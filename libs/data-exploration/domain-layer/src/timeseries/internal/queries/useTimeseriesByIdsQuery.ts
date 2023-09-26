@@ -8,7 +8,7 @@ import { getTimeseriesByIds } from '../../service';
 import { InternalTimeseriesData } from '../types';
 
 export const useTimeseriesByIdsQuery = <T = InternalTimeseriesData>(
-  ids?: IdEither[],
+  ids: IdEither[],
   options?: Omit<
     UseQueryOptions<InternalTimeseriesData[], any, T[]>,
     'queryKey'

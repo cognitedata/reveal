@@ -360,7 +360,6 @@ export class FDMClientV2 extends BaseFDMClient {
   public async searchAggregateValueByProperty<T>(
     data: { dataType: string; field: string },
     queryString: string,
-    filters: unknown,
     property: string
   ) {
     const { dataType, field } = data;
@@ -378,10 +377,6 @@ export class FDMClientV2 extends BaseFDMClient {
       ],
       variables: {
         query: { value: queryString, required: true },
-        filter: {
-          value: filters,
-          type: `_Search${dataType}Filter`,
-        },
       },
     };
 

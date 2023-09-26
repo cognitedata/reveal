@@ -1,4 +1,3 @@
-import { useDisclosure } from '@data-exploration-components/hooks';
 import {
   AccessAction,
   useAccessControl,
@@ -13,12 +12,10 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Body, Button, Flex, Tooltip } from '@cognite/cogs.js';
 
-import { DataQualityOverview, UpsertRuleDrawer } from './pages';
+import { DataQualityOverview, DownloadReport } from './pages';
 
 export const DataQualityPage = () => {
-  const { t } = useTranslation('DataQualityHome');
-
-  const upsertRuleDrawer = useDisclosure({ isOpen: false });
+  const { t } = useTranslation('DataQualityPage');
 
   const {
     dataSource,
@@ -110,25 +107,13 @@ export const DataQualityPage = () => {
                   disabled={validationDisabled}
                   loading={validationInProgress}
                   onClick={startValidation}
+                  type="primary"
                 >
                   {t('data_quality_validate_now', 'Validate now')}
                 </Button>
               </Tooltip>
-              <Tooltip
-                content={accessErrorMessageWrite}
-                disabled={canWriteDataValidation}
-                wrapped
-              >
-                <Button
-                  disabled={!dataSource || !canWriteDataValidation}
-                  onClick={upsertRuleDrawer.onOpen}
-                  icon="AddLarge"
-                  iconPlacement="right"
-                  type="primary"
-                >
-                  {t('data_quality_new_rule', 'New rule')}
-                </Button>
-              </Tooltip>
+
+              <DownloadReport />
             </Flex>
           )}
         </PageToolbar>
@@ -137,11 +122,6 @@ export const DataQualityPage = () => {
       <PageContentLayout.Body data-cy="dq-page-content">
         {renderContent()}
       </PageContentLayout.Body>
-
-      <UpsertRuleDrawer
-        isVisible={upsertRuleDrawer.isOpen}
-        onCancel={upsertRuleDrawer.onClose}
-      />
     </PageContentLayout>
   );
 };

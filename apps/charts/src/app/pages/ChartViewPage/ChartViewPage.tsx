@@ -29,11 +29,7 @@ import SearchSidebar from '@charts-app/components/Search/SearchSidebar';
 import SourceTable from '@charts-app/components/SourceTable/SourceTable';
 import { SourceTableHeader } from '@charts-app/components/SourceTable/SourceTableHeader';
 import ThresholdSidebar from '@charts-app/components/Thresholds/ThresholdSidebar';
-import { useExperimentalCapabilitiesCheck } from '@charts-app/domain/chart';
-import {
-  MONITORING_CAPABILITIES,
-  ALERTING_CAPABILITIES,
-} from '@charts-app/domain/monitoring/constants';
+import { useAclPermissions } from '@charts-app/domain/chart/service/queries/useAclPermissions';
 import { CalculationCollectionEffects } from '@charts-app/effects/calculations';
 import { EventResultEffects } from '@charts-app/effects/events';
 import { TimeseriesCollectionEffects } from '@charts-app/effects/timeseries';
@@ -97,8 +93,10 @@ import {
   ChartWorkflowV2,
   ChartSource,
   ScheduledCalculation,
+  MONITORING_ACL,
+  NOTIFICATIONS_ACL,
 } from '@cognite/charts-lib';
-import { toast, Loader, Button, Tooltip } from '@cognite/cogs.js';
+import { toast, Loader, Button, Tooltip, Chip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 import { ScheduledCalculationCollectionEffects } from '../../effects/scheduled-calculations';
@@ -138,7 +136,11 @@ const defaultTranslations = makeDefaultTranslations(
 const keys = translationKeys(defaultTranslations);
 
 const ChartViewPage = () => {
-  const { data: userProfile } = useUserProfileQuery();
+  const {
+    data: userProfile,
+    isLoading: isUserProfileLoading,
+    isError: isUserProfileError,
+  } = useUserProfileQuery();
   const { isEnabled: isMonitoringFeatureEnabled } = useFlag(
     'CHARTS_UI_MONITORING',
     {
@@ -146,10 +148,23 @@ const ChartViewPage = () => {
       forceRerender: true,
     }
   );
+  const { data: hasMonitoringRead } = useAclPermissions(MONITORING_ACL, 'READ');
+  const { data: hasMonitoringWrite } = useAclPermissions(
+    MONITORING_ACL,
+    'WRITE'
+  );
+  const { data: hasNotificationsRead } = useAclPermissions(
+    NOTIFICATIONS_ACL,
+    'READ'
+  );
+  const { data: hasNotificationsWrite } = useAclPermissions(
+    NOTIFICATIONS_ACL,
+    'WRITE'
+  );
   const isMonitoringAccessible =
-    useExperimentalCapabilitiesCheck(MONITORING_CAPABILITIES) && userProfile;
+    hasMonitoringRead && hasMonitoringWrite && userProfile;
   const isAlertingAccessible =
-    useExperimentalCapabilitiesCheck(ALERTING_CAPABILITIES) && userProfile;
+    hasNotificationsRead && hasNotificationsWrite && userProfile;
   const { isEnabled: isDataProfilingEnabled } = useFlag(
     'CHARTS_UI_DATAPROFILING',
     {
@@ -867,15 +882,27 @@ const ChartViewPage = () => {
       <EventResultEffects />
       <ScheduledCalculationCollectionEffects />
       <AccessDeniedModal
-        hasUserProfile={!!userProfile}
         visible={accessDeniedModal === 'monitoring'}
-        capabilities={MONITORING_CAPABILITIES}
+        capabilities={
+          !isUserProfileLoading && !userProfile
+            ? ['User Profiles']
+            : [
+                hasMonitoringRead ? '' : `${MONITORING_ACL}:READ`,
+                hasMonitoringWrite ? '' : `${MONITORING_ACL}:WRITE`,
+              ].filter(Boolean)
+        }
         onOk={handleAccessDeniedModalClose}
       />
       <AccessDeniedModal
-        hasUserProfile={!!userProfile}
         visible={accessDeniedModal === 'alerting'}
-        capabilities={ALERTING_CAPABILITIES}
+        capabilities={
+          !isUserProfileLoading && !userProfile
+            ? ['User Profiles']
+            : [
+                hasNotificationsRead ? '' : `${NOTIFICATIONS_ACL}:READ`,
+                hasNotificationsWrite ? '' : `${NOTIFICATIONS_ACL}:WRITE`,
+              ].filter(Boolean)
+        }
         onOk={handleAccessDeniedModalClose}
       />
       <ChartViewPageSecondaryAppBar
@@ -1036,27 +1063,31 @@ const ChartViewPage = () => {
           {isMonitoringFeatureEnabled && (
             <div>
               <Tooltip content={t['Alerting']} position="left">
-                <Button
-                  icon="Bell"
-                  aria-label="Toggle alerting sidebar"
-                  toggled={showAlertingSidebar}
-                  onClick={() => {
-                    if (isAlertingAccessible) {
-                      trackUsage(
-                        `Sidebar.Alerting.${
-                          showAlertingSidebar ? 'Close' : 'Open'
-                        }`
-                      );
-                      if (showAlertingSidebar) {
-                        setAlertingFilter();
+                {isUserProfileLoading && !isUserProfileError ? (
+                  <Chip icon="Loader" />
+                ) : (
+                  <Button
+                    icon="Bell"
+                    aria-label="Toggle alerting sidebar"
+                    toggled={showAlertingSidebar}
+                    onClick={() => {
+                      if (isAlertingAccessible) {
+                        trackUsage(
+                          `Sidebar.Alerting.${
+                            showAlertingSidebar ? 'Close' : 'Open'
+                          }`
+                        );
+                        if (showAlertingSidebar) {
+                          setAlertingFilter();
+                        }
+                        handleAlertingSidebarToggle();
+                      } else {
+                        trackUsage('Sidebar.Alerting.AccessDenied');
+                        setAccessDeniedModal('alerting');
                       }
-                      handleAlertingSidebarToggle();
-                    } else {
-                      trackUsage('Sidebar.Alerting.AccessDenied');
-                      setAccessDeniedModal('alerting');
-                    }
-                  }}
-                />
+                    }}
+                  />
+                )}
               </Tooltip>
               <NotificationIndicator />
             </div>
@@ -1089,27 +1120,31 @@ const ChartViewPage = () => {
           </Tooltip>
           {isMonitoringFeatureEnabled && (
             <Tooltip content={t['Monitoring']} position="left">
-              <Button
-                icon="Alarm"
-                aria-label="Toggle monitoring sidebar"
-                toggled={showMonitoringSidebar}
-                onClick={() => {
-                  if (isMonitoringAccessible) {
-                    trackUsage(
-                      `Sidebar.Monitoring.${
-                        showMonitoringSidebar ? 'Close' : 'Open'
-                      }`,
-                      {
-                        accessible: isMonitoringAccessible,
-                      }
-                    );
-                    handleMonitoringSidebarToggle();
-                  } else {
-                    trackUsage('Sidebar.Monitoring.AccessDenied');
-                    setAccessDeniedModal('monitoring');
-                  }
-                }}
-              />
+              {isUserProfileLoading && !isUserProfileError ? (
+                <Chip icon="Loader" />
+              ) : (
+                <Button
+                  icon="Alarm"
+                  aria-label="Toggle monitoring sidebar"
+                  toggled={showMonitoringSidebar}
+                  onClick={() => {
+                    if (isMonitoringAccessible) {
+                      trackUsage(
+                        `Sidebar.Monitoring.${
+                          showMonitoringSidebar ? 'Close' : 'Open'
+                        }`,
+                        {
+                          accessible: isMonitoringAccessible,
+                        }
+                      );
+                      handleMonitoringSidebarToggle();
+                    } else {
+                      trackUsage('Sidebar.Monitoring.AccessDenied');
+                      setAccessDeniedModal('monitoring');
+                    }
+                  }}
+                />
+              )}
             </Tooltip>
           )}
         </Toolbar>

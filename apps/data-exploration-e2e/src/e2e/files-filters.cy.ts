@@ -1,5 +1,7 @@
 import {
+  FILE_AGGREGATE_ALIAS,
   FILE_LIST_ALIAS,
+  interceptFileAggregate,
   interceptFileList,
 } from '../support/interceptions/interceptions';
 
@@ -9,9 +11,17 @@ describe('Files filters', () => {
     cy.navigateToExplorer();
 
     interceptFileList();
+    interceptFileAggregate();
 
     cy.goToTab('Files');
     cy.wait(`@${FILE_LIST_ALIAS}`);
+    cy.wait(`@${FILE_AGGREGATE_ALIAS}`);
+
+    cy.tableShouldBeVisible('documents-search-results');
+  });
+
+  beforeEach(() => {
+    interceptFileList();
   });
 
   afterEach(() => {
@@ -21,54 +31,28 @@ describe('Files filters', () => {
   it('should filter files by file type', () => {
     const FILE_TYPE = 'Image';
 
-    cy.tableSholudBeVisible('documents-search-results').selectColumn(
-      'File type'
-    );
+    cy.clickFilter('File types').searchAndClickOption(FILE_TYPE);
 
-    cy.log('click on file type filter');
-    cy.findAllByTestId('multi-select-filter-File types').click();
+    cy.wait(`@${FILE_LIST_ALIAS}`);
 
-    cy.log('search and select file type');
-    cy.findAllByTestId('multi-select-filter-File types-search-input').type(
-      FILE_TYPE
-    );
-    cy.get('input[type="checkbox"]').check();
-
-    /**
-     * We should wait until the table re-renders after the filter is applied.
-     */
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(5000);
-
-    cy.getTableById('documents-search-results')
-      .findAllByTestId('type')
-      .then((rowFiletypes) => {
-        cy.wrap(rowFiletypes).contains(FILE_TYPE);
-      });
+    cy.getTableById('documents-search-results').within((table) => {
+      cy.wrap(table)
+        .selectColumn('File type')
+        .shouldAllRowsHaveValueInColumn('File type', FILE_TYPE);
+    });
   });
 
   it('should filter files by Author', () => {
     const AUTHOR = 'Roland Wagner';
 
-    cy.tableSholudBeVisible('documents-search-results').selectColumn('Author');
+    cy.clickFilter('Authors').searchAndClickOption(AUTHOR);
 
-    cy.log('click on Author filter');
-    cy.findAllByTestId('multi-select-filter-Authors').click();
+    cy.wait(`@${FILE_LIST_ALIAS}`);
 
-    cy.log('search and select file type');
-    cy.findAllByTestId('multi-select-filter-Authors-search-input').type(AUTHOR);
-    cy.get('input[type="checkbox"]').check();
-
-    /**
-     * We should wait until the table re-renders after the filter is applied.
-     */
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(5000);
-
-    cy.getTableById('documents-search-results')
-      .findAllByTestId('author')
-      .then((rowAuthors) => {
-        cy.wrap(rowAuthors).contains(AUTHOR);
-      });
+    cy.getTableById('documents-search-results').within((table) => {
+      cy.wrap(table)
+        .selectColumn('Author')
+        .shouldAllRowsHaveValueInColumn('Author', AUTHOR);
+    });
   });
 });

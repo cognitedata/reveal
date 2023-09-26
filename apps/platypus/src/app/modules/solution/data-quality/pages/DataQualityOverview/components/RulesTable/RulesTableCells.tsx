@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 
-import { RuleSeverity } from '@data-quality/api/codegen';
+import { RuleRunStatus, RuleSeverity } from '@data-quality/api/codegen';
 import {
   chartConfig,
   formatScoreDotTooltip,
@@ -14,7 +14,16 @@ import {
   getTimeSeriesId,
 } from '@data-quality/utils/validationTimeseries';
 
-import { A, Body, Chip, Flex, Heading, Icon } from '@cognite/cogs.js';
+import {
+  A,
+  Body,
+  Chip,
+  ChipProps,
+  Flex,
+  Heading,
+  Icon,
+  Tooltip,
+} from '@cognite/cogs.js';
 import { LineChart } from '@cognite/plotting-components';
 import { Datapoints } from '@cognite/sdk/dist/src';
 
@@ -27,6 +36,11 @@ type NameCellProps = {
 
 type SeverityCellProps = {
   severity: RuleSeverity;
+};
+
+type StatusCellProps = {
+  message?: string;
+  status: RuleRunStatus;
 };
 
 type ValidityCellProps = {
@@ -57,18 +71,33 @@ export const NameCell = ({ onClick, ruleName }: NameCellProps) => {
 };
 
 export const SeverityCell = ({ severity }: SeverityCellProps) => {
-  switch (severity) {
-    case 'Critical':
-      return <Chip icon="Error" label={severity} type="danger" />;
-    case 'High':
-      return <Chip icon="Warning" label={severity} type="warning" />;
-    case 'Medium':
-      return <Chip label={severity} type="warning" />;
-    case 'Low':
-      return <Chip label={severity} type="neutral" />;
-    default:
-      return <Chip label={severity} />;
-  }
+  const severityType: Record<RuleSeverity, ChipProps['type']> = {
+    Critical: 'danger',
+    High: 'warning',
+    Medium: 'neutral',
+    Low: 'default',
+  };
+
+  return <Chip label={severity} size="small" type={severityType[severity]} />;
+};
+
+export const StatusCell = ({ message, status }: StatusCellProps) => {
+  const chipProps: Record<RuleRunStatus, ChipProps> = {
+    Error: { icon: 'Error', type: 'danger' },
+    InProgress: { icon: 'Loader' },
+    Success: { icon: 'CheckmarkAlternative', type: 'success' },
+  };
+  const tooltipMessages: Record<RuleRunStatus, string> = {
+    Error: message || 'Unknown error',
+    InProgress: 'Validation in progress',
+    Success: 'Validation succeeded',
+  };
+
+  return (
+    <Tooltip content={tooltipMessages[status]}>
+      <Chip size="small" {...chipProps[status]} />
+    </Tooltip>
+  );
 };
 
 export const ValidityCell = ({

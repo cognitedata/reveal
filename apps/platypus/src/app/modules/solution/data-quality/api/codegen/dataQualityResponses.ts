@@ -76,3 +76,7 @@ export type DataScopeListIdsResponse = {
    */
   items: Schemas.ExternalId[];
 };
+
+export type RuleRunListResponse = {
+  items: Schemas.RuleRunDto[];
+};

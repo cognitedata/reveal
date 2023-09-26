@@ -1,10 +1,4 @@
-import { omit } from 'lodash';
-
 import {
-  AssetCentricContainerReference,
-  CanvasAnnotation,
-  ContainerReferenceType,
-  FdmInstanceContainerReference,
   SerializedCanvasDocument,
   SerializedIndustryCanvasState,
 } from '../types';
@@ -14,12 +8,13 @@ import { dtoAssetCentricContainerReferenceToContainerReference } from './dtoAsse
 import { dtoCanvasAnnotationToCanvasAnnotation } from './dtoCanvasAnnotationToCanvasAnnotation';
 import { dtoFdmInstanceContainerReferenceToFdmInstanceContainerReference } from './dtoFdmInstanceContainerReferenceToFdmInstanceContainerReference';
 import { ModelNames } from './IndustryCanvasService';
+import type { DTOCanvasState } from './types';
 import {
-  DTOCanvasAnnotation,
-  DTOCanvasState,
-  DTOAssetCentricContainerReference,
-  DTOFdmInstanceContainerReference,
-} from './types';
+  getDTOCanvasAnnotations,
+  getDTOAssetCentricContainerReferences,
+  getDTOFdmInstanceContainerReferences,
+} from './utils';
+import createZIndexByIdRecord from './utils/createZIndexByIdRecord';
 
 export const getSerializedCanvasStateFromDTOCanvasState = ({
   context: dtoContext,
@@ -38,145 +33,17 @@ export const getSerializedCanvasStateFromDTOCanvasState = ({
       dtoFdmInstanceContainerReferenceToFdmInstanceContainerReference
     ) ?? [],
   context: dtoContext ?? [],
+  zIndexById: createZIndexByIdRecord([
+    ...(dtoAnnotations?.items ?? []),
+    ...(dtoContainerReferences?.items ?? []),
+    ...(dtoFdmInstanceContainerReferences?.items ?? []),
+  ]),
 });
 
 export const getAnnotationOrContainerExternalId = (
   id: string,
   canvasExternalId: string
 ): string => `${canvasExternalId}_${id}`;
-
-const getDTOCanvasAnnotations = (
-  canvasAnnotations: CanvasAnnotation[],
-  canvasExternalId: string
-): DTOCanvasAnnotation[] => {
-  return canvasAnnotations.map((annotation) => {
-    const {
-      id,
-      type,
-      containerId,
-      isSelectable,
-      isDraggable,
-      isResizable,
-      ...props
-    } = annotation;
-    return {
-      externalId: getAnnotationOrContainerExternalId(id, canvasExternalId),
-      id,
-      annotationType: type,
-      containerId,
-      isSelectable,
-      isDraggable,
-      isResizable,
-      properties: props as DTOCanvasAnnotation['properties'],
-    };
-  });
-};
-
-const getResourceIds = (
-  ref: AssetCentricContainerReference
-): Pick<DTOAssetCentricContainerReference, 'resourceId' | 'resourceSubId'> => {
-  if (ref.type === ContainerReferenceType.THREE_D) {
-    return {
-      resourceId: ref.modelId,
-      resourceSubId: ref.revisionId,
-    };
-  }
-  return {
-    resourceId: ref.resourceId,
-  };
-};
-
-const getDTOAssetCentricContainerReferences = (
-  containerReferences: AssetCentricContainerReference[],
-  canvasExternalId: string
-): DTOAssetCentricContainerReference[] => {
-  return containerReferences.map((containerReference) => {
-    const {
-      id,
-      type,
-      label,
-      x,
-      y,
-      width,
-      height,
-      maxWidth,
-      maxHeight,
-      ...props
-    } = containerReference;
-    if (id === undefined) {
-      throw new Error(
-        'The containerReference id cannot be undefined when upserting to FDM'
-      );
-    }
-    return {
-      externalId: getAnnotationOrContainerExternalId(id, canvasExternalId),
-      id,
-      containerReferenceType: type,
-      label,
-      x,
-      y,
-      width,
-      height,
-      maxWidth,
-      maxHeight,
-      ...getResourceIds(containerReference),
-      properties: omit(props, [
-        'resourceId',
-        'modelId',
-        'revisionId',
-      ]) as DTOAssetCentricContainerReference['properties'],
-    };
-  });
-};
-
-const getDTOFdmInstanceContainerReferences = (
-  containerReferences: FdmInstanceContainerReference[],
-  canvasExternalId: string
-): DTOFdmInstanceContainerReference[] => {
-  return containerReferences.map((containerReference) => {
-    const {
-      id,
-      type,
-      label,
-      x,
-      y,
-      width,
-      height,
-      maxWidth,
-      maxHeight,
-      ...props
-    } = containerReference;
-    if (id === undefined) {
-      throw new Error(
-        'The containerReference id cannot be undefined when upserting to FDM'
-      );
-    }
-    return {
-      externalId: getAnnotationOrContainerExternalId(id, canvasExternalId),
-      id,
-      containerReferenceType: type,
-      label,
-      x,
-      y,
-      width,
-      height,
-      maxWidth,
-      maxHeight,
-      instanceExternalId: props.instanceExternalId,
-      instanceSpace: props.instanceSpace,
-      viewExternalId: props.viewExternalId,
-      viewSpace: props.viewSpace,
-      viewVersion: props.viewVersion,
-      properties: omit(props, [
-        'instanceExternalId',
-        'instanceSpace',
-        'viewExternalId',
-        'viewSpace',
-        'viewVersion',
-      ]) as DTOFdmInstanceContainerReference['properties'],
-    };
-  });
-};
 
 const getEdgeExternalId = (
   inNodeExternalId: string,
@@ -207,23 +74,27 @@ export const upsertCanvas = async (
       containerReferences,
       fdmInstanceContainerReferences,
       context,
+      zIndexById,
     },
     ...canvasProps
   } = canvas;
 
   const dtoCanvasAnnotations = getDTOCanvasAnnotations(
     canvasAnnotations,
-    canvas.externalId
+    canvas.externalId,
+    zIndexById
   );
 
   const dtoAssetCentricContainerRefs = getDTOAssetCentricContainerReferences(
     containerReferences,
-    canvas.externalId
+    canvas.externalId,
+    zIndexById
   );
 
   const dtoFdmInstanceContainerRefs = getDTOFdmInstanceContainerReferences(
     fdmInstanceContainerReferences,
-    canvas.externalId
+    canvas.externalId,
+    zIndexById
   );
 
   // We first ingest the nodes, and then the edges, since the start/end

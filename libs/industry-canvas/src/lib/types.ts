@@ -164,7 +164,7 @@ export type IndustryCanvasContainerConfig = ContainerConfig<ResourceMetadata>;
 
 // TODO: We should improve the typing here -- update this together with the TODO above.
 export const isIndustryCanvasContainerConfig = (
-  container: ContainerConfig
+  container: CanvasNode | ContainerConfig
 ): container is IndustryCanvasContainerConfig => {
   const metadata = container.metadata;
   if (container.type === ContainerType.REVEAL) {
@@ -212,10 +212,11 @@ export type SerializedFilter = Omit<Filter, 'appliesWhen'> & {
   appliesWhen?: SerializedFilterConditional[];
 };
 
+export type CanvasNode = IndustryCanvasContainerConfig | CanvasAnnotation;
+
 // NOTE: `CanvasState` is a global interface, hence the `Industry` prefix (https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.canvasstate.html)
 export type IndustryCanvasState = {
-  containers: IndustryCanvasContainerConfig[];
-  canvasAnnotations: CanvasAnnotation[];
+  nodes: CanvasNode[];
   pinnedTimeseriesIdsByAnnotationId: Record<string, number[]>;
   liveSensorRulesByAnnotationIdByTimeseriesId: LiveSensorRulesByAnnotationIdByTimeseriesId;
   filters: Filter[];
@@ -241,6 +242,7 @@ export type FiltersContext = {
 export type CanvasContext = (FiltersContext | PinnedSensorValueContext)[];
 
 export type SerializedIndustryCanvasState = {
+  zIndexById: Record<string, number | undefined>;
   containerReferences: AssetCentricContainerReference[];
   fdmInstanceContainerReferences: FdmInstanceContainerReference[];
   canvasAnnotations: CanvasAnnotation[];
@@ -287,7 +289,7 @@ export const COMMENT_METADATA_ID = '_IS_COMMENT';
 export type CommentAnnotation = RectangleAnnotation;
 
 export const isCommentAnnotation = (
-  annotation: Annotation
+  annotation: CanvasNode
 ): annotation is CommentAnnotation =>
   annotation.metadata && annotation.metadata[COMMENT_METADATA_ID] === true;
 

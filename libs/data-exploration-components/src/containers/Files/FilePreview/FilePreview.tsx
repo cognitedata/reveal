@@ -328,6 +328,13 @@ export const FilePreview = ({
     page,
   ]);
 
+  const nodes = useMemo(() => {
+    if (container === undefined) {
+      return undefined;
+    }
+    return [container, ...displayedAnnotations];
+  }, [container, displayedAnnotations]);
+
   const tooltips = useTooltips({
     isTooltipsEnabled: enableToolTips && !creatable,
     // NOTE: Once support for annotations from Events API has been removed, we can
@@ -398,7 +405,7 @@ export const FilePreview = ({
     );
   }
 
-  if (!isFileFetched || container === undefined || file === undefined) {
+  if (!isFileFetched || nodes === undefined || file === undefined) {
     return <Loader />;
   }
 
@@ -440,8 +447,7 @@ export const FilePreview = ({
             applicationId={applicationId}
             id={id}
             setRef={(ref) => setUnifiedViewerRef(ref)}
-            containers={[container]}
-            annotations={displayedAnnotations}
+            nodes={nodes}
             tooltips={enableToolTips ? tooltips : undefined}
             onClick={onStageClick}
             shouldShowZoomControls={showControls}

@@ -12,7 +12,8 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { isEqual } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { RuleFormValues } from './helpers';
+import { RuleFormValues } from '../helpers';
+
 import { useLoadRuleset } from './useLoadRuleset';
 
 type UpsertRuleOptions = {

@@ -37,6 +37,7 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
       [selectedField.name]: {
         operator,
         value: newValue,
+        type: selectedField.type,
       },
     };
 

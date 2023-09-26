@@ -19,9 +19,9 @@ import { Prediction } from '@entity-matching-app/hooks/entity-matching-predictio
 
 import { CogniteEvent, FileInfo, Sequence, Timeseries } from '@cognite/sdk';
 
-import { AppliedRule } from '@entity-matching-app/hooks/entity-matching-rules';
 import { useRetrieve } from '@entity-matching-app/hooks/retrieve';
 import { SourceType } from '@entity-matching-app/types/api';
+import { AppliedRule } from '@entity-matching-app/types/rules';
 import { MatchOptionType, MatchType } from '@entity-matching-app/types/types';
 
 import AppliedRulesTable from './applied-rules-table';

@@ -8,7 +8,7 @@ import { InternalAssetData } from '../../internal';
 import { getAssetsByIds } from '../network';
 
 export const useAssetsByIdQuery = <T = InternalAssetData>(
-  ids?: IdEither[],
+  ids: IdEither[],
   options?: Omit<UseQueryOptions<InternalAssetData[], any, T[]>, 'queryKey'>
 ) => {
   const sdk = useSDK();

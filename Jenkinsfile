@@ -134,7 +134,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'extraction-pipelines': 'single-branch',
   'extractor-downloads': 'single-branch',
   'charts': 'multi-branch',
-  'entity-matching': 'single-branch',
+  'entity-matching': 'multi-branch',
   'functions-ui' : 'single-branch',
   'access-management': 'multi-branch',
   'notebook': 'single-branch',

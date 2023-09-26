@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import isDateLodash from 'lodash/isDate';
+import isString from 'lodash/isString';
 
 export const getTimestamp = (date: Date) => {
   return dayjs(date).valueOf();
@@ -11,7 +11,7 @@ export const getLocalDate = (value: Date | string) => {
 };
 
 export const isDate = (value: unknown): value is Date => {
-  return isDateLodash(value) && dayjs(value as Date).isValid();
+  return dayjs(value as Date).isValid() || isValidFDMDate(String(value));
 };
 
 export const formatDate = (
@@ -21,7 +21,7 @@ export const formatDate = (
   return dayjs(date).format(format);
 };
 
-export const isValidDate = (input: string) => {
+export const isValidFDMDate = (input: string) => {
   const datePattern =
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$/;
   return datePattern.test(input);

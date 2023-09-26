@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import {
-  ContainerConfig,
   UnifiedViewer,
   UnifiedViewerEventListenerMap,
   UnifiedViewerEventType,
@@ -11,7 +10,7 @@ import {
 import { RuleType } from '../components/ContextualTooltips/AssetTooltip/types';
 import { useCommentsUpsertMutation } from '../services/comments/hooks';
 import { shamefulOnUpdateRequest } from '../state/useIndustrialCanvasStore';
-import { CanvasAnnotation, IndustryCanvasContainerConfig } from '../types';
+import { CanvasNode } from '../types';
 import { useUserProfile } from '../UserProfileProvider';
 import useMetrics from '../utils/tracking/useMetrics';
 
@@ -49,49 +48,14 @@ const mergeIfMatchById = <T extends { id: string }, U extends { id: string }>(
   };
 };
 
-const containerConfigToIndustryCanvasContainerConfig = (
-  containerConfig: ContainerConfig
-): IndustryCanvasContainerConfig => {
-  return {
-    ...containerConfig,
-    metadata: {
-      ...(containerConfig.metadata ?? {}),
-    },
-  };
-};
-
-export const getNextUpdatedContainers = (
-  prevContainers: IndustryCanvasContainerConfig[],
-  updatedContainers: ContainerConfig[]
-): IndustryCanvasContainerConfig[] => {
+export const getNextUpdatedNodes = (
+  prevNodes: CanvasNode[],
+  updatedNodes: CanvasNode[]
+): CanvasNode[] => {
   return [
-    ...prevContainers.map((prevContainer) =>
-      mergeIfMatchById(updatedContainers, prevContainer)
-    ),
-    ...updatedContainers
-      .filter(
-        (updatedContainer) =>
-          !prevContainers.some(
-            (container) => container.id === updatedContainer.id
-          )
-      )
-      .map(containerConfigToIndustryCanvasContainerConfig),
-  ];
-};
-
-export const getNextUpdatedAnnotations = (
-  prevAnnotations: CanvasAnnotation[],
-  updatedAnnotations: CanvasAnnotation[]
-): CanvasAnnotation[] => {
-  return [
-    ...prevAnnotations.map((annotation) =>
-      mergeIfMatchById(updatedAnnotations, annotation)
-    ),
-    ...updatedAnnotations.filter(
-      (updatedAnnotation) =>
-        !prevAnnotations.some(
-          (annotation) => annotation.id === updatedAnnotation.id
-        )
+    ...prevNodes.map((prevNode) => mergeIfMatchById(updatedNodes, prevNode)),
+    ...updatedNodes.filter(
+      (updatedNode) => !prevNodes.some((node) => node.id === updatedNode.id)
     ),
   ];
 };

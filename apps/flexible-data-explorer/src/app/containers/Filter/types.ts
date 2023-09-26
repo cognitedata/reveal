@@ -90,4 +90,5 @@ export type ValueByField = Record<string, FieldValue>;
 export interface FieldValue {
   operator: Operator;
   value: ValueType;
+  type: FieldType;
 }

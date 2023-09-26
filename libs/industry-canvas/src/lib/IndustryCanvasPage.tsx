@@ -25,7 +25,11 @@ import {
 import { useFromCopilotEventHandler } from '@cognite/llm-hub';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { UnifiedViewer, ZoomToFitMode } from '@cognite/unified-file-viewer';
+import {
+  UnifiedViewer,
+  ZoomToFitMode,
+  isAnnotation,
+} from '@cognite/unified-file-viewer';
 
 import { translationKeys } from './common';
 import { ToggleButton } from './components/buttons';
@@ -47,14 +51,15 @@ import {
 import { CommentsPane } from './containers';
 import { useAuth2InvitationsByResource } from './hooks/use-query/useAuth2InvitationsByResource';
 import { useUsers } from './hooks/use-query/useUsers';
+import { useCallbackOnce } from './hooks/useCallbackOnce';
 import useCanvasVisibility from './hooks/useCanvasVisibility';
 import useClickedContainerAnnotation from './hooks/useClickedContainerAnnotation';
 import { useContainerAnnotations } from './hooks/useContainerAnnotations';
-import useContainer from './hooks/useContainers';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import useLocalStorage from './hooks/useLocalStorage';
 import useManagedTool from './hooks/useManagedTool';
+import useNodes from './hooks/useNodes';
 import useOnAddContainerReferences from './hooks/useOnAddContainerReferences';
 import useOnUpdateRequest from './hooks/useOnUpdateRequest';
 import useOnUpdateSelectedAnnotation from './hooks/useOnUpdateSelectedAnnotation';
@@ -91,12 +96,15 @@ import {
   ContainerReference,
   ContainerReferenceType,
   IndustryCanvasToolType,
+  isIndustryCanvasContainerConfig,
 } from './types';
 import { useUserProfile } from './UserProfileProvider';
+import { createDuplicateCanvas } from './utils/createDuplicateCanvas';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
 } from './utils/dimensions';
+import { getCanvasLink } from './utils/getCanvasLink';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 import useMetrics from './utils/tracking/useMetrics';
@@ -196,7 +204,13 @@ export const IndustryCanvasPage = () => {
   const onUpdateRequest = useOnUpdateRequest({
     unifiedViewer: unifiedViewerRef,
   });
-  const containers = useContainer(canvasState);
+
+  const nodes = useNodes(canvasState);
+  const containers = useMemo(
+    () => nodes.filter(isIndustryCanvasContainerConfig),
+    [nodes]
+  );
+  const canvasAnnotations = useMemo(() => nodes.filter(isAnnotation), [nodes]);
   const containerAnnotations = useContainerAnnotations({
     containers,
   });
@@ -253,7 +267,7 @@ export const IndustryCanvasPage = () => {
     useSelectedAnnotationOrContainer({
       unifiedViewerRef,
       toolType,
-      canvasAnnotations: canvasState.canvasAnnotations,
+      canvasAnnotations,
       containers,
     });
 
@@ -306,14 +320,6 @@ export const IndustryCanvasPage = () => {
       })
     );
   };
-
-  if (!canCurrentUserSeeCanvas) {
-    return (
-      <NoAccessToCurrentCanvas
-        onGoBackClick={handleGoBackToIndustryCanvasButtonClick}
-      />
-    );
-  }
 
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
@@ -392,6 +398,28 @@ export const IndustryCanvasPage = () => {
       });
     }
   };
+
+  const handleDuplicateCanvasClick = useCallbackOnce(async () => {
+    if (activeCanvas === undefined) {
+      return;
+    }
+
+    const { externalId } = await createDuplicateCanvas({
+      canvas: activeCanvas,
+      createCanvas,
+      t,
+    });
+
+    navigate(getCanvasLink(externalId));
+  });
+
+  if (!canCurrentUserSeeCanvas) {
+    return (
+      <NoAccessToCurrentCanvas
+        onGoBackClick={handleGoBackToIndustryCanvasButtonClick}
+      />
+    );
+  }
 
   return (
     <>
@@ -562,6 +590,15 @@ export const IndustryCanvasPage = () => {
                     'Always show connection lines'
                   )}
                 </Menu.Item>
+                <Menu.Item
+                  onClick={handleDuplicateCanvasClick}
+                  disabled={isCreatingCanvas}
+                >
+                  {t(
+                    translationKeys.COMMON_CANVAS_MAKE_COPY,
+                    'Duplicate canvas'
+                  )}
+                </Menu.Item>
               </Menu>
             }
           >
@@ -590,9 +627,8 @@ export const IndustryCanvasPage = () => {
             onUpdateRequest={onUpdateRequest}
             containerAnnotations={containerAnnotations}
             clickedContainerAnnotation={clickedContainerAnnotation}
-            containers={containers}
+            nodes={nodes}
             selectedContainer={selectedContainer}
-            canvasAnnotations={canvasState.canvasAnnotations}
             selectedCanvasAnnotation={selectedCanvasAnnotation}
             tool={tool}
             toolType={toolType}

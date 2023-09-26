@@ -73,7 +73,7 @@ const QuickMatchResultsTable = ({
     () =>
       predictions
         .filter((p) =>
-          scoreFilter.length == 2
+          scoreFilter.length === 2
             ? 100 * p.match.score >= scoreFilter[0] &&
               100 * p.match.score <= scoreFilter[1]
             : true

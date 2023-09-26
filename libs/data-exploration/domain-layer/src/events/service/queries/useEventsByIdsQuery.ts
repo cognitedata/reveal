@@ -8,7 +8,7 @@ import { InternalEventsData } from '../../internal';
 import { getEventsByIds } from '../network';
 
 export const useEventsByIdsQuery = <T = InternalEventsData>(
-  ids?: IdEither[],
+  ids: IdEither[],
   options?: Omit<UseQueryOptions<InternalEventsData[], any, T[]>, 'queryKey'>
 ) => {
   const sdk = useSDK();

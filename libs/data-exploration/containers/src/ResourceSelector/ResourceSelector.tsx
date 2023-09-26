@@ -76,6 +76,7 @@ export type ResourceSelectorProps = {
   isDocumentsApiEnabled?: boolean;
   shouldShowPreviews?: boolean;
   shouldOnlyShowPreviewPane?: boolean;
+  shouldDisableAddButton?: boolean;
 } & SelectionProps;
 
 export const ResourceSelector = ({
@@ -89,6 +90,7 @@ export const ResourceSelector = ({
   addButtonText,
   shouldShowPreviews = true,
   shouldOnlyShowPreviewPane = false,
+  shouldDisableAddButton = false,
 }: ResourceSelectorProps) => {
   const { filterState, updateFilterType, resetFilterType } =
     useFilterState(initialFilter);
@@ -359,6 +361,7 @@ export const ResourceSelector = ({
           }}
           inverted
           type="primary"
+          disabled={shouldDisableAddButton}
         >
           {addButtonText ? addButtonText : t('ADD', 'Add')}
         </Button>

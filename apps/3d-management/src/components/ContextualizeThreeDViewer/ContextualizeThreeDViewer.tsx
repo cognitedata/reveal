@@ -19,17 +19,21 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import {
   CONTEXTUALIZE_EDITOR_HEADER_HEIGHT,
+  DEFAULT_RIGHT_SIDE_PANEL_WIDTH,
   defaultRevealColor,
 } from '../../pages/ContextualizeEditor/constants';
+import { useLocalStorage } from '../../utils/useLocalStorage';
 
 import { RevealContent } from './components/RevealContent';
 import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
 import {
-  onCloseResourceSelector,
   setModelId,
   setSelectedNodeTreeIndices,
+  setPendingAnnotation,
   useContextualizeThreeDViewerStore,
+  setAnnotations,
 } from './useContextualizeThreeDViewerStore';
+import { getCdfAnnotations } from './utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
 import { createCdfThreeDAssetMapping } from './utils/createCdfThreeDAssetMapping';
 import { updateStyleForContextualizedCadNodes } from './utils/updateStyleForContextualizedCadNodes';
@@ -61,10 +65,23 @@ export const ContextualizeThreeDViewer = ({
     selectedNodeTreeIndices: state.selectedNodeTreeIndices,
   }));
 
+  const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
+    'COGNITE_CONTEXTUALIZE_EDITOR_RESOURCE_SELECTOR_WIDTH',
+    DEFAULT_RIGHT_SIDE_PANEL_WIDTH
+  );
+
   // use effects
   useEffect(() => {
     setModelId(modelId);
   }, [modelId]);
+
+  useEffect(() => {
+    const loadAnnotations = async () => {
+      const annotations = await getCdfAnnotations(sdk, modelId);
+      setAnnotations(annotations);
+    };
+    loadAnnotations();
+  }, [sdk, modelId]);
 
   useEffect(() => {
     (async () => {
@@ -192,7 +209,10 @@ export const ContextualizeThreeDViewer = ({
   };
   return (
     <>
-      <StyledSplitter>
+      <StyledSplitter
+        secondaryInitialSize={rightSidePanelWidth}
+        onSecondaryPaneSizeChange={setRightSidePanelWidth}
+      >
         <ThreeDViewerStyled>
           <RevealContainer sdk={sdk} color={defaultRevealColor}>
             <RevealContent modelId={modelId} revisionId={revisionId} />
@@ -209,9 +229,11 @@ export const ContextualizeThreeDViewer = ({
           <ResourceSelector
             selectionMode="single"
             visibleResourceTabs={['asset']}
+            shouldDisableAddButton={pendingAnnotation === null}
             onSelect={(item) => {
               onCloseResourceSelector();
               createContextualization(item.id);
+              setPendingAnnotation(null);
             }}
           />
         )}

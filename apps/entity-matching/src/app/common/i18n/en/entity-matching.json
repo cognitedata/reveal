@@ -145,6 +145,8 @@
   "pipeline-notification-delete-success": "The pipeline {{name}} was deleted.",
   "pipeline-notification-duplicate-error": "Something went wrong. Failed to duplicate pipeline.",
   "pipeline-notification-duplicate-success": "The pipeline {{name}} was duplicated.",
+  "pipeline-run-not-found-title": "Pipeline run not found",
+  "pipeline-run-not-found-instructions": "The pipeline run was not found. Please run the pipeline again.",
   "previously-confirmed": "Previously confirmed",
   "qm-result-score": "Score",
   "qm-result-source": "Does this {{resource}} match",

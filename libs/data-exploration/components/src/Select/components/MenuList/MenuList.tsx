@@ -50,11 +50,13 @@ MenuListComponentProps<OptionType>) => {
     }
   };
 
+  const selectDataTestId = props.selectProps['data-testid'];
+
   return (
-    <>
+    <div data-testid={`${selectDataTestId}-menu-list`}>
       {showMenuInput && (
         <SearchInput
-          data-testid={`${props.selectProps['data-testid']}-search-input`}
+          data-testid={`${selectDataTestId}-search-input`}
           value={filterInput.input}
           onChange={onChangeHandler}
           onFocus={onMenuInputFocus}
@@ -65,6 +67,6 @@ MenuListComponentProps<OptionType>) => {
       <components.MenuList {...props} maxHeight={maxHeight}>
         {children}
       </components.MenuList>
-    </>
+    </div>
   );
 };

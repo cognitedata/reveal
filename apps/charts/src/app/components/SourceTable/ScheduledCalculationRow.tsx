@@ -4,6 +4,7 @@ import { DraggableProvided } from 'react-beautiful-dnd';
 import AppearanceDropdown from '@charts-app/components/AppearanceDropdown/AppearanceDropdown';
 import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
 import UnitDropdown from '@charts-app/components/UnitDropdown/UnitDropdown';
+import { useAclPermissions } from '@charts-app/domain/chart/service/queries/useAclPermissions';
 import { useScheduledCalculationDeleteMutate } from '@charts-app/domain/scheduled-calculation/internal/queries/useScheduledCalculationDeleteMutate';
 import {
   useComponentTranslations,
@@ -17,9 +18,14 @@ import {
 } from '@charts-app/utils/translations';
 import { DatapointsSummary } from '@charts-app/utils/units';
 
-import { ChartWorkflow, ScheduledCalculation } from '@cognite/charts-lib';
+import {
+  ChartWorkflow,
+  SCHEDULED_CALCULATIONS_ACL,
+  ScheduledCalculation,
+} from '@cognite/charts-lib';
 import { Button, Tooltip } from '@cognite/cogs.js';
 
+import { AccessDeniedModal } from '../AccessDeniedModal/AccessDeniedModal';
 import { ScheduledCalculationDeleteModal } from '../ScheduledCalculation/ScheduledCalculationDeleteModal';
 
 import {
@@ -101,10 +107,21 @@ export const ScheduledCalculationRow = ({
     preferredUnit,
     customUnitLabel,
   } = scheduledCalculation;
+
+  const { data: hasSCWrite } = useAclPermissions(
+    SCHEDULED_CALCULATIONS_ACL,
+    'WRITE'
+  );
+  const { data: hasSCRead } = useAclPermissions(
+    SCHEDULED_CALCULATIONS_ACL,
+    'READ'
+  );
+  const canDeleteScheduledCalculations = hasSCWrite && hasSCRead;
   const isWorkspaceMode = mode === 'workspace';
   const { mutateAsync: deleteScheduledCalculation } =
     useScheduledCalculationDeleteMutate();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [accessDeniedModalOpen, setAccessDeniedModalOpen] = useState(false);
 
   /**
    * Unit Dropdown translations
@@ -241,7 +258,13 @@ export const ScheduledCalculationRow = ({
               icon="Delete"
               style={{ height: 28 }}
               aria-label="delete"
-              onClick={() => setDeleteModalOpen(true)}
+              onClick={() => {
+                if (canDeleteScheduledCalculations) {
+                  setDeleteModalOpen(true);
+                } else {
+                  setAccessDeniedModalOpen(true);
+                }
+              }}
             />
             {deleteModalOpen && (
               <ScheduledCalculationDeleteModal
@@ -250,6 +273,16 @@ export const ScheduledCalculationRow = ({
                 }
                 onOk={handleRemoveSource}
                 onCancel={() => setDeleteModalOpen(false)}
+              />
+            )}
+            {accessDeniedModalOpen && (
+              <AccessDeniedModal
+                visible={accessDeniedModalOpen}
+                onOk={() => setAccessDeniedModalOpen(false)}
+                capabilities={[
+                  hasSCWrite ? '' : `${SCHEDULED_CALCULATIONS_ACL}:WRITE`,
+                  hasSCRead ? '' : `${SCHEDULED_CALCULATIONS_ACL}:READ`,
+                ].filter(Boolean)}
               />
             )}
           </td>

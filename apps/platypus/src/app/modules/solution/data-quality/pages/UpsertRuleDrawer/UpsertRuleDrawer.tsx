@@ -1,4 +1,6 @@
 import { RuleDto, RuleSeverity } from '@data-quality/api/codegen';
+import { useLoadDataScopes } from '@data-quality/hooks';
+import { useDataModel } from '@data-quality/hooks/useDataModel';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useFormik } from 'formik';
 
@@ -13,6 +15,7 @@ import {
   Textarea,
 } from '@cognite/cogs.js';
 
+import { UpsertRuleFooter } from './components/UpsertRuleFooter';
 import {
   RuleFormValues,
   RuleSeverityOptions,
@@ -20,9 +23,7 @@ import {
   emptyFormValues,
   handleValidate,
 } from './helpers';
-import { UpsertRuleFooter } from './UpsertRuleFooter';
-import { useShowUpsertSuccess } from './useShowUpsertSuccess';
-import { useUpsertRule } from './useUpsertRule';
+import { useShowUpsertSuccess, useUpsertRule } from './hooks';
 
 type UpsertRuleDrawerProps = {
   editedRule?: RuleDto;
@@ -39,13 +40,6 @@ export const UpsertRuleDrawer = ({
 
   const { isLoading, upsertRule } = useUpsertRule();
   const { showUpsertSuccess } = useShowUpsertSuccess();
-
-  const titleText = editedRule
-    ? t('data_quality_update_rule', 'Update rule')
-    : t('data_quality_new_rule', 'New rule');
-  const okText = editedRule
-    ? t('data_quality_save_changes', 'Save changes')
-    : t('data_quality_create_rule', 'Create rule');
 
   const triggerSubmit = (newValues: RuleFormValues) => {
     upsertRule({
@@ -72,6 +66,33 @@ export const UpsertRuleDrawer = ({
       validateOnChange: false,
       enableReinitialize: true,
     });
+
+  const dataTypeOptions = useDataModel().dataModel.views.map((type) => ({
+    label: type.externalId,
+    value: type.externalId,
+  }));
+
+  const selectedDataType =
+    dataTypeOptions.find((type) => type.value === values.dataType) ||
+    dataTypeOptions[0];
+
+  const dataScopeOptions = useLoadDataScopes()
+    .dataScopes.filter((type) => type.dataType === selectedDataType?.value)
+    .map((scope) => ({
+      label: scope.name,
+      value: scope.externalId,
+    }));
+
+  const selectedDataScope = dataScopeOptions.find(
+    (type) => type.value === values.dataScopeId
+  );
+
+  const titleText = editedRule
+    ? t('data_quality_update_rule', 'Update rule')
+    : t('data_quality_new_rule', 'New rule');
+  const okText = editedRule
+    ? t('data_quality_save_changes', 'Save changes')
+    : t('data_quality_create_rule', 'Create rule');
 
   return (
     <Drawer
@@ -162,28 +183,31 @@ export const UpsertRuleDrawer = ({
 
         <Divider />
 
-        {/* Data type, rule conditions */}
+        {/* Data type, Data Scope, rule conditions */}
         <Flex direction="column" gap={16}>
           <Heading level={5}>
             {t('data_quality_rule_setup', 'Rule setup')}
           </Heading>
           <Flex direction="column" gap={16}>
-            <InputExp
-              clearable
-              fullWidth
-              label={{
-                required: true,
-                info: undefined,
-                text: t('data_quality_data_type', 'Data type'),
-              }}
-              onChange={(e) => setFieldValue('dataType', e.target.value)}
-              placeholder={t(
-                'data_quality_set_datatype',
-                `Set a data type to the rule. e.g. "Person"`
-              )}
-              status={errors.dataType ? 'critical' : undefined}
-              statusText={errors.dataType}
-              value={values.dataType}
+            <Select
+              inputId="dataType"
+              disabled={!!editedRule}
+              label={t('data_quality_data_type', 'Data type')}
+              onChange={(e: OptionType<string>) =>
+                setFieldValue('dataType', e.value)
+              }
+              options={dataTypeOptions}
+              value={selectedDataType}
+            />
+
+            <Select
+              inputId="dataScopeId"
+              label={t('data_quality_data_scope_one', 'Data scope')}
+              onChange={(e: OptionType<string>) =>
+                setFieldValue('dataScopeId', e.value)
+              }
+              options={dataScopeOptions}
+              value={selectedDataScope}
             />
 
             <Textarea

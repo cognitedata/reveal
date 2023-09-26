@@ -15,9 +15,9 @@ export const queryKeys = {
       ...queryKeys.sequence(),
       'metadata',
       'keys',
-      query,
-      advancedFilter,
-      filter,
+      query || '',
+      advancedFilter || {},
+      filter || {},
     ] as const,
   listSequence: (input?: any[]) =>
     [...queryKeys.sequence(), ...(input || [])] as const,
@@ -32,9 +32,9 @@ export const queryKeys = {
       'metadata',
       'values',
       metadataKey,
-      query,
-      advancedFilter,
-      filter,
+      query || '',
+      advancedFilter || {},
+      filter || {},
     ] as const,
   aggregateSequence: (input?: any[]) =>
     [...queryKeys.sequence(), ...(input || []), 'aggregate'] as const,
@@ -50,9 +50,9 @@ export const queryKeys = {
       ...queryKeys.timeseries(),
       'metadata',
       'keys',
-      query,
-      advancedFilter,
-      filter,
+      query || '',
+      advancedFilter || {},
+      filter || {},
     ] as const,
   timeseriesMetadataValues: (
     metadataKey: string,
@@ -65,9 +65,9 @@ export const queryKeys = {
       'metadata',
       'values',
       metadataKey,
-      query,
-      advancedFilter,
-      filter,
+      query || '',
+      advancedFilter || {},
+      filter || {},
     ] as const,
   timeseriesUniqueValues: (
     property: string,
@@ -79,19 +79,31 @@ export const queryKeys = {
       ...queryKeys.timeseries(),
       'unique-values',
       property,
-      query,
-      filter,
-      advancedFilter,
+      query || '',
+      filter || {},
+      advancedFilter || {},
     ] as const,
 
   timeseriesDatapoints: (items: IdEither[], filter?: any, limit?: number) =>
-    [...queryKeys.timeseries(), 'datapoints', items, filter, limit] as const,
+    [
+      ...queryKeys.timeseries(),
+      'datapoints',
+      items,
+      filter || {},
+      limit,
+    ] as const,
   timeseriesLatestDatapoints: (
     items: LatestDataBeforeRequest[],
     filter?: any
   ) =>
-    [...queryKeys.timeseries(), 'latest', 'datapoints', items, filter] as const,
-  timeseriesById: (ids?: IdEither[]) =>
+    [
+      ...queryKeys.timeseries(),
+      'latest',
+      'datapoints',
+      items,
+      filter || {},
+    ] as const,
+  timeseriesById: (ids: IdEither[]) =>
     [...queryKeys.timeseries(), ids] as const,
   // EVENTS
   events: () => [...queryKeys.all, 'events'] as const,
@@ -106,9 +118,9 @@ export const queryKeys = {
       'metadata',
       'values',
       metadataKey,
-      query,
-      advancedFilter,
-      filter,
+      query || '',
+      advancedFilter || {},
+      filter || {},
     ] as const,
   eventsUniqueValues: (
     property: string,
@@ -120,9 +132,9 @@ export const queryKeys = {
       ...queryKeys.events(),
       'unique-values',
       property,
-      filter,
-      advancedFilter,
-      query,
+      filter || {},
+      advancedFilter || {},
+      query || '',
     ] as const,
   listEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || [])] as const,
@@ -133,15 +145,15 @@ export const queryKeys = {
       ...queryKeys.events(),
       'metadata',
       'keys',
-      query,
-      advancedFilter,
-      filter,
+      query || '',
+      advancedFilter || {},
+      filter || {},
     ] as const,
-  eventsByIds: (ids?: IdEither[]) => [...queryKeys.events(), ids],
+  eventsByIds: (ids: IdEither[]) => [...queryKeys.events(), ids],
 
   // ASSETS
   assets: () => [...queryKeys.all, 'assets'] as const,
-  assetByIds: (ids?: IdEither[]) => [...queryKeys.assets(), ids],
+  assetByIds: (ids: IdEither[]) => [...queryKeys.assets(), ids],
   rootAsset: (assetId: number) =>
     [...queryKeys.assets(), assetId, 'rootParent'] as const,
   rootAssets: (rootAssetId?: number) => [
@@ -166,19 +178,19 @@ export const queryKeys = {
       ...queryKeys.assets(),
       'unique-values',
       property,
-      query,
-      advancedFilter,
-      searchQuery,
-      filter,
+      query || '',
+      advancedFilter || {},
+      searchQuery || '',
+      filter || {},
     ] as const,
   assetsMetadata: (query?: string, advancedFilter?: any, filter?: any) =>
     [
       ...queryKeys.assets(),
       'metadata',
       'keys',
-      query,
-      advancedFilter,
-      filter,
+      query || '',
+      advancedFilter || {},
+      filter || {},
     ] as const,
   assetsMetadataValues: (
     metadataKey: string,
@@ -191,9 +203,9 @@ export const queryKeys = {
       'metadata',
       'values',
       metadataKey,
-      query,
-      advancedFilter,
-      filter,
+      query || '',
+      advancedFilter || {},
+      filter || {},
     ] as const,
   listBasicAssetMappings: (id: number) =>
     [...queryKeys.retrieveAsset(id), 'basic-mappings'] as const,
@@ -221,10 +233,10 @@ export const queryKeys = {
     [
       ...queryKeys.documents(),
       'search',
-      filter,
+      filter || {},
       localLimit,
       sort,
-      options,
+      options || {},
     ] as const,
   documentsAggregate: () => [...queryKeys.documents(), 'aggregates'] as const,
   documentsAggregateCount: () =>
@@ -239,7 +251,13 @@ export const queryKeys = {
     [...queryKeys.documentsAggregate(), filters, aggregates] as const,
 
   documentsMetadata: (query?: string, filter?: any) =>
-    [...queryKeys.documents(), 'metadata', 'keys', query, filter] as const,
+    [
+      ...queryKeys.documents(),
+      'metadata',
+      'keys',
+      query || '',
+      filter || {},
+    ] as const,
   documentsMetadataValues: (
     metadataKey: string,
     query?: string,
@@ -250,23 +268,23 @@ export const queryKeys = {
       'metadata',
       metadataKey,
       'values',
-      query,
-      filter,
+      query || '',
+      filter || {},
     ] as const,
 
-  documentsLabelValues: (filter?: any, query?: any) =>
-    [...queryKeys.documents(), 'labels', filter, query] as const,
+  documentsLabelValues: (filter?: any, query?: string) =>
+    [...queryKeys.documents(), 'labels', filter || {}, query || ''] as const,
   documentsUniqueValues: (
     property: string | [string, string],
     filter?: any,
-    query?: any
+    query?: string
   ) =>
     [
       ...queryKeys.documents(),
       'unique-values',
       property,
-      filter,
-      query,
+      filter || {},
+      query || '',
     ] as const,
   documentContainer: (file: any) =>
     [...queryKeys.documents(), 'container', file] as const,

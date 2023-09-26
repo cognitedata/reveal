@@ -5,6 +5,7 @@ import {
   CogniteCadModel,
   CognitePointCloudModel,
 } from '@cognite/reveal';
+import { AnnotationModel } from '@cognite/sdk';
 export type ThreeDPosition = {
   x: number;
   y: number;
@@ -31,12 +32,14 @@ type RootState = {
   threeDViewer: Cognite3DViewer | null;
   tool: ToolType;
   shouldShowBoundingVolumes: boolean;
+  shouldShowWireframes: boolean;
   modelId: number | null;
   isToolbarForCadModels: boolean;
   isToolbarForPointCloudModels: boolean;
   model: CogniteCadModel | CognitePointCloudModel | undefined;
   modelType: string;
   selectedNodeTreeIndices: Array<number>;
+  annotations: AnnotationModel[] | null;
 };
 
 const initialState: RootState = {
@@ -48,10 +51,12 @@ const initialState: RootState = {
   threeDViewer: null,
   tool: ToolType.NONE,
   shouldShowBoundingVolumes: false,
+  shouldShowWireframes: false,
   modelId: null,
   model: undefined,
   modelType: '',
   selectedNodeTreeIndices: [],
+  annotations: null,
 };
 
 export const useContextualizeThreeDViewerStore = create<RootState>(
@@ -87,10 +92,12 @@ export const onCloseThreeDNodeTree = () => {
   }));
 };
 
-export const setPendingAnnotation = (annotation: CubeAnnotation) => {
+export const setPendingAnnotation = (annotation: CubeAnnotation | null) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     pendingAnnotation: annotation,
+    isResourceSelectorOpen:
+      annotation !== null || prevState.isResourceSelectorOpen,
   }));
 };
 
@@ -106,7 +113,6 @@ export const setTool = (tool: ToolType) => {
     ...prevState,
     tool,
     pendingAnnotation: null,
-    isResourceSelectorOpen: false,
   }));
 };
 
@@ -124,10 +130,24 @@ export const setToolbarForPointCloudModelsState = () => {
   }));
 };
 
+export const setAnnotations = (annotations: AnnotationModel[]) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    annotations: annotations,
+  }));
+};
+
 export const toggleShouldShowBoundingVolumes = () => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     shouldShowBoundingVolumes: !prevState.shouldShowBoundingVolumes,
+  }));
+};
+
+export const toggleShouldShowWireframes = () => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    shouldShowWireframes: !prevState.shouldShowWireframes,
   }));
 };
 
