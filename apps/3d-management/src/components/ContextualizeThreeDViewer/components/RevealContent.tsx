@@ -1,36 +1,29 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
 import { Button, ToolBar } from '@cognite/cogs.js';
-import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
 import {
   DefaultCameraManager,
   CogniteModel,
-  PointColorType,
   CognitePointCloudModel,
   CogniteCadModel,
 } from '@cognite/reveal';
 import {
   useReveal,
-  RevealToolbar,
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
 
 import { FLOATING_ELEMENT_MARGIN } from '../../../pages/ContextualizeEditor/constants';
 import {
-  HighQualitySettings,
-  LowQualitySettings,
-} from '../../../pages/ContextualizeEditor/constants';
-import {
   onCloseResourceSelector,
   onOpenResourceSelector,
-  useContextualizeThreeDViewerStore,
   setToolbarForCadModelsState,
   setToolbarForPointCloudModelsState,
   useContextualizeThreeDViewerStore,
 } from '../useContextualizeThreeDViewerStore';
 
+import { CadToolBar } from './CadToolBar/CadToolBar';
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 interface RevealContentProps {
@@ -58,7 +51,7 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
       isToolbarForPointCloudModels: state.isToolbarForPointCloudModels,
     }));
 
-  const handleOnLoad = (_model: CogniteModel) => {
+  const handleModelOnLoad = (_model: CogniteModel) => {
     if (!(viewer.cameraManager instanceof DefaultCameraManager)) {
       console.warn(
         'Camera manager is not DefaultCameraManager, so click to change camera target will not work.'
@@ -84,16 +77,6 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
     }
   };
 
-  const handleColorChange = useCallback(
-    (colorType: PointColorType) => {
-      viewer.models.forEach((_model) => {
-        if (!(_model instanceof CognitePointCloudModel)) return;
-        _model.pointColorType = colorType;
-      });
-    },
-    [viewer]
-  );
-
   // check the model type and load it
   useEffect(() => {
     (async () => {
@@ -104,7 +87,7 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
         const modelType = await viewer.determineModelType(modelId, revisionId);
         switch (modelType) {
           case 'cad': {
-            viewer.addModel({ modelId, revisionId }).then(handleOnLoad);
+            viewer.addModel({ modelId, revisionId }).then(handleModelOnLoad);
 
             setToolbarForCadModelsState();
             break;
@@ -112,7 +95,7 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
           case 'pointcloud': {
             viewer
               .addPointCloudModel({ modelId, revisionId })
-              .then(handleOnLoad);
+              .then(handleModelOnLoad);
 
             setToolbarForPointCloudModelsState();
             break;
@@ -141,25 +124,12 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
       <StyledToolBar>
         {isToolbarForCadModels && !isToolbarForPointCloudModels && viewer && (
           <>
-            <RevealToolbar.FitModelsButton />
+            <CadToolBar />
           </>
         )}
         {!isToolbarForCadModels && isToolbarForPointCloudModels && viewer && (
           <>
-            <RevealToolbar.FitModelsButton />
-            <ContextualizeThreeDViewerToolbar modelId={modelId} />
-            <RevealToolbar.SettingsButton
-              customSettingsContent={
-                <>
-                  <ColorTypeSelector
-                    onChange={handleColorChange}
-                  ></ColorTypeSelector>
-                  <PointSizeSlider viewer={viewer}></PointSizeSlider>
-                </>
-              }
-              lowQualitySettings={LowQualitySettings}
-              highQualitySettings={HighQualitySettings}
-            />
+            <PointCloudToolBar />
           </>
         )}
       </StyledToolBar>
@@ -188,4 +158,10 @@ const StyledResourceSelectorButtonWrapper = styled(
   position: absolute;
   top: ${FLOATING_ELEMENT_MARGIN}px;
   right: ${FLOATING_ELEMENT_MARGIN}px;
+`;
+
+const StyledToolBar = styled(withSuppressRevealEvents(ToolBar))`
+  position: absolute;
+  left: 30px;
+  bottom: 30px;
 `;
