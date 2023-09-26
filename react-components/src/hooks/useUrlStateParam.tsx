@@ -16,7 +16,7 @@ export const useUrlStateParam = (): UrlStateParamActions => {
   const url = new URL(window.location.toString());
 
   const getSlicerStateFromUrlParam = (): SlicerUrlStateParam => {
-    const topBottom = url.searchParams.get('slicerTopBottom');
+    const topBottom = url.searchParams.get('slicerState');
     if (topBottom === null || topBottom === undefined) {
       return { top: 1, bottom: 0 };
     }
@@ -26,7 +26,7 @@ export const useUrlStateParam = (): UrlStateParamActions => {
   };
 
   const setUrlParamOnSlicerChanged = (slicerTopBottom: number[]): void => {
-    url.searchParams.set('slicerTopBottom', `[${slicerTopBottom.join(',')}]`);
+    url.searchParams.set('slicerState', `[${slicerTopBottom.join(',')}]`);
     window.history.pushState({}, '', url);
   };
 
