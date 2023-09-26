@@ -39,6 +39,7 @@ type RootState = {
   model: CogniteCadModel | CognitePointCloudModel | undefined;
   modelType: string;
   selectedNodeIdsList: Array<number>;
+  selectedAndContextualizedNodesList: Array<number>;
   annotations: AnnotationModel[] | null;
 };
 
@@ -56,6 +57,7 @@ const initialState: RootState = {
   model: undefined,
   modelType: '',
   selectedNodeIdsList: [],
+  selectedAndContextualizedNodesList: [],
   annotations: null,
 };
 
@@ -176,5 +178,14 @@ export const setSelectedNodeIdsList = (selectedNodeIdsList: Array<number>) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     selectedNodeIdsList,
+  }));
+};
+
+export const setSelectedAndContextualizedNodesList = (
+  selectedAndContextualizedNodesList: Array<number>
+) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    selectedAndContextualizedNodesList,
   }));
 };

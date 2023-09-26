@@ -33,6 +33,7 @@ import {
   useContextualizeThreeDViewerStore,
   setAnnotations,
   onCloseResourceSelector,
+  setSelectedAndContextualizedNodesList,
 } from './useContextualizeThreeDViewerStore';
 import { getCdfAnnotations } from './utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
@@ -58,6 +59,7 @@ export const ContextualizeThreeDViewer = ({
     model,
     modelType,
     selectedNodeIdsList,
+    selectedAndContextualizedNodesList,
   } = useContextualizeThreeDViewerStore((state) => ({
     isResourceSelectorOpen: state.isResourceSelectorOpen,
     pendingAnnotation: state.pendingAnnotation,
@@ -65,6 +67,8 @@ export const ContextualizeThreeDViewer = ({
     model: state.model,
     modelType: state.modelType,
     selectedNodeIdsList: state.selectedNodeIdsList,
+    selectedAndContextualizedNodesList:
+      state.selectedAndContextualizedNodesList,
   }));
 
   const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
@@ -89,6 +93,7 @@ export const ContextualizeThreeDViewer = ({
     (async () => {
       if (model && model instanceof CogniteCadModel && modelType === 'cad') {
         // get the contextualized 3d nodes and update the style of each node
+        // TODO: get the mapped cad nodes with the cursor
         const mappedCadNodes = await getCdfCadContextualization({
           sdk: sdk,
           modelId: modelId,
@@ -136,24 +141,54 @@ export const ContextualizeThreeDViewer = ({
               selectedNodes.updateSet(indexSet);
             }
 
+            const selectedAndContextualizedNodes =
+              new TreeIndexNodeCollection();
+            const indexSetForContextualizedAndSelected =
+              selectedAndContextualizedNodes.getIndexSet();
+            console.log(' CLICK selectedNodeIdsList ', selectedNodeIdsList);
             mappedCadNodes.items.forEach((item) => {
-              if (selectedNodeIdsList.find((node) => node === item.nodeId)) {
-                const selectedAndContextualizedNodes =
-                  new TreeIndexNodeCollection();
-                const indexSetForContextualizedAndSelected =
-                  selectedAndContextualizedNodes.getIndexSet();
+              if (
+                selectedNodeIdsList.find(
+                  (nodeIdItem) => nodeIdItem === item.nodeId
+                )
+              ) {
+                if (
+                  !selectedAndContextualizedNodesList.find(
+                    (nodeIdItem) => nodeIdItem === item.nodeId
+                  )
+                ) {
+                  indexSetForContextualizedAndSelected.add(
+                    intersection.treeIndex
+                  );
+                  model.assignStyledNodeCollection(
+                    selectedAndContextualizedNodes,
+                    {
+                      color: colorMappedAndSelected,
+                    }
+                  );
+                  selectedAndContextualizedNodesList.push(nodeId);
+                } else {
+                  selectedAndContextualizedNodesList.splice(
+                    selectedAndContextualizedNodesList.indexOf(nodeId),
+                    1
+                  );
+                  indexSetForContextualizedAndSelected.remove(
+                    intersection.treeIndex
+                  );
+                  model.assignStyledNodeCollection(
+                    selectedAndContextualizedNodes,
+                    DefaultNodeAppearance.Default
+                  );
+                }
+
                 indexSetForContextualizedAndSelected.add(
                   intersection.treeIndex
                 );
-
-                model.assignStyledNodeCollection(
-                  selectedAndContextualizedNodes,
-                  {
-                    color: colorMappedAndSelected,
-                  }
-                );
               }
             });
+            setSelectedAndContextualizedNodesList(
+              selectedAndContextualizedNodesList
+            );
             setSelectedNodeIdsList(selectedNodeIdsList);
           }
         });
