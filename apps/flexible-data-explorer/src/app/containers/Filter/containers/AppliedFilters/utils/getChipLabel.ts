@@ -1,9 +1,8 @@
 import isArray from 'lodash/isArray';
-import isUndefined from 'lodash/isUndefined';
 
 import { TFunction } from '../../../../../hooks/useTranslation';
-import { isDate, formatDate } from '../../../../../utils/date';
-import { FieldValue, ValueType } from '../../../types';
+import { formatDate } from '../../../../../utils/date';
+import { FieldType, FieldValue, ValueType } from '../../../types';
 
 export interface Props {
   dataType?: string;
@@ -18,17 +17,17 @@ export const getChipLabel = ({
   fieldValue,
   t,
 }: Props): string => {
-  const { operator, value } = fieldValue;
+  const { operator, value, type } = fieldValue;
 
   const prefix = `${dataType} ${field} ${t(operator, {
     postProcess: 'lowercase',
   })}`.trim();
 
-  if (isUndefined(value)) {
+  if (type === 'boolean') {
     return prefix;
   }
 
-  const formattedValue = formatValue(value);
+  const formattedValue = formatValue(value, type);
 
   if (isArray(formattedValue)) {
     return `${prefix} ${formattedValue.join(
@@ -39,18 +38,16 @@ export const getChipLabel = ({
   return `${prefix} ${formattedValue}`;
 };
 
-export const formatValue = (value: ValueType) => {
+export const formatValue = (value: ValueType, type: FieldType) => {
   if (isArray(value)) {
-    return value.map(formatSingleValue);
+    return value.map((item) => formatSingleValue(item, type));
   }
-  return formatSingleValue(value);
+  return formatSingleValue(value, type);
 };
 
-export const formatSingleValue = (
-  value: string | number | Date | boolean | never
-) => {
-  if (isDate(value)) {
-    return formatDate(value);
+export const formatSingleValue = (value: ValueType, type: FieldType) => {
+  if (type === 'date') {
+    return formatDate(value as Date);
   }
   return value;
 };
