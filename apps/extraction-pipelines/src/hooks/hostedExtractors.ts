@@ -494,7 +494,10 @@ const getMQTTJobsWithMetrics = async (
       return Math.min(acc, cur.timestamp);
     }, now);
     const hoursSinceFirstMetric = (now - timeSinceFirstMetric) / 1000 / 60 / 60;
-    const throughput = Math.round(totalInput / hoursSinceFirstMetric);
+    let throughput = 0;
+    if (hoursSinceFirstMetric > 0) {
+      throughput = Math.round(totalInput / hoursSinceFirstMetric);
+    }
     return {
       ...jobWithMetrics,
       throughput,
