@@ -20,29 +20,17 @@ describe('Events', () => {
 
     cy.log('sorting colomn: Type');
     cy.getTableById('event-search-results').clickSortColoumn('Type');
-    cy.wait(`@${EVENT_LIST_ALIAS}`);
-    cy.getTableById('event-search-results')
-      .getColomnValues('type')
-      .shouldBeSortedAscending();
+    cy.wait(`@${EVENT_LIST_ALIAS}`).shouldSortAscending('type');
 
     cy.getTableById('event-search-results').clickSortColoumn('Type');
-    cy.wait(`@${EVENT_LIST_ALIAS}`);
-    cy.getTableById('event-search-results')
-      .getColomnValues('type')
-      .shouldBeSortedDescending();
+    cy.wait(`@${EVENT_LIST_ALIAS}`).shouldSortDescending('type');
 
     cy.log('sorting colomn: Description');
     cy.getTableById('event-search-results').clickSortColoumn('Description');
-    cy.wait(`@${EVENT_LIST_ALIAS}`);
-    cy.getTableById('event-search-results')
-      .getColomnValues('description')
-      .shouldBeSortedAscending();
+    cy.wait(`@${EVENT_LIST_ALIAS}`).shouldSortAscending('description');
 
     cy.getTableById('event-search-results').clickSortColoumn('Description');
-    cy.wait(`@${EVENT_LIST_ALIAS}`);
-    cy.getTableById('event-search-results')
-      .getColomnValues('description')
-      .shouldBeSortedDescending();
+    cy.wait(`@${EVENT_LIST_ALIAS}`).shouldSortDescending('description');
   });
 
   it('should be able to search by id', () => {

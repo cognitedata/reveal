@@ -1,7 +1,11 @@
+import '@testing-library/cypress/add-commands';
+
 import { ButtonCommands } from './button.commands';
+import { CommonCommands } from './common.commands';
+import { FilterCommands } from './filter.commands';
+import { InterceptionCommands } from './interception.commands';
 import { LoginCommand } from './login.commands';
 import { SearchCommand } from './search.commands';
-import '@testing-library/cypress/add-commands';
 import { TableCommands } from './table.commands';
 
 declare global {
@@ -9,16 +13,22 @@ declare global {
   namespace Cypress {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface Chainable
-      extends LoginCommand,
+      extends ButtonCommands,
+        FilterCommands,
+        InterceptionCommands,
+        LoginCommand,
         SearchCommand,
-        ButtonCommands,
-        TableCommands {
+        TableCommands,
+        CommonCommands {
       login(email: string, password: string): void;
     }
   }
 }
 
+export * from './button.commands';
+export * from './common.commands';
+export * from './filter.commands';
+export * from './interception.commands';
 export * from './login.commands';
 export * from './search.commands';
-export * from './button.commands';
 export * from './table.commands';

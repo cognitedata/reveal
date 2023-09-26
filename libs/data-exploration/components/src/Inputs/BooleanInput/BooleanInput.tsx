@@ -61,7 +61,7 @@ export const BooleanInput = ({
   }
 
   return (
-    <div data-testid={`boolean-input-${label}`}>
+    <div data-testid={`filter-${label}`}>
       {label && <FilterLabel>{label}</FilterLabel>}
       <Tooltip
         interactive

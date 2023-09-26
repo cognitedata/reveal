@@ -88,7 +88,7 @@ export const MultiSelectFilter = <ValueType,>({
         isLoading={isLoading}
         isError={isError}
         options={options}
-        data-testid={`multi-select-filter-${label}`}
+        data-testid={`filter-${label}`}
         value={formatValue(value)}
         onChange={handleChange}
         isSearchable
