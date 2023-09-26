@@ -11,7 +11,7 @@ import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@co
 
 import styled from 'styled-components';
 import { useUrlStateParam } from '../../hooks/useUrlStateParam';
-import { useRevealResources } from '../RevealContainer/RevealResourcesContext';
+import { useRevealResourcesCount } from '../RevealContainer/RevealResourcesCountContext';
 
 type SliceState = {
   minHeight: number;
@@ -26,7 +26,7 @@ type SlicerButtonProps = {
 
 export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactElement => {
   const viewer = useReveal();
-  const { reveal3DResources } = useRevealResources();
+  const { reveal3DResourcesCount } = useRevealResourcesCount();
   const urlParam = useUrlStateParam();
   const { top, bottom } = storeStateInUrl
     ? urlParam.getSlicerStateFromUrlParam()
@@ -44,12 +44,12 @@ export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactEleme
 
   useEffect(() => {
     const updateSliceState = (): void => {
-      if (reveal3DResources.length === 0 || viewer === undefined) {
+      if (reveal3DResourcesCount === 0 || viewer === undefined) {
         return;
       }
 
       const box = new Box3();
-      reveal3DResources.forEach((model) => box.union(model.getModelBoundingBox()));
+      viewer.models.forEach((model) => box.union(model.getModelBoundingBox()));
 
       const newMaxY = box.max.y;
       const newMinY = box.min.y;
@@ -70,7 +70,7 @@ export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactEleme
       }
     };
     updateSliceState();
-  }, [reveal3DResources]);
+  }, [reveal3DResourcesCount]);
 
   function changeSlicingState(newValues: number[]): void {
     viewer.setGlobalClippingPlanes([

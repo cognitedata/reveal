@@ -12,7 +12,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { NodeCacheProvider } from '../NodeCacheProvider/NodeCacheProvider';
 import { RevealContainerElementContext } from './RevealContainerElementContext';
-import { RevealResourcesContextProvider } from './RevealResourcesContext';
+import { RevealResourcesCountContextProvider } from './RevealResourcesCountContext';
 
 type RevealContainerProps = {
   color?: Color;
@@ -80,9 +80,9 @@ export function RevealContainer({
         <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
           <RevealContext.Provider value={viewer}>
             <NodeCacheProvider>
-              <RevealResourcesContextProvider>
+              <RevealResourcesCountContextProvider>
                 {createPortal(children, viewerDomElement.current)}
-              </RevealResourcesContextProvider>
+              </RevealResourcesCountContextProvider>
             </NodeCacheProvider>
           </RevealContext.Provider>
         </RevealContainerElementContext.Provider>
