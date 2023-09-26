@@ -121,18 +121,16 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
 
   return (
     <>
-      <StyledToolBar>
-        {isToolbarForCadModels && !isToolbarForPointCloudModels && viewer && (
-          <>
-            <CadToolBar />
-          </>
-        )}
-        {!isToolbarForCadModels && isToolbarForPointCloudModels && viewer && (
-          <>
-            <PointCloudToolBar />
-          </>
-        )}
-      </StyledToolBar>
+      {isToolbarForCadModels && !isToolbarForPointCloudModels && viewer && (
+        <>
+          <CadToolBar />
+        </>
+      )}
+      {!isToolbarForCadModels && isToolbarForPointCloudModels && viewer && (
+        <>
+          <PointCloudToolBar />
+        </>
+      )}
       <StyledResourceSelectorButtonWrapper>
         <Button
           type="ghost"
@@ -158,10 +156,4 @@ const StyledResourceSelectorButtonWrapper = styled(
   position: absolute;
   top: ${FLOATING_ELEMENT_MARGIN}px;
   right: ${FLOATING_ELEMENT_MARGIN}px;
-`;
-
-const StyledToolBar = styled(withSuppressRevealEvents(ToolBar))`
-  position: absolute;
-  left: 30px;
-  bottom: 30px;
 `;
