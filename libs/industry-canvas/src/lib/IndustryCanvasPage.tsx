@@ -51,6 +51,7 @@ import {
 import { CommentsPane } from './containers';
 import { useAuth2InvitationsByResource } from './hooks/use-query/useAuth2InvitationsByResource';
 import { useUsers } from './hooks/use-query/useUsers';
+import { useCallbackOnce } from './hooks/useCallbackOnce';
 import useCanvasVisibility from './hooks/useCanvasVisibility';
 import useClickedContainerAnnotation from './hooks/useClickedContainerAnnotation';
 import { useContainerAnnotations } from './hooks/useContainerAnnotations';
@@ -98,10 +99,12 @@ import {
   isIndustryCanvasContainerConfig,
 } from './types';
 import { useUserProfile } from './UserProfileProvider';
+import { createDuplicateCanvas } from './utils/createDuplicateCanvas';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
 } from './utils/dimensions';
+import { getCanvasLink } from './utils/getCanvasLink';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 import useMetrics from './utils/tracking/useMetrics';
@@ -318,14 +321,6 @@ export const IndustryCanvasPage = () => {
     );
   };
 
-  if (!canCurrentUserSeeCanvas) {
-    return (
-      <NoAccessToCurrentCanvas
-        onGoBackClick={handleGoBackToIndustryCanvasButtonClick}
-      />
-    );
-  }
-
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
     trackUsage(MetricEvent.DOWNLOAD_AS_PDF_CLICKED);
@@ -403,6 +398,28 @@ export const IndustryCanvasPage = () => {
       });
     }
   };
+
+  const handleDuplicateCanvasClick = useCallbackOnce(async () => {
+    if (activeCanvas === undefined) {
+      return;
+    }
+
+    const { externalId } = await createDuplicateCanvas({
+      canvas: activeCanvas,
+      createCanvas,
+      t,
+    });
+
+    navigate(getCanvasLink(externalId));
+  });
+
+  if (!canCurrentUserSeeCanvas) {
+    return (
+      <NoAccessToCurrentCanvas
+        onGoBackClick={handleGoBackToIndustryCanvasButtonClick}
+      />
+    );
+  }
 
   return (
     <>
@@ -571,6 +588,15 @@ export const IndustryCanvasPage = () => {
                   {t(
                     translationKeys.SHOW_CONNECTION_LINES_SWITCH,
                     'Always show connection lines'
+                  )}
+                </Menu.Item>
+                <Menu.Item
+                  onClick={handleDuplicateCanvasClick}
+                  disabled={isCreatingCanvas}
+                >
+                  {t(
+                    translationKeys.COMMON_CANVAS_MAKE_COPY,
+                    'Duplicate canvas'
                   )}
                 </Menu.Item>
               </Menu>
