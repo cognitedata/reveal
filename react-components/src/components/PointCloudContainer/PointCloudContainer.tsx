@@ -134,7 +134,6 @@ export function PointCloudContainer({
         model.setDefaultPointCloudAppearance({ visible });
       }
     });
-
   }
 }
 
