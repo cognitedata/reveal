@@ -33,6 +33,7 @@ type CustomContent = {
   customSettingsContent?: JSX.Element;
   lowFidelitySettings?: Partial<QualitySettings>;
   highFidelitySettings?: Partial<QualitySettings>;
+  storeStateInUrl?: boolean;
 };
 
 const DefaultContentWrapper = (props: CustomContent): ReactElement => {
@@ -43,7 +44,7 @@ const DefaultContentWrapper = (props: CustomContent): ReactElement => {
 
       <div className="cogs-toolbar-divider" />
 
-      <SlicerButton />
+      <SlicerButton storeStateInUrl={props.storeStateInUrl} />
       <MeasurementButton />
 
       <div className="cogs-toolbar-divider" />
@@ -65,6 +66,7 @@ const RevealToolbarContainer = forwardRef(
       lowFidelitySettings,
       highFidelitySettings,
       toolBarContent,
+      storeStateInUrl,
       ...restProps
     }: RevealToolbarProps & { toolBarContent?: JSX.Element },
     ref: Ref<HTMLDivElement>
@@ -77,6 +79,7 @@ const RevealToolbarContainer = forwardRef(
               customSettingsContent={customSettingsContent}
               highFidelitySettings={highFidelitySettings}
               lowFidelitySettings={lowFidelitySettings}
+              storeStateInUrl={storeStateInUrl}
             />
           )}
         </StyledToolBar>
