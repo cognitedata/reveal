@@ -25,15 +25,15 @@ export function SimulatorInformation({
     simulatorVersion,
     licenseLastCheckedTime,
     licenseStatus,
-    connectorStatus,
+    connectorStatus = 'NONE_REPORTED',
     connectorStatusUpdatedTime,
   },
 }: SimulatorDetailsProps) {
   const project = useSelector(selectProject);
 
-  const selectedSimualtorConfig = useSimulatorConfig({ simulator, project });
+  const selectedSimulatorConfig = useSimulatorConfig({ simulator, project });
 
-  const simulatorType = selectedSimualtorConfig?.key ?? '';
+  const simulatorType = selectedSimulatorConfig?.key ?? '';
 
   const { data: simulatorDetails, isFetching: isFetchingSimulatorDetails } =
     useGetSimulatorDetailsQuery(
