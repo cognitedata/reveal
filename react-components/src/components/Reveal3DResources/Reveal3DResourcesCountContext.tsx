@@ -4,18 +4,18 @@
 
 import { type ReactElement, createContext, useContext, useState, type ReactNode } from 'react';
 
-type Reveal3DResourcesCountContext = {
+type Reveal3DResourcesCountContent = {
   reveal3DResourcesCount: number;
   setRevealResourcesCount: (newCount: number) => void;
 };
 
-const Reveal3DResourcesCountContext = createContext<Reveal3DResourcesCountContext | null>(null);
+const Reveal3DResourcesCountContext = createContext<Reveal3DResourcesCountContent | null>(null);
 
-export const useReveal3DResourcesCount = (): Reveal3DResourcesCountContext => {
+export const useReveal3DResourcesCount = (): Reveal3DResourcesCountContent => {
   const element = useContext(Reveal3DResourcesCountContext);
   if (element === null) {
     throw new Error(
-      'useRevealResources must be used within a Reveal3DResourcesCountContextProvider'
+      'useReveal3DResourcesCount must be used within a Reveal3DResourcesCountContextProvider'
     );
   }
   return element;
