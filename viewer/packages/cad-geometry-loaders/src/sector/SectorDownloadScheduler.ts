@@ -60,9 +60,6 @@ export class SectorDownloadScheduler {
         if (deletedSector) {
           return deletedSector;
         }
-
-        // If we somehow want to download a discarded sector we just create a fake discarded one instead of doing the downloading.
-        return Promise.resolve(this.createDiscardedConsumedSector(sector));
       }
 
       const pendingSector = this._pendingSectorDownloads.get(sectorIdentifier);
