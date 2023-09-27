@@ -22,7 +22,11 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       cacheDir: '../../node_modules/.vite/storybook/charts',
       resolve: {
-        dedupe: ['@cognite/plotting-components'],
+        dedupe: [
+          '@cognite/plotting-components',
+          '@cognite/cdf-i18n-utils',
+          '@cognite/cdf-utilities',
+        ],
         alias: {
           fs: require.resolve('rollup-plugin-node-builtins'),
         },

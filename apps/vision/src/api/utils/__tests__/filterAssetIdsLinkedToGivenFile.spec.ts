@@ -1,8 +1,6 @@
-import { filterAssetIdsLinkedToGivenFile } from '@vision/api/utils/filterAssetIdsLinkedToGivenFile';
-
 import sdk from '@cognite/cdf-sdk-singleton';
 
-jest.mock('@cognite/cdf-sdk-singleton');
+import { filterAssetIdsLinkedToGivenFile } from '../filterAssetIdsLinkedToGivenFile';
 
 describe('Test filterAssetIdsLinkedToGivenFile', () => {
   test('should gracefully handle if fileId or asset ids not available', async () => {

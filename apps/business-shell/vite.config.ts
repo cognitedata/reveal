@@ -19,7 +19,11 @@ export default defineConfig((configType) => {
     cacheDir: '../../node_modules/.vite/business-shell',
 
     resolve: {
-      dedupe: ['@cognite/plotting-components'],
+      dedupe: [
+        '@cognite/plotting-components',
+        '@cognite/cdf-i18n-utils',
+        '@cognite/cdf-utilities',
+      ],
       alias: {
         fs: require.resolve('rollup-plugin-node-builtins'),
       },
