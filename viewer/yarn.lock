@@ -640,7 +640,7 @@ __metadata:
     path-browserify: 1.0.1
     prettier: 3.0.3
     process: 0.11.10
-    puppeteer: 21.3.1
+    puppeteer: 21.3.4
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -3740,15 +3740,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromium-bidi@npm:0.4.27":
-  version: 0.4.27
-  resolution: "chromium-bidi@npm:0.4.27"
+"chromium-bidi@npm:0.4.28":
+  version: 0.4.28
+  resolution: "chromium-bidi@npm:0.4.28"
   dependencies:
     mitt: 3.0.1
     urlpattern-polyfill: 9.0.0
   peerDependencies:
     devtools-protocol: "*"
-  checksum: 6e5596b6ffbd56739f610bb309563c87eb8aaf353615d68cbc70a68f0f2c24fab0c4800bdf7b067435b81a1defb84b2e15cf9393f2b1616b9dd6b6cf8e94d2b4
+  checksum: d8ac0aefcf11ebd744e0b97ecded9dac5c03ab55f46267570cdf1b780ad1e05e8cf6987b65178bda99a1ef1ea1bc59721bda85008283ca5f145912b9e1bf578d
   languageName: node
   linkType: hard
 
@@ -10010,28 +10010,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:21.3.1":
-  version: 21.3.1
-  resolution: "puppeteer-core@npm:21.3.1"
+"puppeteer-core@npm:21.3.4":
+  version: 21.3.4
+  resolution: "puppeteer-core@npm:21.3.4"
   dependencies:
     "@puppeteer/browsers": 1.7.1
-    chromium-bidi: 0.4.27
+    chromium-bidi: 0.4.28
     cross-fetch: 4.0.0
     debug: 4.3.4
     devtools-protocol: 0.0.1179426
-    ws: 8.14.1
-  checksum: 7e14ec6619cf7dae72de7b2a0484bd9f6bf6b6029d4f6a271bc525034271b77711a70301543bace4d57a445ee00c98a6c3427b8980c039066e216f5a0e96280d
+    ws: 8.14.2
+  checksum: d69ebb50548c177cffb8912e649514624f353fe84d0c43b91f24550945c6ee1d155ba55c5e04ade3be9c4355188a6e3d287b2b7a5facb4262d1bdb1a74f54b77
   languageName: node
   linkType: hard
 
-"puppeteer@npm:21.3.1":
-  version: 21.3.1
-  resolution: "puppeteer@npm:21.3.1"
+"puppeteer@npm:21.3.4":
+  version: 21.3.4
+  resolution: "puppeteer@npm:21.3.4"
   dependencies:
     "@puppeteer/browsers": 1.7.1
     cosmiconfig: 8.3.6
-    puppeteer-core: 21.3.1
-  checksum: bbb19022261a9550e291702748561d7e7092e37bd4bff2a02fbfc855b78042500de13540aa9345dac9b3481c9c57a8d622be77933f6cc83fd2789a425ac9a56c
+    puppeteer-core: 21.3.4
+  checksum: c727da9cbef43f0e7103d12b80d0b5406b7f0c6dbd4eb084f8d0cf70d3b7c7f4639eb389d9a8ddaa7c50f7b6d8068b2f5d9e8bc07a66a38abead8c1d57869f2a
   languageName: node
   linkType: hard
 
@@ -12613,9 +12613,9 @@ typescript@~4.8.4:
   languageName: node
   linkType: hard
 
-"ws@npm:8.14.1":
-  version: 8.14.1
-  resolution: "ws@npm:8.14.1"
+"ws@npm:8.14.2":
+  version: 8.14.2
+  resolution: "ws@npm:8.14.2"
   peerDependencies:
     bufferutil: ^4.0.1
     utf-8-validate: ">=5.0.2"
@@ -12624,7 +12624,7 @@ typescript@~4.8.4:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 9e310be2b0ff69e1f87d8c6d093ecd17a1ed4c37f281d17c35e8c30e2bd116401775b3d503249651374e6e0e1e9905db62fff096b694371c77561aee06bc3466
+  checksum: 3ca0dad26e8cc6515ff392b622a1467430814c463b3368b0258e33696b1d4bed7510bc7030f7b72838b9fdeb8dbd8839cbf808367d6aae2e1d668ce741d4308b
   languageName: node
   linkType: hard
 
