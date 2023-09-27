@@ -346,11 +346,16 @@ export const getDlc = async (): Promise<DomainResponse> => {
   return hardcodedDlcResponses['sapc-01'];
 };
 
-const ORG_COOKIE_NAME = 'loginOrg';
+const getOrgCookieName = (hostname: string) =>
+  `loginOrg-${encodeURIComponent(hostname)}`;
 
 export function setLoginOrganizationCookie(org: string) {
-  const redirectUriDomain = getBaseHostname();
-  document.cookie = `${ORG_COOKIE_NAME}=${org};domain=${redirectUriDomain}`;
+  const baseHostname = getBaseHostname();
+  const expiresInMinutes = 10;
+  const expires = new Date(Date.now() + expiresInMinutes * 60 * 1000);
+  document.cookie = `${getOrgCookieName(
+    baseHostname
+  )}=${org};domain=${baseHostname};expires=${expires.toUTCString()}`;
 }
 
 function getCookieValue(name: string): string {
@@ -359,18 +364,14 @@ function getCookieValue(name: string): string {
   );
 }
 
-function deleteCookie(name: string) {
-  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-}
-
-export function getAndClearOrganizationCookie(): string | null {
-  const org = getCookieValue(ORG_COOKIE_NAME);
-  deleteCookie(ORG_COOKIE_NAME);
+function getOrganizationCookie(): string | null {
+  const baseHostname = getBaseHostname();
+  const org = getCookieValue(getOrgCookieName(baseHostname));
   return org !== '' ? org : null;
 }
 
 export function handleSigninCallback() {
-  const org = getAndClearOrganizationCookie();
+  const org = getOrganizationCookie();
   if (!org) {
     throw new Error('No organization found');
   }
