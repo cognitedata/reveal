@@ -8,7 +8,8 @@ import {
   type NodeCollection,
   NodeIdNodeCollection,
   TreeIndexNodeCollection,
-  type Cognite3DViewer
+  type Cognite3DViewer,
+  type IndexSet
 } from '@cognite/reveal';
 import { useEffect } from 'react';
 import { useSDK } from '../RevealContainer/SDKProvider';
@@ -22,7 +23,7 @@ export type NodeStylingGroup = {
 };
 
 export type TreeIndexStylingGroup = {
-  treeIndices: number[];
+  treeIndexSet: IndexSet;
   style?: NodeAppearance;
 };
 
@@ -71,8 +72,8 @@ async function applyStyling(
 
     if (stylingGroup.style === undefined) continue;
 
-    if ('treeIndices' in stylingGroup) {
-      const nodes = new TreeIndexNodeCollection(stylingGroup.treeIndices);
+    if ('treeIndexSet' in stylingGroup) {
+      const nodes = new TreeIndexNodeCollection(stylingGroup.treeIndexSet);
       model.assignStyledNodeCollection(nodes, stylingGroup.style);
     }
 
@@ -135,17 +136,19 @@ async function isEqualOrUpdated(
   function updateIfTreeIndexCollection(): void {
     if (
       !(collection.nodeCollection instanceof TreeIndexNodeCollection) ||
-      !('treeIndices' in group)
+      !('treeIndexSet' in group)
     ) {
       return;
     }
-    const compareCollection = new TreeIndexNodeCollection(group.treeIndices);
+
+    const compareCollection = new TreeIndexNodeCollection(group.treeIndexSet);
+
     const isEqualContent = isEqualTreeIndex(collection.nodeCollection, compareCollection);
 
     if (isEqualContent) {
       return;
     }
-    collection.nodeCollection.updateSet(group.treeIndices);
+    collection.nodeCollection.updateSet(group.treeIndexSet);
   }
 }
 
