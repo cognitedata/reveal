@@ -11,6 +11,7 @@ import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 import { useTranslation } from '../../../common/i18n';
+import { useUrlStateParam } from '../../../hooks/useUrlStateParam';
 
 export const Image360CollectionLayerContainer = ({
   layerProps
@@ -20,8 +21,10 @@ export const Image360CollectionLayerContainer = ({
   const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
+  const urlParam = useUrlStateParam();
   const [visible, setVisible] = useState(false);
   const { image360LayerData } = layerProps.reveal3DResourcesLayerData;
+  const { storeStateInUrl } = layerProps;
 
   const count = image360LayerData.length.toString();
   const someImagesVisible = !image360LayerData.every((data) => !data.isToggled);
@@ -45,6 +48,10 @@ export const Image360CollectionLayerContainer = ({
       ...prevResourcesStates,
       image360LayerData: updatedImage360Collection
     }));
+
+    if (storeStateInUrl ?? false) {
+      setUrl(updatedImage360Collection);
+    }
   };
 
   const handleAll360ImagesVisibility = (visible: boolean): void => {
@@ -58,6 +65,26 @@ export const Image360CollectionLayerContainer = ({
       ...prevResourcesStates,
       image360LayerData
     }));
+
+    if (storeStateInUrl ?? false) {
+      setUrl(image360LayerData);
+    }
+  };
+
+  const setUrl = (
+    layerData: Array<{
+      image360: Image360Collection;
+      isToggled: boolean;
+      name?: string | undefined;
+    }>
+  ): void => {
+    const urlImage360LayersData = layerData.map((data) => {
+      return {
+        siteId: data.image360.id,
+        applied: data.isToggled
+      };
+    });
+    urlParam.setUrlParamOnLayersChanged({ image360Layers: urlImage360LayersData });
   };
 
   const image360Content = (): ReactElement => {

@@ -2,14 +2,19 @@
  * Copyright 2023 Cognite AS
  */
 
-type SlicerUrlStateParam = {
-  top: number;
-  bottom: number;
-};
+import {
+  type SlicerUrlStateParam,
+  type LayersUrlStateParam,
+  type CadLayersUrlStateParam,
+  type PointCloudLayersUrlStateParam,
+  type Image360LayersUrlStateParam
+} from './types';
 
 export type UrlStateParamActions = {
   getSlicerStateFromUrlParam: () => SlicerUrlStateParam;
   setUrlParamOnSlicerChanged: (slicerTopBottom: number[]) => void;
+  getLayersFromUrlParam: () => LayersUrlStateParam;
+  setUrlParamOnLayersChanged: (layers: LayersUrlStateParam) => void;
 };
 
 export const useUrlStateParam = (): UrlStateParamActions => {
@@ -30,8 +35,75 @@ export const useUrlStateParam = (): UrlStateParamActions => {
     window.history.pushState({}, '', url);
   };
 
+  const getLayersFromUrlParam = (): LayersUrlStateParam => {
+    const cadLayers = (() => {
+      const s = url.searchParams.get('cadLayers');
+      try {
+        if (s !== null) {
+          const cadModelsUrlData = JSON.parse(s) as Array<
+            Pick<CadLayersUrlStateParam, 'modelId' | 'applied' | 'index'>
+          >;
+          return cadModelsUrlData.map((model) => ({ ...model }));
+        }
+        return [];
+      } catch {
+        return [];
+      }
+    })();
+
+    const pointCloudLayers = (() => {
+      const s = url.searchParams.get('pointCloudLayers');
+      try {
+        if (s !== null) {
+          const pointCloudModelsUrlData = JSON.parse(s) as Array<
+            Pick<PointCloudLayersUrlStateParam, 'modelId' | 'applied' | 'index'>
+          >;
+          return pointCloudModelsUrlData.map((model) => ({ ...model }));
+        }
+        return [];
+      } catch {
+        return [];
+      }
+    })();
+
+    const image360Layers = (() => {
+      const s = url.searchParams.get('image360Layers');
+      try {
+        if (s !== null) {
+          const image360UrlData = JSON.parse(s) as Array<
+            Pick<Image360LayersUrlStateParam, 'siteId' | 'applied'>
+          >;
+          return image360UrlData.map((image360) => ({ ...image360 }));
+        }
+        return [];
+      } catch {
+        return [];
+      }
+    })();
+    return {
+      cadLayers,
+      pointCloudLayers,
+      image360Layers
+    };
+  };
+
+  const setUrlParamOnLayersChanged = (layers: LayersUrlStateParam): void => {
+    if (layers.cadLayers !== undefined) {
+      url.searchParams.set('cadLayers', JSON.stringify(layers.cadLayers));
+    }
+    if (layers.pointCloudLayers !== undefined) {
+      url.searchParams.set('pointCloudLayers', JSON.stringify(layers.pointCloudLayers));
+    }
+    if (layers.image360Layers !== undefined) {
+      url.searchParams.set('image360Layers', JSON.stringify(layers.image360Layers));
+    }
+    window.history.pushState({}, '', url);
+  };
+
   return {
     getSlicerStateFromUrlParam,
-    setUrlParamOnSlicerChanged
+    setUrlParamOnSlicerChanged,
+    getLayersFromUrlParam,
+    setUrlParamOnLayersChanged
   };
 };

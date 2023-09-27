@@ -12,6 +12,7 @@ import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 import { useTranslation } from '../../../common/i18n';
+import { useUrlStateParam } from '../../../hooks/useUrlStateParam';
 
 export const PointCloudLayersContainer = ({
   layerProps
@@ -21,8 +22,10 @@ export const PointCloudLayersContainer = ({
   const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
+  const urlParam = useUrlStateParam();
   const [visible, setVisible] = useState(false);
   const { pointCloudLayerData } = layerProps.reveal3DResourcesLayerData;
+  const { storeStateInUrl } = layerProps;
   const count = pointCloudLayerData.length.toString();
   const someModelVisible = !pointCloudLayerData.every((data) => !data.isToggled);
   const indeterminate = pointCloudLayerData.some((data) => !data.isToggled);
@@ -40,6 +43,10 @@ export const PointCloudLayersContainer = ({
       ...prevResourcesStates,
       pointCloudLayerData: updatedPointCloudModels
     }));
+
+    if (storeStateInUrl ?? false) {
+      setUrl(updatedPointCloudModels);
+    }
   };
 
   const handleAllPointCloudModelsVisibility = (visible: boolean): void => {
@@ -53,6 +60,28 @@ export const PointCloudLayersContainer = ({
       ...prevResourcesStates,
       pointCloudLayerData
     }));
+
+    if (storeStateInUrl ?? false) {
+      setUrl(pointCloudLayerData);
+    }
+  };
+
+  const setUrl = (
+    layerData: Array<{
+      model: CognitePointCloudModel;
+      isToggled: boolean;
+      name?: string | undefined;
+    }>
+  ): void => {
+    const urlPointCloudLayersData = layerData.map((data) => {
+      const index = viewer.models.indexOf(data.model);
+      return {
+        modelId: data.model.modelId,
+        applied: data.isToggled,
+        index
+      };
+    });
+    urlParam.setUrlParamOnLayersChanged({ pointCloudLayers: urlPointCloudLayersData });
   };
 
   const pointCloudModelContent = (): ReactElement => {

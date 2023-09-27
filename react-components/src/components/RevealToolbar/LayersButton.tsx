@@ -16,10 +16,17 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { use3DModelName } from '../../hooks/use3DModelName';
 import { isEqual } from 'lodash';
 import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
+import { useUrlStateParam } from '../../hooks/useUrlStateParam';
 
-export const LayersButton = (): ReactElement => {
+type LayersButtonProps = {
+  storeStateInUrl: boolean;
+};
+
+export const LayersButton = ({ storeStateInUrl }: LayersButtonProps): ReactElement => {
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
+  const urlParam = useUrlStateParam();
+  const { cadLayers, pointCloudLayers, image360Layers } = urlParam.getLayersFromUrlParam();
   const [visible, setVisible] = useState<boolean>(false);
 
   const [cadModelIds, setCadModelIds] = useState<number[]>([]);
@@ -108,6 +115,11 @@ export const LayersButton = (): ReactElement => {
       cadModel: CogniteCadModel,
       index: number
     ): { model: CogniteCadModel; isToggled: boolean; name: string } {
+      cadLayers?.forEach((layer) => {
+        if (layer.index === index) {
+          cadModel.visible = layer.applied;
+        }
+      });
       return {
         model: cadModel,
         isToggled: cadModel.visible ?? true,
@@ -119,6 +131,11 @@ export const LayersButton = (): ReactElement => {
       pointCloudModel: CognitePointCloudModel,
       index: number
     ): { model: CognitePointCloudModel; isToggled: boolean; name: string } {
+      pointCloudLayers?.forEach((layer) => {
+        if (layer.index === index) {
+          pointCloudModel.getDefaultPointCloudAppearance().visible = layer.applied;
+        }
+      });
       return {
         model: pointCloudModel,
         isToggled: pointCloudModel.getDefaultPointCloudAppearance().visible ?? true,
@@ -131,9 +148,15 @@ export const LayersButton = (): ReactElement => {
       isToggled: boolean;
       isActive: boolean;
     } {
+      let visible = true;
+      image360Layers?.forEach((layer) => {
+        if (layer.siteId === image360Collection.id) {
+          visible = layer.applied;
+        }
+      });
       return {
         image360: image360Collection,
-        isToggled: true,
+        isToggled: visible,
         isActive: false
       };
     }
@@ -175,7 +198,8 @@ export const LayersButton = (): ReactElement => {
           <LayersContainer
             props={{
               reveal3DResourcesLayerData,
-              setReveal3DResourcesLayerData
+              setReveal3DResourcesLayerData,
+              storeStateInUrl
             }}
           />
         }
@@ -192,4 +216,8 @@ export const LayersButton = (): ReactElement => {
       </Dropdown>
     </CogsTooltip>
   );
+};
+
+LayersButton.defaultProps = {
+  storeStateInUrl: true
 };

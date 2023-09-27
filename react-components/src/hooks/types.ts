@@ -13,3 +13,31 @@ export type Model3DEdgeProperties = {
   revisionId: number;
   revisionNodeId: number;
 };
+
+export type SlicerUrlStateParam = {
+  top: number;
+  bottom: number;
+};
+
+export type Image360LayersUrlStateParam = {
+  siteId: string;
+  applied: boolean;
+};
+
+export type CadLayersUrlStateParam = {
+  modelId: number;
+  applied: boolean;
+  index: number;
+};
+
+export type PointCloudLayersUrlStateParam = {
+  modelId: number;
+  applied: boolean;
+  index: number;
+};
+
+export type LayersUrlStateParam = {
+  image360Layers?: Image360LayersUrlStateParam[];
+  cadLayers?: CadLayersUrlStateParam[];
+  pointCloudLayers?: PointCloudLayersUrlStateParam[];
+};

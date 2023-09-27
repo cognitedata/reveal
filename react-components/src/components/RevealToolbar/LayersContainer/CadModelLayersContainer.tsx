@@ -11,6 +11,7 @@ import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 import { useTranslation } from '../../../common/i18n';
+import { useUrlStateParam } from '../../../hooks/useUrlStateParam';
 
 export const CadModelLayersContainer = ({
   layerProps
@@ -20,9 +21,11 @@ export const CadModelLayersContainer = ({
   const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
+  const urlParam = useUrlStateParam();
   const [visible, setVisible] = useState(false);
 
   const { cadLayerData } = layerProps.reveal3DResourcesLayerData;
+  const { storeStateInUrl } = layerProps;
 
   const count = cadLayerData.length.toString();
   const someModelVisible = !cadLayerData.every((data) => !data.isToggled);
@@ -45,6 +48,10 @@ export const CadModelLayersContainer = ({
       ...prevResourcesStates,
       cadLayerData: updatedSelectedCadModels
     }));
+
+    if (storeStateInUrl ?? false) {
+      setUrl(updatedSelectedCadModels);
+    }
   };
 
   const handleAllCadModelsVisibility = (visible: boolean): void => {
@@ -60,6 +67,28 @@ export const CadModelLayersContainer = ({
       ...prevResourcesStates,
       cadLayerData: updatedSelectedCadModels
     }));
+
+    if (storeStateInUrl ?? false) {
+      setUrl(updatedSelectedCadModels);
+    }
+  };
+
+  const setUrl = (
+    layerData: Array<{
+      model: CogniteCadModel;
+      isToggled: boolean;
+      name?: string | undefined;
+    }>
+  ): void => {
+    const urlCadLayersData = layerData.map((data) => {
+      const index = viewer.models.indexOf(data.model);
+      return {
+        modelId: data.model.modelId,
+        applied: data.isToggled,
+        index
+      };
+    });
+    urlParam.setUrlParamOnLayersChanged({ cadLayers: urlCadLayersData });
   };
 
   const cadModelContent = (): ReactElement => {
