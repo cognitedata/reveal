@@ -6,7 +6,8 @@
     "build": "../../scripts/build.sh production flexible-data-explorer",
     "test": "../../scripts/test.sh flexible-data-explorer",
     "lint": "../../scripts/lint.sh flexible-data-explorer",
-    "lint:fix": "../../scripts/lint.sh --fix flexible-data-explorer"
+    "lint:fix": "../../scripts/lint.sh --fix flexible-data-explorer",
+    "storybook": "cd ../../ && nx run flexible-data-explorer:storybook"
   },
   "browserslist": {
     "production": [
@@ -19,5 +20,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
