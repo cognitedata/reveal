@@ -148,6 +148,10 @@ export const ContextualizeThreeDViewer = ({
             const selectedNodeFound = indexSelectedNodeSet.contains(
               intersection.treeIndex
             );
+            const selectedAndContextualizedNodeFound =
+              indexContextualizedAndSelectedNodeSet.contains(
+                intersection.treeIndex
+              );
 
             // toggle the selection of nodes
 
@@ -169,12 +173,15 @@ export const ContextualizeThreeDViewer = ({
             } else if (selectedNodeFound && !contextualizedNodeFound) {
               indexSelectedNodeSet.remove(intersection.treeIndex);
               selectedNodes.updateSet(indexSelectedNodeSet);
-            } else if (!selectedNodeFound && contextualizedNodeFound) {
+            } else if (
+              !selectedAndContextualizedNodeFound &&
+              contextualizedNodeFound
+            ) {
               indexContextualizedAndSelectedNodeSet.add(intersection.treeIndex);
               selectedAndContextualizedNodes.updateSet(
                 indexContextualizedAndSelectedNodeSet
               );
-            } else if (selectedNodeFound && contextualizedNodeFound) {
+            } else if (selectedAndContextualizedNodeFound) {
               indexContextualizedAndSelectedNodeSet.remove(
                 intersection.treeIndex
               );
