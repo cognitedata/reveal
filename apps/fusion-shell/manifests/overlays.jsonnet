@@ -26,6 +26,7 @@ local rootServerConfig = |||
 
      location ~ /subapps-import-map.json$ {
        try_files %(SUBAPPS_IMPORT_MAP)s =404;
+       add_header Cache-Control "max-age=0, no-cache, no-store, must-revalidate";
      }
 
      location ~ /assets/.+\.(js|png|jpg|jpeg|map|svg|css|woff2)$ {
