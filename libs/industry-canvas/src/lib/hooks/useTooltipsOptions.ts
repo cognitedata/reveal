@@ -7,8 +7,8 @@ type SupportedContainerType = ContainerType.TIMESERIES;
 export type TooltipsOptions = {
   [ContainerType.TIMESERIES]: {
     shouldApplyToAll: boolean;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
   };
 };
 

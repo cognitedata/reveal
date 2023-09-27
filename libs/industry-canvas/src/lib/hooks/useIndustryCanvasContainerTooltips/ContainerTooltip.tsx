@@ -314,8 +314,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                     startDate: dayjs()
                       .subtract(1, 'day')
                       .startOf('day')
-                      .toDate(),
-                    endDate: dayjs().endOf('day').toDate(),
+                      .toISOString(),
+                    endDate: dayjs().endOf('day').toISOString(),
                   })
                 }
                 aria-label={t(
@@ -340,8 +340,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                     startDate: dayjs()
                       .subtract(1, 'month')
                       .startOf('day')
-                      .toDate(),
-                    endDate: dayjs().endOf('day').toDate(),
+                      .toISOString(),
+                    endDate: dayjs().endOf('day').toISOString(),
                   })
                 }
                 type="ghost"
@@ -368,8 +368,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                     startDate: dayjs()
                       .subtract(1, 'year')
                       .startOf('day')
-                      .toDate(),
-                    endDate: dayjs().endOf('day').toDate(),
+                      .toISOString(),
+                    endDate: dayjs().endOf('day').toISOString(),
                   })
                 }
                 type="ghost"
@@ -389,8 +389,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               // show the correct thing when the date range changes.
               key={`${selectedContainer.startDate}_${selectedContainer.endDate}`}
               initialRange={{
-                startDate: selectedContainer.startDate,
-                endDate: selectedContainer.endDate,
+                startDate: new Date(selectedContainer.startDate),
+                endDate: new Date(selectedContainer.endDate),
               }}
               shouldApplyToAllTimeSeries={
                 tooltipsOptions[ContainerType.TIMESERIES].shouldApplyToAll
@@ -414,9 +414,11 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
 
                 const startDate = dayjs(dateRange.startDate)
                   .startOf('day')
-                  .toDate();
+                  .toISOString();
 
-                const endDate = dayjs(dateRange.endDate).endOf('day').toDate();
+                const endDate = dayjs(dateRange.endDate)
+                  .endOf('day')
+                  .toISOString();
 
                 onUpdateTooltipsOptions(ContainerType.TIMESERIES, {
                   shouldApplyToAll: shouldApplyToAllTimeSeries,
@@ -462,8 +464,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 onClick={() => {
                   navigateToPath('/charts', {
                     timeserieIds: [selectedContainer.metadata.resourceId],
-                    startTime: selectedContainer.startDate.getTime(),
-                    endTime: selectedContainer.endDate.getTime(),
+                    startTime: new Date(selectedContainer.startDate).getTime(),
+                    endTime: new Date(selectedContainer.endDate).getTime(),
                   });
                   trackUsage(
                     MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,

@@ -41,7 +41,7 @@
     "@cognite/sdk-provider": "^2.0.6",
     "@cognite/sidecar": "^0.4.1",
     "@cognite/simconfig-api-sdk": "1.6.17",
-    "@cognite/unified-file-viewer": "^18.0.1",
+    "@cognite/unified-file-viewer": "^19.0.1",
     "@cognite/z-index": "^0.2.3",
     "@floating-ui/react": "^0.24.8",
     "@genql/cli": "^4.0.0",

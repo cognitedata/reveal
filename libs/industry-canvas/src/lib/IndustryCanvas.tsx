@@ -321,6 +321,7 @@ export const IndustryCanvas = ({
         renderContextMenu={renderContextMenu}
         cogniteClient={sdk}
         shouldAllowDragDrop={false} // We are using our own drag and drop handlers
+        namespace="industrialCanvas"
       />
       <ToolbarWrapper>
         <ToolbarComponent
