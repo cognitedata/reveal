@@ -7,8 +7,8 @@ node_modules/
 
 # testing
 /coverage
-apps/platypus-e2e/coverage
-apps/platypus-e2e/.nyc_output
+apps/platypus/coverage
+apps/platypus/.nyc_output
 
 # production
 /build

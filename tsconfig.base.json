@@ -20,7 +20,6 @@
       "@3d-management/*": ["apps/3d-management/src/*"],
       "@access-management/*": ["apps/access-management/src/*"],
       "@charts-app/*": ["apps/charts/src/app/*"],
-      "@cognite/charts-lib": ["libs/charts-lib/src/index.ts"],
       "@cognite/cdf-contextualization-ui": ["apps/contextualization-ui/src/*"],
       "@cognite/cdf-i18n-utils": ["libs/shared/cdf-ui-i18n-utils/src/index.ts"],
       "@cognite/cdf-route-tracker": [
@@ -30,6 +29,7 @@
         "libs/shared/cdf-sdk-singleton/src/index.ts"
       ],
       "@cognite/cdf-utilities": ["libs/shared/cdf-utilities/src/index.ts"],
+      "@cognite/charts-lib": ["libs/charts-lib/src/index.ts"],
       "@cognite/cog-data-grid": [
         "libs/data-modeling/cog-data-grid/src/index.ts"
       ],
@@ -112,6 +112,7 @@
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
       "@raw-explorer/*": ["apps/raw-explorer/src/*"],
+      "@simint-app/*": ["apps/simint/src/*"],
       "@transformations/*": ["apps/transformations/src/*"],
       "@vision/*": ["apps/vision/src/*"]
     }

@@ -93,6 +93,29 @@
       "options": {
         "lintFilePatterns": ["apps/fusion-shell/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/fusion-shell/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "fusion-shell:preview:production",
+        "env": {
+          "ORG": "cog-dss",
+          "PROJECT": "dss-dev",
+          "TENANT": "dssbycognite.onmicrosoft.com",
+          "CLUSTER": "greenfield.cognitedata.com"
+        }
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "fusion-shell:preview:production"
+        },
+        "ci": {
+          "devServerTarget": "fusion-shell:preview:production"
+        }
+      },
+      "dependsOn": ["build-single-spa-deps"]
     }
   },
   "tags": [],

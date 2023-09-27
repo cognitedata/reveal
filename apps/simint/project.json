@@ -161,6 +161,25 @@
       "options": {
         "command": "test-storybook -c apps/simint/.storybook --url=http://localhost:4400"
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/simint/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "simint:serve:development",
+        "env": {
+          "ORG": "cog-charts",
+          "PROJECT": "charts-azuredev",
+          "CLUSTER": "azure-dev.cognitedata.com",
+          "TENANT": "cognitecharts.onmicrosoft.com"
+        }
+      },
+      "configurations": {
+        "development": {
+          "devServerTarget": "simint:serve:development"
+        }
+      }
     }
   },
   "tags": [],

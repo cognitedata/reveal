@@ -16,13 +16,20 @@
   "exclude": [
     "**/*.spec.ts",
     "**/*.spec.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
     "**/*.stories.ts",
     "**/*.stories.js",
     "**/*.stories.jsx",
     "**/*.stories.tsx",
     "**/mocks/**.*",
     "**/tests/**.*",
-    "jest.config.ts"
+    "jest.config.ts",
   ],
-  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
+  "include": [
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

@@ -115,6 +115,25 @@
       "options": {
         "lintFilePatterns": ["apps/industry-canvas-ui/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/industry-canvas-ui/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "industry-canvas-ui:serve:development",
+        "env": {
+          "ORG": "cog-e2e",
+          "PROJECT": "e2e-greenfield",
+          "CLUSTER": "greenfield.cognitedata.com",
+          "IDP_INTERNAL_ID": "09f375ff-13b6-4d58-95fd-869b098d4808"
+        }
+      },
+      "configurations": {
+        "development": {
+          "devServerTarget": "industry-canvas-ui:serve:development"
+        }
+      }
     }
   },
   "tags": [],
