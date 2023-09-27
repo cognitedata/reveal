@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 
 import styled from 'styled-components';
 
+import { trackEvent } from '@cognite/cdf-route-tracker';
 import { Icon } from '@cognite/cogs.js';
 import {
   getLoginFlowsByCluster,
@@ -14,6 +15,8 @@ import {
   useIdpProjectsFromAllClusters,
   AADError,
   usePca,
+  cogIdpInternalId,
+  usePublicCogniteIdpOrg,
 } from '@cognite/login-utils';
 
 import { useTranslation } from '../../common/i18n';
@@ -59,6 +62,26 @@ const SelectProject = (): JSX.Element => {
     idp,
     { enabled: !!idp }
   );
+
+  // Track adoption of CogIdP.
+  // We are interested in three things:
+  //   1. Is the user's organization registered in CogIdP? (cogIdpMigrationStatus != NOT_IN_COG_IDP)
+  //   -> If so:
+  //   -> 2. What is the migration status of the user's organization? (cogIdpMigrationStatus)
+  //   -> 3. Is the user logged in with CogIdP? (isUsingCogIdp)
+  const { data: publicCogIdpOrg, isFetched: isPublicCogIdpOrgFetched } =
+    usePublicCogniteIdpOrg({ timeout: 30000 });
+  useEffect(() => {
+    if (isPublicCogIdpOrgFetched) {
+      const cogIdpMigrationStatus =
+        publicCogIdpOrg?.migrationStatus || 'NOT_IN_COG_IDP';
+      const isUsingCogIdp = internalId === cogIdpInternalId;
+      trackEvent('SelectProjectPageView', {
+        cogIdpMigrationStatus,
+        isUsingCogIdp,
+      });
+    }
+  }, [internalId, publicCogIdpOrg, isPublicCogIdpOrgFetched]);
 
   useEffect(() => {
     if (
