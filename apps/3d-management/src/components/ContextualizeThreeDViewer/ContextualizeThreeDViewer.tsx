@@ -109,6 +109,7 @@ export const ContextualizeThreeDViewer = ({
           sdk: sdk,
           modelId: modelId,
           revisionId: revisionId,
+          nodeId: undefined,
         });
 
         // const colorMappedAndSelected = new Color(0.1, 0.7, 0.78);
@@ -181,12 +182,18 @@ export const ContextualizeThreeDViewer = ({
               selectedAndContextualizedNodes.updateSet(
                 indexContextualizedAndSelectedNodeSet
               );
+
+              selectedAndContextualizedNodesList.push(nodeId);
             } else if (selectedAndContextualizedNodeFound) {
               indexContextualizedAndSelectedNodeSet.remove(
                 intersection.treeIndex
               );
               selectedAndContextualizedNodes.updateSet(
                 indexContextualizedAndSelectedNodeSet
+              );
+              selectedAndContextualizedNodesList.splice(
+                selectedAndContextualizedNodesList.indexOf(nodeId),
+                1
               );
             }
           }

@@ -5,9 +5,7 @@ import styled from 'styled-components';
 import { FLOATING_ELEMENT_MARGIN } from '@3d-management/pages/ContextualizeEditor/constants';
 
 import { ToolBar, Tooltip, Button } from '@cognite/cogs.js';
-import { Cognite3DViewer } from '@cognite/reveal';
 import { withSuppressRevealEvents } from '@cognite/reveal-react-components';
-import { CogniteClient } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
@@ -15,45 +13,57 @@ import {
   setTool,
   useContextualizeThreeDViewerStore,
 } from '../useContextualizeThreeDViewerStore';
-import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
+import { deleteCdfThreeDCadContextualization } from '../utils/deleteCdfThreeDCadContextualization';
 
-type MappedElementsToolPanel = {
+type MappedElementsToolBar = {
   modelId: number;
+  revisionId: number;
 };
 
-export function MappedElementsToolPanel({
+export function MappedElementsToolBar({
   modelId,
-}: MappedElementsToolPanel): ReactElement {
+  revisionId,
+}: MappedElementsToolBar): ReactElement {
   const sdk = useSDK();
 
-  const { tool, viewer } = useContextualizeThreeDViewerStore((state) => ({
-    tool: state.tool,
-    viewer: state.threeDViewer,
-  }));
+  const { tool, viewer, selectedAndContextualizedNodesList } =
+    useContextualizeThreeDViewerStore((state) => ({
+      tool: state.tool,
+      viewer: state.threeDViewer,
+      selectedAndContextualizedNodesList:
+        state.selectedAndContextualizedNodesList,
+    }));
 
   const handleAddContextualizationToolClick = () => {
-    if (tool === ToolType.ADD_ANNOTATION) {
+    if (tool === ToolType.ADD_THREEDNODE_MAPPING) {
       setTool(ToolType.NONE);
       return;
     }
 
-    setTool(ToolType.ADD_ANNOTATION);
+    setTool(ToolType.ADD_THREEDNODE_MAPPING);
   };
 
   const handleDeleteContextualizationToolClick = () => {
-    if (!viewer) return;
+    if (!viewer || !modelId) return;
 
-    const pointCloudModel = getCognitePointCloudModel({
+    /* const pointCloudModel = getCognitePointCloudModel({
       modelId,
       viewer,
     });
+ */
+    deleteCdfThreeDCadContextualization({
+      sdk,
+      modelId,
+      revisionId,
+      nodeIds: selectedAndContextualizedNodesList,
+    });
 
-    if (pointCloudModel === undefined || tool === ToolType.DELETE_ANNOTATION) {
+    if (tool === ToolType.DELETE_THREEDNODE_MAPPING) {
       setTool(ToolType.NONE);
       return;
     }
 
-    setTool(ToolType.DELETE_ANNOTATION);
+    setTool(ToolType.DELETE_THREEDNODE_MAPPING);
   };
 
   return (

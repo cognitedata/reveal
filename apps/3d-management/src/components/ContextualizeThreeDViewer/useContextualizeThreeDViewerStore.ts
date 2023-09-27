@@ -21,8 +21,8 @@ export enum ToolType {
   NONE = 'none',
   ADD_ANNOTATION = 'addAnnotation',
   DELETE_ANNOTATION = 'deleteAnnotation',
-  ADD_THREEDNODE_ASSET_MAPPING = 'addThreeDNodeAssetMapping',
-  DELETE_THREEDNODE_ASSET_MAPPING = 'deleteThreeDNodeAssetMapping',
+  ADD_THREEDNODE_MAPPING = 'addThreeDNodeMapping',
+  DELETE_THREEDNODE_MAPPING = 'deleteThreeDNodeMapping',
 }
 
 type RootState = {

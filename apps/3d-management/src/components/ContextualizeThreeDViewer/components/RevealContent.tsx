@@ -26,7 +26,7 @@ import {
 } from '../useContextualizeThreeDViewerStore';
 
 import { CadToolBar } from './CadToolBar/CadToolBar';
-import { MappedElementsToolPanel } from './MappedElementsToolPanel';
+import { MappedElementsToolBar } from './MappedElementsToolBar';
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 interface RevealContentProps {
@@ -131,7 +131,7 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
       {isToolbarForCadModels && !isToolbarForPointCloudModels && viewer && (
         <>
           <CadToolBar />
-          <MappedElementsToolPanel modelId={modelId} />
+          <MappedElementsToolBar modelId={modelId} revisionId={revisionId} />
         </>
       )}
       {!isToolbarForCadModels && isToolbarForPointCloudModels && viewer && (
