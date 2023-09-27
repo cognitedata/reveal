@@ -53,7 +53,8 @@ import { Button } from '@cognite/cogs.js';
 
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import { useDraftRows } from '../../hooks/useDraftRows';
-import { useGetFilteredRowsCount } from '../../hooks/useGetFilteredRowsCount';
+import { useFilter } from '../../hooks/useFilter';
+import { useFilteredRowsCount } from '../../hooks/useFilteredRowsCount';
 import { useListDataSource } from '../../hooks/useListDataSource';
 import { useNodesDeleteMutation } from '../../hooks/useNodesDeleteMutation';
 import { usePublishedRowsCountMapByType } from '../../hooks/usePublishedRowsCountMapByType';
@@ -106,16 +107,15 @@ export const DataPreviewTable = forwardRef<
   ) => {
     const { t } = useTranslation('DataPreviewTable');
     const [searchTerm, setSearchTerm] = useState('');
-    const [filter, setFilter] = useState<any>(null);
+    const { setFilter } = useFilter();
+    const { filter } = useSelector((state) => state.dataManagement);
     const [isTransformationModalVisible, setIsTransformationModalVisible] =
       useState(false);
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     // This property is used to trigger a rerender when a selection occurs in the grid
     const [, setSelectedPublishedRowsCount] = useState(0);
-    const [filteredRowsCount, setfilteredRowsCount] = useState<null | number>(
-      null
-    );
-    const countResult = useGetFilteredRowsCount({
+
+    const { data: filteredRowsCount } = useFilteredRowsCount({
       dataModelType,
       dataModelExternalId,
       space,
@@ -136,8 +136,6 @@ export const DataPreviewTable = forwardRef<
       useSelectedDataModelVersion(version, dataModelExternalId, space);
 
     const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
-    const queryBuilder = new MixerQueryBuilder();
-
     const draftRowsData = useSelector(
       (state) => state.dataManagement.draftRows[dataModelType.name] || []
     );
@@ -160,10 +158,6 @@ export const DataPreviewTable = forwardRef<
       createNewDraftRow,
       deleteSelectedRows,
     } = useDraftRows();
-
-    useEffect(() => {
-      setfilteredRowsCount(countResult || null);
-    }, [countResult]);
 
     const [columnOrder, setColumnOrder] = useState<ColumnToggleType[]>(
       getColumnsInitialOrder(dataModelType, instanceIdCol)
@@ -721,6 +715,40 @@ export const DataPreviewTable = forwardRef<
       }
     };
 
+    const handleFilterCopyButtonClick = useCallback(() => {
+      track('FilterBuilder.Copy');
+      const sortColumn = gridRef.current?.columnApi
+        .getColumnState()
+        .filter((el) => el.sort)[0];
+      const queryBuilder = new MixerQueryBuilder();
+      const query = queryBuilder.buildListQuery({
+        cursor: '',
+        dataModelType,
+        dataModelTypeDefs,
+        limit: pageSizeLimit,
+        sort: sortColumn
+          ? {
+              fieldName: sortColumn.colId,
+              sortType:
+                (sortColumn.sort!.toUpperCase() as 'ASC' | 'DESC') || 'ASC',
+            }
+          : undefined,
+        nestedLimit: 2,
+        filter,
+      });
+      navigator.clipboard.writeText(
+        JSON.stringify(
+          { query: query, variables: { $filter: filter } },
+          null,
+          2
+        )
+      );
+      Notification({
+        type: 'success',
+        message: 'Copied code to clipboard 🚀',
+      });
+    }, [dataModelType, dataModelTypeDefs, filter, track]);
+
     if (!isPublishedRowsCountMapFetched) {
       return <Spinner />;
     }
@@ -764,7 +792,7 @@ export const DataPreviewTable = forwardRef<
           initialFilter={filter}
           visible={isFilterModalVisible}
           onOk={(newFilter) => {
-            track('FilterBuilder.Apply', { filter });
+            track('FilterBuilder.Apply', { filter: newFilter });
             setFilter(newFilter);
             setFilterModalVisible(false);
           }}
@@ -773,39 +801,7 @@ export const DataPreviewTable = forwardRef<
           dataModelExternalId={dataModelExternalId}
           version={version}
           space={space}
-          copyButtonCallback={() => {
-            track('FilterBuilder.Copy');
-            const sortColumn = gridRef.current?.columnApi
-              .getColumnState()
-              .filter((el) => el.sort)[0];
-            const query = queryBuilder.buildListQuery({
-              cursor: '',
-              dataModelType,
-              dataModelTypeDefs,
-              limit: pageSizeLimit,
-              sort: sortColumn
-                ? {
-                    fieldName: sortColumn.colId,
-                    sortType:
-                      (sortColumn.sort!.toUpperCase() as 'ASC' | 'DESC') ||
-                      'ASC',
-                  }
-                : undefined,
-              nestedLimit: 2,
-              filter,
-            });
-            navigator.clipboard.writeText(
-              JSON.stringify(
-                { query: query, variables: { $filter: filter } },
-                null,
-                2
-              )
-            );
-            Notification({
-              type: 'success',
-              message: 'Copied code to clipboard 🚀',
-            });
-          }}
+          copyButtonCallback={handleFilterCopyButtonClick}
         />
 
         <PreviewPageHeader

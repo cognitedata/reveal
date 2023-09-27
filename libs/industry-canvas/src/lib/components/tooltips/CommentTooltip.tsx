@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -29,7 +29,10 @@ import {
   getCdfUserFromUserProfile,
   getTextContentFromEditorState,
 } from '../../services/comments/utils';
-import { onDeleteRequest } from '../../state/useIndustrialCanvasStore';
+import {
+  createPendingComment,
+  onDeleteRequest,
+} from '../../state/useIndustrialCanvasStore';
 import { CommentAnnotation, SerializedCanvasDocument } from '../../types';
 import { UserProfile, useUserProfile } from '../../UserProfileProvider';
 import zIndex from '../../utils/zIndex';
@@ -166,53 +169,101 @@ export const CommentTooltip = ({
   parentComment,
   comments,
   commentAnnotation,
+  isPendingComment,
 }: {
   activeCanvas: SerializedCanvasDocument;
-  parentComment: Comment;
+  parentComment: Comment | undefined;
   comments: Comment[];
   commentAnnotation: CommentAnnotation;
+  isPendingComment: boolean;
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { userProfile } = useUserProfile();
   const { data: users = [] } = useUsers();
-
   const canvasId = searchParams.get('canvasId');
   const commentTooltipId = searchParams.get('commentTooltipId');
-  const isTooltipOpen = commentTooltipId === commentAnnotation.id;
+  const isTooltipOpen =
+    isPendingComment || commentTooltipId === commentAnnotation.id;
 
-  const { mutate: upsertComment } = useCommentsUpsertMutation();
+  const { mutateAsync: upsertComment } = useCommentsUpsertMutation();
   const { mutate: deleteComments } = useCommentsDeleteMutation();
 
-  const setOpen = (id: string | null) =>
-    setSearchParams((currentParams) => {
-      if (id !== null) {
-        currentParams.set('commentTooltipId', id);
-      } else {
-        currentParams.delete('commentTooltipId');
+  const setOpen = useCallback(
+    (id: string | null) =>
+      setSearchParams((currentParams) => {
+        if (id !== null) {
+          currentParams.set('commentTooltipId', id);
+        } else {
+          currentParams.delete('commentTooltipId');
+        }
+        return currentParams;
+      }),
+    [setSearchParams]
+  );
+  const onCreate = useCallback(
+    (content: string) => {
+      if (canvasId === null) {
+        console.warn('targetId was undefined, will not post comment');
+        return;
       }
-      return currentParams;
-    });
-
-  const onCreate = (content: string) => {
-    if (canvasId === null) {
-      console.warn('targetId was undefined, will not post comment');
-      return;
-    }
-
-    upsertComment([
-      {
-        text: content,
-        createdBy: getCdfUserFromUserProfile(userProfile),
-        externalId: uuid(),
-        targetType: CommentTargetType.CANVAS,
-        targetId: canvasId,
-        parentComment: { externalId: commentTooltipId ?? '' },
-      },
-    ]);
-  };
+      if (isPendingComment) {
+        upsertComment([
+          {
+            text: '',
+            createdBy: getCdfUserFromUserProfile(userProfile),
+            targetType: CommentTargetType.CANVAS,
+            targetId: canvasId,
+            externalId: commentAnnotation.id,
+            targetContext: {
+              x: commentAnnotation.x,
+              y: commentAnnotation.y,
+            },
+          },
+        ]).then(() => {
+          setSearchParams((currentParams) => {
+            currentParams.set('commentTooltipId', commentAnnotation.id);
+            return currentParams;
+          });
+          createPendingComment(null);
+          upsertComment([
+            {
+              text: content,
+              createdBy: getCdfUserFromUserProfile(userProfile),
+              externalId: uuid(),
+              targetType: CommentTargetType.CANVAS,
+              targetId: canvasId,
+              parentComment: { externalId: commentAnnotation.id },
+            },
+          ]);
+        });
+        return;
+      }
+      upsertComment([
+        {
+          text: content,
+          createdBy: getCdfUserFromUserProfile(userProfile),
+          externalId: uuid(),
+          targetType: CommentTargetType.CANVAS,
+          targetId: canvasId,
+          parentComment: { externalId: commentTooltipId ?? '' },
+        },
+      ]);
+    },
+    [
+      canvasId,
+      commentAnnotation.id,
+      commentAnnotation.x,
+      commentAnnotation.y,
+      commentTooltipId,
+      isPendingComment,
+      setSearchParams,
+      upsertComment,
+      userProfile,
+    ]
+  );
 
   const onDelete = () => {
-    if (!isTooltipOpen) {
+    if (!isTooltipOpen || parentComment === undefined) {
       return;
     }
     deleteComments([
@@ -226,19 +277,27 @@ export const CommentTooltip = ({
     setOpen(null);
   };
 
+  const onClose = useCallback(() => {
+    if (isPendingComment) {
+      createPendingComment(null);
+      return;
+    }
+    setOpen(null);
+  }, [isPendingComment, setOpen]);
   return (
     <CommentTooltipCore
       isTooltipOpen={isTooltipOpen}
       onOpen={() => setOpen(commentAnnotation.id)}
-      onClose={() => setOpen(null)}
+      onClose={onClose}
       comments={comments}
       users={users}
       onCreate={onCreate}
       onDelete={
         // Either the creator of the canvas or the comment may delete it
-        parentComment.createdBy?.userIdentifier ===
+        !isPendingComment &&
+        (parentComment?.createdBy?.userIdentifier ===
           userProfile.userIdentifier ||
-        activeCanvas.createdBy === userProfile.userIdentifier
+          activeCanvas.createdBy === userProfile.userIdentifier)
           ? onDelete
           : undefined
       }

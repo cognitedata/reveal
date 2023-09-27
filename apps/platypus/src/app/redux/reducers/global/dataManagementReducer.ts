@@ -1,5 +1,9 @@
 /* eslint-disable no-param-reassign */
-import { DataModelTypeDefsType, KeyValueMap } from '@platypus/platypus-core';
+import {
+  DataModelTypeDefsType,
+  KeyValueMap,
+  QueryFilter,
+} from '@platypus/platypus-core';
 import { generateId } from '@platypus-app/utils/uuid';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -19,6 +23,7 @@ export interface IDataManagementState {
   shouldShowDraftRows: boolean;
   shouldShowPublishedRows: boolean;
   transformationId: number | null;
+  filter: QueryFilter | { [key in string]: QueryFilter } | null;
 }
 
 const initialState = {
@@ -29,6 +34,7 @@ const initialState = {
   shouldShowDraftRows: true,
   shouldShowPublishedRows: true,
   transformationId: null,
+  filter: null,
 } as IDataManagementState;
 
 export const isDraftRowDataComplete = (
@@ -176,6 +182,14 @@ const dataManagementSlice = createSlice({
 
     toggleShouldShowPublishedRows: (state) => {
       state.shouldShowPublishedRows = !state.shouldShowPublishedRows;
+    },
+    setFilter: (
+      state,
+      action: PayloadAction<
+        QueryFilter | { [key in string]: QueryFilter } | null | undefined
+      >
+    ) => {
+      state.filter = action.payload === undefined ? null : action.payload;
     },
   },
 });

@@ -36,8 +36,18 @@ export const QueryKeys = {
   FILTERED_ROWS_COUNT: (
     space: string,
     datamodelId: string,
-    dataModelTypeName: string
-  ) => ['FILTERED_ROWS_COUNT', space, datamodelId, dataModelTypeName] as const,
+    dataModelTypeName: string,
+    version: string,
+    filter?: QueryFilter | { [key in string]: QueryFilter } | null
+  ) =>
+    [
+      'FILTERED_ROWS_COUNT',
+      space,
+      datamodelId,
+      dataModelTypeName,
+      version,
+      filter,
+    ] as const,
   TRANSFORMATION: (space: string, type: string, version: string) =>
     ['TRANSFORMATION', space, type, version] as const,
   PREVIEW_TABLE_DATA: (

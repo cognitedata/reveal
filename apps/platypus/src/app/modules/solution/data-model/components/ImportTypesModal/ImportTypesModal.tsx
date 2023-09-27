@@ -10,7 +10,7 @@ import {
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { GraphqlCodeEditor } from '@platypus-app/modules/solution/data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
-import { parse, DocumentNode, print } from 'graphql';
+import { parse, DocumentNode, print, Kind } from 'graphql';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import {
@@ -34,7 +34,7 @@ interface VersionedType {
 
 const createSubsetOfDataModelBasedOnSelection = (
   selectedTypes: string[],
-  versionedTypes: VersionedType[],
+  selectedDataModel?: DataModelVersion,
   query?: DocumentNode
 ) => {
   // Create a GraphQL data model for the selected types
@@ -49,45 +49,54 @@ const createSubsetOfDataModelBasedOnSelection = (
 
   definitions.forEach((definition) => {
     // The definitions are our types
-    const versionedType = versionedTypes.find(
-      (vt) => vt.name === (definition as any).name.value
-    );
+    if (!selectedDataModel) {
+      return;
+    }
 
     const importDirective: any = {
-      kind: 'Directive',
+      kind: Kind.DIRECTIVE,
       name: {
-        kind: 'Name',
+        kind: Kind.NAME,
         value: 'import',
-      },
-    };
-
-    const viewDirective: any = {
-      kind: 'Directive',
-      name: {
-        kind: 'Name',
-        value: 'view',
       },
       arguments: [
         {
-          kind: 'Argument',
+          kind: Kind.ARGUMENT,
           name: {
-            kind: 'Name',
-            value: 'version',
+            kind: Kind.NAME,
+            value: 'dataModel',
           },
           value: {
-            kind: 'StringValue',
-            value: versionedType!.version,
-          },
-        },
-        {
-          kind: 'Argument',
-          name: {
-            kind: 'Name',
-            value: 'space',
-          },
-          value: {
-            kind: 'StringValue',
-            value: versionedType!.space,
+            kind: Kind.OBJECT,
+            fields: [
+              {
+                kind: Kind.OBJECT_FIELD,
+                name: {
+                  kind: Kind.NAME,
+                  value: 'externalId',
+                },
+                value: {
+                  kind: Kind.STRING,
+                  value: selectedDataModel.externalId,
+                },
+              },
+              {
+                kind: Kind.OBJECT_FIELD,
+                name: {
+                  kind: Kind.NAME,
+                  value: 'version',
+                },
+                value: { kind: Kind.STRING, value: selectedDataModel.version },
+              },
+              {
+                kind: Kind.OBJECT_FIELD,
+                name: {
+                  kind: Kind.NAME,
+                  value: 'space',
+                },
+                value: { kind: Kind.STRING, value: selectedDataModel.space },
+              },
+            ],
           },
         },
       ],
@@ -98,7 +107,6 @@ const createSubsetOfDataModelBasedOnSelection = (
       (directive: any) =>
         directive.name.value !== 'view' && directive.name.value !== 'import'
     );
-    (definition as any).directives.push(viewDirective);
     (definition as any).directives.push(importDirective);
   });
 
@@ -141,19 +149,21 @@ export const ImportTypesModal: React.FC<ImportTypesModalProps> = (props) => {
 
   const selectedTypesQuery = createSubsetOfDataModelBasedOnSelection(
     [...selectedTypesForImport, ...dependencyTypesForImport],
-    versionedTypes,
+    selectedDataModelVersion,
     query
   );
 
   const graphQlCodeForImport =
     selectedTypesForImport.length > 0 && selectedTypesQuery
-      ? `# IMPORT BEGIN\n#  Space: ${
+      ? `#region IMPORT BEGIN (${selectedDataModelVersion?.space}:${
+          selectedDataModelVersion?.externalId
+        }:${selectedDataModelVersion?.version})\n#  Space: ${
           selectedDataModelVersion?.space
         }\n#  Data model: ${selectedDataModelVersion?.name} (${
           selectedDataModelVersion?.externalId
         })\n#  Version: ${selectedDataModelVersion?.version}\n\n ${print(
           selectedTypesQuery
-        )}\n\n# IMPORT END\n\n`
+        )}\n\n#endregion IMPORT END\n\n`
       : '  ';
 
   useEffect(() => {

@@ -10,15 +10,7 @@ import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 
-import {
-  Body,
-  Button,
-  Checkbox,
-  Flex,
-  Icon,
-  Modal,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { Body, Button, Modal } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -36,7 +28,7 @@ export const DeleteDataModel = ({
   const { track } = useMixpanel();
 
   const [deleting, setDeleting] = useState<boolean>(false);
-  const [deleteDataTypes, setDeleteDataTypes] = useState<boolean>(false);
+  const [deleteDataTypes, _setDeleteDataTypes] = useState<boolean>(false);
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
   const localStorageProvider = useInjection(
     TOKENS.storageProviderFactory
@@ -142,19 +134,6 @@ export const DeleteDataModel = ({
           { dataModelName: dataModel.name || NoNameDisplayName }
         )}
       </Body>
-      <Flex alignItems="center" gap={4} style={{ marginTop: 8 }}>
-        <Checkbox
-          checked={deleteDataTypes}
-          onChange={(e) => setDeleteDataTypes(e.target.checked)}
-        >
-          {t('delete_types_label', '')}
-        </Checkbox>
-        <div style={{ marginTop: 4 }}>
-          <Tooltip content={t('delete_types_desc', '')} wrapped>
-            <Icon type="Warning" />
-          </Tooltip>
-        </div>
-      </Flex>
     </Modal>
   );
 };

@@ -7,7 +7,7 @@ import useSelector from '@platypus-app/hooks/useSelector';
 
 import { Detail } from '@cognite/cogs.js';
 
-import { useGetFilteredRowsCount } from '../../hooks/useGetFilteredRowsCount';
+import { useFilteredRowsCount } from '../../hooks/useFilteredRowsCount';
 
 import * as S from './elements';
 
@@ -33,7 +33,7 @@ export const TypeDescription: React.FC<TypeDescriptionProps> = ({
     version: string;
   };
 
-  const filteredRowsCount = useGetFilteredRowsCount({
+  const { data: filteredRowsCount } = useFilteredRowsCount({
     dataModelType,
     dataModelExternalId,
     space,
@@ -55,6 +55,7 @@ export const TypeDescription: React.FC<TypeDescriptionProps> = ({
       }`,
     [activeRowsCount, draftRowsData.length, isManualPopulationEnabled]
   );
+
   return isLoading ? (
     <S.StyledSkeleton />
   ) : (

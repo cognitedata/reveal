@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -10,22 +10,25 @@ import {
   Button,
   Colors,
   Flex,
-  formatDate,
   Icon,
   Chip,
   Loader,
-  Title,
+  Heading,
 } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { useExtractorsList } from '../../hooks/useExtractorsList';
 import { useSolutionsForExtractor } from '../../hooks/useSolutions';
 import { Artifact, getDownloadUrl } from '../../service/extractors';
-import { trackUsage } from '../../utils';
-import { getReleaseVersionCore } from '../../utils/utils';
+import {
+  trackUsage,
+  formatTimeStamp,
+  getReleaseVersionCore,
+} from '../../utils';
 import { ContentContainer } from '../ContentContainer';
 import { DetailsHeader } from '../DetailsHeader';
 import { DocsLinkGrid, DocsLinkGridItem } from '../DocsLinkGrid';
+import { Dropdown } from '../Dropdown';
 import { HostedExtractorDetails } from '../hosted-extractor-details/HostedExtractorDetails';
 import { Layout } from '../Layout';
 import Markdown from '../markdown';
@@ -47,28 +50,20 @@ const ExtractorDetails = () => {
 
   const { data: solutions } = useSolutionsForExtractor(extractorExternalId);
 
-  if (status === 'loading') {
-    return <Loader />;
-  }
-
-  if (extractor?.type === 'hosted') {
-    return <HostedExtractorDetails extractor={extractor} />;
-  }
-
   const latestRelease = extractor?.releases?.at(0);
   const createdAt =
-    latestRelease?.createdTime && formatDate(latestRelease?.createdTime);
+    latestRelease?.createdTime && formatTimeStamp(latestRelease?.createdTime);
 
   const artifacts = latestRelease?.artifacts ?? [];
 
-  const handleDownload = async (artifact: Artifact) => {
+  const handleDownload = useCallback(async (artifact: Artifact) => {
     const url = await getDownloadUrl(artifact);
     const a = document.createElement('a');
     a.href = url;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-  };
+  }, []);
 
   const tags = extractor?.tags ?? [];
 
@@ -80,6 +75,26 @@ const ExtractorDetails = () => {
   const genericLinks =
     extractor?.links?.filter((link) => link?.type === 'generic') ?? [];
 
+  const handleDownloadClick = useCallback(
+    async (artifact: any) => {
+      trackUsage({
+        e: 'Download.Extractor.Click',
+        name: extractor?.name,
+        artifact: artifact.displayName,
+        version: latestRelease?.version,
+      });
+      await handleDownload(artifact);
+    },
+    [handleDownload, extractor, latestRelease]
+  );
+
+  if (status === 'loading') {
+    return <Loader />;
+  }
+
+  if (extractor?.type === 'hosted') {
+    return <HostedExtractorDetails extractor={extractor} />;
+  }
   return (
     <Layout>
       <DetailsHeader
@@ -97,7 +112,9 @@ const ExtractorDetails = () => {
               />
               {externalLinks?.length > 0 && (
                 <Flex direction="column" gap={16}>
-                  <Title level={5}>{t('user-guide-from-cognite-docs')}</Title>
+                  <Heading level={5}>
+                    {t('user-guide-from-cognite-docs')}
+                  </Heading>
                   <DocsLinkGrid>
                     {externalLinks?.map((link) => (
                       <DocsLinkGridItem
@@ -120,11 +137,11 @@ const ExtractorDetails = () => {
               )}
               {!!solutions?.length && (
                 <Flex direction="column" gap={16}>
-                  <Title level={5}>
+                  <Heading level={5}>
                     {t('use-extractor-for-with-colon', {
                       extractor: extractor?.name,
                     })}
-                  </Title>
+                  </Heading>
                   {solutions.map((solution) => (
                     <SolutionForExtractor
                       key={solution.externalId}
@@ -136,37 +153,19 @@ const ExtractorDetails = () => {
             </Flex>
             <aside>
               <Flex direction="column" gap={24}>
-                {artifacts?.length > 0 && (
-                  <Flex direction="column" gap={16}>
-                    <Title level="5">{t('download-extractor')}</Title>
-                    {artifacts.map((artifact) => (
-                      <Button
-                        key={artifact?.link}
-                        type={
-                          artifact?.platform === 'docs'
-                            ? 'secondary'
-                            : 'primary'
-                        }
-                        icon="Download"
-                        iconPlacement="right"
-                        onClick={() => {
-                          trackUsage({
-                            e: 'Download.Extractor.Click',
-                            name: extractor?.name,
-                            artifact: artifact.displayName,
-                            version: latestRelease?.version,
-                          });
-                          handleDownload(artifact);
-                        }}
-                      >
-                        {artifact.displayName}
-                      </Button>
-                    ))}
-                  </Flex>
-                )}
+                <Flex direction="column" gap={16}>
+                  <Dropdown
+                    title={t('download-extractor')}
+                    options={artifacts.map((artifact) => ({
+                      label: artifact.displayName || '',
+                      icon: 'Download',
+                      onClick: () => handleDownloadClick(artifact),
+                    }))}
+                  />
+                </Flex>
                 <StyledDivider />
                 <Flex justifyContent="space-between" alignItems="center">
-                  <Title level="5">{t('versions')}</Title>
+                  <Heading level={5}>{t('versions')}</Heading>
                   <Button
                     type="ghost-accent"
                     size="small"
@@ -199,12 +198,12 @@ const ExtractorDetails = () => {
                       })}
                     </StyledBodyMuted>
                   </Flex>
-                  <Body level="2">{latestRelease?.description}</Body>
+                  <Body size="medium">{latestRelease?.description}</Body>
                 </Flex>
                 {genericLinks?.length > 0 && (
                   <>
                     <StyledDivider />
-                    <Title level="5">{t('links')}</Title>
+                    <Heading level={5}>{t('links')}</Heading>
                     <Flex direction="column" gap={12}>
                       {genericLinks?.map((link) => (
                         <StyledLink
@@ -225,7 +224,7 @@ const ExtractorDetails = () => {
                 {tags?.length > 0 && (
                   <>
                     <StyledDivider />
-                    <Title level="5">{t('tags')}</Title>
+                    <Heading level={5}>{t('tags')}</Heading>
                     <StyledTagsContainer>
                       {tags?.map((tag) => (
                         <Chip selectable size="x-small" label={tag} key={tag} />
@@ -239,7 +238,7 @@ const ExtractorDetails = () => {
         </Layout.Container>
       </ContentContainer>
       <StyledModal
-        visible={isModalOpen}
+        open={isModalOpen}
         title={t('all-versions-of-extractor', { extractor: extractor?.name })}
         closeIcon={<Icon type="Close" />}
         width={840}
@@ -263,19 +262,20 @@ const ExtractorDetails = () => {
               <Flex direction="column" gap={12}>
                 <Flex direction="column" gap={8}>
                   <Flex justifyContent="space-between" gap={8}>
-                    <Title level="5">
+                    <Heading level={5}>
                       <Flex gap={8}>
                         {t('version-n', {
                           version: getReleaseVersionCore(release.version),
                         })}
                         <ReleaseTag version={release.version}></ReleaseTag>
                       </Flex>
-                    </Title>
+                    </Heading>
                     <StyledBodyMuted>
-                      {release?.createdTime && formatDate(release?.createdTime)}
+                      {release?.createdTime &&
+                        formatTimeStamp(release?.createdTime)}
                     </StyledBodyMuted>
                   </Flex>
-                  <Body level="2">{release.description}</Body>
+                  <Body size="medium">{release.description}</Body>
                 </Flex>
                 {Object.values(release?.changelog).length > 0 && (
                   <StyledCollapse
@@ -286,7 +286,7 @@ const ExtractorDetails = () => {
                   >
                     <StyledCollapsePanel
                       header={
-                        <Body level="3" strong>
+                        <Body size="small" strong>
                           {t('changelog')}
                         </Body>
                       }
@@ -302,7 +302,7 @@ const ExtractorDetails = () => {
                               <StyledChangelogList>
                                 {values.map((value) => (
                                   <li key={value}>
-                                    <Body level="3">{value}</Body>
+                                    <Body size="small">{value}</Body>
                                   </li>
                                 ))}
                               </StyledChangelogList>
@@ -314,7 +314,7 @@ const ExtractorDetails = () => {
                   </StyledCollapse>
                 )}
                 <Flex gap={8} alignItems="center">
-                  <Body level="2" strong>
+                  <Body size="medium" strong>
                     {t('download-colon')}
                   </Body>
                   {release.artifacts?.map((artifact) => (

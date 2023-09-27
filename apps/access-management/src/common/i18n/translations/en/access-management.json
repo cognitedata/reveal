@@ -56,6 +56,7 @@
   "capability-desc-users": "Users refer to service accounts",
   "capability-desc-visionmodel": "Computer vision models are used to analyze and extract information from imagery data.",
   "capability-desc-wells": "Access Well Data Layer",
+  "capability-desc-workflow-orchestration": "Orchestrate workflows within CDF",
   "capability-edit": "Edit capability",
   "capability-info": "Select the capabilities to add to the group. These capabilities grant access to the group to perform particular operations on some data.",
   "capability-missing": "Missing capability!",
@@ -291,5 +292,6 @@
   "valid-url-error": "Invalid URL",
   "valid-url-info": "Please enter a valid url!",
   "vision-model": "Vision model",
-  "warning": "Warning"
+  "warning": "Warning",
+  "workflow-orchestration": "Workflows"
 }

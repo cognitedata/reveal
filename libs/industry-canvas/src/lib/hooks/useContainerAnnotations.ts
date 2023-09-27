@@ -5,7 +5,7 @@ import {
   getStyledAnnotationFromAnnotation,
 } from '@cognite/data-exploration';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import type { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { MetricEvent } from '../constants';
 import {
@@ -15,7 +15,10 @@ import {
 import { IndustryCanvasContainerConfig } from '../types';
 import useMetrics from '../utils/tracking/useMetrics';
 
-import { useAnnotationsMultiple } from './useAnnotationsMultiple';
+import {
+  getResourceKey,
+  useAnnotationsMultiple,
+} from './useAnnotationsMultiple';
 
 type useContainerAnnotationsParams = {
   containers: IndustryCanvasContainerConfig[];
@@ -25,7 +28,7 @@ export const useContainerAnnotations = ({
   containers,
 }: useContainerAnnotationsParams): ExtendedAnnotation[] => {
   const trackUsage = useMetrics();
-  const { data: annotationsApiAnnotationsByContainerId } =
+  const { data: annotationsApiAnnotationsByResourceKey } =
     useAnnotationsMultiple(containers);
   const { hoverId, clickedContainerAnnotationId } = useIndustrialCanvasStore(
     (state) => ({
@@ -71,19 +74,22 @@ export const useContainerAnnotations = ({
   }, []);
 
   return useMemo(() => {
-    if (annotationsApiAnnotationsByContainerId === undefined) {
+    if (annotationsApiAnnotationsByResourceKey === undefined) {
       return [];
     }
 
-    const extendedAnnotations = Object.entries(
-      annotationsApiAnnotationsByContainerId
-    )
-      .flatMap(([containerId, annotationsForContainerConfig]) =>
-        getExtendedAnnotationsFromAnnotationsApi(
-          annotationsForContainerConfig,
-          containerId
-        )
-      )
+    const extendedAnnotations = containers
+      .flatMap((container) => {
+        const annotations =
+          annotationsApiAnnotationsByResourceKey[getResourceKey(container)];
+        if (annotations === undefined) {
+          return [];
+        }
+        return getExtendedAnnotationsFromAnnotationsApi(
+          annotations,
+          container.id
+        );
+      })
       .map((annotation) => {
         const isSelected = clickedContainerAnnotationId === annotation.id;
         const isOnHover = hoverId === String(annotation.id);
@@ -124,7 +130,7 @@ export const useContainerAnnotations = ({
     onClick,
     clickedContainerAnnotationId,
     hoverId,
-    annotationsApiAnnotationsByContainerId,
+    annotationsApiAnnotationsByResourceKey,
     containers,
   ]);
 };

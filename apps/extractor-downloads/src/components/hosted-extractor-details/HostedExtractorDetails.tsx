@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-import { Chip, Flex, Icon, formatDate, Heading } from '@cognite/cogs.js';
+import { Chip, Flex, Icon, Heading } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { ExtractorWithReleases } from '../../service/extractors';
-import { trackUsage } from '../../utils';
+import { trackUsage, formatTimeStamp } from '../../utils';
 import { ContentContainer } from '../ContentContainer';
 import { CreateConnectionButton } from '../create-connection';
 import { CreateConnectionModal } from '../create-connection-modal/CreateConnectionModal';
@@ -31,7 +31,7 @@ export const HostedExtractorDetails = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const latestRelease = extractor?.releases?.at(0);
   const createdAt =
-    latestRelease?.createdTime && formatDate(latestRelease?.createdTime);
+    latestRelease?.createdTime && formatTimeStamp(latestRelease?.createdTime);
 
   const tags = extractor?.tags ?? [];
 
@@ -92,7 +92,6 @@ export const HostedExtractorDetails = ({
             <aside>
               <Flex direction="column" gap={24}>
                 <Flex direction="column" gap={16}>
-                  <Heading level={5}>{t('set-up-hosted-extractor')}</Heading>
                   <CreateConnectionButton extractor={extractor} />
                 </Flex>
                 {genericLinks?.length > 0 && (
