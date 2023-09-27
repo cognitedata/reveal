@@ -13,7 +13,7 @@ import { useEffect, type ReactElement, useState } from 'react';
 import { Matrix4 } from 'three';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { useRevealResourcesCount } from '../RevealContainer/RevealResourcesCountContext';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 
 export type AnnotationIdStylingGroup = {
   annotationIds: number[];
@@ -44,7 +44,7 @@ export function PointCloudContainer({
   const [model, setModel] = useState<CognitePointCloudModel>();
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;
-  const { setRevealResourcesCount } = useRevealResourcesCount();
+  const { setRevealResourcesCount } = useReveal3DResourcesCount();
 
   useEffect(() => {
     addModel(modelId, revisionId, transform)

@@ -11,7 +11,7 @@ import {
   useApplyCadModelStyling,
   modelExists
 } from './useApplyCadModelStyling';
-import { useRevealResourcesCount } from '../RevealContainer/RevealResourcesCountContext';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
@@ -30,7 +30,7 @@ export function CadModelContainer({
 }: CogniteCadModelProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
   const viewer = useReveal();
-  const { setRevealResourcesCount } = useRevealResourcesCount();
+  const { setRevealResourcesCount } = useReveal3DResourcesCount();
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(
     viewer.models.find(

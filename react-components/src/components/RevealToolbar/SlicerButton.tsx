@@ -11,7 +11,7 @@ import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@co
 
 import styled from 'styled-components';
 import { useUrlStateParam } from '../../hooks/useUrlStateParam';
-import { useRevealResourcesCount } from '../RevealContainer/RevealResourcesCountContext';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 
 type SliceState = {
   minHeight: number;
@@ -26,7 +26,7 @@ type SlicerButtonProps = {
 
 export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactElement => {
   const viewer = useReveal();
-  const { reveal3DResourcesCount } = useRevealResourcesCount();
+  const { reveal3DResourcesCount } = useReveal3DResourcesCount();
   const urlParam = useUrlStateParam();
   const { top, bottom } = storeStateInUrl
     ? urlParam.getSlicerStateFromUrlParam()
@@ -43,33 +43,31 @@ export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactEleme
   const { minHeight, maxHeight, topRatio, bottomRatio } = sliceState;
 
   useEffect(() => {
-    const updateSliceState = (): void => {
-      if (reveal3DResourcesCount === 0 || viewer === undefined) {
-        return;
+    if (reveal3DResourcesCount === 0 || viewer === undefined) {
+      return;
+    }
+
+    const box = new Box3();
+    viewer.models.forEach((model) => box.union(model.getModelBoundingBox()));
+
+    const newMaxY = box.max.y;
+    const newMinY = box.min.y;
+
+    if (maxHeight !== newMaxY || minHeight !== newMinY) {
+      // Set clipping plane only if top or bottom has changed & storeStateInUrl is enabled
+      if (storeStateInUrl && (topRatio !== 1 || bottomRatio !== 0)) {
+        viewer.setGlobalClippingPlanes([
+          new Plane(new Vector3(0, 1, 0), -(newMinY + topRatio * (newMaxY - newMinY))),
+          new Plane(new Vector3(0, -1, 0), newMinY + bottomRatio * (newMaxY - newMinY))
+        ]);
       }
-
-      const box = new Box3();
-      viewer.models.forEach((model) => box.union(model.getModelBoundingBox()));
-
-      const newMaxY = box.max.y;
-      const newMinY = box.min.y;
-
-      if (maxHeight !== newMaxY || minHeight !== newMinY) {
-        if (storeStateInUrl && (topRatio !== 1 || bottomRatio !== 0)) {
-          viewer.setGlobalClippingPlanes([
-            new Plane(new Vector3(0, 1, 0), -(newMinY + topRatio * (newMaxY - newMinY))),
-            new Plane(new Vector3(0, -1, 0), newMinY + bottomRatio * (newMaxY - newMinY))
-          ]);
-        }
-        setSliceState({
-          maxHeight: newMaxY,
-          minHeight: newMinY,
-          topRatio,
-          bottomRatio
-        });
-      }
-    };
-    updateSliceState();
+      setSliceState({
+        maxHeight: newMaxY,
+        minHeight: newMinY,
+        topRatio,
+        bottomRatio
+      });
+    }
   }, [reveal3DResourcesCount]);
 
   function changeSlicingState(newValues: number[]): void {
