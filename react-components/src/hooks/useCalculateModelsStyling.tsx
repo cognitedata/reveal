@@ -17,7 +17,6 @@ import { useMemo } from 'react';
 import {
   type NodeId,
   type FdmEdgeWithNode,
-  type TreeIndex
 } from '../components/NodeCacheProvider/types';
 import {
   type NodeStylingGroup,
