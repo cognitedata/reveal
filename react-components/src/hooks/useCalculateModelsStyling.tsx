@@ -14,10 +14,7 @@ import {
   useMappedEdgesForRevisions
 } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
-import {
-  type NodeId,
-  type FdmEdgeWithNode,
-} from '../components/NodeCacheProvider/types';
+import { type NodeId, type FdmEdgeWithNode } from '../components/NodeCacheProvider/types';
 import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
