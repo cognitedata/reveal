@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
+
+import isUndefined from 'lodash/isUndefined';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Button, Icon, Link } from '@cognite/cogs.js';
@@ -28,6 +30,18 @@ const ReviewTagBar = ({
   onReject: (annotation: ExtendedAnnotation) => void;
 }) => {
   const { t } = useTranslation();
+
+  const resourceLink = useMemo(() => {
+    const resourceType = getResourceTypeFromExtendedAnnotation(annotation);
+    const resourceId = getResourceIdFromExtendedAnnotation(annotation);
+
+    if (isUndefined(resourceType) || isUndefined(resourceId)) {
+      return undefined;
+    }
+
+    return createLink(`/explore/${resourceType}/${resourceId}`);
+  }, [annotation]);
+
   return (
     <ReviewTagWrapper>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -53,18 +67,11 @@ const ReviewTagBar = ({
       </div>
       <StyledTag>
         {getExtendedAnnotationLabel(annotation) || 'N/A'}{' '}
-        {getResourceIdFromExtendedAnnotation(annotation) ? (
-          <Link
-            href={createLink(
-              `/explore/${getResourceTypeFromExtendedAnnotation(
-                annotation
-              )}/${getResourceIdFromExtendedAnnotation(annotation)}`
-            )}
-            target="_blank"
-          >
+        {resourceLink && (
+          <Link href={resourceLink} target="_blank">
             <StyledIcon type="ArrowUpRight" />
           </Link>
-        ) : undefined}
+        )}
       </StyledTag>
 
       {isSuggestedAnnotation(annotation) && (
