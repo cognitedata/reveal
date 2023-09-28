@@ -380,7 +380,7 @@ paths:
       summary: Start a validation job for a data source.
       description: >-
         A validation job will be started on the current data source and all its rules.
-      operationId: dataSourceValidation
+      operationId: dataSourceValidationRun
       parameters:
         - $ref: '#/components/parameters/project'
         - $ref: '#/components/parameters/dataSourceId'

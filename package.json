@@ -111,7 +111,7 @@
     "brandi": "^4.0.2",
     "brandi-react": "^4.0.2",
     "chalk": "4.1.2",
-    "chart.js": "3.4.1",
+    "chart.js": "^4.4.0",
     "chroma-js": "^2.4.2",
     "cli-table3": "^0.6.3",
     "commander": "^7.2.0",

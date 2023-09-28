@@ -1091,7 +1091,7 @@ export const useListAllRules = <TData = Responses.RuleListResponseWithCursor>(
   );
 };
 
-export type DataSourceValidationPathParams = {
+export type DataSourceValidationRunPathParams = {
   /**
    * The project name.
    *
@@ -1104,30 +1104,30 @@ export type DataSourceValidationPathParams = {
   dataSourceId?: string;
 };
 
-export type DataSourceValidationError = Fetcher.ErrorWrapper<{
+export type DataSourceValidationRunError = Fetcher.ErrorWrapper<{
   status: 400;
   payload: Responses.ErrorResponse;
 }>;
 
-export type DataSourceValidationVariables = {
+export type DataSourceValidationRunVariables = {
   body: Schemas.DataSourceValidationRequest;
-  pathParams?: DataSourceValidationPathParams;
+  pathParams?: DataSourceValidationRunPathParams;
 } & DataQualityContext['fetcherOptions'];
 
 /**
  * A validation job will be started on the current data source and all its rules.
  */
-export const fetchDataSourceValidation = (
-  variables: DataSourceValidationVariables,
+export const fetchDataSourceValidationRun = (
+  variables: DataSourceValidationRunVariables,
   signal?: AbortSignal
 ) =>
   dataQualityFetch<
     undefined,
-    DataSourceValidationError,
+    DataSourceValidationRunError,
     Schemas.DataSourceValidationRequest,
     {},
     {},
-    DataSourceValidationPathParams
+    DataSourceValidationRunPathParams
   >({
     url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/validation/run',
     method: 'post',
@@ -1138,12 +1138,12 @@ export const fetchDataSourceValidation = (
 /**
  * A validation job will be started on the current data source and all its rules.
  */
-export const useDataSourceValidation = (
+export const useDataSourceValidationRun = (
   options?: Omit<
     reactQuery.UseMutationOptions<
       undefined,
-      DataSourceValidationError,
-      DataSourceValidationVariables
+      DataSourceValidationRunError,
+      DataSourceValidationRunVariables
     >,
     'mutationFn'
   >
@@ -1151,11 +1151,11 @@ export const useDataSourceValidation = (
   const { fetcherOptions } = useDataQualityContext();
   return reactQuery.useMutation<
     undefined,
-    DataSourceValidationError,
-    DataSourceValidationVariables
+    DataSourceValidationRunError,
+    DataSourceValidationRunVariables
   >(
-    (variables: DataSourceValidationVariables) =>
-      fetchDataSourceValidation({ ...fetcherOptions, ...variables }),
+    (variables: DataSourceValidationRunVariables) =>
+      fetchDataSourceValidationRun({ ...fetcherOptions, ...variables }),
     options
   );
 };

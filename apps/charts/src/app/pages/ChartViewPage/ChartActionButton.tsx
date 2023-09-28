@@ -40,7 +40,7 @@ export const ChartActionButton = ({
   };
 
   return (
-    <ChartActionContainer>
+    <ChartActionContainer className="downloadChartHide">
       <Dropdown
         content={
           <ChartActionMenu>

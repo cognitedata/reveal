@@ -237,7 +237,9 @@ const PlotlyChart = ({
     layout,
     config,
     onRelayout,
+    divId: 'plotly-chart',
     style: defaultChartStyles,
+    useResizeHandler: true,
   };
 
   const plotProps =

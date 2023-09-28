@@ -42,7 +42,7 @@ export const PageToolbar = ({
         padding: size === Size.LARGE ? '0 10px 0 16px' : '0 10px 0 16px',
       }}
     >
-      <Flex alignItems="center">
+      <Flex alignItems="center" gap={8}>
         {backPathname && (
           <Button
             icon="ChevronLeft"

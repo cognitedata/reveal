@@ -560,7 +560,7 @@ export type RuleRunDto = {
    */
   endTime: EpochTimestamp;
   /**
-   * The external-id of the ruleset
+   * The external-id of the rule run
    *
    * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
    * @minLength 1

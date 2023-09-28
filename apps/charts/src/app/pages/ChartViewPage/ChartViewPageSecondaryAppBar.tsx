@@ -25,6 +25,9 @@ type Props = {
   showGridlines: boolean;
   mergeUnits: boolean;
   handleSettingsToggle: (str: string, val: boolean) => void;
+  takeScreenshot: (
+    imageType: 'png' | 'jpg' | undefined
+  ) => Promise<string | undefined>;
 };
 
 const ChartViewPageSecondaryAppBar = ({
@@ -36,6 +39,7 @@ const ChartViewPageSecondaryAppBar = ({
   mergeUnits,
   handleSettingsToggle,
   setStackedMode,
+  takeScreenshot,
 }: Props) => {
   const [chart, setChart] = useRecoilState(chartAtom);
   const username =
@@ -99,7 +103,7 @@ const ChartViewPageSecondaryAppBar = ({
             </RangeColumn>
           </RangeWrapper>
           <Divider style={{ marginRight: '12px' }} />
-          <ChartActions />
+          <ChartActions takeScreenshot={takeScreenshot} />
         </RightSideActions>
       </SecondaryTopBarLeft>
     </>

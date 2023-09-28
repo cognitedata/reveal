@@ -120,15 +120,6 @@ export const rawAppsData: RawAppItem[] = [
   },
   {
     category: 'contextualize',
-    internalId: 'entity-matching-2',
-    icon: 'Share',
-    linkTo: '/entity-matching-new',
-    importMapApp: '@cognite/cdf-ui-entity-matching',
-    img: images.MatchEntitiesAppImg,
-    ariaLabel: 'Go to Entity Matching',
-  },
-  {
-    category: 'contextualize',
     internalId: 'pnid',
     icon: 'Assets',
     linkTo: '/interactive-diagrams',

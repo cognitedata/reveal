@@ -24,14 +24,17 @@ const InfoModal = ({
     setIsModalVisible(isOpen);
   }, [isOpen]);
 
+  const handleDone = () => {
+    setIsModalVisible(false);
+    onClose();
+  };
+
   return (
     <ModalWrapper
       title={indslFunction.name}
       visible={isModalVisible}
-      onCancel={() => {
-        setIsModalVisible(false);
-        onClose();
-      }}
+      onCancel={handleDone}
+      onOk={handleDone}
     >
       <Markdown>{indslFunction.description || ''}</Markdown>
     </ModalWrapper>
