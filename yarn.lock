@@ -2011,18 +2011,19 @@
     tippy.js "6.3.7"
     ts-dedent "2.2.0"
 
-"@cognite/cogs.js@9.36.0":
-  version "9.36.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.36.0.tgz#f9bb3c7e9f91c1583d08641e5e2de28465b6b893"
-  integrity sha512-mXLFzHUYu1up8s/bX1+As6klZ9E9klQbQEvce1Ejmr5Rk++9rNek5Bc1Etr868t6dEeX7T/g2wwCT3fNZrtMBQ==
+"@cognite/cogs.js@9.48.1":
+  version "9.48.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.48.1.tgz#867b56437be8bc352564758af0e1345570f8cc94"
+  integrity sha512-OvhhxAeVyiNlDIfNMuV+4IlqTlTJYDmFIBxIi5OtgQ2Bh4u6/CovC+YjdrV7A4GONkbgrVOzS72la5A/KNiH0Q==
   dependencies:
     "@emotion/react" "11.10.6"
     "@emotion/styled" "11.10.6"
     "@mui/base" "5.0.0-alpha.97"
     "@mui/joy" "5.0.0-alpha.41"
     "@mui/material" "5.9.2"
-    "@mui/x-date-pickers" "6.10.1"
-    "@mui/x-license-pro" "^6.10.2"
+    "@mui/x-date-pickers" "6.11.0"
+    "@mui/x-date-pickers-pro" "6.11.0"
+    "@mui/x-license-pro" "6.10.2"
     "@notionhq/client" "2.2.3"
     "@react-hook/resize-observer" "1.2.6"
     "@tippyjs/react" "4.2.6"
@@ -2031,7 +2032,7 @@
     classnames "2.3.2"
     color "3.2.1"
     csstype "2.6.10"
-    dayjs "1.11.7"
+    dayjs "^1.11.7"
     deepdash "5.3.9"
     dotenv-flow "3.2.0"
     focus-visible "5.2.0"
@@ -5375,7 +5376,7 @@
     prop-types "^15.8.1"
     react-transition-group "^4.4.5"
 
-"@mui/x-date-pickers@6.10.1", "@mui/x-date-pickers@6.11.0", "@mui/x-date-pickers@^6.5.0":
+"@mui/x-date-pickers@6.11.0", "@mui/x-date-pickers@^6.5.0":
   version "6.11.0"
   resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-6.11.0.tgz#2bbd7c2748d066ed06742c6942e3d5ad5d01c75f"
   integrity sha512-yVGfpH3scUauLaHWvzckD0xswboC48YAaJ4568YTkKozXFSPPkvK7VGSQ+qo1u8K2UjYh1iZoff3k0EoDDPnww==
@@ -5387,7 +5388,7 @@
     prop-types "^15.8.1"
     react-transition-group "^4.4.5"
 
-"@mui/x-license-pro@6.10.2", "@mui/x-license-pro@^6.10.2":
+"@mui/x-license-pro@6.10.2":
   version "6.10.2"
   resolved "https://registry.yarnpkg.com/@mui/x-license-pro/-/x-license-pro-6.10.2.tgz#68b069214efb085f7f8c34b73d450743857e0aea"
   integrity sha512-Baw3shilU+eHgU+QYKNPFUKvfS5rSyNJ98pQx02E0gKA22hWp/XAt88K1qUfUMPlkPpvg/uci6gviQSSLZkuKw==

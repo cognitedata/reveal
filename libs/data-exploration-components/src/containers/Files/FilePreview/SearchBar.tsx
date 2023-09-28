@@ -2,7 +2,13 @@ import { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { Button, InputExp, ToolBar, Tooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  InputExp,
+  ToolBar,
+  Tooltip,
+  ToolBarButton,
+} from '@cognite/cogs.js';
 
 import { TFunction, useTranslation } from '@data-exploration-lib/core';
 
@@ -88,7 +94,7 @@ export const SearchBar = ({
     }
   };
 
-  const NextPrevActions = [
+  const NextPrevActions: ToolBarButton[] = [
     {
       icon: 'ArrowUp',
       onClick: onPreviousResult,

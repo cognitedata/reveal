@@ -89,7 +89,7 @@ describe('CreateDataModel', () => {
       screen.getByLabelText('Name', { exact: false }),
       'My Data Model'
     );
-    userEvent.click(screen.getByLabelText('Edit'));
+    userEvent.click(screen.getByRole('button', { name: 'Edit' }));
     userEvent.clear(screen.getByLabelText('External ID'));
     userEvent.type(
       screen.getByLabelText('External ID'),
@@ -135,7 +135,7 @@ describe('CreateDataModel', () => {
       screen.getByLabelText('Name', { exact: false }),
       dataModelName
     );
-    userEvent.click(screen.getByLabelText('Edit'));
+    userEvent.click(screen.getByRole('button', { name: 'Edit' }));
     userEvent.clear(screen.getByLabelText('External ID'));
     userEvent.type(
       screen.getByLabelText('External ID'),

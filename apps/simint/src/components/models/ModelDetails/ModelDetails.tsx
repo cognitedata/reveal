@@ -24,6 +24,7 @@ import {
   Button,
   Chip,
   Dropdown,
+  IconType,
   Menu,
   SegmentedControl,
   Skeleton,
@@ -48,6 +49,13 @@ interface ModelDetailsProps {
   modelLibraryDeleteHandler?: () => void;
 }
 
+interface TabType {
+  icon: IconType;
+  label: string;
+  key: string;
+  content?: React.ReactNode;
+  children?: React.ReactNode;
+}
 export function ModelDetails({
   project,
   modelName,
@@ -132,7 +140,7 @@ export function ModelDetails({
     throw new Error('No model file returned from backend');
   }
 
-  const tabs = [
+  const tabs: TabType[] = [
     {
       icon: 'History',
       label: 'Model versions',
