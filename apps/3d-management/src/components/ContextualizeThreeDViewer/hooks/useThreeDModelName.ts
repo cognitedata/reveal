@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 
 import { useSDK } from '@cognite/sdk-provider';
 
-export const useThreeDModelName = (modelId: number): string => {
+export const useThreeDModelName = (modelId: number): string | undefined => {
   const sdk = useSDK();
-  const [modelName, setModelName] = useState<string>('');
+  const [modelName, setModelName] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const fetchData = async () => {

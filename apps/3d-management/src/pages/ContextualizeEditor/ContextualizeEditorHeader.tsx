@@ -30,7 +30,7 @@ export const ContextualizeEditorHeader = ({
 }: ContextualizeEditorHeaderProps) => {
   const navigate = useNavigate();
   const modelIdNumber = Number(modelId);
-  const modelName = useThreeDModelName(modelIdNumber);
+  const modelName = useThreeDModelName(modelIdNumber) ?? modelId;
 
   const handleGoBackToIndustryCanvasButtonClick = () => {
     navigate(createLink(`/3d-models/${modelId}/revisions/${revisionId}`));
