@@ -263,6 +263,30 @@
           "quiet": true
         }
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/platypus/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "platypus:serve:mock",
+        "port": 4200
+      },
+      "configurations": {
+        "e2e": {
+          "env": {
+            "FDM_VERSION": "3"
+          },
+          "ignoreTestFiles": "**/@(ui-editor.cy.ts|manual-data-ingestion.cy.ts|suggestions.cy.ts)"
+        },
+        "mockV3": {
+          "env": {
+            "FDM_VERSION": "3"
+          },
+          "ignoreTestFiles": "**/@(ui-editor.cy.ts|manual-data-ingestion.cy.ts|suggestions.cy.ts)"
+        }
+      },
+      "defaultConfiguration": "e2e"
     }
   },
   "tags": [],

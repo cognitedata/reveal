@@ -102,6 +102,30 @@
         "jestConfig": "apps/interactive-diagrams/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/interactive-diagrams/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "interactive-diagrams:serve",
+        "port": 3001,
+        "env": {
+          "ORG": "cog-e2e",
+          "PROJECT": "e2e-greenfield",
+          "CLUSTER": "greenfield.cognitedata.com",
+          "IDP_INTERNAL_ID": "09f375ff-13b6-4d58-95fd-869b098d4808"
+        }
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "interactive-diagrams:serve:production"
+        },
+        "e2e": {
+          "devServerTarget": "interactive-diagrams:serve:production"
+        }
+      },
+      "defaultConfiguration": "e2e"
     }
   },
   "tags": [],

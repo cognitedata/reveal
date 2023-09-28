@@ -12,6 +12,10 @@
   },
   "files": [],
   "include": [],
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ],
   "references": [
     {
       "path": "./tsconfig.app.json"
@@ -21,6 +25,9 @@
     },
     {
       "path": "./tsconfig.storybook.json"
+    },
+    {
+      "path": "./cypress/tsconfig.json"
     }
   ]
 }

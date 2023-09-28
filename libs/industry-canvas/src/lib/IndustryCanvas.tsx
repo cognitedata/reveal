@@ -31,6 +31,7 @@ import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import { UseManagedToolReturnType } from './hooks/useManagedTool';
 import { UseOnUpdateSelectedAnnotationReturnType } from './hooks/useOnUpdateSelectedAnnotation';
 import useRenderContextMenu from './hooks/useRenderContextMenux';
+import { useTimeseriesPlural } from './hooks/useTimeseriesPlural';
 import { UseTooltipsOptionsReturnType } from './hooks/useTooltipsOptions';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
 import type { Comment } from './services/comments/types';
@@ -49,6 +50,7 @@ import {
   IndustryCanvasState,
   IndustryCanvasToolType,
   isIndustryCanvasContainerConfig,
+  isIndustryCanvasTimeSeriesContainer,
 } from './types';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
 import getContainerSummarizationSticky from './utils/getSummarizationSticky';
@@ -218,7 +220,11 @@ export const IndustryCanvas = ({
         }),
     [nodes, commentAnnotationIds, getAnnotationEditHandlers]
   );
-
+  const { data: timeseriesContainerTimeseriesById = {} } = useTimeseriesPlural(
+    containers
+      .filter(isIndustryCanvasTimeSeriesContainer)
+      .map((c) => c.timeseriesId)
+  );
   const enhancedNodes: CanvasNode[] = useMemo(
     () => [
       ...nodesWithEventHandlers,
@@ -232,6 +238,7 @@ export const IndustryCanvas = ({
         clickedId: interactionState.clickedContainerAnnotationId,
         annotations: containerAnnotations,
         shouldShowAllConnectionAnnotations: shouldShowConnectionAnnotations,
+        timeseriesById: timeseriesContainerTimeseriesById,
       }),
       ...containerAnnotations,
       ...commentAnnotations,
@@ -245,6 +252,7 @@ export const IndustryCanvas = ({
       shouldShowConnectionAnnotations,
       commentAnnotations,
       nodesWithEventHandlers,
+      timeseriesContainerTimeseriesById,
     ]
   );
 
@@ -313,6 +321,7 @@ export const IndustryCanvas = ({
         renderContextMenu={renderContextMenu}
         cogniteClient={sdk}
         shouldAllowDragDrop={false} // We are using our own drag and drop handlers
+        namespace="industrialCanvas"
       />
       <ToolbarWrapper>
         <ToolbarComponent

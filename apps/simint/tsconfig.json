@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "resolveJsonModule": true,
     "jsx": "react-jsx",
@@ -6,9 +7,6 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "paths": {
-      "@simint-app/*": ["apps/simint/src/*"]
-    }
   },
   "files": [],
   "include": [],
@@ -20,8 +18,7 @@
       "path": "./tsconfig.spec.json"
     },
     {
-      "path": "./tsconfig.storybook.json"
+      "path": "./cypress/tsconfig.json"
     }
-  ],
-  "extends": "../../tsconfig.base.json"
+  ]
 }

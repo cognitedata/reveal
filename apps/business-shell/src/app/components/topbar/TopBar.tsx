@@ -27,13 +27,6 @@ type Props = {
 export const getAppsInfo = (_t: (key: TranslationKeys) => string) => {
   return [
     {
-      icon: 'InField',
-      name: _t('INFIELD_APP_TITLE'),
-      description: _t('INFIELD_APP_SUBTITLE'),
-      link: 'https://infield.cogniteapp.com/',
-    },
-
-    {
       icon: 'Maintain',
       name: _t('MAINTAIN_APP_TITLE'),
       description: _t('MAINTAIN_APP_SUBTITLE'),

@@ -7,6 +7,7 @@ import {
   getResourceTypeAnnotationColor,
   getResourceTypeFromExtendedAnnotation,
 } from '@cognite/data-exploration';
+import { Timeseries } from '@cognite/sdk/dist/src';
 import {
   Annotation,
   AnnotationType,
@@ -29,10 +30,13 @@ const FILE_CONNECTION_STROKE =
   getResourceTypeAnnotationColor('file').strokeColor;
 const ASSET_CONNECTION_STROKE =
   getResourceTypeAnnotationColor('asset').strokeColor;
+const TIMESERIES_CONNECTION_STROKE =
+  getResourceTypeAnnotationColor('timeSeries').strokeColor;
 
 const resourceTypeToConnectionStroke = {
   file: FILE_CONNECTION_STROKE,
   asset: ASSET_CONNECTION_STROKE,
+  timeSeries: TIMESERIES_CONNECTION_STROKE,
 };
 
 const getHighlightingRectangleId = ({
@@ -40,7 +44,7 @@ const getHighlightingRectangleId = ({
   resourceType,
 }: {
   containerConfig: IndustryCanvasContainerConfig;
-  resourceType: 'file' | 'asset';
+  resourceType: 'file' | 'asset' | 'timeSeries';
 }) => `highlighting-rectangle-${containerConfig.id}-${resourceType}`;
 
 const getHighlightingRectangle = ({
@@ -48,7 +52,7 @@ const getHighlightingRectangle = ({
   resourceType,
 }: {
   containerConfig: IndustryCanvasContainerConfig;
-  resourceType: 'file' | 'asset';
+  resourceType: 'file' | 'asset' | 'timeSeries';
 }) => {
   const stroke = resourceTypeToConnectionStroke[resourceType];
   const highlightingRectangle: RectangleAnnotation = {
@@ -82,7 +86,7 @@ const getAnnotationToRegionConnection = ({
 }: {
   sourceAnnotation: ExtendedAnnotation;
   targetContainer: IndustryCanvasContainerConfig;
-  resourceType: 'file' | 'asset';
+  resourceType: 'file' | 'asset' | 'timeSeries';
   isSelfReferential?: boolean;
 }): Annotation[] => {
   const highlightingRectangle = getHighlightingRectangle({
@@ -117,11 +121,13 @@ const getConnectionAnnotations = ({
   annotations,
   containers,
   shouldAddSelfReferentialHighlighting = false,
+  timeseriesById,
 }: {
   sourceAnnotation: ExtendedAnnotation;
   containers: IndustryCanvasContainerConfig[];
   annotations: ExtendedAnnotation[];
   shouldAddSelfReferentialHighlighting?: boolean;
+  timeseriesById: Record<string, Timeseries>;
 }): Annotation[] => {
   const sourceResourceType =
     getResourceTypeFromExtendedAnnotation(sourceAnnotation);
@@ -129,6 +135,7 @@ const getConnectionAnnotations = ({
     return getAssetConnectionAnnotations({
       sourceAnnotation,
       containers,
+      timeseriesById,
     });
   }
 
@@ -147,26 +154,38 @@ const getConnectionAnnotations = ({
 const getAssetConnectionAnnotations = ({
   sourceAnnotation,
   containers,
+  timeseriesById,
 }: {
   sourceAnnotation: ExtendedAnnotation;
   containers: IndustryCanvasContainerConfig[];
+  timeseriesById: Record<string, Timeseries>;
 }) => {
   const targetAssetId = getResourceIdFromExtendedAnnotation(sourceAnnotation);
   if (targetAssetId === undefined) {
     return EMPTY_CONNECTION_ANNOTATIONS;
   }
-
   const linkedAssetContainers = containers.filter(
     (containerConfig) =>
       containerConfig.type === ContainerType.ASSET &&
       containerConfig.assetId === targetAssetId
   );
+  const linkedTimeseriesContainers = containers.filter(
+    (containerConfig) =>
+      containerConfig.type === ContainerType.TIMESERIES &&
+      timeseriesById[containerConfig.timeseriesId] !== undefined &&
+      timeseriesById[containerConfig.timeseriesId].assetId === targetAssetId
+  );
+  const linkedContainers = linkedAssetContainers.concat(
+    linkedTimeseriesContainers
+  );
 
-  return linkedAssetContainers.flatMap((targetContainer): Annotation[] =>
+  return linkedContainers.flatMap((targetContainer): Annotation[] =>
     getAnnotationToRegionConnection({
       sourceAnnotation,
       targetContainer,
-      resourceType: 'asset',
+      // since linkedContainers is filtered by either asset or timeseries type we can safely do the checking below
+      resourceType:
+        targetContainer.type === ContainerType.ASSET ? 'asset' : 'timeSeries',
     })
   );
 };
@@ -254,6 +273,7 @@ export const getIndustryCanvasConnectionAnnotations = ({
   hoverId,
   clickedId,
   shouldShowAllConnectionAnnotations,
+  timeseriesById,
 }: {
   containers: IndustryCanvasContainerConfig[];
   selectedContainer: IndustryCanvasContainerConfig | undefined;
@@ -261,9 +281,9 @@ export const getIndustryCanvasConnectionAnnotations = ({
   hoverId: string | undefined;
   clickedId: string | undefined;
   shouldShowAllConnectionAnnotations: boolean;
+  timeseriesById: Record<string, Timeseries>;
 }): Annotation[] => {
   const alreadyConnectedAnnotations = new Set<string>();
-
   const connectionAnnotations = uniqBy(
     annotations.flatMap((sourceAnnotation) => {
       if (alreadyConnectedAnnotations.has(sourceAnnotation.id)) {
@@ -274,6 +294,7 @@ export const getIndustryCanvasConnectionAnnotations = ({
         sourceAnnotation,
         annotations,
         containers,
+        timeseriesById,
       });
 
       // Populate the set of already connected annotations to avoid duplicate connections

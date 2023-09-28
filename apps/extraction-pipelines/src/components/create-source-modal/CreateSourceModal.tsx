@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Select, notification } from 'antd';
@@ -86,6 +86,10 @@ export const CreateSourceModal = ({
       errors.host = t('validation-error-field-required');
     }
 
+    if (!values.port) {
+      errors.port = t('validation-error-field-required');
+    }
+
     return errors;
   };
 
@@ -93,6 +97,7 @@ export const CreateSourceModal = ({
     useFormik<CreateMQTTSourceFormValues>({
       initialValues: {
         type: 'mqtt5',
+        port: '1883',
       },
       onSubmit: (val) => {
         if (val.externalId && val.type && val.host) {
@@ -102,7 +107,7 @@ export const CreateSourceModal = ({
             host: val.host,
             ...(values.username && { username: values.username }),
             ...(values.password && { password: values.password }),
-            ...(values.port && { port: values.port }),
+            port: values.port,
             useTls: values.useTls,
           });
         }
@@ -112,6 +117,21 @@ export const CreateSourceModal = ({
       validateOnChange: false,
     });
 
+  const onClickUseTLS = useCallback(
+    (e: any) => {
+      setFieldValue('useTls', e.target.checked);
+      if (e.target.checked) {
+        if (!values.port || values.port === '1883') {
+          setFieldValue('port', '8883');
+        }
+      } else {
+        if (!values.port || values.port === '8883') {
+          setFieldValue('port', '1883');
+        }
+      }
+    },
+    [setFieldValue, values.port]
+  );
   return (
     <Modal
       onCancel={onCancel}
@@ -164,6 +184,7 @@ export const CreateSourceModal = ({
             <InputExp
               clearable
               fullWidth
+              required
               label={{
                 required: false,
                 info: undefined,
@@ -177,10 +198,7 @@ export const CreateSourceModal = ({
             />
           </div>
         </Flex>
-        <Checkbox
-          onChange={(e) => setFieldValue('useTls', e.target.checked)}
-          checked={values.useTls}
-        >
+        <Checkbox onChange={onClickUseTLS} checked={values.useTls}>
           {t('use-tls')}
         </Checkbox>
         <InputExp

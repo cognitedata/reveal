@@ -92,7 +92,7 @@ jobs:
           # wait for 1 minute for the server to respond
           wait-on-timeout: 60
           # Run the cypress tests
-          command: yarn nx run platypus-e2e:e2e:${{ matrix.configuration }}
+          command: yarn nx run platypus:e2e:${{ matrix.configuration }}
 
       # Disabling codecov from here, to not interfere with nx_ci
       # - name: Combine CodeCov reports
@@ -105,4 +105,4 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: platypus-e2e-${{ matrix.configuration }}
-          files: ./apps/platypus-e2e/coverage/coverage-final.json,./apps/platypus-e2e/coverage/clover.xml,./apps/platypus-e2e/coverage/coverage-summary.json
+          files: ./apps/platypus/coverage/coverage-final.json,./apps/platypus/coverage/clover.xml,./apps/platypus/coverage/coverage-summary.json

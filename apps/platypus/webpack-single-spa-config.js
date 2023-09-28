@@ -10,8 +10,8 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 let nodeEnv = process.env.NODE_ENV || 'production';
 const useMockEnv =
   nodeEnv === 'mock' ||
-  (process.env.NX_TASK_TARGET_PROJECT &&
-    process.env.NX_TASK_TARGET_PROJECT === 'platypus-e2e');
+  (process.env.NX_TASK_TARGET_CONFIGURATION &&
+    ['e2e', 'mockV3'].includes(process.env.NX_TASK_TARGET_CONFIGURATION));
 
 module.exports = composePlugins(
   withNx(),

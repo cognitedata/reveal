@@ -82,6 +82,9 @@ export const CreateConnection = () => {
     if (!values.host) {
       errors.host = t('validation-error-field-required');
     }
+    if (!values.port) {
+      errors.host = t('validation-error-field-required');
+    }
     return errors;
   };
 
@@ -89,6 +92,7 @@ export const CreateConnection = () => {
     useFormik<CreateMQTTSourceFormValues>({
       initialValues: {
         type: MQTT_SOURCE_TYPE_OPTIONS[0].value,
+        port: '1883',
       },
       // eslint-disable-next-line @typescript-eslint/no-shadow
       onSubmit: (values) => {
@@ -97,9 +101,9 @@ export const CreateConnection = () => {
             externalId: values.externalId,
             type: values.type,
             host: values.host,
+            port: values.port,
             ...(values.username && { username: values.username }),
             ...(values.password && { password: values.password }),
-            ...(values.port && { port: values.port }),
             useTls: values.useTls,
           });
         }
@@ -114,6 +118,22 @@ export const CreateConnection = () => {
       setFieldValue('type', val);
     },
     [setFieldValue]
+  );
+
+  const onClickUseTLS = useCallback(
+    (e: any) => {
+      setFieldValue('useTls', e.target.checked);
+      if (e.target.checked) {
+        if (!values.port || values.port === '1883') {
+          setFieldValue('port', '8883');
+        }
+      } else {
+        if (!values.port || values.port === '8883') {
+          setFieldValue('port', '1883');
+        }
+      }
+    },
+    [setFieldValue, values.port]
   );
 
   return (
@@ -189,7 +209,7 @@ export const CreateConnection = () => {
               clearable
               fullWidth
               label={{
-                required: false,
+                required: true,
                 info: undefined,
                 text: t('create-connection-form-port'),
               }}
@@ -201,10 +221,7 @@ export const CreateConnection = () => {
               value={values.port}
             />
           </Row>
-          <Checkbox
-            onChange={(e) => setFieldValue('useTls', e.target.checked)}
-            checked={values.useTls}
-          >
+          <Checkbox onChange={onClickUseTLS} checked={values.useTls}>
             {t('use-tls')}
           </Checkbox>
           <InputExp
