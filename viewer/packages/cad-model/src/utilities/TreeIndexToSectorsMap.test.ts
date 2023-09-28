@@ -10,7 +10,7 @@ describe('TreeIndexToSectorsMap', () => {
   let map: TreeIndexToSectorsMap;
 
   beforeEach(() => {
-    map = new TreeIndexToSectorsMap();
+    map = new TreeIndexToSectorsMap(100);
     map.onChange = jest.fn();
   });
 
