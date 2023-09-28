@@ -15,6 +15,8 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
+import { useThreeDModelName } from '../../components/ContextualizeThreeDViewer/hooks/useThreeDModelName';
+
 import { CONTEXTUALIZE_EDITOR_HEADER_HEIGHT } from './constants';
 
 type ContextualizeEditorHeaderProps = {
@@ -27,6 +29,8 @@ export const ContextualizeEditorHeader = ({
   revisionId,
 }: ContextualizeEditorHeaderProps) => {
   const navigate = useNavigate();
+  const modelIdNumber = Number(modelId);
+  const modelName = useThreeDModelName(modelIdNumber);
 
   const handleGoBackToIndustryCanvasButtonClick = () => {
     navigate(createLink(`/3d-models/${modelId}/revisions/${revisionId}`));
@@ -53,18 +57,12 @@ export const ContextualizeEditorHeader = ({
       </PreviewLinkWrapper>
 
       <StyledGoBackWrapper>
-        <div>
-          <p
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            <b>Model ID:</b> {modelId}
-          </p>
-          <p>
-            <b>Revision ID:</b> {revisionId}
-          </p>
-        </div>
+        <StyledInfoContainer>
+          <StyledInfoText>
+            <Heading level={5}>{modelName}</Heading>
+          </StyledInfoText>
+          <StyledInfoText>Revision: {revisionId}</StyledInfoText>
+        </StyledInfoContainer>
 
         <Divider direction="vertical" length="20px" endcap="round" />
 
@@ -110,4 +108,17 @@ const StyledGoBackWrapper = styled.div`
   display: flex;
   gap: 8px;
   align-items: center;
+`;
+
+const StyledInfoContainer = styled.div`
+  padding: 10px 12px;
+  border-radius: 4px;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
+
+const StyledInfoText = styled.p`
+  margin: 0;
+  font-size: 12px;
 `;
