@@ -37,6 +37,7 @@ export default function FilesListEmpty() {
           type="primary"
           icon="Document"
           onClick={onContextualizeNew}
+          data-cy="create-new-interactive-diagrams-button"
         >
           Create new interactive diagrams
         </Button>
