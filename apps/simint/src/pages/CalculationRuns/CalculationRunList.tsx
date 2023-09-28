@@ -133,7 +133,7 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
           target="_blank"
         >
           <Menu.Item icon="LineChart" iconPlacement="left">
-            Open timeseries in Charts
+            Open in Charts
           </Menu.Item>
         </a>
       )}
