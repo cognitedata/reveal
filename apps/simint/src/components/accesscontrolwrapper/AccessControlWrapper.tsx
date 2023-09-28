@@ -3,11 +3,10 @@ import React from 'react';
 import { Navigate, useMatchRoute } from 'react-location';
 
 import { PERMISSIONS_REQUIRED_PAGE_PATH } from '@simint-app/components/app/constants';
-import type { RequiredCapability } from '@simint-app/hooks/useCheckAcl';
 import { useCheckAcl } from '@simint-app/hooks/useCheckAcl';
 
 interface Props {
-  requiredCapabilities: RequiredCapability[];
+  requiredCapabilities: string[];
 }
 
 export function AccessControlWrapper({
