@@ -21,10 +21,10 @@ import {
   downloadImage,
   toggleDownloadChartElements,
 } from '@charts-app/utils/charts';
+import { wait } from '@charts-app/utils/helpers';
 import { createInternalLink } from '@charts-app/utils/link';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useRecoilState } from 'recoil';
-import useScreenshot from 'use-screenshot-hook';
 
 import { Button, Dropdown, toast, Divider } from '@cognite/cogs.js';
 
@@ -42,10 +42,17 @@ const defaultTranslations = makeDefaultTranslations(
   'Duplicate',
   'Delete',
   'Delete chart',
-  'Are you sure you want to delete this chart?'
+  'Are you sure you want to delete this chart?',
+  'Please wait while we take a screenshot.'
 );
 
-export const ChartActions = () => {
+type Props = {
+  takeScreenshot: (
+    imageType: 'png' | 'jpg' | undefined
+  ) => Promise<string | undefined>;
+};
+
+export const ChartActions = ({ takeScreenshot }: Props) => {
   const t = {
     ...defaultTranslations,
     ...useTranslations(Object.keys(defaultTranslations), 'ChartActions').t,
@@ -62,7 +69,6 @@ export const ChartActions = () => {
   const move = useNavigate();
   const [chart, setChart] = useRecoilState(chartAtom);
   const { data: login } = useUserInfo();
-  const { takeScreenshot } = useScreenshot();
   const [isCSVModalVisible, setIsCSVModalVisible] = useState(false);
   const [isDeleteModalVisisble, setIsDeleteModalVisisble] = useState(false);
 
@@ -141,10 +147,15 @@ export const ChartActions = () => {
   };
 
   const handleDownloadImage = () => {
+    toast.info(t['Please wait while we take a screenshot.'], {
+      toastId: 'download-image',
+    });
     const height = toggleDownloadChartElements(true);
-    takeScreenshot('png').then((image) => {
-      toggleDownloadChartElements(false, height);
-      downloadImage(image, chart?.name);
+    wait(500).then(() => {
+      takeScreenshot('png').then((image) => {
+        toggleDownloadChartElements(false, height);
+        downloadImage(image, chart?.name);
+      });
     });
   };
 

@@ -87,11 +87,7 @@ export const RootApp = () => {
             <RecoilRoot>
               <Router>
                 <ToastContainer style={{ top: '5em' }} />
-                {/* need root for png screenshot when we download chart  */}
-                {/* https://github.com/fayeed/use-screenshot/issues/9#issuecomment-1245094413  */}
-                <div id="root">
-                  <Routes />
-                </div>
+                <Routes />
               </Router>
             </RecoilRoot>
           </Sentry.ErrorBoundary>

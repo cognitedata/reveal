@@ -85,6 +85,7 @@ import { getUnitConverter } from '@charts-app/utils/units';
 import { flow } from 'lodash';
 import get from 'lodash/get';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import useScreenshot from 'use-screenshot-hook';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -265,6 +266,9 @@ const ChartViewPage = () => {
   const showMinMax = get(chart, 'settings.showMinMax', false);
   const showGridlines = get(chart, 'settings.showGridlines', true);
   const mergeUnits = get(chart, 'settings.mergeUnits', true);
+
+  const chartScreenshotRef = useRef<HTMLDivElement | null>(null);
+  const { takeScreenshot } = useScreenshot({ ref: chartScreenshotRef });
 
   useEffect(() => {
     trackUsage('PageView.ChartView', {
@@ -914,13 +918,14 @@ const ChartViewPage = () => {
         stackedMode={stackedMode}
         setStackedMode={setStackedMode}
         handleSettingsToggle={handleSettingsToggle}
+        takeScreenshot={takeScreenshot}
       />
       <ChartViewContainer id="chart-view">
         {showSearch && (
           <SearchSidebar visible={showSearch} onClose={handleCloseSearch} />
         )}
         <ContentWrapper showSearch={showSearch}>
-          <ChartContainer>
+          <ChartContainer ref={chartScreenshotRef}>
             <SplitPaneLayout defaultSize={200}>
               <TopPaneWrapper className="chart">
                 <ChartWrapper>
