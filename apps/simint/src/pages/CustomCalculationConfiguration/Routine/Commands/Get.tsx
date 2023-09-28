@@ -9,7 +9,7 @@ import { SelectBox, StepsContainer } from '../../elements';
 
 import { DynamicFields, StepType, Unit, UnitType, Variable } from './Fields';
 import type { StepCommandProps } from './utils';
-import { getTimeSerieIndexByType } from './utils';
+import { getInputOutputIndex } from './utils';
 
 export function Get({
   dynamicStepFields,
@@ -26,14 +26,14 @@ export function Get({
 
   const { values, setFieldValue } = useFormikContext<UserDefined>();
 
-  const timeSerieIndex = getTimeSerieIndexByType(
+  const { index: inputOutputIndex, didFindEntry } = getInputOutputIndex(
     values.outputTimeSeries,
     step.arguments.value ?? ''
   );
 
   useEffect(() => {
-    if (timeSerieIndex !== -1) {
-      const currentTs = values.outputTimeSeries[timeSerieIndex];
+    if (didFindEntry) {
+      const currentTs = values.outputTimeSeries[inputOutputIndex];
       const generateTimeSeriesExternalId = generateOutputTimeSeriesExternalId({
         simulator: values.simulator,
         calculationType: values.calculationName,
@@ -41,13 +41,11 @@ export function Get({
         timeSeriesType: currentTs.type,
       });
       setFieldValue(
-        `outputTimeSeries.${timeSerieIndex}.externalId`,
+        `outputTimeSeries.${inputOutputIndex}.externalId`,
         generateTimeSeriesExternalId
       );
     }
   }, [values.outputTimeSeries]);
-
-  const isVariableDefined = timeSerieIndex !== -1;
 
   return (
     <div style={{ display: 'flex' }}>
@@ -55,7 +53,7 @@ export function Get({
         <SelectBox>
           <StepType {...props} />
           <Variable {...props} timeSeriesPrefix="outputTimeSeries" />
-          {isVariableDefined && (
+          {didFindEntry && (
             <>
               <UnitType {...props} timeSeriesPrefix="outputTimeSeries" />
               <Unit {...props} timeSeriesPrefix="outputTimeSeries" />

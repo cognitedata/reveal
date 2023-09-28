@@ -2440,10 +2440,10 @@
   dependencies:
     "@cognite/intercom-helper" "0.2.1"
 
-"@cognite/simconfig-api-sdk@1.6.17":
-  version "1.6.17"
-  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.6.17.tgz#83c756431f1400af93ece62d7e886caaa42302f6"
-  integrity sha512-cpy0V//rgMRO3z6Kg5ztadgvPtCugdC1mn/01aJb7SYf9XfcR++GSqcctYn9uV9UMfMGNjTk2R2+TlkI2NMePA==
+"@cognite/simconfig-api-sdk@1.6.19":
+  version "1.6.19"
+  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.6.19.tgz#46673edcc60ddd2926a0d0fcac23e4683530d955"
+  integrity sha512-44FZuav+kO36ATtOiYxpeQo3/SNT1w2/XP7TU7CNaGdafuoQ9wIbLaKU9eq9HSm7fQXN92u2GLslovdDqUH+Qw==
 
 "@cognite/storage@0.1.3":
   version "0.1.3"

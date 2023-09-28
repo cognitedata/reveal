@@ -199,6 +199,13 @@ export function ModelDetails({
     });
   }
 
+  const unitSystemKey = modelFile.metadata.unitSystem;
+  const unitSystemLabel = unitSystemKey
+    ? definitions?.type.unitSystem[
+        unitSystemKey as keyof typeof definitions.type.unitSystem
+      ]
+    : modelFile.metadata.unitSystem;
+
   return (
     <ModelDetailsContainer>
       <div className="header">
@@ -208,12 +215,7 @@ export function ModelDetails({
             <ul>
               <li>{simulatorConfigDetails?.name} </li>
               {modelFile.metadata.unitSystem ? (
-                <li>
-                  ,{' '}
-                  {definitions?.type.unitSystem[
-                    modelFile.metadata.unitSystem
-                  ] ?? modelFile.metadata.unitSystem}
-                </li>
+                <li>, {unitSystemLabel}</li>
               ) : null}
 
               {modelFile.metadata.modelType ? (

@@ -43,7 +43,7 @@ export function Routine({
       step: procedure.steps.length + 1,
       type: 'Set',
       arguments: {
-        type: 'manual',
+        type: 'inputConstant',
       },
     };
     if (values.routine) {

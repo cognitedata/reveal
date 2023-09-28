@@ -9,7 +9,7 @@ import type { ConfigurationFieldProps, ValueOptionType } from '../utils';
 
 const INPUT_TYPE_OPTIONS: ValueOptionType<string>[] = [
   { label: 'Time series', value: 'inputTimeSeries' },
-  { label: 'Manual', value: 'manual' },
+  { label: 'Manual', value: 'inputConstant' },
 ];
 
 export function InputType({
@@ -25,6 +25,7 @@ export function InputType({
         <Field
           as={Select}
           label="Input type"
+          inputId={formikPath}
           name={formikPath}
           options={INPUT_TYPE_OPTIONS}
           value={

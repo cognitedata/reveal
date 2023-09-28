@@ -19,7 +19,7 @@ const mapStep = {
   Set: {
     type: 'Set',
     arguments: {
-      type: 'manual',
+      type: 'inputConstant',
     },
   },
   Command: {
@@ -42,6 +42,7 @@ export function StepType({
         <Field
           as={Select}
           label="Step type"
+          inputId={formikPath}
           name={formikPath}
           options={ACTION_OPTIONS}
           value={{
