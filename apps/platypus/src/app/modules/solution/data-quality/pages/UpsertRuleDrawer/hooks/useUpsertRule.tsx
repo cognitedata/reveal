@@ -51,10 +51,7 @@ export const useUpsertRule = () => {
     if (!dataSource || !ruleset) {
       Notification({
         type: 'error',
-        message: t(
-          'data_quality_error_rule_upsert',
-          'Something went wrong. Can not create a rule without a ruleset or datasource.'
-        ),
+        message: t('data_quality_error_upsert', '', { target: 'rule' }),
         errors: `Data source id is "${dataSource?.externalId}". Ruleset id is "${ruleset?.externalId}"`,
         options: { position: 'bottom-left' },
       });
@@ -67,9 +64,9 @@ export const useUpsertRule = () => {
       refetchRules();
     };
 
-    // Create a rule
-    if (!editedRule) {
-      try {
+    try {
+      // Create a rule
+      if (!editedRule) {
         const newRule: RuleCreateDraft = {
           externalId: uuidv4(),
           ...values,
@@ -87,29 +84,17 @@ export const useUpsertRule = () => {
             onSuccess: handleSuccess,
           }
         );
-      } catch (err: any) {
-        Notification({
-          type: 'error',
-          message: t(
-            'data_quality_error_rule_create',
-            'Something went wrong. The rule could not be created.'
-          ),
-          errors: JSON.stringify(err?.stack?.error),
-          options: { position: 'bottom-left' },
-        });
       }
-    }
 
-    // Update a rule
-    else {
-      try {
+      // Update a rule
+      else {
         const noChanges = compareChanges(values, editedRule);
 
         if (noChanges) {
           Notification({
             type: 'info',
             message: t(
-              'data_quality_rule_no_changes',
+              'data_quality_upsert_no_changes',
               'No changes to be updated were found.'
             ),
             options: { position: 'bottom-left' },
@@ -135,17 +120,18 @@ export const useUpsertRule = () => {
             onSuccess: handleSuccess,
           }
         );
-      } catch (err: any) {
-        Notification({
-          type: 'error',
-          message: t(
-            'data_quality_error_rule_update',
-            'Something went wrong. The rule could not be updated.'
-          ),
-          errors: JSON.stringify(err?.stack?.error),
-          options: { position: 'bottom-left' },
-        });
       }
+    } catch (err: any) {
+      const message = editedRule
+        ? 'data_quality_error_update'
+        : 'data_quality_error_create';
+
+      Notification({
+        type: 'error',
+        message: t(message, '', { target: 'rule' }),
+        errors: JSON.stringify(err?.stack?.error),
+        options: { position: 'bottom-left' },
+      });
     }
   };
 

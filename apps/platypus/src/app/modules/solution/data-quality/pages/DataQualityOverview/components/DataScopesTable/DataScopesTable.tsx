@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { CellProps } from 'react-table';
 
 import { DataScopeDto } from '@data-quality/api/codegen';
 import { useLoadDataScopes } from '@data-quality/hooks';
+import { UpsertDataScopeModal } from '@data-quality/pages';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import { Notification } from '@platypus-app/components/Notification/Notification';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
@@ -14,6 +15,8 @@ import { DataTypeCell, FiltersCell, NameCell } from './DataScopesCells';
 export const DataScopesTable = () => {
   const { t } = useTranslation('DataScopesTable');
 
+  const [editedDataScope, setEditedDataScope] = useState<DataScopeDto>();
+
   const { dataScopes, isLoading, error } = useLoadDataScopes();
 
   const tableColumns: TableColumn<DataScopeDto>[] = [
@@ -23,12 +26,7 @@ export const DataScopesTable = () => {
       Cell: ({ row }: CellProps<DataScopeDto>) => {
         return (
           <NameCell
-            onClick={() => {
-              Notification({
-                type: 'info',
-                message: 'Under development',
-              });
-            }}
+            onClick={() => setEditedDataScope(row.original)}
             dataScopeName={row.original.name}
           />
         );
@@ -85,7 +83,11 @@ export const DataScopesTable = () => {
         {renderContent()}
       </Flex>
 
-      {/*TODO add here modal for upserting a data scope */}
+      <UpsertDataScopeModal
+        editedDataScope={editedDataScope}
+        isVisible={!!editedDataScope}
+        onCancel={() => setEditedDataScope(undefined)}
+      />
     </>
   );
 };

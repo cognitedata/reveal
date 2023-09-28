@@ -4,29 +4,24 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 type ShowUpsertSuccessProps = {
   isUpdate: boolean;
   onSuccess: VoidFunction;
-  ruleName: string;
+  targetName: string;
+  targetType: string;
 };
 
-/** Show a notification when upsert is successful for a rule. */
+/** Show a notification when upsert is successful for any target part of the data quality entities.
+ * A target can be a rule, a data scope or a ruleset. */
 export const useShowUpsertSuccess = () => {
   const { t } = useTranslation('useUpsertSuccess');
 
   const showUpsertSuccess = ({
     isUpdate,
     onSuccess,
-    ruleName,
+    targetName,
+    targetType,
   }: ShowUpsertSuccessProps) => {
     const message = isUpdate
-      ? t(
-          'data_quality_rule_updated',
-          `Rule "${ruleName}" was updated successfully!`,
-          { ruleName: ruleName }
-        )
-      : t(
-          'data_quality_rule_created',
-          `Rule "${ruleName}" was created successfully!`,
-          { ruleName: ruleName }
-        );
+      ? t('data_quality_success_update', ``, { targetName, targetType })
+      : t('data_quality_success_create', ``, { targetName, targetType });
 
     Notification({
       type: 'success',

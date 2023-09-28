@@ -420,6 +420,63 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse'
 
+    post:
+      tags:
+        - DataScopes
+      summary: Create data scopes
+      description: >-
+        Create a set of new data scopes.
+      operationId: createDataScopes
+      parameters:
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+      requestBody:
+        description: List of data scopes to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataScopeCreateRequest'
+        required: true
+      x-capability:
+        - 'DatamodelsAcl:WRITE'
+      responses:
+        '200':
+          $ref: '#/components/responses/DataScopeListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '409':
+          description: DataScope conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpsertConflict'
+
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes/update':
+    post:
+      tags:
+        - DataScopes
+      summary: Update data scopes
+      description: >-
+        Update the properties of a set of data scopes
+      operationId: updateDataScopes
+      parameters:
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+      requestBody:
+        description: List of data scopes to be updated.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataScopeUpdateRequest'
+        required: true
+      x-capability:
+        - 'DatamodelsAcl:WRITE'
+      responses:
+        '200':
+          $ref: '#/components/responses/DataScopeListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
   '/api/v1/projects/{project}/data-validation/datasources/{dataSource}/datascopes/byids':
     post:
       tags:
@@ -1238,6 +1295,80 @@ components:
               externalId:
                 description: Ids from data scopes
                 $ref: '#/components/schemas/ExternalId'
+
+    DataScopeCreateDraft:
+      allOf:
+      type: object
+      required: [dataType, externalId, filters, name]
+      properties:
+        dataType:
+          description: 'The reference to a view in FDM'
+          type: string
+        externalId:
+          description: 'The external-id of the data scope'
+          allOf:
+            - $ref: '#/components/schemas/ExternalId'
+        name:
+          description: 'The name of the data scope'
+          type: string
+        filters:
+          description: 'Filters used during validation'
+          type: string
+
+    DataScopeCreateRequest:
+      type: object
+      required: [items]
+      description: List of data scopes to create
+      minItems: 1
+      maxItems: 100
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            $ref: '#/components/schemas/DataScopeCreateDraft'
+
+    DataScopeUpdateItem:
+      allOf:
+      type: object
+      required: [externalId, update]
+      properties:
+        externalId:
+          description: 'The external-id of the data scope'
+          allOf:
+            - $ref: '#/components/schemas/ExternalId'
+        update:
+          description: 'The properties to be updated'
+          allOf:
+            - $ref: '#/components/schemas/DataScopeUpdateDraft'
+
+    DataScopeUpdateDraft:
+      allOf:
+      type: object
+      properties:
+        name:
+          description: 'The name of the rule'
+          type: string
+        filters:
+          description: 'Filters used to perform validation'
+          type: string
+
+    DataScopeUpdateRequest:
+      type: object
+      required: [items]
+      description: List of data scopes to update
+      minItems: 1
+      maxItems: 100
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            $ref: '#/components/schemas/DataScopeUpdateItem'
 
     ### Rule runs schema ###
 

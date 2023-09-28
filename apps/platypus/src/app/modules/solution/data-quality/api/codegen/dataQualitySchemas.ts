@@ -540,6 +540,83 @@ export type DataScopeListIdsRequest = {
   }[];
 };
 
+export type DataScopeCreateDraft = {
+  /**
+   * The reference to a view in FDM
+   */
+  dataType: string;
+  /**
+   * The external-id of the data scope
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  /**
+   * The name of the data scope
+   */
+  name: string;
+  /**
+   * Filters used during validation
+   */
+  filters: string;
+};
+
+/**
+ * List of data scopes to create
+ *
+ * @minItems 1
+ * @maxItems 100
+ */
+export type DataScopeCreateRequest = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: DataScopeCreateDraft[];
+};
+
+export type DataScopeUpdateItem = {
+  /**
+   * The external-id of the data scope
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  /**
+   * The properties to be updated
+   */
+  update: DataScopeUpdateDraft;
+};
+
+export type DataScopeUpdateDraft = {
+  /**
+   * The name of the rule
+   */
+  name?: string;
+  /**
+   * Filters used to perform validation
+   */
+  filters?: string;
+};
+
+/**
+ * List of data scopes to update
+ *
+ * @minItems 1
+ * @maxItems 100
+ */
+export type DataScopeUpdateRequest = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: DataScopeUpdateItem[];
+};
+
 /**
  * State of the rule run
  */
