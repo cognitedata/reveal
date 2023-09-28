@@ -21,10 +21,6 @@ describe('Asset filters', () => {
     cy.tableShouldBeVisible('asset-search-results');
   });
 
-  beforeEach(() => {
-    interceptAssetList();
-  });
-
   afterEach(() => {
     cy.resetSearchFilters();
   });
@@ -32,28 +28,30 @@ describe('Asset filters', () => {
   it('should filter assets by source', () => {
     const SOURCE = 'carina';
 
+    interceptAssetList('assetsFilterBySource');
+
     cy.clickFilter('Sources').searchAndClickOption(SOURCE);
 
-    cy.wait(`@${ASSET_LIST_ALIAS}`);
-
-    cy.getTableById('asset-search-results').within((table) => {
-      cy.wrap(table)
-        .selectColumn('Source')
-        .shouldAllRowsHaveValueInColumn('Source', SOURCE);
+    cy.wait('@assetFilterBySource').payloadShouldContain({
+      in: {
+        property: ['source'],
+        values: [SOURCE],
+      },
     });
   });
 
   it('should filter assets by label', () => {
     const LABEL = 'BEST_DAY_WELL_FLAG_OIL';
 
+    interceptAssetList('assetsFilterByLabel');
+
     cy.clickFilter('Labels').searchAndClickOption(LABEL);
 
-    cy.wait(`@${ASSET_LIST_ALIAS}`);
-
-    cy.getTableById('asset-search-results').within((table) => {
-      cy.wrap(table)
-        .selectColumn('Labels')
-        .shouldAllRowsHaveValueInColumn('Labels', LABEL);
+    cy.wait('@assetFilterByLabel').payloadShouldContain({
+      containsAny: {
+        property: ['labels'],
+        values: [LABEL],
+      },
     });
   });
 });

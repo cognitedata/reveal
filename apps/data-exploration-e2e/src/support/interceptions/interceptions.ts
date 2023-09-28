@@ -8,11 +8,11 @@ export const ASSET_AGGREGATE_ALIAS = 'assetAggregate';
 export const TIMESERIES_AGGREGATE_ALIAS = 'timeseriesAggregate';
 export const FILE_AGGREGATE_ALIAS = 'fileAggregate';
 
-export const interceptAssetList = () => {
+export const interceptAssetList = (alias = ASSET_LIST_ALIAS) => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/assets/list',
     method: 'POST',
-  }).as(ASSET_LIST_ALIAS);
+  }).as(alias);
 };
 
 export const interceptTimeseriesList = () => {
