@@ -207,6 +207,12 @@ export function DataSamplingStep() {
           name="dataSampling.validationWindow"
           step={1}
           title="Validation window"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setFieldValue(
+              'dataSampling.validationWindow',
+              parseInt(event.currentTarget.value)
+            );
+          }}
           width={180}
         />
 
@@ -216,6 +222,12 @@ export function DataSamplingStep() {
           name="dataSampling.samplingWindow"
           step={1}
           title="Sampling window"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setFieldValue(
+              'dataSampling.samplingWindow',
+              parseInt(event.currentTarget.value)
+            );
+          }}
           width={180}
         />
 
@@ -225,6 +237,12 @@ export function DataSamplingStep() {
           name="dataSampling.granularity"
           step={1}
           title="Granularity"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setFieldValue(
+              'dataSampling.granularity',
+              parseInt(event.currentTarget.value)
+            );
+          }}
           width={180}
         />
         <SelectContainer>
