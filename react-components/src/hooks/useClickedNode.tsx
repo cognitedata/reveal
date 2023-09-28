@@ -69,12 +69,13 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
         return;
       }
 
+      setClickedNodeData({
+        intersection: cadIntersection
+      });
+
       const cadAndFdmNodes = await promises.cadAndFdmNodesPromise;
 
       if (cadAndFdmNodes === undefined || cadAndFdmNodes.fdmIds.length === 0) {
-        setClickedNodeData({
-          intersection: cadIntersection
-        });
         return;
       }
 
