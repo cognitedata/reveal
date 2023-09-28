@@ -324,6 +324,7 @@ export function ModelForm({
                 required
                 onChange={({ value }: { value: string }) => {
                   setFieldValue('metadata.simulator', value);
+                  setFieldValue('metadata.unitSystem', undefined);
                   setSelectedSimulator(value);
                 }}
               />
