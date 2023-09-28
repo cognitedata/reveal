@@ -238,6 +238,16 @@
     "routes": [{ "route": "/:tenantName/entity-matching" }]
   },
   {
+    "key": "cdf-ui-entity-matching",
+    "appName": "@cognite/cdf-ui-entity-matching",
+    "hosting": {
+      "staging": "https://cdf-entity-matching-prod.cogniteapp.com",
+      "preview": "https://cdf-entity-matching-prod.cogniteapp.com",
+      "production": "https://cdf-entity-matching-prod.cogniteapp.com"
+    },
+    "routes": [{ "route": "/:tenantName/entity-matching-new" }]
+  },
+  {
     "key": "cdf-ui-notebook",
     "appName": "@cognite/cdf-ui-notebook",
     "hosting": {
