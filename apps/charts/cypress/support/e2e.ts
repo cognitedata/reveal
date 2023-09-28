@@ -22,6 +22,7 @@ import {
   AADPassword,
   project,
 } from '../config';
+import './charts-commands';
 
 Cypress.on('uncaught:exception', (err) => {
   // returning false here prevents Cypress from
