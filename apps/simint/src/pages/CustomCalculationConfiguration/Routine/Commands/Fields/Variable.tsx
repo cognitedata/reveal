@@ -29,7 +29,8 @@ export function Variable({
   routineIndex,
   timeSeriesPrefix,
 }: VariableFieldProps) {
-  const { setFieldValue, values } = useFormikContext<UserDefined>();
+  const { setFieldValue, values, validateField } =
+    useFormikContext<UserDefined>();
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
@@ -63,7 +64,8 @@ export function Variable({
       <div className="cogs-input-container">
         <Field
           as={InputExp}
-          error={variableError}
+          status={variableError ? 'critical' : undefined}
+          statusText={variableError}
           label="Variable"
           name={formikPath}
           options={TIMESERIES_VARIABLE_OPTIONS}
@@ -71,7 +73,8 @@ export function Variable({
           type="text"
           validate={() => {
             // Find the name of the current variable
-            const name = timeSeriesTarget[inputOutputIndex]?.name;
+            let error = '';
+            const name = timeSeriesTarget[inputOutputIndex]?.name?.trim();
 
             if (!name) {
               return undefined;
@@ -96,15 +99,24 @@ export function Variable({
               ).length > 1;
 
             if (isDuplicate) {
-              setVariableError('Duplicate variable name');
-            } else {
-              setVariableError('');
+              error = 'Duplicate variable name';
             }
+            setVariableError(error);
 
-            return undefined;
+            return error;
           }}
           value={timeSeriesTarget[inputOutputIndex]?.name ?? ''}
           fullWidth
+          onBlur={async (event: React.FocusEvent<HTMLInputElement>) => {
+            const { value } = event.currentTarget;
+
+            await setFieldValue(
+              `${timeSeriesPrefix}.${inputOutputIndex}.name`,
+              value?.trim()
+            );
+
+            validateField(formikPath);
+          }}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = event.currentTarget;
             const type = `${value
@@ -116,7 +128,7 @@ export function Variable({
             setFieldValue(`${timeSeriesPrefix}.${inputOutputIndex}.type`, type);
             setFieldValue(
               `${timeSeriesPrefix}.${inputOutputIndex}.name`,
-              value.trim()
+              value
             );
           }}
         />
