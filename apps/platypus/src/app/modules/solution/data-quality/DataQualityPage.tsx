@@ -1,8 +1,10 @@
 import {
   AccessAction,
   useAccessControl,
+  useDataSourceValidation,
   useLoadDataSource,
-  useStartValidation,
+  useValidationStatusMessage,
+  ValidationStatus,
 } from '@data-quality/hooks';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
@@ -10,8 +12,9 @@ import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { Body, Button, Flex, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Chip, ChipProps, Flex, Tooltip } from '@cognite/cogs.js';
 
+import { RuleRunStatus } from './api/codegen';
 import { DataQualityOverview, DownloadReport } from './pages';
 
 export const DataQualityPage = () => {
@@ -23,11 +26,11 @@ export const DataQualityPage = () => {
     isLoading: isLoadingDataSource,
   } = useLoadDataSource();
   const {
-    isDisabled: validationDisabled,
-    isLoading: validationInProgress,
-    disabledMessage,
+    disabledMessage: validationDisabledMessage,
+    isDisabled: isValidationDisabled,
     startValidation,
-  } = useStartValidation();
+    status: validationStatus,
+  } = useDataSourceValidation();
   const {
     isLoading: isLoadingAccess,
     canReadDataValidation,
@@ -51,10 +54,7 @@ export const DataQualityPage = () => {
       return (
         <BasicPlaceholder
           type="EmptyStateFolderSad"
-          title={t(
-            'data_quality_not_found_ds',
-            'Something went wrong. The data source could not be loaded.'
-          )}
+          title={t('data_quality_not_found_ds', '')}
         >
           <Body size="small">{JSON.stringify(error?.stack?.error)}</Body>
         </BasicPlaceholder>
@@ -65,10 +65,7 @@ export const DataQualityPage = () => {
       return (
         <BasicPlaceholder
           type="SecureSecurity"
-          title={t(
-            'data_quality_no_access',
-            'Missing necessary access to view Data Validation.'
-          )}
+          title={t('data_quality_no_access_read', '')}
         >
           <Body size="small">{accessErrorMessageRead}</Body>
         </BasicPlaceholder>
@@ -79,10 +76,7 @@ export const DataQualityPage = () => {
       return (
         <BasicPlaceholder
           type="SecureSecurity"
-          title={t(
-            'data_quality_no_access_initiate_data_source',
-            'Missing access to initialize a data source.'
-          )}
+          title={t('data_quality_no_access_initiate_data_source', '')}
         >
           <Body size="small">{accessErrorMessageWrite}</Body>
         </BasicPlaceholder>
@@ -95,25 +89,28 @@ export const DataQualityPage = () => {
   return (
     <PageContentLayout>
       <PageContentLayout.Header data-cy="dq-page-header">
-        <PageToolbar title={t('data_quality_title', 'Data quality')}>
+        <PageToolbar
+          behindTitle={<ValidationStatusLabel status={validationStatus} />}
+          title={t('data_quality_title', '')}
+        >
           {dataSource && canReadDataValidation && (
             <Flex direction="row" gap={8}>
               <Tooltip
-                content={disabledMessage}
-                disabled={!validationDisabled}
+                content={validationDisabledMessage}
+                disabled={!isValidationDisabled}
                 wrapped
               >
                 <Button
-                  disabled={validationDisabled}
-                  loading={validationInProgress}
+                  disabled={isValidationDisabled}
+                  loading={validationStatus === 'InProgress'}
                   onClick={startValidation}
                   type="primary"
                 >
-                  {t('data_quality_validate_now', 'Validate now')}
+                  {t('data_quality_validate_now', '')}
                 </Button>
               </Tooltip>
 
-              <DownloadReport />
+              <DownloadReport validationStatus={validationStatus} />
             </Flex>
           )}
         </PageToolbar>
@@ -123,5 +120,30 @@ export const DataQualityPage = () => {
         {renderContent()}
       </PageContentLayout.Body>
     </PageContentLayout>
+  );
+};
+
+type ValidationStatusLabelProps = {
+  status: ValidationStatus;
+};
+
+// TODO: Move to /components folder after restructuring page structure
+const ValidationStatusLabel = ({ status }: ValidationStatusLabelProps) => {
+  const { label, message } = useValidationStatusMessage(status);
+
+  if (status === 'Idle') return null;
+
+  const chipStatuses: Record<RuleRunStatus, ChipProps> = {
+    Error: { icon: 'ErrorFilled', type: 'danger' },
+    InProgress: { icon: 'Loader', type: 'neutral' },
+    Success: { icon: 'CheckmarkFilled', type: 'success' },
+  };
+
+  return (
+    <Chip
+      label={label}
+      tooltipProps={{ content: message }}
+      {...chipStatuses[status]}
+    />
   );
 };

@@ -1,5 +1,6 @@
 import { DataSourceDto, RuleDto } from '@data-quality/api/codegen';
 import {
+  ValidationStatus,
   useLoadDataSource,
   useLoadDatapoints,
   useLoadRules,
@@ -23,7 +24,7 @@ import { Datapoints } from '@cognite/sdk/dist/src';
  *
  * If the state is disabled, an informative message will be displayed.
  */
-export const useReportAvailability = () => {
+export const useReportAvailability = (validationStatus: ValidationStatus) => {
   const { dataSource, isLoading: dsLoading } = useLoadDataSource();
   const { rules, loadingRules } = useLoadRules();
   const { datapoints, isLoading: loadingDatapoints } = useLoadDatapoints({
@@ -32,12 +33,19 @@ export const useReportAvailability = () => {
   });
 
   const noRules = rules.length === 0;
-  const noDataSourceValidity = !dataSource || emptyDatapoints(datapoints);
-
   const isLoading = dsLoading || loadingDatapoints || loadingRules;
-  const isDisabled = noRules || noDataSourceValidity;
+  const isDisabled =
+    noRules ||
+    !dataSource ||
+    emptyDatapoints(datapoints) ||
+    validationStatus !== 'Success';
 
-  const disabledMessage = useDisabledMessage(rules, datapoints, dataSource);
+  const disabledMessage = useDisabledMessage(
+    rules,
+    datapoints,
+    validationStatus,
+    dataSource
+  );
 
   return { disabledMessage, isDisabled, isLoading };
 };
@@ -45,33 +53,24 @@ export const useReportAvailability = () => {
 const useDisabledMessage = (
   rules: RuleDto[],
   datapoints: Datapoints[],
+  validationStatus: ValidationStatus,
   dataSource?: DataSourceDto
 ) => {
   const { t } = useTranslation('useDisabledMessage');
 
-  let disabledMessage = t(
-    'data_quality_report_disabled',
-    'Cannot download report'
-  );
-
   // TODO consider access control here too
-  if (!dataSource)
-    disabledMessage = t(
-      'data_quality_report_disabled_ds',
-      'Cannot download report. No datasource was found.'
-    );
+  if (!dataSource) return t('data_quality_report_disabled_no_datasource', '');
 
-  if (rules.length === 0)
-    disabledMessage = t(
-      'data_quality_report_disabled_rules',
-      'Cannot download report. No rules were found.'
-    );
+  if (rules.length === 0) return t('data_quality_report_disabled_no_rules', '');
 
   if (emptyDatapoints(datapoints))
-    disabledMessage = t(
-      'data_quality_report_disabled_score',
-      'Cannot download report. Validate now to get the total validity score of your data.'
-    );
+    return t('data_quality_report_disabled_no_score', '');
 
-  return disabledMessage;
+  if (validationStatus === 'InProgress')
+    return t('data_quality_report_disabled_validation_in_progress', '');
+
+  if (validationStatus === 'Error')
+    return t('data_quality_report_disabled_validation_error', '');
+
+  return '';
 };
