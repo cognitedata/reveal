@@ -18,6 +18,7 @@ import { useSearchQueryParams } from '../../../hooks/useParams';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useAIDataTypesQuery } from '../../../services/dataTypes/queries/useAIDataTypesQuery';
 import { useSelectedDataModels } from '../../../services/useSelectedDataModels';
+import { AIResultAggregateChart } from '../components/AIResultAggregateChart/AIResultAggregateChart';
 import { CogPilotIcon } from '../components/CogPilotIcon';
 import { useAICachedResults } from '../hooks/useAICachedResults';
 
@@ -115,6 +116,11 @@ export const AIResultSummary = ({
     return text;
   }, [results, t, copilotMessage]);
 
+  const groupedResults = useMemo(
+    () => (results || []).filter((item) => !!item.group),
+    [results]
+  );
+
   if (error) {
     return (
       <Header>
@@ -184,6 +190,9 @@ export const AIResultSummary = ({
               </Button>
             </NotificationDot>
           </Flex>
+          {groupedResults.length && (
+            <AIResultAggregateChart items={groupedResults} />
+          )}
         </Flex>
       </Header>
       {copilotMessage && <CopilotActions message={copilotMessage} />}
@@ -233,7 +242,6 @@ export const AIResultSummary = ({
 const Header = styled.div<{ $loading?: boolean }>`
   display: flex;
   padding: 16px;
-  gap: 8px;
   border-radius: 8px;
   background: ${(props) =>
     props.$loading
