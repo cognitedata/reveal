@@ -88,15 +88,18 @@ export const useUrlStateParam = (): UrlStateParamActions => {
   };
 
   const setUrlParamOnLayersChanged = (layers: LayersUrlStateParam): void => {
-    if (layers.cadLayers !== undefined) {
-      url.searchParams.set('cadLayers', JSON.stringify(layers.cadLayers));
+    const { cadLayers, pointCloudLayers, image360Layers } = layers;
+
+    if (cadLayers !== undefined) {
+      url.searchParams.set('cadLayers', JSON.stringify(cadLayers));
     }
-    if (layers.pointCloudLayers !== undefined) {
-      url.searchParams.set('pointCloudLayers', JSON.stringify(layers.pointCloudLayers));
+    if (pointCloudLayers !== undefined) {
+      url.searchParams.set('pointCloudLayers', JSON.stringify(pointCloudLayers));
     }
-    if (layers.image360Layers !== undefined) {
-      url.searchParams.set('image360Layers', JSON.stringify(layers.image360Layers));
+    if (image360Layers !== undefined) {
+      url.searchParams.set('image360Layers', JSON.stringify(image360Layers));
     }
+
     window.history.pushState({}, '', url);
   };
 
