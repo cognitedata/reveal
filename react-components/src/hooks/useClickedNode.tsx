@@ -5,8 +5,12 @@
 import { type CadIntersection, type PointerEventData } from '@cognite/reveal';
 import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
-import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
+import { useFdm3dNodeDataPromises } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { type Node3D } from '@cognite/sdk';
+import {
+  type CadNodeWithFdmIds,
+  type FdmNodeDataPromises
+} from '../components/NodeCacheProvider/types';
 
 export type NodeDataResult = {
   fdmNode: DmsUniqueIdentifier;
@@ -44,44 +48,64 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     };
   }, [viewer]);
 
-  const nodeData = useFdm3dNodeData(
+  const nodeDataPromises = useFdm3dNodeDataPromises(
     cadIntersection?.model.modelId,
     cadIntersection?.model.revisionId,
     cadIntersection?.treeIndex
   ).data;
 
   useEffect(() => {
-    if (isWaitingForQueryResult()) {
-      return;
-    }
+    void setClickedNodeFromQueryResult(nodeDataPromises);
 
-    const nodeDataList = nodeData ?? [];
+    async function setClickedNodeFromQueryResult(
+      promises: FdmNodeDataPromises | undefined
+    ): Promise<void> {
+      if (promises === undefined) {
+        return;
+      }
 
-    if (cadIntersection === undefined) {
-      setClickedNodeData(undefined);
-      return;
-    }
+      if (cadIntersection === undefined) {
+        setClickedNodeData(undefined);
+        return;
+      }
 
-    if (nodeDataList.length === 0) {
       setClickedNodeData({
         intersection: cadIntersection
       });
-      return;
+
+      const cadAndFdmNodes = await promises.cadAndFdmNodesPromise;
+
+      if (cadAndFdmNodes === undefined || cadAndFdmNodes.fdmIds.length === 0) {
+        return;
+      }
+
+      setClickedNodeData({
+        intersection: cadIntersection,
+        fdmNode: cadAndFdmNodes.fdmIds[0],
+        cadNode: cadAndFdmNodes.cadNode
+      });
+
+      await setClickedNodeFromViewPromise(cadAndFdmNodes, promises.viewsPromise);
     }
 
-    const chosenNode = nodeDataList[0];
+    async function setClickedNodeFromViewPromise(
+      data: CadNodeWithFdmIds,
+      viewsPromise: Promise<Source[] | undefined>
+    ): Promise<void> {
+      const views = await viewsPromise;
 
-    setClickedNodeData({
-      intersection: cadIntersection,
-      fdmNode: chosenNode.edge.startNode,
-      view: chosenNode.view,
-      cadNode: chosenNode.node
-    });
+      if (views === undefined || views.length === 0 || cadIntersection === undefined) {
+        return;
+      }
 
-    function isWaitingForQueryResult(): boolean {
-      return nodeData === undefined && cadIntersection !== undefined;
+      setClickedNodeData({
+        intersection: cadIntersection,
+        fdmNode: data.fdmIds[0],
+        cadNode: data.cadNode,
+        view: views[0]
+      });
     }
-  }, [nodeData]);
+  }, [nodeDataPromises]);
 
   return clickedNodeData;
 };
