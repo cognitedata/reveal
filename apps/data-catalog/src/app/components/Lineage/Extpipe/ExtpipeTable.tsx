@@ -2,15 +2,13 @@ import { FunctionComponent, PropsWithChildren } from 'react';
 
 import styled from 'styled-components';
 
-import { DataSetWithExtpipes } from '@data-catalog-app/actions';
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import InfoTooltip from '@data-catalog-app/components/InfoTooltip';
-
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import { Button, Colors, Icon, Link, Table } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
+import { DataSetWithExtpipes } from '../../../actions';
+import { useTranslation } from '../../../common/i18n';
 import { getExtractionPipelineUIUrl } from '../../../utils/extpipeUtils';
 import {
   LineageSection,
@@ -19,6 +17,7 @@ import {
   NoDataText,
 } from '../../../utils/styledComponents';
 import { Extpipe } from '../../../utils/types';
+import InfoTooltip from '../../InfoTooltip';
 
 import { ExtpipeSourceExtractorProps } from './ExtpipeSourceExtractor';
 import { useExtpipeTableColumns } from './ExtpipeTableColumns';

@@ -13,7 +13,6 @@ import {
 } from '@cognite/cdf-utilities';
 
 import { TranslationKeys } from '../common/i18n';
-
 // @ts-ignore
 import { styleScope } from '../styles/styleScope';
 

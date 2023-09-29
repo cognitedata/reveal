@@ -6,23 +6,24 @@ import {
   useState,
 } from 'react';
 
-import { useRawList } from '@data-catalog-app/actions';
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import RawSelector from '@data-catalog-app/components/RawSelector';
-import { Col, Row } from '@data-catalog-app/utils';
-import {
-  FieldLabel,
-  BlockedInformationWrapper,
-  MiniInfoTitle,
-} from '@data-catalog-app/utils/styledComponents';
-import { RawTable } from '@data-catalog-app/utils/types';
 import { useQueryClient } from '@tanstack/react-query';
 
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Modal, Input, Icon, Chip, Flex, toast } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
+import { useRawList } from '../../../actions';
 import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
+import { useTranslation } from '../../../common/i18n';
+import {
+  BlockedInformationWrapper,
+  Col,
+  FieldLabel,
+  MiniInfoTitle,
+  RawTable,
+  Row,
+} from '../../../utils';
+import RawSelector from '../../RawSelector';
 
 interface RawSectionProps {
   selectedDb: string;

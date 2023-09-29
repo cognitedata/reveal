@@ -1,40 +1,32 @@
 import { useState, useEffect } from 'react';
 
-import {
-  DataConsumer,
-  documentationIcon as DocumentationIcon,
-  getDataInIcon as GetDataInIcon,
-  jetfireIcon as JetfireIcon,
-} from '@data-catalog-app/assets';
-
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import { useUserInformation } from '@data-catalog-app/hooks/useUserInformation';
-import theme from '@data-catalog-app/styles/theme';
-import { Card } from '@data-catalog-app/utils';
-import {
-  NAME_MAX_LENGTH,
-  DESC_MAX_LENGTH,
-} from '@data-catalog-app/utils/constants';
-import {
-  getContainer,
-  isNotNilOrWhitespace,
-} from '@data-catalog-app/utils/shared';
-import {
-  CreateButton,
-  ChangesSavedWrapper,
-  SaveButton,
-} from '@data-catalog-app/utils/styledComponents';
-import {
-  CogsTableCellRenderer,
-  CreationDataSet,
-  DataSet,
-} from '@data-catalog-app/utils/types';
-
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { Icon, Tooltip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 import { Group } from '@cognite/sdk';
 
+import {
+  DataConsumer,
+  documentationIcon as DocumentationIcon,
+  getDataInIcon as GetDataInIcon,
+  jetfireIcon as JetfireIcon,
+} from '../../assets';
+import { useTranslation } from '../../common/i18n';
+import { useUserInformation } from '../../hooks/useUserInformation';
+import theme from '../../styles/theme';
+import {
+  Card,
+  ChangesSavedWrapper,
+  CogsTableCellRenderer,
+  CreateButton,
+  CreationDataSet,
+  DataSet,
+  DESC_MAX_LENGTH,
+  getContainer,
+  isNotNilOrWhitespace,
+  NAME_MAX_LENGTH,
+  SaveButton,
+} from '../../utils';
 import ConsumerPage from '../ConsumerPage';
 import CreationFlowSection from '../CreationFlowSection';
 import DataSetInfo from '../DataSetInfo';

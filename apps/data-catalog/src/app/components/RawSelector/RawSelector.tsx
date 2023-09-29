@@ -1,18 +1,21 @@
 import { useState } from 'react';
 
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import { Col, Row } from '@data-catalog-app/utils';
-import { getStringCdfEnv, getContainer } from '@data-catalog-app/utils/shared';
-import {
-  RawCreateButton,
-  ListBox,
-  SearchField,
-  SearchWrapper,
-} from '@data-catalog-app/utils/styledComponents';
-import { CogsTableCellRenderer, RawTable } from '@data-catalog-app/utils/types';
-
 import { Icon, Checkbox, Table, Tooltip, Menu } from '@cognite/cogs.js';
 import { RawDB, RawDBTable } from '@cognite/sdk';
+
+import { useTranslation } from '../../common/i18n';
+import {
+  CogsTableCellRenderer,
+  Col,
+  getContainer,
+  getStringCdfEnv,
+  ListBox,
+  RawCreateButton,
+  RawTable,
+  Row,
+  SearchField,
+  SearchWrapper,
+} from '../../utils';
 
 type DatabaseWithTablesItem = {
   database: RawDB;

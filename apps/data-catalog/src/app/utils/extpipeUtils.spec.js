@@ -1,8 +1,5 @@
-import {
-  fetchExtpipesByDataSetId,
-  mapDataSetExtpipe,
-} from '@data-catalog-app/utils/extpipeUtils';
 import sdk from '@cognite/cdf-sdk-singleton';
+import { fetchExtpipesByDataSetId, mapDataSetExtpipe } from './extpipeUtils';
 
 jest.mock('@cognite/cdf-sdk-singleton', () => {
   return {

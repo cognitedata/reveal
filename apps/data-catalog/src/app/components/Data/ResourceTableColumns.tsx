@@ -1,5 +1,3 @@
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import { CogsTableCellRenderer, trackUsage } from '@data-catalog-app/utils';
 import moment from 'moment';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -11,6 +9,9 @@ import {
   Sequence,
   Timeseries,
 } from '@cognite/sdk';
+
+import { useTranslation } from '../../common/i18n';
+import { CogsTableCellRenderer, trackUsage } from '../../utils';
 
 import ResourceProperty from './ResourceProperty';
 

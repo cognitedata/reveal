@@ -1,24 +1,27 @@
 import { useEffect, useState } from 'react';
 
-import { jetfireIcon as JetfireIcon } from '@data-catalog-app/assets';
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import Drawer from '@data-catalog-app/components/Drawer';
-import useInterval from '@data-catalog-app/hooks/useInterval';
-import { JetfireApi } from '@data-catalog-app/jetfire/JetfireApi';
-import { Col } from '@data-catalog-app/utils';
-import { getJetfireUrl, getStringCdfEnv } from '@data-catalog-app/utils/shared';
-import {
-  InfoSubtitle,
-  IconWrapper,
-  MiniInfoTitle,
-  BlockedInformationWrapper,
-} from '@data-catalog-app/utils/styledComponents';
-import { CogsTableCellRenderer, DataSet } from '@data-catalog-app/utils/types';
 import moment from 'moment';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { Button, Input, Table, toast } from '@cognite/cogs.js';
+
+import { jetfireIcon as JetfireIcon } from '../../assets';
+import { useTranslation } from '../../common/i18n';
+import useInterval from '../../hooks/useInterval';
+import { JetfireApi } from '../../jetfire/JetfireApi';
+import {
+  BlockedInformationWrapper,
+  CogsTableCellRenderer,
+  Col,
+  DataSet,
+  getJetfireUrl,
+  getStringCdfEnv,
+  IconWrapper,
+  InfoSubtitle,
+  MiniInfoTitle,
+} from '../../utils';
+import Drawer from '../Drawer';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 

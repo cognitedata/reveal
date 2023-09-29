@@ -5,10 +5,9 @@ import {
   useState,
 } from 'react';
 
-import { useTranslation } from '@data-catalog-app/common/i18n';
-
 import { Table } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../common/i18n';
 import {
   LineageSubTitle,
   LineageTitle,

@@ -16,11 +16,11 @@ import {
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
+import AccessCheck from './AccessCheck';
 import { translations } from './common/i18n';
 import { DataSetsContextProvider } from './context';
 import GlobalStyles from './styles/GlobalStyles';
 import { trackUsage } from './utils';
-import AccessCheck from './AccessCheck';
 
 const DataSetsList = lazy(() => import('./pages/DataSetsList/DataSetsList'));
 const DataSetDetails = lazy(

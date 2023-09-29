@@ -1,9 +1,10 @@
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import { getAllSetOwnersFromGroups } from '@data-catalog-app/utils/shared';
+import { useMemo } from 'react';
 
 import { Table } from '@cognite/cogs.js';
 import { Group } from '@cognite/sdk';
-import { useMemo } from 'react';
+
+import { useTranslation } from '../../../common/i18n';
+import { getAllSetOwnersFromGroups } from '../../../utils';
 
 interface OwnersProps {
   dataSetId: number;

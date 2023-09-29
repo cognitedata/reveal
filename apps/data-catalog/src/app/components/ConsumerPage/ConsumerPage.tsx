@@ -2,18 +2,12 @@ import { useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { DataConsumer } from '@data-catalog-app/assets';
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import Drawer from '@data-catalog-app/components/Drawer';
-import { Col } from '@data-catalog-app/utils';
-import {
-  IconWrapper,
-  InputField,
-} from '@data-catalog-app/utils/styledComponents';
-import { Consumer, DataSet } from '@data-catalog-app/utils/types';
-
 import { Button, Colors } from '@cognite/cogs.js';
 
+import { DataConsumer } from '../../assets';
+import { useTranslation } from '../../common/i18n';
+import { Col, Consumer, DataSet, IconWrapper, InputField } from '../../utils';
+import Drawer from '../Drawer';
 import LinksList from '../LinksList';
 
 import {

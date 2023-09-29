@@ -1,12 +1,9 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import {
-  NoDataText,
-  NoStyleList,
-} from '@data-catalog-app/utils/styledComponents';
-
 import { Chip } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../common/i18n';
+import { NoDataText, NoStyleList } from '../../../utils';
 
 export interface SourceProps {
   sourceNames?: string[];
