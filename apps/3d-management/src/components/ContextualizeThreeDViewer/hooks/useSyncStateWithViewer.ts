@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import * as THREE from 'three';
 
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 
 import {
   ToolType,
@@ -47,6 +47,7 @@ export const useSyncStateWithViewer = () => {
     threeDViewer,
     tool,
     annotations,
+    visualizationOptions,
   } = useContextualizeThreeDViewerStore((state) => ({
     modelId: state.modelId,
     pendingAnnotation: state.pendingAnnotation,
@@ -55,7 +56,19 @@ export const useSyncStateWithViewer = () => {
     threeDViewer: state.threeDViewer,
     tool: state.tool,
     annotations: state.annotations,
+    visualizationOptions: state.visualizationOptions,
   }));
+
+  // sync visualizationOptions with viewer
+  useEffect(() => {
+    if (threeDViewer === null) return;
+
+    for (const model of threeDViewer.models)
+      if (model instanceof CognitePointCloudModel) {
+        model.pointSize = visualizationOptions.pointSize;
+        model.pointColorType = visualizationOptions.pointColor;
+      }
+  }, [visualizationOptions, threeDViewer]);
 
   // Sync pending annotation with viewer.
   useEffect(() => {

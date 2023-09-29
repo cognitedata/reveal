@@ -1,12 +1,8 @@
-import { useCallback } from 'react';
-
 import styled from 'styled-components';
 
 import { ToolBar } from '@cognite/cogs.js';
-import { CognitePointCloudModel, PointColorType } from '@cognite/reveal';
 import {
   RevealToolbar,
-  useReveal,
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
 
@@ -22,21 +18,9 @@ import { PointSizeSlider } from '../PointSizeSlider';
 import { PointCloudToolBarTools } from './PointCloudToolBarTools';
 
 export const PointCloudToolBar = () => {
-  const viewer = useReveal();
-
   const { modelId } = useContextualizeThreeDViewerStore((state) => ({
     modelId: state.modelId,
   }));
-
-  const handleColorChange = useCallback(
-    (colorType: PointColorType) => {
-      viewer.models.forEach((model) => {
-        if (!(model instanceof CognitePointCloudModel)) return;
-        model.pointColorType = colorType;
-      });
-    },
-    [viewer]
-  );
 
   if (modelId === null) return null;
 
@@ -48,8 +32,8 @@ export const PointCloudToolBar = () => {
         <RevealToolbar.SettingsButton
           customSettingsContent={
             <>
-              <ColorTypeSelector onChange={handleColorChange} />
-              <PointSizeSlider viewer={viewer} />
+              <ColorTypeSelector />
+              <PointSizeSlider />
             </>
           }
           lowQualitySettings={LowQualitySettings}

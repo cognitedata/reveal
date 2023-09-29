@@ -1,29 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Menu } from '@cognite/cogs.js';
 import { PointColorType } from '@cognite/reveal';
 
-type Props = {
-  onChange: (colorType: PointColorType) => void;
-};
+import {
+  useContextualizeThreeDViewerStore,
+  updateVisualizationOptions,
+} from '../useContextualizeThreeDViewerStore';
 
-export const ColorTypeSelector = ({ onChange }: Props): React.ReactElement => {
-  const [classificationColor, setClassificationColor] = useState(false);
+export const ColorTypeSelector = (): React.ReactElement => {
+  const { visualizationOptions } = useContextualizeThreeDViewerStore(
+    (state) => ({
+      visualizationOptions: state.visualizationOptions,
+    })
+  );
 
   const handleToggle = () => {
-    const newColorType = classificationColor
-      ? PointColorType.Rgb
-      : PointColorType.Classification;
+    const newColorType =
+      visualizationOptions.pointColor === PointColorType.Classification
+        ? PointColorType.Rgb
+        : PointColorType.Classification;
 
-    setClassificationColor((prevMode) => !prevMode);
-    onChange(newColorType);
+    updateVisualizationOptions({ pointColor: newColorType });
   };
 
   return (
     <>
       <Menu.Item
         hasSwitch
-        toggled={classificationColor}
+        toggled={
+          visualizationOptions.pointColor === PointColorType.Classification
+        }
         onChange={handleToggle}
       >
         View Classification
