@@ -12,6 +12,7 @@ declare namespace Cypress {
 Cypress.Commands.add('createChart', () => {
   cy.get('[data-testid="new-chart-button"]', { timeout: 30000 })
     .should('exist')
+    .should('not.be.disabled')
     .click();
 });
 

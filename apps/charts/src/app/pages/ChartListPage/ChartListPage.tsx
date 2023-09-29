@@ -7,6 +7,7 @@ import { OpenInCharts } from '@charts-app/components/OpenInCharts/OpenInCharts';
 import { currentStartPageLayout } from '@charts-app/config/startPagePreference';
 import useCreateChart from '@charts-app/hooks/charts/mutations/useCreateChart';
 import { useComponentTranslations } from '@charts-app/hooks/translations';
+import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { trackUsage } from '@charts-app/services/metrics';
 import { createInternalLink } from '@charts-app/utils/link';
 import {
@@ -14,6 +15,7 @@ import {
   translationKeys,
 } from '@charts-app/utils/translations';
 
+import { getProject } from '@cognite/cdf-utilities';
 import {
   Button,
   Input,
@@ -40,9 +42,12 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 const ChartListPage = () => {
+  const { data: loginInfo, isLoading: isLoadingUser } = useUserInfo();
+  const project = getProject();
+
   const move = useNavigate();
   const { mutateAsync: createNewChart, isLoading: isCreatingChart } =
-    useCreateChart();
+    useCreateChart({ loginInfo, project });
   const [activeTab, setActiveTab] = useState<'mine' | 'public'>('mine');
   const [viewOption, setViewOption] = useState<'list' | 'grid'>(
     currentStartPageLayout
@@ -107,7 +112,7 @@ const ChartListPage = () => {
           icon="Add"
           aria-label={t['New chart']}
           onClick={handleCreateChart}
-          disabled={isCreatingChart}
+          loading={isCreatingChart || isLoadingUser}
         >
           {t['New chart']}
         </Button>
