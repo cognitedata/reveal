@@ -12,18 +12,18 @@ import {
   ToolType,
   setTool,
   useContextualizeThreeDViewerStore,
-} from '../../useContextualizeThreeDViewerStore';
-import { deleteCdfThreeDCadContextualization } from '../../utils/deleteCdfThreeDCadContextualization';
+} from '../../../useContextualizeThreeDViewerStore';
+import { deleteCdfThreeDCadContextualization } from '../../../utils/deleteCdfThreeDCadContextualization';
 
-type CadContextualizedToolBar = {
+type CadContextualizedFloatingToolBar = {
   modelId: number;
   revisionId: number;
 };
 
-export function CadContextualizedToolBar({
+export function CadContextualizedFloatingToolBar({
   modelId,
   revisionId,
-}: CadContextualizedToolBar): ReactElement {
+}: CadContextualizedFloatingToolBar): ReactElement {
   const sdk = useSDK();
 
   const { tool, viewer, selectedAndContextualizedNodesList } =
