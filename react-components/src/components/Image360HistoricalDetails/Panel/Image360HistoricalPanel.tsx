@@ -5,7 +5,8 @@
 import { Chip, Tooltip } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from '../../../common/i18n';
+import { translations, useTranslation } from '../../../common/i18n';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 
 export type Image360HistoricalPanelProps = {
   revisionCount?: number;
@@ -26,31 +27,33 @@ export const Image360HistoricalPanel = ({
   };
 
   return (
-    <Container isExpanded={revisionDetailsExpanded}>
-      <Tooltip content="360 Image historical details">
-        <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
-          {!revisionDetailsExpanded && (
-            <>
+    <I18nWrapper translations={translations} addNamespace="reveal-react-components">
+      <Container isExpanded={revisionDetailsExpanded}>
+        <Tooltip content="360 Image historical details">
+          <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
+            {!revisionDetailsExpanded && (
+              <>
+                <StyledChip
+                  icon="History"
+                  iconPlacement="right"
+                  label={t('IMAGES_360_DETAILS') ?? 'Details'}
+                  hideTooltip
+                />
+                <StyledChipCount label={count} hideTooltip />
+              </>
+            )}
+            {revisionDetailsExpanded && (
               <StyledChip
-                icon="History"
+                icon="PushRight"
                 iconPlacement="right"
-                label={t('IMAGES_360_DETAILS')}
+                label={t('IMAGES_360_DETAILS') ?? 'Details'}
                 hideTooltip
               />
-              <StyledChipCount label={count} hideTooltip />
-            </>
-          )}
-          {revisionDetailsExpanded && (
-            <StyledChip
-              icon="PushRight"
-              iconPlacement="right"
-              label={t('IMAGES_360_DETAILS')}
-              hideTooltip
-            />
-          )}
-        </StyledToolBar>
-      </Tooltip>
-    </Container>
+            )}
+          </StyledToolBar>
+        </Tooltip>
+      </Container>
+    </I18nWrapper>
   );
 };
 

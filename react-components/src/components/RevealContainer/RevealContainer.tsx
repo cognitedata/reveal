@@ -13,6 +13,8 @@ import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { NodeCacheProvider } from '../NodeCacheProvider/NodeCacheProvider';
 import { RevealContainerElementContext } from './RevealContainerElementContext';
 import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reveal3DResourcesCountContext';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import { translations } from '../../common/i18n';
 
 type RevealContainerProps = {
   color?: Color;
@@ -77,15 +79,17 @@ export function RevealContainer({
       return <></>;
     return (
       <>
-        <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
-          <RevealContext.Provider value={viewer}>
-            <NodeCacheProvider>
-              <Reveal3DResourcesCountContextProvider>
-                {createPortal(children, viewerDomElement.current)}
-              </Reveal3DResourcesCountContextProvider>
-            </NodeCacheProvider>
-          </RevealContext.Provider>
-        </RevealContainerElementContext.Provider>
+        <I18nWrapper translations={translations} addNamespace="reveal-react-components">
+          <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
+            <RevealContext.Provider value={viewer}>
+              <NodeCacheProvider>
+                <Reveal3DResourcesCountContextProvider>
+                  {createPortal(children, viewerDomElement.current)}
+                </Reveal3DResourcesCountContextProvider>
+              </NodeCacheProvider>
+            </RevealContext.Provider>
+          </RevealContainerElementContext.Provider>
+        </I18nWrapper>
       </>
     );
   }
