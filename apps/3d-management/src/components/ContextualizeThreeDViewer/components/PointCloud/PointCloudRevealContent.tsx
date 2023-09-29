@@ -73,7 +73,7 @@ export const PointCloudRevealContent = ({
   useEffect(() => {
     (async () => {
       if (!viewer) return;
-      if (modelType !== 'cad') return;
+      if (modelType !== 'pointcloud') return;
 
       try {
         viewer
