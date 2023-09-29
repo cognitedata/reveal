@@ -12,6 +12,7 @@ import {
   CogniteCadModel,
   DefaultNodeAppearance,
   NodeAppearance,
+  NodeOutlineColor,
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
 import { RevealContainer } from '@cognite/reveal-react-components';
@@ -49,7 +50,7 @@ export const CadContextualizeThreeDViewer = ({
     DefaultNodeAppearance.Default,
     DefaultNodeAppearance.Highlighted,
     new Color(0.6, 0.2, 0.78),
-    new Color(0.1, 0.7, 0.78),
+    new Color(0.38, 0.27, 0.72),
   ];
 
   const selectedNodes = new TreeIndexNodeCollection();
@@ -100,6 +101,7 @@ export const CadContextualizeThreeDViewer = ({
           model,
           cadMapping: mappedCadNodes,
           color: nodeStyles[2] as Color,
+          outlineColor: NodeOutlineColor.NoOutline,
         });
 
         model.assignStyledNodeCollection(
@@ -109,6 +111,7 @@ export const CadContextualizeThreeDViewer = ({
 
         model.assignStyledNodeCollection(selectedAndContextualizedNodes, {
           color: nodeStyles[3] as Color,
+          outlineColor: NodeOutlineColor.White,
         });
 
         viewer?.on('click', async (event) => {
