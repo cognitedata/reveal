@@ -19,7 +19,8 @@ export const useLinkedResourcesCount = ({
 }) => {
   const { data = 0, isLoading } = useLinkedResourcesCountQuery({
     resourceType: convertToSdkResourceType(resourceType),
-    resourceId: getResourceId(resource),
+    resourceId:
+      resourceType !== 'file' ? getResourceId(resource) : { id: resource?.id },
     linkedResourceIds,
     isDocumentsApiEnabled,
   });

@@ -39,7 +39,13 @@ export const getLinkedDocumentsCount = (
         data: {
           filter: {
             and: compact([
-              convertIdEither('inAssetSubtree', resourceId),
+              {
+                inAssetSubtree: {
+                  property: ['sourceFile', 'assetIds'],
+                  // @ts-ignore don't know why typescript complains here since resourceId is of type IdEither and {id} is passed down
+                  values: [resourceId['id']],
+                },
+              },
               linkedResourceIdsFilter,
             ]),
           },
