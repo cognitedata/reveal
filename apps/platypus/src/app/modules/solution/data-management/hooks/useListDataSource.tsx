@@ -16,7 +16,7 @@ import { IDatasource, IGetRowsParams } from 'ag-grid-community';
 
 import { convertToGraphQlFilters } from '../utils/list-data-source-utils';
 
-import { useFilter } from './useFilter';
+import { useFetchFilteredRowsCount } from './useFetchFilteredRowsCount';
 
 export type ListDataSourceProps = {
   dataModelType: DataModelTypeDefsType;
@@ -40,7 +40,11 @@ export const useListDataSource = ({
   const hasNextPage = useRef(false);
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   const { isEnabled } = useFilterBuilderFeatureFlag();
-  const { setFilter } = useFilter();
+  const getFilteredRowsCount = useFetchFilteredRowsCount({
+    dataModelExternalId: dataModelVersion.externalId,
+    dataModelType,
+    space: dataModelVersion.space,
+  });
 
   const dataSource: IDatasource = {
     getRows: async (params: IGetRowsParams) => {
@@ -76,7 +80,13 @@ export const useListDataSource = ({
             const result = response.getValue();
 
             params.successCallback(result, result.length);
-            setFilter(filter);
+            getFilteredRowsCount.mutate({
+              dataModelType,
+              dataModelId: dataModelVersion.externalId,
+              version: dataModelVersion.version,
+              space: dataModelVersion.space,
+              filter: filter ? filter : {},
+            });
           })
           .catch((result: Result<PlatypusError>) => {
             params.failCallback();
@@ -113,7 +123,13 @@ export const useListDataSource = ({
               : -1;
 
             onSuccess(result.items);
-            setFilter(filter);
+            getFilteredRowsCount.mutate({
+              dataModelType,
+              dataModelId: dataModelVersion.externalId,
+              version: dataModelVersion.version,
+              filter: filter ? filter : {},
+              space: dataModelVersion.space,
+            });
             params.successCallback(result.items, lastRow);
           })
           .catch((result: Result<PlatypusError>) => {

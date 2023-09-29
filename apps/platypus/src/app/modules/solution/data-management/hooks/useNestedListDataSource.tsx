@@ -15,7 +15,7 @@ import noop from 'lodash/noop';
 
 import { PrimitiveTypes } from '@cognite/cog-data-grid';
 
-import { useFilter } from './useFilter';
+import { useFetchFilteredRowsCount } from './useFetchFilteredRowsCount';
 
 export type ListDataSourceProps = {
   dataModelType: DataModelTypeDefsType;
@@ -35,7 +35,11 @@ export const useNestedListDataSource = ({
   const cursor = useRef('');
   const hasNextPage = useRef(false);
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
-  const { setFilter } = useFilter();
+  const { mutate: getFilteredRowsCount } = useFetchFilteredRowsCount({
+    dataModelExternalId: dataModelVersion.externalId,
+    dataModelType,
+    space: dataModelVersion.space,
+  });
   const dataSource: IDatasource = useMemo(
     () => ({
       getRows: async (params: IGetRowsParams) => {
@@ -91,11 +95,17 @@ export const useNestedListDataSource = ({
                   value: el.externalId,
                 })
               );
-              setFilter({
-                [field]:
-                  searchTerm && isCustomType
-                    ? { externalId: { eq: searchTerm } }
-                    : {},
+              getFilteredRowsCount({
+                dataModelType,
+                dataModelId: dataModelVersion.externalId,
+                version: dataModelVersion.version,
+                filter: {
+                  [field]:
+                    searchTerm && isCustomType
+                      ? { externalId: { eq: searchTerm } }
+                      : {},
+                },
+                space: dataModelVersion.space,
               });
               params.successCallback(callbackData, lastRow);
             })
@@ -138,7 +148,6 @@ export const useNestedListDataSource = ({
       dataModelType,
       dataModelTypeDefs,
       instanceSpace,
-      setFilter,
       onError,
     ]
   );
