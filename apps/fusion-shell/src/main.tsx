@@ -4,6 +4,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import antDStyles from 'antd/dist/antd.css?inline';
 import * as ReactDOM from 'react-dom/client';
 
+import cogsLabStyles from '@cognite/cogs-lab/dist/cogs-lab.css?inline';
 import otherStyles from '@cognite/cogs.js/dist/cogs.css?inline';
 
 import { STYLE_SCOPE } from './app/utils/constants';
@@ -21,6 +22,7 @@ root.render(
       <Helmet>
         <style>{antDStyles}</style>
         <style>{otherStyles}</style>
+        <style>{cogsLabStyles}</style>
       </Helmet>
       <div className={STYLE_SCOPE}>
         <AppWrapper />

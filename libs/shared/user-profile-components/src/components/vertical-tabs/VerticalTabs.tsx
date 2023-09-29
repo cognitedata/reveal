@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
-import { Body, Button, Colors, Flex, Select, Title } from '@cognite/cogs.js';
+import { ActionList, ActionListItemProps } from '@cognite/cogs-lab';
+import { Colors, Flex, Select } from '@cognite/cogs.js';
 
 import { RESPONSIVE_BREAKPOINT } from '../../common/constants';
 import { VerticalTab } from '../../common/types';
@@ -61,40 +62,44 @@ export const VerticalTabs = ({
   }
 
   return (
-    <Container direction="column" gap={4}>
-      {builtinTabs.map(({ key, icon, title }) => (
-        <TabButton
-          key={key}
-          icon={icon}
-          onClick={() => {
-            onTrackEvent?.(tabChangeEvent, { tabKey: key });
-            handleChange(key);
-          }}
-          toggled={activeKey === key}
-          type="ghost"
-        >
-          {title} {key === 'language' && <BetaLabel />}
-        </TabButton>
-      ))}
-      {additionalTabsCategoryLabel && (
-        <Title level={6} muted style={{ margin: '32px 0 12px 0' }}>
-          {additionalTabsCategoryLabel}
-        </Title>
-      )}
-      {additionalTabs.map(({ key, icon, title }) => (
-        <TabButton
-          key={key}
-          icon={icon}
-          onClick={() => {
-            onTrackEvent?.(tabChangeEvent, { tabKey: key });
-            handleChange(key);
-          }}
-          toggled={activeKey === key}
-          type="ghost"
-        >
-          {title}
-        </TabButton>
-      ))}
+    <Container direction="column">
+      <ActionList>
+        <ActionList.Section>
+          {builtinTabs.map(({ key, icon, title }) => (
+            <ActionList.Item
+              key={key}
+              icon={(icon as ActionListItemProps['icon']) || undefined}
+              onClick={() => {
+                onTrackEvent?.(tabChangeEvent, { tabKey: key });
+                handleChange(key);
+              }}
+              toggled={activeKey === key}
+              promoChipOptions={
+                key === 'language' ? { label: 'Beta' } : undefined
+              }
+            >
+              {title}
+            </ActionList.Item>
+          ))}
+        </ActionList.Section>
+        {additionalTabs && additionalTabs.length ? (
+          <ActionList.Section label={additionalTabsCategoryLabel}>
+            {additionalTabs.map(({ key, icon, title }) => (
+              <ActionList.Item
+                key={key}
+                icon={(icon as ActionListItemProps['icon']) || undefined}
+                onClick={() => {
+                  onTrackEvent?.(tabChangeEvent, { tabKey: key });
+                  handleChange(key);
+                }}
+                toggled={activeKey === key}
+              >
+                {title}
+              </ActionList.Item>
+            ))}
+          </ActionList.Section>
+        ) : null}
+      </ActionList>
     </Container>
   );
 };
@@ -108,23 +113,6 @@ const Container = styled(Flex)`
   }
 `;
 
-const TabButton = styled(Button)`
-  justify-content: flex-start !important;
-`;
-
 const StyledSelect = styled(Select)`
   background-color: ${Colors['surface--muted']};
-`;
-
-const BetaLabel = () => (
-  <StyledBetaLabel size="x-small" strong inverted>
-    Beta
-  </StyledBetaLabel>
-);
-
-const StyledBetaLabel = styled(Body)`
-  background-color: ${Colors['surface--muted--inverted']};
-  padding: 2px 8px;
-  border-radius: 10000px;
-  margin-left: 8px;
 `;
