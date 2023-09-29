@@ -35,6 +35,9 @@ Cypress.Commands.add('appendTextToCodeEditor', (text: string) => {
 Cypress.Commands.add('clearCodeEditor', () => {
   cy.ensureCodeEditorIsVisible();
   cy.setCodeEditorText('');
+
+  const event = new CustomEvent('onValidGraphQLSchema', { detail: '' });
+  cy.document().then((doc) => doc.dispatchEvent(event));
 });
 
 Cypress.Commands.add('codeEditorContains', (value: string) => {

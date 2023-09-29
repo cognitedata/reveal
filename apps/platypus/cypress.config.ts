@@ -6,9 +6,9 @@ export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, { cypressDir: 'cypress' }),
     modifyObstructiveCode: false,
-    video: false,
-    videosFolder: '../../dist/cypress/apps/platypus-e2e/videos',
-    screenshotsFolder: '../../dist/cypress/apps/platypus-e2e/screenshots',
+    video: true,
+    videosFolder: '../../dist/cypress/apps/platypus/videos',
+    screenshotsFolder: '../../dist/cypress/apps/platypus/screenshots',
     chromeWebSecurity: false,
     screenshotOnRunFailure: false,
     viewportHeight: 900, // macbook 15

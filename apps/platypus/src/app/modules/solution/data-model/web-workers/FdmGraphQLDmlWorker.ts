@@ -59,7 +59,6 @@ export class FdmGraphQLDmlWorker {
         graphqlCode,
         this.createData.options
       );
-      this.setGraphQlSchema(graphqlCode);
       return markers;
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -76,15 +75,18 @@ export class FdmGraphQLDmlWorker {
    * @param builtInTypes all of the types of the most recent correct data model
    */
   public async doComplete(
+    textUntilPosition: string,
     graphqlCode: string,
     position: Position
   ): Promise<CompletionList> {
     try {
       return this.codeCompletionService.getCompletions(
+        textUntilPosition,
         graphqlCode,
-        this.lastValidGraphQlSchema || '',
+        this.lastValidGraphQlSchema || graphqlCode,
         position,
-        !!this.createData.options?.useExtendedSdl
+        !!this.createData.options?.useExtendedSdl,
+        this.dataModelTypeDefs
       );
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -167,7 +169,11 @@ export class FdmGraphQLDmlWorker {
    */
   public async doHover(position: Position) {
     try {
-      if (!this.dataModelTypeDefs || !Object.keys(this.locationTypeDefMap)) {
+      if (
+        !this.dataModelTypeDefs ||
+        !Object.keys(this.locationTypeDefMap) ||
+        !this.lastValidGraphQlSchema
+      ) {
         return null;
       }
 

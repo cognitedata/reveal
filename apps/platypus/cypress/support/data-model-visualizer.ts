@@ -19,6 +19,7 @@ type fieldType = {
 declare namespace Cypress {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
+    ensureVisualizerFinishedLoading(): void;
     typeShouldExistInVisualizer(typeName: string | string[]): void;
     typeShouldHaveFieldInVisualizer(
       type: string,
@@ -31,6 +32,22 @@ declare namespace Cypress {
     ): any;
   }
 }
+
+// Sometimes visualizer loads a bit slow if the data model is big, and loaders displays for more than
+// 4 sec causing tests to fail, this check will wait a bit longer (8 sec)
+// if any loaders are present in the dom, making tests a lot more stable
+Cypress.Commands.add('ensureVisualizerFinishedLoading', () => {
+  const increasedTimeout = 9000;
+
+  // Make sure no loaders are present
+  cy.get("[data-cy='visualizer_loader']", {
+    timeout: increasedTimeout,
+  }).should('not.exist');
+
+  cy.get("[data-cy='visualizer_graph_wrapper']", {
+    timeout: increasedTimeout,
+  }).should('exist');
+});
 
 Cypress.Commands.add(
   'typeShouldExistInVisualizer',

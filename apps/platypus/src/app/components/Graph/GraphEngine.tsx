@@ -682,7 +682,11 @@ export const Graph = <T,>({
   }));
 
   return (
-    <Wrapper {...htmlProps} ref={mainWrapperRef}>
+    <Wrapper
+      {...htmlProps}
+      ref={mainWrapperRef}
+      data-cy="visualizer_graph_wrapper"
+    >
       <div className="node-container" ref={containerRef}>
         <svg className="chart" ref={svgRef}>
           {additionalSvgDefs}
