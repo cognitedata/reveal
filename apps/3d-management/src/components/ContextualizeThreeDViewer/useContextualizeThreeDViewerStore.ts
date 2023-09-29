@@ -36,6 +36,7 @@ type RootState = {
   shouldShowBoundingVolumes: boolean;
   shouldShowWireframes: boolean;
   modelId: number | null;
+  isModelLoaded: boolean;
   annotations: AnnotationModel[] | null;
   visualizationOptions: VisualizationOptions;
 };
@@ -46,8 +47,9 @@ const initialState: RootState = {
   threeDViewer: null,
   tool: ToolType.NONE,
   shouldShowBoundingVolumes: false,
-  shouldShowWireframes: false,
+  shouldShowWireframes: true,
   modelId: null,
+  isModelLoaded: false,
   annotations: null,
   visualizationOptions: DEFAULT_VISUALIZATION_OPTIONS,
 };
@@ -84,6 +86,13 @@ export const setThreeDViewer = (model: Cognite3DViewer) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     threeDViewer: model,
+  }));
+};
+
+export const setModelLoaded = () => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    isModelLoaded: true,
   }));
 };
 

@@ -41,6 +41,7 @@ const removeObjectByName = (viewer: Cognite3DViewer, name: string) => {
 export const useSyncStateWithViewer = () => {
   const {
     modelId,
+    isModelLoaded,
     pendingAnnotation,
     shouldShowBoundingVolumes,
     shouldShowWireframes,
@@ -50,6 +51,7 @@ export const useSyncStateWithViewer = () => {
     visualizationOptions,
   } = useContextualizeThreeDViewerStore((state) => ({
     modelId: state.modelId,
+    isModelLoaded: state.isModelLoaded,
     pendingAnnotation: state.pendingAnnotation,
     shouldShowBoundingVolumes: state.shouldShowBoundingVolumes,
     shouldShowWireframes: state.shouldShowWireframes,
@@ -121,6 +123,7 @@ export const useSyncStateWithViewer = () => {
   // Sync all annotation wireframes with viewer.
   useEffect(() => {
     if (threeDViewer === null) return;
+    if (isModelLoaded === false) return;
 
     if (!shouldShowWireframes) {
       removeObjectByName(threeDViewer, ANNOTATION_AS_WIREFRAME_ID);
@@ -142,5 +145,5 @@ export const useSyncStateWithViewer = () => {
     );
     group.name = ANNOTATION_AS_WIREFRAME_ID;
     addObject(threeDViewer, group);
-  }, [shouldShowWireframes, threeDViewer, annotations, modelId]);
+  }, [shouldShowWireframes, threeDViewer, annotations, modelId, isModelLoaded]);
 };

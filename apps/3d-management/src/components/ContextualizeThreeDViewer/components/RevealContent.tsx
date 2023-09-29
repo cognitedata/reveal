@@ -12,6 +12,7 @@ import { FLOATING_ELEMENT_MARGIN } from '../../../pages/ContextualizeEditor/cons
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
+  setModelLoaded,
   useContextualizeThreeDViewerStore,
 } from '../useContextualizeThreeDViewerStore';
 
@@ -31,6 +32,7 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
   );
 
   const handleModelOnLoad = (model: CogniteModel) => {
+    setModelLoaded();
     viewer.fitCameraToModel(model);
     if (!(viewer.cameraManager instanceof DefaultCameraManager)) {
       console.warn(
