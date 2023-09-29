@@ -54,7 +54,7 @@ export const CadContextualizeThreeDViewer = ({
   ];
 
   const selectedNodes = new TreeIndexNodeCollection();
-  const selectedAndContextualizedNodes = new TreeIndexNodeCollection();
+  // const selectedAndContextualizedNodes = new TreeIndexNodeCollection();
 
   const {
     isResourceSelectorOpen,
@@ -63,6 +63,7 @@ export const CadContextualizeThreeDViewer = ({
     modelType,
     selectedNodeIdsList,
     selectedAndContextualizedNodesList,
+    selectedAndContextualizedNodes,
   } = useContextualizeThreeDViewerStore((state) => ({
     isResourceSelectorOpen: state.isResourceSelectorOpen,
     viewer: state.threeDViewer,
@@ -71,6 +72,7 @@ export const CadContextualizeThreeDViewer = ({
     selectedNodeIdsList: state.selectedNodeIdsList,
     selectedAndContextualizedNodesList:
       state.selectedAndContextualizedNodesList,
+    selectedAndContextualizedNodes: state.selectedAndContextualizedNodes,
   }));
 
   const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(

@@ -4,6 +4,7 @@ import {
   Cognite3DViewer,
   CogniteCadModel,
   CognitePointCloudModel,
+  TreeIndexNodeCollection,
 } from '@cognite/reveal';
 import { AnnotationModel } from '@cognite/sdk';
 export type ThreeDPosition = {
@@ -40,6 +41,7 @@ type RootState = {
   modelType: string;
   selectedNodeIdsList: Array<number>;
   selectedAndContextualizedNodesList: Array<number>;
+  selectedAndContextualizedNodes: TreeIndexNodeCollection;
   annotations: AnnotationModel[] | null;
 };
 
@@ -58,6 +60,7 @@ const initialState: RootState = {
   modelType: '',
   selectedNodeIdsList: [],
   selectedAndContextualizedNodesList: [],
+  selectedAndContextualizedNodes: new TreeIndexNodeCollection(),
   annotations: null,
 };
 
@@ -187,5 +190,14 @@ export const setSelectedAndContextualizedNodesList = (
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     selectedAndContextualizedNodesList,
+  }));
+};
+
+export const setSelectedAndContextualizedTreeIndexCollection = (
+  selectedAndContextualizedNodes: TreeIndexNodeCollection
+) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    selectedAndContextualizedNodes,
   }));
 };

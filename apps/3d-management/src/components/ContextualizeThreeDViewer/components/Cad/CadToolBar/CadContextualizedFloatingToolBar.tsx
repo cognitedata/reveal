@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { FLOATING_ELEMENT_MARGIN } from '@3d-management/pages/ContextualizeEditor/constants';
 
 import { ToolBar, Tooltip, Button } from '@cognite/cogs.js';
+import { CogniteCadModel, DefaultNodeAppearance } from '@cognite/reveal';
 import { withSuppressRevealEvents } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -26,13 +27,20 @@ export function CadContextualizedFloatingToolBar({
 }: CadContextualizedFloatingToolBar): ReactElement {
   const sdk = useSDK();
 
-  const { tool, viewer, selectedAndContextualizedNodesList } =
-    useContextualizeThreeDViewerStore((state) => ({
-      tool: state.tool,
-      viewer: state.threeDViewer,
-      selectedAndContextualizedNodesList:
-        state.selectedAndContextualizedNodesList,
-    }));
+  const {
+    tool,
+    viewer,
+    model,
+    selectedAndContextualizedNodesList,
+    selectedAndContextualizedNodes,
+  } = useContextualizeThreeDViewerStore((state) => ({
+    tool: state.tool,
+    viewer: state.threeDViewer,
+    model: state.model as CogniteCadModel,
+    selectedAndContextualizedNodesList:
+      state.selectedAndContextualizedNodesList,
+    selectedAndContextualizedNodes: state.selectedAndContextualizedNodes,
+  }));
 
   const handleAddContextualizationToolClick = () => {
     if (tool === ToolType.ADD_THREEDNODE_MAPPING) {
@@ -44,7 +52,7 @@ export function CadContextualizedFloatingToolBar({
   };
 
   const handleDeleteContextualizationToolClick = () => {
-    if (!viewer || !modelId) return;
+    if (!viewer || !modelId || !model) return;
 
     deleteCdfThreeDCadContextualization({
       sdk,
@@ -52,6 +60,15 @@ export function CadContextualizedFloatingToolBar({
       revisionId,
       nodeIds: selectedAndContextualizedNodesList,
     });
+
+    // const indexSet = selectedAndContextualizedNodes.getIndexSet();
+    // indexSet.clear();
+    // selectedAndContextualizedNodes.updateSet(indexSet);
+
+    model.assignStyledNodeCollection(
+      selectedAndContextualizedNodes,
+      DefaultNodeAppearance.Default
+    );
 
     if (tool === ToolType.DELETE_THREEDNODE_MAPPING) {
       setTool(ToolType.NONE);
