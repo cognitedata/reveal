@@ -59,7 +59,7 @@ export default function () {
 
   return (
     <StyledAppContainerDiv>
-      <Title level={1}>
+      <Title level={1} data-testid="access-management-title">
         {t('access-management')}
         <Button
           aria-label={t('refetch-data')}
@@ -80,17 +80,34 @@ export default function () {
         }}
         style={{ fontSize: '16px', marginBottom: '20px' }}
       >
-        <Menu.Item disabled={!groupsRead} key="groups">
+        <Menu.Item
+          disabled={!groupsRead}
+          key="groups"
+          data-testid="access-management-groups-tab"
+        >
           {t('groups')}
         </Menu.Item>
-        <Menu.Item key="security-categories" disabled={!secCatRead}>
+        <Menu.Item
+          key="security-categories"
+          disabled={!secCatRead}
+          data-testid="access-management-security-categories-tab"
+        >
           {t('security-categories')}
         </Menu.Item>
-        <Menu.Item key="oidc" disabled={!projectsRead}>
+        <Menu.Item
+          key="oidc"
+          disabled={!projectsRead}
+          data-testid="access-management-openid-connect-tab"
+        >
           {t('open-id-connect')}
         </Menu.Item>
         {!isUnsupportedCluster && (
-          <Menu.Item key="user-profiles">{t('user-profiles')}</Menu.Item>
+          <Menu.Item
+            key="user-profiles"
+            data-testid="access-management-user-profiles-tab"
+          >
+            {t('user-profiles')}
+          </Menu.Item>
         )}
       </Menu>
       <Routes>
