@@ -1,7 +1,12 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk';
+import {
+  AnnotationModel,
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  CogniteInternalId,
+  IdEither
+} from '@cognite/sdk';
 import * as THREE from 'three';
 
 export type Image360AnnotationFilterDelegate = (annotation: AnnotationModel) => boolean;
@@ -35,11 +40,15 @@ export interface Image360FileProvider {
   ): Promise<Image360Face[]>;
 }
 
+export type ImageAssetLinkAnnotation = Omit<AnnotationModel, 'data'> & {
+  data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
+};
+
 export interface Image360AssetProvider {
   get360ImageAssets(
     image360FileDescriptors: Image360FileDescriptor[],
     annotationFilter: Image360AnnotationFilterDelegate
-  ): Promise<IdEither[]>;
+  ): Promise<ImageAssetLinkAnnotation[]>;
 }
 
 export type Historical360ImageSet = Image360EventDescriptor & {

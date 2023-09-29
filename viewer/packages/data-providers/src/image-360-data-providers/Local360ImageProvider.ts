@@ -7,7 +7,8 @@ import {
   Historical360ImageSet,
   Image360AnnotationFilterDelegate,
   Image360Face,
-  Image360FileDescriptor
+  Image360FileDescriptor,
+  ImageAssetLinkAnnotation
 } from '../types';
 import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk';
 
@@ -113,7 +114,7 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
   get360ImageAssets(
     _image360FileDescriptors: Image360FileDescriptor[],
     _annotationFilter: Image360AnnotationFilterDelegate
-  ): Promise<IdEither[]> {
+  ): Promise<ImageAssetLinkAnnotation[]> {
     return Promise.resolve([]);
   }
 }

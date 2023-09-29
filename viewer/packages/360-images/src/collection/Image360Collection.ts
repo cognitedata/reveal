@@ -21,6 +21,24 @@ export type Image360AnnotationAssetFilter = {
 };
 
 /**
+ * Asset search return type, including information about the image in which the asset is found
+ */
+export type AssetImage360Info = {
+  /**
+   * Reference to the relevant asset
+   */
+  assetRef: IdEither;
+  /**
+   * The image entity in which the asset was found
+   */
+  imageEntity: Image360;
+  /**
+   * The image revision in which the asset was found
+   */
+  imageRevision: Image360Revision;
+};
+
+/**
  * Result item from an asset annotation query
  */
 export type Image360AnnotationAssetQueryResult = {
@@ -113,6 +131,14 @@ export interface Image360Collection {
 
   /**
    * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations
+   *
+   * @deprecated Use {@link Image360Collection.getAssetInfo}
    */
   getAssetIds(): Promise<IdEither[]>;
+
+  /**
+   * Get IDs of all CDF assets and related image/revision associated with this
+   * 360 image collection through CDF annotations
+   */
+  getAssetInfo(): Promise<AssetImage360Info[]>;
 }

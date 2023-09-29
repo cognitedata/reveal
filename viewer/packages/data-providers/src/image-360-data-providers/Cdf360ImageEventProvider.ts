@@ -30,7 +30,8 @@ import {
   Image360AnnotationFilterDelegate,
   Image360EventDescriptor,
   Image360Face,
-  Image360FileDescriptor
+  Image360FileDescriptor,
+  ImageAssetLinkAnnotation
 } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
@@ -340,7 +341,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   public async get360ImageAssets(
     image360FileDescriptors: Image360FileDescriptor[],
     annotationFilter: Image360AnnotationFilterDelegate
-  ): Promise<IdEither[]> {
+  ): Promise<ImageAssetLinkAnnotation[]> {
     const fileIds = image360FileDescriptors.map(desc => desc.fileId);
     const assetListPromises = chunk(fileIds, 1000).map(async idList => {
       const annotationArray = await this.listFileAnnotations({
@@ -349,19 +350,19 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
         annotationType: 'images.AssetLink'
       });
 
-      const assetIds = annotationArray
+      const assetAnnotations = annotationArray
         .filter(annotation => annotationFilter(annotation))
         .map(annotation => {
           assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
-          return annotation.data.assetRef;
+          return annotation as ImageAssetLinkAnnotation;
         });
 
-      return assetIds;
+      return assetAnnotations;
     });
 
-    const assetIds = (await Promise.all(assetListPromises)).flat().filter(isIdEither);
+    const annotations = (await Promise.all(assetListPromises)).flat();
 
-    return assetIds;
+    return annotations;
   }
 
   private async listFileAnnotations(filter: AnnotationFilterProps): Promise<AnnotationModel[]> {
@@ -379,8 +380,4 @@ function isAssetLinkAnnotationData(
 ): annotationData is AnnotationsCogniteAnnotationTypesImagesAssetLink {
   const data = annotationData as AnnotationsCogniteAnnotationTypesImagesAssetLink;
   return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
-}
-
-function isIdEither(assetRef: { id?: number; externalId?: string }): assetRef is IdEither {
-  return assetRef.id !== undefined || assetRef.externalId !== undefined;
 }

@@ -164,6 +164,9 @@ export class Image360UI {
 
       gui.add(params, 'remove').name('Remove all 360 images');
     }
+
+    params.siteId = 'helideck-site-2-jpeg';
+    this.add360ImageSet();
   }
 
   private remove360ImageSet() {
@@ -202,6 +205,12 @@ export class Image360UI {
         annotationFilter: { status: 'all' }
       }
     );
+
+    const assetInfos = await collection.getAssetInfo();
+    console.log('Asset infos = ', assetInfos);
+    assetInfos.forEach(assetInfo => assetInfo.imageEntity.setIconStyle({
+      color: new THREE.Color(0, 0, 1)
+    }));
 
     collection.setIconsVisibility(!this.iconCulling.hideAll);
     collection.on('image360Entered', (entity, _) => (this.selectedEntity = entity));

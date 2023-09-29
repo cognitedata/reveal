@@ -6,6 +6,7 @@ import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import cloneDeep from 'lodash/cloneDeep';
 import {
+  AssetImage360Info,
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   Image360Collection
@@ -23,9 +24,12 @@ import {
   ExternalId
 } from '@cognite/sdk';
 
-import { Image360DataProvider } from '@reveal/data-providers';
+import { Image360DataProvider, Image360FileDescriptor } from '@reveal/data-providers';
 import { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import { Image360 } from '../entity/Image360';
+import { Image360Revision } from '../entity/Image360Revision';
+import { ImageAssetLinkAnnotation } from '@reveal/data-providers';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -260,8 +264,46 @@ export class DefaultImage360Collection implements Image360Collection {
     }
   }
 
-  getAssetIds(): Promise<IdEither[]> {
-    const fileDescriptors = this.image360Entities
+  async getAssetIds(): Promise<IdEither[]> {
+    const fileDescriptors = this.getAllFileDescriptors();
+    const annotations = await this._image360DataProvider.get360ImageAssets(fileDescriptors, annotation =>
+      this._annotationFilter.filter(annotation)
+    );
+
+    return annotations.map(annotation => annotation.data.assetRef as IdEither);
+  }
+
+  async getAssetInfo(): Promise<AssetImage360Info[]> {
+
+    const fileDescriptors = this.getAllFileDescriptors();
+    const fileIdToEntityRevision = this.createFileIdToEntityRevisionMap();
+
+    const annotations = await this._image360DataProvider.get360ImageAssets(
+      fileDescriptors,
+      annotation => this._annotationFilter.filter(annotation)
+    );
+
+    return pairAnnotationsWithEntityAndRevision(annotations);
+
+    function pairAnnotationsWithEntityAndRevision(annotations: ImageAssetLinkAnnotation[]) {
+      return annotations
+        .map(annotation => {
+          const entityRevisionObject = fileIdToEntityRevision.get(annotation.annotatedResourceId);
+
+          if (entityRevisionObject === undefined) {
+            return undefined;
+          }
+
+          const { entity, revision } = entityRevisionObject;
+
+          return { assetRef: annotation.data.assetRef, imageEntity: entity, imageRevision: revision };
+        })
+        .filter((info): info is AssetImage360Info => info !== undefined);
+    };
+  }
+
+  private getAllFileDescriptors(): Image360FileDescriptor[] {
+    return this.image360Entities
       .map(entity =>
         entity
           .getRevisions()
@@ -269,9 +311,20 @@ export class DefaultImage360Collection implements Image360Collection {
           .flat()
       )
       .flat();
-    return this._image360DataProvider.get360ImageAssets(fileDescriptors, annotation =>
-      this._annotationFilter.filter(annotation)
-    );
+  }
+
+  private createFileIdToEntityRevisionMap(): Map<number, { entity: Image360; revision: Image360Revision }> {
+    const fileIdToImageRevisionMap = new Map<number, { entity: Image360; revision: Image360Revision }>();
+    this.image360Entities
+      .forEach(entity =>
+        entity
+          .getRevisions()
+          .forEach(revision => {
+            const descriptors = revision.getDescriptors().faceDescriptors;
+            descriptors.forEach(descriptor => fileIdToImageRevisionMap.set(descriptor.fileId, { entity, revision }))
+          })
+              );
+    return fileIdToImageRevisionMap;
   }
 }
 
