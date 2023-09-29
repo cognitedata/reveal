@@ -1,6 +1,15 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import ContextualizeThreeDViewer from '../../components/ContextualizeThreeDViewer';
+import ContextualizeThreeDViewer from '@3d-management/components/ContextualizeThreeDViewer';
+import {
+  setModelType,
+  useContextualizeThreeDViewerStore,
+} from '@3d-management/components/ContextualizeThreeDViewer/useContextualizeThreeDViewerStore';
+
+import { useSDK } from '@cognite/sdk-provider';
+
+import { getThreeDRevisionOutputs } from '@data-exploration-lib/domain-layer';
 
 import { ContextualizeEditorHeader } from './ContextualizeEditorHeader';
 

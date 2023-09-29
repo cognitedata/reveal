@@ -10,7 +10,7 @@ import {
   MIN_POINT_SIZE,
   STEP_POINT_SIZE,
   DEFAULT_POINT_SIZE,
-} from '../../../pages/ContextualizeEditor/constants';
+} from '../../../../pages/ContextualizeEditor/constants';
 
 function getDefaultPointSize(viewer: Cognite3DViewer) {
   for (const model of viewer.models)

@@ -8,7 +8,7 @@ import {
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
 
-import { useContextualizeThreeDViewerStore } from '../../useContextualizeThreeDViewerStore';
+import { useContextualizeThreeDViewerStore } from '../../../useContextualizeThreeDViewerStore';
 
 export const CadToolBar = () => {
   const { modelId } = useContextualizeThreeDViewerStore((state) => ({

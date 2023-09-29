@@ -12,18 +12,18 @@ import {
   ToolType,
   setTool,
   useContextualizeThreeDViewerStore,
-} from '../useContextualizeThreeDViewerStore';
-import { deleteCdfThreeDCadContextualization } from '../utils/deleteCdfThreeDCadContextualization';
+} from '../../useContextualizeThreeDViewerStore';
+import { deleteCdfThreeDCadContextualization } from '../../utils/deleteCdfThreeDCadContextualization';
 
-type MappedElementsToolBar = {
+type CadContextualizedToolBar = {
   modelId: number;
   revisionId: number;
 };
 
-export function MappedElementsToolBar({
+export function CadContextualizedToolBar({
   modelId,
   revisionId,
-}: MappedElementsToolBar): ReactElement {
+}: CadContextualizedToolBar): ReactElement {
   const sdk = useSDK();
 
   const { tool, viewer, selectedAndContextualizedNodesList } =
@@ -46,11 +46,6 @@ export function MappedElementsToolBar({
   const handleDeleteContextualizationToolClick = () => {
     if (!viewer || !modelId) return;
 
-    /* const pointCloudModel = getCognitePointCloudModel({
-      modelId,
-      viewer,
-    });
- */
     deleteCdfThreeDCadContextualization({
       sdk,
       modelId,

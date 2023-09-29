@@ -13,20 +13,16 @@ import {
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
 
-import { FLOATING_ELEMENT_MARGIN } from '../../../pages/ContextualizeEditor/constants';
+import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
   setModel,
-  setModelType,
   setThreeDViewer,
-  setToolbarForCadModelsState,
   setToolbarForPointCloudModelsState,
   useContextualizeThreeDViewerStore,
-} from '../useContextualizeThreeDViewerStore';
+} from '../../useContextualizeThreeDViewerStore';
 
-import { CadToolBar } from './CadToolBar/CadToolBar';
-import { MappedElementsToolBar } from './MappedElementsToolBar';
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 interface RevealContentProps {
@@ -34,21 +30,18 @@ interface RevealContentProps {
   revisionId: number;
 }
 
-export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
+export const PointCloudRevealContent = ({
+  modelId,
+  revisionId,
+}: RevealContentProps) => {
   const viewer = useReveal();
-  const { isResourceSelectorOpen } = useContextualizeThreeDViewerStore(
-    (state) => ({
+  const { isResourceSelectorOpen, modelType } =
+    useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
-    })
-  );
+      modelType: state.modelType,
+    }));
 
   const [error, setError] = useState<Error>();
-
-  const { isToolbarForCadModels, isToolbarForPointCloudModels } =
-    useContextualizeThreeDViewerStore((state) => ({
-      isToolbarForCadModels: state.isToolbarForCadModels,
-      isToolbarForPointCloudModels: state.isToolbarForPointCloudModels,
-    }));
 
   const handleModelOnLoad = (_model: CogniteModel) => {
     if (!(viewer?.cameraManager instanceof DefaultCameraManager)) {
@@ -76,35 +69,18 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
     }
   };
 
-  // check the model type and load it
+  // Load the PC model to the viewer
   useEffect(() => {
     (async () => {
-      if (!viewer) {
-        return;
-      }
+      if (!viewer) return;
+      if (modelType !== 'cad') return;
+
       try {
-        const modelType = await viewer.determineModelType(modelId, revisionId);
-        setModelType(modelType);
+        viewer
+          .addPointCloudModel({ modelId, revisionId })
+          .then(handleModelOnLoad);
 
-        switch (modelType) {
-          case 'cad': {
-            viewer.addModel({ modelId, revisionId }).then(handleModelOnLoad);
-
-            setToolbarForCadModelsState();
-            break;
-          }
-          case 'pointcloud': {
-            viewer
-              .addPointCloudModel({ modelId, revisionId })
-              .then(handleModelOnLoad);
-
-            setToolbarForPointCloudModelsState();
-            break;
-          }
-          default: {
-            throw new Error(`Unsupported model type ${modelType}`);
-          }
-        }
+        setToolbarForPointCloudModelsState();
       } catch (e) {
         if (e instanceof Error && viewer.domElement) {
           setError(e);
@@ -128,17 +104,7 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
 
   return (
     <>
-      {isToolbarForCadModels && !isToolbarForPointCloudModels && viewer && (
-        <>
-          <CadToolBar />
-          <MappedElementsToolBar modelId={modelId} revisionId={revisionId} />
-        </>
-      )}
-      {!isToolbarForCadModels && isToolbarForPointCloudModels && viewer && (
-        <>
-          <PointCloudToolBar />
-        </>
-      )}
+      <PointCloudToolBar />
       <StyledResourceSelectorButtonWrapper>
         <Button
           type="ghost"

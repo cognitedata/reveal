@@ -14,8 +14,8 @@ import {
   FLOATING_ELEMENT_MARGIN,
   HighQualitySettings,
   LowQualitySettings,
-} from '../../../../pages/ContextualizeEditor/constants';
-import { useContextualizeThreeDViewerStore } from '../../useContextualizeThreeDViewerStore';
+} from '../../../../../pages/ContextualizeEditor/constants';
+import { useContextualizeThreeDViewerStore } from '../../../useContextualizeThreeDViewerStore';
 import { ColorTypeSelector } from '../PointCloudColorPicker';
 import { PointSizeSlider } from '../PointSizeSlider';
 
