@@ -2,12 +2,17 @@ import { useState } from 'react';
 
 import styled from 'styled-components';
 
+import { Instance } from '../../services/types';
 import { ThreeDResults } from '../search/results/ThreeDResults';
 import { SearchConfiguration } from '../search/SearchConfiguration';
 
 import { ThreeDSearchTopBar } from './ThreeDSearchTopBar';
 
-export const ThreeDSearchResults = () => {
+interface Props {
+  onZoomButtonClick?: (instance: Instance | undefined) => void;
+}
+
+export const ThreeDSearchResults: React.FC<Props> = ({ onZoomButtonClick }) => {
   const [displayMapped, setDisplayMapped] = useState(true);
 
   return (
@@ -20,7 +25,10 @@ export const ThreeDSearchResults = () => {
             setDisplayMapped(value === 'mapped');
           }}
         />
-        <ThreeDResults displayOnlyMapped3dData={displayMapped} />
+        <ThreeDResults
+          onZoomButtonClick={onZoomButtonClick}
+          displayOnlyMapped3dData={displayMapped}
+        />
       </SearchContent>
     </Container>
   );

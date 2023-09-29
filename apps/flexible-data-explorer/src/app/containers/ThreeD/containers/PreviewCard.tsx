@@ -7,42 +7,39 @@ import { PropsWithChildren } from 'react';
 import {
   ViewerAnchor,
   withSuppressRevealEvents,
-  ClickedNodeData,
 } from '@cognite/reveal-react-components';
 
 import { useFDM } from '../../../providers/FDMProvider';
 import { InstancePreview } from '../../preview/InstancePreview';
 
+import { InstanceWithPosition } from './RevealContent';
+
 export const PreviewCard = ({
   nodeData,
 }: {
-  nodeData: ClickedNodeData | undefined;
+  nodeData: InstanceWithPosition | undefined;
 }) => {
   const fdmClient = useFDM();
 
   if (
     nodeData === undefined ||
-    nodeData.view === undefined ||
-    nodeData.fdmNode === undefined
+    nodeData.dataType === undefined ||
+    nodeData.externalId === undefined
   ) {
     return <></>;
   }
 
   return (
     <ViewerAnchor
-      position={nodeData.intersection.point}
+      position={nodeData.threeDPosition}
       sticky
       stickyMargin={10}
       style={{ transform: 'translate(100px, -50%)' }}
     >
       <SuppressedDiv>
         <InstancePreview.Generic
-          instance={{
-            dataType: nodeData.view.externalId,
-            instanceSpace: nodeData.fdmNode.space,
-            externalId: nodeData.fdmNode.externalId,
-          }}
-          dataModel={fdmClient.getDataModelByDataType(nodeData.view.externalId)}
+          instance={nodeData}
+          dataModel={fdmClient.getDataModelByDataType(nodeData.dataType)}
           disableViewer
         />
       </SuppressedDiv>

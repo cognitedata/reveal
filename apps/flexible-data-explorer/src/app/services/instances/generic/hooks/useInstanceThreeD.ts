@@ -14,6 +14,10 @@ export const useInstanceThreeDEntryQuery = (
 ) => {
   const client = useFDM();
 
+  const dataModelFromInstance = client.getDataModelByDataType(
+    instance?.dataType ?? ''
+  );
+
   const has3dModelField = client
     .getTypesByDataType(instance?.dataType)
     ?.fields.some((item) => {
@@ -28,7 +32,7 @@ export const useInstanceThreeDEntryQuery = (
     undefined,
     {
       instance,
-      model: dataModel,
+      model: dataModel ?? dataModelFromInstance,
     },
     {
       enabled: has3dModelField,

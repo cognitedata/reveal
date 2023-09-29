@@ -11,7 +11,7 @@ import { EMPTY_ARRAY } from '../../../constants/object';
 import { useSearchFilterParams } from '../../../hooks/useParams';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useFDM } from '../../../providers/FDMProvider';
-import { DataModelTypeDefsType } from '../../../services/types';
+import { DataModelTypeDefsType, Instance } from '../../../services/types';
 import { InstancePreview } from '../../preview/InstancePreview';
 import { RelationshipFilter } from '../../widgets/RelationshipEdges/Filters';
 
@@ -19,17 +19,22 @@ import { PAGE_SIZE, PAGE_SIZE_SELECTED } from './constants';
 
 interface Props {
   dataType: string;
+  selectedExternalId?: string;
   values?: { items: any[] };
   type?: DataModelTypeDefsType;
   selected?: boolean;
   disable3dPreview?: boolean;
+  onItemHover?: (item: any) => void;
+  renderHoverButton?: (selectedInstance: Instance) => React.ReactNode;
 }
 export const GenericResults: React.FC<Props> = ({
   dataType,
   values,
   type,
   selected,
+  selectedExternalId,
   disable3dPreview,
+  renderHoverButton,
 }) => {
   const { t } = useTranslation();
   const client = useFDM();
@@ -118,9 +123,15 @@ export const GenericResults: React.FC<Props> = ({
             >
               <Link.GenericPage instance={instance} dataModel={dataModel}>
                 <SearchResults.Item
-                  name={item.name || item.externalId}
+                  name={item.name ?? item.externalId}
                   description={item.description}
                   properties={properties}
+                  selected={item.externalId === selectedExternalId}
+                  customHoverButton={renderHoverButton?.({
+                    externalId: item.externalId,
+                    instanceSpace: item.space,
+                    dataType,
+                  })}
                 />
               </Link.GenericPage>
             </InstancePreview.Generic>

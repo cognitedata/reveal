@@ -11,7 +11,7 @@ type CameraNavigationActions = {
   focusInstance: () => void;
 };
 
-export const useThreeDCameraNavigation = (
+export const useInitialCameraNavigation = (
   isInitialLoad: boolean,
   instance?: { externalId: string; space: string }
 ): CameraNavigationActions => {
@@ -38,6 +38,7 @@ export const useThreeDCameraNavigation = (
     if (currentCameraState === undefined || cameraIsMovingRef.current) {
       return;
     }
+
     cameraNavigation.fitCameraToState(currentCameraState);
   }, [currentCameraState, cameraNavigation]);
 

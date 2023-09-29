@@ -5,10 +5,15 @@ import { ContainerReference } from '@fusion/industry-canvas';
 import queryString from 'query-string';
 
 import { DateRange, ValueByDataType } from '../containers/Filter';
+import { Instance } from '../services/types';
 import { createSearchParams } from '../utils/router';
 
 import { useLinks } from './useLinks';
-import { ViewMode, useViewModeParams } from './useParams';
+import {
+  ViewMode,
+  useSelectedInstanceParams,
+  useViewModeParams,
+} from './useParams';
 
 // TODO: gradually move the navigation logic from this hook to 'Link'.
 
@@ -16,6 +21,7 @@ export const useNavigation = () => {
   const navigate = useNavigate();
   const { search } = useLocation(); // <-- current location being accessed
   const [viewMode] = useViewModeParams();
+  const [selectedInstance] = useSelectedInstanceParams();
 
   const {
     homePageLink,
@@ -37,6 +43,7 @@ export const useNavigation = () => {
         ignoreType?: boolean;
         enableAISearch?: boolean;
         viewMode?: ViewMode;
+        selectedInstance?: Instance;
       } = {}
     ) => {
       const type = options.category;
@@ -48,7 +55,8 @@ export const useNavigation = () => {
         searchCategory: !ignoreType ? type : undefined,
         filters,
         aiSearch: String(enableAISearch),
-        viewMode: options.viewMode || viewMode,
+        viewMode: options.viewMode ?? viewMode,
+        selectedInstance: options.selectedInstance ?? selectedInstance,
       });
 
       navigate({
