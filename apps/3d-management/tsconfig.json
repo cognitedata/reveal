@@ -9,8 +9,7 @@
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    // Remove this and fix the issues
-    "noImplicitAny": false,
+    "noImplicitAny": false
   },
   "files": [],
   "include": [],
@@ -20,6 +19,9 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./cypress/tsconfig.json"
     }
   ]
 }
