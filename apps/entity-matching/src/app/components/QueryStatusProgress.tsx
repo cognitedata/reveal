@@ -1,7 +1,7 @@
 import { MutationStatus } from '@tanstack/react-query';
 import { Progress } from 'antd';
 
-import { JobStatus } from '@entity-matching-app/hooks/types';
+import { JobStatus } from '../hooks/types';
 
 export const percentFromStatus = (
   status?: MutationStatus | JobStatus

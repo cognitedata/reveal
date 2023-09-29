@@ -1,33 +1,37 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
+
 import styled from 'styled-components';
 
-import { useTranslation } from '@entity-matching-app/common';
+import { createLink } from '@cognite/cdf-utilities';
+import { Body, Col, Flex, Infobox, Row } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../common';
 import QueryStatusProgress, {
   percentFromStatus,
-} from '@entity-matching-app/components/QueryStatusProgress';
-import Step from '@entity-matching-app/components/step';
-import { useQuickMatchContext } from '@entity-matching-app/context/QuickMatchContext';
+} from '../../../../components/QueryStatusProgress';
+import Step from '../../../../components/step';
+import { useQuickMatchContext } from '../../../../context/QuickMatchContext';
 import {
   useCreateEMModel,
   useEMModel,
-} from '@entity-matching-app/hooks/entity-matching-models';
+} from '../../../../hooks/entity-matching-models';
 import {
   useCreateEMPredictionJob,
   useEMModelPredictResults,
-} from '@entity-matching-app/hooks/entity-matching-predictions';
+} from '../../../../hooks/entity-matching-predictions';
 import {
   useApplyRulesJob,
   useApplyRulesResults,
   useCreateRulesJob,
   useRulesResults,
-} from '@entity-matching-app/hooks/entity-matching-rules';
+} from '../../../../hooks/entity-matching-rules';
 import {
   INFINITE_Q_OPTIONS,
   useInfiniteList,
-} from '@entity-matching-app/hooks/infiniteList';
-import { useInfinite3dNodes } from '@entity-matching-app/hooks/threeD';
-import { IN_PROGRESS_EM_STATES } from '@entity-matching-app/hooks/types';
+} from '../../../../hooks/infiniteList';
+import { useInfinite3dNodes } from '../../../../hooks/threeD';
+import { IN_PROGRESS_EM_STATES } from '../../../../hooks/types';
 import {
   bulkDownloadStatus,
   filterFieldsFromObjects,
@@ -36,11 +40,7 @@ import {
   sessionStorageApplyRulesJobKey,
   sessionStoragePredictJobKey,
   sessionStorageRulesJobKey,
-} from '@entity-matching-app/utils';
-
-import { createLink } from '@cognite/cdf-utilities';
-import { Body, Col, Flex, Infobox, Row } from '@cognite/cogs.js';
-
+} from '../../../../utils';
 const Circle = styled.div`
   border: 1px solid #000000d9;
   border-radius: 50%;

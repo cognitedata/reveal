@@ -1,7 +1,7 @@
 import { Flex } from '@cognite/cogs.js';
 
-import { EMPipelineResource } from '@entity-matching-app/hooks/entity-matching-pipelines';
-import { ColoredExtractor } from '@entity-matching-app/utils/colored-rules';
+import { EMPipelineResource } from '../../hooks/entity-matching-pipelines';
+import { ColoredExtractor } from '../../utils/colored-rules';
 
 import ResourceCell from './ResourceCell';
 

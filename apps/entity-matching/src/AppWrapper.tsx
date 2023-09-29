@@ -1,19 +1,20 @@
+import { useEffect } from 'react';
+
+import './set-public-path';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import { AuthContainer } from '@cognite/cdf-utilities';
+import { ToastContainer } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+import { CogniteError } from '@cognite/sdk';
 
 import App from './app/App';
 import { translations } from './app/common/i18n';
 import GlobalStyles from './app/styles/GlobalStyles';
-import './set-public-path';
-
-import { useEffect } from 'react';
-
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { CogniteError } from '@cognite/sdk';
-import { ToastContainer } from '@cognite/cogs.js';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import { AuthContainer } from '@cognite/cdf-utilities';
 
 const queryClient = new QueryClient({
   defaultOptions: {

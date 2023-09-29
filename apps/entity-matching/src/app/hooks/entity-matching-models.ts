@@ -10,10 +10,7 @@ import {
 import { CogniteError, EntityMatchingModel } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-import {
-  ModelMapping,
-  EMFeatureType,
-} from '@entity-matching-app/context/QuickMatchContext';
+import { EMFeatureType, ModelMapping } from '../context/QuickMatchContext';
 import {
   RawCogniteEvent,
   RawFileInfo,
@@ -21,8 +18,8 @@ import {
   RawTarget,
   RawTimeseries,
   SourceType,
-} from '@entity-matching-app/types/api';
-import { filterFieldsFromObjects } from '@entity-matching-app/utils';
+} from '../types/api';
+import { filterFieldsFromObjects } from '../utils';
 
 import { JobStatus } from './types';
 

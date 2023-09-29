@@ -2,9 +2,6 @@ import { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@entity-matching-app/common';
-import { useQuickMatchContext } from '@entity-matching-app/context/QuickMatchContext';
-import { use3DRevisions } from '@entity-matching-app/hooks/threeD';
 import { useQuery } from '@tanstack/react-query';
 
 import {
@@ -17,6 +14,10 @@ import {
 } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { useTranslation } from '../../common';
+import { useQuickMatchContext } from '../../context/QuickMatchContext';
+import { use3DRevisions } from '../../hooks/threeD';
 
 type Props = { model: Model3D };
 export default function ThreeDRevisions({ model }: Props) {

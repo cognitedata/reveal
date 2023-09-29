@@ -1,13 +1,13 @@
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
 
-import { useTranslation } from '@entity-matching-app/common';
-import NoAccessPage from '@entity-matching-app/components/error-pages/NoAccess';
-import UnknownErrorPage from '@entity-matching-app/components/error-pages/UnknownError';
-import Page from '@entity-matching-app/components/page';
-import { useEMPipeline } from '@entity-matching-app/hooks/entity-matching-pipelines';
-
 import { createLink } from '@cognite/cdf-utilities';
 import { Button, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../common';
+import NoAccessPage from '../../../components/error-pages/NoAccess';
+import UnknownErrorPage from '../../../components/error-pages/UnknownError';
+import Page from '../../../components/page';
+import { useEMPipeline } from '../../../hooks/entity-matching-pipelines';
 
 import ConfigurePipeline from './configure-pipeline';
 import Run from './run';

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import { useTranslation } from '@entity-matching-app/common';
-
 import { Body, Colors, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
 
 type ResourceCellProps = {
   preferredProperties?: string[];

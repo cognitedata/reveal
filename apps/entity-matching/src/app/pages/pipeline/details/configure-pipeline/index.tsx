@@ -1,22 +1,22 @@
 import { useState } from 'react';
 
-import { useTranslation } from '@entity-matching-app/common';
-import FieldMapping from '@entity-matching-app/components/field-mapping';
-import Radio from '@entity-matching-app/components/radio';
-import RadioBox from '@entity-matching-app/components/radio-box';
-import Step from '@entity-matching-app/components/step';
-import {
-  EMFeatureType,
-  ModelMapping,
-} from '@entity-matching-app/context/QuickMatchContext';
-import {
-  Pipeline,
-  useUpdatePipeline,
-} from '@entity-matching-app/hooks/entity-matching-pipelines';
 import { Collapse } from 'antd';
 
 import { Button, Flex } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../../common';
+import FieldMapping from '../../../../components/field-mapping';
+import Radio from '../../../../components/radio';
+import RadioBox from '../../../../components/radio-box';
+import Step from '../../../../components/step';
+import {
+  EMFeatureType,
+  ModelMapping,
+} from '../../../../context/QuickMatchContext';
+import {
+  Pipeline,
+  useUpdatePipeline,
+} from '../../../../hooks/entity-matching-pipelines';
 import { pipelineSourceToAPIType } from '../sources';
 
 type ConfigurePipelineProps = {

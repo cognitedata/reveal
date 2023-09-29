@@ -1,14 +1,9 @@
 import styled from 'styled-components';
 
-import { useTranslation } from '@entity-matching-app/common/i18n';
-
 import { Button, Flex, Title, Tooltip } from '@cognite/cogs.js';
 
-import {
-  RawSource,
-  SourceType,
-  TargetType,
-} from '@entity-matching-app/types/api';
+import { useTranslation } from '../../common';
+import { RawSource, SourceType, TargetType } from '../../types/api';
 
 type QuickMatchActionBarProps = {
   selectedRows: RawSource[] | number[];

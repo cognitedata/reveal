@@ -1,5 +1,6 @@
-import { Body, Chip, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Body, Chip, Flex } from '@cognite/cogs.js';
 
 type MatchTypeOptionContentProps = {
   count: number;

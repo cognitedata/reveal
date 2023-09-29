@@ -1,12 +1,3 @@
-import { TABLE_ITEMS_PER_PAGE } from '@entity-matching-app/common/constants';
-import {
-  API,
-  RawAsset,
-  RawCogniteEvent,
-  RawFileInfo,
-  RawTimeseries,
-  RawSequence,
-} from '@entity-matching-app/types/api';
 import {
   useInfiniteQuery,
   UseInfiniteQueryResult,
@@ -16,6 +7,16 @@ import { range } from 'lodash-es';
 
 import { CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { TABLE_ITEMS_PER_PAGE } from '../common/constants';
+import {
+  API,
+  RawAsset,
+  RawCogniteEvent,
+  RawFileInfo,
+  RawSequence,
+  RawTimeseries,
+} from '../types/api';
 
 import { getList, ListParams } from './api';
 

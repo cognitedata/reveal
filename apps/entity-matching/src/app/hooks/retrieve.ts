@@ -12,7 +12,7 @@ import {
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { API } from '@entity-matching-app/types/api';
+import { API } from '../types/api';
 
 type Opts = {
   enabled?: boolean;

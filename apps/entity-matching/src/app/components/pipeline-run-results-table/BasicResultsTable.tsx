@@ -2,18 +2,19 @@ import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@entity-matching-app/common';
-import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
-import Confidence from '@entity-matching-app/components/em-result/Confidence';
-import {
-  EMPipelineRunMatch,
-  Pipeline,
-} from '@entity-matching-app/hooks/entity-matching-pipelines';
 import { TableRowSelection } from 'antd/lib/table/interface';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
 import { CogniteInternalId } from '@cognite/sdk';
+
+import { useTranslation } from '../../common';
+import { PAGINATION_SETTINGS } from '../../common/constants';
+import {
+  EMPipelineRunMatch,
+  Pipeline,
+} from '../../hooks/entity-matching-pipelines';
+import Confidence from '../em-result/Confidence';
 
 import ExpandedMatch from './ExpandedMatch';
 import ResourceCell from './ResourceCell';

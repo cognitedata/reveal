@@ -1,4 +1,3 @@
-import { API } from '@entity-matching-app/types/api';
 import {
   QueryKey,
   UseQueryOptions,
@@ -8,6 +7,8 @@ import {
 
 import { CogniteClient, CogniteError, DataSet, InternalId } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { API } from '../types/api';
 
 import { fetchAggregate } from './aggregates';
 

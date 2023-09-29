@@ -1,6 +1,3 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { INFINITE_Q_OPTIONS } from './infiniteList';
-import { CogniteError } from '@cognite/sdk';
 import {
   QueryKey,
   useQuery,
@@ -8,7 +5,13 @@ import {
   useMutation,
   UseMutationOptions,
 } from '@tanstack/react-query';
-import { AppliedRule, Rule } from '@entity-matching-app/types/rules';
+
+import { CogniteError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
+import { AppliedRule, Rule } from '../types/rules';
+
+import { INFINITE_Q_OPTIONS } from './infiniteList';
 import { JobStatus } from './types';
 
 type RulesResponse = {

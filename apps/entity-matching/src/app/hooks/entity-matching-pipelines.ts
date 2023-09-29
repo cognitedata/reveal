@@ -1,9 +1,3 @@
-import { DEFAULT_MODEL_FEATURE_TYPE } from '@entity-matching-app/common/constants';
-import {
-  EMFeatureType,
-  ModelMapping,
-} from '@entity-matching-app/context/QuickMatchContext';
-import { PipelineSourceType, TargetType } from '@entity-matching-app/types/api';
 import {
   QueryKey,
   useQuery,
@@ -19,11 +13,10 @@ import { toast } from '@cognite/cogs.js';
 import { CogniteClient, CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-import {
-  RuleCondition,
-  RuleExtractor,
-  RuleMatch,
-} from '@entity-matching-app/types/rules';
+import { DEFAULT_MODEL_FEATURE_TYPE } from '../common/constants';
+import { EMFeatureType, ModelMapping } from '../context/QuickMatchContext';
+import { PipelineSourceType, TargetType } from '../types/api';
+import { RuleCondition, RuleExtractor, RuleMatch } from '../types/rules';
 
 export type Pipeline = {
   id: number;

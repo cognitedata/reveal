@@ -1,17 +1,18 @@
 import { useState } from 'react';
 
-import { useTranslation } from '@entity-matching-app/common';
-import FieldMapping from '@entity-matching-app/components/field-mapping';
-import Radio from '@entity-matching-app/components/radio';
-import RadioBox from '@entity-matching-app/components/radio-box';
-import Step from '@entity-matching-app/components/step';
-import {
-  EMFeatureType,
-  useQuickMatchContext,
-} from '@entity-matching-app/context/QuickMatchContext';
 import { Collapse } from 'antd';
 
 import { Button, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../common';
+import FieldMapping from '../../../../components/field-mapping';
+import Radio from '../../../../components/radio';
+import RadioBox from '../../../../components/radio-box';
+import Step from '../../../../components/step';
+import {
+  EMFeatureType,
+  useQuickMatchContext,
+} from '../../../../context/QuickMatchContext';
 
 const ConfigureModel = (): JSX.Element => {
   const { t } = useTranslation();

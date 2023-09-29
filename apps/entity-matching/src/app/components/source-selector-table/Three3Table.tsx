@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 
-import ThreeDRevisions from '@entity-matching-app/components/three-d-revisions';
-
 import { Icon } from '@cognite/cogs.js';
 
-import { use3DModels } from '@entity-matching-app/hooks/threeD';
+import { use3DModels } from '../../hooks/threeD';
+import ThreeDRevisions from '../three-d-revisions';
 
 export default function ThreeDMOdelGrid() {
   const { data = [], isInitialLoading, error } = use3DModels();

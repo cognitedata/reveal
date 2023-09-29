@@ -12,9 +12,9 @@ import {
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { Selected3dModel } from '@entity-matching-app/context/QuickMatchContext';
-import { API } from '@entity-matching-app/types/api';
-import { sessionStorage3dDetailsKey } from '@entity-matching-app/utils';
+import { Selected3dModel } from '../context/QuickMatchContext';
+import { API } from '../types/api';
+import { sessionStorage3dDetailsKey } from '../utils';
 
 import { AssetIdUpdate } from './types';
 

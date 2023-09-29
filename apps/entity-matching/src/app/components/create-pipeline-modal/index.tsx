@@ -1,15 +1,15 @@
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useTranslation } from '@entity-matching-app/common';
-import PipelineDetailsForm, {
-  PipelineDetailsFormValues,
-} from '@entity-matching-app/components/pipeline-details-form';
 import { FormikErrors, useFormik } from 'formik';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Modal, ModalProps } from '@cognite/cogs.js';
 
-import { useCreatePipeline } from '@entity-matching-app/hooks/entity-matching-pipelines';
+import { useTranslation } from '../../common';
+import { useCreatePipeline } from '../../hooks/entity-matching-pipelines';
+import PipelineDetailsForm, {
+  PipelineDetailsFormValues,
+} from '../pipeline-details-form';
 
 // eslint-disable-next-line
 type CreatePipelineModalProps = Pick<ModalProps, 'onCancel' | 'visible'> & {};

@@ -32,7 +32,6 @@
               "@platypus-core",
               "@cognite/platypus-cdf-cli",
               "@charts-app",
-              "@entity-matching-app",
               "@simint-app"
             ],
             "depConstraints": [

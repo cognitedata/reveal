@@ -1,9 +1,10 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
+
+import styled from 'styled-components';
 
 import { SecondaryTopbar, createLink } from '@cognite/cdf-utilities';
 import { Colors } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
 
 const SECONDARY_TOPBAR_HEIGHT = 56;
 const FOOTER_HEIGHT = 53;

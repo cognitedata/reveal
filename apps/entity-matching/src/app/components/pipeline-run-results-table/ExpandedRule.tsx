@@ -2,15 +2,16 @@ import { Dispatch, SetStateAction, useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@entity-matching-app/common';
-import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
-import { RuleMatch } from '@entity-matching-app/types/rules';
-import { ColoredExtractor } from '@entity-matching-app/utils/colored-rules';
 import { TableRowSelection } from 'antd/lib/table/interface';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { Colors } from '@cognite/cogs.js';
 import { CogniteInternalId } from '@cognite/sdk';
+
+import { useTranslation } from '../../common';
+import { PAGINATION_SETTINGS } from '../../common/constants';
+import { RuleMatch } from '../../types/rules';
+import { ColoredExtractor } from '../../utils/colored-rules';
 
 import ExtractorMatchesCell from './ExtractorMatchesCell';
 

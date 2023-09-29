@@ -1,10 +1,13 @@
 import React from 'react';
-import { AuthContainerMock } from './AuthContainerMock';
+
 import '@cognite/cogs.js/dist/cogs.css';
-import App from '../../app/App';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+
+import App from '../../app/App';
 import { translations } from '../../app/common/i18n';
+
+import { AuthContainerMock } from './AuthContainerMock';
 
 export const AppWrapper = () => {
   const projectName = 'entity-matching';

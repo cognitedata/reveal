@@ -1,6 +1,6 @@
-import { useTranslation } from '@entity-matching-app/common';
-import SourceSelectionTable from '@entity-matching-app/components/source-selector-table';
-import Step from '@entity-matching-app/components/step';
+import { useTranslation } from '../../../../common';
+import SourceSelectionTable from '../../../../components/source-selector-table';
+import Step from '../../../../components/step';
 
 const SelectSources = (): JSX.Element => {
   const { t } = useTranslation();

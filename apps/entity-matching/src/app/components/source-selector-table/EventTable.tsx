@@ -2,17 +2,16 @@ import { useMemo } from 'react';
 
 import { Alert, Checkbox } from 'antd';
 import { TableRowSelection } from 'antd/lib/table/interface';
-import { useTranslation } from '@entity-matching-app/common';
-import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
-import QuickMatchDataSet from '@entity-matching-app/components/quick-match-data-set/QuickMatchDataSet';
-import { RawCogniteEvent } from '@entity-matching-app/types/api';
-import { SourceTableProps } from '@entity-matching-app/types/types';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
-
-import { useList } from '@entity-matching-app/hooks/list';
-
 import { Icon, Loader, Body, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { PAGINATION_SETTINGS } from '../../common/constants';
+import { useList } from '../../hooks/list';
+import { RawCogniteEvent } from '../../types/api';
+import { SourceTableProps } from '../../types/types';
+import QuickMatchDataSet from '../quick-match-data-set/QuickMatchDataSet';
 
 type EventListTableRecord = { key: string } & RawCogniteEvent;
 type EventListTableRecordCT = ColumnType<EventListTableRecord> & {

@@ -1,6 +1,8 @@
-import { Flex } from '@cognite/cogs.js';
-import graphics from '@entity-matching-app/common/assets/graphics';
 import styled from 'styled-components';
+
+import { Flex } from '@cognite/cogs.js';
+
+import graphics from '../../common/assets/graphics';
 
 export const Container = styled(Flex)`
   width: 80%;

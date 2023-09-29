@@ -1,12 +1,10 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import isString from 'lodash/isString';
 
-import {
-  RuleCondition,
-  RuleExtractor,
-  RuleMatch,
-} from '@entity-matching-app/types/rules';
+import { RuleCondition, RuleExtractor, RuleMatch } from '../types/rules';
 
 type Color = {
   bg: string;

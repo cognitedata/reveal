@@ -1,6 +1,7 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { DataSet } from '@cognite/sdk/dist/src';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
+
+import { DataSet } from '@cognite/sdk/dist/src';
+import { useSDK } from '@cognite/sdk-provider';
 
 export const getDataSetListQueryKey = () => ['quickmatch', 'dataset-list'];
 
