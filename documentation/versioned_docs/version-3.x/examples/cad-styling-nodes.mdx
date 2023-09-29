@@ -35,9 +35,12 @@ retrieve nodes of a certain type. In the following example, only pipes are accep
 // import { PropertyFilterNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
 
 const allPipes = new PropertyFilterNodeCollection(sdk, model);
-allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
+allPipes.executeFilter({ PDMS: { Type: 'PIPE' } });
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyledNodeCollection(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(allPipes, {
+  renderGhosted: false,
+  color: [40, 200, 20],
+});
 ```
 
 ## Partitioning requests
@@ -50,11 +53,16 @@ to the `PropertyFilterNodeCollection`-constructor:
 ```js runnable-3x
 // import { PropertyFilterNodeCollection, DefaultNodeAppearance, NodeOutlineColor } from '@cognite/reveal';
 
-const nodesFromFile = new PropertyFilterNodeCollection(sdk, model, { requestPartitions: 10 });
+const nodesFromFile = new PropertyFilterNodeCollection(sdk, model, {
+  requestPartitions: 10,
+});
 // All nodes originating from a given file
-nodesFromFile.executeFilter({'Item': {'Source File': 'PRO-S_CD-MUM.rvm'}});
+nodesFromFile.executeFilter({ Item: { 'Source File': 'PRO-S_CD-MUM.nwd' } });
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyledNodeCollection(nodesFromFile, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
+model.assignStyledNodeCollection(nodesFromFile, {
+  renderGhosted: false,
+  outlineColor: NodeOutlineColor.Orange,
+});
 ```
 
 To compare speed-up, set `requestPartitions` to `1`.
@@ -71,10 +79,13 @@ When doing this as a single query, no `IntersectionNodeCollection` is necessary 
 // import { PropertyFilterNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
 
 const stuMechNodes = new PropertyFilterNodeCollection(sdk, model);
-stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
+stuMechNodes.executeFilter({ PDMS: { ':capDisc': 'MECH', Purpose: 'STU' } });
 
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyledNodeCollection(stuMechNodes, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(stuMechNodes, {
+  renderGhosted: false,
+  color: [40, 200, 20],
+});
 ```
 
 Combining two separate queries requires the use of `IntersectionNodeCollection`:
@@ -83,17 +94,20 @@ Combining two separate queries requires the use of `IntersectionNodeCollection`:
 // import { PropertyFilterNodeCollection, IntersectionNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
 
 const mechNodes = new PropertyFilterNodeCollection(sdk, model);
-mechNodes.executeFilter({'PDMS': {':capDisc': 'MECH'}});
+mechNodes.executeFilter({ PDMS: { ':capDisc': 'MECH' } });
 
 const stuNodes = new PropertyFilterNodeCollection(sdk, model);
-stuNodes.executeFilter({'PDMS': {'Purpose': 'STU'}});
+stuNodes.executeFilter({ PDMS: { Purpose: 'STU' } });
 
 const combined = new IntersectionNodeCollection();
 combined.add(mechNodes);
 combined.add(stuNodes);
 
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyledNodeCollection(combined, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(combined, {
+  renderGhosted: false,
+  color: [40, 200, 20],
+});
 ```
 
 The two approaches has their pros and cons. Often it will be faster to combine the
@@ -113,16 +127,21 @@ supports thousands of IDs - `PropertyFilterNodeCollection` only supports one mat
 ```js runnable-3x
 // import { SinglePropertyFilterNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
 
-const nodeSet = new SinglePropertyFilterNodeCollection(sdk, model, { requestPartitions: 10 });
+const nodeSet = new SinglePropertyFilterNodeCollection(sdk, model, {
+  requestPartitions: 10,
+});
 const names = [];
-for (let q = 200; q < 300; q++) {
+for (let q = 240; q < 300; q++) {
   for (let e = 1; e <= 9; e++) {
     const name = `/60-EL-9016-Q${q}-E0${e}`;
     names.push(name);
   }
 }
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyledNodeCollection(nodeSet, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
+model.assignStyledNodeCollection(nodeSet, {
+  renderGhosted: false,
+  outlineColor: NodeOutlineColor.Orange,
+});
 
 nodeSet.executeFilter('Item', 'Name', names).then(() => {
   // Create boxes around the areas to make it easier for users to find areas in the 3D model to explore
@@ -142,15 +161,15 @@ can be done using `InvertedNodeCollection`.
 // import { PropertyFilterNodeCollection, InvertedNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
 
 const livingQuarters = new PropertyFilterNodeCollection(sdk, model);
-livingQuarters.executeFilter({'Item': {'Name': '/SLP/S/LQ'}});
+livingQuarters.executeFilter({ Item: { Name: '/SLP/S/LQ' } });
 const notLivingQuarters = new InvertedNodeCollection(model, livingQuarters);
 
 model.setDefaultNodeAppearance({
   outlineColor: NodeOutlineColor.Red,
-  color: [120, 50, 0]
+  color: [120, 50, 0],
 });
 model.assignStyledNodeCollection(notLivingQuarters, {
   outlineColor: NodeOutlineColor.NoOutline,
-  color: [0,0,0]
+  color: [0, 0, 0],
 });
 ```
