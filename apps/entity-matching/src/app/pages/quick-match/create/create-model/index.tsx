@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { useTranslation } from '@entity-matching-app/common';
-import QueryStatusIcon from '@entity-matching-app/components/QueryStatusIcon';
+import QueryStatusProgress, {
+  percentFromStatus,
+} from '@entity-matching-app/components/QueryStatusProgress';
 import Step from '@entity-matching-app/components/step';
 import { useQuickMatchContext } from '@entity-matching-app/context/QuickMatchContext';
 import {
@@ -36,7 +39,18 @@ import {
 } from '@entity-matching-app/utils';
 
 import { createLink } from '@cognite/cdf-utilities';
-import { Body, Flex, Infobox } from '@cognite/cogs.js';
+import { Body, Col, Flex, Infobox, Row } from '@cognite/cogs.js';
+
+const Circle = styled.div`
+  border: 1px solid #000000d9;
+  border-radius: 50%;
+  width: 2em;
+  height: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.3em;
+`;
 
 const CreateModel = (): JSX.Element => {
   const {
@@ -527,79 +541,124 @@ const CreateModel = (): JSX.Element => {
       <Flex direction="column" gap={8}>
         <Infobox type="neutral" title={t('do-not-leave-the-page-quick-match')}>
           {sourceStatus && (
-            <Flex alignItems="center" gap={8}>
-              <QueryStatusIcon status={sourceStatus} />
-              <Body level={2}>
-                {t(`source-data-fetch-${sourceStatus}`)}{' '}
-                {sources?.length && `(${sources.length.toLocaleString()})`}
-              </Body>
-            </Flex>
+            <Row cols={20}>
+              <Col span={1}>
+                <Circle>1</Circle>
+              </Col>
+              <Col span={19}>
+                <Body level={2}>
+                  {t(`source-data-fetch-${sourceStatus}`)}{' '}
+                  {sources?.length && `(${sources.length.toLocaleString()})`}
+                </Body>
+                <QueryStatusProgress status={sourceStatus} />
+              </Col>
+            </Row>
           )}
           {targetStatus && (
-            <Flex alignItems="center" gap={8}>
-              <QueryStatusIcon status={targetStatus} />
-              <Body level={2}>
-                {t(`target-data-fetch-${targetStatus}`)}{' '}
-                {targets?.length && `(${targets.length.toLocaleString()})`}
-              </Body>
-            </Flex>
+            <Row cols={20}>
+              <Col span={1}>
+                <Circle>2</Circle>
+              </Col>
+              <Col span={19}>
+                <Body level={2}>
+                  {t(`target-data-fetch-${targetStatus}`)}{' '}
+                  {targets?.length && `(${targets.length.toLocaleString()})`}
+                </Body>
+                <QueryStatusProgress status={targetStatus} />
+              </Col>
+            </Row>
           )}
-          {!model ? (
-            <Flex alignItems="center" gap={8}>
-              <QueryStatusIcon status={createModelStatus} />
-              <Body level={2}>{t(`create-model-${createModelStatus}`)}</Body>
-            </Flex>
-          ) : (
-            <Flex alignItems="center" gap={8}>
-              <QueryStatusIcon status={model.status} />
-              <Body level={2}>{t(`create-model-${model.status}`)}</Body>
-            </Flex>
-          )}
-          {prediction ? (
-            <Flex alignItems="center" gap={8}>
-              <QueryStatusIcon status={prediction.status} />
-              <Body level={2}>
-                {t(`create-prediction-job-${prediction.status}`)}
-              </Body>
-            </Flex>
-          ) : (
-            <Flex alignItems="center" gap={8}>
-              <QueryStatusIcon status={createPredictStatus} />
-              <Body level={2}>
-                {t(`create-prediction-job-${createPredictStatus}`)}
-              </Body>
-            </Flex>
-          )}
+          <Row cols={20}>
+            <Col span={1}>
+              <Circle>3</Circle>
+            </Col>
+            <Col span={19}>
+              {!model ? (
+                <Body level={2}>{t(`create-model-${createModelStatus}`)}</Body>
+              ) : (
+                <Body level={2}>{t(`create-model-${model.status}`)}</Body>
+              )}
+              <QueryStatusProgress
+                percent={
+                  (percentFromStatus(createModelStatus) +
+                    percentFromStatus(model?.status)) /
+                  2
+                }
+              />
+            </Col>
+          </Row>
+          <Row cols={20}>
+            <Col span={1}>
+              <Circle>4</Circle>
+            </Col>
+            <Col span={19}>
+              {!prediction ? (
+                <Body level={2}>
+                  {t(`create-prediction-job-${createPredictStatus}`)}
+                </Body>
+              ) : (
+                <Body level={2}>
+                  {t(`create-prediction-job-${prediction.status}`)}
+                </Body>
+              )}
+              <QueryStatusProgress
+                percent={
+                  (percentFromStatus(createPredictStatus) +
+                    percentFromStatus(prediction?.status)) /
+                  2
+                }
+              />
+            </Col>
+          </Row>
           {generateRules && (
             <>
-              {rules ? (
-                <Flex alignItems="center" gap={8}>
-                  <QueryStatusIcon status={rules.status} />
-                  <Body level={2}>{t(`create-rules-job-${rules.status}`)}</Body>
-                </Flex>
-              ) : (
-                <Flex alignItems="center" gap={8}>
-                  <QueryStatusIcon status={createRulesStatus} />
-                  <Body level={2}>
-                    {t(`create-rules-job-${createRulesStatus}`)}
-                  </Body>
-                </Flex>
-              )}
-              {applyRulesResult ? (
-                <Flex alignItems="center" gap={8}>
-                  <QueryStatusIcon status={applyRulesResult.status} />
-                  <Body level={2}>
-                    {t(`create-apply-rules-job-${applyRulesResult.status}`)}
-                  </Body>
-                </Flex>
-              ) : (
-                <Flex alignItems="center" gap={8}>
-                  <QueryStatusIcon status={applyRulesStatus} />
-                  <Body level={2}>
-                    {t(`create-apply-rules-job-${applyRulesStatus}`)}
-                  </Body>
-                </Flex>
-              )}
+              <Row cols={20}>
+                <Col span={1}>
+                  <Circle>5</Circle>
+                </Col>
+                <Col span={19}>
+                  {!rules ? (
+                    <Body level={2}>
+                      {t(`create-rules-job-${createRulesStatus}`)}
+                    </Body>
+                  ) : (
+                    <Body level={2}>
+                      {t(`create-rules-job-${rules.status}`)}
+                    </Body>
+                  )}
+                  <QueryStatusProgress
+                    percent={
+                      (percentFromStatus(createRulesStatus) +
+                        percentFromStatus(rules?.status)) /
+                      2
+                    }
+                  />
+                </Col>
+              </Row>
+
+              <Row cols={20}>
+                <Col span={1}>
+                  <Circle>6</Circle>
+                </Col>
+                <Col span={19}>
+                  {!applyRulesResult ? (
+                    <Body level={2}>
+                      {t(`create-apply-rules-job-${applyRulesStatus}`)}
+                    </Body>
+                  ) : (
+                    <Body level={2}>
+                      {t(`create-apply-rules-job-${applyRulesResult.status}`)}
+                    </Body>
+                  )}
+                  <QueryStatusProgress
+                    percent={
+                      (percentFromStatus(applyRulesStatus) +
+                        percentFromStatus(applyRulesResult?.status)) /
+                      2
+                    }
+                  />
+                </Col>
+              </Row>
             </>
           )}
         </Infobox>
