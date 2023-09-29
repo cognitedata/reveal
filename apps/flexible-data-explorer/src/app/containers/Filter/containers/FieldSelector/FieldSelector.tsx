@@ -20,7 +20,7 @@ export interface FieldSelectorProps {
   name: string;
   displayName?: string;
   fields: Field[];
-  onBackClick: () => void;
+  onBackClick?: () => void;
   onSelectField: (field: Field) => void;
   isError?: boolean;
 }

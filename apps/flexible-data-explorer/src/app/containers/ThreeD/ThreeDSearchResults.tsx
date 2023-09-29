@@ -39,6 +39,6 @@ const SearchContent = styled.div`
   min-width: 0;
   display: flex;
   flex-direction: column;
-  padding: 32px 16px 0 16px;
+  padding: 16px 16px 0 16px;
   overflow-x: hidden;
 `;

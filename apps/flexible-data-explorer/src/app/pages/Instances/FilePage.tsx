@@ -46,13 +46,13 @@ export const FilePage = () => {
       ]}
     >
       <Page.Widgets>
+        <FileWidget id="Preview" fileId={data?.id} rows={6} columns={4} />
         <PropertiesWidget
           id="Properties"
           state={status}
           data={data}
           columns={4}
         />
-        <FileWidget id="Preview" fileId={data?.id} rows={6} columns={4} />
       </Page.Widgets>
     </Page.Dashboard>
   );

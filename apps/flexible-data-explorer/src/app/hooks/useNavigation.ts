@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ContainerReference } from '@fusion/industry-canvas';
 import queryString from 'query-string';
@@ -7,24 +7,26 @@ import queryString from 'query-string';
 import { DateRange, ValueByDataType } from '../containers/Filter';
 import { createSearchParams } from '../utils/router';
 
+import { useLinks } from './useLinks';
 import { ViewMode, useViewModeParams } from './useParams';
-import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
+
+// TODO: gradually move the navigation logic from this hook to 'Link'.
 
 export const useNavigation = () => {
   const navigate = useNavigate();
-  const { search, pathname } = useLocation(); // <-- current location being accessed
-  const params = useParams();
+  const { search } = useLocation(); // <-- current location being accessed
   const [viewMode] = useViewModeParams();
-  // const dataModelParams = useDataModelParams();
-  const chartsUrl = useGetChartsUrl();
-  const canvasUrl = useGetCanvasUrl();
 
-  // For migration: if we're located at the route, keep the route
-  // TODO: Better way to use navigate function to do this?
-  const basename = useMemo(
-    () => (pathname.startsWith('/explore') ? '/explore' : ''),
-    [pathname]
-  );
+  const {
+    homePageLink,
+    searchPageLink,
+    instancePageLink,
+    filePageLink,
+    timeseriesPageLink,
+    sequencePageLink,
+    canvasAppLink,
+    chartsAppLink,
+  } = useLinks();
 
   const toSearchPage = useCallback(
     (
@@ -50,36 +52,29 @@ export const useNavigation = () => {
       });
 
       navigate({
-        pathname: `${basename}/search`,
+        pathname: searchPageLink(),
         search: queryParams.toString(),
       });
     },
-    [basename, navigate, viewMode]
-  );
-
-  // NOTE: this is gonna be removed, there will be no list pages, only search results.
-  const toListPage = useCallback(
-    (space: string, dataModel: string, version: string, dataType: string) => {
-      navigate({
-        pathname: `${basename}/${dataModel}/${space}/${version}/list/${dataType}`,
-        // search: `?searchQuery=${query}`,
-      });
-    },
-    [basename, navigate]
+    [searchPageLink, navigate, viewMode]
   );
 
   const toHomePage = useCallback(
     (space: string, dataModel: string, version: string) => {
       navigate(
         {
-          pathname: `${basename}/${dataModel}/${space}/${version}`,
+          pathname: homePageLink({
+            externalId: dataModel,
+            space,
+            version,
+          }),
         },
         {
           replace: true,
         }
       );
     },
-    [basename, navigate]
+    [homePageLink, navigate]
   );
 
   const toGenericPage = useCallback(
@@ -113,24 +108,25 @@ export const useNavigation = () => {
       // Assure that we are looking at the dashboard of the instance
       queryParams.set('viewMode', options.viewMode ?? 'list');
 
-      const pathname = [
-        basename,
-        dataModel,
-        space,
-        version,
-        dataType,
-        instanceSpace,
-        externalId,
-      ]
-        .filter((item) => item !== undefined)
-        .join('/');
+      const pathname = instancePageLink(
+        {
+          externalId: dataModel,
+          space,
+          version,
+        },
+        {
+          dataType,
+          instanceSpace,
+          externalId,
+        }
+      );
 
       navigate({
         pathname,
         search: queryParams.toString(),
       });
     },
-    [basename, navigate, search]
+    [instancePageLink, navigate, search]
   );
 
   const toTimeseriesPage = useCallback(
@@ -147,11 +143,11 @@ export const useNavigation = () => {
       }
 
       navigate({
-        pathname: `${basename}/timeseries/${externalId}`,
+        pathname: timeseriesPageLink(externalId),
         search: queryParams.toString(),
       });
     },
-    [basename, navigate, search]
+    [timeseriesPageLink, navigate, search]
   );
 
   const toFilePage = useCallback(
@@ -168,11 +164,11 @@ export const useNavigation = () => {
       }
 
       navigate({
-        pathname: `${basename}/file/${externalId}`,
+        pathname: filePageLink(externalId),
         search: queryParams.toString(),
       });
     },
-    [basename, navigate, search]
+    [filePageLink, navigate, search]
   );
 
   const toSequencePage = useCallback(
@@ -189,11 +185,11 @@ export const useNavigation = () => {
       }
 
       navigate({
-        pathname: `${basename}/sequence/${externalId}`,
+        pathname: sequencePageLink(externalId),
         search: queryParams.toString(),
       });
     },
-    [basename, navigate, search]
+    [sequencePageLink, navigate, search]
   );
 
   const toInstancePage = useCallback(
@@ -239,7 +235,7 @@ export const useNavigation = () => {
         options
       );
     },
-    [toFilePage, toGenericPage, toSequencePage, toTimeseriesPage, search]
+    [toFilePage, toGenericPage, toSequencePage, toTimeseriesPage]
   );
 
   const toLandingPage = useCallback(() => {
@@ -254,7 +250,7 @@ export const useNavigation = () => {
     };
     const query = queryString.stringify(queryObj);
 
-    window.open(`${chartsUrl}&${query}`, '_blank');
+    window.open(chartsAppLink(query), '_blank');
   };
 
   const toCanvas = (containerReference: ContainerReference) => {
@@ -267,7 +263,7 @@ export const useNavigation = () => {
       initializeWithContainerReferences,
     });
 
-    window.open(`${canvasUrl}&${query}`, '_blank');
+    window.open(canvasAppLink(query), '_blank');
   };
 
   const goBack = useCallback(() => {
@@ -277,7 +273,6 @@ export const useNavigation = () => {
   return {
     toLandingPage,
     toSearchPage,
-    toListPage,
     toHomePage,
 
     toInstancePage,

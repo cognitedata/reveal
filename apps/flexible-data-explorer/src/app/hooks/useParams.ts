@@ -115,7 +115,7 @@ export const useViewModeParams = (): [
 
 export const useSearchFilterParams = (): [
   ValueByDataType | undefined,
-  (query?: ValueByDataType) => void
+  (query?: ValueByDataType, dataType?: string) => void
 ] => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -130,9 +130,15 @@ export const useSearchFilterParams = (): [
   }, [searchParams]);
 
   const setSearchFilterParams = useCallback(
-    (query?: ValueByDataType) => {
+    (query?: ValueByDataType, dataType?: string) => {
       setSearchParams((currentParams) => {
         currentParams.set(ParamKeys.Filters, JSON.stringify(query));
+
+        // Work around for now, the use-case is to switch the category on filter selection.
+        if (dataType) {
+          currentParams.set(ParamKeys.SearchCategory, dataType);
+        }
+
         return currentParams;
       });
     },

@@ -64,18 +64,18 @@ export const TimeseriesPage = () => {
       ]}
     >
       <Page.Widgets>
-        <PropertiesWidget
-          id="Properties"
-          data={data}
-          state={status}
-          columns={4}
-        />
         <TimeseriesWidget
           id="Timeseries"
           timeseriesId={data?.id}
           dateRange={dateRange}
           onChangeDateRange={handleDateRangeChange}
           rows={6}
+          columns={4}
+        />
+        <PropertiesWidget
+          id="Properties"
+          data={data}
+          state={status}
           columns={4}
         />
       </Page.Widgets>

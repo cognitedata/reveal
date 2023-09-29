@@ -17,12 +17,12 @@ export const SearchPage = () => {
       <Page.Body>
         <Container>
           <Suspense fallback="Loading">
+            {!isAIEnabled && <SearchCategories />}
+
             <Content>
               <SearchConfiguration />
               {isAIEnabled ? <AIResults /> : <SearchResults />}
             </Content>
-
-            {!isAIEnabled && <SearchCategories />}
           </Suspense>
         </Container>
       </Page.Body>

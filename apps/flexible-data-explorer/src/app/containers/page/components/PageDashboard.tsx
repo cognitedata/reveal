@@ -41,7 +41,9 @@ export const PageDashboard: React.FC<PropsWithChildren<Props>> = ({
         header={hasExpandedWidget ? undefined : dataType}
         title={hasExpandedWidget ? capitalize(expandedId) : customName}
         subtitle={
-          hasExpandedWidget ? `${customName} • ${description}` : description
+          hasExpandedWidget
+            ? `${customName} ${description ? '•' : ''} ${description || ''}`
+            : description
         }
         loading={loading}
       >

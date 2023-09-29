@@ -11,7 +11,7 @@ import styled, { css } from 'styled-components';
 
 import { matchSorter } from 'match-sorter';
 
-import { Chip, Icon } from '@cognite/cogs.js';
+import { Button, Chip, Tooltip } from '@cognite/cogs.js';
 
 import { Typography } from '../../components/Typography';
 import { useClickOutsideListener } from '../../hooks/listeners/useClickOutsideListener';
@@ -31,7 +31,6 @@ import { AISearchPreview } from './AISearchPreview';
 import { AISearchCategoryDropdown } from './components/AISearchCategoryDropdown';
 import { AiSearchIcon } from './components/AiSearchIcon';
 import { SearchBarSwitch } from './SearchBarSwitch';
-import { SearchFilters } from './SearchFilters';
 import { SearchPreview } from './SearchPreview';
 
 interface Props {
@@ -49,7 +48,6 @@ export const SearchBar: React.FC<Props> = ({
   inverted,
   autoFocus,
   disablePreview,
-  options,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigation();
@@ -88,6 +86,15 @@ export const SearchBar: React.FC<Props> = ({
     setPreviewFocus(false);
   }, []);
 
+  const handleSearchClick = () => {
+    closePreview();
+
+    navigate.toSearchPage(localQuery, filters, {
+      category,
+      enableAISearch: isAISearch,
+    });
+  };
+
   useClickOutsideListener(closePreview, ref);
 
   useEffect(() => {
@@ -107,7 +114,7 @@ export const SearchBar: React.FC<Props> = ({
         $isAIEnabled={isAISearch}
       >
         <Content>
-          {isAISearch ? <AiSearchIcon /> : <StyledIcon type="Search" />}
+          {isAISearch && <AiSearchIcon />}
           {isAISearch && <AISearchCategoryDropdown />}
           {category && !isAISearch && (
             <CategoryChip
@@ -122,12 +129,8 @@ export const SearchBar: React.FC<Props> = ({
               if (e.key === 'Enter' || e.keyCode === 13) {
                 e.preventDefault();
                 (e.target as any).blur();
-                closePreview();
 
-                navigate.toSearchPage(localQuery, filters, {
-                  category,
-                  enableAISearch: isAISearch,
-                });
+                handleSearchClick();
               }
             }}
             // Do not add onBlur to input, it messes with the search preview dropdown.
@@ -163,7 +166,7 @@ export const SearchBar: React.FC<Props> = ({
               })}
             </Typography.Body>
           )}
-          {!isAISearch && (
+          {/* {!isAISearch && (
             <SearchFilters
               value={filters}
               onClick={() => {
@@ -174,7 +177,17 @@ export const SearchBar: React.FC<Props> = ({
               }}
               filterMenuMaxHeight={options?.filterMenuMaxHeight}
             />
-          )}
+          )} */}
+          <Tooltip content="Search">
+            <Button
+              type={isPreviewFocused ? 'primary' : 'secondary'}
+              icon="Search"
+              aria-label="Search"
+              onClick={() => {
+                handleSearchClick();
+              }}
+            />
+          </Tooltip>
         </Content>
 
         {isPreviewFocused && isAISearch && (
@@ -256,10 +269,6 @@ const StyledInput = styled.input.attrs({ type: 'search' })`
   &:focus {
     outline: none;
   }
-`;
-
-const StyledIcon = styled(Icon)`
-  min-width: 16px;
 `;
 
 const CategoryChip = styled(Chip).attrs({ type: 'neutral', size: 'small' })`

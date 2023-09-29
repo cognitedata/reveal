@@ -130,7 +130,10 @@ const NameText = styled(Title).attrs({ level: 6 })`
   white-space: nowrap;
 `;
 
-const DescriptionText = styled(Typography.Body).attrs({ level: 6 })``;
+const DescriptionText = styled(Typography.Body).attrs({
+  level: 6,
+  fallback: '',
+})``;
 
 const KeyText = styled(Typography.Body).attrs({ size: 'xsmall', muted: true })`
   text-transform: capitalize;
