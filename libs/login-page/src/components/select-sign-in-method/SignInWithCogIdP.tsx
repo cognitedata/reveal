@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { parse } from 'query-string';
 
-import { Icon, Chip } from '@cognite/cogs.js';
+import { Icon, PromoChip } from '@cognite/cogs.js';
 import {
   cogIdpAuthority,
   cogIdpInternalId,
@@ -94,14 +94,15 @@ export default function SignInWithCogniteIdP({
       onClick={initiateSignIn}
       icon={<Microsoft />}
     >
-      {'Sign in with Microsoft '}
-      <Chip
-        type="danger"
-        label="Experimental"
+      Sign in with Microsoft
+      <PromoChip
+        type="solid"
         size="x-small"
-        hideTooltip
-        appearance="solid"
-      />
+        tooltip={false}
+        style={{ marginLeft: '10px' }}
+      >
+        Experimental
+      </PromoChip>
     </SignInButton>
   );
 }
