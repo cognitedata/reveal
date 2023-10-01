@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import styled from 'styled-components';
 
@@ -10,9 +10,6 @@ import { Color } from 'three';
 import {
   CadIntersection,
   CogniteCadModel,
-  DefaultNodeAppearance,
-  NodeAppearance,
-  NodeOutlineColor,
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
 import { RevealContainer } from '@cognite/reveal-react-components';
@@ -28,16 +25,21 @@ import {
   setModelId,
   useContextualizeThreeDViewerStore,
   onCloseResourceSelector,
+  setSelectedAndContextualizedNodesList,
 } from '../../useContextualizeThreeDViewerStore';
 import { getCdfCadContextualization } from '../../utils/getCdfCadContextualization';
 import { saveCdfThreeDCadContextualization } from '../../utils/saveCdfThreeDCadContextualization';
-import { updateStyleForContextualizedCadNodes } from '../../utils/updateStyleForContextualizedCadNodes';
+import { updateThreeDViewerCadNodes } from '../../utils/updateThreeDViewerCadNodes';
 
 import { CadRevealContent } from './CadRevealContent';
 
 type ContextualizeThreeDViewerProps = {
   modelId: number;
   revisionId: number;
+};
+export type SelectedNode = {
+  treeIndex: number;
+  nodeId: number;
 };
 
 export const CadContextualizeThreeDViewer = ({
@@ -46,40 +48,36 @@ export const CadContextualizeThreeDViewer = ({
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
 
-  const nodeStyles = [
-    DefaultNodeAppearance.Default,
-    DefaultNodeAppearance.Highlighted,
-    new Color(0.6, 0.2, 0.78),
-    new Color(0.38, 0.27, 0.72),
-  ];
-
   const selectedNodes = new TreeIndexNodeCollection();
-  // const selectedAndContextualizedNodes = new TreeIndexNodeCollection();
+  const currentSelectedAndContextualizedNodesList = new Array<SelectedNode>();
 
   const {
     isResourceSelectorOpen,
-    viewer,
+    threeDViewer,
     model,
     modelType,
     selectedNodeIdsList,
-    selectedAndContextualizedNodesList,
     selectedAndContextualizedNodes,
-  } = useContextualizeThreeDViewerStore((state) => ({
-    isResourceSelectorOpen: state.isResourceSelectorOpen,
-    viewer: state.threeDViewer,
-    model: state.model,
-    modelType: state.modelType,
-    selectedNodeIdsList: state.selectedNodeIdsList,
-    selectedAndContextualizedNodesList:
-      state.selectedAndContextualizedNodesList,
-    selectedAndContextualizedNodes: state.selectedAndContextualizedNodes,
-  }));
+  } = useContextualizeThreeDViewerStore.getState();
 
   const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
     'COGNITE_CONTEXTUALIZE_EDITOR_RESOURCE_SELECTOR_WIDTH',
     DEFAULT_RIGHT_SIDE_PANEL_WIDTH
   );
 
+  const updateContextualizedNodesStyle = (newNodes) => {
+    if (!model || !(model instanceof CogniteCadModel) || modelType !== 'cad')
+      return;
+    updateThreeDViewerCadNodes({
+      sdk,
+      modelId,
+      revisionId,
+      model,
+      contextualizedNodes: newNodes,
+      selectedNodes: selectedNodes,
+      selectedAndContextualizedNodes,
+    });
+  };
   // use effects hooks
   useEffect(() => {
     setModelId(modelId);
@@ -87,107 +85,107 @@ export const CadContextualizeThreeDViewer = ({
 
   useEffect(() => {
     (async () => {
-      if (model && model instanceof CogniteCadModel && modelType === 'cad') {
-        // get the contextualized 3d nodes and update the style of each node
-        // TODO: get the mapped cad nodes with the cursor
-        const mappedCadNodes = await getCdfCadContextualization({
-          sdk: sdk,
-          modelId: modelId,
-          revisionId: revisionId,
-          nodeId: undefined,
-        });
+      if (!model || !(model instanceof CogniteCadModel) || modelType !== 'cad')
+        return;
 
-        // const colorMappedAndSelected = new Color(0.1, 0.7, 0.78);
+      const currentContextualizedNodes = await getCdfCadContextualization({
+        sdk: sdk,
+        modelId: modelId,
+        revisionId: revisionId,
+        nodeId: undefined,
+      });
 
-        updateStyleForContextualizedCadNodes({
-          model,
-          cadMapping: mappedCadNodes,
-          color: nodeStyles[2] as Color,
-          outlineColor: NodeOutlineColor.NoOutline,
-        });
+      updateThreeDViewerCadNodes({
+        sdk,
+        modelId,
+        revisionId,
+        model,
+        contextualizedNodes: currentContextualizedNodes,
+        selectedNodes: selectedNodes,
+        selectedAndContextualizedNodes,
+      });
 
-        model.assignStyledNodeCollection(
-          selectedNodes,
-          nodeStyles[1] as NodeAppearance
-        );
+      threeDViewer?.on('click', async (event) => {
+        const intersection = (await threeDViewer.getIntersectionFromPixel(
+          event.offsetX,
+          event.offsetY
+        )) as CadIntersection;
+        if (intersection) {
+          const nodeId = await model.mapTreeIndexToNodeId(
+            intersection.treeIndex
+          );
 
-        model.assignStyledNodeCollection(selectedAndContextualizedNodes, {
-          color: nodeStyles[3] as Color,
-          outlineColor: NodeOutlineColor.White,
-        });
+          const state = useContextualizeThreeDViewerStore.getState();
+          const currentContextualizedNodesState = state.contextualizedNodes;
 
-        viewer?.on('click', async (event) => {
-          const intersection = (await viewer.getIntersectionFromPixel(
-            event.offsetX,
-            event.offsetY
-          )) as CadIntersection;
-          if (intersection) {
-            const nodeId = await model.mapTreeIndexToNodeId(
-              intersection.treeIndex
-            );
+          const indexSelectedNodeSet = selectedNodes.getIndexSet();
+          const indexContextualizedAndSelectedNodeSet =
+            selectedAndContextualizedNodes.getIndexSet();
 
-            const indexSelectedNodeSet = selectedNodes.getIndexSet();
-            const indexContextualizedAndSelectedNodeSet =
-              selectedAndContextualizedNodes.getIndexSet();
-
-            const contextualizedNodeFound = mappedCadNodes.items.find(
+          const contextualizedNodeFound =
+            currentContextualizedNodesState?.items.find(
               (nodeItem) => nodeItem.nodeId === nodeId
             );
-            const selectedNodeFound = indexSelectedNodeSet.contains(
+          const selectedNodeFound = indexSelectedNodeSet.contains(
+            intersection.treeIndex
+          );
+          const selectedAndContextualizedNodeFound =
+            indexContextualizedAndSelectedNodeSet.contains(
               intersection.treeIndex
             );
-            const selectedAndContextualizedNodeFound =
-              indexContextualizedAndSelectedNodeSet.contains(
-                intersection.treeIndex
-              );
 
-            // toggle the selection of nodes
+          // toggle the selection of nodes
 
-            if (
-              !selectedNodeFound &&
-              !selectedNodeIdsList.find((nodeItem) => nodeItem === nodeId)
-            ) {
-              selectedNodeIdsList.push(nodeId);
-            } else {
-              selectedNodeIdsList.splice(
-                selectedNodeIdsList.indexOf(nodeId),
-                1
-              );
-            }
-
-            if (!selectedNodeFound && !contextualizedNodeFound) {
-              indexSelectedNodeSet.add(intersection.treeIndex);
-              selectedNodes.updateSet(indexSelectedNodeSet);
-            } else if (selectedNodeFound && !contextualizedNodeFound) {
-              indexSelectedNodeSet.remove(intersection.treeIndex);
-              selectedNodes.updateSet(indexSelectedNodeSet);
-            } else if (
-              !selectedAndContextualizedNodeFound &&
-              contextualizedNodeFound
-            ) {
-              indexContextualizedAndSelectedNodeSet.add(intersection.treeIndex);
-              selectedAndContextualizedNodes.updateSet(
-                indexContextualizedAndSelectedNodeSet
-              );
-
-              selectedAndContextualizedNodesList.push(nodeId);
-            } else if (selectedAndContextualizedNodeFound) {
-              indexContextualizedAndSelectedNodeSet.remove(
-                intersection.treeIndex
-              );
-              selectedAndContextualizedNodes.updateSet(
-                indexContextualizedAndSelectedNodeSet
-              );
-              selectedAndContextualizedNodesList.splice(
-                selectedAndContextualizedNodesList.indexOf(nodeId),
-                1
-              );
-            }
+          if (
+            !selectedNodeFound &&
+            !selectedNodeIdsList.find((nodeItem) => nodeItem === nodeId)
+          ) {
+            selectedNodeIdsList.push(nodeId);
+          } else {
+            selectedNodeIdsList.splice(selectedNodeIdsList.indexOf(nodeId), 1);
           }
-        });
-      }
+
+          if (!selectedNodeFound && !contextualizedNodeFound) {
+            indexSelectedNodeSet.add(intersection.treeIndex);
+            selectedNodes.updateSet(indexSelectedNodeSet);
+          } else if (selectedNodeFound && !contextualizedNodeFound) {
+            indexSelectedNodeSet.remove(intersection.treeIndex);
+            selectedNodes.updateSet(indexSelectedNodeSet);
+          } else if (
+            !selectedAndContextualizedNodeFound &&
+            contextualizedNodeFound
+          ) {
+            indexContextualizedAndSelectedNodeSet.add(intersection.treeIndex);
+            selectedAndContextualizedNodes.updateSet(
+              indexContextualizedAndSelectedNodeSet
+            );
+
+            currentSelectedAndContextualizedNodesList.push({
+              nodeId,
+              treeIndex: intersection.treeIndex,
+            });
+          } else if (selectedAndContextualizedNodeFound) {
+            indexContextualizedAndSelectedNodeSet.remove(
+              intersection.treeIndex
+            );
+            selectedAndContextualizedNodes.updateSet(
+              indexContextualizedAndSelectedNodeSet
+            );
+            currentSelectedAndContextualizedNodesList.splice(
+              currentSelectedAndContextualizedNodesList.findIndex(
+                (nodeItem) => nodeItem.treeIndex === intersection.treeIndex
+              ),
+              1
+            );
+          }
+
+          setSelectedAndContextualizedNodesList(
+            currentSelectedAndContextualizedNodesList
+          );
+        }
+      });
     })();
-  }, [viewer, model, modelType, sdk, modelId, revisionId]);
+  }, [threeDViewer, model, modelType, sdk, modelId, revisionId]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -223,7 +221,13 @@ export const CadContextualizeThreeDViewer = ({
       >
         <ThreeDViewerStyled>
           <RevealContainer sdk={sdk} color={defaultRevealColor}>
-            <CadRevealContent modelId={modelId} revisionId={revisionId} />
+            <CadRevealContent
+              modelId={modelId}
+              revisionId={revisionId}
+              onContextualizationUpdated={(newNodes) =>
+                updateContextualizedNodesStyle(newNodes)
+              }
+            />
           </RevealContainer>
         </ThreeDViewerStyled>
         {/* {viewer && model && (

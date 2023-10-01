@@ -6,7 +6,9 @@ import {
   CognitePointCloudModel,
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
-import { AnnotationModel } from '@cognite/sdk';
+import { AnnotationModel, AssetMapping3D, ListResponse } from '@cognite/sdk';
+
+import { SelectedNode } from './components/Cad/CadContextualizeThreeDViewer';
 export type ThreeDPosition = {
   x: number;
   y: number;
@@ -40,8 +42,9 @@ type RootState = {
   model: CogniteCadModel | CognitePointCloudModel | undefined;
   modelType: string;
   selectedNodeIdsList: Array<number>;
-  selectedAndContextualizedNodesList: Array<number>;
+  selectedAndContextualizedNodesList: Array<SelectedNode>;
   selectedAndContextualizedNodes: TreeIndexNodeCollection;
+  contextualizedNodes: ListResponse<AssetMapping3D[]> | null;
   annotations: AnnotationModel[] | null;
 };
 
@@ -61,6 +64,7 @@ const initialState: RootState = {
   selectedNodeIdsList: [],
   selectedAndContextualizedNodesList: [],
   selectedAndContextualizedNodes: new TreeIndexNodeCollection(),
+  contextualizedNodes: null,
   annotations: null,
 };
 
@@ -185,7 +189,7 @@ export const setSelectedNodeIdsList = (selectedNodeIdsList: Array<number>) => {
 };
 
 export const setSelectedAndContextualizedNodesList = (
-  selectedAndContextualizedNodesList: Array<number>
+  selectedAndContextualizedNodesList: Array<SelectedNode>
 ) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
@@ -199,5 +203,14 @@ export const setSelectedAndContextualizedTreeIndexCollection = (
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     selectedAndContextualizedNodes,
+  }));
+};
+
+export const setContextualizedNodes = (
+  contextualizedNodes: ListResponse<AssetMapping3D[]>
+) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    contextualizedNodes,
   }));
 };

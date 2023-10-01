@@ -1,5 +1,6 @@
 import { Color } from 'three';
 
+import { DefaultNodeAppearance } from '@cognite/reveal';
 import { QualitySettings } from '@cognite/reveal-react-components';
 
 export const CONTEXTUALIZE_EDITOR_HEADER_HEIGHT = 40;
@@ -47,3 +48,10 @@ export const HighQualitySettings: QualitySettings = {
     maxRenderResolution: Infinity,
   },
 };
+
+export const cadNodeStyles = [
+  DefaultNodeAppearance.Default,
+  DefaultNodeAppearance.Highlighted,
+  new Color(0.6, 0.2, 0.78),
+  new Color(0.38, 0.27, 0.72),
+];

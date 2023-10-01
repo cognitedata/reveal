@@ -2,12 +2,19 @@ import { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
+import { noop } from 'lodash';
+
 import { Button, ToolBar } from '@cognite/cogs.js';
 import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
 import {
   useReveal,
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
+import {
+  AssetMapping3D,
+  AssetMapping3DBase,
+  ListResponse,
+} from '@cognite/sdk/dist/src';
 
 import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
 import {
@@ -25,17 +32,20 @@ import { CadToolBar } from './CadToolBar/CadToolBar';
 interface RevealContentProps {
   modelId: number;
   revisionId: number;
+  onContextualizationUpdated: typeof noop;
 }
 
 export const CadRevealContent = ({
   modelId,
   revisionId,
+  onContextualizationUpdated,
 }: RevealContentProps) => {
   const viewer = useReveal();
   const { isResourceSelectorOpen, modelType } =
     useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       modelType: state.modelType,
+      contextualizedNodes: state.contextualizedNodes,
     }));
 
   const [error, setError] = useState<Error>();
@@ -60,6 +70,23 @@ export const CadRevealContent = ({
     if (viewer.domElement) {
       setModel(_model);
     }
+  };
+
+  const onContextualizationDeleted = (
+    mappedNodesDeleted: AssetMapping3DBase[]
+  ) => {
+    const state = useContextualizeThreeDViewerStore.getState();
+    const oldContextualizedNodes = state.contextualizedNodes;
+
+    const newContextualizedNodes: ListResponse<AssetMapping3D[]> = {
+      items: [],
+    };
+    oldContextualizedNodes?.items.forEach((item) => {
+      if (mappedNodesDeleted.find((node) => item.nodeId !== node.nodeId)) {
+        newContextualizedNodes.items.push(item);
+      }
+    });
+    onContextualizationUpdated(newContextualizedNodes);
   };
 
   // Load the cad model to the viewer
@@ -99,6 +126,9 @@ export const CadRevealContent = ({
       <CadContextualizedFloatingToolBar
         modelId={modelId}
         revisionId={revisionId}
+        onContextualizationDeleted={(mappedNodesDeleted) => {
+          onContextualizationDeleted(mappedNodesDeleted);
+        }}
       />
       <StyledResourceSelectorButtonWrapper>
         <Button
