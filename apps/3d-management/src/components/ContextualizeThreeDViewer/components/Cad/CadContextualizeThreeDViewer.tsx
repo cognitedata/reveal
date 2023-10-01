@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import ThreeDViewerSidebar from '@3d-management/pages/RevisionDetails/components/ThreeDViewerSidebar';
 import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
-import { Color } from 'three';
 
 import {
   CadIntersection,
@@ -65,7 +64,7 @@ export const CadContextualizeThreeDViewer = ({
     DEFAULT_RIGHT_SIDE_PANEL_WIDTH
   );
 
-  const updateContextualizedNodesStyle = (newNodes) => {
+  const handleContextualizedNodesUpdate = (newNodes, nodesToReset) => {
     if (!model || !(model instanceof CogniteCadModel) || modelType !== 'cad')
       return;
     updateThreeDViewerCadNodes({
@@ -73,6 +72,7 @@ export const CadContextualizeThreeDViewer = ({
       modelId,
       revisionId,
       model,
+      nodesToReset: nodesToReset,
       contextualizedNodes: newNodes,
       selectedNodes: selectedNodes,
       selectedAndContextualizedNodes,
@@ -100,6 +100,7 @@ export const CadContextualizeThreeDViewer = ({
         modelId,
         revisionId,
         model,
+        nodesToReset: null,
         contextualizedNodes: currentContextualizedNodes,
         selectedNodes: selectedNodes,
         selectedAndContextualizedNodes,
@@ -224,8 +225,8 @@ export const CadContextualizeThreeDViewer = ({
             <CadRevealContent
               modelId={modelId}
               revisionId={revisionId}
-              onContextualizationUpdated={(newNodes) =>
-                updateContextualizedNodesStyle(newNodes)
+              onContextualizationUpdated={(newNodes, nodesDeleted) =>
+                handleContextualizedNodesUpdate(newNodes, nodesDeleted)
               }
             />
           </RevealContainer>

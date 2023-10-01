@@ -73,7 +73,7 @@ export const CadRevealContent = ({
   };
 
   const onContextualizationDeleted = (
-    mappedNodesDeleted: AssetMapping3DBase[]
+    mappedNodesDeleted: ListResponse<AssetMapping3D[]>
   ) => {
     const state = useContextualizeThreeDViewerStore.getState();
     const oldContextualizedNodes = state.contextualizedNodes;
@@ -82,11 +82,13 @@ export const CadRevealContent = ({
       items: [],
     };
     oldContextualizedNodes?.items.forEach((item) => {
-      if (mappedNodesDeleted.find((node) => item.nodeId !== node.nodeId)) {
+      if (
+        mappedNodesDeleted.items.find((node) => item.nodeId !== node.nodeId)
+      ) {
         newContextualizedNodes.items.push(item);
       }
     });
-    onContextualizationUpdated(newContextualizedNodes);
+    onContextualizationUpdated(newContextualizedNodes, mappedNodesDeleted);
   };
 
   // Load the cad model to the viewer

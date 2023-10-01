@@ -1,4 +1,9 @@
-import { AssetMapping3DBase, CogniteClient } from '@cognite/sdk/dist/src';
+import {
+  AssetMapping3D,
+  AssetMapping3DBase,
+  CogniteClient,
+  ListResponse,
+} from '@cognite/sdk/dist/src';
 
 import { getCdfCadContextualization } from './getCdfCadContextualization';
 
@@ -13,8 +18,8 @@ export const deleteCdfThreeDCadContextualization = async ({
   revisionId: number;
   nodeIds: Array<number>;
 }) => {
-  const mappedNodesToDelete: Array<AssetMapping3DBase> = [];
-
+  const baseNodesToDelete: Array<AssetMapping3DBase> = [];
+  const nodesToDelete: ListResponse<AssetMapping3D[]> = { items: [] };
   await Promise.all(
     nodeIds.map(async (nodeId) => {
       const mappedNodes = await getCdfCadContextualization({
@@ -23,18 +28,25 @@ export const deleteCdfThreeDCadContextualization = async ({
         revisionId: revisionId,
         nodeId: nodeId,
       });
-      mappedNodes.items.forEach((asset) => {
-        const mapping: AssetMapping3DBase = {
+      mappedNodes.items.forEach((item) => {
+        const mappingForDeletion: AssetMapping3D = {
           nodeId: nodeId,
-          assetId: asset.assetId,
+          assetId: item.assetId,
+          treeIndex: item.treeIndex,
+          subtreeSize: item.subtreeSize,
         };
-        mappedNodesToDelete.push(mapping);
+        const baseMappingForDeletion: AssetMapping3DBase = {
+          nodeId: nodeId,
+          assetId: item.assetId,
+        };
+        baseNodesToDelete.push(baseMappingForDeletion);
+        nodesToDelete.items.push(mappingForDeletion);
       });
     })
   );
 
-  if (mappedNodesToDelete.length) {
-    await sdk.assetMappings3D.delete(modelId, revisionId, mappedNodesToDelete);
+  if (baseNodesToDelete.length) {
+    await sdk.assetMappings3D.delete(modelId, revisionId, baseNodesToDelete);
   }
-  return mappedNodesToDelete;
+  return nodesToDelete;
 };

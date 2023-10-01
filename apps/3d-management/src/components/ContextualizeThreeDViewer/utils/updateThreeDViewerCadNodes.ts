@@ -13,10 +13,7 @@ import {
   ListResponse,
 } from '@cognite/sdk/dist/src';
 
-import {
-  setContextualizedNodes,
-  useContextualizeThreeDViewerStore,
-} from '../useContextualizeThreeDViewerStore';
+import { setContextualizedNodes } from '../useContextualizeThreeDViewerStore';
 
 import { getCdfCadContextualization } from './getCdfCadContextualization';
 import { updateStyleForContextualizedCadNodes } from './updateStyleForContextualizedCadNodes';
@@ -26,6 +23,7 @@ export const updateThreeDViewerCadNodes = async ({
   modelId,
   revisionId,
   model,
+  nodesToReset,
   contextualizedNodes,
   selectedNodes,
   selectedAndContextualizedNodes,
@@ -34,6 +32,7 @@ export const updateThreeDViewerCadNodes = async ({
   modelId: number;
   revisionId: number;
   model: CogniteCadModel;
+  nodesToReset: ListResponse<AssetMapping3D[]> | null;
   contextualizedNodes: ListResponse<AssetMapping3D[]>;
   selectedNodes: TreeIndexNodeCollection;
   selectedAndContextualizedNodes: TreeIndexNodeCollection;
@@ -50,7 +49,8 @@ export const updateThreeDViewerCadNodes = async ({
 
   updateStyleForContextualizedCadNodes({
     model,
-    cadMapping: contextualizedNodes,
+    cadNodes: contextualizedNodes,
+    nodeAppearance: null,
     color: cadNodeStyles[2] as Color,
     outlineColor: NodeOutlineColor.NoOutline,
   });
@@ -64,6 +64,16 @@ export const updateThreeDViewerCadNodes = async ({
     color: cadNodeStyles[3] as Color,
     outlineColor: NodeOutlineColor.White,
   });
+
+  if (nodesToReset) {
+    updateStyleForContextualizedCadNodes({
+      model,
+      cadNodes: nodesToReset,
+      nodeAppearance: cadNodeStyles[0] as NodeAppearance,
+      color: null,
+      outlineColor: NodeOutlineColor.NoOutline,
+    });
+  }
 
   setContextualizedNodes(contextualizedNodes);
 };
