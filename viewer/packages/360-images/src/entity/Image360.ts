@@ -60,12 +60,14 @@ export interface Image360 {
   getActiveRevision(): Image360Revision;
 
   /**
-   * Get a copy of the style assigned to the icon of this entity
+   * Get a copy of the color assigned to the icon of this entity
+   *
+   * @returns The currently assign color, or 'default' if none is assigned
    */
-  getIconStyle(): Image360IconStyle;
+  getIconColor(): Color | 'default';
 
   /**
-   * Assign a style to the icon of this entity
+   * Assign a color to the icon of this entity
    */
-  setIconStyle(style: Image360IconStyle): void;
+  setIconColor(color: Color | 'default'): void;
 }

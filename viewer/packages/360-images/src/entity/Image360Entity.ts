@@ -4,7 +4,7 @@
 
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { Image360DataProvider } from '@reveal/data-providers';
-import { Image360, Image360IconStyle } from './Image360';
+import { Image360 } from './Image360';
 import { Historical360ImageSet, Image360EventDescriptor } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import minBy from 'lodash/minBy';
@@ -12,6 +12,7 @@ import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import { Color } from 'three';
 
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -22,7 +23,7 @@ export class Image360Entity implements Image360 {
   private readonly _image360Icon: Overlay3DIcon;
   private readonly _image360VisualizationBox: Image360VisualizationBox;
   private _activeRevision: Image360RevisionEntity;
-  private _iconStyle: Image360IconStyle = {};
+  private _iconColor: Color | 'default' = 'default';
 
   /**
    * Get a copy of the model-to-world transformation matrix
@@ -140,6 +141,15 @@ export class Image360Entity implements Image360 {
     this._image360VisualizationBox.unloadImages();
   }
 
+  public getIconColor(): Color | 'default' {
+    return cloneDeep(this._iconColor);
+  }
+
+  public setIconColor(color: Color | 'default'): void {
+    this._iconColor = color;
+    this._image360Icon.setColor(color);
+  }
+
   public activateAnnotations(): void {
     const setAndShowAnnotations = async () => {
       const annotations = await this._activeRevision.getAnnotations();
@@ -162,14 +172,5 @@ export class Image360Entity implements Image360 {
     this.unloadImage();
     this._revisions.forEach(revision => revision.dispose());
     this._image360Icon.dispose();
-  }
-
-  public getIconStyle(): Image360IconStyle {
-    return cloneDeep(this._iconStyle);
-  }
-
-  public setIconStyle(style: Image360IconStyle): void {
-    this._iconStyle = style;
-    this._image360Icon.setColor(style.color);
   }
 }

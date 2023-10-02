@@ -129,8 +129,8 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
     }
   }
 
-  setColor(color: Color | undefined): void {
-    if (color === undefined) {
+  setColor(color: Color | 'default'): void {
+    if (color === 'default') {
       this._color = this._defaultColor;
     } else {
       this._color = color;
