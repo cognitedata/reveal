@@ -203,12 +203,6 @@ export class Image360UI {
       }
     );
 
-    const assetInfos = await collection.getAssetInfo();
-    console.log('Asset infos = ', assetInfos);
-    assetInfos.forEach(assetInfo => assetInfo.imageEntity.setIconStyle({
-      color: new THREE.Color(0, 0, 1)
-    }));
-
     collection.setIconsVisibility(!this.iconCulling.hideAll);
     collection.on('image360Entered', (entity, _) => (this.selectedEntity = entity));
     this.viewer.on('click', event => this.onAnnotationClicked(event));
