@@ -21,7 +21,7 @@ import ContainerTooltip from './ContainerTooltip';
 import useContainerOcrData from './useContainerOcrData';
 
 type UseIndustryCanvasContainerTooltipsProps = {
-  selectedContainer: IndustryCanvasContainerConfig | undefined;
+  selectedContainers: IndustryCanvasContainerConfig[];
   containers: IndustryCanvasContainerConfig[];
   tooltipsOptions: TooltipsOptions;
   onUpdateTooltipsOptions: OnUpdateTooltipsOptions;
@@ -33,7 +33,7 @@ type UseIndustryCanvasContainerTooltipsProps = {
 };
 
 const useIndustryCanvasContainerTooltips = ({
-  selectedContainer,
+  selectedContainers,
   containers,
   tooltipsOptions,
   onUpdateTooltipsOptions,
@@ -44,6 +44,8 @@ const useIndustryCanvasContainerTooltips = ({
   );
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
 
+  const selectedContainer =
+    selectedContainers.length === 1 ? selectedContainers[0] : undefined;
   const { isInitialLoading: isOcrDataLoading, data: ocrData } =
     useContainerOcrData(selectedContainer);
 
@@ -75,7 +77,7 @@ const useIndustryCanvasContainerTooltips = ({
 
     const tooltipConfigs: TooltipConfig[] = [
       {
-        targetId: selectedContainer.id,
+        targetIds: [selectedContainer.id],
         content: (
           <ContainerTooltip
             key={selectedContainer.id}

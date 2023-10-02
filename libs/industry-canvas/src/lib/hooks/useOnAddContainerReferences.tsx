@@ -25,14 +25,14 @@ import { useTranslation } from './useTranslation';
 // Note: Temporary hook to facilitate refactoring
 const useOnAddContainerReferences = ({
   unifiedViewerRef,
-  selectedContainer,
+  selectedContainers,
   clickedContainerAnnotation,
   containers,
   isCanvasLocked,
   tooltipsOptions,
 }: {
   unifiedViewerRef: UnifiedViewer | null;
-  selectedContainer: IndustryCanvasContainerConfig | undefined;
+  selectedContainers: IndustryCanvasContainerConfig[];
   clickedContainerAnnotation: ExtendedAnnotation | undefined;
   containers: IndustryCanvasContainerConfig[] | undefined;
   isCanvasLocked: boolean;
@@ -100,7 +100,9 @@ const useOnAddContainerReferences = ({
           zoomToFitAroundContainerIds({
             unifiedViewer: unifiedViewerRef,
             containerIds: [
-              selectedContainer?.id,
+              ...selectedContainers.map(
+                (containerConfig) => containerConfig.id
+              ),
               clickedContainerAnnotation?.containerId,
               ...newContainers.map((c) => c.id),
             ].filter(isNotUndefined),
@@ -132,7 +134,7 @@ const useOnAddContainerReferences = ({
       sdk,
       addContainerReferences,
       unifiedViewerRef,
-      selectedContainer?.id,
+      selectedContainers,
       clickedContainerAnnotation,
       containers,
       isCanvasLocked,

@@ -37,7 +37,7 @@ const useCommentTooltips = ({
       );
       const isPendingComment = annotation.id === pendingComment?.id;
       return {
-        targetId: String(annotation.id),
+        targetIds: [String(annotation.id)],
         content:
           parentComment === undefined && !isPendingComment ? (
             <></>
