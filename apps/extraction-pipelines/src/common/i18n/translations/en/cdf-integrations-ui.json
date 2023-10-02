@@ -365,6 +365,7 @@
   "form-format-option-cognite": "Cognite message format",
   "form-format-option-rockwell": "Rockwell FactoryTalk",
   "form-format-option-value": "Values as string",
+  "form-format-option-sparkplug": "Sparkplug B",
   "form-format-option-custom": "+ Create custom format",
   "use-tls": "Enable TLS against the broker"
 }
