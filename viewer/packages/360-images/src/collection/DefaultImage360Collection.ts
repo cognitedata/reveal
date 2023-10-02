@@ -274,13 +274,11 @@ export class DefaultImage360Collection implements Image360Collection {
   }
 
   async getAssetInfo(): Promise<AssetImage360Info[]> {
-
     const fileDescriptors = this.getAllFileDescriptors();
     const fileIdToEntityRevision = this.createFileIdToEntityRevisionMap();
 
-    const annotations = await this._image360DataProvider.get360ImageAssets(
-      fileDescriptors,
-      annotation => this._annotationFilter.filter(annotation)
+    const annotations = await this._image360DataProvider.get360ImageAssets(fileDescriptors, annotation =>
+      this._annotationFilter.filter(annotation)
     );
 
     return pairAnnotationsWithEntityAndRevision(annotations);
@@ -296,10 +294,10 @@ export class DefaultImage360Collection implements Image360Collection {
 
           const { entity, revision } = entityRevisionObject;
 
-          return { assetRef: annotation.data.assetRef, imageEntity: entity, imageRevision: revision };
+          return { annotationInfo: annotation, imageEntity: entity, imageRevision: revision };
         })
         .filter((info): info is AssetImage360Info => info !== undefined);
-    };
+    }
   }
 
   private getAllFileDescriptors(): Image360FileDescriptor[] {
@@ -315,15 +313,12 @@ export class DefaultImage360Collection implements Image360Collection {
 
   private createFileIdToEntityRevisionMap(): Map<number, { entity: Image360; revision: Image360Revision }> {
     const fileIdToImageRevisionMap = new Map<number, { entity: Image360; revision: Image360Revision }>();
-    this.image360Entities
-      .forEach(entity =>
-        entity
-          .getRevisions()
-          .forEach(revision => {
-            const descriptors = revision.getDescriptors().faceDescriptors;
-            descriptors.forEach(descriptor => fileIdToImageRevisionMap.set(descriptor.fileId, { entity, revision }))
-          })
-              );
+    this.image360Entities.forEach(entity =>
+      entity.getRevisions().forEach(revision => {
+        const descriptors = revision.getDescriptors().faceDescriptors;
+        descriptors.forEach(descriptor => fileIdToImageRevisionMap.set(descriptor.fileId, { entity, revision }));
+      })
+    );
     return fileIdToImageRevisionMap;
   }
 }

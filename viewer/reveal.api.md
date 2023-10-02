@@ -6,6 +6,7 @@
 
 import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
+import { AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 import { AnnotationStatus } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -65,6 +66,13 @@ export interface AreaCollection {
     // (undocumented)
     readonly isEmpty: boolean;
 }
+
+// @public
+export type AssetImage360Info = {
+    annotationInfo: ImageAssetLinkAnnotation;
+    imageEntity: Image360;
+    imageRevision: Image360Revision;
+};
 
 // @public
 export class AssetNodeCollection extends NodeCollection {
@@ -844,7 +852,9 @@ export type Image360AnnotationIntersection = {
 // @public
 export interface Image360Collection {
     findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+    // @deprecated
     getAssetIds(): Promise<IdEither[]>;
+    getAssetInfo(): Promise<AssetImage360Info[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
     readonly id: string;
     readonly image360Entities: Image360[];
@@ -878,6 +888,11 @@ export interface Image360Revision {
 export interface Image360Visualization {
     opacity: number;
 }
+
+// @public
+export type ImageAssetLinkAnnotation = Omit<AnnotationModel, 'data'> & {
+    data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
+};
 
 // @public (undocumented)
 export class IndexSet {

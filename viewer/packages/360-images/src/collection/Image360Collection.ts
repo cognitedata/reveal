@@ -9,6 +9,7 @@ import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
+import { ImageAssetLinkAnnotation } from '@reveal/data-providers';
 
 /**
  * Filter for finding annotations related to an asset
@@ -27,7 +28,7 @@ export type AssetImage360Info = {
   /**
    * Reference to the relevant asset
    */
-  assetRef: IdEither;
+  annotationInfo: ImageAssetLinkAnnotation;
   /**
    * The image entity in which the asset was found
    */

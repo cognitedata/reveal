@@ -40,7 +40,13 @@ export interface Image360FileProvider {
   ): Promise<Image360Face[]>;
 }
 
+/**
+ * A CDF AnnotationModel with a narrower type representing an image asset link
+ */
 export type ImageAssetLinkAnnotation = Omit<AnnotationModel, 'data'> & {
+  /**
+   * The data associated with the image asset link
+   */
   data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
 };
 
