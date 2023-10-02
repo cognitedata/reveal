@@ -92,7 +92,7 @@
     "@types/mixpanel-browser": "2.47.3",
     "@types/node": "18.17.19",
     "@types/random-seed": "0.3.3",
-    "@types/skmeans": "0.11.4",
+    "@types/skmeans": "0.11.5",
     "@types/stats": "0.16.30",
     "@types/three": "0.155.1",
     "@types/tween.js": "18.5.1",
