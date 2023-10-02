@@ -198,6 +198,7 @@ const PipelineTable = (): JSX.Element => {
     <>
       <Table<PipelineListTableRecord>
         columns={columns}
+        defaultSort={['latestRun', 'descend']}
         emptyContent={undefined}
         appendTooltipTo={undefined}
         dataSource={pipelinesList}

@@ -215,6 +215,7 @@ const QuickMatchResultsTable = ({
         ...rowSelection,
       }}
       columns={columns}
+      defaultSort={['score', 'descend']}
       emptyContent={undefined}
       appendTooltipTo={undefined}
       dataSource={dataSource}

@@ -135,6 +135,7 @@ export default function AppliedRulesTable({
   return (
     <Table<AppliedRuleTableRecord>
       columns={columns}
+      defaultSort={['numberOfMatches', 'descend']}
       emptyContent={undefined}
       appendTooltipTo={undefined}
       dataSource={appliedRulesList}

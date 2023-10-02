@@ -162,6 +162,7 @@ const GroupedResultsTable = ({
   return (
     <Table<GroupedResultsTableRecord>
       columns={columns}
+      defaultSort={['numberOfMatches', 'descend']}
       dataSource={dataSource}
       emptyContent={undefined}
       appendTooltipTo={undefined}

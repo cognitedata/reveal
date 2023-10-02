@@ -134,6 +134,7 @@ const BasicResultsTable = ({
   return (
     <Table<BasicResultsTableRecord>
       columns={columns}
+      defaultSort={['score', 'descend']}
       dataSource={dataSource}
       emptyContent={undefined}
       appendTooltipTo={undefined}
