@@ -32,7 +32,7 @@ function createMockImage360(options?: { customTranslation?: THREE.Matrix4 }) {
   const mock360ImageIcon = new Overlay3DIcon({ position: new THREE.Vector3(),
                                                minPixelSize: 10,
                                                maxPixelSize: 10,
-                                               iconRadius: 10 }, {});// new Mock<Overlay3DIcon>().object();
+                                               iconRadius: 10 }, {});
 
   const testTranslation = options?.customTranslation ?? new THREE.Matrix4();
   const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
