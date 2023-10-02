@@ -8,7 +8,7 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
 } from '@cognite/reveal';
-import { useReveal } from '@cognite/reveal-react-components';
+import { RevealToolbar, useReveal } from '@cognite/reveal-react-components';
 import { CogniteClient } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -147,6 +147,9 @@ export const PointCloudToolBarTools = (): ReactElement => {
   return (
     <ToolBar direction="vertical">
       <>
+        <Tooltip content="Slider" position="right">
+          <RevealToolbar.SlicerButton />
+        </Tooltip>
         <Tooltip content="Toggle annotations visibility" position="right">
           <Button
             icon="EyeShow"
