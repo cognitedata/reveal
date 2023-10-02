@@ -19,10 +19,10 @@ import { useRevealContainerElement } from '../RevealContainer/RevealContainerEle
 import { useUrlStateParam } from '../../hooks/useUrlStateParam';
 
 type LayersButtonProps = {
-  storeStateInUrl: boolean;
+  storeStateInUrl?: boolean;
 };
 
-export const LayersButton = ({ storeStateInUrl }: LayersButtonProps): ReactElement => {
+export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): ReactElement => {
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
   const urlParam = useUrlStateParam();
@@ -216,8 +216,4 @@ export const LayersButton = ({ storeStateInUrl }: LayersButtonProps): ReactEleme
       </Dropdown>
     </CogsTooltip>
   );
-};
-
-LayersButton.defaultProps = {
-  storeStateInUrl: true
 };

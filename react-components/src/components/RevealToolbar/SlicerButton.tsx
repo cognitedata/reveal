@@ -21,10 +21,10 @@ type SliceState = {
 };
 
 type SlicerButtonProps = {
-  storeStateInUrl: boolean;
+  storeStateInUrl?: boolean;
 };
 
-export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactElement => {
+export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): ReactElement => {
   const viewer = useReveal();
   const { reveal3DResourcesCount } = useReveal3DResourcesCount();
   const urlParam = useUrlStateParam();
@@ -121,10 +121,6 @@ export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactEleme
       </Dropdown>
     </CogsTooltip>
   );
-};
-
-SlicerButton.defaultProps = {
-  storeStateInUrl: true
 };
 
 const StyledMenu = styled(Menu)`

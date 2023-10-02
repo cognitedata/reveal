@@ -46,8 +46,8 @@ export function PointCloudContainer({
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
-  const urlParam = useUrlStateParam();
-  const { pointCloudLayers } = urlParam.getLayersFromUrlParam();
+  const { getLayersFromUrlParam } = useUrlStateParam();
+  const { pointCloudLayers } = getLayersFromUrlParam();
 
   useEffect(() => {
     addModel(modelId, revisionId, transform)
@@ -129,7 +129,7 @@ export function PointCloudContainer({
     }
     const index = viewer.models.indexOf(model);
     pointCloudLayers.forEach((layer) => {
-      if (layer.modelId === modelId && layer.index === index) {
+      if (layer.revisionId === revisionId && layer.index === index) {
         const visible = layer.applied;
         model.setDefaultPointCloudAppearance({ visible });
       }

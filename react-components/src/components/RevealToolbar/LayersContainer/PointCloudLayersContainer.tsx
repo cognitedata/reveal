@@ -9,20 +9,20 @@ import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type CognitePointCloudModel } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
-import { type Reveal3DResourcesLayersProps } from './types';
+import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 import { useTranslation } from '../../../common/i18n';
-import { useUrlStateParam } from '../../../hooks/useUrlStateParam';
 
 export const PointCloudLayersContainer = ({
-  layerProps
+  layerProps,
+  setUrl
 }: {
   layerProps: Reveal3DResourcesLayersProps;
+  setUrl?: (layersData: Reveal3DResourcesLayerStates) => void;
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
-  const urlParam = useUrlStateParam();
   const [visible, setVisible] = useState(false);
   const { pointCloudLayerData } = layerProps.reveal3DResourcesLayerData;
   const { storeStateInUrl } = layerProps;
@@ -44,8 +44,12 @@ export const PointCloudLayersContainer = ({
       pointCloudLayerData: updatedPointCloudModels
     }));
 
-    if (storeStateInUrl ?? false) {
-      setUrl(updatedPointCloudModels);
+    if (storeStateInUrl !== undefined && setUrl !== undefined) {
+      setUrl({
+        pointCloudLayerData: updatedPointCloudModels,
+        cadLayerData: [],
+        image360LayerData: []
+      });
     }
   };
 
@@ -61,29 +65,15 @@ export const PointCloudLayersContainer = ({
       pointCloudLayerData
     }));
 
-    if (storeStateInUrl ?? false) {
-      setUrl(pointCloudLayerData);
+    if (storeStateInUrl !== undefined && setUrl !== undefined) {
+      const updatedLayerStates: Reveal3DResourcesLayerStates = {
+        cadLayerData: [],
+        pointCloudLayerData,
+        image360LayerData: []
+      };
+      setUrl(updatedLayerStates);
     }
   };
-
-  const setUrl = (
-    layerData: Array<{
-      model: CognitePointCloudModel;
-      isToggled: boolean;
-      name?: string | undefined;
-    }>
-  ): void => {
-    const urlPointCloudLayersData = layerData.map((data) => {
-      const index = viewer.models.indexOf(data.model);
-      return {
-        modelId: data.model.modelId,
-        applied: data.isToggled,
-        index
-      };
-    });
-    urlParam.setUrlParamOnLayersChanged({ pointCloudLayers: urlPointCloudLayersData });
-  };
-
   const pointCloudModelContent = (): ReactElement => {
     return (
       <StyledSubMenu

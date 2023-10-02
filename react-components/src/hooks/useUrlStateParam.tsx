@@ -38,47 +38,35 @@ export const useUrlStateParam = (): UrlStateParamActions => {
   const getLayersFromUrlParam = (): LayersUrlStateParam => {
     const cadLayers = (() => {
       const s = url.searchParams.get('cadLayers');
-      try {
-        if (s !== null) {
-          const cadModelsUrlData = JSON.parse(s) as Array<
-            Pick<CadLayersUrlStateParam, 'modelId' | 'applied' | 'index'>
-          >;
-          return cadModelsUrlData.map((model) => ({ ...model }));
-        }
-        return [];
-      } catch {
-        return [];
+      if (s !== null) {
+        const cadModelsUrlData = JSON.parse(s) as Array<
+          Pick<CadLayersUrlStateParam, 'revisionId' | 'applied' | 'index'>
+        >;
+        return cadModelsUrlData.map((model) => ({ ...model }));
       }
+      return [];
     })();
 
     const pointCloudLayers = (() => {
       const s = url.searchParams.get('pointCloudLayers');
-      try {
-        if (s !== null) {
-          const pointCloudModelsUrlData = JSON.parse(s) as Array<
-            Pick<PointCloudLayersUrlStateParam, 'modelId' | 'applied' | 'index'>
-          >;
-          return pointCloudModelsUrlData.map((model) => ({ ...model }));
-        }
-        return [];
-      } catch {
-        return [];
+      if (s !== null) {
+        const pointCloudModelsUrlData = JSON.parse(s) as Array<
+          Pick<PointCloudLayersUrlStateParam, 'revisionId' | 'applied' | 'index'>
+        >;
+        return pointCloudModelsUrlData.map((model) => ({ ...model }));
       }
+      return [];
     })();
 
     const image360Layers = (() => {
       const s = url.searchParams.get('image360Layers');
-      try {
-        if (s !== null) {
-          const image360UrlData = JSON.parse(s) as Array<
-            Pick<Image360LayersUrlStateParam, 'siteId' | 'applied'>
-          >;
-          return image360UrlData.map((image360) => ({ ...image360 }));
-        }
-        return [];
-      } catch {
-        return [];
+      if (s !== null) {
+        const image360UrlData = JSON.parse(s) as Array<
+          Pick<Image360LayersUrlStateParam, 'siteId' | 'applied'>
+        >;
+        return image360UrlData.map((image360) => ({ ...image360 }));
       }
+      return [];
     })();
     return {
       cadLayers,
@@ -90,13 +78,13 @@ export const useUrlStateParam = (): UrlStateParamActions => {
   const setUrlParamOnLayersChanged = (layers: LayersUrlStateParam): void => {
     const { cadLayers, pointCloudLayers, image360Layers } = layers;
 
-    if (cadLayers !== undefined) {
+    if (cadLayers !== undefined && cadLayers.length !== 0) {
       url.searchParams.set('cadLayers', JSON.stringify(cadLayers));
     }
-    if (pointCloudLayers !== undefined) {
+    if (pointCloudLayers !== undefined && pointCloudLayers.length !== 0) {
       url.searchParams.set('pointCloudLayers', JSON.stringify(pointCloudLayers));
     }
-    if (image360Layers !== undefined) {
+    if (image360Layers !== undefined && image360Layers.length !== 0) {
       url.searchParams.set('image360Layers', JSON.stringify(image360Layers));
     }
 

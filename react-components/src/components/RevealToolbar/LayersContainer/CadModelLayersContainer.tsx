@@ -8,20 +8,20 @@ import { type CogniteCadModel } from '@cognite/reveal';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { uniqueId } from 'lodash';
-import { type Reveal3DResourcesLayersProps } from './types';
+import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 import { useTranslation } from '../../../common/i18n';
-import { useUrlStateParam } from '../../../hooks/useUrlStateParam';
 
 export const CadModelLayersContainer = ({
-  layerProps
+  layerProps,
+  setUrl
 }: {
   layerProps: Reveal3DResourcesLayersProps;
+  setUrl?: (layersData: Reveal3DResourcesLayerStates) => void;
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
-  const urlParam = useUrlStateParam();
   const [visible, setVisible] = useState(false);
 
   const { cadLayerData } = layerProps.reveal3DResourcesLayerData;
@@ -49,8 +49,12 @@ export const CadModelLayersContainer = ({
       cadLayerData: updatedSelectedCadModels
     }));
 
-    if (storeStateInUrl ?? false) {
-      setUrl(updatedSelectedCadModels);
+    if (storeStateInUrl !== undefined && setUrl !== undefined) {
+      setUrl({
+        cadLayerData: updatedSelectedCadModels,
+        pointCloudLayerData: [],
+        image360LayerData: []
+      });
     }
   };
 
@@ -68,27 +72,13 @@ export const CadModelLayersContainer = ({
       cadLayerData: updatedSelectedCadModels
     }));
 
-    if (storeStateInUrl ?? false) {
-      setUrl(updatedSelectedCadModels);
+    if (storeStateInUrl !== undefined && setUrl !== undefined) {
+      setUrl({
+        cadLayerData: updatedSelectedCadModels,
+        pointCloudLayerData: [],
+        image360LayerData: []
+      });
     }
-  };
-
-  const setUrl = (
-    layerData: Array<{
-      model: CogniteCadModel;
-      isToggled: boolean;
-      name?: string | undefined;
-    }>
-  ): void => {
-    const urlCadLayersData = layerData.map((data) => {
-      const index = viewer.models.indexOf(data.model);
-      return {
-        modelId: data.model.modelId,
-        applied: data.isToggled,
-        index
-      };
-    });
-    urlParam.setUrlParamOnLayersChanged({ cadLayers: urlCadLayersData });
   };
 
   const cadModelContent = (): ReactElement => {

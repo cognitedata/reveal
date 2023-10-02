@@ -25,13 +25,13 @@ export type Image360LayersUrlStateParam = {
 };
 
 export type CadLayersUrlStateParam = {
-  modelId: number;
+  revisionId: number;
   applied: boolean;
   index: number;
 };
 
 export type PointCloudLayersUrlStateParam = {
-  modelId: number;
+  revisionId: number;
   applied: boolean;
   index: number;
 };

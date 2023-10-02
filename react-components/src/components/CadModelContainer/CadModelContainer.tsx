@@ -32,8 +32,8 @@ export function CadModelContainer({
   const cachedViewerRef = useRevealKeepAlive();
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
-  const urlParam = useUrlStateParam();
-  const { cadLayers } = urlParam.getLayersFromUrlParam();
+  const { getLayersFromUrlParam } = useUrlStateParam();
+  const { cadLayers } = getLayersFromUrlParam();
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(
     viewer.models.find(
@@ -112,7 +112,7 @@ export function CadModelContainer({
     }
     const index = viewer.models.indexOf(model);
     cadLayers.forEach((layer) => {
-      if (layer.modelId === modelId && layer.index === index) {
+      if (layer.revisionId === revisionId && layer.index === index) {
         model.visible = layer.applied;
       }
     });

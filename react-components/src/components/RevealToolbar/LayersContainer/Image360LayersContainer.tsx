@@ -8,20 +8,20 @@ import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type Image360Collection } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
-import { type Reveal3DResourcesLayersProps } from './types';
+import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 import { useTranslation } from '../../../common/i18n';
-import { useUrlStateParam } from '../../../hooks/useUrlStateParam';
 
 export const Image360CollectionLayerContainer = ({
-  layerProps
+  layerProps,
+  setUrl
 }: {
   layerProps: Reveal3DResourcesLayersProps;
+  setUrl?: (layersData: Reveal3DResourcesLayerStates) => void;
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
-  const urlParam = useUrlStateParam();
   const [visible, setVisible] = useState(false);
   const { image360LayerData } = layerProps.reveal3DResourcesLayerData;
   const { storeStateInUrl } = layerProps;
@@ -49,8 +49,13 @@ export const Image360CollectionLayerContainer = ({
       image360LayerData: updatedImage360Collection
     }));
 
-    if (storeStateInUrl ?? false) {
-      setUrl(updatedImage360Collection);
+    if (storeStateInUrl !== undefined && setUrl !== undefined) {
+      const updatedLayerStates: Reveal3DResourcesLayerStates = {
+        cadLayerData: [],
+        pointCloudLayerData: [],
+        image360LayerData: updatedImage360Collection
+      };
+      setUrl(updatedLayerStates);
     }
   };
 
@@ -66,25 +71,14 @@ export const Image360CollectionLayerContainer = ({
       image360LayerData
     }));
 
-    if (storeStateInUrl ?? false) {
-      setUrl(image360LayerData);
-    }
-  };
-
-  const setUrl = (
-    layerData: Array<{
-      image360: Image360Collection;
-      isToggled: boolean;
-      name?: string | undefined;
-    }>
-  ): void => {
-    const urlImage360LayersData = layerData.map((data) => {
-      return {
-        siteId: data.image360.id,
-        applied: data.isToggled
+    if (storeStateInUrl !== undefined && setUrl !== undefined) {
+      const updatedLayerStates: Reveal3DResourcesLayerStates = {
+        cadLayerData: [],
+        pointCloudLayerData: [],
+        image360LayerData
       };
-    });
-    urlParam.setUrlParamOnLayersChanged({ image360Layers: urlImage360LayersData });
+      setUrl(updatedLayerStates);
+    }
   };
 
   const image360Content = (): ReactElement => {
