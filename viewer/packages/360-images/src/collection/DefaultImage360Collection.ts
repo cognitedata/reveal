@@ -273,7 +273,7 @@ export class DefaultImage360Collection implements Image360Collection {
     return annotations.map(annotation => annotation.data.assetRef as IdEither);
   }
 
-  async getAssetInfo(): Promise<AssetImage360Info[]> {
+  async getAnnotationsInfo(): Promise<AssetImage360Info[]> {
     const fileDescriptors = this.getAllFileDescriptors();
     const fileIdToEntityRevision = this.createFileIdToEntityRevisionMap();
 

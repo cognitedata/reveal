@@ -133,13 +133,15 @@ export interface Image360Collection {
   /**
    * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations
    *
-   * @deprecated Use {@link Image360Collection.getAssetInfo}
+   * @deprecated Use {@link Image360Collection.getAnnotationsInfo}
    */
   getAssetIds(): Promise<IdEither[]>;
 
   /**
    * Get IDs of all CDF assets and related image/revision associated with this
    * 360 image collection through CDF annotations
+   *
+   * @param assets What source data to pull the annotation info from
    */
-  getAssetInfo(): Promise<AssetImage360Info[]>;
+  getAnnotationsInfo(source: 'assets'): Promise<AssetImage360Info[]>;
 }

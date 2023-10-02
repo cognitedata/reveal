@@ -852,9 +852,9 @@ export type Image360AnnotationIntersection = {
 // @public
 export interface Image360Collection {
     findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+    getAnnotationsInfo(source: 'assets'): Promise<AssetImage360Info[]>;
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
-    getAssetInfo(): Promise<AssetImage360Info[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
     readonly id: string;
     readonly image360Entities: Image360[];
