@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
+import { Cognite3DViewer, DefaultCameraManager } from '@cognite/reveal';
 import {
   useCameraNavigation,
   useGetCameraStateFromUrlParam,
@@ -25,6 +26,8 @@ export const useInitialCameraNavigation = (
     const setCameraNotMoving = () => (cameraIsMovingRef.current = false);
     viewer.cameraManager.on('cameraChange', setCameraMoving);
     viewer.cameraManager.on('cameraStop', setCameraNotMoving);
+
+    setDefaultCameraMode(viewer);
 
     return () => {
       viewer.cameraManager.off('cameraChange', setCameraMoving);
@@ -79,3 +82,13 @@ export const useInitialCameraNavigation = (
     loadInitialCameraState,
   };
 };
+
+function setDefaultCameraMode(viewer: Cognite3DViewer) {
+  const cameraManager = viewer.cameraManager;
+
+  if (cameraManager instanceof DefaultCameraManager) {
+    cameraManager.setCameraControlsOptions({
+      mouseWheelAction: 'zoomToCursor',
+    });
+  }
+}
