@@ -398,7 +398,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     super.dispose();
   }
 
-  private async onPointerClick(event: PointerEventData): Promise<void> {
+  private async onPointerClick(event: { offsetX: number; offsetY: number }): Promise<void> {
     const { offsetX, offsetY } = event;
 
     const intersection = await this._viewer.getIntersectionFromPixel(offsetX, offsetY);

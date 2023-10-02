@@ -6,7 +6,7 @@ import {
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
 } from '../components/Reveal3DResources/types';
-import { type NodeAppearance } from '@cognite/reveal';
+import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type ThreeDModelMappings } from './types';
 import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 import {
@@ -14,11 +14,7 @@ import {
   useMappedEdgesForRevisions
 } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
-import {
-  type NodeId,
-  type FdmEdgeWithNode,
-  type TreeIndex
-} from '../components/NodeCacheProvider/types';
+import { type NodeId, type FdmEdgeWithNode } from '../components/NodeCacheProvider/types';
 import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
@@ -154,11 +150,13 @@ function getMappedStyleGroup(
   edges: FdmEdgeWithNode[],
   mapped: NodeAppearance
 ): TreeIndexStylingGroup {
-  const treeIndices = edges.flatMap((edge) => {
-    const treeIndices = getNodeSubtreeIndices(edge.node);
-    return treeIndices;
+  const indexSet = new IndexSet();
+  edges.forEach((edge) => {
+    const treeIndexRange = getNodeSubtreeNumericRange(edge.cadNode);
+    indexSet.addRange(treeIndexRange);
   });
-  return { treeIndices, style: mapped };
+
+  return { treeIndexSet: indexSet, style: mapped };
 }
 
 function calculateCadModelStyling(
@@ -176,18 +174,24 @@ function calculateCadModelStyling(
         .map((uniqueId) => modelMappings.get(uniqueId.externalId))
         .filter((nodeMap): nodeMap is Map<NodeId, Node3D> => nodeMap !== undefined)
         .map((nodeMap) => [...nodeMap.values()]);
+
+      const indexSet = new IndexSet();
+      modelMappedNodeLists.forEach((nodes) => {
+        nodes.forEach((n) => {
+          indexSet.addRange(getNodeSubtreeNumericRange(n));
+        });
+      });
+
       return {
         style: resourcesGroup.style.cad,
-        treeIndices: modelMappedNodeLists.flatMap((nodes) =>
-          nodes.flatMap((n) => getNodeSubtreeIndices(n))
-        )
+        treeIndexSet: indexSet
       };
     })
-    .filter((group) => group.treeIndices.length > 0);
+    .filter((group) => group.treeIndexSet.count > 0);
 }
 
-function getNodeSubtreeIndices(node: Node3D): TreeIndex[] {
-  return [...Array(node.subtreeSize).keys()].map((i) => i + node.treeIndex);
+function getNodeSubtreeNumericRange(node: Node3D): NumericRange {
+  return new NumericRange(node.treeIndex, node.subtreeSize);
 }
 
 function getModelMappings(
