@@ -17,7 +17,13 @@ import { PointSizeSlider } from '../PointSizeSlider';
 
 import { PointCloudToolBarTools } from './PointCloudToolBarTools';
 
-export const PointCloudToolBar = () => {
+type PointCloudToolBarProps = {
+  onDeleteAnnotation: (annotationId: number) => void;
+};
+
+export const PointCloudToolBar = ({
+  onDeleteAnnotation,
+}: PointCloudToolBarProps) => {
   const { modelId } = useContextualizeThreeDViewerStore((state) => ({
     modelId: state.modelId,
   }));
@@ -28,7 +34,7 @@ export const PointCloudToolBar = () => {
     <>
       <StyledToolBar>
         <RevealToolbar.FitModelsButton />
-        <PointCloudToolBarTools />
+        <PointCloudToolBarTools onDeleteAnnotation={onDeleteAnnotation} />
         <RevealToolbar.SettingsButton
           customSettingsContent={
             <>

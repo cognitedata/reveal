@@ -16,20 +16,26 @@ import {
   useContextualizeThreeDViewerStore,
 } from '../useContextualizeThreeDViewerStore';
 
+import { AnnotationsCard } from './AnnotationsCard';
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 interface RevealContentProps {
   modelId: number;
   revisionId: number;
+  onDeleteAnnotation: (annotationId: number) => void;
 }
 
-export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
+export const RevealContent = ({
+  modelId,
+  revisionId,
+  onDeleteAnnotation,
+}: RevealContentProps) => {
   const viewer = useReveal();
-  const { isResourceSelectorOpen } = useContextualizeThreeDViewerStore(
-    (state) => ({
+  const { isResourceSelectorOpen, annotations } =
+    useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
-    })
-  );
+      annotations: state.annotations,
+    }));
 
   const handleModelOnLoad = (model: CogniteModel) => {
     setModelLoaded();
@@ -57,7 +63,7 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
         onLoad={handleModelOnLoad}
       />
 
-      <PointCloudToolBar />
+      <PointCloudToolBar onDeleteAnnotation={onDeleteAnnotation} />
 
       <StyledResourceSelectorButtonWrapper>
         <Button
@@ -74,6 +80,13 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
           }}
         />
       </StyledResourceSelectorButtonWrapper>
+
+      <AnnotationsCard
+        annotations={annotations}
+        onAnnotationDelete={(annotation) => {
+          onDeleteAnnotation(annotation.id);
+        }}
+      />
     </>
   );
 };
@@ -82,6 +95,8 @@ const StyledResourceSelectorButtonWrapper = styled(
   withSuppressRevealEvents(ToolBar)
 )`
   position: absolute;
-  top: ${FLOATING_ELEMENT_MARGIN}px;
   right: ${FLOATING_ELEMENT_MARGIN}px;
+
+  /* The 3px is to vertically align it with the splitter handle */
+  top: calc(50% + 3px);
 `;

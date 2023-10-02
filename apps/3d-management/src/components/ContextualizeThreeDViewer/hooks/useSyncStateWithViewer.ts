@@ -125,13 +125,10 @@ export const useSyncStateWithViewer = () => {
     if (threeDViewer === null) return;
     if (isModelLoaded === false) return;
 
-    if (!shouldShowWireframes) {
-      removeObjectByName(threeDViewer, ANNOTATION_AS_WIREFRAME_ID);
-      return;
-    }
-    if (annotations === null) return;
+    removeObjectByName(threeDViewer, ANNOTATION_AS_WIREFRAME_ID);
 
-    if (modelId === null) return;
+    if (!shouldShowWireframes || annotations === null || modelId === null)
+      return;
 
     const pointCloudModel = getCognitePointCloudModel({
       modelId,

@@ -4,9 +4,15 @@ import styled from 'styled-components';
 
 import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
-import { BoxGeometry, Color, Mesh, MeshBasicMaterial } from 'three';
+import {
+  QueryFunctionContext,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 import { RevealContainer } from '@cognite/reveal-react-components';
+import { CogniteClient } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
@@ -28,6 +34,20 @@ import { getCdfAnnotations } from './utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
 import { getCognitePointCloudModel } from './utils/getCognitePointCloudModel';
 
+const fetchAnnotations = async ({
+  queryKey,
+}: QueryFunctionContext<[string, CogniteClient, number]>) => {
+  const [_key, sdk, modelId] = queryKey;
+  return await getCdfAnnotations(sdk, modelId);
+};
+
+const deleteCdfAnnotation = async (
+  sdk: CogniteClient,
+  annotationId: number
+) => {
+  return await sdk.annotations.delete([{ id: annotationId }]);
+};
+
 type ContextualizeThreeDViewerProps = {
   modelId: number;
   revisionId: number;
@@ -38,6 +58,7 @@ export const ContextualizeThreeDViewer = ({
   revisionId,
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
+  const queryClient = useQueryClient();
 
   const { isResourceSelectorOpen, pendingAnnotation, threeDViewer } =
     useContextualizeThreeDViewerStore((state) => ({
@@ -51,38 +72,45 @@ export const ContextualizeThreeDViewer = ({
     DEFAULT_RIGHT_SIDE_PANEL_WIDTH
   );
 
+  const { data: annotations } = useQuery(
+    ['annotations', sdk, modelId],
+    fetchAnnotations
+  );
+
+  const mutation = useMutation(
+    (annotationId: number) => deleteCdfAnnotation(sdk, annotationId),
+    {
+      onSuccess: () => {
+        // Invalidate to refetch
+        queryClient.invalidateQueries(['annotations', sdk, modelId]);
+      },
+    }
+  );
+
+  const onDeleteAnnotation = (annotationId: number) => {
+    mutation.mutate(annotationId);
+  };
+
   useEffect(() => {
     setModelId(modelId);
   }, [modelId]);
 
   useEffect(() => {
-    const loadAnnotations = async () => {
-      const annotations = await getCdfAnnotations(sdk, modelId);
-      setAnnotations(annotations);
-    };
-    loadAnnotations();
-  }, [sdk, modelId]);
+    if (annotations === undefined) return;
+
+    setAnnotations(annotations);
+  }, [annotations]);
 
   useSyncStateWithViewer();
 
   const saveAnnotationToCdf = (assetId: number) => {
-    // TODO: All of these console.warn should be presented nicely to the user.
-    // Tracked by: https://cognitedata.atlassian.net/browse/BND3D-2168
-    if (threeDViewer === null) {
-      return;
-    }
+    if (threeDViewer === null || pendingAnnotation === null) return;
 
     const pointCloudModel = getCognitePointCloudModel({
       modelId,
       viewer: threeDViewer,
     });
-    if (pointCloudModel === undefined) {
-      return;
-    }
-
-    if (pendingAnnotation === null) {
-      return;
-    }
+    if (pointCloudModel === undefined) return;
 
     createCdfThreeDAnnotation({
       sdk,
@@ -90,26 +118,10 @@ export const ContextualizeThreeDViewer = ({
       assetRefId: assetId,
       pointCloudModel,
       position: pendingAnnotation.position,
+    }).then(() => {
+      // Invalidate to refetch
+      queryClient.invalidateQueries(['annotations', sdk, modelId]);
     });
-
-    // TODO: This is just a temporary place to add the visualized saved annotations.
-    //       We want to store the saved annotation in the same way we store the pending annotation in the useContextualizeThreeDViewerStore.
-    //       In that way, it would be much easier to show all of the annotations in the viewer, not only the one created in the current session.
-    // Tracked by: https://cognitedata.atlassian.net/browse/BND3D-2169
-    const newSavedAnnotation = new Mesh(
-      new BoxGeometry(2, 2, 2),
-      new MeshBasicMaterial({
-        color: new Color(0, 1, 0),
-        transparent: true,
-        opacity: 0.5,
-      })
-    );
-    newSavedAnnotation.position.set(
-      pendingAnnotation.position.x,
-      pendingAnnotation.position.y,
-      pendingAnnotation.position.z
-    );
-    threeDViewer.addObject3D(newSavedAnnotation);
   };
 
   useEffect(() => {
@@ -135,7 +147,11 @@ export const ContextualizeThreeDViewer = ({
       >
         <ThreeDViewerStyled>
           <RevealContainer sdk={sdk} color={defaultRevealColor}>
-            <RevealContent modelId={modelId} revisionId={revisionId} />
+            <RevealContent
+              modelId={modelId}
+              revisionId={revisionId}
+              onDeleteAnnotation={onDeleteAnnotation}
+            />
           </RevealContainer>
         </ThreeDViewerStyled>
 
