@@ -10,6 +10,12 @@ declare namespace Cypress {
 }
 
 Cypress.Commands.add('createChart', () => {
+  cy.get('[data-testid="charts-list-loading"]', { timeout: 20000 }).should(
+    'exist'
+  );
+  cy.get('[data-testid="charts-list-loading"]', { timeout: 20000 }).should(
+    'not.exist'
+  );
   cy.get('[data-testid="new-chart-button"]', { timeout: 30000 })
     .should('exist')
     .should('not.be.disabled')
@@ -29,7 +35,16 @@ Cypress.Commands.add('selectChart', (chartName: string) => {
 });
 
 Cypress.Commands.add('addTimeseries', (timeseriesName: string) => {
-  cy.get('input[placeholder="Find time series"]').type(timeseriesName);
+  cy.get('[data-testid="chart-action-btn"]', { timeout: 20000 }).click();
+
+  cy.contains('Add time series').click();
+
+  cy.log('navigates to time series tab');
+  cy.contains('span', 'Time series').click();
+
+  cy.get('input[placeholder="Find time series"]').type(timeseriesName, {
+    log: false,
+  });
 
   cy.get('input[type="checkbox"]').eq(0).check();
 });

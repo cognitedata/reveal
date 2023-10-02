@@ -55,7 +55,7 @@ function ChartListTable({
 
   const t = { ...defaultTranslations, ...translations };
   const LoadingRow = () => (
-    <tr>
+    <tr data-testid="charts-list-loading">
       <td>
         <Skeleton.Image style={{ height: 80, width: 86 }} />
       </td>

@@ -13,7 +13,7 @@ describe('Create chart', () => {
     cy.contains('New chart', { timeout: 20000 }).should('exist');
 
     cy.log('chart view should visible');
-    cy.get('[id="chart-view"]').should('exist');
+    cy.get('[id="chart-view"]', { timeout: 15000 }).should('exist');
 
     cy.deleteChart();
 
