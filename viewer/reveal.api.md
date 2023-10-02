@@ -794,10 +794,12 @@ export type HtmlOverlayToolOptions = {
 // @public
 export interface Image360 {
     getActiveRevision(): Image360Revision;
+    getIconStyle(): Image360IconStyle;
     getRevisions(): Image360Revision[];
     readonly id: string;
     readonly image360Visualization: Image360Visualization;
     readonly label: string | undefined;
+    setIconStyle(style: Image360IconStyle): void;
     readonly transform: THREE.Matrix4;
 }
 
@@ -866,6 +868,11 @@ export type Image360EnteredDelegate = (image360: Image360, revision: Image360Rev
 
 // @public
 export type Image360ExitedDelegate = () => void;
+
+// @public
+export type Image360IconStyle = {
+    color?: Color;
+};
 
 // @public
 export interface Image360Revision {
