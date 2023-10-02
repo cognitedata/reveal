@@ -48,6 +48,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
                 to: crumb.title,
               })
             }
+            data-cy="breadcrumb-item"
           >
             {crumb.path ? (
               <Link to={`${crumb.path}`}>{crumb.title}</Link>

@@ -37,7 +37,7 @@ export const PageTitle = (props: PageTitleProps) => {
   const { title, subtitle, hasUnderline = false, style } = props;
   return (
     <Flex column>
-      <StyledTitle level={3} style={style}>
+      <StyledTitle level={3} style={style} data-cy="step-title">
         {title}
       </StyledTitle>
       {subtitle && (

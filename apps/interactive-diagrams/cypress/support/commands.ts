@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // ***********************************************
 // This example commands.js shows you how to
@@ -8,6 +9,11 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
+
+const { targetAppPackageName } = require('../config');
+const { getUrl } = require('../utils/getUrl');
+
+// const { getUrl, targetAppPackageName } = require('../config');
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Cypress {
@@ -24,6 +30,14 @@ declare namespace Cypress {
     getCogsToast<E extends Node = HTMLElement>(
       type: 'success' | 'error'
     ): Chainable<JQuery<E>>;
+    assertElementWithTextExists<E extends HTMLElement>(
+      selector: string,
+      text: string
+    ): Chainable<JQuery<E>>;
+    checkElementsExist<E extends Node = HTMLElement>(
+      selectors: string[]
+    ): Chainable<JQuery<E>>;
+    visitAndLoadPage(): Chainable<any>;
   }
 }
 
@@ -40,4 +54,20 @@ Cypress.Commands.add('getCogsToast', (type, ...args) => {
     type === 'success' ? 'cogs-toast-success' : 'cogs-toast-error';
 
   return cy.get(`.Toastify .${cogsTypeClass}`, ...args);
+});
+
+Cypress.Commands.add('assertElementWithTextExists', (selector, text) => {
+  return cy.getBySelector(selector).should('exist').contains(text);
+});
+
+Cypress.Commands.add('checkElementsExist', (selectors) => {
+  selectors.forEach((selector) => {
+    cy.getBySelector(selector).should('exist');
+  });
+});
+
+Cypress.Commands.add('visitAndLoadPage', () => {
+  cy.visit(getUrl());
+  cy.ensureSpaAppIsLoaded(targetAppPackageName);
+  cy.ensurePageFinishedLoading();
 });

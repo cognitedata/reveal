@@ -1,11 +1,17 @@
-import { targetAppPackageName } from '../config';
-import { getUrl } from '../utils/getUrl';
-
 describe('Pending Interactive Diagrams', () => {
+  beforeEach(() => {
+    cy.visitAndLoadPage();
+  });
+
   it('Renders no pending interactive diagrams page', () => {
-    cy.visit(getUrl());
-    cy.ensureSpaAppIsLoaded(targetAppPackageName);
-    cy.ensurePageFinishedLoading();
+    cy.assertElementWithTextExists(
+      'breadcrumb-item',
+      'Interactive engineering diagrams'
+    );
+    cy.assertElementWithTextExists(
+      'pending-diagrams-title',
+      'Pending interactive diagrams'
+    );
 
     cy.getBySelector('create-new-interactive-diagrams-button').should('exist');
   });

@@ -66,7 +66,7 @@ export default function Step(props: StepProps) {
         {showStepIconOrNumber()}
       </StepNumber>
       <Flex column style={{ width: '100%' }}>
-        <div>{title}</div>
+        <div data-cy="create-interactive-diagrams-step-title">{title}</div>
         <StepLabel step={workflowStep} />
         {isCombo && isCurrent && <StepCombo substeps={substeps} />}
       </Flex>
@@ -74,7 +74,12 @@ export default function Step(props: StepProps) {
   );
 
   return (
-    <StyledStep small={!!small} isCurrent={isCurrent} wasVisited={wasVisited}>
+    <StyledStep
+      small={!!small}
+      isCurrent={isCurrent}
+      wasVisited={wasVisited}
+      data-cy="create-interactive-diagrams-step"
+    >
       {isClickable ? (
         <Link to={getUrlWithQueryParams(url)} onClick={onLinkClick}>
           <StepContents />

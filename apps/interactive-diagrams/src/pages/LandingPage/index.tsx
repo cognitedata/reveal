@@ -36,7 +36,11 @@ export default function LandingPage() {
     <Flex column>
       <TitleRow align>
         <PageTitle title="Interactive Engineering Diagrams" />
-        <Button type="primary" onClick={onContextualizeNew}>
+        <Button
+          type="primary"
+          onClick={onContextualizeNew}
+          data-cy="create-new-interactive-diagrams-button"
+        >
           Create interactive diagrams
         </Button>
       </TitleRow>
