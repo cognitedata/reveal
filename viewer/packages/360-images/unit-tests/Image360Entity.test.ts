@@ -61,7 +61,7 @@ describe(Image360Entity.name, () => {
 
     const originalColor = entity.getIconColor();
 
-    expect(originalColor).toBe(undefined);
+    expect(originalColor).toBe('default');
 
     const testColor = new THREE.Color(0.2, 0.3, 0.4);
     entity.setIconColor(testColor);
