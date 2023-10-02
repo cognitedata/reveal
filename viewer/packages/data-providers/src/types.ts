@@ -43,7 +43,7 @@ export interface Image360FileProvider {
 /**
  * A CDF AnnotationModel with a narrower type representing an image asset link
  */
-export type ImageAssetLinkAnnotation = Omit<AnnotationModel, 'data'> & {
+export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
   /**
    * The data associated with the image asset link
    */
@@ -54,7 +54,7 @@ export interface Image360AssetProvider {
   get360ImageAssets(
     image360FileDescriptors: Image360FileDescriptor[],
     annotationFilter: Image360AnnotationFilterDelegate
-  ): Promise<ImageAssetLinkAnnotation[]>;
+  ): Promise<ImageAssetLinkAnnotationInfo[]>;
 }
 
 export type Historical360ImageSet = Image360EventDescriptor & {

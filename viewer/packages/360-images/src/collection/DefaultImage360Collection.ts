@@ -6,7 +6,7 @@ import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import cloneDeep from 'lodash/cloneDeep';
 import {
-  AssetImage360Info,
+  AssetAnnotationImage360Info,
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   Image360Collection
@@ -29,7 +29,7 @@ import { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 import { Image360 } from '../entity/Image360';
 import { Image360Revision } from '../entity/Image360Revision';
-import { ImageAssetLinkAnnotation } from '@reveal/data-providers';
+import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -273,7 +273,7 @@ export class DefaultImage360Collection implements Image360Collection {
     return annotations.map(annotation => annotation.data.assetRef as IdEither);
   }
 
-  async getAnnotationsInfo(): Promise<AssetImage360Info[]> {
+  async getAnnotationsInfo(): Promise<AssetAnnotationImage360Info[]> {
     const fileDescriptors = this.getAllFileDescriptors();
     const fileIdToEntityRevision = this.createFileIdToEntityRevisionMap();
 
@@ -283,7 +283,7 @@ export class DefaultImage360Collection implements Image360Collection {
 
     return pairAnnotationsWithEntityAndRevision(annotations);
 
-    function pairAnnotationsWithEntityAndRevision(annotations: ImageAssetLinkAnnotation[]) {
+    function pairAnnotationsWithEntityAndRevision(annotations: ImageAssetLinkAnnotationInfo[]) {
       return annotations
         .map(annotation => {
           const entityRevisionObject = fileIdToEntityRevision.get(annotation.annotatedResourceId);
@@ -296,7 +296,7 @@ export class DefaultImage360Collection implements Image360Collection {
 
           return { annotationInfo: annotation, imageEntity: entity, imageRevision: revision };
         })
-        .filter((info): info is AssetImage360Info => info !== undefined);
+        .filter((info): info is AssetAnnotationImage360Info => info !== undefined);
     }
   }
 

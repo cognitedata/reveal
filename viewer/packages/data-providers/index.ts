@@ -31,5 +31,5 @@ export {
   Image360Face,
   Image360Texture,
   Image360FileDescriptor,
-  ImageAssetLinkAnnotation
+  ImageAssetLinkAnnotationInfo
 } from './src/types';

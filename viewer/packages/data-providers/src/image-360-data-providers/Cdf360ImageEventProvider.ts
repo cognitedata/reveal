@@ -31,7 +31,7 @@ import {
   Image360EventDescriptor,
   Image360Face,
   Image360FileDescriptor,
-  ImageAssetLinkAnnotation
+  ImageAssetLinkAnnotationInfo
 } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
@@ -341,7 +341,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   public async get360ImageAssets(
     image360FileDescriptors: Image360FileDescriptor[],
     annotationFilter: Image360AnnotationFilterDelegate
-  ): Promise<ImageAssetLinkAnnotation[]> {
+  ): Promise<ImageAssetLinkAnnotationInfo[]> {
     const fileIds = image360FileDescriptors.map(desc => desc.fileId);
     const assetListPromises = chunk(fileIds, 1000).map(async idList => {
       const annotationArray = await this.listFileAnnotations({
@@ -354,7 +354,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
         .filter(annotation => annotationFilter(annotation))
         .map(annotation => {
           assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
-          return annotation as ImageAssetLinkAnnotation;
+          return annotation as ImageAssetLinkAnnotationInfo;
         });
 
       return assetAnnotations;

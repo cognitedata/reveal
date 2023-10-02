@@ -68,8 +68,8 @@ export interface AreaCollection {
 }
 
 // @public
-export type AssetImage360Info = {
-    annotationInfo: ImageAssetLinkAnnotation;
+export type AssetAnnotationImage360Info = {
+    annotationInfo: ImageAssetLinkAnnotationInfo;
     imageEntity: Image360;
     imageRevision: Image360Revision;
 };
@@ -852,7 +852,7 @@ export type Image360AnnotationIntersection = {
 // @public
 export interface Image360Collection {
     findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
-    getAnnotationsInfo(source: 'assets'): Promise<AssetImage360Info[]>;
+    getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info[]>;
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
@@ -890,7 +890,7 @@ export interface Image360Visualization {
 }
 
 // @public
-export type ImageAssetLinkAnnotation = Omit<AnnotationModel, 'data'> & {
+export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
     data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
 };
 
