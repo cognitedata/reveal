@@ -468,10 +468,10 @@ __metadata:
     "@types/jest-image-snapshot": 6.2.1
     "@types/jsdom": 21.1.3
     "@types/lodash": 4.14.199
-    "@types/mixpanel-browser": 2.47.1
+    "@types/mixpanel-browser": 2.47.3
     "@types/node": 18.17.19
     "@types/random-seed": 0.3.3
-    "@types/skmeans": 0.11.4
+    "@types/skmeans": 0.11.5
     "@types/stats": 0.16.30
     "@types/three": 0.155.1
     "@types/tween.js": 18.5.1
@@ -1878,10 +1878,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mixpanel-browser@npm:2.47.1":
-  version: 2.47.1
-  resolution: "@types/mixpanel-browser@npm:2.47.1"
-  checksum: b5aaf5f2fdc7f8b74feed3b91f0753249f2ab35cff7a548bc39220d830ce2833ec9ec3841760993bdc8a5b7a24e57066ba7b8f14d18ee6a8e24b619c74fd3060
+"@types/mixpanel-browser@npm:2.47.3":
+  version: 2.47.3
+  resolution: "@types/mixpanel-browser@npm:2.47.3"
+  checksum: 7ca14ec29f7a4cd29389c1a96395dae90d48e01d363e209d34b6b89fd78bed9baf735057a7ecdeb0a4e47c85e2448d98e270ba5e72575000e07d011f71fdd49d
   languageName: node
   linkType: hard
 
@@ -1971,10 +1971,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/skmeans@npm:0.11.4":
-  version: 0.11.4
-  resolution: "@types/skmeans@npm:0.11.4"
-  checksum: c43df4e7012a237c41413a2436e41a80ceefe69dc09ef9a58c58a1505bb8f8d3fe5c286a20bc5d76a0aa9692f724302f4624c3b9943a7aed00f17c6d17768f0d
+"@types/skmeans@npm:0.11.5":
+  version: 0.11.5
+  resolution: "@types/skmeans@npm:0.11.5"
+  checksum: 60a0d759e4e4599a43adc04c32f23438454e3fdcb64352b418da8e004fb480f1ea7257daa0f4bfb527fed3e9947c85d9d8b9624b8673884114a1e26a615ae1f2
   languageName: node
   linkType: hard
 
