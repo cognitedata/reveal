@@ -29,10 +29,10 @@ function createMockImage360(options?: { customTranslation?: THREE.Matrix4 }) {
 
   const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addCustomObject(It.IsAny())).returns();
   const mock360ImageProvider = new Mock<Image360Provider<any>>();
-  const mock360ImageIcon = new Overlay3DIcon({ position: new THREE.Vector3(),
-                                               minPixelSize: 10,
-                                               maxPixelSize: 10,
-                                               iconRadius: 10 }, {});
+  const mock360ImageIcon = new Overlay3DIcon(
+    { position: new THREE.Vector3(), minPixelSize: 10, maxPixelSize: 10, iconRadius: 10 },
+    {}
+  );
 
   const testTranslation = options?.customTranslation ?? new THREE.Matrix4();
   const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
