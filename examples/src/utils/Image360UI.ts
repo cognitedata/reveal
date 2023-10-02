@@ -164,9 +164,6 @@ export class Image360UI {
 
       gui.add(params, 'remove').name('Remove all 360 images');
     }
-
-    params.siteId = 'helideck-site-2-jpeg';
-    this.add360ImageSet();
   }
 
   private remove360ImageSet() {
