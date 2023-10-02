@@ -44,7 +44,7 @@ export const TimeseriesResults: React.FC<Props> = ({ selected }) => {
 
             setFilters(
               nextFilters,
-              action === 'add' ? 'Timeseries' : undefined
+              action === 'add' ? 'TimeSeries' : undefined
             );
           }}
         />
