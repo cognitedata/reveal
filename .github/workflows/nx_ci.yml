@@ -42,25 +42,19 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
-        with:
-          main-branch-name: ${{ github.base_ref }}
 
       - name: 'Get affected libs to build'
         id: affected-libs
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           projects: 'libs/**'
 
       - name: 'Get affected apps to build'
         id: affected-apps
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           projects: 'apps/**'
           exclude: '*shell'
 
@@ -68,32 +62,28 @@ jobs:
         id: affected-shell-apps
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           projects: '*shell'
 
       - name: 'Get affected projects for lint'
         id: affected-lint
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           target: 'lint'
 
       - name: 'Get affected projects for test'
         id: affected-test
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           target: 'test'
 
       - name: 'Get affected projects for e2e'
         id: affected-e2e
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           target: 'e2e'
           # fusion-shell-e2e and platypus-cdf-cli run in their own jobs
           # the other excluded apps need additional work to successfully run
@@ -103,16 +93,14 @@ jobs:
         id: affected-storybook
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           target: 'build-storybook'
 
       - name: 'Get affected storybook projects to test'
         id: affected-test-storybook
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           target: 'test-storybook'
 
     outputs:
