@@ -59,32 +59,32 @@ describe(Image360Entity.name, () => {
   test('set icon color is returned in getter', () => {
     const entity = createMockImage360();
 
-    const { color: originalColor } = entity.getIconStyle();
+    const originalColor = entity.getIconColor();
 
     expect(originalColor).toBe(undefined);
 
     const testColor = new THREE.Color(0.2, 0.3, 0.4);
-    entity.setIconStyle({ color: testColor });
+    entity.setIconColor(testColor);
 
-    const { color: gottenColor } = entity.getIconStyle();
+    const gottenColor = entity.getIconColor();
 
-    expect(gottenColor?.toArray()).toEqual(testColor.toArray());
+    expect(gottenColor).not.toBe('default');
+    expect((gottenColor as THREE.Color).toArray()).toEqual(testColor.toArray());
   });
 
   test('setting undefined icon color resets image360 icon color', () => {
     const entity = createMockImage360();
 
     const testColor = new THREE.Color(0.2, 0.3, 0.4);
-    entity.setIconStyle({ color: testColor });
+    entity.setIconColor(testColor);
 
-    const { color: firstColor } = entity.getIconStyle();
+    const firstColor = entity.getIconColor();
 
-    expect(firstColor).not.toBe(undefined);
+    expect(firstColor).not.toBe('default');
 
-    entity.setIconStyle({ color: undefined });
+    entity.setIconColor('default');
+    const secondColor = entity.getIconColor();
 
-    const { color: secondColor } = entity.getIconStyle();
-
-    expect(secondColor).toBe(undefined);
+    expect(secondColor).toBe('default');
   });
 });
