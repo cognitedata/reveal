@@ -52,7 +52,7 @@ export const usePreviewTableData = (
         const value = response.getValue();
         records.push(...value.items);
         if (records.length > maxNumberOfRecords) {
-          return Promise.reject('Exceeding max number of records');
+          return Promise.resolve(records.slice(0, maxNumberOfRecords));
         }
         if (!value.pageInfo.hasNextPage) {
           break;

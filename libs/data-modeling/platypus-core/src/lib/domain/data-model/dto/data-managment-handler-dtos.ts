@@ -127,6 +127,7 @@ export interface FetchDataModelTransformationsDTO {
 export type CreateDataModelTransformationDTO = {
   name: string;
   externalId: string;
+  dataSetId?: number;
   destination:
     | {
         type: 'data_model_instances';

@@ -58,7 +58,6 @@ export const DataModelSettingsModal = ({
   return (
     <DataModelDetailModal
       visible={visible}
-      dataSets={[]}
       description={dataModelDescription || ''}
       externalId={externalId}
       isExternalIdLocked

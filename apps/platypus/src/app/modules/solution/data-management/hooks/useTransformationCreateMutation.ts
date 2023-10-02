@@ -19,6 +19,7 @@ type TransformationCreateMutationDTO = {
   transformationExternalId: string;
   typeName: string;
   version: string;
+  dataSetId?: number;
   destination: 'data_model_instances' | 'nodes' | 'edges';
 };
 
@@ -42,6 +43,7 @@ export default function useTransformationCreateMutation() {
       typeName,
       version,
       destination,
+      dataSetId,
     }: TransformationCreateMutationDTO) => {
       const modelExternalId = oneToManyFieldName
         ? getOneToManyModelName(typeName, oneToManyFieldName, version)
@@ -79,6 +81,7 @@ export default function useTransformationCreateMutation() {
         destination: getDestination(),
         externalId: transformationExternalId,
         name: transformationName,
+        dataSetId,
       };
 
       return dataManagementHandler.createTransformation(

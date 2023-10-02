@@ -42,12 +42,7 @@ describe('NoRowsOverlay', () => {
     mockedUseTransformationsFeatureFlag.mockReturnValue(true);
 
     render(
-      <NoRowsOverlay
-        space="abc"
-        onLoadDataClick={noop}
-        typeName="Person"
-        version="2"
-      />
+      <NoRowsOverlay space="abc" onLoadDataClick={noop} typeName="Person" />
     );
 
     expect(screen.getByText(/add instance/i)).toBeTruthy();
