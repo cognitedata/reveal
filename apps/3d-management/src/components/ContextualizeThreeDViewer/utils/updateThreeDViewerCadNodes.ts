@@ -33,7 +33,7 @@ export const updateThreeDViewerCadNodes = async ({
   revisionId: number;
   model: CogniteCadModel;
   nodesToReset: ListResponse<AssetMapping3D[]> | null;
-  contextualizedNodes: ListResponse<AssetMapping3D[]>;
+  contextualizedNodes: ListResponse<AssetMapping3D[]> | null;
   selectedNodes: TreeIndexNodeCollection;
   selectedAndContextualizedNodes: TreeIndexNodeCollection;
 }) => {

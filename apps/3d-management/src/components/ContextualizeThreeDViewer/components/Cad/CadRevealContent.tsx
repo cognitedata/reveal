@@ -26,7 +26,6 @@ import {
   useContextualizeThreeDViewerStore,
 } from '../../useContextualizeThreeDViewerStore';
 
-import { CadContextualizedFloatingToolBar } from './CadToolBar/CadContextualizedFloatingToolBar';
 import { CadToolBar } from './CadToolBar/CadToolBar';
 
 interface RevealContentProps {
@@ -124,14 +123,14 @@ export const CadRevealContent = ({
 
   return (
     <>
-      <CadToolBar />
-      <CadContextualizedFloatingToolBar
+      <CadToolBar
         modelId={modelId}
         revisionId={revisionId}
         onContextualizationDeleted={(mappedNodesDeleted) => {
           onContextualizationDeleted(mappedNodesDeleted);
         }}
       />
+
       <StyledResourceSelectorButtonWrapper>
         <Button
           type="ghost"

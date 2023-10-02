@@ -16,17 +16,17 @@ import {
 } from '../../../useContextualizeThreeDViewerStore';
 import { deleteCdfThreeDCadContextualization } from '../../../utils/deleteCdfThreeDCadContextualization';
 
-type CadContextualizedFloatingToolBar = {
+type CadToolBarTools = {
   modelId: number;
   revisionId: number;
   onContextualizationDeleted: typeof noop;
 };
 
-export function CadContextualizedFloatingToolBar({
+export function CadToolBarTools({
   modelId,
   revisionId,
   onContextualizationDeleted,
-}: CadContextualizedFloatingToolBar): ReactElement {
+}: CadToolBarTools): ReactElement {
   const sdk = useSDK();
 
   const { tool, threeDViewer, model } =
@@ -68,30 +68,28 @@ export function CadContextualizedFloatingToolBar({
   };
 
   return (
-    <StyledToolPanel>
-      <ToolBar direction="horizontal">
-        <>
-          <Tooltip content="Add contextualization" position="right">
-            <Button
-              icon="AddLarge"
-              type="ghost"
-              aria-label="Add contextualization tool"
-              toggled={tool === ToolType.ADD_ANNOTATION}
-              onClick={handleAddClick}
-            />
-          </Tooltip>
-          <Tooltip content="Delete contextualization" position="right">
-            <Button
-              icon="Delete"
-              type="ghost"
-              aria-label="Delete contextualization tool"
-              toggled={tool === ToolType.DELETE_ANNOTATION}
-              onClick={handleDeleteClick}
-            />
-          </Tooltip>
-        </>
-      </ToolBar>
-    </StyledToolPanel>
+    <ToolBar direction="vertical">
+      <>
+        <Tooltip content="Add contextualization" position="right">
+          <Button
+            icon="AddLarge"
+            type="ghost"
+            aria-label="Add contextualization tool"
+            toggled={tool === ToolType.ADD_ANNOTATION}
+            onClick={handleAddClick}
+          />
+        </Tooltip>
+        <Tooltip content="Delete contextualization" position="right">
+          <Button
+            icon="Delete"
+            type="ghost"
+            aria-label="Delete contextualization tool"
+            toggled={tool === ToolType.DELETE_ANNOTATION}
+            onClick={handleDeleteClick}
+          />
+        </Tooltip>
+      </>
+    </ToolBar>
   );
 }
 

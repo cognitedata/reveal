@@ -43,6 +43,7 @@ type RootState = {
   modelType: string;
   selectedNodeIdsList: Array<number>;
   selectedAndContextualizedNodesList: Array<SelectedNode>;
+  selectedNodes: TreeIndexNodeCollection;
   selectedAndContextualizedNodes: TreeIndexNodeCollection;
   contextualizedNodes: ListResponse<AssetMapping3D[]> | null;
   annotations: AnnotationModel[] | null;
@@ -63,6 +64,7 @@ const initialState: RootState = {
   modelType: '',
   selectedNodeIdsList: [],
   selectedAndContextualizedNodesList: [],
+  selectedNodes: new TreeIndexNodeCollection(),
   selectedAndContextualizedNodes: new TreeIndexNodeCollection(),
   contextualizedNodes: null,
   annotations: null,
@@ -197,7 +199,14 @@ export const setSelectedAndContextualizedNodesList = (
   }));
 };
 
-export const setSelectedAndContextualizedTreeIndexCollection = (
+export const setSelectedNodes = (selectedNodes: TreeIndexNodeCollection) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    selectedNodes,
+  }));
+};
+
+export const setSelectedAndContextualizedNodes = (
   selectedAndContextualizedNodes: TreeIndexNodeCollection
 ) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
