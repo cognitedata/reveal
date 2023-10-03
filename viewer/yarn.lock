@@ -457,7 +457,7 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": 2.38.2
-    "@cognite/sdk": 8.2.0
+    "@cognite/sdk": 8.3.0
     "@microsoft/api-extractor": ^7.33.6
     "@tweenjs/tween.js": 19.0.0
     "@types/dat.gui": 0.7.10
@@ -512,7 +512,7 @@ __metadata:
     path-browserify: 1.0.1
     prettier: 3.0.3
     process: 0.11.10
-    puppeteer: 21.3.4
+    puppeteer: 21.3.6
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -553,15 +553,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:8.2.0":
-  version: 8.2.0
-  resolution: "@cognite/sdk@npm:8.2.0"
+"@cognite/sdk@npm:8.3.0":
+  version: 8.3.0
+  resolution: "@cognite/sdk@npm:8.3.0"
   dependencies:
     "@cognite/sdk-core": ^4.9.0
     "@types/geojson": ^7946.0.8
     geojson: ^0.5.0
     lodash: ^4.17.11
-  checksum: f65f00f6941522b2828f637fd8ae0f5b09fdf8e849fe0ad74857baf789b4479471f04cda265fceca6cd1ddd301ee2d2554a33e212513db4df5121549a475f787
+  checksum: af5b898396c27e74504d99d05bf54da541466adc83dc6a10a4e9fa150367ed1b17356d0cc35fb306d015f3f6ba0c7878aff41ce651826e85ca3588f1fc211372
   languageName: node
   linkType: hard
 
@@ -9024,9 +9024,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:21.3.4":
-  version: 21.3.4
-  resolution: "puppeteer-core@npm:21.3.4"
+"puppeteer-core@npm:21.3.6":
+  version: 21.3.6
+  resolution: "puppeteer-core@npm:21.3.6"
   dependencies:
     "@puppeteer/browsers": 1.7.1
     chromium-bidi: 0.4.28
@@ -9034,18 +9034,18 @@ __metadata:
     debug: 4.3.4
     devtools-protocol: 0.0.1179426
     ws: 8.14.2
-  checksum: d69ebb50548c177cffb8912e649514624f353fe84d0c43b91f24550945c6ee1d155ba55c5e04ade3be9c4355188a6e3d287b2b7a5facb4262d1bdb1a74f54b77
+  checksum: 18f85781d0fc575fc6b5261a242414492e99ba497f914afaef9e3afd62a7ad135dbb63602cca5eae102a91ec8e84838a2bf0d6217bf68ba9b01d2c8b4152faf8
   languageName: node
   linkType: hard
 
-"puppeteer@npm:21.3.4":
-  version: 21.3.4
-  resolution: "puppeteer@npm:21.3.4"
+"puppeteer@npm:21.3.6":
+  version: 21.3.6
+  resolution: "puppeteer@npm:21.3.6"
   dependencies:
     "@puppeteer/browsers": 1.7.1
     cosmiconfig: 8.3.6
-    puppeteer-core: 21.3.4
-  checksum: c727da9cbef43f0e7103d12b80d0b5406b7f0c6dbd4eb084f8d0cf70d3b7c7f4639eb389d9a8ddaa7c50f7b6d8068b2f5d9e8bc07a66a38abead8c1d57869f2a
+    puppeteer-core: 21.3.6
+  checksum: 781dd1061e402dd14fb0d2a522987dc81624437b3cf25eae7dfde26e94a23e992e201d97c9021e002ecd3aae43e1f6a248ec70566c2520a25cd4fabe9e171506
   languageName: node
   linkType: hard
 

@@ -79,7 +79,7 @@
   },
   "devDependencies": {
     "@azure/msal-browser": "2.38.2",
-    "@cognite/sdk": "8.2.0",
+    "@cognite/sdk": "8.3.0",
     "@microsoft/api-extractor": "^7.33.6",
     "@types/dat.gui": "0.7.10",
     "@types/gl": "^6.0.2",
@@ -124,7 +124,7 @@
     "nock": "13.3.3",
     "prettier": "3.0.3",
     "process": "0.11.10",
-    "puppeteer": "21.3.4",
+    "puppeteer": "21.3.6",
     "random-seed": "0.3.0",
     "raw-loader": "4.0.2",
     "remove-files-webpack-plugin": "1.5.0",
