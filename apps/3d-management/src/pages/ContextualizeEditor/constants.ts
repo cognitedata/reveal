@@ -52,6 +52,6 @@ export const HighQualitySettings: QualitySettings = {
 export const cadNodeStyles = [
   DefaultNodeAppearance.Default,
   DefaultNodeAppearance.Highlighted,
-  new Color(0.6, 0.2, 0.78),
-  new Color(0.38, 0.27, 0.72),
+  new Color(0.6, 0.2, 0.78), // contextualized
+  new Color(0.38, 0.27, 0.72), // selected and contextualized
 ];

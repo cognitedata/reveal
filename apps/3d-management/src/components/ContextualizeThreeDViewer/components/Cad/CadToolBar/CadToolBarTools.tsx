@@ -6,7 +6,6 @@ import { FLOATING_ELEMENT_MARGIN } from '@3d-management/pages/ContextualizeEdito
 import noop from 'lodash-es/noop';
 
 import { ToolBar, Tooltip, Button } from '@cognite/cogs.js';
-import { withSuppressRevealEvents } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
@@ -92,9 +91,3 @@ export function CadToolBarTools({
     </ToolBar>
   );
 }
-
-const StyledToolPanel = styled(withSuppressRevealEvents(ToolBar))`
-  position: absolute;
-  left: ${FLOATING_ELEMENT_MARGIN + 80}px;
-  top: ${FLOATING_ELEMENT_MARGIN}px;
-`;

@@ -10,11 +10,7 @@ import {
   useReveal,
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
-import {
-  AssetMapping3D,
-  AssetMapping3DBase,
-  ListResponse,
-} from '@cognite/sdk/dist/src';
+import { AssetMapping3D, ListResponse } from '@cognite/sdk/dist/src';
 
 import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
 import {

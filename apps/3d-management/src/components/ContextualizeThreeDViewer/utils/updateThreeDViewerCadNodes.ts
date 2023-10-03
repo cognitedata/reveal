@@ -3,6 +3,7 @@ import { Color } from 'three/src/Three';
 
 import {
   CogniteCadModel,
+  IndexSet,
   NodeAppearance,
   NodeOutlineColor,
   TreeIndexNodeCollection,
@@ -16,17 +17,16 @@ import {
 import { setContextualizedNodes } from '../useContextualizeThreeDViewerStore';
 
 import { getCdfCadContextualization } from './getCdfCadContextualization';
-import { updateStyleForContextualizedCadNodes } from './updateStyleForContextualizedCadNodes';
 
 export const updateThreeDViewerCadNodes = async ({
   sdk,
   modelId,
   revisionId,
   model,
-  nodesToReset,
   contextualizedNodes,
-  selectedNodes,
-  selectedAndContextualizedNodes,
+  contextualizedNodesTreeIndex,
+  selectedNodesTreeIndex,
+  selectedAndContextualizedNodesTreeIndex,
 }: {
   sdk: CogniteClient;
   modelId: number;
@@ -34,8 +34,9 @@ export const updateThreeDViewerCadNodes = async ({
   model: CogniteCadModel;
   nodesToReset: ListResponse<AssetMapping3D[]> | null;
   contextualizedNodes: ListResponse<AssetMapping3D[]> | null;
-  selectedNodes: TreeIndexNodeCollection;
-  selectedAndContextualizedNodes: TreeIndexNodeCollection;
+  contextualizedNodesTreeIndex: TreeIndexNodeCollection;
+  selectedNodesTreeIndex: TreeIndexNodeCollection;
+  selectedAndContextualizedNodesTreeIndex: TreeIndexNodeCollection;
 }) => {
   // TODO: introduce FDM capabilities on updating the style in a way to not be tied on asset-centric
   if (!contextualizedNodes) {
@@ -45,35 +46,28 @@ export const updateThreeDViewerCadNodes = async ({
       revisionId: revisionId,
       nodeId: undefined,
     });
+    setContextualizedNodes(contextualizedNodes);
   }
 
-  updateStyleForContextualizedCadNodes({
-    model,
-    cadNodes: contextualizedNodes,
-    nodeAppearance: null,
+  const treeIndices: Array<number> = [];
+  contextualizedNodes.items.forEach((item) => {
+    treeIndices.push(item.treeIndex);
+  });
+
+  contextualizedNodesTreeIndex.updateSet(new IndexSet(treeIndices));
+
+  model.assignStyledNodeCollection(contextualizedNodesTreeIndex, {
     color: cadNodeStyles[2] as Color,
     outlineColor: NodeOutlineColor.NoOutline,
   });
 
   model.assignStyledNodeCollection(
-    selectedNodes,
+    selectedNodesTreeIndex,
     cadNodeStyles[1] as NodeAppearance
   );
 
-  model.assignStyledNodeCollection(selectedAndContextualizedNodes, {
+  model.assignStyledNodeCollection(selectedAndContextualizedNodesTreeIndex, {
     color: cadNodeStyles[3] as Color,
     outlineColor: NodeOutlineColor.White,
   });
-
-  if (nodesToReset) {
-    updateStyleForContextualizedCadNodes({
-      model,
-      cadNodes: nodesToReset,
-      nodeAppearance: cadNodeStyles[0] as NodeAppearance,
-      color: null,
-      outlineColor: NodeOutlineColor.NoOutline,
-    });
-  }
-
-  setContextualizedNodes(contextualizedNodes);
 };

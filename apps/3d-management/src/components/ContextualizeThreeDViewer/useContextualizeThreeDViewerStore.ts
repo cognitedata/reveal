@@ -43,8 +43,9 @@ type RootState = {
   modelType: string;
   selectedNodeIdsList: Array<number>;
   selectedAndContextualizedNodesList: Array<SelectedNode>;
-  selectedNodes: TreeIndexNodeCollection;
-  selectedAndContextualizedNodes: TreeIndexNodeCollection;
+  selectedNodesTreeIndex: TreeIndexNodeCollection;
+  selectedAndContextualizedNodesTreeIndex: TreeIndexNodeCollection;
+  contextualizedNodesTreeIndex: TreeIndexNodeCollection;
   contextualizedNodes: ListResponse<AssetMapping3D[]> | null;
   annotations: AnnotationModel[] | null;
 };
@@ -64,8 +65,9 @@ const initialState: RootState = {
   modelType: '',
   selectedNodeIdsList: [],
   selectedAndContextualizedNodesList: [],
-  selectedNodes: new TreeIndexNodeCollection(),
-  selectedAndContextualizedNodes: new TreeIndexNodeCollection(),
+  selectedNodesTreeIndex: new TreeIndexNodeCollection(),
+  selectedAndContextualizedNodesTreeIndex: new TreeIndexNodeCollection(),
+  contextualizedNodesTreeIndex: new TreeIndexNodeCollection(),
   contextualizedNodes: null,
   annotations: null,
 };
@@ -199,19 +201,30 @@ export const setSelectedAndContextualizedNodesList = (
   }));
 };
 
-export const setSelectedNodes = (selectedNodes: TreeIndexNodeCollection) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
-    ...prevState,
-    selectedNodes,
-  }));
-};
-
-export const setSelectedAndContextualizedNodes = (
-  selectedAndContextualizedNodes: TreeIndexNodeCollection
+export const setSelectedNodesTreeIndex = (
+  selectedNodesTreeIndex: TreeIndexNodeCollection
 ) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
-    selectedAndContextualizedNodes,
+    selectedNodesTreeIndex,
+  }));
+};
+
+export const setSelectedAndContextualizedNodesTreeIndex = (
+  selectedAndContextualizedNodesTreeIndex: TreeIndexNodeCollection
+) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    selectedAndContextualizedNodesTreeIndex,
+  }));
+};
+
+export const setContextualizedNodesTreeIndex = (
+  contextualizedNodesTreeIndex: TreeIndexNodeCollection
+) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    contextualizedNodesTreeIndex,
   }));
 };
 

@@ -49,9 +49,6 @@ export const PointCloudContextualizeThreeDViewer = ({
     viewer: state.threeDViewer,
     model: state.model,
     modelType: state.modelType,
-    selectedNodeIdsList: state.selectedNodeIdsList,
-    selectedAndContextualizedNodesList:
-      state.selectedAndContextualizedNodesList,
   }));
 
   const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(

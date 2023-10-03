@@ -1,5 +1,3 @@
-import { ReactElement } from 'react';
-
 import styled from 'styled-components';
 
 import { FLOATING_ELEMENT_MARGIN } from '@3d-management/pages/ContextualizeEditor/constants';
