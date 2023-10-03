@@ -74,6 +74,7 @@ export const checkIfUserHasAccessToProject = async (projectName: string) => {
     case 'AAD_B2C':
     case 'ADFS2016':
     case 'AUTH0':
+    case 'COGNITE_IDP':
     case 'AZURE_AD': {
       const urlCluster = getCluster();
       const clusters = urlCluster
@@ -94,7 +95,8 @@ export const checkIfUserHasAccessToProject = async (projectName: string) => {
       if (!cluster) {
         redirectToLogin();
       } else {
-        getProjects(cluster, await getToken()).then((projects) => {
+        const token = await getToken();
+        getProjects(cluster, token).then((projects) => {
           if (!projects.some((p) => p === projectName)) {
             redirectToLogin();
           }

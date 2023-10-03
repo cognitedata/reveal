@@ -259,6 +259,14 @@ export const getOrganization = (): string | null => {
   return null;
 };
 
+export const getRequiredOrganization = (): string => {
+  const org = getOrganization();
+  if (!org) {
+    throw new Error('Organization not found');
+  }
+  return org;
+};
+
 export const getBaseHostname = (): string => {
   const noOrganizationSpecified = !getOrganization();
   if (noOrganizationSpecified) {
@@ -321,11 +329,8 @@ const hardcodedDlcResponses: Record<string, DomainResponse> = {
 export const getDlc = async (): Promise<DomainResponse> => {
   // check for clusters not supported by DLC (Aramco & OpenField)
   if (isAllowlistedHost()) {
-    const organization = getOrganization();
+    const organization = getRequiredOrganization();
     const app = getApp();
-    if (!organization) {
-      throw new Error('Organization not found');
-    }
     const response = await fetch(
       `https://app-login-configuration-lookup.cognite.ai/${app}/${organization}`
     );

@@ -5,7 +5,7 @@ import { ADFS } from '@cognite/sdk-core';
 
 import {
   getBaseUrl,
-  getOrganization,
+  getRequiredOrganization,
   setLoginOrganizationCookie,
 } from './loginInfo';
 
@@ -62,10 +62,7 @@ export const loginRedirectAad = (
   scopes: string[],
   prompt?: string
 ) => {
-  const org = getOrganization();
-  if (!org) {
-    throw new Error('No organization found');
-  }
+  const org = getRequiredOrganization();
   setLoginOrganizationCookie(org);
   pca.loginRedirect({ scopes, prompt });
   // returning a non-resolving promise as we are redirecting the browser

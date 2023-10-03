@@ -137,6 +137,7 @@ export class FusionTokenProvider implements SdkClientTokenProvider {
 
   async logout(): Promise<void> {
     const idp = await getIDP();
+    removeSelectedIdpDetails();
     switch (idp.type) {
       case 'AZURE_AD': {
         await aadLogout(idp.authority, idp.appConfiguration.clientId);
@@ -179,7 +180,6 @@ export class FusionTokenProvider implements SdkClientTokenProvider {
         break;
       }
     }
-    removeSelectedIdpDetails();
     window.location.href = '/';
   }
 }
