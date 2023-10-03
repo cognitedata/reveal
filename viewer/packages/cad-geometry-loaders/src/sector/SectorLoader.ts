@@ -92,7 +92,11 @@ export class SectorLoader {
     const currentBatchId = this._batchId;
 
     for (const batch of chunk(changedSectors, SectorLoadingBatchSize)) {
-      if (currentBatchId !== this._batchId) break; // Stop processing this batch as a new batch has started, and will discard results from old batches.
+      if (currentBatchId !== this._batchId) {
+        // Stop processing this batch as a new batch has started, and will discard results from old batches.
+        this._progressHelper.reportNewSectorsLoaded(batch.length);
+        continue;
+      }
       const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, this._progressHelper);
       const consumedPromises = this.startLoadingBatch(filteredSectors, cadModels);
       for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
