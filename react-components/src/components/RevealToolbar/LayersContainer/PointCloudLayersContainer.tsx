@@ -15,10 +15,10 @@ import { useTranslation } from '../../../common/i18n';
 
 export const PointCloudLayersContainer = ({
   layerProps,
-  setUrl
+  onChange
 }: {
   layerProps: Reveal3DResourcesLayersProps;
-  setUrl?: (layersData: Reveal3DResourcesLayerStates) => void;
+  onChange: (cadState: Reveal3DResourcesLayerStates['pointCloudLayerData']) => void;
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
@@ -44,12 +44,8 @@ export const PointCloudLayersContainer = ({
       pointCloudLayerData: updatedPointCloudModels
     }));
 
-    if (storeStateInUrl !== undefined && setUrl !== undefined) {
-      setUrl({
-        pointCloudLayerData: updatedPointCloudModels,
-        cadLayerData: [],
-        image360LayerData: []
-      });
+    if (storeStateInUrl !== undefined) {
+      onChange(updatedPointCloudModels);
     }
   };
 
@@ -65,13 +61,8 @@ export const PointCloudLayersContainer = ({
       pointCloudLayerData
     }));
 
-    if (storeStateInUrl !== undefined && setUrl !== undefined) {
-      const updatedLayerStates: Reveal3DResourcesLayerStates = {
-        cadLayerData: [],
-        pointCloudLayerData,
-        image360LayerData: []
-      };
-      setUrl(updatedLayerStates);
+    if (storeStateInUrl !== undefined) {
+      onChange(pointCloudLayerData);
     }
   };
   const pointCloudModelContent = (): ReactElement => {

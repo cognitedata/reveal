@@ -2,44 +2,74 @@
  * Copyright 2023 Cognite AS
  */
 
+import { useCallback, useMemo } from 'react';
 import {
-  type SlicerUrlStateParam,
   type LayersUrlStateParam,
   type CadLayersUrlStateParam,
   type PointCloudLayersUrlStateParam,
   type Image360LayersUrlStateParam
 } from './types';
 
-export type UrlStateParamActions = {
-  getSlicerStateFromUrlParam: () => SlicerUrlStateParam;
-  setUrlParamOnSlicerChanged: (slicerTopBottom: number[]) => void;
-  getLayersFromUrlParam: () => LayersUrlStateParam;
-  setUrlParamOnLayersChanged: (layers: LayersUrlStateParam) => void;
+type SearchParamsHookResult = {
+  url: URL;
+  searchParams: URLSearchParams;
 };
 
-export const useUrlStateParam = (): UrlStateParamActions => {
-  const url = new URL(window.location.toString());
+const useSearchParams = (): SearchParamsHookResult => {
+  const url = useMemo(() => new URL(window.location.toString()), []);
+  const searchParams = useMemo(() => url.searchParams, [url]);
+  return { url, searchParams };
+};
 
-  const getSlicerStateFromUrlParam = (): SlicerUrlStateParam => {
-    const topBottom = url.searchParams.get('slicerState');
-    if (topBottom === null || topBottom === undefined) {
-      return { top: 1, bottom: 0 };
+export enum ParamKeys {
+  SlicerState = 'slicerState',
+  CadLayersState = 'cadLayersState',
+  PointCloudLayersState = 'pointCloudLayersState',
+  Image360LayersState = 'image360LayersState'
+}
+
+export const useSlicerUrlParams = (): [
+  { top: number; bottom: number },
+  (slicerTopBottom: number[]) => void
+] => {
+  const { url, searchParams } = useSearchParams();
+
+  const slicerState = useMemo(() => {
+    const topBottom = searchParams.get(ParamKeys.SlicerState);
+
+    if (topBottom !== null && topBottom !== undefined) {
+      const [top, bottom] = JSON.parse(topBottom);
+      return { top, bottom };
     }
-    const [top, bottom] = JSON.parse(topBottom);
 
-    return { top, bottom };
-  };
+    return { top: 1, bottom: 0 };
+  }, [searchParams]);
 
-  const setUrlParamOnSlicerChanged = (slicerTopBottom: number[]): void => {
-    url.searchParams.set('slicerState', `[${slicerTopBottom.join(',')}]`);
-    window.history.pushState({}, '', url);
-  };
+  const setSlicerState = useCallback(
+    (slicerTopBottom: number[]) => {
+      searchParams.set(ParamKeys.SlicerState, JSON.stringify(slicerTopBottom));
+      window.history.pushState({}, '', url);
+    },
+    [searchParams]
+  );
 
-  const getLayersFromUrlParam = (): LayersUrlStateParam => {
+  return [slicerState, setSlicerState];
+};
+
+export const useLayersUrlParams = (): [
+  LayersUrlStateParam,
+  (layers: LayersUrlStateParam) => void
+] => {
+  const { url, searchParams } = useSearchParams();
+
+  const layersState = useMemo(() => {
+    const cadInstance = searchParams.get(ParamKeys.CadLayersState);
+    const pointCloudInstance = searchParams.get(ParamKeys.PointCloudLayersState);
+    const image360Instance = searchParams.get(ParamKeys.Image360LayersState);
+
     const cadLayers = (() => {
-      const s = url.searchParams.get('cadLayers');
-      if (s !== null) {
-        const cadModelsUrlData = JSON.parse(s) as Array<
+      if (cadInstance !== null) {
+        const cadModelsUrlData = JSON.parse(cadInstance) as Array<
           Pick<CadLayersUrlStateParam, 'revisionId' | 'applied' | 'index'>
         >;
         return cadModelsUrlData.map((model) => ({ ...model }));
@@ -48,9 +78,8 @@ export const useUrlStateParam = (): UrlStateParamActions => {
     })();
 
     const pointCloudLayers = (() => {
-      const s = url.searchParams.get('pointCloudLayers');
-      if (s !== null) {
-        const pointCloudModelsUrlData = JSON.parse(s) as Array<
+      if (pointCloudInstance !== null) {
+        const pointCloudModelsUrlData = JSON.parse(pointCloudInstance) as Array<
           Pick<PointCloudLayersUrlStateParam, 'revisionId' | 'applied' | 'index'>
         >;
         return pointCloudModelsUrlData.map((model) => ({ ...model }));
@@ -59,42 +88,39 @@ export const useUrlStateParam = (): UrlStateParamActions => {
     })();
 
     const image360Layers = (() => {
-      const s = url.searchParams.get('image360Layers');
-      if (s !== null) {
-        const image360UrlData = JSON.parse(s) as Array<
+      if (image360Instance !== null) {
+        const image360UrlData = JSON.parse(image360Instance) as Array<
           Pick<Image360LayersUrlStateParam, 'siteId' | 'applied'>
         >;
         return image360UrlData.map((image360) => ({ ...image360 }));
       }
       return [];
     })();
+
     return {
       cadLayers,
       pointCloudLayers,
       image360Layers
     };
-  };
+  }, [searchParams]);
 
-  const setUrlParamOnLayersChanged = (layers: LayersUrlStateParam): void => {
-    const { cadLayers, pointCloudLayers, image360Layers } = layers;
+  const setLayersState = useCallback(
+    (layers: LayersUrlStateParam) => {
+      const { cadLayers, pointCloudLayers, image360Layers } = layers;
 
-    if (cadLayers !== undefined && cadLayers.length !== 0) {
-      url.searchParams.set('cadLayers', JSON.stringify(cadLayers));
-    }
-    if (pointCloudLayers !== undefined && pointCloudLayers.length !== 0) {
-      url.searchParams.set('pointCloudLayers', JSON.stringify(pointCloudLayers));
-    }
-    if (image360Layers !== undefined && image360Layers.length !== 0) {
-      url.searchParams.set('image360Layers', JSON.stringify(image360Layers));
-    }
+      if (cadLayers !== undefined && cadLayers.length !== 0) {
+        url.searchParams.set(ParamKeys.CadLayersState, JSON.stringify(cadLayers));
+      }
+      if (pointCloudLayers !== undefined && pointCloudLayers.length !== 0) {
+        url.searchParams.set(ParamKeys.PointCloudLayersState, JSON.stringify(pointCloudLayers));
+      }
+      if (image360Layers !== undefined && image360Layers.length !== 0) {
+        url.searchParams.set(ParamKeys.Image360LayersState, JSON.stringify(image360Layers));
+      }
+      window.history.pushState({}, '', url);
+    },
+    [searchParams]
+  );
 
-    window.history.pushState({}, '', url);
-  };
-
-  return {
-    getSlicerStateFromUrlParam,
-    setUrlParamOnSlicerChanged,
-    getLayersFromUrlParam,
-    setUrlParamOnLayersChanged
-  };
+  return [layersState, setLayersState];
 };

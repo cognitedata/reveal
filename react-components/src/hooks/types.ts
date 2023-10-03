@@ -14,11 +14,6 @@ export type Model3DEdgeProperties = {
   revisionNodeId: number;
 };
 
-export type SlicerUrlStateParam = {
-  top: number;
-  bottom: number;
-};
-
 export type Image360LayersUrlStateParam = {
   siteId: string;
   applied: boolean;

@@ -6,7 +6,7 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type AddImageCollection360Options } from '../..';
-import { useUrlStateParam } from '../../hooks/useUrlStateParam';
+import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
 
 type Image360CollectionContainerProps = {
   siteId: string;
@@ -22,8 +22,8 @@ export function Image360CollectionContainer({
   const cachedViewerRef = useRevealKeepAlive();
   const modelRef = useRef<Image360Collection>();
   const viewer = useReveal();
-  const { getLayersFromUrlParam } = useUrlStateParam();
-  const { image360Layers } = getLayersFromUrlParam();
+  const [layersState] = useLayersUrlParams();
+  const { image360Layers } = layersState;
 
   useEffect(() => {
     void add360Collection();

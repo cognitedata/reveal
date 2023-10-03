@@ -12,7 +12,7 @@ import {
   modelExists
 } from './useApplyCadModelStyling';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { useUrlStateParam } from '../../hooks/useUrlStateParam';
+import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
@@ -32,8 +32,8 @@ export function CadModelContainer({
   const cachedViewerRef = useRevealKeepAlive();
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
-  const { getLayersFromUrlParam } = useUrlStateParam();
-  const { cadLayers } = getLayersFromUrlParam();
+  const [layersState] = useLayersUrlParams();
+  const { cadLayers } = layersState;
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(
     viewer.models.find(

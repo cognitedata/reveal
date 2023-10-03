@@ -16,7 +16,7 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { use3DModelName } from '../../hooks/use3DModelName';
 import { isEqual } from 'lodash';
 import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
-import { useUrlStateParam } from '../../hooks/useUrlStateParam';
+import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
 
 type LayersButtonProps = {
   storeStateInUrl?: boolean;
@@ -25,8 +25,8 @@ type LayersButtonProps = {
 export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): ReactElement => {
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
-  const urlParam = useUrlStateParam();
-  const { cadLayers, pointCloudLayers, image360Layers } = urlParam.getLayersFromUrlParam();
+  const [layersState] = useLayersUrlParams();
+  const { cadLayers, pointCloudLayers, image360Layers } = layersState;
   const [visible, setVisible] = useState<boolean>(false);
 
   const [cadModelIds, setCadModelIds] = useState<number[]>([]);

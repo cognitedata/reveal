@@ -14,7 +14,7 @@ import { Matrix4 } from 'three';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { useUrlStateParam } from '../../hooks/useUrlStateParam';
+import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
 
 export type AnnotationIdStylingGroup = {
   annotationIds: number[];
@@ -46,8 +46,8 @@ export function PointCloudContainer({
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
-  const { getLayersFromUrlParam } = useUrlStateParam();
-  const { pointCloudLayers } = getLayersFromUrlParam();
+  const [layersState] = useLayersUrlParams();
+  const { pointCloudLayers } = layersState;
 
   useEffect(() => {
     addModel(modelId, revisionId, transform)

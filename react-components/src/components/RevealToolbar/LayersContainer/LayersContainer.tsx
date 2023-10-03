@@ -7,17 +7,22 @@ import styled from 'styled-components';
 import { CadModelLayersContainer } from './CadModelLayersContainer';
 import { Image360CollectionLayerContainer } from './Image360LayersContainer';
 import { PointCloudLayersContainer } from './PointCloudLayersContainer';
-import { type ReactElement } from 'react';
+import { useState, type ReactElement, useEffect } from 'react';
 import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useReveal } from '../../RevealContainer/RevealContext';
-import { useUrlStateParam } from '../../../hooks/useUrlStateParam';
+import { useLayersUrlParams } from '../../../hooks/useUrlStateParam';
 
 const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): ReactElement => {
   const viewer = useReveal();
-  const urlParam = useUrlStateParam();
+  const [, setLayersState] = useLayersUrlParams();
+  const [layersContainerState, setLayersContainerState] = useState<Reveal3DResourcesLayerStates>({
+    cadLayerData: [],
+    pointCloudLayerData: [],
+    image360LayerData: []
+  });
 
-  const setUrl = (layerData: Reveal3DResourcesLayerStates): void => {
-    const { cadLayerData, pointCloudLayerData, image360LayerData } = layerData;
+  const setUrl = (): void => {
+    const { cadLayerData, pointCloudLayerData, image360LayerData } = layersContainerState;
     const cadLayers = cadLayerData.map((data) => {
       const index = viewer.models.indexOf(data.model);
       return {
@@ -41,12 +46,16 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
         applied: data.isToggled
       };
     });
-    urlParam.setUrlParamOnLayersChanged({
+    setLayersState({
       cadLayers,
       pointCloudLayers,
       image360Layers
     });
   };
+
+  useEffect(() => {
+    setUrl();
+  }, [layersContainerState]);
   return (
     <>
       {(viewer.models.length > 0 || viewer.get360ImageCollections().length > 0) && (
@@ -55,9 +64,26 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
             onClick={(event: MouseEvent) => {
               event.stopPropagation();
             }}>
-            <CadModelLayersContainer layerProps={props} setUrl={setUrl} />
-            <PointCloudLayersContainer layerProps={props} setUrl={setUrl} />
-            <Image360CollectionLayerContainer layerProps={props} setUrl={setUrl} />
+            <CadModelLayersContainer
+              layerProps={props}
+              onChange={(cadLayerData: Reveal3DResourcesLayerStates['cadLayerData']) => {
+                setLayersContainerState((prev) => ({ ...prev, cadLayerData }));
+              }}
+            />
+            <PointCloudLayersContainer
+              layerProps={props}
+              onChange={(
+                pointCloudLayerData: Reveal3DResourcesLayerStates['pointCloudLayerData']
+              ) => {
+                setLayersContainerState((prev) => ({ ...prev, pointCloudLayerData }));
+              }}
+            />
+            <Image360CollectionLayerContainer
+              layerProps={props}
+              onChange={(image360LayerData: Reveal3DResourcesLayerStates['image360LayerData']) => {
+                setLayersContainerState((prev) => ({ ...prev, image360LayerData }));
+              }}
+            />
           </StyledMenu>
         </Container>
       )}

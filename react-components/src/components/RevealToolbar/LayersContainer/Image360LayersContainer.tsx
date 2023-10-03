@@ -14,10 +14,10 @@ import { useTranslation } from '../../../common/i18n';
 
 export const Image360CollectionLayerContainer = ({
   layerProps,
-  setUrl
+  onChange
 }: {
   layerProps: Reveal3DResourcesLayersProps;
-  setUrl?: (layersData: Reveal3DResourcesLayerStates) => void;
+  onChange: (cadState: Reveal3DResourcesLayerStates['image360LayerData']) => void;
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
@@ -49,13 +49,8 @@ export const Image360CollectionLayerContainer = ({
       image360LayerData: updatedImage360Collection
     }));
 
-    if (storeStateInUrl !== undefined && setUrl !== undefined) {
-      const updatedLayerStates: Reveal3DResourcesLayerStates = {
-        cadLayerData: [],
-        pointCloudLayerData: [],
-        image360LayerData: updatedImage360Collection
-      };
-      setUrl(updatedLayerStates);
+    if (storeStateInUrl !== undefined) {
+      onChange(updatedImage360Collection);
     }
   };
 
@@ -71,13 +66,8 @@ export const Image360CollectionLayerContainer = ({
       image360LayerData
     }));
 
-    if (storeStateInUrl !== undefined && setUrl !== undefined) {
-      const updatedLayerStates: Reveal3DResourcesLayerStates = {
-        cadLayerData: [],
-        pointCloudLayerData: [],
-        image360LayerData
-      };
-      setUrl(updatedLayerStates);
+    if (storeStateInUrl !== undefined) {
+      onChange(image360LayerData);
     }
   };
 

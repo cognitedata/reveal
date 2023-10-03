@@ -14,10 +14,10 @@ import { useTranslation } from '../../../common/i18n';
 
 export const CadModelLayersContainer = ({
   layerProps,
-  setUrl
+  onChange
 }: {
   layerProps: Reveal3DResourcesLayersProps;
-  setUrl?: (layersData: Reveal3DResourcesLayerStates) => void;
+  onChange: (cadState: Reveal3DResourcesLayerStates['cadLayerData']) => void;
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
@@ -49,12 +49,8 @@ export const CadModelLayersContainer = ({
       cadLayerData: updatedSelectedCadModels
     }));
 
-    if (storeStateInUrl !== undefined && setUrl !== undefined) {
-      setUrl({
-        cadLayerData: updatedSelectedCadModels,
-        pointCloudLayerData: [],
-        image360LayerData: []
-      });
+    if (storeStateInUrl !== undefined) {
+      onChange(updatedSelectedCadModels);
     }
   };
 
@@ -72,12 +68,8 @@ export const CadModelLayersContainer = ({
       cadLayerData: updatedSelectedCadModels
     }));
 
-    if (storeStateInUrl !== undefined && setUrl !== undefined) {
-      setUrl({
-        cadLayerData: updatedSelectedCadModels,
-        pointCloudLayerData: [],
-        image360LayerData: []
-      });
+    if (storeStateInUrl !== undefined) {
+      onChange(updatedSelectedCadModels);
     }
   };
 
