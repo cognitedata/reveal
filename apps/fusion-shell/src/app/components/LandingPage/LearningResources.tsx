@@ -10,9 +10,19 @@ const LearningResources = (): JSX.Element => {
   const { t } = useTranslation();
   const { learningResources } = getLearningResources(t);
   return (
-    <Flex direction="column" alignItems="flex-start" gap={24}>
+    <Flex
+      direction="column"
+      alignItems="flex-start"
+      gap={24}
+      data-testid="learning-resources-section"
+    >
       <Title level={5}>{t('title-learning-resources')}</Title>
-      <Flex direction="column" alignItems="flex-start" gap={16}>
+      <Flex
+        direction="column"
+        alignItems="flex-start"
+        gap={16}
+        data-testid="learning-resource-links"
+      >
         {Object.keys(learningResources).map((resource) => {
           const learningResource =
             learningResources[resource as keyof typeof learningResources];

@@ -135,7 +135,11 @@ const Section = (props: SectionProps) => {
       isCompact={isCompact}
     >
       {showSectionName && sectionName}
-      <SectionContent colors={colors} isCompact={isCompact}>
+      <SectionContent
+        colors={colors}
+        isCompact={isCompact}
+        data-testid={`menu-${section.internalId}`}
+      >
         {children}
       </SectionContent>
     </Container>

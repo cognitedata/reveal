@@ -114,7 +114,11 @@ export default function QuickLinks(): JSX.Element {
     <QuickLinksWrapper direction="column" gap={24}>
       <StyledTitle level={4}>{t('title-quick-access')}</StyledTitle>
       <Flex justifyContent="space-between">
-        <Flex justifyContent="flex-start" gap={8}>
+        <Flex
+          justifyContent="flex-start"
+          gap={8}
+          data-testid="landing-quick-access-btn-wrapper"
+        >
           {quickLinksFilters[filterType as keyof typeof quickLinksFilters].map(
             (filterKey) => {
               return (
@@ -147,7 +151,11 @@ export default function QuickLinks(): JSX.Element {
           {t('label-view-all')}
         </Button>
       </Flex>
-      <Flex justifyContent="space-between" gap={16}>
+      <Flex
+        justifyContent="space-between"
+        gap={16}
+        data-testid="quick-link-card-container"
+      >
         {displayQuickLinks[
           appliedQuickLinkFilter as keyof typeof quickLinks
         ].map((appLink) => {
@@ -171,6 +179,7 @@ export default function QuickLinks(): JSX.Element {
 
           return (
             <CardContainer
+              data-testid={appItem?.linkTo}
               key={`quick-access-to-${appItem?.internalId}`}
               onMouseOver={() =>
                 onMouseHoverLinkHandler(true, appItem?.internalId || '')
