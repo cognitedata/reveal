@@ -1,5 +1,5 @@
-import { get } from 'cypress/types/lodash';
 import { Interception } from 'cypress/types/net-stubbing';
+import { get } from 'lodash';
 
 type Order = 'asc' | 'desc';
 

@@ -20,10 +20,6 @@ describe('Files filters', () => {
     cy.tableShouldBeVisible('documents-search-results');
   });
 
-  beforeEach(() => {
-    interceptFileList();
-  });
-
   afterEach(() => {
     cy.resetSearchFilters();
   });
@@ -31,28 +27,30 @@ describe('Files filters', () => {
   it('should filter files by file type', () => {
     const FILE_TYPE = 'Image';
 
+    interceptFileList('filesFilterByFiletType');
+
     cy.clickFilter('File types').searchAndClickOption(FILE_TYPE);
 
-    cy.wait(`@${FILE_LIST_ALIAS}`);
-
-    cy.getTableById('documents-search-results').within((table) => {
-      cy.wrap(table)
-        .selectColumn('File type')
-        .shouldAllRowsHaveValueInColumn('File type', FILE_TYPE);
+    cy.wait('@filesFilterByFiletType').payloadShouldContain({
+      in: {
+        property: ['type'],
+        values: [FILE_TYPE],
+      },
     });
   });
 
   it('should filter files by Author', () => {
     const AUTHOR = 'Roland Wagner';
 
+    interceptFileList('filesFilterByAuthor');
+
     cy.clickFilter('Authors').searchAndClickOption(AUTHOR);
 
-    cy.wait(`@${FILE_LIST_ALIAS}`);
-
-    cy.getTableById('documents-search-results').within((table) => {
-      cy.wrap(table)
-        .selectColumn('Author')
-        .shouldAllRowsHaveValueInColumn('Author', AUTHOR);
+    cy.wait('@filesFilterByAuthor').payloadShouldContain({
+      in: {
+        property: ['author'],
+        values: [AUTHOR],
+      },
     });
   });
 });

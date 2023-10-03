@@ -29,11 +29,11 @@ export const interceptEventList = () => {
   }).as(EVENT_LIST_ALIAS);
 };
 
-export const interceptFileList = () => {
+export const interceptFileList = (alias = FILE_LIST_ALIAS) => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/documents/search',
     method: 'POST',
-  }).as(FILE_LIST_ALIAS);
+  }).as(alias);
 };
 
 export const interceptSequenceList = () => {
