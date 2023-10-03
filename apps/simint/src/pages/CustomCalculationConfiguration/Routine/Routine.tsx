@@ -38,6 +38,21 @@ export function Routine({
     }));
   };
 
+  useEffect(() => {
+    return () => {
+      const routine = cloneDeep(values.routine ?? []).map(
+        (procedure, index) => {
+          const sortedSteps = procedure.steps.map((step, stepIndex) => ({
+            ...step,
+            step: stepIndex + 1,
+          }));
+          return { ...procedure, steps: sortedSteps, order: index + 1 };
+        }
+      );
+      setCalculation({ ...values, routine });
+    };
+  }, [values, setCalculation]);
+
   const handleNewStep = (procedure: CalculationProcedure) => {
     const newStep: CalculationStep = {
       step: procedure.steps.length + 1,

@@ -1,10 +1,13 @@
 describe('fusion-shell', () => {
   beforeEach(() => {
     cy.navigate('');
+    cy.ensurePageFinishedLoading();
   });
 
   it('should display welcome message', () => {
-    cy.get('h2.cogs-title-2').contains(/Welcome to Cognite Data Fusion/);
+    cy.get("[data-testid='fusion-landing-page-welcome-message']").should(
+      'exist'
+    );
   });
 
   it('has quick access buttons', () => {

@@ -6,12 +6,6 @@ declare namespace Cypress {
     ensurePageFinishedLoading(): void;
     createLink(navigateTo: string): string;
     navigate(navigateTo: string): void;
-    getBySel<E extends Node = HTMLElement>(
-      selector: string
-    ): Chainable<JQuery<E>>;
-    getBySelLike<E extends Node = HTMLElement>(
-      selector: string
-    ): Chainable<JQuery<E>>;
     setup(): void;
   }
 }

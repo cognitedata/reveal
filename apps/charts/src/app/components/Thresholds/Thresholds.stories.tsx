@@ -1,13 +1,14 @@
 /**
  * Threshold Item
  */
-import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
 import { useArgs } from '@storybook/preview-api';
 import { Meta, Story } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ChartThreshold } from '@cognite/charts-lib';
+
+import useThresholdsResults from '../../hooks/threshold-calculations';
 
 import ThresholdsComponent from './Thresholds';
 

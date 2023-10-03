@@ -1,6 +1,5 @@
-import { useChartAtom } from '@charts-app/models/chart/atom';
-import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
-
+import { useChartAtom } from '../../../../models/chart/atom';
+import { useScheduledCalculationDataValue } from '../../../../models/scheduled-calculation-results/atom';
 import {
   getTsExternalIdsFromScheduledCalculations,
   getTsIdsFromTsCollection,

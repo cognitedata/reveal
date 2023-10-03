@@ -1,7 +1,8 @@
 import { ComponentProps, useState } from 'react';
 
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import { ComponentMeta, Story } from '@storybook/react';
+
+import { defaultTranslations } from '../../../translations';
 
 import EditSaveViewButton from './EditSaveViewButton';
 

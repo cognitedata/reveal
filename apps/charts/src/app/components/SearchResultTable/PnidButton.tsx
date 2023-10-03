@@ -1,14 +1,14 @@
 import { ReactNode } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { useFilesAssetAppearsIn } from '@charts-app/components/FileList/hooks';
-import { StatusIcon } from '@charts-app/components/StatusIcon/StatusIcon';
-import { useLinkedAsset } from '@charts-app/hooks/cdf-assets';
-import { trackUsage } from '@charts-app/services/metrics';
-import { createInternalLink } from '@charts-app/utils/link';
-
 import { Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
+
+import { useLinkedAsset } from '../../hooks/cdf-assets';
+import { trackUsage } from '../../services/metrics';
+import { createInternalLink } from '../../utils/link';
+import { useFilesAssetAppearsIn } from '../FileList/hooks';
+import { StatusIcon } from '../StatusIcon/StatusIcon';
 
 export const PnidButton = ({
   asset,

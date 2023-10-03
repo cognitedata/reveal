@@ -1,17 +1,17 @@
-import { LoadingRow } from '@charts-app/components/Common/SidebarElements';
-import MonitoringAlertRow from '@charts-app/components/MonitoringAlert/MonitoringAlert';
-import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { trackUsage } from '@charts-app/services/metrics';
+import { Icon } from '@cognite/cogs.js';
+
+import { useSearchParam } from '../../hooks/navigation';
+import { trackUsage } from '../../services/metrics';
 import {
   MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR,
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
   // MONITORING_SIDEBAR_KEY,
   MONITORING_SIDEBAR_SHOW_ALERTS,
-} from '@charts-app/utils/constants';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
-import { Icon } from '@cognite/cogs.js';
+} from '../../utils/constants';
+import { makeDefaultTranslations } from '../../utils/translations';
+import { LoadingRow } from '../Common/SidebarElements';
+import MonitoringAlertRow from '../MonitoringAlert/MonitoringAlert';
+import { MonitoringJob } from '../MonitoringSidebar/types';
 
 import {
   AlertContainer,

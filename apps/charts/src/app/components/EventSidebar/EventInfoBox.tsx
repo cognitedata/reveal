@@ -4,18 +4,19 @@
 
 import { MouseEvent, useCallback } from 'react';
 
-import { LoadingRow } from '@charts-app/components/Common/SidebarElements';
-import { formatDate } from '@charts-app/utils/date';
-import {
-  makeDefaultTranslations,
-  translationKeys,
-} from '@charts-app/utils/translations';
 import { GeneralDetails } from '@data-exploration/components';
 import { Col, Row } from 'antd';
 import dayjs from 'dayjs';
 
 import { Button, Body } from '@cognite/cogs.js';
 import { CogniteEvent } from '@cognite/sdk';
+
+import { formatDate } from '../../utils/date';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '../../utils/translations';
+import { LoadingRow } from '../Common/SidebarElements';
 
 import { EventDetails, AssetDetailsWrapper } from './elements';
 

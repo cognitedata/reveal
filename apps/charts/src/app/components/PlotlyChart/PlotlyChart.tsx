@@ -1,14 +1,6 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { PlotParams } from 'react-plotly.js';
 
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import {
-  ChartEventResults,
-  EventsCollection,
-} from '@charts-app/models/event-results/types';
-import { InteractionData } from '@charts-app/models/interactions/types';
-import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
-import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 
@@ -18,6 +10,15 @@ import {
   ChartWorkflow,
   ScheduledCalculation,
 } from '@cognite/charts-lib';
+
+import { WorkflowState } from '../../models/calculation-results/types';
+import {
+  ChartEventResults,
+  EventsCollection,
+} from '../../models/event-results/types';
+import { InteractionData } from '../../models/interactions/types';
+import { ScheduledCalculationsDataMap } from '../../models/scheduled-calculation-results/types';
+import { TimeseriesEntry } from '../../models/timeseries-results/types';
 
 import { PlotWrapper } from './elements';
 import { createNavigationSafePlotComponent } from './navigation-safe-plot-component';

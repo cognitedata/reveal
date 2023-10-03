@@ -1,13 +1,14 @@
 import { useSelector } from 'react-redux';
 
-import { useSimulatorConfig } from '@simint-app/hooks/useSimulatorConfig';
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
 import { formatDistanceToNow } from 'date-fns';
 import styled from 'styled-components/macro';
 
 import { Collapse, Icon, Skeleton } from '@cognite/cogs.js';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetSimulatorDetailsQuery } from '@cognite/simconfig-api-sdk/rtk';
+
+import { useSimulatorConfig } from '../../hooks/useSimulatorConfig';
+import { selectProject } from '../../store/simconfigApiProperties/selectors';
 
 import { SimulatorInformationList } from './elements';
 

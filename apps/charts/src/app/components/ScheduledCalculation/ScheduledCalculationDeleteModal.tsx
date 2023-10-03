@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Trans } from 'react-i18next';
 
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Flex, Body, Checkbox, Modal } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 type Props = {
   name: string;

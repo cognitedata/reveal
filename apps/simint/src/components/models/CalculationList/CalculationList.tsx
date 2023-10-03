@@ -3,18 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import RuleMonitoring from '@simint-app/assets/RuleMonitoring.svg';
-import { GraphicContainer } from '@simint-app/components/shared/elements';
-import { useUserInfo } from '@simint-app/hooks/useUserInfo';
-import { CalculationDescriptionInfoDrawer } from '@simint-app/pages/CalculationConfiguration/steps/infoDrawers/CalculationDescriptionInfoDrawer';
-import type { AppLocationGenerics } from '@simint-app/routes';
-import { selectIsDeleteEnabled } from '@simint-app/store/capabilities/selectors';
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
-import { isBHPApproxMethodWarning } from '@simint-app/utils/common';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
-import { TRACKING_EVENTS } from '@simint-app/utils/metrics/constants';
-import { trackUsage } from '@simint-app/utils/metrics/tracking';
-import { isSuccessResponse } from '@simint-app/utils/responseUtils';
 import { parseISO } from 'date-fns';
 import styled from 'styled-components/macro';
 
@@ -44,6 +32,19 @@ import {
   useGetModelFileQuery,
   useRunModelCalculationMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
+
+import RuleMonitoring from '../../../assets/RuleMonitoring.svg';
+import { useUserInfo } from '../../../hooks/useUserInfo';
+import { CalculationDescriptionInfoDrawer } from '../../../pages/CalculationConfiguration/steps/infoDrawers/CalculationDescriptionInfoDrawer';
+import type { AppLocationGenerics } from '../../../routes';
+import { selectIsDeleteEnabled } from '../../../store/capabilities/selectors';
+import { selectProject } from '../../../store/simconfigApiProperties/selectors';
+import { isBHPApproxMethodWarning } from '../../../utils/common';
+import { createCdfLink } from '../../../utils/createCdfLink';
+import { TRACKING_EVENTS } from '../../../utils/metrics/constants';
+import { trackUsage } from '../../../utils/metrics/tracking';
+import { isSuccessResponse } from '../../../utils/responseUtils';
+import { GraphicContainer } from '../../shared/elements';
 
 import { CalculationRunTypeIndicator } from './CalculationRunTypeIndicator';
 import { CalculationScheduleIndicator } from './CalculationScheduleIndicator';

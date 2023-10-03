@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { CopyValue } from '@simint-app/components/molecules/CopyValue';
-import { getFormattedSciNumber } from '@simint-app/utils/numberUtils';
 import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
@@ -10,6 +8,9 @@ import type {
   BoundaryConditionValue,
   ModelFile,
 } from '@cognite/simconfig-api-sdk/rtk';
+
+import { getFormattedSciNumber } from '../../../utils/numberUtils';
+import { CopyValue } from '../../molecules/CopyValue';
 
 interface BoundaryConditionTableProps {
   modelFile?: ModelFile;

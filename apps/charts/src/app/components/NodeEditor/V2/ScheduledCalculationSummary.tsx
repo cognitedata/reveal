@@ -2,18 +2,14 @@ import { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { ExpandIcon } from '@charts-app/components/Common/SidebarElements';
-import CopyButton from '@charts-app/components/CopyButton/CopyButton';
-import { HorizontalDivider } from '@charts-app/components/TopBar/elements';
-import {
-  formatDate,
-  convertMillisecondsToDuration,
-} from '@charts-app/utils/date';
-import Layers from '@charts-app/utils/z-index';
-
 import { Body, Flex, Collapse, Button, Modal } from '@cognite/cogs.js';
 
 import { useScheduledCalculationDataValue } from '../../../models/scheduled-calculation-results/atom';
+import { formatDate, convertMillisecondsToDuration } from '../../../utils/date';
+import Layers from '../../../utils/z-index';
+import { ExpandIcon } from '../../Common/SidebarElements';
+import CopyButton from '../../CopyButton/CopyButton';
+import { HorizontalDivider } from '../../TopBar/elements';
 
 import { StyledCollapse } from './elements';
 

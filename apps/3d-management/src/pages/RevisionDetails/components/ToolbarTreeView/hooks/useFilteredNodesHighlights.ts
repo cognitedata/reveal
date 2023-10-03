@@ -5,6 +5,7 @@ import {
   PropertyFilterNodeCollection,
   CogniteCadModel,
   NodeOutlineColor,
+  Cognite3DViewer,
 } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -17,8 +18,10 @@ import { assignOrUpdateStyledNodeCollection } from '../../../../../utils/sdk/3dN
 
 export function useFilteredNodesHighlights({
   model,
+  viewer,
 }: {
   model: CogniteCadModel;
+  viewer: Cognite3DViewer;
 }) {
   const dispatch = useDispatch();
   const { value: filter } = useSelector(
@@ -27,7 +30,7 @@ export function useFilteredNodesHighlights({
   const sdk = useSDK();
 
   const filteredNodes = React.useRef<PropertyFilterNodeCollection>(
-    new PropertyFilterNodeCollection(sdk as any, model, {
+    new PropertyFilterNodeCollection(sdk, model, {
       requestPartitions: 10,
     })
   );
@@ -41,13 +44,15 @@ export function useFilteredNodesHighlights({
       renderGhosted: false,
     });
     return () => {
-      model.unassignStyledNodeCollection(filteredNodesSet);
+      if (viewer.models.includes(model)) {
+        model.unassignStyledNodeCollection(filteredNodesSet);
+      }
       if (filteredNodesSet) {
         filteredNodesSet.clear();
       }
       dispatch(setNodePropertyFilter(null));
     };
-  }, [dispatch, model]);
+  }, [dispatch, model, viewer]);
 
   // filter execution and loading state updates
   useEffect(() => {

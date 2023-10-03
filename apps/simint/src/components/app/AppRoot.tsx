@@ -1,7 +1,8 @@
 import { Provider as ReduxProvider } from 'react-redux';
 
-import App from '@simint-app/components/app/App';
-import { store } from '@simint-app/store';
+import { store } from '../../store';
+
+import App from './App';
 
 export default function AppRoot() {
   return (

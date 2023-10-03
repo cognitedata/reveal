@@ -20,55 +20,50 @@ describe('Timeseries filters', () => {
     cy.tableShouldBeVisible('timeseries-search-results');
   });
 
-  beforeEach(() => {
-    interceptTimeseriesList();
-  });
-
   afterEach(() => {
     cy.resetSearchFilters();
   });
 
   it('should filter timeseries by unit', () => {
-    const UNIT = 'M3';
+    const UNIT = 'm3';
+
+    interceptTimeseriesList('timeseriesFilterByUnit');
 
     cy.clickFilter('Units').searchAndClickOption(UNIT);
 
-    cy.wait(`@${TIMESERIES_LIST_ALIAS}`);
-
-    cy.getTableById('timeseries-search-results').within((table) => {
-      cy.wrap(table)
-        .selectColumn('Unit')
-        .shouldAllRowsHaveValueInColumn('Unit', UNIT);
+    cy.wait('@timeseriesFilterByUnit').payloadShouldContain({
+      in: {
+        property: ['unit'],
+        values: [UNIT],
+      },
     });
   });
 
   it('should filter timeseries by Is step', () => {
-    const IS_STEP = 'True';
+    interceptTimeseriesList('timeseriesFilterByIsStep');
 
     cy.log('click on True button of Is step filter');
-    cy.getFilter('Is step').contains(IS_STEP).click();
+    cy.getFilter('Is step').contains('True').click();
 
-    cy.wait(`@${TIMESERIES_LIST_ALIAS}`);
-
-    cy.getTableById('timeseries-search-results').within((table) => {
-      cy.wrap(table)
-        .selectColumn('Is step')
-        .shouldAllRowsHaveValueInColumn('Is step', IS_STEP);
+    cy.wait(`@timeseriesFilterByIsStep`).payloadShouldContain({
+      equals: {
+        property: ['isStep'],
+        value: 'true',
+      },
     });
   });
 
   it('should filter timeseries by Is string', () => {
-    const IS_STRING = 'False';
+    interceptTimeseriesList('timeseriesFilterByIsString');
 
     cy.log('click on False button of Is string filter');
-    cy.getFilter('Is string').contains(IS_STRING).click();
+    cy.getFilter('Is string').contains('False').click();
 
-    cy.wait(`@${TIMESERIES_LIST_ALIAS}`);
-
-    cy.getTableById('timeseries-search-results').within((table) => {
-      cy.wrap(table)
-        .selectColumn('Is string')
-        .shouldAllRowsHaveValueInColumn('Is string', IS_STRING);
+    cy.wait(`@timeseriesFilterByIsString`).payloadShouldContain({
+      equals: {
+        property: ['isString'],
+        value: 'false',
+      },
     });
   });
 });

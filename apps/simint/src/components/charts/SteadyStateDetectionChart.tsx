@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 
-import { edPelt, steadyStateDetection } from '@simint-app/utils/ssd';
-import { Timeseries } from '@simint-app/utils/ssd/timeseries';
-
 import { toast } from '@cognite/cogs.js';
 import type { AggregateType } from '@cognite/simconfig-api-sdk/rtk';
+
+import { edPelt, steadyStateDetection } from '../../utils/ssd';
+import { Timeseries } from '../../utils/ssd/timeseries';
 
 import { useBaseChart } from './BaseChart';
 import { linearScale, timeScale } from './BaseChart/scale';

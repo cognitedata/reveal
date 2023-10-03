@@ -2,13 +2,14 @@ import { Control, Controller } from 'react-hook-form';
 
 import styled from 'styled-components';
 
-import { getVisibility } from '@charts-app/domain/chart/internal/transformers/getVisibility';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { useChartAtom } from '@charts-app/models/chart/atom';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { SharedUsersList, UserSearchInput } from '@fusion/industry-canvas';
 
 import { Flex, Infobox } from '@cognite/cogs.js';
+
+import { getVisibility } from '../../domain/chart/internal/transformers/getVisibility';
+import { useTranslations } from '../../hooks/translations';
+import { useChartAtom } from '../../models/chart/atom';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import { CreateMonitoringJobFormData } from './types';
 

@@ -4,14 +4,15 @@ import Highlighter from 'react-highlight-words';
 
 import styled from 'styled-components';
 
-import { useTranslations } from '@charts-app/hooks/translations';
-import { removeIllegalCharacters } from '@charts-app/utils/text';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { TimeseriesChart } from '@data-exploration-components/containers';
 import dayjs from 'dayjs';
 
 import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
+
+import { useTranslations } from '../../hooks/translations';
+import { removeIllegalCharacters } from '../../utils/text';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 const defaultTranslation = makeDefaultTranslations(
   'Exact match on external id'

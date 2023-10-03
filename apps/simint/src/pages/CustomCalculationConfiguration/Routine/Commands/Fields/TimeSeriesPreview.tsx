@@ -1,8 +1,3 @@
-import { TimeseriesChart } from '@simint-app/components/charts/TimeseriesChart';
-import type {
-  TimeseriesState,
-  TimeseriesStateEntry,
-} from '@simint-app/pages/CalculationConfiguration/utils';
 import { ParentSizeModern } from '@visx/responsive';
 import styled from 'styled-components/macro';
 
@@ -12,7 +7,12 @@ import type {
   InputTimeSeries,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import { TimeseriesChart } from '../../../../../components/charts/TimeseriesChart';
 import { LoaderOverlay } from '../../../../CalculationConfiguration/elements';
+import type {
+  TimeseriesState,
+  TimeseriesStateEntry,
+} from '../../../../CalculationConfiguration/utils';
 
 interface TimeSeriesPreviewProps {
   timeseriesState: TimeseriesState;

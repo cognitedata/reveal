@@ -1,11 +1,11 @@
-import { hasRawPoints } from '@charts-app/components/PlotlyChart/utils';
-
 import { ChartThreshold } from '@cognite/charts-lib';
 import {
   DatapointAggregate,
   DoubleDatapoint,
   StringDatapoint,
 } from '@cognite/sdk';
+
+import { hasRawPoints } from '../components/PlotlyChart/utils';
 
 export enum UnitTypes {
   CUSTOM = 'Custom',

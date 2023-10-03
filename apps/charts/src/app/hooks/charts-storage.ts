@@ -1,4 +1,3 @@
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import * as Sentry from '@sentry/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isUndefined, omitBy } from 'lodash';
@@ -14,6 +13,8 @@ import {
   fetchUserCharts,
   updateChart,
 } from '@cognite/charts-lib';
+
+import { useUserInfo } from './useUserInfo';
 
 export const useMyCharts = () => {
   const { data: { id, mail } = {} } = useUserInfo();

@@ -7,6 +7,7 @@ export const SEQUENCE_LIST_ALIAS = 'sequenceList';
 export const ASSET_AGGREGATE_ALIAS = 'assetAggregate';
 export const TIMESERIES_AGGREGATE_ALIAS = 'timeseriesAggregate';
 export const FILE_AGGREGATE_ALIAS = 'fileAggregate';
+export const EVENT_AGGREGATE_ALIAS = 'interceptEventsAggregate';
 
 export const interceptAssetList = (alias = ASSET_LIST_ALIAS) => {
   cy.intercept({
@@ -15,25 +16,25 @@ export const interceptAssetList = (alias = ASSET_LIST_ALIAS) => {
   }).as(alias);
 };
 
-export const interceptTimeseriesList = () => {
+export const interceptTimeseriesList = (alias = TIMESERIES_LIST_ALIAS) => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/timeseries/list',
     method: 'POST',
-  }).as(TIMESERIES_LIST_ALIAS);
+  }).as(alias);
 };
 
-export const interceptEventList = () => {
+export const interceptEventList = (alias = EVENT_LIST_ALIAS) => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/events/list',
     method: 'POST',
-  }).as(EVENT_LIST_ALIAS);
+  }).as(alias);
 };
 
-export const interceptFileList = () => {
+export const interceptFileList = (alias = FILE_LIST_ALIAS) => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/documents/search',
     method: 'POST',
-  }).as(FILE_LIST_ALIAS);
+  }).as(alias);
 };
 
 export const interceptSequenceList = () => {
@@ -62,4 +63,11 @@ export const interceptFileAggregate = () => {
     url: '**/api/v1/projects/dss-dev/documents/aggregate',
     method: 'POST',
   }).as(FILE_AGGREGATE_ALIAS);
+};
+
+export const interceptEventsAggregate = () => {
+  cy.intercept({
+    url: '**/api/v1/projects/dss-dev/events/aggregate',
+    method: 'POST',
+  }).as(EVENT_AGGREGATE_ALIAS);
 };

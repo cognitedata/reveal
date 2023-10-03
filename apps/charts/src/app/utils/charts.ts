@@ -1,10 +1,11 @@
 import { FlowElement, FlowExportObject } from 'react-flow-renderer';
 
-import { SourceNodeData } from '@charts-app/components/NodeEditor/V2/Nodes/SourceNode';
-import { NodeDataVariants } from '@charts-app/components/NodeEditor/V2/types';
 import { uuid4 } from '@sentry/utils';
 
 import { ChartWorkflow, ChartWorkflowV2 } from '@cognite/charts-lib';
+
+import { SourceNodeData } from '../components/NodeEditor/V2/Nodes/SourceNode';
+import { NodeDataVariants } from '../components/NodeEditor/V2/types';
 
 /**
  * There is an extra space below the plotting component kept for showing the plus button on the left hand side.

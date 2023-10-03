@@ -1,9 +1,9 @@
 import { memo, useEffect, useState } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
-
 import { Input } from '@cognite/cogs.js';
+
+import { defaultTranslations } from '../../translations';
 
 import {
   ColorBlock,

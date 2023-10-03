@@ -1,9 +1,9 @@
-import { InputRow } from '@simint-app/components/forms/ModelForm/elements';
 import { Field, useFormikContext } from 'formik';
 
 import { InputExp } from '@cognite/cogs.js';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
+import { InputRow } from '../../../../../components/forms/ModelForm/elements';
 import { getInputOutputIndex, type ConfigurationFieldProps } from '../utils';
 
 export function Value({ step }: ConfigurationFieldProps) {

@@ -1,14 +1,14 @@
 import { memo, useEffect, useState } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 
-import Markdown from '@charts-app/components/Markdown/Markdown';
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
 import { Operation } from '@cognite/calculation-backend';
 import { Flex } from '@cognite/cogs.js';
 
+import Markdown from '../../../../Markdown/Markdown';
+import { defaultTranslations } from '../../../translations';
 import {
   AUTO_ALIGN_PARAM,
   FUNCTION_NODE_DRAG_HANDLE_CLASSNAME,

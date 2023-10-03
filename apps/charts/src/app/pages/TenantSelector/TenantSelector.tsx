@@ -1,8 +1,8 @@
-import config from '@charts-app/config/config';
-import { useCluster } from '@charts-app/hooks/config';
-import { isProduction } from '@charts-app/utils/environment';
-
 import TenantSelector, { Background } from '@cognite/cdf-hub-tenant-selector';
+
+import config from '../../config/config';
+import { useCluster } from '../../hooks/config';
+import { isProduction } from '../../utils/environment';
 
 const clusters = [
   {

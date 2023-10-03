@@ -1,9 +1,10 @@
 import { ComponentProps, useState } from 'react';
 
-import { fullListOfOperations } from '@charts-app/models/operations/mocks';
 import { ComponentMeta, Story } from '@storybook/react';
 
 import { Button } from '@cognite/cogs.js';
+
+import { fullListOfOperations } from '../../../../../models/operations/mocks';
 
 import InfoModal from './InfoModal';
 

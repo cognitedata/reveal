@@ -1,6 +1,7 @@
 describe('Access-management page', () => {
   beforeEach(() => {
     cy.navigate('access-management');
+    cy.ensurePageFinishedLoading();
   });
 
   it('should display welcome message and display table with access groups', () => {

@@ -1,17 +1,6 @@
 import { useMemo } from 'react';
 import { useThrottle } from 'react-use';
 
-import { LogicalCheckChart } from '@simint-app/components/charts/LogicalCheckChart';
-import { SteadyStateDetectionChart } from '@simint-app/components/charts/SteadyStateDetectionChart';
-import {
-  FormContainer,
-  FormHeader,
-  FormRow,
-  FormRowStacked,
-  NumberField,
-  SliderNumberField,
-  TimeSeriesField,
-} from '@simint-app/components/forms/elements';
 import { ParentSizeModern } from '@visx/responsive';
 import classNames from 'classnames';
 import { Field, useFormikContext } from 'formik';
@@ -20,6 +9,17 @@ import type { OptionType } from '@cognite/cogs.js';
 import { SegmentedControl, Select, Switch } from '@cognite/cogs.js';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
+import { LogicalCheckChart } from '../../../components/charts/LogicalCheckChart';
+import { SteadyStateDetectionChart } from '../../../components/charts/SteadyStateDetectionChart';
+import {
+  FormContainer,
+  FormHeader,
+  FormRow,
+  FormRowStacked,
+  NumberField,
+  SliderNumberField,
+  TimeSeriesField,
+} from '../../../components/forms/elements';
 import { ChartContainer, LoaderOverlay, SelectContainer } from '../elements';
 import type { ScheduleRepeat } from '../types';
 import { INTERVAL_OPTIONS, getScheduleRepeat, useTimeseries } from '../utils';

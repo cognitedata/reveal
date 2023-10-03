@@ -1,13 +1,6 @@
 import { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 
-import { getStepsFromWorkflow } from '@charts-app/components/NodeEditor/transforms';
-import { useScheduledCalculationCreateMutate } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationCreateMutate';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { useChartAtom } from '@charts-app/models/chart/atom';
-import { useOperations } from '@charts-app/models/operations/atom';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { ModalDefaultProps, Modal, IconType } from '@cognite/cogs.js';
 
 import { useGetWorkflow } from '../../domain/chart/internal/queries/useGetWorkflow';
@@ -20,6 +13,12 @@ import {
   ScheduledCalculationModalProps,
   StepInfo,
 } from '../../domain/scheduled-calculation/internal/types';
+import { useScheduledCalculationCreateMutate } from '../../domain/scheduled-calculation/service/queries/useScheduledCalculationCreateMutate';
+import { useTranslations } from '../../hooks/translations';
+import { useChartAtom } from '../../models/chart/atom';
+import { useOperations } from '../../models/operations/atom';
+import { makeDefaultTranslations } from '../../utils/translations';
+import { getStepsFromWorkflow } from '../NodeEditor/transforms';
 
 import { handleNext } from './helpers';
 import { ModalBody } from './ModalBody';

@@ -75,16 +75,19 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
 
   useCheckedNodesVisibility({
     model: props.model,
+    viewer: props.viewer,
     treeData: state.treeData,
     checkedKeys: state.checkedNodes,
   });
 
   useFilteredNodesHighlights({
     model: props.model,
+    viewer: props.viewer,
   });
 
   useSelectedNodesHighlights({
     model: props.model,
+    viewer: props.viewer,
   });
 
   const loadChildren = async (treeNode: TreeDataNode): Promise<void> => {

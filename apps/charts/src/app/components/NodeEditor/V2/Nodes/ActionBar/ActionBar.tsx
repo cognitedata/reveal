@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
-
 import { OperationVersion } from '@cognite/calculation-backend';
 import { Button } from '@cognite/cogs.js';
+
+import { defaultTranslations } from '../../../translations';
 
 import EditSaveViewButton from './EditSaveViewButton';
 import InfoModal from './InfoModal';

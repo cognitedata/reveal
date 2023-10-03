@@ -1,9 +1,9 @@
 import { ComponentProps } from 'react';
 import Highlighter from 'react-highlight-words';
 
-import { removeIllegalCharacters } from '@charts-app/utils/text';
-
 import { Icon, Button, Colors } from '@cognite/cogs.js';
+
+import { removeIllegalCharacters } from '../../utils/text';
 
 import { AssetItem } from './elements/AssetItem';
 import { Description } from './elements/Description';

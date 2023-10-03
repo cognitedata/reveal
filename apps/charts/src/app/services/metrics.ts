@@ -1,11 +1,8 @@
-import config from '@charts-app/config/config';
-import {
-  isDevelopment,
-  isProduction,
-  isStaging,
-} from '@charts-app/utils/environment';
 import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
+
+import config from '../config/config';
+import { isDevelopment, isProduction, isStaging } from '../utils/environment';
 
 const mixpanelConfig = {
   prefix: 'Charts',

@@ -3,11 +3,12 @@
  */
 import { FunctionComponent } from 'react';
 
-import DetailsBlock from '@charts-app/components/DetailsBlock/DetailsBlock';
 import { List, Row, Col } from 'antd';
 import styled from 'styled-components/macro';
 
 import { Tooltip } from '@cognite/cogs.js';
+
+import DetailsBlock from '../DetailsBlock/DetailsBlock';
 
 type Source = {
   label: string;

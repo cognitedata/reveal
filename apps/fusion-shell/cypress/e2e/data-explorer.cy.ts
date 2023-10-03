@@ -1,6 +1,7 @@
 describe('Data-explorer page', () => {
   beforeEach(() => {
     cy.navigate('explore');
+    cy.ensurePageFinishedLoading();
   });
 
   it('Should open Data Explorer from Home page', () => {

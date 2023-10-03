@@ -1,10 +1,11 @@
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import dayjs from 'dayjs';
 
 import { Icon } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import { DataSetItem, LinkedAssetItem, MetadataItem } from './MetadataItem';
 

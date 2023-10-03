@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Select, OptionType } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 export type FilterOption = OptionType<'all' | 'current' | 'subscribed'>;
 

@@ -1,10 +1,10 @@
 import { ComponentProps } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
-import { mockSourceList } from '@charts-app/models/calculation-results/mocks';
 import { Meta, Story } from '@storybook/react';
 
+import { mockSourceList } from '../../../../models/calculation-results/mocks';
+import { defaultTranslations } from '../../translations';
 import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 import { NodeTypes } from '../types';
 

@@ -1,4 +1,4 @@
-import { units } from '@charts-app/utils/units';
+import { units } from '../../utils/units';
 
 export const getDisplayUnit = (
   preferredUnit: string | undefined,

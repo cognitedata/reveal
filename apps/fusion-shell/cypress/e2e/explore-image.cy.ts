@@ -1,6 +1,7 @@
 describe('Explore image page', () => {
   beforeEach(() => {
     cy.navigate('vision/explore');
+    cy.ensurePageFinishedLoading();
   });
 
   it('Should open Explore image page', () => {

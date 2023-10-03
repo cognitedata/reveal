@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { trackUsage } from '@charts-app/services/metrics';
-import { durationFormatter } from '@charts-app/utils/date';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { format, formatDistance } from 'date-fns';
 
 import { Row, Col, Dropdown, Menu, Icon, Modal } from '@cognite/cogs.js';
+
+import { trackUsage } from '../../services/metrics';
+import { durationFormatter } from '../../utils/date';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import { AlertAction, AlertText, ModalBody } from './elements';
 import { useAlertsResolveCreate } from './hooks';

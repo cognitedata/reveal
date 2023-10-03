@@ -3,7 +3,8 @@ import {
   useDeleteRules,
   useListAllRules,
 } from '@data-quality/api/codegen';
-import { useLoadDataSource } from '@data-quality/hooks';
+import { DeleteModal } from '@data-quality/components';
+import { useDisclosure, useLoadDataSource } from '@data-quality/hooks';
 import { getDefaultRulesetId } from '@data-quality/utils/namingPatterns';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -16,6 +17,8 @@ export const RuleOptionsMenu = ({ rule }: RuleOptionsMenuProps) => {
   const { t } = useTranslation('RuleOptionsMenu');
 
   const { dataSource } = useLoadDataSource();
+
+  const deleteRuleModal = useDisclosure({ isOpen: false });
 
   const rulesetId =
     rule.rulesetId || getDefaultRulesetId(dataSource?.externalId);
@@ -34,21 +37,17 @@ export const RuleOptionsMenu = ({ rule }: RuleOptionsMenuProps) => {
     refetch();
     Notification({
       type: 'success',
-      message: t(
-        'data_quality_success_delete_rule',
-        `Rule "${rule.name}" was deleted successfully.`,
-        rule.name
-      ),
+      message: t('data_quality_success_delete', ``, {
+        targetName: rule.name,
+        targetType: 'Rule',
+      }),
     });
   };
 
   const onError = (error: any) => {
     Notification({
       type: 'error',
-      message: t(
-        'data_quality_error_delete_rule',
-        'Something went wrong. The rule could not be deleted'
-      ),
+      message: t('data_quality_error_delete', '', { target: 'rule' }),
       errors: JSON.stringify(error),
     });
   };
@@ -71,22 +70,41 @@ export const RuleOptionsMenu = ({ rule }: RuleOptionsMenuProps) => {
   };
 
   return (
-    <Dropdown
-      content={
-        <Menu loading={isLoading}>
-          <Menu.Item destructive icon="Delete" onClick={handleDelete}>
-            {t('delete', 'Delete')}
-          </Menu.Item>
-        </Menu>
-      }
-      hideOnClick
-    >
-      <Button
-        aria-label="Open options menu for rule"
-        icon="EllipsisVertical"
-        size="small"
-        type="ghost"
+    <>
+      <Dropdown
+        content={
+          <Menu loading={isLoading}>
+            <Menu.Item
+              destructive
+              icon="Delete"
+              onClick={deleteRuleModal.onOpen}
+            >
+              {t('delete', 'Delete')}
+            </Menu.Item>
+          </Menu>
+        }
+        hideOnClick
+      >
+        <Button
+          aria-label="Open options menu for the rule"
+          icon="EllipsisVertical"
+          size="small"
+          type="ghost"
+        />
+      </Dropdown>
+
+      <DeleteModal
+        bodyText={t('data_quality_delete_rule', '', { targetName: rule.name })}
+        checkboxText={t('data_quality_delete_confirm', '', {
+          target: 'rule',
+        })}
+        onCancel={deleteRuleModal.onClose}
+        onOk={handleDelete}
+        titleText={t('data_quality_delete_title', '', {
+          target: 'rule',
+        })}
+        visible={deleteRuleModal.isOpen}
       />
-    </Dropdown>
+    </>
   );
 };

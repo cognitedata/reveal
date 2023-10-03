@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import { OptionProps, components } from 'react-select';
 
-import { SourceSelect } from '@charts-app/components/Common/SidebarElements';
-import { SourceOption } from '@charts-app/components/NodeEditor/V2/types';
-import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
-
 import { ChartSource, SourceType } from '@cognite/charts-lib';
 import { SelectProps, SelectComponents } from '@cognite/cogs.js';
 
+import { useChartSourcesValue } from '../../models/chart/selectors';
+import { SourceOption } from '../NodeEditor/V2/types';
+
 import { SourceOptionContainer, EllipsesText } from './elements';
+import { SourceSelect } from './SidebarElements';
 import { SourceIcon } from './SourceIcon';
 
 interface SourceOptionType extends OptionProps<ChartSource, false> {

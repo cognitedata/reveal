@@ -1,9 +1,10 @@
-import { useCanvasSize } from '@charts-app/components/NodeEditor/V2/CanvasContext';
 import { sortBy } from 'lodash';
 import styled from 'styled-components/macro';
 
 import { Operation } from '@cognite/calculation-backend';
 import { Menu } from '@cognite/cogs.js';
+
+import { useCanvasSize } from '../NodeEditor/V2/CanvasContext';
 
 import FunctionsList from './FunctionsList';
 

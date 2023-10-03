@@ -2,20 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { ModelDetails, ModelList } from '@simint-app/components/models';
-import type { AppLocationGenerics } from '@simint-app/routes';
-import { capabilitiesSlice } from '@simint-app/store/capabilities';
-import { selectIsLabelsEnabled } from '@simint-app/store/capabilities/selectors';
-import { useAppDispatch } from '@simint-app/store/hooks';
-import { selectBaseUrl } from '@simint-app/store/simconfigApiProperties/selectors';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
-import { TRACKING_EVENTS } from '@simint-app/utils/metrics/constants';
-import { trackUsage } from '@simint-app/utils/metrics/tracking';
-import {
-  INITIAL_ITEMS_PER_PAGE,
-  getTotalPages,
-  paginateData,
-} from '@simint-app/utils/pagination';
 import styled from 'styled-components/macro';
 
 import { getProject } from '@cognite/cdf-utilities';
@@ -27,6 +13,21 @@ import {
   Skeleton,
 } from '@cognite/cogs.js';
 import { useGetModelFileListV2Query } from '@cognite/simconfig-api-sdk/rtk';
+
+import { ModelDetails, ModelList } from '../../components/models';
+import type { AppLocationGenerics } from '../../routes';
+import { capabilitiesSlice } from '../../store/capabilities';
+import { selectIsLabelsEnabled } from '../../store/capabilities/selectors';
+import { useAppDispatch } from '../../store/hooks';
+import { selectBaseUrl } from '../../store/simconfigApiProperties/selectors';
+import { createCdfLink } from '../../utils/createCdfLink';
+import { TRACKING_EVENTS } from '../../utils/metrics/constants';
+import { trackUsage } from '../../utils/metrics/tracking';
+import {
+  INITIAL_ITEMS_PER_PAGE,
+  getTotalPages,
+  paginateData,
+} from '../../utils/pagination';
 
 import { LabelsFilter } from './LabelsFilter';
 

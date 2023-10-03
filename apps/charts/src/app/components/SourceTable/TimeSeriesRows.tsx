@@ -1,17 +1,17 @@
 import { ComponentProps } from 'react';
 
-import { ScheduledCalculationRow } from '@charts-app/components/SourceTable/ScheduledCalculationRow';
-import WorkflowRow from '@charts-app/components/SourceTable/WorkflowRow';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { Modes } from '@charts-app/pages/types';
-
 import {
   ChartTimeSeries,
   ChartWorkflow,
   ScheduledCalculation,
 } from '@cognite/charts-lib';
 
+import { useTranslations } from '../../hooks/translations';
+import { Modes } from '../../pages/types';
+
+import { ScheduledCalculationRow } from './ScheduledCalculationRow';
 import TimeSeriesRow from './TimeSeriesRow';
+import WorkflowRow from './WorkflowRow';
 
 type Props = {
   sources: ChartTimeSeries[];

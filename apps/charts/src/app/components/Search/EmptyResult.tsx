@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Body, Illustrations, Title } from '@cognite/cogs.js';
+
+import { makeDefaultTranslations } from '../../utils/translations';
 
 export const defaultTranslations = makeDefaultTranslations(
   'No results found for',

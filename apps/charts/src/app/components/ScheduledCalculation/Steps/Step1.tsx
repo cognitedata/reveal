@@ -1,8 +1,8 @@
-import { CredentialsForm } from '@charts-app/components/CredentialsForm/CredentialsForm';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Flex, Button } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../../hooks/translations';
+import { makeDefaultTranslations } from '../../../utils/translations';
+import { CredentialsForm } from '../../CredentialsForm/CredentialsForm';
 
 type BodyProps = {
   onUpdateCredsValidated: (validated: boolean) => void;

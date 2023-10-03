@@ -3,21 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { ModelForm } from '@simint-app/components/forms/ModelForm';
-import {
-  CalculationList,
-  ModelVersionList,
-} from '@simint-app/components/models';
-import { useSimulatorConfig } from '@simint-app/hooks/useSimulatorConfig';
-import { useTitle } from '@simint-app/hooks/useTitle';
-import type { AppLocationGenerics } from '@simint-app/routes';
-import {
-  selectIsDeleteEnabled,
-  selectIsLabelsEnabled,
-} from '@simint-app/store/capabilities/selectors';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
-import { TRACKING_EVENTS } from '@simint-app/utils/metrics/constants';
-import { trackUsage } from '@simint-app/utils/metrics/tracking';
 import styled from 'styled-components/macro';
 
 import {
@@ -36,6 +21,20 @@ import {
   useDeleteModelFileMutation,
   useGetModelFileQuery,
 } from '@cognite/simconfig-api-sdk/rtk';
+
+import { useSimulatorConfig } from '../../../hooks/useSimulatorConfig';
+import { useTitle } from '../../../hooks/useTitle';
+import type { AppLocationGenerics } from '../../../routes';
+import {
+  selectIsDeleteEnabled,
+  selectIsLabelsEnabled,
+} from '../../../store/capabilities/selectors';
+import { createCdfLink } from '../../../utils/createCdfLink';
+import { TRACKING_EVENTS } from '../../../utils/metrics/constants';
+import { trackUsage } from '../../../utils/metrics/tracking';
+import { ModelForm } from '../../forms/ModelForm';
+import { CalculationList } from '../CalculationList/CalculationList';
+import { ModelVersionList } from '../ModelVersionList/ModelVersionList';
 
 import DeleteConfirmModal from './DeleteConfirmModal';
 import { Divider } from './elements';

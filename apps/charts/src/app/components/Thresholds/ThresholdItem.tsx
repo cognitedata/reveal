@@ -1,23 +1,5 @@
 import { useCallback, useEffect, useState, ChangeEvent } from 'react';
 
-import {
-  ReverseSwitch,
-  ExpandIcon,
-  SidebarInnerCollapse,
-  FilterSelect,
-  SidebarFormLabel,
-  SidebarInnerBox,
-  SidebarChip,
-} from '@charts-app/components/Common/SidebarElements';
-import { SourceSelector } from '@charts-app/components/Common/SourceSelector';
-import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
-import { convertMSToDisplay } from '@charts-app/utils/date';
-import { isThresholdValid } from '@charts-app/utils/threshold';
-import {
-  makeDefaultTranslations,
-  translationKeys,
-} from '@charts-app/utils/translations';
-import { getUnitConverter } from '@charts-app/utils/units';
 import { Col, Row } from 'antd';
 
 import {
@@ -35,6 +17,25 @@ import {
   Popconfirm,
   Select,
 } from '@cognite/cogs.js';
+
+import useThresholdsResults from '../../hooks/threshold-calculations';
+import { convertMSToDisplay } from '../../utils/date';
+import { isThresholdValid } from '../../utils/threshold';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '../../utils/translations';
+import { getUnitConverter } from '../../utils/units';
+import {
+  ReverseSwitch,
+  ExpandIcon,
+  SidebarInnerCollapse,
+  FilterSelect,
+  SidebarFormLabel,
+  SidebarInnerBox,
+  SidebarChip,
+} from '../Common/SidebarElements';
+import { SourceSelector } from '../Common/SourceSelector';
 
 import { useFilterValue } from './useFilterValue';
 

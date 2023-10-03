@@ -1,18 +1,19 @@
 import { useEffect } from 'react';
 
-import { useAddRemoveTimeseries } from '@charts-app/components/Search/hooks';
-import { useCdfItems } from '@charts-app/hooks/cognite-functions';
-import { useRecentViewLocalStorage } from '@charts-app/hooks/recently-used';
-import { useTranslations } from '@charts-app/hooks/translations';
-import chartAtom from '@charts-app/models/chart/atom';
-import { trackUsage } from '@charts-app/services/metrics';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components/macro';
 
 import { Checkbox, Icon, Title } from '@cognite/cogs.js';
 import { Asset, Timeseries } from '@cognite/sdk';
+
+import { useCdfItems } from '../../hooks/cognite-functions';
+import { useRecentViewLocalStorage } from '../../hooks/recently-used';
+import { useTranslations } from '../../hooks/translations';
+import chartAtom from '../../models/chart/atom';
+import { trackUsage } from '../../services/metrics';
+import { makeDefaultTranslations } from '../../utils/translations';
+import { useAddRemoveTimeseries } from '../Search/hooks';
 
 import AssetSearchHit from './AssetSearchHit';
 import SearchEmptyState from './SearchEmptyState';

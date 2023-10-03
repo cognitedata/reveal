@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { selectBaseUrl } from '@simint-app/store/simconfigApiProperties/selectors';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
 import { Button, Icon, Input, Modal, Textarea } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { selectBaseUrl } from '../../../store/simconfigApiProperties/selectors';
+import { createCdfLink } from '../../../utils/createCdfLink';
 
 export function ConfigureCustomCalculation({
   modelName,

@@ -1,8 +1,5 @@
 import { useCallback } from 'react';
 
-import { WorkflowResult } from '@charts-app/models/calculation-results/types';
-import { RAW_DATA_POINTS_THRESHOLD } from '@charts-app/utils/constants';
-import { getHash } from '@charts-app/utils/hash';
 import {
   MutateOptions,
   useMutation,
@@ -25,6 +22,7 @@ import { ChartThreshold } from '@cognite/charts-lib';
 import { DatapointAggregate, DatapointsMultiQuery } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { WorkflowResult } from '../models/calculation-results/types';
 import {
   createCalculation,
   createStatistics,
@@ -41,6 +39,8 @@ import {
   waitForCalculationToFinish,
   waitForThresholdToFinish,
 } from '../services/calculation-backend';
+import { RAW_DATA_POINTS_THRESHOLD } from '../utils/constants';
+import { getHash } from '../utils/hash';
 
 export const useCreateCalculation = () => {
   const sdk = useSDK();

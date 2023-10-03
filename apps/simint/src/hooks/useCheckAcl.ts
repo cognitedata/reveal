@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { getProject } from '@cognite/cdf-utilities';
 import {
   CapabilityItemModel,
-  DefinitionMap,
   UserCapabilities,
   useGetDefinitionsQuery,
 } from '@cognite/simconfig-api-sdk/rtk';
@@ -17,12 +16,7 @@ type CapabilityResult = {
 export const useCheckAcl = (requiredCapabilities: string[]) => {
   const project = getProject();
 
-  const {
-    isSuccess,
-    isLoading,
-    isError,
-    data: definitions,
-  } = useGetDefinitionsQuery({
+  const { isSuccess, data: definitions } = useGetDefinitionsQuery({
     project,
   });
 

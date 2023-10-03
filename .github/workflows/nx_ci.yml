@@ -532,8 +532,7 @@ jobs:
         env:
           AFFECTED_APPS: ${{ needs.setup.outputs.affected-apps }}
           PULL_REQUEST_NUMBER: ${{ github.event.number }}
-          CLIENT_ID: ${{ secrets.DATA_EXPLORER_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.DATA_EXPLORER_CLIENT_SECRET }}
+          CYPRESS_FUSION_SHELL_E2E_AAD_PASSWORD: ${{ secrets.CYPRESS_FUSION_SHELL_E2E_AAD_PASSWORD }}
         # execute Cypress using a custom test command
         with:
           # let's make sure our tests pass on Chrome browser

@@ -2,15 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { useMatch } from 'react-location';
 import type { CellProps } from 'react-table';
 
-import { ChokeCurveChart } from '@simint-app/components/charts/ChokeCurveChart';
-import {
-  FormContainer,
-  FormHeader,
-  FormRowStacked,
-  NumberField,
-} from '@simint-app/components/forms/elements';
-import { Alert } from '@simint-app/components/molecules/Alert';
-import type { AppLocationGenerics } from '@simint-app/routes';
 import { ParentSizeModern } from '@visx/responsive';
 import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
@@ -27,6 +18,15 @@ import {
 } from '@cognite/cogs.js';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
+import { ChokeCurveChart } from '../../../components/charts/ChokeCurveChart';
+import {
+  FormContainer,
+  FormHeader,
+  FormRowStacked,
+  NumberField,
+} from '../../../components/forms/elements';
+import { Alert } from '../../../components/molecules/Alert';
+import type { AppLocationGenerics } from '../../../routes';
 import type { StepProps } from '../types';
 
 import { BHPEstimationInfoDrawer } from './infoDrawers/BHPEstimationInfoDrawer';
@@ -244,7 +244,6 @@ export function AdvancedStep({ isDisabled }: StepProps) {
           </ChokeCurveContainer>
         </>
       ) : null}
-
       {values.calculationType === 'IPR' || values.calculationType === 'VLP' ? (
         <>
           <FormHeader>
@@ -358,7 +357,6 @@ export function AdvancedStep({ isDisabled }: StepProps) {
           </FormRowStacked>
         </>
       ) : null}
-
       {values.calculationType === 'BhpFromGradientTraverse' ? (
         <>
           <FormHeader>

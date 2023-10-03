@@ -5,6 +5,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useFormik } from 'formik';
 
 import {
+  Body,
   Divider,
   Drawer,
   Flex,
@@ -195,6 +196,14 @@ export const UpsertRuleDrawer = ({
             {t('data_quality_rule_setup', 'Rule setup')}
           </Heading>
           <Flex direction="column" gap={16}>
+            <Flex direction="column">
+              <Body size="small" muted>
+                {t('data_quality_rule_setup_info1', '')}
+              </Body>
+              <Body size="small" muted>
+                {t('data_quality_rule_setup_info2', '')}
+              </Body>
+            </Flex>
             <RequiredWrapper
               errorMessage={errors.dataType}
               label={t('data_quality_data_type', 'Data type')}
@@ -212,10 +221,12 @@ export const UpsertRuleDrawer = ({
             </RequiredWrapper>
 
             <Select
+              disabled={!selectedDataType}
               inputId="dataScopeId"
+              isClearable
               label={t('data_quality_data_scope_one', 'Data scope')}
               onChange={(e: OptionType<string>) =>
-                setFieldValue('dataScopeId', e.value)
+                setFieldValue('dataScopeId', e.value || null)
               }
               options={dataScopeOptions}
               value={selectedDataScope}

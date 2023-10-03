@@ -8,6 +8,10 @@ const tableShouldBeVisible = (id: string) => {
   return cy.getTableById(id).should('be.visible');
 };
 
+const tableContentShouldBeVisible = (id: string) => {
+  return cy.getTableById(id).findByTestId('table-body').should('be.visible');
+};
+
 const findByColumnName = (table: JQuery<HTMLElement>, columnName: string) => {
   return cy.wrap(table).find(`[data-column-name="${columnName}"]`);
 };
@@ -138,6 +142,10 @@ Cypress.Commands.add(
 );
 Cypress.Commands.add('getTableById', getTableById);
 Cypress.Commands.add('tableShouldBeVisible', tableShouldBeVisible);
+Cypress.Commands.add(
+  'tableContentShouldBeVisible',
+  tableContentShouldBeVisible
+);
 Cypress.Commands.add('getNumberOfRows', { prevSubject: true }, getNumberOfRows);
 Cypress.Commands.add(
   'clickLoadMoreButton',
@@ -163,6 +171,9 @@ export interface TableCommands {
     columnValue: string
   ) => Cypress.Chainable<JQuery<HTMLElement>>;
   tableShouldBeVisible: (id: string) => Cypress.Chainable<JQuery<HTMLElement>>;
+  tableContentShouldBeVisible: (
+    id: string
+  ) => Cypress.Chainable<JQuery<HTMLElement>>;
   getNumberOfRows: () => Cypress.Chainable<number>;
   clickLoadMoreButton: () => void;
   getRowsWithColumnValues: (

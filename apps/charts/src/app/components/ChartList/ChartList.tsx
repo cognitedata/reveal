@@ -1,6 +1,6 @@
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Infobox } from '@cognite/cogs.js';
+
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import ChartListGrid from './ChartListGrid/ChartListGrid';
 import ChartListTable from './ChartListTable/ChartListTable';

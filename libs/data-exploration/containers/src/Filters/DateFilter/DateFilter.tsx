@@ -155,6 +155,7 @@ export const DateFilter = ({
             zIndex: `${zIndex.MAXIMUM} !important`,
           }),
         }}
+        data-testid={`filter-${label}`}
       />
       {(period === 'after' || period === 'before') && (
         <div style={{ marginTop: 8 }}>
@@ -203,7 +204,11 @@ const UpdatedTimeFilter = (props: DateFilterProps) => {
 
 const StartTimeFilter = (props: DateFilterProps) => {
   const { t } = useTranslation();
-  return <DateFilter {...props} label={t('START_TIME', 'Start time')} />;
+  return (
+    <div data-testid="start-time-filter">
+      <DateFilter {...props} label={t('START_TIME', 'Start time')} />
+    </div>
+  );
 };
 
 const EndTimeFilter = (props: DateFilterProps) => {

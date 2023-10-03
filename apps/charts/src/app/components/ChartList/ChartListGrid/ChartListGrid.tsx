@@ -1,7 +1,6 @@
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Flex, Title } from '@cognite/cogs.js';
 
+import { makeDefaultTranslations } from '../../../utils/translations';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
 import { ChartListProps } from '../types';
 

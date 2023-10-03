@@ -1,12 +1,11 @@
 import { FC } from 'react';
 import { Controller, Control, RegisterOptions } from 'react-hook-form';
 
-import { UnitSelector } from '@charts-app/components/UnitDropdown/UnitSelector';
-
 import { Radio, OptionType, Tooltip } from '@cognite/cogs.js';
 
 import { SourceSelector } from '../Common/SourceSelector';
 import { DatasetSelector } from '../Dataset/DatasetSelector';
+import { UnitSelector } from '../UnitDropdown/UnitSelector';
 
 import {
   FormInput,

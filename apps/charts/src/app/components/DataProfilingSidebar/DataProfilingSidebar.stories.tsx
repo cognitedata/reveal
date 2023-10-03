@@ -2,10 +2,11 @@
  * Data Profiling Sidebar Story
  */
 
-import chartAtom from '@charts-app/models/chart/atom';
 import { Meta, Story } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecoilRoot, useRecoilState } from 'recoil';
+
+import chartAtom from '../../models/chart/atom';
 
 import DataProfilingSidebar from './DataProfilingSidebar';
 

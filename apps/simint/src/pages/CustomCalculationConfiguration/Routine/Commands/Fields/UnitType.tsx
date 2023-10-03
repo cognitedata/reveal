@@ -1,12 +1,12 @@
 import { useMatch } from 'react-location';
 
-import { InputRow } from '@simint-app/components/forms/ModelForm/elements';
-import type { AppLocationGenerics } from '@simint-app/routes';
 import { Field, useFormikContext } from 'formik';
 
 import { Select } from '@cognite/cogs.js';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
+import { InputRow } from '../../../../../components/forms/ModelForm/elements';
+import type { AppLocationGenerics } from '../../../../../routes';
 import { getOptionLabel, getInputOutputIndex } from '../utils';
 import type {
   ConfigurationFieldProps,
