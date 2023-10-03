@@ -30,11 +30,11 @@ import {
   Image360AnnotationFilterDelegate,
   Image360EventDescriptor,
   Image360Face,
-  Image360FileDescriptor
+  Image360FileDescriptor,
+  ImageAssetLinkAnnotationInfo
 } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
-import assert from 'assert';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
@@ -340,7 +340,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   public async get360ImageAssets(
     image360FileDescriptors: Image360FileDescriptor[],
     annotationFilter: Image360AnnotationFilterDelegate
-  ): Promise<IdEither[]> {
+  ): Promise<ImageAssetLinkAnnotationInfo[]> {
     const fileIds = image360FileDescriptors.map(desc => desc.fileId);
     const assetListPromises = chunk(fileIds, 1000).map(async idList => {
       const annotationArray = await this.listFileAnnotations({
@@ -349,19 +349,16 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
         annotationType: 'images.AssetLink'
       });
 
-      const assetIds = annotationArray
+      const assetAnnotations = annotationArray
         .filter(annotation => annotationFilter(annotation))
-        .map(annotation => {
-          assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
-          return annotation.data.assetRef;
-        });
+        .filter(isImageAssetLinkAnnotation);
 
-      return assetIds;
+      return assetAnnotations;
     });
 
-    const assetIds = (await Promise.all(assetListPromises)).flat().filter(isIdEither);
+    const annotations = (await Promise.all(assetListPromises)).flat();
 
-    return assetIds;
+    return annotations;
   }
 
   private async listFileAnnotations(filter: AnnotationFilterProps): Promise<AnnotationModel[]> {
@@ -374,13 +371,13 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   }
 }
 
+function isImageAssetLinkAnnotation(annotation: AnnotationModel): annotation is ImageAssetLinkAnnotationInfo {
+  return isAssetLinkAnnotationData(annotation.data);
+}
+
 function isAssetLinkAnnotationData(
   annotationData: AnnotationData
 ): annotationData is AnnotationsCogniteAnnotationTypesImagesAssetLink {
   const data = annotationData as AnnotationsCogniteAnnotationTypesImagesAssetLink;
   return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
-}
-
-function isIdEither(assetRef: { id?: number; externalId?: string }): assetRef is IdEither {
-  return assetRef.id !== undefined || assetRef.externalId !== undefined;
 }
