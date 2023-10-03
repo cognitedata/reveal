@@ -6,6 +6,7 @@ import {
   DefaultNodeAppearance,
   IndexSet,
   NumericRange,
+  Cognite3DViewer,
 } from '@cognite/reveal';
 
 import { subtreeHasTreeIndex } from '../../../../../store/modules/TreeView/treeViewUtils';
@@ -15,12 +16,14 @@ import { traverseTree } from '../../TreeView/utils/treeFunctions';
 
 type Args = {
   model: CogniteCadModel;
+  viewer: Cognite3DViewer;
   treeData: Array<TreeDataNode>;
   checkedKeys: Array<number>;
 };
 
 export function useCheckedNodesVisibility({
   model,
+  viewer,
   treeData,
   checkedKeys,
 }: Args) {
@@ -85,9 +88,12 @@ export function useCheckedNodesVisibility({
       DefaultNodeAppearance.Hidden
     );
     return () => {
+      if (!viewer.models.includes(model)) {
+        return;
+      }
       model.unassignStyledNodeCollection(styledSet);
     };
-  }, [model]);
+  }, [model, viewer]);
 
   // show only checked nodes
   useEffect(() => {
