@@ -66,9 +66,8 @@ export const CadContextualizeThreeDViewer = ({
   );
 
   const handleContextualizedNodesUpdate = (
-    newContextualizedNodes: ListResponse<AssetMapping3D[]> | null,
-    newSelectedNodes: TreeIndexNodeCollection | null,
-    nodesToReset
+    newContextualizedNodes: ListResponse<AssetMapping3D[]> | null = null,
+    nodesToReset = null
   ) => {
     if (!model || !(model instanceof CogniteCadModel) || modelType !== 'cad')
       return;
@@ -250,7 +249,6 @@ export const CadContextualizeThreeDViewer = ({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        //onCloseResourceSelector();
         event.stopPropagation();
       }
     };
@@ -273,7 +271,7 @@ export const CadContextualizeThreeDViewer = ({
       assetId,
     });
 
-    handleContextualizedNodesUpdate(null, null, null);
+    handleContextualizedNodesUpdate();
   };
   return (
     <>
@@ -292,7 +290,6 @@ export const CadContextualizeThreeDViewer = ({
               ) =>
                 handleContextualizedNodesUpdate(
                   newContextualizedNodes,
-                  null,
                   nodesDeleted
                 )
               }
