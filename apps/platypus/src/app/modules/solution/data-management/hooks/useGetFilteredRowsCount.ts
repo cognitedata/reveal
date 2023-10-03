@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
@@ -14,16 +14,22 @@ export function useGetFilteredRowsCount({
   space: string;
 }) {
   const [filteredRowsCount, setFilteredRowsCount] = useState<number>();
-  const aggregationsQueryKey = QueryKeys.FILTERED_ROWS_COUNT(
-    space,
-    dataModelExternalId,
-    dataModelType.name
+  const aggregationsQueryKey = useMemo(
+    () =>
+      QueryKeys.FILTERED_ROWS_COUNT(
+        space,
+        dataModelExternalId,
+        dataModelType.name
+      ),
+    [space, dataModelExternalId, dataModelType.name]
   );
   const queryClient = useQueryClient();
 
   useEffect(() => {
     const data = queryClient.getQueryData<number>(aggregationsQueryKey);
-    if (data) setFilteredRowsCount(data);
+    if (data) {
+      setFilteredRowsCount(data);
+    }
   }, [aggregationsQueryKey, queryClient]);
 
   return filteredRowsCount;
