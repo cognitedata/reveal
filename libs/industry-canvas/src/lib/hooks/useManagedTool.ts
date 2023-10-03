@@ -70,19 +70,7 @@ const useManagedTool = (): UseManagedToolReturnType => {
   }, [toolType, toolConfigByType]);
 
   useEffect(() => {
-    if (toolType === IndustryCanvasToolType.LINE) {
-      setToolConfigByType((toolConfigByType) => ({
-        ...toolConfigByType,
-        [IndustryCanvasToolType.LINE]: {
-          ...toolConfigByType[IndustryCanvasToolType.LINE],
-          shouldGenerateConnections: true,
-        },
-      }));
-    }
-  }, [toolType]);
-
-  useEffect(() => {
-    if (tool.type !== ToolType.LINE) {
+    if (tool.type !== ToolType.LINE && tool.type !== ToolType.SELECT) {
       return;
     }
 
@@ -104,13 +92,33 @@ const useManagedTool = (): UseManagedToolReturnType => {
             ...toolConfigByType[IndustryCanvasToolType.LINE],
             shouldGenerateConnections: nextShouldGenerateConnections,
           },
+          [IndustryCanvasToolType.SELECT]: {
+            ...toolConfigByType[IndustryCanvasToolType.SELECT],
+            shouldGenerateConnections: nextShouldGenerateConnections,
+          },
         }));
       }
     };
 
+    const onKeyUp = () => {
+      setToolConfigByType((toolConfigByType) => ({
+        ...toolConfigByType,
+        [IndustryCanvasToolType.LINE]: {
+          ...toolConfigByType[IndustryCanvasToolType.LINE],
+          shouldGenerateConnections: true,
+        },
+        [IndustryCanvasToolType.SELECT]: {
+          ...toolConfigByType[IndustryCanvasToolType.SELECT],
+          shouldGenerateConnections: true,
+        },
+      }));
+    };
+
     document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
     return () => {
       document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keyup', onKeyUp);
     };
   }, [tool]);
 
