@@ -10,6 +10,7 @@ import { CogniteClient } from '@cognite/sdk/dist/src';
 import { CubeAnnotation } from '../useContextualizeThreeDViewerStore';
 
 import { createCdfThreeDAnnotation } from './createCdfThreeDAnnotation';
+import { getCognitePointCloudModel } from './getCognitePointCloudModel';
 
 export const saveCdfThreeDPointCloudContextualization = ({
   sdk,
@@ -36,7 +37,29 @@ export const saveCdfThreeDPointCloudContextualization = ({
   ) {
     return;
   }
-  const pointCloudModel = model;
+
+  let pointCloudModel: CognitePointCloudModel;
+
+  if (model) {
+    pointCloudModel = model;
+  } else {
+    pointCloudModel = getCognitePointCloudModel({
+      modelId,
+      viewer: viewer,
+    });
+    if (pointCloudModel === undefined) return;
+  }
+
+  createCdfThreeDAnnotation({
+    sdk,
+    modelId,
+    assetRefId: assetId,
+    pointCloudModel,
+    position: pendingAnnotation.position,
+  }).then(() => {
+    // Invalidate to refetch
+    queryClient.invalidateQueries(['annotations', sdk, modelId]);
+  });
 
   createCdfThreeDAnnotation({
     position: pendingAnnotation.position,

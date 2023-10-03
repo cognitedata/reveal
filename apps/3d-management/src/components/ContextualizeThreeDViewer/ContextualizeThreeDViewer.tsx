@@ -49,9 +49,9 @@ export const ContextualizeThreeDViewer = ({
   revisionId,
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
-  const { modelType } = useContextualizeThreeDViewerStore((state) => ({
+  /* const { modelType } = useContextualizeThreeDViewerStore((state) => ({
     modelType: state.modelType,
   }));
 
@@ -68,7 +68,7 @@ export const ContextualizeThreeDViewer = ({
         queryClient.invalidateQueries(['annotations', sdk, modelId]);
       },
     }
-  );
+  ); */
   useEffect(() => {
     (async () => {
       // call the sdk.get() to retrieve the outputs and check the model type with the url:
@@ -96,7 +96,7 @@ export const ContextualizeThreeDViewer = ({
   useSyncStateWithViewer();
 
   const saveAnnotationToCdf = (assetId: number) => {
-    if (threeDViewer === null || pendingAnnotation === null) return;
+    /*     if (threeDViewer === null || pendingAnnotation === null) return;
 
     const pointCloudModel = getCognitePointCloudModel({
       modelId,
@@ -113,7 +113,7 @@ export const ContextualizeThreeDViewer = ({
     }).then(() => {
       // Invalidate to refetch
       queryClient.invalidateQueries(['annotations', sdk, modelId]);
-    });
+    }); */
   };
 
   useEffect(() => {
