@@ -270,7 +270,11 @@ export class DefaultImage360Collection implements Image360Collection {
       this._annotationFilter.filter(annotation)
     );
 
-    return annotations.map(annotation => annotation.data.assetRef as IdEither);
+    return annotations.map(annotation => annotation.data.assetRef).filter(isIdEither);
+
+    function isIdEither(idEither: any | undefined): idEither is IdEither {
+      return idEither?.id !== undefined || idEither?.externalId !== undefined;
+    }
   }
 
   async getAnnotationsInfo(): Promise<AssetAnnotationImage360Info[]> {
