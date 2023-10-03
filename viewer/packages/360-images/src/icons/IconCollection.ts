@@ -83,9 +83,9 @@ export class IconCollection {
       spriteTexture: sharedTexture,
       minPixelSize: IconCollection.MinPixelSize,
       maxPixelSize: this._maxPixelSize,
-      radius: this._iconRadius
+      radius: this._iconRadius,
+      maskTexture: sharedTexture
     });
-    iconsSprites.setPoints(points);
 
     const spriteTexture = this.createHoverIconTexture();
     this._hoverSprite = this.createHoverSprite(spriteTexture);
@@ -133,7 +133,11 @@ export class IconCollection {
 
       this._icons.forEach(icon => (icon.culled = true));
       selectedIcons.forEach(icon => (icon.culled = false));
-      iconSprites.setPoints(selectedIcons.filter(icon => icon.getVisible()).map(icon => icon.getPosition()));
+      const visibleIcons = selectedIcons.filter(icon => icon.getVisible());
+      iconSprites.setPoints(
+        visibleIcons.map(icon => icon.getPosition()),
+        visibleIcons.map(icon => icon.getColor())
+      );
     };
   }
 
@@ -159,11 +163,12 @@ export class IconCollection {
 
       this._icons.forEach(icon => (icon.culled = true));
       closestPoints.forEach(icon => (icon.culled = false));
+
+      const closestVisibleReversedPoints = closestPoints.filter(icon => icon.getVisible()).reverse();
+
       iconSprites.setPoints(
-        closestPoints
-          .filter(icon => icon.getVisible())
-          .reverse()
-          .map(p => p.getPosition())
+        closestVisibleReversedPoints.map(p => p.getPosition()),
+        closestVisibleReversedPoints.map(p => p.getColor())
       );
     };
   }

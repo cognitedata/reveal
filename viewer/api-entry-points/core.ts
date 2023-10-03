@@ -85,6 +85,7 @@ export {
   Image360Collection,
   Image360EnteredDelegate,
   Image360ExitedDelegate,
+  Image360IconStyle,
   Image360AnnotationIntersection,
   Image360AnnotationAppearance,
   Image360Annotation,

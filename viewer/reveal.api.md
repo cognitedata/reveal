@@ -802,10 +802,12 @@ export type HtmlOverlayToolOptions = {
 // @public
 export interface Image360 {
     getActiveRevision(): Image360Revision;
+    getIconColor(): Color | 'default';
     getRevisions(): Image360Revision[];
     readonly id: string;
     readonly image360Visualization: Image360Visualization;
     readonly label: string | undefined;
+    setIconColor(color: Color | 'default'): void;
     readonly transform: THREE.Matrix4;
 }
 
@@ -878,6 +880,11 @@ export type Image360EnteredDelegate = (image360: Image360, revision: Image360Rev
 export type Image360ExitedDelegate = () => void;
 
 // @public
+export type Image360IconStyle = {
+    color?: Color;
+};
+
+// @public
 export interface Image360Revision {
     readonly date: Date | undefined;
     getAnnotations(): Promise<Image360Annotation[]>;
@@ -915,7 +922,9 @@ export class IndexSet {
     // (undocumented)
     forEachRange(visitor: (range: NumericRange) => void): void;
     // (undocumented)
-    hasIntersectionWith(otherSet: IndexSet | Map<number, number> | Set<number>): boolean;
+    hasIntersectionWith(otherSet: IndexSet | Set<number>): boolean;
+    // (undocumented)
+    hasIntersectionWithMap(otherMap: Map<number, number>): boolean;
     // (undocumented)
     intersectWith(otherSet: IndexSet): IndexSet;
     // (undocumented)
