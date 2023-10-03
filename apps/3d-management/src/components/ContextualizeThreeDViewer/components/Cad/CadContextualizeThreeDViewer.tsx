@@ -250,7 +250,7 @@ export const CadContextualizeThreeDViewer = ({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onCloseResourceSelector();
+        //onCloseResourceSelector();
         event.stopPropagation();
       }
     };

@@ -3,11 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Button, ToolBar } from '@cognite/cogs.js';
-import {
-  DefaultCameraManager,
-  CogniteModel,
-  CognitePointCloudModel,
-} from '@cognite/reveal';
+import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
 import {
   useReveal,
   withSuppressRevealEvents,
@@ -17,7 +13,6 @@ import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/c
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
-  setModel,
   setModelLoaded,
   setThreeDViewer,
   setToolbarForPointCloudModelsState,

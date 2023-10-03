@@ -26,10 +26,10 @@ import {
   setPendingAnnotation,
   useContextualizeThreeDViewerStore,
   setAnnotations,
-  onCloseResourceSelector,
 } from '../../useContextualizeThreeDViewerStore';
 import { getCdfAnnotations } from '../../utils/annotations/annotationUtils';
-import { saveCdfThreeDPointCloudContextualization } from '../../utils/saveCdfThreeDPointCloudContextualization';
+import { createCdfThreeDAnnotation } from '../../utils/createCdfThreeDAnnotation';
+import { getCognitePointCloudModel } from '../../utils/getCognitePointCloudModel';
 
 import { PointCloudRevealContent } from './PointCloudRevealContent';
 
@@ -59,19 +59,17 @@ export const PointCloudContextualizeThreeDViewer = ({
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
-  const {
-    isResourceSelectorOpen,
-    pendingAnnotation,
-    viewer,
-    model,
-    modelType,
-  } = useContextualizeThreeDViewerStore((state) => ({
-    isResourceSelectorOpen: state.isResourceSelectorOpen,
-    pendingAnnotation: state.pendingAnnotation,
-    viewer: state.threeDViewer,
-    model: state.model,
-    modelType: state.modelType,
-  }));
+  const { isResourceSelectorOpen, pendingAnnotation, viewer } =
+    useContextualizeThreeDViewerStore((state) => ({
+      isResourceSelectorOpen: state.isResourceSelectorOpen,
+      pendingAnnotation: state.pendingAnnotation,
+      viewer: state.threeDViewer,
+    }));
+
+  const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
+    'COGNITE_CONTEXTUALIZE_EDITOR_RESOURCE_SELECTOR_WIDTH',
+    DEFAULT_RIGHT_SIDE_PANEL_WIDTH
+  );
 
   const { data: annotations } = useQuery(
     ['annotations', sdk, modelId],
@@ -88,23 +86,14 @@ export const PointCloudContextualizeThreeDViewer = ({
     }
   );
 
-  const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
-    'COGNITE_CONTEXTUALIZE_EDITOR_RESOURCE_SELECTOR_WIDTH',
-    DEFAULT_RIGHT_SIDE_PANEL_WIDTH
-  );
+  const onDeleteAnnotation = (annotationId: number) => {
+    mutation.mutate(annotationId);
+  };
 
   // use effects hooks
   useEffect(() => {
     setModelId(modelId);
   }, [modelId]);
-
-  /*   useEffect(() => {
-    const loadAnnotations = async () => {
-      const annotations = await getCdfAnnotations(sdk, modelId);
-      setAnnotations(annotations);
-    };
-    loadAnnotations();
-  }, [sdk, modelId]); */
 
   useEffect(() => {
     if (annotations === undefined) return;
@@ -115,7 +104,7 @@ export const PointCloudContextualizeThreeDViewer = ({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onCloseResourceSelector();
+        setPendingAnnotation(null);
         event.stopPropagation();
       }
     };
@@ -127,17 +116,25 @@ export const PointCloudContextualizeThreeDViewer = ({
     };
   });
 
-  const generateContextualization = (assetId: number) => {
-    if (modelType === 'pointcloud') {
-      saveCdfThreeDPointCloudContextualization({
-        sdk,
-        viewer,
-        model,
-        modelId,
-        assetId,
-        pendingAnnotation,
-      });
-    }
+  const saveAnnotationToCdf = (assetId: number) => {
+    if (viewer === null || pendingAnnotation === null) return;
+
+    const pointCloudModel = getCognitePointCloudModel({
+      modelId,
+      viewer: viewer,
+    });
+    if (pointCloudModel === undefined) return;
+
+    createCdfThreeDAnnotation({
+      sdk,
+      modelId,
+      assetRefId: assetId,
+      pointCloudModel,
+      position: pendingAnnotation.position,
+    }).then(() => {
+      // Invalidate to refetch
+      queryClient.invalidateQueries(['annotations', sdk, modelId]);
+    });
   };
   return (
     <>
@@ -160,40 +157,12 @@ export const PointCloudContextualizeThreeDViewer = ({
             visibleResourceTabs={['asset']}
             shouldDisableAddButton={pendingAnnotation === null}
             onSelect={(item) => {
-              onCloseResourceSelector();
-              generateContextualization(item.id);
-              setPendingAnnotation(null);
-            }}
-          />
-        )}
-      </StyledSplitter>
-
-      {/*       <StyledSplitter
-        secondaryInitialSize={rightSidePanelWidth}
-        onSecondaryPaneSizeChange={setRightSidePanelWidth}
-      >
-        <ThreeDViewerStyled>
-          <RevealContainer sdk={sdk} color={defaultRevealColor}>
-            <RevealContent
-              modelId={modelId}
-              revisionId={revisionId}
-              onDeleteAnnotation={onDeleteAnnotation}
-            />
-          </RevealContainer>
-        </ThreeDViewerStyled>
-
-        {isResourceSelectorOpen && (
-          <ResourceSelector
-            selectionMode="single"
-            visibleResourceTabs={['asset']}
-            shouldDisableAddButton={pendingAnnotation === null}
-            onSelect={(item) => {
               saveAnnotationToCdf(item.id);
               setPendingAnnotation(null);
             }}
           />
         )}
-      </StyledSplitter> */}
+      </StyledSplitter>
     </>
   );
 };
