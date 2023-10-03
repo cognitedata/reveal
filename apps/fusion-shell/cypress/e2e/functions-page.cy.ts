@@ -1,6 +1,7 @@
 describe('Functions page', () => {
   beforeEach(() => {
     cy.navigate('functions');
+    cy.ensurePageFinishedLoading();
   });
 
   it('Should open Cognite functions page', () => {

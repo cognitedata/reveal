@@ -1,6 +1,7 @@
 describe('Extraction pipelines page', () => {
   beforeEach(() => {
     cy.navigate('extpipes');
+    cy.ensurePageFinishedLoading();
   });
 
   it('Should open Extraction pipelines page', () => {

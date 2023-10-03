@@ -1,6 +1,7 @@
 describe('Interactive engineering diagram page', () => {
   beforeEach(() => {
     cy.navigate('interactive-diagrams');
+    cy.ensurePageFinishedLoading();
   });
 
   it('Should open Interactive engineering diagram page', () => {

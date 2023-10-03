@@ -1,6 +1,7 @@
 describe('Document Classifiers page', () => {
   beforeEach(() => {
     cy.navigate('documents');
+    cy.ensurePageFinishedLoading();
   });
 
   it('Should open Document Classifiers page', () => {

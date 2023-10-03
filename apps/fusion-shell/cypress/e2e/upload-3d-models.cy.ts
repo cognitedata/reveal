@@ -1,6 +1,7 @@
 describe('Upload 3D models page', () => {
   beforeEach(() => {
     cy.navigate('3d-models');
+    cy.ensurePageFinishedLoading();
   });
 
   it('Should open Upload 3D models page', () => {
