@@ -35,6 +35,8 @@ export class CadManager {
   private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
   private readonly _materialsChangedListener = this.handleMaterialsChanged.bind(this);
 
+  private readonly _sectorBufferTime = 350;
+
   get materialManager(): CadMaterialManager {
     return this._materialManager;
   }
@@ -115,7 +117,7 @@ export class CadManager {
     };
 
     const consumedSectorsObservable = this._cadModelUpdateHandler.consumedSectorObservable();
-    const flushAt = consumedSectorsObservable.pipe(auditTime(350));
+    const flushAt = consumedSectorsObservable.pipe(auditTime(this._sectorBufferTime));
     this._subscription.add(
       consumedSectorsObservable.pipe(buffer(flushAt)).subscribe({
         next: consumeNextSectors,
