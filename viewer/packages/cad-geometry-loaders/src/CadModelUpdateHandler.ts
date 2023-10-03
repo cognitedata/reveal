@@ -38,6 +38,7 @@ export class CadModelUpdateHandler {
   private readonly _modelStateHandler: ModelStateHandler;
   private _budget: CadModelBudget;
   private _lastSpent: SectorLoadingSpent;
+  private readonly _determineSectorsHandler: SectorLoader;
 
   private readonly _cameraSubject: Subject<CameraInput> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
@@ -106,7 +107,7 @@ export class CadModelUpdateHandler {
       };
       this._progressSubject.next(state);
     };
-    const determineSectorsHandler = new SectorLoader(
+    this._determineSectorsHandler = new SectorLoader(
       sectorCuller,
       this._modelStateHandler,
       collectStatisticsCallback,
@@ -114,7 +115,7 @@ export class CadModelUpdateHandler {
       continuousModelStreaming
     );
 
-    async function* loadSectors(input: DetermineSectorsPayload) {
+    async function* loadSectors(input: DetermineSectorsPayload, determineSectorsHandler: SectorLoader) {
       for await (const sector of determineSectorsHandler.loadSectors(input)) {
         yield sector;
       }
@@ -124,7 +125,7 @@ export class CadModelUpdateHandler {
       observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
-      mergeMap(async x => loadSectors(x)),
+      mergeMap(async x => loadSectors(x, this._determineSectorsHandler)),
       mergeMap(x => x)
     );
   }
@@ -180,6 +181,10 @@ export class CadModelUpdateHandler {
 
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._progressSubject;
+  }
+
+  reportNewSectorsLoaded(loadedCountChange: number): void {
+    this._determineSectorsHandler.reportNewSectorsLoaded(loadedCountChange);
   }
 
   /**
