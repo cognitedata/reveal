@@ -304,7 +304,6 @@ export const CadContextualizeThreeDViewer = ({
             selectionMode="single"
             visibleResourceTabs={['asset']}
             onSelect={(item) => {
-              onCloseResourceSelector();
               generateContextualization(item.id);
             }}
           />

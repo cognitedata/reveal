@@ -5,14 +5,13 @@ import {
   CogniteCadModel,
   CognitePointCloudModel,
   TreeIndexNodeCollection,
+  PointColorType,
 } from '@cognite/reveal';
 import { AnnotationModel, AssetMapping3D, ListResponse } from '@cognite/sdk';
 
-import { SelectedNode } from './components/Cad/CadContextualizeThreeDViewer';
-import { Cognite3DViewer, PointColorType } from '@cognite/reveal';
-import { AnnotationModel } from '@cognite/sdk';
-
 import { DEFAULT_POINT_SIZE } from '../../pages/ContextualizeEditor/constants';
+
+import { SelectedNode } from './components/Cad/CadContextualizeThreeDViewer';
 
 export type ThreeDPosition = {
   x: number;
