@@ -4,7 +4,13 @@
 
 import { TypedArray, TypedArrayConstructor } from '@reveal/utilities';
 import assert from 'assert';
-import { BufferAttribute, InterleavedBufferAttribute, BufferGeometry, InstancedInterleavedBuffer } from 'three';
+import {
+  BufferAttribute,
+  InterleavedBufferAttribute,
+  BufferGeometry,
+  InstancedInterleavedBuffer,
+  DynamicDrawUsage
+} from 'three';
 
 export class GeometryBufferUtils {
   private static readonly TypedArrayViews = new Map<number, TypedArrayConstructor>([
@@ -51,6 +57,7 @@ export class GeometryBufferUtils {
 
       const ComponentType = GeometryBufferUtils.TypedArrayViews.get(componentSize)!;
       const interleavedAttributesBuffer = new InstancedInterleavedBuffer(new ComponentType(backingBuffer), stride);
+      interleavedAttributesBuffer.setUsage(DynamicDrawUsage);
 
       bufferGeometry.setAttribute(
         name,
