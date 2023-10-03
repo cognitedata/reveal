@@ -142,21 +142,13 @@ export class IndexSet {
     return this;
   }
 
-  hasIntersectionWith(otherSet: IndexSet | Map<number, number> | Set<number>): boolean {
+  hasIntersectionWith(otherSet: IndexSet | Set<number>): boolean {
     if (otherSet instanceof IndexSet) {
       if (this.rootNode === undefined || otherSet.rootNode === undefined) {
         return false;
       }
 
       return this.rootNode.hasIntersectionWith(otherSet.rootNode);
-    } else if (otherSet instanceof Map) {
-      for (const index of otherSet.keys()) {
-        if (this.contains(index)) {
-          return true;
-        }
-      }
-
-      return false;
     } else {
       for (const index of otherSet) {
         if (this.contains(index)) {
@@ -166,6 +158,20 @@ export class IndexSet {
 
       return false;
     }
+  }
+
+  hasIntersectionWithMap(otherMap: Map<number, number>): boolean {
+    if (!this.rootNode) {
+      return false;
+    }
+
+    for (const index of otherMap.keys()) {
+      if (this.rootNode.contains(index)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   intersectWith(otherSet: IndexSet): IndexSet {

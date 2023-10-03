@@ -141,6 +141,22 @@ describe('IndexSet', () => {
     expect(set1.hasIntersectionWith(set2)).toBeFalse();
   });
 
+  test('hasIntersectionWithMap returns true if there is any overlap', () => {
+    const set = new IndexSet();
+    set.addRange(new NumericRange(1, 5));
+    const map = new Map<number, number>();
+    map.set(3, 0);
+    expect(set.hasIntersectionWithMap(map)).toBeTrue();
+  });
+
+  test('hasIntersectionWithMap returns false if there is no overlap', () => {
+    const set = new IndexSet();
+    set.addRange(new NumericRange(1, 5));
+    const map = new Map<number, number>();
+    map.set(6, 0);
+    expect(set.hasIntersectionWithMap(map)).toBeFalse();
+  });
+
   test('differenceWith removes overlapping elements', () => {
     const set1 = new IndexSet();
     set1.addRange(new NumericRange(1, 5));
