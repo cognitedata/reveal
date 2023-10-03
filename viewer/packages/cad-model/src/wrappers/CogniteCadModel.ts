@@ -241,8 +241,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
         // from this node are discovered at a later point, customSectorBounds.updateNodeSectors will be called through the
         // treeIndexToSectorsMap.onChange callback, which is setup in the constructor.
         const sectorIds = this.cadNode.treeIndexToSectorsMap.getSectorIdsForTreeIndex(treeIndex);
-        if (sectorIds.size) {
-          this.customSectorBounds.updateNodeSectors(treeIndex, Array.from(sectorIds));
+        if (sectorIds.length) {
+          this.customSectorBounds.updateNodeSectors(treeIndex, sectorIds);
         }
       }
 
