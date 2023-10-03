@@ -17,7 +17,6 @@ import { CalculationConfiguration } from './pages/CalculationConfiguration/Calcu
 import { CalculationRunDetails } from './pages/CalculationRunDetails/CalculationRunDetails';
 import { CalculationRuns } from './pages/CalculationRuns/CalculationRuns';
 import { CustomCalculationConfiguration } from './pages/CustomCalculationConfiguration/CustomCalculationConfiguration';
-import { PermissionsRequired } from './pages/emptystates/permissions-required';
 import { NewModel } from './pages/ModelLibrary';
 import type { StoreState } from './store/types';
 
@@ -121,10 +120,6 @@ export function routes(
               },
             },
           ],
-        },
-        {
-          path: 'need-permissions',
-          element: <PermissionsRequired />,
         },
         {
           path: 'logout',

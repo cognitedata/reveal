@@ -2,8 +2,6 @@ export const AUTOCLOSE_PERIOD = 7500;
 
 export const ROUGH_APPROXIMATION = 'Rough Approximation';
 
-export const PERMISSIONS_REQUIRED_PAGE_PATH = '/simint/need-permissions';
-
 export const BASIC_CAPABILITIES_REQUIRED = [
   'ui-events-acl',
   'ui-files-acl',
