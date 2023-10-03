@@ -1,12 +1,13 @@
 import { useEffect, useMemo } from 'react';
 
-import DelayedComponent from '@charts-app/components/DelayedComponent';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
 
 import { Body, DocumentIcon, Icon, Overline, Flex } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
+
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
+import DelayedComponent from '../DelayedComponent';
 
 import { useFileIcon, useFilesAssetAppearsIn } from './hooks';
 import { isFilePreviewable } from './utils';

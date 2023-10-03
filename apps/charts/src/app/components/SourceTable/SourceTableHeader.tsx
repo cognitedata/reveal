@@ -4,9 +4,9 @@
 
 import { MouseEvent } from 'react';
 
-import { ShowHideButton } from '@charts-app/components/ShowHideButton/ShowHideButton';
-import { Modes } from '@charts-app/pages/types';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { Modes } from '../../pages/types';
+import { makeDefaultTranslations } from '../../utils/translations';
+import { ShowHideButton } from '../ShowHideButton/ShowHideButton';
 
 import { SourceItem, SourceName } from './elements';
 

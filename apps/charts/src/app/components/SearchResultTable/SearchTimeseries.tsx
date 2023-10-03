@@ -1,15 +1,16 @@
-import EmptyResult, {
-  defaultTranslations as emptyResultDefaultTranslations,
-} from '@charts-app/components/Search/EmptyResult';
-import { useAddRemoveTimeseries } from '@charts-app/components/Search/hooks';
-import { useTranslations } from '@charts-app/hooks/translations';
-import chartAtom from '@charts-app/models/chart/atom';
-import { trackUsage } from '@charts-app/services/metrics';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components/macro';
 
 import { Icon, Button, Checkbox } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../hooks/translations';
+import chartAtom from '../../models/chart/atom';
+import { trackUsage } from '../../services/metrics';
+import { makeDefaultTranslations } from '../../utils/translations';
+import EmptyResult, {
+  defaultTranslations as emptyResultDefaultTranslations,
+} from '../Search/EmptyResult';
+import { useAddRemoveTimeseries } from '../Search/hooks';
 
 import { useTimeseriesSearchResult } from './hooks';
 import RecentViewSources from './RecentViewSources';

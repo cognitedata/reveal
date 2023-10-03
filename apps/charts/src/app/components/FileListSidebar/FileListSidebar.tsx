@@ -1,9 +1,9 @@
 import { ComponentProps, MouseEventHandler } from 'react';
 
-import { FileSidebar } from '@charts-app/components/LinkedAssetsSidebar/elements/FileSidebar';
-import { Header } from '@charts-app/components/LinkedAssetsSidebar/elements/Header';
-
 import { Body, Button, Title } from '@cognite/cogs.js';
+
+import { FileSidebar } from '../LinkedAssetsSidebar/elements/FileSidebar';
+import { Header } from '../LinkedAssetsSidebar/elements/Header';
 
 import { FileList } from './FileList';
 

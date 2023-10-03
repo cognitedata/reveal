@@ -1,16 +1,6 @@
 import { ComponentProps, useCallback, useEffect, useMemo } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 
-import ErrorToast from '@charts-app/components/ErrorToast/ErrorToast';
-import { useIsChartOwner } from '@charts-app/hooks/user';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { availableWorkflows } from '@charts-app/models/calculation-results/selectors';
-import {
-  updateScheduledCalculation,
-  updateWorkflow,
-} from '@charts-app/models/chart/updates';
-import { useOperations } from '@charts-app/models/operations/atom';
-import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
 import { SetterOrUpdater, useRecoilValue } from 'recoil';
 
 import {
@@ -19,6 +9,17 @@ import {
   ScheduledCalculation,
 } from '@cognite/charts-lib';
 import { Icon, toast } from '@cognite/cogs.js';
+
+import { useIsChartOwner } from '../../hooks/user';
+import { useUserInfo } from '../../hooks/useUserInfo';
+import { availableWorkflows } from '../../models/calculation-results/selectors';
+import {
+  updateScheduledCalculation,
+  updateWorkflow,
+} from '../../models/chart/updates';
+import { useOperations } from '../../models/operations/atom';
+import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
+import ErrorToast from '../ErrorToast/ErrorToast';
 
 import { defaultTranslations } from './translations';
 import { getSourceOption, getSourcesFromChart } from './utils';

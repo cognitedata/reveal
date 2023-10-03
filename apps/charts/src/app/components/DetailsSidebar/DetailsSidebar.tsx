@@ -2,23 +2,6 @@
 
 import { useState } from 'react';
 
-import {
-  Sidebar,
-  ContentOverflowWrapper,
-  TopContainer,
-  TopContainerAside,
-  TopContainerTitle,
-} from '@charts-app/components/Common/SidebarElements';
-import DetailsBlock from '@charts-app/components/DetailsBlock/DetailsBlock';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
-import {
-  SourceCircle,
-  SourceSquare,
-} from '@charts-app/pages/ChartViewPage/elements';
-import { formatValueForDisplay } from '@charts-app/utils/numbers';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { getUnitConverter } from '@charts-app/utils/units';
 import { Col, List, Row } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -37,6 +20,20 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
+import { useTranslations } from '../../hooks/translations';
+import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
+import { SourceCircle, SourceSquare } from '../../pages/ChartViewPage/elements';
+import { formatValueForDisplay } from '../../utils/numbers';
+import { makeDefaultTranslations } from '../../utils/translations';
+import { getUnitConverter } from '../../utils/units';
+import {
+  Sidebar,
+  ContentOverflowWrapper,
+  TopContainer,
+  TopContainerAside,
+  TopContainerTitle,
+} from '../Common/SidebarElements';
+import DetailsBlock from '../DetailsBlock/DetailsBlock';
 import { Histogram } from '../Histogram/Histogram';
 
 import {

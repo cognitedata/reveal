@@ -1,6 +1,6 @@
-import { SourceOption } from '@charts-app/components/NodeEditor/V2/types';
-
 import { Chart } from '@cognite/charts-lib';
+
+import { SourceOption } from '../../components/NodeEditor/V2/types';
 
 export const mockSourceList: SourceOption[] = [
   {

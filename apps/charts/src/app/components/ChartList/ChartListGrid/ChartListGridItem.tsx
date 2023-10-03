@@ -2,7 +2,6 @@ import { MouseEvent, useContext } from 'react';
 
 import styled from 'styled-components';
 
-import { RenderWhenOnScreen } from '@charts-app/components/RenderWhenOnScreen/RenderWhenOnScreen';
 import { Skeleton } from 'antd';
 
 import { Chart } from '@cognite/charts-lib';
@@ -16,6 +15,7 @@ import {
   Heading,
 } from '@cognite/cogs.js';
 
+import { RenderWhenOnScreen } from '../../RenderWhenOnScreen/RenderWhenOnScreen';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
 import { ChartListContext } from '../context';
 import formatOwner from '../formatOwner';

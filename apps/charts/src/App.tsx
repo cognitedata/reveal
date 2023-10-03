@@ -14,10 +14,6 @@ import {
   matchRoutes,
 } from 'react-router-dom';
 
-import config from '@charts-app/config/config';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import Routes from '@charts-app/pages/Routes';
-import { isDevelopment } from '@charts-app/utils/environment';
 import { DataExplorationProvider } from '@data-exploration-components/context/DataExplorationContext';
 import * as Sentry from '@sentry/react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -28,6 +24,10 @@ import { getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
+import config from './app/config/config';
+import { useUserInfo } from './app/hooks/useUserInfo';
+import Routes from './app/pages/Routes';
+import { isDevelopment } from './app/utils/environment';
 import GlobalStyles from './GlobalStyles';
 
 // START SENTRY CODE

@@ -1,7 +1,7 @@
 import {
   makeDefaultTranslations,
   translationKeys,
-} from '@charts-app/utils/translations';
+} from '../utils/translations';
 
 function FunctionComponentWithoutTranslationsProp({
   label = 'Test',

@@ -3,11 +3,12 @@ import Highlighter from 'react-highlight-words';
 
 import styled from 'styled-components';
 
-import Sparkline from '@charts-app/components/PlotlyChart/Sparkline/Sparkline';
-import { removeIllegalCharacters } from '@charts-app/utils/text';
 import { Skeleton } from 'antd';
 
 import { Button, Checkbox, Colors, Icon, Tooltip } from '@cognite/cogs.js';
+
+import { removeIllegalCharacters } from '../../utils/text';
+import Sparkline from '../PlotlyChart/Sparkline/Sparkline';
 
 type Props = {
   externalId: string;

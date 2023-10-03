@@ -1,12 +1,12 @@
 import { memo, useEffect, useState, useCallback, ChangeEvent } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import Joi from 'joi';
 import styled from 'styled-components/macro';
 
 import { Input } from '@cognite/cogs.js';
 
+import { defaultTranslations } from '../../translations';
 import { NodeTypes } from '../types';
 
 import { NodeWrapper, NoDragWrapper } from './elements';

@@ -1,12 +1,13 @@
-import EmptyResult, {
-  defaultTranslations as emptyResultDefaultTranslations,
-} from '@charts-app/components/Search/EmptyResult';
-import { SearchFilter } from '@charts-app/components/Search/Search';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
 
 import { Icon, Button } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
+import EmptyResult, {
+  defaultTranslations as emptyResultDefaultTranslations,
+} from '../Search/EmptyResult';
+import { SearchFilter } from '../Search/Search';
 
 import AssetSearchHit from './AssetSearchHit';
 import { useAssetSearchResults } from './hooks';

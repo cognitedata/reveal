@@ -11,11 +11,6 @@ import {
   removeElements,
 } from 'react-flow-renderer';
 
-import {
-  FunctionNodeData,
-  FunctionNodeDataDehydrated,
-} from '@charts-app/components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
-import { NodeDataVariants } from '@charts-app/components/NodeEditor/V2/types';
 import { compareVersions } from 'compare-versions';
 import { uniqBy } from 'lodash';
 
@@ -29,8 +24,12 @@ import { ChartWorkflowV2, ScheduledCalculation } from '@cognite/charts-lib';
 
 import { passthroughOperationDefinition } from './calculations';
 import { AUTO_ALIGN_PARAM } from './constants';
+import {
+  FunctionNodeData,
+  FunctionNodeDataDehydrated,
+} from './Nodes/FunctionNode/FunctionNode';
 import { SourceNodeData } from './Nodes/SourceNode';
-import { NodeTypes } from './types';
+import { NodeDataVariants, NodeTypes } from './types';
 
 export function transformParamInput(
   type: OperationVersionParamsTypeEnum,

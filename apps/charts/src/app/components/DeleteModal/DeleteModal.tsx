@@ -1,8 +1,8 @@
 import { PropsWithChildren } from 'react';
 
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Modal } from '@cognite/cogs.js';
+
+import { makeDefaultTranslations } from '../../utils/translations';
 
 type Props = {
   visible: boolean;

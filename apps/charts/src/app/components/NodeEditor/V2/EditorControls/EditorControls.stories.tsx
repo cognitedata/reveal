@@ -1,9 +1,9 @@
 import { ComponentProps } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import { Meta, Story } from '@storybook/react';
 
+import { defaultTranslations } from '../../translations';
 import EditorToolbar from '../EditorToolbar/EditorToolbar';
 
 import EditorControls from './EditorControls';

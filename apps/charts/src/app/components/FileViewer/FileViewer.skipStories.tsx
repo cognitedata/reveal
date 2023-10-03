@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { FileViewer } from '@charts-app/components/FileViewer/FileViewer';
-import { files } from '@charts-app/stubs/files';
 import { Meta, Story } from '@storybook/react';
 
 import { CogniteClient, FileInfo as File } from '@cognite/sdk';
 
+import { files } from '../../stubs/files';
+
+import { FileViewer } from './FileViewer';
 import pdfFileUrl from './pdf/example.pdf';
 import dataExplorationDecorator from './utils/dataExplorationDecorator';
 

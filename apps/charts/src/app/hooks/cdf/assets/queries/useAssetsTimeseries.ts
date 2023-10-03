@@ -1,8 +1,9 @@
-import useSimpleMemo from '@charts-app/hooks/useSimpleMemo';
 import { useQueries } from '@tanstack/react-query';
 
 import { Asset } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import useSimpleMemo from '../../../useSimpleMemo';
 
 export default function useAssetsTimeseries(assets: Asset[]) {
   const sdk = useSDK();

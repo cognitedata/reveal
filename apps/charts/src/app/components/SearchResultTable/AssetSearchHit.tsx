@@ -2,21 +2,22 @@ import Highlighter from 'react-highlight-words';
 
 import styled from 'styled-components';
 
-import DelayedComponent from '@charts-app/components/DelayedComponent';
-import { useAddRemoveTimeseries } from '@charts-app/components/Search/hooks';
-import { SearchFilter } from '@charts-app/components/Search/Search';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { useTranslations } from '@charts-app/hooks/translations';
-import chartAtom from '@charts-app/models/chart/atom';
-import { trackUsage } from '@charts-app/services/metrics';
-import { ASSET_KEY } from '@charts-app/utils/constants';
-import { removeIllegalCharacters } from '@charts-app/utils/text';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useRecoilState } from 'recoil';
 
 import { Icon, Checkbox, Button, Colors } from '@cognite/cogs.js';
 import { Asset, Timeseries } from '@cognite/sdk';
 import { useAggregate, useList } from '@cognite/sdk-react-query-hooks';
+
+import { useSearchParam } from '../../hooks/navigation';
+import { useTranslations } from '../../hooks/translations';
+import chartAtom from '../../models/chart/atom';
+import { trackUsage } from '../../services/metrics';
+import { ASSET_KEY } from '../../utils/constants';
+import { removeIllegalCharacters } from '../../utils/text';
+import { makeDefaultTranslations } from '../../utils/translations';
+import DelayedComponent from '../DelayedComponent';
+import { useAddRemoveTimeseries } from '../Search/hooks';
+import { SearchFilter } from '../Search/Search';
 
 import { PnidButton } from './PnidButton';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';

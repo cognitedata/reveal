@@ -1,9 +1,10 @@
-import { ScheduledCalculationTask } from '@charts-app/domain/scheduled-calculation/service/types';
-import { getEntryColor } from '@charts-app/utils/colors';
 import { omit } from 'lodash';
 
 import { ChartWorkflowV2, ScheduledCalculation } from '@cognite/charts-lib';
 import { Timeseries } from '@cognite/sdk';
+
+import { getEntryColor } from '../../../../utils/colors';
+import { ScheduledCalculationTask } from '../../service/types';
 
 export const adaptCalculationForClonedScheduledCalculation = (
   workflow: ChartWorkflowV2,

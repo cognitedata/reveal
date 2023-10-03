@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useTranslations } from '@charts-app/hooks/translations';
-import { createInternalLink } from '@charts-app/utils/link';
+import { Button, Colors, Flex } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../hooks/translations';
+import { createInternalLink } from '../../utils/link';
 import {
   makeDefaultTranslations,
   translationKeys,
-} from '@charts-app/utils/translations';
-
-import { Button, Colors, Flex } from '@cognite/cogs.js';
+} from '../../utils/translations';
 
 const defaultTranslations = makeDefaultTranslations('All charts');
 

@@ -1,36 +1,33 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-import {
-  FieldHelperText,
-  FieldTitleRequired,
-} from '@charts-app/components/Form/elements';
-import MonitoringFolderSelect from '@charts-app/components/MonitoringFolderSelect/MonitoringFolderSelect';
-import PortalWait from '@charts-app/components/PortalWait/PortalWait';
-import {
-  SCHEDULE_MINUTE_OPTIONS,
-  SCHEDULE_HOUR_OPTIONS,
-  MONITORING_THRESHOLD_ID,
-  MINIMUM_DURATION_LIMIT,
-} from '@charts-app/domain/monitoring/constants';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { useChartAtom } from '@charts-app/models/chart/atom';
-import {
-  addChartThreshold,
-  removeChartThreshold,
-  updateChartThresholdSelectedSource,
-  updateChartThresholdUpperLimit,
-} from '@charts-app/models/chart/updates-threshold';
-import { useChartInteractionsAtom } from '@charts-app/models/interactions/atom';
-import { trackUsage } from '@charts-app/services/metrics';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { delay } from 'lodash';
 
 import { ChartThreshold, ChartTimeSeries } from '@cognite/charts-lib';
 import { Button, Icon, Row, Col, Chip } from '@cognite/cogs.js';
 
+import {
+  SCHEDULE_MINUTE_OPTIONS,
+  SCHEDULE_HOUR_OPTIONS,
+  MONITORING_THRESHOLD_ID,
+  MINIMUM_DURATION_LIMIT,
+} from '../../domain/monitoring/constants';
+import { useTranslations } from '../../hooks/translations';
+import { useChartAtom } from '../../models/chart/atom';
+import {
+  addChartThreshold,
+  removeChartThreshold,
+  updateChartThresholdSelectedSource,
+  updateChartThresholdUpperLimit,
+} from '../../models/chart/updates-threshold';
+import { useChartInteractionsAtom } from '../../models/interactions/atom';
+import { trackUsage } from '../../services/metrics';
+import { makeDefaultTranslations } from '../../utils/translations';
+import { FieldHelperText, FieldTitleRequired } from '../Form/elements';
 import { FormError } from '../Form/FormError';
 import { FormInputWithController } from '../Form/FormInputWithController';
+import MonitoringFolderSelect from '../MonitoringFolderSelect/MonitoringFolderSelect';
+import PortalWait from '../PortalWait/PortalWait';
 
 import { FullWidthButton } from './elements';
 import { SubscribeJob } from './SubscribeJob';

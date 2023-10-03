@@ -1,6 +1,5 @@
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
 import { NoAlerts } from '../Icons/NoAlerts';
 
 import {

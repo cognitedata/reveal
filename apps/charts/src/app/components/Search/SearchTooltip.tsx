@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
 
 import { Tooltip, Button } from '@cognite/cogs.js';
 import { getFromLocalStorage, saveToLocalStorage } from '@cognite/storage';
+
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 const defaultTranslations = makeDefaultTranslations(
   'Find your data here to get started creating your chart.',

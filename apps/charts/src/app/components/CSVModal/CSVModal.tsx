@@ -1,10 +1,10 @@
 import { ComponentProps, useContext, useState } from 'react';
 
-import DateTimeRangeSelector from '@charts-app/components/DateTime/DateTimeRangeSelector';
-import { Delimiters } from '@charts-app/utils/csv';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Checkbox, SegmentedControl, Tooltip, Modal } from '@cognite/cogs.js';
+
+import { Delimiters } from '../../utils/csv';
+import { makeDefaultTranslations } from '../../utils/translations';
+import DateTimeRangeSelector from '../DateTime/DateTimeRangeSelector';
 
 import { CSVModalContext } from './CSVModalContext';
 import {

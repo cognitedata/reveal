@@ -3,12 +3,12 @@
  * https://github.com/cognitedata/data-exploration-components/blob/master/src/domain/transformers.ts
  */
 
+import { CogniteEvent } from '@cognite/sdk';
+
 import {
   EventsCollection,
   EventsEntry,
-} from '@charts-app/models/event-results/types';
-
-import { CogniteEvent } from '@cognite/sdk';
+} from '../../models/event-results/types';
 
 export const transformNewFilterToOldFilter = <T>(
   filter?: any

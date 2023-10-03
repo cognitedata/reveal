@@ -1,8 +1,9 @@
-import chartAtom from '@charts-app/models/chart/atom';
-import { getUnitConvertedDatapointsSummary } from '@charts-app/utils/units';
 import { selector } from 'recoil';
 
 import { Chart } from '@cognite/charts-lib';
+
+import { getUnitConvertedDatapointsSummary } from '../../utils/units';
+import chartAtom from '../chart/atom';
 
 import { scheduledCalculationDataAtom } from './atom';
 import { ScheduledCalculationsDataMap } from './types';

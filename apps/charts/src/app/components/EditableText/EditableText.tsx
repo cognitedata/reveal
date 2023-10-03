@@ -3,9 +3,9 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Button, Icon, Input, Tooltip } from '@cognite/cogs.js';
+
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import ClickBoundary from './ClickBoundary';
 

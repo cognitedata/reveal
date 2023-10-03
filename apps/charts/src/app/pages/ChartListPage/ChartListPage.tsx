@@ -1,20 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import MyChartsList from '@charts-app/components/ChartList/MyChartsList/MyChartsList';
-import PublicChartsList from '@charts-app/components/ChartList/PublicChartsList/PublicChartsList';
-import { OpenInCharts } from '@charts-app/components/OpenInCharts/OpenInCharts';
-import { currentStartPageLayout } from '@charts-app/config/startPagePreference';
-import useCreateChart from '@charts-app/hooks/charts/mutations/useCreateChart';
-import { useComponentTranslations } from '@charts-app/hooks/translations';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { trackUsage } from '@charts-app/services/metrics';
-import { createInternalLink } from '@charts-app/utils/link';
-import {
-  makeDefaultTranslations,
-  translationKeys,
-} from '@charts-app/utils/translations';
-
 import { getProject } from '@cognite/cdf-utilities';
 import {
   Button,
@@ -24,6 +10,20 @@ import {
   Select,
   Flex,
 } from '@cognite/cogs.js';
+
+import MyChartsList from '../../components/ChartList/MyChartsList/MyChartsList';
+import PublicChartsList from '../../components/ChartList/PublicChartsList/PublicChartsList';
+import { OpenInCharts } from '../../components/OpenInCharts/OpenInCharts';
+import { currentStartPageLayout } from '../../config/startPagePreference';
+import useCreateChart from '../../hooks/charts/mutations/useCreateChart';
+import { useComponentTranslations } from '../../hooks/translations';
+import { useUserInfo } from '../../hooks/useUserInfo';
+import { trackUsage } from '../../services/metrics';
+import { createInternalLink } from '../../utils/link';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '../../utils/translations';
 
 const defaultTranslations = makeDefaultTranslations(
   'Name',

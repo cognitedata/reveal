@@ -1,11 +1,11 @@
-import {
-  useUserProfileQuery,
-  UserProfile,
-} from '@charts-app/common/providers/useUserProfileQuery';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 
+import {
+  useUserProfileQuery,
+  UserProfile,
+} from '../../common/providers/useUserProfileQuery';
 import { SessionAPIResponse } from '../../domain/chart/internal/types';
 import { EMPTY_ARRAY } from '../../domain/constants';
 

@@ -1,7 +1,8 @@
 import { ComponentProps } from 'react';
 
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import { Meta, Story } from '@storybook/react';
+
+import { defaultTranslations } from '../../translations';
 
 import WorkflowSettings from './WorkflowSettings';
 

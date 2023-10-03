@@ -1,12 +1,13 @@
 import { ComponentProps, PropsWithChildren } from 'react';
 
-import { useComponentTranslations } from '@charts-app/hooks/translations';
-import { useIsChartOwner } from '@charts-app/hooks/user';
-import chartAtom from '@charts-app/models/chart/atom';
-import { trackUsage } from '@charts-app/services/metrics';
 import { useRecoilState } from 'recoil';
 
 import { Dropdown } from '@cognite/cogs.js';
+
+import { useComponentTranslations } from '../../hooks/translations';
+import { useIsChartOwner } from '../../hooks/user';
+import chartAtom from '../../models/chart/atom';
+import { trackUsage } from '../../services/metrics';
 
 import SharingDropdown from './SharingDropdown';
 

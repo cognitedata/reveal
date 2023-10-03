@@ -3,21 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components';
 
-import PageTitle from '@charts-app/components/PageTitle/PageTitle';
-import config from '@charts-app/config/config';
-import {
-  availableLocales,
-  changeDayJSLocale,
-  currentLocale,
-} from '@charts-app/config/locale';
-import {
-  changeStartPageLayout,
-  currentStartPageLayout,
-} from '@charts-app/config/startPagePreference';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { isProduction } from '@charts-app/utils/environment';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import dayjs from 'dayjs';
 import { getAuth } from 'firebase/auth';
 
@@ -30,6 +15,22 @@ import {
   Row,
   Select,
 } from '@cognite/cogs.js';
+
+import PageTitle from '../../components/PageTitle/PageTitle';
+import config from '../../config/config';
+import {
+  availableLocales,
+  changeDayJSLocale,
+  currentLocale,
+} from '../../config/locale';
+import {
+  changeStartPageLayout,
+  currentStartPageLayout,
+} from '../../config/startPagePreference';
+import { useTranslations } from '../../hooks/translations';
+import { useUserInfo } from '../../hooks/useUserInfo';
+import { isProduction } from '../../utils/environment';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;

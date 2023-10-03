@@ -15,10 +15,6 @@ import {
   FlowTransform,
 } from 'react-flow-renderer';
 
-import { ScheduledCalculationDeleteModal } from '@charts-app/components/ScheduledCalculation/ScheduledCalculationDeleteModal';
-import { useScheduledCalculationDeleteMutate } from '@charts-app/domain/scheduled-calculation/internal/queries/useScheduledCalculationDeleteMutate';
-import { ScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/types';
-import Layers from '@charts-app/utils/z-index';
 import styled from 'styled-components/macro';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,6 +22,10 @@ import { ComputationStep, Operation } from '@cognite/calculation-backend';
 import { ChartWorkflowV2, ScheduledCalculation } from '@cognite/charts-lib';
 import { Button } from '@cognite/cogs.js';
 
+import { useScheduledCalculationDeleteMutate } from '../../../domain/scheduled-calculation/internal/queries/useScheduledCalculationDeleteMutate';
+import { ScheduledCalculationData } from '../../../models/scheduled-calculation-results/types';
+import Layers from '../../../utils/z-index';
+import { ScheduledCalculationDeleteModal } from '../../ScheduledCalculation/ScheduledCalculationDeleteModal';
 import { defaultTranslations } from '../translations';
 
 import { validateSteps } from './calculations';
