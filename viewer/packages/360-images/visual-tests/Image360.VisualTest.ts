@@ -36,9 +36,14 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     camera.near = 0.01;
     camera.updateProjectionMatrix();
+
+    camera.position.set(11.67, 4.15, -2.89);
+    camera.rotation.set(-0.4, 0.84, 0.3);
+
     const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
 
     const { facade, entities } = await this.setup360Images(cogniteClient, sceneHandler, onBeforeRender, desktopDevice);
+    entities[1].setIconColor(new THREE.Color(1.0, 0.0, 1.0));
 
     const icons = entities.map(entity => entity.icon);
     sceneHandler.addCustomObject(this.getOctreeVisualizationObject(icons));
