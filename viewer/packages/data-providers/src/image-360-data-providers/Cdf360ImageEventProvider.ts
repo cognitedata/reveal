@@ -352,10 +352,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
 
       const assetAnnotations = annotationArray
         .filter(annotation => annotationFilter(annotation))
-        .map(annotation => {
-          assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
-          return annotation as ImageAssetLinkAnnotationInfo;
-        });
+        .filter(isImageAssetLinkAnnotation);
 
       return assetAnnotations;
     });
@@ -373,6 +370,10 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
       })
       .autoPagingToArray({ limit: Infinity });
   }
+}
+
+function isImageAssetLinkAnnotation(annotation: AnnotationModel): annotation is ImageAssetLinkAnnotationInfo {
+  return isAssetLinkAnnotationData(annotation.data);
 }
 
 function isAssetLinkAnnotationData(
