@@ -10,7 +10,7 @@ describe('TreeIndexToSectorsMap', () => {
   let map: TreeIndexToSectorsMap;
 
   beforeEach(() => {
-    map = new TreeIndexToSectorsMap();
+    map = new TreeIndexToSectorsMap(100);
     map.onChange = jest.fn();
   });
 
@@ -34,8 +34,14 @@ describe('TreeIndexToSectorsMap', () => {
   });
 
   test('should keep track of which geometry types that are completed for each sector', () => {
-    expect(map.isCompleted(1, RevealGeometryCollectionType.BoxCollection)).toBeFalse();
-    map.markCompleted(1, RevealGeometryCollectionType.BoxCollection);
-    expect(map.isCompleted(1, RevealGeometryCollectionType.BoxCollection)).toBeTrue();
+    const sectorId = 1337;
+    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.BoxCollection)).toBeFalse();
+    map.markCompleted(sectorId, RevealGeometryCollectionType.BoxCollection);
+    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.BoxCollection)).toBeTrue();
+
+    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.ConeCollection)).toBeFalse();
+    // Covers the alternative branch when a Sector already has a map
+    map.markCompleted(sectorId, RevealGeometryCollectionType.ConeCollection);
+    expect(map.isCompleted(sectorId, RevealGeometryCollectionType.ConeCollection)).toBeTrue();
   });
 });

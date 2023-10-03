@@ -7,10 +7,10 @@ import {
   RevealContainer,
   RevealToolbar,
   Reveal3DResources,
-  type AddResourceOptions,
   useClickedNodeData,
-  type FdmAssetStylingGroup,
-  useCameraNavigation
+  useCameraNavigation,
+  type AddResourceOptions,
+  type FdmAssetStylingGroup
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
@@ -76,7 +76,10 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         style: { cad: DefaultNodeAppearance.Highlighted }
       }
     ]);
+
     void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, nodeData.fdmNode.space);
+
+    console.log('Clicked node data', nodeData);
   }, [nodeData?.fdmNode]);
 
   return (

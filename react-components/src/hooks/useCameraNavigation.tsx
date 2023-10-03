@@ -2,20 +2,20 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteCadModel } from '@cognite/reveal';
+import { type CameraState, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../components/RevealContainer/RevealContext';
-import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
-import { SYSTEM_3D_EDGE_SOURCE, type InModel3dEdgeProperties } from '../utilities/globalDataModels';
+import { useFdmNodeCache } from '../components/NodeCacheProvider/NodeCacheProvider';
 
 export type CameraNavigationActions = {
   fitCameraToAllModels: () => void;
   fitCameraToModelNode: (revisionId: number, nodeId: number) => Promise<void>;
   fitCameraToInstance: (externalId: string, space: string) => Promise<void>;
+  fitCameraToState: (cameraState: CameraState) => void;
 };
 
 export const useCameraNavigation = (): CameraNavigationActions => {
+  const fdmNodeCache = useFdmNodeCache();
   const viewer = useReveal();
-  const fdmSDK = useFdmSdk();
 
   const fitCameraToAllModels = (): void => {
     const models = viewer.models;
@@ -36,33 +36,35 @@ export const useCameraNavigation = (): CameraNavigationActions => {
   };
 
   const fitCameraToInstance = async (externalId: string, space: string): Promise<void> => {
-    const fdmAssetMappingFilter = {
-      equals: {
-        property: ['edge', 'startNode'],
-        value: { externalId, space }
-      }
-    };
+    const modelsRevisionIds = viewer.models.map((model) => ({
+      modelId: model.modelId,
+      revisionId: model.revisionId
+    }));
 
-    const assetEdges = await fdmSDK.filterInstances<InModel3dEdgeProperties>(
-      fdmAssetMappingFilter,
-      'edge',
-      SYSTEM_3D_EDGE_SOURCE
-    );
+    const modelMappings = (
+      await fdmNodeCache.cache.getMappingsForFdmIds([{ externalId, space }], modelsRevisionIds)
+    ).find((model) => model.mappings.size > 0);
 
-    if (assetEdges.edges.length === 0) {
+    const nodeId = modelMappings?.mappings.get(externalId)?.[0];
+
+    if (modelMappings === undefined || nodeId === undefined) {
       await Promise.reject(
         new Error(`Could not find a connected model to instance ${externalId} in space ${space}`)
       );
       return;
     }
 
-    const { revisionId, revisionNodeId } = assetEdges.edges[0].properties;
-    await fitCameraToModelNode(revisionId, revisionNodeId);
+    await fitCameraToModelNode(modelMappings.revisionId, nodeId.id);
+  };
+
+  const fitCameraToState = (cameraState: CameraState): void => {
+    viewer.cameraManager.setCameraState(cameraState);
   };
 
   return {
     fitCameraToAllModels,
     fitCameraToInstance,
-    fitCameraToModelNode
+    fitCameraToModelNode,
+    fitCameraToState
   };
 };

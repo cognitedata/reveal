@@ -5,9 +5,21 @@ import { type Node3D } from '@cognite/sdk';
 import { type EdgeItem, type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
 
-export type Fdm3dNodeData = { fdmId: DmsUniqueIdentifier; view: Source; cadNode: Node3D };
 export type FdmCadEdge = EdgeItem<InModel3dEdgeProperties>;
-export type FdmEdgeWithNode = { edge: FdmCadEdge; node: Node3D };
+export type FdmEdgeWithNode = { edge: FdmCadEdge; cadNode: Node3D; view?: Source };
+
+export type CadNodeWithFdmIds = { cadNode: Node3D; fdmIds: DmsUniqueIdentifier[] };
+export type CadNodeWithEdges = { cadNode: Node3D; edges: FdmCadEdge[] };
+export type FdmNodeDataPromises = {
+  cadAndFdmNodesPromise: Promise<CadNodeWithFdmIds | undefined>;
+  viewsPromise: Promise<Source[] | undefined>;
+};
+
+export type AncestorQueryResult = {
+  edges: FdmCadEdge[];
+  ancestorsWithSameMapping: Node3D[];
+  firstMappedAncestorTreeIndex: number;
+};
 
 export type ModelId = number;
 export type RevisionId = number;

@@ -10,6 +10,8 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
+import { useUrlStateParam } from '../../hooks/useUrlStateParam';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 
 type SliceState = {
   minHeight: number;
@@ -18,24 +20,33 @@ type SliceState = {
   bottomRatio: number;
 };
 
-export const SlicerButton = (): ReactElement => {
+type SlicerButtonProps = {
+  storeStateInUrl: boolean;
+};
+
+export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactElement => {
   const viewer = useReveal();
+  const { reveal3DResourcesCount } = useReveal3DResourcesCount();
+  const urlParam = useUrlStateParam();
+  const { top, bottom } = storeStateInUrl
+    ? urlParam.getSlicerStateFromUrlParam()
+    : { top: 1, bottom: 0 };
+  const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,
     maxHeight: 0,
-    topRatio: 1,
-    bottomRatio: 0
+    topRatio: top,
+    bottomRatio: bottom
   });
 
   const { minHeight, maxHeight, topRatio, bottomRatio } = sliceState;
 
-  // Heuristic to increase chance that update is propagated even
-  // if multiple additions/deletions of models occur.
-  const lastModel =
-    viewer.models.length === 0 ? undefined : viewer.models[viewer.models.length - 1];
-
   useEffect(() => {
+    if (reveal3DResourcesCount === 0 || viewer === undefined) {
+      return;
+    }
+
     const box = new Box3();
     viewer.models.forEach((model) => box.union(model.getModelBoundingBox()));
 
@@ -43,9 +54,21 @@ export const SlicerButton = (): ReactElement => {
     const newMinY = box.min.y;
 
     if (maxHeight !== newMaxY || minHeight !== newMinY) {
-      setSliceState(getNewSliceState(sliceState, newMinY, newMaxY));
+      // Set clipping plane only if top or bottom has changed & storeStateInUrl is enabled
+      if (storeStateInUrl && (topRatio !== 1 || bottomRatio !== 0)) {
+        viewer.setGlobalClippingPlanes([
+          new Plane(new Vector3(0, 1, 0), -(newMinY + topRatio * (newMaxY - newMinY))),
+          new Plane(new Vector3(0, -1, 0), newMinY + bottomRatio * (newMaxY - newMinY))
+        ]);
+      }
+      setSliceState({
+        maxHeight: newMaxY,
+        minHeight: newMinY,
+        topRatio,
+        bottomRatio
+      });
     }
-  }, [viewer, viewer.models.length, lastModel]);
+  }, [reveal3DResourcesCount]);
 
   function changeSlicingState(newValues: number[]): void {
     viewer.setGlobalClippingPlanes([
@@ -59,12 +82,19 @@ export const SlicerButton = (): ReactElement => {
       bottomRatio: newValues[0],
       topRatio: newValues[1]
     });
+
+    if (storeStateInUrl) {
+      urlParam.setUrlParamOnSlicerChanged(newValues);
+    }
   }
 
   return (
     <CogsTooltip content={'Slice'} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={() => document.body}
+        onClickOutside={() => {
+          setSliceActive(false);
+        }}
         content={
           <StyledMenu>
             <RangeSlider
@@ -79,34 +109,23 @@ export const SlicerButton = (): ReactElement => {
           </StyledMenu>
         }
         placement="right-end">
-        <Button type="ghost" icon="Slice" aria-label="Slice models" />
+        <Button
+          type="ghost"
+          icon="Slice"
+          aria-label="Slice models"
+          toggled={sliceActive}
+          onClick={() => {
+            setSliceActive((prevState) => !prevState);
+          }}
+        />
       </Dropdown>
     </CogsTooltip>
   );
 };
 
-function getNewSliceState(oldSliceState: SliceState, newMin: number, newMax: number): SliceState {
-  function getRatioForNewRange(ratio: number): number {
-    if (ratio === 0 || ratio === 1) {
-      return ratio;
-    }
-
-    const oldMin = oldSliceState.minHeight;
-    const oldMax = oldSliceState.maxHeight;
-
-    const position = oldMin + ratio * (oldMax - oldMin);
-    const newRatio = (position - newMin) / (newMax - newMin);
-
-    return Math.min(1.0, Math.max(0.0, newRatio));
-  }
-
-  return {
-    maxHeight: newMax,
-    minHeight: newMin,
-    topRatio: getRatioForNewRange(oldSliceState.topRatio),
-    bottomRatio: getRatioForNewRange(oldSliceState.bottomRatio)
-  };
-}
+SlicerButton.defaultProps = {
+  storeStateInUrl: true
+};
 
 const StyledMenu = styled(Menu)`
   height: 512px;

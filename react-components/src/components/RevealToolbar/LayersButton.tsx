@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useState, useEffect, useMemo, useRef } from 'react';
+import { type ReactElement, useState, useEffect, useMemo, useRef, type RefObject } from 'react';
 import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type Reveal3DResourcesLayerStates } from './LayersContainer/types';
 import LayersContainer from './LayersContainer/LayersContainer';
@@ -39,6 +39,25 @@ export const LayersButton = (): ReactElement => {
   const showLayers = (): void => {
     setVisible((prevState) => !prevState);
   };
+
+  const useOutsideClick = (ref: RefObject<HTMLElement | null>): void => {
+    useEffect(() => {
+      const handleClick = (event: MouseEvent): void => {
+        if (ref.current !== null && !ref.current.contains(event.target as Node)) {
+          setVisible(false);
+        }
+      };
+
+      document.addEventListener('click', handleClick);
+
+      return () => {
+        document.removeEventListener('click', handleClick);
+      };
+    }, [ref]);
+  };
+
+  const ref = useRef<HTMLButtonElement | null>(null);
+  useOutsideClick(ref);
 
   useEffect(() => {
     const currentModels = viewer.models;
@@ -148,12 +167,6 @@ export const LayersButton = (): ReactElement => {
     setReveal3DResourcesLayerData(updated3DResourcesLayerData);
   }, [updated3DResourcesLayerData]);
 
-  useEffect(() => {
-    viewer.on('click', () => {
-      setVisible(false);
-    });
-  }, [viewer]);
-
   return (
     <CogsTooltip content={'Filter 3D resource layers'} placement="right" appendTo={document.body}>
       <Dropdown
@@ -167,8 +180,15 @@ export const LayersButton = (): ReactElement => {
           />
         }
         visible={visible}
-        placement="auto">
-        <Button type="ghost" icon="Layers" aria-label="3D Resource layers" onClick={showLayers} />
+        placement="right-start">
+        <Button
+          ref={ref}
+          type="ghost"
+          icon="Layers"
+          aria-label="3D Resource layers"
+          onClick={showLayers}
+          toggled={visible}
+        />
       </Dropdown>
     </CogsTooltip>
   );

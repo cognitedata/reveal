@@ -584,7 +584,7 @@ export class ComboControls extends EventDispatcher {
     // (undocumented)
     triggerCameraChangeEvent: () => void;
     // (undocumented)
-    update: (deltaTime: number, forceUpdate?: boolean) => boolean;
+    update: (deltaTimeS: number, forceUpdate?: boolean) => boolean;
 }
 
 // @public

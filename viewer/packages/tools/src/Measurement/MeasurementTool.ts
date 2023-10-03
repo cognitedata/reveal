@@ -236,7 +236,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     if (this._measurementMode) {
       throw new Error('Measurement mode is active, call exitMeasurementMode()');
     }
-    this._viewer.domElement.addEventListener('pointerdown', this._handlePointerClick, { capture: true });
+    this._viewer.on('click', this._handlePointerClick);
     this._viewer.on('beforeSceneRendered', this._handleClippingPlanes);
     this._events.measurementStarted.fire();
     this._measurementMode = true;
@@ -251,7 +251,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       throw new Error('Measurement mode is not active, call enterMeasurementMode()');
     }
     this.cancelActiveMeasurement();
-    this._viewer.domElement.removeEventListener('pointerdown', this._handlePointerClick, { capture: true });
+    this._viewer.off('click', this._handlePointerClick);
     this._viewer.off('beforeSceneRendered', this._handleClippingPlanes);
     this._events.measurementEnded.fire();
     this._measurementMode = false;
@@ -377,13 +377,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     super.dispose();
   }
 
-  private async onPointerClick(event: MouseEvent): Promise<void> {
-    if (event.target !== this._viewer.canvas) {
-      return;
-    }
-
-    event.stopPropagation();
-
+  private async onPointerClick(event: { offsetX: number; offsetY: number }): Promise<void> {
     const { offsetX, offsetY } = event;
 
     const intersection = await this._viewer.getIntersectionFromPixel(offsetX, offsetY);

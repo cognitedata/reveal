@@ -45,15 +45,20 @@ export const Main: Story = {
           }
         }}>
         <RevealResourcesFitCameraOnLoad resources={resources} />
-        <ViewerAnchor position={position}>
+        <ViewerAnchor
+          position={position}
+          sticky
+          stickyMargin={20}
+          style={{
+            transform: 'translate(-50%, calc(-100% - 50px))'
+          }}>
           <div
             style={{
               backgroundColor: 'turquoise',
               padding: '10px',
               borderRadius: '10px',
               borderStyle: 'solid',
-              maxWidth: '300px',
-              transform: 'translate(-50%, calc(-100% - 50px))'
+              maxWidth: '300px'
             }}>
             <SuppressedDiv>
               <p>This label is stuck at position {position.toArray().join(',')}</p>
