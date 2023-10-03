@@ -13,6 +13,8 @@ import type {
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import { getRoutineIndex } from '../Commands/utils';
+
 import { CollapseOptions } from './CollapseOptions';
 
 interface GroupProps {
@@ -28,6 +30,7 @@ export function Group({
   groupOrder,
 }: React.PropsWithChildren<GroupProps>) {
   const { setValues, setFieldValue, values } = useFormikContext<UserDefined>();
+  const groupIndex = getRoutineIndex(values, procedure.order);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const controls = useDragControls();
   const dragControlKey = procedure.order.toString();
@@ -58,7 +61,7 @@ export function Group({
           <span className="procedure-order">{groupOrder + 1}</span>
           <Field
             className="group-description-input"
-            name={`routine.${procedure.order - 1}.description`}
+            name={`routine.${groupIndex}.description`}
             size={procedure.description.length - 5}
             spellCheck={false}
             value={procedure.description}
