@@ -32,8 +32,8 @@ export function CadModelContainer({
   const cachedViewerRef = useRevealKeepAlive();
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
-  const [layersState] = useLayersUrlParams();
-  const { cadLayers } = layersState;
+  const [layersUrlState] = useLayersUrlParams();
+  const { cadLayers } = layersUrlState;
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(
     viewer.models.find(

@@ -34,7 +34,7 @@ export const useSlicerUrlParams = (): [
 ] => {
   const { url, searchParams } = useSearchParams();
 
-  const slicerState = useMemo(() => {
+  const slicerUrlState = useMemo(() => {
     const topBottom = searchParams.get(ParamKeys.SlicerState);
 
     if (topBottom !== null && topBottom !== undefined) {
@@ -45,7 +45,7 @@ export const useSlicerUrlParams = (): [
     return { top: 1, bottom: 0 };
   }, [searchParams]);
 
-  const setSlicerState = useCallback(
+  const setSlicerUrlState = useCallback(
     (slicerTopBottom: number[]) => {
       searchParams.set(ParamKeys.SlicerState, JSON.stringify(slicerTopBottom));
       window.history.pushState({}, '', url);
@@ -53,7 +53,7 @@ export const useSlicerUrlParams = (): [
     [searchParams]
   );
 
-  return [slicerState, setSlicerState];
+  return [slicerUrlState, setSlicerUrlState];
 };
 
 export const useLayersUrlParams = (): [
@@ -62,7 +62,7 @@ export const useLayersUrlParams = (): [
 ] => {
   const { url, searchParams } = useSearchParams();
 
-  const layersState = useMemo(() => {
+  const layersUrlState = useMemo(() => {
     const cadInstance = searchParams.get(ParamKeys.CadLayersState);
     const pointCloudInstance = searchParams.get(ParamKeys.PointCloudLayersState);
     const image360Instance = searchParams.get(ParamKeys.Image360LayersState);
@@ -104,7 +104,7 @@ export const useLayersUrlParams = (): [
     };
   }, [searchParams]);
 
-  const setLayersState = useCallback(
+  const setLayersUrlState = useCallback(
     (layers: LayersUrlStateParam) => {
       const { cadLayers, pointCloudLayers, image360Layers } = layers;
 
@@ -122,5 +122,5 @@ export const useLayersUrlParams = (): [
     [searchParams]
   );
 
-  return [layersState, setLayersState];
+  return [layersUrlState, setLayersUrlState];
 };

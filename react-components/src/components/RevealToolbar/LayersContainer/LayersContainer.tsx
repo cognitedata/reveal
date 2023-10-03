@@ -14,7 +14,7 @@ import { useLayersUrlParams } from '../../../hooks/useUrlStateParam';
 
 const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): ReactElement => {
   const viewer = useReveal();
-  const [, setLayersState] = useLayersUrlParams();
+  const [, setLayersUrlState] = useLayersUrlParams();
   const [layersContainerState, setLayersContainerState] = useState<Reveal3DResourcesLayerStates>({
     cadLayerData: [],
     pointCloudLayerData: [],
@@ -46,7 +46,7 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
         applied: data.isToggled
       };
     });
-    setLayersState({
+    setLayersUrlState({
       cadLayers,
       pointCloudLayers,
       image360Layers

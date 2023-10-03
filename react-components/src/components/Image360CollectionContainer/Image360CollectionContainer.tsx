@@ -22,8 +22,8 @@ export function Image360CollectionContainer({
   const cachedViewerRef = useRevealKeepAlive();
   const modelRef = useRef<Image360Collection>();
   const viewer = useReveal();
-  const [layersState] = useLayersUrlParams();
-  const { image360Layers } = layersState;
+  const [layersUrlState] = useLayersUrlParams();
+  const { image360Layers } = layersUrlState;
 
   useEffect(() => {
     void add360Collection();

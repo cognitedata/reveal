@@ -46,8 +46,8 @@ export function PointCloudContainer({
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
-  const [layersState] = useLayersUrlParams();
-  const { pointCloudLayers } = layersState;
+  const [layersUrlState] = useLayersUrlParams();
+  const { pointCloudLayers } = layersUrlState;
 
   useEffect(() => {
     addModel(modelId, revisionId, transform)

@@ -25,8 +25,8 @@ type LayersButtonProps = {
 export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): ReactElement => {
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
-  const [layersState] = useLayersUrlParams();
-  const { cadLayers, pointCloudLayers, image360Layers } = layersState;
+  const [layersUrlState] = useLayersUrlParams();
+  const { cadLayers, pointCloudLayers, image360Layers } = layersUrlState;
   const [visible, setVisible] = useState<boolean>(false);
 
   const [cadModelIds, setCadModelIds] = useState<number[]>([]);

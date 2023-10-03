@@ -27,8 +27,8 @@ type SlicerButtonProps = {
 export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): ReactElement => {
   const viewer = useReveal();
   const { reveal3DResourcesCount } = useReveal3DResourcesCount();
-  const [slicerState, setSlicerState] = useSlicerUrlParams();
-  const { top, bottom } = storeStateInUrl ? slicerState : { top: 1, bottom: 0 };
+  const [slicerUrlState, setSlicerUrlState] = useSlicerUrlParams();
+  const { top, bottom } = storeStateInUrl ? slicerUrlState : { top: 1, bottom: 0 };
   const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
@@ -82,7 +82,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
     });
 
     if (storeStateInUrl) {
-      setSlicerState(newValues);
+      setSlicerUrlState(newValues);
     }
   }
 
