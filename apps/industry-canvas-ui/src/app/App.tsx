@@ -5,11 +5,7 @@ import collapseStyle from 'rc-collapse/assets/index.css';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import {
-  getProject,
-  isUsingUnifiedSignin,
-  useGlobalStyles,
-} from '@cognite/cdf-utilities';
+import { getProject, useGlobalStyles } from '@cognite/cdf-utilities';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { ErrorBoundary } from '@cognite/react-errors';
@@ -28,7 +24,7 @@ export default () => {
     throw new Error('project missing');
   }
 
-  const baseUrl = isUsingUnifiedSignin() ? `/cdf/:tenant` : `/:tenant`;
+  const baseUrl = `/:tenant`;
 
   const didLoadStyles = useGlobalStyles([
     cogsStyles,

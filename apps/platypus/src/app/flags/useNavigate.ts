@@ -31,8 +31,7 @@ export const useNavigate = () => {
         ...queryString.parse(window.location.search),
         ...params,
       },
-      undefined,
-      environment.APP_ENV === 'preview'
+      undefined
     );
 
     if (

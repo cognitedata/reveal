@@ -8,7 +8,7 @@ import {
 
 import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
 
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { getProject } from '@cognite/cdf-utilities';
 
 import { Spinner } from './components/Spinner/Spinner';
 import { getContainer } from './GlobalStyles';
@@ -59,7 +59,7 @@ const RoutesWrapper = ({ children }: RoutesWrapperProps) => {
   return <>{children}</>;
 };
 const Routes = () => {
-  const tenant = isUsingUnifiedSignin() ? `/cdf/${getProject()}` : getProject();
+  const tenant = getProject();
 
   return (
     <BrowserRouter

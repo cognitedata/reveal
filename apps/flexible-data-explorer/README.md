@@ -53,4 +53,4 @@ Follow the guide [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3
 4. Proceed with the login steps.
 
 Keep having issues? Reach out the team in
-[#temp-unified-login](https://cognitedata.slack.com/archives/C0457PWB5HR) on Slack.
+[#cdf-ui-devs](https://cognitedata.slack.com/archives/C012L1VCTTL) on Slack.

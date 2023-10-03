@@ -26,7 +26,7 @@ Simply go to the [create repo page] and select "cognitedata/unified-cdf-ui-demo-
 ## Help
 
 If you have any questions related to frontend development, please join us in [#frontend] and ask away!
-If you have any questions related to fusion development, please join us in [#unified-cdf-ui-devs] and ask away!
+If you have any questions related to fusion development, please join us in [#cdf-ui-devs] and ask away!
 
 [React](https://reactjs.org/)
 

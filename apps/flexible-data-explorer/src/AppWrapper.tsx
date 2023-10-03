@@ -1,7 +1,5 @@
 import '@cognite/cogs.js/dist/cogs.css';
-import { AuthProvider } from '@cognite/auth-react';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { Loader } from '@cognite/cogs.js';
 
 import App from './app/App';
 import { AuthProvider as InternalAuthProvider } from './app/common/auth/AuthProvider';
@@ -15,11 +13,9 @@ export const AppWrapper = () => {
   return (
     <GlobalStyles>
       <I18nWrapper translations={translations} defaultNamespace={projectName}>
-        <AuthProvider loader={<Loader infoText="Loading" />}>
-          <InternalAuthProvider>
-            <App />
-          </InternalAuthProvider>
-        </AuthProvider>
+        <InternalAuthProvider>
+          <App />
+        </InternalAuthProvider>
       </I18nWrapper>
       <GlobalStyle />
     </GlobalStyles>

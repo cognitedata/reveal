@@ -1,8 +1,4 @@
-import { clearLoginHints, generateRedirectUri } from '@cognite/auth-react';
-
 import { ProjectList, TokenInspect } from '../types';
-
-import { isUsingUnifiedSignin } from './isUsingUnifiedSignin';
 
 export const redirectToApp = (
   projectName: string,
@@ -22,15 +18,10 @@ export const redirectToApp = (
 };
 
 export const redirectToLogin = () => {
-  if (isUsingUnifiedSignin()) {
-    clearLoginHints();
-    window.location.href = generateRedirectUri();
-  } else {
-    const path = encodeURIComponent(
-      window.location.pathname.split('/').slice(2).join('/')
-    );
-    window.location.href = path ? `/?ref=${path}` : '/';
-  }
+  const path = encodeURIComponent(
+    window.location.pathname.split('/').slice(2).join('/')
+  );
+  window.location.href = path ? `/?ref=${path}` : '/';
 };
 
 export const parseEnvFromCluster = (cluster: string) => {

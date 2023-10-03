@@ -4,11 +4,7 @@ import { Route, Routes as ReactRoutes } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 
 import { getFlow } from '@cognite/auth-utils';
-import {
-  getProject,
-  getCluster,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { getProject, getCluster } from '@cognite/cdf-utilities';
 import { useFirebaseInit } from '@cognite/charts-lib';
 import { Loader, toast } from '@cognite/cogs.js';
 import { parseEnvFromCluster } from '@cognite/login-utils';
@@ -82,15 +78,10 @@ const RouteWithFirebase = ({
 const RouteWithSentry = Sentry.withSentryReactRouterV6Routing(Route);
 
 const Routes = () => {
-  const baseUrl = isUsingUnifiedSignin()
-    ? `/cdf/:project/:subAppPath`
-    : '/:project/:subAppPath';
+  const baseUrl = '/:project/:subAppPath';
   return (
     <ReactRoutes>
-      <RouteWithSentry
-        path="/"
-        element={isUsingUnifiedSignin() ? null : <TenantSelectorView />}
-      />
+      <RouteWithSentry path="/" element={<TenantSelectorView />} />
       <RouteWithSentry
         path={`${baseUrl}`}
         element={<RouteWithFirebase element={ChartListPage} />}

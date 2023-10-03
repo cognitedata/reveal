@@ -1,7 +1,7 @@
 // TODO(CDFUX-0): copies from @cognite/cdf-utilities!
 import queryString from 'query-string';
 
-import { createLink, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 
 export const getProject = () =>
   new URL(window.location.href).pathname.split('/')[1];
@@ -37,9 +37,7 @@ export const removeProjectFromPath = (path: string) => {
 };
 
 export const getSubAppPath = () => {
-  const mountPoint = isUsingUnifiedSignin()
-    ? window.location.pathname.split('/')[3]
-    : window.location.pathname.split('/')[2];
+  const mountPoint = window.location.pathname.split('/')[2];
   return `/${mountPoint}`;
 };
 

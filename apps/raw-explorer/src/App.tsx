@@ -15,11 +15,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthContainer,
-  getProject,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { AuthContainer, getProject } from '@cognite/cdf-utilities';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 setupMixpanel();
@@ -36,7 +32,7 @@ const App = () => {
 
   // const appName = 'cdf-raw-explorer';
   const projectName = getProject();
-  const tenant = isUsingUnifiedSignin() ? `/cdf/${projectName}` : projectName;
+  const tenant = projectName;
 
   return (
     <I18nWrapper

@@ -9,7 +9,7 @@ Please see the [deployment guide] for more information how to actually get this 
 ## Help
 
 If you have any questions related to frontend development, please join us in [#frontend] and ask away!
-If you have any questions related to fusion development, please join us in [#unified-cdf-ui-devs] and ask away!
+If you have any questions related to fusion development, please join us in [#cdf-ui-devs] and ask away!
 
 [React](https://reactjs.org/)
 

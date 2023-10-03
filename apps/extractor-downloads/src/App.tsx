@@ -5,11 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthContainer,
-  getProject,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { AuthContainer, getProject } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
@@ -34,9 +30,7 @@ const App = () => {
   const appName = 'cdf-extractor-downloads';
   const projectName = getProject();
 
-  const baseUrl = isUsingUnifiedSignin()
-    ? `/cdf/${projectName}`
-    : `/${projectName}`;
+  const baseUrl = `/${projectName}`;
 
   return (
     <I18nWrapper

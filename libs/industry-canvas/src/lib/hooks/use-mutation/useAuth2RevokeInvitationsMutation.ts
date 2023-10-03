@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getToken } from '@cognite/cdf-sdk-singleton';
-import { getOrganization, getProject } from '@cognite/cdf-utilities';
+import { getProject } from '@cognite/cdf-utilities';
 import { toast } from '@cognite/cogs.js';
+import { getOrganization } from '@cognite/login-utils';
 
 import { QueryKeys, TOAST_POSITION, AUTH2_API_URL } from '../../constants';
 

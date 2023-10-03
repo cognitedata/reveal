@@ -6,11 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import debounce from 'lodash/debounce';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthContainer,
-  getProject,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { AuthContainer, getProject } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
@@ -25,7 +21,6 @@ import { AntStyles, GlobalStyles } from './styles';
 const App = () => {
   const project = getProject();
   const LS_KEY = `${LS_KEY_PREFIX}_${project}`;
-  const baseUrl = isUsingUnifiedSignin() ? '/cdf' : '';
 
   const updateLocalStorage = debounce(() => {
     const localStorageContent = persistedState(store.getState());
@@ -70,7 +65,7 @@ const App = () => {
                   <BrowserRouter>
                     <Routes>
                       <Route
-                        path={`${baseUrl}/:project/${root}/*`}
+                        path={`/:project/${root}/*`}
                         element={<RootApp />}
                       />
                     </Routes>
