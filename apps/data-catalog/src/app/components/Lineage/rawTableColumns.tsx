@@ -1,11 +1,11 @@
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import { ExtpipeLink } from '@data-catalog-app/components/Lineage/Extpipe/ExtpipeLink';
-import { RawExtpipeWithUpdateTime } from '@data-catalog-app/components/Lineage/Extpipe/ExtpipeRawTables';
-import { RawWithUpdateTime } from '@data-catalog-app/components/Lineage/Lineage';
-import { CogsTableCellRenderer } from '@data-catalog-app/utils';
-import { NoStyleList } from '@data-catalog-app/utils/styledComponents';
-
 import { createLink } from '@cognite/cdf-utilities';
+
+import { useTranslation } from '../../common/i18n';
+import { CogsTableCellRenderer, NoStyleList } from '../../utils';
+
+import { ExtpipeLink } from './Extpipe/ExtpipeLink';
+import { RawExtpipeWithUpdateTime } from './Extpipe/ExtpipeRawTables';
+import { RawWithUpdateTime } from './Lineage';
 
 export const useRawTableColumns = () => {
   const { t } = useTranslation();

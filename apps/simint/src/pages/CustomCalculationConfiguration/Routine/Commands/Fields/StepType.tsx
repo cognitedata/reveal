@@ -1,9 +1,9 @@
-import { InputRow } from '@simint-app/components/forms/ModelForm/elements';
 import { Field, useFormikContext } from 'formik';
 
 import { Select } from '@cognite/cogs.js';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
+import { InputRow } from '../../../../../components/forms/ModelForm/elements';
 import { ACTION_OPTIONS, getOptionLabel } from '../utils';
 import type { ConfigurationFieldProps, ValueOptionType } from '../utils';
 
@@ -19,7 +19,7 @@ const mapStep = {
   Set: {
     type: 'Set',
     arguments: {
-      type: 'manual',
+      type: 'inputConstant',
     },
   },
   Command: {
@@ -42,6 +42,7 @@ export function StepType({
         <Field
           as={Select}
           label="Step type"
+          inputId={formikPath}
           name={formikPath}
           options={ACTION_OPTIONS}
           value={{

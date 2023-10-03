@@ -1,10 +1,11 @@
 import { RuleDto, RuleSeverity } from '@data-quality/api/codegen';
-import { useLoadDataScopes } from '@data-quality/hooks';
-import { useDataModel } from '@data-quality/hooks/useDataModel';
+import { RequiredWrapper } from '@data-quality/components';
+import { useLoadDataScopes, useDataModel } from '@data-quality/hooks';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useFormik } from 'formik';
 
 import {
+  Body,
   Divider,
   Drawer,
   Flex,
@@ -15,6 +16,8 @@ import {
   Textarea,
 } from '@cognite/cogs.js';
 
+import { useShowUpsertSuccess } from '../hooks';
+
 import { UpsertRuleFooter } from './components/UpsertRuleFooter';
 import {
   RuleFormValues,
@@ -23,7 +26,7 @@ import {
   emptyFormValues,
   handleValidate,
 } from './helpers';
-import { useShowUpsertSuccess, useUpsertRule } from './hooks';
+import { useUpsertRule } from './hooks';
 
 type UpsertRuleDrawerProps = {
   editedRule?: RuleDto;
@@ -41,6 +44,11 @@ export const UpsertRuleDrawer = ({
   const { isLoading, upsertRule } = useUpsertRule();
   const { showUpsertSuccess } = useShowUpsertSuccess();
 
+  const dataTypeOptions = useDataModel().dataModel.views.map((type) => ({
+    label: type.externalId,
+    value: type.externalId,
+  }));
+
   const triggerSubmit = (newValues: RuleFormValues) => {
     upsertRule({
       editedRule,
@@ -49,7 +57,8 @@ export const UpsertRuleDrawer = ({
         showUpsertSuccess({
           isUpdate: !!editedRule,
           onSuccess: onCancel,
-          ruleName: values.name,
+          targetName: values.name,
+          targetType: 'Rule',
         });
 
         resetForm();
@@ -67,14 +76,9 @@ export const UpsertRuleDrawer = ({
       enableReinitialize: true,
     });
 
-  const dataTypeOptions = useDataModel().dataModel.views.map((type) => ({
-    label: type.externalId,
-    value: type.externalId,
-  }));
-
-  const selectedDataType =
-    dataTypeOptions.find((type) => type.value === values.dataType) ||
-    dataTypeOptions[0];
+  const selectedDataType = dataTypeOptions.find(
+    (type) => type.value === values.dataType
+  );
 
   const dataScopeOptions = useLoadDataScopes()
     .dataScopes.filter((type) => type.dataType === selectedDataType?.value)
@@ -125,7 +129,10 @@ export const UpsertRuleDrawer = ({
                 text: t('data_quality_name', 'Name'),
               }}
               onChange={(e) => setFieldValue('name', e.target.value)}
-              placeholder={t('data_quality_set_name', 'Set a name to the rule')}
+              placeholder={t(
+                'data_quality_set_name_rule',
+                'Set a name to the rule'
+              )}
               status={errors.name ? 'critical' : undefined}
               statusText={errors.name}
               value={values.name}
@@ -189,22 +196,37 @@ export const UpsertRuleDrawer = ({
             {t('data_quality_rule_setup', 'Rule setup')}
           </Heading>
           <Flex direction="column" gap={16}>
-            <Select
-              inputId="dataType"
-              disabled={!!editedRule}
+            <Flex direction="column">
+              <Body size="small" muted>
+                {t('data_quality_rule_setup_info1', '')}
+              </Body>
+              <Body size="small" muted>
+                {t('data_quality_rule_setup_info2', '')}
+              </Body>
+            </Flex>
+            <RequiredWrapper
+              errorMessage={errors.dataType}
               label={t('data_quality_data_type', 'Data type')}
-              onChange={(e: OptionType<string>) =>
-                setFieldValue('dataType', e.value)
-              }
-              options={dataTypeOptions}
-              value={selectedDataType}
-            />
+              showErrorMessage={!!errors.dataType}
+            >
+              <Select
+                inputId="dataType"
+                disabled={!!editedRule}
+                onChange={(e: OptionType<string>) =>
+                  setFieldValue('dataType', e.value)
+                }
+                options={dataTypeOptions}
+                value={selectedDataType}
+              />
+            </RequiredWrapper>
 
             <Select
+              disabled={!selectedDataType}
               inputId="dataScopeId"
+              isClearable
               label={t('data_quality_data_scope_one', 'Data scope')}
               onChange={(e: OptionType<string>) =>
-                setFieldValue('dataScopeId', e.value)
+                setFieldValue('dataScopeId', e.value || null)
               }
               options={dataScopeOptions}
               value={selectedDataScope}

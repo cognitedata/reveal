@@ -210,7 +210,8 @@
   "source-status-earlier-pause_one": "{{count}} earlier pause:",
   "source-status-earlier-pause_other": "{{count}} earlier pauses:",
   "source-status-error": "{{logCount}} errors:",
-  "source-status-no-data": "No Data",
+  "source-status-no-data": "No data",
+  "source-status-no-data-for": "No data for",
   "source-status-other_one": "{{count}} pause:",
   "source-status-other_other": "{{count}} pauses:",
   "source-status-success": "No errors",
@@ -365,6 +366,7 @@
   "form-format-option-cognite": "Cognite message format",
   "form-format-option-rockwell": "Rockwell FactoryTalk",
   "form-format-option-value": "Values as string",
+  "form-format-option-sparkplug": "Sparkplug B",
   "form-format-option-custom": "+ Create custom format",
   "use-tls": "Enable TLS against the broker"
 }

@@ -65,7 +65,8 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
 };
 
 const Container = styled.div`
-  padding-left: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   overflow-x: clip;
   text-overflow: ellipsis;
   white-space: nowrap;

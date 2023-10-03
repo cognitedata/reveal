@@ -222,7 +222,7 @@
         }
       },
       "defaultConfiguration": "development",
-      "dependsOn": ["build-worker", "^build"]
+      "dependsOn": ["build-worker"]
     },
     "lint": {
       "executor": "@nx/linter:eslint",

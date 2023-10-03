@@ -1,6 +1,6 @@
-import { InfoDrawer } from '@simint-app/components/shared/InfoDrawer';
-
 import { Link } from '@cognite/cogs.js';
+
+import { InfoDrawer } from '../../../../components/shared/InfoDrawer';
 
 export function InputInfoDrawer() {
   return (

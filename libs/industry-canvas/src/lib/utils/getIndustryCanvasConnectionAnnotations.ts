@@ -268,7 +268,7 @@ const getFileConnectionAnnotations = ({
 
 export const getIndustryCanvasConnectionAnnotations = ({
   containers,
-  selectedContainer,
+  selectedContainers,
   annotations,
   hoverId,
   clickedId,
@@ -276,7 +276,7 @@ export const getIndustryCanvasConnectionAnnotations = ({
   timeseriesById,
 }: {
   containers: IndustryCanvasContainerConfig[];
-  selectedContainer: IndustryCanvasContainerConfig | undefined;
+  selectedContainers: IndustryCanvasContainerConfig[];
   annotations: ExtendedAnnotation[];
   hoverId: string | undefined;
   clickedId: string | undefined;
@@ -327,7 +327,7 @@ export const getIndustryCanvasConnectionAnnotations = ({
   });
 
   const shouldShowSelectedContainerConnectionAnnotations =
-    clickedId === undefined && selectedContainer !== undefined;
+    clickedId === undefined && selectedContainers.length > 0;
 
   const linkedConnectionAnnotations = polylineConnectionAnnotations.filter(
     (annotation) => {
@@ -342,9 +342,15 @@ export const getIndustryCanvasConnectionAnnotations = ({
       if (shouldShowSelectedContainerConnectionAnnotations) {
         return (
           (fromId !== undefined &&
-            annotationToContainerIdMap.get(fromId) === selectedContainer?.id) ||
+            selectedContainers.some(
+              (selectedContainer) =>
+                annotationToContainerIdMap.get(fromId) === selectedContainer.id
+            )) ||
           (toId !== undefined &&
-            annotationToContainerIdMap.get(toId) === selectedContainer?.id)
+            selectedContainers.some(
+              (selectedContainer) =>
+                annotationToContainerIdMap.get(toId) === selectedContainer.id
+            ))
         );
       }
 

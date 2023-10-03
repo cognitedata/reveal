@@ -1,9 +1,11 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
+
 import styled from 'styled-components';
+
+import { useTranslation } from '../../../common/i18n';
+import { LineageSubTitle } from '../../../utils/styledComponents';
 import { Extractor, ExtractorProps } from '../Extractor/Extractor';
 import { Source, SourceProps } from '../Source/Source';
-import { LineageSubTitle } from '../../../utils/styledComponents';
-import { useTranslation } from '@data-catalog-app/common/i18n';
 
 export type ExtpipeSourceExtractorProps = SourceProps & ExtractorProps;
 

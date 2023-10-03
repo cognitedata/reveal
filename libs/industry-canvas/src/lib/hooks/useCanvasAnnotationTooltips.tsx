@@ -44,7 +44,7 @@ const useCanvasAnnotationTooltips = ({
     if (isShapeAnnotation(selectedCanvasAnnotation)) {
       return [
         {
-          targetId: String(selectedCanvasAnnotation.id),
+          targetIds: [String(selectedCanvasAnnotation.id)],
           content: (
             <BottomMarginStyle>
               <ShapeAnnotationTooltip
@@ -63,7 +63,7 @@ const useCanvasAnnotationTooltips = ({
     if (isTextAnnotation(selectedCanvasAnnotation)) {
       return [
         {
-          targetId: String(selectedCanvasAnnotation.id),
+          targetIds: [String(selectedCanvasAnnotation.id)],
           content: (
             <BottomMarginStyle>
               <TextAnnotationTooltip
@@ -82,7 +82,7 @@ const useCanvasAnnotationTooltips = ({
     if (isPolylineAnnotation(selectedCanvasAnnotation)) {
       return [
         {
-          targetId: String(selectedCanvasAnnotation.id),
+          targetIds: [String(selectedCanvasAnnotation.id)],
           content: (
             <BottomMarginStyle>
               <LineAnnotationTooltip
@@ -101,7 +101,7 @@ const useCanvasAnnotationTooltips = ({
     if (isStickyAnnotation(selectedCanvasAnnotation)) {
       return [
         {
-          targetId: String(selectedCanvasAnnotation.id),
+          targetIds: [String(selectedCanvasAnnotation.id)],
           content: (
             <BottomMarginStyle>
               <StickyAnnotationTooltip

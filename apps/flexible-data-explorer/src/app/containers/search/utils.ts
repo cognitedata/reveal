@@ -108,3 +108,19 @@ export const flattenProperties = (
     return [...acc, { key, value: JSON.stringify(value) }];
   }, [] as { key: string; value?: string }[]);
 };
+
+export const makeAllValuesZero = (data: Record<string, number> | undefined) => {
+  return Object.keys(data ?? {}).reduce((acc, key) => {
+    return { ...acc, [key]: 0 };
+  }, {});
+};
+
+export function areAllValuesZero(
+  values: { [key: string]: number } | undefined
+) {
+  return Object.values(values ?? {}).every((value) => value === 0);
+}
+
+export const makeAllValuesUnique = (array: string[]) => {
+  return Array.from(new Set(array));
+};

@@ -111,7 +111,7 @@ export const useUnifiedFileViewerState = ({
     if (focusedAnnotation) {
       return [
         {
-          targetId: `${focusedAnnotation.id}`,
+          targetIds: [`${focusedAnnotation.id}`],
           content: (
             <AnnotationPopover
               resourceId={focusedAnnotation.metadata.resourceId}

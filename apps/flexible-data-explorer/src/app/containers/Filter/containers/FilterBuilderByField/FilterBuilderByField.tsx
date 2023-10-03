@@ -10,7 +10,7 @@ export interface FilterBuilderByFieldProps {
   displayName?: string;
   fields: Field[];
   value?: ValueByField;
-  onBackClick: () => void;
+  onBackClick?: () => void;
   onChange: (value: ValueByField) => void;
   isError?: boolean;
 }

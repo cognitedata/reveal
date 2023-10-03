@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useMatch } from 'react-location';
 
-import { Editor } from '@simint-app/components/shared/Editor';
-import { Wizard } from '@simint-app/components/shared/Wizard';
-import { useUserInfo } from '@simint-app/hooks/useUserInfo';
-import { DataSamplingStep } from '@simint-app/pages/CalculationConfiguration/steps/DataSamplingStep';
-import { ScheduleStep } from '@simint-app/pages/CalculationConfiguration/steps/ScheduleStep';
-import { SummaryStep } from '@simint-app/pages/CalculationConfiguration/steps/SummaryStep';
-import { AppLocationGenerics } from '@simint-app/routes';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import { Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
 import { Infobox, Switch, toast } from '@cognite/cogs.js';
 import { useUpsertCalculationMutation } from '@cognite/simconfig-api-sdk/rtk';
 import type { StepFields, UserDefined } from '@cognite/simconfig-api-sdk/rtk';
+
+import { Editor } from '../../components/shared/Editor';
+import { Wizard } from '../../components/shared/Wizard';
+import { useUserInfo } from '../../hooks/useUserInfo';
+import { AppLocationGenerics } from '../../routes';
+import { createCdfLink } from '../../utils/createCdfLink';
+import { DataSamplingStep } from '../CalculationConfiguration/steps/DataSamplingStep';
+import { ScheduleStep } from '../CalculationConfiguration/steps/ScheduleStep';
+import { SummaryStep } from '../CalculationConfiguration/steps/SummaryStep';
 
 import { CustomCalculationBuilderContainer } from './elements';
 import { Routine } from './Routine';

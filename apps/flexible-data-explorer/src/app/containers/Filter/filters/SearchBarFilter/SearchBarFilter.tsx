@@ -20,8 +20,8 @@ export const SearchBarFilter: React.FC<SearchBarFilterProps> = ({
 
   const dataTypes = useMemo(() => {
     return [
-      ...transformDefTypesToFilterOptions(client.allDataTypes),
       ...customDataTypeOptions,
+      ...transformDefTypesToFilterOptions(client.allDataTypes),
     ];
   }, [client.allDataTypes]);
 

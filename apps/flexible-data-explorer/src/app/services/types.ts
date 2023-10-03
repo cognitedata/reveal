@@ -45,6 +45,7 @@ export type SearchResponse = {
 export interface SearchResponseItem extends Record<string, unknown> {
   __typename: DataType;
   externalId: string;
+  space: string;
   name: string;
   description?: string;
 }

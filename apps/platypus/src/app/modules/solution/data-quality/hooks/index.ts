@@ -1,5 +1,6 @@
 export * from './useAccessControl';
 export * from './useCapabilities';
+export * from './useDataModel';
 export * from './useDataSourceValidation';
 export * from './useDisclosure';
 export * from './useLoadDatapoints';

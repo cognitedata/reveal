@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 
 import styled from 'styled-components';
 
-import { getContainer } from '@data-catalog-app/utils/shared';
 import noop from 'lodash/noop';
 
 import {
@@ -10,6 +9,8 @@ import {
   Drawer as CogsDrawer,
   DrawerProps as CogsDrawerProps,
 } from '@cognite/cogs.js';
+
+import { getContainer } from '../utils';
 
 interface DrawerProps extends CogsDrawerProps {
   children: JSX.Element;

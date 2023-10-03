@@ -121,6 +121,25 @@
         "jestConfig": "apps/access-management/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/access-management/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "access-management:serve:development",
+        "env": {
+          "ORG": "cog-charts",
+          "PROJECT": "charts-azuredev",
+          "CLUSTER": "azure-dev.cognitedata.com",
+          "TENANT": "cognitecharts.onmicrosoft.com"
+        }
+      },
+      "configurations": {
+        "development": {
+          "devServerTarget": "access-management:serve:development"
+        }
+      }
     }
   },
   "tags": [],

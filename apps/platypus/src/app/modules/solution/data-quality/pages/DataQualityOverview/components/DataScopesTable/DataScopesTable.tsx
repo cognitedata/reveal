@@ -1,54 +1,74 @@
+import { useMemo, useState } from 'react';
 import { CellProps } from 'react-table';
 
 import { DataScopeDto } from '@data-quality/api/codegen';
-import { useLoadDataScopes } from '@data-quality/hooks';
+import {
+  useAccessControl,
+  useLoadDataScopes,
+  useLoadDataSource,
+} from '@data-quality/hooks';
+import { UpsertDataScopeModal } from '@data-quality/pages';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import { Notification } from '@platypus-app/components/Notification/Notification';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Body, Flex, Table, TableColumn } from '@cognite/cogs.js';
 
+import { DataScopeOptionsMenu } from './DataScopeOptionsMenu';
 import { DataTypeCell, FiltersCell, NameCell } from './DataScopesCells';
 
 export const DataScopesTable = () => {
   const { t } = useTranslation('DataScopesTable');
 
-  const { dataScopes, isLoading, error } = useLoadDataScopes();
+  const [editedDataScope, setEditedDataScope] = useState<DataScopeDto>();
 
-  const tableColumns: TableColumn<DataScopeDto>[] = [
-    {
-      Header: 'Name',
-      accessor: 'name',
-      Cell: ({ row }: CellProps<DataScopeDto>) => {
-        return (
-          <NameCell
-            onClick={() => {
-              Notification({
-                type: 'info',
-                message: 'Under development',
-              });
-            }}
-            dataScopeName={row.original.name}
-          />
-        );
+  const { canWriteDataValidation } = useAccessControl();
+  const { dataScopes, isLoading, error } = useLoadDataScopes();
+  const { dataSource } = useLoadDataSource();
+
+  const dataScopesDependency = JSON.stringify(dataScopes);
+
+  const tableColumns: TableColumn<DataScopeDto>[] = useMemo(() => {
+    return [
+      {
+        Header: 'Name',
+        accessor: 'name',
+        Cell: ({ row }: CellProps<DataScopeDto>) => {
+          return (
+            <NameCell
+              onClick={() => setEditedDataScope(row.original)}
+              dataScopeName={row.original.name}
+            />
+          );
+        },
       },
-    },
-    {
-      Header: 'Data type',
-      accessor: 'dataType',
-      Cell: ({ row }: CellProps<DataScopeDto>) => {
-        return <DataTypeCell dataType={row.original.dataType} />;
+      {
+        Header: 'Data type',
+        accessor: 'dataType',
+        Cell: ({ row }: CellProps<DataScopeDto>) => {
+          return <DataTypeCell dataType={row.original.dataType} />;
+        },
       },
-    },
-    {
-      Header: 'Filters',
-      accessor: 'filters',
-      Cell: ({ row }: CellProps<DataScopeDto>) => {
-        return <FiltersCell filters={row.original.filters} />;
+      {
+        Header: 'Filters',
+        accessor: 'filters',
+        Cell: ({ row }: CellProps<DataScopeDto>) => {
+          return <FiltersCell filters={row.original.filters} />;
+        },
       },
-    },
-  ];
+      {
+        Header: '',
+        accessor: 'externalId',
+        Cell: ({ row }: any) => {
+          return (
+            canWriteDataValidation && (
+              <DataScopeOptionsMenu dataScope={row.original} />
+            )
+          );
+        },
+      },
+    ];
+  }, [dataSource?.externalId, dataScopesDependency]);
 
   const renderContent = () => {
     if (isLoading) return <Spinner />;
@@ -85,7 +105,11 @@ export const DataScopesTable = () => {
         {renderContent()}
       </Flex>
 
-      {/*TODO add here modal for upserting a data scope */}
+      <UpsertDataScopeModal
+        editedDataScope={editedDataScope}
+        isVisible={!!editedDataScope}
+        onCancel={() => setEditedDataScope(undefined)}
+      />
     </>
   );
 };

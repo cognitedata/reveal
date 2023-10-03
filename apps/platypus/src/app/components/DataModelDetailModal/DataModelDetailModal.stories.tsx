@@ -18,7 +18,6 @@ const Template: Story<DataModelDetailModalProps> = (args) => (
 
 export const Base = Template.bind({});
 Base.args = {
-  dataSets: [],
   description: 'Lorem ipsum dolor amit.',
   externalId: 'lorem-ipsum',
   name: 'Lorem Ipsum',

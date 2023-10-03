@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { ReactNode, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -14,6 +14,8 @@ interface Props {
   description?: string;
   properties?: { key?: string; value?: any }[];
   onClick?: () => void;
+  selected?: boolean;
+  customHoverButton?: ReactNode;
 }
 
 const MAX_PROPERTIES = 3;
@@ -24,7 +26,11 @@ export const SearchResultsItem: React.FC<Props> = ({
   description,
   properties,
   onClick,
+  selected,
+  customHoverButton,
 }) => {
+  const [isHoverButtonVisible, setIsHoverButtonVisible] = useState(false);
+
   const normalizedProperties = useMemo(() => {
     // Some of the properties may be time series charts etc, so we need to filter out those
     const propertiesWithKey = properties?.filter(({ key }) => !!key);
@@ -55,7 +61,18 @@ export const SearchResultsItem: React.FC<Props> = ({
   }, [properties]);
 
   return (
-    <Container role="button" tabIndex={0} onClick={onClick}>
+    <Container
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      selected={selected}
+      onPointerEnter={() =>
+        !isHoverButtonVisible && setIsHoverButtonVisible(true)
+      }
+      onPointerLeave={() =>
+        isHoverButtonVisible && setIsHoverButtonVisible(false)
+      }
+    >
       {icon && <CategoryChip icon={icon} />}
 
       <TitleContent>
@@ -71,14 +88,41 @@ export const SearchResultsItem: React.FC<Props> = ({
           </PropertiesContent>
         ))}
       </PropertiesContainer>
+      {isHoverButtonVisible && customHoverButton && (
+        <HoverButtonBackground>{customHoverButton}</HoverButtonBackground>
+      )}
     </Container>
   );
 };
 
-const Container = styled.div`
-  min-height: 40px;
-  background: white;
+const HoverButtonBackground = styled.div`
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 56px;
+  width: 133px;
+  background: linear-gradient(
+    270deg,
+    #f2f2f5 83.39%,
+    rgba(242, 242, 245, 0) 100%
+  );
+`;
+
+const Container = styled.div<{ selected?: boolean }>`
+  min-height: 76px;
+  background: ${({ selected }) =>
+    selected
+      ? 'var(--cogs-themed-surface--interactive--toggled-default)'
+      : 'white'};
+  color: ${({ selected }) =>
+    selected
+      ? 'var(--cogs-themed-text-icon--interactive--default)'
+      : 'var(--cogs-themed-text-icon--strong)'};
   padding: 16px;
+  position: relative;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -87,12 +131,7 @@ const Container = styled.div`
   /* border-bottom: 1px solid #ebeef7; */
 
   &:hover {
-    background: linear-gradient(
-        0deg,
-        rgba(59, 130, 246, 0.1),
-        rgba(59, 130, 246, 0.1)
-      ),
-      rgba(255, 255, 255, 0.8);
+    background: var(--surface-interactive-hover, rgba(34, 42, 83, 0.06));
   }
 `;
 
@@ -130,7 +169,10 @@ const NameText = styled(Title).attrs({ level: 6 })`
   white-space: nowrap;
 `;
 
-const DescriptionText = styled(Typography.Body).attrs({ level: 6 })``;
+const DescriptionText = styled(Typography.Body).attrs({
+  level: 6,
+  fallback: '',
+})``;
 
 const KeyText = styled(Typography.Body).attrs({ size: 'xsmall', muted: true })`
   text-transform: capitalize;

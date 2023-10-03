@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react';
 
-import { CopyValue } from '@simint-app/components/molecules/CopyValue';
-import { getFormattedSciNumber } from '@simint-app/utils/numberUtils';
 import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
 import { Tooltip } from '@cognite/cogs.js';
+
+import { getFormattedSciNumber } from '../../utils/numberUtils';
+import { CopyValue } from '../molecules/CopyValue';
 
 export interface PropertyGridProps<T> {
   entries: Record<string, T>;

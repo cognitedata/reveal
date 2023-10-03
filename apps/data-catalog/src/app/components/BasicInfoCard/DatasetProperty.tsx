@@ -1,6 +1,8 @@
-import { Body, Flex } from '@cognite/cogs.js';
 import { ReactNode } from 'react';
+
 import styled from 'styled-components';
+
+import { Body, Flex } from '@cognite/cogs.js';
 
 interface DatasetPropertyProps {
   label?: string | ReactNode;

@@ -23,7 +23,7 @@ import { UseOnUpdateSelectedAnnotationReturnType } from './useOnUpdateSelectedAn
 import { OnUpdateTooltipsOptions, TooltipsOptions } from './useTooltipsOptions';
 
 export type UseTooltipsParams = {
-  selectedContainer: IndustryCanvasContainerConfig | undefined;
+  selectedContainers: IndustryCanvasContainerConfig[];
   containers: IndustryCanvasContainerConfig[];
   clickedContainerAnnotation: ExtendedAnnotation | undefined;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
@@ -50,7 +50,7 @@ const useIndustryCanvasTooltips = ({
   onAddSummarizationSticky,
   tooltipsOptions,
   onUpdateTooltipsOptions,
-  selectedContainer,
+  selectedContainers,
   onUpdateSelectedAnnotation,
   comments,
   commentAnnotations,
@@ -72,7 +72,7 @@ const useIndustryCanvasTooltips = ({
     onUpdateSelectedAnnotation,
   });
   const containerTooltips = useIndustryCanvasContainerTooltips({
-    selectedContainer,
+    selectedContainers,
     containers,
     tooltipsOptions,
     onUpdateTooltipsOptions,

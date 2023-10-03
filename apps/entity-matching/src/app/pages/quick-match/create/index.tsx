@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
 
-import { useTranslation } from '@entity-matching-app/common';
-import Page from '@entity-matching-app/components/page';
-import { useQuickMatchContext } from '@entity-matching-app/context/QuickMatchContext';
-
 import { Body as _Body, Button, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../common';
+import Page from '../../../components/page';
+import { useQuickMatchContext } from '../../../context/QuickMatchContext';
 
 import ConfigureModel from './configure-model';
 import CreateModel from './create-model';

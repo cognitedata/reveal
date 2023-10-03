@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import Drawer from '@data-catalog-app/components/Drawer';
-import handleError from '@data-catalog-app/utils/handleError';
-import { getContainer } from '@data-catalog-app/utils/shared';
-import { ItemLabel } from '@data-catalog-app/utils/styledComponents';
 import Table from 'antd/lib/table';
 
 import sdk from '@cognite/cdf-sdk-singleton';
+
+import { useTranslation } from '../../common/i18n';
+import { getContainer, handleError, ItemLabel } from '../../utils';
+import Drawer from '../Drawer';
 
 interface EventsProfileProps {
   dataSetId: string | number;

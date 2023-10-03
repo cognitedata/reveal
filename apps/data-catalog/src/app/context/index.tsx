@@ -1,6 +1,8 @@
 import { createContext, ReactNode, useState, useContext } from 'react';
-import { DataSetsState } from './types';
+
 import { CreationDataSet } from '../utils/types';
+
+import { DataSetsState } from './types';
 
 export const DataSetsContextDefault: DataSetsState = {
   setCreationDataSet: () => null,

@@ -3,26 +3,26 @@ import { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { useUpdateDataSetMutation } from '@data-catalog-app/actions';
-import { EmptyDataset, Users as UsersIcon } from '@data-catalog-app/assets';
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import BasicInfoCard from '@data-catalog-app/components/BasicInfoCard';
-import { useResourceAggregates } from '@data-catalog-app/hooks/useResourceAggregates';
-import {
-  ContentView,
-  Divider,
-  DataSet,
-  ContentWrapper,
-  isEmptyDataset,
-  EXPLORE_DATA_CATALOG,
-  trackUsage,
-  Col,
-  Row,
-  Card,
-} from '@data-catalog-app/utils';
-
 import { createLink } from '@cognite/cdf-utilities';
 import { Title, Flex, Body, Button, Icon, Textarea } from '@cognite/cogs.js';
+
+import { useUpdateDataSetMutation } from '../../actions';
+import { EmptyDataset, Users as UsersIcon } from '../../assets';
+import { useTranslation } from '../../common/i18n';
+import { useResourceAggregates } from '../../hooks/useResourceAggregates';
+import {
+  Card,
+  Col,
+  ContentView,
+  ContentWrapper,
+  DataSet,
+  Divider,
+  EXPLORE_DATA_CATALOG,
+  isEmptyDataset,
+  Row,
+  trackUsage,
+} from '../../utils';
+import BasicInfoCard from '../BasicInfoCard';
 
 type DatasetOverviewProps = {
   dataSet: DataSet;

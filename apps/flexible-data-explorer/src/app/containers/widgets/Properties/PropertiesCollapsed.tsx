@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import styled from 'styled-components';
 
@@ -45,7 +45,9 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
         <Button.Fullscreen
           disabled={state === 'loading'}
           onClick={() => onExpandClick?.(id)}
-        />
+        >
+          {t('GENERAL_SHOW_MORE')}
+        </Button.Fullscreen>
       </Widget.Header>
 
       <Widget.Body state={state}>

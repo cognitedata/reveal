@@ -7,10 +7,11 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useCdfUserHistoryService } from '@user-history';
 import omit from 'lodash/omit';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 import { toast } from '@cognite/cogs.js';
 import { DataSetPatch, Group } from '@cognite/sdk';
 
@@ -69,7 +70,7 @@ export const onError = (error: any) => {
 /* MUTATIONS */
 export const useCreateDataSetMutation = () => {
   const client = useQueryClient();
-  const { subAppPath: appPath } = useParams<{ subAppPath?: string }>();
+  const { appPath } = useParams<{ appPath?: string }>();
   const userHistoryService = useCdfUserHistoryService();
 
   const {
@@ -84,11 +85,13 @@ export const useCreateDataSetMutation = () => {
     },
     {
       onSuccess: (dataset) => {
-        userHistoryService.logNewResourceEdit({
-          application: appPath!,
-          name: dataset.name!,
-          path: createLink(`/${appPath}/data-set/${dataset.id}`),
-        });
+        if (appPath && dataset?.name) {
+          userHistoryService.logNewResourceEdit({
+            application: appPath,
+            name: dataset?.name,
+            path: createLink(`/${appPath}/data-set/${dataset.id}`),
+          });
+        }
         invalidateDataSetQueries(client);
       },
       onError,
@@ -142,11 +145,13 @@ export const useUpdateDataSetMutation = () => {
     },
     {
       onSuccess: (_, dataset: DataSet) => {
-        userHistoryService.logNewResourceEdit({
-          application: appPath!,
-          name: dataset.name,
-          path: createLink(`/${appPath}/data-set/${dataset.id}`),
-        });
+        if (appPath) {
+          userHistoryService.logNewResourceEdit({
+            application: appPath,
+            name: dataset.name,
+            path: createLink(`/${appPath}/data-set/${dataset.id}`),
+          });
+        }
         toast.success(
           <span>
             {t('data-set-is-updated', { datasetName: dataset?.name })}

@@ -4,6 +4,7 @@ import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/webpack-resolver';
 
 export function Editor(props: IAceEditorProps) {
   return <AceEditor mode="json" theme="tomorrow" width="100%" {...props} />;

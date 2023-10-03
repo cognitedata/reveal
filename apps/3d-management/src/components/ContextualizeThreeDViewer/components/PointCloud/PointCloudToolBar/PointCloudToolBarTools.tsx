@@ -8,9 +8,7 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
 } from '@cognite/reveal';
-import { useReveal } from '@cognite/reveal-react-components';
-import { CogniteClient } from '@cognite/sdk/dist/src';
-import { useSDK } from '@cognite/sdk-provider';
+import { useReveal, RevealToolbar } from '@cognite/reveal-react-components';
 
 import {
   CubeAnnotation,
@@ -26,11 +24,15 @@ import { getCognitePointCloudModel } from '../../../utils/getCognitePointCloudMo
 import { isPointCloudIntersection } from '../../../utils/isPointCloudIntersection';
 import { showBoundingVolumes } from '../../../utils/showBoundingVolumes';
 
-const deleteBoundingVolumes = (
-  viewer: Cognite3DViewer,
-  sdk: CogniteClient,
-  pointCloudModel: CognitePointCloudModel
-) => {
+const deleteBoundingVolumes = ({
+  viewer,
+  pointCloudModel,
+  onDeleteAnnotation,
+}: {
+  viewer: Cognite3DViewer;
+  pointCloudModel: CognitePointCloudModel;
+  onDeleteAnnotation: (annotationId: number) => void;
+}) => {
   // TODO: It is a somewhat inconsistent that this onClick handler is added here, while the other onClick handler is added in the useEffect hook below.
   //       Investigate how to do this in a more consistent way.
   // Tracked by: https://cognitedata.atlassian.net/browse/BND3D-2156v
@@ -58,12 +60,17 @@ const deleteBoundingVolumes = (
     const appearance = { color: new THREE.Color(1, 0, 0) };
 
     pointCloudModel.assignStyledObjectCollection(objectCollection, appearance);
-    sdk.annotations.delete([{ id: annotationId }]);
+    onDeleteAnnotation(annotationId);
   });
 };
 
-export const PointCloudToolBarTools = (): ReactElement => {
-  const sdk = useSDK();
+type PointCloudToolBarToolsProps = {
+  onDeleteAnnotation: (annotationId: number) => void;
+};
+
+export const PointCloudToolBarTools = ({
+  onDeleteAnnotation,
+}: PointCloudToolBarToolsProps): ReactElement => {
   const viewer = useReveal();
 
   const {
@@ -140,13 +147,16 @@ export const PointCloudToolBarTools = (): ReactElement => {
     }
 
     setTool(ToolType.DELETE_ANNOTATION);
-    deleteBoundingVolumes(viewer, sdk, pointCloudModel);
+    deleteBoundingVolumes({ viewer, pointCloudModel, onDeleteAnnotation });
     showBoundingVolumes(pointCloudModel);
   };
 
   return (
     <ToolBar direction="vertical">
       <>
+        <Tooltip content="Slider" position="right">
+          <RevealToolbar.SlicerButton />
+        </Tooltip>
         <Tooltip content="Toggle annotations visibility" position="right">
           <Button
             icon="EyeShow"

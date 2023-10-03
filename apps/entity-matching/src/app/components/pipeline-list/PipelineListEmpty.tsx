@@ -1,9 +1,8 @@
-import { useTranslation } from '@entity-matching-app/common';
-
 import { Body, Flex, Title } from '@cognite/cogs.js';
 
-import { CreatePipelineButton } from '@entity-matching-app/components/create-pipeline-button/CreatePipelineButton';
-import { Container, Graphic } from '@entity-matching-app/components/InfoBox';
+import { useTranslation } from '../../common';
+import { CreatePipelineButton } from '../create-pipeline-button/CreatePipelineButton';
+import { Container, Graphic } from '../InfoBox';
 
 const PipelineListEmpty = (): JSX.Element => {
   const { t } = useTranslation();

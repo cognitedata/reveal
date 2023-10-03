@@ -1,23 +1,25 @@
+import isString from 'lodash/isString';
+import noop from 'lodash/noop';
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   CogniteClient,
   HttpResponse,
   HttpRequestOptions,
   HttpQueryParams,
 } from '@cognite/sdk';
-import isString from 'lodash/isString';
-import noop from 'lodash/noop';
-import { ItemsWithCursor } from './types/ItemsWithCursor';
-import { DataSource, ConflictMode } from './types/DataSource';
+
 import JetfireApiError from './JetfireApiError';
-import { ColumnSchema } from './types/Schema';
-import { QueryResultsResponse, QueryResults } from './types/Query';
+import { DataSource, ConflictMode } from './types/DataSource';
+import { Items } from './types/Items';
+import { ItemsWithCursor } from './types/ItemsWithCursor';
 import { Job } from './types/Job';
-import { Transformation } from './types/Transformation';
-import { Schedule } from './types/Schedule';
 import { Notification } from './types/Notification';
 import { OidcCredentials } from './types/OidcCredentials';
-import { Items } from './types/Items';
-import { v4 as uuidv4 } from 'uuid';
+import { QueryResultsResponse, QueryResults } from './types/Query';
+import { Schedule } from './types/Schedule';
+import { ColumnSchema } from './types/Schema';
+import { Transformation } from './types/Transformation';
 
 export type MetricCounter = { timestamp: number; name: string; count: number };
 

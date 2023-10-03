@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getChipRightPropsForResourceCounter } from '@data-exploration/containers';
 
-import { Tabs, TabProps } from '@cognite/cogs.js';
+import { Tabs, TabProps, ChipProps } from '@cognite/cogs.js';
 import {
   ResourceType,
   ResourceItem,
@@ -117,7 +117,10 @@ export const ResourceDetailsTabs = ({
     ? isNewCountsLoading
     : isOldCountsLoading;
 
-  const getChipRightProps = (count: number, key: ResourceType) => {
+  const getChipRightProps = (
+    count: number,
+    key: ResourceType
+  ): { chipRight?: ChipProps } => {
     if (isNewCountsEnabled) {
       return getChipRightPropsForResourceCounter(
         count,

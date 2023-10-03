@@ -1,17 +1,15 @@
 import React, { useCallback } from 'react';
 
-import type {
-  DatumType,
-  OrdinalDatum,
-} from '@simint-app/components/charts/types';
-import { getExtents, getX, getY } from '@simint-app/components/charts/utils';
-import { getFormattedSciNumber } from '@simint-app/utils/numberUtils';
-import { LAYER } from '@simint-app/utils/zIndex';
 import { localPoint } from '@visx/event';
 import { Bar, Line } from '@visx/shape';
 import { Portal, Tooltip, defaultStyles, useTooltip } from '@visx/tooltip';
 import { bisector } from 'd3';
 import styled from 'styled-components/macro';
+
+import { getFormattedSciNumber } from '../../../utils/numberUtils';
+import { LAYER } from '../../../utils/zIndex';
+import type { DatumType, OrdinalDatum } from '../types';
+import { getExtents, getX, getY } from '../utils';
 
 import type { Plot, PlotFunctionProps } from './plot/types';
 import type { ChartGeometry } from './types';

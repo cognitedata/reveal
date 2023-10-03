@@ -1,7 +1,7 @@
 /* eslint-disable */
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
-import { SteadyStateDetectionChart } from '@simint-app/components/charts/SteadyStateDetectionChart';
+import { SteadyStateDetectionChart } from "../components/charts/SteadyStateDetectionChart";
 
 const data = [
   {

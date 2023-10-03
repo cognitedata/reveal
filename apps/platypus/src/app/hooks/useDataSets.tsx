@@ -6,8 +6,9 @@ import { getCogniteSDKClient } from '../../environments/cogniteSdk';
 export const useDataSets = () => {
   const cdfClient = getCogniteSDKClient();
 
-  return useQuery(
-    QueryKeys.DATA_SETS_LIST,
-    async () => await (await cdfClient.datasets.list()).items
-  );
+  return useQuery(QueryKeys.DATA_SETS_LIST, async () => {
+    return (await cdfClient.datasets.list().autoPagingToArray()).filter(
+      (el) => !el.metadata || !el.metadata['archived']
+    );
+  });
 };

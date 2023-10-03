@@ -1,7 +1,8 @@
-import { CalculationSummary } from '@simint-app/components/calculation/CalculationSummary';
 import { useFormikContext } from 'formik';
 
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
+
+import { CalculationSummary } from '../../../components/calculation/CalculationSummary';
 
 export function SummaryStep() {
   const { values } = useFormikContext<CalculationTemplate>();

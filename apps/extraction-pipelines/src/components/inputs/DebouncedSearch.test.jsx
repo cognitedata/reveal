@@ -7,7 +7,7 @@ import { renderWithRunFilterContext } from '../../utils/test/render';
 describe('DebouncedSearch', () => {
   test('Render default', async () => {
     render(<DebouncedSearch label="Search" placeholder="Search" />);
-    const searchField = screen.getByLabelText('Search');
+    const searchField = screen.getByRole('searchbox');
     expect(searchField).toBeInTheDocument();
     expect(searchField.textContent).toEqual('');
   });
@@ -17,7 +17,7 @@ describe('DebouncedSearch', () => {
       <DebouncedSearch label="Search" placeholder="Search" />,
       { providerProps: { search } }
     );
-    const searchField = screen.getByLabelText('Search');
+    const searchField = screen.getByRole('searchbox');
     expect(searchField).toBeInTheDocument();
     expect(screen.getByDisplayValue(search)).toBeInTheDocument();
   });
@@ -27,11 +27,11 @@ describe('DebouncedSearch', () => {
       <DebouncedSearch label="Search" placeholder="Search" />,
       {}
     );
-    const searchField = screen.getByLabelText('Search');
+    const searchField = screen.getByRole('searchbox');
     expect(searchField).toBeInTheDocument();
     expect(searchField.textContent).toEqual('');
     const newSearchValue = 'test';
-    fireEvent.change(screen.getByLabelText('Search'), {
+    fireEvent.change(screen.getByRole('searchbox'), {
       target: { value: newSearchValue },
     });
     expect(screen.getByDisplayValue(newSearchValue)).toBeInTheDocument();

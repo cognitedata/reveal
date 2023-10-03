@@ -1,8 +1,6 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "**/*"
-  ],
+  "ignorePatterns": ["**/*"],
   "extends": [
     "plugin:testing-library/react",
     "plugin:lodash/recommended",
@@ -21,12 +19,7 @@
   ],
   "overrides": [
     {
-      "files": [
-        "*.ts",
-        "*.tsx",
-        "*.js",
-        "*.jsx"
-      ],
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@nx/enforce-module-boundaries": [
           "error",
@@ -38,60 +31,29 @@
               "@data-quality",
               "@platypus-core",
               "@cognite/platypus-cdf-cli",
-              "@charts-app",
-              "@entity-matching-app",
-              "@data-catalog-app",
-              "@simint-app"
+              "@charts-app"
             ],
             "depConstraints": [
               {
                 "sourceTag": "*",
-                "onlyDependOnLibsWithTags": [
-                  "*"
-                ]
+                "onlyDependOnLibsWithTags": ["*"]
               }
             ]
           }
         ],
-        "max-classes-per-file": [
-          "off"
-        ],
-        "react/jsx-props-no-spreading": [
-          "off"
-        ],
-        "react/static-property-placement": [
-          "off"
-        ],
-        "react/state-in-constructor": [
-          "off"
-        ],
-        "jest/expect-expect": [
-          "off"
-        ],
-        "jest/no-test-callback": [
-          "off"
-        ],
-        "jest/no-export": [
-          "off"
-        ],
-        "lodash/prefer-lodash-method": [
-          "off"
-        ],
-        "lodash/prefer-lodash-typecheck": [
-          "off"
-        ],
-        "lodash/prop-shorthand": [
-          "off"
-        ],
-        "lodash/prefer-constant": [
-          "off"
-        ],
-        "lodash/prefer-is-nil": [
-          "off"
-        ],
-        "lodash/prefer-get": [
-          "off"
-        ],
+        "max-classes-per-file": ["off"],
+        "react/jsx-props-no-spreading": ["off"],
+        "react/static-property-placement": ["off"],
+        "react/state-in-constructor": ["off"],
+        "jest/expect-expect": ["off"],
+        "jest/no-test-callback": ["off"],
+        "jest/no-export": ["off"],
+        "lodash/prefer-lodash-method": ["off"],
+        "lodash/prefer-lodash-typecheck": ["off"],
+        "lodash/prop-shorthand": ["off"],
+        "lodash/prefer-constant": ["off"],
+        "lodash/prefer-is-nil": ["off"],
+        "lodash/prefer-get": ["off"],
         "@typescript-eslint/no-unused-vars": [
           "error",
           {
@@ -103,70 +65,31 @@
       }
     },
     {
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
+      "files": ["*.ts", "*.tsx"],
       "extends": [
         "plugin:@nx/typescript",
         "plugin:testing-library/react",
         "plugin:react-hooks/recommended"
       ],
       "rules": {
-        "@cognite/no-sdk-submodule-imports": [
-          "off"
-        ],
-        "@cognite/no-unissued-todos": [
-          "off"
-        ],
-        "@cognite/require-hellip": [
-          "off"
-        ],
-        "@cognite/rtl-use-custom-render-function": [
-          "off"
-        ],
-        "@cognite/styled-macro": [
-          "off"
-        ],
-        "@typescript-eslint/ban-ts-comment": [
-          "off"
-        ],
-        "@typescript-eslint/ban-types": [
-          "off"
-        ],
-        "@typescript-eslint/no-empty-function": [
-          "off"
-        ],
-        "@typescript-eslint/no-inferrable-types": [
-          "off"
-        ],
-        "@typescript-eslint/no-redeclare": [
-          "off"
-        ],
-        "arrow-body-style": [
-          "off"
-        ],
-        "camelcase": [
-          "off"
-        ],
-        "class-methods-use-this": [
-          "off"
-        ],
-        "consistent-return": [
-          "off"
-        ],
-        "default-param-last": [
-          "off"
-        ],
-        "func-names": [
-          "off"
-        ],
-        "import/first": [
-          "error"
-        ],
-        "import/no-duplicates": [
-          "error"
-        ],
+        "@cognite/no-sdk-submodule-imports": ["off"],
+        "@cognite/no-unissued-todos": ["off"],
+        "@cognite/require-hellip": ["off"],
+        "@cognite/rtl-use-custom-render-function": ["off"],
+        "@cognite/styled-macro": ["off"],
+        "@typescript-eslint/ban-ts-comment": ["off"],
+        "@typescript-eslint/ban-types": ["off"],
+        "@typescript-eslint/no-empty-function": ["off"],
+        "@typescript-eslint/no-inferrable-types": ["off"],
+        "@typescript-eslint/no-redeclare": ["off"],
+        "arrow-body-style": ["off"],
+        "camelcase": ["off"],
+        "class-methods-use-this": ["off"],
+        "consistent-return": ["off"],
+        "default-param-last": ["off"],
+        "func-names": ["off"],
+        "import/first": ["error"],
+        "import/no-duplicates": ["error"],
         "import/order": [
           "error",
           {
@@ -175,10 +98,7 @@
               "external",
               "internal",
               "parent",
-              [
-                "sibling",
-                "index"
-              ]
+              ["sibling", "index"]
             ],
             "newlines-between": "always",
             "alphabetize": {
@@ -235,98 +155,40 @@
                 "pattern": "@data-exploration-lib/core"
               }
             ],
-            "pathGroupsExcludedImportTypes": [
-              "react"
-            ]
+            "pathGroupsExcludedImportTypes": ["react"]
           }
         ],
-        "jsx-a11y/click-events-have-key-events": [
-          "off"
-        ],
-        "jsx-a11y/no-static-element-interactions": [
-          "off"
-        ],
-        "lines-between-class-members": [
-          "off"
-        ],
-        "lodash/import-scope": [
-          "off"
-        ],
-        "lodash/prefer-matches": [
-          "off"
-        ],
-        "lodash/prefer-some": [
-          "off"
-        ],
-        "no-await-in-loop": [
-          "off"
-        ],
-        "no-else-return": [
-          "off"
-        ],
-        "no-empty": [
-          "off"
-        ],
-        "no-extra-boolean-cast": [
-          "off"
-        ],
-        "no-param-reassign": [
-          "off"
-        ],
-        "no-plusplus": [
-          "off"
-        ],
-        "no-redeclare": [
-          "off"
-        ],
-        "no-restricted-exports": [
-          "off"
-        ],
-        "no-restricted-properties": [
-          "off"
-        ],
-        "no-restricted-syntax": [
-          "off"
-        ],
-        "no-return-await": [
-          "off"
-        ],
-        "no-shadow": [
-          "off"
-        ],
-        "no-underscore-dangle": [
-          "off"
-        ],
-        "no-unsafe-optional-chaining": [
-          "off"
-        ],
-        "no-unused-expressions": [
-          "off"
-        ],
-        "object-shorthand": [
-          "off"
-        ],
-        "prefer-arrow-callback": [
-          "off"
-        ],
-        "prefer-const": [
-          "off"
-        ],
-        "prefer-destructuring": [
-          "off"
-        ],
-        "prefer-exponentiation-operator": [
-          "off"
-        ],
-        "prefer-promise-reject-errors": [
-          "off"
-        ]
+        "jsx-a11y/click-events-have-key-events": ["off"],
+        "jsx-a11y/no-static-element-interactions": ["off"],
+        "lines-between-class-members": ["off"],
+        "lodash/import-scope": ["off"],
+        "lodash/prefer-matches": ["off"],
+        "lodash/prefer-some": ["off"],
+        "no-await-in-loop": ["off"],
+        "no-else-return": ["off"],
+        "no-empty": ["off"],
+        "no-extra-boolean-cast": ["off"],
+        "no-param-reassign": ["off"],
+        "no-plusplus": ["off"],
+        "no-redeclare": ["off"],
+        "no-restricted-exports": ["off"],
+        "no-restricted-properties": ["off"],
+        "no-restricted-syntax": ["off"],
+        "no-return-await": ["off"],
+        "no-shadow": ["off"],
+        "no-underscore-dangle": ["off"],
+        "no-unsafe-optional-chaining": ["off"],
+        "no-unused-expressions": ["off"],
+        "object-shorthand": ["off"],
+        "prefer-arrow-callback": ["off"],
+        "prefer-const": ["off"],
+        "prefer-destructuring": ["off"],
+        "prefer-exponentiation-operator": ["off"],
+        "prefer-promise-reject-errors": ["off"]
       }
     },
     {
-      "files": [
-        "*.tsx"
-      ],
+      "files": ["*.tsx"],
       "extends": [
         "plugin:@nx/typescript",
         "plugin:testing-library/react",
@@ -346,36 +208,16 @@
             "props": false
           }
         ],
-        "react/require-default-props": [
-          "off"
-        ],
-        "max-classes-per-file": [
-          "off"
-        ],
-        "lines-between-class-members": [
-          "off"
-        ],
-        "class-methods-use-this": [
-          "off"
-        ],
-        "react/jsx-props-no-spreading": [
-          "off"
-        ],
-        "react/static-property-placement": [
-          "off"
-        ],
-        "react/state-in-constructor": [
-          "off"
-        ],
-        "jest/expect-expect": [
-          "off"
-        ],
-        "jest/no-test-callback": [
-          "off"
-        ],
-        "jest/no-export": [
-          "off"
-        ],
+        "react/require-default-props": ["off"],
+        "max-classes-per-file": ["off"],
+        "lines-between-class-members": ["off"],
+        "class-methods-use-this": ["off"],
+        "react/jsx-props-no-spreading": ["off"],
+        "react/static-property-placement": ["off"],
+        "react/state-in-constructor": ["off"],
+        "jest/expect-expect": ["off"],
+        "jest/no-test-callback": ["off"],
+        "jest/no-export": ["off"],
         "@typescript-eslint/no-unused-vars": "error",
         "prettier/prettier": [
           "error",
@@ -392,57 +234,31 @@
         "@typescript-eslint/no-explicit-any": "off",
         //
         // "react/function-component-definition": ["off"],<- Will come back to this one latee
-        "react/jsx-curly-brace-presence": [
-          "warn"
-        ],
-        "react/function-component-definition": [
-          "off"
-        ],
-        "react/jsx-key": [
-          "off"
-        ],
-        "react/jsx-no-constructed-context-values": [
-          "off"
-        ],
-        "react/jsx-no-useless-fragment": [
-          "off"
-        ],
-        "react/prop-types": [
-          "off"
-        ],
-        "react/react-in-jsx-scope": [
-          "off"
-        ]
+        "react/jsx-curly-brace-presence": ["warn"],
+        "react/function-component-definition": ["off"],
+        "react/jsx-key": ["off"],
+        "react/jsx-no-constructed-context-values": ["off"],
+        "react/jsx-no-useless-fragment": ["off"],
+        "react/prop-types": ["off"],
+        "react/react-in-jsx-scope": ["off"]
       }
     },
     {
-      "files": [
-        "*.js",
-        "*.jsx"
-      ],
-      "extends": [
-        "plugin:@nx/javascript"
-      ],
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nx/javascript"],
       "rules": {}
     },
     {
-      "files": [
-        "*.json"
-      ],
+      "files": ["*.json"],
       "parser": "jsonc-eslint-parser",
       "rules": {
         "@nx/dependency-checks": "error"
       }
     },
     {
-      "files": [
-        "*.ts",
-        "*.cy.ts"
-      ],
+      "files": ["*.ts", "*.cy.ts"],
       "rules": {
-        "cypress/unsafe-to-chain-command": [
-          "off"
-        ]
+        "cypress/unsafe-to-chain-command": ["off"]
       }
     }
   ]

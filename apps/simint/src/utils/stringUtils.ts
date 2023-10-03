@@ -4,6 +4,24 @@
 export const sanitizeValue = (value: string) =>
   value.replace(/[^-.\w]+/g, '_').replace('/', '_');
 
+/** Remove non alphanumeric characters and extra whitespace and separate each word by a space*/
+export const sanitizeStepInput = (value: string) =>
+  value
+    .split(/[^A-Za-z0-9]/)
+    .filter((word) => word !== '')
+    .join(' ')
+    .trim();
+
+/**
+ * Get identifier used to link routine steps to entries in time series or input constants arrays
+ * Example: 'Crude Feed VMGOPStream MassFlow' -> 'CFVM0'
+ * */
+export const getStepIdentifier = (name: string, inputConstantIndex: number) =>
+  `${name
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase())
+    .join('')}${inputConstantIndex}`;
+
 /** DJB2a non-cryptographic hash function */
 export const hashCode = (input: string) =>
   Array.from(input).reduce(

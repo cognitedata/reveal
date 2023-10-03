@@ -5,7 +5,7 @@ import { CogniteClient } from '@cognite/sdk/dist/src';
 
 import { ThreeDPosition } from '../useContextualizeThreeDViewerStore';
 
-export const createCdfThreeDAnnotation = ({
+export const createCdfThreeDAnnotation = async ({
   position,
   sdk,
   modelId,
@@ -25,7 +25,7 @@ export const createCdfThreeDAnnotation = ({
       pointCloudModel.getCdfToDefaultModelTransformation().invert()
     );
 
-  sdk.annotations.create([
+  await sdk.annotations.create([
     {
       annotatedResourceId: modelId,
       annotatedResourceType: 'threedmodel',

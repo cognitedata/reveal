@@ -86,7 +86,7 @@ export const MonitoringSidebar = memo(
     }, []);
 
     return (
-      <Sidebar visible>
+      <Sidebar visible data-testid="monitoring-sidebar-container">
         <TopContainer>
           <TopContainerTitle>
             <Icon size={21} type="Alarm" />

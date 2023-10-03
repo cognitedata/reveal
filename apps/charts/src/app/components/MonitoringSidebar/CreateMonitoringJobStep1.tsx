@@ -263,6 +263,8 @@ const CreateMonitoringJobStep1 = ({
         </FieldHelperText>
       </Row>
 
+      {/* Could be used later if we decide on giving user the ability to select frequency of schedule
+
       <FieldTitleRequired>{t.Schedule} </FieldTitleRequired>
       <Row>
         <Col span={13}>
@@ -299,7 +301,7 @@ const CreateMonitoringJobStep1 = ({
         <FieldHelperText>
           {t['How often the monitoring job runs']}
         </FieldHelperText>
-      </Row>
+      </Row> */}
 
       <FieldTitleRequired>{t['Save to']} </FieldTitleRequired>
       <MonitoringFolderSelect

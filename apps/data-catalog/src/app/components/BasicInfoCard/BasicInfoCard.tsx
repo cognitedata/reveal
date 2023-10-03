@@ -1,20 +1,21 @@
 import styled from 'styled-components';
 
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import InfoTooltip from '@data-catalog-app/components/InfoTooltip';
-import {
-  BasicInfoPane,
-  NoDataText,
-  DataSet,
-  CREATE_DATASET_DOC,
-  EDIT_DATASET_DOC,
-  EDIT_DATASET_HELP_DOC,
-  getGovernedStatus,
-} from '@data-catalog-app/utils';
 import moment from 'moment';
 
 import { CopyButton } from '@cognite/cdf-utilities';
 import { Body, Flex, Icon, Chip } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common/i18n';
+import {
+  BasicInfoPane,
+  CREATE_DATASET_DOC,
+  DataSet,
+  EDIT_DATASET_DOC,
+  EDIT_DATASET_HELP_DOC,
+  getGovernedStatus,
+  NoDataText,
+} from '../../utils';
+import InfoTooltip from '../InfoTooltip';
 
 import DatasetProperty from './DatasetProperty';
 

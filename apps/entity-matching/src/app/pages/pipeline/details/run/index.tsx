@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useTranslation } from '@entity-matching-app/common';
-import QueryStatusIcon from '@entity-matching-app/components/QueryStatusIcon';
-import Step from '@entity-matching-app/components/step';
+import { createLink } from '@cognite/cdf-utilities';
+import { Flex, Infobox } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../common';
+import QueryStatusIcon from '../../../../components/QueryStatusIcon';
+import Step from '../../../../components/step';
 import {
   Pipeline,
   useEMPipelineRun,
   useRunEMPipeline,
-} from '@entity-matching-app/hooks/entity-matching-pipelines';
-import { IN_PROGRESS_EM_STATES } from '@entity-matching-app/hooks/types';
-
-import { createLink } from '@cognite/cdf-utilities';
-import { Flex, Infobox } from '@cognite/cogs.js';
+} from '../../../../hooks/entity-matching-pipelines';
+import { IN_PROGRESS_EM_STATES } from '../../../../hooks/types';
 
 type RunProps = {
   pipeline: Pipeline;

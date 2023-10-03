@@ -61,7 +61,7 @@ const useIndustryCanvasFileLinkTooltips = ({
 
     return [
       {
-        targetId: String(annotation.id),
+        targetIds: [String(annotation.id)],
         content: (
           <FileTooltip
             id={resourceId}

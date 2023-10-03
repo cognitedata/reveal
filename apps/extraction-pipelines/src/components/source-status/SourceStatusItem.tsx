@@ -37,9 +37,12 @@ export const SourceStatusItem = ({
   aggregation,
   source,
 }: SourceStatusItemProps): JSX.Element => {
-  const isPausedEntireTime = aggregation.logs.every((log) => {
-    return doesLogHavePauseType(log);
-  });
+  const isPausedEntireTime =
+    aggregation.logs.length === 0
+      ? false
+      : aggregation.logs.every((log) => {
+          return doesLogHavePauseType(log);
+        });
 
   return (
     <div style={{ flex: 1 }}>
@@ -65,7 +68,7 @@ const AggregationItemBase = styled.button`
 `;
 
 const AggregationItemNoData = styled(AggregationItemBase)`
-  background-color: ${Colors['surface--status-undefined--muted--default']};
+  background-color: ${Colors['surface--status-undefined--muted--default--alt']};
   cursor: unset;
 
   :hover {

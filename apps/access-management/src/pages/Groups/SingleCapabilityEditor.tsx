@@ -259,7 +259,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
     clearStateAndExit();
   };
 
-  const title = capability ? t('capability-edit') : t('capability-add');
+  const title: string = capability ? t('capability-edit') : t('capability-add');
 
   const disabledStyle = { opacity: 0.5 };
 
@@ -356,6 +356,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
             !scope.value ||
             !!scope.errorMessage
           }
+          data-testid="access-management-save-capability-button"
           onClick={() => addCapability()}
         >
           {t('save')}

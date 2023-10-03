@@ -1599,6 +1599,13 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
+"@babel/runtime@^7.22.15":
+  version "7.23.1"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.1.tgz#72741dc4d413338a91dcb044a86f3c0bc402646d"
+  integrity sha512-hC2v6p8ZSI/W0HUzh3V8C5g+NwSKzKPtJwSpTjwl0o297GP9+ZLQSkdvHz46CM3LqyoXxq+5G9komY+eSqSO0g==
+  dependencies:
+    regenerator-runtime "^0.14.0"
+
 "@babel/template@^7.12.7", "@babel/template@^7.22.5", "@babel/template@^7.3.3":
   version "7.22.5"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.22.5.tgz#0c8c4d944509875849bd0344ff0050756eefc6ec"
@@ -1941,6 +1948,48 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
+"@cognite/cogs-lab@9.0.0-alpha.4":
+  version "9.0.0-alpha.4"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs-lab/-/cogs-lab-9.0.0-alpha.4.tgz#31be75575e7b79c7cd16049c37d947584feb6176"
+  integrity sha512-SiBpdLseYEhi2a+T1UjAUPcg29dTF6nbGOslCq8n/UN+K6ldqi7Iosh035zgCJ/D5y//Tb53Na8Iy7yFJiHrOQ==
+  dependencies:
+    "@cognite/cogs.js" "^9.49.2"
+    "@emotion/react" "11.10.6"
+    "@emotion/styled" "11.10.6"
+    "@mui/base" "5.0.0-beta.12"
+    "@mui/joy" "5.0.0-beta.3"
+    "@mui/material" "5.9.2"
+    "@mui/x-data-grid-pro" "^6.11.2"
+    "@mui/x-date-pickers" "6.10.1"
+    "@mui/x-license-pro" "^6.10.2"
+    "@notionhq/client" "2.2.3"
+    "@react-hook/resize-observer" "1.2.6"
+    "@tippyjs/react" "4.2.6"
+    "@types/react-date-range" "1.4.4"
+    axios "0.27.2"
+    classnames "2.3.2"
+    color "3.2.1"
+    csstype "2.6.10"
+    dayjs "^1.11.7"
+    deepdash "5.3.9"
+    dotenv-flow "3.2.0"
+    focus-visible "5.2.0"
+    framer-motion "6.5.1"
+    fuse.js "6.6.2"
+    match-sorter "6.3.1"
+    prompts "2.4.2"
+    rc-collapse "1.11.8"
+    rc-drawer "4.4.3"
+    rc-slider "9.5.4"
+    rc-tabs "11.16.1"
+    react-date-range "1.4.0"
+    react-select "3.2.0"
+    react-table "7.6.0"
+    react-toastify "6.2.0"
+    resize-observer-polyfill "1.5.1"
+    tippy.js "6.3.7"
+    ts-dedent "2.2.0"
+
 "@cognite/cogs.js@7.8.3":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.8.3.tgz#f4831516cc39463702dab520c0cf91a87ce771c8"
@@ -2011,18 +2060,19 @@
     tippy.js "6.3.7"
     ts-dedent "2.2.0"
 
-"@cognite/cogs.js@9.36.0":
-  version "9.36.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.36.0.tgz#f9bb3c7e9f91c1583d08641e5e2de28465b6b893"
-  integrity sha512-mXLFzHUYu1up8s/bX1+As6klZ9E9klQbQEvce1Ejmr5Rk++9rNek5Bc1Etr868t6dEeX7T/g2wwCT3fNZrtMBQ==
+"@cognite/cogs.js@9.48.1":
+  version "9.48.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.48.1.tgz#867b56437be8bc352564758af0e1345570f8cc94"
+  integrity sha512-OvhhxAeVyiNlDIfNMuV+4IlqTlTJYDmFIBxIi5OtgQ2Bh4u6/CovC+YjdrV7A4GONkbgrVOzS72la5A/KNiH0Q==
   dependencies:
     "@emotion/react" "11.10.6"
     "@emotion/styled" "11.10.6"
     "@mui/base" "5.0.0-alpha.97"
     "@mui/joy" "5.0.0-alpha.41"
     "@mui/material" "5.9.2"
-    "@mui/x-date-pickers" "6.10.1"
-    "@mui/x-license-pro" "^6.10.2"
+    "@mui/x-date-pickers" "6.11.0"
+    "@mui/x-date-pickers-pro" "6.11.0"
+    "@mui/x-license-pro" "6.10.2"
     "@notionhq/client" "2.2.3"
     "@react-hook/resize-observer" "1.2.6"
     "@tippyjs/react" "4.2.6"
@@ -2031,7 +2081,7 @@
     classnames "2.3.2"
     color "3.2.1"
     csstype "2.6.10"
-    dayjs "1.11.7"
+    dayjs "^1.11.7"
     deepdash "5.3.9"
     dotenv-flow "3.2.0"
     focus-visible "5.2.0"
@@ -2116,6 +2166,47 @@
     react-select "3.2.0"
     react-table "7.6.0"
     react-toastify "9.1.3"
+    resize-observer-polyfill "1.5.1"
+    tippy.js "6.3.7"
+    ts-dedent "2.2.0"
+
+"@cognite/cogs.js@^9.49.2":
+  version "9.51.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.51.1.tgz#d7d0c69519a8d0285872a9d6cce339999bb9fa52"
+  integrity sha512-z6uR4pjjl6EV+tHGy5pq2oChsx/llNDLzU1404DRopiUsDh7Adoqn3LgsBlQQJXyG1tK4QCMN58LJ2wwnQ43RQ==
+  dependencies:
+    "@emotion/react" "11.10.6"
+    "@emotion/styled" "11.10.6"
+    "@mui/base" "5.0.0-alpha.97"
+    "@mui/joy" "5.0.0-alpha.41"
+    "@mui/material" "5.9.2"
+    "@mui/x-date-pickers" "6.11.0"
+    "@mui/x-date-pickers-pro" "6.11.0"
+    "@mui/x-license-pro" "6.10.2"
+    "@notionhq/client" "2.2.3"
+    "@react-hook/resize-observer" "1.2.6"
+    "@tippyjs/react" "4.2.6"
+    "@types/react-date-range" "1.4.4"
+    axios "0.27.2"
+    classnames "2.3.2"
+    color "3.2.1"
+    csstype "2.6.10"
+    dayjs "^1.11.7"
+    deepdash "5.3.9"
+    dotenv-flow "3.2.0"
+    focus-visible "5.2.0"
+    framer-motion "6.5.1"
+    fuse.js "6.6.2"
+    match-sorter "6.3.1"
+    prompts "2.4.2"
+    rc-collapse "1.11.8"
+    rc-drawer "4.4.3"
+    rc-slider "9.5.4"
+    rc-tabs "11.16.1"
+    react-date-range "1.4.0"
+    react-select "3.2.0"
+    react-table "7.6.0"
+    react-toastify "6.2.0"
     resize-observer-polyfill "1.5.1"
     tippy.js "6.3.7"
     ts-dedent "2.2.0"
@@ -2439,10 +2530,10 @@
   dependencies:
     "@cognite/intercom-helper" "0.2.1"
 
-"@cognite/simconfig-api-sdk@1.6.17":
-  version "1.6.17"
-  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.6.17.tgz#83c756431f1400af93ece62d7e886caaa42302f6"
-  integrity sha512-cpy0V//rgMRO3z6Kg5ztadgvPtCugdC1mn/01aJb7SYf9XfcR++GSqcctYn9uV9UMfMGNjTk2R2+TlkI2NMePA==
+"@cognite/simconfig-api-sdk@1.6.19":
+  version "1.6.19"
+  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.6.19.tgz#46673edcc60ddd2926a0d0fcac23e4683530d955"
+  integrity sha512-44FZuav+kO36ATtOiYxpeQo3/SNT1w2/XP7TU7CNaGdafuoQ9wIbLaKU9eq9HSm7fQXN92u2GLslovdDqUH+Qw==
 
 "@cognite/storage@0.1.3":
   version "0.1.3"
@@ -2457,10 +2548,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^19.0.1":
-  version "19.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-19.0.1.tgz#55ac0b4f425daa961071b8f176ee658fbbf695f5"
-  integrity sha512-pbVKPkA9aN6S1x5SdPhjj9pOMHdA7JqZn/QHcJ/XELPVNH+2mC08svw90ixQdSn3cMj6704LudAkS9cQCD0ppw==
+"@cognite/unified-file-viewer@^20.0.2":
+  version "20.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-20.0.2.tgz#65a4d51c2f6339fd093e781210ea1dd78ba25510"
+  integrity sha512-bbPEFcCcr4do7mBJpeaK66QPL+7nUj0RDSrJ+1HeeRKtI+jH+Wwn2ETCOsnuMnQrCvK34OtT9Q7AoWxvDJfnIA==
   dependencies:
     "@cognite/cogs.js" "^9.10.0"
     "@cognite/plotting-components" "^1.0.1"
@@ -5072,7 +5163,7 @@
   dependencies:
     state-local "^1.0.6"
 
-"@monaco-editor/react@^4.4.6":
+"@monaco-editor/react@^4.5.2":
   version "4.5.2"
   resolved "https://registry.yarnpkg.com/@monaco-editor/react/-/react-4.5.2.tgz#e8cc802203f729b423a998ea6fcb466604d61258"
   integrity sha512-emcWu6vg1OpXPiYll4aPOaXe8bwYB4UaaNTwtArFLgMoNGBzRZb2Xn0Bra2HMIFM7QLgs7fCGunHO5LkfT2LBA==
@@ -5196,6 +5287,21 @@
     prop-types "^15.8.1"
     react-is "^18.2.0"
 
+"@mui/base@5.0.0-beta.12":
+  version "5.0.0-beta.12"
+  resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-beta.12.tgz#131882930bdbe236dd835867bf6222a993b8d219"
+  integrity sha512-tZjjXNAyUpwSDT1uRliZMhRQkWYzELJ8Qi61EuOMRpi36HIwnK2T7Nr4RI423Sv8G2EEikDAZj7je33eNd73NQ==
+  dependencies:
+    "@babel/runtime" "^7.22.10"
+    "@emotion/is-prop-valid" "^1.2.1"
+    "@floating-ui/react-dom" "^2.0.1"
+    "@mui/types" "^7.2.4"
+    "@mui/utils" "^5.14.6"
+    "@popperjs/core" "^2.11.8"
+    clsx "^2.0.0"
+    prop-types "^15.8.1"
+    react-is "^18.2.0"
+
 "@mui/base@5.0.0-beta.13":
   version "5.0.0-beta.13"
   resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-beta.13.tgz#3bae94c39752546d84a67d4ca73486b7c4923a89"
@@ -5215,6 +5321,11 @@
   version "5.14.7"
   resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-5.14.7.tgz#95bed2487bf59632125a13b8eb8f4c21e460afec"
   integrity sha512-sCWTUNElBPgB30iLvWe3PU7SIlTKZNf6/E/sko85iHVeHCM6WPkDw+y89CrZYjhFNmPqt2fIQM/pZu+rP2lFLA==
+
+"@mui/core-downloads-tracker@^5.14.6":
+  version "5.14.11"
+  resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-5.14.11.tgz#e829aceb5c0bbfc3383ed90a6a85445344dd65a7"
+  integrity sha512-uY8FLQURhXe3f3O4dS5OSGML9KDm9+IE226cBu78jarVIzdQGPlXwGIlSI9VJR8MvZDA6C0+6XfWDhWCHruC5Q==
 
 "@mui/icons-material@^5.2.1":
   version "5.14.7"
@@ -5236,6 +5347,22 @@
     "@mui/utils" "^5.9.3"
     clsx "^1.2.1"
     csstype "^3.1.0"
+    prop-types "^15.8.1"
+    react-is "^18.2.0"
+
+"@mui/joy@5.0.0-beta.3":
+  version "5.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@mui/joy/-/joy-5.0.0-beta.3.tgz#f256877e4d0a9ab06e8ef75c0de1a46e0a6359ec"
+  integrity sha512-5K8DSA1zMaxaN/d0LltESLpato5tBuaknjOIgsfmjMC63f8EBs9C0aF3dkVDKnliniNtDZWtG/KI6zhtvn2I4w==
+  dependencies:
+    "@babel/runtime" "^7.22.10"
+    "@mui/base" "5.0.0-beta.12"
+    "@mui/core-downloads-tracker" "^5.14.6"
+    "@mui/system" "^5.14.6"
+    "@mui/types" "^7.2.4"
+    "@mui/utils" "^5.14.6"
+    clsx "^2.0.0"
+    csstype "^3.1.2"
     prop-types "^15.8.1"
     react-is "^18.2.0"
 
@@ -5290,6 +5417,15 @@
     react-is "^18.2.0"
     react-transition-group "^4.4.5"
 
+"@mui/private-theming@^5.14.11":
+  version "5.14.11"
+  resolved "https://registry.yarnpkg.com/@mui/private-theming/-/private-theming-5.14.11.tgz#1543b4d13d5cb32018c5bd41b516db1c33f70344"
+  integrity sha512-MSnNNzTu9pfKLCKs1ZAKwOTgE4bz+fQA0fNr8Jm7NDmuWmw0CaN9Vq2/MHsatE7+S0A25IAKby46Uv1u53rKVQ==
+  dependencies:
+    "@babel/runtime" "^7.22.15"
+    "@mui/utils" "^5.14.11"
+    prop-types "^15.8.1"
+
 "@mui/private-theming@^5.14.7":
   version "5.14.7"
   resolved "https://registry.yarnpkg.com/@mui/private-theming/-/private-theming-5.14.7.tgz#c9fec31e59bf66b12959e724b0e8ec3bb4a3d923"
@@ -5297,6 +5433,16 @@
   dependencies:
     "@babel/runtime" "^7.22.10"
     "@mui/utils" "^5.14.7"
+    prop-types "^15.8.1"
+
+"@mui/styled-engine@^5.14.11":
+  version "5.14.11"
+  resolved "https://registry.yarnpkg.com/@mui/styled-engine/-/styled-engine-5.14.11.tgz#22cb0047f211be4dbc133a5d1015369293bdff00"
+  integrity sha512-jdUlqRgTYQ8RMtPX4MbRZqar6W2OiIb6J5KEFbIu4FqvPrk44Each4ppg/LAqp1qNlBYq5i+7Q10MYLMpDxX9A==
+  dependencies:
+    "@babel/runtime" "^7.22.15"
+    "@emotion/cache" "^11.11.0"
+    csstype "^3.1.2"
     prop-types "^15.8.1"
 
 "@mui/styled-engine@^5.14.7":
@@ -5346,6 +5492,20 @@
     csstype "^3.1.2"
     prop-types "^15.8.1"
 
+"@mui/system@^5.14.6":
+  version "5.14.11"
+  resolved "https://registry.yarnpkg.com/@mui/system/-/system-5.14.11.tgz#4f3aaf3e3d6d039e41a60f939056aa5fd371d291"
+  integrity sha512-yl8xV+y0k7j6dzBsHabKwoShmjqLa8kTxrhUI3JpqLG358VRVMJRW/ES0HhvfcCi4IVXde+Tc2P3K1akGL8zoA==
+  dependencies:
+    "@babel/runtime" "^7.22.15"
+    "@mui/private-theming" "^5.14.11"
+    "@mui/styled-engine" "^5.14.11"
+    "@mui/types" "^7.2.4"
+    "@mui/utils" "^5.14.11"
+    clsx "^2.0.0"
+    csstype "^3.1.2"
+    prop-types "^15.8.1"
+
 "@mui/types@^7.1.5", "@mui/types@^7.2.0", "@mui/types@^7.2.4":
   version "7.2.4"
   resolved "https://registry.yarnpkg.com/@mui/types/-/types-7.2.4.tgz#b6fade19323b754c5c6de679a38f068fd50b9328"
@@ -5361,6 +5521,41 @@
     "@types/react-is" "^18.2.1"
     prop-types "^15.8.1"
     react-is "^18.2.0"
+
+"@mui/utils@^5.14.11", "@mui/utils@^5.14.6", "@mui/utils@^5.14.8":
+  version "5.14.11"
+  resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.14.11.tgz#d19a1d8725ffd16c6c6817f00b5172931958fb9a"
+  integrity sha512-fmkIiCPKyDssYrJ5qk+dime1nlO3dmWfCtaPY/uVBqCRMBZ11JhddB9m8sjI2mgqQQwRJG5bq3biaosNdU/s4Q==
+  dependencies:
+    "@babel/runtime" "^7.22.15"
+    "@types/prop-types" "^15.7.5"
+    prop-types "^15.8.1"
+    react-is "^18.2.0"
+
+"@mui/x-data-grid-pro@^6.11.2":
+  version "6.15.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-data-grid-pro/-/x-data-grid-pro-6.15.0.tgz#30ce839fe504e5415d9d3f081a3153155e434e04"
+  integrity sha512-4YUWKCN8o+ZjcJO6FpdhnuXqrxrR0AYgr5pUaUaGyurvcpMZdxL1SwYjzSZyzL0NRMU/tK2DAWS77vHl89xSFA==
+  dependencies:
+    "@babel/runtime" "^7.22.15"
+    "@mui/utils" "^5.14.8"
+    "@mui/x-data-grid" "6.15.0"
+    "@mui/x-license-pro" "6.10.2"
+    "@types/format-util" "^1.0.2"
+    clsx "^2.0.0"
+    prop-types "^15.8.1"
+    reselect "^4.1.8"
+
+"@mui/x-data-grid@6.15.0":
+  version "6.15.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-data-grid/-/x-data-grid-6.15.0.tgz#070924459034a65a1ef54a09672b540292ed9430"
+  integrity sha512-0u7Z+al7M1BOni5SILp+gc4coJy88oOrUoVfOSGQdfTAJwcoHvP3KZYA80MGBsQwo5A9/bZz40HK8+mdm+ftnA==
+  dependencies:
+    "@babel/runtime" "^7.22.15"
+    "@mui/utils" "^5.14.8"
+    clsx "^2.0.0"
+    prop-types "^15.8.1"
+    reselect "^4.1.8"
 
 "@mui/x-date-pickers-pro@6.11.0":
   version "6.11.0"
@@ -10456,6 +10651,11 @@
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/@types/find-cache-dir/-/find-cache-dir-3.2.1.tgz#7b959a4b9643a1e6a1a5fe49032693cc36773501"
   integrity sha512-frsJrz2t/CeGifcu/6uRo4b+SzAwT4NYCVPu1GN8IB9XTzrpPkGuV0tmh9mN+/L0PklAlsC3u5Fxt0ju00LXIw==
+
+"@types/format-util@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@types/format-util/-/format-util-1.0.2.tgz#7d19feb1caf59b6ea99c83dfe795ffa3f06b87d7"
+  integrity sha512-9SrLCpgzWo2yHHhiMOX0WwgDh37nSbDbWUsRc1ss++o8O97E3tB6SJiyUQM21UeUsKvZNuhDCmkRaINZ4uJAfg==
 
 "@types/fs-extra@^8.0.1":
   version "8.1.2"
@@ -33661,7 +33861,7 @@ reselect@^3.0.1:
   resolved "https://registry.yarnpkg.com/reselect/-/reselect-3.0.1.tgz#efdaa98ea7451324d092b2b2163a6a1d7a9a2147"
   integrity sha512-b/6tFZCmRhtBMa4xGqiiRp9jh9Aqi2A687Lo265cN0/QohJQEBPiQ52f4QB6i0eF3yp3hmLL21LSGBcML2dlxA==
 
-reselect@^4.1.7:
+reselect@^4.1.7, reselect@^4.1.8:
   version "4.1.8"
   resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.1.8.tgz#3f5dc671ea168dccdeb3e141236f69f02eaec524"
   integrity sha512-ab9EmR80F/zQTMNeneUr4cv+jSwPJgIlvEmVwLerwrWVbpLlBuls9XHzIeTFy4cegU2NHBp3va0LKOzU5qFEYQ==

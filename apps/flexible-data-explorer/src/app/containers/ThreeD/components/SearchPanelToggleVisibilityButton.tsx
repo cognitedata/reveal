@@ -8,7 +8,7 @@ interface Props {
   className?: string;
 }
 
-export const SearchPanelCloseButton = ({
+export const SearchPanelToggleVisibilityButton = ({
   onClick,
   isPanelClosed,
   className,
@@ -17,9 +17,9 @@ export const SearchPanelCloseButton = ({
 
   return (
     <ButtonBackground className={className}>
-      <BiggerButton
+      <MoreRoundButton
         icon={buttonIcon}
-        type="tertiary"
+        type="ghost"
         onClick={() => {
           onClick?.();
         }}
@@ -28,14 +28,23 @@ export const SearchPanelCloseButton = ({
   );
 };
 
-const BiggerButton = styled(Button)`
-  width: 40px;
-  height: 40px;
+const MoreRoundButton = styled(Button)`
+  && {
+    border-radius: 8px;
+  }
 `;
 
 const ButtonBackground = styled.div`
-  background-color: white;
+  background: var(--cogs-surface--muted);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 8px;
-  width: 40px;
-  height: 40px;
+  border: 1px solid
+    var(--border-interactive-default-alt, rgba(83, 88, 127, 0.24));
+  box-shadow: 0px 0px 2px 0px rgba(79, 82, 104, 0.24),
+    0px 0px 0px 0px rgba(79, 82, 104, 0.08),
+    0px 0px 16px 0px rgba(79, 82, 104, 0.1);
+  width: 48px;
+  height: 48px;
 `;

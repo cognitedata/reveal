@@ -209,6 +209,9 @@ export const AddTopicFilter = () => {
       type: 'value',
     },
     {
+      type: 'sparkplug',
+    },
+    {
       type: 'custom',
     },
   ];

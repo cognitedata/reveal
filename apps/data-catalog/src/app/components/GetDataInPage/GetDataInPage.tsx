@@ -1,20 +1,17 @@
 import { useEffect, useState } from 'react';
 
-import { getDataInIcon as GetDataInIcon } from '@data-catalog-app/assets';
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import Drawer from '@data-catalog-app/components/Drawer';
-import { RawSection } from '@data-catalog-app/components/GetDataInPage/raw/RawSection';
-import { OidcCheck } from '@data-catalog-app/components/OidcCheck/OidcCheck';
-import theme from '@data-catalog-app/styles/theme';
-import { Col } from '@data-catalog-app/utils';
-import {
-  IconWrapper,
-  FieldLabel,
-} from '@data-catalog-app/utils/styledComponents';
-import { DataSet, RawTable } from '@data-catalog-app/utils/types';
 import CreatableSelect from 'react-select/creatable';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
+
+import { getDataInIcon as GetDataInIcon } from '../../assets';
+import { useTranslation } from '../../common/i18n';
+import theme from '../../styles/theme';
+import { Col, DataSet, FieldLabel, IconWrapper, RawTable } from '../../utils';
+import Drawer from '../Drawer';
+import { OidcCheck } from '../OidcCheck/OidcCheck';
+
+import { RawSection } from './raw/RawSection';
 
 interface SelectOption {
   value: string;

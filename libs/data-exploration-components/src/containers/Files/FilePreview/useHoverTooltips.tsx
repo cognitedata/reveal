@@ -26,7 +26,7 @@ const useHoverTooltips = (
 
     return [
       {
-        targetId: String(hoveredAnnotation?.id),
+        targetIds: [String(hoveredAnnotation.id)],
         content: <AnnotationHoverPreview annotation={hoveredAnnotation} />,
         anchorTo: TooltipAnchorPosition.BOTTOM_CENTER,
       },

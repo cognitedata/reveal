@@ -9,6 +9,11 @@ import {
 import { AnnotationModel, AssetMapping3D, ListResponse } from '@cognite/sdk';
 
 import { SelectedNode } from './components/Cad/CadContextualizeThreeDViewer';
+import { Cognite3DViewer, PointColorType } from '@cognite/reveal';
+import { AnnotationModel } from '@cognite/sdk';
+
+import { DEFAULT_POINT_SIZE } from '../../pages/ContextualizeEditor/constants';
+
 export type ThreeDPosition = {
   x: number;
   y: number;
@@ -18,6 +23,12 @@ export type ThreeDPosition = {
 export type CubeAnnotation = {
   position: ThreeDPosition;
   size: ThreeDPosition;
+};
+
+type VisualizationOptions = { pointSize: number; pointColor: PointColorType };
+const DEFAULT_VISUALIZATION_OPTIONS: VisualizationOptions = {
+  pointSize: DEFAULT_POINT_SIZE,
+  pointColor: PointColorType.Rgb,
 };
 
 export enum ToolType {
@@ -37,6 +48,7 @@ type RootState = {
   shouldShowBoundingVolumes: boolean;
   shouldShowWireframes: boolean;
   modelId: number | null;
+  isModelLoaded: boolean;
   isToolbarForCadModels: boolean;
   isToolbarForPointCloudModels: boolean;
   model: CogniteCadModel | CognitePointCloudModel | undefined;
@@ -48,6 +60,7 @@ type RootState = {
   contextualizedNodesTreeIndex: TreeIndexNodeCollection;
   contextualizedNodes: ListResponse<AssetMapping3D[]> | null;
   annotations: AnnotationModel[] | null;
+  visualizationOptions: VisualizationOptions;
 };
 
 const initialState: RootState = {
@@ -59,8 +72,9 @@ const initialState: RootState = {
   threeDViewer: null,
   tool: ToolType.NONE,
   shouldShowBoundingVolumes: false,
-  shouldShowWireframes: false,
+  shouldShowWireframes: true,
   modelId: null,
+  isModelLoaded: false,
   model: undefined,
   modelType: '',
   selectedNodeIdsList: [],
@@ -70,6 +84,7 @@ const initialState: RootState = {
   contextualizedNodesTreeIndex: new TreeIndexNodeCollection(),
   contextualizedNodes: null,
   annotations: null,
+  visualizationOptions: DEFAULT_VISUALIZATION_OPTIONS,
 };
 
 export const useContextualizeThreeDViewerStore = create<RootState>(
@@ -121,6 +136,13 @@ export const setThreeDViewer = (viewer: Cognite3DViewer) => {
   }));
 };
 
+export const setModelLoaded = () => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    isModelLoaded: true,
+  }));
+};
+
 export const setTool = (tool: ToolType) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
@@ -168,6 +190,18 @@ export const setModelId = (modelId: number) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     modelId,
+  }));
+};
+
+export const updateVisualizationOptions = (
+  visualizationOptions: Partial<VisualizationOptions>
+) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    visualizationOptions: {
+      ...prevState.visualizationOptions,
+      ...visualizationOptions,
+    },
   }));
 };
 

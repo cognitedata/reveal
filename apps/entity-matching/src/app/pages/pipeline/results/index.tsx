@@ -1,23 +1,22 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useTranslation } from '@entity-matching-app/common';
-import ErrorPage from '@entity-matching-app/components/error-pages/Error';
-import NoAccessPage from '@entity-matching-app/components/error-pages/NoAccess';
-import UnknownErrorPage from '@entity-matching-app/components/error-pages/UnknownError';
-import Page from '@entity-matching-app/components/page';
-import PipelineRunResultsTable from '@entity-matching-app/components/pipeline-run-results-table';
-import Step from '@entity-matching-app/components/step';
-import {
-  useEMPipeline,
-  useEMPipelineRun,
-} from '@entity-matching-app/hooks/entity-matching-pipelines';
-import { useUpdateAssetIds } from '@entity-matching-app/hooks/update';
-
 import { notification } from '@cognite/cdf-utilities';
 import { Button, Loader } from '@cognite/cogs.js';
 import { CogniteInternalId } from '@cognite/sdk';
 
+import { useTranslation } from '../../../common';
+import ErrorPage from '../../../components/error-pages/Error';
+import NoAccessPage from '../../../components/error-pages/NoAccess';
+import UnknownErrorPage from '../../../components/error-pages/UnknownError';
+import Page from '../../../components/page';
+import PipelineRunResultsTable from '../../../components/pipeline-run-results-table';
+import Step from '../../../components/step';
+import {
+  useEMPipeline,
+  useEMPipelineRun,
+} from '../../../hooks/entity-matching-pipelines';
+import { useUpdateAssetIds } from '../../../hooks/update';
 import { pipelineSourceToAPIType } from '../details/sources';
 
 const PipelineResults = (): JSX.Element => {

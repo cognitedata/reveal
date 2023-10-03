@@ -94,7 +94,11 @@ const CapabilitiesSelector = (props: CapabilitiesSelectorProps, ref: any) => {
         />
       </div>
       <div>
-        <Button icon="Plus" onClick={openCapabilityComposer}>
+        <Button
+          icon="Plus"
+          onClick={openCapabilityComposer}
+          data-testid="access-management-add-capability-button"
+        >
           {t('capability-add')}
         </Button>
         {composerVisible && (

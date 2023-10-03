@@ -1,5 +1,3 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteError, Node3D } from '@cognite/sdk';
 import {
   QueryKey,
   useInfiniteQuery,
@@ -7,6 +5,9 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import { range } from 'lodash-es';
+
+import { CogniteError, Node3D } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 const PARTITIONS = 10;
 const ITEMS_PER_PAGE = 1000;

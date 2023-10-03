@@ -2,18 +2,18 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@entity-matching-app/common';
-import { SOURCE_TABLE_QUERY_KEY } from '@entity-matching-app/common/constants';
-import { CreatePipelineButton } from '@entity-matching-app/components/create-pipeline-button/CreatePipelineButton';
-import NoAccessPage from '@entity-matching-app/components/error-pages/NoAccess';
-import UnknownErrorPage from '@entity-matching-app/components/error-pages/UnknownError';
-import NoWrapButton from '@entity-matching-app/components/no-wrap-button';
-import PipelineList from '@entity-matching-app/components/pipeline-list';
-import SearchInput from '@entity-matching-app/components/search-input';
-import { useEMPipelines } from '@entity-matching-app/hooks/entity-matching-pipelines';
-
 import { createLink } from '@cognite/cdf-utilities';
 import { Title, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { SOURCE_TABLE_QUERY_KEY } from '../../common/constants';
+import { CreatePipelineButton } from '../../components/create-pipeline-button/CreatePipelineButton';
+import NoAccessPage from '../../components/error-pages/NoAccess';
+import UnknownErrorPage from '../../components/error-pages/UnknownError';
+import NoWrapButton from '../../components/no-wrap-button';
+import PipelineList from '../../components/pipeline-list';
+import SearchInput from '../../components/search-input';
+import { useEMPipelines } from '../../hooks/entity-matching-pipelines';
 
 export default function RootList() {
   const { t } = useTranslation();

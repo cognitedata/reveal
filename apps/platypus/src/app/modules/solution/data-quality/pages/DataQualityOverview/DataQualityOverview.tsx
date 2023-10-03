@@ -11,7 +11,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Button, Dropdown, Flex, Menu, Tabs, Tooltip } from '@cognite/cogs.js';
 
-import { UpsertRuleDrawer } from '..';
+import { UpsertDataScopeModal, UpsertRuleDrawer } from '..';
 
 import { DataScopesTable, RulesTable, TotalValidityCard } from './components';
 
@@ -23,6 +23,7 @@ export const DataQualityOverview = () => {
   const [tabActiveKey, setTabActiveKey] = useState<TabKey>('rules');
 
   const upsertRuleDrawer = useDisclosure({ isOpen: false });
+  const upsertDataScopeModal = useDisclosure({ isOpen: false });
 
   const { dataSource, isLoading: isLoadingDataSource } = useLoadDataSource();
   const {
@@ -82,7 +83,13 @@ export const DataQualityOverview = () => {
                     disabled={!canCreate}
                     onClick={upsertRuleDrawer.onOpen}
                   >
-                    {t('data_quality_new_rule', 'New rule')}
+                    {t('data_quality_new_rule', '')}
+                  </Menu.Item>
+                  <Menu.Item
+                    disabled={!canCreate}
+                    onClick={upsertDataScopeModal.onOpen}
+                  >
+                    {t('data_quality_new_data_scope', '')}
                   </Menu.Item>
                 </Menu>
               }
@@ -107,6 +114,11 @@ export const DataQualityOverview = () => {
       <UpsertRuleDrawer
         isVisible={upsertRuleDrawer.isOpen}
         onCancel={upsertRuleDrawer.onClose}
+      />
+
+      <UpsertDataScopeModal
+        isVisible={upsertDataScopeModal.isOpen}
+        onCancel={upsertDataScopeModal.onClose}
       />
     </SplitPanel>
   );

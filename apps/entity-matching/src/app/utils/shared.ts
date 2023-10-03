@@ -5,13 +5,13 @@ import {
   useState as reactUseState,
 } from 'react';
 
-import { PredictionObject } from '@entity-matching-app/hooks/entity-matching-predictions';
-// @ts-ignore
-import { styleScope } from '../styles/styleScope';
-import { API } from '@entity-matching-app/types/api';
-
 import { createLink, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { Metadata } from '@cognite/sdk';
+
+import { PredictionObject } from '../hooks/entity-matching-predictions';
+// @ts-ignore
+import { styleScope } from '../styles/styleScope';
+import { API } from '../types/api';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope);

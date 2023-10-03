@@ -49,6 +49,7 @@ export default function Actions({ id }: { id: number }) {
       overlay={
         <Menu>
           <Menu.Item
+            data-testid="access-management-delete-security-category-button"
             onClick={() =>
               Modal.confirm({
                 title: t('confirm-delete'),

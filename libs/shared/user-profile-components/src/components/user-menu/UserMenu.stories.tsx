@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 
 import { Meta, StoryFn } from '@storybook/react';
 
@@ -9,7 +10,9 @@ export default {
 } as Meta<typeof UserMenu>;
 
 export const Default: StoryFn<typeof UserMenu> = (args) => (
-  <UserMenu {...args} />
+  <BrowserRouter>
+    <UserMenu {...args} />
+  </BrowserRouter>
 );
 
 Default.args = {

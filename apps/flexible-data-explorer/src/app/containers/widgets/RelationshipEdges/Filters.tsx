@@ -13,7 +13,7 @@ import {
 
 export interface SearchBarFilterProps {
   value?: ValueByField;
-  onChange: (value: ValueByField) => void;
+  onChange: (value: ValueByField, action: 'add' | 'remove') => void;
   dataType: string;
 }
 
@@ -46,8 +46,7 @@ export const RelationshipFilter: React.FC<SearchBarFilterProps> = ({
             name={dataType}
             fields={fields}
             value={value}
-            onChange={onChange}
-            onBackClick={() => null}
+            onChange={(nextValue) => onChange(nextValue, 'add')}
           />
         }
       >
@@ -61,7 +60,10 @@ export const RelationshipFilter: React.FC<SearchBarFilterProps> = ({
           {t('FILTER_BUTTON')}
         </Button>
       </Dropdown>
-      <AppliedFilters value={value} onRemove={onChange} />
+      <AppliedFilters
+        value={value}
+        onRemove={(nextValue) => onChange(nextValue, 'remove')}
+      />
     </>
   );
 };

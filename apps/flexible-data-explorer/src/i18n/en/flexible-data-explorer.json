@@ -32,6 +32,8 @@
   "SEARCH_RESULTS_3D_FILTER_ALL_OPTION_DESCRIPTION": "All objects are displayed",
   "SEARCH_RESULTS_3D_FILTER_MAPPED_OPTION": "Available in 3D",
   "SEARCH_RESULTS_3D_FILTER_MAPPED_OPTION_DESCRIPTION": "Only 3D contextualised objects are displayed",
+  "SEARCH_RESULTS_3D_ZOOM_IN_BUTTON": "Zoom in",
+  "SEARCH_RESULTS_3D_NOT_3D_MAPPED_TEXT": "Not available in 3D",
 
   "ONBOARDING_PAGE_TOGGLE_DATA_MODEL_BUTTON": "Please select a Data Model to explore",
 

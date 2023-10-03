@@ -305,7 +305,7 @@ export const SchemaVisualizer = React.memo(
     const renderGraph = () => (
       <Wrapper direction="column">
         {isLoading && (
-          <WrappedSpinner>
+          <WrappedSpinner data-cy="visualizer_loader">
             <Spinner />
           </WrappedSpinner>
         )}

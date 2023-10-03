@@ -60,7 +60,7 @@ const useFileLinkTooltips = (
 
       return [
         {
-          targetId: String(selectedAnnotation.id),
+          targetIds: [String(selectedAnnotation.id)],
           content: (
             <TooltipContainer>
               <Tooltip
@@ -112,7 +112,7 @@ const useFileLinkTooltips = (
 
     return [
       {
-        targetId: String(selectedAnnotation.id),
+        targetIds: [String(selectedAnnotation.id)],
         content: (
           <TooltipContainer>
             <Tooltip

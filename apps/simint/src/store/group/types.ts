@@ -1,10 +1,10 @@
-import type { RequestStatus } from '@simint-app/store/constants';
-
 import type {
   Acl,
   SingleCogniteCapability as Capability,
   Group,
 } from '@cognite/sdk';
+
+import type { RequestStatus } from '../constants';
 
 export interface GroupState {
   requestStatus: RequestStatus;

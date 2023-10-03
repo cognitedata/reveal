@@ -6,6 +6,10 @@ export default defineConfig({
     ...nxE2EPreset(__dirname, { cypressDir: 'cypress' }),
     experimentalModifyObstructiveThirdPartyCode: true,
     chromeWebSecurity: true,
+    video: true,
   },
   env: process.env,
+
+  viewportWidth: 1920,
+  viewportHeight: 1080,
 });

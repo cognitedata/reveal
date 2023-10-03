@@ -1,5 +1,7 @@
 import styled from 'styled-components';
+
 import { Colors, Icon, Title } from '@cognite/cogs.js';
+
 import { Instructions, ErrorPageContent } from './styled-components';
 
 type ErrorPageProps = {

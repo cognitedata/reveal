@@ -54,7 +54,7 @@ const useOverlappingAnnotationsTooltips = (
 
     return [
       {
-        targetId: String(selectedAnnotation.id),
+        targetIds: [String(selectedAnnotation.id)],
         content: (
           <TooltipContainerColumn>
             <div style={{ padding: '8px' }}>Overlapping annotations</div>

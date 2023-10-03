@@ -10,13 +10,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { createLink } from '@cognite/cdf-utilities';
 
-import {
-  Filter,
-  RawSource,
-  RawTarget,
-  SourceType,
-} from '@entity-matching-app/types/api';
-import { useContextState } from '@entity-matching-app/utils';
+import { Filter, RawSource, RawTarget, SourceType } from '../types/api';
+import { useContextState } from '../utils';
 
 const QUICK_MATCH_STEPS = [
   'select-sources',

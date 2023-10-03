@@ -4,8 +4,6 @@ import type { Range } from 'react-date-range';
 import { useMatch, useNavigate, useSearch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import type { AppLocationGenerics } from '@simint-app/routes';
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
 import { formatISO, parseISO, sub } from 'date-fns';
 import capitalize from 'lodash/capitalize';
 import uniq from 'lodash/uniq';
@@ -23,6 +21,9 @@ import type {
   GetCalculationRunListV2ApiArg,
   SimulatorConfigDetails,
 } from '@cognite/simconfig-api-sdk/rtk';
+
+import type { AppLocationGenerics } from '../../routes';
+import { selectProject } from '../../store/simconfigApiProperties/selectors';
 
 import { CalculationRunList } from './CalculationRunList';
 import { generateOptions } from './options';

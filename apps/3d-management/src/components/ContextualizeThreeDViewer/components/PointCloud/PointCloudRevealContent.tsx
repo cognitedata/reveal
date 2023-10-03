@@ -18,33 +18,40 @@ import {
   onCloseResourceSelector,
   onOpenResourceSelector,
   setModel,
+  setModelLoaded,
   setThreeDViewer,
   setToolbarForPointCloudModelsState,
   useContextualizeThreeDViewerStore,
 } from '../../useContextualizeThreeDViewerStore';
+import { AnnotationsCard } from '../AnnotationsCard';
 
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 interface RevealContentProps {
   modelId: number;
   revisionId: number;
+  onDeleteAnnotation: (annotationId: number) => void;
 }
 
 export const PointCloudRevealContent = ({
   modelId,
   revisionId,
+  onDeleteAnnotation,
 }: RevealContentProps) => {
   const viewer = useReveal();
-  const { isResourceSelectorOpen, modelType } =
+  const { isResourceSelectorOpen, annotations, modelType } =
     useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
+      annotations: state.annotations,
       modelType: state.modelType,
     }));
 
   const [error, setError] = useState<Error>();
 
-  const handleModelOnLoad = (_model: CogniteModel) => {
-    if (!(viewer?.cameraManager instanceof DefaultCameraManager)) {
+  const handleModelOnLoad = (model: CogniteModel) => {
+    setModelLoaded();
+    viewer.fitCameraToModel(model);
+    if (!(viewer.cameraManager instanceof DefaultCameraManager)) {
       console.warn(
         'Camera manager is not DefaultCameraManager, so click to change camera target will not work.'
       );
@@ -55,18 +62,6 @@ export const PointCloudRevealContent = ({
       changeCameraTargetOnClick: true,
       mouseWheelAction: 'zoomToCursor',
     });
-    viewer.models.forEach((_modelItem) => {
-      if (!(_modelItem instanceof CognitePointCloudModel)) return;
-      _modelItem.pointSize = 1.0;
-    });
-    viewer.loadCameraFromModel(_model as CogniteModel);
-
-    // force fit camera to the model with also some easing effect
-    viewer.fitCameraToModel(_model);
-
-    if (viewer.domElement) {
-      setModel(_model);
-    }
   };
 
   // Load the PC model to the viewer
@@ -104,7 +99,7 @@ export const PointCloudRevealContent = ({
 
   return (
     <>
-      <PointCloudToolBar />
+      <PointCloudToolBar onDeleteAnnotation={onDeleteAnnotation} />
       <StyledResourceSelectorButtonWrapper>
         <Button
           type="ghost"
@@ -120,6 +115,12 @@ export const PointCloudRevealContent = ({
           }}
         />
       </StyledResourceSelectorButtonWrapper>
+      <AnnotationsCard
+        annotations={annotations}
+        onAnnotationDelete={(annotation) => {
+          onDeleteAnnotation(annotation.id);
+        }}
+      />
     </>
   );
 };

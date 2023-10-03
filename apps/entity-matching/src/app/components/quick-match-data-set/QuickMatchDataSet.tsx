@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
 
-import { useDataSet } from '@entity-matching-app/hooks/dataset';
+import { useDataSet } from '../../hooks/dataset';
 
 type QuickMatchDataSetProps = {
   dataSetId: number;

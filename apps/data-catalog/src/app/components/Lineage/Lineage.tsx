@@ -1,34 +1,35 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import {
-  DataSetWithExtpipes,
-  useUpdateDataSetTransformations,
-} from '@data-catalog-app/actions';
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import ConsumerTable from '@data-catalog-app/components/Lineage/ConsumerTable';
-import { ExtpipeRawTables } from '@data-catalog-app/components/Lineage/Extpipe/ExtpipeRawTables';
-import ExtpipeTable from '@data-catalog-app/components/Lineage/Extpipe/ExtpipeTable';
-import { Extractor } from '@data-catalog-app/components/Lineage/Extractor/Extractor';
-import { Source } from '@data-catalog-app/components/Lineage/Source/Source';
-import { useTransformationsColumns } from '@data-catalog-app/components/Lineage/transformationColumns';
-import { JetfireApi } from '@data-catalog-app/jetfire/JetfireApi';
-import handleError from '@data-catalog-app/utils/handleError';
-import { getJetfireUrl } from '@data-catalog-app/utils/shared';
-import {
-  LineageSubTitle,
-  LineageTitle,
-  NoDataText,
-  SectionLine,
-  LineageSection,
-  ContentWrapper,
-  ExpandableParagraph,
-} from '@data-catalog-app/utils/styledComponents';
-import { RawTable } from '@data-catalog-app/utils/types';
-
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { Flex, Icon, Table } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
+
+import {
+  DataSetWithExtpipes,
+  useUpdateDataSetTransformations,
+} from '../../actions';
+import { useTranslation } from '../../common/i18n';
+import { JetfireApi } from '../../jetfire/JetfireApi';
+import {
+  ContentWrapper,
+  ExpandableParagraph,
+  getJetfireUrl,
+  handleError,
+  LineageSection,
+  LineageSubTitle,
+  LineageTitle,
+  NoDataText,
+  RawTable,
+  SectionLine,
+} from '../../utils';
+
+import ConsumerTable from './ConsumerTable';
+import { ExtpipeRawTables } from './Extpipe/ExtpipeRawTables';
+import ExtpipeTable from './Extpipe/ExtpipeTable';
+import { Extractor } from './Extractor/Extractor';
+import { Source } from './Source/Source';
+import { useTransformationsColumns } from './transformationColumns';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 

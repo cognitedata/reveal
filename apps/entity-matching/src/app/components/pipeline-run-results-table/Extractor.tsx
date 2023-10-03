@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { Body, Flex } from '@cognite/cogs.js';
 
-import { ColoredExtractor } from '@entity-matching-app/utils/colored-rules';
+import { ColoredExtractor } from '../../utils/colored-rules';
 
 type ExtractorProps = {
   extractors: ColoredExtractor[];

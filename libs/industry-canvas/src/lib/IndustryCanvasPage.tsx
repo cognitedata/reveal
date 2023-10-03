@@ -263,10 +263,9 @@ export const IndustryCanvasPage = () => {
     }
   }, [isCanvasLocked, toolType]);
 
-  const { selectedCanvasAnnotation, selectedContainer } =
+  const { selectedCanvasAnnotation, selectedContainers } =
     useSelectedAnnotationOrContainer({
       unifiedViewerRef,
-      toolType,
       canvasAnnotations,
       containers,
     });
@@ -285,7 +284,7 @@ export const IndustryCanvasPage = () => {
 
   const onAddContainerReferences = useOnAddContainerReferences({
     unifiedViewerRef,
-    selectedContainer,
+    selectedContainers,
     clickedContainerAnnotation,
     containers,
     isCanvasLocked,
@@ -628,7 +627,7 @@ export const IndustryCanvasPage = () => {
             containerAnnotations={containerAnnotations}
             clickedContainerAnnotation={clickedContainerAnnotation}
             nodes={nodes}
-            selectedContainer={selectedContainer}
+            selectedContainers={selectedContainers}
             selectedCanvasAnnotation={selectedCanvasAnnotation}
             tool={tool}
             toolType={toolType}

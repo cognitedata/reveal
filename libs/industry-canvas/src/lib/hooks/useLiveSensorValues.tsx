@@ -56,7 +56,7 @@ const useLiveSensorValuesTooltips = ({
             }
 
             return {
-              targetId: annotationId,
+              targetIds: [annotationId],
               anchorTo: TooltipAnchorPosition.TOP_RIGHT,
               content: (
                 <ConditionalLiveSensorValue

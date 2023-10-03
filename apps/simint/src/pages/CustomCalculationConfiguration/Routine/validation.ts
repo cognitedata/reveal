@@ -18,7 +18,7 @@ const isYupValidationError = (value?: unknown): value is ValidationError =>
 
 const stepMap = {
   Set: {
-    type: Yup.string().oneOf(['inputTimeSeries', 'manual']).required(),
+    type: Yup.string().oneOf(['inputTimeSeries', 'inputConstant']).required(),
     value: Yup.string().required(),
   },
   Get: {

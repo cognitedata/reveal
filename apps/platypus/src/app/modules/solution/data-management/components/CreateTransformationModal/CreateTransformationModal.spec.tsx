@@ -80,7 +80,7 @@ describe('CreateTransformationModal', () => {
     );
 
     userEvent.click(screen.getByText('Load relationship'));
-    userEvent.click(screen.getByText(/select/i));
+    userEvent.click(screen.getByText('Select relationship'));
 
     expect(screen.getByText('Movie.actors')).toBeTruthy();
   });
@@ -123,7 +123,7 @@ describe('CreateTransformationModal', () => {
     );
 
     userEvent.click(screen.getByText('Load relationship'));
-    userEvent.click(screen.getByText(/select/i));
+    userEvent.click(screen.getByText('Select relationship'));
     userEvent.click(screen.getByText('Movie.actors'));
 
     expect(
@@ -165,7 +165,7 @@ describe('CreateTransformationModal', () => {
     );
 
     userEvent.click(screen.getByText('Load relationship'));
-    userEvent.click(screen.getByText(/select/i));
+    userEvent.click(screen.getByText('Select relationship'));
     userEvent.click(screen.getByText('Movie.actors'));
 
     expect(screen.getByLabelText('Transformation name')).toHaveValue(
@@ -200,7 +200,7 @@ describe('CreateTransformationModal', () => {
     );
 
     userEvent.click(screen.getByText('Load relationship'));
-    userEvent.click(screen.getByText(/select/i));
+    userEvent.click(screen.getByText('Select relationship'));
     userEvent.click(screen.getByText('Movie.actors'));
     userEvent.click(screen.getByRole('button', { name: 'Next', hidden: true }));
 

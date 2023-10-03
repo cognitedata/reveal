@@ -47,7 +47,7 @@ export default function SectionSetup(): JSX.Element {
     ));
 
   return (
-    <SetUpWrapper jobStatus={jobStatus}>
+    <SetUpWrapper jobStatus={jobStatus} data-cy="setup-summary">
       <Flex column>
         <Flex row align style={{ justifyContent: 'space-between' }}>
           <Title level={5}>Setup for creating interactive diagrams</Title>

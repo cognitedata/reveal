@@ -113,7 +113,7 @@ describe('PreviewPageHeader', () => {
 
     expect(screen.getByText(/add instance/i)).toBeTruthy();
     expect(screen.getByText(/bulk population/i)).toBeTruthy();
-    expect(screen.getByLabelText(/delete/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /delete/gi })).toBeTruthy();
   });
 
   it('Shows action buttons if there are published rows', () => {
@@ -145,7 +145,7 @@ describe('PreviewPageHeader', () => {
     );
 
     expect(screen.getByText(/add instance/i)).toBeTruthy();
-    expect(screen.getByLabelText(/delete/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /delete/gi })).toBeTruthy();
   });
 
   it('Shows action buttons if there are draft rows', () => {
@@ -177,7 +177,7 @@ describe('PreviewPageHeader', () => {
     );
 
     expect(screen.getByText(/add instance/i)).toBeTruthy();
-    expect(screen.getByLabelText(/delete/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /delete/gi })).toBeTruthy();
   });
 
   it('Does not show action buttons if there are no rows or transformations', () => {
@@ -209,7 +209,7 @@ describe('PreviewPageHeader', () => {
     );
 
     expect(screen.queryByText(/add instance/i)).toBeNull();
-    expect(screen.queryByLabelText(/delete/i)).toBeNull();
+    expect(screen.queryByRole('button', { name: /delete/gi })).toBeNull();
   });
 
   it('Shows search input if there are published rows', () => {

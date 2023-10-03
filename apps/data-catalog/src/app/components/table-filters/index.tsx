@@ -2,15 +2,6 @@ import { PropsWithChildren, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import AppliedFilters from '@data-catalog-app/components/applied-filters';
-import useDebounce from '@data-catalog-app/hooks/useDebounce';
-import {
-  useSearchParamState,
-  useUpdateSearchParamState,
-} from '@data-catalog-app/hooks/useSearchParamState';
-import { trackUsage } from '@data-catalog-app/utils';
-
 import {
   Body,
   Button,
@@ -24,6 +15,15 @@ import {
   Select,
   OptionType,
 } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common/i18n';
+import useDebounce from '../../hooks/useDebounce';
+import {
+  useSearchParamState,
+  useUpdateSearchParamState,
+} from '../../hooks/useSearchParamState';
+import { trackUsage } from '../../utils';
+import AppliedFilters from '../applied-filters';
 
 const GOVERNANCE_STATUSES = ['governed', 'ungoverned', 'not-defined'] as const;
 export type GovernanceStatus = (typeof GOVERNANCE_STATUSES)[number];

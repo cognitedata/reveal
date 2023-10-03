@@ -1,4 +1,4 @@
-import type { TemporalDatum } from '@simint-app/components/charts/types';
+import type { TemporalDatum } from '../../components/charts/types';
 
 import { linearInterpolation, linspace, mean } from './mathUtils';
 

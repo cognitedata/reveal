@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Avatar, Button, Body } from '@cognite/cogs.js';
+import { Avatar, Button, Body, AvatarProps } from '@cognite/cogs.js';
 
 import { translationKeys } from '../../common';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -10,7 +10,7 @@ type Props = {
   ownerProfile?: UserProfile;
   sharedUsers?: UserProfile[];
   onUserRemoved: (userId: string) => void;
-  size?: string; // use 'small' here if needed (for 'Charts').
+  size?: AvatarProps['size']; // use 'small' here if needed (for 'Charts').
   enableUserRemoval?: boolean;
 };
 

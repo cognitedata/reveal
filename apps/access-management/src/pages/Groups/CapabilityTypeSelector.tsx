@@ -100,6 +100,7 @@ const CapabilityTypeSelector = (props: CapabilityTypeSelectorProps) => {
 
   return (
     <Select
+      data-testid="access-management-capability-type-selector"
       value={value}
       onChange={onChange}
       showSearch

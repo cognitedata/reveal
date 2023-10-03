@@ -33,7 +33,6 @@ describe('DataModelDetailModal', () => {
   it('validates invalid name when using DMS V3', () => {
     render(
       <Container
-        dataSets={[]}
         description=""
         externalId=""
         okButtonName="Create"
@@ -56,7 +55,6 @@ describe('DataModelDetailModal', () => {
 
     render(
       <DataModelDetailModal
-        dataSets={[]}
         description=""
         externalId=""
         name=""
@@ -86,7 +84,6 @@ describe('DataModelDetailModal', () => {
 
     render(
       <DataModelDetailModal
-        dataSets={[]}
         description=""
         externalId=""
         name="My Data Model"
@@ -116,7 +113,6 @@ describe('DataModelDetailModal', () => {
 
     render(
       <DataModelDetailModal
-        dataSets={[]}
         description=""
         externalId=""
         isLoading
@@ -147,7 +143,6 @@ describe('DataModelDetailModal', () => {
 
     render(
       <DataModelDetailModal
-        dataSets={[]}
         description=""
         externalId=""
         name="My Data Model"
@@ -177,7 +172,6 @@ describe('DataModelDetailModal', () => {
 
     render(
       <DataModelDetailModal
-        dataSets={[]}
         description=""
         externalId=""
         name="My Data Model"

@@ -124,6 +124,7 @@ export default function SelectionTable(props: Props): JSX.Element {
       pagination={{ showQuickJumper: true }}
       style={{ width: '100%', borderRadius: '8px' }}
       options={{ narrow: true, bordered: true }}
+      data-cy="diagram-selection-table"
     />
   );
 }

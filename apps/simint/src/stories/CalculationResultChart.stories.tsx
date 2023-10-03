@@ -2,7 +2,7 @@
 
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
-import { CalculationResultChart } from '@simint-app/components/charts/CalculationResultChart';
+import { CalculationResultChart } from "../components/charts/CalculationResultChart";
 
 const data = [
   {

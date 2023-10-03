@@ -17,7 +17,6 @@ import {
   Modal,
   Textarea,
 } from '@cognite/cogs.js';
-import { DataSet } from '@cognite/sdk';
 
 import { CreateNewSpaceModal } from '../CreateNewSpaceModal/CreateNewSpaceModal';
 import { DataModelLibrary } from '../DataModelLibrary/DataModelLibrary';
@@ -31,9 +30,6 @@ export type DataModelDetailModalProps = {
   description: string;
   externalId: string;
   hasInputError?: boolean;
-  dataSets: DataSet[];
-  isDataSetsLoading?: boolean;
-  isDataSetsFetchError?: boolean;
   isExternalIdLocked?: boolean;
   isLoading?: boolean;
   isSpaceDisabled?: boolean;

@@ -1,6 +1,6 @@
-import Dropdown from '@data-catalog-app/components/dropdown/Dropdown';
-
 import { Button, Menu, MenuItemProps } from '@cognite/cogs.js';
+
+import Dropdown from '../../dropdown/Dropdown';
 
 type RowActionsProps = {
   actions: MenuItemProps[];

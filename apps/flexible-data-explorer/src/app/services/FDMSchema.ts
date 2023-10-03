@@ -56,7 +56,9 @@ export class FDMSchema {
     return types
       ?.filter((type) => {
         // Remove system data model imports from the type list.
-        return !type.directives?.some((item) => item.name === 'import');
+        return !type.directives?.some((item) =>
+          ['import', 'edge'].includes(item.name)
+        );
       })
       .map((type) => {
         const descriptionTokens = extractDescriptionTokens(type.description);

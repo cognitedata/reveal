@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import Editor, { Monaco } from '@monaco-editor/react';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import debounce from 'lodash/debounce';
+import { subscribe, unsubscribe } from '@platypus-app/utils/custom-events';
 import noop from 'lodash/noop';
 import {
   Environment as MonacoEditorEnvironment,
@@ -11,6 +11,7 @@ import {
   MarkerSeverity,
 } from 'monaco-editor/esm/vs/editor/editor.api';
 
+import { CUSTOM_EVENTS } from '../../constants';
 import { setupGraphql } from '../../web-workers';
 // web workers stuff
 import { getGraphQlWorker } from '../../web-workers/worker-loaders/graphqlWorkerLoader';
@@ -114,16 +115,13 @@ export const GraphqlCodeEditor = React.memo(
       setEditorRef(editor);
     };
 
-    const debouncedOnChange = useMemo(
-      () => debounce((value: string) => onChange(value), 500),
+    const handleValidGraphQlChange = useCallback(
+      (event: CustomEvent | Event) => {
+        const newGraphQlSchema = (event as CustomEvent).detail;
+        onChange(newGraphQlSchema);
+      },
       [onChange]
     );
-
-    useEffect(() => {
-      return () => {
-        debouncedOnChange.cancel();
-      };
-    }, [debouncedOnChange]);
 
     useEffect(() => {
       if (currentTypeName && editorRef && typeDefs) {
@@ -158,6 +156,28 @@ export const GraphqlCodeEditor = React.memo(
       };
     }, []);
 
+    /**
+     * We need to save and work only with the valid graphql schema
+     * so that the visualizer can work, parsing can work, autocomplete and hover...etc.
+     * This is the only (hacky) way to do it.
+     * There is some bug in the react-monaco editor and onValidate is not triggered on every change
+     *
+     * This is custom event that is triggered only when the schema is valid.
+     */
+    React.useEffect(() => {
+      subscribe(
+        CUSTOM_EVENTS.ON_VALID_GRAPHQL_SCHEMA_CHANGED,
+        handleValidGraphQlChange
+      );
+
+      return () => {
+        unsubscribe(
+          CUSTOM_EVENTS.ON_VALID_GRAPHQL_SCHEMA_CHANGED,
+          handleValidGraphQlChange
+        );
+      };
+    }, [handleValidGraphQlChange]);
+
     useEffect(() => {
       const editorModel = editorRef?.getModel();
       if (editorModel != null) {
@@ -181,6 +201,9 @@ export const GraphqlCodeEditor = React.memo(
             formatOnPaste: true,
             formatOnType: true,
             fixedOverflowWidgets: true,
+            lightbulb: {
+              enabled: true,
+            },
           }}
           language={language}
           value={editorValue}
@@ -190,17 +213,18 @@ export const GraphqlCodeEditor = React.memo(
           defaultValue={getSampleDataModel(space)}
           defaultLanguage={language}
           onValidate={(markers) => {
-            setEditorHasError(
-              markers.some(
-                (marker) =>
-                  marker.severity === MarkerSeverity.Error &&
-                  marker.owner === 'graphql'
-              )
+            const editorHasErrors = markers.some(
+              (marker) =>
+                marker.severity === MarkerSeverity.Error &&
+                marker.owner === 'graphql'
             );
+            setEditorHasError(editorHasErrors);
           }}
           onChange={(value) => {
             const editCode = value || '';
-            debouncedOnChange(editCode);
+            if (!editCode) {
+              handleValidGraphQlChange({ detail: '' } as CustomEvent);
+            }
             setErrorsByGroup({ DmlError: [] });
             setEditorValue(editCode);
           }}

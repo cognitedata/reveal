@@ -74,6 +74,7 @@ export default function SecurityCategories() {
           <Form layout="horizontal">
             <Form.Item name="name" label={t('name')}>
               <Input
+                data-testid="access-management-create-security-category-input"
                 onChange={(e) => setNewName(e.target.value)}
                 value={newName}
               />
@@ -84,6 +85,7 @@ export default function SecurityCategories() {
       <Row justify="space-between">
         <Col>
           <Input.Search
+            data-testid="access-management-security-categories-search"
             placeholder={t('create-category-filter-placeholder')}
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
@@ -95,13 +97,18 @@ export default function SecurityCategories() {
           />
         </Col>
         <Col>
-          <Button type="primary" onClick={() => setShowModal(true)}>
+          <Button
+            type="primary"
+            onClick={() => setShowModal(true)}
+            data-testid="access-management-create-security-category-button"
+          >
             {t('create-new-security-category')}
           </Button>
         </Col>
       </Row>
       <Table
         rowKey="id"
+        data-testid="access-management-security-categories-table"
         loading={!isFetched}
         columns={columns}
         pagination={{ pageSize: 100, hideOnSinglePage: true }}

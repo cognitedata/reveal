@@ -1,5 +1,5 @@
-import { Job } from './Job';
 import { DataSource } from './DataSource';
+import { Job } from './Job';
 import { Schedule } from './Schedule';
 
 export type TransformBlockedInfo = { reason: string; createdTime: number };

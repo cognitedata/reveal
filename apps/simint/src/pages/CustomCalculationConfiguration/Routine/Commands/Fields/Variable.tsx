@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { useMatch } from 'react-location';
 
-import { InputRow } from '@simint-app/components/forms/ModelForm/elements';
-import type { AppLocationGenerics } from '@simint-app/routes';
-import { getTargetTimeseriesByPrefix } from '@simint-app/utils/routineUtils';
 import { Field, useFormikContext } from 'formik';
 
 import { InputExp } from '@cognite/cogs.js';
@@ -13,7 +10,9 @@ import type {
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
 
-import { getTimeSerieIndexByType } from '../utils';
+import { InputRow } from '../../../../../components/forms/ModelForm/elements';
+import type { AppLocationGenerics } from '../../../../../routes';
+import { getInputOutputIndex } from '../utils';
 import type {
   ConfigurationFieldProps,
   TimeSeriesPrefixProps,
@@ -30,7 +29,8 @@ export function Variable({
   routineIndex,
   timeSeriesPrefix,
 }: VariableFieldProps) {
-  const { setFieldValue, values } = useFormikContext<UserDefined>();
+  const { setFieldValue, values, validateField } =
+    useFormikContext<UserDefined>();
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
@@ -38,10 +38,7 @@ export function Variable({
   // state for setting variable error message
   const [variableError, setVariableError] = useState<string>('');
 
-  const timeSeriesTarget = getTargetTimeseriesByPrefix(
-    timeSeriesPrefix as string,
-    values
-  );
+  const timeSeriesTarget = values[timeSeriesPrefix];
 
   const currentTimeSeries = timeSeriesTarget.map((ts) => ts.type);
   const currentValue =
@@ -54,16 +51,12 @@ export function Variable({
       ({ value }) =>
         !currentTimeSeries.includes(value) || value === currentValue
     );
-  // If the time serie is in the routine, we get its index
-  const timeSerieIndexInRoutine = getTimeSerieIndexByType(
+
+  const { index: inputOutputIndex } = getInputOutputIndex(
     timeSeriesTarget,
     step.arguments.value ?? ''
   );
-  //  If the time serie is not in the routine, we add it at the end
-  const timeSeriesIndex =
-    timeSerieIndexInRoutine !== -1
-      ? timeSerieIndexInRoutine
-      : timeSeriesTarget.length;
+
   const formikPath = `routine.${routineIndex}.steps.${stepIndex}.arguments.value`;
 
   return (
@@ -71,7 +64,8 @@ export function Variable({
       <div className="cogs-input-container">
         <Field
           as={InputExp}
-          error={variableError}
+          status={variableError ? 'critical' : undefined}
+          statusText={variableError}
           label="Variable"
           name={formikPath}
           options={TIMESERIES_VARIABLE_OPTIONS}
@@ -79,7 +73,8 @@ export function Variable({
           type="text"
           validate={() => {
             // Find the name of the current variable
-            const name = timeSeriesTarget[timeSeriesIndex]?.name;
+            let error = '';
+            const name = timeSeriesTarget[inputOutputIndex]?.name?.trim();
 
             if (!name) {
               return undefined;
@@ -104,27 +99,36 @@ export function Variable({
               ).length > 1;
 
             if (isDuplicate) {
-              setVariableError('Duplicate variable name');
-            } else {
-              setVariableError('');
+              error = 'Duplicate variable name';
             }
+            setVariableError(error);
 
-            return undefined;
+            return error;
           }}
-          value={timeSeriesTarget[timeSeriesIndex]?.name ?? ''}
+          value={timeSeriesTarget[inputOutputIndex]?.name ?? ''}
           fullWidth
+          onBlur={async (event: React.FocusEvent<HTMLInputElement>) => {
+            const { value } = event.currentTarget;
+
+            await setFieldValue(
+              `${timeSeriesPrefix}.${inputOutputIndex}.name`,
+              value?.trim()
+            );
+
+            validateField(formikPath);
+          }}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = event.currentTarget;
             const type = `${value
               .trim()
               .split(' ')
               .map((word) => word.charAt(0).toUpperCase())
-              .join('')}${timeSeriesIndex}`;
+              .join('')}${inputOutputIndex}`;
             setFieldValue(formikPath, type);
-            setFieldValue(`${timeSeriesPrefix}.${timeSeriesIndex}.type`, type);
+            setFieldValue(`${timeSeriesPrefix}.${inputOutputIndex}.type`, type);
             setFieldValue(
-              `${timeSeriesPrefix}.${timeSeriesIndex}.name`,
-              value.trim()
+              `${timeSeriesPrefix}.${inputOutputIndex}.name`,
+              value
             );
           }}
         />

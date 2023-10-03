@@ -100,7 +100,10 @@ export default function GroupDrawer({ group, onClose }: Props) {
           ]}
           extra={t('group-name-info')}
         >
-          <Input disabled={isLoading} />
+          <Input
+            disabled={isLoading}
+            data-testid="access-management-create-group-name-input"
+          />
         </Form.Item>
 
         <Form.Item name="id" hidden>
@@ -136,12 +139,18 @@ export default function GroupDrawer({ group, onClose }: Props) {
           extra={t('source-id-info')}
         >
           <Input
+            data-testid="access-management-group-source-id-input"
             disabled={isLoading}
             placeholder={t('source-id-placeholder')}
           />
         </Form.Item>
         <Form.Item>
-          <Button disabled={isLoading} type="primary" htmlType="submit">
+          <Button
+            disabled={isLoading}
+            type="primary"
+            htmlType="submit"
+            data-testid="access-management-create-group-submit-button"
+          >
             {group ? t('update') : t('create')}
           </Button>
           <Button onClick={onClose}>{t('cancel')}</Button>

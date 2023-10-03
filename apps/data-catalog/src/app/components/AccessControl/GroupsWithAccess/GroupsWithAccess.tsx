@@ -1,13 +1,14 @@
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import { CogsTableCellRenderer } from '@data-catalog-app/utils';
-import {
-  isCapScopedOnDataSets,
-  isGroupScopedOnDataSets,
-} from '@data-catalog-app/utils/shared';
+import { useMemo } from 'react';
 
 import { Chip, Table } from '@cognite/cogs.js';
 import { Group, SingleCogniteCapability } from '@cognite/sdk';
-import { useMemo } from 'react';
+
+import { useTranslation } from '../../../common/i18n';
+import {
+  CogsTableCellRenderer,
+  isCapScopedOnDataSets,
+  isGroupScopedOnDataSets,
+} from '../../../utils';
 
 interface GroupsWithAccessProps {
   dataSetId: number;

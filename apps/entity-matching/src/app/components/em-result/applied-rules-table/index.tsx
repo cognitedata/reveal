@@ -1,25 +1,19 @@
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 import { TableRowSelection } from 'antd/lib/table/interface';
-import { useTranslation } from '@entity-matching-app/common';
-import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
-
-import { Container, Graphic } from '@entity-matching-app/components/InfoBox';
-import ExpandedRule from '@entity-matching-app/components/pipeline-run-results-table/ExpandedRule';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
-
-import Extractor from '@entity-matching-app/components/pipeline-run-results-table/Extractor';
-
 import { Body, Flex, Icon, Title } from '@cognite/cogs.js';
 
-import { ExpandButton } from '@entity-matching-app/components/pipeline-run-results-table/GroupedResultsTable';
-import { Prediction } from '@entity-matching-app/hooks/entity-matching-predictions';
-import { AppliedRule } from '@entity-matching-app/types/rules';
-import {
-  ColoredRule,
-  colorRule,
-} from '@entity-matching-app/utils/colored-rules';
+import { useTranslation } from '../../../common';
+import { PAGINATION_SETTINGS } from '../../../common/constants';
+import { Prediction } from '../../../hooks/entity-matching-predictions';
+import { AppliedRule } from '../../../types/rules';
+import { ColoredRule, colorRule } from '../../../utils/colored-rules';
+import { Container, Graphic } from '../../InfoBox';
+import ExpandedRule from '../../pipeline-run-results-table/ExpandedRule';
+import Extractor from '../../pipeline-run-results-table/Extractor';
+import { ExpandButton } from '../../pipeline-run-results-table/GroupedResultsTable';
 
 type Props = {
   predictions: Prediction[];
@@ -141,6 +135,7 @@ export default function AppliedRulesTable({
   return (
     <Table<AppliedRuleTableRecord>
       columns={columns}
+      defaultSort={['numberOfMatches', 'descend']}
       emptyContent={undefined}
       appendTooltipTo={undefined}
       dataSource={appliedRulesList}

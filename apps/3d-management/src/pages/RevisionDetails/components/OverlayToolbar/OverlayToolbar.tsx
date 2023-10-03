@@ -11,7 +11,14 @@ import styled from 'styled-components';
 
 import * as THREE from 'three';
 
-import { ToolBarButton, ToolBar, Slider, Icon, Menu } from '@cognite/cogs.js';
+import {
+  ToolBarButton,
+  ToolBar,
+  Slider,
+  Icon,
+  Menu,
+  IconType,
+} from '@cognite/cogs.js';
 import {
   CameraControlsOptions,
   CogniteCadModel,
@@ -176,7 +183,7 @@ export function OverlayToolbar({
 
   function addPointToPointMeasurement() {
     const measurement = {
-      icon: 'Ruler',
+      icon: 'Ruler' as IconType,
       toggled: !nodesClickable,
       description: 'Measure distance between two points',
       onClick: () => {
@@ -230,7 +237,7 @@ export function OverlayToolbar({
 
   function addHighQualityMode() {
     const highQuality = {
-      icon: 'SunHigh',
+      icon: 'SunHigh' as IconType,
       toggled: !highQualityRender,
       description:
         'Toggle improved fidelity rendering. Note that this might affect performance',

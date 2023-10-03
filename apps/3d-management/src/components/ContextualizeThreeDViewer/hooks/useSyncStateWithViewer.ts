@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import * as THREE from 'three';
 
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 
 import {
   ToolType,
@@ -41,21 +41,36 @@ const removeObjectByName = (viewer: Cognite3DViewer, name: string) => {
 export const useSyncStateWithViewer = () => {
   const {
     modelId,
+    isModelLoaded,
     pendingAnnotation,
     shouldShowBoundingVolumes,
     shouldShowWireframes,
     threeDViewer,
     tool,
     annotations,
+    visualizationOptions,
   } = useContextualizeThreeDViewerStore((state) => ({
     modelId: state.modelId,
+    isModelLoaded: state.isModelLoaded,
     pendingAnnotation: state.pendingAnnotation,
     shouldShowBoundingVolumes: state.shouldShowBoundingVolumes,
     shouldShowWireframes: state.shouldShowWireframes,
     threeDViewer: state.threeDViewer,
     tool: state.tool,
     annotations: state.annotations,
+    visualizationOptions: state.visualizationOptions,
   }));
+
+  // sync visualizationOptions with viewer
+  useEffect(() => {
+    if (threeDViewer === null) return;
+
+    for (const model of threeDViewer.models)
+      if (model instanceof CognitePointCloudModel) {
+        model.pointSize = visualizationOptions.pointSize;
+        model.pointColorType = visualizationOptions.pointColor;
+      }
+  }, [visualizationOptions, threeDViewer]);
 
   // Sync pending annotation with viewer.
   useEffect(() => {
@@ -108,14 +123,12 @@ export const useSyncStateWithViewer = () => {
   // Sync all annotation wireframes with viewer.
   useEffect(() => {
     if (threeDViewer === null) return;
+    if (isModelLoaded === false) return;
 
-    if (!shouldShowWireframes) {
-      removeObjectByName(threeDViewer, ANNOTATION_AS_WIREFRAME_ID);
+    removeObjectByName(threeDViewer, ANNOTATION_AS_WIREFRAME_ID);
+
+    if (!shouldShowWireframes || annotations === null || modelId === null)
       return;
-    }
-    if (annotations === null) return;
-
-    if (modelId === null) return;
 
     const pointCloudModel = getCognitePointCloudModel({
       modelId,
@@ -129,5 +142,5 @@ export const useSyncStateWithViewer = () => {
     );
     group.name = ANNOTATION_AS_WIREFRAME_ID;
     addObject(threeDViewer, group);
-  }, [shouldShowWireframes, threeDViewer, annotations, modelId]);
+  }, [shouldShowWireframes, threeDViewer, annotations, modelId, isModelLoaded]);
 };

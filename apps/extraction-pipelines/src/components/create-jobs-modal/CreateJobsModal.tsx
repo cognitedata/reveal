@@ -220,6 +220,9 @@ export const CreateJobsModal = ({
     {
       type: 'value',
     },
+    {
+      type: 'sparkplug',
+    },
   ];
 
   const formatFieldOptions = formatField.map(({ type }) => ({

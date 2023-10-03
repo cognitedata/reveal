@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
 import styled from 'styled-components/macro';
 
 import { Button, Input, Modal } from '@cognite/cogs.js';
@@ -12,6 +11,8 @@ import {
   useDeleteLabelMutation,
   useGetLabelsListQuery,
 } from '@cognite/simconfig-api-sdk/rtk';
+
+import { selectProject } from '../store/simconfigApiProperties/selectors';
 
 interface LabelsModalProps {
   isOpen: boolean;

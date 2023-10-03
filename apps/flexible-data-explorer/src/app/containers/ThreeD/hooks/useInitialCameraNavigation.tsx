@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
+import { Cognite3DViewer, DefaultCameraManager } from '@cognite/reveal';
 import {
   useCameraNavigation,
   useGetCameraStateFromUrlParam,
@@ -11,7 +12,7 @@ type CameraNavigationActions = {
   focusInstance: () => void;
 };
 
-export const useThreeDCameraNavigation = (
+export const useInitialCameraNavigation = (
   isInitialLoad: boolean,
   instance?: { externalId: string; space: string }
 ): CameraNavigationActions => {
@@ -26,6 +27,8 @@ export const useThreeDCameraNavigation = (
     viewer.cameraManager.on('cameraChange', setCameraMoving);
     viewer.cameraManager.on('cameraStop', setCameraNotMoving);
 
+    setDefaultCameraMode(viewer);
+
     return () => {
       viewer.cameraManager.off('cameraChange', setCameraMoving);
       viewer.cameraManager.off('cameraStop', setCameraNotMoving);
@@ -38,6 +41,7 @@ export const useThreeDCameraNavigation = (
     if (currentCameraState === undefined || cameraIsMovingRef.current) {
       return;
     }
+
     cameraNavigation.fitCameraToState(currentCameraState);
   }, [currentCameraState, cameraNavigation]);
 
@@ -78,3 +82,13 @@ export const useThreeDCameraNavigation = (
     loadInitialCameraState,
   };
 };
+
+function setDefaultCameraMode(viewer: Cognite3DViewer) {
+  const cameraManager = viewer.cameraManager;
+
+  if (cameraManager instanceof DefaultCameraManager) {
+    cameraManager.setCameraControlsOptions({
+      mouseWheelAction: 'zoomToCursor',
+    });
+  }
+}

@@ -55,7 +55,7 @@ export default function Preview(props: Props) {
         <Tabs.Tab
           tabKey="assets"
           chipRight={{
-            label: counts?.asset ?? '-',
+            label: `${counts?.asset ?? '-'}`,
             size: 'small',
           }}
           label="Assets"
@@ -65,7 +65,7 @@ export default function Preview(props: Props) {
         <Tabs.Tab
           tabKey="files"
           chipRight={{
-            label: counts?.file ?? '-',
+            label: `${counts?.file ?? '-'}`,
             size: 'small',
           }}
           label="Diagrams"

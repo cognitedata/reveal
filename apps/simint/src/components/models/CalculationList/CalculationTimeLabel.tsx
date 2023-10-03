@@ -1,11 +1,12 @@
-import type { DateType } from '@simint-app/utils/timeUtils';
-import {
-  formatCalculationDate,
-  formatCalculationDuration,
-} from '@simint-app/utils/timeUtils';
 import styled from 'styled-components/macro';
 
 import { Icon, Tooltip } from '@cognite/cogs.js';
+
+import type { DateType } from '../../../utils/timeUtils';
+import {
+  formatCalculationDate,
+  formatCalculationDuration,
+} from '../../../utils/timeUtils';
 
 interface CalculationTimeLabelProps {
   calcTime?: DateType;

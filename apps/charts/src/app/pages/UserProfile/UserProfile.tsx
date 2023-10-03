@@ -192,14 +192,13 @@ const UserProfile = () => {
           <article className="lang-col">
             <Select
               disabled={!ready}
-              value={
-                ready
-                  ? availableLanguages.find(
+              {...(ready
+                ? {
+                    value: availableLanguages.find(
                       (option) => option.value === i18n.language
-                    )
-                  : availableLanguages[0]
-              }
-              icon={ready ? '' : 'Loader'}
+                    ),
+                  }
+                : { icon: 'Loader', value: availableLanguages[0] })}
               onChange={(option: (typeof availableLanguages)[0]) =>
                 i18n.changeLanguage(option.value)
               }

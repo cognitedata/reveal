@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
-import type { StoreState } from '@simint-app/store/types';
+
+import type { StoreState } from '../types';
 
 import type { Capabilities } from './types';
 

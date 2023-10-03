@@ -2,13 +2,6 @@ import { useMemo } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { Wizard } from '@simint-app/components/shared/Wizard';
-import { HEARTBEAT_POLL_INTERVAL } from '@simint-app/components/simulator/constants';
-import { useTitle } from '@simint-app/hooks/useTitle';
-import { useUserInfo } from '@simint-app/hooks/useUserInfo';
-import type { AppLocationGenerics } from '@simint-app/routes';
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import { formatISO } from 'date-fns';
 import { Form, Formik, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
@@ -33,6 +26,13 @@ import {
   useUpsertCalculationMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import { Wizard } from '../../components/shared/Wizard';
+import { HEARTBEAT_POLL_INTERVAL } from '../../components/simulator/constants';
+import { useTitle } from '../../hooks/useTitle';
+import { useUserInfo } from '../../hooks/useUserInfo';
+import type { AppLocationGenerics } from '../../routes';
+import { selectProject } from '../../store/simconfigApiProperties/selectors';
+import { createCdfLink } from '../../utils/createCdfLink';
 import { LAYER } from '../../utils/zIndex';
 
 import { AdvancedStep } from './steps/AdvancedStep';

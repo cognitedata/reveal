@@ -59,7 +59,7 @@ export const BoolCellRenderer = React.memo((props: BoolCellRendererProps) => {
             checked={props.value}
             disabled={shouldBeDisabled}
             onChange={checkedHandler}
-            size="small"
+            size="x-small"
           ></Switch>
         )}
       </Tooltip>

@@ -88,6 +88,7 @@ export default function UserProfilesConfigContainer() {
       <UserProfilesConfigurationWarning />
       <Form
         {...formItemLayout}
+        data-testid="access-management-user-profiles-form"
         onFinish={handleSubmit}
         initialValues={{
           isUserProfilesEnabled:

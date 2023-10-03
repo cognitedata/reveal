@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import styled from 'styled-components';
 
 import { Skeleton, Tabs } from '@cognite/cogs.js';
@@ -11,6 +13,7 @@ import { useSearchDataTypeSortedByKeys } from './hooks/useSearchDataTypeSortedBy
 import { useSearchThreeDMappedSortedByKeys } from './hooks/useSearchThreeDMappedSortedByKeys';
 import { useSearchThreeDMappedTotalCount } from './hooks/useSearchThreeDMappedTotalCount';
 import { useSearchTotalCount } from './hooks/useSearchTotalCount';
+import { makeAllValuesUnique, makeAllValuesZero } from './utils';
 
 interface Props {
   displayOnlyMapped3dData?: boolean;
@@ -41,8 +44,20 @@ export const ThreeDSearchCategories: React.FC<Props> = ({
   const transformedTotalCount = displayOnlyMapped3dData
     ? totalCount3d
     : totalCount;
-  const transformedCounts = displayOnlyMapped3dData ? counts3d : counts;
-  const transformedKeys = displayOnlyMapped3dData ? keys3d : keys;
+  const transformedCounts = useMemo(
+    () =>
+      displayOnlyMapped3dData
+        ? { ...makeAllValuesZero(counts), ...counts3d }
+        : counts,
+    [counts, counts3d, displayOnlyMapped3dData]
+  );
+  const transformedKeys = useMemo(
+    () =>
+      displayOnlyMapped3dData
+        ? makeAllValuesUnique([...keys3d, ...keys])
+        : keys,
+    [keys, keys3d, displayOnlyMapped3dData]
+  );
 
   const isDataLoading = displayOnlyMapped3dData
     ? isCounts3dLoading || isTotalCount3dLoading

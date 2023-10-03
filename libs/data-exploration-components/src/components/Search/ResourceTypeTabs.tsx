@@ -49,7 +49,10 @@ const ResourceTypeTab = ({
   });
 
   return (
-    <Tabs.Tab chipRight={{ label: result.count, size: 'x-small' }} {...rest} />
+    <Tabs.Tab
+      chipRight={{ label: `${result.count}`, size: 'x-small' }}
+      {...rest}
+    />
   );
 };
 export const ResourceTypeTabs = ({

@@ -48,7 +48,7 @@ export interface FetchFilteredRowsCountDTO {
   dataModelId: string;
   version: string;
   space: string;
-  filter: QueryFilter | { [key in string]: QueryFilter } | null;
+  filter?: QueryFilter | { [key in string]: QueryFilter };
 }
 
 export interface FetchPublishedRowsCountDTO {
@@ -127,6 +127,7 @@ export interface FetchDataModelTransformationsDTO {
 export type CreateDataModelTransformationDTO = {
   name: string;
   externalId: string;
+  dataSetId?: number;
   destination:
     | {
         type: 'data_model_instances';

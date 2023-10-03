@@ -2,9 +2,9 @@ import { FunctionComponent, PropsWithChildren, ReactNode } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@data-catalog-app/common/i18n';
-
 import { Colors, Icon } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common/i18n';
 
 export interface DataSetError {
   status: number;

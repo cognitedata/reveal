@@ -8,6 +8,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { SearchBarFilter, ValueByDataType, AppliedFilters } from '../Filter';
 
 export interface SearchFiltersProps {
+  dataType?: string;
   value?: ValueByDataType;
   onChange: (value: ValueByDataType) => void;
   onClick?: () => void;

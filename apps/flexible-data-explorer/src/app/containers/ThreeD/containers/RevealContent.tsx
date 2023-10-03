@@ -1,50 +1,55 @@
 import { useCallback, useMemo, useState } from 'react';
 
+import { Vector3 } from 'three';
+
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import {
   AddResourceOptions,
   DefaultResourceStyling,
   Reveal3DResources,
-  useClickedNodeData,
   Image360Details,
   FdmAssetStylingGroup,
 } from '@cognite/reveal-react-components';
 
 import { defaultResourceStyling } from '../../../constants/threeD';
-import { useNavigateOnClick } from '../hooks/useNavigateOnClick';
-import { useResetNodeDataOnNavigate } from '../hooks/useResetNodeDataOnNavigate';
-import { useThreeDCameraNavigation } from '../hooks/useThreeDCameraNavigation';
+import { Instance } from '../../../services/types';
+import { useHandleSelectedInstance } from '../hooks/useHandleSelectedInstance';
+import { useInitialCameraNavigation } from '../hooks/useInitialCameraNavigation';
+import { createInstanceIfDefined } from '../utils';
 
 import { PreviewCard } from './PreviewCard';
 import { ToolBarContainer } from './ToolBarContainer';
 
+export type InstanceWithPosition = Instance & {
+  threeDPosition: Vector3;
+};
 interface Props {
   threeDResources: AddResourceOptions[];
-  externalId?: string;
   instanceExternalId?: string;
   instanceSpace?: string;
+  dataType?: string;
   hideToolbar?: boolean;
   focusNode?: boolean;
+  disablePreviewCard?: boolean;
   isInitialLoad?: boolean;
 }
+
 export const RevealContent = ({
   threeDResources,
   instanceExternalId,
+  dataType,
   instanceSpace,
   hideToolbar,
   focusNode,
+  disablePreviewCard,
   isInitialLoad,
 }: Props) => {
-  const clickedNodeData = useClickedNodeData();
   const [resourceMounted, setResourcesMounted] = useState(false);
   const [hasOriginalCadColors, setHasOriginalCadColors] = useState(false);
 
-  const instance =
-    instanceExternalId !== undefined && instanceSpace !== undefined
-      ? { externalId: instanceExternalId, space: instanceSpace }
-      : undefined;
+  const instance = createInstanceIfDefined(instanceExternalId, instanceSpace);
 
-  const { loadInitialCameraState, focusInstance } = useThreeDCameraNavigation(
+  const { loadInitialCameraState, focusInstance } = useInitialCameraNavigation(
     isInitialLoad === true,
     instance
   );
@@ -60,14 +65,12 @@ export const RevealContent = ({
       : defaultResourceStyling;
   }, [hasOriginalCadColors]);
 
-  const clickedNodeDataDisabledOnFocus =
-    focusNode === true ? undefined : clickedNodeData;
-
-  useNavigateOnClick(clickedNodeDataDisabledOnFocus);
-  const previewCardNodeData = useResetNodeDataOnNavigate(
-    clickedNodeDataDisabledOnFocus,
+  const selectedInstance = useHandleSelectedInstance(
     instanceExternalId,
-    instanceSpace
+    instanceSpace,
+    dataType,
+    focusInstance,
+    focusNode
   );
 
   const instanceStyling = computeInstanceStyling(
@@ -100,7 +103,7 @@ export const RevealContent = ({
         onResourcesAdded={handleResourcesAdded}
       />
       {resourceMounted && <Image360Details />}
-      {!focusNode && <PreviewCard nodeData={previewCardNodeData} />}
+      {!disablePreviewCard && <PreviewCard nodeData={selectedInstance} />}
     </>
   );
 };

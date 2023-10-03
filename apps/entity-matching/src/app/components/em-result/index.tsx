@@ -2,27 +2,21 @@ import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import MatchTypeOptionContent from '@entity-matching-app/components/pipeline-run-results-table/MatchTypeOptionContent';
-
 import { Select } from 'antd';
 
-import QuickMatchActionBar from '@entity-matching-app/components/qm-action-bar/QuickMatchActionbar';
-
-import { useTranslation } from '@entity-matching-app/common';
-
-import Step from '@entity-matching-app/components/step';
-import { EMModel } from '@entity-matching-app/hooks/entity-matching-models';
-
 import { Flex, Switch } from '@cognite/cogs.js';
-
-import { Prediction } from '@entity-matching-app/hooks/entity-matching-predictions';
-
 import { CogniteEvent, FileInfo, Sequence, Timeseries } from '@cognite/sdk';
 
-import { useRetrieve } from '@entity-matching-app/hooks/retrieve';
-import { SourceType } from '@entity-matching-app/types/api';
-import { AppliedRule } from '@entity-matching-app/types/rules';
-import { MatchOptionType, MatchType } from '@entity-matching-app/types/types';
+import { useTranslation } from '../../common';
+import { EMModel } from '../../hooks/entity-matching-models';
+import { Prediction } from '../../hooks/entity-matching-predictions';
+import { useRetrieve } from '../../hooks/retrieve';
+import { SourceType } from '../../types/api';
+import { AppliedRule } from '../../types/rules';
+import { MatchOptionType, MatchType } from '../../types/types';
+import MatchTypeOptionContent from '../pipeline-run-results-table/MatchTypeOptionContent';
+import QuickMatchActionBar from '../qm-action-bar/QuickMatchActionbar';
+import Step from '../step';
 
 import AppliedRulesTable from './applied-rules-table';
 import QuickMatchResultsTable from './QuickMatchResultsTable';

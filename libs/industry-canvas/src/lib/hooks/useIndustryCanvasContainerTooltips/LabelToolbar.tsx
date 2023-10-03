@@ -48,7 +48,6 @@ const LabelToolbar: React.FC<LabelToolbarProps> = ({
           type="text"
           onChange={(e) => setLocalLabel(e.target.value)}
           buttonProps={{
-            type: 'ghost',
             icon: 'Checkmark',
             onClick: () => onSave(localLabel),
           }}

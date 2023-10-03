@@ -43,3 +43,19 @@ See the following guide for instructions on how to deploy to production, staging
 Some of the 3D management features are hidden behind feature flags. You can read more about adding new feature flags, adding new projects to already existing feature flags etc., in [this guide on Confluence](https://cognitedata.atlassian.net/wiki/spaces/DEGEXP/pages/3721068657/Feature+flags+unleash).
 
 The feature flag for the `Contextualize Editor` under `Upload 3D models` are called `3D_MANAGEMENT_contextualize_editor`.
+
+## E2E Testing
+
+Read [Setup](https://github.com/cognitedata/fusion#setup-1) for setup the credentials.
+
+### Run the tests
+
+To run the e2e tests from the terminal using a headless browser, make sure the [mock server is running](https://github.com/cognitedata/fusion#run-the-tests), and then from another terminal window, run:
+
+`nx run 3d-management:e2e`
+
+To run them in the Cypress GUI:
+
+`nx run 3d-management:e2e --watch`
+
+You can optionally run the e2e tests using the `Nx Console` VSCode extension by clicking to run `e2e` and then choosing the `3d-management` project.

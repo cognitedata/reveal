@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
 import { Link, useMatch } from 'react-location';
 
-import type { AppLocationGenerics } from '@simint-app/routes';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import format from 'date-fns/format';
 import styled from 'styled-components/macro';
 
 import { Chip, Illustrations, Tooltip } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
+
+import type { AppLocationGenerics } from '../../../routes';
+import { createCdfLink } from '../../../utils/createCdfLink';
 
 interface ModelListProps {
   isModalLibraryEmpty: boolean;

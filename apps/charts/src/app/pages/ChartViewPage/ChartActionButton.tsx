@@ -73,7 +73,11 @@ export const ChartActionButton = ({
         }
       >
         <ChartActionButtonRef type="button">
-          <ChartActionIcon type="AddLarge" size={18} />
+          <ChartActionIcon
+            type="AddLarge"
+            size={18}
+            data-testid="chart-action-btn"
+          />
         </ChartActionButtonRef>
       </Dropdown>
     </ChartActionContainer>

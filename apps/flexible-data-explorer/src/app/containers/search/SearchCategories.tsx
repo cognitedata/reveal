@@ -55,15 +55,13 @@ export const SearchCategories = () => {
       {keys?.map((key, index) => {
         // const dataType = item.name;
         const count = counts?.[key];
-        const isDisabled = !count;
 
         if (key === 'File') {
           return (
             <Content
               key={key}
               selected={isSelected('File')}
-              onClick={() => !!count && handleSelectionClick('File')}
-              disabled={!count}
+              onClick={() => handleSelectionClick('File')}
             >
               <NameText>File</NameText>
               <Chip
@@ -83,8 +81,7 @@ export const SearchCategories = () => {
             <Content
               key={key}
               selected={isSelected('TimeSeries')}
-              onClick={() => !!count && handleSelectionClick('TimeSeries')}
-              disabled={!count}
+              onClick={() => handleSelectionClick('TimeSeries')}
             >
               <NameText>Time series</NameText>
               <Chip
@@ -104,8 +101,7 @@ export const SearchCategories = () => {
           <Content
             key={`${key}-${index}`}
             selected={isSelected(key)}
-            disabled={isDisabled}
-            onClick={() => !isDisabled && handleSelectionClick(key)}
+            onClick={() => handleSelectionClick(key)}
           >
             <NameText>{type?.displayName || type?.name}</NameText>
             <CountChip
@@ -134,7 +130,7 @@ const Container = styled.div`
   overflow: auto;
 `;
 
-const Content = styled.div<{ selected?: boolean; disabled?: boolean }>`
+const Content = styled.div<{ selected?: boolean }>`
   height: 40px;
   border-radius: 8px;
   display: flex;
@@ -164,17 +160,6 @@ const Content = styled.div<{ selected?: boolean; disabled?: boolean }>`
       & > * {
         color: #3b82f6 !important;
         font-weight: 600;
-      }
-    `}
-
-  ${({ disabled }) =>
-    disabled &&
-    css`
-      user-select: none;
-      cursor: not-allowed;
-
-      & > * {
-        opacity: 0.5;
       }
     `}
 `;

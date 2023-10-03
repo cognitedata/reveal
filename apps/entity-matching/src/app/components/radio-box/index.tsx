@@ -1,6 +1,8 @@
-import { Body, Colors } from '@cognite/cogs.js';
-import { Radio as AntdRadio, RadioProps } from 'antd';
 import styled from 'styled-components';
+
+import { Radio as AntdRadio, RadioProps } from 'antd';
+
+import { Body, Colors } from '@cognite/cogs.js';
 
 const RadioBox = ({ children, ...otherProps }: RadioProps): JSX.Element => {
   return (

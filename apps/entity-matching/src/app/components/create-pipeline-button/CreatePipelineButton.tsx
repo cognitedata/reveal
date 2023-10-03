@@ -1,9 +1,8 @@
 import { useState } from 'react';
 
-import { useTranslation } from '@entity-matching-app/common';
-
-import CreatePipelineModal from '@entity-matching-app/components/create-pipeline-modal';
-import NoWrapButton from '@entity-matching-app/components/no-wrap-button';
+import { useTranslation } from '../../common';
+import CreatePipelineModal from '../create-pipeline-modal';
+import NoWrapButton from '../no-wrap-button';
 
 export const CreatePipelineButton = (): JSX.Element => {
   const { t } = useTranslation();

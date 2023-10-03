@@ -63,7 +63,7 @@ export type IndustryCanvasProps = {
   onAddContainerReferences: OnAddContainerReferences;
   onRef?: (ref: UnifiedViewer | null) => void;
   viewerRef: UnifiedViewer | null;
-  selectedContainer: IndustryCanvasContainerConfig | undefined;
+  selectedContainers: IndustryCanvasContainerConfig[];
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
   commentAnnotations: CommentAnnotation[];
   toolType: IndustryCanvasToolType;
@@ -87,7 +87,7 @@ export const IndustryCanvas = ({
   onUpdateRequest,
   containerAnnotations,
   clickedContainerAnnotation,
-  selectedContainer,
+  selectedContainers,
   selectedCanvasAnnotation,
   onAddContainerReferences,
   onRef,
@@ -153,7 +153,7 @@ export const IndustryCanvas = ({
   };
 
   const tooltips = useIndustryCanvasTooltips({
-    selectedContainer,
+    selectedContainers,
     containers,
     clickedContainerAnnotation,
     selectedCanvasAnnotation,
@@ -233,7 +233,7 @@ export const IndustryCanvas = ({
       // NOTE: The nodes (annotations) below are order-independent
       ...getIndustryCanvasConnectionAnnotations({
         containers,
-        selectedContainer,
+        selectedContainers,
         hoverId: interactionState.hoverId,
         clickedId: interactionState.clickedContainerAnnotationId,
         annotations: containerAnnotations,
@@ -245,7 +245,7 @@ export const IndustryCanvas = ({
     ],
     [
       containers,
-      selectedContainer,
+      selectedContainers,
       interactionState.hoverId,
       interactionState.clickedContainerAnnotationId,
       containerAnnotations,

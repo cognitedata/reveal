@@ -128,7 +128,7 @@ export const SetStep: Story = {
       step: 1,
       type: 'Set',
       arguments: {
-        type: 'manual',
+        type: 'inputConstant',
       },
     },
     stepIndex: 0,

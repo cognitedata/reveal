@@ -1,13 +1,13 @@
-import { useCdfGroups } from '@data-catalog-app/actions';
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import {
-  CREATE_GROUP_ACCESS_DOC,
-  ContentWrapper,
-  LoaderWrapper,
-} from '@data-catalog-app/utils';
-import { isOidcEnv } from '@data-catalog-app/utils/shared';
-
 import { Body, Icon, Title } from '@cognite/cogs.js';
+
+import { useCdfGroups } from '../../actions';
+import { useTranslation } from '../../common/i18n';
+import {
+  ContentWrapper,
+  CREATE_GROUP_ACCESS_DOC,
+  isOidcEnv,
+  LoaderWrapper,
+} from '../../utils';
 
 import GroupsWithAccess from './GroupsWithAccess';
 import Owners from './Owners';

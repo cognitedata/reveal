@@ -2,16 +2,16 @@ import styled from 'styled-components';
 
 import { Icon } from '@cognite/cogs.js';
 
+import { useLinks } from '../../hooks/useLinks';
 import { useTranslation } from '../../hooks/useTranslation';
-import { useGetAssetCentricDataExplorerUrl } from '../../hooks/useUrl';
 
 export const DataExplorerLink = () => {
   const { t } = useTranslation();
-  const assetCentricDataExplorerUrl = useGetAssetCentricDataExplorerUrl();
+  const { classicExplorerLink } = useLinks();
 
   return (
     <StyledLink
-      href={assetCentricDataExplorerUrl}
+      href={classicExplorerLink()}
       target="_blank"
       rel="noopener noreferrer"
     >

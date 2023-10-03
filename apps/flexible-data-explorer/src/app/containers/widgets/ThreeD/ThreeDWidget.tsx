@@ -54,6 +54,7 @@ export const ThreeDWidget: React.FC<ThreeDWidgetProps> = () => {
             instanceExternalId={externalId}
             instanceSpace={instanceSpace}
             hideToolbar
+            disablePreviewCard
             focusNode
           />
         </RevealContainer>

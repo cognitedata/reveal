@@ -2,13 +2,6 @@ import { useState } from 'react';
 import { useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { ModelVersionDetails } from '@simint-app/components/models';
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
-import {
-  INITIAL_ITEMS_PER_PAGE,
-  getTotalPages,
-  paginateData,
-} from '@simint-app/utils/pagination';
 import formatDistance from 'date-fns/formatDistance';
 import formatISO9075 from 'date-fns/formatISO9075';
 import parseISO from 'date-fns/parseISO';
@@ -25,6 +18,14 @@ import {
 } from '@cognite/cogs.js';
 import type { Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetModelFileVersionListQuery } from '@cognite/simconfig-api-sdk/rtk';
+
+import { selectProject } from '../../../store/simconfigApiProperties/selectors';
+import {
+  INITIAL_ITEMS_PER_PAGE,
+  getTotalPages,
+  paginateData,
+} from '../../../utils/pagination';
+import { ModelVersionDetails } from '../ModelVersionDetails/ModelVersionDetails';
 
 interface ModelVersionListProps {
   simulator: Simulator;

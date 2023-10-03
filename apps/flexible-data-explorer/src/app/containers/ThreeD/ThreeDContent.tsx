@@ -8,17 +8,23 @@ import {
 } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { useSelectedInstanceParams } from '../../../app/hooks/useParams';
 import { EmptyState } from '../../components/EmptyState';
 import {
   defaultRevealColor,
   defaultViewerOptions,
 } from '../../constants/threeD';
 import { useSiteConfig } from '../../hooks/useConfig';
+import { Instance } from '../../services/types';
 
 import { MappedEquipmentContextHandler } from './containers/MappedEquipmentContextHandler';
 import { RevealContent } from './containers/RevealContent';
 
-export const ThreeDContent: React.FC = () => {
+interface Props {
+  focusOnInstance?: boolean;
+}
+
+export const ThreeDContent: React.FC<Props> = ({ focusOnInstance }) => {
   const sdk = useSDK();
   const isRevealInitialized = useIsRevealInitialized();
 
@@ -26,7 +32,13 @@ export const ThreeDContent: React.FC = () => {
 
   const threeDResources = siteConfig?.threeDResources;
 
-  const { instanceSpace, externalId } = useParams();
+  const { instanceSpace, externalId, dataType } = useParams();
+  const [selectedInstance] = useSelectedInstanceParams();
+
+  const currentInstance: Partial<Instance> | undefined =
+    externalId === undefined
+      ? selectedInstance
+      : { externalId, instanceSpace, dataType };
 
   const threeDModels = useMemo(
     () =>
@@ -37,7 +49,7 @@ export const ThreeDContent: React.FC = () => {
     [threeDResources]
   );
 
-  if (!threeDResources) {
+  if (threeDResources === undefined) {
     return (
       <EmptyState
         title="No 3D models found"
@@ -55,10 +67,11 @@ export const ThreeDContent: React.FC = () => {
       <MappedEquipmentContextHandler modelsOptions={threeDModels} />
       <RevealContent
         threeDResources={threeDResources}
-        externalId={externalId}
-        instanceExternalId={externalId}
-        instanceSpace={instanceSpace}
+        dataType={currentInstance?.dataType}
+        instanceExternalId={currentInstance?.externalId}
+        instanceSpace={currentInstance?.instanceSpace}
         isInitialLoad={!isRevealInitialized}
+        focusNode={focusOnInstance}
       />
     </RevealContainer>
   );

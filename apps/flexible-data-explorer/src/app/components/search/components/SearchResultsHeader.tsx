@@ -11,7 +11,8 @@ interface Props {
   description?: string;
 }
 
-export const SearchResultsHeader: React.FC<Props> = ({
+export const SearchResultsHeader: React.FC<React.PropsWithChildren<Props>> = ({
+  children,
   title,
   description,
 }) => {
@@ -22,6 +23,7 @@ export const SearchResultsHeader: React.FC<Props> = ({
         <Title level={6}>{title}</Title>
         {description && <Body>{description}</Body>}
       </span>
+      <Actions>{children}</Actions>
     </Container>
   );
 };
@@ -37,4 +39,11 @@ const Container = styled.div`
   background: linear-gradient(180deg, #f8f9fc 0%, rgba(243, 244, 248, 0) 100%);
   backdrop-filter: blur(8px);
   z-index: ${zIndex.PAGE_HEADER};
+`;
+
+const Actions = styled.div`
+  margin-left: auto;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 8px;
 `;
