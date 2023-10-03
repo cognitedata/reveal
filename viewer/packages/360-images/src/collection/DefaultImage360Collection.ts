@@ -316,15 +316,13 @@ export class DefaultImage360Collection implements Image360Collection {
   }
 
   private createFileIdToEntityRevisionMap(): Map<number, { entity: Image360; revision: Image360Revision }> {
-
     return this.image360Entities.reduce((map, entity) => {
       entity.getRevisions().forEach(revision => {
         const descriptors = revision.getDescriptors().faceDescriptors;
         descriptors.forEach(descriptor => map.set(descriptor.fileId, { entity, revision }));
       });
       return map;
-    },
-                                        new Map<number, { entity: Image360; revision: Image360Revision }>());
+    }, new Map<number, { entity: Image360; revision: Image360Revision }>());
   }
 }
 

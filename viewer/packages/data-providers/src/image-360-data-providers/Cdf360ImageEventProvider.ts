@@ -35,7 +35,6 @@ import {
 } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
-import assert from 'assert';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
