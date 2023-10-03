@@ -1,18 +1,5 @@
 import { useEffect } from 'react';
 
-import styled from 'styled-components';
-
-import { Splitter } from '@data-exploration/components';
-import { ResourceSelector } from '@data-exploration/containers';
-import {
-  QueryFunctionContext,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
-
-import { RevealContainer } from '@cognite/reveal-react-components';
-import { CogniteClient } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { getThreeDRevisionOutputs } from '@data-exploration-lib/domain-layer';

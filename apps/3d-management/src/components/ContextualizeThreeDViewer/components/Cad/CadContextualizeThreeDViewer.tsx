@@ -1,15 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import styled from 'styled-components';
 
 import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
 
-import {
-  CadIntersection,
-  CogniteCadModel,
-  TreeIndexNodeCollection,
-} from '@cognite/reveal';
+import { CadIntersection, CogniteCadModel } from '@cognite/reveal';
 import { RevealContainer } from '@cognite/reveal-react-components';
 import { AssetMapping3D, ListResponse } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
@@ -23,7 +19,6 @@ import { useLocalStorage } from '../../../../utils/useLocalStorage';
 import {
   setModelId,
   useContextualizeThreeDViewerStore,
-  onCloseResourceSelector,
   setSelectedNodesTreeIndex,
   setSelectedAndContextualizedNodesTreeIndex,
   setContextualizedNodes,
