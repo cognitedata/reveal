@@ -52,7 +52,9 @@ describe('fusion-shell', () => {
               $element[0].firstElementChild.getAttribute('data-testid');
             cy.wrap($element).click();
             cy.get(`[id="single-spa-application:${mappedApplicationID}"]`, {
-              // timeout: 60000,
+              // this specific timeout is here due to inconsitent timings on app loading to the DOM.
+              // did not configure this globally as this is only specifc to this scenario.
+              timeout: 60000,
             }).should('exist');
             cy.findByTestId(`topbar-${topBarItem}`).click();
           }
@@ -77,4 +79,18 @@ describe('fusion-shell', () => {
         cy.request($element.find('a').prop('href'));
       });
   });
+
+  it('verify global search behavior', () => {
+    cy.findByTestId('global-search-input').type('asset');
+    cy.findByTestId('global-search-menu').should('be.visible');
+
+    cy.findByTestId('global-search-clear-input').click();
+    cy.findByTestId('global-search-menu').should('not.exist');
+  });
+
+  // below will be completed when login flow is connected
+  // it('verify user sign out', () => {
+  //   cy.findByTestId('topbar-user-profile-area').find('.cogs-dropdown').click();
+  //   cy.findByTestId('topbar-user-logout-btn').click();
+  // });
 });
