@@ -1459,6 +1459,75 @@ export const useListByIdsDataScopes = (
   );
 };
 
+export type DeleteDataScopesPathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+  /**
+   * The external id of the data source.
+   */
+  dataSourceId?: string;
+};
+
+export type DeleteDataScopesError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: Responses.ErrorResponse;
+}>;
+
+export type DeleteDataScopesVariables = {
+  body: Schemas.DataScopeListIdsRequest;
+  pathParams?: DeleteDataScopesPathParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * Delete one or more data scopes
+ */
+export const fetchDeleteDataScopes = (
+  variables: DeleteDataScopesVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    Responses.DataScopeListResponse,
+    DeleteDataScopesError,
+    Schemas.DataScopeListIdsRequest,
+    {},
+    {},
+    DeleteDataScopesPathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes/delete',
+    method: 'post',
+    ...variables,
+    signal,
+  });
+
+/**
+ * Delete one or more data scopes
+ */
+export const useDeleteDataScopes = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Responses.DataScopeListResponse,
+      DeleteDataScopesError,
+      DeleteDataScopesVariables
+    >,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useDataQualityContext();
+  return reactQuery.useMutation<
+    Responses.DataScopeListResponse,
+    DeleteDataScopesError,
+    DeleteDataScopesVariables
+  >(
+    (variables: DeleteDataScopesVariables) =>
+      fetchDeleteDataScopes({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type ListLatestRuleRunsPathParams = {
   /**
    * The project name.

@@ -502,6 +502,31 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse'
 
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes/delete':
+    post:
+      tags:
+        - DataScopes
+      summary: Delete data scopes
+      description: 'Delete one or more data scopes'
+      operationId: deleteDataScopes
+      parameters:
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+      requestBody:
+        description: List of data scopes ids to delete.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataScopeListIdsRequest'
+        required: true
+      x-capability:
+        - 'DatamodelsAcl:WRITE'
+      responses:
+        '200':
+          $ref: '#/components/responses/DataScopeListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
   #
   # Rule Runs
   #

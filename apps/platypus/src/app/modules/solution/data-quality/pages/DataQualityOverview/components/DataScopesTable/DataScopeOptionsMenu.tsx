@@ -1,45 +1,35 @@
-import {
-  RuleDto,
-  useDeleteRules,
-  useListAllRules,
-} from '@data-quality/api/codegen';
+import { DataScopeDto, useDeleteDataScopes } from '@data-quality/api/codegen';
 import { DeleteModal } from '@data-quality/components';
-import { useDisclosure, useLoadDataSource } from '@data-quality/hooks';
-import { getDefaultRulesetId } from '@data-quality/utils/namingPatterns';
+import {
+  useDisclosure,
+  useLoadDataScopes,
+  useLoadDataSource,
+} from '@data-quality/hooks';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
-type RuleOptionsMenuProps = { rule: RuleDto };
+type DataScopeOptionsMenuProps = { dataScope: DataScopeDto };
 
-export const RuleOptionsMenu = ({ rule }: RuleOptionsMenuProps) => {
+export const DataScopeOptionsMenu = ({
+  dataScope,
+}: DataScopeOptionsMenuProps) => {
   const { t } = useTranslation('RuleOptionsMenu');
 
   const { dataSource } = useLoadDataSource();
+  const { isLoading, mutate: deleteDataScopes } = useDeleteDataScopes();
+  const { refetch } = useLoadDataScopes();
 
-  const deleteRuleModal = useDisclosure({ isOpen: false });
-
-  const rulesetId =
-    rule.rulesetId || getDefaultRulesetId(dataSource?.externalId);
-
-  const { isLoading, mutate: deleteRules } = useDeleteRules();
-  const { refetch } = useListAllRules(
-    {
-      pathParams: {
-        dataSourceId: dataSource?.externalId,
-      },
-    },
-    { enabled: !!dataSource?.externalId }
-  );
+  const deleteDataScopeModal = useDisclosure({ isOpen: false });
 
   const onSuccess = () => {
     refetch();
     Notification({
       type: 'success',
       message: t('data_quality_success_delete', ``, {
-        targetName: rule.name,
-        targetType: 'Rule',
+        targetName: dataScope.name,
+        targetType: 'Data scope',
       }),
     });
   };
@@ -47,20 +37,22 @@ export const RuleOptionsMenu = ({ rule }: RuleOptionsMenuProps) => {
   const onError = (error: any) => {
     Notification({
       type: 'error',
-      message: t('data_quality_error_delete', '', { target: 'rule' }),
+      message: t('data_quality_error_delete', '', { target: 'data scope' }),
       errors: JSON.stringify(error),
     });
   };
 
   const handleDelete = async () => {
+    if (!dataSource) {
+      onError('No data source found');
+      return;
+    }
+
     try {
-      await deleteRules(
+      await deleteDataScopes(
         {
-          pathParams: {
-            dataSourceId: dataSource?.externalId,
-            rulesetId,
-          },
-          body: { items: [{ externalId: rule.externalId }] },
+          pathParams: { dataSourceId: dataSource.externalId },
+          body: { items: [{ externalId: dataScope.externalId }] },
         },
         { onSuccess: onSuccess, onError: onError }
       );
@@ -77,7 +69,7 @@ export const RuleOptionsMenu = ({ rule }: RuleOptionsMenuProps) => {
             <Menu.Item
               destructive
               icon="Delete"
-              onClick={deleteRuleModal.onOpen}
+              onClick={deleteDataScopeModal.onOpen}
             >
               {t('delete', 'Delete')}
             </Menu.Item>
@@ -86,7 +78,7 @@ export const RuleOptionsMenu = ({ rule }: RuleOptionsMenuProps) => {
         hideOnClick
       >
         <Button
-          aria-label="Open options menu for the rule"
+          aria-label="Open options menu for the data scope"
           icon="EllipsisVertical"
           size="small"
           type="ghost"
@@ -94,16 +86,18 @@ export const RuleOptionsMenu = ({ rule }: RuleOptionsMenuProps) => {
       </Dropdown>
 
       <DeleteModal
-        bodyText={t('data_quality_delete_rule', '', { targetName: rule.name })}
-        checkboxText={t('data_quality_delete_confirm', '', {
-          target: 'rule',
+        bodyText={t('data_quality_delete_data_scope', '', {
+          targetName: dataScope.name,
         })}
-        onCancel={deleteRuleModal.onClose}
+        checkboxText={t('data_quality_delete_confirm', '', {
+          target: 'data scope',
+        })}
+        onCancel={deleteDataScopeModal.onClose}
         onOk={handleDelete}
         titleText={t('data_quality_delete_title', '', {
-          target: 'rule',
+          target: 'data scope',
         })}
-        visible={deleteRuleModal.isOpen}
+        visible={deleteDataScopeModal.isOpen}
       />
     </>
   );
