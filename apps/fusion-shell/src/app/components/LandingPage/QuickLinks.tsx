@@ -130,6 +130,7 @@ export default function QuickLinks(): JSX.Element {
                   }
                   inverted
                   key={filterKey}
+                  data-testid={filterKey}
                   onClick={() => quickLinkFilterHandler(filterKey)}
                 >
                   {t(`label-${filterKey}` as TranslationKeys)}
