@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 
-import { generateOutputTimeSeriesExternalId } from '@simint-app/utils/externalIdGenerators';
 import { useFormikContext } from 'formik';
 
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
+import { generateOutputTimeSeriesExternalId } from '../../../../utils/externalIdGenerators';
 import { SelectBox, StepsContainer } from '../../elements';
 
 import { DynamicFields, StepType, Unit, UnitType, Variable } from './Fields';

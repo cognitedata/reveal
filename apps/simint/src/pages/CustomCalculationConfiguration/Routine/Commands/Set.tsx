@@ -1,18 +1,18 @@
 import { useEffect, useMemo } from 'react';
 
-import {
-  FormRow,
-  TimeSeriesField,
-} from '@simint-app/components/forms/elements';
-import {
-  getScheduleRepeat,
-  useTimeseries,
-} from '@simint-app/pages/CalculationConfiguration/utils';
-import { generateInputTimeSeriesExternalId } from '@simint-app/utils/externalIdGenerators';
 import { useFormikContext } from 'formik';
 
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
+import {
+  FormRow,
+  TimeSeriesField,
+} from '../../../../components/forms/elements';
+import { generateInputTimeSeriesExternalId } from '../../../../utils/externalIdGenerators';
+import {
+  getScheduleRepeat,
+  useTimeseries,
+} from '../../../CalculationConfiguration/utils';
 import { SelectBox, StepsContainer } from '../../elements';
 
 import {

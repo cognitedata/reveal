@@ -1,9 +1,5 @@
 import { useCallback, useRef } from 'react';
 
-import type { DatumType } from '@simint-app/components/charts/types';
-import { getExtents, getX, getY } from '@simint-app/components/charts/utils';
-import { getFormattedSciNumber } from '@simint-app/utils/numberUtils';
-import { LAYER } from '@simint-app/utils/zIndex';
 import { localPoint } from '@visx/event';
 import { Bar, Line } from '@visx/shape';
 import { Portal, Tooltip, defaultStyles, useTooltip } from '@visx/tooltip';
@@ -13,6 +9,11 @@ import { formatISO9075 } from 'date-fns';
 import styled from 'styled-components/macro';
 
 import { Colors } from '@cognite/cogs.js';
+
+import { getFormattedSciNumber } from '../../../utils/numberUtils';
+import { LAYER } from '../../../utils/zIndex';
+import type { DatumType } from '../types';
+import { getExtents, getX, getY } from '../utils';
 
 import type { ChartGeometry, ChartScale } from './types';
 

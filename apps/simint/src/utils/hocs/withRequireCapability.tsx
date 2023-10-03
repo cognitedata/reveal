@@ -2,8 +2,8 @@
 import type { ComponentType } from 'react';
 import { useSelector } from 'react-redux';
 
-import { selectCapabilities } from '@simint-app/store/group/selectors';
-import type { Capabilities } from '@simint-app/store/group/types';
+import { selectCapabilities } from "../../store/group/selectors";
+import type { Capabilities } from "../../store/group/types";
 
 export function withRequireCapability<
   PropsType extends JSX.IntrinsicAttributes,

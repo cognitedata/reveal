@@ -1,5 +1,6 @@
-import { useCheckAcl } from '@simint-app/hooks/useCheckAcl';
 import { renderHook } from '@testing-library/react';
+
+import { useCheckAcl } from '../useCheckAcl';
 
 const mockedUseGetDefinitionsQuery = jest.fn();
 jest.mock('@simint-app/hooks/useCapabilities', () => ({

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'react-location';
 
-import type { AppLocationGenerics } from '@simint-app/routes';
+import type { AppLocationGenerics } from '../routes';
 
 export function useTitle(title?: string) {
   const previousTitleRef = useRef(document.title);

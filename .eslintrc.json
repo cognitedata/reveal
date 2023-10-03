@@ -31,8 +31,7 @@
               "@data-quality",
               "@platypus-core",
               "@cognite/platypus-cdf-cli",
-              "@charts-app",
-              "@simint-app"
+              "@charts-app"
             ],
             "depConstraints": [
               {

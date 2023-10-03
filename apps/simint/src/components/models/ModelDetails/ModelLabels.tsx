@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
 import styled from 'styled-components/macro';
 
 import {
@@ -21,6 +20,7 @@ import {
   useUpdateModelFileLabelsMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import { selectProject } from '../../../store/simconfigApiProperties/selectors';
 import { LabelsModal } from '../../LabelsModal';
 
 interface ModelLabelsProps {

@@ -1,14 +1,6 @@
 import React, { useMemo } from 'react';
 import { useMatch } from 'react-location';
 
-import {
-  FormContainer,
-  FormHeader,
-  FormRowStacked,
-  StyledInput,
-} from '@simint-app/components/forms/elements';
-import { getOptionLabel } from '@simint-app/pages/CustomCalculationConfiguration/Routine/Commands/utils';
-import type { AppLocationGenerics } from '@simint-app/routes';
 import { Field, useFormikContext } from 'formik';
 
 import type { OptionType } from '@cognite/cogs.js';
@@ -18,6 +10,14 @@ import type {
   TimeSeries,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import {
+  FormContainer,
+  FormHeader,
+  FormRowStacked,
+  StyledInput,
+} from '../../../components/forms/elements';
+import type { AppLocationGenerics } from '../../../routes';
+import { getOptionLabel } from '../../CustomCalculationConfiguration/Routine/Commands/utils';
 import type { StepProps } from '../types';
 
 import { OutputInfoDrawer } from './infoDrawers/OutputInfoDrawer';

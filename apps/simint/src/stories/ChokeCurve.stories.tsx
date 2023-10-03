@@ -1,8 +1,8 @@
 /* eslint-disable */
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
-import { ChokeCurveChart } from '@simint-app/components/charts/ChokeCurveChart';
-import type { OrdinalDatum } from '@simint-app/components/charts/types';
+import { ChokeCurveChart } from "../components/charts/ChokeCurveChart";
+import type { OrdinalDatum } from "../components/charts/types";
 
 const data = {
   chokeCurve: {

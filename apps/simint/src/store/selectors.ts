@@ -1,4 +1,4 @@
-import type { StoreState } from '@simint-app/store/types';
+import type { StoreState } from './types';
 
 export const selectIsAppInitialized = (state: StoreState) =>
   state.group.initialized;

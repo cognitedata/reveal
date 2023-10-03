@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import type { StoreState } from '@simint-app/store/types';
+import type { StoreState } from '../types';
 
 export const selectBaseUrl = (state: StoreState) =>
   state.simconfigApiProperties.baseUrl;

@@ -1,4 +1,4 @@
-import { InfoDrawer } from '@simint-app/components/shared/InfoDrawer';
+import { InfoDrawer } from '../../../../components/shared/InfoDrawer';
 
 export function NodalAnalysisInfoDrawer() {
   return (

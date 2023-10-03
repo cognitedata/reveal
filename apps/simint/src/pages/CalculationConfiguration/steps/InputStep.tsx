@@ -1,19 +1,6 @@
 import React, { useMemo } from 'react';
 import { useMatch } from 'react-location';
 
-import { TimeseriesChart } from '@simint-app/components/charts/TimeseriesChart';
-import {
-  FormContainer,
-  FormHeader,
-  FormRow,
-  TimeSeriesField,
-} from '@simint-app/components/forms/elements';
-import {
-  getScheduleRepeat,
-  useTimeseries,
-} from '@simint-app/pages/CalculationConfiguration/utils';
-import { getOptionLabel } from '@simint-app/pages/CustomCalculationConfiguration/Routine/Commands/utils';
-import type { AppLocationGenerics } from '@simint-app/routes';
 import { ParentSizeModern } from '@visx/responsive';
 import classNames from 'classnames';
 import { Field, useFormikContext } from 'formik';
@@ -22,8 +9,18 @@ import type { OptionType } from '@cognite/cogs.js';
 import { Infobox, Select } from '@cognite/cogs.js';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
+import { TimeseriesChart } from '../../../components/charts/TimeseriesChart';
+import {
+  FormContainer,
+  FormHeader,
+  FormRow,
+  TimeSeriesField,
+} from '../../../components/forms/elements';
+import type { AppLocationGenerics } from '../../../routes';
+import { getOptionLabel } from '../../CustomCalculationConfiguration/Routine/Commands/utils';
 import { ChartContainer, LoaderOverlay } from '../elements';
 import type { StepProps } from '../types';
+import { getScheduleRepeat, useTimeseries } from '../utils';
 
 import { InputInfoDrawer } from './infoDrawers/InputInfoDrawer';
 

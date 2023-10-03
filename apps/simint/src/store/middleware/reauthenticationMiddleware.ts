@@ -1,6 +1,7 @@
 import { isRejectedWithValue } from '@reduxjs/toolkit';
 import type { Dispatch, MiddlewareAPI, PayloadAction } from '@reduxjs/toolkit';
-import { appSlice } from '@simint-app/store/app';
+
+import { appSlice } from '../app';
 
 export function reauthenticationMiddleware({ dispatch }: MiddlewareAPI) {
   return (next: Dispatch) =>

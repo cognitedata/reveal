@@ -1,14 +1,14 @@
-import { InputRow } from '@simint-app/components/forms/ModelForm/elements';
-import { generateInputTimeSeriesExternalId } from '@simint-app/utils/externalIdGenerators';
-import {
-  getStepIdentifier,
-  sanitizeStepInput,
-} from '@simint-app/utils/stringUtils';
 import { Field, useFormikContext } from 'formik';
 
 import { InputExp, Select } from '@cognite/cogs.js';
 import { StepFields, UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
+import { InputRow } from '../../../../../components/forms/ModelForm/elements';
+import { generateInputTimeSeriesExternalId } from '../../../../../utils/externalIdGenerators';
+import {
+  getStepIdentifier,
+  sanitizeStepInput,
+} from '../../../../../utils/stringUtils';
 import {
   ConfigurationFieldProps,
   ValueOptionType,

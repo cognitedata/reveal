@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 
-import { logicalCheck } from '@simint-app/utils/ssd';
-import { Timeseries } from '@simint-app/utils/ssd/timeseries';
 import Color from 'color';
 import { curveStepAfter, max, min } from 'd3';
 
@@ -10,6 +8,9 @@ import type {
   AggregateType,
   LogicalCheck,
 } from '@cognite/simconfig-api-sdk/rtk';
+
+import { logicalCheck } from '../../utils/ssd';
+import { Timeseries } from '../../utils/ssd/timeseries';
 
 import { useBaseChart } from './BaseChart';
 import { linearScale, timeScale } from './BaseChart/scale';

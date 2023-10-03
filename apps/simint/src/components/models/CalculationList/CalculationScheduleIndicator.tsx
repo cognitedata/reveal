@@ -1,14 +1,15 @@
-import {
-  DurationFormatMap,
-  DurationKeyMap,
-  isValidDuration,
-} from '@simint-app/utils/timeUtils';
 import format from 'date-fns/format';
 import formatDuration from 'date-fns/formatDuration';
 import styled from 'styled-components/macro';
 
 import { Icon } from '@cognite/cogs.js';
 import type { CalculationSchedule } from '@cognite/simconfig-api-sdk/rtk';
+
+import {
+  DurationFormatMap,
+  DurationKeyMap,
+  isValidDuration,
+} from '../../../utils/timeUtils';
 
 interface CalculationScheduleIndicatorProps
   extends React.HTMLAttributes<unknown> {

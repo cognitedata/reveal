@@ -1,14 +1,15 @@
 import React from 'react';
 import { useMatch } from 'react-location';
 
-import { CalculationScheduleIndicator } from '@simint-app/components/models/CalculationList/CalculationScheduleIndicator';
-import { getScheduleRepeat } from '@simint-app/pages/CalculationConfiguration/utils';
-import type { AppLocationGenerics } from '@simint-app/routes';
 import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
 import { Chip } from '@cognite/cogs.js';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
+
+import { getScheduleRepeat } from '../../pages/CalculationConfiguration/utils';
+import type { AppLocationGenerics } from '../../routes';
+import { CalculationScheduleIndicator } from '../models/CalculationList/CalculationScheduleIndicator';
 
 interface CalculationSummaryProps {
   configuration: CalculationTemplate;

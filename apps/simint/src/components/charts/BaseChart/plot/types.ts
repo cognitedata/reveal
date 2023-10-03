@@ -1,10 +1,7 @@
-import type {
-  OrdinalDatum,
-  TemporalDatum,
-} from '@simint-app/components/charts/types';
 import type Color from 'color';
 import type { CurveFactory } from 'd3';
 
+import type { OrdinalDatum, TemporalDatum } from '../../types';
 import type { ChartGeometry, ChartScale } from '../types';
 import type { TooltipProps } from '../usePortalTooltip';
 

@@ -3,7 +3,7 @@ import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 import type { DatapointAggregate } from '@cognite/sdk';
 
-import { TimeseriesChart } from '@simint-app/components/charts/TimeseriesChart';
+import { TimeseriesChart } from "../components/charts/TimeseriesChart";
 
 const datapoints: DatapointAggregate[] = [
   {

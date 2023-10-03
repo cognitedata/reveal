@@ -1,13 +1,14 @@
 /* eslint-disable @cognite/no-number-z-index */
 import { useNavigate } from 'react-location';
 
-import { BASIC_CAPABILITIES_REQUIRED } from '@simint-app/components/app/constants';
-import { useCheckAcl } from '@simint-app/hooks/useCheckAcl';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import styled from 'styled-components/macro';
 
 import { Button, Collapse, Icon, Illustrations, Title } from '@cognite/cogs.js';
 import { CapabilityItemModel } from '@cognite/simconfig-api-sdk/rtk';
+
+import { BASIC_CAPABILITIES_REQUIRED } from '../../components/app/constants';
+import { useCheckAcl } from '../../hooks/useCheckAcl';
+import { createCdfLink } from '../../utils/createCdfLink';
 
 function PermissionsRequired() {
   const { Panel } = Collapse;
