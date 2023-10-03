@@ -15,11 +15,11 @@ export const interceptAssetList = (alias = ASSET_LIST_ALIAS) => {
   }).as(alias);
 };
 
-export const interceptTimeseriesList = () => {
+export const interceptTimeseriesList = (alias = TIMESERIES_LIST_ALIAS) => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/timeseries/list',
     method: 'POST',
-  }).as(TIMESERIES_LIST_ALIAS);
+  }).as(alias);
 };
 
 export const interceptEventList = () => {
