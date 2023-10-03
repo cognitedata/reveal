@@ -16,7 +16,7 @@ type SearchParamsHookResult = {
 };
 
 const useSearchParams = (): SearchParamsHookResult => {
-  const url = useMemo(() => new URL(window.location.toString()), []);
+  const url = new URL(window.location.toString());
   const searchParams = useMemo(() => url.searchParams, [url]);
   return { url, searchParams };
 };
