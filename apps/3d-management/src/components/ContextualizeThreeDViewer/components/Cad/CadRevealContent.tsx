@@ -7,6 +7,7 @@ import { noop } from 'lodash';
 import { Button, ToolBar } from '@cognite/cogs.js';
 import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
 import {
+  CadModelContainer,
   useReveal,
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
@@ -36,34 +37,34 @@ export const CadRevealContent = ({
   onContextualizationUpdated,
 }: RevealContentProps) => {
   const viewer = useReveal();
-  const { isResourceSelectorOpen, modelType } =
-    useContextualizeThreeDViewerStore((state) => ({
+  const { isResourceSelectorOpen } = useContextualizeThreeDViewerStore(
+    (state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       modelType: state.modelType,
       contextualizedNodes: state.contextualizedNodes,
-    }));
+    })
+  );
 
   const [error, setError] = useState<Error>();
 
-  const handleModelOnLoad = (_model: CogniteModel) => {
+  const handleModelOnLoad = (model: CogniteModel) => {
     if (!(viewer?.cameraManager instanceof DefaultCameraManager)) {
       console.warn(
         'Camera manager is not DefaultCameraManager, so click to change camera target will not work.'
       );
       return;
     }
-
+    viewer.loadCameraFromModel(model);
+    viewer.fitCameraToModel(model);
     viewer.cameraManager.setCameraControlsOptions({
       changeCameraTargetOnClick: true,
       mouseWheelAction: 'zoomToCursor',
     });
-    viewer.loadCameraFromModel(_model as CogniteModel);
 
-    // force fit camera to the model with also some easing effect
-    viewer.fitCameraToModel(_model);
+    setToolbarForCadModelsState();
 
     if (viewer.domElement) {
-      setModel(_model);
+      setModel(model);
     }
   };
 
@@ -86,36 +87,17 @@ export const CadRevealContent = ({
     onContextualizationUpdated(newContextualizedNodes, mappedNodesDeleted);
   };
 
-  // Load the cad model to the viewer
-  useEffect(() => {
-    (async () => {
-      if (!viewer) return;
-      if (modelType !== 'cad') return;
-
-      try {
-        viewer.addModel({ modelId, revisionId }).then(handleModelOnLoad);
-
-        setToolbarForCadModelsState();
-      } catch (e) {
-        if (e instanceof Error && viewer.domElement) {
-          setError(e);
-        }
-        return;
-      }
-    })();
-    // props.camera updates is not something that should trigger that hook
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewer, modelId, revisionId]);
-
   useEffect(() => {
     if (viewer) {
       setThreeDViewer(viewer);
     }
   }, [viewer]);
 
-  if (error) {
-    throw error;
-  }
+  const handleLoadError = (e: Error) => {
+    if (e instanceof Error && viewer.domElement) {
+      throw error;
+    }
+  };
 
   return (
     <>
@@ -125,6 +107,14 @@ export const CadRevealContent = ({
         onContextualizationDeleted={(mappedNodesDeleted) => {
           onContextualizationDeleted(mappedNodesDeleted);
         }}
+      />
+      <CadModelContainer
+        addModelOptions={{
+          modelId: modelId,
+          revisionId: revisionId,
+        }}
+        onLoadError={(options, e) => handleLoadError(e)}
+        onLoad={handleModelOnLoad}
       />
 
       <StyledResourceSelectorButtonWrapper>
@@ -152,4 +142,12 @@ const StyledResourceSelectorButtonWrapper = styled(
   position: absolute;
   top: ${FLOATING_ELEMENT_MARGIN}px;
   right: ${FLOATING_ELEMENT_MARGIN}px;
+`;
+
+const CanvasContainer = styled.div`
+  flex-grow: 1;
+  canvas {
+    height: 100%;
+    width: 100%;
+  }
 `;

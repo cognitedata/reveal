@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { Button, ToolBar } from '@cognite/cogs.js';
 import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
 import {
+  PointCloudContainer,
   useReveal,
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
@@ -13,9 +14,9 @@ import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/c
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
+  setModel,
   setModelLoaded,
   setThreeDViewer,
-  setToolbarForPointCloudModelsState,
   useContextualizeThreeDViewerStore,
 } from '../../useContextualizeThreeDViewerStore';
 import { AnnotationsCard } from '../AnnotationsCard';
@@ -34,14 +35,15 @@ export const PointCloudRevealContent = ({
   onDeleteAnnotation,
 }: RevealContentProps) => {
   const viewer = useReveal();
-  const { isResourceSelectorOpen, annotations, modelType } =
+
+  const [error, setError] = useState<Error>();
+
+  const { isResourceSelectorOpen, annotations } =
     useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       annotations: state.annotations,
       modelType: state.modelType,
     }));
-
-  const [error, setError] = useState<Error>();
 
   const handleModelOnLoad = (model: CogniteModel) => {
     setModelLoaded();
@@ -57,30 +59,17 @@ export const PointCloudRevealContent = ({
       changeCameraTargetOnClick: true,
       mouseWheelAction: 'zoomToCursor',
     });
+
+    if (viewer.domElement) {
+      setModel(model);
+    }
   };
 
-  // Load the PC model to the viewer
-  useEffect(() => {
-    (async () => {
-      if (!viewer) return;
-      if (modelType !== 'pointcloud') return;
-
-      try {
-        viewer
-          .addPointCloudModel({ modelId, revisionId })
-          .then(handleModelOnLoad);
-
-        setToolbarForPointCloudModelsState();
-      } catch (e) {
-        if (e instanceof Error && viewer.domElement) {
-          setError(e);
-        }
-        return;
-      }
-    })();
-    // props.camera updates is not something that should trigger that hook
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewer, modelId, revisionId]);
+  const handleLoadError = (e: Error) => {
+    if (e instanceof Error && viewer.domElement) {
+      throw error;
+    }
+  };
 
   useEffect(() => {
     if (viewer) {
@@ -88,13 +77,17 @@ export const PointCloudRevealContent = ({
     }
   }, [viewer]);
 
-  if (error) {
-    throw error;
-  }
-
   return (
     <>
       <PointCloudToolBar onDeleteAnnotation={onDeleteAnnotation} />
+      <PointCloudContainer
+        addModelOptions={{
+          modelId: modelId,
+          revisionId: revisionId,
+        }}
+        onLoadError={(options, e) => handleLoadError(e)}
+        onLoad={handleModelOnLoad}
+      />
       <StyledResourceSelectorButtonWrapper>
         <Button
           type="ghost"
@@ -124,6 +117,7 @@ const StyledResourceSelectorButtonWrapper = styled(
   withSuppressRevealEvents(ToolBar)
 )`
   position: absolute;
-  top: ${FLOATING_ELEMENT_MARGIN}px;
   right: ${FLOATING_ELEMENT_MARGIN}px;
+  /* The 3px is to vertically align it with the splitter handle */
+  top: calc(50% + 3px);
 `;
