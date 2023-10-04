@@ -6,6 +6,7 @@ This app is the entry point for the CDF (Cognite Data Fusion) front-end.
 It's a microfrontend architecture that uses [Single SPA](https://github.com/single-spa/single-spa) to render it's sub-apps.
 
 This app is basically the "shell" for loading and unloading sub-apps in addition to render:
+
 - Redirect page
 - Login page
 - Navigation (top bar, menu, profile page)
@@ -17,6 +18,7 @@ The idea is to devide the app into smaller sub-apps and be able to build, deploy
 # Development
 
 Use one of the following commands to run the fusion-shell locally:
+
 - `nx serve fusion-shell`
 - `nx preview fusion-shell`
 
@@ -137,3 +139,5 @@ After this step, you can run cypress. This is the command that is executed on CI
 `CLIENT_ID=<your-client-id> CLIENT_SECRET=<your-client-secret> nx run fusion-shell-e2e:e2e --watch`
 
 > Remeber to run fusion-shell when running e2e tests. E.g. `nx run fusion-shell:preview:production`.
+
+Before running e2e tests locally, make sure you have a `.env.local` file with env variable `FUSION_ENV` set to one of these values `staging | preview | production`. This is needed in order to generate subapp import maps.
