@@ -1,11 +1,11 @@
-import { PlatypusError } from '@platypus-core/boundaries/types';
-
 import {
   CogniteClient,
   HttpQueryParams,
   HttpRequestOptions,
   HttpResponse,
 } from '@cognite/sdk';
+
+import { PlatypusError } from '../../../../../../boundaries/types';
 
 export abstract class BaseApiService {
   public readonly baseUrl;

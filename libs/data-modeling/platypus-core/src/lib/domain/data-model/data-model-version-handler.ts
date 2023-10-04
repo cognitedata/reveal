@@ -1,9 +1,5 @@
-import { DTO, PlatypusError, Result } from '@platypus-core/boundaries/types';
-import {
-  Validator,
-  ValidatorResult,
-} from '@platypus-core/boundaries/validation';
-
+import { DTO, PlatypusError, Result } from '../../boundaries/types';
+import { Validator, ValidatorResult } from '../../boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
 
 import { FlexibleDataModelingClient, IGraphQlUtilsService } from './boundaries';

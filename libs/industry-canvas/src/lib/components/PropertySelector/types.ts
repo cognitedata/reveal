@@ -1,6 +1,6 @@
 export type Property = {
   path: string;
-  value: string;
+  value: string | undefined;
   isSelected: boolean;
 };
 
