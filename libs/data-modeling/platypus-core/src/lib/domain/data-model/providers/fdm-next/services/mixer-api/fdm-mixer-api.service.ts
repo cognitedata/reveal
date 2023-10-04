@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { PlatypusError, SdkError } from '@platypus-core/boundaries/types';
-
 import { CogniteClient } from '@cognite/sdk';
 
+import { PlatypusError, SdkError } from '../../../../../../boundaries/types';
 import {
   GraphQlQueryParams,
   GraphQLQueryResponse,
