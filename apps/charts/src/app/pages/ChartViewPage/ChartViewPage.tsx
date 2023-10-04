@@ -196,8 +196,6 @@ const ChartViewPage = () => {
     activeSidebar === ALERTING_SIDEBAR_KEY
   );
 
-  console.log({ activeSidebar, showMonitoringSidebar, isMonitoringAccessible });
-
   const [showErrorSidebar, setShowErrorSidebar] = useState(false);
   const [showEventSidebar, setShowEventSidebar] = useState(
     activeSidebar === EVENT_SIDEBAR_KEY
