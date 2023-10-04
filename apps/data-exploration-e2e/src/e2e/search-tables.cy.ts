@@ -4,11 +4,13 @@ import {
   interceptFileList,
   interceptSequenceList,
   interceptEventList,
+  intercept3DList,
   ASSET_LIST_ALIAS,
   TIMESERIES_LIST_ALIAS,
   FILE_LIST_ALIAS,
   SEQUENCE_LIST_ALIAS,
   EVENT_LIST_ALIAS,
+  THREED_LIST_ALIAS,
 } from '../support/interceptions/interceptions';
 
 describe('Search result tables', () => {
@@ -23,6 +25,7 @@ describe('Search result tables', () => {
     interceptFileList();
     interceptSequenceList();
     interceptEventList();
+    intercept3DList();
   });
 
   it('Should be able navigate to AllResources tab', () => {
@@ -96,5 +99,13 @@ describe('Search result tables', () => {
     cy.tableShouldBeVisible('sequence-search-results').shouldLoadMore(
       SEQUENCE_LIST_ALIAS
     );
+  });
+
+  it('Should be able navigate to 3D tab', () => {
+    cy.goToTab('3D');
+    cy.wait(`@${THREED_LIST_ALIAS}`);
+
+    cy.log('should contain sequence search results');
+    cy.tableShouldBeVisible('3d-model-table');
   });
 });
