@@ -8,20 +8,23 @@ import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type Image360Collection } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
-import { type Reveal3DResourcesLayersProps } from './types';
+import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 import { useTranslation } from '../../../common/i18n';
 
 export const Image360CollectionLayerContainer = ({
-  layerProps
+  layerProps,
+  onChange
 }: {
   layerProps: Reveal3DResourcesLayersProps;
+  onChange: (cadState: Reveal3DResourcesLayerStates['image360LayerData']) => void;
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);
   const { image360LayerData } = layerProps.reveal3DResourcesLayerData;
+  const { storeStateInUrl } = layerProps;
 
   const count = image360LayerData.length.toString();
   const someImagesVisible = !image360LayerData.every((data) => !data.isToggled);
@@ -45,6 +48,10 @@ export const Image360CollectionLayerContainer = ({
       ...prevResourcesStates,
       image360LayerData: updatedImage360Collection
     }));
+
+    if (storeStateInUrl !== undefined) {
+      onChange(updatedImage360Collection);
+    }
   };
 
   const handleAll360ImagesVisibility = (visible: boolean): void => {
@@ -58,6 +65,10 @@ export const Image360CollectionLayerContainer = ({
       ...prevResourcesStates,
       image360LayerData
     }));
+
+    if (storeStateInUrl !== undefined) {
+      onChange(image360LayerData);
+    }
   };
 
   const image360Content = (): ReactElement => {
