@@ -123,11 +123,11 @@ To revert, go to firebase console and revert the deployment directly from there.
 
 E2E tests are running on CI where we have the clientId and clientSecret as repository secrets available so that we can get access token.
 The token is fetched before cypress tests are started and is valid for the whole session. The code is here:
-`apps/fusion-shell-e2e/cypress.config.ts`
+ `apps/fusion-shell/cypress.config.ts`
 
 After we get the access token, we are setting the local storage item `CY_TOKEN: <token>` . This item is picked up by `cdf-sdk-sigleton`.
 The code for that is here:
-`apps/fusion-shell-e2e/src/support/commands.ts`
+`apps/fusion-shell/src/support/commands.ts`
 
 If you want to run cypress test locally, you will need to get hold of a clientId/ClientSecret pair.
 
