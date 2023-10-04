@@ -159,7 +159,11 @@ const ChartViewPage = () => {
     'WRITE'
   );
   const isMonitoringAccessible =
-    hasMonitoringRead && hasMonitoringWrite && userProfile;
+    hasMonitoringRead &&
+    hasMonitoringWrite &&
+    hasNotificationsRead &&
+    hasNotificationsWrite &&
+    userProfile;
   const isAlertingAccessible =
     hasNotificationsRead && hasNotificationsWrite && userProfile;
   const { isEnabled: isDataProfilingEnabled } = useFlag(
@@ -889,6 +893,8 @@ const ChartViewPage = () => {
             : [
                 hasMonitoringRead ? '' : `${MONITORING_ACL}:READ`,
                 hasMonitoringWrite ? '' : `${MONITORING_ACL}:WRITE`,
+                hasNotificationsRead ? '' : `${NOTIFICATIONS_ACL}:READ`,
+                hasNotificationsWrite ? '' : `${NOTIFICATIONS_ACL}:WRITE`,
               ].filter(Boolean)
         }
         onOk={handleAccessDeniedModalClose}
