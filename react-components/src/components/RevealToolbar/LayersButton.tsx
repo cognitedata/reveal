@@ -115,11 +115,9 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
       cadModel: CogniteCadModel,
       index: number
     ): { model: CogniteCadModel; isToggled: boolean; name: string } {
-      cadLayers?.forEach((layer) => {
-        if (layer.index === index) {
-          cadModel.visible = layer.applied;
-        }
-      });
+      const urlLayerState = cadLayers?.find((layer) => layer.index === index);
+      urlLayerState !== undefined && (cadModel.visible = urlLayerState.applied);
+
       return {
         model: cadModel,
         isToggled: cadModel.visible ?? true,
@@ -131,11 +129,10 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
       pointCloudModel: CognitePointCloudModel,
       index: number
     ): { model: CognitePointCloudModel; isToggled: boolean; name: string } {
-      pointCloudLayers?.forEach((layer) => {
-        if (layer.index === index) {
-          pointCloudModel.getDefaultPointCloudAppearance().visible = layer.applied;
-        }
-      });
+      const urlLayerState = pointCloudLayers?.find((layer) => layer.index === index);
+      urlLayerState !== undefined &&
+        pointCloudModel.setDefaultPointCloudAppearance({ visible: urlLayerState.applied });
+
       return {
         model: pointCloudModel,
         isToggled: pointCloudModel.getDefaultPointCloudAppearance().visible ?? true,
@@ -148,12 +145,9 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
       isToggled: boolean;
       isActive: boolean;
     } {
-      let visible = true;
-      image360Layers?.forEach((layer) => {
-        if (layer.siteId === image360Collection.id) {
-          visible = layer.applied;
-        }
-      });
+      const urlLayerState = image360Layers?.find((layer) => layer.siteId === image360Collection.id);
+      urlLayerState !== undefined && image360Collection.setIconsVisibility(urlLayerState.applied);
+
       return {
         image360: image360Collection,
         isToggled: visible,
