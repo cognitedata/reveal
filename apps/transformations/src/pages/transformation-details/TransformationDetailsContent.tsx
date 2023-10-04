@@ -25,9 +25,9 @@ import {
   createInternalLink,
   shouldDisableUpdatesOnTransformation,
 } from '@transformations/utils';
+import { useCdfUserHistoryService } from '@user-history';
 import { Allotment } from 'allotment';
 
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Colors } from '@cognite/cogs.js';
 
 type TransformationDetailsContentProps = {
