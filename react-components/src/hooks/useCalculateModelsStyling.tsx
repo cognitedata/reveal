@@ -8,17 +8,18 @@ import {
 } from '../components/Reveal3DResources/types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type ThreeDModelMappings } from './types';
-import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
+import { type Node3D, type CogniteExternalId, AssetMapping3D } from '@cognite/sdk';
 import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
 } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
-import { type NodeId, type FdmEdgeWithNode } from '../components/NodeCacheProvider/types';
+import { type NodeId, type FdmEdgeWithNode, ModelRevisionKey } from '../components/NodeCacheProvider/types';
 import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../components/CadModelContainer/useApplyCadModelStyling';
+import { useMappeNodesForRevisions } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -59,7 +60,9 @@ function useCalculateMappedStyling(
     modelsRevisionsWithMappedEquipment
   );
 
-  const modelsMappedStyleGroups = useMemo(() => {
+  const { data: assetMappingData } = useMappeNodesForRevisions(modelsRevisionsWithMappedEquipment);
+
+  const modelsMappedFdmStyleGroups = useMemo(() => {
     if (
       models.length === 0 ||
       mappedEquipmentEdges === undefined ||
@@ -67,16 +70,36 @@ function useCalculateMappedStyling(
     ) {
       return [];
     }
+
     return modelsRevisionsWithMappedEquipment.map((model) => {
       const fdmData = mappedEquipmentEdges?.get(`${model.modelId}/${model.revisionId}`) ?? [];
       const modelStyle = model.styling?.mapped ?? defaultMappedNodeAppearance;
 
-      const styleGroup = modelStyle !== undefined ? [getMappedStyleGroup(fdmData, modelStyle)] : [];
+      const styleGroup = modelStyle !== undefined ? [getMappedStyleGroupFromFdm(fdmData, modelStyle)] : [];
       return { model, styleGroup };
     });
   }, [modelsRevisionsWithMappedEquipment, mappedEquipmentEdges, defaultMappedNodeAppearance]);
 
-  return modelsMappedStyleGroups;
+  const modelsMappedAssetStyleGroups = useMemo(() => {
+    if (models.length === 0 ||
+      assetMappingData === undefined ||
+      assetMappingData.length === 0) {
+      return [];
+    }
+
+    return assetMappingData.map(assetMappedModel => {
+      const modelStyle = assetMappedModel.model.styling?.mapped ?? defaultMappedNodeAppearance;
+
+      const styleGroup = modelStyle !== undefined ? [getMappedStyleGroupFromAssetMappings(assetMappedModel.assetMappings, modelStyle)] : [];
+      return { model: assetMappedModel.model, styleGroup };
+    });
+  }, [modelsRevisionsWithMappedEquipment, assetMappingData, defaultMappedNodeAppearance]);
+
+  const combinedMappedStyleGroups = useMemo(() =>
+    groupStyleGroupByModel([...modelsMappedAssetStyleGroups, ...modelsMappedFdmStyleGroups]),
+   [modelsMappedAssetStyleGroups, modelsMappedFdmStyleGroups]);
+
+  return combinedMappedStyleGroups;
 
   function getMappedCadModelsOptions(): CadModelOptions[] {
     if (defaultMappedNodeAppearance !== undefined) {
@@ -137,6 +160,22 @@ function useJoinStylingGroups(
   return modelsStyling;
 }
 
+function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
+  const auxillaryMap = new Map<ModelRevisionKey, ModelStyleGroup>();
+
+  styleGroup.forEach(({ model, styleGroup })  => {
+    const key = `${model.modelId}/${model.revisionId}` as const;
+    const storedGroup = auxillaryMap.get(key);
+    if (storedGroup !== undefined) {
+      storedGroup.styleGroup.push(...styleGroup);
+    } else {
+      auxillaryMap.set(key, { model, styleGroup });
+    }
+  });
+
+  return [...auxillaryMap.values()];
+}
+
 function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {
   return typedModels.map((model) => {
     return {
@@ -146,7 +185,7 @@ function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {
   });
 }
 
-function getMappedStyleGroup(
+function getMappedStyleGroupFromFdm(
   edges: FdmEdgeWithNode[],
   mapped: NodeAppearance
 ): TreeIndexStylingGroup {
@@ -157,6 +196,16 @@ function getMappedStyleGroup(
   });
 
   return { treeIndexSet: indexSet, style: mapped };
+}
+
+function getMappedStyleGroupFromAssetMappings(assetMappings: AssetMapping3D[], nodeAppearance: NodeAppearance): TreeIndexStylingGroup {
+  const indexSet = new IndexSet();
+  assetMappings.forEach(assetMapping => {
+    const range = new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize);
+    indexSet.addRange(range);
+  });
+
+  return { treeIndexSet: indexSet, style: nodeAppearance };
 }
 
 function calculateCadModelStyling(

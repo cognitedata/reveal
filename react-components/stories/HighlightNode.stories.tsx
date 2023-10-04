@@ -10,7 +10,9 @@ import {
   useClickedNodeData,
   useCameraNavigation,
   type AddResourceOptions,
-  type FdmAssetStylingGroup
+  type FdmAssetStylingGroup,
+  ClickedNodeData,
+  FdmNodeDataResult
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
@@ -18,6 +20,7 @@ import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
+import assert from 'assert';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -34,8 +37,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 2231774635735416,
-        revisionId: 912809199849811,
+        modelId: 1791160622840317,
+        revisionId: 502149125550840,
         styling: {
           default: {
             color: new Color('#efefef')
@@ -63,10 +66,15 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const nodeData = useClickedNodeData();
 
   useEffect(() => {
-    if (nodeData?.fdmNode === undefined) {
+
+    console.log('Clicked node data', nodeData);
+    const isFdmData = ((data: any): data is FdmNodeDataResult => data?.fdmNode !== undefined);
+    if (!isFdmData(nodeData)) {
       setStylingGroups([]);
       return;
     }
+
+    assert(nodeData.fdmNode !== undefined);
 
     setStylingGroups([
       {
@@ -78,9 +86,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     ]);
 
     void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, nodeData.fdmNode.space);
-
-    console.log('Clicked node data', nodeData);
-  }, [nodeData?.fdmNode]);
+  }, [nodeData]);
 
   return (
     <>

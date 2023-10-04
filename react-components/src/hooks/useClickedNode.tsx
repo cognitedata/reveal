@@ -6,19 +6,27 @@ import { type CadIntersection, type PointerEventData } from '@cognite/reveal';
 import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeDataPromises } from '../components/NodeCacheProvider/NodeCacheProvider';
-import { type Node3D } from '@cognite/sdk';
+import { AssetMapping3D, CogniteInternalId, type Node3D } from '@cognite/sdk';
 import {
   type CadNodeWithFdmIds,
   type FdmNodeDataPromises
 } from '../components/NodeCacheProvider/types';
+import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 
-export type NodeDataResult = {
-  fdmNode: DmsUniqueIdentifier;
-  view: Source;
-  cadNode: Node3D;
+export type AssetMappingDataResult = {
+  type: 'cad-assetmapping',
+  cadNode?: Node3D,
+  assetIds?: CogniteInternalId[]
 };
 
-export type ClickedNodeData = Partial<NodeDataResult> & {
+export type FdmNodeDataResult = {
+  type: 'cad-datamodel',
+  fdmNode?: DmsUniqueIdentifier;
+  view?: Source;
+  cadNode?: Node3D;
+};
+
+export type ClickedNodeData = (FdmNodeDataResult | AssetMappingDataResult) & {
   intersection: CadIntersection;
 };
 
@@ -54,13 +62,20 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     cadIntersection?.treeIndex
   ).data;
 
+  const assetMappingResult = useAssetMappingForTreeIndex(
+    cadIntersection?.model.modelId,
+    cadIntersection?.model.revisionId,
+    cadIntersection?.treeIndex
+  ).data;
+
   useEffect(() => {
-    void setClickedNodeFromQueryResult(nodeDataPromises);
+    void setClickedNodeFromQueryResult(nodeDataPromises, assetMappingResult);
 
     async function setClickedNodeFromQueryResult(
-      promises: FdmNodeDataPromises | undefined
+      promises: FdmNodeDataPromises | undefined,
+      assetMappingResult: { node: Node3D, mappings: AssetMapping3D[] } | undefined
     ): Promise<void> {
-      if (promises === undefined) {
+      if (promises === undefined && assetMappingResult == undefined) {
         return;
       }
 
@@ -70,22 +85,34 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
       }
 
       setClickedNodeData({
+        type: promises !== undefined ? 'cad-datamodel' : 'cad-assetmapping',
         intersection: cadIntersection
       });
 
-      const cadAndFdmNodes = await promises.cadAndFdmNodesPromise;
+      if (promises !== undefined) {
+        const cadAndFdmNodes = await promises.cadAndFdmNodesPromise;
 
-      if (cadAndFdmNodes === undefined || cadAndFdmNodes.fdmIds.length === 0) {
-        return;
+        if (cadAndFdmNodes === undefined || cadAndFdmNodes.fdmIds.length === 0) {
+          return;
+        }
+
+        setClickedNodeData({
+          type: 'cad-datamodel',
+          intersection: cadIntersection,
+          fdmNode: cadAndFdmNodes.fdmIds[0],
+          cadNode: cadAndFdmNodes.cadNode
+        });
+
+        await setClickedNodeFromViewPromise(cadAndFdmNodes, promises.viewsPromise);
+      } else if (assetMappingResult !== undefined) {
+        console.log('AAAAH');
+        setClickedNodeData({
+          type: 'cad-assetmapping',
+          intersection: cadIntersection,
+          assetIds: assetMappingResult.mappings.map(mapping => mapping.assetId),
+          cadNode: assetMappingResult.node
+        });
       }
-
-      setClickedNodeData({
-        intersection: cadIntersection,
-        fdmNode: cadAndFdmNodes.fdmIds[0],
-        cadNode: cadAndFdmNodes.cadNode
-      });
-
-      await setClickedNodeFromViewPromise(cadAndFdmNodes, promises.viewsPromise);
     }
 
     async function setClickedNodeFromViewPromise(
@@ -99,13 +126,14 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
       }
 
       setClickedNodeData({
+        type: 'cad-datamodel',
         intersection: cadIntersection,
         fdmNode: data.fdmIds[0],
         cadNode: data.cadNode,
         view: views[0]
       });
     }
-  }, [nodeDataPromises]);
+  }, [nodeDataPromises, assetMappingResult]);
 
   return clickedNodeData;
 };
