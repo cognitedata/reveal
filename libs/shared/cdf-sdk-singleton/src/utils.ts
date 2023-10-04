@@ -8,9 +8,6 @@ import {
   cogIdpInternalId,
   cogIdpAsResponse,
 } from '@cognite/login-utils';
-import { CogniteClient } from '@cognite/sdk';
-
-import { isUsingUnifiedSignin } from './unified-signin';
 
 export const getQueryParameter = (parameterKey: string): string => {
   const parameters = queryString.parse(window.location.search) ?? {};
@@ -18,22 +15,9 @@ export const getQueryParameter = (parameterKey: string): string => {
 };
 
 export const getProject = (): string => {
-  if (isUsingUnifiedSignin()) {
-    const project = getQueryParameter('project');
-    // If we're able to find the project return it, otherwise default to the previous behaviour.
-    if (project) {
-      return project;
-    }
-  }
-
-  // if unified signin, the url is apps.cognite.com/cdf/project
-  // otherwise is fusion.cognite.com/project
-  // when splitting, for fusion index is 1, for /cdf is 2
-  const projectPathParamLocation = isUsingUnifiedSignin() ? 2 : 1;
-
-  return new URL(window.location.href).pathname.split('/')[
-    projectPathParamLocation
-  ];
+  // example pathname: "/<project>/<subapp>/search/abc123"
+  // this function will return the `<project>` part
+  return window.location.pathname.split('/')[1];
 };
 
 export const getCluster = () => {
@@ -82,7 +66,7 @@ export async function getIDP(): Promise<IDPResponse | LegacyProject> {
   return idp;
 }
 
-export const getDomainConfigCluster = async (): Promise<string | undefined> => {
+const getDomainConfigCluster = async (): Promise<string | undefined> => {
   try {
     const idp = await getIDP();
     const clusters =
@@ -107,32 +91,3 @@ export const getBaseUrl = async (): Promise<string | undefined> => {
   }
   return Promise.reject(new Error('cluster not found'));
 };
-
-/* eslint-disable */
-export function convertToProxy(originalInstance: CogniteClient) {
-  originalInstance = Object(originalInstance);
-  let proxy = new Proxy(new WrappedSdkClient(originalInstance), {
-    get: function (originalObj, key, proxy) {
-      switch (key) {
-        case 'overrideInstance':
-          return originalObj.overrideInstance;
-        default:
-          // @ts-ignore
-          return originalObj.instance[key];
-      }
-    },
-  });
-  return proxy;
-}
-
-export class WrappedSdkClient {
-  instance: CogniteClient;
-
-  constructor(sdkInstance: CogniteClient) {
-    this.instance = sdkInstance;
-  }
-
-  overrideInstance(newSdk: CogniteClient) {
-    this.instance = newSdk;
-  }
-}

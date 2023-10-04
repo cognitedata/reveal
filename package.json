@@ -19,7 +19,6 @@
     "@cognite/acl-protos": "^0.20.7",
     "@cognite/annotations": "^1.1.0",
     "@cognite/apm-auth-container": "^1.0.0",
-    "@cognite/auth-react": "^0.0.28-beta",
     "@cognite/calculation-backend": "^4.1.0-alpha.3",
     "@cognite/cdf-hub-tenant-selector": "^0.14.2",
     "@cognite/cdf-ui-cli": "^1.1.1",

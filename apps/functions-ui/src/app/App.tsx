@@ -4,7 +4,7 @@ import { setupMixpanel } from '@functions-ui/utils/Metrics';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import styled from 'styled-components/macro';
 
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
@@ -13,7 +13,6 @@ import RootApp from './containers/RootApp';
 setupMixpanel();
 
 function App() {
-  const baseUrl = isUsingUnifiedSignin() ? '/cdf' : '';
   return (
     <>
       <ReactQueryDevtools initialIsOpen={false} />
@@ -28,10 +27,7 @@ function App() {
         >
           <BrowserRouter>
             <Routes>
-              <Route
-                path={`${baseUrl}/:project/:subAppPath/*`}
-                element={<RootApp />}
-              />
+              <Route path="/:project/:subAppPath/*" element={<RootApp />} />
             </Routes>
           </BrowserRouter>
         </FlagProvider>

@@ -9,11 +9,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthContainer,
-  getProject,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { AuthContainer, getProject } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
 const queryClient = new QueryClient({
@@ -29,7 +25,7 @@ const App = () => {
   const appName = 'cdf-access-management';
   const projectName = getProject();
   const flagProviderApiToken = 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE';
-  const baseUrl = isUsingUnifiedSignin() ? `/cdf/:tenant` : `/:tenant`;
+  const baseUrl = `/:tenant`;
 
   return (
     <I18nWrapper

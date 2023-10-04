@@ -10,11 +10,7 @@ import { MAX_NETWORK_RETRIES } from '@transformations/utils';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthContainer,
-  getProject,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { AuthContainer, getProject } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { CogniteError } from '@cognite/sdk';
 
@@ -47,9 +43,7 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const project = getProject();
-  const baseUrl = isUsingUnifiedSignin()
-    ? `/cdf/:projectName`
-    : '/:projectName';
+  const baseUrl = '/:projectName';
 
   return (
     <I18nWrapper translations={translations} defaultNamespace="transformations">

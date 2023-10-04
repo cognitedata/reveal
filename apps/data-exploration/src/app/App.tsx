@@ -13,11 +13,7 @@ import { RecoilURLSyncJSON } from 'recoil-sync';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthContainer,
-  getProject,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { AuthContainer, getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { ErrorBoundary } from '@cognite/react-errors';
@@ -34,7 +30,7 @@ import theme from './styles/theme';
 
 export default () => {
   const project = getProject();
-  const baseUrl = isUsingUnifiedSignin() ? `/cdf/${project}` : `/${project}`;
+  const baseUrl = `/${project}`;
 
   if (!project) {
     throw new Error('project missing');

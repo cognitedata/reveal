@@ -31,16 +31,10 @@ import {
   logout as keycloakLogout,
 } from './keycloak';
 import getLegacyToken, { logout as legacyLogout } from './legacy';
-import { SdkClientTokenProvider, UserInfo } from './types';
+import { UserInfo } from './types';
 import { getIDP } from './utils';
 
-/**
- * This is the default token provider used in fusion.cognite.com.
- * For unified sign-in and others, different one will be provided when calling the create function.
- *
- * NOTE: This code will be soon depricated when unified sign-in is fully rolled out.
- */
-export class FusionTokenProvider implements SdkClientTokenProvider {
+export class FusionTokenProvider {
   getAppId() {
     return 'fusion.cognite.com';
   }

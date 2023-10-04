@@ -8,11 +8,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { createBrowserHistory } from 'history';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthContainer,
-  isUsingUnifiedSignin,
-  PageTitle,
-} from '@cognite/cdf-utilities';
+import { AuthContainer, PageTitle } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
 import ErrorBoundary from './components/ErrorBoundary';
@@ -26,7 +22,6 @@ export const App = () => {
   const history = createBrowserHistory();
   const store = configureStore(history);
   const subAppName = 'cdf-3d-management';
-  const baseUrl = isUsingUnifiedSignin() ? '/cdf' : '';
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -51,7 +46,7 @@ export const App = () => {
                 login={loginAndAuthIfNeeded}
               >
                 <Provider store={store}>
-                  <BrowserRouter basename={baseUrl}>
+                  <BrowserRouter>
                     <>
                       <PageTitle title={APP_TITLE} />
                       <ReactQueryDevtools initialIsOpen={false} />

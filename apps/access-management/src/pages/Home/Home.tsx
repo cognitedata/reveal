@@ -18,7 +18,7 @@ import {
 } from '@tanstack/react-query';
 import Menu from 'antd/lib/menu';
 
-import { createLink, getCluster } from '@cognite/cdf-utilities';
+import { createLink, getEnvFromCluster } from '@cognite/cdf-utilities';
 import { Title, Loader, Button } from '@cognite/cogs.js';
 
 export default function () {
@@ -49,7 +49,7 @@ export default function () {
   const page = params?.['*'] || 'groups';
   const navigate = useNavigate();
 
-  const env = getCluster()?.split('.')[0];
+  const env = getEnvFromCluster();
   const isUnsupportedCluster =
     env === 'sapc-01' || env === 'openfield' || env === 'okd-dev-01';
 

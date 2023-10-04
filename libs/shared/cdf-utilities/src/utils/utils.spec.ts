@@ -1,44 +1,6 @@
-import {
-  getEnv,
-  createLink,
-  checkUrl,
-  Envs,
-  getProject,
-  isUsingUnifiedSignin,
-  getOrganization,
-} from './utils';
+import { getEnv, createLink, checkUrl, Envs, getProject } from './utils';
 
 describe('Utils', () => {
-  describe('checkUnifiedSignin', () => {
-    global.window ??= Object.create(window);
-
-    it('Should return false when app is served from fusion domains', () => {
-      Object.defineProperty(window, 'location', {
-        writable: true,
-        value: {
-          href: 'https://dev.fusion.cogniteapp.com/test-project',
-          pathname: '/test-project',
-          hostname: 'dev.fusion.cogniteapp.com',
-          host: 'dev.fusion.cogniteapp.com',
-        },
-      });
-      expect(isUsingUnifiedSignin()).toBe(false);
-    });
-
-    it('Should return true if app is served from sign-in domains', () => {
-      Object.defineProperty(window, 'location', {
-        writable: true,
-        value: {
-          href: 'https://apps-staging.cognite.com/cdf/test-project',
-          pathname: '/cdf/test-project',
-          hostname: 'apps-staging.cognite.com',
-          host: 'apps-staging.cognite.com',
-        },
-      });
-      expect(isUsingUnifiedSignin()).toBe(true);
-    });
-  });
-
   describe('getEnv', () => {
     global.window ??= Object.create(window);
     Object.defineProperty(window, 'location', {
@@ -235,50 +197,6 @@ describe('Utils', () => {
         )
       ).toEqual('/some-tenant/feature?cart=a|b');
     });
-
-    it('should append project, cluster, organization, env when unified-signin', () => {
-      Object.defineProperty(window, 'location', {
-        writable: true,
-        value: {
-          href: 'https://apps-staging.cognite.com/cdf/test-project?project=test-project&cluster=greenfield.cognitedata.com&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev',
-          pathname: '/cdf/test-project',
-          hostname: 'apps-staging.cognite.com',
-          host: 'apps-staging.cognite.com',
-          search:
-            '?project=test-project&cluster=greenfield.cognitedata.com&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev',
-        },
-      });
-
-      expect(createLink('/data-models', { env: 'sandfield' })).toEqual(
-        '/cdf/test-project/data-models?cluster=greenfield.cognitedata.com&env=sandfield&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev&project=test-project'
-      );
-    });
-
-    it('Should not duplicate project when unified signin', () => {
-      Object.defineProperty(window, 'location', {
-        writable: true,
-        value: {
-          href: 'https://apps-staging.cognite.com/cdf/test-project?project=test-project&cluster=greenfield.cognitedata.com&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev',
-          pathname: '/cdf/test-project',
-          hostname: 'apps-staging.cognite.com',
-          host: 'apps-staging.cognite.com',
-          search:
-            '?project=test-project&cluster=greenfield.cognitedata.com&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev',
-        },
-      });
-
-      expect(
-        createLink('/test-project/data-models', { env: 'sandfield' })
-      ).toEqual(
-        '/cdf/test-project/data-models?cluster=greenfield.cognitedata.com&env=sandfield&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev&project=test-project'
-      );
-
-      expect(
-        createLink('/cdf/test-project/data-models', { env: 'sandfield' })
-      ).toEqual(
-        '/cdf/test-project/data-models?cluster=greenfield.cognitedata.com&env=sandfield&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev&project=test-project'
-      );
-    });
   });
 
   describe('checkUrl', () => {
@@ -371,48 +289,6 @@ describe('Utils', () => {
         },
       });
       expect(getProject()).toBe('test-project');
-    });
-    it('Should correctly recognize project from URL when unified signin', () => {
-      Object.defineProperty(window, 'location', {
-        writable: true,
-        value: {
-          href: 'https://apps-staging.cognite.com/cdf/test-project?env=greenfield',
-          pathname: '/cdf/test-project',
-          hostname: 'apps-staging.cognite.com',
-          host: 'apps-staging.cognite.com',
-        },
-      });
-      expect(getProject()).toBe('test-project');
-    });
-  });
-
-  describe('checkOrganization', () => {
-    global.window ??= Object.create(window);
-
-    it('Should correctly recognize organization from sub domain', () => {
-      Object.defineProperty(window, 'location', {
-        writable: true,
-        value: {
-          href: 'https://cog-appdev.fusion.cogniteapp.com/test-project',
-          pathname: '/test-project',
-          hostname: 'cog-appdev.fusion.cogniteapp.com',
-        },
-      });
-      expect(getOrganization()).toBe('cog-appdev');
-    });
-    it('Should correctly recognize organization when in URL as query string param', () => {
-      Object.defineProperty(window, 'location', {
-        writable: true,
-        value: {
-          href: 'https://apps-staging.cognite.com/cdf/test-project?project=test-project&cluster=greenfield.cognitedata.com&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev',
-          pathname: '/cdf/test-project',
-          hostname: 'apps-staging.cognite.com',
-          host: 'apps-staging.cognite.com',
-          search:
-            '?project=test-project&cluster=greenfield.cognitedata.com&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev',
-        },
-      });
-      expect(getOrganization()).toBe('cog-appdev');
     });
   });
 });

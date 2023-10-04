@@ -12,11 +12,7 @@ import theme from '@vision/styles/theme';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthContainer,
-  getProject,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { AuthContainer, getProject } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
@@ -49,8 +45,6 @@ const App = () => {
 
   const project = getProject();
 
-  const baseUrl = isUsingUnifiedSignin() ? '/cdf' : '';
-
   return (
     <AntStyles>
       <ThemeProvider theme={theme}>
@@ -70,7 +64,7 @@ const App = () => {
                 <DataExplorationWrapper>
                   <BrowserRouter>
                     <Routes>
-                      <Route path={`${baseUrl}/*`} element={<AppRoutes />} />
+                      <Route path="/*" element={<AppRoutes />} />
                     </Routes>
                   </BrowserRouter>
                 </DataExplorationWrapper>
