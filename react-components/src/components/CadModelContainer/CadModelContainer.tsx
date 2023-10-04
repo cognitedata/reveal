@@ -111,11 +111,10 @@ export function CadModelContainer({
       return;
     }
     const index = viewer.models.indexOf(model);
-    cadLayers.forEach((layer) => {
-      if (layer.revisionId === revisionId && layer.index === index) {
-        model.visible = layer.applied;
-      }
-    });
+    const urlLayerState = cadLayers.find(
+      (layer) => layer.revisionId === revisionId && layer.index === index
+    );
+    urlLayerState !== undefined && (model.visible = urlLayerState.applied);
   }
 }
 

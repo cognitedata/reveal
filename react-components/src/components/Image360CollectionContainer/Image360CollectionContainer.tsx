@@ -73,11 +73,8 @@ export function Image360CollectionContainer({
     if (image360Layers === undefined) {
       return;
     }
-    image360Layers.forEach((layer) => {
-      if (layer.siteId === image360Collection.id) {
-        image360Collection.setIconsVisibility(layer.applied);
-      }
-    });
+    const urlLayerState = image360Layers.find((layer) => layer.siteId === image360Collection.id);
+    urlLayerState !== undefined && image360Collection.setIconsVisibility(urlLayerState.applied);
   }
 }
 

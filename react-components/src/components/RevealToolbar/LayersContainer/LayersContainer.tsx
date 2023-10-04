@@ -21,7 +21,7 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
     image360LayerData: []
   });
 
-  const setUrl = (): void => {
+  useEffect(() => {
     const { cadLayerData, pointCloudLayerData, image360LayerData } = layersContainerState;
     const cadLayers = cadLayerData.map((data) => {
       const index = viewer.models.indexOf(data.model);
@@ -51,11 +51,8 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
       pointCloudLayers,
       image360Layers
     });
-  };
-
-  useEffect(() => {
-    setUrl();
   }, [layersContainerState]);
+
   return (
     <>
       {(viewer.models.length > 0 || viewer.get360ImageCollections().length > 0) && (

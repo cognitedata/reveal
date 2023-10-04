@@ -128,12 +128,11 @@ export function PointCloudContainer({
       return;
     }
     const index = viewer.models.indexOf(model);
-    pointCloudLayers.forEach((layer) => {
-      if (layer.revisionId === revisionId && layer.index === index) {
-        const visible = layer.applied;
-        model.setDefaultPointCloudAppearance({ visible });
-      }
-    });
+    const urlLayerState = pointCloudLayers.find(
+      (layer) => layer.revisionId === revisionId && layer.index === index
+    );
+    urlLayerState !== undefined &&
+      model.setDefaultPointCloudAppearance({ visible: urlLayerState.applied });
   }
 }
 
