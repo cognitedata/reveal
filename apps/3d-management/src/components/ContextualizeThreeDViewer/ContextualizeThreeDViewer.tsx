@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -6,11 +6,7 @@ import { getThreeDRevisionOutputs } from '@data-exploration-lib/domain-layer';
 
 import { CadContextualizeThreeDViewer } from './components/Cad/CadContextualizeThreeDViewer';
 import { PointCloudContextualizeThreeDViewer } from './components/PointCloud/PointCloudContextualizeThreeDViewer';
-import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
-import {
-  useContextualizeThreeDViewerStore,
-  setModelType,
-} from './useContextualizeThreeDViewerStore';
+import { ThreeDModelType } from './types';
 
 type ContextualizeThreeDViewerProps = {
   modelId: number;
@@ -23,9 +19,7 @@ export const ContextualizeThreeDViewer = ({
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
 
-  const { modelType } = useContextualizeThreeDViewerStore((state) => ({
-    modelType: state.modelType,
-  }));
+  const [modelType, setModelType] = useState(ThreeDModelType.NONE);
 
   useEffect(() => {
     (async () => {
@@ -38,29 +32,30 @@ export const ContextualizeThreeDViewer = ({
         'all-outputs'
       );
       if (response.find((item) => item.format === 'ept-pointcloud')) {
-        setModelType('pointcloud');
+        setModelType(ThreeDModelType.POINT_CLOUD);
       } else {
-        setModelType('cad');
+        setModelType(ThreeDModelType.CAD);
       }
     })();
   }, [sdk, modelId, revisionId]);
 
-  useSyncStateWithViewer();
+  if (modelType === ThreeDModelType.CAD) {
+    return (
+      <CadContextualizeThreeDViewer
+        modelId={Number(modelId)}
+        revisionId={Number(revisionId)}
+      />
+    );
+  }
 
-  return (
-    <>
-      {modelType === 'cad' && (
-        <CadContextualizeThreeDViewer
-          modelId={Number(modelId)}
-          revisionId={Number(revisionId)}
-        />
-      )}
-      {modelType === 'pointcloud' && (
-        <PointCloudContextualizeThreeDViewer
-          modelId={Number(modelId)}
-          revisionId={Number(revisionId)}
-        />
-      )}
-    </>
-  );
+  if (modelType === ThreeDModelType.POINT_CLOUD) {
+    return (
+      <PointCloudContextualizeThreeDViewer
+        modelId={Number(modelId)}
+        revisionId={Number(revisionId)}
+      />
+    );
+  }
+
+  return <></>;
 };

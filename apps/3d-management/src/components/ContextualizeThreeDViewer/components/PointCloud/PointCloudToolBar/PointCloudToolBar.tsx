@@ -11,7 +11,7 @@ import {
   HighQualitySettings,
   LowQualitySettings,
 } from '../../../../../pages/ContextualizeEditor/constants';
-import { useContextualizeThreeDViewerStore } from '../../../useContextualizeThreeDViewerStore';
+import { useContextualizeThreeDViewerStorePointCloud } from '../../../useContextualizeThreeDViewerStorePointCloud';
 import { ColorTypeSelector } from '../PointCloudColorPicker';
 import { PointSizeSlider } from '../PointSizeSlider';
 
@@ -24,7 +24,7 @@ type PointCloudToolBarProps = {
 export const PointCloudToolBar = ({
   onDeleteAnnotation,
 }: PointCloudToolBarProps) => {
-  const { modelId } = useContextualizeThreeDViewerStore((state) => ({
+  const { modelId } = useContextualizeThreeDViewerStorePointCloud((state) => ({
     modelId: state.modelId,
   }));
 
@@ -52,12 +52,11 @@ export const PointCloudToolBar = ({
 };
 
 const InformationBox = () => {
-  const { tool, pendingAnnotation } = useContextualizeThreeDViewerStore(
-    (state) => ({
+  const { tool, pendingAnnotation } =
+    useContextualizeThreeDViewerStorePointCloud((state) => ({
       tool: state.tool,
       pendingAnnotation: state.pendingAnnotation,
-    })
-  );
+    }));
 
   if (tool !== 'addAnnotation') return null;
 

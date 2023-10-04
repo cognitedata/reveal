@@ -6,8 +6,8 @@ import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 
 import {
   ToolType,
-  useContextualizeThreeDViewerStore,
-} from '../useContextualizeThreeDViewerStore';
+  useContextualizeThreeDViewerStorePointCloud,
+} from '../useContextualizeThreeDViewerStorePointCloud';
 import { createAnnotationsAsWireframes } from '../utils/annotations/annotationUtils';
 import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
 import { hideBoundingVolumes } from '../utils/hideBoundingVolumes';
@@ -38,7 +38,7 @@ const removeObjectByName = (viewer: Cognite3DViewer, name: string) => {
     });
 };
 
-export const useSyncStateWithViewer = () => {
+export const useSyncStateWithViewerPointCloud = () => {
   const {
     modelId,
     isModelLoaded,
@@ -49,7 +49,7 @@ export const useSyncStateWithViewer = () => {
     tool,
     annotations,
     visualizationOptions,
-  } = useContextualizeThreeDViewerStore((state) => ({
+  } = useContextualizeThreeDViewerStorePointCloud((state) => ({
     modelId: state.modelId,
     isModelLoaded: state.isModelLoaded,
     pendingAnnotation: state.pendingAnnotation,

@@ -11,7 +11,7 @@ import { AnnotationModel, AssetMapping3D, ListResponse } from '@cognite/sdk';
 
 import { DEFAULT_POINT_SIZE } from '../../pages/ContextualizeEditor/constants';
 
-import { SelectedNode } from './components/Cad/CadContextualizeThreeDViewer';
+import { SelectedNode } from './types';
 
 export type ThreeDPosition = {
   x: number;
@@ -51,13 +51,6 @@ type RootState = {
   isToolbarForCadModels: boolean;
   isToolbarForPointCloudModels: boolean;
   model: CogniteCadModel | CognitePointCloudModel | undefined;
-  modelType: string;
-  selectedNodeIdsList: Array<number>;
-  selectedAndContextualizedNodesList: Array<SelectedNode>;
-  selectedNodesTreeIndex: TreeIndexNodeCollection;
-  selectedAndContextualizedNodesTreeIndex: TreeIndexNodeCollection;
-  contextualizedNodesTreeIndex: TreeIndexNodeCollection;
-  contextualizedNodes: ListResponse<AssetMapping3D[]> | null;
   annotations: AnnotationModel[] | null;
   visualizationOptions: VisualizationOptions;
 };
@@ -75,30 +68,23 @@ const initialState: RootState = {
   modelId: null,
   isModelLoaded: false,
   model: undefined,
-  modelType: '',
-  selectedNodeIdsList: [],
-  selectedAndContextualizedNodesList: [],
-  selectedNodesTreeIndex: new TreeIndexNodeCollection(),
-  selectedAndContextualizedNodesTreeIndex: new TreeIndexNodeCollection(),
-  contextualizedNodesTreeIndex: new TreeIndexNodeCollection(),
-  contextualizedNodes: null,
   annotations: null,
   visualizationOptions: DEFAULT_VISUALIZATION_OPTIONS,
 };
 
-export const useContextualizeThreeDViewerStore = create<RootState>(
+export const useContextualizeThreeDViewerStorePointCloud = create<RootState>(
   () => initialState
 );
 
 export const onOpenResourceSelector = () => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     isResourceSelectorOpen: true,
   }));
 };
 
 export const onCloseResourceSelector = () => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     isResourceSelectorOpen: false,
     pendingAnnotation: null,
@@ -106,21 +92,21 @@ export const onCloseResourceSelector = () => {
 };
 
 export const onOpenThreeDNodeTree = () => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     isThreeDNodeTreeOpen: true,
   }));
 };
 
 export const onCloseThreeDNodeTree = () => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     isThreeDNodeTreeOpen: false,
   }));
 };
 
 export const setPendingAnnotation = (annotation: CubeAnnotation | null) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     pendingAnnotation: annotation,
     isResourceSelectorOpen:
@@ -129,64 +115,57 @@ export const setPendingAnnotation = (annotation: CubeAnnotation | null) => {
 };
 
 export const setThreeDViewer = (viewer: Cognite3DViewer) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     threeDViewer: viewer,
   }));
 };
 
 export const setModelLoaded = () => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     isModelLoaded: true,
   }));
 };
 
 export const setTool = (tool: ToolType) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     tool,
     pendingAnnotation: null,
   }));
 };
 
-export const setToolbarForCadModelsState = () => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
-    ...prevState,
-    isToolbarForCadModels: true,
-  }));
-};
-
 export const setToolbarForPointCloudModelsState = () => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     isToolbarForPointCloudModels: true,
   }));
 };
 
 export const setAnnotations = (annotations: AnnotationModel[]) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     annotations: annotations,
   }));
 };
 
 export const toggleShouldShowBoundingVolumes = () => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     shouldShowBoundingVolumes: !prevState.shouldShowBoundingVolumes,
   }));
 };
 
 export const toggleShouldShowWireframes = () => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     shouldShowWireframes: !prevState.shouldShowWireframes,
   }));
 };
 
 export const setModelId = (modelId: number) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     modelId,
   }));
@@ -195,7 +174,7 @@ export const setModelId = (modelId: number) => {
 export const updateVisualizationOptions = (
   visualizationOptions: Partial<VisualizationOptions>
 ) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     visualizationOptions: {
       ...prevState.visualizationOptions,
@@ -204,68 +183,9 @@ export const updateVisualizationOptions = (
   }));
 };
 
-export const setModelType = (modelType: string) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
-    ...prevState,
-    modelType,
-  }));
-};
-
 export const setModel = (model: CogniteCadModel | CognitePointCloudModel) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
+  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
     ...prevState,
     model,
-  }));
-};
-
-export const setSelectedNodeIdsList = (selectedNodeIdsList: Array<number>) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
-    ...prevState,
-    selectedNodeIdsList,
-  }));
-};
-
-export const setSelectedAndContextualizedNodesList = (
-  selectedAndContextualizedNodesList: Array<SelectedNode>
-) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
-    ...prevState,
-    selectedAndContextualizedNodesList,
-  }));
-};
-
-export const setSelectedNodesTreeIndex = (
-  selectedNodesTreeIndex: TreeIndexNodeCollection
-) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
-    ...prevState,
-    selectedNodesTreeIndex,
-  }));
-};
-
-export const setSelectedAndContextualizedNodesTreeIndex = (
-  selectedAndContextualizedNodesTreeIndex: TreeIndexNodeCollection
-) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
-    ...prevState,
-    selectedAndContextualizedNodesTreeIndex,
-  }));
-};
-
-export const setContextualizedNodesTreeIndex = (
-  contextualizedNodesTreeIndex: TreeIndexNodeCollection
-) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
-    ...prevState,
-    contextualizedNodesTreeIndex,
-  }));
-};
-
-export const setContextualizedNodes = (
-  contextualizedNodes: ListResponse<AssetMapping3D[]>
-) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
-    ...prevState,
-    contextualizedNodes,
   }));
 };

@@ -11,7 +11,6 @@ import {
   useReveal,
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
-import { AssetMapping3D, ListResponse } from '@cognite/sdk/dist/src';
 
 import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
 import {
@@ -19,29 +18,26 @@ import {
   onOpenResourceSelector,
   setModel,
   setThreeDViewer,
-  setToolbarForCadModelsState,
-  useContextualizeThreeDViewerStore,
-} from '../../useContextualizeThreeDViewerStore';
+  useContextualizeThreeDViewerStoreCad,
+} from '../../useContextualizeThreeDViewerStoreCad';
 
 import { CadToolBar } from './CadToolBar/CadToolBar';
 
 interface RevealContentProps {
   modelId: number;
   revisionId: number;
-  onContextualizationUpdated: typeof noop;
+  onContextualizationDeletionRequest: typeof noop;
 }
 
 export const CadRevealContent = ({
   modelId,
   revisionId,
-  onContextualizationUpdated,
+  onContextualizationDeletionRequest,
 }: RevealContentProps) => {
   const viewer = useReveal();
-  const { isResourceSelectorOpen } = useContextualizeThreeDViewerStore(
+  const { isResourceSelectorOpen } = useContextualizeThreeDViewerStoreCad(
     (state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
-      modelType: state.modelType,
-      contextualizedNodes: state.contextualizedNodes,
     })
   );
 
@@ -61,30 +57,11 @@ export const CadRevealContent = ({
       mouseWheelAction: 'zoomToCursor',
     });
 
-    setToolbarForCadModelsState();
+    // setToolbarForCadModelsState();
 
     if (viewer.domElement) {
       setModel(model);
     }
-  };
-
-  const onContextualizationDeleted = (
-    mappedNodesDeleted: ListResponse<AssetMapping3D[]>
-  ) => {
-    const state = useContextualizeThreeDViewerStore.getState();
-    const oldContextualizedNodes = state.contextualizedNodes;
-
-    const newContextualizedNodes: ListResponse<AssetMapping3D[]> = {
-      items: [],
-    };
-    oldContextualizedNodes?.items.forEach((item) => {
-      if (
-        mappedNodesDeleted.items.find((node) => item.nodeId !== node.nodeId)
-      ) {
-        newContextualizedNodes.items.push(item);
-      }
-    });
-    onContextualizationUpdated(newContextualizedNodes, mappedNodesDeleted);
   };
 
   useEffect(() => {
@@ -104,8 +81,8 @@ export const CadRevealContent = ({
       <CadToolBar
         modelId={modelId}
         revisionId={revisionId}
-        onContextualizationDeleted={(mappedNodesDeleted) => {
-          onContextualizationDeleted(mappedNodesDeleted);
+        onContextualizationDeletionRequest={() => {
+          onContextualizationDeletionRequest();
         }}
       />
       <CadModelContainer
@@ -142,12 +119,4 @@ const StyledResourceSelectorButtonWrapper = styled(
   position: absolute;
   top: ${FLOATING_ELEMENT_MARGIN}px;
   right: ${FLOATING_ELEMENT_MARGIN}px;
-`;
-
-const CanvasContainer = styled.div`
-  flex-grow: 1;
-  canvas {
-    height: 100%;
-    width: 100%;
-  }
 `;

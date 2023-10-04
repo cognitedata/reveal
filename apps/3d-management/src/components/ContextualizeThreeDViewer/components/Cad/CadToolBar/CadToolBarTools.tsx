@@ -1,35 +1,31 @@
-import { type ReactElement } from 'react';
+import { type ReactElement, useCallback } from 'react';
 
-import styled from 'styled-components';
-
-import { FLOATING_ELEMENT_MARGIN } from '@3d-management/pages/ContextualizeEditor/constants';
+import { ToolType } from '@3d-management/components/ContextualizeThreeDViewer/types';
+import { useContextualizeThreeDViewerStoreCad } from '@3d-management/components/ContextualizeThreeDViewer/useContextualizeThreeDViewerStoreCad';
 import noop from 'lodash-es/noop';
 
 import { ToolBar, Tooltip, Button } from '@cognite/cogs.js';
-import { useSDK } from '@cognite/sdk-provider';
 
-import {
-  ToolType,
-  setTool,
-  useContextualizeThreeDViewerStore,
-} from '../../../useContextualizeThreeDViewerStore';
-import { deleteCdfThreeDCadContextualization } from '../../../utils/deleteCdfThreeDCadContextualization';
+import { setTool } from '../../../useContextualizeThreeDViewerStoreCad';
 
 type CadToolBarTools = {
   modelId: number;
   revisionId: number;
-  onContextualizationDeleted: typeof noop;
+  onContextualizationDeletionRequest: typeof noop;
 };
 
 export function CadToolBarTools({
   modelId,
   revisionId,
-  onContextualizationDeleted,
+  onContextualizationDeletionRequest,
 }: CadToolBarTools): ReactElement {
-  const sdk = useSDK();
-
-  const { tool, threeDViewer, model } =
-    useContextualizeThreeDViewerStore.getState();
+  const { tool, threeDViewer, model } = useContextualizeThreeDViewerStoreCad(
+    (state) => ({
+      tool: state.tool,
+      threeDViewer: state.threeDViewer,
+      model: state.model,
+    })
+  );
 
   const handleAddClick = () => {
     if (tool === ToolType.ADD_THREEDNODE_MAPPING) {
@@ -40,23 +36,10 @@ export function CadToolBarTools({
     setTool(ToolType.ADD_THREEDNODE_MAPPING);
   };
 
-  const handleDeleteClick = async () => {
+  const handleDeleteClick = useCallback(async () => {
     if (!threeDViewer || !modelId || !model) return;
 
-    const { selectedAndContextualizedNodesList } =
-      useContextualizeThreeDViewerStore.getState();
-
-    const nodeIds = selectedAndContextualizedNodesList.map(
-      (item) => item.nodeId
-    );
-    const mappedNodesDeleted = await deleteCdfThreeDCadContextualization({
-      sdk,
-      modelId,
-      revisionId,
-      nodeIds: nodeIds,
-    });
-
-    onContextualizationDeleted(mappedNodesDeleted);
+    onContextualizationDeletionRequest();
 
     if (tool === ToolType.DELETE_THREEDNODE_MAPPING) {
       setTool(ToolType.NONE);
@@ -64,7 +47,7 @@ export function CadToolBarTools({
     }
 
     setTool(ToolType.DELETE_THREEDNODE_MAPPING);
-  };
+  }, [threeDViewer, modelId, model, onContextualizationDeletionRequest, tool]);
 
   return (
     <ToolBar direction="vertical">

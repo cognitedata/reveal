@@ -4,12 +4,12 @@ import { Menu } from '@cognite/cogs.js';
 import { PointColorType } from '@cognite/reveal';
 
 import {
-  useContextualizeThreeDViewerStore,
+  useContextualizeThreeDViewerStorePointCloud,
   updateVisualizationOptions,
-} from '../../useContextualizeThreeDViewerStore';
+} from '../../useContextualizeThreeDViewerStorePointCloud';
 
 export const ColorTypeSelector = (): React.ReactElement => {
-  const { visualizationOptions } = useContextualizeThreeDViewerStore(
+  const { visualizationOptions } = useContextualizeThreeDViewerStorePointCloud(
     (state) => ({
       visualizationOptions: state.visualizationOptions,
     })

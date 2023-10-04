@@ -21,12 +21,13 @@ import {
   defaultRevealColor,
 } from '../../../../pages/ContextualizeEditor/constants';
 import { useLocalStorage } from '../../../../utils/useLocalStorage';
+import { useSyncStateWithViewerPointCloud } from '../../hooks/useSyncStateWithViewerPointCloud';
 import {
   setModelId,
   setPendingAnnotation,
-  useContextualizeThreeDViewerStore,
+  useContextualizeThreeDViewerStorePointCloud,
   setAnnotations,
-} from '../../useContextualizeThreeDViewerStore';
+} from '../../useContextualizeThreeDViewerStorePointCloud';
 import { getCdfAnnotations } from '../../utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from '../../utils/createCdfThreeDAnnotation';
 import { getCognitePointCloudModel } from '../../utils/getCognitePointCloudModel';
@@ -60,7 +61,7 @@ export const PointCloudContextualizeThreeDViewer = ({
   const queryClient = useQueryClient();
 
   const { isResourceSelectorOpen, pendingAnnotation, viewer } =
-    useContextualizeThreeDViewerStore((state) => ({
+    useContextualizeThreeDViewerStorePointCloud((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       pendingAnnotation: state.pendingAnnotation,
       viewer: state.threeDViewer,
@@ -136,6 +137,9 @@ export const PointCloudContextualizeThreeDViewer = ({
       queryClient.invalidateQueries(['annotations', sdk, modelId]);
     });
   };
+
+  useSyncStateWithViewerPointCloud();
+
   return (
     <>
       <StyledSplitter

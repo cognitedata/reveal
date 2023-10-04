@@ -14,8 +14,6 @@ import {
   ListResponse,
 } from '@cognite/sdk/dist/src';
 
-import { setContextualizedNodes } from '../useContextualizeThreeDViewerStore';
-
 import { getCdfCadContextualization } from './getCdfCadContextualization';
 
 export const updateThreeDViewerCadNodes = async ({
@@ -46,7 +44,6 @@ export const updateThreeDViewerCadNodes = async ({
       revisionId: revisionId,
       nodeId: undefined,
     });
-    setContextualizedNodes(contextualizedNodes);
   }
 
   const treeIndices: Array<number> = [];

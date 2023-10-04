@@ -13,13 +13,13 @@ import { CadToolBarTools } from './CadToolBarTools';
 type CadToolBarProps = {
   modelId: number;
   revisionId: number;
-  onContextualizationDeleted: typeof noop;
+  onContextualizationDeletionRequest: typeof noop;
 };
 
 export const CadToolBar = ({
   modelId,
   revisionId,
-  onContextualizationDeleted,
+  onContextualizationDeletionRequest,
 }: CadToolBarProps) => {
   if (modelId === null) return;
 
@@ -30,8 +30,8 @@ export const CadToolBar = ({
         <CadToolBarTools
           modelId={modelId}
           revisionId={revisionId}
-          onContextualizationDeleted={(mappedNodesDeleted) => {
-            onContextualizationDeleted(mappedNodesDeleted);
+          onContextualizationDeletionRequest={() => {
+            onContextualizationDeletionRequest();
           }}
         />
       </StyledToolBar>

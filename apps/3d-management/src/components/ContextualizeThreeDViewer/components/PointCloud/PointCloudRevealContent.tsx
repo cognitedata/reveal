@@ -17,8 +17,8 @@ import {
   setModel,
   setModelLoaded,
   setThreeDViewer,
-  useContextualizeThreeDViewerStore,
-} from '../../useContextualizeThreeDViewerStore';
+  useContextualizeThreeDViewerStorePointCloud,
+} from '../../useContextualizeThreeDViewerStorePointCloud';
 import { AnnotationsCard } from '../AnnotationsCard';
 
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
@@ -39,10 +39,9 @@ export const PointCloudRevealContent = ({
   const [error, setError] = useState<Error>();
 
   const { isResourceSelectorOpen, annotations } =
-    useContextualizeThreeDViewerStore((state) => ({
+    useContextualizeThreeDViewerStorePointCloud((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       annotations: state.annotations,
-      modelType: state.modelType,
     }));
 
   const handleModelOnLoad = (model: CogniteModel) => {
