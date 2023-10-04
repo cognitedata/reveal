@@ -96,6 +96,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
 
   return (
     <Chart
+      data-testid="timeseries-chart"
       data={data}
       metadata={metadata}
       dataRevision={getDataRevision(timeseries)}

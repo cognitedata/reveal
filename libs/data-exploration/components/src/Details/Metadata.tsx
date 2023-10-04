@@ -128,7 +128,7 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
   };
 
   return (
-    <MetadataCard>
+    <MetadataCard data-testid="metadata-card">
       <MetadataHeader>
         <Title level={5}>{t('METADATA', 'Metadata')}</Title>
         <FilterContainer>
