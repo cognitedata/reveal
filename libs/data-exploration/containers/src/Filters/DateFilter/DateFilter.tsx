@@ -144,9 +144,10 @@ export const DateFilter = ({
   };
 
   return (
-    <>
+    <div data-testid={`filter-${label}`}>
       {!isEmpty(label) && <FilterLabel>{label}</FilterLabel>}
       <Select
+        data-testid={`select-${label}`}
         value={options.find((el) => el.value === period)!}
         options={options}
         isSearchable={false}
@@ -163,11 +164,11 @@ export const DateFilter = ({
             zIndex: `${zIndex.MAXIMUM} !important`,
           }),
         }}
-        data-testid={`filter-${label}`}
       />
       {(period === 'after' || period === 'before') && (
         <div style={{ marginTop: 8 }}>
           <DatePicker
+            id={`date-picker-${label}`}
             initialDate={startDate}
             onDateChanged={(newDate) => {
               if (period === 'after') {
@@ -189,7 +190,7 @@ export const DateFilter = ({
           />
         </div>
       )}
-    </>
+    </div>
   );
 };
 const CreatedTimeFilter = (props: DateFilterProps) => {
@@ -212,11 +213,7 @@ const UpdatedTimeFilter = (props: DateFilterProps) => {
 
 const StartTimeFilter = (props: DateFilterProps) => {
   const { t } = useTranslation();
-  return (
-    <div data-testid="start-time-filter">
-      <DateFilter {...props} label={t('START_TIME', 'Start time')} />
-    </div>
-  );
+  return <DateFilter {...props} label={t('START_TIME', 'Start time')} />;
 };
 
 const EndTimeFilter = (props: DateFilterProps) => {

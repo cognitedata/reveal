@@ -80,15 +80,15 @@ export const MultiSelectFilter = <ValueType,>({
   });
 
   return (
-    <>
+    <div data-testid={`filter-${label}`}>
       {!isEmpty(label) && <FilterLabel>{label}</FilterLabel>}
 
       <MultiSelect<ValueType | undefined>
         {...rest}
+        data-testid={`select-${label}`}
         isLoading={isLoading}
         isError={isError}
         options={options}
-        data-testid={`filter-${label}`}
         value={formatValue(value)}
         onChange={handleChange}
         isSearchable
@@ -103,6 +103,6 @@ export const MultiSelectFilter = <ValueType,>({
           }),
         }}
       />
-    </>
+    </div>
   );
 };
