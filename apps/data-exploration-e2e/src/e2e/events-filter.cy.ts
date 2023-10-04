@@ -90,4 +90,26 @@ describe('Events filters', () => {
       });
     });
   });
+
+  it('should filter events by End Time', () => {
+    cy.clickSelectFilter('End time').clickSelectOption('Before');
+
+    cy.log('change date to 2023/01/01');
+    cy.openDatePicker('End time');
+
+    interceptEventList('eventFilterByEndTime');
+
+    cy.selectYear(2023);
+    cy.selectMonth('January');
+    cy.selectDate('January 1st');
+
+    cy.getDatePickerValue('End time').then((selectedDate) => {
+      cy.wait('@eventFilterByEndTime').payloadShouldContain({
+        range: {
+          property: ['endTime'],
+          lte: new Date(selectedDate).valueOf(),
+        },
+      });
+    });
+  });
 });
