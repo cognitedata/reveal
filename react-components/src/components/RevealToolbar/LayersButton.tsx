@@ -150,7 +150,7 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
 
       return {
         image360: image360Collection,
-        isToggled: visible,
+        isToggled: urlLayerState?.applied ?? true,
         isActive: false
       };
     }
