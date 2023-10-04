@@ -16,21 +16,21 @@ export const TouchNavigation = (): ReactElement => {
   const { t } = useTranslation();
   return (
     <Section
-      title={t('TOUCH_NAVIGATION_TITLE') ?? 'Touch'}
-      subTitle={t('MOUSE_TOUCH_NAVIGATION_SUBTITLE') ?? 'Navigate and select'}
-      description={t('TOUCH_NAVIGATION_DESCRIPTION') ?? 'Use gestures to zoom, pan and select'}>
+      title={t('TOUCH_NAVIGATION_TITLE', 'Touch')}
+      subTitle={t('MOUSE_TOUCH_NAVIGATION_SUBTITLE', 'Navigate and select')}
+      description={t('TOUCH_NAVIGATION_DESCRIPTION', 'Use gestures to zoom, pan and select')}>
       <TouchNavigationInstructionGrid>
         <div>
           <TouchPan />
-          <InstructionText>{t('PAN') ?? 'Pan'}</InstructionText>
+          <InstructionText>{t('PAN', 'Pan')}</InstructionText>
         </div>
         <TouchNavigationCombinedGridItem>
           <TouchSelect />
-          <InstructionText>{t('TOUCH_SELECT') ?? 'Tap to select'}</InstructionText>
+          <InstructionText>{t('TOUCH_SELECT', 'Tap to select')}</InstructionText>
         </TouchNavigationCombinedGridItem>
         <div>
           <TouchZoom />
-          <InstructionText>{t('TOUCH_ZOOM') ?? 'Zoom'}</InstructionText>
+          <InstructionText>{t('TOUCH_ZOOM', 'Zoom')}</InstructionText>
         </div>
       </TouchNavigationInstructionGrid>
     </Section>

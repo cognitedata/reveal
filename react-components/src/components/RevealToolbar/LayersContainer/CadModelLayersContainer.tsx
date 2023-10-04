@@ -111,7 +111,7 @@ export const CadModelLayersContainer = ({
                 setVisible(true);
               }}
             />
-            <StyledLabel> {t('CAD_MODELS') ?? 'CAD models'} </StyledLabel>
+            <StyledLabel> {t('CAD_MODELS', 'CAD models')} </StyledLabel>
             <StyledChipCount label={count} hideTooltip type="neutral" />
           </Flex>
         </Menu.Submenu>

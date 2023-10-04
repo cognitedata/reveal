@@ -36,7 +36,7 @@ export const Image360HistoricalPanel = ({
                 <StyledChip
                   icon="History"
                   iconPlacement="right"
-                  label={t('IMAGES_360_DETAILS') ?? 'Details'}
+                  label={t('IMAGES_360_DETAILS', 'Details')}
                   hideTooltip
                 />
                 <StyledChipCount label={count} hideTooltip />
@@ -46,7 +46,7 @@ export const Image360HistoricalPanel = ({
               <StyledChip
                 icon="PushRight"
                 iconPlacement="right"
-                label={t('IMAGES_360_DETAILS') ?? 'Details'}
+                label={t('IMAGES_360_DETAILS', 'Details')}
                 hideTooltip
               />
             )}

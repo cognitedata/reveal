@@ -103,7 +103,7 @@ export const PointCloudLayersContainer = ({
                 setVisible(true);
               }}
             />
-            <StyledLabel> {t('POINT_CLOUDS') ?? 'Point clouds'} </StyledLabel>
+            <StyledLabel> {t('POINT_CLOUDS', 'Point clouds')} </StyledLabel>
             <StyledChipCount label={count} hideTooltip type="neutral" />
           </Flex>
         </Menu.Submenu>

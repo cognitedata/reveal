@@ -64,7 +64,7 @@ export const HighFidelityContainer = ({
 
   return (
     <Menu.Item hasSwitch toggled={active} onChange={onClick}>
-      {t('HIGH_FIDELITY')}
+      {t('HIGH_FIDELITY', 'High Fidelity')}
     </Menu.Item>
   );
 };
