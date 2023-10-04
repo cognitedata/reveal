@@ -19,12 +19,12 @@ import {
 import { Filter, IndustryCanvasContainerConfig } from '../../types';
 import zIndex from '../../utils/zIndex';
 
-import useResolveContainerConfigProperties from './hooks/useResolveContainerConfigProperties';
+import useResolveContainerConfigsPropertiesById from './hooks/useResolveContainerConfigsPropertiesById';
 import PropertySelector, { PropertySelectorProps } from './PropertySelector';
 import { Property } from './types';
 
 type PropertySelectorToolbarWrapperProps = {
-  containerConfig: IndustryCanvasContainerConfig;
+  containerConfigs: IndustryCanvasContainerConfig[];
   onApplyClick: PropertySelectorProps['onApplyClick'];
 };
 
@@ -69,9 +69,9 @@ const getPropertySortOrderByContainerConfig = (
   return index >= 0 ? index : Number.POSITIVE_INFINITY;
 };
 
-const getPropertiesFromFilters = (
+const getPropertiesFromFiltersForContainerConfig = (
   containerConfig: IndustryCanvasContainerConfig,
-  allProperties: Property[],
+  containerConfigProperties: Property[],
   filters: Filter[]
 ): Property[] => {
   const applicableFilter = findApplicableContainerConfigFilter(
@@ -79,15 +79,32 @@ const getPropertiesFromFilters = (
     filters
   );
 
+  const selectedPropertiesNotPartOfContainerConfigProperties =
+    applicableFilter?.properties.filter(
+      (property) =>
+        !containerConfigProperties.some(
+          (containerConfigProperty) => containerConfigProperty.path === property
+        )
+    ) ?? [];
+
   return sortBy(
-    allProperties.map((property) => ({
-      ...property,
-      isSelected: shouldPropertyBeSelected(
-        property.path,
-        containerConfig,
-        applicableFilter
+    [
+      ...containerConfigProperties.map((property) => ({
+        ...property,
+        isSelected: shouldPropertyBeSelected(
+          property.path,
+          containerConfig,
+          applicableFilter
+        ),
+      })),
+      ...selectedPropertiesNotPartOfContainerConfigProperties.map(
+        (property) => ({
+          path: property,
+          value: undefined,
+          isSelected: true,
+        })
       ),
-    })),
+    ],
     (property) =>
       getPropertySortOrderByContainerConfig(containerConfig, property.path)
   );
@@ -95,15 +112,13 @@ const getPropertiesFromFilters = (
 
 const PropertySelectorToolbarWrapper: React.FC<
   PropertySelectorToolbarWrapperProps
-> = ({ containerConfig, onApplyClick }) => {
-  const { data = [], isLoading } =
-    useResolveContainerConfigProperties(containerConfig);
+> = ({ containerConfigs, onApplyClick }) => {
+  const { data: propertiesByContainerConfigId = {}, isLoading } =
+    useResolveContainerConfigsPropertiesById(containerConfigs);
 
   const { filters } = useIndustrialCanvasStore((state) => ({
     filters: selectors.canvasState(state).filters,
   }));
-
-  const properties = getPropertiesFromFilters(containerConfig, data, filters);
 
   if (isLoading) {
     return (
@@ -113,10 +128,24 @@ const PropertySelectorToolbarWrapper: React.FC<
     );
   }
 
+  const propertiesList = containerConfigs.map((containerConfig) => {
+    if (propertiesByContainerConfigId[containerConfig.id] === undefined) {
+      throw new Error(
+        `No properties found for container config with id: ${containerConfig.id}`
+      );
+    }
+
+    return getPropertiesFromFiltersForContainerConfig(
+      containerConfig,
+      propertiesByContainerConfigId[containerConfig.id],
+      filters
+    );
+  });
+
   return (
     <AlignmentWrapper>
       <PropertySelector
-        propertiesList={[properties]}
+        propertiesList={propertiesList}
         onApplyClick={onApplyClick}
       />
     </AlignmentWrapper>
