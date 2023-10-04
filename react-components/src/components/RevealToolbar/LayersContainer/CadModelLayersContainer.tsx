@@ -8,14 +8,16 @@ import { type CogniteCadModel } from '@cognite/reveal';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { uniqueId } from 'lodash';
-import { type Reveal3DResourcesLayersProps } from './types';
+import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 import { useTranslation } from '../../../common/i18n';
 
 export const CadModelLayersContainer = ({
-  layerProps
+  layerProps,
+  onChange
 }: {
   layerProps: Reveal3DResourcesLayersProps;
+  onChange: (cadState: Reveal3DResourcesLayerStates['cadLayerData']) => void;
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
@@ -23,6 +25,7 @@ export const CadModelLayersContainer = ({
   const [visible, setVisible] = useState(false);
 
   const { cadLayerData } = layerProps.reveal3DResourcesLayerData;
+  const { storeStateInUrl } = layerProps;
 
   const count = cadLayerData.length.toString();
   const someModelVisible = !cadLayerData.every((data) => !data.isToggled);
@@ -45,6 +48,10 @@ export const CadModelLayersContainer = ({
       ...prevResourcesStates,
       cadLayerData: updatedSelectedCadModels
     }));
+
+    if (storeStateInUrl !== undefined) {
+      onChange(updatedSelectedCadModels);
+    }
   };
 
   const handleAllCadModelsVisibility = (visible: boolean): void => {
@@ -60,6 +67,10 @@ export const CadModelLayersContainer = ({
       ...prevResourcesStates,
       cadLayerData: updatedSelectedCadModels
     }));
+
+    if (storeStateInUrl !== undefined) {
+      onChange(updatedSelectedCadModels);
+    }
   };
 
   const cadModelContent = (): ReactElement => {
