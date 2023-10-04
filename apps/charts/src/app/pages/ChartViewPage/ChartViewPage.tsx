@@ -163,9 +163,11 @@ const ChartViewPage = () => {
     hasMonitoringWrite &&
     hasNotificationsRead &&
     hasNotificationsWrite &&
-    userProfile;
+    !!userProfile;
+
   const isAlertingAccessible =
-    hasNotificationsRead && hasNotificationsWrite && userProfile;
+    hasNotificationsRead && hasNotificationsWrite && !!userProfile;
+
   const { isEnabled: isDataProfilingEnabled } = useFlag(
     'CHARTS_UI_DATAPROFILING',
     {
@@ -186,12 +188,16 @@ const ChartViewPage = () => {
   const [showThresholdSidebar, setShowThresholdSidebar] = useState(
     activeSidebar === THRESHOLD_SIDEBAR_KEY
   );
+
   const [showMonitoringSidebar, setShowMonitoringSidebar] = useState(
     activeSidebar === MONITORING_SIDEBAR_KEY
   );
   const [showAlertingSidebar, setShowAlertingSidebar] = useState(
     activeSidebar === ALERTING_SIDEBAR_KEY
   );
+
+  console.log({ activeSidebar, showMonitoringSidebar, isMonitoringAccessible });
+
   const [showErrorSidebar, setShowErrorSidebar] = useState(false);
   const [showEventSidebar, setShowEventSidebar] = useState(
     activeSidebar === EVENT_SIDEBAR_KEY
@@ -1046,7 +1052,7 @@ const ChartViewPage = () => {
           />
         )}
 
-        {showMonitoringSidebar && (
+        {showMonitoringSidebar && isMonitoringAccessible && (
           <MonitoringSidebar
             onClose={handleCloseMonitoringSidebar}
             onViewAlertingSidebar={() => {
@@ -1056,7 +1062,7 @@ const ChartViewPage = () => {
           />
         )}
 
-        {showAlertingSidebar && (
+        {showAlertingSidebar && isAlertingAccessible && (
           <AlertingSidebar
             onClose={handleCloseAlertingSidebar}
             onViewMonitoringJobs={() => {
@@ -1076,7 +1082,7 @@ const ChartViewPage = () => {
                   <Button
                     icon="Bell"
                     aria-label="Toggle alerting sidebar"
-                    toggled={showAlertingSidebar}
+                    toggled={showAlertingSidebar && isAlertingAccessible}
                     onClick={() => {
                       if (isAlertingAccessible) {
                         trackUsage(
@@ -1133,7 +1139,7 @@ const ChartViewPage = () => {
                 <Button
                   icon="Alarm"
                   aria-label="Toggle monitoring sidebar"
-                  toggled={showMonitoringSidebar}
+                  toggled={showMonitoringSidebar && isMonitoringAccessible}
                   onClick={() => {
                     if (isMonitoringAccessible) {
                       trackUsage(
