@@ -27,13 +27,13 @@ describe('fusion-shell', () => {
       cy.findByTestId('quick-link-card-container')
         .children()
         .each(async ($element) => {
-          let linkValue = $element[0].getAttribute('data-testid') ?? '';
+          let linkTestId = $element[0].getAttribute('data-testid') ?? '';
           // had to query again due to $element being invalid after cy.click() command
-          cy.findByTestId(linkValue).click();
+          cy.findByTestId(linkTestId).click();
           cy.location().should((loc) => {
             const currentPath =
               loc.pathname.split('/')[loc.pathname.split('/').length - 1];
-            expect(linkValue).contains(`/${currentPath}`);
+            expect(linkTestId).contains(`/${currentPath}`);
           });
           cy.navigate('');
           cy.findByTestId(currentItem).click();
@@ -51,7 +51,7 @@ describe('fusion-shell', () => {
         .children()
         .each(async ($element) => {
           if ($element[0].firstElementChild) {
-            let mappedApplicationID =
+            const mappedApplicationID =
               $element[0].firstElementChild.getAttribute('data-testid');
             cy.wrap($element).click();
             cy.get(`[id="single-spa-application:${mappedApplicationID}"]`, {
@@ -71,7 +71,7 @@ describe('fusion-shell', () => {
 
   it('verify Learning Resources label', () => {
     cy.findByTestId('learning-resources-section')
-      .find('h5')
+      .findByTestId('learning-resources-title')
       .should('be.visible');
   });
 
@@ -91,9 +91,12 @@ describe('fusion-shell', () => {
     cy.findByTestId('global-search-menu').should('not.exist');
   });
 
-  // below will be completed when login flow is connected
-  // it('verify user sign out', () => {
-  //   cy.findByTestId('topbar-user-profile-area').find('.cogs-dropdown').click();
-  //   cy.findByTestId('topbar-user-logout-btn').click();
-  // });
+  it('verify user sign out', () => {
+    cy.findByTestId('topbar-user-profile-area').find('.cogs-dropdown').click();
+    cy.findByTestId('topbar-user-logout-btn').click();
+    cy.location().should((loc) => {
+      expect(loc.pathname).eq('/');
+      expect(loc.search.length).eq(0);
+    });
+  });
 });

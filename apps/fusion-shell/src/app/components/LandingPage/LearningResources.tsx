@@ -16,7 +16,9 @@ const LearningResources = (): JSX.Element => {
       gap={24}
       data-testid="learning-resources-section"
     >
-      <Title level={5}>{t('title-learning-resources')}</Title>
+      <Title level={5} data-testid="learning-resources-title">
+        {t('title-learning-resources')}
+      </Title>
       <Flex
         direction="column"
         alignItems="flex-start"
