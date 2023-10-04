@@ -184,6 +184,7 @@ export const fitCameraToAsset = async (
       CAMERA_ANIMATION_RADIUS
     );
   }
+
   if (threeDModel instanceof CognitePointCloudModel) {
     const annotation = await getAnnotationByAssetId(sdk, threeDModel, assetId);
     if (annotation === undefined) {
