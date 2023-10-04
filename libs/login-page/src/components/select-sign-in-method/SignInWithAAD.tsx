@@ -7,6 +7,7 @@ import {
   usePca,
   AADResponse,
   loginRedirectAad,
+  goToSelectProject,
 } from '@cognite/login-utils';
 
 import { useTranslation } from '../../common/i18n';
@@ -55,7 +56,7 @@ const SignInWithAAD = ({
           if (redirectResult?.account) {
             persistIDPDetails(redirectResult.tenantId);
             pca.setActiveAccount(redirectResult?.account);
-            navigate('/select-project');
+            goToSelectProject(navigate);
           }
         })
         // eslint-disable-next-line lodash/prefer-noop
@@ -76,14 +77,14 @@ const SignInWithAAD = ({
 
   useEffect(() => {
     // If there is an active AAD account entry in local storage for the
-    // selected login flow, we redirect to `/select-project` route.
+    // selected login flow, we go to the select project step.
     const activeAccount = pca?.getActiveAccount();
 
     if (
       selectedInternalId === internalId &&
       `${internalId}_${activeAccount?.tenantId}` === idpId
     ) {
-      navigate('/select-project');
+      goToSelectProject(navigate);
     }
   }, [authority, navigate, idpId, internalId, pca, selectedInternalId]);
 

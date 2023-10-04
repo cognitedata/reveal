@@ -9,7 +9,6 @@ import {
 } from '@cognite/login-utils';
 
 import GoToProjectButton from '../../components/go-to-project-button/GoToProjectButton';
-import { parseRef } from '../../utils';
 
 type SignInWithLegacyProps = LegacyProject & {
   isSignInRequiredLabelShown?: boolean;
@@ -31,10 +30,8 @@ const SignInWithLegacy = ({
   const handleSignInWithLegacy = () => {
     saveSelectedIdpDetails({ internalId, type });
 
-    const [refPath, extraParams] = parseRef(window.location.search);
-    const path = refPath ? `${projectName}/${refPath}` : projectName;
     const env = parseEnvFromCluster(cluster);
-    redirectToApp(path, env, cluster, extraParams);
+    redirectToApp(projectName, { env, cluster });
   };
 
   if (isError || !isFetchedProject) {

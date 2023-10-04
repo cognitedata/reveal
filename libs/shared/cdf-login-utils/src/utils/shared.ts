@@ -1,27 +1,68 @@
+import { NavigateFunction } from 'react-router-dom';
+
 import { ProjectList, TokenInspect } from '../types';
 
-export const redirectToApp = (
-  projectName: string,
-  env: string,
-  cluster: string,
-  extraParams: Record<string, string> = {}
-) => {
-  const urlSearchParams = new URLSearchParams();
-  urlSearchParams.append('env', env);
-  urlSearchParams.append('cluster', cluster);
+// we export this function for testing purposes only
+export function generateRedirectToLoginUrl(href: string) {
+  const url = new URL(href);
+  const ref = new URLSearchParams({
+    path: url.pathname,
+    search: url.search,
+  });
+  const redirectUrl = new URL('/', url.origin);
+  redirectUrl.search = ref.toString();
+  return redirectUrl.href;
+}
 
-  Object.keys(extraParams).forEach((key) => {
-    urlSearchParams.append(key, extraParams[key]);
+/**
+ * Used to redirect to login page if user does not have access to project
+ * And forwards the current path and search params to the login page
+ */
+export function redirectToLogin() {
+  const redirectUrl = generateRedirectToLoginUrl(window.location.href);
+  redirectToSubpath(redirectUrl);
+}
+
+export const parseRef = (search: string): [string, Record<string, string>] => {
+  const searchParams = new URLSearchParams(search);
+
+  const refPath = searchParams.get('path') ?? '';
+  const refSearch = searchParams.get('search') ?? '';
+  const extraParams: Record<string, string> = {};
+
+  new URLSearchParams(refSearch).forEach((value, key) => {
+    extraParams[key] = value;
   });
 
-  window.location.href = `/${projectName}?${urlSearchParams.toString()}`;
+  return [refPath, extraParams];
 };
 
-export const redirectToLogin = () => {
-  const path = encodeURIComponent(
-    window.location.pathname.split('/').slice(2).join('/')
-  );
-  window.location.href = path ? `/?ref=${path}` : '/';
+export const selectProjectRoute = '/select-project';
+export const goToSelectProject = (navigate: NavigateFunction) => {
+  const [path, extraParams] = parseRef(window.location.search);
+  if (path && Object.keys(extraParams).length > 0) {
+    redirectToApp(path, extraParams);
+    return;
+  }
+  navigate(selectProjectRoute);
+};
+
+export const redirectToSubpath = (url: string) => {
+  const { host, protocol, origin } = window.location;
+  const redirectUrl = new URL(url, origin);
+  // make sure we don't redirect to antoher domain as we don't trust the input path
+  // see https://kennel209.gitbooks.io/owasp-testing-guide-v4/content/en/web_application_security_testing/testing_for_client_side_url_redirect_otg-client-004.html
+  redirectUrl.host = host;
+  redirectUrl.protocol = protocol;
+  window.location.href = redirectUrl.href;
+};
+
+export const redirectToApp = (
+  path: string,
+  extraParams: Record<string, string> = {}
+) => {
+  const urlSearchParams = new URLSearchParams(extraParams);
+  redirectToSubpath(`${path}?${urlSearchParams.toString()}`);
 };
 
 export const parseEnvFromCluster = (cluster: string) => {

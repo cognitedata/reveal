@@ -8,6 +8,7 @@ import {
   saveSelectedIdpDetails,
   useAuth0,
   Auth0Response,
+  goToSelectProject,
 } from '@cognite/login-utils';
 
 import { useTranslation } from '../../common/i18n';
@@ -67,7 +68,7 @@ const SignInWithAuth0 = ({
 
   useEffect(() => {
     if (user) {
-      navigate('/select-project');
+      goToSelectProject(navigate);
     }
   }, [user, navigate]);
 

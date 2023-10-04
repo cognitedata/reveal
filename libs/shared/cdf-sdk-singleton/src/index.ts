@@ -1,4 +1,4 @@
-import { IDPType } from '@cognite/login-utils';
+import { IDPType, redirectToLogin } from '@cognite/login-utils';
 import { CogniteClient } from '@cognite/sdk';
 
 import { FusionTokenProvider } from './fusionTokenProvider';
@@ -74,7 +74,7 @@ export function loginAndAuthIfNeeded(): Promise<void> {
       // eslint-disable-next-line
       .then(() => {})
       .catch(() => {
-        window.location.href = '/';
+        redirectToLogin();
       });
   }
   return authInit;
