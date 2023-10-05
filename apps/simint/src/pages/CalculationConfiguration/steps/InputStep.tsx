@@ -14,9 +14,9 @@ import {
   FormContainer,
   FormHeader,
   FormRow,
-  TimeSeriesField,
 } from '../../../components/forms/elements';
 import type { AppLocationGenerics } from '../../../routes';
+import { TimeSeriesField } from '../../CustomCalculationConfiguration/Routine/Commands/Fields/TimeSeriesField';
 import { getOptionLabel } from '../../CustomCalculationConfiguration/Routine/Commands/utils';
 import { ChartContainer, LoaderOverlay } from '../elements';
 import type { StepProps } from '../types';

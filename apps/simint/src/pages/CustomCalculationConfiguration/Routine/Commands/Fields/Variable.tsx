@@ -64,6 +64,7 @@ export function Variable({
       <div className="cogs-input-container">
         <Field
           as={InputExp}
+          id={formikPath}
           status={variableError ? 'critical' : undefined}
           statusText={variableError}
           label="Variable"

@@ -16,13 +16,12 @@ import type {
 import { Group, Step } from './Collapse';
 import { getRoutineIndex } from './Commands/utils';
 
-export function Routine({
-  dynamicStepFields,
-  setCalculation,
-}: {
+export type RoutineProps = {
   dynamicStepFields: StepFields;
   setCalculation: (calculation: UserDefined) => void;
-}) {
+};
+
+export function Routine({ dynamicStepFields, setCalculation }: RoutineProps) {
   const { values, setValues } = useFormikContext<UserDefined>();
   const [dragControls, setDragControls] =
     useState<Record<string, DragControls>>();
@@ -114,6 +113,7 @@ export function Routine({
         onReorder={(groups) => {
           sortGroups(groups as CalculationProcedure[]);
         }}
+        role="tree"
       >
         {values.routine?.map((routine, groupIndex) => (
           <Reorder.Item

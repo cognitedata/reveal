@@ -18,8 +18,8 @@ import {
   FormRowStacked,
   NumberField,
   SliderNumberField,
-  TimeSeriesField,
 } from '../../../components/forms/elements';
+import { TimeSeriesField } from '../../CustomCalculationConfiguration/Routine/Commands/Fields/TimeSeriesField';
 import { ChartContainer, LoaderOverlay, SelectContainer } from '../elements';
 import type { ScheduleRepeat } from '../types';
 import { INTERVAL_OPTIONS, getScheduleRepeat, useTimeseries } from '../utils';
