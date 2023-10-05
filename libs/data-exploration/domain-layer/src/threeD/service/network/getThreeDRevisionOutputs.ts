@@ -8,10 +8,8 @@ export const getThreeDRevisionOutputs = async (
   revisionId?: number,
   formats?: string
 ) => {
-  let formatsQueryString: string = '';
-  if (formats) {
-    formatsQueryString = `?format=${formats}`;
-  }
+  const formatsQueryString = formats === undefined ? '' : `?format=${formats}`;
+
   return sdk
     .get(
       `${sdk.getBaseUrl()}/api/v1/projects/${
