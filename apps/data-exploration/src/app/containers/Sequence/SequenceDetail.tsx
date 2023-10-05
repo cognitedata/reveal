@@ -166,6 +166,7 @@ export const SequenceDetail = ({
     </SequenceDetailWrapper>
   );
 };
+
 const SequenceDetailWrapper = styled.div`
   display: contents;
 `;
