@@ -11,7 +11,6 @@ import {
   useCameraNavigation,
   type AddResourceOptions,
   type FdmAssetStylingGroup,
-  type FdmNodeDataResult
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
@@ -19,7 +18,6 @@ import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
-import assert from 'assert';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -66,24 +64,21 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   useEffect(() => {
     console.log('Clicked node data', nodeData);
-    const isFdmData = (data: any): data is FdmNodeDataResult => data?.fdmNode !== undefined;
-    if (!isFdmData(nodeData)) {
+    if (nodeData?.fdmResult === undefined) {
       setStylingGroups([]);
       return;
     }
 
-    assert(nodeData.fdmNode !== undefined);
-
     setStylingGroups([
       {
         fdmAssetExternalIds: [
-          { externalId: nodeData.fdmNode.externalId, space: nodeData.fdmNode.space }
+          { externalId: nodeData.fdmResult.fdmNode.externalId, space: nodeData.fdmResult.fdmNode.space }
         ],
         style: { cad: DefaultNodeAppearance.Highlighted }
       }
     ]);
 
-    void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, nodeData.fdmNode.space);
+    void cameraNavigation.fitCameraToInstance(nodeData.fdmResult.fdmNode.externalId, nodeData.fdmResult.fdmNode.space);
   }, [nodeData]);
 
   return (

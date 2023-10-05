@@ -18,7 +18,7 @@ export class AssetMappingCache {
     this._sdk = sdk;
   }
 
-  public async getAssetMappingForAncestors(
+  public async getAssetMappingsForLowestAncestor(
     modelId: ModelId,
     revisionId: RevisionId,
     ancestors: Node3D[]
