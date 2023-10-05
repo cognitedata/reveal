@@ -1,8 +1,8 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useTypedTranslation } from '@cognite/cdf-i18n-utils';
 
+import { useTypedTranslation } from '../../components/i18n/useTypedTranslation';
 import en from './en/reveal-react-components.json';
 import { useCallback } from 'react';
 

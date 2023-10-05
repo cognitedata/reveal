@@ -13,8 +13,8 @@ import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { NodeCacheProvider } from '../NodeCacheProvider/NodeCacheProvider';
 import { RevealContainerElementContext } from './RevealContainerElementContext';
 import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { translations } from '../../common/i18n';
+import I18nWrapper from '../i18n/I18nWrapper';
 
 type RevealContainerProps = {
   color?: Color;

@@ -10,7 +10,7 @@ import { type Cognite3DViewer, type Image360 } from '@cognite/reveal';
 // Using named import to avoid react component creation error when default import is used.
 import { uniqueId } from 'lodash';
 import { translations, useTranslation } from '../../../common/i18n';
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import I18nWrapper from '../../i18n/I18nWrapper';
 
 export type Image360RevisionDetails = {
   date?: string;

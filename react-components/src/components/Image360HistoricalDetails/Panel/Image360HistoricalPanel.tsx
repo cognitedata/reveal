@@ -6,7 +6,7 @@ import { Chip, Tooltip } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import styled from 'styled-components';
 import { translations, useTranslation } from '../../../common/i18n';
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import I18nWrapper from '../../i18n/I18nWrapper';
 
 export type Image360HistoricalPanelProps = {
   revisionCount?: number;
