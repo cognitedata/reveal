@@ -1,5 +1,5 @@
 import { FLOATING_ELEMENT_MARGIN } from '@3d-management/pages/ContextualizeEditor/constants';
-import { useContextualizeThreeDViewerStoreCad } from '../../useContextualizeThreeDViewerStoreCad';
+import { useContextualizeThreeDViewerStoreCad } from './useContextualizeThreeDViewerStoreCad';
 
 export const CadAnnotationsCard = () => {
   const { contextualizedNodes } = useContextualizeThreeDViewerStoreCad(

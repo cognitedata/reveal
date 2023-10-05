@@ -11,16 +11,16 @@ import {
 } from '@cognite/reveal-react-components';
 
 import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
+
+import { CadAnnotationsCard } from './CadAnnotationsCard';
+import { CadToolBar } from './CadToolBar/CadToolBar';
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
   setModelLoaded,
   setThreeDViewer,
   useContextualizeThreeDViewerStoreCad,
-} from '../../useContextualizeThreeDViewerStoreCad';
-
-import { CadAnnotationsCard } from './CadAnnotationsCard';
-import { CadToolBar } from './CadToolBar/CadToolBar';
+} from './useContextualizeThreeDViewerStoreCad';
 
 type RevealContentProps = {
   modelId: number;

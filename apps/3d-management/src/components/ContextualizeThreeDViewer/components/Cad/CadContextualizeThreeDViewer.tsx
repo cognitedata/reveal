@@ -21,18 +21,18 @@ import {
   defaultRevealColor,
 } from '../../../../pages/ContextualizeEditor/constants';
 import { useLocalStorage } from '../../../../utils/useLocalStorage';
-import {
-  useContextualizeThreeDViewerStoreCad,
-  setContextualizedNodes,
-  setModelId,
-  setSelectedNodeIds,
-} from '../../useContextualizeThreeDViewerStoreCad';
 import { getCdfCadContextualization } from '../../utils/getCdfCadContextualization';
 import { saveCdfThreeDCadContextualization } from '../../utils/saveCdfThreeDCadContextualization';
 
 import { CadRevealContent } from './CadRevealContent';
 import { useCadOnClickHandler } from './hooks/useCadOnClickHandler';
 import { useSyncCadStateWithViewer } from './hooks/useSyncCadStateWithViewer';
+import {
+  useContextualizeThreeDViewerStoreCad,
+  setContextualizedNodes,
+  setModelId,
+  setSelectedNodeIds,
+} from './useContextualizeThreeDViewerStoreCad';
 
 const fetchContextualizedNodes = async ({
   queryKey,

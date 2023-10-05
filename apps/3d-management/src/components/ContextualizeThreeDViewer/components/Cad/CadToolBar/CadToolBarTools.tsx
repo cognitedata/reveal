@@ -6,7 +6,7 @@ import {
   setTool,
   ToolType,
   useContextualizeThreeDViewerStoreCad,
-} from '../../../useContextualizeThreeDViewerStoreCad';
+} from '../useContextualizeThreeDViewerStoreCad';
 
 export const CadToolBarTools = (): ReactElement => {
   const { tool } = useContextualizeThreeDViewerStoreCad((state) => ({

@@ -6,11 +6,11 @@ import {
   PointerEventData,
 } from '@cognite/reveal';
 
+import { getCogniteCadModel } from '../../../utils/getCogniteCadModel';
 import {
   setSelectedNodeIds,
   useContextualizeThreeDViewerStoreCad,
-} from '../../../useContextualizeThreeDViewerStoreCad';
-import { getCogniteCadModel } from '../../../utils/getCogniteCadModel';
+} from '../useContextualizeThreeDViewerStoreCad';
 
 // TODO: This is something that should be exported from Reveal.
 // Add ticket before merging.
