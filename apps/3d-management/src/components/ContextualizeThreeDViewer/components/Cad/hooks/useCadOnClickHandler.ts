@@ -29,7 +29,6 @@ export const useCadOnClickHandler = () => {
     useContextualizeThreeDViewerStoreCad((state) => ({
       modelId: state.modelId,
       threeDViewer: state.threeDViewer,
-      contextualizedNodes: state.contextualizedNodes,
       selectedNodeIdsList: state.selectedNodeIds,
     }));
 

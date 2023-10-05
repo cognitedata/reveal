@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { Cognite3DViewer } from '@cognite/reveal';
-import { AssetMapping3D, ListResponse } from '@cognite/sdk';
+import { AssetMapping3D } from '@cognite/sdk';
 
 // TODO: Improve naming of the tools
 export enum ToolType {
@@ -16,7 +16,7 @@ type RootState = {
   modelId: number | null;
   isModelLoaded: boolean;
   selectedNodeIds: Array<number>;
-  contextualizedNodes: ListResponse<AssetMapping3D[]> | null;
+  contextualizedNodes: AssetMapping3D[] | null;
 };
 
 const initialState: RootState = {
@@ -85,7 +85,7 @@ export const setSelectedNodeIds = (selectedNodeIds: Array<number>) => {
 };
 
 export const setContextualizedNodes = (
-  contextualizedNodes: ListResponse<AssetMapping3D[]>
+  contextualizedNodes: AssetMapping3D[]
 ) => {
   useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
     ...prevState,

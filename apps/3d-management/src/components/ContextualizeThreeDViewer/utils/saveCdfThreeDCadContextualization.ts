@@ -18,11 +18,11 @@ export const saveCdfThreeDCadContextualization = async ({
   await Promise.all(
     nodeIds.map(async (nodeId: number) => {
       await createCdfThreeDCadContextualization({
-        sdk: sdk,
-        modelId: modelId,
-        revisionId: revisionId,
+        sdk,
+        modelId,
+        revisionId,
         assetRefId: assetId,
-        nodeId: nodeId,
+        nodeId,
       });
     })
   );

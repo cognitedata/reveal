@@ -28,7 +28,7 @@ export const deleteCdfThreeDCadContextualization = async ({
         revisionId: revisionId,
         nodeId: nodeId,
       });
-      mappedNodes.items.forEach((item) => {
+      mappedNodes.forEach((item) => {
         const mappingForDeletion: AssetMapping3D = {
           nodeId: nodeId,
           assetId: item.assetId,

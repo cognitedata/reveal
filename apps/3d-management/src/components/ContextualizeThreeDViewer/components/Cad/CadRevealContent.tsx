@@ -18,6 +18,7 @@ import {
   useContextualizeThreeDViewerStoreCad,
 } from '../../useContextualizeThreeDViewerStoreCad';
 
+import { CadAnnotationsCard } from './CadAnnotationsCard';
 import { CadToolBar } from './CadToolBar/CadToolBar';
 
 type RevealContentProps = {
@@ -81,6 +82,7 @@ export const CadRevealContent = ({
           }}
         />
       </StyledResourceSelectorButtonWrapper>
+      <CadAnnotationsCard />
     </>
   );
 };
@@ -89,6 +91,7 @@ const StyledResourceSelectorButtonWrapper = styled(
   withSuppressRevealEvents(ToolBar)
 )`
   position: absolute;
-  top: ${FLOATING_ELEMENT_MARGIN}px;
   right: ${FLOATING_ELEMENT_MARGIN}px;
+  /* The 3px is to vertically align it with the splitter handle */
+  top: calc(50% + 3px);
 `;

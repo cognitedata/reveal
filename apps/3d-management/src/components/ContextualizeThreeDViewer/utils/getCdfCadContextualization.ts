@@ -19,6 +19,7 @@ export const getCdfCadContextualization = async ({
     filter.nodeId = nodeId;
   }
 
-  const mapping3D = await sdk.assetMappings3D.list(modelId, revisionId, filter);
-  return mapping3D;
+  return await sdk.assetMappings3D
+    .list(modelId, revisionId, filter)
+    .autoPagingToArray({ limit: Infinity });
 };

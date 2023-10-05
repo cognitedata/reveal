@@ -4,8 +4,10 @@ import styled from 'styled-components';
 
 import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
 
 import { RevealContainer } from '@cognite/reveal-react-components';
+import { CogniteClient } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
@@ -18,14 +20,27 @@ import {
   useContextualizeThreeDViewerStoreCad,
   setContextualizedNodes,
   setModelId,
+  setSelectedNodeIds,
 } from '../../useContextualizeThreeDViewerStoreCad';
 import { getCdfCadContextualization } from '../../utils/getCdfCadContextualization';
-import { getCogniteCadModel } from '../../utils/getCogniteCadModel';
 import { saveCdfThreeDCadContextualization } from '../../utils/saveCdfThreeDCadContextualization';
 
 import { CadRevealContent } from './CadRevealContent';
 import { useCadOnClickHandler } from './hooks/useCadOnClickHandler';
 import { useSyncCadStateWithViewer } from './hooks/useSyncCadStateWithViewer';
+
+const fetchContextualizedNodes = async ({
+  queryKey,
+}: QueryFunctionContext<[string, CogniteClient, number, number]>) => {
+  const [_key, sdk, modelId, revisionId] = queryKey;
+
+  return await getCdfCadContextualization({
+    sdk,
+    modelId,
+    revisionId,
+    nodeId: undefined,
+  });
+};
 
 type ContextualizeThreeDViewerProps = {
   modelId: number;
@@ -38,7 +53,7 @@ export const CadContextualizeThreeDViewer = ({
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
 
-  const { isResourceSelectorOpen, threeDViewer, selectedNodeIdsList } =
+  const { isResourceSelectorOpen, selectedNodeIdsList } =
     useContextualizeThreeDViewerStoreCad((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       threeDViewer: state.threeDViewer,
@@ -50,36 +65,22 @@ export const CadContextualizeThreeDViewer = ({
     DEFAULT_RIGHT_SIDE_PANEL_WIDTH
   );
 
+  const { data: contextualizedNodes } = useQuery(
+    ['cadContextualization', sdk, modelId, revisionId],
+    fetchContextualizedNodes
+  );
+
+  useEffect(() => {
+    if (contextualizedNodes === undefined) return;
+
+    setContextualizedNodes(contextualizedNodes);
+  }, [contextualizedNodes]);
+
   useEffect(() => {
     setModelId(modelId);
   }, [modelId]);
 
   useSyncCadStateWithViewer();
-
-  // use effects hooks
-  useEffect(() => {
-    const updateSelectedCadNodes = async () => {
-      // TODO: Display a user friendly error message if the model is not found
-      if (threeDViewer === null) return;
-
-      const model = getCogniteCadModel({
-        modelId,
-        viewer: threeDViewer,
-      });
-      if (model === undefined) return;
-
-      const currentContextualizedNodes = await getCdfCadContextualization({
-        sdk: sdk,
-        modelId: modelId,
-        revisionId: revisionId,
-        nodeId: undefined,
-      });
-      setContextualizedNodes(currentContextualizedNodes);
-    };
-
-    updateSelectedCadNodes();
-  }, [modelId, revisionId, sdk, threeDViewer]);
-
   useCadOnClickHandler();
 
   useEffect(() => {
@@ -97,6 +98,7 @@ export const CadContextualizeThreeDViewer = ({
   });
 
   const handleResourceSelectorSelect = async (assetId: number) => {
+    setSelectedNodeIds([]);
     await saveCdfThreeDCadContextualization({
       sdk,
       modelId,
