@@ -3,13 +3,6 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 import styled from 'styled-components';
 
-import { PnidButton } from '@charts-app/components/SearchResultTable/PnidButton';
-import TimeseriesSearchResultItem from '@charts-app/components/SearchResultTable/TimeseriesSearchResultItem';
-import { useAsset } from '@charts-app/hooks/cdf-assets';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import chartAtom from '@charts-app/models/chart/atom';
-import { trackUsage } from '@charts-app/services/metrics';
-import { ASSET_KEY, TS_SEARCH_KEY } from '@charts-app/utils/constants';
 import { useRecoilState } from 'recoil';
 import { useDebounce } from 'use-debounce';
 
@@ -29,6 +22,14 @@ import {
   useInfiniteSearch,
   useSearch,
 } from '@cognite/sdk-react-query-hooks';
+
+import { useAsset } from '../../hooks/cdf-assets';
+import { useSearchParam } from '../../hooks/navigation';
+import chartAtom from '../../models/chart/atom';
+import { trackUsage } from '../../services/metrics';
+import { ASSET_KEY, TS_SEARCH_KEY } from '../../utils/constants';
+import { PnidButton } from '../SearchResultTable/PnidButton';
+import TimeseriesSearchResultItem from '../SearchResultTable/TimeseriesSearchResultItem';
 
 import { useAddRemoveTimeseries } from './hooks';
 import { SearchFilter } from './Search';

@@ -6,19 +6,20 @@
 
 import { memo, useCallback, useState, ChangeEvent } from 'react';
 
+import { useRecoilState } from 'recoil';
+
+import { Body, Button, Heading, Row, Col, Input } from '@cognite/cogs.js';
+
+import { useCdfEvent } from '../../hooks/cdf-assets';
+import { activeEventIdAtom } from '../../models/event-results/atom';
+import { formatDate } from '../../utils/date';
+import { makeDefaultTranslations } from '../../utils/translations';
 import {
   ContentContainer,
   LoadingRow,
   OverlayContentOverflowWrapper,
   SidebarHeaderActions,
-} from '@charts-app/components/Common/SidebarElements';
-import { useCdfEvent } from '@charts-app/hooks/cdf-assets';
-import { activeEventIdAtom } from '@charts-app/models/event-results/atom';
-import { formatDate } from '@charts-app/utils/date';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useRecoilState } from 'recoil';
-
-import { Body, Button, Heading, Row, Col, Input } from '@cognite/cogs.js';
+} from '../Common/SidebarElements';
 
 import {
   EventDetailBox,

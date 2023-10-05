@@ -1,10 +1,10 @@
-import { fullListOfOperations } from '@charts-app/models/operations/mocks';
-
 import {
   ComputationStep,
   TimeSeriesInputTypeEnum,
 } from '@cognite/calculation-backend';
 import { ChartTimeSeries } from '@cognite/charts-lib';
+
+import { fullListOfOperations } from '../../models/operations/mocks';
 
 import {
   getOperationsGroupedByCategory,

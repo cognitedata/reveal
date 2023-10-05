@@ -1,23 +1,19 @@
 import {
-  TIMESERIES_AGGREGATE_ALIAS,
   TIMESERIES_LIST_ALIAS,
-  interceptTimeseriesAggregate,
   interceptTimeseriesList,
 } from '../support/interceptions/interceptions';
 
-describe('Timeseries filters', () => {
+describe('Timeseries - Filters', () => {
   before(() => {
     cy.fusionLogin();
     cy.navigateToExplorer();
 
-    interceptTimeseriesList();
-    interceptTimeseriesAggregate();
-
     cy.goToTab('Time series');
-    cy.wait(`@${TIMESERIES_LIST_ALIAS}`);
-    cy.wait(`@${TIMESERIES_AGGREGATE_ALIAS}`);
+    cy.tableContentShouldBeVisible('timeseries-search-results');
+  });
 
-    cy.tableShouldBeVisible('timeseries-search-results');
+  beforeEach(() => {
+    interceptTimeseriesList();
   });
 
   afterEach(() => {
@@ -27,11 +23,9 @@ describe('Timeseries filters', () => {
   it('should filter timeseries by unit', () => {
     const UNIT = 'm3';
 
-    interceptTimeseriesList('timeseriesFilterByUnit');
+    cy.clickSelectFilter('Units').searchAndClickSelectOption(UNIT);
 
-    cy.clickFilter('Units').searchAndClickOption(UNIT);
-
-    cy.wait('@timeseriesFilterByUnit').payloadShouldContain({
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).payloadShouldContain({
       in: {
         property: ['unit'],
         values: [UNIT],
@@ -40,29 +34,25 @@ describe('Timeseries filters', () => {
   });
 
   it('should filter timeseries by Is step', () => {
-    interceptTimeseriesList('timeseriesFilterByIsStep');
-
     cy.log('click on True button of Is step filter');
-    cy.getFilter('Is step').contains('True').click();
+    cy.getFilter('Is step').clickBooleanOption('True');
 
-    cy.wait(`@timeseriesFilterByIsStep`).payloadShouldContain({
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).payloadShouldContain({
       equals: {
         property: ['isStep'],
-        value: 'true',
+        value: true,
       },
     });
   });
 
   it('should filter timeseries by Is string', () => {
-    interceptTimeseriesList('timeseriesFilterByIsString');
-
     cy.log('click on False button of Is string filter');
-    cy.getFilter('Is string').contains('False').click();
+    cy.getFilter('Is string').clickBooleanOption('False');
 
-    cy.wait(`@timeseriesFilterByIsString`).payloadShouldContain({
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).payloadShouldContain({
       equals: {
         property: ['isString'],
-        value: 'false',
+        value: false,
       },
     });
   });

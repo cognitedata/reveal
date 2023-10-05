@@ -1,6 +1,7 @@
 describe('Transform data page', () => {
   beforeEach(() => {
     cy.navigate('transformations');
+    cy.ensurePageFinishedLoading();
   });
 
   it('Should open Transform data page', () => {

@@ -50,12 +50,17 @@ export const useAnnotationModelsWithAsset = (
     }
   );
 
-  const result: AnnotationModelWithAsset[] | undefined = annotationModels?.map(
-    (annotation) => ({
+  const result: AnnotationModelWithAsset[] | undefined = annotationModels
+    ?.map((annotation) => ({
       annotation,
       asset: data?.find((asset) => asset.id === getAssetId(annotation)),
-    })
-  );
+    }))
+    .sort((a, b) => {
+      if (a.asset === undefined) return -1;
+      if (b.asset === undefined) return 1;
+
+      return a.asset.name.localeCompare(b.asset.name);
+    });
 
   return {
     data: result,

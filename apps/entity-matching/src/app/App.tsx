@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { getProject } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
 import Details from './pages/Details';
@@ -11,9 +11,7 @@ import QuickMatch from './pages/quick-match';
 const project = getProject();
 
 const App = () => {
-  const baseUrl = isUsingUnifiedSignin()
-    ? `/cdf/:projectName`
-    : '/:projectName';
+  const baseUrl = '/:projectName';
 
   return (
     <FlagProvider

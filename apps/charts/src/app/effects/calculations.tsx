@@ -1,20 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getStepsFromWorkflow } from '@charts-app/components/NodeEditor/transforms';
-import { isWorkflowRunnable } from '@charts-app/components/NodeEditor/utils';
-import { validateSteps } from '@charts-app/components/NodeEditor/V2/calculations';
-import {
-  useCalculationQueryResult,
-  useCalculationStatus,
-  useCreateCalculation,
-} from '@charts-app/hooks/calculation-backend';
-import { workflowsAtom } from '@charts-app/models/calculation-results/atom';
-import chartAtom from '@charts-app/models/chart/atom';
-import { updateWorkflow } from '@charts-app/models/chart/updates';
-import { useOperations } from '@charts-app/models/operations/atom';
-import { CHART_POINTS_PER_SERIES } from '@charts-app/utils/constants';
-import { getHash } from '@charts-app/utils/hash';
-import { calculateGranularity } from '@charts-app/utils/timeseries';
 import dayjs from 'dayjs';
 import { isEqual } from 'lodash';
 import { useRecoilState } from 'recoil';
@@ -25,6 +10,22 @@ import {
   CalculationResultQueryAggregateEnum,
 } from '@cognite/calculation-backend';
 import { ChartWorkflowV2 } from '@cognite/charts-lib';
+
+import { getStepsFromWorkflow } from '../components/NodeEditor/transforms';
+import { isWorkflowRunnable } from '../components/NodeEditor/utils';
+import { validateSteps } from '../components/NodeEditor/V2/calculations';
+import {
+  useCalculationQueryResult,
+  useCalculationStatus,
+  useCreateCalculation,
+} from '../hooks/calculation-backend';
+import { workflowsAtom } from '../models/calculation-results/atom';
+import chartAtom from '../models/chart/atom';
+import { updateWorkflow } from '../models/chart/updates';
+import { useOperations } from '../models/operations/atom';
+import { CHART_POINTS_PER_SERIES } from '../utils/constants';
+import { getHash } from '../utils/hash';
+import { calculateGranularity } from '../utils/timeseries';
 
 export function CalculationCollectionEffects() {
   const [chart] = useRecoilState(chartAtom);

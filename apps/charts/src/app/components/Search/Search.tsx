@@ -8,26 +8,6 @@ import {
 
 import styled from 'styled-components';
 
-import EmptyResult, {
-  defaultTranslations as emptyResultDefaultTranslations,
-} from '@charts-app/components/Search/EmptyResult';
-import {
-  defaultTranslations as filterDropdownDefaultTranslation,
-  SearchFilterSettings,
-} from '@charts-app/components/Search/FilterDropdown';
-import {
-  useAssetSearchResults,
-  useTimeseriesSearchResult,
-} from '@charts-app/components/SearchResultTable/hooks';
-import SearchResultList from '@charts-app/components/SearchResultTable/SearchResultList';
-import SearchTimeseries from '@charts-app/components/SearchResultTable/SearchTimeseries';
-import { useRootAssets } from '@charts-app/hooks/cdf-assets';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { facilityAtom } from '@charts-app/models/facility/atom';
-import { trackUsage } from '@charts-app/services/metrics';
-import { SEARCH_KEY } from '@charts-app/utils/constants';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useRecoilState } from 'recoil';
 import { useDebounce } from 'use-debounce';
 
@@ -41,7 +21,27 @@ import {
   Icon,
 } from '@cognite/cogs.js';
 
-import FilterDropdown from './FilterDropdown';
+import { useRootAssets } from '../../hooks/cdf-assets';
+import { useSearchParam } from '../../hooks/navigation';
+import { useTranslations } from '../../hooks/translations';
+import { facilityAtom } from '../../models/facility/atom';
+import { trackUsage } from '../../services/metrics';
+import { SEARCH_KEY } from '../../utils/constants';
+import { makeDefaultTranslations } from '../../utils/translations';
+import {
+  useAssetSearchResults,
+  useTimeseriesSearchResult,
+} from '../SearchResultTable/hooks';
+import SearchResultList from '../SearchResultTable/SearchResultList';
+import SearchTimeseries from '../SearchResultTable/SearchTimeseries';
+
+import EmptyResult, {
+  defaultTranslations as emptyResultDefaultTranslations,
+} from './EmptyResult';
+import FilterDropdown, {
+  defaultTranslations as filterDropdownDefaultTranslation,
+  SearchFilterSettings,
+} from './FilterDropdown';
 import SearchTooltip from './SearchTooltip';
 
 export type SearchFilter = {

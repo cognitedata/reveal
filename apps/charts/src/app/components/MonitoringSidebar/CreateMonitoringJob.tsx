@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react';
 
-import { useUserProfileQuery } from '@charts-app/common/providers/useUserProfileQuery';
-import { useCreateSessionNonce } from '@charts-app/domain/chart';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { useChartAtom } from '@charts-app/models/chart/atom';
-import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
-import { trackUsage, stopTimer } from '@charts-app/services/metrics';
-import {
-  MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
-  MONITORING_SOURCE_CHART,
-} from '@charts-app/utils/constants';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { Col, Row } from 'antd';
 import { head } from 'lodash';
 
 import { toast } from '@cognite/cogs.js';
 import { CogniteError } from '@cognite/sdk';
 
+import { useUserProfileQuery } from '../../common/providers/useUserProfileQuery';
+import { useCreateSessionNonce } from '../../domain/chart';
+import { useSearchParam } from '../../hooks/navigation';
+import { useTranslations } from '../../hooks/translations';
+import { useChartAtom } from '../../models/chart/atom';
+import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
+import { trackUsage, stopTimer } from '../../services/metrics';
+import {
+  MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
+  MONITORING_SOURCE_CHART,
+} from '../../utils/constants';
+import { makeDefaultTranslations } from '../../utils/translations';
 import { FormTitle } from '../Common/SidebarElements';
 
 import CreateMonitoringJobStep1 from './CreateMonitoringJobStep1';

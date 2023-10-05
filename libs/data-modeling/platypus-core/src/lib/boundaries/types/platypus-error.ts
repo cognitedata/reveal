@@ -1,4 +1,4 @@
-import { DataModelValidationError } from '@platypus-core/domain/data-model';
+import { DataModelValidationError } from '../../domain/data-model';
 
 export interface ValidationError {
   status: number;

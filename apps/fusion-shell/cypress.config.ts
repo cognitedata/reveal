@@ -10,6 +10,13 @@ export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, { bundler: 'vite', cypressDir: 'cypress' }),
     chromeWebSecurity: true,
+    /**
+     * To authenticate with Azure Active Directory,
+     * `experimentalModifyObstructiveThirdPartyCode` configuration option needs
+     * to be enabled.
+     * Ref: https://docs.cypress.io/guides/end-to-end-testing/azure-active-directory-authentication#Configuring-Cypress-to-use-Microsoft-AAD
+     */
+    experimentalModifyObstructiveThirdPartyCode: true,
     testIsolation: false,
     env: process.env,
     video: true,

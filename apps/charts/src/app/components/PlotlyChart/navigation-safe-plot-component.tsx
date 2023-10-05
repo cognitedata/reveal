@@ -1,6 +1,6 @@
 import React, { ComponentType, memo } from 'react';
 
-import { shallowCompareProperties } from '@charts-app/utils/compare';
+import { shallowCompareProperties } from '../../utils/compare';
 
 import { PlotWrapper } from './elements';
 import { useDebouncePropsOnNavigation } from './navigation-safe-plot-hooks';

@@ -1,6 +1,6 @@
-import { fullListOfOperations } from '@charts-app/models/operations/mocks';
-
 import { Calculation } from '@cognite/calculation-backend';
+
+import { fullListOfOperations } from '../../../models/operations/mocks';
 
 import { validateSteps } from './calculations';
 

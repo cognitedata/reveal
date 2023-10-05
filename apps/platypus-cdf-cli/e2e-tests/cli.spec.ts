@@ -24,11 +24,13 @@ describe('platpus-cli', () => {
     it('can publish data models and list', async () => {
       const dataModelName = `cdf_cli_publish_e2e_test_${getDatamodelNameTimeAppendix()}`;
       const dataModelExternalId = dataModelName;
+      const dataModelDesc = dataModelName;
 
       let output = await platypusCli.dataModelsCreate(
         dataModelName,
         dataModelExternalId,
-        dataModelExternalId
+        dataModelExternalId,
+        dataModelDesc
       );
 
       expect(output).toMatch(

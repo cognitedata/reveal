@@ -1,14 +1,5 @@
 import { useEffect, useCallback } from 'react';
 
-import { useCreateDataProfiling } from '@charts-app/hooks/calculation-backend';
-import { usePrevious } from '@charts-app/hooks/usePrevious';
-import chartAtom from '@charts-app/models/chart/atom';
-import {
-  waitForDataProfilingToFinish,
-  waitForCalculationToFinish,
-  fetchDataProfilingResult,
-} from '@charts-app/services/calculation-backend';
-import { getHash } from '@charts-app/utils/hash';
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 import { useDebounce } from 'use-debounce';
@@ -24,6 +15,16 @@ import {
   ChartSource,
 } from '@cognite/charts-lib';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { useCreateDataProfiling } from '../../hooks/calculation-backend';
+import { usePrevious } from '../../hooks/usePrevious';
+import chartAtom from '../../models/chart/atom';
+import {
+  waitForDataProfilingToFinish,
+  waitForCalculationToFinish,
+  fetchDataProfilingResult,
+} from '../../services/calculation-backend';
+import { getHash } from '../../utils/hash';
 
 export const useDataProfiling = (
   sourceItem: ChartSource | undefined,

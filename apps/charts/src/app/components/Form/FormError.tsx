@@ -2,8 +2,8 @@ import { FieldErrors, FieldValues as FormFieldValues } from 'react-hook-form';
 
 import styled from 'styled-components';
 
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import {
   InfoBoxHeadingContainer,

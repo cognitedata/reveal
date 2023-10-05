@@ -4,10 +4,7 @@ import { useFormikContext } from 'formik';
 
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
-import {
-  FormRow,
-  TimeSeriesField,
-} from '../../../../components/forms/elements';
+import { FormRow } from '../../../../components/forms/elements';
 import { generateInputTimeSeriesExternalId } from '../../../../utils/externalIdGenerators';
 import {
   getScheduleRepeat,
@@ -24,6 +21,7 @@ import {
   Value,
   Variable,
 } from './Fields';
+import { TimeSeriesField } from './Fields/TimeSeriesField';
 import { TimeSeriesPreview } from './Fields/TimeSeriesPreview';
 import type { StepCommandProps } from './utils';
 import { getInputOutputIndex } from './utils';

@@ -1,23 +1,19 @@
 import {
-  FILE_AGGREGATE_ALIAS,
   FILE_LIST_ALIAS,
-  interceptFileAggregate,
   interceptFileList,
 } from '../support/interceptions/interceptions';
 
-describe('Files filters', () => {
+describe('Files - Filters', () => {
   before(() => {
     cy.fusionLogin();
     cy.navigateToExplorer();
 
-    interceptFileList();
-    interceptFileAggregate();
-
     cy.goToTab('Files');
-    cy.wait(`@${FILE_LIST_ALIAS}`);
-    cy.wait(`@${FILE_AGGREGATE_ALIAS}`);
+    cy.tableContentShouldBeVisible('documents-search-results');
+  });
 
-    cy.tableShouldBeVisible('documents-search-results');
+  beforeEach(() => {
+    interceptFileList();
   });
 
   afterEach(() => {
@@ -27,11 +23,9 @@ describe('Files filters', () => {
   it('should filter files by file type', () => {
     const FILE_TYPE = 'Image';
 
-    interceptFileList('filesFilterByFiletType');
+    cy.clickSelectFilter('File types').searchAndClickSelectOption(FILE_TYPE);
 
-    cy.clickFilter('File types').searchAndClickOption(FILE_TYPE);
-
-    cy.wait('@filesFilterByFiletType').payloadShouldContain({
+    cy.wait(`@${FILE_LIST_ALIAS}`).payloadShouldContain({
       in: {
         property: ['type'],
         values: [FILE_TYPE],
@@ -42,11 +36,9 @@ describe('Files filters', () => {
   it('should filter files by Author', () => {
     const AUTHOR = 'Roland Wagner';
 
-    interceptFileList('filesFilterByAuthor');
+    cy.clickSelectFilter('Authors').searchAndClickSelectOption(AUTHOR);
 
-    cy.clickFilter('Authors').searchAndClickOption(AUTHOR);
-
-    cy.wait('@filesFilterByAuthor').payloadShouldContain({
+    cy.wait(`@${FILE_LIST_ALIAS}`).payloadShouldContain({
       in: {
         property: ['author'],
         values: [AUTHOR],

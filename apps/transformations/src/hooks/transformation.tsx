@@ -42,10 +42,11 @@ import {
   FIVE_MINUTES,
   getTransformationsApiUrl,
 } from '@transformations/utils';
+import { useCdfUserHistoryService } from '@user-history';
 import { notification } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Timestamp, useCdfUserHistoryService } from '@cognite/cdf-utilities';
+import { Timestamp } from '@cognite/cdf-utilities';
 import { CogniteClient, CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 

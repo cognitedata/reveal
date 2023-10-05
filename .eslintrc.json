@@ -30,8 +30,7 @@
               "@vision",
               "@data-quality",
               "@platypus-core",
-              "@cognite/platypus-cdf-cli",
-              "@charts-app"
+              "@cognite/platypus-cdf-cli"
             ],
             "depConstraints": [
               {

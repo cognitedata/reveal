@@ -1,11 +1,11 @@
 import { ComponentProps, useState } from 'react';
 import { useZoomPanHelper } from 'react-flow-renderer';
 
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import { Badge } from 'antd';
 
 import { Dropdown, Icon } from '@cognite/cogs.js';
 
+import { defaultTranslations } from '../../translations';
 import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 
 import { CustomControlButtonGroup, CustomControlButton } from './elements';

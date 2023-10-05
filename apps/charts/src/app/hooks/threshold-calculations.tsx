@@ -1,16 +1,5 @@
 import { useCallback, useEffect } from 'react';
 
-import {
-  useCreateThreshold,
-  useThresholdCreator,
-  useThresholdIsReady,
-  useThresholdResultData,
-} from '@charts-app/hooks/calculation-backend';
-import { usePrevious } from '@charts-app/hooks/usePrevious';
-import { useChartAtom } from '@charts-app/models/chart/atom';
-import { updateChartThresholdProperties } from '@charts-app/models/chart/updates-threshold';
-import { getHash } from '@charts-app/utils/hash';
-import { isThresholdValid } from '@charts-app/utils/threshold';
 import { milliseconds } from 'date-fns';
 import { omit } from 'lodash';
 import { useDebounce } from 'use-debounce';
@@ -20,6 +9,19 @@ import {
   ThresholdResult,
 } from '@cognite/calculation-backend';
 import { ChartThreshold } from '@cognite/charts-lib';
+
+import { useChartAtom } from '../models/chart/atom';
+import { updateChartThresholdProperties } from '../models/chart/updates-threshold';
+import { getHash } from '../utils/hash';
+import { isThresholdValid } from '../utils/threshold';
+
+import {
+  useCreateThreshold,
+  useThresholdCreator,
+  useThresholdIsReady,
+  useThresholdResultData,
+} from './calculation-backend';
+import { usePrevious } from './usePrevious';
 
 export const thresholdParameters = (
   dateFrom: string,

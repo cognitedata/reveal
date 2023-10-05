@@ -100,7 +100,11 @@ export const PointCloudToolBarTools = ({
         event.offsetX,
         event.offsetY
       );
-      if (intersection === null || tool !== ToolType.ADD_ANNOTATION) {
+      if (
+        intersection === null ||
+        tool !== ToolType.ADD_ANNOTATION ||
+        pendingAnnotation !== null
+      ) {
         return;
       }
 

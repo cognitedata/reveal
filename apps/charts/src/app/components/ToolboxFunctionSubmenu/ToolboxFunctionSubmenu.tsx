@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 
-import Markdown from '@charts-app/components/Markdown/Markdown';
-import { useCanvasSize } from '@charts-app/components/NodeEditor/V2/CanvasContext';
-import Layers from '@charts-app/utils/z-index';
 import { compareVersions } from 'compare-versions';
 import styled from 'styled-components/macro';
 
 import { Operation } from '@cognite/calculation-backend';
 import { Button, Input, Modal, Menu } from '@cognite/cogs.js';
+
+import Layers from '../../utils/z-index';
+import Markdown from '../Markdown/Markdown';
+import { useCanvasSize } from '../NodeEditor/V2/CanvasContext';
 
 import CategoryMenu from './CategoryMenu';
 import SearchResultMenu from './SearchResultMenu';

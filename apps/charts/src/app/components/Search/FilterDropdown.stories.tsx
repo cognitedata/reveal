@@ -1,10 +1,11 @@
 import { ComponentProps } from 'react';
 
+import { Meta, Story } from '@storybook/react';
+
 import {
   rootAssetsMissingExternalIdMock,
   rootAssetsMock,
-} from '@charts-app/models/facility/mocks';
-import { Meta, Story } from '@storybook/react';
+} from '../../models/facility/mocks';
 
 import FilterDropdown from './FilterDropdown';
 

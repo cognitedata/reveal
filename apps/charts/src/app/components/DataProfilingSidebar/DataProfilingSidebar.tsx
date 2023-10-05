@@ -4,6 +4,14 @@
 
 import { FunctionComponent, useState, useMemo } from 'react';
 
+import styled from 'styled-components/macro';
+
+import { StatusStatusEnum } from '@cognite/calculation-backend';
+import { Chart, ChartSource } from '@cognite/charts-lib';
+import { Icon, Tooltip, Button, Infobox } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
 import {
   Sidebar,
   TopContainer,
@@ -13,15 +21,7 @@ import {
   ContentContainer,
   SidebarFormLabel,
   SourceSelect,
-} from '@charts-app/components/Common/SidebarElements';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import styled from 'styled-components/macro';
-
-import { StatusStatusEnum } from '@cognite/calculation-backend';
-import { Chart, ChartSource } from '@cognite/charts-lib';
-import { Icon, Tooltip, Button, Infobox } from '@cognite/cogs.js';
-
+} from '../Common/SidebarElements';
 import { SourceSelector } from '../Common/SourceSelector';
 
 import Boxplot from './Boxplot';

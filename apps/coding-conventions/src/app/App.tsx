@@ -6,20 +6,14 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import styled from 'styled-components/macro';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthContainer,
-  getProject,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { AuthContainer, getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 
 import Routes from './Routes';
 
 function App() {
   const project = getProject();
-  const basename = isUsingUnifiedSignin()
-    ? `/cdf/${project}/coding-conventions`
-    : `${project}/coding-conventions`;
+  const basename = `${project}/coding-conventions`;
 
   const queryClient = new QueryClient({
     defaultOptions: {

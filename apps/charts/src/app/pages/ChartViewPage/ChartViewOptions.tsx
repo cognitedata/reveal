@@ -1,6 +1,3 @@
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import {
   Button,
   Dropdown,
@@ -9,6 +6,9 @@ import {
   Switch,
   Tooltip,
 } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import { DropdownTitle, DropdownWrapper } from './elements';
 

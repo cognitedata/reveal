@@ -1,4 +1,4 @@
-import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
+import { User, UserManager, WebStorageStateStore } from 'oidc-client-ts';
 
 import {
   CogniteIdPResponse,
@@ -7,7 +7,12 @@ import {
   PublicOrgResponse,
 } from '../types';
 
-import { getApp, getOrganization } from './loginInfo';
+import {
+  getApp,
+  getBaseUrl,
+  getRequiredOrganization,
+  setLoginOrganizationCookie,
+} from './loginInfo';
 
 export const cogIdpAuthority = 'https://auth.cognite.com';
 export const cogIdpInternalId = 'ff16d970-0491-415a-ab4b-3ba9eb65ac4a';
@@ -29,6 +34,10 @@ export const cogIdpAsResponse = (
 
 const removeProtocol = (url: string) => new URL(url).host;
 
+const getRedirectUri = () => {
+  return `${getBaseUrl()}/signin/callback`;
+};
+
 // If we have multiple instances of UserManager we will perform multiple parallel token refresh requests.
 // This will be rejected by CogIdP. Therefore, we must take care to only use one instance of User Manager
 // per authority/client_id combination.
@@ -45,7 +54,7 @@ export const getCogniteIdPUserManager = (params: {
   const userManager = new UserManager({
     authority: params.authority,
     client_id: params.client_id,
-    redirect_uri: window.location.href,
+    redirect_uri: getRedirectUri(),
     scope: `openid offline_access email profile`,
     automaticSilentRenew: true,
     accessTokenExpiringNotificationTimeInSeconds: 180,
@@ -63,11 +72,11 @@ export const getCogniteIdPUserManager = (params: {
 };
 
 export const getCogniteIdPToken = async (userManager: UserManager) => {
+  const organization = getRequiredOrganization();
   try {
-    await userManager.signinSilent();
     let user = await userManager.getUser();
     if (user?.expired) {
-      user = await userManager.signinSilent();
+      await cogniteIdPSignInRedirect(userManager, organization);
     }
     if (!user?.access_token) {
       return undefined;
@@ -80,10 +89,36 @@ export const getCogniteIdPToken = async (userManager: UserManager) => {
   }
 };
 
+export type CogIdPState = {
+  pathname: string;
+  search: string;
+};
+
+export const getCogIdPState = (user: User) => user.state as CogIdPState;
+
+export const cogniteIdPSignInRedirect = async (
+  userManager: UserManager,
+  organization: string
+) => {
+  const org = getRequiredOrganization();
+  setLoginOrganizationCookie(org);
+  const { pathname, search } = window.location;
+  const state: CogIdPState = {
+    pathname,
+    search,
+  };
+  await userManager.signinRedirect({
+    state,
+    extraQueryParams: {
+      organization_hint: organization,
+    },
+  });
+};
+
 export const getPublicOrg = async (
   options: { timeout?: number } = {}
 ): Promise<PublicOrgResponse | undefined> => {
-  const organization = getOrganization();
+  const organization = getRequiredOrganization();
 
   const controller = new AbortController();
   if (options.timeout) {
@@ -108,7 +143,7 @@ export const getProjectsForCogIdpOrg = async (
   if (!token) {
     return undefined;
   }
-  const organization = getOrganization();
+  const organization = getRequiredOrganization();
 
   const response = await fetch(
     `${cogIdpAuthority}/api/v0/orgs/${organization}/projects`,

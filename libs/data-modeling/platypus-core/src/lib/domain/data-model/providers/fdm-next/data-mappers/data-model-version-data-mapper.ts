@@ -1,8 +1,7 @@
 import {
   DataModelVersion,
   DataModelVersionStatus,
-} from '@platypus-core/domain/data-model/types';
-
+} from '../../../../../domain/data-model';
 import { GraphQlDmlVersionDTO } from '../dto/mixer-api-dtos';
 
 export class DataModelVersionDataMapper {

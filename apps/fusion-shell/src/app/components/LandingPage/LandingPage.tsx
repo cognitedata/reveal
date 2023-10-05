@@ -46,7 +46,10 @@ export default function LandingPage({
     >
       <UserOnboardingSectionWrapper>
         <UserOnboardingSection direction="column" alignItems="flex-start">
-          <StyledTitle level={2}>
+          <StyledTitle
+            data-testid="fusion-landing-page-welcome-message"
+            level={2}
+          >
             {isRockwellDomains
               ? t('fusion-landing-page-welcome-message-rockwell')
               : t('fusion-landing-page-welcome-message')}{' '}

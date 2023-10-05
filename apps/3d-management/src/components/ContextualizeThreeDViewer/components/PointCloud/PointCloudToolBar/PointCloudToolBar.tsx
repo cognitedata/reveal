@@ -77,6 +77,8 @@ const InformationBox = () => {
         Select an asset from
         <br />
         the right side panel
+        <br />
+        Press 'M' to Move and 'R' to Resize
       </p>
     </StyledInformation>
   );

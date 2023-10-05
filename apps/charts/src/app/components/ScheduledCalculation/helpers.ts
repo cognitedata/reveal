@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-import { ScheduledCalculationTask } from '@charts-app/domain/scheduled-calculation/service/types';
 import { captureMessage } from '@sentry/react';
 import { UseMutateAsyncFunction } from '@tanstack/react-query';
 import { SetterOrUpdater } from 'recoil';
@@ -14,6 +13,7 @@ import { Timeseries } from '@cognite/sdk';
 import { STEPS } from '../../domain/scheduled-calculation/internal/constants';
 import { adaptCalculationForClonedScheduledCalculation } from '../../domain/scheduled-calculation/internal/transformers/adaptCalculationForClonedScheduledCalculation';
 import { ScheduleCalculationFieldValues } from '../../domain/scheduled-calculation/internal/types';
+import { ScheduledCalculationTask } from '../../domain/scheduled-calculation/service/types';
 import { addScheduledCalculation } from '../../models/chart/updates-calculation';
 
 export const handleNext = ({

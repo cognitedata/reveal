@@ -10,12 +10,14 @@ import { useAnnotationModelsWithAsset } from '../hooks/useAnnotationModelsWithAs
 
 type AnnotationsCardProps = {
   annotations: AnnotationModel[] | null;
-  onAnnotationDelete: (annotation: AnnotationModel) => void;
+  onDeleteAnnotation: (annotation: AnnotationModel) => void;
+  onZoomToAnnotation: (annotationId: number) => void;
 };
 
 export const AnnotationsCard = ({
   annotations,
-  onAnnotationDelete,
+  onDeleteAnnotation,
+  onZoomToAnnotation,
 }: AnnotationsCardProps) => {
   const divRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -95,6 +97,7 @@ export const AnnotationsCard = ({
               key={annotation.id}
               justifyContent="space-between"
               alignItems="center"
+              onClick={() => onZoomToAnnotation(annotation.id)}
             >
               <span>{asset?.name ?? `Annotation ID: ${annotation.id}`}</span>
               <Button
@@ -102,7 +105,7 @@ export const AnnotationsCard = ({
                 size="small"
                 icon="Delete"
                 aria-label="Delete annotation"
-                onClick={() => onAnnotationDelete(annotation)}
+                onClick={() => onDeleteAnnotation(annotation)}
               />
             </StyledAnnotationListItem>
           ))}
@@ -118,7 +121,12 @@ const StyledAnnotationCardHeader = styled(Flex)`
 `;
 
 const StyledAnnotationListItem = styled(Flex)`
-  padding-top: 8px;
+  padding: 4px 0 4px 0;
+
+  cursor: pointer;
+  :hover {
+    background-color: ${Colors['decorative--grayscale--300']};
+  }
 `;
 
 const StyledBody = styled(Body)`

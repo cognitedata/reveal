@@ -1,8 +1,9 @@
 import { ComponentProps } from 'react';
 
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
-import { fullListOfOperations } from '@charts-app/models/operations/mocks';
 import { ComponentMeta, Story } from '@storybook/react';
+
+import { fullListOfOperations } from '../../../../../models/operations/mocks';
+import { defaultTranslations } from '../../../translations';
 
 import ActionBar from './ActionBar';
 

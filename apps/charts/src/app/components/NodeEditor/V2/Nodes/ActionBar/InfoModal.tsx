@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import Markdown from '@charts-app/components/Markdown/Markdown';
 import styled from 'styled-components/macro';
 
 import { OperationVersion } from '@cognite/calculation-backend';
 import { Modal } from '@cognite/cogs.js';
+
+import Markdown from '../../../../Markdown/Markdown';
 
 type Props = {
   indslFunction: OperationVersion;

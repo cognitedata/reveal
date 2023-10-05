@@ -4,35 +4,6 @@
 
 import { memo, useCallback, useEffect, useState } from 'react';
 
-import { ColorDropdown } from '@charts-app/components/AppearanceDropdown/AppearanceDropdown';
-import {
-  ExpandIcon,
-  Sidebar,
-  TopContainer,
-  TopContainerAside,
-  TopContainerTitle,
-  ContentOverflowWrapper,
-  ContentContainer,
-  SidebarHeaderActions,
-  SidebarCollapse,
-  CollapsePanelTitle,
-  SidebarFooterActions,
-  ReverseSwitch,
-} from '@charts-app/components/Common/SidebarElements';
-import ClickBoundary from '@charts-app/components/EditableText/ClickBoundary';
-import TranslatedEditableText from '@charts-app/components/EditableText/TranslatedEditableText';
-import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
-import { useTranslations } from '@charts-app/hooks/translations';
-import {
-  addEventFilters,
-  initEventFilters,
-  removeChartEventFilter,
-  updateEventFiltersProperties,
-} from '@charts-app/models/chart/updates-event-filters';
-import { activeEventFilterIdAtom } from '@charts-app/models/event-results/atom';
-import { ChartEventResults } from '@charts-app/models/event-results/types';
-import { DEFAULT_EVENT_COLOR } from '@charts-app/utils/colors';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { Col, Row } from 'antd';
 import { isNil, omit, omitBy } from 'lodash';
 import { useRecoilState } from 'recoil';
@@ -48,6 +19,36 @@ import {
   Popconfirm,
   Tooltip,
 } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../hooks/translations';
+import {
+  addEventFilters,
+  initEventFilters,
+  removeChartEventFilter,
+  updateEventFiltersProperties,
+} from '../../models/chart/updates-event-filters';
+import { activeEventFilterIdAtom } from '../../models/event-results/atom';
+import { ChartEventResults } from '../../models/event-results/types';
+import { DEFAULT_EVENT_COLOR } from '../../utils/colors';
+import { makeDefaultTranslations } from '../../utils/translations';
+import { ColorDropdown } from '../AppearanceDropdown/AppearanceDropdown';
+import {
+  ExpandIcon,
+  Sidebar,
+  TopContainer,
+  TopContainerAside,
+  TopContainerTitle,
+  ContentOverflowWrapper,
+  ContentContainer,
+  SidebarHeaderActions,
+  SidebarCollapse,
+  CollapsePanelTitle,
+  SidebarFooterActions,
+  ReverseSwitch,
+} from '../Common/SidebarElements';
+import ClickBoundary from '../EditableText/ClickBoundary';
+import TranslatedEditableText from '../EditableText/TranslatedEditableText';
+import { StyleButton } from '../StyleButton/StyleButton';
 
 import EventDetailsSidebar, {
   defaultTranslations as eventDetailDefaultTranslations,

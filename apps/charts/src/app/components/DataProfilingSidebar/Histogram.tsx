@@ -4,12 +4,13 @@
  * Data Profiling Histogram
  */
 
-import { formatValueForDisplay } from '@charts-app/utils/numbers';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import styled from 'styled-components/macro';
 
 import { DataProfilingResultResults } from '@cognite/calculation-backend';
+
+import { formatValueForDisplay } from '../../utils/numbers';
 
 import EmptyState from './EmptyState';
 

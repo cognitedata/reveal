@@ -6,7 +6,8 @@ type ResourceTab =
   | 'Sequence'
   | 'All resources'
   | 'Hierarchy'
-  | 'Details';
+  | 'Details'
+  | '3D';
 
 Cypress.Commands.add(
   'goToTab',

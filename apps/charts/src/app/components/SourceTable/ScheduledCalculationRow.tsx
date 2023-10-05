@@ -1,23 +1,6 @@
 import { ComponentProps, useState } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';
 
-import AppearanceDropdown from '@charts-app/components/AppearanceDropdown/AppearanceDropdown';
-import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
-import UnitDropdown from '@charts-app/components/UnitDropdown/UnitDropdown';
-import { useAclPermissions } from '@charts-app/domain/chart/service/queries/useAclPermissions';
-import { useScheduledCalculationDeleteMutate } from '@charts-app/domain/scheduled-calculation/internal/queries/useScheduledCalculationDeleteMutate';
-import {
-  useComponentTranslations,
-  useTranslations,
-} from '@charts-app/hooks/translations';
-import { ScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/types';
-import { formatValueForDisplay } from '@charts-app/utils/numbers';
-import {
-  makeDefaultTranslations,
-  translationKeys,
-} from '@charts-app/utils/translations';
-import { DatapointsSummary } from '@charts-app/utils/units';
-
 import {
   ChartWorkflow,
   SCHEDULED_CALCULATIONS_ACL,
@@ -25,8 +8,24 @@ import {
 } from '@cognite/charts-lib';
 import { Button, Tooltip } from '@cognite/cogs.js';
 
+import { useAclPermissions } from '../../domain/chart/service/queries/useAclPermissions';
+import { useScheduledCalculationDeleteMutate } from '../../domain/scheduled-calculation/internal/queries/useScheduledCalculationDeleteMutate';
+import {
+  useComponentTranslations,
+  useTranslations,
+} from '../../hooks/translations';
+import { ScheduledCalculationData } from '../../models/scheduled-calculation-results/types';
+import { formatValueForDisplay } from '../../utils/numbers';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '../../utils/translations';
+import { DatapointsSummary } from '../../utils/units';
 import { AccessDeniedModal } from '../AccessDeniedModal/AccessDeniedModal';
+import AppearanceDropdown from '../AppearanceDropdown/AppearanceDropdown';
 import { ScheduledCalculationDeleteModal } from '../ScheduledCalculation/ScheduledCalculationDeleteModal';
+import { StyleButton } from '../StyleButton/StyleButton';
+import UnitDropdown from '../UnitDropdown/UnitDropdown';
 
 import {
   DropdownWithoutMaxWidth,

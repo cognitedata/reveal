@@ -1,22 +1,19 @@
 import * as React from 'react';
 import { Route, Routes as ReactRoutes } from 'react-router-dom';
 
-import ErrorToast from '@charts-app/components/ErrorToast/ErrorToast';
-import PageLayout from '@charts-app/components/Layout/PageLayout';
-import SecondaryTopBar from '@charts-app/components/SecondaryTopBar/SecondaryTopBar';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { identifyUserForMetrics } from '@charts-app/services/metrics';
 import * as Sentry from '@sentry/react';
 
 import { getFlow } from '@cognite/auth-utils';
-import {
-  getProject,
-  getCluster,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { getProject, getCluster } from '@cognite/cdf-utilities';
 import { useFirebaseInit } from '@cognite/charts-lib';
 import { Loader, toast } from '@cognite/cogs.js';
 import { parseEnvFromCluster } from '@cognite/login-utils';
+
+import ErrorToast from '../components/ErrorToast/ErrorToast';
+import PageLayout from '../components/Layout/PageLayout';
+import SecondaryTopBar from '../components/SecondaryTopBar/SecondaryTopBar';
+import { useUserInfo } from '../hooks/useUserInfo';
+import { identifyUserForMetrics } from '../services/metrics';
 
 import ChartListPage from './ChartListPage/ChartListPage';
 import ChartViewPage from './ChartViewPage/ChartViewPage';
@@ -81,15 +78,10 @@ const RouteWithFirebase = ({
 const RouteWithSentry = Sentry.withSentryReactRouterV6Routing(Route);
 
 const Routes = () => {
-  const baseUrl = isUsingUnifiedSignin()
-    ? `/cdf/:project/:subAppPath`
-    : '/:project/:subAppPath';
+  const baseUrl = '/:project/:subAppPath';
   return (
     <ReactRoutes>
-      <RouteWithSentry
-        path="/"
-        element={isUsingUnifiedSignin() ? null : <TenantSelectorView />}
-      />
+      <RouteWithSentry path="/" element={<TenantSelectorView />} />
       <RouteWithSentry
         path={`${baseUrl}`}
         element={<RouteWithFirebase element={ChartListPage} />}

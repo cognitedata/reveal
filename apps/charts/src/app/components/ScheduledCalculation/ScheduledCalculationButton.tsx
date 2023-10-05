@@ -1,14 +1,13 @@
 import { useState } from 'react';
 
-import { ScheduleClock } from '@charts-app/components/Icons/ScheduleClock';
-import { useAclPermissions } from '@charts-app/domain/chart/service/queries/useAclPermissions';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { SCHEDULED_CALCULATIONS_ACL } from '@cognite/charts-lib';
 import { Button, Flex } from '@cognite/cogs.js';
 
+import { useAclPermissions } from '../../domain/chart/service/queries/useAclPermissions';
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
 import { AccessDeniedModal } from '../AccessDeniedModal/AccessDeniedModal';
+import { ScheduleClock } from '../Icons/ScheduleClock';
 
 import { ScheduledCalculationModal } from './ScheduledCalculationModal';
 

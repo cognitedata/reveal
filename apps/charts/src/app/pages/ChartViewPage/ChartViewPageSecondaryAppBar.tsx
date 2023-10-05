@@ -2,16 +2,17 @@ import React, { ComponentProps } from 'react';
 
 import styled from 'styled-components';
 
-import DateTimePicker from '@charts-app/components/DateTime/DateTimePicker';
-import TranslatedEditableText from '@charts-app/components/EditableText/TranslatedEditableText';
-import SecondaryTopBarLeft from '@charts-app/components/SecondaryTopBar/SecondaryAppBarLeft';
-import { ChartActions } from '@charts-app/components/TopBar/ChartActions';
-import { currentDateRangeLocale } from '@charts-app/config/locale';
-import chartAtom from '@charts-app/models/chart/atom';
 import dayjs from 'dayjs';
 import { useRecoilState } from 'recoil';
 
 import { Flex, Title } from '@cognite/cogs.js';
+
+import DateTimePicker from '../../components/DateTime/DateTimePicker';
+import TranslatedEditableText from '../../components/EditableText/TranslatedEditableText';
+import SecondaryTopBarLeft from '../../components/SecondaryTopBar/SecondaryAppBarLeft';
+import { ChartActions } from '../../components/TopBar/ChartActions';
+import { currentDateRangeLocale } from '../../config/locale';
+import chartAtom from '../../models/chart/atom';
 
 import ChartViewOptions from './ChartViewOptions';
 import { Divider, RangeColumn, RangeWrapper } from './elements';

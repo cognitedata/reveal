@@ -11,7 +11,6 @@ import {
   Drawer,
   Loader,
   Modal,
-  Select,
 } from '@cognite/cogs.js';
 import cogs9Styles from '@cognite/cogs.js/dist/cogs.css';
 
@@ -35,12 +34,6 @@ CogsTooltip.defaultProps = {
 CogsDropdown.defaultProps = {
   ...CogsDropdown.defaultProps,
   appendTo: getContainer,
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-Select.defaultProps = {
-  ...Select.defaultProps,
-  menuPortalTarget: document.body,
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

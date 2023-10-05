@@ -9,7 +9,7 @@ import {
 import { isEmpty } from 'lodash';
 
 import { OptionType } from '@cognite/cogs.js';
-import { DateRange } from '@cognite/sdk';
+import { DateRange, Timestamp } from '@cognite/sdk';
 
 import {
   DATA_EXPLORATION_COMPONENT,
@@ -36,6 +36,12 @@ const determinePeriod = (value: DateRange | undefined | null) => {
     return 'before';
   }
   return 'none';
+};
+
+const getFormattedDate = (timestamp: Timestamp) => {
+  const date = new Date(timestamp);
+  date.setSeconds(0);
+  return date;
 };
 
 interface DateFilterProps {
@@ -65,10 +71,10 @@ export const DateFilter = ({
     setPeriod(initialPeriod);
   }, [initialPeriod]);
 
-  const startDate = new Date(
-    value?.min || value?.max || TIME_SELECT['1Y'].getTime()[0]
+  const startDate = getFormattedDate(
+    value?.min || value?.max || TIME_SELECT['1Y'].getTime()[0].valueOf()
   );
-  const endDate = new Date(value?.max || new Date());
+  const endDate = value?.max ? getFormattedDate(value.max) : new Date();
 
   const options = [
     { value: 'none', label: t('ALL', 'All') },
@@ -104,7 +110,8 @@ export const DateFilter = ({
         break;
       }
       case 'before': {
-        const previousMinValue = value?.min && new Date(value.min).getTime();
+        const previousMinValue =
+          value?.min && getFormattedDate(value.min).getTime();
         if (!value || value.max !== endDate.valueOf()) {
           finalValue = {
             max: previousMinValue || endDate.valueOf(),
@@ -113,7 +120,8 @@ export const DateFilter = ({
         break;
       }
       case 'after': {
-        const previousMaxValue = value?.max && new Date(value?.max).getTime();
+        const previousMaxValue =
+          value?.max && getFormattedDate(value.max).getTime();
         if (!value || value.min !== endDate.valueOf()) {
           finalValue = {
             min: previousMaxValue || endDate.valueOf(),
@@ -136,9 +144,10 @@ export const DateFilter = ({
   };
 
   return (
-    <>
+    <div data-testid={`filter-${label}`}>
       {!isEmpty(label) && <FilterLabel>{label}</FilterLabel>}
       <Select
+        data-testid={`select-${label}`}
         value={options.find((el) => el.value === period)!}
         options={options}
         isSearchable={false}
@@ -159,6 +168,7 @@ export const DateFilter = ({
       {(period === 'after' || period === 'before') && (
         <div style={{ marginTop: 8 }}>
           <DatePicker
+            id={`date-picker-${label}`}
             initialDate={startDate}
             onDateChanged={(newDate) => {
               if (period === 'after') {
@@ -180,7 +190,7 @@ export const DateFilter = ({
           />
         </div>
       )}
-    </>
+    </div>
   );
 };
 const CreatedTimeFilter = (props: DateFilterProps) => {

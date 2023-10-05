@@ -1,9 +1,9 @@
+import { FileInfo as File } from '@cognite/sdk';
+
 import {
   PREVIEWABLE_FILE_TYPES,
   PREVIEWABLE_IMAGE_TYPES,
-} from '@charts-app/components/FileViewer/constants';
-
-import { FileInfo as File } from '@cognite/sdk';
+} from '../FileViewer/constants';
 
 const isFileOfType = (file?: File, type?: string[]) => {
   const { mimeType = '', name = '' } = file || {};

@@ -12,16 +12,16 @@ import ReactFlow, {
   NodeTypesType,
 } from 'react-flow-renderer';
 
-import AlertIcon from '@charts-app/components/AlertIcon/AlertIcon';
-import { usePrevious } from '@charts-app/hooks/usePrevious';
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import { trackUsage } from '@charts-app/services/metrics';
 import { compareVersions } from 'compare-versions';
 
 import { Operation } from '@cognite/calculation-backend';
 import { Chip, Flex } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
+import { usePrevious } from '../../../hooks/usePrevious';
+import { WorkflowState } from '../../../models/calculation-results/types';
+import { trackUsage } from '../../../services/metrics';
+import AlertIcon from '../../AlertIcon/AlertIcon';
 import { ScheduledCalculationButton } from '../../ScheduledCalculation/ScheduledCalculationButton';
 import { defaultTranslations } from '../translations';
 

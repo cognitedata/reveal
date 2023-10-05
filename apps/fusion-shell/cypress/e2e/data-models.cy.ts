@@ -1,6 +1,7 @@
 describe('Data-models page', () => {
   beforeEach(() => {
     cy.navigate('data-models');
+    cy.ensurePageFinishedLoading();
   });
 
   it('Should open Data models page', () => {

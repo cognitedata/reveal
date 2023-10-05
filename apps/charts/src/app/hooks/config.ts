@@ -1,9 +1,10 @@
 import { useSearchParams } from 'react-router-dom';
 
-import { CLUSTER_KEY } from '@charts-app/utils/constants';
 import { omit } from 'lodash';
 
 import { getProject } from '@cognite/cdf-utilities';
+
+import { CLUSTER_KEY } from '../utils/constants';
 
 export const useCluster = () => {
   const [searchParams, setSearchParams] = useSearchParams();

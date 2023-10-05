@@ -112,7 +112,7 @@ export const DataPreviewTable = forwardRef<
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     // This property is used to trigger a rerender when a selection occurs in the grid
     const [, setSelectedPublishedRowsCount] = useState(0);
-    const [filteredRowsCount, setfilteredRowsCount] = useState<null | number>(
+    const [filteredRowsCount, setFilteredRowsCount] = useState<null | number>(
       null
     );
     const countResult = useGetFilteredRowsCount({
@@ -162,8 +162,10 @@ export const DataPreviewTable = forwardRef<
     } = useDraftRows();
 
     useEffect(() => {
-      setfilteredRowsCount(countResult || null);
-    }, [countResult]);
+      if (countResult !== filteredRowsCount) {
+        setFilteredRowsCount(countResult || null);
+      }
+    }, [countResult, filteredRowsCount]);
 
     const [columnOrder, setColumnOrder] = useState<ColumnToggleType[]>(
       getColumnsInitialOrder(dataModelType, instanceIdCol)

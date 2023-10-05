@@ -11,10 +11,10 @@ import {
 } from '@transformations/hooks';
 import { TransformationListTableRecord } from '@transformations/pages/transformation-list/TransformationListTable';
 import { createInternalLink, getTrackEvent } from '@transformations/utils';
+import { useCdfUserHistoryService } from '@user-history';
 import { notification } from 'antd';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Button, Colors, Menu } from '@cognite/cogs.js';
 
 type TableOptionsProps = {

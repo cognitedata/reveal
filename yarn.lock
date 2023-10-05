@@ -138,11 +138,6 @@
     promise-polyfill "^8.2.1"
     unfetch "^4.2.0"
 
-"@auth0/auth0-spa-js@2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@auth0/auth0-spa-js/-/auth0-spa-js-2.0.4.tgz#81f6b5d9f72617ed30ee53cdf27dcd7a216bf2da"
-  integrity sha512-NgD6Fkm5Xnbned1VjhEW8irm1/Y8AWtdSLexgLXNwwBVgfnYicCVBu8w75m2t+4QljXkTcI7IXVEFhVmxMuxaA==
-
 "@automerge/automerge-wasm@^0.1.26":
   version "0.1.26"
   resolved "https://registry.yarnpkg.com/@automerge/automerge-wasm/-/automerge-wasm-0.1.26.tgz#825848beab15a759de273fa4f99e9344c3850a26"
@@ -170,13 +165,6 @@
   dependencies:
     "@azure/msal-common" "^6.1.0"
 
-"@azure/msal-browser@2.35.0":
-  version "2.35.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.35.0.tgz#39b553f5da140d5d16bf90e0d92f1bcc6f0d61d3"
-  integrity sha512-L+gSBbJfU3H81Bnj+VIVjO7jRpt2Ex+4i2YVOPE50ykfQ5W9mtBFMRCHb1K+8FzTeyQH/KkQv6bC+MdaU+3LEw==
-  dependencies:
-    "@azure/msal-common" "^12.0.0"
-
 "@azure/msal-browser@^2.11.0":
   version "2.38.2"
   resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.38.2.tgz#707725c892258fe6b3af4dd410e1daff608521b5"
@@ -188,11 +176,6 @@
   version "13.3.0"
   resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-13.3.0.tgz#dfa39810e0fbce6e07ca85a2cf305da58d30b7c9"
   integrity sha512-/VFWTicjcJbrGp3yQP7A24xU95NiDMe23vxIU1U6qdRPFsprMDNUohMudclnd+WSHE4/McqkZs/nUU3sAKkVjg==
-
-"@azure/msal-common@^12.0.0":
-  version "12.1.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-12.1.0.tgz#e253a4912a359193c52c570a1e2585cfd0213bff"
-  integrity sha512-9RUiv0evSHvYtvF7r9ksShw9FgCeT6Rf6JB/SOMbMzI0VySZDUBSE+0b9e7DgL2Ph8wSARIh3m8c5pCK9TRY3w==
 
 "@azure/msal-common@^6.1.0":
   version "6.4.0"
@@ -1818,16 +1801,6 @@
   resolved "https://registry.yarnpkg.com/@cognite/apm-auth-container/-/apm-auth-container-1.0.0.tgz#b0bfdfd90d328c02985ac8efb4bb73fbd50300ab"
   integrity sha512-lzLLisQcNN65XYCy6S+6K69zUAjhRi/Frihw8+PQSosxGbt4FoZXd2Ajo3h+s4piugh8byfnQQry2vef1eH49w==
 
-"@cognite/auth-react@^0.0.28-beta":
-  version "0.0.28-beta"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-react/-/auth-react-0.0.28-beta.tgz#0e48960a654612ad853a97d8bf95e3df3022f84f"
-  integrity sha512-fFqyQoeM59CgDu+5Sy6l782q+rgWTW+AfLaoWHB0/+0Aqu1jBVpSnIS9c4WU2IflLVphZzQ/y+xmh4na9r9Tcg==
-  dependencies:
-    "@auth0/auth0-spa-js" "2.0.4"
-    "@azure/msal-browser" "2.35.0"
-    jwt-decode "3.1.2"
-    oidc-client-ts "2.2.2"
-
 "@cognite/auth-utils@^2.1.0":
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@cognite/auth-utils/-/auth-utils-2.3.1.tgz#d35adf8990e427b3871ff23f38c74cba7d038c1d"
@@ -2218,10 +2191,10 @@
   dependencies:
     nanoid "^3.1.16"
 
-"@cognite/e2e-auth@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@cognite/e2e-auth/-/e2e-auth-1.0.3.tgz#42680a0fcdf004ffb811ee9a1ffa9e868717ca73"
-  integrity sha512-t8gmZjCEPyXrBo+YCNKYpDcKmmDnkfiiYlf4qvwMO92EY2wzqKrt7Ycc5nxaqNq1exd4TkTkhYDjmuiZe9JQzg==
+"@cognite/e2e-auth@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@cognite/e2e-auth/-/e2e-auth-1.0.4.tgz#caa42807820a6e3c047753bf77bfa1da01d0f4a7"
+  integrity sha512-XQAasIGnqmjb55QDkjXVE1w9RKz3zeKXlHvRdvemf69G3pAz/elivhqAYKqfvRwSkNPr4HyznJqGExm6mLUISg==
 
 "@cognite/eslint-config@^3.2.0":
   version "3.2.0"
@@ -28924,14 +28897,6 @@ octal@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/octal/-/octal-1.0.0.tgz#63e7162a68efbeb9e213588d58e989d1e5c4530b"
   integrity sha512-nnda7W8d+A3vEIY+UrDQzzboPf1vhs4JYVhff5CDkq9QNoZY7Xrxeo/htox37j9dZf7yNHevZzqtejWgy1vCqQ==
-
-oidc-client-ts@2.2.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/oidc-client-ts/-/oidc-client-ts-2.2.2.tgz#3656f7b7c98e14b3185d2a53fe277da67fd3f87a"
-  integrity sha512-tEpnC1xQX6PMhnDMNEvDhpqnsu0buh29b/sA9a1I5tq6lD87wRAW1rTj49B2+5925I0sQlvU64DoK0Pxeiu7Dg==
-  dependencies:
-    crypto-js "^4.1.1"
-    jwt-decode "^3.1.2"
 
 oidc-client-ts@^2.2.4:
   version "2.2.5"

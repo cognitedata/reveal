@@ -1,10 +1,10 @@
-import { useUpdateChart } from '@charts-app/hooks/charts-storage';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { duplicateChart } from '@charts-app/models/chart/helpers';
 import { filter, orderBy, isString } from 'lodash';
 
 import { Chart } from '@cognite/charts-lib';
 
+import { duplicateChart } from '../../../models/chart/helpers';
+import { useUpdateChart } from '../../charts-storage';
+import { useUserInfo } from '../../useUserInfo';
 import useDeleteMyChart from '../mutations/useDeleteMyChart';
 import useMyCharts from '../queries/useMyCharts';
 

@@ -5,7 +5,7 @@ import {
   useState as reactUseState,
 } from 'react';
 
-import { createLink, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 import { Metadata } from '@cognite/sdk';
 
 import { PredictionObject } from '../hooks/entity-matching-predictions';
@@ -20,9 +20,7 @@ export const getContainer = () => {
 };
 
 export const createInternalLink = (path?: string | number) => {
-  const mountPoint = isUsingUnifiedSignin()
-    ? window.location.pathname.split('/')[3]
-    : window.location.pathname.split('/')[2];
+  const mountPoint = window.location.pathname.split('/')[2];
   return createLink(`/${mountPoint}/${path || ''}`);
 };
 

@@ -9,11 +9,12 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
 
 import { DataProfilingResultResults } from '@cognite/calculation-backend';
 import { Tooltip } from '@cognite/cogs.js';
+
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import EmptyState from './EmptyState';
 

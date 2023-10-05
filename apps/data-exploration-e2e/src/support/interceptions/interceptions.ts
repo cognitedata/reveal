@@ -3,23 +3,20 @@ export const TIMESERIES_LIST_ALIAS = 'timeseriesList';
 export const EVENT_LIST_ALIAS = 'eventList';
 export const FILE_LIST_ALIAS = 'fileList';
 export const SEQUENCE_LIST_ALIAS = 'sequenceList';
+export const FILES_SEARCH_ALIAS = 'filesSearch';
 
-export const ASSET_AGGREGATE_ALIAS = 'assetAggregate';
-export const TIMESERIES_AGGREGATE_ALIAS = 'timeseriesAggregate';
-export const FILE_AGGREGATE_ALIAS = 'fileAggregate';
-
-export const interceptAssetList = (alias = ASSET_LIST_ALIAS) => {
+export const interceptAssetList = () => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/assets/list',
     method: 'POST',
-  }).as(alias);
+  }).as(ASSET_LIST_ALIAS);
 };
 
-export const interceptTimeseriesList = (alias = TIMESERIES_LIST_ALIAS) => {
+export const interceptTimeseriesList = () => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/timeseries/list',
     method: 'POST',
-  }).as(alias);
+  }).as(TIMESERIES_LIST_ALIAS);
 };
 
 export const interceptEventList = () => {
@@ -29,11 +26,11 @@ export const interceptEventList = () => {
   }).as(EVENT_LIST_ALIAS);
 };
 
-export const interceptFileList = (alias = FILE_LIST_ALIAS) => {
+export const interceptFileList = () => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/documents/search',
     method: 'POST',
-  }).as(alias);
+  }).as(FILE_LIST_ALIAS);
 };
 
 export const interceptSequenceList = () => {
@@ -43,23 +40,9 @@ export const interceptSequenceList = () => {
   }).as(SEQUENCE_LIST_ALIAS);
 };
 
-export const interceptAssetAggregate = () => {
+export const interceptFilesSearch = () => {
   cy.intercept({
-    url: '**/api/v1/projects/dss-dev/assets/aggregate',
+    url: '**/api/v1/projects/dss-dev/files/search',
     method: 'POST',
-  }).as(ASSET_AGGREGATE_ALIAS);
-};
-
-export const interceptTimeseriesAggregate = () => {
-  cy.intercept({
-    url: '**/api/v1/projects/dss-dev/timeseries/aggregate',
-    method: 'POST',
-  }).as(TIMESERIES_AGGREGATE_ALIAS);
-};
-
-export const interceptFileAggregate = () => {
-  cy.intercept({
-    url: '**/api/v1/projects/dss-dev/documents/aggregate',
-    method: 'POST',
-  }).as(FILE_AGGREGATE_ALIAS);
+  }).as(FILES_SEARCH_ALIAS);
 };

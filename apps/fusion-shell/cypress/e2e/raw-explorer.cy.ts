@@ -1,6 +1,7 @@
 describe('Raw explorer page', () => {
   beforeEach(() => {
     cy.navigate('raw');
+    cy.ensurePageFinishedLoading();
   });
 
   it('Should open Extract data page', () => {

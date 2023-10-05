@@ -4,12 +4,12 @@ import ReactDOM from 'react-dom';
 import './set-public-path';
 import singleSpaReact from 'single-spa-react';
 
-import App from './App';
+import { AppWrapper } from './AppWrapper';
 
 const lifecycles = singleSpaReact({
   React: React as any,
   ReactDOM,
-  rootComponent: App,
+  rootComponent: AppWrapper,
   // @ts-ignore
   errorBoundary() {
     // eslint-disable-line

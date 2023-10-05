@@ -1,8 +1,9 @@
 import React from 'react';
 
-import { MonitoringJob } from '@charts-app/components/MonitoringSidebar/types';
-import { customFormatDuration } from '@charts-app/utils/date';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { customFormatDuration } from '../../utils/date';
+import { makeDefaultTranslations } from '../../utils/translations';
+
+import { MonitoringJob } from './types';
 
 const defaultTranslations = makeDefaultTranslations('Condition');
 

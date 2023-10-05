@@ -1,6 +1,7 @@
 describe('Charts page', () => {
   beforeEach(() => {
     cy.navigate('charts');
+    cy.ensurePageFinishedLoading();
   });
 
   // skipping this to for next-release, will re-enable after

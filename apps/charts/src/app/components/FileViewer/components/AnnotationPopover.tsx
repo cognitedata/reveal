@@ -1,11 +1,3 @@
-import { useAddRemoveTimeseries } from '@charts-app/components/Search/hooks';
-import {
-  useAsset,
-  useAssetTimeseries,
-  useAssetList,
-} from '@charts-app/hooks/cdf-assets';
-import chartAtom from '@charts-app/models/chart/atom';
-import { trackUsage } from '@charts-app/services/metrics';
 import { TimeseriesChart } from '@data-exploration-components/containers';
 import dayjs from 'dayjs';
 import { useRecoilState } from 'recoil';
@@ -20,6 +12,15 @@ import {
   Heading,
   Colors,
 } from '@cognite/cogs.js';
+
+import {
+  useAsset,
+  useAssetTimeseries,
+  useAssetList,
+} from '../../../hooks/cdf-assets';
+import chartAtom from '../../../models/chart/atom';
+import { trackUsage } from '../../../services/metrics';
+import { useAddRemoveTimeseries } from '../../Search/hooks';
 
 export const AnnotationPopover = ({
   resourceId,

@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { Elements } from 'react-flow-renderer';
 
-import { ToolboxFunctionSubmenu } from '@charts-app/components/ToolboxFunctionSubmenu/ToolboxFunctionSubmenu';
-import {
-  SourceCircle,
-  SourceSquare,
-} from '@charts-app/pages/ChartViewPage/elements';
 import styled from 'styled-components/macro';
 
 import { Operation } from '@cognite/calculation-backend';
 import { Button, Dropdown, Menu, Flex } from '@cognite/cogs.js';
 
+import {
+  SourceCircle,
+  SourceSquare,
+} from '../../../pages/ChartViewPage/elements';
+import { ToolboxFunctionSubmenu } from '../../ToolboxFunctionSubmenu/ToolboxFunctionSubmenu';
 import { defaultTranslations } from '../translations';
 import { getOperationsGroupedByCategory } from '../utils';
 

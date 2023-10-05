@@ -2,13 +2,17 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 import { useQuery } from '@tanstack/react-query';
+import { noop } from 'lodash-es';
 import { parse } from 'query-string';
 
 import { Icon, PromoChip } from '@cognite/cogs.js';
 import {
   cogIdpAuthority,
   cogIdpInternalId,
+  cogniteIdPSignInRedirect,
+  getCogIdPState,
   getSelectedIdpDetails,
+  goToSelectProject,
   saveSelectedIdpDetails,
   useCogniteIdPUserManager,
 } from '@cognite/login-utils';
@@ -42,18 +46,18 @@ export default function SignInWithCogniteIdP({
     async () => {
       try {
         if (code) {
-          const cdfUser = userManager.signinRedirectCallback();
-          window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname
+          const cdfUser = await userManager.signinRedirectCallback();
+          const { location } = window;
+          const { pathname, search } = getCogIdPState(cdfUser);
+          window.location.replace(
+            (pathname || location.pathname) + (search || '')
           );
-          return cdfUser;
+          return new Promise(noop);
         } else {
           return userManager.getUser();
         }
       } finally {
-        userManager.clearStaleState();
+        await userManager.clearStaleState();
       }
     },
     { enabled: active }
@@ -61,7 +65,7 @@ export default function SignInWithCogniteIdP({
 
   useEffect(() => {
     if (user) {
-      navigate('/select-project');
+      goToSelectProject(navigate);
     }
   }, [user, navigate]);
 
@@ -69,16 +73,12 @@ export default function SignInWithCogniteIdP({
     return <Icon type="Loader" />;
   }
 
-  const initiateSignIn = () => {
+  const initiateSignIn = async () => {
     saveSelectedIdpDetails({
       internalId: cogIdpInternalId,
       type: 'COGNITE_IDP',
     });
-    userManager.signinRedirect({
-      extraQueryParams: {
-        organization_hint: organization,
-      },
-    });
+    await cogniteIdPSignInRedirect(userManager, organization);
   };
 
   // If we have a code or user it means we're in the IdP sign-in callback

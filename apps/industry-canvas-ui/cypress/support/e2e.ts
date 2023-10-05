@@ -47,7 +47,7 @@ beforeEach(() => {
       cy.setImportMapOverrides([
         {
           module: '@cognite/cdf-industry-canvas-ui',
-          domain: 'https://localhost:3010/index.js',
+          domain: 'https://localhost:3011/index.js',
         },
       ]);
     },

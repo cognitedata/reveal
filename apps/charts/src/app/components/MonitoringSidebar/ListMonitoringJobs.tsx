@@ -1,27 +1,28 @@
 import React, { memo, useEffect, useState } from 'react';
 
-import {
-  CollapsePanelTitle,
-  ExpandIcon,
-  LoadingRow,
-} from '@charts-app/components/Common/SidebarElements';
-import {
-  useGetTsIdsFromTimeseriesCollection,
-  useGetTsExternalIdsFromScheduledCalculations,
-} from '@charts-app/domain/chart/internal/queries/useGetTSIds';
-import { CHARTS_FOLDER_PREFIX } from '@charts-app/domain/monitoring/constants';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { trackUsage } from '@charts-app/services/metrics';
-import {
-  MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
-  MONITORING_SIDEBAR_SELECTED_FOLDER,
-  MONITORING_FILTER,
-} from '@charts-app/utils/constants';
 import { Col, Row } from 'antd';
 import difference from 'lodash/difference';
 import head from 'lodash/head';
 
 import { Collapse, Chip } from '@cognite/cogs.js';
+
+import {
+  useGetTsIdsFromTimeseriesCollection,
+  useGetTsExternalIdsFromScheduledCalculations,
+} from '../../domain/chart/internal/queries/useGetTSIds';
+import { CHARTS_FOLDER_PREFIX } from '../../domain/monitoring/constants';
+import { useSearchParam } from '../../hooks/navigation';
+import { trackUsage } from '../../services/metrics';
+import {
+  MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
+  MONITORING_SIDEBAR_SELECTED_FOLDER,
+  MONITORING_FILTER,
+} from '../../utils/constants';
+import {
+  CollapsePanelTitle,
+  ExpandIcon,
+  LoadingRow,
+} from '../Common/SidebarElements';
 
 import { SidebarCollapseWrapped, ExpandTitle } from './elements';
 import EmptyState from './EmptyState';

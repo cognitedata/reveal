@@ -1,11 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-  isFilePreviewable,
-  readablePreviewableFileTypes,
-} from '@charts-app/components/FileList/utils';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
 
 import { FileInfo } from '@cognite/sdk';
@@ -15,6 +9,13 @@ import ReactUnifiedViewer, {
   getContainerConfigFromFileInfo,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
+
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
+import {
+  isFilePreviewable,
+  readablePreviewableFileTypes,
+} from '../FileList/utils';
 
 import { ActionTools } from './components/ActionTools';
 import { Loader } from './components/Loader';

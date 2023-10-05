@@ -1,15 +1,18 @@
 import { useCallback, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { useAuth } from '@cognite/auth-react';
+import {
+  getCluster,
+  getEnvFromCluster,
+  getProject,
+} from '@cognite/cdf-utilities';
 
 import { DataModelV2, Instance } from '../services/types';
 
 const FUSION_URL = 'fusion.cognite.com';
 
 const useGetEnv = () => {
-  const { cluster } = useAuth();
-  const env = cluster?.split('.')?.[0];
+  const env = getEnvFromCluster();
 
   // In Fusion, for the EU1-1 cluster (api.cognitedata.com) there are no need of env. variable
   if (env === 'api' || !env) {
@@ -21,7 +24,8 @@ const useGetEnv = () => {
 
 export const useLinks = () => {
   const { pathname } = useLocation();
-  const { cluster, project } = useAuth();
+  const cluster = getCluster();
+  const project = getProject();
   const env = useGetEnv();
 
   const basename = useMemo(

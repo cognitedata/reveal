@@ -1,9 +1,9 @@
-import { useAclPermissions } from '@charts-app/domain/chart/service/queries/useAclPermissions';
 import { useQuery } from '@tanstack/react-query';
 
 import { ExternalId } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { useAclPermissions } from '../../../chart/service/queries/useAclPermissions';
 import { fetchScheduledCalculationTasks } from '../network/fetchScheduledCalculationTasks';
 import { ScheduledCalculationTask } from '../types';
 

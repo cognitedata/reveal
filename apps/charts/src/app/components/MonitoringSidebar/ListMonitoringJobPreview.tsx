@@ -2,16 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { useUserProfileQuery } from '@charts-app/common/providers/useUserProfileQuery';
-import Dropdown from '@charts-app/components/Dropdown/Dropdown';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { trackUsage } from '@charts-app/services/metrics';
-import {
-  MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
-  MONITORING_SIDEBAR_SHOW_ALERTS,
-} from '@charts-app/utils/constants';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { Col, Row } from 'antd';
 import { format } from 'date-fns';
 import { head } from 'lodash';
@@ -19,6 +9,17 @@ import { head } from 'lodash';
 import { Button, Icon, toast, Body, Colors } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+
+import { useUserProfileQuery } from '../../common/providers/useUserProfileQuery';
+import { useSearchParam } from '../../hooks/navigation';
+import { useTranslations } from '../../hooks/translations';
+import { trackUsage } from '../../services/metrics';
+import {
+  MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
+  MONITORING_SIDEBAR_SHOW_ALERTS,
+} from '../../utils/constants';
+import { makeDefaultTranslations } from '../../utils/translations';
+import Dropdown from '../Dropdown/Dropdown';
 
 import { SubscriptionLoader } from './elements';
 import {

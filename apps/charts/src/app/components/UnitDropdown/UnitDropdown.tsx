@@ -1,13 +1,14 @@
 import { CSSProperties, useState } from 'react';
 
-import {
-  makeDefaultTranslations,
-  translationKeys,
-} from '@charts-app/utils/translations';
-import { units, UnitTypes } from '@charts-app/utils/units';
 import styled from 'styled-components/macro';
 
 import { Menu, Button, Dropdown } from '@cognite/cogs.js';
+
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '../../utils/translations';
+import { units, UnitTypes } from '../../utils/units';
 
 import UnitDropDownInput from './UnitDropDownInput';
 import UnitDropdownOutput from './UnitDropdownOutput';
