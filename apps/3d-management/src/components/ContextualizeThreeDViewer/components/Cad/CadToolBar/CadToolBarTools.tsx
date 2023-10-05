@@ -17,10 +17,6 @@ export const CadToolBarTools = (): ReactElement => {
     setTool(ToolType.ADD_ANNOTATION);
   };
 
-  const handleDeleteClick = () => {
-    setTool(ToolType.DELETE_ANNOTATION);
-  };
-
   return (
     <ToolBar direction="vertical">
       <>
@@ -31,15 +27,6 @@ export const CadToolBarTools = (): ReactElement => {
             aria-label="Add contextualization tool"
             toggled={tool === ToolType.ADD_ANNOTATION}
             onClick={handleAddClick}
-          />
-        </Tooltip>
-        <Tooltip content="Delete contextualization" position="right">
-          <Button
-            icon="Delete"
-            type="ghost"
-            aria-label="Delete contextualization tool"
-            toggled={tool === ToolType.DELETE_ANNOTATION}
-            onClick={handleDeleteClick}
           />
         </Tooltip>
       </>
