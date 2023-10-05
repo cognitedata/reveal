@@ -50,8 +50,7 @@ export const HighQualitySettings: QualitySettings = {
 };
 
 // TODO: Refactor in a better way
-export const cadNodeStyles = [
-  DefaultNodeAppearance.Default,
-  new Color(0.6, 0.2, 0.78), // contextualized
-  new Color(0.38, 0.27, 0.72), // selected and contextualized
-] as const;
+export const CAD_STYLE = {
+  SELECTED: DefaultNodeAppearance.Highlighted,
+  CONTEXTUALIZED_COLOR: new Color(0.6, 0.2, 0.78),
+};

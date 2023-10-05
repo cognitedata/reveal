@@ -1,11 +1,8 @@
 import { useEffect } from 'react';
 import { useContextualizeThreeDViewerStoreCad } from '../../../useContextualizeThreeDViewerStoreCad';
 import { getCogniteCadModel } from '@3d-management/components/ContextualizeThreeDViewer/utils/getCogniteCadModel';
-import {
-  DefaultNodeAppearance,
-  TreeIndexNodeCollection,
-} from '@cognite/reveal';
-import { cadNodeStyles } from '@3d-management/pages/ContextualizeEditor/constants';
+import { TreeIndexNodeCollection } from '@cognite/reveal';
+import { CAD_STYLE } from '@3d-management/pages/ContextualizeEditor/constants';
 
 export const useSyncCadStateWithViewer = () => {
   const { modelId, threeDViewer, selectedNodeIds, contextualizedNodes } =
@@ -40,7 +37,7 @@ export const useSyncCadStateWithViewer = () => {
       // Update selected nodes
       cadModel.assignStyledNodeCollection(
         new TreeIndexNodeCollection(selectedTreeIds),
-        DefaultNodeAppearance.Highlighted
+        CAD_STYLE.SELECTED
       );
     };
 
@@ -71,7 +68,7 @@ export const useSyncCadStateWithViewer = () => {
       // Update contextualized nodes
       cadModel.assignStyledNodeCollection(
         new TreeIndexNodeCollection(contextualizedTreeIds),
-        { color: cadNodeStyles[1] }
+        { color: CAD_STYLE.CONTEXTUALIZED_COLOR }
       );
     };
 
