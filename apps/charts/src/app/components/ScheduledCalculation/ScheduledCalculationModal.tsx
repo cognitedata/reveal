@@ -1,7 +1,15 @@
 import { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 
-import { ModalDefaultProps, Modal, IconType } from '@cognite/cogs.js';
+import styled from 'styled-components';
+
+import {
+  ModalDefaultProps,
+  Modal,
+  IconType,
+  PromoChip,
+  Flex,
+} from '@cognite/cogs.js';
 
 import { useGetWorkflow } from '../../domain/chart/internal/queries/useGetWorkflow';
 import {
@@ -32,9 +40,11 @@ type Header = {
 const defaultTranslations = makeDefaultTranslations(
   'Create scheduled calculation',
   'Save result and schedule the calculation',
+  'This feature is available for beta testing and will likely change. Use it for testing purposes only.',
   'Error occured',
   'Cancel',
-  'Next'
+  'Next',
+  'Beta'
 );
 
 const STEP_WIDTH: Record<string, ModalDefaultProps['size']> = {
@@ -85,14 +95,32 @@ export const ScheduledCalculationModal = ({
   });
 
   const modalHeader = STEP_HEADER[currentStep];
-  const title = modalHeader ? t[modalHeader.title] : '';
+  const title = modalHeader ? (
+    <Flex justifyContent="space-between" alignItems="center">
+      <div>{t[modalHeader.title]}</div>
+      <PromoChip
+        size="x-small"
+        tooltip={
+          t[
+            'This feature is available for beta testing and will likely change. Use it for testing purposes only.'
+          ]
+        }
+      >
+        {t['Beta']}
+      </PromoChip>
+    </Flex>
+  ) : (
+    ''
+  );
 
   return (
-    <Modal
+    <StyledModal
       visible
       onCancel={onClose}
       hideFooter
       icon={modalHeader?.icon}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore even though Cogs just renders title, it is not accepting element as title, will resolve with Cogs later
       title={title}
       size={STEP_WIDTH[currentStep]}
     >
@@ -123,6 +151,12 @@ export const ScheduledCalculationModal = ({
           loading={loading}
         />
       </div>
-    </Modal>
+    </StyledModal>
   );
 };
+
+const StyledModal = styled(Modal)`
+  .cogs-modal-title-container {
+    width: 100%;
+  }
+`;
