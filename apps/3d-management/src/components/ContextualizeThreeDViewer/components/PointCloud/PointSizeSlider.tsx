@@ -10,12 +10,12 @@ import {
   STEP_POINT_SIZE,
 } from '../../../../pages/ContextualizeEditor/constants';
 import {
-  useContextualizeThreeDViewerStorePointCloud,
+  useContextualizeThreeDViewerStore,
   updateVisualizationOptions,
-} from '../../useContextualizeThreeDViewerStorePointCloud';
+} from '../../useContextualizeThreeDViewerStore';
 
 export const PointSizeSlider = (): React.ReactElement => {
-  const { visualizationOptions } = useContextualizeThreeDViewerStorePointCloud(
+  const { visualizationOptions } = useContextualizeThreeDViewerStore(
     (state) => ({
       visualizationOptions: state.visualizationOptions,
     })

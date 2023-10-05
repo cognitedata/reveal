@@ -3,7 +3,7 @@ import { Matrix4, Vector3 } from 'three';
 import { CognitePointCloudModel } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk/dist/src';
 
-import { ThreeDPosition } from '../useContextualizeThreeDViewerStorePointCloud';
+import { ThreeDPosition } from '../useContextualizeThreeDViewerStore';
 
 export const createCdfThreeDAnnotation = async ({
   position,

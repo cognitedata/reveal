@@ -54,19 +54,19 @@ const initialState: RootState = {
   visualizationOptions: DEFAULT_VISUALIZATION_OPTIONS,
 };
 
-export const useContextualizeThreeDViewerStorePointCloud = create<RootState>(
+export const useContextualizeThreeDViewerStore = create<RootState>(
   () => initialState
 );
 
 export const onOpenResourceSelector = () => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     isResourceSelectorOpen: true,
   }));
 };
 
 export const onCloseResourceSelector = () => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     isResourceSelectorOpen: false,
     pendingAnnotation: null,
@@ -74,7 +74,7 @@ export const onCloseResourceSelector = () => {
 };
 
 export const setPendingAnnotation = (annotation: CubeAnnotation | null) => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     pendingAnnotation: annotation,
     isResourceSelectorOpen:
@@ -82,22 +82,22 @@ export const setPendingAnnotation = (annotation: CubeAnnotation | null) => {
   }));
 };
 
-export const setThreeDViewer = (viewer: Cognite3DViewer) => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
+export const setThreeDViewer = (model: Cognite3DViewer) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
-    threeDViewer: viewer,
+    threeDViewer: model,
   }));
 };
 
 export const setModelLoaded = () => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     isModelLoaded: true,
   }));
 };
 
 export const setTool = (tool: ToolType) => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     tool,
     pendingAnnotation: null,
@@ -105,28 +105,28 @@ export const setTool = (tool: ToolType) => {
 };
 
 export const setAnnotations = (annotations: AnnotationModel[]) => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     annotations: annotations,
   }));
 };
 
 export const toggleShouldShowBoundingVolumes = () => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     shouldShowBoundingVolumes: !prevState.shouldShowBoundingVolumes,
   }));
 };
 
 export const toggleShouldShowWireframes = () => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     shouldShowWireframes: !prevState.shouldShowWireframes,
   }));
 };
 
 export const setModelId = (modelId: number) => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     modelId,
   }));
@@ -135,7 +135,7 @@ export const setModelId = (modelId: number) => {
 export const updateVisualizationOptions = (
   visualizationOptions: Partial<VisualizationOptions>
 ) => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     visualizationOptions: {
       ...prevState.visualizationOptions,

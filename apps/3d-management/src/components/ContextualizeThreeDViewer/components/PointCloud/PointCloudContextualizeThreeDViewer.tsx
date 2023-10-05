@@ -25,9 +25,9 @@ import { useSyncStateWithViewerPointCloud } from '../../hooks/useSyncStateWithVi
 import {
   setModelId,
   setPendingAnnotation,
-  useContextualizeThreeDViewerStorePointCloud,
+  useContextualizeThreeDViewerStore,
   setAnnotations,
-} from '../../useContextualizeThreeDViewerStorePointCloud';
+} from '../../useContextualizeThreeDViewerStore';
 import { getCdfAnnotations } from '../../utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from '../../utils/createCdfThreeDAnnotation';
 import { getCognitePointCloudModel } from '../../utils/getCognitePointCloudModel';
@@ -61,7 +61,7 @@ export const PointCloudContextualizeThreeDViewer = ({
   const queryClient = useQueryClient();
 
   const { isResourceSelectorOpen, pendingAnnotation, viewer } =
-    useContextualizeThreeDViewerStorePointCloud((state) => ({
+    useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       pendingAnnotation: state.pendingAnnotation,
       viewer: state.threeDViewer,

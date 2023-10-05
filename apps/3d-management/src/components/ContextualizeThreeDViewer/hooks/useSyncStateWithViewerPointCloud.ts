@@ -6,8 +6,8 @@ import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 
 import {
   ToolType,
-  useContextualizeThreeDViewerStorePointCloud,
-} from '../useContextualizeThreeDViewerStorePointCloud';
+  useContextualizeThreeDViewerStore,
+} from '../useContextualizeThreeDViewerStore';
 import { createAnnotationsAsWireframes } from '../utils/annotations/annotationUtils';
 import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
 import { hideBoundingVolumes } from '../utils/hideBoundingVolumes';
@@ -49,7 +49,7 @@ export const useSyncStateWithViewerPointCloud = () => {
     tool,
     annotations,
     visualizationOptions,
-  } = useContextualizeThreeDViewerStorePointCloud((state) => ({
+  } = useContextualizeThreeDViewerStore((state) => ({
     modelId: state.modelId,
     isModelLoaded: state.isModelLoaded,
     pendingAnnotation: state.pendingAnnotation,

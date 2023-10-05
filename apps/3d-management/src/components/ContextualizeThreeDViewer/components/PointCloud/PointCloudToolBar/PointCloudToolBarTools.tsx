@@ -18,8 +18,8 @@ import {
   setTool,
   toggleShouldShowBoundingVolumes,
   toggleShouldShowWireframes,
-  useContextualizeThreeDViewerStorePointCloud,
-} from '../../../useContextualizeThreeDViewerStorePointCloud';
+  useContextualizeThreeDViewerStore,
+} from '../../../useContextualizeThreeDViewerStore';
 import { getCognitePointCloudModel } from '../../../utils/getCognitePointCloudModel';
 import { isPointCloudIntersection } from '../../../utils/isPointCloudIntersection';
 import { showBoundingVolumes } from '../../../utils/showBoundingVolumes';
@@ -79,7 +79,7 @@ export const PointCloudToolBarTools = ({
     shouldShowBoundingVolumes,
     shouldShowWireframes,
     modelId,
-  } = useContextualizeThreeDViewerStorePointCloud((state) => ({
+  } = useContextualizeThreeDViewerStore((state) => ({
     pendingAnnotation: state.pendingAnnotation,
     tool: state.tool,
     shouldShowBoundingVolumes: state.shouldShowBoundingVolumes,
