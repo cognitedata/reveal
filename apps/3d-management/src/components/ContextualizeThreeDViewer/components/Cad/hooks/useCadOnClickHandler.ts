@@ -5,6 +5,8 @@ import { CadIntersection, Intersection } from '@cognite/reveal';
 import { useContextualizeThreeDViewerStoreCad } from '../../../useContextualizeThreeDViewerStoreCad';
 import { getCogniteCadModel } from '../../../utils/getCogniteCadModel';
 
+// TODO: This is something that should be exported from Reveal.
+// Add ticket before merging.
 const isCadIntersection = (
   intersection: Intersection | undefined | null
 ): intersection is CadIntersection => {
