@@ -9,8 +9,7 @@ import { Thumbnail } from '../utils/Thumbnail';
 import { type Cognite3DViewer, type Image360 } from '@cognite/reveal';
 // Using named import to avoid react component creation error when default import is used.
 import { uniqueId } from 'lodash';
-import { translations, useTranslation } from '../../../common/i18n';
-import I18nWrapper from '../../i18n/I18nWrapper';
+import { useI18n } from '../../i18n/I18n';
 
 export type Image360RevisionDetails = {
   date?: string;
@@ -40,7 +39,7 @@ export const Image360HistoricalSummary = forwardRef(
     }: Image360HistoricalSummaryProps,
     ref: React.ForwardedRef<number>
   ) => {
-    const { t } = useTranslation();
+    const { t } = useI18n();
     const gridContainerRef = useRef<HTMLDivElement>(null);
 
     const onRevisionChanged = async (
@@ -74,36 +73,34 @@ export const Image360HistoricalSummary = forwardRef(
     }, []);
 
     return (
-      <I18nWrapper translations={translations} addNamespace="reveal-react-components">
-        <OverviewContainer>
-          <StyledFlex direction="column">
-            <StyledSubFlex>{stationName}</StyledSubFlex>
-            <StyledDetail>
-              {t('IMAGES_360_STATION', 'Station :')} {stationId}
-            </StyledDetail>
-          </StyledFlex>
+      <OverviewContainer>
+        <StyledFlex direction="column">
+          <StyledSubFlex>{stationName}</StyledSubFlex>
+          <StyledDetail>
+            {t('IMAGES_360_STATION', 'Station :')} {stationId}
+          </StyledDetail>
+        </StyledFlex>
 
-          <StyledLayoutGridContainer onScroll={onScroll} ref={gridContainerRef}>
-            <StyledLayoutGrid>
-              {revisionCollection.map((revisionDetails, index) => (
-                <RevisionItem
-                  key={uniqueId()}
-                  onClick={() => {
-                    void onRevisionChanged(revisionDetails, index);
-                  }}>
-                  <Thumbnail
-                    key={index}
-                    isActive={activeRevision === index}
-                    imageUrl={revisionDetails.imageUrl}
-                    isLoading={false}
-                  />
-                  <Detail style={{ height: '16px' }}>{revisionDetails.date}</Detail>
-                </RevisionItem>
-              ))}
-            </StyledLayoutGrid>
-          </StyledLayoutGridContainer>
-        </OverviewContainer>
-      </I18nWrapper>
+        <StyledLayoutGridContainer onScroll={onScroll} ref={gridContainerRef}>
+          <StyledLayoutGrid>
+            {revisionCollection.map((revisionDetails, index) => (
+              <RevisionItem
+                key={uniqueId()}
+                onClick={() => {
+                  void onRevisionChanged(revisionDetails, index);
+                }}>
+                <Thumbnail
+                  key={index}
+                  isActive={activeRevision === index}
+                  imageUrl={revisionDetails.imageUrl}
+                  isLoading={false}
+                />
+                <Detail style={{ height: '16px' }}>{revisionDetails.date}</Detail>
+              </RevisionItem>
+            ))}
+          </StyledLayoutGrid>
+        </StyledLayoutGridContainer>
+      </OverviewContainer>
     );
   }
 );

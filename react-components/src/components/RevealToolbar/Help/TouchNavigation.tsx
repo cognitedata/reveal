@@ -10,10 +10,10 @@ import {
   TouchNavigationInstructionGrid
 } from './elements';
 import { TouchZoom, TouchPan, TouchSelect } from './Graphics/Touch';
-import { useTranslation } from '../../../common/i18n';
+import { useI18n } from '../../i18n/I18n';
 
 export const TouchNavigation = (): ReactElement => {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   return (
     <Section
       title={t('TOUCH_NAVIGATION_TITLE', 'Touch')}

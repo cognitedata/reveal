@@ -5,8 +5,7 @@
 import { Chip, Tooltip } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import styled from 'styled-components';
-import { translations, useTranslation } from '../../../common/i18n';
-import I18nWrapper from '../../i18n/I18nWrapper';
+import { useI18n } from '../../i18n/I18n';
 
 export type Image360HistoricalPanelProps = {
   revisionCount?: number;
@@ -19,7 +18,7 @@ export const Image360HistoricalPanel = ({
   revisionDetailsExpanded,
   setRevisionDetailsExpanded
 }: Image360HistoricalPanelProps): ReactElement => {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const count = revisionCount?.toString();
 
   const onDetailsClick = (): void => {
@@ -27,33 +26,31 @@ export const Image360HistoricalPanel = ({
   };
 
   return (
-    <I18nWrapper translations={translations} addNamespace="reveal-react-components">
-      <Container isExpanded={revisionDetailsExpanded}>
-        <Tooltip content="360 Image historical details">
-          <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
-            {!revisionDetailsExpanded && (
-              <>
-                <StyledChip
-                  icon="History"
-                  iconPlacement="right"
-                  label={t('IMAGES_360_DETAILS', 'Details')}
-                  hideTooltip
-                />
-                <StyledChipCount label={count} hideTooltip />
-              </>
-            )}
-            {revisionDetailsExpanded && (
+    <Container isExpanded={revisionDetailsExpanded}>
+      <Tooltip content="360 Image historical details">
+        <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
+          {!revisionDetailsExpanded && (
+            <>
               <StyledChip
-                icon="PushRight"
+                icon="History"
                 iconPlacement="right"
                 label={t('IMAGES_360_DETAILS', 'Details')}
                 hideTooltip
               />
-            )}
-          </StyledToolBar>
-        </Tooltip>
-      </Container>
-    </I18nWrapper>
+              <StyledChipCount label={count} hideTooltip />
+            </>
+          )}
+          {revisionDetailsExpanded && (
+            <StyledChip
+              icon="PushRight"
+              iconPlacement="right"
+              label={t('IMAGES_360_DETAILS', 'Details')}
+              hideTooltip
+            />
+          )}
+        </StyledToolBar>
+      </Tooltip>
+    </Container>
   );
 };
 

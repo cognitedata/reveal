@@ -7,7 +7,7 @@ import { Menu } from '@cognite/cogs.js';
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { type QualitySettings, type QualityProps } from './types';
 import { type Cognite3DViewer } from '@cognite/reveal';
-import { useTranslation } from '../../../common/i18n';
+import { useI18n } from '../../i18n/I18n';
 
 const defaultLowFidelitySettings: QualitySettings = {
   cadBudget: {
@@ -41,7 +41,7 @@ export const HighFidelityContainer = ({
   lowQualitySettings,
   highQualitySettings
 }: QualityProps): ReactElement => {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const viewer = useReveal();
   const [active, setActive] = useState(!isLowFidelity(viewer));
 

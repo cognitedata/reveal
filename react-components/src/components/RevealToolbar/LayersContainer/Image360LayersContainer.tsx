@@ -10,7 +10,7 @@ import { type Image360Collection } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
-import { useTranslation } from '../../../common/i18n';
+import { useI18n } from '../../i18n/I18n';
 
 export const Image360CollectionLayerContainer = ({
   layerProps,
@@ -19,7 +19,7 @@ export const Image360CollectionLayerContainer = ({
   layerProps: Reveal3DResourcesLayersProps;
   onChange: (cadState: Reveal3DResourcesLayerStates['image360LayerData']) => void;
 }): ReactElement => {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);

@@ -14,7 +14,7 @@ import { NodeCacheProvider } from '../NodeCacheProvider/NodeCacheProvider';
 import { RevealContainerElementContext } from './RevealContainerElementContext';
 import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { translations } from '../../common/i18n';
-import I18nWrapper from '../i18n/I18nWrapper';
+import { I18nContextProvider } from '../i18n/I18n';
 
 type RevealContainerProps = {
   color?: Color;
@@ -79,7 +79,7 @@ export function RevealContainer({
       return <></>;
     return (
       <>
-        <I18nWrapper translations={translations} addNamespace="reveal-react-components">
+        <I18nContextProvider>
           <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
             <RevealContext.Provider value={viewer}>
               <NodeCacheProvider>
@@ -89,7 +89,7 @@ export function RevealContainer({
               </NodeCacheProvider>
             </RevealContext.Provider>
           </RevealContainerElementContext.Provider>
-        </I18nWrapper>
+        </I18nContextProvider>
       </>
     );
   }

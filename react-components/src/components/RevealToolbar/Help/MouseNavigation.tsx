@@ -11,10 +11,10 @@ import {
   MouseNavigationCombinedGridItem
 } from './elements';
 import { Section } from './Section';
-import { useTranslation } from '../../../common/i18n';
+import { useI18n } from '../../i18n/I18n';
 
 export const MouseNavigation = (): ReactElement => {
-  const { t } = useTranslation();
+  const { t } = useI18n();
   return (
     <Section
       title={t('MOUSE_NAVIGATION_TITLE', 'Mouse')}
