@@ -14,7 +14,6 @@ import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/c
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
-  setModel,
   setModelLoaded,
   setThreeDViewer,
   useContextualizeThreeDViewerStorePointCloud,
@@ -58,10 +57,6 @@ export const PointCloudRevealContent = ({
       changeCameraTargetOnClick: true,
       mouseWheelAction: 'zoomToCursor',
     });
-
-    if (viewer.domElement) {
-      setModel(model);
-    }
   };
 
   const handleLoadError = (e: Error) => {

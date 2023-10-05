@@ -1,17 +1,9 @@
 import { create } from 'zustand';
 
-import {
-  Cognite3DViewer,
-  CogniteCadModel,
-  CognitePointCloudModel,
-  TreeIndexNodeCollection,
-  PointColorType,
-} from '@cognite/reveal';
-import { AnnotationModel, AssetMapping3D, ListResponse } from '@cognite/sdk';
+import { Cognite3DViewer, PointColorType } from '@cognite/reveal';
+import { AnnotationModel } from '@cognite/sdk';
 
 import { DEFAULT_POINT_SIZE } from '../../pages/ContextualizeEditor/constants';
-
-import { SelectedNode } from './types';
 
 export type ThreeDPosition = {
   x: number;
@@ -34,23 +26,17 @@ export enum ToolType {
   NONE = 'none',
   ADD_ANNOTATION = 'addAnnotation',
   DELETE_ANNOTATION = 'deleteAnnotation',
-  ADD_THREEDNODE_MAPPING = 'addThreeDNodeMapping',
-  DELETE_THREEDNODE_MAPPING = 'deleteThreeDNodeMapping',
 }
 
 type RootState = {
   pendingAnnotation: CubeAnnotation | null;
   isResourceSelectorOpen: boolean;
-  isThreeDNodeTreeOpen: boolean;
   threeDViewer: Cognite3DViewer | null;
   tool: ToolType;
   shouldShowBoundingVolumes: boolean;
   shouldShowWireframes: boolean;
   modelId: number | null;
   isModelLoaded: boolean;
-  isToolbarForCadModels: boolean;
-  isToolbarForPointCloudModels: boolean;
-  model: CogniteCadModel | CognitePointCloudModel | undefined;
   annotations: AnnotationModel[] | null;
   visualizationOptions: VisualizationOptions;
 };
@@ -58,16 +44,12 @@ type RootState = {
 const initialState: RootState = {
   pendingAnnotation: null,
   isResourceSelectorOpen: true,
-  isThreeDNodeTreeOpen: true,
-  isToolbarForCadModels: false,
-  isToolbarForPointCloudModels: false,
   threeDViewer: null,
   tool: ToolType.NONE,
   shouldShowBoundingVolumes: false,
   shouldShowWireframes: true,
   modelId: null,
   isModelLoaded: false,
-  model: undefined,
   annotations: null,
   visualizationOptions: DEFAULT_VISUALIZATION_OPTIONS,
 };
@@ -88,20 +70,6 @@ export const onCloseResourceSelector = () => {
     ...prevState,
     isResourceSelectorOpen: false,
     pendingAnnotation: null,
-  }));
-};
-
-export const onOpenThreeDNodeTree = () => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
-    ...prevState,
-    isThreeDNodeTreeOpen: true,
-  }));
-};
-
-export const onCloseThreeDNodeTree = () => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
-    ...prevState,
-    isThreeDNodeTreeOpen: false,
   }));
 };
 
@@ -133,13 +101,6 @@ export const setTool = (tool: ToolType) => {
     ...prevState,
     tool,
     pendingAnnotation: null,
-  }));
-};
-
-export const setToolbarForPointCloudModelsState = () => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
-    ...prevState,
-    isToolbarForPointCloudModels: true,
   }));
 };
 
@@ -180,12 +141,5 @@ export const updateVisualizationOptions = (
       ...prevState.visualizationOptions,
       ...visualizationOptions,
     },
-  }));
-};
-
-export const setModel = (model: CogniteCadModel | CognitePointCloudModel) => {
-  useContextualizeThreeDViewerStorePointCloud.setState((prevState) => ({
-    ...prevState,
-    model,
   }));
 };
