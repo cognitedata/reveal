@@ -27,7 +27,7 @@ describe('fusion-shell', () => {
       cy.findByTestId('quick-link-card-container')
         .children()
         .each(async ($element) => {
-          let linkTestId = $element[0].getAttribute('data-testid') ?? '';
+          const linkTestId = $element[0].getAttribute('data-testid') ?? '';
           // had to query again due to $element being invalid after cy.click() command
           cy.findByTestId(linkTestId).click();
           cy.location().should((loc) => {
