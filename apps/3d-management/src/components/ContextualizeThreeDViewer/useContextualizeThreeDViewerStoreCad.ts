@@ -1,9 +1,7 @@
 import { create } from 'zustand';
 
-import { Cognite3DViewer, TreeIndexNodeCollection } from '@cognite/reveal';
+import { Cognite3DViewer } from '@cognite/reveal';
 import { AssetMapping3D, ListResponse } from '@cognite/sdk';
-
-import { SelectedNode } from './types';
 
 // TODO: Improve naming of the tools
 export enum ToolType {
@@ -18,9 +16,6 @@ type RootState = {
   modelId: number | null;
   isModelLoaded: boolean;
   selectedNodeIds: Array<number>;
-  selectedAndContextualizedNodesList: Array<SelectedNode>;
-  selectedAndContextualizedNodesTreeIndex: TreeIndexNodeCollection;
-  contextualizedNodesTreeIndex: TreeIndexNodeCollection;
   contextualizedNodes: ListResponse<AssetMapping3D[]> | null;
 };
 
@@ -31,9 +26,6 @@ const initialState: RootState = {
   modelId: null,
   isModelLoaded: false,
   selectedNodeIds: [],
-  selectedAndContextualizedNodesList: [],
-  selectedAndContextualizedNodesTreeIndex: new TreeIndexNodeCollection(),
-  contextualizedNodesTreeIndex: new TreeIndexNodeCollection(),
   contextualizedNodes: null,
 };
 
@@ -89,33 +81,6 @@ export const setSelectedNodeIds = (selectedNodeIds: Array<number>) => {
   useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
     ...prevState,
     selectedNodeIds: selectedNodeIds,
-  }));
-};
-
-export const setSelectedAndContextualizedNodesList = (
-  selectedAndContextualizedNodesList: Array<SelectedNode>
-) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
-    ...prevState,
-    selectedAndContextualizedNodesList,
-  }));
-};
-
-export const setSelectedAndContextualizedNodesTreeIndex = (
-  selectedAndContextualizedNodesTreeIndex: TreeIndexNodeCollection
-) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
-    ...prevState,
-    selectedAndContextualizedNodesTreeIndex,
-  }));
-};
-
-export const setContextualizedNodesTreeIndex = (
-  contextualizedNodesTreeIndex: TreeIndexNodeCollection
-) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
-    ...prevState,
-    contextualizedNodesTreeIndex,
   }));
 };
 

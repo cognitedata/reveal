@@ -25,18 +25,13 @@ const isCadIntersection = (
 };
 
 export const useCadOnClickHandler = () => {
-  const { modelId, threeDViewer } = useContextualizeThreeDViewerStoreCad(
-    (state) => ({
+  const { modelId, threeDViewer, selectedNodeIdsList } =
+    useContextualizeThreeDViewerStoreCad((state) => ({
       modelId: state.modelId,
       threeDViewer: state.threeDViewer,
       contextualizedNodes: state.contextualizedNodes,
-      selectedAndContextualizedNodesTreeIndex:
-        state.selectedAndContextualizedNodesTreeIndex,
       selectedNodeIdsList: state.selectedNodeIds,
-      selectedAndContextualizedNodesList:
-        state.selectedAndContextualizedNodesList,
-    })
-  );
+    }));
 
   const onClick = useCallback(
     async (event: PointerEventData) => {
@@ -57,9 +52,15 @@ export const useCadOnClickHandler = () => {
       if (model === undefined) return;
 
       const nodeId = await model.mapTreeIndexToNodeId(intersection.treeIndex);
-      setSelectedNodeIds([nodeId]);
+
+      if (selectedNodeIdsList.includes(nodeId)) {
+        setSelectedNodeIds(selectedNodeIdsList.filter((id) => id !== nodeId));
+        return;
+      }
+
+      setSelectedNodeIds([...selectedNodeIdsList, nodeId]);
     },
-    [modelId, threeDViewer]
+    [modelId, selectedNodeIdsList, threeDViewer]
   );
 
   useEffect(() => {
