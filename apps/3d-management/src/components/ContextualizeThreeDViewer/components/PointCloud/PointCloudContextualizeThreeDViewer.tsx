@@ -21,7 +21,6 @@ import {
   defaultRevealColor,
 } from '../../../../pages/ContextualizeEditor/constants';
 import { useLocalStorage } from '../../../../utils/useLocalStorage';
-import { useSyncStateWithViewerPointCloud } from '../../hooks/useSyncStateWithViewerPointCloud';
 import {
   setModelId,
   setPendingAnnotation,
@@ -32,6 +31,7 @@ import { getCdfAnnotations } from '../../utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from '../../utils/createCdfThreeDAnnotation';
 import { getCognitePointCloudModel } from '../../utils/getCognitePointCloudModel';
 
+import { useSyncStateWithViewerPointCloud } from './hooks/useSyncStateWithViewerPointCloud';
 import { PointCloudRevealContent } from './PointCloudRevealContent';
 
 const fetchAnnotations = async ({

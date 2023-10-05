@@ -7,11 +7,11 @@ import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 import {
   ToolType,
   useContextualizeThreeDViewerStore,
-} from '../useContextualizeThreeDViewerStore';
-import { createAnnotationsAsWireframes } from '../utils/annotations/annotationUtils';
-import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
-import { hideBoundingVolumes } from '../utils/hideBoundingVolumes';
-import { showBoundingVolumes } from '../utils/showBoundingVolumes';
+} from '../../../useContextualizeThreeDViewerStore';
+import { createAnnotationsAsWireframes } from '../../../utils/annotations/annotationUtils';
+import { getCognitePointCloudModel } from '../../../utils/getCognitePointCloudModel';
+import { hideBoundingVolumes } from '../../../utils/hideBoundingVolumes';
+import { showBoundingVolumes } from '../../../utils/showBoundingVolumes';
 
 const PENDING_ANNOTATION_ID = 'pending-annotation';
 const ANNOTATION_AS_WIREFRAME_ID = 'annotation-as-wireframe';
