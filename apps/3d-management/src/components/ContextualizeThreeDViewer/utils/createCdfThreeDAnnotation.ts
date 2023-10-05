@@ -1,30 +1,47 @@
-import { Matrix4, Vector3 } from 'three';
+import { Matrix4, Vector3, Quaternion } from 'three';
 
 import { CognitePointCloudModel } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk/dist/src';
 
-import { ThreeDPosition } from '../useContextualizeThreeDViewerStore';
+import { CubeAnnotation } from '../useContextualizeThreeDViewerStore';
 
 export const createCdfThreeDAnnotation = async ({
-  position,
+  cubeAnnotation,
   sdk,
   modelId,
   assetRefId,
   pointCloudModel,
 }: {
-  position: ThreeDPosition;
+  cubeAnnotation: CubeAnnotation;
   sdk: CogniteClient;
   modelId: number;
   assetRefId: number;
   pointCloudModel: CognitePointCloudModel;
 }) => {
-  const vector3Position = new Vector3(position.x, position.y, position.z);
-  const cdfPosition = vector3Position
-    .clone()
-    .applyMatrix4(
-      pointCloudModel.getCdfToDefaultModelTransformation().invert()
-    );
+  const defaultModelToCdfTransformation = pointCloudModel
+    .getCdfToDefaultModelTransformation()
+    .invert();
 
+  const vector3Position = new Vector3(
+    cubeAnnotation.position.x,
+    cubeAnnotation.position.y,
+    cubeAnnotation.position.z
+  );
+  const vector3Size = new Vector3(
+    cubeAnnotation.size.x,
+    cubeAnnotation.size.y,
+    cubeAnnotation.size.z
+  ).multiplyScalar(0.5);
+
+  const cdfPosition = vector3Position.applyMatrix4(
+    defaultModelToCdfTransformation
+  );
+
+  const cdfSize = vector3Size.applyMatrix4(defaultModelToCdfTransformation);
+
+  const transformationMatrix = new Matrix4()
+    .compose(cdfPosition, new Quaternion(), cdfSize)
+    .transpose();
   await sdk.annotations.create([
     {
       annotatedResourceId: modelId,
@@ -39,9 +56,7 @@ export const createCdfThreeDAnnotation = async ({
         region: [
           {
             box: {
-              matrix: new Matrix4()
-                .makeTranslation(cdfPosition.x, cdfPosition.y, cdfPosition.z)
-                .transpose().elements,
+              matrix: transformationMatrix.elements,
             },
           },
         ],

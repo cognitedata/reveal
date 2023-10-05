@@ -119,7 +119,7 @@ export const ContextualizeThreeDViewer = ({
       modelId,
       assetRefId: assetId,
       pointCloudModel,
-      position: pendingAnnotation.position,
+      cubeAnnotation: pendingAnnotation,
     }).then(() => {
       // Invalidate to refetch
       queryClient.invalidateQueries(['annotations', sdk, modelId]);

@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import * as THREE from 'three';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 
 import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 
@@ -9,10 +10,10 @@ import {
   useContextualizeThreeDViewerStore,
 } from '../useContextualizeThreeDViewerStore';
 import { createAnnotationsAsWireframes } from '../utils/annotations/annotationUtils';
+import { createTransformControls } from '../utils/createTransformControls';
 import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
 import { hideBoundingVolumes } from '../utils/hideBoundingVolumes';
 import { showBoundingVolumes } from '../utils/showBoundingVolumes';
-
 const PENDING_ANNOTATION_ID = 'pending-annotation';
 const ANNOTATION_AS_WIREFRAME_ID = 'annotation-as-wireframe';
 
@@ -60,6 +61,17 @@ export const useSyncStateWithViewer = () => {
     annotations: state.annotations,
     visualizationOptions: state.visualizationOptions,
   }));
+  const pendingAnnotationTransformControls = useRef<TransformControls | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (threeDViewer === null) return;
+    if (pendingAnnotationTransformControls.current === null) {
+      pendingAnnotationTransformControls.current =
+        createTransformControls(threeDViewer);
+    }
+  });
 
   // sync visualizationOptions with viewer
   useEffect(() => {
@@ -76,14 +88,24 @@ export const useSyncStateWithViewer = () => {
   useEffect(() => {
     if (threeDViewer === null) return;
 
+    const transformControls = pendingAnnotationTransformControls.current;
+    if (transformControls === null) return;
+
     // Remove previous pending annotation(s) from the viewer.
     removeObjectByName(threeDViewer, PENDING_ANNOTATION_ID);
 
     // Add new pending annotation(s) to the viewer.
-    if (pendingAnnotation === null) return;
+    if (pendingAnnotation === null) {
+      transformControls.detach();
+      return;
+    }
 
     const newAnnotationCube = new THREE.Mesh(
-      new THREE.BoxGeometry(2, 2, 2),
+      new THREE.BoxGeometry(
+        pendingAnnotation.size.x,
+        pendingAnnotation.size.y,
+        pendingAnnotation.size.z
+      ),
       new THREE.MeshBasicMaterial({
         color: new THREE.Color(1, 1, 0),
         transparent: true,
@@ -97,9 +119,13 @@ export const useSyncStateWithViewer = () => {
       pendingAnnotation.position.y,
       pendingAnnotation.position.z
     );
+
     newAnnotationCube.position.copy(point);
     addObject(threeDViewer, newAnnotationCube);
-  }, [pendingAnnotation, threeDViewer]);
+
+    transformControls.attach(newAnnotationCube);
+    threeDViewer.addObject3D(transformControls);
+  }, [pendingAnnotation, pendingAnnotationTransformControls, threeDViewer]);
 
   // Sync annotation points with viewer.
   useEffect(() => {
