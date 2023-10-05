@@ -5,16 +5,24 @@ import { TreeIndexNodeCollection } from '@cognite/reveal';
 import { CAD_STYLE } from '@3d-management/pages/ContextualizeEditor/constants';
 
 export const useSyncCadStateWithViewer = () => {
-  const { modelId, threeDViewer, selectedNodeIds, contextualizedNodes } =
-    useContextualizeThreeDViewerStoreCad((state) => ({
-      modelId: state.modelId,
-      threeDViewer: state.threeDViewer,
-      selectedNodeIds: state.selectedNodeIds,
-      contextualizedNodes: state.contextualizedNodes,
-    }));
+  const {
+    modelId,
+    isModelLoaded,
+    threeDViewer,
+    selectedNodeIds,
+    contextualizedNodes,
+  } = useContextualizeThreeDViewerStoreCad((state) => ({
+    modelId: state.modelId,
+    isModelLoaded: state.isModelLoaded,
+    threeDViewer: state.threeDViewer,
+    selectedNodeIds: state.selectedNodeIds,
+    contextualizedNodes: state.contextualizedNodes,
+  }));
 
   // Update selected nodes in the viewer
   useEffect(() => {
+    if (!isModelLoaded) return;
+
     const updateSelectedNodes = async () => {
       if (modelId === null) return;
       if (threeDViewer === null) return;
@@ -42,10 +50,12 @@ export const useSyncCadStateWithViewer = () => {
     };
 
     updateSelectedNodes();
-  }, [selectedNodeIds, modelId, threeDViewer]);
+  }, [selectedNodeIds, modelId, threeDViewer, isModelLoaded]);
 
   // Update contextualized nodes in the viewer
   useEffect(() => {
+    if (!isModelLoaded) return;
+
     const updateContextualizedNodes = async () => {
       if (modelId === null) return;
       if (threeDViewer === null) return;
@@ -73,5 +83,5 @@ export const useSyncCadStateWithViewer = () => {
     };
 
     updateContextualizedNodes();
-  });
+  }, [isModelLoaded, contextualizedNodes, modelId, threeDViewer]);
 };

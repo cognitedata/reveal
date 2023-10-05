@@ -4,7 +4,12 @@ import styled from 'styled-components';
 
 import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
+import {
+  QueryFunctionContext,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 import { RevealContainer } from '@cognite/reveal-react-components';
 import { CogniteClient } from '@cognite/sdk/dist/src';
@@ -52,12 +57,13 @@ export const CadContextualizeThreeDViewer = ({
   revisionId,
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
+  const queryClient = useQueryClient();
 
-  const { isResourceSelectorOpen, selectedNodeIdsList } =
+  const { isResourceSelectorOpen, selectedNodeIds } =
     useContextualizeThreeDViewerStoreCad((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       threeDViewer: state.threeDViewer,
-      selectedNodeIdsList: state.selectedNodeIds,
+      selectedNodeIds: state.selectedNodeIds,
     }));
 
   const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
@@ -68,6 +74,26 @@ export const CadContextualizeThreeDViewer = ({
   const { data: contextualizedNodes } = useQuery(
     ['cadContextualization', sdk, modelId, revisionId],
     fetchContextualizedNodes
+  );
+
+  const mutation = useMutation(
+    (params: {
+      sdk: CogniteClient;
+      modelId: number;
+      revisionId: number;
+      nodeIds: Array<number>;
+      assetId: number;
+    }) => saveCdfThreeDCadContextualization(params),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([
+          'cadContextualization',
+          sdk,
+          modelId,
+          revisionId,
+        ]);
+      },
+    }
   );
 
   useEffect(() => {
@@ -99,11 +125,11 @@ export const CadContextualizeThreeDViewer = ({
 
   const handleResourceSelectorSelect = async (assetId: number) => {
     setSelectedNodeIds([]);
-    await saveCdfThreeDCadContextualization({
+    mutation.mutate({
       sdk,
       modelId,
       revisionId,
-      nodeIds: selectedNodeIdsList,
+      nodeIds: selectedNodeIds,
       assetId,
     });
   };

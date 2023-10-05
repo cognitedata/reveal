@@ -14,6 +14,7 @@ import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/c
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
+  setModelLoaded,
   setThreeDViewer,
   useContextualizeThreeDViewerStoreCad,
 } from '../../useContextualizeThreeDViewerStoreCad';
@@ -38,6 +39,8 @@ export const CadRevealContent = ({
   );
 
   const handleModelOnLoad = (model: CogniteModel) => {
+    setModelLoaded();
+
     if (!(viewer?.cameraManager instanceof DefaultCameraManager)) {
       console.warn(
         'Camera manager is not DefaultCameraManager, so click to change camera target will not work.'
