@@ -7,12 +7,12 @@ import {
   AnnotationsBoundingVolume,
 } from '@cognite/sdk/dist/src';
 
-import { useContextualizeThreeDViewerStore } from '../useContextualizeThreeDViewerStore';
+import { useContextualizeThreeDViewerStore } from '../../../useContextualizeThreeDViewerStore';
 import {
   createBoxAnnotationAsBox3,
   createCylinderAnnotationAsBox3,
-} from '../utils/annotations/annotationUtils';
-import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
+} from '../../../utils/annotations/annotationUtils';
+import { getCognitePointCloudModel } from '../../../utils/getCognitePointCloudModel';
 
 const FIT_CAMERA_TO_BOUNDING_BOX_ANIMATION_DURATION_MS = 1000;
 const FIT_CAMERA_TO_BOUNDING_BOX_RADIUS_FACTOR = 5;
