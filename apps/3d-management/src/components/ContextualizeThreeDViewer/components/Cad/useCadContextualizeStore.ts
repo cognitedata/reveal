@@ -29,19 +29,17 @@ const initialState: RootState = {
   contextualizedNodes: null,
 };
 
-export const useContextualizeThreeDViewerStoreCad = create<RootState>(
-  () => initialState
-);
+export const useCadContextualizeStore = create<RootState>(() => initialState);
 
 export const onOpenResourceSelector = () => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
+  useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
     isResourceSelectorOpen: true,
   }));
 };
 
 export const onCloseResourceSelector = () => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
+  useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
     isResourceSelectorOpen: false,
     pendingAnnotation: null,
@@ -49,21 +47,21 @@ export const onCloseResourceSelector = () => {
 };
 
 export const setThreeDViewer = (viewer: Cognite3DViewer) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
+  useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
     threeDViewer: viewer,
   }));
 };
 
 export const setModelLoaded = () => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
+  useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
     isModelLoaded: true,
   }));
 };
 
 export const setTool = (tool: ToolType) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
+  useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
     tool,
     pendingAnnotation: null,
@@ -71,14 +69,14 @@ export const setTool = (tool: ToolType) => {
 };
 
 export const setModelId = (modelId: number) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
+  useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
     modelId,
   }));
 };
 
 export const setSelectedNodeIds = (selectedNodeIds: Array<number>) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
+  useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
     selectedNodeIds: selectedNodeIds,
   }));
@@ -87,7 +85,7 @@ export const setSelectedNodeIds = (selectedNodeIds: Array<number>) => {
 export const setContextualizedNodes = (
   contextualizedNodes: AssetMapping3D[]
 ) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
+  useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
     contextualizedNodes,
   }));

@@ -28,11 +28,11 @@ import { CadRevealContent } from './CadRevealContent';
 import { useCadOnClickHandler } from './hooks/useCadOnClickHandler';
 import { useSyncCadStateWithViewer } from './hooks/useSyncCadStateWithViewer';
 import {
-  useContextualizeThreeDViewerStoreCad,
+  useCadContextualizeStore,
   setContextualizedNodes,
   setModelId,
   setSelectedNodeIds,
-} from './useContextualizeThreeDViewerStoreCad';
+} from './useCadContextualizeStore';
 
 const fetchContextualizedNodes = async ({
   queryKey,
@@ -59,12 +59,13 @@ export const CadContextualizeThreeDViewer = ({
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
-  const { isResourceSelectorOpen, selectedNodeIds } =
-    useContextualizeThreeDViewerStoreCad((state) => ({
+  const { isResourceSelectorOpen, selectedNodeIds } = useCadContextualizeStore(
+    (state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       threeDViewer: state.threeDViewer,
       selectedNodeIds: state.selectedNodeIds,
-    }));
+    })
+  );
 
   const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
     'COGNITE_CONTEXTUALIZE_EDITOR_RESOURCE_SELECTOR_WIDTH',

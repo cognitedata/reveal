@@ -5,11 +5,11 @@ import { ToolBar, Tooltip, Button } from '@cognite/cogs.js';
 import {
   setTool,
   ToolType,
-  useContextualizeThreeDViewerStoreCad,
-} from '../useContextualizeThreeDViewerStoreCad';
+  useCadContextualizeStore,
+} from '../useCadContextualizeStore';
 
 export const CadToolBarTools = (): ReactElement => {
-  const { tool } = useContextualizeThreeDViewerStoreCad((state) => ({
+  const { tool } = useCadContextualizeStore((state) => ({
     tool: state.tool,
   }));
 

@@ -9,8 +9,8 @@ import {
 import { getCogniteCadModel } from '../../../utils/getCogniteCadModel';
 import {
   setSelectedNodeIds,
-  useContextualizeThreeDViewerStoreCad,
-} from '../useContextualizeThreeDViewerStoreCad';
+  useCadContextualizeStore,
+} from '../useCadContextualizeStore';
 
 // TODO: This is something that should be exported from Reveal.
 // Add ticket before merging.
@@ -26,7 +26,7 @@ const isCadIntersection = (
 
 export const useCadOnClickHandler = () => {
   const { modelId, threeDViewer, selectedNodeIdsList } =
-    useContextualizeThreeDViewerStoreCad((state) => ({
+    useCadContextualizeStore((state) => ({
       modelId: state.modelId,
       threeDViewer: state.threeDViewer,
       selectedNodeIdsList: state.selectedNodeIds,

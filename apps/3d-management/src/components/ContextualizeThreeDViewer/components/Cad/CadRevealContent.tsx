@@ -19,8 +19,8 @@ import {
   onOpenResourceSelector,
   setModelLoaded,
   setThreeDViewer,
-  useContextualizeThreeDViewerStoreCad,
-} from './useContextualizeThreeDViewerStoreCad';
+  useCadContextualizeStore,
+} from './useCadContextualizeStore';
 
 type RevealContentProps = {
   modelId: number;
@@ -32,11 +32,9 @@ export const CadRevealContent = ({
   revisionId,
 }: RevealContentProps) => {
   const viewer = useReveal();
-  const { isResourceSelectorOpen } = useContextualizeThreeDViewerStoreCad(
-    (state) => ({
-      isResourceSelectorOpen: state.isResourceSelectorOpen,
-    })
-  );
+  const { isResourceSelectorOpen } = useCadContextualizeStore((state) => ({
+    isResourceSelectorOpen: state.isResourceSelectorOpen,
+  }));
 
   const handleModelOnLoad = (model: CogniteModel) => {
     setModelLoaded();

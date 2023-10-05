@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useContextualizeThreeDViewerStoreCad } from '../useContextualizeThreeDViewerStoreCad';
+import { useCadContextualizeStore } from '../useCadContextualizeStore';
 import { getCogniteCadModel } from '@3d-management/components/ContextualizeThreeDViewer/utils/getCogniteCadModel';
 import { TreeIndexNodeCollection } from '@cognite/reveal';
 import { CAD_STYLE } from '@3d-management/pages/ContextualizeEditor/constants';
@@ -11,7 +11,7 @@ export const useSyncCadStateWithViewer = () => {
     threeDViewer,
     selectedNodeIds,
     contextualizedNodes,
-  } = useContextualizeThreeDViewerStoreCad((state) => ({
+  } = useCadContextualizeStore((state) => ({
     modelId: state.modelId,
     isModelLoaded: state.isModelLoaded,
     threeDViewer: state.threeDViewer,
