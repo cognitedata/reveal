@@ -77,10 +77,7 @@ export enum WellKnownAsprsPointClassCodes {
    * levels, landslides, permafrost
    */
   TemporalExclusion = 22,
-
-  /**
-   * First user definable class identifier (64).
+  /*
    * Values up to and including 63 are reserved
    */
-  UserDefinableOffset = 64
 }
