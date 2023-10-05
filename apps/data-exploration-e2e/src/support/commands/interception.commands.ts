@@ -3,25 +3,21 @@ import { get } from 'lodash';
 
 type Order = 'asc' | 'desc';
 
-const shouldSort = (
-  interception: Interception,
-  property: string,
-  order: Order
-) => {
+const shouldSort = (interception: Interception, key: string, order: Order) => {
   const { request } = interception;
 
   expect(request.body.sort[0]).to.deep.include({
-    property: [property],
+    property: key.split('.'),
     order,
   });
 };
 
-const shouldSortAscending = (interception: Interception, property: string) => {
-  cy.wrap(interception).shouldSort(property, 'asc');
+const shouldSortAscending = (interception: Interception, key: string) => {
+  cy.wrap(interception).shouldSort(key, 'asc');
 };
 
-const shouldSortDescending = (interception: Interception, property: string) => {
-  cy.wrap(interception).shouldSort(property, 'desc');
+const shouldSortDescending = (interception: Interception, key: string) => {
+  cy.wrap(interception).shouldSort(key, 'desc');
 };
 
 const payloadShouldContain = (
@@ -58,8 +54,8 @@ Cypress.Commands.add(
 );
 
 export interface InterceptionCommands {
-  shouldSort: (property: string, order: Order) => void;
-  shouldSortAscending: (property: string) => void;
-  shouldSortDescending: (property: string) => void;
+  shouldSort: (key: string, order: Order) => void;
+  shouldSortAscending: (key: string) => void;
+  shouldSortDescending: (key: string) => void;
   payloadShouldContain: (target: unknown, targetPath?: string) => void;
 }

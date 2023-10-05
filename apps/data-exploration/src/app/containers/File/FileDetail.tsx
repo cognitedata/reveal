@@ -162,7 +162,7 @@ export const FileDetail = ({
   };
 
   return (
-    <>
+    <FileDetailWrapper data-testid="file-detail">
       <BreadcrumbsV2 />
       <ResourceTitleRow
         item={{ id: fileId!, type: resourceType || 'file' }}
@@ -184,7 +184,7 @@ export const FileDetail = ({
             key="preview"
             tabKey="preview"
           >
-            <PreviewTabWrapper>
+            <PreviewTabWrapper data-testid="file-preview">
               {editMode && (
                 <Infobar
                   type="neutral"
@@ -235,10 +235,14 @@ export const FileDetail = ({
           </Tabs.Tab>,
         ]}
       />
-    </>
+    </FileDetailWrapper>
   );
 };
 
 const PreviewTabWrapper = styled.div`
   height: 100%;
+`;
+
+const FileDetailWrapper = styled.div`
+  display: contents;
 `;
