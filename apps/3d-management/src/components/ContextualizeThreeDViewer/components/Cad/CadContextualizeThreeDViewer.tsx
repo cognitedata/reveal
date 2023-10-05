@@ -18,7 +18,8 @@ import { useLocalStorage } from '../../../../utils/useLocalStorage';
 import {
   useContextualizeThreeDViewerStoreCad,
   setContextualizedNodes,
-  setSelectedNodeIdsList,
+  setSelectedNodeIds,
+  setModelId,
 } from '../../useContextualizeThreeDViewerStoreCad';
 import { deleteCdfThreeDCadContextualization } from '../../utils/deleteCdfThreeDCadContextualization';
 import { getCdfCadContextualization } from '../../utils/getCdfCadContextualization';
@@ -28,6 +29,7 @@ import { updateThreeDViewerCadNodes } from '../../utils/updateThreeDViewerCadNod
 
 import { CadRevealContent } from './CadRevealContent';
 import { useCadOnClickHandler } from './hooks/useCadOnClickHandler';
+import { useSyncCadStateWithViewer } from './hooks/useSyncCadStateWithViewer';
 
 type ContextualizeThreeDViewerProps = {
   modelId: number;
@@ -45,7 +47,6 @@ export const CadContextualizeThreeDViewer = ({
     threeDViewer,
     selectedNodeIdsList,
     contextualizedNodesTreeIndex,
-    selectedNodesTreeIndex,
     selectedAndContextualizedNodesTreeIndex,
     contextualizedNodes,
     selectedAndContextualizedNodesList,
@@ -53,8 +54,7 @@ export const CadContextualizeThreeDViewer = ({
     isResourceSelectorOpen: state.isResourceSelectorOpen,
     threeDViewer: state.threeDViewer,
     contextualizedNodesTreeIndex: state.contextualizedNodesTreeIndex,
-    selectedNodeIdsList: state.selectedNodeIdsList,
-    selectedNodesTreeIndex: state.selectedNodesTreeIndex,
+    selectedNodeIdsList: state.selectedNodeIds,
     selectedAndContextualizedNodesTreeIndex:
       state.selectedAndContextualizedNodesTreeIndex,
     contextualizedNodes: state.contextualizedNodes,
@@ -67,87 +67,92 @@ export const CadContextualizeThreeDViewer = ({
     DEFAULT_RIGHT_SIDE_PANEL_WIDTH
   );
 
-  const handleContextualizedNodesUpdate = useCallback(
-    async (
-      newContextualizedNodes: ListResponse<AssetMapping3D[]> | null = null,
-      nodesToReset = null
-    ) => {
-      // TODO: Display a user friendly error message if the model is not found
-      if (threeDViewer === null) return;
-      if (modelId === undefined) return;
+  useEffect(() => {
+    setModelId(modelId);
+  }, [modelId]);
 
-      const model = getCogniteCadModel({
-        modelId,
-        viewer: threeDViewer,
-      });
-      if (model === undefined) return;
+  useSyncCadStateWithViewer();
 
-      // TODO: improve/simplify this logic of processing the different states to a simpler one
-      const currentSelectedNodesTreeIndexState = selectedNodesTreeIndex;
-      const currentSelectedAndContextualizedNodesTreeIndexState =
-        selectedAndContextualizedNodesTreeIndex;
-      const currentContextualizedNodesTreeIndexState =
-        contextualizedNodesTreeIndex;
+  // const handleContextualizedNodesUpdate = useCallback(
+  //   async (
+  //     newContextualizedNodes: ListResponse<AssetMapping3D[]> | null = null,
+  //     nodesToReset = null
+  //   ) => {
+  //     // TODO: Display a user friendly error message if the model is not found
+  //     if (threeDViewer === null) return;
+  //     if (modelId === undefined) return;
 
-      const indexCurrentContextualizedNodesState =
-        currentContextualizedNodesTreeIndexState.getIndexSet();
+  //     const model = getCogniteCadModel({
+  //       modelId,
+  //       viewer: threeDViewer,
+  //     });
+  //     if (model === undefined) return;
 
-      indexCurrentContextualizedNodesState.clear();
+  //     // TODO: improve/simplify this logic of processing the different states to a simpler one
+  //     // const currentSelectedNodesTreeIndexState = selectedNodesTreeIndex;
+  //     const currentSelectedAndContextualizedNodesTreeIndexState =
+  //       selectedAndContextualizedNodesTreeIndex;
+  //     const currentContextualizedNodesTreeIndexState =
+  //       contextualizedNodesTreeIndex;
 
-      newContextualizedNodes?.items.forEach((item) => {
-        indexCurrentContextualizedNodesState.add(item.treeIndex);
-      });
+  //     const indexCurrentContextualizedNodesState =
+  //       currentContextualizedNodesTreeIndexState.getIndexSet();
 
-      currentContextualizedNodesTreeIndexState.updateSet(
-        indexCurrentContextualizedNodesState
-      );
+  //     indexCurrentContextualizedNodesState.clear();
 
-      const indexCurrentSelectedNodes =
-        currentSelectedNodesTreeIndexState.getIndexSet();
-      indexCurrentSelectedNodes.clear();
-      currentSelectedNodesTreeIndexState.updateSet(indexCurrentSelectedNodes);
-      //}
+  //     newContextualizedNodes?.items.forEach((item) => {
+  //       indexCurrentContextualizedNodesState.add(item.treeIndex);
+  //     });
 
-      const indexCurrentSelectedAndContetualizedNodes =
-        currentSelectedAndContextualizedNodesTreeIndexState.getIndexSet();
+  //     currentContextualizedNodesTreeIndexState.updateSet(
+  //       indexCurrentContextualizedNodesState
+  //     );
 
-      indexCurrentSelectedAndContetualizedNodes.clear();
-      currentSelectedAndContextualizedNodesTreeIndexState.clear();
-      currentSelectedAndContextualizedNodesTreeIndexState.updateSet(
-        indexCurrentSelectedAndContetualizedNodes
-      );
+  //     const indexCurrentSelectedNodes =
+  //       currentSelectedNodesTreeIndexState.getIndexSet();
+  //     indexCurrentSelectedNodes.clear();
+  //     currentSelectedNodesTreeIndexState.updateSet(indexCurrentSelectedNodes);
+  //     //}
 
-      await updateThreeDViewerCadNodes({
-        sdk,
-        modelId,
-        revisionId,
-        model,
-        nodesToReset: nodesToReset,
-        contextualizedNodes: newContextualizedNodes,
-        contextualizedNodesTreeIndex: currentContextualizedNodesTreeIndexState,
-        selectedNodesTreeIndex: currentSelectedNodesTreeIndexState,
-        selectedAndContextualizedNodesTreeIndex:
-          currentSelectedAndContextualizedNodesTreeIndexState,
-      });
+  //     const indexCurrentSelectedAndContetualizedNodes =
+  //       currentSelectedAndContextualizedNodesTreeIndexState.getIndexSet();
 
-      if (newContextualizedNodes) {
-        setContextualizedNodes(newContextualizedNodes);
-      }
+  //     indexCurrentSelectedAndContetualizedNodes.clear();
+  //     currentSelectedAndContextualizedNodesTreeIndexState.clear();
+  //     currentSelectedAndContextualizedNodesTreeIndexState.updateSet(
+  //       indexCurrentSelectedAndContetualizedNodes
+  //     );
 
-      selectedNodeIdsList.length = 0;
-      setSelectedNodeIdsList(selectedNodeIdsList);
-    },
-    [
-      contextualizedNodesTreeIndex,
-      modelId,
-      revisionId,
-      sdk,
-      selectedAndContextualizedNodesTreeIndex,
-      selectedNodeIdsList,
-      selectedNodesTreeIndex,
-      threeDViewer,
-    ]
-  );
+  //     await updateThreeDViewerCadNodes({
+  //       sdk,
+  //       modelId,
+  //       revisionId,
+  //       model,
+  //       nodesToReset: nodesToReset,
+  //       contextualizedNodes: newContextualizedNodes,
+  //       contextualizedNodesTreeIndex: currentContextualizedNodesTreeIndexState,
+  //       selectedNodesTreeIndex: currentSelectedNodesTreeIndexState,
+  //       selectedAndContextualizedNodesTreeIndex:
+  //         currentSelectedAndContextualizedNodesTreeIndexState,
+  //     });
+
+  //     if (newContextualizedNodes) {
+  //       setContextualizedNodes(newContextualizedNodes);
+  //     }
+
+  //     selectedNodeIdsList.length = 0;
+  //     setSelectedNodeIds(selectedNodeIdsList);
+  //   },
+  //   [
+  //     contextualizedNodesTreeIndex,
+  //     modelId,
+  //     revisionId,
+  //     sdk,
+  //     selectedAndContextualizedNodesTreeIndex,
+  //     selectedNodeIdsList,
+  //     threeDViewer,
+  //   ]
+  // );
 
   // use effects hooks
   useEffect(() => {
@@ -168,17 +173,16 @@ export const CadContextualizeThreeDViewer = ({
         nodeId: undefined,
       });
 
-      updateThreeDViewerCadNodes({
-        sdk,
-        modelId,
-        revisionId,
-        model,
-        nodesToReset: null,
-        contextualizedNodes: currentContextualizedNodes,
-        contextualizedNodesTreeIndex,
-        selectedNodesTreeIndex,
-        selectedAndContextualizedNodesTreeIndex,
-      });
+      // updateThreeDViewerCadNodes({
+      //   sdk,
+      //   modelId,
+      //   revisionId,
+      //   model,
+      //   nodesToReset: null,
+      //   contextualizedNodes: currentContextualizedNodes,
+      //   contextualizedNodesTreeIndex,
+      //   selectedAndContextualizedNodesTreeIndex,
+      // });
 
       setContextualizedNodes(currentContextualizedNodes);
     };
@@ -190,7 +194,6 @@ export const CadContextualizeThreeDViewer = ({
     revisionId,
     sdk,
     selectedAndContextualizedNodesTreeIndex,
-    selectedNodesTreeIndex,
     threeDViewer,
   ]);
 
@@ -210,48 +213,45 @@ export const CadContextualizeThreeDViewer = ({
     };
   });
 
-  const handleContextualizationDeletionRequest = useCallback(async () => {
-    if (!contextualizedNodes) return;
-    const nodeIds = selectedAndContextualizedNodesList.map(
-      (item) => item.nodeId
-    );
-    const mappedNodesDeleted = await deleteCdfThreeDCadContextualization({
-      sdk,
-      modelId,
-      revisionId,
-      nodeIds: nodeIds,
-    });
+  // const handleContextualizationDeletionRequest = useCallback(async () => {
+  //   if (!contextualizedNodes) return;
+  //   const nodeIds = selectedAndContextualizedNodesList.map(
+  //     (item) => item.nodeId
+  //   );
+  //   const mappedNodesDeleted = await deleteCdfThreeDCadContextualization({
+  //     sdk,
+  //     modelId,
+  //     revisionId,
+  //     nodeIds: nodeIds,
+  //   });
 
-    contextualizedNodes?.items.forEach((item, index) => {
-      if (
-        mappedNodesDeleted.items.find((node) => item.nodeId === node.nodeId)
-      ) {
-        contextualizedNodes?.items.splice(index, 1);
-      }
-    });
-    handleContextualizedNodesUpdate(contextualizedNodes);
-  }, [
-    contextualizedNodes,
-    selectedAndContextualizedNodesList,
-    sdk,
-    modelId,
-    revisionId,
-    handleContextualizedNodesUpdate,
-  ]);
+  //   contextualizedNodes?.items.forEach((item, index) => {
+  //     if (
+  //       mappedNodesDeleted.items.find((node) => item.nodeId === node.nodeId)
+  //     ) {
+  //       contextualizedNodes?.items.splice(index, 1);
+  //     }
+  //   });
+  //   handleContextualizedNodesUpdate(contextualizedNodes);
+  // }, [
+  //   contextualizedNodes,
+  //   selectedAndContextualizedNodesList,
+  //   sdk,
+  //   modelId,
+  //   revisionId,
+  //   handleContextualizedNodesUpdate,
+  // ]);
 
-  const handleContextualizationCreationRequest = async (
-    assetId: number,
-    nodeIds: number[]
-  ) => {
+  const handleResourceSelectorSelect = async (assetId: number) => {
     await saveCdfThreeDCadContextualization({
       sdk,
       modelId,
       revisionId,
-      nodeIds: nodeIds,
+      nodeIds: selectedNodeIdsList,
       assetId,
     });
 
-    handleContextualizedNodesUpdate();
+    // handleContextualizedNodesUpdate();
   };
 
   return (
@@ -270,10 +270,7 @@ export const CadContextualizeThreeDViewer = ({
             selectionMode="single"
             visibleResourceTabs={['asset']}
             onSelect={(item) => {
-              handleContextualizationCreationRequest(
-                item.id,
-                selectedNodeIdsList
-              );
+              handleResourceSelectorSelect(item.id);
             }}
           />
         )}

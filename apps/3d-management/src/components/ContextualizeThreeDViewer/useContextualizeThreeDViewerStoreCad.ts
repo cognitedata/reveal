@@ -13,14 +13,12 @@ export enum ToolType {
 
 type RootState = {
   isResourceSelectorOpen: boolean;
-  isThreeDNodeTreeOpen: boolean;
   threeDViewer: Cognite3DViewer | null;
   tool: ToolType;
   modelId: number | null;
   isModelLoaded: boolean;
-  selectedNodeIdsList: Array<number>;
+  selectedNodeIds: Array<number>;
   selectedAndContextualizedNodesList: Array<SelectedNode>;
-  selectedNodesTreeIndex: TreeIndexNodeCollection;
   selectedAndContextualizedNodesTreeIndex: TreeIndexNodeCollection;
   contextualizedNodesTreeIndex: TreeIndexNodeCollection;
   contextualizedNodes: ListResponse<AssetMapping3D[]> | null;
@@ -28,14 +26,12 @@ type RootState = {
 
 const initialState: RootState = {
   isResourceSelectorOpen: true,
-  isThreeDNodeTreeOpen: true,
   threeDViewer: null,
   tool: ToolType.ADD_ANNOTATION,
   modelId: null,
   isModelLoaded: false,
-  selectedNodeIdsList: [],
+  selectedNodeIds: [],
   selectedAndContextualizedNodesList: [],
-  selectedNodesTreeIndex: new TreeIndexNodeCollection(),
   selectedAndContextualizedNodesTreeIndex: new TreeIndexNodeCollection(),
   contextualizedNodesTreeIndex: new TreeIndexNodeCollection(),
   contextualizedNodes: null,
@@ -57,20 +53,6 @@ export const onCloseResourceSelector = () => {
     ...prevState,
     isResourceSelectorOpen: false,
     pendingAnnotation: null,
-  }));
-};
-
-export const onOpenThreeDNodeTree = () => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
-    ...prevState,
-    isThreeDNodeTreeOpen: true,
-  }));
-};
-
-export const onCloseThreeDNodeTree = () => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
-    ...prevState,
-    isThreeDNodeTreeOpen: false,
   }));
 };
 
@@ -103,10 +85,10 @@ export const setModelId = (modelId: number) => {
   }));
 };
 
-export const setSelectedNodeIdsList = (selectedNodeIdsList: Array<number>) => {
+export const setSelectedNodeIds = (selectedNodeIds: Array<number>) => {
   useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
     ...prevState,
-    selectedNodeIdsList,
+    selectedNodeIds: selectedNodeIds,
   }));
 };
 
@@ -116,15 +98,6 @@ export const setSelectedAndContextualizedNodesList = (
   useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
     ...prevState,
     selectedAndContextualizedNodesList,
-  }));
-};
-
-export const setSelectedNodesTreeIndex = (
-  selectedNodesTreeIndex: TreeIndexNodeCollection
-) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
-    ...prevState,
-    selectedNodesTreeIndex,
   }));
 };
 

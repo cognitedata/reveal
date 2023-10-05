@@ -4,7 +4,6 @@ import { Color } from 'three/src/Three';
 import {
   CogniteCadModel,
   IndexSet,
-  NodeAppearance,
   NodeOutlineColor,
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
@@ -23,7 +22,6 @@ export const updateThreeDViewerCadNodes = async ({
   model,
   contextualizedNodes,
   contextualizedNodesTreeIndex,
-  selectedNodesTreeIndex,
   selectedAndContextualizedNodesTreeIndex,
 }: {
   sdk: CogniteClient;
@@ -54,17 +52,12 @@ export const updateThreeDViewerCadNodes = async ({
   contextualizedNodesTreeIndex.updateSet(new IndexSet(treeIndices));
 
   model.assignStyledNodeCollection(contextualizedNodesTreeIndex, {
-    color: cadNodeStyles[2] as Color,
+    color: cadNodeStyles[1] as Color,
     outlineColor: NodeOutlineColor.NoOutline,
   });
 
-  model.assignStyledNodeCollection(
-    selectedNodesTreeIndex,
-    cadNodeStyles[1] as NodeAppearance
-  );
-
   model.assignStyledNodeCollection(selectedAndContextualizedNodesTreeIndex, {
-    color: cadNodeStyles[3] as Color,
+    color: cadNodeStyles[2] as Color,
     outlineColor: NodeOutlineColor.White,
   });
 };
