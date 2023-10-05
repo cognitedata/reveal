@@ -32,7 +32,6 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
   const viewer = useReveal();
 
   const [cadIntersection, setCadIntersection] = useState<CadIntersection | undefined>(undefined);
-  // const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>(undefined);
 
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
