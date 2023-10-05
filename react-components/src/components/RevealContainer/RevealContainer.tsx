@@ -13,7 +13,6 @@ import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { NodeCacheProvider } from '../NodeCacheProvider/NodeCacheProvider';
 import { RevealContainerElementContext } from './RevealContainerElementContext';
 import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { translations } from '../../common/i18n';
 import { I18nContextProvider } from '../i18n/I18n';
 
 type RevealContainerProps = {
