@@ -1,1 +1,1 @@
-export { AllModels as default } from './AllModels';
+export { AllModels as default } from './AllModelsFeatureFlag';
