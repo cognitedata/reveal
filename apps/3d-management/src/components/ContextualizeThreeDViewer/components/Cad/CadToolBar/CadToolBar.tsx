@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import { FLOATING_ELEMENT_MARGIN } from '@3d-management/pages/ContextualizeEditor/constants';
-import noop from 'lodash-es/noop';
 
 import { ToolBar } from '@cognite/cogs.js';
 import {
@@ -10,30 +9,13 @@ import {
 } from '@cognite/reveal-react-components';
 
 import { CadToolBarTools } from './CadToolBarTools';
-type CadToolBarProps = {
-  modelId: number;
-  revisionId: number;
-  onContextualizationDeletionRequest: typeof noop;
-};
 
-export const CadToolBar = ({
-  modelId,
-  revisionId,
-  onContextualizationDeletionRequest,
-}: CadToolBarProps) => {
-  if (modelId === null) return;
-
+export const CadToolBar = () => {
   return (
     <>
       <StyledToolBar>
         <RevealToolbar.FitModelsButton />
-        <CadToolBarTools
-          modelId={modelId}
-          revisionId={revisionId}
-          onContextualizationDeletionRequest={() => {
-            onContextualizationDeletionRequest();
-          }}
-        />
+        <CadToolBarTools />
       </StyledToolBar>
     </>
   );

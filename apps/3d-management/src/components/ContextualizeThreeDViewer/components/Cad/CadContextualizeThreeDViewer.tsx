@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
 
-import { CadIntersection, CogniteCadModel } from '@cognite/reveal';
+import { CadIntersection } from '@cognite/reveal';
 import { RevealContainer } from '@cognite/reveal-react-components';
 import { AssetMapping3D, ListResponse } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
@@ -23,6 +23,7 @@ import {
 } from '../../useContextualizeThreeDViewerStoreCad';
 import { deleteCdfThreeDCadContextualization } from '../../utils/deleteCdfThreeDCadContextualization';
 import { getCdfCadContextualization } from '../../utils/getCdfCadContextualization';
+import { getCogniteCadModel } from '../../utils/getCogniteCadModel';
 import { saveCdfThreeDCadContextualization } from '../../utils/saveCdfThreeDCadContextualization';
 import { updateThreeDViewerCadNodes } from '../../utils/updateThreeDViewerCadNodes';
 
@@ -42,7 +43,6 @@ export const CadContextualizeThreeDViewer = ({
   const {
     isResourceSelectorOpen,
     threeDViewer,
-    model,
     selectedNodeIdsList,
     contextualizedNodesTreeIndex,
     selectedNodesTreeIndex,
@@ -52,7 +52,6 @@ export const CadContextualizeThreeDViewer = ({
   } = useContextualizeThreeDViewerStoreCad((state) => ({
     isResourceSelectorOpen: state.isResourceSelectorOpen,
     threeDViewer: state.threeDViewer,
-    model: state.model,
     contextualizedNodesTreeIndex: state.contextualizedNodesTreeIndex,
     selectedNodeIdsList: state.selectedNodeIdsList,
     selectedNodesTreeIndex: state.selectedNodesTreeIndex,
@@ -73,10 +72,17 @@ export const CadContextualizeThreeDViewer = ({
       newContextualizedNodes: ListResponse<AssetMapping3D[]> | null = null,
       nodesToReset = null
     ) => {
-      if (!model || !(model instanceof CogniteCadModel)) return;
+      // TODO: Display a user friendly error message if the model is not found
+      if (threeDViewer === null) return;
+      if (modelId === undefined) return;
+
+      const model = getCogniteCadModel({
+        modelId,
+        viewer: threeDViewer,
+      });
+      if (model === undefined) return;
 
       // TODO: improve/simplify this logic of processing the different states to a simpler one
-
       const currentSelectedNodesTreeIndexState = selectedNodesTreeIndex;
       const currentSelectedAndContextualizedNodesTreeIndexState =
         selectedAndContextualizedNodesTreeIndex;
@@ -132,20 +138,28 @@ export const CadContextualizeThreeDViewer = ({
       setSelectedNodeIdsList(selectedNodeIdsList);
     },
     [
-      model,
-      selectedNodesTreeIndex,
-      selectedAndContextualizedNodesTreeIndex,
       contextualizedNodesTreeIndex,
-      sdk,
       modelId,
       revisionId,
+      sdk,
+      selectedAndContextualizedNodesTreeIndex,
       selectedNodeIdsList,
+      selectedNodesTreeIndex,
+      threeDViewer,
     ]
   );
+
   // use effects hooks
   useEffect(() => {
-    (async () => {
-      if (!model || !(model instanceof CogniteCadModel)) return;
+    const updateSelectedCadNodes = async () => {
+      // TODO: Display a user friendly error message if the model is not found
+      if (threeDViewer === null) return;
+
+      const model = getCogniteCadModel({
+        modelId,
+        viewer: threeDViewer,
+      });
+      if (model === undefined) return;
 
       const currentContextualizedNodes = await getCdfCadContextualization({
         sdk: sdk,
@@ -167,8 +181,18 @@ export const CadContextualizeThreeDViewer = ({
       });
 
       setContextualizedNodes(currentContextualizedNodes);
-    })();
-  }, [model]);
+    };
+
+    updateSelectedCadNodes();
+  }, [
+    contextualizedNodesTreeIndex,
+    modelId,
+    revisionId,
+    sdk,
+    selectedAndContextualizedNodesTreeIndex,
+    selectedNodesTreeIndex,
+    threeDViewer,
+  ]);
 
   const onClick = useCallback(
     async (event) => {
@@ -177,11 +201,16 @@ export const CadContextualizeThreeDViewer = ({
         event.offsetY
       )) as CadIntersection;
       if (intersection) {
-        if (
-          (!modelId && !model && !revisionId) ||
-          !(model instanceof CogniteCadModel)
-        )
-          return;
+        // TODO: Display a user friendly error message if the model is not found
+        if (!modelId) return;
+        if (!threeDViewer) return;
+
+        const model = getCogniteCadModel({
+          modelId,
+          viewer: threeDViewer,
+        });
+        if (model === undefined) return;
+
         const nodeId = await model.mapTreeIndexToNodeId(intersection.treeIndex);
 
         // TODO: improve/simplify this logic of processing the different states to a simpler one
@@ -247,8 +276,6 @@ export const CadContextualizeThreeDViewer = ({
     [
       threeDViewer,
       modelId,
-      model,
-      revisionId,
       contextualizedNodes,
       selectedNodesTreeIndex,
       selectedAndContextualizedNodesTreeIndex,
@@ -259,21 +286,14 @@ export const CadContextualizeThreeDViewer = ({
 
   useEffect(() => {
     (async () => {
-      if (
-        !modelId ||
-        !model ||
-        !revisionId ||
-        !contextualizedNodes ||
-        !(model instanceof CogniteCadModel)
-      )
-        return;
+      if (!modelId || !revisionId || !contextualizedNodes) return;
 
       threeDViewer?.on('click', onClick);
       return () => {
         threeDViewer?.off('click', onClick);
       };
     })();
-  }, [threeDViewer, modelId, model, revisionId, contextualizedNodes, onClick]);
+  }, [threeDViewer, modelId, revisionId, contextualizedNodes, onClick]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -322,7 +342,6 @@ export const CadContextualizeThreeDViewer = ({
     assetId: number,
     nodeIds: number[]
   ) => {
-    if (!model || !(model instanceof CogniteCadModel)) return;
     await saveCdfThreeDCadContextualization({
       sdk,
       modelId,
@@ -342,13 +361,7 @@ export const CadContextualizeThreeDViewer = ({
       >
         <ThreeDViewerStyled>
           <RevealContainer sdk={sdk} color={defaultRevealColor}>
-            <CadRevealContent
-              modelId={modelId}
-              revisionId={revisionId}
-              onContextualizationDeletionRequest={() =>
-                handleContextualizationDeletionRequest()
-              }
-            />
+            <CadRevealContent modelId={modelId} revisionId={revisionId} />
           </RevealContainer>
         </ThreeDViewerStyled>
         {isResourceSelectorOpen && (

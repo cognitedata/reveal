@@ -1,19 +1,15 @@
 import { create } from 'zustand';
 
-import {
-  Cognite3DViewer,
-  CogniteCadModel,
-  CognitePointCloudModel,
-  TreeIndexNodeCollection,
-} from '@cognite/reveal';
+import { Cognite3DViewer, TreeIndexNodeCollection } from '@cognite/reveal';
 import { AssetMapping3D, ListResponse } from '@cognite/sdk';
 
-import {
-  DEFAULT_VISUALIZATION_OPTIONS,
-  SelectedNode,
-  ToolType,
-  VisualizationOptions,
-} from './types';
+import { SelectedNode } from './types';
+
+// TODO: Improve naming of the tools
+export enum ToolType {
+  ADD_ANNOTATION = 'addAnnotation',
+  DELETE_ANNOTATION = 'deleteAnnotation',
+}
 
 type RootState = {
   isResourceSelectorOpen: boolean;
@@ -22,31 +18,27 @@ type RootState = {
   tool: ToolType;
   modelId: number | null;
   isModelLoaded: boolean;
-  model: CogniteCadModel | CognitePointCloudModel | undefined;
   selectedNodeIdsList: Array<number>;
   selectedAndContextualizedNodesList: Array<SelectedNode>;
   selectedNodesTreeIndex: TreeIndexNodeCollection;
   selectedAndContextualizedNodesTreeIndex: TreeIndexNodeCollection;
   contextualizedNodesTreeIndex: TreeIndexNodeCollection;
   contextualizedNodes: ListResponse<AssetMapping3D[]> | null;
-  visualizationOptions: VisualizationOptions;
 };
 
 const initialState: RootState = {
   isResourceSelectorOpen: true,
   isThreeDNodeTreeOpen: true,
   threeDViewer: null,
-  tool: ToolType.NONE,
+  tool: ToolType.ADD_ANNOTATION,
   modelId: null,
   isModelLoaded: false,
-  model: undefined,
   selectedNodeIdsList: [],
   selectedAndContextualizedNodesList: [],
   selectedNodesTreeIndex: new TreeIndexNodeCollection(),
   selectedAndContextualizedNodesTreeIndex: new TreeIndexNodeCollection(),
   contextualizedNodesTreeIndex: new TreeIndexNodeCollection(),
   contextualizedNodes: null,
-  visualizationOptions: DEFAULT_VISUALIZATION_OPTIONS,
 };
 
 export const useContextualizeThreeDViewerStoreCad = create<RootState>(
@@ -108,32 +100,6 @@ export const setModelId = (modelId: number) => {
   useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
     ...prevState,
     modelId,
-  }));
-};
-
-export const updateVisualizationOptions = (
-  visualizationOptions: Partial<VisualizationOptions>
-) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
-    ...prevState,
-    visualizationOptions: {
-      ...prevState.visualizationOptions,
-      ...visualizationOptions,
-    },
-  }));
-};
-
-export const setModelType = (modelType: string) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
-    ...prevState,
-    modelType,
-  }));
-};
-
-export const setModel = (model: CogniteCadModel | CognitePointCloudModel) => {
-  useContextualizeThreeDViewerStoreCad.setState((prevState) => ({
-    ...prevState,
-    model,
   }));
 };
 

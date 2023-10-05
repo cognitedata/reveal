@@ -23,14 +23,6 @@ export const DEFAULT_VISUALIZATION_OPTIONS: VisualizationOptions = {
   pointColor: PointColorType.Rgb,
 };
 
-export enum ToolType {
-  NONE = 'none',
-  ADD_ANNOTATION = 'addAnnotation',
-  DELETE_ANNOTATION = 'deleteAnnotation',
-  ADD_THREEDNODE_MAPPING = 'addThreeDNodeMapping',
-  DELETE_THREEDNODE_MAPPING = 'deleteThreeDNodeMapping',
-}
-
 export enum ThreeDModelType {
   NONE = 'none',
   CAD = 'cad',

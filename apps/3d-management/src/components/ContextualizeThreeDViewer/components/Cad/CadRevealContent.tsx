@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import styled from 'styled-components';
-
-import { noop } from 'lodash';
 
 import { Button, ToolBar } from '@cognite/cogs.js';
 import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
@@ -16,23 +14,20 @@ import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/c
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
-  setModel,
   setThreeDViewer,
   useContextualizeThreeDViewerStoreCad,
 } from '../../useContextualizeThreeDViewerStoreCad';
 
 import { CadToolBar } from './CadToolBar/CadToolBar';
 
-interface RevealContentProps {
+type RevealContentProps = {
   modelId: number;
   revisionId: number;
-  onContextualizationDeletionRequest: typeof noop;
-}
+};
 
 export const CadRevealContent = ({
   modelId,
   revisionId,
-  onContextualizationDeletionRequest,
 }: RevealContentProps) => {
   const viewer = useReveal();
   const { isResourceSelectorOpen } = useContextualizeThreeDViewerStoreCad(
@@ -40,8 +35,6 @@ export const CadRevealContent = ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
     })
   );
-
-  const [error, setError] = useState<Error>();
 
   const handleModelOnLoad = (model: CogniteModel) => {
     if (!(viewer?.cameraManager instanceof DefaultCameraManager)) {
@@ -56,41 +49,20 @@ export const CadRevealContent = ({
       changeCameraTargetOnClick: true,
       mouseWheelAction: 'zoomToCursor',
     });
-
-    // setToolbarForCadModelsState();
-
-    if (viewer.domElement) {
-      setModel(model);
-    }
   };
 
   useEffect(() => {
-    if (viewer) {
-      setThreeDViewer(viewer);
-    }
+    setThreeDViewer(viewer);
   }, [viewer]);
-
-  const handleLoadError = (e: Error) => {
-    if (e instanceof Error && viewer.domElement) {
-      throw error;
-    }
-  };
 
   return (
     <>
-      <CadToolBar
-        modelId={modelId}
-        revisionId={revisionId}
-        onContextualizationDeletionRequest={() => {
-          onContextualizationDeletionRequest();
-        }}
-      />
+      <CadToolBar />
       <CadModelContainer
         addModelOptions={{
           modelId: modelId,
           revisionId: revisionId,
         }}
-        onLoadError={(options, e) => handleLoadError(e)}
         onLoad={handleModelOnLoad}
       />
 

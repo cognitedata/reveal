@@ -1,53 +1,25 @@
-import { type ReactElement, useCallback } from 'react';
-
-import { ToolType } from '@3d-management/components/ContextualizeThreeDViewer/types';
-import { useContextualizeThreeDViewerStoreCad } from '@3d-management/components/ContextualizeThreeDViewer/useContextualizeThreeDViewerStoreCad';
-import noop from 'lodash-es/noop';
+import { type ReactElement } from 'react';
 
 import { ToolBar, Tooltip, Button } from '@cognite/cogs.js';
 
-import { setTool } from '../../../useContextualizeThreeDViewerStoreCad';
+import {
+  setTool,
+  ToolType,
+  useContextualizeThreeDViewerStoreCad,
+} from '../../../useContextualizeThreeDViewerStoreCad';
 
-type CadToolBarTools = {
-  modelId: number;
-  revisionId: number;
-  onContextualizationDeletionRequest: typeof noop;
-};
-
-export function CadToolBarTools({
-  modelId,
-  revisionId,
-  onContextualizationDeletionRequest,
-}: CadToolBarTools): ReactElement {
-  const { tool, threeDViewer, model } = useContextualizeThreeDViewerStoreCad(
-    (state) => ({
-      tool: state.tool,
-      threeDViewer: state.threeDViewer,
-      model: state.model,
-    })
-  );
+export const CadToolBarTools = (): ReactElement => {
+  const { tool } = useContextualizeThreeDViewerStoreCad((state) => ({
+    tool: state.tool,
+  }));
 
   const handleAddClick = () => {
-    if (tool === ToolType.ADD_THREEDNODE_MAPPING) {
-      setTool(ToolType.NONE);
-      return;
-    }
-
-    setTool(ToolType.ADD_THREEDNODE_MAPPING);
+    setTool(ToolType.ADD_ANNOTATION);
   };
 
-  const handleDeleteClick = useCallback(async () => {
-    if (!threeDViewer || !modelId || !model) return;
-
-    onContextualizationDeletionRequest();
-
-    if (tool === ToolType.DELETE_THREEDNODE_MAPPING) {
-      setTool(ToolType.NONE);
-      return;
-    }
-
-    setTool(ToolType.DELETE_THREEDNODE_MAPPING);
-  }, [threeDViewer, modelId, model, onContextualizationDeletionRequest, tool]);
+  const handleDeleteClick = () => {
+    setTool(ToolType.DELETE_ANNOTATION);
+  };
 
   return (
     <ToolBar direction="vertical">
@@ -73,4 +45,4 @@ export function CadToolBarTools({
       </>
     </ToolBar>
   );
-}
+};

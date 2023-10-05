@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-import ContextualizeThreeDViewer from '@3d-management/components/ContextualizeThreeDViewer';
+import ContextualizeThreeDViewer from '../../components/ContextualizeThreeDViewer';
 
 import { ContextualizeEditorHeader } from './ContextualizeEditorHeader';
 
