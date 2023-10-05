@@ -4,13 +4,13 @@ import {
   interceptFileList,
   interceptSequenceList,
   interceptEventList,
-  intercept3DList,
+  interceptFilesSearch,
   ASSET_LIST_ALIAS,
   TIMESERIES_LIST_ALIAS,
   FILE_LIST_ALIAS,
   SEQUENCE_LIST_ALIAS,
   EVENT_LIST_ALIAS,
-  THREED_LIST_ALIAS,
+  FILES_SEARCH_ALIAS,
 } from '../support/interceptions/interceptions';
 
 describe('Search result tables', () => {
@@ -25,7 +25,7 @@ describe('Search result tables', () => {
     interceptFileList();
     interceptSequenceList();
     interceptEventList();
-    intercept3DList();
+    interceptFilesSearch();
   });
 
   it('Should be able navigate to AllResources tab', () => {
@@ -103,7 +103,7 @@ describe('Search result tables', () => {
 
   it('Should be able navigate to 3D tab', () => {
     cy.goToTab('3D');
-    cy.wait(`@${THREED_LIST_ALIAS}`);
+    cy.wait(`@${FILES_SEARCH_ALIAS}`);
 
     cy.log('should contain sequence search results');
     cy.tableShouldBeVisible('3d-model-table');

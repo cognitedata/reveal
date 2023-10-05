@@ -1,37 +1,31 @@
 import {
-  EVENT_AGGREGATE_ALIAS,
   EVENT_LIST_ALIAS,
-  interceptEventsAggregate,
   interceptEventList,
 } from '../support/interceptions/interceptions';
 
-describe('Events filters', () => {
+describe('Events - Filters', () => {
   before(() => {
     cy.fusionLogin();
     cy.navigateToExplorer();
 
-    interceptEventList();
-    interceptEventsAggregate();
-
     cy.goToTab('Events');
-    cy.wait(`@${EVENT_LIST_ALIAS}`);
-    cy.wait(`@${EVENT_AGGREGATE_ALIAS}`);
-
     cy.tableContentShouldBeVisible('event-search-results');
+  });
+
+  beforeEach(() => {
+    interceptEventList();
   });
 
   afterEach(() => {
     cy.resetSearchFilters();
   });
 
-  it('should filter events by Type', () => {
+  it('should filter events by type', () => {
     const TYPES = 'material';
-
-    interceptEventList('eventFilterByType');
 
     cy.clickSelectFilter('Types').searchAndClickSelectOption(TYPES);
 
-    cy.wait('@eventFilterByType').payloadShouldContain({
+    cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain({
       in: {
         property: ['type'],
         values: [TYPES],
@@ -39,14 +33,12 @@ describe('Events filters', () => {
     });
   });
 
-  it('should filter events by SubType', () => {
+  it('should filter events by subtype', () => {
     const SUB_TYPES = 'actual';
-
-    interceptEventList('eventFilterBySubType');
 
     cy.clickSelectFilter('Subtypes').searchAndClickSelectOption(SUB_TYPES);
 
-    cy.wait('@eventFilterBySubType').payloadShouldContain({
+    cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain({
       in: {
         property: ['subtype'],
         values: [SUB_TYPES],
@@ -57,11 +49,9 @@ describe('Events filters', () => {
   it('should filter events by source', () => {
     const SOURCE = 'sap';
 
-    interceptEventList('eventFilterBySource');
-
     cy.clickSelectFilter('Sources').searchAndClickSelectOption(SOURCE);
 
-    cy.wait('@eventFilterBySource').payloadShouldContain({
+    cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain({
       in: {
         property: ['source'],
         values: [SOURCE],
@@ -69,20 +59,19 @@ describe('Events filters', () => {
     });
   });
 
-  it('should filter events by StartTime', () => {
+  it('should filter events by start time', () => {
     cy.clickSelectFilter('Start time').clickSelectOption('Before');
 
-    cy.log('change date to 2023/01/01');
     cy.openDatePicker('Start time');
+    cy.wait(`@${EVENT_LIST_ALIAS}`);
 
-    interceptEventList('eventFilterByStartTime');
-
+    cy.log('change date to 2023/01/01');
     cy.selectYear(2023);
     cy.selectMonth('January');
     cy.selectDate('January 1st');
 
     cy.getDatePickerValue('Start time').then((selectedDate) => {
-      cy.wait('@eventFilterByStartTime').payloadShouldContain({
+      cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain({
         range: {
           property: ['startTime'],
           lte: new Date(selectedDate).valueOf(),
@@ -91,20 +80,19 @@ describe('Events filters', () => {
     });
   });
 
-  it('should filter events by End Time', () => {
+  it('should filter events by end time', () => {
     cy.clickSelectFilter('End time').clickSelectOption('Before');
 
-    cy.log('change date to 2023/01/01');
     cy.openDatePicker('End time');
+    cy.wait(`@${EVENT_LIST_ALIAS}`);
 
-    interceptEventList('eventFilterByEndTime');
-
+    cy.log('change date to 2023/01/01');
     cy.selectYear(2023);
     cy.selectMonth('January');
     cy.selectDate('January 1st');
 
     cy.getDatePickerValue('End time').then((selectedDate) => {
-      cy.wait('@eventFilterByEndTime').payloadShouldContain({
+      cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain({
         range: {
           property: ['endTime'],
           lte: new Date(selectedDate).valueOf(),
