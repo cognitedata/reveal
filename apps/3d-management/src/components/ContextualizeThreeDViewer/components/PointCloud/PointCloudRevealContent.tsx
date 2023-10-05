@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import styled from 'styled-components';
 
 import { Button, ToolBar } from '@cognite/cogs.js';
@@ -15,7 +13,6 @@ import {
   onCloseResourceSelector,
   onOpenResourceSelector,
   setModelLoaded,
-  setThreeDViewer,
   useContextualizeThreeDViewerStore,
 } from '../../useContextualizeThreeDViewerStore';
 import { AnnotationsCard } from '../AnnotationsCard';
@@ -34,9 +31,6 @@ export const PointCloudRevealContent = ({
   onDeleteAnnotation,
 }: RevealContentProps) => {
   const viewer = useReveal();
-
-  const [error, setError] = useState<Error>();
-
   const { isResourceSelectorOpen, annotations } =
     useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
@@ -59,29 +53,18 @@ export const PointCloudRevealContent = ({
     });
   };
 
-  const handleLoadError = (e: Error) => {
-    if (e instanceof Error && viewer.domElement) {
-      throw error;
-    }
-  };
-
-  useEffect(() => {
-    if (viewer) {
-      setThreeDViewer(viewer);
-    }
-  }, [viewer]);
-
   return (
     <>
-      <PointCloudToolBar onDeleteAnnotation={onDeleteAnnotation} />
       <PointCloudContainer
         addModelOptions={{
           modelId: modelId,
           revisionId: revisionId,
         }}
-        onLoadError={(options, e) => handleLoadError(e)}
         onLoad={handleModelOnLoad}
       />
+
+      <PointCloudToolBar onDeleteAnnotation={onDeleteAnnotation} />
+
       <StyledResourceSelectorButtonWrapper>
         <Button
           type="ghost"
@@ -97,6 +80,7 @@ export const PointCloudRevealContent = ({
           }}
         />
       </StyledResourceSelectorButtonWrapper>
+
       <AnnotationsCard
         annotations={annotations}
         onAnnotationDelete={(annotation) => {
@@ -112,6 +96,7 @@ const StyledResourceSelectorButtonWrapper = styled(
 )`
   position: absolute;
   right: ${FLOATING_ELEMENT_MARGIN}px;
+
   /* The 3px is to vertically align it with the splitter handle */
   top: calc(50% + 3px);
 `;
