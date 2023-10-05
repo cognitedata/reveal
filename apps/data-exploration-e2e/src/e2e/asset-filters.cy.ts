@@ -18,7 +18,7 @@ describe('Asset filters', () => {
     cy.wait(`@${ASSET_AGGREGATE_ALIAS}`);
 
     cy.clickIconButton('List');
-    cy.tableShouldBeVisible('asset-search-results');
+    cy.tableContentShouldBeVisible('asset-search-results');
   });
 
   afterEach(() => {
@@ -30,7 +30,7 @@ describe('Asset filters', () => {
 
     interceptAssetList('assetsFilterBySource');
 
-    cy.clickFilter('Sources').searchAndClickOption(SOURCE);
+    cy.clickSelectFilter('Sources').searchAndClickSelectOption(SOURCE);
 
     cy.wait('@assetFilterBySource').payloadShouldContain({
       in: {
@@ -45,7 +45,7 @@ describe('Asset filters', () => {
 
     interceptAssetList('assetsFilterByLabel');
 
-    cy.clickFilter('Labels').searchAndClickOption(LABEL);
+    cy.clickSelectFilter('Labels').searchAndClickSelectOption(LABEL);
 
     cy.wait('@assetFilterByLabel').payloadShouldContain({
       containsAny: {

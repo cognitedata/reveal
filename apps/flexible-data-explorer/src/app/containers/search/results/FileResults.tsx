@@ -39,7 +39,7 @@ export const FileResults: React.FC<Props> = ({ selected }) => {
               Files: value,
             };
 
-            setFilters(nextFilters, action === 'add' ? 'Files' : undefined);
+            setFilters(nextFilters, action === 'add' ? 'File' : undefined);
           }}
         />
       </SearchResults.Header>

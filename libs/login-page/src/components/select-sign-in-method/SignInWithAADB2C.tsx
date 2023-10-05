@@ -8,6 +8,7 @@ import {
   saveSelectedIdpDetails,
   AADB2CResponse,
   loginRedirectAad,
+  goToSelectProject,
 } from '@cognite/login-utils';
 
 import { Microsoft } from '../../components/icons';
@@ -48,7 +49,7 @@ const SignInWithAADB2C = ({
         .then((redirectResult) => {
           if (redirectResult?.account) {
             pca.setActiveAccount(redirectResult?.account);
-            navigate('/select-project');
+            goToSelectProject(navigate);
           }
         })
         // eslint-disable-next-line lodash/prefer-noop
@@ -63,10 +64,10 @@ const SignInWithAADB2C = ({
 
   useEffect(() => {
     // If there is an active AAD account entry in local storage for the
-    // selected login flow, we redirect to `/select-project` route.
+    // selected login flow, we navigate to the project select step.
     const { internalId: selectedIdpId } = getSelectedIdpDetails() ?? {};
     if (selectedIdpId === internalId) {
-      navigate('/select-project');
+      goToSelectProject(navigate);
     }
   }, [authority, navigate, internalId, pca]);
 

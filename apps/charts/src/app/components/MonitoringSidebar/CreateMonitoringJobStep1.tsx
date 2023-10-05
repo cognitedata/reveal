@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 
 import { delay } from 'lodash';
 
-import { ChartThreshold, ChartTimeSeries } from '@cognite/charts-lib';
+import { ChartThreshold } from '@cognite/charts-lib';
 import { Button, Icon, Row, Col, Chip } from '@cognite/cogs.js';
 
 import {
@@ -17,8 +17,9 @@ import { useChartAtom } from '../../models/chart/atom';
 import {
   addChartThreshold,
   removeChartThreshold,
-  updateChartThresholdSelectedSource,
+  updateChartThresholdProperties,
   updateChartThresholdUpperLimit,
+  updateChartThresholdVisibility,
 } from '../../models/chart/updates-threshold';
 import { useChartInteractionsAtom } from '../../models/interactions/atom';
 import { trackUsage } from '../../services/metrics';
@@ -83,7 +84,6 @@ const CreateMonitoringJobStep1 = ({
 
   const [chart, setChart] = useChartAtom();
   const [, setInteractionsState] = useChartInteractionsAtom();
-  const timeseries = (chart && chart?.timeSeriesCollection) || [];
 
   const formValues = watch();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -121,15 +121,26 @@ const CreateMonitoringJobStep1 = ({
   }, [hasMonitoringThreshold, setChart]);
 
   useEffect(() => {
-    return () => {
-      setTimeout(() => {
-        setChart((oldChart) =>
-          removeChartThreshold(oldChart!, MONITORING_THRESHOLD_ID)
-        );
-      }, 200);
+    const cleanupThreshold = () => {
+      setChart((oldChart) =>
+        removeChartThreshold(oldChart!, MONITORING_THRESHOLD_ID)
+      );
+
       setInteractionsState({
         highlightedTimeseriesId: undefined,
       });
+    };
+
+    // Event listener for beforeunload to run cleanup before tab is closed
+    // So that orphan monitoring thresholds aren't stored.
+    const handleBeforeUnload = () => {
+      cleanupThreshold();
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      cleanupThreshold();
     };
   }, []);
 
@@ -144,36 +155,32 @@ const CreateMonitoringJobStep1 = ({
   }, [formValues.alertThreshold, setChart]);
 
   useEffect(() => {
-    const tsSource = timeseries.find((ts: ChartTimeSeries) => {
-      return (
-        ts.tsExternalId === (formValues.source as ChartTimeSeries)?.tsExternalId
-      );
-    });
-    if (tsSource) {
+    // FormValue.source is always either Timeseries or ScheduledCalculation
+    if (formValues?.source) {
       setChart((oldChart) =>
-        updateChartThresholdSelectedSource(
-          oldChart!,
-          MONITORING_THRESHOLD_ID,
-          tsSource?.id || ''
-        )
-      );
-      const selectedTs = chart?.timeSeriesCollection?.find(
-        (currentTs: ChartTimeSeries) => {
-          return (
-            currentTs.tsExternalId ===
-            (formValues.source as ChartTimeSeries)?.tsExternalId
-          );
-        }
+        updateChartThresholdProperties(oldChart!, MONITORING_THRESHOLD_ID, {
+          sourceId: formValues?.source?.id || '',
+          visible: true,
+        })
       );
       setInteractionsState({
-        highlightedTimeseriesId: selectedTs?.id,
+        highlightedTimeseriesId: formValues?.source?.id,
       });
+    } else {
+      // When the source is not available hide the threshold
+      setChart((oldChart) =>
+        updateChartThresholdVisibility(
+          oldChart!,
+          MONITORING_THRESHOLD_ID,
+          false
+        )
+      );
     }
   }, [
     setChart,
     setInteractionsState,
-    (formValues.source as ChartTimeSeries)?.tsExternalId,
-    JSON.stringify(timeseries.map((ts) => ts.tsExternalId)),
+    formValues.source,
+    formValues?.source?.id,
   ]);
 
   useEffect(() => {

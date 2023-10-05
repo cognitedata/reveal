@@ -1,7 +1,5 @@
 import React, { useCallback, useState } from 'react';
 
-import styled from 'styled-components';
-
 import dayjs from 'dayjs';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -34,10 +32,7 @@ import { useTranslation } from '../useTranslation';
 
 import getContainerText from './getContainerText';
 import LabelToolbar from './LabelToolbar';
-
-const TooltipToolBarContainer = styled.div`
-  margin: 18px 0px;
-`;
+import { TooltipToolBarContainer } from './styles';
 
 const navigateToPath = (path: string, query?: any) => {
   const link = createLink(path, query);
@@ -193,7 +188,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         )}
         {isChangingProperties && (
           <PropertySelectorToolbarWrapper
-            containerConfig={selectedContainer}
+            containerConfigs={[selectedContainer]}
             onApplyClick={handleApplyClick}
           />
         )}

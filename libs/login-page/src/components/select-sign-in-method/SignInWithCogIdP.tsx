@@ -12,6 +12,7 @@ import {
   cogniteIdPSignInRedirect,
   getCogIdPState,
   getSelectedIdpDetails,
+  goToSelectProject,
   saveSelectedIdpDetails,
   useCogniteIdPUserManager,
 } from '@cognite/login-utils';
@@ -64,7 +65,7 @@ export default function SignInWithCogniteIdP({
 
   useEffect(() => {
     if (user) {
-      navigate('/select-project');
+      goToSelectProject(navigate);
     }
   }, [user, navigate]);
 

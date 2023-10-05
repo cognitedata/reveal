@@ -24,6 +24,7 @@ import { useLocalStorage } from '../../utils/useLocalStorage';
 
 import { RevealContent } from './components/RevealContent';
 import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
+import { useZoomToAnnotation } from './hooks/useZoomToAnnotation';
 import {
   setModelId,
   setPendingAnnotation,
@@ -102,6 +103,7 @@ export const ContextualizeThreeDViewer = ({
   }, [annotations]);
 
   useSyncStateWithViewer();
+  const zoomToAnnotation = useZoomToAnnotation();
 
   const saveAnnotationToCdf = (assetId: number) => {
     if (threeDViewer === null || pendingAnnotation === null) return;
@@ -151,6 +153,7 @@ export const ContextualizeThreeDViewer = ({
               modelId={modelId}
               revisionId={revisionId}
               onDeleteAnnotation={onDeleteAnnotation}
+              onZoomToAnnotation={zoomToAnnotation}
             />
           </RevealContainer>
         </ThreeDViewerStyled>

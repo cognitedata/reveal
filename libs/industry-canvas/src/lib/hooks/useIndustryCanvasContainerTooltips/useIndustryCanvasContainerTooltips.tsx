@@ -18,6 +18,7 @@ import {
 } from '../useTooltipsOptions';
 
 import ContainerTooltip from './ContainerTooltip';
+import MultiContainerTooltip from './MultiContainerTooltip';
 import useContainerOcrData from './useContainerOcrData';
 
 type UseIndustryCanvasContainerTooltipsProps = {
@@ -70,7 +71,7 @@ const useIndustryCanvasContainerTooltips = ({
     })();
   }, [selectedContainer]);
 
-  return useMemo(() => {
+  const selectedContainerTooltip = useMemo(() => {
     if (selectedContainer === undefined) {
       return [];
     }
@@ -118,6 +119,35 @@ const useIndustryCanvasContainerTooltips = ({
     tooltipsOptions,
     onUpdateTooltipsOptions,
   ]);
+
+  const multiSelectedContainerTooltip: TooltipConfig[] = useMemo(() => {
+    if (selectedContainers.length < 2) {
+      return [];
+    }
+
+    const haveOnlyAssetsOrEventContainersBeenSelected =
+      selectedContainers.every(
+        (container) =>
+          container.type === ContainerType.ASSET ||
+          container.type === ContainerType.EVENT
+      );
+
+    if (!haveOnlyAssetsOrEventContainersBeenSelected) {
+      return [];
+    }
+
+    return [
+      {
+        targetIds: selectedContainers.map((container) => container.id),
+        content: (
+          <MultiContainerTooltip selectedContainers={selectedContainers} />
+        ),
+        anchorTo: TooltipAnchorPosition.TOP_CENTER,
+      },
+    ];
+  }, [selectedContainers]);
+
+  return [...selectedContainerTooltip, ...multiSelectedContainerTooltip];
 };
 
 export default useIndustryCanvasContainerTooltips;

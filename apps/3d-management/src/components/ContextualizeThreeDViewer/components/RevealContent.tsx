@@ -23,12 +23,14 @@ interface RevealContentProps {
   modelId: number;
   revisionId: number;
   onDeleteAnnotation: (annotationId: number) => void;
+  onZoomToAnnotation: (annotationId: number) => void;
 }
 
 export const RevealContent = ({
   modelId,
   revisionId,
   onDeleteAnnotation,
+  onZoomToAnnotation,
 }: RevealContentProps) => {
   const viewer = useReveal();
   const { isResourceSelectorOpen, annotations } =
@@ -83,9 +85,10 @@ export const RevealContent = ({
 
       <AnnotationsCard
         annotations={annotations}
-        onAnnotationDelete={(annotation) => {
+        onDeleteAnnotation={(annotation) => {
           onDeleteAnnotation(annotation.id);
         }}
+        onZoomToAnnotation={onZoomToAnnotation}
       />
     </>
   );

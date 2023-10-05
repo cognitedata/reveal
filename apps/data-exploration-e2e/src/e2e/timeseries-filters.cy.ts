@@ -17,7 +17,7 @@ describe('Timeseries filters', () => {
     cy.wait(`@${TIMESERIES_LIST_ALIAS}`);
     cy.wait(`@${TIMESERIES_AGGREGATE_ALIAS}`);
 
-    cy.tableShouldBeVisible('timeseries-search-results');
+    cy.tableContentShouldBeVisible('timeseries-search-results');
   });
 
   afterEach(() => {
@@ -29,7 +29,7 @@ describe('Timeseries filters', () => {
 
     interceptTimeseriesList('timeseriesFilterByUnit');
 
-    cy.clickFilter('Units').searchAndClickOption(UNIT);
+    cy.clickSelectFilter('Units').searchAndClickSelectOption(UNIT);
 
     cy.wait('@timeseriesFilterByUnit').payloadShouldContain({
       in: {
@@ -43,7 +43,7 @@ describe('Timeseries filters', () => {
     interceptTimeseriesList('timeseriesFilterByIsStep');
 
     cy.log('click on True button of Is step filter');
-    cy.getFilter('Is step').contains('True').click();
+    cy.getFilter('Is step').clickBooleanOption('True');
 
     cy.wait(`@timeseriesFilterByIsStep`).payloadShouldContain({
       equals: {
@@ -57,7 +57,7 @@ describe('Timeseries filters', () => {
     interceptTimeseriesList('timeseriesFilterByIsString');
 
     cy.log('click on False button of Is string filter');
-    cy.getFilter('Is string').contains('False').click();
+    cy.getFilter('Is string').clickBooleanOption('False');
 
     cy.wait(`@timeseriesFilterByIsString`).payloadShouldContain({
       equals: {

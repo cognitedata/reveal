@@ -267,6 +267,7 @@ export const useEditMQTTSource = (
 
 type DeleteMQTTSourceVariables = {
   externalId: string;
+  force?: boolean;
 };
 
 export const useDeleteMQTTSource = (
@@ -285,6 +286,7 @@ export const useDeleteMQTTSource = (
               externalId: variables.externalId,
             },
           ],
+          ...(variables.force && { force: variables.force }),
         },
       });
     },

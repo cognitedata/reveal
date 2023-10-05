@@ -1,5 +1,4 @@
 import { TranslationKeys } from '@access-management/common/i18n';
-import queryString from 'query-string';
 
 import { cognite } from '@cognite/acl-protos';
 import {
@@ -349,17 +348,6 @@ export const getScopeLabel = (
       return _t('space-ids');
   }
   return null;
-};
-
-export const getStringCdfEnv = () => {
-  const { env } = queryString.parse(window.location.search);
-  if (env instanceof Array) {
-    return env[0];
-  }
-  if (typeof env === 'string') {
-    return env;
-  }
-  return undefined;
 };
 
 export const getActionLabel = (

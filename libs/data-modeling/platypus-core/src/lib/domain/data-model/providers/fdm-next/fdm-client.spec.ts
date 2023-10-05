@@ -1,5 +1,4 @@
-import { PlatypusError } from '@platypus-core/boundaries/types';
-
+import { PlatypusError } from '../../../../boundaries/types';
 import {
   DeleteInstancesDTO,
   IngestInstancesDTO,

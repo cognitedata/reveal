@@ -18,9 +18,10 @@ export type DatePickerProps = {
 
 const currentDate = new Date();
 export const DatePicker = ({
+  id,
   initialDate = currentDate,
   onDateChanged = noop,
-}: DatePickerProps) => {
+}: DatePickerProps & { id?: string }) => {
   // Cogs is stupid af so we have to ref the span
   const spanRef = useRef<HTMLSpanElement>(null);
 
@@ -45,7 +46,7 @@ export const DatePicker = ({
       }
       maxWidth="auto"
     >
-      <Button icon="Calendar">
+      <Button icon="Calendar" data-testid={id}>
         <span ref={spanRef}>{formatDateToDatePickerString(initialDate)}</span>
       </Button>
     </Dropdown>

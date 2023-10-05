@@ -17,7 +17,7 @@ describe('Files filters', () => {
     cy.wait(`@${FILE_LIST_ALIAS}`);
     cy.wait(`@${FILE_AGGREGATE_ALIAS}`);
 
-    cy.tableShouldBeVisible('documents-search-results');
+    cy.tableContentShouldBeVisible('documents-search-results');
   });
 
   afterEach(() => {
@@ -29,7 +29,7 @@ describe('Files filters', () => {
 
     interceptFileList('filesFilterByFiletType');
 
-    cy.clickFilter('File types').searchAndClickOption(FILE_TYPE);
+    cy.clickSelectFilter('File types').searchAndClickSelectOption(FILE_TYPE);
 
     cy.wait('@filesFilterByFiletType').payloadShouldContain({
       in: {
@@ -44,7 +44,7 @@ describe('Files filters', () => {
 
     interceptFileList('filesFilterByAuthor');
 
-    cy.clickFilter('Authors').searchAndClickOption(AUTHOR);
+    cy.clickSelectFilter('Authors').searchAndClickSelectOption(AUTHOR);
 
     cy.wait('@filesFilterByAuthor').payloadShouldContain({
       in: {

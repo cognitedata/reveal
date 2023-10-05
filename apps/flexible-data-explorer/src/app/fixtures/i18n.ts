@@ -5,7 +5,14 @@ import { TFunction } from '../hooks/useTranslation';
 
 export const mockTFunction: TFunction = (
   key: keyof typeof english,
-  _options: TOptions = {}
+  options: TOptions = {}
 ) => {
-  return english[key];
+  let string = english[key];
+
+  switch (options.postProcess) {
+    case 'lowercase':
+      string = string.toLowerCase();
+  }
+
+  return string;
 };

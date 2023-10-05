@@ -29,7 +29,7 @@ describe('Events filters', () => {
 
     interceptEventList('eventFilterByType');
 
-    cy.clickFilter('Types').searchAndClickOption(TYPES);
+    cy.clickSelectFilter('Types').searchAndClickSelectOption(TYPES);
 
     cy.wait('@eventFilterByType').payloadShouldContain({
       in: {
@@ -44,7 +44,7 @@ describe('Events filters', () => {
 
     interceptEventList('eventFilterBySubType');
 
-    cy.clickFilter('Subtypes').searchAndClickOption(SUB_TYPES);
+    cy.clickSelectFilter('Subtypes').searchAndClickSelectOption(SUB_TYPES);
 
     cy.wait('@eventFilterBySubType').payloadShouldContain({
       in: {
@@ -59,13 +59,57 @@ describe('Events filters', () => {
 
     interceptEventList('eventFilterBySource');
 
-    cy.clickFilter('Sources').searchAndClickOption(SOURCE);
+    cy.clickSelectFilter('Sources').searchAndClickSelectOption(SOURCE);
 
     cy.wait('@eventFilterBySource').payloadShouldContain({
       in: {
         property: ['source'],
         values: [SOURCE],
       },
+    });
+  });
+
+  it('should filter events by StartTime', () => {
+    cy.clickSelectFilter('Start time').clickSelectOption('Before');
+
+    cy.log('change date to 2023/01/01');
+    cy.openDatePicker('Start time');
+
+    interceptEventList('eventFilterByStartTime');
+
+    cy.selectYear(2023);
+    cy.selectMonth('January');
+    cy.selectDate('January 1st');
+
+    cy.getDatePickerValue('Start time').then((selectedDate) => {
+      cy.wait('@eventFilterByStartTime').payloadShouldContain({
+        range: {
+          property: ['startTime'],
+          lte: new Date(selectedDate).valueOf(),
+        },
+      });
+    });
+  });
+
+  it('should filter events by End Time', () => {
+    cy.clickSelectFilter('End time').clickSelectOption('Before');
+
+    cy.log('change date to 2023/01/01');
+    cy.openDatePicker('End time');
+
+    interceptEventList('eventFilterByEndTime');
+
+    cy.selectYear(2023);
+    cy.selectMonth('January');
+    cy.selectDate('January 1st');
+
+    cy.getDatePickerValue('End time').then((selectedDate) => {
+      cy.wait('@eventFilterByEndTime').payloadShouldContain({
+        range: {
+          property: ['endTime'],
+          lte: new Date(selectedDate).valueOf(),
+        },
+      });
     });
   });
 });

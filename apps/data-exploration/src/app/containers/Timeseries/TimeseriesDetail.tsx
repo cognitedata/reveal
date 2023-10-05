@@ -156,7 +156,7 @@ export const TimeseriesDetail = ({
                 key="details"
                 tabKey="details"
               >
-                <DetailsTabWrapper>
+                <DetailsTabWrapper data-testid="timeseries-details">
                   <TimeseriesChart
                     timeseries={{ id: timeseries.id }}
                     height={300}

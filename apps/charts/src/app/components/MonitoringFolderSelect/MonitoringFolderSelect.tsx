@@ -7,7 +7,6 @@ import { Divider, Row } from 'antd';
 import debounce from 'lodash/debounce';
 
 import { Button, Icon, Select, toast } from '@cognite/cogs.js';
-import { CogniteError } from '@cognite/sdk';
 
 import { useTranslations } from '../../hooks/translations';
 import { trackUsage } from '../../services/metrics';
@@ -52,13 +51,7 @@ const MonitoringFolderSelect: React.FC<Props> = ({
 
   useEffect(() => {
     if (createMonitoringJobError) {
-      const allErrors: CogniteError =
-        createMonitoringJobErrorMsg as CogniteError;
-      const messages = allErrors
-        .toJSON()
-        .message.errors.map((err: any) => err.message)
-        .join(',');
-      toast.error(`${createMonitoringJobErrorText} ${messages}`);
+      toast.error(`${createMonitoringJobErrorText}`);
     }
   }, [
     createMonitoringJobError,

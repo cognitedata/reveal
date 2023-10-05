@@ -39,6 +39,8 @@ export default function App(): JSX.Element {
       // ignrore error and instead render the redirect page as normal
       window.history.replaceState(null, '', '/');
     }
+  } else if (window.location.pathname !== '/') {
+    window.history.replaceState(null, '', '/');
   }
 
   return (
