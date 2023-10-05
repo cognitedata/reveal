@@ -89,7 +89,11 @@ export const useAssetMappingForTreeIndex = (
         cdfClient
       );
 
-      return await assetMappingCache.getAssetMappingsForLowestAncestor(modelId, revisionId, ancestors);
+      return await assetMappingCache.getAssetMappingsForLowestAncestor(
+        modelId,
+        revisionId,
+        ancestors
+      );
     },
     { staleTime: Infinity }
   );

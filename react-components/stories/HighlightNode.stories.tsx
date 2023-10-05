@@ -10,7 +10,7 @@ import {
   useClickedNodeData,
   useCameraNavigation,
   type AddResourceOptions,
-  type FdmAssetStylingGroup,
+  type FdmAssetStylingGroup
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
@@ -72,13 +72,19 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     setStylingGroups([
       {
         fdmAssetExternalIds: [
-          { externalId: nodeData.fdmResult.fdmNode.externalId, space: nodeData.fdmResult.fdmNode.space }
+          {
+            externalId: nodeData.fdmResult.fdmNode.externalId,
+            space: nodeData.fdmResult.fdmNode.space
+          }
         ],
         style: { cad: DefaultNodeAppearance.Highlighted }
       }
     ]);
 
-    void cameraNavigation.fitCameraToInstance(nodeData.fdmResult.fdmNode.externalId, nodeData.fdmResult.fdmNode.space);
+    void cameraNavigation.fitCameraToInstance(
+      nodeData.fdmResult.fdmNode.externalId,
+      nodeData.fdmResult.fdmNode.space
+    );
   }, [nodeData]);
 
   return (
