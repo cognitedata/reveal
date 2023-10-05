@@ -94,9 +94,13 @@ describe('fusion-shell', () => {
   it('verify user sign out', () => {
     cy.findByTestId('topbar-user-profile-area').find('.cogs-dropdown').click();
     cy.findByTestId('topbar-user-logout-btn').click();
-    cy.location().should((loc) => {
-      expect(loc.pathname).eq('/');
-      expect(loc.search.length).eq(0);
+    // this timeout is needed to check logout. As the redirection is is dependanct on MSAL signout.
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(25000).then(() => {
+      cy.location().should((loc) => {
+        expect(loc.pathname).eq('/');
+        expect(loc.search.length).eq(0);
+      });
     });
   });
 });
