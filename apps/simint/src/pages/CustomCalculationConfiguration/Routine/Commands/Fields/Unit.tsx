@@ -53,7 +53,7 @@ export function Unit({ step, timeSeriesPrefix }: UnitFieldProps) {
   const formikPath = `${timeSeriesPrefix}.${inputOutputIndex}.unit`;
 
   const value = timeSeriesTarget[inputOutputIndex] && {
-    value: timeSeriesTarget[inputOutputIndex].unit,
+    value: timeSeriesTarget[inputOutputIndex].unit ?? '',
     label: getOptionLabel(
       TIMESERIES_UNIT_OPTIONS,
       timeSeriesTarget[inputOutputIndex].unit ?? ''

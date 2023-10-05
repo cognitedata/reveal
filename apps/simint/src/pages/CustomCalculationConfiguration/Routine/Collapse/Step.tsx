@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 
 import { useFormikContext } from 'formik';
 import { useDragControls } from 'framer-motion';
-import cloneDeep from 'lodash/cloneDeep';
 import styled from 'styled-components/macro';
 
 import { Chip, Icon } from '@cognite/cogs.js';
@@ -12,6 +11,7 @@ import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
 import { StepCommand } from '../Commands/StepCommand';
 import type { StepCommandProps } from '../Commands/utils';
+import { removeStepFromCalculation } from '../utils';
 import { isValidStep } from '../validation';
 
 import { CollapseOptions } from './CollapseOptions';
@@ -39,36 +39,17 @@ export function Step({
   }, []);
 
   const handleDeleteStep = (routineOrder: number, stepOrder: number) => {
-    const calculation = cloneDeep(values);
-    if (calculation.routine) {
-      const { routine } = calculation;
-      const stepRoutine = routine[routineOrder - 1];
-      const currentStep = stepRoutine.steps.find(
-        (step) => step.step === stepOrder
-      );
-
-      if (currentStep?.arguments.type) {
-        if (currentStep.arguments.type === 'inputTimeSeries') {
-          calculation.inputTimeSeries = calculation.inputTimeSeries.filter(
-            (ts) => ts.type !== currentStep.arguments.value
-          );
-        }
-
-        if (currentStep.arguments.type === 'outputTimeSeries') {
-          calculation.outputTimeSeries = calculation.outputTimeSeries.filter(
-            (ts) => ts.type !== currentStep.arguments.value
-          );
-        }
-        stepRoutine.steps = stepRoutine.steps
-          .filter((step) => step.step !== stepOrder)
-          .map((step, index) => ({ ...step, step: index + 1 }));
-        setValues(calculation);
-      }
-    }
+    setValues(removeStepFromCalculation(values, routineOrder, stepOrder));
   };
 
+  const treeItemLabel = `Step ${stepPosition}`;
+
   return (
-    <CollapseStepContainer>
+    <CollapseStepContainer
+      role="treeitem"
+      aria-expanded={isOpen}
+      aria-label={treeItemLabel}
+    >
       <div className="step-title">
         <div
           className="step-drop"
@@ -76,7 +57,10 @@ export function Step({
             setIsOpen(!isOpen);
           }}
         >
-          <Icon type={`${isOpen ? 'ChevronUp' : 'ChevronDown'}`} />
+          <Icon
+            aria-label={`${isOpen ? 'Collapse' : 'Expand'} ${treeItemLabel}`}
+            type={`${isOpen ? 'ChevronUp' : 'ChevronDown'}`}
+          />
           <span className="step-position">{stepPosition}</span>
           {title}
           {!isValidStep(step, dynamicStepFields) && (
@@ -94,6 +78,7 @@ export function Step({
           handleDelete={() => {
             handleDeleteStep(routineOrder, step.step);
           }}
+          label={`Step ${stepPosition}`}
         />
       </div>
 
