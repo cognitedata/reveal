@@ -1,4 +1,4 @@
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { AssetMapping3DBase, CogniteClient } from '@cognite/sdk/dist/src';
 
 export const createCdfThreeDCadContextualization = async ({
   sdk,
@@ -13,7 +13,7 @@ export const createCdfThreeDCadContextualization = async ({
   assetRefId: number;
   nodeId: number;
 }) => {
-  const assetMappingsToCreate = [
+  const assetMappingsToCreate: AssetMapping3DBase[] = [
     {
       nodeId: nodeId,
       assetId: assetRefId,
