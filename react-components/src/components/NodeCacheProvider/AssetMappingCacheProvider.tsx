@@ -2,16 +2,15 @@
  * Copyright 2023 Cognite AS
  */
 
-import { ReactElement, ReactNode, createContext, useContext, useMemo } from 'react';
-import { CadModelOptions } from '../Reveal3DResources/types';
-import { AssetMappingCache } from './AssetMappingCache';
-import { UseQueryResult, useQuery } from '@tanstack/react-query';
-import { AssetMapping3D, Node3D } from '@cognite/sdk';
+import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
+import { type CadModelOptions } from '../Reveal3DResources/types';
+import { AssetMappingCache, type NodeAssetMappingResult } from './AssetMappingCache';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
+import { type AssetMapping3D } from '@cognite/sdk';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { ModelId, RevisionId, TreeIndex } from './types';
+import { type ModelId, type RevisionId, type TreeIndex } from './types';
 import { fetchAncestorNodesForTreeIndex } from './requests';
-
 
 export type AssetMappingCacheContent = {
   cache: AssetMappingCache;
@@ -20,7 +19,7 @@ export type AssetMappingCacheContent = {
 export type ModelWithAssetMappings = {
   model: CadModelOptions;
   assetMappings: AssetMapping3D[];
-}
+};
 
 const AssetMappingCacheContext = createContext<AssetMappingCacheContent | undefined>(undefined);
 
@@ -32,51 +31,69 @@ const useAssetMappingCache = (): AssetMappingCache => {
   }
 
   return content.cache;
-}
+};
 
-export const useMappeNodesForRevisions = (cadModels: CadModelOptions[]): UseQueryResult<ModelWithAssetMappings[]> => {
+export const useMappeNodesForRevisions = (
+  cadModels: CadModelOptions[]
+): UseQueryResult<ModelWithAssetMappings[]> => {
   const assetMappingCache = useAssetMappingCache();
 
   return useQuery(
-    ['reveal',
-     'react-components',
-     'models-asset-mappings',
-     ...cadModels.map((model) => `${model.modelId}/${model.revisionId}`).sort()],
+    [
+      'reveal',
+      'react-components',
+      'models-asset-mappings',
+      ...cadModels.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+    ],
     async () => {
-      const fetchPromises = cadModels.map(model => assetMappingCache.getAssetMappingsForModel(model.modelId, model.revisionId).then(assetMappings => ({ model, assetMappings})));
+      const fetchPromises = cadModels.map(
+        async (model) =>
+          await assetMappingCache
+            .getAssetMappingsForModel(model.modelId, model.revisionId)
+            .then((assetMappings) => ({ model, assetMappings }))
+      );
       return await Promise.all(fetchPromises);
     },
     { staleTime: Infinity, enabled: cadModels.length > 0 }
   );
-}
+};
 
-export const useAssetMappingForTreeIndex = (modelId: ModelId | undefined, revisionId: RevisionId | undefined, treeIndex: TreeIndex | undefined): UseQueryResult<{ node: Node3D, mappings: AssetMapping3D[] } | undefined> => {
+export const useAssetMappingForTreeIndex = (
+  modelId: ModelId | undefined,
+  revisionId: RevisionId | undefined,
+  treeIndex: TreeIndex | undefined
+): UseQueryResult<NodeAssetMappingResult> => {
   const assetMappingCache = useAssetMappingCache();
   const cdfClient = useSDK();
 
-  const areInputsDefined = modelId !== undefined && revisionId !== undefined && treeIndex !== undefined;
-
-  modelId ??= 0;
-  revisionId ??= 0;
-  treeIndex ??= 0;
-
   return useQuery(
-    ['reveal',
-     'react-components',
-     'tree-index-asset-mapping',
-     `${modelId}/${revisionId}`,
-     treeIndex],
+    [
+      'reveal',
+      'react-components',
+      'tree-index-asset-mapping',
+      `${modelId}/${revisionId}`,
+      treeIndex
+    ],
     async () => {
-      const ancestors = await fetchAncestorNodesForTreeIndex(modelId!,
-                                                             revisionId!,
-                                                             treeIndex!,
-                                                             cdfClient);
+      const areInputsDefined =
+        modelId !== undefined && revisionId !== undefined && treeIndex !== undefined;
 
-      return assetMappingCache.getAssetMappingForAncestors(modelId!, revisionId!, ancestors);
+      if (!areInputsDefined) {
+        return { mappings: [] };
+      }
+
+      const ancestors = await fetchAncestorNodesForTreeIndex(
+        modelId,
+        revisionId,
+        treeIndex,
+        cdfClient
+      );
+
+      return await assetMappingCache.getAssetMappingForAncestors(modelId, revisionId, ancestors);
     },
-    { staleTime: Infinity, enabled: areInputsDefined }
+    { staleTime: Infinity }
   );
-}
+};
 
 export function AssetMappingCacheProvider({ children }: { children?: ReactNode }): ReactElement {
   const cdfClient = useSDK();

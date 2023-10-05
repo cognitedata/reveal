@@ -11,8 +11,7 @@ import {
   useCameraNavigation,
   type AddResourceOptions,
   type FdmAssetStylingGroup,
-  ClickedNodeData,
-  FdmNodeDataResult
+  type FdmNodeDataResult
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
@@ -66,9 +65,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const nodeData = useClickedNodeData();
 
   useEffect(() => {
-
     console.log('Clicked node data', nodeData);
-    const isFdmData = ((data: any): data is FdmNodeDataResult => data?.fdmNode !== undefined);
+    const isFdmData = (data: any): data is FdmNodeDataResult => data?.fdmNode !== undefined;
     if (!isFdmData(nodeData)) {
       setStylingGroups([]);
       return;

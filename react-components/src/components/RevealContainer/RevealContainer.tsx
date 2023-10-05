@@ -80,12 +80,12 @@ export function RevealContainer({
       <>
         <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
           <RevealContext.Provider value={viewer}>
-        <NodeCacheProvider>
-        <AssetMappingCacheProvider>
-              <Reveal3DResourcesCountContextProvider>
-                {createPortal(children, viewerDomElement.current)}
-      </Reveal3DResourcesCountContextProvider>
-        </AssetMappingCacheProvider>
+            <NodeCacheProvider>
+              <AssetMappingCacheProvider>
+                <Reveal3DResourcesCountContextProvider>
+                  {createPortal(children, viewerDomElement.current)}
+                </Reveal3DResourcesCountContextProvider>
+              </AssetMappingCacheProvider>
             </NodeCacheProvider>
           </RevealContext.Provider>
         </RevealContainerElementContext.Provider>

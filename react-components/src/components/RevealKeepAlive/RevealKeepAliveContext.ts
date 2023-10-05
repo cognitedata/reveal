@@ -4,7 +4,7 @@
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { type MutableRefObject, createContext, useContext } from 'react';
 import { type FdmNodeCache } from '../NodeCacheProvider/FdmNodeCache';
-import { AssetMappingCache } from '../NodeCacheProvider/AssetMappingCache';
+import { type AssetMappingCache } from '../NodeCacheProvider/AssetMappingCache';
 
 export type RevealKeepAliveData = {
   viewerRef: MutableRefObject<Cognite3DViewer | undefined>;
