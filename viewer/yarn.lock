@@ -469,7 +469,7 @@ __metadata:
     "@types/jsdom": 21.1.3
     "@types/lodash": 4.14.199
     "@types/mixpanel-browser": 2.47.3
-    "@types/node": 18.18.0
+    "@types/node": 18.18.1
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.5
     "@types/stats": 0.16.30
@@ -502,7 +502,7 @@ __metadata:
     jest-environment-jsdom: 29.7.0
     jest-extended: 4.0.1
     jest-image-snapshot: 6.2.0
-    jest-puppeteer: 9.0.0
+    jest-puppeteer: 9.0.1
     jsdom: 22.1.0
     lodash: 4.17.21
     loglevel: 1.8.1
@@ -1892,10 +1892,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.18.0":
-  version: 18.18.0
-  resolution: "@types/node@npm:18.18.0"
-  checksum: 61bcffa28eb713e7a4c66fd369df603369c3f834a783faeced95fe3e78903faa25f1a704d49e054f41d71b7915eeb066d10a37cc699421fcf5dd267f96ad5808
+"@types/node@npm:18.18.1":
+  version: 18.18.1
+  resolution: "@types/node@npm:18.18.1"
+  checksum: 079085afc8615b91727900628410a2077f7fff51c5c3e20c4ab2d9caae4010b035aac13dae1221155e9d6ca46084aebf68121642140527b4009eee17b716d339
   languageName: node
   linkType: hard
 
@@ -3674,7 +3674,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cosmiconfig@npm:8.3.6, cosmiconfig@npm:^8.1.3":
+"cosmiconfig@npm:8.3.6, cosmiconfig@npm:^8.3.6":
   version: 8.3.6
   resolution: "cosmiconfig@npm:8.3.6"
   dependencies:
@@ -4771,10 +4771,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expect-puppeteer@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "expect-puppeteer@npm:9.0.0"
-  checksum: f8e8a555ff57e3ee93807a60c44abf7fb70d752727ce3e91ed23748bc79590e32b904174de31ba92e6d6179d3bba98105d7c23e7a553d755584ae84badd23266
+"expect-puppeteer@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "expect-puppeteer@npm:9.0.1"
+  checksum: f4dea7ac3e4f6ba19577fb2edabbdf008c014d5795d85f69df939309292856e868df8e7fc4a5436f6cce3f9fa8d4038a9c7eca0ff55a87cac9ff8bd5b5fd51d0
   languageName: node
   linkType: hard
 
@@ -6717,18 +6717,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-dev-server@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "jest-dev-server@npm:9.0.0"
+"jest-dev-server@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "jest-dev-server@npm:9.0.1"
   dependencies:
     chalk: ^4.1.2
     cwd: ^0.10.0
     find-process: ^1.4.7
     prompts: ^2.4.2
-    spawnd: ^9.0.0
+    spawnd: ^9.0.1
     tree-kill: ^1.2.2
     wait-on: ^7.0.1
-  checksum: f2b943a4a7c4507cd57c0a2234b9cfe8568f07aa8fede4d62111580e6d1bda06ac2be4cb17de3bacfcd77f7ed09efa5bd46094490c785a1ceefec2f0a508eb64
+  checksum: 2be5898b69dc7f067abaec77954c544e41b8520937ec2993dbe2217e496d8b2d3692fc1f90588e0eddf7627132f4f4841c66f889fce37040a2298f904f74bb7d
   languageName: node
   linkType: hard
 
@@ -6801,7 +6801,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-node@npm:^29.5.0, jest-environment-node@npm:^29.7.0":
+"jest-environment-node@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-environment-node@npm:29.7.0"
   dependencies:
@@ -6815,16 +6815,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-puppeteer@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "jest-environment-puppeteer@npm:9.0.0"
+"jest-environment-puppeteer@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "jest-environment-puppeteer@npm:9.0.1"
   dependencies:
     chalk: ^4.1.2
-    cosmiconfig: ^8.1.3
+    cosmiconfig: ^8.3.6
     deepmerge: ^4.3.1
-    jest-dev-server: ^9.0.0
-    jest-environment-node: ^29.5.0
-  checksum: 1bf7c832f5708ddc9f50cae4624433344070d7f81baae86ff461316bd51b36d3f0830395de28305ad2ce636e1751fb3e842272f623f73819cd9312346a86281e
+    jest-dev-server: ^9.0.1
+    jest-environment-node: ^29.7.0
+  checksum: abb537afbb56b339fbedb5a92aa7b83341247a0036422e96c5a415759db230afac91cb980083514ec92fa8f6c9b4d548ebf0cbd11f0046f44ddb864e0cf787de
   languageName: node
   linkType: hard
 
@@ -6983,15 +6983,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-puppeteer@npm:9.0.0":
-  version: 9.0.0
-  resolution: "jest-puppeteer@npm:9.0.0"
+"jest-puppeteer@npm:9.0.1":
+  version: 9.0.1
+  resolution: "jest-puppeteer@npm:9.0.1"
   dependencies:
-    expect-puppeteer: ^9.0.0
-    jest-environment-puppeteer: ^9.0.0
+    expect-puppeteer: ^9.0.1
+    jest-environment-puppeteer: ^9.0.1
   peerDependencies:
     puppeteer: ">=19"
-  checksum: 61da4c50ebef1a32a15cbe8e5bfd3863b804d8b9b44762e3a17fc3753bd1e68cdfd1965530a06cbaaaeac35aecb9b6879c557b618b76cc6ef8d66be34bf670ca
+  checksum: def786e974f13a2cf7f6f337fd0bfcdf210a7bdc19985e1b8ee5bb6689e112331dca72e2395baae7b96d53133a2118c6ba10c6efce9fb3e8a184e9dd47bbee35
   languageName: node
   linkType: hard
 
@@ -9757,10 +9757,17 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"signal-exit@npm:^4.0.1, signal-exit@npm:^4.0.2":
+"signal-exit@npm:^4.0.1":
   version: 4.0.2
   resolution: "signal-exit@npm:4.0.2"
   checksum: 41f5928431cc6e91087bf0343db786a6313dd7c6fd7e551dbc141c95bb5fb26663444fd9df8ea47c5d7fc202f60aa7468c3162a9365cbb0615fc5e1b1328fe31
+  languageName: node
+  linkType: hard
+
+"signal-exit@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "signal-exit@npm:4.1.0"
+  checksum: 64c757b498cb8629ffa5f75485340594d2f8189e9b08700e69199069c8e3070fb3e255f7ab873c05dc0b3cec412aea7402e10a5990cb6a050bd33ba062a6c549
   languageName: node
   linkType: hard
 
@@ -9914,13 +9921,13 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"spawnd@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "spawnd@npm:9.0.0"
+"spawnd@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "spawnd@npm:9.0.1"
   dependencies:
-    signal-exit: ^4.0.2
+    signal-exit: ^4.1.0
     tree-kill: ^1.2.2
-  checksum: 982c995777087a9fa4e3e34f01b11cf283441c223541356c491381851d3099902e72af7080923b5c19f600514c58beb13e3ba9eb8befc817ada4fd9b3214e0ba
+  checksum: f8988166ffd5bd57abbfbd0fc709505aa9a6d5ad40fa496686bd1da9d52c99ee1b07f77d0cd255e6b6ebdade86d706f345e1c5e3b59f6b23d5b92d74c0ecd104
   languageName: node
   linkType: hard
 
