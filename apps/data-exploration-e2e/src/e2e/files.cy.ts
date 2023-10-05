@@ -68,7 +68,8 @@ describe('Files', () => {
 
   it('should close file detail view and clear search input', () => {
     cy.log('close file detail view');
-    cy.clickIconButton('Close');
+    cy.findByTestId('file-detail').clickIconButton('Close');
+    cy.findByTestId('file-detail').should('not.exist');
 
     cy.clearSearchInput();
   });
