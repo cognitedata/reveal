@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { trackEvent } from '@cognite/cdf-route-tracker';
+import { selectProjectRoute } from '@cognite/login-utils';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
 import { translations } from './common/i18n';
@@ -61,7 +62,10 @@ const App = () => {
                         </React.Fragment>
                       }
                     />
-                    <Route path="/select-project" element={<SelectProject />} />
+                    <Route
+                      path={selectProjectRoute}
+                      element={<SelectProject />}
+                    />
                   </Routes>
                 </Background>
               </LoginPageProvider>

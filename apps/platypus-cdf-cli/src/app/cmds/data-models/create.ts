@@ -1,6 +1,7 @@
 import {
   DataModelExternalIdValidator,
   DataModelNameValidator,
+  DataModelDescriptionValidator,
   SpaceIdValidator,
   DataUtils,
   Validator,
@@ -51,12 +52,21 @@ export const commandArgs = [
     prompt: 'Enter data model space id',
     promptDefaultValue: (commandArgs) => commandArgs['external-id'],
   },
+  {
+    name: 'description',
+    description: 'The description of the data model',
+    prompt: 'Enter the description of the data model',
+    isPositional: false,
+    type: CommandArgumentType.STRING,
+    required: false,
+  },
 ] as CommandArgument[];
 
 type DataModelCreateCommandArgs = BaseArgs & {
   name: string;
   'external-id': string;
   space: string;
+  descritpion?: string;
 };
 
 export class CreateCmd extends CLICommand {
@@ -71,6 +81,9 @@ export class CreateCmd extends CLICommand {
     validator.addRule('name', new DataModelNameValidator());
     validator.addRule('external-id', new DataModelExternalIdValidator());
     validator.addRule('space', new SpaceIdValidator());
+    if (args.descritpion) {
+      validator.addRule('description', new DataModelDescriptionValidator());
+    }
 
     const validationResult = validator.validate();
     if (!validationResult.valid) {
@@ -89,11 +102,14 @@ export class CreateCmd extends CLICommand {
     const dataModelsHandler = getDataModelsHandler();
     DEBUG('dataModelsHandler initialized');
 
-    const response = await dataModelsHandler.create({
+    const createDataModelArgs = {
       name: args.name,
-      space: args.space ? args.space : args['external-id'],
+      space: args?.space || args['external-id'],
       externalId: args['external-id'],
-    });
+      description: (args['description'] || '') as string,
+    };
+
+    const response = await dataModelsHandler.create(createDataModelArgs);
 
     if (!response.isSuccess) {
       throw response.error;

@@ -38,12 +38,14 @@ export async function dataModelsList() {
 export async function dataModelsCreate(
   name: string,
   externalId: string,
-  space: string
+  space: string,
+  description?: string
 ) {
   const args = ['data-models', 'create', name];
 
   args.push('--external-id', externalId);
   args.push('--space', space);
+  args.push('--description', description);
 
   return await runCommand(...args, '--verbose');
 }

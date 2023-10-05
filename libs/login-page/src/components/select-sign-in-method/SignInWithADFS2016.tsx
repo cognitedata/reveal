@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import {
   getSelectedIdpDetails,
+  goToSelectProject,
   saveSelectedIdpDetails,
 } from '@cognite/login-utils';
 import { ADFS } from '@cognite/sdk-core';
@@ -63,7 +64,7 @@ const SignInWithADFS2016 = ({
 
   useEffect(() => {
     if (active && token) {
-      navigate('/select-project');
+      goToSelectProject(navigate);
     }
   }, [token, navigate, active]);
 
