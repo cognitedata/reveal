@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
 
-import { CadIntersection } from '@cognite/reveal';
 import { RevealContainer } from '@cognite/reveal-react-components';
 import { AssetMapping3D, ListResponse } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
@@ -28,6 +27,7 @@ import { saveCdfThreeDCadContextualization } from '../../utils/saveCdfThreeDCadC
 import { updateThreeDViewerCadNodes } from '../../utils/updateThreeDViewerCadNodes';
 
 import { CadRevealContent } from './CadRevealContent';
+import { useCadOnClickHandler } from './hooks/useCadOnClickHandler';
 
 type ContextualizeThreeDViewerProps = {
   modelId: number;
@@ -194,106 +194,7 @@ export const CadContextualizeThreeDViewer = ({
     threeDViewer,
   ]);
 
-  const onClick = useCallback(
-    async (event) => {
-      const intersection = (await threeDViewer?.getIntersectionFromPixel(
-        event.offsetX,
-        event.offsetY
-      )) as CadIntersection;
-      if (intersection) {
-        // TODO: Display a user friendly error message if the model is not found
-        if (!modelId) return;
-        if (!threeDViewer) return;
-
-        const model = getCogniteCadModel({
-          modelId,
-          viewer: threeDViewer,
-        });
-        if (model === undefined) return;
-
-        const nodeId = await model.mapTreeIndexToNodeId(intersection.treeIndex);
-
-        // TODO: improve/simplify this logic of processing the different states to a simpler one
-        const indexSelectedNodeSet = selectedNodesTreeIndex.getIndexSet();
-        const indexContextualizedAndSelectedNodeSet =
-          selectedAndContextualizedNodesTreeIndex.getIndexSet();
-
-        const contextualizedNodeFound = contextualizedNodes?.items.find(
-          (nodeItem) => nodeItem.nodeId === nodeId
-        );
-        const selectedNodeFound = indexSelectedNodeSet.contains(
-          intersection.treeIndex
-        );
-        const selectedAndContextualizedNodeFound =
-          indexContextualizedAndSelectedNodeSet.contains(
-            intersection.treeIndex
-          );
-
-        // toggle the selection of nodes
-
-        if (
-          !selectedNodeFound &&
-          !selectedNodeIdsList.find((nodeItem) => nodeItem === nodeId)
-        ) {
-          selectedNodeIdsList.push(nodeId);
-        } else {
-          selectedNodeIdsList.splice(selectedNodeIdsList.indexOf(nodeId), 1);
-        }
-
-        if (!selectedNodeFound && !contextualizedNodeFound) {
-          indexSelectedNodeSet.add(intersection.treeIndex);
-          selectedNodesTreeIndex.updateSet(indexSelectedNodeSet);
-        } else if (selectedNodeFound && !contextualizedNodeFound) {
-          indexSelectedNodeSet.remove(intersection.treeIndex);
-          selectedNodesTreeIndex.updateSet(indexSelectedNodeSet);
-        } else if (
-          !selectedAndContextualizedNodeFound &&
-          contextualizedNodeFound
-        ) {
-          indexContextualizedAndSelectedNodeSet.add(intersection.treeIndex);
-          selectedAndContextualizedNodesTreeIndex.updateSet(
-            indexContextualizedAndSelectedNodeSet
-          );
-
-          selectedAndContextualizedNodesList.push({
-            nodeId,
-            treeIndex: intersection.treeIndex,
-          });
-        } else if (selectedAndContextualizedNodeFound) {
-          indexContextualizedAndSelectedNodeSet.remove(intersection.treeIndex);
-          selectedAndContextualizedNodesTreeIndex.updateSet(
-            indexContextualizedAndSelectedNodeSet
-          );
-          selectedAndContextualizedNodesList.splice(
-            selectedAndContextualizedNodesList.findIndex(
-              (nodeItem) => nodeItem.treeIndex === intersection.treeIndex
-            ),
-            1
-          );
-        }
-      }
-    },
-    [
-      threeDViewer,
-      modelId,
-      contextualizedNodes,
-      selectedNodesTreeIndex,
-      selectedAndContextualizedNodesTreeIndex,
-      selectedAndContextualizedNodesList,
-      selectedNodeIdsList,
-    ]
-  );
-
-  useEffect(() => {
-    (async () => {
-      if (!modelId || !revisionId || !contextualizedNodes) return;
-
-      threeDViewer?.on('click', onClick);
-      return () => {
-        threeDViewer?.off('click', onClick);
-      };
-    })();
-  }, [threeDViewer, modelId, revisionId, contextualizedNodes, onClick]);
+  useCadOnClickHandler();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
