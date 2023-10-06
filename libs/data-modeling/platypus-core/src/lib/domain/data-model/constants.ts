@@ -44,7 +44,7 @@ export const mixerApiBuiltInTypes = [
   {
     name: 'view',
     type: 'DIRECTIVE',
-    body: 'directive @view(space: String, version: String) on OBJECT | INTERFACE',
+    body: 'directive @view(space: String, version: String, rawFilter: JSONObject) on OBJECT | INTERFACE',
     fieldDirective: false,
   },
   {
