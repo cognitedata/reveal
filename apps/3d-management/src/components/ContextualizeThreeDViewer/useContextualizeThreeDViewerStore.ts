@@ -41,6 +41,7 @@ type RootState = {
   isModelLoaded: boolean;
   annotations: AnnotationModel[] | null;
   visualizationOptions: VisualizationOptions;
+  hoveredAnnotationId: number | null;
 };
 
 const initialState: RootState = {
@@ -54,6 +55,7 @@ const initialState: RootState = {
   isModelLoaded: false,
   annotations: null,
   visualizationOptions: DEFAULT_VISUALIZATION_OPTIONS,
+  hoveredAnnotationId: null,
 };
 
 export const useContextualizeThreeDViewerStore = create<RootState>(
@@ -170,5 +172,12 @@ export const updateVisualizationOptions = (
       ...prevState.visualizationOptions,
       ...visualizationOptions,
     },
+  }));
+};
+
+export const setHoveredAnnotationId = (annotationId: number | null) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    hoveredAnnotationId: annotationId,
   }));
 };
