@@ -21,13 +21,18 @@ export function SDKProvider({ sdk, children }: Props): React.ReactElement {
   );
 }
 
-export const useSDK = (): CogniteClient => {
+export const useSDK = (userSdk?: CogniteClient): CogniteClient => {
   const sdk = useContext(SdkContext);
   if (sdk === null) {
+    if (userSdk) {
+      return userSdk;
+    }
+
     throw new Error(
       `SdkContext not found, add '<SDKProvider value={sdk}>' around your component/app`
     );
   }
+
   return sdk;
 };
 

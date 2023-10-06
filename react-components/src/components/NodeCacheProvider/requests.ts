@@ -73,11 +73,13 @@ export async function getMappingEdgesForNodeIds(
     ]
   };
 
-  return await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
+  const instances = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
     filter,
     'edge',
     SYSTEM_3D_EDGE_SOURCE
   );
+
+  return { edges: instances.instances };
 }
 
 export async function inspectNodes(
