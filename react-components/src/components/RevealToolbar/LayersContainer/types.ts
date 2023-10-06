@@ -33,4 +33,5 @@ export type SetReveal3DResourcesLayerStates = Dispatch<
 export type Reveal3DResourcesLayersProps = {
   reveal3DResourcesLayerData: Reveal3DResourcesLayerStates;
   setReveal3DResourcesLayerData: SetReveal3DResourcesLayerStates;
+  storeStateInUrl?: boolean;
 };
