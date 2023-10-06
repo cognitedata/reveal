@@ -30,7 +30,7 @@ export const Image360HistoricalPanel = ({
       <Tooltip content="360 Image historical details">
         <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
           {!revisionDetailsExpanded && (
-            <>
+            <div style={{ width: 'fit-content' }}>
               <StyledChip
                 icon="History"
                 iconPlacement="right"
@@ -38,7 +38,7 @@ export const Image360HistoricalPanel = ({
                 hideTooltip
               />
               <StyledChipCount label={count} hideTooltip />
-            </>
+            </div>
           )}
           {revisionDetailsExpanded && (
             <StyledChip
@@ -106,7 +106,7 @@ const StyledChipCount = styled(Chip)`
 
 const Container = styled.div<{ isExpanded: boolean }>`
   position: relative;
-  left: calc(100% - 150px);
+  left: calc(100% - 200px);
   width: 140px;
   height: 28px;
   background-color: white;
