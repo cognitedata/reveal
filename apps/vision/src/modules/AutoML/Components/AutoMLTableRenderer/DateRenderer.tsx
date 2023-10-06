@@ -2,10 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { AutoMLTableDataType } from '@vision/modules/AutoML/Components/AutoMLModelList';
-import { dateformat } from '@vision/utils/DateUtils';
-
 import { Icon } from '@cognite/cogs.js';
+
+import { dateformat } from '../../../../utils/DateUtils';
+import { AutoMLTableDataType } from '../AutoMLModelList';
 
 export const DateRenderer = ({
   rowData: { createdTime },

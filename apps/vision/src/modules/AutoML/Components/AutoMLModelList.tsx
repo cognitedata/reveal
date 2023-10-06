@@ -4,15 +4,15 @@ import ReactBaseTable, { Column, ColumnShape } from 'react-base-table';
 
 import styled from 'styled-components';
 
+import { Title, Icon, Body } from '@cognite/cogs.js';
+
 import {
   AutoMLModelCore,
   AutoMLTrainingJob,
-} from '@vision/api/vision/autoML/types';
-import { TableWrapper } from '@vision/modules/Common/Components/FileTable/FileTableWrapper';
-import { StringHeaderRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
-import { StringRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringRenderer';
-
-import { Title, Icon, Body } from '@cognite/cogs.js';
+} from '../../../api/vision/autoML/types';
+import { TableWrapper } from '../../Common/Components/FileTable/FileTableWrapper';
+import { StringHeaderRenderer } from '../../Common/Containers/FileTableRenderers/StringHeaderRenderer';
+import { StringRenderer } from '../../Common/Containers/FileTableRenderers/StringRenderer';
 
 import { DateRenderer } from './AutoMLTableRenderer/DateRenderer';
 import { IdRenderer } from './AutoMLTableRenderer/IdRenderer';

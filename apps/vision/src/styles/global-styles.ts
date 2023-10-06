@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
-import { ids } from '@vision/cogs-variables';
+import { ids } from '../cogs-variables';
 
 import theme from './theme';
 

@@ -1,7 +1,8 @@
 import { singleton } from '@keenondrums/singleton';
-import { BaseLegacyDetectionModelDataProvider } from '@vision/api/vision/detectionModels/BaseLegacyDetectionModelDataProvider';
-import { getDetectionModelEndpoint } from '@vision/api/vision/detectionModels/detectionUtils';
-import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
+
+import { BaseLegacyDetectionModelDataProvider } from '../BaseLegacyDetectionModelDataProvider';
+import { getDetectionModelEndpoint } from '../detectionUtils';
+import { VisionDetectionModelType } from '../types';
 
 @singleton
 export class CustomModelDataProvider extends BaseLegacyDetectionModelDataProvider {

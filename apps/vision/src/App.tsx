@@ -5,10 +5,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import store from '@vision/store';
-import AntStyles from '@vision/styles/AntStyles';
-import GlobalStyles from '@vision/styles/global-styles';
-import theme from '@vision/styles/theme';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
@@ -18,7 +14,11 @@ import { FlagProvider } from '@cognite/react-feature-flags';
 
 import { DataExplorationWrapper } from './DataExplorationWrapper';
 import { AppRoutes } from './Routes';
+import store from './store';
+import AntStyles from './styles/AntStyles';
+import GlobalStyles from './styles/global-styles';
 import rootStyles from './styles/index.css';
+import theme from './styles/theme';
 
 const App = () => {
   const subAppName = 'cdf-vision-subapp';

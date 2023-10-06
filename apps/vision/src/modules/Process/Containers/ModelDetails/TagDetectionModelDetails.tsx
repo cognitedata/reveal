@@ -3,16 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import {
-  DetectionModelParams,
-  ParamsTagDetection,
-} from '@vision/api/vision/detectionModels/types';
-import TagdetectionIllustration from '@vision/assets/visualDescriptions/TagdetectionIllustration';
-import { ColorsTagDetection } from '@vision/constants/Colors';
-import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
-import { AssetSelector } from '@vision/modules/Review/Components/AssetSelector/AssetSelector';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
 import { InputNumber } from 'antd';
 
 import {
@@ -24,6 +14,17 @@ import {
   SegmentedControl,
   Title,
 } from '@cognite/cogs.js';
+
+import {
+  DetectionModelParams,
+  ParamsTagDetection,
+} from '../../../../api/vision/detectionModels/types';
+import TagdetectionIllustration from '../../../../assets/visualDescriptions/TagdetectionIllustration';
+import { ColorsTagDetection } from '../../../../constants/Colors';
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { AssetSelector } from '../../../Review/Components/AssetSelector/AssetSelector';
+import { setUnsavedDetectionModelSettings } from '../../store/slice';
 
 import {
   ColorBox,

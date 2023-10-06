@@ -4,13 +4,6 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 
 import { ThemeProvider } from 'styled-components';
 
-import { LazyWrapper } from '@vision/modules/Common/Components/LazyWrapper';
-import NoAccessPage from '@vision/pages/NoAccessPage';
-import NotFound from '@vision/pages/NotFound';
-import store from '@vision/store';
-import AntStyles from '@vision/styles/AntStyles';
-import GlobalStyles from '@vision/styles/global-styles';
-import theme from '@vision/styles/theme';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 
 import { Loader } from '@cognite/cogs.js';
@@ -18,7 +11,14 @@ import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 import { DataExplorationWrapper } from './DataExplorationWrapper';
 import { useUserCapabilities } from './hooks/useUserCapabilities';
+import { LazyWrapper } from './modules/Common/Components/LazyWrapper';
+import NoAccessPage from './pages/NoAccessPage';
+import NotFound from './pages/NotFound';
+import store from './store';
+import AntStyles from './styles/AntStyles';
+import GlobalStyles from './styles/global-styles';
 import rootStyles from './styles/index.css';
+import theme from './styles/theme';
 
 const App = () => {
   useEffect(() => {
@@ -72,7 +72,7 @@ const RouteWrapper: React.FC<{
 const routes = [
   {
     path: '/',
-    importFn: () => import('@vision/pages/Home'),
+    importFn: () => import('./pages/Home'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -86,7 +86,7 @@ const routes = [
   },
   {
     path: '/workflow/review/:fileId',
-    importFn: () => import('@vision/modules/Review/Containers/Review'),
+    importFn: () => import('./modules/Review/Containers/Review'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -100,7 +100,7 @@ const routes = [
   },
   {
     path: '/workflow/*',
-    importFn: () => import('@vision/pages/Process'),
+    importFn: () => import('./pages/Process'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -118,7 +118,7 @@ const routes = [
   },
   {
     path: '/explore',
-    importFn: () => import('@vision/modules/Explorer/Containers/Explorer'),
+    importFn: () => import('./modules/Explorer/Containers/Explorer'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -132,7 +132,7 @@ const routes = [
   },
   {
     path: '/models',
-    importFn: () => import('@vision/modules/AutoML/Components/AutoML'),
+    importFn: () => import('./modules/AutoML/Components/AutoML'),
     capabilities: [
       {
         acl: 'groupsAcl',

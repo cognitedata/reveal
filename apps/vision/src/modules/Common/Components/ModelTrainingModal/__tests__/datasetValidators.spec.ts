@@ -1,11 +1,11 @@
-import { getDummyImageObjectDetectionBoundingBoxAnnotation } from '@vision/__test-utils/getDummyAnnotations';
+import { getDummyImageObjectDetectionBoundingBoxAnnotation } from '../../../../../__test-utils/getDummyAnnotations';
+import { VisionFile } from '../../../store/files/types';
 import {
   annotationTypeCountIsValid,
   fileTypesValid,
   imageCountPerAnnotationTypeIsValid,
   imagesHaveAnnotations,
-} from '@vision/modules/Common/Components/ModelTrainingModal/datasetValidators';
-import { VisionFile } from '@vision/modules/Common/store/files/types';
+} from '../datasetValidators';
 
 jest.mock('@vision/api/vision/autoML/constants', () => ({
   ...jest.requireActual('@vision/api/vision/autoML/constants'),

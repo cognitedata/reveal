@@ -4,8 +4,9 @@ import {
   sampleCDFAnnotation6,
   sampleCDFAnnotation7,
   sampleCDFAnnotations,
-} from '@vision/__test-utils/fixtures/annotationsCDF';
-import { convertCDFAnnotationToVisionAnnotations } from '@vision/api/annotation/converters';
+} from '../../../__test-utils/fixtures/annotationsCDF';
+import { VisionAnnotation } from '../../../modules/Common/types';
+import { convertCDFAnnotationToVisionAnnotations } from '../converters';
 import {
   ImageAssetLink,
   ImageExtractedText,
@@ -13,8 +14,7 @@ import {
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   ImageObjectDetectionPolyline,
-} from '@vision/api/annotation/types';
-import { VisionAnnotation } from '@vision/modules/Common/types';
+} from '../types';
 
 describe('Test convertCDFAnnotationToVisionAnnotations fn', () => {
   test('for empty array', () => {

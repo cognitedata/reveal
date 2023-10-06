@@ -2,11 +2,12 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { MAX_AUTOML_MODEL_NAME_LENGTH } from '@vision/api/vision/autoML/constants';
-import { AutoMLModelType } from '@vision/api/vision/autoML/types';
 import { Input } from 'antd';
 
 import { Body, Select, Title } from '@cognite/cogs.js';
+
+import { MAX_AUTOML_MODEL_NAME_LENGTH } from '../../../../api/vision/autoML/constants';
+import { AutoMLModelType } from '../../../../api/vision/autoML/types';
 
 type SelectOption = {
   label: any;

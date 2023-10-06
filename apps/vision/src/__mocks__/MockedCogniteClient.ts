@@ -1,8 +1,9 @@
-import { mockCogniteAssetList } from '@vision/__test-utils/fixtures/assets';
-import { mockFileList } from '@vision/__test-utils/fixtures/files';
 import noop from 'lodash/noop';
 
 import { CogniteEvent, InternalId } from '@cognite/sdk';
+
+import { mockCogniteAssetList } from '../__test-utils/fixtures/assets';
+import { mockFileList } from '../__test-utils/fixtures/files';
 
 export const MOCK_PROJECT_NAME = 'test-project';
 

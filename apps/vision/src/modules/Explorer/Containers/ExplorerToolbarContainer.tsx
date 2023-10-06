@@ -2,32 +2,32 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { cancelFetch } from '@vision/api/file/fetchFiles/fetchFiles';
-import { MAX_SELECT_COUNT } from '@vision/constants/ExplorerConstants';
-import {
-  setModelTrainingModalVisibility,
-  setBulkEditModalVisibility,
-  setFileDownloadModalVisibility,
-} from '@vision/modules/Common/store/common/slice';
-import { ViewMode } from '@vision/modules/Common/types';
-import { ExplorerToolbar } from '@vision/modules/Explorer/Components/ExplorerToolbar';
-import { selectExplorerSelectedFileIdsInSortedOrder } from '@vision/modules/Explorer/store/selectors';
-import {
-  setCurrentView,
-  setExplorerFileUploadModalVisibility,
-  setExplorerQueryString,
-} from '@vision/modules/Explorer/store/slice';
-import { cancelFileDetailsEdit } from '@vision/modules/FileDetails/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
-import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
-import { PopulateReviewFiles } from '@vision/store/thunks/Review/PopulateReviewFiles';
+import { cancelFetch } from '../../../api/file/fetchFiles/fetchFiles';
+import { MAX_SELECT_COUNT } from '../../../constants/ExplorerConstants';
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { DeleteFilesById } from '../../../store/thunks/Files/DeleteFilesById';
+import { PopulateProcessFiles } from '../../../store/thunks/Process/PopulateProcessFiles';
+import { PopulateReviewFiles } from '../../../store/thunks/Review/PopulateReviewFiles';
 import {
   getLink,
   getParamLink,
   workflowRoutes,
-} from '@vision/utils/workflowRoutes';
+} from '../../../utils/workflowRoutes';
+import {
+  setModelTrainingModalVisibility,
+  setBulkEditModalVisibility,
+  setFileDownloadModalVisibility,
+} from '../../Common/store/common/slice';
+import { ViewMode } from '../../Common/types';
+import { cancelFileDetailsEdit } from '../../FileDetails/slice';
+import { ExplorerToolbar } from '../Components/ExplorerToolbar';
+import { selectExplorerSelectedFileIdsInSortedOrder } from '../store/selectors';
+import {
+  setCurrentView,
+  setExplorerFileUploadModalVisibility,
+  setExplorerQueryString,
+} from '../store/slice';
 
 export type ExplorerToolbarContainerProps = {
   query?: string;

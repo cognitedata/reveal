@@ -1,7 +1,7 @@
 import {
   LegacyAnnotation,
   LegacyAnnotationStatus,
-} from '@vision/api/annotation/legacy/legacyTypes';
+} from '../../api/annotation/legacy/legacyTypes';
 
 export const predefinedAnnotations: LegacyAnnotation[] = [
   {

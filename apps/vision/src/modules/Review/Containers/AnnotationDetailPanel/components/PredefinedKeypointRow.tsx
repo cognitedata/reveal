@@ -2,13 +2,14 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { SidePanelRow } from '@vision/modules/Review/Containers/AnnotationDetailPanel/components/common';
-import { KeypointRowContent } from '@vision/modules/Review/Containers/AnnotationDetailPanel/components/common/KeypointRowContent';
+import { PredefinedKeypoint } from '../../../types';
 import {
   AnnotationDetailPanelRowDataBase,
   VirtualizedTreeRowProps,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
-import { PredefinedKeypoint } from '@vision/modules/Review/types';
+} from '../types';
+
+import { SidePanelRow } from './common';
+import { KeypointRowContent } from './common/KeypointRowContent';
 
 /**
  * Annotation detail Component for a row of a single predefined keypoint

@@ -4,20 +4,22 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import SummaryContent from '@vision/modules/Process/Containers/SummaryModal/SummaryContent';
-import {
-  setProcessViewFileUploadModalVisibility,
-  setSummaryModalVisibility,
-} from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
-import { getContainer } from '@vision/utils';
-import { pushMetric } from '@vision/utils/pushMetric';
 import { Modal } from 'antd';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
+
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { PopulateProcessFiles } from '../../../../store/thunks/Process/PopulateProcessFiles';
+import { getContainer } from '../../../../utils';
+import { pushMetric } from '../../../../utils/pushMetric';
+import {
+  setProcessViewFileUploadModalVisibility,
+  setSummaryModalVisibility,
+} from '../../store/slice';
+
+import SummaryContent from './SummaryContent';
 
 export const SummaryModal = () => {
   const navigate = useNavigate();

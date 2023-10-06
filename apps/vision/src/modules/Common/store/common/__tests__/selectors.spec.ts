@@ -1,6 +1,6 @@
-import { CDFStatusModes } from '@vision/modules/Common/Components/CDFStatus/CDFStatus';
-import { selectCDFState } from '@vision/modules/Common/store/common/selectors';
-import { initialState } from '@vision/modules/Common/store/common/slice';
+import { CDFStatusModes } from '../../../Components/CDFStatus/CDFStatus';
+import { selectCDFState } from '../selectors';
+import { initialState } from '../slice';
 
 describe('Test CDF state selector', () => {
   test('should return initial saveState data', () => {

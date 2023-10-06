@@ -3,13 +3,14 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
-import { mockFileList } from '@vision/__test-utils/fixtures/files';
-import { testRenderer } from '@vision/__test-utils/renderer';
-import { getMockedStore } from '@vision/__test-utils/store.utils';
-import { initialState as fileState } from '@vision/modules/Common/store/files/slice';
+
+import { mockFileList } from '../../../__test-utils/fixtures/files';
+import { testRenderer } from '../../../__test-utils/renderer';
+import { getMockedStore } from '../../../__test-utils/store.utils';
+import { createFileState } from '../../../store/util/StateUtils';
+import { initialState as fileState } from '../../Common/store/files/slice';
 // import { ProcessResults } from '@vision/modules/Process/Containers/ProcessResults';
-import { initialState as processState } from '@vision/modules/Process/store/slice';
-import { createFileState } from '@vision/store/util/StateUtils';
+import { initialState as processState } from '../store/slice';
 
 // Debt: This tests fails because of something related to unified file viewer. it works in prod, so expecting this to be a config issue
 // Should be looked into later. It fails when importing the component

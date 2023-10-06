@@ -3,22 +3,23 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { AutoMLAPI } from '@vision/api/vision/autoML/AutoMLAPI';
-import { AutoMLModelCore } from '@vision/api/vision/autoML/types';
-import {
-  DetectionModelParams,
-  ParamsCustomModel,
-} from '@vision/api/vision/detectionModels/types';
-import CustomModelIllustration from '@vision/assets/visualDescriptions/CustomModelIllustration';
-import { ColorsObjectDetection } from '@vision/constants/Colors';
-import { AutoMLModelSelectFilter } from '@vision/modules/Process/Components/AutoMLModelSelectFilter';
-import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 import { InputNumber } from 'antd';
 
 import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
+
+import { AutoMLAPI } from '../../../../api/vision/autoML/AutoMLAPI';
+import { AutoMLModelCore } from '../../../../api/vision/autoML/types';
+import {
+  DetectionModelParams,
+  ParamsCustomModel,
+} from '../../../../api/vision/detectionModels/types';
+import CustomModelIllustration from '../../../../assets/visualDescriptions/CustomModelIllustration';
+import { ColorsObjectDetection } from '../../../../constants/Colors';
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { getLink, workflowRoutes } from '../../../../utils/workflowRoutes';
+import { AutoMLModelSelectFilter } from '../../Components/AutoMLModelSelectFilter';
+import { setUnsavedDetectionModelSettings } from '../../store/slice';
 
 import {
   ColorBox,

@@ -3,14 +3,6 @@ import { Link } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { Status } from '@vision/api/annotation/types';
-import { AnnotationActionMenuExtended } from '@vision/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
-import { isImageAssetLinkData } from '@vision/modules/Common/types/typeGuards';
-import { getAnnotationLabelOrText } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { AnnotationTableRowProps } from '@vision/modules/Review/types';
-import useColorForLabel from '@vision/store/hooks/useColorForLabel';
-import { pushMetric } from '@vision/utils/pushMetric';
-
 import { createLink } from '@cognite/cdf-utilities';
 import {
   Button,
@@ -19,6 +11,14 @@ import {
   SegmentedControl,
   Tooltip,
 } from '@cognite/cogs.js';
+
+import { Status } from '../../../../../../api/annotation/types';
+import useColorForLabel from '../../../../../../store/hooks/useColorForLabel';
+import { pushMetric } from '../../../../../../utils/pushMetric';
+import { AnnotationActionMenuExtended } from '../../../../../Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
+import { isImageAssetLinkData } from '../../../../../Common/types/typeGuards';
+import { getAnnotationLabelOrText } from '../../../../../Common/Utils/AnnotationUtils/AnnotationUtils';
+import { AnnotationTableRowProps } from '../../../../types';
 
 import { AnnotationTableRowAttribute } from './AnnotationTableRowAttribute';
 

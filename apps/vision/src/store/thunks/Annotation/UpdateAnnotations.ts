@@ -1,13 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { convertCDFAnnotationToVisionAnnotations } from '@vision/api/annotation/converters';
-import {
-  VisionAnnotation,
-  VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
-import { ThunkConfig } from '@vision/store/rootReducer';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { AnnotationChangeById } from '@cognite/sdk';
+
+import { convertCDFAnnotationToVisionAnnotations } from '../../../api/annotation/converters';
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from '../../../modules/Common/types';
+import { ThunkConfig } from '../../rootReducer';
 
 /**
  * ## Example

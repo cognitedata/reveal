@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { unsavedAssetsHasOverlaps } from '@vision/modules/Common/Components/BulkEdit/Asset/unsavedAssetsHasOverlaps';
-import { EditPanelProps } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
-import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
 import { Alert } from 'antd';
 
 import { Body, Select } from '@cognite/cogs.js';
 import { AssetSelect } from '@cognite/data-exploration';
+
+import { BulkEditUnsavedState } from '../../../store/common/types';
+import { EditPanelProps } from '../bulkEditOptions';
+
+import { unsavedAssetsHasOverlaps } from './unsavedAssetsHasOverlaps';
 
 enum TaskOptions {
   add = 'add',

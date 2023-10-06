@@ -1,9 +1,10 @@
 import React from 'react';
 
 import { screen } from '@testing-library/react';
-import { testRenderer } from '@vision/__test-utils/renderer';
-import { StatusColors } from '@vision/constants/Colors';
-import { AutoMLStatusBadge } from '@vision/modules/AutoML/Components/AutoMLStatusBadge';
+
+import { testRenderer } from '../../../../__test-utils/renderer';
+import { StatusColors } from '../../../../constants/Colors';
+import { AutoMLStatusBadge } from '../AutoMLStatusBadge';
 
 describe('AutoMLStatusBadge', () => {
   const TestComponent = (props: any) => {

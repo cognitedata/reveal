@@ -2,21 +2,19 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import { Icon, IconType } from '@cognite/cogs.js';
+
 import {
   annotationTypeIconMap,
   annotationTypeStyleMap,
-} from '@vision/constants/annotationDetailPanel';
-import {
-  ExpandIconComponent,
-  KeyboardShortCutSelectable,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/components/common';
+} from '../../../../../constants/annotationDetailPanel';
 import {
   AnnotationDetailPanelAnnotationType,
   AnnotationDetailPanelRowDataBase,
   VirtualizedTreeRowProps,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
+} from '../types';
 
-import { Icon, IconType } from '@cognite/cogs.js';
+import { ExpandIconComponent, KeyboardShortCutSelectable } from './common';
 
 /**
  * Annotation detail row component for main annotation category group headers

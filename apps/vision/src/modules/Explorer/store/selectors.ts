@@ -1,8 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { GenericSort, SortKeys } from '@vision/modules/Common/Utils/SortUtils';
-import { ExplorerState } from '@vision/modules/Explorer/types';
-import { RootState } from '@vision/store/rootReducer';
-import { createFileInfo } from '@vision/store/util/StateUtils';
+
+import { RootState } from '../../../store/rootReducer';
+import { createFileInfo } from '../../../store/util/StateUtils';
+import { GenericSort, SortKeys } from '../../Common/Utils/SortUtils';
+import { ExplorerState } from '../types';
 
 export const selectExplorerSelectedIds = (state: ExplorerState): number[] =>
   state.files.selectedIds;

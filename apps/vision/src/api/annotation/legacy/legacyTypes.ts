@@ -1,11 +1,8 @@
-import { AnnotationAttributes } from '@vision/api/annotation/types';
-import {
-  AnnotationRegion,
-  Vertex,
-} from '@vision/api/vision/detectionModels/types';
-import { PredefinedKeypoint } from '@vision/modules/Review/types';
-
 import { IdEither } from '@cognite/sdk';
+
+import { PredefinedKeypoint } from '../../../modules/Review/types';
+import { AnnotationRegion, Vertex } from '../../vision/detectionModels/types';
+import { AnnotationAttributes } from '../types';
 
 /**
  * Legacy Annotation Types

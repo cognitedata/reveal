@@ -4,15 +4,15 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { AutoMLAPI } from '@vision/api/vision/autoML/AutoMLAPI';
-import { AutoMLModelType } from '@vision/api/vision/autoML/types';
-import { Graphic, GraphicOptions } from '@vision/assets/Graphics/Graphic';
-import { makeSelectAnnotationsForFileIds } from '@vision/modules/Common/store/annotation/selectors';
-import { VisionFile } from '@vision/modules/Common/store/files/types';
-import { RootState } from '@vision/store/rootReducer';
-import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
-
 import { Button, Title, Body, Tooltip } from '@cognite/cogs.js';
+
+import { AutoMLAPI } from '../../../../api/vision/autoML/AutoMLAPI';
+import { AutoMLModelType } from '../../../../api/vision/autoML/types';
+import { Graphic, GraphicOptions } from '../../../../assets/Graphics/Graphic';
+import { RootState } from '../../../../store/rootReducer';
+import { getLink, workflowRoutes } from '../../../../utils/workflowRoutes';
+import { makeSelectAnnotationsForFileIds } from '../../store/annotation/selectors';
+import { VisionFile } from '../../store/files/types';
 
 import { validateDataset } from './datasetValidators';
 import { ModelTrainingFileTable } from './ModelTrainingFileTable';

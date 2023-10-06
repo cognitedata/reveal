@@ -1,17 +1,17 @@
-import { predefinedAnnotations } from '@vision/__test-utils/fixtures/predefinedAnnotations';
-import { CDFAnnotationTypeEnum } from '@vision/api/annotation/types';
+import { predefinedAnnotations } from '../../__test-utils/fixtures/predefinedAnnotations';
+import { CDFAnnotationTypeEnum } from '../../api/annotation/types';
 import {
   ColorsObjectDetection,
   ColorsOCR,
   ColorsPersonDetection,
   ColorsTagDetection,
   HEX_COLOR_CODE_REGEX,
-} from '@vision/constants/Colors';
+} from '../../constants/Colors';
 import {
   getAnnotationColor,
   getAnnotationColorFromColorKey,
   getPredefinedAnnotationColor,
-} from '@vision/utils/colorUtils';
+} from '../colorUtils';
 
 describe('Test Color utils', () => {
   const colorMap = {

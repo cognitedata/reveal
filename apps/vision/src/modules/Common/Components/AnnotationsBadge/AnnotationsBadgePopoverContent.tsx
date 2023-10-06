@@ -2,14 +2,12 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { showBadge } from '@vision/modules/Common/Components/AnnotationsBadge/utils';
-import {
-  AnnotationsBadgeCounts,
-  AnnotationsBadgeStatuses,
-} from '@vision/modules/Common/types';
-
 import { Button, Body, Detail, Micro } from '@cognite/cogs.js';
 import { Divider } from '@cognite/data-exploration';
+
+import { AnnotationsBadgeCounts, AnnotationsBadgeStatuses } from '../../types';
+
+import { showBadge } from './utils';
 
 export function AnnotationsBadgePopoverContent(
   badgeCounts: AnnotationsBadgeCounts,

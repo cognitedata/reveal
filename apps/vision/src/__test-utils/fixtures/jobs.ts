@@ -1,4 +1,4 @@
-import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from '../../api/vision/detectionModels/types';
 
 export const mockJobsList = [
   {

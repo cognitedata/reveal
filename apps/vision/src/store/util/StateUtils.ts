@@ -1,8 +1,8 @@
 // state helper functions
 
-import { VisionFile } from '@vision/modules/Common/store/files/types';
-
 import { FileInfo } from '@cognite/sdk';
+
+import { VisionFile } from '../../modules/Common/store/files/types';
 
 // convert to state
 export const createFileState = (file: FileInfo): VisionFile => {

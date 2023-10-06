@@ -3,15 +3,12 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { DataSetSelect } from '@vision/modules/Common/Components/DataSetSelect/DataSetSelect';
-import {
-  setDataSetIds,
-  setExtractExif,
-} from '@vision/modules/Common/store/files/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-
 import { Body, Checkbox, Detail, Icon, Tooltip } from '@cognite/cogs.js';
+
+import { useThunkDispatch } from '../../../../../store';
+import { RootState } from '../../../../../store/rootReducer';
+import { setDataSetIds, setExtractExif } from '../../../store/files/slice';
+import { DataSetSelect } from '../../DataSetSelect/DataSetSelect';
 
 import 'antd/dist/antd.css';
 

@@ -4,23 +4,24 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
-import { AnnotationsBadge } from '@vision/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
-import { makeSelectTotalAnnotationCountForFileIds } from '@vision/modules/Common/store/annotation/selectors';
-import { AnnotationsBadgeStatuses } from '@vision/modules/Common/types';
+import { Progress } from 'antd';
+
+import { Body, Button, Col, Icon, Micro, Row, Title } from '@cognite/cogs.js';
+
+import { VisionDetectionModelType } from '../../../../api/vision/detectionModels/types';
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { AnnotationsBadge } from '../../../Common/Components/AnnotationsBadge/AnnotationsBadge';
+import { makeSelectTotalAnnotationCountForFileIds } from '../../../Common/store/annotation/selectors';
+import { AnnotationsBadgeStatuses } from '../../../Common/types';
 import {
   selectAllJobs,
   selectAllJobsForAllFilesDict,
   selectIsPollingComplete,
   selectIsProcessingStarted,
   selectPageCount,
-} from '@vision/modules/Process/store/selectors';
-import { setSummaryModalVisibility } from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { Progress } from 'antd';
-
-import { Body, Button, Col, Icon, Micro, Row, Title } from '@cognite/cogs.js';
+} from '../../store/selectors';
+import { setSummaryModalVisibility } from '../../store/slice';
 
 export default function ProgressStatus() {
   const dispatch = useThunkDispatch();

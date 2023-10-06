@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { MenuContent } from '@vision/modules/Common/Components/ActionMenu/MenuContent';
-
 import { Button, Dropdown } from '@cognite/cogs.js';
+
+import { MenuContent } from './MenuContent';
 
 interface ActionMenuProps {
   showExifIcon?: boolean;

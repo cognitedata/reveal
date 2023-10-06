@@ -1,12 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ModelTrainingModal } from '@vision/modules/Common/Components/ModelTrainingModal/ModelTrainingModal';
-import { setModelTrainingModalVisibility } from '@vision/modules/Common/store/common/slice';
-import { VisionFile } from '@vision/modules/Common/store/files/types';
-import { selectExplorerAllSelectedFilesInSortedOrder } from '@vision/modules/Explorer/store/selectors';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { ModelTrainingModal } from '../../Common/Components/ModelTrainingModal/ModelTrainingModal';
+import { setModelTrainingModalVisibility } from '../../Common/store/common/slice';
+import { VisionFile } from '../../Common/store/files/types';
+import { selectExplorerAllSelectedFilesInSortedOrder } from '../store/selectors';
 
 export const ExplorerModelTrainingModalContainer = () => {
   const dispatch = useThunkDispatch();

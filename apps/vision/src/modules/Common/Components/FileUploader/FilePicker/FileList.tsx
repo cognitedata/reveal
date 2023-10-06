@@ -2,11 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { margin } from '@vision/cogs-variables';
-import { FileListItem } from '@vision/modules/Common/Components/FileUploader/FilePicker/FileListItem';
-
 import { Title } from '@cognite/cogs.js';
 
+import { margin } from '../../../../../cogs-variables';
+
+import { FileListItem } from './FileListItem';
 import { CogsFileInfo } from './types';
 
 type FileListProps = {

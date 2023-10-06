@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
-import { AnnotationsBadgePopover } from '@vision/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
-import { makeSelectTotalAnnotationCountForFileIds } from '@vision/modules/Common/store/annotation/selectors';
-import { CellRenderer } from '@vision/modules/Common/types';
-import { calculateBadgeCountsDifferences } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
-import { RootState } from '@vision/store/rootReducer';
+import { RootState } from '../../../../store/rootReducer';
+import { makeSelectJobStatusForFile } from '../../../Process/store/selectors';
+import { AnnotationsBadgePopover } from '../../Components/AnnotationsBadge/AnnotationBadgePopover';
+import { makeSelectTotalAnnotationCountForFileIds } from '../../store/annotation/selectors';
+import { CellRenderer } from '../../types';
+import { calculateBadgeCountsDifferences } from '../../Utils/AnnotationUtils/AnnotationUtils';
 
 export function FilteredAnnotationsRenderer({
   rowData: { id, annotationFilter },

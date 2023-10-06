@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { AnnotationSettingsOption } from '@vision/modules/Review/store/review/enums';
+import { Button, Detail, Tabs, Title } from '@cognite/cogs.js';
+
+import { AnnotationSettingsOption } from '../../store/review/enums';
 import {
   PredefinedVisionAnnotations,
   PredefinedKeypointCollection,
   PredefinedShape,
-} from '@vision/modules/Review/types';
-
-import { Button, Detail, Tabs, Title } from '@cognite/cogs.js';
+} from '../../types';
 
 import { Keypoints } from './Body/Keypoints';
 import { Shapes } from './Body/Shapes';

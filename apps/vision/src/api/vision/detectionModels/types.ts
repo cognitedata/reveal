@@ -1,10 +1,10 @@
+import { CogniteInternalId, CogniteExternalId } from '@cognite/sdk';
+
 import {
   ImageAssetLink,
   ImageExtractedText,
   ImageObjectDetection,
-} from '@vision/api/annotation/types';
-
-import { CogniteInternalId, CogniteExternalId } from '@cognite/sdk';
+} from '../../annotation/types';
 
 // Vision API schema types
 export declare type FileIdEither = FileInternalId | FileExternalId;

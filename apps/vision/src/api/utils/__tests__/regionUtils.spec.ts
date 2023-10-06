@@ -1,8 +1,8 @@
-import { Point } from '@vision/api/annotation/types';
+import { Point } from '../../annotation/types';
 import {
   uniqueVertices,
   vertexIsNormalized,
-} from '@vision/api/vision/detectionModels/typeValidators';
+} from '../../vision/detectionModels/typeValidators';
 
 describe('Test vertexIsNormalized', () => {
   test('Invalid vertex', () => {

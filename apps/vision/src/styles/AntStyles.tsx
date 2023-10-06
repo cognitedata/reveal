@@ -1,8 +1,6 @@
 // @ts-nocheck : issue with antd less imports
 import React, { useEffect } from 'react';
 
-import { ids } from '@vision/cogs-variables';
-import { getContainer } from '@vision/utils';
 import {
   ConfigProvider,
   Modal,
@@ -81,6 +79,9 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 
 import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+
+import { ids } from '../cogs-variables';
+import { getContainer } from '../utils';
 // import uploadStyle from 'antd/es/upload/style/index.less';
 
 const styles = [

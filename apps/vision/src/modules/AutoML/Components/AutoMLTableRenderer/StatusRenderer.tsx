@@ -2,10 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { AutoMLTableDataType } from '@vision/modules/AutoML/Components/AutoMLModelList';
-import { AutoMLStatusBadge } from '@vision/modules/AutoML/Components/AutoMLStatusBadge';
-
 import { Icon } from '@cognite/cogs.js';
+
+import { AutoMLTableDataType } from '../AutoMLModelList';
+import { AutoMLStatusBadge } from '../AutoMLStatusBadge';
 
 export const StatusRenderer = ({
   rowData: { status, errorMessage },

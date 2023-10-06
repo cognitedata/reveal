@@ -4,24 +4,25 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { isVideo } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
-import { FileDetailsReview } from '@vision/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
-import { PreviewProcessingOverlay } from '@vision/modules/Review/Components/PreviewProcessingOverlay/PreviewProcessingOverlay';
-import { ThumbnailCarousel } from '@vision/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
-import { VideoPreview } from '@vision/modules/Review/Components/VideoPreview/VideoPreview';
-import { FileProcessStatusWrapper } from '@vision/modules/Review/Containers/FileProcessStatusWrapper';
-import { ImagePreview } from '@vision/modules/Review/Containers/ImagePreview';
-import { selectAllReviewFiles } from '@vision/modules/Review/store/review/selectors';
-import { setScrollToId } from '@vision/modules/Review/store/review/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 import { Spin, notification } from 'antd';
 
 import { Tabs, Title } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { getParamLink, workflowRoutes } from '../../../utils/workflowRoutes';
+import { isVideo } from '../../Common/Components/FileUploader/utils/FileUtils';
+import { FileDetailsReview } from '../../FileDetails/Containers/FileDetailsReview/FileDetailsReview';
+import { PreviewProcessingOverlay } from '../Components/PreviewProcessingOverlay/PreviewProcessingOverlay';
+import { ThumbnailCarousel } from '../Components/ThumbnailCarousel/ThumbnailCarousel';
+import { VideoPreview } from '../Components/VideoPreview/VideoPreview';
+import { selectAllReviewFiles } from '../store/review/selectors';
+import { setScrollToId } from '../store/review/slice';
+
 import { AnnotationDetailPanel } from './AnnotationDetailPanel/AnnotationDetailPanel';
+import { FileProcessStatusWrapper } from './FileProcessStatusWrapper';
+import { ImagePreview } from './ImagePreview';
 
 const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const { file } = props;

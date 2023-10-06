@@ -1,30 +1,31 @@
 import { FC } from 'react';
 
-import { VisionAnnotationDataType } from '@vision/modules/Common/types';
-import { getAnnotationLabelOrText } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { VisionAnnotationDataType } from '../../../../Common/types';
+import { getAnnotationLabelOrText } from '../../../../Common/Utils/AnnotationUtils/AnnotationUtils';
+import {
+  PredefinedKeypoint,
+  ReviewKeypoint,
+  VisionReviewAnnotation,
+} from '../../../types';
 import {
   ReviewVisionAnnotationTypeRow,
   ReviewKeypointRow,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/components';
-import { PredefinedKeypointRow } from '@vision/modules/Review/Containers/AnnotationDetailPanel/components/PredefinedKeypointRow';
+} from '../components';
+import { PredefinedKeypointRow } from '../components/PredefinedKeypointRow';
 import {
   AnnotationDetailPanelAnnotationType,
   AnnotationDetailPanelRowData,
   AnnotationDetailPanelRowDataBase,
   TreeNode,
   VirtualizedTreeRowProps,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
+} from '../types';
+
 import {
   isVisionReviewAnnotationRowData,
   isAnnotationTypeRowData,
   isVisionReviewImageKeypointCollection,
   isVisionReviewImageKeypointRowData,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/utils/nodeTreeUtils';
-import {
-  PredefinedKeypoint,
-  ReviewKeypoint,
-  VisionReviewAnnotation,
-} from '@vision/modules/Review/types';
+} from './nodeTreeUtils';
 
 /**
  * Recursive method that generates a node tree structure using the annotation hierarchy:

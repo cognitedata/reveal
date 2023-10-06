@@ -2,17 +2,17 @@ import React, { ReactElement, useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { VisionAnnotationDataType } from '@vision/modules/Common/types/annotation';
+import { Icon, Tooltip } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
+
+import useAssetLinkWarning, {
+  AssetWarnTypes,
+} from '../../../../../store/hooks/useAssetLinkWarning';
+import { VisionAnnotationDataType } from '../../../../Common/types/annotation';
 import {
   AnnotationTableRowProps,
   VisionReviewAnnotation,
-} from '@vision/modules/Review/types';
-import useAssetLinkWarning, {
-  AssetWarnTypes,
-} from '@vision/store/hooks/useAssetLinkWarning';
-
-import { Icon, Tooltip } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
+} from '../../../types';
 
 export const AssetWarnMessages = {
   [AssetWarnTypes.NoWarning]: '',

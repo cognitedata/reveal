@@ -1,10 +1,11 @@
 import React from 'react';
 
 import { screen } from '@testing-library/react';
-import { mockCogniteAutoMLModel } from '@vision/__test-utils/fixtures/automlModels';
-import { testRenderer } from '@vision/__test-utils/renderer';
-import { AutoMLTrainingJob } from '@vision/api/vision/autoML/types';
-import { AutoMLModelPage } from '@vision/modules/AutoML/Components/AutoMLPage/AutoMLModelPage';
+
+import { mockCogniteAutoMLModel } from '../../../../../__test-utils/fixtures/automlModels';
+import { testRenderer } from '../../../../../__test-utils/renderer';
+import { AutoMLTrainingJob } from '../../../../../api/vision/autoML/types';
+import { AutoMLModelPage } from '../AutoMLModelPage';
 
 jest.mock('@vision/hooks/useUserCapabilities', () => ({
   useUserCapabilities: () => {

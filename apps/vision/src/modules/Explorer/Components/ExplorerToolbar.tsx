@@ -2,13 +2,14 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { BulkActionMenu } from '@vision/modules/Common/Components/BulkActionMenu/BulkActionMenu';
-import { LoadingBar } from '@vision/modules/Common/Components/LoadingBar/LoadingBar';
-import { ExplorationSearchBar } from '@vision/modules/Explorer/Components/ExplorationSearchBar';
-import { ExplorerToolbarContainerProps } from '@vision/modules/Explorer/Containers/ExplorerToolbarContainer';
-
 import { Button, SegmentedControl, Title } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
+
+import { BulkActionMenu } from '../../Common/Components/BulkActionMenu/BulkActionMenu';
+import { LoadingBar } from '../../Common/Components/LoadingBar/LoadingBar';
+import { ExplorerToolbarContainerProps } from '../Containers/ExplorerToolbarContainer';
+
+import { ExplorationSearchBar } from './ExplorationSearchBar';
 
 type ExplorerToolbarProps = ExplorerToolbarContainerProps & {
   maxSelectCount?: number;

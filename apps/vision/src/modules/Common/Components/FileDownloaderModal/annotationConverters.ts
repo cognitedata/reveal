@@ -1,17 +1,14 @@
-import { Status } from '@vision/api/annotation/types';
-import {
-  VisionAnnotation,
-  VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
+import { FileInfo } from '@cognite/sdk';
+
+import { Status } from '../../../../api/annotation/types';
+import { VisionAnnotation, VisionAnnotationDataType } from '../../types';
 import {
   isImageKeypointCollectionData,
   isImageObjectDetectionBoundingBoxData,
   isImageObjectDetectionPolygonData,
   isImageObjectDetectionPolylineData,
-} from '@vision/modules/Common/types/typeGuards';
-import { getAnnotationLabelOrText } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-
-import { FileInfo } from '@cognite/sdk';
+} from '../../types/typeGuards';
+import { getAnnotationLabelOrText } from '../../Utils/AnnotationUtils/AnnotationUtils';
 
 export const convertAnnotationsToAutoML = async (
   files: FileInfo[],

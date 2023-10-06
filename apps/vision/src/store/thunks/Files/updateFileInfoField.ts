@@ -1,10 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { VisionFile } from '@vision/modules/Common/store/files/types';
-import { ThunkConfig } from '@vision/store/rootReducer';
-import { UpdateFiles } from '@vision/store/thunks/Files/UpdateFiles';
 import isEqual from 'lodash/isEqual';
 
 import { Label, Metadata } from '@cognite/sdk';
+
+import { VisionFile } from '../../../modules/Common/store/files/types';
+import { ThunkConfig } from '../../rootReducer';
+
+import { UpdateFiles } from './UpdateFiles';
 
 export const updateFileInfoField = createAsyncThunk<
   void,

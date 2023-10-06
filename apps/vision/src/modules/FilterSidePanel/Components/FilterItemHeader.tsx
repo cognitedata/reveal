@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { ClearButton } from '@vision/modules/Explorer/Components/ClearButton';
-
 import { Body } from '@cognite/cogs.js';
+
+import { ClearButton } from '../../Explorer/Components/ClearButton';
 
 export const FilterItemHeader = ({
   headerText,

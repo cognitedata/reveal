@@ -1,14 +1,16 @@
 // it's not strictly necessary to have that mapping, but it's just handy to have an overview in one place
+
+import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
+
+import { DetectionModelTypeFeatureMapping } from '../../../constants/DetectionModelTypeApiFieldMapping';
+
 import {
   LegacyVisionJobResultItem,
   VisionDetectionModelType,
   VisionExtractResultItem,
   VisionJobQueued,
-} from '@vision/api/vision/detectionModels/types';
-import { DetectionModelTypeFeatureMapping } from '@vision/constants/DetectionModelTypeApiFieldMapping';
-
-import sdk from '@cognite/cdf-sdk-singleton';
-import { getProject } from '@cognite/cdf-utilities';
+} from './types';
 
 export function getDetectionModelEndpoint(modelType: VisionDetectionModelType) {
   if (

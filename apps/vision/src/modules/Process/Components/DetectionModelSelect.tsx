@@ -5,26 +5,26 @@ import { Props as SelectProps } from 'react-select';
 
 import styled from 'styled-components';
 
+import { Select, Button } from '@cognite/cogs.js';
+
 import {
   ParamsCustomModel,
   VisionDetectionModelType,
-} from '@vision/api/vision/detectionModels/types';
+} from '../../../api/vision/detectionModels/types';
 import {
   ColorsOCR,
   ColorsObjectDetection,
   ColorsTagDetection,
   ColorsPersonDetection,
-} from '@vision/constants/Colors';
-import * as customModelDetails from '@vision/modules/Process/Containers/ModelDetails/customModelDetails';
-import * as gaugeReaderDetails from '@vision/modules/Process/Containers/ModelDetails/gaugeReaderDetails';
-import * as objectDetectionModelDetails from '@vision/modules/Process/Containers/ModelDetails/ObjectDetectionModelDetails';
-import * as ocrModelDetails from '@vision/modules/Process/Containers/ModelDetails/OcrModelDetails';
-import * as peopleDetectionModelDetails from '@vision/modules/Process/Containers/ModelDetails/PeopleDetectionModelDetails';
-import * as tagDetectionModelDetails from '@vision/modules/Process/Containers/ModelDetails/TagDetectionModelDetails';
-import { BUILT_IN_MODEL_COUNT } from '@vision/modules/Process/store/slice';
-import { RootState } from '@vision/store/rootReducer';
-
-import { Select, Button } from '@cognite/cogs.js';
+} from '../../../constants/Colors';
+import { RootState } from '../../../store/rootReducer';
+import * as customModelDetails from '../Containers/ModelDetails/customModelDetails';
+import * as gaugeReaderDetails from '../Containers/ModelDetails/gaugeReaderDetails';
+import * as objectDetectionModelDetails from '../Containers/ModelDetails/ObjectDetectionModelDetails';
+import * as ocrModelDetails from '../Containers/ModelDetails/OcrModelDetails';
+import * as peopleDetectionModelDetails from '../Containers/ModelDetails/PeopleDetectionModelDetails';
+import * as tagDetectionModelDetails from '../Containers/ModelDetails/TagDetectionModelDetails';
+import { BUILT_IN_MODEL_COUNT } from '../store/slice';
 
 type SelectOption = {
   label: any;

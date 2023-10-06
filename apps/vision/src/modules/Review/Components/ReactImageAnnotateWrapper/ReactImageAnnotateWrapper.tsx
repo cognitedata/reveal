@@ -10,26 +10,18 @@ import React, {
 
 import styled from 'styled-components';
 
-import { retrieveDownloadUrl } from '@vision/api/file/fileDownloadUrl';
+import { Annotator, AnnotatorTool } from '@cognite/react-image-annotate';
+import { AnnotationChangeById, FileInfo, InternalId } from '@cognite/sdk';
+
+import { retrieveDownloadUrl } from '../../../../api/file/fileDownloadUrl';
+import { useThunkDispatch } from '../../../../store';
+import { deselectAllSelectionsReviewPage } from '../../../../store/commonActions';
+import { getIcon } from '../../../../utils/iconUtils';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
-import { AnnotationEditPopup } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopup';
-import {
-  convertAnnotatorPointRegionToAnnotationChangeProperties,
-  convertAnnotatorRegionToAnnotationChangeProperties,
-  convertRegionToUnsavedVisionAnnotation,
-  convertTempKeypointCollectionToRegions,
-  convertVisionReviewAnnotationsToRegions,
-} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/converters';
-import {
-  AnnotatorRegion,
-  AnnotatorRegionLabelProps,
-  isAnnotatorPointRegion,
-} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { cropBoxRegionAtEdges } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/utils/cropBoxRegionAtEdges';
-import { useIsCurrentKeypointCollectionComplete } from '@vision/modules/Review/store/annotatorWrapper/hooks';
+} from '../../../Common/types';
+import { useIsCurrentKeypointCollectionComplete } from '../../store/annotatorWrapper/hooks';
 import {
   clearTemporaryRegion,
   createTempKeypointCollection,
@@ -39,24 +31,32 @@ import {
   onUpdateRegion,
   setLastShape,
   setSelectedTool,
-} from '@vision/modules/Review/store/annotatorWrapper/slice';
-import { selectAnnotation } from '@vision/modules/Review/store/review/slice';
-import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from '@vision/modules/Review/store/review/utils';
+} from '../../store/annotatorWrapper/slice';
+import { selectAnnotation } from '../../store/review/slice';
+import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from '../../store/review/utils';
 import {
   PredefinedKeypointCollection,
   PredefinedShape,
   PredefinedVisionAnnotations,
   TempKeypointCollection,
   VisionReviewAnnotation,
-} from '@vision/modules/Review/types';
-import { useThunkDispatch } from '@vision/store';
-import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
-import { getIcon } from '@vision/utils/iconUtils';
+} from '../../types';
 
-import { Annotator, AnnotatorTool } from '@cognite/react-image-annotate';
-import { AnnotationChangeById, FileInfo, InternalId } from '@cognite/sdk';
-
+import { AnnotationEditPopup } from './AnnotationEditPopup/AnnotationEditPopup';
+import {
+  convertAnnotatorPointRegionToAnnotationChangeProperties,
+  convertAnnotatorRegionToAnnotationChangeProperties,
+  convertRegionToUnsavedVisionAnnotation,
+  convertTempKeypointCollectionToRegions,
+  convertVisionReviewAnnotationsToRegions,
+} from './converters';
 import { tools } from './Tools';
+import {
+  AnnotatorRegion,
+  AnnotatorRegionLabelProps,
+  isAnnotatorPointRegion,
+} from './types';
+import { cropBoxRegionAtEdges } from './utils/cropBoxRegionAtEdges';
 
 type ReactImageAnnotateWrapperProps = {
   fileInfo: FileInfo;

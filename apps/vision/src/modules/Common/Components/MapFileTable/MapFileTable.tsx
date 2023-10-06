@@ -3,18 +3,15 @@ import { ColumnShape } from 'react-base-table';
 
 import styled from 'styled-components';
 
-import {
-  FileMapTableProps,
-  PageSize,
-} from '@vision/modules/Common/Components/FileTable/types';
-import { LoadingTable } from '@vision/modules/Common/Components/LoadingRenderer/LoadingTable';
-import { NoData } from '@vision/modules/Common/Components/NoData/NoData';
-import { SelectableTable } from '@vision/modules/Common/Components/SelectableTable/SelectableTable';
-import { PaginationWrapper } from '@vision/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
-import { NameAndAnnotationRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/NameAndAnnotation';
-import { ResultData, TableDataItem } from '@vision/modules/Common/types';
-
 import { Tabs } from '@cognite/cogs.js';
+
+import { NameAndAnnotationRenderer } from '../../Containers/FileTableRenderers/NameAndAnnotation';
+import { ResultData, TableDataItem } from '../../types';
+import { FileMapTableProps, PageSize } from '../FileTable/types';
+import { LoadingTable } from '../LoadingRenderer/LoadingTable';
+import { NoData } from '../NoData/NoData';
+import { SelectableTable } from '../SelectableTable/SelectableTable';
+import { PaginationWrapper } from '../SorterPaginationWrapper/PaginationWrapper';
 
 type MapTableProps = FileMapTableProps<TableDataItem> & {
   setMapActive: (active: boolean) => void;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Rectangle } from '@vision/modules/Common/Components/Skeleton/elements';
+import { Rectangle } from '../elements';
 
 export interface Props {
   currentLine?: number;

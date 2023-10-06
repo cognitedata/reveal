@@ -1,5 +1,4 @@
 import { Row } from '@tanstack/react-table';
-import { ColorsTagDetection } from '@vision/constants/Colors';
 
 import { Button } from '@cognite/cogs.js';
 
@@ -7,6 +6,12 @@ import { Image360Data } from '@data-exploration-lib/domain-layer';
 
 import PermissioningHintWrapper from '../../../../components/PermissioningHintWrapper';
 import { InternalThreeDModelData } from '../../types';
+
+// this was imported from vision app which is not allowed. Copy-pasted it here
+const ColorsTagDetection = {
+  backgroundColor: '#F4DAF8',
+  color: '#C945DB',
+};
 
 export const ThreeSixtyContextualizationProcess = ({
   row,

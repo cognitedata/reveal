@@ -3,26 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { TableProps } from '@data-exploration/components';
-import { totalFileCount } from '@vision/api/file/aggregate';
-import { fetchFiles } from '@vision/api/file/fetchFiles/fetchFiles';
-import { EXPLORER_FILE_FETCH_LIMIT } from '@vision/constants/ExplorerConstants';
-import { FileActions } from '@vision/modules/Common/types';
-import { selectExplorerSortedFiles } from '@vision/modules/Explorer/store/selectors';
-import {
-  setExplorerFiles,
-  setIsLoading,
-  setPercentageScanned,
-  setLoadingAnnotations,
-  setFocusedFileId,
-  showFileMetadata,
-} from '@vision/modules/Explorer/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
-import { FetchFilesById } from '@vision/store/thunks/Files/FetchFilesById';
-import { PopulateReviewFiles } from '@vision/store/thunks/Review/PopulateReviewFiles';
-import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 
 import {
   SelectableItemsProps,
@@ -36,6 +16,27 @@ import {
   Sequence,
   FileFilterProps,
 } from '@cognite/sdk';
+
+import { totalFileCount } from '../../../api/file/aggregate';
+import { fetchFiles } from '../../../api/file/fetchFiles/fetchFiles';
+import { EXPLORER_FILE_FETCH_LIMIT } from '../../../constants/ExplorerConstants';
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { RetrieveAnnotations } from '../../../store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from '../../../store/thunks/Files/DeleteFilesById';
+import { FetchFilesById } from '../../../store/thunks/Files/FetchFilesById';
+import { PopulateReviewFiles } from '../../../store/thunks/Review/PopulateReviewFiles';
+import { getParamLink, workflowRoutes } from '../../../utils/workflowRoutes';
+import { FileActions } from '../../Common/types';
+import { selectExplorerSortedFiles } from '../store/selectors';
+import {
+  setExplorerFiles,
+  setIsLoading,
+  setPercentageScanned,
+  setLoadingAnnotations,
+  setFocusedFileId,
+  showFileMetadata,
+} from '../store/slice';
 
 export const ResultTableLoader = ({
   children,

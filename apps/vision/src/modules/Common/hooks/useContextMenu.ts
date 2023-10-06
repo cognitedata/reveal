@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { SKIP_MENU_CLOSE_ID } from '@vision/constants/ContextMenuConstants';
-import { ContextMenuPosition } from '@vision/modules/Common/Components/ContextMenu/types';
-import { TableDataItem } from '@vision/modules/Common/types';
+import { SKIP_MENU_CLOSE_ID } from '../../../constants/ContextMenuConstants';
+import { ContextMenuPosition } from '../Components/ContextMenu/types';
+import { TableDataItem } from '../types';
 
 export const useContextMenu = () => {
   const [contextMenuDataItem, setContextMenuDataItem] =

@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { SelectableTableCellRendererProps } from '@vision/modules/Common/types';
-import { SortKeys } from '@vision/modules/Common/Utils/SortUtils';
-import { RootState } from '@vision/store/rootReducer';
-
 import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+
+import { RootState } from '../../../../store/rootReducer';
+import { SelectableTableCellRendererProps } from '../../types';
+import { SortKeys } from '../../Utils/SortUtils';
 
 export function TimeHeaderRenderer({
   column,

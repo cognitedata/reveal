@@ -2,17 +2,17 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { FileUploadModal } from '@vision/modules/Common/Components/FileUploaderModal/FileUploaderModal';
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { DeleteFilesById } from '../../../store/thunks/Files/DeleteFilesById';
+import { PopulateProcessFiles } from '../../../store/thunks/Process/PopulateProcessFiles';
+import { getLink, workflowRoutes } from '../../../utils/workflowRoutes';
+import { FileUploadModal } from '../../Common/Components/FileUploaderModal/FileUploaderModal';
 import {
   addExplorerUploadedFileId,
   clearExplorerUploadedFileIds,
   setExplorerFileUploadModalVisibility,
-} from '@vision/modules/Explorer/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
-import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
-import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
+} from '../store/slice';
 
 export const ExplorerFileUploadModalContainer = ({
   refetch,
