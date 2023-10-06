@@ -59,7 +59,6 @@ const StyledToolBar = styled.div<{ isExpanded: boolean }>`
   bottom: 30px;
   display: flex;
   flex-direction: row;
-  padding: 0px 0px 0px 5px;
   background: #ffffff;
 
   ${({ isExpanded }) =>
@@ -107,10 +106,10 @@ const StyledChipCount = styled(Chip)`
 const Container = styled.div<{ isExpanded: boolean }>`
   position: relative;
   left: calc(100% - 200px);
-  width: 140px;
+  width: fit-content;
   height: 28px;
   background-color: white;
-  padding: 4px 2px;
+  padding: 4px 4px;
   align-items: center;
   display: flex;
   border-radius: 6px;

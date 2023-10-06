@@ -15,12 +15,14 @@ export type Image360HistoricalDetailsProps = {
   viewer: Cognite3DViewer;
   image360Entity?: Image360;
   onExpand?: (isExpanded: boolean) => void;
+  appLanguage?: string;
 };
 
 export const Image360HistoricalDetails = ({
   viewer,
   image360Entity,
-  onExpand
+  onExpand,
+  appLanguage
 }: Image360HistoricalDetailsProps): ReactElement => {
   const [revisionDetailsExpanded, setRevisionDetailsExpanded] = useState<boolean>(false);
   const [activeRevision, setActiveRevision] = useState<number>(0);
@@ -83,7 +85,7 @@ export const Image360HistoricalDetails = ({
   }, [revisionDetailsExpanded]);
 
   return (
-    <I18nContextProvider>
+    <I18nContextProvider appLanguage={appLanguage}>
       <DetailsContainer style={{ minWidth }}>
         {
           <>

@@ -1,16 +1,9 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import {
-  useEffect,
-  createContext,
-  useContext,
-  useState,
-  type ReactNode,
-  type ReactElement
-} from 'react';
+import { useEffect, createContext, useContext, useState, type ReactElement } from 'react';
 
-import { type I18nContent, type Translations } from './types';
+import { type I18nProps, type I18nContent, type Translations } from './types';
 import { getLanguage } from './utils';
 
 import en from '../../common/i18n/en/reveal-react-components.json';
@@ -31,9 +24,9 @@ export const useI18n = (): I18nContent => {
   return element;
 };
 
-export const I18nContextProvider = ({ children }: { children: ReactNode }): ReactElement => {
-  const intitialLangauge = getLanguage();
-  const [currentLanguage, setCurrentLanguage] = useState(intitialLangauge ?? 'en');
+export const I18nContextProvider = ({ appLanguage, children }: I18nProps): ReactElement => {
+  const intitialLangauge = appLanguage ?? getLanguage() ?? 'en';
+  const [currentLanguage, setCurrentLanguage] = useState(intitialLangauge);
 
   useEffect(() => {
     const handleLanguageChange = (): void => {
