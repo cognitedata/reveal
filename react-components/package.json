@@ -48,7 +48,7 @@
     "@storybook/builder-vite": "^7.4.2",
     "@storybook/react": "7.4.3",
     "@storybook/react-vite": "^7.4.3",
-    "@storybook/testing-library": "0.2.1",
+    "@storybook/testing-library": "0.2.2",
     "@tanstack/react-query-devtools": "^4.29.19",
     "@types/lodash": "^4.14.190",
     "@types/react": "18.2.7",
