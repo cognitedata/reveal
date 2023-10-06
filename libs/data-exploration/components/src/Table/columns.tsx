@@ -215,6 +215,7 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
       'Relationship description(Source/Target)'
     ),
     accessorKey: 'relation',
+    enableSorting: false,
   },
   labels: {
     header: t('LABELS', 'Labels'),
@@ -358,6 +359,7 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
     accessorKey: 'relationshipLabels',
     header: t('RELATIONSHIP_LABELS', 'Relationship labels'),
     size: 250,
+    enableSorting: false,
     cell: ({ getValue }) => {
       const labels = getValue<string[]>() || [];
 
