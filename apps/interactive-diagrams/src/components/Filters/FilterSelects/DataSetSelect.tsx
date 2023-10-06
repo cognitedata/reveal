@@ -14,7 +14,7 @@ type Props = {
   resourceType: ResourceType;
   selectedDataSetIds?: number[];
   onDataSetSelected: (ids: number[]) => void;
-  'data-cy'?: string;
+  'data-testid'?: string;
 };
 
 export const DataSetSelect = (props: Props) => {
@@ -78,7 +78,7 @@ export const DataSetSelect = (props: Props) => {
         title: 'Data set:',
         options: options!,
         value: currentSelection,
-        'data-cy': `${rest['data-cy']}`,
+        'data-testid': `${rest['data-testid']}`,
         onChange: setMultiSelection,
       }}
     />

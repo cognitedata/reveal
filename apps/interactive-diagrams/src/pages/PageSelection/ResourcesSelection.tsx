@@ -64,7 +64,7 @@ export default function ResourcesSelection(
         setSelectAll={setSelectAll}
         setSelectedRowKeys={setSelectedRowKeys}
         showSelected={showSelected}
-        data-cy="resources-selection-table"
+        data-testid="resources-selection-table"
       />
     </Flex>
   );

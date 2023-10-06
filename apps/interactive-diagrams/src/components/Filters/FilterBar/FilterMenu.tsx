@@ -39,7 +39,7 @@ export const FilterMenu = ({ options }: FileMenuProps): JSX.Element => {
         onClick={() => {
           setShowFilterMenu(true);
         }}
-        data-cy="more-filters-button"
+        data-testid="more-filters-button"
       >
         More filters
       </Button>

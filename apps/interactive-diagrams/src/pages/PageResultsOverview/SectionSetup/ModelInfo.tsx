@@ -27,7 +27,7 @@ type Props = {
   children: React.ReactNode;
   editable: boolean;
   onClick: () => void;
-  'data-cy'?: string;
+  'data-testid'?: string;
 };
 
 export default function ModelInfo(props: Props): JSX.Element {
@@ -41,7 +41,7 @@ export default function ModelInfo(props: Props): JSX.Element {
     <StyledModelInfo
       editable={editable}
       onClick={onSelectionClick}
-      data-cy={props['data-cy']}
+      data-testid={props['data-testid']}
     >
       <Body level={2} strong>
         {children}

@@ -26,7 +26,7 @@ type Props = {
   setSelectedRowKeys: (selectedRowKeys: number[]) => void;
   diagramsToContextualizeIds?: number[];
   showSelected: boolean;
-  'data-cy'?: string;
+  'data-testid'?: string;
 };
 type RecordType = (Asset | FileInfo) & unknown;
 export default function SelectionTable(props: Props): JSX.Element {
@@ -115,7 +115,7 @@ export default function SelectionTable(props: Props): JSX.Element {
               disabled={isDataEmpty || !canSelectAll}
               onChange={(e) => setSelectAll(e.target.checked)}
               checked={isSelectAll}
-              data-cy={`${props['data-cy']}-select-all`}
+              data-testid={`${props['data-testid']}-select-all`}
             />
           </Tooltip>
         ),
@@ -126,7 +126,7 @@ export default function SelectionTable(props: Props): JSX.Element {
       pagination={{ showQuickJumper: true }}
       style={{ width: '100%', borderRadius: '8px' }}
       options={{ narrow: true, bordered: true }}
-      data-cy={`${props['data-cy']}`}
+      data-testid={`${props['data-testid']}`}
     />
   );
 }

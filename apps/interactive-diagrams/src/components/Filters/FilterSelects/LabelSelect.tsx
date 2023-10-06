@@ -10,7 +10,7 @@ import { Select } from '../../Common';
 type Props = {
   selectedLabels?: string[];
   onLabelsSelected: (selectedLabels: string[]) => void;
-  'data-cy'?: string;
+  'data-testid'?: string;
 };
 
 export const LabelSelect = (props: Props) => {
@@ -54,7 +54,7 @@ export const LabelSelect = (props: Props) => {
         onChange: setMultiSelection,
         value: currentSelection,
         isMulti: true,
-        'data-cy': `${props['data-cy']}`,
+        'data-testid': `${props['data-testid']}`,
       }}
     />
   );

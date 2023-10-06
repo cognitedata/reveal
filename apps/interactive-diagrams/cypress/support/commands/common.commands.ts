@@ -13,7 +13,7 @@ Cypress.Commands.add('waitForPageToLoad', () => {
 });
 
 Cypress.Commands.add('getBySelector', (selector, ...args) => {
-  return cy.get(`[data-cy=${selector}]`, ...args);
+  return cy.get(`[data-testid  =${selector}]`, ...args);
 });
 
 Cypress.Commands.add('assertElementWithTextExists', (selector, text) => {

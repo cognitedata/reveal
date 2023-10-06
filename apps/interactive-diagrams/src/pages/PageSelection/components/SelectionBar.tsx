@@ -159,7 +159,7 @@ export default function SelectionBar(props: Props): JSX.Element {
   const selectionButtonLabel = getSelectionButtonLabel();
 
   return (
-    <Flex column data-cy="filter-bar">
+    <Flex column data-testid="filter-bar">
       <StyledFlex row align>
         <InputRow row>
           <Input
@@ -172,14 +172,14 @@ export default function SelectionBar(props: Props): JSX.Element {
             resourceType={type === 'diagrams' ? 'files' : type}
             selectedDataSetIds={dataSetIds}
             onDataSetSelected={onDataSetSelected}
-            data-cy="data-set"
+            data-testid="data-set"
           />
           <FilterMenu
             options={[
               <LabelSelect
                 selectedLabels={labels.map((l) => l.externalId)}
                 onLabelsSelected={onLabelsSelected}
-                data-cy="label"
+                data-testid="label"
               />,
               type === 'assets' ? (
                 <RootAssetSelect
@@ -195,7 +195,7 @@ export default function SelectionBar(props: Props): JSX.Element {
             ]}
           />
         </InputRow>
-        <Selected data-cy="selected-count">
+        <Selected data-testid="selected-count">
           <Button
             type="ghost-accent"
             disabled={!selected && !showSelected}
@@ -216,7 +216,7 @@ export default function SelectionBar(props: Props): JSX.Element {
           onMimeTypeChange={onMimeTypeSelected}
           onQueryClear={onNameClear}
           onClearAll={() => updateFilter({ filter: {} })}
-          data-cy="filter-list"
+          data-testid="filter-list"
         />
         <Results>
           <span>{results}</span>

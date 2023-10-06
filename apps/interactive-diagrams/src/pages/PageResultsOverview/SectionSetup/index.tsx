@@ -42,13 +42,13 @@ export default function SectionSetup(): JSX.Element {
           editable={!jobStarted}
           type={resourceType as ResourceType}
           count={allCounts[resourceType as ResourceType]}
-          data-cy={`${resourceType}-selection-info`}
+          data-testid={`${resourceType}-selection-info`}
         />
       </React.Fragment>
     ));
 
   return (
-    <SetUpWrapper jobStatus={jobStatus} data-cy="setup-summary">
+    <SetUpWrapper jobStatus={jobStatus} data-testid="setup-summary">
       <Flex column>
         <Flex row align style={{ justifyContent: 'space-between' }}>
           <Title level={5}>Setup for creating interactive diagrams</Title>
@@ -97,7 +97,7 @@ export default function SectionSetup(): JSX.Element {
                 editable={!jobStarted}
                 type="diagrams"
                 count={allCounts.diagrams}
-                data-cy="diagrams-selection-info"
+                data-testid="diagrams-selection-info"
               />
               <Body level={2} style={{ whiteSpace: 'nowrap' }}>
                 will be linked to asdasd
@@ -107,7 +107,7 @@ export default function SectionSetup(): JSX.Element {
               <ModelInfo
                 editable={!jobStarted}
                 onClick={onModelClick}
-                data-cy="model-selection-info"
+                data-testid="model-selection-info"
               >
                 {modelSelected}
               </ModelInfo>
