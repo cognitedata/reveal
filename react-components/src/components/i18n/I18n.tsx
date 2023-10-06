@@ -10,24 +10,20 @@ import {
   type ReactElement
 } from 'react';
 
+import { type I18nContent, type Translations } from './types';
+import { getLanguage } from './utils';
+
 import en from '../../common/i18n/en/reveal-react-components.json';
 import de from '../../common/i18n/de/reveal-react-components.json';
-import { type Translations } from './types';
-import { getLanguage } from './utils';
 
 const translations: Translations = {
   en,
-  de // German
+  de
 };
 
-type I18nType = {
-  currentLanguage: string;
-  t: (key: string, fallback?: string) => string;
-};
+const I18nContext = createContext<I18nContent | null>(null);
 
-const I18nContext = createContext<I18nType | null>(null);
-
-export const useI18n = (): I18nType => {
+export const useI18n = (): I18nContent => {
   const element = useContext(I18nContext);
   if (element === null) {
     throw new Error('useI18n must be used within a I18nContextProvider');
@@ -41,7 +37,6 @@ export const I18nContextProvider = ({ children }: { children: ReactNode }): Reac
 
   useEffect(() => {
     const handleLanguageChange = (): void => {
-      console.log('Language change event received');
       const newLanguage = getLanguage();
       if (newLanguage !== undefined && newLanguage !== currentLanguage) {
         setCurrentLanguage(newLanguage);
@@ -49,7 +44,6 @@ export const I18nContextProvider = ({ children }: { children: ReactNode }): Reac
     };
 
     window.addEventListener('languagechange', handleLanguageChange);
-    console.log('Language change event listener added');
 
     return () => {
       window.removeEventListener('languagechange', handleLanguageChange);
