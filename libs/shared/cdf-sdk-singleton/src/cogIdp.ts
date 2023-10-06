@@ -5,6 +5,9 @@ import {
   getBaseUrl,
   getCogniteIdPUserManager,
   getRequiredOrganization,
+  isPreviewDeployment,
+  removeSelectedIdpDetails,
+  setRedirectCookieForPreviewDeployment,
 } from '@cognite/login-utils';
 
 import { UserInfo } from './types';
@@ -79,7 +82,19 @@ export const logout = async (params: {
     authority: params.authority,
     client_id: params.clientId,
   });
-  await userManager.signoutRedirect({
-    post_logout_redirect_uri: getBaseUrl(),
-  });
+
+  removeSelectedIdpDetails();
+  const redirectUri = getBaseUrl();
+
+  if (isPreviewDeployment) {
+    setRedirectCookieForPreviewDeployment(redirectUri);
+    await userManager.signoutRedirect({
+      post_logout_redirect_uri:
+        'https://oauth.preview.cogniteapp.com/signout/callback',
+    });
+  } else {
+    await userManager.signoutRedirect({
+      post_logout_redirect_uri: redirectUri,
+    });
+  }
 };

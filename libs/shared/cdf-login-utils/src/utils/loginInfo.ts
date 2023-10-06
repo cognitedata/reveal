@@ -237,6 +237,10 @@ export const isAllowlistedHost = () => {
   );
 };
 
+export const isPreviewDeployment = window.location.hostname.endsWith(
+  '.preview.cogniteapp.com'
+);
+
 export const getOrganization = (): string | null => {
   const hostname = window.location.hostname;
 
@@ -357,10 +361,32 @@ const getOrgCookieName = (hostname: string) =>
 export function setLoginOrganizationCookie(org: string) {
   const baseHostname = getBaseHostname();
   const expiresInMinutes = 10;
+  setCookie(
+    getOrgCookieName(baseHostname),
+    org,
+    baseHostname,
+    expiresInMinutes
+  );
+}
+
+export function setRedirectCookieForPreviewDeployment(redirectTo: string) {
+  const expiresInMinutes = 10;
+  setCookie(
+    'cogRedirectTo',
+    redirectTo,
+    'preview.cogniteapp.com',
+    expiresInMinutes
+  );
+}
+
+function setCookie(
+  name: string,
+  value: string,
+  domain: string,
+  expiresInMinutes: number
+) {
   const expires = new Date(Date.now() + expiresInMinutes * 60 * 1000);
-  document.cookie = `${getOrgCookieName(
-    baseHostname
-  )}=${org};domain=${baseHostname};expires=${expires.toUTCString()}`;
+  document.cookie = `${name}=${value};domain=${domain};expires=${expires.toUTCString()}`;
 }
 
 function getCookieValue(name: string): string {
