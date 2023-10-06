@@ -167,19 +167,19 @@ export default function SelectionBar(props: Props): JSX.Element {
             style={{ width: '250px' }}
             value={filter.search?.name ?? ''}
             onChange={onNameSearchChange}
-            data-cy="search-input"
           />
           <DataSetSelect
             resourceType={type === 'diagrams' ? 'files' : type}
             selectedDataSetIds={dataSetIds}
             onDataSetSelected={onDataSetSelected}
-            data-cy="data-set-selector"
+            data-cy="data-set"
           />
           <FilterMenu
             options={[
               <LabelSelect
                 selectedLabels={labels.map((l) => l.externalId)}
                 onLabelsSelected={onLabelsSelected}
+                data-cy="label"
               />,
               type === 'assets' ? (
                 <RootAssetSelect
@@ -193,7 +193,6 @@ export default function SelectionBar(props: Props): JSX.Element {
                 />
               ),
             ]}
-            data-cy="more-filters"
           />
         </InputRow>
         <Selected data-cy="selected-count">

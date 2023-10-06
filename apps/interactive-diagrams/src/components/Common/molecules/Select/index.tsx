@@ -64,6 +64,7 @@ export const Select = (props: CustomSelectProps) => {
           onClick={() => {
             setShowSelectMenu(true);
           }}
+          data-cy={`${selectProps['data-cy']}-select`}
         >
           <Flex row>
             <Body level={2} strong>

@@ -42,6 +42,7 @@ export default function SectionSetup(): JSX.Element {
           editable={!jobStarted}
           type={resourceType as ResourceType}
           count={allCounts[resourceType as ResourceType]}
+          data-cy={`${resourceType}-selection-info`}
         />
       </React.Fragment>
     ));
@@ -96,13 +97,18 @@ export default function SectionSetup(): JSX.Element {
                 editable={!jobStarted}
                 type="diagrams"
                 count={allCounts.diagrams}
+                data-cy="diagrams-selection-info"
               />
               <Body level={2} style={{ whiteSpace: 'nowrap' }}>
-                will be linked to
+                will be linked to asdasd
               </Body>
               {getLinkedResources()}
               <Body level={2}>on</Body>
-              <ModelInfo editable={!jobStarted} onClick={onModelClick}>
+              <ModelInfo
+                editable={!jobStarted}
+                onClick={onModelClick}
+                data-cy="model-selection-info"
+              >
                 {modelSelected}
               </ModelInfo>
               <Body level={2}>model.</Body>
