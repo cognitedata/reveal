@@ -16,14 +16,11 @@ type Props = {
 export function ClassPicker(props: Props) {
   const ALL_CLASSES = -Infinity;
 
-  let userDefinedNameCounter = 0;
   const keyValueMapping: Record<string, number> = props.model
     .getClasses()
     .reduce((acc, classValue) => {
       const key =
-        WellKnownAsprsPointClassCodes[classValue.code] ||
-        // eslint-disable-next-line no-plusplus
-        `User defined (${userDefinedNameCounter++})`;
+        classValue.name !== '' ? classValue.name : `Class ${classValue}`;
 
       if (key.startsWith('ReservedOr')) {
         const betterKey = key.slice('ReservedOr'.length);
