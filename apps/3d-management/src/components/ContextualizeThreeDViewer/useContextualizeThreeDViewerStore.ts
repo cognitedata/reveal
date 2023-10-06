@@ -27,6 +27,7 @@ export enum ToolType {
   NONE = 'none',
   ADD_ANNOTATION = 'addAnnotation',
   DELETE_ANNOTATION = 'deleteAnnotation',
+  SELECT_TOOL = 'selectTool',
 }
 
 type RootState = {
