@@ -22,26 +22,28 @@ describe('Timeseries', () => {
 
   it('should sort timeseries results', () => {
     cy.log('sorting colomn: Name');
-    interceptTimeseriesList('sortAscendingByName');
-    cy.getTableById('timeseries-search-results').clickSortColoumn('Name');
-    cy.wait(`@sortAscendingByName`).shouldSortAscending('name');
 
-    interceptTimeseriesList('sortDescendingByName');
     cy.getTableById('timeseries-search-results').clickSortColoumn('Name');
-    cy.wait(`@sortDescendingByName`).shouldSortDescending('name');
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).shouldSortAscending('name');
+
+    cy.getTableById('timeseries-search-results').clickSortColoumn('Name');
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).shouldSortDescending('name');
 
     cy.log('sorting colomn: Description');
-    interceptTimeseriesList('sortAscendingByDescription');
     cy.getTableById('timeseries-search-results').clickSortColoumn(
       'Description'
     );
-    cy.wait(`@sortAscendingByDescription`).shouldSortAscending('description');
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).shouldSortAscending('description');
 
-    interceptTimeseriesList('sortDescendingByDescription');
     cy.getTableById('timeseries-search-results').clickSortColoumn(
       'Description'
     );
-    cy.wait(`@sortDescendingByDescription`).shouldSortDescending('description');
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).shouldSortDescending('description');
+
+    // Reset sorting
+    cy.getTableById('timeseries-search-results').clickSortColoumn(
+      'Description'
+    );
   });
 
   it('Should be able to search time series by name and navigate to detail view', () => {

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { EventInfo } from '@data-exploration/containers';
+import styled from 'styled-components/macro';
 
 import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
@@ -120,7 +121,7 @@ export const EventDetail = ({
   };
 
   return (
-    <>
+    <EventDetailWrapper data-testid="event-detail">
       <BreadcrumbsV2 />
       <ResourceTitleRow
         item={{ id: eventId, type: 'event' }}
@@ -164,6 +165,9 @@ export const EventDetail = ({
           </Tabs.Tab>,
         ]}
       />
-    </>
+    </EventDetailWrapper>
   );
 };
+const EventDetailWrapper = styled.div`
+  display: contents;
+`;
