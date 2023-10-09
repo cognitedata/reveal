@@ -35,7 +35,6 @@
     "single-spa-react": "^5.0.0",
     "styled-components": "5.3.6",
     "systemjs-webpack-interop": "^2.3.7",
-    "@cognite/cdf-solutions-ui": "*",
     "antd": "^4.24.7",
     "@data-exploration/components": "*",
     "@tanstack/react-table": "^8.7.4",

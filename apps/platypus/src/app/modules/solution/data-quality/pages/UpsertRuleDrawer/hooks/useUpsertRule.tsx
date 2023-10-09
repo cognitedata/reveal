@@ -1,17 +1,17 @@
+import { isEqual } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+
+import { Notification } from '../../../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../../../hooks/useTranslation';
 import {
   RuleCreateDraft,
   RuleDto,
   RuleUpdateItem,
   useCreateRules,
   useUpdateRules,
-} from '@data-quality/api/codegen';
-import { useLoadDataSource, useLoadRules } from '@data-quality/hooks';
-import { getDefaultRulesetId } from '@data-quality/utils/namingPatterns';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { isEqual } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
-
+} from '../../../api/codegen';
+import { useLoadDataSource, useLoadRules } from '../../../hooks';
+import { getDefaultRulesetId } from '../../../utils/namingPatterns';
 import { RuleFormValues } from '../helpers';
 
 import { useLoadRuleset } from './useLoadRuleset';

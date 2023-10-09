@@ -1,5 +1,4 @@
-import { PlatypusError } from '@platypus-core/boundaries/types';
-
+import { PlatypusError } from '../../boundaries/types';
 import { Result } from '../../boundaries/types/result';
 import { Validator } from '../../boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';

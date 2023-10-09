@@ -6,7 +6,6 @@ import {
   mixerApiBuiltInTypes,
   UpdateDataModelFieldDTO,
 } from '@platypus/platypus-core';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
   GetRowIdParams,
   GridApi,
@@ -18,6 +17,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { CogDataGrid } from '@cognite/cog-data-grid';
 import { Button } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../../../hooks/useTranslation';
 import { useTypeDefFieldsGrid } from '../../hooks/useTypeDefFieldsGrid';
 import { useTypeDefsKeyboardActions } from '../../hooks/useTypeDefsKeyboardActions';
 

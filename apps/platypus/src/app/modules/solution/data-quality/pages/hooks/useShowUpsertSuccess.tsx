@@ -1,5 +1,5 @@
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { Notification } from '../../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 type ShowUpsertSuccessProps = {
   isUpdate: boolean;

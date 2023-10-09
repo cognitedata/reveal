@@ -1,11 +1,13 @@
+import { screen } from '@testing-library/react';
+import noop from 'lodash/noop';
+
 import {
   useManualPopulationFeatureFlag,
   useTransformationsFeatureFlag,
-} from '@platypus-app/flags';
-import render from '@platypus-app/tests/render';
-import { screen } from '@testing-library/react';
+} from '../../../../../flags';
+import render from '../../../../../tests/render';
+
 import '@testing-library/jest-dom/extend-expect';
-import noop from 'lodash/noop';
 
 import { NoRowsOverlay } from './NoRowsOverlay';
 

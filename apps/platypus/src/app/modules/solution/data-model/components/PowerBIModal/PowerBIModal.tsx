@@ -1,10 +1,10 @@
-import { FormLabel } from '@platypus-app/components/FormLabel/FormLabel';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { getProject } from '@cognite/cdf-utilities';
 import { Button, Flex, Modal } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { FormLabel } from '../../../../../components/FormLabel/FormLabel';
+import { Notification } from '../../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 import { StyledEndpoint, StyledWrapper } from './elements';
 

@@ -3,7 +3,6 @@ import { Dispatch, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { ContextualizationScoreChip } from '@fusion/contextualization';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 import { Button, Flex, Icon } from '@cognite/cogs.js';
 
@@ -11,6 +10,7 @@ import { useTables } from '../hooks/sdk-queries';
 import { EstimateArray, JobStatus, RawTableProps } from '../types';
 
 import { collectPages } from './DatabaseColumn';
+import { Spinner } from './Spinner/Spinner';
 import {
   CenteredColumnContent,
   Column,

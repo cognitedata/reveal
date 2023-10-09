@@ -1,11 +1,10 @@
 import { useParams } from 'react-router-dom';
 
-import { useCustomTypeNames } from '@platypus-app/hooks/useDataModelActions';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
-
 import { Flex } from '@cognite/cogs.js';
 
+import { useCustomTypeNames } from '../../../../../hooks/useDataModelActions';
+import useSelector from '../../../../../hooks/useSelector';
+import { useDataModelState } from '../../../hooks/useDataModelState';
 import { useTypeDefActions } from '../../hooks/useTypeDefActions';
 import { SchemaTypeList } from '../SchemaTypeAndField/SchemaTypeList';
 import { SchemaTypeView } from '../SchemaTypeAndField/SchemaTypeView';

@@ -1,16 +1,17 @@
 import '@testing-library/jest-dom/extend-expect';
+import { screen } from '@testing-library/react';
+
 import {
   useDataModel,
   useDataModelVersions,
-} from '@platypus-app/hooks/useDataModelActions';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+} from '../../hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '../../hooks/useSelectedDataModelVersion';
 import {
   DataModelReducerState,
   initialState,
-} from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { mockSchemas, mockSolutions } from '@platypus-app/tests/mockData';
-import render from '@platypus-app/tests/render';
-import { screen } from '@testing-library/react';
+} from '../../redux/reducers/global/dataModelReducer';
+import { mockSchemas, mockSolutions } from '../../tests/mockData';
+import render from '../../tests/render';
 
 import { DataLayout } from './DataLayout';
 import { DataModel } from './DataModel';

@@ -2,19 +2,20 @@ import {
   DataModelVersion,
   DataModelVersionStatus,
 } from '@platypus/platypus-core';
-import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
-import config from '@platypus-app/config/config';
-import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
-import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
-import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 
 import { Button, Flex, Chip, Tooltip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
+
+import { VersionSelectorToolbar } from '../../../../../components/VersionSelectorToolbar';
+import config from '../../../../../config/config';
+import { useCapabilities } from '../../../../../hooks/useCapabilities';
+import { useMixpanel } from '../../../../../hooks/useMixpanel';
+import useSelector from '../../../../../hooks/useSelector';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { DataModelState } from '../../../../../redux/reducers/global/dataModelReducer';
+import { useDataModelState } from '../../../hooks/useDataModelState';
+import { useLocalDraft } from '../../hooks/useLocalDraft';
+import { SchemaEditorMode } from '../../types';
 
 import { DiscardButton, ReturnButton, ImportTypesButton } from './elements';
 

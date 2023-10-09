@@ -1,4 +1,4 @@
-import { HtmlElementProps } from '@platypus-app/types';
+import { HtmlElementProps } from '../../types';
 
 import { StyledPageLayout } from './elements';
 

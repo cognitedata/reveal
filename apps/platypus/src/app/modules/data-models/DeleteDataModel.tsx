@@ -1,18 +1,18 @@
 import { useState } from 'react';
 
 import { DataModel, StorageProviderType } from '@platypus/platypus-core';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { NoNameDisplayName } from '@platypus-app/constants';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { Body, Button, Modal } from '@cognite/cogs.js';
 
+import { Notification } from '../../components/Notification/Notification';
+import { NoNameDisplayName } from '../../constants';
+import { TOKENS } from '../../di';
+import { useInjection } from '../../hooks/useInjection';
+import { useMixpanel } from '../../hooks/useMixpanel';
 import { useTranslation } from '../../hooks/useTranslation';
+import { getLocalDraftKey } from '../../utils/local-storage-utils';
+import { QueryKeys } from '../../utils/queryKeys';
 
 export const DeleteDataModel = ({
   dataModel,

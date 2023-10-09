@@ -7,13 +7,13 @@ import {
   getOneToManyModelName,
   getVersionedExternalId,
 } from '@platypus/platypus-core';
-import { useCustomTypeNames } from '@platypus-app/hooks/useDataModelActions';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { generateId } from '@platypus-app/utils/uuid';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Modal, OptionType } from '@cognite/cogs.js';
 
+import { useCustomTypeNames } from '../../../../../hooks/useDataModelActions';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { generateId } from '../../../../../utils/uuid';
 import useTransformationCreateMutation from '../../hooks/useTransformationCreateMutation';
 import {
   CreateTransformationForm,

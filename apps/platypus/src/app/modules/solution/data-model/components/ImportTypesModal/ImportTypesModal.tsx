@@ -1,15 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { DataModel, DataModelVersion } from '@platypus/platypus-core';
-import { FormLabel } from '@platypus-app/components/FormLabel/FormLabel';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import {
-  useDataModels,
-  useDataModelVersions,
-} from '@platypus-app/hooks/useDataModelActions';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { GraphqlCodeEditor } from '@platypus-app/modules/solution/data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
 import { parse, DocumentNode, print, Kind } from 'graphql';
 
 import sdk from '@cognite/cdf-sdk-singleton';
@@ -21,6 +12,16 @@ import {
   Checkbox,
   CheckboxGroup,
 } from '@cognite/cogs.js';
+
+import { FormLabel } from '../../../../../components/FormLabel/FormLabel';
+import { Notification } from '../../../../../components/Notification/Notification';
+import {
+  useDataModels,
+  useDataModelVersions,
+} from '../../../../../hooks/useDataModelActions';
+import { useMixpanel } from '../../../../../hooks/useMixpanel';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { GraphqlCodeEditor } from '../GraphqlCodeEditor/GraphqlCodeEditor';
 
 export interface ImportTypesModalProps {
   onClose: () => void;

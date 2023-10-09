@@ -1,18 +1,18 @@
 import { useRef } from 'react';
 
-import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
+import { Tooltip, Button, Flex, Chip, Divider } from '@cognite/cogs.js';
+
+import { PageToolbar } from '../../../../../components/PageToolbar/PageToolbar';
 import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
   useSuggestionsFeatureFlag,
   useTransformationsFeatureFlag,
-} from '@platypus-app/flags';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { BulkPopulationButton } from '@platypus-app/modules/solution/data-management/components/BulkPopulationButton';
-import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown';
-import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
-
-import { Tooltip, Button, Flex, Chip, Divider } from '@cognite/cogs.js';
+} from '../../../../../flags';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import useTransformations from '../../hooks/useTransformations';
+import { BulkPopulationButton } from '../BulkPopulationButton';
+import { TransformationDropdown } from '../TransformationDropdown';
 
 import * as S from './elements';
 

@@ -3,7 +3,8 @@ import {
   DataModelVersionStatus,
   PlatypusError,
 } from '@platypus/platypus-core';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
+
+import { DEFAULT_VERSION_PATH } from '../utils/config';
 
 import { useDataModel, useDataModelVersions } from './useDataModelActions';
 

@@ -1,6 +1,6 @@
-import { useUserInformation } from '@platypus-app/hooks/useUserInformation';
-
 import { SubAppWrapper } from '@cognite/cdf-utilities';
+
+import { useUserInformation } from './hooks/useUserInformation';
 
 export interface FusionSubAppContainerProps {
   children: React.ReactNode;

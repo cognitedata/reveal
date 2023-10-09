@@ -1,18 +1,20 @@
 import { useEffect } from 'react';
 
-import { RuleDto } from '@data-quality/api/codegen';
-import { useLoadDataSource } from '@data-quality/hooks';
-import { getQueryKey } from '@data-quality/utils/namingPatterns';
+import { useQuery } from '@tanstack/react-query';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+
+import { Notification } from '../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../hooks/useTranslation';
+import { RuleDto } from '../api/codegen';
+import { getQueryKey } from '../utils/namingPatterns';
 import {
   TimeSeriesType,
   formatTimeriesResponse,
   getTimeSeriesItemRequest,
-} from '@data-quality/utils/validationTimeseries';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useQuery } from '@tanstack/react-query';
+} from '../utils/validationTimeseries';
 
-import sdk from '@cognite/cdf-sdk-singleton';
+import { useLoadDataSource } from './';
 
 export type DatapointsTarget = 'dataSource' | 'rules';
 

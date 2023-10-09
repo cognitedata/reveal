@@ -2,9 +2,9 @@ import { Dispatch } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { Button, Chip, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 type ToggleVisualizerProps = {
   isVisualizerOn: boolean;

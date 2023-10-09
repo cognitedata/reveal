@@ -6,18 +6,17 @@ import {
   useParams,
 } from 'react-router-dom';
 
-import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
-import { useNavigate } from '@platypus-app/flags/useNavigate';
-import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
-
 import { getQueryParameter } from '@cognite/cdf-utilities';
 import { Flex } from '@cognite/cogs.js';
 
+import { SplitPanelLayout } from '../../../../components/Layouts/SplitPanelLayout';
+import { FlexPlaceholder } from '../../../../components/Placeholder/FlexPlaceholder';
+import { useNavigate } from '../../../../flags/useNavigate';
+import { useDataModelTypeDefs } from '../../../../hooks/useDataModelActions';
+import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
+import useSelector from '../../../../hooks/useSelector';
+import { useTranslation } from '../../../../hooks/useTranslation';
+import { DataManagementState } from '../../../../redux/reducers/global/dataManagementReducer';
 import {
   DataPreviewTable,
   DataPreviewTableRef,

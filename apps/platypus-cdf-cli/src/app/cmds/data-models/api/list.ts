@@ -1,8 +1,5 @@
-import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
-import Response, {
-  DEBUG as _DEBUG,
-} from '@cognite/platypus-cdf-cli/app/utils/logger';
-
+import { CLICommand } from '../../../common/cli-command';
+import Response, { DEBUG as _DEBUG } from '../../../utils/logger';
 import { getDataModelsHandler } from '../utils';
 
 const DEBUG = _DEBUG.extend('solutions:api:list');

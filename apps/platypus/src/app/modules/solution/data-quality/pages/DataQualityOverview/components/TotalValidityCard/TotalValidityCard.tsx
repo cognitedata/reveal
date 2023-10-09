@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 
+import { Body, Flex, Overline } from '@cognite/cogs.js';
+
+import { BasicPlaceholder } from '../../../../../../../components/BasicPlaceholder/BasicPlaceholder';
+import { Spinner } from '../../../../../../../components/Spinner/Spinner';
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
 import {
   useLoadDataSource,
   useLoadDatapoints,
   useLoadRules,
-} from '@data-quality/hooks';
-import { emptyDatapoints } from '@data-quality/utils/validationTimeseries';
-import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Body, Flex, Overline } from '@cognite/cogs.js';
+} from '../../../../hooks';
+import { emptyDatapoints } from '../../../../utils/validationTimeseries';
 
 import { ValidationGraph } from './ValidationGraph';
 import { ValidationStatistics } from './ValidationStatistics';

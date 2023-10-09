@@ -2,12 +2,13 @@ import { Dispatch, SetStateAction } from 'react';
 
 import styled from 'styled-components';
 
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { Select, SelectProps } from 'antd';
 
 import { LABELING_TABLE_COLUMN_WIDTH } from '../constants';
 import { useSearchMatchInputOptions } from '../hooks/useSearchMatchInputOptions';
 import { ManualMatch, MatchedInstance } from '../types';
+
+import { Spinner } from './Spinner/Spinner';
 
 export interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {

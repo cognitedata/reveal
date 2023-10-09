@@ -1,16 +1,16 @@
+import { isEqual } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+
+import { Notification } from '../../../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../../../hooks/useTranslation';
 import {
   DataScopeCreateDraft,
   DataScopeDto,
   DataScopeUpdateItem,
   useCreateDataScopes,
   useUpdateDataScopes,
-} from '@data-quality/api/codegen';
-import { useLoadDataSource, useLoadDataScopes } from '@data-quality/hooks';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { isEqual } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
-
+} from '../../../api/codegen';
+import { useLoadDataSource, useLoadDataScopes } from '../../../hooks';
 import { DataScopeFormValues } from '../helpers';
 
 type UpsertDataScopeOptions = {

@@ -1,5 +1,6 @@
-import { useListDataScopes } from '@data-quality/api/codegen';
-import { useLoadDataSource } from '@data-quality/hooks';
+import { useListDataScopes } from '../api/codegen';
+
+import { useLoadDataSource } from './';
 
 // TODO consider getting the amount of rules connected to each data scope
 // TODO use this hook when upserting a rule

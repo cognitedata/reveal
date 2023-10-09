@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-import { useLoadDataSource } from '@data-quality/hooks';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import sdk from '@cognite/cdf-sdk-singleton';
+
+import { Notification } from '../../../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../../../hooks/useTranslation';
+import { useLoadDataSource } from '../../../hooks';
 
 import { downloadAsExcel, downloadAsJSON } from './helpers';
 

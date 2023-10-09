@@ -3,10 +3,11 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
 
 import { Body, Button, Title, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { useDataModelState } from '../../../hooks/useDataModelState';
 
 import { EllipsisMenu } from './EllipsisMenu';
 import { TypeDeleteModal } from './TypeDeleteModal';

@@ -8,9 +8,9 @@ import {
 
 import styled from 'styled-components';
 
-import { HtmlElementProps } from '@platypus-app/types';
-
 import { Button, Icon, Input, Tooltip } from '@cognite/cogs.js';
+
+import { HtmlElementProps } from '../../types';
 
 export interface EditableChipProps
   extends Omit<HtmlElementProps<HTMLDivElement>, 'onChange'> {

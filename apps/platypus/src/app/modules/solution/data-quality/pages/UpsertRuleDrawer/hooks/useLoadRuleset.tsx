@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 
+import { Notification } from '../../../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../../../hooks/useTranslation';
+import { queryClient } from '../../../../../../queryClient';
 import {
   RulesetDraft,
   RulesetDto,
   useCreateRulesets,
   useListByIdsRulesets,
-} from '@data-quality/api/codegen';
-import { useLoadDataSource } from '@data-quality/hooks';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { queryClient } from '@platypus-app/queryClient';
+} from '../../../api/codegen';
+import { useLoadDataSource } from '../../../hooks';
 
 type LoadRulesetOptions = {
   rulesetId: string;

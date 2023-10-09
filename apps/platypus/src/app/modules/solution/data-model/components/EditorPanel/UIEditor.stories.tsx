@@ -3,10 +3,10 @@ import {
   MainDescription,
   MainTitle,
   Wrapper,
-} from '@platypus-app/components/Styles/storybook';
-import { mockComplexGraphqlModel } from '@platypus-app/mocks/graphqlModels';
-import { initialState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import configureStory from '@platypus-app/tests/configureStorybook';
+} from '../../../../../components/Styles/storybook';
+import { mockComplexGraphqlModel } from '../../../../../mocks/graphqlModels';
+import { initialState } from '../../../../../redux/reducers/global/dataModelReducer';
+import configureStory from '../../../../../tests/configureStorybook';
 
 import { UIEditor } from './UIEditor';
 

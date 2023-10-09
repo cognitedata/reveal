@@ -1,4 +1,4 @@
-import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
+import { PageToolbar } from '../PageToolbar/PageToolbar';
 
 export interface VersionSelectorToolbarProps {
   title: string;

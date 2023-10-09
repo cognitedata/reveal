@@ -1,13 +1,12 @@
 import { useState } from 'react';
 
-import { useDataSourceValidationRun } from '@data-quality/api/codegen';
-import { useLoadDataSource, useLoadRules } from '@data-quality/hooks';
-import { sleep } from '@data-quality/utils/async';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
+import { Notification } from '../../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { useDataSourceValidationRun } from '../../api/codegen';
+import { sleep } from '../../utils/async';
 import { useLoadLatestRuleRuns } from '../useLoadLatestRuleRuns';
 
+import { useLoadDataSource, useLoadRules } from './..';
 import { createSession, getValidationStatus } from './helpers';
 import { useDisableValidation } from './hooks';
 

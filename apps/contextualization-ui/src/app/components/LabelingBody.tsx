@@ -2,8 +2,6 @@ import { Dispatch, SetStateAction, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-
 import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 
 import { MatchTable } from '../containers/MatchTable';
@@ -11,6 +9,7 @@ import { InternalModelInstance, JobStatus, ManualMatch } from '../types';
 
 import { InstructionsModal } from './InstructionsModal';
 import { SectionDivider } from './SectionDivider';
+import { Spinner } from './Spinner/Spinner';
 
 export const LabelingBody = ({
   labelingStage,

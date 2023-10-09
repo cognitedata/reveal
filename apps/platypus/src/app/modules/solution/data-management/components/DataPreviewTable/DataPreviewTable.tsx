@@ -17,24 +17,6 @@ import {
   MixerQueryBuilder,
   PlatypusError,
 } from '@platypus/platypus-core';
-import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { TOKENS } from '@platypus-app/di';
-import {
-  useManualPopulationFeatureFlag,
-  useDataManagementDeletionFeatureFlag,
-  useSuggestionsFeatureFlag,
-  useFilterBuilderFeatureFlag,
-  useColumnSelectionFeatureFlag,
-} from '@platypus-app/flags';
-import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DraftRowData } from '@platypus-app/redux/reducers/global/dataManagementReducer';
 import {
   CellDoubleClickedEvent,
   CellEditingStartedEvent,
@@ -51,6 +33,24 @@ import debounce from 'lodash/debounce';
 import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
 import { Button } from '@cognite/cogs.js';
 
+import { ErrorBoundary } from '../../../../../components/ErrorBoundary/ErrorBoundary';
+import { Notification } from '../../../../../components/Notification/Notification';
+import { Spinner } from '../../../../../components/Spinner/Spinner';
+import { TOKENS } from '../../../../../di';
+import {
+  useManualPopulationFeatureFlag,
+  useDataManagementDeletionFeatureFlag,
+  useSuggestionsFeatureFlag,
+  useFilterBuilderFeatureFlag,
+  useColumnSelectionFeatureFlag,
+} from '../../../../../flags';
+import { useDataModelVersions } from '../../../../../hooks/useDataModelActions';
+import { useInjection } from '../../../../../hooks/useInjection';
+import { useMixpanel } from '../../../../../hooks/useMixpanel';
+import { useSelectedDataModelVersion } from '../../../../../hooks/useSelectedDataModelVersion';
+import useSelector from '../../../../../hooks/useSelector';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { DraftRowData } from '../../../../../redux/reducers/global/dataManagementReducer';
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import { useDraftRows } from '../../hooks/useDraftRows';
 import { useGetFilteredRowsCount } from '../../hooks/useGetFilteredRowsCount';

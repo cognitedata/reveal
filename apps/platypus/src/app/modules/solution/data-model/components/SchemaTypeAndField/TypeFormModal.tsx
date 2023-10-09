@@ -4,9 +4,10 @@ import {
   DataModelTypeDefsType,
   DataModelTypeNameValidator,
 } from '@platypus/platypus-core';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Input, InputProps, Modal } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 type FormInput = {
   typeName: string;

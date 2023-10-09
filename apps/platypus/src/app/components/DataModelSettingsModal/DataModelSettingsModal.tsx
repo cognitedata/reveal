@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { DataModel } from '@platypus/platypus-core';
-import { SUB_APP_PATH } from '@platypus-app/constants';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
 
+import { SUB_APP_PATH } from '../../constants';
+import { useTranslation } from '../../hooks/useTranslation';
 import { useDataModelMutation } from '../../modules/data-models/hooks/useDataModelMutation';
 import { DataModelDetailModal } from '../DataModelDetailModal/DataModelDetailModal';
 

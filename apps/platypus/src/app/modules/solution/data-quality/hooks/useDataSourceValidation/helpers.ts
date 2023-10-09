@@ -1,7 +1,7 @@
-import { RuleRunDto } from '@data-quality/api/codegen';
-
 import sdk from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
+
+import { RuleRunDto } from '../../api/codegen';
 
 import { ValidationStatus } from './types';
 

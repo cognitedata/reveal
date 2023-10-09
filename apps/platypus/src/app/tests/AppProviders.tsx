@@ -2,15 +2,15 @@ import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
-import config from '@platypus-app/config/config';
-import { rootInjector } from '@platypus-app/di';
-import { StoreType } from '@platypus-app/redux/store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ContainerProvider } from 'brandi-react';
 
 import { CogniteClient } from '@cognite/sdk';
 
 import { setCogniteSDKClient } from '../../environments/cogniteSdk';
+import config from '../config/config';
+import { rootInjector } from '../di';
+import { StoreType } from '../redux/store';
 
 export type Props = {
   store: StoreType;

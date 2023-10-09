@@ -1,5 +1,6 @@
-import { Wrapper } from '@platypus-app/components/Styles/storybook';
 import { action } from '@storybook/addon-actions';
+
+import { Wrapper } from '../../../../../components/Styles/storybook';
 
 import { BreakingChangesModal } from './BreakingChangesModal';
 

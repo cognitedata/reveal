@@ -10,38 +10,37 @@ import {
   ValidationError,
   PlatypusDmlError,
 } from '@platypus/platypus-core';
-import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
-import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
-import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import {
-  formatValidationErrors,
-  Notification,
-} from '@platypus-app/components/Notification/Notification';
-import {
-  PageToolbar,
-  Size,
-} from '@platypus-app/components/PageToolbar/PageToolbar';
-import { SchemaVisualizer } from '@platypus-app/components/SchemaVisualizer/SchemaVisualizer';
-import { SUB_APP_PATH } from '@platypus-app/constants';
-import { TOKENS } from '@platypus-app/di';
-import { useNavigate } from '@platypus-app/flags/useNavigate';
-import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
-import { getKeyForDataModel } from '@platypus-app/utils/local-storage-utils';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Flex } from '@cognite/cogs.js';
 
+import { ErrorBoundary } from '../../../../components/ErrorBoundary/ErrorBoundary';
+import { PageContentLayout } from '../../../../components/Layouts/PageContentLayout';
+import { SplitPanelLayout } from '../../../../components/Layouts/SplitPanelLayout';
+import {
+  formatValidationErrors,
+  Notification,
+} from '../../../../components/Notification/Notification';
+import {
+  PageToolbar,
+  Size,
+} from '../../../../components/PageToolbar/PageToolbar';
+import { SchemaVisualizer } from '../../../../components/SchemaVisualizer/SchemaVisualizer';
+import { SUB_APP_PATH } from '../../../../constants';
+import { TOKENS } from '../../../../di';
+import { useNavigate } from '../../../../flags/useNavigate';
+import { useDataModelVersions } from '../../../../hooks/useDataModelActions';
+import { useInjection } from '../../../../hooks/useInjection';
+import { useMixpanel } from '../../../../hooks/useMixpanel';
+import { usePersistedState } from '../../../../hooks/usePersistedState';
+import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
+import useSelector from '../../../../hooks/useSelector';
+import { useTranslation } from '../../../../hooks/useTranslation';
+import { DataModelState } from '../../../../redux/reducers/global/dataModelReducer';
+import { DEFAULT_VERSION_PATH } from '../../../../utils/config';
+import { getKeyForDataModel } from '../../../../utils/local-storage-utils';
+import { QueryKeys } from '../../../../utils/queryKeys';
 import { useDataModelState } from '../../hooks/useDataModelState';
 import { DataModelHeader } from '../components/DataModelHeader';
 import { EditorPanel } from '../components/EditorPanel';
@@ -53,6 +52,7 @@ import {
   VersionType,
 } from '../components/PublishVersionModal';
 import { ToggleVisualizer } from '../components/ToggleVisualizer/ToggleVisualizer';
+import { useLocalDraft } from '../hooks/useLocalDraft';
 import { SchemaEditorMode } from '../types';
 
 const MAX_TYPES_VISUALIZABLE = 30;

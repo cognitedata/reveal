@@ -1,8 +1,8 @@
 import { MouseEventHandler } from 'react';
 
-import { HtmlElementProps } from '@platypus-app/types';
-
 import { Button, Flex, Title } from '@cognite/cogs.js';
+
+import { HtmlElementProps } from '../../../../../types';
 
 interface SidePanelProps
   extends Omit<HtmlElementProps<HTMLDivElement>, 'title'> {

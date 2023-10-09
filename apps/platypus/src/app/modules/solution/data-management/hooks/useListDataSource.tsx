@@ -9,11 +9,11 @@ import {
   PlatypusError,
   Result,
 } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
-import { useFilterBuilderFeatureFlag } from '@platypus-app/flags';
-import { useInjection } from '@platypus-app/hooks/useInjection';
 import { IDatasource, IGetRowsParams } from 'ag-grid-community';
 
+import { TOKENS } from '../../../../di';
+import { useFilterBuilderFeatureFlag } from '../../../../flags';
+import { useInjection } from '../../../../hooks/useInjection';
 import { convertToGraphQlFilters } from '../utils/list-data-source-utils';
 
 import { useFetchFilteredRowsCount } from './useFetchFilteredRowsCount';

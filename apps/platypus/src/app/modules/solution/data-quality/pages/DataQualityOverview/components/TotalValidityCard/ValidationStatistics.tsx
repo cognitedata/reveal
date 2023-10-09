@@ -1,18 +1,17 @@
-import { useLoadDatapoints, useLoadRules } from '@data-quality/hooks';
-import { abbreviateNumber } from '@data-quality/utils/numbers';
+import { Body, Divider, Flex, Heading, Tooltip } from '@cognite/cogs.js';
+
+import { LastValidationTime, ValidationDifference } from '..';
+import { Spinner } from '../../../../../../../components/Spinner/Spinner';
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
+import { useLoadDatapoints, useLoadRules } from '../../../../hooks';
+import { abbreviateNumber } from '../../../../utils/numbers';
 import {
   TimeSeriesType,
   getDatapointsById,
   getLastDatapointValue,
   getScoreValue,
   getTimeSeriesId,
-} from '@data-quality/utils/validationTimeseries';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Body, Divider, Flex, Heading, Tooltip } from '@cognite/cogs.js';
-
-import { LastValidationTime, ValidationDifference } from '..';
+} from '../../../../utils/validationTimeseries';
 
 type ValidationStatisticsProps = {
   dataSourceId: string;

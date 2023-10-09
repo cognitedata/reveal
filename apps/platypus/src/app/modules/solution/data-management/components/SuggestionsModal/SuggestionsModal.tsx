@@ -3,10 +3,6 @@ import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { KeyValueMap } from '@platypus/platypus-core';
-import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import * as Sentry from '@sentry/react';
 import { GetRowIdParams } from 'ag-grid-community';
 
@@ -22,6 +18,10 @@ import {
   Modal,
 } from '@cognite/cogs.js';
 
+import { SplitPanelLayout } from '../../../../../components/Layouts/SplitPanelLayout';
+import { Notification } from '../../../../../components/Notification/Notification';
+import { useMixpanel } from '../../../../../hooks/useMixpanel';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 import { DataPreviewTableProps } from '../DataPreviewTable/DataPreviewTable';
 
 import { TypeColumnSelect } from './TypeColumnSelect';

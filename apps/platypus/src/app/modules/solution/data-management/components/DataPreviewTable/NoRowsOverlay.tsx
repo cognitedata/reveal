@@ -1,11 +1,10 @@
+import { Body, Button, Title } from '@cognite/cogs.js';
+
 import {
   useManualPopulationFeatureFlag,
   useTransformationsFeatureFlag,
-} from '@platypus-app/flags';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Body, Button, Title } from '@cognite/cogs.js';
-
+} from '../../../../../flags';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 import { useDraftRows } from '../../hooks/useDraftRows';
 import useTransformations from '../../hooks/useTransformations';
 import { BulkPopulationButton } from '../BulkPopulationButton';

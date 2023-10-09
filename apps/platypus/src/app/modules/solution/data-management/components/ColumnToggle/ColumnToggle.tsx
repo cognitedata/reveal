@@ -7,8 +7,6 @@ import {
   DragHandleIcon,
   WithDragHandleProps,
 } from '@data-exploration/components';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import {
   Button,
@@ -22,6 +20,9 @@ import {
   Detail,
   Body,
 } from '@cognite/cogs.js';
+
+import { useMixpanel } from '../../../../../hooks/useMixpanel';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 export type ColumnToggleType = {
   label: string;

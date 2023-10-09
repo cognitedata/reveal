@@ -1,21 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Suspense, useState } from 'react';
 
-import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
+import { SegmentedControl } from '@cognite/cogs.js';
+
+import { ErrorBoundary } from '../../../../../components/ErrorBoundary/ErrorBoundary';
 import {
   PageToolbar,
   Size,
-} from '@platypus-app/components/PageToolbar/PageToolbar';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useUIEditorFeatureFlag } from '@platypus-app/flags';
-import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-
-import { SegmentedControl } from '@cognite/cogs.js';
-
+} from '../../../../../components/PageToolbar/PageToolbar';
+import { Spinner } from '../../../../../components/Spinner/Spinner';
+import { useUIEditorFeatureFlag } from '../../../../../flags';
+import { useDataModelVersions } from '../../../../../hooks/useDataModelActions';
+import useSelector from '../../../../../hooks/useSelector';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { DataModelState } from '../../../../../redux/reducers/global/dataModelReducer';
+import { useDataModelState } from '../../../hooks/useDataModelState';
 import { SchemaEditorMode } from '../../types';
 import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
 import { ErrorsByGroup } from '../GraphqlCodeEditor/Model';

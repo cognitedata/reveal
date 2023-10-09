@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react';
 
 import { DataModel } from '@platypus/platypus-core';
-import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
-import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { AgGridReact } from 'ag-grid-react';
 
+import { StyledPageWrapper } from '../../../components/Layouts/elements';
+import { FlexPlaceholder } from '../../../components/Placeholder/FlexPlaceholder';
+import { Spinner } from '../../../components/Spinner/Spinner';
+import { useDataModels } from '../../../hooks/useDataModelActions';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { DataModelsListHeader } from '../components/DataModelsListHeader/DataModelsListHeader';
 import { DataModelsTable } from '../components/DataModelsTable/DataModelsTable';
 import { CreateDataModel } from '../CreateDataModel';

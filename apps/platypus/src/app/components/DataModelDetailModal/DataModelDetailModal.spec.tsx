@@ -1,10 +1,11 @@
 import { useState } from 'react';
 
-import render from '@platypus-app/tests/render';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 import noop from 'lodash/noop';
+
+import render from '../../tests/render';
 
 import {
   DataModelDetailModal,

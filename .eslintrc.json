@@ -25,12 +25,7 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": [
-              "@platypus-app",
-              "@data-quality",
-              "@platypus-core",
-              "@cognite/platypus-cdf-cli"
-            ],
+            "allow": [],
             "depConstraints": [
               {
                 "sourceTag": "*",

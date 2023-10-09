@@ -9,15 +9,9 @@ import {
 } from '@platypus/platypus-core';
 import { Arguments, Argv } from 'yargs';
 
-import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
-import {
-  BaseArgs,
-  CommandArgument,
-  CommandArgumentType,
-} from '@cognite/platypus-cdf-cli/app/types';
-import Response, {
-  DEBUG as _DEBUG,
-} from '@cognite/platypus-cdf-cli/app/utils/logger';
+import { CLICommand } from '../../common/cli-command';
+import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
+import Response, { DEBUG as _DEBUG } from '../../utils/logger';
 
 import { getDataModelsHandler } from './utils';
 

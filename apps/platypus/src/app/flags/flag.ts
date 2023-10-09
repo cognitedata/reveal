@@ -1,6 +1,7 @@
 import { StorageProviderType } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
 import { useInjection } from 'brandi-react';
+
+import { TOKENS } from '../di';
 
 export const useFeatureToggle = (key: string) => {
   const localStorageProvider = useInjection(

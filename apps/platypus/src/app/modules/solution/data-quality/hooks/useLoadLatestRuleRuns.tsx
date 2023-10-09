@@ -1,5 +1,6 @@
-import { useListLatestRuleRuns } from '@data-quality/api/codegen';
-import { useLoadDataSource } from '@data-quality/hooks';
+import { useListLatestRuleRuns } from '../api/codegen';
+
+import { useLoadDataSource } from './';
 
 /** Load all the latest RuleRuns in the current DataSource. */
 export const useLoadLatestRuleRuns = () => {

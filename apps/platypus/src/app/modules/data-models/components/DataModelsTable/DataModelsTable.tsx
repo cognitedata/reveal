@@ -7,17 +7,17 @@ import React, {
 } from 'react';
 
 import { DataModel, StorageProviderType } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
-import { useNavigate } from '@platypus-app/flags/useNavigate';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { RowClickedEvent } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 import { CogDataTable } from '@cognite/cog-data-grid';
 import { Pagination } from '@cognite/cogs.js';
 
+import { TOKENS } from '../../../../di';
+import { useNavigate } from '../../../../flags/useNavigate';
+import { useInjection } from '../../../../hooks/useInjection';
+import { useMixpanel } from '../../../../hooks/useMixpanel';
+import { DEFAULT_VERSION_PATH } from '../../../../utils/config';
 import { useDataModelsGridConfig } from '../../hooks/useDataModelsGridConfig';
 
 import { PaginationWrapper } from './elements';

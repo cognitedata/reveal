@@ -2,9 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { GraphqlCodeEditor } from '@platypus-app/modules/solution/data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
-
 import {
   Body,
   Button,
@@ -19,6 +16,8 @@ import {
   SegmentedControl,
 } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../hooks/useTranslation';
+import { GraphqlCodeEditor } from '../../modules/solution/data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
 import { SchemaVisualizer } from '../SchemaVisualizer/SchemaVisualizer';
 
 import { DataModelLibraryItem, library } from './library';

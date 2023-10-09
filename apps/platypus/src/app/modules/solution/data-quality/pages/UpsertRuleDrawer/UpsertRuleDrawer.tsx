@@ -1,7 +1,3 @@
-import { RuleDto, RuleSeverity } from '@data-quality/api/codegen';
-import { RequiredWrapper } from '@data-quality/components';
-import { useLoadDataScopes, useDataModel } from '@data-quality/hooks';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useFormik } from 'formik';
 
 import {
@@ -16,6 +12,10 @@ import {
   Textarea,
 } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { RuleDto, RuleSeverity } from '../../api/codegen';
+import { RequiredWrapper } from '../../components';
+import { useLoadDataScopes, useDataModel } from '../../hooks';
 import { useShowUpsertSuccess } from '../hooks';
 
 import { UpsertRuleFooter } from './components/UpsertRuleFooter';

@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { DataModelTypeDefsType, KeyValueMap } from '@platypus/platypus-core';
-import { useGraphViewerFeatureFlag } from '@platypus-app/flags';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { ICellRendererParams } from 'ag-grid-community';
 
 import { Button, Flex, Chip, Modal } from '@cognite/cogs.js';
 
+import { useGraphViewerFeatureFlag } from '../../../../../../flags';
+import { useMixpanel } from '../../../../../../hooks/useMixpanel';
+import { useTranslation } from '../../../../../../hooks/useTranslation';
 import { RelationViewer } from '../../RelationViewer/RelationViewer';
 import { getNodeId } from '../../RelationViewer/utils';
 

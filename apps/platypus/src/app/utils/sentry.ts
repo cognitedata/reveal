@@ -1,6 +1,6 @@
-import { environment } from '@platypus-app/environment';
 import * as Sentry from '@sentry/browser';
 
+import { environment } from '../../environments/environment';
 import config from '../config/config';
 
 if (

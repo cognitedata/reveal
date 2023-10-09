@@ -6,9 +6,10 @@ import {
   DataModelVersionStatus,
   UpdateDataModelFieldDTO,
 } from '@platypus/platypus-core';
-import { rootInjector, TOKENS } from '@platypus-app/di';
-import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { rootInjector, TOKENS } from '../../../di';
+import { SchemaEditorMode } from '../../../modules/solution/data-model/types';
 
 export interface DataModelReducerState {
   currentTypeName: null | string;

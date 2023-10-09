@@ -1,10 +1,9 @@
 import Table from 'cli-table3';
 import { Arguments } from 'yargs';
 
-import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
-import { DEBUG as _DEBUG } from '@cognite/platypus-cdf-cli/app/utils/logger';
-
+import { CLICommand } from '../../common/cli-command';
 import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
+import { DEBUG as _DEBUG } from '../../utils/logger';
 
 import { getDataModelsHandler } from './utils';
 
