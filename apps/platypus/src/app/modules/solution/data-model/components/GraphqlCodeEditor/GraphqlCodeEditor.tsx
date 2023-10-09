@@ -77,6 +77,7 @@ type Props = {
   currentTypeName?: string;
   typeDefs?: DataModelTypeDefs;
   space?: string;
+  dataModelExternalId?: string;
   disabled?: boolean;
   language?: string;
   errorsByGroup?: ErrorsByGroup;
@@ -90,6 +91,7 @@ export const GraphqlCodeEditor = React.memo(
     code,
     currentTypeName,
     space,
+    dataModelExternalId,
     typeDefs,
     disabled = false,
     errorsByGroup = {},
@@ -106,6 +108,7 @@ export const GraphqlCodeEditor = React.memo(
     const editorWillMount = (monacoInstance: Monaco) => {
       langProviders.current = setupGraphql(monacoInstance, {
         useExtendedSdl: true,
+        dataModelExternalId,
       });
     };
 

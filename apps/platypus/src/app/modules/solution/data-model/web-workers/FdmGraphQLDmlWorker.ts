@@ -1,6 +1,10 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
-import type { Position, worker } from 'monaco-editor/esm/vs/editor/editor.api';
+import type {
+  Position,
+  worker,
+  languages,
+} from 'monaco-editor/esm/vs/editor/editor.api';
 import prettierGraphqlParser from 'prettier/parser-graphql';
 import prettierStandalone from 'prettier/standalone';
 
@@ -228,6 +232,44 @@ export class FdmGraphQLDmlWorker {
       options,
       this.dataModelTypeDefs
     );
+  }
+
+  public getCodeLens() {
+    const codeLenses = [] as languages.CodeLens[];
+    if (!this.dataModelTypeDefs || !this.lastValidGraphQlSchema) {
+      return null;
+    }
+
+    this.dataModelTypeDefs.types.forEach((typeDef) => {
+      if (!typeDef.directives?.some((d) => d.name === 'import')) {
+        const range = {
+          startLineNumber: typeDef.location?.line || 1,
+          startColumn: 1,
+          endLineNumber: typeDef.location?.line || 1,
+          endColumn: 1,
+        };
+        codeLenses.push({
+          range: { ...range },
+          id: 'PreviewData',
+          command: {
+            id: 'openDataPreview',
+            title: 'Preview data',
+            arguments: [typeDef.name],
+          },
+        });
+        codeLenses.push({
+          range: { ...range },
+          id: 'TransformData',
+          command: {
+            id: 'openTransformations',
+            title: 'Transform data',
+            arguments: [typeDef.name],
+          },
+        });
+      }
+    });
+
+    return codeLenses;
   }
 }
 
