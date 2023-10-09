@@ -15,6 +15,12 @@ export type FdmNodeDataPromises = {
   viewsPromise: Promise<Source[] | undefined>;
 };
 
+export type ModelRevisionNodesResult = {
+  modelId: ModelId;
+  revisionId: RevisionId;
+  nodes: Node3D[];
+};
+
 export type AncestorQueryResult = {
   edges: FdmCadEdge[];
   ancestorsWithSameMapping: Node3D[];

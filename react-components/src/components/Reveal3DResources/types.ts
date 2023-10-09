@@ -6,7 +6,7 @@ import { type NodeAppearance, type AddModelOptions } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
-import { type Node3D } from '@cognite/sdk/dist/src';
+import { CogniteInternalId, type Node3D } from '@cognite/sdk/dist/src';
 
 export type AddImageCollection360Options = {
   siteId: string;
@@ -42,6 +42,11 @@ export type FdmAssetStylingGroup = {
   style: { cad: NodeAppearance };
 };
 
+export type AssetMappingStylingGroup = {
+  assetIds: CogniteInternalId[];
+  style: { cad: NodeAppearance };
+};
+
 export type DefaultResourceStyling = {
   cad?: { default?: NodeAppearance; mapped?: NodeAppearance };
   pointcloud?: { default: NodeAppearance };
@@ -50,7 +55,7 @@ export type DefaultResourceStyling = {
 export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
   defaultResourceStyling?: DefaultResourceStyling;
-  instanceStyling?: FdmAssetStylingGroup[];
+  instanceStyling?: (FdmAssetStylingGroup | AssetMappingStylingGroup)[];
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
 };

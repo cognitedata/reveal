@@ -2,10 +2,11 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteClient, type AssetMapping3D, type Node3D } from '@cognite/sdk';
+import { type CogniteClient, type AssetMapping3D, type Node3D, CogniteInternalId } from '@cognite/sdk';
 import { type ModelId, type ModelRevisionKey, type RevisionId } from './types';
 import { maxBy } from 'lodash';
 import assert from 'assert';
+import { fetchNodesForNodeIds } from './requests';
 
 export type NodeAssetMappingResult = { node?: Node3D; mappings: AssetMapping[] };
 
@@ -91,6 +92,15 @@ export class AssetMappingCache {
       .autoPagingToArray({ limit: Infinity });
 
     return assetMapping3D.filter(isValidAssetMapping);
+  }
+
+  public async getNodesForAssetIds(modelId: ModelId, revisionId: RevisionId, assetIds: CogniteInternalId[]): Promise<Node3D[]> {
+    const assetMappings = await this.getAssetMappingsForModel(modelId, revisionId);
+    const relevantAssetIds = new Set(assetIds);
+
+    const relevantAssetMappings = assetMappings.filter(mapping => relevantAssetIds.has(mapping.assetId));
+
+    return fetchNodesForNodeIds(modelId, revisionId, relevantAssetMappings.map(assetMapping => assetMapping.nodeId), this._sdk);
   }
 }
 
