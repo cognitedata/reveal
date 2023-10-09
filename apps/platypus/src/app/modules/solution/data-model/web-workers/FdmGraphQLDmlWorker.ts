@@ -122,6 +122,14 @@ export class FdmGraphQLDmlWorker {
   public async setGraphQlSchema(graphQlString: string) {
     try {
       const graphQlUtils = new GraphQlUtilsService();
+      if (!graphQlString) {
+        // eslint-disable-next-line no-console
+        console.log(
+          'trying to parse empty GraphQlString string in the worker!'
+        );
+        return;
+      }
+
       this.dataModelTypeDefs = graphQlUtils.parseSchema(
         graphQlString,
         [],

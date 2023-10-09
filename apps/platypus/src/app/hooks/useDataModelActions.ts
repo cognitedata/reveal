@@ -86,6 +86,11 @@ export const useDataModelTypeDefs = (
     );
 
   const memoizedDataModelTypeDefs = useMemo(() => {
+    // Do not remove, it fixes really bad bug with stale data
+    if (!selectedDataModelVersion.schema) {
+      return { types: [] };
+    }
+
     try {
       const dataModelTypeDefs = dataModelTypeDefsBuilder.parseSchema(
         selectedDataModelVersion.schema,

@@ -65,7 +65,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
     useSelector<DataModelState>((state) => state.dataModel);
 
   const isUIDisabled = editorMode === SchemaEditorMode.View || isPublishing;
-  const { updateGraphQlSchema } = useDataModelState();
+  const { updateGraphQlSchema, setCurrentTypeName } = useDataModelState();
 
   return (
     <div
@@ -80,7 +80,13 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
         {isUIEditorVisible && (
           <SegmentedControl
             currentKey={currentView}
-            onButtonClicked={setCurrentView}
+            onButtonClicked={(key) => {
+              setCurrentView(key);
+
+              // If you remove the current type from code and switch to UI
+              // The UI will crash. This fixes that issue
+              setCurrentTypeName(null);
+            }}
             size="small"
           >
             <SegmentedControl.Button

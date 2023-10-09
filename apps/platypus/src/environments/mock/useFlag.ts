@@ -2,10 +2,14 @@
 
 export const useFlag = (
   flagName: string,
-  { fallbackForTest }: { fallbackForTest?: boolean }
+  {
+    fallback,
+    fallbackForTest,
+  }: { fallback?: boolean; fallbackForTest?: boolean }
 ) => {
+  const flagValue = fallbackForTest ?? fallback;
   return {
     isClientReady: true,
-    isEnabled: fallbackForTest,
+    isEnabled: flagValue,
   };
 };

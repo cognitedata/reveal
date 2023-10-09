@@ -216,7 +216,7 @@ export const SchemaVisualizer = React.memo(
         }
         return (
           <NodeWrapper
-            isActive={active === item.id}
+            isActive={item.title === active}
             width={nodeWidth}
             id={item.id}
             key={item.id}
