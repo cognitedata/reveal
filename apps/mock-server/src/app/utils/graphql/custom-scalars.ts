@@ -38,6 +38,11 @@ const dateScallar = (scalarName: string) => {
 };
 
 export const longScalar = numericScalars('Long');
+export const float32Scalar = numericScalars('Float32');
+export const float64Scalar = numericScalars('Float64');
+export const dataPointValue = numericScalars('DataPointValue');
 export const bigIntScalar = numericScalars('Int64');
+export const Int32Scalar = numericScalars('Int32');
 export const timestampScalar = numericScalars('Timestamp');
 export const timestampStringScalar = dateScallar('Timestamp');
+export const dateStringScalar = dateScallar('Date');

@@ -1,7 +1,10 @@
 import { IntrospectionObjectType, IntrospectionQuery } from 'graphql';
 
 import { getType } from '../../../../utils';
-import { mixerApiV3CustomDirectives } from '../../config/schema-service-api';
+import {
+  mixerApiCustomTypes,
+  mixerApiV3CustomDirectives,
+} from '../../config/schema-service-api';
 
 export class SchemaServiceGraphqlApiBuilder {
   private typeSearchFieldsMap = {};
@@ -34,16 +37,7 @@ export class SchemaServiceGraphqlApiBuilder {
 
   getBuiltInTypes() {
     return `
-    scalar JSONObject
-
-    scalar Timestamp
-    scalar TimeSeries
-    scalar DataPoint
-    scalar DataPointValue
-    scalar File
-    scalar Sequence
-
-    scalar Int64
+    ${mixerApiCustomTypes}
 
     input _StringCondition {
       eq: String
