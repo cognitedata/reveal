@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { VisionAnnotationDataType } from '@vision/modules/Common/types/annotation';
+import { VisionAnnotationDataType } from '../../../../Common/types/annotation';
+import { VisionReviewAnnotation } from '../../../types';
+import {
+  AnnotationDetailPanelRowDataBase,
+  VirtualizedTreeRowProps,
+} from '../types';
+
+import { AssetLinkWarning } from './AssetLinkWarning';
 import {
   AnnotationTableRow,
   KeyboardShortCutSelectable,
   SidePanelRow,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/components/common';
-import {
-  AnnotationDetailPanelRowDataBase,
-  VirtualizedTreeRowProps,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
-import { VisionReviewAnnotation } from '@vision/modules/Review/types';
-
-import { AssetLinkWarning } from './AssetLinkWarning';
+} from './common';
 
 /**
  * Annotation detail row component for Tag annotations

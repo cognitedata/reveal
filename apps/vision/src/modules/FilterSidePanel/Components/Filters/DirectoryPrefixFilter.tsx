@@ -3,13 +3,11 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { RightOutlined } from '@ant-design/icons';
-import {
-  VisionFileFilterProps,
-  VisionFilterItemProps,
-} from '@vision/modules/FilterSidePanel/types';
 
 import { Body, Button, Detail } from '@cognite/cogs.js';
 import { StringFilter } from '@cognite/data-exploration';
+
+import { VisionFileFilterProps, VisionFilterItemProps } from '../../types';
 
 const extractSubDirectories = (subdirectoryPaths: string[]) => {
   const subDirectories = subdirectoryPaths

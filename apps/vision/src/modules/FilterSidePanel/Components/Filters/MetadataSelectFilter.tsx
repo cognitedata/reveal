@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 
-import { VisionFilterItemProps } from '@vision/modules/FilterSidePanel/types';
-
 import { MetadataFilter } from '@cognite/data-exploration';
 import { FileInfo } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
+
+import { VisionFilterItemProps } from '../../types';
 
 export const MetadataSelectFilter = ({
   filter,

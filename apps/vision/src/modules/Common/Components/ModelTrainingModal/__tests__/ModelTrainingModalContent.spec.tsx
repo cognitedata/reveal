@@ -1,28 +1,12 @@
-import React from 'react';
-
 import { fireEvent, screen } from '@testing-library/react';
-import { getDummyImageObjectDetectionBoundingBoxAnnotation } from '@vision/__test-utils/getDummyAnnotations';
-import { testRenderer } from '@vision/__test-utils/renderer';
-import { getMockedStore } from '@vision/__test-utils/store.utils';
+
+import { getDummyImageObjectDetectionBoundingBoxAnnotation } from '../../../../../__test-utils/getDummyAnnotations';
+import { testRenderer } from '../../../../../__test-utils/renderer';
+import { getMockedStore } from '../../../../../__test-utils/store.utils';
 import {
   MAX_AUTOML_ANNOTATIONS_TYPE,
   MIN_AUTOML_FILES_PER_ANNOTATIONS_TYPE,
-} from '@vision/api/vision/autoML/constants';
-// import { ModelTrainingModalContent } from '@vision/modules/Common/Components/ModelTrainingModal/ModelTrainingModalContent';
-
-jest.mock('@vision/modules/Process/store/slice', () => ({
-  ...jest.requireActual('@vision/modules/Process/store/slice'),
-  makeSelectAnnotationStatuses: () => {
-    return () => {
-      return {
-        tag: {},
-        gdpr: {},
-        text: {},
-        objects: {},
-      };
-    };
-  },
-}));
+} from '../../../../../api/vision/autoML/constants';
 
 jest.mock('@vision/api/vision/autoML/constants', () => ({
   ...jest.requireActual('@vision/api/vision/autoML/constants'),

@@ -2191,10 +2191,10 @@
   dependencies:
     nanoid "^3.1.16"
 
-"@cognite/e2e-auth@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@cognite/e2e-auth/-/e2e-auth-1.0.3.tgz#42680a0fcdf004ffb811ee9a1ffa9e868717ca73"
-  integrity sha512-t8gmZjCEPyXrBo+YCNKYpDcKmmDnkfiiYlf4qvwMO92EY2wzqKrt7Ycc5nxaqNq1exd4TkTkhYDjmuiZe9JQzg==
+"@cognite/e2e-auth@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@cognite/e2e-auth/-/e2e-auth-1.0.4.tgz#caa42807820a6e3c047753bf77bfa1da01d0f4a7"
+  integrity sha512-XQAasIGnqmjb55QDkjXVE1w9RKz3zeKXlHvRdvemf69G3pAz/elivhqAYKqfvRwSkNPr4HyznJqGExm6mLUISg==
 
 "@cognite/eslint-config@^3.2.0":
   version "3.2.0"

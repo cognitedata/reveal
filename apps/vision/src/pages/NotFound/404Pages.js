@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components/macro';
 import { Button } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
-import { projectName } from '@vision/utils';
-import worker13 from '@vision/assets/worker13.svg';
+import { projectName } from '../../utils/index';
+import worker13 from '../../assets/worker13.svg';
 
 const Background = styled.div`
   background: white;

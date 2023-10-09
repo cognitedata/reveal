@@ -1,15 +1,16 @@
 import React from 'react';
 
 import { screen } from '@testing-library/react';
-import { mockCogniteAutoMLModel } from '@vision/__test-utils/fixtures/automlModels';
-import { testRenderer } from '@vision/__test-utils/renderer';
-import { AutoMLModelType } from '@vision/api/vision/autoML/types';
+
+import { mockCogniteAutoMLModel } from '../../../../../__test-utils/fixtures/automlModels';
+import { testRenderer } from '../../../../../__test-utils/renderer';
+import { AutoMLModelType } from '../../../../../api/vision/autoML/types';
+import { dateformat, getDateDiff } from '../../../../../utils/DateUtils';
 import {
   AutoMLMetricsOverview,
   formatModelType,
   getPrecisionAndRecall,
-} from '@vision/modules/AutoML/Components/AutoMLPage/AutoMLMetricsOverview';
-import { dateformat, getDateDiff } from '@vision/utils/DateUtils';
+} from '../AutoMLMetricsOverview';
 
 describe('AutoMLMetricsOverview', () => {
   const TestComponent = (props: any) => {

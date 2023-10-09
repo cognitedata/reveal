@@ -1,7 +1,8 @@
 import React from 'react';
 
-import Text from '@vision/modules/Common/Components/Skeleton/layouts/Text';
 import times from 'lodash/times';
+
+import Text from './Text';
 
 export interface Props {
   lines?: number;

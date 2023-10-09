@@ -14,7 +14,7 @@
 // ***********************************************************
 
 // Import commands.ts using ES2015 syntax:
-import './commands';
+import './commands/commands';
 
 // This will also register cypress commands defined in @fusion/shared/cypress like loginWithAADClientCredentials()
 import {

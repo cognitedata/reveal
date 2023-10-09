@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Button, Colors, Body, Flex } from '@cognite/cogs.js';
+import { Button, Colors, Body, Flex, InputExp } from '@cognite/cogs.js';
 import { AnnotationModel } from '@cognite/sdk/dist/src';
 
 import { FLOATING_ELEMENT_MARGIN } from '../../../pages/ContextualizeEditor/constants';
 import { useAnnotationModelsWithAsset } from '../hooks/useAnnotationModelsWithAsset';
+import { setHoveredAnnotationId } from '../useContextualizeThreeDViewerStore';
 
 type AnnotationsCardProps = {
   annotations: AnnotationModel[] | null;
@@ -21,6 +22,7 @@ export const AnnotationsCard = ({
 }: AnnotationsCardProps) => {
   const divRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   const { data: annotationsWithAssets } =
     useAnnotationModelsWithAsset(annotations);
@@ -52,8 +54,15 @@ export const AnnotationsCard = ({
     // TODO: Investigate a better approach.
   });
 
+  const filteredAnnotationsWithAssets = annotationsWithAssets?.filter(
+    ({ asset, annotation }) =>
+      asset?.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      asset?.id.toString().includes(searchValue) ||
+      annotation.id.toString().includes(searchValue)
+  );
+
   const shouldShowAnnotationList =
-    isExpanded && annotationsWithAssets !== undefined;
+    isExpanded && filteredAnnotationsWithAssets !== undefined;
 
   return (
     <div
@@ -92,12 +101,25 @@ export const AnnotationsCard = ({
 
       {shouldShowAnnotationList && (
         <AnnotationListContainer>
-          {annotationsWithAssets.map(({ annotation, asset }) => (
+          <InputExp
+            fullWidth
+            placeholder="Search annotations"
+            value={searchValue}
+            onChange={(event) => setSearchValue(event.target.value)}
+          />
+
+          {filteredAnnotationsWithAssets.map(({ annotation, asset }) => (
             <StyledAnnotationListItem
               key={annotation.id}
               justifyContent="space-between"
               alignItems="center"
               onClick={() => onZoomToAnnotation(annotation.id)}
+              onMouseEnter={() => {
+                setHoveredAnnotationId(annotation.id);
+              }}
+              onMouseLeave={() => {
+                setHoveredAnnotationId(null);
+              }}
             >
               <span>{asset?.name ?? `Annotation ID: ${annotation.id}`}</span>
               <Button

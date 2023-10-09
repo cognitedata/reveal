@@ -1,6 +1,6 @@
-import { APP_STATE_VERSION } from '@vision/utils/localStorage/LocalStorage';
-
 import sdk from '@cognite/cdf-sdk-singleton';
+
+import { APP_STATE_VERSION } from './LocalStorage';
 
 export const validatePersistedState = (
   project: string,

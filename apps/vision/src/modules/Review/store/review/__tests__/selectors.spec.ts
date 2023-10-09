@@ -1,26 +1,29 @@
-import { mockFileList } from '@vision/__test-utils/fixtures/files';
+import { mockFileList } from '../../../../../__test-utils/fixtures/files';
 import {
   getDummyImageObjectDetectionBoundingBoxAnnotation,
   getDummyImageKeypointCollectionAnnotation,
-} from '@vision/__test-utils/getDummyAnnotations';
-import { CDFAnnotationTypeEnum, Status } from '@vision/api/annotation/types';
-import { initialState as annotationInitialState } from '@vision/modules/Common/store/annotation/slice';
-import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
-import { initialState as filesInitialState } from '@vision/modules/Common/store/files/slice';
-import { FileState } from '@vision/modules/Common/store/files/types';
-import { initialState as annotatorWrapperInitialState } from '@vision/modules/Review/store/annotatorWrapper/slice';
-import { AnnotatorWrapperState } from '@vision/modules/Review/store/annotatorWrapper/type';
-import { AnnotationSettingsOption } from '@vision/modules/Review/store/review/enums';
+} from '../../../../../__test-utils/getDummyAnnotations';
+import {
+  CDFAnnotationTypeEnum,
+  Status,
+} from '../../../../../api/annotation/types';
+import { RootState } from '../../../../../store/rootReducer';
+import { createFileState } from '../../../../../store/util/StateUtils';
+import { initialState as annotationInitialState } from '../../../../Common/store/annotation/slice';
+import { AnnotationState } from '../../../../Common/store/annotation/types';
+import { initialState as filesInitialState } from '../../../../Common/store/files/slice';
+import { FileState } from '../../../../Common/store/files/types';
+import { initialState as annotatorWrapperInitialState } from '../../annotatorWrapper/slice';
+import { AnnotatorWrapperState } from '../../annotatorWrapper/type';
+import { AnnotationSettingsOption } from '../enums';
 import {
   selectAllReviewFiles,
   selectAnnotationSettingsState,
   selectVisionReviewAnnotationsForFile,
   selectNonRejectedVisionReviewAnnotationsForFile,
-} from '@vision/modules/Review/store/review/selectors';
-import { initialState as reviewInitialState } from '@vision/modules/Review/store/review/slice';
-import { ReviewState } from '@vision/modules/Review/store/review/types';
-import { RootState } from '@vision/store/rootReducer';
-import { createFileState } from '@vision/store/util/StateUtils';
+} from '../selectors';
+import { initialState as reviewInitialState } from '../slice';
+import { ReviewState } from '../types';
 
 const mockFilesState: FileState = {
   files: {

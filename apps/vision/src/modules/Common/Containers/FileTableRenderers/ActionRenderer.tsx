@@ -3,20 +3,20 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { VisionMode } from '@vision/constants/enums/VisionEnums';
-import { ActionMenu } from '@vision/modules/Common/Components/ActionMenu/ActionMenu';
-import { ReviewButton } from '@vision/modules/Common/Components/ReviewButton/ReviewButton';
-import { selectAllSelectedIds } from '@vision/modules/Common/store/files/selectors';
-import { CellRenderer, TableDataItem } from '@vision/modules/Common/types';
-import { selectExplorerSelectedIds } from '@vision/modules/Explorer/store/selectors';
-import { selectUpdatedFileDetails } from '@vision/modules/FileDetails/selectors';
-import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
-import { isProcessingFile } from '@vision/modules/Process/store/utils';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
-
 import { FileInfo } from '@cognite/sdk';
+
+import { VisionMode } from '../../../../constants/enums/VisionEnums';
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { DeleteFilesById } from '../../../../store/thunks/Files/DeleteFilesById';
+import { selectExplorerSelectedIds } from '../../../Explorer/store/selectors';
+import { selectUpdatedFileDetails } from '../../../FileDetails/selectors';
+import { makeSelectJobStatusForFile } from '../../../Process/store/selectors';
+import { isProcessingFile } from '../../../Process/store/utils';
+import { ActionMenu } from '../../Components/ActionMenu/ActionMenu';
+import { ReviewButton } from '../../Components/ReviewButton/ReviewButton';
+import { selectAllSelectedIds } from '../../store/files/selectors';
+import { CellRenderer, TableDataItem } from '../../types';
 
 export function ActionRenderer(
   rowData: TableDataItem,

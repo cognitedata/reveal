@@ -1,13 +1,10 @@
-import { CDFAnnotationTypeEnum } from '@vision/api/annotation/types';
-import {
-  ColorsObjectDetection,
-  ColorsOCR,
-  ColorsTagDetection,
-} from '@vision/constants/Colors';
+import { CDFAnnotationTypeEnum } from '../api/annotation/types';
 import {
   ReviewAssetLinkAnnotationRow,
   ReviewVisionAnnotationRow,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/components';
+} from '../modules/Review/Containers/AnnotationDetailPanel/components';
+
+import { ColorsObjectDetection, ColorsOCR, ColorsTagDetection } from './Colors';
 
 export const annotationCategoryTitle = {
   [CDFAnnotationTypeEnum.ImagesAssetLink]: 'Asset tags',

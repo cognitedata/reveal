@@ -2,12 +2,14 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { MimeTypes } from '@vision/constants/validMimeTypes';
-import { CogsFileInfo } from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
-import { getHumanReadableFileSize } from '@vision/modules/Common/Components/FileUploader/utils/getHumanReadableFileSize';
 import { Progress } from 'antd';
 
 import { AllIconTypes, Button, Detail, Icon } from '@cognite/cogs.js';
+
+import { MimeTypes } from '../../../../../constants/validMimeTypes';
+import { getHumanReadableFileSize } from '../utils/getHumanReadableFileSize';
+
+import { CogsFileInfo } from './types';
 
 type FileListItemProps = {
   file: CogsFileInfo;

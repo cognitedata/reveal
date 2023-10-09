@@ -1,17 +1,20 @@
 import React, { ReactText } from 'react';
 import { FixedSizeNodeData } from 'react-vtree';
 
-import { CDFAnnotationTypeEnum, Status } from '@vision/api/annotation/types';
-import { VisionAnnotationDataType } from '@vision/modules/Common/types';
+import { FileInfo } from '@cognite/sdk';
+
+import {
+  CDFAnnotationTypeEnum,
+  Status,
+} from '../../../../api/annotation/types';
+import { VisionAnnotationDataType } from '../../../Common/types';
 import {
   PredefinedKeypoint,
   ReviewKeypoint,
   Selectable,
   TempKeypointCollection,
   VisionReviewAnnotation,
-} from '@vision/modules/Review/types';
-
-import { FileInfo } from '@cognite/sdk';
+} from '../../types';
 
 export type AnnotationDetailPanelAnnotationType = Selectable & {
   title: string;

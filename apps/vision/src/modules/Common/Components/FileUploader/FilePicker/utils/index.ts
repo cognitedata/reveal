@@ -1,7 +1,4 @@
-import {
-  CogsFile,
-  WebkitFile,
-} from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
+import { CogsFile, WebkitFile } from '../types';
 
 export * from './attrAccept';
 

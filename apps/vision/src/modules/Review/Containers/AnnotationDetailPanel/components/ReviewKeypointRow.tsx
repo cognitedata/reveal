@@ -2,17 +2,18 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import { ReviewKeypoint } from '../../../types';
+import {
+  AnnotationDetailPanelRowDataBase,
+  VirtualizedTreeRowProps,
+} from '../types';
+
 import {
   KeyboardShortCutExpandChildSelectable,
   KeyboardShortCutSelectable,
   SidePanelRow,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/components/common';
-import { KeypointRowContent } from '@vision/modules/Review/Containers/AnnotationDetailPanel/components/common/KeypointRowContent';
-import {
-  AnnotationDetailPanelRowDataBase,
-  VirtualizedTreeRowProps,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
-import { ReviewKeypoint } from '@vision/modules/Review/types';
+} from './common';
+import { KeypointRowContent } from './common/KeypointRowContent';
 
 /**
  * Annotation detail Component for a row of a single keypoint

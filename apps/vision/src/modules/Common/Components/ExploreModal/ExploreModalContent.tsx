@@ -2,13 +2,13 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { MAX_CID_FILE_COUNT } from '@vision/constants/CIDConstants';
-import { TableDataItem } from '@vision/modules/Common/types';
-import { ExplorationSearchBar } from '@vision/modules/Explorer/Components/ExplorationSearchBar';
-import { ExplorerSearchResults } from '@vision/modules/Explorer/Containers/ExplorerSearchResults';
-
 import { Button, Title, Body, Tooltip } from '@cognite/cogs.js';
 import { FileFilterProps } from '@cognite/sdk';
+
+import { MAX_CID_FILE_COUNT } from '../../../../constants/CIDConstants';
+import { ExplorationSearchBar } from '../../../Explorer/Components/ExplorationSearchBar';
+import { ExplorerSearchResults } from '../../../Explorer/Containers/ExplorerSearchResults';
+import { TableDataItem } from '../../types';
 
 export type ExploreModalContentProps = {
   onItemClick: (item: TableDataItem) => void;

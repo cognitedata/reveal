@@ -1,7 +1,4 @@
-import {
-  PredefinedKeypointCollection,
-  PredefinedShape,
-} from '@vision/modules/Review/types';
+import { PredefinedKeypointCollection, PredefinedShape } from '../../types';
 
 export const predefinedKeypoints: PredefinedKeypointCollection[] = [
   {

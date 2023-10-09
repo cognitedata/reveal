@@ -3,17 +3,26 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { AutoMLAPI } from '@vision/api/vision/autoML/AutoMLAPI';
-import { AutoMLModelCore } from '@vision/api/vision/autoML/types';
-import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
-import { isVideo } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
-import { DetectionModelSelect } from '@vision/modules/Process/Components/DetectionModelSelect';
-import { ModelConfiguration } from '@vision/modules/Process/Containers/ModelConfiguration';
+import { message, notification } from 'antd';
+
+import { Button, Title, Modal } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
+
+import { AutoMLAPI } from '../../../../api/vision/autoML/AutoMLAPI';
+import { AutoMLModelCore } from '../../../../api/vision/autoML/types';
+import { VisionDetectionModelType } from '../../../../api/vision/detectionModels/types';
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { RunDetectionModels } from '../../../../store/thunks/Process/RunDetectionModels';
+import { getContainer } from '../../../../utils';
+import { zIndex } from '../../../../utils/zIndex';
+import { isVideo } from '../../../Common/Components/FileUploader/utils/FileUtils';
+import { DetectionModelSelect } from '../../Components/DetectionModelSelect';
 import {
   selectAllProcessFiles,
   selectIsPollingComplete,
   selectIsProcessingStarted,
-} from '@vision/modules/Process/store/selectors';
+} from '../../store/selectors';
 import {
   setDetectionModelParameters,
   setProcessViewFileUploadModalVisibility,
@@ -21,16 +30,8 @@ import {
   setSelectFromExploreModalVisibility,
   resetDetectionModelParameters,
   addToAvailableDetectionModels,
-} from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { RunDetectionModels } from '@vision/store/thunks/Process/RunDetectionModels';
-import { getContainer } from '@vision/utils';
-import { zIndex } from '@vision/utils/zIndex';
-import { message, notification } from 'antd';
-
-import { Button, Title, Modal } from '@cognite/cogs.js';
-import { useFlag } from '@cognite/react-feature-flags';
+} from '../../store/slice';
+import { ModelConfiguration } from '../ModelConfiguration';
 
 import ProgressStatus from './ProgressStatus';
 

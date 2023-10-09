@@ -1,4 +1,4 @@
-import { UNIX_MAX_DIRECTORY_LENGTH } from '@vision/constants/BulkEditConstants';
+import { UNIX_MAX_DIRECTORY_LENGTH } from '../../../../../constants/BulkEditConstants';
 
 export const validateDirectoryPrefix = ({
   directory,

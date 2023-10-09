@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { DirectoryPrefixesProvider } from '@vision/modules/FilterSidePanel/Containers/DirectoryPrefixesProvider';
-import { VisionFileFilterProps } from '@vision/modules/FilterSidePanel/types';
+import { DirectoryPrefixesProvider } from '../Containers/DirectoryPrefixesProvider';
+import { VisionFileFilterProps } from '../types';
 
 import { AnnotationFilter } from './Filters/AnnotationFilter';
 import { AssetSelectFilter } from './Filters/AssetSelectFilter';

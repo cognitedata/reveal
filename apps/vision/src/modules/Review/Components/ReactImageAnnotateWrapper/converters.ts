@@ -1,3 +1,8 @@
+import isEmpty from 'lodash/isEmpty';
+import isFinite from 'lodash/isFinite';
+
+import { AnnotationChangeById } from '@cognite/sdk';
+
 import {
   CDFAnnotationTypeEnum,
   ImageAssetLink,
@@ -8,12 +13,12 @@ import {
   ImageObjectDetectionPolygon,
   ImageObjectDetectionPolyline,
   Status,
-} from '@vision/api/annotation/types';
+} from '../../../../api/annotation/types';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotation,
   VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
+} from '../../../Common/types';
 import {
   isImageAssetLinkData,
   isImageClassificationData,
@@ -23,8 +28,16 @@ import {
   isImageObjectDetectionData,
   isImageObjectDetectionPolygonData,
   isImageObjectDetectionPolylineData,
-} from '@vision/modules/Common/types/typeGuards';
-import { getAnnotationLabelOrText } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+} from '../../../Common/types/typeGuards';
+import { getAnnotationLabelOrText } from '../../../Common/Utils/AnnotationUtils/AnnotationUtils';
+import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from '../../store/review/utils';
+import {
+  ReviewKeypoint,
+  TempKeypointCollection,
+  TurnKeypointType,
+  VisionReviewAnnotation,
+} from '../../types';
+
 import {
   AnnotatorBaseRegion,
   AnnotatorBoxRegion,
@@ -37,18 +50,7 @@ import {
   isAnnotatorLineRegion,
   isAnnotatorPointRegion,
   isAnnotatorPolygonRegion,
-} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from '@vision/modules/Review/store/review/utils';
-import {
-  ReviewKeypoint,
-  TempKeypointCollection,
-  TurnKeypointType,
-  VisionReviewAnnotation,
-} from '@vision/modules/Review/types';
-import isEmpty from 'lodash/isEmpty';
-import isFinite from 'lodash/isFinite';
-
-import { AnnotationChangeById } from '@cognite/sdk';
+} from './types';
 
 /**
  * Converts array of VisionAnnotations to Array of AnnotatorRegions

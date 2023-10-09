@@ -9,14 +9,15 @@
  */
 
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import { initialState as annotationState } from '@vision/modules/Common/store/annotation/slice';
-import { initialState as fileState } from '@vision/modules/Common/store/files/slice';
-import { initialState as fileDetailsState } from '@vision/modules/FileDetails/slice';
-import { initialState as processState } from '@vision/modules/Process/store/slice';
-import { initialState as annotatorWrapperState } from '@vision/modules/Review/store/annotatorWrapper/slice';
-import rootReducer, { RootState } from '@vision/store/rootReducer';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+
+import { initialState as annotationState } from '../modules/Common/store/annotation/slice';
+import { initialState as fileState } from '../modules/Common/store/files/slice';
+import { initialState as fileDetailsState } from '../modules/FileDetails/slice';
+import { initialState as processState } from '../modules/Process/store/slice';
+import { initialState as annotatorWrapperState } from '../modules/Review/store/annotatorWrapper/slice';
+import rootReducer, { RootState } from '../store/rootReducer';
 
 export type StoreState = Partial<RootState>;
 

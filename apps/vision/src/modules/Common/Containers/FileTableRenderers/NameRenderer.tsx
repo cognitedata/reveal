@@ -3,19 +3,19 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import ImageIcon from '@vision/assets/ImageIcon';
-import ImageWithAnnotationsAndExifIcon from '@vision/assets/ImageWithAnnotationsAndExifIcon';
-import ImageWithAnnotationsIcon from '@vision/assets/ImageWithAnnotationsIcon';
-import ImageWithExifIcon from '@vision/assets/ImageWithExifIcon';
-import VideoIcon from '@vision/assets/VideoIcon';
-import VideoWithExifIcon from '@vision/assets/VideoWithExifIcon';
-import { isVideo } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
-import { makeSelectFileAnnotations } from '@vision/modules/Common/store/annotation/selectors';
-import { CellRenderer } from '@vision/modules/Common/types';
-import { RootState } from '@vision/store/rootReducer';
-
 import { Tooltip } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+
+import ImageIcon from '../../../../assets/ImageIcon';
+import ImageWithAnnotationsAndExifIcon from '../../../../assets/ImageWithAnnotationsAndExifIcon';
+import ImageWithAnnotationsIcon from '../../../../assets/ImageWithAnnotationsIcon';
+import ImageWithExifIcon from '../../../../assets/ImageWithExifIcon';
+import VideoIcon from '../../../../assets/VideoIcon';
+import VideoWithExifIcon from '../../../../assets/VideoWithExifIcon';
+import { RootState } from '../../../../store/rootReducer';
+import { isVideo } from '../../Components/FileUploader/utils/FileUtils';
+import { makeSelectFileAnnotations } from '../../store/annotation/selectors';
+import { CellRenderer } from '../../types';
 
 export const FileNameText = styled.div`
   text-overflow: ellipsis;

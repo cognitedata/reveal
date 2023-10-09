@@ -2,11 +2,12 @@
 import React from 'react';
 
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { testRenderer } from '@vision/__test-utils/renderer';
-import { getRealStore } from '@vision/__test-utils/store.utils';
-import { ProcessFileUploadModalContainer } from '@vision/modules/Process/Containers/ProcessFileUploadModalContainer';
-import { processReducerInitialState } from '@vision/modules/Process/store/slice';
-import { ProcessState } from '@vision/modules/Process/store/types';
+
+import { testRenderer } from '../../../__test-utils/renderer';
+import { getRealStore } from '../../../__test-utils/store.utils';
+import { ProcessFileUploadModalContainer } from '../Containers/ProcessFileUploadModalContainer';
+import { processReducerInitialState } from '../store/slice';
+import { ProcessState } from '../store/types';
 
 jest.mock(
   '@vision/modules/Common/Components/FileUploaderModal/FileUploaderModal'

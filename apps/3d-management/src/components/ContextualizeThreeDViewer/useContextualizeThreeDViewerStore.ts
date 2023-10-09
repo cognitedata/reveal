@@ -1,3 +1,4 @@
+import isEqual from 'lodash/isEqual';
 import { create } from 'zustand';
 
 import { Cognite3DViewer, PointColorType } from '@cognite/reveal';
@@ -26,6 +27,7 @@ export enum ToolType {
   NONE = 'none',
   ADD_ANNOTATION = 'addAnnotation',
   DELETE_ANNOTATION = 'deleteAnnotation',
+  SELECT_TOOL = 'selectTool',
 }
 
 type RootState = {
@@ -39,6 +41,7 @@ type RootState = {
   isModelLoaded: boolean;
   annotations: AnnotationModel[] | null;
   visualizationOptions: VisualizationOptions;
+  hoveredAnnotationId: number | null;
 };
 
 const initialState: RootState = {
@@ -52,6 +55,7 @@ const initialState: RootState = {
   isModelLoaded: false,
   annotations: null,
   visualizationOptions: DEFAULT_VISUALIZATION_OPTIONS,
+  hoveredAnnotationId: null,
 };
 
 export const useContextualizeThreeDViewerStore = create<RootState>(
@@ -80,6 +84,33 @@ export const setPendingAnnotation = (annotation: CubeAnnotation | null) => {
     isResourceSelectorOpen:
       annotation !== null || prevState.isResourceSelectorOpen,
   }));
+};
+
+export const updatePendingAnnotation = (deltaAnnotation: {
+  position: ThreeDPosition;
+  scale: ThreeDPosition;
+}) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => {
+    const { pendingAnnotation } = prevState;
+    if (pendingAnnotation === null) return prevState;
+
+    const wouldNotUpdatePendingAnnotation =
+      isEqual(pendingAnnotation.position, deltaAnnotation.position) &&
+      isEqual(deltaAnnotation.scale, { x: 1, y: 1, z: 1 });
+    if (wouldNotUpdatePendingAnnotation) return prevState;
+
+    return {
+      ...prevState,
+      pendingAnnotation: {
+        position: deltaAnnotation.position,
+        size: {
+          x: pendingAnnotation.size.x * deltaAnnotation.scale.x,
+          y: pendingAnnotation.size.y * deltaAnnotation.scale.y,
+          z: pendingAnnotation.size.z * deltaAnnotation.scale.z,
+        },
+      },
+    };
+  });
 };
 
 export const setThreeDViewer = (model: Cognite3DViewer) => {
@@ -141,5 +172,12 @@ export const updateVisualizationOptions = (
       ...prevState.visualizationOptions,
       ...visualizationOptions,
     },
+  }));
+};
+
+export const setHoveredAnnotationId = (annotationId: number | null) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    hoveredAnnotationId: annotationId,
   }));
 };

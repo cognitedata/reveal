@@ -8,4 +8,9 @@ export default defineConfig({
     chromeWebSecurity: true,
   },
   env: process.env,
+  video: true,
+  screenshotOnRunFailure: true,
+  defaultCommandTimeout: 10000,
+  viewportWidth: 1920,
+  viewportHeight: 1080,
 });

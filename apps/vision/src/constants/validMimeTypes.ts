@@ -1,4 +1,4 @@
-import { MediaTypeOption } from '@vision/modules/FilterSidePanel/types';
+import { MediaTypeOption } from '../modules/FilterSidePanel/types';
 
 export enum MimeTypes {
   jpg = 'image/jpg',

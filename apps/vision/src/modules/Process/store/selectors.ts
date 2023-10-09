@@ -1,19 +1,3 @@
-import { Status } from '@vision/api/annotation/types';
-import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
-import {
-  annotatedFilesById,
-  annotationsById,
-} from '@vision/modules/Common/store/annotation/selectors';
-import { selectAllSelectedIds } from '@vision/modules/Common/store/files/selectors';
-import { AnnotationsBadgeStatuses } from '@vision/modules/Common/types';
-import { isImageObjectDetectionData } from '@vision/modules/Common/types/typeGuards';
-import {
-  getAnnotationLabelOrText,
-  getAnnotationsBadgeCounts,
-} from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { GenericSort, SortKeys } from '@vision/modules/Common/Utils/SortUtils';
-import { RootState } from '@vision/store/rootReducer';
-import { createFileInfo } from '@vision/store/util/StateUtils';
 import isEqual from 'lodash/isEqual';
 import {
   createSelector,
@@ -22,6 +6,23 @@ import {
 } from 'reselect';
 
 import { FileInfo } from '@cognite/sdk';
+
+import { Status } from '../../../api/annotation/types';
+import { VisionDetectionModelType } from '../../../api/vision/detectionModels/types';
+import { RootState } from '../../../store/rootReducer';
+import { createFileInfo } from '../../../store/util/StateUtils';
+import {
+  annotatedFilesById,
+  annotationsById,
+} from '../../Common/store/annotation/selectors';
+import { selectAllSelectedIds } from '../../Common/store/files/selectors';
+import { AnnotationsBadgeStatuses } from '../../Common/types';
+import { isImageObjectDetectionData } from '../../Common/types/typeGuards';
+import {
+  getAnnotationLabelOrText,
+  getAnnotationsBadgeCounts,
+} from '../../Common/Utils/AnnotationUtils/AnnotationUtils';
+import { GenericSort, SortKeys } from '../../Common/Utils/SortUtils';
 
 import { ProcessState, JobState } from './types';
 

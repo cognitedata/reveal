@@ -1,14 +1,14 @@
+import sdk from '@cognite/cdf-sdk-singleton';
+import { HttpResponse } from '@cognite/sdk';
+
 import {
   mockCogniteAutoMLModelList,
   mockCogniteAutoMLModel,
   mockCogniteAutoMLTrainingJob,
-} from '@vision/__test-utils/fixtures/automlModels';
-import { AutoMLAPI } from '@vision/api/vision/autoML/AutoMLAPI';
-import { AutoMLModelType } from '@vision/api/vision/autoML/types';
-import { FileIdEither } from '@vision/api/vision/detectionModels/types';
-
-import sdk from '@cognite/cdf-sdk-singleton';
-import { HttpResponse } from '@cognite/sdk';
+} from '../../../../__test-utils/fixtures/automlModels';
+import { FileIdEither } from '../../detectionModels/types';
+import { AutoMLAPI } from '../AutoMLAPI';
+import { AutoMLModelType } from '../types';
 
 jest.mock('@cognite/cdf-sdk-singleton', () => ({
   get: jest.fn(),

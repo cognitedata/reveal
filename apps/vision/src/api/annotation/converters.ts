@@ -1,14 +1,11 @@
-import {
-  CDFAnnotationType,
-  CDFAnnotationTypeEnum,
-  Status,
-} from '@vision/api/annotation/types';
+import { AnnotationModel } from '@cognite/sdk';
+
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
+} from '../../modules/Common/types';
 
-import { AnnotationModel } from '@cognite/sdk';
+import { CDFAnnotationType, CDFAnnotationTypeEnum, Status } from './types';
 
 export const convertCDFAnnotationToVisionAnnotations = (
   annotations: AnnotationModel[]

@@ -1,3 +1,5 @@
+import { CogniteInternalId, ExternalId, InternalId } from '@cognite/sdk';
+
 import {
   BoundingBox,
   CDFAnnotationTypeEnum,
@@ -12,23 +14,21 @@ import {
   Polygon,
   Polyline,
   Status,
-} from '@vision/api/annotation/types';
+} from '../api/annotation/types';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotation,
   VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
+} from '../modules/Common/types';
 import {
   isImageKeypointCollectionData,
   isImageObjectDetectionData,
-} from '@vision/modules/Common/types/typeGuards';
-import { generateKeypointId } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+} from '../modules/Common/types/typeGuards';
+import { generateKeypointId } from '../modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
   TurnKeypointType,
   VisionReviewAnnotation,
-} from '@vision/modules/Review/types';
-
-import { CogniteInternalId, ExternalId, InternalId } from '@cognite/sdk';
+} from '../modules/Review/types';
 
 export const getDummyImageClassificationAnnotation = ({
   id = 1,

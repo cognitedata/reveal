@@ -2,20 +2,18 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { InlineMapView } from '@vision/modules/Common/Components/MapView/InlineMapView';
+import { Title } from '@cognite/cogs.js';
+
+import { dateformat } from '../../../../utils/DateUtils';
+import { InlineMapView } from '../../../Common/Components/MapView/InlineMapView';
+
 import {
   AssetContainerView,
   DataSetFieldView,
   FileDetailFieldView,
   LabelContainerView,
-} from '@vision/modules/FileDetails/Components/FileMetadata/FileDetailsChildren';
-import {
-  VisionFileDetailKey,
-  VisionFileDetails,
-} from '@vision/modules/FileDetails/Components/FileMetadata/Types';
-import { dateformat } from '@vision/utils/DateUtils';
-
-import { Title } from '@cognite/cogs.js';
+} from './FileDetailsChildren';
+import { VisionFileDetailKey, VisionFileDetails } from './Types';
 
 export const FileDetailsContainer = (props: {
   info: VisionFileDetails;

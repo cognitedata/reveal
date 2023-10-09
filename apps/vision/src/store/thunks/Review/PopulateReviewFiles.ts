@@ -1,10 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { setReviewFileIds } from '@vision/modules/Review/store/review/slice';
-import {
-  clearAnnotationState,
-  clearFileState,
-} from '@vision/store/commonActions';
-import { ThunkConfig } from '@vision/store/rootReducer';
+
+import { setReviewFileIds } from '../../../modules/Review/store/review/slice';
+import { clearAnnotationState, clearFileState } from '../../commonActions';
+import { ThunkConfig } from '../../rootReducer';
 
 export const PopulateReviewFiles = createAsyncThunk<
   void,

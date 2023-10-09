@@ -3,11 +3,11 @@ import ReactBaseTable, { Column } from 'react-base-table';
 
 import styled from 'styled-components';
 
-import { TableWrapper } from '@vision/modules/Common/Components/FileTable/FileTableWrapper';
-import { AnnotationRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
-import { NameRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { StringHeaderRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
-import { VisionFile } from '@vision/modules/Common/store/files/types';
+import { AnnotationRenderer } from '../../Containers/FileTableRenderers/AnnotationRenderer';
+import { NameRenderer } from '../../Containers/FileTableRenderers/NameRenderer';
+import { StringHeaderRenderer } from '../../Containers/FileTableRenderers/StringHeaderRenderer';
+import { VisionFile } from '../../store/files/types';
+import { TableWrapper } from '../FileTable/FileTableWrapper';
 
 export type ModelTrainingFileTableDataType = {
   file: VisionFile[];

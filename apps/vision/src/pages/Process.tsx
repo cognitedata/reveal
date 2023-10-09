@@ -3,15 +3,15 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { LazyWrapper } from '@vision/modules/Common/Components/LazyWrapper';
-import { VerticalContainer } from '@vision/modules/Common/Components/VerticalContainer';
-import { ProcessFileDetailsContainer } from '@vision/modules/Process/Containers/ProcesseFileDetailsContainer/ProcesseFileDetailsContainer';
-import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
-import { workflowRoutes } from '@vision/utils/workflowRoutes';
+import { LazyWrapper } from '../modules/Common/Components/LazyWrapper';
+import { VerticalContainer } from '../modules/Common/Components/VerticalContainer';
+import { ProcessFileDetailsContainer } from '../modules/Process/Containers/ProcesseFileDetailsContainer/ProcesseFileDetailsContainer';
+import { StatusToolBar } from '../modules/Process/Containers/StatusToolBar';
+import { workflowRoutes } from '../utils/workflowRoutes';
 
 const ProcessStep = () => {
   const compRoute = useMemo(
-    () => () => import('@vision/modules/Process/Containers/ProcessStep'),
+    () => () => import('../modules/Process/Containers/ProcessStep'),
     []
   );
 

@@ -2,18 +2,18 @@ import React, { useMemo, useRef } from 'react';
 import ReactBaseTable, { Column, ColumnShape, RowKey } from 'react-base-table';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
-import { TableWrapper } from '@vision/modules/Common/Components/FileTable/FileTableWrapper';
-import { FileListTableProps } from '@vision/modules/Common/Components/FileTable/types';
-import { SelectAllHeaderRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/SelectAllHeaderRendrerer';
-import { SelectionRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/SelectionRenderer';
-import { StringHeaderRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
-import { StringRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringRenderer';
-import { TimeHeaderRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/TimeHeaderRenderer';
+import { SelectAllHeaderRenderer } from '../../Containers/FileTableRenderers/SelectAllHeaderRendrerer';
+import { SelectionRenderer } from '../../Containers/FileTableRenderers/SelectionRenderer';
+import { StringHeaderRenderer } from '../../Containers/FileTableRenderers/StringHeaderRenderer';
+import { StringRenderer } from '../../Containers/FileTableRenderers/StringRenderer';
+import { TimeHeaderRenderer } from '../../Containers/FileTableRenderers/TimeHeaderRenderer';
 import {
   CellRenderer,
   SelectableTableColumnShape,
   TableDataItem,
-} from '@vision/modules/Common/types';
+} from '../../types';
+import { TableWrapper } from '../FileTable/FileTableWrapper';
+import { FileListTableProps } from '../FileTable/types';
 
 export type SelectableTableProps = FileListTableProps<TableDataItem> & {
   selectable: boolean;

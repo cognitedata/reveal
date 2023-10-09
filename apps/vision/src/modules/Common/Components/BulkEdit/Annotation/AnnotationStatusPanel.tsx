@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { EditPanelProps } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
-import { RangeSlider } from '@vision/modules/Common/Components/Slider/rangeSlider';
-import { makeSelectAnnotationsForFileIds } from '@vision/modules/Common/store/annotation/selectors';
-import { filterAnnotationIdsByConfidence } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { RootState } from '@vision/store/rootReducer';
-
 import { Body, Micro } from '@cognite/cogs.js';
+
+import { RootState } from '../../../../../store/rootReducer';
+import { makeSelectAnnotationsForFileIds } from '../../../store/annotation/selectors';
+import { filterAnnotationIdsByConfidence } from '../../../Utils/AnnotationUtils/AnnotationUtils';
+import { RangeSlider } from '../../Slider/rangeSlider';
+import { EditPanelProps } from '../bulkEditOptions';
 
 // Constants
 export const DEFAULT_THRESHOLDS: [number, number] = [0.25, 0.75];

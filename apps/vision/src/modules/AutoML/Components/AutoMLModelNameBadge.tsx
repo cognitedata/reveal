@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { ColorsObjectDetection } from '@vision/constants/Colors';
-
 import { Button, Tooltip } from '@cognite/cogs.js';
+
+import { ColorsObjectDetection } from '../../../constants/Colors';
 
 export const AutoMLModelNameBadge = (props: {
   name?: string;

@@ -3,10 +3,11 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { RootState } from '@vision/store/rootReducer';
 import { format } from 'date-fns';
 
 import { Body, Icon } from '@cognite/cogs.js';
+
+import { RootState } from '../../../../store/rootReducer';
 
 export type CDFStatusModes = 'saving' | 'saved' | 'error' | 'timestamp';
 

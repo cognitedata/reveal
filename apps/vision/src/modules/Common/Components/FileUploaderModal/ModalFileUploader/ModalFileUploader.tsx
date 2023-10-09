@@ -3,20 +3,6 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { MAX_CID_FILE_COUNT } from '@vision/constants/CIDConstants';
-import * as UPLODER_CONST from '@vision/constants/UploderConstants';
-import {
-  CogsFile,
-  CogsFileInfo,
-} from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
-import { sleep } from '@vision/modules/Common/Components/FileUploader/utils';
-import { getMIMEType } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
-import { getHumanReadableFileSize } from '@vision/modules/Common/Components/FileUploader/utils/getHumanReadableFileSize';
-import { STATUS } from '@vision/modules/Common/Components/FileUploaderModal/enums';
-import { ModalFilePicker } from '@vision/modules/Common/Components/FileUploaderModal/ModalFilePicker/ModalFilePicker';
-import { getUploadControls } from '@vision/modules/Common/Components/FileUploaderModal/ModalFileUploader/UploadControlButtons';
-import { RootState } from '@vision/store/rootReducer';
-import { pushMetric } from '@vision/utils/pushMetric';
 import { Modal, message } from 'antd';
 import exifr from 'exifr';
 
@@ -25,6 +11,19 @@ import UploadGCS from '@cognite/gcs-browser-upload';
 import { useFlag } from '@cognite/react-feature-flags';
 import { FileUploadResponse, FileInfo, FileGeoLocation } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { MAX_CID_FILE_COUNT } from '../../../../../constants/CIDConstants';
+import * as UPLODER_CONST from '../../../../../constants/UploderConstants';
+import { RootState } from '../../../../../store/rootReducer';
+import { pushMetric } from '../../../../../utils/pushMetric';
+import { CogsFile, CogsFileInfo } from '../../FileUploader/FilePicker/types';
+import { sleep } from '../../FileUploader/utils';
+import { getMIMEType } from '../../FileUploader/utils/FileUtils';
+import { getHumanReadableFileSize } from '../../FileUploader/utils/getHumanReadableFileSize';
+import { STATUS } from '../enums';
+import { ModalFilePicker } from '../ModalFilePicker/ModalFilePicker';
+
+import { getUploadControls } from './UploadControlButtons';
 
 type GCSUploaderOptions = {
   file: Blob;

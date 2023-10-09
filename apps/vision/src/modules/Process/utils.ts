@@ -1,4 +1,4 @@
-import { ProcessSummary } from '@vision/modules/Process/types';
+import { ProcessSummary } from './types';
 
 export const calculateSummaryStats = (summary: ProcessSummary) => {
   const stats = {

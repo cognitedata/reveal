@@ -1,11 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { FileDownloaderModal } from '@vision/modules/Common/Components/FileDownloaderModal/FileDownloaderModal';
-import { setFileDownloadModalVisibility } from '@vision/modules/Common/store/common/slice';
-import { selectExplorerSelectedFileIdsInSortedOrder } from '@vision/modules/Explorer/store/selectors';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { FileDownloaderModal } from '../../Common/Components/FileDownloaderModal/FileDownloaderModal';
+import { setFileDownloadModalVisibility } from '../../Common/store/common/slice';
+import { selectExplorerSelectedFileIdsInSortedOrder } from '../store/selectors';
 
 export const ExplorerFileDownloadModalContainer = () => {
   const dispatch = useThunkDispatch();

@@ -1,21 +1,40 @@
-const getButton = (value: string, attribute?: string) => {
-  if (attribute) {
-    return cy.get(`[${attribute}="${value}"]`).eq(0);
+const getButton = (
+  subject: JQuery<HTMLElement>,
+  value: string,
+  attribute?: string
+) => {
+  if (!attribute) {
+    return cy.wrap(subject).contains(value);
   }
-  return cy.contains(value);
+
+  const selector = `[${attribute}="${value}"]`;
+
+  if (subject) {
+    return cy.wrap(subject).find(selector).first();
+  }
+
+  return cy.get(selector).first();
 };
 
-const clickButton = (value: string, attribute?: string) => {
-  cy.getButton(value, attribute).should('be.visible').click({ force: true });
+const clickButton = (
+  subject: JQuery<HTMLElement>,
+  value: string,
+  attribute?: string
+) => {
+  cy.wrap(subject).getButton(value, attribute).should('be.visible').click();
 };
 
-const clickIconButton = (ariaLabel: string) => {
-  cy.clickButton(ariaLabel, 'aria-label');
+const clickIconButton = (subject: JQuery<HTMLElement>, ariaLabel: string) => {
+  cy.wrap(subject).clickButton(ariaLabel, 'aria-label');
 };
 
-Cypress.Commands.add('getButton', getButton);
-Cypress.Commands.add('clickButton', clickButton);
-Cypress.Commands.add('clickIconButton', clickIconButton);
+Cypress.Commands.add('getButton', { prevSubject: 'optional' }, getButton);
+Cypress.Commands.add('clickButton', { prevSubject: 'optional' }, clickButton);
+Cypress.Commands.add(
+  'clickIconButton',
+  { prevSubject: 'optional' },
+  clickIconButton
+);
 
 export interface ButtonCommands {
   getButton(

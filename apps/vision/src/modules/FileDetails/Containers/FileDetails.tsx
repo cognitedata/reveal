@@ -3,22 +3,23 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { FileDetailsContainer } from '@vision/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
-import { MetaDataTable } from '@vision/modules/FileDetails/Components/FileMetadata/MetadataTable';
-import { MetadataTableToolBar } from '@vision/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
-import { VisionFileDetails } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
+import isEqual from 'lodash/isEqual';
+
+import { Button, Icon, Tabs, Title } from '@cognite/cogs.js';
+
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { updateFileInfoField } from '../../../store/thunks/Files/updateFileInfoField';
+import { FileDetailsContainer } from '../Components/FileMetadata/FileDetailsContainer';
+import { MetaDataTable } from '../Components/FileMetadata/MetadataTable';
+import { MetadataTableToolBar } from '../Components/FileMetadata/MetadataTableToolBar';
+import { VisionFileDetails } from '../Components/FileMetadata/Types';
 import {
   metadataEditMode,
   selectUpdatedFileDetails,
   selectUpdatedFileMeta,
-} from '@vision/modules/FileDetails/selectors';
-import { fileInfoEdit } from '@vision/modules/FileDetails/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { updateFileInfoField } from '@vision/store/thunks/Files/updateFileInfoField';
-import isEqual from 'lodash/isEqual';
-
-import { Button, Icon, Tabs, Title } from '@cognite/cogs.js';
+} from '../selectors';
+import { fileInfoEdit } from '../slice';
 
 import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
 

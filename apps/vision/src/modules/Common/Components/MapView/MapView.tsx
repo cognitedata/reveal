@@ -9,10 +9,11 @@ import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl';
 
 import styled from 'styled-components';
 
-import { FileMapTableProps } from '@vision/modules/Common/Components/FileTable/types';
-import { MapFileTable } from '@vision/modules/Common/Components/MapFileTable/MapFileTable';
-import { ResultData, TableDataItem } from '@vision/modules/Common/types';
 import * as MapboxGL from 'mapbox-gl';
+
+import { ResultData, TableDataItem } from '../../types';
+import { FileMapTableProps } from '../FileTable/types';
+import { MapFileTable } from '../MapFileTable/MapFileTable';
 
 import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
 import 'mapbox-gl/dist/mapbox-gl.css';

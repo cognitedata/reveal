@@ -3,12 +3,12 @@ import { OptionProps } from 'react-select';
 
 import styled from 'styled-components';
 
-import { VisionSelectOption } from '@vision/modules/Common/Components/SelectOption/VisionSelectOption';
-import { VisionOptionType } from '@vision/modules/Review/types';
-import useColorForLabel from '@vision/store/hooks/useColorForLabel';
-import { getIcon } from '@vision/utils/iconUtils';
-
 import { AutoComplete, Button, OptionType } from '@cognite/cogs.js';
+
+import useColorForLabel from '../../../../store/hooks/useColorForLabel';
+import { getIcon } from '../../../../utils/iconUtils';
+import { VisionOptionType } from '../../../Review/types';
+import { VisionSelectOption } from '../SelectOption/VisionSelectOption';
 
 const CUSTOM_FOOTER_HEIGHT = 44;
 const DEFAULT_MENU_HEIGHT = 160;

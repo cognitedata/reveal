@@ -1,6 +1,6 @@
-import { mockFileList } from '@vision/__test-utils/fixtures/files';
-import { selectAllFilesSelected } from '@vision/modules/Common/store/files/selectors';
-import { VisionFilesToFileState } from '@vision/store/util/StateUtils';
+import { mockFileList } from '../../../../../__test-utils/fixtures/files';
+import { VisionFilesToFileState } from '../../../../../store/util/StateUtils';
+import { selectAllFilesSelected } from '../selectors';
 
 describe('Test files reducer', () => {
   const fileIds = [1, 2];

@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { RootState } from '@vision/store/rootReducer';
+import { RootState } from '../rootReducer';
 
 const useIsFieldSavePending = (id: string) => {
   const [loading, setLoadingState] = useState<boolean>(false);

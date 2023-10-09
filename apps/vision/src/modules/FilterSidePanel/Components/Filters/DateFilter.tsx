@@ -2,18 +2,19 @@ import React, { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
+import { DatePicker } from 'antd';
+import moment from 'moment';
+
+import { SegmentedControl, Title } from '@cognite/cogs.js';
+import { DateRange } from '@cognite/sdk';
+
 import {
   DateActions,
   DateFilterType,
   DateOptions,
   VisionFileFilterProps,
   VisionFilterItemProps,
-} from '@vision/modules/FilterSidePanel/types';
-import { DatePicker } from 'antd';
-import moment from 'moment';
-
-import { SegmentedControl, Title } from '@cognite/cogs.js';
-import { DateRange } from '@cognite/sdk';
+} from '../../types';
 
 export const dateFormat = 'DD.MM.YYYY';
 

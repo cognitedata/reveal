@@ -3,15 +3,15 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { AutoMLModelCore } from '@vision/api/vision/autoML/types';
+import { Select, Body, Button, Detail } from '@cognite/cogs.js';
+
+import { AutoMLModelCore } from '../../../api/vision/autoML/types';
 import {
   ParamsCustomModel,
   VisionDetectionModelType,
-} from '@vision/api/vision/detectionModels/types';
-import { BUILT_IN_MODEL_COUNT } from '@vision/modules/Process/store/slice';
-import { RootState } from '@vision/store/rootReducer';
-
-import { Select, Body, Button, Detail } from '@cognite/cogs.js';
+} from '../../../api/vision/detectionModels/types';
+import { RootState } from '../../../store/rootReducer';
+import { BUILT_IN_MODEL_COUNT } from '../store/slice';
 
 import * as customModelDetails from './ModelDetails/customModelDetails';
 import * as gaugeReaderDetails from './ModelDetails/gaugeReaderDetails';

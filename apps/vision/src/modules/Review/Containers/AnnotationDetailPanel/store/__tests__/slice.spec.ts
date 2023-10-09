@@ -1,9 +1,9 @@
-import { CDFAnnotationTypeEnum } from '@vision/api/annotation/types';
+import { CDFAnnotationTypeEnum } from '../../../../../../api/annotation/types';
 import reducer, {
   annotationDetailPanelInitialState,
   AnnotationDetailPanelState,
   selectAnnotationCategory,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/store/slice';
+} from '../slice';
 
 describe('Test AnnotationDetailPanel reducer', () => {
   const state: AnnotationDetailPanelState = {

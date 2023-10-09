@@ -1,17 +1,19 @@
-import { CDFAnnotationTypeEnum } from '@vision/api/annotation/types';
-import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
+import isEqual from 'lodash/isEqual';
+import { createSelectorCreator, defaultMemoize } from 'reselect';
+
+import { CDFAnnotationTypeEnum } from '../../../../api/annotation/types';
+import { AnnotationFilterType } from '../../../FilterSidePanel/types';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
-} from '@vision/modules/Common/types/annotation';
-import { getTypeGuardForVisionAnnotationDataType } from '@vision/modules/Common/types/typeGuards';
+} from '../../types/annotation';
+import { getTypeGuardForVisionAnnotationDataType } from '../../types/typeGuards';
 import {
   filterAnnotations,
   getAnnotationsBadgeCounts,
-} from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { AnnotationFilterType } from '@vision/modules/FilterSidePanel/types';
-import isEqual from 'lodash/isEqual';
-import { createSelectorCreator, defaultMemoize } from 'reselect';
+} from '../../Utils/AnnotationUtils/AnnotationUtils';
+
+import { AnnotationState } from './types';
 
 const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
 

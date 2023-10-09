@@ -1,14 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { AutoMLTrainingJob } from '@vision/api/vision/autoML/types';
-import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
+
+import { AutoMLTrainingJob } from '../../../api/vision/autoML/types';
+import { VisionDetectionModelType } from '../../../api/vision/detectionModels/types';
 import {
   addToAvailableDetectionModels,
   BUILT_IN_MODEL_COUNT,
   setDetectionModelParameters,
   setSelectedDetectionModels,
   setUnsavedDetectionModelSettings,
-} from '@vision/modules/Process/store/slice';
-import { ThunkConfig } from '@vision/store/rootReducer';
+} from '../../../modules/Process/store/slice';
+import { ThunkConfig } from '../../rootReducer';
 
 const DEFAULT_THRESHOLD = 0.8;
 

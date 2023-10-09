@@ -39,7 +39,7 @@ export default function LandingPage() {
         <Button
           type="primary"
           onClick={onContextualizeNew}
-          data-cy="create-new-interactive-diagrams-button"
+          data-testid="create-new-interactive-diagrams-button"
         >
           Create interactive diagrams
         </Button>

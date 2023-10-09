@@ -1,10 +1,10 @@
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-import { HotKeys } from '@vision/constants/HotKeys';
-import { tools } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
-import { setSelectedTool } from '@vision/modules/Review/store/annotatorWrapper/slice';
-import { useThunkDispatch } from '@vision/store';
+import { HotKeys } from '../../../../constants/HotKeys';
+import { useThunkDispatch } from '../../../../store';
+import { tools } from '../../Components/ReactImageAnnotateWrapper/Tools';
+import { setSelectedTool } from '../../store/annotatorWrapper/slice';
 
 export const ImageKeyboardShortKeys = ({ children }: { children: any }) => {
   const dispatch = useThunkDispatch();

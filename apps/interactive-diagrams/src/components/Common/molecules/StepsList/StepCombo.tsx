@@ -35,12 +35,12 @@ export const StepCombo = (props: Props): JSX.Element => {
           <Link
             to={getUrlWithQueryParams(substep.path)}
             onClick={() => onSubStepClick(substep)}
-            data-cy="create-interactive-diagrams-sub-step-title"
+            data-testid="create-interactive-diagrams-sub-step-title"
           >
             <Flex
               row
               style={{ width: '100%', height: '100%' }}
-              data-cy="create-interactive-diagrams-sub-step-title"
+              data-testid="create-interactive-diagrams-sub-step-title"
             >
               {substep.title}
             </Flex>

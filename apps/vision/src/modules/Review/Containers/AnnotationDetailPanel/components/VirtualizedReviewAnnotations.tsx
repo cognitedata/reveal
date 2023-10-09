@@ -9,12 +9,9 @@ import {
 
 import styled from 'styled-components';
 
-import {
-  NodeMeta,
-  TreeData,
-  TreeNode,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
 import { NodeComponentProps } from 'react-vtree/dist/es/Tree';
+
+import { NodeMeta, TreeData, TreeNode } from '../types';
 
 // This helper function constructs the object that will be sent back at the step
 // [2] during the treeWalker function work. Except for the mandatory `data`

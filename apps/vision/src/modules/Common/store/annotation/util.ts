@@ -1,16 +1,14 @@
 /* eslint-disable no-param-reassign */
-import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
-import {
-  VisionAnnotation,
-  VisionAnnotationDataType,
-} from '@vision/modules/Common/types/index';
+import { getRandomColor } from '../../../Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
+import { VisionAnnotation, VisionAnnotationDataType } from '../../types/index';
 import {
   isImageClassificationData,
   isImageKeypointCollectionData,
   isImageObjectDetectionData,
-} from '@vision/modules/Common/types/typeGuards';
-import { getAnnotationLabelOrText } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { getRandomColor } from '@vision/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
+} from '../../types/typeGuards';
+import { getAnnotationLabelOrText } from '../../Utils/AnnotationUtils/AnnotationUtils';
+
+import { AnnotationState } from './types';
 
 export const clearAnnotationStates = (
   state: AnnotationState,

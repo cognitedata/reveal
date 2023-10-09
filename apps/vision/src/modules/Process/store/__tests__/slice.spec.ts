@@ -1,12 +1,12 @@
-import { mockFileIds } from '@vision/__test-utils/data/mockFileInfo';
+import { mockFileIds } from '../../../../__test-utils/data/mockFileInfo';
 import {
   filesWithJobs,
   jobState,
   jobIds,
   partiallyCompletedJob,
   allFileIdsWithJob400,
-} from '@vision/__test-utils/data/mockJobInfo';
-import { getFakeQueuedJob } from '@vision/api/vision/detectionModels/detectionUtils';
+} from '../../../../__test-utils/data/mockJobInfo';
+import { getFakeQueuedJob } from '../../../../api/vision/detectionModels/detectionUtils';
 import {
   ParamsCustomModel,
   ParamsObjectDetection,
@@ -14,7 +14,13 @@ import {
   ParamsTagDetection,
   VisionDetectionModelType,
   VisionJob,
-} from '@vision/api/vision/detectionModels/types';
+} from '../../../../api/vision/detectionModels/types';
+import {
+  clearFileState,
+  fileProcessUpdate,
+} from '../../../../store/commonActions';
+import { DeleteFilesById } from '../../../../store/thunks/Files/DeleteFilesById';
+import { CreateVisionJob } from '../../../../store/thunks/Process/CreateVisionJob';
 import reducer, {
   addProcessUploadedFileId,
   addToAvailableDetectionModels,
@@ -31,11 +37,8 @@ import reducer, {
   setSelectFromExploreModalVisibility,
   setSummaryModalVisibility,
   setUnsavedDetectionModelSettings,
-} from '@vision/modules/Process/store/slice';
-import { ProcessState } from '@vision/modules/Process/store/types';
-import { clearFileState, fileProcessUpdate } from '@vision/store/commonActions';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
-import { CreateVisionJob } from '@vision/store/thunks/Process/CreateVisionJob';
+} from '../slice';
+import { ProcessState } from '../types';
 
 describe('Test process reducers', () => {
   const mockProcessState: ProcessState = {

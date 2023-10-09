@@ -1,3 +1,4 @@
+import { updateFileInfoField } from '../../../store/thunks/Files/updateFileInfoField';
 import reducer, {
   initialState,
   fileInfoEdit,
@@ -5,9 +6,8 @@ import reducer, {
   toggleMetaDataTableEditMode,
   fileMetaDataAddRow,
   resetEditHistory,
-} from '@vision/modules/FileDetails/slice';
-import { FileDetailsState } from '@vision/modules/FileDetails/types';
-import { updateFileInfoField } from '@vision/store/thunks/Files/updateFileInfoField';
+} from '../slice';
+import { FileDetailsState } from '../types';
 
 describe('Test file details reducers', () => {
   const mockState: FileDetailsState = {

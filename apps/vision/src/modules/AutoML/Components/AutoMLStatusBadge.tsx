@@ -3,10 +3,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { JobStatus } from '@vision/api/vision/detectionModels/types';
-import { StatusColors } from '@vision/constants/Colors';
-
 import { Body, Icon, Tooltip } from '@cognite/cogs.js';
+
+import { JobStatus } from '../../../api/vision/detectionModels/types';
+import { StatusColors } from '../../../constants/Colors';
 
 export const AutoMLStatusBadge = (props: {
   status: JobStatus;

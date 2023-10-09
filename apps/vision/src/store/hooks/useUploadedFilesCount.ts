@@ -1,8 +1,8 @@
 // todo: remove unused function
 import { useSelector } from 'react-redux';
 
-import { selectAllFiles } from '@vision/modules/Common/store/files/selectors';
-import { RootState } from '@vision/store/rootReducer';
+import { selectAllFiles } from '../../modules/Common/store/files/selectors';
+import { RootState } from '../rootReducer';
 
 export function useUploadedFilesCount() {
   const uploadedFiles = useSelector((state: RootState) =>

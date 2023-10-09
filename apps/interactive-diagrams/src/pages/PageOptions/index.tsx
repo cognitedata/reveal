@@ -34,7 +34,7 @@ export default function PageOptions(props: Props) {
         title="Select model"
         subtitle="Select the model you want to be applied to create interactive diagrams"
       />
-      <Flex row style={{ paddingBottom: '50px' }} data-cy="model-options">
+      <Flex row style={{ paddingBottom: '50px' }} data-testid="model-options">
         <Flex column style={{ width: '100%' }}>
           <CollapsibleRadio
             groupRadioValue={modelSelected}

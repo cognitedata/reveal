@@ -27,7 +27,6 @@
             "enforceBuildableLibDependency": true,
             "allow": [
               "@platypus-app",
-              "@vision",
               "@data-quality",
               "@platypus-core",
               "@cognite/platypus-cdf-cli"

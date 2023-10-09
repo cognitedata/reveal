@@ -7,20 +7,19 @@ import ReactBaseTable, {
 
 import styled from 'styled-components';
 
-import ExifIcon from '@vision/assets/exifIcon';
-import { TableWrapper } from '@vision/modules/Common/Components/FileTable/FileTableWrapper';
-import { ExifIcon as ExifIconWrapper } from '@vision/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { TableDataItem } from '@vision/modules/Common/types';
-import {
-  MetadataItem,
-  VisionFileDetails,
-} from '@vision/modules/FileDetails/Components/FileMetadata/Types';
-import { fileMetaDataEdit } from '@vision/modules/FileDetails/slice';
-import store from '@vision/store';
-import { keyGenerator } from '@vision/utils/keyGenerator/keyGenerator';
 import { Input } from 'antd';
 
 import { Title } from '@cognite/cogs.js';
+
+import ExifIcon from '../../../../assets/exifIcon';
+import store from '../../../../store';
+import { keyGenerator } from '../../../../utils/keyGenerator/keyGenerator';
+import { TableWrapper } from '../../../Common/Components/FileTable/FileTableWrapper';
+import { ExifIcon as ExifIconWrapper } from '../../../Common/Containers/FileTableRenderers/NameRenderer';
+import { TableDataItem } from '../../../Common/types';
+import { fileMetaDataEdit } from '../../slice';
+
+import { MetadataItem, VisionFileDetails } from './Types';
 
 type TableProps = Omit<Omit<BaseTableProps<TableDataItem>, 'width'>, 'height'>;
 

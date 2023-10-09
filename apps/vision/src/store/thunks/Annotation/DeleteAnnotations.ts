@@ -1,8 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ThunkConfig } from '@vision/store/rootReducer';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { InternalId } from '@cognite/sdk';
+
+import { ThunkConfig } from '../../rootReducer';
 
 /**
  * ## Example

@@ -1,13 +1,12 @@
 import { waitFor, act, renderHook } from '@testing-library/react';
-import { mockFileList } from '@vision/__test-utils/fixtures/files';
-import { getDummyImageAssetLinkAnnotation } from '@vision/__test-utils/getDummyAnnotations';
-import { WrappedWithProviders } from '@vision/__test-utils/renderer';
-import { ImageAssetLink, Status } from '@vision/api/annotation/types';
-import { VisionAnnotationDataType } from '@vision/modules/Common/types';
-import { VisionReviewAnnotation } from '@vision/modules/Review/types';
-import useAssetLinkWarning, {
-  AssetWarnTypes,
-} from '@vision/store/hooks/useAssetLinkWarning';
+
+import { mockFileList } from '../../../__test-utils/fixtures/files';
+import { getDummyImageAssetLinkAnnotation } from '../../../__test-utils/getDummyAnnotations';
+import { WrappedWithProviders } from '../../../__test-utils/renderer';
+import { ImageAssetLink, Status } from '../../../api/annotation/types';
+import { VisionAnnotationDataType } from '../../../modules/Common/types';
+import { VisionReviewAnnotation } from '../../../modules/Review/types';
+import useAssetLinkWarning, { AssetWarnTypes } from '../useAssetLinkWarning';
 
 const approveAnnotation = (
   reviewAnnotation: VisionReviewAnnotation<ImageAssetLink>

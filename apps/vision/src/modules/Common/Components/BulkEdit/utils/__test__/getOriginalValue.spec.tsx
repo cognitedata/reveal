@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { CellContainer } from '@vision/modules/Common/Components/BulkEdit/utils/CellContainer';
-import { getOriginalValue } from '@vision/modules/Common/Components/BulkEdit/utils/getOriginalValue';
+import { CellContainer } from '../CellContainer';
+import { getOriginalValue } from '../getOriginalValue';
 
 describe('Test original value', () => {
   test('If originalValue undefined return --- cell', () => {

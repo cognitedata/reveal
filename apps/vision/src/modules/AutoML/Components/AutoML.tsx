@@ -4,18 +4,18 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { AutoMLAPI } from '@vision/api/vision/autoML/AutoMLAPI';
+import { Divider } from '@cognite/data-exploration';
+
+import { AutoMLAPI } from '../../../api/vision/autoML/AutoMLAPI';
 import {
   AutoMLExportFormat,
   AutoMLModelCore,
   AutoMLTrainingJob,
-} from '@vision/api/vision/autoML/types';
-import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
-import { useThunkDispatch } from '@vision/store';
-import { PopulateCustomModel } from '@vision/store/thunks/Process/PopulateCustomModel';
-import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
-
-import { Divider } from '@cognite/data-exploration';
+} from '../../../api/vision/autoML/types';
+import { useThunkDispatch } from '../../../store';
+import { PopulateCustomModel } from '../../../store/thunks/Process/PopulateCustomModel';
+import { getLink, workflowRoutes } from '../../../utils/workflowRoutes';
+import { StatusToolBar } from '../../Process/Containers/StatusToolBar';
 
 import { AutoMLModelList } from './AutoMLModelList';
 import { AutoMLModelPage } from './AutoMLPage/AutoMLModelPage';

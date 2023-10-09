@@ -1,9 +1,11 @@
-import { getValidFilters } from '@vision/api/utils/getValidFilters';
-import { timeFormat } from '@vision/modules/FilterSidePanel/Components/Filters/TimeFilter';
-import { VisionFileFilterProps } from '@vision/modules/FilterSidePanel/types';
 import moment from 'moment';
 
 import { DateRange, FileFilterProps } from '@cognite/sdk';
+
+import { timeFormat } from '../../modules/FilterSidePanel/Components/Filters/TimeFilter';
+import { VisionFileFilterProps } from '../../modules/FilterSidePanel/types';
+
+import { getValidFilters } from './getValidFilters';
 
 const dummyTimeRange: DateRange = {
   min: moment('6:00 AM', timeFormat).valueOf(),

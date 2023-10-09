@@ -2,10 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { FileListItem } from '@vision/modules/Common/Components/FileUploader/FilePicker/FileListItem';
-import { CogsFileInfo } from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
-
 import { Illustrations, Title } from '@cognite/cogs.js';
+
+import { FileListItem } from '../../FileUploader/FilePicker/FileListItem';
+import { CogsFileInfo } from '../../FileUploader/FilePicker/types';
 
 type ModalFileListProps = {
   files: CogsFileInfo[];

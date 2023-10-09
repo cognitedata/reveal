@@ -1,10 +1,11 @@
 import React from 'react';
 
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { testRenderer } from '@vision/__test-utils/renderer';
-import { getMockedStore } from '@vision/__test-utils/store.utils';
-import { MetadataTableToolBar } from '@vision/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
-import { MetadataItem } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
+
+import { testRenderer } from '../../../../../__test-utils/renderer';
+import { getMockedStore } from '../../../../../__test-utils/store.utils';
+import { MetadataTableToolBar } from '../MetadataTableToolBar';
+import { MetadataItem } from '../Types';
 
 describe('MetadataTableToolBar', () => {
   const TestComponent = (props: any) => {

@@ -3,16 +3,17 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
+import { InputNumber } from 'antd';
+
+import { Body, Icon, Tooltip, Slider, Title } from '@cognite/cogs.js';
+
 import {
   AutoMLMetrics,
   AutoMLModelType,
   AutoMLTrainingJob,
-} from '@vision/api/vision/autoML/types';
-import { AutoMLStatusBadge } from '@vision/modules/AutoML/Components/AutoMLStatusBadge';
-import { dateformat, getDateDiff } from '@vision/utils/DateUtils';
-import { InputNumber } from 'antd';
-
-import { Body, Icon, Tooltip, Slider, Title } from '@cognite/cogs.js';
+} from '../../../../api/vision/autoML/types';
+import { dateformat, getDateDiff } from '../../../../utils/DateUtils';
+import { AutoMLStatusBadge } from '../AutoMLStatusBadge';
 
 export const getPrecisionAndRecall = (
   threshold: number,

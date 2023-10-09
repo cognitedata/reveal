@@ -8,14 +8,28 @@ import React, {
 import { useHotkeys } from 'react-hotkeys-hook';
 import { batch, useDispatch } from 'react-redux';
 
-import { CDFAnnotationTypeEnum, Status } from '@vision/api/annotation/types';
-import { annotationTypeFromCategoryTitle } from '@vision/constants/annotationDetailPanel';
-import { HotKeys } from '@vision/constants/HotKeys';
-import { selectAnnotationCategory } from '@vision/modules/Review/Containers/AnnotationDetailPanel/store/slice';
+import { Modal } from 'antd';
+
+import { FileInfo } from '@cognite/sdk';
+
 import {
-  AnnotationDetailPanelRowData,
-  TreeNode,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
+  CDFAnnotationTypeEnum,
+  Status,
+} from '../../../../api/annotation/types';
+import { annotationTypeFromCategoryTitle } from '../../../../constants/annotationDetailPanel';
+import { HotKeys } from '../../../../constants/HotKeys';
+import { useThunkDispatch } from '../../../../store';
+import { deselectAllSelectionsReviewPage } from '../../../../store/commonActions';
+import { AnnotationStatusChange } from '../../../../store/thunks/Annotation/AnnotationStatusChange';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from '../../../../store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import {
+  keypointSelectStatusChange,
+  selectCollection,
+} from '../../store/annotatorWrapper/slice';
+import { selectAnnotation, setScrollToId } from '../../store/review/slice';
+
+import { selectAnnotationCategory } from './store/slice';
+import { AnnotationDetailPanelRowData, TreeNode } from './types';
 import {
   getActiveNode,
   getActiveNodeIndexFromArray,
@@ -26,22 +40,7 @@ import {
   isVisionReviewImageKeypointRowData,
   selectNextOrFirstIndexArr,
   selectPrevOrFirstIndexArr,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/utils/nodeTreeUtils';
-import {
-  keypointSelectStatusChange,
-  selectCollection,
-} from '@vision/modules/Review/store/annotatorWrapper/slice';
-import {
-  selectAnnotation,
-  setScrollToId,
-} from '@vision/modules/Review/store/review/slice';
-import { useThunkDispatch } from '@vision/store';
-import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
-import { AnnotationStatusChange } from '@vision/store/thunks/Annotation/AnnotationStatusChange';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from '@vision/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
-import { Modal } from 'antd';
-
-import { FileInfo } from '@cognite/sdk';
+} from './utils/nodeTreeUtils';
 
 export const AnnotationDetailPanelHotKeys = ({
   scrollId,

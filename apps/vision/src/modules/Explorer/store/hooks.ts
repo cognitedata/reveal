@@ -1,7 +1,8 @@
 import { useSelector } from 'react-redux';
 
-import { selectExplorerSelectedIds } from '@vision/modules/Explorer/store/selectors';
-import { RootState } from '@vision/store/rootReducer';
+import { RootState } from '../../../store/rootReducer';
+
+import { selectExplorerSelectedIds } from './selectors';
 
 export const useIsSelectedInExplorer = (id: number) => {
   const selectedIds = useSelector(({ explorerReducer }: RootState) =>

@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { FileDetails } from '@vision/modules/FileDetails/Containers/FileDetails';
-import { hideFileMetadata } from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
-import { zIndex } from '@vision/utils/zIndex';
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { getParamLink, workflowRoutes } from '../../../../utils/workflowRoutes';
+import { zIndex } from '../../../../utils/zIndex';
+import { FileDetails } from '../../../FileDetails/Containers/FileDetails';
+import { hideFileMetadata } from '../../store/slice';
 
 export const ProcessFileDetailsContainer = () => {
   const dispatch = useThunkDispatch();

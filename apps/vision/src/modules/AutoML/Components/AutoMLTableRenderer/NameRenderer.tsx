@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { AutoMLTableDataType } from '@vision/modules/AutoML/Components/AutoMLModelList';
-import { AutoMLModelNameBadge } from '@vision/modules/AutoML/Components/AutoMLModelNameBadge';
+import { AutoMLTableDataType } from '../AutoMLModelList';
+import { AutoMLModelNameBadge } from '../AutoMLModelNameBadge';
 
 export const NameRenderer = ({
   rowData: { name },

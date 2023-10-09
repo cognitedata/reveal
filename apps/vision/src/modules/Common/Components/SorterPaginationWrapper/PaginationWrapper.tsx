@@ -2,16 +2,16 @@ import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import * as CONST from '@vision/constants/PaginationConsts';
+import { Pagination } from '@cognite/cogs.js';
+
+import * as CONST from '../../../../constants/PaginationConsts';
+import { zIndex } from '../../../../utils/zIndex';
+import { TableDataItem } from '../../types';
 import {
   SortPaginateControls,
   PaginatedTableProps,
   PageSize,
-} from '@vision/modules/Common/Components/FileTable/types';
-import { TableDataItem } from '@vision/modules/Common/types';
-import { zIndex } from '@vision/utils/zIndex';
-
-import { Pagination } from '@cognite/cogs.js';
+} from '../FileTable/types';
 
 import { Footer } from './Footer';
 

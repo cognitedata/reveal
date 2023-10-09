@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
-import { FileUploadModalProps } from '@vision/modules/Common/Components/FileUploaderModal/FileUploaderModal';
+import { FileUploadModalProps } from '../FileUploaderModal';
 
 let mockFileId = 0;
 // allows the test to set uploaded file id

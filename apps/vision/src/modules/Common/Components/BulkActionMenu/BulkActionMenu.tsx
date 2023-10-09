@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 
-import { pushMetric } from '@vision/utils/pushMetric';
-
 import {
   Chip,
   Button,
@@ -13,6 +11,8 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
+
+import { pushMetric } from '../../../../utils/pushMetric';
 
 export const BulkActionMenu = ({
   selectedCount,

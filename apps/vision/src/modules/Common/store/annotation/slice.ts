@@ -1,22 +1,21 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
-import {
-  clearAnnotationStates,
-  repopulateAnnotationState,
-} from '@vision/modules/Common/store/annotation/util';
+
+import { clearAnnotationState } from '../../../../store/commonActions';
+import { DeleteAnnotations } from '../../../../store/thunks/Annotation/DeleteAnnotations';
+import { PopulateAnnotationTemplates } from '../../../../store/thunks/Annotation/PopulateAnnotationTemplates';
+import { RetrieveAnnotations } from '../../../../store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from '../../../../store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationTemplates } from '../../../../store/thunks/Annotation/SaveAnnotationTemplates';
+import { UpdateAnnotations } from '../../../../store/thunks/Annotation/UpdateAnnotations';
+import { DeleteFilesById } from '../../../../store/thunks/Files/DeleteFilesById';
+import { VisionJobUpdate } from '../../../../store/thunks/Process/VisionJobUpdate';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
-} from '@vision/modules/Common/types/annotation';
-import { clearAnnotationState } from '@vision/store/commonActions';
-import { DeleteAnnotations } from '@vision/store/thunks/Annotation/DeleteAnnotations';
-import { PopulateAnnotationTemplates } from '@vision/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
-import { SaveAnnotations } from '@vision/store/thunks/Annotation/SaveAnnotations';
-import { SaveAnnotationTemplates } from '@vision/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
-import { VisionJobUpdate } from '@vision/store/thunks/Process/VisionJobUpdate';
+} from '../../types/annotation';
+
+import { AnnotationState } from './types';
+import { clearAnnotationStates, repopulateAnnotationState } from './util';
 
 export const initialState: AnnotationState = {
   files: {

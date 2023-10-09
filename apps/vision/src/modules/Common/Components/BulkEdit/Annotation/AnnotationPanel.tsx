@@ -3,12 +3,12 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { EditPanelProps } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
-import { makeSelectAnnotationsForFileIds } from '@vision/modules/Common/store/annotation/selectors';
-import { filterAnnotations } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { RootState } from '@vision/store/rootReducer';
-
 import { Body, Select } from '@cognite/cogs.js';
+
+import { RootState } from '../../../../../store/rootReducer';
+import { makeSelectAnnotationsForFileIds } from '../../../store/annotation/selectors';
+import { filterAnnotations } from '../../../Utils/AnnotationUtils/AnnotationUtils';
+import { EditPanelProps } from '../bulkEditOptions';
 
 import {
   annotationEditOptions,

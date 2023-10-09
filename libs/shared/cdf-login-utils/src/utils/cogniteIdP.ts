@@ -11,6 +11,8 @@ import {
   getApp,
   getBaseUrl,
   getRequiredOrganization,
+  isPreviewDeployment,
+  setRedirectCookieForPreviewDeployment,
   setLoginOrganizationCookie,
 } from './loginInfo';
 
@@ -35,6 +37,9 @@ export const cogIdpAsResponse = (
 const removeProtocol = (url: string) => new URL(url).host;
 
 const getRedirectUri = () => {
+  if (isPreviewDeployment) {
+    return 'https://oauth.preview.cogniteapp.com/signin/callback';
+  }
   return `${getBaseUrl()}/signin/callback`;
 };
 
@@ -101,7 +106,13 @@ export const cogniteIdPSignInRedirect = async (
   organization: string
 ) => {
   const org = getRequiredOrganization();
-  setLoginOrganizationCookie(org);
+  if (isPreviewDeployment) {
+    const redirectTo = new URL(window.location.href);
+    redirectTo.pathname = `/`;
+    setRedirectCookieForPreviewDeployment(redirectTo.href);
+  } else {
+    setLoginOrganizationCookie(org);
+  }
   const { pathname, search } = window.location;
   const state: CogIdPState = {
     pathname,

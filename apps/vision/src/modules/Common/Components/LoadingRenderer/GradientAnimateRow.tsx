@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import Text from '@vision/modules/Common/Components/Skeleton/layouts/Text';
+import Text from '../Skeleton/layouts/Text';
 
 export const GradientAnimateRow = ({
   width,

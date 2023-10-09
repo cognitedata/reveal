@@ -1,10 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { resetExplorerTemporaryState } from '@vision/modules/Explorer/store/slice';
+
+import { resetExplorerTemporaryState } from '../../../modules/Explorer/store/slice';
 import {
   clearAnnotationState,
   clearExplorerFileState,
-} from '@vision/store/commonActions';
-import { ThunkConfig } from '@vision/store/rootReducer';
+} from '../../commonActions';
+import { ThunkConfig } from '../../rootReducer';
 
 export const ClearExplorerStateOnTransition = createAsyncThunk<
   void,

@@ -2,10 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { EditPanelProps } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
-
 import { Body } from '@cognite/cogs.js';
 import { LabelFilter } from '@cognite/data-exploration';
+
+import { EditPanelProps } from '../bulkEditOptions';
 
 export const LabelPanel = ({
   bulkEditUnsaved,

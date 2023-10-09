@@ -1,8 +1,12 @@
 import {
+  UnsavedVisionAnnotation,
+  VisionAnnotationDataType,
+} from '../../../../modules/Common/types';
+import {
   CDFAnnotationTypeEnum,
   RegionShape,
   Status,
-} from '@vision/api/annotation/types';
+} from '../../../annotation/types';
 import {
   convertVisionJobAnnotationToImageAssetLinkList,
   convertVisionJobAnnotationToImageClassification,
@@ -11,17 +15,13 @@ import {
   convertVisionJobAnnotationToImageObjectDetectionBoundingBox,
   convertVisionJobResultItemToUnsavedVisionAnnotation,
   convertVisionJobResultsToUnsavedVisionAnnotations,
-} from '@vision/api/vision/detectionModels/converters';
+} from '../converters';
 import {
   GaugeReaderJobAnnotation,
   LegacyVisionJobResultItem,
   VisionDetectionModelType,
   VisionJobAnnotation,
-} from '@vision/api/vision/detectionModels/types';
-import {
-  UnsavedVisionAnnotation,
-  VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
+} from '../types';
 
 describe('convertVisionJobAnnotationToImageClassification', () => {
   test('Missing confidence and label', () => {

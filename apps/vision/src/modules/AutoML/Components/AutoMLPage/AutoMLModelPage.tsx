@@ -4,13 +4,6 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import {
-  AutoMLExportFormat,
-  AutoMLTrainingJob,
-} from '@vision/api/vision/autoML/types';
-import { useUserCapabilities } from '@vision/hooks/useUserCapabilities';
-import { AutoMLModelNameBadge } from '@vision/modules/AutoML/Components/AutoMLModelNameBadge';
-
-import {
   Button,
   Dropdown,
   Icon,
@@ -18,6 +11,13 @@ import {
   Popconfirm,
   Title,
 } from '@cognite/cogs.js';
+
+import {
+  AutoMLExportFormat,
+  AutoMLTrainingJob,
+} from '../../../../api/vision/autoML/types';
+import { useUserCapabilities } from '../../../../hooks/useUserCapabilities';
+import { AutoMLModelNameBadge } from '../AutoMLModelNameBadge';
 
 import { AutoMLCharts } from './AutoMLCharts';
 import { AutoMLMetricsOverview } from './AutoMLMetricsOverview';

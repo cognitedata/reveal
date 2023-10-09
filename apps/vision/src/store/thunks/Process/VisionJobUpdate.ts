@@ -1,21 +1,22 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
-import { convertVisionJobResultsToUnsavedVisionAnnotations } from '@vision/api/vision/detectionModels/converters';
+
+import { convertVisionJobResultsToUnsavedVisionAnnotations } from '../../../api/vision/detectionModels/converters';
 import {
   VisionJob,
   VisionDetectionModelType,
   VisionJobRunning,
   VisionJobCompleted,
-} from '@vision/api/vision/detectionModels/types';
+} from '../../../api/vision/detectionModels/types';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotation,
   VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
-import { fileProcessUpdate } from '@vision/store/commonActions';
-import { ThunkConfig } from '@vision/store/rootReducer';
-import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
-import { SaveAnnotations } from '@vision/store/thunks/Annotation/SaveAnnotations';
-import { ToastUtils } from '@vision/utils/ToastUtils';
+} from '../../../modules/Common/types';
+import { ToastUtils } from '../../../utils/ToastUtils';
+import { fileProcessUpdate } from '../../commonActions';
+import { ThunkConfig } from '../../rootReducer';
+import { RetrieveAnnotations } from '../Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from '../Annotation/SaveAnnotations';
 
 const getNewFailedFileIds = ({
   job,

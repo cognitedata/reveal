@@ -5,8 +5,11 @@ import {
   getDummyImageObjectDetectionBoundingBoxAnnotation,
   getDummyImageObjectDetectionPolygonAnnotation,
   getDummyImageObjectDetectionPolylineAnnotation,
-} from '@vision/__test-utils/getDummyAnnotations';
-import { CDFAnnotationTypeEnum, Status } from '@vision/api/annotation/types';
+} from '../../../../../__test-utils/getDummyAnnotations';
+import {
+  CDFAnnotationTypeEnum,
+  Status,
+} from '../../../../../api/annotation/types';
 import {
   annotatedFilesById,
   annotationsById,
@@ -15,9 +18,9 @@ import {
   makeSelectFileAnnotations,
   makeSelectFileAnnotationsByType,
   makeSelectTotalAnnotationCountForFileIds,
-} from '@vision/modules/Common/store/annotation/selectors';
-import { initialState } from '@vision/modules/Common/store/annotation/slice';
-import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
+} from '../selectors';
+import { initialState } from '../slice';
+import { AnnotationState } from '../types';
 
 const annotations = [
   getDummyImageClassificationAnnotation({

@@ -2,11 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import {
-  ActionMenuProps,
-  MenuContent,
-} from '@vision/modules/Common/Components/ActionMenu/MenuContent';
-import { ContextMenuPosition } from '@vision/modules/Common/Components/ContextMenu/types';
+import { ActionMenuProps, MenuContent } from '../ActionMenu/MenuContent';
+
+import { ContextMenuPosition } from './types';
 
 // need this correction because of top menu bar
 const TOP_OFFSET = 50;

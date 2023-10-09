@@ -3,10 +3,10 @@ import { Navigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
-
 import { PageTitle } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
+
+import { getLink, workflowRoutes } from '../utils/workflowRoutes';
 
 const Home = () => {
   return (

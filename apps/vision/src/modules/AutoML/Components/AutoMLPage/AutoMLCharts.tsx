@@ -2,7 +2,6 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { AutoMLTrainingJob } from '@vision/api/vision/autoML/types';
 import {
   XAxis,
   YAxis,
@@ -15,6 +14,8 @@ import {
 } from 'recharts';
 
 import { Body } from '@cognite/cogs.js';
+
+import { AutoMLTrainingJob } from '../../../../api/vision/autoML/types';
 
 const dataKeyLabelMap = new Map<string, string>([
   ['precision', 'Precision'],
