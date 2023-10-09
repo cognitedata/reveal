@@ -4,7 +4,7 @@
 
 import { type ReactNode } from 'react';
 
-export type Translations = Record<string, Record<string, string>>;
+export type Translations = Record<string, string>;
 
 export type I18nProps = {
   appLanguage?: string;
