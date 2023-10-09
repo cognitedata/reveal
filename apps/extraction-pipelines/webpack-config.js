@@ -19,6 +19,7 @@ module.exports = composePlugins(
     config.resolve.mainFields = ['browser', 'module', 'main'];
     config.resolve.fallback = { path: require.resolve('path-browserify') };
 
+    config.experiments.asyncWebAssembly = true;
     if (nodeEnv === 'development' && config.devServer) {
       // Temp fix to devserver and hmr
       config.devServer.allowedHosts = 'all';

@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 
 import { getProject } from '@cognite/cdf-utilities';
+import { OptionType } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -309,7 +310,7 @@ type BaseMQTTDestination = {
   externalId: string;
 };
 
-type ReadMQTTDestination = BaseMQTTDestination & {
+export type ReadMQTTDestination = BaseMQTTDestination & {
   sessionId?: number;
   createdTime: number;
   lastUpdatedTime: number;
@@ -317,18 +318,28 @@ type ReadMQTTDestination = BaseMQTTDestination & {
 
 const getMQTTDestinationsQueryKey = () => ['mqtt', 'destination', 'list'];
 
-export const useMQTTDestinations = () => {
+export const useMQTTDestinations = ({
+  select,
+}: {
+  select?: (data?: ReadMQTTDestination[]) => OptionType<string>[];
+}) => {
   const sdk = useSDK();
-  return useQuery(getMQTTDestinationsQueryKey(), async () => {
-    return sdk
-      .get<{ items: ReadMQTTDestination[] }>(
-        `/api/v1/projects/${getProject()}/pluto/destinations`,
-        {
-          headers: { 'cdf-version': 'alpha' },
-        }
-      )
-      .then((r) => r.data.items);
-  });
+  return useQuery(
+    getMQTTDestinationsQueryKey(),
+    async () => {
+      return sdk
+        .get<{ items: ReadMQTTDestination[] }>(
+          `/api/v1/projects/${getProject()}/pluto/destinations`,
+          {
+            headers: { 'cdf-version': 'alpha' },
+          }
+        )
+        .then((r) => r.data.items);
+    },
+    {
+      select,
+    }
+  );
 };
 
 type MQTTSessionCredentials = {

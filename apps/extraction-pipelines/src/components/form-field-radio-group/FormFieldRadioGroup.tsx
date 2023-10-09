@@ -33,7 +33,7 @@ const FormFieldRadioGroup = <V extends string>({
     <FormFieldWrapper isRequired={isRequired} title={title}>
       <Flex direction={direction} gap={24}>
         {options.map(({ details, label, value, content }) => (
-          <Flex direction="column" gap={16} alignItems="stretch">
+          <Flex direction="column" gap={16} alignItems="stretch" key={label}>
             <StyledRadio
               checked={selectedValue === value}
               key={JSON.stringify(value)}

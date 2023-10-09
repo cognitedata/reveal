@@ -1,50 +1,100 @@
-import React, { useCallback, useState } from 'react';
+import React, { Suspense, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { notification, Select } from 'antd';
+import { notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 
 import {
   Body,
   Button,
+  Checkbox,
   Colors,
   Divider,
   Flex,
   Heading,
   InputExp,
+  Loader,
+  OptionType,
+  Select,
 } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
+import { CodeEditorWithStatus } from '../../components/CodeEditorWithStatus';
 import FormFieldRadioGroup from '../../components/form-field-radio-group/FormFieldRadioGroup';
 import FormFieldWrapper from '../../components/form-field-wrapper/FormFieldWrapper';
 import { BottomBar, TopBar } from '../../components/ToolBars';
 import {
+  ExtractorMapping,
+  useCreateExtractorMapping,
+  useFetchExtractorMappings,
+} from '../../hooks';
+import {
   MQTTFormat,
+  ReadMQTTDestination,
   useCreateMQTTDestination,
   useCreateMQTTJob,
   useMQTTDestinations,
   useMQTTSourceWithMetrics,
 } from '../../hooks/hostedExtractors';
 
-import { Section } from './Section';
+import {
+  Section,
+  SectionContainer,
+  SectionLink,
+  SectionSubTitle,
+  SectionTitle,
+} from './Section';
 import { TopicFilterGuide } from './TopicFilterGuide';
 import { CreateJobsFormValues, ExpandOptions } from './types';
+
+// Lazy load editor component due to asyncWebAssembly support in webpack
+const TopicFilterCodeEditor = React.lazy(
+  () => import('../../containers/TopicFilterCodeEditor/TopicFilterCodeEditor')
+);
+
+const formatField: MQTTFormat[] = [
+  {
+    type: 'cognite',
+  },
+  {
+    type: 'rockwell',
+  },
+  {
+    type: 'value',
+  },
+  {
+    type: 'sparkplug',
+  },
+  {
+    type: 'custom',
+  },
+];
 
 export const AddTopicFilter = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [expandedOption, setExpandedOption] = useState(ExpandOptions.None);
 
-  const onCancel = useCallback(() => navigate(-1), [navigate]);
+  const goBack = useCallback(() => navigate(-1), [navigate]);
   const { externalId: sourceExternalId } = useParams();
 
   const { data: source } = useMQTTSourceWithMetrics(sourceExternalId);
 
   const [tempTopicFilterInput, setTempTopicFilterInput] = useState('');
 
-  const { data: destinations } = useMQTTDestinations();
+  const { data: destinations } = useMQTTDestinations({
+    select: React.useCallback((data?: ReadMQTTDestination[]) => {
+      return (
+        data?.map((value) => ({
+          ...value,
+          label: value.externalId,
+          value: value.externalId,
+        })) ?? []
+      );
+    }, []),
+  });
 
   const sourceTopicFilters = source?.jobs.map((job) => {
     return job.config.topicFilter;
@@ -57,7 +107,7 @@ export const AddTopicFilter = () => {
         message: t('notification-success-job-create'),
         key: 'delete-source',
       });
-      onCancel();
+      goBack();
     },
     onError: (e: any) => {
       notification.error({
@@ -67,6 +117,24 @@ export const AddTopicFilter = () => {
       });
     },
   });
+  const { mutateAsync: createMapping } = useCreateExtractorMapping({
+    onSuccess: (data) => {
+      notification.success({
+        message: t('transformation-code-saved', {
+          mappingId: data?.[0].externalId,
+        }),
+        key: 'add-mapping',
+      });
+    },
+    onError: (e: any) => {
+      notification.error({
+        message: e.toString(),
+        description: e.message,
+        key: 'add-mapping',
+      });
+    },
+  });
+  const { data: customExtractorMappings } = useFetchExtractorMappings();
 
   const handleValidate = (
     values: CreateJobsFormValues
@@ -106,75 +174,112 @@ export const AddTopicFilter = () => {
         );
       }
     }
+    if (values.format === 'custom') {
+      if (!values.mappingName) {
+        errors.mappingName = t('validation-error-field-required');
+      }
+    }
 
     return errors;
   };
 
-  const { errors, handleSubmit, setFieldValue, values } =
-    useFormik<CreateJobsFormValues>({
-      initialValues: {
-        destinationOption: 'use-existing',
-      },
-      onSubmit: async (val) => {
-        if (!val.topicFilters || val.topicFilters.length === 0) {
-          return;
-        }
+  const isCustomFormat = useCallback(
+    (format?: string) => {
+      return format
+        ? customExtractorMappings
+            ?.map((mapping) => mapping.externalId)
+            .includes(format)
+        : false;
+    },
+    [customExtractorMappings]
+  );
 
-        let destinationExternalId: string | undefined = undefined;
-        if (
-          val.destinationOption === 'use-existing' &&
-          val.selectedDestinationExternalId
-        ) {
-          destinationExternalId = val.selectedDestinationExternalId;
-        } else if (
-          val.destinationOption === 'client-credentials' &&
-          val.clientId &&
-          val.clientSecret &&
-          val.destinationExternalIdToCreate
-        ) {
-          const destination = await createDestination({
-            credentials: {
-              clientId: val.clientId,
-              clientSecret: val.clientSecret,
-            },
-            externalId: val.destinationExternalIdToCreate,
-          });
-          destinationExternalId = destination.externalId;
-        } else if (
-          val.destinationOption === 'current-user' &&
-          val.destinationExternalIdToCreate
-        ) {
-          const destination = await createDestination({
-            credentials: {
-              tokenExchange: true,
-            },
-            externalId: val.destinationExternalIdToCreate,
-          });
-          destinationExternalId = destination.externalId;
-        }
+  const { errors, handleSubmit, setFieldValue, values } = useFormik<
+    CreateJobsFormValues & { useSampleData?: boolean }
+  >({
+    initialValues: {
+      destinationOption: 'use-existing',
+    },
+    onSubmit: async (val) => {
+      let mappingId = '';
+      let format = val.format;
+      if (!val.topicFilters || val.topicFilters.length === 0) {
+        return;
+      }
 
-        if (destinationExternalId && source) {
-          await Promise.all(
-            val.topicFilters.map((topicFilter) => {
-              return createJob({
-                destinationId: destinationExternalId!,
-                externalId: `${source?.externalId}-${val.selectedDestinationExternalId}-${topicFilter}`,
-                format: {
-                  type: val.format ?? 'cognite',
-                },
-                sourceId: source?.externalId,
-                config: {
-                  topicFilter,
-                },
-              });
-            })
-          );
-        }
-      },
-      validate: handleValidate,
-      validateOnBlur: false,
-      validateOnChange: false,
-    });
+      if (val.format === 'custom' && val.mapping && val.mappingName) {
+        mappingId = await createMapping({
+          externalId: val.mappingName,
+          published: true,
+          mapping: {
+            expression: val.mapping,
+          },
+        }).then((data: ExtractorMapping[]) => {
+          return data?.[0]?.externalId ?? '';
+        });
+      }
+
+      if (val.format && isCustomFormat(val.format)) {
+        format = 'custom';
+        mappingId = val.format;
+      }
+
+      let destinationExternalId: string | undefined = undefined;
+      if (
+        val.destinationOption === 'use-existing' &&
+        val.selectedDestinationExternalId
+      ) {
+        destinationExternalId = val.selectedDestinationExternalId;
+      } else if (
+        val.destinationOption === 'client-credentials' &&
+        val.clientId &&
+        val.clientSecret &&
+        val.destinationExternalIdToCreate
+      ) {
+        const destination = await createDestination({
+          credentials: {
+            clientId: val.clientId,
+            clientSecret: val.clientSecret,
+          },
+          externalId: val.destinationExternalIdToCreate,
+        });
+        destinationExternalId = destination.externalId;
+      } else if (
+        val.destinationOption === 'current-user' &&
+        val.destinationExternalIdToCreate
+      ) {
+        const destination = await createDestination({
+          credentials: {
+            tokenExchange: true,
+          },
+          externalId: val.destinationExternalIdToCreate,
+        });
+        destinationExternalId = destination.externalId;
+      }
+
+      if (destinationExternalId && source) {
+        await Promise.all(
+          val.topicFilters.map((topicFilter) => {
+            return createJob({
+              destinationId: destinationExternalId!,
+              externalId: `${source?.externalId}-${val.selectedDestinationExternalId}-${topicFilter}`,
+              format: {
+                type: format ?? 'cognite',
+                ...(mappingId && { mappingId }),
+              },
+              sourceId: source?.externalId,
+              config: {
+                topicFilter,
+              },
+            });
+          })
+        );
+      }
+    },
+    validate: handleValidate,
+    validateOnBlur: false,
+    validateOnChange: false,
+  });
 
   const handleAddTopicFilter = (): void => {
     if (
@@ -198,43 +303,59 @@ export const AddTopicFilter = () => {
     );
   };
 
-  const formatField: MQTTFormat[] = [
-    {
-      type: 'cognite',
-    },
-    {
-      type: 'rockwell',
-    },
-    {
-      type: 'value',
-    },
-    {
-      type: 'sparkplug',
-    },
-    {
-      type: 'custom',
-    },
-  ];
+  const formatFieldOptionsWithCustomTypes = useMemo(() => {
+    const formatFiledOptions = formatField.map(({ type: optionType }) => ({
+      label: t(`form-format-option-${optionType}` as any),
+      value: optionType as string,
+    }));
 
-  const formatFieldOptions = formatField.map(({ type }) => ({
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    label: t(`form-format-option-${type}`),
-    value: type,
-  }));
+    return [
+      ...formatFiledOptions.slice(0, formatFiledOptions.length - 2),
+      ...(customExtractorMappings?.map((mapping) => ({
+        label: mapping.externalId,
+        value: mapping.externalId,
+      })) || []),
+      formatFiledOptions.pop(),
+    ] as OptionType<string>[];
+  }, [customExtractorMappings, t]);
 
+  const onClickExpand = useCallback(
+    (expandOption: ExpandOptions) => {
+      if (expandOption && setExpandedOption) {
+        setExpandedOption(expandOption);
+      }
+    },
+    [setExpandedOption]
+  );
+
+  const onChangeFormat = useCallback(
+    (format: any) => {
+      setFieldValue('mapping', format);
+    },
+    [setFieldValue]
+  );
+
+  const selectedMapping = useMemo(() => {
+    if (isCustomFormat(values.format)) {
+      const customFormat = customExtractorMappings?.find(
+        (mapping) => mapping.externalId === values.format
+      );
+      return customFormat ?? null;
+    }
+    return null;
+  }, [values.format, customExtractorMappings, isCustomFormat]);
   return (
     <GridContainer>
-      <StyledTopBar title={t('back')} onClick={onCancel} />
+      <StyledTopBar title={t('back')} onClick={goBack} />
       <TopicFilterContent>
         <Heading level={3}>{t('form-setup-stream')}</Heading>
-        <SectionContainer>
+        <SectionWrapper>
           <Section
             title={t('form-step-1-x', { step: t('add-topic-filter') })}
             subtitle={t('form-add-topic-filter-detail')}
             expandOption={ExpandOptions.TopicFilters}
-            setExpandOption={setExpandedOption}
-          ></Section>
+            onClickExpand={onClickExpand}
+          />
           <Flex gap={16} direction="column" style={{ width: '100%' }}>
             <Flex gap={8} style={{ width: '100%' }}>
               <div style={{ flex: 1 }}>
@@ -276,6 +397,7 @@ export const AddTopicFilter = () => {
                 <TopicFilterContainer>
                   <Body size="medium">{filter}</Body>
                   <Button
+                    aria-label="Delete"
                     icon="Delete"
                     onClick={() => handleDeleteTopicFilter(filter)}
                     size="small"
@@ -285,34 +407,106 @@ export const AddTopicFilter = () => {
               ))}
             </Flex>
           </Flex>
-        </SectionContainer>
+        </SectionWrapper>
         <Divider />
-        <SectionContainer>
+        <SectionWrapper>
           <Section
             title={t('form-step-2-x', { step: t('form-choose-format') })}
             subtitle={t('form-choose-format-detail')}
             expandOption={ExpandOptions.Format}
-            setExpandOption={setExpandedOption}
-          ></Section>
+            onClickExpand={onClickExpand}
+          />
           <FormFieldWrapper isRequired title={t('form-message-format')}>
             <Select
-              onChange={(e) => setFieldValue('format', e)}
-              options={formatFieldOptions}
+              onChange={(value: OptionType<string>) =>
+                setFieldValue('format', value.value)
+              }
+              options={formatFieldOptionsWithCustomTypes}
               placeholder={t('select-format')}
-              value={values.format}
+              value={formatFieldOptionsWithCustomTypes.find(
+                (val) => val?.value === values.format
+              )}
               aria-placeholder={t('select-format')}
             />
           </FormFieldWrapper>
-        </SectionContainer>
+          {values.format === 'custom' && (
+            <>
+              <div style={{ flex: 1 }}>
+                <InputExp
+                  label={{
+                    required: true,
+                    text: t('form-format-name'),
+                  }}
+                  fullWidth
+                  onChange={(e) => setFieldValue('mappingName', e.target.value)}
+                  status={errors.mappingName ? 'critical' : undefined}
+                  statusText={errors.mappingName}
+                  placeholder={t('form-format-name-placeholder')}
+                  value={values.mappingName}
+                  helpText={t('form-format-name-tip')}
+                />
+              </div>
+              <SectionContainer style={{ marginTop: 16 }}>
+                <SectionTitle level={6}>
+                  {t('create-your-own-custom-format')}
+                </SectionTitle>
+                <Flex style={{ flexGrow: 1 }}>
+                  <SectionSubTitle size="small">
+                    {t('use-kuiper-to-write-code')}&nbsp;
+                  </SectionSubTitle>
+                  <SectionLink
+                    onClick={() => onClickExpand(ExpandOptions.Format)}
+                  >
+                    <Body
+                      style={{
+                        color: Colors['text-icon--interactive--default'],
+                      }}
+                      size="small"
+                    >{`Learn more ->`}</Body>
+                  </SectionLink>
+                </Flex>
+                <div style={{ marginTop: 8 }}>
+                  <FormFieldWrapper>
+                    <Checkbox
+                      onChange={(e) =>
+                        setFieldValue('useSampleData', e.target.checked)
+                      }
+                    >
+                      {t('try-with-sample-data')}
+                    </Checkbox>
+                  </FormFieldWrapper>
+                </div>
+              </SectionContainer>
+              <Suspense fallback={<Loader />}>
+                <TopicFilterCodeEditor
+                  onChangeFormat={onChangeFormat}
+                  showSampleData={values.useSampleData}
+                />
+              </Suspense>
+            </>
+          )}
+          {isCustomFormat(values.format) && (
+            <Flex direction="column" gap={8}>
+              <Body size="medium" strong>
+                {t('transformation-code')}
+              </Body>
+              <CodeEditorWithStatus
+                disabled
+                placeholder={t('transformation-code-placeholder')}
+                value={selectedMapping?.mapping.expression || ''}
+              />
+            </Flex>
+          )}
+        </SectionWrapper>
         <Divider />
-        <SectionContainer>
+        <SectionWrapper>
           <Section
             title={t('form-step-3-x', {
               step: t('form-select-authenticate-sync'),
             })}
             subtitle={t('form-select-authenticate-detail')}
             expandOption={ExpandOptions.Sync}
-            setExpandOption={setExpandedOption}
+            onClickExpand={onClickExpand}
           ></Section>
           <FormFieldRadioGroup
             direction="column"
@@ -331,16 +525,19 @@ export const AddTopicFilter = () => {
                     >
                       <Select
                         showSearch
-                        onChange={(value) => {
-                          setFieldValue('selectedDestinationExternalId', value);
+                        onChange={(value: OptionType<string>) => {
+                          setFieldValue(
+                            'selectedDestinationExternalId',
+                            value.value
+                          );
                         }}
-                        options={destinations?.map(({ externalId }) => ({
-                          label: externalId,
-                          value: externalId,
-                        }))}
+                        options={destinations || []}
                         placeholder={t('form-existing-syncs-placeholder')}
-                        value={values.selectedDestinationExternalId}
-                      />
+                        value={destinations?.find(
+                          (val) =>
+                            val.value === values.selectedDestinationExternalId
+                        )}
+                      ></Select>
                     </FormFieldWrapper>
                   </RadioButtonContentContainer>
                 ),
@@ -442,7 +639,7 @@ export const AddTopicFilter = () => {
             ]}
             value={values.destinationOption}
           />
-        </SectionContainer>
+        </SectionWrapper>
       </TopicFilterContent>
       <StyledBottomBar
         title={t('field-is-mandatory')}
@@ -471,7 +668,7 @@ const TopicFilterContainer = styled.div`
   padding: 4px 4px 4px 12px;
 `;
 
-const SectionContainer = styled(Flex)`
+const SectionWrapper = styled(Flex)`
   gap: 24px;
   flex-direction: column;
   width: 100%;

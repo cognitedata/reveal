@@ -1,3 +1,4 @@
+import { CodeEditorTheme } from '@cognite/cdf-utilities';
 import { OptionType } from '@cognite/cogs.js';
 
 export const EXTRACTION_PIPELINE: Readonly<string> = 'Extraction pipeline';
@@ -117,3 +118,7 @@ export const PAGINATION_SETTINGS = {
   defaultPageSize: 10,
   hideOnSinglePage: true,
 };
+
+export const DEFAULT_CODE_EDITOR_THEME: CodeEditorTheme = 'light';
+export const CODE_EDITOR_THEME_LOCAL_STORAGE_KEY =
+  '@cognite/fusion/extraction-pipelines/code-editor-theme';
