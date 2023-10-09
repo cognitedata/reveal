@@ -86,10 +86,13 @@ export function OutputStep({ isDisabled }: StepProps) {
                   disabled={isDisabled}
                   name={`outputTimeSeries.${index}.unit`}
                   options={unitsMap[unitType] ? unitsMap[unitType].units : []}
-                  value={getOptionLabel(
-                    unitsMap[unitType] ? unitsMap[unitType].units : [],
-                    unit ?? ''
-                  )}
+                  value={{
+                    label: getOptionLabel(
+                      unitsMap[unitType] ? unitsMap[unitType].units : [],
+                      unit ?? ''
+                    ),
+                    value: unit ?? '',
+                  }}
                   closeMenuOnSelect
                   onChange={({ value }: OptionType<string>) => {
                     setFieldValue(`outputTimeSeries.${index}.unit`, value);
