@@ -76,7 +76,7 @@ export enum WellKnownAsprsPointClassCodes {
    * Features excluded due to changes over time between data sources – e.g., water
    * levels, landslides, permafrost
    */
-  TemporalExclusion = 22,
+  TemporalExclusion = 22
   /*
    * Values up to and including 63 are reserved
    */
