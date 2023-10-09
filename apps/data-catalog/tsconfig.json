@@ -6,7 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   },
   "files": [],
   "include": [],
@@ -16,6 +16,9 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./cypress/tsconfig.json"
     }
   ],
   "extends": "../../tsconfig.base.json"

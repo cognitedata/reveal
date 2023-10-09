@@ -105,6 +105,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
         type="text"
         placeholder={t('name')}
         error={nameTooLongError}
+        data-cy="dataset-form-name-input"
       />
 
       <RequiredFieldLabel>{t('description')}</RequiredFieldLabel>
@@ -120,6 +121,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
         placeholder={t('description')}
         size="large"
         error={descTooLongError}
+        data-cy="dataset-form-description-input"
       />
 
       <FieldLabel>{t('label_other')}</FieldLabel>
@@ -157,6 +159,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
                 value: label,
               }))
           )}
+        data-cy="dataset-form-labels-select"
       />
       <FieldLabel>
         <InfoTooltip
@@ -209,6 +212,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
         css={{
           marginTop: '20px',
         }}
+        className="dataset-form-advanced-options-accordion"
       >
         <Panel
           style={{ border: '0px', padding: '0px' }}
@@ -226,6 +230,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
             }}
             type="text"
             placeholder={t('external-id')}
+            data-cy="dataset-form-external-id-input"
           />
         </Panel>
       </Collapse>

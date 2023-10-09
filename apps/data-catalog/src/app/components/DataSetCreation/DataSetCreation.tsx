@@ -442,6 +442,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
               nameOrDescTooLong
             }
             type="primary"
+            data-cy="update-dataset-button"
           >
             {t('save')}
           </CreateButton>
@@ -461,6 +462,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
                   nameOrDescTooLong
                 }
                 type="primary"
+                data-cy="create-new-dataset-button"
               >
                 {t('create')}
               </CreateButton>

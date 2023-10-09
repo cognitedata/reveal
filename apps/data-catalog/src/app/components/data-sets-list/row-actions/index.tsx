@@ -16,7 +16,14 @@ const RowActions = ({
       content={
         <Menu loading={loading}>
           {actions.map((buttonProps, idx) => (
-            <Menu.Item key={idx} iconPlacement="left" {...buttonProps} />
+            <Menu.Item
+              key={idx}
+              iconPlacement="left"
+              {...buttonProps}
+              data-cy={`row-action-${(buttonProps.icon || '')
+                .toLocaleString()
+                .toLowerCase()}`}
+            />
           ))}
         </Menu>
       }
@@ -27,6 +34,7 @@ const RowActions = ({
         size="small"
         icon="EllipsisHorizontal"
         aria-label="Options"
+        data-cy="row-actions-menu-button"
       />
     </Dropdown>
   );

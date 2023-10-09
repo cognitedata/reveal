@@ -7,9 +7,7 @@ const { withReact } = require('@nx/react');
 
 const nodeEnv = process.env.NODE_ENV || 'production';
 const useMockEnv =
-  nodeEnv === 'mock' ||
-  (process.env.NX_TASK_TARGET_PROJECT &&
-    process.env.NX_TASK_TARGET_PROJECT === 'data-catalog-e2e');
+  nodeEnv === 'mock' || process.env.NX_TASK_TARGET_CONFIGURATION == 'mock';
 
 // Nx plugins for webpack.
 module.exports = composePlugins(

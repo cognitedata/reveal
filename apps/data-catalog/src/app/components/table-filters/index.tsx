@@ -142,6 +142,7 @@ const TableFilter = ({
             value={searchQuery || ''}
             fullWidth
             clearable={{ callback: () => setSearchQuery('') }}
+            data-cy="data-sets-search-input"
           />
         </StyledInputContainer>
         <Dropdown

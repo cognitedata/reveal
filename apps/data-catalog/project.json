@@ -143,6 +143,30 @@
           "codeCoverage": true
         }
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/data-catalog/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "data-catalog:serve",
+        "port": 3001,
+        "env": {
+          "ORG": "cog-e2e",
+          "PROJECT": "e2e-greenfield",
+          "CLUSTER": "greenfield.cognitedata.com",
+          "IDP_INTERNAL_ID": "09f375ff-13b6-4d58-95fd-869b098d4808"
+        }
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "data-catalog:serve:production"
+        },
+        "e2e": {
+          "devServerTarget": "data-catalog:serve:production"
+        }
+      },
+      "defaultConfiguration": "e2e"
     }
   },
   "tags": [],

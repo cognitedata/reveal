@@ -20,7 +20,9 @@ const Page = ({ children, className, title }: PageProps): JSX.Element => {
   return (
     <StyledPage className={className}>
       <StyledTitleContainer justifyContent="space-between" alignItems="center">
-        <Title level={3}>{title}</Title>
+        <Title level={3} data-cy="data-catalog-page-title">
+          {title}
+        </Title>
         <span
           role="button"
           onClick={() => trackUsage({ e: 'data.explore.navigate' })}
