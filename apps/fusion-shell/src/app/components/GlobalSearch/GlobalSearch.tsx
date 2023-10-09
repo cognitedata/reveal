@@ -55,6 +55,7 @@ export default function GlobalSearch() {
               setQuery(searchText);
             }}
             value={query}
+            data-testid="global-search-input"
           />
           {query.length > 0 && (
             <StyledClearButton
@@ -67,6 +68,7 @@ export default function GlobalSearch() {
               size="small"
               type="ghost"
               inverted
+              data-testid="global-search-clear-input"
             />
           )}
         </StyledSearchContent>

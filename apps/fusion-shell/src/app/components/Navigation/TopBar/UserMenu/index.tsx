@@ -43,7 +43,7 @@ const UserMenu = (): JSX.Element => {
   };
 
   return (
-    <>
+    <div data-testid="topbar-user-profile-area">
       <StyledDropdown
         appendTo={document.body}
         hideOnSelect={{
@@ -103,7 +103,7 @@ const UserMenu = (): JSX.Element => {
           />
         </StyledAccessInfoModalContent>
       </Modal>
-    </>
+    </div>
   );
 };
 

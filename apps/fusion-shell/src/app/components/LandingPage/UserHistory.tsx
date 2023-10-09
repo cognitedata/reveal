@@ -82,7 +82,12 @@ export default function UserHistory(props: UserHistoryProps) {
     userHistoryService.getCdfUserHistoryResources()[displayResourceType];
 
   return (
-    <UserHistoryWrapper justifyContent="flex-start" direction="column" gap={24}>
+    <UserHistoryWrapper
+      justifyContent="flex-start"
+      direction="column"
+      gap={24}
+      data-testid="user-history-section"
+    >
       <Flex direction="row" justifyContent="space-between" alignItems="center">
         <Flex direction="row" alignItems="center" gap={8}>
           <Title level={5}>{t('title-resume-your-activity')}</Title>

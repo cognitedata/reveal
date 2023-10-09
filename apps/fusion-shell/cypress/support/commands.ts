@@ -2,6 +2,7 @@ import { getAppUrl } from '@fusion/shared/cypress'; // adds custom commands defi
 
 import { BASE_URL, PROJECT, CLUSTER } from '../utils/config';
 
+import '@testing-library/cypress/add-commands';
 // Sometimes page loads a bit slow, and loaders displays for more than
 // 4 sec causing tests to fail, this check will wait a bit longer (9 sec)
 // if any loaders are present in the dom, making tests a lot more stable

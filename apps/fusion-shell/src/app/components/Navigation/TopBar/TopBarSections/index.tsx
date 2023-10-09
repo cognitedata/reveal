@@ -77,6 +77,7 @@ const TopBarSections = ({ onClickHome }: TopBarSectionsProps): JSX.Element => {
             $isVisible={isSectionDropdownVisible(section)}
             type="ghost"
             inverted
+            data-testid={`topbar-${section.internalId}`}
           >
             {t(`section-navtitle-${section.internalId}`)}
           </StyledSectionDropdownButton>

@@ -149,7 +149,7 @@ export function GlobalSearchMenu({
   if (!query) return null;
 
   return (
-    <StyledMenuContainer>
+    <StyledMenuContainer data-testid="global-search-menu">
       <Menu onClick={onClose}>
         <ResourcesLabelGroup
           appliedFilters={appliedFilters}

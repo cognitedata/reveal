@@ -20,7 +20,11 @@
     },
     {
       "files": ["*.cy.{ts,js,tsx,jsx}", "cypress/**/*.{ts,js,tsx,jsx}"],
-      "rules": {}
+      "rules": {
+        "testing-library/await-async-query": ["off"],
+        "testing-library/prefer-screen-queries": ["off"],
+        "testing-library/no-node-access": "warn"
+      }
     }
   ]
 }
