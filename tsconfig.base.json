@@ -114,8 +114,8 @@
       "@raw-explorer/*": ["apps/raw-explorer/src/*"],
       "@simint-app/*": ["apps/simint/src/*"],
       "@transformations/*": ["apps/transformations/src/*"],
-      "@vision/*": ["apps/vision/src/*"],
-      "@user-history": ["libs/shared/user-history/src/index.ts"]
+      "@user-history": ["libs/shared/user-history/src/index.ts"],
+      "@vision/*": ["apps/vision/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp", "proxy"]

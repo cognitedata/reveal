@@ -5,9 +5,9 @@ import styled from 'styled-components';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { FileInfo } from '@data-exploration/containers';
+import { useCdfUserHistoryService } from '@user-history';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs, Infobar } from '@cognite/cogs.js';
 import {
   FilePreview as CogniteFilePreview,
@@ -21,7 +21,6 @@ import {
   APPLICATION_ID,
   useTranslation,
   SUB_APP_PATH,
-  createInternalLink,
 } from '@data-exploration-lib/core';
 import { useFileAnnotationsResourceIds } from '@data-exploration-lib/domain-layer';
 
@@ -127,7 +126,7 @@ export const FileDetail = ({
         userHistoryService.logNewResourceView({
           application: SUB_APP_PATH,
           name: fileInfo?.name,
-          path: createInternalLink(pathname, searchParams),
+          path: pathname.concat(searchParams),
         });
       trackUsage('Exploration.Preview.File.MimeType', {
         mimeType: fileInfo.mimeType,
