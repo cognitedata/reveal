@@ -13,10 +13,12 @@ import {
   onCloseResourceSelector,
   onOpenResourceSelector,
   setModelLoaded,
+  ToolType,
   useContextualizeThreeDViewerStore,
 } from '../useContextualizeThreeDViewerStore';
 
 import { AnnotationsCard } from './AnnotationsCard';
+import { AnnotationBoxToolbar } from './AnnotationToolbar';
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 interface RevealContentProps {
@@ -33,10 +35,11 @@ export const RevealContent = ({
   onZoomToAnnotation,
 }: RevealContentProps) => {
   const viewer = useReveal();
-  const { isResourceSelectorOpen, annotations } =
+  const { isResourceSelectorOpen, annotations, tool } =
     useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       annotations: state.annotations,
+      tool: state.tool,
     }));
 
   const handleModelOnLoad = (model: CogniteModel) => {
@@ -82,7 +85,7 @@ export const RevealContent = ({
           }}
         />
       </StyledResourceSelectorButtonWrapper>
-
+      {tool === ToolType.SELECT_TOOL && <AnnotationBoxToolbar />}
       <AnnotationsCard
         annotations={annotations}
         onDeleteAnnotation={(annotation) => {
