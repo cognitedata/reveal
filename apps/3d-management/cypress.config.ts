@@ -8,4 +8,5 @@ export default defineConfig({
     chromeWebSecurity: true,
   },
   env: process.env,
+  defaultCommandTimeout: 10000,
 });
