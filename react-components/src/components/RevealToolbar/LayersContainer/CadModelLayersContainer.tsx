@@ -10,7 +10,7 @@ import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
-import { useI18n } from '../../i18n/I18n';
+import { useTranslation } from '../../i18n/I18n';
 
 export const CadModelLayersContainer = ({
   layerProps,
@@ -19,7 +19,7 @@ export const CadModelLayersContainer = ({
   layerProps: Reveal3DResourcesLayersProps;
   onChange: (cadState: Reveal3DResourcesLayerStates['cadLayerData']) => void;
 }): ReactElement => {
-  const { t } = useI18n();
+  const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);

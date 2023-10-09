@@ -11,10 +11,10 @@ import {
   KeyboardNavigationInstructionGrid,
   ArrowKeyboardNavigationInstructionGrid
 } from './elements';
-import { useI18n } from '../../i18n/I18n';
+import { useTranslation } from '../../i18n/I18n';
 
 export const KeyboardNavigation = (): ReactElement => {
-  const { t } = useI18n();
+  const { t } = useTranslation();
   return (
     <Section
       title={t('KEYBOARD_NAVIGATION_TITLE', 'Keyboard')}

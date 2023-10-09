@@ -16,10 +16,10 @@ const translations: Translations = {
 
 const I18nContext = createContext<I18nContent | null>(null);
 
-export const useI18n = (): I18nContent => {
+export const useTranslation = (): I18nContent => {
   const element = useContext(I18nContext);
   if (element === null) {
-    throw new Error('useI18n must be used within a I18nContextProvider');
+    throw new Error('useTranslation must be used within a I18nContextProvider');
   }
   return element;
 };

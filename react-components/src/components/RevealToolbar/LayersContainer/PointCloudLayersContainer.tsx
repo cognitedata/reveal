@@ -11,7 +11,7 @@ import { type CognitePointCloudModel } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
-import { useI18n } from '../../i18n/I18n';
+import { useTranslation } from '../../i18n/I18n';
 
 export const PointCloudLayersContainer = ({
   layerProps,
@@ -20,7 +20,7 @@ export const PointCloudLayersContainer = ({
   layerProps: Reveal3DResourcesLayersProps;
   onChange: (cadState: Reveal3DResourcesLayerStates['pointCloudLayerData']) => void;
 }): ReactElement => {
-  const { t } = useI18n();
+  const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);

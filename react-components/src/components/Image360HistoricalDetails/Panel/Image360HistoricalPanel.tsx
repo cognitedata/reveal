@@ -5,7 +5,7 @@
 import { Chip, Tooltip } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import styled from 'styled-components';
-import { useI18n } from '../../i18n/I18n';
+import { useTranslation } from '../../i18n/I18n';
 
 export type Image360HistoricalPanelProps = {
   revisionCount?: number;
@@ -18,7 +18,7 @@ export const Image360HistoricalPanel = ({
   revisionDetailsExpanded,
   setRevisionDetailsExpanded
 }: Image360HistoricalPanelProps): ReactElement => {
-  const { t } = useI18n();
+  const { t } = useTranslation();
   const count = revisionCount?.toString();
 
   const onDetailsClick = (): void => {
