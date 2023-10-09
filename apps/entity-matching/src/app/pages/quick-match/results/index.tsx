@@ -12,13 +12,9 @@ import Page from '../../../components/page';
 import Step from '../../../components/step';
 import { useEMModel } from '../../../hooks/entity-matching-models';
 import { useEMModelPredictResults } from '../../../hooks/entity-matching-predictions';
-import { useApplyRulesResults } from '../../../hooks/entity-matching-rules';
 import { INFINITE_Q_OPTIONS } from '../../../hooks/infiniteList';
 import { SourceType } from '../../../types/api';
-import {
-  sessionStorageApplyRulesJobKey,
-  sessionStoragePredictJobKey,
-} from '../../../utils';
+import { sessionStoragePredictJobKey } from '../../../utils';
 
 const QuickMatchResults = (): JSX.Element => {
   const [confirmedPredictions, setConfirmedPredictions] = useState<number[]>(
@@ -28,28 +24,20 @@ const QuickMatchResults = (): JSX.Element => {
     subAppPath,
     modelId: modelIdStr,
     predictJobId: predictJobIdStr,
-    applyRulesJobId: applyRulesJobIdStr,
     sourceType,
   } = useParams<{
     subAppPath: string;
     modelId: string;
     predictJobId: string;
-    rulesJobId?: string;
-    applyRulesJobId?: string;
     sourceType: SourceType;
   }>();
 
   const { t } = useTranslation();
   const modelId = parseInt(modelIdStr ?? '', 10);
   const predictJobId = parseInt(predictJobIdStr ?? '', 10);
-  const applyRulesJobId = parseInt(applyRulesJobIdStr ?? '', 10);
 
   const predictJobToken = sessionStorage.getItem(
     sessionStoragePredictJobKey(predictJobId)
-  );
-
-  const applyRulesJobToken = sessionStorage.getItem(
-    sessionStorageApplyRulesJobKey(applyRulesJobId)
   );
 
   const { data: model } = useEMModel(modelId!, {
@@ -66,20 +54,11 @@ const QuickMatchResults = (): JSX.Element => {
     ...INFINITE_Q_OPTIONS,
   });
 
-  const {
-    data: appliedRules,
-    isInitialLoading: loadingAppliedRules,
-    error: appliedRulesError,
-  } = useApplyRulesResults(applyRulesJobId, applyRulesJobToken, {
-    enabled: !!applyRulesJobId,
-    ...INFINITE_Q_OPTIONS,
-  });
-
   if (!sourceType) {
     return <Navigate to={`/${subAppPath}/quick-match/}`} replace={true} />;
   }
 
-  if (loadingPredictions || loadingAppliedRules) {
+  if (loadingPredictions) {
     return (
       <Page subtitle={t('results')} title={t('quick-match')}>
         <Step
@@ -92,8 +71,8 @@ const QuickMatchResults = (): JSX.Element => {
     );
   }
 
-  if (predictJobError || appliedRulesError) {
-    if (predictJobError?.status === 403 || appliedRulesError?.status === 403) {
+  if (predictJobError) {
+    if (predictJobError?.status === 403) {
       return (
         <Page subtitle={t('results')} title={t('quick-match')}>
           <Step>
@@ -110,9 +89,6 @@ const QuickMatchResults = (): JSX.Element => {
                 <Title level={4}>{t('unknown-error-title')}</Title>
                 {predictJobError && (
                   <Body level={1}>{predictJobError.message}</Body>
-                )}
-                {appliedRulesError && (
-                  <Body level={1}>{appliedRulesError.message}</Body>
                 )}
               </Flex>
               <Graphic />
@@ -164,7 +140,6 @@ const QuickMatchResults = (): JSX.Element => {
               predictions={predictions.items}
               confirmedPredictions={confirmedPredictions}
               setConfirmedPredictions={setConfirmedPredictions}
-              appliedRules={appliedRules?.items}
             />
           )}
         </Page>

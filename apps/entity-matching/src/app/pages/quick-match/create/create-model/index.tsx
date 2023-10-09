@@ -21,12 +21,6 @@ import {
   useEMModelPredictResults,
 } from '../../../../hooks/entity-matching-predictions';
 import {
-  useApplyRulesJob,
-  useApplyRulesResults,
-  useCreateRulesJob,
-  useRulesResults,
-} from '../../../../hooks/entity-matching-rules';
-import {
   INFINITE_Q_OPTIONS,
   useInfiniteList,
 } from '../../../../hooks/infiniteList';
@@ -34,12 +28,9 @@ import { useInfinite3dNodes } from '../../../../hooks/threeD';
 import { IN_PROGRESS_EM_STATES } from '../../../../hooks/types';
 import {
   bulkDownloadStatus,
-  filterFieldsFromObjects,
   getAdvancedFilter,
   sessionStorage3dDetailsKey,
-  sessionStorageApplyRulesJobKey,
   sessionStoragePredictJobKey,
-  sessionStorageRulesJobKey,
 } from '../../../../utils';
 const Circle = styled.div`
   border: 1px solid #000000d9;
@@ -57,22 +48,14 @@ const CreateModel = (): JSX.Element => {
     subAppPath,
     modelId: modelIdStr,
     predictJobId: predictJobIdStr,
-    rulesJobId: rulesJobIdStr,
-    applyRulesJobId: applyRulesJobIdStr,
   } = useParams<{
     subAppPath: string;
     modelId?: string;
     predictJobId?: string;
-    rulesJobId?: string;
-    applyRulesJobId?: string;
   }>();
   const modelId = modelIdStr ? parseInt(modelIdStr, 10) : undefined;
   const predictJobId = predictJobIdStr
     ? parseInt(predictJobIdStr, 10)
-    : undefined;
-  const rulesJobId = rulesJobIdStr ? parseInt(rulesJobIdStr, 10) : undefined;
-  const applyRulesJobId = applyRulesJobIdStr
-    ? parseInt(applyRulesJobIdStr, 10)
     : undefined;
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -89,7 +72,6 @@ const CreateModel = (): JSX.Element => {
     allTargets,
     targetFilter,
     threeDModel,
-    generateRules,
   } = useQuickMatchContext();
   const [modelRefetchInterval, setModelRefetchInterval] = useState<
     number | undefined
@@ -97,23 +79,11 @@ const CreateModel = (): JSX.Element => {
   const [predictRefetchInterval, setPredictRefetchInterval] = useState<
     number | undefined
   >();
-  const [rulesRefetchInterval, setRulesRefetchInterval] = useState<
-    number | undefined
-  >();
-  const [applyRulesRefetchInterval, setApplyRulesRefetchInterval] = useState<
-    number | undefined
-  >();
 
   const is3d = sourceType === 'threeD';
 
   const predictJobToken = sessionStorage.getItem(
     sessionStoragePredictJobKey(predictJobId!)
-  );
-  const rulesJobToken = sessionStorage.getItem(
-    sessionStorageRulesJobKey(rulesJobId!)
-  );
-  const applyRulesJobToken = sessionStorage.getItem(
-    sessionStorageApplyRulesJobKey(applyRulesJobId!)
   );
 
   const { data: model } = useEMModel(modelId!, {
@@ -128,22 +98,6 @@ const CreateModel = (): JSX.Element => {
     {
       enabled: !!predictJobId,
       refetchInterval: predictRefetchInterval,
-      ...INFINITE_Q_OPTIONS,
-    }
-  );
-
-  const { data: rules } = useRulesResults(rulesJobId!, rulesJobToken, {
-    enabled: !!rulesJobId,
-    refetchInterval: rulesRefetchInterval,
-    ...INFINITE_Q_OPTIONS,
-  });
-
-  const { data: applyRulesResult } = useApplyRulesResults(
-    applyRulesJobId!,
-    applyRulesJobToken,
-    {
-      enabled: !!applyRulesJobId,
-      refetchInterval: applyRulesRefetchInterval,
       ...INFINITE_Q_OPTIONS,
     }
   );
@@ -343,41 +297,6 @@ const CreateModel = (): JSX.Element => {
       },
     });
 
-  const { mutate: createRulesJob, status: createRulesStatus } =
-    useCreateRulesJob({
-      async onSuccess(job) {
-        if (job.jobToken) {
-          sessionStorage.setItem(
-            sessionStorageRulesJobKey(job.jobId),
-            job.jobToken
-          );
-        }
-        navigate(
-          createLink(
-            `/${subAppPath}/quick-match/create/create-model/${modelId}/${predictJobId}/${job.jobId}`
-          ),
-          { replace: true }
-        );
-      },
-    });
-
-  const { mutate: applyRules, status: applyRulesStatus } = useApplyRulesJob({
-    async onSuccess(job) {
-      if (job.jobToken) {
-        sessionStorage.setItem(
-          sessionStorageApplyRulesJobKey(job.jobId),
-          job.jobToken
-        );
-      }
-      navigate(
-        createLink(
-          `/${subAppPath}/quick-match/create/create-model/${modelId}/${predictJobId}/${rulesJobId}/${job.jobId}`
-        ),
-        { replace: true }
-      );
-    },
-  });
-
   useEffect(() => {
     if (!model?.status) {
       return;
@@ -398,76 +317,6 @@ const CreateModel = (): JSX.Element => {
     }
   }, [createPredictJob, model?.id, model?.status]);
 
-  const filteredSources = useMemo(
-    () =>
-      filterFieldsFromObjects(sources, [
-        'id',
-        ...matchFields
-          .filter((source) => !!source)
-          .map(({ source }) => source as string),
-      ]),
-    [sources, matchFields]
-  );
-
-  const filteredTargets = useMemo(
-    () =>
-      filterFieldsFromObjects(targets, [
-        'id',
-        ...matchFields
-          .filter((target) => !!target)
-          .map(({ target }) => target as string),
-      ]),
-    [targets, matchFields]
-  );
-
-  useEffect(() => {
-    if (prediction?.status === 'Completed') {
-      const matches =
-        prediction?.items.map((i) => ({
-          sourceId: i.source.id,
-          targetId: i.match.target.id,
-        })) || [];
-
-      if (matches.length > 0 && generateRules) {
-        createRulesJob({
-          sources: filteredSources,
-          targets: filteredTargets,
-          matches,
-        });
-      }
-    }
-  }, [
-    createRulesJob,
-    prediction?.items,
-    prediction?.status,
-    filteredSources,
-    filteredTargets,
-    matchFields,
-    generateRules,
-  ]);
-
-  useEffect(() => {
-    if (
-      rules?.status === 'Completed' &&
-      rules?.rules &&
-      rules.rules.length > 0 &&
-      generateRules
-    ) {
-      applyRules({
-        sources: filteredSources,
-        targets: filteredTargets,
-        rules: rules?.rules,
-      });
-    }
-  }, [
-    applyRules,
-    filteredSources,
-    filteredTargets,
-    rules?.rules,
-    rules?.status,
-    generateRules,
-  ]);
-
   useEffect(() => {
     if (
       prediction?.status &&
@@ -479,53 +328,7 @@ const CreateModel = (): JSX.Element => {
     }
   }, [prediction?.status]);
 
-  useEffect(() => {
-    if (rules?.status && IN_PROGRESS_EM_STATES.includes(rules?.status)) {
-      setRulesRefetchInterval(1000);
-    } else {
-      setRulesRefetchInterval(undefined);
-    }
-  }, [rules?.status]);
-
-  useEffect(() => {
-    if (
-      applyRulesResult?.status &&
-      IN_PROGRESS_EM_STATES.includes(applyRulesResult?.status)
-    ) {
-      setApplyRulesRefetchInterval(1000);
-    } else {
-      setApplyRulesRefetchInterval(undefined);
-    }
-  }, [applyRulesResult?.status]);
-
-  if (applyRulesResult?.status === 'Completed') {
-    return (
-      <Navigate
-        to={createLink(
-          `/${subAppPath}/quick-match/results/${modelId}/${predictJobId}/${sourceType}/${rulesJobId}/${applyRulesJobId}`
-        )}
-        replace={true}
-      />
-    );
-  }
-
-  // No predictions means there ar no rules generatioon to wait for
-  if (
-    prediction?.status === 'Completed' &&
-    (prediction?.items.length === 0 || !generateRules)
-  ) {
-    return (
-      <Navigate
-        to={createLink(
-          `/${subAppPath}/quick-match/results/${modelId}/${predictJobId}/${sourceType}`
-        )}
-        replace={true}
-      />
-    );
-  }
-
-  // No rules means there are no apply-rules-job to wait for
-  if (rules?.status === 'Completed' && rules?.rules.length === 0) {
+  if (prediction?.status === 'Completed') {
     return (
       <Navigate
         to={createLink(
@@ -610,57 +413,6 @@ const CreateModel = (): JSX.Element => {
               />
             </Col>
           </Row>
-          {generateRules && (
-            <>
-              <Row cols={20}>
-                <Col span={1}>
-                  <Circle>5</Circle>
-                </Col>
-                <Col span={19}>
-                  {!rules ? (
-                    <Body level={2}>
-                      {t(`create-rules-job-${createRulesStatus}`)}
-                    </Body>
-                  ) : (
-                    <Body level={2}>
-                      {t(`create-rules-job-${rules.status}`)}
-                    </Body>
-                  )}
-                  <QueryStatusProgress
-                    percent={
-                      (percentFromStatus(createRulesStatus) +
-                        percentFromStatus(rules?.status)) /
-                      2
-                    }
-                  />
-                </Col>
-              </Row>
-
-              <Row cols={20}>
-                <Col span={1}>
-                  <Circle>6</Circle>
-                </Col>
-                <Col span={19}>
-                  {!applyRulesResult ? (
-                    <Body level={2}>
-                      {t(`create-apply-rules-job-${applyRulesStatus}`)}
-                    </Body>
-                  ) : (
-                    <Body level={2}>
-                      {t(`create-apply-rules-job-${applyRulesResult.status}`)}
-                    </Body>
-                  )}
-                  <QueryStatusProgress
-                    percent={
-                      (percentFromStatus(applyRulesStatus) +
-                        percentFromStatus(applyRulesResult?.status)) /
-                      2
-                    }
-                  />
-                </Col>
-              </Row>
-            </>
-          )}
         </Infobox>
       </Flex>
     </Step>
