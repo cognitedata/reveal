@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 
-import { FLOATING_ELEMENT_MARGIN } from '@3d-management/pages/ContextualizeEditor/constants';
-
 import { ToolBar } from '@cognite/cogs.js';
 import {
   RevealToolbar,
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
+
+import { FLOATING_ELEMENT_MARGIN } from '../../../../../pages/ContextualizeEditor/constants';
 
 import { CadToolBarTools } from './CadToolBarTools';
 

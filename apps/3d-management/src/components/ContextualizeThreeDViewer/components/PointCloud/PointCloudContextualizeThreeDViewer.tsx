@@ -12,7 +12,7 @@ import {
 } from '@tanstack/react-query';
 
 import { RevealContainer } from '@cognite/reveal-react-components';
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
 import {

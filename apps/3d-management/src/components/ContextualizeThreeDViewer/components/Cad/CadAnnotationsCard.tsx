@@ -1,4 +1,5 @@
-import { FLOATING_ELEMENT_MARGIN } from '@3d-management/pages/ContextualizeEditor/constants';
+import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
+
 import { useCadContextualizeStore } from './useCadContextualizeStore';
 
 export const CadAnnotationsCard = () => {
