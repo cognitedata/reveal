@@ -12,12 +12,10 @@ import { CadToolBarTools } from './CadToolBarTools';
 
 export const CadToolBar = () => {
   return (
-    <>
-      <StyledToolBar>
-        <RevealToolbar.FitModelsButton />
-        <CadToolBarTools />
-      </StyledToolBar>
-    </>
+    <StyledToolBar>
+      <RevealToolbar.FitModelsButton />
+      <CadToolBarTools />
+    </StyledToolBar>
   );
 };
 
