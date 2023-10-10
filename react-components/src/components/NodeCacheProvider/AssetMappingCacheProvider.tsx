@@ -4,9 +4,8 @@
 
 import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
 import { type CadModelOptions } from '../Reveal3DResources/types';
-import { AssetMappingCache, type NodeAssetMappingResult } from './AssetMappingCache';
+import { AssetMapping, AssetMappingCache, type NodeAssetMappingResult } from './AssetMappingCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { type AssetMapping3D } from '@cognite/sdk';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type ModelId, type RevisionId, type TreeIndex } from './types';
@@ -18,7 +17,7 @@ export type AssetMappingCacheContent = {
 
 export type ModelWithAssetMappings = {
   model: CadModelOptions;
-  assetMappings: AssetMapping3D[];
+  assetMappings: AssetMapping[];
 };
 
 const AssetMappingCacheContext = createContext<AssetMappingCacheContent | undefined>(undefined);
@@ -33,7 +32,7 @@ const useAssetMappingCache = (): AssetMappingCache => {
   return content.cache;
 };
 
-export const useMappeNodesForRevisions = (
+export const useAssetMappeNodesForRevisions = (
   cadModels: CadModelOptions[]
 ): UseQueryResult<ModelWithAssetMappings[]> => {
   const assetMappingCache = useAssetMappingCache();

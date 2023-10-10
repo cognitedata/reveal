@@ -7,12 +7,14 @@ import { type ModelId, type ModelRevisionKey, type RevisionId } from './types';
 import { maxBy } from 'lodash';
 import assert from 'assert';
 
-export type NodeAssetMappingResult = { node?: Node3D; mappings: AssetMapping3D[] };
+export type NodeAssetMappingResult = { node?: Node3D; mappings: AssetMapping[] };
+
+export type AssetMapping = Required<AssetMapping3D>;
 
 export class AssetMappingCache {
   private readonly _sdk: CogniteClient;
 
-  private readonly _modelToAssetMappings = new Map<ModelRevisionKey, AssetMapping3D[]>();
+  private readonly _modelToAssetMappings = new Map<ModelRevisionKey, Promise<AssetMapping[]>>();
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
@@ -55,10 +57,10 @@ export class AssetMappingCache {
     return { node: nearestMappedAncestor, mappings: mappingsOfNearestAncestor };
   }
 
-  public async getAssetMappingsForModel(
+  public getAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<AssetMapping3D[]> {
+  ): Promise<AssetMapping[]> {
     const key = modelRevisionToKey(modelId, revisionId);
     const cachedResult = this._modelToAssetMappings.get(key);
 
@@ -66,7 +68,15 @@ export class AssetMappingCache {
       return cachedResult;
     }
 
-    const assetMappings = await this.fetchAssetMappingsForModel(modelId, revisionId);
+    return this.fetchAndCacheMappingsForModel(modelId, revisionId);
+  }
+
+  private fetchAndCacheMappingsForModel(
+    modelId: ModelId,
+    revisionId: RevisionId
+  ): Promise<AssetMapping[]> {
+    const key = modelRevisionToKey(modelId, revisionId);
+    const assetMappings = this.fetchAssetMappingsForModel(modelId, revisionId);
 
     this._modelToAssetMappings.set(key, assetMappings);
     return assetMappings;
@@ -75,11 +85,17 @@ export class AssetMappingCache {
   private async fetchAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<AssetMapping3D[]> {
-    return await this._sdk.assetMappings3D
-      .list(modelId, revisionId)
+  ): Promise<AssetMapping[]> {
+    const assetMapping3D = await this._sdk.assetMappings3D
+      .list(modelId, revisionId, { limit: 1000 })
       .autoPagingToArray({ limit: Infinity });
+
+    return assetMapping3D.filter(isValidAssetMapping);
   }
+}
+
+function isValidAssetMapping(assetMapping: AssetMapping3D): assetMapping is AssetMapping {
+  return assetMapping.treeIndex !== undefined && assetMapping.subtreeSize !== undefined;
 }
 
 function modelRevisionToKey(modelId: ModelId, revisionId: RevisionId): ModelRevisionKey {

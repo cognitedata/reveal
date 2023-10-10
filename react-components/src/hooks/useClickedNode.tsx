@@ -95,7 +95,7 @@ const useCombinedClickedNodeData = (
       assetMappingResult: assetMappingData,
       intersection: cadIntersection
     });
-  }, [cadIntersection, fdmData, assetMappings]);
+  }, [cadIntersection, fdmData, assetMappings?.node]);
 
   return clickedNodeData;
 };

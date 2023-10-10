@@ -8,7 +8,7 @@ import {
 } from '../components/Reveal3DResources/types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type ThreeDModelMappings } from './types';
-import { type Node3D, type CogniteExternalId, type AssetMapping3D } from '@cognite/sdk';
+import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
@@ -23,7 +23,8 @@ import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../components/CadModelContainer/useApplyCadModelStyling';
-import { useMappeNodesForRevisions } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
+import { useAssetMappeNodesForRevisions } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
+import { AssetMapping } from '../components/NodeCacheProvider/AssetMappingCache';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -64,7 +65,7 @@ function useCalculateMappedStyling(
     modelsRevisionsWithMappedEquipment
   );
 
-  const { data: assetMappingData } = useMappeNodesForRevisions(modelsRevisionsWithMappedEquipment);
+  const { data: assetMappingData } = useAssetMappeNodesForRevisions(modelsRevisionsWithMappedEquipment);
 
   const modelsMappedFdmStyleGroups = useMemo(() => {
     if (
@@ -206,7 +207,7 @@ function getMappedStyleGroupFromFdm(
 }
 
 function getMappedStyleGroupFromAssetMappings(
-  assetMappings: AssetMapping3D[],
+  assetMappings: AssetMapping[],
   nodeAppearance: NodeAppearance
 ): TreeIndexStylingGroup {
   const indexSet = new IndexSet();
