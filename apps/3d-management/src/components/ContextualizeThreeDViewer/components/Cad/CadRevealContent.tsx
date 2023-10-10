@@ -36,6 +36,14 @@ export const CadRevealContent = ({
     isResourceSelectorOpen: state.isResourceSelectorOpen,
   }));
 
+  const handleOnClickResourceSelector = () => {
+    if (isResourceSelectorOpen) {
+      onCloseResourceSelector();
+      return;
+    }
+    onOpenResourceSelector();
+  };
+
   const handleModelOnLoad = (model: CogniteModel) => {
     setModelLoaded();
 
@@ -74,13 +82,7 @@ export const CadRevealContent = ({
           size="small"
           icon={isResourceSelectorOpen ? 'ChevronRight' : 'ChevronLeft'}
           aria-label="Toggle resource selector visibility"
-          onClick={() => {
-            if (isResourceSelectorOpen) {
-              onCloseResourceSelector();
-              return;
-            }
-            onOpenResourceSelector();
-          }}
+          onClick={handleOnClickResourceSelector}
         />
       </StyledResourceSelectorButtonWrapper>
       <CadAnnotationsCard />
