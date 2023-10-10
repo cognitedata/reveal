@@ -2,7 +2,10 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 
 import { Cognite3DViewer } from '@cognite/reveal';
 
-import { updatePendingAnnotation } from '../useContextualizeThreeDViewerStore';
+import {
+  updatePendingAnnotation,
+  setTransformMode,
+} from '../useContextualizeThreeDViewerStore';
 
 export enum TransformMode {
   TRANSLATE = 'translate',
@@ -19,10 +22,10 @@ export const createTransformControls = (
 
   addDraggingChangedListener(transformControls, viewer);
   addChangeListener(transformControls, viewer);
-  addKeydownListener(transformControls);
+  addKeydownListener();
   addMouseUpListener(transformControls);
   // default to scaling
-  setTransformMode(transformControls, TransformMode.SCALE);
+  setTransformMode(TransformMode.SCALE);
 
   return transformControls;
 };
@@ -39,25 +42,16 @@ const onChange = (viewer: Cognite3DViewer): void => {
   viewer.requestRedraw();
 };
 
-const onKeydown = (
-  event: KeyboardEvent,
-  transformControls: TransformControls
-): void => {
+const onKeydown = (event: KeyboardEvent): void => {
   switch (event.code) {
-    case 'KeyM':
-      setTransformMode(transformControls, TransformMode.TRANSLATE);
+    case 'KeyT':
+      setTransformMode(TransformMode.TRANSLATE);
+
       break;
-    case 'KeyR':
-      setTransformMode(transformControls, TransformMode.SCALE);
+    case 'KeyG':
+      setTransformMode(TransformMode.SCALE);
       break;
   }
-};
-
-const setTransformMode = (
-  transformControls: TransformControls,
-  mode: TransformMode
-): void => {
-  transformControls.setMode(mode);
 };
 
 const addDraggingChangedListener = (
@@ -78,9 +72,9 @@ const addChangeListener = (
   });
 };
 
-const addKeydownListener = (transformControls: TransformControls): void => {
+const addKeydownListener = (): void => {
   window.addEventListener('keydown', (event) => {
-    onKeydown(event, transformControls);
+    onKeydown(event);
   });
 };
 

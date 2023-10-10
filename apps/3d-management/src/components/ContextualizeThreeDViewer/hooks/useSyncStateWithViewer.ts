@@ -54,6 +54,7 @@ export const useSyncStateWithViewer = () => {
     threeDViewer,
     tool,
     visualizationOptions,
+    transformMode,
   } = useContextualizeThreeDViewerStore((state) => ({
     annotations: state.annotations,
     hoveredAnnotationId: state.hoveredAnnotationId,
@@ -65,6 +66,7 @@ export const useSyncStateWithViewer = () => {
     threeDViewer: state.threeDViewer,
     tool: state.tool,
     visualizationOptions: state.visualizationOptions,
+    transformMode: state.transformMode,
   }));
   const pendingAnnotationTransformControls = useRef<TransformControls | null>(
     null
@@ -88,6 +90,21 @@ export const useSyncStateWithViewer = () => {
         model.pointColorType = visualizationOptions.pointColor;
       }
   }, [visualizationOptions, threeDViewer]);
+
+  // sync transformControls with state
+  useEffect(() => {
+    if (threeDViewer === null) return;
+    const transformControls = pendingAnnotationTransformControls.current;
+    if (transformControls === null) return;
+    if (transformMode === null) {
+      transformControls.visible = false;
+      transformControls.enabled = false;
+      return;
+    }
+    transformControls.setMode(transformMode);
+    transformControls.visible = true;
+    transformControls.enabled = true;
+  }, [threeDViewer, pendingAnnotationTransformControls, transformMode]);
 
   // Sync pending annotation with viewer.
   useEffect(() => {

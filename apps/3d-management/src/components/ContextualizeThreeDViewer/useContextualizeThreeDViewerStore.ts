@@ -6,6 +6,8 @@ import { AnnotationModel } from '@cognite/sdk';
 
 import { DEFAULT_POINT_SIZE } from '../../pages/ContextualizeEditor/constants';
 
+import { TransformMode } from './utils/createTransformControls';
+
 export type ThreeDPosition = {
   x: number;
   y: number;
@@ -41,6 +43,7 @@ type RootState = {
   isModelLoaded: boolean;
   annotations: AnnotationModel[] | null;
   visualizationOptions: VisualizationOptions;
+  transformMode: TransformMode | null;
   hoveredAnnotationId: number | null;
 };
 
@@ -55,6 +58,7 @@ const initialState: RootState = {
   isModelLoaded: false,
   annotations: null,
   visualizationOptions: DEFAULT_VISUALIZATION_OPTIONS,
+  transformMode: null,
   hoveredAnnotationId: null,
 };
 
@@ -172,6 +176,14 @@ export const updateVisualizationOptions = (
       ...prevState.visualizationOptions,
       ...visualizationOptions,
     },
+  }));
+};
+
+export const setTransformMode = (transformMode: TransformMode | null) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    transformMode:
+      prevState.transformMode === transformMode ? null : transformMode,
   }));
 };
 
