@@ -32,7 +32,7 @@ export class AssetMappingCache {
     const searchTreeIndices = new Set(ancestors.map((ancestor) => ancestor.treeIndex));
     const allModelMappings = await this.getAssetMappingsForModel(modelId, revisionId);
 
-    const relevantMappings = [...allModelMappings.values()].filter((mapping) =>
+    const relevantMappings = allModelMappings.filter((mapping) =>
       searchTreeIndices.has(mapping.treeIndex)
     );
 
