@@ -126,7 +126,7 @@ export const SearchConfig: React.FC<Props> = ({
         onSave();
       }}
     >
-      <Flex style={{ overflow: 'hidden' }}>
+      <Flex data-testid="search-config" style={{ overflow: 'hidden' }}>
         <CommonColumn
           searchConfigData={configData}
           onChange={onChangeCommonHandler}
