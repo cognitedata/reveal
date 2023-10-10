@@ -17,9 +17,9 @@ export type AssetMappingDataResult = {
 };
 
 export type FdmNodeDataResult = {
-  fdmNode: DmsUniqueIdentifier;
+  fdmNodes: DmsUniqueIdentifier[];
   cadNode: Node3D;
-  view?: Source;
+  views?: Source[];
 };
 
 export type ClickedNodeData = {
@@ -121,7 +121,7 @@ const useFdmData = (
       }
 
       setFdmData({
-        fdmNode: cadAndFdmNodes.fdmIds[0],
+        fdmNodes: cadAndFdmNodes.fdmIds,
         cadNode: cadAndFdmNodes.cadNode
       });
 
@@ -132,9 +132,9 @@ const useFdmData = (
       }
 
       setFdmData({
-        fdmNode: cadAndFdmNodes.fdmIds[0],
+        fdmNodes: cadAndFdmNodes.fdmIds,
         cadNode: cadAndFdmNodes.cadNode,
-        view: views[0]
+        views: views
       });
     }
   }, [fdmPromises]);

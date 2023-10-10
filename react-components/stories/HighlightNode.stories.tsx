@@ -73,8 +73,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       {
         fdmAssetExternalIds: [
           {
-            externalId: nodeData.fdmResult.fdmNode.externalId,
-            space: nodeData.fdmResult.fdmNode.space
+            externalId: nodeData.fdmResult.fdmNodes[0].externalId,
+            space: nodeData.fdmResult.fdmNodes[0].space
           }
         ],
         style: { cad: DefaultNodeAppearance.Highlighted }
@@ -82,8 +82,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     ]);
 
     void cameraNavigation.fitCameraToInstance(
-      nodeData.fdmResult.fdmNode.externalId,
-      nodeData.fdmResult.fdmNode.space
+      nodeData.fdmResult.fdmNodes[0].externalId,
+      nodeData.fdmResult.fdmNodes[0].space
     );
   }, [nodeData]);
 
