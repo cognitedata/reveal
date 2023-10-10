@@ -70,6 +70,10 @@ Cypress.Commands.add('resetSearchFilters', () => {
   cy.clickButton('Reset');
 });
 
+Cypress.Commands.add('shouldExistExactMatchLabelBy', (property: string) => {
+  cy.contains(new RegExp(`Exact match: .*${property}.*`)).should('exist');
+});
+
 export interface SearchCommand {
   goToTab(tab: ResourceTab): void;
   performSearch(searchString: string): void;
@@ -79,4 +83,5 @@ export interface SearchCommand {
   excludeSearchParameter(parameterName: string): void;
   includeSearchParameter(parameterName: string): void;
   resetSearchFilters(): void;
+  shouldExistExactMatchLabelBy(property: string): void;
 }
