@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, TreeIndexNodeCollection } from '@cognite/reveal';
 import { AssetMapping3D } from '@cognite/sdk';
 
 // TODO: Improve naming of the tools
@@ -17,6 +17,8 @@ type RootState = {
   isModelLoaded: boolean;
   selectedNodeIds: Array<number>;
   contextualizedNodes: AssetMapping3D[] | null;
+  selectedNodeIdsStyleIndex: TreeIndexNodeCollection;
+  contextualizedNodesStyleIndex: TreeIndexNodeCollection;
 };
 
 const initialState: RootState = {
@@ -27,6 +29,8 @@ const initialState: RootState = {
   isModelLoaded: false,
   selectedNodeIds: [],
   contextualizedNodes: null,
+  selectedNodeIdsStyleIndex: new TreeIndexNodeCollection(),
+  contextualizedNodesStyleIndex: new TreeIndexNodeCollection(),
 };
 
 export const useCadContextualizeStore = create<RootState>(() => initialState);
@@ -88,5 +92,23 @@ export const setContextualizedNodes = (
   useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
     contextualizedNodes,
+  }));
+};
+
+export const setSelectedNodeIdsStyleIndex = (
+  selectedNodeIdsStyleIndex: TreeIndexNodeCollection
+) => {
+  useCadContextualizeStore.setState((prevState) => ({
+    ...prevState,
+    selectedNodeIdsStyleIndex: selectedNodeIdsStyleIndex,
+  }));
+};
+
+export const setContextualizedNodesStyleIndex = (
+  contextualizedNodesStyleIndex: TreeIndexNodeCollection
+) => {
+  useCadContextualizeStore.setState((prevState) => ({
+    ...prevState,
+    contextualizedNodesStyleIndex,
   }));
 };
