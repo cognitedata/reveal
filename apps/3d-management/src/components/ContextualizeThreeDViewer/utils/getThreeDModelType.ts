@@ -4,6 +4,7 @@ import { ThreeDModelType } from '../types';
 
 // call the sdk.get() to retrieve the outputs and check the model type with the url:
 // '/api/v1/projects/${getProject()}/3d/models/${modelId}/revisions/${revisionId}/outputs?format=all-outputs'
+// TODO: handle format return type that are neither PC nor CAD to handle error messages properly
 export const getThreeDModelType = async (
   sdk,
   modelId,
