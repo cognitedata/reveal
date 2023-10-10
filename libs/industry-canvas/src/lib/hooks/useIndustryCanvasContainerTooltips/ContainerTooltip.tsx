@@ -3,7 +3,14 @@ import React, { useCallback, useState } from 'react';
 import dayjs from 'dayjs';
 
 import { createLink } from '@cognite/cdf-utilities';
-import { Button, Pagination, ToolBar, Tooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  Dropdown,
+  Menu,
+  Pagination,
+  ToolBar,
+  Tooltip,
+} from '@cognite/cogs.js';
 import { ContainerType } from '@cognite/unified-file-viewer';
 
 import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
@@ -75,6 +82,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
   const trackUsage = useMetrics();
   const [isInEditLabelMode, setIsInEditLabelMode] = useState(false);
   const [isChangingProperties, setIsChangingProperties] = useState(false);
+  const [shouldShowDropdown, setShouldShowDropdown] = useState<boolean>(false);
   const { resourceType, resourceId } = selectedContainer.metadata;
   const { t } = useTranslation();
 
@@ -232,7 +240,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               )}
             >
               <Button
-                icon="ListSearch"
+                icon="SidebarRight"
                 onClick={onOpenInResourceSelectorClick}
                 type="ghost"
                 aria-label={t(
@@ -302,7 +310,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
             >
               <Button
                 type="ghost"
-                size="medium"
+                size="small"
                 onClick={() =>
                   onUpdateContainer({
                     ...selectedContainer,
@@ -340,7 +348,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                   })
                 }
                 type="ghost"
-                size="medium"
+                size="small"
                 aria-label={t(
                   translationKeys.TIMESERIES_TOOLTIP_LAST_YEAR,
                   'Last month'
@@ -368,7 +376,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                   })
                 }
                 type="ghost"
-                size="medium"
+                size="small"
                 aria-label={t(
                   translationKeys.TIMESERIES_TOOLTIP_LAST_YEAR,
                   'Last year'
@@ -445,34 +453,80 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 icon="String"
                 onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
                 type="ghost"
+                size="small"
                 aria-label={t(
                   translationKeys.CHANGE_LABEL_TOOLTIP,
                   'Change label'
                 )}
               />
             </Tooltip>
-            <Tooltip
-              content={t(translationKeys.OPEN_IN_CHARTS, 'Open in Charts')}
+            <Dropdown
+              visible={shouldShowDropdown}
+              placement="bottom-end"
+              content={
+                <Menu>
+                  <Menu.Item
+                    aria-label={t(
+                      translationKeys.OPEN_IN_DATA_EXPLORER,
+                      'Open in Data Explorer'
+                    )}
+                    onClick={() => {
+                      navigateToPath(
+                        `/explore/timeSeries/${selectedContainer.metadata.resourceId}`
+                      );
+                      trackUsage(
+                        MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                        {
+                          containerType: selectedContainer.type,
+                        }
+                      );
+                    }}
+                  >
+                    {t(
+                      translationKeys.OPEN_IN_DATA_EXPLORER,
+                      'Open in Data Explorer'
+                    )}
+                  </Menu.Item>
+                  <Menu.Item
+                    aria-label={t(
+                      translationKeys.OPEN_IN_CHARTS,
+                      'Open in Charts'
+                    )}
+                    onClick={() => {
+                      navigateToPath('/charts', {
+                        timeserieIds: [selectedContainer.metadata.resourceId],
+                        startTime: new Date(
+                          selectedContainer.startDate
+                        ).getTime(),
+                        endTime: new Date(selectedContainer.endDate).getTime(),
+                      });
+                      trackUsage(
+                        MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                        {
+                          containerType: selectedContainer.type,
+                        }
+                      );
+                    }}
+                  >
+                    {t(translationKeys.OPEN_IN_CHARTS, 'Open in Charts')}
+                  </Menu.Item>
+                </Menu>
+              }
             >
-              <Button
-                icon="LineChart"
-                onClick={() => {
-                  navigateToPath('/charts', {
-                    timeserieIds: [selectedContainer.metadata.resourceId],
-                    startTime: new Date(selectedContainer.startDate).getTime(),
-                    endTime: new Date(selectedContainer.endDate).getTime(),
-                  });
-                  trackUsage(
-                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
-                    {
-                      containerType: selectedContainer.type,
-                    }
-                  );
-                }}
-                type="ghost"
-                aria-label={t(translationKeys.OPEN_IN_CHARTS, 'Open in Charts')}
-              />
-            </Tooltip>
+              <Tooltip content={t(translationKeys.OPEN_IN, 'Open in...')}>
+                <Button
+                  onClick={() =>
+                    setShouldShowDropdown(
+                      (prevShouldShowDropdown) => !prevShouldShowDropdown
+                    )
+                  }
+                  style={{ paddingLeft: 10 }}
+                  icon="ExternalLink"
+                  size="small"
+                  type="ghost"
+                />
+              </Tooltip>
+            </Dropdown>
             <Tooltip
               content={t(
                 translationKeys.FIND_RELATED_DATA,
@@ -480,7 +534,9 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               )}
             >
               <Button
-                icon="ListSearch"
+                style={{ paddingLeft: 12 }}
+                icon="SidebarRight"
+                size="small"
                 onClick={onOpenInResourceSelectorClick}
                 type="ghost"
                 aria-label={t(
@@ -489,36 +545,11 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 )}
               />
             </Tooltip>
-            <Tooltip
-              content={t(
-                translationKeys.OPEN_IN_DATA_EXPLORER,
-                'Open in Data Explorer'
-              )}
-            >
-              <Button
-                icon="ExternalLink"
-                onClick={() => {
-                  navigateToPath(
-                    `/explore/timeSeries/${selectedContainer.metadata.resourceId}`
-                  );
-                  trackUsage(
-                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
-                    {
-                      containerType: selectedContainer.type,
-                    }
-                  );
-                }}
-                type="ghost"
-                aria-label={t(
-                  translationKeys.OPEN_IN_DATA_EXPLORER,
-                  'Open in Data Explorer'
-                )}
-              />
-            </Tooltip>
           </>
           <Tooltip content={t(translationKeys.REMOVE, 'Remove')}>
             <Button
               icon="Delete"
+              size="small"
               onClick={onRemoveContainer}
               type="ghost"
               aria-label={t(
@@ -713,7 +744,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               )}
             >
               <Button
-                icon="ListSearch"
+                icon="SidebarRight"
                 onClick={onOpenInResourceSelectorClick}
                 type="ghost"
                 aria-label={t(
