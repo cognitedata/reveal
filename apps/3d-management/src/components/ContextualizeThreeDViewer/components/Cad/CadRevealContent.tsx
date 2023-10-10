@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 
 import styled from 'styled-components';
 
+import { Color } from 'three';
+
 import { Button, ToolBar } from '@cognite/cogs.js';
 import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
 import {
@@ -72,6 +74,11 @@ export const CadRevealContent = ({
         addModelOptions={{
           modelId: modelId,
           revisionId: revisionId,
+        }}
+        styling={{
+          defaultStyle: {
+            color: new Color('#efefef'),
+          },
         }}
         onLoad={handleModelOnLoad}
       />
