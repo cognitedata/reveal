@@ -32,7 +32,7 @@ const useAssetMappingCache = (): AssetMappingCache => {
   return content.cache;
 };
 
-export const useAssetMappeNodesForRevisions = (
+export const useAssetMappedNodesForRevisions = (
   cadModels: CadModelOptions[]
 ): UseQueryResult<ModelWithAssetMappings[]> => {
   const assetMappingCache = useAssetMappingCache();
