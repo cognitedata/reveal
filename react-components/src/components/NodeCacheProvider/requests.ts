@@ -8,7 +8,7 @@ import {
   type FdmSDK,
   type InspectResultList
 } from '../../utilities/FdmSDK';
-import { ModelId, type FdmCadEdge, RevisionId } from './types';
+import { type FdmCadEdge } from './types';
 import {
   INSTANCE_SPACE_3D_DATA,
   type InModel3dEdgeProperties,

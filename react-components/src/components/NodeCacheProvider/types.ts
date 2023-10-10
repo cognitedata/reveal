@@ -18,7 +18,7 @@ export type FdmNodeDataPromises = {
 export type ModelRevisionNodesResult = {
   modelId: ModelId;
   revisionId: RevisionId;
-  nodes: Node3D[];
+  nodeMap: Map<AssetId, Node3D>;
 };
 
 export type AncestorQueryResult = {
@@ -31,6 +31,7 @@ export type ModelId = number;
 export type RevisionId = number;
 export type TreeIndex = number;
 export type NodeId = number;
+export type AssetId = number;
 export type FdmId = DmsUniqueIdentifier;
 
 export type ModelRevisionId = { modelId: number; revisionId: number };

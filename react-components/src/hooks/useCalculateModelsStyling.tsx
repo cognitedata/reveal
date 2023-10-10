@@ -2,14 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 import {
-  AssetMappingStylingGroup,
+  type AssetMappingStylingGroup,
   type CadModelOptions,
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
 } from '../components/Reveal3DResources/types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type ThreeDModelFdmMappings } from './types';
-import { type Node3D, type CogniteExternalId, type AssetMapping3D } from '@cognite/sdk';
+import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
@@ -18,14 +18,18 @@ import { useMemo } from 'react';
 import {
   type NodeId,
   type FdmEdgeWithNode,
-  type ModelRevisionKey
+  type ModelRevisionKey,
+  type AssetId
 } from '../components/NodeCacheProvider/types';
 import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../components/CadModelContainer/useApplyCadModelStyling';
-import { AssetMapping } from '../components/NodeCacheProvider/AssetMappingCache';
-import { useAssetMappeNodesForRevisions, useNodesForAssets } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
+import { type AssetMapping } from '../components/NodeCacheProvider/AssetMappingCache';
+import {
+  useAssetMappeNodesForRevisions,
+  useNodesForAssets
+} from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -41,7 +45,7 @@ export type StyledModel = {
 
 export const useCalculateCadStyling = (
   models: CadModelOptions[],
-  instanceGroups: (FdmAssetStylingGroup | AssetMappingStylingGroup)[],
+  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>,
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledModel[] => {
   const modelsMappedStyleGroups = useCalculateMappedStyling(
@@ -66,7 +70,9 @@ function useCalculateMappedStyling(
     modelsRevisionsWithMappedEquipment
   );
 
-  const { data: assetMappingData } = useAssetMappeNodesForRevisions(modelsRevisionsWithMappedEquipment);
+  const { data: assetMappingData } = useAssetMappeNodesForRevisions(
+    modelsRevisionsWithMappedEquipment
+  );
 
   const modelsMappedFdmStyleGroups = useMemo(() => {
     if (
@@ -121,32 +127,63 @@ function useCalculateMappedStyling(
 
 function useCalculateInstanceStyling(
   models: CadModelOptions[],
-  instanceGroups: (FdmAssetStylingGroup | AssetMappingStylingGroup)[]
+  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>
 ): ModelStyleGroup[] {
   const { data: fdmAssetMappings } = useFdmAssetMappings(
-    instanceGroups.filter(isFdmAssetStylingGroup).flatMap((instanceGroup) => instanceGroup.fdmAssetExternalIds),
+    instanceGroups
+      .filter(isFdmAssetStylingGroup)
+      .flatMap((instanceGroup) => instanceGroup.fdmAssetExternalIds),
     models
   );
 
-  const modelAssetMappings = useNodesForAssets(models, instanceGroups.filter(isAssetMappingStylingGroup).flatMap((instanceGroup) => instanceGroup.assetIds));
+  const modelAssetMappings = useNodesForAssets(
+    models,
+    instanceGroups
+      .filter(isAssetMappingStylingGroup)
+      .flatMap((instanceGroup) => instanceGroup.assetIds)
+  );
 
-  const modelInstanceStyleGroups = useMemo(() => {
+  const fdmModelInstanceStyleGroups = useMemo(() => {
     if (models.length === 0 || fdmAssetMappings === undefined) {
       return [];
     }
 
-    const assetModelMappings = modelAssetMappings.data.map(data => data.
-
     return models.map((model) => {
       const styleGroup =
         fdmAssetMappings !== undefined
-          ? calculateCadModelStyling(instanceGroups, fdmAssetMappings, model)
+          ? calculateFdmCadModelStyling(
+              instanceGroups.filter(isFdmAssetStylingGroup),
+              fdmAssetMappings,
+              model
+            )
           : [];
       return { model, styleGroup };
     });
   }, [models, instanceGroups, fdmAssetMappings]);
 
-  return modelInstanceStyleGroups;
+  const assetMappingInstanceStyleGroups = useMemo(() => {
+    if (modelAssetMappings.data === undefined || modelAssetMappings.data.length === 0) {
+      return [];
+    }
+
+    return models.map((model, index) => {
+      console.log('model index = ', index);
+      console.dir('model data = ', modelAssetMappings.data);
+      return calculateAssetMappingCadModelStyling(
+        instanceGroups.filter(isAssetMappingStylingGroup),
+        modelAssetMappings.data[index].nodeMap,
+        model
+      );
+    });
+  }, [models, instanceGroups, modelAssetMappings.data]);
+
+  const combinedMappedStyleGroups = useMemo(
+    () =>
+      groupStyleGroupByModel([...fdmModelInstanceStyleGroups, ...assetMappingInstanceStyleGroups]),
+    [fdmModelInstanceStyleGroups, assetMappingInstanceStyleGroups]
+  );
+
+  return combinedMappedStyleGroups;
 }
 
 function isFdmAssetStylingGroup(instanceGroup: any): instanceGroup is FdmAssetStylingGroup {
@@ -233,16 +270,14 @@ function getMappedStyleGroupFromAssetMappings(
   return { treeIndexSet: indexSet, style: nodeAppearance };
 }
 
-function calculateCadModelStyling(
+function calculateFdmCadModelStyling(
   stylingGroups: FdmAssetStylingGroup[],
   mappings: ThreeDModelFdmMappings[],
   model: CadModelOptions
 ): TreeIndexStylingGroup[] {
   const modelMappings = getModelMappings(mappings, model);
 
-  const resourcesStylingGroups = stylingGroups;
-
-  return resourcesStylingGroups
+  return stylingGroups
     .map((resourcesGroup) => {
       const modelMappedNodeLists = resourcesGroup.fdmAssetExternalIds
         .map((uniqueId) => modelMappings.get(uniqueId.externalId))
@@ -262,6 +297,34 @@ function calculateCadModelStyling(
       };
     })
     .filter((group) => group.treeIndexSet.count > 0);
+}
+
+function calculateAssetMappingCadModelStyling(
+  stylingGroups: AssetMappingStylingGroup[],
+  nodeMap: Map<AssetId, Node3D>,
+  model: CadModelOptions
+): ModelStyleGroup {
+  const treeIndexSetsWithStyle = stylingGroups
+    .map((group) => {
+      const indexSet = new IndexSet();
+      group.assetIds
+        .map((assetId) => nodeMap.get(assetId))
+        .filter((node): node is Node3D => node !== undefined)
+        .forEach((node) => {
+          indexSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
+        });
+
+      return {
+        treeIndexSet: indexSet,
+        style: group.style.cad
+      };
+    })
+    .filter((setWithStyle) => setWithStyle.treeIndexSet.count > 0);
+
+  return {
+    model,
+    styleGroup: treeIndexSetsWithStyle
+  };
 }
 
 function getNodeSubtreeNumericRange(node: Node3D): NumericRange {

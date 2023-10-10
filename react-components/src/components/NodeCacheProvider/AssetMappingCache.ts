@@ -2,8 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteClient, type AssetMapping3D, type Node3D, CogniteInternalId } from '@cognite/sdk';
-import { type ModelId, type ModelRevisionKey, type RevisionId } from './types';
+import {
+  type CogniteClient,
+  type AssetMapping3D,
+  type Node3D,
+  type CogniteInternalId
+} from '@cognite/sdk';
+import { type AssetId, type ModelId, type ModelRevisionKey, type RevisionId } from './types';
 import { maxBy } from 'lodash';
 import assert from 'assert';
 import { fetchNodesForNodeIds } from './requests';
@@ -58,7 +63,7 @@ export class AssetMappingCache {
     return { node: nearestMappedAncestor, mappings: mappingsOfNearestAncestor };
   }
 
-  public getAssetMappingsForModel(
+  public async getAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
@@ -66,13 +71,13 @@ export class AssetMappingCache {
     const cachedResult = this._modelToAssetMappings.get(key);
 
     if (cachedResult !== undefined) {
-      return cachedResult;
+      return await cachedResult;
     }
 
-    return this.fetchAndCacheMappingsForModel(modelId, revisionId);
+    return await this.fetchAndCacheMappingsForModel(modelId, revisionId);
   }
 
-  private fetchAndCacheMappingsForModel(
+  private async fetchAndCacheMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
@@ -80,7 +85,7 @@ export class AssetMappingCache {
     const assetMappings = this.fetchAssetMappingsForModel(modelId, revisionId);
 
     this._modelToAssetMappings.set(key, assetMappings);
-    return assetMappings;
+    return await assetMappings;
   }
 
   private async fetchAssetMappingsForModel(
@@ -94,13 +99,26 @@ export class AssetMappingCache {
     return assetMapping3D.filter(isValidAssetMapping);
   }
 
-  public async getNodesForAssetIds(modelId: ModelId, revisionId: RevisionId, assetIds: CogniteInternalId[]): Promise<Node3D[]> {
+  public async getNodesForAssetIds(
+    modelId: ModelId,
+    revisionId: RevisionId,
+    assetIds: CogniteInternalId[]
+  ): Promise<Map<AssetId, Node3D>> {
     const assetMappings = await this.getAssetMappingsForModel(modelId, revisionId);
     const relevantAssetIds = new Set(assetIds);
 
-    const relevantAssetMappings = assetMappings.filter(mapping => relevantAssetIds.has(mapping.assetId));
+    const relevantAssetMappings = assetMappings.filter((mapping) =>
+      relevantAssetIds.has(mapping.assetId)
+    );
 
-    return fetchNodesForNodeIds(modelId, revisionId, relevantAssetMappings.map(assetMapping => assetMapping.nodeId), this._sdk);
+    const nodes = await fetchNodesForNodeIds(
+      modelId,
+      revisionId,
+      relevantAssetMappings.map((assetMapping) => assetMapping.nodeId),
+      this._sdk
+    );
+
+    return new Map(nodes.map((node, index) => [relevantAssetMappings[index].assetId, node]));
   }
 }
 
