@@ -148,6 +148,11 @@ export const DocumentsTable = (props: DocumentTableProps) => {
             return <Body level={2}>{row.original.type}</Body>;
           },
         },
+        tableColumns.labels,
+        {
+          ...tableColumns.source(),
+          accessorFn: (document) => document.sourceFile.source,
+        },
         {
           accessorKey: 'modifiedTime',
           header: t('LAST_UPDATED', 'Last updated'),
