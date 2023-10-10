@@ -20,6 +20,7 @@ declare namespace Cypress {
     codeEditorDoesNotContain(value: string): void;
     ensureCodeEditorIsVisible(): void;
     openCodeEditorTab(): void;
+    openUiEditorTab(): void;
     setCodeEditorText(text: string): void;
     typeTextInCodeEditor(text: string): void;
   }
@@ -70,6 +71,10 @@ Cypress.Commands.add('ensureCodeEditorIsVisible', () => {
 
 Cypress.Commands.add('openCodeEditorTab', () => {
   cy.getBySel('code-editor-tab-btn').click();
+  cy.ensurePageFinishedLoading();
+});
+Cypress.Commands.add('openUiEditorTab', () => {
+  cy.getBySel('ui-editor-tab-btn').click();
   cy.ensurePageFinishedLoading();
 });
 

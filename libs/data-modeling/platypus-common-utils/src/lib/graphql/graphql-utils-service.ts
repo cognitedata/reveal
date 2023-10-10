@@ -9,6 +9,7 @@ import {
   DataModelValidationError,
   ArgumentNodeProps,
   IGraphQlUtilsService,
+  DataModelTypeDefsTypeKind,
 } from '@platypus/platypus-core';
 import {
   ObjectTypeDefinitionNode,
@@ -32,6 +33,8 @@ import {
   ObjectTypeApi,
   DirectiveApi,
   InputValueApi,
+  InterfaceTypeApi,
+  ObjectTypeDefinitionNodeProps,
 } from 'graphql-extra';
 import { validateWithCustomRules } from 'graphql-language-service';
 
@@ -57,12 +60,24 @@ const DIRECTIVE_ARGUMENTS_KIND_MAP: {
 export class GraphQlUtilsService implements IGraphQlUtilsService {
   private schemaAst: DocumentApi | null = null;
 
-  addType(name: string, directive?: string): DataModelTypeDefsType {
+  addType(
+    name: string,
+    kind: DataModelTypeDefsTypeKind = 'type',
+    directive?: string
+  ): DataModelTypeDefsType {
     this.createIfEmpty();
-    const newType = this.schemaAst!.createObjectType({
+    const createPayload = {
       name: name,
       directives: directive ? [directive] : [],
-    });
+    } as ObjectTypeDefinitionNodeProps;
+
+    const isInterfaceKind = kind === 'interface';
+
+    // schemaAst is not empty here, createIfEmpty is called at the beginning of the function
+    // that creates the schemaAst and typeMap
+    const newType = isInterfaceKind
+      ? this.schemaAst!.createInterfaceType(createPayload)
+      : this.schemaAst!.createObjectType(createPayload);
 
     const typeNames = this.getTypeNames();
 
@@ -75,7 +90,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   ): DataModelTypeDefsType {
     this.createIfEmpty();
 
-    const type = this.schemaAst!.getObjectType(typeName);
+    const type = this.getDataModelTypeApi(typeName);
     if (updates.name && updates.name !== type.getName()) {
       // Should probably use updateType() but that function is not exposed for some reason??
       // https://graphql-extra.netlify.app/classes/documentapi.html#updatetype
@@ -144,7 +159,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   ): DataModelTypeDefsField {
     this.createIfEmpty();
     const updatedFieldName = fieldProps.name ? fieldProps.name : fieldName;
-    const createdType = this.schemaAst!.getObjectType(typeName).createField(
+    const dataModelType = this.getDataModelTypeApi(typeName);
+    const createdType = dataModelType.createField(
       fieldProps as FieldDefinitionNodeProps
     );
     const typeNames = this.getTypeNames();
@@ -162,10 +178,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   ): DataModelTypeDefsField {
     this.createIfEmpty();
     const updatedFieldName = updates.name ? updates.name : fieldName;
-    const updatedType = this.schemaAst!.getObjectType(typeName).updateField(
-      fieldName,
-      updates
-    );
+    const dataModelType = this.getDataModelTypeApi(typeName);
+    const updatedType = dataModelType.updateField(fieldName, updates);
     const typeNames = this.getTypeNames();
 
     const updatedField = this.toSolutionDataModelField(
@@ -181,7 +195,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
   removeField(typeName: string, fieldName: string): void {
     this.createIfEmpty();
-    this.schemaAst!.getObjectType(typeName).removeField(fieldName);
+    const dataModelType = this.getDataModelTypeApi(typeName);
+    dataModelType.removeField(fieldName);
   }
 
   parseSchema(
@@ -236,7 +251,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       )
       .map((type) => {
         const typeDef = type as ObjectTypeDefinitionNode;
-        const typeApi = objectTypeApi(typeDef);
+
+        const typeApi = this.getDataModelTypeApi(typeDef.name.value);
         const mappedType = this.toSolutionDataModelType(typeApi, typeNames);
         mappedType.version = views.find(
           (el) => el.externalId === mappedType.name
@@ -260,7 +276,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
   hasTypeField(typeName: string, fieldName: string): boolean {
     this.createIfEmpty();
-    return this.schemaAst!.getObjectType(typeName).hasField(fieldName);
+    const dataModelType = this.getDataModelTypeApi(typeName);
+    return dataModelType.hasField(fieldName);
   }
 
   generateSdl(): string {
@@ -270,7 +287,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   }
 
   private toSolutionDataModelType(
-    type: ObjectTypeApi,
+    type: ObjectTypeApi | InterfaceTypeApi,
     typeNames: Set<string>
   ): DataModelTypeDefsType {
     return {
@@ -282,6 +299,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       interfaces: type.node.interfaces?.map(
         (typeInterface) => typeInterface.name.value
       ),
+      isReadOnly: type.hasDirective('readonly') || type.hasDirective('import'),
+      kind: type.node.kind === 'InterfaceTypeDefinition' ? 'interface' : 'type',
       directives: this.mapDirectives(type.getDirectives()),
       location: type.node.loc
         ? {
@@ -343,7 +362,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       name: directive.getName(),
       arguments: directive.getArguments().map((arg) => ({
         name: arg.getName(),
-        value: arg.getValue(),
+        value: JSON.parse(JSON.stringify(arg.getValue())),
       })),
     }));
   }
@@ -454,6 +473,18 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       }
     }
     return errors.map((err) => this.graphQlToValidationError(err));
+  }
+
+  private getDataModelTypeApi(typeName: string) {
+    // SchemaAst is not null here because we are always calling this function after parseSchema or createIfEmpty
+    // This will populate the typeMap as well
+    const typeKind = this.schemaAst!.typeMap.get(typeName)!.kind;
+
+    const isInterfaceKind = typeKind === 'InterfaceTypeDefinition';
+
+    return isInterfaceKind
+      ? this.schemaAst!.getInterfaceType(typeName)
+      : this.schemaAst!.getObjectType(typeName);
   }
 
   private graphQlToValidationError(

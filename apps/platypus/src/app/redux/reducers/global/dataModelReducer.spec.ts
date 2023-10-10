@@ -28,6 +28,8 @@ const parsedTypeDefsMock = {
         },
       ],
       interfaces: [],
+      isReadOnly: false,
+      kind: 'type',
       location: { column: 37, line: 1 },
       name: 'Person',
     },
@@ -47,6 +49,8 @@ const parsedTypeDefsMock = {
         },
       ],
       interfaces: [],
+      isReadOnly: false,
+      kind: 'type',
       location: { column: 63, line: 1 },
       name: 'Job',
     },
@@ -80,7 +84,10 @@ describe('DataModel reducer', () => {
       },
       {
         type: dataModelReducer.actions.createTypeDefsType,
-        payload: `Team`,
+        payload: {
+          typeName: `Team`,
+          dataModelKind: 'type',
+        },
       }
     );
 

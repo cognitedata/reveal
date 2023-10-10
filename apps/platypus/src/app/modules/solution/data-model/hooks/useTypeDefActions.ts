@@ -18,11 +18,16 @@ export const useTypeDefActions = () => {
   const { track } = useMixpanel();
 
   const createType = useCallback(
-    (typeName: string) => {
+    (typeName: string, dataModelKind: string) => {
       track('UIEditor', {
         type: 'Create type',
       });
-      dispatch(dataModelActions.createTypeDefsType(typeName));
+      dispatch(
+        dataModelActions.createTypeDefsType({
+          typeName,
+          dataModelKind,
+        })
+      );
     },
     [track, dispatch]
   );

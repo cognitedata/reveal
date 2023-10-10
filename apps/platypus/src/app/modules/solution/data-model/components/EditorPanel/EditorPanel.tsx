@@ -53,9 +53,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
   // for fdm v3 users, only show the ui editor if the feature toggle is on.
   const isUIEditorVisible = isUIEditorFlagEnabled;
 
-  const [currentView, setCurrentView] = useState(
-    isUIEditorVisible ? 'ui' : 'code'
-  );
+  const [currentView, setCurrentView] = useState('code');
 
   const { data: dataModelVersionList } = useDataModelVersions(
     externalId,
@@ -123,9 +121,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
         </Suspense>
       ) : (
         <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
-          <div style={{ flexGrow: 1, overflow: 'auto' }}>
-            <UIEditor disabled={isUIDisabled} />
-          </div>
+          <UIEditor disabled={isUIDisabled} />
         </ErrorBoundary>
       )}
     </div>

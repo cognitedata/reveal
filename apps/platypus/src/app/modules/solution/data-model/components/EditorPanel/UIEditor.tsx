@@ -42,29 +42,27 @@ export function UIEditor({ disabled }: UIEditorProps) {
 
   return (
     <>
-      {currentTypeName ? (
+      {currentTypeName && currentType ? (
         <SchemaTypeView
-          currentTypeName={currentTypeName}
+          currentType={currentType}
           onNavigateBack={() => setCurrentTypeName(null)}
         >
           <Flex direction="column" gap={16}>
-            {currentType && (
-              <TypeDefFields
-                key="TypeDefFields"
-                currentType={currentType}
-                disabled={disabled}
-                customTypesNames={customTypesNames.filter((name) => name)}
-                onFieldCreated={createField}
-                onFieldUpdated={(fieldName, updates) =>
-                  updateField({
-                    typeName: currentType.name,
-                    fieldName,
-                    updates,
-                  })
-                }
-                onFieldRemoved={removeField}
-              />
-            )}
+            <TypeDefFields
+              key="TypeDefFields"
+              currentType={currentType}
+              disabled={disabled || (currentType.isReadOnly as boolean)}
+              customTypesNames={customTypesNames.filter((name) => name)}
+              onFieldCreated={createField}
+              onFieldUpdated={(fieldName, updates) =>
+                updateField({
+                  typeName: currentType.name,
+                  fieldName,
+                  updates,
+                })
+              }
+              onFieldRemoved={removeField}
+            />
           </Flex>
         </SchemaTypeView>
       ) : (

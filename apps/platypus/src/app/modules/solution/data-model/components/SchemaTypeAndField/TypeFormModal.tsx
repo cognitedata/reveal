@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useController, useForm, SubmitHandler } from 'react-hook-form';
 
 import {
@@ -5,7 +6,7 @@ import {
   DataModelTypeNameValidator,
 } from '@platypus/platypus-core';
 
-import { Input, InputProps, Modal } from '@cognite/cogs.js';
+import { Input, InputProps, Modal, SegmentedControl } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../../../../hooks/useTranslation';
 
@@ -16,7 +17,7 @@ type FormInput = {
 type BaseModalProps = {
   visible: boolean;
   closeModal: () => void;
-  onOk: (typeName: string) => void;
+  onOk: (typeName: string, dataModelKind: string) => void;
   typeValue: string;
   mode: string;
   existingTypes: DataModelTypeDefsType[];
@@ -31,6 +32,7 @@ export const TypeFormModal = ({
   existingTypes,
 }: BaseModalProps) => {
   const { t } = useTranslation('type_modal');
+  const [dataModelKind, setDataModelKind] = useState('type');
   const label =
     {
       create: t('add_type', 'Add Type'),
@@ -77,7 +79,7 @@ export const TypeFormModal = ({
   const onSubmit: SubmitHandler<FormInput> = (data) => {
     if (data.typeName) {
       closeModal();
-      onOk(data.typeName);
+      onOk(data.typeName, dataModelKind);
       reset({
         typeName: '',
       });
@@ -108,6 +110,16 @@ export const TypeFormModal = ({
         }}
         placeholder={t('modal_name_input_placeholder', 'Enter name')}
       />
+      <br />
+      <SegmentedControl
+        currentKey={dataModelKind}
+        onButtonClicked={setDataModelKind}
+      >
+        <SegmentedControl.Button key="type">Type</SegmentedControl.Button>
+        <SegmentedControl.Button key="interface">
+          Interface
+        </SegmentedControl.Button>
+      </SegmentedControl>
     </Modal>
   );
 };

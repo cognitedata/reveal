@@ -29,6 +29,7 @@ declare namespace Cypress {
       required?: boolean
     ): void;
     ensureUIEditorIsVisible(): void;
+    ensureTypeDefsEditorIsVisible(): void;
     getFieldRowViaUIEditor<E extends Node = HTMLElement>(
       fieldName: string
     ): Chainable<JQuery<E>>;
@@ -155,6 +156,18 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('ensureUIEditorIsVisible', () => {
   cy.getBySel('ui-editor-list-title').should('be.visible');
+});
+
+Cypress.Commands.add('ensureTypeDefsEditorIsVisible', () => {
+  cy.get(
+    '[data-cy="editor_panel"] .cog-data-grid.cog-data-grid-compact'
+  ).should('be.visible');
+
+  cy.get(
+    '[data-cy="editor_panel"] .cog-data-grid.cog-data-grid-compact .ag-row'
+  )
+    .its('length')
+    .should('be.gte', 1);
 });
 
 Cypress.Commands.add('getFieldRowViaUIEditor', (fieldName: string) => {

@@ -3,6 +3,7 @@ import {
   DataModelTypeDefs,
   DataModelTypeDefsField,
   DataModelTypeDefsType,
+  DataModelTypeDefsTypeKind,
   DataModelValidationError,
 } from '../types';
 
@@ -30,7 +31,11 @@ export interface IGraphQlUtilsService {
    * Adds new type into AST
    * @param name
    */
-  addType(name: string, directive?: string): DataModelTypeDefsType;
+  addType(
+    name: string,
+    kind?: DataModelTypeDefsTypeKind,
+    directive?: string
+  ): DataModelTypeDefsType;
 
   /**
    * Update specified type in AST

@@ -90,7 +90,6 @@ export const useDataModelTypeDefs = (
     if (!selectedDataModelVersion.schema) {
       return { types: [] };
     }
-
     try {
       const dataModelTypeDefs = dataModelTypeDefsBuilder.parseSchema(
         selectedDataModelVersion.schema,

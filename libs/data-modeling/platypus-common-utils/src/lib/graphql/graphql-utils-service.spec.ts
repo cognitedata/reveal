@@ -26,13 +26,27 @@ type Comment @view {
 type PostMetadata {
   slug: String
 }
-type PostColor {
+interface PostColor {
   name: String
 }
 type Like {
   id: Int
   user: User
   comment: Comment
+}
+
+interface UserType @view(version: "1", space: "Blog") @import {
+  name: String!
+}
+
+type AuthorAddress {
+  street: String
+}
+
+interface Author implements UserType {
+	name: String!
+  contact: String
+  address: [AuthorAddress] @relation(edgeSource: "AuthorAddress")
 }
 `;
 
@@ -78,6 +92,22 @@ describe('GraphQlUtilsServiceTest', () => {
         nonNull: false,
       })
     );
+
+    const authorType = result.types.find((type) => type.name === 'Author');
+    expect(authorType).toBeTruthy();
+    expect(authorType?.kind).toEqual('interface');
+    expect(authorType.isReadOnly).toEqual(false);
+    expect(authorType?.interfaces).toEqual(['UserType']);
+
+    const addressField = authorType?.fields.find(
+      (field) => field.name === 'address'
+    ) as DataModelTypeDefsField;
+    expect(addressField).toBeTruthy();
+    expect(addressField?.directives[0].name).toEqual('relation');
+
+    const userType = result.types.find((type) => type.name === 'UserType');
+    expect(authorType).toBeTruthy();
+    expect(userType.isReadOnly).toEqual(true);
   });
 
   it('should parse empty graphql schema into SolutionDataModel', () => {
@@ -105,21 +135,35 @@ describe('GraphQlUtilsServiceTest', () => {
     service.parseSchema(schemaMock);
 
     const generatedGraphQlSchema = service.generateSdl();
-    expect(generatedGraphQlSchema.trim().replace(/\n/gm, '')).toEqual(
-      schemaMock.trim().replace(/\n/gm, '')
+    expect(generatedGraphQlSchema.replace(/\s/g, '')).toEqual(
+      schemaMock.replace(/\s/g, '')
     );
   });
 
   it('should add new type into existing SolutionDataModel', () => {
     const service = createInstance();
     service.parseSchema(schemaMock);
-    const newType = service.addType('Test');
+    const newType = service.addType('Test', 'type');
     expect(newType).toEqual(
       expect.objectContaining({
         name: 'Test',
         fields: [],
       })
     );
+  });
+
+  it('should add new interface into existing SolutionDataModel', () => {
+    const service = createInstance();
+    service.parseSchema(schemaMock);
+    const newType = service.addType('Test', 'interface');
+    expect(newType).toEqual(
+      expect.objectContaining({
+        name: 'Test',
+        fields: [],
+      })
+    );
+
+    expect(service.generateSdl()).toContain('interface Test');
   });
 
   it('can rename type name twice', () => {
@@ -186,6 +230,25 @@ describe('GraphQlUtilsServiceTest', () => {
     );
   });
 
+  it('should add new field into a inteface type', () => {
+    const service = createInstance();
+    service.parseSchema(schemaMock);
+    const newField = service.addField('PostColor', 'test', {
+      name: 'test',
+      type: { name: 'String' },
+    });
+
+    expect(service.hasTypeField('PostColor', 'test')).toEqual(true);
+    expect(newField).toEqual(
+      expect.objectContaining({
+        name: 'test',
+        description: undefined,
+        type: { name: 'String', list: false, nonNull: false, custom: false },
+        nonNull: false,
+      })
+    );
+  });
+
   it('should update field into SolutionDataModel', () => {
     const service = createInstance();
     service.parseSchema(schemaMock);
@@ -236,7 +299,7 @@ describe('GraphQlUtilsServiceTest', () => {
 
   it('should return empty string as SDL when all types are removed', () => {
     const service = createInstance();
-    service.addType('Person');
+    service.addType('Person', 'type');
     service.removeType('Person');
     expect(service.generateSdl()).toBe('');
   });

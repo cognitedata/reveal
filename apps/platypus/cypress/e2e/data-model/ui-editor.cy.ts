@@ -5,13 +5,14 @@ describe('Data Model Page - UI editor', () => {
     cy.request('http://localhost:4200/reset').then(() => {
       cy.visit(getUrl('/blog/blog/latest'));
       cy.ensurePageFinishedLoading();
+      cy.openUiEditorTab();
     });
   });
 
   it('renders with correct types', () => {
     cy.ensureUIEditorIsVisible();
     cy.typeShouldExistInUIEditor('Post');
-    cy.typeShouldExistInUIEditor('User');
+    cy.typeShouldExistInUIEditor('UserType');
     cy.typeShouldExistInUIEditor('Comment');
     cy.typeShouldExistInUIEditor('TypeWithoutData');
   });
@@ -41,12 +42,13 @@ describe('Data Model Page - UI editor', () => {
   });
 
   // Requires cypress window to be focused if using --watch
-  it.skip('can add type with fields', () => {
+  it('can add type with fields', () => {
     const typeName = 'CypressTest';
 
     cy.enableEditMode();
     cy.addTypeViaUIEditor(typeName);
 
+    cy.ensureTypeDefsEditorIsVisible();
     cy.addFieldViaUIEditor('nameZ', 'String', true);
     cy.addFieldViaUIEditor('ageZ', 'Int');
     cy.addFieldViaUIEditor('isActiveZ', 'Boolean', true);
@@ -100,6 +102,8 @@ describe('Data Model Page - UI editor', () => {
     cy.addTypeViaUIEditor('Cypress');
     cy.reload();
     cy.ensurePageFinishedLoading();
+    cy.openUiEditorTab();
+    cy.ensureUIEditorIsVisible();
     cy.typeShouldExistInUIEditor('Cypress');
   });
 

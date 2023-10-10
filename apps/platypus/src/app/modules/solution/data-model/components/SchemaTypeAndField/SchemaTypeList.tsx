@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 
-import { Body, Button, Title, Flex } from '@cognite/cogs.js';
+import { Body, Button, Title, Flex, Input } from '@cognite/cogs.js';
 
+import { useDebounce } from '../../../../../hooks/useDebounce';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 import { useDataModelState } from '../../../hooks/useDataModelState';
 
@@ -16,7 +17,7 @@ import { TypeFormModal } from './TypeFormModal';
 type Props = {
   disabled?: boolean;
   objectTypes: DataModelTypeDefsType[];
-  createSchemaType: (schema: string) => void;
+  createSchemaType: (typeName: string, dataModelKind: string) => void;
   renameSchemaType: (oldTypeName: string, newTypeName: string) => void;
   deleteSchemaType: (typeName: string) => void;
 };
@@ -33,7 +34,18 @@ export const SchemaTypeList = ({
   const [currentModal, setModal] = useState<ModalType>('');
   const { setCurrentTypeName } = useDataModelState();
   const [typeValue, setValue] = useState('');
+  const [searchFilterValue, setSearchFilterValue] = useState('');
   const { t } = useTranslation('schema_type_list');
+
+  const debouncedSearchValue = useDebounce(searchFilterValue, 300);
+
+  const filteredTypes = useMemo(
+    () =>
+      (objectTypes || []).filter((type) =>
+        type.name.toLowerCase().startsWith(debouncedSearchValue.toLowerCase())
+      ),
+    [objectTypes, debouncedSearchValue]
+  );
 
   const closeModal = () => {
     setModal('');
@@ -51,9 +63,9 @@ export const SchemaTypeList = ({
     setValue(value);
   };
 
-  const formModalOkMethod = (newTypeName: string) => {
+  const formModalOkMethod = (newTypeName: string, dataModelKind: string) => {
     if (currentModal === 'create') {
-      createSchemaType(newTypeName);
+      createSchemaType(newTypeName, dataModelKind);
     }
     if (currentModal === 'rename') {
       renameSchemaType(typeValue, newTypeName);
@@ -80,17 +92,43 @@ export const SchemaTypeList = ({
         onOk={deleteSchemaType}
       />
       <Header>
-        <Title
-          data-cy="ui-editor-list-title"
-          level={5}
-          style={{ paddingLeft: 16, marginTop: 24 }}
-        >
+        <Title data-cy="ui-editor-list-title" level={5}>
           {t('type_title', 'Types')}
         </Title>
+
+        <Flex alignItems="center" gap={4}>
+          {objectTypes.length ? (
+            <Input
+              iconPlacement="left"
+              icon="Search"
+              onChange={(e) => setSearchFilterValue(e.target.value)}
+              placeholder="Search"
+              value={searchFilterValue}
+              type="search"
+            />
+          ) : null}
+
+          {!disabled && (
+            <Button
+              icon="Add"
+              iconPlacement="left"
+              type="ghost"
+              aria-label="Add type"
+              data-cy="add-type-btn"
+              disabled={disabled}
+              style={{
+                padding: '4px 8px 4px 8px',
+              }}
+              onClick={openCreateModal}
+            >
+              {t('add_type', 'Add Type')}
+            </Button>
+          )}
+        </Flex>
       </Header>
-      {objectTypes.length > 0 ? (
-        <>
-          {objectTypes.map((el) => (
+      {filteredTypes.length > 0 ? (
+        <div style={{ flexGrow: 1, overflow: 'auto' }}>
+          {filteredTypes.map((el) => (
             <ListItem
               data-cy={`type-list-item-${el.name}`}
               key={el.name}
@@ -105,6 +143,9 @@ export const SchemaTypeList = ({
                 </Body>
               </Flex>
               <Flex alignItems="center" gap={8}>
+                {el.kind === 'interface' ? (
+                  <Tag key={el.name}>interface</Tag>
+                ) : null}
                 {el.directives?.map((directive) => (
                   <Tag key={directive.name}>{directive.name}</Tag>
                 ))}
@@ -125,25 +166,7 @@ export const SchemaTypeList = ({
               </Flex>
             </ListItem>
           ))}
-          {!disabled && (
-            <Button
-              icon="Add"
-              iconPlacement="left"
-              type="ghost"
-              aria-label="Add type"
-              data-cy="add-type-btn"
-              disabled={disabled}
-              style={{
-                marginLeft: '8px',
-                marginTop: '16px',
-                padding: '4px 8px 4px 8px',
-              }}
-              onClick={openCreateModal}
-            >
-              {t('add_type', 'Add Type')}
-            </Button>
-          )}
-        </>
+        </div>
       ) : (
         <Flex direction="column" justifyContent="center" alignItems="center">
           <EmptyText>
@@ -170,6 +193,8 @@ export const SchemaTypeList = ({
 const Header = styled.div`
   display: flex;
   margin-bottom: 12px;
+  justify-content: space-between;
+  padding: 24px 16px 0;
 `;
 
 const ListItem = styled.div`
