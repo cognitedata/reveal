@@ -1,30 +1,36 @@
+import { ModelMapping } from '../context/QuickMatchContext';
 import { Prediction } from '../hooks/entity-matching-predictions';
 import { AppliedRule, Rule, RuleCondition } from '../types/rules';
 
 export const generateAppliedRules = (
+  matchFields: ModelMapping,
   predictions: Prediction[]
 ): AppliedRule[] => {
   const appliedRules: { [key: string]: AppliedRule } = {};
   predictions.forEach((prediction) => {
-    const sourceName = prediction.source.name;
-    const targetName = prediction.match.target.name;
+    matchFields.forEach((fields) => {
+      if (fields.source === undefined || fields.target === undefined) return;
 
-    const rule = toRule(sourceName, targetName);
-    const sourcePattern = rule.extractors[0].pattern;
-    const targetPattern = rule.extractors[1].pattern;
+      const sourceName = prediction.source[fields.source];
+      const targetName = prediction.match.target[fields.target];
 
-    const key = `${sourcePattern},${targetPattern}`;
-    if (!(key in appliedRules)) {
-      appliedRules[key] = {
-        numberOfMatches: 0,
-        matches: [],
-        rule: rule,
-      };
-    }
+      const rule = toRule(fields.source, sourceName, fields.target, targetName);
+      const sourcePattern = rule.extractors[0].pattern;
+      const targetPattern = rule.extractors[1].pattern;
 
-    appliedRules[key].matches.push({
-      source: prediction.source,
-      target: prediction.match.target,
+      const key = `${fields.source},${sourcePattern},${fields.target},${targetPattern}`;
+      if (!(key in appliedRules)) {
+        appliedRules[key] = {
+          numberOfMatches: 0,
+          matches: [],
+          rule: rule,
+        };
+      }
+
+      appliedRules[key].matches.push({
+        source: prediction.source,
+        target: prediction.match.target,
+      });
     });
   });
 
@@ -67,7 +73,12 @@ export const nameToPattern = (name: string): any[] => {
   return [groups, groupTypes];
 };
 
-export const toRule = (sourceName: string, targetName: string): Rule => {
+export const toRule = (
+  sourceField: string,
+  sourceName: string,
+  targetField: string,
+  targetName: string
+): Rule => {
   const [sourceGroups, sourceTypes] = nameToPattern(sourceName);
   const [targetGroups, targetTypes] = nameToPattern(targetName);
 
@@ -155,13 +166,13 @@ export const toRule = (sourceName: string, targetName: string): Rule => {
       {
         entitySet: 'sources',
         extractorType: 'regex',
-        field: 'name', // TODO(CXT-1415): fix
+        field: sourceField,
         pattern: sourcePattern,
       },
       {
         entitySet: 'targets',
         extractorType: 'regex',
-        field: 'name', // TODO(CXT-1415): fix
+        field: targetField,
         pattern: targetPattern,
       },
     ],

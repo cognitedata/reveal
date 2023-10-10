@@ -14,10 +14,7 @@ import { JobStatus } from './types';
 
 export type PredictionObject = {
   id: number;
-  externalId?: string;
-  name: string;
-  description?: string;
-};
+} & Record<string, string>;
 
 export type Match = {
   score: number;

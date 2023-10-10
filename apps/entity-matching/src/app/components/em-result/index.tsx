@@ -102,7 +102,10 @@ export default function EntityMatchingResult({
   );
 
   const appliedRules = useMemo(
-    () => (rulesView ? generateAppliedRules(predictions) : []),
+    () =>
+      rulesView && model?.matchFields
+        ? generateAppliedRules(model.matchFields, predictions)
+        : [],
     [predictions, rulesView]
   );
 

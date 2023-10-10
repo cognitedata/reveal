@@ -12,7 +12,12 @@ describe('Rules', () => {
 
   describe('toRule', () => {
     it('returns a simple rule', () => {
-      const rule = toRule('VAL_23_XF_12345:foo.bar', '23-XF-12345');
+      const rule = toRule(
+        'name',
+        'VAL_23_XF_12345:foo.bar',
+        'name',
+        '23-XF-12345'
+      );
 
       expect(rule.conditions.length).toBe(3);
       expect(rule.conditions[0].arguments).toMatchObject([
@@ -38,7 +43,7 @@ describe('Rules', () => {
     });
 
     it('can handle different group orders', () => {
-      const rule = toRule('XF_12345:foo23.bar', '23-XF-12345');
+      const rule = toRule('name', 'XF_12345:foo23.bar', 'name', '23-XF-12345');
 
       expect(rule.conditions.length).toBe(3);
       expect(rule.conditions[0].arguments).toMatchObject([
