@@ -1,7 +1,4 @@
-import {
-  AssetMappings3DListFilter,
-  CogniteClient,
-} from '@cognite/sdk/dist/src';
+import { AssetMappings3DListFilter, CogniteClient } from '@cognite/sdk';
 
 export const getCdfCadContextualization = async ({
   sdk,

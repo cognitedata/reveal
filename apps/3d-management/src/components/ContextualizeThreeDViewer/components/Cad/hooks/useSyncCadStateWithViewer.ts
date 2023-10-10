@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
-import { useCadContextualizeStore } from '../useCadContextualizeStore';
-import { getCogniteCadModel } from '@3d-management/components/ContextualizeThreeDViewer/utils/getCogniteCadModel';
+
 import { TreeIndexNodeCollection } from '@cognite/reveal';
-import { CAD_STYLE } from '@3d-management/pages/ContextualizeEditor/constants';
+
+import { getCogniteCadModel } from '../../../../../components/ContextualizeThreeDViewer/utils/getCogniteCadModel';
+import { CAD_STYLE } from '../../../../../pages/ContextualizeEditor/constants';
+import { useCadContextualizeStore } from '../useCadContextualizeStore';
 
 export const useSyncCadStateWithViewer = () => {
   const {
