@@ -7,6 +7,7 @@ import { Loader } from '@data-exploration/components';
 import noop from 'lodash/noop';
 
 import { Flex } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 import { FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -19,6 +20,8 @@ import ReactUnifiedViewer, {
   isSupportedFileInfo,
   ToolType,
   UnifiedViewer,
+  ZoomControls,
+  ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
 import type {
   PanToolConfig,
@@ -258,6 +261,11 @@ export const FilePreview = ({
     enabled: showControls,
   });
 
+  const { isEnabled: isCogPilotEnabled } = useFlag('COGNITE_COPILOT', {
+    fallback: false,
+    forceRerender: true,
+  });
+
   const { currentSearchResultIndex, onNextResult, onPreviousResult } =
     useCurrentSearchResult({
       searchResults: searchResults ?? [],
@@ -450,7 +458,7 @@ export const FilePreview = ({
             nodes={nodes}
             tooltips={enableToolTips ? tooltips : undefined}
             onClick={onStageClick}
-            shouldShowZoomControls={showControls}
+            shouldShowZoomControls={false}
             onUpdateRequest={handleUpdateRequest}
             tool={creatable ? RECTANGLE_TOOL : PAN_TOOL}
           />
@@ -487,6 +495,16 @@ export const FilePreview = ({
           annotationsAcl={annotationsAcl}
           hideEdit={hideEdit}
         />
+        {showControls && (
+          <ZoomControlsWrapper
+            addMarginToRight={isCogPilotEnabled && !showResourcePreviewSidebar}
+          >
+            <ZoomControls
+              unifiedViewerRef={unifiedViewerRef}
+              zoomToFitMode={ZoomToFitMode.DEFAULT}
+            />
+          </ZoomControlsWrapper>
+        )}
       </UFVWrapper>
       {showSideBar && showResourcePreviewSidebar && (
         <SidebarWrapper>
@@ -509,6 +527,12 @@ export const FilePreview = ({
     </FullHeightWrapper>
   );
 };
+
+const ZoomControlsWrapper = styled.div<{ addMarginToRight: boolean }>`
+  position: absolute;
+  bottom: 15px;
+  right: ${({ addMarginToRight }) => (addMarginToRight ? 130 : 50)}px;
+`;
 
 const UFVWrapper = styled.div`
   display: flex;
