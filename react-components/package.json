@@ -33,13 +33,13 @@
     "styled-components": ">=5"
   },
   "dependencies": {
-    "@cognite/cdf-i18n-utils": "^0.7.5",
-    "@cognite/cdf-utilities": "^3.5.0",
     "@tanstack/react-query": "^4.29.19",
     "assert": "^2.0.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@cognite/cdf-i18n-utils": "^0.7.5",
+    "@cognite/cdf-utilities": "^3.5.0",
     "@cognite/cogs.js": "^9.17.0",
     "@cognite/reveal": "4.4.3",
     "@cognite/sdk": "^8.2.0",
