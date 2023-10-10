@@ -1,3 +1,5 @@
+import styled from 'styled-components';
+
 import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
 
 import { useCadContextualizeStore } from './useCadContextualizeStore';
@@ -8,17 +10,15 @@ export const CadAnnotationsCard = () => {
   }));
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        top: FLOATING_ELEMENT_MARGIN,
-        right: FLOATING_ELEMENT_MARGIN,
-        background: 'white',
-        padding: '4px',
-        borderRadius: '4px',
-      }}
-    >
-      Asset Mappings: {contextualizedNodes?.length ?? 0}
-    </div>
+    <StyledCard> Asset Mappings: {contextualizedNodes?.length ?? 0}</StyledCard>
   );
 };
+
+const StyledCard = styled.div`
+  position: absolute;
+  top: ${FLOATING_ELEMENT_MARGIN}px;
+  right: ${FLOATING_ELEMENT_MARGIN}px;
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+`;
