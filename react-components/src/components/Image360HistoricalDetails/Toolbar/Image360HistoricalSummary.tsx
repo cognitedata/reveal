@@ -9,7 +9,7 @@ import { Thumbnail } from '../utils/Thumbnail';
 import { type Cognite3DViewer, type Image360 } from '@cognite/reveal';
 // Using named import to avoid react component creation error when default import is used.
 import { uniqueId } from 'lodash';
-import { useTranslation } from '../../../common/i18n';
+import { useTranslation } from '../../i18n/I18n';
 
 export type Image360RevisionDetails = {
   date?: string;
@@ -77,7 +77,7 @@ export const Image360HistoricalSummary = forwardRef(
         <StyledFlex direction="column">
           <StyledSubFlex>{stationName}</StyledSubFlex>
           <StyledDetail>
-            {t('IMAGES_360_STATION')} {stationId}
+            {t('IMAGES_360_STATION', 'Station :')} {stationId}
           </StyledDetail>
         </StyledFlex>
 
