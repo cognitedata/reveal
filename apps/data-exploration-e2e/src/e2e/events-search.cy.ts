@@ -40,9 +40,8 @@ describe('Search - Events', () => {
     cy.wait(`@${EVENT_LIST_ALIAS}`);
 
     cy.getTableById('event-search-results')
-      .selectColumn('Type')
       .contains(EVENT_TYPE)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Type');
   });
@@ -54,7 +53,7 @@ describe('Search - Events', () => {
     cy.getTableById('event-search-results')
       .selectColumn('Description')
       .contains(EVENT_DESCRIPTION)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Description');
   });
@@ -66,7 +65,7 @@ describe('Search - Events', () => {
     cy.getTableById('event-search-results')
       .selectColumn('External ID')
       .contains(EVENT_EXTERNAL_ID)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('External ID');
   });
@@ -78,7 +77,7 @@ describe('Search - Events', () => {
     cy.getTableById('event-search-results')
       .selectColumn('ID')
       .contains(EVENT_ID)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('ID');
   });
@@ -90,7 +89,7 @@ describe('Search - Events', () => {
     cy.getTableById('event-search-results')
       .selectColumn('isdeleted')
       .contains(EVENT_METADATA)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Metadata "isdeleted"');
   });

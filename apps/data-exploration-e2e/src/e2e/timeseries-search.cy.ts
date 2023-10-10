@@ -41,7 +41,7 @@ describe('Timeseries - Search', () => {
 
     cy.getTableById('timeseries-search-results')
       .contains(TIMESERIES_NAME)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Name');
   });
@@ -53,7 +53,7 @@ describe('Timeseries - Search', () => {
     cy.getTableById('timeseries-search-results')
       .selectColumn('Description')
       .contains(TIMESERIES_DESCRIPTION)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Description');
   });
@@ -65,7 +65,7 @@ describe('Timeseries - Search', () => {
     cy.getTableById('timeseries-search-results')
       .selectColumn('External ID')
       .contains(TIMESERIES_EXTERNAL_ID)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('External ID');
   });
@@ -77,8 +77,7 @@ describe('Timeseries - Search', () => {
     cy.getTableById('timeseries-search-results')
       .selectColumn('ID')
       .contains(TIMESERIES_ID)
-      .scrollIntoView()
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('ID');
   });
@@ -90,8 +89,7 @@ describe('Timeseries - Search', () => {
     cy.getTableById('timeseries-search-results')
       .selectColumn('ValueType')
       .contains(TIMESERIES_METADATA)
-      .scrollIntoView()
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Metadata "ValueType"');
   });

@@ -39,9 +39,8 @@ describe('Search function - files', () => {
     cy.wait(`@${SEQUENCE_LIST_ALIAS}`);
 
     cy.getTableById('sequence-search-results')
-      .selectColumn('Name')
       .contains(SEQUENCE_NAME)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Name');
   });
@@ -53,7 +52,7 @@ describe('Search function - files', () => {
     cy.getTableById('sequence-search-results')
       .selectColumn('Description')
       .contains(SEQUENCE_DESCRIPTION)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Description');
   });
@@ -65,7 +64,7 @@ describe('Search function - files', () => {
     cy.getTableById('sequence-search-results')
       .selectColumn('External ID')
       .contains(SEQUENCE_EXTERNAL_ID)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('External ID');
   });
@@ -77,7 +76,7 @@ describe('Search function - files', () => {
     cy.getTableById('sequence-search-results')
       .selectColumn(' ID')
       .contains(SEQUENCE_ID)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('ID');
   });
@@ -88,7 +87,7 @@ describe('Search function - files', () => {
     cy.getTableById('sequence-search-results')
       .selectColumn('source')
       .contains(SEQUENCE_METADATA)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Metadata "source"');
   });

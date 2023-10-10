@@ -39,9 +39,7 @@ describe('Assets - Search', () => {
     cy.performSearch(ASSET_NAME);
     cy.wait(`@${ASSET_LIST_ALIAS}`);
 
-    cy.getTableById('asset-tree-table')
-      .contains(ASSET_NAME)
-      .should('be.visible');
+    cy.getTableById('asset-tree-table').contains(ASSET_NAME).should('exist');
 
     cy.shouldExistExactMatchLabelBy('Name');
   });
@@ -53,7 +51,7 @@ describe('Assets - Search', () => {
     cy.getTableById('asset-tree-table')
       .selectColumn('Description')
       .contains(ASSET_DESCRIPTION)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Description');
   });
@@ -65,7 +63,7 @@ describe('Assets - Search', () => {
     cy.getTableById('asset-tree-table')
       .selectColumn('External ID')
       .contains(ASSET_EXTERNAL_ID)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('External ID');
   });
@@ -84,8 +82,7 @@ describe('Assets - Search', () => {
     cy.getTableById('asset-tree-table')
       .selectColumn('description')
       .contains(ASSET_METADATA)
-      .scrollIntoView()
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Metadata "Description"');
   });

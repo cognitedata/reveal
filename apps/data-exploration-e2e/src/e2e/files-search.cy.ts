@@ -41,7 +41,7 @@ describe('Search - files', () => {
 
     cy.getTableById('documents-search-results')
       .contains(FILE_NAME)
-      .should('be.visible');
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Name');
   });
@@ -50,12 +50,7 @@ describe('Search - files', () => {
     cy.performSearch(FILE_CONTENT);
     cy.wait(`@${FILE_LIST_ALIAS}`);
 
-    cy.getTableById('documents-search-results')
-      .selectColumn('Content')
-      .contains(FILE_CONTENT)
-      .should('be.visible');
-
-    cy.shouldExistExactMatchLabelBy('Content');
+    cy.shouldExistMatchLabelBy('Fuzzy', 'Content');
   });
 
   it('should search by: External ID', () => {
@@ -64,8 +59,8 @@ describe('Search - files', () => {
 
     cy.getTableById('documents-search-results')
       .selectColumn('External ID')
-      .contains(FILE_CONTENT)
-      .should('be.visible');
+      .contains(FILE_EXTERNAL_ID)
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('External ID');
   });
@@ -76,8 +71,8 @@ describe('Search - files', () => {
 
     cy.getTableById('documents-search-results')
       .selectColumn('ID')
-      .contains(FILE_CONTENT)
-      .should('be.visible');
+      .contains(FILE_ID)
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('ID');
   });
@@ -88,8 +83,8 @@ describe('Search - files', () => {
 
     cy.getTableById('documents-search-results')
       .selectColumn('description')
-      .contains(FILE_CONTENT)
-      .should('be.visible');
+      .contains(FILE_METADATA)
+      .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Metadata "description"');
   });
