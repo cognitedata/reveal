@@ -32,6 +32,7 @@ import {
   setContextualizedNodes,
   setModelId,
   setSelectedNodeIds,
+  setRevisionId,
 } from './useCadContextualizeStore';
 
 const fetchContextualizedNodes = async ({
@@ -105,7 +106,8 @@ export const CadContextualizeThreeDViewer = ({
 
   useEffect(() => {
     setModelId(modelId);
-  }, [modelId]);
+    setRevisionId(revisionId);
+  }, [modelId, revisionId]);
 
   useSyncCadStateWithViewer();
   useCadOnClickHandler();

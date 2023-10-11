@@ -7,6 +7,7 @@ import { useCadContextualizeStore } from '../useCadContextualizeStore';
 export const useSyncCadStateWithViewer = () => {
   const {
     modelId,
+    revisionId,
     isModelLoaded,
     threeDViewer,
     selectedNodeIds,
@@ -15,6 +16,7 @@ export const useSyncCadStateWithViewer = () => {
     contextualizedNodesStyleIndex,
   } = useCadContextualizeStore((state) => ({
     modelId: state.modelId,
+    revisionId: state.revisionId,
     isModelLoaded: state.isModelLoaded,
     threeDViewer: state.threeDViewer,
     selectedNodeIds: state.selectedNodeIds,
@@ -27,16 +29,18 @@ export const useSyncCadStateWithViewer = () => {
   useEffect(() => {
     if (!isModelLoaded) return;
     if (modelId === null) return;
+    if (revisionId === null) return;
     if (threeDViewer === null) return;
     const cadModel = getCogniteCadModel({
       modelId,
+      revisionId,
       viewer: threeDViewer,
     });
     if (cadModel === undefined) return;
 
     // Reset all nodes
     cadModel.removeAllStyledNodeCollections();
-  }, [modelId, threeDViewer, isModelLoaded]);
+  }, [modelId, revisionId, threeDViewer, isModelLoaded]);
 
   // Update selected nodes in the viewer
   useEffect(() => {
@@ -44,10 +48,12 @@ export const useSyncCadStateWithViewer = () => {
 
     const updateSelectedNodes = async () => {
       if (modelId === null) return;
+      if (revisionId === null) return;
       if (threeDViewer === null) return;
 
       const cadModel = getCogniteCadModel({
         modelId,
+        revisionId,
         viewer: threeDViewer,
       });
       if (cadModel === undefined) return;
@@ -74,6 +80,7 @@ export const useSyncCadStateWithViewer = () => {
   }, [
     selectedNodeIds,
     modelId,
+    revisionId,
     threeDViewer,
     isModelLoaded,
     contextualizedNodesStyleIndex,
@@ -86,10 +93,12 @@ export const useSyncCadStateWithViewer = () => {
 
     const updateContextualizedNodes = async () => {
       if (modelId === null) return;
+      if (revisionId === null) return;
       if (threeDViewer === null) return;
 
       const cadModel = getCogniteCadModel({
         modelId,
+        revisionId,
         viewer: threeDViewer,
       });
       if (cadModel === undefined) return;
@@ -114,6 +123,7 @@ export const useSyncCadStateWithViewer = () => {
     isModelLoaded,
     contextualizedNodes,
     modelId,
+    revisionId,
     threeDViewer,
     contextualizedNodesStyleIndex,
   ]);
@@ -121,10 +131,12 @@ export const useSyncCadStateWithViewer = () => {
   useEffect(() => {
     if (!isModelLoaded) return;
     if (modelId === null) return;
+    if (revisionId === null) return;
     if (threeDViewer === null) return;
 
     const cadModel = getCogniteCadModel({
       modelId,
+      revisionId,
       viewer: threeDViewer,
     });
     if (cadModel === undefined) return;
@@ -137,5 +149,5 @@ export const useSyncCadStateWithViewer = () => {
     cadModel.assignStyledNodeCollection(contextualizedNodesStyleIndex, {
       color: CAD_STYLE.CONTEXTUALIZED_COLOR,
     });
-  }, [modelId, threeDViewer, isModelLoaded]);
+  }, [modelId, revisionId, threeDViewer, isModelLoaded]);
 };

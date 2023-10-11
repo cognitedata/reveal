@@ -14,6 +14,7 @@ type RootState = {
   threeDViewer: Cognite3DViewer | null;
   tool: ToolType;
   modelId: number | null;
+  revisionId: number | null;
   isModelLoaded: boolean;
   selectedNodeIds: Array<number>;
   contextualizedNodes: AssetMapping3D[] | null;
@@ -26,6 +27,7 @@ const initialState: RootState = {
   threeDViewer: null,
   tool: ToolType.ADD_ANNOTATION,
   modelId: null,
+  revisionId: null,
   isModelLoaded: false,
   selectedNodeIds: [],
   contextualizedNodes: null,
@@ -76,6 +78,13 @@ export const setModelId = (modelId: number) => {
   useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
     modelId,
+  }));
+};
+
+export const setRevisionId = (revisionId: number) => {
+  useCadContextualizeStore.setState((prevState) => ({
+    ...prevState,
+    revisionId,
   }));
 };
 

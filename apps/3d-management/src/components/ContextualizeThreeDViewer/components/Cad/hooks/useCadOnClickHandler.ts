@@ -6,7 +6,6 @@ import {
   PointerEventData,
 } from '@cognite/reveal';
 
-import { getCogniteCadModel } from '../../../utils/getCogniteCadModel';
 import {
   setSelectedNodeIds,
   useCadContextualizeStore,
@@ -27,12 +26,14 @@ const isCadIntersection = (
 export const useCadOnClickHandler = () => {
   const {
     modelId,
+    revisionId,
     threeDViewer,
     selectedNodeIdsList,
     contextualizedNodes,
     contextualizedNodesStyleIndex,
   } = useCadContextualizeStore((state) => ({
     modelId: state.modelId,
+    revisionId: state.revisionId,
     threeDViewer: state.threeDViewer,
     selectedNodeIdsList: state.selectedNodeIds,
     contextualizedNodes: state.contextualizedNodes,
@@ -52,6 +53,7 @@ export const useCadOnClickHandler = () => {
     async (event: PointerEventData) => {
       // TODO: Display a user friendly error message if the model is not found
       if (!modelId) return;
+      if (!revisionId) return;
       if (!threeDViewer) return;
 
       const intersection = await threeDViewer.getIntersectionFromPixel(
@@ -60,10 +62,8 @@ export const useCadOnClickHandler = () => {
       );
       if (!isCadIntersection(intersection)) return;
 
-      const model = getCogniteCadModel({
-        modelId,
-        viewer: threeDViewer,
-      });
+      const model = intersection.model;
+
       if (model === undefined) return;
 
       const nodeId = await model.mapTreeIndexToNodeId(intersection.treeIndex);
@@ -79,6 +79,7 @@ export const useCadOnClickHandler = () => {
     },
     [
       modelId,
+      revisionId,
       threeDViewer,
       refreshContextualizedNodeStylesFromTreeIds,
       selectedNodeIdsList,

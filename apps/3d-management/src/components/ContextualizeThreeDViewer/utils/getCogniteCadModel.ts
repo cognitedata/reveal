@@ -9,12 +9,16 @@ const isCogniteCadModel = (model: CogniteModel): model is CogniteCadModel =>
 
 export const getCogniteCadModel = ({
   modelId,
+  revisionId,
   viewer,
 }: {
   modelId: number;
+  revisionId: number;
   viewer: Cognite3DViewer;
 }): CogniteCadModel | undefined => {
   return viewer.models
     .filter(isCogniteCadModel)
-    .find((model) => model.modelId === modelId);
+    .find(
+      (model) => model.modelId === modelId && model.revisionId === revisionId
+    );
 };
