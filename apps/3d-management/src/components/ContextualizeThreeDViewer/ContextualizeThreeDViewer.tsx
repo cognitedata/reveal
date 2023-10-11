@@ -21,38 +21,32 @@ export const ContextualizeThreeDViewer = ({
   const [modelType, setModelType] = useState<ThreeDModelType>(
     ThreeDModelType.NONE
   );
-  const [error, setError] = useState<Error>();
-
   useEffect(() => {
     const loadThreeDModel = async () => {
-      const threeDModel = await getThreeDModelType(sdk, modelId, revisionId);
-      setModelType(threeDModel);
+      const threeDModelType = await getThreeDModelType(
+        sdk,
+        modelId,
+        revisionId
+      );
+      if (threeDModelType === ThreeDModelType.NOT_RECOGNIZED_TYPE) {
+        toast.error(
+          <ErrorToast
+            error={
+              new Error(
+                'Model type error or not recognized. Please refresh the page or try another model'
+              )
+            }
+          />,
+          {
+            autoClose: false,
+          }
+        );
+      }
+      setModelType(threeDModelType);
     };
 
     loadThreeDModel();
   }, [sdk, modelId, revisionId]);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(<ErrorToast error={error} />, {
-        autoClose: false,
-      });
-    }
-  }, [error]);
-
-  useEffect(() => {
-    if (
-      modelType !== ThreeDModelType.NONE &&
-      modelType !== ThreeDModelType.POINT_CLOUD &&
-      modelType !== ThreeDModelType.CAD
-    ) {
-      setError(
-        new Error(
-          ' Model type error or not recognized. Please refresh the page or try another model'
-        )
-      );
-    }
-  }, [modelType]);
 
   return (
     <>
