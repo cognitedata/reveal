@@ -2,10 +2,15 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
+    "module": "esnext",
+    "moduleResolution": "node",
     "declaration": true,
+    "allowSyntheticDefaultImports": true,
     "types": []
   },
-  "include": ["**/*.ts"],
+  "include": [
+    "**/*.ts"
+  ],
   "exclude": [
     "**/*.spec.ts",
     "**/*.test.ts",

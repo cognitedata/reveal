@@ -3,7 +3,8 @@ import {
   getIntrospectionQuery,
   GraphQLInputObjectType,
 } from 'graphql';
-import { chunk, uniqBy } from 'lodash';
+import chunk from 'lodash/chunk';
+import uniqBy from 'lodash/uniqBy';
 
 import { PlatypusDmlError, PlatypusError } from '../../../../boundaries/types';
 import { DataUtils } from '../../../../boundaries/utils/data-utils';
@@ -55,7 +56,7 @@ import { compareDataModelVersions } from '../../utils';
 import { DataModelDataMapper } from './data-mappers';
 import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
 import { ItemsWithCursor } from './dto/dms-common-dtos';
-import { DataModelDTO } from './dto/dms-data-model-dtos';
+import { DataModelDTO, DataModelInstanceDTO } from './dto/dms-data-model-dtos';
 import { ListSpacesDTO, SpaceDTO } from './dto/dms-space-dtos';
 import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
 import {
@@ -424,9 +425,9 @@ export class FdmClient implements FlexibleDataModelingClient {
 
     // delete all versions of the data model
     await Promise.all(
-      chunk(dataModelVersions, 100).map((chunk) =>
+      chunk(dataModelVersions, 100).map((chunk: DataModelInstanceDTO[]) =>
         this.dataModelsApi.delete({
-          items: chunk.map((item) => ({
+          items: chunk.map((item: DataModelInstanceDTO) => ({
             space: item.space,
             version: item.version,
             externalId: item.externalId,
