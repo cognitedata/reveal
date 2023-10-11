@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
 import { DataUtils } from '@platypus/platypus-core';
+import { useCdfUserHistoryService } from '@user-history';
 
-import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 
 import { DataModelDetailModal } from '../../components/DataModelDetailModal/DataModelDetailModal';
 import { Notification } from '../../components/Notification/Notification';

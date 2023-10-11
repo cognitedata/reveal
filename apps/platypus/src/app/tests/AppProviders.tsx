@@ -3,6 +3,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { UserHistoryProvider } from '@user-history';
 import { ContainerProvider } from 'brandi-react';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -37,7 +38,13 @@ const AppProviders = ({ store, children, tenant }: Props) => {
     <ReduxProvider store={store}>
       <QueryClientProvider client={queryClient}>
         <ContainerProvider container={rootInjector}>
-          <BrowserRouter basename={`/${tenant}`}>{children}</BrowserRouter>
+          <UserHistoryProvider
+            cluster="test-cluster"
+            project="test-project"
+            userId="test-user"
+          >
+            <BrowserRouter basename={`/${tenant}`}>{children}</BrowserRouter>
+          </UserHistoryProvider>
         </ContainerProvider>
       </QueryClientProvider>
     </ReduxProvider>

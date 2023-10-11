@@ -11,8 +11,9 @@ import {
   PlatypusDmlError,
 } from '@platypus/platypus-core';
 import { useQueryClient } from '@tanstack/react-query';
+import { useCdfUserHistoryService } from '@user-history';
 
-import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 import { Flex } from '@cognite/cogs.js';
 
 import { ErrorBoundary } from '../../../../components/ErrorBoundary/ErrorBoundary';
