@@ -4,7 +4,7 @@ import { ToastContainer, toast } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 
 import ErrorToast from './components/ErrorToast';
-import { ContextualizeThreeDViewerModelType } from './ContextualizeThreeDViewerModelType';
+import { ContextualizationViewer } from './ContextualizationViewer';
 import { ThreeDModelType } from './types';
 import { getThreeDModelType } from './utils/getThreeDModelType';
 
@@ -51,7 +51,7 @@ export const ContextualizeThreeDViewer = ({
   return (
     <>
       <ToastContainer />
-      <ContextualizeThreeDViewerModelType
+      <ContextualizationViewer
         modelId={modelId}
         revisionId={revisionId}
         modelType={modelType}

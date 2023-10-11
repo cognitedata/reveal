@@ -2,17 +2,17 @@ import { CadContextualizeThreeDViewer } from './components/Cad/CadContextualizeT
 import { PointCloudContextualizeThreeDViewer } from './components/PointCloud/PointCloudContextualizeThreeDViewer';
 import { ThreeDModelType } from './types';
 
-type ContextualizeThreeDViewerModelTypeProps = {
+type ContextualizationViewerProps = {
   modelId: number;
   revisionId: number;
   modelType: ThreeDModelType;
 };
 
-export const ContextualizeThreeDViewerModelType = ({
+export const ContextualizationViewer = ({
   modelType,
   modelId,
   revisionId,
-}: ContextualizeThreeDViewerModelTypeProps) => {
+}: ContextualizationViewerProps) => {
   if (modelType === ThreeDModelType.CAD) {
     return (
       <CadContextualizeThreeDViewer
