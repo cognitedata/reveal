@@ -22,7 +22,7 @@ export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCachePro
 export {
   useClickedNodeData,
   type ClickedNodeData,
-  type NodeDataResult
+  type FdmNodeDataResult
 } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
