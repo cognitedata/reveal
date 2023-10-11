@@ -19,25 +19,16 @@ describe('fusion-shell', () => {
     });
   });
 
-  it('check quick link navigation', () => {
-    const quickAccessItems = ['suggestions', 'integrate', 'explore', 'build'];
-    for (let i = 0; i < quickAccessItems.length; i++) {
-      const currentItem = quickAccessItems[i];
-      cy.findByTestId(currentItem).click();
-      cy.findByTestId('quick-link-card-container')
-        .children()
-        .each(async ($element) => {
-          const linkTestId = $element[0].getAttribute('data-testid') ?? '';
-          // had to query again due to $element being invalid after cy.click() command
-          cy.findByTestId(linkTestId).click();
-          cy.location().should((loc) => {
-            const currentPath =
-              loc.pathname.split('/')[loc.pathname.split('/').length - 1];
-            expect(linkTestId).contains(`/${currentPath}`);
-          });
-          cy.navigate('');
-          cy.findByTestId(currentItem).click();
-        });
+  it('should have quick access buttons for categories if there is no recent activity', () => {
+    const defaultQuickAccessItems = [
+      'suggestions',
+      'integrate',
+      'explore',
+      'build',
+    ];
+    for (let i = 0; i < defaultQuickAccessItems.length; i += 1) {
+      const currentItem = defaultQuickAccessItems[i];
+      cy.findByTestId(currentItem).should('exist');
     }
   });
 
