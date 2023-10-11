@@ -212,9 +212,7 @@ export type DetectionModelParams =
   | ParamsOCR
   | ParamsTagDetection
   | ParamsObjectDetection
-  | ParamsGaugeReader
-  | ParamsCustomModel;
-
+  | ParamsGaugeReader;
 // App specific types
 export enum VisionDetectionModelType {
   OCR = 1,
@@ -222,7 +220,6 @@ export enum VisionDetectionModelType {
   ObjectDetection,
   PeopleDetection,
   GaugeReader,
-  CustomModel,
 }
 export interface DetectionModelDataProvider {
   postJob(

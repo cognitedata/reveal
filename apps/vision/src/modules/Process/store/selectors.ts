@@ -156,7 +156,6 @@ export const makeSelectJobStatusForFile = () =>
           [
             VisionDetectionModelType.ObjectDetection,
             VisionDetectionModelType.GaugeReader,
-            VisionDetectionModelType.CustomModel,
           ].includes(job.type)
         ) {
           annotationBadgeProps.objects = statusData;

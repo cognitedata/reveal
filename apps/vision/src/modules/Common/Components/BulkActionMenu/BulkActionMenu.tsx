@@ -3,9 +3,7 @@ import React, { useState } from 'react';
 import {
   Chip,
   Button,
-  Detail,
   Dropdown,
-  Icon,
   Menu,
   Popconfirm,
   Tooltip,
@@ -22,7 +20,6 @@ export const BulkActionMenu = ({
   onReview,
   onBulkEdit,
   onDelete,
-  onTrainModel,
   handleCancelOtherEdits,
   style,
   processingFiles,
@@ -48,11 +45,6 @@ export const BulkActionMenu = ({
   const exceededLimitMessage = `Total number of files that can be processed simultaneously is ${maxSelectCount}`;
 
   const visionMLEnabled = useFlag('VISION_ML', {
-    fallback: false,
-    forceRerender: true,
-  });
-
-  const visionAutoMLEnabled = useFlag('VISION_AutoML', {
     fallback: false,
     forceRerender: true,
   });
@@ -151,16 +143,6 @@ export const BulkActionMenu = ({
               {showAlphaBadge}
             </div>
           </Tooltip>
-        </Menu.Item>
-      )}
-      {visionAutoMLEnabled && onTrainModel && (
-        <Menu.Item
-          onClick={onTrainModel}
-          disabled={!count}
-          icon="Network"
-          iconPlacement="left"
-        >
-          Train Model {count} {showAlphaBadge}
         </Menu.Item>
       )}
     </Menu>

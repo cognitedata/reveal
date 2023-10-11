@@ -1,4 +1,3 @@
-import { CustomModelDataProvider } from './customModel/CustomModelDataProvider';
 import { GaugeReaderDataProvider } from './gaugeReader/GaugeReaderDetectionDataProvider';
 import { MockDataProvider } from './MockDataProvider';
 import { ObjectDetectionDataProvider } from './objectDetection/ObjectDetectionDataProvider';
@@ -30,9 +29,6 @@ export function getDetectionModelDataProvider(
     }
     case VisionDetectionModelType.PeopleDetection: {
       return new PeopleDetectionDataProvider();
-    }
-    case VisionDetectionModelType.CustomModel: {
-      return new CustomModelDataProvider();
     }
     default: {
       // todo: implement other data providers and remove that default case and fake provider itself

@@ -23,7 +23,6 @@ import { DeleteFilesById } from '../../../../store/thunks/Files/DeleteFilesById'
 import { CreateVisionJob } from '../../../../store/thunks/Process/CreateVisionJob';
 import reducer, {
   addProcessUploadedFileId,
-  addToAvailableDetectionModels,
   BUILT_IN_MODEL_COUNT,
   clearUploadedFiles,
   initialState,
@@ -52,23 +51,7 @@ describe('Test process reducers', () => {
       byId: jobState,
       allIds: jobIds,
     },
-    availableDetectionModels: [
-      ...initialState.availableDetectionModels,
-      {
-        modelName: 'Custom model',
-        type: VisionDetectionModelType.CustomModel,
-        settings: {
-          threshold: 0.8,
-          modelName: 'Custom model',
-          isValid: false,
-        },
-        unsavedSettings: {
-          threshold: 0.8,
-          modelName: 'Custom model',
-          isValid: false,
-        },
-      },
-    ],
+    availableDetectionModels: initialState.availableDetectionModels,
   };
 
   test('should return the initial state for undefined state', () => {
@@ -116,32 +99,13 @@ describe('Test process reducers', () => {
     test('should set Selected Detection Models to empty', () => {
       const modifiedMockProcessState = {
         ...mockProcessState,
-        selectedDetectionModels: [
-          VisionDetectionModelType.TagDetection,
-          VisionDetectionModelType.CustomModel,
-        ],
+        selectedDetectionModels: [VisionDetectionModelType.TagDetection],
       };
       const newState = reducer(
         modifiedMockProcessState,
         setSelectedDetectionModels([])
       );
       expect(newState.selectedDetectionModels).toEqual([]);
-    });
-  });
-
-  describe('action addToAvailableDetectionModels', () => {
-    test('should have added a custom detection model', () => {
-      const customModelIndex = BUILT_IN_MODEL_COUNT;
-      const newState = reducer(
-        mockProcessState,
-        addToAvailableDetectionModels()
-      );
-      expect(newState.availableDetectionModels[customModelIndex].type).toEqual(
-        VisionDetectionModelType.CustomModel
-      );
-      expect(
-        newState.availableDetectionModels[customModelIndex].modelName
-      ).toEqual('Custom model');
     });
   });
 
@@ -197,16 +161,6 @@ describe('Test process reducers', () => {
           },
           unsavedSettings: {
             gaugeType: 'digital',
-          },
-        },
-        {
-          modelName: 'Custom model',
-          type: VisionDetectionModelType.CustomModel,
-          settings: {
-            threshold: 0.85,
-          },
-          unsavedSettings: {
-            threshold: 0.9,
           },
         },
       ],
@@ -331,7 +285,7 @@ describe('Test process reducers', () => {
         );
         for (
           let modelIndex = 0;
-          modelIndex < BUILT_IN_MODEL_COUNT + 1; // built-in models + custom model
+          modelIndex < BUILT_IN_MODEL_COUNT;
           modelIndex++
         ) {
           expect(
@@ -356,7 +310,7 @@ describe('Test process reducers', () => {
         );
         for (
           let modelIndex = 0;
-          modelIndex < BUILT_IN_MODEL_COUNT + 1; // built-in models + custom model
+          modelIndex < BUILT_IN_MODEL_COUNT;
           modelIndex++
         ) {
           expect(
@@ -469,14 +423,13 @@ describe('Test process reducers', () => {
       const { fileIds } = partiallyCompletedJob;
       const job: VisionJob = {
         jobId: 500,
-        type: VisionDetectionModelType.CustomModel,
+        type: VisionDetectionModelType.OCR,
         status: 'Running',
         createdTime: 1643352030229,
         statusTime: 1643352030229,
         startTime: 1643352030660,
       };
-      const modelType: VisionDetectionModelType =
-        VisionDetectionModelType.CustomModel;
+      const modelType: VisionDetectionModelType = VisionDetectionModelType.OCR;
       const completedFileIds: number[] = [1, 2];
       const failedFileIds: number[] = [4, 5, 6];
       const action = {

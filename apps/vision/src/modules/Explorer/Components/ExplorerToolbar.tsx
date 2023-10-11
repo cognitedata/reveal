@@ -22,8 +22,6 @@ type ExplorerToolbarProps = ExplorerToolbarContainerProps & {
   onReview: () => void;
   onBulkEdit: () => void;
   onDelete: (setIsDeletingState: (val: boolean) => void) => void;
-  onTrainModel: () => void;
-  onAutoMLModelPage: () => void;
   handleCancelOtherEdits: () => void;
 };
 
@@ -42,16 +40,9 @@ export const ExplorerToolbar = ({
   onReview,
   onBulkEdit,
   onDelete,
-  onTrainModel,
-  onAutoMLModelPage,
   reFetch,
   handleCancelOtherEdits,
 }: ExplorerToolbarProps) => {
-  const visionAutoMLEnabled = useFlag('VISION_AutoML', {
-    fallback: false,
-    forceRerender: true,
-  });
-
   return (
     <>
       <TitleBar>
@@ -76,20 +67,8 @@ export const ExplorerToolbar = ({
             onReview={onReview}
             onBulkEdit={onBulkEdit}
             onDelete={onDelete}
-            onTrainModel={onTrainModel}
             handleCancelOtherEdits={handleCancelOtherEdits}
           />
-          {visionAutoMLEnabled && (
-            <Button
-              style={{ marginLeft: 14 }}
-              icon="ArrowRight"
-              type="tertiary"
-              iconPlacement="right"
-              onClick={onAutoMLModelPage}
-            >
-              AutoML Models
-            </Button>
-          )}
         </Right>
       </TitleBar>
 

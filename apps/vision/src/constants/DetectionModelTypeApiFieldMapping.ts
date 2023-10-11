@@ -9,5 +9,4 @@ export const DetectionModelTypeFeatureMapping: Record<
   [VisionDetectionModelType.ObjectDetection]: 'IndustrialObjectDetection',
   [VisionDetectionModelType.PeopleDetection]: 'PeopleDetection',
   [VisionDetectionModelType.GaugeReader]: 'gaugereader',
-  [VisionDetectionModelType.CustomModel]: 'automl/prediction',
 };

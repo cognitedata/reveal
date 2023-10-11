@@ -315,7 +315,7 @@ describe('convertVisionJobResultItemToUnsavedVisionAnnotation', () => {
     });
   });
 
-  test('Valid type (objectDetection and custom model)', () => {
+  test('Valid type (objectDetection)', () => {
     const visionJobAnnotation = {
       text: 'gauge',
       confidence: 0.1,
@@ -327,33 +327,28 @@ describe('convertVisionJobResultItemToUnsavedVisionAnnotation', () => {
       annotations: [visionJobAnnotation],
     } as LegacyVisionJobResultItem;
 
-    [
-      VisionDetectionModelType.ObjectDetection,
-      VisionDetectionModelType.CustomModel,
-    ].forEach((visionDetectionModelType) => {
-      expect(
-        convertVisionJobResultItemToUnsavedVisionAnnotation(
-          visionJobResultItem,
-          visionDetectionModelType
-        )
-      ).toStrictEqual([
-        {
-          annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
-          annotatedResourceId: visionJobResultItem.fileId,
-          status: Status.Suggested,
-          data: {
-            label: visionJobAnnotation.text,
-            confidence: visionJobAnnotation.confidence,
-            boundingBox: {
-              xMin: rectangleShape.region.vertices[0].x,
-              yMin: rectangleShape.region.vertices[0].y,
-              xMax: rectangleShape.region.vertices[1].x,
-              yMax: rectangleShape.region.vertices[1].y,
-            },
+    expect(
+      convertVisionJobResultItemToUnsavedVisionAnnotation(
+        visionJobResultItem,
+        VisionDetectionModelType.ObjectDetection
+      )
+    ).toStrictEqual([
+      {
+        annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
+        annotatedResourceId: visionJobResultItem.fileId,
+        status: Status.Suggested,
+        data: {
+          label: visionJobAnnotation.text,
+          confidence: visionJobAnnotation.confidence,
+          boundingBox: {
+            xMin: rectangleShape.region.vertices[0].x,
+            yMin: rectangleShape.region.vertices[0].y,
+            xMax: rectangleShape.region.vertices[1].x,
+            yMax: rectangleShape.region.vertices[1].y,
           },
         },
-      ]);
-    });
+      },
+    ]);
   });
 
   test('Valid type (textDetection)', () => {
@@ -428,35 +423,6 @@ describe('convertVisionJobResultItemToUnsavedVisionAnnotation', () => {
             xMax: rectangleShape.region.vertices[1].x,
             yMax: rectangleShape.region.vertices[1].y,
           },
-        },
-      },
-    ]);
-  });
-
-  test('Valid type (custom model classification)', () => {
-    const visionJobAnnotation = {
-      text: 'gauge',
-      confidence: 0.1,
-    } as VisionJobAnnotation;
-
-    const visionJobResultItem = {
-      fileId: 1,
-      annotations: [visionJobAnnotation],
-    } as LegacyVisionJobResultItem;
-
-    expect(
-      convertVisionJobResultItemToUnsavedVisionAnnotation(
-        visionJobResultItem,
-        VisionDetectionModelType.CustomModel
-      )
-    ).toStrictEqual([
-      {
-        annotationType: CDFAnnotationTypeEnum.ImagesClassification,
-        annotatedResourceId: visionJobResultItem.fileId,
-        status: Status.Suggested,
-        data: {
-          label: visionJobAnnotation.text,
-          confidence: visionJobAnnotation.confidence,
         },
       },
     ]);

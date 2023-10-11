@@ -31,8 +31,6 @@ const getPageTitle = (requestedPathName: string) => {
       return 'Image and video management';
     case 'process':
       return 'Contextualize Imagery Data';
-    case 'models':
-      return 'Vision AutoML';
     default:
       return '';
   }

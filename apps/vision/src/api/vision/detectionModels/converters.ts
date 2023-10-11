@@ -295,35 +295,6 @@ export function convertVisionJobResultItemToUnsavedVisionAnnotation(
                     }
                   : null;
               }
-              case VisionDetectionModelType.CustomModel: {
-                const annotationData =
-                  convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
-                    visionJobAnnotation
-                  );
-                if (annotationData) {
-                  return annotationData
-                    ? {
-                        ...commonProperties,
-                        annotationType:
-                          CDFAnnotationTypeEnum.ImagesObjectDetection,
-                        data: annotationData,
-                      }
-                    : null;
-                }
-
-                const annotationDataClassification =
-                  convertVisionJobAnnotationToImageClassification(
-                    visionJobAnnotation
-                  );
-                return annotationDataClassification
-                  ? {
-                      ...commonProperties,
-                      annotationType:
-                        CDFAnnotationTypeEnum.ImagesClassification,
-                      data: annotationDataClassification,
-                    }
-                  : null;
-              }
               default:
                 return null;
             }

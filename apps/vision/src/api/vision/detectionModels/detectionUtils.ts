@@ -13,10 +13,7 @@ import {
 } from './types';
 
 export function getDetectionModelEndpoint(modelType: VisionDetectionModelType) {
-  if (
-    modelType === VisionDetectionModelType.CustomModel ||
-    modelType === VisionDetectionModelType.GaugeReader
-  ) {
+  if (modelType === VisionDetectionModelType.GaugeReader) {
     return `${sdk.getBaseUrl()}/api/playground/projects/${getProject()}/context/vision/${
       DetectionModelTypeFeatureMapping[modelType]
     }`;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { cancelFetch } from '../../../api/file/fetchFiles/fetchFiles';
@@ -15,7 +15,6 @@ import {
   workflowRoutes,
 } from '../../../utils/workflowRoutes';
 import {
-  setModelTrainingModalVisibility,
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
 } from '../../Common/store/common/slice';
@@ -64,9 +63,6 @@ export const ExplorerToolbarContainer = (
     dispatch(setFileDownloadModalVisibility(true));
   };
 
-  const onTrainModel = () => {
-    dispatch(setModelTrainingModalVisibility(true));
-  };
   const onContextualise = async () => {
     try {
       await dispatch(PopulateProcessFiles(selectedFileIds)).unwrap();
@@ -83,9 +79,6 @@ export const ExplorerToolbarContainer = (
     );
   };
 
-  const onAutoMLModelPage = () => {
-    navigate(getLink(workflowRoutes.models));
-  };
   const onDelete = (setIsDeletingState: (val: boolean) => void) => {
     dispatch(
       DeleteFilesById({
@@ -115,8 +108,6 @@ export const ExplorerToolbarContainer = (
       onReview={onReview}
       onDelete={onDelete}
       onBulkEdit={onBulkEdit}
-      onTrainModel={onTrainModel}
-      onAutoMLModelPage={onAutoMLModelPage}
       handleCancelOtherEdits={handleCancelOtherEdits}
     />
   );

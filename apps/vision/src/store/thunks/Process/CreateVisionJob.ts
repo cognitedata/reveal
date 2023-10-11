@@ -4,7 +4,6 @@ import {
   VisionJob,
   DetectionModelParams,
   VisionDetectionModelType,
-  ParamsCustomModel,
 } from '../../../api/vision/detectionModels/types';
 import { postVisionJob } from '../../../api/vision/detectionModels/visionJob';
 import { ProcessState } from '../../../modules/Process/store/types';
@@ -36,10 +35,5 @@ const getDetectionModelParameters = (
     (item) => item.type === modelType
   )?.settings;
 
-  // HACK: remove internal parameters used in the app
-  if (modelType === VisionDetectionModelType.CustomModel) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return (({ isValid, modelName, ..._ }) => _)(settings as ParamsCustomModel);
-  }
   return settings;
 };

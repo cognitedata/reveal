@@ -90,20 +90,6 @@ const routes = [
       },
     ],
   },
-  {
-    path: '/:tenant/vision/models',
-    importFn: () => import('./modules/AutoML/Components/AutoML'),
-    capabilities: [
-      {
-        acl: 'groupsAcl',
-        actions: ['LIST'],
-      },
-      {
-        acl: 'visionModelAcl',
-        actions: ['READ'],
-      },
-    ],
-  },
 ];
 
 export function AppRoutes() {

@@ -162,18 +162,7 @@ const processSlice = createGenericTabularDataSlice({
           case VisionDetectionModelType.GaugeReader:
             item.unsavedSettings = initialDetectionModelParameters.gaugeReader;
             break;
-          case VisionDetectionModelType.CustomModel:
-            item.unsavedSettings = initialDetectionModelParameters.customModel;
-            break;
         }
-      });
-    },
-    addToAvailableDetectionModels(state) {
-      state.availableDetectionModels.push({
-        modelName: initialDetectionModelParameters.customModel.modelName,
-        type: VisionDetectionModelType.CustomModel,
-        settings: initialDetectionModelParameters.customModel,
-        unsavedSettings: initialDetectionModelParameters.customModel,
       });
     },
 
@@ -340,7 +329,6 @@ export const {
   setDetectionModelParameters,
   revertDetectionModelParameters,
   resetDetectionModelParameters,
-  addToAvailableDetectionModels,
   setProcessViewFileUploadModalVisibility,
   setSelectFromExploreModalVisibility,
   setSummaryModalVisibility,

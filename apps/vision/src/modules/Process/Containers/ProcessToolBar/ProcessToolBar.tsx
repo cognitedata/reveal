@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
@@ -6,10 +6,7 @@ import styled from 'styled-components';
 import { message, notification } from 'antd';
 
 import { Button, Title, Modal } from '@cognite/cogs.js';
-import { useFlag } from '@cognite/react-feature-flags';
 
-import { AutoMLAPI } from '../../../../api/vision/autoML/AutoMLAPI';
-import { AutoMLModelCore } from '../../../../api/vision/autoML/types';
 import { VisionDetectionModelType } from '../../../../api/vision/detectionModels/types';
 import { useThunkDispatch } from '../../../../store';
 import { RootState } from '../../../../store/rootReducer';
@@ -29,21 +26,12 @@ import {
   setSelectedDetectionModels,
   setSelectFromExploreModalVisibility,
   resetDetectionModelParameters,
-  addToAvailableDetectionModels,
 } from '../../store/slice';
 import { ModelConfiguration } from '../ModelConfiguration';
 
 import ProgressStatus from './ProgressStatus';
 
 export const ProcessToolBar = () => {
-  const visionAutoMLEnabled = useFlag('VISION_AutoML', {
-    fallback: false,
-    forceRerender: true,
-  });
-  const disabledModelTypes: VisionDetectionModelType[] = [];
-  if (!visionAutoMLEnabled)
-    disabledModelTypes.push(VisionDetectionModelType.CustomModel);
-
   const dispatch = useThunkDispatch();
 
   const processFiles = useSelector((state: RootState) =>
@@ -90,9 +78,6 @@ export const ProcessToolBar = () => {
   };
 
   const [isModalOpen, setModalOpen] = useState(false);
-  const [customModels, setCustomModels] = useState<
-    AutoMLModelCore[] | undefined
-  >();
 
   const disableAddFiles = !isPollingFinished;
   const disableModelSelection = !processFiles.length || !isPollingFinished;
@@ -101,11 +86,6 @@ export const ProcessToolBar = () => {
     !!processFiles.length &&
     !selectedDetectionModels.length &&
     isPollingFinished;
-
-  const handleCustomModelCreate = () => {
-    dispatch(addToAvailableDetectionModels());
-    setModalOpen(true);
-  };
 
   const detectionModelConfiguration = () => {
     return (
@@ -131,14 +111,6 @@ export const ProcessToolBar = () => {
     );
   };
 
-  useEffect(() => {
-    const getModels = async () => {
-      const models = await AutoMLAPI.listAutoMLModels();
-      setCustomModels(models);
-    };
-    if (visionAutoMLEnabled) getModels();
-  }, []);
-
   return (
     <Container>
       <StyledModal
@@ -149,13 +121,7 @@ export const ProcessToolBar = () => {
         hideFooter={true}
       >
         <ModalContentWrapper>
-          <ModelConfiguration
-            disabledModelTypes={disabledModelTypes}
-            customModels={customModels}
-            handleCustomModelCreate={() => {
-              dispatch(addToAvailableDetectionModels());
-            }}
-          />
+          <ModelConfiguration />
           {/* Adding a customer footer as Cogs Ok and Cancel buttons are not working */}
           {detectionModelConfiguration()}
         </ModalContentWrapper>
@@ -214,11 +180,9 @@ export const ProcessToolBar = () => {
                 <DetectionModelSelect
                   value={selectedDetectionModels}
                   onChange={onChange}
-                  handleCustomModelCreate={handleCustomModelCreate}
                   handleOpenSettingsWindow={() => {
                     setModalOpen(true);
                   }}
-                  disabledModelTypes={disabledModelTypes}
                   isDisabled={disableModelSelection}
                 />
               </ModelSelector>

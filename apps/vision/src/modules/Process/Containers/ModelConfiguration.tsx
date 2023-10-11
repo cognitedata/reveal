@@ -3,17 +3,11 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { Select, Body, Button, Detail } from '@cognite/cogs.js';
+import { Select, Body, Detail } from '@cognite/cogs.js';
 
-import { AutoMLModelCore } from '../../../api/vision/autoML/types';
-import {
-  ParamsCustomModel,
-  VisionDetectionModelType,
-} from '../../../api/vision/detectionModels/types';
+import { VisionDetectionModelType } from '../../../api/vision/detectionModels/types';
 import { RootState } from '../../../store/rootReducer';
-import { BUILT_IN_MODEL_COUNT } from '../store/slice';
 
-import * as customModelDetails from './ModelDetails/customModelDetails';
 import * as gaugeReaderDetails from './ModelDetails/gaugeReaderDetails';
 import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
 import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
@@ -36,38 +30,14 @@ const BadgeWrapper = (modelName: string, badge: JSX.Element) => {
   );
 };
 
-export const ModelConfiguration = (props: {
-  disabledModelTypes: VisionDetectionModelType[];
-  customModels?: AutoMLModelCore[];
-  handleCustomModelCreate: () => void;
-}) => {
+export const ModelConfiguration = () => {
   const availableDetectionModels = useSelector(
     (state: RootState) => state.processSlice.availableDetectionModels
   );
 
-  const [currentModelSettings, setCurrentModelSettings] = useState(
-    // show custom model settings if custom model added and automl is enabled
-    availableDetectionModels.length > BUILT_IN_MODEL_COUNT &&
-      !props.disabledModelTypes.includes(VisionDetectionModelType.CustomModel)
-      ? availableDetectionModels.length - 1
-      : 0
-  );
+  const [currentModelSettings, setCurrentModelSettings] = useState(0);
 
-  // WORKAROUND: Always generate the contents of the custom model page.
-  // Custom models may not initially be available. However, they can be added by
-  // using the "Add custom model button".  As per the rules of hooks, we cannot
-  // use hooks inside conditionals. When the user clicks on the "Add custom
-  // model" button we conditionally use the hooks inside the
-  // customModelDetails.content function. By always generating the contents, we
-  // avoid conditionally calling the hooks.
-  const customModelDetailsContent = customModelDetails.content(
-    BUILT_IN_MODEL_COUNT,
-    props.customModels
-  );
-
-  const enabledDetectionModels = availableDetectionModels.filter(
-    (item) => !props.disabledModelTypes.includes(item.type)
-  );
+  const enabledDetectionModels = availableDetectionModels;
   const modelSelectOptions: SelectOption[] = enabledDetectionModels.map(
     // eslint-disable-next-line consistent-return
     (item, index) => {
@@ -123,40 +93,12 @@ export const ModelConfiguration = (props: {
             content: gaugeReaderDetails.content(index),
           };
           break;
-        case VisionDetectionModelType.CustomModel:
-          labelAndContent = {
-            label: BadgeWrapper(
-              (item.unsavedSettings as ParamsCustomModel).modelName,
-              customModelDetails.badge({
-                modelName: item.modelName,
-                hideText,
-                disabled: !(item.unsavedSettings as ParamsCustomModel).isValid,
-              })
-            ),
-            content: customModelDetailsContent,
-          };
-          break;
       }
       return { ...labelAndContent, value: index, modelType: item.type };
     }
   );
 
-  const addCustomModelOption = {
-    label: (
-      <StyledButton icon="Add" type="ghost">
-        Add custom model
-      </StyledButton>
-    ),
-    value: BUILT_IN_MODEL_COUNT,
-    content: customModelDetailsContent,
-    modelType: undefined,
-  };
-  const options =
-    // Show create if custom model not already added and if it is enabled
-    modelSelectOptions.length > BUILT_IN_MODEL_COUNT ||
-    props.disabledModelTypes.includes(VisionDetectionModelType.CustomModel)
-      ? modelSelectOptions
-      : [...modelSelectOptions, addCustomModelOption];
+  const options = modelSelectOptions;
 
   return (
     <>
@@ -173,7 +115,6 @@ export const ModelConfiguration = (props: {
                 // We handle model creation here instead of in an onClick for
                 // the button. This is because the user may be able to click
                 // outside the dropdown, yet inside the dropdown select.
-                if (!option.modelType) props.handleCustomModelCreate();
                 setCurrentModelSettings(option.value);
               }}
               options={options}
@@ -220,14 +161,6 @@ const ModelSettingsContainer = styled.div`
   padding-left: 15px;
   padding-bottom: 15px;
   border-radius: 10px;
-`;
-
-const StyledButton = styled(Button)`
-  width: 100%;
-  justify-content: start;
-  &:hover {
-    background: none !important;
-  }
 `;
 
 const StyledBadgeRow = styled.div`

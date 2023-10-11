@@ -34,7 +34,6 @@ import { ContextMenuContainer } from './ContextMenuContainer';
 import { ExplorerBulkEditModalContainer } from './ExplorerBulkEditModalContainer';
 import { ExplorerFileDownloadModalContainer } from './ExplorerFileDownloadModalContainer';
 import { ExplorerFileUploadModalContainer } from './ExplorerFileUploadModalContainer';
-import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
 import { ExplorerSearchResults } from './ExplorerSearchResults';
 import { ExplorerToolbarContainer } from './ExplorerToolbarContainer';
 
@@ -202,7 +201,6 @@ const Explorer = () => {
           />
         )}
         <ExplorerBulkEditModalContainer />
-        <ExplorerModelTrainingModalContainer />
       </Wrapper>
     </VerticalContainer>
   );

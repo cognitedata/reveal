@@ -27,7 +27,6 @@ export type BulkEditUnsavedState = {
 export type CommonState = {
   showFileDownloadModal: boolean;
   showBulkEditModal: boolean;
-  showModelTrainingModal: boolean;
   bulkEditUnsavedState: BulkEditUnsavedState;
   saveState: {
     mode: CDFStatusModes;

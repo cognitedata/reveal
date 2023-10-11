@@ -95,7 +95,6 @@ export default function ProgressStatus() {
           [
             VisionDetectionModelType.ObjectDetection,
             VisionDetectionModelType.GaugeReader,
-            VisionDetectionModelType.CustomModel,
           ].includes(job.type)
         ) {
           objects.push(job.status);
