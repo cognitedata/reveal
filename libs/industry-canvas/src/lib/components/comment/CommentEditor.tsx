@@ -18,11 +18,15 @@ const theme: EditorThemeClasses = {
   placeholder: 'editor-placeholder',
 };
 
+const SHAMEFUL_AUTO_FOCUS_DELAY_MS = 100;
+
 function AutoFocusPlugin() {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
-    // Focus the editor when the effect fires!
-    editor.focus();
+    // Shameful because firing the focus call immediately doesn't work, and
+    // we are using an arbitrary time to wait before focusing. Maybe the editor
+    // has been initialized but the DOM hasn't been mounted yet?
+    setTimeout(() => editor.focus(), SHAMEFUL_AUTO_FOCUS_DELAY_MS);
   }, [editor]);
 
   return null;
