@@ -352,6 +352,8 @@
   "form-message-format": "Message format",
   "form-format-placeholder": "Custom format",
   "form-format-name": "Format name",
+  "form-cognite-default-formats": "Cognite’s default message formats",
+  "form-custom-message-formats": "Custom message formats",
   "form-select-authenticate-sync": "Select and authenticate sink",
   "form-select-authenticate-detail": "Use a sink to batch data from the broker into CDF.",
   "form-use-existing-sync": "Use an existing sink",
