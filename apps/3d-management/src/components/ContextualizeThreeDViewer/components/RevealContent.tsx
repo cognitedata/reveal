@@ -1,4 +1,8 @@
+import { FC } from 'react';
+
 import styled from 'styled-components';
+
+import { head } from 'lodash';
 
 import { Button, ToolBar } from '@cognite/cogs.js';
 import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
@@ -9,12 +13,14 @@ import {
 } from '@cognite/reveal-react-components';
 
 import { FLOATING_ELEMENT_MARGIN } from '../../../pages/ContextualizeEditor/constants';
+import { useIntersectAnnotationVolumesOnClick } from '../hooks/useIntersectAnnotationBoundsOnClick';
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
   setModelLoaded,
   ToolType,
   useContextualizeThreeDViewerStore,
+  setSelectedAnnotationId,
 } from '../useContextualizeThreeDViewerStore';
 
 import { AnnotationsCard } from './AnnotationsCard';
@@ -27,6 +33,21 @@ interface RevealContentProps {
   onDeleteAnnotation: (annotationId: number) => void;
   onZoomToAnnotation: (annotationId: number) => void;
 }
+
+const SelectedAnnotationToolbar: FC = () => {
+  const { tool, selectedAnnotationId } = useContextualizeThreeDViewerStore(
+    (state) => ({
+      tool: state.tool,
+      selectedAnnotationId: state.selectedAnnotationId,
+    })
+  );
+
+  if (tool !== ToolType.SELECT_TOOL || selectedAnnotationId === null) {
+    return <></>;
+  }
+
+  return <AnnotationBoxToolbar />;
+};
 
 export const RevealContent = ({
   modelId,
@@ -41,6 +62,14 @@ export const RevealContent = ({
       annotations: state.annotations,
       tool: state.tool,
     }));
+
+  useIntersectAnnotationVolumesOnClick(
+    (intersectedAnnotationData) =>
+      setSelectedAnnotationId(
+        head(intersectedAnnotationData)?.annotationId ?? null
+      ),
+    { enabled: tool === ToolType.SELECT_TOOL }
+  );
 
   const handleModelOnLoad = (model: CogniteModel) => {
     setModelLoaded();
@@ -85,7 +114,7 @@ export const RevealContent = ({
           }}
         />
       </StyledResourceSelectorButtonWrapper>
-      {tool === ToolType.SELECT_TOOL && <AnnotationBoxToolbar />}
+      <SelectedAnnotationToolbar />
       <AnnotationsCard
         annotations={annotations}
         onDeleteAnnotation={(annotation) => {
