@@ -137,7 +137,7 @@ function useCalculateInstanceStyling(
     models
   );
 
-  const modelAssetMappings = useNodesForAssets(
+  const { data: modelAssetMappings } = useNodesForAssets(
     models,
     instanceGroups
       .filter(isAssetMappingStylingGroup)
@@ -153,7 +153,7 @@ function useCalculateInstanceStyling(
   const assetMappingInstanceStyleGroups = useAssetMappingInstanceStyleGroups(
     models,
     instanceGroups,
-    modelAssetMappings.data
+    modelAssetMappings
   );
 
   const combinedMappedStyleGroups = useMemo(
