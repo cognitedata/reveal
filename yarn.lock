@@ -2463,10 +2463,10 @@
     skmeans "0.11.3"
     sparse-octree "7.1.8"
 
-"@cognite/schema-matching@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/schema-matching/-/schema-matching-4.0.1.tgz#7a74cab31330746885f256ee701bf5cd9460cd8f"
-  integrity sha512-9e0GFTuGFtJkOqvR1LmIVCOEfyh5gZBS5Q7ibR/bzmtfZDNBIaGqLSrA//Rx5Tq55pSzHQ+eQOo9UgKqHMN1Gw==
+"@cognite/schema-matching@4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@cognite/schema-matching/-/schema-matching-4.0.3.tgz#ec1545219aa829c94809e7ea191a9aa6c0e9fe27"
+  integrity sha512-DhWNmOw1Tr8N0vpxMDAEIOc9JnQhCCbNLuNwivQUx24YQov8Nt0+GGAyZUZPE+nKrgaRJJLWlk8Ix2iW9Ev/Ew==
 
 "@cognite/sdk-core@^3.4.1":
   version "3.4.1"
