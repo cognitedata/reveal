@@ -18,7 +18,9 @@ export const getThreeDModelType = async (
   );
   if (response.find((item) => item.format === 'ept-pointcloud')) {
     return ThreeDModelType.POINT_CLOUD;
-  } else {
+  } else if (response.find((item) => item.format === 'gltf-directory')) {
     return ThreeDModelType.CAD;
+  } else {
+    return ThreeDModelType.NOT_RECOGNIZED_TYPE;
   }
 };
