@@ -1,5 +1,7 @@
 import React, { Suspense, useCallback, useMemo } from 'react';
 
+import styled, { CSSObject } from 'styled-components';
+
 import { FormikErrors } from 'formik';
 
 import {
@@ -49,21 +51,40 @@ export const StepTwo = ({
 }) => {
   const { t } = useTranslation();
   const formatFieldOptionsWithCustomTypes = useMemo(() => {
-    const formatFiledOptions = ADD_TOPIC_FILTER_BUILT_IN_FORMATS.map(
+    const builtInFormats = ADD_TOPIC_FILTER_BUILT_IN_FORMATS.map(
       ({ type: optionType }) => ({
         label: t(`form-format-option-${optionType}` as any),
         value: optionType as string,
       })
     );
 
-    return [
-      ...formatFiledOptions.slice(0, formatFiledOptions.length - 2),
-      ...(customExtractorMappings?.map((mapping) => ({
+    const customFormat = builtInFormats.find((item) => item.value === 'custom');
+
+    const builtInOptions = [
+      ...builtInFormats
+        .filter((item) => item.value !== 'custom')
+        .map((item, index, array) => {
+          return index === array.length - 1 ? { ...item, divider: true } : item; // add divider to last item
+        }),
+    ];
+
+    const customOptions =
+      customExtractorMappings?.map((mapping) => ({
         label: mapping.externalId,
         value: mapping.externalId,
-      })) || []),
-      formatFiledOptions.pop(),
-    ] as OptionType<string>[];
+      })) || [];
+
+    return [
+      {
+        label: t('form-cognite-default-formats'),
+        options: builtInOptions,
+        key: 'built-in',
+      },
+      {
+        label: t('form-custom-message-formats'),
+        options: [...customOptions, customFormat],
+      },
+    ];
   }, [t, customExtractorMappings]);
 
   const onChangeFormat = useCallback(
@@ -82,19 +103,34 @@ export const StepTwo = ({
     }
     return null;
   }, [values.format, customExtractorMappings]);
+
+  const valueSelect = useMemo(() => {
+    return formatFieldOptionsWithCustomTypes
+      .map((item) => item.options)
+      .flat()
+      .find((val) => val?.value === values.format);
+  }, [formatFieldOptionsWithCustomTypes, values.format]);
+
   return (
     <>
       <FormFieldWrapper isRequired title={t('form-message-format')}>
-        <Select
+        <CustomSelect
           onChange={(value: OptionType<string>) =>
             setFieldValue('format', value.value)
           }
-          options={formatFieldOptionsWithCustomTypes}
+          options={formatFieldOptionsWithCustomTypes as any}
           placeholder={t('select-format')}
-          value={formatFieldOptionsWithCustomTypes.find(
-            (val) => val?.value === values.format
-          )}
+          value={valueSelect}
           aria-placeholder={t('select-format')}
+          styles={{
+            groupHeading: (base: CSSObject) => ({
+              ...base,
+              padding: 8,
+              paddingLeft: '8px!important',
+              color: Colors['text-icon--muted'],
+              fontWeight: 400,
+            }),
+          }}
         />
       </FormFieldWrapper>
       {values.format === 'custom' && (
@@ -166,3 +202,10 @@ export const StepTwo = ({
     </>
   );
 };
+
+const CustomSelect = styled(Select)`
+  .cogs-select__menu {
+    min-width: 300px;
+    max-width: 600px;
+  }
+`;
