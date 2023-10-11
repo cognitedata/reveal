@@ -1,5 +1,7 @@
 import { AllIconTypes } from '@cognite/cogs.js';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
+// TODO: why do we keep this file?
+// Can't we just use resource.ts from @core?
 
 // TODO: while moving away from ResourceTypes, we can use/rename this as ViewType
 export enum ResourceTypes {
@@ -9,6 +11,7 @@ export enum ResourceTypes {
   File = 'file',
   Event = 'event',
   ThreeD = 'threeD',
+  Charts = 'charts',
 }
 
 export type ResourceType =
@@ -17,6 +20,7 @@ export type ResourceType =
   | 'sequence'
   | 'file'
   | 'event'
+  | 'charts'
   | 'threeD';
 
 // Temporary mapping of the two almost identical types. Should be

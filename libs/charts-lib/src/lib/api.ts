@@ -11,6 +11,7 @@ const charts = (project: string) => {
     .doc(project)
     .collection('charts');
 };
+
 export const fetchPublicCharts = async (projectId: string) => {
   const snapshot = await charts(projectId)
     .where('version', '==', 1)
@@ -18,6 +19,7 @@ export const fetchPublicCharts = async (projectId: string) => {
     .get();
   return snapshot.docs.map((doc) => doc.data()) as Chart[];
 };
+
 export const fetchUserCharts = async (
   projectId: string,
   userId: string,
@@ -52,12 +54,15 @@ export const fetchUserCharts = async (
 
   return userCharts;
 };
+
 export const fetchChart = async (projectId: string, chartId: string) => {
   return (await charts(projectId).doc(chartId).get()).data() as Chart;
 };
+
 export const deleteChart = async (projectId: string, chartId: string) => {
   return charts(projectId).doc(chartId).delete();
 };
+
 export const updateChart = async (
   projectId: string,
   chartId: string,
@@ -65,4 +70,5 @@ export const updateChart = async (
 ) => {
   return charts(projectId).doc(chartId).set(content, { merge: true });
 };
+
 export const createChart = updateChart;

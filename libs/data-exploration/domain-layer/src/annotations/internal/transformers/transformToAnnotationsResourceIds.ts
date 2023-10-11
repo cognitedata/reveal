@@ -15,6 +15,7 @@ export const transformToAnnotationsResourceIds = (data: AnnotationModel[]) => {
     [ResourceTypes.Sequence]: [],
     [ResourceTypes.File]: [],
     [ResourceTypes.ThreeD]: [],
+    [ResourceTypes.Charts]: [],
   };
 
   const annotations = transformToAnnotationModelInternal(data);

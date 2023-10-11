@@ -35,6 +35,7 @@ import {
 } from '../ResourceTabs';
 import { SidebarFilters } from '../Search';
 
+import { ChartsTab } from './Charts';
 import { ResourceSelectorDetails } from './ResourceSelectorDetails';
 import { ResourceSelectorTable } from './ResourceSelectorTable';
 import { useFilterState } from './useFilterState';
@@ -46,13 +47,14 @@ const DEFAULT_VISIBLE_RESOURCE_TABS: ResourceType[] = [
   'timeSeries',
 ];
 
-const initialSelectedRows = {
+const initialSelectedRows: Record<ResourceType, any> = {
   asset: {},
   file: {},
   timeSeries: {},
   sequence: {},
   threeD: {},
   event: {},
+  charts: {},
 };
 
 type SelectionProps =
@@ -96,6 +98,7 @@ export const ResourceSelector = ({
     useFilterState(initialFilter);
   const [query, setQuery] = useState<string>('');
   const { isOpen: showFilter, toggle: onToggleFilter } = useDialog();
+
   const [activeKey, setActiveKey] = useState(initialTab);
   const [previewItem, setPreviewItem] = useState<ResourceItem>();
   const { t } = useTranslation();
@@ -146,6 +149,7 @@ export const ResourceSelector = ({
       })),
     [allSelectedRows]
   );
+
   const onDetailRowSelection = useCallback(
     (
       updater?: Updater<RowSelectionState>,
@@ -189,6 +193,81 @@ export const ResourceSelector = ({
     [previewItem]
   );
 
+  const selectedResourceTabs = visibleResourceTabs.map((tab) => {
+    if (tab === 'charts')
+      return (
+        <ChartsTab
+          key={tab}
+          tabKey={ViewType.Charts}
+          label={t('CHARTS', 'Charts')}
+          query={debouncedQuery}
+          filter={filterState.charts}
+        />
+      );
+    if (tab === 'asset')
+      return (
+        <AssetsTab
+          key={tab}
+          tabKey={ViewType.Asset}
+          label={t('ASSETS', 'Assets')}
+          query={debouncedQuery}
+          filter={{ ...filterState.common, ...filterState.asset }}
+        />
+      );
+    if (tab === 'event')
+      return (
+        <EventsTab
+          key={tab}
+          tabKey={ViewType.Event}
+          query={debouncedQuery}
+          filter={{ ...filterState.common, ...filterState.event }}
+          label={t('EVENTS', 'Events')}
+        />
+      );
+    if (tab === 'file')
+      return (
+        <FilesTab
+          key={tab}
+          tabKey={ViewType.File}
+          query={debouncedQuery}
+          filter={{
+            ...filterState.common,
+            ...(isDocumentsApiEnabled
+              ? filterState.document
+              : filterState.file),
+          }}
+          isDocumentsApiEnabled={isDocumentsApiEnabled}
+          label={t('FILES', 'Files')}
+        />
+      );
+    if (tab === 'timeSeries')
+      return (
+        <TimeseriesTab
+          key={tab}
+          tabKey={ViewType.TimeSeries}
+          query={debouncedQuery}
+          filter={{
+            ...filterState.common,
+            ...filterState.timeSeries,
+          }}
+          label={t('TIMESERIES', 'Time series')}
+        />
+      );
+    if (tab === 'sequence')
+      return (
+        <SequenceTab
+          tabKey={ViewType.Sequence}
+          query={debouncedQuery}
+          filter={{
+            ...filterState.common,
+            ...filterState.sequence,
+          }}
+          label={t('SEQUENCES', 'Sequences')}
+        />
+      );
+    return <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />;
+  });
+
   return (
     <ResourceSelectorWrapper>
       {!shouldOnlyShowPreviewPane && (
@@ -201,11 +280,12 @@ export const ResourceSelector = ({
             onFilterChange={(resourceType, currentFilter) => {
               updateFilterType(resourceType, currentFilter);
             }}
-            resourceType={activeKey}
+            resourceType={activeKey as ResourceType}
             onResetFilterClick={resetFilterType}
           />
         </FilterWrapper>
       )}
+
       {!shouldOnlyShowPreviewPane && (
         <MainSearchContainer>
           <SearchInputContainer>
@@ -234,73 +314,9 @@ export const ResourceSelector = ({
             currentResourceType={activeKey}
             setCurrentResourceType={(tab) => setActiveKey(tab as ResourceType)}
           >
-            {visibleResourceTabs.map((tab) => {
-              if (tab === 'asset')
-                return (
-                  <AssetsTab
-                    key={tab}
-                    tabKey={ViewType.Asset}
-                    label={t('ASSETS', 'Assets')}
-                    query={debouncedQuery}
-                    filter={{ ...filterState.common, ...filterState.asset }}
-                  />
-                );
-              if (tab === 'event')
-                return (
-                  <EventsTab
-                    key={tab}
-                    tabKey={ViewType.Event}
-                    query={debouncedQuery}
-                    filter={{ ...filterState.common, ...filterState.event }}
-                    label={t('EVENTS', 'Events')}
-                  />
-                );
-              if (tab === 'file')
-                return (
-                  <FilesTab
-                    key={tab}
-                    tabKey={ViewType.File}
-                    query={debouncedQuery}
-                    filter={{
-                      ...filterState.common,
-                      ...(isDocumentsApiEnabled
-                        ? filterState.document
-                        : filterState.file),
-                    }}
-                    isDocumentsApiEnabled={isDocumentsApiEnabled}
-                    label={t('FILES', 'Files')}
-                  />
-                );
-              if (tab === 'timeSeries')
-                return (
-                  <TimeseriesTab
-                    key={tab}
-                    tabKey={ViewType.TimeSeries}
-                    query={debouncedQuery}
-                    filter={{
-                      ...filterState.common,
-                      ...filterState.timeSeries,
-                    }}
-                    label={t('TIMESERIES', 'Time series')}
-                  />
-                );
-              if (tab === 'sequence')
-                return (
-                  <SequenceTab
-                    tabKey={ViewType.Sequence}
-                    query={debouncedQuery}
-                    filter={{
-                      ...filterState.common,
-                      ...filterState.sequence,
-                    }}
-                    label={t('SEQUENCES', 'Sequences')}
-                  />
-                );
-              return (
-                <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />
-              );
-            })}
+            {selectedResourceTabs}
           </ResourceTypeTabs>
+
           <MainContainer>
             <ResourceSelectorTable
               selectedRows={selectedRows}
@@ -328,22 +344,30 @@ export const ResourceSelector = ({
           </MainContainer>
         </MainSearchContainer>
       )}
+
       {previewItem && (
         <ResourcePreviewSidebarWrapper isOnlyPane={shouldOnlyShowPreviewPane}>
-          <ResourceSelectorDetails
-            item={previewItem}
-            closable={!shouldOnlyShowPreviewPane}
-            onClose={() => setPreviewItem(undefined)}
-            selectionMode={selectionMode}
-            selectedRows={selectedRows}
-            onSelect={onDetailRowSelection}
-            isSelected={Boolean(selectedRows[previewItem.type][previewItem.id])}
-            visibleResources={visibleResourceTabs}
-            isDocumentsApiEnabled={isDocumentsApiEnabled}
-            showSelectButton={shouldOnlyShowPreviewPane ? false : undefined}
-          />
+          {/* TODO: handle this later for charts */}
+          {/* https://cognitedata.atlassian.net/browse/AH-1958 */}
+          {activeKey !== 'charts' && (
+            <ResourceSelectorDetails
+              item={previewItem}
+              closable={!shouldOnlyShowPreviewPane}
+              onClose={() => setPreviewItem(undefined)}
+              selectionMode={selectionMode}
+              selectedRows={selectedRows}
+              onSelect={onDetailRowSelection}
+              isSelected={Boolean(
+                selectedRows[previewItem.type][previewItem.id]
+              )}
+              visibleResources={visibleResourceTabs}
+              isDocumentsApiEnabled={isDocumentsApiEnabled}
+              showSelectButton={shouldOnlyShowPreviewPane ? false : undefined}
+            />
+          )}
         </ResourcePreviewSidebarWrapper>
       )}
+
       <BulkActionBar
         options={actionBarOptions}
         title={t('SELECTED', 'Selected')}

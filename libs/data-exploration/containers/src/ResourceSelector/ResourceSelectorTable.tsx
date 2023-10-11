@@ -4,6 +4,8 @@ import { RowSelectionState, Updater } from '@tanstack/react-table';
 import { mapValues } from 'lodash';
 import noop from 'lodash/noop';
 
+import { ChartsSdkInitialisationGuard } from '@cognite/charts-lib';
+
 import {
   FilterState,
   ResourceItem,
@@ -21,6 +23,7 @@ import {
   TimeseriesSearchResults,
 } from '../Search';
 
+import { ChartsSearchResults } from './Charts';
 import { ResourceSelection } from './ResourceSelector';
 
 export const ResourceSelectorTable = ({
@@ -91,6 +94,16 @@ export const ResourceSelectorTable = ({
   };
 
   switch (resourceType) {
+    case 'charts':
+      return (
+        <ChartsSdkInitialisationGuard>
+          <ChartsSearchResults
+            {...commonProps}
+            filter={filter.charts}
+            onClick={(item) => console.log('RST, CSR on click; item: ', item)}
+          />
+        </ChartsSdkInitialisationGuard>
+      );
     case 'asset':
       return (
         <AssetSearchResults showCount isTreeEnabled={false} {...commonProps} />

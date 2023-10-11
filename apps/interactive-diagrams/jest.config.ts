@@ -5,6 +5,7 @@ export default {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
+  transformIgnorePatterns: ['node_modules/(?!(es-cookie|lodash-es))'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/interactive-diagrams',
   setupFilesAfterEnv: ['./src/setupTests.js'],

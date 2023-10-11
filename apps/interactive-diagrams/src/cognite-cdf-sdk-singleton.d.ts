@@ -12,6 +12,7 @@ declare module '@cognite/cdf-sdk-singleton' {
   }
 
   export declare function getFlow(): { flow: Exclude<IDPType | 'ADFS2016'> };
+  export declare function getToken(): Promise<string>;
   export declare function getUserInformation(): Promise<any>;
   export declare function loginAndAuthIfNeeded(): Promise<void>;
   export declare function createSdkClient(
