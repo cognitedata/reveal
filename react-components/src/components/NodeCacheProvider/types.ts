@@ -15,10 +15,10 @@ export type FdmNodeDataPromises = {
   viewsPromise: Promise<Source[] | undefined>;
 };
 
-export type ModelRevisionNodesResult = {
+export type ModelRevisionAssetNodesResult = {
   modelId: ModelId;
   revisionId: RevisionId;
-  nodeMap: Map<AssetId, Node3D>;
+  assetToNodeMap: Map<AssetId, Node3D>;
 };
 
 export type AncestorQueryResult = {

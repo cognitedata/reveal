@@ -19,7 +19,8 @@ import {
   type NodeId,
   type FdmEdgeWithNode,
   type ModelRevisionKey,
-  type AssetId
+  type AssetId,
+  type ModelRevisionAssetNodesResult
 } from '../components/NodeCacheProvider/types';
 import {
   type NodeStylingGroup,
@@ -143,7 +144,53 @@ function useCalculateInstanceStyling(
       .flatMap((instanceGroup) => instanceGroup.assetIds)
   );
 
-  const fdmModelInstanceStyleGroups = useMemo(() => {
+  const fdmModelInstanceStyleGroups = useFdmInstanceStyleGroups(
+    models,
+    instanceGroups,
+    fdmAssetMappings
+  );
+
+  const assetMappingInstanceStyleGroups = useAssetMappingInstanceStyleGroups(
+    models,
+    instanceGroups,
+    modelAssetMappings.data
+  );
+
+  const combinedMappedStyleGroups = useMemo(
+    () =>
+      groupStyleGroupByModel([...fdmModelInstanceStyleGroups, ...assetMappingInstanceStyleGroups]),
+    [fdmModelInstanceStyleGroups, assetMappingInstanceStyleGroups]
+  );
+
+  return combinedMappedStyleGroups;
+}
+
+function useAssetMappingInstanceStyleGroups(
+  models: CadModelOptions[],
+  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>,
+  modelAssetMappings: ModelRevisionAssetNodesResult[] | undefined
+): ModelStyleGroup[] {
+  return useMemo(() => {
+    if (modelAssetMappings === undefined || modelAssetMappings.length === 0) {
+      return [];
+    }
+
+    return models.map((model, index) => {
+      return calculateAssetMappingCadModelStyling(
+        instanceGroups.filter(isAssetMappingStylingGroup),
+        modelAssetMappings[index].assetToNodeMap,
+        model
+      );
+    });
+  }, [models, instanceGroups, modelAssetMappings]);
+}
+
+function useFdmInstanceStyleGroups(
+  models: CadModelOptions[],
+  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>,
+  fdmAssetMappings: ThreeDModelFdmMappings[] | undefined
+): ModelStyleGroup[] {
+  return useMemo(() => {
     if (models.length === 0 || fdmAssetMappings === undefined) {
       return [];
     }
@@ -160,30 +207,6 @@ function useCalculateInstanceStyling(
       return { model, styleGroup };
     });
   }, [models, instanceGroups, fdmAssetMappings]);
-
-  const assetMappingInstanceStyleGroups = useMemo(() => {
-    if (modelAssetMappings.data === undefined || modelAssetMappings.data.length === 0) {
-      return [];
-    }
-
-    return models.map((model, index) => {
-      console.log('model index = ', index);
-      console.dir('model data = ', modelAssetMappings.data);
-      return calculateAssetMappingCadModelStyling(
-        instanceGroups.filter(isAssetMappingStylingGroup),
-        modelAssetMappings.data[index].nodeMap,
-        model
-      );
-    });
-  }, [models, instanceGroups, modelAssetMappings.data]);
-
-  const combinedMappedStyleGroups = useMemo(
-    () =>
-      groupStyleGroupByModel([...fdmModelInstanceStyleGroups, ...assetMappingInstanceStyleGroups]),
-    [fdmModelInstanceStyleGroups, assetMappingInstanceStyleGroups]
-  );
-
-  return combinedMappedStyleGroups;
 }
 
 function isFdmAssetStylingGroup(instanceGroup: any): instanceGroup is FdmAssetStylingGroup {

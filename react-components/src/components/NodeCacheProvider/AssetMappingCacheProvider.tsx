@@ -18,7 +18,7 @@ import {
   type ModelId,
   type RevisionId,
   type TreeIndex,
-  type ModelRevisionNodesResult
+  type ModelRevisionAssetNodesResult
 } from './types';
 import { fetchAncestorNodesForTreeIndex } from './requests';
 
@@ -71,7 +71,7 @@ export const useAssetMappedNodesForRevisions = (
 export const useNodesForAssets = (
   models: ModelRevisionId[],
   assetIds: CogniteInternalId[]
-): UseQueryResult<ModelRevisionNodesResult[]> => {
+): UseQueryResult<ModelRevisionAssetNodesResult[]> => {
   const assetMappingCache = useAssetMappingCache();
 
   return useQuery(
