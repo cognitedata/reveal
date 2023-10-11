@@ -101,6 +101,7 @@ export const useSyncStateWithViewer = () => {
       transformControls.enabled = false;
       return;
     }
+
     transformControls.setMode(transformMode);
     transformControls.visible = true;
     transformControls.enabled = true;
@@ -146,6 +147,12 @@ export const useSyncStateWithViewer = () => {
     addObject(threeDViewer, newAnnotationCube);
 
     transformControls.attach(newAnnotationCube);
+    if (transformMode === null) {
+      transformControls.visible = false;
+      transformControls.enabled = false;
+    } else {
+      transformControls.setMode(transformMode);
+    }
     threeDViewer.addObject3D(transformControls);
   }, [pendingAnnotation, pendingAnnotationTransformControls, threeDViewer]);
 

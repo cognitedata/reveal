@@ -24,9 +24,6 @@ export const createTransformControls = (
   addChangeListener(transformControls, viewer);
   addKeydownListener();
   addMouseUpListener(transformControls);
-  // default to scaling
-  setTransformMode(TransformMode.SCALE);
-
   return transformControls;
 };
 
