@@ -66,7 +66,7 @@ const TitleBar = ({ jobStatus }: { jobStatus: JobStatus }) => {
       row
       align
       style={{ width: '100%', justifyContent: 'space-between' }}
-      data-cy="results-preview"
+      data-testid="results-preview"
     >
       <Title level={5} style={{ margin: '16px' }}>
         Results preview{' '}

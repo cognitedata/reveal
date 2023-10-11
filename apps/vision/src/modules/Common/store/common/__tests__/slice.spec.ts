@@ -1,13 +1,12 @@
 import { SerializedError } from '@reduxjs/toolkit';
-import reducer, {
-  initialState,
-} from '@vision/modules/Common/store/common/slice';
-import { DeleteAnnotations } from '@vision/store/thunks/Annotation/DeleteAnnotations';
-import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
-import { SaveAnnotations } from '@vision/store/thunks/Annotation/SaveAnnotations';
-import { SaveAnnotationTemplates } from '@vision/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
-import { UpdateFiles } from '@vision/store/thunks/Files/UpdateFiles';
+
+import { DeleteAnnotations } from '../../../../../store/thunks/Annotation/DeleteAnnotations';
+import { RetrieveAnnotations } from '../../../../../store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from '../../../../../store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationTemplates } from '../../../../../store/thunks/Annotation/SaveAnnotationTemplates';
+import { UpdateAnnotations } from '../../../../../store/thunks/Annotation/UpdateAnnotations';
+import { UpdateFiles } from '../../../../../store/thunks/Files/UpdateFiles';
+import reducer, { initialState } from '../slice';
 
 jest.mock('@vision/utils/extractErrorMessage', () => ({
   extractErrorMessage: (rawMessage: SerializedError) => rawMessage,

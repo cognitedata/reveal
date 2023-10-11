@@ -13,7 +13,7 @@ https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3682697292/...create+a+ne
    nx serve industry-canvas-ui
 
    or from 'industry-canvas-ui` app;
-   yarn start
+   nx serve
    ```
 
 2. Navigate to [dev.fusion.cogniteapp.com](dev.fusion.cogniteapp.com)

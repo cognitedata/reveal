@@ -1,4 +1,4 @@
-import { MockedCogniteClient } from '@vision/__mocks__/MockedCogniteClient';
+import { MockedCogniteClient } from '../MockedCogniteClient';
 
 const sdk = new MockedCogniteClient();
 export default sdk;

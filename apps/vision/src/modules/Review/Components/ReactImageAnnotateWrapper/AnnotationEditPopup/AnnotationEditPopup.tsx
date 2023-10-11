@@ -2,26 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { AnnotationEditPopupBody } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopupBody';
-import {
-  AnnotatorPointRegion,
-  AnnotatorRegion,
-  AnnotatorRegionLabelProps,
-  AnnotatorRegionType,
-  isAnnotatorPointRegion,
-} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { clearTemporaryRegion } from '@vision/modules/Review/store/annotatorWrapper/slice';
-import { AnnotationSettingsOption } from '@vision/modules/Review/store/review/enums';
-import {
-  PredefinedKeypoint,
-  PredefinedKeypointCollection,
-  PredefinedShape,
-  PredefinedVisionAnnotations,
-  VisionOptionType,
-} from '@vision/modules/Review/types';
-import { useThunkDispatch } from '@vision/store';
-import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
-
 import {
   Title,
   Button,
@@ -30,6 +10,27 @@ import {
   Row,
   Col,
 } from '@cognite/cogs.js';
+
+import { useThunkDispatch } from '../../../../../store';
+import { deselectAllSelectionsReviewPage } from '../../../../../store/commonActions';
+import { clearTemporaryRegion } from '../../../store/annotatorWrapper/slice';
+import { AnnotationSettingsOption } from '../../../store/review/enums';
+import {
+  PredefinedKeypoint,
+  PredefinedKeypointCollection,
+  PredefinedShape,
+  PredefinedVisionAnnotations,
+  VisionOptionType,
+} from '../../../types';
+import {
+  AnnotatorPointRegion,
+  AnnotatorRegion,
+  AnnotatorRegionLabelProps,
+  AnnotatorRegionType,
+  isAnnotatorPointRegion,
+} from '../types';
+
+import { AnnotationEditPopupBody } from './AnnotationEditPopupBody';
 
 export const AnnotationEditPopup = ({
   region,

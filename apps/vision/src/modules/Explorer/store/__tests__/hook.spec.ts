@@ -1,10 +1,8 @@
 import { useSelector } from 'react-redux';
 
 import { renderHook } from '@testing-library/react';
-import {
-  useIsSelectedInExplorer,
-  useExplorerFilesSelected,
-} from '@vision/modules/Explorer/store/hooks';
+
+import { useIsSelectedInExplorer, useExplorerFilesSelected } from '../hooks';
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),

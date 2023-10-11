@@ -129,10 +129,11 @@
         "testingType": "e2e",
         "devServerTarget": "access-management:serve:development",
         "env": {
-          "ORG": "cog-charts",
-          "PROJECT": "charts-azuredev",
-          "CLUSTER": "azure-dev.cognitedata.com",
-          "TENANT": "cognitecharts.onmicrosoft.com"
+          "ORG": "cog-dog",
+          "PROJECT": "azure-data-enablers-test",
+          "CLUSTER": "bluefield.cognitedata.com",
+          "TENANT": "dataenablers.onmicrosoft.com",
+          "CLIENT_ID_AZURE_DATA_ENABLERS_TEST": "fafb535c-eb99-4e3e-9018-c11c948691b3"
         }
       },
       "configurations": {

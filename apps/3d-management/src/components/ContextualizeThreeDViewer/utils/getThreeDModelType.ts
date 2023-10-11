@@ -21,6 +21,6 @@ export const getThreeDModelType = async (
   } else if (response.find((item) => item.format === 'gltf-directory')) {
     return ThreeDModelType.CAD;
   } else {
-    return ThreeDModelType.NOT_RECOGNIZED_TYPE;
+    return ThreeDModelType.UNKNOWN;
   }
 };

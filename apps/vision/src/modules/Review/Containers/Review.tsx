@@ -5,25 +5,27 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 // import { CustomPrompt } from '@vision/modules/Common/Components/CustomPrompt/CustomPrompt';
-import { selectFileById } from '@vision/modules/Common/store/files/selectors';
-import { resetEditHistory } from '@vision/modules/FileDetails/slice';
-import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
-import ReviewBody from '@vision/modules/Review/Containers/ReviewBody';
-import { resetPreview } from '@vision/modules/Review/store/review/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { PopulateAnnotationTemplates } from '@vision/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
-import { FetchFilesById } from '@vision/store/thunks/Files/FetchFilesById';
-import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
-import { PopulateReviewFiles } from '@vision/store/thunks/Review/PopulateReviewFiles';
-import { pushMetric } from '@vision/utils/pushMetric';
-import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 import { notification } from 'antd';
 
 import { PageTitle } from '@cognite/cdf-utilities';
 import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
+
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { PopulateAnnotationTemplates } from '../../../store/thunks/Annotation/PopulateAnnotationTemplates';
+import { RetrieveAnnotations } from '../../../store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from '../../../store/thunks/Files/DeleteFilesById';
+import { FetchFilesById } from '../../../store/thunks/Files/FetchFilesById';
+import { PopulateProcessFiles } from '../../../store/thunks/Process/PopulateProcessFiles';
+import { PopulateReviewFiles } from '../../../store/thunks/Review/PopulateReviewFiles';
+import { pushMetric } from '../../../utils/pushMetric';
+import { getParamLink, workflowRoutes } from '../../../utils/workflowRoutes';
+import { selectFileById } from '../../Common/store/files/selectors';
+import { resetEditHistory } from '../../FileDetails/slice';
+import { StatusToolBar } from '../../Process/Containers/StatusToolBar';
+import { resetPreview } from '../store/review/slice';
+
+import ReviewBody from './ReviewBody';
 
 const DeleteButton = (props: {
   onConfirm: () => void;

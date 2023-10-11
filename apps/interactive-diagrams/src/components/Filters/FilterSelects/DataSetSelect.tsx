@@ -14,10 +14,12 @@ type Props = {
   resourceType: ResourceType;
   selectedDataSetIds?: number[];
   onDataSetSelected: (ids: number[]) => void;
+  'data-testid'?: string;
 };
 
 export const DataSetSelect = (props: Props) => {
-  const { resourceType, selectedDataSetIds, onDataSetSelected } = props;
+  const { resourceType, selectedDataSetIds, onDataSetSelected, ...rest } =
+    props;
   const [query, setQuery] = useState('');
   const [options, setOptions] = useState<OptionType<React.ReactText>[]>();
   const [datasetSearchResults, setDatasetSearchResults] = useState(
@@ -76,6 +78,7 @@ export const DataSetSelect = (props: Props) => {
         title: 'Data set:',
         options: options!,
         value: currentSelection,
+        'data-testid': `${rest['data-testid']}`,
         onChange: setMultiSelection,
       }}
     />

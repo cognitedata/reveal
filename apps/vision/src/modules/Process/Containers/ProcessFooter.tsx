@@ -4,20 +4,21 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import {
-  selectIsPollingComplete,
-  selectIsProcessingStarted,
-  selectAllProcessFiles,
-} from '@vision/modules/Process/store/selectors';
-import { setSummaryModalVisibility } from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
-import { zIndex } from '@vision/utils/zIndex';
 import { Modal } from 'antd';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
+
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { PopulateProcessFiles } from '../../../store/thunks/Process/PopulateProcessFiles';
+import { zIndex } from '../../../utils/zIndex';
+import {
+  selectIsPollingComplete,
+  selectIsProcessingStarted,
+  selectAllProcessFiles,
+} from '../store/selectors';
+import { setSummaryModalVisibility } from '../store/slice';
 
 import { SummaryModal } from './SummaryModal/SummaryModal';
 

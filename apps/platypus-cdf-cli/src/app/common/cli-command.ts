@@ -1,8 +1,7 @@
 import { Arguments, Argv, CommandModule } from 'yargs';
 
-import { BaseArgs, CommandArgument } from '@cognite/platypus-cdf-cli/app/types';
-
 import { CommandBuilderService } from '../services';
+import { BaseArgs, CommandArgument } from '../types';
 import { promptQuestions } from '../utils/enquirer-utils';
 import Response from '../utils/logger';
 

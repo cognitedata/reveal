@@ -71,7 +71,8 @@ export const Login = (props: Props) => {
       id="org"
       onSubmit={(e) => {
         e.preventDefault();
-        onDomainSubmit();
+        if (isDomainValid) onDomainSubmit();
+        return;
       }}
     >
       <Wrapper>

@@ -1,14 +1,14 @@
-import { DataSourceDto, RuleDto } from '@data-quality/api/codegen';
+import { Datapoints } from '@cognite/sdk/dist/src';
+
+import { useTranslation } from '../../../../../../hooks/useTranslation';
+import { DataSourceDto, RuleDto } from '../../../api/codegen';
 import {
   ValidationStatus,
   useLoadDataSource,
   useLoadDatapoints,
   useLoadRules,
-} from '@data-quality/hooks';
-import { emptyDatapoints } from '@data-quality/utils/validationTimeseries';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Datapoints } from '@cognite/sdk/dist/src';
+} from '../../../hooks';
+import { emptyDatapoints } from '../../../utils/validationTimeseries';
 
 /** Get the availability status of the report before the download process can start.
  * A report state can be:

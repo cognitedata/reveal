@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CellContainer } from '@vision/modules/Common/Components/BulkEdit/utils/CellContainer';
+import { CellContainer } from './CellContainer';
 
 export const getUpdatedValue = ({
   originalValue,

@@ -1,14 +1,14 @@
-import { DataScopeDto, useDeleteDataScopes } from '@data-quality/api/codegen';
-import { DeleteModal } from '@data-quality/components';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+
+import { Notification } from '../../../../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
+import { DataScopeDto, useDeleteDataScopes } from '../../../../api/codegen';
+import { DeleteModal } from '../../../../components';
 import {
   useDisclosure,
   useLoadDataScopes,
   useLoadDataSource,
-} from '@data-quality/hooks';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+} from '../../../../hooks';
 
 type DataScopeOptionsMenuProps = { dataScope: DataScopeDto };
 

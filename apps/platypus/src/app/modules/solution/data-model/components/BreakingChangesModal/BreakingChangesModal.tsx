@@ -1,6 +1,6 @@
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { Modal } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 import { StyledBody, StyledBreakingChanges } from './elements';
 

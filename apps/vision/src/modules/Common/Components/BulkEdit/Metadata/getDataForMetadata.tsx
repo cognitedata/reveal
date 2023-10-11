@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { EditPanelState } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
-import { BulkEditTableDataType } from '@vision/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
-import { CellContainer } from '@vision/modules/Common/Components/BulkEdit/utils/CellContainer';
-import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
-import { VisionFile } from '@vision/modules/Common/store/files/types';
+import { BulkEditUnsavedState } from '../../../store/common/types';
+import { VisionFile } from '../../../store/files/types';
+import { EditPanelState } from '../bulkEditOptions';
+import { BulkEditTableDataType } from '../BulkEditTable/BulkEditTable';
+import { CellContainer } from '../utils/CellContainer';
 
 export const getDataForMetadata = ({
   selectedFiles,

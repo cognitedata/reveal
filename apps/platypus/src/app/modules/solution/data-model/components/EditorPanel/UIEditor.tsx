@@ -1,11 +1,10 @@
 import { useParams } from 'react-router-dom';
 
-import { useCustomTypeNames } from '@platypus-app/hooks/useDataModelActions';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
-
 import { Flex } from '@cognite/cogs.js';
 
+import { useCustomTypeNames } from '../../../../../hooks/useDataModelActions';
+import useSelector from '../../../../../hooks/useSelector';
+import { useDataModelState } from '../../../hooks/useDataModelState';
 import { useTypeDefActions } from '../../hooks/useTypeDefActions';
 import { SchemaTypeList } from '../SchemaTypeAndField/SchemaTypeList';
 import { SchemaTypeView } from '../SchemaTypeAndField/SchemaTypeView';
@@ -43,29 +42,27 @@ export function UIEditor({ disabled }: UIEditorProps) {
 
   return (
     <>
-      {currentTypeName ? (
+      {currentTypeName && currentType ? (
         <SchemaTypeView
-          currentTypeName={currentTypeName}
+          currentType={currentType}
           onNavigateBack={() => setCurrentTypeName(null)}
         >
           <Flex direction="column" gap={16}>
-            {currentType && (
-              <TypeDefFields
-                key="TypeDefFields"
-                currentType={currentType}
-                disabled={disabled}
-                customTypesNames={customTypesNames.filter((name) => name)}
-                onFieldCreated={createField}
-                onFieldUpdated={(fieldName, updates) =>
-                  updateField({
-                    typeName: currentType.name,
-                    fieldName,
-                    updates,
-                  })
-                }
-                onFieldRemoved={removeField}
-              />
-            )}
+            <TypeDefFields
+              key="TypeDefFields"
+              currentType={currentType}
+              disabled={disabled || (currentType.isReadOnly as boolean)}
+              customTypesNames={customTypesNames.filter((name) => name)}
+              onFieldCreated={createField}
+              onFieldUpdated={(fieldName, updates) =>
+                updateField({
+                  typeName: currentType.name,
+                  fieldName,
+                  updates,
+                })
+              }
+              onFieldRemoved={removeField}
+            />
           </Flex>
         </SchemaTypeView>
       ) : (

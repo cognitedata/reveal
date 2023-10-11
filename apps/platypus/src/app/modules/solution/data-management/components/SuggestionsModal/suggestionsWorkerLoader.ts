@@ -1,4 +1,4 @@
-import { CorsWorker } from '@platypus-app/CorsWorker';
+import { CorsWorker } from '../../../../../CorsWorker';
 
 function getSuggestionsWorker() {
   return new CorsWorker('./suggestions-worker.js').getWorker();

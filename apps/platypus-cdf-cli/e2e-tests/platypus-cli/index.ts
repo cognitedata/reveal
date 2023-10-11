@@ -1,4 +1,4 @@
-import { CONSTANTS } from '@cognite/platypus-cdf-cli/app/constants';
+import { CONSTANTS } from '../../src/app/constants';
 
 import { Run } from './process';
 

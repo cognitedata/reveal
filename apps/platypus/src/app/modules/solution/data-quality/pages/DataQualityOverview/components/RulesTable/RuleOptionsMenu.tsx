@@ -1,15 +1,15 @@
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+
+import { Notification } from '../../../../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
 import {
   RuleDto,
   useDeleteRules,
   useListAllRules,
-} from '@data-quality/api/codegen';
-import { DeleteModal } from '@data-quality/components';
-import { useDisclosure, useLoadDataSource } from '@data-quality/hooks';
-import { getDefaultRulesetId } from '@data-quality/utils/namingPatterns';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+} from '../../../../api/codegen';
+import { DeleteModal } from '../../../../components/DeleteModal/DeleteModal';
+import { useDisclosure, useLoadDataSource } from '../../../../hooks';
+import { getDefaultRulesetId } from '../../../../utils/namingPatterns';
 
 type RuleOptionsMenuProps = { rule: RuleDto };
 

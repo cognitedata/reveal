@@ -19,15 +19,14 @@ export interface Props {
   dateRange?: DateRange;
 }
 
-export const openInCharts = ({ timeseries, dateRange }: Props) => {
+export const getOpenInChartsLink = ({ timeseries, dateRange }: Props) => {
   const query: OpenInChartsQuery = {
     ...getOpenInChartsQueryIds(timeseries),
     startTime: dateRange?.[0].getTime(),
     endTime: dateRange?.[1].getTime(),
   };
 
-  const link = createLink('/charts', query);
-  window.open(link, '_blank');
+  return createLink('/charts', query);
 };
 
 export const getOpenInChartsQueryIds = (timeseries: TimeseriesItem[]) => {

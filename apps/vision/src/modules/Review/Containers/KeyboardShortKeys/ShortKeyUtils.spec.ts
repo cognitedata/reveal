@@ -4,7 +4,7 @@ import {
   getActiveRowIndex,
   getActiveRowSelection,
   getAnnotationIdOrKeypointIdForRowSelect,
-} from '@vision/modules/Review/Containers/KeyboardShortKeys/ShortKeyUtils';
+} from './ShortKeyUtils';
 
 describe('extractAnnotationIdFromElement', () => {
   const element = document.createElement('div');

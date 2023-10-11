@@ -1,21 +1,29 @@
+import { FC } from 'react';
+
 import styled from 'styled-components';
+
+import { head } from 'lodash';
 
 import { Button, ToolBar } from '@cognite/cogs.js';
 import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
 import {
-  PointCloudContainer,
   useReveal,
+  PointCloudContainer,
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
 
 import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
+import { useIntersectAnnotationVolumesOnClick } from '../../hooks/useIntersectAnnotationBoundsOnClick';
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
   setModelLoaded,
+  ToolType,
   useContextualizeThreeDViewerStore,
+  setSelectedAnnotationId,
 } from '../../useContextualizeThreeDViewerStore';
 import { AnnotationsCard } from '../AnnotationsCard';
+import { AnnotationBoxToolbar } from '../AnnotationToolbar';
 
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
@@ -26,6 +34,21 @@ interface RevealContentProps {
   onZoomToAnnotation: (annotationId: number) => void;
 }
 
+const SelectedAnnotationToolbar: FC = () => {
+  const { tool, selectedAnnotationId } = useContextualizeThreeDViewerStore(
+    (state) => ({
+      tool: state.tool,
+      selectedAnnotationId: state.selectedAnnotationId,
+    })
+  );
+
+  if (tool !== ToolType.SELECT_TOOL || selectedAnnotationId === null) {
+    return <></>;
+  }
+
+  return <AnnotationBoxToolbar />;
+};
+
 export const PointCloudRevealContent = ({
   modelId,
   revisionId,
@@ -33,11 +56,20 @@ export const PointCloudRevealContent = ({
   onZoomToAnnotation,
 }: RevealContentProps) => {
   const viewer = useReveal();
-  const { isResourceSelectorOpen, annotations } =
+  const { isResourceSelectorOpen, annotations, tool } =
     useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       annotations: state.annotations,
+      tool: state.tool,
     }));
+
+  useIntersectAnnotationVolumesOnClick(
+    (intersectedAnnotationData) =>
+      setSelectedAnnotationId(
+        head(intersectedAnnotationData)?.annotationId ?? null
+      ),
+    { enabled: tool === ToolType.SELECT_TOOL }
+  );
 
   const handleModelOnLoad = (model: CogniteModel) => {
     setModelLoaded();
@@ -82,7 +114,7 @@ export const PointCloudRevealContent = ({
           }}
         />
       </StyledResourceSelectorButtonWrapper>
-
+      <SelectedAnnotationToolbar />
       <AnnotationsCard
         annotations={annotations}
         onDeleteAnnotation={(annotation) => {

@@ -30,6 +30,16 @@ export const celaneseConfig: ProjectConfig[] = [
             space: 'EDG-COR-ALL-DMD',
             version: '1_0_0',
           },
+          {
+            externalId: 'IncidentDOM',
+            space: 'EDG-COR-ALL-DMD',
+            version: '1_0_4_draft',
+          },
+          {
+            externalId: 'EnergyDOM',
+            space: 'NRG-COR-ALL-DML',
+            version: '1_0_0',
+          },
         ],
 
         instanceSpaces: ['SAP-CLK-ALL-DAT', 'REF-COR-ALL-DAT'],

@@ -1,4 +1,4 @@
-import { getIcon } from '@vision/utils/iconUtils';
+import { getIcon } from '../iconUtils';
 
 describe('test icon utils', () => {
   test('when text is not provided should provide default icon', () => {

@@ -2,11 +2,9 @@ import { readFileSync } from 'fs';
 
 import { CreateDataModelVersionDTO } from '@platypus/platypus-core';
 
-import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
-import Response from '@cognite/platypus-cdf-cli/app/utils/logger';
-
+import { CLICommand } from '../../../../common/cli-command';
 import { CommandArgument, CommandArgumentType } from '../../../../types';
-import { DEBUG as _DEBUG } from '../../../../utils/logger';
+import Response, { DEBUG as _DEBUG } from '../../../../utils/logger';
 import { getDataModelVersionsHandler } from '../../utils';
 
 export const commandArgs = [

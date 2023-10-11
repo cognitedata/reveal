@@ -38,8 +38,9 @@ const DateRangePrompt: React.FC<DateRangePromptProps> = ({
   const { t } = useTranslation();
   const [dateRange, setDateRange] = useState<Range>(initialRange);
   return (
-    <>
+    <StyledDateRange>
       <DateRange
+        format="YYYY/MM/DD"
         range={dateRange}
         onChange={(nextDateRange) => {
           setDateRange((prevDateRange) => ({
@@ -60,8 +61,33 @@ const DateRangePrompt: React.FC<DateRangePromptProps> = ({
         )}
         onApplyClick={() => onComplete(dateRange, shouldApplyToAllTimeSeries)}
       />
-    </>
+    </StyledDateRange>
   );
 };
 
 export default DateRangePrompt;
+
+const StyledDateRange = styled.div`
+  .cogs-date-range--input {
+    height: 33px;
+    background: var(--cogs-surface--action--muted--default);
+
+    border: 1px solid transparent;
+    &:hover {
+      border: 1px solid var(--cogs-midblue-4);
+    }
+  }
+
+  .cogs-input.cogs-input-default:focus {
+    background: inherit;
+  }
+
+  .cogs-date-range--input .cogs-tab-input > * {
+    margin: 0 -7px;
+  }
+
+  .cogs-date-range--input .cogs-tab-input > .input-icon.calendar {
+    margin-right: 2px;
+    margin-left: 8px;
+  }
+`;

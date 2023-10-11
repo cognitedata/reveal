@@ -1,6 +1,6 @@
-import { CDFStatusModes } from '@vision/modules/Common/Components/CDFStatus/CDFStatus';
-
 import { Label, Metadata } from '@cognite/sdk';
+
+import { CDFStatusModes } from '../../Components/CDFStatus/CDFStatus';
 
 export type AssetIds = {
   addedAssetIds?: number[];
@@ -27,7 +27,6 @@ export type BulkEditUnsavedState = {
 export type CommonState = {
   showFileDownloadModal: boolean;
   showBulkEditModal: boolean;
-  showModelTrainingModal: boolean;
   bulkEditUnsavedState: BulkEditUnsavedState;
   saveState: {
     mode: CDFStatusModes;

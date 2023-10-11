@@ -8,12 +8,13 @@ import {
   PlatypusError,
   Result,
 } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
 import { IDatasource, IGetRowsParams } from 'ag-grid-community';
 import noop from 'lodash/noop';
 
 import { PrimitiveTypes } from '@cognite/cog-data-grid';
+
+import { TOKENS } from '../../../../di';
+import { useInjection } from '../../../../hooks/useInjection';
 
 import { useFetchFilteredRowsCount } from './useFetchFilteredRowsCount';
 

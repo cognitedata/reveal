@@ -70,12 +70,176 @@ Specifies if a type will be used for representing edge properties
 directive @edge on OBJECT | INTERFACE
 `;
 
+export const mixerApiCustomTypes = `
+scalar Int32
+
+"Represents a 64-bit integer value. Note that some consumers as JavaScript only supports [-(2^53)+1, (2^53)-1]."
+scalar Int64
+
+scalar Float32
+scalar Float64
+
+"Represents the number of milliseconds since 00:00:00 Thursday, 1 January 1970, Coordinated Universal Time (UTC), minus leap seconds."
+scalar Timestamp
+
+"Represents a plain JSON object"
+scalar JSONObject
+
+scalar Date
+
+type File {
+  id: Int64
+  externalId: String
+  name: String
+  directory: String
+  source: String
+  mimeType: String
+  metadata: JSONObject
+  assetIds: [Int64]
+  dataSetId: Int64
+  sourceCreatedTime: Timestamp
+  sourceModifiedTime: Timestamp
+  securityCategories: [Int64]
+  labels: [String]
+  geoLocation: _GeoLocation
+  uploaded: Boolean
+  uploadedTime: Timestamp
+  downloadLink(extendedExpiration: Boolean): _DownloadLink
+}
+
+type _GeoLocation {
+  type: String
+  geometry: _GeoLocationGeometry
+  properties: JSONObject
+}
+
+type _GeoLocationGeometry {
+  type: _GeoLocationType
+  coordinates: JSONObject
+}
+
+enum _GeoLocationType {
+  Point
+  LineString
+  Polygon
+  MultiPoint
+  MultiLineString
+  MultiPolygon
+}
+
+type _DownloadLink {
+  downloadUrl: String
+}
+
+type DataPoint {
+  timestamp: Timestamp
+  value: DataPointValue
+  average: Float64
+  max: Float64
+  min: Float64
+  count: Int32
+  sum: Float64
+  interpolation: Float64
+  stepInterpolation: Float64
+  continuousVariance: Float64
+  discreteVariance: Float64
+  totalVariation: Float64
+}
+
+scalar DataPointValue
+
+
+type Sequence {
+  id: Int64
+  externalId: String
+  name: String
+  description: String
+  assetId: Int64
+  dataSetId: Int64
+  metadata: JSONObject
+  columns: [_SequenceColumn]
+  data(start: Int64, end: Int64, limit: Int, columns: [String]): _SequenceRow
+  latest(before: Int64, columns: [String]): _SequenceRow
+}
+
+
+type _SequenceColumn {
+  externalId: String
+  name: String
+  description: String
+  metadata: JSONObject
+  valueType: _SequenceColumnValueType
+}
+
+type _SequenceColumnInfo {
+  externalId: String
+  name: String
+  valueType: _SequenceColumnValueType
+}
+
+enum _SequenceColumnValueType {
+  DOUBLE
+  STRING
+  LONG
+}
+
+type _SequenceRow {
+  id: Int64
+  externalId: String
+  columns: [_SequenceColumnInfo]
+  rows: [_SequenceRowsData]
+}
+
+scalar _SequenceRowColumnValue
+
+type _SequenceRowsData {
+  rowNumber: Int64
+  values: [_SequenceRowColumnValue]
+}
+
+type TimeSeries {
+  id: Int64
+  externalId: String
+  name: String
+  isString: Boolean
+  metadata: JSONObject
+  unit: String
+  assetId: Int64
+  isStep: Boolean
+  description: String
+  securityCategories: [Int64]
+  datasetId: Int64
+  dataPoints(
+    start: Int64
+    end: Int64
+    limit: Int
+    granularity: String
+    aggregates: [_AggregateKind!]
+  ): [DataPoint]
+}
+
+
+type _AggregateHistogramObjectType {
+  start: Int
+  count: Int
+}
+
+enum _AggregateKind {
+  AVERAGE
+  MAX
+  MIN
+  COUNT
+  SUM
+  INTERPOLATION
+  STEP_INTERPOLATION
+  CONTINUOUS_VARIANCE
+  DISCRETE_VARIANCE
+  TOTAL_VARIATION
+}
+`;
+
 export const schemaServiceGraphqlApi = `
 directive @specifiedBy(url: String!) on SCALAR
-
-scalar JSONElement
-
-scalar JSONObject
 
 type Mutation {
   upsertGraphQlDmlVersion(graphQlDmlVersion: GraphQlDmlVersionUpsert!): UpsertGraphQlDmlVersionResult!
@@ -93,19 +257,11 @@ type Query {
   graphQlDmlVersionsById(space: String!, externalId: String!): GraphQlDmlVersionConnection
 }
 
-scalar Timestamp
-
-"Represents a plain JSON object"
-scalar JSONObject
-
 "Represents a plain JSON element. An Object, an array, a primitive."
 scalar JSONElement
 
-"Represents the number of milliseconds since 00:00:00 Thursday, 1 January 1970, Coordinated Universal Time (UTC), minus leap seconds."
-scalar Timestamp
 
-"Represents a 64-bit integer value. Note that some consumers as JavaScript only supports [-(2^53)+1, (2^53)-1]."
-scalar Int64
+${mixerApiCustomTypes}
 
 ${mixerApiV3CustomDirectives}
 

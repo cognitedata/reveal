@@ -31,7 +31,7 @@ export function DynamicFields({
 
   const commandKey =
     step.type === 'Get' || step.type === 'Set' ? 'get/set' : 'command';
-  const stepType = dynamicStepFields?.steps.find(
+  const stepType = dynamicStepFields?.steps?.find(
     (step) => step.stepType === commandKey
   );
   const dynamicFields = stepType?.fields ?? [];

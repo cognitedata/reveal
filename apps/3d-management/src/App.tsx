@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+//import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { createBrowserHistory } from 'history';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
@@ -49,7 +49,7 @@ export const App = () => {
                   <BrowserRouter>
                     <>
                       <PageTitle title={APP_TITLE} />
-                      <ReactQueryDevtools initialIsOpen={false} />
+                      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
                       <ModelRoutes />
                     </>
                   </BrowserRouter>

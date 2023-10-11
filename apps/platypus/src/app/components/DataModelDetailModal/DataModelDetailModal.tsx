@@ -5,8 +5,6 @@ import {
   DataModelNameValidator,
   Validator,
 } from '@platypus/platypus-core';
-import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import {
   Body,
@@ -18,6 +16,8 @@ import {
   Textarea,
 } from '@cognite/cogs.js';
 
+import { useDataModels } from '../../hooks/useDataModelActions';
+import { useTranslation } from '../../hooks/useTranslation';
 import { CreateNewSpaceModal } from '../CreateNewSpaceModal/CreateNewSpaceModal';
 import { DataModelLibrary } from '../DataModelLibrary/DataModelLibrary';
 import { DataModelLibraryItem } from '../DataModelLibrary/library';

@@ -1,4 +1,4 @@
-import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
+import { VisionDetectionModelType } from '../api/vision/detectionModels/types';
 
 export const DetectionModelTypeFeatureMapping: Record<
   VisionDetectionModelType,
@@ -9,5 +9,4 @@ export const DetectionModelTypeFeatureMapping: Record<
   [VisionDetectionModelType.ObjectDetection]: 'IndustrialObjectDetection',
   [VisionDetectionModelType.PeopleDetection]: 'PeopleDetection',
   [VisionDetectionModelType.GaugeReader]: 'gaugereader',
-  [VisionDetectionModelType.CustomModel]: 'automl/prediction',
 };

@@ -1,5 +1,6 @@
-import { RegionShape } from '@vision/api/annotation/types';
 import isFinite from 'lodash/isFinite';
+
+import { RegionShape } from '../../annotation/types';
 
 import {
   GaugeReaderJobAnnotation,

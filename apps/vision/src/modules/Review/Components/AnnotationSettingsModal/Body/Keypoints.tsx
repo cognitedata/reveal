@@ -3,24 +3,22 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { CaretRightOutlined } from '@ant-design/icons';
-import { NO_EMPTY_LABELS_MESSAGE } from '@vision/constants/annotationSettingsConstants';
-import { ColorsPersonDetection } from '@vision/constants/Colors';
-import { ColorPicker } from '@vision/modules/Common/Components/ColorPicker/ColorPicker';
-import {
-  getRandomColor,
-  validNewKeypoint,
-} from '@vision/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
-import { NewKeypoints } from '@vision/modules/Review/Components/AnnotationSettingsModal/types';
-import {
-  PredefinedKeypoint,
-  PredefinedKeypointCollection,
-} from '@vision/modules/Review/types';
-import { isSensitiveAnnotationLabel } from '@vision/utils/textUtils';
-import { ToastUtils } from '@vision/utils/ToastUtils';
 import { Collapse, Input } from 'antd';
 import isEmpty from 'lodash/isEmpty';
 
 import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
+
+import { NO_EMPTY_LABELS_MESSAGE } from '../../../../../constants/annotationSettingsConstants';
+import { ColorsPersonDetection } from '../../../../../constants/Colors';
+import { isSensitiveAnnotationLabel } from '../../../../../utils/textUtils';
+import { ToastUtils } from '../../../../../utils/ToastUtils';
+import { ColorPicker } from '../../../../Common/Components/ColorPicker/ColorPicker';
+import {
+  PredefinedKeypoint,
+  PredefinedKeypointCollection,
+} from '../../../types';
+import { getRandomColor, validNewKeypoint } from '../AnnotationSettingsUtils';
+import { NewKeypoints } from '../types';
 
 import { renderEmptyAnnotationMessage } from './EmptyAnnotationInfo';
 import { Header } from './Header';

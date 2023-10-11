@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { unwrapResult } from '@reduxjs/toolkit';
-import { ImageAssetLink, Status } from '@vision/api/annotation/types';
-import { VisionAsset } from '@vision/modules/Common/store/files/types';
-import { VisionAnnotationDataType } from '@vision/modules/Common/types';
-import { isImageAssetLinkData } from '@vision/modules/Common/types/typeGuards';
-import { VisionReviewAnnotation } from '@vision/modules/Review/types';
-import { useThunkDispatch } from '@vision/store';
-import { fetchAssets } from '@vision/store/thunks/fetchAssets';
 
 import { FileInfo } from '@cognite/sdk';
+
+import { ImageAssetLink, Status } from '../../api/annotation/types';
+import { VisionAsset } from '../../modules/Common/store/files/types';
+import { VisionAnnotationDataType } from '../../modules/Common/types';
+import { isImageAssetLinkData } from '../../modules/Common/types/typeGuards';
+import { VisionReviewAnnotation } from '../../modules/Review/types';
+import { fetchAssets } from '../thunks/fetchAssets';
+
+import { useThunkDispatch } from './..';
 
 export enum AssetWarnTypes {
   NoWarning,

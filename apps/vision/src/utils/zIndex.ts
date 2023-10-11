@@ -6,6 +6,8 @@ const LAYERS = [
 
   'SIDE_PANEL',
 
+  'BULK_EDIT',
+
   /** The default z-index for all components */
   'DEFAULT',
   // used for deselect container in process page (contextualization)

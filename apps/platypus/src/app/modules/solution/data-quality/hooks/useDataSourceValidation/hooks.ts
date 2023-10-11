@@ -1,6 +1,5 @@
-import { DataSourceDto, RuleDto } from '@data-quality/api/codegen';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { DataSourceDto, RuleDto } from '../../api/codegen';
 import { AccessAction, useAccessControl } from '../useAccessControl';
 
 import { ValidationStatus } from './types';

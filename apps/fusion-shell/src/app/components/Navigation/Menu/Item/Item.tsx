@@ -23,7 +23,11 @@ const Item = (props: ItemProps) => {
   const { icon, title, subtitle = '', onClick } = item;
 
   const itemContent = (
-    <LinkContainer onClick={onClick} isCompact={isCompact}>
+    <LinkContainer
+      onClick={onClick}
+      isCompact={isCompact}
+      data-testid={item.importMapApp}
+    >
       <ItemIcon className="icon" isCompact={isCompact}>
         <Icon type={icon} />
       </ItemIcon>

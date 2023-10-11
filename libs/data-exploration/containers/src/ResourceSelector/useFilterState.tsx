@@ -16,6 +16,7 @@ const EMPTY_FILTER_STATE: FilterState = {
   sequence: {},
   event: {},
   threeD: {},
+  charts: {},
 };
 
 type FilterStateKey = keyof FilterState;

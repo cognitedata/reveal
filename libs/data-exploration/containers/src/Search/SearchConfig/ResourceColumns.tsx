@@ -42,48 +42,46 @@ export const ResourceColumns: React.FC<Props> = ({
           const title = getTitle(resource, true);
 
           return (
-            <div key={`${resource}`}>
-              <CommonWrapper direction="column">
-                <ColumnHeader>
-                  {t(`${title.split(' ').join().toUpperCase()}`, title)}
-                </ColumnHeader>
-                {resourceFilterIds.map((filterId, index) => {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore Property does not exist on type
-                  const config = searchConfigData[resource][filterId];
-                  const label = config.label || '';
+            <CommonWrapper
+              key={resource}
+              data-testid={`search-config-${title}`}
+              direction="column"
+            >
+              <ColumnHeader>
+                {t(`${title.split(' ').join().toUpperCase()}`, title)}
+              </ColumnHeader>
+              {resourceFilterIds.map((filterId, index) => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore Property does not exist on type
+                const config = searchConfigData[resource][filterId];
+                const label = config.label || '';
 
-                  const disableCheckboxWithFuzzySearchConfig =
-                    config.label === 'Content' && !config.enabledFuzzySearch;
+                const disableCheckboxWithFuzzySearchConfig =
+                  config.label === 'Content' && !config.enabledFuzzySearch;
 
-                  return (
-                    <React.Fragment key={`${resource}_${filterId}`}>
-                      <ModalCheckbox
-                        onChange={(_, isChecked) =>
-                          onChange(!!isChecked, resource, filterId)
-                        }
-                        name={config?.label}
-                        checked={
-                          config?.enabled &&
-                          !disableCheckboxWithFuzzySearchConfig
-                        }
-                        data-testid={`modal-checkbox-${resource}-${filterId}`}
-                        id={`modal-checkbox-${resource}-${filterId}`}
-                        disabled={disableCheckboxWithFuzzySearchConfig}
-                      >
-                        {t(
-                          `${label.split(' ').join('_').toUpperCase()}`,
-                          label
-                        )}
-                      </ModalCheckbox>
-                      {index === sizeOfCommonSection - 1 && (
-                        <Divider data-testid="search-config-divider" />
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </CommonWrapper>
-            </div>
+                return (
+                  <React.Fragment key={`${resource}_${filterId}`}>
+                    <ModalCheckbox
+                      onChange={(_, isChecked) =>
+                        onChange(!!isChecked, resource, filterId)
+                      }
+                      name={config?.label}
+                      checked={
+                        config?.enabled && !disableCheckboxWithFuzzySearchConfig
+                      }
+                      data-testid={`modal-checkbox-${resource}-${filterId}`}
+                      id={`modal-checkbox-${resource}-${filterId}`}
+                      disabled={disableCheckboxWithFuzzySearchConfig}
+                    >
+                      {t(`${label.split(' ').join('_').toUpperCase()}`, label)}
+                    </ModalCheckbox>
+                    {index === sizeOfCommonSection - 1 && (
+                      <Divider data-testid="search-config-divider" />
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </CommonWrapper>
           );
         })}
     </>

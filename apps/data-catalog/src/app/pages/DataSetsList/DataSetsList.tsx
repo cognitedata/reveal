@@ -185,7 +185,6 @@ const DataSetsList = (): JSX.Element => {
                 editDataSet(record.key);
               },
               disabled: !hasWritePermissions,
-
               icon: 'Edit',
             },
             {
@@ -253,6 +252,7 @@ const DataSetsList = (): JSX.Element => {
         setUserWarned(false);
       }}
       disabled={!hasWritePermissions}
+      data-cy="create-data-set-button"
     >
       {t('create-data-set')}
     </Button>
@@ -300,6 +300,7 @@ const DataSetsList = (): JSX.Element => {
         justifyContent="space-between"
         style={{ marginBottom: 16 }}
         key="table-filters-wrapper"
+        data-cy="data-set-list-filters"
       >
         <TableFilter
           filteredCount={filteredTableData.length}
@@ -319,7 +320,7 @@ const DataSetsList = (): JSX.Element => {
           {CreateButton}
         </Flex>
       </Flex>
-      <div className="data-sets-list-table">
+      <div className="data-sets-list-table" data-cy="data-sets-table">
         <Table<DataSetRow>
           key="data-sets-table"
           columns={dataSetsTableColumns}

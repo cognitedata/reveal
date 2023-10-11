@@ -1,7 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { createFileInfo } from '@vision/store/util/StateUtils';
 import isEqual from 'lodash/isEqual';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
+
+import { createFileInfo } from '../../../../store/util/StateUtils';
 
 import { FileState } from './types';
 

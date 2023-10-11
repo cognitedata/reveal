@@ -12,6 +12,7 @@ import {
   LowQualitySettings,
 } from '../../../../../pages/ContextualizeEditor/constants';
 import { useContextualizeThreeDViewerStore } from '../../../useContextualizeThreeDViewerStore';
+import { AddAnnotationToolBar } from '../../PointCloudToolBar/AddAnnotationToolBar';
 import { ColorTypeSelector } from '../PointCloudColorPicker';
 import { PointSizeSlider } from '../PointSizeSlider';
 
@@ -45,42 +46,9 @@ export const PointCloudToolBar = ({
           lowQualitySettings={LowQualitySettings}
           highQualitySettings={HighQualitySettings}
         />
+        <AddAnnotationToolBar />
       </StyledToolBar>
-      <InformationBox />
     </>
-  );
-};
-
-const InformationBox = () => {
-  const { tool, pendingAnnotation } = useContextualizeThreeDViewerStore(
-    (state) => ({
-      tool: state.tool,
-      pendingAnnotation: state.pendingAnnotation,
-    })
-  );
-
-  if (tool !== 'addAnnotation') return null;
-
-  if (pendingAnnotation === null) {
-    return (
-      <StyledInformation left={75} bottom={85}>
-        Click on the model
-        <br />
-        to add an annotation
-      </StyledInformation>
-    );
-  }
-
-  return (
-    <StyledInformation left={75} bottom={85}>
-      <p>
-        Select an asset from
-        <br />
-        the right side panel
-        <br />
-        Press 'M' to Move and 'R' to Resize
-      </p>
-    </StyledInformation>
   );
 };
 
@@ -90,7 +58,7 @@ const StyledToolBar = styled(withSuppressRevealEvents(ToolBar))`
   bottom: ${FLOATING_ELEMENT_MARGIN}px;
 `;
 
-const StyledInformation = styled.div<{ left: number; bottom: number }>`
+export const StyledInformation = styled.div<{ left: number; bottom: number }>`
   position: absolute;
   background-color: rgba(0, 0, 0, 0.8);
   padding: 10px;

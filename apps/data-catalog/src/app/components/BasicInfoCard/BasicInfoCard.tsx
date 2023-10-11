@@ -56,7 +56,9 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
           <Flex gap={8} alignItems="center" justifyContent="space-between">
             <Flex gap={8} alignItems="center">
               {writeProtected && <Icon type="Lock" />}
-              <Body level={1}>{name}</Body>
+              <Body level={1} data-cy="basic-info-card-name">
+                {name}
+              </Body>
             </Flex>
             <CopyButton aria-label={t('copy-name')} content={name} />
           </Flex>
@@ -92,7 +94,9 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
         }
         value={
           <Flex gap={8} alignItems="center" justifyContent="space-between">
-            <Body level={1}>{id}</Body>
+            <Body level={1} data-cy="basic-info-card-dataset-id">
+              {id}
+            </Body>
             <CopyButton
               aria-label={t('copy-dataset-id')}
               content={id.toString()}

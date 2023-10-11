@@ -1,10 +1,10 @@
 import { BuiltInType, DataModelTypeDefsField } from '@platypus/platypus-core';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { EditableCallbackParams } from 'ag-grid-community';
 
 import { BoolCellRenderer, GridConfig } from '@cognite/cog-data-grid';
 import { Tooltip } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../../hooks/useTranslation';
 import { FieldNameCellEditor } from '../components/TypeDefFields/cellEditors/FieldNameCellEditor';
 import { FieldTypeCellEditor } from '../components/TypeDefFields/cellEditors/FieldTypeCellEditor';
 import { FieldActionsCellRenderer } from '../components/TypeDefFields/cellRenderers/FieldActionsCellRenderer';

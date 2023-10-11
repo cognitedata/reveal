@@ -15,6 +15,7 @@ export enum ViewType {
   Event = 'event',
   Sequence = 'sequence',
   ThreeD = 'threeD',
+  Charts = 'charts',
 }
 
 // sub-app name configured in cdf-hu > cdf-navigation > sections - app.linkTo i.e. fusion sub apps configuration

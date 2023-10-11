@@ -11,6 +11,7 @@ const resourceTypeMap: Record<ResourceType, string> = {
   timeSeries: 'Time series',
   sequence: 'Sequences',
   threeD: '3D',
+  charts: 'Charts',
 };
 
 const defaultResourceTypes: ResourceType[] = [
@@ -20,6 +21,7 @@ const defaultResourceTypes: ResourceType[] = [
   'event',
   'sequence',
   'threeD',
+  'charts',
 ];
 
 type Props = {

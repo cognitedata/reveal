@@ -4,7 +4,7 @@ import {
   ArrayPromptOptions,
   CommandArgument,
   CommandArgumentType,
-} from '@cognite/platypus-cdf-cli/app/types';
+} from '../../types';
 
 export class YargsCommandBuilder {
   buildArguments(yargs: Argv, args: CommandArgument[]): Argv {

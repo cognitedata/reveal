@@ -1,4 +1,4 @@
-import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
+import { BulkEditUnsavedState } from '../../../store/common/types';
 
 export const disableAssetTable = ({
   bulkEditUnsaved,

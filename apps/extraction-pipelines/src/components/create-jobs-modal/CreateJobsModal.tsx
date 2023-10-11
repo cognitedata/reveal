@@ -23,8 +23,7 @@ import {
   useCreateMQTTJob,
   useMQTTDestinations,
 } from '../../hooks/hostedExtractors';
-import FormFieldRadioGroup from '../form-field-radio-group/FormFieldRadioGroup';
-import FormFieldWrapper from '../form-field-wrapper/FormFieldWrapper';
+import { FormFieldRadioGroup, FormFieldWrapper } from '../form-fields';
 
 type CreateJobsFormDestinationOptionType =
   | 'use-existing'
@@ -56,7 +55,7 @@ export const CreateJobsModal = ({
 
   const [tempTopicFilterInput, setTempTopicFilterInput] = useState('');
 
-  const { data: destinations } = useMQTTDestinations();
+  const { data: destinations } = useMQTTDestinations({});
 
   const sourceTopicFilters = source.jobs.map((job) => {
     return job.config.topicFilter;
@@ -251,7 +250,7 @@ export const CreateJobsModal = ({
                 }}
                 fullWidth
                 onChange={(e) => setTempTopicFilterInput(e.target.value)}
-                onKeyPress={(e) => {
+                onKeyDown={(e) => {
                   if (e.key === 'Enter' && !!tempTopicFilterInput) {
                     handleAddTopicFilter();
                   }
@@ -278,7 +277,7 @@ export const CreateJobsModal = ({
           </Flex>
           {values.topicFilters?.map((filter) => (
             <TopicFilterContainer>
-              <Body level={2}>{filter}</Body>
+              <Body size="medium">{filter}</Body>
               <Button
                 icon="Delete"
                 onClick={() => handleDeleteTopicFilter(filter)}

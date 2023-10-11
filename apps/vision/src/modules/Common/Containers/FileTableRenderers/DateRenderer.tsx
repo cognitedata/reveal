@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CellRenderer } from '@vision/modules/Common/types';
+import { CellRenderer } from '../../types';
 
 export function DateRenderer({ rowData: { createdTime } }: CellRenderer) {
   const date = createdTime ? formatDate(createdTime) : 'N/A';

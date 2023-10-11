@@ -1,4 +1,4 @@
-import { isSensitiveAnnotationLabel } from '@vision/utils/textUtils';
+import { isSensitiveAnnotationLabel } from '../textUtils';
 
 describe('test text utils', () => {
   describe('test isSensitiveText', () => {

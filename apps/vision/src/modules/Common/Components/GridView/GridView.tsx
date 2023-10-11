@@ -3,8 +3,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { GridTable } from '@data-exploration-components/components';
-import { GridViewProps } from '@vision/modules/Common/Components/FileTable/types';
-import { TableDataItem } from '@vision/modules/Common/types';
+
+import { TableDataItem } from '../../types';
+import { GridViewProps } from '../FileTable/types';
 
 /**
  * Grid table Wrapper

@@ -2,11 +2,12 @@ import React, { useEffect } from 'react';
 import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
 
 import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useFusionQuery } from '@platypus-app/hooks/useFusionQuery';
-import { DataModelsPage } from '@platypus-app/modules/data-models/DataModelsPage';
-import { DataModel } from '@platypus-app/modules/solution/DataModel';
-import zIndex from '@platypus-app/utils/zIndex';
+
+import { Spinner } from '../../app/components/Spinner/Spinner';
+import { useFusionQuery } from '../../app/hooks/useFusionQuery';
+import { DataModelsPage } from '../../app/modules/data-models/DataModelsPage';
+import { DataModel } from '../../app/modules/solution/DataModel';
+import zIndex from '../../app/utils/zIndex';
 
 // Globally defined global
 // GraphiQL package needs this to be run correctly

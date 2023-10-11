@@ -97,10 +97,13 @@ export function InputStep({ isDisabled }: StepProps) {
                       options={
                         unitsMap[unitType] ? unitsMap[unitType].units : []
                       }
-                      value={getOptionLabel(
-                        unitsMap[unitType] ? unitsMap[unitType].units : [],
-                        unit ?? ''
-                      )}
+                      value={{
+                        label: getOptionLabel(
+                          unitsMap[unitType] ? unitsMap[unitType].units : [],
+                          unit ?? ''
+                        ),
+                        value: unit ?? '',
+                      }}
                       closeMenuOnSelect
                       onChange={({ value }: OptionType<string>) => {
                         setFieldValue(`inputTimeSeries.${index}.unit`, value);

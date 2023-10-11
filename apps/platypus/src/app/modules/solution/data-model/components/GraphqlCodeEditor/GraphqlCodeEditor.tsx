@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import Editor, { Monaco } from '@monaco-editor/react';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { subscribe, unsubscribe } from '@platypus-app/utils/custom-events';
 import noop from 'lodash/noop';
 import {
   Environment as MonacoEditorEnvironment,
@@ -11,6 +9,8 @@ import {
   MarkerSeverity,
 } from 'monaco-editor/esm/vs/editor/editor.api';
 
+import { Spinner } from '../../../../../components/Spinner/Spinner';
+import { subscribe, unsubscribe } from '../../../../../utils/custom-events';
 import { CUSTOM_EVENTS } from '../../constants';
 import { setupGraphql } from '../../web-workers';
 // web workers stuff
@@ -77,6 +77,7 @@ type Props = {
   currentTypeName?: string;
   typeDefs?: DataModelTypeDefs;
   space?: string;
+  dataModelExternalId?: string;
   disabled?: boolean;
   language?: string;
   errorsByGroup?: ErrorsByGroup;
@@ -90,6 +91,7 @@ export const GraphqlCodeEditor = React.memo(
     code,
     currentTypeName,
     space,
+    dataModelExternalId,
     typeDefs,
     disabled = false,
     errorsByGroup = {},
@@ -106,6 +108,7 @@ export const GraphqlCodeEditor = React.memo(
     const editorWillMount = (monacoInstance: Monaco) => {
       langProviders.current = setupGraphql(monacoInstance, {
         useExtendedSdl: true,
+        dataModelExternalId,
       });
     };
 

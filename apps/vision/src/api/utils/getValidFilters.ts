@@ -1,6 +1,6 @@
-import { VisionFileFilterProps } from '@vision/modules/FilterSidePanel/types';
-
 import { FileFilterProps } from '@cognite/sdk';
+
+import { VisionFileFilterProps } from '../../modules/FilterSidePanel/types';
 
 /**
  * Pick only the valid properties from VisionFileFilters to get FileFilterProps

@@ -1,4 +1,4 @@
-import { cropEdge } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/utils/cropBoxRegionAtEdges';
+import { cropEdge } from '../utils/cropBoxRegionAtEdges';
 
 describe('test cropEdge fn', () => {
   describe('if started right side or below the image', () => {

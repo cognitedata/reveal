@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Accordion, Colors, Divider, Flex } from '@cognite/cogs.js';
 
-import { useTranslation } from '../../common';
+import { Trans, useTranslation } from '../../common';
 
 import { Section } from './Section';
 import { ExpandOptions } from './types';
@@ -43,48 +43,27 @@ export const TopicFilterGuide = ({
       >
         <Flex direction="column" gap={24} style={{ width: '100%' }}>
           <GuideParagraph>
-            Let’s start with a quick explanation of how this connection will
-            work! A broker is a server that receives messages from various
-            sources. Every message is tagged with a topic (a string), and to get
-            these messages into CDF, we subscribe to the topics. You subscribe
-            to a topic by using topic filter strings. The broker will return
-            messages tagged with a topic matching your topic filter and give the
-            data to CDF.
+            {t('topic-filter-guide-step-1-para-1')}
             <br />
             <br />
-            For example, say that in your house there are multiple floors. Each
-            floor has several rooms, and there are several sensors in each room.
-            You can subscribe to one topic by writing the following topic
-            filter:
+            {t('topic-filter-guide-step-1-para-2')}
           </GuideParagraph>
 
-          <GuideCode>Ground floor / Living room / Temperature</GuideCode>
+          <GuideCode>{t('topic-filter-guide-step-1-example-1')}</GuideCode>
           <GuideParagraph>
-            This topic filter string will match an identical topic string in the
-            broker and give you the messages related to the temperature in the
-            living room on the ground floor. As you see in the example, both
-            topics and topic filters have one or more topic levels, and each
-            topic level is separated by a forward slash.
+            {t('topic-filter-guide-step-1-para-3')}
             <br />
             <br />
-            You can also subscribe to multiple topics at the same time by using
-            wildcards. To subscribe to multiple topics, your topic filter has to
-            contain a plus sign or a hash.
+            {t('topic-filter-guide-step-1-para-4')}
             <br />
-            <br />A plus sign (+) replaces one topic level. That means it will
-            include all the topics in a topic level. In the example below, the
-            topic filter would give you the messages related to the temperature
-            of every room on the ground floor:
+            <br />
+            {t('topic-filter-guide-step-1-para-5')}
           </GuideParagraph>
-          <GuideCode>Ground floor / + / Temperature</GuideCode>
+          <GuideCode> {t('topic-filter-guide-step-1-example-2')}</GuideCode>
           <GuideParagraph>
-            A hash (#) is used at the end of a topic filter. It will give you
-            messages from the current and following topic levels. In the example
-            below, the topic filter would give you the messages related to the
-            all the sensors (temperature, time, noise, etc.) of every room on
-            the ground floor:
+            {t('topic-filter-guide-step-1-para-6')}
           </GuideParagraph>
-          <GuideCode>Ground floor / #</GuideCode>
+          <GuideCode>{t('topic-filter-guide-step-1-example-3')}</GuideCode>
         </Flex>
       </Accordion>
       <Divider />
@@ -96,31 +75,27 @@ export const TopicFilterGuide = ({
       >
         <Flex direction="column" gap={24} style={{ width: '100%' }}>
           <GuideParagraph>
-            Choose the format your messages will have when they come into CDF.
-            You can choose existing formats or build a custom format by using
-            Kuiper.
+            {t('topic-filter-guide-step-2-para-1')}
             <br />
             <br />
-            <strong>Custom formats</strong>
+            <strong>{t('topic-filter-guide-step-2-custom-formats')}</strong>
             <br />
-            Kuiper is a JSON to JSON transform and templating language. Use this
-            code to define what format your code should have in CDF. You do this
-            by choosing what values in CDF equals of values from your source.
+            {t('topic-filter-guide-step-2-para-2')}
             <br />
             <br />
-            To help you get started, we’ve given you an example of a
-            configuration. In the example, you can see that your source value
-            named "datapoint" will be named "type" when it comes into CDF. Read
-            our{' '}
-            <a href="https://github.com/cognitedata/pluto/blob/main/kuiper_in_pluto.md">
-              detailed documentation{' '}
-            </a>{' '}
-            to learn how to create custom formats.
+            <Trans
+              t={t as any}
+              i18nKey="topic-filter-guide-step-2-para-3"
+              components={{
+                1: (
+                  // eslint-disable-next-line jsx-a11y/anchor-has-content
+                  <a href="https://github.com/cognitedata/pluto/blob/main/kuiper_in_pluto.md"></a>
+                ),
+              }}
+            />
             <br />
             <br />
-            Custom created formats can be used by other topic filters too. Be
-            aware that editing a custom format for one topic filter will affect
-            the format being used anywhere else too.
+            {t('topic-filter-guide-step-2-para-4')}
           </GuideParagraph>
         </Flex>
       </Accordion>
@@ -133,43 +108,28 @@ export const TopicFilterGuide = ({
       >
         <Flex direction="column" gap={24} style={{ width: '100%' }}>
           <GuideParagraph>
-            In order to get the data into CDF, you need a ‘sink’. A sink is a
-            thing that batches data from the broker into CDF. You can choose an
-            existing sink or create a new one.
+            {t('topic-filter-guide-step-3-para-1')}
             <br />
             <br />
-            If you’re creating a new sink, you also have to give this new sink
-            permission to upload data to CDF. This is done by choosing an
-            authentication method.
+            {t('topic-filter-guide-step-3-para-2')}
             <br />
             <br />
-            <strong>Use an existing sink</strong>
+            <strong>{t('topic-filter-guide-step-3-cat-1')}</strong>
             <br />
             <ul>
-              <li>
-                Existing sinks: Choose an existing sink in CDF to get you data
-                in CDF. No additional authentication is needed as it already has
-                existing authentication.
-              </li>
+              <li>{t('topic-filter-guide-step-3-cat-1-bullet')}</li>
             </ul>
-            <strong>Create new sink as current user:</strong>
+            <strong>{t('topic-filter-guide-step-3-cat-2')}</strong>
             <br />
             <ul>
-              <li>Create an unique ID for your new sink.</li>
-              <li>
-                Your own user credentials will be used to create the new sink.
-                This means the sink will use your credentials towards CDF.
-              </li>
+              <li>{t('topic-filter-guide-step-3-cat-2-bullet-1')}</li>
+              <li>{t('topic-filter-guide-step-3-cat-2-bullet-2')}</li>
             </ul>
-            <strong>Create new sink with client credentials:</strong>
+            <strong>{t('topic-filter-guide-step-3-cat-3')}</strong>
             <br />
             <ul>
-              <li>Sink external ID: Create an unique ID for your new sink.</li>
-              <li>
-                Use client credentials to give this new sink permission to
-                upload data to CDF. That means this sink is registered on client
-                credentials.
-              </li>
+              <li>{t('topic-filter-guide-step-3-cat-3-bullet-1')}</li>
+              <li>{t('topic-filter-guide-step-3-cat-3-bullet-2')}</li>
             </ul>
           </GuideParagraph>
         </Flex>

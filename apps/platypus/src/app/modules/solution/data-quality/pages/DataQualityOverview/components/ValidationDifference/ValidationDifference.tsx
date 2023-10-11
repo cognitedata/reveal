@@ -1,8 +1,8 @@
-import { TimeSeriesType } from '@data-quality/utils/validationTimeseries';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { Flex, Micro } from '@cognite/cogs.js';
 import { Datapoints, DoubleDatapoint } from '@cognite/sdk/dist/src';
+
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
+import { TimeSeriesType } from '../../../../utils/validationTimeseries';
 
 import { DifferenceChip } from './DifferenceChip';
 

@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
+import { Title } from '@cognite/cogs.js';
+
 import {
   FileBland,
   FileUnresolvedPerson,
@@ -10,12 +12,10 @@ import {
   FileWasReviewed,
   FileWithAnnotations,
   FileWithExifIcon,
-} from '@vision/assets';
-import { selectProcessSummary } from '@vision/modules/Process/store/selectors';
-import { calculateSummaryStats } from '@vision/modules/Process/utils';
-import { RootState } from '@vision/store/rootReducer';
-
-import { Title } from '@cognite/cogs.js';
+} from '../../../../assets';
+import { RootState } from '../../../../store/rootReducer';
+import { selectProcessSummary } from '../../store/selectors';
+import { calculateSummaryStats } from '../../utils';
 
 export default function SummaryContent() {
   const [statView, setStatView] = useState('totalFiles');

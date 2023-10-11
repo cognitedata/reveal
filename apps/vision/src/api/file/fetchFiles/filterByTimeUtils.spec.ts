@@ -1,12 +1,13 @@
-import { mockFileInfo } from '@vision/__test-utils/data/mockFileInfo';
-import { timeFormat } from '@vision/modules/FilterSidePanel/Components/Filters/TimeFilter';
-import {
-  DateActions,
-  DateOptions,
-} from '@vision/modules/FilterSidePanel/types';
 import moment from 'moment';
 
 import { DateRange, FileInfo } from '@cognite/sdk';
+
+import { mockFileInfo } from '../../../__test-utils/data/mockFileInfo';
+import { timeFormat } from '../../../modules/FilterSidePanel/Components/Filters/TimeFilter';
+import {
+  DateActions,
+  DateOptions,
+} from '../../../modules/FilterSidePanel/types';
 
 import {
   calculateTotalSeconds,

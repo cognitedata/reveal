@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { selectTempKeypointCollection } from '@vision/modules/Review/store/annotatorWrapper/selectors';
-import { RootState } from '@vision/store/rootReducer';
+import { RootState } from '../../../../store/rootReducer';
+
+import { selectTempKeypointCollection } from './selectors';
 
 export const useIsCurrentKeypointCollectionComplete = (fileId: number) => {
   const [isComplete, setIsComplete] = useState(false);

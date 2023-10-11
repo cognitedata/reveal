@@ -83,7 +83,7 @@ describe('Access Management - create groups', () => {
       `.ant-select > .ant-select-selector > .ant-select-selection-overflow`
     )
       .click()
-      .type('{enter}{enter}');
+      .type('{enter}{enter}{esc}');
 
     cy.getBySel('access-management-save-capability-button').click();
 
@@ -117,7 +117,7 @@ describe('Access Management - create groups', () => {
       `.ant-select > .ant-select-selector > .ant-select-selection-overflow`
     )
       .click()
-      .type('{enter}{enter}{esc}');
+      .type('access-management-e2e{enter}{esc}');
 
     cy.getBySel('access-management-save-capability-button').click();
 

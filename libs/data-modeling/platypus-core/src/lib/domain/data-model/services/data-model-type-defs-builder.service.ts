@@ -6,6 +6,7 @@ import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
   BuiltInType,
+  DataModelTypeDefsTypeKind,
 } from '../types';
 export class DataModelTypeDefsBuilderService {
   constructor(private graphqlService: IGraphQlUtilsService) {}
@@ -25,9 +26,10 @@ export class DataModelTypeDefsBuilderService {
   addType(
     state: DataModelTypeDefs,
     name: string,
+    kind: DataModelTypeDefsTypeKind,
     directive?: string
   ): DataModelTypeDefs {
-    const newType = this.graphqlService.addType(name, directive);
+    const newType = this.graphqlService.addType(name, kind, directive);
     const newState = {
       ...state,
       types: [...state.types, newType],

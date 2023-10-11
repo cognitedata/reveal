@@ -328,6 +328,7 @@ export const IndustryCanvasPage = () => {
   const onAddResourcePress = async (
     results?: ResourceItem | ResourceItem[]
   ) => {
+    console.log('ICP; selection results: ', results);
     if (isCanvasLocked) {
       return;
     }
@@ -650,7 +651,13 @@ export const IndustryCanvasPage = () => {
         {isResourceSelectorOpen && (
           <ResourceSelector
             onSelect={onAddResourcePress}
-            visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
+            visibleResourceTabs={[
+              // 'charts', // this should be commented until feature becomes ready.
+              'file',
+              'timeSeries',
+              'asset',
+              'event',
+            ]}
             selectionMode="multiple"
             initialFilter={resourceSelectorProps?.initialFilter}
             initialTab={resourceSelectorProps?.initialTab}

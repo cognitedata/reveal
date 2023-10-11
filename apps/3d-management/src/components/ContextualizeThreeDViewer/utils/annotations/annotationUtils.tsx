@@ -1,5 +1,9 @@
 import * as THREE from 'three';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
+//import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry';
+import { Wireframe } from 'three/examples/jsm/lines/Wireframe';
 
+import { Cognite3DViewer } from '@cognite/reveal';
 import {
   AnnotationModel,
   AnnotationsBox,
@@ -20,8 +24,8 @@ import { createCylinderGeometry } from './createCylinderGeometry';
 
 // Static constants to be reused:
 const UP_AXIS = new THREE.Vector3(0, 1, 0);
-const CYliNDER_BUFFER_GEOMETRY = createCylinderGeometry();
-const BOX_BUFFER_GEOMETRY = createBoxGeometry();
+const BOX_GEOMETRY = createBoxGeometry();
+const CYLINDER_GEOMETRY = createCylinderGeometry();
 
 export const getCdfAnnotations = (
   client: CogniteClient,
@@ -40,6 +44,7 @@ export const getCdfAnnotations = (
 };
 
 export const createAnnotationsAsWireframes = (
+  threeDViewer: Cognite3DViewer,
   annotations: AnnotationModel[],
   matrix: THREE.Matrix4
 ): THREE.Group => {
@@ -48,10 +53,11 @@ export const createAnnotationsAsWireframes = (
 
   for (const annotation of annotations) {
     const group = createAnnotationAsWireframe({
+      threeDViewer,
       annotation,
       matrix,
       cylinderRadiusMargin: ANNOTATION_CYLINDER_RADIUS_MARGIN,
-      lineWidth: 5,
+      lineWidth: 4,
     });
     if (group) mainGroup.add(group);
   }
@@ -59,11 +65,13 @@ export const createAnnotationsAsWireframes = (
 };
 
 const createAnnotationAsWireframe = ({
+  threeDViewer,
   annotation,
   matrix,
   cylinderRadiusMargin,
   lineWidth,
 }: {
+  threeDViewer: Cognite3DViewer;
   annotation: AnnotationModel;
   matrix: THREE.Matrix4;
   cylinderRadiusMargin: number;
@@ -81,6 +89,7 @@ const createAnnotationAsWireframe = ({
     if (regionPart.box) {
       group.add(
         createBoxAnnotationAsWireframe({
+          threeDViewer,
           box: regionPart.box,
           matrix,
           color,
@@ -93,6 +102,7 @@ const createAnnotationAsWireframe = ({
     if (regionPart.cylinder) {
       group.add(
         createCylinderAnnotationAsWireframe({
+          threeDViewer,
           cylinder: regionPart.cylinder,
           matrix,
           color,
@@ -106,29 +116,99 @@ const createAnnotationAsWireframe = ({
 };
 
 const createBoxAnnotationAsWireframe = ({
+  threeDViewer,
   box,
   matrix,
   color,
   lineWidth,
 }: {
+  threeDViewer: Cognite3DViewer;
   box: AnnotationsBox;
   matrix: THREE.Matrix4;
   color: number;
   lineWidth: number;
-}): THREE.LineSegments => {
-  const material = new THREE.LineBasicMaterial({
+}): Wireframe => {
+  // Create the line material
+  const material = new LineMaterial({
     color: color,
     linewidth: lineWidth,
+    resolution: new THREE.Vector2(
+      threeDViewer.domElement.clientWidth,
+      threeDViewer.domElement.clientHeight
+    ),
+    dashed: false,
   });
-  const line = new THREE.LineSegments(BOX_BUFFER_GEOMETRY, material);
+
+  // Create the wireframe from the main geometry
+  const wireframe = new Wireframe(BOX_GEOMETRY, material);
+  wireframe.computeLineDistances();
+
+  // Adjust and apply the matrix
   const boxMatrix = new THREE.Matrix4();
   boxMatrix.fromArray(box.matrix);
   boxMatrix.transpose();
 
   const actualMatrix = matrix.clone();
   actualMatrix.multiply(boxMatrix);
-  line.applyMatrix4(actualMatrix);
-  return line;
+
+  wireframe.applyMatrix4(actualMatrix);
+  wireframe.scale.setFromMatrixScale(actualMatrix);
+  return wireframe;
+};
+
+const createCylinderAnnotationAsWireframe = ({
+  threeDViewer,
+  cylinder,
+  matrix,
+  color,
+  lineWidth,
+  cylinderRadiusMargin,
+}: {
+  threeDViewer: Cognite3DViewer;
+  cylinder: AnnotationsCylinder;
+  matrix: THREE.Matrix4;
+  color: number;
+  lineWidth: number;
+  cylinderRadiusMargin: number;
+}): Wireframe => {
+  // Calculate the center of the cylinder
+  const centerA = new THREE.Vector3(...cylinder.centerA);
+  const centerB = new THREE.Vector3(...cylinder.centerB);
+
+  centerA.applyMatrix4(matrix);
+  centerB.applyMatrix4(matrix);
+
+  const center = centerB.clone();
+  center.add(centerA);
+  center.multiplyScalar(0.5);
+
+  // Calculate the axis of the cylinder
+  const axis = centerB.clone();
+  axis.sub(centerA);
+  axis.normalize();
+
+  // Calculate the scale of the cylinder
+  const radius = cylinder.radius * (1 + cylinderRadiusMargin);
+  const height = centerA.distanceTo(centerB);
+  const scale = new THREE.Vector3(radius, height, radius);
+
+  const material = new LineMaterial({
+    color: color,
+    linewidth: lineWidth,
+    resolution: new THREE.Vector2(
+      threeDViewer.domElement.clientWidth,
+      threeDViewer.domElement.clientHeight
+    ),
+    dashed: false,
+  });
+
+  const wireframe = new Wireframe(CYLINDER_GEOMETRY, material);
+  wireframe.position.copy(center);
+  wireframe.scale.copy(scale);
+  // Use quaternion to rotate cylinder from default to target orientation
+  wireframe.quaternion.setFromUnitVectors(UP_AXIS, axis);
+
+  return wireframe;
 };
 
 export const createBoxAnnotationAsBox3 = ({
@@ -198,52 +278,6 @@ export const createCylinderAnnotationAsBox3 = (
   const resultBox = new THREE.Box3().setFromCenterAndSize(center, scale);
 
   return resultBox;
-};
-
-const createCylinderAnnotationAsWireframe = ({
-  cylinder,
-  matrix,
-  color,
-  lineWidth,
-  cylinderRadiusMargin,
-}: {
-  cylinder: AnnotationsCylinder;
-  matrix: THREE.Matrix4;
-  color: number;
-  lineWidth: number;
-  cylinderRadiusMargin: number;
-}): THREE.LineSegments => {
-  // Calculate the center of the cylinder
-  const centerA = new THREE.Vector3(...cylinder.centerA);
-  const centerB = new THREE.Vector3(...cylinder.centerB);
-
-  centerA.applyMatrix4(matrix);
-  centerB.applyMatrix4(matrix);
-
-  const center = centerB.clone();
-  center.add(centerA);
-  center.multiplyScalar(0.5);
-
-  // Calculate the axis of the cylinder
-  const axis = centerB.clone();
-  axis.sub(centerA);
-  axis.normalize();
-
-  // Calculate the scale of the cylinder
-  const radius = cylinder.radius * (1 + cylinderRadiusMargin);
-  const height = centerA.distanceTo(centerB);
-  const scale = new THREE.Vector3(radius, height, radius);
-
-  const material = new THREE.LineBasicMaterial({
-    color: color,
-    linewidth: lineWidth,
-  });
-  const line = new THREE.LineSegments(CYliNDER_BUFFER_GEOMETRY, material);
-  line.position.copy(center);
-  line.scale.copy(scale);
-  // Use quaternion to rotate cylinder from default to target orientation
-  line.quaternion.setFromUnitVectors(UP_AXIS, axis);
-  return line;
 };
 
 const getAnnotationColor = (annotation: AnnotationModel): number => {

@@ -162,10 +162,11 @@ export const filterFieldsFromObjects = (
     const filteredItem: Record<string, any> = {};
     keys.forEach((key: string) => {
       if (key.startsWith('metadata')) {
-        const metadataKey = key.slice(8);
+        const metadataKey = key.slice(9);
         filteredItem[key] = item.metadata[metadataKey];
+      } else {
+        filteredItem[key] = item[key];
       }
-      filteredItem[key] = item[key];
     });
     return filteredItem;
   });

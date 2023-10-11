@@ -5,8 +5,9 @@ import {
   configureStore,
   getDefaultMiddleware,
 } from '@reduxjs/toolkit';
-import { loadState, saveState } from '@vision/utils/localStorage/LocalStorage';
 import { AnyAction } from 'redux';
+
+import { loadState, saveState } from '../utils/localStorage/LocalStorage';
 
 import rootReducer from './rootReducer';
 

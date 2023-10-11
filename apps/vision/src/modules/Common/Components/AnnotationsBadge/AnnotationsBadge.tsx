@@ -1,12 +1,12 @@
 import React from 'react';
 
+import { Body, Button, Icon, Tooltip } from '@cognite/cogs.js';
+
 import {
   AnnotationsBadgeCounts,
   AnnotationsBadgeStatuses,
   AnnotationStatuses,
-} from '@vision/modules/Common/types';
-
-import { Body, Button, Icon, Tooltip } from '@cognite/cogs.js';
+} from '../../types';
 
 import { showBadge } from './utils';
 

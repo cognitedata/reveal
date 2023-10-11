@@ -3,11 +3,11 @@ import {
   DataModelVersionStatus,
   StorageProviderType,
 } from '@platypus/platypus-core';
-import { rootInjector, TOKENS } from '@platypus-app/di';
-import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
-import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 import { Action, Dispatch, MiddlewareAPI } from '@reduxjs/toolkit';
 
+import { rootInjector, TOKENS } from '../../di';
+import { SchemaEditorMode } from '../../modules/solution/data-model/types';
+import { getLocalDraftKey } from '../../utils/local-storage-utils';
 import { actions } from '../reducers/global/dataModelReducer';
 
 const getLocalStorageProvider = () =>

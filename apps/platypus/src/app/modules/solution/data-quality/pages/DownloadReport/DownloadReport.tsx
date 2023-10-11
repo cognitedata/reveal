@@ -1,11 +1,7 @@
-import {
-  AccessAction,
-  ValidationStatus,
-  useAccessControl,
-} from '@data-quality/hooks';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { Button, Dropdown, Flex, Icon, Menu, Tooltip } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { AccessAction, ValidationStatus, useAccessControl } from '../../hooks';
 
 import { useDownloadReport, useReportAvailability } from './hooks';
 
@@ -82,7 +78,6 @@ export const DownloadReport = ({ validationStatus }: DownloadReportProps) => {
           </Button>
         </Tooltip>
       )}
-
       <Tooltip content={t('data_quality_report_help', '')} wrapped>
         <Icon
           aria-label={t('data_quality_report_help_label', '')}

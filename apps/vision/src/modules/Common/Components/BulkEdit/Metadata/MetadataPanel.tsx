@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { EditPanelProps } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
-import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
-import { VisionFile } from '@vision/modules/Common/store/files/types';
 import { Input } from 'antd';
 
 import { Body, Button, Select, Tooltip } from '@cognite/cogs.js';
 import { Metadata } from '@cognite/sdk';
+
+import { BulkEditUnsavedState } from '../../../store/common/types';
+import { VisionFile } from '../../../store/files/types';
+import { EditPanelProps } from '../bulkEditOptions';
 
 const getMetadataKeys = (
   selectedFiles: VisionFile[],

@@ -1,19 +1,5 @@
 import { PropsWithChildren } from 'react';
 
-import { RuleRunStatus, RuleSeverity } from '@data-quality/api/codegen';
-import {
-  chartConfig,
-  formatScoreDotTooltip,
-  getScoreChartData,
-} from '@data-quality/utils/charts';
-import {
-  TimeSeriesType,
-  getDatapointsById,
-  getLastDatapointValue,
-  getScoreValue,
-  getTimeSeriesId,
-} from '@data-quality/utils/validationTimeseries';
-
 import {
   A,
   Body,
@@ -28,6 +14,19 @@ import { LineChart } from '@cognite/plotting-components';
 import { Datapoints } from '@cognite/sdk/dist/src';
 
 import { ValidationDifference } from '..';
+import { RuleRunStatus, RuleSeverity } from '../../../../api/codegen';
+import {
+  chartConfig,
+  formatScoreDotTooltip,
+  getScoreChartData,
+} from '../../../../utils/charts';
+import {
+  TimeSeriesType,
+  getDatapointsById,
+  getLastDatapointValue,
+  getScoreValue,
+  getTimeSeriesId,
+} from '../../../../utils/validationTimeseries';
 
 type NameCellProps = {
   onClick: VoidFunction;

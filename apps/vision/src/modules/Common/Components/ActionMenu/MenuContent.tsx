@@ -2,11 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import ExifIconSVG from '@vision/assets/exifIcon';
-import { SKIP_MENU_CLOSE_ID } from '@vision/constants/ContextMenuConstants';
-import { ExifIcon } from '@vision/modules/Common/Containers/FileTableRenderers/NameRenderer';
-
 import { Icon, Menu, Popconfirm, Tooltip } from '@cognite/cogs.js';
+
+import ExifIconSVG from '../../../../assets/exifIcon';
+import { SKIP_MENU_CLOSE_ID } from '../../../../constants/ContextMenuConstants';
+import { ExifIcon } from '../../Containers/FileTableRenderers/NameRenderer';
 
 export interface ActionMenuProps {
   showExifIcon?: boolean;

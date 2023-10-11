@@ -3,9 +3,6 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
 import type {
   JsonGroup,
   Config,
@@ -29,6 +26,10 @@ import merge from 'lodash/merge';
 import setWith from 'lodash/setWith';
 
 import { Modal } from '@cognite/cogs.js';
+
+import { Notification } from '../../../../../components/Notification/Notification';
+import { TOKENS } from '../../../../../di';
+import { useInjection } from '../../../../../hooks/useInjection';
 
 import {
   ConjunctionButtons,

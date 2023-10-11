@@ -1,12 +1,10 @@
 import React from 'react';
 
-import {
-  getNewItems,
-  getTagForOriginal,
-} from '@vision/modules/Common/Components/BulkEdit/Label/getDataForLabel';
 import { Tag } from 'antd';
 
 import { ExternalId } from '@cognite/sdk';
+
+import { getNewItems, getTagForOriginal } from '../getDataForLabel';
 
 describe('Test get Tag For Original', () => {
   test('If no unsavedItems items', () => {

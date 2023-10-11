@@ -1,5 +1,6 @@
-import { useListAllRules } from '@data-quality/api/codegen';
-import { useLoadDataSource, useLoadDatapoints } from '@data-quality/hooks';
+import { useListAllRules } from '../api/codegen';
+
+import { useLoadDataSource, useLoadDatapoints } from './';
 
 /** Load all the rules and their timeseries + datapoints in a datasource. */
 export const useLoadRules = () => {

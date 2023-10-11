@@ -1,7 +1,8 @@
 import { DataModelVersion, StorageProviderType } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
+
+import { TOKENS } from '../../../../di';
+import { useInjection } from '../../../../hooks/useInjection';
+import { getLocalDraftKey } from '../../../../utils/local-storage-utils';
 
 export const useLocalDraft = (
   dataModelId: string,

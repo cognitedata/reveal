@@ -1,9 +1,6 @@
-import { Keypoint, Status } from '@vision/api/annotation/types';
-import { AnnotatorNewRegion } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import {
-  PredefinedVisionAnnotations,
-  Tool,
-} from '@vision/modules/Review/types';
+import { Keypoint, Status } from '../../../../api/annotation/types';
+import { AnnotatorNewRegion } from '../../Components/ReactImageAnnotateWrapper/types';
+import { PredefinedVisionAnnotations, Tool } from '../../types';
 
 export type KeypointCollectionState = {
   id: number;

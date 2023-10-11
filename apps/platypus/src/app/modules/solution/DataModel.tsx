@@ -1,12 +1,12 @@
 import { lazy } from 'react';
 import { Route, Routes, useParams } from 'react-router-dom';
 
-import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { Body } from '@cognite/cogs.js';
+
+import { BasicPlaceholder } from '../../components/BasicPlaceholder/BasicPlaceholder';
+import { Spinner } from '../../components/Spinner/Spinner';
+import { useSelectedDataModelVersion } from '../../hooks/useSelectedDataModelVersion';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const DataPage = lazy(() =>
   import('./DataLayout').then((module) => ({

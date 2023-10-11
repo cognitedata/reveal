@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { getContainer } from '@vision/utils';
 import { Modal } from 'antd';
+
+import { getContainer } from '../../../../utils';
 
 import { KeyboardShortcutModalContent } from './KeyboardShortcutModalContent';
 

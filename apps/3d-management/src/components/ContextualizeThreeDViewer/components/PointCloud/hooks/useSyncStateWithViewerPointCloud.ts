@@ -10,11 +10,13 @@ import {
   useContextualizeThreeDViewerStore,
 } from '../../../useContextualizeThreeDViewerStore';
 import { createAnnotationsAsWireframes } from '../../../utils/annotations/annotationUtils';
+import { getAnnotationAsBox3 } from '../../../utils/annotations/getAnnotationAsBox3';
 import { createTransformControls } from '../../../utils/createTransformControls';
 import { getCognitePointCloudModel } from '../../../utils/getCognitePointCloudModel';
 import { hideBoundingVolumes } from '../../../utils/hideBoundingVolumes';
 import { showBoundingVolumes } from '../../../utils/showBoundingVolumes';
 
+const HOVERING_ANNOTATION_ID = 'hovered-annotation';
 const PENDING_ANNOTATION_ID = 'pending-annotation';
 const ANNOTATION_AS_WIREFRAME_ID = 'annotation-as-wireframe';
 
@@ -42,25 +44,29 @@ const removeObjectByName = (viewer: Cognite3DViewer, name: string) => {
 
 export const useSyncStateWithViewerPointCloud = () => {
   const {
-    modelId,
+    annotations,
+    hoveredAnnotationId,
     isModelLoaded,
+    modelId,
     pendingAnnotation,
     shouldShowBoundingVolumes,
     shouldShowWireframes,
     threeDViewer,
     tool,
-    annotations,
     visualizationOptions,
+    transformMode,
   } = useContextualizeThreeDViewerStore((state) => ({
-    modelId: state.modelId,
+    annotations: state.annotations,
+    hoveredAnnotationId: state.hoveredAnnotationId,
     isModelLoaded: state.isModelLoaded,
+    modelId: state.modelId,
     pendingAnnotation: state.pendingAnnotation,
     shouldShowBoundingVolumes: state.shouldShowBoundingVolumes,
     shouldShowWireframes: state.shouldShowWireframes,
     threeDViewer: state.threeDViewer,
     tool: state.tool,
-    annotations: state.annotations,
     visualizationOptions: state.visualizationOptions,
+    transformMode: state.transformMode,
   }));
   const pendingAnnotationTransformControls = useRef<TransformControls | null>(
     null
@@ -84,6 +90,22 @@ export const useSyncStateWithViewerPointCloud = () => {
         model.pointColorType = visualizationOptions.pointColor;
       }
   }, [visualizationOptions, threeDViewer]);
+
+  // sync transformControls with state
+  useEffect(() => {
+    if (threeDViewer === null) return;
+    const transformControls = pendingAnnotationTransformControls.current;
+    if (transformControls === null) return;
+    if (transformMode === null) {
+      transformControls.visible = false;
+      transformControls.enabled = false;
+      return;
+    }
+
+    transformControls.setMode(transformMode);
+    transformControls.visible = true;
+    transformControls.enabled = true;
+  }, [threeDViewer, pendingAnnotationTransformControls, transformMode]);
 
   // Sync pending annotation with viewer.
   useEffect(() => {
@@ -125,6 +147,12 @@ export const useSyncStateWithViewerPointCloud = () => {
     addObject(threeDViewer, newAnnotationCube);
 
     transformControls.attach(newAnnotationCube);
+    if (transformMode === null) {
+      transformControls.visible = false;
+      transformControls.enabled = false;
+    } else {
+      transformControls.setMode(transformMode);
+    }
     threeDViewer.addObject3D(transformControls);
   }, [pendingAnnotation, pendingAnnotationTransformControls, threeDViewer]);
 
@@ -164,10 +192,59 @@ export const useSyncStateWithViewerPointCloud = () => {
     if (pointCloudModel === undefined) return;
 
     const group = createAnnotationsAsWireframes(
+      threeDViewer,
       annotations ?? [],
       pointCloudModel.getCdfToDefaultModelTransformation()
     );
     group.name = ANNOTATION_AS_WIREFRAME_ID;
     addObject(threeDViewer, group);
   }, [shouldShowWireframes, threeDViewer, annotations, modelId, isModelLoaded]);
+
+  // Sync hovered annotation with viewer.
+  useEffect(() => {
+    if (threeDViewer === null) return;
+    if (modelId === null) return;
+
+    // Remove previous hovered annotation(s) from the viewer.
+    removeObjectByName(threeDViewer, 'hovered-annotation');
+
+    // Add new hovered annotation(s) to the viewer.
+    const annotation = annotations?.find(
+      (annotation) => annotation.id === hoveredAnnotationId
+    );
+    if (annotation === undefined) return;
+
+    const pointCloudModel = getCognitePointCloudModel({
+      modelId,
+      viewer: threeDViewer,
+    });
+    if (pointCloudModel === undefined) return;
+
+    const matrix4 = pointCloudModel.getCdfToDefaultModelTransformation();
+    const box3 = getAnnotationAsBox3(annotation, matrix4);
+    if (box3 === undefined) return;
+
+    // Semi transparent filled THREE box that will be visible regardless of the camera position
+    const box = new THREE.Mesh(
+      new THREE.BoxGeometry(
+        box3.max.x - box3.min.x,
+        box3.max.y - box3.min.y,
+        box3.max.z - box3.min.z
+      ),
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(1, 1, 0),
+        transparent: true,
+        opacity: 0.5,
+        depthTest: false,
+      })
+    );
+
+    // TODO: This representation of the box doesn't take into account the rotation of the box.
+    // Tracked by: https://cognitedata.atlassian.net/browse/BND3D-2262
+    box.position.copy(box3.getCenter(new THREE.Vector3()));
+
+    box.name = HOVERING_ANNOTATION_ID;
+
+    addObject(threeDViewer, box);
+  }, [threeDViewer, annotations, modelId, hoveredAnnotationId]);
 };

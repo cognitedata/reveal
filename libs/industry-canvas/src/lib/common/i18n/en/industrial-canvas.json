@@ -71,6 +71,7 @@
   "OPEN_DOCUMENT_TOOLTIP": "Open document",
   "OPEN_IN_CHARTS": "Open in Charts",
   "OPEN_IN_DATA_EXPLORER": "Open in Data Explorer",
+  "OPEN_IN": "Open in...",
   "OPEN_THREE_D_TOOLTIP": "Open 3D-model",
   "OPEN_TIMESERIES_TOOLTIP": "Open time series",
   "PUBLIC_CANVASES_LIST_DROPDOWN": "Public canvases",

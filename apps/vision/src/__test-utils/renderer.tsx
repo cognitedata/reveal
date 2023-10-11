@@ -3,12 +3,14 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 import { RenderResult } from '@testing-library/react';
-import { render } from '@vision/__test-utils/custom-render';
-import { getMockedStore } from '@vision/__test-utils/store.utils';
-import { ids } from '@vision/cogs-variables';
 import { Store } from 'redux';
 
 import { ToastContainer } from '@cognite/cogs.js';
+
+import { ids } from '../cogs-variables';
+
+import { render } from './custom-render';
+import { getMockedStore } from './store.utils';
 
 type Props<T> = {
   store?: Store;

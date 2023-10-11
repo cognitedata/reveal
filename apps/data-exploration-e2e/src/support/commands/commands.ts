@@ -6,6 +6,7 @@ import { DatePickerCommands } from './date-picker.commands';
 import { FilterCommands } from './filter.commands';
 import { InterceptionCommands } from './interception.commands';
 import { LoginCommand } from './login.commands';
+import { SearchConfigCommands } from './search-config.commands';
 import { SearchCommand } from './search.commands';
 import { TableCommands } from './table.commands';
 
@@ -20,6 +21,7 @@ declare global {
         InterceptionCommands,
         LoginCommand,
         SearchCommand,
+        SearchConfigCommands,
         TableCommands,
         CommonCommands {
       login(email: string, password: string): void;
@@ -33,5 +35,6 @@ export * from './date-picker.commands';
 export * from './filter.commands';
 export * from './interception.commands';
 export * from './login.commands';
+export * from './search-config.commands';
 export * from './search.commands';
 export * from './table.commands';

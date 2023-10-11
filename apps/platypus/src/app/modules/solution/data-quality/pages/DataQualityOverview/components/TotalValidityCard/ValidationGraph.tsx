@@ -1,20 +1,20 @@
+import { Flex } from '@cognite/cogs.js';
+import { LineChart } from '@cognite/plotting-components';
+import { Datapoints } from '@cognite/sdk/dist/src';
+
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
 import {
   chartConfig,
   formatInstancesDot,
   formatScoreDot,
   getScoreChartData,
   getTotalItemsChartData,
-} from '@data-quality/utils/charts';
+} from '../../../../utils/charts';
 import {
   TimeSeriesType,
   getDatapointsById,
   getTimeSeriesId,
-} from '@data-quality/utils/validationTimeseries';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Flex } from '@cognite/cogs.js';
-import { LineChart } from '@cognite/plotting-components';
-import { Datapoints } from '@cognite/sdk/dist/src';
+} from '../../../../utils/validationTimeseries';
 
 type ValidationGraphProps = {
   dataSourceId: string;

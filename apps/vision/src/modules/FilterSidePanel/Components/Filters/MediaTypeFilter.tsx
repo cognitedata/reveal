@@ -2,12 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import {
-  MediaTypeOption,
-  VisionFilterItemProps,
-} from '@vision/modules/FilterSidePanel/types';
-
 import { Radio } from '@cognite/cogs.js';
+
+import { MediaTypeOption, VisionFilterItemProps } from '../../types';
 
 export const MediaTypeFilter = ({
   filter,

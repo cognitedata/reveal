@@ -3,21 +3,21 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import ExifIcon from '@vision/assets/exifIcon';
-import { ActionMenu } from '@vision/modules/Common/Components/ActionMenu/ActionMenu';
-import { AnnotationsBadgePopover } from '@vision/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
-import { Thumbnail } from '@vision/modules/Common/Components/Thumbnail/Thumbnail';
-import { makeSelectTotalAnnotationCountForFileIds } from '@vision/modules/Common/store/annotation/selectors';
-import { TableDataItem } from '@vision/modules/Common/types';
-import { selectUpdatedFileDetails } from '@vision/modules/FileDetails/selectors';
-import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
-import { isProcessingFile } from '@vision/modules/Process/store/utils';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
-
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+
+import ExifIcon from '../../../../assets/exifIcon';
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { DeleteFilesById } from '../../../../store/thunks/Files/DeleteFilesById';
+import { selectUpdatedFileDetails } from '../../../FileDetails/selectors';
+import { makeSelectJobStatusForFile } from '../../../Process/store/selectors';
+import { isProcessingFile } from '../../../Process/store/utils';
+import { makeSelectTotalAnnotationCountForFileIds } from '../../store/annotation/selectors';
+import { TableDataItem } from '../../types';
+import { ActionMenu } from '../ActionMenu/ActionMenu';
+import { AnnotationsBadgePopover } from '../AnnotationsBadge/AnnotationBadgePopover';
+import { Thumbnail } from '../Thumbnail/Thumbnail';
 
 export const MapPopup = ({
   item,

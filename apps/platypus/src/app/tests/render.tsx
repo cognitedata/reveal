@@ -4,8 +4,8 @@ import React, { ComponentClass, JSXElementConstructor } from 'react';
 /* eslint-disable-next-line @cognite/rtl-use-custom-render-function */
 import { render, RenderOptions } from '@testing-library/react';
 import { DeepPartial } from 'redux';
-import { RootState } from '@platypus-app/redux/store';
-import { rootReducer } from '@platypus-app/redux/store';
+import { RootState } from "../redux/store";
+import { rootReducer } from "../redux/store";
 import { configureStore } from '@reduxjs/toolkit';
 
 import { INITIAL_TEST_STATE } from './store';

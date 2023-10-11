@@ -1,11 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { setProcessFileIds } from '@vision/modules/Process/store/slice';
-import {
-  clearAnnotationState,
-  clearFileState,
-} from '@vision/store/commonActions';
-import { ThunkConfig } from '@vision/store/rootReducer';
-import { ToastUtils } from '@vision/utils/ToastUtils';
+
+import { setProcessFileIds } from '../../../modules/Process/store/slice';
+import { ToastUtils } from '../../../utils/ToastUtils';
+import { clearAnnotationState, clearFileState } from '../../commonActions';
+import { ThunkConfig } from '../../rootReducer';
 
 export const PopulateProcessFiles = createAsyncThunk<
   void,

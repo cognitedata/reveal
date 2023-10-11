@@ -1,4 +1,4 @@
-import { showBadge } from '@vision/modules/Common/Components/AnnotationsBadge/utils';
+import { showBadge } from './utils';
 
 describe('showBadge', () => {
   it('should be true if status is set or count is nonzero', () => {

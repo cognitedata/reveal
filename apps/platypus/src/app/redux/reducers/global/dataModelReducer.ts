@@ -2,13 +2,15 @@
 import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
+  DataModelTypeDefsTypeKind,
   DataModelVersion,
   DataModelVersionStatus,
   UpdateDataModelFieldDTO,
 } from '@platypus/platypus-core';
-import { rootInjector, TOKENS } from '@platypus-app/di';
-import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { rootInjector, TOKENS } from '../../../di';
+import { SchemaEditorMode } from '../../../modules/solution/data-model/types';
 
 export interface DataModelReducerState {
   currentTypeName: null | string;
@@ -99,16 +101,25 @@ const dataModelSlice = createSlice({
         state.hasError = !!err;
       }
     },
-    createTypeDefsType: (state, action: PayloadAction<string>) => {
+    createTypeDefsType: (
+      state,
+      action: PayloadAction<{
+        typeName: string;
+        dataModelKind: string;
+      }>
+    ) => {
       const typeDefsBuilder = getTypeDefsBuilder();
 
-      const typeName = action.payload;
+      const typeName = action.payload.typeName;
+      const dataModelKind = action.payload
+        .dataModelKind as DataModelTypeDefsTypeKind;
       const capitalizedTypeName =
         typeName.charAt(0).toUpperCase() + typeName.slice(1);
 
       const dataModelWithNewType = typeDefsBuilder.addType(
         state.typeDefs,
-        capitalizedTypeName
+        capitalizedTypeName,
+        dataModelKind
       );
 
       const updatedType = dataModelWithNewType.types.find(

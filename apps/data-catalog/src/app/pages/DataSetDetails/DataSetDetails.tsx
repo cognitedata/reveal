@@ -262,7 +262,9 @@ const DataSetDetails = (): JSX.Element => {
           title={
             <Flex alignItems="center" gap={8}>
               {dataSet?.writeProtected ? <Icon type="Lock" /> : <></>}
-              <Title level="4">{dataSet?.name || dataSet?.externalId}</Title>
+              <Title level="4" data-cy="data-set-title">
+                {dataSet?.name || dataSet?.externalId}
+              </Title>
               <Chip
                 size="medium"
                 type={statusVariant}

@@ -4,25 +4,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { CaretRightOutlined } from '@ant-design/icons';
-import { totalFileCount } from '@vision/api/file/aggregate';
-import { cancelFetch } from '@vision/api/file/fetchFiles/fetchFiles';
-import { ClearButton } from '@vision/modules/Explorer/Components/ClearButton';
-import { selectExploreFileCount } from '@vision/modules/Explorer/store/selectors';
-import {
-  setExplorerFilter,
-  toggleExplorerFilterView,
-} from '@vision/modules/Explorer/store/slice';
-import { FilterItemHeader } from '@vision/modules/FilterSidePanel/Components/FilterItemHeader';
-import {
-  FilterPanelConfigItem,
-  getFilterPanelItems,
-} from '@vision/modules/FilterSidePanel/Components/getFilterPanelItems';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
 import { Collapse } from 'antd';
 
 import { Body, Button, Title, Tooltip } from '@cognite/cogs.js';
 import { FileFilterProps } from '@cognite/sdk';
+
+import { totalFileCount } from '../../../api/file/aggregate';
+import { cancelFetch } from '../../../api/file/fetchFiles/fetchFiles';
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { ClearButton } from '../../Explorer/Components/ClearButton';
+import { selectExploreFileCount } from '../../Explorer/store/selectors';
+import {
+  setExplorerFilter,
+  toggleExplorerFilterView,
+} from '../../Explorer/store/slice';
+import { FilterItemHeader } from '../Components/FilterItemHeader';
+import {
+  FilterPanelConfigItem,
+  getFilterPanelItems,
+} from '../Components/getFilterPanelItems';
 
 const { Panel } = Collapse;
 

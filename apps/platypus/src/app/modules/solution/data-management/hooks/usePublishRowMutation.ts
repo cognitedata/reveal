@@ -3,11 +3,12 @@ import {
   IngestInstancesDTO,
   IngestInstancesResponseDTO,
 } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { PlatypusError } from '@platypus-app/types';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { TOKENS } from '../../../../di';
+import { useInjection } from '../../../../hooks/useInjection';
+import { PlatypusError } from '../../../../types';
+import { QueryKeys } from '../../../../utils/queryKeys';
 
 export function usePublishRowMutation({
   dataModelExternalId,

@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
-import { HtmlElementProps } from '@platypus-app/types';
-
 import { Body, Button, Flex, Title } from '@cognite/cogs.js';
+
+import { HtmlElementProps } from '../../types';
 
 export enum Size {
   SMALL = 'SMALL',

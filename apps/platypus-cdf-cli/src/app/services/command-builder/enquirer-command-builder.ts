@@ -1,5 +1,6 @@
 import { KeyValueMap } from '@platypus/platypus-core';
 
+import { CommandArgument, CommandArgumentType } from '../../types';
 import {
   showAutocomplete,
   showConfirm,
@@ -8,9 +9,7 @@ import {
   showMultiSelect,
   showNumeric,
   showSelect,
-} from '@cognite/platypus-cdf-cli/app/utils/enquirer-utils';
-
-import { CommandArgument, CommandArgumentType } from '../../types';
+} from '../../utils/enquirer-utils';
 
 export class EnquirerCommandBuilder {
   build(commandArg: CommandArgument, commandArgs: KeyValueMap) {

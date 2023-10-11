@@ -1,13 +1,13 @@
 import { BaseTableProps } from 'react-base-table';
 
-import { SelectFilter, TableDataItem } from '@vision/modules/Common/types';
-
 import { RANGE_OPTIONS } from '@cognite/cogs.js/dist/esm/Components/Pagination/types';
 
 import {
   ResourceItem,
   ResourceSelectionMode,
 } from '@data-exploration-lib/core';
+
+import { SelectFilter, TableDataItem } from '../../types';
 
 export type PaginatedTableProps<T> = {
   data: T[];

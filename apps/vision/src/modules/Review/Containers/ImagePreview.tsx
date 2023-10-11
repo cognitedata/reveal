@@ -4,49 +4,51 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { unwrapResult } from '@reduxjs/toolkit';
+import isEmpty from 'lodash/isEmpty';
+
+import { Button, Tooltip } from '@cognite/cogs.js';
+import { AnnotationChangeById, FileInfo, InternalId } from '@cognite/sdk';
+
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { SaveAnnotations } from '../../../store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationTemplates } from '../../../store/thunks/Annotation/SaveAnnotationTemplates';
+import { UpdateAnnotations } from '../../../store/thunks/Annotation/UpdateAnnotations';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from '../../../store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { pushMetric } from '../../../utils/pushMetric';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
+} from '../../Common/types';
 import {
   isImageKeypointCollectionData,
   isImageObjectDetectionBoundingBoxData,
   isImageObjectDetectionPolygonData,
   isImageObjectDetectionPolylineData,
-} from '@vision/modules/Common/types/typeGuards';
-import { AnnotationSettingsModal } from '@vision/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsModal';
-import { KeyboardShortcutModal } from '@vision/modules/Review/Components/KeyboardShortcutModal/KeyboardShortcutModal';
-import { ReactImageAnnotateWrapper } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
-import { ImageKeyboardShortKeys } from '@vision/modules/Review/Containers/KeyboardShortKeys/ImageKeyboardShortKeys';
+} from '../../Common/types/typeGuards';
+import { AnnotationSettingsModal } from '../Components/AnnotationSettingsModal/AnnotationSettingsModal';
+import { KeyboardShortcutModal } from '../Components/KeyboardShortcutModal/KeyboardShortcutModal';
+import { ReactImageAnnotateWrapper } from '../Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
 import {
   selectNextPredefinedKeypointCollection,
   selectNextPredefinedShape,
   selectTempKeypointCollection,
   selectTemporaryRegion,
-} from '@vision/modules/Review/store/annotatorWrapper/selectors';
+} from '../store/annotatorWrapper/selectors';
 import {
   clearTemporaryRegion,
   setLastCollectionName,
   setLastShape,
-} from '@vision/modules/Review/store/annotatorWrapper/slice';
-import { AnnotationSettingsOption } from '@vision/modules/Review/store/review/enums';
+} from '../store/annotatorWrapper/slice';
+import { AnnotationSettingsOption } from '../store/review/enums';
 import {
   selectAnnotationSettingsState,
   selectNonRejectedVisionReviewAnnotationsForFile,
-} from '@vision/modules/Review/store/review/selectors';
-import { showAnnotationSettingsModel } from '@vision/modules/Review/store/review/slice';
-import { PredefinedVisionAnnotations } from '@vision/modules/Review/types';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { SaveAnnotations } from '@vision/store/thunks/Annotation/SaveAnnotations';
-import { SaveAnnotationTemplates } from '@vision/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from '@vision/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
-import { pushMetric } from '@vision/utils/pushMetric';
-import isEmpty from 'lodash/isEmpty';
+} from '../store/review/selectors';
+import { showAnnotationSettingsModel } from '../store/review/slice';
+import { PredefinedVisionAnnotations } from '../types';
 
-import { Button, Tooltip } from '@cognite/cogs.js';
-import { AnnotationChangeById, FileInfo, InternalId } from '@cognite/sdk';
+import { ImageKeyboardShortKeys } from './KeyboardShortKeys/ImageKeyboardShortKeys';
 
 export const ImagePreview = ({
   file,

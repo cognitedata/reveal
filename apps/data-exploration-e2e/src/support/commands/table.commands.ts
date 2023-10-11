@@ -101,12 +101,12 @@ const selectColumn = (table: JQuery<HTMLElement>, columnName: string) => {
     .click();
 
   cy.wrap(table)
-    .findAllByTestId('column-toggle-menu')
-    .should('be.visible')
+    .findByTestId('column-toggle-menu')
     .containsExact(columnName)
-    .as(`column-${columnName}`)
     .scrollIntoView()
     .should('be.visible')
+    .as(`column-${columnName}`)
+    .closest('label')
     .find('input[type="checkbox"]')
     .then((checkbox) => {
       if (checkbox.is(':not(:checked)')) {

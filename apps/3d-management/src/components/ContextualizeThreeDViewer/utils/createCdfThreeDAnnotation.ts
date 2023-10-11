@@ -22,26 +22,22 @@ export const createCdfThreeDAnnotation = async ({
     .getCdfToDefaultModelTransformation()
     .invert();
 
-  const vector3Position = new Vector3(
+  const position = new Vector3(
     cubeAnnotation.position.x,
     cubeAnnotation.position.y,
     cubeAnnotation.position.z
   );
-  const vector3Size = new Vector3(
-    cubeAnnotation.size.x,
-    cubeAnnotation.size.y,
-    cubeAnnotation.size.z
+  const scale = new Vector3(
+    Math.abs(cubeAnnotation.size.x),
+    Math.abs(cubeAnnotation.size.y),
+    Math.abs(cubeAnnotation.size.z)
   ).multiplyScalar(0.5);
 
-  const cdfPosition = vector3Position.applyMatrix4(
-    defaultModelToCdfTransformation
-  );
-
-  const cdfSize = vector3Size.applyMatrix4(defaultModelToCdfTransformation);
-
   const transformationMatrix = new Matrix4()
-    .compose(cdfPosition, new Quaternion(), cdfSize)
+    .compose(position, new Quaternion(), scale)
+    .premultiply(defaultModelToCdfTransformation)
     .transpose();
+
   await sdk.annotations.create([
     {
       annotatedResourceId: modelId,

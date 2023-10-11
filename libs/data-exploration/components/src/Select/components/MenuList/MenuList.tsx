@@ -12,6 +12,8 @@ import { isEscapeButton } from '@data-exploration-lib/core';
 
 import { SearchInput } from '../SearchInput';
 
+import { MenuListContent, MenuListWrapper } from './elements';
+
 export const MenuList = <OptionType extends OptionTypeBase>({
   children,
   ...props
@@ -53,20 +55,23 @@ MenuListComponentProps<OptionType>) => {
   const selectDataTestId = props.selectProps['data-testid'];
 
   return (
-    <div data-testid={`${selectDataTestId}-menu-list`}>
-      {showMenuInput && (
-        <SearchInput
-          data-testid={`${selectDataTestId}-search-input`}
-          value={filterInput.input}
-          onChange={onChangeHandler}
-          onFocus={onMenuInputFocus}
-          onBlur={onMenuInputBlur}
-          onKeyDown={onKeyDownHandler}
-        />
-      )}
-      <components.MenuList {...props} maxHeight={maxHeight}>
-        {children}
-      </components.MenuList>
-    </div>
+    <MenuListWrapper>
+      <MenuListContent data-testid={`${selectDataTestId}-menu-list`}>
+        {showMenuInput && (
+          <SearchInput
+            data-testid={`${selectDataTestId}-search-input`}
+            value={filterInput.input}
+            onChange={onChangeHandler}
+            onFocus={onMenuInputFocus}
+            onBlur={onMenuInputBlur}
+            onKeyDown={onKeyDownHandler}
+          />
+        )}
+
+        <components.MenuList {...props} maxHeight={maxHeight}>
+          {children}
+        </components.MenuList>
+      </MenuListContent>
+    </MenuListWrapper>
   );
 };

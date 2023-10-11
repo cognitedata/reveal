@@ -1,16 +1,16 @@
+import { useQuery } from '@tanstack/react-query';
+
+import { getProject } from '@cognite/cdf-utilities';
+
+import { getCogniteSDKClient } from '../../environments/cogniteSdk';
 import {
   Capability,
   Combine,
   CombinedSCC,
   KeysOfSCC,
   checkPermissions,
-} from '@platypus-app/utils/capabilities';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { useQuery } from '@tanstack/react-query';
-
-import { getProject } from '@cognite/cdf-utilities';
-
-import { getCogniteSDKClient } from '../../environments/cogniteSdk';
+} from '../utils/capabilities';
+import { QueryKeys } from '../utils/queryKeys';
 
 export function useCapabilities<T extends KeysOfSCC>(
   aclName?: T,

@@ -2,18 +2,19 @@ import React from 'react';
 import { Column, ColumnShape } from 'react-base-table';
 import { useSelector } from 'react-redux';
 
-import { LoadingTable } from '@vision/modules/Common/Components/LoadingRenderer/LoadingTable';
-import { NoData } from '@vision/modules/Common/Components/NoData/NoData';
-import { SelectableTable } from '@vision/modules/Common/Components/SelectableTable/SelectableTable';
-import { ActionRendererExplorer } from '@vision/modules/Common/Containers/FileTableRenderers/ActionRenderer';
-import { AnnotationRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
-import { DateRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/DateRenderer';
-import { NameRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { StringRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringRenderer';
-import { ResultData, TableDataItem } from '@vision/modules/Common/types';
-import { SortKeys } from '@vision/modules/Common/Utils/SortUtils';
-import { RootState } from '@vision/store/rootReducer';
 import mime from 'mime-types';
+
+import { RootState } from '../../../../store/rootReducer';
+import { ActionRendererExplorer } from '../../Containers/FileTableRenderers/ActionRenderer';
+import { AnnotationRenderer } from '../../Containers/FileTableRenderers/AnnotationRenderer';
+import { DateRenderer } from '../../Containers/FileTableRenderers/DateRenderer';
+import { NameRenderer } from '../../Containers/FileTableRenderers/NameRenderer';
+import { StringRenderer } from '../../Containers/FileTableRenderers/StringRenderer';
+import { ResultData, TableDataItem } from '../../types';
+import { SortKeys } from '../../Utils/SortUtils';
+import { LoadingTable } from '../LoadingRenderer/LoadingTable';
+import { NoData } from '../NoData/NoData';
+import { SelectableTable } from '../SelectableTable/SelectableTable';
 
 import { FileListTableProps } from './types';
 

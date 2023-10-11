@@ -7,8 +7,6 @@ import React, {
 } from 'react';
 
 import { BuiltInType } from '@platypus/platypus-core';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Kind, parse } from 'graphql';
 import noop from 'lodash/noop';
 import styled, { CSSProperties } from 'styled-components/macro';
@@ -16,6 +14,8 @@ import styled, { CSSProperties } from 'styled-components/macro';
 import { Body, Button, Colors, Flex, Modal, Title } from '@cognite/cogs.js';
 
 import { useDebounce } from '../../hooks/useDebounce';
+import { useMixpanel } from '../../hooks/useMixpanel';
+import { useTranslation } from '../../hooks/useTranslation';
 import {
   getInterfaceTypes,
   getLinkedNodes,
@@ -216,7 +216,7 @@ export const SchemaVisualizer = React.memo(
         }
         return (
           <NodeWrapper
-            isActive={active === item.id}
+            isActive={item.title === active}
             width={nodeWidth}
             id={item.id}
             key={item.id}

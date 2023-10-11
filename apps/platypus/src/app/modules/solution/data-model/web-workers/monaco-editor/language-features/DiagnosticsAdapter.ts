@@ -1,5 +1,4 @@
 import { DataModelValidationError } from '@platypus/platypus-core';
-import { publish } from '@platypus-app/utils/custom-events';
 import {
   editor,
   IDisposable,
@@ -8,6 +7,7 @@ import {
   Uri,
 } from 'monaco-editor/esm/vs/editor/editor.api';
 
+import { publish } from '../../../../../../utils/custom-events';
 import { CUSTOM_EVENTS } from '../../../constants';
 import { config } from '../../config';
 import { FdmGraphQLDmlWorker } from '../../FdmGraphQLDmlWorker';

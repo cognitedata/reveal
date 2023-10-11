@@ -128,15 +128,6 @@ export const PointCloudToolBarTools = ({
     };
   }, [viewer, pendingAnnotation, tool]);
 
-  const handleAddAnnotationToolClick = () => {
-    if (tool === ToolType.ADD_ANNOTATION) {
-      setTool(ToolType.NONE);
-      return;
-    }
-
-    setTool(ToolType.ADD_ANNOTATION);
-  };
-
   const handleDeleteAnnotationToolClick = () => {
     if (modelId === null) return;
 
@@ -153,6 +144,15 @@ export const PointCloudToolBarTools = ({
     setTool(ToolType.DELETE_ANNOTATION);
     deleteBoundingVolumes({ viewer, pointCloudModel, onDeleteAnnotation });
     showBoundingVolumes(pointCloudModel);
+  };
+
+  const handleToolClick = (toolType: ToolType) => {
+    if (tool === toolType) {
+      setTool(ToolType.NONE);
+      return;
+    }
+
+    setTool(toolType);
   };
 
   return (
@@ -183,13 +183,22 @@ export const PointCloudToolBarTools = ({
         </Tooltip>
       </>
       <>
+        <Tooltip content="Select Tool" position="right">
+          <Button
+            icon="Cursor"
+            type="ghost"
+            aria-label="Select tool"
+            toggled={tool === ToolType.SELECT_TOOL}
+            onClick={() => handleToolClick(ToolType.SELECT_TOOL)}
+          />
+        </Tooltip>
         <Tooltip content="Add annotation" position="right">
           <Button
             icon="AddLarge"
             type="ghost"
             aria-label="Add annotation tool"
             toggled={tool === ToolType.ADD_ANNOTATION}
-            onClick={handleAddAnnotationToolClick}
+            onClick={() => handleToolClick(ToolType.ADD_ANNOTATION)}
           />
         </Tooltip>
         <Tooltip content="Delete annotation" position="right">

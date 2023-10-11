@@ -2,10 +2,11 @@ import { useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import config from '@platypus-app/config/config';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-
 import { Icon } from '@cognite/cogs.js';
+
+import config from '../../config/config';
+import { useMixpanel } from '../../hooks/useMixpanel';
+
 const NoAccessPage = (): JSX.Element => {
   const { track } = useMixpanel();
   useEffect(() => {

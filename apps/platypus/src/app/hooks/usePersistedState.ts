@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { StorageProviderType } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
+
+import { TOKENS } from '../di';
 
 import { useInjection } from './useInjection';
 

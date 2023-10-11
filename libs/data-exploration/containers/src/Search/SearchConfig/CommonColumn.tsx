@@ -45,7 +45,7 @@ export const CommonColumn = ({
   };
 
   return (
-    <CommonColumnWrapper>
+    <CommonColumnWrapper data-testid="search-config-Common">
       <CommonWrapper direction="column">
         <ColumnHeader>{t('COMMON', COMMON_COLUMN_HEADER)}</ColumnHeader>
         {searchConfigCommonColumns.map((column, index) => {

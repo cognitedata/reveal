@@ -1,13 +1,14 @@
-import { getDummyReviewImageKeypointObject } from '@vision/__test-utils/annotations';
-import { getDummyImageObjectDetectionBoundingBoxAnnotation } from '@vision/__test-utils/getDummyAnnotations';
-import { VisionAnnotationDataType } from '@vision/modules/Common/types';
+import { getDummyReviewImageKeypointObject } from '../../../../../../__test-utils/annotations';
+import { getDummyImageObjectDetectionBoundingBoxAnnotation } from '../../../../../../__test-utils/getDummyAnnotations';
+import { VisionAnnotationDataType } from '../../../../../Common/types';
+import { ReviewKeypoint, VisionReviewAnnotation } from '../../../../types';
 import {
   AnnotationDetailPanelReviewCallbacks,
   AnnotationDetailPanelAnnotationType,
   AnnotationDetailPanelCommonProps,
   AnnotationDetailPanelRowData,
   TreeNode,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
+} from '../../types';
 import {
   getActiveNode,
   getActiveNodeIndexFromArray,
@@ -19,11 +20,7 @@ import {
   isVisionReviewImageKeypointRowData,
   selectNextOrFirstIndexArr,
   selectPrevOrFirstIndexArr,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/utils/nodeTreeUtils';
-import {
-  ReviewKeypoint,
-  VisionReviewAnnotation,
-} from '@vision/modules/Review/types';
+} from '../nodeTreeUtils';
 
 const getDummyRowDataObject = (
   data:

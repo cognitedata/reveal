@@ -1,18 +1,18 @@
 import { useMemo, useState } from 'react';
 import { CellProps } from 'react-table';
 
-import { DataScopeDto } from '@data-quality/api/codegen';
+import { Body, Flex, Table, TableColumn } from '@cognite/cogs.js';
+
+import { UpsertDataScopeModal } from '../../..';
+import { BasicPlaceholder } from '../../../../../../../components/BasicPlaceholder/BasicPlaceholder';
+import { Spinner } from '../../../../../../../components/Spinner/Spinner';
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
+import { DataScopeDto } from '../../../../api/codegen';
 import {
   useAccessControl,
   useLoadDataScopes,
   useLoadDataSource,
-} from '@data-quality/hooks';
-import { UpsertDataScopeModal } from '@data-quality/pages';
-import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Body, Flex, Table, TableColumn } from '@cognite/cogs.js';
+} from '../../../../hooks';
 
 import { DataScopeOptionsMenu } from './DataScopeOptionsMenu';
 import { DataTypeCell, FiltersCell, NameCell } from './DataScopesCells';

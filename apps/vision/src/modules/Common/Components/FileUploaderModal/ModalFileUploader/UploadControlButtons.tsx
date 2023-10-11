@@ -1,13 +1,10 @@
 // todo: unused component
 import React, { useMemo } from 'react';
 
-import {
-  CogsFile,
-  CogsFileInfo,
-} from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
-import { STATUS } from '@vision/modules/Common/Components/FileUploaderModal/enums';
-
 import { Button, Icon, Title } from '@cognite/cogs.js';
+
+import { CogsFile, CogsFileInfo } from '../../FileUploader/FilePicker/types';
+import { STATUS } from '../enums';
 
 const GetUploadControls = (
   uploadStatus: STATUS,

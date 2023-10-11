@@ -1,9 +1,9 @@
 import { PropsWithChildren } from 'react';
 
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useDataManagementPageUI } from '@platypus-app/modules/solution/data-management/hooks/useDataManagemenPageUI';
-
 import { Button, Tooltip } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 
 export interface BulkPopulationButtonProps extends PropsWithChildren {
   onClick?: () => void;

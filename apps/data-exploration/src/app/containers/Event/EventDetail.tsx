@@ -3,18 +3,15 @@ import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { EventInfo } from '@data-exploration/containers';
+import { useCdfUserHistoryService } from '@user-history';
+import styled from 'styled-components/macro';
 
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
 import { ErrorFeedback } from '@cognite/data-exploration';
 import { CogniteError, CogniteEvent } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
-import {
-  useTranslation,
-  SUB_APP_PATH,
-  createInternalLink,
-} from '@data-exploration-lib/core';
+import { useTranslation, SUB_APP_PATH } from '@data-exploration-lib/core';
 
 import { BreadcrumbsV2 } from '../../components/Breadcrumbs/BreadcrumbsV2';
 import ResourceTitleRow from '../../components/ResourceTitleRow';
@@ -77,7 +74,7 @@ export const EventDetail = ({
         userHistoryService.logNewResourceView({
           application: SUB_APP_PATH,
           name: renderTitle(event),
-          path: createInternalLink(pathname, searchParams),
+          path: pathname.concat(searchParams),
         });
     }
   }, [isEventFetched, event]);
@@ -120,7 +117,7 @@ export const EventDetail = ({
   };
 
   return (
-    <>
+    <EventDetailWrapper data-testid="event-detail">
       <BreadcrumbsV2 />
       <ResourceTitleRow
         item={{ id: eventId, type: 'event' }}
@@ -164,6 +161,9 @@ export const EventDetail = ({
           </Tabs.Tab>,
         ]}
       />
-    </>
+    </EventDetailWrapper>
   );
 };
+const EventDetailWrapper = styled.div`
+  display: contents;
+`;

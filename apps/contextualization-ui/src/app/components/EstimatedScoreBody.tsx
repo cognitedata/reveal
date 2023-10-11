@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 
 import { ScoreComponent } from '@fusion/contextualization';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 import { Body, Icon } from '@cognite/cogs.js';
 
 import { EstimateArray, EstimateJobPercentages, JobStatus } from '../types';
+
+import { Spinner } from './Spinner/Spinner';
 
 export const EstimatedScoreBody = ({
   savedManualMatchesCount,

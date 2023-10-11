@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
 
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { getProject } from '@cognite/cdf-utilities';
+
+import { useTranslation } from '../../../../hooks/useTranslation';
 
 import { AclName, CapabilityActions, useCapabilities } from './useCapabilities';
 

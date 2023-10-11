@@ -1,5 +1,14 @@
 {
-  "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
+  "extends": [
+    "plugin:cypress/recommended",
+    "plugin:@nx/react",
+    "../../.eslintrc.json"
+  ],
   "ignorePatterns": ["!**/*"],
-  "overrides": []
+  "overrides": [
+    {
+      "files": ["*.cy.{ts,js,tsx,jsx}", "cypress/**/*.{ts,js,tsx,jsx}"],
+      "rules": {}
+    }
+  ]
 }

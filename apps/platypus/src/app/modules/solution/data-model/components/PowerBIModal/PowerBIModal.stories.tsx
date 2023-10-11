@@ -1,4 +1,4 @@
-import { Wrapper } from '@platypus-app/components/Styles/storybook';
+import { Wrapper } from '../../../../../components/Styles/storybook';
 
 import { PowerBIModal } from './PowerBIModal';
 

@@ -12,6 +12,7 @@ export enum ResourceTypes {
   File = 'file',
   Event = 'event',
   ThreeD = 'threeD',
+  Charts = 'charts',
 }
 
 export type ResourceType =
@@ -20,6 +21,7 @@ export type ResourceType =
   | 'sequence'
   | 'file'
   | 'event'
+  | 'charts'
   | 'threeD';
 
 export type ResourceSelectionMode = 'single' | 'multiple';
@@ -80,6 +82,9 @@ export function getTitle(t: ResourceType, plural = true): string {
     }
     case 'threeD': {
       return plural ? '3D models' : '3D model';
+    }
+    case 'charts': {
+      return plural ? 'Charts' : 'Chart';
     }
     default: {
       throw new Error(`Unknown ResourceType: ${t}`);

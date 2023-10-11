@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 
-import { EditableChip } from '@platypus-app/components/EditableChip';
-import { getContainer } from '@platypus-app/GlobalStyles';
-import { useDataSets } from '@platypus-app/hooks/useDataSets';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { Input, OptionType, SegmentedControl, Select } from '@cognite/cogs.js';
+
+import { EditableChip } from '../../../../../components/EditableChip';
+import { getContainer } from '../../../../../GlobalStyles';
+import { useDataSets } from '../../../../../hooks/useDataSets';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 import { Column, Label, Row } from './elements';
 

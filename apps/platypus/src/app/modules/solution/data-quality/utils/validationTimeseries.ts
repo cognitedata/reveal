@@ -1,4 +1,3 @@
-import { DateUtilsImpl } from '@platypus-app/utils/data';
 import { DateFormat } from '@platypus-core/boundaries/types';
 import { toNumber } from 'lodash';
 import { Datum } from 'plotly.js';
@@ -8,6 +7,8 @@ import {
   Datapoints,
   Timestamp,
 } from '@cognite/sdk/dist/src';
+
+import { DateUtilsImpl } from '../../../../utils/data';
 
 export enum TimeSeriesType {
   SCORE = 'score',

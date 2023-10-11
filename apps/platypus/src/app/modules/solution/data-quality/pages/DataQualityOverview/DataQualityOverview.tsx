@@ -1,17 +1,16 @@
 import { useState } from 'react';
 
+import { Button, Dropdown, Flex, Menu, Tabs, Tooltip } from '@cognite/cogs.js';
+
+import { UpsertDataScopeModal, UpsertRuleDrawer } from '..';
+import { SplitPanel } from '../../../../../components/Layouts/elements';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 import {
   AccessAction,
   useAccessControl,
   useDisclosure,
   useLoadDataSource,
-} from '@data-quality/hooks';
-import { SplitPanel } from '@platypus-app/components/Layouts/elements';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Button, Dropdown, Flex, Menu, Tabs, Tooltip } from '@cognite/cogs.js';
-
-import { UpsertDataScopeModal, UpsertRuleDrawer } from '..';
+} from '../../hooks';
 
 import { DataScopesTable, RulesTable, TotalValidityCard } from './components';
 

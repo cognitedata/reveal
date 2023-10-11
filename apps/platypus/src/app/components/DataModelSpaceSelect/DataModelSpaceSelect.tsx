@@ -1,10 +1,9 @@
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useSpaces } from '@platypus-app/hooks/useSpaces';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { Button, Flex, OptionType, Select, Tooltip } from '@cognite/cogs.js';
 
+import { useSpaces } from '../../hooks/useSpaces';
+import { useTranslation } from '../../hooks/useTranslation';
 import { FormLabel } from '../FormLabel/FormLabel';
+import { Spinner } from '../Spinner/Spinner';
 
 import {
   HorizontalDivider,

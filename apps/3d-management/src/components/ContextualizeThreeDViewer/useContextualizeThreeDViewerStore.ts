@@ -6,6 +6,8 @@ import { AnnotationModel } from '@cognite/sdk';
 
 import { DEFAULT_POINT_SIZE } from '../../pages/ContextualizeEditor/constants';
 
+import { TransformMode } from './utils/createTransformControls';
+
 export type ThreeDPosition = {
   x: number;
   y: number;
@@ -27,6 +29,7 @@ export enum ToolType {
   NONE = 'none',
   ADD_ANNOTATION = 'addAnnotation',
   DELETE_ANNOTATION = 'deleteAnnotation',
+  SELECT_TOOL = 'selectTool',
 }
 
 type RootState = {
@@ -40,6 +43,9 @@ type RootState = {
   isModelLoaded: boolean;
   annotations: AnnotationModel[] | null;
   visualizationOptions: VisualizationOptions;
+  transformMode: TransformMode | null;
+  hoveredAnnotationId: number | null;
+  selectedAnnotationId: number | null;
 };
 
 const initialState: RootState = {
@@ -53,6 +59,9 @@ const initialState: RootState = {
   isModelLoaded: false,
   annotations: null,
   visualizationOptions: DEFAULT_VISUALIZATION_OPTIONS,
+  transformMode: null,
+  hoveredAnnotationId: null,
+  selectedAnnotationId: null,
 };
 
 export const useContextualizeThreeDViewerStore = create<RootState>(
@@ -125,10 +134,12 @@ export const setModelLoaded = () => {
 };
 
 export const setTool = (tool: ToolType) => {
+  const isSelectTool = tool === ToolType.SELECT_TOOL;
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     tool,
     pendingAnnotation: null,
+    selectedAnnotationId: isSelectTool ? prevState.selectedAnnotationId : null,
   }));
 };
 
@@ -169,5 +180,32 @@ export const updateVisualizationOptions = (
       ...prevState.visualizationOptions,
       ...visualizationOptions,
     },
+  }));
+};
+
+export const setTransformMode = (transformMode: TransformMode | null) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    transformMode:
+      prevState.transformMode === transformMode ? null : transformMode,
+  }));
+};
+
+export const setHoveredAnnotationId = (annotationId: number | null) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    hoveredAnnotationId: annotationId,
+  }));
+};
+
+export const setSelectedAnnotationId = (annotationId: number | null) => {
+  const prevSelectedAnnotationId =
+    useContextualizeThreeDViewerStore.getState().selectedAnnotationId;
+  if (annotationId === prevSelectedAnnotationId) {
+    return;
+  }
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    selectedAnnotationId: annotationId,
   }));
 };

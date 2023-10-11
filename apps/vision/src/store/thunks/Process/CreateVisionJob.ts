@@ -1,14 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+
 import {
   VisionJob,
   DetectionModelParams,
   VisionDetectionModelType,
-  ParamsCustomModel,
-} from '@vision/api/vision/detectionModels/types';
-import { postVisionJob } from '@vision/api/vision/detectionModels/visionJob';
-import { ProcessState } from '@vision/modules/Process/store/types';
-import { ThunkConfig } from '@vision/store/rootReducer';
-import { PollJobs } from '@vision/store/thunks/Process/PollJobs';
+} from '../../../api/vision/detectionModels/types';
+import { postVisionJob } from '../../../api/vision/detectionModels/visionJob';
+import { ProcessState } from '../../../modules/Process/store/types';
+import { ThunkConfig } from '../../rootReducer';
+
+import { PollJobs } from './PollJobs';
 
 export const CreateVisionJob = createAsyncThunk<
   VisionJob,
@@ -34,10 +35,5 @@ const getDetectionModelParameters = (
     (item) => item.type === modelType
   )?.settings;
 
-  // HACK: remove internal parameters used in the app
-  if (modelType === VisionDetectionModelType.CustomModel) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return (({ isValid, modelName, ..._ }) => _)(settings as ParamsCustomModel);
-  }
   return settings;
 };

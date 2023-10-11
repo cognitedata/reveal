@@ -3,52 +3,41 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { notification, Select } from 'antd';
+import { notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 
-import {
-  Body,
-  Button,
-  Colors,
-  Divider,
-  Flex,
-  Heading,
-  InputExp,
-} from '@cognite/cogs.js';
+import { Colors, Divider, Flex, Heading } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
-import FormFieldRadioGroup from '../../components/form-field-radio-group/FormFieldRadioGroup';
-import FormFieldWrapper from '../../components/form-field-wrapper/FormFieldWrapper';
 import { BottomBar, TopBar } from '../../components/ToolBars';
 import {
-  MQTTFormat,
+  ExtractorMapping,
+  useCreateExtractorMapping,
+  useFetchExtractorMappings,
+} from '../../hooks';
+import {
   useCreateMQTTDestination,
   useCreateMQTTJob,
-  useMQTTDestinations,
   useMQTTSourceWithMetrics,
 } from '../../hooks/hostedExtractors';
 
 import { Section } from './Section';
+import { StepOne } from './StepOne';
+import { StepThree } from './StepThree';
+import { StepTwo } from './StepTwo';
 import { TopicFilterGuide } from './TopicFilterGuide';
 import { CreateJobsFormValues, ExpandOptions } from './types';
+import { isCustomFormat } from './utils';
 
 export const AddTopicFilter = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [expandedOption, setExpandedOption] = useState(ExpandOptions.None);
 
-  const onCancel = useCallback(() => navigate(-1), [navigate]);
+  const goBack = useCallback(() => navigate(-1), [navigate]);
   const { externalId: sourceExternalId } = useParams();
 
   const { data: source } = useMQTTSourceWithMetrics(sourceExternalId);
-
-  const [tempTopicFilterInput, setTempTopicFilterInput] = useState('');
-
-  const { data: destinations } = useMQTTDestinations();
-
-  const sourceTopicFilters = source?.jobs.map((job) => {
-    return job.config.topicFilter;
-  });
 
   const { mutateAsync: createDestination } = useCreateMQTTDestination();
   const { mutateAsync: createJob } = useCreateMQTTJob({
@@ -57,7 +46,7 @@ export const AddTopicFilter = () => {
         message: t('notification-success-job-create'),
         key: 'delete-source',
       });
-      onCancel();
+      goBack();
     },
     onError: (e: any) => {
       notification.error({
@@ -67,6 +56,24 @@ export const AddTopicFilter = () => {
       });
     },
   });
+  const { mutateAsync: createMapping } = useCreateExtractorMapping({
+    onSuccess: (data) => {
+      notification.success({
+        message: t('transformation-code-saved', {
+          mappingId: data?.[0].externalId,
+        }),
+        key: 'add-mapping',
+      });
+    },
+    onError: (e: any) => {
+      notification.error({
+        message: e.toString(),
+        description: e.message,
+        key: 'add-mapping',
+      });
+    },
+  });
+  const { data: customExtractorMappings } = useFetchExtractorMappings();
 
   const handleValidate = (
     values: CreateJobsFormValues
@@ -75,7 +82,7 @@ export const AddTopicFilter = () => {
 
     if (!values.topicFilters || values.topicFilters.length === 0) {
       errors.topicFilters = t(
-        tempTopicFilterInput
+        isTopicFilterInputValueAvailable
           ? 'validation-error-topic-filter-click-add-only'
           : 'validation-error-topic-filter-required'
       );
@@ -106,343 +113,170 @@ export const AddTopicFilter = () => {
         );
       }
     }
+    if (values.format === 'custom') {
+      if (!values.mappingName) {
+        errors.mappingName = t('validation-error-field-required');
+      }
+    }
 
     return errors;
   };
 
-  const { errors, handleSubmit, setFieldValue, values } =
-    useFormik<CreateJobsFormValues>({
-      initialValues: {
-        destinationOption: 'use-existing',
-      },
-      onSubmit: async (val) => {
-        if (!val.topicFilters || val.topicFilters.length === 0) {
-          return;
-        }
-
-        let destinationExternalId: string | undefined = undefined;
-        if (
-          val.destinationOption === 'use-existing' &&
-          val.selectedDestinationExternalId
-        ) {
-          destinationExternalId = val.selectedDestinationExternalId;
-        } else if (
-          val.destinationOption === 'client-credentials' &&
-          val.clientId &&
-          val.clientSecret &&
-          val.destinationExternalIdToCreate
-        ) {
-          const destination = await createDestination({
-            credentials: {
-              clientId: val.clientId,
-              clientSecret: val.clientSecret,
-            },
-            externalId: val.destinationExternalIdToCreate,
-          });
-          destinationExternalId = destination.externalId;
-        } else if (
-          val.destinationOption === 'current-user' &&
-          val.destinationExternalIdToCreate
-        ) {
-          const destination = await createDestination({
-            credentials: {
-              tokenExchange: true,
-            },
-            externalId: val.destinationExternalIdToCreate,
-          });
-          destinationExternalId = destination.externalId;
-        }
-
-        if (destinationExternalId && source) {
-          await Promise.all(
-            val.topicFilters.map((topicFilter) => {
-              return createJob({
-                destinationId: destinationExternalId!,
-                externalId: `${source?.externalId}-${val.selectedDestinationExternalId}-${topicFilter}`,
-                format: {
-                  type: val.format ?? 'cognite',
-                },
-                sourceId: source?.externalId,
-                config: {
-                  topicFilter,
-                },
-              });
-            })
-          );
-        }
-      },
-      validate: handleValidate,
-      validateOnBlur: false,
-      validateOnChange: false,
-    });
-
-  const handleAddTopicFilter = (): void => {
-    if (
-      !values.topicFilters ||
-      !values.topicFilters.includes(tempTopicFilterInput)
-    ) {
-      setFieldValue(
-        'topicFilters',
-        values.topicFilters?.concat(tempTopicFilterInput) ?? [
-          tempTopicFilterInput,
-        ]
-      );
-      setTempTopicFilterInput('');
-    }
-  };
-
-  const handleDeleteTopicFilter = (filter: string): void => {
-    setFieldValue(
-      'topicFilters',
-      values.topicFilters?.filter((f) => f !== filter) ?? []
-    );
-  };
-
-  const formatField: MQTTFormat[] = [
-    {
-      type: 'cognite',
+  const { errors, handleSubmit, setFieldValue, values } = useFormik<
+    CreateJobsFormValues & { useSampleData?: boolean }
+  >({
+    initialValues: {
+      destinationOption: 'use-existing',
     },
-    {
-      type: 'rockwell',
-    },
-    {
-      type: 'value',
-    },
-    {
-      type: 'sparkplug',
-    },
-    {
-      type: 'custom',
-    },
-  ];
+    onSubmit: async (val) => {
+      let mappingId = '';
+      let format = val.format;
+      if (!val.topicFilters || val.topicFilters.length === 0) {
+        return;
+      }
 
-  const formatFieldOptions = formatField.map(({ type }) => ({
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    label: t(`form-format-option-${type}`),
-    value: type,
-  }));
+      if (val.format === 'custom' && val.mapping && val.mappingName) {
+        mappingId = await createMapping({
+          externalId: val.mappingName,
+          published: true,
+          mapping: {
+            expression: val.mapping,
+          },
+        }).then((data: ExtractorMapping[]) => {
+          return data?.[0]?.externalId ?? '';
+        });
+      }
+
+      if (val.format && isCustomFormat(customExtractorMappings, val.format)) {
+        format = 'custom';
+        mappingId = val.format;
+      }
+
+      let destinationExternalId: string | undefined = undefined;
+      if (
+        val.destinationOption === 'use-existing' &&
+        val.selectedDestinationExternalId
+      ) {
+        destinationExternalId = val.selectedDestinationExternalId;
+      } else if (
+        val.destinationOption === 'client-credentials' &&
+        val.clientId &&
+        val.clientSecret &&
+        val.destinationExternalIdToCreate
+      ) {
+        const destination = await createDestination({
+          credentials: {
+            clientId: val.clientId,
+            clientSecret: val.clientSecret,
+          },
+          externalId: val.destinationExternalIdToCreate,
+        });
+        destinationExternalId = destination.externalId;
+      } else if (
+        val.destinationOption === 'current-user' &&
+        val.destinationExternalIdToCreate
+      ) {
+        const destination = await createDestination({
+          credentials: {
+            tokenExchange: true,
+          },
+          externalId: val.destinationExternalIdToCreate,
+        });
+        destinationExternalId = destination.externalId;
+      }
+
+      if (destinationExternalId && source) {
+        await Promise.all(
+          val.topicFilters.map((topicFilter) => {
+            return createJob({
+              destinationId: destinationExternalId!,
+              externalId: `${source?.externalId}-${val.selectedDestinationExternalId}-${topicFilter}`,
+              format: {
+                type: format ?? 'cognite',
+                ...(mappingId && { mappingId }),
+              },
+              sourceId: source?.externalId,
+              config: {
+                topicFilter,
+              },
+            });
+          })
+        );
+      }
+    },
+    validate: handleValidate,
+    validateOnBlur: false,
+    validateOnChange: false,
+  });
+
+  const [
+    isTopicFilterInputValueAvailable,
+    setIsTopicFilterInputValueAvailable,
+  ] = useState(false);
+
+  const onClickExpand = useCallback(
+    (expandOption: ExpandOptions) => {
+      if (expandOption && setExpandedOption) {
+        setExpandedOption(expandOption);
+      }
+    },
+    [setExpandedOption]
+  );
 
   return (
     <GridContainer>
-      <StyledTopBar title={t('back')} onClick={onCancel} />
+      <StyledTopBar title={t('back')} onClick={goBack} />
       <TopicFilterContent>
         <Heading level={3}>{t('form-setup-stream')}</Heading>
-        <SectionContainer>
+        <SectionWrapper>
           <Section
             title={t('form-step-1-x', { step: t('add-topic-filter') })}
             subtitle={t('form-add-topic-filter-detail')}
             expandOption={ExpandOptions.TopicFilters}
-            setExpandOption={setExpandedOption}
-          ></Section>
-          <Flex gap={16} direction="column" style={{ width: '100%' }}>
-            <Flex gap={8} style={{ width: '100%' }}>
-              <div style={{ flex: 1 }}>
-                <InputExp
-                  label={{
-                    info: t('form-topic-filters-info'),
-                    required: true,
-                    text: t('topic-filter_other'),
-                  }}
-                  fullWidth
-                  onChange={(e) => setTempTopicFilterInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !!tempTopicFilterInput) {
-                      handleAddTopicFilter();
-                    }
-                  }}
-                  status={errors.topicFilters ? 'critical' : undefined}
-                  statusText={errors.topicFilters}
-                  placeholder={t('form-topic-filters-placeholder')}
-                  value={tempTopicFilterInput}
-                />
-              </div>
-              <div style={{ marginTop: 27 }}>
-                <Button
-                  disabled={
-                    !tempTopicFilterInput ||
-                    values.topicFilters?.includes(tempTopicFilterInput) ||
-                    sourceTopicFilters?.includes(tempTopicFilterInput)
-                  }
-                  onClick={handleAddTopicFilter}
-                  type="primary"
-                >
-                  {t('add')}
-                </Button>
-              </div>
-            </Flex>
-            <Flex style={{ width: '100%' }} direction="column" gap={8}>
-              {values.topicFilters?.map((filter) => (
-                <TopicFilterContainer>
-                  <Body size="medium">{filter}</Body>
-                  <Button
-                    icon="Delete"
-                    onClick={() => handleDeleteTopicFilter(filter)}
-                    size="small"
-                    type="ghost"
-                  />
-                </TopicFilterContainer>
-              ))}
-            </Flex>
-          </Flex>
-        </SectionContainer>
+            onClickExpand={onClickExpand}
+          />
+          <StepOne
+            source={source}
+            values={values}
+            errors={errors}
+            setFieldValue={setFieldValue}
+            onTopicFilterInputValueAvailabilityChange={
+              setIsTopicFilterInputValueAvailable
+            }
+          />
+        </SectionWrapper>
         <Divider />
-        <SectionContainer>
+        <SectionWrapper>
           <Section
             title={t('form-step-2-x', { step: t('form-choose-format') })}
             subtitle={t('form-choose-format-detail')}
             expandOption={ExpandOptions.Format}
-            setExpandOption={setExpandedOption}
-          ></Section>
-          <FormFieldWrapper isRequired title={t('form-message-format')}>
-            <Select
-              onChange={(e) => setFieldValue('format', e)}
-              options={formatFieldOptions}
-              placeholder={t('select-format')}
-              value={values.format}
-              aria-placeholder={t('select-format')}
-            />
-          </FormFieldWrapper>
-        </SectionContainer>
+            onClickExpand={onClickExpand}
+          />
+          <StepTwo
+            customExtractorMappings={customExtractorMappings}
+            values={values}
+            errors={errors}
+            setFieldValue={setFieldValue}
+            onClickExpand={onClickExpand}
+          />
+        </SectionWrapper>
         <Divider />
-        <SectionContainer>
+        <SectionWrapper>
           <Section
             title={t('form-step-3-x', {
               step: t('form-select-authenticate-sync'),
             })}
             subtitle={t('form-select-authenticate-detail')}
             expandOption={ExpandOptions.Sync}
-            setExpandOption={setExpandedOption}
+            onClickExpand={onClickExpand}
           ></Section>
-          <FormFieldRadioGroup
-            direction="column"
-            isRequired
-            onChange={(value) => setFieldValue('destinationOption', value)}
-            options={[
-              {
-                label: t('form-use-existing-sync'),
-                value: 'use-existing',
-                content: (
-                  <RadioButtonContentContainer>
-                    <FormFieldWrapper
-                      isRequired
-                      error={errors.selectedDestinationExternalId}
-                      title={t('form-existing-syncs')}
-                    >
-                      <Select
-                        showSearch
-                        onChange={(value) => {
-                          setFieldValue('selectedDestinationExternalId', value);
-                        }}
-                        options={destinations?.map(({ externalId }) => ({
-                          label: externalId,
-                          value: externalId,
-                        }))}
-                        placeholder={t('form-existing-syncs-placeholder')}
-                        value={values.selectedDestinationExternalId}
-                      />
-                    </FormFieldWrapper>
-                  </RadioButtonContentContainer>
-                ),
-              },
-              {
-                label: t('form-create-new-sync-current-user'),
-                value: 'current-user',
-                content: (
-                  <RadioButtonContentContainer>
-                    <InputExp
-                      clearable
-                      fullWidth
-                      label={{
-                        info: undefined,
-                        required: true,
-                        text: t('form-sink-external-id'),
-                      }}
-                      onChange={(e) =>
-                        setFieldValue(
-                          'destinationExternalIdToCreate',
-                          e.target.value
-                        )
-                      }
-                      status={
-                        errors.destinationExternalIdToCreate
-                          ? 'critical'
-                          : undefined
-                      }
-                      statusText={errors.destinationExternalIdToCreate}
-                      placeholder={t('form-sink-external-id-placeholder')}
-                      value={values.destinationExternalIdToCreate}
-                    />
-                  </RadioButtonContentContainer>
-                ),
-              },
-              {
-                label: t('form-create-new-sync-client-credentials'),
-                value: 'client-credentials',
-                content: (
-                  <RadioButtonContentContainer gap={16}>
-                    <InputExp
-                      clearable
-                      fullWidth
-                      label={{
-                        info: undefined,
-                        required: true,
-                        text: t('form-sink-external-id'),
-                      }}
-                      onChange={(e) =>
-                        setFieldValue(
-                          'destinationExternalIdToCreate',
-                          e.target.value
-                        )
-                      }
-                      status={
-                        errors.destinationExternalIdToCreate
-                          ? 'critical'
-                          : undefined
-                      }
-                      statusText={errors.destinationExternalIdToCreate}
-                      placeholder={t('form-sink-external-id-placeholder')}
-                      value={values.destinationExternalIdToCreate}
-                    />
-                    <InputExp
-                      clearable
-                      fullWidth
-                      label={{
-                        required: true,
-                        info: undefined,
-                        text: t('form-sink-client-id'),
-                      }}
-                      onChange={(e) =>
-                        setFieldValue('clientId', e.target.value)
-                      }
-                      placeholder={t('form-sink-client-id-placeholder')}
-                      status={errors.clientId ? 'critical' : undefined}
-                      statusText={errors.clientId}
-                      value={values.clientId}
-                    />
-                    <InputExp
-                      clearable
-                      fullWidth
-                      label={{
-                        required: true,
-                        info: undefined,
-                        text: t('form-client-secret'),
-                      }}
-                      onChange={(e) =>
-                        setFieldValue('clientSecret', e.target.value)
-                      }
-                      placeholder={t('form-client-secret-placeholder')}
-                      status={errors.clientSecret ? 'critical' : undefined}
-                      statusText={errors.clientSecret}
-                      value={values.clientSecret}
-                    />
-                  </RadioButtonContentContainer>
-                ),
-              },
-            ]}
-            value={values.destinationOption}
+          <StepThree
+            values={values}
+            errors={errors}
+            setFieldValue={setFieldValue}
           />
-        </SectionContainer>
+        </SectionWrapper>
       </TopicFilterContent>
       <StyledBottomBar
         title={t('field-is-mandatory')}
@@ -456,22 +290,7 @@ export const AddTopicFilter = () => {
   );
 };
 
-const RadioButtonContentContainer = styled(Flex)`
-  align-self: stretch;
-  padding-left: 28px;
-  flex-direction: column;
-`;
-
-const TopicFilterContainer = styled.div`
-  align-items: center;
-  background-color: ${Colors['surface--interactive--disabled']};
-  border-radius: 6px;
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 4px 4px 12px;
-`;
-
-const SectionContainer = styled(Flex)`
+const SectionWrapper = styled(Flex)`
   gap: 24px;
   flex-direction: column;
   width: 100%;

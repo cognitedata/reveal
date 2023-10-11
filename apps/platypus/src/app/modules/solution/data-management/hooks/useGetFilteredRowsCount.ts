@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
+
+import { QueryKeys } from '../../../../utils/queryKeys';
 
 export function useGetFilteredRowsCount({
   dataModelExternalId,

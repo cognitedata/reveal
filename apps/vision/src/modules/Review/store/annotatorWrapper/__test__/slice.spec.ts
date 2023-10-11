@@ -3,7 +3,7 @@ import {
   getDummyKeypointState,
   getDummyPredefinedKeypointCollection,
   getDummyPredefinedShape,
-} from '@vision/__test-utils/annotations';
+} from '../../../../../__test-utils/annotations';
 import {
   getDummyImageAssetLinkAnnotation,
   getDummyImageClassificationAnnotation,
@@ -11,16 +11,24 @@ import {
   getDummyImageKeypointCollectionAnnotation,
   getDummyImageObjectDetectionBoundingBoxAnnotation,
   getDummyImageObjectDetectionPolygonAnnotation,
-} from '@vision/__test-utils/getDummyAnnotations';
-import { Status } from '@vision/api/annotation/types';
-import { generateKeypointId } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { getDummyRegionOriginatedInAnnotator } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/__test-utils/region';
-import { tools } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
+} from '../../../../../__test-utils/getDummyAnnotations';
+import { Status } from '../../../../../api/annotation/types';
+import { deselectAllSelectionsReviewPage } from '../../../../../store/commonActions';
+import { PopulateAnnotationTemplates } from '../../../../../store/thunks/Annotation/PopulateAnnotationTemplates';
+import { RetrieveAnnotations } from '../../../../../store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from '../../../../../store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationTemplates } from '../../../../../store/thunks/Annotation/SaveAnnotationTemplates';
+import { UpdateAnnotations } from '../../../../../store/thunks/Annotation/UpdateAnnotations';
+import { VisionJobUpdate } from '../../../../../store/thunks/Process/VisionJobUpdate';
+import { generateKeypointId } from '../../../../Common/Utils/AnnotationUtils/AnnotationUtils';
+import { getDummyRegionOriginatedInAnnotator } from '../../../Components/ReactImageAnnotateWrapper/__test-utils/region';
+import { tools } from '../../../Components/ReactImageAnnotateWrapper/Tools';
 import {
   AnnotatorNewRegion,
   AnnotatorPointRegion,
   AnnotatorRegionType,
-} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
+} from '../../../Components/ReactImageAnnotateWrapper/types';
+import { PredefinedKeypoint, PredefinedShape } from '../../../types';
 import reducer, {
   createTempKeypointCollection,
   deleteTempKeypointCollection,
@@ -34,22 +42,8 @@ import reducer, {
   setLastShape,
   setSelectedTool,
   toggleCollectionVisibility,
-} from '@vision/modules/Review/store/annotatorWrapper/slice';
-import {
-  AnnotatorWrapperState,
-  KeypointCollectionState,
-} from '@vision/modules/Review/store/annotatorWrapper/type';
-import {
-  PredefinedKeypoint,
-  PredefinedShape,
-} from '@vision/modules/Review/types';
-import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
-import { PopulateAnnotationTemplates } from '@vision/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
-import { SaveAnnotations } from '@vision/store/thunks/Annotation/SaveAnnotations';
-import { SaveAnnotationTemplates } from '@vision/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
-import { VisionJobUpdate } from '@vision/store/thunks/Process/VisionJobUpdate';
+} from '../slice';
+import { AnnotatorWrapperState, KeypointCollectionState } from '../type';
 
 jest.mock(
   '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils',

@@ -1,10 +1,10 @@
+import { CogniteInternalId, CogniteExternalId } from '@cognite/sdk';
+
 import {
   ImageAssetLink,
   ImageExtractedText,
   ImageObjectDetection,
-} from '@vision/api/annotation/types';
-
-import { CogniteInternalId, CogniteExternalId } from '@cognite/sdk';
+} from '../../annotation/types';
 
 // Vision API schema types
 export declare type FileIdEither = FileInternalId | FileExternalId;
@@ -212,9 +212,7 @@ export type DetectionModelParams =
   | ParamsOCR
   | ParamsTagDetection
   | ParamsObjectDetection
-  | ParamsGaugeReader
-  | ParamsCustomModel;
-
+  | ParamsGaugeReader;
 // App specific types
 export enum VisionDetectionModelType {
   OCR = 1,
@@ -222,7 +220,6 @@ export enum VisionDetectionModelType {
   ObjectDetection,
   PeopleDetection,
   GaugeReader,
-  CustomModel,
 }
 export interface DetectionModelDataProvider {
   postJob(

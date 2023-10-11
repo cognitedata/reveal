@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { FileGridTableProps } from '@vision/modules/Common/Components/FileTable/types';
-import { LoadingGrid } from '@vision/modules/Common/Components/LoadingRenderer/LoadingGrid';
-import { NoData } from '@vision/modules/Common/Components/NoData/NoData';
-import { TableDataItem } from '@vision/modules/Common/types';
+import { TableDataItem } from '../../types';
+import { FileGridTableProps } from '../FileTable/types';
+import { LoadingGrid } from '../LoadingRenderer/LoadingGrid';
+import { NoData } from '../NoData/NoData';
 
 import { GridView } from './GridView';
 

@@ -2,6 +2,14 @@ import React, { useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
+import { Body, Flex, Icon, Modal, Switch } from '@cognite/cogs.js';
+
+import COLUMNS_IMG from '../../../assets/images/columns.gif';
+import FILTER_BUILDER_IMG from '../../../assets/images/filter_builder.gif';
+import GPT_SEARCH_IMG from '../../../assets/images/gpt_search.gif';
+import GRAPH_IMG from '../../../assets/images/graph.gif';
+import MANUAL_POP_IMG from '../../../assets/images/manual_population.gif';
+import SUGGESTIONS_IMG from '../../../assets/images/suggestions.gif';
 import {
   useFilterBuilderFeatureFlag,
   useUpdateFilterBuilderFeatureFlag,
@@ -16,18 +24,9 @@ import {
   useGPTSearch,
   useUpdateGPTSearch,
   useGPTSearchForProject,
-} from '@platypus-app/flags';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Body, Flex, Icon, Modal, Switch } from '@cognite/cogs.js';
-
-import COLUMNS_IMG from '../../../assets/images/columns.gif';
-import FILTER_BUILDER_IMG from '../../../assets/images/filter_builder.gif';
-import GPT_SEARCH_IMG from '../../../assets/images/gpt_search.gif';
-import GRAPH_IMG from '../../../assets/images/graph.gif';
-import MANUAL_POP_IMG from '../../../assets/images/manual_population.gif';
-import SUGGESTIONS_IMG from '../../../assets/images/suggestions.gif';
+} from '../../flags';
+import { useMixpanel } from '../../hooks/useMixpanel';
+import { useTranslation } from '../../hooks/useTranslation';
 
 type FeatureKey =
   | 'population'

@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { WebkitFile } from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
-
 import { useFilePickerContext } from './FilePickerContext';
+import { WebkitFile } from './types';
 
 export const fileDropzoneTitle = 'Drop files or folders here';
 

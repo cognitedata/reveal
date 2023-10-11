@@ -1,4 +1,4 @@
-import { AnnotationStatuses } from '@vision/modules/Common/types';
+import { AnnotationStatuses } from '../../types';
 
 export const showBadge = (
   count?: number,

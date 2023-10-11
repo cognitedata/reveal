@@ -17,11 +17,12 @@ import {
   DataModelsApiService,
   InstancesApiService,
 } from '@platypus/platypus-core';
-import { DateUtilsImpl, TimeUtilsImpl } from '@platypus-app/utils/data';
-import { StorageProviderFactoryImpl } from '@platypus-app/utils/persistence';
 import { Container, token } from 'brandi';
 
 import { getCogniteSDKClient } from '../environments/cogniteSdk';
+
+import { DateUtilsImpl, TimeUtilsImpl } from './utils/data';
+import { StorageProviderFactoryImpl } from './utils/persistence/storage-provider-factory.impl';
 
 // First define the Tokens
 export const TOKENS = {

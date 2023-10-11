@@ -7,6 +7,9 @@ inputs:
   firebaseSite:
     description: 'firebase site'
     required: true
+  project:
+    description: 'project name'
+    required: true
 outputs:
   content:
     description: 'the content to put in firebase.json'

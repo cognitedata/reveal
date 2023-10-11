@@ -12,7 +12,7 @@ import {
   CommandArgument,
   CommandArgumentType,
   NumberPromptOptions,
-} from '@cognite/platypus-cdf-cli/app/types';
+} from '../../types';
 
 import { EnquirerCommandBuilder } from './enquirer-command-builder';
 import { YargsCommandBuilder } from './yargs-command-builder';

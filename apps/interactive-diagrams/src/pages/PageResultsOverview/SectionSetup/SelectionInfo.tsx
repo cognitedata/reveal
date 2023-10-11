@@ -10,6 +10,7 @@ type Props = {
   count?: number;
   editable?: boolean;
   text?: string;
+  'data-testid'?: string;
 };
 
 export default function SelectionInfo(props: Props): JSX.Element {
@@ -33,7 +34,11 @@ export default function SelectionInfo(props: Props): JSX.Element {
   };
 
   return (
-    <ModelInfo editable={editable} onClick={onSelectionClick}>
+    <ModelInfo
+      editable={editable}
+      onClick={onSelectionClick}
+      data-testid={props['data-testid']}
+    >
       {text || `${count} ${getLabel()}`}
     </ModelInfo>
   );

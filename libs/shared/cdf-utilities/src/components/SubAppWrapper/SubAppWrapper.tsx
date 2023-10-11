@@ -15,6 +15,7 @@ interface SubAppWrapperProps {
   breadcrumbItems?: { title: string; path: string }[];
   children: ReactNode;
   userId?: string;
+  css?: React.CSSProperties;
 }
 
 const SubAppWrapper = ({
@@ -22,6 +23,7 @@ const SubAppWrapper = ({
   children,
   breadcrumbItems,
   userId,
+  css,
 }: SubAppWrapperProps) => {
   const cluster = getCluster() || '';
   const project = getProject();
@@ -29,7 +31,7 @@ const SubAppWrapper = ({
   return (
     <SubAppProvider user={{ cluster, project, id: userId || '' }}>
       <PageTitle title={title} />
-      <StyledWrapper>
+      <StyledWrapper style={css || {}}>
         {breadcrumbItems ? <StyledBreadcrumb items={breadcrumbItems} /> : null}
         {children}
       </StyledWrapper>

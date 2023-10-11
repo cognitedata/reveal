@@ -1,7 +1,8 @@
-import { RuleSeverity } from '@data-quality/api/codegen';
 import { FormikErrors } from 'formik';
 
 import { OptionType } from '@cognite/cogs.js';
+
+import { RuleSeverity } from '../../api/codegen';
 
 export const conditionsExample = `
 {

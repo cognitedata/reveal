@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 import { Validator } from '@platypus/platypus-core';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { SpaceIdValidator } from '@platypus-core/domain/data-model/validators/space-id-validator';
 
 import { Input, Modal } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../hooks/useTranslation';
 import { FormLabel } from '../FormLabel/FormLabel';
 
 import { NameWrapper } from './elements';

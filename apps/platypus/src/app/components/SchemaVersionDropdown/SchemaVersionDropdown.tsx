@@ -4,9 +4,6 @@ import {
   DataModelVersion,
   DataModelVersionStatus,
 } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 import {
   Flex,
@@ -17,6 +14,10 @@ import {
   Chip,
   Tooltip,
 } from '@cognite/cogs.js';
+
+import { TOKENS } from '../../di';
+import { useInjection } from '../../hooks/useInjection';
+import { useMixpanel } from '../../hooks/useMixpanel';
 
 import { DropdownButton, LastTimeText } from './elements';
 

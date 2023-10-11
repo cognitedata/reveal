@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
-import { actions as dataManagementActions } from '@platypus-app/redux/reducers/global/dataManagementReducer';
+import { useCapabilities } from '../../../../hooks/useCapabilities';
+import { actions as dataManagementActions } from '../../../../redux/reducers/global/dataManagementReducer';
 
 export const useDataManagementPageUI = () => {
   const dispatch = useDispatch();

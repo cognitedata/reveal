@@ -1,7 +1,8 @@
 import { FetcherParams } from '@graphiql/toolkit';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { rootInjector, TOKENS } from '@platypus-app/di';
 import { ExecutionResult } from 'graphql-ws';
+
+import { Notification } from '../../../../components/Notification/Notification';
+import { rootInjector, TOKENS } from '../../../../di';
 
 export default {
   fetcher: (

@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { NoNameDisplayName } from '@platypus-app/constants';
 import { ICellRendererParams } from 'ag-grid-community';
 
 import { Chip } from '@cognite/cogs.js';
+
+import { NoNameDisplayName } from '../../../../constants';
 
 export const DataModelNameCellRenderer = React.memo(
   (params: ICellRendererParams) => {

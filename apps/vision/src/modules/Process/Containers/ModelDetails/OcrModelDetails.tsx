@@ -1,18 +1,19 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-  DetectionModelParams,
-  ParamsOCR,
-} from '@vision/api/vision/detectionModels/types';
-import OcrIllustration from '@vision/assets/visualDescriptions/OcrIllustration';
-import { ColorsOCR } from '@vision/constants/Colors';
-import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
 import { InputNumber } from 'antd';
 
 import { Title, Button, Icon, Detail, Row, Tooltip } from '@cognite/cogs.js';
+
+import {
+  DetectionModelParams,
+  ParamsOCR,
+} from '../../../../api/vision/detectionModels/types';
+import OcrIllustration from '../../../../assets/visualDescriptions/OcrIllustration';
+import { ColorsOCR } from '../../../../constants/Colors';
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { setUnsavedDetectionModelSettings } from '../../store/slice';
 
 import {
   ColorBox,

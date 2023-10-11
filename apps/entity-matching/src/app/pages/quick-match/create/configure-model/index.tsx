@@ -30,8 +30,6 @@ const ConfigureModel = (): JSX.Element => {
     setFeatureType,
     scope,
     setScope,
-    generateRules,
-    setGenerateRules,
   } = useQuickMatchContext();
 
   return (
@@ -154,26 +152,6 @@ const ConfigureModel = (): JSX.Element => {
               </RadioBox>
               <RadioBox checked={scope === 'unmatched'} value="unmatched">
                 {t('model-configuration-scope-unmatched-only')}
-              </RadioBox>
-            </Flex>
-          </Radio.Group>
-        </Step.Section>
-        <Step.Section>
-          <Step.SectionHeader
-            title={t('model-configuration-generate-rule-header')}
-            subtitle={t('model-configuration-generate-rule-desc')}
-          />
-
-          <Radio.Group
-            onChange={(e) => setGenerateRules(e.target.value)}
-            value={generateRules}
-          >
-            <Flex>
-              <RadioBox checked={generateRules} value={true}>
-                {t('model-configuration-generate-rule-do')}
-              </RadioBox>
-              <RadioBox checked={!generateRules} value={false}>
-                {t('model-configuration-generate-rule-dont')}
               </RadioBox>
             </Flex>
           </Radio.Group>

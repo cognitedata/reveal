@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import zIndex from '@platypus-app/utils/zIndex';
-
 import { Button } from '@cognite/cogs.js';
+
+import zIndex from '../../../../../utils/zIndex';
 
 export const DataModelFieldsGrid = styled.div`
   padding: 0 16px;

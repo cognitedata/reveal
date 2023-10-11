@@ -1,21 +1,20 @@
 import { useMemo, useState } from 'react';
 import { CellProps } from 'react-table';
 
-import { RuleDto } from '@data-quality/api/codegen';
+import { Body, Flex, Table, TableColumn } from '@cognite/cogs.js';
+
+import { LastValidationTime } from '..';
+import { UpsertRuleDrawer } from '../../..';
+import { BasicPlaceholder } from '../../../../../../../components/BasicPlaceholder/BasicPlaceholder';
+import { Spinner } from '../../../../../../../components/Spinner/Spinner';
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
+import { RuleDto } from '../../../../api/codegen';
 import {
   useAccessControl,
   useLoadDataSource,
   useLoadRules,
-} from '@data-quality/hooks';
-import { useLoadLatestRuleRuns } from '@data-quality/hooks/useLoadLatestRuleRuns';
-import { UpsertRuleDrawer } from '@data-quality/pages';
-import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Body, Flex, Table, TableColumn } from '@cognite/cogs.js';
-
-import { LastValidationTime } from '..';
+} from '../../../../hooks';
+import { useLoadLatestRuleRuns } from '../../../../hooks/useLoadLatestRuleRuns';
 
 import { RuleOptionsMenu } from './RuleOptionsMenu';
 import {

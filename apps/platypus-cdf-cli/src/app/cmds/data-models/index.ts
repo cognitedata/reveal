@@ -6,6 +6,7 @@ import deleteCmd from './delete';
 import generateCmd from './generate';
 import listCmd from './list';
 import publishCmd from './publish';
+import validateCmd from './validate';
 
 export const command = 'data-models <command>';
 export const desc = 'Manage data models to store and retrieve data.';
@@ -20,6 +21,7 @@ export const builder = (yargs: Argv) => {
 
   cmds
     .command(createCmd)
+    .command(validateCmd)
     .command(publishCmd)
     .command(listCmd)
     .command(deleteCmd)

@@ -85,8 +85,11 @@ export const useContainerAnnotations = ({
         if (annotations === undefined) {
           return [];
         }
+        const approvedAnnotations = annotations.filter(
+          (annotation) => annotation.status === 'approved'
+        );
         return getExtendedAnnotationsFromAnnotationsApi(
-          annotations,
+          approvedAnnotations,
           container.id
         );
       })

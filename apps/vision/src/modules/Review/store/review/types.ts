@@ -1,4 +1,4 @@
-import { AnnotationSettingsOption } from '@vision/modules/Review/store/review/enums';
+import { AnnotationSettingsOption } from './enums';
 
 export type ReviewState = {
   fileIds: number[];

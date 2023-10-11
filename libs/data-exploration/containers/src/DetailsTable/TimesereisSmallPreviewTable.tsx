@@ -24,6 +24,7 @@ interface Props {
   selectedRows?: ResourceSelection;
 }
 
+// TODO: Fix typo TimeseriesSmallPreviewTable
 export const TimesereisSmallPreviewTable: FC<
   Props & Partial<Pick<SelectableItemsProps, 'onSelect'>>
 > = ({

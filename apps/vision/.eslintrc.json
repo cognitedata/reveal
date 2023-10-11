@@ -6,7 +6,6 @@
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@cognite/no-number-z-index": "off",
-        "@nx/enforce-module-boundaries": "off",
         "lodash/prefer-noop": "warn",
         "@typescript-eslint/no-empty-function": "warn",
         "testing-library/no-node-access": "warn",

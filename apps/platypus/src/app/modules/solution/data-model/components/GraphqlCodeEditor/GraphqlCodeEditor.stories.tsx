@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { mockComplexGraphqlModel } from '@platypus-app/mocks/graphqlModels';
 import { Story } from '@storybook/react';
+
+import { mockComplexGraphqlModel } from '../../../../../mocks/graphqlModels';
 
 import { GraphqlCodeEditor } from './GraphqlCodeEditor';
 

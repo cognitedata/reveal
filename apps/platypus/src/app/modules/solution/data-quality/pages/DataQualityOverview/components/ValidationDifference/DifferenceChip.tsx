@@ -1,12 +1,12 @@
-import { abbreviateNumber } from '@data-quality/utils/numbers';
+import { Chip } from '@cognite/cogs.js';
+import { DoubleDatapoint } from '@cognite/sdk/dist/src';
+
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
+import { abbreviateNumber } from '../../../../utils/numbers';
 import {
   TimeSeriesType,
   getScoreValue,
-} from '@data-quality/utils/validationTimeseries';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Chip } from '@cognite/cogs.js';
-import { DoubleDatapoint } from '@cognite/sdk/dist/src';
+} from '../../../../utils/validationTimeseries';
 
 type DifferenceChipProps = {
   currentDatapoint?: DoubleDatapoint;

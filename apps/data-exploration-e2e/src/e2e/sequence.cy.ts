@@ -17,10 +17,12 @@ describe('Sequence', () => {
   it('should go to sequence tab', () => {
     cy.goToTab('Sequence');
     cy.wait(`@${SEQUENCE_LIST_ALIAS}`);
+    cy.tableContentShouldBeVisible('sequence-search-results');
   });
 
   it('should sort sequence results', () => {
     cy.log('sorting colomn: Name');
+
     cy.getTableById('sequence-search-results').clickSortColoumn('Name');
     cy.wait(`@${SEQUENCE_LIST_ALIAS}`).shouldSortAscending('name');
 
@@ -33,6 +35,9 @@ describe('Sequence', () => {
 
     cy.getTableById('sequence-search-results').clickSortColoumn('External ID');
     cy.wait(`@${SEQUENCE_LIST_ALIAS}`).shouldSortDescending('externalId');
+
+    // Reset sorting
+    cy.getTableById('sequence-search-results').clickSortColoumn('External ID');
   });
 
   it('should select ID from the colomn selection', () => {
@@ -50,11 +55,11 @@ describe('Sequence', () => {
 
   it('should navigate between the detail view tabs', () => {
     cy.log('should contain All resources tab details');
-    cy.findAllByTestId('sequence-details-preview').should('be.visible');
+    cy.findByTestId('sequence-details-preview').should('be.visible');
 
     cy.log('should navigate to Details tab');
-    cy.findAllByTestId('sequence-detail').goToTab('Details');
-    cy.findAllByTestId('general-details-card').should('be.visible');
+    cy.findByTestId('sequence-detail').goToTab('Details');
+    cy.findByTestId('general-details-card').should('be.visible');
   });
 
   it('should be able to download as json', () => {
@@ -73,12 +78,11 @@ describe('Sequence', () => {
     cy.clickIconButton('Toggle fullscreen-collapse');
   });
 
-  it('should be able to close the detail view', () => {
-    cy.log('close event detail view');
-    cy.clickIconButton('Close');
-  });
+  it('should close file detail view and clear search input', () => {
+    cy.log('close file detail view');
+    cy.findByTestId('sequence-detail').clickIconButton('Close');
+    cy.findByTestId('sequence-detail').should('not.exist');
 
-  it('should be able to clear input field', () => {
-    cy.clickIconButton('Clear input field');
+    cy.clearSearchInput();
   });
 });

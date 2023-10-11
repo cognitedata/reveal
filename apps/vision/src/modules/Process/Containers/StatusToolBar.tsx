@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { CDFStatus } from '@vision/modules/Common/Components/CDFStatus/CDFStatus';
-import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 import { Breadcrumb } from 'antd';
 
 import { Body } from '@cognite/cogs.js';
+
+import { getLink, workflowRoutes } from '../../../utils/workflowRoutes';
+import { CDFStatus } from '../../Common/Components/CDFStatus/CDFStatus';
 
 export const StatusToolBar = (props: {
   current: string;

@@ -1,7 +1,7 @@
-import { EditPanelState } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
-import { BulkEditTableDataType } from '@vision/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
-import { VisionFile } from '@vision/modules/Common/store/files/types';
-import { AnnotationFilterType } from '@vision/modules/FilterSidePanel/types';
+import { AnnotationFilterType } from '../../../../FilterSidePanel/types';
+import { VisionFile } from '../../../store/files/types';
+import { EditPanelState } from '../bulkEditOptions';
+import { BulkEditTableDataType } from '../BulkEditTable/BulkEditTable';
 
 const getDataForAnnotation = ({
   files,

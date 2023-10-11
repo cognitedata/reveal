@@ -1,6 +1,6 @@
-import { VisionAsset } from '@vision/modules/Common/store/files/types';
-import { fetchAssets } from '@vision/store/thunks/fetchAssets';
-import { UpdateFiles } from '@vision/store/thunks/Files/UpdateFiles';
+import { VisionAsset } from '../../modules/Common/store/files/types';
+import { fetchAssets } from '../thunks/fetchAssets';
+import { UpdateFiles } from '../thunks/Files/UpdateFiles';
 
 export const removeAssetIdsFromFile = async (
   fileId: number,

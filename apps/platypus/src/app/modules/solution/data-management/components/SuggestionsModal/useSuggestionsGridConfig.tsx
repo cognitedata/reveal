@@ -2,11 +2,12 @@ import { useCallback } from 'react';
 
 import styled, { css } from 'styled-components';
 
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { ICellRendererParams } from 'ag-grid-community';
 
 import { GridConfig } from '@cognite/cog-data-grid';
 import { Body, Button, Checkbox, Flex, Icon } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 import { SuggestionsTableData } from './SuggestionsModal';
 

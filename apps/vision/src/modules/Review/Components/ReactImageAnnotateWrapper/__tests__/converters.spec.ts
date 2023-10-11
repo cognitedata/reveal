@@ -1,4 +1,4 @@
-import { getDummyTempKeypointCollection } from '@vision/__test-utils/annotations';
+import { getDummyTempKeypointCollection } from '../../../../../__test-utils/annotations';
 import {
   getDummyImageAssetLinkAnnotation,
   getDummyImageClassificationAnnotation,
@@ -9,24 +9,25 @@ import {
   getDummyImageObjectDetectionPolylineAnnotation,
   getDummyUnsavedAnnotation,
   getDummyVisionReviewAnnotation,
-} from '@vision/__test-utils/getDummyAnnotations';
+} from '../../../../../__test-utils/getDummyAnnotations';
 import {
   CDFAnnotationTypeEnum,
   ImageKeypointCollection,
   ImageObjectDetectionPolygon,
   Status,
-} from '@vision/api/annotation/types';
-import { VisionAnnotationDataType } from '@vision/modules/Common/types';
+} from '../../../../../api/annotation/types';
+import { VisionAnnotationDataType } from '../../../../Common/types';
+import { TempKeypointCollection, VisionReviewAnnotation } from '../../../types';
 import {
   getDummyRegion,
   getDummyRegionOriginatedInAnnotator,
-} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/__test-utils/region';
+} from '../__test-utils/region';
 import {
   convertRegionToUnsavedVisionAnnotation,
   convertTempKeypointCollectionToRegions,
   convertVisionReviewAnnotationsToRegions,
   convertVisionReviewAnnotationToRegions,
-} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/converters';
+} from '../converters';
 import {
   AnnotatorBoxRegion,
   AnnotatorLineRegion,
@@ -34,11 +35,7 @@ import {
   AnnotatorPolygonRegion,
   AnnotatorRegion,
   AnnotatorRegionType,
-} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import {
-  TempKeypointCollection,
-  VisionReviewAnnotation,
-} from '@vision/modules/Review/types';
+} from '../types';
 
 const dummyImageClassificationAnnotation =
   getDummyImageClassificationAnnotation({

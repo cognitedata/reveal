@@ -13,7 +13,7 @@ import {
   MQTTSourceType,
   useCreateMQTTSource,
 } from '../../hooks/hostedExtractors';
-import FormFieldWrapper from '../form-field-wrapper/FormFieldWrapper';
+import { FormFieldWrapper } from '../form-fields';
 
 export const MQTT_SOURCE_TYPE_LABEL: Record<MQTTSourceType, string> = {
   mqtt3: 'Version 3.1.1',

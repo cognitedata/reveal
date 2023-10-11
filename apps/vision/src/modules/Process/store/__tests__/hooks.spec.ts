@@ -1,10 +1,8 @@
 import { useSelector } from 'react-redux';
 
 import { renderHook } from '@testing-library/react';
-import {
-  useIsSelectedInProcess,
-  useProcessFilesSelected,
-} from '@vision/modules/Process/store/hooks';
+
+import { useIsSelectedInProcess, useProcessFilesSelected } from '../hooks';
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),

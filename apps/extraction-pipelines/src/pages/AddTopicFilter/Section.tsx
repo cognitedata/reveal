@@ -10,18 +10,18 @@ export const Section = ({
   title,
   subtitle,
   expandOption,
-  setExpandOption,
+  onClickExpand,
 }: {
   title: string;
   subtitle: string;
   expandOption?: ExpandOptions;
-  setExpandOption?: (option: ExpandOptions) => void;
+  onClickExpand?: (option: ExpandOptions) => void;
 }) => {
   const onClick = useCallback(() => {
-    if (expandOption && setExpandOption) {
-      setExpandOption(expandOption);
+    if (expandOption && onClickExpand) {
+      onClickExpand(expandOption);
     }
-  }, [expandOption, setExpandOption]);
+  }, [expandOption, onClickExpand]);
   return (
     <SectionContainer>
       <SectionTitle level={5}>{title}</SectionTitle>
@@ -40,20 +40,20 @@ export const Section = ({
   );
 };
 
-const SectionContainer = styled.div`
+export const SectionContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-self: stretch;
+  gap: 8px;
 `;
-const SectionLink = styled.a`
+export const SectionLink = styled.a`
   color: ${Colors['text-icon--interactive--default']};
   div:hover {
     text-decoration: underline;
   }
 `;
-const SectionTitle = styled(Heading)`
+export const SectionTitle = styled(Heading)`
   align-self: stretch;
-  margin-bottom: 8px;
 `;
 
-const SectionSubTitle = styled(Body)``;
+export const SectionSubTitle = styled(Body)``;

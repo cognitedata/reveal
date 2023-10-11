@@ -1,7 +1,7 @@
-import { AccessAction, useAccessControl } from '@data-quality/hooks';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { Body, Button, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../../../hooks/useTranslation';
+import { AccessAction, useAccessControl } from '../../../hooks';
 
 type UpsertRuleFooterProps = {
   isLoading: boolean;

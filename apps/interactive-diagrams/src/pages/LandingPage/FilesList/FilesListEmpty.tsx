@@ -26,7 +26,7 @@ export default function FilesListEmpty() {
 
   return (
     <div>
-      <Title level={4} data-cy="pending-diagrams-title">
+      <Title level={4} data-testid="pending-diagrams-title">
         Pending interactive diagrams
       </Title>
       <Wrapper>
@@ -39,7 +39,7 @@ export default function FilesListEmpty() {
           type="primary"
           icon="Document"
           onClick={onContextualizeNew}
-          data-cy="create-new-interactive-diagrams-button"
+          data-testid="create-new-interactive-diagrams-button"
         >
           Create new interactive diagrams
         </Button>

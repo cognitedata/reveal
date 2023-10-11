@@ -260,7 +260,7 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
   const sortedIdps = sortIDPsByLabel(loginInfo?.idps ?? []);
 
   return (
-    <StyledSelectSignInMethodContainer>
+    <StyledSelectSignInMethodContainer data-testid="login-select-container">
       <StyledContainerHeader>
         {loginInfo?.imageRectangle && (
           <StyledOrganizationImage

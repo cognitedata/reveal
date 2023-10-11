@@ -28,7 +28,7 @@ export const ContextualizeThreeDViewer = ({
         modelId,
         revisionId
       );
-      if (threeDModelType === ThreeDModelType.NOT_RECOGNIZED_TYPE) {
+      if (threeDModelType === ThreeDModelType.UNKNOWN) {
         toast.error(
           <ErrorToast
             error={

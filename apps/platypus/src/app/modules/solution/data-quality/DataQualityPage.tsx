@@ -1,3 +1,12 @@
+import { Body, Button, Chip, ChipProps, Flex, Tooltip } from '@cognite/cogs.js';
+
+import { BasicPlaceholder } from '../../../components/BasicPlaceholder/BasicPlaceholder';
+import { PageContentLayout } from '../../../components/Layouts/PageContentLayout';
+import { PageToolbar } from '../../../components/PageToolbar/PageToolbar';
+import { Spinner } from '../../../components/Spinner/Spinner';
+import { useTranslation } from '../../../hooks/useTranslation';
+
+import { RuleRunStatus } from './api/codegen';
 import {
   AccessAction,
   useAccessControl,
@@ -5,16 +14,7 @@ import {
   useLoadDataSource,
   useValidationStatusMessage,
   ValidationStatus,
-} from '@data-quality/hooks';
-import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
-import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Body, Button, Chip, ChipProps, Flex, Tooltip } from '@cognite/cogs.js';
-
-import { RuleRunStatus } from './api/codegen';
+} from './hooks';
 import { DataQualityOverview, DownloadReport } from './pages';
 
 export const DataQualityPage = () => {

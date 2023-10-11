@@ -4,44 +4,57 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { VisionMode } from '@vision/constants/enums/VisionEnums';
-import { FileGridPreview } from '@vision/modules/Common/Components/FileGridPreview/FileGridPreview';
-import { FileTable } from '@vision/modules/Common/Components/FileTable/FileTable';
+import noop from 'lodash/noop';
+
+import { Detail } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
+
+import { VisionMode } from '../../../constants/enums/VisionEnums';
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { RetrieveAnnotations } from '../../../store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from '../../../store/thunks/Files/DeleteFilesById';
+import { FetchFilesById } from '../../../store/thunks/Files/FetchFilesById';
+import { PollJobs } from '../../../store/thunks/Process/PollJobs';
+import { PopulateReviewFiles } from '../../../store/thunks/Review/PopulateReviewFiles';
+import { getParamLink, workflowRoutes } from '../../../utils/workflowRoutes';
+import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
+import { FileTable } from '../../Common/Components/FileTable/FileTable';
 import {
   PageSize,
   PaginatedTableProps,
-} from '@vision/modules/Common/Components/FileTable/types';
-import { PageBasedGridView } from '@vision/modules/Common/Components/GridView/PageBasedGridView';
-import { MapView } from '@vision/modules/Common/Components/MapView/MapView';
-import { PaginationWrapper } from '@vision/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
-import { useContextMenu } from '@vision/modules/Common/hooks/useContextMenu';
-import { selectAllFilesSelected } from '@vision/modules/Common/store/files/selectors';
+} from '../../Common/Components/FileTable/types';
+import { PageBasedGridView } from '../../Common/Components/GridView/PageBasedGridView';
+import { MapView } from '../../Common/Components/MapView/MapView';
+import { PaginationWrapper } from '../../Common/Components/SorterPaginationWrapper/PaginationWrapper';
+import { useContextMenu } from '../../Common/hooks/useContextMenu';
+import { selectAllFilesSelected } from '../../Common/store/files/selectors';
 import {
   setFileSelectState,
   setSelectedFiles,
   setSelectedAllFiles,
-} from '@vision/modules/Common/store/files/slice';
+} from '../../Common/store/files/slice';
 import {
   FileActions,
   ResultData,
   SelectFilter,
   TableDataItem,
   ViewMode,
-} from '@vision/modules/Common/types';
-import { ContextMenuContainer } from '@vision/modules/Explorer/Containers/ContextMenuContainer';
+} from '../../Common/types';
+import { ContextMenuContainer } from '../../Explorer/Containers/ContextMenuContainer';
 import {
   cancelFileDetailsEdit,
   resetEditHistory,
-} from '@vision/modules/FileDetails/slice';
+} from '../../FileDetails/slice';
 import {
   useIsSelectedInProcess,
   useProcessFilesSelected,
-} from '@vision/modules/Process/store/hooks';
+} from '../store/hooks';
 import {
   selectProcessSortedFiles,
   selectUnfinishedJobs,
   selectProcessSelectedFileIdsInSortedOrder,
-} from '@vision/modules/Process/store/selectors';
+} from '../store/selectors';
 import {
   setMapTableTabKey,
   setFocusedFileId,
@@ -50,19 +63,7 @@ import {
   setReverse,
   setCurrentPage,
   setPageSize,
-} from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
-import { FetchFilesById } from '@vision/store/thunks/Files/FetchFilesById';
-import { PollJobs } from '@vision/store/thunks/Process/PollJobs';
-import { PopulateReviewFiles } from '@vision/store/thunks/Review/PopulateReviewFiles';
-import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
-import noop from 'lodash/noop';
-
-import { Detail } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
+} from '../store/slice';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const {

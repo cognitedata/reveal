@@ -70,6 +70,7 @@ export const AllTab = ({
     sequence: [],
     threeD: [],
     timeSeries: [],
+    charts: [],
   },
 }: Props) => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();

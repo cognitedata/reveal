@@ -5,19 +5,15 @@ import styled from 'styled-components';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { TimeseriesInfo } from '@data-exploration/containers';
+import { useCdfUserHistoryService } from '@user-history';
 
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
 import { ErrorFeedback } from '@cognite/data-exploration';
 import { TimeseriesChart } from '@cognite/plotting-components';
 import { CogniteError, Timeseries } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
-import {
-  useTranslation,
-  SUB_APP_PATH,
-  createInternalLink,
-} from '@data-exploration-lib/core';
+import { useTranslation, SUB_APP_PATH } from '@data-exploration-lib/core';
 
 import { BreadcrumbsV2 } from '../../components/Breadcrumbs/BreadcrumbsV2';
 import ResourceTitleRow from '../../components/ResourceTitleRow';
@@ -82,7 +78,7 @@ export const TimeseriesDetail = ({
         userHistoryService.logNewResourceView({
           application: SUB_APP_PATH,
           name: timeseries?.name,
-          path: createInternalLink(pathname, searchParams),
+          path: pathname.concat(searchParams),
         });
     }
   }, [isTimeseriesFetched, timeseries]);
