@@ -3,7 +3,7 @@
  */
 
 function getNumber(arg: string | undefined): number | undefined {
-  return typeof arg === 'string' ? parseInt(arg, 10) : arg
+  return typeof arg === 'string' ? parseInt(arg, 10) : arg;
 }
 
 export const env = {
@@ -11,10 +11,13 @@ export const env = {
   cluster: process.env.REACT_APP_CLUSTER || 'api',
   cad: {
     modelId: getNumber(process.env.REACT_APP_CAD_ID) || 3356984403684032,
-    revisionId: getNumber(process.env.REACT_APP_CAD_REVISION_ID) || 6664823881595566,
+    revisionId:
+      getNumber(process.env.REACT_APP_CAD_REVISION_ID) || 6049696084265067,
   },
   pointCloud: {
     modelId: getNumber(process.env.REACT_APP_POINTCLOUD_ID) || 5564365369975452,
-    revisionId: getNumber(process.env.REACT_APP_POINTCLOUD_REVISION_ID) || 2817572261344477
-  }
-}
+    revisionId:
+      getNumber(process.env.REACT_APP_POINTCLOUD_REVISION_ID) ||
+      2817572261344477,
+  },
+};

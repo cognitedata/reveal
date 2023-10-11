@@ -12,6 +12,9 @@ import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import { Color } from 'three';
+
+import cloneDeep from 'lodash/cloneDeep';
 
 export class Image360Entity implements Image360 {
   private readonly _revisions: Image360RevisionEntity[];
@@ -20,6 +23,7 @@ export class Image360Entity implements Image360 {
   private readonly _image360Icon: Overlay3DIcon;
   private readonly _image360VisualizationBox: Image360VisualizationBox;
   private _activeRevision: Image360RevisionEntity;
+  private _iconColor: Color | 'default' = 'default';
 
   /**
    * Get a copy of the model-to-world transformation matrix
@@ -135,6 +139,15 @@ export class Image360Entity implements Image360 {
    */
   public unloadImage(): void {
     this._image360VisualizationBox.unloadImages();
+  }
+
+  public getIconColor(): Color | 'default' {
+    return cloneDeep(this._iconColor);
+  }
+
+  public setIconColor(color: Color | 'default'): void {
+    this._iconColor = color;
+    this._image360Icon.setColor(color);
   }
 
   public activateAnnotations(): void {

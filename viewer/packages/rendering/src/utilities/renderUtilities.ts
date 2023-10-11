@@ -265,14 +265,14 @@ export function setModelRenderLayers(rootNode: THREE.Object3D, stylingSets: Styl
       return;
     }
 
-    if (visible.hasIntersectionWith(objectTreeIndices)) {
-      if (back.hasIntersectionWith(objectTreeIndices)) {
+    if (visible.hasIntersectionWithMap(objectTreeIndices)) {
+      if (back.hasIntersectionWithMap(objectTreeIndices)) {
         node.layers.enable(RenderLayer.Back);
       }
-      if (ghost.hasIntersectionWith(objectTreeIndices)) {
+      if (ghost.hasIntersectionWithMap(objectTreeIndices)) {
         node.layers.enable(RenderLayer.Ghost);
       }
-      if (inFront.hasIntersectionWith(objectTreeIndices)) {
+      if (inFront.hasIntersectionWithMap(objectTreeIndices)) {
         node.layers.enable(RenderLayer.InFront);
       }
     }

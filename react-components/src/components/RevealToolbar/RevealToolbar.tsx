@@ -3,7 +3,6 @@
  */
 
 import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 import { LayersButton } from './LayersButton';
@@ -13,7 +12,6 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { MeasurementButton } from './MeasurementButton';
 import { HelpButton } from './HelpButton';
 import { type QualitySettings } from './SettingsContainer/types';
-import { translations } from '../../common/i18n';
 import styled from 'styled-components';
 
 const StyledToolBar = styled(ToolBar)`
@@ -33,6 +31,7 @@ type CustomContent = {
   customSettingsContent?: JSX.Element;
   lowFidelitySettings?: Partial<QualitySettings>;
   highFidelitySettings?: Partial<QualitySettings>;
+  storeStateInUrl?: boolean;
 };
 
 const DefaultContentWrapper = (props: CustomContent): ReactElement => {
@@ -43,7 +42,7 @@ const DefaultContentWrapper = (props: CustomContent): ReactElement => {
 
       <div className="cogs-toolbar-divider" />
 
-      <SlicerButton />
+      <SlicerButton storeStateInUrl={props.storeStateInUrl} />
       <MeasurementButton />
 
       <div className="cogs-toolbar-divider" />
@@ -65,22 +64,22 @@ const RevealToolbarContainer = forwardRef(
       lowFidelitySettings,
       highFidelitySettings,
       toolBarContent,
+      storeStateInUrl,
       ...restProps
     }: RevealToolbarProps & { toolBarContent?: JSX.Element },
     ref: Ref<HTMLDivElement>
   ): ReactElement => {
     return (
-      <I18nWrapper translations={translations} addNamespace="reveal-react-components">
-        <StyledToolBar {...restProps} ref={ref}>
-          {toolBarContent ?? (
-            <DefaultContentWrapper
-              customSettingsContent={customSettingsContent}
-              highFidelitySettings={highFidelitySettings}
-              lowFidelitySettings={lowFidelitySettings}
-            />
-          )}
-        </StyledToolBar>
-      </I18nWrapper>
+      <StyledToolBar {...restProps} ref={ref}>
+        {toolBarContent ?? (
+          <DefaultContentWrapper
+            customSettingsContent={customSettingsContent}
+            highFidelitySettings={highFidelitySettings}
+            lowFidelitySettings={lowFidelitySettings}
+            storeStateInUrl={storeStateInUrl}
+          />
+        )}
+      </StyledToolBar>
     );
   }
 );

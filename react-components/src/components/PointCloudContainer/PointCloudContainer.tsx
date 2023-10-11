@@ -13,6 +13,8 @@ import { useEffect, type ReactElement, useState } from 'react';
 import { Matrix4 } from 'three';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
+import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
 
 export type AnnotationIdStylingGroup = {
   annotationIds: number[];
@@ -43,10 +45,17 @@ export function PointCloudContainer({
   const [model, setModel] = useState<CognitePointCloudModel>();
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;
+  const { setRevealResourcesCount } = useReveal3DResourcesCount();
+  const [layersUrlState] = useLayersUrlParams();
+  const { pointCloudLayers } = layersUrlState;
 
   useEffect(() => {
     addModel(modelId, revisionId, transform)
-      .then((pointCloudModel) => onLoad?.(pointCloudModel))
+      .then((pointCloudModel) => {
+        onLoad?.(pointCloudModel);
+        setRevealResourcesCount(viewer.models.length);
+        applyLayersState(pointCloudModel);
+      })
       .catch((error) => {
         const errorHandler = onLoadError ?? defaultLoadErrorHandler;
         errorHandler(addModelOptions, error);
@@ -112,6 +121,18 @@ export function PointCloudContainer({
 
     model.setDefaultPointCloudAppearance(DefaultPointCloudAppearance);
     model.removeAllStyledObjectCollections();
+  }
+
+  function applyLayersState(model: CognitePointCloudModel): void {
+    if (pointCloudLayers === undefined) {
+      return;
+    }
+    const index = viewer.models.indexOf(model);
+    const urlLayerState = pointCloudLayers.find(
+      (layer) => layer.revisionId === revisionId && layer.index === index
+    );
+    urlLayerState !== undefined &&
+      model.setDefaultPointCloudAppearance({ visible: urlLayerState.applied });
   }
 }
 
