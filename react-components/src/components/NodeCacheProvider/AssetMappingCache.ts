@@ -57,7 +57,7 @@ export class AssetMappingCache {
     return { node: nearestMappedAncestor, mappings: mappingsOfNearestAncestor };
   }
 
-  public getAssetMappingsForModel(
+  public async getAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
@@ -65,13 +65,13 @@ export class AssetMappingCache {
     const cachedResult = this._modelToAssetMappings.get(key);
 
     if (cachedResult !== undefined) {
-      return cachedResult;
+      return await cachedResult;
     }
 
-    return this.fetchAndCacheMappingsForModel(modelId, revisionId);
+    return await this.fetchAndCacheMappingsForModel(modelId, revisionId);
   }
 
-  private fetchAndCacheMappingsForModel(
+  private async fetchAndCacheMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
@@ -79,7 +79,7 @@ export class AssetMappingCache {
     const assetMappings = this.fetchAssetMappingsForModel(modelId, revisionId);
 
     this._modelToAssetMappings.set(key, assetMappings);
-    return assetMappings;
+    return await assetMappings;
   }
 
   private async fetchAssetMappingsForModel(

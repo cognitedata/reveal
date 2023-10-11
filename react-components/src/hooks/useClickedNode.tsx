@@ -134,7 +134,7 @@ const useFdmData = (
       setFdmData({
         fdmNodes: cadAndFdmNodes.fdmIds,
         cadNode: cadAndFdmNodes.cadNode,
-        views: views
+        views
       });
     }
   }, [fdmPromises]);

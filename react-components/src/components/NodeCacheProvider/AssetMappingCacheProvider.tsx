@@ -4,7 +4,11 @@
 
 import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
 import { type CadModelOptions } from '../Reveal3DResources/types';
-import { AssetMapping, AssetMappingCache, type NodeAssetMappingResult } from './AssetMappingCache';
+import {
+  type AssetMapping,
+  AssetMappingCache,
+  type NodeAssetMappingResult
+} from './AssetMappingCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';

@@ -24,7 +24,7 @@ import {
   type TreeIndexStylingGroup
 } from '../components/CadModelContainer/useApplyCadModelStyling';
 import { useAssetMappedNodesForRevisions } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
-import { AssetMapping } from '../components/NodeCacheProvider/AssetMappingCache';
+import { type AssetMapping } from '../components/NodeCacheProvider/AssetMappingCache';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -65,7 +65,9 @@ function useCalculateMappedStyling(
     modelsRevisionsWithMappedEquipment
   );
 
-  const { data: assetMappingData } = useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
+  const { data: assetMappingData } = useAssetMappedNodesForRevisions(
+    modelsRevisionsWithMappedEquipment
+  );
 
   const modelsMappedFdmStyleGroups = useMemo(() => {
     if (
