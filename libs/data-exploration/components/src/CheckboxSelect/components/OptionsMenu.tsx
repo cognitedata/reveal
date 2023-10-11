@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import has from 'lodash/has';
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import noop from 'lodash/noop';
 import omit from 'lodash/omit';
 
@@ -48,6 +49,7 @@ export interface OptionsMenuProps {
   disableOptionsMenu?: boolean;
   isLoading?: boolean;
   placement?: DropdownProps['placement'];
+  submenuOpenDelay?: number;
 }
 
 export const OptionsMenu = ({
@@ -62,6 +64,7 @@ export const OptionsMenu = ({
   disableOptionsMenu,
   isLoading,
   placement = 'right-start',
+  submenuOpenDelay,
 }: OptionsMenuProps) => {
   const { t } = useTranslation();
 
@@ -103,25 +106,21 @@ export const OptionsMenu = ({
     }
 
     return displayOptions.map((option, index) => {
-      const { options: childOptions } = option;
-      let { value } = option;
+      const { value = EMPTY_LABEL } = option;
 
-      if (!value) {
-        value = EMPTY_LABEL;
-      }
+      let openChildOptionsMenuTimeout: NodeJS.Timeout;
 
       return (
         <Dropdown
           key={`${option.value}_${index}`}
           placement={placement}
-          visible={hoverOption && hoverOption?.value === option.value}
+          visible={hoverOption?.value === option.value}
           onClickOutside={() => {
             setHoverOption(undefined);
           }}
           content={
             <ChildOptionsMenu
               parentOptionValue={value}
-              options={childOptions}
               useCustomMetadataValuesQuery={useCustomMetadataValuesQuery}
               selection={selection}
               onChange={onChange}
@@ -133,10 +132,19 @@ export const OptionsMenu = ({
         >
           <Option
             onMouseEnter={() => {
-              setHoverOption(option);
+              if (isUndefined(submenuOpenDelay)) {
+                setHoverOption(option);
+              } else {
+                openChildOptionsMenuTimeout = setTimeout(() => {
+                  setHoverOption(option);
+                }, submenuOpenDelay);
+              }
             }}
             onMouseLeave={() => {
               setHoverOption(undefined);
+              if (openChildOptionsMenuTimeout) {
+                clearTimeout(openChildOptionsMenuTimeout);
+              }
             }}
             option={option}
             checked={has(selection, value)}
