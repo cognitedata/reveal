@@ -12,8 +12,8 @@ import {
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
 
-import { FLOATING_ELEMENT_MARGIN } from '../../../pages/ContextualizeEditor/constants';
-import { useIntersectAnnotationVolumesOnClick } from '../hooks/useIntersectAnnotationBoundsOnClick';
+import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
+import { useIntersectAnnotationVolumesOnClick } from '../../hooks/useIntersectAnnotationBoundsOnClick';
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
@@ -21,10 +21,10 @@ import {
   ToolType,
   useContextualizeThreeDViewerStore,
   setSelectedAnnotationId,
-} from '../useContextualizeThreeDViewerStore';
+} from '../../useContextualizeThreeDViewerStore';
+import { AnnotationsCard } from '../AnnotationsCard';
+import { AnnotationBoxToolbar } from '../AnnotationToolbar';
 
-import { AnnotationsCard } from './AnnotationsCard';
-import { AnnotationBoxToolbar } from './AnnotationToolbar';
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 interface RevealContentProps {
@@ -49,7 +49,7 @@ const SelectedAnnotationToolbar: FC = () => {
   return <AnnotationBoxToolbar />;
 };
 
-export const RevealContent = ({
+export const PointCloudRevealContent = ({
   modelId,
   revisionId,
   onDeleteAnnotation,

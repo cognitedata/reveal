@@ -8,13 +8,13 @@ import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 import {
   ToolType,
   useContextualizeThreeDViewerStore,
-} from '../useContextualizeThreeDViewerStore';
-import { createAnnotationsAsWireframes } from '../utils/annotations/annotationUtils';
-import { getAnnotationAsBox3 } from '../utils/annotations/getAnnotationAsBox3';
-import { createTransformControls } from '../utils/createTransformControls';
-import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
-import { hideBoundingVolumes } from '../utils/hideBoundingVolumes';
-import { showBoundingVolumes } from '../utils/showBoundingVolumes';
+} from '../../../useContextualizeThreeDViewerStore';
+import { createAnnotationsAsWireframes } from '../../../utils/annotations/annotationUtils';
+import { getAnnotationAsBox3 } from '../../../utils/annotations/getAnnotationAsBox3';
+import { createTransformControls } from '../../../utils/createTransformControls';
+import { getCognitePointCloudModel } from '../../../utils/getCognitePointCloudModel';
+import { hideBoundingVolumes } from '../../../utils/hideBoundingVolumes';
+import { showBoundingVolumes } from '../../../utils/showBoundingVolumes';
 
 const HOVERING_ANNOTATION_ID = 'hovered-annotation';
 const PENDING_ANNOTATION_ID = 'pending-annotation';
@@ -42,7 +42,7 @@ const removeObjectByName = (viewer: Cognite3DViewer, name: string) => {
     });
 };
 
-export const useSyncStateWithViewer = () => {
+export const useSyncStateWithViewerPointCloud = () => {
   const {
     annotations,
     hoveredAnnotationId,

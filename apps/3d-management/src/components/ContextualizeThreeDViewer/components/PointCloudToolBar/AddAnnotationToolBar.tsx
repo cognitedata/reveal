@@ -8,9 +8,8 @@ import {
   useContextualizeThreeDViewerStore,
 } from '../../useContextualizeThreeDViewerStore';
 import { TransformMode } from '../../utils/createTransformControls';
+import { StyledInformation } from '../PointCloud/PointCloudToolBar/PointCloudToolBar';
 import ToolTooltip from '../ToolTooltip';
-
-import { StyledInformation } from './PointCloudToolBar';
 
 export const AddAnnotationToolBar = () => {
   const { pendingAnnotation, tool, transformMode } =

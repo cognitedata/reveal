@@ -19,10 +19,10 @@ import {
   toggleShouldShowBoundingVolumes,
   toggleShouldShowWireframes,
   useContextualizeThreeDViewerStore,
-} from '../../useContextualizeThreeDViewerStore';
-import { getCognitePointCloudModel } from '../../utils/getCognitePointCloudModel';
-import { isPointCloudIntersection } from '../../utils/isPointCloudIntersection';
-import { showBoundingVolumes } from '../../utils/showBoundingVolumes';
+} from '../../../useContextualizeThreeDViewerStore';
+import { getCognitePointCloudModel } from '../../../utils/getCognitePointCloudModel';
+import { isPointCloudIntersection } from '../../../utils/isPointCloudIntersection';
+import { showBoundingVolumes } from '../../../utils/showBoundingVolumes';
 
 const deleteBoundingVolumes = ({
   viewer,

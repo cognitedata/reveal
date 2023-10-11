@@ -1,8 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { uniq } from 'lodash';
 
-import { AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
-import { AnnotationModel, Asset, CogniteClient } from '@cognite/sdk/dist/src';
+import {
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  AnnotationModel,
+  Asset,
+  CogniteClient,
+} from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { isNotUndefined } from '@data-exploration-lib/core';

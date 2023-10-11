@@ -10,12 +10,12 @@ import {
   FLOATING_ELEMENT_MARGIN,
   HighQualitySettings,
   LowQualitySettings,
-} from '../../../../pages/ContextualizeEditor/constants';
-import { useContextualizeThreeDViewerStore } from '../../useContextualizeThreeDViewerStore';
+} from '../../../../../pages/ContextualizeEditor/constants';
+import { useContextualizeThreeDViewerStore } from '../../../useContextualizeThreeDViewerStore';
+import { AddAnnotationToolBar } from '../../PointCloudToolBar/AddAnnotationToolBar';
 import { ColorTypeSelector } from '../PointCloudColorPicker';
 import { PointSizeSlider } from '../PointSizeSlider';
 
-import { AddAnnotationToolBar } from './AddAnnotationToolBar';
 import { PointCloudToolBarTools } from './PointCloudToolBarTools';
 
 type PointCloudToolBarProps = {

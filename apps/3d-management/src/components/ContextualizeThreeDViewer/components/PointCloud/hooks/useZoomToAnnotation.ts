@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import { useContextualizeThreeDViewerStore } from '../useContextualizeThreeDViewerStore';
-import { getAnnotationAsBox3 } from '../utils/annotations/getAnnotationAsBox3';
-import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
+import { useContextualizeThreeDViewerStore } from '../../../useContextualizeThreeDViewerStore';
+import { getAnnotationAsBox3 } from '../../../utils/annotations/getAnnotationAsBox3';
+import { getCognitePointCloudModel } from '../../../utils/getCognitePointCloudModel';
 
 const FIT_CAMERA_TO_BOUNDING_BOX_ANIMATION_DURATION_MS = 1000;
 const FIT_CAMERA_TO_BOUNDING_BOX_RADIUS_FACTOR = 5;
