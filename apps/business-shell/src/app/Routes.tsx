@@ -2,7 +2,7 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
 
 import ExplorerRoutes from '@flexible-data-explorer/app/Routes';
-import { IndustryCanvasPage } from '@fusion/industry-canvas';
+// import { IndustryCanvasPage } from '@fusion/industry-canvas';
 
 import { Flex } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -34,8 +34,8 @@ export const CoreRoutes = () => {
     <Routes>
       <Route path="/" element={<Navigate to="/explore" replace />} />
       <Route path="/explore/*" element={<ExplorerRoutes />} />
-      <Route path="/canvas/*" element={<IndustryCanvasPage />} />
-      <Route path="/charts/*" element={<div>On its way...</div>} />
+      {/* <Route path="/canvas/*" element={<IndustryCanvasPage />} /> */}
+      {/* <Route path="/charts/*" element={<div>On its way...</div>} /> */}
       <Route path="/profile/*" element={<UserProfilePage />} />
     </Routes>
   );

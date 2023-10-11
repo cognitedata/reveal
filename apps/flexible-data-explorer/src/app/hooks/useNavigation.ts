@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { ContainerReference } from '@fusion/industry-canvas';
 import queryString from 'query-string';
 
 import { DateRange, ValueByDataType } from '../containers/Filter';
 import { Instance } from '../services/types';
+import { ContainerReference } from '../types';
 import { createSearchParams } from '../utils/router';
 
 import { useLinks } from './useLinks';

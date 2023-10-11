@@ -1,6 +1,5 @@
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { AppContextProvider } from '@data-exploration-components/context/AppContext';
 import {
   Orientation,
   OrientationProvider,
@@ -63,18 +62,12 @@ function App() {
                       />
                     )}
                   >
-                    <AppContextProvider
-                      flow="AZURE_AD"
-                      userInfo={<div />}
-                      isAdvancedFiltersEnabled
-                    >
-                      <Router window={window}>
-                        <TopBar />
-                        <Onboarding />
-                        <CoreRoutes />
-                        <AI />
-                      </Router>
-                    </AppContextProvider>
+                    <Router window={window}>
+                      <TopBar />
+                      <Onboarding />
+                      <CoreRoutes />
+                      <AI />
+                    </Router>
                   </Sentry.ErrorBoundary>
                 )}
               </QueryErrorResetBoundary>

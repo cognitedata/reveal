@@ -36,7 +36,7 @@ export const celaneseConfig: ProjectConfig[] = [
             version: '1_0_4_draft',
           },
           {
-            externalId: 'EnergyDOM',
+            externalId: 'EnergySOL',
             space: 'NRG-COR-ALL-DML',
             version: '1_0_0',
           },
