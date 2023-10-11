@@ -267,6 +267,7 @@ export const ResourceSelector = ({
       );
     return <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />;
   });
+  const isBulkActionBarVisible = actionBarOptions.length > 0;
 
   return (
     <ResourceSelectorWrapper>
@@ -340,6 +341,7 @@ export const ResourceSelector = ({
               onClick={({ id, externalId }) => {
                 setPreviewItem({ id, externalId, type: activeKey });
               }}
+              isBulkActionBarVisible={isBulkActionBarVisible}
             />
           </MainContainer>
         </MainSearchContainer>
@@ -374,7 +376,7 @@ export const ResourceSelector = ({
         subtitle={t('BULK_ACTION_SELECT', `${actionBarOptions.length} items`, {
           itemsLength: actionBarOptions.length,
         })}
-        isVisible={actionBarOptions.length > 0}
+        isVisible={isBulkActionBarVisible}
       >
         <Button
           icon="Add"

@@ -37,6 +37,7 @@ export const ResourceSelectorTable = ({
   isDocumentsApiEnabled = true,
   shouldShowPreviews = true,
   onClick = noop,
+  isBulkActionBarVisible,
 }: {
   resourceType: ResourceType;
   filter: FilterState;
@@ -48,6 +49,7 @@ export const ResourceSelectorTable = ({
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   shouldShowPreviews?: boolean;
   isDocumentsApiEnabled?: boolean;
+  isBulkActionBarVisible?: boolean;
 }) => {
   const commonProps = {
     shouldShowPreviews,
@@ -91,6 +93,7 @@ export const ResourceSelectorTable = ({
     },
     onClick,
     onFilterChange,
+    isBulkActionBarVisible,
   };
 
   switch (resourceType) {

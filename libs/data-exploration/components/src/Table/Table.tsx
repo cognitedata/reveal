@@ -115,6 +115,7 @@ export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   // This is to render a subcomponent inside a cell of a row
   renderCellSubComponent?: (cell: Cell<T, unknown>) => React.ReactNode;
   onChangeSearchInput?: (value: string) => void;
+  isBulkActionBarVisible?: boolean;
 };
 
 export type TableData = Record<string, any>;
@@ -154,6 +155,7 @@ export function Table<T extends TableData>({
   renderSubRowComponent,
   renderCellSubComponent,
   onChangeSearchInput,
+  isBulkActionBarVisible = false,
 }: TableProps<T>) {
   const { t } = useTranslation();
 
@@ -382,6 +384,7 @@ export function Table<T extends TableData>({
         />
       );
     }
+
     if (!getIsSomeColumnsVisible()) {
       return (
         <EmptyState body={t('SELECT_COLUMNS', 'Please, select your columns')} />
@@ -389,7 +392,7 @@ export function Table<T extends TableData>({
     }
 
     return (
-      <ContainerInside>
+      <ContainerInside isBulkActionBarVisible={isBulkActionBarVisible}>
         <StyledTable id={id} key={id} className="data-exploration-table">
           <Thead isStickyHeader={stickyHeader} data-testid="table-head">
             {getHeaderGroups().map((headerGroup) => (
