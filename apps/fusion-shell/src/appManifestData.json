@@ -231,8 +231,8 @@
     "key": "cdf-datastudio",
     "appName": "@cognite/cdf-datastudio",
     "hosting": {
-      "staging": "/dependencies/@cognite/datastudio/1.2.0/8fba1f60c54f66ef38a809b19fc86364.js",
-      "preview": "/dependencies/@cognite/datastudio/1.2.0/8fba1f60c54f66ef38a809b19fc86364.js",
+      "staging": "https://cdf-entity-matching-staging.web.app",
+      "preview": "https://cdf-entity-matching-staging.web.app",
       "production": "/dependencies/@cognite/datastudio/1.2.0/8fba1f60c54f66ef38a809b19fc86364.js"
     },
     "routes": [{ "route": "/:tenantName/entity-matching" }]
@@ -241,8 +241,8 @@
     "key": "cdf-ui-entity-matching",
     "appName": "@cognite/cdf-ui-entity-matching",
     "hosting": {
-      "staging": "https://cdf-entity-matching-prod.cogniteapp.com",
-      "preview": "https://cdf-entity-matching-prod.cogniteapp.com",
+      "staging": "https://cdf-entity-matching-staging.web.app",
+      "preview": "https://cdf-entity-matching-staging.web.app",
       "production": "https://cdf-entity-matching-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/entity-matching-new" }]
