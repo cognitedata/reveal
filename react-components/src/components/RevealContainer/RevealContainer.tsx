@@ -14,10 +14,12 @@ import { NodeCacheProvider } from '../NodeCacheProvider/NodeCacheProvider';
 import { RevealContainerElementContext } from './RevealContainerElementContext';
 import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { AssetMappingCacheProvider } from '../NodeCacheProvider/AssetMappingCacheProvider';
+import { I18nContextProvider } from '../i18n/I18n';
 
 type RevealContainerProps = {
   color?: Color;
   sdk: CogniteClient;
+  appLanguage?: string;
   children?: ReactNode;
   viewerOptions?: Pick<
     Cognite3DViewerOptions,
@@ -37,7 +39,8 @@ export function RevealContainer({
   children,
   sdk,
   color,
-  viewerOptions
+  viewerOptions,
+  appLanguage
 }: RevealContainerProps): ReactElement {
   const revealKeepAliveData = useRevealKeepAlive();
   const [viewer, setViewer] = useState<Cognite3DViewer>();
@@ -78,17 +81,19 @@ export function RevealContainer({
       return <></>;
     return (
       <>
-        <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
-          <RevealContext.Provider value={viewer}>
-            <NodeCacheProvider>
-              <AssetMappingCacheProvider>
-                <Reveal3DResourcesCountContextProvider>
-                  {createPortal(children, viewerDomElement.current)}
-                </Reveal3DResourcesCountContextProvider>
-              </AssetMappingCacheProvider>
-            </NodeCacheProvider>
-          </RevealContext.Provider>
-        </RevealContainerElementContext.Provider>
+        <I18nContextProvider appLanguage={appLanguage}>
+          <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
+            <RevealContext.Provider value={viewer}>
+              <NodeCacheProvider>
+                <AssetMappingCacheProvider>
+                  <Reveal3DResourcesCountContextProvider>
+                    {createPortal(children, viewerDomElement.current)}
+                  </Reveal3DResourcesCountContextProvider>
+                </AssetMappingCacheProvider>
+              </NodeCacheProvider>
+            </RevealContext.Provider>
+          </RevealContainerElementContext.Provider>
+        </I18nContextProvider>
       </>
     );
   }

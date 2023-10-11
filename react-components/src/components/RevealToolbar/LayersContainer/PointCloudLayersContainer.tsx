@@ -11,7 +11,7 @@ import { type CognitePointCloudModel } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
-import { useTranslation } from '../../../common/i18n';
+import { useTranslation } from '../../i18n/I18n';
 
 export const PointCloudLayersContainer = ({
   layerProps,
@@ -113,7 +113,7 @@ export const PointCloudLayersContainer = ({
                 setVisible(true);
               }}
             />
-            <StyledLabel> {t('POINT_CLOUDS')} </StyledLabel>
+            <StyledLabel> {t('POINT_CLOUDS', 'Point clouds')} </StyledLabel>
             <StyledChipCount label={count} hideTooltip type="neutral" />
           </Flex>
         </Menu.Submenu>

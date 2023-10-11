@@ -27,7 +27,7 @@ import {
 } from '../components/CadModelContainer/useApplyCadModelStyling';
 import { type AssetMapping } from '../components/NodeCacheProvider/AssetMappingCache';
 import {
-  useAssetMappeNodesForRevisions,
+  useAssetMappedNodesForRevisions,
   useNodesForAssets
 } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 
@@ -70,7 +70,7 @@ function useCalculateMappedStyling(
     modelsRevisionsWithMappedEquipment
   );
 
-  const { data: assetMappingData } = useAssetMappeNodesForRevisions(
+  const { data: assetMappingData } = useAssetMappedNodesForRevisions(
     modelsRevisionsWithMappedEquipment
   );
 

@@ -43,7 +43,7 @@ const useAssetMappingCache = (): AssetMappingCache => {
   return content.cache;
 };
 
-export const useAssetMappeNodesForRevisions = (
+export const useAssetMappedNodesForRevisions = (
   cadModels: CadModelOptions[]
 ): UseQueryResult<ModelWithAssetMappings[]> => {
   const assetMappingCache = useAssetMappingCache();
@@ -89,7 +89,6 @@ export const useNodesForAssets = (
           model.revisionId,
           assetIds
         );
-        console.log('returning node map', nodeMap);
         return { modelId: model.modelId, revisionId: model.revisionId, nodeMap };
       });
 

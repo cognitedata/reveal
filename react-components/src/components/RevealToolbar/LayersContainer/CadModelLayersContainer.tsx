@@ -10,7 +10,7 @@ import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
-import { useTranslation } from '../../../common/i18n';
+import { useTranslation } from '../../i18n/I18n';
 
 export const CadModelLayersContainer = ({
   layerProps,
@@ -122,7 +122,7 @@ export const CadModelLayersContainer = ({
                 setVisible(true);
               }}
             />
-            <StyledLabel> {t('CAD_MODELS')} </StyledLabel>
+            <StyledLabel> {t('CAD_MODELS', 'CAD models')} </StyledLabel>
             <StyledChipCount label={count} hideTooltip type="neutral" />
           </Flex>
         </Menu.Submenu>
