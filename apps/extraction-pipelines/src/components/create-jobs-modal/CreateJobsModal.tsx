@@ -23,8 +23,7 @@ import {
   useCreateMQTTJob,
   useMQTTDestinations,
 } from '../../hooks/hostedExtractors';
-import FormFieldRadioGroup from '../form-field-radio-group/FormFieldRadioGroup';
-import FormFieldWrapper from '../form-field-wrapper/FormFieldWrapper';
+import { FormFieldRadioGroup, FormFieldWrapper } from '../form-fields';
 
 type CreateJobsFormDestinationOptionType =
   | 'use-existing'

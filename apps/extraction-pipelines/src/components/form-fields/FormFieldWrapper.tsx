@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Colors, Detail, Flex, Icon, Tooltip } from '@cognite/cogs.js';
+import { Body, Colors, Flex, Icon, Tooltip } from '@cognite/cogs.js';
 
 export type FormFieldWrapperProps = {
   children: React.ReactNode;
@@ -40,7 +40,7 @@ const FormFieldWrapper = ({
       )}
       {children}
       {error && (
-        <StyledFormFieldError>
+        <StyledFormFieldError size="x-small">
           <Icon size={12} type="ErrorFilled" />
           {error}
         </StyledFormFieldError>
@@ -56,7 +56,7 @@ const StyledFormFieldTitle = styled(Body)`
   gap: 2px;
 `;
 
-const StyledFormFieldError = styled(Detail)`
+const StyledFormFieldError = styled(Body)`
   align-items: center;
   color: ${Colors['text-icon--status-critical']};
   display: flex;

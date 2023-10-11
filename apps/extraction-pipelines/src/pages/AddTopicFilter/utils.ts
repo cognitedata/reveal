@@ -1,5 +1,7 @@
 import { EditorState, SelectionRange } from '@codemirror/state';
 
+import { ExtractorMapping } from '../../hooks';
+
 type BoundarySummary = {
   line: number;
   column: number;
@@ -37,4 +39,13 @@ export const getSelectionRangeSummary = (
     to: toSummary,
     length: range.to - range.from,
   };
+};
+
+export const isCustomFormat = (
+  customMappings?: ExtractorMapping[],
+  format?: string
+) => {
+  return format
+    ? customMappings?.map((mapping) => mapping.externalId).includes(format)
+    : false;
 };

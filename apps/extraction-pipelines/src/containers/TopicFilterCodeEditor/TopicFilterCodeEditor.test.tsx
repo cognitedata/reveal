@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import TopicFilterCodeEditor from './TopicFilterCodeEditor';
+import { TopicFilterCodeEditor } from './TopicFilterCodeEditor';
 
 const onChangeFormat = jest.fn();
 

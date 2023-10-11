@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -6,24 +6,9 @@ import styled from 'styled-components';
 import { notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 
-import {
-  Body,
-  Button,
-  Checkbox,
-  Colors,
-  Divider,
-  Flex,
-  Heading,
-  InputExp,
-  Loader,
-  OptionType,
-  Select,
-} from '@cognite/cogs.js';
+import { Colors, Divider, Flex, Heading } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
-import { CodeEditorWithStatus } from '../../components/CodeEditorWithStatus';
-import FormFieldRadioGroup from '../../components/form-field-radio-group/FormFieldRadioGroup';
-import FormFieldWrapper from '../../components/form-field-wrapper/FormFieldWrapper';
 import { BottomBar, TopBar } from '../../components/ToolBars';
 import {
   ExtractorMapping,
@@ -31,46 +16,18 @@ import {
   useFetchExtractorMappings,
 } from '../../hooks';
 import {
-  MQTTFormat,
-  ReadMQTTDestination,
   useCreateMQTTDestination,
   useCreateMQTTJob,
-  useMQTTDestinations,
   useMQTTSourceWithMetrics,
 } from '../../hooks/hostedExtractors';
 
-import {
-  Section,
-  SectionContainer,
-  SectionLink,
-  SectionSubTitle,
-  SectionTitle,
-} from './Section';
+import { Section } from './Section';
+import { StepOne } from './StepOne';
+import { StepThree } from './StepThree';
+import { StepTwo } from './StepTwo';
 import { TopicFilterGuide } from './TopicFilterGuide';
 import { CreateJobsFormValues, ExpandOptions } from './types';
-
-// Lazy load editor component due to asyncWebAssembly support in webpack
-const TopicFilterCodeEditor = React.lazy(
-  () => import('../../containers/TopicFilterCodeEditor/TopicFilterCodeEditor')
-);
-
-const formatField: MQTTFormat[] = [
-  {
-    type: 'cognite',
-  },
-  {
-    type: 'rockwell',
-  },
-  {
-    type: 'value',
-  },
-  {
-    type: 'sparkplug',
-  },
-  {
-    type: 'custom',
-  },
-];
+import { isCustomFormat } from './utils';
 
 export const AddTopicFilter = () => {
   const { t } = useTranslation();
@@ -81,24 +38,6 @@ export const AddTopicFilter = () => {
   const { externalId: sourceExternalId } = useParams();
 
   const { data: source } = useMQTTSourceWithMetrics(sourceExternalId);
-
-  const [tempTopicFilterInput, setTempTopicFilterInput] = useState('');
-
-  const { data: destinations } = useMQTTDestinations({
-    select: React.useCallback((data?: ReadMQTTDestination[]) => {
-      return (
-        data?.map((value) => ({
-          ...value,
-          label: value.externalId,
-          value: value.externalId,
-        })) ?? []
-      );
-    }, []),
-  });
-
-  const sourceTopicFilters = source?.jobs.map((job) => {
-    return job.config.topicFilter;
-  });
 
   const { mutateAsync: createDestination } = useCreateMQTTDestination();
   const { mutateAsync: createJob } = useCreateMQTTJob({
@@ -143,7 +82,7 @@ export const AddTopicFilter = () => {
 
     if (!values.topicFilters || values.topicFilters.length === 0) {
       errors.topicFilters = t(
-        tempTopicFilterInput
+        isTopicFilterInputValueAvailable
           ? 'validation-error-topic-filter-click-add-only'
           : 'validation-error-topic-filter-required'
       );
@@ -183,17 +122,6 @@ export const AddTopicFilter = () => {
     return errors;
   };
 
-  const isCustomFormat = useCallback(
-    (format?: string) => {
-      return format
-        ? customExtractorMappings
-            ?.map((mapping) => mapping.externalId)
-            .includes(format)
-        : false;
-    },
-    [customExtractorMappings]
-  );
-
   const { errors, handleSubmit, setFieldValue, values } = useFormik<
     CreateJobsFormValues & { useSampleData?: boolean }
   >({
@@ -219,7 +147,7 @@ export const AddTopicFilter = () => {
         });
       }
 
-      if (val.format && isCustomFormat(val.format)) {
+      if (val.format && isCustomFormat(customExtractorMappings, val.format)) {
         format = 'custom';
         mappingId = val.format;
       }
@@ -281,43 +209,10 @@ export const AddTopicFilter = () => {
     validateOnChange: false,
   });
 
-  const handleAddTopicFilter = (): void => {
-    if (
-      !values.topicFilters ||
-      !values.topicFilters.includes(tempTopicFilterInput)
-    ) {
-      setFieldValue(
-        'topicFilters',
-        values.topicFilters?.concat(tempTopicFilterInput) ?? [
-          tempTopicFilterInput,
-        ]
-      );
-      setTempTopicFilterInput('');
-    }
-  };
-
-  const handleDeleteTopicFilter = (filter: string): void => {
-    setFieldValue(
-      'topicFilters',
-      values.topicFilters?.filter((f) => f !== filter) ?? []
-    );
-  };
-
-  const formatFieldOptionsWithCustomTypes = useMemo(() => {
-    const formatFiledOptions = formatField.map(({ type: optionType }) => ({
-      label: t(`form-format-option-${optionType}` as any),
-      value: optionType as string,
-    }));
-
-    return [
-      ...formatFiledOptions.slice(0, formatFiledOptions.length - 2),
-      ...(customExtractorMappings?.map((mapping) => ({
-        label: mapping.externalId,
-        value: mapping.externalId,
-      })) || []),
-      formatFiledOptions.pop(),
-    ] as OptionType<string>[];
-  }, [customExtractorMappings, t]);
+  const [
+    isTopicFilterInputValueAvailable,
+    setIsTopicFilterInputValueAvailable,
+  ] = useState(false);
 
   const onClickExpand = useCallback(
     (expandOption: ExpandOptions) => {
@@ -328,22 +223,6 @@ export const AddTopicFilter = () => {
     [setExpandedOption]
   );
 
-  const onChangeFormat = useCallback(
-    (format: any) => {
-      setFieldValue('mapping', format);
-    },
-    [setFieldValue]
-  );
-
-  const selectedMapping = useMemo(() => {
-    if (isCustomFormat(values.format)) {
-      const customFormat = customExtractorMappings?.find(
-        (mapping) => mapping.externalId === values.format
-      );
-      return customFormat ?? null;
-    }
-    return null;
-  }, [values.format, customExtractorMappings, isCustomFormat]);
   return (
     <GridContainer>
       <StyledTopBar title={t('back')} onClick={goBack} />
@@ -356,57 +235,15 @@ export const AddTopicFilter = () => {
             expandOption={ExpandOptions.TopicFilters}
             onClickExpand={onClickExpand}
           />
-          <Flex gap={16} direction="column" style={{ width: '100%' }}>
-            <Flex gap={8} style={{ width: '100%' }}>
-              <div style={{ flex: 1 }}>
-                <InputExp
-                  label={{
-                    info: t('form-topic-filters-info'),
-                    required: true,
-                    text: t('topic-filter_other'),
-                  }}
-                  fullWidth
-                  onChange={(e) => setTempTopicFilterInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !!tempTopicFilterInput) {
-                      handleAddTopicFilter();
-                    }
-                  }}
-                  status={errors.topicFilters ? 'critical' : undefined}
-                  statusText={errors.topicFilters}
-                  placeholder={t('form-topic-filters-placeholder')}
-                  value={tempTopicFilterInput}
-                />
-              </div>
-              <div style={{ marginTop: 27 }}>
-                <Button
-                  disabled={
-                    !tempTopicFilterInput ||
-                    values.topicFilters?.includes(tempTopicFilterInput) ||
-                    sourceTopicFilters?.includes(tempTopicFilterInput)
-                  }
-                  onClick={handleAddTopicFilter}
-                  type="primary"
-                >
-                  {t('add')}
-                </Button>
-              </div>
-            </Flex>
-            <Flex style={{ width: '100%' }} direction="column" gap={8}>
-              {values.topicFilters?.map((filter) => (
-                <TopicFilterContainer>
-                  <Body size="medium">{filter}</Body>
-                  <Button
-                    aria-label="Delete"
-                    icon="Delete"
-                    onClick={() => handleDeleteTopicFilter(filter)}
-                    size="small"
-                    type="ghost"
-                  />
-                </TopicFilterContainer>
-              ))}
-            </Flex>
-          </Flex>
+          <StepOne
+            source={source}
+            values={values}
+            errors={errors}
+            setFieldValue={setFieldValue}
+            onTopicFilterInputValueAvailabilityChange={
+              setIsTopicFilterInputValueAvailable
+            }
+          />
         </SectionWrapper>
         <Divider />
         <SectionWrapper>
@@ -416,87 +253,13 @@ export const AddTopicFilter = () => {
             expandOption={ExpandOptions.Format}
             onClickExpand={onClickExpand}
           />
-          <FormFieldWrapper isRequired title={t('form-message-format')}>
-            <Select
-              onChange={(value: OptionType<string>) =>
-                setFieldValue('format', value.value)
-              }
-              options={formatFieldOptionsWithCustomTypes}
-              placeholder={t('select-format')}
-              value={formatFieldOptionsWithCustomTypes.find(
-                (val) => val?.value === values.format
-              )}
-              aria-placeholder={t('select-format')}
-            />
-          </FormFieldWrapper>
-          {values.format === 'custom' && (
-            <>
-              <div style={{ flex: 1 }}>
-                <InputExp
-                  label={{
-                    required: true,
-                    text: t('form-format-name'),
-                  }}
-                  fullWidth
-                  onChange={(e) => setFieldValue('mappingName', e.target.value)}
-                  status={errors.mappingName ? 'critical' : undefined}
-                  statusText={errors.mappingName}
-                  placeholder={t('form-format-name-placeholder')}
-                  value={values.mappingName}
-                  helpText={t('form-format-name-tip')}
-                />
-              </div>
-              <SectionContainer style={{ marginTop: 16 }}>
-                <SectionTitle level={6}>
-                  {t('create-your-own-custom-format')}
-                </SectionTitle>
-                <Flex style={{ flexGrow: 1 }}>
-                  <SectionSubTitle size="small">
-                    {t('use-kuiper-to-write-code')}&nbsp;
-                  </SectionSubTitle>
-                  <SectionLink
-                    onClick={() => onClickExpand(ExpandOptions.Format)}
-                  >
-                    <Body
-                      style={{
-                        color: Colors['text-icon--interactive--default'],
-                      }}
-                      size="small"
-                    >{`Learn more ->`}</Body>
-                  </SectionLink>
-                </Flex>
-                <div style={{ marginTop: 8 }}>
-                  <FormFieldWrapper>
-                    <Checkbox
-                      onChange={(e) =>
-                        setFieldValue('useSampleData', e.target.checked)
-                      }
-                    >
-                      {t('try-with-sample-data')}
-                    </Checkbox>
-                  </FormFieldWrapper>
-                </div>
-              </SectionContainer>
-              <Suspense fallback={<Loader />}>
-                <TopicFilterCodeEditor
-                  onChangeFormat={onChangeFormat}
-                  showSampleData={values.useSampleData}
-                />
-              </Suspense>
-            </>
-          )}
-          {isCustomFormat(values.format) && (
-            <Flex direction="column" gap={8}>
-              <Body size="medium" strong>
-                {t('transformation-code')}
-              </Body>
-              <CodeEditorWithStatus
-                disabled
-                placeholder={t('transformation-code-placeholder')}
-                value={selectedMapping?.mapping.expression || ''}
-              />
-            </Flex>
-          )}
+          <StepTwo
+            customExtractorMappings={customExtractorMappings}
+            values={values}
+            errors={errors}
+            setFieldValue={setFieldValue}
+            onClickExpand={onClickExpand}
+          />
         </SectionWrapper>
         <Divider />
         <SectionWrapper>
@@ -508,136 +271,10 @@ export const AddTopicFilter = () => {
             expandOption={ExpandOptions.Sync}
             onClickExpand={onClickExpand}
           ></Section>
-          <FormFieldRadioGroup
-            direction="column"
-            isRequired
-            onChange={(value) => setFieldValue('destinationOption', value)}
-            options={[
-              {
-                label: t('form-use-existing-sync'),
-                value: 'use-existing',
-                content: (
-                  <RadioButtonContentContainer>
-                    <FormFieldWrapper
-                      isRequired
-                      error={errors.selectedDestinationExternalId}
-                      title={t('form-existing-syncs')}
-                    >
-                      <Select
-                        showSearch
-                        onChange={(value: OptionType<string>) => {
-                          setFieldValue(
-                            'selectedDestinationExternalId',
-                            value.value
-                          );
-                        }}
-                        options={destinations || []}
-                        placeholder={t('form-existing-syncs-placeholder')}
-                        value={destinations?.find(
-                          (val) =>
-                            val.value === values.selectedDestinationExternalId
-                        )}
-                      ></Select>
-                    </FormFieldWrapper>
-                  </RadioButtonContentContainer>
-                ),
-              },
-              {
-                label: t('form-create-new-sync-current-user'),
-                value: 'current-user',
-                content: (
-                  <RadioButtonContentContainer>
-                    <InputExp
-                      clearable
-                      fullWidth
-                      label={{
-                        info: undefined,
-                        required: true,
-                        text: t('form-sink-external-id'),
-                      }}
-                      onChange={(e) =>
-                        setFieldValue(
-                          'destinationExternalIdToCreate',
-                          e.target.value
-                        )
-                      }
-                      status={
-                        errors.destinationExternalIdToCreate
-                          ? 'critical'
-                          : undefined
-                      }
-                      statusText={errors.destinationExternalIdToCreate}
-                      placeholder={t('form-sink-external-id-placeholder')}
-                      value={values.destinationExternalIdToCreate}
-                    />
-                  </RadioButtonContentContainer>
-                ),
-              },
-              {
-                label: t('form-create-new-sync-client-credentials'),
-                value: 'client-credentials',
-                content: (
-                  <RadioButtonContentContainer gap={16}>
-                    <InputExp
-                      clearable
-                      fullWidth
-                      label={{
-                        info: undefined,
-                        required: true,
-                        text: t('form-sink-external-id'),
-                      }}
-                      onChange={(e) =>
-                        setFieldValue(
-                          'destinationExternalIdToCreate',
-                          e.target.value
-                        )
-                      }
-                      status={
-                        errors.destinationExternalIdToCreate
-                          ? 'critical'
-                          : undefined
-                      }
-                      statusText={errors.destinationExternalIdToCreate}
-                      placeholder={t('form-sink-external-id-placeholder')}
-                      value={values.destinationExternalIdToCreate}
-                    />
-                    <InputExp
-                      clearable
-                      fullWidth
-                      label={{
-                        required: true,
-                        info: undefined,
-                        text: t('form-sink-client-id'),
-                      }}
-                      onChange={(e) =>
-                        setFieldValue('clientId', e.target.value)
-                      }
-                      placeholder={t('form-sink-client-id-placeholder')}
-                      status={errors.clientId ? 'critical' : undefined}
-                      statusText={errors.clientId}
-                      value={values.clientId}
-                    />
-                    <InputExp
-                      clearable
-                      fullWidth
-                      label={{
-                        required: true,
-                        info: undefined,
-                        text: t('form-client-secret'),
-                      }}
-                      onChange={(e) =>
-                        setFieldValue('clientSecret', e.target.value)
-                      }
-                      placeholder={t('form-client-secret-placeholder')}
-                      status={errors.clientSecret ? 'critical' : undefined}
-                      statusText={errors.clientSecret}
-                      value={values.clientSecret}
-                    />
-                  </RadioButtonContentContainer>
-                ),
-              },
-            ]}
-            value={values.destinationOption}
+          <StepThree
+            values={values}
+            errors={errors}
+            setFieldValue={setFieldValue}
           />
         </SectionWrapper>
       </TopicFilterContent>
@@ -652,21 +289,6 @@ export const AddTopicFilter = () => {
     </GridContainer>
   );
 };
-
-const RadioButtonContentContainer = styled(Flex)`
-  align-self: stretch;
-  padding-left: 28px;
-  flex-direction: column;
-`;
-
-const TopicFilterContainer = styled.div`
-  align-items: center;
-  background-color: ${Colors['surface--interactive--disabled']};
-  border-radius: 6px;
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 4px 4px 12px;
-`;
 
 const SectionWrapper = styled(Flex)`
   gap: 24px;

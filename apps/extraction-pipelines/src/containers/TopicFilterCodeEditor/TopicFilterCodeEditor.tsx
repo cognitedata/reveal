@@ -15,13 +15,13 @@ import {
 } from '@cognite/kuiper_js';
 
 import { useTranslation } from '../../common';
-import { CodeEditorWithStatus } from '../../components/CodeEditorWithStatus';
+import { CodeEditorWithStatus } from '../../components';
 import { formatJSCode } from '../../utils/codeFormatUtils';
 
 // JSON Language Support
 const jsonLang = json();
 
-const TopicFilterCodeEditor = ({
+export const TopicFilterCodeEditor = ({
   showSampleData = false,
   onChangeFormat,
 }: {
@@ -291,4 +291,3 @@ const EditorContainer = styled(Flex)``;
 const PreviewContainer = styled.pre`
   user-select: all; /* Standard syntax */
 `;
-export default TopicFilterCodeEditor;

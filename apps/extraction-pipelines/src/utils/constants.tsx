@@ -1,6 +1,8 @@
 import { CodeEditorTheme } from '@cognite/cdf-utilities';
 import { OptionType } from '@cognite/cogs.js';
 
+import { MQTTFormat } from '../hooks/hostedExtractors';
+
 export const EXTRACTION_PIPELINE: Readonly<string> = 'Extraction pipeline';
 export const EXTRACTION_PIPELINE_LOWER: Readonly<string> =
   'extraction pipeline';
@@ -122,3 +124,21 @@ export const PAGINATION_SETTINGS = {
 export const DEFAULT_CODE_EDITOR_THEME: CodeEditorTheme = 'light';
 export const CODE_EDITOR_THEME_LOCAL_STORAGE_KEY =
   '@cognite/fusion/extraction-pipelines/code-editor-theme';
+
+export const ADD_TOPIC_FILTER_BUILT_IN_FORMATS: MQTTFormat[] = [
+  {
+    type: 'cognite',
+  },
+  {
+    type: 'rockwell',
+  },
+  {
+    type: 'value',
+  },
+  {
+    type: 'sparkplug',
+  },
+  {
+    type: 'custom',
+  },
+];
