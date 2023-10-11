@@ -185,6 +185,7 @@ export const useSyncStateWithViewer = () => {
     if (pointCloudModel === undefined) return;
 
     const group = createAnnotationsAsWireframes(
+      threeDViewer,
       annotations ?? [],
       pointCloudModel.getCdfToDefaultModelTransformation()
     );
