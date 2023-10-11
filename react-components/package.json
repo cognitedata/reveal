@@ -79,7 +79,7 @@
     "style-loader": "^3.3.3",
     "styled-components": "5.3.11",
     "three": "0.155.0",
-    "ts-loader": "9.4.4",
+    "ts-loader": "9.5.0",
     "typescript": "5.2.2",
     "vite": "^4.4.9",
     "vite-plugin-dts": "^3.5.3",
