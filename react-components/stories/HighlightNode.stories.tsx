@@ -91,6 +91,11 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           style: { cad: DefaultNodeAppearance.Highlighted }
         }
       ]);
+
+      cameraNavigation.fitCameraToModelNode(
+        nodeData.intersection.model.revisionId,
+        nodeData.assetMappingResult.cadNode.id,
+      );
     } else {
       setStylingGroups([]);
     }
