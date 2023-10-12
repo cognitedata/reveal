@@ -9,6 +9,8 @@ declare namespace Cypress {
     deleteEventFilter(eventNumber: number): void;
     duplicateEventFilter(): void;
     closeSidebar(sidebarContainerID: string): void;
+    duplicateThreshold(): void;
+    deleteThreshold(eventNumber: number): void;
   }
 }
 
@@ -72,4 +74,16 @@ Cypress.Commands.add('closeSidebar', (sidebarContainerID: string) => {
     .within(() => {
       cy.get('.cogs-icon--type-close').should('exist').parent('button').click();
     });
+});
+
+Cypress.Commands.add('duplicateThreshold', () => {
+  cy.get('[aria-label="Duplicate"]').eq(0).click();
+
+  cy.contains('New threshold 1 (Duplicate)').should('exist');
+});
+
+Cypress.Commands.add('deleteThreshold', (eventNumber: number) => {
+  cy.get('footer button[aria-label="Delete"]').eq(eventNumber).click();
+
+  cy.contains('Confirm').click();
 });

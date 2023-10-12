@@ -140,7 +140,7 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
   }, [chart, updateChart]);
 
   return (
-    <Sidebar visible={visible}>
+    <Sidebar visible={visible} data-testid="thresholds-sidebar-container">
       <TopContainer>
         <TopContainerTitle>
           <Icon type="Threshold" size={21} />
