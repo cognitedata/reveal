@@ -6,7 +6,7 @@ import {
   Envs,
 } from '@cognite/cdf-utilities';
 
-const env = process?.env ?? {};
+const env = process.env ?? {};
 
 const isPR = () => checkUrl(Envs.PR);
 

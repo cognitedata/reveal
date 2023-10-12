@@ -538,7 +538,7 @@ jobs:
           # let's make sure our tests pass on Chrome browser
           browser: chrome
           # Run the cypress tests
-          command: yarn nx run fusion-shell:e2e:ci --skip-cache
+          command: yarn nx run fusion-shell:e2e:ci --skip-nx-cache
 
       - name: Upload cypress artifacts
         uses: actions/upload-artifact@v3
