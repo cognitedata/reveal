@@ -89,7 +89,7 @@ export const useNodesForAssets = (
           model.revisionId,
           assetIds
         );
-        return { modelId: model.modelId, revisionId: model.revisionId, nodeMap };
+        return { modelId: model.modelId, revisionId: model.revisionId, assetToNodeMap: nodeMap };
       });
 
       return await Promise.all(modelAndNodeMapPromises);
