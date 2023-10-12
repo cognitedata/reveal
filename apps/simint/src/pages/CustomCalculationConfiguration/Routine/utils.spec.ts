@@ -1,6 +1,20 @@
 import { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
-import { removeGroupFromCalculation, removeStepFromCalculation } from './utils';
+import {
+  removeEntryFromInputOutputArray,
+  removeGroupFromCalculation,
+  removeStepFromCalculation,
+} from './utils';
+
+describe('removeEntryFromInputOutputArray', () => {
+  it('removes entry', () => {
+    const array = [{ type: 'a' }, { type: 'b' }, { type: 'c' }];
+    expect(removeEntryFromInputOutputArray(array, 'b')).toEqual([
+      { type: 'a' },
+      { type: 'c' },
+    ]);
+  });
+});
 
 describe('removeStepFromCalculation', () => {
   it('removes step', () => {

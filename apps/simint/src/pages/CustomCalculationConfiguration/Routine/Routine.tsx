@@ -14,6 +14,7 @@ import type {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { Group, Step } from './Collapse';
+import { StepInputType } from './Commands/Fields';
 import { getRoutineIndex } from './Commands/utils';
 
 export type RoutineProps = {
@@ -57,7 +58,7 @@ export function Routine({ dynamicStepFields, setCalculation }: RoutineProps) {
       step: procedure.steps.length + 1,
       type: 'Set',
       arguments: {
-        type: 'inputConstant',
+        type: StepInputType.InputConstant,
       },
     };
     if (values.routine) {

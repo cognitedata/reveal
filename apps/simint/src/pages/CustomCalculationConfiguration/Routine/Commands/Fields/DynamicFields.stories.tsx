@@ -5,6 +5,7 @@ import { Formik, useFormikContext } from 'formik';
 import { StepFields } from '@cognite/simconfig-api-sdk/rtk';
 
 import { DynamicFields } from './DynamicFields';
+import { StepInputType } from './InputType';
 
 const meta: Meta<typeof DynamicFields> = {
   component: DynamicFields,
@@ -128,7 +129,7 @@ export const SetStep: Story = {
       step: 1,
       type: 'Set',
       arguments: {
-        type: 'inputConstant',
+        type: StepInputType.InputConstant,
       },
     },
     stepIndex: 0,

@@ -4,8 +4,11 @@ import { Select } from '@cognite/cogs.js';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
 import { InputRow } from '../../../../../components/forms/ModelForm/elements';
+import { removeEntryFromInputOutputArray } from '../../utils';
 import { ACTION_OPTIONS, getOptionLabel } from '../utils';
 import type { ConfigurationFieldProps, ValueOptionType } from '../utils';
+
+import { StepInputType } from './InputType';
 
 type StepOption = 'Command' | 'Get' | 'Set';
 
@@ -13,13 +16,13 @@ const mapStep = {
   Get: {
     type: 'Get',
     arguments: {
-      type: 'outputTimeSeries',
+      type: StepInputType.OutputTimeSeries,
     },
   },
   Set: {
     type: 'Set',
     arguments: {
-      type: 'inputConstant',
+      type: StepInputType.InputConstant,
     },
   },
   Command: {
@@ -33,7 +36,7 @@ export function StepType({
   stepIndex,
   step,
 }: ConfigurationFieldProps) {
-  const { setFieldValue } = useFormikContext<UserDefined>();
+  const { setFieldValue, values } = useFormikContext<UserDefined>();
   const formikPath = `routine.${routineIndex}.steps.${stepIndex}`;
 
   return (
@@ -55,6 +58,27 @@ export function StepType({
               step: step.step,
               ...mapStep[option.value],
             });
+
+            if (!step.arguments.value) {
+              return;
+            }
+
+            // remove the input/output of the previously selected step type
+            if (step.type === 'Set') {
+              const updatedInputConstants = removeEntryFromInputOutputArray(
+                values.inputConstants ?? [],
+                step.arguments.value
+              );
+
+              setFieldValue('inputConstants', updatedInputConstants);
+            } else if (step.type === 'Get') {
+              const updatedOutputTimeSeries = removeEntryFromInputOutputArray(
+                values.outputTimeSeries ?? [],
+                step.arguments.value
+              );
+
+              setFieldValue('outputTimeSeries', updatedOutputTimeSeries);
+            }
           }}
         />
       </div>

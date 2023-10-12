@@ -491,4 +491,254 @@ describe('Routine', () => {
       )
     );
   });
+
+  it('Removes input constant from routine JSON when changing Input Type to Time Series', async () => {
+    const handleSetCalculation = jest.fn();
+
+    render(
+      <WrappedRoutine
+        dynamicStepFields={petroSimDynamicStepFields!}
+        setCalculation={handleSetCalculation}
+      />
+    );
+
+    // Add new group and name it "Misc"
+    addGroup('Misc');
+
+    // Add Set step with input constant
+    userEvent.click(screen.getByRole('button', { name: /add new step/i }));
+    userEvent.click(screen.getByLabelText('Expand Step 1.1'));
+    userEvent.paste(
+      screen.getByLabelText(/Simulation Object Type/i),
+      'Mat Stream'
+    );
+
+    // Change Input Type to Time Series
+    userEvent.type(screen.getByLabelText(/Input Type/i), 'tim{enter}');
+
+    userEvent.paste(screen.getByLabelText(/Variable/i), 'Temp');
+
+    // need this to avoid "Warning: An update to Formik inside a test was not wrapped in act(...)."
+    // https://stackoverflow.com/a/68891807
+    await waitFor(() =>
+      expect(handleSetCalculation).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          inputConstants: [],
+          inputTimeSeries: [
+            {
+              name: 'Temp',
+              sampleExternalId:
+                'PetroSIM-INPUT-Minimal-T0-Simple_Crude_Distillation_Unit',
+              type: 'T0',
+            },
+          ],
+          outputTimeSeries: [],
+          routine: [
+            {
+              description: 'Misc',
+              order: 1,
+              steps: [
+                {
+                  arguments: { type: 'inputTimeSeries', value: 'T0' },
+                  step: 1,
+                  type: 'Set',
+                },
+              ],
+            },
+          ],
+        })
+      )
+    );
+  });
+
+  it('Removes time series from routine JSON when changing Input Type to Input Constant', async () => {
+    const handleSetCalculation = jest.fn();
+
+    render(
+      <WrappedRoutine
+        dynamicStepFields={petroSimDynamicStepFields!}
+        setCalculation={handleSetCalculation}
+      />
+    );
+
+    // Add new group and name it "Misc"
+    addGroup('Misc');
+
+    // Add Set step
+    userEvent.click(screen.getByRole('button', { name: /add new step/i }));
+    userEvent.click(screen.getByLabelText('Expand Step 1.1'));
+
+    // Change Input Type to Time Series
+    userEvent.type(screen.getByLabelText(/Input Type/i), 'tim{enter}');
+    userEvent.paste(screen.getByLabelText(/Variable/i), 'Temp');
+
+    // Change Input Type to Input Constant
+    userEvent.type(screen.getByLabelText(/Input Type/i), 'man{enter}');
+    userEvent.paste(
+      screen.getByLabelText(/Simulation Object Type/i),
+      'Mat Stream'
+    );
+
+    // need this to avoid "Warning: An update to Formik inside a test was not wrapped in act(...)."
+    // https://stackoverflow.com/a/68891807
+    await waitFor(() =>
+      expect(handleSetCalculation).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          inputConstants: [
+            {
+              name: 'Mat Stream - Constant',
+              saveTimeseriesExternalId:
+                'PetroSIM-INPUT-Minimal-MS0-Simple_Crude_Distillation_Unit',
+              type: 'MS0',
+            },
+          ],
+          inputTimeSeries: [],
+          outputTimeSeries: [],
+          routine: [
+            {
+              description: 'Misc',
+              order: 1,
+              steps: [
+                {
+                  arguments: {
+                    objectType: 'Mat Stream',
+                    type: 'inputConstant',
+                    value: 'MS0',
+                  },
+                  step: 1,
+                  type: 'Set',
+                },
+              ],
+            },
+          ],
+        })
+      )
+    );
+  });
+
+  it('Removes input time series from routine JSON when changing Set step to Get', async () => {
+    const handleSetCalculation = jest.fn();
+
+    render(
+      <WrappedRoutine
+        dynamicStepFields={petroSimDynamicStepFields!}
+        setCalculation={handleSetCalculation}
+      />
+    );
+
+    // Add new group and name it "Misc"
+    addGroup('Misc');
+
+    // Add Set step
+    userEvent.click(screen.getByRole('button', { name: /add new step/i }));
+    userEvent.click(screen.getByLabelText('Expand Step 1.1'));
+
+    userEvent.paste(
+      screen.getByLabelText(/Simulation Object Type/i),
+      'Mat Stream'
+    );
+
+    // Change Set to Get
+    userEvent.type(screen.getByLabelText(/step type/i), 'get{enter}');
+    userEvent.paste(screen.getByLabelText(/Variable/i), 'Temp');
+
+    // need this to avoid "Warning: An update to Formik inside a test was not wrapped in act(...)."
+    // https://stackoverflow.com/a/68891807
+    await waitFor(() =>
+      expect(handleSetCalculation).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          inputConstants: [],
+          inputTimeSeries: [],
+          outputTimeSeries: [
+            {
+              externalId:
+                'PetroSIM-OUTPUT-Minimal-T0-Simple_Crude_Distillation_Unit',
+              name: 'Temp',
+              type: 'T0',
+            },
+          ],
+          routine: [
+            {
+              description: 'Misc',
+              order: 1,
+              steps: [
+                {
+                  arguments: {
+                    type: 'outputTimeSeries',
+                    value: 'T0',
+                  },
+                  step: 1,
+                  type: 'Get',
+                },
+              ],
+            },
+          ],
+        })
+      )
+    );
+  });
+
+  it('Removes input time series from routine JSON when changing Get step to Set', async () => {
+    const handleSetCalculation = jest.fn();
+
+    render(
+      <WrappedRoutine
+        dynamicStepFields={petroSimDynamicStepFields!}
+        setCalculation={handleSetCalculation}
+      />
+    );
+
+    // Add new group and name it "Misc"
+    addGroup('Misc');
+
+    // Add Get step
+    userEvent.click(screen.getByRole('button', { name: /add new step/i }));
+    userEvent.click(screen.getByLabelText('Expand Step 1.1'));
+    userEvent.type(screen.getByLabelText(/step type/i), 'get{enter}');
+
+    userEvent.paste(screen.getByLabelText(/Variable/i), 'Temp');
+
+    // Change to Set step
+    userEvent.type(screen.getByLabelText(/step type/i), 'set{enter}');
+    userEvent.paste(
+      screen.getByLabelText(/Simulation Object Type/i),
+      'Mat Stream'
+    );
+
+    // need this to avoid "Warning: An update to Formik inside a test was not wrapped in act(...)."
+    // https://stackoverflow.com/a/68891807
+    await waitFor(() =>
+      expect(handleSetCalculation).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          inputConstants: [
+            {
+              name: 'Mat Stream - Constant',
+              saveTimeseriesExternalId:
+                'PetroSIM-INPUT-Minimal-MS0-Simple_Crude_Distillation_Unit',
+              type: 'MS0',
+            },
+          ],
+          inputTimeSeries: [],
+          outputTimeSeries: [],
+          routine: [
+            {
+              description: 'Misc',
+              order: 1,
+              steps: [
+                {
+                  arguments: {
+                    objectType: 'Mat Stream',
+                    type: 'inputConstant',
+                    value: 'MS0',
+                  },
+                  step: 1,
+                  type: 'Set',
+                },
+              ],
+            },
+          ],
+        })
+      )
+    );
+  });
 });

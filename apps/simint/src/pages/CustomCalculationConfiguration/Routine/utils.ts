@@ -1,6 +1,19 @@
 import { cloneDeep } from 'lodash';
 
-import { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
+import {
+  InputConstant,
+  InputTimeSeries,
+  OutputTimeSeries,
+  UserDefined,
+} from '@cognite/simconfig-api-sdk/rtk';
+
+import { StepInputType } from './Commands/Fields/InputType';
+
+export function removeEntryFromInputOutputArray<
+  T extends InputTimeSeries | OutputTimeSeries | InputConstant
+>(bucket: Array<T>, type: string) {
+  return bucket.filter((inputOutput) => inputOutput.type !== type);
+}
 
 export const removeGroupFromCalculation = (
   calculation: UserDefined,
@@ -17,25 +30,27 @@ export const removeGroupFromCalculation = (
     (group) => group.order === orderToRemove
   );
   groupToRemove?.steps.forEach((step) => {
-    if (step.arguments.type === 'inputTimeSeries') {
-      clonedCalculation.inputTimeSeries =
-        clonedCalculation.inputTimeSeries.filter(
-          (inputTimeSeries) => inputTimeSeries.type !== step.arguments.value
+    if (step.arguments.value) {
+      if (step.arguments.type === StepInputType.InputTimeSeries) {
+        clonedCalculation.inputTimeSeries = removeEntryFromInputOutputArray(
+          clonedCalculation.inputTimeSeries,
+          step.arguments.value
         );
-    }
+      }
 
-    if (step.arguments.type === 'outputTimeSeries') {
-      clonedCalculation.outputTimeSeries =
-        clonedCalculation.outputTimeSeries.filter(
-          (outputTimeSeries) => outputTimeSeries.type !== step.arguments.value
+      if (step.arguments.type === StepInputType.OutputTimeSeries) {
+        clonedCalculation.outputTimeSeries = removeEntryFromInputOutputArray(
+          clonedCalculation.outputTimeSeries,
+          step.arguments.value
         );
-    }
+      }
 
-    if (step.arguments.type === 'inputConstant') {
-      clonedCalculation.inputConstants =
-        clonedCalculation.inputConstants.filter(
-          (inputConstant) => inputConstant.type !== step.arguments.value
+      if (step.arguments.type === StepInputType.InputConstant) {
+        clonedCalculation.inputConstants = removeEntryFromInputOutputArray(
+          clonedCalculation.inputConstants,
+          step.arguments.value
         );
+      }
     }
   });
 
@@ -62,21 +77,21 @@ export const removeStepFromCalculation = (
     );
 
     if (currentStep?.arguments.type) {
-      if (currentStep.arguments.type === 'inputTimeSeries') {
+      if (currentStep.arguments.type === StepInputType.InputTimeSeries) {
         clonedCalculation.inputTimeSeries =
           clonedCalculation.inputTimeSeries.filter(
             (ts) => ts.type !== currentStep.arguments.value
           );
       }
 
-      if (currentStep.arguments.type === 'outputTimeSeries') {
+      if (currentStep.arguments.type === StepInputType.OutputTimeSeries) {
         clonedCalculation.outputTimeSeries =
           clonedCalculation.outputTimeSeries.filter(
             (ts) => ts.type !== currentStep.arguments.value
           );
       }
 
-      if (currentStep.arguments.type === 'inputConstant') {
+      if (currentStep.arguments.type === StepInputType.InputConstant) {
         clonedCalculation.inputConstants =
           clonedCalculation.inputConstants.filter(
             (inputConstant) =>

@@ -10,6 +10,8 @@ import type {
 
 import { getScheduleRepeat } from '../../../pages/CalculationConfiguration/utils';
 
+import { StepInputType } from './Commands/Fields/InputType';
+
 type ValueOf<T> = T[keyof T];
 type StepTypes = ValueOf<Pick<CalculationStep, 'type'>>;
 
@@ -18,7 +20,9 @@ const isYupValidationError = (value?: unknown): value is ValidationError =>
 
 const stepMap = {
   Set: {
-    type: Yup.string().oneOf(['inputTimeSeries', 'inputConstant']).required(),
+    type: Yup.string()
+      .oneOf([StepInputType.InputTimeSeries, StepInputType.InputConstant])
+      .required(),
     value: Yup.string().required(),
   },
   Get: {

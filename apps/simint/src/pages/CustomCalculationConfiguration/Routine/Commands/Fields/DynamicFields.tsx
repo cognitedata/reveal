@@ -16,6 +16,8 @@ import {
   getInputOutputIndex,
 } from '../utils';
 
+import { StepInputType } from './InputType';
+
 type DynamicFieldsProps = {
   dynamicStepFields: StepFields;
 } & ConfigurationFieldProps;
@@ -91,7 +93,7 @@ export function DynamicFields({
                */
               if (
                 step.type === 'Set' &&
-                step.arguments.type === 'inputConstant'
+                step.arguments.type === StepInputType.InputConstant
               ) {
                 // concatenate all values from all dynamic fields
                 const fieldValues = dynamicFields.map((field) => {
