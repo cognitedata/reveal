@@ -92,9 +92,9 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         }
       ]);
 
-      cameraNavigation.fitCameraToModelNode(
+      void cameraNavigation.fitCameraToModelNode(
         nodeData.intersection.model.revisionId,
-        nodeData.assetMappingResult.cadNode.id,
+        nodeData.assetMappingResult.cadNode.id
       );
     } else {
       setStylingGroups([]);
