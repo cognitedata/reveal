@@ -1091,7 +1091,7 @@ export const useListAllRules = <TData = Responses.RuleListResponseWithCursor>(
   );
 };
 
-export type DataSourceValidationPathParams = {
+export type DataSourceValidationRunPathParams = {
   /**
    * The project name.
    *
@@ -1104,30 +1104,30 @@ export type DataSourceValidationPathParams = {
   dataSourceId?: string;
 };
 
-export type DataSourceValidationError = Fetcher.ErrorWrapper<{
+export type DataSourceValidationRunError = Fetcher.ErrorWrapper<{
   status: 400;
   payload: Responses.ErrorResponse;
 }>;
 
-export type DataSourceValidationVariables = {
+export type DataSourceValidationRunVariables = {
   body: Schemas.DataSourceValidationRequest;
-  pathParams?: DataSourceValidationPathParams;
+  pathParams?: DataSourceValidationRunPathParams;
 } & DataQualityContext['fetcherOptions'];
 
 /**
  * A validation job will be started on the current data source and all its rules.
  */
-export const fetchDataSourceValidation = (
-  variables: DataSourceValidationVariables,
+export const fetchDataSourceValidationRun = (
+  variables: DataSourceValidationRunVariables,
   signal?: AbortSignal
 ) =>
   dataQualityFetch<
     undefined,
-    DataSourceValidationError,
+    DataSourceValidationRunError,
     Schemas.DataSourceValidationRequest,
     {},
     {},
-    DataSourceValidationPathParams
+    DataSourceValidationRunPathParams
   >({
     url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/validation/run',
     method: 'post',
@@ -1138,12 +1138,12 @@ export const fetchDataSourceValidation = (
 /**
  * A validation job will be started on the current data source and all its rules.
  */
-export const useDataSourceValidation = (
+export const useDataSourceValidationRun = (
   options?: Omit<
     reactQuery.UseMutationOptions<
       undefined,
-      DataSourceValidationError,
-      DataSourceValidationVariables
+      DataSourceValidationRunError,
+      DataSourceValidationRunVariables
     >,
     'mutationFn'
   >
@@ -1151,12 +1151,468 @@ export const useDataSourceValidation = (
   const { fetcherOptions } = useDataQualityContext();
   return reactQuery.useMutation<
     undefined,
-    DataSourceValidationError,
-    DataSourceValidationVariables
+    DataSourceValidationRunError,
+    DataSourceValidationRunVariables
   >(
-    (variables: DataSourceValidationVariables) =>
-      fetchDataSourceValidation({ ...fetcherOptions, ...variables }),
+    (variables: DataSourceValidationRunVariables) =>
+      fetchDataSourceValidationRun({ ...fetcherOptions, ...variables }),
     options
+  );
+};
+
+export type ListDataScopesPathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+  /**
+   * The external id of the data source.
+   */
+  dataSourceId?: string;
+};
+
+export type ListDataScopesQueryParams = {
+  /**
+   * Cursor for paging through results.
+   *
+   * @example 4zj0Vy2fo0NtNMb229mI9r1V3YG5NBL752kQz1cKtwo
+   */
+  cursor?: string;
+};
+
+export type ListDataScopesError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: Responses.ErrorResponse;
+}>;
+
+export type ListDataScopesVariables = {
+  pathParams?: ListDataScopesPathParams;
+  queryParams?: ListDataScopesQueryParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * List data scopes defined in the current data source.
+ */
+export const fetchListDataScopes = (
+  variables: ListDataScopesVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    Responses.DataScopeListResponseWithCursor,
+    ListDataScopesError,
+    undefined,
+    {},
+    ListDataScopesQueryParams,
+    ListDataScopesPathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes',
+    method: 'get',
+    ...variables,
+    signal,
+  });
+
+/**
+ * List data scopes defined in the current data source.
+ */
+export const useListDataScopes = <
+  TData = Responses.DataScopeListResponseWithCursor
+>(
+  variables: ListDataScopesVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      Responses.DataScopeListResponseWithCursor,
+      ListDataScopesError,
+      TData
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } =
+    useDataQualityContext(options);
+  return reactQuery.useQuery<
+    Responses.DataScopeListResponseWithCursor,
+    ListDataScopesError,
+    TData
+  >(
+    queryKeyFn({
+      path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes',
+      operationId: 'listDataScopes',
+      variables,
+    }),
+    ({ signal }) =>
+      fetchListDataScopes({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions,
+    }
+  );
+};
+
+export type CreateDataScopesPathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+  /**
+   * The external id of the data source.
+   */
+  dataSourceId?: string;
+};
+
+export type CreateDataScopesError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: Responses.ErrorResponse;
+    }
+  | {
+      status: 409;
+      payload: Schemas.UpsertConflict;
+    }
+>;
+
+export type CreateDataScopesVariables = {
+  body: Schemas.DataScopeCreateRequest;
+  pathParams?: CreateDataScopesPathParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * Create a set of new data scopes.
+ */
+export const fetchCreateDataScopes = (
+  variables: CreateDataScopesVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    Responses.DataScopeListResponse,
+    CreateDataScopesError,
+    Schemas.DataScopeCreateRequest,
+    {},
+    {},
+    CreateDataScopesPathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes',
+    method: 'post',
+    ...variables,
+    signal,
+  });
+
+/**
+ * Create a set of new data scopes.
+ */
+export const useCreateDataScopes = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Responses.DataScopeListResponse,
+      CreateDataScopesError,
+      CreateDataScopesVariables
+    >,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useDataQualityContext();
+  return reactQuery.useMutation<
+    Responses.DataScopeListResponse,
+    CreateDataScopesError,
+    CreateDataScopesVariables
+  >(
+    (variables: CreateDataScopesVariables) =>
+      fetchCreateDataScopes({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type UpdateDataScopesPathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+  /**
+   * The external id of the data source.
+   */
+  dataSourceId?: string;
+};
+
+export type UpdateDataScopesError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: Responses.ErrorResponse;
+}>;
+
+export type UpdateDataScopesVariables = {
+  body: Schemas.DataScopeUpdateRequest;
+  pathParams?: UpdateDataScopesPathParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * Update the properties of a set of data scopes
+ */
+export const fetchUpdateDataScopes = (
+  variables: UpdateDataScopesVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    Responses.DataScopeListResponse,
+    UpdateDataScopesError,
+    Schemas.DataScopeUpdateRequest,
+    {},
+    {},
+    UpdateDataScopesPathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes/update',
+    method: 'post',
+    ...variables,
+    signal,
+  });
+
+/**
+ * Update the properties of a set of data scopes
+ */
+export const useUpdateDataScopes = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Responses.DataScopeListResponse,
+      UpdateDataScopesError,
+      UpdateDataScopesVariables
+    >,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useDataQualityContext();
+  return reactQuery.useMutation<
+    Responses.DataScopeListResponse,
+    UpdateDataScopesError,
+    UpdateDataScopesVariables
+  >(
+    (variables: UpdateDataScopesVariables) =>
+      fetchUpdateDataScopes({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type ListByIdsDataScopesPathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+};
+
+export type ListByIdsDataScopesError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: Responses.ErrorResponse;
+}>;
+
+export type ListByIdsDataScopesVariables = {
+  body: Schemas.DataScopeListIdsRequest;
+  pathParams?: ListByIdsDataScopesPathParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * Retrieve up to 100 data scopes by specifying their ids.
+ */
+export const fetchListByIdsDataScopes = (
+  variables: ListByIdsDataScopesVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    Responses.DataScopeListResponse,
+    ListByIdsDataScopesError,
+    Schemas.DataScopeListIdsRequest,
+    {},
+    {},
+    ListByIdsDataScopesPathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSource}/datascopes/byids',
+    method: 'post',
+    ...variables,
+    signal,
+  });
+
+/**
+ * Retrieve up to 100 data scopes by specifying their ids.
+ */
+export const useListByIdsDataScopes = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Responses.DataScopeListResponse,
+      ListByIdsDataScopesError,
+      ListByIdsDataScopesVariables
+    >,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useDataQualityContext();
+  return reactQuery.useMutation<
+    Responses.DataScopeListResponse,
+    ListByIdsDataScopesError,
+    ListByIdsDataScopesVariables
+  >(
+    (variables: ListByIdsDataScopesVariables) =>
+      fetchListByIdsDataScopes({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type DeleteDataScopesPathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+  /**
+   * The external id of the data source.
+   */
+  dataSourceId?: string;
+};
+
+export type DeleteDataScopesError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: Responses.ErrorResponse;
+}>;
+
+export type DeleteDataScopesVariables = {
+  body: Schemas.DataScopeListIdsRequest;
+  pathParams?: DeleteDataScopesPathParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * Delete one or more data scopes
+ */
+export const fetchDeleteDataScopes = (
+  variables: DeleteDataScopesVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    Responses.DataScopeListResponse,
+    DeleteDataScopesError,
+    Schemas.DataScopeListIdsRequest,
+    {},
+    {},
+    DeleteDataScopesPathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes/delete',
+    method: 'post',
+    ...variables,
+    signal,
+  });
+
+/**
+ * Delete one or more data scopes
+ */
+export const useDeleteDataScopes = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Responses.DataScopeListResponse,
+      DeleteDataScopesError,
+      DeleteDataScopesVariables
+    >,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useDataQualityContext();
+  return reactQuery.useMutation<
+    Responses.DataScopeListResponse,
+    DeleteDataScopesError,
+    DeleteDataScopesVariables
+  >(
+    (variables: DeleteDataScopesVariables) =>
+      fetchDeleteDataScopes({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type ListLatestRuleRunsPathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+  /**
+   * The external id of the data source.
+   */
+  dataSourceId?: string;
+};
+
+export type ListLatestRuleRunsQueryParams = {
+  /**
+   * Cursor for paging through results.
+   *
+   * @example 4zj0Vy2fo0NtNMb229mI9r1V3YG5NBL752kQz1cKtwo
+   */
+  cursor?: string;
+};
+
+export type ListLatestRuleRunsError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: Responses.ErrorResponse;
+}>;
+
+export type ListLatestRuleRunsVariables = {
+  pathParams?: ListLatestRuleRunsPathParams;
+  queryParams?: ListLatestRuleRunsQueryParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * List the latest rule runs for each rule defined in the current data source.
+ */
+export const fetchListLatestRuleRuns = (
+  variables: ListLatestRuleRunsVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    Responses.RuleRunListResponse,
+    ListLatestRuleRunsError,
+    undefined,
+    {},
+    ListLatestRuleRunsQueryParams,
+    ListLatestRuleRunsPathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/ruleruns/latest',
+    method: 'get',
+    ...variables,
+    signal,
+  });
+
+/**
+ * List the latest rule runs for each rule defined in the current data source.
+ */
+export const useListLatestRuleRuns = <TData = Responses.RuleRunListResponse>(
+  variables: ListLatestRuleRunsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      Responses.RuleRunListResponse,
+      ListLatestRuleRunsError,
+      TData
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } =
+    useDataQualityContext(options);
+  return reactQuery.useQuery<
+    Responses.RuleRunListResponse,
+    ListLatestRuleRunsError,
+    TData
+  >(
+    queryKeyFn({
+      path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/ruleruns/latest',
+      operationId: 'listLatestRuleRuns',
+      variables,
+    }),
+    ({ signal }) =>
+      fetchListLatestRuleRuns({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions,
+    }
   );
 };
 
@@ -1185,4 +1641,14 @@ export type QueryOperation =
       path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rules';
       operationId: 'listAllRules';
       variables: ListAllRulesVariables;
+    }
+  | {
+      path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes';
+      operationId: 'listDataScopes';
+      variables: ListDataScopesVariables;
+    }
+  | {
+      path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/ruleruns/latest';
+      operationId: 'listLatestRuleRuns';
+      variables: ListLatestRuleRunsVariables;
     };

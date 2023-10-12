@@ -3,26 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@entity-matching-app/common';
-import {
-  PAGINATION_SETTINGS,
-  SOURCE_TABLE_QUERY_KEY,
-} from '@entity-matching-app/common/constants';
-import ResourceCount from '@entity-matching-app/components/resource-count';
-import Step from '@entity-matching-app/components/step';
-import {
-  useAllDataSets,
-  useDataSets,
-} from '@entity-matching-app/hooks/datasets';
-import {
-  Pipeline,
-  useUpdatePipeline,
-} from '@entity-matching-app/hooks/entity-matching-pipelines';
-import {
-  API,
-  PipelineSourceType,
-  pipelineSourceTypeToSourceType,
-} from '@entity-matching-app/types/api';
 import { Select } from 'antd';
 import { TableRowSelection } from 'antd/lib/table/interface';
 
@@ -39,6 +19,24 @@ import {
   toast,
 } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
+
+import { useTranslation } from '../../../../common';
+import {
+  PAGINATION_SETTINGS,
+  SOURCE_TABLE_QUERY_KEY,
+} from '../../../../common/constants';
+import ResourceCount from '../../../../components/resource-count';
+import Step from '../../../../components/step';
+import { useAllDataSets, useDataSets } from '../../../../hooks/datasets';
+import {
+  Pipeline,
+  useUpdatePipeline,
+} from '../../../../hooks/entity-matching-pipelines';
+import {
+  API,
+  PipelineSourceType,
+  pipelineSourceTypeToSourceType,
+} from '../../../../types/api';
 
 const { Option } = Select;
 

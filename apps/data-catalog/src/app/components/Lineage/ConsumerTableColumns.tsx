@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
-import { useTranslation } from '@data-catalog-app/common/i18n';
-
+import { useTranslation } from '../../common/i18n';
 import { CogsTableCellRenderer, Consumer } from '../../utils/types';
 
 const LinksUl = styled.ul`

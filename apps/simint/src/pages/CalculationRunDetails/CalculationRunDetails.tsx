@@ -3,16 +3,6 @@ import { useEffect, useMemo, useReducer } from 'react';
 import { Link, useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { CalculationResultChart } from '@simint-app/components/charts/CalculationResultChart';
-import { CalculationRunTypeIndicator } from '@simint-app/components/models/CalculationList/CalculationRunTypeIndicator';
-import { CalculationStatusIndicator } from '@simint-app/components/models/CalculationList/CalculationStatusIndicator';
-import { CalculationTimeLabel } from '@simint-app/components/models/CalculationList/CalculationTimeLabel';
-import type { ValueUnitType } from '@simint-app/components/shared/PropertyGrid';
-import { ValueUnitGrid } from '@simint-app/components/shared/PropertyGrid';
-import type { AppLocationGenerics } from '@simint-app/routes';
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
-import { recordsToDsv } from '@simint-app/utils/stringUtils';
 import { ParentSizeModern } from '@visx/responsive';
 import styled from 'styled-components/macro';
 
@@ -31,6 +21,17 @@ import type {
   DefinitionMap,
 } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetDefinitionsQuery } from '@cognite/simconfig-api-sdk/rtk';
+
+import { CalculationResultChart } from '../../components/charts/CalculationResultChart';
+import { CalculationRunTypeIndicator } from '../../components/models/CalculationList/CalculationRunTypeIndicator';
+import { CalculationStatusIndicator } from '../../components/models/CalculationList/CalculationStatusIndicator';
+import { CalculationTimeLabel } from '../../components/models/CalculationList/CalculationTimeLabel';
+import type { ValueUnitType } from '../../components/shared/PropertyGrid';
+import { ValueUnitGrid } from '../../components/shared/PropertyGrid';
+import type { AppLocationGenerics } from '../../routes';
+import { selectProject } from '../../store/simconfigApiProperties/selectors';
+import { createCdfLink } from '../../utils/createCdfLink';
+import { recordsToDsv } from '../../utils/stringUtils';
 
 import { calculationSchema } from './constants';
 

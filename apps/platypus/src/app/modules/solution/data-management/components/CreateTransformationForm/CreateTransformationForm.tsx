@@ -1,7 +1,11 @@
-import { EditableChip } from '@platypus-app/components/EditableChip';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useMemo } from 'react';
 
 import { Input, OptionType, SegmentedControl, Select } from '@cognite/cogs.js';
+
+import { EditableChip } from '../../../../../components/EditableChip';
+import { getContainer } from '../../../../../GlobalStyles';
+import { useDataSets } from '../../../../../hooks/useDataSets';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 import { Column, Label, Row } from './elements';
 
@@ -18,6 +22,8 @@ export interface CreateTransformationFormProps {
   onTransformationTypeChange: (value: TransformationType) => void;
   relationships?: Option[];
   selectedRelationship?: Option;
+  selectedDataSet?: number;
+  onDataSetChange?: (dataSet?: number) => void;
   transformationType: TransformationType;
 }
 
@@ -25,6 +31,14 @@ export const CreateTransformationForm = (
   props: CreateTransformationFormProps
 ) => {
   const { t } = useTranslation('CreateTransformationForm');
+  const { data: dataSets = [] } = useDataSets();
+
+  const dataSetsOptions = useMemo(() => {
+    return dataSets.map((el) => ({
+      value: el.id,
+      label: el.name || el.externalId || `${el.id}`,
+    }));
+  }, [dataSets]);
 
   return (
     <>
@@ -53,6 +67,26 @@ export const CreateTransformationForm = (
             value={props.id}
             isLocked
           ></EditableChip>
+        </Column>
+      </Row>
+      <Row>
+        <Column>
+          <Label htmlFor="nameInput">
+            {t(
+              'create_transformation_modal_data_set_label',
+              'Data set (optional)'
+            )}
+          </Label>
+          <Select
+            menuPortalTarget={getContainer()}
+            value={dataSetsOptions.find(
+              (el) => el.value === props.selectedDataSet
+            )}
+            options={dataSetsOptions}
+            onChange={(val?: { value: number }) =>
+              props.onDataSetChange?.(val?.value)
+            }
+          />
         </Column>
       </Row>
 
@@ -93,9 +127,18 @@ export const CreateTransformationForm = (
                   )}
                 </Label>
                 <Select
+                  menuPortalTarget={getContainer()}
                   value={props.selectedRelationship}
                   options={props.relationships}
                   onChange={props.onRelationshipChange}
+                  placeholderElement={
+                    <span>
+                      {t(
+                        'create_transformation_modal_relationshispan_placeholder',
+                        'Select relationship'
+                      )}
+                    </span>
+                  }
                 />
               </>
             )}

@@ -38,6 +38,7 @@ export type CheckboxSelectProps = {
   onSearchInputChange?: (newValue: string) => void;
   isLoading?: boolean;
   menuProps?: MenuProps;
+  submenuOpenDelay?: number;
 } & WidthProps;
 
 export const CheckboxSelect = ({
@@ -52,6 +53,7 @@ export const CheckboxSelect = ({
   selection: customSelection,
   useCustomMetadataValuesQuery,
   width,
+  submenuOpenDelay,
 }: CheckboxSelectProps) => {
   const { t } = useTranslation();
 
@@ -103,6 +105,7 @@ export const CheckboxSelect = ({
             )
           }
           enableSorting={enableSorting}
+          submenuOpenDelay={submenuOpenDelay}
           {...menuProps}
         />
       }

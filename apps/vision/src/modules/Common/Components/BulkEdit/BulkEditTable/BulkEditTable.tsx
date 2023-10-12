@@ -3,11 +3,11 @@ import ReactBaseTable from 'react-base-table';
 
 import styled from 'styled-components';
 
-import { TableWrapper } from '@vision/modules/Common/Components/FileTable/FileTableWrapper';
-import { StringHeaderRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
-import { StringRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringRenderer';
-import { CellRenderer } from '@vision/modules/Common/types';
-import { AnnotationFilterType } from '@vision/modules/FilterSidePanel/types';
+import { AnnotationFilterType } from '../../../../FilterSidePanel/types';
+import { StringHeaderRenderer } from '../../../Containers/FileTableRenderers/StringHeaderRenderer';
+import { StringRenderer } from '../../../Containers/FileTableRenderers/StringRenderer';
+import { CellRenderer } from '../../../types';
+import { TableWrapper } from '../../FileTable/FileTableWrapper';
 
 export type BulkEditTableDataType = {
   name: string;

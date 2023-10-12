@@ -5,12 +5,10 @@ import {
   FileTable,
   FileViewSwitcher,
 } from '@data-exploration/containers';
-import {
-  SelectableItemsProps,
-  ResourceItem,
-} from '@data-exploration-components/types';
 
 import { FileInfo } from '@cognite/sdk';
+
+import { ResourceItem, SelectableItemsProps } from '../../types';
 
 import {
   FileSwitcherWrapper,

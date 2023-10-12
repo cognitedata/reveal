@@ -4,30 +4,23 @@ import styled from 'styled-components';
 
 import { TableRowSelection } from 'antd/lib/table/interface';
 
-import MatchInfo from '@entity-matching-app/components/MatchInfo';
-
-import { useTranslation } from '@entity-matching-app/common';
-
-import ExpandedMatch from '@entity-matching-app/components/pipeline-run-results-table/ExpandedMatch';
-
-import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
-
-import { ExpandButton } from '@entity-matching-app/components/pipeline-run-results-table/GroupedResultsTable';
-import ResourceCell from '@entity-matching-app/components/pipeline-run-results-table/ResourceCell';
-
 import { ColumnType, Table } from '@cognite/cdf-utilities';
-
-import { EMModel } from '@entity-matching-app/hooks/entity-matching-models';
-
 import { Icon, RangeSlider } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../common';
+import { PAGINATION_SETTINGS } from '../../common/constants';
+import { EMModel } from '../../hooks/entity-matching-models';
 import {
   Match,
   Prediction,
   PredictionObject,
-} from '@entity-matching-app/hooks/entity-matching-predictions';
-import { SourceType } from '@entity-matching-app/types/api';
-import { formatPredictionObject } from '@entity-matching-app/utils';
+} from '../../hooks/entity-matching-predictions';
+import { SourceType } from '../../types/api';
+import { formatPredictionObject } from '../../utils';
+import MatchInfo from '../MatchInfo';
+import ExpandedMatch from '../pipeline-run-results-table/ExpandedMatch';
+import { ExpandButton } from '../pipeline-run-results-table/GroupedResultsTable';
+import ResourceCell from '../pipeline-run-results-table/ResourceCell';
 
 import ConfidenceScore from './Confidence';
 
@@ -73,7 +66,7 @@ const QuickMatchResultsTable = ({
     () =>
       predictions
         .filter((p) =>
-          scoreFilter.length == 2
+          scoreFilter.length === 2
             ? 100 * p.match.score >= scoreFilter[0] &&
               100 * p.match.score <= scoreFilter[1]
             : true
@@ -222,6 +215,7 @@ const QuickMatchResultsTable = ({
         ...rowSelection,
       }}
       columns={columns}
+      defaultSort={['score', 'descend']}
       emptyContent={undefined}
       appendTooltipTo={undefined}
       dataSource={dataSource}

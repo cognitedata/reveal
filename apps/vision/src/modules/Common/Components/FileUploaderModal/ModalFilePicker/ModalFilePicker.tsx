@@ -2,18 +2,15 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { margin } from '@vision/cogs-variables';
-import * as UPLODER_CONST from '@vision/constants/UploderConstants';
-import { VALID_MIME_TYPES } from '@vision/constants/validMimeTypes';
-import { FileDropzone } from '@vision/modules/Common/Components/FileUploader/FilePicker/FileDropzone';
-import { FilePickerHeadless } from '@vision/modules/Common/Components/FileUploader/FilePicker/FilePickerHeadless';
-import DocumentsImg from '@vision/modules/Common/Components/FileUploader/FilePicker/img/Documents.svg';
-import {
-  CogsFile,
-  CogsFileInfo,
-} from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
-
 import { Button, Detail, Title } from '@cognite/cogs.js';
+
+import { margin } from '../../../../../cogs-variables';
+import * as UPLODER_CONST from '../../../../../constants/UploderConstants';
+import { VALID_MIME_TYPES } from '../../../../../constants/validMimeTypes';
+import { FileDropzone } from '../../FileUploader/FilePicker/FileDropzone';
+import { FilePickerHeadless } from '../../FileUploader/FilePicker/FilePickerHeadless';
+import DocumentsImg from '../../FileUploader/FilePicker/img/Documents.svg';
+import { CogsFile, CogsFileInfo } from '../../FileUploader/FilePicker/types';
 
 import { ModalFileList } from './ModalFileList';
 import { ModalFileUploadOption } from './ModalFileUploadOption';

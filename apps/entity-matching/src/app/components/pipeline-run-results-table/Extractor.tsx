@@ -1,10 +1,12 @@
+import styled from 'styled-components';
+
 import { Body, Flex } from '@cognite/cogs.js';
 
-import { EMPipelineRegexExtractor } from '@entity-matching-app/hooks/entity-matching-pipelines';
+import { ColoredExtractor } from '../../utils/colored-rules';
 
 type ExtractorProps = {
-  extractors: EMPipelineRegexExtractor[];
-  entitySetToRender: EMPipelineRegexExtractor['entitySet'];
+  extractors: ColoredExtractor[];
+  entitySetToRender: ColoredExtractor['entitySet'];
 };
 
 const Extractor = ({
@@ -23,7 +25,7 @@ const Extractor = ({
             <Body level={3} muted>
               {extractor.field}
             </Body>
-            <Body level={2}>{extractor.pattern}</Body>
+            <Pattern>{extractor.pattern}</Pattern>
           </Flex>
         ))}
       </Flex>
@@ -32,5 +34,11 @@ const Extractor = ({
 
   return <></>;
 };
+
+const Pattern = styled.div`
+  font-size: 1.2em;
+  font-weight: 500;
+  font-family: monospace;
+`;
 
 export default Extractor;

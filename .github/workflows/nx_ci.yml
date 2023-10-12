@@ -1,8 +1,6 @@
 name: NX - CI
 on:
   pull_request:
-    branches-ignore:
-      - release*
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -30,7 +28,11 @@ jobs:
         id: cache-node-modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          # any jobs using the cache need to use the same path since path is considered
+          # part of the key
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: cache-node-modules-
 
@@ -40,25 +42,19 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
-        with:
-          main-branch-name: ${{ github.base_ref }}
 
       - name: 'Get affected libs to build'
         id: affected-libs
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           projects: 'libs/**'
 
       - name: 'Get affected apps to build'
         id: affected-apps
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           projects: 'apps/**'
           exclude: '*shell'
 
@@ -66,41 +62,46 @@ jobs:
         id: affected-shell-apps
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           projects: '*shell'
 
       - name: 'Get affected projects for lint'
         id: affected-lint
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           target: 'lint'
 
       - name: 'Get affected projects for test'
         id: affected-test
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           target: 'test'
 
       - name: 'Get affected projects for e2e'
         id: affected-e2e
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           target: 'e2e'
+          # fusion-shell-e2e and platypus-cdf-cli run in their own jobs
+          # the other excluded apps need additional work to successfully run
+          exclude: 'fusion-shell, platypus-cdf-cli, data-exploration-e2e, platypus'
 
       - name: 'Get affected storybook projects to build'
         id: affected-storybook
         uses: './scripts/github-actions/nx-get-affected'
         with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
+          base: origin/${{ github.base_ref }}
           target: 'build-storybook'
+
+      - name: 'Get affected storybook projects to test'
+        id: affected-test-storybook
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: origin/${{ github.base_ref }}
+          target: 'test-storybook'
 
     outputs:
       affected-libs: ${{ steps.affected-libs.outputs.projects }}
@@ -113,6 +114,7 @@ jobs:
       affected-shell-apps: ${{ steps.affected-shell-apps.outputs.projects }}
       affected-e2e: ${{ steps.affected-e2e.outputs.projects }}
       affected-storybook: ${{ steps.affected-storybook.outputs.projects }}
+      affected-test-storybook: ${{ steps.affected-test-storybook.outputs.projects }}
 
   lint:
     name: 'Lint'
@@ -130,7 +132,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Lint
@@ -154,7 +158,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Test
@@ -164,7 +170,7 @@ jobs:
 
   build-libs:
     name: 'Build libs'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest-m
     needs: setup
     if: ${{ needs.setup.outputs.affected-libs != '' && toJson(fromJson(needs.setup.outputs.affected-libs)) != '[]' }}
     steps:
@@ -178,7 +184,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Build
@@ -206,7 +214,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Build
@@ -248,7 +258,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Get deploy environment
@@ -297,7 +309,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Build
@@ -320,10 +334,47 @@ jobs:
           destination: 'opint-pr-server/fusion-preview/storybook-${{matrix.project}}-${{github.event.number}}'
           parent: false
 
+  test-storybook:
+    name: Test storybook
+    runs-on: ubuntu-20.04
+    if: ${{ needs.setup.outputs.affected-test-storybook != '' && toJson(fromJson(needs.setup.outputs.affected-test-storybook)) != '[]' }}
+    needs: setup
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.setup.outputs.affected-test-storybook)  }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Install playwright
+        run: npx playwright install
+
+      - name: Test
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+          NODE_ENV: production
+        run: |
+          npx concurrently -k -s first -n "STORYBOOK,TEST" -c "magenta,blue" \
+            "npx nx run ${{ matrix.project }}:static-storybook" \
+            "npx wait-on http://localhost:4400 && npx nx run ${{ matrix.project }}:test-storybook"
+
   build-preview-comment:
     name: Comment build previews
     runs-on: ubuntu-20.04
     needs: [setup, build]
+    if: ${{ !cancelled() && !failure() && needs.build.result != 'failure' && needs.build.result != 'cancelled' && needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -332,7 +383,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Get comment message
@@ -363,6 +416,7 @@ jobs:
     name: Comment build shell previews
     runs-on: ubuntu-20.04
     needs: [setup, build-shell]
+    if: ${{ !cancelled() && !failure() && needs.build-shell.result != 'failure' && needs.build-shell.result != 'cancelled' && needs.setup.outputs.affected-shell-apps != '' && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -371,7 +425,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Get comment message
@@ -403,6 +459,7 @@ jobs:
     name: Comment storybook previews
     runs-on: ubuntu-20.04
     needs: [setup, build-storybook]
+    if: ${{ !cancelled() && !failure() && needs.build-storybook.result != 'failure' && needs.build-storybook.result != 'cancelled' && needs.setup.outputs.affected-storybook != '' && toJson(fromJson(needs.setup.outputs.affected-storybook)) != '[]' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -411,7 +468,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Get comment message
@@ -457,7 +516,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Cypress run
@@ -471,21 +532,80 @@ jobs:
         env:
           AFFECTED_APPS: ${{ needs.setup.outputs.affected-apps }}
           PULL_REQUEST_NUMBER: ${{ github.event.number }}
-          CLIENT_ID: ${{ secrets.DATA_EXPLORER_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.DATA_EXPLORER_CLIENT_SECRET }}
+          CYPRESS_FUSION_SHELL_E2E_AAD_PASSWORD: ${{ secrets.CYPRESS_FUSION_SHELL_E2E_AAD_PASSWORD }}
         # execute Cypress using a custom test command
         with:
           # let's make sure our tests pass on Chrome browser
           browser: chrome
           # Run the cypress tests
-          command: yarn nx run fusion-shell-e2e:e2e:ci
+          command: yarn nx run fusion-shell:e2e:ci --skip-nx-cache
 
       - name: Upload cypress artifacts
         uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: cypress-snapshots
-          path: dist/cypress/apps/fusion-shell-e2e
+          path: dist/cypress/apps/fusion-shell
+
+  e2e:
+    runs-on: ubuntu-latest-m
+    needs: setup
+    if: ${{ needs.setup.outputs.affected-e2e != '' && toJson(fromJson(needs.setup.outputs.affected-e2e)) != '[]' }}
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.setup.outputs.affected-e2e) }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4.2.2
+        id: cypress
+        env:
+          CLIENT_ID: ${{ secrets.DATA_EXPLORER_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.DATA_EXPLORER_CLIENT_SECRET }}
+
+          # used in simint
+          CLIENT_ID_CHARTS_AZUREDEV: ${{ secrets.CLIENT_ID_CHARTS_AZUREDEV }}
+          CLIENT_SECRET_CHARTS_AZUREDEV: ${{ secrets.CLIENT_SECRET_CHARTS_AZUREDEV }}
+
+          CLIENT_SECRET_AZURE_DATA_ENABLERS_TEST: ${{ secrets.CLIENT_SECRET_AZURE_DATA_ENABLERS_TEST }}
+
+          COG_E2E_AAD_USERNAME_1: ${{ secrets.COG_E2E_AAD_USERNAME_1 }}
+          COG_E2E_AAD_PASSWORD_1: ${{ secrets.COG_E2E_AAD_PASSWORD_1 }}
+
+          # needed for error with self signed certificate:
+          # https://github.com/cypress-io/github-action/issues/154#issuecomment-693719925
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
+
+        with:
+          browser: chrome
+          # start the shell and wait for it to be ready
+          start: yarn nx run fusion-shell:preview:production
+          wait-on: https://local.cognite.ai:4200
+          wait-on-timeout: 300
+          # run the e2e test target for the given project
+          command: yarn nx run ${{ matrix.project }}:e2e:ci
+
+      - name: Upload cypress artifacts
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ matrix.project }}-failed-cypress-tests-recordings
+          path: dist/cypress/apps/${{ matrix.project }}/videos
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
 
   ci-passed:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7

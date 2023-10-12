@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
+import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
 
 /**
  * Returns details of the current data model.

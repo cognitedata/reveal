@@ -2,23 +2,21 @@ import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@entity-matching-app/common';
-import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
-import {
-  EMPipelineGeneratedRule,
-  EMPipelineRun,
-  Pipeline,
-} from '@entity-matching-app/hooks/entity-matching-pipelines';
 import { TableRowSelection } from 'antd/lib/table/interface';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
 import { CogniteInternalId } from '@cognite/sdk';
 
+import { useTranslation } from '../../common';
+import { PAGINATION_SETTINGS } from '../../common/constants';
+import { EMPipelineRun, Pipeline } from '../../hooks/entity-matching-pipelines';
+import { ColoredRule, colorRule } from '../../utils/colored-rules';
+
 import ExpandedRule from './ExpandedRule';
 import Extractor from './Extractor';
 
-type GroupedResultsTableRecord = EMPipelineGeneratedRule & { key: string };
+type GroupedResultsTableRecord = ColoredRule & { key: string };
 
 type GroupedResultsTableColumnType = ColumnType<GroupedResultsTableRecord> & {
   title: string;
@@ -34,7 +32,7 @@ type GroupedResultsTableProps = {
 const GROUPED_RESULTS_TABLE_KEY_PATTERN_SEPARATOR =
   'GROUPED_RESULTS_TABLE_KEY_PATTERN_SEPARATOR';
 
-const getRuleKey = (rule: EMPipelineGeneratedRule) => {
+const getRuleKey = (rule: ColoredRule) => {
   return (
     rule.extractors
       ?.map(({ pattern }) => pattern)
@@ -59,8 +57,12 @@ const GroupedResultsTable = ({
     );
   };
 
+  const coloredRules = run.generatedRules?.map((rule) =>
+    colorRule(rule.conditions ?? [], rule.extractors ?? [], rule.matches ?? [])
+  );
+
   const selectedRuleKeys = useMemo(() => {
-    return run.generatedRules
+    return coloredRules
       ?.filter(({ matches }) =>
         matches?.every(({ source }) =>
           selectedSourceIds.includes(
@@ -69,7 +71,7 @@ const GroupedResultsTable = ({
         )
       )
       .map((rule) => getRuleKey(rule));
-  }, [selectedSourceIds, run]);
+  }, [selectedSourceIds, coloredRules]);
 
   const columns: GroupedResultsTableColumnType[] = useMemo(
     () => [
@@ -120,18 +122,18 @@ const GroupedResultsTable = ({
 
   const dataSource = useMemo(
     () =>
-      run.generatedRules?.map((rule) => ({
+      coloredRules?.map((rule) => ({
         ...rule,
         key: getRuleKey(rule),
       })) ?? [],
-    [run.generatedRules]
+    [coloredRules]
   );
 
   const rowSelection: TableRowSelection<GroupedResultsTableRecord> = {
     selectedRowKeys: selectedRuleKeys,
     onChange: (rowKeys, _, info) => {
       if (info.type === 'single') {
-        const rules = run.generatedRules?.filter((rule) =>
+        const rules = coloredRules?.filter((rule) =>
           rowKeys.includes(getRuleKey(rule))
         );
         setSelectedSourceIds(
@@ -160,6 +162,7 @@ const GroupedResultsTable = ({
   return (
     <Table<GroupedResultsTableRecord>
       columns={columns}
+      defaultSort={['numberOfMatches', 'descend']}
       dataSource={dataSource}
       emptyContent={undefined}
       appendTooltipTo={undefined}
@@ -170,7 +173,6 @@ const GroupedResultsTable = ({
         expandedRowRender: (record) =>
           !!record.matches && !!record.extractors && !!record.conditions ? (
             <ExpandedRule
-              conditions={record.conditions}
               extractors={record.extractors}
               matches={record.matches}
               selectedSourceIds={selectedSourceIds}

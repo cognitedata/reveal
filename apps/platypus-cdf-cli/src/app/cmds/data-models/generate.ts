@@ -13,15 +13,11 @@ import { rollup } from 'rollup';
 import typescript from 'rollup-plugin-typescript2';
 import { Arguments } from 'yargs';
 
-import {
-  CONSTANTS,
-  SupportedGraphQLGeneratorPlugins,
-} from '@cognite/platypus-cdf-cli/app/constants';
-import { getAuthToken } from '@cognite/platypus-cdf-cli/app/utils/auth';
-import { getProjectConfig } from '@cognite/platypus-cdf-cli/app/utils/config';
-
 import { CLICommand } from '../../common/cli-command';
+import { CONSTANTS, SupportedGraphQLGeneratorPlugins } from '../../constants';
 import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
+import { getAuthToken } from '../../utils/auth';
+import { getProjectConfig } from '../../utils/config';
 import { DEBUG as _DEBUG } from '../../utils/logger';
 
 import { getFdmV3MixerApiService } from './utils';

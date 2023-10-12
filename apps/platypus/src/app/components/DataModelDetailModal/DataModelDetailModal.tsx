@@ -5,8 +5,6 @@ import {
   DataModelNameValidator,
   Validator,
 } from '@platypus/platypus-core';
-import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import {
   Body,
@@ -17,8 +15,9 @@ import {
   Modal,
   Textarea,
 } from '@cognite/cogs.js';
-import { DataSet } from '@cognite/sdk';
 
+import { useDataModels } from '../../hooks/useDataModelActions';
+import { useTranslation } from '../../hooks/useTranslation';
 import { CreateNewSpaceModal } from '../CreateNewSpaceModal/CreateNewSpaceModal';
 import { DataModelLibrary } from '../DataModelLibrary/DataModelLibrary';
 import { DataModelLibraryItem } from '../DataModelLibrary/library';
@@ -31,9 +30,6 @@ export type DataModelDetailModalProps = {
   description: string;
   externalId: string;
   hasInputError?: boolean;
-  dataSets: DataSet[];
-  isDataSetsLoading?: boolean;
-  isDataSetsFetchError?: boolean;
   isExternalIdLocked?: boolean;
   isLoading?: boolean;
   isSpaceDisabled?: boolean;

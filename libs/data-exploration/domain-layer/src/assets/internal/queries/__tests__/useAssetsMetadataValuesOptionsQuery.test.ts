@@ -3,8 +3,11 @@ import { setupServer } from 'msw/node';
 
 import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
 
+import { getAssetsMetadataValues } from '../../../service/__fixtures/getAssetsMetadataValuesFixture';
 import { getMockAssetsAggregatePost } from '../../../service/__mocks';
 import { useAssetsSearchAggregateQuery } from '../useAssetsSearchAggregateQuery';
+
+const responseData = getAssetsMetadataValues();
 
 const mockServer = setupServer(getMockAssetsAggregatePost());
 describe('useAssetsMetadataValuesOptionsQuery', () => {
@@ -20,6 +23,8 @@ describe('useAssetsMetadataValuesOptionsQuery', () => {
       { wrapper }
     );
 
-    await waitFor(() => expect(result.current.data.count).toEqual(43));
+    await waitFor(() =>
+      expect(result.current.data.count).toEqual(responseData[0].count)
+    );
   });
 });

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 
 import styled from 'styled-components';
 
+import { trackEvent } from '@cognite/cdf-route-tracker';
 import { Icon } from '@cognite/cogs.js';
 import {
   getLoginFlowsByCluster,
@@ -13,6 +14,9 @@ import {
   useValidatedLegacyProjects,
   useIdpProjectsFromAllClusters,
   AADError,
+  usePca,
+  cogIdpInternalId,
+  usePublicCogniteIdpOrg,
 } from '@cognite/login-utils';
 
 import { useTranslation } from '../../common/i18n';
@@ -43,20 +47,68 @@ const SelectProject = (): JSX.Element => {
     (loginInfo?.idps.length === 1 ? loginInfo.idps[0] : {});
 
   const { data: idp, isFetched: isFetchedIdp } = useIdp(internalId);
+  const pca = usePca(idp?.appConfiguration.clientId, idp?.authority);
 
   const { data: legacyProjectsByCluster } = useValidatedLegacyProjects(true);
   const { invalidLegacyProjects = [], validLegacyProjects = [] } =
     legacyProjectsByCluster || {};
 
   const loginFlowsByCluster = useMemo(() => {
-    return getLoginFlowsByCluster(loginInfo, internalId, validLegacyProjects);
-  }, [internalId, loginInfo, validLegacyProjects]);
+    return getLoginFlowsByCluster(loginInfo, idp, validLegacyProjects);
+  }, [idp, loginInfo, validLegacyProjects]);
 
   const projectsFromAllClusters = useIdpProjectsFromAllClusters(
     Object.keys(loginFlowsByCluster),
     idp,
     { enabled: !!idp }
   );
+
+  // Track adoption of CogIdP.
+  // We are interested in three things:
+  //   1. Is the user's organization registered in CogIdP? (cogIdpMigrationStatus != NOT_IN_COG_IDP)
+  //   -> If so:
+  //   -> 2. What is the migration status of the user's organization? (cogIdpMigrationStatus)
+  //   -> 3. Is the user logged in with CogIdP? (isUsingCogIdp)
+  const { data: publicCogIdpOrg, isFetched: isPublicCogIdpOrgFetched } =
+    usePublicCogniteIdpOrg({ timeout: 30000 });
+  useEffect(() => {
+    if (isPublicCogIdpOrgFetched) {
+      const cogIdpMigrationStatus =
+        publicCogIdpOrg?.migrationStatus || 'NOT_IN_COG_IDP';
+      const isUsingCogIdp = internalId === cogIdpInternalId;
+      trackEvent('SelectProjectPageView', {
+        cogIdpMigrationStatus,
+        isUsingCogIdp,
+      });
+    }
+  }, [internalId, publicCogIdpOrg, isPublicCogIdpOrgFetched]);
+
+  useEffect(() => {
+    if (
+      projectsFromAllClusters.length > 0 &&
+      projectsFromAllClusters.every(
+        ({ error }) =>
+          !!error && (error as any)?.subError !== 'consent_required'
+      )
+    ) {
+      if (pca) {
+        const activeAccount = pca.getActiveAccount();
+        pca.logout({
+          account: activeAccount || undefined,
+          onRedirectNavigate: () => {
+            // By returning false, we skip the redirect to microsoft logout page
+            // because we don't want user to be actually logged out from the idp.
+            // Instead, we want @azure/msal-browser do the clean-up on local
+            // storage and session storage.
+            return false;
+          },
+        });
+        pca.setActiveAccount(null);
+      }
+      removeSelectedIdpDetails();
+      navigate('/');
+    }
+  }, [navigate, pca, projectsFromAllClusters]);
 
   useEffect(() => {
     if (!internalId) {

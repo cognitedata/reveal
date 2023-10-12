@@ -7,6 +7,7 @@ import { parse } from 'query-string';
 import { Icon } from '@cognite/cogs.js';
 import {
   getSelectedIdpDetails,
+  goToSelectProject,
   KeycloakResponse,
   saveSelectedIdpDetails,
   useKeycloakUserManager,
@@ -61,7 +62,7 @@ export default function SignInWithKeycloak({
 
   useEffect(() => {
     if (user) {
-      navigate('/select-project');
+      goToSelectProject(navigate);
     }
   }, [user, navigate]);
 

@@ -2,27 +2,21 @@ import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import MatchTypeOptionContent from '@entity-matching-app/components/pipeline-run-results-table/MatchTypeOptionContent';
-
 import { Select } from 'antd';
 
-import QuickMatchActionBar from '@entity-matching-app/components/qm-action-bar/QuickMatchActionbar';
-
-import { useTranslation } from '@entity-matching-app/common';
-
-import Step from '@entity-matching-app/components/step';
-import { EMModel } from '@entity-matching-app/hooks/entity-matching-models';
-
 import { Flex, Switch } from '@cognite/cogs.js';
-
-import { Prediction } from '@entity-matching-app/hooks/entity-matching-predictions';
-
 import { CogniteEvent, FileInfo, Sequence, Timeseries } from '@cognite/sdk';
 
-import { AppliedRule } from '@entity-matching-app/hooks/entity-matching-rules';
-import { useRetrieve } from '@entity-matching-app/hooks/retrieve';
-import { SourceType } from '@entity-matching-app/types/api';
-import { MatchOptionType, MatchType } from '@entity-matching-app/types/types';
+import { useTranslation } from '../../common';
+import { EMModel } from '../../hooks/entity-matching-models';
+import { Prediction } from '../../hooks/entity-matching-predictions';
+import { useRetrieve } from '../../hooks/retrieve';
+import { SourceType } from '../../types/api';
+import { MatchOptionType, MatchType } from '../../types/types';
+import { generateAppliedRules } from '../../utils/rules';
+import MatchTypeOptionContent from '../pipeline-run-results-table/MatchTypeOptionContent';
+import QuickMatchActionBar from '../qm-action-bar/QuickMatchActionbar';
+import Step from '../step';
 
 import AppliedRulesTable from './applied-rules-table';
 import QuickMatchResultsTable from './QuickMatchResultsTable';
@@ -33,7 +27,6 @@ type Props = {
   predictions: Prediction[];
   confirmedPredictions: number[];
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
-  appliedRules?: AppliedRule[];
 };
 export default function EntityMatchingResult({
   sourceType,
@@ -41,7 +34,6 @@ export default function EntityMatchingResult({
   predictions,
   confirmedPredictions,
   setConfirmedPredictions,
-  appliedRules,
 }: Props) {
   const { t } = useTranslation();
 
@@ -107,6 +99,14 @@ export default function EntityMatchingResult({
         }
       }) || [],
     [data, sourceType]
+  );
+
+  const appliedRules = useMemo(
+    () =>
+      rulesView && model?.matchFields
+        ? generateAppliedRules(model.matchFields, predictions)
+        : [],
+    [predictions, rulesView]
   );
 
   const diffMatched: any[] = useMemo(
@@ -205,24 +205,22 @@ export default function EntityMatchingResult({
     >
       <Container $isActionBarVisible={!!confirmedPredictions.length}>
         <Flex direction="column" gap={16}>
-          {appliedRules && (
-            <Flex gap={12} alignItems="center">
-              <Select
-                disabled={rulesView}
-                loading={isInitialLoading}
-                options={matchTypeOptions}
-                onChange={(value) => setSelectedMatchType(value)}
-                style={{ width: 300 }}
-                value={selectedMatchType}
-              />
-              <Switch
-                label={t('group-by-pattern')}
-                checked={rulesView}
-                onChange={() => setRulesView((enabled) => !enabled)}
-              />
-            </Flex>
-          )}
-          {rulesView && appliedRules ? (
+          <Flex gap={12} alignItems="center">
+            <Select
+              disabled={rulesView}
+              loading={isInitialLoading}
+              options={matchTypeOptions}
+              onChange={(value) => setSelectedMatchType(value)}
+              style={{ width: 300 }}
+              value={selectedMatchType}
+            />
+            <Switch
+              label={t('group-by-pattern')}
+              checked={rulesView}
+              onChange={() => setRulesView((enabled) => !enabled)}
+            />
+          </Flex>
+          {rulesView ? (
             <AppliedRulesTable
               appliedRules={appliedRules}
               predictions={predictions}

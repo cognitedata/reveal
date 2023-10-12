@@ -1,14 +1,16 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import { Chart } from '@charts-app/models/chart/types';
-import { updateSourceAxisForChart } from '@charts-app/models/chart/updates';
-import { selectedEventsAtom } from '@charts-app/models/event-results/atom';
-import { ChartEventResults } from '@charts-app/models/event-results/types';
-import { InteractionData } from '@charts-app/models/interactions/types';
-import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
-import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
 import { useRecoilValue } from 'recoil';
+
+import { Chart } from '@cognite/charts-lib';
+
+import { WorkflowState } from '../../models/calculation-results/types';
+import { updateSourceAxisForChart } from '../../models/chart/updates';
+import { selectedEventsAtom } from '../../models/event-results/atom';
+import { ChartEventResults } from '../../models/event-results/types';
+import { InteractionData } from '../../models/interactions/types';
+import { ScheduledCalculationsDataMap } from '../../models/scheduled-calculation-results/types';
+import { TimeseriesEntry } from '../../models/timeseries-results/types';
 
 import { ChartingContainer } from './elements';
 import PlotlyChart, { PlotNavigationUpdate } from './PlotlyChart';

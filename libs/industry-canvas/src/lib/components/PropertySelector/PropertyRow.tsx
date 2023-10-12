@@ -58,7 +58,10 @@ const PropertyRow = ({ property, index, onSelect }: PropertyRowProps) => {
             </ColumnContentContainer>
             {/* attaching the tooltip to document.body to not break the width of parent container */}
             <ColumnContentContainer>
-              <Tooltip content={property.value} appendTo={document.body}>
+              <Tooltip
+                content={String(property.value)}
+                appendTo={document.body}
+              >
                 <Body size="medium">{String(property.value)}</Body>
               </Tooltip>
             </ColumnContentContainer>

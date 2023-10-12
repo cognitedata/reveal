@@ -3,10 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { StorageProviderType } from '@platypus/platypus-core';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import GraphiQL from 'graphiql';
 import {
   buildClientSchema,
@@ -18,6 +14,10 @@ import {
 import { Checkbox, Icon } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { Spinner } from '../../../../components/Spinner/Spinner';
+import { TOKENS } from '../../../../di';
+import { useInjection } from '../../../../hooks/useInjection';
+import { useMixpanel } from '../../../../hooks/useMixpanel';
 import { GraphiqlStorageProvider } from '../utils/graphiqlStorageProvider';
 import graphQlQueryFetcher from '../utils/graphqlQueryFetcher';
 

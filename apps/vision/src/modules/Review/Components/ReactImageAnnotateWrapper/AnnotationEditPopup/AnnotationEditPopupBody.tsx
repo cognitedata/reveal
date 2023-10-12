@@ -2,9 +2,6 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { VisionAutoComplete } from '@vision/modules/Common/Components/VisionAutoComplete/VisionAutoComplete';
-import { PopupUIElementContainer } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/TitleContainer';
-
 import {
   Body,
   Col,
@@ -14,6 +11,9 @@ import {
   Title,
   Button,
 } from '@cognite/cogs.js';
+
+import { VisionAutoComplete } from '../../../../Common/Components/VisionAutoComplete/VisionAutoComplete';
+import { PopupUIElementContainer } from '../TitleContainer';
 
 export type BodyContainerMode = 'point' | 'shape';
 

@@ -1,18 +1,32 @@
 import { PropsWithChildren } from 'react';
 
-import { RuleSeverity } from '@data-quality/api/codegen';
+import {
+  A,
+  Body,
+  Chip,
+  ChipProps,
+  Flex,
+  Heading,
+  Icon,
+  Tooltip,
+} from '@cognite/cogs.js';
+import { LineChart } from '@cognite/plotting-components';
+import { Datapoints } from '@cognite/sdk/dist/src';
+
+import { ValidationDifference } from '..';
+import { RuleRunStatus, RuleSeverity } from '../../../../api/codegen';
+import {
+  chartConfig,
+  formatScoreDotTooltip,
+  getScoreChartData,
+} from '../../../../utils/charts';
 import {
   TimeSeriesType,
   getDatapointsById,
   getLastDatapointValue,
   getScoreValue,
   getTimeSeriesId,
-} from '@data-quality/utils/validationTimeseries';
-
-import { A, Body, Chip, Flex, Heading, Icon } from '@cognite/cogs.js';
-import { Datapoints } from '@cognite/sdk/dist/src';
-
-import { ValidationDifference } from '..';
+} from '../../../../utils/validationTimeseries';
 
 type NameCellProps = {
   onClick: VoidFunction;
@@ -21,6 +35,11 @@ type NameCellProps = {
 
 type SeverityCellProps = {
   severity: RuleSeverity;
+};
+
+type StatusCellProps = {
+  message?: string;
+  status: RuleRunStatus;
 };
 
 type ValidityCellProps = {
@@ -39,7 +58,7 @@ type ItemsCheckedCellProps = {
 
 type CellProps = {
   isLoading?: boolean;
-  value?: string | number;
+  value?: string | number | null;
 } & PropsWithChildren;
 
 export const NameCell = ({ onClick, ruleName }: NameCellProps) => {
@@ -51,18 +70,33 @@ export const NameCell = ({ onClick, ruleName }: NameCellProps) => {
 };
 
 export const SeverityCell = ({ severity }: SeverityCellProps) => {
-  switch (severity) {
-    case 'Critical':
-      return <Chip icon="Error" label={severity} type="danger" />;
-    case 'High':
-      return <Chip icon="Warning" label={severity} type="warning" />;
-    case 'Medium':
-      return <Chip label={severity} type="warning" />;
-    case 'Low':
-      return <Chip label={severity} type="neutral" />;
-    default:
-      return <Chip label={severity} />;
-  }
+  const severityType: Record<RuleSeverity, ChipProps['type']> = {
+    Critical: 'danger',
+    High: 'warning',
+    Medium: 'neutral',
+    Low: 'default',
+  };
+
+  return <Chip label={severity} size="small" type={severityType[severity]} />;
+};
+
+export const StatusCell = ({ message, status }: StatusCellProps) => {
+  const chipProps: Record<RuleRunStatus, ChipProps> = {
+    Error: { icon: 'Error', type: 'danger' },
+    InProgress: { icon: 'Loader' },
+    Success: { icon: 'CheckmarkAlternative', type: 'success' },
+  };
+  const tooltipMessages: Record<RuleRunStatus, string> = {
+    Error: message || 'Unknown error',
+    InProgress: 'Validation in progress',
+    Success: 'Validation succeeded',
+  };
+
+  return (
+    <Tooltip content={tooltipMessages[status]}>
+      <Chip size="small" {...chipProps[status]} />
+    </Tooltip>
+  );
 };
 
 export const ValidityCell = ({
@@ -86,6 +120,41 @@ export const ValidityCell = ({
   return (
     <Cell isLoading={loadingDatapoints} value={cellValue}>
       <ValidationDifference tsDatapoints={scoreDatapoints} showStaleState />
+    </Cell>
+  );
+};
+
+export const ValidityOverTimeCell = ({
+  datapoints,
+  dataSourceId,
+  loadingDatapoints,
+  ruleId,
+}: ValidityCellProps) => {
+  if (!dataSourceId) return <Cell />;
+
+  const timeSeriesIdScore = getTimeSeriesId(
+    TimeSeriesType.SCORE,
+    dataSourceId,
+    ruleId
+  );
+
+  const scoreDatapoints = getDatapointsById(datapoints, timeSeriesIdScore);
+  const noDatapoints = scoreDatapoints?.datapoints.length === 0;
+
+  if (noDatapoints) return <Cell />;
+
+  const dataScore = getScoreChartData(scoreDatapoints);
+
+  return (
+    <Cell isLoading={loadingDatapoints} value={null}>
+      <LineChart
+        config={chartConfig}
+        data={dataScore}
+        variant="small"
+        formatTooltipContent={formatScoreDotTooltip}
+        layout={{ showTickLabels: false }}
+        style={{ backgroundColor: 'transparent', height: 40, width: 180 }}
+      />
     </Cell>
   );
 };

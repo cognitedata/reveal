@@ -1,14 +1,14 @@
 import React from 'react';
 import { OptionsType, OptionTypeBase } from 'react-select';
 
-import { MultiSelect } from '@data-exploration-components/components';
-import { ResourceType } from '@data-exploration-components/types';
-
 import { Body, Tooltip } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
 
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { ResourceType } from '../../../../types';
+import { MultiSelect } from '../../../Select/MultiSelect';
 
 export const LabelFilter = ({
   resourceType,

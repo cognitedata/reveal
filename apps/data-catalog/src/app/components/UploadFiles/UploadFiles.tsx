@@ -2,10 +2,6 @@ import { Dispatch, SetStateAction, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { TranslationKeys, useTranslation } from '@data-catalog-app/common/i18n';
-import { ErrorMessageBox } from '@data-catalog-app/components/ErrorMessage/ErrorMessage';
-import { nameToAclTypeMap } from '@data-catalog-app/utils/shared';
-import { FileInfo } from '@data-catalog-app/utils/types';
 import { Upload } from 'antd';
 import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -15,6 +11,10 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button, Icon, Popconfirm, toast } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import { TranslationKeys, useTranslation } from '../../common/i18n';
+import { FileInfo, nameToAclTypeMap } from '../../utils';
+import { ErrorMessageBox } from '../ErrorMessage/ErrorMessage';
 
 interface UploadFileProps {
   setFileList: Dispatch<SetStateAction<FileInfo[]>>;

@@ -5,13 +5,13 @@ import styled from 'styled-components';
 import { Divider, Flex } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
-import { useFlagPointsOfInterestFeature } from '@data-exploration-app/hooks/flags';
 import { useTranslation } from '@data-exploration-lib/core';
 import {
   Revision3DWithIndex,
   Image360SiteData,
 } from '@data-exploration-lib/domain-layer';
 
+import { useFlagPointsOfInterestFeature } from '../../../hooks';
 import { ThreeDContext } from '../contexts/ThreeDContext';
 
 import PointsOfInterestDropdown from './Dropdowns/PointsOfInterestDropdown';

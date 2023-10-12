@@ -5,26 +5,22 @@ import { Props as SelectProps } from 'react-select';
 
 import styled from 'styled-components';
 
-import {
-  ParamsCustomModel,
-  VisionDetectionModelType,
-} from '@vision/api/vision/detectionModels/types';
+import { Select, Button } from '@cognite/cogs.js';
+
+import { VisionDetectionModelType } from '../../../api/vision/detectionModels/types';
 import {
   ColorsOCR,
   ColorsObjectDetection,
   ColorsTagDetection,
   ColorsPersonDetection,
-} from '@vision/constants/Colors';
-import * as customModelDetails from '@vision/modules/Process/Containers/ModelDetails/customModelDetails';
-import * as gaugeReaderDetails from '@vision/modules/Process/Containers/ModelDetails/gaugeReaderDetails';
-import * as objectDetectionModelDetails from '@vision/modules/Process/Containers/ModelDetails/ObjectDetectionModelDetails';
-import * as ocrModelDetails from '@vision/modules/Process/Containers/ModelDetails/OcrModelDetails';
-import * as peopleDetectionModelDetails from '@vision/modules/Process/Containers/ModelDetails/PeopleDetectionModelDetails';
-import * as tagDetectionModelDetails from '@vision/modules/Process/Containers/ModelDetails/TagDetectionModelDetails';
-import { BUILT_IN_MODEL_COUNT } from '@vision/modules/Process/store/slice';
-import { RootState } from '@vision/store/rootReducer';
-
-import { Select, Button } from '@cognite/cogs.js';
+} from '../../../constants/Colors';
+import { RootState } from '../../../store/rootReducer';
+import * as gaugeReaderDetails from '../Containers/ModelDetails/gaugeReaderDetails';
+import * as objectDetectionModelDetails from '../Containers/ModelDetails/ObjectDetectionModelDetails';
+import * as ocrModelDetails from '../Containers/ModelDetails/OcrModelDetails';
+import * as peopleDetectionModelDetails from '../Containers/ModelDetails/PeopleDetectionModelDetails';
+import * as tagDetectionModelDetails from '../Containers/ModelDetails/TagDetectionModelDetails';
+import { BUILT_IN_MODEL_COUNT } from '../store/slice';
 
 type SelectOption = {
   label: any;
@@ -45,18 +41,14 @@ type Props = Omit<
 export function DetectionModelSelect({
   value,
   onChange,
-  handleCustomModelCreate,
   handleOpenSettingsWindow,
-  disabledModelTypes,
   ...props
 }: Props) {
   // Remove the selected model(s) that are disabled.
   // For example; it could be that a custom model is selected but after page
   // refresh, custom models are disabled. This filter will make sure that the
   // disabled model type is unselected.
-  const enabledSelectedModels = value.filter(
-    (modelType) => !disabledModelTypes.includes(modelType)
-  );
+  const enabledSelectedModels = value;
   const [selectedOptionsCount, setSelectedOptionsCount] = useState<number>(
     enabledSelectedModels.length
   );
@@ -81,9 +73,7 @@ export function DetectionModelSelect({
   );
   // Same as before, but here we make sure that the disabled model type(s) are
   // not shown as option(s) to the user.
-  const enabledDetectionModels = availableDetectionModels.filter(
-    (item) => !disabledModelTypes.includes(item.type)
-  );
+  const enabledDetectionModels = availableDetectionModels;
   const detectionModelOptions: SelectOption[] = enabledDetectionModels.map(
     // eslint-disable-next-line consistent-return
     (item) => {
@@ -126,36 +116,9 @@ export function DetectionModelSelect({
             isSelectable: true,
             divider: availableDetectionModels.length < BUILT_IN_MODEL_COUNT,
           };
-        case VisionDetectionModelType.CustomModel:
-          return {
-            label: customModelDetails.badge({
-              modelName: (item.settings as ParamsCustomModel).modelName,
-              hideText: false,
-              disabled: !(item.settings as ParamsCustomModel).isValid,
-            }),
-            value: VisionDetectionModelType.CustomModel,
-            backgroundColor: ColorsObjectDetection.backgroundColor,
-            isSelectable: (item.settings as ParamsCustomModel).isValid,
-            divider: availableDetectionModels.length > BUILT_IN_MODEL_COUNT,
-          };
       }
     }
   );
-
-  const addCustomModelOption = {
-    label: (
-      <StyledButton
-        icon="AddLarge"
-        onClick={handleCustomModelCreate}
-        type="ghost"
-      >
-        Add custom model
-      </StyledButton>
-    ),
-    value: VisionDetectionModelType.CustomModel,
-    backgroundColor: '',
-    isSelectable: true,
-  };
 
   const openSettingsOption = {
     label: (
@@ -172,12 +135,7 @@ export function DetectionModelSelect({
     isSelectable: false,
   };
 
-  const options =
-    // Show create if custom model not already added and if it is enabled
-    detectionModelOptions.length > BUILT_IN_MODEL_COUNT ||
-    disabledModelTypes.includes(VisionDetectionModelType.CustomModel)
-      ? detectionModelOptions
-      : [...detectionModelOptions, addCustomModelOption];
+  const options = detectionModelOptions;
   options.push(openSettingsOption);
 
   const toOption = (modelType: VisionDetectionModelType): SelectOption => {

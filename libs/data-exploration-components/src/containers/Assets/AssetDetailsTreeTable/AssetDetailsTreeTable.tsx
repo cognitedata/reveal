@@ -9,10 +9,6 @@ import {
   useAssetsMetadataColumns,
   useRootPath,
 } from '@data-exploration/containers';
-import {
-  SelectableItemsProps,
-  TableStateProps,
-} from '@data-exploration-components/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
 import gt from 'lodash/gt';
@@ -29,6 +25,8 @@ import {
   useRootAssetsQuery,
   InternalAssetTreeData,
 } from '@data-exploration-lib/domain-layer';
+
+import { SelectableItemsProps, TableStateProps } from '../../../types';
 
 const visibleColumns = ['name', 'rootId'];
 
@@ -58,10 +56,12 @@ export const AssetDetailsTreeTable = ({
     }, [] as number[]);
   }, [rootExpanded]);
 
-  const { data: rootAssetTree } = useRootAssetsQuery(
-    rootExpandedKeys,
-    rootAssetId
-  );
+  const {
+    data: rootAssetTree,
+    isLoading,
+    hasNextPage,
+    fetchNextPage,
+  } = useRootAssetsQuery(rootExpandedKeys, rootAssetId);
 
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
@@ -146,7 +146,7 @@ export const AssetDetailsTreeTable = ({
   return (
     <Table<InternalAssetTreeData>
       id="asset-details-tree-table"
-      data={rootAssetTree || []}
+      data={rootAssetTree}
       columns={columns}
       enableExpanding
       selectedRows={selectedRows}
@@ -165,6 +165,10 @@ export const AssetDetailsTreeTable = ({
         setRootExpanded(expanded);
       }}
       onChangeSearchInput={setMetadataKeyQuery}
+      isDataLoading={isLoading}
+      hasNextPage={hasNextPage}
+      fetchMore={fetchNextPage}
+      showLoadButton={hasNextPage}
     />
   );
 };

@@ -4,23 +4,17 @@ import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Select } from 'antd';
-import { useTranslation } from '@entity-matching-app/common';
-import { SOURCE_TABLE_QUERY_KEY } from '@entity-matching-app/common/constants';
-
-import { DataSetSelect } from '@entity-matching-app/components/data-set-select';
 
 import { Flex, Icon, Body, IconType, InputExp, Switch } from '@cognite/cogs.js';
 
-import QuickMatchActionBar from '@entity-matching-app/components/qm-action-bar/QuickMatchActionbar';
-import ResourceCount from '@entity-matching-app/components/resource-count';
-import { useQuickMatchContext } from '@entity-matching-app/context/QuickMatchContext';
-import {
-  API,
-  RawSource,
-  SourceType,
-  SOURCE_TYPES,
-} from '@entity-matching-app/types/api';
-import { getAdvancedFilter } from '@entity-matching-app/utils';
+import { useTranslation } from '../../common';
+import { SOURCE_TABLE_QUERY_KEY } from '../../common/constants';
+import { useQuickMatchContext } from '../../context/QuickMatchContext';
+import { API, RawSource, SOURCE_TYPES, SourceType } from '../../types/api';
+import { getAdvancedFilter } from '../../utils';
+import { DataSetSelect } from '../data-set-select';
+import QuickMatchActionBar from '../qm-action-bar/QuickMatchActionbar';
+import ResourceCount from '../resource-count';
 
 import EventTable from './EventTable';
 import FileInfoTable from './FilesTable';

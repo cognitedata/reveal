@@ -6,6 +6,7 @@ import {
   PolylineAnnotation,
   RectangleAnnotation,
   TextAnnotation,
+  getSafeUfvNodeTypeForAnnotation,
 } from '@cognite/unified-file-viewer';
 import type { StickyAnnotation } from '@cognite/unified-file-viewer';
 
@@ -18,6 +19,7 @@ export const dtoCanvasAnnotationToCanvasAnnotation = (
   dtoCanvasAnnotation: DTOCanvasAnnotation
 ): CanvasAnnotation => {
   const { annotationType, properties, ...commonProps } = dtoCanvasAnnotation;
+  const safeType = getSafeUfvNodeTypeForAnnotation(annotationType);
   // Filter out null values from commonProps
   const filteredCommonProps: typeof commonProps = {
     ...pickBy(commonProps, (value) => value !== null),
@@ -25,7 +27,7 @@ export const dtoCanvasAnnotationToCanvasAnnotation = (
     externalId: dtoCanvasAnnotation.externalId,
   };
 
-  if (annotationType === AnnotationType.RECTANGLE) {
+  if (safeType === AnnotationType.RECTANGLE) {
     if (properties.x === undefined || properties.y === undefined) {
       throw new Error('x and y must be defined for rectangle annotations');
     }
@@ -45,7 +47,7 @@ export const dtoCanvasAnnotationToCanvasAnnotation = (
     };
   }
 
-  if (annotationType === AnnotationType.ELLIPSE) {
+  if (safeType === AnnotationType.ELLIPSE) {
     if (properties.x === undefined || properties.y === undefined) {
       throw new Error('x and y must be defined for ellipse annotations');
     }
@@ -62,7 +64,7 @@ export const dtoCanvasAnnotationToCanvasAnnotation = (
     };
   }
 
-  if (annotationType === AnnotationType.POLYLINE) {
+  if (safeType === AnnotationType.POLYLINE) {
     return {
       ...filteredCommonProps,
       type: AnnotationType.POLYLINE,
@@ -75,7 +77,7 @@ export const dtoCanvasAnnotationToCanvasAnnotation = (
     };
   }
 
-  if (annotationType === AnnotationType.TEXT) {
+  if (safeType === AnnotationType.TEXT) {
     if (properties.x === undefined || properties.y === undefined) {
       throw new Error('x and y must be defined for text annotations');
     }
@@ -97,7 +99,7 @@ export const dtoCanvasAnnotationToCanvasAnnotation = (
     };
   }
 
-  if (annotationType === AnnotationType.STICKY) {
+  if (safeType === AnnotationType.STICKY) {
     if (properties.x === undefined || properties.y === undefined) {
       throw new Error('x and y must be defined for sticky annotations');
     }
@@ -122,16 +124,20 @@ export const dtoCanvasAnnotationToCanvasAnnotation = (
     };
   }
 
-  if (annotationType === AnnotationType.IMAGE) {
+  if (safeType === undefined) {
+    throw new Error(`Unknown annotation type '${annotationType}' provided`);
+  }
+
+  if (safeType === AnnotationType.IMAGE) {
     throw new Error('Image annotation types are not supported yet');
   }
 
-  if (annotationType === AnnotationType.LABEL) {
+  if (safeType === AnnotationType.LABEL) {
     throw new Error('Label annotation types are not supported yet');
   }
 
   assertNever(
-    annotationType,
-    `Unknown container reference type '${annotationType}' was provided`
+    safeType,
+    `Unknown container reference type '${safeType}' was provided`
   );
 };

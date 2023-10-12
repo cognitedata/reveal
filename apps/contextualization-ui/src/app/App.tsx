@@ -5,7 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import styled from 'styled-components/macro';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
 
@@ -15,7 +15,7 @@ import AntStyles from './styles/Styles';
 
 function App() {
   const project = getProject();
-  const baseUrl = isUsingUnifiedSignin() ? `/cdf/${project}` : `/${project}`;
+  const baseUrl = `/${project}`;
   return (
     <AntStyles>
       <SDKProvider sdk={sdk}>

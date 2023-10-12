@@ -1,13 +1,7 @@
-import { getDummyImageObjectDetectionBoundingBoxAnnotation } from '@vision/__test-utils/getDummyAnnotations';
-import { initialState } from '@vision/modules/Common/store/annotation/slice';
-import {
-  clearAnnotationStates,
-  repopulateAnnotationState,
-} from '@vision/modules/Common/store/annotation/util';
-import {
-  VisionAnnotation,
-  VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
+import { getDummyImageObjectDetectionBoundingBoxAnnotation } from '../../../../../__test-utils/getDummyAnnotations';
+import { VisionAnnotation, VisionAnnotationDataType } from '../../../types';
+import { initialState } from '../slice';
+import { clearAnnotationStates, repopulateAnnotationState } from '../util';
 
 const mockState = {
   ...initialState,

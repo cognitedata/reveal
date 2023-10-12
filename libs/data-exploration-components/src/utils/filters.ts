@@ -1,7 +1,3 @@
-import {
-  ResourceType,
-  ResourceFilterProps,
-} from '@data-exploration-components/types';
 import get from 'lodash/get';
 import isBoolean from 'lodash/isBoolean';
 import isEmpty from 'lodash/isEmpty';
@@ -14,6 +10,8 @@ import {
   InternalSequenceFilters,
   InternalAssetFilters,
 } from '@data-exploration-lib/core';
+
+import { ResourceFilterProps, ResourceType } from '../types';
 
 export type FiltersWithResourceType = Required<ResourceFilterProps> & {
   resourceType: ResourceType;

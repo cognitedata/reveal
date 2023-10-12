@@ -1,20 +1,25 @@
-import { map } from 'lodash';
-
-import { sortAscending, sortDescending } from '../utils/sort';
 const LOAD_MORE_BUTTON_TEXT = 'Load More';
 
 const getTableById = (id: string) => {
   return cy.findAllByTestId(id);
 };
 
-const tableSholudBeVisible = (id: string) => {
+const tableShouldBeVisible = (id: string) => {
   return cy.getTableById(id).should('be.visible');
+};
+
+const tableContentShouldBeVisible = (id: string) => {
+  return cy.getTableById(id).findByTestId('table-body').should('be.visible');
+};
+
+const findByColumnName = (table: JQuery<HTMLElement>, columnName: string) => {
+  return cy.wrap(table).find(`[data-column-name="${columnName}"]`);
 };
 
 const clickSortColoumn = (table: JQuery<HTMLElement>, columnName: string) => {
   cy.wrap(table)
     .findAllByTestId('table-head')
-    .contains(columnName)
+    .containsExact(columnName)
     .parent()
     .find('button')
     .should('be.visible')
@@ -24,7 +29,6 @@ const clickSortColoumn = (table: JQuery<HTMLElement>, columnName: string) => {
 const getNumberOfRows = (table: JQuery<HTMLElement>) => {
   return cy
     .wrap(table)
-    .findAllByTestId('table-body')
     .findAllByTestId('table-row')
     .then((rows) => {
       return rows.length;
@@ -39,24 +43,32 @@ const clickLoadMoreButton = (table: JQuery<HTMLElement>) => {
     .click();
 };
 
-const getColomnValues = (table: JQuery<HTMLElement>, coloumnId: string) => {
+const getRowsWithColumnValues = (
+  table: JQuery<HTMLElement>,
+  columnName: string,
+  columnValue: string
+) => {
   return cy
     .wrap(table)
-    .findAllByTestId('table-body')
-    .findAllByTestId(coloumnId)
-    .then((cells) => {
-      return map(cells, 'innerText');
+    .findAllByTestId('table-row')
+    .findByColumnName(columnName)
+    .filter(`:contains(${columnValue})`);
+};
+
+const shouldAllRowsHaveValueInColumn = (
+  table: JQuery<HTMLElement>,
+  columnName: string,
+  columnValue: string
+) => {
+  cy.wrap(table)
+    .getNumberOfRows()
+    .then((numberOfTotalRows) => {
+      cy.wrap(table)
+        .getRowsWithColumnValues(columnName, columnValue)
+        .should('have.length', numberOfTotalRows);
     });
-};
 
-const shouldBeSortedAscending = (values: string[]) => {
-  const sortedValues = sortAscending(values);
-  expect(sortedValues).to.deep.equal(values);
-};
-
-const shouldBeSortedDescending = (values: string[]) => {
-  const sortedValues = sortDescending(values);
-  expect(sortedValues).to.deep.equal(values);
+  return cy.wrap(table);
 };
 
 const shouldLoadMore = (table: JQuery<HTMLElement>, requestAlias?: string) => {
@@ -82,42 +94,92 @@ const shouldLoadMore = (table: JQuery<HTMLElement>, requestAlias?: string) => {
     });
 };
 
+const selectColumn = (table: JQuery<HTMLElement>, columnName: string) => {
+  cy.wrap(table)
+    .find('[aria-label="Column Selection"]')
+    .as('column-toggle-button')
+    .click();
+
+  cy.wrap(table)
+    .findByTestId('column-toggle-menu')
+    .containsExact(columnName)
+    .scrollIntoView()
+    .should('be.visible')
+    .as(`column-${columnName}`)
+    .closest('label')
+    .find('input[type="checkbox"]')
+    .then((checkbox) => {
+      if (checkbox.is(':not(:checked)')) {
+        cy.log(`select column "${columnName}"`);
+        cy.get(`@column-${columnName}`).click();
+      } else {
+        cy.log(`"${columnName}" column is already selected`);
+      }
+    });
+
+  cy.log('close column toggle menu');
+  cy.get('@column-toggle-button').click();
+
+  return cy.wrap(table);
+};
+
 Cypress.Commands.add('getTableById', getTableById);
-Cypress.Commands.add('tableSholudBeVisible', tableSholudBeVisible);
+Cypress.Commands.add('tableShouldBeVisible', tableShouldBeVisible);
+Cypress.Commands.add(
+  'findByColumnName',
+  { prevSubject: true },
+  findByColumnName
+);
 Cypress.Commands.add(
   'clickSortColoumn',
   { prevSubject: true },
   clickSortColoumn
 );
-Cypress.Commands.add('getColomnValues', { prevSubject: true }, getColomnValues);
 Cypress.Commands.add(
-  'shouldBeSortedAscending',
+  'shouldAllRowsHaveValueInColumn',
   { prevSubject: true },
-  shouldBeSortedAscending
-);
-Cypress.Commands.add(
-  'shouldBeSortedDescending',
-  { prevSubject: true },
-  shouldBeSortedDescending
+  shouldAllRowsHaveValueInColumn
 );
 Cypress.Commands.add('getTableById', getTableById);
-Cypress.Commands.add('tableSholudBeVisible', tableSholudBeVisible);
+Cypress.Commands.add('tableShouldBeVisible', tableShouldBeVisible);
+Cypress.Commands.add(
+  'tableContentShouldBeVisible',
+  tableContentShouldBeVisible
+);
 Cypress.Commands.add('getNumberOfRows', { prevSubject: true }, getNumberOfRows);
 Cypress.Commands.add(
   'clickLoadMoreButton',
   { prevSubject: true },
   clickLoadMoreButton
 );
+Cypress.Commands.add(
+  'getRowsWithColumnValues',
+  { prevSubject: true },
+  getRowsWithColumnValues
+);
 Cypress.Commands.add('shouldLoadMore', { prevSubject: true }, shouldLoadMore);
+Cypress.Commands.add('selectColumn', { prevSubject: true }, selectColumn);
 
 export interface TableCommands {
   getTableById: (id: string) => Cypress.Chainable<JQuery<HTMLElement>>;
-  clickSortColoumn: (coloumnName: string) => void;
-  getColomnValues: (coloumnid: string) => Cypress.Chainable<string[]>;
-  shouldBeSortedAscending: () => void;
-  shouldBeSortedDescending: () => void;
-  tableSholudBeVisible: (id: string) => Cypress.Chainable<JQuery<HTMLElement>>;
+  findByColumnName: (
+    columnName: string
+  ) => Cypress.Chainable<JQuery<HTMLElement>>;
+  clickSortColoumn: (columnName: string) => void;
+  shouldAllRowsHaveValueInColumn: (
+    columnName: string,
+    columnValue: string
+  ) => Cypress.Chainable<JQuery<HTMLElement>>;
+  tableShouldBeVisible: (id: string) => Cypress.Chainable<JQuery<HTMLElement>>;
+  tableContentShouldBeVisible: (
+    id: string
+  ) => Cypress.Chainable<JQuery<HTMLElement>>;
   getNumberOfRows: () => Cypress.Chainable<number>;
   clickLoadMoreButton: () => void;
+  getRowsWithColumnValues: (
+    columnName: string,
+    columnValue: string
+  ) => Cypress.Chainable<JQuery<HTMLElement>>;
   shouldLoadMore: (requestAlias?: string) => void;
+  selectColumn: (columnName: string) => Cypress.Chainable<JQuery<HTMLElement>>;
 }

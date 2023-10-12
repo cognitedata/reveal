@@ -10,55 +10,92 @@ describe('Assets', () => {
     cy.navigateToExplorer();
   });
 
-  it('should navigate among the tabs ', () => {
+  beforeEach(() => {
     interceptAssetList();
+  });
+
+  it('should click the assets tab and go to list view ', () => {
     cy.goToTab('Assets');
     cy.wait(`@${ASSET_LIST_ALIAS}`);
+    cy.clickIconButton('List');
+    cy.tableContentShouldBeVisible('asset-search-results');
+  });
+
+  it('should sort asset results', () => {
+    cy.log('sorting colomn: Name');
+
+    cy.getTableById('asset-search-results').clickSortColoumn('Name');
+    cy.wait(`@${ASSET_LIST_ALIAS}`).shouldSortAscending('name');
+
+    cy.getTableById('asset-search-results').clickSortColoumn('Name');
+    cy.wait(`@${ASSET_LIST_ALIAS}`).shouldSortDescending('name');
+
+    cy.log('should select Description from the colomn selection');
+    cy.tableShouldBeVisible('asset-search-results').selectColumn(`Description`);
+
+    cy.log('sorting colomn: Description');
+    cy.getTableById('asset-search-results').clickSortColoumn('Description');
+    cy.wait(`@${ASSET_LIST_ALIAS}`).shouldSortAscending('description');
+
+    cy.getTableById('asset-search-results').clickSortColoumn('Description');
+    cy.wait(`@${ASSET_LIST_ALIAS}`).shouldSortDescending('description');
+
+    // Reset sorting
+    cy.getTableById('asset-search-results').clickSortColoumn('Description');
+  });
+
+  it('should navigate to the detail view', () => {
+    cy.clickIconButton('Asset hierarchy');
     cy.performSearch(ASSET_NAME);
 
     cy.getTableById('asset-tree-table')
       .contains(ASSET_NAME)
       .should('be.visible')
       .click();
+  });
 
+  it('should navigate between the detail view tabs', () => {
     cy.log('should contain All resources tab details');
-    cy.findAllByTestId('asset-detail').goToTab('All resources');
-    cy.findAllByTestId('asset-summary').should('be.visible');
-    cy.findAllByTestId('timeseries-summary').should('be.visible');
-    cy.findAllByTestId('document-summary').should('be.visible');
-    cy.findAllByTestId('event-summary').should('be.visible');
-    cy.findAllByTestId('sequence-summary')
-      .scrollIntoView()
-      .should('be.visible');
+    cy.findByTestId('asset-detail').goToTab('All resources');
+    cy.findByTestId('asset-summary').should('be.visible');
+    cy.findByTestId('timeseries-summary').should('be.visible');
+    cy.findByTestId('document-summary').should('be.visible');
+    cy.findByTestId('event-summary').should('be.visible');
+    cy.findByTestId('sequence-summary').scrollIntoView().should('be.visible');
 
     // Scrolling back to top
     cy.findAllByTestId('asset-detail').scrollIntoView();
 
     cy.log('should navigate to Hierarchy tab');
-    cy.findAllByTestId('asset-detail').goToTab('Hierarchy');
-    cy.tableSholudBeVisible('asset-details-tree-table');
+    cy.findByTestId('asset-detail').goToTab('Hierarchy');
+    cy.tableShouldBeVisible('asset-details-tree-table');
 
     cy.log('should navigate to Assets tab');
-    cy.findAllByTestId('asset-detail').goToTab('Assets');
-    cy.tableSholudBeVisible('asset-linked-search-results');
+    cy.findByTestId('asset-detail').goToTab('Assets');
+    cy.tableShouldBeVisible('asset-linked-search-results');
 
     cy.log('should navigate to Time series tab');
-    cy.findAllByTestId('asset-detail').goToTab('Time series');
-    cy.tableSholudBeVisible('timeseries-linked-search-results');
+    cy.findByTestId('asset-detail').goToTab('Time series');
+    cy.tableShouldBeVisible('timeseries-linked-search-results');
 
     cy.log('should navigate to Files tab');
-    cy.findAllByTestId('asset-detail').goToTab('Files');
+    cy.findByTestId('asset-detail').goToTab('Files');
     cy.findAllByTestId('file-grouping-table').should('be.visible');
 
     cy.log('should navigate to Events tab');
-    cy.findAllByTestId('asset-detail').goToTab('Events');
-    cy.tableSholudBeVisible('event-linked-search-results');
+    cy.findByTestId('asset-detail').goToTab('Events');
+    cy.tableShouldBeVisible('event-linked-search-results');
 
     cy.log('should navigate to Sequence tab');
-    cy.findAllByTestId('asset-detail').goToTab('Sequence');
-    cy.tableSholudBeVisible('sequence-linked-search-results');
+    cy.findByTestId('asset-detail').goToTab('Sequence');
+    cy.tableShouldBeVisible('sequence-linked-search-results');
+  });
 
+  it('Should close the detail view and clear search input', () => {
     cy.log('close asset detail view');
-    cy.clickButton('Close', 'aria-label');
+    cy.findByTestId('asset-detail').clickIconButton('Close');
+    cy.findByTestId('asset-detail').should('not.exist');
+
+    cy.clearSearchInput();
   });
 });

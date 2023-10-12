@@ -3,22 +3,23 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { FileDetailsContainer } from '@vision/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
-import { MetaDataTable } from '@vision/modules/FileDetails/Components/FileMetadata/MetadataTable';
-import { MetadataTableToolBar } from '@vision/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
-import { VisionFileDetailKey } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
+import isEqual from 'lodash/isEqual';
+
+import { FileInfo } from '@cognite/sdk';
+
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { updateFileInfoField } from '../../../../store/thunks/Files/updateFileInfoField';
+import { FileDetailsContainer } from '../../Components/FileMetadata/FileDetailsContainer';
+import { MetaDataTable } from '../../Components/FileMetadata/MetadataTable';
+import { MetadataTableToolBar } from '../../Components/FileMetadata/MetadataTableToolBar';
+import { VisionFileDetailKey } from '../../Components/FileMetadata/Types';
 import {
   metadataEditMode,
   selectUpdatedFileDetails,
   selectUpdatedFileMeta,
-} from '@vision/modules/FileDetails/selectors';
-import { fileInfoEdit } from '@vision/modules/FileDetails/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { updateFileInfoField } from '@vision/store/thunks/Files/updateFileInfoField';
-import isEqual from 'lodash/isEqual';
-
-import { FileInfo } from '@cognite/sdk';
+} from '../../selectors';
+import { fileInfoEdit } from '../../slice';
 
 const Container = styled.div`
   width: 100%;

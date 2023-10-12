@@ -1,46 +1,49 @@
 import { useEffect, useMemo } from 'react';
 
-import {
-  FormRow,
-  TimeSeriesField,
-} from '@simint-app/components/forms/elements';
-import {
-  getScheduleRepeat,
-  useTimeseries,
-} from '@simint-app/pages/CalculationConfiguration/utils';
-import { generateInputTimeSeriesExternalId } from '@simint-app/utils/externalIdGenerators';
 import { useFormikContext } from 'formik';
 
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
+import { FormRow } from '../../../../components/forms/elements';
+import { generateInputTimeSeriesExternalId } from '../../../../utils/externalIdGenerators';
+import {
+  getScheduleRepeat,
+  useTimeseries,
+} from '../../../CalculationConfiguration/utils';
 import { SelectBox, StepsContainer } from '../../elements';
 
 import {
+  DynamicFields,
   InputType,
-  OpenServerAddress,
   StepType,
   Unit,
   UnitType,
   Value,
   Variable,
 } from './Fields';
+import { TimeSeriesField } from './Fields/TimeSeriesField';
 import { TimeSeriesPreview } from './Fields/TimeSeriesPreview';
 import type { StepCommandProps } from './utils';
-import { getTimeSerieIndexByType } from './utils';
+import { getInputOutputIndex } from './utils';
 
-export function Set({ step, routineOrder, stepIndex }: StepCommandProps) {
+export function Set({
+  dynamicStepFields,
+  step,
+  routineOrder,
+  stepIndex,
+}: StepCommandProps) {
   const isTimeSeriesStep = step.arguments.type === 'inputTimeSeries';
   const routineIndex = routineOrder;
-  const props = { routineIndex, step, stepIndex };
+  const props = { routineIndex, step, stepIndex, dynamicStepFields };
   const { values, setFieldValue } = useFormikContext<UserDefined>();
-  const timeSerieIndex = getTimeSerieIndexByType(
+  const { index: inputOutputIndex, didFindEntry } = getInputOutputIndex(
     values.inputTimeSeries,
     step.arguments.value ?? ''
   );
 
   useEffect(() => {
-    if (timeSerieIndex !== -1) {
-      const currentTs = values.inputTimeSeries[timeSerieIndex];
+    if (didFindEntry) {
+      const currentTs = values.inputTimeSeries[inputOutputIndex];
       const generateSampleExternalId = generateInputTimeSeriesExternalId({
         simulator: values.simulator,
         calculationType: values.calculationName,
@@ -48,13 +51,11 @@ export function Set({ step, routineOrder, stepIndex }: StepCommandProps) {
         timeSeriesType: currentTs.type,
       });
       setFieldValue(
-        `inputTimeSeries.${timeSerieIndex}.sampleExternalId`,
+        `inputTimeSeries.${inputOutputIndex}.sampleExternalId`,
         generateSampleExternalId
       );
     }
   }, [values.inputTimeSeries]);
-
-  const isVariableDefined = timeSerieIndex !== -1;
 
   const timeseries = useMemo(
     () =>
@@ -88,31 +89,42 @@ export function Set({ step, routineOrder, stepIndex }: StepCommandProps) {
           {isTimeSeriesStep && (
             <Variable {...props} timeSeriesPrefix="inputTimeSeries" />
           )}
-          <OpenServerAddress {...props} />
-          {!isTimeSeriesStep && <Value {...props} />}
 
-          {isTimeSeriesStep && isVariableDefined && (
-            <>
+          {isTimeSeriesStep && didFindEntry && (
+            <FormRow>
               <UnitType {...props} timeSeriesPrefix="inputTimeSeries" />
               <Unit {...props} timeSeriesPrefix="inputTimeSeries" />
-            </>
+            </FormRow>
           )}
         </SelectBox>
 
-        {isTimeSeriesStep && isVariableDefined && (
+        {isTimeSeriesStep && didFindEntry && (
           <FormRow>
             <TimeSeriesField
-              aggregateTypeField={`inputTimeSeries.${timeSerieIndex}.aggregateType`}
-              externalIdField={`inputTimeSeries.${timeSerieIndex}.sensorExternalId`}
+              aggregateTypeField={`inputTimeSeries.${inputOutputIndex}.aggregateType`}
+              externalIdField={`inputTimeSeries.${inputOutputIndex}.sensorExternalId`}
               width={305}
             />
+          </FormRow>
+        )}
+
+        <SelectBox>
+          <DynamicFields {...props} />
+        </SelectBox>
+
+        {!isTimeSeriesStep && <Value {...props} />}
+
+        {!isTimeSeriesStep && (
+          <FormRow>
+            <UnitType {...props} timeSeriesPrefix="inputConstants" />
+            <Unit {...props} timeSeriesPrefix="inputConstants" />
           </FormRow>
         )}
       </StepsContainer>
 
       {isTimeSeriesStep && step.arguments.value && (
         <TimeSeriesPreview
-          aggregateType={values.inputTimeSeries[timeSerieIndex].aggregateType}
+          aggregateType={values.inputTimeSeries[inputOutputIndex].aggregateType}
           inputTimeseries={values.inputTimeSeries}
           step={step}
           timeseriesState={timeseriesState}

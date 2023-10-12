@@ -7,6 +7,6 @@ export type TooltipProps = {
 };
 
 export type CustomSelectProps = {
-  selectProps: SelectProps<any>;
+  selectProps: SelectProps<any> & { 'data-testid'?: string };
   tooltipProps?: TooltipProps;
 };

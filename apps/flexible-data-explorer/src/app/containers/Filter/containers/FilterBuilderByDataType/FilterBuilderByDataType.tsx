@@ -37,6 +37,7 @@ export const FilterBuilderByDataType: React.FC<
     return (
       <FilterBuilderByField
         name={selectedDataType.name}
+        displayName={selectedDataType?.displayName}
         fields={selectedDataType.fields}
         value={value[selectedDataType.name]}
         onBackClick={() => setSelectedDataType(undefined)}

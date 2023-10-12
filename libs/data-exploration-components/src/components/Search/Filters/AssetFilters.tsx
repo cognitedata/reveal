@@ -7,12 +7,6 @@ import {
   MetadataFilterV2,
   StringFilterV2,
 } from '@data-exploration/containers';
-import {
-  ByAssetFilterV2,
-  DataSetFilterV2,
-  SourceFilter,
-} from '@data-exploration-components/components/SearchNew';
-import { ResourceTypes } from '@data-exploration-components/types';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
 
@@ -23,6 +17,13 @@ import {
   isObjectEmpty,
 } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+
+import { ResourceTypes } from '../../../types';
+import {
+  ByAssetFilterV2,
+  DataSetFilterV2,
+  SourceFilter,
+} from '../../SearchNew';
 
 import {
   TempCommonMultiSelectFix,

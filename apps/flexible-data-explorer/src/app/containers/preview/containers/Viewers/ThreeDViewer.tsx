@@ -49,10 +49,9 @@ export const ThreeDViewer: React.FC<Props> = ({ instance, dataModel }) => {
         viewerOptions={defaultViewerOptions}
       >
         <RevealContent
-          modelIdentifiers={modelIdentifiers}
-          externalId={instance.externalId}
+          threeDResources={modelIdentifiers}
+          instanceExternalId={instance.externalId}
           instanceSpace={instance.instanceSpace}
-          fitCamera="instance"
           hideToolbar
           focusNode
         />

@@ -49,6 +49,7 @@ const ActionsSelector = (props: ActionsSelectorProps) => {
   return (
     <>
       <Checkbox
+        data-testid="access-management-capabilities-check-all-checkbox"
         indeterminate={indeterminate}
         onChange={onCheckAllChange}
         checked={checkAll}

@@ -48,6 +48,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
                 to: crumb.title,
               })
             }
+            data-testid="breadcrumb-item"
           >
             {crumb.path ? (
               <Link to={`${crumb.path}`}>{crumb.title}</Link>

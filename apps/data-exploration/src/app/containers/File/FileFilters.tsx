@@ -10,16 +10,16 @@ import {
 
 import { useList } from '@cognite/sdk-react-query-hooks';
 
-import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+
+import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
   useFileFilters,
   useFilterEmptyState,
   useResetFileFilters,
-} from '@data-exploration-app/store/filter';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
-
-import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+} from '../../store';
+import { SPECIFIC_INFO_CONTENT } from '../constants';
+import { TempMultiSelectFix } from '../elements';
 
 export const FileFilters = ({ ...rest }) => {
   const [fileFilter, setFileFilter] = useFileFilters();

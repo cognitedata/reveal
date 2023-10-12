@@ -1,6 +1,6 @@
 {
   "name": "@cognite/copilot-core",
-  "version": "0.0.18",
+  "version": "0.0.20",
   "dependencies": {
     "@cognite/sdk": "^7.19.1",
     "@cognite/z-index": "^0.2.3",
@@ -20,8 +20,9 @@
     "uuid": "9.0.0",
     "@cognite/cdf-i18n-utils": "*",
     "@cognite/cogs.js": "9.36.0",
-    "@cognite/llm-hub": "^0.0.21",
-    "i18next": "^23.2.3"
+    "@cognite/llm-hub": "^0.0.24",
+    "i18next": "^23.2.3",
+    "@tanstack/react-query": "^4.29.13"
   },
   "peerDependencies": {
     "@cognite/sdk": "^7.19.1",

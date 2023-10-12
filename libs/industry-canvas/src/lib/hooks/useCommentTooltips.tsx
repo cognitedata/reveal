@@ -7,6 +7,7 @@ import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import { CommentTooltip } from '../components/tooltips/CommentTooltip';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
 import type { Comment } from '../services/comments/types';
+import { useIndustrialCanvasStore } from '../state/useIndustrialCanvasStore';
 import { CommentAnnotation } from '../types';
 
 export type UseCommentTooltipsParams = {
@@ -19,23 +20,31 @@ const useCommentTooltips = ({
   commentAnnotations,
 }: UseCommentTooltipsParams) => {
   const { activeCanvas } = useIndustryCanvasContext();
+  const pendingComment = useIndustrialCanvasStore(
+    (state) => state.pendingComment
+  );
   return useMemo(() => {
     if (activeCanvas === undefined || commentAnnotations === undefined) {
       return [];
     }
-
-    return commentAnnotations.map((annotation) => {
+    const mergedCommentAnnotations =
+      pendingComment !== null
+        ? [pendingComment, ...commentAnnotations]
+        : commentAnnotations;
+    return mergedCommentAnnotations.map((annotation) => {
       const parentComment = comments.find(
         (comment) => comment.externalId === annotation.id
       );
+      const isPendingComment = annotation.id === pendingComment?.id;
       return {
-        targetId: String(annotation.id),
+        targetIds: [String(annotation.id)],
         content:
-          parentComment === undefined ? (
+          parentComment === undefined && !isPendingComment ? (
             <></>
           ) : (
             <BottomMarginStyle>
               <CommentTooltip
+                isPendingComment={isPendingComment}
                 activeCanvas={activeCanvas}
                 parentComment={parentComment}
                 comments={comments.filter(
@@ -50,7 +59,7 @@ const useCommentTooltips = ({
         shouldPositionStrictly: true,
       };
     });
-  }, [comments, commentAnnotations, activeCanvas]);
+  }, [activeCanvas, commentAnnotations, pendingComment, comments]);
 };
 
 const BottomMarginStyle = styled.div`

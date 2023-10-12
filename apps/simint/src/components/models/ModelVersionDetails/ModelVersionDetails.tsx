@@ -1,15 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { useSimulatorConfig } from '@simint-app/hooks/useSimulatorConfig';
-import {
-  selectAuthHeaders,
-  selectBaseUrl,
-  selectProject,
-} from '@simint-app/store/simconfigApiProperties/selectors';
-import { downloadModelFile } from '@simint-app/utils/fileDownload';
-import { TRACKING_EVENTS } from '@simint-app/utils/metrics/constants';
-import { trackUsage } from '@simint-app/utils/metrics/tracking';
 import formatISO9075 from 'date-fns/formatISO9075';
 import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
@@ -32,6 +23,16 @@ import {
   useGetModelFileQuery,
   useReparseModelFileMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
+
+import { useSimulatorConfig } from '../../../hooks/useSimulatorConfig';
+import {
+  selectAuthHeaders,
+  selectBaseUrl,
+  selectProject,
+} from '../../../store/simconfigApiProperties/selectors';
+import { downloadModelFile } from '../../../utils/fileDownload';
+import { TRACKING_EVENTS } from '../../../utils/metrics/constants';
+import { trackUsage } from '../../../utils/metrics/tracking';
 
 import { BoundaryConditionTable } from './BoundaryConditionTable';
 

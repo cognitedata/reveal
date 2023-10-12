@@ -1,14 +1,12 @@
 import { useCallback } from 'react';
 
+import { DateRange } from '../containers/Filter';
 import {
   ContainerReference,
-  resourceItemToContainerReference,
-} from '@fusion/industry-canvas';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { FdmInstanceContainerReference } from 'libs/industry-canvas/src/lib/types';
-
-import { DateRange } from '../containers/Filter';
-import { ResourceItem } from '../types';
+  FdmInstanceContainerReference,
+  ResourceItem,
+} from '../types';
+import { resourceItemToContainerReference } from '../utils/canvas';
 
 import { useNavigation } from './useNavigation';
 

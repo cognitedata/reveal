@@ -1,5 +1,18 @@
 import { memo, useEffect, useState } from 'react';
 
+import { Button, Icon, Tooltip } from '@cognite/cogs.js';
+
+import { useSearchParam } from '../../hooks/navigation';
+import { useTranslations } from '../../hooks/translations';
+import { startTimer, trackUsage } from '../../services/metrics';
+import {
+  MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
+  MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR,
+  MONITORING_SIDEBAR_SELECTED_FOLDER,
+  MONITORING_SIDEBAR_SHOW_ALERTS,
+  MONITORING_FILTER,
+} from '../../utils/constants';
+import { makeDefaultTranslations } from '../../utils/translations';
 import {
   ContentContainer,
   ContentOverflowWrapper,
@@ -8,20 +21,8 @@ import {
   TopContainer,
   TopContainerAside,
   TopContainerTitle,
-} from '@charts-app/components/Common/SidebarElements';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { startTimer, trackUsage } from '@charts-app/services/metrics';
-import {
-  MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
-  MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR,
-  MONITORING_SIDEBAR_SELECTED_FOLDER,
-  MONITORING_SIDEBAR_SHOW_ALERTS,
-  MONITORING_FILTER,
-} from '@charts-app/utils/constants';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
-import { Button, Icon, Tooltip } from '@cognite/cogs.js';
+} from '../Common/SidebarElements';
+import { TempPromoChip } from '../TempPromoChip/TempPromoChip';
 
 import CreateMonitoringJob from './CreateMonitoringJob';
 import ListMonitoringJobAlerts from './ListMonitoringJobAlerts';
@@ -38,7 +39,9 @@ const defaultTranslation = makeDefaultTranslations(
   'Monitoring',
   'Hide',
   'Create',
-  'Back'
+  'Back',
+  'Beta',
+  'This feature is available for beta testing and will likely change. Use it for testing purposes only.'
 );
 
 export const MonitoringSidebar = memo(
@@ -82,13 +85,22 @@ export const MonitoringSidebar = memo(
     }, []);
 
     return (
-      <Sidebar visible>
+      <Sidebar visible data-testid="monitoring-sidebar-container">
         <TopContainer>
           <TopContainerTitle>
             <Icon size={21} type="Alarm" />
             {t.Monitoring}
           </TopContainerTitle>
           <TopContainerAside>
+            <TempPromoChip
+              tooltip={
+                t[
+                  'This feature is available for beta testing and will likely change. Use it for testing purposes only.'
+                ]
+              }
+            >
+              {t['Beta']}
+            </TempPromoChip>
             <Tooltip content={t.Hide}>
               <Button
                 icon="Close"

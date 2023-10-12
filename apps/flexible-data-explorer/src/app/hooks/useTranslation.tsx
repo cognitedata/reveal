@@ -17,7 +17,7 @@ const test = false;
 export const useTranslation = () => {
   const { t: i18nTranslate } = useTypedTranslation();
 
-  const translate = useCallback(
+  const translate: TFunction = useCallback(
     (key: keyof typeof english, options: TOptions = {}) => {
       if (test) {
         return 'TRANSLATED_STRING' as string;

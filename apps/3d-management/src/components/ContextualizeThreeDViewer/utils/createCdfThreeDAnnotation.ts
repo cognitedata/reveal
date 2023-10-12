@@ -1,31 +1,44 @@
-import { Matrix4, Vector3 } from 'three';
+import { Matrix4, Vector3, Quaternion } from 'three';
 
 import { CognitePointCloudModel } from '@cognite/reveal';
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { CogniteClient } from '@cognite/sdk';
 
-import { ThreeDPosition } from '../useContextualizeThreeDViewerStore';
+import { CubeAnnotation } from '../useContextualizeThreeDViewerStore';
 
-export const createCdfThreeDAnnotation = ({
-  position,
+export const createCdfThreeDAnnotation = async ({
+  cubeAnnotation,
   sdk,
   modelId,
   assetRefId,
   pointCloudModel,
 }: {
-  position: ThreeDPosition;
+  cubeAnnotation: CubeAnnotation;
   sdk: CogniteClient;
   modelId: number;
   assetRefId: number;
   pointCloudModel: CognitePointCloudModel;
 }) => {
-  const vector3Position = new Vector3(position.x, position.y, position.z);
-  const cdfPosition = vector3Position
-    .clone()
-    .applyMatrix4(
-      pointCloudModel.getCdfToDefaultModelTransformation().invert()
-    );
+  const defaultModelToCdfTransformation = pointCloudModel
+    .getCdfToDefaultModelTransformation()
+    .invert();
 
-  sdk.annotations.create([
+  const position = new Vector3(
+    cubeAnnotation.position.x,
+    cubeAnnotation.position.y,
+    cubeAnnotation.position.z
+  );
+  const scale = new Vector3(
+    Math.abs(cubeAnnotation.size.x),
+    Math.abs(cubeAnnotation.size.y),
+    Math.abs(cubeAnnotation.size.z)
+  ).multiplyScalar(0.5);
+
+  const transformationMatrix = new Matrix4()
+    .compose(position, new Quaternion(), scale)
+    .premultiply(defaultModelToCdfTransformation)
+    .transpose();
+
+  await sdk.annotations.create([
     {
       annotatedResourceId: modelId,
       annotatedResourceType: 'threedmodel',
@@ -39,9 +52,7 @@ export const createCdfThreeDAnnotation = ({
         region: [
           {
             box: {
-              matrix: new Matrix4()
-                .makeTranslation(cdfPosition.x, cdfPosition.y, cdfPosition.z)
-                .transpose().elements,
+              matrix: transformationMatrix.elements,
             },
           },
         ],

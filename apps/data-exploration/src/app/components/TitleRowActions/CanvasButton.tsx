@@ -12,10 +12,11 @@ import { Button, Tooltip } from '@cognite/cogs.js';
 import { ResourceItem } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { useFlagIndustryCanvas } from '@data-exploration-app/hooks/flags/useFlagIndustryCanvas';
-import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 import { useTranslation } from '@data-exploration-lib/core';
 import { queryKeys } from '@data-exploration-lib/domain-layer';
+
+import { useFlagIndustryCanvas } from '../../hooks/flags/useFlagIndustryCanvas';
+import { getSearchParams } from '../../utils/URLUtils';
 
 type CanvasButtonProps = {
   item: ResourceItem;

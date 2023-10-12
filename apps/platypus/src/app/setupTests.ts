@@ -3,11 +3,12 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
-import config from '@platypus-app/config/config';
 
 import { CogniteClient } from '@cognite/sdk';
 
 import { setCogniteSDKClient } from '../environments/cogniteSdk';
+
+import config from './config/config';
 
 const cogniteClient: CogniteClient = new CogniteClient({
   appId: config.APP_APP_ID,

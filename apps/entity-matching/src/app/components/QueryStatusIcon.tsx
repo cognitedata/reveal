@@ -2,7 +2,7 @@ import { MutationStatus } from '@tanstack/react-query';
 
 import { Colors, Icon } from '@cognite/cogs.js';
 
-import { JobStatus } from '@entity-matching-app/hooks/types';
+import { JobStatus } from '../hooks/types';
 
 export default function QueryStatusIcon({
   status,

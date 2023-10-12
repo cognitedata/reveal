@@ -5,19 +5,6 @@
 import { useCallback, useMemo } from 'react';
 
 import {
-  ExpandIcon,
-  LoadingRow,
-  SidebarChip,
-  SidebarInnerBox,
-  SidebarInnerCollapse,
-} from '@charts-app/components/Common/SidebarElements';
-import { ChartEventFilters } from '@charts-app/models/chart/types';
-import { ChartEventResults } from '@charts-app/models/event-results/types';
-import {
-  makeDefaultTranslations,
-  translationKeys,
-} from '@charts-app/utils/translations';
-import {
   TypeFilter,
   SubTypeFilter,
   MetadataFilter,
@@ -28,10 +15,24 @@ import {
 } from '@data-exploration/containers';
 import { omit } from 'lodash';
 
+import { ChartEventFilters } from '@cognite/charts-lib';
 import { Button, Collapse, Icon } from '@cognite/cogs.js';
 import { Metadata } from '@cognite/sdk';
 
 import { InternalEventsFilters } from '@data-exploration-lib/core';
+
+import { ChartEventResults } from '../../models/event-results/types';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '../../utils/translations';
+import {
+  ExpandIcon,
+  LoadingRow,
+  SidebarChip,
+  SidebarInnerBox,
+  SidebarInnerCollapse,
+} from '../Common/SidebarElements';
 
 import { GhostMetadataFilter } from './elements';
 import { useDebouncedDateRange } from './useDebouncedDateRange';

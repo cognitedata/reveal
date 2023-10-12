@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { DOCS_LINKS } from '@platypus-app/constants';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { EndpointModal } from '@platypus-app/modules/solution/data-model/components/EndpointModal';
-
 import { Button, Tooltip } from '@cognite/cogs.js';
+
+import { DOCS_LINKS } from '../../constants';
+import { TOKENS } from '../../di';
+import { useInjection } from '../../hooks/useInjection';
+import { useMixpanel } from '../../hooks/useMixpanel';
+import { useSelectedDataModelVersion } from '../../hooks/useSelectedDataModelVersion';
+import { useTranslation } from '../../hooks/useTranslation';
+import { EndpointModal } from '../../modules/solution/data-model/components/EndpointModal';
 
 import * as S from './elements';
 

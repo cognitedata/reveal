@@ -10,12 +10,7 @@ import collapseStyle from 'rc-collapse/assets/index.css';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthContainer,
-  getEnv,
-  getProject,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { AuthContainer, getEnv, getProject } from '@cognite/cdf-utilities';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { FlagProvider } from '@cognite/react-feature-flags';
@@ -58,9 +53,7 @@ const queryClient = new QueryClient({
 const App = () => {
   const appName = 'cdf-integrations-ui';
   const projectName = getProject();
-  const baseUrl = isUsingUnifiedSignin()
-    ? `/cdf/${projectName}`
-    : `/${projectName}`;
+  const baseUrl = `/${projectName}`;
   const env = getEnv();
   const { origin } = window.location;
 

@@ -7,13 +7,13 @@ import {
   getOneToManyModelName,
   getVersionedExternalId,
 } from '@platypus/platypus-core';
-import { useCustomTypeNames } from '@platypus-app/hooks/useDataModelActions';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { generateId } from '@platypus-app/utils/uuid';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Modal, OptionType } from '@cognite/cogs.js';
 
+import { useCustomTypeNames } from '../../../../../hooks/useDataModelActions';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { generateId } from '../../../../../utils/uuid';
 import useTransformationCreateMutation from '../../hooks/useTransformationCreateMutation';
 import {
   CreateTransformationForm,
@@ -42,6 +42,7 @@ export const CreateTransformationModal = ({
   const { t } = useTranslation('CreateTransformationModal');
 
   const [selectedRelationship, setSelectedRelationship] = useState<Option>();
+  const [selectedDataSet, setSelectedDataSet] = useState<number | undefined>();
   const [transformationType, setTransformationType] = useState(
     TransformationType.Data
   );
@@ -96,6 +97,7 @@ export const CreateTransformationModal = ({
           ? selectedRelationship.value
           : undefined,
         transformationExternalId,
+        dataSetId: selectedDataSet,
         transformationName,
         typeName: dataModelType.name,
         version: viewVersion,
@@ -133,6 +135,8 @@ export const CreateTransformationModal = ({
         relationships={relationships}
         selectedRelationship={selectedRelationship}
         transformationType={transformationType}
+        selectedDataSet={selectedDataSet}
+        onDataSetChange={setSelectedDataSet}
       />
     </Modal>
   );

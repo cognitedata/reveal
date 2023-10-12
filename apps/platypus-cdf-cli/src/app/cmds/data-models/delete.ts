@@ -1,15 +1,9 @@
 import { DataModelDTO } from '@platypus-core/domain/data-model/providers/fdm-next/dto/dms-data-model-dtos';
 import { Arguments } from 'yargs';
 
-import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
-import {
-  BaseArgs,
-  CommandArgument,
-  CommandArgumentType,
-} from '@cognite/platypus-cdf-cli/app/types';
-import Response, {
-  DEBUG as _DEBUG,
-} from '@cognite/platypus-cdf-cli/app/utils/logger';
+import { CLICommand } from '../../common/cli-command';
+import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
+import Response, { DEBUG as _DEBUG } from '../../utils/logger';
 
 import { getDataModelsHandler } from './utils';
 
@@ -34,11 +28,18 @@ export const commandArgs = [
     prompt: 'Enter data model space ID',
     promptDefaultValue: (commandArgs) => commandArgs['external-id'],
   },
+  {
+    name: 'deleteTypes',
+    description:
+      "Also deletes the data types if they are not imported by other data models. However, If there's data types imported by data models you dont have access to, they will still be deleted!",
+    type: CommandArgumentType.BOOLEAN,
+  },
 ] as CommandArgument[];
 
 type DataModelDeleteCommandArgs = BaseArgs & {
   'external-id': string;
   space: string;
+  deleteTypes: boolean;
 };
 
 export class DeleteCmd extends CLICommand {
@@ -59,10 +60,13 @@ export class DeleteCmd extends CLICommand {
       return;
     }
 
-    const response = await dataModelsHandler.delete({
-      externalId: args['external-id'],
-      space: args['space'],
-    });
+    const response = await dataModelsHandler.delete(
+      {
+        externalId: args['external-id'],
+        space: args['space'],
+      },
+      args['deleteTypes'] || false
+    );
 
     if (!response.isSuccess) {
       throw response.error;
@@ -77,7 +81,7 @@ export class DeleteCmd extends CLICommand {
     Response.success(
       `Data model "${args['external-id']}" has been deleted successfully`
     );
-    if (referencedViews && referencedViews.length) {
+    if (args['deleteTypes'] && referencedViews && referencedViews.length) {
       Response.info(
         `However, some data types were kept because they are still used by other data models.
 ${referencedViews

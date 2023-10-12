@@ -21,7 +21,7 @@ export const use3DResults = (
   sort?: TableSortBy[],
   limit: number = DEFAULT_SEARCH_RESULTS_PAGE_SIZE_3D
 ) => {
-  const image360Api = useImage360Query();
+  const image360Api = useImage360Query(query, filter);
 
   const threeDModelApi = useInfinite3DModelsQuery(
     DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,

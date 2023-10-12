@@ -20,13 +20,21 @@ export default function CapabilitiesList(props: CapabilitiesTableProps) {
 
   const renderItem = (capability: SingleCogniteCapability, index: number) => {
     const removeButton = (
-      <Button type="ghost-accent" onClick={() => onRemove && onRemove(index)}>
+      <Button
+        type="ghost-accent"
+        data-testid="access-management-remove-capability-button"
+        onClick={() => onRemove && onRemove(index)}
+      >
         {t('remove')}
       </Button>
     );
 
     const editButton = (
-      <Button type="ghost-accent" onClick={() => onEdit && onEdit(index)}>
+      <Button
+        type="ghost-accent"
+        data-testid="access-management-edit-capability-button"
+        onClick={() => onEdit && onEdit(index)}
+      >
         {t('edit')}
       </Button>
     );

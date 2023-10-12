@@ -15,6 +15,7 @@ export const transformToRelatedResourceExternalIds = (
     [ResourceTypes.Sequence]: [],
     [ResourceTypes.File]: [],
     [ResourceTypes.ThreeD]: [],
+    [ResourceTypes.Charts]: [],
   };
 
   relationships.forEach(

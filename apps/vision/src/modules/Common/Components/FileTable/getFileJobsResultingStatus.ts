@@ -1,4 +1,4 @@
-import { JobStatus } from '@vision/api/vision/detectionModels/types';
+import { JobStatus } from '../../../../api/vision/detectionModels/types';
 
 export function getFileJobsResultingStatus(
   jobs: Array<{

@@ -3,8 +3,9 @@ import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { SequenceInfo } from '@data-exploration/containers';
+import { useCdfUserHistoryService } from '@user-history';
+import styled from 'styled-components/macro';
 
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
 import {
   SequencePreview as SequenceTabPreview,
@@ -13,22 +14,15 @@ import {
 import { CogniteError, Sequence } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
-import { BreadcrumbsV2 } from '@data-exploration-app/components/Breadcrumbs/BreadcrumbsV2';
-import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
-import {
-  useEndJourney,
-  useResourceDetailSelectedTab,
-} from '@data-exploration-app/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import {
-  useTranslation,
-  SUB_APP_PATH,
-  createInternalLink,
-} from '@data-exploration-lib/core';
+import { useTranslation, SUB_APP_PATH } from '@data-exploration-lib/core';
 
+import { BreadcrumbsV2 } from '../../components/Breadcrumbs/BreadcrumbsV2';
+import ResourceTitleRow from '../../components/ResourceTitleRow';
+import { useEndJourney, useResourceDetailSelectedTab } from '../../hooks';
+import { trackUsage } from '../../utils/Metrics';
 import { AllTab } from '../All';
+import { DetailsTabWrapper } from '../Common/element';
+import { ResourceDetailsTabs } from '../ResourceDetails';
 
 // SequencePreviewType;
 // - details
@@ -81,7 +75,7 @@ export const SequenceDetail = ({
         userHistoryService.logNewResourceView({
           application: SUB_APP_PATH,
           name: sequence?.name,
-          path: createInternalLink(pathname, searchParams),
+          path: pathname.concat(searchParams),
         });
     }
   }, [isSequenceFetched, sequence]);
@@ -114,7 +108,7 @@ export const SequenceDetail = ({
     assetIds: sequence.assetId ? [{ value: sequence.assetId }] : [],
   };
   return (
-    <>
+    <SequenceDetailWrapper data-testid="sequence-detail">
       <BreadcrumbsV2 />
       <ResourceTitleRow
         item={{ id: sequenceId, type: 'sequence' }}
@@ -165,6 +159,10 @@ export const SequenceDetail = ({
           </Tabs.Tab>,
         ]}
       />
-    </>
+    </SequenceDetailWrapper>
   );
 };
+
+const SequenceDetailWrapper = styled.div`
+  display: contents;
+`;

@@ -1,12 +1,14 @@
 import React, { useMemo } from 'react';
 
+import styled from 'styled-components';
+
 import {
   ColumnType,
   SortOrder,
   Table,
   TableNoResults,
 } from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
+import { Flex, Loader } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { useDataSetList } from '../../hooks/dataSet';
@@ -15,6 +17,7 @@ import { Extpipe } from '../../model/Extpipe';
 import { User } from '../../model/User';
 import { addIfExist, calculateLatest } from '../../utils/extpipeUtils';
 import { dateSorter, getContainer, stringSorter } from '../../utils/utils';
+import { ErrorComponent } from '../error';
 import { DataSet } from '../extpipes/cols/DataSet';
 import ExtractionPipelineName from '../extpipes/cols/ExtractionPipelineName';
 import RelativeTimeWithTooltip from '../extpipes/cols/RelativeTimeWithTooltip';
@@ -32,13 +35,19 @@ export type ExtractionPipelineListTableRecord = {
 >;
 
 type ExtpipesTableProps = {
+  headerComp: React.JSX.Element;
+  emptyPage: React.JSX.Element;
   search?: string;
 };
 
-const ExtpipesTable = ({ search }: ExtpipesTableProps): JSX.Element => {
+const ExtpipesTable = ({
+  headerComp,
+  search,
+  emptyPage,
+}: ExtpipesTableProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { data, hasNextPage, isFetched } = useAllExtpipes();
+  const { data, hasNextPage, isFetched, error, refetch } = useAllExtpipes();
 
   const { data: dataSets } = useDataSetList();
 
@@ -178,26 +187,55 @@ const ExtpipesTable = ({ search }: ExtpipesTableProps): JSX.Element => {
     },
   ];
 
+  const isEmptyData = useMemo(() => {
+    return data?.pages?.[0]?.items.length === 0;
+  }, [data]);
+
   if (hasNextPage || !isFetched) {
     return <Loader />;
   }
 
+  if (isEmptyData) {
+    return <>{emptyPage}</>;
+  }
+
+  if (error) {
+    return (
+      <ErrorComponent
+        tabKey="self-hosted"
+        error={error}
+        handleErrorDialogClick={async () => {
+          await refetch();
+        }}
+      />
+    );
+  }
+
   return (
-    <Table
-      columns={columns}
-      appendTooltipTo={getContainer()}
-      dataSource={filteredExtractionPipelines}
-      defaultSort={defaultSort}
-      emptyContent={
-        <TableNoResults
-          title={t('extraction-pipeline-list-no-records')}
-          content={t('extraction-pipeline-list-search-not-found', {
-            $: search !== '' ? `"${search}"` : search,
-          })}
-        />
-      }
-    />
+    <Container gap={16}>
+      <>{headerComp}</>
+      <Table
+        columns={columns}
+        appendTooltipTo={getContainer()}
+        dataSource={filteredExtractionPipelines}
+        defaultSort={defaultSort}
+        emptyContent={
+          <TableNoResults
+            title={t('extraction-pipeline-list-no-records')}
+            content={t('extraction-pipeline-list-search-not-found', {
+              $: search !== '' ? `"${search}"` : search,
+            })}
+          />
+        }
+      />
+    </Container>
   );
 };
+
+const Container = styled(Flex)`
+  margin-top: 16px;
+  flex-direction: column;
+  width: 100%;
+`;
 
 export default ExtpipesTable;

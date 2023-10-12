@@ -1,11 +1,5 @@
 import { useContext } from 'react';
 
-import { RenderWhenOnScreen } from '@charts-app/components/RenderWhenOnScreen/RenderWhenOnScreen';
-import {
-  getTranslationsForComponent,
-  makeDefaultTranslations,
-  translationKeys,
-} from '@charts-app/utils/translations';
 import { Skeleton } from 'antd';
 
 import {
@@ -17,6 +11,12 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
+import {
+  getTranslationsForComponent,
+  makeDefaultTranslations,
+  translationKeys,
+} from '../../../utils/translations';
+import { RenderWhenOnScreen } from '../../RenderWhenOnScreen/RenderWhenOnScreen';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
 import { ChartListContext } from '../context';
 import formatOwner from '../formatOwner';
@@ -55,7 +55,7 @@ function ChartListTable({
 
   const t = { ...defaultTranslations, ...translations };
   const LoadingRow = () => (
-    <tr>
+    <tr data-testid="charts-list-loading">
       <td>
         <Skeleton.Image style={{ height: 80, width: 86 }} />
       </td>

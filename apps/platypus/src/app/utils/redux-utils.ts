@@ -1,5 +1,5 @@
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { PlatypusError } from '@platypus-app/types';
+import { Notification } from '../components/Notification/Notification';
+import { PlatypusError } from '../types';
 
 const showErrorNotification = (error: PlatypusError) => {
   Notification({ type: 'error', message: error.message });

@@ -3,7 +3,7 @@ import isString from 'lodash/isString';
 
 import { formatDate } from '@cognite/cogs.js';
 
-import { isValidDate } from '../../utils/date';
+import { isValidFDMDate } from '../../utils/date';
 import { toFlatPropertyMap } from '../../utils/object';
 
 export const extractProperties = (item: {
@@ -54,7 +54,7 @@ const normalizePrimitives = (value?: unknown) => {
   }
 
   // Fix me + need to build a "in-house" date formatter
-  if (isValidDate(value as any)) {
+  if (isValidFDMDate(value as any)) {
     return formatDate(value as any);
   }
 
@@ -107,4 +107,20 @@ export const flattenProperties = (
 
     return [...acc, { key, value: JSON.stringify(value) }];
   }, [] as { key: string; value?: string }[]);
+};
+
+export const makeAllValuesZero = (data: Record<string, number> | undefined) => {
+  return Object.keys(data ?? {}).reduce((acc, key) => {
+    return { ...acc, [key]: 0 };
+  }, {});
+};
+
+export function areAllValuesZero(
+  values: { [key: string]: number } | undefined
+) {
+  return Object.values(values ?? {}).every((value) => value === 0);
+}
+
+export const makeAllValuesUnique = (array: string[]) => {
+  return Array.from(new Set(array));
 };

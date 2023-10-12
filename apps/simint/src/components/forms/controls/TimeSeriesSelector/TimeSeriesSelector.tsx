@@ -148,7 +148,7 @@ function TimeseriesSelector({
 
   return (
     <TimeseriesSelectorContainer className="cogs-input-container" width={width}>
-      <div className="title">{title}</div>
+      <div className="cogs cogs-textlabel">{title}</div>
       <AutoComplete
         components={{
           Option: TimeseriesSelectorOptionContainer,

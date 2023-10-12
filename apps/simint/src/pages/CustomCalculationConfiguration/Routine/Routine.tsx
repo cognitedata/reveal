@@ -9,17 +9,20 @@ import { Button } from '@cognite/cogs.js';
 import type {
   CalculationProcedure,
   CalculationStep,
+  StepFields,
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { Group, Step } from './Collapse';
+import { StepInputType } from './Commands/Fields';
 import { getRoutineIndex } from './Commands/utils';
 
-export function Routine({
-  setCalculation,
-}: {
+export type RoutineProps = {
+  dynamicStepFields: StepFields;
   setCalculation: (calculation: UserDefined) => void;
-}) {
+};
+
+export function Routine({ dynamicStepFields, setCalculation }: RoutineProps) {
   const { values, setValues } = useFormikContext<UserDefined>();
   const [dragControls, setDragControls] =
     useState<Record<string, DragControls>>();
@@ -35,13 +38,27 @@ export function Routine({
     }));
   };
 
+  useEffect(() => {
+    return () => {
+      const routine = cloneDeep(values.routine ?? []).map(
+        (procedure, index) => {
+          const sortedSteps = procedure.steps.map((step, stepIndex) => ({
+            ...step,
+            step: stepIndex + 1,
+          }));
+          return { ...procedure, steps: sortedSteps, order: index + 1 };
+        }
+      );
+      setCalculation({ ...values, routine });
+    };
+  }, [values, setCalculation]);
+
   const handleNewStep = (procedure: CalculationProcedure) => {
     const newStep: CalculationStep = {
       step: procedure.steps.length + 1,
       type: 'Set',
       arguments: {
-        address: '',
-        type: 'manual',
+        type: StepInputType.InputConstant,
       },
     };
     if (values.routine) {
@@ -97,6 +114,7 @@ export function Routine({
         onReorder={(groups) => {
           sortGroups(groups as CalculationProcedure[]);
         }}
+        role="tree"
       >
         {values.routine?.map((routine, groupIndex) => (
           <Reorder.Item
@@ -131,6 +149,7 @@ export function Routine({
                       value={step}
                     >
                       <Step
+                        dynamicStepFields={dynamicStepFields}
                         index={stepIndex}
                         routineIndex={groupIndex + 1}
                         routineOrder={routine.order}

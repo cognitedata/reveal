@@ -1,17 +1,6 @@
 import { useMemo } from 'react';
 import { useThrottle } from 'react-use';
 
-import { LogicalCheckChart } from '@simint-app/components/charts/LogicalCheckChart';
-import { SteadyStateDetectionChart } from '@simint-app/components/charts/SteadyStateDetectionChart';
-import {
-  FormContainer,
-  FormHeader,
-  FormRow,
-  FormRowStacked,
-  NumberField,
-  SliderNumberField,
-  TimeSeriesField,
-} from '@simint-app/components/forms/elements';
 import { ParentSizeModern } from '@visx/responsive';
 import classNames from 'classnames';
 import { Field, useFormikContext } from 'formik';
@@ -20,6 +9,17 @@ import type { OptionType } from '@cognite/cogs.js';
 import { SegmentedControl, Select, Switch } from '@cognite/cogs.js';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
+import { LogicalCheckChart } from '../../../components/charts/LogicalCheckChart';
+import { SteadyStateDetectionChart } from '../../../components/charts/SteadyStateDetectionChart';
+import {
+  FormContainer,
+  FormHeader,
+  FormRow,
+  FormRowStacked,
+  NumberField,
+  SliderNumberField,
+} from '../../../components/forms/elements';
+import { TimeSeriesField } from '../../CustomCalculationConfiguration/Routine/Commands/Fields/TimeSeriesField';
 import { ChartContainer, LoaderOverlay, SelectContainer } from '../elements';
 import type { ScheduleRepeat } from '../types';
 import { INTERVAL_OPTIONS, getScheduleRepeat, useTimeseries } from '../utils';
@@ -207,6 +207,12 @@ export function DataSamplingStep() {
           name="dataSampling.validationWindow"
           step={1}
           title="Validation window"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setFieldValue(
+              'dataSampling.validationWindow',
+              parseInt(event.currentTarget.value)
+            );
+          }}
           width={180}
         />
 
@@ -216,6 +222,12 @@ export function DataSamplingStep() {
           name="dataSampling.samplingWindow"
           step={1}
           title="Sampling window"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setFieldValue(
+              'dataSampling.samplingWindow',
+              parseInt(event.currentTarget.value)
+            );
+          }}
           width={180}
         />
 
@@ -225,6 +237,12 @@ export function DataSamplingStep() {
           name="dataSampling.granularity"
           step={1}
           title="Granularity"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setFieldValue(
+              'dataSampling.granularity',
+              parseInt(event.currentTarget.value)
+            );
+          }}
           width={180}
         />
         <SelectContainer>

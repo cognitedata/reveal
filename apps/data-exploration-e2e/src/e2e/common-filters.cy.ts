@@ -13,7 +13,7 @@ describe('Common filters', () => {
 
   it('Data set filter should work', () => {
     cy.log('click on data set filter');
-    cy.findAllByTestId('multi-select-filter-Data set').click();
+    cy.findAllByTestId('filter-Data set').click();
 
     cy.log('search and select data set name');
     cy.get('input[placeholder="Filter by name"]').type(DATA_SET);
@@ -39,7 +39,7 @@ describe('Common filters', () => {
 
   it('Asset filter should work', () => {
     cy.log('click on asset filter');
-    cy.findAllByTestId('multi-select-filter-Asset').click();
+    cy.findAllByTestId('filter-Asset').click();
 
     cy.log('search and select asset');
     cy.get('input[placeholder="Filter by name"]').type(ASSET_NAME);

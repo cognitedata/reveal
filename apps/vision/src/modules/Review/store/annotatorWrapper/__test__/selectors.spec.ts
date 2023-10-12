@@ -1,4 +1,5 @@
 import { CombinedState } from '@reduxjs/toolkit';
+
 import {
   getDummyPredefinedKeypoint,
   getDummyKeypointCollectionState,
@@ -6,26 +7,23 @@ import {
   getDummyPredefinedKeypointCollection,
   getDummyTempKeypointCollection,
   getDummyKeypoint,
-} from '@vision/__test-utils/annotations';
-import { getInitialState } from '@vision/__test-utils/store.utils';
-import { generateKeypointId } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+} from '../../../../../__test-utils/annotations';
+import { getInitialState } from '../../../../../__test-utils/store.utils';
+import { RootState } from '../../../../../store/rootReducer';
+import { generateKeypointId } from '../../../../Common/Utils/AnnotationUtils/AnnotationUtils';
+import { PredefinedKeypointCollection, ReviewKeypoint } from '../../../types';
+import { ReviewState } from '../../review/types';
 import {
   selectNextPredefinedKeypointCollection,
   selectNextPredefinedShape,
   selectTempKeypointCollection,
-} from '@vision/modules/Review/store/annotatorWrapper/selectors';
-import { initialState } from '@vision/modules/Review/store/annotatorWrapper/slice';
+} from '../selectors';
+import { initialState } from '../slice';
 import {
   AnnotatorWrapperState,
   KeypointCollectionState,
   KeypointState,
-} from '@vision/modules/Review/store/annotatorWrapper/type';
-import { ReviewState } from '@vision/modules/Review/store/review/types';
-import {
-  PredefinedKeypointCollection,
-  ReviewKeypoint,
-} from '@vision/modules/Review/types';
-import { RootState } from '@vision/store/rootReducer';
+} from '../type';
 
 describe('Test annotationLabel selectors', () => {
   // todo add correct

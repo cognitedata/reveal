@@ -1,13 +1,14 @@
 import { ComponentProps } from 'react';
 
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import {
   ChartTimeSeries,
   ChartWorkflow,
   ScheduledCalculation,
-} from '@charts-app/models/chart/types';
-import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
-import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
+} from '@cognite/charts-lib';
+
+import { WorkflowState } from '../../models/calculation-results/types';
+import { ScheduledCalculationsDataMap } from '../../models/scheduled-calculation-results/types';
+import { TimeseriesEntry } from '../../models/timeseries-results/types';
 
 import { ScheduledCalculationRow } from './ScheduledCalculationRow';
 import TimeSeriesRow from './TimeSeriesRow';

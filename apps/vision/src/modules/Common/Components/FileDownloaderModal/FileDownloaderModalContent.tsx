@@ -3,12 +3,6 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { Status } from '@vision/api/annotation/types';
-import { renameDuplicates } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
-import { STATUS } from '@vision/modules/Common/Components/FileUploaderModal/enums';
-import { makeSelectAnnotationsForFileIds } from '@vision/modules/Common/store/annotation/selectors';
-import { RootState } from '@vision/store/rootReducer';
-import { ToastUtils } from '@vision/utils/ToastUtils';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import moment from 'moment';
@@ -17,6 +11,13 @@ import sdk from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
 import { Title, Body, Radio, Select } from '@cognite/cogs.js';
 import { FileLink, IdEither } from '@cognite/sdk';
+
+import { Status } from '../../../../api/annotation/types';
+import { RootState } from '../../../../store/rootReducer';
+import { ToastUtils } from '../../../../utils/ToastUtils';
+import { makeSelectAnnotationsForFileIds } from '../../store/annotation/selectors';
+import { renameDuplicates } from '../FileUploader/utils/FileUtils';
+import { STATUS } from '../FileUploaderModal/enums';
 
 import {
   convertAnnotationsToAutoML,

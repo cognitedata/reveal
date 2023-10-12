@@ -6,12 +6,10 @@ import InfiniteLoader from 'react-window-infinite-loader';
 import styled from 'styled-components';
 
 import { Loader } from '@data-exploration/components';
-import {
-  SelectableItemsProps,
-  AllowedTableStateId,
-} from '@data-exploration-components/types';
 
 import { Body } from '@cognite/cogs.js';
+
+import { AllowedTableStateId, SelectableItemsProps } from '../../types';
 
 export type GridCellProps<T> = {
   item: T;

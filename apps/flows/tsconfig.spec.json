@@ -1,30 +1,32 @@
 {
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-        "outDir": "../../dist/out-tsc",
-        "module": "commonjs",
-        "types": [
-            "jest",
-            "node",
-            "@testing-library/jest-dom"
-        ]
-    },
-    "include": [
-        "**/*.test.ts",
-        "**/*.test.tsx",
-        "**/*.test.js",
-        "**/*.test.jsx",
-        "**/*.spec.ts",
-        "**/*.spec.tsx",
-        "**/*.spec.js",
-        "**/*.spec.jsx",
-        "**/*.d.ts",
-        "../../types/index.d.ts",
-        "jest.config.ts"
-    ],
-    "files": [
-        "../../node_modules/@nx/react/typings/cssmodule.d.ts",
-        "../../node_modules/@nx/react/typings/image.d.ts",
-        "../../types/index.d.ts"
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "module": "commonjs",
+    "types": [
+      "jest",
+      "node",
+      "@testing-library/jest-dom",
+      "@nx/react/typings/cssmodule.d.ts",
+      "@nx/react/typings/image.d.ts"
     ]
+  },
+  "include": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.test.js",
+    "**/*.test.jsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.spec.js",
+    "**/*.spec.jsx",
+    "**/*.d.ts",
+    "../../types/index.d.ts",
+    "jest.config.ts"
+  ],
+  "files": [
+    "../../node_modules/@nx/react/typings/cssmodule.d.ts",
+    "../../node_modules/@nx/react/typings/image.d.ts",
+    "../../types/index.d.ts"
+  ]
 }

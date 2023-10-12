@@ -59,6 +59,11 @@ export const SourceDetails = ({
             value: MQTT_SOURCE_TYPE_LABEL[source.type],
           },
           { key: 'port', title: t('form-port'), value: source.port },
+          {
+            key: 'useTls',
+            title: t('use-tls'),
+            value: source.useTls ? t('true') : t('false'),
+          },
         ]}
         title={t('source-details')}
       />

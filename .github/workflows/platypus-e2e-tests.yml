@@ -69,6 +69,9 @@ jobs:
             ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
+      - name: Build platypus workers
+        run: yarn nx run platypus:build-worker
+
       - name: Cypress run
         uses: cypress-io/github-action@v4.2.2
         # let's give this action an ID so we can refer
@@ -89,7 +92,15 @@ jobs:
           # wait for 1 minute for the server to respond
           wait-on-timeout: 60
           # Run the cypress tests
-          command: yarn nx run platypus-e2e:e2e:${{ matrix.configuration }}
+          command: yarn nx run platypus:e2e:${{ matrix.configuration }}
+
+      - name: Upload cypress artifacts
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: platypus-failed-cypress-tests-recordings
+          path: dist/cypress/apps/platypus/videos
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
 
       # Disabling codecov from here, to not interfere with nx_ci
       # - name: Combine CodeCov reports
@@ -102,4 +113,4 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: platypus-e2e-${{ matrix.configuration }}
-          files: ./apps/platypus-e2e/coverage/coverage-final.json,./apps/platypus-e2e/coverage/clover.xml,./apps/platypus-e2e/coverage/coverage-summary.json
+          files: ./apps/platypus/coverage/coverage-final.json,./apps/platypus/coverage/clover.xml,./apps/platypus/coverage/coverage-summary.json

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Select, notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 
 import { createLink } from '@cognite/cdf-utilities';
-import { Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
+import { Checkbox, Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import {
@@ -13,7 +13,7 @@ import {
   MQTTSourceType,
   useCreateMQTTSource,
 } from '../../hooks/hostedExtractors';
-import FormFieldWrapper from '../form-field-wrapper/FormFieldWrapper';
+import { FormFieldWrapper } from '../form-fields';
 
 export const MQTT_SOURCE_TYPE_LABEL: Record<MQTTSourceType, string> = {
   mqtt3: 'Version 3.1.1',
@@ -33,6 +33,7 @@ export const MQTT_SOURCE_TYPE_OPTIONS: {
 
 type CreateMQTTSourceFormValues = Partial<BaseMQTTSource> & {
   password?: string;
+  useTls?: boolean;
 };
 
 type CreateSourceModalProps = {
@@ -84,11 +85,9 @@ export const CreateSourceModal = ({
     if (!values.host) {
       errors.host = t('validation-error-field-required');
     }
-    if (!values.username) {
-      errors.username = t('validation-error-field-required');
-    }
-    if (!values.password) {
-      errors.password = t('validation-error-field-required');
+
+    if (!values.port) {
+      errors.port = t('validation-error-field-required');
     }
 
     return errors;
@@ -98,22 +97,18 @@ export const CreateSourceModal = ({
     useFormik<CreateMQTTSourceFormValues>({
       initialValues: {
         type: 'mqtt5',
+        port: '1883',
       },
       onSubmit: (val) => {
-        if (
-          val.externalId &&
-          val.type &&
-          val.host &&
-          val.username &&
-          val.password
-        ) {
+        if (val.externalId && val.type && val.host) {
           createMQTTSource({
             externalId: val.externalId,
             type: val.type,
-            username: val.username,
-            password: val.password,
             host: val.host,
-            port: val.port,
+            ...(values.username && { username: values.username }),
+            ...(values.password && { password: values.password }),
+            port: values.port,
+            useTls: values.useTls,
           });
         }
       },
@@ -122,6 +117,21 @@ export const CreateSourceModal = ({
       validateOnChange: false,
     });
 
+  const onClickUseTLS = useCallback(
+    (e: any) => {
+      setFieldValue('useTls', e.target.checked);
+      if (e.target.checked) {
+        if (!values.port || values.port === '1883') {
+          setFieldValue('port', '8883');
+        }
+      } else {
+        if (!values.port || values.port === '8883') {
+          setFieldValue('port', '1883');
+        }
+      }
+    },
+    [setFieldValue, values.port]
+  );
   return (
     <Modal
       onCancel={onCancel}
@@ -159,33 +169,43 @@ export const CreateSourceModal = ({
           statusText={errors.host}
           value={values.host}
         />
-        <FormFieldWrapper isRequired title={t('form-protocol-version')}>
-          <Select
-            onChange={(e) => setFieldValue('type', e)}
-            options={MQTT_SOURCE_TYPE_OPTIONS}
-            placeholder={t('form-protocol-version-placeholder')}
-            value={values.type}
-          />
-        </FormFieldWrapper>
+        <Flex gap={16}>
+          <div style={{ flex: '1 1 0' }}>
+            <FormFieldWrapper isRequired title={t('form-protocol-version')}>
+              <Select
+                onChange={(e) => setFieldValue('type', e)}
+                options={MQTT_SOURCE_TYPE_OPTIONS}
+                placeholder={t('form-protocol-version-placeholder')}
+                value={values.type}
+              />
+            </FormFieldWrapper>
+          </div>
+          <div style={{ flex: '1 1 0' }}>
+            <InputExp
+              clearable
+              fullWidth
+              required
+              label={{
+                required: false,
+                info: undefined,
+                text: t('form-port'),
+              }}
+              onChange={(e) => setFieldValue('port', e.target.value)}
+              placeholder={t('form-port-placeholder')}
+              status={errors.port ? 'critical' : undefined}
+              statusText={errors.port}
+              value={values.port}
+            />
+          </div>
+        </Flex>
+        <Checkbox onChange={onClickUseTLS} checked={values.useTls}>
+          {t('use-tls')}
+        </Checkbox>
         <InputExp
           clearable
           fullWidth
           label={{
             required: false,
-            info: undefined,
-            text: t('form-port'),
-          }}
-          onChange={(e) => setFieldValue('port', e.target.value)}
-          placeholder={t('form-port-placeholder')}
-          status={errors.port ? 'critical' : undefined}
-          statusText={errors.port}
-          value={values.port}
-        />
-        <InputExp
-          clearable
-          fullWidth
-          label={{
-            required: true,
             info: undefined,
             text: t('form-username'),
           }}
@@ -199,7 +219,7 @@ export const CreateSourceModal = ({
           clearable
           fullWidth
           label={{
-            required: true,
+            required: false,
             info: undefined,
             text: t('form-password'),
           }}

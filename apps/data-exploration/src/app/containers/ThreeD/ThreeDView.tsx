@@ -23,28 +23,25 @@ import {
 import { Image360HistoricalDetails } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import AssetsHighlightButton from '@data-exploration-app/containers/ThreeD/assets-highlight-button/AssetsHighlightButton';
-import MouseWheelAction from '@data-exploration-app/containers/ThreeD/components/MouseWheelAction';
-import OverlayTool from '@data-exploration-app/containers/ThreeD/components/OverlayTool';
-import LoadSecondaryModels from '@data-exploration-app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
-import { LabelEventHandler } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
+import { EXPLORATION } from '../../constants/metrics';
 import {
   useFlagAssetMappingsOverlays,
   useFlagPointCloudSearch,
   useFlagPointsOfInterestFeature,
-} from '@data-exploration-app/hooks/flags';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { PREVIEW_SIDEBAR_MIN_WIDTH } from '@data-exploration-lib/core';
-
+  useJourney,
+} from '../../hooks';
+import { trackUsage } from '../../utils/Metrics';
 import zIndex from '../../utils/zIndex';
-import { StyledSplitter } from '../elements';
+import { DetailsOverlay } from '../Exploration/DetailsOverlay';
 
-import { AssetMappingsSidebar } from './AssetMappingsSidebar';
-import { AssetPreviewSidebar } from './AssetPreviewSidebar';
+import AssetsHighlightButton from './assets-highlight-button/AssetsHighlightButton';
+import { AssetSearchSidebar } from './AssetSearchSidebar';
+import MouseWheelAction from './components/MouseWheelAction';
+import OverlayTool from './components/OverlayTool';
 import { ThreeDContext } from './contexts/ThreeDContext';
 import HighQualityToggle from './high-quality-toggle/HighQualityToggle';
 import LoadImages360 from './load-secondary-models/LoadImages360';
+import LoadSecondaryModels from './load-secondary-models/LoadSecondaryModels';
 import PointsOfInterestLoader from './load-secondary-models/PointsOfInterestLoader';
 import NodePreview, { ResourceTabType } from './NodePreview';
 import PointSizeSlider from './point-size-slider/PointSizeSlider';
@@ -59,8 +56,9 @@ import {
   PointToPointMeasurementButton,
   ShareButton,
 } from './toolbar';
+import { LabelEventHandler } from './tools/SmartOverlayTool';
 import {
-  AssetSelectionState,
+  AssetSelectionContext,
   findClosestAsset,
   fitCameraToAsset,
   getAssetIdFromImageAnnotation,
@@ -104,11 +102,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     assetDetailsExpanded,
     assetHighlightMode,
     setAssetDetailsExpanded,
-    splitterColumnWidth,
-    setSplitterColumnWidth,
     revisionId,
-    tab,
-    setTab,
     secondaryModels,
     viewState,
     images360,
@@ -154,7 +148,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const setSelectedAssetAndFitCamera = useCallback(
     (
       newSelectedAssetId: number | undefined,
-      assetSelectionState: AssetSelectionState
+      assetSelectionState: AssetSelectionContext
     ) => {
       setSelectedAssetId(newSelectedAssetId);
       if (
@@ -181,7 +175,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     ) => {
       (async () => {
         let closestAssetId: number | undefined;
-        const assetSelectionState: AssetSelectionState = {
+        const assetSelectionState: AssetSelectionContext = {
           model: model!,
         };
 
@@ -196,6 +190,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
           assetSelectionState.imageAnnotation =
             image360AnnotationIntersection.annotation;
           assetSelectionState.model = enteredImage360Collection;
+          assetSelectionState.imageEntity = image360Entity;
 
           setClickedModel(enteredImage360Collection);
         }
@@ -254,11 +249,15 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     [setSelectedAssetId]
   );
 
+  const [journey, setJourney] = useJourney();
+
   useEffect(() => {
-    if (!selectedAssetId) {
+    if (!selectedAssetId || journey === undefined) {
       setAssetDetailsExpanded(false);
+    } else {
+      setAssetDetailsExpanded(true);
     }
-  }, [selectedAssetId, setAssetDetailsExpanded]);
+  }, [selectedAssetId, setAssetDetailsExpanded, journey]);
 
   const [labelsVisibility, setLabelsVisibility] = useState(
     useOverlays ? assetHighlightMode : false
@@ -307,20 +306,32 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     stylingState,
   ]);
 
+  useEffect(() => {
+    if (!selectedAssetId || !viewer) {
+      return;
+    }
+    fitCameraToAsset(
+      sdk,
+      queryClient,
+      viewer,
+      {
+        model: model!,
+        imageEntity: image360Entity,
+      },
+      selectedAssetId
+    );
+  }, [image360Entity, model, queryClient, sdk, selectedAssetId, viewer]);
+
   if (!revisionId && !image360SiteId) {
     return null;
   }
-  const shouldShowAssetPreviewSidebar =
-    !!selectedAssetId && assetDetailsExpanded;
+  const shouldShowResourcePreview = !!selectedAssetId && assetDetailsExpanded;
+
   return (
     <>
       <ThreeDTitle id={modelId} image360SiteId={image360SiteId} />
       <PreviewContainer>
-        <StyledSplitter
-          secondaryInitialSize={splitterColumnWidth}
-          onSecondaryPaneSizeChange={setSplitterColumnWidth}
-          secondaryMinSize={PREVIEW_SIDEBAR_MIN_WIDTH}
-        >
+        <RootHeightWrapper>
           <Reveal
             key={`${modelId}.${revisionId}`}
             image360SiteId={image360SiteId}
@@ -422,7 +433,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                   {(revealThreeDModel ||
                     image360 ||
                     (revealPointCloudModel && pointCloudSearchFeatureFlag)) && (
-                    <AssetMappingsSidebar
+                    <AssetSearchSidebar
                       modelId={modelId}
                       revisionId={revisionId}
                       selectedAssetId={selectedAssetId}
@@ -437,7 +448,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                     />
                   )}
                 </SidebarContainer>
-                {!!selectedAssetId && !assetDetailsExpanded && (
+                {!!selectedAssetId && !shouldShowResourcePreview && (
                   <NodePreviewContainer>
                     <NodePreview
                       assetId={selectedAssetId}
@@ -445,8 +456,13 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                         setSelectedAssetId(undefined);
                       }}
                       openDetails={(newTab?: ResourceTabType) => {
-                        setTab(newTab);
-                        setAssetDetailsExpanded(true);
+                        setJourney([
+                          {
+                            type: 'asset',
+                            id: selectedAssetId,
+                            selectedTab: newTab,
+                          },
+                        ]);
                       }}
                     />
                   </NodePreviewContainer>
@@ -454,16 +470,8 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
               </>
             )}
           </Reveal>
-          {shouldShowAssetPreviewSidebar && (
-            <AssetPreviewSidebar
-              assetId={selectedAssetId}
-              onClose={() => {
-                setAssetDetailsExpanded(false);
-              }}
-              tab={tab}
-            />
-          )}
-        </StyledSplitter>
+          {shouldShowResourcePreview && <DetailsOverlay />}
+        </RootHeightWrapper>
       </PreviewContainer>
     </>
   );
@@ -530,4 +538,10 @@ const SidebarContainer = styled(Flex)`
 const PreviewContainer = styled.div`
   height: 100%;
   display: contents;
+`;
+
+const RootHeightWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: row;
 `;

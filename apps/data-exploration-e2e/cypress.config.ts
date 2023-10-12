@@ -6,11 +6,15 @@ import { loginWithAzureClientCredentials } from './src/support/loginWithClientCr
 export default defineConfig({
   e2e: {
     ...nxE2EPreset(__dirname),
-    baseUrl: 'http://localhost:8080',
     chromeWebSecurity: false,
     testIsolation: false,
     env: {
-      OVERRIDE_URL: 'http://localhost:3010/data-exploration/index.js',
+      ORG: 'cog-dss',
+      PROJECT: 'dss-dev',
+      TENANT: 'dssbycognite.onmicrosoft.com',
+      CLUSTER: 'greenfield.cognitedata.com',
+      ENV: 'greenfield',
+      OVERRIDE_URL: 'http://localhost:3010/index.js',
     },
     async setupNodeEvents(
       on: Cypress.PluginEvents,

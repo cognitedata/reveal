@@ -1,10 +1,10 @@
-import { getDummyTempKeypointCollection } from '@vision/__test-utils/annotations';
-import { CDFAnnotationTypeEnum, Status } from '@vision/api/annotation/types';
-import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from '@vision/modules/Review/store/review/utils';
+import { getDummyTempKeypointCollection } from '../../../../../__test-utils/annotations';
 import {
-  ReviewKeypoint,
-  TempKeypointCollection,
-} from '@vision/modules/Review/types';
+  CDFAnnotationTypeEnum,
+  Status,
+} from '../../../../../api/annotation/types';
+import { ReviewKeypoint, TempKeypointCollection } from '../../../types';
+import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from '../utils';
 
 const dummyTempKeypointCollection = getDummyTempKeypointCollection({});
 

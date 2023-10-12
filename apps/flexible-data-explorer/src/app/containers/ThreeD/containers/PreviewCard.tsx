@@ -4,49 +4,45 @@
 
 import { PropsWithChildren } from 'react';
 
-import styled from 'styled-components';
-
 import {
   ViewerAnchor,
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
-import { ClickedNodeData } from '@cognite/reveal-react-components/dist/hooks/useClickedNode';
 
 import { useFDM } from '../../../providers/FDMProvider';
 import { InstancePreview } from '../../preview/InstancePreview';
 
+import { InstanceWithPosition } from './RevealContent';
+
 export const PreviewCard = ({
   nodeData,
 }: {
-  nodeData: ClickedNodeData | undefined;
+  nodeData: InstanceWithPosition | undefined;
 }) => {
   const fdmClient = useFDM();
 
   if (
     nodeData === undefined ||
-    nodeData.view === undefined ||
-    nodeData.fdmNode === undefined
+    nodeData.dataType === undefined ||
+    nodeData.externalId === undefined
   ) {
     return <></>;
   }
 
   return (
-    <ViewerAnchor position={nodeData.intersection.point}>
-      <OffsetAnchor>
-        <SuppressedDiv>
-          <InstancePreview.Generic
-            instance={{
-              dataType: nodeData.view.externalId,
-              instanceSpace: nodeData.fdmNode.space,
-              externalId: nodeData.fdmNode.externalId,
-            }}
-            dataModel={fdmClient.getDataModelByDataType(
-              nodeData.view.externalId
-            )}
-            disableViewer
-          />
-        </SuppressedDiv>
-      </OffsetAnchor>
+    <ViewerAnchor
+      position={nodeData.threeDPosition}
+      sticky
+      stickyMargin={10}
+      style={{ transform: 'translate(100px, -50%)' }}
+    >
+      <SuppressedDiv>
+        <InstancePreview.Generic
+          instance={nodeData}
+          dataModel={fdmClient.getDataModelByDataType(nodeData.dataType)}
+          disableViewer
+        />
+      </SuppressedDiv>
     </ViewerAnchor>
   );
 };
@@ -54,7 +50,3 @@ export const PreviewCard = ({
 const SuppressedDiv = withSuppressRevealEvents(
   ({ children }: PropsWithChildren) => <div>{children}</div>
 );
-
-const OffsetAnchor = styled.div`
-  transform: translate(100px, -50%);
-`;

@@ -1,11 +1,8 @@
-import { AlertResponse } from '@charts-app/components/MonitoringAlert/types';
-import {
-  ChartTimeSeries,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
-import { UserProfile } from '@fusion/industry-canvas';
-
+import { ChartTimeSeries, ScheduledCalculation } from '@cognite/charts-lib';
 import { CogniteExternalId, CogniteInternalId, Metadata } from '@cognite/sdk';
+
+import { UserProfile } from '../../common/providers/useUserProfileQuery';
+import { AlertResponse } from '../MonitoringAlert/types';
 
 export type MonitoringChannel = {
   name: string;
@@ -30,10 +27,8 @@ export type CreateMonitoringJobPayload = {
   timeSeriesExternalId: string;
   nonce: string;
   subscribers: Pick<UserProfile, 'userIdentifier' | 'email'>[];
-  // @deprecated in favor of subscribers from user profiles
-  userAuthId_deprecated: string;
-  // @deprecated in favor of subscribers from user profiles
-  userEmail_deprecated: string;
+  sourceId: CogniteExternalId;
+  source: 'CHARTS';
 };
 
 export type ScheduleDurationType = { label: string; value: string };
@@ -114,7 +109,6 @@ export type MonitoringSubscriptionResponse = {
 export type MonitoringSubscriptionPayload = {
   channelID: number;
   subscribers: Pick<UserProfile, 'userIdentifier' | 'email'>[];
-  userAuthId_deprecated?: string;
 };
 
 export type MonitoringSubscriptionsListResponse = { [key: string]: boolean };

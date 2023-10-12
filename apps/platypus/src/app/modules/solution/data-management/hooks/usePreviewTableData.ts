@@ -2,12 +2,13 @@ import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
 } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { DMSRecord } from '@platypus-core/domain/suggestions';
 import { useQuery } from '@tanstack/react-query';
+
+import { TOKENS } from '../../../../di';
+import { useInjection } from '../../../../hooks/useInjection';
+import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
+import { QueryKeys } from '../../../../utils/queryKeys';
 
 export const usePreviewTableData = (
   dataModelExternalId: string,
@@ -52,7 +53,7 @@ export const usePreviewTableData = (
         const value = response.getValue();
         records.push(...value.items);
         if (records.length > maxNumberOfRecords) {
-          return Promise.reject('Exceeding max number of records');
+          return Promise.resolve(records.slice(0, maxNumberOfRecords));
         }
         if (!value.pageInfo.hasNextPage) {
           break;

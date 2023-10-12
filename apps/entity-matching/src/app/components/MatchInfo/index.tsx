@@ -2,9 +2,9 @@ import _ from 'lodash-es';
 
 import { Icon } from '@cognite/cogs.js';
 
-import ResourceCell from '@entity-matching-app/components/pipeline-run-results-table/ResourceCell';
-import { useRetrieve } from '@entity-matching-app/hooks/retrieve';
-import { API } from '@entity-matching-app/types/api';
+import { useRetrieve } from '../../hooks/retrieve';
+import { API } from '../../types/api';
+import ResourceCell from '../pipeline-run-results-table/ResourceCell';
 
 type Props = {
   api: API;

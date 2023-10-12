@@ -39,7 +39,7 @@ export const BaseFilterInput = <T extends string | number | Date>({
     if (isLoading) {
       return 'Loader';
     }
-    return icon;
+    return icon as IconType;
   }, [icon, isLoading]);
 
   const inputIconPlacement = useMemo(() => {

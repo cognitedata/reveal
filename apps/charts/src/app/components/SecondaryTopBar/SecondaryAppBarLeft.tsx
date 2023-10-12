@@ -1,6 +1,6 @@
-import PortalWait from '@charts-app/components/PortalWait/PortalWait';
-
 import { Flex } from '@cognite/cogs.js';
+
+import PortalWait from '../PortalWait/PortalWait';
 
 const SecondaryTopBarLeft = (props: { children: React.ReactNode }) => {
   return (

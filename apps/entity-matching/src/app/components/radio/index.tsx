@@ -1,10 +1,12 @@
-import { Body, Colors, Flex } from '@cognite/cogs.js';
+import styled from 'styled-components';
+
 import {
   Collapse,
   Radio as AntdRadio,
   RadioProps as AntdRadioProps,
 } from 'antd';
-import styled from 'styled-components';
+
+import { Body, Colors, Flex } from '@cognite/cogs.js';
 
 type RadioProps = Omit<AntdRadioProps, 'children'> & {
   title: string;

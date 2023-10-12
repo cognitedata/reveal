@@ -2,12 +2,6 @@ import { useState } from 'react';
 import { Link, useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { CalculationSummary } from '@simint-app/components/calculation/CalculationSummary';
-import { Editor } from '@simint-app/components/shared/Editor';
-import { useTitle } from '@simint-app/hooks/useTitle';
-import type { AppLocationGenerics } from '@simint-app/routes';
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import styled from 'styled-components/macro';
 
 import { Button, Skeleton, Switch } from '@cognite/cogs.js';
@@ -15,6 +9,13 @@ import {
   useGetModelCalculationQuery,
   useGetModelFileQuery,
 } from '@cognite/simconfig-api-sdk/rtk';
+
+import { CalculationSummary } from '../../components/calculation/CalculationSummary';
+import { Editor } from '../../components/shared/Editor';
+import { useTitle } from '../../hooks/useTitle';
+import type { AppLocationGenerics } from '../../routes';
+import { selectProject } from '../../store/simconfigApiProperties/selectors';
+import { createCdfLink } from '../../utils/createCdfLink';
 
 export function CalculationDetails() {
   const [isJsonModeEnabled, setJsonModeEnabled] = useState<boolean>(false);

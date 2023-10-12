@@ -8,7 +8,6 @@ import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
 
 import { translationKeys } from '../../common';
 import { useTranslation } from '../../hooks/useTranslation';
-import { useIndustryCanvasContext } from '../../IndustryCanvasContext';
 import { IndustryCanvasToolType } from '../../types';
 import { StickyButton } from '../StickyButton';
 
@@ -43,8 +42,6 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
 }) => {
   const [isShapeToolActive, setIsShapeToolActive] = useState(false);
   const { t } = useTranslation();
-
-  const { isCommentsEnabled } = useIndustryCanvasContext();
 
   const [activeShapeTool, setActiveShapeTool] =
     useState<IndustryCanvasToolType>(IndustryCanvasToolType.RECTANGLE);
@@ -153,6 +150,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
           <Tooltip
             content={
               <ToolTooltip
+                key="select"
                 label={t(translationKeys.TOOLBAR_SELECT_BUTTON, 'Select')}
                 keys={[
                   ShortcutKeysByIndustryCanvasToolType[
@@ -188,6 +186,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
           <Tooltip
             content={
               <ToolTooltip
+                key="text"
                 label={t(translationKeys.TOOLBAR_TEXT_BUTTON, 'Text')}
                 keys={[
                   ShortcutKeysByIndustryCanvasToolType[
@@ -210,6 +209,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
           <Tooltip
             content={
               <ToolTooltip
+                key="sticky"
                 label={t(
                   translationKeys.TOOLBAR_STICKY_NOTE_BUTTON,
                   'Sticky note'
@@ -249,6 +249,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
           <Tooltip
             content={
               <ToolTooltip
+                key="line"
                 label={t(translationKeys.TOOLBAR_LINE_BUTTON, 'Line')}
                 keys={[
                   ShortcutKeysByIndustryCanvasToolType[
@@ -267,32 +268,29 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
               onClick={() => onToolChange(IndustryCanvasToolType.LINE)}
             />
           </Tooltip>
-          {isCommentsEnabled && (
-            <Tooltip
-              content={
-                <ToolTooltip
-                  label={t(translationKeys.TOOLBAR_COMMENT_BUTTON, 'Comment')}
-                  keys={[
-                    ShortcutKeysByIndustryCanvasToolType[
-                      IndustryCanvasToolType.COMMENT
-                    ],
-                  ]}
-                />
-              }
-              position="right"
-            >
-              <Button
-                icon="Comment"
-                type="ghost"
-                toggled={activeTool === IndustryCanvasToolType.COMMENT}
-                aria-label={t(
-                  translationKeys.TOOLBAR_COMMENT_BUTTON,
-                  'Comment'
-                )}
-                onClick={() => onToolChange(IndustryCanvasToolType.COMMENT)}
+
+          <Tooltip
+            content={
+              <ToolTooltip
+                key="comment"
+                label={t(translationKeys.TOOLBAR_COMMENT_BUTTON, 'Comment')}
+                keys={[
+                  ShortcutKeysByIndustryCanvasToolType[
+                    IndustryCanvasToolType.COMMENT
+                  ],
+                ]}
               />
-            </Tooltip>
-          )}
+            }
+            position="right"
+          >
+            <Button
+              icon="Comment"
+              type="ghost"
+              toggled={activeTool === IndustryCanvasToolType.COMMENT}
+              aria-label={t(translationKeys.TOOLBAR_COMMENT_BUTTON, 'Comment')}
+              onClick={() => onToolChange(IndustryCanvasToolType.COMMENT)}
+            />
+          </Tooltip>
         </>
       </ToolBar>
     </>

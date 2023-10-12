@@ -1,5 +1,3 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteError, EntityMatchingPredictResponse } from '@cognite/sdk';
 import {
   QueryKey,
   useQuery,
@@ -7,15 +5,16 @@ import {
   useMutation,
   UseMutationOptions,
 } from '@tanstack/react-query';
-import { JobStatus } from './types';
+
+import { CogniteError, EntityMatchingPredictResponse } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { INFINITE_Q_OPTIONS } from './infiniteList';
+import { JobStatus } from './types';
 
 export type PredictionObject = {
   id: number;
-  externalId?: string;
-  name: string;
-  description?: string;
-};
+} & Record<string, string>;
 
 export type Match = {
   score: number;

@@ -3,14 +3,14 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { Thumbnail } from '@vision/modules/Common/Components/Thumbnail/Thumbnail';
-import { VisionFileDetails } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
-import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
-import { isProcessingFile } from '@vision/modules/Process/store/utils';
-import { AnnotationDetailPanel } from '@vision/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanel';
-import { RootState } from '@vision/store/rootReducer';
-
 import { Button } from '@cognite/cogs.js';
+
+import { RootState } from '../../../../store/rootReducer';
+import { Thumbnail } from '../../../Common/Components/Thumbnail/Thumbnail';
+import { makeSelectJobStatusForFile } from '../../../Process/store/selectors';
+import { isProcessingFile } from '../../../Process/store/utils';
+import { AnnotationDetailPanel } from '../../../Review/Containers/AnnotationDetailPanel/AnnotationDetailPanel';
+import { VisionFileDetails } from '../../Components/FileMetadata/Types';
 
 export const FileDetailsAnnotationsPreview = ({
   fileInfo,

@@ -1,8 +1,9 @@
-import { useRecentViewLocalStorage } from '@charts-app/hooks/recently-used';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
 
 import { Illustrations } from '@cognite/cogs.js';
+
+import { useRecentViewLocalStorage } from '../../hooks/recently-used';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 export const defaultTranslations = makeDefaultTranslations(
   'Search for tag numbers or asset names',

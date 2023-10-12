@@ -1,5 +1,6 @@
 {
   "name": "charts",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/charts/src",
   "projectType": "application",
   "targets": {
@@ -15,22 +16,14 @@
         "assets": ["apps/charts/src/favicon.ico", "apps/charts/src/assets"],
         "styles": [],
         "scripts": [],
-        "runtimeChunk": false,
-        "vendorChunk": false,
-        "commonChunk": false,
         "webpackConfig": "apps/charts/webpack-config.js"
       },
       "configurations": {
         "development": {
-          "optimization": false,
-          "outputHashing": "all",
-          "sourceMap": true,
-          "extractCss": false,
-          "namedChunks": false,
           "extractLicenses": false,
-          "vendorChunk": false,
-          "runtimeChunk": false,
-          "budgets": []
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": false
         },
         "production": {
           "fileReplacements": [
@@ -104,14 +97,14 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "charts:build",
-        "hmr": true,
-        "port": 3000,
+        "allowedHosts": ".cogniteapp.com,.cognite.com",
         "ssl": true,
-        "allowedHosts": "*.dev.fusion.cogniteapp.com,apps-staging.cognite.com"
+        "port": 3000
       },
       "configurations": {
         "development": {
-          "buildTarget": "charts:build:development"
+          "buildTarget": "charts:build:development",
+          "hmr": true
         },
         "production": {
           "buildTarget": "charts:build:production",
@@ -144,6 +137,50 @@
         "ci": {
           "ci": true,
           "codeCoverage": true
+        }
+      }
+    },
+    "storybook": {
+      "executor": "@nx/storybook:storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "apps/charts/.storybook"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@nx/storybook:build",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "configDir": "apps/charts/.storybook",
+        "outputDir": "dist/storybook/charts"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/charts/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "charts:serve:development",
+        "env": {
+          "ORG": "cog-e2e",
+          "PROJECT": "e2e-greenfield",
+          "CLUSTER": "greenfield.cognitedata.com",
+          "IDP_INTERNAL_ID": "09f375ff-13b6-4d58-95fd-869b098d4808"
+        }
+      },
+      "configurations": {
+        "development": {
+          "devServerTarget": "charts:serve:development"
         }
       }
     }

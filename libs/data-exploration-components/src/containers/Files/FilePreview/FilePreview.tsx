@@ -4,12 +4,10 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Loader } from '@data-exploration/components';
-import useTooltips from '@data-exploration-components/containers/Files/FilePreview/useTooltips';
-import { ResourceItem } from '@data-exploration-components/types';
-import { lightGrey } from '@data-exploration-components/utils';
 import noop from 'lodash/noop';
 
 import { Flex } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 import { FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -22,6 +20,8 @@ import ReactUnifiedViewer, {
   isSupportedFileInfo,
   ToolType,
   UnifiedViewer,
+  ZoomControls,
+  ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
 import type {
   PanToolConfig,
@@ -43,6 +43,8 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { useIsDocumentsApiEnabled } from '../../../hooks';
+import { ResourceItem } from '../../../types';
+import { lightGrey } from '../../../utils';
 
 import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
@@ -54,6 +56,7 @@ import { useNumPages } from './hooks/useNumPages';
 import usePrevious from './hooks/usePrevious';
 import { useSearchBarState } from './hooks/useSearchBarState';
 import { Pagination } from './Pagination';
+import useTooltips from './useTooltips';
 import { getContainerId, getSearchResultAnnotationStyle } from './utils';
 
 type FilePreviewProps = {
@@ -258,6 +261,11 @@ export const FilePreview = ({
     enabled: showControls,
   });
 
+  const { isEnabled: isCogPilotEnabled } = useFlag('COGNITE_COPILOT', {
+    fallback: false,
+    forceRerender: true,
+  });
+
   const { currentSearchResultIndex, onNextResult, onPreviousResult } =
     useCurrentSearchResult({
       searchResults: searchResults ?? [],
@@ -327,6 +335,13 @@ export const FilePreview = ({
     currentSearchResultIndex,
     page,
   ]);
+
+  const nodes = useMemo(() => {
+    if (container === undefined) {
+      return undefined;
+    }
+    return [container, ...displayedAnnotations];
+  }, [container, displayedAnnotations]);
 
   const tooltips = useTooltips({
     isTooltipsEnabled: enableToolTips && !creatable,
@@ -398,7 +413,7 @@ export const FilePreview = ({
     );
   }
 
-  if (!isFileFetched || container === undefined || file === undefined) {
+  if (!isFileFetched || nodes === undefined || file === undefined) {
     return <Loader />;
   }
 
@@ -440,11 +455,10 @@ export const FilePreview = ({
             applicationId={applicationId}
             id={id}
             setRef={(ref) => setUnifiedViewerRef(ref)}
-            container={container}
-            annotations={displayedAnnotations}
+            nodes={nodes}
             tooltips={enableToolTips ? tooltips : undefined}
             onClick={onStageClick}
-            shouldShowZoomControls={showControls}
+            shouldShowZoomControls={false}
             onUpdateRequest={handleUpdateRequest}
             tool={creatable ? RECTANGLE_TOOL : PAN_TOOL}
           />
@@ -481,6 +495,16 @@ export const FilePreview = ({
           annotationsAcl={annotationsAcl}
           hideEdit={hideEdit}
         />
+        {showControls && (
+          <ZoomControlsWrapper
+            addMarginToRight={isCogPilotEnabled && !showResourcePreviewSidebar}
+          >
+            <ZoomControls
+              unifiedViewerRef={unifiedViewerRef}
+              zoomToFitMode={ZoomToFitMode.DEFAULT}
+            />
+          </ZoomControlsWrapper>
+        )}
       </UFVWrapper>
       {showSideBar && showResourcePreviewSidebar && (
         <SidebarWrapper>
@@ -503,6 +527,12 @@ export const FilePreview = ({
     </FullHeightWrapper>
   );
 };
+
+const ZoomControlsWrapper = styled.div<{ addMarginToRight: boolean }>`
+  position: absolute;
+  bottom: 15px;
+  right: ${({ addMarginToRight }) => (addMarginToRight ? 130 : 50)}px;
+`;
 
 const UFVWrapper = styled.div`
   display: flex;

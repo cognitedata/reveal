@@ -1,14 +1,16 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
-import { LegacyAnnotationApi } from '@vision/api/annotation/legacy/legacyAnnotationApi';
-import { LegacyUnsavedAnnotation } from '@vision/api/annotation/legacy/legacyTypes';
+
+import { LegacyAnnotationApi } from '../../../api/annotation/legacy/legacyAnnotationApi';
+import { LegacyUnsavedAnnotation } from '../../../api/annotation/legacy/legacyTypes';
 import {
   PredefinedVisionAnnotations,
   PredefinedKeypointCollection,
   PredefinedShape,
-} from '@vision/modules/Review/types';
-import { ThunkConfig } from '@vision/store/rootReducer';
-import { PopulateAnnotationTemplates } from '@vision/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { getPredefinedAnnotationColor } from '@vision/utils/colorUtils';
+} from '../../../modules/Review/types';
+import { getPredefinedAnnotationColor } from '../../../utils/colorUtils';
+import { ThunkConfig } from '../../rootReducer';
+
+import { PopulateAnnotationTemplates } from './PopulateAnnotationTemplates';
 
 export const SaveAnnotationTemplates = createAsyncThunk<
   PredefinedVisionAnnotations,

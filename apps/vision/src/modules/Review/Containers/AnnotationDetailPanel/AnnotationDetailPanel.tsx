@@ -3,56 +3,57 @@ import { batch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
+import { Detail, Icon, Tooltip } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
+
 import {
   CDFAnnotationTypeEnum,
   ImageKeypointCollection,
   Status,
-} from '@vision/api/annotation/types';
+} from '../../../../api/annotation/types';
 import {
   annotationCategoryTitle,
   annotationObjectsName,
   annotationRowComponent,
   annotationTypeFromCategoryTitle,
-} from '@vision/constants/annotationDetailPanel';
-import { VisionAnnotationDataType } from '@vision/modules/Common/types';
+} from '../../../../constants/annotationDetailPanel';
+import { useThunkDispatch } from '../../../../store';
+import { deselectAllSelectionsReviewPage } from '../../../../store/commonActions';
+import { RootState } from '../../../../store/rootReducer';
+import { AnnotationStatusChange } from '../../../../store/thunks/Annotation/AnnotationStatusChange';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from '../../../../store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { VisionAnnotationDataType } from '../../../Common/types';
 import {
   isImageAssetLinkData,
   isImageClassificationData,
   isImageExtractedTextData,
   isImageKeypointCollectionData,
   isImageObjectDetectionData,
-} from '@vision/modules/Common/types/typeGuards';
-import { AnnotationDetailPanelHotKeys } from '@vision/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanelHotKeys';
-import { VirtualizedReviewAnnotations } from '@vision/modules/Review/Containers/AnnotationDetailPanel/components';
-import { selectAnnotationCategory } from '@vision/modules/Review/Containers/AnnotationDetailPanel/store/slice';
-import {
-  AnnotationDetailPanelAnnotationType,
-  AnnotationDetailPanelRowDataBase,
-} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
-import { generateNodeTree } from '@vision/modules/Review/Containers/AnnotationDetailPanel/utils/generateNodeTree';
-import { selectTempKeypointCollection } from '@vision/modules/Review/store/annotatorWrapper/selectors';
+} from '../../../Common/types/typeGuards';
+import { selectTempKeypointCollection } from '../../store/annotatorWrapper/selectors';
 import {
   deleteTempKeypointCollection,
   keypointSelectStatusChange,
   selectCollection,
   setCollectionStatus,
   toggleCollectionVisibility,
-} from '@vision/modules/Review/store/annotatorWrapper/slice';
-import { selectVisionReviewAnnotationsForFile } from '@vision/modules/Review/store/review/selectors';
+} from '../../store/annotatorWrapper/slice';
+import { selectVisionReviewAnnotationsForFile } from '../../store/review/selectors';
 import {
   selectAnnotation,
   toggleAnnotationVisibility,
-} from '@vision/modules/Review/store/review/slice';
-import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from '@vision/modules/Review/store/review/utils';
-import { VisionReviewAnnotation } from '@vision/modules/Review/types';
-import { useThunkDispatch } from '@vision/store';
-import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
-import { RootState } from '@vision/store/rootReducer';
-import { AnnotationStatusChange } from '@vision/store/thunks/Annotation/AnnotationStatusChange';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from '@vision/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+} from '../../store/review/slice';
+import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from '../../store/review/utils';
+import { VisionReviewAnnotation } from '../../types';
 
-import { Detail, Icon, Tooltip } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
+import { AnnotationDetailPanelHotKeys } from './AnnotationDetailPanelHotKeys';
+import { VirtualizedReviewAnnotations } from './components';
+import { selectAnnotationCategory } from './store/slice';
+import {
+  AnnotationDetailPanelAnnotationType,
+  AnnotationDetailPanelRowDataBase,
+} from './types';
+import { generateNodeTree } from './utils/generateNodeTree';
 
 export const AnnotationDetailPanel = ({
   file,

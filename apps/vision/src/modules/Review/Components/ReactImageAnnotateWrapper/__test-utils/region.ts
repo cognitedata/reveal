@@ -1,14 +1,14 @@
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
-import { getAnnotationLabelOrText } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+} from '../../../../Common/types';
+import { getAnnotationLabelOrText } from '../../../../Common/Utils/AnnotationUtils/AnnotationUtils';
+import { VisionReviewAnnotation } from '../../../types';
 import {
   AnnotatorBaseRegion,
   AnnotatorNewRegion,
   AnnotatorRegionType,
-} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { VisionReviewAnnotation } from '@vision/modules/Review/types';
+} from '../types';
 
 export const getDummyRegion = <
   RegionType extends { type: AnnotatorRegionType } & AnnotatorBaseRegion

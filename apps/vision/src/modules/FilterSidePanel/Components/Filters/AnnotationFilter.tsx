@@ -4,16 +4,14 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { unwrapResult } from '@reduxjs/toolkit';
-import { ClearButton } from '@vision/modules/Explorer/Components/ClearButton';
-import {
-  AnnotationFilterType,
-  VisionFilterItemProps,
-} from '@vision/modules/FilterSidePanel/types';
-import { useThunkDispatch } from '@vision/store';
-import { PopulateAnnotationTemplates } from '@vision/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { Radio, RadioChangeEvent } from 'antd';
 
 import { Body, Detail, Select } from '@cognite/cogs.js';
+
+import { useThunkDispatch } from '../../../../store';
+import { PopulateAnnotationTemplates } from '../../../../store/thunks/Annotation/PopulateAnnotationTemplates';
+import { ClearButton } from '../../../Explorer/Components/ClearButton';
+import { AnnotationFilterType, VisionFilterItemProps } from '../../types';
 
 const annotationStateOptions: { [key: string]: string } = {
   approved: 'True (verified annotations)',

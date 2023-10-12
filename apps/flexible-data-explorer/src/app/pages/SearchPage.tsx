@@ -17,12 +17,12 @@ export const SearchPage = () => {
       <Page.Body>
         <Container>
           <Suspense fallback="Loading">
+            {!isAIEnabled && <SearchCategories />}
+
             <Content>
               <SearchConfiguration />
               {isAIEnabled ? <AIResults /> : <SearchResults />}
             </Content>
-
-            {!isAIEnabled && <SearchCategories />}
           </Suspense>
         </Container>
       </Page.Body>
@@ -30,15 +30,15 @@ export const SearchPage = () => {
   );
 };
 
-const Content = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
-
 const Container = styled.div`
   display: flex;
   max-width: 100%;
   width: 100%;
   gap: 32px;
   padding-top: 24px;
+`;
+
+const Content = styled.div`
+  flex: 1;
+  min-width: 0;
 `;

@@ -3,9 +3,9 @@
     "key": "cdf-3d-management",
     "appName": "@cognite/cdf-3d-management",
     "hosting": {
-      "staging": "https://cdf-3d-management-prod.web.app",
-      "preview": "https://cdf-3d-management-prod.web.app",
-      "production": "https://cdf-3d-management-prod.web.app"
+      "staging": "https://cdf-3d-management-prod.cogniteapp.com",
+      "preview": "https://cdf-3d-management-prod.cogniteapp.com",
+      "production": "https://cdf-3d-management-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/3d-models" }]
   },
@@ -15,7 +15,7 @@
     "hosting": {
       "staging": "https://cdf-access-management-staging.web.app",
       "preview": "https://cdf-access-management-staging.web.app",
-      "production": "https://cdf-access-management-prod.web.app"
+      "production": "https://cdf-access-management-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/access-management" }]
   },
@@ -25,7 +25,7 @@
     "hosting": {
       "staging": "https://cdf-charts-staging.web.app",
       "preview": "https://cdf-charts-preview.web.app",
-      "production": "https://cdf-charts-prod.web.app"
+      "production": "https://cdf-charts-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/charts" }]
   },
@@ -35,7 +35,7 @@
     "hosting": {
       "staging": "https://cdf-coding-conventions-staging.web.app",
       "preview": "https://cdf-coding-conventions-staging.web.app",
-      "production": "https://cdf-coding-conventions-prod.web.app"
+      "production": "https://cdf-coding-conventions-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/coding-conventions" }]
   },
@@ -45,7 +45,7 @@
     "hosting": {
       "staging": "https://cognite-onboard-infield-staging.web.app",
       "preview": "https://cognite-onboard-infield-staging.web.app",
-      "production": "https://cognite-onboard-infield-production.web.app"
+      "production": "https://cognite-onboard-infield-production.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/infield" }]
   },
@@ -55,7 +55,7 @@
     "hosting": {
       "staging": "https://cdf-pnid-contextualization-staging.web.app",
       "preview": "https://cdf-pnid-contextualization-staging.web.app",
-      "production": "https://cdf-pnid-contextualization-prod.web.app"
+      "production": "https://cdf-pnid-contextualization-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/interactive-diagrams" }]
   },
@@ -63,9 +63,9 @@
     "key": "cdf-contextualization-ui",
     "appName": "@cognite/cdf-contextualization-ui",
     "hosting": {
-      "staging": "https://cdf-contextualization-ui-prod.web.app",
-      "preview": "https://cdf-contextualization-ui-prod.web.app",
-      "production": "https://cdf-contextualization-ui-prod.web.app"
+      "staging": "https://cdf-contextualization-ui-prod.cogniteapp.com",
+      "preview": "https://cdf-contextualization-ui-prod.cogniteapp.com",
+      "production": "https://cdf-contextualization-ui-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/contextualization" }]
   },
@@ -73,9 +73,9 @@
     "key": "cdf-copilot",
     "appName": "@cognite/cdf-copilot",
     "hosting": {
-      "staging": "https://cdf-copilot-prod.web.app",
-      "preview": "https://cdf-copilot-prod.web.app",
-      "production": "https://cdf-copilot-prod.web.app"
+      "staging": "https://cdf-copilot-prod.cogniteapp.com",
+      "preview": "https://cdf-copilot-prod.cogniteapp.com",
+      "production": "https://cdf-copilot-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName" }]
   },
@@ -85,7 +85,7 @@
     "hosting": {
       "staging": "https://cdf-data-catalog-staging.web.app",
       "preview": "https://cdf-data-catalog-staging.web.app",
-      "production": "https://cdf-data-catalog-prod.web.app"
+      "production": "https://cdf-data-catalog-prod.cogniteapp.com"
     },
     "routes": [
       { "route": "/:tenantName/new-data-sets" },
@@ -100,7 +100,7 @@
     "hosting": {
       "staging": "https://cdf-data-exploration-staging.web.app",
       "preview": "https://cdf-data-exploration-preview.web.app",
-      "production": "https://cdf-data-exploration-prod.web.app"
+      "production": "https://cdf-data-exploration-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/explore" }]
   },
@@ -108,9 +108,9 @@
     "key": "cdf-document-search-ui",
     "appName": "@cognite/cdf-document-search-ui",
     "hosting": {
-      "staging": "https://cdf-document-search-prod.web.app",
-      "preview": "https://cdf-document-search-prod.web.app",
-      "production": "https://cdf-document-search-prod.web.app"
+      "staging": "https://cdf-document-search-prod.cogniteapp.com",
+      "preview": "https://cdf-document-search-prod.cogniteapp.com",
+      "production": "https://cdf-document-search-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/documents" }]
   },
@@ -118,9 +118,9 @@
     "key": "cdf-extractor-downloads",
     "appName": "@cognite/cdf-extractor-downloads",
     "hosting": {
-      "staging": "https://cdf-extractor-downloads-prod.web.app",
-      "preview": "https://cdf-extractor-downloads-prod.web.app",
-      "production": "https://cdf-extractor-downloads-prod.web.app"
+      "staging": "https://cdf-extractor-downloads-prod.cogniteapp.com",
+      "preview": "https://cdf-extractor-downloads-prod.cogniteapp.com",
+      "production": "https://cdf-extractor-downloads-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/extractors" }]
   },
@@ -130,7 +130,7 @@
     "hosting": {
       "staging": "https://cdf-orchestration-staging.web.app",
       "preview": "https://cdf-orchestration-staging.web.app",
-      "production": "https://cdf-orchestration-staging.web.app"
+      "production": "https://cdf-orchestration-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/flows" }]
   },
@@ -138,9 +138,9 @@
     "key": "cdf-functions-ui",
     "appName": "@cognite/cdf-functions-ui",
     "hosting": {
-      "staging": "https://cdf-functions-prod.web.app",
-      "preview": "https://cdf-functions-prod.web.app",
-      "production": "https://cdf-functions-prod.web.app"
+      "staging": "https://cdf-functions-prod.cogniteapp.com",
+      "preview": "https://cdf-functions-prod.cogniteapp.com",
+      "production": "https://cdf-functions-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/functions" }]
   },
@@ -150,7 +150,7 @@
     "hosting": {
       "staging": "https://cdf-industry-canvas-ui-staging.web.app",
       "preview": "https://cdf-industry-canvas-ui-preview.web.app",
-      "production": "https://cdf-industry-canvas-ui-prod.web.app"
+      "production": "https://cdf-industry-canvas-ui-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/industrial-canvas" }]
   },
@@ -158,9 +158,9 @@
     "key": "cdf-integrations-ui",
     "appName": "@cognite/cdf-integrations-ui",
     "hosting": {
-      "staging": "https://cdf-extraction-pipelines-prod.web.app",
-      "preview": "https://cdf-extraction-pipelines-prod.web.app",
-      "production": "https://cdf-extraction-pipelines-prod.web.app"
+      "staging": "https://cdf-extraction-pipelines-prod.cogniteapp.com",
+      "preview": "https://cdf-extraction-pipelines-prod.cogniteapp.com",
+      "production": "https://cdf-extraction-pipelines-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/extpipes" }]
   },
@@ -168,9 +168,9 @@
     "key": "cdf-iot-hub",
     "appName": "@cognite/cdf-iot-hub",
     "hosting": {
-      "staging": "https://cdf-iot-hub-prod.web.app",
-      "preview": "https://cdf-iot-hub-prod.web.app",
-      "production": "https://cdf-iot-hub-prod.web.app"
+      "staging": "https://cdf-iot-hub-prod.cogniteapp.com",
+      "preview": "https://cdf-iot-hub-prod.cogniteapp.com",
+      "production": "https://cdf-iot-hub-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/iot" }]
   },
@@ -178,9 +178,9 @@
     "key": "cdf-raw-explorer",
     "appName": "@cognite/cdf-raw-explorer",
     "hosting": {
-      "staging": "https://cdf-raw-explorer-prod.web.app",
-      "preview": "https://cdf-raw-explorer-prod.web.app",
-      "production": "https://cdf-raw-explorer-prod.web.app"
+      "staging": "https://cdf-raw-explorer-prod.cogniteapp.com",
+      "preview": "https://cdf-raw-explorer-prod.cogniteapp.com",
+      "production": "https://cdf-raw-explorer-prod.cogniteapp.com"
     },
     "routes": [
       { "route": "/:tenantName/raw-explorer" },
@@ -193,7 +193,7 @@
     "hosting": {
       "staging": "https://cdf-simint-staging.web.app",
       "preview": "https://cdf-simint-staging.web.app",
-      "production": "https://cdf-simint-prod.web.app"
+      "production": "https://cdf-simint-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/simint" }]
   },
@@ -203,7 +203,7 @@
     "hosting": {
       "staging": "https://cdf-platypus-staging.web.app",
       "preview": "https://cdf-platypus-staging.web.app",
-      "production": "https://cdf-platypus-prod.web.app"
+      "production": "https://cdf-platypus-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/data-models" }]
   },
@@ -213,7 +213,7 @@
     "hosting": {
       "staging": "https://cdf-templates-staging.web.app",
       "preview": "https://cdf-templates-staging.web.app",
-      "production": "https://cdf-templates-prod.web.app"
+      "production": "https://cdf-templates-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/template-management" }]
   },
@@ -221,9 +221,9 @@
     "key": "cdf-transformations-2",
     "appName": "@cognite/cdf-transformations-2",
     "hosting": {
-      "staging": "https://cdf-transformations-prod.web.app",
-      "preview": "https://cdf-transformations-prod.web.app",
-      "production": "https://cdf-transformations-prod.web.app"
+      "staging": "https://cdf-transformations-prod.cogniteapp.com",
+      "preview": "https://cdf-transformations-prod.cogniteapp.com",
+      "production": "https://cdf-transformations-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/transformations" }]
   },
@@ -231,11 +231,21 @@
     "key": "cdf-datastudio",
     "appName": "@cognite/cdf-datastudio",
     "hosting": {
-      "staging": "/dependencies/@cognite/datastudio/1.2.0/8fba1f60c54f66ef38a809b19fc86364.js",
-      "preview": "/dependencies/@cognite/datastudio/1.2.0/8fba1f60c54f66ef38a809b19fc86364.js",
+      "staging": "https://cdf-entity-matching-staging.web.app",
+      "preview": "https://cdf-entity-matching-staging.web.app",
       "production": "/dependencies/@cognite/datastudio/1.2.0/8fba1f60c54f66ef38a809b19fc86364.js"
     },
     "routes": [{ "route": "/:tenantName/entity-matching" }]
+  },
+  {
+    "key": "cdf-ui-entity-matching",
+    "appName": "@cognite/cdf-ui-entity-matching",
+    "hosting": {
+      "staging": "https://cdf-entity-matching-staging.web.app",
+      "preview": "https://cdf-entity-matching-staging.web.app",
+      "production": "https://cdf-entity-matching-prod.cogniteapp.com"
+    },
+    "routes": [{ "route": "/:tenantName/entity-matching-new" }]
   },
   {
     "key": "cdf-ui-notebook",
@@ -243,7 +253,7 @@
     "hosting": {
       "staging": "https://cdf-notebook-staging.web.app",
       "preview": "https://cdf-notebook-staging.web.app",
-      "production": "https://cdf-notebook-prod.web.app"
+      "production": "https://cdf-notebook-prod.cogniteapp.com"
     },
     "routes": [
       { "route": "/:tenantName/notebook" },
@@ -254,9 +264,9 @@
     "key": "cdf-vision-subapp",
     "appName": "@cognite/cdf-vision-subapp",
     "hosting": {
-      "staging": "https://cdf-vision-prod.web.app",
-      "preview": "https://cdf-vision-prod.web.app",
-      "production": "https://cdf-vision-prod.web.app"
+      "staging": "https://cdf-vision-prod.cogniteapp.com",
+      "preview": "https://cdf-vision-prod.cogniteapp.com",
+      "production": "https://cdf-vision-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/vision" }]
   }

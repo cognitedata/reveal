@@ -19,5 +19,5 @@ export default {
   coverageDirectory: '../../coverage/apps/extraction-pipelines',
   setupFilesAfterEnv: ['./src/setupTests.ts'],
   collectCoverage: true,
-  collectCoverageFrom: ['./src/app/**/*.{ts,tsx}'],
+  collectCoverageFrom: ['./src/app/**/*.{ts,tsx,js,jsx}'],
 };

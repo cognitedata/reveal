@@ -1,8 +1,9 @@
-import { HEARTBEAT_TIMEOUT_SECONDS } from '@simint-app/components/simulator/constants';
 import { isAfter } from 'date-fns/esm';
 
 import { Chip } from '@cognite/cogs.js';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
+
+import { HEARTBEAT_TIMEOUT_SECONDS } from './constants';
 
 interface SimulatorStatusCellProps {
   simulator: SimulatorInstance;

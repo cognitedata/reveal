@@ -1,8 +1,8 @@
-import { ThumbsUpAgree } from '@charts-app/components/Icons/ThumbsUpAgree';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Flex, Title, Button } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../../hooks/translations';
+import { makeDefaultTranslations } from '../../../utils/translations';
+import { ThumbsUpAgree } from '../../Icons/ThumbsUpAgree';
 
 import { CenterAlignedBody } from './elements';
 

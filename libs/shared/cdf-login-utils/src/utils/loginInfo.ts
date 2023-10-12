@@ -55,13 +55,24 @@ const getValidLegacyProjectsInLoginFlows = (
 
 export const getLoginFlowsByCluster = (
   loginInfo?: DomainResponse,
-  loginFlowId?: string,
+  idp?: IDPResponse,
   validLegacyProjects?: LegacyProject[]
 ) => {
   const loginFlowsByCluster: Record<
     string,
     { idp?: IDPResponse; legacyProjects: LegacyProject[] }
   > = {};
+
+  // For CogIdp, it's the same IdP for all login flows.
+  if (idp?.type === 'COGNITE_IDP') {
+    idp.clusters.forEach((cluster) => {
+      loginFlowsByCluster[cluster] = {
+        idp,
+        legacyProjects: [],
+      };
+    });
+    return loginFlowsByCluster;
+  }
 
   const legacyProjectsByCluster = getLegacyProjectsByCluster(
     loginInfo?.legacyProjects
@@ -76,11 +87,7 @@ export const getLoginFlowsByCluster = (
       legacyProjectsByCluster[cluster];
   });
 
-  if (loginFlowId) {
-    const idp = loginInfo?.idps.find(
-      ({ internalId }) => internalId === loginFlowId
-    );
-
+  if (idp) {
     idp?.clusters.forEach((idpCluster) => {
       if (!loginFlowsByCluster[idpCluster]) {
         loginFlowsByCluster[idpCluster] = { legacyProjects: [] };
@@ -209,7 +216,7 @@ const isAnyOfHosts = (hostname: string, baseHostnames: string[]) => {
 const getBaseHostnameFromDomain = ({ baseHostname }: FusionDomain) =>
   baseHostname;
 
-const getApp = () => {
+export const getApp = () => {
   const hostname = window.location.hostname;
 
   if (isAnyOfHosts(hostname, fusionAppHosts.map(getBaseHostnameFromDomain))) {
@@ -222,13 +229,17 @@ const getApp = () => {
 // Make apps explicitly require to be specified in order to use the
 // dlc-service api directly instead of hardcoded responses.
 // See the variable [hardcodedDlcResponses].
-export const isWhitelistedHost = () => {
+export const isAllowlistedHost = () => {
   const hostname = window.location.hostname;
   return isAnyOfHosts(
     hostname,
     whitelistedHosts.map(getBaseHostnameFromDomain)
   );
 };
+
+export const isPreviewDeployment = window.location.hostname.endsWith(
+  '.preview.cogniteapp.com'
+);
 
 export const getOrganization = (): string | null => {
   const hostname = window.location.hostname;
@@ -252,6 +263,14 @@ export const getOrganization = (): string | null => {
   return null;
 };
 
+export const getRequiredOrganization = (): string => {
+  const org = getOrganization();
+  if (!org) {
+    throw new Error('Organization not found');
+  }
+  return org;
+};
+
 export const getBaseHostname = (): string => {
   const noOrganizationSpecified = !getOrganization();
   if (noOrganizationSpecified) {
@@ -259,6 +278,17 @@ export const getBaseHostname = (): string => {
   } else {
     return window.location.hostname.split('.').slice(1).join('.');
   }
+};
+
+export const getBaseUrl = (): string => {
+  const baseHostnameWithProtocol = `${
+    window.location.protocol
+  }//${getBaseHostname()}`;
+  const { port } = window.location;
+  if (port) {
+    return `${baseHostnameWithProtocol}:${port}`;
+  }
+  return baseHostnameWithProtocol;
 };
 
 const hardcodedDlcResponses: Record<string, DomainResponse> = {
@@ -302,8 +332,8 @@ const hardcodedDlcResponses: Record<string, DomainResponse> = {
 
 export const getDlc = async (): Promise<DomainResponse> => {
   // check for clusters not supported by DLC (Aramco & OpenField)
-  if (isWhitelistedHost()) {
-    const organization = getOrganization();
+  if (isAllowlistedHost()) {
+    const organization = getRequiredOrganization();
     const app = getApp();
     const response = await fetch(
       `https://app-login-configuration-lookup.cognite.ai/${app}/${organization}`
@@ -325,11 +355,38 @@ export const getDlc = async (): Promise<DomainResponse> => {
   return hardcodedDlcResponses['sapc-01'];
 };
 
-const ORG_COOKIE_NAME = 'loginOrg';
+const getOrgCookieName = (hostname: string) =>
+  `loginOrg-${encodeURIComponent(hostname)}`;
 
 export function setLoginOrganizationCookie(org: string) {
-  const redirectUriDomain = getBaseHostname();
-  document.cookie = `${ORG_COOKIE_NAME}=${org};domain=${redirectUriDomain}`;
+  const baseHostname = getBaseHostname();
+  const expiresInMinutes = 10;
+  setCookie(
+    getOrgCookieName(baseHostname),
+    org,
+    baseHostname,
+    expiresInMinutes
+  );
+}
+
+export function setRedirectCookieForPreviewDeployment(redirectTo: string) {
+  const expiresInMinutes = 10;
+  setCookie(
+    'cogRedirectTo',
+    redirectTo,
+    'preview.cogniteapp.com',
+    expiresInMinutes
+  );
+}
+
+function setCookie(
+  name: string,
+  value: string,
+  domain: string,
+  expiresInMinutes: number
+) {
+  const expires = new Date(Date.now() + expiresInMinutes * 60 * 1000);
+  document.cookie = `${name}=${value};domain=${domain};expires=${expires.toUTCString()}`;
 }
 
 function getCookieValue(name: string): string {
@@ -338,18 +395,14 @@ function getCookieValue(name: string): string {
   );
 }
 
-function deleteCookie(name: string) {
-  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-}
-
-export function getAndClearOrganizationCookie(): string | null {
-  const org = getCookieValue(ORG_COOKIE_NAME);
-  deleteCookie(ORG_COOKIE_NAME);
+function getOrganizationCookie(): string | null {
+  const baseHostname = getBaseHostname();
+  const org = getCookieValue(getOrgCookieName(baseHostname));
   return org !== '' ? org : null;
 }
 
 export function handleSigninCallback() {
-  const org = getAndClearOrganizationCookie();
+  const org = getOrganizationCookie();
   if (!org) {
     throw new Error('No organization found');
   }

@@ -1,11 +1,11 @@
+import { Kind, ObjectTypeDefinitionNode } from 'graphql';
+
 import {
   Group,
   MainDescription,
   MainTitle,
   Wrapper,
-} from '@platypus-app/components/Styles/storybook';
-import { Kind, ObjectTypeDefinitionNode } from 'graphql';
-
+} from '../../Styles/storybook';
 import { NodeWrapper } from '../SchemaVisualizer';
 
 import { FullNode } from './FullNode';

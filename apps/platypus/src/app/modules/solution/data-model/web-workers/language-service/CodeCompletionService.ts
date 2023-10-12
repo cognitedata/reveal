@@ -1,3 +1,4 @@
+import { DataModelTypeDefs, mixerApiBuiltInTypes } from '@fusion/data-modeling';
 import { getBuiltInTypesString } from '@platypus/platypus-common-utils';
 import { buildSchema } from 'graphql';
 import {
@@ -6,7 +7,7 @@ import {
   Position as GLSPosition,
   IRange as GLSRange,
 } from 'graphql-language-service';
-import { IRange, Position } from 'monaco-editor';
+import { IRange, Position } from 'monaco-editor/esm/vs/editor/editor.api';
 
 import { CompletionItemKind, CompletionList } from './types';
 
@@ -40,13 +41,35 @@ const UNSUPPORTED_LIST = [
     label: 'schema',
     kind: CompletionItemKind.Field,
   },
+  {
+    label: 'fragment',
+    kind: CompletionItemKind.Field,
+  },
+  {
+    label: 'query',
+    kind: CompletionItemKind.Field,
+  },
+  {
+    label: 'mutation',
+    kind: CompletionItemKind.Field,
+  },
+  {
+    label: 'subscription',
+    kind: CompletionItemKind.Field,
+  },
+  {
+    label: '{', // Don't ask :)
+    kind: CompletionItemKind.Field,
+  },
 ];
 export class CodeCompletionService {
   getCompletions(
+    textUntilPosition: string,
     currentCode: string,
     mostRecentDataModel: string,
     position: Position,
-    useExtendedSdl: boolean
+    useExtendedSdl: boolean,
+    dataModelTypeDefs: DataModelTypeDefs | null
   ): CompletionList {
     try {
       const schema = buildSchema(
@@ -56,11 +79,32 @@ export class CodeCompletionService {
         ].join('\n')
       );
 
-      const glsResults = getAutocompleteSuggestions(
+      let glsResults = getAutocompleteSuggestions(
         schema,
         currentCode,
         new GLSPosition(position.lineNumber - 1, position.column - 1)
       );
+
+      const isFieldInput = textUntilPosition.trim().match(/[a-zA-Z0-9_]+:$/);
+      if (!glsResults.length && dataModelTypeDefs && isFieldInput) {
+        glsResults = mixerApiBuiltInTypes
+          .filter((type) => !type.fieldDirective && type.type !== 'DIRECTIVE')
+          .map((type) => ({
+            label: type.name,
+            kind: CompletionItemKind.Class,
+            insertText: type.name,
+          }));
+
+        // extract all current custom types from code editor
+        dataModelTypeDefs?.types.forEach((type) =>
+          glsResults.push({
+            label: type.name,
+            kind: CompletionItemKind.Class,
+            insertText: type.name,
+            // insertTextRules: CompletionItemInsertTextRule.InsertAsSnippet,
+          })
+        );
+      }
 
       const filteredResults = glsResults.filter(
         (suggestion) =>

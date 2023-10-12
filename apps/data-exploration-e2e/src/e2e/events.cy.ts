@@ -14,42 +14,37 @@ describe('Events', () => {
     interceptEventList();
   });
 
-  it('should sort event results', () => {
+  it('should go to events tab', () => {
     cy.goToTab('Events');
     cy.wait(`@${EVENT_LIST_ALIAS}`);
+    cy.tableContentShouldBeVisible('event-search-results');
+  });
 
+  it('should sort files results', () => {
     cy.log('sorting colomn: Type');
-    cy.getTableById('event-search-results').clickSortColoumn('Type');
-    cy.wait(`@${EVENT_LIST_ALIAS}`);
-    cy.getTableById('event-search-results')
-      .getColomnValues('type')
-      .shouldBeSortedAscending();
 
     cy.getTableById('event-search-results').clickSortColoumn('Type');
-    cy.wait(`@${EVENT_LIST_ALIAS}`);
-    cy.getTableById('event-search-results')
-      .getColomnValues('type')
-      .shouldBeSortedDescending();
+    cy.wait(`@${EVENT_LIST_ALIAS}`).shouldSortAscending('type');
+
+    cy.getTableById('event-search-results').clickSortColoumn('Type');
+    cy.wait(`@${EVENT_LIST_ALIAS}`).shouldSortDescending('type');
 
     cy.log('sorting colomn: Description');
     cy.getTableById('event-search-results').clickSortColoumn('Description');
-    cy.wait(`@${EVENT_LIST_ALIAS}`);
-    cy.getTableById('event-search-results')
-      .getColomnValues('description')
-      .shouldBeSortedAscending();
+    cy.wait(`@${EVENT_LIST_ALIAS}`).shouldSortAscending('description');
 
     cy.getTableById('event-search-results').clickSortColoumn('Description');
-    cy.wait(`@${EVENT_LIST_ALIAS}`);
-    cy.getTableById('event-search-results')
-      .getColomnValues('description')
-      .shouldBeSortedDescending();
+    cy.wait(`@${EVENT_LIST_ALIAS}`).shouldSortDescending('description');
+
+    // Reset sorting
+    cy.getTableById('event-search-results').clickSortColoumn('Description');
   });
 
   it('should be able to search by id', () => {
-    cy.columnSelection(`id`);
     cy.performSearch(EVENT_ID);
 
     cy.getTableById('event-search-results')
+      .selectColumn('ID')
       .contains(EVENT_ID)
       .should('be.visible');
     cy.findAllByText('Exact match: ID').should('be.visible').click();
@@ -71,12 +66,11 @@ describe('Events', () => {
     cy.clickIconButton('Toggle fullscreen-collapse');
   });
 
-  it('should be able to close the detail view', () => {
+  it('Should close the detail view and clear search input', () => {
     cy.log('close event detail view');
-    cy.clickIconButton('Close');
-  });
+    cy.findByTestId('event-detail').clickIconButton('Close');
+    cy.findByTestId('event-detail').should('not.exist');
 
-  it('should be able to clear input field', () => {
-    cy.clickIconButton('Clear input field');
+    cy.clearSearchInput();
   });
 });

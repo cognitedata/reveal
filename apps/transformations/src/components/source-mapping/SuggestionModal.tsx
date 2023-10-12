@@ -70,7 +70,7 @@ export default function SourceSelectionDropdownSuggestionModal({
   useEffect(() => {
     if (suggestions) {
       const newSelectedSuggestions: Record<string, string> = suggestions.reduce(
-        (accl, d) => ({ ...accl, [d.from]: d.to[0].label }),
+        (accl, d) => ({ ...accl, [d.from]: d.to[0]?.label }),
         {}
       );
       setSelectedSuggestion(newSelectedSuggestions);

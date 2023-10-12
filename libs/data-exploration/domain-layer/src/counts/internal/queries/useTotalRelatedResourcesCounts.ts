@@ -48,6 +48,7 @@ export const useTotalRelatedResourcesCounts = ({
     [ResourceTypes.Sequence]: sequences.data,
     [ResourceTypes.File]: files.data,
     [ResourceTypes.ThreeD]: 0,
+    [ResourceTypes.Charts]: 0,
   };
 
   const isLoading: Record<ResourceType, boolean> = {
@@ -57,6 +58,7 @@ export const useTotalRelatedResourcesCounts = ({
     [ResourceTypes.Sequence]: sequences.isLoading,
     [ResourceTypes.File]: files.isLoading,
     [ResourceTypes.ThreeD]: false,
+    [ResourceTypes.Charts]: false,
   };
 
   return { data, isLoading };

@@ -1,18 +1,17 @@
-import { useDataSourceValidity, useLoadRules } from '@data-quality/hooks';
-import { abbreviateNumber } from '@data-quality/utils/numbers';
+import { Body, Divider, Flex, Heading, Tooltip } from '@cognite/cogs.js';
+
+import { LastValidationTime, ValidationDifference } from '..';
+import { Spinner } from '../../../../../../../components/Spinner/Spinner';
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
+import { useLoadDatapoints, useLoadRules } from '../../../../hooks';
+import { abbreviateNumber } from '../../../../utils/numbers';
 import {
   TimeSeriesType,
   getDatapointsById,
   getLastDatapointValue,
   getScoreValue,
   getTimeSeriesId,
-} from '@data-quality/utils/validationTimeseries';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Body, Divider, Flex, Heading, Tooltip } from '@cognite/cogs.js';
-
-import { LastValidationTime, ValidationDifference } from '..';
+} from '../../../../utils/validationTimeseries';
 
 type ValidationStatisticsProps = {
   dataSourceId: string;
@@ -24,7 +23,10 @@ export const ValidationStatistics = ({
   const { t } = useTranslation('ValidationStatistics');
 
   const { rules } = useLoadRules();
-  const { datapoints, loadingDatapoints } = useDataSourceValidity();
+  const { datapoints, isLoading: loadingDatapoints } = useLoadDatapoints({
+    target: 'dataSource',
+    rules,
+  });
 
   const timeSeriesIdScore = getTimeSeriesId(TimeSeriesType.SCORE, dataSourceId);
   const timeSeriesIdInstances = getTimeSeriesId(
@@ -40,10 +42,9 @@ export const ValidationStatistics = ({
     getLastDatapointValue(datapoints, timeSeriesIdInstances) || 0;
 
   const rulesCount = rules.length;
-  const rulesText =
-    rules.length === 1
-      ? t('data_quality_rule', 'rule')
-      : t('data_quality_rules', 'rules');
+  const rulesText = t('data_quality_rule', 'rule', {
+    count: rulesCount,
+  }).toLowerCase();
 
   const scoreDatapoints = getDatapointsById(datapoints, timeSeriesIdScore);
   const totalInstancesDatapoints = getDatapointsById(

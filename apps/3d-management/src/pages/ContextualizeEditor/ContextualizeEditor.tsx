@@ -1,10 +1,8 @@
 import { useParams } from 'react-router-dom';
 
-import { Flex } from '@cognite/cogs.js';
-
 import ContextualizeThreeDViewer from '../../components/ContextualizeThreeDViewer';
 
-import { CONTEXTUALIZE_EDITOR_HEADER_HEIGHT } from './constants';
+import { ContextualizeEditorHeader } from './ContextualizeEditorHeader';
 
 type ContextualizeEditorParams = {
   modelId: string;
@@ -24,35 +22,10 @@ export const ContextualizeEditor = () => {
 
   return (
     <>
-      {/* 
-        TODO: Add a proper header
-        Tracked by: https://cognitedata.atlassian.net/browse/BND3D-2157
-       */}
-      <Flex
-        dir="horizontal"
-        justifyContent="space-between"
-        style={{
-          height: `${CONTEXTUALIZE_EDITOR_HEADER_HEIGHT}px`,
-          borderBottom: '1px solid #ccc',
-          boxSizing: 'border-box',
-          padding: '0 20px',
-        }}
-      >
-        <h1>Contextualize Editor</h1>
-        <div>
-          <p
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            <b>Model ID:</b> {params.modelId}
-          </p>
-          <p>
-            <b>Revision ID:</b> {params.revisionId}
-          </p>
-        </div>
-      </Flex>
-
+      <ContextualizeEditorHeader
+        modelId={params.modelId}
+        revisionId={params.revisionId}
+      />
       <ContextualizeThreeDViewer
         modelId={Number(params.modelId)}
         revisionId={Number(params.revisionId)}

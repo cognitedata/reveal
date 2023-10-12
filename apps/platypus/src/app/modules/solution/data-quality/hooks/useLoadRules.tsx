@@ -1,25 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useListAllRules } from '../api/codegen';
 
-import { useListAllRules } from '@data-quality/api/codegen';
-import { useLoadDataSource } from '@data-quality/hooks';
-import {
-  TimeSeriesType,
-  formatTimeriesResponse,
-  getTimeSeriesItemRequest,
-} from '@data-quality/utils/validationTimeseries';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import sdk from '@cognite/cdf-sdk-singleton';
-import { Datapoints } from '@cognite/sdk/dist/src';
+import { useLoadDataSource, useLoadDatapoints } from './';
 
 /** Load all the rules and their timeseries + datapoints in a datasource. */
 export const useLoadRules = () => {
-  const { t } = useTranslation('useLoadRules');
-
-  const [datapoints, setDataPoints] = useState<Datapoints[]>([]);
-  const [loadingDatapoints, setLoadingDatapoints] = useState(false);
-
   const { dataSource } = useLoadDataSource();
 
   const {
@@ -38,53 +22,10 @@ export const useLoadRules = () => {
 
   const rules = rulesData?.items || [];
 
-  useEffect(() => {
-    const getDatapoints = async () => {
-      if (!dataSource || !rules.length) return;
-
-      setLoadingDatapoints(true);
-
-      const timeseriesToRetrieve = {
-        items: rules.flatMap((rule) => [
-          getTimeSeriesItemRequest(
-            TimeSeriesType.SCORE,
-            dataSource.externalId,
-            rule.externalId
-          ),
-          getTimeSeriesItemRequest(
-            TimeSeriesType.TOTAL_ITEMS_COUNT,
-            dataSource.externalId,
-            rule.externalId
-          ),
-        ]),
-      };
-
-      try {
-        await sdk.datapoints.retrieve(timeseriesToRetrieve).then((res) => {
-          const data = formatTimeriesResponse(res);
-          setDataPoints(data);
-        });
-      } catch (err) {
-        Notification({
-          type: 'error',
-          message: t(
-            'data_quality_not_found_timeseries_rules',
-            'Something went wrong. The timeseries for the given rules could not be loaded.'
-          ),
-          errors: JSON.stringify(err),
-        });
-      } finally {
-        setLoadingDatapoints(false);
-      }
-    };
-
-    // No rules, then there are no timeseries yet
-    if (!rules.length && datapoints.length > 0) {
-      setDataPoints([]);
-    } else {
-      getDatapoints();
-    }
-  }, [rules]);
+  const { datapoints, isLoading: loadingDatapoints } = useLoadDatapoints({
+    target: 'rules',
+    rules,
+  });
 
   return {
     datapoints,

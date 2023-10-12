@@ -52,7 +52,7 @@ const useIndustryCanvasFileLinkTooltips = ({
     };
 
     const onViewClick = () => {
-      window.open(createLink(`/explore/files/${resourceId}`), '_blank');
+      window.open(createLink(`/explore/file/${resourceId}`), '_blank');
     };
 
     const isSelfReferential =
@@ -61,7 +61,7 @@ const useIndustryCanvasFileLinkTooltips = ({
 
     return [
       {
-        targetId: String(annotation.id),
+        targetIds: [String(annotation.id)],
         content: (
           <FileTooltip
             id={resourceId}

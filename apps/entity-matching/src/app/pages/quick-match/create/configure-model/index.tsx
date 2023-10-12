@@ -1,17 +1,18 @@
 import { useState } from 'react';
 
-import { useTranslation } from '@entity-matching-app/common';
-import FieldMapping from '@entity-matching-app/components/field-mapping';
-import Radio from '@entity-matching-app/components/radio';
-import RadioBox from '@entity-matching-app/components/radio-box';
-import Step from '@entity-matching-app/components/step';
-import {
-  EMFeatureType,
-  useQuickMatchContext,
-} from '@entity-matching-app/context/QuickMatchContext';
 import { Collapse } from 'antd';
 
 import { Button, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../common';
+import FieldMapping from '../../../../components/field-mapping';
+import Radio from '../../../../components/radio';
+import RadioBox from '../../../../components/radio-box';
+import Step from '../../../../components/step';
+import {
+  EMFeatureType,
+  useQuickMatchContext,
+} from '../../../../context/QuickMatchContext';
 
 const ConfigureModel = (): JSX.Element => {
   const { t } = useTranslation();
@@ -29,8 +30,6 @@ const ConfigureModel = (): JSX.Element => {
     setFeatureType,
     scope,
     setScope,
-    generateRules,
-    setGenerateRules,
   } = useQuickMatchContext();
 
   return (
@@ -153,26 +152,6 @@ const ConfigureModel = (): JSX.Element => {
               </RadioBox>
               <RadioBox checked={scope === 'unmatched'} value="unmatched">
                 {t('model-configuration-scope-unmatched-only')}
-              </RadioBox>
-            </Flex>
-          </Radio.Group>
-        </Step.Section>
-        <Step.Section>
-          <Step.SectionHeader
-            title={t('model-configuration-generate-rule-header')}
-            subtitle={t('model-configuration-generate-rule-desc')}
-          />
-
-          <Radio.Group
-            onChange={(e) => setGenerateRules(e.target.value)}
-            value={generateRules}
-          >
-            <Flex>
-              <RadioBox checked={generateRules} value={true}>
-                {t('model-configuration-generate-rule-do')}
-              </RadioBox>
-              <RadioBox checked={!generateRules} value={false}>
-                {t('model-configuration-generate-rule-dont')}
               </RadioBox>
             </Flex>
           </Radio.Group>

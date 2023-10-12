@@ -1,4 +1,6 @@
+const { pathsToModuleNameMapper } = require('ts-jest');
 const nxPreset = require('@nx/jest/preset').default;
+const { compilerOptions } = require('./tsconfig.base.json');
 
 module.exports = {
   ...nxPreset,
@@ -12,4 +14,6 @@ module.exports = {
    * More info: https://jestjs.io/docs/upgrading-to-jest29#snapshot-format
    */
   snapshotFormat: { escapeString: true, printBasicPrototype: true },
+  // This was needed so Jest resolves to the local package and not the one in node_modules
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
 };

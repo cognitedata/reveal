@@ -1,4 +1,4 @@
-import { ChartItem } from '@charts-app/hooks/charts/types';
+import { ChartItem } from '../../hooks/charts/types';
 
 export interface ChartListProps {
   loading: boolean;

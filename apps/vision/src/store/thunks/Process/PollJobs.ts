@@ -1,11 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { VisionJob } from '@vision/api/vision/detectionModels/types';
-import { fetchVisionJobById } from '@vision/api/vision/detectionModels/visionJob';
-import { removeJobById } from '@vision/modules/Process/store/slice';
-import { JobState } from '@vision/modules/Process/store/types';
-import { ThunkConfig } from '@vision/store/rootReducer';
-import { fetchUntilComplete } from '@vision/utils';
-import { ToastUtils } from '@vision/utils/ToastUtils';
+
+import { VisionJob } from '../../../api/vision/detectionModels/types';
+import { fetchVisionJobById } from '../../../api/vision/detectionModels/visionJob';
+import { removeJobById } from '../../../modules/Process/store/slice';
+import { JobState } from '../../../modules/Process/store/types';
+import { fetchUntilComplete } from '../../../utils';
+import { ToastUtils } from '../../../utils/ToastUtils';
+import { ThunkConfig } from '../../rootReducer';
 
 import { VisionJobUpdate } from './VisionJobUpdate';
 

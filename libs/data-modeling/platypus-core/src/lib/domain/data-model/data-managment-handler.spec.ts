@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Result } from '@platypus-core/boundaries/types';
+import { Result } from '../../boundaries/types';
 
 import { FlexibleDataModelingClient } from './boundaries';
 import { DataManagementHandler } from './data-managment-handler';
@@ -49,6 +49,9 @@ describe('DataManagementHandlerTest', () => {
         Cars: 0,
       })
     ),
+    fetchFilteredRowsCount: jest
+      .fn()
+      .mockImplementationOnce(() => Promise.resolve(0)),
     ingestNodes: jest.fn().mockImplementation(() => Promise.resolve()),
   } as any as FlexibleDataModelingClient;
 
@@ -56,7 +59,7 @@ describe('DataManagementHandlerTest', () => {
     return new DataManagementHandler(fdmClientMock);
   };
 
-  it('should work', () => {
+  it('should create the service instance successfully', () => {
     const service = createInstance();
     expect(service).toBeTruthy();
   });
@@ -189,6 +192,24 @@ describe('DataManagementHandlerTest', () => {
       Person: 0,
       Cars: 0,
     });
+  });
+
+  it('should fetch filtered rows count', async () => {
+    const service = createInstance();
+    const mockType = {
+      name: 'Person',
+      fields: [],
+    };
+    const response = await service.fetchFilteredRowsCount({
+      dataModelType: mockType,
+      dataModelId: 'testExternalId',
+      version: '1',
+      space: 'testExternalId',
+      filter: {},
+    });
+
+    expect(response.isSuccess).toBe(true);
+    expect(response.getValue()).toEqual(0);
   });
 
   it('should create transformation', async () => {

@@ -25,7 +25,7 @@ export const TopBar = ({
         <Button
           type="ghost"
           icon="Close"
-          aria-label="go-back"
+          aria-label="clear"
           onClick={onClick}
         />
       </Flex>

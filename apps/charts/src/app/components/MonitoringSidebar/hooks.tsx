@@ -1,9 +1,11 @@
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { UserProfile, useUserProfile } from '@fusion/industry-canvas';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 
+import {
+  useUserProfileQuery,
+  UserProfile,
+} from '../../common/providers/useUserProfileQuery';
 import { SessionAPIResponse } from '../../domain/chart/internal/types';
 import { EMPTY_ARRAY } from '../../domain/constants';
 
@@ -78,18 +80,14 @@ export const useMonitoringFoldersWithJobs = (
   }
 ) => {
   const sdk = useSDK();
-  const userInfo = useUserInfo();
-  const { userProfile } = useUserProfile();
-  const userAuthId_deprecated = userInfo.data?.id;
-  const userIdentifier = userProfile.userIdentifier;
+  const { data: userProfile } = useUserProfileQuery();
+  const userIdentifier = userProfile?.userIdentifier;
   const { subscribed, timeseriesIds, timeseriesExternalIds, currentChart } =
     filters || {};
   const hookConfig: any = {
     enabled:
-      userAuthId_deprecated !== undefined &&
-      userIdentifier !== undefined &&
-      (!currentChart ||
-        Boolean(timeseriesIds?.length || timeseriesExternalIds?.length)),
+      !currentChart ||
+      Boolean(timeseriesIds?.length || timeseriesExternalIds?.length),
   };
   if (hookId === 'indicator') {
     hookConfig.refetchInterval = 10000;
@@ -116,7 +114,6 @@ export const useMonitoringFoldersWithJobs = (
             },
             params: {
               listJobs: true,
-              userAuthId_deprecated,
             },
           }
         )
@@ -277,7 +274,6 @@ export const useMonitoringSubscriptionDelete = () => {
 export const useMonitoringSubscripitionList = (
   monitoringTaskIds: number[],
   channelIds: number[], // used for query cache invalidation
-  userAuthId_deprecated: string,
   subscribers: UserProfile[]
 ) => {
   const sdk = useSDK();
@@ -289,7 +285,6 @@ export const useMonitoringSubscripitionList = (
         {
           data: {
             monitoringTaskIDs: monitoringTaskIds,
-            userAuthId_deprecated,
             subscribers: subscribers.map((subscriber) => ({
               userIdentifier: subscriber.userIdentifier,
             })),

@@ -22,6 +22,7 @@ import {
 import { useSelectedDataModels } from '../../../services/useSelectedDataModels';
 import { AIResultsList } from '../containers/AIResultsList';
 import { AIResultSummary } from '../containers/AIResultSummary';
+import { useAICacheEdited } from '../hooks/useAICacheEdited';
 
 export const AIResults = () => {
   const [query] = useSearchQueryParams();
@@ -33,8 +34,8 @@ export const AIResults = () => {
     (CopilotDataModelQueryMessage & { edited?: boolean }) | undefined
   >(undefined);
 
-  const [cachedQuery] = useAIQueryLocalStorage();
-
+  const [cachedQuery, setCachedQuery] = useAIQueryLocalStorage();
+  useAICacheEdited(copilotMessage, setMessage);
   useEffect(() => {
     if (cachedQuery && !isSearching) {
       if (query === cachedQuery.search) {
@@ -47,7 +48,7 @@ export const AIResults = () => {
 
   useToCopilotEventHandler('NEW_MESSAGES', (messages) => {
     for (const message of messages) {
-      if (message.type === 'data-model-query') {
+      if (message.type === 'data-model-query' && message.replyTo === query) {
         setIsSearching(false);
         setMessage(message);
       }
@@ -55,7 +56,20 @@ export const AIResults = () => {
   });
 
   useFromCopilotEventHandler('SUMMARIZE_QUERY', ({ summary }) => {
-    setMessage((curr) => (curr ? { ...curr, summary } : undefined));
+    setMessage((curr) => {
+      const newMessage = curr ? { ...curr, summary } : undefined;
+      if (newMessage) {
+        setCachedQuery((currCache) =>
+          currCache
+            ? {
+                ...currCache,
+                message: newMessage,
+              }
+            : undefined
+        );
+      }
+      return newMessage;
+    });
   });
 
   const sendMessage = useCallback(() => {
@@ -74,6 +88,7 @@ export const AIResults = () => {
               version: model.version,
             })),
             content: 'I am looking at data in this data model',
+            replyTo: '',
           },
           {
             source: 'user',

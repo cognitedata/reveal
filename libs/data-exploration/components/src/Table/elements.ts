@@ -19,13 +19,15 @@ export const SummaryCardWrapper = styled.div`
   background-color: var(--cogs-surface--medium);
 `;
 
-export const ContainerInside = styled.div`
+export const ContainerInside = styled.div<{ isBulkActionBarVisible?: boolean }>`
   height: 100%;
   overflow-y: auto;
   scroll-margin-top: ${defaultRowHeight};
   ${SummaryCardWrapper} & {
     height: unset;
   }
+  padding-bottom: ${({ isBulkActionBarVisible }) =>
+    isBulkActionBarVisible && '70px'};
 `;
 
 export const TableContainer = styled.div`

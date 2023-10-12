@@ -1,13 +1,12 @@
 import React from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 
-import { LazyWrapper } from '@vision/modules/Common/Components/LazyWrapper';
-import NoAccessPage from '@vision/pages/NoAccessPage';
-import NotFound from '@vision/pages/NotFound';
-
 import { Loader } from '@cognite/cogs.js';
 
 import { useUserCapabilities } from './hooks/useUserCapabilities';
+import { LazyWrapper } from './modules/Common/Components/LazyWrapper';
+import NoAccessPage from './pages/NoAccessPage';
+import NotFound from './pages/NotFound';
 
 const RouteWrapper: React.FC<{
   capabilities: { acl: string; actions: string[] }[];
@@ -33,7 +32,7 @@ const RouteWrapper: React.FC<{
 const routes = [
   {
     path: '/:tenant/vision',
-    importFn: () => import('@vision/pages/Home'),
+    importFn: () => import('./pages/Home'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -47,7 +46,7 @@ const routes = [
   },
   {
     path: '/:tenant/vision/workflow/review/:fileId',
-    importFn: () => import('@vision/modules/Review/Containers/Review'),
+    importFn: () => import('./modules/Review/Containers/Review'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -61,7 +60,7 @@ const routes = [
   },
   {
     path: '/:tenant/vision/workflow/*',
-    importFn: () => import('@vision/pages/Process'),
+    importFn: () => import('./pages/Process'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -79,7 +78,7 @@ const routes = [
   },
   {
     path: '/:tenant/vision/explore',
-    importFn: () => import('@vision/modules/Explorer/Containers/Explorer'),
+    importFn: () => import('./modules/Explorer/Containers/Explorer'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -88,20 +87,6 @@ const routes = [
       {
         acl: 'groupsAcl',
         actions: ['LIST'],
-      },
-    ],
-  },
-  {
-    path: '/:tenant/vision/models',
-    importFn: () => import('@vision/modules/AutoML/Components/AutoML'),
-    capabilities: [
-      {
-        acl: 'groupsAcl',
-        actions: ['LIST'],
-      },
-      {
-        acl: 'visionModelAcl',
-        actions: ['READ'],
       },
     ],
   },

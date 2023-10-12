@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import { createRoot } from 'react-dom/client';
 
 import { gridConfigService } from '@cognite/cog-data-grid';
 import { Icon } from '@cognite/cogs.js';
 
+import { TOKENS } from '../../../di';
+import { useInjection } from '../../../hooks/useInjection';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { DataModelActionsCellRenderer } from '../components/DataModelsTable/DataModelActionsCellRenderer';
 import { DataModelNameCellRenderer } from '../components/DataModelsTable/DataModelNameCellRenderer';
 

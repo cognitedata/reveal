@@ -1,6 +1,7 @@
-import { AccessPermission } from '@vision/utils/types';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
+
+import { AccessPermission } from '../utils/types';
 
 import { useGroups } from './useGroups';
 

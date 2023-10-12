@@ -1,9 +1,8 @@
 import { lazy, Suspense, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-
+import { PageContentLayout } from '../../../components/Layouts/PageContentLayout';
+import { Spinner } from '../../../components/Spinner/Spinner';
 import { StyledPage } from '../data-model/pages/elements';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';

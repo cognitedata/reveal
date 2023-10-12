@@ -1,72 +1,89 @@
 import { useMemo } from 'react';
 
 import {
-  QueryObserverLoadingErrorResult,
   useQuery,
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query';
 
-import { IDPResponse, CogniteIdPResponse } from '../types/loginInfo';
-import { getCogniteIdPToken, getCogniteIdPUserManager } from '../utils';
-import { getProjects } from '../utils/shared';
+import { BASE_QUERY_KEY } from '../common';
+import {
+  ListCogIdpProjectsResponse,
+  CogIdpError,
+  PublicOrgResponse,
+} from '../types';
+import {
+  cogIdpAuthority,
+  getClientId,
+  getCogniteIdPToken,
+  getCogniteIdPUserManager,
+  getProjectsForCogIdpOrg,
+  getPublicOrg,
+} from '../utils';
 
 export const useCogniteIdPUserManager = (params: {
   authority: string;
   client_id: string;
 }) => useMemo(() => getCogniteIdPUserManager(params), [params]);
 
-export const getCogniteIdPQueryKey = (
-  idp: IDPResponse,
-  type: 'token' | 'projects',
-  cluster: string = '' // only needed to fetch projects across clusters
-) => [
-  'cognite_idp',
-  cluster,
-  type,
-  ...(idp?.internalId ? [idp?.internalId] : []),
-];
+const getPublicOrgQueryKey = [BASE_QUERY_KEY, 'cognite-idp', 'public-org'];
+export const usePublicCogniteIdpOrg = (options: { timeout: number }) => {
+  return useQuery<
+    PublicOrgResponse | undefined,
+    CogIdpError,
+    PublicOrgResponse | undefined
+  >(getPublicOrgQueryKey, () => getPublicOrg(options));
+};
 
-export const useCogniteIdPProjects = (
+const getProjectsForCogIdpOrgQueryKey = [
+  BASE_QUERY_KEY,
+  'cognite-idp',
+  'projects',
+];
+export const useProjectsForCogIdpOrg = (options: { enabled?: boolean }) => {
+  const { data: token, isFetched } = useCogniteIdPToken();
+
+  return useQuery<
+    ListCogIdpProjectsResponse | undefined,
+    CogIdpError,
+    ListCogIdpProjectsResponse | undefined
+  >(getProjectsForCogIdpOrgQueryKey, () => getProjectsForCogIdpOrg(token), {
+    enabled: isFetched && options.enabled !== false,
+  });
+};
+
+export const useProjectsForCogIdpOrgInCluster = (
   cluster: string,
-  idp?: CogniteIdPResponse,
   options: UseQueryOptions<string[], unknown, string[], string[]> = {
     enabled: true,
   }
 ): UseQueryResult<string[], unknown> => {
-  const tokenResponse = useCogniteIdPToken(idp, {
+  const projectsResponse = useProjectsForCogIdpOrg({
     enabled: options.enabled,
   });
-  const { data: token, error, isFetched } = tokenResponse;
 
-  const projectResponse = useQuery(
-    getCogniteIdPQueryKey(idp!, 'projects', cluster),
-    () => getProjects(cluster, token!),
-    { ...options, enabled: isFetched && options.enabled }
-  );
+  const projectsInCluster = projectsResponse.data?.items
+    .filter((p) => p.apiUrl === `https://${cluster}`)
+    .map((p) => p.name);
 
-  if (error) {
-    return {
-      ...tokenResponse,
-      data: undefined,
-    } as QueryObserverLoadingErrorResult<string[], unknown>;
-  }
-  return projectResponse;
+  return {
+    ...projectsResponse,
+    data: projectsInCluster,
+  } as UseQueryResult<string[], unknown>;
 };
 
 export const useCogniteIdPToken = (
-  idp?: CogniteIdPResponse,
   options: UseQueryOptions<string, unknown, string, string[]> = {
     enabled: true,
   }
 ) => {
   const userManager = useCogniteIdPUserManager({
-    authority: idp?.authority || '',
-    client_id: idp?.appConfiguration.clientId || '',
+    authority: cogIdpAuthority,
+    client_id: getClientId(),
   });
 
   return useQuery(
-    getCogniteIdPQueryKey(idp!, 'token'),
+    ['cognite_idp', 'token'],
     () => getCogniteIdPToken(userManager) as Promise<string>,
     options
   );

@@ -7,17 +7,15 @@ import { CogniteCadModel } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
-import {
-  AugmentedMapping,
-  useInfiniteAssetMappings,
-} from '@data-exploration-app/containers/ThreeD/hooks';
-import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
-import { getBoundingBoxesByNodeIds } from '@data-exploration-app/containers/ThreeD/utils';
-import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { EXPLORATION } from '../../../constants/metrics';
+import { useFlagAssetMappingsOverlays } from '../../../hooks';
+import { trackUsage } from '../../../utils/Metrics';
+import { ThreeDContext } from '../contexts/ThreeDContext';
+import { AugmentedMapping, useInfiniteAssetMappings } from '../hooks';
+import { SmartOverlayTool } from '../tools/SmartOverlayTool';
+import { getBoundingBoxesByNodeIds } from '../utils';
 
 type AssetsHighlightButtonProps = {
   labelsVisibility: boolean;

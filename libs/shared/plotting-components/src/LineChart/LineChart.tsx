@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useCallback, useRef, useState } from 'react';
 
+import get from 'lodash/get';
+
 import { Header } from './components/Header';
 import { HoverLayer } from './components/HoverLayer';
 import { Legend } from './components/Legend';
@@ -36,6 +38,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   formatHoverLineInfo,
   onRangeChange,
   inverted,
+  ...rest
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<PlotElement>(null);
@@ -79,7 +82,11 @@ export const LineChart: React.FC<LineChartProps> = ({
   }, []);
 
   return (
-    <LineChartWrapper ref={chartRef} style={style}>
+    <LineChartWrapper
+      ref={chartRef}
+      style={style}
+      data-testid={get(rest, 'data-testid')}
+    >
       <Toolbar
         plotRef={plotRef}
         zoomDirectionConfig={buttonZoom}

@@ -4,7 +4,7 @@ import { Icon } from '@cognite/cogs.js';
 
 export const Spinner = () => (
   <Container>
-    <Icon type="Loader" aria-label="Spinning icon" />;
+    <Icon type="Loader" aria-label="Spinning icon" />
   </Container>
 );
 

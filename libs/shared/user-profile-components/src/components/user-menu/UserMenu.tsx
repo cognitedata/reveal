@@ -70,7 +70,11 @@ export const UserMenu = ({
       <Divider />
       {children && <>{children}</>}
       {children && <Divider />}
-      <Menu.Item icon="Logout" onClick={onLogoutClick}>
+      <Menu.Item
+        icon="Logout"
+        onClick={onLogoutClick}
+        data-testid="topbar-user-logout-btn"
+      >
         {menuItemLogoutBtnText}
       </Menu.Item>
     </StyledUserMenu>

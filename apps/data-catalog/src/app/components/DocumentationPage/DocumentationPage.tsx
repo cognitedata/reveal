@@ -1,26 +1,23 @@
 import { useState, useEffect } from 'react';
 
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import { documentationIcon as DocumentationIcon } from '@data-catalog-app/assets';
-import Drawer from '@data-catalog-app/components/Drawer';
-import { Col } from '@data-catalog-app/utils';
-import { isNotNilOrWhitespace } from '@data-catalog-app/utils/shared';
-import {
-  IconWrapper,
-  InputField,
-  UnApprovedDot,
-  ApprovedDot,
-  FieldLabel,
-} from '@data-catalog-app/utils/styledComponents';
-import {
-  FileInfo,
-  DataSet,
-  Documentation,
-} from '@data-catalog-app/utils/types';
-
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { Button } from '@cognite/cogs.js';
 
+import { documentationIcon as DocumentationIcon } from '../../assets';
+import { useTranslation } from '../../common/i18n';
+import {
+  ApprovedDot,
+  Col,
+  DataSet,
+  Documentation,
+  FieldLabel,
+  FileInfo,
+  IconWrapper,
+  InputField,
+  isNotNilOrWhitespace,
+  UnApprovedDot,
+} from '../../utils';
+import Drawer from '../Drawer';
 import InfoTooltip from '../InfoTooltip';
 import LinksList from '../LinksList';
 import UploadFiles from '../UploadFiles';

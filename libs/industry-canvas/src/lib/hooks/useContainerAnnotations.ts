@@ -1,13 +1,11 @@
 import { useCallback, useMemo } from 'react';
 
-import zip from 'lodash/zip';
-
 import {
   getExtendedAnnotationsFromAnnotationsApi,
   getStyledAnnotationFromAnnotation,
 } from '@cognite/data-exploration';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import type { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { MetricEvent } from '../constants';
 import {
@@ -15,24 +13,23 @@ import {
   useIndustrialCanvasStore,
 } from '../state/useIndustrialCanvasStore';
 import { IndustryCanvasContainerConfig } from '../types';
-import { isNotUndefined } from '../utils/isNotUndefined';
-import { isNotUndefinedTuple } from '../utils/isNotUndefinedTuple';
 import useMetrics from '../utils/tracking/useMetrics';
 
-import { EMPTY_ARRAY } from './constants';
-import { useAnnotationsMultiple } from './useAnnotationsMultiple';
+import {
+  getResourceKey,
+  useAnnotationsMultiple,
+} from './useAnnotationsMultiple';
 
 type useContainerAnnotationsParams = {
-  container: IndustryCanvasContainerConfig;
+  containers: IndustryCanvasContainerConfig[];
 };
 
 export const useContainerAnnotations = ({
-  container,
+  containers,
 }: useContainerAnnotationsParams): ExtendedAnnotation[] => {
   const trackUsage = useMetrics();
-  const containerConfigs = container.children ?? EMPTY_ARRAY;
-  const { data: annotationsApiAnnotations } =
-    useAnnotationsMultiple(containerConfigs);
+  const { data: annotationsApiAnnotationsByResourceKey } =
+    useAnnotationsMultiple(containers);
   const { hoverId, clickedContainerAnnotationId } = useIndustrialCanvasStore(
     (state) => ({
       hoverId: state.interactionState.hoverId,
@@ -77,19 +74,25 @@ export const useContainerAnnotations = ({
   }, []);
 
   return useMemo(() => {
-    if (annotationsApiAnnotations === undefined) {
+    if (annotationsApiAnnotationsByResourceKey === undefined) {
       return [];
     }
 
-    const extendedAnnotations = zip(containerConfigs, annotationsApiAnnotations)
-      .filter(isNotUndefinedTuple)
-      .flatMap(([containerConfig, annotationsForContainerConfig]) =>
-        getExtendedAnnotationsFromAnnotationsApi(
-          annotationsForContainerConfig,
-          containerConfig.id
-        )
-      )
-      .filter(isNotUndefined)
+    const extendedAnnotations = containers
+      .flatMap((container) => {
+        const annotations =
+          annotationsApiAnnotationsByResourceKey[getResourceKey(container)];
+        if (annotations === undefined) {
+          return [];
+        }
+        const approvedAnnotations = annotations.filter(
+          (annotation) => annotation.status === 'approved'
+        );
+        return getExtendedAnnotationsFromAnnotationsApi(
+          approvedAnnotations,
+          container.id
+        );
+      })
       .map((annotation) => {
         const isSelected = clickedContainerAnnotationId === annotation.id;
         const isOnHover = hoverId === String(annotation.id);
@@ -104,19 +107,19 @@ export const useContainerAnnotations = ({
         (annotation) =>
           ({
             ...annotation,
-            onClick: (e: any, annotation: ExtendedAnnotation) => {
+            onClick: (e, annotation: ExtendedAnnotation) => {
               e.cancelBubble = true;
               if (onClick) {
                 onClick(annotation);
               }
             },
-            onMouseOver: (e: any, annotation: ExtendedAnnotation) => {
+            onMouseOver: (e, annotation: ExtendedAnnotation) => {
               e.cancelBubble = true;
               if (onMouseOver) {
                 onMouseOver(annotation);
               }
             },
-            onMouseOut: (e: any) => {
+            onMouseOut: (e) => {
               e.cancelBubble = true;
               if (onMouseOut) {
                 onMouseOut();
@@ -130,7 +133,7 @@ export const useContainerAnnotations = ({
     onClick,
     clickedContainerAnnotationId,
     hoverId,
-    annotationsApiAnnotations,
-    containerConfigs,
+    annotationsApiAnnotationsByResourceKey,
+    containers,
   ]);
 };

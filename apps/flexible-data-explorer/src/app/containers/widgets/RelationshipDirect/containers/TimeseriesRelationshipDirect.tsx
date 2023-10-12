@@ -41,7 +41,8 @@ export const TimeseriesRelationshipDirect: React.FC<
   return (
     <Widget id={id} rows={rows} columns={columns}>
       <Widget.Header
-        header={`Time series • ${capitalize(type.field)}`}
+        type="TimeSeries"
+        header={capitalize(type.field)}
         title={renderValueTitle()}
       >
         <InstancePreview.Timeseries

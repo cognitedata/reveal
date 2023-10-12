@@ -1,6 +1,6 @@
-import { MimeTypes } from '@vision/constants/validMimeTypes';
-
 import { FileInfo } from '@cognite/sdk';
+
+import { MimeTypes } from '../../constants/validMimeTypes';
 
 /**
  * Test data for test filterByTime fn

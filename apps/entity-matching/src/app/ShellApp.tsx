@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
 
-import Details from '@entity-matching-app/pages/Details';
-import RootList from '@entity-matching-app/pages/Home';
-import Pipeline from '@entity-matching-app/pages/pipeline';
-import QuickMatch from '@entity-matching-app/pages/quick-match';
-import GlobalStyles from '@entity-matching-app/styles/GlobalStyles';
+import Details from './pages/Details';
+import RootList from './pages/Home';
+import Pipeline from './pages/pipeline';
+import QuickMatch from './pages/quick-match';
+import GlobalStyles from './styles';
 
 const App = () => {
   return (

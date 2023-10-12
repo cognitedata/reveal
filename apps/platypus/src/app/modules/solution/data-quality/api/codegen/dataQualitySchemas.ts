@@ -493,3 +493,173 @@ export type RuleListIdsRequest = {
 };
 
 export type DataSourceValidationRequest = Record<string, any>;
+
+export type DataScopeDto = {
+  createdTime: EpochTimestamp;
+  /**
+   * The external-id of the data source
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  dataSourceId: ExternalId;
+  /**
+   * The selected data type from the data model
+   */
+  dataType: string;
+  /**
+   * The external-id of the data scope
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  /**
+   * Filters used during validation
+   */
+  filters: string;
+  lastUpdatedTime: EpochTimestamp;
+  /**
+   * The name of the data scope
+   */
+  name: string;
+};
+
+export type DataScopeListIdsRequest = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: {
+    /**
+     * Ids from data scopes
+     */
+    externalId: ExternalId;
+  }[];
+};
+
+export type DataScopeCreateDraft = {
+  /**
+   * The reference to a view in FDM
+   */
+  dataType: string;
+  /**
+   * The external-id of the data scope
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  /**
+   * The name of the data scope
+   */
+  name: string;
+  /**
+   * Filters used during validation
+   */
+  filters: string;
+};
+
+/**
+ * List of data scopes to create
+ *
+ * @minItems 1
+ * @maxItems 100
+ */
+export type DataScopeCreateRequest = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: DataScopeCreateDraft[];
+};
+
+export type DataScopeUpdateItem = {
+  /**
+   * The external-id of the data scope
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  /**
+   * The properties to be updated
+   */
+  update: DataScopeUpdateDraft;
+};
+
+export type DataScopeUpdateDraft = {
+  /**
+   * The name of the rule
+   */
+  name?: string;
+  /**
+   * Filters used to perform validation
+   */
+  filters?: string;
+};
+
+/**
+ * List of data scopes to update
+ *
+ * @minItems 1
+ * @maxItems 100
+ */
+export type DataScopeUpdateRequest = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: DataScopeUpdateItem[];
+};
+
+/**
+ * State of the rule run
+ */
+export type RuleRunStatus = 'Error' | 'InProgress' | 'Success';
+
+export type RuleRunDto = {
+  createdTime: EpochTimestamp;
+  /**
+   * The external-id of the data source
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  dataSourceId: ExternalId;
+  /**
+   * Time when the rule validation finishes
+   */
+  endTime: EpochTimestamp;
+  /**
+   * The external-id of the rule run
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  lastUpdatedTime: EpochTimestamp;
+  /**
+   * Error message in case the run failed
+   */
+  message: string;
+  /**
+   * The external-id of the related rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  ruleId: ExternalId;
+  /**
+   * Time when the rule validation starts
+   */
+  startTime: EpochTimestamp;
+  status: RuleRunStatus;
+};

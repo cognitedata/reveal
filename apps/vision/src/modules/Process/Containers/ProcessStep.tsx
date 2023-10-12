@@ -4,27 +4,28 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 // import { CustomPrompt } from '@vision/modules/Common/Components/CustomPrompt/CustomPrompt';
-import { ViewMode } from '@vision/modules/Common/types';
-import { ExploreModalContainer } from '@vision/modules/Process/Containers/ExploreModalContainer';
-import { FileToolbar } from '@vision/modules/Process/Containers/FileToolbar';
-import { ProcessBulkEditModalContainer } from '@vision/modules/Process/Containers/ProcessBulkEditModalContainer';
-import { ProcessFileDownloadModalContainer } from '@vision/modules/Process/Containers/ProcessFileDownloadModalContainer';
-import { ProcessFileUploadModalContainer } from '@vision/modules/Process/Containers/ProcessFileUploadModalContainer';
-import { ProcessFooter } from '@vision/modules/Process/Containers/ProcessFooter';
-import { ProcessResults } from '@vision/modules/Process/Containers/ProcessResults';
-import { ProcessToolBar } from '@vision/modules/Process/Containers/ProcessToolBar/ProcessToolBar';
+import { Title } from '@cognite/cogs.js';
+
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { PopulateProcessFiles } from '../../../store/thunks/Process/PopulateProcessFiles';
+import { pushMetric } from '../../../utils/pushMetric';
+import { zIndex } from '../../../utils/zIndex';
+import { ViewMode } from '../../Common/types';
 import {
   hideFileMetadata,
   setCurrentView,
   setFocusedFileId,
-} from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
-import { pushMetric } from '@vision/utils/pushMetric';
-import { zIndex } from '@vision/utils/zIndex';
+} from '../store/slice';
 
-import { Title } from '@cognite/cogs.js';
+import { ExploreModalContainer } from './ExploreModalContainer';
+import { FileToolbar } from './FileToolbar';
+import { ProcessBulkEditModalContainer } from './ProcessBulkEditModalContainer';
+import { ProcessFileDownloadModalContainer } from './ProcessFileDownloadModalContainer';
+import { ProcessFileUploadModalContainer } from './ProcessFileUploadModalContainer';
+import { ProcessFooter } from './ProcessFooter';
+import { ProcessResults } from './ProcessResults';
+import { ProcessToolBar } from './ProcessToolBar/ProcessToolBar';
 
 const ResultsContainer = styled.div`
   flex: 1;

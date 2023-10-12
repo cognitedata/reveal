@@ -1,7 +1,3 @@
-import {
-  isFileOfType,
-  fetchFilePreviewURL,
-} from '@data-exploration-components/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -18,7 +14,7 @@ import {
   aggregate,
 } from '@cognite/sdk-react-query-hooks';
 
-import { InternalDocument } from '@data-exploration-lib/domain-layer';
+import { isFileOfType } from '../utils';
 
 const post = (sdk: CogniteClient, path: string, data: any) =>
   sdk

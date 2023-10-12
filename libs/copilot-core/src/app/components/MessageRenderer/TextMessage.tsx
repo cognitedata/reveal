@@ -9,7 +9,10 @@ import { MessageBase } from './MessageBase';
 export const TextMessage = ({
   message,
 }: {
-  message: { data: CopilotTextMessage & { source: 'user' | 'bot' } };
+  message: {
+    data: CopilotTextMessage &
+      ({ source: 'user' } | { source: 'bot'; replyTo: string });
+  };
 }) => {
   const {
     data: { content, context },

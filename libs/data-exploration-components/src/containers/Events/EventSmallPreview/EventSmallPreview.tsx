@@ -1,24 +1,22 @@
 import React from 'react';
 
 import { Loader } from '@data-exploration/components';
-import {
-  ErrorFeedback,
-  InfoGrid,
-  InfoCell,
-  SpacedRow,
-} from '@data-exploration-components/components';
-import { ResourceIcons } from '@data-exploration-components/components/ResourceIcons/ResourceIcons';
-import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
-import {
-  SmallPreviewProps,
-  SelectableItemProps,
-} from '@data-exploration-components/types';
-import { renderTitle } from '@data-exploration-components/utils';
 import noop from 'lodash/noop';
 
 import { Title, Body, Colors } from '@cognite/cogs.js';
 import { CogniteError, CogniteEvent } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
+import {
+  ErrorFeedback,
+  InfoCell,
+  InfoGrid,
+  ResourceIcons,
+  SpacedRow,
+} from '../../../components';
+import { useSelectionButton } from '../../../hooks';
+import { SelectableItemProps, SmallPreviewProps } from '../../../types';
+import { renderTitle } from '../../../utils';
 // import { EventInfo } from '@data-exploration/containers';
 
 export const EventSmallPreview = ({

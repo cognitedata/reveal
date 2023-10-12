@@ -4,8 +4,8 @@ import { noop } from 'lodash-es';
 import { ADFS } from '@cognite/sdk-core';
 
 import {
-  getBaseHostname,
-  getOrganization,
+  getBaseUrl,
+  getRequiredOrganization,
   setLoginOrganizationCookie,
 } from './loginInfo';
 
@@ -15,10 +15,7 @@ const CACHE_CONFIG = {
 };
 
 const getRedirectUri = () => {
-  const { protocol, port } = window.location;
-  return `${protocol}//${getBaseHostname()}${
-    port !== '' ? `:${port}` : ''
-  }/signin/callback`;
+  return `${getBaseUrl()}/signin/callback`;
 };
 
 export const getPca = (
@@ -65,10 +62,7 @@ export const loginRedirectAad = (
   scopes: string[],
   prompt?: string
 ) => {
-  const org = getOrganization();
-  if (!org) {
-    throw new Error('No organization found');
-  }
+  const org = getRequiredOrganization();
   setLoginOrganizationCookie(org);
   pca.loginRedirect({ scopes, prompt });
   // returning a non-resolving promise as we are redirecting the browser

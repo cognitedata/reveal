@@ -3,11 +3,12 @@
  */
 import { ComponentProps, useState } from 'react';
 
-import Dropdown from '@charts-app/components/Dropdown/Dropdown';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
 
 import { Button } from '@cognite/cogs.js';
+
+import { makeDefaultTranslations } from '../../utils/translations';
+import Dropdown from '../Dropdown/Dropdown';
 
 const defaultTranslations = makeDefaultTranslations(
   'PNG',

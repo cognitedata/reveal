@@ -1,6 +1,6 @@
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
-import { usePreviewTableData } from '@platypus-app/modules/solution/data-management/hooks/usePreviewTableData';
 
+import { usePreviewTableData } from '../../hooks/usePreviewTableData';
 import { DataPreviewTableProps } from '../DataPreviewTable/DataPreviewTable';
 
 import { SuggestionsTableData } from './SuggestionsModal';

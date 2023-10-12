@@ -4,13 +4,14 @@ import {
   DataModelTransformation,
   CreateDataModelTransformationDTO,
 } from '@platypus/platypus-core';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { TOKENS } from '@platypus-app/di';
-import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { Notification } from '../../../../components/Notification/Notification';
+import { TOKENS } from '../../../../di';
+import { useErrorLogger } from '../../../../hooks/useErrorLogger';
+import { useInjection } from '../../../../hooks/useInjection';
+import { useMixpanel } from '../../../../hooks/useMixpanel';
+import { QueryKeys } from '../../../../utils/queryKeys';
 
 type TransformationCreateMutationDTO = {
   space: string;
@@ -19,6 +20,7 @@ type TransformationCreateMutationDTO = {
   transformationExternalId: string;
   typeName: string;
   version: string;
+  dataSetId?: number;
   destination: 'data_model_instances' | 'nodes' | 'edges';
 };
 
@@ -42,6 +44,7 @@ export default function useTransformationCreateMutation() {
       typeName,
       version,
       destination,
+      dataSetId,
     }: TransformationCreateMutationDTO) => {
       const modelExternalId = oneToManyFieldName
         ? getOneToManyModelName(typeName, oneToManyFieldName, version)
@@ -79,6 +82,7 @@ export default function useTransformationCreateMutation() {
         destination: getDestination(),
         externalId: transformationExternalId,
         name: transformationName,
+        dataSetId,
       };
 
       return dataManagementHandler.createTransformation(

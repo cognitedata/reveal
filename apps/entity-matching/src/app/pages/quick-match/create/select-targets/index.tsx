@@ -1,6 +1,6 @@
-import { useTranslation } from '@entity-matching-app/common';
-import Step from '@entity-matching-app/components/step';
-import TargetSelectionTable from '@entity-matching-app/components/target-selector-table';
+import { useTranslation } from '../../../../common';
+import Step from '../../../../components/step';
+import TargetSelectionTable from '../../../../components/target-selector-table';
 
 const SelectTargets = (): JSX.Element => {
   const { t } = useTranslation();

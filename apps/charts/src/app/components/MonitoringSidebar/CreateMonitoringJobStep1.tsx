@@ -1,39 +1,34 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-import {
-  FieldHelperText,
-  FieldTitleRequired,
-} from '@charts-app/components/Form/elements';
-import MonitoringFolderSelect from '@charts-app/components/MonitoringFolderSelect/MonitoringFolderSelect';
-import PortalWait from '@charts-app/components/PortalWait/PortalWait';
+import { delay } from 'lodash';
+
+import { ChartThreshold } from '@cognite/charts-lib';
+import { Button, Icon, Row, Col, Chip } from '@cognite/cogs.js';
+
 import {
   SCHEDULE_MINUTE_OPTIONS,
   SCHEDULE_HOUR_OPTIONS,
   MONITORING_THRESHOLD_ID,
   MINIMUM_DURATION_LIMIT,
-} from '@charts-app/domain/monitoring/constants';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { useChartAtom } from '@charts-app/models/chart/atom';
-import {
-  ChartThreshold,
-  ChartTimeSeries,
-} from '@charts-app/models/chart/types';
+} from '../../domain/monitoring/constants';
+import { useTranslations } from '../../hooks/translations';
+import { useChartAtom } from '../../models/chart/atom';
 import {
   addChartThreshold,
   removeChartThreshold,
-  updateChartThresholdSelectedSource,
+  updateChartThresholdProperties,
   updateChartThresholdUpperLimit,
-} from '@charts-app/models/chart/updates-threshold';
-import { useChartInteractionsAtom } from '@charts-app/models/interactions/atom';
-import { trackUsage } from '@charts-app/services/metrics';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { delay } from 'lodash';
-
-import { Button, Icon, Row, Col, Chip } from '@cognite/cogs.js';
-
+  updateChartThresholdVisibility,
+} from '../../models/chart/updates-threshold';
+import { useChartInteractionsAtom } from '../../models/interactions/atom';
+import { trackUsage } from '../../services/metrics';
+import { makeDefaultTranslations } from '../../utils/translations';
+import { FieldHelperText, FieldTitleRequired } from '../Form/elements';
 import { FormError } from '../Form/FormError';
 import { FormInputWithController } from '../Form/FormInputWithController';
+import MonitoringFolderSelect from '../MonitoringFolderSelect/MonitoringFolderSelect';
+import PortalWait from '../PortalWait/PortalWait';
 
 import { FullWidthButton } from './elements';
 import { SubscribeJob } from './SubscribeJob';
@@ -89,7 +84,6 @@ const CreateMonitoringJobStep1 = ({
 
   const [chart, setChart] = useChartAtom();
   const [, setInteractionsState] = useChartInteractionsAtom();
-  const timeseries = (chart && chart?.timeSeriesCollection) || [];
 
   const formValues = watch();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -127,15 +121,26 @@ const CreateMonitoringJobStep1 = ({
   }, [hasMonitoringThreshold, setChart]);
 
   useEffect(() => {
-    return () => {
-      setTimeout(() => {
-        setChart((oldChart) =>
-          removeChartThreshold(oldChart!, MONITORING_THRESHOLD_ID)
-        );
-      }, 200);
+    const cleanupThreshold = () => {
+      setChart((oldChart) =>
+        removeChartThreshold(oldChart!, MONITORING_THRESHOLD_ID)
+      );
+
       setInteractionsState({
         highlightedTimeseriesId: undefined,
       });
+    };
+
+    // Event listener for beforeunload to run cleanup before tab is closed
+    // So that orphan monitoring thresholds aren't stored.
+    const handleBeforeUnload = () => {
+      cleanupThreshold();
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      cleanupThreshold();
     };
   }, []);
 
@@ -150,36 +155,32 @@ const CreateMonitoringJobStep1 = ({
   }, [formValues.alertThreshold, setChart]);
 
   useEffect(() => {
-    const tsSource = timeseries.find((ts: ChartTimeSeries) => {
-      return (
-        ts.tsExternalId === (formValues.source as ChartTimeSeries)?.tsExternalId
-      );
-    });
-    if (tsSource) {
+    // FormValue.source is always either Timeseries or ScheduledCalculation
+    if (formValues?.source) {
       setChart((oldChart) =>
-        updateChartThresholdSelectedSource(
-          oldChart!,
-          MONITORING_THRESHOLD_ID,
-          tsSource?.id || ''
-        )
-      );
-      const selectedTs = chart?.timeSeriesCollection?.find(
-        (currentTs: ChartTimeSeries) => {
-          return (
-            currentTs.tsExternalId ===
-            (formValues.source as ChartTimeSeries)?.tsExternalId
-          );
-        }
+        updateChartThresholdProperties(oldChart!, MONITORING_THRESHOLD_ID, {
+          sourceId: formValues?.source?.id || '',
+          visible: true,
+        })
       );
       setInteractionsState({
-        highlightedTimeseriesId: selectedTs?.id,
+        highlightedTimeseriesId: formValues?.source?.id,
       });
+    } else {
+      // When the source is not available hide the threshold
+      setChart((oldChart) =>
+        updateChartThresholdVisibility(
+          oldChart!,
+          MONITORING_THRESHOLD_ID,
+          false
+        )
+      );
     }
   }, [
     setChart,
     setInteractionsState,
-    (formValues.source as ChartTimeSeries)?.tsExternalId,
-    JSON.stringify(timeseries.map((ts) => ts.tsExternalId)),
+    formValues.source,
+    formValues?.source?.id,
   ]);
 
   useEffect(() => {
@@ -266,6 +267,8 @@ const CreateMonitoringJobStep1 = ({
         </FieldHelperText>
       </Row>
 
+      {/* Could be used later if we decide on giving user the ability to select frequency of schedule
+
       <FieldTitleRequired>{t.Schedule} </FieldTitleRequired>
       <Row>
         <Col span={13}>
@@ -302,7 +305,7 @@ const CreateMonitoringJobStep1 = ({
         <FieldHelperText>
           {t['How often the monitoring job runs']}
         </FieldHelperText>
-      </Row>
+      </Row> */}
 
       <FieldTitleRequired>{t['Save to']} </FieldTitleRequired>
       <MonitoringFolderSelect

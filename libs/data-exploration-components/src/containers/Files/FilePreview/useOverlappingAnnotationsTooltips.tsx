@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 
-import { getExtendedAnnotationLabel } from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
 import sortBy from 'lodash/sortBy';
 
 import { Button } from '@cognite/cogs.js';
@@ -8,9 +7,9 @@ import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
-import { TooltipContainerColumn } from '../Canvas/TooltipContainer';
-
 import { getOverlappingAnnotations } from './getOverlappingAnnotations';
+import { getExtendedAnnotationLabel } from './migration';
+import { TooltipContainerColumn } from './TooltipContainerColumn';
 
 const useOverlappingAnnotationsTooltips = (
   isEnabled: boolean,
@@ -55,7 +54,7 @@ const useOverlappingAnnotationsTooltips = (
 
     return [
       {
-        targetId: String(selectedAnnotation.id),
+        targetIds: [String(selectedAnnotation.id)],
         content: (
           <TooltipContainerColumn>
             <div style={{ padding: '8px' }}>Overlapping annotations</div>

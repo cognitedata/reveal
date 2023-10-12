@@ -1,48 +1,35 @@
 {
   "extends": [
+    "plugin:cypress/recommended",
     "plugin:@nx/react",
     "../../.eslintrc.json"
   ],
-  "ignorePatterns": [
-    "!**/*"
-  ],
+  "ignorePatterns": ["!**/*"],
   "overrides": [
     {
-      "files": [
-        "*.jsx",
-        "*.tsx"
-      ],
+      "files": ["*.jsx", "*.tsx"],
       "rules": {
         "no-shadow": "off",
         "@typescript-eslint/no-shadow": "off",
-        "@typescript-eslint/ban-ts-comment": [
-          "warn"
-        ],
+        "@typescript-eslint/ban-ts-comment": ["warn"],
         "lodash/prefer-noop": "warn",
         "@cognite/no-number-z-index": "warn"
       }
     },
     {
-      "files": [
-        "*.ts",
-        "*.tsx",
-        "*.js",
-        "*.jsx"
-      ],
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {}
     },
     {
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
+      "files": ["*.ts", "*.tsx"],
       "rules": {}
     },
     {
-      "files": [
-        "*.js",
-        "*.jsx"
-      ],
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.cy.{ts,js,tsx,jsx}", "cypress/**/*.{ts,js,tsx,jsx}"],
       "rules": {}
     }
   ]

@@ -6,34 +6,33 @@ import {
   mockFileIdsSortedByNameAscending,
   mockFileIdsSortedByNameDescending,
   mockFileInfo,
-} from '@vision/__test-utils/data/mockFileInfo';
+} from '../../../../__test-utils/data/mockFileInfo';
 import {
   completedJob,
   failedJob,
   filesWithJobs,
   jobIds,
   jobState,
-} from '@vision/__test-utils/data/mockJobInfo';
-import { convertToVisionFileState } from '@vision/__test-utils/files';
-import { mockFileList } from '@vision/__test-utils/fixtures/files';
+} from '../../../../__test-utils/data/mockJobInfo';
+import { convertToVisionFileState } from '../../../../__test-utils/files';
+import { mockFileList } from '../../../../__test-utils/fixtures/files';
 import {
   getDummyImageAssetLinkAnnotation,
   getDummyImageExtractedTextAnnotation,
   getDummyImageObjectDetectionBoundingBoxAnnotation,
-} from '@vision/__test-utils/getDummyAnnotations';
-import { Status } from '@vision/api/annotation/types';
-import { DEFAULT_PAGE_SIZE } from '@vision/constants/PaginationConsts';
-import { initialState as annotationReducerInitialState } from '@vision/modules/Common/store/annotation/slice';
-import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
-import { initialState as fileSliceInitialState } from '@vision/modules/Common/store/files/slice';
-import {
-  FileState,
-  VisionFile,
-} from '@vision/modules/Common/store/files/types';
+} from '../../../../__test-utils/getDummyAnnotations';
+import { Status } from '../../../../api/annotation/types';
+import { DEFAULT_PAGE_SIZE } from '../../../../constants/PaginationConsts';
+import { RootState } from '../../../../store/rootReducer';
+import { VisionFilesToFileState } from '../../../../store/util/StateUtils';
+import { initialState as annotationReducerInitialState } from '../../../Common/store/annotation/slice';
+import { AnnotationState } from '../../../Common/store/annotation/types';
+import { initialState as fileSliceInitialState } from '../../../Common/store/files/slice';
+import { FileState, VisionFile } from '../../../Common/store/files/types';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
+} from '../../../Common/types';
 import {
   makeSelectJobStatusForFile,
   selectAllFilesDict,
@@ -50,11 +49,9 @@ import {
   selectProcessSortedFiles,
   selectProcessSummary,
   selectUnfinishedJobs,
-} from '@vision/modules/Process/store/selectors';
-import { initialState as processSliceInitialState } from '@vision/modules/Process/store/slice';
-import { ProcessState } from '@vision/modules/Process/store/types';
-import { RootState } from '@vision/store/rootReducer';
-import { VisionFilesToFileState } from '@vision/store/util/StateUtils';
+} from '../selectors';
+import { initialState as processSliceInitialState } from '../slice';
+import { ProcessState } from '../types';
 
 // Process State
 const mockProcessState: ProcessState = {

@@ -55,8 +55,8 @@ export const FilePreview = ({
   }, [fileId, sdk]);
 
   const container = useMemo(() => {
-    if (file && isSupportedFileInfo(file)) {
-      return containerData;
+    if (file && isSupportedFileInfo(file) && containerData) {
+      return [containerData];
     }
     return undefined;
   }, [file, containerData]);
@@ -67,7 +67,7 @@ export const FilePreview = ({
     <ReactUnifiedViewer
       applicationId={UFV_APPLICATION_ID}
       id={fileId}
-      container={container}
+      nodes={container}
       shouldShowZoomControls={false}
     />
   );

@@ -12,6 +12,7 @@ export const Container = styled.div`
 export const TextContent = styled.div`
   display: flex;
   flex-direction: column;
+  padding-left: 8px;
 `;
 
 export const Title = styled.span`

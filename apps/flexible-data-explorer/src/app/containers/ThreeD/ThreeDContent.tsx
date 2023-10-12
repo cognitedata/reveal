@@ -1,27 +1,55 @@
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { RevealContainer } from '@cognite/reveal-react-components';
+import {
+  RevealContainer,
+  AddReveal3DModelOptions,
+  useIsRevealInitialized,
+} from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { useSelectedInstanceParams } from '../../../app/hooks/useParams';
 import { EmptyState } from '../../components/EmptyState';
 import {
   defaultRevealColor,
   defaultViewerOptions,
 } from '../../constants/threeD';
 import { useSiteConfig } from '../../hooks/useConfig';
+import { Instance } from '../../services/types';
 
+import { MappedEquipmentContextHandler } from './containers/MappedEquipmentContextHandler';
 import { RevealContent } from './containers/RevealContent';
 
-export const ThreeDContent = () => {
+interface Props {
+  focusOnInstance?: boolean;
+}
+
+export const ThreeDContent: React.FC<Props> = ({ focusOnInstance }) => {
   const sdk = useSDK();
+  const isRevealInitialized = useIsRevealInitialized();
 
   const siteConfig = useSiteConfig();
 
-  const modelIdentifiers = siteConfig?.threeDResources;
+  const threeDResources = siteConfig?.threeDResources;
 
-  const { instanceSpace, externalId } = useParams();
+  const { instanceSpace, externalId, dataType } = useParams();
+  const [selectedInstance] = useSelectedInstanceParams();
 
-  if (!modelIdentifiers) {
+  const currentInstance: Partial<Instance> | undefined =
+    externalId === undefined
+      ? selectedInstance
+      : { externalId, instanceSpace, dataType };
+
+  const threeDModels = useMemo(
+    () =>
+      threeDResources?.filter(
+        (resource): resource is AddReveal3DModelOptions =>
+          !('siteId' in resource)
+      ) ?? [],
+    [threeDResources]
+  );
+
+  if (threeDResources === undefined) {
     return (
       <EmptyState
         title="No 3D models found"
@@ -30,21 +58,20 @@ export const ThreeDContent = () => {
     );
   }
 
-  const hasSpecifiedInstance =
-    instanceSpace !== undefined && externalId !== undefined;
-  const fitCameraMode = hasSpecifiedInstance ? 'instance' : 'models';
-
   return (
     <RevealContainer
       sdk={sdk}
       color={defaultRevealColor}
       viewerOptions={defaultViewerOptions}
     >
+      <MappedEquipmentContextHandler modelsOptions={threeDModels} />
       <RevealContent
-        modelIdentifiers={modelIdentifiers}
-        externalId={externalId}
-        instanceSpace={instanceSpace}
-        fitCamera={fitCameraMode}
+        threeDResources={threeDResources}
+        dataType={currentInstance?.dataType}
+        instanceExternalId={currentInstance?.externalId}
+        instanceSpace={currentInstance?.instanceSpace}
+        isInitialLoad={!isRevealInitialized}
+        focusNode={focusOnInstance}
       />
     </RevealContainer>
   );

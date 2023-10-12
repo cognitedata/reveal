@@ -8,8 +8,9 @@ import {
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   ImageObjectDetectionPolyline,
-} from '@vision/api/annotation/types';
-import { VisionAnnotationDataType } from '@vision/modules/Common/types/annotation';
+} from '../../../api/annotation/types';
+
+import { VisionAnnotationDataType } from './annotation';
 
 // VisionAnnotationDataType typeGuards
 

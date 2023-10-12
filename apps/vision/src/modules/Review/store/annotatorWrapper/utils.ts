@@ -1,11 +1,10 @@
 /* eslint-disable no-param-reassign */
-import { Keypoint } from '@vision/api/annotation/types';
-import { AnnotatorPointRegion } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import {
-  AnnotatorWrapperState,
-  KeypointState,
-} from '@vision/modules/Review/store/annotatorWrapper/type';
 import isFinite from 'lodash/isFinite';
+
+import { Keypoint } from '../../../../api/annotation/types';
+import { AnnotatorPointRegion } from '../../Components/ReactImageAnnotateWrapper/types';
+
+import { AnnotatorWrapperState, KeypointState } from './type';
 
 export const deleteCollection = (
   state: AnnotatorWrapperState,

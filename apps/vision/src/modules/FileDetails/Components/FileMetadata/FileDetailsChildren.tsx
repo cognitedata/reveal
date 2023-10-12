@@ -3,14 +3,16 @@ import React, { ReactText } from 'react';
 import styled from 'styled-components';
 
 import { GeneralDetails } from '@data-exploration/components';
-import { CopyableText } from '@vision/modules/FileDetails/Components/FileMetadata/CopyableText';
-import { VisionFileDetailKey } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
-import useIsFieldSavePending from '@vision/store/hooks/useIsFieldSavePending';
 import { Input } from 'antd';
 
 import { Body, Icon } from '@cognite/cogs.js';
 import { LabelFilter, ByAssetFilter } from '@cognite/data-exploration';
 import { Label } from '@cognite/sdk';
+
+import useIsFieldSavePending from '../../../../store/hooks/useIsFieldSavePending';
+
+import { CopyableText } from './CopyableText';
+import { VisionFileDetailKey } from './Types';
 
 const FieldViewContainer = styled.div`
   margin-bottom: 14px;

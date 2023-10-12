@@ -17,24 +17,6 @@ import {
   MixerQueryBuilder,
   PlatypusError,
 } from '@platypus/platypus-core';
-import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { TOKENS } from '@platypus-app/di';
-import {
-  useManualPopulationFeatureFlag,
-  useDataManagementDeletionFeatureFlag,
-  useSuggestionsFeatureFlag,
-  useFilterBuilderFeatureFlag,
-  useColumnSelectionFeatureFlag,
-} from '@platypus-app/flags';
-import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DraftRowData } from '@platypus-app/redux/reducers/global/dataManagementReducer';
 import {
   CellDoubleClickedEvent,
   CellEditingStartedEvent,
@@ -51,11 +33,31 @@ import debounce from 'lodash/debounce';
 import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
 import { Button } from '@cognite/cogs.js';
 
+import { ErrorBoundary } from '../../../../../components/ErrorBoundary/ErrorBoundary';
+import { Notification } from '../../../../../components/Notification/Notification';
+import { Spinner } from '../../../../../components/Spinner/Spinner';
+import { TOKENS } from '../../../../../di';
+import {
+  useManualPopulationFeatureFlag,
+  useDataManagementDeletionFeatureFlag,
+  useSuggestionsFeatureFlag,
+  useFilterBuilderFeatureFlag,
+  useColumnSelectionFeatureFlag,
+} from '../../../../../flags';
+import { useDataModelVersions } from '../../../../../hooks/useDataModelActions';
+import { useInjection } from '../../../../../hooks/useInjection';
+import { useMixpanel } from '../../../../../hooks/useMixpanel';
+import { useSelectedDataModelVersion } from '../../../../../hooks/useSelectedDataModelVersion';
+import useSelector from '../../../../../hooks/useSelector';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { DraftRowData } from '../../../../../redux/reducers/global/dataManagementReducer';
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import { useDraftRows } from '../../hooks/useDraftRows';
+import { useGetFilteredRowsCount } from '../../hooks/useGetFilteredRowsCount';
 import { useListDataSource } from '../../hooks/useListDataSource';
 import { useNodesDeleteMutation } from '../../hooks/useNodesDeleteMutation';
 import { usePublishedRowsCountMapByType } from '../../hooks/usePublishedRowsCountMapByType';
+import { usePublishRowMutation } from '../../hooks/usePublishRowMutation';
 import { buildGridConfig } from '../../services/grid-config-builder';
 import { ColumnToggleType, ColumnToggle } from '../ColumnToggle/ColumnToggle';
 import { CreateTransformationModal } from '../CreateTransformationModal';
@@ -110,9 +112,14 @@ export const DataPreviewTable = forwardRef<
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     // This property is used to trigger a rerender when a selection occurs in the grid
     const [, setSelectedPublishedRowsCount] = useState(0);
-    const [filteredRowCount, setFilteredRowCount] = useState<null | number>(
+    const [filteredRowsCount, setFilteredRowsCount] = useState<null | number>(
       null
     );
+    const countResult = useGetFilteredRowsCount({
+      dataModelType,
+      dataModelExternalId,
+      space,
+    });
     const [columnState, setColumnState] = useState<ColumnState[]>([]);
     const [shouldAlignColumnState, setShouldAlignColumnState] = useState(false);
     const gridRef = useRef<AgGridReact>(null);
@@ -153,6 +160,12 @@ export const DataPreviewTable = forwardRef<
       createNewDraftRow,
       deleteSelectedRows,
     } = useDraftRows();
+
+    useEffect(() => {
+      if (countResult !== filteredRowsCount) {
+        setFilteredRowsCount(countResult || null);
+      }
+    }, [countResult, filteredRowsCount]);
 
     const [columnOrder, setColumnOrder] = useState<ColumnToggleType[]>(
       getColumnsInitialOrder(dataModelType, instanceIdCol)
@@ -204,6 +217,11 @@ export const DataPreviewTable = forwardRef<
       dataModelType,
       space,
     });
+    const addRowsMutation = usePublishRowMutation({
+      dataModelExternalId,
+      dataModelType,
+      space,
+    });
     const viewVersion = dataModelType.version;
 
     const [sidebarData, setSidebarData] = useState<DataPreviewSidebarData>();
@@ -219,8 +237,8 @@ export const DataPreviewTable = forwardRef<
         });
         return;
       }
-      dataManagementHandler
-        .ingestNodes({
+      addRowsMutation
+        .mutateAsync({
           space,
           model: [dataModelExternalId, `${dataModelType.name}_${viewVersion}`],
           version: viewVersion,
@@ -807,7 +825,7 @@ export const DataPreviewTable = forwardRef<
           onPublishedRowsCountClick={toggleShouldShowPublishedRows}
           onSearchInputValueChange={debouncedHandleSearchInputValueChange}
           publishedRowsCount={publishedRowsCountMap?.[dataModelType.name] || 0}
-          filteredRowCount={filteredRowCount}
+          filteredRowsCount={filteredRowsCount}
           shouldShowDraftRows={shouldShowDraftRows}
           shouldShowPublishedRows={shouldShowPublishedRows}
           onRefreshClick={() => gridRef.current?.api.purgeInfiniteCache()}
@@ -867,9 +885,6 @@ export const DataPreviewTable = forwardRef<
           >
             <CogDataGrid
               ref={gridRef}
-              onModelUpdated={(event) => {
-                setFilteredRowCount(event.api.getDisplayedRowCount());
-              }}
               onSortChanged={() => {
                 track('DataModel.Data.Sort', {
                   version,

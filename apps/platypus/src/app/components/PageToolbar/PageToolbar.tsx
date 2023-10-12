@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
-import { HtmlElementProps } from '@platypus-app/types';
-
 import { Body, Button, Flex, Title } from '@cognite/cogs.js';
+
+import { HtmlElementProps } from '../../types';
 
 export enum Size {
   SMALL = 'SMALL',
@@ -42,7 +42,7 @@ export const PageToolbar = ({
         padding: size === Size.LARGE ? '0 10px 0 16px' : '0 10px 0 16px',
       }}
     >
-      <Flex alignItems="center">
+      <Flex alignItems="center" gap={8}>
         {backPathname && (
           <Button
             icon="ChevronLeft"

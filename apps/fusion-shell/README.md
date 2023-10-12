@@ -6,6 +6,7 @@ This app is the entry point for the CDF (Cognite Data Fusion) front-end.
 It's a microfrontend architecture that uses [Single SPA](https://github.com/single-spa/single-spa) to render it's sub-apps.
 
 This app is basically the "shell" for loading and unloading sub-apps in addition to render:
+
 - Redirect page
 - Login page
 - Navigation (top bar, menu, profile page)
@@ -17,6 +18,7 @@ The idea is to devide the app into smaller sub-apps and be able to build, deploy
 # Development
 
 Use one of the following commands to run the fusion-shell locally:
+
 - `nx serve fusion-shell`
 - `nx preview fusion-shell`
 
@@ -123,11 +125,11 @@ To revert, go to firebase console and revert the deployment directly from there.
 
 E2E tests are running on CI where we have the clientId and clientSecret as repository secrets available so that we can get access token.
 The token is fetched before cypress tests are started and is valid for the whole session. The code is here:
-`apps/fusion-shell-e2e/cypress.config.ts`
+ `apps/fusion-shell/cypress.config.ts`
 
 After we get the access token, we are setting the local storage item `CY_TOKEN: <token>` . This item is picked up by `cdf-sdk-sigleton`.
 The code for that is here:
-`apps/fusion-shell-e2e/src/support/commands.ts`
+`apps/fusion-shell/src/support/commands.ts`
 
 If you want to run cypress test locally, you will need to get hold of a clientId/ClientSecret pair.
 
@@ -137,3 +139,5 @@ After this step, you can run cypress. This is the command that is executed on CI
 `CLIENT_ID=<your-client-id> CLIENT_SECRET=<your-client-secret> nx run fusion-shell-e2e:e2e --watch`
 
 > Remeber to run fusion-shell when running e2e tests. E.g. `nx run fusion-shell:preview:production`.
+
+Before running e2e tests locally, make sure you have a `.env.local` file with env variable `FUSION_ENV` set to one of these values `staging | preview | production`. This is needed in order to generate subapp import maps.

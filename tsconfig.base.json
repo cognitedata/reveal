@@ -29,6 +29,7 @@
         "libs/shared/cdf-sdk-singleton/src/index.ts"
       ],
       "@cognite/cdf-utilities": ["libs/shared/cdf-utilities/src/index.ts"],
+      "@cognite/charts-lib": ["libs/charts-lib/src/index.ts"],
       "@cognite/cog-data-grid": [
         "libs/data-modeling/cog-data-grid/src/index.ts"
       ],
@@ -76,9 +77,7 @@
       "@extraction-pipelines/*": ["apps/extraction-pipelines/src/*"],
       "@extractor-downloads/*": ["apps/extractor-downloads/src/*"],
       "@flexible-data-explorer/*": ["apps/flexible-data-explorer/src/*"],
-      "@flows/*": [
-        "apps/flows/src/*"
-      ],
+      "@flows/*": ["apps/flows/src/*"],
       "@functions-ui/*": ["apps/functions-ui/src/*"],
       "@fusion-shell/*": ["apps/fusion-shell/src/*"],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
@@ -92,6 +91,7 @@
         "libs/shared/load-remote-module/src/index.ts"
       ],
       "@fusion/mock-data": ["libs/shared/mock-data/src/index.ts"],
+      "@fusion/shared/cypress": ["libs/shared/cypress/src/index.ts"],
       "@fusion/shared/user-onboarding-components": [
         "libs/shared/user-onboarding-components/src/index.ts"
       ],
@@ -112,7 +112,9 @@
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
       "@raw-explorer/*": ["apps/raw-explorer/src/*"],
+      "@simint-app/*": ["apps/simint/src/*"],
       "@transformations/*": ["apps/transformations/src/*"],
+      "@user-history": ["libs/shared/user-history/src/index.ts"],
       "@vision/*": ["apps/vision/src/*"]
     }
   },

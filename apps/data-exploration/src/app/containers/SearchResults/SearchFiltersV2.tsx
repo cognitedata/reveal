@@ -5,11 +5,10 @@ import { useDebounce } from 'use-debounce';
 
 import { ResourceType } from '@cognite/data-exploration';
 
-import { useQueryString } from '@data-exploration-app/hooks/hooks';
-import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-
 import { useFlagDocumentsApiEnabled } from '../../hooks';
-import { useAllFilters } from '../../store/filter/selectors/allSelectors';
+import { useQueryString } from '../../hooks/hooks';
+import { useAllFilters } from '../../store';
+import { SEARCH_KEY } from '../../utils/constants';
 
 // import { useFilterState } from 'providers';
 

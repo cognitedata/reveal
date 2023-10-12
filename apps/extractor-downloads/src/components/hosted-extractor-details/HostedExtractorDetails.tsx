@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 
-import {
-  Button,
-  Chip,
-  Flex,
-  Icon,
-  formatDate,
-  Heading,
-} from '@cognite/cogs.js';
+import { Chip, Flex, Icon, Heading } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { ExtractorWithReleases } from '../../service/extractors';
-import { trackUsage } from '../../utils';
+import { trackUsage, formatTimeStamp } from '../../utils';
 import { ContentContainer } from '../ContentContainer';
+import { CreateConnectionButton } from '../create-connection';
 import { CreateConnectionModal } from '../create-connection-modal/CreateConnectionModal';
 import { DetailsHeader } from '../DetailsHeader';
 import { DocsLinkGrid, DocsLinkGridItem } from '../DocsLinkGrid';
@@ -34,12 +27,11 @@ export const HostedExtractorDetails = ({
   extractor,
 }: HostedExtractorDetailsProps): JSX.Element => {
   const { t } = useTranslation();
-  const { search } = useLocation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const latestRelease = extractor?.releases?.at(0);
   const createdAt =
-    latestRelease?.createdTime && formatDate(latestRelease?.createdTime);
+    latestRelease?.createdTime && formatTimeStamp(latestRelease?.createdTime);
 
   const tags = extractor?.tags ?? [];
 
@@ -100,14 +92,7 @@ export const HostedExtractorDetails = ({
             <aside>
               <Flex direction="column" gap={24}>
                 <Flex direction="column" gap={16}>
-                  <Heading level={5}>{t('set-up-hosted-extractor')}</Heading>
-                  <Link to={`create_new_connection${search}`}>
-                    <Button key={extractor.externalId} type="primary">
-                      {t('connect-to-hosted-extractor', {
-                        extractor: extractor?.name,
-                      })}
-                    </Button>
-                  </Link>
+                  <CreateConnectionButton extractor={extractor} />
                 </Flex>
                 {genericLinks?.length > 0 && (
                   <>

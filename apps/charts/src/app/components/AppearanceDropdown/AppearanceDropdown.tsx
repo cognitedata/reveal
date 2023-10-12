@@ -1,9 +1,9 @@
-import { Interpolation, LineStyle } from '@charts-app/models/chart/types';
-import { trackUsage } from '@charts-app/services/metrics';
-import { availableColors } from '@charts-app/utils/colors';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
+import { Interpolation, LineStyle } from '@cognite/charts-lib';
 import { Menu, Flex } from '@cognite/cogs.js';
+
+import { trackUsage } from '../../services/metrics';
+import { availableColors } from '../../utils/colors';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import {
   DropdownWrapper,

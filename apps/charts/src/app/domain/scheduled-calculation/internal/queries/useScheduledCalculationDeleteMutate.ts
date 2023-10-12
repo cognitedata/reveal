@@ -1,11 +1,11 @@
-import { ScheduledCalculationTask } from '@charts-app/domain/scheduled-calculation/service/types';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useMutation } from '@tanstack/react-query';
 
 import { toast } from '@cognite/cogs.js';
 
+import { makeDefaultTranslations } from '../../../../utils/translations';
 import { useScheduledCalculationTaskDeleteMutate } from '../../service/queries/useScheduledCalculationTaskDeleteMutate';
 import { useTimeseriesDeleteMutate } from '../../service/queries/useTimeseriesDeleteMutate';
+import { ScheduledCalculationTask } from '../../service/types';
 
 const defaultTranslations = makeDefaultTranslations(
   'Unable to delete scheduled calculation.',

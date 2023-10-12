@@ -1,4 +1,4 @@
-import { editor, Uri } from 'monaco-editor';
+import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api';
 
 import { config } from '../config';
 import { FdmGraphQLDmlWorker } from '../FdmGraphQLDmlWorker';

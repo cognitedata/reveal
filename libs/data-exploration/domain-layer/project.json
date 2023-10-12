@@ -12,7 +12,8 @@
         "main": "libs/data-exploration/domain-layer/src/index.ts",
         "tsConfig": "libs/data-exploration/domain-layer/tsconfig.lib.json",
         "assets": ["libs/data-exploration/domain-layer/*.md"]
-      }
+      },
+      "compiler": "swc"
     },
     "lint": {
       "executor": "@nx/linter:eslint",

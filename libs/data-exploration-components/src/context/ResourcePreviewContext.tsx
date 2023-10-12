@@ -3,10 +3,11 @@ import React, { useContext, useState, useCallback } from 'react';
 import styled from 'styled-components';
 
 import { ResourceSelectorDetails } from '@data-exploration/containers';
-import { Splitter } from '@data-exploration-components/components';
-import { ResourceItem } from '@data-exploration-components/types';
 
 import { SIDEBAR_RESIZE_EVENT } from '@data-exploration-lib/core';
+
+import { Splitter } from '../components';
+import { ResourceItem } from '../types';
 
 export type ResourcePreviewProps = {
   /**

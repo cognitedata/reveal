@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import styled from 'styled-components';
 
 import { notification } from 'antd';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Checkbox, Flex, Modal, ModalProps } from '@cognite/cogs.js';
 
-import { useTranslation } from '../../common';
+import { Trans, useTranslation } from '../../common';
 import {
   MQTTSourceWithJobMetrics,
   useDeleteMQTTSource,
@@ -46,31 +48,71 @@ const DeleteSourceModal = ({
     },
   });
 
-  const handleDelete = (): void => {
-    deleteSource({ externalId: source.externalId });
-  };
+  const sourceContainsActiveJobs = useMemo(() => {
+    return !!source.jobs.length;
+  }, [source]);
+
+  const handleDelete = useCallback((): void => {
+    deleteSource({
+      externalId: source.externalId,
+      force: sourceContainsActiveJobs,
+    });
+  }, [source.externalId, sourceContainsActiveJobs, deleteSource]);
 
   return (
-    <Modal
+    <StyledModal
       destructive
       onCancel={onCancel}
-      okDisabled={!isChecked}
+      okDisabled={sourceContainsActiveJobs ? !isChecked : false}
       okText={t('delete')}
       onOk={handleDelete}
-      title={t('delete-source')}
+      title={t('delete-connection')}
       visible={visible}
     >
-      <Flex direction="column" gap={12}>
-        <Body level={2}>{t('delete-source-warning')}</Body>
-        <Checkbox
-          checked={isChecked}
-          onChange={(e) => setIsChecked(e.target.checked)}
-        >
-          {t('delete-source-checkbox')}
-        </Checkbox>
+      <Flex direction="column" gap={10}>
+        {sourceContainsActiveJobs ? (
+          <>
+            <Trans
+              i18nKey="delete-connection-jobs-warning"
+              values={{ connection: source.externalId }}
+              components={{
+                1: <Body size="medium"></Body>,
+                2: <strong></strong>,
+              }}
+            ></Trans>
+
+            <Checkbox
+              checked={isChecked}
+              onChange={(e) => setIsChecked(e.target.checked)}
+            >
+              <Trans
+                i18nKey="delete-connection-checkbox"
+                values={{ connection: source.externalId }}
+                components={{
+                  1: <Body size="medium"></Body>,
+                  2: <strong></strong>,
+                }}
+              ></Trans>
+            </Checkbox>
+          </>
+        ) : (
+          <Trans
+            i18nKey="delete-connection-warning"
+            values={{ connection: source.externalId }}
+            components={{
+              1: <Body size="medium"></Body>,
+              2: <strong></strong>,
+            }}
+          ></Trans>
+        )}
       </Flex>
-    </Modal>
+    </StyledModal>
   );
 };
 
+const StyledModal = styled(Modal)`
+  .cogs-modal__content-container {
+    overflow: hidden;
+  }
+`;
 export default DeleteSourceModal;

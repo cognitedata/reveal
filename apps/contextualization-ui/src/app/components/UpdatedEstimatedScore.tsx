@@ -1,12 +1,12 @@
 import { Dispatch, SetStateAction, useEffect } from 'react';
 
 import { useEstimateQuality } from '@fusion/contextualization';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 import { EstimateArray, JobStatus, SelectedColumns } from '../types';
 
 import { EstimatedScoreBody } from './EstimatedScoreBody';
 import { FormattedContainer } from './FormattedContainer';
+import { Spinner } from './Spinner/Spinner';
 
 export const UpdatedEstimatedScore = ({
   advancedJoinExternalId,

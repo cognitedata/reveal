@@ -1,5 +1,7 @@
 import { merge } from 'lodash';
 
+import { SiteConfig } from '../../config/types';
+
 import { FDMClientV2 } from './FDMClientV2';
 import { DataType, EdgeRelationshipResponse, SearchResponse } from './types';
 
@@ -46,10 +48,14 @@ export class FDMComposer {
     return client?.schema.dataModel;
   }
 
-  public async search(query: string, filters: Record<string, unknown>) {
+  public async search(
+    query: string,
+    filters: Record<string, unknown>,
+    config?: SiteConfig
+  ) {
     const promises = await Promise.allSettled(
       (this.clients || []).map(async (client) => {
-        const results = await client.searchDataTypes(query, filters);
+        const results = await client.searchDataTypes(query, filters, config);
 
         return results;
       })
@@ -66,11 +72,16 @@ export class FDMComposer {
 
   public async searchAggregateCount(
     query: string,
-    filters: Record<string, unknown>
+    filters: Record<string, unknown>,
+    config?: SiteConfig
   ) {
     const promises = await Promise.allSettled(
       (this.clients || []).map(async (client) => {
-        const results = await client.searchAggregateCount(query, filters);
+        const results = await client.searchAggregateCount(
+          query,
+          filters,
+          config
+        );
 
         return results;
       })
@@ -88,7 +99,6 @@ export class FDMComposer {
   public async searchAggregateValueByProperty<T>(
     data: { dataType: string; field: string },
     query: string,
-    filters: unknown,
     property: string
   ) {
     const dataModel = this.getDataModelByDataType(data.dataType);
@@ -110,7 +120,6 @@ export class FDMComposer {
     const result = await client.searchAggregateValueByProperty<T>(
       data,
       query,
-      filters,
       property
     );
 
@@ -156,6 +165,40 @@ export class FDMComposer {
       dataModel.version,
       dataModel.space
     )?.aiSearch(query, variables);
+  }
+
+  public async getInstancesByIds(
+    header: {
+      dataType: string;
+      dataModel: string;
+      version: string;
+      space: string;
+      externalIds: string[];
+    },
+    filter?: unknown
+  ) {
+    const client = this.getClient(
+      header.dataModel,
+      header.version,
+      header.space
+    );
+
+    if (!client) {
+      return Promise.reject(new Error('Missing client...'));
+    }
+
+    const primitiveFields = client.schema.getPrimitiveFields(header.dataType);
+
+    const instances = await client.getInstancesByIds<Record<string, any>>(
+      primitiveFields,
+      {
+        dataType: header.dataType,
+        externalIds: header.externalIds,
+      },
+      filter
+    );
+
+    return instances;
   }
 
   public async getInstancesById(header: {

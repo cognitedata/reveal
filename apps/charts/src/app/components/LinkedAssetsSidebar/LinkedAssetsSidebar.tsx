@@ -1,11 +1,11 @@
 import { ComponentProps } from 'react';
 
+import { Button, Title } from '@cognite/cogs.js';
+
 import {
   makeDefaultTranslations,
   translationKeys,
-} from '@charts-app/utils/translations';
-
-import { Button, Title } from '@cognite/cogs.js';
+} from '../../utils/translations';
 
 import { FileSidebar } from './elements/FileSidebar';
 import { Header } from './elements/Header';

@@ -1,8 +1,9 @@
-import { TimeseriesChart } from '@simint-app/components/charts/TimeseriesChart';
-import HighlightMatch from '@simint-app/components/shared/HighlightMatch';
 import styled from 'styled-components/macro';
 
 import { Tooltip } from '@cognite/cogs.js';
+
+import { TimeseriesChart } from '../../../charts/TimeseriesChart';
+import HighlightMatch from '../../../shared/HighlightMatch';
 
 import type { TimeseriesOption } from './types';
 

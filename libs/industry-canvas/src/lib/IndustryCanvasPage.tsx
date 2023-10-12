@@ -25,7 +25,11 @@ import {
 import { useFromCopilotEventHandler } from '@cognite/llm-hub';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { UnifiedViewer, ZoomToFitMode } from '@cognite/unified-file-viewer';
+import {
+  UnifiedViewer,
+  ZoomToFitMode,
+  isAnnotation,
+} from '@cognite/unified-file-viewer';
 
 import { translationKeys } from './common';
 import { ToggleButton } from './components/buttons';
@@ -47,14 +51,15 @@ import {
 import { CommentsPane } from './containers';
 import { useAuth2InvitationsByResource } from './hooks/use-query/useAuth2InvitationsByResource';
 import { useUsers } from './hooks/use-query/useUsers';
+import { useCallbackOnce } from './hooks/useCallbackOnce';
 import useCanvasVisibility from './hooks/useCanvasVisibility';
 import useClickedContainerAnnotation from './hooks/useClickedContainerAnnotation';
-import useContainer from './hooks/useContainer';
 import { useContainerAnnotations } from './hooks/useContainerAnnotations';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import useLocalStorage from './hooks/useLocalStorage';
 import useManagedTool from './hooks/useManagedTool';
+import useNodes from './hooks/useNodes';
 import useOnAddContainerReferences from './hooks/useOnAddContainerReferences';
 import useOnUpdateRequest from './hooks/useOnUpdateRequest';
 import useOnUpdateSelectedAnnotation from './hooks/useOnUpdateSelectedAnnotation';
@@ -91,12 +96,15 @@ import {
   ContainerReference,
   ContainerReferenceType,
   IndustryCanvasToolType,
+  isIndustryCanvasContainerConfig,
 } from './types';
 import { useUserProfile } from './UserProfileProvider';
+import { createDuplicateCanvas } from './utils/createDuplicateCanvas';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
 } from './utils/dimensions';
+import { getCanvasLink } from './utils/getCanvasLink';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 import useMetrics from './utils/tracking/useMetrics';
@@ -184,7 +192,6 @@ export const IndustryCanvasPage = () => {
     createCanvas,
     setCanvasId,
     isCanvasLocked,
-    isCommentsEnabled,
   } = useIndustryCanvasContext();
 
   const { comments, isLoading: isCommentsLoading } = useListCommentsQuery({
@@ -197,9 +204,15 @@ export const IndustryCanvasPage = () => {
   const onUpdateRequest = useOnUpdateRequest({
     unifiedViewer: unifiedViewerRef,
   });
-  const container = useContainer(canvasState);
+
+  const nodes = useNodes(canvasState);
+  const containers = useMemo(
+    () => nodes.filter(isIndustryCanvasContainerConfig),
+    [nodes]
+  );
+  const canvasAnnotations = useMemo(() => nodes.filter(isAnnotation), [nodes]);
   const containerAnnotations = useContainerAnnotations({
-    container,
+    containers,
   });
   const clickedContainerAnnotation = useClickedContainerAnnotation({
     containerAnnotations,
@@ -224,12 +237,10 @@ export const IndustryCanvasPage = () => {
   // if comments is not enabled then return empty, hiding all comments for that project (even if canvas had comments before)
   const commentAnnotations = useMemo(
     () =>
-      isCommentsEnabled
-        ? comments
-            .filter((comment) => comment.targetContext !== undefined)
-            .map((comment) => createCommentAnnotation(comment))
-        : [],
-    [isCommentsEnabled, comments]
+      comments
+        .filter((comment) => comment.targetContext !== undefined)
+        .map((comment) => createCommentAnnotation(comment)),
+    [comments]
   );
 
   const {
@@ -252,12 +263,11 @@ export const IndustryCanvasPage = () => {
     }
   }, [isCanvasLocked, toolType]);
 
-  const { selectedCanvasAnnotation, selectedContainer } =
+  const { selectedCanvasAnnotation, selectedContainers } =
     useSelectedAnnotationOrContainer({
       unifiedViewerRef,
-      toolType,
-      canvasAnnotations: canvasState.canvasAnnotations,
-      container,
+      canvasAnnotations,
+      containers,
     });
 
   const { onUpdateSelectedAnnotation } = useOnUpdateSelectedAnnotation({
@@ -274,9 +284,9 @@ export const IndustryCanvasPage = () => {
 
   const onAddContainerReferences = useOnAddContainerReferences({
     unifiedViewerRef,
-    selectedContainer,
+    selectedContainers,
     clickedContainerAnnotation,
-    container,
+    containers,
     isCanvasLocked,
     tooltipsOptions,
   });
@@ -289,7 +299,7 @@ export const IndustryCanvasPage = () => {
       return;
     }
 
-    if (container.children === undefined || container.children.length === 0) {
+    if (containers.length === 0) {
       return;
     }
 
@@ -298,7 +308,7 @@ export const IndustryCanvasPage = () => {
       duration: 0,
     });
     setHasZoomedToFitOnInitialLoad(true);
-  }, [hasZoomedToFitOnInitialLoad, unifiedViewerRef, container]);
+  }, [hasZoomedToFitOnInitialLoad, unifiedViewerRef, containers]);
 
   const { onKeyDown, onKeyUp } = useKeyboardShortcuts(unifiedViewerRef);
 
@@ -310,14 +320,6 @@ export const IndustryCanvasPage = () => {
     );
   };
 
-  if (!canCurrentUserSeeCanvas) {
-    return (
-      <NoAccessToCurrentCanvas
-        onGoBackClick={handleGoBackToIndustryCanvasButtonClick}
-      />
-    );
-  }
-
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
     trackUsage(MetricEvent.DOWNLOAD_AS_PDF_CLICKED);
@@ -326,6 +328,7 @@ export const IndustryCanvasPage = () => {
   const onAddResourcePress = async (
     results?: ResourceItem | ResourceItem[]
   ) => {
+    console.log('ICP; selection results: ', results);
     if (isCanvasLocked) {
       return;
     }
@@ -395,6 +398,28 @@ export const IndustryCanvasPage = () => {
       });
     }
   };
+
+  const handleDuplicateCanvasClick = useCallbackOnce(async () => {
+    if (activeCanvas === undefined) {
+      return;
+    }
+
+    const { externalId } = await createDuplicateCanvas({
+      canvas: activeCanvas,
+      createCanvas,
+      t,
+    });
+
+    navigate(getCanvasLink(externalId));
+  });
+
+  if (!canCurrentUserSeeCanvas) {
+    return (
+      <NoAccessToCurrentCanvas
+        onGoBackClick={handleGoBackToIndustryCanvasButtonClick}
+      />
+    );
+  }
 
   return (
     <>
@@ -565,6 +590,15 @@ export const IndustryCanvasPage = () => {
                     'Always show connection lines'
                   )}
                 </Menu.Item>
+                <Menu.Item
+                  onClick={handleDuplicateCanvasClick}
+                  disabled={isCreatingCanvas}
+                >
+                  {t(
+                    translationKeys.COMMON_CANVAS_MAKE_COPY,
+                    'Duplicate canvas'
+                  )}
+                </Menu.Item>
               </Menu>
             }
           >
@@ -593,9 +627,8 @@ export const IndustryCanvasPage = () => {
             onUpdateRequest={onUpdateRequest}
             containerAnnotations={containerAnnotations}
             clickedContainerAnnotation={clickedContainerAnnotation}
-            container={container}
-            selectedContainer={selectedContainer}
-            canvasAnnotations={canvasState.canvasAnnotations}
+            nodes={nodes}
+            selectedContainers={selectedContainers}
             selectedCanvasAnnotation={selectedCanvasAnnotation}
             tool={tool}
             toolType={toolType}
@@ -618,7 +651,13 @@ export const IndustryCanvasPage = () => {
         {isResourceSelectorOpen && (
           <ResourceSelector
             onSelect={onAddResourcePress}
-            visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
+            visibleResourceTabs={[
+              // 'charts', // this should be commented until feature becomes ready.
+              'file',
+              'timeSeries',
+              'asset',
+              'event',
+            ]}
             selectionMode="multiple"
             initialFilter={resourceSelectorProps?.initialFilter}
             initialTab={resourceSelectorProps?.initialTab}

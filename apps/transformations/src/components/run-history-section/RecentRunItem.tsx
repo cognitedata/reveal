@@ -28,7 +28,7 @@ const RecentRunItem = ({ job }: RecentRunItemProps) => {
     <RecentRunItemTooltip job={job}>
       <StyledRunBox
         $color={iconProps.status}
-        href={`#${job.id}`}
+        href={`${window.location.origin}${window.location.pathname}${window.location.search}#${job.id}`}
         onClick={() => handleClick(job.id)}
       />
     </RecentRunItemTooltip>

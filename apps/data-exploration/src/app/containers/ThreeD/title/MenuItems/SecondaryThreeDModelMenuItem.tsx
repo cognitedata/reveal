@@ -5,10 +5,11 @@ import styled from 'styled-components';
 import { Body, Checkbox, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
-import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
-import { formatTime } from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
 import { useTranslation } from '@data-exploration-lib/core';
 import { use3DRevisionsQuery } from '@data-exploration-lib/domain-layer';
+
+import { SecondaryModelOptions } from '../../contexts/ThreeDContext';
+import { formatTime } from '../../timestamp/ThreeDTimestamp';
 
 export const SecondaryThreeDModelMenuItem = ({
   model,

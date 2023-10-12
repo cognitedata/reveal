@@ -1,11 +1,5 @@
 import { initReactI18next, setI18n } from 'react-i18next';
 
-import config from '@charts-app/config/config';
-import {
-  isDevelopment,
-  isPR,
-  isProduction,
-} from '@charts-app/utils/environment';
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import ChainedBackend, { ChainedBackendOptions } from 'i18next-chained-backend';
@@ -15,6 +9,10 @@ import { locizePlugin } from 'locize';
 import LocizeLastusedPlugin, { LocizeLastusedOptions } from 'locize-lastused';
 
 import { SELECTED_LANGUAGE_LS_KEY } from '@cognite/cdf-utilities';
+
+import { isDevelopment, isPR, isProduction } from '../utils/environment';
+
+import config from './config';
 
 if (!config.locizeProjectId) throw new Error('Locize is not configured!');
 

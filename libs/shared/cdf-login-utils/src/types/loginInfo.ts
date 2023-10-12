@@ -1,3 +1,5 @@
+import { CogIdpProject } from './cogniteIdp';
+
 export const IDP_TYPES = [
   'COGNITE_AUTH',
   'AZURE_AD',
@@ -109,7 +111,8 @@ export type IDPResponse =
   | AADResponse
   | Auth0Response
   | AADB2CResponse
-  | KeycloakResponse;
+  | KeycloakResponse
+  | CogniteIdPResponse;
 
 export interface AADResponse extends IDP {
   appConfiguration: {
@@ -124,6 +127,7 @@ export interface KeycloakResponse extends IDP {
   };
 }
 export interface CogniteIdPResponse extends IDP {
+  projects: CogIdpProject[];
   appConfiguration: {
     clientId: string;
   };

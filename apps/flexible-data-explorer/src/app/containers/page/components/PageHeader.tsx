@@ -45,7 +45,7 @@ export const PageHeader: React.FC<PropsWithChildren<Props>> = ({
               <Skeleton.Paragraph lines={2} />
             ) : (
               <>
-                <HeaderText>{header}</HeaderText>
+                {header && <HeaderText>{header}</HeaderText>}
                 <Title level={4}>{title}</Title>
                 <DescriptionText>{subtitle}</DescriptionText>
               </>

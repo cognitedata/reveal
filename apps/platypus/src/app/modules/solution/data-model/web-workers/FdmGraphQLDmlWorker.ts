@@ -1,6 +1,10 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
-import type { Position, worker } from 'monaco-editor';
+import type {
+  Position,
+  worker,
+  languages,
+} from 'monaco-editor/esm/vs/editor/editor.api';
 import prettierGraphqlParser from 'prettier/parser-graphql';
 import prettierStandalone from 'prettier/standalone';
 
@@ -59,7 +63,6 @@ export class FdmGraphQLDmlWorker {
         graphqlCode,
         this.createData.options
       );
-      this.setGraphQlSchema(graphqlCode);
       return markers;
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -76,15 +79,18 @@ export class FdmGraphQLDmlWorker {
    * @param builtInTypes all of the types of the most recent correct data model
    */
   public async doComplete(
+    textUntilPosition: string,
     graphqlCode: string,
     position: Position
   ): Promise<CompletionList> {
     try {
       return this.codeCompletionService.getCompletions(
+        textUntilPosition,
         graphqlCode,
-        this.lastValidGraphQlSchema || '',
+        this.lastValidGraphQlSchema || graphqlCode,
         position,
-        !!this.createData.options?.useExtendedSdl
+        !!this.createData.options?.useExtendedSdl,
+        this.dataModelTypeDefs
       );
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -120,6 +126,14 @@ export class FdmGraphQLDmlWorker {
   public async setGraphQlSchema(graphQlString: string) {
     try {
       const graphQlUtils = new GraphQlUtilsService();
+      if (!graphQlString) {
+        // eslint-disable-next-line no-console
+        console.log(
+          'trying to parse empty GraphQlString string in the worker!'
+        );
+        return;
+      }
+
       this.dataModelTypeDefs = graphQlUtils.parseSchema(
         graphQlString,
         [],
@@ -167,7 +181,11 @@ export class FdmGraphQLDmlWorker {
    */
   public async doHover(position: Position) {
     try {
-      if (!this.dataModelTypeDefs || !Object.keys(this.locationTypeDefMap)) {
+      if (
+        !this.dataModelTypeDefs ||
+        !Object.keys(this.locationTypeDefMap) ||
+        !this.lastValidGraphQlSchema
+      ) {
         return null;
       }
 
@@ -214,6 +232,44 @@ export class FdmGraphQLDmlWorker {
       options,
       this.dataModelTypeDefs
     );
+  }
+
+  public getCodeLens() {
+    const codeLenses = [] as languages.CodeLens[];
+    if (!this.dataModelTypeDefs || !this.lastValidGraphQlSchema) {
+      return null;
+    }
+
+    this.dataModelTypeDefs.types.forEach((typeDef) => {
+      if (!typeDef.directives?.some((d) => d.name === 'import')) {
+        const range = {
+          startLineNumber: typeDef.location?.line || 1,
+          startColumn: 1,
+          endLineNumber: typeDef.location?.line || 1,
+          endColumn: 1,
+        };
+        codeLenses.push({
+          range: { ...range },
+          id: 'PreviewData',
+          command: {
+            id: 'openDataPreview',
+            title: 'Preview data',
+            arguments: [typeDef.name],
+          },
+        });
+        codeLenses.push({
+          range: { ...range },
+          id: 'TransformData',
+          command: {
+            id: 'openTransformations',
+            title: 'Transform data',
+            arguments: [typeDef.name],
+          },
+        });
+      }
+    });
+
+    return codeLenses;
   }
 }
 

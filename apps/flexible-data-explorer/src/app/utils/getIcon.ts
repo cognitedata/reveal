@@ -34,9 +34,13 @@ export const getIcon = (value: string): IconType => {
     return 'ReportList';
   }
 
-  // if (['manufacturer', 'supplier', 'facility', 'vendor'].includes(type)) {
-  //   return 'AzureDataFactory';
-  // }
+  if (['3d', 'threed'].includes(type)) {
+    return 'Cube';
+  }
+
+  if (['properties'].includes(type)) {
+    return 'List';
+  }
 
   return 'Component';
 };

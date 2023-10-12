@@ -3,7 +3,8 @@ import {
   getIntrospectionQuery,
   GraphQLInputObjectType,
 } from 'graphql';
-import { chunk, uniqBy } from 'lodash';
+import chunk from 'lodash/chunk';
+import uniqBy from 'lodash/uniqBy';
 
 import { PlatypusDmlError, PlatypusError } from '../../../../boundaries/types';
 import { DataUtils } from '../../../../boundaries/utils/data-utils';
@@ -32,6 +33,7 @@ import {
   GetByExternalIdDTO,
   DeleteDataModelOutput,
   IngestInstanceDTO,
+  FetchFilteredRowsCountDTO,
 } from '../../dto';
 import {
   MixerQueryBuilder,
@@ -54,7 +56,7 @@ import { compareDataModelVersions } from '../../utils';
 import { DataModelDataMapper } from './data-mappers';
 import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
 import { ItemsWithCursor } from './dto/dms-common-dtos';
-import { DataModelDTO } from './dto/dms-data-model-dtos';
+import { DataModelDTO, DataModelInstanceDTO } from './dto/dms-data-model-dtos';
 import { ListSpacesDTO, SpaceDTO } from './dto/dms-space-dtos';
 import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
 import {
@@ -328,7 +330,8 @@ export class FdmClient implements FlexibleDataModelingClient {
    * And the data related with it.
    */
   async deleteDataModel(
-    dto: DeleteDataModelDTO
+    dto: DeleteDataModelDTO,
+    deleteViews: boolean
   ): Promise<DeleteDataModelOutput> {
     // helper functions
     const convertViewRefToKey = ({
@@ -396,33 +399,35 @@ export class FdmClient implements FlexibleDataModelingClient {
       });
     });
 
-    const viewRefs = Array.from(viewRefsKeys).map(convertKeyToViewRef);
+    if (deleteViews) {
+      const viewRefs = Array.from(viewRefsKeys).map(convertKeyToViewRef);
 
-    // delete all views
-    await Promise.all(
-      // DMS limit right now is 100
-      chunk(viewRefs, 100).map((chunk) => this.viewsApi.delete(chunk))
-    );
-    // delete all containers
-    const containerRefs = uniqBy(viewRefs, (el) =>
-      JSON.stringify([el.externalId, el.space])
-    );
-    await Promise.all(
-      chunk(containerRefs, 100).map((chunk) =>
-        this.containersApi.delete(
-          chunk.map((item) => ({
-            externalId: item.externalId,
-            space: item.space,
-          }))
+      // delete all views
+      await Promise.all(
+        // DMS limit right now is 100
+        chunk(viewRefs, 100).map((chunk) => this.viewsApi.delete(chunk))
+      );
+      // delete all containers
+      const containerRefs = uniqBy(viewRefs, (el) =>
+        JSON.stringify([el.externalId, el.space])
+      );
+      await Promise.all(
+        chunk(containerRefs, 100).map((chunk) =>
+          this.containersApi.delete(
+            chunk.map((item) => ({
+              externalId: item.externalId,
+              space: item.space,
+            }))
+          )
         )
-      )
-    );
+      );
+    }
 
     // delete all versions of the data model
     await Promise.all(
-      chunk(dataModelVersions, 100).map((chunk) =>
+      chunk(dataModelVersions, 100).map((chunk: DataModelInstanceDTO[]) =>
         this.dataModelsApi.delete({
-          items: chunk.map((item) => ({
+          items: chunk.map((item: DataModelInstanceDTO) => ({
             space: item.space,
             version: item.version,
             externalId: item.externalId,
@@ -753,6 +758,32 @@ export class FdmClient implements FlexibleDataModelingClient {
    */
   createSpace(dto: SpaceDTO): Promise<SpaceInstance> {
     return this.spacesApi.upsert([dto]).then((res) => res.items[0]);
+  }
+
+  /**
+   * Fetches the number of filtered rows by type
+   * @param dto
+   */
+  fetchFilteredRowsCount(dto: FetchFilteredRowsCountDTO): Promise<number> {
+    const query = this.queryBuilder.buildAggregateWithFiltersQuery(
+      dto.dataModelType.name
+    );
+    return this.mixerApiService
+      .runQuery({
+        graphQlParams: {
+          query,
+          variables: { filter: dto.filter },
+        },
+        dataModelId: dto.dataModelId,
+        schemaVersion: dto.version,
+        space: dto.space,
+      })
+      .then((res) => {
+        return (
+          res.data[`aggregate${dto.dataModelType.name}`]?.items[0]?.count
+            .externalId || 0
+        );
+      });
   }
 
   /**

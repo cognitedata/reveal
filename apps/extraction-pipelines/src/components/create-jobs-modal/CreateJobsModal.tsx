@@ -23,8 +23,7 @@ import {
   useCreateMQTTJob,
   useMQTTDestinations,
 } from '../../hooks/hostedExtractors';
-import FormFieldRadioGroup from '../form-field-radio-group/FormFieldRadioGroup';
-import FormFieldWrapper from '../form-field-wrapper/FormFieldWrapper';
+import { FormFieldRadioGroup, FormFieldWrapper } from '../form-fields';
 
 type CreateJobsFormDestinationOptionType =
   | 'use-existing'
@@ -56,10 +55,10 @@ export const CreateJobsModal = ({
 
   const [tempTopicFilterInput, setTempTopicFilterInput] = useState('');
 
-  const { data: destinations } = useMQTTDestinations();
+  const { data: destinations } = useMQTTDestinations({});
 
   const sourceTopicFilters = source.jobs.map((job) => {
-    return job.topicFilter;
+    return job.config.topicFilter;
   });
 
   const { mutateAsync: createDestination } = useCreateMQTTDestination();
@@ -86,7 +85,11 @@ export const CreateJobsModal = ({
     const errors: FormikErrors<CreateJobsFormValues> = {};
 
     if (!values.topicFilters || values.topicFilters.length === 0) {
-      errors.topicFilters = t('validation-error-field-required');
+      errors.topicFilters = t(
+        tempTopicFilterInput
+          ? 'validation-error-topic-filter-click-add-only'
+          : 'validation-error-topic-filter-required'
+      );
     }
 
     if (values.destinationOption === 'use-existing') {
@@ -171,7 +174,9 @@ export const CreateJobsModal = ({
                   type: val.format ?? 'cognite',
                 },
                 sourceId: source.externalId,
-                topicFilter,
+                config: {
+                  topicFilter,
+                },
               });
             })
           );
@@ -214,6 +219,9 @@ export const CreateJobsModal = ({
     {
       type: 'value',
     },
+    {
+      type: 'sparkplug',
+    },
   ];
 
   const formatFieldOptions = formatField.map(({ type }) => ({
@@ -242,7 +250,7 @@ export const CreateJobsModal = ({
                 }}
                 fullWidth
                 onChange={(e) => setTempTopicFilterInput(e.target.value)}
-                onKeyPress={(e) => {
+                onKeyDown={(e) => {
                   if (e.key === 'Enter' && !!tempTopicFilterInput) {
                     handleAddTopicFilter();
                   }
@@ -269,7 +277,7 @@ export const CreateJobsModal = ({
           </Flex>
           {values.topicFilters?.map((filter) => (
             <TopicFilterContainer>
-              <Body level={2}>{filter}</Body>
+              <Body size="medium">{filter}</Body>
               <Button
                 icon="Delete"
                 onClick={() => handleDeleteTopicFilter(filter)}

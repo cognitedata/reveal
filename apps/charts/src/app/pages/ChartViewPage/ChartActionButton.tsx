@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Dropdown, Divider, Menu } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../hooks/translations';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import {
   ChartActionStyledButton,
@@ -40,7 +40,7 @@ export const ChartActionButton = ({
   };
 
   return (
-    <ChartActionContainer>
+    <ChartActionContainer className="downloadChartHide">
       <Dropdown
         content={
           <ChartActionMenu>
@@ -73,7 +73,11 @@ export const ChartActionButton = ({
         }
       >
         <ChartActionButtonRef type="button">
-          <ChartActionIcon type="AddLarge" size={18} />
+          <ChartActionIcon
+            type="AddLarge"
+            size={18}
+            data-testid="chart-action-btn"
+          />
         </ChartActionButtonRef>
       </Dropdown>
     </ChartActionContainer>

@@ -62,7 +62,7 @@ export const mapFiltersToDocumentSearchFilters = (
     .in('sourceFile|source', source)
     .in('type', type)
     .equals('id', internalId)
-    .inAssetSubtree('assetIds', () => {
+    .inAssetSubtree('sourceFile|assetIds', () => {
       return assetSubtreeIds?.reduce((acc, { value }) => {
         if (typeof value === 'number') {
           return [...acc, value];
@@ -70,7 +70,9 @@ export const mapFiltersToDocumentSearchFilters = (
         return acc;
       }, [] as number[]);
     })
-    .containsAny('assetIds', () => assetIds?.map(({ value }) => value))
+    .containsAny('sourceFile|assetIds', () =>
+      assetIds?.map(({ value }) => value)
+    )
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,

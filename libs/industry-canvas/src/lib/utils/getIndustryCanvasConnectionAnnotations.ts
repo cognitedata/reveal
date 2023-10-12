@@ -1,4 +1,5 @@
 import { partition } from 'lodash';
+import uniqBy from 'lodash/uniqBy';
 
 import {
   getFileIdFromExtendedAnnotation,
@@ -6,14 +7,15 @@ import {
   getResourceTypeAnnotationColor,
   getResourceTypeFromExtendedAnnotation,
 } from '@cognite/data-exploration';
+import { Timeseries } from '@cognite/sdk/dist/src';
 import {
   Annotation,
   AnnotationType,
   ContainerType,
+  isConnectionPolylineAnnotation,
   LineType,
   PolylineAnnotation,
   RectangleAnnotation,
-  isConnectionPolylineAnnotation,
 } from '@cognite/unified-file-viewer';
 
 import { ExtendedAnnotation, isNotUndefined } from '@data-exploration-lib/core';
@@ -28,29 +30,38 @@ const FILE_CONNECTION_STROKE =
   getResourceTypeAnnotationColor('file').strokeColor;
 const ASSET_CONNECTION_STROKE =
   getResourceTypeAnnotationColor('asset').strokeColor;
+const TIMESERIES_CONNECTION_STROKE =
+  getResourceTypeAnnotationColor('timeSeries').strokeColor;
 
 const resourceTypeToConnectionStroke = {
   file: FILE_CONNECTION_STROKE,
   asset: ASSET_CONNECTION_STROKE,
+  timeSeries: TIMESERIES_CONNECTION_STROKE,
 };
 
-const getAnnotationToRegionConnection = ({
-  sourceAnnotation,
-  targetContainer,
+const getHighlightingRectangleId = ({
+  containerConfig,
   resourceType,
-  isSelfReferential = false,
 }: {
-  sourceAnnotation: ExtendedAnnotation;
-  targetContainer: IndustryCanvasContainerConfig;
-  resourceType: 'file' | 'asset';
-  isSelfReferential?: boolean;
-}): Annotation[] => {
+  containerConfig: IndustryCanvasContainerConfig;
+  resourceType: 'file' | 'asset' | 'timeSeries';
+}) => `highlighting-rectangle-${containerConfig.id}-${resourceType}`;
+
+const getHighlightingRectangle = ({
+  containerConfig,
+  resourceType,
+}: {
+  containerConfig: IndustryCanvasContainerConfig;
+  resourceType: 'file' | 'asset' | 'timeSeries';
+}) => {
   const stroke = resourceTypeToConnectionStroke[resourceType];
-  const highlightingRectangleId = `highlighting-rectangle-${targetContainer.id}`;
   const highlightingRectangle: RectangleAnnotation = {
     type: AnnotationType.RECTANGLE,
-    id: highlightingRectangleId,
-    containerId: targetContainer.id,
+    id: getHighlightingRectangleId({
+      containerConfig,
+      resourceType,
+    }),
+    containerId: containerConfig.id,
     x: 0,
     y: 0,
     width: 1,
@@ -64,17 +75,36 @@ const getAnnotationToRegionConnection = ({
     },
   };
 
+  return highlightingRectangle;
+};
+
+const getAnnotationToRegionConnection = ({
+  sourceAnnotation,
+  targetContainer,
+  resourceType,
+  isSelfReferential = false,
+}: {
+  sourceAnnotation: ExtendedAnnotation;
+  targetContainer: IndustryCanvasContainerConfig;
+  resourceType: 'file' | 'asset' | 'timeSeries';
+  isSelfReferential?: boolean;
+}): Annotation[] => {
+  const highlightingRectangle = getHighlightingRectangle({
+    containerConfig: targetContainer,
+    resourceType,
+  });
+
   if (isSelfReferential) {
     return [highlightingRectangle];
   }
 
   const connection: PolylineAnnotation = {
-    id: `connection-${sourceAnnotation.id}}`,
+    id: `connection-${sourceAnnotation.id}-${highlightingRectangle.id}`,
     type: AnnotationType.POLYLINE,
     fromId: sourceAnnotation.id,
-    toId: highlightingRectangleId,
+    toId: highlightingRectangle.id,
     style: {
-      stroke,
+      stroke: resourceTypeToConnectionStroke[resourceType],
       strokeWidth: CONNECTION_STROKE_WIDTH,
       opacity: CONNECTION_OPACITY,
     },
@@ -89,20 +119,23 @@ const EMPTY_CONNECTION_ANNOTATIONS: Annotation[] = [];
 const getConnectionAnnotations = ({
   sourceAnnotation,
   annotations,
-  container,
+  containers,
   shouldAddSelfReferentialHighlighting = false,
+  timeseriesById,
 }: {
   sourceAnnotation: ExtendedAnnotation;
-  container: IndustryCanvasContainerConfig;
+  containers: IndustryCanvasContainerConfig[];
   annotations: ExtendedAnnotation[];
   shouldAddSelfReferentialHighlighting?: boolean;
+  timeseriesById: Record<string, Timeseries>;
 }): Annotation[] => {
   const sourceResourceType =
     getResourceTypeFromExtendedAnnotation(sourceAnnotation);
   if (sourceResourceType === 'asset') {
     return getAssetConnectionAnnotations({
       sourceAnnotation,
-      container,
+      containers,
+      timeseriesById,
     });
   }
 
@@ -110,7 +143,7 @@ const getConnectionAnnotations = ({
     return getFileConnectionAnnotations({
       sourceAnnotation,
       annotations,
-      container,
+      containers,
       shouldAddSelfReferentialHighlighting,
     });
   }
@@ -120,27 +153,39 @@ const getConnectionAnnotations = ({
 
 const getAssetConnectionAnnotations = ({
   sourceAnnotation,
-  container,
+  containers,
+  timeseriesById,
 }: {
   sourceAnnotation: ExtendedAnnotation;
-  container: IndustryCanvasContainerConfig;
+  containers: IndustryCanvasContainerConfig[];
+  timeseriesById: Record<string, Timeseries>;
 }) => {
   const targetAssetId = getResourceIdFromExtendedAnnotation(sourceAnnotation);
   if (targetAssetId === undefined) {
     return EMPTY_CONNECTION_ANNOTATIONS;
   }
-
-  const linkedAssetContainers = (container.children ?? []).filter(
+  const linkedAssetContainers = containers.filter(
     (containerConfig) =>
       containerConfig.type === ContainerType.ASSET &&
       containerConfig.assetId === targetAssetId
   );
+  const linkedTimeseriesContainers = containers.filter(
+    (containerConfig) =>
+      containerConfig.type === ContainerType.TIMESERIES &&
+      timeseriesById[containerConfig.timeseriesId] !== undefined &&
+      timeseriesById[containerConfig.timeseriesId].assetId === targetAssetId
+  );
+  const linkedContainers = linkedAssetContainers.concat(
+    linkedTimeseriesContainers
+  );
 
-  return linkedAssetContainers.flatMap((targetContainer): Annotation[] =>
+  return linkedContainers.flatMap((targetContainer): Annotation[] =>
     getAnnotationToRegionConnection({
       sourceAnnotation,
       targetContainer,
-      resourceType: 'asset',
+      // since linkedContainers is filtered by either asset or timeseries type we can safely do the checking below
+      resourceType:
+        targetContainer.type === ContainerType.ASSET ? 'asset' : 'timeSeries',
     })
   );
 };
@@ -148,11 +193,11 @@ const getAssetConnectionAnnotations = ({
 const getFileConnectionAnnotations = ({
   sourceAnnotation,
   annotations,
-  container,
+  containers,
   shouldAddSelfReferentialHighlighting,
 }: {
   sourceAnnotation: ExtendedAnnotation;
-  container: IndustryCanvasContainerConfig;
+  containers: IndustryCanvasContainerConfig[];
   annotations: ExtendedAnnotation[];
   shouldAddSelfReferentialHighlighting: boolean;
 }) => {
@@ -172,7 +217,7 @@ const getFileConnectionAnnotations = ({
     return EMPTY_CONNECTION_ANNOTATIONS;
   }
 
-  const linkedContainers = (container.children ?? []).filter(
+  const linkedContainers = containers.filter(
     (containerConfig) =>
       (containerConfig.type === ContainerType.DOCUMENT ||
         containerConfig.type === ContainerType.IMAGE ||
@@ -180,7 +225,7 @@ const getFileConnectionAnnotations = ({
       containerConfig.metadata.resourceId === targetFileId
   );
 
-  const connectionAnnotations = linkedContainers.flatMap<Annotation>(
+  return linkedContainers.flatMap<Annotation>(
     (targetContainer): Annotation[] => {
       const targetAnnotations = annotations.filter(
         (annotation) =>
@@ -219,47 +264,50 @@ const getFileConnectionAnnotations = ({
       );
     }
   );
-
-  return connectionAnnotations;
 };
 
 export const getIndustryCanvasConnectionAnnotations = ({
-  container,
-  selectedContainer,
+  containers,
+  selectedContainers,
   annotations,
   hoverId,
   clickedId,
   shouldShowAllConnectionAnnotations,
+  timeseriesById,
 }: {
-  container: IndustryCanvasContainerConfig;
-  selectedContainer: IndustryCanvasContainerConfig | undefined;
+  containers: IndustryCanvasContainerConfig[];
+  selectedContainers: IndustryCanvasContainerConfig[];
   annotations: ExtendedAnnotation[];
   hoverId: string | undefined;
   clickedId: string | undefined;
   shouldShowAllConnectionAnnotations: boolean;
+  timeseriesById: Record<string, Timeseries>;
 }): Annotation[] => {
   const alreadyConnectedAnnotations = new Set<string>();
-  const connectionAnnotations = annotations.flatMap((sourceAnnotation) => {
-    if (alreadyConnectedAnnotations.has(sourceAnnotation.id)) {
-      return EMPTY_CONNECTION_ANNOTATIONS;
-    }
+  const connectionAnnotations = uniqBy(
+    annotations.flatMap((sourceAnnotation) => {
+      if (alreadyConnectedAnnotations.has(sourceAnnotation.id)) {
+        return EMPTY_CONNECTION_ANNOTATIONS;
+      }
 
-    const connectionAnnotations = getConnectionAnnotations({
-      sourceAnnotation: sourceAnnotation,
-      annotations,
-      container,
-    });
+      const connectionAnnotations = getConnectionAnnotations({
+        sourceAnnotation,
+        annotations,
+        containers,
+        timeseriesById,
+      });
 
-    // Populate the set of already connected annotations to avoid duplicate connections
-    connectionAnnotations
-      .filter(isConnectionPolylineAnnotation)
-      .map((connectionAnnotation) => connectionAnnotation.toId)
-      .filter(isNotUndefined)
-      .forEach((id) => alreadyConnectedAnnotations.add(id));
+      // Populate the set of already connected annotations to avoid duplicate connections
+      connectionAnnotations
+        .filter(isConnectionPolylineAnnotation)
+        .map((connectionAnnotation) => connectionAnnotation.toId)
+        .filter(isNotUndefined)
+        .forEach((id) => alreadyConnectedAnnotations.add(id));
 
-    return connectionAnnotations;
-  });
-
+      return connectionAnnotations;
+    }),
+    (annotation) => annotation.id
+  );
   if (shouldShowAllConnectionAnnotations) {
     return connectionAnnotations;
   }
@@ -279,7 +327,7 @@ export const getIndustryCanvasConnectionAnnotations = ({
   });
 
   const shouldShowSelectedContainerConnectionAnnotations =
-    clickedId === undefined && selectedContainer !== undefined;
+    clickedId === undefined && selectedContainers.length > 0;
 
   const linkedConnectionAnnotations = polylineConnectionAnnotations.filter(
     (annotation) => {
@@ -294,9 +342,15 @@ export const getIndustryCanvasConnectionAnnotations = ({
       if (shouldShowSelectedContainerConnectionAnnotations) {
         return (
           (fromId !== undefined &&
-            annotationToContainerIdMap.get(fromId) === selectedContainer?.id) ||
+            selectedContainers.some(
+              (selectedContainer) =>
+                annotationToContainerIdMap.get(fromId) === selectedContainer.id
+            )) ||
           (toId !== undefined &&
-            annotationToContainerIdMap.get(toId) === selectedContainer?.id)
+            selectedContainers.some(
+              (selectedContainer) =>
+                annotationToContainerIdMap.get(toId) === selectedContainer.id
+            ))
         );
       }
 

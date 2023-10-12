@@ -1,12 +1,5 @@
 import { useEffect } from 'react';
 
-import { useScheduledCalculationTasks } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationTasks';
-import { ScheduledCalculationTask } from '@charts-app/domain/scheduled-calculation/service/types';
-import { useChartAtom } from '@charts-app/models/chart/atom';
-import { useScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/atom';
-import { fetchRawOrAggregatedDatapoints } from '@charts-app/services/cdf-api';
-import { CHART_POINTS_PER_SERIES } from '@charts-app/utils/constants';
-import { calculateGranularity } from '@charts-app/utils/timeseries';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { isEqual } from 'lodash';
@@ -16,11 +9,20 @@ import { DatapointsMultiQuery, Timeseries } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
+import { useScheduledCalculationTasks } from '../domain/scheduled-calculation/service/queries/useScheduledCalculationTasks';
+import { ScheduledCalculationTask } from '../domain/scheduled-calculation/service/types';
+import { useChartAtom } from '../models/chart/atom';
+import { useScheduledCalculationData } from '../models/scheduled-calculation-results/atom';
+import { fetchRawOrAggregatedDatapoints } from '../services/cdf-api';
+import { CHART_POINTS_PER_SERIES } from '../utils/constants';
+import { calculateGranularity } from '../utils/timeseries';
+
 export const ScheduledCalculationCollectionEffects = () => {
   const [chart] = useChartAtom();
   const taskExternalIds = chart?.scheduledCalculationCollection?.map(
     (scheduledCalculation) => scheduledCalculation.id
   );
+
   const { data: tasks } = useScheduledCalculationTasks(
     taskExternalIds?.map((externalId) => ({ externalId })) || []
   );

@@ -46,8 +46,8 @@ const containerConfigToContainerReference = (
       y: containerConfig.y,
       width: containerConfig.width,
       height: containerConfig.height,
-      startDate: containerConfig.startDate.toISOString(),
-      endDate: containerConfig.endDate.toISOString(),
+      startDate: containerConfig.startDate,
+      endDate: containerConfig.endDate,
       label: containerConfig.label,
     };
   }

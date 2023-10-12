@@ -14,11 +14,6 @@ import {
 } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { SearchResultWrapper } from '@data-exploration-app/containers/elements';
-import { useQueryString } from '@data-exploration-app/hooks/hooks';
-import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import {
   InternalAssetFilters,
   InternalCommonFilters,
@@ -29,6 +24,7 @@ import {
   InternalTimeseriesFilters,
 } from '@data-exploration-lib/core';
 
+import { EXPLORATION } from '../../constants/metrics';
 import {
   useJourneyLength,
   usePushJourney,
@@ -36,6 +32,10 @@ import {
   useFlagDocumentsApiEnabled,
   useBreakJourneyPromptState,
 } from '../../hooks';
+import { useQueryString } from '../../hooks/hooks';
+import { SEARCH_KEY } from '../../utils/constants';
+import { trackUsage } from '../../utils/Metrics';
+import { SearchResultWrapper } from '../elements';
 
 export type Filters = {
   common?: InternalCommonFilters;
@@ -70,6 +70,7 @@ export const AllTab = ({
     sequence: [],
     threeD: [],
     timeSeries: [],
+    charts: [],
   },
 }: Props) => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();

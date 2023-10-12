@@ -13,6 +13,9 @@ import type {
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import { getRoutineIndex } from '../Commands/utils';
+import { removeGroupFromCalculation } from '../utils';
+
 import { CollapseOptions } from './CollapseOptions';
 
 interface GroupProps {
@@ -28,6 +31,7 @@ export function Group({
   groupOrder,
 }: React.PropsWithChildren<GroupProps>) {
   const { setValues, setFieldValue, values } = useFormikContext<UserDefined>();
+  const groupIndex = getRoutineIndex(values, procedure.order);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const controls = useDragControls();
   const dragControlKey = procedure.order.toString();
@@ -37,16 +41,11 @@ export function Group({
   }, []);
 
   const handleDeleteGroup = (procedure: CalculationProcedure) => {
-    if (values.routine) {
-      const routine = values.routine
-        .filter((routine) => routine.order !== procedure.order)
-        .map((routine, index) => ({ ...routine, order: index + 1 }));
-      setValues((prevState) => ({ ...prevState, routine }));
-    }
+    setValues(removeGroupFromCalculation(values, procedure.order));
   };
 
   return (
-    <CollapseStepContainer>
+    <CollapseStepContainer role="treeitem" aria-expanded={isOpen}>
       <div
         className="step-group"
         onClick={() => {
@@ -54,11 +53,16 @@ export function Group({
         }}
       >
         <div className="group-title">
-          <Icon type={`${isOpen ? 'ChevronUp' : 'ChevronDown'}`} />
+          <Icon
+            aria-label={`${isOpen ? 'Collapse' : 'Expand'} ${
+              procedure.description
+            } Group`}
+            type={`${isOpen ? 'ChevronUp' : 'ChevronDown'}`}
+          />
           <span className="procedure-order">{groupOrder + 1}</span>
           <Field
             className="group-description-input"
-            name={`routine.${procedure.order - 1}.description`}
+            name={`routine.${groupIndex}.description`}
             size={procedure.description.length - 5}
             spellCheck={false}
             value={procedure.description}
@@ -78,9 +82,12 @@ export function Group({
           handleDelete={() => {
             handleDeleteGroup(procedure);
           }}
+          label={`Group ${groupOrder + 1}`}
         />
       </div>
-      <div className="group-content">{isOpen && children}</div>
+      <div className="group-content" role="group">
+        {isOpen && children}
+      </div>
     </CollapseStepContainer>
   );
 }

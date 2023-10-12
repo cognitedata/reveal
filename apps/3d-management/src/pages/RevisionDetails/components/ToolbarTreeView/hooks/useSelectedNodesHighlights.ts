@@ -9,6 +9,7 @@ import {
   DefaultNodeAppearance,
   IndexSet,
   NumericRange,
+  Cognite3DViewer,
 } from '@cognite/reveal';
 
 import { RootState } from '../../../../../store';
@@ -17,8 +18,10 @@ import { assignOrUpdateStyledNodeCollection } from '../../../../../utils/sdk/3dN
 
 export function useSelectedNodesHighlights({
   model,
+  viewer,
 }: {
   model: CogniteCadModel;
+  viewer: Cognite3DViewer;
 }) {
   const selectedNodes: Array<SelectedNode> = useSelector(
     ({ treeView }: RootState) => treeView.selectedNodes
@@ -34,12 +37,15 @@ export function useSelectedNodesHighlights({
     const selectedTreeIndicesNodeSet = selectedTreeIndicesNodeSetRef.current;
     assignOrUpdateStyledNodeCollection(model, selectedTreeIndicesNodeSet, {});
     return () => {
-      if (selectedTreeIndicesNodeSet) {
+      if (selectedTreeIndicesNodeSet === undefined) {
+        return;
+      }
+      selectedTreeIndicesNodeSet.clear();
+      if (viewer.models.includes(model)) {
         model.unassignStyledNodeCollection(selectedTreeIndicesNodeSet);
-        selectedTreeIndicesNodeSet.clear();
       }
     };
-  }, [model]);
+  }, [model, viewer]);
 
   // ghost mode switcher + cleanup
   useEffect(() => {

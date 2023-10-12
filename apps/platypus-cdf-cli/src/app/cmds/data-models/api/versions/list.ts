@@ -1,9 +1,6 @@
-import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
-import { CommandArgumentType } from '@cognite/platypus-cdf-cli/app/types';
-import Response, {
-  DEBUG as _DEBUG,
-} from '@cognite/platypus-cdf-cli/app/utils/logger';
-
+import { CLICommand } from '../../../../common/cli-command';
+import { CommandArgumentType } from '../../../../types';
+import Response, { DEBUG as _DEBUG } from '../../../../utils/logger';
 import { getDataModelVersionsHandler } from '../../utils';
 
 export const commandArgs = [

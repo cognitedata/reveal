@@ -6,12 +6,6 @@ import {
   MetadataFilterV2,
   StringFilterV2,
 } from '@data-exploration/containers';
-import {
-  AggregatedEventFilterV2,
-  ByAssetFilterV2,
-  DataSetFilterV2,
-  SourceFilter,
-} from '@data-exploration-components/components/SearchNew';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
 
@@ -22,6 +16,13 @@ import {
   SPECIFIC_INFO_CONTENT,
 } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+
+import {
+  AggregatedEventFilterV2,
+  ByAssetFilterV2,
+  DataSetFilterV2,
+  SourceFilter,
+} from '../../SearchNew';
 
 import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
 

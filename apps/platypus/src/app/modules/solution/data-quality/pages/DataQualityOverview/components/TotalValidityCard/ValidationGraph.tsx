@@ -1,15 +1,20 @@
+import { Flex } from '@cognite/cogs.js';
+import { LineChart } from '@cognite/plotting-components';
+import { Datapoints } from '@cognite/sdk/dist/src';
+
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
+import {
+  chartConfig,
+  formatInstancesDot,
+  formatScoreDot,
+  getScoreChartData,
+  getTotalItemsChartData,
+} from '../../../../utils/charts';
 import {
   TimeSeriesType,
-  formatDateDatum,
   getDatapointsById,
-  getScore,
   getTimeSeriesId,
-} from '@data-quality/utils/validationTimeseries';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
-import { Flex } from '@cognite/cogs.js';
-import { LineChart, Data, HoverLineData } from '@cognite/plotting-components';
-import { Datapoints } from '@cognite/sdk/dist/src';
+} from '../../../../utils/validationTimeseries';
 
 type ValidationGraphProps = {
   dataSourceId: string;
@@ -34,34 +39,26 @@ export const ValidationGraph = ({
     timeSeriesIdInstances
   );
 
-  const dataScore = {
-    x: scoreDatapoints?.datapoints?.map((dp) => dp.timestamp) ?? [],
-    y: scoreDatapoints?.datapoints?.map((dp) => getScore(dp.value)) ?? [],
-    color: 'purple',
-    name: t('data_quality_total_validity_score', 'Total validity score'),
-  } as Data;
-  const dataInstances = {
-    x: totalInstancesDatapoints?.datapoints?.map((dp) => dp.timestamp) ?? [],
-    y: totalInstancesDatapoints?.datapoints?.map((dp) => dp.value) ?? [],
-    color: 'blue',
-    name: t('data_quality_total_items_checked', 'Total of items checked'),
-  } as Data;
-
-  const formatScoreDot = ({ x, y }: HoverLineData) =>
-    `${formatDateDatum(x)}, score = ${y}%`;
-
-  const formatInstancesDot = ({ x, y }: HoverLineData) =>
-    `${formatDateDatum(x)}, instances = ${y}`;
+  const dataScore = getScoreChartData(
+    scoreDatapoints,
+    t('data_quality_total_validity_score', 'Total validity score')
+  );
+  const dataInstances = getTotalItemsChartData(
+    totalInstancesDatapoints,
+    t('data_quality_total_items_checked', 'Total of items checked')
+  );
 
   return (
     <Flex direction="row" gap={8}>
       <LineChart
+        config={chartConfig}
         data={dataScore}
         formatHoverLineInfo={formatScoreDot}
         layout={{ showActions: false, showTooltip: false }}
         style={{ backgroundColor: 'white', height: 250, width: 400 }}
       />
       <LineChart
+        config={chartConfig}
         data={dataInstances}
         formatHoverLineInfo={formatInstancesDot}
         layout={{ showActions: false, showTooltip: false }}

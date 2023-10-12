@@ -9,20 +9,18 @@ import {
   setSelectedIdsByType,
   useIndustrialCanvasStore,
 } from '../state/useIndustrialCanvasStore';
-import { IndustryCanvasState, IndustryCanvasToolType } from '../types';
+import { CanvasAnnotation, IndustryCanvasContainerConfig } from '../types';
 
 type UseSelectedAnnotationOrContainerProps = {
   unifiedViewerRef: UnifiedViewer | null;
-  toolType: IndustryCanvasToolType;
-  canvasAnnotations: IndustryCanvasState['canvasAnnotations'];
-  container: IndustryCanvasState['container'];
+  canvasAnnotations: CanvasAnnotation[];
+  containers: IndustryCanvasContainerConfig[];
 };
 
 export const useSelectedAnnotationOrContainer = ({
   unifiedViewerRef,
-  toolType,
   canvasAnnotations,
-  container,
+  containers,
 }: UseSelectedAnnotationOrContainerProps) => {
   const { selectedIdsByType } = useIndustrialCanvasStore((state) => ({
     selectedIdsByType: state.selectedIdsByType,
@@ -42,11 +40,6 @@ export const useSelectedAnnotationOrContainer = ({
   }, [unifiedViewerRef]);
 
   const selectedCanvasAnnotation = useMemo(() => {
-    // This is to avoid the bug in UFV where the ON_SELECT is not emitted with empty IDs when changing tool
-    if (toolType !== IndustryCanvasToolType.SELECT) {
-      return undefined;
-    }
-
     if (
       selectedIdsByType.annotationIds.length !== 1 ||
       selectedIdsByType.containerIds.length !== 0
@@ -57,28 +50,23 @@ export const useSelectedAnnotationOrContainer = ({
     return canvasAnnotations.find(
       (annotation) => annotation.id === selectedIdsByType.annotationIds[0]
     );
-  }, [canvasAnnotations, selectedIdsByType, toolType]);
+  }, [canvasAnnotations, selectedIdsByType]);
 
-  const selectedContainer = useMemo(() => {
-    // This is to avoid the bug in UFV where the ON_SELECT is not emitted with empty IDs when changing tool
-    if (toolType !== IndustryCanvasToolType.SELECT) {
-      return undefined;
-    }
-
+  const selectedContainers = useMemo(() => {
     if (
-      selectedIdsByType.containerIds.length !== 1 ||
+      selectedIdsByType.containerIds.length === 0 ||
       selectedIdsByType.annotationIds.length !== 0
     ) {
-      return undefined;
+      return [];
     }
 
-    return (container.children ?? []).find(
-      (child) => child.id === selectedIdsByType.containerIds[0]
+    return containers.filter(({ id }) =>
+      selectedIdsByType.containerIds.includes(id)
     );
-  }, [container.children, selectedIdsByType, toolType]);
+  }, [containers, selectedIdsByType]);
 
   return {
     selectedCanvasAnnotation,
-    selectedContainer,
+    selectedContainers,
   };
 };

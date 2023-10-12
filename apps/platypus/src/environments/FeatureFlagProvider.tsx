@@ -1,9 +1,9 @@
 import { PropsWithChildren } from 'react';
 
-import { getEnvironment } from '@platypus-app/utils/environment-utils';
-
 import { getProject } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
+
+import { getEnvironment } from '../app/utils/environment-utils';
 
 export const FeatureFlagProvider: React.FC<PropsWithChildren> = ({
   children,

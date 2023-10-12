@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 
+import capitalize from 'lodash/capitalize';
 import empty from 'lodash/isEmpty';
 import { matchSorter } from 'match-sorter';
 
@@ -8,7 +9,6 @@ import { SearchInput } from '../../../../../components/input/SearchInput';
 import { SearchResults } from '../../../../../components/search/SearchResults';
 import { Widget } from '../../../../../components/widget/Widget';
 import { useNavigation } from '../../../../../hooks/useNavigation';
-import { useTranslation } from '../../../../../hooks/useTranslation';
 import { useInstanceDirectRelationshipQuery } from '../../../../../services/instances/generic/queries/useInstanceDirectRelationshipQuery';
 import { InstancePreview } from '../../../../preview/InstancePreview';
 import { RelationshipEdgesProps } from '../../RelationshipEdgesWidget';
@@ -16,7 +16,6 @@ import { RelationshipEdgesProps } from '../../RelationshipEdgesWidget';
 export const FileRelationshipEdgesCollapsed: React.FC<
   RelationshipEdgesProps
 > = ({ id, onExpandClick, rows, columns, type }) => {
-  const { t } = useTranslation();
   const navigate = useNavigation();
   const { data, status, isFetched } = useInstanceDirectRelationshipQuery(type);
 
@@ -31,10 +30,7 @@ export const FileRelationshipEdgesCollapsed: React.FC<
 
   return (
     <Widget rows={rows || 4} columns={columns} id={id}>
-      <Widget.Header
-        header="File"
-        title={t('RELATIONSHIP_EDGES_WIDGET_TITLE', { type: id })}
-      >
+      <Widget.Header type="File" title={capitalize(id)}>
         {!isEmpty && <SearchInput query={query} onChange={setQuery} />}
 
         <Button.Fullscreen

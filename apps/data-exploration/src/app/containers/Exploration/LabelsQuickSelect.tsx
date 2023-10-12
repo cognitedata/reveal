@@ -13,8 +13,8 @@ import {
 import {
   useResourceFilter,
   useSetResourceFilter,
-} from '@data-exploration-app/context/ResourceSelectionContext';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
+} from '../../context/ResourceSelectionContext';
+import { trackUsage } from '../../utils/Metrics';
 
 export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
   const filter = useResourceFilter(type) as FileFilterProps | AssetFilterProps;

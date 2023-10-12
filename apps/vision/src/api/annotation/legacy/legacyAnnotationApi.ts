@@ -9,6 +9,10 @@ import {
   LegacyAnnotationUpdateRequest,
 } from './legacyTypes';
 
+/**
+ * @deprecated The legacy annotations back-end is deprecated, and will be removed on Oct 31, 2023.
+ * Call the v1 (stable) back-end instead.
+ */
 export class LegacyAnnotationApi {
   public static listCursor = async (
     request: LegacyAnnotationListRequest
@@ -34,6 +38,9 @@ export class LegacyAnnotationApi {
     };
   };
 
+  /**
+   * @deprecated Use the `annotations.list` endpoint from the Cognite stable SDK instead
+   */
   public static list = async (
     request: LegacyAnnotationListRequest
   ): Promise<LegacyAnnotation[]> => {
@@ -67,6 +74,9 @@ export class LegacyAnnotationApi {
     return result;
   };
 
+  /**
+   * @deprecated Use the `annotations.create` or `annotations.suggest` endpoint from the Cognite stable SDK instead
+   */
   public static create(
     request: LegacyAnnotationCreateRequest
   ): Promise<HttpResponse<ItemsResponse<LegacyAnnotation>>> {
@@ -77,6 +87,9 @@ export class LegacyAnnotationApi {
     );
   }
 
+  /**
+   * @deprecated Use the `annotations.update` endpoint from the Cognite stable SDK instead
+   */
   public static update(
     request: LegacyAnnotationUpdateRequest
   ): Promise<HttpResponse<ItemsResponse<LegacyAnnotation>>> {

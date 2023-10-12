@@ -3,12 +3,12 @@ import { Fragment } from 'react';
 import styled from 'styled-components';
 
 import { groupTransformationsByTypes } from '@platypus/platypus-core';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Dropdown, Menu, Button } from '@cognite/cogs.js';
 
+import { useMixpanel } from '../../../../../hooks/useMixpanel';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 import useTransformations from '../../hooks/useTransformations';
 
 type Props = {

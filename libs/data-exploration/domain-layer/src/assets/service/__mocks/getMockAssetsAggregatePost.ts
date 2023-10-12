@@ -6,11 +6,21 @@ import { getAssetsMetadataValues } from '../__fixtures/getAssetsMetadataValuesFi
 
 const responseData = getAssetsMetadataValues();
 
-export const getMockAssetsAggregatePost = (): MSWRequest => {
+export const getMockAssetsAggregatePost = (
+  data?: {
+    count: number;
+    value: {
+      property: string[];
+    };
+    values: {
+      property: string[];
+    }[];
+  }[]
+): MSWRequest => {
   return rest.post<Request>(
     `https://api.cognitedata.com/api/v1/projects/testProject/assets/aggregate`,
     (_req, res, ctx) => {
-      return res(ctx.json({ items: responseData }));
+      return res(ctx.json({ items: data || responseData }));
     }
   );
 };

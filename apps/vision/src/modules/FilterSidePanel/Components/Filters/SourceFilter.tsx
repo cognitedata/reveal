@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-import { VisionFilterItemProps } from '@vision/modules/FilterSidePanel/types';
 import debounce from 'lodash/debounce';
 
 import { StringFilter } from '@cognite/data-exploration';
+
+import { VisionFilterItemProps } from '../../types';
 
 const DEBOUNCE_TIME = 200;
 

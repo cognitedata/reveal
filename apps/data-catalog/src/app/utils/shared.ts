@@ -6,14 +6,9 @@ import moment from 'moment';
 import queryString from 'query-string';
 
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import {
-  createLink,
-  getCluster,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { createLink, getCluster } from '@cognite/cdf-utilities';
 
 import { TranslationKeys } from '../common/i18n';
-
 // @ts-ignore
 import { styleScope } from '../styles/styleScope';
 
@@ -437,9 +432,7 @@ export const getReadableCapabilities = (capabilities: any[]) =>
   }, []);
 
 export const createInternalLink = (path?: string | number) => {
-  const mountPoint = isUsingUnifiedSignin()
-    ? window.location.pathname.split('/')[3]
-    : window.location.pathname.split('/')[2];
+  const mountPoint = window.location.pathname.split('/')[2];
   return createLink(`/${mountPoint}/${path || ''}`);
 };
 

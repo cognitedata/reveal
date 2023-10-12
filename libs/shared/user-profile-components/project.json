@@ -32,10 +32,10 @@
         "entryFile": "libs/shared/user-profile-components/src/index.ts",
         "external": [
           "@cognite/cogs.js",
+          "@cognite/cogs-lab",
           "react",
           "react-router-dom",
-          "styled-components",
-          "vite-plugin-svgr"
+          "styled-components"
         ],
         "rollupConfig": "@nx/react/plugins/bundle-rollup",
         "compiler": "babel",

@@ -4,13 +4,6 @@ import { MetadataFilterV2 } from '@data-exploration/containers';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
 
-import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
-import {
-  useFilterEmptyState,
-  useResetSequenceFilters,
-  useSequenceFilters,
-} from '@data-exploration-app/store/filter';
 import {
   transformNewFilterToOldFilter,
   useSequencesMetadataValuesAggregateQuery,
@@ -18,6 +11,13 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import {
+  useFilterEmptyState,
+  useResetSequenceFilters,
+  useSequenceFilters,
+} from '../../store';
+import { SPECIFIC_INFO_CONTENT } from '../constants';
+import { TempMultiSelectFix } from '../elements';
 
 export const SequenceFilters = ({ ...rest }) => {
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();

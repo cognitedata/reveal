@@ -14,6 +14,7 @@ import {
 import {
   getLoginFlowsByCluster,
   getSelectedIdpDetails,
+  useIdp,
   useLoginInfo,
   useValidatedLegacyProjects,
 } from '@cognite/login-utils';
@@ -29,9 +30,10 @@ export const ProjectDropdown = () => {
   const { data: legacyProjectsByCluster } = useValidatedLegacyProjects(true);
   const { validLegacyProjects = [] } = legacyProjectsByCluster || {};
 
+  const { data: idp } = useIdp(internalId);
   const loginFlowsByCluster = useMemo(() => {
-    return getLoginFlowsByCluster(loginInfo, internalId, validLegacyProjects);
-  }, [internalId, loginInfo, validLegacyProjects]);
+    return getLoginFlowsByCluster(loginInfo, idp, validLegacyProjects);
+  }, [idp, loginInfo, validLegacyProjects]);
 
   const handleGoBackToLoginPage = () => {
     window.location.href = '/';

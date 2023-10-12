@@ -1,10 +1,10 @@
+import sdk from '@cognite/cdf-sdk-singleton';
+
 import {
   VisionJobResponse,
   DetectionModelDataProvider,
   DetectionModelParams,
-} from '@vision/api/vision/detectionModels/types';
-
-import sdk from '@cognite/cdf-sdk-singleton';
+} from './types';
 
 // tag and ocr api quite similar that's why this base class exists
 // in further, when api will be normalized, all these provides should be removed in favor

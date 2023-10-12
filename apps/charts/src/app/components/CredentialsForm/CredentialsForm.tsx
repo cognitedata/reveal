@@ -1,6 +1,15 @@
 import { useMemo, useEffect, useState } from 'react';
 import { useFormContext, Path, PathValue } from 'react-hook-form';
 
+import debounce from 'lodash/debounce';
+import head from 'lodash/head';
+
+import { Tooltip, Flex } from '@cognite/cogs.js';
+
+import { useCreateSessionNonce } from '../../domain/chart';
+import { useTranslations } from '../../hooks/translations';
+import { trackUsage } from '../../services/metrics';
+import { makeDefaultTranslations } from '../../utils/translations';
 import {
   ClientCredentialsWrapper,
   ClientCredentialsWrapperError,
@@ -14,16 +23,7 @@ import {
   Line,
   ClientCredentialsDetails,
   ClientCredentialsOptionMessage,
-} from '@charts-app/components/Form/elements';
-import { useCreateSessionNonce } from '@charts-app/domain/chart';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { trackUsage } from '@charts-app/services/metrics';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import debounce from 'lodash/debounce';
-import head from 'lodash/head';
-
-import { Tooltip, Flex } from '@cognite/cogs.js';
-
+} from '../Form/elements';
 import { FormError } from '../Form/FormError';
 import { FormInputWithController } from '../Form/FormInputWithController';
 

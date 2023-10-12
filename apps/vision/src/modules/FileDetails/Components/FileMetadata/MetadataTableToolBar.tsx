@@ -3,14 +3,12 @@ import { useDispatch } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { MetadataItem } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
-import {
-  fileMetaDataAddRow,
-  toggleMetaDataTableEditMode,
-} from '@vision/modules/FileDetails/slice';
-import { useThunkDispatch } from '@vision/store';
-
 import { Button } from '@cognite/cogs.js';
+
+import { useThunkDispatch } from '../../../../store';
+import { fileMetaDataAddRow, toggleMetaDataTableEditMode } from '../../slice';
+
+import { MetadataItem } from './Types';
 
 export const MetadataTableToolBar = ({
   editMode,

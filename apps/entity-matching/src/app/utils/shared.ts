@@ -5,13 +5,13 @@ import {
   useState as reactUseState,
 } from 'react';
 
-import { PredictionObject } from '@entity-matching-app/hooks/entity-matching-predictions';
+import { createLink } from '@cognite/cdf-utilities';
+import { Metadata } from '@cognite/sdk';
+
+import { PredictionObject } from '../hooks/entity-matching-predictions';
 // @ts-ignore
 import { styleScope } from '../styles/styleScope';
-import { API } from '@entity-matching-app/types/api';
-
-import { createLink, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
-import { Metadata } from '@cognite/sdk';
+import { API } from '../types/api';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope);
@@ -20,9 +20,7 @@ export const getContainer = () => {
 };
 
 export const createInternalLink = (path?: string | number) => {
-  const mountPoint = isUsingUnifiedSignin()
-    ? window.location.pathname.split('/')[3]
-    : window.location.pathname.split('/')[2];
+  const mountPoint = window.location.pathname.split('/')[2];
   return createLink(`/${mountPoint}/${path || ''}`);
 };
 
@@ -164,10 +162,11 @@ export const filterFieldsFromObjects = (
     const filteredItem: Record<string, any> = {};
     keys.forEach((key: string) => {
       if (key.startsWith('metadata')) {
-        const metadataKey = key.slice(8);
+        const metadataKey = key.slice(9);
         filteredItem[key] = item.metadata[metadataKey];
+      } else {
+        filteredItem[key] = item[key];
       }
-      filteredItem[key] = item[key];
     });
     return filteredItem;
   });

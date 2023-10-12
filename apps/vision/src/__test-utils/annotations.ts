@@ -1,15 +1,15 @@
-import { Point, Status } from '@vision/api/annotation/types';
+import { Point, Status } from '../api/annotation/types';
 import {
   KeypointCollectionState,
   KeypointState,
-} from '@vision/modules/Review/store/annotatorWrapper/type';
+} from '../modules/Review/store/annotatorWrapper/type';
 import {
   PredefinedKeypoint,
   PredefinedKeypointCollection,
   PredefinedShape,
   ReviewKeypoint,
   TempKeypointCollection,
-} from '@vision/modules/Review/types';
+} from '../modules/Review/types';
 
 import { getDummyImageKeypointCollectionAnnotation } from './getDummyAnnotations';
 

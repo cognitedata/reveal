@@ -1,6 +1,9 @@
-import { CDFAnnotationTypeEnum, Status } from '@vision/api/annotation/types';
-import { VisionAnnotationDataType } from '@vision/modules/Common/types';
-import { VisionReviewAnnotation } from '@vision/modules/Review/types';
+import {
+  CDFAnnotationTypeEnum,
+  Status,
+} from '../../../../api/annotation/types';
+import { VisionAnnotationDataType } from '../../../Common/types';
+import { VisionReviewAnnotation } from '../../types';
 
 // This will always be a label or a text field of an annotation
 export type AnnotatorAnnotationLabelOrText = string;

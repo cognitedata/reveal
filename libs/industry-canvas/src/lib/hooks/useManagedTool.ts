@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { ToolConfig } from '@cognite/unified-file-viewer';
+import { ToolConfig, ToolType } from '@cognite/unified-file-viewer';
 
 import { IndustryCanvasToolTypeByShortcutKey } from '../components/ToolbarComponent/ToolbarComponent';
 import {
@@ -11,7 +11,10 @@ import {
 } from '../state/useIndustrialCanvasStore';
 import { IndustryCanvasToolType } from '../types';
 import { ExactlyOnePartial } from '../utils/ExactlyOnePartial';
+import isEditableElement from '../utils/isEditableElement';
 import shouldFireToolKeyboardShortcut from '../utils/shouldFireToolKeyboardShortcut';
+
+import isMacOs from './isMacOs';
 
 export type UseManagedToolReturnType = {
   toolType: IndustryCanvasToolType;
@@ -65,6 +68,59 @@ const useManagedTool = (): UseManagedToolReturnType => {
   const tool = useMemo((): ToolConfig => {
     return toolConfigByType[toolType];
   }, [toolType, toolConfigByType]);
+
+  useEffect(() => {
+    if (tool.type !== ToolType.LINE && tool.type !== ToolType.SELECT) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (isEditableElement(event.target as HTMLElement)) {
+        return;
+      }
+
+      const isGeneratingConnections = tool.shouldGenerateConnections;
+      const nextShouldGenerateConnections = !(
+        (isMacOs() && event?.metaKey === true) ||
+        (!isMacOs() && event?.ctrlKey === true)
+      );
+
+      if (isGeneratingConnections !== nextShouldGenerateConnections) {
+        setToolConfigByType((toolConfigByType) => ({
+          ...toolConfigByType,
+          [IndustryCanvasToolType.LINE]: {
+            ...toolConfigByType[IndustryCanvasToolType.LINE],
+            shouldGenerateConnections: nextShouldGenerateConnections,
+          },
+          [IndustryCanvasToolType.SELECT]: {
+            ...toolConfigByType[IndustryCanvasToolType.SELECT],
+            shouldGenerateConnections: nextShouldGenerateConnections,
+          },
+        }));
+      }
+    };
+
+    const onKeyUp = () => {
+      setToolConfigByType((toolConfigByType) => ({
+        ...toolConfigByType,
+        [IndustryCanvasToolType.LINE]: {
+          ...toolConfigByType[IndustryCanvasToolType.LINE],
+          shouldGenerateConnections: true,
+        },
+        [IndustryCanvasToolType.SELECT]: {
+          ...toolConfigByType[IndustryCanvasToolType.SELECT],
+          shouldGenerateConnections: true,
+        },
+      }));
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keyup', onKeyUp);
+    };
+  }, [tool]);
 
   return {
     tool,

@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 
-import { getX, getY } from '@simint-app/components/charts/utils';
 import type { PatternOrientation } from '@visx/pattern';
 import { PatternLines } from '@visx/pattern';
 import { AreaClosed } from '@visx/shape';
@@ -10,6 +9,7 @@ import { curveMonotoneX } from 'd3';
 import { Colors } from '@cognite/cogs.js';
 
 import { SymbolLegendItem } from '..';
+import { getX, getY } from '../../utils';
 import { usePortalTooltip } from '../usePortalTooltip';
 
 import type { Plot, PlotFunctionProps, PlotProps } from './types';

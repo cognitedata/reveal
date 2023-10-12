@@ -102,6 +102,7 @@ export default function DiagramsSelection(props: SelectionProps): JSX.Element {
         setSelectedRowKeys={setSelectedRowKeys}
         diagramsToContextualizeIds={diagramsToContextualizeIds}
         showSelected={showSelected}
+        data-testid="diagram-selection-table"
       />
     </Flex>
   );

@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 
 import { renderComponent } from '@data-exploration-lib/core';
 
@@ -17,7 +17,9 @@ describe('ResourceDetailsHeader', () => {
       icon: 'Alarm',
       title: 'My Title',
     });
-    expect(screen.getByLabelText('Alarm')).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId('cogs-chip')).getByLabelText('Alarm')
+    ).toBeInTheDocument();
   });
 
   test('calls onSelectClicked when select button is clicked', () => {
@@ -63,11 +65,11 @@ describe('ResourceDetailsHeader', () => {
     renderComponent(ResourceDetailsHeader, {
       title: 'My Title',
     });
-    expect(screen.getByTestId('title-row-wrapper')).toHaveStyle(`  
-      display: flex;  
-      align-items: center;  
-      flex-wrap: nowrap;  
-      gap: 8px;  
+    expect(screen.getByTestId('title-row-wrapper')).toHaveStyle(`
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 8px;
     `);
   });
 });

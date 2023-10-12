@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { useLoginHints } from '@cognite/auth-react';
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { getCluster } from '@cognite/cdf-utilities';
 import { Metrics } from '@cognite/metrics';
 
 // fusion token
@@ -27,8 +27,8 @@ export type Tracker = {
 };
 
 export const useTracker = (): Tracker => {
+  const cluster = getCluster();
   const [identified, setIdentified] = useState(false);
-  const { organization, cluster, project } = useLoginHints();
   const { hostname, pathname } = window.location;
   const isTrackingDisabled =
     DONT_TRACK_ME_CLUSTERS.includes(cluster || '') ||
@@ -40,19 +40,16 @@ export const useTracker = (): Tracker => {
       mixpanelToken,
       applicationId,
       hostname,
-      organization,
-      cluster,
-      project,
     });
     Metrics.optIn();
     return Metrics.create();
-  }, [cluster, hostname, organization, project]);
+  }, [hostname]);
 
   const track = useCallback(
     (name: string, options?: object) => {
       if (isTrackingDisabled) return;
 
-      const props = { ...options, pathname, organization, cluster, project };
+      const props = { ...options, pathname };
 
       if (identified) {
         metrics.track(name, props);
@@ -75,15 +72,7 @@ export const useTracker = (): Tracker => {
           });
       }
     },
-    [
-      cluster,
-      identified,
-      isTrackingDisabled,
-      metrics,
-      organization,
-      pathname,
-      project,
-    ]
+    [identified, isTrackingDisabled, metrics, pathname]
   );
 
   return { track };

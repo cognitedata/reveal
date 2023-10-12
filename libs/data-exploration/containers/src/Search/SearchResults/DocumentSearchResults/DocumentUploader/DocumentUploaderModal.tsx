@@ -4,9 +4,9 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useQueryClient } from '@tanstack/react-query';
+import { useCdfUserHistoryService } from '@user-history';
 import { Modal } from 'antd';
 
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import {
@@ -14,11 +14,7 @@ import {
   listBaseCacheKey,
 } from '@cognite/sdk-react-query-hooks';
 
-import {
-  useTranslation,
-  SUB_APP_PATH,
-  createInternalLink,
-} from '@data-exploration-lib/core';
+import { useTranslation, SUB_APP_PATH } from '@data-exploration-lib/core';
 
 import { DocumentUploader } from './DocumentUploader';
 
@@ -56,7 +52,7 @@ export const DocumentUploaderModal = ({
   const client = useQueryClient();
   const { t } = useTranslation();
 
-  const { pathname } = useLocation();
+  const { pathname, search: searchParams } = useLocation();
   const userHistoryService = useCdfUserHistoryService();
 
   return (
@@ -74,7 +70,7 @@ export const DocumentUploaderModal = ({
               userHistoryService.logNewResourceEdit({
                 application: SUB_APP_PATH,
                 name: file?.name,
-                path: createInternalLink(pathname),
+                path: pathname.concat(searchParams),
               });
 
             setFileList((list) => [...list, file]);

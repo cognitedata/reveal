@@ -1,10 +1,10 @@
-import { FormLabel } from '@platypus-app/components/FormLabel/FormLabel';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { getProject } from '@cognite/cdf-utilities';
 import { Button, Flex, Modal } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { FormLabel } from '../../../../../components/FormLabel/FormLabel';
+import { Notification } from '../../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 import { StyledEndpoint, StyledWrapper } from './elements';
 
@@ -55,7 +55,7 @@ export const PowerBIModal: React.FC<PowerBIModalProps> = (props) => {
   const projectField = getODataFDMProjectField(props.dataModel);
 
   const sdk = useSDK();
-  const enviromentField = getODataFDMEnvironmentField(sdk.getBaseUrl());
+  const environmentField = getODataFDMEnvironmentField(sdk.getBaseUrl());
 
   const handleCopyProjectClick = () => {
     navigator.clipboard.writeText(projectField);
@@ -68,8 +68,8 @@ export const PowerBIModal: React.FC<PowerBIModalProps> = (props) => {
     });
   };
 
-  const handleCopyEnviromentClick = () => {
-    navigator.clipboard.writeText(enviromentField || '');
+  const handleCopyEnvironmentClick = () => {
+    navigator.clipboard.writeText(environmentField || '');
     Notification({
       type: 'success',
       message: t(
@@ -82,7 +82,10 @@ export const PowerBIModal: React.FC<PowerBIModalProps> = (props) => {
   return (
     <Modal
       visible
-      title={t('data_model_powerbi_modal_title', 'Cognite Data Fusion (CDF)')}
+      title={t(
+        'data_model_powerbi_modal_title',
+        'Settings to connect the data model to Power BI'
+      )}
       onOk={props.onRequestClose}
       onCancel={props.onRequestClose}
       hideFooter
@@ -103,13 +106,13 @@ export const PowerBIModal: React.FC<PowerBIModalProps> = (props) => {
         </StyledWrapper>
         <StyledWrapper>
           <FormLabel size="large">
-            {t('data_model_powerbi_modal_enviroment', 'CDF: Enviroment')}
+            {t('data_model_powerbi_modal_environment', 'CDF: Environment')}
           </FormLabel>
           <Flex>
             <StyledEndpoint data-cy="powerbi-env">
-              {enviromentField}
+              {environmentField}
             </StyledEndpoint>
-            <Button onClick={handleCopyEnviromentClick} icon="Copy">
+            <Button onClick={handleCopyEnvironmentClick} icon="Copy">
               {t('data_model_powerbi_modal_copy_button_text', 'Copy')}
             </Button>
           </Flex>

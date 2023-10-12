@@ -2,8 +2,9 @@ import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { UpdateDataModelFieldDTO } from '@platypus/platypus-core';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { actions as dataModelActions } from '@platypus-app/redux/reducers/global/dataModelReducer';
+
+import { useMixpanel } from '../../../../hooks/useMixpanel';
+import { actions as dataModelActions } from '../../../../redux/reducers/global/dataModelReducer';
 
 export const useTypeDefActions = () => {
   const dispatch = useDispatch();
@@ -17,11 +18,16 @@ export const useTypeDefActions = () => {
   const { track } = useMixpanel();
 
   const createType = useCallback(
-    (typeName: string) => {
+    (typeName: string, dataModelKind: string) => {
       track('UIEditor', {
         type: 'Create type',
       });
-      dispatch(dataModelActions.createTypeDefsType(typeName));
+      dispatch(
+        dataModelActions.createTypeDefsType({
+          typeName,
+          dataModelKind,
+        })
+      );
     },
     [track, dispatch]
   );

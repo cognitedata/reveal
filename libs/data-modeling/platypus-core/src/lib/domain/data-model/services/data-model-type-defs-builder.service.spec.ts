@@ -112,33 +112,35 @@ describe('DataModelTypeDefsBuilderService Test', () => {
       name: params.name,
       type: params.type,
     })),
-    addType: jest.fn().mockImplementation((name, directive?: string) => {
-      return directive
-        ? {
-            name,
-            directives: [
-              {
-                name: directive,
-                arguments: [],
-              },
-            ],
-            fields: [
-              {
-                name: '',
-                type: 'String',
-              },
-            ],
-          }
-        : {
-            name,
-            fields: [
-              {
-                name: '',
-                type: 'String',
-              },
-            ],
-          };
-    }),
+    addType: jest
+      .fn()
+      .mockImplementation((name, kind: string, directive?: string) => {
+        return directive
+          ? {
+              name,
+              directives: [
+                {
+                  name: directive,
+                  arguments: [],
+                },
+              ],
+              fields: [
+                {
+                  name: '',
+                  type: 'String',
+                },
+              ],
+            }
+          : {
+              name,
+              fields: [
+                {
+                  name: '',
+                  type: 'String',
+                },
+              ],
+            };
+      }),
     generateSdl: jest.fn().mockImplementation(() => schemaMock),
     parseSchema: jest.fn().mockImplementation(() => dataModelMock),
     removeField: jest.fn(),
@@ -181,13 +183,13 @@ describe('DataModelTypeDefsBuilderService Test', () => {
 
   it('should add type', () => {
     const service = createInstance();
-    const newState = service.addType(dataModelMock, 'Test');
+    const newState = service.addType(dataModelMock, 'Test', 'type');
     expect(newState.types.find((t) => t.name === 'Test')).toBeTruthy();
   });
 
   it('should add type with directive', () => {
     const service = createInstance();
-    const newState = service.addType(dataModelMock, 'Test', 'Template');
+    const newState = service.addType(dataModelMock, 'Test', 'type', 'Template');
     expect(
       newState.types.find(
         (t) => t.name && t.directives && t.directives[0].name === 'Template'

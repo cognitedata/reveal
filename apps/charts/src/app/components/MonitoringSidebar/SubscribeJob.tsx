@@ -1,16 +1,15 @@
-import { useEffect } from 'react';
 import { Control, Controller } from 'react-hook-form';
 
 import styled from 'styled-components';
 
-import { getVisibility } from '@charts-app/domain/chart/internal/transformers/getVisibility';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { useChartAtom } from '@charts-app/models/chart/atom';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { SharedUsersList, UserSearchInput } from '@fusion/industry-canvas';
 
 import { Flex, Infobox } from '@cognite/cogs.js';
-import { useSDK } from '@cognite/sdk-provider';
+
+import { getVisibility } from '../../domain/chart/internal/transformers/getVisibility';
+import { useTranslations } from '../../hooks/translations';
+import { useChartAtom } from '../../models/chart/atom';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import { CreateMonitoringJobFormData } from './types';
 
@@ -32,14 +31,6 @@ export const SubscribeJob = ({ control, title }: Props) => {
   };
   const [chart] = useChartAtom();
   const isPublicChart = getVisibility(chart);
-
-  const sdk = useSDK();
-
-  useEffect(() => {
-    sdk
-      .get(`/api/v1/projects/${sdk.project}/profiles/me`)
-      .then((res) => console.log('wow', res));
-  }, []);
 
   return (
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

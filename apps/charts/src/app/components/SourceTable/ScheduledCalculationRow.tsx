@@ -1,29 +1,31 @@
 import { ComponentProps, useState } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';
 
-import AppearanceDropdown from '@charts-app/components/AppearanceDropdown/AppearanceDropdown';
-import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
-import UnitDropdown from '@charts-app/components/UnitDropdown/UnitDropdown';
-import { useScheduledCalculationDeleteMutate } from '@charts-app/domain/scheduled-calculation/internal/queries/useScheduledCalculationDeleteMutate';
+import {
+  ChartWorkflow,
+  SCHEDULED_CALCULATIONS_ACL,
+  ScheduledCalculation,
+} from '@cognite/charts-lib';
+import { Button, Tooltip } from '@cognite/cogs.js';
+
+import { useAclPermissions } from '../../domain/chart/service/queries/useAclPermissions';
+import { useScheduledCalculationDeleteMutate } from '../../domain/scheduled-calculation/internal/queries/useScheduledCalculationDeleteMutate';
 import {
   useComponentTranslations,
   useTranslations,
-} from '@charts-app/hooks/translations';
-import {
-  ChartWorkflow,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
-import { ScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/types';
-import { formatValueForDisplay } from '@charts-app/utils/numbers';
+} from '../../hooks/translations';
+import { ScheduledCalculationData } from '../../models/scheduled-calculation-results/types';
+import { formatValueForDisplay } from '../../utils/numbers';
 import {
   makeDefaultTranslations,
   translationKeys,
-} from '@charts-app/utils/translations';
-import { DatapointsSummary } from '@charts-app/utils/units';
-
-import { Button, Tooltip } from '@cognite/cogs.js';
-
+} from '../../utils/translations';
+import { DatapointsSummary } from '../../utils/units';
+import { AccessDeniedModal } from '../AccessDeniedModal/AccessDeniedModal';
+import AppearanceDropdown from '../AppearanceDropdown/AppearanceDropdown';
 import { ScheduledCalculationDeleteModal } from '../ScheduledCalculation/ScheduledCalculationDeleteModal';
+import { StyleButton } from '../StyleButton/StyleButton';
+import UnitDropdown from '../UnitDropdown/UnitDropdown';
 
 import {
   DropdownWithoutMaxWidth,
@@ -104,10 +106,21 @@ export const ScheduledCalculationRow = ({
     preferredUnit,
     customUnitLabel,
   } = scheduledCalculation;
+
+  const { data: hasSCWrite } = useAclPermissions(
+    SCHEDULED_CALCULATIONS_ACL,
+    'WRITE'
+  );
+  const { data: hasSCRead } = useAclPermissions(
+    SCHEDULED_CALCULATIONS_ACL,
+    'READ'
+  );
+  const canDeleteScheduledCalculations = hasSCWrite && hasSCRead;
   const isWorkspaceMode = mode === 'workspace';
   const { mutateAsync: deleteScheduledCalculation } =
     useScheduledCalculationDeleteMutate();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [accessDeniedModalOpen, setAccessDeniedModalOpen] = useState(false);
 
   /**
    * Unit Dropdown translations
@@ -244,7 +257,13 @@ export const ScheduledCalculationRow = ({
               icon="Delete"
               style={{ height: 28 }}
               aria-label="delete"
-              onClick={() => setDeleteModalOpen(true)}
+              onClick={() => {
+                if (canDeleteScheduledCalculations) {
+                  setDeleteModalOpen(true);
+                } else {
+                  setAccessDeniedModalOpen(true);
+                }
+              }}
             />
             {deleteModalOpen && (
               <ScheduledCalculationDeleteModal
@@ -253,6 +272,16 @@ export const ScheduledCalculationRow = ({
                 }
                 onOk={handleRemoveSource}
                 onCancel={() => setDeleteModalOpen(false)}
+              />
+            )}
+            {accessDeniedModalOpen && (
+              <AccessDeniedModal
+                visible={accessDeniedModalOpen}
+                onOk={() => setAccessDeniedModalOpen(false)}
+                capabilities={[
+                  hasSCWrite ? '' : `${SCHEDULED_CALCULATIONS_ACL}:WRITE`,
+                  hasSCRead ? '' : `${SCHEDULED_CALCULATIONS_ACL}:READ`,
+                ].filter(Boolean)}
               />
             )}
           </td>

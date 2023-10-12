@@ -2,9 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Thumbnail } from '@vision/modules/Common/Components/Thumbnail/Thumbnail';
-import { FileProcessStatusWrapper } from '@vision/modules/Review/Containers/FileProcessStatusWrapper';
-import { getIdFromUrl } from '@vision/utils/tenancy';
 import debounce from 'lodash/debounce';
 // Import Swiper React components
 import SwiperCore, {
@@ -20,6 +17,10 @@ import swiperStyles from 'swiper/swiper-bundle.css';
 
 import { Button, Icon } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+
+import { getIdFromUrl } from '../../../../utils/tenancy';
+import { Thumbnail } from '../../../Common/Components/Thumbnail/Thumbnail';
+import { FileProcessStatusWrapper } from '../../Containers/FileProcessStatusWrapper';
 
 // Import Swiper styles
 

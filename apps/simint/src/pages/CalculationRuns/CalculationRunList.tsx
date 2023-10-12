@@ -3,13 +3,6 @@ import React from 'react';
 import { Link, useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { CalculationRunTypeIndicator } from '@simint-app/components/models/CalculationList/CalculationRunTypeIndicator';
-import { CalculationStatusIndicator } from '@simint-app/components/models/CalculationList/CalculationStatusIndicator';
-import { CalculationTimeLabel } from '@simint-app/components/models/CalculationList/CalculationTimeLabel';
-import type { AppLocationGenerics } from '@simint-app/routes';
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
-
 import {
   Button,
   Chip,
@@ -20,6 +13,13 @@ import {
 } from '@cognite/cogs.js';
 import type { CalculationRun } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetCalculationQuery } from '@cognite/simconfig-api-sdk/rtk';
+
+import { CalculationRunTypeIndicator } from '../../components/models/CalculationList/CalculationRunTypeIndicator';
+import { CalculationStatusIndicator } from '../../components/models/CalculationList/CalculationStatusIndicator';
+import { CalculationTimeLabel } from '../../components/models/CalculationList/CalculationTimeLabel';
+import type { AppLocationGenerics } from '../../routes';
+import { selectProject } from '../../store/simconfigApiProperties/selectors';
+import { createCdfLink } from '../../utils/createCdfLink';
 
 import { CalculationRunsListContainer } from './styles';
 
@@ -117,14 +117,12 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
   return (
     <Menu>
       <Link to={createCdfLink(`${run.id}`)}>
-        {/* @ts-ignore */}
         <Menu.Item icon="Info" iconPlacement="left">
           Calculation run details
         </Menu.Item>
       </Link>
       <Divider />
       {isFetchingChartLinks ? (
-        // @ts-ignore
         <Menu.Item>
           <Skeleton.Text />
         </Menu.Item>
@@ -134,9 +132,8 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
           rel="noreferrer"
           target="_blank"
         >
-          {/* @ts-ignore */}
           <Menu.Item icon="LineChart" iconPlacement="left">
-            Open timeseries in Charts
+            Open in Charts
           </Menu.Item>
         </a>
       )}
@@ -148,7 +145,6 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
           )}/${encodeURIComponent(run.metadata.modelName)}`
         )}
       >
-        {/* @ts-ignore */}
         <Menu.Item icon="DataSource" iconPlacement="left">
           View model
         </Menu.Item>
@@ -161,7 +157,6 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
         )}/calculations/${encodeURIComponent(run.metadata.calcType)}
         /${run.metadata.calcType === 'UserDefined' ? calculationType : ''}`)}
       >
-        {/* @ts-ignore */}
         <Menu.Item icon="Settings" iconPlacement="left">
           View configuration
         </Menu.Item>

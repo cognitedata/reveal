@@ -26,7 +26,7 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
 
   const dataModels = selectedDataModels?.map((item) => item.externalId);
 
-  const Wrapper: any = header ? Title : Body;
+  const Wrapper: any = header ? Title : MainTextBody;
 
   const [isAIEnabled] = useAISearchParams();
 
@@ -65,19 +65,31 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
 };
 
 const Container = styled.div`
-  margin-bottom: 16px;
-  padding-left: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  overflow-x: clip;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledBody = styled.p<{ $isHeader?: boolean }>`
   display: inline-flex;
+  margin-bottom: 0;
   align-items: center;
   color: rgba(51, 51, 51, 0.6);
   font-size: ${({ $isHeader }) => ($isHeader ? '24px' : '14px')};
   margin-bottom: 0px;
+  overflow-x: clip;
+  text-overflow: ellipsis;
 
   &:hover {
     cursor: pointer;
     color: rgba(51, 51, 51, 0.5);
   }
+`;
+
+const MainTextBody = styled(Body)`
+  overflow-x: clip;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;

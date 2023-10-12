@@ -27,13 +27,6 @@ type Props = {
 export const getAppsInfo = (_t: (key: TranslationKeys) => string) => {
   return [
     {
-      icon: 'InField',
-      name: _t('INFIELD_APP_TITLE'),
-      description: _t('INFIELD_APP_SUBTITLE'),
-      link: 'https://infield.cogniteapp.com/',
-    },
-
-    {
       icon: 'Maintain',
       name: _t('MAINTAIN_APP_TITLE'),
       description: _t('MAINTAIN_APP_SUBTITLE'),
@@ -68,20 +61,20 @@ export const TopBar: FC<Props> = () => {
     forceRerender: true,
     fallback: false,
   });
-  const { isEnabled: isChartsEnabled } = useFlag(
-    'CDF_BUSINESS_Charts_IsEnabled',
-    {
-      forceRerender: true,
-      fallback: false,
-    }
-  );
-  const { isEnabled: isCanvasEnabled } = useFlag(
-    'CDF_BUSINESS_Industrial_Canvas_IsEnabled',
-    {
-      forceRerender: true,
-      fallback: false,
-    }
-  );
+  // const { isEnabled: isChartsEnabled } = useFlag(
+  //   'CDF_BUSINESS_Charts_IsEnabled',
+  //   {
+  //     forceRerender: true,
+  //     fallback: false,
+  //   }
+  // );
+  // const { isEnabled: isCanvasEnabled } = useFlag(
+  //   'CDF_BUSINESS_Industrial_Canvas_IsEnabled',
+  //   {
+  //     forceRerender: true,
+  //     fallback: false,
+  //   }
+  // );
 
   // const { isEnabled: isSiteSelectionEnabled } = useFlag('CDF_SITE_SELECTION', {
   //   forceRerender: true,
@@ -94,16 +87,16 @@ export const TopBar: FC<Props> = () => {
       link: '/explore',
       isEnabled: isExploreTabEnabled,
     },
-    {
-      link: '/canvas',
-      label: t('LABEL_CANVAS'),
-      isEnabled: isCanvasEnabled,
-    },
-    {
-      link: '/charts',
-      label: t('LABEL_CHARTS'),
-      isEnabled: isChartsEnabled,
-    },
+    // {
+    //   link: '/canvas',
+    //   label: t('LABEL_CANVAS'),
+    //   isEnabled: isCanvasEnabled,
+    // },
+    // {
+    //   link: '/charts',
+    //   label: t('LABEL_CHARTS'),
+    //   isEnabled: isChartsEnabled,
+    // },
   ];
   const { value: isAppSelectorVisible, toggle, setFalse } = useBoolean(false);
   const apps = getAppsInfo(t);

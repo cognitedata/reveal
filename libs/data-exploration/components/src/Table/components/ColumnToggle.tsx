@@ -125,7 +125,7 @@ export function ColumnToggle<T extends TableData = any>({
     <Dropdown
       content={
         <Suspense fallback="...loading">
-          <StyledMenu>
+          <StyledMenu data-testid="column-toggle-menu">
             <SegmentedControl
               fullWidth
               onButtonClicked={handleTabClick}

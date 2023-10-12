@@ -39,15 +39,9 @@ export const SearchListItem = React.forwardRef<HTMLDivElement, Props>(
     ref
   ) => {
     return (
-      <Container
-        tabIndex={0}
-        focused={focused}
-        ref={ref}
-        role="button"
-        onClick={onClick}
-      >
+      <Container focused={focused} ref={ref} role="button" onClick={onClick}>
         <Content>
-          <InfoContent>
+          <Cell>
             <SearchListItemIcon icon={icon} />
             <InfoTextContent>
               <Detail muted>{subtitle}</Detail>
@@ -55,12 +49,14 @@ export const SearchListItem = React.forwardRef<HTMLDivElement, Props>(
                 {title}
               </Body>
             </InfoTextContent>
-          </InfoContent>
-          <DescriptionContent>
+          </Cell>
+
+          <Cell>
             <DescriptionText level={6} muted>
               {description}
             </DescriptionText>
-          </DescriptionContent>
+          </Cell>
+
           {experimental && <ExperimentalIndicator />}
           {!hideEnterIcon && <EnterIcon />}
         </Content>
@@ -73,6 +69,7 @@ SearchList.Item = SearchListItem;
 
 const SearchListContainer = styled.div<{ hideShadow?: boolean }>`
   border-radius: 10px;
+  width: 100%;
   padding: 8px 0;
   background: white;
 
@@ -140,30 +137,22 @@ const Content = styled.div`
   display: flex;
   width: 100%;
   height: 100%;
-  padding: 16px;
-  gap: 8px;
 `;
 
-const InfoContent = styled.div`
-  flex: 1;
+const Cell = styled.div`
   display: flex;
   align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  flex: 0 0 50%;
+  padding: 16px;
+  & > * {
+    min-width: 0;
+  }
 `;
-
 const InfoTextContent = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 12px;
-`;
-
-const DescriptionContent = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  max-width: 50%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const DescriptionText = styled(Body)`

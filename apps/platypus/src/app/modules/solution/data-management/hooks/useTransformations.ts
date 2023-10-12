@@ -1,7 +1,8 @@
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQuery } from '@tanstack/react-query';
+
+import { TOKENS } from '../../../../di';
+import { useInjection } from '../../../../hooks/useInjection';
+import { QueryKeys } from '../../../../utils/queryKeys';
 
 export default function useTransformations({
   space,

@@ -8,10 +8,11 @@ import React, {
   useState,
 } from 'react';
 
-import { HtmlElementProps } from '@platypus-app/types';
 import * as d3 from 'd3';
 import { SimulationLinkDatum, SimulationNodeDatum } from 'd3';
 import styled from 'styled-components/macro';
+
+import { HtmlElementProps } from '../../types';
 
 import { getNodesKey, loadFromCache, saveToCache } from './cache';
 import { getELKNodes } from './layout/elkLayout';
@@ -682,7 +683,11 @@ export const Graph = <T,>({
   }));
 
   return (
-    <Wrapper {...htmlProps} ref={mainWrapperRef}>
+    <Wrapper
+      {...htmlProps}
+      ref={mainWrapperRef}
+      data-cy="visualizer_graph_wrapper"
+    >
       <div className="node-container" ref={containerRef}>
         <svg className="chart" ref={svgRef}>
           {additionalSvgDefs}

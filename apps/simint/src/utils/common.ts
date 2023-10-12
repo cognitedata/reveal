@@ -1,11 +1,11 @@
-import { ROUGH_APPROXIMATION } from '@simint-app/components/app/constants';
-
 import type {
   AdditionalMetadata,
   CalculationTemplate,
   Metadata,
   Simulator,
 } from '@cognite/simconfig-api-sdk/rtk';
+
+import { ROUGH_APPROXIMATION } from '../components/app/constants';
 
 export const isBHPApproxMethodWarning = (
   simulator: Simulator,

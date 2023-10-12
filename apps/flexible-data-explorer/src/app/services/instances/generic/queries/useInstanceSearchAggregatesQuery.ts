@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
+import { useSiteConfig } from '../../../../hooks/useConfig';
 import {
   useDataTypeFilterParams,
   useSearchFilterParams,
@@ -16,20 +17,22 @@ import { queryKeys } from '../../../queryKeys';
 
 export const useInstanceSearchAggregateQuery = () => {
   const client = useFDM();
+  const siteConfig = useSiteConfig();
 
   const [query] = useSearchQueryParams();
   const [filters] = useSearchFilterParams();
 
   const transformedFilter = useMemo(() => {
-    return buildFilterByDataType(filters);
-  }, [filters]);
+    return buildFilterByDataType(filters, siteConfig);
+  }, [filters, siteConfig]);
 
   return useQuery(
     queryKeys.searchAggregates(query, transformedFilter),
     async () => {
       const results = await client.searchAggregateCount(
         query,
-        transformedFilter
+        transformedFilter,
+        siteConfig
       );
 
       return results;
@@ -87,25 +90,12 @@ export const useSearchAggregateValueByPropertyQuery = <T>({
 
   // const { data: types } = useTypesDataModelQuery();
 
-  const [filters] = useDataTypeFilterParams(dataType);
-
-  const transformedFilter = useMemo(() => {
-    return buildFilterByField(filters);
-  }, [filters]);
-
   return useQuery(
-    queryKeys.searchAggregateValueByProperty(
-      dataType,
-      field,
-      query,
-      transformedFilter,
-      property
-    ),
+    queryKeys.searchAggregateValueByProperty(dataType, field, query, property),
     async () => {
       const result = await client.searchAggregateValueByProperty<T>(
         { dataType, field },
         query,
-        transformedFilter,
         property
       );
 

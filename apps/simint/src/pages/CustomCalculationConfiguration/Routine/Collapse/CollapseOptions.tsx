@@ -5,16 +5,18 @@ import { Button } from '@cognite/cogs.js';
 interface CollapseOptionsProps {
   controls: DragControls;
   handleDelete: () => void;
+  label: string;
 }
 
 export function CollapseOptions({
   controls,
   handleDelete,
+  label,
 }: CollapseOptionsProps) {
   return (
     <div>
       <Button
-        aria-label="Drag to reorder"
+        aria-label={`Drag to reorder ${label}`}
         icon="DragHandleVertical"
         style={{ cursor: 'move' }}
         type="ghost"
@@ -23,7 +25,7 @@ export function CollapseOptions({
         }}
       />
       <Button
-        aria-label="Delete"
+        aria-label={`Delete ${label}`}
         icon="Delete"
         type="ghost"
         onClick={() => {

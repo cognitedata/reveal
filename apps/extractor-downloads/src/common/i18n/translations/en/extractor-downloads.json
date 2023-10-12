@@ -83,5 +83,7 @@
   "create-connection-broker-cdf": "Create a connection between the broker and CDF",
   "connection-information": "Connection information",
   "mqtt-broker-info": "MQTT broker information",
-  "field-is-mandatory": "*This field is mandatory"
+  "field-is-mandatory": "*This field is mandatory",
+  "coming-soon": "coming soon",
+  "use-tls": "Enable TLS against the broker"
 }

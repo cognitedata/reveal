@@ -1,10 +1,11 @@
 /* eslint camelcase: 0 */
-import { formatValueForDisplay } from '@charts-app/utils/numbers';
-import { getUnitConverter } from '@charts-app/utils/units';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 
 import { StatisticsResultResults } from '@cognite/calculation-backend';
+
+import { formatValueForDisplay } from '../../utils/numbers';
+import { getUnitConverter } from '../../utils/units';
 
 const Plot = createPlotlyComponent(Plotly);
 

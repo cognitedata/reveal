@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 declare module '@cognite/cdf-sdk-singleton' {
-  import { CogniteClient, ClientOptions, UserInfo } from '@cognite/sdk';
+  import { CogniteClient, ClientOptions } from '@cognite/sdk';
+
+  export type UserInfo = {
+    displayName?: string;
+    givenName?: string;
+    id: string;
+    mail?: string;
+    userPrincipalName?: string;
+    profilePicture?: string; // if defined, then a URL to the picture
+  };
 
   export interface SdkClientTokenProvider {
     getAppId: () => string;

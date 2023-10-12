@@ -20,6 +20,7 @@ export type ReadMQTTSource = BaseMQTTSource & {
 
 export type CreateMQTTSource = BaseMQTTSource & {
   password?: string;
+  useTls?: boolean;
 };
 
 type CreateMQTTSourceVariables = CreateMQTTSource;

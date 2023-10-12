@@ -1,19 +1,17 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import Details from '@entity-matching-app/pages/Details';
-import RootList from '@entity-matching-app/pages/Home';
-import Pipeline from '@entity-matching-app/pages/pipeline';
-import QuickMatch from '@entity-matching-app/pages/quick-match';
-
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { getProject } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
+
+import Details from './pages/Details';
+import RootList from './pages/Home';
+import Pipeline from './pages/pipeline';
+import QuickMatch from './pages/quick-match';
 
 const project = getProject();
 
 const App = () => {
-  const baseUrl = isUsingUnifiedSignin()
-    ? `/cdf/:projectName`
-    : '/:projectName';
+  const baseUrl = '/:projectName';
 
   return (
     <FlagProvider

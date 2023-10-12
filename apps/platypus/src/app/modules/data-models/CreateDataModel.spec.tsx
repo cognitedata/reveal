@@ -1,8 +1,9 @@
-import render from '@platypus-app/tests/render';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 import noop from 'lodash/noop';
+
+import render from '../../tests/render';
 
 import { CreateDataModel } from './CreateDataModel';
 
@@ -89,7 +90,7 @@ describe('CreateDataModel', () => {
       screen.getByLabelText('Name', { exact: false }),
       'My Data Model'
     );
-    userEvent.click(screen.getByLabelText('Edit'));
+    userEvent.click(screen.getByRole('button', { name: 'Edit' }));
     userEvent.clear(screen.getByLabelText('External ID'));
     userEvent.type(
       screen.getByLabelText('External ID'),
@@ -135,7 +136,7 @@ describe('CreateDataModel', () => {
       screen.getByLabelText('Name', { exact: false }),
       dataModelName
     );
-    userEvent.click(screen.getByLabelText('Edit'));
+    userEvent.click(screen.getByRole('button', { name: 'Edit' }));
     userEvent.clear(screen.getByLabelText('External ID'));
     userEvent.type(
       screen.getByLabelText('External ID'),

@@ -2,11 +2,13 @@ import React, { useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { EditPanelProps } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
-import { validateDirectoryPrefix } from '@vision/modules/Common/Components/BulkEdit/Directory/validateDirectoryPrefix';
 import { Input } from 'antd';
 
 import { Body, Button, Tooltip } from '@cognite/cogs.js';
+
+import { EditPanelProps } from '../bulkEditOptions';
+
+import { validateDirectoryPrefix } from './validateDirectoryPrefix';
 
 export const DirectoryPanel = ({
   bulkEditUnsaved,

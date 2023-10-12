@@ -1,8 +1,7 @@
-import { RuleDto, RuleSeverity } from '@data-quality/api/codegen';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useFormik } from 'formik';
 
 import {
+  Body,
   Divider,
   Drawer,
   Flex,
@@ -13,6 +12,13 @@ import {
   Textarea,
 } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { RuleDto, RuleSeverity } from '../../api/codegen';
+import { RequiredWrapper } from '../../components';
+import { useLoadDataScopes, useDataModel } from '../../hooks';
+import { useShowUpsertSuccess } from '../hooks';
+
+import { UpsertRuleFooter } from './components/UpsertRuleFooter';
 import {
   RuleFormValues,
   RuleSeverityOptions,
@@ -20,9 +26,7 @@ import {
   emptyFormValues,
   handleValidate,
 } from './helpers';
-import { UpsertRuleFooter } from './UpsertRuleFooter';
-import { useShowUpsertSuccess } from './useShowUpsertSuccess';
-import { useUpsertRule } from './useUpsertRule';
+import { useUpsertRule } from './hooks';
 
 type UpsertRuleDrawerProps = {
   editedRule?: RuleDto;
@@ -40,12 +44,10 @@ export const UpsertRuleDrawer = ({
   const { isLoading, upsertRule } = useUpsertRule();
   const { showUpsertSuccess } = useShowUpsertSuccess();
 
-  const titleText = editedRule
-    ? t('data_quality_update_rule', 'Update rule')
-    : t('data_quality_new_rule', 'New rule');
-  const okText = editedRule
-    ? t('data_quality_save_changes', 'Save changes')
-    : t('data_quality_create_rule', 'Create rule');
+  const dataTypeOptions = useDataModel().dataModel.views.map((type) => ({
+    label: type.externalId,
+    value: type.externalId,
+  }));
 
   const triggerSubmit = (newValues: RuleFormValues) => {
     upsertRule({
@@ -55,7 +57,8 @@ export const UpsertRuleDrawer = ({
         showUpsertSuccess({
           isUpdate: !!editedRule,
           onSuccess: onCancel,
-          ruleName: values.name,
+          targetName: values.name,
+          targetType: 'Rule',
         });
 
         resetForm();
@@ -72,6 +75,28 @@ export const UpsertRuleDrawer = ({
       validateOnChange: false,
       enableReinitialize: true,
     });
+
+  const selectedDataType = dataTypeOptions.find(
+    (type) => type.value === values.dataType
+  );
+
+  const dataScopeOptions = useLoadDataScopes()
+    .dataScopes.filter((type) => type.dataType === selectedDataType?.value)
+    .map((scope) => ({
+      label: scope.name,
+      value: scope.externalId,
+    }));
+
+  const selectedDataScope = dataScopeOptions.find(
+    (type) => type.value === values.dataScopeId
+  );
+
+  const titleText = editedRule
+    ? t('data_quality_update_rule', 'Update rule')
+    : t('data_quality_new_rule', 'New rule');
+  const okText = editedRule
+    ? t('data_quality_save_changes', 'Save changes')
+    : t('data_quality_create_rule', 'Create rule');
 
   return (
     <Drawer
@@ -104,7 +129,10 @@ export const UpsertRuleDrawer = ({
                 text: t('data_quality_name', 'Name'),
               }}
               onChange={(e) => setFieldValue('name', e.target.value)}
-              placeholder={t('data_quality_set_name', 'Set a name to the rule')}
+              placeholder={t(
+                'data_quality_set_name_rule',
+                'Set a name to the rule'
+              )}
               status={errors.name ? 'critical' : undefined}
               statusText={errors.name}
               value={values.name}
@@ -162,28 +190,46 @@ export const UpsertRuleDrawer = ({
 
         <Divider />
 
-        {/* Data type, rule conditions */}
+        {/* Data type, Data Scope, rule conditions */}
         <Flex direction="column" gap={16}>
           <Heading level={5}>
             {t('data_quality_rule_setup', 'Rule setup')}
           </Heading>
           <Flex direction="column" gap={16}>
-            <InputExp
-              clearable
-              fullWidth
-              label={{
-                required: true,
-                info: undefined,
-                text: t('data_quality_data_type', 'Data type'),
-              }}
-              onChange={(e) => setFieldValue('dataType', e.target.value)}
-              placeholder={t(
-                'data_quality_set_datatype',
-                `Set a data type to the rule. e.g. "Person"`
-              )}
-              status={errors.dataType ? 'critical' : undefined}
-              statusText={errors.dataType}
-              value={values.dataType}
+            <Flex direction="column">
+              <Body size="small" muted>
+                {t('data_quality_rule_setup_info1', '')}
+              </Body>
+              <Body size="small" muted>
+                {t('data_quality_rule_setup_info2', '')}
+              </Body>
+            </Flex>
+            <RequiredWrapper
+              errorMessage={errors.dataType}
+              label={t('data_quality_data_type', 'Data type')}
+              showErrorMessage={!!errors.dataType}
+            >
+              <Select
+                inputId="dataType"
+                disabled={!!editedRule}
+                onChange={(e: OptionType<string>) =>
+                  setFieldValue('dataType', e.value)
+                }
+                options={dataTypeOptions}
+                value={selectedDataType}
+              />
+            </RequiredWrapper>
+
+            <Select
+              disabled={!selectedDataType}
+              inputId="dataScopeId"
+              isClearable
+              label={t('data_quality_data_scope_one', 'Data scope')}
+              onChange={(e: OptionType<string>) =>
+                setFieldValue('dataScopeId', e.value || null)
+              }
+              options={dataScopeOptions}
+              value={selectedDataScope}
             />
 
             <Textarea

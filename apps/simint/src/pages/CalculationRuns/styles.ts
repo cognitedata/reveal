@@ -13,14 +13,14 @@ export const CalculationRunsListContainer = styled.div`
   > .grid-row {
     display: grid;
     grid-gap: 0 12px;
-    grid-template-columns: 1.5fr 2fr auto 5fr auto 1.5fr auto;
+    grid-template-columns: 1.5fr 2fr auto 5fr auto 2.5fr auto;
     align-items: center;
     transition: background 0.3s cubic-bezier(0.39, 0.575, 0.565, 1);
     border-radius: 6px;
     padding: 4px 6px;
 
     @media screen and (min-width: 1340px) {
-      grid-template-columns: 1fr 2fr auto 5fr auto 1fr auto;
+      grid-template-columns: 1fr 2fr auto 5fr auto 1.5fr auto;
     }
 
     &:hover,

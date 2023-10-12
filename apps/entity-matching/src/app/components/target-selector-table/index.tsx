@@ -3,24 +3,19 @@ import { useSearchParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { DataSetSelect } from '@entity-matching-app/components/data-set-select';
-
-import { useTranslation } from '@entity-matching-app/common';
-
-import QuickMatchActionBar from '@entity-matching-app/components/qm-action-bar/QuickMatchActionbar';
-
-import { TARGET_TABLE_QUERY_KEY } from '@entity-matching-app/common/constants';
-
-import ResourceCount from '@entity-matching-app/components/resource-count';
-
 import { Flex } from '@cognite/cogs.js';
 
-import RootAssetSelect from '@entity-matching-app/components/root-asset-select';
-import SearchInput from '@entity-matching-app/components/search-input';
-import AssetTable from '@entity-matching-app/components/source-selector-table/AssetTable';
-import { useQuickMatchContext } from '@entity-matching-app/context/QuickMatchContext';
-import { RawTarget } from '@entity-matching-app/types/api';
-import { getAdvancedFilter } from '@entity-matching-app/utils';
+import { useTranslation } from '../../common';
+import { TARGET_TABLE_QUERY_KEY } from '../../common/constants';
+import { useQuickMatchContext } from '../../context/QuickMatchContext';
+import { RawTarget } from '../../types/api';
+import { getAdvancedFilter } from '../../utils';
+import { DataSetSelect } from '../data-set-select';
+import QuickMatchActionBar from '../qm-action-bar/QuickMatchActionbar';
+import ResourceCount from '../resource-count';
+import RootAssetSelect from '../root-asset-select';
+import SearchInput from '../search-input';
+import AssetTable from '../source-selector-table/AssetTable';
 
 export default function TargetSelectionTable() {
   const {

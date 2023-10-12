@@ -1,3 +1,6 @@
+import isEmpty from 'lodash/isEmpty';
+import isFinite from 'lodash/isFinite';
+
 import {
   ImageAssetLink,
   ImageClassification,
@@ -7,23 +10,21 @@ import {
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   Status,
-} from '@vision/api/annotation/types';
+} from '../../../../api/annotation/types';
+import { AnnotationFilterType } from '../../../FilterSidePanel/types';
 import {
   AnnotationIdsByStatus,
   AnnotationsBadgeCounts,
   VisionAnnotation,
   VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
+} from '../../types';
 import {
   isImageAssetLinkData,
   isImageExtractedTextData,
   isImageObjectDetectionBoundingBoxData,
   isImageObjectDetectionPolygonData,
   isImageKeypointCollectionData,
-} from '@vision/modules/Common/types/typeGuards';
-import { AnnotationFilterType } from '@vision/modules/FilterSidePanel/types';
-import isEmpty from 'lodash/isEmpty';
-import isFinite from 'lodash/isFinite';
+} from '../../types/typeGuards';
 
 export const getAnnotationLabelOrText = (
   data: VisionAnnotationDataType

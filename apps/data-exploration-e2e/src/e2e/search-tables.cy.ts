@@ -4,11 +4,13 @@ import {
   interceptFileList,
   interceptSequenceList,
   interceptEventList,
+  interceptFilesSearch,
   ASSET_LIST_ALIAS,
   TIMESERIES_LIST_ALIAS,
   FILE_LIST_ALIAS,
   SEQUENCE_LIST_ALIAS,
   EVENT_LIST_ALIAS,
+  FILES_SEARCH_ALIAS,
 } from '../support/interceptions/interceptions';
 
 describe('Search result tables', () => {
@@ -23,6 +25,7 @@ describe('Search result tables', () => {
     interceptFileList();
     interceptSequenceList();
     interceptEventList();
+    interceptFilesSearch();
   });
 
   it('Should be able navigate to AllResources tab', () => {
@@ -47,13 +50,13 @@ describe('Search result tables', () => {
     cy.wait(`@${ASSET_LIST_ALIAS}`);
 
     cy.log('should contain asset search results - tree view');
-    cy.tableSholudBeVisible('asset-tree-table').shouldLoadMore(
+    cy.tableShouldBeVisible('asset-tree-table').shouldLoadMore(
       ASSET_LIST_ALIAS
     );
 
     cy.log('should contain asset search results - list view');
     cy.clickIconButton('List');
-    cy.tableSholudBeVisible('asset-search-results').shouldLoadMore(
+    cy.tableShouldBeVisible('asset-search-results').shouldLoadMore(
       ASSET_LIST_ALIAS
     );
   });
@@ -63,7 +66,7 @@ describe('Search result tables', () => {
     cy.wait(`@${TIMESERIES_LIST_ALIAS}`);
 
     cy.log('should contain timeseries search results');
-    cy.tableSholudBeVisible('timeseries-search-results').shouldLoadMore(
+    cy.tableShouldBeVisible('timeseries-search-results').shouldLoadMore(
       TIMESERIES_LIST_ALIAS
     );
   });
@@ -73,7 +76,7 @@ describe('Search result tables', () => {
     cy.wait(`@${FILE_LIST_ALIAS}`);
 
     cy.log('should contain files search results');
-    cy.tableSholudBeVisible('documents-search-results').shouldLoadMore(
+    cy.tableShouldBeVisible('documents-search-results').shouldLoadMore(
       FILE_LIST_ALIAS
     );
   });
@@ -83,7 +86,7 @@ describe('Search result tables', () => {
     cy.wait(`@${EVENT_LIST_ALIAS}`);
 
     cy.log('should contain events search results');
-    cy.tableSholudBeVisible('event-search-results').shouldLoadMore(
+    cy.tableShouldBeVisible('event-search-results').shouldLoadMore(
       EVENT_LIST_ALIAS
     );
   });
@@ -93,8 +96,16 @@ describe('Search result tables', () => {
     cy.wait(`@${SEQUENCE_LIST_ALIAS}`);
 
     cy.log('should contain sequence search results');
-    cy.tableSholudBeVisible('sequence-search-results').shouldLoadMore(
+    cy.tableShouldBeVisible('sequence-search-results').shouldLoadMore(
       SEQUENCE_LIST_ALIAS
     );
+  });
+
+  it('Should be able navigate to 3D tab', () => {
+    cy.goToTab('3D');
+    cy.wait(`@${FILES_SEARCH_ALIAS}`);
+
+    cy.log('should contain sequence search results');
+    cy.tableShouldBeVisible('3d-model-table');
   });
 });

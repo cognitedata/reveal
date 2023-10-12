@@ -1,5 +1,6 @@
-import { Chart } from '@charts-app/models/chart/types';
 import { Skeleton } from 'antd';
+
+import { Chart } from '@cognite/charts-lib';
 
 import { ChartingContainer } from './elements';
 import PlotlyChart from './PlotlyChart';

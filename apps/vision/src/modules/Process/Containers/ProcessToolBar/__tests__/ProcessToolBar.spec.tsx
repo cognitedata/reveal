@@ -1,21 +1,22 @@
 import React from 'react';
 
 import { fireEvent, screen, within } from '@testing-library/react';
-import { mockFileInfo } from '@vision/__test-utils/data/mockFileInfo';
-import { convertToVisionFileState } from '@vision/__test-utils/files';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
+
+import { mockFileInfo } from '../../../../../__test-utils/data/mockFileInfo';
+import { convertToVisionFileState } from '../../../../../__test-utils/files';
 import {
   mockedOCRGetRes,
   mockedOCRPostRes,
-} from '@vision/__test-utils/fixtures/jobs/ocr';
-import { testRendererModals } from '@vision/__test-utils/renderer';
-import { getRealStore } from '@vision/__test-utils/store.utils';
-import { initialState as fileState } from '@vision/modules/Common/store/files/slice';
-import { FileState } from '@vision/modules/Common/store/files/types';
+} from '../../../../../__test-utils/fixtures/jobs/ocr';
+import { testRendererModals } from '../../../../../__test-utils/renderer';
+import { getRealStore } from '../../../../../__test-utils/store.utils';
+import { initialState as fileState } from '../../../../Common/store/files/slice';
+import { FileState } from '../../../../Common/store/files/types';
 // import { ProcessToolBar } from '@vision/modules/Process/Containers/ProcessToolBar/ProcessToolBar';
-import { processReducerInitialState } from '@vision/modules/Process/store/slice';
-import { ProcessState } from '@vision/modules/Process/store/types';
-import { rest } from 'msw';
-import { setupServer } from 'msw/node';
+import { processReducerInitialState } from '../../../store/slice';
+import { ProcessState } from '../../../store/types';
 
 // Use msw to intercept the network request during the test,
 export const handlers = [

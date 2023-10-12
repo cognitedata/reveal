@@ -5,14 +5,15 @@ import {
   PlatypusValidationError,
   QueryFilter,
 } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
-import { useDataModelTypeDefs } from '@platypus-app/hooks/useDataModelActions';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQuery } from '@tanstack/react-query';
 
 import { KeyValueMap } from '@cognite/cog-data-grid';
+
+import { TOKENS } from '../../../../di';
+import { useDataModelTypeDefs } from '../../../../hooks/useDataModelActions';
+import { useInjection } from '../../../../hooks/useInjection';
+import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
+import { QueryKeys } from '../../../../utils/queryKeys';
 
 export const usePreviewData = (
   params: {

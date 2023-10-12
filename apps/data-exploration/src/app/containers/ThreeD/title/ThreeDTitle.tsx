@@ -4,18 +4,18 @@ import { Alert } from 'antd';
 
 import { createLink, PageTitle, SecondaryTopbar } from '@cognite/cdf-utilities';
 
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
+import { useTranslation } from '@data-exploration-lib/core';
+
+import { ThreeDContext } from '../contexts/ThreeDContext';
 import {
   use3DModel,
   useImage360,
   useRevision,
   useRevisionIndex,
-} from '@data-exploration-app/containers/ThreeD/hooks';
-import MainModelDropdown from '@data-exploration-app/containers/ThreeD/title/Dropdowns/MainModelDropdown';
-import { useTranslation } from '@data-exploration-lib/core';
-
+} from '../hooks';
 import { getMainModelTitle } from '../utils';
 
+import MainModelDropdown from './Dropdowns/MainModelDropdown';
 import { ThreeDTopbar } from './ThreeDTopbar';
 
 export const ThreeDTitle = ({

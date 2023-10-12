@@ -3,12 +3,15 @@ import type { DragControls } from 'framer-motion';
 import type { OptionType } from '@cognite/cogs.js';
 import type {
   CalculationStep,
+  StepFields,
+  InputConstant,
   InputTimeSeries,
   OutputTimeSeries,
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
 
 export interface StepCommandProps {
+  dynamicStepFields: StepFields;
   step: CalculationStep;
   routineOrder: number;
   index?: number;
@@ -24,7 +27,7 @@ export interface ConfigurationFieldProps {
 }
 
 export interface TimeSeriesPrefixProps {
-  timeSeriesPrefix: 'inputTimeSeries' | 'outputTimeSeries';
+  timeSeriesPrefix: 'inputTimeSeries' | 'outputTimeSeries' | 'inputConstants';
 }
 
 export type ValueOptionType<T> = OptionType<T> &
@@ -61,7 +64,17 @@ export const getStepIndex = (
   );
 };
 
-export const getTimeSerieIndexByType = (
-  timeseries: InputTimeSeries[] | OutputTimeSeries[],
-  type: string
-) => timeseries.findIndex((timeserie) => timeserie.type === type);
+export const getInputOutputIndex = (
+  bucket: InputTimeSeries[] | OutputTimeSeries[] | InputConstant[],
+  value: string
+) => {
+  const index = bucket.findIndex((bucketEntry) => bucketEntry.type === value);
+
+  // when the index is not found, it means that the step is a new one
+  // which means that the index is the last and current one
+  // if the index is found, it will overwrite the found index
+  return {
+    index: index === -1 ? bucket.length : index,
+    didFindEntry: index !== -1,
+  };
+};

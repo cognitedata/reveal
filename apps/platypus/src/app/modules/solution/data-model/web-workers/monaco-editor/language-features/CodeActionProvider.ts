@@ -1,4 +1,8 @@
-import { editor, languages, Range } from 'monaco-editor';
+import {
+  editor,
+  languages,
+  Range,
+} from 'monaco-editor/esm/vs/editor/editor.api';
 
 import {
   CodeActionEdit,

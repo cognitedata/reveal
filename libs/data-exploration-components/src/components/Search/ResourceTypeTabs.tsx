@@ -1,7 +1,8 @@
 import { useResultCount } from '@data-exploration/containers';
-import { ResourceType } from '@data-exploration-components/types';
 
 import { TabProps, Tabs } from '@cognite/cogs.js';
+
+import { ResourceType } from '../../types';
 
 const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',
@@ -10,6 +11,7 @@ const resourceTypeMap: Record<ResourceType, string> = {
   timeSeries: 'Time series',
   sequence: 'Sequences',
   threeD: '3D',
+  charts: 'Charts',
 };
 
 const defaultResourceTypes: ResourceType[] = [
@@ -19,6 +21,7 @@ const defaultResourceTypes: ResourceType[] = [
   'event',
   'sequence',
   'threeD',
+  'charts',
 ];
 
 type Props = {
@@ -48,7 +51,10 @@ const ResourceTypeTab = ({
   });
 
   return (
-    <Tabs.Tab chipRight={{ label: result.count, size: 'x-small' }} {...rest} />
+    <Tabs.Tab
+      chipRight={{ label: `${result.count}`, size: 'x-small' }}
+      {...rest}
+    />
   );
 };
 export const ResourceTypeTabs = ({

@@ -1,7 +1,4 @@
-import {
-  MainDescription,
-  MainTitle,
-} from '@platypus-app/components/Styles/storybook';
+import { MainDescription, MainTitle } from '../Styles/storybook';
 
 import { SplitPanelLayout } from './SplitPanelLayout';
 

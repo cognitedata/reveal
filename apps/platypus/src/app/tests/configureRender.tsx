@@ -1,5 +1,6 @@
-import { rootReducer } from '@platypus-app/redux/store';
 import { configureStore } from '@reduxjs/toolkit';
+
+import { rootReducer } from '../redux/store';
 
 import { INITIAL_TEST_STATE } from './store';
 

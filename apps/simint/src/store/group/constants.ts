@@ -1,4 +1,4 @@
-import { RequestStatus } from '@simint-app/store/constants';
+import { RequestStatus } from '../constants';
 
 import type { GroupState } from './types';
 

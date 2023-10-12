@@ -1,11 +1,11 @@
-import { translations } from '@charts-app/common/i18n';
-import { AuthContainer } from '@charts-app/components/AuthContainer';
-import config from '@charts-app/config/config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 
 import { RootApp } from './App';
+import { translations } from './app/common/i18n';
+import { AuthContainer } from './app/components/AuthContainer';
+import config from './app/config/config';
 
 import './set-public-path';
 

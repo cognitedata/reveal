@@ -77,6 +77,7 @@ export const MetadataFilter = <TFilter,>({
       onSearchInputChange={onSearchInputChange}
       onClickApply={handleOnClickApply}
       useCustomMetadataValuesQuery={useCustomMetadataValuesQuery}
+      submenuOpenDelay={500}
     />
   );
 };

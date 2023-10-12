@@ -3,18 +3,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { FileInput } from '@simint-app/components/forms/controls/FileInput';
-import { HEARTBEAT_POLL_INTERVAL } from '@simint-app/components/simulator/constants';
-import { SimulatorStatusLabel } from '@simint-app/components/simulator/SimulatorStatusLabel';
-import { useUserInfo } from '@simint-app/hooks/useUserInfo';
-import type { AppLocationGenerics } from '@simint-app/routes';
-import { selectIsLabelsEnabled } from '@simint-app/store/capabilities/selectors';
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
-import {
-  getFileExtensionFromFileName,
-  getSelectEntriesFromMap,
-} from '@simint-app/utils/formUtils';
-import { isSuccessResponse } from '@simint-app/utils/responseUtils';
 import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
@@ -37,6 +25,18 @@ import {
   useUpdateModelFileVersionMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
 
+import { useUserInfo } from '../../../hooks/useUserInfo';
+import type { AppLocationGenerics } from '../../../routes';
+import { selectIsLabelsEnabled } from '../../../store/capabilities/selectors';
+import { selectProject } from '../../../store/simconfigApiProperties/selectors';
+import {
+  getFileExtensionFromFileName,
+  getSelectEntriesFromMap,
+} from '../../../utils/formUtils';
+import { isSuccessResponse } from '../../../utils/responseUtils';
+import { HEARTBEAT_POLL_INTERVAL } from '../../simulator/constants';
+import { SimulatorStatusLabel } from '../../simulator/SimulatorStatusLabel';
+import { FileInput } from '../controls/FileInput';
 import { LabelsInput } from '../controls/LabelsInput';
 
 import { DEFAULT_MODEL_SOURCE } from './constants';
@@ -324,6 +324,7 @@ export function ModelForm({
                 required
                 onChange={({ value }: { value: string }) => {
                   setFieldValue('metadata.simulator', value);
+                  setFieldValue('metadata.unitSystem', undefined);
                   setSelectedSimulator(value);
                 }}
               />

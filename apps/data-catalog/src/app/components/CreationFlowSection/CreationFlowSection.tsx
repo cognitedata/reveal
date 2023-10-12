@@ -1,12 +1,12 @@
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import { Col } from '@data-catalog-app/utils';
+import { useTranslation } from '../../common/i18n';
 import {
+  Col,
   IconWrapper,
   SectionCard,
+  SectionTitle,
   StatusTable,
   TitleOrnament,
-  SectionTitle,
-} from '@data-catalog-app/utils/styledComponents';
+} from '../../utils';
 
 interface CreationFlowSectionProps {
   title: string;

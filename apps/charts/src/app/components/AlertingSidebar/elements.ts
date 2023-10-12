@@ -1,8 +1,5 @@
 import styled from 'styled-components';
 
-import { Sidebar } from '@charts-app/components/Common/SidebarElements';
-import { SidebarCollapseWrapped } from '@charts-app/components/MonitoringSidebar/elements';
-
 import {
   Button,
   Col,
@@ -12,6 +9,9 @@ import {
   Title,
   Body,
 } from '@cognite/cogs.js';
+
+import { Sidebar } from '../Common/SidebarElements';
+import { SidebarCollapseWrapped } from '../MonitoringSidebar/elements';
 
 export const DividerLine = styled.div`
   border: 1px solid lightgray;

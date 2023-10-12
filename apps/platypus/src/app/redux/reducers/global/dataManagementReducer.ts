@@ -1,7 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { DataModelTypeDefsType, KeyValueMap } from '@platypus/platypus-core';
-import { generateId } from '@platypus-app/utils/uuid';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { generateId } from '../../../utils/uuid';
 
 export interface DraftRowData extends KeyValueMap {
   externalId: string;

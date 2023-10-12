@@ -157,17 +157,15 @@ type ResourceMetadata = {
   assetExternalId?: string; // Used by RevealContainer
   modelName?: string; // Used by RevealContainer
   modelId?: number; // Used by RevealContainer
+  eventType?: string; // Used by EventContainer
+  eventSubType?: string; // Used by EventContainer.
 };
 export type IndustryCanvasContainerConfig = ContainerConfig<ResourceMetadata>;
 
 // TODO: We should improve the typing here -- update this together with the TODO above.
 export const isIndustryCanvasContainerConfig = (
-  container: ContainerConfig
+  container: CanvasNode | ContainerConfig
 ): container is IndustryCanvasContainerConfig => {
-  if (container.type === ContainerType.FLEXIBLE_LAYOUT) {
-    return 'metadata' in container;
-  }
-
   const metadata = container.metadata;
   if (container.type === ContainerType.REVEAL) {
     return metadata !== undefined && 'modelId' in metadata;
@@ -193,12 +191,44 @@ export type LiveSensorRulesByAnnotationIdByTimeseriesId = Record<
   Record<number, RuleType[]>
 >;
 
+export type FilterConditional = {
+  valueAtPath: string;
+  isEqualTo: string | undefined;
+};
+
+export type SerializedFilterConditional = {
+  valueAtPath: string;
+  isEqualTo: string | null;
+};
+
+export type Filter = {
+  appliesToContainerType: ContainerType;
+  containerId?: string;
+  appliesWhen?: FilterConditional[];
+  properties: string[];
+};
+
+export const isSpecificFilterForContainerId = (
+  filter: Filter,
+  containerId: string
+): filter is Omit<Filter, 'containerId'> & { containerId: string } =>
+  filter.containerId === containerId;
+
+export const isGenericFilter = (filter: Filter): boolean =>
+  filter.containerId === undefined;
+
+export type SerializedFilter = Omit<Filter, 'appliesWhen'> & {
+  appliesWhen?: SerializedFilterConditional[];
+};
+
+export type CanvasNode = IndustryCanvasContainerConfig | CanvasAnnotation;
+
 // NOTE: `CanvasState` is a global interface, hence the `Industry` prefix (https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.canvasstate.html)
 export type IndustryCanvasState = {
-  container: IndustryCanvasContainerConfig;
-  canvasAnnotations: CanvasAnnotation[];
+  nodes: CanvasNode[];
   pinnedTimeseriesIdsByAnnotationId: Record<string, number[]>;
   liveSensorRulesByAnnotationIdByTimeseriesId: LiveSensorRulesByAnnotationIdByTimeseriesId;
+  filters: Filter[];
 };
 
 export type PinnedSensorValueContext = {
@@ -211,9 +241,17 @@ export type PinnedSensorValueContext = {
   }[];
 };
 
-export type CanvasContext = PinnedSensorValueContext[];
+export type FiltersContext = {
+  type: 'FILTERS';
+  payload: {
+    filters: SerializedFilter[];
+  };
+};
+
+export type CanvasContext = (FiltersContext | PinnedSensorValueContext)[];
 
 export type SerializedIndustryCanvasState = {
+  zIndexById: Record<string, number | undefined>;
   containerReferences: AssetCentricContainerReference[];
   fdmInstanceContainerReferences: FdmInstanceContainerReference[];
   canvasAnnotations: CanvasAnnotation[];
@@ -236,7 +274,9 @@ export type CanvasMetadata = {
   updatedBy: UserIdentifier;
 };
 
-export type CanvasDocument = CanvasMetadata & { data: IndustryCanvasState };
+export type CanvasDocument = CanvasMetadata & {
+  data: IndustryCanvasState;
+};
 
 export type SerializedCanvasDocument = Omit<CanvasDocument, 'data'> & {
   data: SerializedIndustryCanvasState;
@@ -258,23 +298,9 @@ export const COMMENT_METADATA_ID = '_IS_COMMENT';
 export type CommentAnnotation = RectangleAnnotation;
 
 export const isCommentAnnotation = (
-  annotation: Annotation
+  annotation: CanvasNode
 ): annotation is CommentAnnotation =>
   annotation.metadata && annotation.metadata[COMMENT_METADATA_ID] === true;
-
-export type Comment = {
-  text: string;
-  author: string;
-  thread?: { externalId: string };
-  canvas?: { externalId: string };
-  x?: number;
-  y?: number;
-  externalId: string;
-  createdTime: Date;
-  lastUpdatedTime: Date;
-  // additive, not from api
-  subComments: Comment[];
-};
 
 // New user type introduced by Auth2.0 team
 export type OrganizationUserProfile = {

@@ -45,6 +45,7 @@
   "CAD_POINT_CLOUD_MODELS": "CAD,Point cloud models",
   "CALENDAR": "Calender",
   "CANCEL": "Cancel",
+  "CHARTS": "Charts",
   "CLEAR": "Clear",
   "CLEAR_ALL": "Clear all",
   "CLICK": "click",
@@ -218,6 +219,7 @@
   "OPEN_IN_NEW_TAB": "Open in new browser tab",
   "ORIGINAL_FILE": "Original File",
   "OVERWRITE_CURRENT_FLOW": "Overwrite current flow",
+  "OWNER": "Owner",
   "PAN": "Pan",
   "PARENT_EXTERNAL_ID": "Parent external ID",
   "PARTIAL": "Partial",
@@ -235,6 +237,8 @@
   "PREVIEW_FILTER_PLACEHOLDER": "Search for name, description, etc...",
   "PREVIEW_TAB_LABEL": "Preview",
   "PREVIOUS_SEARCH_RESULT": "Previous search result",
+  "PRIVATE": "Private",
+  "PUBLIC": "Public",
   "PUBLISHED": "Published",
   "RANGE": "Range",
   "REFINE_FILTERS_OR_UPDATE_SEARCH": "Please, refine your filters or update the search parameters",
@@ -329,5 +333,6 @@
   "VIEW": "View",
   "VIEWING_OPTIONS": "Viewing Options",
   "VIEW_FULL_HIERARCHY": "View full hierarchy",
+  "VISIBILITY": "Visibility",
   "ZOOM": "Zoom"
 }

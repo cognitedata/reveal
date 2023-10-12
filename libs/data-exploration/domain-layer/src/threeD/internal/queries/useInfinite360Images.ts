@@ -40,14 +40,16 @@ export const useInfinite360Images = () => {
         (accum, current) => {
           if (!current.metadata?.site_id) return accum;
 
-          if (!Object.hasOwn(accum, current.metadata.site_id)) {
-            accum[current.metadata.site_id] = {
-              siteId: current.metadata.site_id,
-              siteName: current.metadata?.site_name ?? current.metadata.site_id,
+          const siteId = current.metadata.site_id.toLowerCase();
+
+          if (!Object.hasOwn(accum, siteId)) {
+            accum[siteId] = {
+              siteId,
+              siteName: current.metadata?.site_name ?? siteId,
               numberOfImages: 1,
             };
           } else {
-            accum[current.metadata.site_id].numberOfImages += 1;
+            accum[siteId].numberOfImages += 1;
           }
 
           return accum;

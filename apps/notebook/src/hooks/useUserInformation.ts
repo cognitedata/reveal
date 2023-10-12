@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import sdk, { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { CogniteClient, HttpError } from '@cognite/sdk/dist/src';
@@ -14,7 +14,7 @@ export type UserProfile = {
 };
 
 export const useUserInformation = () => {
-  return useQuery('user-info', async () => await getUserProfile(sdk), {
+  return useQuery(['user-info'], async () => await getUserProfile(sdk), {
     retry: (failureCount: number, error: HttpError): boolean => {
       // Retry iff we do *not* get a 403. That is if, and only if,
       // we do have access to the Profiles API

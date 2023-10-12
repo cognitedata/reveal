@@ -1,10 +1,10 @@
 import { ComponentProps } from 'react';
 
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import styled from 'styled-components/macro';
 
 import { Menu, SegmentedControl, Title } from '@cognite/cogs.js';
 
+import { defaultTranslations } from '../../translations';
 import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 
 type Props = {

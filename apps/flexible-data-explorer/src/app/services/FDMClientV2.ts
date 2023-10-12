@@ -7,6 +7,8 @@ import head from 'lodash/head';
 
 import type { CogniteClient } from '@cognite/sdk';
 
+import { SiteConfig } from '../../config/types';
+
 import { BASE_FIELDS } from './constants';
 import { FDMSchema } from './FDMSchema';
 import {
@@ -159,6 +161,54 @@ export class FDMClientV2 extends BaseFDMClient {
     return this.request<T>(url, data);
   }
 
+  public async getInstancesByIds<T>(
+    fields: Fields,
+    { dataType, externalIds }: { dataType: string; externalIds: string[] },
+    filter?: unknown
+  ) {
+    const operation = `list${dataType}`;
+
+    const externalIdsFilter = {
+      externalId: {
+        in: externalIds,
+      },
+    };
+    const appliedFilters = filter
+      ? [filter, externalIdsFilter]
+      : [externalIdsFilter];
+
+    const payload = query({
+      operation,
+      fields: [
+        {
+          items: fields,
+        },
+      ],
+      variables: {
+        first: 1000,
+        filter: {
+          value: {
+            and: appliedFilters,
+          },
+          type: `_List${dataType}Filter`,
+        },
+      },
+    });
+
+    const {
+      [operation]: { items, pageInfo },
+    } = await this.gqlRequest<{
+      [operation in string]: {
+        items: T[];
+        pageInfo: {
+          hasNextPage: boolean;
+        };
+      };
+    }>(payload);
+
+    return items;
+  }
+
   public async getInstanceById<T>(
     fields: Fields,
     { dataType, externalId, instanceSpace }: Instance
@@ -203,12 +253,22 @@ export class FDMClientV2 extends BaseFDMClient {
 
   public async searchDataTypes(
     queryString: string,
-    filters: Record<string, unknown>
+    filters: Record<string, unknown>,
+    config?: SiteConfig
   ) {
     const constructPayload = this.schema.types.map((item) => {
       const dataType = item.name;
 
       const fields = this.schema.getPrimitiveFields(dataType);
+
+      // TODO: Move this into filter transformation instead.
+      const defaultFilter = config?.instanceSpaces
+        ? {
+            space: {
+              in: config.instanceSpaces,
+            },
+          }
+        : {};
 
       return {
         operation: { name: `search${dataType}`, alias: dataType },
@@ -220,7 +280,7 @@ export class FDMClientV2 extends BaseFDMClient {
         variables: {
           query: { value: queryString, required: true },
           [`filter${dataType}`]: {
-            value: filters[dataType] || {},
+            value: filters[dataType] || defaultFilter,
             name: 'filter',
             type: `_Search${dataType}Filter`,
           },
@@ -239,10 +299,20 @@ export class FDMClientV2 extends BaseFDMClient {
 
   public async searchAggregateCount(
     queryString: string,
-    filters: Record<string, unknown>
+    filters: Record<string, unknown>,
+    config?: SiteConfig
   ) {
     const constructPayload = this.schema.types.map((item) => {
       const dataType = item.name;
+
+      // TODO: Move this into filter transformation instead.
+      const defaultFilter = config?.instanceSpaces
+        ? {
+            space: {
+              in: config.instanceSpaces,
+            },
+          }
+        : {};
 
       return {
         operation: { name: `aggregate${dataType}`, alias: dataType },
@@ -258,7 +328,7 @@ export class FDMClientV2 extends BaseFDMClient {
         variables: {
           query: { value: queryString, required: true },
           [`filter${dataType}`]: {
-            value: filters[dataType] || {},
+            value: filters[dataType] || defaultFilter,
             name: 'filter',
             type: `_Search${dataType}Filter`,
           },
@@ -290,7 +360,6 @@ export class FDMClientV2 extends BaseFDMClient {
   public async searchAggregateValueByProperty<T>(
     data: { dataType: string; field: string },
     queryString: string,
-    filters: unknown,
     property: string
   ) {
     const { dataType, field } = data;
@@ -308,10 +377,6 @@ export class FDMClientV2 extends BaseFDMClient {
       ],
       variables: {
         query: { value: queryString, required: true },
-        filter: {
-          value: filters,
-          type: `_Search${dataType}Filter`,
-        },
       },
     };
 

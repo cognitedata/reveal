@@ -1,17 +1,18 @@
 import { ComponentProps, useState } from 'react';
 
+import { ChartSource, ChartThreshold } from '@cognite/charts-lib';
+import { Button, Collapse } from '@cognite/cogs.js';
+
 import {
   ExpandIcon,
   ContentContainer,
   SidebarCollapse,
   SidebarHeaderActions,
   CollapsePanelTitle,
-} from '@charts-app/components/Common/SidebarElements';
-import TranslatedEditableText from '@charts-app/components/EditableText/TranslatedEditableText';
-import ThresholdItem from '@charts-app/components/Thresholds/ThresholdItem';
-import { ChartSource, ChartThreshold } from '@charts-app/models/chart/types';
+} from '../Common/SidebarElements';
+import TranslatedEditableText from '../EditableText/TranslatedEditableText';
 
-import { Button, Collapse } from '@cognite/cogs.js';
+import ThresholdItem from './ThresholdItem';
 
 interface Props
   extends Omit<ComponentProps<typeof ThresholdItem>, 'threshold'> {

@@ -49,7 +49,7 @@ const SectionProgress = (): JSX.Element => {
   };
 
   return (
-    <Wrapper>
+    <Wrapper data-testid="section-progress">
       <DoughnutChart
         data={data}
         label={

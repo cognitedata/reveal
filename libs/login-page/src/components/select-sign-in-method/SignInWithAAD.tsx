@@ -1,25 +1,19 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
-import { useQuery } from '@tanstack/react-query';
-
 import {
   getSelectedIdpDetails,
   saveSelectedIdpDetails,
   usePca,
   AADResponse,
   loginRedirectAad,
+  goToSelectProject,
 } from '@cognite/login-utils';
 
 import { useTranslation } from '../../common/i18n';
 import { Microsoft } from '../../components/icons';
 import SignInButton from '../../components/sign-in-button/SignInButton';
 import { useLoginPageContext } from '../../contexts/LoginPageContext';
-import { SSO_SESSION_KEY } from '../../utils';
-
-interface Props extends AADResponse {
-  trySSO?: boolean;
-}
 
 const SignInWithAAD = ({
   appConfiguration,
@@ -27,9 +21,7 @@ const SignInWithAAD = ({
   internalId,
   label,
   type,
-  trySSO = false,
-  clusters,
-}: Props): JSX.Element => {
+}: AADResponse): JSX.Element => {
   const { isHandledAADRedirect, setIsHandledAADRedirect } =
     useLoginPageContext();
   const { t } = useTranslation();
@@ -39,10 +31,6 @@ const SignInWithAAD = ({
   const { internalId: selectedInternalId, idpId } =
     getSelectedIdpDetails() ?? {};
   const shouldHandleRedirect = internalId === selectedInternalId;
-
-  // Keep track of sso attempts to avoid doing a sso signing when the user clicks "Sign in to
-  // another project or account"
-  const ssoDoneThisSession = !!window.sessionStorage.getItem(SSO_SESSION_KEY);
 
   const persistIDPDetails = useCallback(
     (tenantId: string) => {
@@ -54,45 +42,6 @@ const SignInWithAAD = ({
     },
     [internalId, type]
   );
-
-  const {
-    data: ssoResult,
-    isInitialLoading: ssoLoading,
-    isSuccess: ssoSuccess,
-  } = useQuery(
-    ['login', 'sso', internalId],
-    () =>
-      Promise.any(
-        clusters.map((c) => {
-          const scopes = [
-            `https://${c}/IDENTITY`,
-            `https://${c}/user_impersonation`,
-          ];
-          return pca?.ssoSilent({ scopes });
-        })
-      ),
-    {
-      enabled: pca && trySSO && !ssoDoneThisSession,
-    }
-  );
-
-  useEffect(() => {
-    if (ssoSuccess && ssoResult && !ssoDoneThisSession) {
-      window.sessionStorage.setItem(SSO_SESSION_KEY, 'yes');
-      pca?.setActiveAccount(ssoResult.account);
-      persistIDPDetails(ssoResult.tenantId);
-      navigate('/select-project');
-    }
-  }, [
-    ssoResult,
-    navigate,
-    internalId,
-    ssoSuccess,
-    pca,
-    type,
-    persistIDPDetails,
-    ssoDoneThisSession,
-  ]);
 
   useEffect(() => {
     // If there is an entry for selected idp, this means user has already
@@ -107,7 +56,7 @@ const SignInWithAAD = ({
           if (redirectResult?.account) {
             persistIDPDetails(redirectResult.tenantId);
             pca.setActiveAccount(redirectResult?.account);
-            navigate('/select-project');
+            goToSelectProject(navigate);
           }
         })
         // eslint-disable-next-line lodash/prefer-noop
@@ -128,14 +77,14 @@ const SignInWithAAD = ({
 
   useEffect(() => {
     // If there is an active AAD account entry in local storage for the
-    // selected login flow, we redirect to `/select-project` route.
+    // selected login flow, we go to the select project step.
     const activeAccount = pca?.getActiveAccount();
 
     if (
       selectedInternalId === internalId &&
       `${internalId}_${activeAccount?.tenantId}` === idpId
     ) {
-      navigate('/select-project');
+      goToSelectProject(navigate);
     }
   }, [authority, navigate, idpId, internalId, pca, selectedInternalId]);
 
@@ -160,9 +109,10 @@ const SignInWithAAD = ({
 
   return (
     <SignInButton
-      isLoading={!isHandledAADRedirect || ssoLoading}
+      isLoading={!isHandledAADRedirect}
       onClick={handleSignInWithAAD}
       icon={<Microsoft />}
+      internalId={internalId}
     >
       {label || t('sign-in-with-microsoft')}
     </SignInButton>

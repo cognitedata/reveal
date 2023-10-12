@@ -2,7 +2,7 @@ import { custom } from '@recoiljs/refine';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import { syncEffect } from 'recoil-sync';
 
-import { isObjectEmpty } from '@data-exploration-app/utils/compare';
+import { isObjectEmpty } from '../../utils/compare';
 
 import { FILTER } from './constants';
 import { GlobalFilter, GlobalFilterKeys } from './types';

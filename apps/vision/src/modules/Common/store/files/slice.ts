@@ -5,12 +5,13 @@ import {
   isAnyOf,
   createAction,
 } from '@reduxjs/toolkit';
-import { SelectFilter } from '@vision/modules/Common/types';
-import { clearFileState } from '@vision/store/commonActions';
-import { makeReducerSelectAllFilesWithFilter } from '@vision/store/commonReducers';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
-import { FetchFilesById } from '@vision/store/thunks/Files/FetchFilesById';
-import { UpdateFiles } from '@vision/store/thunks/Files/UpdateFiles';
+
+import { clearFileState } from '../../../../store/commonActions';
+import { makeReducerSelectAllFilesWithFilter } from '../../../../store/commonReducers';
+import { DeleteFilesById } from '../../../../store/thunks/Files/DeleteFilesById';
+import { FetchFilesById } from '../../../../store/thunks/Files/FetchFilesById';
+import { UpdateFiles } from '../../../../store/thunks/Files/UpdateFiles';
+import { SelectFilter } from '../../types';
 
 import { FileState, VisionFile } from './types';
 import { clearFilesState, deleteFileById, updateFileState } from './utils';

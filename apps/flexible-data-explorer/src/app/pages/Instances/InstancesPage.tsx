@@ -1,9 +1,6 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { ContainerReferenceType } from 'libs/industry-canvas/src/lib/types';
-
 import { Button } from '../../components/buttons/Button';
 import { Dropdown } from '../../components/dropdown/Dropdown';
 import { Page } from '../../containers/page/Page';
@@ -15,6 +12,7 @@ import { useOpenIn } from '../../hooks/useOpenIn';
 import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
 import { useFDM } from '../../providers/FDMProvider';
 import { useInstancesQuery } from '../../services/instances/generic/queries/useInstanceByIdQuery';
+import { ContainerReferenceType } from '../../types';
 
 export const InstancesPage = () => {
   const { dataType, dataModel, space, version } = useParams();

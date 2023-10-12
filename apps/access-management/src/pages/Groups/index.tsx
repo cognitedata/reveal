@@ -243,6 +243,7 @@ export default function Groups() {
                 // @ts-ignore I added editable without a custom type; it's going to take too long
                 disabled={!item.editable}
                 onClick={() => setShowEdit(item)}
+                data-testid="access-management-edit-group-button"
               >
                 Edit
               </Menu.Item>
@@ -260,6 +261,7 @@ export default function Groups() {
                 </Menu.Item>
               )}
               <Menu.Item
+                data-testid="access-management-delete-group-button"
                 onClick={() =>
                   Modal.confirm({
                     title: t('confirm-delete'),
@@ -269,7 +271,11 @@ export default function Groups() {
                         ?
                       </>
                     ),
-                    okText: t('delete'),
+                    okText: (
+                      <div data-testid="access-management-confirm-delete-group-button">
+                        {t('delete')}
+                      </div>
+                    ),
                     onOk: () => deleteGroup(item.id),
                   })
                 }
@@ -294,6 +300,7 @@ export default function Groups() {
       <Row justify="space-between">
         <Col>
           <Input.Search
+            data-testid="access-management-group-search"
             placeholder={t('group-filter-placeholder')}
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
@@ -309,12 +316,14 @@ export default function Groups() {
             type="primary"
             disabled={!createPermission}
             onClick={() => setShowNew(true)}
+            data-testid="access-management-create-group-button"
           >
             {t('group-create-label')}
           </Button>
         </Col>
       </Row>
       <Table
+        data-testid="access-management-groups-table"
         rowKey="id"
         loading={!projectFetched || !groupsFetched}
         columns={columns}

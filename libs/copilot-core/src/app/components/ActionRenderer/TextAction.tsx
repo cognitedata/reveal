@@ -17,7 +17,6 @@ import { ResponsiveActions } from '../MessageRenderer/components/ResponsiveActio
 
 export const TextAction = ({ disabled }: { disabled?: boolean }) => {
   const textActionProps = useBotUIAction();
-  console.log(textActionProps);
 
   const {
     meta: { feature, waiting },

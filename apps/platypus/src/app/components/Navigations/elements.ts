@@ -6,6 +6,9 @@ export const StyledTopBarRight = styled(TopBar.Right)`
   display: flex;
   align-items: center;
   padding-right: 12px;
+  .cogs-button {
+    width: max-content;
+  }
 `;
 
 export const StyledTopBarLeft = styled(TopBar.Left)`

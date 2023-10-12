@@ -1,5 +1,6 @@
-import sdk from '@cognite/cdf-sdk-singleton';
 import { useQueries } from '@tanstack/react-query';
+
+import sdk from '@cognite/cdf-sdk-singleton';
 
 const getDataSetFilter = (id: number) => ({
   filter: { dataSetIds: [{ id }] },

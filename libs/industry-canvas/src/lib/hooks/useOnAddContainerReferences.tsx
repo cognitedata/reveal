@@ -25,16 +25,16 @@ import { useTranslation } from './useTranslation';
 // Note: Temporary hook to facilitate refactoring
 const useOnAddContainerReferences = ({
   unifiedViewerRef,
-  selectedContainer,
+  selectedContainers,
   clickedContainerAnnotation,
-  container,
+  containers,
   isCanvasLocked,
   tooltipsOptions,
 }: {
   unifiedViewerRef: UnifiedViewer | null;
-  selectedContainer: IndustryCanvasContainerConfig | undefined;
+  selectedContainers: IndustryCanvasContainerConfig[];
   clickedContainerAnnotation: ExtendedAnnotation | undefined;
-  container: IndustryCanvasContainerConfig | undefined;
+  containers: IndustryCanvasContainerConfig[] | undefined;
   isCanvasLocked: boolean;
   tooltipsOptions: TooltipsOptions;
 }) => {
@@ -52,9 +52,7 @@ const useOnAddContainerReferences = ({
       }
 
       // Ensure that we don't add a container with an ID that already exists
-      const currentContainerIds = new Set(
-        (container?.children ?? []).map((c) => c.id)
-      );
+      const currentContainerIds = new Set((containers ?? []).map((c) => c.id));
       const containerReferencesToAdd = containerReferences.filter(
         (containerReference) =>
           containerReference.id === undefined ||
@@ -95,21 +93,23 @@ const useOnAddContainerReferences = ({
           tooltipsOptions,
           containerReferencesToAdd
         ),
-      }).then((containers) => {
+      }).then((newContainers) => {
         // When we add new containers, we want to zoom to fit and select them.
         // Since the new containers might not be rendered immediately, we need to wait a bit before we can do that.
         setTimeout(() => {
           zoomToFitAroundContainerIds({
             unifiedViewer: unifiedViewerRef,
             containerIds: [
-              selectedContainer?.id,
+              ...selectedContainers.map(
+                (containerConfig) => containerConfig.id
+              ),
               clickedContainerAnnotation?.containerId,
-              ...containers.map((c) => c.id),
+              ...newContainers.map((c) => c.id),
             ].filter(isNotUndefined),
           });
 
           unifiedViewerRef.selectByIds({
-            containerIds: containers.map((c) => c.id),
+            containerIds: newContainers.map((c) => c.id),
             annotationIds: [],
           });
         }, SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS);
@@ -134,9 +134,9 @@ const useOnAddContainerReferences = ({
       sdk,
       addContainerReferences,
       unifiedViewerRef,
-      selectedContainer?.id,
+      selectedContainers,
       clickedContainerAnnotation,
-      container?.children,
+      containers,
       isCanvasLocked,
       t,
       tooltipsOptions,

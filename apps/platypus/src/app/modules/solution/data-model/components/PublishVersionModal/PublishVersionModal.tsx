@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { DataModelVersionValidator } from '@platypus/platypus-core';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Body, Button, Flex, Input, Modal, Radio } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 import { StyledBreakingChanges } from './elements';
 

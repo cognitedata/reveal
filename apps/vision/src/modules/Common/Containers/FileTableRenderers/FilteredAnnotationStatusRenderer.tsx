@@ -3,16 +3,16 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { DEFAULT_THRESHOLDS } from '@vision/modules/Common/Components/BulkEdit/Annotation/AnnotationStatusPanel';
-import { makeSelectAnnotationsForFileIds } from '@vision/modules/Common/store/annotation/selectors';
-import { CellRenderer } from '@vision/modules/Common/types';
+import { Body } from '@cognite/cogs.js';
+
+import { RootState } from '../../../../store/rootReducer';
+import { DEFAULT_THRESHOLDS } from '../../Components/BulkEdit/Annotation/AnnotationStatusPanel';
+import { makeSelectAnnotationsForFileIds } from '../../store/annotation/selectors';
+import { CellRenderer } from '../../types';
 import {
   filterAnnotationIdsByAnnotationStatus,
   filterAnnotationIdsByConfidence,
-} from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { RootState } from '@vision/store/rootReducer';
-
-import { Body } from '@cognite/cogs.js';
+} from '../../Utils/AnnotationUtils/AnnotationUtils';
 
 import { createTag } from './AnnotationStatusRenderer';
 

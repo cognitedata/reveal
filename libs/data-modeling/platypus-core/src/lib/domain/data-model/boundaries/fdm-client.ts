@@ -22,6 +22,7 @@ import {
   UpdateDataModelDTO,
   GetByExternalIdDTO,
   DeleteDataModelOutput,
+  FetchFilteredRowsCountDTO,
 } from '../dto';
 import { ListSpacesDTO } from '../providers/fdm-next/dto/dms-space-dtos';
 import {
@@ -95,7 +96,10 @@ export interface FlexibleDataModelingClient {
    * Deletes the specified Data Model including all versions
    * And the data related with it.
    */
-  deleteDataModel(dto: DeleteDataModelDTO): Promise<DeleteDataModelOutput>;
+  deleteDataModel(
+    dto: DeleteDataModelDTO,
+    deleteViews: boolean
+  ): Promise<DeleteDataModelOutput>;
 
   /**
    * Validates Data Model GraphQL.
@@ -177,6 +181,12 @@ export interface FlexibleDataModelingClient {
    * @param dto
    */
   createSpace(dto: SpaceDTO): Promise<SpaceInstance>;
+
+  /**
+   * Fetches the number of filtered rows by type
+   * @param dto
+   */
+  fetchFilteredRowsCount(dto: FetchFilteredRowsCountDTO): Promise<number>;
 
   /**
    * Fetches the number of published rows by type

@@ -105,7 +105,7 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
 
   return (
     <StyledCanvasTitle
-      isEditable={isEditingTitle}
+      $isEditable={isEditingTitle}
       level={5}
       onClick={onCanvasTitleClick}
     >
@@ -141,9 +141,9 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
   );
 };
 
-const StyledCanvasTitle = styled(Heading)<{ isEditable: boolean }>`
+const StyledCanvasTitle = styled(Heading)<{ $isEditable: boolean }>`
   && {
-    padding: ${({ isEditable }) => (isEditable ? '0' : '0 8px')};
+    padding: ${({ $isEditable }) => ($isEditable ? '0' : '0 8px')};
     margin-left: 8px;
   }
 `;

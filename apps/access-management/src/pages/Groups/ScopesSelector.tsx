@@ -269,7 +269,11 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
 
   return (
     <div>
-      <Radio.Group value={selectedScope} onChange={(e) => onSelectScope(e)}>
+      <Radio.Group
+        value={selectedScope}
+        onChange={(e) => onSelectScope(e)}
+        data-testid="access-management-capability-scope-selector"
+      >
         {scopes.map((scope) => (
           <Radio value={scope} key={scope}>
             {getScopeLabel(scope, capabilityKey, t)}

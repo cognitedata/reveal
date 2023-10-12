@@ -118,7 +118,10 @@ export default function UploadFunctionModal({
   const [secrets, setSecrets] = useState([] as Secret[]);
   const [cpu, setCpu] = useState(String(limits.cpuCores.default));
   const [memory, setMemory] = useState(String(limits.memoryGb.default));
-  const [runtime, setRuntime] = useState<RuntimeOption>(runtimes[1]);
+  const [runtime, setRuntime] = useState<RuntimeOption>({
+    label: 'Python 3.8',
+    value: 'py38',
+  });
   const [metadata, setMetadata] = useState([] as MetaType[]);
   const [dataSetId, setDataSetId] = useState<undefined | number>(undefined);
 

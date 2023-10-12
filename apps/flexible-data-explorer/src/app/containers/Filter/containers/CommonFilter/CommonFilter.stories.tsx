@@ -12,8 +12,9 @@ export const Example: ComponentStory<typeof CommonFilter> = (args) => (
   <CommonFilter {...args} />
 );
 Example.args = {
+  dataType: 'Movie',
   field: {
-    name: 'Field',
+    name: 'Name',
     type: 'string',
   },
 };

@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useCreateSessionNonce } from '@charts-app/domain/chart';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
-import { trackUsage, stopTimer } from '@charts-app/services/metrics';
-import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from '@charts-app/utils/constants';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useUserProfile } from '@fusion/industry-canvas';
 import { Col, Row } from 'antd';
 import { head } from 'lodash';
 
 import { toast } from '@cognite/cogs.js';
 import { CogniteError } from '@cognite/sdk';
 
+import { useUserProfileQuery } from '../../common/providers/useUserProfileQuery';
+import { useCreateSessionNonce } from '../../domain/chart';
+import { useSearchParam } from '../../hooks/navigation';
+import { useTranslations } from '../../hooks/translations';
+import { useChartAtom } from '../../models/chart/atom';
+import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
+import { trackUsage, stopTimer } from '../../services/metrics';
+import {
+  MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
+  MONITORING_SOURCE_CHART,
+} from '../../utils/constants';
+import { makeDefaultTranslations } from '../../utils/translations';
 import { FormTitle } from '../Common/SidebarElements';
 
 import CreateMonitoringJobStep1 from './CreateMonitoringJobStep1';
@@ -26,7 +29,6 @@ import {
   CreateMonitoringJobFormData,
   CreateMonitoringJobPayload,
 } from './types';
-import { validateEmail } from './utils';
 
 const defaultTranslation = makeDefaultTranslations(
   'Create monitoring job',
@@ -35,9 +37,8 @@ const defaultTranslation = makeDefaultTranslations(
   'Next',
   'Back',
   'Unable to create Session Nonce',
-  'Monitoring job created succesfully',
+  'Monitoring job created successfully',
   'Unable to create monitoring job',
-  'Notification email not found. Please ask your AD administrator to set it up for you.',
   'User ID not found',
   'Subscribers not found'
 );
@@ -51,7 +52,8 @@ const CreateMonitoringJob = ({ onCancel }: Props) => {
     ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar').t,
   };
 
-  const { userProfile } = useUserProfile();
+  const { data: userProfile } = useUserProfileQuery();
+  const [chart] = useChartAtom();
 
   const {
     data: sessionNonceResponse,
@@ -90,24 +92,8 @@ const CreateMonitoringJob = ({ onCancel }: Props) => {
       clientId: '',
       clientSecret: '',
       cdfCredsMode: 'USER_CREDS',
-      subscribers: [userProfile],
+      subscribers: userProfile ? [userProfile] : [],
     });
-
-  const userInfo = useUserInfo();
-  let notificationEmail = userInfo.data?.mail;
-  if (notificationEmail === null) {
-    // some users have an email as their displayName or givenName
-    if (
-      userInfo.data?.displayName &&
-      validateEmail(userInfo.data.displayName)
-    ) {
-      notificationEmail = userInfo.data.displayName;
-    }
-    if (userInfo.data?.givenName && validateEmail(userInfo.data.givenName)) {
-      notificationEmail = userInfo.data.givenName;
-    }
-  }
-  const userAuthId_deprecated = userInfo.data?.id;
 
   const onBack = (data: CreateMonitoringJobFormData) => {
     // Save the data from the corresponding step when the user goes back
@@ -175,14 +161,7 @@ const CreateMonitoringJob = ({ onCancel }: Props) => {
     } = steppedFormValues;
     const activationInterval = `${minimumDuration}m`;
 
-    if (
-      source &&
-      alertThresholdType &&
-      notificationEmail &&
-      folder &&
-      userAuthId_deprecated &&
-      subscribers?.length
-    ) {
+    if (source && alertThresholdType && folder && subscribers?.length) {
       let tsExtId: string;
 
       if (
@@ -208,23 +187,13 @@ const CreateMonitoringJob = ({ onCancel }: Props) => {
           userIdentifier,
           email,
         })),
-        userAuthId_deprecated,
-        userEmail_deprecated: notificationEmail,
+        sourceId: chart?.id || '',
+        source: MONITORING_SOURCE_CHART,
       };
       createMonitoringJob(dataToSend);
       setFormStatus('NONCE_CREATED_DATA_SUBMITTED');
-    } else if (!notificationEmail) {
-      toast.error(
-        t[
-          'Notification email not found. Please ask your AD administrator to set it up for you.'
-        ]
-      );
-      setFormStatus('READY');
     } else if (!subscribers?.length) {
       toast.error(t['Subscribers not found']);
-      setFormStatus('READY');
-    } else if (!userAuthId_deprecated) {
-      toast.error(t['User ID not found']);
       setFormStatus('READY');
     }
   };
@@ -253,7 +222,7 @@ const CreateMonitoringJob = ({ onCancel }: Props) => {
 
   useEffect(() => {
     if (createMonitoringJobSuccess) {
-      toast.success(t['Monitoring job created succesfully']);
+      toast.success(t['Monitoring job created successfully']);
       const job = head(createMonitoringJobData);
       if (job) {
         setMonitoringJobIdParam(`${job.id}`);

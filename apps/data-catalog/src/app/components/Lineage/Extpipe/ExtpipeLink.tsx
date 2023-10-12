@@ -2,10 +2,9 @@ import React, { FunctionComponent, PropsWithChildren } from 'react';
 
 import styled from 'styled-components';
 
-import { Extpipe } from '@data-catalog-app/utils/types';
-
 import { createLink } from '@cognite/cdf-utilities';
 
+import { Extpipe } from '../../../utils';
 import { getExtractionPipelineUIUrl } from '../../../utils/extpipeUtils';
 
 const StyledLink = styled.a`

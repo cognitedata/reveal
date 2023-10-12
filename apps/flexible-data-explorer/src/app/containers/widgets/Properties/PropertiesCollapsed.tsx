@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import styled from 'styled-components';
 
@@ -41,11 +41,13 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
 
   return (
     <Widget rows={rows || getAdaptiveGridRows()} columns={columns} id={id}>
-      <Widget.Header title={t('PROPERTIES_WIDGET_NAME')}>
+      <Widget.Header type="Properties" title={t('PROPERTIES_WIDGET_NAME')}>
         <Button.Fullscreen
           disabled={state === 'loading'}
           onClick={() => onExpandClick?.(id)}
-        />
+        >
+          {t('GENERAL_SHOW_MORE')}
+        </Button.Fullscreen>
       </Widget.Header>
 
       <Widget.Body state={state}>

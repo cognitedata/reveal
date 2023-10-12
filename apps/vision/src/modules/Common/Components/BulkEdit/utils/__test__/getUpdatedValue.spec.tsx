@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { CellContainer } from '@vision/modules/Common/Components/BulkEdit/utils/CellContainer';
-import { getUpdatedValue } from '@vision/modules/Common/Components/BulkEdit/utils/getUpdatedValue';
+import { CellContainer } from '../CellContainer';
+import { getUpdatedValue } from '../getUpdatedValue';
 
 describe('Test updated value', () => {
   describe('If original originalValue not set', () => {

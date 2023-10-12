@@ -11,6 +11,7 @@ import {
   ThreeDTab,
   TimeseriesTab,
   ResourceTypeTabs as ResourceTypeTabsV2,
+  ThreeDSearchContextProvider,
 } from '@data-exploration/containers';
 import styled from 'styled-components/macro';
 import { useDebounce } from 'use-debounce';
@@ -19,42 +20,6 @@ import { PageTitle } from '@cognite/cdf-utilities';
 import { Flex, Tabs } from '@cognite/cogs.js';
 import { getTitle, ResourceType } from '@cognite/data-exploration';
 
-import { GPTInfobar } from '@data-exploration-app/components/GPTInfobar';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { AllTab } from '@data-exploration-app/containers/All';
-import { routes } from '@data-exploration-app/containers/App';
-import { AssetSearchResultView } from '@data-exploration-app/containers/Asset/AssetSearchResultView';
-import { EventSearchResultView } from '@data-exploration-app/containers/Event/EventSearchResultView';
-import { ExplorationFilterToggle } from '@data-exploration-app/containers/Exploration/ExplorationFilterToggle';
-import { ExplorationSearchBar } from '@data-exploration-app/containers/Exploration/ExplorationSearchBar';
-import { FileSearchResultView } from '@data-exploration-app/containers/File/FileSearchResultView';
-import { SequenceSearchResultView } from '@data-exploration-app/containers/Sequence/SequenceSearchResultView';
-import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
-import { TimeseriesSearchResultView } from '@data-exploration-app/containers/Timeseries/TimeseriesSearchResultView';
-import { useResourceFilter } from '@data-exploration-app/context/ResourceSelectionContext';
-import { ThreeDSearchContextProvider } from '@data-exploration-app/context/ThreeDSearchContext';
-import {
-  useFlagDocumentGPT,
-  useFlagDocumentLabelsFilter,
-} from '@data-exploration-app/hooks';
-import {
-  useQueryString,
-  useCurrentResourceType,
-} from '@data-exploration-app/hooks/hooks';
-import {
-  useFilterSidebarState,
-  useCommonFilters,
-} from '@data-exploration-app/store';
-import {
-  useAssetFilters,
-  useEventsFilters,
-  useFileFilters,
-  useSequenceFilters,
-  useTimeseriesFilters,
-} from '@data-exploration-app/store/filter/selectors';
-import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
-import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation, ViewType } from '@data-exploration-lib/core';
 import {
   useAssetsMetadataKeys,
@@ -64,11 +29,41 @@ import {
   useSequencesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 
-import { useFlagDocumentsApiEnabled } from '../../hooks/flags/useFlagDocumentsApiEnabled';
+import { GPTInfobar } from '../../components/GPTInfobar';
+import { EXPLORATION } from '../../constants/metrics';
+import { useResourceFilter } from '../../context/ResourceSelectionContext';
+import {
+  useFlagDocumentGPT,
+  useFlagDocumentLabelsFilter,
+  useFlagDocumentsApiEnabled,
+} from '../../hooks';
+import { useCurrentResourceType, useQueryString } from '../../hooks/hooks';
+import {
+  useAssetFilters,
+  useCommonFilters,
+  useEventsFilters,
+  useFileFilters,
+  useFilterSidebarState,
+  useSequenceFilters,
+  useTimeseriesFilters,
+} from '../../store';
+import { useDocumentFilters } from '../../store/filter/selectors/documentSelectors';
+import { SEARCH_KEY } from '../../utils/constants';
+import { trackUsage } from '../../utils/Metrics';
+import { AllTab } from '../All';
+import { routes } from '../App';
+import { AssetSearchResultView } from '../Asset/AssetSearchResultView';
+import { EventSearchResultView } from '../Event/EventSearchResultView';
+import { FileSearchResultView } from '../File/FileSearchResultView';
 import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
+import { SequenceSearchResultView } from '../Sequence/SequenceSearchResultView';
+import { ThreeDSearchResultView } from '../ThreeD/ThreeDSearchResultView';
+import { TimeseriesSearchResultView } from '../Timeseries/TimeseriesSearchResultView';
 
 import { BreakJourneyPrompt } from './BreakJourneyPrompt';
 import { DetailsOverlay } from './DetailsOverlay';
+import { ExplorationFilterToggle } from './ExplorationFilterToggle';
+import { ExplorationSearchBar } from './ExplorationSearchBar';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${

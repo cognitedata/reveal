@@ -3,18 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import RuleMonitoring from '@simint-app/assets/RuleMonitoring.svg';
-import { GraphicContainer } from '@simint-app/components/shared/elements';
-import { useUserInfo } from '@simint-app/hooks/useUserInfo';
-import { CalculationDescriptionInfoDrawer } from '@simint-app/pages/CalculationConfiguration/steps/infoDrawers/CalculationDescriptionInfoDrawer';
-import type { AppLocationGenerics } from '@simint-app/routes';
-import { selectIsDeleteEnabled } from '@simint-app/store/capabilities/selectors';
-import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
-import { isBHPApproxMethodWarning } from '@simint-app/utils/common';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
-import { TRACKING_EVENTS } from '@simint-app/utils/metrics/constants';
-import { trackUsage } from '@simint-app/utils/metrics/tracking';
-import { isSuccessResponse } from '@simint-app/utils/responseUtils';
 import { parseISO } from 'date-fns';
 import styled from 'styled-components/macro';
 
@@ -44,6 +32,19 @@ import {
   useGetModelFileQuery,
   useRunModelCalculationMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
+
+import RuleMonitoring from '../../../assets/RuleMonitoring.svg';
+import { useUserInfo } from '../../../hooks/useUserInfo';
+import { CalculationDescriptionInfoDrawer } from '../../../pages/CalculationConfiguration/steps/infoDrawers/CalculationDescriptionInfoDrawer';
+import type { AppLocationGenerics } from '../../../routes';
+import { selectIsDeleteEnabled } from '../../../store/capabilities/selectors';
+import { selectProject } from '../../../store/simconfigApiProperties/selectors';
+import { isBHPApproxMethodWarning } from '../../../utils/common';
+import { createCdfLink } from '../../../utils/createCdfLink';
+import { TRACKING_EVENTS } from '../../../utils/metrics/constants';
+import { trackUsage } from '../../../utils/metrics/tracking';
+import { isSuccessResponse } from '../../../utils/responseUtils';
+import { GraphicContainer } from '../../shared/elements';
 
 import { CalculationRunTypeIndicator } from './CalculationRunTypeIndicator';
 import { CalculationScheduleIndicator } from './CalculationScheduleIndicator';
@@ -407,110 +408,100 @@ export function CalculationList({
               <Dropdown
                 content={
                   <Menu>
-                    {
-                      /* @ts-ignore */
-                      <Menu.Item
-                        icon="Info"
-                        iconPlacement="left"
-                        onClick={() => {
-                          if (calculation.configuration.calcTypeUserDefined) {
-                            navigate({
-                              to: createCdfLink(
-                                `${encodeURIComponent(
-                                  calculation.configuration.calculationType
-                                )}/${encodeURIComponent(
-                                  calculation.configuration.calcTypeUserDefined
-                                )}`
-                              ),
-                            });
-                          } else {
-                            navigate({
-                              to: createCdfLink(
-                                encodeURIComponent(
-                                  calculation.configuration.calculationType
-                                )
-                              ),
-                            });
-                          }
-                        }}
-                      >
-                        Calculation details
-                      </Menu.Item>
-                    }
-                    {
-                      /* @ts-ignore */
-                      <Menu.Item
-                        icon="History"
-                        iconPlacement="left"
-                        onClick={() => {
-                          const { modelName, simulator, calculationType } =
-                            calculation.configuration;
-
-                          trackUsage(
-                            TRACKING_EVENTS.MODEL_CALC_VIEW_RUN_HISTORY,
-                            {
-                              calculationType,
-                              modelName,
-                              simulator,
-                            }
-                          );
-
+                    <Menu.Item
+                      icon="Info"
+                      iconPlacement="left"
+                      onClick={() => {
+                        if (calculation.configuration.calcTypeUserDefined) {
                           navigate({
                             to: createCdfLink(
-                              '/calculations/runs',
-                              undefined,
-                              new URLSearchParams({
-                                modelName,
-                                simulator,
-                                calculationType,
-                              })
+                              `${encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )}/${encodeURIComponent(
+                                calculation.configuration.calcTypeUserDefined
+                              )}`
                             ),
                           });
-                        }}
-                      >
-                        Calculation run history
-                      </Menu.Item>
-                    }
+                        } else {
+                          navigate({
+                            to: createCdfLink(
+                              encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )
+                            ),
+                          });
+                        }
+                      }}
+                    >
+                      Calculation details
+                    </Menu.Item>
+                    <Menu.Item
+                      icon="History"
+                      iconPlacement="left"
+                      onClick={() => {
+                        const { modelName, simulator, calculationType } =
+                          calculation.configuration;
+
+                        trackUsage(
+                          TRACKING_EVENTS.MODEL_CALC_VIEW_RUN_HISTORY,
+                          {
+                            calculationType,
+                            modelName,
+                            simulator,
+                          }
+                        );
+
+                        navigate({
+                          to: createCdfLink(
+                            '/calculations/runs',
+                            undefined,
+                            new URLSearchParams({
+                              modelName,
+                              simulator,
+                              calculationType,
+                            })
+                          ),
+                        });
+                      }}
+                    >
+                      Calculation run history
+                    </Menu.Item>
                     <Divider />
 
-                    {
-                      /* @ts-ignore */
-                      <Menu.Item
-                        icon="Settings"
-                        iconPlacement="left"
-                        onClick={() => {
-                          trackUsage(TRACKING_EVENTS.MODEL_CALC_EDIT, {
-                            modelName: decodeURI(modelName),
-                            simulator,
-                            calculationType:
-                              calculation.configuration.calculationType,
+                    <Menu.Item
+                      icon="Settings"
+                      iconPlacement="left"
+                      onClick={() => {
+                        trackUsage(TRACKING_EVENTS.MODEL_CALC_EDIT, {
+                          modelName: decodeURI(modelName),
+                          simulator,
+                          calculationType:
+                            calculation.configuration.calculationType,
+                        });
+                        if (calculation.configuration.calcTypeUserDefined) {
+                          navigate({
+                            to: createCdfLink(
+                              `${encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )}/${encodeURIComponent(
+                                calculation.configuration.calcTypeUserDefined
+                              )}/configuration`
+                            ),
                           });
-                          if (calculation.configuration.calcTypeUserDefined) {
-                            navigate({
-                              to: createCdfLink(
-                                `${encodeURIComponent(
-                                  calculation.configuration.calculationType
-                                )}/${encodeURIComponent(
-                                  calculation.configuration.calcTypeUserDefined
-                                )}/configuration`
-                              ),
-                            });
-                          } else {
-                            navigate({
-                              to: createCdfLink(
-                                `${encodeURIComponent(
-                                  calculation.configuration.calculationType
-                                )}/configuration`
-                              ),
-                            });
-                          }
-                        }}
-                      >
-                        Edit configuration
-                      </Menu.Item>
-                    }
+                        } else {
+                          navigate({
+                            to: createCdfLink(
+                              `${encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )}/configuration`
+                            ),
+                          });
+                        }
+                      }}
+                    >
+                      Edit configuration
+                    </Menu.Item>
                     {isDeleteEnabled ? (
-                      // @ts-ignore
                       <Menu.Item
                         icon="Delete"
                         iconPlacement="left"

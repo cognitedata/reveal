@@ -1,34 +1,64 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { Dropdown, Menu, Button } from '@cognite/cogs.js';
+import { Menu, Button } from '@cognite/cogs.js';
+
+import Layers from '../../../utils/zindex';
 
 type FileMenuProps = {
   options: React.ReactNode[];
 };
 
 export const FilterMenu = ({ options }: FileMenuProps): JSX.Element => {
-  const filterMenu = (
-    <StyledMenu>
-      {options.map((option, index) => (
-        <React.Fragment key={`menu-filter-${String(index)}`}>
-          {option}
-        </React.Fragment>
-      ))}
-    </StyledMenu>
-  );
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setShowFilterMenu(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   return (
-    <Dropdown content={filterMenu}>
-      <Button icon="ChevronDown" iconPlacement="right">
+    <div ref={containerRef}>
+      <Button
+        icon="ChevronDown"
+        iconPlacement="right"
+        onClick={() => {
+          setShowFilterMenu(true);
+        }}
+        data-testid="more-filters-button"
+      >
         More filters
       </Button>
-    </Dropdown>
+      {showFilterMenu && (
+        <StyledMenu>
+          {options.map((option, index) => (
+            <React.Fragment key={`menu-filter-${String(index)}`}>
+              {option}
+            </React.Fragment>
+          ))}
+        </StyledMenu>
+      )}
+    </div>
   );
 };
 
 const StyledMenu = styled(Menu)`
+  position: absolute;
+  z-index: ${Layers.POPOVER};
   & > :not(:last-child) {
     margin-bottom: 8px;
   }

@@ -17,7 +17,7 @@ import { startPnidParsingWorkflow } from '../../../modules/workflows';
 
 export default function RunModelButton(): JSX.Element {
   const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();
-  const { jobStarted, setJobStarted } = useJobStarted();
+  const { jobStarted, setJobStarted, assetsLoaded } = useJobStarted();
 
   const { statusCount } = useParsingJob();
   const jobStatus = useJobStatus();
@@ -62,7 +62,7 @@ export default function RunModelButton(): JSX.Element {
       <Button
         type={isJobRejected ? 'secondary' : 'primary'}
         onClick={onRunModelClick}
-        disabled={jobStarted}
+        disabled={jobStarted || !assetsLoaded}
         icon={
           (jobStarted && 'Loader') || (isJobRejected && 'Refresh') || undefined
         }

@@ -1,19 +1,21 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { Status } from '@vision/api/annotation/types';
-import { makeSelectFileAnnotations } from '@vision/modules/Common/store/annotation/selectors';
-import { VisionAnnotationDataType } from '@vision/modules/Common/types';
+
+import { FileInfo } from '@cognite/sdk';
+
+import { Status } from '../../../../api/annotation/types';
+import { RootState } from '../../../../store/rootReducer';
+import { createFileInfo } from '../../../../store/util/StateUtils';
+import { getAnnotationColor } from '../../../../utils/colorUtils';
+import { makeSelectFileAnnotations } from '../../../Common/store/annotation/selectors';
+import { VisionAnnotationDataType } from '../../../Common/types';
 import {
   isImageClassificationData,
   isImageKeypointCollectionData,
-} from '@vision/modules/Common/types/typeGuards';
-import { getAnnotationLabelOrText } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { ReviewState } from '@vision/modules/Review/store/review/types';
-import { VisionReviewAnnotation } from '@vision/modules/Review/types';
-import { RootState } from '@vision/store/rootReducer';
-import { createFileInfo } from '@vision/store/util/StateUtils';
-import { getAnnotationColor } from '@vision/utils/colorUtils';
+} from '../../../Common/types/typeGuards';
+import { getAnnotationLabelOrText } from '../../../Common/Utils/AnnotationUtils/AnnotationUtils';
+import { VisionReviewAnnotation } from '../../types';
 
-import { FileInfo } from '@cognite/sdk';
+import { ReviewState } from './types';
 
 // selectors
 

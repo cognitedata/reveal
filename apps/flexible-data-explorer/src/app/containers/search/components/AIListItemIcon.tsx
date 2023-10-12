@@ -7,8 +7,8 @@ export const AIListItemIcon = () => (
     fill="none"
   >
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M1.2749 3.99999C1.2749 3.59959 1.5995 3.27499 1.9999 3.27499H13.9999C14.4003 3.27499 14.7249 3.59959 14.7249 3.99999C14.7249 4.4004 14.4003 4.72499 13.9999 4.72499H1.9999C1.5995 4.72499 1.2749 4.4004 1.2749 3.99999ZM1.2749 7.99999C1.2749 7.59959 1.5995 7.27499 1.9999 7.27499H7.9999C8.40031 7.27499 8.7249 7.59959 8.7249 7.99999C8.7249 8.4004 8.40031 8.72499 7.9999 8.72499H1.9999C1.5995 8.72499 1.2749 8.4004 1.2749 7.99999ZM1.9999 11.275C1.5995 11.275 1.2749 11.5996 1.2749 12C1.2749 12.4004 1.5995 12.725 1.9999 12.725H4.9999C5.40031 12.725 5.7249 12.4004 5.7249 12C5.7249 11.5996 5.40031 11.275 4.9999 11.275H1.9999Z"
       fill="#602ACF"
     />
@@ -25,8 +25,8 @@ export const AIListItemIcon = () => (
         gradientUnits="userSpaceOnUse"
         gradientTransform="translate(14 13.6667) rotate(-115.463) scale(7.75314)"
       >
-        <stop stop-color="#8E5CFF" />
-        <stop offset="1" stop-color="#2E1065" />
+        <stop stopColor="#8E5CFF" />
+        <stop offset="1" stopColor="#2E1065" />
       </radialGradient>
     </defs>
   </svg>

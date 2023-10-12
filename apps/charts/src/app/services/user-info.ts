@@ -1,5 +1,5 @@
 // import { CogniteClient } from '@cognite/sdk';
-// import { UserInfo } from '@charts-app/models/chart/types';
+// import { UserInfo } from '@cognite/charts-lib';
 
 export {};
 

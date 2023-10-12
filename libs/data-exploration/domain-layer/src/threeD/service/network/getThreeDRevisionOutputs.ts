@@ -5,13 +5,16 @@ import { ThreeDRevisionOutput } from '../types';
 export const getThreeDRevisionOutputs = async (
   sdk: CogniteClient,
   modelId?: number,
-  revisionId?: number
+  revisionId?: number,
+  formats?: string
 ) => {
+  const formatsQueryString = formats === undefined ? '' : `?format=${formats}`;
+
   return sdk
     .get(
       `${sdk.getBaseUrl()}/api/v1/projects/${
         sdk.project
-      }/3d/models/${modelId}/revisions/${revisionId}/outputs`
+      }/3d/models/${modelId}/revisions/${revisionId}/outputs${formatsQueryString}`
     )
     .then(
       (value: {

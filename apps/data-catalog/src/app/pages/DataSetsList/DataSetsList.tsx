@@ -1,11 +1,5 @@
 import { useMemo, useState } from 'react';
 
-import RowActions from '@data-catalog-app/components/data-sets-list/row-actions';
-import Page from '@data-catalog-app/components/page';
-import TableFilter, {
-  GovernanceStatus,
-} from '@data-catalog-app/components/table-filters';
-import { useHandleFilters } from '@data-catalog-app/utils/filterUtils';
 import isArray from 'lodash/isArray';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
@@ -20,12 +14,16 @@ import {
   useUpdateDataSetVisibility,
 } from '../../actions/index';
 import { useTranslation } from '../../common/i18n';
+import RowActions from '../../components/data-sets-list/row-actions';
+import Page from '../../components/page';
+import TableFilter, { GovernanceStatus } from '../../components/table-filters';
 import { useDataSetMode, useSelectedDataSet } from '../../context/index';
 import useDiscardChangesToast from '../../hooks/useDiscardChangesToast';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { useSearchParamState } from '../../hooks/useSearchParamState';
 import { useWithExtpipes } from '../../hooks/useWithExtpipes';
 import { CogsTableCellRenderer, trackUsage } from '../../utils';
+import { useHandleFilters } from '../../utils/filterUtils';
 import DataSetEditor from '../DataSetEditor';
 
 import { useTableColumns, DataSetRow, getLabelsList } from './TableColumns';
@@ -187,7 +185,6 @@ const DataSetsList = (): JSX.Element => {
                 editDataSet(record.key);
               },
               disabled: !hasWritePermissions,
-
               icon: 'Edit',
             },
             {
@@ -255,6 +252,7 @@ const DataSetsList = (): JSX.Element => {
         setUserWarned(false);
       }}
       disabled={!hasWritePermissions}
+      data-cy="create-data-set-button"
     >
       {t('create-data-set')}
     </Button>
@@ -302,6 +300,7 @@ const DataSetsList = (): JSX.Element => {
         justifyContent="space-between"
         style={{ marginBottom: 16 }}
         key="table-filters-wrapper"
+        data-cy="data-set-list-filters"
       >
         <TableFilter
           filteredCount={filteredTableData.length}
@@ -321,7 +320,7 @@ const DataSetsList = (): JSX.Element => {
           {CreateButton}
         </Flex>
       </Flex>
-      <div className="data-sets-list-table">
+      <div className="data-sets-list-table" data-cy="data-sets-table">
         <Table<DataSetRow>
           key="data-sets-table"
           columns={dataSetsTableColumns}

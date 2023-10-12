@@ -3,9 +3,9 @@ import { components, OptionProps } from 'react-select';
 
 import styled from 'styled-components';
 
-import { VisionOptionType } from '@vision/modules/Review/types';
-
 import { Icon, Menu, OptionType } from '@cognite/cogs.js';
+
+import { VisionOptionType } from '../../../Review/types';
 
 export const VisionSelectOption = (
   // @ts-expect-error ignoring errors for the migration

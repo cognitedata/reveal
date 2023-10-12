@@ -1,13 +1,15 @@
 {
   "name": "@cognite/user-profile-components",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "license": "UNLICENSED",
   "sideEffects": false,
+  "types": "index.esm.d.ts",
   "peerDependencies": {
     "@cognite/cogs.js": "^9",
+    "@cognite/cogs-lab": "^9",
     "react": "^18",
     "react-router-dom": "^6",
-    "styled-components": "^5",
-    "vite-plugin-svgr": "^3"
-  }
+    "styled-components": "^5"
+  },
+  "dependencies": {}
 }

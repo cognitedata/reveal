@@ -62,7 +62,12 @@ const TitleBar = ({ jobStatus }: { jobStatus: JobStatus }) => {
   const isJobDone = jobStatus === 'done';
 
   return (
-    <Flex row align style={{ width: '100%', justifyContent: 'space-between' }}>
+    <Flex
+      row
+      align
+      style={{ width: '100%', justifyContent: 'space-between' }}
+      data-testid="results-preview"
+    >
       <Title level={5} style={{ margin: '16px' }}>
         Results preview{' '}
         <span style={{ fontWeight: 'lighter', color: '#8C8C8C' }}>

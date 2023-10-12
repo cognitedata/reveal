@@ -139,6 +139,7 @@ export default function OIDCConfigContainer() {
       <OIDCConfigurationWarning />
       <Form
         {...formItemLayout}
+        data-testid="access-management-openid-connect-form"
         onFinish={handleSubmit}
         initialValues={{
           ...projectSettings?.oidcConfiguration,

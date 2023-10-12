@@ -1,10 +1,6 @@
 import styled from 'styled-components';
 
 import {
-  getFieldType,
-  renderFieldType,
-} from '@platypus-app/utils/graphql-utils';
-import {
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
   ObjectTypeDefinitionNode,
@@ -12,6 +8,7 @@ import {
 
 import { Body, Icon, Chip, Title, Tooltip } from '@cognite/cogs.js';
 
+import { getFieldType, renderFieldType } from '../../../utils/graphql-utils';
 import {
   getTypeDirective,
   capitalizeFirst,

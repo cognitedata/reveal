@@ -1,8 +1,5 @@
 import styled from 'styled-components';
 
-import { ZIndexLayer } from '@data-catalog-app/common/zIndex';
-import { getContainer } from '@data-catalog-app/utils/shared';
-
 import {
   Button,
   Colors,
@@ -10,6 +7,9 @@ import {
   DropdownProps as CogsDropdownProps,
   Menu,
 } from '@cognite/cogs.js';
+
+import { ZIndexLayer } from '../../common/zIndex';
+import { getContainer } from '../../utils';
 
 type DropdownProps = CogsDropdownProps;
 

@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-location';
 
-import { ModelForm } from '@simint-app/components/forms/ModelForm';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import styled from 'styled-components/macro';
+
+import { ModelForm } from '../../../components/forms/ModelForm';
+import { createCdfLink } from '../../../utils/createCdfLink';
 
 export function NewModel() {
   const navigate = useNavigate();

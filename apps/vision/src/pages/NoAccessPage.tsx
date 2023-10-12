@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { Graphic, GraphicOptions } from '@vision/assets/Graphics/Graphic';
-import * as NavLinks from '@vision/constants/NavLinks';
-import { AccessPermission } from '@vision/utils/types';
-
 import { Body, Button, Title } from '@cognite/cogs.js';
+
+import { Graphic, GraphicOptions } from '../assets/Graphics/Graphic';
+import * as NavLinks from '../constants/NavLinks';
+import { AccessPermission } from '../utils/types';
 
 type Props = {
   capabilities: Array<AccessPermission>;
@@ -31,8 +31,6 @@ const getPageTitle = (requestedPathName: string) => {
       return 'Image and video management';
     case 'process':
       return 'Contextualize Imagery Data';
-    case 'models':
-      return 'Vision AutoML';
     default:
       return '';
   }

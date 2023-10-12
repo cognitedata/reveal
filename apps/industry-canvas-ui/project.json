@@ -7,13 +7,11 @@
     "build": {
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/industry-canvas-ui",
         "index": "apps/industry-canvas-ui/src/index.html",
         "main": "apps/industry-canvas-ui/src/index.tsx",
-        "runtimeChunk": false,
-        "vendorChunk": false,
-        "commonChunk": false,
         "tsConfig": "apps/industry-canvas-ui/tsconfig.app.json",
         "assets": ["apps/industry-canvas-ui/src/assets"],
         "styles": [],
@@ -22,90 +20,41 @@
       },
       "configurations": {
         "development": {
-          "optimization": false,
-          "outputHashing": "all",
-          "sourceMap": true,
-          "extractCss": false,
-          "namedChunks": false,
           "extractLicenses": false,
-          "vendorChunk": false,
-          "runtimeChunk": false,
-          "budgets": []
-        },
-        "preview": {
           "optimization": false,
-          "outputHashing": "all",
           "sourceMap": true,
-          "extractCss": true,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false,
-          "runtimeChunk": false,
-          "budgets": []
-        },
-        "staging": {
-          "optimization": false,
-          "outputHashing": "all",
-          "sourceMap": true,
-          "extractCss": true,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false,
-          "runtimeChunk": false,
-          "budgets": []
+          "vendorChunk": false
         },
         "production": {
-          "optimization": false,
+          "optimization": true,
           "outputHashing": "all",
-          "sourceMap": true,
-          "extractCss": true,
+          "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
-          "vendorChunk": false,
-          "budgets": []
+          "vendorChunk": false
         }
       }
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
+      "defaultConfiguration": "development",
       "options": {
         "buildTarget": "industry-canvas-ui:build",
-        "hmr": true
+        "allowedHosts": "all",
+        "headers": {
+          "Access-Control-Allow-Origin": "*"
+        },
+        "ssl": true,
+        "port": 3011
       },
       "configurations": {
         "development": {
           "buildTarget": "industry-canvas-ui:build:development",
-          "hmr": true,
-          "liveReload": true,
-          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com"
-        },
-        "preview": {
-          "buildTarget": "industry-canvas-ui:build:preview",
-          "hmr": false
+          "hmr": true
         },
         "production": {
           "buildTarget": "industry-canvas-ui:build:production",
           "hmr": false
-        }
-      },
-      "defaultConfiguration": "development"
-    },
-    "serve-static": {
-      "executor": "@nrwl/web:file-server",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "industry-canvas-ui:build",
-        "port": 3010
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "industry-canvas-ui:build:development"
-        },
-        "preview": {
-          "buildTarget": "industry-canvas-ui:build:preview"
-        },
-        "production": {
-          "buildTarget": "industry-canvas-ui:build:production"
         }
       }
     },
@@ -114,6 +63,25 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/industry-canvas-ui/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/industry-canvas-ui/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "industry-canvas-ui:serve:development",
+        "env": {
+          "ORG": "cog-e2e",
+          "PROJECT": "e2e-greenfield",
+          "CLUSTER": "greenfield.cognitedata.com",
+          "IDP_INTERNAL_ID": "09f375ff-13b6-4d58-95fd-869b098d4808"
+        }
+      },
+      "configurations": {
+        "development": {
+          "devServerTarget": "industry-canvas-ui:serve:development"
+        }
       }
     }
   },

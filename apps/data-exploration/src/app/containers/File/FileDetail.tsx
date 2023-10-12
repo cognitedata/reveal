@@ -5,9 +5,9 @@ import styled from 'styled-components';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { FileInfo } from '@data-exploration/containers';
+import { useCdfUserHistoryService } from '@user-history';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs, Infobar } from '@cognite/cogs.js';
 import {
   FilePreview as CogniteFilePreview,
@@ -17,26 +17,25 @@ import {
 import { CogniteError, FileInfo as FileInfoType } from '@cognite/sdk';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 
-import { BreadcrumbsV2 } from '@data-exploration-app/components/Breadcrumbs/BreadcrumbsV2';
-import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
-import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
-import {
-  useEndJourney,
-  usePushJourney,
-  useResourceDetailSelectedTab,
-} from '@data-exploration-app/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import {
   APPLICATION_ID,
   useTranslation,
   SUB_APP_PATH,
-  createInternalLink,
 } from '@data-exploration-lib/core';
 import { useFileAnnotationsResourceIds } from '@data-exploration-lib/domain-layer';
 
+import { BreadcrumbsV2 } from '../../components/Breadcrumbs/BreadcrumbsV2';
+import ResourceTitleRow from '../../components/ResourceTitleRow';
+import ResourceSelectionContext from '../../context/ResourceSelectionContext';
+import {
+  useEndJourney,
+  usePushJourney,
+  useResourceDetailSelectedTab,
+} from '../../hooks';
+import { trackUsage } from '../../utils/Metrics';
 import { AllTab } from '../All';
+import { DetailsTabWrapper } from '../Common/element';
+import { ResourceDetailsTabs } from '../ResourceDetails';
 
 // FilePreviewTabType;
 // - preview
@@ -127,7 +126,7 @@ export const FileDetail = ({
         userHistoryService.logNewResourceView({
           application: SUB_APP_PATH,
           name: fileInfo?.name,
-          path: createInternalLink(pathname, searchParams),
+          path: pathname.concat(searchParams),
         });
       trackUsage('Exploration.Preview.File.MimeType', {
         mimeType: fileInfo.mimeType,
@@ -162,7 +161,7 @@ export const FileDetail = ({
   };
 
   return (
-    <>
+    <FileDetailWrapper data-testid="file-detail">
       <BreadcrumbsV2 />
       <ResourceTitleRow
         item={{ id: fileId!, type: resourceType || 'file' }}
@@ -184,7 +183,7 @@ export const FileDetail = ({
             key="preview"
             tabKey="preview"
           >
-            <PreviewTabWrapper>
+            <PreviewTabWrapper data-testid="file-preview">
               {editMode && (
                 <Infobar
                   type="neutral"
@@ -235,10 +234,14 @@ export const FileDetail = ({
           </Tabs.Tab>,
         ]}
       />
-    </>
+    </FileDetailWrapper>
   );
 };
 
 const PreviewTabWrapper = styled.div`
   height: 100%;
+`;
+
+const FileDetailWrapper = styled.div`
+  display: contents;
 `;

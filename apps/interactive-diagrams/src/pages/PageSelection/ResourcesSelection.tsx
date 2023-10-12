@@ -64,6 +64,7 @@ export default function ResourcesSelection(
         setSelectAll={setSelectAll}
         setSelectedRowKeys={setSelectedRowKeys}
         showSelected={showSelected}
+        data-testid="resources-selection-table"
       />
     </Flex>
   );

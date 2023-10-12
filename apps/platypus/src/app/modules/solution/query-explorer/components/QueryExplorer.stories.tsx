@@ -1,13 +1,13 @@
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
+
 import {
   Wrapper,
   MainTitle,
   MainDescription,
   GroupTitle,
   Group,
-} from '@platypus-app/components/Styles/storybook';
-import configureStory from '@platypus-app/tests/configureStorybook';
-
+} from '../../../../components/Styles/storybook';
+import configureStory from '../../../../tests/configureStorybook';
 import graphQlQueryFetcher from '../utils/graphqlQueryFetcher';
 
 import { FETCHER_API, DEFAULT_QUERY } from './query-explorer.mock';

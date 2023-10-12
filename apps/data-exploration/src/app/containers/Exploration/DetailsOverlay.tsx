@@ -3,18 +3,15 @@ import { useSearchParams } from 'react-router-dom';
 
 import { ResizableOverlay } from '@data-exploration/components';
 
-import { AssetDetail } from '@data-exploration-app/containers/Asset/AssetDetail';
-import { EventDetail } from '@data-exploration-app/containers/Event/EventDetail';
-import { FileDetail } from '@data-exploration-app/containers/File/FileDetail';
-import { SequenceDetail } from '@data-exploration-app/containers/Sequence/SequenceDetail';
-import { TimeseriesDetail } from '@data-exploration-app/containers/Timeseries/TimeseriesDetail';
-import {
-  useGetJourney,
-  useJourney,
-  useViewModeToggle,
-} from '@data-exploration-app/hooks';
-import { useFilterSidebarState } from '@data-exploration-app/store';
 import { VIEW_MODE_FIELD } from '@data-exploration-lib/core';
+
+import { useGetJourney, useJourney, useViewModeToggle } from '../../hooks';
+import { useFilterSidebarState } from '../../store';
+import { AssetDetail } from '../Asset/AssetDetail';
+import { EventDetail } from '../Event/EventDetail';
+import { FileDetail } from '../File/FileDetail';
+import { SequenceDetail } from '../Sequence/SequenceDetail';
+import { TimeseriesDetail } from '../Timeseries/TimeseriesDetail';
 
 export const DetailsOverlay: React.FC<unknown> = () => {
   const [showFilter] = useFilterSidebarState();

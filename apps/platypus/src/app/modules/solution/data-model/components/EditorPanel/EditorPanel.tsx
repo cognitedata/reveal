@@ -1,21 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Suspense, useState } from 'react';
 
-import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
+import { SegmentedControl } from '@cognite/cogs.js';
+
+import { ErrorBoundary } from '../../../../../components/ErrorBoundary/ErrorBoundary';
 import {
   PageToolbar,
   Size,
-} from '@platypus-app/components/PageToolbar/PageToolbar';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useUIEditorFeatureFlag } from '@platypus-app/flags';
-import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-
-import { SegmentedControl } from '@cognite/cogs.js';
-
+} from '../../../../../components/PageToolbar/PageToolbar';
+import { Spinner } from '../../../../../components/Spinner/Spinner';
+import { useUIEditorFeatureFlag } from '../../../../../flags';
+import { useDataModelVersions } from '../../../../../hooks/useDataModelActions';
+import useSelector from '../../../../../hooks/useSelector';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { DataModelState } from '../../../../../redux/reducers/global/dataModelReducer';
+import { useDataModelState } from '../../../hooks/useDataModelState';
 import { SchemaEditorMode } from '../../types';
 import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
 import { ErrorsByGroup } from '../GraphqlCodeEditor/Model';
@@ -54,9 +53,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
   // for fdm v3 users, only show the ui editor if the feature toggle is on.
   const isUIEditorVisible = isUIEditorFlagEnabled;
 
-  const [currentView, setCurrentView] = useState(
-    isUIEditorVisible ? 'ui' : 'code'
-  );
+  const [currentView, setCurrentView] = useState('code');
 
   const { data: dataModelVersionList } = useDataModelVersions(
     externalId,
@@ -66,7 +63,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
     useSelector<DataModelState>((state) => state.dataModel);
 
   const isUIDisabled = editorMode === SchemaEditorMode.View || isPublishing;
-  const { updateGraphQlSchema } = useDataModelState();
+  const { updateGraphQlSchema, setCurrentTypeName } = useDataModelState();
 
   return (
     <div
@@ -81,7 +78,13 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
         {isUIEditorVisible && (
           <SegmentedControl
             currentKey={currentView}
-            onButtonClicked={setCurrentView}
+            onButtonClicked={(key) => {
+              setCurrentView(key);
+
+              // If you remove the current type from code and switch to UI
+              // The UI will crash. This fixes that issue
+              setCurrentTypeName(null);
+            }}
             size="small"
           >
             <SegmentedControl.Button
@@ -105,6 +108,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
           <GraphqlCodeEditor
             key={`graphql-code-editor-version-${dataModelVersionList?.length}`}
             space={space}
+            dataModelExternalId={externalId}
             currentTypeName={currentTypeName || undefined}
             typeDefs={typeDefs}
             code={graphQlSchema}
@@ -117,9 +121,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
         </Suspense>
       ) : (
         <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
-          <div style={{ flexGrow: 1, overflow: 'auto' }}>
-            <UIEditor disabled={isUIDisabled} />
-          </div>
+          <UIEditor disabled={isUIDisabled} />
         </ErrorBoundary>
       )}
     </div>

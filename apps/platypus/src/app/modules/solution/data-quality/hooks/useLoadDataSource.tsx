@@ -1,16 +1,17 @@
 import { useEffect } from 'react';
 
+import { DataModelVersion } from '@fusion/data-modeling';
+import { useQueryClient } from '@tanstack/react-query';
+import { v4 as uuidv4 } from 'uuid';
+
+import { Notification } from '../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../hooks/useTranslation';
 import {
   DataSourceDto,
   DataSourceDraft,
   useCreateDataSources,
   useListDataSources,
-} from '@data-quality/api/codegen';
-import { DataModelVersion } from '@fusion/data-modeling';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useQueryClient } from '@tanstack/react-query';
-import { v4 as uuidv4 } from 'uuid';
+} from '../api/codegen';
 
 import { useAccessControl } from './useAccessControl';
 import { useDataModel } from './useDataModel';

@@ -25,21 +25,7 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": [
-              "@platypus-app",
-              "@data-exploration-app",
-              "@vision",
-              "@data-exploration-components",
-              "@data-exploration/components",
-              "@data-exploration-lib/domain-layer",
-              "@data-quality",
-              "@platypus-core",
-              "@cognite/platypus-cdf-cli",
-              "@cognite/data-exploration",
-              "@charts-app",
-              "@entity-matching-app",
-              "@data-catalog-app"
-            ],
+            "allow": [],
             "depConstraints": [
               {
                 "sourceTag": "*",

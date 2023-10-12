@@ -18,3 +18,4 @@ export const MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR = 'navFromAlertSidebar';
 export const MONITORING_SIDEBAR_ALERT_COUNT_KEY = `monitoring-alerts`;
 export const MONITORING_FILTER = 'monitoringFilter';
 export const ALERTING_FILTER = 'alertingFilter';
+export const MONITORING_SOURCE_CHART = `CHARTS`;

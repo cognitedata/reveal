@@ -3,14 +3,14 @@ import { Controller } from 'react-hook-form';
 
 import styled from 'styled-components';
 
-import { useTranslations } from '@charts-app/hooks/translations';
-import { trackUsage } from '@charts-app/services/metrics';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { Divider, Row } from 'antd';
 import debounce from 'lodash/debounce';
 
 import { Button, Icon, Select, toast } from '@cognite/cogs.js';
-import { CogniteError } from '@cognite/sdk';
+
+import { useTranslations } from '../../hooks/translations';
+import { trackUsage } from '../../services/metrics';
+import { makeDefaultTranslations } from '../../utils/translations';
 
 import { useCreateMonitoringFolder, useMonitoringFolders } from './hooks';
 
@@ -51,13 +51,7 @@ const MonitoringFolderSelect: React.FC<Props> = ({
 
   useEffect(() => {
     if (createMonitoringJobError) {
-      const allErrors: CogniteError =
-        createMonitoringJobErrorMsg as CogniteError;
-      const messages = allErrors
-        .toJSON()
-        .message.errors.map((err: any) => err.message)
-        .join(',');
-      toast.error(`${createMonitoringJobErrorText} ${messages}`);
+      toast.error(`${createMonitoringJobErrorText}`);
     }
   }, [
     createMonitoringJobError,

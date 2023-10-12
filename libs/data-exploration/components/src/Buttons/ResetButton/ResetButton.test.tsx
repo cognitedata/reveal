@@ -14,7 +14,7 @@ describe('ResetButton', () => {
     const onClick = jest.fn();
     render(<ResetButton onClick={onClick} />);
 
-    fireEvent.click(screen.getByText(RESET));
+    fireEvent.click(screen.getByRole('button', { name: RESET }));
     expect(onClick).toHaveBeenCalled();
   });
 });

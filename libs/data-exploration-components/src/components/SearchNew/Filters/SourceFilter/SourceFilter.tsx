@@ -3,10 +3,10 @@ import * as React from 'react';
 import { AggregatedFilterV2 } from '@data-exploration/containers';
 import head from 'lodash/head';
 
-import { extractSources, MultiSelectFilter } from '@cognite/data-exploration';
-
 import { useTranslation } from '@data-exploration-lib/core';
 
+import { extractSources } from '../../../../utils';
+import { MultiSelectFilter } from '../../../MultiSelectFilter';
 import { OptionValue } from '../types';
 
 export interface SourceFilterProps<T extends { source?: string }> {

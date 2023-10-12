@@ -5,7 +5,11 @@ type ResourceTab =
   | 'Events'
   | 'Sequence'
   | 'All resources'
-  | 'Hierarchy';
+  | 'Hierarchy'
+  | 'Details'
+  | '3D';
+
+type SearchResultMatchType = 'Exact' | 'Partial' | 'Fuzzy';
 
 Cypress.Commands.add(
   'goToTab',
@@ -28,7 +32,7 @@ Cypress.Commands.add('performSearch', (searchString: string) => {
 
 Cypress.Commands.add('clearSearchInput', () => {
   cy.log('clear search input');
-  cy.get('[aria-label="Clear input field"]').click();
+  cy.clickIconButton('Clear input field');
 });
 
 Cypress.Commands.add('fuzzySearchDisable', () => {
@@ -43,18 +47,6 @@ Cypress.Commands.add('fuzzySearchEnable', () => {
   cy.get('input[role="switch"]').then(($toggle) => {
     if ($toggle.is(':not(:checked)')) {
       cy.findAllByTestId('fuzzy-search-toggle').click({ multiple: true });
-    }
-  });
-});
-
-Cypress.Commands.add('columnSelection', (columnName) => {
-  cy.get('[aria-label="Column Selection"]').click();
-
-  cy.get(`[id=${columnName}]`).then(($columnCheckbox) => {
-    if ($columnCheckbox.is(':not(:checked)')) {
-      cy.get(`[id=${columnName}]`).click();
-    } else {
-      cy.log(`${columnName} column is already selected`);
     }
   });
 });
@@ -74,13 +66,32 @@ Cypress.Commands.add('includeSearchParameter', (parameterID) => {
     }
   });
 });
+
+Cypress.Commands.add('resetSearchFilters', () => {
+  cy.log('reset search filters');
+  cy.clickButton('Reset');
+});
+
+Cypress.Commands.add(
+  'shouldExistMatchLabelBy',
+  (type: SearchResultMatchType, property: string) => {
+    cy.contains(new RegExp(`${type} match: .*${property}.*`)).should('exist');
+  }
+);
+
+Cypress.Commands.add('shouldExistExactMatchLabelBy', (property: string) => {
+  cy.contains(new RegExp(`Exact match: .*${property}.*`)).should('exist');
+});
+
 export interface SearchCommand {
   goToTab(tab: ResourceTab): void;
   performSearch(searchString: string): void;
   clearSearchInput(): void;
   fuzzySearchDisable(): void;
   fuzzySearchEnable(): void;
-  columnSelection(columnName: string): void;
   excludeSearchParameter(parameterName: string): void;
   includeSearchParameter(parameterName: string): void;
+  resetSearchFilters(): void;
+  shouldExistMatchLabelBy(type: SearchResultMatchType, property: string): void;
+  shouldExistExactMatchLabelBy(property: string): void;
 }

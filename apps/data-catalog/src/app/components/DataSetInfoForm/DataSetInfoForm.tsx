@@ -1,29 +1,28 @@
 import Select, { components, OptionProps } from 'react-select';
 
-import { useCdfGroups, useLabelSuggestions } from '@data-catalog-app/actions';
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import InfoTooltip from '@data-catalog-app/components/InfoTooltip';
-import theme from '@data-catalog-app/styles/theme';
-import { Col } from '@data-catalog-app/utils';
-import {
-  NAME_MAX_LENGTH,
-  DESC_MAX_LENGTH,
-} from '@data-catalog-app/utils/constants';
-import { getReadableCapabilities } from '@data-catalog-app/utils/shared';
-import {
-  SectionTitle,
-  TitleOrnament,
-  InputField,
-  OptionWrapper,
-  OptionTitle,
-  OptionDescription,
-  FieldLabel,
-  RequiredFieldLabel,
-} from '@data-catalog-app/utils/styledComponents';
 import CreatableSelect from 'react-select/creatable';
 
 import { Switch, Collapse, Chip, Infobox } from '@cognite/cogs.js';
 import { Group } from '@cognite/sdk';
+
+import { useCdfGroups, useLabelSuggestions } from '../../actions';
+import { useTranslation } from '../../common/i18n';
+import theme from '../../styles/theme';
+import {
+  Col,
+  DESC_MAX_LENGTH,
+  FieldLabel,
+  getReadableCapabilities,
+  InputField,
+  NAME_MAX_LENGTH,
+  OptionDescription,
+  OptionTitle,
+  OptionWrapper,
+  RequiredFieldLabel,
+  SectionTitle,
+  TitleOrnament,
+} from '../../utils';
+import InfoTooltip from '../InfoTooltip';
 
 const { Panel } = Collapse;
 
@@ -106,6 +105,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
         type="text"
         placeholder={t('name')}
         error={nameTooLongError}
+        data-cy="dataset-form-name-input"
       />
 
       <RequiredFieldLabel>{t('description')}</RequiredFieldLabel>
@@ -121,6 +121,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
         placeholder={t('description')}
         size="large"
         error={descTooLongError}
+        data-cy="dataset-form-description-input"
       />
 
       <FieldLabel>{t('label_other')}</FieldLabel>
@@ -158,6 +159,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
                 value: label,
               }))
           )}
+        data-cy="dataset-form-labels-select"
       />
       <FieldLabel>
         <InfoTooltip
@@ -210,6 +212,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
         css={{
           marginTop: '20px',
         }}
+        className="dataset-form-advanced-options-accordion"
       >
         <Panel
           style={{ border: '0px', padding: '0px' }}
@@ -227,6 +230,7 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
             }}
             type="text"
             placeholder={t('external-id')}
+            data-cy="dataset-form-external-id-input"
           />
         </Panel>
       </Collapse>

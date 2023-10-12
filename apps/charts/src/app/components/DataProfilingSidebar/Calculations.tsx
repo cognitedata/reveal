@@ -5,21 +5,15 @@
 import { FunctionComponent, useState } from 'react';
 import { Elements } from 'react-flow-renderer';
 
-import {
-  NodeDataDehydratedVariants,
-  NodeTypes,
-} from '@charts-app/components/NodeEditor/V2/types';
-import {
-  Chart,
-  ChartSource,
-  ChartWorkflowV2,
-} from '@charts-app/models/chart/types';
-import { addWorkflow, removeSource } from '@charts-app/models/chart/updates';
-import { getEntryColor } from '@charts-app/utils/colors';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { v4 as uuidv4 } from 'uuid';
 
+import { Chart, ChartSource, ChartWorkflowV2 } from '@cognite/charts-lib';
 import { Switch } from '@cognite/cogs.js';
+
+import { addWorkflow, removeSource } from '../../models/chart/updates';
+import { getEntryColor } from '../../utils/colors';
+import { makeDefaultTranslations } from '../../utils/translations';
+import { NodeDataDehydratedVariants, NodeTypes } from '../NodeEditor/V2/types';
 
 type Props = {
   chart: Chart;

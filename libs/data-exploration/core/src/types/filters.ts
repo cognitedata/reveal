@@ -11,6 +11,10 @@ import { ResourceType } from './resource';
 
 export type FilterResourceType = ResourceType | 'document' | 'common';
 
+export interface InternalChartsFilters {
+  isPublic?: boolean;
+}
+
 export interface FilterState {
   common: InternalCommonFilters;
   asset: InternalAssetFilters;
@@ -20,6 +24,7 @@ export interface FilterState {
   event: InternalEventsFilters;
   document: InternalDocumentFilter;
   threeD: InternalThreeDFilters;
+  charts: InternalChartsFilters;
 }
 
 export interface FilterProps {

@@ -5,15 +5,15 @@ import {
   DataModelTypeDefsType,
   DataModelVersion,
 } from '@platypus/platypus-core';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useDebounce } from '@platypus-app/hooks/useDebounce';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { GridReadyEvent } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 import { CogDataList } from '@cognite/cog-data-grid';
 import { Button, Input, Flex } from '@cognite/cogs.js';
 
+import { Notification } from '../../../../../../components/Notification/Notification';
+import { useDebounce } from '../../../../../../hooks/useDebounce';
+import { useTranslation } from '../../../../../../hooks/useTranslation';
 import { useNestedListDataSource } from '../../../hooks/useNestedListDataSource';
 import { usePreviewData } from '../../../hooks/usePreviewData';
 

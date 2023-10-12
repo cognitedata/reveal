@@ -1,8 +1,5 @@
 import React from 'react';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { styleScope } from '@entity-matching-app/styles/styleScope';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   render as testingLibraryRender,
@@ -11,6 +8,10 @@ import {
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { styleScope } from '../../styles/styleScope';
 
 export const render = (
   ui: React.ReactElement,

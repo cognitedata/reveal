@@ -3,21 +3,21 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import ExifIcon from '@vision/assets/exifIcon';
-import { VisionMode } from '@vision/constants/enums/VisionEnums';
-import { ActionMenu } from '@vision/modules/Common/Components/ActionMenu/ActionMenu';
-import { AnnotationsBadgePopover } from '@vision/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
-import { ReviewButton } from '@vision/modules/Common/Components/ReviewButton/ReviewButton';
-import { SelectionCheckbox } from '@vision/modules/Common/Components/SelectionCheckbox/SelectionCheckbox';
-import { Thumbnail } from '@vision/modules/Common/Components/Thumbnail/Thumbnail';
-import { makeSelectTotalAnnotationCountForFileIds } from '@vision/modules/Common/store/annotation/selectors';
-import { TableDataItem } from '@vision/modules/Common/types';
-import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
-import { isProcessingFile } from '@vision/modules/Process/store/utils';
-import { RootState } from '@vision/store/rootReducer';
-
 import { Tooltip } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+
+import ExifIcon from '../../../../assets/exifIcon';
+import { VisionMode } from '../../../../constants/enums/VisionEnums';
+import { RootState } from '../../../../store/rootReducer';
+import { makeSelectJobStatusForFile } from '../../../Process/store/selectors';
+import { isProcessingFile } from '../../../Process/store/utils';
+import { makeSelectTotalAnnotationCountForFileIds } from '../../store/annotation/selectors';
+import { TableDataItem } from '../../types';
+import { ActionMenu } from '../ActionMenu/ActionMenu';
+import { AnnotationsBadgePopover } from '../AnnotationsBadge/AnnotationBadgePopover';
+import { ReviewButton } from '../ReviewButton/ReviewButton';
+import { SelectionCheckbox } from '../SelectionCheckbox/SelectionCheckbox';
+import { Thumbnail } from '../Thumbnail/Thumbnail';
 
 export const FileGridPreview = ({
   item,

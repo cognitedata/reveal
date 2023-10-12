@@ -1,5 +1,15 @@
 /* eslint-disable no-underscore-dangle */
 import {
+  UnsavedVisionAnnotation,
+  VisionAnnotationDataType,
+} from '../../../modules/Common/types';
+import {
+  isImageAssetLinkData,
+  isImageExtractedTextData,
+  isImageKeypointCollectionData,
+  isImageObjectDetectionData,
+} from '../../../modules/Common/types/typeGuards';
+import {
   AnnotationAttributes,
   CDFAnnotationTypeEnum,
   ImageAssetLink,
@@ -8,19 +18,9 @@ import {
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   Status,
-} from '@vision/api/annotation/types';
-import { isLegacyJobResultItem } from '@vision/api/vision/detectionModels/detectionUtils';
-import {
-  UnsavedVisionAnnotation,
-  VisionAnnotationDataType,
-} from '@vision/modules/Common/types';
-import {
-  isImageAssetLinkData,
-  isImageExtractedTextData,
-  isImageKeypointCollectionData,
-  isImageObjectDetectionData,
-} from '@vision/modules/Common/types/typeGuards';
+} from '../../annotation/types';
 
+import { isLegacyJobResultItem } from './detectionUtils';
 import {
   GaugeReaderJobAnnotation,
   LegacyVisionJobResultItem,
@@ -292,35 +292,6 @@ export function convertVisionJobResultItemToUnsavedVisionAnnotation(
                         CDFAnnotationTypeEnum.ImagesKeypointCollection,
                       data: annotationDataKeypointCollection,
                       ...commonProperties,
-                    }
-                  : null;
-              }
-              case VisionDetectionModelType.CustomModel: {
-                const annotationData =
-                  convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
-                    visionJobAnnotation
-                  );
-                if (annotationData) {
-                  return annotationData
-                    ? {
-                        ...commonProperties,
-                        annotationType:
-                          CDFAnnotationTypeEnum.ImagesObjectDetection,
-                        data: annotationData,
-                      }
-                    : null;
-                }
-
-                const annotationDataClassification =
-                  convertVisionJobAnnotationToImageClassification(
-                    visionJobAnnotation
-                  );
-                return annotationDataClassification
-                  ? {
-                      ...commonProperties,
-                      annotationType:
-                        CDFAnnotationTypeEnum.ImagesClassification,
-                      data: annotationDataClassification,
                     }
                   : null;
               }

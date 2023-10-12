@@ -1,32 +1,35 @@
 import { useEffect } from 'react';
 
-import {
-  TopContainer,
-  TopContainerAside,
-  TopContainerTitle,
-} from '@charts-app/components/Common/SidebarElements';
-import { useMonitoringFoldersWithJobs } from '@charts-app/components/MonitoringSidebar/hooks';
-import {
-  JobAndAlertsFilter,
-  FilterOption,
-  ALERTING_FILTER_OPTIONS,
-} from '@charts-app/components/MonitoringSidebar/JobAndAlertsFilter';
-import {
-  useGetTsExternalIdsFromScheduledCalculations,
-  useGetTsIdsFromTimeseriesCollection,
-} from '@charts-app/domain/chart/internal/queries/useGetTSIds';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { jobsToAlerts } from '@charts-app/pages/ChartViewPage/NotificationIndicator';
-import { trackUsage } from '@charts-app/services/metrics';
-import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from '@charts-app/utils/constants';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { Button, Icon, toast, Tooltip } from '@cognite/cogs.js';
 import { saveToLocalStorage } from '@cognite/storage';
 
-import { ALERTING_FILTER } from '../../utils/constants';
+import {
+  TopContainer,
+  TopContainerAside,
+  TopContainerTitle,
+} from '../../components/Common/SidebarElements';
+import { useMonitoringFoldersWithJobs } from '../../components/MonitoringSidebar/hooks';
+import {
+  JobAndAlertsFilter,
+  FilterOption,
+  ALERTING_FILTER_OPTIONS,
+} from '../../components/MonitoringSidebar/JobAndAlertsFilter';
+import {
+  useGetTsExternalIdsFromScheduledCalculations,
+  useGetTsIdsFromTimeseriesCollection,
+} from '../../domain/chart/internal/queries/useGetTSIds';
+import { useSearchParam } from '../../hooks/navigation';
+import { useTranslations } from '../../hooks/translations';
+import { jobsToAlerts } from '../../pages/ChartViewPage/NotificationIndicator';
+import { trackUsage } from '../../services/metrics';
+import {
+  MONITORING_SIDEBAR_ALERT_COUNT_KEY,
+  ALERTING_FILTER,
+} from '../../utils/constants';
+import { makeDefaultTranslations } from '../../utils/translations';
+import { TempPromoChip } from '../TempPromoChip/TempPromoChip';
 
 import { DisplayAlerts } from './DisplayAlerts';
 import { JobsWithAlertsContainer, SidebarWithScroll } from './elements';
@@ -35,7 +38,9 @@ const defaultTranslation = makeDefaultTranslations(
   'Alerts',
   'Hide',
   'Unable to load alerts',
-  'Show'
+  'Show',
+  'Beta',
+  'This feature is available for beta testing and will likely change. Use it for testing purposes only.'
 );
 
 type Props = {
@@ -109,6 +114,15 @@ export const AlertingSidebar = ({ onViewMonitoringJobs, onClose }: Props) => {
           {t.Alerts}
         </TopContainerTitle>
         <TopContainerAside>
+          <TempPromoChip
+            tooltip={
+              t[
+                'This feature is available for beta testing and will likely change. Use it for testing purposes only.'
+              ]
+            }
+          >
+            {t['Beta']}
+          </TempPromoChip>
           <Tooltip content={t.Hide}>
             <Button
               icon="Close"

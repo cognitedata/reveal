@@ -9,13 +9,15 @@ import { FileResults } from './FileResults';
 import { GenericResults } from './GenericResults';
 import { TimeseriesResults } from './TimeseriesResults';
 
-export const SearchResults: React.FC = () => {
+export const SearchResults = () => {
   const client = useFDM();
   const [category] = useSearchCategoryParams();
   const { data: hits, isLoading } = useSearchDataTypesQuery();
   const { keys, isLoading: isCountsLoading } = useSearchDataTypeSortedByKeys();
 
-  if (isLoading && isCountsLoading) {
+  const isDataLoading = isLoading && isCountsLoading;
+
+  if (isDataLoading) {
     return <Skeleton.List lines={3} />;
   }
 
@@ -29,11 +31,13 @@ export const SearchResults: React.FC = () => {
     }
 
     const type = client.allDataTypes?.find((item) => item.name === category);
+    const values = hits?.[category];
+
     return (
       <GenericResults
         dataType={category}
         type={type}
-        values={hits?.[category]}
+        values={values}
         selected
       />
     );
@@ -54,12 +58,14 @@ export const SearchResults: React.FC = () => {
           (item) => item.name === dataType
         );
 
+        const values = hits?.[dataType];
+
         return (
           <GenericResults
             key={dataType}
             dataType={dataType}
             type={type}
-            values={hits?.[dataType]}
+            values={values}
           />
         );
       })}

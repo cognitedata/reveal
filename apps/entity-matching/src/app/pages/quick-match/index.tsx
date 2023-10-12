@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 
-import { QuickMatchContextProvider } from '@entity-matching-app/context/QuickMatchContext';
+import { QuickMatchContextProvider } from '../../context/QuickMatchContext';
 
 import QuickMatchCreate from './create';
 import QuickMatchResults from './results';

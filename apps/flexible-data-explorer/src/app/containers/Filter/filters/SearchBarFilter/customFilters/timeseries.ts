@@ -2,6 +2,7 @@ import { DataTypeOption, Operator } from '../../../types';
 
 export const timeseries: DataTypeOption = {
   name: 'Timeseries',
+  displayName: 'Time series',
   fields: [
     // {
     //   name: 'Data Set',

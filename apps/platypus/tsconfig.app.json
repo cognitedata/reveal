@@ -4,7 +4,9 @@
     "outDir": "../../dist/out-tsc",
     "resolveJsonModule": true,
     "types": [
-      "node"
+      "node",
+      "@nx/react/typings/cssmodule.d.ts",
+      "@nx/react/typings/image.d.ts"
     ]
   },
   "files": [
@@ -14,13 +16,15 @@
   "exclude": [
     "**/*.spec.ts",
     "**/*.spec.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
     "**/*.stories.ts",
     "**/*.stories.js",
     "**/*.stories.jsx",
     "**/*.stories.tsx",
     "**/mocks/**.*",
     "**/tests/**.*",
-    "jest.config.ts"
+    "jest.config.ts",
   ],
   "include": [
     "**/*.js",

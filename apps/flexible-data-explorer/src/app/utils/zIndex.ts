@@ -9,6 +9,8 @@ const LAYERS = [
 
   'SEARCH',
 
+  'THREED_SEARCH_PANEL_BUTTON',
+
   'PAGE_HEADER',
   /** The default z-index for all components */
   'DEFAULT',

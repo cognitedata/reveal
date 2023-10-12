@@ -3,8 +3,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import './set-public-path';
-import cdfApp from '@simint-app/cdfApp';
 import singleSpaReact from 'single-spa-react';
+
+import cdfApp from './cdfApp';
 
 const lifecycles = singleSpaReact({
   React,

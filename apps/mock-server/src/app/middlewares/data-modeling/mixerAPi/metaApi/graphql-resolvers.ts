@@ -5,7 +5,13 @@ import { CdfDatabaseService } from '../../../../common/cdf-database.service';
 import { CdfMockDatabase, CdfResourceObject } from '../../../../types';
 import { sortCollection } from '../../../../utils';
 import {
+  Int32Scalar,
   bigIntScalar,
+  dataPointValue,
+  dateStringScalar,
+  float32Scalar,
+  float64Scalar,
+  longScalar,
   timestampStringScalar,
 } from '../../../../utils/graphql/custom-scalars';
 import {
@@ -23,7 +29,12 @@ export const graphQlMetaApiResolvers = (
 
   return {
     Timestamp: timestampStringScalar,
+    Int32: Int32Scalar,
     Int64: bigIntScalar,
+    Float32: float32Scalar,
+    Float64: float64Scalar,
+    DataPointValue: dataPointValue,
+    Date: dateStringScalar,
     Query: {
       listGraphQlDmlVersions: (prm, filterParams) => {
         const dataModelsFilter = { filter: {} };

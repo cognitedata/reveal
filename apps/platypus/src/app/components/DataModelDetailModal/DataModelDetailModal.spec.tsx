@@ -1,10 +1,11 @@
 import { useState } from 'react';
 
-import render from '@platypus-app/tests/render';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 import noop from 'lodash/noop';
+
+import render from '../../tests/render';
 
 import {
   DataModelDetailModal,
@@ -33,7 +34,6 @@ describe('DataModelDetailModal', () => {
   it('validates invalid name when using DMS V3', () => {
     render(
       <Container
-        dataSets={[]}
         description=""
         externalId=""
         okButtonName="Create"
@@ -56,7 +56,6 @@ describe('DataModelDetailModal', () => {
 
     render(
       <DataModelDetailModal
-        dataSets={[]}
         description=""
         externalId=""
         name=""
@@ -86,7 +85,6 @@ describe('DataModelDetailModal', () => {
 
     render(
       <DataModelDetailModal
-        dataSets={[]}
         description=""
         externalId=""
         name="My Data Model"
@@ -116,7 +114,6 @@ describe('DataModelDetailModal', () => {
 
     render(
       <DataModelDetailModal
-        dataSets={[]}
         description=""
         externalId=""
         isLoading
@@ -147,7 +144,6 @@ describe('DataModelDetailModal', () => {
 
     render(
       <DataModelDetailModal
-        dataSets={[]}
         description=""
         externalId=""
         name="My Data Model"
@@ -177,7 +173,6 @@ describe('DataModelDetailModal', () => {
 
     render(
       <DataModelDetailModal
-        dataSets={[]}
         description=""
         externalId=""
         name="My Data Model"

@@ -4,24 +4,24 @@ import {
   isRejected,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { CDFStatusModes } from '@vision/modules/Common/Components/CDFStatus/CDFStatus';
-import { DeleteAnnotations } from '@vision/store/thunks/Annotation/DeleteAnnotations';
-import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
-import { SaveAnnotations } from '@vision/store/thunks/Annotation/SaveAnnotations';
-import { SaveAnnotationTemplates } from '@vision/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
-import { UpdateFiles } from '@vision/store/thunks/Files/UpdateFiles';
-import { CreateVisionJob } from '@vision/store/thunks/Process/CreateVisionJob';
-import { PollJobs } from '@vision/store/thunks/Process/PollJobs';
-import { extractErrorMessage } from '@vision/utils/extractErrorMessage';
-import { ToastUtils } from '@vision/utils/ToastUtils';
+
+import { DeleteAnnotations } from '../../../../store/thunks/Annotation/DeleteAnnotations';
+import { RetrieveAnnotations } from '../../../../store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from '../../../../store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationTemplates } from '../../../../store/thunks/Annotation/SaveAnnotationTemplates';
+import { UpdateAnnotations } from '../../../../store/thunks/Annotation/UpdateAnnotations';
+import { UpdateFiles } from '../../../../store/thunks/Files/UpdateFiles';
+import { CreateVisionJob } from '../../../../store/thunks/Process/CreateVisionJob';
+import { PollJobs } from '../../../../store/thunks/Process/PollJobs';
+import { extractErrorMessage } from '../../../../utils/extractErrorMessage';
+import { ToastUtils } from '../../../../utils/ToastUtils';
+import { CDFStatusModes } from '../../Components/CDFStatus/CDFStatus';
 
 import { BulkEditUnsavedState, CommonState } from './types';
 
 export const initialState: CommonState = {
   showFileDownloadModal: false,
   showBulkEditModal: false,
-  showModelTrainingModal: false,
   bulkEditUnsavedState: {},
   saveState: {
     mode: 'saved' as CDFStatusModes,
@@ -39,9 +39,6 @@ const commonSlice = createSlice({
     },
     setBulkEditModalVisibility(state, action: PayloadAction<boolean>) {
       state.showBulkEditModal = action.payload;
-    },
-    setModelTrainingModalVisibility(state, action: PayloadAction<boolean>) {
-      state.showModelTrainingModal = action.payload;
     },
     setBulkEditUnsaved(state, action: PayloadAction<BulkEditUnsavedState>) {
       state.bulkEditUnsavedState = action.payload;
@@ -104,7 +101,6 @@ const commonSlice = createSlice({
 export const {
   setFileDownloadModalVisibility,
   setBulkEditModalVisibility,
-  setModelTrainingModalVisibility,
   setBulkEditUnsaved,
 } = commonSlice.actions;
 

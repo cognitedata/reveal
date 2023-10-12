@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { useTranslation } from '@transformations/common';
 import CredentialsMissingModal from '@transformations/components/credentials-missing-modal/CredentialsMissingModal';
@@ -10,15 +9,15 @@ import { useTokenExchangeSupport } from '@transformations/hooks/sessions';
 import { useTransformationContext } from '@transformations/pages/transformation-details/TransformationContext';
 import { TransformationRead } from '@transformations/types';
 import {
-  createInternalLink,
   getContainer,
   getTrackEvent,
   hasCredentials,
 } from '@transformations/utils';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Button, Chip, Dropdown, Flex, Icon, Menu } from '@cognite/cogs.js';
+
+import { RunNowItem } from './RunNowItem';
 
 type TransformationDetailsTopbarActionButtonsProps = {
   isLoading: boolean;
@@ -32,11 +31,6 @@ const TransformationDetailsTopbarActionButtons = ({
   transformation,
 }: TransformationDetailsTopbarActionButtonsProps): JSX.Element => {
   const { t } = useTranslation();
-
-  const { subAppPath } = useParams<{
-    subAppPath: string;
-  }>();
-  const userHistoryService = useCdfUserHistoryService();
 
   const { isQueryValid, setIsScheduleModalOpen } = useTransformationContext();
 
@@ -80,15 +74,14 @@ const TransformationDetailsTopbarActionButtons = ({
         content={
           <Menu>
             {isTokenExchangeSupported?.supported && (
-              <Item
-                key="personal-credentials"
+              <RunNowItem
+                transformationId={transformation.id}
+                transformationName={transformation.name}
                 onClick={() => {
                   trackEvent(getTrackEvent('event-tr-details-run-now-click'));
                   handleRunNowButtonClick(true);
                 }}
-              >
-                {t('run-as-current-user')}
-              </Item>
+              />
             )}
             <Item
               key="oidc-credentials"
@@ -167,6 +160,9 @@ const TransformationDetailsTopbarActionButtons = ({
       />
 
       <RunConfirmationModal
+        shouldLogUsage={true}
+        transformationId={transformation.id}
+        transformationName={transformation.name}
         onCancel={() => setRunConfirmationModalState({ open: false })}
         onConfirm={() => {
           runTransformation({
@@ -174,12 +170,6 @@ const TransformationDetailsTopbarActionButtons = ({
             personalCredentials:
               !!runConfirmationModalState.personalCredentials,
           });
-          if (subAppPath && transformation?.name)
-            userHistoryService.logNewResourceEdit({
-              application: subAppPath,
-              name: transformation.name,
-              path: createInternalLink(`${transformation.id}`),
-            });
           setRunConfirmationModalState({ open: false });
         }}
         open={runConfirmationModalState.open}

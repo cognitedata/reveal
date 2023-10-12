@@ -56,11 +56,14 @@ export const useRootAssetsQuery = (
   });
 
   const rootAssets = useInfiniteQuery(
-    queryKeys.rootAssets(),
+    queryKeys.rootAssets(rootAssetId),
     ({ pageParam }) => {
       return sdk.assets
         .list({
-          filter: { root: true },
+          filter: {
+            rootIds: rootAssetId ? [{ id: rootAssetId }] : undefined,
+            root: true,
+          },
           aggregatedProperties: ['childCount'],
           limit: 20,
           cursor: pageParam,

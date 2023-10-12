@@ -1,34 +1,31 @@
 import { ComponentProps, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import CSVModal from '@charts-app/components/CSVModal/CSVModal';
-import DownloadDropdown from '@charts-app/components/DownloadDropdown/DownloadDropdown';
-import ConnectedSharingDropdown from '@charts-app/components/SharingDropdown/ConnectedSharingDropdown';
-import { currentDateRangeLocale } from '@charts-app/config/locale';
-import {
-  useDeleteChart,
-  useUpdateChart,
-} from '@charts-app/hooks/charts-storage';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { useIsChartOwner } from '@charts-app/hooks/user';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import chartAtom from '@charts-app/models/chart/atom';
-import { duplicateChart } from '@charts-app/models/chart/helpers';
-import { updateChartDateRange } from '@charts-app/models/chart/updates';
-import { trackUsage } from '@charts-app/services/metrics';
+import { useRecoilState } from 'recoil';
+
+import { Button, Dropdown, toast, Divider } from '@cognite/cogs.js';
+
+import { currentDateRangeLocale } from '../../config/locale';
+import { useDeleteChart, useUpdateChart } from '../../hooks/charts-storage';
+import { useTranslations } from '../../hooks/translations';
+import { useIsChartOwner } from '../../hooks/user';
+import { useUserInfo } from '../../hooks/useUserInfo';
+import chartAtom from '../../models/chart/atom';
+import { duplicateChart } from '../../models/chart/helpers';
+import { updateChartDateRange } from '../../models/chart/updates';
+import { trackUsage } from '../../services/metrics';
 import {
   downloadCalculations,
   downloadImage,
   toggleDownloadChartElements,
-} from '@charts-app/utils/charts';
-import { createInternalLink } from '@charts-app/utils/link';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useRecoilState } from 'recoil';
-import useScreenshot from 'use-screenshot-hook';
-
-import { Button, Dropdown, toast, Divider } from '@cognite/cogs.js';
-
+} from '../../utils/charts';
+import { wait } from '../../utils/helpers';
+import { createInternalLink } from '../../utils/link';
+import { makeDefaultTranslations } from '../../utils/translations';
+import CSVModal from '../CSVModal/CSVModal';
 import { DeleteModal } from '../DeleteModal/DeleteModal';
+import DownloadDropdown from '../DownloadDropdown/DownloadDropdown';
+import ConnectedSharingDropdown from '../SharingDropdown/ConnectedSharingDropdown';
 
 import { StyledMenu, StyledMenuButton } from './elements';
 
@@ -42,10 +39,17 @@ const defaultTranslations = makeDefaultTranslations(
   'Duplicate',
   'Delete',
   'Delete chart',
-  'Are you sure you want to delete this chart?'
+  'Are you sure you want to delete this chart?',
+  'Please wait while we take a screenshot.'
 );
 
-export const ChartActions = () => {
+type Props = {
+  takeScreenshot: (
+    imageType: 'png' | 'jpg' | undefined
+  ) => Promise<string | undefined>;
+};
+
+export const ChartActions = ({ takeScreenshot }: Props) => {
   const t = {
     ...defaultTranslations,
     ...useTranslations(Object.keys(defaultTranslations), 'ChartActions').t,
@@ -62,7 +66,6 @@ export const ChartActions = () => {
   const move = useNavigate();
   const [chart, setChart] = useRecoilState(chartAtom);
   const { data: login } = useUserInfo();
-  const { takeScreenshot } = useScreenshot();
   const [isCSVModalVisible, setIsCSVModalVisible] = useState(false);
   const [isDeleteModalVisisble, setIsDeleteModalVisisble] = useState(false);
 
@@ -141,10 +144,15 @@ export const ChartActions = () => {
   };
 
   const handleDownloadImage = () => {
+    toast.info(t['Please wait while we take a screenshot.'], {
+      toastId: 'download-image',
+    });
     const height = toggleDownloadChartElements(true);
-    takeScreenshot('png').then((image) => {
-      toggleDownloadChartElements(false, height);
-      downloadImage(image, chart?.name);
+    wait(500).then(() => {
+      takeScreenshot('png').then((image) => {
+        toggleDownloadChartElements(false, height);
+        downloadImage(image, chart?.name);
+      });
     });
   };
 

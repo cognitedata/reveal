@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 
-import {
-  useDataSourceValidity,
-  useLoadDataSource,
-  useLoadRules,
-} from '@data-quality/hooks';
-import { emptyDatapoints } from '@data-quality/utils/validationTimeseries';
-import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { Body, Flex, Overline } from '@cognite/cogs.js';
+
+import { BasicPlaceholder } from '../../../../../../../components/BasicPlaceholder/BasicPlaceholder';
+import { Spinner } from '../../../../../../../components/Spinner/Spinner';
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
+import {
+  useLoadDataSource,
+  useLoadDatapoints,
+  useLoadRules,
+} from '../../../../hooks';
+import { emptyDatapoints } from '../../../../utils/validationTimeseries';
 
 import { ValidationGraph } from './ValidationGraph';
 import { ValidationStatistics } from './ValidationStatistics';
@@ -19,8 +19,11 @@ export const TotalValidityCard = () => {
   const { t } = useTranslation('TotalValidityCard');
 
   const { dataSource } = useLoadDataSource();
-  const { error: errorRules, loadingRules } = useLoadRules();
-  const { datapoints, loadingDatapoints } = useDataSourceValidity();
+  const { error: errorRules, loadingRules, rules } = useLoadRules();
+  const { datapoints, isLoading: loadingDatapoints } = useLoadDatapoints({
+    target: 'dataSource',
+    rules,
+  });
 
   const isLoading = loadingRules || loadingDatapoints;
   const isError = errorRules;
@@ -60,7 +63,7 @@ export const TotalValidityCard = () => {
       );
 
     return (
-      <Flex direction="column" gap={8}>
+      <Flex direction="column">
         <ValidationStatistics dataSourceId={dataSource.externalId} />
         <ValidationGraph
           dataSourceId={dataSource.externalId}
@@ -87,7 +90,7 @@ const Card = styled.div`
   border-radius: 6px;
   box-shadow: var(--cogs-elevation--surface--interactive);
   overflow: auto;
-  padding: 0.5rem 1.5rem 2rem 1.5rem;
+  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
   width: min(50vw, 600px);
 
   .cogs-overline-3 {

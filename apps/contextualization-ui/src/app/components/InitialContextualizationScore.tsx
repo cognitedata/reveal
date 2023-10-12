@@ -3,11 +3,11 @@ import {
   ScoreComponent,
   useEstimateQuality,
 } from '@fusion/contextualization';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 import { Body, Chip, Icon } from '@cognite/cogs.js';
 
 import { FormattedContainer } from './FormattedContainer';
+import { Spinner } from './Spinner/Spinner';
 
 export const InitialContextualizationScore = ({
   headerName,

@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 
 import { KeyValueMap, StorageProviderType } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 
+import { TOKENS } from '../../../../../di';
+import { useInjection } from '../../../../../hooks/useInjection';
+import { QueryKeys } from '../../../../../utils/queryKeys';
 import { DataPreviewTableProps } from '../DataPreviewTable/DataPreviewTable';
 
 const REJECTED_SUGGESTIONS_KEY = 'REJECTED_SUGGESTIONS';

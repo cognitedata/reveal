@@ -40,6 +40,7 @@ export default function NavigationStickyBottomRow(props: Props) {
           type="secondary"
           onClick={() => (prev?.onClick ? prev.onClick() : goToPrevStep())}
           disabled={prev?.disabled}
+          data-testid="back-button"
         >
           {prev?.text ?? 'Back'}
         </Button>
@@ -52,6 +53,7 @@ export default function NavigationStickyBottomRow(props: Props) {
               onClick={() => (skip?.onClick ? skip.onClick() : goToNextStep())}
               disabled={skip?.disabled}
               style={{ marginRight: '8px' }}
+              data-testid="skip-button"
             >
               {skip?.text ?? 'Skip'}
             </Button>
@@ -62,6 +64,7 @@ export default function NavigationStickyBottomRow(props: Props) {
             type="primary"
             onClick={() => (next?.onClick ? next.onClick() : goToNextStep())}
             disabled={next?.disabled}
+            data-testid="next-button"
           >
             {next?.text ?? 'Next step'}
           </Button>

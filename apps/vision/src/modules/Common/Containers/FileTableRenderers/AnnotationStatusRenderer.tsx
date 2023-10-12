@@ -3,13 +3,14 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { makeSelectAnnotationsForFileIds } from '@vision/modules/Common/store/annotation/selectors';
-import { CellRenderer } from '@vision/modules/Common/types';
-import { filterAnnotationIdsByAnnotationStatus } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { RootState } from '@vision/store/rootReducer';
 import { Tag } from 'antd';
 
 import { Body } from '@cognite/cogs.js';
+
+import { RootState } from '../../../../store/rootReducer';
+import { makeSelectAnnotationsForFileIds } from '../../store/annotation/selectors';
+import { CellRenderer } from '../../types';
+import { filterAnnotationIdsByAnnotationStatus } from '../../Utils/AnnotationUtils/AnnotationUtils';
 
 export const createTag = (status: string, count: number, color: string) => {
   return (

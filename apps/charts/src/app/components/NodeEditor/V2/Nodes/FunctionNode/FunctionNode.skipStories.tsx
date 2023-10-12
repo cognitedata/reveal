@@ -1,12 +1,12 @@
 import { ComponentProps } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 
-import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
-import { fullListOfOperations } from '@charts-app/models/operations/mocks';
 import { Meta, Story } from '@storybook/react';
 
 import { Operation } from '@cognite/calculation-backend';
 
+import { fullListOfOperations } from '../../../../../models/operations/mocks';
+import { defaultTranslations } from '../../../translations';
 import ReactFlowNodeEditor from '../../ReactFlowNodeEditor';
 import { NodeTypes } from '../../types';
 

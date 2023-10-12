@@ -42,12 +42,12 @@ const resolveTimeseriesContainerConfig = async (
     label: label ?? name ?? timeseriesExternalId,
     startDate:
       startDate !== undefined
-        ? new Date(startDate)
-        : dayjs(new Date()).subtract(2, 'years').startOf('day').toDate(),
+        ? startDate
+        : dayjs(new Date()).subtract(2, 'years').startOf('day').toISOString(),
     endDate:
       endDate !== undefined
-        ? new Date(endDate)
-        : dayjs(new Date()).endOf('day').toDate(),
+        ? endDate
+        : dayjs(new Date()).endOf('day').toDate().toISOString(),
     x: x,
     y: y,
     width: width ?? DEFAULT_TIMESERIES_WIDTH,

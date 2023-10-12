@@ -2,8 +2,10 @@ import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import { Loader } from '@data-exploration/components';
+import { UserHistoryProvider } from '@user-history';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { getCluster, getProject } from '@cognite/cdf-utilities';
 import {
   FileContextualizationContextProvider,
   DataExplorationProvider,
@@ -11,22 +13,21 @@ import {
 } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { ResourceActionsProvider } from '@data-exploration-app/context/ResourceActionsContext';
-import { ResourceSelectionProvider } from '@data-exploration-app/context/ResourceSelectionContext';
+import { ids } from '../../../cogs-variables';
+import { ResourceActionsProvider } from '../../context/ResourceActionsContext';
+import { ResourceSelectionProvider } from '../../context/ResourceSelectionContext';
 import {
   useFlagAdvancedFilters,
   useFlagDocumentsApiEnabled,
-} from '@data-exploration-app/hooks';
-import { useUserInformation } from '@data-exploration-app/hooks/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-
-import { ids } from '../../../cogs-variables';
+} from '../../hooks';
+import { useUserInformation } from '../../hooks/hooks';
+import { trackUsage } from '../../utils/Metrics';
 
 const Spinner = () => <Loader />;
 const Exploration = React.lazy(
   () =>
     import(
-      '@data-exploration-app/containers/Exploration'
+      '../Exploration'
       /* webpackChunkName: "pnid_exploration" */
     )
 );
@@ -38,35 +39,41 @@ export default function App({ useInShell = false }: { useInShell?: boolean }) {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
 
+  const project = getProject();
+  const cluster = getCluster() ?? undefined;
+  const userId = userInfo?.id;
+
   return (
     <Suspense fallback={<Spinner />}>
-      <FileContextualizationContextProvider>
-        <ResourceSelectionProvider allowEdit mode="none">
-          <ResourceActionsProvider>
-            <DataExplorationProvider
-              flow={flow as Flow}
-              sdk={sdk}
-              userInfo={userInfo}
-              styleScopeId={ids.styleScope}
-              overrideURLMap={{
-                pdfjsWorkerSrc:
-                  '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
-              }}
-              trackUsage={trackUsage}
-              isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
-              isDocumentsApiEnabled={isDocumentsApiEnabled}
-            >
-              {useInShell ? (
-                <Exploration />
-              ) : (
-                <Routes>
-                  <Route path="/explore/*" element={<Exploration />} />
-                </Routes>
-              )}
-            </DataExplorationProvider>
-          </ResourceActionsProvider>
-        </ResourceSelectionProvider>
-      </FileContextualizationContextProvider>
+      <UserHistoryProvider cluster={cluster} project={project} userId={userId}>
+        <FileContextualizationContextProvider>
+          <ResourceSelectionProvider allowEdit mode="none">
+            <ResourceActionsProvider>
+              <DataExplorationProvider
+                flow={flow as Flow}
+                sdk={sdk}
+                userInfo={userInfo}
+                styleScopeId={ids.styleScope}
+                overrideURLMap={{
+                  pdfjsWorkerSrc:
+                    '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+                }}
+                trackUsage={trackUsage}
+                isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
+                isDocumentsApiEnabled={isDocumentsApiEnabled}
+              >
+                {useInShell ? (
+                  <Exploration />
+                ) : (
+                  <Routes>
+                    <Route path="/explore/*" element={<Exploration />} />
+                  </Routes>
+                )}
+              </DataExplorationProvider>
+            </ResourceActionsProvider>
+          </ResourceSelectionProvider>
+        </FileContextualizationContextProvider>
+      </UserHistoryProvider>
     </Suspense>
   );
 }

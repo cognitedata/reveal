@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 
 import { getProject } from '@cognite/cdf-utilities';
+import { OptionType } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -28,7 +29,8 @@ export type BaseMQTTSource = {
   type: MQTTSourceType;
   host: string;
   port?: string;
-  username: string;
+  username?: string;
+  useTls?: boolean;
 };
 
 export type ReadMQTTSource = BaseMQTTSource & {
@@ -37,7 +39,7 @@ export type ReadMQTTSource = BaseMQTTSource & {
 };
 
 export type CreateMQTTSource = BaseMQTTSource & {
-  password: string;
+  password?: string;
 };
 
 export type EditMQTTSource = Required<Pick<BaseMQTTSource, 'externalId'>> &
@@ -178,7 +180,6 @@ export const useMQTTSourceWithMetrics = (externalId?: string) => {
     async () => {
       const source = await fetchMQTTSource(sdk, queryClient, externalId);
       const jobs = await fetchMQTTJobsWithMetrics(sdk, queryClient, externalId);
-
       const throughput = jobs.reduce((acc, cur) => acc + cur.throughput, 0);
 
       return {
@@ -267,6 +268,7 @@ export const useEditMQTTSource = (
 
 type DeleteMQTTSourceVariables = {
   externalId: string;
+  force?: boolean;
 };
 
 export const useDeleteMQTTSource = (
@@ -285,6 +287,7 @@ export const useDeleteMQTTSource = (
               externalId: variables.externalId,
             },
           ],
+          ...(variables.force && { force: variables.force }),
         },
       });
     },
@@ -307,7 +310,7 @@ type BaseMQTTDestination = {
   externalId: string;
 };
 
-type ReadMQTTDestination = BaseMQTTDestination & {
+export type ReadMQTTDestination = BaseMQTTDestination & {
   sessionId?: number;
   createdTime: number;
   lastUpdatedTime: number;
@@ -315,18 +318,28 @@ type ReadMQTTDestination = BaseMQTTDestination & {
 
 const getMQTTDestinationsQueryKey = () => ['mqtt', 'destination', 'list'];
 
-export const useMQTTDestinations = () => {
+export const useMQTTDestinations = ({
+  select,
+}: {
+  select?: (data?: ReadMQTTDestination[]) => OptionType<string>[];
+}) => {
   const sdk = useSDK();
-  return useQuery(getMQTTDestinationsQueryKey(), async () => {
-    return sdk
-      .get<{ items: ReadMQTTDestination[] }>(
-        `/api/v1/projects/${getProject()}/pluto/destinations`,
-        {
-          headers: { 'cdf-version': 'alpha' },
-        }
-      )
-      .then((r) => r.data.items);
-  });
+  return useQuery(
+    getMQTTDestinationsQueryKey(),
+    async () => {
+      return sdk
+        .get<{ items: ReadMQTTDestination[] }>(
+          `/api/v1/projects/${getProject()}/pluto/destinations`,
+          {
+            headers: { 'cdf-version': 'alpha' },
+          }
+        )
+        .then((r) => r.data.items);
+    },
+    {
+      select,
+    }
+  );
 };
 
 type MQTTSessionCredentials = {
@@ -381,7 +394,14 @@ type MQTTFormatPrefixConfig = {
 };
 
 export type MQTTFormat = {
-  type: 'cognite' | 'siemens' | 'tmc' | 'rockwell' | 'value' | 'custom';
+  type:
+    | 'cognite'
+    | 'siemens'
+    | 'tmc'
+    | 'rockwell'
+    | 'value'
+    | 'sparkplug'
+    | 'custom';
   prefix?: MQTTFormatPrefixConfig;
 };
 
@@ -399,9 +419,13 @@ type MQTTJobStatus =
 
 type MQTTJobTargetStatus = 'running' | 'paused';
 
-type BaseMQTTJob = {
-  externalId: string;
+type MqttJobConfig = {
   topicFilter: string;
+};
+
+type BaseMQTTJob = {
+  config: MqttJobConfig;
+  externalId: string;
   format: MQTTFormat;
 };
 
@@ -477,19 +501,23 @@ const getMQTTJobsWithMetrics = async (
 
   const raw = Object.values(jobsWithMetrics);
   const withThroughput = raw.map((jobWithMetrics) => {
-    const totalInput = jobWithMetrics.metrics.reduce((acc, cur) => {
+    const now = new Date().getTime();
+    //only get the average over the last 6 hours
+    const sixHoursAgoTimestamp = now - 1000 * 60 * 60 * 6;
+    const jobsLastSixHours = jobWithMetrics.metrics.filter((metric) => {
+      return metric.timestamp >= sixHoursAgoTimestamp;
+    });
+    const totalInput = jobsLastSixHours.reduce((acc, cur) => {
       return acc + cur.destinationInputValues;
     }, 0);
-
-    const now = new Date().getTime();
-    const minTimestamp = jobWithMetrics.metrics.reduce((acc, cur) => {
+    const timeSinceFirstMetric = jobsLastSixHours.reduce((acc, cur) => {
       return Math.min(acc, cur.timestamp);
     }, now);
-
-    const msDiff = now - minTimestamp;
-    const hourDiff = Math.floor(msDiff / 1000 / 60 / 60) + 1;
-    const throughput = Math.round(totalInput / hourDiff);
-
+    const hoursSinceFirstMetric = (now - timeSinceFirstMetric) / 1000 / 60 / 60;
+    let throughput = 0;
+    if (hoursSinceFirstMetric > 0) {
+      throughput = Math.round(totalInput / hoursSinceFirstMetric);
+    }
     return {
       ...jobWithMetrics,
       throughput,
@@ -644,7 +672,7 @@ export const useCreateMQTTJob = (
 
 type UpdateMQTTJobVariables = UpdateWithExternalId<
   ReadMQTTJob,
-  'targetStatus' | 'topicFilter'
+  'targetStatus' | 'config'
 >;
 
 export const useUpdateMQTTJob = (

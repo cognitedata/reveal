@@ -1,5 +1,10 @@
 import { getBaseHostname, getOrganization } from './loginInfo';
-import { parseEnvFromCluster, parseEnvLabelFromCluster } from './shared';
+import {
+  parseEnvFromCluster,
+  parseEnvLabelFromCluster,
+  generateRedirectToLoginUrl,
+  parseRef,
+} from './shared';
 
 describe('Shared utils', () => {
   describe('parseEnvFromCluster', () => {
@@ -124,5 +129,35 @@ describe('Shared utils', () => {
       });
       expect(getBaseHostname()).toBe(expected);
     });
+  });
+
+  describe('generateRedirectToLoginUrl', () => {
+    const baseUrl = 'https://fusion.cognite.com';
+    it.each([
+      ['/my-project/my-app', { cluster: 'abc.cognitedata.com' }],
+      ['/my-project/my-app', { cluster: 'abc.cognitedata.com', env: 'abc' }],
+      [
+        '/my-project/my-app/123',
+        { cluster: 'test.cognitedata.com', something: '123' },
+      ],
+      [
+        '/my-project/my-app/123',
+        { cluster: 'test.cognitedata.com', something: '123' },
+      ],
+      ['/my-project', { cluster: 'test.cognitedata.com' }],
+    ])(
+      "redirect URL if unauthenticated for '%s' should be '%s",
+      (inputPath, inputSearchParams) => {
+        const inputUrl = new URL(inputPath, baseUrl);
+        inputUrl.search = new URLSearchParams(inputSearchParams).toString();
+
+        const redirectUrl = generateRedirectToLoginUrl(inputUrl.href);
+        const url = new URL(redirectUrl);
+        expect(url.pathname).toBe('/');
+        const [path, search] = parseRef(url.search);
+        expect(path).toBe(inputPath);
+        expect(search).toEqual(inputSearchParams);
+      }
+    );
   });
 });

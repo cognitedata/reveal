@@ -1,27 +1,25 @@
 import { useRef } from 'react';
 
-import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
+import { Tooltip, Button, Flex, Chip, Divider } from '@cognite/cogs.js';
+
+import { PageToolbar } from '../../../../../components/PageToolbar/PageToolbar';
 import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
   useSuggestionsFeatureFlag,
   useTransformationsFeatureFlag,
-} from '@platypus-app/flags';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { BulkPopulationButton } from '@platypus-app/modules/solution/data-management/components/BulkPopulationButton';
-import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown';
-import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
-
-import { Tooltip, Button, Flex, Chip } from '@cognite/cogs.js';
-
-import { PageHeaderDivider } from '../DataPreviewTable/elements';
+} from '../../../../../flags';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import useTransformations from '../../hooks/useTransformations';
+import { BulkPopulationButton } from '../BulkPopulationButton';
+import { TransformationDropdown } from '../TransformationDropdown';
 
 import * as S from './elements';
 
 type Props = {
   children?: React.ReactNode;
   draftRowsCount: number;
-  filteredRowCount: null | undefined | number;
+  filteredRowsCount: null | undefined | number;
   isDeleteButtonDisabled: boolean;
   onAddTransformationClick: () => void;
   onCreateClick: () => void;
@@ -44,7 +42,7 @@ type Props = {
 export function PreviewPageHeader({
   children,
   draftRowsCount,
-  filteredRowCount,
+  filteredRowsCount,
   isDeleteButtonDisabled,
   onAddTransformationClick,
   onCreateClick,
@@ -132,8 +130,8 @@ export function PreviewPageHeader({
                 opacity: !shouldShowPublishedRows ? '0.2' : '1.0',
               }}
               label={`${
-                filteredRowCount !== null && filteredRowCount !== undefined
-                  ? filteredRowCount
+                filteredRowsCount !== null && filteredRowsCount !== undefined
+                  ? filteredRowsCount
                   : publishedRowsCount
               }`}
             />
@@ -177,7 +175,7 @@ export function PreviewPageHeader({
       }
     >
       {shouldShowActions && (
-        <Flex justifyContent="flex-end" gap={8}>
+        <Flex justifyContent="flex-end" gap={8} alignItems="center">
           {children}
           {publishedRowsCount > 0 && (
             <>
@@ -208,7 +206,9 @@ export function PreviewPageHeader({
             </>
           )}
           {(isDeleteEnabled || isManualPopulationEnabled) &&
-            publishedRowsCount > 0 && <PageHeaderDivider />}
+            publishedRowsCount > 0 && (
+              <Divider direction="vertical" length="16px" weight="2px" />
+            )}
           {isDeleteEnabled && (
             <Button
               type="ghost"
@@ -226,12 +226,17 @@ export function PreviewPageHeader({
               icon="Add"
               iconPlacement="left"
               onClick={onCreateClick}
+              style={{
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
             >
               {t('create-new-row', 'Add instance')}
             </Button>
           )}
           {(isSuggestionsEnabled || isTransformationsEnabled) && (
-            <PageHeaderDivider />
+            <Divider direction="vertical" length="16px" weight="2px" />
           )}
           {isSuggestionsEnabled && (
             <S.SuggestionButton

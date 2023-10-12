@@ -3,13 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { ParamsGaugeReader } from '@vision/api/vision/detectionModels/types';
-import GaugeReaderIllustration from '@vision/assets/visualDescriptions/GaugeReaderIllustration';
-import { ColorsObjectDetection } from '@vision/constants/Colors';
-import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-
 import {
   Button,
   Detail,
@@ -19,6 +12,13 @@ import {
   Select,
   Title,
 } from '@cognite/cogs.js';
+
+import { ParamsGaugeReader } from '../../../../api/vision/detectionModels/types';
+import GaugeReaderIllustration from '../../../../assets/visualDescriptions/GaugeReaderIllustration';
+import { ColorsObjectDetection } from '../../../../constants/Colors';
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { setUnsavedDetectionModelSettings } from '../../store/slice';
 
 import {
   ColorBox,

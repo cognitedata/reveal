@@ -1,18 +1,19 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-  DetectionModelParams,
-  ParamsObjectDetection,
-} from '@vision/api/vision/detectionModels/types';
-import ObjectDetectionIllustration from '@vision/assets/visualDescriptions/ObjectDetectionIllustration';
-import { ColorsObjectDetection } from '@vision/constants/Colors';
-import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
 import { InputNumber } from 'antd';
 
 import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
+
+import {
+  DetectionModelParams,
+  ParamsObjectDetection,
+} from '../../../../api/vision/detectionModels/types';
+import ObjectDetectionIllustration from '../../../../assets/visualDescriptions/ObjectDetectionIllustration';
+import { ColorsObjectDetection } from '../../../../constants/Colors';
+import { useThunkDispatch } from '../../../../store';
+import { RootState } from '../../../../store/rootReducer';
+import { setUnsavedDetectionModelSettings } from '../../store/slice';
 
 import {
   ColorBox,

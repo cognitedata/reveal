@@ -1,4 +1,4 @@
-import { KeysOfSCC } from '@platypus-app/utils/capabilities';
+import { KeysOfSCC } from '../../../../../utils/capabilities';
 
 /** Acl names that we care about for DQ purposes. */
 export type AclName = KeysOfSCC | 'sessionsAcl';

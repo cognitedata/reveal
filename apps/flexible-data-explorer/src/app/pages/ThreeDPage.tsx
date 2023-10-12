@@ -1,11 +1,11 @@
 import { Page } from '../containers/page/Page';
-import { ThreeDContent } from '../containers/ThreeD/ThreeDContent';
+import { ThreeDSplitView } from '../containers/ThreeD/containers/ThreeDSplitView';
 
 export const ThreeDPage = () => {
   return (
     <Page disableScrollbarGutter>
       <Page.Body fullscreen>
-        <ThreeDContent />
+        <ThreeDSplitView />
       </Page.Body>
     </Page>
   );

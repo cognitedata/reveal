@@ -2,27 +2,6 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DataModelVersion } from '@platypus/platypus-core';
-import { DataModelSettingsModal } from '@platypus-app/components/DataModelSettingsModal/DataModelSettingsModal';
-import { DOCS_LINKS } from '@platypus-app/constants';
-import { TOKENS } from '@platypus-app/di';
-import { useNavigate } from '@platypus-app/flags/useNavigate';
-import {
-  useDataModel,
-  useDataModelVersions,
-} from '@platypus-app/hooks/useDataModelActions';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useDraftRows } from '@platypus-app/modules/solution/data-management/hooks/useDraftRows';
-import { EndpointModal } from '@platypus-app/modules/solution/data-model/components/EndpointModal';
-import { PowerBIModal } from '@platypus-app/modules/solution/data-model/components/PowerBIModal';
-import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
-import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
-import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 
 import {
   Button,
@@ -34,6 +13,27 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
+import { DOCS_LINKS } from '../../constants';
+import { TOKENS } from '../../di';
+import { useNavigate } from '../../flags/useNavigate';
+import {
+  useDataModel,
+  useDataModelVersions,
+} from '../../hooks/useDataModelActions';
+import { useInjection } from '../../hooks/useInjection';
+import { useMixpanel } from '../../hooks/useMixpanel';
+import { useSelectedDataModelVersion } from '../../hooks/useSelectedDataModelVersion';
+import useSelector from '../../hooks/useSelector';
+import { useTranslation } from '../../hooks/useTranslation';
+import { useDraftRows } from '../../modules/solution/data-management/hooks/useDraftRows';
+import { EndpointModal } from '../../modules/solution/data-model/components/EndpointModal';
+import { PowerBIModal } from '../../modules/solution/data-model/components/PowerBIModal';
+import { useLocalDraft } from '../../modules/solution/data-model/hooks/useLocalDraft';
+import { SchemaEditorMode } from '../../modules/solution/data-model/types';
+import { useDataModelState } from '../../modules/solution/hooks/useDataModelState';
+import { DataModelState } from '../../redux/reducers/global/dataModelReducer';
+import { DEFAULT_VERSION_PATH } from '../../utils/config';
+import { DataModelSettingsModal } from '../DataModelSettingsModal/DataModelSettingsModal';
 import { SchemaVersionDropdown } from '../SchemaVersionDropdown/SchemaVersionDropdown';
 
 import {
@@ -153,7 +153,7 @@ export const NavigationDataModel = () => {
   const renderTopBarRight = () => {
     return (
       <StyledTopBarRight style={{ gap: 8 }}>
-        <Tooltip content={t('cli_PowerBI_tooltip', 'PowerBI Connection Info')}>
+        <Tooltip content={t('cli_PowerBI_tooltip', 'Power BI Connection Info')}>
           <Button
             icon="Link"
             data-cy="btn-endpoint-modal"
@@ -162,7 +162,7 @@ export const NavigationDataModel = () => {
               setShowPowerBIModal(true);
             }}
           >
-            {t('powerbi_link_button', 'PowerBI')}
+            {t('powerbi_link_button', 'Power BI')}
           </Button>
         </Tooltip>
         <Tooltip content={t('cli_URL_tooltip', 'GraphQL URL')}>

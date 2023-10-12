@@ -54,6 +54,7 @@ export type DataModelTypeDefsField = {
   location?: { line: number; column: number };
 };
 
+export type DataModelTypeDefsTypeKind = 'type' | 'interface';
 export type DataModelTypeDefsType = {
   name: string;
   description?: string;
@@ -61,6 +62,8 @@ export type DataModelTypeDefsType = {
   directives?: DirectiveProps[];
   fields: DataModelTypeDefsField[];
   version?: string;
+  kind?: DataModelTypeDefsTypeKind;
+  isReadOnly?: boolean;
   location?: { line: number; column: number };
 };
 export type DataModelTypeDefs = {

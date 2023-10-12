@@ -8,13 +8,6 @@ import {
   MetadataFilterV2,
   StringFilterV2,
 } from '@data-exploration/containers';
-import {
-  AggregatedMultiselectFilter,
-  ByAssetFilterV2,
-  DataSetFilterV2,
-} from '@data-exploration-components/components/SearchNew';
-import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
-import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';
 
 import {
   COMMON_INFO_CONTENT,
@@ -26,6 +19,14 @@ import {
   useTimeseriesList,
   useTimeseriesMetadataKeysAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
+
+import { useAdvancedFiltersEnabled } from '../../../hooks';
+import { getTimeseriesFilterUnit } from '../../../utils';
+import {
+  AggregatedMultiselectFilter,
+  ByAssetFilterV2,
+  DataSetFilterV2,
+} from '../../SearchNew';
 
 import { TempCommonMultiSelectFix } from './AdvancedFiltersCollapse';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';

@@ -4,6 +4,8 @@ import { RowSelectionState, Updater } from '@tanstack/react-table';
 import { mapValues } from 'lodash';
 import noop from 'lodash/noop';
 
+import { ChartsSdkInitialisationGuard } from '@cognite/charts-lib';
+
 import {
   FilterState,
   ResourceItem,
@@ -21,6 +23,7 @@ import {
   TimeseriesSearchResults,
 } from '../Search';
 
+import { ChartsSearchResults } from './Charts';
 import { ResourceSelection } from './ResourceSelector';
 
 export const ResourceSelectorTable = ({
@@ -34,6 +37,7 @@ export const ResourceSelectorTable = ({
   isDocumentsApiEnabled = true,
   shouldShowPreviews = true,
   onClick = noop,
+  isBulkActionBarVisible,
 }: {
   resourceType: ResourceType;
   filter: FilterState;
@@ -45,6 +49,7 @@ export const ResourceSelectorTable = ({
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   shouldShowPreviews?: boolean;
   isDocumentsApiEnabled?: boolean;
+  isBulkActionBarVisible?: boolean;
 }) => {
   const commonProps = {
     shouldShowPreviews,
@@ -88,9 +93,20 @@ export const ResourceSelectorTable = ({
     },
     onClick,
     onFilterChange,
+    isBulkActionBarVisible,
   };
 
   switch (resourceType) {
+    case 'charts':
+      return (
+        <ChartsSdkInitialisationGuard>
+          <ChartsSearchResults
+            {...commonProps}
+            filter={filter.charts}
+            onClick={(item) => console.log('RST, CSR on click; item: ', item)}
+          />
+        </ChartsSdkInitialisationGuard>
+      );
     case 'asset':
       return (
         <AssetSearchResults showCount isTreeEnabled={false} {...commonProps} />

@@ -1,6 +1,6 @@
-import ResourceTypei18n from '@entity-matching-app/components/resource-type-i18n';
-import { useAggregate } from '@entity-matching-app/hooks/aggregates';
-import { API, Filter } from '@entity-matching-app/types/api';
+import { useAggregate } from '../../hooks/aggregates';
+import { API, Filter } from '../../types/api';
+import ResourceTypei18n from '../resource-type-i18n';
 
 type Props = {
   type: Exclude<API, 'threeD'>;

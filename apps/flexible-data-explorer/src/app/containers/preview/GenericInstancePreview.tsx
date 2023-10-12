@@ -1,7 +1,5 @@
 import React, { Suspense, useState } from 'react';
 
-import { ContainerReferenceType } from '@fusion/industry-canvas';
-
 import { Button } from '@cognite/cogs.js';
 
 import { Dropdown } from '../../components/dropdown/Dropdown';
@@ -10,6 +8,7 @@ import { useNavigation } from '../../hooks/useNavigation';
 import { useOpenIn } from '../../hooks/useOpenIn';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useInstancesQuery } from '../../services/instances/generic/queries/useInstanceByIdQuery';
+import { ContainerReferenceType } from '../../types';
 
 import { Overview } from './containers/Overview';
 import { PropertiesView } from './containers/PropertiesView';

@@ -6,10 +6,11 @@ import {
   PlatypusError,
   Result,
 } from '@platypus/platypus-core';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { TOKENS } from '@platypus-app/di';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQuery } from '@tanstack/react-query';
+
+import { Notification } from '../components/Notification/Notification';
+import { TOKENS } from '../di';
+import { QueryKeys } from '../utils/queryKeys';
 
 import { useErrorLogger } from './useErrorLogger';
 import { useInjection } from './useInjection';
@@ -85,6 +86,10 @@ export const useDataModelTypeDefs = (
     );
 
   const memoizedDataModelTypeDefs = useMemo(() => {
+    // Do not remove, it fixes really bad bug with stale data
+    if (!selectedDataModelVersion.schema) {
+      return { types: [] };
+    }
     try {
       const dataModelTypeDefs = dataModelTypeDefsBuilder.parseSchema(
         selectedDataModelVersion.schema,

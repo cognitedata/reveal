@@ -2,10 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { VisionAnnotationDataType } from '@vision/modules/Common/types';
-import { VisionReviewAnnotation } from '@vision/modules/Review/types';
-
 import { Detail } from '@cognite/cogs.js';
+
+import { VisionAnnotationDataType } from '../../../../../Common/types';
+import { VisionReviewAnnotation } from '../../../../types';
 
 export const AnnotationTableRowAttribute = ({
   reviewAnnotation,

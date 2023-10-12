@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { isFilePreviewable } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
-
 import { Body, DocumentIcon, Button, Icon } from '@cognite/cogs.js';
 import { useFileIcon } from '@cognite/data-exploration';
 import { FileInfo } from '@cognite/sdk';
+
+import { isFilePreviewable } from '../FileUploader/utils/FileUtils';
 
 import { ThumbnailProcessingOverlay } from './ThumbnailProcessingOverlay';
 

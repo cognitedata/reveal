@@ -52,7 +52,7 @@ export const DataTypeSelector = <T extends DataType>({
             return (
               <MenuItem
                 key={dataType.name}
-                title={dataType.name}
+                title={dataType.displayName || dataType.name}
                 subtitle={dataType.description}
                 onClick={() => onSelectDataType(dataType)}
               />

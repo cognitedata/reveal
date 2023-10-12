@@ -14,11 +14,11 @@ import isArray from 'lodash/isArray';
 import qs from 'query-string';
 
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
-import { createLink, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 import { ResourceItem, ResourceType } from '@cognite/data-exploration';
 
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
+import { trackUsage } from '../utils/Metrics';
+import { getSearchParams } from '../utils/URLUtils';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 
@@ -73,19 +73,12 @@ export const useCurrentSearchResourceTypeFromLocation = () => {
   // sample path3: "/dss-dev/explore/search/asset/:asset-id/asset"
   // sample path4: "/dss-dev/explore/search/timeSeries/:timerseries-id/asset/:asset-id/asset"
 
-  // For Unified Signin, the path is different
-  // sample path1: "/cdf/dss-dev/explore/search/asset"
-  // sample path2: "/cdf/dss-dev/explore/search/asset/:asset-id"
-  // sample path3: "/cdf/dss-dev/explore/search/asset/:asset-id/asset"
-  // sample path4: "/cdf/dss-dev/explore/search/timeSeries/:timerseries-id/asset/:asset-id/asset"
   const path = location.pathname;
 
   const splittedPath = path.split('/');
 
   const getPossibleResourceTypeIndex = (baseNumberOfSplittedPath: number) =>
-    isUsingUnifiedSignin()
-      ? baseNumberOfSplittedPath + 1
-      : baseNumberOfSplittedPath;
+    baseNumberOfSplittedPath;
 
   if (
     splittedPath.includes('search') &&
@@ -96,8 +89,6 @@ export const useCurrentSearchResourceTypeFromLocation = () => {
 
   // sample path: "/dss-dev/explore/asset/123123123/asset"
 
-  // For Unified Signin, the path is different
-  // sample path: "/cdf/dss-dev/explore/asset/123123123/asset"
   if (
     !splittedPath.includes('search') &&
     splittedPath.length >= getPossibleResourceTypeIndex(4)

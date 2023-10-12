@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 
-import { useTranslation } from '@entity-matching-app/common';
-import { ModelMapping } from '@entity-matching-app/context/QuickMatchContext';
+import { Body, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { ModelMapping } from '../../context/QuickMatchContext';
 import {
   EMPipelineSource,
   EMPipelineTarget,
-} from '@entity-matching-app/hooks/entity-matching-pipelines';
-
-import { Body, Flex } from '@cognite/cogs.js';
+} from '../../hooks/entity-matching-pipelines';
 
 import ResourceCell from './ResourceCell';
 

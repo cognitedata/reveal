@@ -1,16 +1,17 @@
 import { useMemo } from 'react';
 
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import { Chart } from '@charts-app/models/chart/types';
-import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
-import { fetchCalculationQueryResult } from '@charts-app/services/calculation-backend';
-import { calculateGranularity } from '@charts-app/utils/timeseries';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
 import { CalculationResultQueryAggregateEnum } from '@cognite/calculation-backend';
+import { Chart } from '@cognite/charts-lib';
 import { DatapointsMultiQuery } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { WorkflowState } from '../../models/calculation-results/types';
+import { TimeseriesEntry } from '../../models/timeseries-results/types';
+import { fetchCalculationQueryResult } from '../../services/calculation-backend';
+import { calculateGranularity } from '../../utils/timeseries';
 
 const POINTS_PER_SERIES_IN_PREVIEW = 100;
 

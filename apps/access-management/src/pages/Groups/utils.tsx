@@ -1,5 +1,4 @@
 import { TranslationKeys } from '@access-management/common/i18n';
-import queryString from 'query-string';
 
 import { cognite } from '@cognite/acl-protos';
 import {
@@ -58,6 +57,10 @@ const nameToAclTypeMap = {
   datamodels: 'dataModelsAcl',
   datamodelinstances: 'dataModelInstancesAcl',
   hostedextractors: 'hostedExtractorsAcl',
+  monitoringtasks: 'monitoringTasksAcl',
+  scheduledcalculations: 'scheduledCalculationsAcl',
+  notifications: 'notificationsAcl',
+  workfloworchestration: 'workflowOrchestrationAcl',
 };
 
 const getCapabilityNameTranslationKey = {
@@ -85,6 +88,10 @@ const getCapabilityNameTranslationKey = {
   datamodels: 'data-models',
   datamodelinstances: 'data-model-instances',
   hostedextractors: 'hosted-extractors',
+  monitoringtasks: 'monitoring-tasks',
+  scheduledcalculations: 'scheduled-calculations',
+  notifications: 'notifications',
+  workfloworchestration: 'workflow-orchestration',
 };
 
 const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
@@ -136,6 +143,10 @@ const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
         'visionmodel',
         'robotics',
         'hostedextractors',
+        'monitoringtasks',
+        'scheduledcalculations',
+        'notifications',
+        'workfloworchestration',
       ],
     },
   ];
@@ -175,6 +186,10 @@ export const capabilityDescriptions = {
   datamodels: 'capability-desc-data-models',
   datamodelinstances: 'capability-desc-data-model-instances',
   hostedextractors: 'capability-desc-hosted-extractors',
+  monitoringtasks: 'capability-desc-monitoring-tasks',
+  scheduledcalculations: 'capability-desc-scheduled-calculations',
+  notifications: 'capability-desc-notifications',
+  workfloworchestration: 'capability-desc-workflow-orchestration',
 };
 
 const deprecatedAclTypes = ['genericsAcl', 'modelHostingAcl', 'typesAcl'];
@@ -333,17 +348,6 @@ export const getScopeLabel = (
       return _t('space-ids');
   }
   return null;
-};
-
-export const getStringCdfEnv = () => {
-  const { env } = queryString.parse(window.location.search);
-  if (env instanceof Array) {
-    return env[0];
-  }
-  if (typeof env === 'string') {
-    return env;
-  }
-  return undefined;
 };
 
 export const getActionLabel = (

@@ -24,9 +24,9 @@ export const Categories = () => {
   return (
     <CategoriesContainer>
       <CategoryContent className="categories-container">
-        {client.allDataTypes?.map((item, index) => (
+        {client.allDataTypes?.map((item) => (
           <CategoryCard
-            key={index}
+            key={item.name}
             type={item.displayName || item.name}
             description={item.description}
             onClick={() => handleCategoryClick(item.name)}
@@ -47,7 +47,8 @@ export const Categories = () => {
 const CategoriesContainer = styled.div`
   height: 10%;
   padding-top: 16px;
-  width: 774px;
+  max-width: 774px;
+  width: 100%;
   align-self: center;
 `;
 
@@ -57,4 +58,10 @@ const CategoryContent = styled.div`
   width: 100%;
   gap: 16px;
   padding: 16px 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  @media only screen and (max-width: 860px) {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
 `;

@@ -11,10 +11,6 @@ import {
   ResultCount,
   SearchResultCountLabel,
 } from '@data-exploration/containers';
-import {
-  useRelatedResourceResults,
-  useRelationshipCount,
-} from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
 import isEmpty from 'lodash/isEmpty';
 
@@ -32,6 +28,10 @@ import {
   useRelatedResourceDataForDetailView,
 } from '@data-exploration-lib/domain-layer';
 
+import {
+  useRelatedResourceResults,
+  useRelationshipCount,
+} from '../../../hooks';
 import {
   GroupingTableContainer,
   GroupingTableHeader,

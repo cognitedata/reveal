@@ -28,6 +28,12 @@
   "SEARCH_RESULTS_EMPTY_BODY": "We could not find any results for your query",
   "SEARCH_CATEGORIES_HEADER": "Categories",
   "SEARCH_CATEGORIES_ALL_OPTION": "All",
+  "SEARCH_RESULTS_3D_FILTER_ALL_OPTION": "All objects",
+  "SEARCH_RESULTS_3D_FILTER_ALL_OPTION_DESCRIPTION": "All objects are displayed",
+  "SEARCH_RESULTS_3D_FILTER_MAPPED_OPTION": "Available in 3D",
+  "SEARCH_RESULTS_3D_FILTER_MAPPED_OPTION_DESCRIPTION": "Only 3D contextualised objects are displayed",
+  "SEARCH_RESULTS_3D_ZOOM_IN_BUTTON": "Zoom in",
+  "SEARCH_RESULTS_3D_NOT_3D_MAPPED_TEXT": "Not available in 3D",
 
   "ONBOARDING_PAGE_TOGGLE_DATA_MODEL_BUTTON": "Please select a Data Model to explore",
 
@@ -114,7 +120,7 @@
   "AI_FIND_IN_FILES_DESC": "AI scans documents to look for answer",
   "AI_COMING_SOON": "coming soon",
   "AI_HELP_ME_FIND_DESC": "AI generates filters to find data",
-  "AI_SEARCH_PLACEHOLDER": "Ask your question...",
+  "AI_SEARCH_PLACEHOLDER": "Describe the data you want to find...",
   "AI_SEARCH_BAR_SEARCH_FOR": "Help me find \"{{query}}\"",
   "AI_SUGGESTION_SEARCH_1": "{{prefix}} all {{type}}",
   "AI_SUGGESTION_SEARCH_2": "{{prefix}} all {{type}} where {{field}} starts with A",
@@ -133,5 +139,6 @@
   "AI_LOADING_TEXT_LONG": "{{status}} this may take a while. You can use the standard search if this takes too long.",
   "AI_LOADING_TEXT": "{{status}} this may take a while.",
   "AI_FAILED": "Failed to find results",
+  "AI_EDITED_FILTER_RESULTS": "I found {{resultAggregate}} results based on the new filters.",
   "AI_LEARN_MORE": "Learn more"
 }

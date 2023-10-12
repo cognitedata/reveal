@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { selectBaseUrl } from '@simint-app/store/simconfigApiProperties/selectors';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
 import { Button, Icon, Input, Modal, Textarea } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { selectBaseUrl } from '../../../store/simconfigApiProperties/selectors';
+import { createCdfLink } from '../../../utils/createCdfLink';
 
 export function ConfigureCustomCalculation({
   modelName,
@@ -70,17 +71,13 @@ export function ConfigureCustomCalculation({
       <Modal
         icon="Function"
         size="small"
-        title="Create custom calculation"
+        title="Create simulation routine"
         visible={isModalOpen}
         hideFooter
         onCancel={() => {
           setIsModalOpen(false);
         }}
       >
-        <StyledH4>
-          <Icon type="Function" />
-          Create simulation routine
-        </StyledH4>
         <Formik
           initialValues={{
             calculationName: '',
@@ -156,14 +153,6 @@ export function ConfigureCustomCalculation({
     </>
   );
 }
-
-const StyledH4 = styled.h4`
-  display: flex;
-  align-items: center;
-  i {
-    margin-right: 8px;
-  }
-`;
 
 const StyledTitle = styled.label`
   display: block;

@@ -4,9 +4,22 @@ import { useQuery } from '@tanstack/react-query';
 
 import { AnnotationModel } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { ContainerConfig, ContainerType } from '@cognite/unified-file-viewer';
+import { ContainerType } from '@cognite/unified-file-viewer';
 
-export const useAnnotationsMultiple = (containerConfigs: ContainerConfig[]) => {
+import type { IndustryCanvasContainerConfig } from '../types';
+
+export const getResourceKey = (
+  container: IndustryCanvasContainerConfig
+): string => {
+  if (container.type === ContainerType.DOCUMENT) {
+    return `${container.metadata.resourceId}-${container.page}`;
+  }
+  return `${container.metadata.resourceId}`;
+};
+
+export const useAnnotationsMultiple = (
+  containerConfigs: IndustryCanvasContainerConfig[]
+) => {
   const sdk = useSDK();
 
   const queryKey = useMemo(() => {
@@ -16,37 +29,27 @@ export const useAnnotationsMultiple = (containerConfigs: ContainerConfig[]) => {
           containerConfig.type === ContainerType.DOCUMENT ||
           containerConfig.type === ContainerType.IMAGE
       )
-      .map((containerConfig) => {
-        if (containerConfig.type === ContainerType.DOCUMENT) {
-          return {
-            resourceId: containerConfig.metadata.resourceId,
-            page: containerConfig.page,
-          };
-        }
-
-        return {
-          resourceId: containerConfig.metadata.resourceId,
-        };
-      });
+      .map(getResourceKey);
   }, [containerConfigs]);
 
   return useQuery(
     queryKey,
-    (): Promise<AnnotationModel[][]> =>
-      Promise.all(
+    async (): Promise<Record<string, AnnotationModel[]>> => {
+      const annotationsByResourceKeyEntries = await Promise.all(
         containerConfigs.map(async (containerConfig) => {
+          const resourceKey = getResourceKey(containerConfig);
           if (
             containerConfig.type !== ContainerType.IMAGE &&
             containerConfig.type !== ContainerType.DOCUMENT
           ) {
-            return [];
+            return [resourceKey, []];
           }
 
           if (containerConfig.metadata.resourceId === undefined) {
             throw new Error('Expected resourceId to be defined');
           }
 
-          return (
+          const annotations = (
             await sdk.annotations
               .list({
                 filter: {
@@ -75,8 +78,11 @@ export const useAnnotationsMultiple = (containerConfigs: ContainerConfig[]) => {
 
             return containerConfig.page === annotationPageNumber;
           });
+          return [resourceKey, annotations];
         })
-      ),
+      );
+      return Object.fromEntries(annotationsByResourceKeyEntries);
+    },
     {
       keepPreviousData: true,
     }

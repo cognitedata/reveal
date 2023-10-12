@@ -1,5 +1,5 @@
-import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
-import { JobState } from '@vision/modules/Process/store/types';
+import { VisionDetectionModelType } from '../../api/vision/detectionModels/types';
+import { JobState } from '../../modules/Process/store/types';
 
 export const jobIds: number[] = [100, 200, 300, 400, 500, 600];
 export const filesWithJobs: Record<number, { jobIds: number[] }> = {

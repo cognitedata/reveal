@@ -5,11 +5,9 @@ import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { Breadcrumbs as Breadcrumb } from '@cognite/cogs.js';
 
-import {
-  getSearchParams,
-  removeProjectFromPath,
-} from '@data-exploration-app/utils/URLUtils';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { getSearchParams, removeProjectFromPath } from '../../utils/URLUtils';
 
 type BreadcrumbsProps = {
   currentResource: {

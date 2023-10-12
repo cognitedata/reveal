@@ -1,22 +1,25 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 
-import { DataSetWithExtpipes } from '@data-catalog-app/actions';
-import { getRawTableExtpipeLastUpdateTimeKey } from '@data-catalog-app/actions/keys';
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import {
-  combineDataSetAndExtpipesRawTables,
-  updateRawTableWithLastUpdate,
-} from '@data-catalog-app/components/Lineage/Extpipe/rawTablesUtils';
-import { useRawTableColumns } from '@data-catalog-app/components/Lineage/rawTableColumns';
-import {
-  LineageSection,
-  LineageSubTitle,
-  LineageTitle,
-} from '@data-catalog-app/utils/styledComponents';
-import { Extpipe, RawTable } from '@data-catalog-app/utils/types';
 import { useQuery } from '@tanstack/react-query';
 
 import { Icon, Table } from '@cognite/cogs.js';
+
+import { DataSetWithExtpipes } from '../../../actions';
+import { getRawTableExtpipeLastUpdateTimeKey } from '../../../actions/keys';
+import { useTranslation } from '../../../common/i18n';
+import {
+  Extpipe,
+  LineageSection,
+  LineageSubTitle,
+  LineageTitle,
+  RawTable,
+} from '../../../utils';
+import { useRawTableColumns } from '../rawTableColumns';
+
+import {
+  combineDataSetAndExtpipesRawTables,
+  updateRawTableWithLastUpdate,
+} from './rawTablesUtils';
 
 export interface RawExtpipeWithUpdateTime extends RawTable {
   lastUpdate: string;

@@ -1,10 +1,11 @@
 import { DataModelTransformation } from '@platypus/platypus-core';
-import * as flags from '@platypus-app/flags';
-import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
-import render from '@platypus-app/tests/render';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import noop from 'lodash/noop';
+
+import * as flags from '../../../../../flags';
+import render from '../../../../../tests/render';
+import useTransformations from '../../hooks/useTransformations';
 
 import { PreviewPageHeader } from './PreviewPageHeader';
 
@@ -92,7 +93,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -113,7 +114,7 @@ describe('PreviewPageHeader', () => {
 
     expect(screen.getByText(/add instance/i)).toBeTruthy();
     expect(screen.getByText(/bulk population/i)).toBeTruthy();
-    expect(screen.getByLabelText(/delete/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /delete/gi })).toBeTruthy();
   });
 
   it('Shows action buttons if there are published rows', () => {
@@ -125,7 +126,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -145,7 +146,7 @@ describe('PreviewPageHeader', () => {
     );
 
     expect(screen.getByText(/add instance/i)).toBeTruthy();
-    expect(screen.getByLabelText(/delete/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /delete/gi })).toBeTruthy();
   });
 
   it('Shows action buttons if there are draft rows', () => {
@@ -157,7 +158,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={1}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -177,7 +178,7 @@ describe('PreviewPageHeader', () => {
     );
 
     expect(screen.getByText(/add instance/i)).toBeTruthy();
-    expect(screen.getByLabelText(/delete/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /delete/gi })).toBeTruthy();
   });
 
   it('Does not show action buttons if there are no rows or transformations', () => {
@@ -189,7 +190,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -209,7 +210,7 @@ describe('PreviewPageHeader', () => {
     );
 
     expect(screen.queryByText(/add instance/i)).toBeNull();
-    expect(screen.queryByLabelText(/delete/i)).toBeNull();
+    expect(screen.queryByRole('button', { name: /delete/gi })).toBeNull();
   });
 
   it('Shows search input if there are published rows', () => {
@@ -217,7 +218,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -244,7 +245,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={10}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -278,7 +279,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}

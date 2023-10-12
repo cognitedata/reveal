@@ -1,4 +1,8 @@
-import { editor, languages, Position } from 'monaco-editor';
+import {
+  editor,
+  languages,
+  Position,
+} from 'monaco-editor/esm/vs/editor/editor.api';
 
 import { WorkerAccessor } from '../../types';
 
@@ -22,9 +26,22 @@ export class CodeCompletionProvider implements CompletionItemProvider {
     position: Position
   ): Promise<CompletionList> {
     const resource = model.uri;
+
+    // get the text from current line
+    const textUntilPosition = model.getValueInRange({
+      startLineNumber: position.lineNumber,
+      startColumn: 1,
+      endLineNumber: position.lineNumber,
+      endColumn: position.column,
+    });
+
     const worker = await this._worker(resource);
 
-    const suggestions = await worker.doComplete(model.getValue(), position);
+    const suggestions = await worker.doComplete(
+      textUntilPosition,
+      model.getValue(),
+      position
+    );
     return suggestions as CompletionList;
   }
 }

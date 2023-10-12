@@ -1,14 +1,5 @@
 import styled from 'styled-components';
 
-import { assets, rootAssets } from '@data-exploration-components/stubs/assets';
-import { datasets } from '@data-exploration-components/stubs/datasets';
-import { events } from '@data-exploration-components/stubs/events';
-import { files } from '@data-exploration-components/stubs/files';
-import { mappings } from '@data-exploration-components/stubs/mappings';
-import { relationships } from '@data-exploration-components/stubs/relationships';
-import { timeseries } from '@data-exploration-components/stubs/timeseries';
-import { datapoints } from '@data-exploration-components/stubs/timeseriesDatapoints';
-
 import { AssetListScope, IdEither } from '@cognite/sdk';
 
 import { documents, sequences } from '@data-exploration-lib/core';
@@ -19,6 +10,14 @@ import {
   OpenSelectorProps,
   ResourceSelector,
 } from '../context';
+import { assets, rootAssets } from '../stubs/assets';
+import { datasets } from '../stubs/datasets';
+import { events } from '../stubs/events';
+import { files } from '../stubs/files';
+import { mappings } from '../stubs/mappings';
+import { relationships } from '../stubs/relationships';
+import { timeseries } from '../stubs/timeseries';
+import { datapoints } from '../stubs/timeseriesDatapoints';
 
 const UNSPLASH_URL = 'https://unsplash.it/300/400';
 

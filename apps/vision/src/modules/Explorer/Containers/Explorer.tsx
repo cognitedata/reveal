@@ -4,39 +4,38 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { VerticalContainer } from '@vision/modules/Common/Components/VerticalContainer';
-import { useContextMenu } from '@vision/modules/Common/hooks/useContextMenu';
-import { TableDataItem } from '@vision/modules/Common/types';
-import { ContextMenuContainer } from '@vision/modules/Explorer/Containers/ContextMenuContainer';
-import { ExplorerBulkEditModalContainer } from '@vision/modules/Explorer/Containers/ExplorerBulkEditModalContainer';
-import { ExplorerFileDownloadModalContainer } from '@vision/modules/Explorer/Containers/ExplorerFileDownloadModalContainer';
-import { ExplorerFileUploadModalContainer } from '@vision/modules/Explorer/Containers/ExplorerFileUploadModalContainer';
-import { ExplorerSearchResults } from '@vision/modules/Explorer/Containers/ExplorerSearchResults';
-import { ExplorerToolbarContainer } from '@vision/modules/Explorer/Containers/ExplorerToolbarContainer';
-import { selectExplorerSelectedFileIdsInSortedOrder } from '@vision/modules/Explorer/store/selectors';
+import { Colors } from '@cognite/cogs.js';
+
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { ClearExplorerStateOnTransition } from '../../../store/thunks/Explorer/ClearExplorerStateOnTransition';
+import { FetchFilesById } from '../../../store/thunks/Files/FetchFilesById';
+import { PopulateReviewFiles } from '../../../store/thunks/Review/PopulateReviewFiles';
+import { pushMetric } from '../../../utils/pushMetric';
+import { getParamLink, workflowRoutes } from '../../../utils/workflowRoutes';
+import { VerticalContainer } from '../../Common/Components/VerticalContainer';
+import { useContextMenu } from '../../Common/hooks/useContextMenu';
+import { TableDataItem } from '../../Common/types';
+import { FileDetails } from '../../FileDetails/Containers/FileDetails';
+import { cancelFileDetailsEdit } from '../../FileDetails/slice';
+import FilterToggleButton from '../../FilterSidePanel/Components/FilterToggleButton';
+import { FilterSidePanel } from '../../FilterSidePanel/Containers/FilterSidePanel';
+import { StatusToolBar } from '../../Process/Containers/StatusToolBar';
+import { selectExplorerSelectedFileIdsInSortedOrder } from '../store/selectors';
 import {
   hideFileMetadata,
   setExplorerFileSelectState,
   setFocusedFileId,
   showFileMetadata,
   toggleExplorerFilterView,
-} from '@vision/modules/Explorer/store/slice';
-import { FileDetails } from '@vision/modules/FileDetails/Containers/FileDetails';
-import { cancelFileDetailsEdit } from '@vision/modules/FileDetails/slice';
-import FilterToggleButton from '@vision/modules/FilterSidePanel/Components/FilterToggleButton';
-import { FilterSidePanel } from '@vision/modules/FilterSidePanel/Containers/FilterSidePanel';
-import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { ClearExplorerStateOnTransition } from '@vision/store/thunks/Explorer/ClearExplorerStateOnTransition';
-import { FetchFilesById } from '@vision/store/thunks/Files/FetchFilesById';
-import { PopulateReviewFiles } from '@vision/store/thunks/Review/PopulateReviewFiles';
-import { pushMetric } from '@vision/utils/pushMetric';
-import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
+} from '../store/slice';
 
-import { Colors } from '@cognite/cogs.js';
-
-import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
+import { ContextMenuContainer } from './ContextMenuContainer';
+import { ExplorerBulkEditModalContainer } from './ExplorerBulkEditModalContainer';
+import { ExplorerFileDownloadModalContainer } from './ExplorerFileDownloadModalContainer';
+import { ExplorerFileUploadModalContainer } from './ExplorerFileUploadModalContainer';
+import { ExplorerSearchResults } from './ExplorerSearchResults';
+import { ExplorerToolbarContainer } from './ExplorerToolbarContainer';
 
 const Explorer = () => {
   const {
@@ -202,7 +201,6 @@ const Explorer = () => {
           />
         )}
         <ExplorerBulkEditModalContainer />
-        <ExplorerModelTrainingModalContainer />
       </Wrapper>
     </VerticalContainer>
   );

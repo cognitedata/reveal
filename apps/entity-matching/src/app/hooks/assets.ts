@@ -1,5 +1,3 @@
-import { Asset, AssetFilterProps, CogniteError } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider';
 import {
   QueryKey,
   useInfiniteQuery,
@@ -7,6 +5,9 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query';
+
+import { Asset, AssetFilterProps, CogniteError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 const assetRootKey = ['assets'];
 

@@ -15,19 +15,19 @@ export function createStore(): any {
   });
 
   // TODO: commenting this might help if not working in localhost
-  if ((module as any).hot) {
-    // Enable Webpack hot module replacement for reducers
-    (module as any).hot.accept(
-      '@interactive-diagrams-app/store/reducer',
-      () => {
-        const nextReducer =
-          /* eslint-disable global-require */
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          require('@interactive-diagrams-app/store/reducer').default;
-        store.replaceReducer(nextReducer);
-      }
-    );
-  }
+  // if ((module as any).hot) {
+  //   // Enable Webpack hot module replacement for reducers
+  //   (module as any).hot.accept(
+  //     '@interactive-diagrams-app/store/reducer',
+  //     () => {
+  //       const nextReducer =
+  //         /* eslint-disable global-require */
+  //         // eslint-disable-next-line @typescript-eslint/no-var-requires
+  //         require('@interactive-diagrams-app/store/reducer').default;
+  //       store.replaceReducer(nextReducer);
+  //     }
+  //   );
+  // }
 
   return store;
 }

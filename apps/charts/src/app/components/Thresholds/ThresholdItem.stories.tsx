@@ -1,9 +1,10 @@
 /**
  * Threshold Item
  */
-import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
 import { Meta, Story } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
+
+import useThresholdsResults from '../../hooks/threshold-calculations';
 
 import ThresholdItem from './ThresholdItem';
 

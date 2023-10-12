@@ -9,6 +9,7 @@ const RESOURCE_TYPES_MAP: Record<ResourceType, SdkResourceType> = {
   file: 'files',
   event: 'events',
   threeD: 'threeD' as SdkResourceType,
+  charts: 'charts' as SdkResourceType,
 };
 
 export const convertToSdkResourceType = (resourceType: ResourceType) => {

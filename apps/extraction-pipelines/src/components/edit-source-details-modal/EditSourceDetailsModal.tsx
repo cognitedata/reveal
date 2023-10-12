@@ -3,7 +3,7 @@ import React from 'react';
 import { notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 
-import { Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
+import { Checkbox, Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import {
@@ -18,7 +18,9 @@ type EditSourceDetailsModalProps = {
   visible: ModalProps['visible'];
 };
 
-type EditMQTTSourceFormValues = Partial<Pick<BaseMQTTSource, 'host' | 'port'>>;
+type EditMQTTSourceFormValues = Partial<
+  Pick<BaseMQTTSource, 'host' | 'port' | 'useTls'>
+>;
 
 export const EditSourceDetailsModal = ({
   onCancel,
@@ -64,6 +66,7 @@ export const EditSourceDetailsModal = ({
       initialValues: {
         host: source.host,
         port: source.port,
+        useTls: source.useTls,
       },
       onSubmit: (val) => {
         if (val.host && val.port) {
@@ -76,6 +79,9 @@ export const EditSourceDetailsModal = ({
               },
               port: {
                 set: val.port,
+              },
+              useTls: {
+                set: !!val.useTls,
               },
             },
           });
@@ -123,6 +129,12 @@ export const EditSourceDetailsModal = ({
           statusText={errors.port}
           value={values.port}
         />
+        <Checkbox
+          checked={!!values.useTls}
+          onChange={(e) => setFieldValue('useTls', e.target.checked)}
+        >
+          {t('use-tls')}
+        </Checkbox>
       </Flex>
     </Modal>
   );

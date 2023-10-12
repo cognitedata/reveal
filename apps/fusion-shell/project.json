@@ -93,6 +93,30 @@
       "options": {
         "lintFilePatterns": ["apps/fusion-shell/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/fusion-shell/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "fusion-shell:preview:production",
+        "env": {
+          "FUSION_SHELL_E2E_ORG": "cog-e2e",
+          "FUSION_SHELL_E2E_PROJECT": "e2e-bluefield",
+          "FUSION_SHELL_E2E_CLUSTER": "bluefield.cognitedata.com",
+          "FUSION_SHELL_E2E_AAD_IDP_INTERNAL_ID": "09f375ff-13b6-4d58-95fd-869b098d4808",
+          "FUSION_SHELL_E2E_AAD_USERNAME": "fusion-shell-test-user@cognitee2etesting.onmicrosoft.com"
+        }
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "fusion-shell:preview:production"
+        },
+        "ci": {
+          "devServerTarget": "fusion-shell:preview:production"
+        }
+      },
+      "dependsOn": ["build-single-spa-deps"]
     }
   },
   "tags": [],

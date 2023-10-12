@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -8,7 +8,6 @@ import { Body, Button, Flex, Heading, Icon } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { MQTTSourceWithJobMetrics } from '../../hooks/hostedExtractors';
-import { CreateJobsModal } from '../create-jobs-modal/CreateJobsModal';
 import Section from '../section';
 
 import { TopicFilter } from './TopicFilter';
@@ -25,7 +24,13 @@ export const TopicFilters = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const navigateToAddTopicFilter = useCallback(() => {
+    navigate(
+      createLink(
+        `/extpipes/hosted-extraction-pipeline/${source.externalId}/add-topic-filters`
+      )
+    );
+  }, [navigate, source.externalId]);
 
   return (
     <Section
@@ -34,13 +39,7 @@ export const TopicFilters = ({
         source.jobs.length !== 0 && (
           <Button
             size="small"
-            onClick={() =>
-              navigate(
-                createLink(
-                  `/extpipes/hosted-extraction-pipeline/${source.externalId}/add-topic-filters`
-                )
-              )
-            }
+            onClick={navigateToAddTopicFilter}
             type="ghost-accent"
           >
             {t('add-topic-filters')}
@@ -50,13 +49,6 @@ export const TopicFilters = ({
       icon="BarChart"
       title={t('topic-filter', { count: 2 })}
     >
-      {isCreateModalOpen && (
-        <CreateJobsModal
-          onCancel={() => setIsCreateModalOpen(false)}
-          source={source}
-          visible={isCreateModalOpen}
-        />
-      )}
       <Content>
         {source.jobs.length ? (
           source.jobs.map((job) => (
@@ -73,7 +65,7 @@ export const TopicFilters = ({
                 </Body>
               </Flex>
             </Flex>
-            <Button onClick={() => setIsCreateModalOpen(true)} type="primary">
+            <Button onClick={navigateToAddTopicFilter} type="primary">
               {t('setup-stream')}
             </Button>
           </EmptyContent>

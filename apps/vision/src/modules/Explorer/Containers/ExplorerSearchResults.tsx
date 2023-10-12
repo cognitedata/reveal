@@ -3,29 +3,34 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { VisionMode } from '@vision/constants/enums/VisionEnums';
-import { FileGridPreview } from '@vision/modules/Common/Components/FileGridPreview/FileGridPreview';
-import { FileTableExplorer } from '@vision/modules/Common/Components/FileTable/FileTableExplorer';
+import noop from 'lodash/noop';
+
+import { FileFilterProps } from '@cognite/sdk';
+
+import { VisionMode } from '../../../constants/enums/VisionEnums';
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { FileGridPreview } from '../../Common/Components/FileGridPreview/FileGridPreview';
+import { FileTableExplorer } from '../../Common/Components/FileTable/FileTableExplorer';
 import {
   PageSize,
   PaginatedTableProps,
-} from '@vision/modules/Common/Components/FileTable/types';
-import { PageBasedGridView } from '@vision/modules/Common/Components/GridView/PageBasedGridView';
-import { MapView } from '@vision/modules/Common/Components/MapView/MapView';
-import { PaginationWrapper } from '@vision/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
+} from '../../Common/Components/FileTable/types';
+import { PageBasedGridView } from '../../Common/Components/GridView/PageBasedGridView';
+import { MapView } from '../../Common/Components/MapView/MapView';
+import { PaginationWrapper } from '../../Common/Components/SorterPaginationWrapper/PaginationWrapper';
 import {
   ResultData,
   SelectFilter,
   TableDataItem,
   ViewMode,
-} from '@vision/modules/Common/types';
-import { SortKeys } from '@vision/modules/Common/Utils/SortUtils';
-import { ResultTableLoader } from '@vision/modules/Explorer/Containers/ResultTableLoader';
+} from '../../Common/types';
+import { SortKeys } from '../../Common/Utils/SortUtils';
 import {
   useIsSelectedInExplorer,
   useExplorerFilesSelected,
-} from '@vision/modules/Explorer/store/hooks';
-import { selectExplorerAllFilesSelected } from '@vision/modules/Explorer/store/selectors';
+} from '../store/hooks';
+import { selectExplorerAllFilesSelected } from '../store/selectors';
 import {
   setReverse,
   setSortKey,
@@ -39,12 +44,9 @@ import {
   setExploreModalPageSize,
   setExploreModalReverse,
   setExploreModalSortKey,
-} from '@vision/modules/Explorer/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import noop from 'lodash/noop';
+} from '../store/slice';
 
-import { FileFilterProps } from '@cognite/sdk';
+import { ResultTableLoader } from './ResultTableLoader';
 
 export const ExplorerSearchResults = ({
   reFetchProp,

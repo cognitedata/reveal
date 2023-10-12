@@ -13,6 +13,8 @@ export type CreateJobsFormValues = {
   clientId?: string;
   clientSecret?: string;
   format?: MQTTFormat['type'];
+  mapping?: string;
+  mappingName?: string;
 };
 
 export enum ExpandOptions {

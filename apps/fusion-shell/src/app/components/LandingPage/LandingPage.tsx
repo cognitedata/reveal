@@ -29,6 +29,8 @@ export default function LandingPage({
     loginInfo.data?.domain === 'ftdatamosaix' ||
     loginInfo.data?.domain === 'ftdatamosaix-dev' ||
     loginInfo.data?.domain === 'ftdatamosaix-qa' ||
+    loginInfo.data?.domain === 'ftdatamosaix-preprod' ||
+    loginInfo.data?.domain === 'ftdatamosaix-demo' ||
     loginInfo.data?.domain === 'rockwellautomation' ||
     loginInfo.data?.domain === 'rockwelldemo';
 
@@ -44,7 +46,10 @@ export default function LandingPage({
     >
       <UserOnboardingSectionWrapper>
         <UserOnboardingSection direction="column" alignItems="flex-start">
-          <StyledTitle level={2}>
+          <StyledTitle
+            data-testid="fusion-landing-page-welcome-message"
+            level={2}
+          >
             {isRockwellDomains
               ? t('fusion-landing-page-welcome-message-rockwell')
               : t('fusion-landing-page-welcome-message')}{' '}

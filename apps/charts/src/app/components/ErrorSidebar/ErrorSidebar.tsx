@@ -4,6 +4,13 @@
 
 import { memo } from 'react';
 
+import { v4 as uuidv4 } from 'uuid';
+
+import { Button, Infobox, Tooltip } from '@cognite/cogs.js';
+
+import { useTranslations } from '../../hooks/translations';
+import { WorkflowState } from '../../models/calculation-results/types';
+import { makeDefaultTranslations } from '../../utils/translations';
 import {
   Sidebar,
   TopContainer,
@@ -12,14 +19,8 @@ import {
   ContentOverflowWrapper,
   ContentContainer,
   LoadingRow,
-} from '@charts-app/components/Common/SidebarElements';
-import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { v4 as uuidv4 } from 'uuid';
-
-import { Button, Infobox, Tooltip } from '@cognite/cogs.js';
+} from '../Common/SidebarElements';
+import { StyleButton } from '../StyleButton/StyleButton';
 
 type Props = {
   visible: boolean;

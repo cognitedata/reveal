@@ -15,6 +15,7 @@ const CommandMap = {
 };
 
 export function StepCommand({
+  dynamicStepFields,
   step,
   routineOrder,
 }: Omit<StepCommandProps, 'stepIndex'>) {
@@ -31,6 +32,11 @@ export function StepCommand({
   const stepIndex = getStepIndex(values, routineIndex, stepOrder);
 
   return (
-    <StepCmd routineOrder={routineIndex} step={step} stepIndex={stepIndex} />
+    <StepCmd
+      dynamicStepFields={dynamicStepFields}
+      routineOrder={routineIndex}
+      step={step}
+      stepIndex={stepIndex}
+    />
   );
 }

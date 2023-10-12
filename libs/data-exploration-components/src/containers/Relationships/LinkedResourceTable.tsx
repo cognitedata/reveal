@@ -7,13 +7,10 @@ import {
   SequenceLinkedSearchResults,
   TimeseriesLinkedSearchResults,
 } from '@data-exploration/containers';
-import {
-  ResourceType,
-  ResourceItem,
-  SelectableItemsProps,
-} from '@data-exploration-components/types';
 
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { ResourceItem, ResourceType, SelectableItemsProps } from '../../types';
 
 export const LinkedResourceTable = ({
   isGroupingFilesEnabled,

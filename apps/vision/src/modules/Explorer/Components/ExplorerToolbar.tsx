@@ -2,13 +2,14 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { BulkActionMenu } from '@vision/modules/Common/Components/BulkActionMenu/BulkActionMenu';
-import { LoadingBar } from '@vision/modules/Common/Components/LoadingBar/LoadingBar';
-import { ExplorationSearchBar } from '@vision/modules/Explorer/Components/ExplorationSearchBar';
-import { ExplorerToolbarContainerProps } from '@vision/modules/Explorer/Containers/ExplorerToolbarContainer';
-
 import { Button, SegmentedControl, Title } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
+
+import { BulkActionMenu } from '../../Common/Components/BulkActionMenu/BulkActionMenu';
+import { LoadingBar } from '../../Common/Components/LoadingBar/LoadingBar';
+import { ExplorerToolbarContainerProps } from '../Containers/ExplorerToolbarContainer';
+
+import { ExplorationSearchBar } from './ExplorationSearchBar';
 
 type ExplorerToolbarProps = ExplorerToolbarContainerProps & {
   maxSelectCount?: number;
@@ -21,8 +22,6 @@ type ExplorerToolbarProps = ExplorerToolbarContainerProps & {
   onReview: () => void;
   onBulkEdit: () => void;
   onDelete: (setIsDeletingState: (val: boolean) => void) => void;
-  onTrainModel: () => void;
-  onAutoMLModelPage: () => void;
   handleCancelOtherEdits: () => void;
 };
 
@@ -41,16 +40,9 @@ export const ExplorerToolbar = ({
   onReview,
   onBulkEdit,
   onDelete,
-  onTrainModel,
-  onAutoMLModelPage,
   reFetch,
   handleCancelOtherEdits,
 }: ExplorerToolbarProps) => {
-  const visionAutoMLEnabled = useFlag('VISION_AutoML', {
-    fallback: false,
-    forceRerender: true,
-  });
-
   return (
     <>
       <TitleBar>
@@ -75,20 +67,8 @@ export const ExplorerToolbar = ({
             onReview={onReview}
             onBulkEdit={onBulkEdit}
             onDelete={onDelete}
-            onTrainModel={onTrainModel}
             handleCancelOtherEdits={handleCancelOtherEdits}
           />
-          {visionAutoMLEnabled && (
-            <Button
-              style={{ marginLeft: 14 }}
-              icon="ArrowRight"
-              type="tertiary"
-              iconPlacement="right"
-              onClick={onAutoMLModelPage}
-            >
-              AutoML Models
-            </Button>
-          )}
         </Right>
       </TitleBar>
 

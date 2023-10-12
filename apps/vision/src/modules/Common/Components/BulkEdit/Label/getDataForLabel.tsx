@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { BulkEditTableDataType } from '@vision/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
-import { CellContainer } from '@vision/modules/Common/Components/BulkEdit/utils/CellContainer';
-import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
-import { VisionFile } from '@vision/modules/Common/store/files/types';
 import { Tag } from 'antd';
 
 import { ExternalId } from '@cognite/sdk';
+
+import { BulkEditUnsavedState } from '../../../store/common/types';
+import { VisionFile } from '../../../store/files/types';
+import { BulkEditTableDataType } from '../BulkEditTable/BulkEditTable';
+import { CellContainer } from '../utils/CellContainer';
 
 export const getTagForOriginal = ({
   item,

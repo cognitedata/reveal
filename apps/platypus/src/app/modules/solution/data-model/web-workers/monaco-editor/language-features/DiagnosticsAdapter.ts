@@ -5,8 +5,10 @@ import {
   MarkerSeverity,
   Thenable,
   Uri,
-} from 'monaco-editor';
+} from 'monaco-editor/esm/vs/editor/editor.api';
 
+import { publish } from '../../../../../../utils/custom-events';
+import { CUSTOM_EVENTS } from '../../../constants';
 import { config } from '../../config';
 import { FdmGraphQLDmlWorker } from '../../FdmGraphQLDmlWorker';
 import { EditorInstance, ValidationMarker } from '../../types';
@@ -115,6 +117,7 @@ export class DiagnosticsAdapter {
     // so we can use it later for other stuff
     if (!diagnostics.length && editorContent) {
       await worker.setGraphQlSchema(editorContent);
+      publish(CUSTOM_EVENTS.ON_VALID_GRAPHQL_SCHEMA_CHANGED, editorContent);
     }
 
     // Monaco editor needs them as separate lines
@@ -137,7 +140,6 @@ export class DiagnosticsAdapter {
       });
     });
 
-    // return markers;
     editorInstance.setModelMarkers(model, config.languageId, markers);
   }
 }

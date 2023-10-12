@@ -4,16 +4,16 @@ import {
   DataModelTypeDefsType,
   FetchPublishedRowsCountDTO,
 } from '@platypus/platypus-core';
+import { useQuery } from '@tanstack/react-query';
+
 import {
   formatValidationErrors,
   Notification,
-} from '@platypus-app/components/Notification/Notification';
-import { TOKENS } from '@platypus-app/di';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { useQuery } from '@tanstack/react-query';
-
+} from '../../../../components/Notification/Notification';
+import { TOKENS } from '../../../../di';
 import { useInjection } from '../../../../hooks/useInjection';
+import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
+import { QueryKeys } from '../../../../utils/queryKeys';
 
 export const usePublishedRowsCountMapByType = ({
   dataModelExternalId,

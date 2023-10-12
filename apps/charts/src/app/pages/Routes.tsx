@@ -1,28 +1,24 @@
 import * as React from 'react';
 import { Route, Routes as ReactRoutes } from 'react-router-dom';
 
-import ErrorToast from '@charts-app/components/ErrorToast/ErrorToast';
-import PageLayout from '@charts-app/components/Layout/PageLayout';
-import SecondaryTopBar from '@charts-app/components/SecondaryTopBar/SecondaryTopBar';
-import { useFirebaseInit } from '@charts-app/hooks/firebase';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { identifyUserForMetrics } from '@charts-app/services/metrics';
 import * as Sentry from '@sentry/react';
 
 import { getFlow } from '@cognite/auth-utils';
-import {
-  getProject,
-  getCluster,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { getProject, getCluster } from '@cognite/cdf-utilities';
+import { useFirebaseInit } from '@cognite/charts-lib';
 import { Loader, toast } from '@cognite/cogs.js';
 import { parseEnvFromCluster } from '@cognite/login-utils';
+
+import ErrorToast from '../components/ErrorToast/ErrorToast';
+import PageLayout from '../components/Layout/PageLayout';
+import SecondaryTopBar from '../components/SecondaryTopBar/SecondaryTopBar';
+import { useUserInfo } from '../hooks/useUserInfo';
+import { identifyUserForMetrics } from '../services/metrics';
 
 import ChartListPage from './ChartListPage/ChartListPage';
 import ChartViewPage from './ChartViewPage/ChartViewPage';
 import FileViewPage from './FileViewPage/FileViewPage';
-import TenantSelectorView from './TenantSelector/TenantSelector';
-import UserProfile from './UserProfile/UserProfile';
+import { UnsubscribePage } from './UnsubscribePage/UnsubscribePage';
 
 type PropsRouteWithFirebase = {
   element: () => JSX.Element;
@@ -81,22 +77,16 @@ const RouteWithFirebase = ({
 const RouteWithSentry = Sentry.withSentryReactRouterV6Routing(Route);
 
 const Routes = () => {
-  const baseUrl = isUsingUnifiedSignin()
-    ? `/cdf/:project/:subAppPath`
-    : '/:project/:subAppPath';
+  const baseUrl = '/:project/:subAppPath';
   return (
     <ReactRoutes>
-      <RouteWithSentry
-        path="/"
-        element={isUsingUnifiedSignin() ? null : <TenantSelectorView />}
-      />
       <RouteWithSentry
         path={`${baseUrl}`}
         element={<RouteWithFirebase element={ChartListPage} />}
       />
       <RouteWithSentry
-        path={`${baseUrl}/user}`}
-        element={<RouteWithFirebase element={UserProfile} />}
+        path={`${baseUrl}/unsubscribe/monitoring/:channelId`}
+        element={<RouteWithFirebase element={UnsubscribePage} />}
       />
       <RouteWithSentry
         path={`${baseUrl}/:chartId`}

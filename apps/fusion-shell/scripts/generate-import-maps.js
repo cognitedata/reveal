@@ -86,6 +86,17 @@ function generateImportMap(fusionEnv) {
       if (!baseUrl) {
         throw new Error(`Missing hosting for ${app.appName} in ${fusionEnv}`);
       }
+      // we can only load sub-apps from domains our customers have whitelisted
+      // we had an incident about it here: https://cognitedata.slack.com/archives/C05RAGU91FD
+      if (
+        fusionEnv === 'production' &&
+        !baseUrl.startsWith('/') &&
+        !baseUrl.toLowerCase().endsWith('.cogniteapp.com')
+      ) {
+        throw new Error(
+          `The app ${app.key} points to a domain for production which isn't allowed. Please use a *.cogniteapp.com domain`
+        );
+      }
       if (baseUrl.endsWith('.js')) {
         imports[app.appName] = baseUrl;
       } else {

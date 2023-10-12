@@ -129,12 +129,12 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'transformations': 'multi-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
-  'interactive-diagrams': 'single-branch',
+  'interactive-diagrams': 'multi-branch',
   'cdf-document-search': 'single-branch',
   'extraction-pipelines': 'single-branch',
   'extractor-downloads': 'single-branch',
   'charts': 'multi-branch',
-  'entity-matching': 'single-branch',
+  'entity-matching': 'multi-branch',
   'functions-ui' : 'single-branch',
   'access-management': 'multi-branch',
   'notebook': 'single-branch',
@@ -411,8 +411,14 @@ pods {
 
             dockerUtils.tag("${dockerBaseName}:${dockerTag}", "${dockerBaseName}:latest");
 
+            dockerUtils.tag("${dockerBaseName}:${dockerTag}", "${dockerBaseName}/prod:${dockerTag}");
+            dockerUtils.tag("${dockerBaseName}:${dockerTag}", "${dockerBaseName}/prod:latest");
+
             dockerUtils.push("${dockerBaseName}:${dockerTag}");
             dockerUtils.push("${dockerBaseName}:latest");
+
+            dockerUtils.push("${dockerBaseName}/prod:${dockerTag}");
+            dockerUtils.push("${dockerBaseName}/prod:latest");
           }
         }
 
@@ -423,7 +429,7 @@ pods {
             spinnaker.deploy('fusion-app', 'prod-verification', ["${dockerBaseName}:${dockerTag}"])
             spinnaker.deploy('fusion-app', 'dev', ["${dockerBaseName}:${dockerTag}"])
             spinnaker.deploy('fusion-app', 'pr-preview', ["${dockerBaseName}:${dockerTag}"])
-            // spinnaker.deploy('fusion-app', 'prod', ["${dockerBaseName}:${dockerTag}"])
+            spinnaker.deploy('fusion-app', 'prod', ["${dockerBaseName}/prod:${dockerTag}"])
             // disabling aramco deployment as we need to generate a self-contained docker image for them
             // the pipeline to aramco is disabled anyway.
             // spinnaker.deploy('fusion-app', 'sapc-prod', ["${dockerBaseName}:${dockerTag}"])

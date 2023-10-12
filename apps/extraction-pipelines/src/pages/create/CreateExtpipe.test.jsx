@@ -9,7 +9,6 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from '../../utils/baseURL';
-import '../../utils/test/windowLocation';
 import CreateExtpipe from './CreateExtpipe';
 import {
   EXTERNAL_ID_REQUIRED,

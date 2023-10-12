@@ -107,6 +107,7 @@ export const ChatUI = ({
         return;
       }
       setLoadingStatus('');
+
       bot.action
         .set(
           { feature },
@@ -194,21 +195,25 @@ export const ChatUI = ({
               promptUser(nextActionType);
             });
           } else {
-            promptUser('Message');
+            if (messages.current.some((el) => el.type === 'chain')) {
+              promptUser('Message');
+            }
           }
         }
       }
     );
+    // TODO, this should be changed down the line when the new chain is in place
     const removeListener2 = addToCopilotEventListener(
       'SUMMARIZE_QUERY',
-      async (graphql) => {
+      async ({ variables, query, question }) => {
         const [{ summary }] = await callPromptChain(
           chains.GraphQlChain as any,
           'summarize filter',
           datamodelResultSummaryPrompt,
           [
             {
-              query: JSON.stringify(graphql),
+              graphql: JSON.stringify({ variables, query }),
+              question: question,
             },
           ]
         ).then(
@@ -291,6 +296,7 @@ export const ChatUI = ({
         el.memory = memory;
       });
       if (messages.current.length === 0) {
+        // bot.action.reset({}, { actionType: 'None' });
         // new chat
         processMessage(
           feature,

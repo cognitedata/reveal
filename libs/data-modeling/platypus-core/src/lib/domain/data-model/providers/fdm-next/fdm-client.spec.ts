@@ -1,5 +1,4 @@
-import { PlatypusError } from '@platypus-core/boundaries/types';
-
+import { PlatypusError } from '../../../../boundaries/types';
 import {
   DeleteInstancesDTO,
   IngestInstancesDTO,
@@ -578,10 +577,13 @@ describe('FDM v3 Client', () => {
         instancesApiMock.working
       );
 
-      const response = await fdmClient.deleteDataModel({
-        space: 'ABCD',
-        externalId: 'DM3',
-      });
+      const response = await fdmClient.deleteDataModel(
+        {
+          space: 'ABCD',
+          externalId: 'DM3',
+        },
+        true
+      );
       // A and B are kept because they are imported in DM 1 and DM2
       expect(response.referencedViews).toEqual([
         {
@@ -612,10 +614,13 @@ describe('FDM v3 Client', () => {
         instancesApiMock.working
       );
 
-      const response = await fdmClient.deleteDataModel({
-        space: 'ABC',
-        externalId: 'DM2',
-      });
+      const response = await fdmClient.deleteDataModel(
+        {
+          space: 'ABC',
+          externalId: 'DM2',
+        },
+        true
+      );
       // A and B are kept because they are imported in DM 1 and DM3
       expect(response.referencedViews).toEqual([
         {
@@ -662,10 +667,13 @@ describe('FDM v3 Client', () => {
         })
       );
 
-      const responseA = await fdmClient.deleteDataModel({
-        space: 'ABC',
-        externalId: 'DM2',
-      });
+      const responseA = await fdmClient.deleteDataModel(
+        {
+          space: 'ABC',
+          externalId: 'DM2',
+        },
+        true
+      );
       // A is kept because they are imported in DM3
       expect(responseA.referencedViews).toEqual(
         expect.objectContaining([
@@ -691,10 +699,13 @@ describe('FDM v3 Client', () => {
         })
       );
 
-      const responseB = await fdmClient.deleteDataModel({
-        space: 'ABC',
-        externalId: 'DM2',
-      });
+      const responseB = await fdmClient.deleteDataModel(
+        {
+          space: 'ABC',
+          externalId: 'DM2',
+        },
+        true
+      );
       // all views are deleted
       expect(responseB.referencedViews).toEqual([]);
       expect(responseB.success).toBe(true);

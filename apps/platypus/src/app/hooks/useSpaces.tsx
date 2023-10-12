@@ -1,8 +1,9 @@
 import { SpaceInstance } from '@platypus/platypus-core';
-import { TOKENS } from '@platypus-app/di';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQuery } from '@tanstack/react-query';
 import { useInjection } from 'brandi-react';
+
+import { TOKENS } from '../di';
+import { QueryKeys } from '../utils/queryKeys';
 
 export const useSpaces = () => {
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);

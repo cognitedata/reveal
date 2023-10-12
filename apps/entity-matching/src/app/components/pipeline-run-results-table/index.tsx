@@ -1,14 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
-import { useTranslation } from '@entity-matching-app/common';
-import {
-  EMPipelineRun,
-  EMPipelineRunMatch,
-  Pipeline,
-} from '@entity-matching-app/hooks/entity-matching-pipelines';
-import { useRetrieve } from '@entity-matching-app/hooks/retrieve';
-import { pipelineSourceToAPIType } from '@entity-matching-app/pages/pipeline/details/sources';
-import { MatchOptionType, MatchType } from '@entity-matching-app/types/types';
 import { Select } from 'antd';
 
 import { Body, Checkbox, Flex } from '@cognite/cogs.js';
@@ -19,6 +10,16 @@ import {
   Sequence,
   Timeseries,
 } from '@cognite/sdk';
+
+import { useTranslation } from '../../common';
+import {
+  EMPipelineRun,
+  EMPipelineRunMatch,
+  Pipeline,
+} from '../../hooks/entity-matching-pipelines';
+import { useRetrieve } from '../../hooks/retrieve';
+import { pipelineSourceToAPIType } from '../../pages/pipeline/details/sources';
+import { MatchOptionType, MatchType } from '../../types/types';
 
 import BasicResultsTable from './BasicResultsTable';
 import GroupedResultsTable from './GroupedResultsTable';

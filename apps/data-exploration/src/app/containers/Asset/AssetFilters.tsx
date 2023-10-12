@@ -3,15 +3,6 @@ import { LabelFilterV2, MetadataFilterV2 } from '@data-exploration/containers';
 import { SourceFilter } from '@cognite/data-exploration';
 import { useList } from '@cognite/sdk-react-query-hooks';
 
-import { BaseFilterCollapse } from '@data-exploration-app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
-import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
-import {
-  useAssetFilters,
-  useFilterEmptyState,
-  useResetAssetFilters,
-} from '@data-exploration-app/store/filter';
 import { useTranslation } from '@data-exploration-lib/core';
 import {
   transformNewFilterToOldFilter,
@@ -19,6 +10,16 @@ import {
   useAssetsMetadataValuesAggregateQuery,
   useAssetsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
+
+import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import { useFlagAdvancedFilters } from '../../hooks';
+import {
+  useAssetFilters,
+  useFilterEmptyState,
+  useResetAssetFilters,
+} from '../../store';
+import { SPECIFIC_INFO_CONTENT } from '../constants';
+import { TempMultiSelectFix } from '../elements';
 
 export const AssetFilters = ({ ...rest }) => {
   const { t } = useTranslation();

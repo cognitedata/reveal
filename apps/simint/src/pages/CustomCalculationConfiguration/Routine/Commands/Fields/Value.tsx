@@ -1,31 +1,32 @@
-import { InputRow } from '@simint-app/components/forms/ModelForm/elements';
 import { Field, useFormikContext } from 'formik';
 
-import { Input } from '@cognite/cogs.js';
+import { InputExp } from '@cognite/cogs.js';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
-import type { ConfigurationFieldProps } from '../utils';
+import { InputRow } from '../../../../../components/forms/ModelForm/elements';
+import { getInputOutputIndex, type ConfigurationFieldProps } from '../utils';
 
-export function Value({
-  routineIndex,
-  stepIndex,
-  step,
-}: ConfigurationFieldProps) {
-  const { setFieldValue } = useFormikContext<UserDefined>();
-  const formikPath = `routine.${routineIndex}.steps.${stepIndex}.arguments.value`;
+export function Value({ step }: ConfigurationFieldProps) {
+  const { getFieldMeta, values } = useFormikContext<UserDefined>();
+
+  const { index: constantIndex, didFindEntry } = getInputOutputIndex(
+    values.inputConstants ?? [],
+    step.arguments.value ?? ''
+  );
+
+  const formikPath = `inputConstants.${constantIndex}.value`;
+  const { value } = getFieldMeta(formikPath) as { value: string };
 
   return (
     <InputRow>
       <Field
-        as={Input}
+        as={InputExp}
+        disabled={!didFindEntry}
+        id={formikPath}
         name={formikPath}
         style={{ width: 300 }}
-        title="Value"
-        value={step.arguments.value}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-          const { value } = event.target;
-          setFieldValue(formikPath, value);
-        }}
+        value={value ?? ''}
+        label="Value"
       />
     </InputRow>
   );

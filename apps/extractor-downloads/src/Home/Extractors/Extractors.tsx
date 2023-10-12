@@ -9,10 +9,10 @@ import {
   Body,
   Colors,
   Flex,
+  Heading,
   Icon,
   Input,
   Loader,
-  Title,
 } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
@@ -26,8 +26,12 @@ import { ListHeader } from '../../components/ListHeader';
 import SearchHelper from '../../components/search-helper/SearchHelper';
 import { useExtractorsList } from '../../hooks/useExtractorsList';
 import { useSourceSystems } from '../../hooks/useSourceSystems';
-import { MixpanelEvent, trackUsage } from '../../utils';
-import { grepContains, prepareSearchString } from '../../utils/utils';
+import {
+  MixpanelEvent,
+  trackUsage,
+  grepContains,
+  prepareSearchString,
+} from '../../utils';
 
 const debouncedTrackUsage = debounce((mixpanelEvent: MixpanelEvent) => {
   trackUsage(mixpanelEvent);
@@ -187,8 +191,8 @@ const Extractors = () => {
                   <StyledEmptyContainer>
                     <Icon size={24} type="ListSearch" />
                     <Flex alignItems="center" direction="column" gap={2}>
-                      <Title level={5}>{t('no-results')}</Title>
-                      <Body level={2}>
+                      <Heading level={5}>{t('no-results')}</Heading>
+                      <Body size="medium">
                         {t(
                           category
                             ? `no-results-description-${category}`

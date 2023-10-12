@@ -7,9 +7,6 @@ import {
   Table,
 } from '@data-exploration/components';
 import { useEventsMetadataColumns } from '@data-exploration/containers';
-import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
-import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
 import noop from 'lodash/noop';
 import uniqBy from 'lodash/uniqBy';
@@ -31,6 +28,10 @@ import {
   useRelatedEventsQuery,
   InternalEventsData,
 } from '@data-exploration-lib/domain-layer';
+
+import { SummaryHeader } from '../../../components/SummaryHeader/SummaryHeader';
+import { getSummaryCardItems } from '../../../components/SummaryHeader/utils';
+import { useUniqueCdfItems } from '../../../hooks';
 
 export const EventSummary = ({
   query = '',

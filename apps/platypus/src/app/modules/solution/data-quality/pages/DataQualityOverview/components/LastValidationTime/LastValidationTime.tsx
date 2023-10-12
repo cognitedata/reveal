@@ -1,9 +1,10 @@
 import { DateFormat } from '@platypus/platypus-core';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DateUtilsImpl } from '@platypus-app/utils/data';
 
 import { Body, Flex, Heading, Icon } from '@cognite/cogs.js';
 import { Datapoints } from '@cognite/sdk/dist/src';
+
+import { useTranslation } from '../../../../../../../hooks/useTranslation';
+import { DateUtilsImpl } from '../../../../../../../utils/data';
 
 type LastValidationTimeProps = {
   datapoints: Datapoints[];

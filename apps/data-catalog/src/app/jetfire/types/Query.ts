@@ -1,5 +1,5 @@
-import { ColumnSchema } from './Schema';
 import { Items } from './Items';
+import { ColumnSchema } from './Schema';
 
 export type QueryResultsResponse = {
   schema: Items<ColumnSchema>;

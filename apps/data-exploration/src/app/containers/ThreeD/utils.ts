@@ -29,22 +29,23 @@ import {
   AnnotationsCogniteAnnotationTypesImagesAssetLink,
 } from '@cognite/sdk';
 
-import {
-  Image360DatasetOptions,
-  SecondaryModelOptions,
-  SlicingState,
-} from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
-import {
-  PointsOfInterestCollection,
-  fetchAssetDetails,
-  fetchAssetMappingsByAssetIdQuery,
-  fetchClosestAssetIdQuery,
-} from '@data-exploration-app/containers/ThreeD/hooks';
 import { TFunction } from '@data-exploration-lib/core';
 import {
   Image360SiteData,
   Revision3DWithIndex,
 } from '@data-exploration-lib/domain-layer';
+
+import {
+  Image360DatasetOptions,
+  SecondaryModelOptions,
+  SlicingState,
+} from './contexts/ThreeDContext';
+import {
+  fetchAssetDetails,
+  fetchAssetMappingsByAssetIdQuery,
+  fetchClosestAssetIdQuery,
+  PointsOfInterestCollection,
+} from './hooks';
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY = 'slicingState';
@@ -52,7 +53,8 @@ export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
 export const THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY = 'expanded';
 export const THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY = 'hl_mode';
 export const THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY = 'secondaryModels';
-export const THREE_D_POINTS_OF_INTEREST_QUERY_PARAMETER_KEY = 'pointsOfInterest';
+export const THREE_D_POINTS_OF_INTEREST_QUERY_PARAMETER_KEY =
+  'pointsOfInterest';
 export const THREE_D_REVISION_ID_QUERY_PARAMETER_KEY = 'revisionId';
 export const THREE_D_CUBEMAP_360_IMAGES_QUERY_PARAMETER_KEY = 'images360';
 
@@ -65,7 +67,7 @@ export const SECONDARY_MODEL_DISPLAY_LIMIT = 20;
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-export type AssetSelectionState = {
+export type AssetSelectionContext = {
   model: CogniteModel | Image360Collection;
   imageAnnotation?: Image360Annotation | undefined;
   imageEntity?: Image360 | undefined;
@@ -139,10 +141,14 @@ export const fitCameraToAsset = async (
   sdk: CogniteClient,
   queryClient: QueryClient,
   viewer: Cognite3DViewer,
-  assetSelectionState: AssetSelectionState,
+  assetSelectionContext: AssetSelectionContext,
   assetId: number
 ) => {
-  const threeDModel = assetSelectionState.model;
+  const threeDModel = assetSelectionContext.model;
+
+  if (!threeDModel) {
+    return;
+  }
 
   if (threeDModel instanceof CogniteCadModel) {
     const { modelId, revisionId } = threeDModel;
@@ -178,6 +184,7 @@ export const fitCameraToAsset = async (
       CAMERA_ANIMATION_RADIUS
     );
   }
+
   if (threeDModel instanceof CognitePointCloudModel) {
     const annotation = await getAnnotationByAssetId(sdk, threeDModel, assetId);
     if (annotation === undefined) {
@@ -197,33 +204,18 @@ export const fitCameraToAsset = async (
   }
 
   if (is360ImageCollection(threeDModel)) {
-    const annotationInfo = await threeDModel.findImageAnnotations({
+    const annotationCandidates = await threeDModel.findImageAnnotations({
       assetRef: { id: assetId },
     });
 
-    if (annotationInfo.length === 0) {
+    const selectedAnnotation = chooseMostApplicable360Annotation(
+      assetSelectionContext,
+      annotationCandidates
+    );
+
+    if (selectedAnnotation === undefined) {
       return;
     }
-
-    let selectedAnnotation: Image360AnnotationAssetQueryResult | undefined =
-      undefined;
-
-    if (assetSelectionState.imageAnnotation) {
-      selectedAnnotation = annotationInfo.find(
-        (info) => info.annotation === assetSelectionState.imageAnnotation
-      );
-    }
-
-    if (
-      assetSelectionState !== undefined &&
-      assetSelectionState.imageEntity !== undefined
-    ) {
-      selectedAnnotation = annotationInfo.find(
-        (info) => info.image === assetSelectionState.imageEntity
-      );
-    }
-
-    selectedAnnotation = annotationInfo?.[0];
 
     await viewer.enter360Image(
       selectedAnnotation.image,
@@ -260,6 +252,57 @@ export const fitCameraToAsset = async (
     tween.update(TWEEN.now());
   }
 };
+
+function chooseMostApplicable360Annotation(
+  assetSelectionContext: AssetSelectionContext,
+  annotationCandidates: Image360AnnotationAssetQueryResult[]
+): Image360AnnotationAssetQueryResult | undefined {
+  if (annotationCandidates.length === 0) {
+    return undefined;
+  }
+
+  const matchingAnnotation = findMatchingAnnotation(
+    assetSelectionContext.imageAnnotation
+  );
+
+  if (matchingAnnotation !== undefined) {
+    return matchingAnnotation;
+  }
+
+  const annotationInSameEntity = findAnnotationInSameEntity(
+    assetSelectionContext.imageEntity
+  );
+
+  if (annotationInSameEntity !== undefined) {
+    return annotationInSameEntity;
+  }
+
+  return annotationCandidates[0];
+
+  function findMatchingAnnotation(
+    queryAnnotation: Image360Annotation | undefined
+  ): Image360AnnotationAssetQueryResult | undefined {
+    if (queryAnnotation === undefined) {
+      return undefined;
+    }
+
+    return annotationCandidates.find(
+      (candidate) => candidate.annotation === queryAnnotation
+    );
+  }
+
+  function findAnnotationInSameEntity(
+    imageEntity: Image360 | undefined
+  ): Image360AnnotationAssetQueryResult | undefined {
+    if (imageEntity === undefined) {
+      return undefined;
+    }
+
+    return annotationCandidates.find(
+      (candidate) => candidate.image === imageEntity
+    );
+  }
+}
 
 export async function fetchAssetNodeCollection(
   sdk: CogniteClient,
@@ -485,7 +528,7 @@ export const getStateUrl = ({
     const selectedPointsOfInterest = pointsOfInterest
       .filter((poi) => !!poi.applied)
       .map((poi) => ({
-        id: poi.externalId
+        id: poi.externalId,
       }));
     searchParams.set(
       THREE_D_POINTS_OF_INTEREST_QUERY_PARAMETER_KEY,

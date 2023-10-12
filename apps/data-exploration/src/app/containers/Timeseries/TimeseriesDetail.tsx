@@ -5,31 +5,27 @@ import styled from 'styled-components';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { TimeseriesInfo } from '@data-exploration/containers';
+import { useCdfUserHistoryService } from '@user-history';
 
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
 import { ErrorFeedback } from '@cognite/data-exploration';
 import { TimeseriesChart } from '@cognite/plotting-components';
 import { CogniteError, Timeseries } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
-import { BreadcrumbsV2 } from '@data-exploration-app/components/Breadcrumbs/BreadcrumbsV2';
-import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
+import { useTranslation, SUB_APP_PATH } from '@data-exploration-lib/core';
+
+import { BreadcrumbsV2 } from '../../components/Breadcrumbs/BreadcrumbsV2';
+import ResourceTitleRow from '../../components/ResourceTitleRow';
 import {
   useEndJourney,
   usePreviewDateRange,
   useResourceDetailSelectedTab,
-} from '@data-exploration-app/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import {
-  useTranslation,
-  SUB_APP_PATH,
-  createInternalLink,
-} from '@data-exploration-lib/core';
-
+} from '../../hooks';
+import { trackUsage } from '../../utils/Metrics';
 import { AllTab } from '../All';
+import { DetailsTabWrapper } from '../Common/element';
+import { ResourceDetailsTabs } from '../ResourceDetails';
 
 // TimeseriesPreviewTabType;
 // - details
@@ -82,7 +78,7 @@ export const TimeseriesDetail = ({
         userHistoryService.logNewResourceView({
           application: SUB_APP_PATH,
           name: timeseries?.name,
-          path: createInternalLink(pathname, searchParams),
+          path: pathname.concat(searchParams),
         });
     }
   }, [isTimeseriesFetched, timeseries]);
@@ -156,7 +152,7 @@ export const TimeseriesDetail = ({
                 key="details"
                 tabKey="details"
               >
-                <DetailsTabWrapper>
+                <DetailsTabWrapper data-testid="timeseries-details">
                   <TimeseriesChart
                     timeseries={{ id: timeseries.id }}
                     height={300}

@@ -674,6 +674,12 @@ const Wrapper = styled.div`
   .rule--body > div {
     flex: 1;
     max-width: 33.333%;
+    position: relative;
+    display: block;
+  }
+  .rule--field {
+    width: 100%;
+    display: block;
   }
   .widget--widget,
   .rule--widget {

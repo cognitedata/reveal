@@ -1,17 +1,19 @@
-import { useSearchParams } from 'react-router-dom';
-
+import { compose } from 'lodash/fp';
 import { create } from 'zustand';
 
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { isAnnotationPartOfContainer } from '@cognite/data-exploration';
+import type { CogniteClient } from '@cognite/sdk';
 import {
   Annotation,
   ContainerConfig,
+  ContainerType,
   EllipseToolConfig,
   IdsByType,
   ImageContainerProps,
   isRectangleAnnotation,
   LineToolConfig,
   PanToolConfig,
+  RectangleAnnotation,
   RectangleToolConfig,
   SelectToolConfig,
   StickyToolConfig,
@@ -19,6 +21,8 @@ import {
   ToolType,
   UnifiedViewer,
   UnifiedViewerEventType,
+  isAnnotation,
+  isContainerConfig,
 } from '@cognite/unified-file-viewer';
 
 import {
@@ -40,32 +44,32 @@ import {
   MetricEvent,
   SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS,
 } from '../constants';
-import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
 import {
-  getNextUpdatedAnnotations,
-  getNextUpdatedContainer,
+  getNextUpdatedNodes,
   InteractionState,
 } from '../hooks/useOnUpdateRequest';
 import resolveContainerConfig from '../hooks/utils/resolveContainerConfig';
-import { useCommentsUpsertMutation } from '../services/comments/hooks/index';
-import { CommentTargetType } from '../services/comments/types';
-import { getCdfUserFromUserProfile } from '../services/comments/utils';
 import {
+  CanvasNode,
   COMMENT_METADATA_ID,
   ContainerReference,
   IndustryCanvasContainerConfig,
   IndustryCanvasState,
   IndustryCanvasToolType,
   isCommentAnnotation,
+  isGenericFilter,
   isIndustryCanvasContainerConfig,
+  isSpecificFilterForContainerId,
 } from '../types';
-import { UserProfile } from '../UserProfileProvider';
 import { dataUrlToFile, isPastedImageContainer } from '../utils/dataUrlUtils';
 import { addDimensionsToContainerReferencesIfNotExists } from '../utils/dimensions/index';
 import { TrackUsageFn } from '../utils/tracking/createTrackUsage';
 import { serializeCanvasState } from '../utils/utils';
 
-import removeRecursive from './removeRecursive';
+import applyAssetFilters from './utils/applyAssetFilters';
+import applyEventFilters from './utils/applyEventFilters';
+import assignNewIdsToNewItems from './utils/assignNewIdsToNewItems';
+import getNewIdsMapping from './utils/getNewIdsMapping';
 
 export type HistoryState = {
   history: IndustryCanvasState[];
@@ -118,10 +122,12 @@ const initialToolConfigsByType: ToolConfigByType = {
   [IndustryCanvasToolType.RECTANGLE]: {
     type: ToolType.RECTANGLE,
     ...DEFAULT_STYLE,
+    fill: SHAPE_ANNOTATION_FILL_COLOR_MAP.TRANSPARENT,
   },
   [IndustryCanvasToolType.ELLIPSE]: {
     type: ToolType.ELLIPSE,
     ...DEFAULT_STYLE,
+    fill: SHAPE_ANNOTATION_FILL_COLOR_MAP.TRANSPARENT,
   },
   [IndustryCanvasToolType.TEXT]: {
     type: ToolType.TEXT,
@@ -179,6 +185,7 @@ export type RootState = {
   isConditionalFormattingOpenAnnotationIdByTimeseriesId: IsConditionalFormattingOpenByAnnotationIdByTimeseriesId;
   selectedIdsByType: IdsByType;
   fileUploadData: FileUploadData | null;
+  pendingComment: RectangleAnnotation | null;
 };
 
 const initialState: RootState = {
@@ -190,10 +197,10 @@ const initialState: RootState = {
   historyState: {
     history: [
       {
-        container: EMPTY_FLEXIBLE_LAYOUT,
-        canvasAnnotations: [],
+        nodes: [],
         pinnedTimeseriesIdsByAnnotationId: {},
         liveSensorRulesByAnnotationIdByTimeseriesId: {},
+        filters: [],
       },
     ],
     index: 0,
@@ -212,6 +219,7 @@ const initialState: RootState = {
     containerIds: [],
   },
   fileUploadData: null,
+  pendingComment: null,
 };
 
 export const useIndustrialCanvasStore = create<RootState>(() => initialState);
@@ -373,32 +381,59 @@ export const closeConditionalFormattingClick = () => {
   });
 };
 
+const filterNonRemovedEntries = <T>(
+  data: Record<string, T>,
+  shouldKeepEntryFn: ([key, value]: [string, T]) => boolean
+): Record<string, T> =>
+  Object.fromEntries(Object.entries(data).filter(shouldKeepEntryFn));
+
 const applyDeleteRequestTransform = (
-  { container, canvasAnnotations, ...otherState }: IndustryCanvasState,
+  {
+    nodes,
+    pinnedTimeseriesIdsByAnnotationId,
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+    filters,
+  }: IndustryCanvasState,
   { annotationIds, containerIds }: IdsByType
-) => {
-  const nextCanvasAnnotations = canvasAnnotations.filter(
-    (annotation) =>
-      !annotationIds.includes(annotation.id) &&
-      containerIds.every(
-        (containerId) =>
-          !('containerId' in annotation) ||
-          annotation?.containerId !== containerId
-      )
-  );
-
-  const nextContainer = removeRecursive<IndustryCanvasContainerConfig>(
-    container,
-    (container) => {
-      return container.id !== undefined && containerIds.includes(container.id);
+): IndustryCanvasState => {
+  const nextNodes = nodes.filter((node) => {
+    if (isAnnotation(node)) {
+      return (
+        !annotationIds.includes(node.id) &&
+        containerIds.every(
+          (containerId) =>
+            !('containerId' in node) || node?.containerId !== containerId
+        )
+      );
     }
-  );
+    if (isContainerConfig(node)) {
+      return !containerIds.includes(node.id);
+    }
+    return false;
+  });
 
-  // TODO: Missing deleting pinned timeseries ids here if the annotation is deleted
+  const shouldKeepAnnotationEntryFn = <T>([annotationId]: [string, T]) =>
+    !containerIds.some((containerId) =>
+      isAnnotationPartOfContainer(annotationId, containerId)
+    );
+
   return {
-    ...otherState,
-    container: nextContainer,
-    canvasAnnotations: nextCanvasAnnotations,
+    nodes: nextNodes,
+    liveSensorRulesByAnnotationIdByTimeseriesId: filterNonRemovedEntries(
+      liveSensorRulesByAnnotationIdByTimeseriesId,
+      shouldKeepAnnotationEntryFn
+    ),
+    pinnedTimeseriesIdsByAnnotationId: filterNonRemovedEntries(
+      pinnedTimeseriesIdsByAnnotationId,
+      shouldKeepAnnotationEntryFn
+    ),
+    filters: filters.filter(
+      (filter) =>
+        isGenericFilter(filter) ||
+        !containerIds.some((containerId) =>
+          isSpecificFilterForContainerId(filter, containerId)
+        )
+    ),
   };
 };
 
@@ -454,41 +489,31 @@ export const addContainerConfig = ({
 }) => {
   pushHistoryState((prevState: IndustryCanvasState) => ({
     ...prevState,
-    container: {
-      ...prevState.container,
-      children: [
-        ...(prevState.container.children ?? []),
-        {
-          ...containerConfig,
-        },
-      ],
-    },
+    nodes: [...prevState.nodes, containerConfig],
   }));
   return containerConfig;
 };
 
 export const updateContainerById = ({
-  containerId,
-  containerConfig,
+  containerId: updatedContainerId,
+  containerConfig: updatedContainerConfig,
 }: {
   containerId: string;
   containerConfig: IndustryCanvasContainerConfig;
 }) => {
   pushHistoryState((prevState: IndustryCanvasState) => ({
     ...prevState,
-    container: {
-      ...prevState.container,
-      children: [
-        ...(prevState.container.children ?? []).map((child) =>
-          child.id === containerId
-            ? ({
-                ...child,
-                ...containerConfig,
-              } as IndustryCanvasContainerConfig)
-            : child
-        ),
-      ],
-    },
+    nodes: [
+      ...prevState.nodes.map(
+        (node): CanvasNode =>
+          isContainerConfig(node) && node.id === updatedContainerId
+            ? {
+                ...node,
+                ...updatedContainerConfig,
+              }
+            : node
+      ),
+    ],
   }));
 };
 
@@ -515,19 +540,11 @@ export const shamefulOnUpdateRequest = ({
   annotations: updatedAnnotations,
   trackUsage,
   unifiedViewer,
-  upsertComments,
-  searchParams,
-  setSearchParams,
-  userProfile,
 }: {
   containers: ContainerConfig[];
   annotations: Annotation[];
   trackUsage: TrackUsageFn;
   unifiedViewer: UnifiedViewer | null;
-  upsertComments: ReturnType<typeof useCommentsUpsertMutation>['mutateAsync'];
-  searchParams: URLSearchParams;
-  setSearchParams: ReturnType<typeof useSearchParams>[1];
-  userProfile: UserProfile;
 }) => {
   const rootState = useIndustrialCanvasStore.getState();
 
@@ -546,49 +563,31 @@ export const shamefulOnUpdateRequest = ({
   }
 
   const toolType = rootState.toolType;
+  const updatedAnnotation = updatedAnnotations[0];
+  // Augment the annotation with the comment metadata if the tool is comment
 
-  pushHistoryState(({ container, canvasAnnotations, ...otherState }) => {
+  if (
+    updatedAnnotation !== undefined &&
+    isRectangleAnnotation(updatedAnnotation) &&
+    toolType === IndustryCanvasToolType.COMMENT
+  ) {
+    updatedAnnotation.isSelectable = false;
+    updatedAnnotation.metadata = {
+      ...updatedAnnotation.metadata,
+      [COMMENT_METADATA_ID]: true,
+    };
+
+    createPendingComment(updatedAnnotation);
+  }
+
+  pushHistoryState(({ nodes, ...otherState }) => {
     const updatedAnnotation = updatedAnnotations[0];
     const hasAnnotationBeenCreated =
       updatedAnnotation !== undefined &&
       updatedAnnotations.length === 1 &&
-      !canvasAnnotations.some(
-        (canvasAnnotation) => canvasAnnotation.id === updatedAnnotation.id
-      );
+      !nodes.some((node) => node.id === updatedAnnotation.id);
 
     if (hasAnnotationBeenCreated) {
-      // Augment the annotation with the comment metadata if the tool is comment
-      if (toolType === IndustryCanvasToolType.COMMENT) {
-        updatedAnnotation.isSelectable = false;
-        updatedAnnotation.metadata = {
-          ...updatedAnnotation.metadata,
-          [COMMENT_METADATA_ID]: true,
-        };
-
-        if (!isRectangleAnnotation(updatedAnnotation)) {
-          throw new Error('Provided annotation is not rectangle annotation');
-        }
-
-        upsertComments([
-          {
-            targetId: searchParams.get('canvasId') ?? undefined,
-            targetType: CommentTargetType.CANVAS,
-            createdBy: getCdfUserFromUserProfile(userProfile),
-            text: '',
-            externalId: updatedAnnotation.id,
-            targetContext: {
-              x: updatedAnnotation.x,
-              y: updatedAnnotation.y,
-            },
-          },
-        ]).then(() => {
-          setSearchParams((currentParams) => {
-            currentParams.set('commentTooltipId', updatedAnnotation.id);
-            return currentParams;
-          });
-        });
-      }
-
       setInteractionState({
         hoverId: undefined,
         clickedContainerAnnotationId: updatedAnnotation.id,
@@ -617,13 +616,19 @@ export const shamefulOnUpdateRequest = ({
 
     return {
       ...otherState,
-      container: getNextUpdatedContainer(container, validUpdatedContainers),
-      canvasAnnotations: getNextUpdatedAnnotations(
-        canvasAnnotations,
-        updatedAnnotations
-      ),
+      nodes: getNextUpdatedNodes(nodes, [
+        ...validUpdatedContainers,
+        ...updatedAnnotations,
+      ]),
     };
   });
+};
+
+export const createPendingComment = (comment: RectangleAnnotation | null) => {
+  useIndustrialCanvasStore.setState((prevState) => ({
+    ...prevState,
+    pendingComment: comment,
+  }));
 };
 
 export const onDeleteRequest = ({ annotationIds, containerIds }: IdsByType) => {
@@ -637,6 +642,10 @@ export const onDeleteRequest = ({ annotationIds, containerIds }: IdsByType) => {
       containerIds,
     })
   );
+};
+
+export const setNodes = (nodes: CanvasNode[]): void => {
+  pushHistoryState((state) => ({ ...state, nodes }));
 };
 
 export const setCurrentZoomScale = (zoomScale: number) => {
@@ -802,17 +811,10 @@ export const pushHistoryState = (
 
 export const removeContainerById = (containerIdToRemove: string) => {
   pushHistoryState((prevState: IndustryCanvasState) => {
-    return {
-      ...prevState,
-      container: {
-        ...prevState.container,
-        children: [
-          ...(prevState.container.children ?? []).filter(
-            (child) => containerIdToRemove !== child.id
-          ),
-        ],
-      },
-    };
+    return applyDeleteRequestTransform(prevState, {
+      annotationIds: [],
+      containerIds: [containerIdToRemove],
+    });
   });
 };
 
@@ -831,10 +833,24 @@ export const undo = () => {
       return prevState;
     }
 
+    // Because of caching issues in our persistence layer (i.e., FDM), we always
+    // set new (unique) IDs to the new and/or re-created items so that we avoid
+    // reusing the IDs of previously deleted nodes
+    const newIdsMapping = getNewIdsMapping({
+      prevItems:
+        prevState.historyState.history[prevState.historyState.index].nodes,
+      currentItems: nextState.nodes,
+    });
     return {
       ...prevState,
       historyState: {
         ...prevState.historyState,
+        history: prevState.historyState.history.map((state, index) => {
+          if (index === prevState.historyState.index - 1) {
+            return assignNewIdsToNewItems(state, newIdsMapping);
+          }
+          return state;
+        }),
         index: prevState.historyState.index - 1,
       },
     };
@@ -849,14 +865,57 @@ export const redo = () => {
       return prevState;
     }
 
+    // Because of caching issues in our persistence layer (i.e., FDM), we always
+    // set new (unique) IDs to the new and/or re-created items so that we avoid
+    // reusing the IDs of previously deleted nodes
+    const newIdsMapping = getNewIdsMapping({
+      prevItems:
+        prevState.historyState.history[prevState.historyState.index].nodes,
+      currentItems: nextState.nodes,
+    });
     return {
       ...prevState,
       historyState: {
         ...prevState.historyState,
+        history: prevState.historyState.history.map((state, index) => {
+          if (index === prevState.historyState.index + 1) {
+            return assignNewIdsToNewItems(state, newIdsMapping);
+          }
+          return state;
+        }),
         index: prevState.historyState.index + 1,
       },
     };
   });
+};
+
+export const setFilteredPropertiesByContainerConfigs = ({
+  containerConfigs,
+  propertyPaths,
+  shouldApplyToAll,
+}: {
+  containerConfigs: IndustryCanvasContainerConfig[];
+  propertyPaths: string[];
+  shouldApplyToAll: boolean;
+}) => {
+  if (
+    !containerConfigs.every(
+      (containerConfig) =>
+        containerConfig.type === ContainerType.ASSET ||
+        containerConfig.type === ContainerType.EVENT
+    )
+  ) {
+    // Only supported for Asset and Event container types right now
+    return;
+  }
+
+  pushHistoryState((prevState: IndustryCanvasState) => ({
+    ...prevState,
+    filters: compose(
+      applyAssetFilters(containerConfigs, propertyPaths, shouldApplyToAll),
+      applyEventFilters(containerConfigs, propertyPaths, shouldApplyToAll)
+    )(prevState.filters),
+  }));
 };
 
 // Shameful because we don't really want to imperatively reset the state, but it's a short term

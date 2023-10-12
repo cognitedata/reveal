@@ -1,12 +1,11 @@
 import { useFormContext } from 'react-hook-form';
 
-import FormError from '@charts-app/components/Form/FormError';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
-
 import { Flex, Button, Title } from '@cognite/cogs.js';
 
 import { ScheduleCalculationFieldValues } from '../../../domain/scheduled-calculation/internal/types';
+import { useTranslations } from '../../../hooks/translations';
+import { makeDefaultTranslations } from '../../../utils/translations';
+import FormError from '../../Form/FormError';
 import { FormInputWithController } from '../../Form/FormInputWithController';
 
 import { CalculationPreview } from './CalculationPreview';
@@ -16,6 +15,7 @@ const defaultTranslations = makeDefaultTranslations(
   'Cancel',
   'Start schedule',
   'Name',
+  'Dataset',
   'Run every',
   'Description',
   'Unit',
@@ -88,7 +88,15 @@ export const Step2Body = ({ workflowId }: { workflowId: string }) => {
           name="description"
           title={t.Description}
         />
-        <FormInputWithController type="unit" name="unit" title={t.Unit} />
+        <div style={{ marginBottom: '1rem' }}>
+          <FormInputWithController type="unit" name="unit" title={t.Unit} />
+        </div>
+
+        <FormInputWithController
+          type="dataset"
+          name="dataset"
+          title={t.Dataset}
+        />
         {isDirty && !isValid && (
           <FormError<ScheduleCalculationFieldValues> errors={errors} />
         )}

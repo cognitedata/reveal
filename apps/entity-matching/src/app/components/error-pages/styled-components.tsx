@@ -1,5 +1,6 @@
-import { Colors, Elevations } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Colors, Elevations } from '@cognite/cogs.js';
 
 export const ErrorPageContent = styled.div`
   margin: 80px 50px;

@@ -71,9 +71,12 @@ const SourceStatusItemTooltip = ({
     );
   };
 
-  const isPausedEntireTime = aggregation.logs.every((log) => {
-    return doesLogHavePauseType(log);
-  });
+  const isPausedEntireTime =
+    aggregation.logs.length === 0
+      ? false
+      : aggregation.logs.every((log) => {
+          return doesLogHavePauseType(log);
+        });
 
   const pausedOnlyLogs = aggregation.logs.filter((log) => {
     return doesLogHavePauseType(log);
@@ -83,7 +86,7 @@ const SourceStatusItemTooltip = ({
     const sourceJob = source.jobs.find((job) => {
       return job.externalId === log.jobExternalId;
     });
-    return sourceJob?.topicFilter;
+    return sourceJob?.config?.topicFilter;
   };
 
   return (
@@ -91,18 +94,23 @@ const SourceStatusItemTooltip = ({
       <Tooltip
         content={
           <Flex direction="column">
-            <span>{formatTime(aggregation.endTime, true)}</span>
+            <span>
+              {isPausedEntireTime === false &&
+                aggregation.uptimePercentage === -1 &&
+                t('source-status-no-data-for')}
+              &nbsp;
+              {formatTime(aggregation.endTime, true)}
+            </span>
             <span>
               <Flex gap={5}>
                 {aggregation.uptimePercentage !== -1 &&
                   isPausedEntireTime === false &&
                   getUptimeIcon(aggregation.uptimePercentage)}
                 {isPausedEntireTime === false &&
-                  (aggregation.uptimePercentage === -1
-                    ? t('source-status-no-data')
-                    : t('uptime-with-percentage', {
-                        percentage: formatUptime(aggregation.uptimePercentage),
-                      }))}
+                  aggregation.uptimePercentage !== -1 &&
+                  t('uptime-with-percentage', {
+                    percentage: formatUptime(aggregation.uptimePercentage),
+                  })}
               </Flex>
             </span>
             {pausedOnlyLogs.length > 0 && (

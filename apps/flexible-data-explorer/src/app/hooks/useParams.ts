@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { ValueByDataType, ValueByField } from '../containers/Filter';
-import { DataModelV2 } from '../services/types';
+import { DataModelV2, Instance } from '../services/types';
 
 export enum ParamKeys {
   ExpandedId = 'expandedId',
@@ -12,6 +12,7 @@ export enum ParamKeys {
   DataModels = 'models',
   AISearch = 'aiSearch',
   ViewMode = 'viewMode',
+  SelectedInstance = 'selectedInstance',
 }
 
 export type ViewMode = '3d' | 'list';
@@ -84,6 +85,41 @@ export const useSearchCategoryParams = (): [
   ];
 };
 
+export const useSelectedInstanceParams = (): [
+  Instance | undefined,
+  (instance?: Instance) => void
+] => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const selectedInstance = useMemo(() => {
+    const instance = searchParams.get(ParamKeys.SelectedInstance);
+
+    if (instance) {
+      return JSON.parse(instance) as Instance;
+    }
+
+    return undefined;
+  }, [searchParams]);
+
+  const setSelectedInstance = useCallback(
+    (instance?: Instance) => {
+      setSearchParams((currentParams) => {
+        if (instance === undefined) {
+          currentParams.delete(ParamKeys.SelectedInstance);
+          return currentParams;
+        }
+
+        currentParams.set(ParamKeys.SelectedInstance, JSON.stringify(instance));
+
+        return currentParams;
+      });
+    },
+    [setSearchParams]
+  );
+
+  return [selectedInstance, setSelectedInstance];
+};
+
 export const useViewModeParams = (): [
   ViewMode,
   (viewMode?: ViewMode) => void
@@ -115,7 +151,7 @@ export const useViewModeParams = (): [
 
 export const useSearchFilterParams = (): [
   ValueByDataType | undefined,
-  (query?: ValueByDataType) => void
+  (query?: ValueByDataType, dataType?: string) => void
 ] => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -130,9 +166,15 @@ export const useSearchFilterParams = (): [
   }, [searchParams]);
 
   const setSearchFilterParams = useCallback(
-    (query?: ValueByDataType) => {
+    (query?: ValueByDataType, dataType?: string) => {
       setSearchParams((currentParams) => {
         currentParams.set(ParamKeys.Filters, JSON.stringify(query));
+
+        // Work around for now, the use-case is to switch the category on filter selection.
+        if (dataType) {
+          currentParams.set(ParamKeys.SearchCategory, dataType);
+        }
+
         return currentParams;
       });
     },

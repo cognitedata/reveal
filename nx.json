@@ -73,7 +73,6 @@
         "default",
         "^production",
         "{workspaceRoot}/.storybook/**/*",
-        "!{projectRoot}/.storybook/**/*",
         "{projectRoot}/.storybook/**/*",
         "{projectRoot}/tsconfig.storybook.json"
       ]
@@ -83,7 +82,8 @@
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "sharedGlobals": [
       "{workspaceRoot}/babel.config.json",
-      "{workspaceRoot}/.github/workflows/nx_ci.yml"
+      "{workspaceRoot}/.github/workflows/nx_ci.yml",
+      "{workspaceRoot}/.github/workflows/CD.yml"
     ],
     "production": [
       "default",

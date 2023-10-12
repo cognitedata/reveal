@@ -1,13 +1,19 @@
 /* eslint-disable @cognite/no-number-z-index */
 import { useNavigate } from 'react-location';
 
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import styled from 'styled-components/macro';
 
 import { Button, Collapse, Icon, Illustrations, Title } from '@cognite/cogs.js';
+import { CapabilityItemModel } from '@cognite/simconfig-api-sdk/rtk';
+
+import { BASIC_CAPABILITIES_REQUIRED } from '../../components/app/constants';
+import { useCheckAcl } from '../../hooks/useCheckAcl';
+import { createCdfLink } from '../../utils/createCdfLink';
 
 function PermissionsRequired() {
   const { Panel } = Collapse;
+
+  const { capabilityMap } = useCheckAcl(BASIC_CAPABILITIES_REQUIRED);
 
   const navigate = useNavigate();
 
@@ -46,6 +52,41 @@ function PermissionsRequired() {
                   </ul>
                 </div>
               </Panel>
+
+              {Object.entries(capabilityMap).filter(
+                ([, capability]) => capability.found === false
+              )?.length > 0 && (
+                <Panel header="Missing access" key="miss">
+                  <div>
+                    <ul>
+                      {Object.entries(capabilityMap)
+                        .filter(([, capability]) => capability.found === false)
+                        .map(([key, capability]) => {
+                          return (
+                            <li key={key}>
+                              <div>ACL : {capability.capabilityName}</div>
+                              <div>
+                                {capability.missing.map(
+                                  (missing: CapabilityItemModel) => {
+                                    return (
+                                      <>
+                                        <div>
+                                          {`Actions: ${missing.actions?.join(
+                                            ', '
+                                          )}`}
+                                        </div>
+                                      </>
+                                    );
+                                  }
+                                )}
+                              </div>
+                            </li>
+                          );
+                        })}
+                    </ul>
+                  </div>
+                </Panel>
+              )}
             </CollapseWrapperFull>
           </div>
           <div>

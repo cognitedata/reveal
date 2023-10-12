@@ -50,7 +50,8 @@ export const GenericRelationshipDirect: React.FC<RelationshipDirectProps> = ({
   return (
     <Widget id={id} rows={rows} columns={columns}>
       <Widget.Header
-        header={`${capitalize(type.type)} • ${capitalize(type.field)}`}
+        type={type.type}
+        header={capitalize(type.field)}
         title={renderValueTitle()}
       >
         <InstancePreview.Generic

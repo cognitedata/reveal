@@ -1,11 +1,11 @@
 import { Provider as ReduxProvider } from 'react-redux';
 
-import GlobalStyles from '@platypus-app/GlobalStyles';
 import { Store } from 'redux';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 
 import '../set-public-path';
+import GlobalStyles from '../app/GlobalStyles';
 import { translations } from '../i18n';
 
 import { AuthContainer } from './AuthContainer';

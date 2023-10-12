@@ -11,14 +11,12 @@ import { Loader } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
 import {
-  ThreeDGridPreview,
-  Model3DWithType,
-} from '@data-exploration-app/containers/ThreeD/ThreeDGridPreview';
-import {
   ThreeDModelsResponse,
   useInfinite360Images,
   useInfinite3DModelsQuery,
 } from '@data-exploration-lib/domain-layer';
+
+import { Model3DWithType, ThreeDGridPreview } from './ThreeDGridPreview';
 
 export const ThreeDSearchResults = ({
   query = '',

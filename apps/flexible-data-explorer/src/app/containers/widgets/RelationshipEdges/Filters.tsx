@@ -6,11 +6,14 @@ import { useTranslation } from '../../../hooks/useTranslation';
 import { useFDM } from '../../../providers/FDMProvider';
 import { ValueByField } from '../../Filter';
 import { AppliedFilters, FilterBuilderByField } from '../../Filter/containers';
-import { transformDefFieldsToFilterFields } from '../../Filter/filters/SearchBarFilter/utils';
+import {
+  getCustomDataTypeOption,
+  transformDefFieldsToFilterFields,
+} from '../../Filter/filters/SearchBarFilter/utils';
 
 export interface SearchBarFilterProps {
   value?: ValueByField;
-  onChange: (value: ValueByField) => void;
+  onChange: (value: ValueByField, action: 'add' | 'remove') => void;
   dataType: string;
 }
 
@@ -23,11 +26,16 @@ export const RelationshipFilter: React.FC<SearchBarFilterProps> = ({
   const client = useFDM();
 
   const fields = useMemo(() => {
-    const result =
-      client.allDataTypes?.find((item) => item.name === dataType)?.fields || [];
+    const type = client.getTypesByDataType(dataType);
 
-    return transformDefFieldsToFilterFields(result);
-  }, [client.allDataTypes, dataType]);
+    if (type) {
+      return transformDefFieldsToFilterFields(type.fields);
+    }
+
+    const customType = getCustomDataTypeOption(dataType);
+
+    return customType?.fields || [];
+  }, [client, dataType]);
 
   return (
     <>
@@ -38,8 +46,7 @@ export const RelationshipFilter: React.FC<SearchBarFilterProps> = ({
             name={dataType}
             fields={fields}
             value={value}
-            onChange={onChange}
-            onBackClick={() => null}
+            onChange={(nextValue) => onChange(nextValue, 'add')}
           />
         }
       >
@@ -53,7 +60,10 @@ export const RelationshipFilter: React.FC<SearchBarFilterProps> = ({
           {t('FILTER_BUTTON')}
         </Button>
       </Dropdown>
-      <AppliedFilters value={value} onRemove={onChange} />
+      <AppliedFilters
+        value={value}
+        onRemove={(nextValue) => onChange(nextValue, 'remove')}
+      />
     </>
   );
 };

@@ -2,18 +2,18 @@ import styled from 'styled-components';
 
 import { Body, Flex } from '@cognite/cogs.js';
 
+import { useLinks } from '../../hooks/useLinks';
 import { useTranslation } from '../../hooks/useTranslation';
-import { useGetAssetCentricDataExplorerUrl } from '../../hooks/useUrl';
 
 export const AIDisclaimer = () => {
   const { t } = useTranslation();
-  const assetCentricDataExplorerUrl = useGetAssetCentricDataExplorerUrl();
+  const { classicExplorerLink } = useLinks();
 
   return (
     <Wrapper gap={4}>
       <Body size="small">{t('AI_DISCLAIMER')}</Body>
       <StyledLink
-        href={assetCentricDataExplorerUrl}
+        href={classicExplorerLink()}
         target="_blank"
         rel="noopener noreferrer"
       >

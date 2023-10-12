@@ -3,23 +3,23 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { BulkActionMenu } from '@vision/modules/Common/Components/BulkActionMenu/BulkActionMenu';
+import { SegmentedControl } from '@cognite/cogs.js';
+
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { DeleteFilesById } from '../../../store/thunks/Files/DeleteFilesById';
+import { zIndex } from '../../../utils/zIndex';
+import { BulkActionMenu } from '../../Common/Components/BulkActionMenu/BulkActionMenu';
 import {
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
-} from '@vision/modules/Common/store/common/slice';
-import { selectAllSelectedIds } from '@vision/modules/Common/store/files/selectors';
-import { cancelFileDetailsEdit } from '@vision/modules/FileDetails/slice';
+} from '../../Common/store/common/slice';
+import { selectAllSelectedIds } from '../../Common/store/files/selectors';
+import { cancelFileDetailsEdit } from '../../FileDetails/slice';
 import {
   selectAllProcessFiles,
   selectIsPollingComplete,
-} from '@vision/modules/Process/store/selectors';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
-import { zIndex } from '@vision/utils/zIndex';
-
-import { SegmentedControl } from '@cognite/cogs.js';
+} from '../store/selectors';
 
 export const FileToolbar = ({
   onViewChange,
@@ -115,5 +115,5 @@ const Container = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   gap: 8px;
-  z-index: ${zIndex.DEFAULT};
+  z-index: ${zIndex.BULK_EDIT};
 `;

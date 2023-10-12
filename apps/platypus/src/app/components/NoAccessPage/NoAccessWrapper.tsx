@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
-
 import { Loader } from '@cognite/cogs.js';
+
+import { useCapabilities } from '../../hooks/useCapabilities';
 
 import NoAccessPage from './NoAccessPage';
 

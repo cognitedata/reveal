@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { getToken } from '@cognite/cdf-sdk-singleton';
-import { getOrganization } from '@cognite/cdf-utilities';
+import { getOrganization } from '@cognite/login-utils';
 
 import { QueryKeys, AUTH2_API_URL } from '../../constants';
 import { OrganizationUserProfile } from '../../types';

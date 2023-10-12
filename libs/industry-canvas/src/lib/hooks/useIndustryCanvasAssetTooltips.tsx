@@ -141,7 +141,7 @@ const useIndustryCanvasAssetTooltips = (
 
     return [
       {
-        targetId: String(selectedAnnotation?.id),
+        targetIds: [String(selectedAnnotation?.id)],
         content: (
           <AssetTooltip
             id={resourceId}

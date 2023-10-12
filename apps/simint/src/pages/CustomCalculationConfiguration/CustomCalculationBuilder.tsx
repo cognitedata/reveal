@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-location';
+import { useNavigate, useMatch } from 'react-location';
 
-import { Editor } from '@simint-app/components/shared/Editor';
-import { Wizard } from '@simint-app/components/shared/Wizard';
-import { useUserInfo } from '@simint-app/hooks/useUserInfo';
-import { DataSamplingStep } from '@simint-app/pages/CalculationConfiguration/steps/DataSamplingStep';
-import { ScheduleStep } from '@simint-app/pages/CalculationConfiguration/steps/ScheduleStep';
-import { SummaryStep } from '@simint-app/pages/CalculationConfiguration/steps/SummaryStep';
-import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import { Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
 import { Infobox, Switch, toast } from '@cognite/cogs.js';
 import { useUpsertCalculationMutation } from '@cognite/simconfig-api-sdk/rtk';
-import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
+import type { StepFields, UserDefined } from '@cognite/simconfig-api-sdk/rtk';
+
+import { Editor } from '../../components/shared/Editor';
+import { Wizard } from '../../components/shared/Wizard';
+import { useUserInfo } from '../../hooks/useUserInfo';
+import { AppLocationGenerics } from '../../routes';
+import { createCdfLink } from '../../utils/createCdfLink';
+import { DataSamplingStep } from '../CalculationConfiguration/steps/DataSamplingStep';
+import { ScheduleStep } from '../CalculationConfiguration/steps/ScheduleStep';
+import { SummaryStep } from '../CalculationConfiguration/steps/SummaryStep';
 
 import { CustomCalculationBuilderContainer } from './elements';
 import { Routine } from './Routine';
@@ -44,6 +46,17 @@ export function CustomCalculationBuilder({
   const [editorChangesSaved, setEditorChangesSaved] = useState<boolean>(true);
   const { data: user } = useUserInfo();
   const [upsertCalculation] = useUpsertCalculationMutation();
+
+  const {
+    data: { definitions },
+  } = useMatch<AppLocationGenerics>();
+
+  const simulatorConfig = definitions?.simulatorsConfig?.find(
+    (config) => config.key === calculation.simulator
+  );
+  const dynamicStepFields: StepFields = simulatorConfig?.stepFields ?? {
+    steps: [],
+  };
 
   useEffect(() => {
     setCalculationTemp(JSON.stringify(calculation, null, 2));
@@ -136,7 +149,11 @@ export function CustomCalculationBuilder({
                 icon="Calendar"
                 key="schedule"
                 title="Schedule"
-                validationErrors={getStepValidationErrors(values, 'schedule')}
+                validationErrors={getStepValidationErrors(
+                  dynamicStepFields,
+                  values,
+                  'schedule'
+                )}
               >
                 <ScheduleStep />
               </Wizard.Step>
@@ -147,6 +164,7 @@ export function CustomCalculationBuilder({
                 key="data-sampling"
                 title="Data sampling"
                 validationErrors={getStepValidationErrors(
+                  dynamicStepFields,
                   values,
                   'dataSampling',
                   'logicalCheck',
@@ -160,7 +178,11 @@ export function CustomCalculationBuilder({
                 icon="Function"
                 key="routine"
                 title="Routine"
-                validationErrors={getStepValidationErrors(values, 'routine')}
+                validationErrors={getStepValidationErrors(
+                  dynamicStepFields,
+                  values,
+                  'routine'
+                )}
               >
                 <Switch
                   label={
@@ -199,7 +221,10 @@ export function CustomCalculationBuilder({
                     />
                   </EditorContainer>
                 ) : (
-                  <Routine setCalculation={setCalculation} />
+                  <Routine
+                    dynamicStepFields={dynamicStepFields}
+                    setCalculation={setCalculation}
+                  />
                 )}
               </Wizard.Step>
 

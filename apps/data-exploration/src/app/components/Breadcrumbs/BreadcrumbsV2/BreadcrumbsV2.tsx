@@ -1,14 +1,11 @@
 import {
-  useGetJourney,
-  useJourney,
-  usePruneJourney,
-} from '@data-exploration-app/hooks';
-import {
   getTitle,
   JourneyItem,
   TFunction,
   useTranslation,
 } from '@data-exploration-lib/core';
+
+import { useGetJourney, useJourney, usePruneJourney } from '../../../hooks';
 
 import { Breadcrumb } from './Breadcrumb';
 import { BreadcrumbItemWrapper, BreadcrumbsWrapper } from './elements';

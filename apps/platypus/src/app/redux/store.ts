@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDispatch } from 'react-redux';
 
-import { environment } from '@platypus-app/environment';
-import { KeyValueStore } from '@platypus-app/types';
 import {
   configureStore,
   combineReducers,
   ThunkDispatch,
   AnyAction,
 } from '@reduxjs/toolkit';
+
+import { environment } from '../../environments/environment';
+import { KeyValueStore } from '../types';
 
 import { draftRowsLocalStorageMiddleware } from './middlewares/dataManagementMiddleware';
 import { graphQlSchemaLocalStorageMiddleware } from './middlewares/dataModelMiddleware';

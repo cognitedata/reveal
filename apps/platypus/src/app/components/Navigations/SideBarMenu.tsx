@@ -2,10 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 
 import { StorageProviderType } from '@fusion/data-modeling';
-import { TOKENS } from '@platypus-app/di';
-import { useNavigate } from '@platypus-app/flags/useNavigate';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import uniqueId from 'lodash/uniqueId';
 
 import {
@@ -18,6 +14,10 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
+import { TOKENS } from '../../di';
+import { useNavigate } from '../../flags/useNavigate';
+import { useInjection } from '../../hooks/useInjection';
+import { useTranslation } from '../../hooks/useTranslation';
 import { FeaturePreview } from '../FeaturePreview/FeaturePreview';
 
 import * as S from './elements';

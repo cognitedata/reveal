@@ -3,401 +3,552 @@ info:
   title: Cognite API
   version: v1 alpha
 servers:
-- url: "https://api.cognitedata.com"
+  - url: 'https://api.cognitedata.com'
 tags:
-- name: Data Quality
-  description: Cerberus
+  - name: Data Quality
+    description: Cerberus
 paths:
   #
   # Data Sources
   #
-  "/api/v1/projects/{project}/data-validation/datasources":
+  '/api/v1/projects/{project}/data-validation/datasources':
     post:
       tags:
-      - DataSources
+        - DataSources
       summary: Create or update data sources
       description: >-
         Add or update (upsert) data sources.
       operationId: createDataSources
       parameters:
-      - $ref: "#/components/parameters/project"
+        - $ref: '#/components/parameters/project'
       requestBody:
         description: DataSources to add or update.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DataSourceCreateRequest"
+              $ref: '#/components/schemas/DataSourceCreateRequest'
         required: true
       x-capability:
-      - "DatamodelsAcl:WRITE"
+        - 'DatamodelsAcl:WRITE'
       responses:
-        "200":
-          $ref: "#/components/responses/DataSourceListResponse"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
-        "409":
+        '200':
+          $ref: '#/components/responses/DataSourceListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '409':
           description: DataSource conflict
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UpsertConflict"
+                $ref: '#/components/schemas/UpsertConflict'
 
     get:
       tags:
-      - DataSources
+        - DataSources
       summary: List data sources defined in the project
       description: >-
         List data sources defined in the current project.
       operationId: listDataSources
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/Cursor"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/Cursor'
       x-capability:
-      - "DatamodelsAcl:READ"
+        - 'DatamodelsAcl:READ'
       responses:
-        "200":
-          $ref: "#/components/responses/DataSourceListResponseWithCursor"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
+        '200':
+          $ref: '#/components/responses/DataSourceListResponseWithCursor'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
-  "/api/v1/projects/{project}/data-validation/datasources/byids":
+  '/api/v1/projects/{project}/data-validation/datasources/byids':
     post:
       tags:
-      - DataSources
+        - DataSources
       summary: Retrieve data sources by their ids
       description: >-
         Retrieve up to 100 data sources by specifying their ids.
       operationId: listByIdsDataSources
       parameters:
-      - $ref: "#/components/parameters/project"
+        - $ref: '#/components/parameters/project'
       requestBody:
         description: List of ids for the data sources to return.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DataSourceListIdsRequest"
+              $ref: '#/components/schemas/DataSourceListIdsRequest'
         required: true
       x-capability:
-      - "DatamodelsAcl:READ"
+        - 'DatamodelsAcl:READ'
       responses:
-        "200":
-          $ref: "#/components/responses/DataSourceListResponse"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
+        '200':
+          $ref: '#/components/responses/DataSourceListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
-  "/api/v1/projects/{project}/data-validation/datasources/delete":
+  '/api/v1/projects/{project}/data-validation/datasources/delete':
     post:
       tags:
-      - DataSources
+        - DataSources
       summary: Delete data sources
-      description: "Delete one or more data sources"
+      description: 'Delete one or more data sources'
       operationId: deleteDataSources
       parameters:
-      - $ref: "#/components/parameters/project"
+        - $ref: '#/components/parameters/project'
       requestBody:
         description: List of data sources ids to delete.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DataSourceListIdsRequest"
+              $ref: '#/components/schemas/DataSourceListIdsRequest'
         required: true
       x-capability:
-      - "DatamodelsAcl:WRITE"
+        - 'DatamodelsAcl:WRITE'
       responses:
-        "200":
-          $ref: "#/components/responses/DataSourceListIdsResponse"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
+        '200':
+          $ref: '#/components/responses/DataSourceListIdsResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
   #
   # Rulesets
   #
-  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets":
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets':
     post:
       tags:
-      - Rulesets
+        - Rulesets
       summary: Create rulesets
       description: >-
         Add rulesets.
       operationId: createRulesets
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/dataSourceId"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
       requestBody:
         description: Rulesets to add or update.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RulesetCreateRequest"
+              $ref: '#/components/schemas/RulesetCreateRequest'
         required: true
       x-capability:
-      - "DatamodelsAcl:WRITE"
+        - 'DatamodelsAcl:WRITE'
       responses:
-        "200":
-          $ref: "#/components/responses/RulesetListResponse"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
-        "409":
+        '200':
+          $ref: '#/components/responses/RulesetListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '409':
           description: Ruleset conflict
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UpsertConflict"
+                $ref: '#/components/schemas/UpsertConflict'
 
     get:
       tags:
-      - Rulesets
+        - Rulesets
       summary: List rulesets
       description: >-
         List rulesets defined in the current project and the current data source.
       operationId: listRulesets
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/dataSourceId"
-      - $ref: "#/components/parameters/Cursor"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+        - $ref: '#/components/parameters/Cursor'
       x-capability:
-      - "DatamodelsAcl:READ"
+        - 'DatamodelsAcl:READ'
       responses:
-        "200":
-          $ref: "#/components/responses/RulesetListResponseWithCursor"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
+        '200':
+          $ref: '#/components/responses/RulesetListResponseWithCursor'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
-  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/byids":
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/byids':
     post:
       tags:
-      - Rulesets
+        - Rulesets
       summary: Retrieve rulesets by their ids
       description: >-
         Retrieve up to 100 rulesets by specifying their ids.
       operationId: listByIdsRulesets
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/dataSourceId"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
       requestBody:
         description: List of ids for the rulesets to return.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RulesetListIdsRequest"
+              $ref: '#/components/schemas/RulesetListIdsRequest'
         required: true
       x-capability:
-      - "DatamodelsAcl:READ"
+        - 'DatamodelsAcl:READ'
       responses:
-        "200":
-          $ref: "#/components/responses/RulesetListResponse"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
+        '200':
+          $ref: '#/components/responses/RulesetListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
-  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/delete":
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/delete':
     post:
       tags:
-      - Rulesets
+        - Rulesets
       summary: Delete rulesets
-      description: "Delete one or more rulesets"
+      description: 'Delete one or more rulesets'
       operationId: deleteRulesets
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/dataSourceId"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
       requestBody:
         description: List of rulesets ids to delete.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RulesetListIdsRequest"
+              $ref: '#/components/schemas/RulesetListIdsRequest'
         required: true
       x-capability:
-      - "DatamodelsAcl:WRITE"
+        - 'DatamodelsAcl:WRITE'
       responses:
-        "200":
-          $ref: "#/components/responses/RulesetListIdsResponse"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
+        '200':
+          $ref: '#/components/responses/RulesetListIdsResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
   #
   # Rules in a ruleset
   #
-  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules":
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules':
     post:
       tags:
-      - Rules
+        - Rules
       summary: Create rules
       description: >-
         Create a set of new rules.
       operationId: createRules
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/dataSourceId"
-      - $ref: "#/components/parameters/rulesetId"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+        - $ref: '#/components/parameters/rulesetId'
       requestBody:
         description: List of rules to create.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RuleCreateRequest"
+              $ref: '#/components/schemas/RuleCreateRequest'
         required: true
       x-capability:
-      - "DatamodelsAcl:WRITE"
+        - 'DatamodelsAcl:WRITE'
       responses:
-        "200":
-          $ref: "#/components/responses/RuleListResponse"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
-        "409":
+        '200':
+          $ref: '#/components/responses/RuleListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '409':
           description: Rule conflict
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UpsertConflict"
+                $ref: '#/components/schemas/UpsertConflict'
 
     get:
       tags:
-      - Rules
+        - Rules
       summary: List rules
       description: >-
         List rules defined in the current project, in the current data source and in the current ruleset.
       operationId: listRules
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/dataSourceId"
-      - $ref: "#/components/parameters/rulesetId"
-      - $ref: "#/components/parameters/Cursor"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+        - $ref: '#/components/parameters/rulesetId'
+        - $ref: '#/components/parameters/Cursor'
       x-capability:
-      - "DatamodelsAcl:READ"
+        - 'DatamodelsAcl:READ'
       responses:
-        "200":
-          $ref: "#/components/responses/RuleListResponseWithCursor"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
+        '200':
+          $ref: '#/components/responses/RuleListResponseWithCursor'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
-  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules/byids":
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules/byids':
     post:
       tags:
-      - Rules
+        - Rules
       summary: Retrieve rules by their ids
       description: >-
         Retrieve up to 100 rules by specifying their ids.
       operationId: listByIdsRules
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/dataSourceId"
-      - $ref: "#/components/parameters/rulesetId"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+        - $ref: '#/components/parameters/rulesetId'
       requestBody:
         description: List of ids for the rules to return.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RuleListIdsRequest"
+              $ref: '#/components/schemas/RuleListIdsRequest'
         required: true
       x-capability:
-      - "DatamodelsAcl:READ"
+        - 'DatamodelsAcl:READ'
       responses:
-        "200":
-          $ref: "#/components/responses/RuleListResponse"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
+        '200':
+          $ref: '#/components/responses/RuleListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
-  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules/delete":
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules/delete':
     post:
       tags:
-      - Rules
+        - Rules
       summary: Delete rules
-      description: "Delete one or more rules"
+      description: 'Delete one or more rules'
       operationId: deleteRules
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/dataSourceId"
-      - $ref: "#/components/parameters/rulesetId"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+        - $ref: '#/components/parameters/rulesetId'
       requestBody:
         description: List of rules ids to delete.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RuleListIdsRequest"
+              $ref: '#/components/schemas/RuleListIdsRequest'
         required: true
       x-capability:
-      - "DatamodelsAcl:WRITE"
+        - 'DatamodelsAcl:WRITE'
       responses:
-        "200":
-          $ref: "#/components/responses/RuleListIdsResponse"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
+        '200':
+          $ref: '#/components/responses/RuleListIdsResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
-  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules/update":
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules/update':
     post:
       tags:
-      - Rules
+        - Rules
       summary: Update rules
       description: >-
         Update the properties of a set of rules
       operationId: updateRules
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/dataSourceId"
-      - $ref: "#/components/parameters/rulesetId"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+        - $ref: '#/components/parameters/rulesetId'
       requestBody:
         description: List of rules to be updated.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RuleUpdateRequest"
+              $ref: '#/components/schemas/RuleUpdateRequest'
         required: true
       x-capability:
-      - "DatamodelsAcl:READ"
+        - 'DatamodelsAcl:READ'
       responses:
-        "200":
-          $ref: "#/components/responses/RuleListResponse"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
-
-
+        '200':
+          $ref: '#/components/responses/RuleListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
   #
   # Rules from all the rulesets
   #
-  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rules":
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rules':
     get:
       tags:
-      - Rules
+        - Rules
       summary: List all rules of the data source
       description: >-
         List rules defined in the current project, in the current data source and from all the rulesets.
       operationId: listAllRules
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/dataSourceId"
-      - $ref: "#/components/parameters/Cursor"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+        - $ref: '#/components/parameters/Cursor'
       x-capability:
-      - "DatamodelsAcl:READ"
+        - 'DatamodelsAcl:READ'
       responses:
-        "200":
-          $ref: "#/components/responses/RuleListResponseWithCursor"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
+        '200':
+          $ref: '#/components/responses/RuleListResponseWithCursor'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
-  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/validation/run":
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/validation/run':
     post:
       tags:
-      - Validation
+        - Validation
       summary: Start a validation job for a data source.
       description: >-
         A validation job will be started on the current data source and all its rules.
-      operationId: dataSourceValidation
+      operationId: dataSourceValidationRun
       parameters:
-      - $ref: "#/components/parameters/project"
-      - $ref: "#/components/parameters/dataSourceId"
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
       requestBody:
         description: Nonce token to be used for validation.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DataSourceValidationRequest"
+              $ref: '#/components/schemas/DataSourceValidationRequest'
         required: true
       x-capability:
-      - "DatamodelsAcl:READ"
+        - 'DatamodelsAcl:READ'
       responses:
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  #
+  # Data Scopes
+  #
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes':
+    get:
+      tags:
+        - DataScopes
+      summary: List data scopes defined in the current data source.
+      description: >-
+        List data scopes defined in the current data source.
+      operationId: listDataScopes
+      parameters:
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+        - $ref: '#/components/parameters/Cursor'
+      x-capability:
+        - 'DatamodelsAcl:READ'
+      responses:
+        '200':
+          $ref: '#/components/responses/DataScopeListResponseWithCursor'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+    post:
+      tags:
+        - DataScopes
+      summary: Create data scopes
+      description: >-
+        Create a set of new data scopes.
+      operationId: createDataScopes
+      parameters:
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+      requestBody:
+        description: List of data scopes to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataScopeCreateRequest'
+        required: true
+      x-capability:
+        - 'DatamodelsAcl:WRITE'
+      responses:
+        '200':
+          $ref: '#/components/responses/DataScopeListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '409':
+          description: DataScope conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpsertConflict'
+
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes/update':
+    post:
+      tags:
+        - DataScopes
+      summary: Update data scopes
+      description: >-
+        Update the properties of a set of data scopes
+      operationId: updateDataScopes
+      parameters:
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+      requestBody:
+        description: List of data scopes to be updated.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataScopeUpdateRequest'
+        required: true
+      x-capability:
+        - 'DatamodelsAcl:WRITE'
+      responses:
+        '200':
+          $ref: '#/components/responses/DataScopeListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSource}/datascopes/byids':
+    post:
+      tags:
+        - DataScopes
+      summary: Retrieve data scopes by their ids
+      description: >-
+        Retrieve up to 100 data scopes by specifying their ids.
+      operationId: listByIdsDataScopes
+      parameters:
+        - $ref: '#/components/parameters/project'
+      requestBody:
+        description: List of ids for the data scopes to return.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataScopeListIdsRequest'
+        required: true
+      x-capability:
+        - 'DatamodelsAcl:READ'
+      responses:
+        '200':
+          $ref: '#/components/responses/DataScopeListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes/delete':
+    post:
+      tags:
+        - DataScopes
+      summary: Delete data scopes
+      description: 'Delete one or more data scopes'
+      operationId: deleteDataScopes
+      parameters:
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+      requestBody:
+        description: List of data scopes ids to delete.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataScopeListIdsRequest'
+        required: true
+      x-capability:
+        - 'DatamodelsAcl:WRITE'
+      responses:
+        '200':
+          $ref: '#/components/responses/DataScopeListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  #
+  # Rule Runs
+  #
+  '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/ruleruns/latest':
+    get:
+      tags:
+        - RuleRuns
+      summary: List the latest rule runs for each rule defined in the current data source.
+      description: >-
+        List the latest rule runs for each rule defined in the current data source.
+      operationId: listLatestRuleRuns
+      parameters:
+        - $ref: '#/components/parameters/project'
+        - $ref: '#/components/parameters/dataSourceId'
+        - $ref: '#/components/parameters/Cursor'
+      x-capability:
+        - 'DatamodelsAcl:READ'
+      responses:
+        '200':
+          $ref: '#/components/responses/RuleRunListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
 
 components:
   parameters:
@@ -440,7 +591,7 @@ components:
       in: query
       schema:
         type: string
-        example: "4zj0Vy2fo0NtNMb229mI9r1V3YG5NBL752kQz1cKtwo"
+        example: '4zj0Vy2fo0NtNMb229mI9r1V3YG5NBL752kQz1cKtwo'
 
   responses:
     ErrorResponse:
@@ -450,15 +601,15 @@ components:
           schema:
             type: object
             required:
-            - error
+              - error
             properties:
               error:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 
-    #### Data source respones ####
+    #### Data source response ####
 
     DataSourceListResponse:
-      description: "List of data sources"
+      description: 'List of data sources'
       content:
         application/json:
           schema:
@@ -468,10 +619,10 @@ components:
               items:
                 type: array
                 items:
-                  $ref: "#/components/schemas/DataSourceDto"
+                  $ref: '#/components/schemas/DataSourceDto'
 
     DataSourceListResponseWithCursor:
-      description: "List of data sources with cursor"
+      description: 'List of data sources with cursor'
       content:
         application/json:
           schema:
@@ -481,12 +632,12 @@ components:
               items:
                 type: array
                 items:
-                  $ref: "#/components/schemas/DataSourceDto"
+                  $ref: '#/components/schemas/DataSourceDto'
               nextCursor:
-                $ref: "#/components/schemas/NextCursorV3"
+                $ref: '#/components/schemas/NextCursorV3'
 
     DataSourceListIdsResponse:
-      description: "List of data source id(s) affected by the request"
+      description: 'List of data source id(s) affected by the request'
       content:
         application/json:
           schema:
@@ -498,26 +649,26 @@ components:
                 minItems: 1
                 maxItems: 100
                 items:
-                  $ref: "#/components/schemas/ExternalId"
+                  $ref: '#/components/schemas/ExternalId'
 
-    #### Ruleset respones ####
+    #### Ruleset response ####
 
     RulesetListResponse:
-      description: "List of rulesets"
+      description: 'List of rulesets'
       content:
         application/json:
           schema:
             type: object
             required:
-            - items
+              - items
             properties:
               items:
                 type: array
                 items:
-                  $ref: "#/components/schemas/RulesetDto"
+                  $ref: '#/components/schemas/RulesetDto'
 
     RulesetListResponseWithCursor:
-      description: "List of rulesets with cursor"
+      description: 'List of rulesets with cursor'
       content:
         application/json:
           schema:
@@ -527,12 +678,12 @@ components:
               items:
                 type: array
                 items:
-                  $ref: "#/components/schemas/RulesetDto"
+                  $ref: '#/components/schemas/RulesetDto'
               nextCursor:
-                $ref: "#/components/schemas/NextCursorV3"
+                $ref: '#/components/schemas/NextCursorV3'
 
     RulesetListIdsResponse:
-      description: "List of ruleset id(s) affected by the request"
+      description: 'List of ruleset id(s) affected by the request'
       content:
         application/json:
           schema:
@@ -544,26 +695,26 @@ components:
                 minItems: 1
                 maxItems: 100
                 items:
-                  $ref: "#/components/schemas/ExternalId"
+                  $ref: '#/components/schemas/ExternalId'
 
-    #### Rule respones ####
+    #### Rule response ####
 
     RuleListResponse:
-      description: "List of rules"
+      description: 'List of rules'
       content:
         application/json:
           schema:
             type: object
             required:
-            - items
+              - items
             properties:
               items:
                 type: array
                 items:
-                  $ref: "#/components/schemas/RuleDto"
+                  $ref: '#/components/schemas/RuleDto'
 
     RuleListResponseWithCursor:
-      description: "List of rules with cursor"
+      description: 'List of rules with cursor'
       content:
         application/json:
           schema:
@@ -573,12 +724,12 @@ components:
               items:
                 type: array
                 items:
-                  $ref: "#/components/schemas/RuleDto"
+                  $ref: '#/components/schemas/RuleDto'
               nextCursor:
-                $ref: "#/components/schemas/NextCursorV3"
+                $ref: '#/components/schemas/NextCursorV3'
 
     RuleListIdsResponse:
-      description: "List of rule id(s) affected by the request"
+      description: 'List of rule id(s) affected by the request'
       content:
         application/json:
           schema:
@@ -590,15 +741,75 @@ components:
                 minItems: 1
                 maxItems: 100
                 items:
-                  $ref: "#/components/schemas/ExternalId"
+                  $ref: '#/components/schemas/ExternalId'
+
+    #### Data scopes response ####
+
+    DataScopeListResponse:
+      description: 'List of data scopes'
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataScopeDto'
+
+    DataScopeListResponseWithCursor:
+      description: 'List of data scopes with cursor'
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataScopeDto'
+              nextCursor:
+                $ref: '#/components/schemas/NextCursorV3'
+
+    DataScopeListIdsResponse:
+      description: 'List of data scopes id(s) affected by the request'
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                minItems: 1
+                maxItems: 100
+                items:
+                  $ref: '#/components/schemas/ExternalId'
+
+    #### Rule runs response ####
+
+    RuleRunListResponse:
+      description: 'List of rule runs'
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RuleRunDto'
 
   schemas:
     # Generic error object. Shared across all CDF APIs
     Error:
       type: object
       required:
-      - code
-      - message
+        - code
+        - message
       description: Cognite API error.
       properties:
         code:
@@ -609,7 +820,7 @@ components:
         message:
           type: string
           description: Error message.
-          example: "Could not authenticate."
+          example: 'Could not authenticate.'
 
     EpochTimestamp:
       description: >-
@@ -653,25 +864,25 @@ components:
 
     DataModelId:
       type: string
-      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
+      pattern: '^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$'
       minLength: 1
       maxLength: 255
 
     DataModelSpace:
       type: string
-      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
+      pattern: '^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$'
       minLength: 1
       maxLength: 255
 
     DataModelVersion:
       type: string
-      pattern: "^[a-zA-Z0-9]([a-zA-Z0-9_-]{0,41}[a-zA-Z0-9])?$"
+      pattern: '^[a-zA-Z0-9]([a-zA-Z0-9_-]{0,41}[a-zA-Z0-9])?$'
       minLength: 1
       maxLength: 43
 
     ExternalId:
       type: string
-      pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
+      pattern: '^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$'
       minLength: 1
       maxLength: 255
 
@@ -684,47 +895,55 @@ components:
       required: [dataModelId, dataModelSpaceId, dataModelVersion, externalId]
       properties:
         dataModelId:
-          description: "Id of the data model that the data source belongs to"
+          description: 'Id of the data model that the data source belongs to'
           allOf:
-          - $ref: "#/components/schemas/DataModelId"
+            - $ref: '#/components/schemas/DataModelId'
         dataModelSpaceId:
-          description: "The data model space that the data source belongs to"
+          description: 'The data model space that the data source belongs to'
           allOf:
-          - $ref: "#/components/schemas/DataModelSpace"
+            - $ref: '#/components/schemas/DataModelSpace'
         dataModelVersion:
-          description: "The data model version that the data source belongs to"
+          description: 'The data model version that the data source belongs to'
           allOf:
-          - $ref: "#/components/schemas/DataModelVersion"
+            - $ref: '#/components/schemas/DataModelVersion'
         externalId:
-          description: "External-id of the data source"
+          description: 'External-id of the data source'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
 
     DataSourceDto:
       allOf:
       type: object
-      required: [createdTime, dataModelId, dataModelSpaceId, dataModelVersion, externalId, lastUpdatedTime]
+      required:
+        [
+          createdTime,
+          dataModelId,
+          dataModelSpaceId,
+          dataModelVersion,
+          externalId,
+          lastUpdatedTime,
+        ]
       properties:
         createdTime:
-          $ref: "#/components/schemas/EpochTimestamp"
+          $ref: '#/components/schemas/EpochTimestamp'
         dataModelId:
-          description: "Id of the data model that the data source belongs to"
+          description: 'Id of the data model that the data source belongs to'
           allOf:
-          - $ref: "#/components/schemas/DataModelId"
+            - $ref: '#/components/schemas/DataModelId'
         dataModelSpaceId:
-          description: "The data model space that the data source belongs to"
+          description: 'The data model space that the data source belongs to'
           allOf:
-          - $ref: "#/components/schemas/DataModelSpace"
+            - $ref: '#/components/schemas/DataModelSpace'
         dataModelVersion:
-          description: "The data model version that the data source belongs to"
+          description: 'The data model version that the data source belongs to'
           allOf:
-          - $ref: "#/components/schemas/DataModelVersion"
+            - $ref: '#/components/schemas/DataModelVersion'
         externalId:
-          description: "The external-id of the data source"
+          description: 'The external-id of the data source'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         lastUpdatedTime:
-          $ref: "#/components/schemas/EpochTimestamp"
+          $ref: '#/components/schemas/EpochTimestamp'
 
     DataSourceCreateRequest:
       type: object
@@ -739,7 +958,7 @@ components:
           maxItems: 100
           items:
             type: object
-            $ref: "#/components/schemas/DataSourceDraft"
+            $ref: '#/components/schemas/DataSourceDraft'
 
     DataSourceListIdsRequest:
       type: object
@@ -755,7 +974,7 @@ components:
             properties:
               externalId:
                 description: Ids for the data sources used in the request
-                $ref: "#/components/schemas/ExternalId"
+                $ref: '#/components/schemas/ExternalId'
 
     #### Ruleset schemas ####
 
@@ -765,47 +984,56 @@ components:
       required: [externalId, name]
       properties:
         description:
-          description: "The description of the ruleset"
+          description: 'The description of the ruleset'
           type: string
         externalId:
-          description: "The external-id of the ruleset"
+          description: 'The external-id of the ruleset'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         name:
-          description: "The name of the ruleset"
+          description: 'The name of the ruleset'
           type: string
         parentRulesetId:
-          description: "The external-id of the parent ruleset"
+          description: 'The external-id of the parent ruleset'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
 
     RulesetDto:
       allOf:
       type: object
-      required: [createdTime, dataSourceId, description, externalId, lastUpdatedTime, name, parentRulesetId]
+      required:
+        [
+          createdTime,
+          dataSourceId,
+          description,
+          externalId,
+          lastUpdatedTime,
+          name,
+          parentRulesetId,
+        ]
       properties:
         createdTime:
-          $ref: "#/components/schemas/EpochTimestamp"
+          $ref: '#/components/schemas/EpochTimestamp'
         dataSourceId:
-          description: "The external-id of the data source"
+          description: 'The external-id of the data source'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         description:
-          description: "The description of the ruleset"
+          description: 'The description of the ruleset'
           type: string
         externalId:
-          description: "The external-id of the ruleset"
+          description: 'The external-id of the ruleset'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         name:
-          description: "The name of the ruleset"
+          description: 'The name of the ruleset'
           type: string
         lastUpdatedTime:
-          $ref: "#/components/schemas/EpochTimestamp"
+          $ref: '#/components/schemas/EpochTimestamp'
         parentRulesetId:
-          description: "The external-id of the parent ruleset"
+          description: 'The external-id of the parent ruleset'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
 
     RulesetCreateRequest:
       type: object
@@ -820,7 +1048,7 @@ components:
           maxItems: 100
           items:
             type: object
-            $ref: "#/components/schemas/RulesetDraft"
+            $ref: '#/components/schemas/RulesetDraft'
 
     RulesetListIdsRequest:
       type: object
@@ -836,18 +1064,18 @@ components:
             properties:
               externalId:
                 description: Ids from rulesets
-                $ref: "#/components/schemas/ExternalId"
+                $ref: '#/components/schemas/ExternalId'
 
     #### Rule schemas ####
 
     RuleSeverity:
-      description: "The severity of the rule"
+      description: 'The severity of the rule'
       type: string
       enum:
-      - Critical
-      - High
-      - Medium
-      - Low
+        - Critical
+        - High
+        - Medium
+        - Low
 
     RuleCreateDraft:
       allOf:
@@ -855,36 +1083,36 @@ components:
       required: [conditions, dataType, externalId, name, severity]
       properties:
         conditions:
-          description: "Conditions used to perform validation"
+          description: 'Conditions used to perform validation'
           type: string
         dataScopeId:
-          description: "External-id of the data scope connected to the rule"
+          description: 'External-id of the data scope connected to the rule'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         dataType:
-          description: "The reference to a view in FDM"
+          description: 'The reference to a view in FDM'
           type: string
         description:
-          description: "The description of the rule"
+          description: 'The description of the rule'
           type: string
         errorMessage:
-          description: "The error message of the rule"
+          description: 'The error message of the rule'
           type: string
         externalId:
-          description: "The external-id of the rule"
+          description: 'The external-id of the rule'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         name:
-          description: "The name of the rule"
+          description: 'The name of the rule'
           type: string
         rulesetId:
-          description: "External-id of the ruleset connected to the rule"
+          description: 'External-id of the ruleset connected to the rule'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         severity:
-          description: "The severity of the rule"
+          description: 'The severity of the rule'
           allOf:
-          - $ref: "#/components/schemas/RuleSeverity"
+            - $ref: '#/components/schemas/RuleSeverity'
 
     RuleUpdateItem:
       allOf:
@@ -892,87 +1120,98 @@ components:
       required: [externalId, update]
       properties:
         externalId:
-          description: "The external-id of the rule"
+          description: 'The external-id of the rule'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         update:
-          description: "The properties to be updated"
+          description: 'The properties to be updated'
           allOf:
-          - $ref: "#/components/schemas/RuleUpdateDraft"
-
+            - $ref: '#/components/schemas/RuleUpdateDraft'
 
     RuleUpdateDraft:
       allOf:
       type: object
       properties:
         conditions:
-          description: "Conditions used to perform validation"
+          description: 'Conditions used to perform validation'
           type: string
         dataScopeId:
-          description: "External-id of the data scope connected to the rule"
+          description: 'External-id of the data scope connected to the rule'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         dataType:
-          description: "The reference to a view in FDM"
+          description: 'The reference to a view in FDM'
           type: string
         description:
-          description: "The description of the rule"
+          description: 'The description of the rule'
           type: string
         errorMessage:
-          description: "The error message of the rule"
+          description: 'The error message of the rule'
           type: string
         name:
-          description: "The name of the rule"
+          description: 'The name of the rule'
           type: string
         rulesetId:
-          description: "External-id of the ruleset connected to the rule"
+          description: 'External-id of the ruleset connected to the rule'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         severity:
-          description: "The severity of the rule"
+          description: 'The severity of the rule'
           allOf:
-          - $ref: "#/components/schemas/RuleSeverity"
+            - $ref: '#/components/schemas/RuleSeverity'
 
     RuleDto:
       allOf:
       type: object
-      required: [conditions, createdTime, dataScope, dataType, description, errorMessage, externalId, lastUpdatedTime, name, severity]
+      required:
+        [
+          conditions,
+          createdTime,
+          dataScope,
+          dataType,
+          description,
+          errorMessage,
+          externalId,
+          lastUpdatedTime,
+          name,
+          severity,
+        ]
       properties:
         conditions:
-          description: "Conditions used to perform validation"
+          description: 'Conditions used to perform validation'
           type: string
         createdTime:
-          $ref: "#/components/schemas/EpochTimestamp"
+          $ref: '#/components/schemas/EpochTimestamp'
         externalId:
-          description: "The external-id of the rule"
+          description: 'The external-id of the rule'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         dataScopeId:
-          description: "The external-id of the data scope connected to the rule"
+          description: 'The external-id of the data scope connected to the rule'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         dataType:
-          description: "The reference to a view in FDM"
+          description: 'The reference to a view in FDM'
           type: string
         description:
-          description: "The description of the rule"
+          description: 'The description of the rule'
           type: string
         errorMessage:
-          description: "The error message of the rule"
+          description: 'The error message of the rule'
           type: string
         lastUpdatedTime:
-          $ref: "#/components/schemas/EpochTimestamp"
+          $ref: '#/components/schemas/EpochTimestamp'
         name:
-          description: "The name of the rule"
+          description: 'The name of the rule'
           type: string
         rulesetId:
-          description: "The external-id of the ruleset connected to the rule"
+          description: 'The external-id of the ruleset connected to the rule'
           allOf:
-          - $ref: "#/components/schemas/ExternalId"
+            - $ref: '#/components/schemas/ExternalId'
         severity:
-          description: "The severity of the rule"
+          description: 'The severity of the rule'
           allOf:
-          - $ref: "#/components/schemas/RuleSeverity"
+            - $ref: '#/components/schemas/RuleSeverity'
 
     RuleCreateRequest:
       type: object
@@ -987,7 +1226,7 @@ components:
           maxItems: 100
           items:
             type: object
-            $ref: "#/components/schemas/RuleCreateDraft"
+            $ref: '#/components/schemas/RuleCreateDraft'
 
     RuleUpdateRequest:
       type: object
@@ -1002,7 +1241,7 @@ components:
           maxItems: 100
           items:
             type: object
-            $ref: "#/components/schemas/RuleUpdateItem"
+            $ref: '#/components/schemas/RuleUpdateItem'
 
     RuleListIdsRequest:
       type: object
@@ -1018,7 +1257,7 @@ components:
             properties:
               externalId:
                 description: Ids from rules
-                $ref: "#/components/schemas/ExternalId"
+                $ref: '#/components/schemas/ExternalId'
 
     DataSourceValidationRequest:
       type: object
@@ -1026,4 +1265,186 @@ components:
       nonce:
         type: string
         description: Nonce token to be used for validation.
-        $ref: "#/components/schemas/Nonce"
+        $ref: '#/components/schemas/Nonce'
+
+    ### Data scopes schema ###
+
+    DataScopeDto:
+      allOf:
+      type: object
+      required:
+        [
+          createdTime,
+          dataSourceId,
+          dataType,
+          externalId,
+          filters,
+          lastUpdatedTime,
+          name,
+        ]
+      properties:
+        createdTime:
+          $ref: '#/components/schemas/EpochTimestamp'
+        dataSourceId:
+          description: 'The external-id of the data source'
+          allOf:
+            - $ref: '#/components/schemas/ExternalId'
+        dataType:
+          description: 'The selected data type from the data model'
+          type: string
+        externalId:
+          description: 'The external-id of the data scope'
+          allOf:
+            - $ref: '#/components/schemas/ExternalId'
+        filters:
+          description: 'Filters used during validation'
+          type: string
+        lastUpdatedTime:
+          $ref: '#/components/schemas/EpochTimestamp'
+        name:
+          description: 'The name of the data scope'
+          type: string
+
+    DataScopeListIdsRequest:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            required: [externalId]
+            properties:
+              externalId:
+                description: Ids from data scopes
+                $ref: '#/components/schemas/ExternalId'
+
+    DataScopeCreateDraft:
+      allOf:
+      type: object
+      required: [dataType, externalId, filters, name]
+      properties:
+        dataType:
+          description: 'The reference to a view in FDM'
+          type: string
+        externalId:
+          description: 'The external-id of the data scope'
+          allOf:
+            - $ref: '#/components/schemas/ExternalId'
+        name:
+          description: 'The name of the data scope'
+          type: string
+        filters:
+          description: 'Filters used during validation'
+          type: string
+
+    DataScopeCreateRequest:
+      type: object
+      required: [items]
+      description: List of data scopes to create
+      minItems: 1
+      maxItems: 100
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            $ref: '#/components/schemas/DataScopeCreateDraft'
+
+    DataScopeUpdateItem:
+      allOf:
+      type: object
+      required: [externalId, update]
+      properties:
+        externalId:
+          description: 'The external-id of the data scope'
+          allOf:
+            - $ref: '#/components/schemas/ExternalId'
+        update:
+          description: 'The properties to be updated'
+          allOf:
+            - $ref: '#/components/schemas/DataScopeUpdateDraft'
+
+    DataScopeUpdateDraft:
+      allOf:
+      type: object
+      properties:
+        name:
+          description: 'The name of the rule'
+          type: string
+        filters:
+          description: 'Filters used to perform validation'
+          type: string
+
+    DataScopeUpdateRequest:
+      type: object
+      required: [items]
+      description: List of data scopes to update
+      minItems: 1
+      maxItems: 100
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            $ref: '#/components/schemas/DataScopeUpdateItem'
+
+    ### Rule runs schema ###
+
+    RuleRunStatus:
+      description: 'State of the rule run'
+      type: string
+      enum:
+        - Error
+        - InProgress
+        - Success
+
+    RuleRunDto:
+      allOf:
+      type: object
+      required:
+        [
+          createdTime,
+          dataSourceId,
+          endTime,
+          externalId,
+          lastUpdatedTime,
+          message,
+          ruleId,
+          startTime,
+          status,
+        ]
+      properties:
+        createdTime:
+          $ref: '#/components/schemas/EpochTimestamp'
+        dataSourceId:
+          description: 'The external-id of the data source'
+          allOf:
+            - $ref: '#/components/schemas/ExternalId'
+        endTime:
+          description: 'Time when the rule validation finishes'
+          $ref: '#/components/schemas/EpochTimestamp'
+        externalId:
+          description: 'The external-id of the rule run'
+          allOf:
+            - $ref: '#/components/schemas/ExternalId'
+        lastUpdatedTime:
+          $ref: '#/components/schemas/EpochTimestamp'
+        message:
+          description: 'Error message in case the run failed'
+          type: string
+        ruleId:
+          description: 'The external-id of the related rule'
+          allOf:
+            - $ref: '#/components/schemas/ExternalId'
+        startTime:
+          description: 'Time when the rule validation starts'
+          $ref: '#/components/schemas/EpochTimestamp'
+        status:
+          $ref: '#/components/schemas/RuleRunStatus'

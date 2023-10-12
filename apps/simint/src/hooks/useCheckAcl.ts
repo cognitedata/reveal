@@ -1,73 +1,77 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
-import type { Acl, SingleCogniteCapability } from '@cognite/sdk';
+import { getProject } from '@cognite/cdf-utilities';
+import {
+  CapabilityItemModel,
+  UserCapabilities,
+  useGetDefinitionsQuery,
+} from '@cognite/simconfig-api-sdk/rtk';
 
-import { useCapabilities } from './useCapabilities';
+type CapabilityResult = {
+  found: boolean;
+  missing: CapabilityItemModel[];
+  capabilityName: string;
+};
 
-type TemporaryCapabilitiesList = [string, boolean][];
+export const useCheckAcl = (requiredCapabilities: string[]) => {
+  const project = getProject();
 
-export type AclName = keyof SingleCogniteCapability;
+  const { isSuccess, data: definitions } = useGetDefinitionsQuery({
+    project,
+  });
 
-export interface RequiredCapability {
-  acl: AclName;
-  actions: string[];
-}
-
-export const useCheckAcl = (requiredCapabilities: RequiredCapability[]) => {
-  const { data: capabilities, isFetched } = useCapabilities();
+  const userCapabilities = isSuccess
+    ? (definitions.features as UserCapabilities[])
+    : undefined;
   const [capabilityMap, setCapabilityMap] = React.useState<
-    Record<string, boolean>
+    Record<string, CapabilityResult>
   >({});
 
   // to prevent reruns of the memo hook
-  const capabilityString = requiredCapabilities.reduce(
-    (acc, curr) => `${acc} + ${curr.acl as string}`,
+  const capabilityString = userCapabilities?.reduce(
+    (acc, curr) => `${acc} + ${curr.key as string}`,
     ''
   );
 
   useMemo(() => {
-    if (isFetched) {
-      const allCheckedCapabilities =
-        requiredCapabilities.reduce<TemporaryCapabilitiesList>(
-          (capabilityList: TemporaryCapabilitiesList, requiredCapability) => {
-            const userCapability = capabilities?.find(
-              (capability: SingleCogniteCapability) =>
-                requiredCapability.acl in capability
-            );
-            if (userCapability) {
-              const hasAllRequiredCapabilities =
-                requiredCapability.actions.reduce(
-                  (_acc: boolean, requiredAction: unknown) =>
-                    Boolean(
-                      (
-                        userCapability[requiredCapability.acl] as Acl<
-                          unknown,
-                          unknown
-                        >
-                      ).actions.includes(requiredAction)
-                    ),
-                  false
-                );
-              capabilityList.push([
-                requiredCapability.acl,
-                hasAllRequiredCapabilities,
-              ]);
-            } else {
-              capabilityList.push([requiredCapability.acl, false]);
-            }
-            return capabilityList;
-          },
-          []
+    let map = new Map();
+    if (isSuccess && userCapabilities) {
+      for (const requiredKey of requiredCapabilities) {
+        const capability = userCapabilities.find(
+          (currentCapability) => requiredKey === currentCapability.key
         );
-      setCapabilityMap(Object.fromEntries(allCheckedCapabilities));
+
+        if (capability) {
+          const isEnabled =
+            capability.capabilities?.filter((cap) => cap.enabled).length ===
+            (capability.capabilities ? capability.capabilities.length : 0);
+          const capabilityName =
+            capability.capabilities && capability.capabilities?.length > 0
+              ? capability.capabilities[0].capability
+              : requiredKey;
+          map.set(capability.key, {
+            found: isEnabled,
+            missing: isEnabled === false ? capability.capabilities : [],
+            capabilityName: capabilityName,
+          });
+        } else {
+          map.set(requiredKey, {
+            found: false,
+            missing: [],
+            capabilityName: requiredKey,
+          });
+        }
+      }
+      setCapabilityMap(Object.fromEntries(map));
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [capabilities, capabilityString, isFetched]);
+  }, [capabilityString]);
 
   return {
     capabilityMap,
     hasAllCapabilities: Object.values(capabilityMap).reduce(
-      (acc, curr) => acc && curr,
+      (acc, curr) => acc && curr.found,
       true
     ),
   };

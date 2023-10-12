@@ -6,23 +6,6 @@ import {
   VerticalDivider,
   ExplorationFilterToggle,
 } from '@data-exploration/components';
-import {
-  Divider,
-  ResourceTypeTabs,
-  SpacedRow,
-} from '@data-exploration-components/components';
-import {
-  SearchFilters,
-  SearchResults,
-  ResourcePreviewSidebar,
-} from '@data-exploration-components/containers';
-import { usePrevious } from '@data-exploration-components/hooks/index';
-import {
-  ResourceType,
-  ResourceItem,
-  SelectableItemsProps,
-  InitialOldResourceFilterProps,
-} from '@data-exploration-components/types';
 import isEqual from 'lodash/isEqual';
 
 import { Button, Flex, Input } from '@cognite/cogs.js';
@@ -35,6 +18,17 @@ import {
   InternalTimeseriesFilters,
   zIndex,
 } from '@data-exploration-lib/core';
+
+import { Divider, ResourceTypeTabs, SpacedRow } from '../../../components';
+import { usePrevious } from '../../../hooks';
+import {
+  InitialOldResourceFilterProps,
+  ResourceItem,
+  ResourceType,
+  SelectableItemsProps,
+} from '../../../types';
+import { SearchFilters, SearchResults } from '../../SearchResults';
+import { ResourcePreviewSidebar } from '../ResourcePreviewSidebar';
 
 const Wrapper = styled.div`
   display: flex;

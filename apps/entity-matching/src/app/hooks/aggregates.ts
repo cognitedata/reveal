@@ -1,5 +1,3 @@
-import { PropertyAggregate } from '@entity-matching-app/common/types';
-import { API, Filter } from '@entity-matching-app/types/api';
 import {
   FetchQueryOptions,
   QueryClient,
@@ -10,6 +8,9 @@ import {
 
 import { CogniteClient, CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { PropertyAggregate } from '../common/types';
+import { API, Filter } from '../types/api';
 
 type T = API | 'documents';
 

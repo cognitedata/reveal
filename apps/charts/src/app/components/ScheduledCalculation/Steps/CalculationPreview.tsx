@@ -4,15 +4,15 @@
 
 import { memo, useMemo } from 'react';
 
-import PlotlyChart from '@charts-app/components/PlotlyChart/PlotlyChart';
-import { useCalculationPreviewData } from '@charts-app/domain/scheduled-calculation/service/queries/useCalculationPreviewData';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { isBefore, sub } from 'date-fns';
 
 import { Icon } from '@cognite/cogs.js';
 
 import { useGetWorkflow } from '../../../domain/chart/internal/queries/useGetWorkflow';
+import { useCalculationPreviewData } from '../../../domain/scheduled-calculation/service/queries/useCalculationPreviewData';
+import { useTranslations } from '../../../hooks/translations';
+import { makeDefaultTranslations } from '../../../utils/translations';
+import PlotlyChart from '../../PlotlyChart/PlotlyChart';
 
 import { PreviewStatus } from './elements';
 

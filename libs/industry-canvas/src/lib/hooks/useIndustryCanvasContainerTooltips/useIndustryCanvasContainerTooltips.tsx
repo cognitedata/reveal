@@ -18,10 +18,11 @@ import {
 } from '../useTooltipsOptions';
 
 import ContainerTooltip from './ContainerTooltip';
+import MultiContainerTooltip from './MultiContainerTooltip';
 import useContainerOcrData from './useContainerOcrData';
 
 type UseIndustryCanvasContainerTooltipsProps = {
-  selectedContainer: IndustryCanvasContainerConfig | undefined;
+  selectedContainers: IndustryCanvasContainerConfig[];
   containers: IndustryCanvasContainerConfig[];
   tooltipsOptions: TooltipsOptions;
   onUpdateTooltipsOptions: OnUpdateTooltipsOptions;
@@ -33,7 +34,7 @@ type UseIndustryCanvasContainerTooltipsProps = {
 };
 
 const useIndustryCanvasContainerTooltips = ({
-  selectedContainer,
+  selectedContainers,
   containers,
   tooltipsOptions,
   onUpdateTooltipsOptions,
@@ -44,6 +45,8 @@ const useIndustryCanvasContainerTooltips = ({
   );
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
 
+  const selectedContainer =
+    selectedContainers.length === 1 ? selectedContainers[0] : undefined;
   const { isInitialLoading: isOcrDataLoading, data: ocrData } =
     useContainerOcrData(selectedContainer);
 
@@ -68,14 +71,14 @@ const useIndustryCanvasContainerTooltips = ({
     })();
   }, [selectedContainer]);
 
-  return useMemo(() => {
+  const selectedContainerTooltip = useMemo(() => {
     if (selectedContainer === undefined) {
       return [];
     }
 
     const tooltipConfigs: TooltipConfig[] = [
       {
-        targetId: selectedContainer.id,
+        targetIds: [selectedContainer.id],
         content: (
           <ContainerTooltip
             key={selectedContainer.id}
@@ -116,6 +119,35 @@ const useIndustryCanvasContainerTooltips = ({
     tooltipsOptions,
     onUpdateTooltipsOptions,
   ]);
+
+  const multiSelectedContainerTooltip: TooltipConfig[] = useMemo(() => {
+    if (selectedContainers.length < 2) {
+      return [];
+    }
+
+    const haveOnlyAssetsOrEventContainersBeenSelected =
+      selectedContainers.every(
+        (container) =>
+          container.type === ContainerType.ASSET ||
+          container.type === ContainerType.EVENT
+      );
+
+    if (!haveOnlyAssetsOrEventContainersBeenSelected) {
+      return [];
+    }
+
+    return [
+      {
+        targetIds: selectedContainers.map((container) => container.id),
+        content: (
+          <MultiContainerTooltip selectedContainers={selectedContainers} />
+        ),
+        anchorTo: TooltipAnchorPosition.TOP_CENTER,
+      },
+    ];
+  }, [selectedContainers]);
+
+  return [...selectedContainerTooltip, ...multiSelectedContainerTooltip];
 };
 
 export default useIndustryCanvasContainerTooltips;

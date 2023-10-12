@@ -1,13 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import {
-  Wrapper,
-  MainTitle,
-  MainDescription,
-  GroupTitle,
-  Group,
-} from '@platypus-app/components/Styles/storybook';
-import {
   ColDef,
   GetRowIdParams,
   GridReadyEvent,
@@ -19,6 +12,13 @@ import { AgGridReact } from 'ag-grid-react';
 import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
 import { Input } from '@cognite/cogs.js';
 
+import {
+  Wrapper,
+  MainTitle,
+  MainDescription,
+  GroupTitle,
+  Group,
+} from '../../../../components/Styles/storybook';
 import { TypeList } from '../components/TypeList/TypeList';
 
 const configMock = {

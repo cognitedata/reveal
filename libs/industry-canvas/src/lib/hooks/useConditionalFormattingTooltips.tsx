@@ -30,7 +30,7 @@ const useConditionalFormattingTooltips = ({
       Object.entries(isOpenByTimeseriesId)
         .filter(([, isOpen]) => isOpen)
         .flatMap(([timeseriesId]) => ({
-          targetId: annotationId,
+          targetIds: [annotationId],
           anchorTo: TooltipAnchorPosition.TOP_LEFT,
           shouldPositionStrictly: true,
           content: (

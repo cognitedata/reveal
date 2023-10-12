@@ -1,21 +1,17 @@
-import { RuleSeverity } from '@data-quality/api/codegen';
 import { FormikErrors } from 'formik';
 
 import { OptionType } from '@cognite/cogs.js';
+
+import { RuleSeverity } from '../../api/codegen';
 
 export const conditionsExample = `
 {
   "and": [
     {
-      "exists": {
-        "name": true
-      }
+      "exists": ["{name}"]
     },
     {
-      "equals": {
-        "left": "{name}",
-        "right": "Pipe-1"
-      }
+      "equals": ["{name}", "John Doe"]
     }
   ]
 }`;
@@ -41,6 +37,7 @@ export const RuleSeverityOptions: OptionType<RuleSeverity>[] = [
 
 export type RuleFormValues = {
   conditions: string;
+  dataScopeId?: string;
   dataType: string;
   description: string;
   errorMessage: string;
@@ -50,6 +47,7 @@ export type RuleFormValues = {
 
 export const emptyFormValues: RuleFormValues = {
   conditions: '',
+  dataScopeId: undefined,
   dataType: '',
   description: '',
   errorMessage: '',

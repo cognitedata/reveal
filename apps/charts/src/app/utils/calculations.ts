@@ -3,8 +3,9 @@
  */
 import { FlowElement } from 'react-flow-renderer';
 
-import { ChartWorkflow, ChartWorkflowV2 } from '@charts-app/models/chart/types';
 import { v4 as uuidv4 } from 'uuid';
+
+import { ChartWorkflow, ChartWorkflowV2 } from '@cognite/charts-lib';
 
 type IdMapType = Record<string, string>;
 

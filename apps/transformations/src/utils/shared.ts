@@ -10,11 +10,7 @@ import { JobMetricsGroup, Warning } from '@transformations/hooks';
 import { Items, Job, Schema, TransformationRead } from '@transformations/types';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import {
-  CodeEditorTheme,
-  createLink,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { CodeEditorTheme, createLink } from '@cognite/cdf-utilities';
 import { IconType } from '@cognite/cogs.js';
 import { IDPType } from '@cognite/login-utils';
 
@@ -78,9 +74,7 @@ export const trimFileExtension = (fullName: string): string => {
 };
 
 export const createInternalLink = (path?: string | number) => {
-  const mountPoint = isUsingUnifiedSignin()
-    ? window.location.pathname.split('/')[3]
-    : window.location.pathname.split('/')[2];
+  const mountPoint = window.location.pathname.split('/')[2];
   return createLink(`/${mountPoint}/${path || ''}`);
 };
 

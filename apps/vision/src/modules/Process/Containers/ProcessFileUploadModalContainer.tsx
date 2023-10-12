@@ -1,17 +1,17 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
-import { FileUploadModal } from '@vision/modules/Common/Components/FileUploaderModal/FileUploaderModal';
-import { selectAllProcessFiles } from '@vision/modules/Process/store/selectors';
+import { useThunkDispatch } from '../../../store';
+import { RootState } from '../../../store/rootReducer';
+import { DeleteFilesById } from '../../../store/thunks/Files/DeleteFilesById';
+import { FileUploadModal } from '../../Common/Components/FileUploaderModal/FileUploaderModal';
+import { selectAllProcessFiles } from '../store/selectors';
 import {
   addProcessUploadedFileId,
   clearUploadedFiles,
   setProcessFileIds,
   setProcessViewFileUploadModalVisibility,
-} from '@vision/modules/Process/store/slice';
-import { useThunkDispatch } from '@vision/store';
-import { RootState } from '@vision/store/rootReducer';
-import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+} from '../store/slice';
 
 export const ProcessFileUploadModalContainer = () => {
   const dispatch = useThunkDispatch();

@@ -8,52 +8,61 @@ import {
 import { Elements } from 'react-flow-renderer';
 import { useParams } from 'react-router-dom';
 
-import { AccessDeniedModal } from '@charts-app/components/AccessDeniedModal/AccessDeniedModal';
-import { AlertingSidebar } from '@charts-app/components/AlertingSidebar/AlertingSidebar';
-import { Toolbar } from '@charts-app/components/Common/SidebarElements';
-import DataProfilingSidebar from '@charts-app/components/DataProfilingSidebar/DataProfilingSidebar';
-import DetailsSidebar from '@charts-app/components/DetailsSidebar/DetailsSidebar';
-import ErrorSidebar from '@charts-app/components/ErrorSidebar/ErrorSidebar';
-import EventSidebar from '@charts-app/components/EventSidebar/EventSidebar';
-import SplitPaneLayout from '@charts-app/components/Layout/SplitPaneLayout';
-import { MonitoringSidebar } from '@charts-app/components/MonitoringSidebar/MonitoringSidebar';
-import NodeEditor from '@charts-app/components/NodeEditor/NodeEditor';
-import {
-  NodeDataDehydratedVariants,
-  NodeTypes,
-} from '@charts-app/components/NodeEditor/V2/types';
-import PageTitle from '@charts-app/components/PageTitle/PageTitle';
-import ChartPlotContainer from '@charts-app/components/PlotlyChart/ChartPlotContainer';
-import SearchSidebar from '@charts-app/components/Search/SearchSidebar';
-import SourceTable from '@charts-app/components/SourceTable/SourceTable';
-import { SourceTableHeader } from '@charts-app/components/SourceTable/SourceTableHeader';
-import ThresholdSidebar from '@charts-app/components/Thresholds/ThresholdSidebar';
-import { useExperimentalCapabilitiesCheck } from '@charts-app/domain/chart';
-import {
-  MONITORING_CAPABILITIES,
-  ALERTING_CAPABILITIES,
-} from '@charts-app/domain/monitoring/constants';
-import { CalculationCollectionEffects } from '@charts-app/effects/calculations';
-import { EventResultEffects } from '@charts-app/effects/events';
-import { TimeseriesCollectionEffects } from '@charts-app/effects/timeseries';
-import { useUpdateChart } from '@charts-app/hooks/charts-storage';
-import { useSearchParam } from '@charts-app/hooks/navigation';
-import { useTranslations } from '@charts-app/hooks/translations';
-import { useIsChartOwner } from '@charts-app/hooks/user';
-import {
-  availableWorkflows,
-  calculationSummaries,
-} from '@charts-app/models/calculation-results/selectors';
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import chartAtom from '@charts-app/models/chart/atom';
-import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
+import { flow } from 'lodash';
+import get from 'lodash/get';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import useScreenshot from 'use-screenshot-hook';
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
   ChartSource,
   ScheduledCalculation,
-} from '@charts-app/models/chart/types';
+  MONITORING_ACL,
+  NOTIFICATIONS_ACL,
+} from '@cognite/charts-lib';
+import { toast, Loader, Button, Tooltip, Chip } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
+
+import { useUserProfileQuery } from '../../common/providers/useUserProfileQuery';
+import { AccessDeniedModal } from '../../components/AccessDeniedModal/AccessDeniedModal';
+import { AlertingSidebar } from '../../components/AlertingSidebar/AlertingSidebar';
+import { Toolbar } from '../../components/Common/SidebarElements';
+import DataProfilingSidebar from '../../components/DataProfilingSidebar/DataProfilingSidebar';
+import DetailsSidebar from '../../components/DetailsSidebar/DetailsSidebar';
+import ErrorSidebar from '../../components/ErrorSidebar/ErrorSidebar';
+import EventSidebar from '../../components/EventSidebar/EventSidebar';
+import SplitPaneLayout from '../../components/Layout/SplitPaneLayout';
+import { MonitoringSidebar } from '../../components/MonitoringSidebar/MonitoringSidebar';
+import NodeEditor from '../../components/NodeEditor/NodeEditor';
+import {
+  NodeDataDehydratedVariants,
+  NodeTypes,
+} from '../../components/NodeEditor/V2/types';
+import PageTitle from '../../components/PageTitle/PageTitle';
+import ChartPlotContainer from '../../components/PlotlyChart/ChartPlotContainer';
+import SearchSidebar from '../../components/Search/SearchSidebar';
+import SourceTable from '../../components/SourceTable/SourceTable';
+import { SourceTableHeader } from '../../components/SourceTable/SourceTableHeader';
+import ThresholdSidebar from '../../components/Thresholds/ThresholdSidebar';
+import { useAclPermissions } from '../../domain/chart/service/queries/useAclPermissions';
+import { CalculationCollectionEffects } from '../../effects/calculations';
+import { EventResultEffects } from '../../effects/events';
+import { ScheduledCalculationCollectionEffects } from '../../effects/scheduled-calculations';
+import { TimeseriesCollectionEffects } from '../../effects/timeseries';
+import { useUpdateChart } from '../../hooks/charts-storage';
+import { useSearchParam } from '../../hooks/navigation';
+import { useTranslations } from '../../hooks/translations';
+import { useIsChartOwner } from '../../hooks/user';
+import {
+  availableWorkflows,
+  calculationSummaries,
+} from '../../models/calculation-results/selectors';
+import { WorkflowState } from '../../models/calculation-results/types';
+import chartAtom from '../../models/chart/atom';
+import { useChartSourcesValue } from '../../models/chart/selectors';
 import {
   addWorkflow,
   addWorkflows,
@@ -64,19 +73,15 @@ import {
   updateChartSource,
   updateSourceCollectionOrder,
   updateVisibilityForAllSources,
-} from '@charts-app/models/chart/updates';
-import { eventResultsAtom } from '@charts-app/models/event-results/atom';
-import interactionsAtom from '@charts-app/models/interactions/atom';
-import { timeseriesAtom } from '@charts-app/models/timeseries-results/atom';
-import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
-import ChartViewPageSecondaryAppBar from '@charts-app/pages/ChartViewPage/ChartViewPageSecondaryAppBar';
-import { Modes } from '@charts-app/pages/types';
-import {
-  startTimer,
-  stopTimer,
-  trackUsage,
-} from '@charts-app/services/metrics';
-import { getEntryColor } from '@charts-app/utils/colors';
+} from '../../models/chart/updates';
+import { eventResultsAtom } from '../../models/event-results/atom';
+import interactionsAtom from '../../models/interactions/atom';
+import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
+import { scheduledCalculationSummaries } from '../../models/scheduled-calculation-results/selectors';
+import { timeseriesAtom } from '../../models/timeseries-results/atom';
+import { timeseriesSummaries } from '../../models/timeseries-results/selectors';
+import { startTimer, stopTimer, trackUsage } from '../../services/metrics';
+import { getEntryColor } from '../../utils/colors';
 import {
   SEARCH_KEY,
   ACTIVE_SIDEBAR_KEY,
@@ -86,25 +91,16 @@ import {
   THRESHOLD_SIDEBAR_KEY,
   ALERTING_FILTER,
   DATAPROFILING_SIDEBAR_KEY,
-} from '@charts-app/utils/constants';
+} from '../../utils/constants';
 import {
   makeDefaultTranslations,
   translationKeys,
-} from '@charts-app/utils/translations';
-import { getUnitConverter } from '@charts-app/utils/units';
-import { flow } from 'lodash';
-import get from 'lodash/get';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
-
-import { toast, Loader, Button, Tooltip } from '@cognite/cogs.js';
-import { useFlag } from '@cognite/react-feature-flags';
-
-import { ScheduledCalculationCollectionEffects } from '../../effects/scheduled-calculations';
-import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
-import { scheduledCalculationSummaries } from '../../models/scheduled-calculation-results/selectors';
+} from '../../utils/translations';
+import { getUnitConverter } from '../../utils/units';
+import { Modes } from '../types';
 
 import { ChartActionButton } from './ChartActionButton';
+import ChartViewPageSecondaryAppBar from './ChartViewPageSecondaryAppBar';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -137,6 +133,11 @@ const defaultTranslations = makeDefaultTranslations(
 const keys = translationKeys(defaultTranslations);
 
 const ChartViewPage = () => {
+  const {
+    data: userProfile,
+    isLoading: isUserProfileLoading,
+    isError: isUserProfileError,
+  } = useUserProfileQuery();
   const { isEnabled: isMonitoringFeatureEnabled } = useFlag(
     'CHARTS_UI_MONITORING',
     {
@@ -144,12 +145,29 @@ const ChartViewPage = () => {
       forceRerender: true,
     }
   );
-  const isMonitoringAccessible = useExperimentalCapabilitiesCheck(
-    MONITORING_CAPABILITIES
+  const { data: hasMonitoringRead } = useAclPermissions(MONITORING_ACL, 'READ');
+  const { data: hasMonitoringWrite } = useAclPermissions(
+    MONITORING_ACL,
+    'WRITE'
   );
-  const isAlertingAccessible = useExperimentalCapabilitiesCheck(
-    ALERTING_CAPABILITIES
+  const { data: hasNotificationsRead } = useAclPermissions(
+    NOTIFICATIONS_ACL,
+    'READ'
   );
+  const { data: hasNotificationsWrite } = useAclPermissions(
+    NOTIFICATIONS_ACL,
+    'WRITE'
+  );
+  const isMonitoringAccessible =
+    hasMonitoringRead &&
+    hasMonitoringWrite &&
+    hasNotificationsRead &&
+    hasNotificationsWrite &&
+    !!userProfile;
+
+  const isAlertingAccessible =
+    hasNotificationsRead && hasNotificationsWrite && !!userProfile;
+
   const { isEnabled: isDataProfilingEnabled } = useFlag(
     'CHARTS_UI_DATAPROFILING',
     {
@@ -170,12 +188,14 @@ const ChartViewPage = () => {
   const [showThresholdSidebar, setShowThresholdSidebar] = useState(
     activeSidebar === THRESHOLD_SIDEBAR_KEY
   );
+
   const [showMonitoringSidebar, setShowMonitoringSidebar] = useState(
     activeSidebar === MONITORING_SIDEBAR_KEY
   );
   const [showAlertingSidebar, setShowAlertingSidebar] = useState(
     activeSidebar === ALERTING_SIDEBAR_KEY
   );
+
   const [showErrorSidebar, setShowErrorSidebar] = useState(false);
   const [showEventSidebar, setShowEventSidebar] = useState(
     activeSidebar === EVENT_SIDEBAR_KEY
@@ -250,6 +270,9 @@ const ChartViewPage = () => {
   const showMinMax = get(chart, 'settings.showMinMax', false);
   const showGridlines = get(chart, 'settings.showGridlines', true);
   const mergeUnits = get(chart, 'settings.mergeUnits', true);
+
+  const chartScreenshotRef = useRef<HTMLDivElement | null>(null);
+  const { takeScreenshot } = useScreenshot({ ref: chartScreenshotRef });
 
   useEffect(() => {
     trackUsage('PageView.ChartView', {
@@ -868,12 +891,28 @@ const ChartViewPage = () => {
       <ScheduledCalculationCollectionEffects />
       <AccessDeniedModal
         visible={accessDeniedModal === 'monitoring'}
-        capabilities={MONITORING_CAPABILITIES}
+        capabilities={
+          !isUserProfileLoading && !userProfile
+            ? ['User Profiles']
+            : [
+                hasMonitoringRead ? '' : `${MONITORING_ACL}:READ`,
+                hasMonitoringWrite ? '' : `${MONITORING_ACL}:WRITE`,
+                hasNotificationsRead ? '' : `${NOTIFICATIONS_ACL}:READ`,
+                hasNotificationsWrite ? '' : `${NOTIFICATIONS_ACL}:WRITE`,
+              ].filter(Boolean)
+        }
         onOk={handleAccessDeniedModalClose}
       />
       <AccessDeniedModal
         visible={accessDeniedModal === 'alerting'}
-        capabilities={ALERTING_CAPABILITIES}
+        capabilities={
+          !isUserProfileLoading && !userProfile
+            ? ['User Profiles']
+            : [
+                hasNotificationsRead ? '' : `${NOTIFICATIONS_ACL}:READ`,
+                hasNotificationsWrite ? '' : `${NOTIFICATIONS_ACL}:WRITE`,
+              ].filter(Boolean)
+        }
         onOk={handleAccessDeniedModalClose}
       />
       <ChartViewPageSecondaryAppBar
@@ -885,13 +924,14 @@ const ChartViewPage = () => {
         stackedMode={stackedMode}
         setStackedMode={setStackedMode}
         handleSettingsToggle={handleSettingsToggle}
+        takeScreenshot={takeScreenshot}
       />
       <ChartViewContainer id="chart-view">
         {showSearch && (
           <SearchSidebar visible={showSearch} onClose={handleCloseSearch} />
         )}
         <ContentWrapper showSearch={showSearch}>
-          <ChartContainer>
+          <ChartContainer ref={chartScreenshotRef}>
             <SplitPaneLayout defaultSize={200}>
               <TopPaneWrapper className="chart">
                 <ChartWrapper>
@@ -1010,7 +1050,7 @@ const ChartViewPage = () => {
           />
         )}
 
-        {showMonitoringSidebar && (
+        {showMonitoringSidebar && isMonitoringAccessible && (
           <MonitoringSidebar
             onClose={handleCloseMonitoringSidebar}
             onViewAlertingSidebar={() => {
@@ -1020,7 +1060,7 @@ const ChartViewPage = () => {
           />
         )}
 
-        {showAlertingSidebar && (
+        {showAlertingSidebar && isAlertingAccessible && (
           <AlertingSidebar
             onClose={handleCloseAlertingSidebar}
             onViewMonitoringJobs={() => {
@@ -1034,27 +1074,31 @@ const ChartViewPage = () => {
           {isMonitoringFeatureEnabled && (
             <div>
               <Tooltip content={t['Alerting']} position="left">
-                <Button
-                  icon="Bell"
-                  aria-label="Toggle alerting sidebar"
-                  toggled={showAlertingSidebar}
-                  onClick={() => {
-                    if (isAlertingAccessible) {
-                      trackUsage(
-                        `Sidebar.Alerting.${
-                          showAlertingSidebar ? 'Close' : 'Open'
-                        }`
-                      );
-                      if (showAlertingSidebar) {
-                        setAlertingFilter();
+                {isUserProfileLoading && !isUserProfileError ? (
+                  <Chip icon="Loader" />
+                ) : (
+                  <Button
+                    icon="Bell"
+                    aria-label="Toggle alerting sidebar"
+                    toggled={showAlertingSidebar && isAlertingAccessible}
+                    onClick={() => {
+                      if (isAlertingAccessible) {
+                        trackUsage(
+                          `Sidebar.Alerting.${
+                            showAlertingSidebar ? 'Close' : 'Open'
+                          }`
+                        );
+                        if (showAlertingSidebar) {
+                          setAlertingFilter();
+                        }
+                        handleAlertingSidebarToggle();
+                      } else {
+                        trackUsage('Sidebar.Alerting.AccessDenied');
+                        setAccessDeniedModal('alerting');
                       }
-                      handleAlertingSidebarToggle();
-                    } else {
-                      trackUsage('Sidebar.Alerting.AccessDenied');
-                      setAccessDeniedModal('alerting');
-                    }
-                  }}
-                />
+                    }}
+                  />
+                )}
               </Tooltip>
               <NotificationIndicator />
             </div>
@@ -1087,27 +1131,31 @@ const ChartViewPage = () => {
           </Tooltip>
           {isMonitoringFeatureEnabled && (
             <Tooltip content={t['Monitoring']} position="left">
-              <Button
-                icon="Alarm"
-                aria-label="Toggle monitoring sidebar"
-                toggled={showMonitoringSidebar}
-                onClick={() => {
-                  if (isMonitoringAccessible) {
-                    trackUsage(
-                      `Sidebar.Monitoring.${
-                        showMonitoringSidebar ? 'Close' : 'Open'
-                      }`,
-                      {
-                        accessible: isMonitoringAccessible,
-                      }
-                    );
-                    handleMonitoringSidebarToggle();
-                  } else {
-                    trackUsage('Sidebar.Monitoring.AccessDenied');
-                    setAccessDeniedModal('monitoring');
-                  }
-                }}
-              />
+              {isUserProfileLoading && !isUserProfileError ? (
+                <Chip icon="Loader" />
+              ) : (
+                <Button
+                  icon="Alarm"
+                  aria-label="Toggle monitoring sidebar"
+                  toggled={showMonitoringSidebar && isMonitoringAccessible}
+                  onClick={() => {
+                    if (isMonitoringAccessible) {
+                      trackUsage(
+                        `Sidebar.Monitoring.${
+                          showMonitoringSidebar ? 'Close' : 'Open'
+                        }`,
+                        {
+                          accessible: isMonitoringAccessible,
+                        }
+                      );
+                      handleMonitoringSidebarToggle();
+                    } else {
+                      trackUsage('Sidebar.Monitoring.AccessDenied');
+                      setAccessDeniedModal('monitoring');
+                    }
+                  }}
+                />
+              )}
             </Tooltip>
           )}
         </Toolbar>

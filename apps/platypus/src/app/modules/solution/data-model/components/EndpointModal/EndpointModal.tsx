@@ -1,7 +1,7 @@
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { Button, Flex, Modal } from '@cognite/cogs.js';
+
+import { Notification } from '../../../../../components/Notification/Notification';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 
 import { StyledEndpoint } from './elements';
 

@@ -1,8 +1,8 @@
-import config from '@platypus-app/config/config';
-import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
-
 import { Flex, Title, Input, Tooltip, Button } from '@cognite/cogs.js';
+
+import config from '../../../../config/config';
+import { useCapabilities } from '../../../../hooks/useCapabilities';
+import { useTranslation } from '../../../../hooks/useTranslation';
 
 export interface DataModelsListHeaderProps {
   dataModelsCount: number;

@@ -31,13 +31,20 @@ export const mixerApiBuiltInTypes = [
   {
     name: 'import',
     type: 'DIRECTIVE',
-    body: 'directive @import on OBJECT | INTERFACE',
+    body: `
+    input _DataModelRef {
+      space: String!
+      externalId: String!
+      version: String!
+    }
+    directive @import(dataModel: _DataModelRef) on OBJECT | INTERFACE
+`,
     fieldDirective: false,
   },
   {
     name: 'view',
     type: 'DIRECTIVE',
-    body: 'directive @view(space: String, version: String) on OBJECT | INTERFACE',
+    body: 'directive @view(space: String, version: String, rawFilter: JSONObject) on OBJECT | INTERFACE',
     fieldDirective: false,
   },
   {
@@ -50,6 +57,12 @@ export const mixerApiBuiltInTypes = [
     name: 'mapping',
     type: 'DIRECTIVE',
     body: 'directive @mapping(space: String, container: String, property: String) on FIELD_DEFINITION',
+    fieldDirective: true,
+  },
+  {
+    name: 'default',
+    type: 'DIRECTIVE',
+    body: `directive @default(value: String) on FIELD_DEFINITION`,
     fieldDirective: true,
   },
   {
@@ -101,6 +114,7 @@ export const mixerApiBuiltInTypes = [
 
     enum _IndexType {
       BTREE
+      INVERTED
     }
 
     input _IndexDefinition {

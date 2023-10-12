@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 
 import { Select } from 'antd';
-import { useTranslation } from '@entity-matching-app/common';
 
-import { useList } from '@entity-matching-app/hooks/list';
-import { useSearch } from '@entity-matching-app/hooks/search';
+import { useTranslation } from '../../common';
+import { useList } from '../../hooks/list';
+import { useSearch } from '../../hooks/search';
 
 type Props = {
   onChange: (e: number) => void;
@@ -28,8 +28,7 @@ export default function RootAssetSelect({ onChange, selected }: Props) {
     {
       limit: 1000,
       filter: { root: true },
-    },
-    { enabled: !!query }
+    }
   );
 
   const items = useMemo(() => {

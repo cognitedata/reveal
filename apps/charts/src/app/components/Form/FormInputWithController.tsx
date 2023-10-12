@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { Controller, Control, RegisterOptions } from 'react-hook-form';
 
-import { UnitSelector } from '@charts-app/components/UnitDropdown/UnitSelector';
-
 import { Radio, OptionType, Tooltip } from '@cognite/cogs.js';
 
 import { SourceSelector } from '../Common/SourceSelector';
+import { DatasetSelector } from '../Dataset/DatasetSelector';
+import { UnitSelector } from '../UnitDropdown/UnitSelector';
 
 import {
   FormInput,
@@ -26,7 +26,8 @@ type Props = RegisterOptions<any> & {
     | 'select'
     | 'timeseries'
     | 'radio'
-    | 'unit';
+    | 'unit'
+    | 'dataset';
   control?: Control<any>;
   options?: OptionType<any>[];
   placeholder?: string;
@@ -122,6 +123,8 @@ export const FormInputWithController: FC<Props> = ({
                 onChange={onChange} // send value to hook form
                 value={value}
                 placeholder={placeholder}
+                fullWidth
+                autoResize
               />
             )}
             {type === 'timeseries' && (
@@ -161,6 +164,14 @@ export const FormInputWithController: FC<Props> = ({
               <UnitSelector
                 ref={ref}
                 onBlur={onBlur} // notify when input is touched
+                onChange={onChange} // send value to hook form
+                value={value}
+              />
+            )}
+            {type === 'dataset' && (
+              <DatasetSelector
+                ref={ref}
+                onBlur={onBlur}
                 onChange={onChange} // send value to hook form
                 value={value}
               />

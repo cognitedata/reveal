@@ -1,34 +1,28 @@
 import { ColumnShape, Column } from 'react-base-table';
 
-import { AnnotationPanel } from '@vision/modules/Common/Components/BulkEdit/Annotation/AnnotationPanel';
-import { AssetPanel } from '@vision/modules/Common/Components/BulkEdit/Asset/AssetPanel';
-import { disableAssetTable } from '@vision/modules/Common/Components/BulkEdit/Asset/disableAssetTable';
-import { getDataForAssets } from '@vision/modules/Common/Components/BulkEdit/Asset/getDataForAssets';
-import { BulkEditTableDataType } from '@vision/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
-import { DirectoryPanel } from '@vision/modules/Common/Components/BulkEdit/Directory/DirectoryPanel';
-import { getDataForDirectory } from '@vision/modules/Common/Components/BulkEdit/Directory/getDataForDirectory';
-import { BulkEditOptions } from '@vision/modules/Common/Components/BulkEdit/enums';
-// Metadata
-import { getDataForLabel } from '@vision/modules/Common/Components/BulkEdit/Label/getDataForLabel';
-import { LabelPanel } from '@vision/modules/Common/Components/BulkEdit/Label/LabelPanel';
-import { getDataForMetadata } from '@vision/modules/Common/Components/BulkEdit/Metadata/getDataForMetadata';
-import { MetadataPanel } from '@vision/modules/Common/Components/BulkEdit/Metadata/MetadataPanel';
-// Label
-// Asset
-// Source
-import { getDataForSource } from '@vision/modules/Common/Components/BulkEdit/Source/getDataForSource';
-import { SourcePanel } from '@vision/modules/Common/Components/BulkEdit/Source/SourcePanel';
-import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
-import { VisionFile } from '@vision/modules/Common/store/files/types';
-// Directory
-// Annotation
-import { AnnotationFilterType } from '@vision/modules/FilterSidePanel/types';
+import { AnnotationFilterType } from '../../../FilterSidePanel/types';
+import { BulkEditUnsavedState } from '../../store/common/types';
+import { VisionFile } from '../../store/files/types';
 
+import { AnnotationPanel } from './Annotation/AnnotationPanel';
 import { AnnotationStatusPanel } from './Annotation/AnnotationStatusPanel';
 import {
   getDataForAnnotationFilteredByState,
   getDataForAnnotationsFilteredByConfidence,
 } from './Annotation/getDataForAnnotation';
+import { AssetPanel } from './Asset/AssetPanel';
+import { disableAssetTable } from './Asset/disableAssetTable';
+import { getDataForAssets } from './Asset/getDataForAssets';
+import { BulkEditTableDataType } from './BulkEditTable/BulkEditTable';
+import { DirectoryPanel } from './Directory/DirectoryPanel';
+import { getDataForDirectory } from './Directory/getDataForDirectory';
+import { BulkEditOptions } from './enums';
+import { getDataForLabel } from './Label/getDataForLabel';
+import { LabelPanel } from './Label/LabelPanel';
+import { getDataForMetadata } from './Metadata/getDataForMetadata';
+import { MetadataPanel } from './Metadata/MetadataPanel';
+import { getDataForSource } from './Source/getDataForSource';
+import { SourcePanel } from './Source/SourcePanel';
 
 export type EditPanelState = {
   metadataActiveKey?: MetadataSelectOptionType;

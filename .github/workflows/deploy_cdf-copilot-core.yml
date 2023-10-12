@@ -28,16 +28,6 @@ jobs:
           yarn install --frozen-lockfile
           rm .npmrc
 
-      - name: Save missing keys to locize
-        run: yarn i18n-push copilot-core
-        env:
-          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
-
-      - name: Remove deleted keys from locize
-        run: yarn i18n-remove-deleted copilot-core
-        env:
-          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
-
       - name: Build
         run: yarn build production copilot-core
 

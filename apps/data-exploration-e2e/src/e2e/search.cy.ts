@@ -33,7 +33,9 @@ describe('Search function - Exact match', () => {
     cy.wait(`@${ASSET_LIST_ALIAS}`);
     cy.performSearch(ASSET_NAME);
 
-    cy.get('[id="asset-tree-table"]').contains(ASSET_NAME).should('be.visible');
+    cy.getTableById('asset-tree-table')
+      .contains(ASSET_NAME)
+      .should('be.visible');
     cy.findAllByText('Exact match: Name').should('be.visible');
     cy.clearSearchInput();
   });
@@ -44,7 +46,7 @@ describe('Search function - Exact match', () => {
     cy.wait(`@${TIMESERIES_LIST_ALIAS}`);
     cy.performSearch(TIMESERIES_NAME);
 
-    cy.get('[id="timeseries-search-results"]')
+    cy.getTableById('timeseries-search-results')
       .contains(TIMESERIES_NAME)
       .should('be.visible');
   });
@@ -53,17 +55,17 @@ describe('Search function - Exact match', () => {
     cy.goToTab('Files');
     cy.performSearch(FILE_NAME);
 
-    cy.get('[id="documents-search-results"]')
+    cy.getTableById('documents-search-results')
       .contains(FILE_NAME)
       .should('be.visible');
   });
 
   it('Should be able to search events by id', () => {
     cy.goToTab('Events');
-    cy.columnSelection(`id`);
     cy.performSearch(EVENT_ID);
 
-    cy.get('[id="event-search-results"]')
+    cy.getTableById('event-search-results')
+      .selectColumn('ID')
       .contains(EVENT_ID)
       .should('be.visible');
     cy.findAllByText('Exact match: ID').should('be.visible');
@@ -73,7 +75,7 @@ describe('Search function - Exact match', () => {
     cy.goToTab('Sequence');
     cy.performSearch(SEQUENCE_NAME);
 
-    cy.get('[id="sequence-search-results"]')
+    cy.getTableById('sequence-search-results')
       .contains(SEQUENCE_NAME)
       .should('be.visible');
   });
@@ -139,7 +141,7 @@ describe('Search Parameters', () => {
     cy.performSearch(FUZZY_SEARCH_PHRASE);
 
     cy.log('fuzzy search result should appear');
-    cy.get('[id="asset-tree-table"]')
+    cy.getTableById('asset-tree-table')
       .contains('Fuzzy match: Name or Description')
       .should('be.visible');
   });

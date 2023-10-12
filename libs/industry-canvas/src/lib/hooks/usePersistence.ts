@@ -64,12 +64,12 @@ const useAutoSaveState = (
       return;
     }
 
-    const filteredCanvasAnnotations = canvasState.canvasAnnotations.filter(
-      (annotation) => !isCommentAnnotation(annotation)
+    const filteredNodes = canvasState.nodes.filter(
+      (node) => !isCommentAnnotation(node)
     );
     const serializedData = serializeCanvasState({
       ...canvasState,
-      canvasAnnotations: filteredCanvasAnnotations,
+      nodes: filteredNodes,
     });
     if (deepEqualWithMissingProperties(serializedData, activeCanvas.data)) {
       return;

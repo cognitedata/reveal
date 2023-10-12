@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
-import { AuthenticatedUser } from '@platypus-app/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { AuthenticatedUser } from '../../../types';
 
 const globalStateSlice = createSlice({
   name: 'global',

@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
 
-import { units } from '@charts-app/utils/units';
 import groupBy from 'lodash/groupBy';
 import map from 'lodash/map';
 import uniqBy from 'lodash/uniqBy';
 
 import { Select, Button, SelectProps } from '@cognite/cogs.js';
+
+import { units } from '../../utils/units';
 
 export const UnitSelector = ({
   value,

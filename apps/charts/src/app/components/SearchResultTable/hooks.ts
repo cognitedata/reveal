@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { SearchFilter } from '@charts-app/components/Search/Search';
 import { useQuery } from '@tanstack/react-query';
 import { last } from 'lodash';
 
@@ -11,6 +10,8 @@ import {
   useCdfItems,
   useInfiniteSearch,
 } from '@cognite/sdk-react-query-hooks';
+
+import { SearchFilter } from '../Search/Search';
 
 const MAX_SEARCH_OFFSET = 1000;
 const RESULTS_TO_FETCH = 20;
@@ -133,7 +134,9 @@ export const useTimeseriesSearchResult = ({
       resourcesBySearch?.pages
         ?.reduce((accl, page) => accl.concat(page), [])
         .filter(
-          ({ externalId }) => externalId !== timeseriesExactMatch?.externalId
+          ({ externalId }) =>
+            externalId !== timeseriesExactMatch?.externalId ||
+            timeseriesExactMatch?.externalId === undefined
         ),
     [resourcesBySearch, timeseriesExactMatch]
   );
@@ -277,7 +280,7 @@ export const useAssetSearchResults = ({
     enabled: !!query,
   });
 
-  const hasResults = !(assets?.length === 0);
+  const hasResults = !(assetCountData?.length === 0);
 
   return {
     resultExactMatch: assetExactMatch,

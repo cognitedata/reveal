@@ -24,7 +24,11 @@ const config: StorybookConfig = {
         '../../node_modules/.vite/storybook/data-exploration-components',
 
       resolve: {
-        dedupe: ['@cognite/plotting-components'],
+        dedupe: [
+          '@cognite/plotting-components',
+          '@cognite/cdf-i18n-utils',
+          '@cognite/cdf-utilities',
+        ],
         alias: {
           fs: require.resolve('rollup-plugin-node-builtins'),
         },

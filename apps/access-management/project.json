@@ -121,6 +121,26 @@
         "jestConfig": "apps/access-management/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/access-management/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "access-management:serve:development",
+        "env": {
+          "ORG": "cog-dog",
+          "PROJECT": "azure-data-enablers-test",
+          "CLUSTER": "bluefield.cognitedata.com",
+          "TENANT": "dataenablers.onmicrosoft.com",
+          "CLIENT_ID_AZURE_DATA_ENABLERS_TEST": "fafb535c-eb99-4e3e-9018-c11c948691b3"
+        }
+      },
+      "configurations": {
+        "development": {
+          "devServerTarget": "access-management:serve:development"
+        }
+      }
     }
   },
   "tags": [],

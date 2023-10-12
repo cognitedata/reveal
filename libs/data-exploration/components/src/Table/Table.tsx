@@ -20,6 +20,7 @@ import {
 } from '@tanstack/react-table';
 import has from 'lodash/has';
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import mapValues from 'lodash/mapValues';
 import merge from 'lodash/merge';
 import noop from 'lodash/noop';
@@ -114,6 +115,7 @@ export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   // This is to render a subcomponent inside a cell of a row
   renderCellSubComponent?: (cell: Cell<T, unknown>) => React.ReactNode;
   onChangeSearchInput?: (value: string) => void;
+  isBulkActionBarVisible?: boolean;
 };
 
 export type TableData = Record<string, any>;
@@ -153,6 +155,7 @@ export function Table<T extends TableData>({
   renderSubRowComponent,
   renderCellSubComponent,
   onChangeSearchInput,
+  isBulkActionBarVisible = false,
 }: TableProps<T>) {
   const { t } = useTranslation();
 
@@ -333,20 +336,22 @@ export function Table<T extends TableData>({
     sortDescFirst: false,
   });
 
+  const scrollRowElement = isUndefined(scrollIntoViewRow)
+    ? null
+    : document.querySelector(`[id="${id}"] [id="${scrollIntoViewRow}"]`);
+
   useEffect(() => {
-    if (scrollIntoViewRow) {
-      const rowElement = document.querySelector(
-        `[id="${id}"] [id="${scrollIntoViewRow}"]`
-      );
-      if (rowElement && !isElementHorizontallyInViewport(rowElement)) {
-        rowElement.scrollIntoView({
-          behavior: 'auto',
-          block: 'center',
-          inline: 'center',
-        });
-      }
+    if (
+      scrollRowElement &&
+      !isElementHorizontallyInViewport(scrollRowElement)
+    ) {
+      scrollRowElement.scrollIntoView({
+        behavior: 'auto',
+        block: 'center',
+        inline: 'center',
+      });
     }
-  }, [id, scrollIntoViewRow]);
+  }, [scrollRowElement]);
 
   const handleClickLoadMore = () => {
     if (!fetchMore) return;
@@ -379,6 +384,7 @@ export function Table<T extends TableData>({
         />
       );
     }
+
     if (!getIsSomeColumnsVisible()) {
       return (
         <EmptyState body={t('SELECT_COLUMNS', 'Please, select your columns')} />
@@ -386,13 +392,15 @@ export function Table<T extends TableData>({
     }
 
     return (
-      <ContainerInside>
+      <ContainerInside isBulkActionBarVisible={isBulkActionBarVisible}>
         <StyledTable id={id} key={id} className="data-exploration-table">
           <Thead isStickyHeader={stickyHeader} data-testid="table-head">
             {getHeaderGroups().map((headerGroup) => (
               <HeaderRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <Th
+                    data-testid={header.column.id}
+                    data-column-name={header.column.columnDef.header}
                     {...{
                       key: header.id,
                       colSpan: header.colSpan,
@@ -468,6 +476,7 @@ export function Table<T extends TableData>({
                         return (
                           <Td
                             data-testid={cell.column.id}
+                            data-column-name={cell.column.columnDef.header}
                             {...{
                               key: cell.id,
                               style: {

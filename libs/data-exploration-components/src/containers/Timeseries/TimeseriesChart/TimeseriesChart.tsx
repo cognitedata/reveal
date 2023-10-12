@@ -3,12 +3,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Loader } from '@data-exploration/components';
-import {
-  LineChart,
-  LineChartProps,
-  RangePicker,
-  SpacedRow,
-} from '@data-exploration-components/components';
 import { useQuery } from '@tanstack/react-query';
 import { ParentSize } from '@visx/responsive';
 import dayjs from 'dayjs';
@@ -25,6 +19,12 @@ import {
   useMetrics,
 } from '@data-exploration-lib/core';
 
+import {
+  LineChart,
+  LineChartProps,
+  RangePicker,
+  SpacedRow,
+} from '../../../components';
 import { TimeOptions } from '../types';
 import { calculateGranularity } from '../utils/calculateGranularity';
 

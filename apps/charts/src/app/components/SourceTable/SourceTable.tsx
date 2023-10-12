@@ -4,18 +4,19 @@
 import { ComponentProps, useCallback } from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
-import SourceRows from '@charts-app/components/SourceTable/SourceRows';
-import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import {
   ChartTimeSeries,
   ChartWorkflow,
   ScheduledCalculation,
-} from '@charts-app/models/chart/types';
-import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
-import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
-import { Modes } from '@charts-app/pages/types';
+} from '@cognite/charts-lib';
+
+import { WorkflowState } from '../../models/calculation-results/types';
+import { ScheduledCalculationsDataMap } from '../../models/scheduled-calculation-results/types';
+import { TimeseriesEntry } from '../../models/timeseries-results/types';
+import { Modes } from '../../pages/types';
 
 import { SourceTableWrapper, Table } from './elements';
+import SourceRows from './SourceRows';
 import { SourceTableHeader } from './SourceTableHeader';
 import TimeSeriesRows from './TimeSeriesRows';
 

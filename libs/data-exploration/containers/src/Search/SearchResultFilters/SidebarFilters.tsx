@@ -7,6 +7,7 @@ import { BaseFilterCollapse } from '@data-exploration/components';
 import { FilterProps, ResourceType } from '@data-exploration-lib/core';
 import { usePrefetchAllLabelsQuery } from '@data-exploration-lib/domain-layer';
 
+import { ChartsFilters } from '../../ResourceSelector';
 import { OldFileFilters as OldFilesFilter } from '../../Temp/';
 
 import { AssetFilters } from './AssetFilters';
@@ -35,6 +36,16 @@ export const SidebarFilters: React.FC<Props> = ({
 
   const renderCustomResourceTypeFilter = () => {
     switch (resourceType) {
+      case 'charts': {
+        return (
+          <ChartsFilters
+            query={query}
+            filter={filter}
+            onFilterChange={onFilterChange}
+            onResetFilterClick={onResetFilterClick}
+          />
+        );
+      }
       case 'asset': {
         return (
           <AssetFilters
@@ -102,6 +113,16 @@ export const SidebarFilters: React.FC<Props> = ({
       }
     }
   };
+
+  if (resourceType === 'charts') {
+    return (
+      <Container>
+        <BaseFilterCollapse>
+          {renderCustomResourceTypeFilter()}
+        </BaseFilterCollapse>
+      </Container>
+    );
+  }
 
   return (
     <Container>

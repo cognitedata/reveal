@@ -1,8 +1,9 @@
+import { useSearchMappedEquipmentByDataTypeCount } from '../../../../app/providers/Mapped3DEquipmentProvider';
 import { useFilesSearchAggregateCountQuery } from '../../../services/instances/file/queries/useFilesSearchAggregateCountQuery';
 import { useInstanceSearchAggregateQuery } from '../../../services/instances/generic/queries/useInstanceSearchAggregatesQuery';
 import { useTimeseriesSearchAggregateCountQuery } from '../../../services/instances/timeseries/queries/useTimeseriesSearchAggregateCountQuery';
 
-type SearchTotalCount = {
+export type SearchTotalCount = {
   totalCount?: number;
   isLoading: boolean;
 };
@@ -26,6 +27,7 @@ export const useSearchTotalCount = () => {
     (acc, value) => acc + value,
     0
   );
+
   const filesCount = filesResults ?? 0;
   const timeseriesCount = timeseriesResults ?? 0;
 

@@ -1,9 +1,3 @@
-import { DEFAULT_MODEL_FEATURE_TYPE } from '@entity-matching-app/common/constants';
-import {
-  EMFeatureType,
-  ModelMapping,
-} from '@entity-matching-app/context/QuickMatchContext';
-import { PipelineSourceType, TargetType } from '@entity-matching-app/types/api';
 import {
   QueryKey,
   useQuery,
@@ -19,7 +13,10 @@ import { toast } from '@cognite/cogs.js';
 import { CogniteClient, CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { RuleMatch } from './entity-matching-rules';
+import { DEFAULT_MODEL_FEATURE_TYPE } from '../common/constants';
+import { EMFeatureType, ModelMapping } from '../context/QuickMatchContext';
+import { PipelineSourceType, TargetType } from '../types/api';
+import { RuleCondition, RuleExtractor, RuleMatch } from '../types/rules';
 
 export type Pipeline = {
   id: number;
@@ -342,27 +339,9 @@ export type EMPipelineRunMatch = {
   target?: EMPipelineTarget;
 };
 
-type EMPipelineRegexExtractorEntitySetType = 'sources' | 'targets';
-
-type EMPipelineRegexExtractorExtractorType = 'regex';
-
-export type EMPipelineRegexExtractor = {
-  entitySet: EMPipelineRegexExtractorEntitySetType;
-  extractorType: EMPipelineRegexExtractorExtractorType;
-  field: string;
-  pattern: string;
-};
-
-type EMMatchConditionType = 'equals';
-
-export type EMMatchCondition = {
-  conditionType: EMMatchConditionType;
-  arguments: number[][];
-};
-
 export type EMPipelineGeneratedRule = {
-  extractors?: EMPipelineRegexExtractor[];
-  conditions?: EMMatchCondition[];
+  extractors?: RuleExtractor[];
+  conditions?: RuleCondition[];
   matches?: RuleMatch[];
   priority: number;
 };

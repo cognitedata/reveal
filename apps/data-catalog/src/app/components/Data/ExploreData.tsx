@@ -2,36 +2,37 @@ import { useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@data-catalog-app/common/i18n';
-import AppliedFilters from '@data-catalog-app/components/applied-filters';
-import AssetsTable from '@data-catalog-app/components/AssetsTable';
-import EventsProfile from '@data-catalog-app/components/EventsProfile';
-import EventsTable from '@data-catalog-app/components/EventsTable';
-import FilesTable from '@data-catalog-app/components/FilesTable';
-import SequencesTable from '@data-catalog-app/components/SequencesTable';
-import { StyledItemCount } from '@data-catalog-app/components/table-filters';
-import TimeseriesTable from '@data-catalog-app/components/TimeseriesTable';
-import useDebounce from '@data-catalog-app/hooks/useDebounce';
-import {
-  ResourcesFilters,
-  useResourcesSearch,
-} from '@data-catalog-app/hooks/useResourcesSearch';
-import {
-  filesCounter,
-  timeSeriesCounter,
-  eventsCounter,
-  assetsCounter,
-  sequenceCounter,
-  ExploreViewConfig,
-  DetailsPane,
-  trackUsage,
-  ContentWrapper,
-  isEmptyDataset,
-} from '@data-catalog-app/utils';
 import { useFormik } from 'formik';
 
 import { TableFilter } from '@cognite/cdf-utilities';
 import { Flex, Tabs, Input } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common/i18n';
+import useDebounce from '../../hooks/useDebounce';
+import {
+  ResourcesFilters,
+  useResourcesSearch,
+} from '../../hooks/useResourcesSearch';
+import {
+  assetsCounter,
+  ContentWrapper,
+  DetailsPane,
+  eventsCounter,
+  ExploreViewConfig,
+  filesCounter,
+  isEmptyDataset,
+  sequenceCounter,
+  timeSeriesCounter,
+  trackUsage,
+} from '../../utils';
+import AppliedFilters from '../applied-filters';
+import AssetsTable from '../AssetsTable';
+import EventsProfile from '../EventsProfile';
+import EventsTable from '../EventsTable';
+import FilesTable from '../FilesTable';
+import SequencesTable from '../SequencesTable';
+import { StyledItemCount } from '../table-filters';
+import TimeseriesTable from '../TimeseriesTable';
 
 import EmptyDataState from './EmptyDataState';
 
