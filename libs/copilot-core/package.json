@@ -1,6 +1,6 @@
 {
   "name": "@cognite/copilot-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "dependencies": {
     "@cognite/sdk": "^7.19.1",
     "@cognite/z-index": "^0.2.3",
@@ -21,7 +21,7 @@
     "uuid": "9.0.0",
     "@cognite/cdf-i18n-utils": "*",
     "@cognite/cogs.js": "9.48.1",
-    "@cognite/llm-hub": "^0.1.4",
+    "@cognite/llm-hub": "^0.1.5",
     "i18next": "^23.2.3",
     "mixpanel-browser": "^2.45.0",
     "lodash": "^4.17.21"

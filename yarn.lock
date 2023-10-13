@@ -2273,10 +2273,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/kuiper_js/-/kuiper_js-0.3.0.tgz#aa8d6bef950375ee4bb1878f68570ec7434562e5"
   integrity sha512-8fznyHjQtBJZX52VwqKDSARI3XxyNe4HlclUtzFCWF1QJtqyUwrkqMxSThjzR+32ucVXGmo3szUnDYSYJrBj/g==
 
-"@cognite/llm-hub@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.1.2.tgz#4bb163c16e0e5d719f7b83986d515ef9653353a6"
-  integrity sha512-x7qUZWpu0FRf6HPFjWIx8c8lqWDeRUonrytta2ubZT7woACw79wZ+mZtPzX121x+YElD4Uqaeya4E7mD6mgbvg==
+"@cognite/llm-hub@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.1.5.tgz#48949a587908c92828d3b7dc0b084eaf5a3a98bb"
+  integrity sha512-q86VB39wjUgZdABofw/ZXIgpop9YREslPaPBE1a29M/C3InwoWzzeq5MYO5hBLyk/s+ZmZagdRvEfeZqLkTXag==
   dependencies:
     "@types/express" "^4.17.17"
     "@types/mixpanel-browser" "^2.47.1"
