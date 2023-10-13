@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useCdfUserHistoryService, formatTime } from '@cognite/cdf-utilities';
+import { useCdfUserHistoryService } from '@user-history';
+
+import { formatTime } from '@cognite/cdf-utilities';
 import {
   Body,
   Flex,

@@ -10,6 +10,7 @@ import { UserHistoryProvider } from '@user-history';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { AuthContainer, getCluster, getProject } from '@cognite/cdf-utilities';
+import { Loader } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
 import { useUserInformation } from './hooks';
@@ -17,8 +18,16 @@ import { useUserInformation } from './hooks';
 const App = () => {
   const project = getProject();
   const cluster = getCluster() ?? undefined;
-  const { data: user } = useUserInformation();
+  const { data: user, isFetched } = useUserInformation();
   const userId = user?.id;
+
+  // We need to fetch this information in order to properly store the user history events, since
+  // the app userId is used in generating the appropriate local storage key. Just in case, didn't
+  // read whether the userId is undefined, in case some tenants return this weird logic. Waiting
+  // for the request to finish is the safest way to go I think.
+  if (!isFetched) {
+    return <Loader />;
+  }
 
   return (
     <I18nWrapper translations={translations} defaultNamespace="transformations">

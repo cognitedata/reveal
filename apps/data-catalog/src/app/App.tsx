@@ -39,8 +39,12 @@ const App = () => {
 
   const cluster = getCluster() ?? undefined;
   const project = getProject();
-  const { data: user } = useUserInformation();
+  const { data: user, isFetched } = useUserInformation();
   const userId = user?.id;
+
+  if (!isFetched) {
+    return <Loader />;
+  }
 
   return (
     <I18nWrapper translations={translations} defaultNamespace="data-catalog">

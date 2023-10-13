@@ -3,12 +3,16 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { SubAppProvider, getCluster, getProject } from '@cognite/cdf-utilities';
+import { UserHistoryProvider } from '@user-history';
+
+import { SubAppWrapper, getCluster, getProject } from '@cognite/cdf-utilities';
+import { Loader } from '@cognite/cogs.js';
 
 import AllApps from './components/AllApps';
 import LandingPage from './components/LandingPage/LandingPage';
 import Navigation from './components/Navigation';
 import { UserProfilePage } from './components/UserProfilePage/UserProfilePage';
+import { useUserInformation } from './hooks';
 
 const RoutesWrapper = styled.div`
   height: 100%;
@@ -18,43 +22,46 @@ const RoutesWrapper = styled.div`
 `;
 
 export function App() {
-  const project = getProject();
-  const cluster = getCluster();
   const routerBasename = '/:project';
+
+  const project = getProject();
+  const cluster = getCluster() ?? undefined;
+  const { data: user, isFetched } = useUserInformation();
+  const userId = user?.id;
 
   const [isReleaseBanner, setReleaseBanner] = useState<string>(
     () => localStorage.getItem(`isCDFReleaseBanner`) || 'true'
   );
 
-  return (
-    <SubAppProvider
-      user={{
-        id: 'unknown',
-        cluster: cluster || '',
-        project,
-      }}
-    >
-      <BrowserRouter>
-        <Navigation
-          isReleaseBanner={isReleaseBanner}
-          setReleaseBanner={setReleaseBanner}
-        />
+  if (!isFetched) {
+    return <Loader />;
+  }
 
-        <RoutesWrapper>
-          <Routes>
-            <Route
-              path={routerBasename}
-              element={<LandingPage isReleaseBanner={isReleaseBanner} />}
-            />
-            <Route path={`${routerBasename}/apps`} element={<AllApps />} />
-            <Route
-              path={`${routerBasename}/profile`}
-              element={<UserProfilePage />}
-            />
-          </Routes>
-        </RoutesWrapper>
-      </BrowserRouter>
-    </SubAppProvider>
+  return (
+    <UserHistoryProvider cluster={cluster} project={project} userId={userId}>
+      <SubAppWrapper>
+        <BrowserRouter>
+          <Navigation
+            isReleaseBanner={isReleaseBanner}
+            setReleaseBanner={setReleaseBanner}
+          />
+
+          <RoutesWrapper>
+            <Routes>
+              <Route
+                path={routerBasename}
+                element={<LandingPage isReleaseBanner={isReleaseBanner} />}
+              />
+              <Route path={`${routerBasename}/apps`} element={<AllApps />} />
+              <Route
+                path={`${routerBasename}/profile`}
+                element={<UserProfilePage />}
+              />
+            </Routes>
+          </RoutesWrapper>
+        </BrowserRouter>
+      </SubAppWrapper>
+    </UserHistoryProvider>
   );
 }
 

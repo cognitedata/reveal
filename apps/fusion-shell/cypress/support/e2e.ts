@@ -56,7 +56,7 @@ function overrideAffectedSubapps() {
   });
 }
 
-beforeEach(() => {
+before(() => {
   interceptProfileMe();
 
   cy.session(
