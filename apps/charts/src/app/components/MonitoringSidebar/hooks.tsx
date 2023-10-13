@@ -17,6 +17,7 @@ import {
   MonitoringSubscriptionResponse,
   MonitoringSubscriptionsListResponse,
   CreateMonitoringJobAPIResponse,
+  MonitoringJobsEmptyResponse,
 } from './types';
 
 /**
@@ -103,7 +104,7 @@ export const useMonitoringFoldersWithJobs = (
     ],
     () =>
       sdk
-        .post<MonitoringFolderJobs[]>(
+        .post<MonitoringFolderJobs[] | MonitoringJobsEmptyResponse>(
           `apps/v1/projects/${sdk.project}/charts/monitoring/folders/filter`,
           {
             data: {
@@ -118,6 +119,9 @@ export const useMonitoringFoldersWithJobs = (
           }
         )
         .then(({ data }) => {
+          // When the response is empty, the API returns data as an object with items as an empty array
+          if ('items' in data) return data.items;
+
           /**
            * This adapts the responses by removing the first 11 characters
            * which is the id from the externalId field, the rest of the characters

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { SCHEDULED_CALCULATIONS_ACL } from '@cognite/charts-lib';
+import { TIMESERIES_ACL } from '@cognite/charts-lib';
 import { Button, Flex } from '@cognite/cogs.js';
 
 import { useAclPermissions } from '../../domain/chart/service/queries/useAclPermissions';
@@ -18,11 +18,11 @@ export const ScheduledCalculationButton = ({
 }: {
   workflowId: string;
 }) => {
-  const { data: hasSCWrite, isFetching: isFetchingWriteCapabilities } =
-    useAclPermissions(SCHEDULED_CALCULATIONS_ACL, 'WRITE');
-  const { data: hasSCRead, isFetching: isFetchingReadCapabilities } =
-    useAclPermissions(SCHEDULED_CALCULATIONS_ACL, 'READ');
-  const canCreateScheduledCalculations = hasSCWrite && hasSCRead;
+  const { data: hasTSWrite, isFetching: isFetchingWriteCapabilities } =
+    useAclPermissions(TIMESERIES_ACL, 'WRITE');
+  const { data: hasTSRead, isFetching: isFetchingReadCapabilities } =
+    useAclPermissions(TIMESERIES_ACL, 'READ');
+  const canCreateScheduledCalculations = hasTSWrite && hasTSRead;
   const isFetchingCapabilities =
     isFetchingWriteCapabilities || isFetchingReadCapabilities;
   const { t } = useTranslations(
@@ -62,8 +62,8 @@ export const ScheduledCalculationButton = ({
           visible={isAccessModalVisible}
           onOk={() => setAccessModalVisible(false)}
           capabilities={[
-            hasSCWrite ? '' : `${SCHEDULED_CALCULATIONS_ACL}:WRITE`,
-            hasSCRead ? '' : `${SCHEDULED_CALCULATIONS_ACL}:READ`,
+            hasTSWrite ? '' : `${TIMESERIES_ACL}:WRITE`,
+            hasTSRead ? '' : `${TIMESERIES_ACL}:READ`,
           ].filter(Boolean)}
         />
       ) : null}

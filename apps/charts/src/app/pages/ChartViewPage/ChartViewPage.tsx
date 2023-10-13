@@ -20,8 +20,8 @@ import {
   ChartWorkflowV2,
   ChartSource,
   ScheduledCalculation,
-  MONITORING_ACL,
-  NOTIFICATIONS_ACL,
+  TIMESERIES_ACL,
+  SESSION_ACL,
 } from '@cognite/charts-lib';
 import { toast, Loader, Button, Tooltip, Chip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -145,28 +145,20 @@ const ChartViewPage = () => {
       forceRerender: true,
     }
   );
-  const { data: hasMonitoringRead } = useAclPermissions(MONITORING_ACL, 'READ');
-  const { data: hasMonitoringWrite } = useAclPermissions(
-    MONITORING_ACL,
-    'WRITE'
-  );
-  const { data: hasNotificationsRead } = useAclPermissions(
-    NOTIFICATIONS_ACL,
-    'READ'
-  );
-  const { data: hasNotificationsWrite } = useAclPermissions(
-    NOTIFICATIONS_ACL,
-    'WRITE'
-  );
+
+  const { data: hasTSRead } = useAclPermissions(TIMESERIES_ACL, 'READ');
+  const { data: hasSessionList } = useAclPermissions(SESSION_ACL, 'LIST');
+  const { data: hasSessionCreate } = useAclPermissions(SESSION_ACL, 'CREATE');
+  const { data: hasSessionDelete } = useAclPermissions(SESSION_ACL, 'DELETE');
+
   const isMonitoringAccessible =
-    hasMonitoringRead &&
-    hasMonitoringWrite &&
-    hasNotificationsRead &&
-    hasNotificationsWrite &&
+    hasTSRead &&
+    hasSessionList &&
+    hasSessionCreate &&
+    hasSessionDelete &&
     !!userProfile;
 
-  const isAlertingAccessible =
-    hasNotificationsRead && hasNotificationsWrite && !!userProfile;
+  const isAlertingAccessible = hasTSRead && !!userProfile;
 
   const { isEnabled: isDataProfilingEnabled } = useFlag(
     'CHARTS_UI_DATAPROFILING',
@@ -895,10 +887,10 @@ const ChartViewPage = () => {
           !isUserProfileLoading && !userProfile
             ? ['User Profiles']
             : [
-                hasMonitoringRead ? '' : `${MONITORING_ACL}:READ`,
-                hasMonitoringWrite ? '' : `${MONITORING_ACL}:WRITE`,
-                hasNotificationsRead ? '' : `${NOTIFICATIONS_ACL}:READ`,
-                hasNotificationsWrite ? '' : `${NOTIFICATIONS_ACL}:WRITE`,
+                hasTSRead ? '' : `${TIMESERIES_ACL}:READ`,
+                hasSessionList ? '' : `${SESSION_ACL}:LIST`,
+                hasSessionCreate ? '' : `${SESSION_ACL}:CREATE`,
+                hasSessionDelete ? '' : `${SESSION_ACL}:DELETE`,
               ].filter(Boolean)
         }
         onOk={handleAccessDeniedModalClose}
@@ -908,10 +900,7 @@ const ChartViewPage = () => {
         capabilities={
           !isUserProfileLoading && !userProfile
             ? ['User Profiles']
-            : [
-                hasNotificationsRead ? '' : `${NOTIFICATIONS_ACL}:READ`,
-                hasNotificationsWrite ? '' : `${NOTIFICATIONS_ACL}:WRITE`,
-              ].filter(Boolean)
+            : [hasTSRead ? '' : `${TIMESERIES_ACL}:READ`].filter(Boolean)
         }
         onOk={handleAccessDeniedModalClose}
       />
