@@ -122,6 +122,7 @@ export class PickingHandler {
         cadNodeData.cadNode.visible = true;
         const treeIndex = await this.intersectCadNodeTreeIndex(cadNodeData.cadNode, input, async);
         if (treeIndex) {
+          // Assuming we have depth anywhere we hit a treeIndex
           const depthResult = await this.intersectCadNodeDepth(depthInput, async);
           const result: IntersectCadNodesResult = {
             distance: depthResult.distance,
