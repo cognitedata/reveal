@@ -166,10 +166,7 @@ export class RevisionFdmNodeCache {
     ancestorIndicesWithSameMapping: TreeIndex[]
   ): Promise<Source[] | undefined> {
     if (cadAndFdmIds === undefined) {
-      ancestorIndicesWithSameMapping.forEach((treeIndex) => {
-        this._treeIndexToFdmEdges.set(treeIndex, []);
-      });
-
+      this.setCacheDataForTreeIndices(ancestorIndicesWithSameMapping, []);
       return undefined;
     }
 
@@ -188,9 +185,7 @@ export class RevisionFdmNodeCache {
       view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
     }));
 
-    ancestorIndicesWithSameMapping.forEach((treeIndex) => {
-      this._treeIndexToFdmEdges.set(treeIndex, dataWithViews);
-    });
+    this.setCacheDataForTreeIndices(ancestorIndicesWithSameMapping, dataWithViews);
 
     return views;
   }

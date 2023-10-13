@@ -13,6 +13,7 @@ import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { NodeCacheProvider } from '../NodeCacheProvider/NodeCacheProvider';
 import { RevealContainerElementContext } from './RevealContainerElementContext';
 import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reveal3DResourcesCountContext';
+import { AssetMappingCacheProvider } from '../NodeCacheProvider/AssetMappingCacheProvider';
 import { I18nContextProvider } from '../i18n/I18n';
 
 type RevealContainerProps = {
@@ -84,9 +85,11 @@ export function RevealContainer({
           <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
             <RevealContext.Provider value={viewer}>
               <NodeCacheProvider>
-                <Reveal3DResourcesCountContextProvider>
-                  {createPortal(children, viewerDomElement.current)}
-                </Reveal3DResourcesCountContextProvider>
+                <AssetMappingCacheProvider>
+                  <Reveal3DResourcesCountContextProvider>
+                    {createPortal(children, viewerDomElement.current)}
+                  </Reveal3DResourcesCountContextProvider>
+                </AssetMappingCacheProvider>
               </NodeCacheProvider>
             </RevealContext.Provider>
           </RevealContainerElementContext.Provider>
