@@ -2,13 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 
-import { retrievePnIdRawOCRResult } from '@data-exploration-lib/domain-layer';
-
 import { IndustryCanvasContainerConfig } from '../../types';
 
 import canContainerHaveOcrData from './canContainerHaveOcrData';
 
-const useContainerOcrData = (
+const useContainerOcrText = (
   containerConfig: IndustryCanvasContainerConfig | undefined
 ) => {
   const sdk = useSDK();
@@ -16,12 +14,15 @@ const useContainerOcrData = (
     [
       `ocr-data-${containerConfig?.type}-${containerConfig?.metadata.resourceId}`,
     ],
-    () => {
+    async () => {
       if (containerConfig?.metadata.resourceId === undefined) {
         return undefined;
       }
-
-      return retrievePnIdRawOCRResult(sdk, containerConfig.metadata.resourceId);
+      try {
+        return sdk.documents.content(containerConfig.metadata.resourceId);
+      } catch {
+        return undefined;
+      }
     },
     {
       enabled:
@@ -31,4 +32,4 @@ const useContainerOcrData = (
   );
 };
 
-export default useContainerOcrData;
+export default useContainerOcrText;

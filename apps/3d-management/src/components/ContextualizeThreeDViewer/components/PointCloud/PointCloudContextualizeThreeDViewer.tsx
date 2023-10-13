@@ -26,6 +26,7 @@ import {
   setPendingAnnotation,
   useContextualizeThreeDViewerStore,
   setAnnotations,
+  setSelectedAnnotationId,
 } from '../../useContextualizeThreeDViewerStore';
 import { getCdfAnnotations } from '../../utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from '../../utils/createCdfThreeDAnnotation';
@@ -111,7 +112,11 @@ export const PointCloudContextualizeThreeDViewer = ({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setPendingAnnotation(null);
+        setSelectedAnnotationId(null);
         event.stopPropagation();
+      }
+      if (event.key === 'Enter') {
+        updateCdfThreeDAnnotation();
       }
     };
 

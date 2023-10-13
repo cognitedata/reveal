@@ -92,6 +92,10 @@ export type MonitoringFolderJobs = {
   count: number;
 };
 
+export type MonitoringJobsEmptyResponse = {
+  items: [];
+};
+
 export type MonitoringSubscriptionsListPayload = {
   monitoringTaskIDs: number[];
   userAuthId: string;

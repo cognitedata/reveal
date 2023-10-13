@@ -1,7 +1,11 @@
 import { ComponentProps, useState, useMemo } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';
 
-import { ChartWorkflow, SCHEDULED_CALCULATIONS_ACL } from '@cognite/charts-lib';
+import {
+  ChartWorkflow,
+  SESSION_ACL,
+  TIMESERIES_ACL,
+} from '@cognite/charts-lib';
 import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
@@ -124,11 +128,23 @@ function WorkflowRow({
     preferredUnit,
     customUnitLabel,
   } = workflow;
-  const { data: hasSCWrite, isFetching: isFetchingWriteCapabilities } =
-    useAclPermissions(SCHEDULED_CALCULATIONS_ACL, 'WRITE');
-  const { data: hasSCRead, isFetching: isFetchingReadCapabilities } =
-    useAclPermissions(SCHEDULED_CALCULATIONS_ACL, 'READ');
-  const canCreateScheduledCalculations = hasSCWrite && hasSCRead;
+
+  const { data: hasTSWrite, isFetching: isFetchingWriteCapabilities } =
+    useAclPermissions(TIMESERIES_ACL, 'WRITE');
+  const { data: hasTSRead, isFetching: isFetchingReadCapabilities } =
+    useAclPermissions(TIMESERIES_ACL, 'READ');
+
+  const { data: hasSessionList } = useAclPermissions(SESSION_ACL, 'LIST');
+  const { data: hasSessionCreate } = useAclPermissions(SESSION_ACL, 'CREATE');
+  const { data: hasSessionDelete } = useAclPermissions(SESSION_ACL, 'DELETE');
+
+  const canCreateScheduledCalculations =
+    hasTSWrite &&
+    hasTSRead &&
+    hasSessionList &&
+    hasSessionCreate &&
+    hasSessionDelete;
+
   const isFetchingCapabilities =
     isFetchingWriteCapabilities || isFetchingReadCapabilities;
   const call = [...(calls || [])].sort((c) => c.callDate)[0];
@@ -196,7 +212,7 @@ function WorkflowRow({
     onDuplicateCalculation,
     isPersistenceCalcEnabled,
     isFetchingCapabilities,
-    hasSCWrite,
+    hasTSWrite,
   ]);
 
   return (
@@ -388,8 +404,11 @@ function WorkflowRow({
           visible={isSCAccessModalEnabled}
           onOk={() => setSCAccessModalEnabled(false)}
           capabilities={[
-            hasSCWrite ? '' : `${SCHEDULED_CALCULATIONS_ACL}:WRITE`,
-            hasSCRead ? '' : `${SCHEDULED_CALCULATIONS_ACL}:READ`,
+            hasTSWrite ? '' : `${TIMESERIES_ACL}:WRITE`,
+            hasTSRead ? '' : `${TIMESERIES_ACL}:READ`,
+            hasSessionList ? '' : `${SESSION_ACL}:LIST`,
+            hasSessionCreate ? '' : `${SESSION_ACL}:CREATE`,
+            hasSessionDelete ? '' : `${SESSION_ACL}:DELETE`,
           ].filter(Boolean)}
         />
       ) : null}
