@@ -56,4 +56,28 @@ describe('Timeseries - Filters', () => {
       },
     });
   });
+
+  it('should filter timeseries by metadata', () => {
+    const METADATA_PROPERTY = 'product_type';
+    const METADATA_VALUE = 'oil';
+
+    cy.clickSelectFilter('Metadata')
+      .searchOption(METADATA_PROPERTY)
+      .hoverSelectOption(METADATA_PROPERTY)
+      .getSelectMenu({ subMenu: true })
+      .should('be.visible');
+
+    cy.getSelectFilter('Metadata').searchAndClickSelectOption(METADATA_VALUE, {
+      subMenu: true,
+    });
+
+    cy.getSelectFilter('Metadata').getSelectMenu().clickButton('Apply');
+
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).payloadShouldContain({
+      equals: {
+        property: ['metadata', METADATA_PROPERTY],
+        value: METADATA_VALUE,
+      },
+    });
+  });
 });
