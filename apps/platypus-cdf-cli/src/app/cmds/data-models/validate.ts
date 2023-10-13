@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import {
   FlexibleDataModelingClient,
   mixerApiBuiltInTypes,
+  PlatypusDmlError,
 } from '@platypus/platypus-core';
 import { Arguments, Argv } from 'yargs';
 
@@ -62,7 +63,20 @@ export class ValidateCmd extends CLICommand {
     );
 
     if (errors.length) {
-      Response.error(`GraphQL file contains errors: ${errors}`);
+      throw new PlatypusDmlError(
+        `GraphQL syntax error`,
+        errors.map((error) => ({
+          kind: 'Syntax error',
+          message: error.message,
+          hint: '',
+          location: {
+            start: {
+              line: error.locations[0].line,
+              column: error.locations[0].column,
+            },
+          },
+        }))
+      );
     }
 
     Response.success(`GraphQL file is valid.`);
