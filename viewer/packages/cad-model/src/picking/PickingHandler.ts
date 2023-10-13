@@ -160,7 +160,12 @@ export class PickingHandler {
     return candidateCadNodes;
 
     function getIntersection(cadNode: CadNode, ray: THREE.Ray): [CadNode, THREE.Vector3 | null] {
-      return [cadNode, ray.intersectBox(getWorldSpaceNodeBounds(cadNode), new THREE.Vector3())];
+      const nodeBounds = getWorldSpaceNodeBounds(cadNode);
+      // If we are inside the box, set the intersection point to the ray origin point
+      return [
+        cadNode,
+        nodeBounds.containsPoint(ray.origin) ? ray.origin : ray.intersectBox(nodeBounds, new THREE.Vector3())
+      ];
     }
 
     function getWorldSpaceNodeBounds(node: CadNode): THREE.Box3 {
