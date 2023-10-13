@@ -28,6 +28,7 @@ export const useSuggestions = ({
       if (data.length !== 0 && dataModelType.version) {
         await dataManagementHandler.ingestNodes({
           space,
+          instanceSpace: space,
           model: [
             dataModelExternalId,
             `${dataModelType.name}_${dataModelType.version}`,

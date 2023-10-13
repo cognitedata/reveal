@@ -83,6 +83,7 @@ export type IngestInstancesDTO = {
   dataModelExternalId: string;
   // allow v2
   space: string;
+  instanceSpace: string;
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
   // allow v3

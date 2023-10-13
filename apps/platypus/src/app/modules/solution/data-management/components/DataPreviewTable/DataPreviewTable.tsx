@@ -82,7 +82,7 @@ import {
 
 const pageSizeLimit = 100;
 const instanceIdCol = 'externalId';
-const lockedFields = ['space', 'lastUpdatedTime', 'createdTime'];
+const lockedFields = ['lastUpdatedTime', 'createdTime'];
 
 export interface DataPreviewTableProps {
   dataModelType: DataModelTypeDefsType;
@@ -239,6 +239,7 @@ export const DataPreviewTable = forwardRef<
       }
       addRowsMutation
         .mutateAsync({
+          instanceSpace: row.space || space,
           space,
           model: [dataModelExternalId, `${dataModelType.name}_${viewVersion}`],
           version: viewVersion,
@@ -576,6 +577,7 @@ export const DataPreviewTable = forwardRef<
         */
           overwrite: true,
           space,
+          instanceSpace: updatedRowData.space || space,
           model: [dataModelExternalId, `${dataModelType.name}_${viewVersion}`],
           items: [updatedRowData],
           version: viewVersion,
@@ -617,6 +619,19 @@ export const DataPreviewTable = forwardRef<
             e.api.refreshCells({ columns: [e.column], rowNodes: [e.node!] });
           }
         });
+
+      if (updatedRowData.space !== e.oldValue) {
+        dataManagementHandler.deleteData({
+          /*
+            PG3 does not currently set a value to null if we pass null when doing a partial
+            update (overwrite: false), but rather it will ignore that value. Therefore in
+            order to be able to set values to null we need overwrite: true
+            */
+          space: e.oldValue,
+          items: [updatedRowData],
+          dataModelExternalId,
+        });
+      }
 
       return true;
     };

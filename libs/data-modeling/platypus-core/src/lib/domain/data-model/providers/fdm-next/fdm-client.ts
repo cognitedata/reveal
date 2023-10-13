@@ -641,7 +641,7 @@ export class FdmClient implements FlexibleDataModelingClient {
           replace: true,
           items: dto.items.map((item) => ({
             instanceType: 'node',
-            space: dto.space,
+            space: dto.instanceSpace,
             externalId: (item as { externalId: string }).externalId,
             sources: [
               {
@@ -653,7 +653,7 @@ export class FdmClient implements FlexibleDataModelingClient {
                 },
                 properties: normalizeIngestionItem(
                   item,
-                  dto.space,
+                  dto.instanceSpace,
                   dto.dataModelType
                 ),
               },
