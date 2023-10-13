@@ -29,6 +29,8 @@ export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeC
 export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
 export { use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
 export { useSlicerUrlParams, useLayersUrlParams } from './hooks/useUrlStateParam';
+export { useReveal360Annotations } from './hooks/useReveal360Annotations';
+export { use360Annotations } from './hooks/use360Annotations';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
@@ -60,3 +62,4 @@ export type {
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
+export type { AugmentedMapping } from './hooks/types';
