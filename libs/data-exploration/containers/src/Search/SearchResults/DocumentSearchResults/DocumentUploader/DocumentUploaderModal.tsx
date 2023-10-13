@@ -57,6 +57,7 @@ export const DocumentUploaderModal = ({
 
   return (
     <Modal
+      data-testid="document-uploader-modal"
       visible={visible}
       onCancel={onCancel}
       title={t('UPLOAD_FILE', 'Upload File')}
