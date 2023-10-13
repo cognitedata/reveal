@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk, { getToken, getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { Flex } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 
 let notebook_origin = 'https://notebook-standalone.cogniteapp.com';
 if ((window as any).CDF_NOTEBOOK_ORIGIN_OVERRIDE) {
@@ -32,6 +33,8 @@ const Home = React.forwardRef(
     ref: ForwardedRef<HTMLIFrameElement | null>
   ) => {
     const myIframe = useRef<HTMLIFrameElement>(null);
+
+    const { isEnabled } = useFlag('NOTEBOOK_AI_CODEGEN');
 
     const fetchAndSendToken = useCallback(async () => {
       return getToken().then(async (newToken) => {
@@ -91,7 +94,9 @@ const Home = React.forwardRef(
         <IFrame
           data-testid="iframe-for-notebook"
           ref={myIframe}
-          src={`${NOTEBOOK_ORIGIN}/lab/index.html?nocache=${Date.now()}`}
+          src={`${NOTEBOOK_ORIGIN}/lab/index.html?nocache=${Date.now()}${
+            isEnabled ? '' : '&aiDisabled'
+          }}`}
         ></IFrame>
       </Flex>
     );

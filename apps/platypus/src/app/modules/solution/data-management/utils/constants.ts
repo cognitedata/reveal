@@ -8,6 +8,10 @@ export const INSTANCE_TYPE_DEFS_FIELDS: DataModelTypeDefsField[] = [
     type: { list: false, custom: false, name: 'String', nonNull: true },
   },
   {
+    name: 'space',
+    type: { list: false, custom: false, name: 'String', nonNull: true },
+  },
+  {
     name: 'lastUpdatedTime',
     type: { list: false, custom: false, name: 'Timestamp', nonNull: false },
   },

@@ -32,6 +32,7 @@ import { createCdfThreeDAnnotation } from '../../utils/createCdfThreeDAnnotation
 import { getCognitePointCloudModel } from '../../utils/getCognitePointCloudModel';
 
 import { useSyncStateWithViewerPointCloud } from './hooks/useSyncStateWithViewerPointCloud';
+import { useUpdateCdfThreeDAnnotation } from './hooks/useUpdateCdfThreeDAnnotation';
 import { useZoomToAnnotation } from './hooks/useZoomToAnnotation';
 import { PointCloudRevealContent } from './PointCloudRevealContent';
 
@@ -89,6 +90,7 @@ export const PointCloudContextualizeThreeDViewer = ({
   );
 
   const onZoomToAnnotation = useZoomToAnnotation();
+  const updateCdfThreeDAnnotation = useUpdateCdfThreeDAnnotation();
 
   const onDeleteAnnotation = (annotationId: number) => {
     mutation.mutate(annotationId);
@@ -156,6 +158,7 @@ export const PointCloudContextualizeThreeDViewer = ({
               revisionId={revisionId}
               onDeleteAnnotation={onDeleteAnnotation}
               onZoomToAnnotation={onZoomToAnnotation}
+              onUpdateCdfThreeDAnnotation={updateCdfThreeDAnnotation}
             />
           </RevealContainer>
         </ThreeDViewerStyled>

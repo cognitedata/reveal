@@ -23,7 +23,7 @@ import {
   setSelectedAnnotationId,
 } from '../../useContextualizeThreeDViewerStore';
 import { AnnotationsCard } from '../AnnotationsCard';
-import { AnnotationBoxToolbar } from '../AnnotationToolbar';
+import { SelectedAnnotationBoxToolbar } from '../SelectedAnnotationToolbar';
 
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
@@ -32,21 +32,33 @@ interface RevealContentProps {
   revisionId: number;
   onDeleteAnnotation: (annotationId: number) => void;
   onZoomToAnnotation: (annotationId: number) => void;
+  onUpdateCdfThreeDAnnotation: () => void;
 }
 
-const SelectedAnnotationToolbar: FC = () => {
-  const { tool, selectedAnnotationId } = useContextualizeThreeDViewerStore(
-    (state) => ({
+interface SelectedAnnotationToolbarProps {
+  onUpdateCdfThreeDAnnotation: () => void;
+}
+
+const SelectedAnnotationToolbar: FC<SelectedAnnotationToolbarProps> = ({
+  onUpdateCdfThreeDAnnotation,
+}) => {
+  const { tool, selectedAnnotationId, transformMode } =
+    useContextualizeThreeDViewerStore((state) => ({
       tool: state.tool,
       selectedAnnotationId: state.selectedAnnotationId,
-    })
-  );
+      transformMode: state.transformMode,
+    }));
 
   if (tool !== ToolType.SELECT_TOOL || selectedAnnotationId === null) {
     return <></>;
   }
 
-  return <AnnotationBoxToolbar />;
+  return (
+    <SelectedAnnotationBoxToolbar
+      transformMode={transformMode}
+      onUpdateCdfThreeDAnnotation={onUpdateCdfThreeDAnnotation}
+    />
+  );
 };
 
 export const PointCloudRevealContent = ({
@@ -54,6 +66,7 @@ export const PointCloudRevealContent = ({
   revisionId,
   onDeleteAnnotation,
   onZoomToAnnotation,
+  onUpdateCdfThreeDAnnotation,
 }: RevealContentProps) => {
   const viewer = useReveal();
   const { isResourceSelectorOpen, annotations, tool } =
@@ -114,7 +127,9 @@ export const PointCloudRevealContent = ({
           }}
         />
       </StyledResourceSelectorButtonWrapper>
-      <SelectedAnnotationToolbar />
+      <SelectedAnnotationToolbar
+        onUpdateCdfThreeDAnnotation={onUpdateCdfThreeDAnnotation}
+      />
       <AnnotationsCard
         annotations={annotations}
         onDeleteAnnotation={(annotation) => {

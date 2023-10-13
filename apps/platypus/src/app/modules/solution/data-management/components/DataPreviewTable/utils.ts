@@ -70,6 +70,11 @@ export const getColumnsInitialOrder = (
       visible: true,
     })),
     {
+      label: 'space',
+      value: 'space',
+      visible: true,
+    },
+    {
       label: 'lastUpdatedTime',
       value: 'lastUpdatedTime',
       visible: true,

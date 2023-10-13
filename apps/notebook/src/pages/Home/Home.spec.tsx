@@ -6,6 +6,10 @@ import { getToken } from '@cognite/cdf-sdk-singleton';
 
 import Home from './Home';
 
+jest.mock('@cognite/react-feature-flags', () => ({
+  __esModule: true,
+  useFlag: () => ({ isEnabled: true }),
+}));
 jest.mock('@cognite/cdf-sdk-singleton', () => ({
   __esModule: true,
   getUserInformation: () =>
