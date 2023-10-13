@@ -1,15 +1,12 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Highlight from 'react-highlight';
 
 import styled from 'styled-components';
 
 import { Body, Flex, Icon, Modal } from '@cognite/cogs.js';
-import {
-  CopilotCodeMessage,
-  CopilotDataModelQueryMessage,
-  sendFromCopilotEvent,
-} from '@cognite/llm-hub';
 
+import { CopilotCodeResponse } from '../../../lib/types';
+import { useCopilotContext } from '../../hooks/useCopilotContext';
 import { getContainer } from '../../utils/getContainer';
 import { Editor } from '../Editor/Editor';
 
@@ -19,42 +16,21 @@ import { MessageBase } from './MessageBase';
 export const CodeMessage = ({
   message: { data },
 }: {
-  message: { data: CopilotCodeMessage | CopilotDataModelQueryMessage };
+  message: { data: CopilotCodeResponse & { source: 'bot' } };
 }) => {
-  const { actions: prevActions } = data;
-  const content =
-    data.type === 'data-model-query' ? data.graphql.query : data.content;
-  const language = data.type === 'data-model-query' ? 'graphql' : data.language;
-  const prevContent = data.type === 'data-model-query' ? '' : data.prevContent;
-  // handle breaking change in message format
-  const actions =
-    data.type === 'data-model-query'
-      ? [
-          {
-            content: 'View results',
-            onClick: () => {
-              sendFromCopilotEvent('USE_CODE', {
-                content,
-              });
-            },
-          },
-          ...(prevActions || []),
-        ]
-      : [
-          {
-            content: 'Use code',
-            onClick: () => {
-              sendFromCopilotEvent('USE_CODE', {
-                content,
-              });
-            },
-          },
-          ...(prevActions || []),
-        ];
+  const { actionGetters } = useCopilotContext();
+  const content = data.content;
+  const language = data.language;
+  const prevContent = data.prevContent;
+  const actions = useMemo(() => {
+    return (actionGetters[data.type] || [])
+      .map((actionGetter) => actionGetter(data))
+      .flat();
+  }, [actionGetters, data]);
   const [open, setOpen] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
   return (
-    <MessageBase message={{ data: { ...data, source: 'bot' } }}>
+    <MessageBase message={{ ...data, source: 'bot' }}>
       <Wrapper direction="column" gap={4}>
         <Body level={2}>Click to view the follow code in full screen</Body>
         <Flex
@@ -119,6 +95,7 @@ export const CodeMessage = ({
 
 const Wrapper = styled(Flex)`
   width: 100%;
+  position: relative;
   pre {
     width: 100%;
   }
@@ -126,6 +103,10 @@ const Wrapper = styled(Flex)`
     position: absolute;
     width: 100%;
     height: 100%;
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
 
     i {
       color: white;

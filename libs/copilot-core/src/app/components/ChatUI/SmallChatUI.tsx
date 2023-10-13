@@ -10,8 +10,8 @@ import { useFromCache, useSaveToCache } from '../../hooks/useCache';
 import { useCopilotContext } from '../../hooks/useCopilotContext';
 import { useMetrics } from '../../hooks/useMetrics';
 import zIndex from '../../utils/zIndex';
-import { actionRenderers } from '../ActionRenderer';
 import { messageRenderers } from '../MessageRenderer';
+import { actionRenderers } from '../UserActionRenderer';
 
 import { ChatHeader } from './ChatHeader';
 import { HistoryList } from './HistoryList';
@@ -80,9 +80,12 @@ export const SmallChatUI = ({
       <ChatHeader style={{ padding: 16 }} />
       {mode === 'chat' ? (
         <>
-          <Flex direction="column" style={{ overflow: 'auto', flex: 1 }}>
-            <BotUIMessageList renderer={messageRenderers} />
+          <Flex
+            direction="column-reverse"
+            style={{ overflow: 'auto', flex: 1 }}
+          >
             <LoadingMessage />
+            <BotUIMessageList renderer={messageRenderers} />
           </Flex>
           <BotUIAction renderer={actionRenderers} />
         </>
@@ -94,32 +97,35 @@ export const SmallChatUI = ({
 };
 
 const SmallChatBotWrapper = styled(ResizableBox)`
-  z-index: ${zIndex.CHAT};
-  position: fixed;
-  bottom: 70px;
-  right: 10px;
-  background: #fff;
-  margin-top: 16px;
-  border-radius: 10px;
-  box-shadow: 0px 1px 16px 4px rgba(79, 82, 104, 0.1),
-    0px 1px 8px rgba(79, 82, 104, 0.08), 0px 1px 2px rgba(79, 82, 104, 0.24);
-  display: flex;
-  flex-direction: column;
-
-  .react-resizable-handle-nw {
-    background-image: none;
-    transform: translate(-50%, -50%) rotate(90deg);
-    width: auto;
-    height: auto;
-    background: #fff !important;
-    opacity: 0;
-    transition: 0.3s all;
-    border-radius: 50%;
+  && {
+    z-index: ${zIndex.CHAT};
+    position: fixed;
+    bottom: 70px;
+    right: 10px;
+    background: #fff;
+    margin-top: 16px;
+    border-radius: 10px;
     box-shadow: 0px 1px 16px 4px rgba(79, 82, 104, 0.1),
       0px 1px 8px rgba(79, 82, 104, 0.08), 0px 1px 2px rgba(79, 82, 104, 0.24);
-    cursor: nw-resize;
-  }
-  .react-resizable-handle:hover {
-    opacity: 1;
+    display: flex;
+    flex-direction: column;
+
+    .react-resizable-handle-nw {
+      position: absolute;
+      background-image: none;
+      transform: translate(-50%, -50%) rotate(90deg);
+      width: auto;
+      height: auto;
+      background: #fff !important;
+      opacity: 0;
+      transition: 0.3s all;
+      border-radius: 50%;
+      box-shadow: 0px 1px 16px 4px rgba(79, 82, 104, 0.1),
+        0px 1px 8px rgba(79, 82, 104, 0.08), 0px 1px 2px rgba(79, 82, 104, 0.24);
+      cursor: nw-resize;
+    }
+    .react-resizable-handle:hover {
+      opacity: 1;
+    }
   }
 `;

@@ -1,6 +1,6 @@
+import { CopilotDataModelQueryResponse } from '@fusion/copilot-core';
 import useLocalStorageState from 'use-local-storage-state';
 
-import { CopilotDataModelQueryMessage } from '@cognite/llm-hub';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { localStorageKeys } from '../constants/localStorageKeys';
@@ -51,7 +51,7 @@ export const useAIQueryLocalStorage = () => {
         search: string;
         results?: Record<string, SearchResponse>;
         dataModels: DataModelV2[];
-        message: CopilotDataModelQueryMessage;
+        message: CopilotDataModelQueryResponse;
       }
     | undefined
   >(localStorageKeys.aiResults(project), {

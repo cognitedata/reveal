@@ -1,7 +1,7 @@
+import { CopilotDataModelQueryResponse } from '@fusion/copilot-core';
 import { FdmMixerApiService } from '@fusion/data-modeling';
 import { v4 as uuid } from 'uuid';
 
-import { CopilotEvents } from '@cognite/llm-hub';
 import { CogniteClient } from '@cognite/sdk';
 
 import {
@@ -11,7 +11,7 @@ import {
 
 const resolveGqlToFdmInstanceContainerReferences = async (
   sdk: CogniteClient,
-  { query, variables, dataModel }: CopilotEvents['FromCopilot']['GQL_QUERY']
+  { graphql, dataModel }: CopilotDataModelQueryResponse
 ): Promise<FdmInstanceContainerReference[]> => {
   const client = new FdmMixerApiService(sdk);
   const model = await client.getDataModelVersionsById(
@@ -28,10 +28,7 @@ const resolveGqlToFdmInstanceContainerReferences = async (
     dataModelId: dataModel.externalId,
     space: dataModel.space,
     schemaVersion: dataModel.version,
-    graphQlParams: {
-      query,
-      variables,
-    },
+    graphQlParams: graphql,
   });
 
   if (response === undefined) {

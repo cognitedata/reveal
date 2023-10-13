@@ -2,17 +2,14 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 
 import styled from 'styled-components';
 
+import { PythonAppBuilderFlow, useCopilotContext } from '@fusion/copilot-core';
 import MonacoEditor, { OnMount, loader } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 import { editor, Environment as MonacoEditorEnvironment } from 'monaco-editor';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { Body, Button, Flex, Icon, Overline, Tooltip } from '@cognite/cogs.js';
-import {
-  CopilotEvents,
-  sendToCopilotEvent,
-  useFromCopilotEventHandler,
-} from '@cognite/llm-hub';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { AddFileModal } from '../components/AddFileModal';
 import { DeleteFileModal } from '../components/DeleteFileModal';
@@ -62,6 +59,7 @@ export const Editor = ({
   onShowSettingsClicked,
   onAppFilesChange,
 }: EditorProps) => {
+  const sdk = useSDK();
   // Keep the tab order
   const [fileNames, setFileNames] = useState<string[]>([]);
   const [currentFileName, setCurrentFileName] = useState<string>();
@@ -119,6 +117,36 @@ export const Editor = ({
   const [editorRef, setEditorRef] = useState<
     editor.IStandaloneCodeEditor | undefined
   >();
+
+  const { registerFlow, setShowChatButton } = useCopilotContext();
+  const flow = useMemo(() => new PythonAppBuilderFlow({ sdk }), [sdk]);
+  useEffect(() => {
+    const unregister = registerFlow({
+      flow,
+      input: { prevCode: () => editorRef?.getModel()?.getValue() || '' },
+      messageActions: {
+        code: (message) => [
+          {
+            content: 'Use code',
+            onClick: () => {
+              onChange(currentFileName!, message.content || '');
+            },
+          },
+        ],
+      },
+    });
+    return () => {
+      unregister();
+    };
+  }, [currentFileName, editorRef, flow, onChange, registerFlow]);
+
+  useEffect(() => {
+    setShowChatButton(true);
+    return () => {
+      setShowChatButton(false);
+    };
+  }, [setShowChatButton]);
+
   const [monacoRef, setMonacoRef] = useState<typeof monaco | undefined>();
   const handleEditorDitMount = useCallback<OnMount>((newEditor, newMonaco) => {
     setEditorRef(newEditor);
@@ -215,36 +243,6 @@ export const Editor = ({
       }
     };
   }, [monacoRef]);
-
-  const getCodeHandler = useCallback(() => {
-    sendToCopilotEvent('GET_CODE', {
-      content: editorRef?.getModel()?.getValue() || '',
-    });
-  }, [editorRef]);
-
-  useFromCopilotEventHandler('GET_CODE', getCodeHandler);
-
-  const sendSelectionHandler = useCallback(() => {
-    if (editorRef) {
-      const selection = editorRef.getSelection();
-      sendToCopilotEvent('GET_CODE_FOR_SELECTION', {
-        content: selection
-          ? editorRef.getModel()?.getValueInRange(selection) || ''
-          : '',
-      });
-    }
-  }, [editorRef]);
-
-  useFromCopilotEventHandler('GET_CODE_FOR_SELECTION', sendSelectionHandler);
-
-  const sendCodeHandler = useCallback(
-    (event: CopilotEvents['FromCopilot']['USE_CODE']) => {
-      onChange(currentFileName!, event.content || '');
-    },
-    [currentFileName, onChange]
-  );
-
-  useFromCopilotEventHandler('USE_CODE', sendCodeHandler);
 
   const showTextEditor =
     currentFile?.content?.$case === 'text' ||

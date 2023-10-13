@@ -1,32 +1,23 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 import styled from 'styled-components';
 
 import { useBotUI, useBotUIAction } from '@botui/react';
 
 import { Button, Flex, Textarea } from '@cognite/cogs.js';
-import {
-  getActions,
-  CopilotAction,
-  CopilotMessage,
-  CopilotSupportedFeatureType,
-} from '@cognite/llm-hub';
-import { useSDK } from '@cognite/sdk-provider';
 
-import { ResponsiveActions } from '../MessageRenderer/components/ResponsiveActions';
+import { CopilotTextResponse, TextAction } from '../../../lib/types';
 
-export const TextAction = ({ disabled }: { disabled?: boolean }) => {
+export const TextActionRenderer = ({ disabled }: { disabled?: boolean }) => {
   const textActionProps = useBotUIAction();
 
   const {
-    meta: { feature, waiting },
+    meta: { waiting, action },
   } = textActionProps!;
 
   const bot = useBotUI(); // current instance
-  const sdk = useSDK();
 
   const [value, setValue] = useState('');
-  const [actions, setActions] = useState<CopilotAction[]>([]);
 
   const ref = useRef<HTMLTextAreaElement>(null);
 
@@ -36,42 +27,14 @@ export const TextAction = ({ disabled }: { disabled?: boolean }) => {
     }
   }, []);
 
-  useEffect(() => {
-    bot.message.getAll().then(async (messages) => {
-      const newActions = await getActions(
-        feature as CopilotSupportedFeatureType,
-        sdk,
-        messages.map(
-          (el) =>
-            ({
-              ...(el.data as CopilotMessage),
-              source: el.meta.previous ? 'user' : 'bot',
-            } as CopilotMessage)
-        ),
-        async (message) => {
-          await bot.next(message);
-        }
-      );
-      setActions(newActions);
-    });
-  }, [sdk, bot, feature]);
-
-  const handleInputChange = () => {
-    const textarea = ref.current;
-    if (textarea) {
-      // Calculate the number of rows (lines) in the textarea based on the content
-      const rows = textarea?.value.split('\n').length || 1;
-
-      // Set a maximum of 7 lines (you can adjust this number as needed)
-      const maxRows = 7;
-
-      // Calculate the maximum height based on the number of rows
-      const maxHeight = `${Math.min(rows, maxRows) * 1.5}em`; // Adjust the line height as needed
-
-      // Set the maximum height to the textarea
-      textarea.style.height = maxHeight;
+  const resizeTextArea = useCallback(() => {
+    if (ref.current) {
+      ref.current.style.height = 'auto';
+      ref.current.style.height = ref.current.scrollHeight + 'px';
     }
-  };
+  }, [ref]);
+
+  useEffect(() => resizeTextArea(), [resizeTextArea, value]);
 
   return (
     <Wrapper
@@ -79,19 +42,17 @@ export const TextAction = ({ disabled }: { disabled?: boolean }) => {
       direction="column"
       style={{ position: 'relative', width: '100%' }}
     >
-      {!waiting && !disabled && actions?.length > 0 && (
-        <ResponsiveActions actions={actions} />
-      )}
       <div style={{ position: 'relative', width: '100%' }}>
         <Textarea
           ref={ref}
           value={value}
           disabled={!!waiting || disabled}
           onChange={(e) => {
-            handleInputChange();
             setValue(e.target.value);
           }}
-          placeholder="Ask CogPilot anything..."
+          placeholder={
+            (action as TextAction).text || 'Ask CogPilot anything...'
+          }
           rows={1}
           style={{
             width: '100%',
@@ -100,7 +61,11 @@ export const TextAction = ({ disabled }: { disabled?: boolean }) => {
           }}
           onKeyDown={(e) => {
             if (!e.shiftKey && e.key === 'Enter' && !!value) {
-              bot.next({ content: value, type: 'text' });
+              bot.next({
+                content: value,
+                source: 'user',
+                type: 'text',
+              } as CopilotTextResponse);
             }
           }}
         />
@@ -111,7 +76,11 @@ export const TextAction = ({ disabled }: { disabled?: boolean }) => {
           disabled={!!waiting}
           onClick={() => {
             if (value) {
-              bot.next({ content: value });
+              bot.next({
+                content: value,
+                source: 'user',
+                type: 'text',
+              } as CopilotTextResponse);
             }
           }}
           type="ghost"
@@ -144,9 +113,10 @@ const Wrapper = styled(Flex)`
     }
   }
 
-  .cogs.cogs-textarea {
+  .cogs-textarea {
     width: 100%;
     padding: 16px;
+    padding-bottom: 14px;
     border: 2px solid var(--cogs-border--interactive--default);
     border-radius: var(--cogs-border-radius--default);
     outline: none;
@@ -157,5 +127,8 @@ const Wrapper = styled(Flex)`
       color: black !important;
       padding-right: 28px;
     }
+  }
+  .cogs-textarea-container {
+    display: flex;
   }
 `;

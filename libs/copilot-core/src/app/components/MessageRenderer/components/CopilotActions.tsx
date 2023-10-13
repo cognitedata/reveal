@@ -1,17 +1,19 @@
 import { useState } from 'react';
 
 import { Button, Flex, toast } from '@cognite/cogs.js';
-import { CopilotBotMessage } from '@cognite/llm-hub';
 
+import { CopilotAction, CopilotBotResponse } from '../../../../lib/types';
 import { useCopilotContext } from '../../../hooks/useCopilotContext';
 import { useMetrics } from '../../../hooks/useMetrics';
 
 import { ResponsiveActions } from './ResponsiveActions';
 
 export const CopilotActions = ({
-  message: { content, actions = [], chain },
+  message: { content, chain },
+  actions = [],
 }: {
-  message: CopilotBotMessage;
+  message: Omit<CopilotBotResponse, 'replyTo'>;
+  actions: CopilotAction[];
 }) => {
   const [selectedFeedback, setSelectedFeedback] = useState('');
 

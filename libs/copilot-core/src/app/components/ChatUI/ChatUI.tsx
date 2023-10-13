@@ -1,259 +1,76 @@
 /* eslint-disable testing-library/await-async-utils */
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import styled, { css } from 'styled-components';
 
 import { useBotUI } from '@botui/react';
-import { BotuiInterface } from 'botui';
-import { BufferMemory, ChatMessageHistory } from 'langchain/memory';
-import { AIMessage, HumanMessage } from 'langchain/schema';
 
 import { Flex } from '@cognite/cogs.js';
-import {
-  datamodelResultSummaryPrompt,
-  processMessage,
-  newChain,
-  CogniteChatGPT,
-  CogniteChainName,
-  callPromptChain,
-  safeConvertToJson,
-  ActionType,
-  CopilotBotMessage,
-  CopilotMessage,
-  CopilotSupportedFeatureType,
-  addToCopilotEventListener,
-  sendFromCopilotEvent,
-  sendToCopilotEvent,
-} from '@cognite/llm-hub';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { CopilotMessage } from '../../../lib/types';
 import { getChatHistory, useSaveChat } from '../../hooks/useChatHistory';
 import { useCopilotContext } from '../../hooks/useCopilotContext';
 import { useMetrics } from '../../hooks/useMetrics';
+import { scrollToBottom } from '../../utils/scrollToBottom';
 import zIndex from '../../utils/zIndex';
 
 import { LargeChatUI } from './LargeChatUI';
 import { SmallChatUI } from './SmallChatUI';
 
-const scrollToBottom = () => {
-  const messagesDiv = document.querySelector('.botui_message_list');
-  if (messagesDiv) {
-    if (messagesDiv.parentElement) {
-      messagesDiv.parentElement.scrollTop = messagesDiv.scrollHeight;
-    }
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }
-};
-
-export const ChatUI = ({
-  visible,
-  feature,
-  excludeChains,
-}: {
-  visible: boolean;
-  feature?: CopilotSupportedFeatureType;
-  excludeChains: CogniteChainName[];
-}) => {
+export const ChatUI = ({ visible }: { visible: boolean }) => {
   const bot = useBotUI();
   const sdk = useSDK();
+  const { action, runFlow, activeFlow } = useCopilotContext();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { currentChatId, setLoadingStatus, messages } = useCopilotContext();
+  const { currentChatId, messages, loadingStatus, addMessages } =
+    useCopilotContext();
 
   const { mutate: setChatHistory } = useSaveChat(currentChatId);
 
   const { track } = useMetrics();
 
-  const model = useMemo(() => new CogniteChatGPT(sdk), [sdk]);
-
-  const { base: conversationChain, chains } = useMemo(() => {
-    return newChain(sdk, model, messages);
-  }, [sdk, model, messages]);
-
-  const updateMessage = useCallback(
-    async (key: number, result: CopilotBotMessage) => {
-      sendToCopilotEvent('NEW_MESSAGES', [
-        { key: key, source: 'bot', ...result },
-      ]);
-    },
-    []
-  );
-
-  const addMessage = useCallback(
-    async (chatBot: BotuiInterface, message: CopilotMessage) => {
-      messages.current.push(message);
-      await setChatHistory(messages.current);
-      const messageCount = messages.current.length;
-      await chatBot.message.add(message, {
-        ...(message.source === 'user' && {
-          previous: {
-            key: messageCount - 1,
-            type: 'action',
-            data: {},
-            meta: {},
-          },
-        }),
-        messageType: message.type,
-        updateMessage,
-      });
-    },
-    [setChatHistory, updateMessage, messages]
-  );
-
-  const promptUser = useCallback(
-    (nextActionType: ActionType) => {
-      if (nextActionType === 'None') {
-        bot.action.set({}, { actionType: 'None' });
-        return;
-      }
-      setLoadingStatus('');
-
-      bot.action
-        .set(
-          { feature },
-          { actionType: nextActionType, feature, chains, excludeChains }
-        )
-        .then(async ({ content }: { content: string }) => {
-          track('USER_PROMPT', undefined);
-          if (nextActionType === 'Message') {
-            messages.current.push({
-              content: content,
-              type: 'text',
-              source: 'user',
-            });
-            setChatHistory(messages.current);
-            processMessage(
-              feature,
-              conversationChain,
-              sdk,
-              content,
-              messages.current,
-              'en'
-            ).then((newActionType) => {
-              promptUser(newActionType);
-            });
-            setTimeout(() => {
-              scrollToBottom();
-            }, 100);
-            if (messages.current.length > 0) {
-              await bot.wait();
-            }
-          } else {
-            messages.current.push({
-              chain: content as CogniteChainName,
-              content,
-              type: 'chain',
-              source: 'user',
-            });
-            setChatHistory(messages.current);
-            promptUser('Message');
-          }
-        });
-    },
-    [
-      bot,
-      track,
-      conversationChain,
-      feature,
-      sdk,
-      setChatHistory,
-      setLoadingStatus,
-      messages,
-      chains,
-      excludeChains,
-    ]
-  );
-
-  const { createNewChat } = useCopilotContext();
+  useEffect(() => {
+    setTimeout(scrollToBottom, 400);
+  }, [loadingStatus]);
 
   useEffect(() => {
-    const removeListener = addToCopilotEventListener(
-      'NEW_MESSAGES',
-      async (newMessages) => {
-        if (newMessages.length > 0) {
-          for (const message of newMessages) {
-            if (message.key === undefined) {
-              await addMessage(bot, message);
-            } else {
-              messages.current[message.key] = message;
-              setChatHistory(messages.current);
-              await bot.message.update(message.key, message);
-            }
-          }
-          const lastMessage = newMessages[newMessages.length - 1];
-          if (lastMessage.source === 'user' && lastMessage.pending) {
-            const message = lastMessage.content;
-            bot.wait();
-            processMessage(
-              feature,
-              conversationChain,
-              sdk,
-              message,
-              messages.current,
-              'en'
-            ).then((nextActionType) => {
-              promptUser(nextActionType);
-            });
-          } else {
-            if (messages.current.some((el) => el.type === 'chain')) {
-              promptUser('Message');
-            }
-          }
-        }
-      }
-    );
-    // TODO, this should be changed down the line when the new chain is in place
-    const removeListener2 = addToCopilotEventListener(
-      'SUMMARIZE_QUERY',
-      async ({ variables, query, question }) => {
-        const [{ summary }] = await callPromptChain(
-          chains.GraphQlChain as any,
-          'summarize filter',
-          datamodelResultSummaryPrompt,
-          [
+    bot.action
+      .set({}, { actionType: action?.type || 'chain', action })
+      .then((value) => {
+        track('USER_PROMPT', undefined);
+        messages.current.push(value);
+        setChatHistory(messages.current);
+        try {
+          action?.onNext(value);
+        } catch (e: any) {
+          addMessages([
             {
-              graphql: JSON.stringify({ variables, query }),
-              question: question,
+              type: 'error',
+              content: (e as Error).message,
+              source: 'bot',
+              replyTo: messages.current.length - 1,
             },
-          ]
-        ).then(
-          safeConvertToJson<{
-            summary: string;
-          }>
-        );
-        sendFromCopilotEvent('SUMMARIZE_QUERY', { summary });
-      }
-    );
-    const removeListener3 = addToCopilotEventListener(
-      'NEW_CHAT_WITH_MESSAGES',
-      async ({ chain, messages: newMessages }) => {
-        await createNewChat([
-          {
-            type: 'chain',
-            source: 'user',
-            chain: chain,
-            content: chain,
-          },
-          ...newMessages,
-        ]);
-      }
-    );
-    return () => {
-      removeListener();
-      removeListener2();
-      removeListener3();
-    };
+          ]);
+          console.error(e);
+        }
+        if (activeFlow) {
+          runFlow(activeFlow);
+        }
+      });
+    setTimeout(() => {
+      scrollToBottom();
+    }, 400);
   }, [
+    action,
     bot,
-    addMessage,
-    setChatHistory,
-    promptUser,
-    feature,
-    sdk,
-    conversationChain,
+    runFlow,
+    activeFlow,
     messages,
-    chains,
-    createNewChat,
+    track,
+    setChatHistory,
+    addMessages,
   ]);
 
   const setupMessages = useCallback(
@@ -268,7 +85,6 @@ export const ChatUI = ({
           key: i,
           type: el.type,
           meta: {
-            updateMessage,
             messageType: el.type,
             ...(el.source === 'user' && {
               previous: {
@@ -282,74 +98,8 @@ export const ChatUI = ({
           data: el,
         }))
       );
-      const memory = new BufferMemory({
-        inputKey: 'input',
-        chatHistory: new ChatMessageHistory(
-          cachedMessages?.map((el) =>
-            el.source === 'user'
-              ? new HumanMessage(el.content)
-              : new AIMessage(el.content)
-          )
-        ),
-      });
-      [...Object.values(chains), conversationChain].forEach((el) => {
-        el.memory = memory;
-      });
-      if (messages.current.length === 0) {
-        // bot.action.reset({}, { actionType: 'None' });
-        // new chat
-        processMessage(
-          feature,
-          conversationChain,
-          sdk,
-          '',
-          messages.current,
-          'en'
-        ).then((nextActionType) => {
-          promptUser(nextActionType);
-        });
-      } else {
-        // if this is not a brand new chat
-        const firstUserMessage = messages.current?.find(
-          (el) => el.source === 'user'
-        );
-        // if theres already a welcome message, then do chain selection
-        if (!firstUserMessage) {
-          promptUser('ChainSelection');
-          return;
-        }
-        const lastUserMessage = messages.current?.findLast(
-          (el) => el.source === 'user'
-        );
-        // if theres a set of messages, and one needs to be processed, then run it
-        if (lastUserMessage && lastUserMessage.pending) {
-          bot.wait();
-          processMessage(
-            feature,
-            conversationChain,
-            sdk,
-            lastUserMessage.content,
-            messages.current,
-            'en'
-          ).then((nextActionType) => {
-            promptUser(nextActionType);
-          });
-        } else {
-          // if missing "chain" selection, default to None, other wise allow for messages.
-          promptUser(firstUserMessage?.type === 'chain' ? 'Message' : 'None');
-        }
-      }
     },
-    [
-      promptUser,
-      feature,
-      conversationChain,
-      chains,
-      sdk,
-      bot,
-      updateMessage,
-      messages,
-    ]
+    [bot, messages]
   );
 
   useEffect(() => {
@@ -363,9 +113,6 @@ export const ChatUI = ({
       }, 100);
     })();
   }, [currentChatId, sdk.project, setupMessages]);
-  useEffect(() => {
-    sendFromCopilotEvent('CHAT_READY', undefined);
-  }, []);
 
   if (!visible || isLoading) {
     return <></>;
@@ -417,6 +164,7 @@ export const CopilotPurpleOverride = css`
 
   --cogs-surface--action--strong--hover: #632cd4;
   --cogs-surface--action--strong--default: #6f3be4;
+  --cogs-themed-surface--action--strong--default: #6f3be4;
 `;
 
 const Wrapper = styled.div`

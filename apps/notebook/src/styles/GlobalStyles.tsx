@@ -1,3 +1,4 @@
+import highlight from 'highlight.js/styles/dracula.css';
 import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
@@ -17,7 +18,7 @@ Modal.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  const didLoadStyles = useGlobalStyles([cogsStyles, monacoStyles]);
+  const didLoadStyles = useGlobalStyles([cogsStyles, monacoStyles, highlight]);
 
   if (!didLoadStyles) {
     return <Loader />;

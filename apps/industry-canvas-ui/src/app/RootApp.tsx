@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import { Loader } from '@data-exploration/components';
+import { Copilot } from '@fusion/copilot-core';
 import {
   IndustryCanvasHomePage,
   IndustryCanvasPage,
@@ -16,6 +17,7 @@ import {
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { ChartsSdkInitialisationGuard } from '@cognite/charts-lib';
+import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { useUserInformation } from '../hooks/useUserInformation';
@@ -33,63 +35,66 @@ export default function App() {
   const sdk = useSDK();
   const { flow } = getFlow();
   const { data: userInfo } = useUserInformation();
+  const { isEnabled } = useFlag('COGNITE_COPILOT');
 
   return (
     <Suspense fallback={<Spinner />}>
-      <TrackingContextProvider trackUsage={trackUsage}>
-        <ICProvider flow={flow} sdk={sdk} userInfo={userInfo}>
-          <SpaceProvider
-            spaceDefinition={{
-              space: IndustryCanvasService.INSTANCE_SPACE,
-              name: 'Industrial Canvas instance space',
-              description: 'The Industrial Canvas instance space',
-            }}
-            requiredReadScopes={[
-              IndustryCanvasService.SYSTEM_SPACE,
-              IndustryCanvasService.INSTANCE_SPACE,
-            ]}
-            requiredDatamodelWriteScopes={[
-              IndustryCanvasService.INSTANCE_SPACE,
-            ]}
-          >
+      <Copilot sdk={sdk} showChatButton={isEnabled}>
+        <TrackingContextProvider trackUsage={trackUsage}>
+          <ICProvider flow={flow} sdk={sdk} userInfo={userInfo}>
             <SpaceProvider
               spaceDefinition={{
-                space: CommentService.INSTANCE_SPACE,
-                name: 'Comment instance space',
-                description: 'The comment instance space',
+                space: IndustryCanvasService.INSTANCE_SPACE,
+                name: 'Industrial Canvas instance space',
+                description: 'The Industrial Canvas instance space',
               }}
               requiredReadScopes={[
-                CommentService.SYSTEM_SPACE,
-                CommentService.INSTANCE_SPACE,
+                IndustryCanvasService.SYSTEM_SPACE,
+                IndustryCanvasService.INSTANCE_SPACE,
               ]}
-              requiredDatamodelWriteScopes={[CommentService.INSTANCE_SPACE]}
+              requiredDatamodelWriteScopes={[
+                IndustryCanvasService.INSTANCE_SPACE,
+              ]}
             >
-              <UserProfileProvider>
-                <IndustryCanvasProvider>
-                  <Routes>
-                    <Route
-                      path="/industrial-canvas"
-                      element={<IndustryCanvasHomePage />}
-                    />
-                    <Route
-                      path="/industrial-canvas/canvas"
-                      element={<IndustryCanvasPage />}
-                    />
-                    <Route
-                      path="/industrial-canvas/test"
-                      element={
-                        <ChartsSdkInitialisationGuard>
-                          <Charts />
-                        </ChartsSdkInitialisationGuard>
-                      }
-                    />
-                  </Routes>
-                </IndustryCanvasProvider>
-              </UserProfileProvider>
+              <SpaceProvider
+                spaceDefinition={{
+                  space: CommentService.INSTANCE_SPACE,
+                  name: 'Comment instance space',
+                  description: 'The comment instance space',
+                }}
+                requiredReadScopes={[
+                  CommentService.SYSTEM_SPACE,
+                  CommentService.INSTANCE_SPACE,
+                ]}
+                requiredDatamodelWriteScopes={[CommentService.INSTANCE_SPACE]}
+              >
+                <UserProfileProvider>
+                  <IndustryCanvasProvider>
+                    <Routes>
+                      <Route
+                        path="/industrial-canvas"
+                        element={<IndustryCanvasHomePage />}
+                      />
+                      <Route
+                        path="/industrial-canvas/canvas"
+                        element={<IndustryCanvasPage />}
+                      />
+                      <Route
+                        path="/industrial-canvas/test"
+                        element={
+                          <ChartsSdkInitialisationGuard>
+                            <Charts />
+                          </ChartsSdkInitialisationGuard>
+                        }
+                      />
+                    </Routes>
+                  </IndustryCanvasProvider>
+                </UserProfileProvider>
+              </SpaceProvider>
             </SpaceProvider>
-          </SpaceProvider>
-        </ICProvider>
-      </TrackingContextProvider>
+          </ICProvider>
+        </TrackingContextProvider>
+      </Copilot>
     </Suspense>
   );
 }

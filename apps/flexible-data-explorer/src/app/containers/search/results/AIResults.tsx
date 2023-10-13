@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { CopilotPurpleOverride } from '@fusion/copilot-core';
-
 import {
-  CopilotDataModelQueryMessage,
-  addFromCopilotEventListener,
-  sendToCopilotEvent,
-  useToCopilotEventHandler,
-  useFromCopilotEventHandler,
-} from '@cognite/llm-hub';
+  CopilotPurpleOverride,
+  useCopilotContext,
+  GraphQlQueryFlow,
+  CopilotDataModelQueryResponse,
+  GraphQlSummaryFlow,
+} from '@fusion/copilot-core';
+
+import { useSDK } from '@cognite/sdk-provider';
 
 import { SearchResults } from '../../../components/search/SearchResults';
 import { useIsCogpilotEnabled } from '../../../hooks/useFlag';
@@ -19,6 +19,7 @@ import {
   useAISearchParams,
   useSearchQueryParams,
 } from '../../../hooks/useParams';
+import { DataModelV2 } from '../../../services/types';
 import { useSelectedDataModels } from '../../../services/useSelectedDataModels';
 import { AIResultsList } from '../containers/AIResultsList';
 import { AIResultSummary } from '../containers/AIResultSummary';
@@ -29,12 +30,18 @@ export const AIResults = () => {
   const selectedDataModels = useSelectedDataModels();
   const [aiSearchEnabled] = useAISearchParams();
   const [isSearching, setIsSearching] = useState(false);
+  const [error, setError] = useState<string | undefined>();
+  const [loadingStatus, setLoadingStatus] = useState<
+    { status: string; stage?: number } | undefined
+  >();
+  const sdk = useSDK();
 
   const [copilotMessage, setMessage] = useState<
-    (CopilotDataModelQueryMessage & { edited?: boolean }) | undefined
+    (CopilotDataModelQueryResponse & { edited?: boolean }) | undefined
   >(undefined);
 
   const [cachedQuery, setCachedQuery] = useAIQueryLocalStorage();
+  const currentQueryRef = useRef<string | null>(cachedQuery?.search || null);
   useAICacheEdited(copilotMessage, setMessage);
   useEffect(() => {
     if (cachedQuery && !isSearching) {
@@ -46,64 +53,72 @@ export const AIResults = () => {
 
   const isCopilotEnabled = useIsCogpilotEnabled();
 
-  useToCopilotEventHandler('NEW_MESSAGES', (messages) => {
-    for (const message of messages) {
-      if (message.type === 'data-model-query' && message.replyTo === query) {
-        setIsSearching(false);
-        setMessage(message);
-      }
-    }
-  });
+  const graphQLFlow = useMemo(() => new GraphQlQueryFlow({ sdk }), [sdk]);
+  const summarizeFlow = useMemo(() => new GraphQlSummaryFlow({ sdk }), [sdk]);
 
-  useFromCopilotEventHandler('SUMMARIZE_QUERY', ({ summary }) => {
-    setMessage((curr) => {
-      const newMessage = curr ? { ...curr, summary } : undefined;
-      if (newMessage) {
-        setCachedQuery((currCache) =>
-          currCache
-            ? {
-                ...currCache,
-                message: newMessage,
-              }
-            : undefined
-        );
-      }
-      return newMessage;
-    });
-  });
+  const { runFlow } = useCopilotContext();
 
-  const sendMessage = useCallback(() => {
-    if (cachedQuery?.search !== query) {
+  const sendMessage = useCallback(
+    (prompt: string, dataModels: DataModelV2[]) => {
+      if (currentQueryRef.current === prompt) {
+        return;
+      }
+      currentQueryRef.current = prompt;
+      setError(undefined);
       setMessage(undefined);
       setIsSearching(true);
-      sendToCopilotEvent('NEW_CHAT_WITH_MESSAGES', {
-        chain: 'GraphQlChain',
-        messages: [
-          {
-            source: 'bot',
-            type: 'data-models',
-            dataModels: (selectedDataModels || []).map((model) => ({
-              dataModel: model.externalId,
-              space: model.space,
-              version: model.version,
-            })),
-            content: 'I am looking at data in this data model',
-            replyTo: '',
-          },
-          {
-            source: 'user',
-            content: query,
-            type: 'text',
-            context: 'Searched in Explorer',
-          },
-        ],
-      });
-    }
-  }, [query, selectedDataModels, cachedQuery]);
+
+      runFlow(graphQLFlow, {
+        prompt,
+        sdk: sdk,
+        selectedDataModels:
+          dataModels?.map((el) => ({
+            dataModel: el.externalId,
+            version: el.version,
+            space: el.space,
+          })) || [],
+        onStatus(_, progress = 0) {
+          if (currentQueryRef.current === prompt) {
+            if (progress < 0.3) {
+              setLoadingStatus({
+                status: 'Identifying correct data...',
+                stage: progress,
+              });
+            } else if (progress < 0.6) {
+              setLoadingStatus({
+                status: 'Identifying correct filter...',
+                stage: progress,
+              });
+            } else if (progress < 0.9) {
+              setLoadingStatus({
+                status: 'Summarizing results...',
+                stage: progress,
+              });
+            } else {
+              setLoadingStatus({ status: 'Finishing up...', stage: progress });
+            }
+          }
+        },
+      })
+        .then((message) => {
+          if (currentQueryRef.current === prompt) {
+            setIsSearching(false);
+            setMessage(message);
+            setLoadingStatus(undefined);
+          }
+        })
+        .catch((e) => {
+          if (currentQueryRef.current === prompt) {
+            setError(e.message);
+          }
+        });
+    },
+    [graphQLFlow, runFlow, sdk]
+  );
 
   useEffect(() => {
     if (aiSearchEnabled && query && selectedDataModels && isCopilotEnabled) {
-      sendMessage();
+      sendMessage(query, selectedDataModels);
     }
   }, [
     query,
@@ -113,14 +128,39 @@ export const AIResults = () => {
     sendMessage,
   ]);
 
-  useEffect(() => {
-    const removeHandler = addFromCopilotEventListener('CHAT_READY', () => {
-      if (query && selectedDataModels) {
-        sendMessage();
-      }
-      removeHandler();
-    });
-  }, [query, selectedDataModels, sendMessage]);
+  const handleEditFilter = (newFilter: any) => {
+    runFlow(summarizeFlow, {
+      queryType: copilotMessage?.queryType || '',
+      relevantTypes: copilotMessage?.relevantTypes || [],
+      prompt: '...',
+      sdk: sdk,
+      query: copilotMessage?.graphql.query || '',
+      variables: {
+        ...copilotMessage?.graphql.variables,
+        filter: newFilter || {},
+      },
+    })
+      .then(({ content: summary }) => {
+        setIsSearching(false);
+        setMessage((curr) => {
+          const newMessage = curr ? { ...curr, summary } : undefined;
+          if (newMessage) {
+            setCachedQuery((currCache) =>
+              currCache
+                ? {
+                    ...currCache,
+                    message: newMessage,
+                  }
+                : undefined
+            );
+          }
+          return newMessage;
+        });
+      })
+      .catch(() => {
+        setError('');
+      });
+  };
 
   if (!aiSearchEnabled || !isCopilotEnabled) {
     return null;
@@ -132,6 +172,9 @@ export const AIResults = () => {
         <AIResultSummary
           copilotMessage={copilotMessage}
           setCopilotMessage={setMessage}
+          error={error}
+          loadingStatus={loadingStatus}
+          onEditFilter={handleEditFilter}
         />
         <AIResultsList copilotMessage={copilotMessage} />
       </SearchResults>

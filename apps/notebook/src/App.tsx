@@ -5,6 +5,7 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 
+import { Copilot } from '@fusion/copilot-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
@@ -16,7 +17,7 @@ import {
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
-import { FlagProvider } from '@cognite/react-feature-flags';
+import { FlagProvider, useFlag } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { translations } from './common/i18n';
@@ -39,6 +40,7 @@ const env = getEnv();
 const project = getProject();
 
 const App = () => {
+  const { isEnabled } = useFlag('COGNITE_COPILOT');
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/:project/">
@@ -53,6 +55,18 @@ const App = () => {
       </Route>
     )
   );
+  return (
+    <Wrapper>
+      <SDKProvider sdk={sdk}>
+        <Copilot sdk={sdk} showChatButton={isEnabled}>
+          <RouterProvider router={router} />
+        </Copilot>
+      </SDKProvider>
+    </Wrapper>
+  );
+};
+
+const Wrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <FlagProvider
       appName="cdf-ui-notebook"
@@ -70,9 +84,7 @@ const App = () => {
                 loadingScreen={<Loader />}
                 login={() => loginAndAuthIfNeeded(project, env)}
               >
-                <SDKProvider sdk={sdk}>
-                  <RouterProvider router={router} />
-                </SDKProvider>
+                {children}
               </AuthWrapper>
             </SubAppWrapper>
           </GlobalStyles>

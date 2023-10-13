@@ -7,8 +7,13 @@ import {
 } from 'react-router-dom';
 
 import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
+import { Copilot, FusionQAFlow, useCopilotContext } from '@fusion/copilot-core';
+import noop from 'lodash/noop';
 
 import { getProject } from '@cognite/cdf-utilities';
+
+import { getCogniteSDKClient } from '../environments/cogniteSdk';
+import { useFlag } from '../environments/useFlag';
 
 import { Spinner } from './components/Spinner/Spinner';
 import { getContainer } from './GlobalStyles';
@@ -49,6 +54,22 @@ interface RoutesWrapperProps {
 }
 const RoutesWrapper = ({ children }: RoutesWrapperProps) => {
   useFusionQuery();
+  const { isEnabled } = useFlag('COGNITE_COPILOT', {
+    fallbackForTest: false,
+    fallback: false,
+  });
+
+  const { registerFlow } = useCopilotContext();
+
+  useEffect(() => {
+    if (isEnabled) {
+      const unmount = registerFlow({
+        flow: new FusionQAFlow({ sdk: getCogniteSDKClient() }),
+      });
+      return () => unmount();
+    }
+    return noop;
+  }, [registerFlow, isEnabled]);
   useEffect(() => {
     const dragDropPortal: HTMLElement = document.createElement('div');
     dragDropPortal.classList.add(DRAG_DROP_PORTAL_CLASS);
@@ -58,10 +79,15 @@ const RoutesWrapper = ({ children }: RoutesWrapperProps) => {
   }, []);
   return <>{children}</>;
 };
+
 const Routes = () => {
   const tenant = getProject();
+  const { isEnabled } = useFlag('COGNITE_COPILOT', {
+    fallbackForTest: false,
+    fallback: false,
+  });
 
-  return (
+  const contents = (
     <BrowserRouter
       basename={tenant}
       window={window}
@@ -79,6 +105,12 @@ const Routes = () => {
       }
     />
   );
+
+  if (isEnabled) {
+    return <Copilot sdk={getCogniteSDKClient()}>{contents}</Copilot>;
+  }
+
+  return contents;
 };
 
 export default Routes;

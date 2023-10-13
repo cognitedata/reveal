@@ -5,11 +5,8 @@ import styled from 'styled-components';
 import { useDebounce } from 'use-debounce';
 
 import { Button, Dropdown, InputExp, Menu } from '@cognite/cogs.js';
-import {
-  CopilotAction,
-  sendFromCopilotEvent,
-  sendToCopilotEvent,
-} from '@cognite/llm-hub';
+
+import { CopilotAction } from '../../../../lib/types';
 
 const getButtonWidth = (text: string) => text.length * 8 + 20;
 
@@ -67,7 +64,7 @@ export const ResponsiveActions = ({ actions }: { actions: Action[] }) => {
 
   return (
     <Wrapper ref={navigationOuter}>
-      {priorityItems.map((item) => (
+      {priorityItems.map((item, i) => (
         <Dropdown
           key={item.content}
           disabled={!('options' in item)}
@@ -76,16 +73,12 @@ export const ResponsiveActions = ({ actions }: { actions: Action[] }) => {
         >
           <Button
             size="small"
-            key={item.content}
+            key={`${item.content}-${i}`}
             icon={'options' in item ? 'ChevronDown' : item.icon}
             iconPlacement={'options' in item ? 'right' : 'left'}
             onClick={() => {
               if ('onClick' in item && item.onClick) {
                 item.onClick();
-              } else if ('fromCopilotEvent' in item) {
-                sendFromCopilotEvent(...item.fromCopilotEvent);
-              } else if ('toCopilotEvent' in item) {
-                sendToCopilotEvent(...item.toCopilotEvent);
               }
             }}
             className="ai"
@@ -98,16 +91,12 @@ export const ResponsiveActions = ({ actions }: { actions: Action[] }) => {
         <Dropdown
           content={
             <Menu>
-              {moreItems.map((item) => (
+              {moreItems.map((item, i) => (
                 <Menu.Item
-                  key={item.content}
+                  key={`${item.content}-${i}`}
                   onClick={() => {
                     if ('onClick' in item && item.onClick) {
                       item.onClick();
-                    } else if ('fromCopilotEvent' in item) {
-                      sendFromCopilotEvent(...item.fromCopilotEvent);
-                    } else if ('toCopilotEvent' in item) {
-                      sendToCopilotEvent(...item.toCopilotEvent);
                     }
                   }}
                 >

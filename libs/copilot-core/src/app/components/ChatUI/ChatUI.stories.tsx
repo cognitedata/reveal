@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import { useBotUI } from '@botui/react';
 import type { Meta } from '@storybook/react';
 
-import { CopilotMessage } from '@cognite/llm-hub';
+import { CogniteClient } from '@cognite/sdk';
 
-import { CopilotContextProvider } from '../../utils/CopilotContext';
+import { CopilotMessage } from '../../../lib/types';
+import { CopilotContextProvider } from '../../context/CopilotContext';
 
 import { ChatUIInner } from './ChatUI';
 
@@ -16,7 +17,7 @@ const Story: Meta<typeof ChatUIInner> = {
     (InnerStory) => {
       return (
         <>
-          <CopilotContextProvider>
+          <CopilotContextProvider sdk={{} as CogniteClient}>
             <InnerStory />
           </CopilotContextProvider>
         </>

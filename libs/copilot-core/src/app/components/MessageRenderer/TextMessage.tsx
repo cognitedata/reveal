@@ -1,7 +1,12 @@
 import React from 'react';
 
 import { Body, Flex } from '@cognite/cogs.js';
-import { CopilotTextMessage } from '@cognite/llm-hub';
+
+import {
+  CopilotBotTextResponse,
+  CopilotMessage,
+  CopilotTextResponse,
+} from '../../../lib/types';
 
 import { Markdown } from './components/Markdown';
 import { MessageBase } from './MessageBase';
@@ -10,15 +15,14 @@ export const TextMessage = ({
   message,
 }: {
   message: {
-    data: CopilotTextMessage &
-      ({ source: 'user' } | { source: 'bot'; replyTo: string });
+    data: CopilotBotTextResponse | CopilotTextResponse;
   };
 }) => {
   const {
     data: { content, context },
   } = message;
   return (
-    <MessageBase message={message}>
+    <MessageBase message={message.data as CopilotMessage}>
       <Flex direction="column" gap={4} style={{ marginTop: 8 }}>
         <Markdown content={content} />
         {context && (

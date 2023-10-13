@@ -1,13 +1,12 @@
 import { useMemo } from 'react';
 
-import { Flex } from '@cognite/cogs.js';
-import {
-  CopilotAction,
-  CopilotDataModelQueryMessage,
-  sendFromCopilotEvent,
-} from '@cognite/llm-hub';
+import { FdmMixerApiService } from '@platypus/platypus-core';
+import { useQuery } from '@tanstack/react-query';
 
-import { useCopilotContext } from '../../hooks/useCopilotContext';
+import { Body, Flex } from '@cognite/cogs.js';
+import { useSDK } from '@cognite/sdk-provider';
+
+import { CopilotDataModelQueryResponse } from '../../../lib/types';
 
 import { Markdown } from './components/Markdown';
 import { MessageBase } from './MessageBase';
@@ -15,67 +14,47 @@ import { MessageBase } from './MessageBase';
 export const DataQueryMessage = ({
   message,
 }: {
-  message: { data: CopilotDataModelQueryMessage & { source: 'bot' } };
+  message: {
+    data: CopilotDataModelQueryResponse & { source: 'bot'; replyTo: number };
+  };
 }) => {
-  const { messages } = useCopilotContext();
   const {
-    data: { content, actions = [], dataModel, graphql },
+    data: { summary },
   } = message;
 
-  const openInExplorer = useMemo(() => {
-    if (!window.location.pathname.includes('/explore')) {
-      return {
-        content: 'View in Explorer',
-        icon: 'Search',
-        onClick: () => {
-          window.open(
-            `//${
-              window.location.href.includes('.dev.fusion')
-                ? 'localhost:3000'
-                : 'apps.cognite.com/explore'
-            }/search?aiSearch=true&searchQuery=${
-              [...messages.current].reverse().find((el) => el.source === 'user')
-                ?.content
-            }`,
-            '_blank'
-          );
-        },
-      } as CopilotAction;
-    }
-    return undefined;
-  }, [messages]);
-  const openInCanvas = useMemo(() => {
-    if (window.location.pathname.includes('/industrial-canvas/canvas')) {
-      return {
-        content: 'Open in Canvas',
-        icon: 'Add',
-        onClick: () => {
-          sendFromCopilotEvent('GQL_QUERY', {
-            query: graphql.query,
-            variables: graphql.variables,
-            dataModel: dataModel,
-          });
-        },
-      } as CopilotAction;
-    }
-    return undefined;
-  }, [dataModel, graphql]);
+  const { data: result, isLoading } = useResults(message.data);
   return (
     <MessageBase
       message={{
-        data: {
-          ...message.data,
-          actions: [
-            ...actions,
-            ...(openInCanvas ? [openInCanvas] : []),
-            ...(openInExplorer ? [openInExplorer] : []),
-          ],
-        },
+        ...message.data,
       }}
     >
       <Flex direction="column" gap={4} style={{ marginTop: 8 }}>
-        <Markdown content={content} />
+        <Markdown content={summary} />
+        {isLoading && <Body size="x-small">Loading...</Body>}
+        {result && (
+          <Body size="x-small">
+            {(Object.values(result.data as any)[0] as any).items.length} items
+            found
+          </Body>
+        )}
       </Flex>
     </MessageBase>
   );
+};
+
+const useResults = (message: CopilotDataModelQueryResponse) => {
+  const sdk = useSDK();
+
+  const service = useMemo(() => new FdmMixerApiService(sdk), [sdk]);
+
+  return useQuery([JSON.stringify(message)], () => {
+    const result = service.runQuery({
+      dataModelId: message.dataModel.externalId,
+      space: message.dataModel.space,
+      schemaVersion: message.dataModel.version,
+      graphQlParams: message.graphql,
+    });
+    return result;
+  });
 };

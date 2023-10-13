@@ -1,6 +1,6 @@
 import { Button, Flex, Title } from '@cognite/cogs.js';
 
-import { ReactComponent as CopilotIcon } from '../../../assets/CopilotIcon.svg';
+import { CopilotIcon } from '../../../assets/CopilotIcon';
 import { useCopilotContext } from '../../hooks/useCopilotContext';
 
 export const ChatHeader = ({

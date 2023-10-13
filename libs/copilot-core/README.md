@@ -1,179 +1,193 @@
 # @cognite/copilot-core
 
-This is the core logic part of copilot, where both the UI and business logic lives. Most apps (ones in fusion) will not need to import the UI part, simply just need to update the business logic.
+This is the core library for the Copilot. It contains the UI for the chatbot, and acts as a thin wrapper above the Chains from `@cognite/llm-hub`.
 
-We will go over how the business logic works first, and UI second.
+## Getting started
 
-# Business logic part
+1. Install the library
 
-For the Copilot, there are 3 categories of logic, both living in `src/lib`:
-
-1. Chat bot flow - the UX of the chatbot and **how it interacts with the user**
-
-2. Toolchains of the copilot - the backbone of the chat bot, where **each toolchain is a tool that the user have access to**. Each toolchain may need to communicate with the base application, thus:
-
-3. Events - the **communication between the copilot and the base application.**
-
-## 1. Chat bot flow
-
-<img style="max-width:200px" src="./assets/labeled-example.png" />
-
-### `processMessage`
-
-Given a message from the user, what should we reply and respond with.
-
-- params:
-  - `message`
-  - `pastMessages`(includes the current `message` in the first parameter)
-  - `async sendMessage()` - allows the bot to send a message to the user
-- returns: `Promise<Boolean>`, should continue letting users do input or not.
-
-> This process message by default will call the **router chain** as the main toolchain that identifies which tool to use to solve the identified user intent. More on this in next section
-
-### `getActions`
-
-Given the current list of messages, what are some recommended actions that the user can do.
-
-- params:
-  - `pastMessages`
-  - async `sendMessage()`
-- returns: `Promise<Actions[]>` - what buttons the user has access to for perfoming an action
-
-Note: if the `pastMesages` are empty, assume you are starting the conversation with the user. Hence the sendMessage is super useful for giving context to the user, while the actions provide some quick ways to get started.
-
-## 2. Toolchains
-
-Toolchains are defined in `src/lib/toolchains`. The toolchains are categorized into different feature, but each can be "chained" to the result of another. How it works is as following:
-
-```mermaid
-flowchart LR
-    Prompt[Prompt] --> Router(Router Chain)
-    Router --> Chain1[Chain 1]:::Chain
-    Router --> Chain2[Chain 2]:::Chain
-    Router --> Chain[...]
-    Router --> ChainN[Chain N]:::Chain
-    Chain1 --> Ready[Ready for next prompt]
-    Chain2 --> Ready[Ready for next prompt]
-    Chain --> Ready[Ready for next prompt]
-    ChainN --> Ready[Ready for next prompt]
-
-    style Prompt fill:none,stroke-width:0px
-    style Router fill:purple,stroke-width:0px
-    style Chain stroke-width:0px,fill:none
-    classDef Chain fill:none,stroke:purple, stroke-width:2px
-    style Ready fill:green,stroke-width:0px
+```bash
+yarn add @cognite/copilot-core
+# if your in `fusion` repo already, you can skip this,
+# '@fusion/copilot-core' is already avaialble to you
 ```
 
-and within each chain:
+2. import the `Copilot` component from the library and mount it. It expects a valid `sdk` (CogniteClient).
 
-```mermaid
-flowchart LR
-    ChainStart --> TOOL1 --> TOOL2 --> TOOLN --> ... --> ChainEnd
-    subgraph TOOL1[Some tool talks to users]
-        direction TB
-        ToolChain1 --> bot[Send Message as bot]:::bot
-    end
-    subgraph TOOL2[Some tool talks to users]
-        direction TB
-        ToolChain2 --> bot2[Send Message as bot]:::bot --> prompt:::bot
-    end
-    subgraph TOOLN[Some tool just processes data]
-        direction TB
-        ToolChain3
-    end
+```js
+import { Copilot } from '@cognite/copilot-core';
+// or
+// import { Copilot } from '@fusion/copilot-core'
 
-    style ChainStart fill:purple,stroke:none
-    style ChainEnd fill:purple,stroke:none
-    classDef bot fill:none,stroke:none,font-family:monospace,font-size:12px,color:red
-
+// somewhere in your app
+<Copilot sdk={sdk}>{/* children */}</Copilot>;
 ```
 
-> The router chain is defined in `src/lib/toolchains/router/router.ts` and the most important chain - this gets triggered when we get a message from the user typically from `processMessage` and it will route the message to the correct toolchain.
+You can mount the copilot anywhere in your app, but we recommend the root. With this wrapper, `useCopilotContext` will be available to you anywhere in your app. You can use this to customize the copilot chat interface, such as (or "for example"/"e.g."):
 
-To add a tool chain, simply:
+- availability of the button / UI
+- how "messages" (responses from AI and user) behave
+- which features are available to run in the UI
+- run a specific feature
 
-1. Create a new toolchain in the `src/lib/toolchains` folder (under a feature group preferably), make sure the tool chain extends from `CogniteBaseChain`.
-2. Code the chain, in here you have access to the sdk, the latest message and also the ability to communicate to the app or send message to the user via `ToCopilot.NEW_MESSAGES` **with the source as bot!** (more in the next section).
-   > We recommend taking a look at the simple `appBuilder.ts` toolchain to get started.
-3. Add the new toolchain in the `src/lib/toolchains/index.ts` file, and add it to the `ChainName` type with the literal of the name. and to
-   `destinationChains` mapping between the name and the instantiated chain.
-4. Watch the magic happen and give yourself a high five (or high five here 🖐️).
+We call these features "Flows", more on this in next section.
 
-## 3. Communicating between Copilot <-> App
+# Flows
 
-We communicate between the Copilot and the App via CustomMessage. We provide a variety of helpers for making this communication easy. To define these special events, there are 2 categories of events and event listener - `fromCopilot` and `toCopilot`, which intuitively describes event (or listening to events) that are "from" or "to" the Copilot.
+Flows are features you can run to help a user do a task end to end. They are wrapped around a [Chain](https://github.com/cognitedata/cognite-llm-hub/tree/main/ts-library#chains) from `@cognite/llm-hub` usually, but they can be anything.
 
-These are defined in the [types](./src/lib/types.ts) file.
+For example, we have `PythonAppBuilderFlow` which is a flow that helps a user build a python app. This flow is a wrapper around the `PythonAppBuilderChain` from `@cognite/llm-hub`. In the Flow, we add the ability for apps to pass in the current code, and also decide how the response should be rendered as a UI for the user.
 
-Let's walk through an example:
+## Create a flow
+
+A Flow is defined as the following:
 
 ```typescript
-type CopilotEvents = {
-  FromCopilot: {
-    // get all code from streamlit
-    GET_CODE: null;
-  };
-  ToCopilot: {
-    // get all code from streamlit
-    GET_CODE: {
-      content?: string;
+import { CogniteClient } from '@cognite/sdk';
+
+import { Flow, CopilotBotTextResponse } from '@cognite/copilot-core'; // or '@fusion/copilot-core' from within the fusion repo
+
+type Input = { prompt: string; sdk: CogniteClient }; // must at least have SDK
+
+type Output = CopilotBotTextResponse; // must be one of CopilotBotResponse
+
+export class MyAwesomeFlow extends Flow<Input, Output> {
+  label = 'Inquire about CDF';
+  description = 'Answer questions about CDF';
+
+  // must be implemented
+  // takes the input, does magic, and gives a Response
+  run: Flow<Input, Output>['run'] = async ({ prompt, sdk }) => {
+    // some magic...
+    // here you should also run Chains from @cognite/llm-hub
+
+    return {
+      type: 'text',
+      content: 'some new content',
     };
   };
-};
+  // implement chatRun to allow for it to run from Copilot
+  chatRun: Flow<Input, Output>['chatRun'] = async (sendMessage, sendStatus) => {
+    // loop through required Inputs that hasnt been completed yet
+    if (this.fields?.prompt === undefined) {
+      // return only valid "UserAction" (those supported by the chatbot)
+      return {
+        text: 'What would like you like to know about CDF?',
+        type: 'text',
+        onNext: ({ content }) => {
+          this.fields.prompt = content;
+        },
+      };
+    }
+    // update status
+    sendStatus({ status: 'Finding answer...' });
+    // send a Response to the copilot coming back by the default run
+    // and send to the user as a Message
+    sendMessage(await this.run(this.fields as Input));
+    // reset the state after a response is finished
+    this.fields.prompt = undefined;
+
+    // return undefined to stop the chatbot from asking for more input
+    return undefined;
+  };
+}
 ```
 
-**Copilot side**
+## Running a flow
 
-Now, lets say in `processMessage` in Copilot, you want to trigger an event to get all the code, then you can do the following.
+After declaring the flow, there are 2 ways to run the flow.
 
-In this case, you want to add a way to listen for `GET_CODE` **from** the App, and then send a `GET_CODE` event **to** the App.
+### 1. Run it directly from the app
 
 ```typescript
-// creates a listener for `GET_CODE_RESPONSE` from Copilot, we will use the returned function later
-const removeEventListener = addToCopilotEventListener('GET_CODE', (event) => {
-  // do something with the event.content code
-  // ...
+const { runFlow } = useCopilotContext();
 
-  removeEventListener();
-});
+const flow = useMemo(() => new MyAwesomeFlow({ sdk }), [sdk]);
 
-// send the event to the App (from the Copilot) to trigger a response.
-sendFromCopilotEvent('GET_CODE', null);
+const response = await runFlow(flow, { prompt: 'What is CDF' });
+
+// if you want to have the response in the chatbot with a message indicating some context, you can do
+
+const response = await runFlow(flow, { prompt: 'What is CDF' }, true, { type: 'text', content: 'Running this now', source: 'user' });
 ```
 
-**App side**
-
-You would do the inverse of the To/From but the same logic as above in the app. However, you can also use the provided hook builder - `createCopilotEventHandlerHooks`.
-
-In this case you are listening to `GET_CODE` **from** the Copilot, and then sending a `GET_CODE` **to** the Copilot.
+### 2. Enable it from the chat bot
 
 ```typescript
-// creates a handler for `GET_CODE_RESPONSE` from Copilot
-const handler = useCallback(() => {
-  sendToCopilotEvent('GET_CODE', {
-    content: editorRef?.getModel()?.getValue(),
+const { registerFlow } = useCopilotContext();
+
+const flow = useMemo(() => new MyAwesomeFlow({ sdk }), [sdk]);
+
+useEffect(() => {
+  const unregister = await registerFlow({
+    flow,
   });
-});
 
-// creates a listener for `GET_CODE` from Copilot
-useFromCopilotEventHandler('GET_CODE', handler);
+  // dont forget to unregister the flow
+  return () => unregister();
+}, []);
 ```
 
-# UI part
+#### Async input
 
-`/src/app` contains all the code for the UI, which is divided in 2, the Button itself and the Chat UI.
+Sometimes you need to pass in additional input to the flow that needs to be passed in at time of request (i.e. the current code when user runs the Flow).
 
-<img style="max-width:300px" src="./assets/example.png" />
+```typescript
+const unregister = await registerFlow({
+  flow,
+  input: {
+    somethingFromTheApp: () => someRef.current.value,
+  },
+});
+```
 
-Most uses of this fusion is not needed as the Button and Chat are globally mounted by the `@cognite/cdf-copilot` subapp (another `app` in this repo.).
+#### Additional message actions (buttons)
 
-The Button triggers the copilot via a CustomEvent via window. This means any other app can simply pass the same CustomEvent and trigger the open / closing of the Chat UI. This is also the way the Chatbot will communicate with other UIs on the screen.
+Sometimes the message from Copilot (Responses from Flows) needs additional actions for users to be able to interact with. For example, the `PythonAppBuilderFlow` has a "Use code" button that allows users to use the code.
 
-However, this is needed for other non fusion apps to mount the copilot itself.
+```typescript
+const unregister = await registerFlow({
+  flow,
+  undefined,
+  messageActions: {
+    text: (message) => [
+      {
+        content: 'Use code',
+        onClick: () => {
+          // do something with message.content
+        },
+      },
+    ],
+  },
+});
+```
 
-### How to use the UI aspect of the data model.
+## Copilot core additional states
 
-Simply import the `Copilot` component from the library and mount it. It expects a valid `sdk` (CogniteClient) and a `feature` name, which it needs to identify the business logic to run. We will go over this in the previous section.
+**AI states**
+
+1. `loadingStatus` - the current loading status of the copilot
+
+**UI states**
+
+1. `messages` - all the current messages
+2. `createNewChat` - creates a new chat
+3. `showChatButton`/`setShowChatButton` - the current visibility of the chat button
+
+## Diagram of how it works
+
+Explaining more of how it works, here's some diagrams
+
+<div style="display:flex;gap:10px;width:100%">
+  <img style="width:50%" src="./assets/example1.png" />
+  <img style="width:50%" src="./assets/example2.png" />
+</div>
+
+<img  src="./assets/example3.png" />
+
+### Missing styles, monaco editor, and web workers
+
+**monaco**
 
 Make sure to create a file like the following
 
@@ -200,7 +214,7 @@ declare const self: any;
 loader.config({ monaco });
 ```
 
-and import it in the root.
+**styles**
 
 Additionally, make sure to load in the styles!
 
@@ -209,20 +223,6 @@ import 'highlight.js/styles/dracula.css';
 import 'monaco-editor/dev/vs/editor/editor.main.css';
 import 'react-resizable/css/styles.css';
 import '@cognite/cogs.js/dist/cogs.css';
-```
-
-then
-
-```js
-import { Copilot } from '@cognite/copilot-core';
-import { CogniteClient } from '@cognite/sdk';
-...
-
-const sdk = new CogniteClient({ appId: 'Copilot' });
-
-export const SomeComponent = () => {
-  return <Copilot feature={'Something'} sdk={sdk} />;
-};
 ```
 
 ## Local dev
@@ -238,7 +238,7 @@ The output of the library will be at `dist/libs/@fusion/copilot-core` (NOT `dist
 > Important
 > the correct location for the built copilot now is `dist/libs/@fusion/copilot-core` (NOT `dist/libs/copilot-core`).
 
-### issues locally built library linking
+### Issues locally built library linking
 
 Copilot is built in fusion, which is linked and imported from other apps (link from fusion, used in app), in these cases you may see errors for common libraries, like
 `error: react hooks invalid` or `core-js not found`.

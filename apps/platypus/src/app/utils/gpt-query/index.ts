@@ -1,1 +1,0 @@
-export { fetchGptAutoQuery } from './fdmGptAutoQuery';

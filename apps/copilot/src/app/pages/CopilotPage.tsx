@@ -1,40 +1,81 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Copilot } from '@fusion/copilot-core';
+import {
+  FusionQAFlow,
+  useCopilotContext,
+  HRQueryFlow,
+  GraphQlQueryFlow,
+} from '@fusion/copilot-core';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-import { createLink } from '@cognite/cdf-utilities';
-import { CogniteChainName, useFromCopilotEventHandler } from '@cognite/llm-hub';
-import { useFlag } from '@cognite/react-feature-flags';
-
-const excludeChains: CogniteChainName[] = [
-  'WorkorderChain',
-  'DocumentQueryChain',
-  'DocumentSummaryChain',
-  'FusionQAChain',
-  ...(sdk.project === 'cognite2'
-    ? []
-    : (['DocumentQAQueryChain'] as CogniteChainName[])),
-];
+import { createLink, getProject } from '@cognite/cdf-utilities';
 
 export const CopilotPage = () => {
   const navigate = useNavigate();
+  const project = getProject();
+  const { registerFlow } = useCopilotContext();
 
-  useFromCopilotEventHandler('PUSH_DOC_ID_AND_PAGE', (event) => {
-    // modify query params to include page and full screen
-    const url = createLink(`/explore/search/file`, {
-      page: event.page,
-      'full-page': true,
-      journey: `file-${event.docId}`,
+  useEffect(() => {
+    const unmount = registerFlow({
+      flow: new FusionQAFlow({ sdk }),
+      messageActions: {
+        text: (message) =>
+          message.links?.slice(0, 2).map((link, i) => ({
+            content: `Open source ${i}`,
+            onClick: () => {
+              // modify query params to include page and full screen
+              window.open(link.metadata.url, '_blank');
+            },
+          })) || [],
+      },
     });
+    const unmount2 = registerFlow({
+      flow: new GraphQlQueryFlow({ sdk }),
+      messageActions: {
+        'data-model-query': (message) => [
+          {
+            content: 'Debug',
+            icon: 'Bug',
+            onClick: () => {
+              console.log(message);
+            },
+          },
+        ],
+      },
+    });
+    return () => {
+      unmount();
+      unmount2();
+    };
+  }, [registerFlow]);
 
-    navigate(url);
-  });
+  useEffect(() => {
+    if (project === 'cognite2') {
+      const unmount = registerFlow({
+        flow: new HRQueryFlow({ sdk }),
+        messageActions: {
+          text: (message) =>
+            message.fileLinks?.slice(0, 2).map((link, i) => ({
+              content: `Open source ${i}`,
+              onClick: () => {
+                // modify query params to include page and full screen
+                const url = createLink(`/explore/search/file`, {
+                  page: link.metadata.page,
+                  'full-page': true,
+                  journey: `file-${link.metadata.fileId}`,
+                });
 
-  const { isEnabled } = useFlag('COGNITE_COPILOT');
-  return (
-    <div style={{ display: isEnabled ? 'inherit' : 'none' }}>
-      <Copilot sdk={sdk} excludeChains={excludeChains} />
-    </div>
-  );
+                navigate(url);
+              },
+            })) || [],
+        },
+      });
+      return () => {
+        unmount();
+      };
+    }
+  }, [registerFlow, project, navigate]);
+
+  return <></>;
 };

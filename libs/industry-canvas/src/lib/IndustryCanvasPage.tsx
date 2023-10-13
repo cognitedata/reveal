@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ResourceSelector } from '@data-exploration/containers';
+import { GraphQlQueryFlow, useCopilotContext } from '@fusion/copilot-core';
 
 import { createLink, PageTitle } from '@cognite/cdf-utilities';
 import {
@@ -22,8 +23,6 @@ import {
   ResourceItem,
   Splitter,
 } from '@cognite/data-exploration';
-import { useFromCopilotEventHandler } from '@cognite/llm-hub';
-import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   UnifiedViewer,
@@ -115,21 +114,6 @@ export type OnAddContainerReferences = (
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 const DEFAULT_RIGHT_SIDE_PANEL_WIDTH = 700;
-
-const useCopilotGqlResolver = (
-  sdk: CogniteClient,
-  onAddContainerReferences: OnAddContainerReferences
-) => {
-  useFromCopilotEventHandler('GQL_QUERY', ({ query, variables, dataModel }) => {
-    resolveGqlToFdmInstanceContainerReferences(sdk, {
-      query,
-      variables,
-      dataModel,
-    }).then((containerReferences) =>
-      onAddContainerReferences(containerReferences)
-    );
-  });
-};
 
 export const IndustryCanvasPage = () => {
   const sdk = useSDK();
@@ -290,7 +274,31 @@ export const IndustryCanvasPage = () => {
     isCanvasLocked,
     tooltipsOptions,
   });
-  useCopilotGqlResolver(sdk, onAddContainerReferences);
+
+  const { registerFlow } = useCopilotContext();
+  const flow = useMemo(() => new GraphQlQueryFlow({ sdk }), [sdk]);
+
+  useEffect(() => {
+    const unregister = registerFlow({
+      flow,
+      messageActions: {
+        'data-model-query': (message) => [
+          {
+            content: 'Add to canvas',
+            onClick: () => {
+              resolveGqlToFdmInstanceContainerReferences(sdk, message).then(
+                (containerReferences) =>
+                  onAddContainerReferences(containerReferences)
+              );
+            },
+          },
+        ],
+      },
+    });
+    return () => unregister();
+  }, [registerFlow, flow, sdk, onAddContainerReferences]);
+
+  // useCopilotGqlResolver(sdk, onAddContainerReferences);
 
   useRefocusCanvasWhenPanesClose({ unifiedViewerRef });
 
