@@ -61,6 +61,7 @@ const CreatePipelineModal = ({
       cancelText={t('cancel')}
       onOk={detailsForm.handleSubmit}
       okText={t('create')}
+      okButtonProps={{ 'data-testid': 'create-pipeline-ok' }}
     >
       <PipelineDetailsForm formik={detailsForm} />
     </Modal>

@@ -4,7 +4,11 @@ import { useTranslation } from '../../common';
 import CreatePipelineModal from '../create-pipeline-modal';
 import NoWrapButton from '../no-wrap-button';
 
-export const CreatePipelineButton = (): JSX.Element => {
+export const CreatePipelineButton = ({
+  dataTestId,
+}: {
+  dataTestId?: string;
+}): JSX.Element => {
   const { t } = useTranslation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,6 +23,7 @@ export const CreatePipelineButton = (): JSX.Element => {
         onClick={() => setIsModalOpen(true)}
         type="primary"
         icon="AddLarge"
+        data-testid={dataTestId}
       >
         {t('title-create-pipeline')}
       </NoWrapButton>

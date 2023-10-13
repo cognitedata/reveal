@@ -23,7 +23,11 @@ const QuickMatchCreate = (): JSX.Element => {
       extraContent={
         <Flex gap={8}>
           {hasPrevStep() && (
-            <Button disabled={!hasPrevStep()} onClick={() => popStep()}>
+            <Button
+              disabled={!hasPrevStep()}
+              onClick={() => popStep()}
+              data-testid="back-button"
+            >
               {t('navigate-back')}
             </Button>
           )}
@@ -33,6 +37,7 @@ const QuickMatchCreate = (): JSX.Element => {
               pushStep();
             }}
             type="primary"
+            data-testid="next-button"
           >
             {configureModel ? t('run-model') : t('navigate-next')}
           </Button>

@@ -17,6 +17,7 @@ export type TableProps<RecordType> = {
   emptyContent: ReactNode;
   onSort?: (key: string, direction: SortOrder) => void;
   appendTooltipTo: TooltipProps['appendTo'];
+  dataTestId?: string;
 } & Omit<AntdTableProps<RecordType>, 'columns'>;
 
 export const Table = <RecordType extends Record<string, unknown>>({
@@ -25,6 +26,7 @@ export const Table = <RecordType extends Record<string, unknown>>({
   onSort,
   emptyContent,
   appendTooltipTo,
+  dataTestId,
   ...tableProps
 }: TableProps<RecordType>): JSX.Element => {
   const [sortState, setSortState] = useState<
@@ -108,6 +110,7 @@ export const Table = <RecordType extends Record<string, unknown>>({
       }}
       {...tableProps}
       dataSource={sortedDataSource}
+      data-testid={dataTestId}
     />
   );
 };

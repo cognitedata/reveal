@@ -73,8 +73,12 @@ const ConfigurePipeline = ({
   };
 
   return (
-    <Step isCentered title={t('configure-pipeline-step-title', { step: 3 })}>
-      <Flex direction="column">
+    <Step
+      isCentered
+      title={t('configure-pipeline-step-title', { step: 3 })}
+      dataTestId="pipeline-configure-step"
+    >
+      <Flex direction="column" data-testid="pipeline-configure-step-content">
         <Step.Section>
           <Step.SectionHeader
             subtitle={t('model-configuration-fields-body')}

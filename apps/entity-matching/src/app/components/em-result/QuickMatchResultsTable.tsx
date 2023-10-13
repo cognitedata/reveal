@@ -29,6 +29,7 @@ type Props = {
   model?: EMModel;
   predictions: Prediction[];
   confirmedPredictions: number[];
+  dataTestId?: string;
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
 };
 
@@ -47,6 +48,7 @@ const QuickMatchResultsTable = ({
   model,
   predictions,
   confirmedPredictions,
+  dataTestId,
   setConfirmedPredictions,
 }: Props): JSX.Element => {
   const { t } = useTranslation();
@@ -234,6 +236,7 @@ const QuickMatchResultsTable = ({
           : undefined,
         indentSize: 64,
       }}
+      dataTestId={dataTestId}
     />
   );
 };

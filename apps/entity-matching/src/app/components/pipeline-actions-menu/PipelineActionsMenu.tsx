@@ -12,11 +12,12 @@ import { getContainer } from '../../utils';
 type PipelineActionsMenuProps = {
   pipeline: PipelineWithLatestRun;
   latestRun?: PipelineWithLatestRun['latestRun'];
+  dataTestId?: string;
   onDuplicatePipeline?: () => void;
   onDeletePipeline: () => void;
 };
 const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
-  const { onDuplicatePipeline, onDeletePipeline } = props;
+  const { dataTestId, onDuplicatePipeline, onDeletePipeline } = props;
   const { mutateAsync: runEMPipeline } = useRunEMPipeline();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const { t } = useTranslation();
@@ -78,6 +79,7 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
             setDeleteModalVisible(true);
           }}
           destructive
+          data-testid={`${dataTestId}-delete`}
         >
           {t('pipeline-actions-menu-delete')}
         </Menu.Item>
@@ -86,6 +88,7 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
         visible={deleteModalVisible}
         onOk={onDeletePipeline}
         onCancel={onCancelDeletePipeline}
+        dataTestId={`${dataTestId}-delete`}
       />
     </>
   );
@@ -93,11 +96,12 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
 
 type PipelineDeleteModalProps = {
   visible: boolean;
+  dataTestId?: string;
   onOk: () => void;
   onCancel: () => void;
 };
 function PipelineDeleteModal(props: PipelineDeleteModalProps) {
-  const { visible, onOk, onCancel } = props;
+  const { visible, dataTestId, onOk, onCancel } = props;
   const { t } = useTranslation();
   return (
     <Modal
@@ -107,6 +111,7 @@ function PipelineDeleteModal(props: PipelineDeleteModalProps) {
       onOk={onOk}
       title={t('pipeline-delete-modal-title')}
       okText={t('pipeline-actions-menu-delete')}
+      okButtonProps={{ 'data-testid': `${dataTestId}-ok` }}
     >
       {t('pipeline-delete-modal-warning-message')}
     </Modal>

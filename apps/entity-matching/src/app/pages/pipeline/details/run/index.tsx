@@ -80,7 +80,7 @@ const Run = ({ pipeline }: RunProps): JSX.Element => {
   }, [emPipelineRun, navigate, pipeline.id, subAppPath]);
 
   return (
-    <Step isCentered>
+    <Step isCentered dataTestId="details-step">
       <Infobox
         showIcon={false}
         type="neutral"

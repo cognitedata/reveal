@@ -20,5 +20,13 @@ export default function PipelineList() {
     );
   }
 
-  return <>{data?.length ? <PipelineTable /> : <PipelineListEmpty />}</>;
+  return (
+    <div data-testid="pipelines">
+      {data?.length ? (
+        <PipelineTable dataTestId="pipelines-table" />
+      ) : (
+        <PipelineListEmpty />
+      )}
+    </div>
+  );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Colors, Detail, Flex, Title } from '@cognite/cogs.js';
+import { Colors, Detail, Flex, Heading } from '@cognite/cogs.js';
 
 import { CENTERED_STEP_WIDTH } from '../../common/constants';
 
@@ -11,6 +11,7 @@ type StepProps = {
   isCentered?: boolean;
   subtitle?: string;
   title?: string;
+  dataTestId?: string;
 };
 
 const Step = ({
@@ -18,14 +19,23 @@ const Step = ({
   isCentered,
   subtitle,
   title,
+  dataTestId,
 }: StepProps): JSX.Element => {
   return (
-    <Container $isCentered={isCentered}>
+    <Container $isCentered={isCentered} data-testid={dataTestId}>
       <Content $isCentered={isCentered} direction="column" gap={16}>
         {title || subtitle ? (
           <Flex direction="column">
-            {title && <Title level={4}>{title}</Title>}
-            {subtitle && <Subtitle>{subtitle}</Subtitle>}
+            {title && (
+              <Heading level={4} data-testid={`${dataTestId}-title`}>
+                {title}
+              </Heading>
+            )}
+            {subtitle && (
+              <Subtitle data-testid={`${dataTestId}-sub-title`}>
+                {subtitle}
+              </Subtitle>
+            )}
           </Flex>
         ) : (
           <></>
@@ -44,7 +54,7 @@ type SectionHeaderProps = {
 const SectionHeader = ({ subtitle, title }: SectionHeaderProps) => {
   return (
     <Flex direction="column" gap={4}>
-      <Title level={6}>{title}</Title>
+      <Heading level={6}>{title}</Heading>
       <Subtitle>{subtitle}</Subtitle>
     </Flex>
   );

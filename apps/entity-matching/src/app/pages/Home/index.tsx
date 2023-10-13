@@ -3,7 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { createLink } from '@cognite/cdf-utilities';
-import { Title, Flex } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { SOURCE_TABLE_QUERY_KEY } from '../../common/constants';
@@ -13,6 +13,7 @@ import UnknownErrorPage from '../../components/error-pages/UnknownError';
 import NoWrapButton from '../../components/no-wrap-button';
 import PipelineList from '../../components/pipeline-list';
 import SearchInput from '../../components/search-input';
+import Title from '../../components/title';
 import { useEMPipelines } from '../../hooks/entity-matching-pipelines';
 
 export default function RootList() {
@@ -27,7 +28,10 @@ export default function RootList() {
     if (error?.status === 403) {
       return (
         <ListWrapper>
-          <Title level={3}>{t('entity-matching-pipelines')}</Title>
+          <Title
+            title={t('entity-matching-pipelines')}
+            dataTestId="home-title"
+          />
           <NoAccessPage />
         </ListWrapper>
       );
@@ -37,8 +41,13 @@ export default function RootList() {
 
   return (
     <ListWrapper>
-      <Title level={3}>{t('entity-matching-pipelines')}</Title>
-      <TopRow gap={22} alignItems="center" justifyContent="space-between">
+      <Title title={t('entity-matching-pipelines')} dataTestId="home-title" />
+      <TopRow
+        gap={22}
+        alignItems="center"
+        justifyContent="space-between"
+        data-testid="top-row"
+      >
         <SearchInput
           placeholder={t('filter-placeholder')}
           onChange={(e) => {
@@ -50,12 +59,13 @@ export default function RootList() {
         <Flex gap={12}>
           <Link
             to={createLink(`/${subAppPath}/quick-match/create/select-sources`)}
+            data-testid="quick-match-button"
           >
             <NoWrapButton type="primary" icon="GanttChart">
               {t('quick-match')}
             </NoWrapButton>
           </Link>
-          <CreatePipelineButton />
+          <CreatePipelineButton dataTestId="create-pipeline-button" />
         </Flex>
       </TopRow>
       <PipelineList />

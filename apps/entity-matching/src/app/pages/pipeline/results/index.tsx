@@ -136,6 +136,7 @@ const PipelineResults = (): JSX.Element => {
         <Step
           title={t('result-step-title', { step: 4 })}
           subtitle={t('result-step-subtitle')}
+          dataTestId="pipeline-review-results-step"
         >
           <PipelineRunResultsTable
             pipeline={pipeline}

@@ -33,7 +33,11 @@ type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
   key: PipelineTableTypes;
 };
 
-const PipelineTable = (): JSX.Element => {
+const PipelineTable = ({
+  dataTestId,
+}: {
+  dataTestId?: string;
+}): JSX.Element => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [searchParams] = useSearchParams('');
   const { data, isInitialLoading } = useEMPipelinesWithLatestRuns();
@@ -163,6 +167,7 @@ const PipelineTable = (): JSX.Element => {
                   pipeline={record}
                   onDeletePipeline={() => handleDeletePipeline(record.id)}
                   latestRun={record.latestRun}
+                  dataTestId="pipeline-actions"
                 />
               }
               key={`dropdown-${record.id}`}
@@ -171,6 +176,7 @@ const PipelineTable = (): JSX.Element => {
                 aria-label="Options"
                 icon="EllipsisHorizontal"
                 type="ghost"
+                data-testid="pipeline-actions"
               />
             </Dropdown>
           );
@@ -204,6 +210,7 @@ const PipelineTable = (): JSX.Element => {
         dataSource={pipelinesList}
         rowSelection={rowSelection}
         pagination={PAGINATION_SETTINGS}
+        dataTestId={dataTestId}
       />
     </>
   );

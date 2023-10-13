@@ -21,7 +21,7 @@ const PipelineDetailsForm = ({
   const { errors, setFieldValue, values } = formik;
 
   return (
-    <Flex direction="column" gap={12}>
+    <Flex direction="column" gap={12} data-testid="create-pipeline-modal">
       <InputExp
         status={errors.name ? 'critical' : undefined}
         statusText={errors.name}
@@ -34,6 +34,7 @@ const PipelineDetailsForm = ({
         name="name"
         onChange={(e) => setFieldValue('name', e.target.value)}
         value={values.name}
+        data-testid="create-pipeline-name"
       />
       <InputExp
         fullWidth
@@ -45,6 +46,7 @@ const PipelineDetailsForm = ({
         name="description"
         onChange={(e) => setFieldValue('description', e.target.value)}
         value={values.description}
+        data-testid="create-pipeline-description"
       />
     </Flex>
   );

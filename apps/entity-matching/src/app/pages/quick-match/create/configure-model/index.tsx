@@ -33,7 +33,11 @@ const ConfigureModel = (): JSX.Element => {
   } = useQuickMatchContext();
 
   return (
-    <Step isCentered title={t('configure-model-step-title', { step: 3 })}>
+    <Step
+      isCentered
+      title={t('configure-model-step-title', { step: 3 })}
+      dataTestId="model-configure-step"
+    >
       <Flex direction="column">
         <Step.Section>
           <Step.SectionHeader

@@ -9,6 +9,7 @@ const SelectTargets = (): JSX.Element => {
     <Step
       subtitle={t('select-target-step-subtitle')}
       title={t('select-target-step-title', { step: 2 })}
+      dataTestId="target-select-step"
     >
       <TargetSelectionTable />
     </Step>

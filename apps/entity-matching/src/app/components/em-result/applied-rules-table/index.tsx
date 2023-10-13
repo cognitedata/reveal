@@ -19,6 +19,7 @@ type Props = {
   predictions: Prediction[];
   appliedRules: AppliedRule[];
   confirmedPredictions: number[];
+  dataTestId?: string;
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
 };
 
@@ -37,6 +38,7 @@ type AppliedRuleTableRecordCT = ColumnType<AppliedRuleTableRecord> & {
 export default function AppliedRulesTable({
   appliedRules,
   confirmedPredictions,
+  dataTestId,
   setConfirmedPredictions,
 }: Props) {
   const { t } = useTranslation();
@@ -157,6 +159,7 @@ export default function AppliedRulesTable({
           ),
         indentSize: 64,
       }}
+      dataTestId={dataTestId}
     />
   );
 }

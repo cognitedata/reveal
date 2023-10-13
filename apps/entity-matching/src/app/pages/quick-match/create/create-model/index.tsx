@@ -340,7 +340,7 @@ const CreateModel = (): JSX.Element => {
   }
 
   return (
-    <Step isCentered>
+    <Step isCentered dataTestId="create-model-step">
       <Flex direction="column" gap={8}>
         <Infobox type="neutral" title={t('do-not-leave-the-page-quick-match')}>
           {sourceStatus && (

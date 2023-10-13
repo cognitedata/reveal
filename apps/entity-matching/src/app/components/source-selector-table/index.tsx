@@ -145,9 +145,14 @@ export default function SourceSelectionTable() {
               style={{ width: 220 }}
               defaultValue="timeseries"
               onChange={handleSelectSourceType}
+              data-testid="data-type"
             >
               {sourceTypeOptions.map(({ value, label, icon }) => (
-                <Option key={value} value={value}>
+                <Option
+                  key={value}
+                  value={value}
+                  data-testid="data-type-option"
+                >
                   <SourceOptionContainer>
                     <Icon type={icon} />
                     <Body level={2}>{label}</Body>
@@ -167,6 +172,7 @@ export default function SourceSelectionTable() {
                     });
                   }}
                   selected={sourceFilter.dataSetIds?.[0]?.id}
+                  dataTestId="data-set-select"
                 />
                 <InputExp
                   disabled={allSources}

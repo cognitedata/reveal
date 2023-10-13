@@ -26,6 +26,7 @@ type GroupedResultsTableProps = {
   pipeline: Pipeline;
   run: EMPipelineRun;
   selectedSourceIds: CogniteInternalId[];
+  dataTestId?: string;
   setSelectedSourceIds: Dispatch<SetStateAction<CogniteInternalId[]>>;
 };
 
@@ -43,6 +44,7 @@ const getRuleKey = (rule: ColoredRule) => {
 const GroupedResultsTable = ({
   run,
   selectedSourceIds,
+  dataTestId,
   setSelectedSourceIds,
 }: GroupedResultsTableProps): JSX.Element => {
   const { t } = useTranslation();
@@ -184,6 +186,7 @@ const GroupedResultsTable = ({
         indentSize: 64,
       }}
       rowSelection={rowSelection}
+      dataTestId={dataTestId}
     />
   );
 };

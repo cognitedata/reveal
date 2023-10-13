@@ -153,6 +153,7 @@ const Targets = ({ pipeline }: TargetsProps): JSX.Element => {
     <Step
       subtitle={t('select-target-step-subtitle')}
       title={t('select-target-step-title', { step: 2 })}
+      dataTestId="target-select-step"
     >
       <Flex direction="column" gap={16}>
         <Flex alignItems="center" gap={12} justifyContent="space-between">
@@ -165,6 +166,7 @@ const Targets = ({ pipeline }: TargetsProps): JSX.Element => {
               }}
               placeholder={t('search-data-sets')}
               value={query}
+              data-testid="data-set-input"
             />
             <Switch
               checked={shouldShowOnlyDataSetsContainingResourceType}

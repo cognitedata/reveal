@@ -232,6 +232,7 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
     <Step
       subtitle={t('select-source-step-subtitle')}
       title={t('select-source-step-title', { step: 1 })}
+      dataTestId="source-select-step"
     >
       <Flex direction="column" gap={16}>
         <Flex alignItems="center" gap={12} justifyContent="space-between">
@@ -240,9 +241,14 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
               onChange={handleChangeSelectSourceType}
               style={{ width: 200 }}
               value={pipeline.sources.resource}
+              data-testid="data-type"
             >
               {sourceTypeOptions.map(({ icon, label, value }) => (
-                <Option key={value} value={value}>
+                <Option
+                  key={value}
+                  value={value}
+                  data-testid="data-type-option"
+                >
                   <Container>
                     <Icon type={icon} />
                     <Body level={2}>{label}</Body>
@@ -258,6 +264,7 @@ const Sources = ({ pipeline }: SourcesProps): JSX.Element => {
               }}
               placeholder={t('search-data-sets')}
               value={query}
+              data-testid="data-set-input"
             />
             <Switch
               checked={shouldShowOnlyDataSetsContainingResourceType}

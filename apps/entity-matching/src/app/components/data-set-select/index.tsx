@@ -10,13 +10,18 @@ import { useTranslation } from '../../common';
 import { useDataSets } from '../../hooks/datasets';
 import { API } from '../../types/api';
 
-type Props = { api: API; onChange: (e: number) => void; selected?: number };
+type Props = {
+  api: API;
+  onChange: (e: number) => void;
+  selected?: number;
+  dataTestId?: string;
+};
 
 const { Option } = Select;
 
 const NumberFormat = new Intl.NumberFormat(undefined);
 
-export function DataSetSelect({ api, onChange, selected }: Props) {
+export function DataSetSelect({ api, onChange, selected, dataTestId }: Props) {
   const { t } = useTranslation();
   const {
     data: datasets = [],
@@ -55,6 +60,7 @@ export function DataSetSelect({ api, onChange, selected }: Props) {
       filterOption={(input, option) =>
         `${option?.label}`.toLowerCase().includes(input.toLowerCase())
       }
+      data-testid={dataTestId}
     >
       {items.map(({ value, label, count }) => (
         <Option value={value} key={value} label={label}>

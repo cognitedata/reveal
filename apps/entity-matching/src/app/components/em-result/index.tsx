@@ -202,6 +202,7 @@ export default function EntityMatchingResult({
     <Step
       title={t('result-step-title', { step: 4 })}
       subtitle={t('result-step-subtitle')}
+      dataTestId="pipeline-review-results-step"
     >
       <Container $isActionBarVisible={!!confirmedPredictions.length}>
         <Flex direction="column" gap={16}>
@@ -214,11 +215,13 @@ export default function EntityMatchingResult({
               style={{ width: 300 }}
               value={selectedMatchType}
             />
-            <Switch
-              label={t('group-by-pattern')}
-              checked={rulesView}
-              onChange={() => setRulesView((enabled) => !enabled)}
-            />
+            <div data-testid="group-by-pattern">
+              <Switch
+                label={t('group-by-pattern')}
+                checked={rulesView}
+                onChange={() => setRulesView((enabled) => !enabled)}
+              />
+            </div>
           </Flex>
           {rulesView ? (
             <AppliedRulesTable
@@ -226,6 +229,7 @@ export default function EntityMatchingResult({
               predictions={predictions}
               confirmedPredictions={confirmedPredictions}
               setConfirmedPredictions={setConfirmedPredictions}
+              dataTestId="quick-match-rules-table"
             />
           ) : (
             <QuickMatchResultsTable
@@ -234,6 +238,7 @@ export default function EntityMatchingResult({
               predictions={filteredPreditions}
               confirmedPredictions={confirmedPredictions}
               setConfirmedPredictions={setConfirmedPredictions}
+              dataTestId="quick-match-results-table"
             />
           )}
         </Flex>

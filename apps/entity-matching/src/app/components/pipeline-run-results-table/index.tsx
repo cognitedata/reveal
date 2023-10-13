@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
 import { Select } from 'antd';
 
-import { Body, Checkbox, Flex } from '@cognite/cogs.js';
+import { Body, Flex, Switch } from '@cognite/cogs.js';
 import {
   CogniteEvent,
   CogniteInternalId,
@@ -233,12 +233,14 @@ const PipelineRunResultsTable = ({
             style={{ width: 300 }}
             value={selectedMatchType}
           />
-          <Checkbox
-            disabled={!run.generatedRules || run.generatedRules.length === 0}
-            label={t('group-by-pattern')}
-            checked={shouldGroupByPattern}
-            onChange={(e) => setShouldGroupByPattern(e.target.checked)}
-          />
+          <div data-testid="group-by-pattern">
+            <Switch
+              disabled={!run.generatedRules || run.generatedRules.length === 0}
+              label={t('group-by-pattern')}
+              checked={shouldGroupByPattern}
+              onChange={(e) => setShouldGroupByPattern(e.target.checked)}
+            />
+          </div>
         </Flex>
         <Flex alignItems="center" gap={16}>
           {selectedSourceIds.length > 0 && (
@@ -254,6 +256,7 @@ const PipelineRunResultsTable = ({
           run={run}
           selectedSourceIds={selectedSourceIds}
           setSelectedSourceIds={setSelectedSourceIds}
+          dataTestId="pipeline-rules-table"
         />
       ) : (
         <BasicResultsTable
@@ -261,6 +264,7 @@ const PipelineRunResultsTable = ({
           matches={filteredMatches}
           selectedSourceIds={selectedSourceIds}
           setSelectedSourceIds={setSelectedSourceIds}
+          dataTestId="pipeline-results-table"
         />
       )}
     </Flex>

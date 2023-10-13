@@ -71,6 +71,7 @@ export default function TargetSelectionTable() {
                 });
               }}
               selected={targetFilter.dataSetIds?.[0]?.id}
+              dataTestId="data-set-select"
             />
             <RootAssetSelect
               onChange={(id) => {

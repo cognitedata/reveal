@@ -9,6 +9,7 @@ const SelectSources = (): JSX.Element => {
     <Step
       subtitle={t('select-source-step-subtitle')}
       title={t('select-source-step-title', { step: 1 })}
+      dataTestId="source-select-step"
     >
       <SourceSelectionTable />
     </Step>

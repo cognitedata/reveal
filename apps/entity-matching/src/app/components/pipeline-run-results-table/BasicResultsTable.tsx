@@ -29,6 +29,7 @@ type BasicResultsTableProps = {
   matches?: EMPipelineRunMatch[];
   pipeline: Pipeline;
   selectedSourceIds: CogniteInternalId[];
+  dataTestId?: string;
   setSelectedSourceIds: Dispatch<SetStateAction<CogniteInternalId[]>>;
 };
 
@@ -36,6 +37,7 @@ const BasicResultsTable = ({
   matches,
   pipeline,
   selectedSourceIds,
+  dataTestId,
   setSelectedSourceIds,
 }: BasicResultsTableProps): JSX.Element => {
   const { t } = useTranslation();
@@ -152,6 +154,7 @@ const BasicResultsTable = ({
         indentSize: 64,
       }}
       rowSelection={rowSelection}
+      dataTestId={dataTestId}
     />
   );
 };
