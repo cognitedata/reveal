@@ -1,10 +1,8 @@
 import { useEffect } from 'react';
 
+import { CdfUserHistoryService, useCdfUserHistoryService } from '@user-history';
+
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import {
-  CdfUserHistoryService,
-  useCdfUserHistoryService,
-} from '@cognite/cdf-utilities';
 
 import { rawAppsData } from '../../sections/sections';
 

@@ -32,6 +32,7 @@ export const ChildOptionsMenu = ({
   useCustomMetadataValuesQuery,
   enableSorting,
   onCloseMenu,
+  ...rest
 }: ChildOptionsMenuProps) => {
   const [query, setQuery] = useDebouncedState<string>('');
   const [totalOptionCount, setTotalOptionCount] = React.useState<number>(0);
@@ -105,6 +106,7 @@ export const ChildOptionsMenu = ({
       enableSorting={enableSorting}
       disableOptionsMenu
       onCloseMenu={onCloseMenu}
+      {...rest}
     />
   );
 };

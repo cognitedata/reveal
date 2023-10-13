@@ -2,18 +2,16 @@ import { useState, useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { CopilotActions, Markdown } from '@fusion/copilot-core';
+import {
+  CopilotActions,
+  CopilotDataModelQueryResponse,
+  Markdown,
+  trackCopilotUsage,
+} from '@fusion/copilot-core';
 import pluralize from 'pluralize';
 
 import { Body, Button, Flex, NotificationDot } from '@cognite/cogs.js';
-import {
-  trackCopilotUsage,
-  CopilotDataModelQueryMessage,
-  useToCopilotEventHandler,
-  sendToCopilotEvent,
-} from '@cognite/llm-hub';
 
-import { useAIQueryLocalStorage } from '../../../hooks/useLocalStorage';
 import { useSearchQueryParams } from '../../../hooks/useParams';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useAIDataTypesQuery } from '../../../services/dataTypes/queries/useAIDataTypesQuery';
@@ -27,28 +25,25 @@ import { AIFilterBuilder } from './AIFilterBuilder/AIFilterBuilder';
 export const AIResultSummary = ({
   copilotMessage,
   setCopilotMessage,
+  error,
+  onEditFilter,
+  loadingStatus,
 }: {
-  copilotMessage?: CopilotDataModelQueryMessage & { edited?: boolean };
+  copilotMessage?: CopilotDataModelQueryResponse & { edited?: boolean };
   setCopilotMessage: (
-    message: CopilotDataModelQueryMessage & { edited?: boolean }
+    message: CopilotDataModelQueryResponse & { edited?: boolean }
   ) => void;
+  onEditFilter: (newFilter: any) => void;
+  loadingStatus?: { status: string; stage?: number };
+  error?: string;
 }) => {
   const { t } = useTranslation();
   const [query] = useSearchQueryParams();
 
-  const [_, setCachedMessage] = useAIQueryLocalStorage();
   const selectedDataModels = useSelectedDataModels();
 
   const [isFilterBuilderVisible, setFilterBuilderVisible] = useState(false);
-  const [loadingProgress, setLoadingProgress] = useState<
-    | {
-        stage?: number;
-        status: string;
-      }
-    | undefined
-  >(undefined);
   const [showLongStatusMessage, setShowLongStatusMessage] = useState(false);
-  const [error, setError] = useState<string | undefined>();
 
   const { isLoading } = useAIDataTypesQuery(
     query,
@@ -75,32 +70,6 @@ export const AIResultSummary = ({
 
   const results = useAICachedResults(copilotMessage);
 
-  useToCopilotEventHandler('NEW_MESSAGES', (messages) => {
-    for (const message of messages) {
-      if (message.type === 'data-model-query' && message.replyTo === query) {
-        setLoadingProgress(undefined);
-      }
-      if (message.type === 'error') {
-        setLoadingProgress(undefined);
-        setError(message.content);
-        setCachedMessage(undefined);
-      }
-      if (message.source === 'user' && message.pending) {
-        setError(undefined);
-      }
-    }
-  });
-
-  useToCopilotEventHandler('LOADING_STATUS', (status) => {
-    if (status.replyTo === query) {
-      setLoadingProgress(status);
-    }
-  });
-
-  useEffect(() => {
-    setError(undefined);
-  }, [query]);
-
   const resultText = useMemo(() => {
     let text = '';
     if ((results?.length || 0) === 0) {
@@ -108,9 +77,9 @@ export const AIResultSummary = ({
         type: pluralize(copilotMessage?.dataModel.view.toLowerCase() || ''),
       });
     } else {
-      text += copilotMessage?.content;
+      text += copilotMessage?.content || '';
       if (!copilotMessage?.edited) {
-        text += t('AI_SEARCH_RESULTS_GENERATED_DISCLAIMER');
+        text += ' ' + t('AI_SEARCH_RESULTS_GENERATED_DISCLAIMER');
       }
     }
     return text;
@@ -134,7 +103,7 @@ export const AIResultSummary = ({
     );
   }
 
-  if ((results === undefined && isLoading) || loadingProgress) {
+  if ((results === undefined && isLoading) || loadingStatus) {
     return (
       <Header $loading>
         <Flex gap={8} alignItems="center" style={{ width: '100%' }}>
@@ -145,13 +114,13 @@ export const AIResultSummary = ({
                 ? 'AI_LOADING_TEXT_LONG'
                 : 'AI_LOADING_TEXT',
               {
-                status: loadingProgress?.status || t('AI_LOADING_SEARCH'),
+                status: loadingStatus?.status || t('AI_LOADING_SEARCH'),
               }
             )}
           </Body>
         </Flex>
         <Loader
-          $progress={`${Math.floor((loadingProgress?.stage || 0) * 100)}%`}
+          $progress={`${Math.floor((loadingStatus?.stage || 0) * 100)}%`}
         />
       </Header>
     );
@@ -162,6 +131,9 @@ export const AIResultSummary = ({
       <Header>
         <CogPilotIcon />
         <Flex direction="column" gap={8} style={{ width: '100%' }}>
+          {groupedResults.length > 0 && (
+            <AIResultAggregateChart items={groupedResults} />
+          )}
           <MarkdownWrapper>
             <Markdown content={resultText} inverted />
           </MarkdownWrapper>
@@ -190,12 +162,11 @@ export const AIResultSummary = ({
               </Button>
             </NotificationDot>
           </Flex>
-          {groupedResults.length && (
-            <AIResultAggregateChart items={groupedResults} />
-          )}
         </Flex>
       </Header>
-      {copilotMessage && <CopilotActions message={copilotMessage} />}
+      {copilotMessage && (
+        <CopilotActions message={copilotMessage} actions={[]} />
+      )}
       {copilotMessage && (
         <AIFilterBuilder
           visible={isFilterBuilderVisible}
@@ -216,14 +187,7 @@ export const AIResultSummary = ({
               },
               edited: true,
             });
-            sendToCopilotEvent('SUMMARIZE_QUERY', {
-              question: query,
-              ...copilotMessage.graphql,
-              variables: {
-                ...copilotMessage.graphql.variables,
-                filter: newFilter,
-              },
-            });
+            onEditFilter(newFilter);
             trackCopilotUsage('GQL_EDIT_FILTER', {
               oldFilter: copilotMessage?.graphql.variables.filter,
               filter: newFilter,

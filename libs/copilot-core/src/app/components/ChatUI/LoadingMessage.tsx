@@ -17,7 +17,7 @@ export const LoadingMessage = () => {
       >
         <div id="wrapper">
           <Icon type="Loader" />
-          <Body level={3}>{loadingStatus}</Body>
+          <Body level={3}>{loadingStatus.status}</Body>
         </div>
       </Wrapper>
     );

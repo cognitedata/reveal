@@ -1,8 +1,6 @@
+import { CopilotDataModelQueryResponse } from '@fusion/copilot-core';
 import { useQuery } from '@tanstack/react-query';
 
-import { CopilotDataModelQueryMessage } from '@cognite/llm-hub';
-
-import { useAIQueryLocalStorage } from '../../../hooks/useLocalStorage';
 import { useFDM } from '../../../providers/FDMProvider';
 import { queryKeys } from '../../queryKeys';
 import { DataModelV2 } from '../../types';
@@ -10,11 +8,10 @@ import { DataModelV2 } from '../../types';
 export const useAIDataTypesQuery = (
   search: string,
   selectedDataModels: DataModelV2[],
-  message?: CopilotDataModelQueryMessage
+  message?: CopilotDataModelQueryResponse
 ) => {
   const client = useFDM();
 
-  const [_, setQueryResults] = useAIQueryLocalStorage();
   return useQuery(
     queryKeys.aiSearchDataTypes(
       search,
@@ -24,21 +21,13 @@ export const useAIDataTypesQuery = (
     ),
     async () => {
       if (!message) {
-        setQueryResults(undefined);
-        return undefined;
+        return null;
       }
       const results = await client.aiSearch(
         message.dataModel,
         message.graphql.query,
         message.graphql.variables
       );
-
-      setQueryResults({
-        search,
-        results,
-        dataModels: selectedDataModels,
-        message,
-      });
 
       return results;
     },

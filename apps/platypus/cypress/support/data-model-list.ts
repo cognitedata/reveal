@@ -18,6 +18,8 @@ declare namespace Cypress {
 }
 
 Cypress.Commands.add('createDataModel', (name: string, space: string) => {
+  // make sure ui isnt locking with the list of data models
+  cy.get('.ag-row-even > [aria-colindex="1"]').should('be.visible');
   cy.getBySel('create-data-model-btn').click();
   cy.getBySel('input-data-model-name').type(name);
 

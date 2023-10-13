@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+import { GraphQlQueryFlow, useCopilotContext } from '@fusion/copilot-core';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
 
 import {
@@ -20,10 +21,10 @@ import {
   Tabs,
 } from '@cognite/cogs.js';
 
+import { getCogniteSDKClient } from '../../../../../environments/cogniteSdk';
 import { useDataModelTypeDefs } from '../../../../hooks/useDataModelActions';
 import { useMixpanel } from '../../../../hooks/useMixpanel';
 import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
-import { fetchGptAutoQuery } from '../../../../utils/gpt-query';
 import zIndex from '../../../../utils/zIndex';
 import { RelationViewer } from '../../data-management/components/RelationViewer/RelationViewer';
 import {
@@ -66,18 +67,39 @@ export const SearchPage = ({
     space
   );
 
+  const flow = useMemo(
+    () => new GraphQlQueryFlow({ sdk: getCogniteSDKClient() }),
+    []
+  );
+
+  const { registerFlow, runFlow, messages } = useCopilotContext();
+
   useEffect(() => {
-    setGraphQLQuery(undefined);
     setError(undefined);
   }, [searchText]);
   const onSearch = () => {
     setIsSearching(true);
     async function generateQuery() {
-      const newQuery = await fetchGptAutoQuery(
-        searchText,
-        selectedDataModelVersion.externalId,
-        selectedDataModelVersion.version,
-        selectedDataModelVersion.space
+      const { graphql: newQuery } = await runFlow(
+        flow,
+        {
+          prompt: searchText,
+          sdk: getCogniteSDKClient(),
+          selectedDataModels: [
+            {
+              dataModel: selectedDataModelVersion.externalId,
+              version: selectedDataModelVersion.version,
+              space: selectedDataModelVersion.space,
+            },
+          ],
+        },
+        false,
+        {
+          type: 'text',
+          content: searchText,
+          context: 'Searched from data model',
+          source: 'user',
+        }
       );
       // reset query explorer and result
       setQueryExplorerQuery(undefined);
@@ -90,6 +112,45 @@ export const SearchPage = ({
     }
     generateQuery();
   };
+
+  useEffect(() => {
+    const unmount = registerFlow({
+      flow,
+      input: {
+        selectedDataModels: () => {
+          return [
+            {
+              dataModel: selectedDataModelVersion.externalId,
+              version: selectedDataModelVersion.version,
+              space: selectedDataModelVersion.space,
+            },
+          ];
+        },
+      },
+      messageActions: {
+        'data-model-query': ({ graphql: newGraphQL }) => [
+          {
+            content: 'Show results',
+            icon: 'Expand',
+            onClick: () => {
+              const newSearchText = messages.current.findLast(
+                (el) => el.source === 'user' && el.type === 'text'
+              )?.content;
+              setSearchText(newSearchText || '');
+              setQueryExplorerQuery(undefined);
+              setResult(undefined);
+              track('ChatGPTSearch.GeneratedQuery', {
+                searchText: newSearchText,
+                ...newGraphQL,
+              });
+              setGraphQLQuery(newGraphQL);
+            },
+          },
+        ],
+      },
+    });
+    return () => unmount();
+  }, [registerFlow]);
 
   useEffect(() => {
     if (graphQLQuery) {
@@ -167,7 +228,10 @@ export const SearchPage = ({
           fullWidth
           value={searchText}
           disabled={isSearching}
-          onChange={(e) => setSearchText(e.target.value)}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+            setGraphQLQuery(undefined);
+          }}
           onKeyDown={(e) => {
             if (!e.shiftKey && e.keyCode === 13) {
               onSearch();

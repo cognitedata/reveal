@@ -1,14 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import localforage, * as localForage from 'localforage';
 
-import { CopilotMessage } from '@cognite/llm-hub';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { CopilotMessage } from '../../lib/types';
 
 import { getCacheKey } from './useCache';
 import { useCopilotContext } from './useCopilotContext';
 import { useMetrics } from './useMetrics';
 
-const VERSION = '2';
+const VERSION = '3';
 
 const CHAT_PREFIX = `chats-${VERSION}`;
 
@@ -70,10 +71,8 @@ export const useSaveChat = (id: string) => {
             id,
             dateUpdated: new Date(),
             dateCreated: data?.dateCreated || new Date(),
-            history: messages.map(({ actions = [], ...el }) => ({
+            history: messages.map((el) => ({
               ...el,
-              // we cannot store custom onclick in localforage
-              actions: actions.filter((action) => !('onClick' in action)),
             })),
           })
         : Promise.resolve(null),
@@ -141,11 +140,9 @@ export const useCreateChat = () => {
               id,
               dateUpdated: new Date(),
               dateCreated: new Date(),
-              history: messages.map(({ actions = [], ...el }) => ({
+              history: messages.map((el) => ({
                 ...el,
                 pending: el.source === 'user' ? true : false,
-                // we cannot store custom onclick in localforage
-                actions: actions.filter((action) => !('onClick' in action)),
               })),
             }
           )

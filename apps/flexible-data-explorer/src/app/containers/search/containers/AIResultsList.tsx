@@ -1,8 +1,7 @@
 import { useState, useMemo } from 'react';
 
+import { CopilotDataModelQueryResponse } from '@fusion/copilot-core';
 import take from 'lodash/take';
-
-import { CopilotDataModelQueryMessage } from '@cognite/llm-hub';
 
 import { ButtonShowMore } from '../../../components/buttons/ButtonShowMore';
 import { Link } from '../../../components/Link';
@@ -18,7 +17,7 @@ import { extractProperties } from '../utils';
 export const AIResultsList = ({
   copilotMessage,
 }: {
-  copilotMessage?: CopilotDataModelQueryMessage & { edited?: boolean };
+  copilotMessage?: CopilotDataModelQueryResponse & { edited?: boolean };
 }) => {
   const client = useFDM();
 

@@ -13,6 +13,10 @@ const goBack = () => {
   return cy.go('back');
 };
 
+const hover = (subject: JQuery<HTMLElement>) => {
+  return cy.wrap(subject).trigger('mouseover');
+};
+
 Cypress.Commands.add(
   'containsExact',
   { prevSubject: 'optional' },
@@ -20,6 +24,7 @@ Cypress.Commands.add(
 );
 Cypress.Commands.add('getDataTestId', { prevSubject: true }, getDataTestId);
 Cypress.Commands.add('goBack', goBack);
+Cypress.Commands.add('hover', { prevSubject: true }, hover);
 
 export interface CommonCommands {
   containsExact: (
@@ -27,4 +32,5 @@ export interface CommonCommands {
   ) => Cypress.Chainable<JQuery<HTMLElement>>;
   getDataTestId: () => Cypress.Chainable<string>;
   goBack: () => Cypress.Chainable<Cypress.AUTWindow>;
+  hover: () => Cypress.Chainable<JQuery<HTMLElement>>;
 }

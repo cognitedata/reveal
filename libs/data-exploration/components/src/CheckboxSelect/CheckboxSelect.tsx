@@ -89,6 +89,7 @@ export const CheckboxSelect = ({
       visible={visible}
       content={
         <OptionsMenu
+          data-testid={`select-${label}-menu-list`}
           isLoading={isLoading}
           options={options}
           selection={selection}
@@ -110,9 +111,10 @@ export const CheckboxSelect = ({
         />
       }
     >
-      <>
+      <div data-testid={`filter-${label}`}>
         {label && <FilterLabel>{label}</FilterLabel>}
         <StyledButton
+          data-testid={`select-${label}`}
           type="secondary"
           icon="ChevronDown"
           iconPlacement="right"
@@ -134,7 +136,7 @@ export const CheckboxSelect = ({
             {getFilterButtonText(selection, t)}
           </FilterButtonText>
         </StyledButton>
-      </>
+      </div>
     </Dropdown>
   );
 };

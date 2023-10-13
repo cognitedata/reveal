@@ -100,4 +100,28 @@ describe('Events - Filters', () => {
       });
     });
   });
+
+  it('should filter events by metadata', () => {
+    const METADATA_PROPERTY = 'order';
+    const METADATA_VALUE = '10740089';
+
+    cy.clickSelectFilter('Metadata')
+      .searchOption(METADATA_PROPERTY)
+      .hoverSelectOption(METADATA_PROPERTY)
+      .getSelectMenu({ subMenu: true })
+      .should('be.visible');
+
+    cy.getSelectFilter('Metadata').searchAndClickSelectOption(METADATA_VALUE, {
+      subMenu: true,
+    });
+
+    cy.getSelectFilter('Metadata').getSelectMenu().clickButton('Apply');
+
+    cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain({
+      equals: {
+        property: ['metadata', METADATA_PROPERTY],
+        value: METADATA_VALUE,
+      },
+    });
+  });
 });

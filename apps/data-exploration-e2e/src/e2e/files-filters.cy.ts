@@ -45,4 +45,28 @@ describe('Files - Filters', () => {
       },
     });
   });
+
+  it('should filter files by metadata', () => {
+    const METADATA_PROPERTY = 'type';
+    const METADATA_VALUE = 'pid';
+
+    cy.clickSelectFilter('Metadata')
+      .searchOption(METADATA_PROPERTY)
+      .hoverSelectOption(METADATA_PROPERTY)
+      .getSelectMenu({ subMenu: true })
+      .should('be.visible');
+
+    cy.getSelectFilter('Metadata').searchAndClickSelectOption(METADATA_VALUE, {
+      subMenu: true,
+    });
+
+    cy.getSelectFilter('Metadata').getSelectMenu().clickButton('Apply');
+
+    cy.wait(`@${FILE_LIST_ALIAS}`).payloadShouldContain({
+      equals: {
+        property: ['sourceFile', 'metadata', METADATA_PROPERTY],
+        value: METADATA_VALUE,
+      },
+    });
+  });
 });

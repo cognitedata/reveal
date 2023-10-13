@@ -4,55 +4,38 @@ import styled, { css } from 'styled-components';
 
 import { Body, Flex, Icon } from '@cognite/cogs.js';
 
-import { ReactComponent as CopilotIcon } from '../../assets/CopilotIcon.svg';
+import { CopilotIcon } from '../../assets/CopilotIcon';
+import { useCopilotContext } from '../hooks/useCopilotContext';
 import zIndex from '../utils/zIndex';
-export const COPILOT_TOGGLE = 'COPILOT_TOGGLE';
 
 export const CopilotButton = (): JSX.Element => {
-  const [isCopilotVisible, setCopilotVisible] = useState<boolean>(false);
+  const { isOpen, setIsOpen } = useCopilotContext();
   const [hasImportMap, setHasImportMap] = useState<boolean>(false);
 
   useEffect(() => {
-    const listener = (ev: Event) => {
-      if ('detail' in ev) {
-        const toggleEvent = ev as CustomEvent<{ active?: boolean }>;
-        if ('active' in toggleEvent.detail) {
-          setCopilotVisible(toggleEvent.detail.active || false);
-        }
-      }
-    };
-    window.addEventListener(COPILOT_TOGGLE, listener);
-    return () => {
-      window.removeEventListener(COPILOT_TOGGLE, listener);
-    };
-  }, [isCopilotVisible]);
-
-  useEffect(() => {
-    setHasImportMap(!!document.querySelector('import-map-overrides-full'));
+    setHasImportMap(
+      !!document.querySelector('import-map-overrides-full > div')
+    );
   }, []);
 
   return (
     <ButtonWrapper
       justifyContent="start"
       alignItems="center"
-      $visible={isCopilotVisible}
+      $visible={isOpen}
       style={{ right: hasImportMap ? 70 : 10 }}
       onClick={() => {
-        window.dispatchEvent(
-          new CustomEvent(COPILOT_TOGGLE, {
-            detail: { active: !isCopilotVisible },
-          })
-        );
+        setIsOpen(!isOpen);
       }}
     >
-      {isCopilotVisible ? (
+      {isOpen ? (
         <Icon type="Close" size={24} />
       ) : (
         <div className="cogs-icon cogpilot-icon">
           <CopilotIcon />
         </div>
       )}
-      {!isCopilotVisible && (
+      {!isOpen && (
         <Body className="hover-text" strong>
           CogPilot
         </Body>

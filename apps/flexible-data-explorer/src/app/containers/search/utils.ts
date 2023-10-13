@@ -3,6 +3,7 @@ import isString from 'lodash/isString';
 
 import { formatDate } from '@cognite/cogs.js';
 
+import { DataModelTypeDefsField } from '../../services/types';
 import { isValidFDMDate } from '../../utils/date';
 import { toFlatPropertyMap } from '../../utils/object';
 
@@ -27,21 +28,21 @@ export const extractProperties = (item: {
   }, [] as { key: string; value: string }[]);
 };
 
-export const recursiveConcatItems = (data?: any) => {
-  return Object.values(data || []).flatMap(({ items }: any) =>
-    items.concat(
-      items
-        .map((el: any) =>
-          Object.values(el)
-            .filter(
-              (val: any) => val && typeof val === 'object' && 'items' in val
-            )
-            .map((val: any) => recursiveConcatItems({ val }))
-            .flat()
-        )
-        .flat()
-    )
-  );
+export const extractItems = (data?: any) => {
+  return Object.values(data || []).flatMap(({ items }: any) => items);
+};
+
+export const getNestedItemsForField = (
+  field: DataModelTypeDefsField,
+  item: any
+) => {
+  if (!item[field.name]) {
+    return [];
+  }
+  if (field.type.list) {
+    return (item[field.name] as { items: any[] }).items;
+  }
+  return [item[field.name]];
 };
 
 const normalizePrimitives = (value?: unknown) => {

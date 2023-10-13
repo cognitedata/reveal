@@ -77,7 +77,9 @@ scriptName(CONSTANTS.APP_ID)
           .join('\n');
     }
 
+    let isDmlError = false;
     if (err instanceof PlatypusDmlError) {
+      isDmlError = true;
       errorMessage +=
         '\n' +
         (err as PlatypusDmlError).errors
@@ -116,7 +118,12 @@ scriptName(CONSTANTS.APP_ID)
     if (printHelp) {
       console.log('\nUsages:\n');
     }
-    console.error(help());
+
+    if (!isDmlError) {
+      // Don't show help menu on DML errors
+      console.error(help());
+    }
+
     process.exit(1);
   })
   .parse();

@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import * as Sentry from '@sentry/react';
 import { Modal } from 'antd';
 import noop from 'lodash/noop';
-import { useDebounce } from 'use-debounce';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk, { getToken, getUserInformation } from '@cognite/cdf-sdk-singleton';
@@ -336,7 +336,7 @@ const StreamLitApp = React.forwardRef(
       }));
     };
 
-    const [debouncedChangeHandler] = useDebounce(changeHandler, 500);
+    const debouncedChangeHandler = useDebouncedCallback(changeHandler, 500);
 
     useImperativeHandle(ref, () => myIframe.current as any);
 

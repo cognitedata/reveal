@@ -3,11 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import {
-  createLink,
-  useCdfUserHistoryService,
-  CdfApplicationUsage,
-} from '@cognite/cdf-utilities';
+import { useCdfUserHistoryService } from '@user-history';
+
+import { createLink, CdfApplicationUsage } from '@cognite/cdf-utilities';
 import { Button, Flex, Title, Body, Colors, Tooltip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 

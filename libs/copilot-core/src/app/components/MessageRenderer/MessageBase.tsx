@@ -1,54 +1,39 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import {
-  Avatar,
-  Dropdown,
-  Body,
-  Button,
-  Flex,
-  Icon,
-  Menu,
-  Modal,
-  Overline,
-} from '@cognite/cogs.js';
-import { CopilotLogContent, CopilotMessage } from '@cognite/llm-hub';
+import { Avatar, Body, Flex, Icon } from '@cognite/cogs.js';
 
-import { ReactComponent as CopilotIcon } from '../../../assets/CopilotIcon.svg';
+import { CopilotIcon } from '../../../assets/CopilotIcon';
+import { CopilotMessage } from '../../../lib/types';
+import { useCopilotContext } from '../../hooks/useCopilotContext';
 import { useUserProfile } from '../../hooks/useUserProfile';
 
 import { CopilotActions } from './components/CopilotActions';
-import { Markdown } from './components/Markdown';
 
 export const MessageBase = ({
-  message: { data },
+  message: data,
   children,
   hideActions = false,
-  isBot: propsIsBot = false,
 }: {
-  message: {
-    data: CopilotMessage;
-  };
+  message: CopilotMessage;
   children: React.ReactNode;
   hideActions?: boolean;
-  isBot?: boolean;
 }) => {
   const { source } = data;
   const { data: user, isLoading } = useUserProfile();
+  const { actionGetters } = useCopilotContext();
 
-  const [showLogs, setShowLogs] = useState(false);
+  const actions = useMemo(() => {
+    return (actionGetters[data.type] || [])
+      .map((actionGetter) => actionGetter(data))
+      .flat();
+  }, [actionGetters, data]);
 
-  const isBot = propsIsBot || source === 'bot';
+  const isBot = source === 'bot';
 
   return (
-    <Wrapper gap={10}>
-      {showLogs && (
-        <LogsModal
-          logs={data.source === 'bot' ? data.logs || [] : []}
-          onClose={() => setShowLogs(false)}
-        />
-      )}
+    <Wrapper>
       {isBot ? (
         <CopilotIconWrapper alignItems="center" justifyContent="center">
           <CopilotIcon style={{ width: 16, height: 16, fill: 'white' }} />
@@ -67,62 +52,22 @@ export const MessageBase = ({
       <Flex direction="column" gap={16} style={{ flex: 1, overflow: 'hidden' }}>
         <Flex gap={10} alignItems="start">
           <ErrorBoundary>
-            <Flex style={{ flex: 1 }}>{children}</Flex>
+            <Flex style={{ flex: 1, overflow: 'hidden' }}>{children}</Flex>
           </ErrorBoundary>
-          {isBot && !hideActions && (
-            <Dropdown
-              disabled={data.source !== 'bot' || !data.logs}
-              content={
-                <Menu>
-                  {data.source === 'bot' && data.logs ? (
-                    <Menu.Item onClick={() => setShowLogs(true)}>
-                      Logs
-                    </Menu.Item>
-                  ) : null}
-                </Menu>
-              }
-            >
-              <Button
-                icon="EllipsisVertical"
-                type="ghost"
-                className="hover"
-                aria-label="overflow menu"
-              />
-            </Dropdown>
-          )}
         </Flex>
-        {source === 'bot' && !hideActions && <CopilotActions message={data} />}
+        {source === 'bot' && !hideActions && (
+          <CopilotActions message={data} actions={actions} />
+        )}
       </Flex>
     </Wrapper>
   );
 };
 
-const LogsModal = ({
-  logs,
-  onClose,
-}: {
-  logs: CopilotLogContent[];
-  onClose: () => void;
-}) => {
-  return (
-    <Modal visible onCancel={onClose} hideFooter>
-      {logs.map((el, i) => {
-        return (
-          <Flex direction="column" gap={4} key={i}>
-            <Overline size="small">
-              {i} - {el.key}
-            </Overline>
-            <Markdown content={el.content} />
-          </Flex>
-        );
-      })}
-    </Modal>
-  );
-};
-
-const Wrapper = styled(Flex)`
+const Wrapper = styled.div`
+  display: flex;
   overflow: hidden;
   position: relative;
+  gap: 10px;
   max-width: 800px;
   margin: 0 auto;
 

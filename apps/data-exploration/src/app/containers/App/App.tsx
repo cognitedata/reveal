@@ -35,13 +35,17 @@ const Exploration = React.lazy(
 export default function App({ useInShell = false }: { useInShell?: boolean }) {
   const sdk = useSDK();
   const { flow } = getFlow();
-  const { data: userInfo } = useUserInformation();
+  const { data: userInfo, isFetched } = useUserInformation();
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
 
   const project = getProject();
   const cluster = getCluster() ?? undefined;
   const userId = userInfo?.id;
+
+  if (!isFetched) {
+    return <Loader />;
+  }
 
   return (
     <Suspense fallback={<Spinner />}>

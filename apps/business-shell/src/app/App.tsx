@@ -1,5 +1,6 @@
 import { BrowserRouter as Router } from 'react-router-dom';
 
+import { Copilot } from '@fusion/copilot-core';
 import {
   Orientation,
   OrientationProvider,
@@ -18,7 +19,6 @@ import { SDKProvider } from '@cognite/sdk-provider';
 
 import { translations } from './common';
 import { useAuthContext } from './common/auth/AuthProvider';
-import { AI } from './components/AI';
 import { ErrorFallback } from './components/ErrorFallback';
 import { Onboarding } from './components/Onboarding';
 import { TopBar } from './components/topbar/TopBar';
@@ -62,12 +62,13 @@ function App() {
                       />
                     )}
                   >
-                    <Router window={window}>
-                      <TopBar />
-                      <Onboarding />
-                      <CoreRoutes />
-                      <AI />
-                    </Router>
+                    <Copilot sdk={client} showChatButton={false}>
+                      <Router window={window}>
+                        <TopBar />
+                        <Onboarding />
+                        <CoreRoutes />
+                      </Router>
+                    </Copilot>
                   </Sentry.ErrorBoundary>
                 )}
               </QueryErrorResetBoundary>

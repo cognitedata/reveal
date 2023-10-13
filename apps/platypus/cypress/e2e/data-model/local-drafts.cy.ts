@@ -138,7 +138,7 @@ describe('Data model page - Local drafts', () => {
     cy.publishSchema();
 
     // A toast message should notify user when schema has been published successfully
-    cy.getBySel('toast-title').should('have.text', 'Data model published');
+    cy.getBySel('toast-title').should('include.text', 'Data model published');
 
     cy.ensureCurrentVersionIsNotDraft();
 

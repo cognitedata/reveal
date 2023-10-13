@@ -5,8 +5,8 @@ import { BotUIMessageList, BotUIAction } from '@botui/react';
 import { Flex } from '@cognite/cogs.js';
 
 import zIndex from '../../utils/zIndex';
-import { actionRenderers } from '../ActionRenderer';
 import { messageRenderers } from '../MessageRenderer';
+import { actionRenderers } from '../UserActionRenderer';
 
 import { ChatHeader } from './ChatHeader';
 import { HistoryList } from './HistoryList';
@@ -14,7 +14,7 @@ import { LoadingMessage } from './LoadingMessage';
 
 export const LargeChatUI = () => {
   return (
-    <LargeChatWrapper direction="column">
+    <LargeChatWrapper>
       <ChatHeader style={{ paddingTop: 16, paddingBottom: 16 }} hideHistory />
       <Flex style={{ flex: 1, overflow: 'hidden' }} gap={16}>
         <div

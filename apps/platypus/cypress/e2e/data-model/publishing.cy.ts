@@ -16,8 +16,11 @@ describe('Data model page - Publishing', () => {
     }
 
     cy.enableEditMode();
+    // eslint-disable-next-line
+    cy.wait(1000);
 
     cy.appendTextToCodeEditor('type Author {name: String}');
+    cy.ensureVisualizerFinishedLoading();
 
     cy.publishSchema(version);
     cy.typeShouldExistInVisualizer('Author');

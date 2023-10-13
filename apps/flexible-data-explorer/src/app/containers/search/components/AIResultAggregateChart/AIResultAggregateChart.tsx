@@ -83,8 +83,12 @@ export const AIResultAggregateChart = ({
 }) => {
   const [chartConfig, setChartConfig] = useState<ChartConfiguration>();
   const chartContainer = useRef<HTMLCanvasElement>(null);
+  const chartId = useRef<string | null>(null);
 
   useEffect(() => {
+    if (chartId.current !== null) {
+      return;
+    }
     if (!chartContainer?.current || !items?.length) return;
 
     // merge dynamic values into chart config (datasets, labels, subtitle)
@@ -100,7 +104,8 @@ export const AIResultAggregateChart = ({
     if (!isEqual(newChartConfig, chartConfig)) {
       setChartConfig(newChartConfig);
       // instantiate & render the bar chart
-      new Chart(chartContainer.current, newChartConfig);
+      const chart = new Chart(chartContainer.current, newChartConfig);
+      chartId.current = chart.id;
     }
   }, [chartConfig, chartContainer, items]);
 
