@@ -13,8 +13,6 @@ import {
 } from '@cognite/cogs.js';
 import { ContainerType } from '@cognite/unified-file-viewer';
 
-import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
-
 import { translationKeys } from '../../common';
 import DateRangePrompt from '../../components/DateRangePrompt';
 import PropertySelectorToolbarWrapper from '../../components/PropertySelector/PropertySelectorToolbarWrapper';
@@ -37,7 +35,6 @@ import {
 } from '../useTooltipsOptions';
 import { useTranslation } from '../useTranslation';
 
-import getContainerText from './getContainerText';
 import LabelToolbar from './LabelToolbar';
 import { TooltipToolBarContainer } from './styles';
 
@@ -59,8 +56,8 @@ type ContainerTooltipProps = {
     isMultiPageDocument: boolean
   ) => void;
   shamefulNumPages: number | undefined;
-  isOcrDataLoading: boolean;
-  ocrData: OCRAnnotationPageResult[] | undefined;
+  isOcrTextLoading: boolean;
+  ocrText: string | undefined;
   isLoadingSummary: boolean;
   setIsLoadingSummary: (isLoading: boolean) => void;
 };
@@ -74,8 +71,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
   tooltipsOptions,
   onUpdateTooltipsOptions,
   shamefulNumPages,
-  isOcrDataLoading,
-  ocrData,
+  isOcrTextLoading,
+  ocrText,
   isLoadingSummary,
   setIsLoadingSummary,
 }) => {
@@ -636,8 +633,10 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
     selectedContainer.type === ContainerType.IMAGE ||
     selectedContainer.type === ContainerType.TEXT
   ) {
-    const ocrText = getContainerText(selectedContainer, ocrData);
     const onSummarizationClick = async () => {
+      if (ocrText === undefined || ocrText.length === 0) {
+        return;
+      }
       if (onAddSummarizationSticky) {
         setIsLoadingSummary(true);
         trackUsage(MetricEvent.DOCUMENT_SUMMARIZE_CLICKED, {
@@ -695,7 +694,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
 
             <Tooltip
               content={
-                ocrText.length === 0
+                ocrText === undefined || ocrText.length === 0
                   ? t(
                       translationKeys.CONTAINER_TOOLTIP_SUMMARIZATION_UNAVAILABLE,
                       {
@@ -712,7 +711,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
             >
               <Button
                 aria-label={
-                  ocrText.length === 0
+                  ocrText === undefined || ocrText.length === 0
                     ? t(
                         translationKeys.CONTAINER_TOOLTIP_SUMMARIZATION_UNAVAILABLE,
                         {
@@ -727,11 +726,11 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                       })
                 }
                 icon={
-                  isOcrDataLoading || isLoadingSummary
+                  isOcrTextLoading || isLoadingSummary
                     ? 'Loader'
                     : 'Documentation'
                 }
-                disabled={isOcrDataLoading || !ocrData || ocrData.length === 0}
+                disabled={isOcrTextLoading || !ocrText || ocrText.length === 0}
                 onClick={onSummarizationClick}
                 type="ghost"
               />

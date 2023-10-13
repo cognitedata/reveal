@@ -19,7 +19,7 @@ import {
 
 import ContainerTooltip from './ContainerTooltip';
 import MultiContainerTooltip from './MultiContainerTooltip';
-import useContainerOcrData from './useContainerOcrData';
+import useContainerOcrText from './useContainerOcrText';
 
 type UseIndustryCanvasContainerTooltipsProps = {
   selectedContainers: IndustryCanvasContainerConfig[];
@@ -47,8 +47,8 @@ const useIndustryCanvasContainerTooltips = ({
 
   const selectedContainer =
     selectedContainers.length === 1 ? selectedContainers[0] : undefined;
-  const { isInitialLoading: isOcrDataLoading, data: ocrData } =
-    useContainerOcrData(selectedContainer);
+  const { isInitialLoading: isOcrTextLoading, data: ocrText } =
+    useContainerOcrText(selectedContainer);
 
   useEffect(() => {
     (async () => {
@@ -99,8 +99,8 @@ const useIndustryCanvasContainerTooltips = ({
             shamefulNumPages={numberOfPages}
             isLoadingSummary={isLoadingSummary}
             setIsLoadingSummary={setIsLoadingSummary}
-            isOcrDataLoading={isOcrDataLoading}
-            ocrData={ocrData}
+            isOcrTextLoading={isOcrTextLoading}
+            ocrText={ocrText}
           />
         ),
         anchorTo: TooltipAnchorPosition.TOP_RIGHT,
@@ -114,8 +114,8 @@ const useIndustryCanvasContainerTooltips = ({
     onAddSummarizationSticky,
     numberOfPages,
     isLoadingSummary,
-    isOcrDataLoading,
-    ocrData,
+    isOcrTextLoading,
+    ocrText,
     tooltipsOptions,
     onUpdateTooltipsOptions,
   ]);
