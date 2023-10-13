@@ -21,6 +21,7 @@ import type {
 import {
   useGetModelBoundaryConditionListQuery,
   useGetModelFileQuery,
+  useReparseModelFileMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { useSimulatorConfig } from '../../../hooks/useSimulatorConfig';
@@ -62,6 +63,15 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
   const { simulator, modelName, version } = metadata;
 
   const simulatorConfigDetails = useSimulatorConfig({ simulator, project });
+
+  const [
+    reparseModelFile,
+    {
+      isSuccess: isReparseReqSuccess,
+      isError: isReparseReqError,
+      isLoading: isReparseReqLoading,
+    },
+  ] = useReparseModelFileMutation();
 
   const pollingOptions = {
     pollingInterval: !isProcessingReady
@@ -121,6 +131,17 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
     }
   }, [modelName, isProcessingReady, simulator, version]);
 
+  useEffect(() => {
+    if (isReparseReqSuccess) {
+      toast.success('Reparse request sent successfully', { autoClose: 3000 });
+    }
+    if (isReparseReqError) {
+      toast.error('An error occured while sending the reparse request', {
+        autoClose: 3000,
+      });
+    }
+  }, [isReparseReqSuccess, isReparseReqError]);
+
   const additionalMetadata = useMemo(() => {
     const metadataKeys = [
       'dataModelVersion',
@@ -148,6 +169,14 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
   if (isFetchingBoundaryConditions && !isSuccessBoundaryConditions) {
     return <Skeleton.List lines={2} />;
   }
+
+  const onReparseClicked = async (modelName: string, simulator: string) => {
+    reparseModelFile({
+      reparseModelFileRequestModel: { modelName, simulator },
+      project,
+    });
+    return null;
+  };
 
   const onDownloadClicked = async () => {
     if (!headers || !baseUrl) {
@@ -228,6 +257,24 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
                 </Link>
               </div>
             ) : null}
+
+            {/* Restrict reparsing action to GAP and latest model version */}
+            {modelFile.source === 'GAP' &&
+              modelFile.metadata.nextVersion === '' && (
+                <Button
+                  disabled={isReparseReqLoading}
+                  icon="Refresh"
+                  loading={isReparseReqLoading}
+                  size="small"
+                  style={{ margin: '6px 0' }}
+                  type="ghost-accent"
+                  onClick={() =>
+                    onReparseClicked(modelFile.name, modelFile.source)
+                  }
+                >
+                  Reparse
+                </Button>
+              )}
 
             <Button
               disabled={isModelFileDownloading}
