@@ -35,3 +35,6 @@ export const FUZZY_SEARCH_PHRASE = 'Noway';
 export const DATA_SET = 'test';
 export const EXTERNAL_ID = 'LOR_NORWAY';
 export const INTERNAL_ID = '1918823365845105';
+
+export const THREED_NAME = 'California Love';
+export const THREED_ID = '2959807724750871';
