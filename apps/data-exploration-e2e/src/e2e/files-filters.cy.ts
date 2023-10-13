@@ -33,7 +33,7 @@ describe('Files - Filters', () => {
     });
   });
 
-  it('should filter files by Author', () => {
+  it('should filter files by author', () => {
     const AUTHOR = 'Roland Wagner';
 
     cy.clickSelectFilter('Authors').searchAndClickSelectOption(AUTHOR);
@@ -42,6 +42,32 @@ describe('Files - Filters', () => {
       in: {
         property: ['author'],
         values: [AUTHOR],
+      },
+    });
+  });
+
+  it('should filter files by source', () => {
+    const SOURCE = 'cognite data fusion';
+
+    cy.clickSelectFilter('Sources').searchAndClickSelectOption(SOURCE);
+
+    cy.wait(`@${FILE_LIST_ALIAS}`).payloadShouldContain({
+      in: {
+        property: ['sourceFile', 'source'],
+        values: [SOURCE],
+      },
+    });
+  });
+
+  it('should filter files by label', () => {
+    const LABEL = 'DISCOVER_PRESSURE_BOOK';
+
+    cy.clickSelectFilter('Labels').searchAndClickSelectOption(LABEL);
+
+    cy.wait(`@${FILE_LIST_ALIAS}`).payloadShouldContain({
+      containsAny: {
+        property: ['labels'],
+        values: [{ externalId: LABEL }],
       },
     });
   });

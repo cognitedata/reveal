@@ -14,7 +14,7 @@ export const TIMESERIES_METADATA = 'PRODUCTION';
 export const FILE_NAME = 'PID-ME-P-0021-SVG.svg';
 export const FILE_CONTENT = 'This is a test file';
 export const FILE_EXTERNAL_ID = '15_9_19_A_1997_07_25';
-export const FILE_ID = '1477029362694324';
+export const FILE_ID = '6057854064781786';
 export const FILE_METADATA = 'Dancing in the dark';
 
 export const EVENT_ID = '8973980073298523';

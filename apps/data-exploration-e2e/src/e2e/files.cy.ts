@@ -1,4 +1,4 @@
-import { FILE_NAME } from '../support/constant';
+import { FILE_ID, FILE_NAME } from '../support/constant';
 import {
   FILE_LIST_ALIAS,
   interceptFileList,
@@ -66,11 +66,31 @@ describe('Files', () => {
     cy.findByTestId('metadata-card').should('be.visible');
   });
 
+  it('should open in industrial canvas', () => {
+    cy.clickIconButton('Open in Industrial Canvas');
+
+    cy.url().should('include', 'industrial-canvas');
+    cy.url().should('include', `file-${FILE_ID}`);
+
+    cy.goBack();
+    cy.findByTestId('file-detail')
+      .findByTestId('general-details-card')
+      .should('be.visible');
+  });
+
   it('should close file detail view and clear search input', () => {
     cy.log('close file detail view');
     cy.findByTestId('file-detail').clickIconButton('Close');
     cy.findByTestId('file-detail').should('not.exist');
 
     cy.clearSearchInput();
+  });
+
+  it('should be able to upload a file', () => {
+    cy.clickButton('Upload');
+    cy.findByTestId('document-uploader-modal').should('exist');
+
+    cy.findByTestId('document-uploader-modal').clickIconButton('Close');
+    cy.findByTestId('document-uploader-modal').should('not.exist');
   });
 });
