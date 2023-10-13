@@ -55,7 +55,6 @@ type AnnotationAssetElementsProps = {
 };
 
 function AnnotationAssetElements({ siteId }: AnnotationAssetElementsProps): ReactElement {
-
   const annotations = use360Annotations(sdk, [siteId] ?? ['celanese1']);
 
   return (
