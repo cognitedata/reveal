@@ -1,0 +1,36 @@
+[
+  {
+    "dataSetName": "SymmetryData",
+    "dataSetWriteProtected": false,
+    "dataSetId": 2408940221847413,
+    "heartbeat": 1697113960465,
+    "connectorVersion": "SymmetryConnector-1.0.0-alpha-004",
+    "simulatorVersion": "N/A",
+    "licenseLastCheckedTime": 0,
+    "licenseStatus": "License check disabled",
+    "connectorStatus": "NONE_REPORTED",
+    "connectorStatusUpdatedTime": 0,
+    "models": 3,
+    "calculations": 5,
+    "calculationsRuns": 3144,
+    "connectorName": "symmetry",
+    "simulator": "Symmetry"
+  },
+  {
+    "dataSetName": "PetroSim",
+    "dataSetWriteProtected": false,
+    "dataSetId": 841335569281748,
+    "heartbeat": 1697113955095,
+    "connectorVersion": "PetrosimConnector-1.0.0-alpha-005",
+    "simulatorVersion": "Petro-SIM v7.3",
+    "licenseLastCheckedTime": 0,
+    "licenseStatus": "License check disabled",
+    "connectorStatus": "NONE_REPORTED",
+    "connectorStatusUpdatedTime": 0,
+    "models": 7,
+    "calculations": 3,
+    "calculationsRuns": 3026,
+    "connectorName": "simint-petrosim",
+    "simulator": "PetroSIM"
+  }
+]

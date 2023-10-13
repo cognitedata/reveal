@@ -15,7 +15,7 @@ import { api } from '@cognite/simconfig-api-sdk/rtk';
 import { CalculationDetails, ModelLibrary } from './pages';
 import { CalculationConfiguration } from './pages/CalculationConfiguration/CalculationConfiguration';
 import { CalculationRunDetails } from './pages/CalculationRunDetails/CalculationRunDetails';
-import { CalculationRuns } from './pages/CalculationRuns/CalculationRuns';
+import { CalculationRunsContainer } from './pages/CalculationRuns/CalculationRunsContainer';
 import { CustomCalculationConfiguration } from './pages/CustomCalculationConfiguration/CustomCalculationConfiguration';
 import { NewModel } from './pages/ModelLibrary';
 import type { StoreState } from './store/types';
@@ -137,7 +137,7 @@ export function routes(
               children: [
                 {
                   path: '/',
-                  element: <CalculationRuns />,
+                  element: <CalculationRunsContainer />,
                 },
                 {
                   path: ':runId',

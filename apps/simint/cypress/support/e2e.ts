@@ -14,6 +14,7 @@
 // ***********************************************************
 // Import commands.ts using ES2015 syntax:
 import { interceptProfileMe } from '@fusion/shared/cypress';
+import './commands';
 
 // This will also register cypress commands defined in @fusion/shared/cypress like loginWithAADClientCredentials()
 import {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
-import { Link, useMatch } from 'react-location';
+import { Link } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import {
@@ -11,13 +11,15 @@ import {
   Menu,
   Skeleton,
 } from '@cognite/cogs.js';
-import type { CalculationRun } from '@cognite/simconfig-api-sdk/rtk';
+import type {
+  CalculationRun,
+  SimulatorConfigDetails,
+} from '@cognite/simconfig-api-sdk/rtk';
 import { useGetCalculationQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { CalculationRunTypeIndicator } from '../../components/models/CalculationList/CalculationRunTypeIndicator';
 import { CalculationStatusIndicator } from '../../components/models/CalculationList/CalculationStatusIndicator';
 import { CalculationTimeLabel } from '../../components/models/CalculationList/CalculationTimeLabel';
-import type { AppLocationGenerics } from '../../routes';
 import { selectProject } from '../../store/simconfigApiProperties/selectors';
 import { createCdfLink } from '../../utils/createCdfLink';
 
@@ -26,17 +28,15 @@ import { CalculationRunsListContainer } from './styles';
 interface CalculationRunListProps extends React.HTMLAttributes<HTMLDivElement> {
   calculationRuns: CalculationRun[];
   isFetchingCalculationsRunList: boolean;
+  simulatorConfig: SimulatorConfigDetails[];
 }
 
 export function CalculationRunList({
   calculationRuns,
   isFetchingCalculationsRunList,
   onScroll,
+  simulatorConfig,
 }: CalculationRunListProps) {
-  const {
-    data: { definitions },
-  } = useMatch<AppLocationGenerics>();
-
   return (
     <CalculationRunsListContainer onScroll={onScroll}>
       {calculationRuns.map((run) => {
@@ -50,9 +50,8 @@ export function CalculationRunList({
         return (
           <div className="grid-row" key={run.id}>
             <span className="simulators">
-              {definitions?.simulatorsConfig?.filter(
-                ({ key }) => key === run.source
-              )?.[0]?.name ?? run.source}
+              {simulatorConfig.filter(({ key }) => key === run.source)?.[0]
+                ?.name ?? run.source}
             </span>
             <span className="model-name">{run.metadata.modelName}</span>
 
