@@ -1,41 +1,95 @@
+type SelectMenuSelectorConfig = {
+  subMenu?: boolean;
+};
+
 const getFilter = (filterLabel: string) => {
   return cy.findByTestId(`filter-${filterLabel}`);
 };
 
-const clickSelectFilter = (filterLabel: string) => {
-  cy.log(`Click filter: ${filterLabel}`);
-  return cy
-    .getFilter(filterLabel)
-    .findByTestId(`select-${filterLabel}`)
-    .click();
+const getSelectFilter = (subject: JQuery<HTMLElement>, filterLabel: string) => {
+  return cy.wrap(subject).findByTestId(`select-${filterLabel}`);
 };
 
-const clickSelectOption = (filter: JQuery<HTMLElement>, option: string) => {
-  cy.wrap(filter)
+const clickSelectFilter = (filterLabel: string) => {
+  cy.log(`Click filter: ${filterLabel}`);
+  return cy.getFilter(filterLabel).getSelectFilter(filterLabel).click();
+};
+
+const getSelectMenu = (
+  filter: JQuery<HTMLElement>,
+  config: SelectMenuSelectorConfig = {}
+) => {
+  const { subMenu } = config;
+
+  return cy
+    .wrap(filter)
     .getDataTestId()
     .then((filterDataTestId) => {
-      cy.log(`Click filter option: ${option}`);
-      cy.findByTestId(`${filterDataTestId}-menu-list`)
-        .contains(option, { matchCase: false })
-        .should('be.visible')
-        .click();
+      const menuDataTestId = subMenu
+        ? `${filterDataTestId}-menu-list-child`
+        : `${filterDataTestId}-menu-list`;
+
+      return cy.findByTestId(menuDataTestId);
     });
+};
+
+const searchOption = (
+  filter: JQuery<HTMLElement>,
+  option: string,
+  config?: SelectMenuSelectorConfig
+) => {
+  cy.log(`Search filter option: "${option}"`);
+  cy.wrap(filter)
+    .getSelectMenu(config)
+    .findByTestId('search-input')
+    .type(option);
+
+  return cy.wrap(filter);
+};
+
+const getSelectOption = (
+  filter: JQuery<HTMLElement>,
+  option: string,
+  config?: SelectMenuSelectorConfig
+) => {
+  return cy
+    .wrap(filter)
+    .getSelectMenu(config)
+    .contains(option, { matchCase: false })
+    .should('be.visible');
+};
+
+const hoverSelectOption = (
+  filter: JQuery<HTMLElement>,
+  option: string,
+  config?: SelectMenuSelectorConfig
+) => {
+  cy.log(`Hover filter option: ${option}`);
+  cy.wrap(filter).getSelectOption(option, config).hover();
+
+  return cy.wrap(filter);
+};
+
+const clickSelectOption = (
+  filter: JQuery<HTMLElement>,
+  option: string,
+  config?: SelectMenuSelectorConfig
+) => {
+  cy.log(`Click filter option: ${option}`);
+  cy.wrap(filter).getSelectOption(option, config).click();
 
   return cy.wrap(filter);
 };
 
 const searchAndClickSelectOption = (
   filter: JQuery<HTMLElement>,
-  option: string
+  option: string,
+  config?: SelectMenuSelectorConfig
 ) => {
-  cy.wrap(filter)
-    .getDataTestId()
-    .then((filterDataTestId) => {
-      cy.log(`Search filter option: "${option}"`);
-      cy.findByTestId(`${filterDataTestId}-search-input`).type(option);
-    });
-
-  return cy.wrap(filter).clickSelectOption(option);
+  return cy
+    .wrap(filter)
+    .searchOption(option, config)
+    .clickSelectOption(option, config);
 };
 
 const clickBooleanOption = (filter: JQuery<HTMLElement>, option: string) => {
@@ -46,7 +100,20 @@ const clickBooleanOption = (filter: JQuery<HTMLElement>, option: string) => {
 };
 
 Cypress.Commands.add('getFilter', getFilter);
+Cypress.Commands.add(
+  'getSelectFilter',
+  { prevSubject: 'optional' },
+  getSelectFilter
+);
 Cypress.Commands.add('clickSelectFilter', clickSelectFilter);
+Cypress.Commands.add('getSelectMenu', { prevSubject: true }, getSelectMenu);
+Cypress.Commands.add('searchOption', { prevSubject: true }, searchOption);
+Cypress.Commands.add('getSelectOption', { prevSubject: true }, getSelectOption);
+Cypress.Commands.add(
+  'hoverSelectOption',
+  { prevSubject: true },
+  hoverSelectOption
+);
 Cypress.Commands.add(
   'clickSelectOption',
   { prevSubject: true },
@@ -65,12 +132,34 @@ Cypress.Commands.add(
 
 export interface FilterCommands {
   getFilter: (filterLabel: string) => Cypress.Chainable<JQuery<HTMLElement>>;
+  getSelectFilter: (
+    filterLabel: string
+  ) => Cypress.Chainable<JQuery<HTMLElement>>;
   clickSelectFilter: (
     filterLabel: string
   ) => Cypress.Chainable<JQuery<HTMLElement>>;
-  clickSelectOption: (option: string) => Cypress.Chainable<JQuery<HTMLElement>>;
+  getSelectMenu: (
+    config?: SelectMenuSelectorConfig
+  ) => Cypress.Chainable<JQuery<HTMLElement>>;
+  searchOption: (
+    option: string,
+    config?: SelectMenuSelectorConfig
+  ) => Cypress.Chainable<JQuery<HTMLElement>>;
+  getSelectOption: (
+    option: string,
+    config?: SelectMenuSelectorConfig
+  ) => Cypress.Chainable<JQuery<HTMLElement>>;
+  hoverSelectOption: (
+    option: string,
+    config?: SelectMenuSelectorConfig
+  ) => Cypress.Chainable<JQuery<HTMLElement>>;
+  clickSelectOption: (
+    option: string,
+    config?: SelectMenuSelectorConfig
+  ) => Cypress.Chainable<JQuery<HTMLElement>>;
   searchAndClickSelectOption: (
-    option: string
+    option: string,
+    config?: SelectMenuSelectorConfig
   ) => Cypress.Chainable<JQuery<HTMLElement>>;
   clickBooleanOption: (
     option: string

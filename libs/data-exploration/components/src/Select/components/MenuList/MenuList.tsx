@@ -59,7 +59,7 @@ MenuListComponentProps<OptionType>) => {
       <MenuListContent data-testid={`${selectDataTestId}-menu-list`}>
         {showMenuInput && (
           <SearchInput
-            data-testid={`${selectDataTestId}-search-input`}
+            data-testid="search-input"
             value={filterInput.input}
             onChange={onChangeHandler}
             onFocus={onMenuInputFocus}

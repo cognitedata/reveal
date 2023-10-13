@@ -9,8 +9,7 @@ describe('Assets - Filters', () => {
     cy.navigateToExplorer();
 
     cy.goToTab('Assets');
-    cy.clickIconButton('List');
-    cy.tableContentShouldBeVisible('asset-search-results');
+    cy.tableContentShouldBeVisible('asset-tree-table');
   });
 
   beforeEach(() => {
@@ -43,6 +42,30 @@ describe('Assets - Filters', () => {
       in: {
         property: ['source'],
         values: [SOURCE],
+      },
+    });
+  });
+
+  it('should filter assets by metadata', () => {
+    const METADATA_PROPERTY = 'description';
+    const METADATA_VALUE = 'inst';
+
+    cy.clickSelectFilter('Metadata')
+      .searchOption(METADATA_PROPERTY)
+      .hoverSelectOption(METADATA_PROPERTY)
+      .getSelectMenu({ subMenu: true })
+      .should('be.visible');
+
+    cy.getSelectFilter('Metadata').searchAndClickSelectOption(METADATA_VALUE, {
+      subMenu: true,
+    });
+
+    cy.getSelectFilter('Metadata').getSelectMenu().clickButton('Apply');
+
+    cy.wait(`@${ASSET_LIST_ALIAS}`).payloadShouldContain({
+      equals: {
+        property: ['metadata', METADATA_PROPERTY],
+        value: METADATA_VALUE,
       },
     });
   });

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import get from 'lodash/get';
 import has from 'lodash/has';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
@@ -65,6 +66,7 @@ export const OptionsMenu = ({
   isLoading,
   placement = 'right-start',
   submenuOpenDelay,
+  ...rest
 }: OptionsMenuProps) => {
   const { t } = useTranslation();
 
@@ -120,6 +122,7 @@ export const OptionsMenu = ({
           }}
           content={
             <ChildOptionsMenu
+              data-testid={`${get(rest, 'data-testid')}-child`}
               parentOptionValue={value}
               useCustomMetadataValuesQuery={useCustomMetadataValuesQuery}
               selection={selection}
@@ -178,7 +181,7 @@ export const OptionsMenu = ({
   }
 
   return (
-    <OptionMenuContainer>
+    <OptionMenuContainer data-testid={get(rest, 'data-testid')}>
       <SearchInput
         onChange={handleFilterOptions}
         onKeyDown={onKeyDownHandler}
