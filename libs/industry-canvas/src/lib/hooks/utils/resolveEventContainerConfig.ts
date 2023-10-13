@@ -48,6 +48,7 @@ const resolveEventContainerConfig = async (
     width: width ?? DEFAULT_EVENT_WIDTH,
     height: height ?? DEFAULT_EVENT_HEIGHT,
     eventId: resourceId,
+    shouldAutoSize: true,
     metadata: {
       resourceId,
       resourceType: 'event',

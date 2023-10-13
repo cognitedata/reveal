@@ -32,6 +32,7 @@ const resolveAssetContainerConfig = async (
     y: y,
     width: width ?? DEFAULT_ASSET_WIDTH,
     height: height ?? DEFAULT_ASSET_HEIGHT,
+    shouldAutoSize: true,
     assetId: resourceId,
     metadata: {
       resourceId,

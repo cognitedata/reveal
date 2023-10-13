@@ -329,7 +329,13 @@ export const IndustryCanvasPage = () => {
   };
 
   const onDownloadPress = () => {
-    unifiedViewerRef?.exportWorkspaceToPdf();
+    if (activeCanvas === undefined) {
+      return;
+    }
+    unifiedViewerRef?.exportWorkspaceToPdf({
+      fileName: `${activeCanvas.name}.pdf`,
+      pages: containers.map(({ id: containerId }) => ({ containerId })),
+    });
     trackUsage(MetricEvent.DOWNLOAD_AS_PDF_CLICKED);
   };
 
