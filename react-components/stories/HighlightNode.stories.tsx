@@ -63,7 +63,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const nodeData = useClickedNodeData();
 
   useEffect(() => {
-    if (nodeData?.fdmNode === undefined) {
+    console.log('Clicked node data', nodeData);
+    if (nodeData?.fdmResult === undefined) {
       setStylingGroups([]);
       return;
     }
@@ -71,16 +72,20 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     setStylingGroups([
       {
         fdmAssetExternalIds: [
-          { externalId: nodeData.fdmNode.externalId, space: nodeData.fdmNode.space }
+          {
+            externalId: nodeData.fdmResult.fdmNodes[0].externalId,
+            space: nodeData.fdmResult.fdmNodes[0].space
+          }
         ],
         style: { cad: DefaultNodeAppearance.Highlighted }
       }
     ]);
 
-    void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, nodeData.fdmNode.space);
-
-    console.log('Clicked node data', nodeData);
-  }, [nodeData?.fdmNode]);
+    void cameraNavigation.fitCameraToInstance(
+      nodeData.fdmResult.fdmNodes[0].externalId,
+      nodeData.fdmResult.fdmNodes[0].space
+    );
+  }, [nodeData]);
 
   return (
     <>
