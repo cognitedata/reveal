@@ -14,7 +14,7 @@ export enum TransformMode {
 
 export const createTransformControls = (
   viewer: Cognite3DViewer
-): TransformControls | null => {
+): TransformControls => {
   const transformControls = new TransformControls(
     viewer.cameraManager.getCamera(),
     viewer.domElement
