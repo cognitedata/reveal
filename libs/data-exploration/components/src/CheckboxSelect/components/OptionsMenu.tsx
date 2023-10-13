@@ -116,7 +116,7 @@ export const OptionsMenu = ({
         <Dropdown
           key={`${option.value}_${index}`}
           placement={placement}
-          visible={hoverOption?.value === option.value}
+          visible={hoverOption && hoverOption.value === option.value}
           onClickOutside={() => {
             setHoverOption(undefined);
           }}
