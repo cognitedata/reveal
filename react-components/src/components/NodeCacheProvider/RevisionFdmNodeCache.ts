@@ -201,7 +201,7 @@ export class RevisionFdmNodeCache {
     const ancestorMappings = await this.getMappingEdgesForAncestors(ancestors);
 
     if (ancestorMappings.length === 0) {
-      return { edges: [], ancestorsWithSameMapping: [], firstMappedAncestorTreeIndex: 0 };
+      return { edges: [], ancestorsWithSameMapping: ancestors, firstMappedAncestorTreeIndex: -1 };
     }
 
     const edgesWithCorrespondingTreeIndex = this.combineEdgesWithTreeIndex(

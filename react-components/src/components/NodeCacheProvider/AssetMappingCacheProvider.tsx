@@ -10,9 +10,16 @@ import {
   type NodeAssetMappingResult
 } from './AssetMappingCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
+import { type CogniteInternalId } from '@cognite/sdk';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { type ModelId, type RevisionId, type TreeIndex } from './types';
+import {
+  type ModelRevisionId,
+  type ModelId,
+  type RevisionId,
+  type TreeIndex,
+  type ModelRevisionAssetNodesResult
+} from './types';
 import { fetchAncestorNodesForTreeIndex } from './requests';
 
 export type AssetMappingCacheContent = {
@@ -58,6 +65,36 @@ export const useAssetMappedNodesForRevisions = (
       return await Promise.all(fetchPromises);
     },
     { staleTime: Infinity, enabled: cadModels.length > 0 }
+  );
+};
+
+export const useNodesForAssets = (
+  models: ModelRevisionId[],
+  assetIds: CogniteInternalId[]
+): UseQueryResult<ModelRevisionAssetNodesResult[]> => {
+  const assetMappingCache = useAssetMappingCache();
+
+  return useQuery(
+    [
+      'reveal',
+      'react-components',
+      'asset-mapping-nodes',
+      ...models.map((model) => `${model.modelId}/${model.revisionId}`),
+      ...assetIds.map((id) => `${id}`)
+    ],
+    async () => {
+      const modelAndNodeMapPromises = models.map(async (model) => {
+        const nodeMap = await assetMappingCache.getNodesForAssetIds(
+          model.modelId,
+          model.revisionId,
+          assetIds
+        );
+        return { modelId: model.modelId, revisionId: model.revisionId, assetToNodeMap: nodeMap };
+      });
+
+      return await Promise.all(modelAndNodeMapPromises);
+    },
+    { staleTime: Infinity, enabled: assetIds.length > 0 }
   );
 };
 
