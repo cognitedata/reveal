@@ -20,7 +20,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/charts-lib/**/*.ts"]
+        "lintFilePatterns": ["libs/charts-lib/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {

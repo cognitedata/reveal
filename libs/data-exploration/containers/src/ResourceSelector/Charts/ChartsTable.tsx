@@ -1,4 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
+
+import styled from 'styled-components';
 
 import {
   getHighlightQuery,
@@ -9,7 +11,7 @@ import {
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { Chart } from '@cognite/charts-lib';
+import { Chart, ChartListContext } from '@cognite/charts-lib';
 import { Body } from '@cognite/cogs.js';
 
 import { DateRangeProps, useTranslation } from '@data-exploration-lib/core';
@@ -24,6 +26,8 @@ export const ChartsTable = ({ query, ...props }: ChartsTableProps) => {
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
 
+  const { PreviewPlotContainer } = useContext(ChartListContext);
+
   const columns = useMemo(() => {
     return [
       {
@@ -31,18 +35,33 @@ export const ChartsTable = ({ query, ...props }: ChartsTableProps) => {
         enableHiding: false,
       },
       {
+        id: 'chart-preview',
+        header: 'Preview',
+        size: 100,
+        cell: ({ row }) => {
+          return (
+            <StyledPreviewPlot>
+              <PreviewPlotContainer chart={row.original} />
+            </StyledPreviewPlot>
+          );
+        },
+      },
+      {
         accessorKey: 'updatedAt',
         id: 'updatedAt',
         header: t('LAST_UPDATED', 'Last updated'),
-        cell: ({ getValue }) => (
-          <Body level={2}>
-            <TimeDisplay
-              value={getValue<number | Date>()}
-              relative
-              withTooltip
-            />
-          </Body>
-        ),
+        cell: ({ getValue, row }) => {
+          console.log('CT, LU; row, getValue: ', row, getValue());
+          return (
+            <Body level={2}>
+              <TimeDisplay
+                value={getValue<number | Date>()}
+                relative
+                withTooltip
+              />
+            </Body>
+          );
+        },
       },
       {
         accessorKey: 'userInfo.displayName',
@@ -56,3 +75,9 @@ export const ChartsTable = ({ query, ...props }: ChartsTableProps) => {
 
   return <Table<Chart> columns={columns} data={data || []} {...rest} />;
 };
+
+const StyledPreviewPlot = styled.div`
+  width: 80px;
+  height: 80px;
+  border: 1px solid var(--cogs-greyscale-grey2);
+`;

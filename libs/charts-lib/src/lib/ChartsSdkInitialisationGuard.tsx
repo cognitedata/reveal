@@ -1,4 +1,4 @@
-import { Loader, toast } from '@cognite/cogs.js';
+import { toast } from '@cognite/cogs.js';
 
 import { useFirebaseInit } from './useFirebaseInit';
 
@@ -13,7 +13,8 @@ export const ChartsSdkInitialisationGuard: React.FC<ChartsSdkGuardProps> = ({
     useFirebaseInit(true);
 
   if (!firebaseDone) {
-    return <Loader />;
+    // <Loader /> is spanning whole page here, disabled for now.
+    return null;
   }
 
   if (isFirebaseError) {
