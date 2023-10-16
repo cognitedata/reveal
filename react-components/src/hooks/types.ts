@@ -37,14 +37,6 @@ export type LayersUrlStateParam = {
   pointCloudLayers?: PointCloudLayersUrlStateParam[];
 };
 
-export type Annotation360Data = {
-  id: string;
-  externalId: string;
-  type: string;
-  createdTime: string;
-  lastUpdatedTime: string;
-};
-
 export type AugmentedMapping = Partial<AssetMapping3D> & {
   name: string;
   description?: string;
