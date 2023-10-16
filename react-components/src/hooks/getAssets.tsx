@@ -5,7 +5,7 @@
 import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { type QueryFunction } from '@tanstack/query-core';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { keyBy } from 'lodash';
+import { chunk, keyBy } from 'lodash';
 
 export const getAssets = (
   uniqueAssets: Array<{
@@ -15,13 +15,20 @@ export const getAssets = (
   sdk: CogniteClient
 ): UseQueryResult<Record<number, Asset> | undefined, unknown> => {
   const queryFunction: QueryFunction<Record<number, Asset> | undefined> = async () => {
-    const retrievedAssets = await sdk.assets.retrieve(
-      uniqueAssets.map(({ assetId }) => ({
-        id: assetId
-      })),
-      { ignoreUnknownIds: true }
+    const assetsPromises = await Promise.all(
+      chunk(uniqueAssets, 1000).map(async (uniqueAssetsChunk) => {
+        const retrievedAssets = await sdk.assets.retrieve(
+          uniqueAssetsChunk.map(({ assetId }) => ({
+            id: assetId
+          })),
+          { ignoreUnknownIds: true }
+        );
+        return retrievedAssets;
+      })
     );
-    const assets = keyBy(retrievedAssets, 'id');
+
+    const flattenedAssests = assetsPromises.flat();
+    const assets = keyBy(flattenedAssests, 'id');
     return assets;
   };
 

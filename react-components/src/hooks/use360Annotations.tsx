@@ -50,7 +50,7 @@ export const use360Annotations = (sdk: CogniteClient, siteIds: string[]): Augmen
       .map((mapping) => ({
         name: assets[mapping.assetId].name,
         description: assets[mapping.assetId].description,
-        createTime: assets[mapping.assetId].createdTime,
+        createdTime: assets[mapping.assetId].createdTime,
         lastUpdatedTime: assets[mapping.assetId].lastUpdatedTime,
         ...mapping
       }));

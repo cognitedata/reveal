@@ -49,6 +49,6 @@ export type AugmentedMapping = Partial<AssetMapping3D> & {
   name: string;
   description?: string;
   annotationId?: number;
-  createTime?: Date;
-  updateTime?: Date;
+  createdTime?: Date;
+  lastUpdatedTime?: Date;
 };
