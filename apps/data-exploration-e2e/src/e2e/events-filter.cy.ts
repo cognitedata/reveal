@@ -70,7 +70,7 @@ describe('Events - Filters', () => {
     cy.selectMonth('January');
     cy.selectDate('January 1st');
 
-    cy.getDatePickerValue('Start time').then((selectedDate) => {
+    cy.getDatePickerValue().then((selectedDate) => {
       cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain({
         range: {
           property: ['startTime'],
@@ -91,7 +91,7 @@ describe('Events - Filters', () => {
     cy.selectMonth('January');
     cy.selectDate('January 1st');
 
-    cy.getDatePickerValue('End time').then((selectedDate) => {
+    cy.getDatePickerValue().then((selectedDate) => {
       cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain({
         range: {
           property: ['endTime'],

@@ -101,15 +101,17 @@ export const DatePickerInput = ({
   date: Date;
   onDateChange: (_date: Date) => void;
 } & Omit<ButtonProps, 'ref' | 'alignVertically'>) => (
-  <DatePickerButtonWrapper icon="Calendar" type="tertiary" {...props}>
-    <ReactDatePicker
-      open={false}
-      dateFormat="yyyy-MM-dd HH:mm"
-      onChange={(value) => onDateChange(value as Date)}
-      selected={date}
-      showTimeInput
-    />
-  </DatePickerButtonWrapper>
+  <div data-testid="date-picker-input">
+    <DatePickerButtonWrapper icon="Calendar" type="tertiary" {...props}>
+      <ReactDatePicker
+        open={false}
+        dateFormat="yyyy-MM-dd HH:mm"
+        onChange={(value) => onDateChange(value as Date)}
+        selected={date}
+        showTimeInput
+      />
+    </DatePickerButtonWrapper>
+  </div>
 );
 
 const years = range(dayjs(0).get('year'), dayjs().get('year') + 1, 1).reverse();

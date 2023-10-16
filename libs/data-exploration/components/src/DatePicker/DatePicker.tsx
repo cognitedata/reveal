@@ -74,6 +74,7 @@ const ModePicker = ({
       <DatePickerInput
         date={date}
         onDateChange={(newDate) => {
+          newDate.setSeconds(0);
           onDateChanged(newDate);
           setDate(newDate);
         }}
@@ -84,6 +85,7 @@ const ModePicker = ({
           selected={date}
           onChange={(newDate) => {
             const typedDate = newDate as Date;
+            typedDate.setSeconds(0);
             onDateChanged(typedDate);
             setDate(typedDate);
           }}

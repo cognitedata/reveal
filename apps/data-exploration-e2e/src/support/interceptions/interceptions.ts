@@ -1,5 +1,6 @@
 export const ASSET_LIST_ALIAS = 'assetList';
 export const TIMESERIES_LIST_ALIAS = 'timeseriesList';
+export const TIMESERIES_DATAPOINTS_LIST_ALIAS = 'timeseriesList';
 export const EVENT_LIST_ALIAS = 'eventList';
 export const FILE_LIST_ALIAS = 'fileList';
 export const SEQUENCE_LIST_ALIAS = 'sequenceList';
@@ -17,6 +18,13 @@ export const interceptTimeseriesList = () => {
     url: '**/api/v1/projects/dss-dev/timeseries/list',
     method: 'POST',
   }).as(TIMESERIES_LIST_ALIAS);
+};
+
+export const interceptTimeseriesDatapointsList = () => {
+  cy.intercept({
+    url: '**/api/v1/projects/dss-dev/timeseries/data/list',
+    method: 'POST',
+  }).as(TIMESERIES_DATAPOINTS_LIST_ALIAS);
 };
 
 export const interceptEventList = () => {

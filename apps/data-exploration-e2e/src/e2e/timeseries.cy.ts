@@ -1,8 +1,11 @@
 import { TIMESERIES_ID, TIMESERIES_NAME } from '../support/constant';
 import {
+  TIMESERIES_DATAPOINTS_LIST_ALIAS,
   TIMESERIES_LIST_ALIAS,
+  interceptTimeseriesDatapointsList,
   interceptTimeseriesList,
 } from '../support/interceptions/interceptions';
+import { getDaySuffix, subtractDate } from '../support/utils/date';
 
 describe('Timeseries', () => {
   before(() => {
@@ -107,5 +110,40 @@ describe('Timeseries', () => {
     cy.findByTestId('timeseries-detail').should('not.exist');
 
     cy.clearSearchInput();
+  });
+
+  it('should be able to interact with chart preview', () => {
+    cy.clickButton('Chart Preview');
+    cy.findByTestId('pivot-range-picker').should('be.visible');
+
+    cy.setPivotRangeInput(2);
+    cy.selectPivotRangeUnit('years');
+    cy.selectPivotRangeDirection('before');
+
+    cy.selectYear(2023);
+    cy.selectMonth('January');
+
+    cy.getDatePickerValue().then((currentDate) => {
+      interceptTimeseriesDatapointsList();
+
+      const day = subtractDate(currentDate, 1, 'day').day();
+      const daySuffix = getDaySuffix(day);
+      cy.selectDate(`January ${day}${daySuffix}`);
+    });
+
+    cy.getDatePickerValue().then((selectedDate) => {
+      cy.wait(`@${TIMESERIES_DATAPOINTS_LIST_ALIAS}`).then(({ request }) => {
+        const payload = request.body;
+
+        const startDate = subtractDate(selectedDate, 2, 'years');
+        const endDate = new Date(selectedDate);
+
+        expect(payload.start).to.eq(startDate.valueOf());
+        expect(payload.end).to.eq(endDate.valueOf());
+      });
+    });
+
+    cy.clickButton('Chart Preview');
+    cy.findByTestId('pivot-range-picker').should('not.be.visible');
   });
 });

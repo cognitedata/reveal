@@ -52,15 +52,17 @@ export const PivotRangePicker = ({
   }));
 
   const onChange = (changes: Partial<PivotRange>) => {
+    changes.date?.setSeconds(0);
     onRangeChanged({ date, unit, amount, direction, type, ...changes });
   };
 
   return (
-    <PivotRangePickerWrapper>
+    <PivotRangePickerWrapper data-testid="pivot-range-picker">
       <Body>{t('SHOW_ME_DATA_FROM', 'Show me data from')}</Body>
       <SpacedRow style={{ marginBottom: 8, marginTop: 8 }}>
         <PivotRangeInput>
           <Input
+            data-testid="pivot-range-input"
             type="tel"
             variant="noBorder"
             value={amount}
@@ -81,6 +83,7 @@ export const PivotRangePicker = ({
         </PivotRangeInput>
         <PivotRangeUnit>
           <select
+            data-testid="pivot-range-unit"
             value={options.find((el) => el.value === unit)?.value}
             onChange={(value) => {
               onChange({
@@ -103,6 +106,7 @@ export const PivotRangePicker = ({
       </SpacedRow>
       <PivotRangeDirection>
         <select
+          data-testid="pivot-range-direction"
           value={directions.find((el) => el.value === direction)?.value}
           onChange={(value) => {
             onChange({
