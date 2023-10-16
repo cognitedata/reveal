@@ -594,7 +594,12 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               <Button
                 icon="ExternalLink"
                 onClick={() => {
-                  navigateToPath(`/explore/threeD/${selectedContainer.id}`);
+                  navigateToPath(
+                    `/explore/threeD/${selectedContainer.metadata.modelId}`,
+                    {
+                      selectedAssetId: selectedContainer.initialAssetId,
+                    }
+                  );
                   trackUsage(
                     MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
                     {
