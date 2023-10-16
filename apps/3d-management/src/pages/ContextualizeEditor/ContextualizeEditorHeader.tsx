@@ -52,7 +52,7 @@ export const ContextualizeEditorHeader = ({
               onClick={handleGoBackToIndustryCanvasButtonClick}
             />
           </Tooltip>
-          <Heading level={5}>Contextualize editor</Heading>
+          <Heading level={5}>Contextualization Editor</Heading>
         </Flex>
       </PreviewLinkWrapper>
 
