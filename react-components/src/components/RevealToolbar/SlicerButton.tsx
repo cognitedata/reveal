@@ -10,8 +10,8 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
-import { useUrlStateParam } from '../../hooks/useUrlStateParam';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
+import { useSlicerUrlParams } from '../../hooks/useUrlStateParam';
 
 type SliceState = {
   minHeight: number;
@@ -21,16 +21,14 @@ type SliceState = {
 };
 
 type SlicerButtonProps = {
-  storeStateInUrl: boolean;
+  storeStateInUrl?: boolean;
 };
 
-export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactElement => {
+export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): ReactElement => {
   const viewer = useReveal();
   const { reveal3DResourcesCount } = useReveal3DResourcesCount();
-  const urlParam = useUrlStateParam();
-  const { top, bottom } = storeStateInUrl
-    ? urlParam.getSlicerStateFromUrlParam()
-    : { top: 1, bottom: 0 };
+  const [slicerUrlState, setSlicerUrlState] = useSlicerUrlParams();
+  const { top, bottom } = storeStateInUrl ? slicerUrlState : { top: 1, bottom: 0 };
   const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
@@ -84,7 +82,7 @@ export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactEleme
     });
 
     if (storeStateInUrl) {
-      urlParam.setUrlParamOnSlicerChanged(newValues);
+      setSlicerUrlState(newValues);
     }
   }
 
@@ -121,10 +119,6 @@ export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactEleme
       </Dropdown>
     </CogsTooltip>
   );
-};
-
-SlicerButton.defaultProps = {
-  storeStateInUrl: true
 };
 
 const StyledMenu = styled(Menu)`

@@ -9,17 +9,20 @@ import { Image360HistoricalSummary } from './Toolbar/Image360HistoricalSummary';
 import { formatDate } from './utils/FormatDate';
 import styled from 'styled-components';
 import { uniqueId } from 'lodash';
+import { I18nContextProvider } from '../i18n/I18n';
 
 export type Image360HistoricalDetailsProps = {
   viewer: Cognite3DViewer;
   image360Entity?: Image360;
   onExpand?: (isExpanded: boolean) => void;
+  appLanguage?: string;
 };
 
 export const Image360HistoricalDetails = ({
   viewer,
   image360Entity,
-  onExpand
+  onExpand,
+  appLanguage
 }: Image360HistoricalDetailsProps): ReactElement => {
   const [revisionDetailsExpanded, setRevisionDetailsExpanded] = useState<boolean>(false);
   const [activeRevision, setActiveRevision] = useState<number>(0);
@@ -82,30 +85,32 @@ export const Image360HistoricalDetails = ({
   }, [revisionDetailsExpanded]);
 
   return (
-    <DetailsContainer style={{ minWidth }}>
-      {
-        <>
-          <Image360HistoricalPanel
-            key={uniqueId()}
-            revisionCount={revisionCollection.length}
-            revisionDetailsExpanded={revisionDetailsExpanded}
-            setRevisionDetailsExpanded={setRevisionDetailsExpanded}
-          />
-          {revisionDetailsExpanded && (
-            <Image360HistoricalSummary
-              ref={newScrollPosition}
+    <I18nContextProvider appLanguage={appLanguage}>
+      <DetailsContainer style={{ minWidth }}>
+        {
+          <>
+            <Image360HistoricalPanel
               key={uniqueId()}
-              viewer={viewer}
-              stationId={image360Entity?.id}
-              stationName={image360Entity?.label}
-              activeRevision={activeRevision}
-              setActiveRevision={setActiveRevision}
-              revisionCollection={revisionCollection}
+              revisionCount={revisionCollection.length}
+              revisionDetailsExpanded={revisionDetailsExpanded}
+              setRevisionDetailsExpanded={setRevisionDetailsExpanded}
             />
-          )}
-        </>
-      }
-    </DetailsContainer>
+            {revisionDetailsExpanded && (
+              <Image360HistoricalSummary
+                ref={newScrollPosition}
+                key={uniqueId()}
+                viewer={viewer}
+                stationId={image360Entity?.id}
+                stationName={image360Entity?.label}
+                activeRevision={activeRevision}
+                setActiveRevision={setActiveRevision}
+                revisionCollection={revisionCollection}
+              />
+            )}
+          </>
+        }
+      </DetailsContainer>
+    </I18nContextProvider>
   );
 };
 

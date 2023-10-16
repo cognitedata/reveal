@@ -15,6 +15,12 @@ export type FdmNodeDataPromises = {
   viewsPromise: Promise<Source[] | undefined>;
 };
 
+export type ModelRevisionAssetNodesResult = {
+  modelId: ModelId;
+  revisionId: RevisionId;
+  assetToNodeMap: Map<AssetId, Node3D>;
+};
+
 export type AncestorQueryResult = {
   edges: FdmCadEdge[];
   ancestorsWithSameMapping: Node3D[];
@@ -25,6 +31,7 @@ export type ModelId = number;
 export type RevisionId = number;
 export type TreeIndex = number;
 export type NodeId = number;
+export type AssetId = number;
 export type FdmId = DmsUniqueIdentifier;
 
 export type ModelRevisionId = { modelId: number; revisionId: number };

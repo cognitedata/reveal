@@ -3,7 +3,6 @@
  */
 
 import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 import { LayersButton } from './LayersButton';
@@ -13,7 +12,6 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { MeasurementButton } from './MeasurementButton';
 import { HelpButton } from './HelpButton';
 import { type QualitySettings } from './SettingsContainer/types';
-import { translations } from '../../common/i18n';
 import styled from 'styled-components';
 
 const StyledToolBar = styled(ToolBar)`
@@ -72,18 +70,16 @@ const RevealToolbarContainer = forwardRef(
     ref: Ref<HTMLDivElement>
   ): ReactElement => {
     return (
-      <I18nWrapper translations={translations} addNamespace="reveal-react-components">
-        <StyledToolBar {...restProps} ref={ref}>
-          {toolBarContent ?? (
-            <DefaultContentWrapper
-              customSettingsContent={customSettingsContent}
-              highFidelitySettings={highFidelitySettings}
-              lowFidelitySettings={lowFidelitySettings}
-              storeStateInUrl={storeStateInUrl}
-            />
-          )}
-        </StyledToolBar>
-      </I18nWrapper>
+      <StyledToolBar {...restProps} ref={ref}>
+        {toolBarContent ?? (
+          <DefaultContentWrapper
+            customSettingsContent={customSettingsContent}
+            highFidelitySettings={highFidelitySettings}
+            lowFidelitySettings={lowFidelitySettings}
+            storeStateInUrl={storeStateInUrl}
+          />
+        )}
+      </StyledToolBar>
     );
   }
 );

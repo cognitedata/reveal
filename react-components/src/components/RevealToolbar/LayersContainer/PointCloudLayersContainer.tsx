@@ -9,20 +9,23 @@ import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type CognitePointCloudModel } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
-import { type Reveal3DResourcesLayersProps } from './types';
+import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
-import { useTranslation } from '../../../common/i18n';
+import { useTranslation } from '../../i18n/I18n';
 
 export const PointCloudLayersContainer = ({
-  layerProps
+  layerProps,
+  onChange
 }: {
   layerProps: Reveal3DResourcesLayersProps;
+  onChange: (cadState: Reveal3DResourcesLayerStates['pointCloudLayerData']) => void;
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);
   const { pointCloudLayerData } = layerProps.reveal3DResourcesLayerData;
+  const { storeStateInUrl } = layerProps;
   const count = pointCloudLayerData.length.toString();
   const someModelVisible = !pointCloudLayerData.every((data) => !data.isToggled);
   const indeterminate = pointCloudLayerData.some((data) => !data.isToggled);
@@ -40,6 +43,10 @@ export const PointCloudLayersContainer = ({
       ...prevResourcesStates,
       pointCloudLayerData: updatedPointCloudModels
     }));
+
+    if (storeStateInUrl !== undefined) {
+      onChange(updatedPointCloudModels);
+    }
   };
 
   const handleAllPointCloudModelsVisibility = (visible: boolean): void => {
@@ -53,8 +60,11 @@ export const PointCloudLayersContainer = ({
       ...prevResourcesStates,
       pointCloudLayerData
     }));
-  };
 
+    if (storeStateInUrl !== undefined) {
+      onChange(pointCloudLayerData);
+    }
+  };
   const pointCloudModelContent = (): ReactElement => {
     return (
       <StyledSubMenu
@@ -103,7 +113,7 @@ export const PointCloudLayersContainer = ({
                 setVisible(true);
               }}
             />
-            <StyledLabel> {t('POINT_CLOUDS')} </StyledLabel>
+            <StyledLabel> {t('POINT_CLOUDS', 'Point clouds')} </StyledLabel>
             <StyledChipCount label={count} hideTooltip type="neutral" />
           </Flex>
         </Menu.Submenu>

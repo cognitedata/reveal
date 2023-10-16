@@ -6,6 +6,7 @@
 
 import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
+import { AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 import { AnnotationStatus } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -65,6 +66,13 @@ export interface AreaCollection {
     // (undocumented)
     readonly isEmpty: boolean;
 }
+
+// @public
+export type AssetAnnotationImage360Info = {
+    annotationInfo: ImageAssetLinkAnnotationInfo;
+    imageEntity: Image360;
+    imageRevision: Image360Revision;
+};
 
 // @public
 export class AssetNodeCollection extends NodeCollection {
@@ -794,10 +802,12 @@ export type HtmlOverlayToolOptions = {
 // @public
 export interface Image360 {
     getActiveRevision(): Image360Revision;
+    getIconColor(): Color | 'default';
     getRevisions(): Image360Revision[];
     readonly id: string;
     readonly image360Visualization: Image360Visualization;
     readonly label: string | undefined;
+    setIconColor(color: Color | 'default'): void;
     readonly transform: THREE.Matrix4;
 }
 
@@ -844,6 +854,8 @@ export type Image360AnnotationIntersection = {
 // @public
 export interface Image360Collection {
     findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+    getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info[]>;
+    // @deprecated
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
     readonly id: string;
@@ -868,6 +880,11 @@ export type Image360EnteredDelegate = (image360: Image360, revision: Image360Rev
 export type Image360ExitedDelegate = () => void;
 
 // @public
+export type Image360IconStyle = {
+    color?: Color;
+};
+
+// @public
 export interface Image360Revision {
     readonly date: Date | undefined;
     getAnnotations(): Promise<Image360Annotation[]>;
@@ -878,6 +895,11 @@ export interface Image360Revision {
 export interface Image360Visualization {
     opacity: number;
 }
+
+// @public
+export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
+    data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
+};
 
 // @public (undocumented)
 export class IndexSet {
@@ -900,7 +922,9 @@ export class IndexSet {
     // (undocumented)
     forEachRange(visitor: (range: NumericRange) => void): void;
     // (undocumented)
-    hasIntersectionWith(otherSet: IndexSet | Map<number, number> | Set<number>): boolean;
+    hasIntersectionWith(otherSet: IndexSet | Set<number>): boolean;
+    // (undocumented)
+    hasIntersectionWithMap(otherMap: Map<number, number>): boolean;
     // (undocumented)
     intersectWith(otherSet: IndexSet): IndexSet;
     // (undocumented)
