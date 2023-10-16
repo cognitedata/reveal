@@ -1,9 +1,6 @@
 import styled from 'styled-components/macro';
 
 export const SelectWrapper = styled.div`
-  .cogs-select__menu {
-    width: 200px;
-  }
   .cogs-select__option {
     color: var(--cogs-text-icon--medium);
     font-weight: 500;
