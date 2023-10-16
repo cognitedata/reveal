@@ -99,6 +99,25 @@ const clickBooleanOption = (filter: JQuery<HTMLElement>, option: string) => {
   return cy.wrap(filter);
 };
 
+const typeString = (filter: JQuery<HTMLElement>, input: string) => {
+  cy.log(`Type string: ${input}`);
+
+  /**
+   * Had to do this ugly hack since Cypress was over-writing the input characters.
+   * Tried adding a delay, but then it's hard to trace the request since
+   * multiple requests are sent for each and every charactor.
+   */
+  const firstPart = input.slice(0, -1);
+  const lastCharacter = input.charAt(input.length - 1);
+
+  cy.wrap(filter)
+    .find('input')
+    .invoke('attr', 'value', firstPart)
+    .type(lastCharacter);
+
+  return cy.wrap(filter);
+};
+
 Cypress.Commands.add('getFilter', getFilter);
 Cypress.Commands.add(
   'getSelectFilter',
@@ -129,6 +148,7 @@ Cypress.Commands.add(
   { prevSubject: true },
   clickBooleanOption
 );
+Cypress.Commands.add('typeString', { prevSubject: true }, typeString);
 
 export interface FilterCommands {
   getFilter: (filterLabel: string) => Cypress.Chainable<JQuery<HTMLElement>>;
@@ -164,4 +184,5 @@ export interface FilterCommands {
   clickBooleanOption: (
     option: string
   ) => Cypress.Chainable<JQuery<HTMLElement>>;
+  typeString: (input: string) => Cypress.Chainable<JQuery<HTMLElement>>;
 }

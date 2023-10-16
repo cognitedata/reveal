@@ -33,7 +33,7 @@ export const NumberInput = ({
     : {};
 
   return (
-    <>
+    <div data-testid={`filter-${label}`}>
       {label && <FilterLabel>{label}</FilterLabel>}
 
       <Input
@@ -51,6 +51,6 @@ export const NumberInput = ({
         }}
         {...isLoading}
       />
-    </>
+    </div>
   );
 };

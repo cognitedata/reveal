@@ -1,170 +1,191 @@
 import {
-  DATA_SET,
+  DATA_SET_NAME,
   ASSET_NAME,
   EXTERNAL_ID,
   INTERNAL_ID,
+  DATA_SET_ID,
+  ASSET_ID,
 } from '../support/constant';
+import {
+  ASSET_LIST_ALIAS,
+  EVENT_LIST_ALIAS,
+  FILE_LIST_ALIAS,
+  SEQUENCE_LIST_ALIAS,
+  TIMESERIES_LIST_ALIAS,
+  interceptAssetList,
+  interceptEventList,
+  interceptFileList,
+  interceptSequenceList,
+  interceptTimeseriesList,
+} from '../support/interceptions/interceptions';
 
 describe('Common filters', () => {
-  beforeEach(() => {
+  before(() => {
     cy.fusionLogin();
     cy.navigateToExplorer();
+
+    cy.tableContentShouldBeVisible('asset-summary-table');
+    cy.tableContentShouldBeVisible('timeseries-summary-table');
+    cy.tableContentShouldBeVisible('document-summary-table');
+    cy.tableContentShouldBeVisible('events-summary-table');
+
+    cy.getTableById('sequence-summary-table').scrollIntoView();
+    cy.tableContentShouldBeVisible('sequence-summary-table');
+    // Scroll back to top
+    cy.getTableById('asset-summary-table').scrollIntoView();
   });
 
-  it('Data set filter should work', () => {
-    cy.log('click on data set filter');
-    cy.findAllByTestId('filter-Data set').click();
-
-    cy.log('search and select data set name');
-    cy.get('input[placeholder="Filter by name"]').type(DATA_SET);
-    cy.get('input[type="checkbox"]').check();
-
-    cy.goToTab('Files');
-
-    cy.log('filter label should display');
-    cy.findAllByTestId('sub-table-wrapper').should(
-      'contain',
-      `Data sets: ${DATA_SET}`
-    );
-
-    cy.log('click reset button');
-    cy.clickButton('Reset');
-
-    cy.log('filter label should not display');
-    cy.findAllByTestId('sub-table-wrapper').should(
-      'not.contain',
-      `Data sets: ${DATA_SET}`
-    );
+  beforeEach(() => {
+    interceptAssetList();
+    interceptTimeseriesList();
+    interceptFileList();
+    interceptEventList();
+    interceptSequenceList();
   });
 
-  it('Asset filter should work', () => {
-    cy.log('click on asset filter');
-    cy.findAllByTestId('filter-Asset').click();
-
-    cy.log('search and select asset');
-    cy.get('input[placeholder="Filter by name"]').type(ASSET_NAME);
-    cy.get('input[type="checkbox"]').check();
-
-    cy.goToTab('Assets');
-
-    cy.log('filter label should display');
-    cy.findAllByTestId('sub-table-wrapper').should(
-      'contain',
-      `Asset: ${ASSET_NAME}`
-    );
-
-    cy.clickButton('Reset');
-
-    cy.log('filter label should not display');
-    cy.findAllByTestId('sub-table-wrapper').should(
-      'not.contain',
-      `Asset: ${ASSET_NAME}`
-    );
+  afterEach(() => {
+    cy.resetSearchFilters();
   });
 
-  it('Created time filter should work', () => {
-    cy.log('click on created time filter');
-    cy.findAllByTestId('common-created-time-filter').click();
+  it('should filter by data set', () => {
+    cy.clickSelectFilter('Data sets').searchAndClickSelectOption(DATA_SET_NAME);
 
-    cy.log('select before option');
-    cy.get('input[type="checkbox"]').eq(1).check();
+    const filter = {
+      in: {
+        property: ['dataSetId'],
+        values: [Number(DATA_SET_ID)],
+      },
+    };
+
+    cy.wait(`@${ASSET_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${FILE_LIST_ALIAS}`).payloadShouldContain({
+      in: {
+        property: ['sourceFile', 'datasetId'],
+        values: [Number(DATA_SET_ID)],
+      },
+    });
+    cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${SEQUENCE_LIST_ALIAS}`).payloadShouldContain(filter);
+  });
+
+  it('should filter by asset', () => {
+    cy.clickSelectFilter('Assets').searchAndClickSelectOption(ASSET_NAME);
+
+    const filter = {
+      assetSubtreeIds: [{ id: Number(ASSET_ID) }],
+    };
+
+    cy.wait(`@${ASSET_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${FILE_LIST_ALIAS}`).payloadShouldContain({
+      inAssetSubtree: {
+        property: ['sourceFile', 'assetIds'],
+        values: [Number(ASSET_ID)],
+      },
+    });
+    cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${SEQUENCE_LIST_ALIAS}`).payloadShouldContain(filter);
+  });
+
+  it('should filter by created time', () => {
+    cy.clickSelectFilter('Created time').clickSelectOption('Before');
+
+    cy.openDatePicker('Created time');
+    cy.wait(`@${ASSET_LIST_ALIAS}`);
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`);
+    cy.wait(`@${FILE_LIST_ALIAS}`);
+    cy.wait(`@${EVENT_LIST_ALIAS}`);
+    cy.wait(`@${SEQUENCE_LIST_ALIAS}`);
 
     cy.log('change date to 2023/01/01');
-    cy.findAllByTestId('common-created-time-filter').find('button').click();
-    cy.findAllByTestId('yearSelect').select('2023');
-    cy.findAllByTestId('monthSelect').select('January');
-    cy.get('[aria-label*="January 1st"]').click();
+    cy.selectYear(2023);
+    cy.selectMonth('January');
+    cy.selectDate('January 1st');
 
-    cy.goToTab('Assets');
+    cy.getDatePickerValue().then((selectedDate) => {
+      const filter = {
+        range: {
+          property: ['createdTime'],
+          lte: new Date(selectedDate).valueOf(),
+        },
+      };
 
-    cy.log('filter label should display');
-    // cy.findAllByTestId('sub-table-wrapper').should(
-    //   'contain',
-    //   'Created Time: Before 1 Jan. 2023'
-    // );
-
-    cy.clickButton('Reset');
-
-    cy.log('filter label should not display');
-    cy.findAllByTestId('sub-table-wrapper').should(
-      'not.contain',
-      'Created Time: Before 1 Jan. 2023'
-    );
+      cy.wait(`@${ASSET_LIST_ALIAS}`).payloadShouldContain(filter);
+      cy.wait(`@${TIMESERIES_LIST_ALIAS}`).payloadShouldContain(filter);
+      cy.wait(`@${FILE_LIST_ALIAS}`).payloadShouldContain(filter);
+      cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain(filter);
+      cy.wait(`@${SEQUENCE_LIST_ALIAS}`).payloadShouldContain(filter);
+    });
   });
 
-  it('Updated time filter should work', () => {
-    cy.log('click on created time filter');
-    cy.findAllByTestId('common-updated-time-filter').click();
+  it('should filter by updated time', () => {
+    cy.clickSelectFilter('Updated time').clickSelectOption('Before');
 
-    cy.log('select before option');
-    cy.get('input[type="checkbox"]').eq(1).check();
+    cy.openDatePicker('Updated time');
+    cy.wait(`@${ASSET_LIST_ALIAS}`);
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`);
+    cy.wait(`@${FILE_LIST_ALIAS}`);
+    cy.wait(`@${EVENT_LIST_ALIAS}`);
+    cy.wait(`@${SEQUENCE_LIST_ALIAS}`);
 
     cy.log('change date to 2023/01/01');
-    cy.findAllByTestId('common-updated-time-filter').find('button').click();
-    cy.findAllByTestId('yearSelect').select('2023');
-    cy.findAllByTestId('monthSelect').select('January');
-    cy.get('[aria-label*="January 1st"]').click();
+    cy.selectYear(2023);
+    cy.selectMonth('January');
+    cy.selectDate('January 1st');
 
-    cy.goToTab('Assets');
+    cy.getDatePickerValue().then((selectedDate) => {
+      const filter = {
+        range: {
+          property: ['lastUpdatedTime'],
+          lte: new Date(selectedDate).valueOf(),
+        },
+      };
 
-    cy.log('filter label should display');
-    // cy.findAllByTestId('sub-table-wrapper').should(
-    //   'contain',
-    //   'Updated Time: Before 1 Jan. 2023'
-    // );
-
-    cy.clickButton('Reset');
-
-    cy.log('filter label should not display');
-    cy.findAllByTestId('sub-table-wrapper').should(
-      'not.contain',
-      'Updated Time: Before 1 Jan. 2023'
-    );
+      cy.wait(`@${ASSET_LIST_ALIAS}`).payloadShouldContain(filter);
+      cy.wait(`@${TIMESERIES_LIST_ALIAS}`).payloadShouldContain(filter);
+      cy.wait(`@${FILE_LIST_ALIAS}`).payloadShouldContain({
+        range: {
+          property: ['modifiedTime'],
+          lte: new Date(selectedDate).valueOf(),
+        },
+      });
+      cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain(filter);
+      cy.wait(`@${SEQUENCE_LIST_ALIAS}`).payloadShouldContain(filter);
+    });
   });
 
-  it('External ID filter should work', () => {
-    cy.log('type external ID');
-    cy.get('input[placeholder="Starts with..."]').type(EXTERNAL_ID, {
-      delay: 500,
-    });
+  it('should filter by external id', () => {
+    cy.getFilter('External ID').typeString(EXTERNAL_ID);
 
-    cy.goToTab('Assets');
+    const filter = {
+      prefix: {
+        property: ['externalId'],
+        value: EXTERNAL_ID,
+      },
+    };
 
-    cy.log('filter label should display');
-    cy.findAllByTestId('sub-table-wrapper').should(
-      'contain',
-      `External ID: ${EXTERNAL_ID}`
-    );
-
-    cy.clickButton('Reset');
-
-    cy.log('filter label should not display');
-    cy.findAllByTestId('sub-table-wrapper').should(
-      'not.contain',
-      `External ID: ${EXTERNAL_ID}`
-    );
+    cy.wait(`@${ASSET_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${FILE_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${SEQUENCE_LIST_ALIAS}`).payloadShouldContain(filter);
   });
 
-  it('Internal ID filter should work', () => {
-    cy.log('type internal ID');
-    cy.get('input[placeholder="Enter exact match..."]').type(INTERNAL_ID, {
-      delay: 500,
-    });
+  it('should filter by internal id', () => {
+    cy.getFilter('Internal ID').typeString(INTERNAL_ID);
 
-    cy.goToTab('Assets');
+    const filter = {
+      equals: {
+        property: ['id'],
+        value: Number(INTERNAL_ID),
+      },
+    };
 
-    cy.log('filter label should display');
-    cy.findAllByTestId('sub-table-wrapper').should(
-      'contain',
-      `Internal ID: ${INTERNAL_ID}`
-    );
-
-    cy.clickButton('Reset');
-
-    cy.log('filter label should display');
-    cy.findAllByTestId('sub-table-wrapper').should(
-      'not.contain',
-      `Internal ID: ${INTERNAL_ID}`
-    );
+    cy.wait(`@${ASSET_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${TIMESERIES_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${FILE_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${EVENT_LIST_ALIAS}`).payloadShouldContain(filter);
+    cy.wait(`@${SEQUENCE_LIST_ALIAS}`).payloadShouldContain(filter);
   });
 });

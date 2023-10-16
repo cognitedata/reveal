@@ -32,7 +32,8 @@ export const SEQUENCE_METADATA = 'carina';
 
 export const NO_RESULTS_TEXT = 'No results available';
 export const FUZZY_SEARCH_PHRASE = 'Noway';
-export const DATA_SET = 'test';
+export const DATA_SET_NAME = 'BEST_DAY_ADVISORS';
+export const DATA_SET_ID = '3703254655903370';
 export const EXTERNAL_ID = 'LOR_NORWAY';
 export const INTERNAL_ID = '1918823365845105';
 

@@ -31,7 +31,7 @@ export const StringInput = ({
     ? { disabled: true, icon: 'Loader', placeholder: 'Loading...' }
     : {};
   return (
-    <>
+    <div data-testid={`filter-${label}`}>
       {label && <FilterLabel>{label}</FilterLabel>}
       <Input
         error={error}
@@ -46,6 +46,6 @@ export const StringInput = ({
         }}
         {...isLoading}
       />
-    </>
+    </div>
   );
 };
