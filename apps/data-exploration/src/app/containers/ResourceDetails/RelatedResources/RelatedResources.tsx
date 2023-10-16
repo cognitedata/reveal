@@ -241,8 +241,8 @@ export const RelatedResources = ({
 
         {selectedType?.value === 'annotation' && (
           <AnnotationTable
-            fileId={parentResource.id}
-            resourceType={type}
+            parentResource={parentResource}
+            type={type}
             onItemClicked={onItemClicked}
             onParentAssetClick={onParentAssetClick}
             {...props}

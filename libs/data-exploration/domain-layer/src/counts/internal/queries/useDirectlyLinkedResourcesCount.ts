@@ -1,33 +1,30 @@
-import { IdEither } from '@cognite/sdk';
-
 import { ResourceType } from '@data-exploration-lib/core';
 
-import { useAssetIdsQuery, useLinkedResourcesCountQuery } from '../../service';
+import {
+  useAssetIdsQuery,
+  useDirectlyLinkedResourcesCountQuery,
+} from '../../service';
 import { BaseResourceProps } from '../types';
 import { convertToSdkResourceType, getResourceId } from '../utils';
 
-export const useLinkedResourcesCount = ({
+export const useDirectlyLinkedResourcesCount = ({
   resource,
   resourceType,
-  linkedResourceIds,
   isDocumentsApiEnabled,
 }: {
   resource: BaseResourceProps;
   resourceType: ResourceType;
-  linkedResourceIds?: IdEither[];
   isDocumentsApiEnabled: boolean;
 }) => {
   const { data: assetIds = [] } = useAssetIdsQuery({
     resourceType: convertToSdkResourceType(resource.type),
-    resourceId:
-      resourceType !== 'file' ? getResourceId(resource) : { id: resource?.id },
+    resourceId: getResourceId(resource),
     isDocumentsApiEnabled,
   });
 
-  const { data = 0, isLoading } = useLinkedResourcesCountQuery({
+  const { data = 0, isLoading } = useDirectlyLinkedResourcesCountQuery({
     resourceType: convertToSdkResourceType(resourceType),
     assetIds,
-    linkedResourceIds,
     isDocumentsApiEnabled,
   });
 

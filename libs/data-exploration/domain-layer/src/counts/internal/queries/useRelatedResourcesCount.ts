@@ -4,6 +4,7 @@ import { BaseResourceProps } from '../types';
 
 import { useAnnotationsCount } from './useAnnotationsCount';
 import { useAssetIdsCount } from './useAssetIdsCount';
+import { useDirectlyLinkedResourcesCount } from './useDirectlyLinkedResourcesCount';
 import { useLinkedResourcesCount } from './useLinkedResourcesCount';
 import { useRelationshipsCount } from './useRelationshipsCount';
 
@@ -17,16 +18,25 @@ export const useRelatedResourcesCount = ({
   isDocumentsApiEnabled?: boolean;
 }) => {
   const annotations = useAnnotationsCount({ resource, resourceType });
+
   const assetIds = useAssetIdsCount({
     resource,
     resourceType,
     isDocumentsApiEnabled,
   });
+
   const linkedResources = useLinkedResourcesCount({
     resource,
     resourceType,
     isDocumentsApiEnabled,
   });
+
+  const directlyLinkedResources = useDirectlyLinkedResourcesCount({
+    resource,
+    resourceType,
+    isDocumentsApiEnabled,
+  });
+
   const relationships = useRelationshipsCount({
     resource,
     resourceType,
@@ -37,6 +47,7 @@ export const useRelatedResourcesCount = ({
     annotationsCount: annotations.data,
     assetIdsCount: assetIds.data,
     linkedResourcesCount: linkedResources.data,
+    directlyLinkedResourcesCount: directlyLinkedResources.data,
     relationshipsCount: relationships.data,
   };
 
@@ -44,6 +55,7 @@ export const useRelatedResourcesCount = ({
     annotations.isLoading ||
     assetIds.isLoading ||
     linkedResources.isLoading ||
+    directlyLinkedResources.isLoading ||
     relationships.isLoading;
 
   return { data, isLoading };

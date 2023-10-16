@@ -5,10 +5,7 @@ import { useDebounce } from 'use-debounce';
 
 import { Asset } from '@cognite/sdk';
 
-import {
-  InternalAssetFilters,
-  InternalCommonFilters,
-} from '@data-exploration-lib/core';
+import { InternalAssetFilters } from '@data-exploration-lib/core';
 import {
   TableSortBy,
   useAssetsSearchResultQuery,
@@ -20,7 +17,7 @@ import { AssetTable } from './AssetTable';
 import { AssetTableFilters } from './AssetTableFilters';
 
 interface Props {
-  defaultFilter: InternalCommonFilters;
+  defaultFilter: InternalAssetFilters;
   onClick: (item: Asset) => void;
 }
 

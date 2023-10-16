@@ -67,7 +67,10 @@ export const useRelatedEventsQuery = ({
       sort,
       limit: 20,
     },
-    { enabled: hasRelatedEvents }
+    {
+      enabled: hasRelatedEvents,
+      keepPreviousData: true,
+    }
   );
 
   const transformedData = useMemo(() => {

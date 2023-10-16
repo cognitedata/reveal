@@ -9,24 +9,28 @@ import {
 import { Alert } from 'antd';
 
 import { useTranslation } from '@data-exploration-lib/core';
-import { useFileAnnotationsResourceIds } from '@data-exploration-lib/domain-layer';
+import {
+  useAnnotatedFileIdsOfAsset,
+  useFileAnnotationsResourceIds,
+} from '@data-exploration-lib/domain-layer';
 
 import { useUniqueCdfItems } from '../../hooks';
 import {
   convertResourceType,
+  ResourceItem,
   ResourceType,
   SelectableItemsProps,
 } from '../../types';
 
 type Props = {
-  fileId: number;
-  resourceType: ResourceType;
+  parentResource: ResourceItem;
+  type: ResourceType;
   onItemClicked: (id: number) => void;
   onParentAssetClick: (assetId: number) => void;
 };
 export function AnnotationTable({
-  fileId,
-  resourceType,
+  parentResource,
+  type,
   onItemClicked,
   onParentAssetClick,
 }: Props & SelectableItemsProps) {
@@ -36,20 +40,28 @@ export function AnnotationTable({
     data,
     isInitialLoading: isTaggedAnnotationsInitialLoading,
     isError,
-  } = useFileAnnotationsResourceIds({ id: fileId });
+  } = useFileAnnotationsResourceIds(
+    { id: parentResource.id },
+    parentResource.type === 'file'
+  );
+
+  const { data: fileIdsOfAsset, isInitialLoading: isFileIdsOfAssetLoading } =
+    useAnnotatedFileIdsOfAsset({
+      assetId: parentResource.id,
+      enabled: parentResource.type === 'asset',
+    });
 
   function onRowClick<T extends { id: number }>({ id }: T) {
     onItemClicked(id);
   }
 
-  const ids = data[resourceType];
-  const itemsEnabled = ids && ids.length > 0;
+  const ids = parentResource.type === 'asset' ? fileIdsOfAsset : data[type];
   const {
     data: items = [],
     isInitialLoading: isUniqueCdfItemsInitialLoading,
     isError: itemsError,
   } = useUniqueCdfItems<any>(
-    convertResourceType(resourceType),
+    convertResourceType(type),
     ids.map((id) => ({ id })),
     true
   );
@@ -66,14 +78,14 @@ export function AnnotationTable({
   }
 
   if (
-    isTaggedAnnotationsInitialLoading &&
-    isUniqueCdfItemsInitialLoading &&
-    itemsEnabled
+    isTaggedAnnotationsInitialLoading ||
+    isFileIdsOfAssetLoading ||
+    isUniqueCdfItemsInitialLoading
   ) {
     return <Loader />;
   }
 
-  switch (resourceType) {
+  switch (type) {
     case 'asset': {
       return (
         <AssetTable

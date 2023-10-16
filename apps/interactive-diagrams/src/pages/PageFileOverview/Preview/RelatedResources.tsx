@@ -137,8 +137,8 @@ export const RelatedResources = ({
 
         {selectedType?.value === 'annotation' && (
           <AnnotationTable
-            fileId={parentResource.id}
-            resourceType={type}
+            parentResource={parentResource}
+            type={type}
             {...props}
           />
         )}

@@ -67,7 +67,10 @@ export const useRelatedAssetsQuery = ({
       sort,
       limit: 20,
     },
-    { enabled: hasRelatedAssets && enabled }
+    {
+      enabled: hasRelatedAssets && enabled,
+      keepPreviousData: true,
+    }
   );
 
   const transformedData = useMemo(() => {

@@ -1,3 +1,5 @@
+import { AnnotatedResourceType, AnnotationStatus } from '@cognite/sdk';
+
 export type AnnotationType =
   | 'diagrams.AssetLink'
   | 'diagrams.FileLink'
@@ -15,3 +17,13 @@ export type AnnotationType =
   | 'images.ObjectDetection'
   | 'images.TextRegion'
   | 'pointcloud.BoundingVolume';
+
+export interface AnnotationReverseLookupFilterProps {
+  annotatedResourceType: AnnotatedResourceType;
+  annotationType?: AnnotationType;
+  creatingApp?: string;
+  creatingAppVersion?: string;
+  creatingUser?: string;
+  data?: Record<string, any>;
+  status?: AnnotationStatus;
+}

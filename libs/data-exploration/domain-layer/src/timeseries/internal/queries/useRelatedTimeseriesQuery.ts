@@ -70,7 +70,10 @@ export const useRelatedTimeseriesQuery = ({
       sort,
       limit: 20,
     },
-    { enabled: hasRelatedTimeseries }
+    {
+      enabled: hasRelatedTimeseries,
+      keepPreviousData: true,
+    }
   );
 
   const transformedData = useMemo(() => {

@@ -51,7 +51,10 @@ export const useRelatedFilesQuery = ({
     () => {
       return sdk.files.retrieve(externalIds).catch(() => []);
     },
-    { enabled: enabled && hasRelatedFiles }
+    {
+      enabled: enabled && hasRelatedFiles,
+      keepPreviousData: true,
+    }
   );
 
   const transformedData = useMemo(() => {

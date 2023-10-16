@@ -1,4 +1,7 @@
 export * from './getAssetIds';
+export * from './getDirectlyLinkedAssetsCount';
+export * from './getDirectlyLinkedDocumentsCount';
+export * from './getDirectlyLinkedResourcesCount';
 export * from './getDocumentAssetIds';
 export * from './getLinkedDocumentsCount';
 export * from './getLinkedResourcesCount';

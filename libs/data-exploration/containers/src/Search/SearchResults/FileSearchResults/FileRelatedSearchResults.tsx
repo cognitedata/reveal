@@ -22,8 +22,10 @@ import {
   WithDetailViewData,
   useRelatedDocumentsQuery,
   useRelatedFilesQuery,
+  useRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
 
+import { RelationshipFilter } from '../../../Filters';
 import { OldFileGroupTable } from '../../../Temp';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import {
@@ -50,7 +52,6 @@ const visibleColumns = [
 
 interface Props {
   resourceExternalId?: string;
-  labels?: string[];
   onClick?: (
     item: WithDetailViewData<FileInfo> | WithDetailViewData<Document>
   ) => void;
@@ -60,7 +61,6 @@ interface Props {
 
 export const FileRelatedSearchResults: React.FC<Props> = ({
   resourceExternalId,
-  labels,
   onClick,
   isDocumentsApiEnabled = true,
   isGroupingFilesEnabled = true,
@@ -71,6 +71,9 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
     {}
   );
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [relationshipFilterLabels, setRelationshipFilterLabels] =
+    useState<string[]>();
+
   const [currentView, setCurrentView] = useState(
     isGroupingFilesEnabled ? 'tree' : 'list'
   );
@@ -112,18 +115,23 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
 
   const filesQuery = useRelatedFilesQuery({
     resourceExternalId,
-    relationshipFilter: { labels },
+    relationshipFilter: { labels: relationshipFilterLabels },
     enabled: !isDocumentsApiEnabled,
   });
 
   const documentsQuery = useRelatedDocumentsQuery({
     resourceExternalId,
-    relationshipFilter: { labels },
+    relationshipFilter: { labels: relationshipFilterLabels },
     documentFilter,
     query: debouncedQuery,
     sortBy,
     enabled: isDocumentsApiEnabled,
     limit: 1000,
+  });
+
+  const { data: relationshipLabels } = useRelationshipLabels({
+    resourceExternalId,
+    relationshipResourceTypes: ['file'],
   });
 
   const { data, isLoading, hasNextPage, fetchNextPage } = isDocumentsApiEnabled
@@ -144,6 +152,11 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
         <GroupingTableContentWrapper>
           {isDocumentsApiEnabled && (
             <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
+              <RelationshipFilter
+                options={relationshipLabels}
+                onChange={setRelationshipFilterLabels}
+                value={relationshipFilterLabels}
+              />
               <FileTableFiltersDocument
                 filter={documentFilter}
                 onFilterChange={handleDocumentFilterChange}
@@ -209,6 +222,11 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
         <>
           {isDocumentsApiEnabled && (
             <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
+              <RelationshipFilter
+                options={relationshipLabels}
+                onChange={setRelationshipFilterLabels}
+                value={relationshipFilterLabels}
+              />
               <FileTableFiltersDocument
                 filter={documentFilter}
                 onFilterChange={handleDocumentFilterChange}

@@ -1,33 +1,17 @@
 import compact from 'lodash/compact';
 import head from 'lodash/head';
 
-import {
-  AggregateResponse,
-  CogniteClient,
-  CursorResponse,
-  IdEither,
-} from '@cognite/sdk';
-
-import { convertIdEither } from '../utils';
+import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
 
 type Payload = {
   assetIds: number[];
-  linkedResourceIds?: IdEither[];
 };
 
-export const getLinkedDocumentsCount = (
+export const getDirectlyLinkedDocumentsCount = (
   sdk: CogniteClient,
   payload: Payload
 ) => {
-  const { assetIds, linkedResourceIds } = payload;
-
-  const linkedResourceIdsFilter = linkedResourceIds
-    ? {
-        or: linkedResourceIds.map((linkedResourceId) =>
-          convertIdEither('equals', linkedResourceId)
-        ),
-      }
-    : undefined;
+  const { assetIds } = payload;
 
   return sdk
     .post<CursorResponse<AggregateResponse[]>>(
@@ -40,12 +24,11 @@ export const getLinkedDocumentsCount = (
           filter: {
             and: compact([
               {
-                inAssetSubtree: {
+                containsAny: {
                   property: ['sourceFile', 'assetIds'],
                   values: assetIds,
                 },
               },
-              linkedResourceIdsFilter,
             ]),
           },
         },

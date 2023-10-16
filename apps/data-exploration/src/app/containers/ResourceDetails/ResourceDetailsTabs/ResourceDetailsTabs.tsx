@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import styled from 'styled-components';
 
@@ -21,14 +21,13 @@ import {
 } from '@data-exploration-lib/core';
 import { useTotalRelatedResourcesCounts } from '@data-exploration-lib/domain-layer';
 
-import ResourceSelectionContext from '../../../context/ResourceSelectionContext';
 import {
   useFlagDocumentsApiEnabled,
   useFlagNewCounts,
   usePushJourney,
 } from '../../../hooks';
 import { addPlusSignToCount } from '../../../utils/stringUtils';
-import { RelatedResources } from '../RelatedResources/RelatedResources';
+import { RelatedResources } from '../RelatedResourcesV2';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };
@@ -56,33 +55,16 @@ const ResourceDetailTabContent = ({
 }) => {
   const [pushJourney] = usePushJourney();
 
-  const { mode, onSelect, resourcesState } = useContext(
-    ResourceSelectionContext
-  );
-
-  const isSelected = (item: ResourceItem) => {
-    return resourcesState.some(
-      (el) =>
-        // eslint-disable-next-line lodash/prefer-matches
-        el.state === 'selected' && el.id === item.id && el.type === item.type
-    );
-  };
-
-  const handleParentAssetClicked = (assetId: number) => {
-    pushJourney({ id: assetId, type: 'asset' });
-  };
-
   return (
     <RelatedResources
-      type={type}
-      parentResource={resource}
-      onItemClicked={(id: number) => {
+      resource={resource}
+      relatedResourcesType={type}
+      onItemClicked={(id) => {
         pushJourney({ id, type, initialTab: type });
       }}
-      onParentAssetClick={handleParentAssetClicked}
-      selectionMode={mode}
-      onSelect={onSelect}
-      isSelected={isSelected}
+      onParentAssetClick={(id) => {
+        pushJourney({ id, type: 'asset' });
+      }}
     />
   );
 };

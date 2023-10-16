@@ -9,6 +9,7 @@ type Payload = {
 };
 
 type BaseCdfItemProps = OneOf<{
+  id?: number;
   assetId?: number;
   assetIds?: number[];
 }>;
@@ -35,12 +36,21 @@ export const getAssetIds = <T extends BaseCdfItemProps>(
     .then(({ data }) => {
       const item = head(data.items);
 
+      // If resource type is asset itself, we return its id
+      if (resourceType === 'assets' && item?.id) {
+        return [item.id];
+      }
+
+      // For resources which can be directly linked to only one asset
       if (item?.assetId) {
         return [item.assetId];
       }
+
+      // For resources which can be directly linked to multiple assets
       if (item?.assetIds) {
         return item.assetIds;
       }
+
       return [] as number[];
     })
     .catch(() => {

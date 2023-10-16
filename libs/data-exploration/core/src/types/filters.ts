@@ -68,6 +68,7 @@ export interface InternalAssetFilters extends InternalCommonFilters {
   labels?: { label?: string; value: string }[];
   metadata?: { key: string; value: string | typeof METADATA_ALL_VALUE }[];
   sources?: { label?: string; value: string }[];
+  parentIds?: { label?: string; value: number }[];
 }
 
 export interface OldAssetFilters

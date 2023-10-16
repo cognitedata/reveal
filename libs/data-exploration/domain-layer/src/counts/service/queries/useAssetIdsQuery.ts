@@ -5,7 +5,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
 import { queryKeys } from '../../../queryKeys';
-import { getAssetIds } from '../network';
+import { getAssetIds, getDocumentAssetIds } from '../network';
 
 export const useAssetIdsQuery = ({
   resourceType,
@@ -26,9 +26,9 @@ export const useAssetIdsQuery = ({
       if (!resourceId) {
         return undefined;
       }
-      // if (resourceType === 'files' && isDocumentsApiEnabled) {
-      //   return getDocumentAssetIds(sdk, { resourceId });
-      // }
+      if (resourceType === 'files' && isDocumentsApiEnabled) {
+        return getDocumentAssetIds(sdk, { resourceId });
+      }
       return getAssetIds(sdk, {
         resourceType,
         resourceId,

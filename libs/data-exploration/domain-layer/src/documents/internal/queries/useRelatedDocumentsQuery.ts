@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import compact from 'lodash/compact';
 import isEmpty from 'lodash/isEmpty';
 
-import { DocumentSearchItem } from '@cognite/sdk';
+import { DocumentFilter, DocumentSearchItem } from '@cognite/sdk';
 
 import {
   InternalDocumentFilter,
@@ -65,11 +65,14 @@ export const useRelatedDocumentsQuery = ({
 
   const { data, isLoading, ...rest } = useDocumentSearchQuery(
     {
-      filter,
+      filter: filter as DocumentFilter,
       sort,
       limit,
     },
-    { enabled: enabled && hasRelatedDocuments }
+    {
+      enabled: enabled && hasRelatedDocuments,
+      keepPreviousData: true,
+    }
   );
 
   const transformedData = useMemo(() => {

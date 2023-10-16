@@ -22,8 +22,10 @@ import {
   TableSortBy,
   WithDetailViewData,
   useRelatedAssetsQuery,
+  useRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
 
+import { RelationshipFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { AssetTableFilters } from './AssetTableFilters';
@@ -39,19 +41,19 @@ const visibleColumns = [
 
 interface Props {
   resourceExternalId?: string;
-  labels?: string[];
   onClick?: (item: Asset) => void;
 }
 
 export const AssetRelatedSearchResults: React.FC<Props> = ({
   resourceExternalId,
-  labels,
   onClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
   const [debouncedQuery] = useDebounce(query, 300);
   const [assetFilter, setAssetFilter] = useState<InternalAssetFilters>({});
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [relationshipFilterLabels, setRelationshipFilterLabels] =
+    useState<string[]>();
 
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
@@ -72,12 +74,17 @@ export const AssetRelatedSearchResults: React.FC<Props> = ({
   const { data, hasNextPage, fetchNextPage, isLoading } = useRelatedAssetsQuery(
     {
       resourceExternalId,
-      relationshipFilter: { labels },
+      relationshipFilter: { labels: relationshipFilterLabels },
       assetFilter,
       query: debouncedQuery,
       sortBy,
     }
   );
+
+  const { data: relationshipLabels } = useRelationshipLabels({
+    resourceExternalId,
+    relationshipResourceTypes: ['asset'],
+  });
 
   const handleFilterChange = (newValue: InternalAssetFilters) => {
     setAssetFilter((prevState) => ({ ...prevState, ...newValue }));
@@ -110,6 +117,11 @@ export const AssetRelatedSearchResults: React.FC<Props> = ({
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
+          <RelationshipFilter
+            options={relationshipLabels}
+            onChange={setRelationshipFilterLabels}
+            value={relationshipFilterLabels}
+          />
           <AssetTableFilters
             filter={assetFilter}
             onFilterChange={handleFilterChange}

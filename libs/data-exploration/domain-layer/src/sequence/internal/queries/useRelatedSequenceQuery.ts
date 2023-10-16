@@ -70,7 +70,10 @@ export const useRelatedSequenceQuery = ({
       sort,
       limit: 20,
     },
-    { enabled: hasRelatedSequences }
+    {
+      enabled: hasRelatedSequences,
+      keepPreviousData: true,
+    }
   );
 
   const transformedData = useMemo(() => {

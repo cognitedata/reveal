@@ -22,7 +22,6 @@ export const RelationshipTableV2 = ({
   parentResource,
   onItemClicked,
   onParentAssetClick,
-  labels,
   isDocumentsApiEnabled = true,
   isGroupingFilesEnabled = true,
 }: {
@@ -80,7 +79,6 @@ export const RelationshipTableV2 = ({
       return (
         <AssetRelatedSearchResults
           resourceExternalId={resourceExternalId}
-          labels={labels}
           onClick={(asset) => onItemClicked(asset.id)}
         />
       );
@@ -88,7 +86,6 @@ export const RelationshipTableV2 = ({
       return (
         <EventRelatedSearchResults
           resourceExternalId={resourceExternalId}
-          labels={labels}
           onClick={(event) => onItemClicked(event.id)}
         />
       );
@@ -96,7 +93,6 @@ export const RelationshipTableV2 = ({
       return (
         <FileRelatedSearchResults
           resourceExternalId={resourceExternalId}
-          labels={labels}
           onClick={(file) => onItemClicked(file.id)}
           isDocumentsApiEnabled={isDocumentsApiEnabled}
           isGroupingFilesEnabled={isGroupingFilesEnabled}
@@ -106,7 +102,6 @@ export const RelationshipTableV2 = ({
       return (
         <SequenceRelatedSearchResults
           resourceExternalId={resourceExternalId}
-          labels={labels}
           onClick={(sequence) => onItemClicked(sequence.id)}
         />
       );
@@ -115,7 +110,6 @@ export const RelationshipTableV2 = ({
       return (
         <TimeseriesRelatedSearchResults
           resourceExternalId={resourceExternalId}
-          labels={labels}
           onClick={(sequence) => onItemClicked(sequence.id)}
           onParentAssetClick={(asset) => onParentAssetClick(asset.id)}
         />

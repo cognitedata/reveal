@@ -22,8 +22,10 @@ import {
   TableSortBy,
   WithDetailViewData,
   useRelatedTimeseriesQuery,
+  useRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
 
+import { RelationshipFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { TimeseriesTableFilters } from './TimeseriesTableFilters';
@@ -42,14 +44,12 @@ const visibleColumns = [
 
 interface Props {
   resourceExternalId?: string;
-  labels?: string[];
   onClick?: (item: WithDetailViewData<InternalTimeseriesData>) => void;
   onParentAssetClick: (asset: Asset) => void;
 }
 
 export const TimeseriesRelatedSearchResults: React.FC<Props> = ({
   resourceExternalId,
-  labels,
   onClick,
   onParentAssetClick,
 }) => {
@@ -58,6 +58,8 @@ export const TimeseriesRelatedSearchResults: React.FC<Props> = ({
   const [timeseriesFilter, setTimeseriesFilter] =
     useState<InternalTimeseriesFilters>({});
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [relationshipFilterLabels, setRelationshipFilterLabels] =
+    useState<string[]>();
 
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
@@ -82,11 +84,16 @@ export const TimeseriesRelatedSearchResults: React.FC<Props> = ({
   const { data, hasNextPage, fetchNextPage, isLoading } =
     useRelatedTimeseriesQuery({
       resourceExternalId,
-      relationshipFilter: { labels },
+      relationshipFilter: { labels: relationshipFilterLabels },
       timeseriesFilter,
       query: debouncedQuery,
       sortBy,
     });
+
+  const { data: relationshipLabels } = useRelationshipLabels({
+    resourceExternalId,
+    relationshipResourceTypes: ['timeSeries'],
+  });
 
   const handleFilterChange = (newValue: InternalTimeseriesFilters) => {
     setTimeseriesFilter((prevState) => ({ ...prevState, ...newValue }));
@@ -119,6 +126,11 @@ export const TimeseriesRelatedSearchResults: React.FC<Props> = ({
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
+          <RelationshipFilter
+            options={relationshipLabels}
+            onChange={setRelationshipFilterLabels}
+            value={relationshipFilterLabels}
+          />
           <TimeseriesTableFilters
             filter={timeseriesFilter}
             onFilterChange={handleFilterChange}

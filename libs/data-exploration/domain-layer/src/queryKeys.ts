@@ -320,20 +320,29 @@ export const queryKeys = {
   annotationsPagedFileReferences: (
     pagedFileReferences: { id: number; page: number | undefined }[]
   ) => [...queryKeys.annotations(), pagedFileReferences] as const,
+  reverseLookupAnnotations: (filter: unknown) =>
+    [...queryKeys.annotations(), 'reverseLookup', filter] as const,
 
   // Counts
   counts: () => [...queryKeys.all, 'counts'] as const,
   linkedResourcesCount: (
     resourceType: string,
-    resourceId: unknown,
+    assetIds?: unknown[],
     linkedResourceIds?: unknown[]
   ) =>
     [
       ...queryKeys.counts(),
       'linked-resources',
       resourceType,
-      resourceId,
+      ...(assetIds || []),
       ...(linkedResourceIds || []),
+    ] as const,
+  directlyLinkedResourcesCount: (resourceType: string, assetIds?: unknown[]) =>
+    [
+      ...queryKeys.counts(),
+      'directly-linked-resources',
+      resourceType,
+      ...(assetIds || []),
     ] as const,
   assetIdsCount: (
     resourceType: string,

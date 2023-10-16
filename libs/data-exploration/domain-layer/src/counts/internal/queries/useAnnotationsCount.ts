@@ -1,6 +1,9 @@
 import { ResourceType } from '@data-exploration-lib/core';
 
-import { useFileAnnotationsResourceIds } from '../../../annotations';
+import {
+  useAnnotatedFileIdsOfAsset,
+  useFileAnnotationsResourceIds,
+} from '../../../annotations';
 import { BaseResourceProps } from '../types';
 import { getResourceId } from '../utils';
 
@@ -12,17 +15,33 @@ export const useAnnotationsCount = ({
   resourceType: ResourceType;
 }) => {
   const resourceId = getResourceId(resource);
-  const enabled = resource.type === 'file';
 
-  const { data, isInitialLoading } = useFileAnnotationsResourceIds(
+  const annotatedFileIdsOfAsset = useAnnotatedFileIdsOfAsset({
+    assetId: resource.id,
+    enabled: resource.type === 'asset',
+  });
+
+  const fileAnnotationsResourceIds = useFileAnnotationsResourceIds(
     resourceId,
-    enabled
+    resource.type === 'file'
   );
 
-  const count = enabled ? data[resourceType].length : 0;
+  if (resource.type === 'asset') {
+    return {
+      data: annotatedFileIdsOfAsset.data.length,
+      isLoading: annotatedFileIdsOfAsset.isInitialLoading,
+    };
+  }
+
+  if (resource.type === 'file') {
+    return {
+      data: fileAnnotationsResourceIds.data[resourceType].length,
+      isLoading: fileAnnotationsResourceIds.isInitialLoading,
+    };
+  }
 
   return {
-    data: count,
-    isLoading: isInitialLoading,
+    data: 0,
+    isLoading: false,
   };
 };

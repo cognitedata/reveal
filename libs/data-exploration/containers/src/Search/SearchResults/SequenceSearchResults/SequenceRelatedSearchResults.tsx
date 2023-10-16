@@ -20,8 +20,10 @@ import {
   TableSortBy,
   WithDetailViewData,
   useRelatedSequenceQuery,
+  useRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
 
+import { RelationshipFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { SequenceTableFilters } from './SequenceTableFilters';
@@ -39,13 +41,11 @@ const visibleColumns = [
 
 interface Props {
   resourceExternalId?: string;
-  labels?: string[];
   onClick?: (item: WithDetailViewData<InternalSequenceData>) => void;
 }
 
 export const SequenceRelatedSearchResults: React.FC<Props> = ({
   resourceExternalId,
-  labels,
   onClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
@@ -54,6 +54,8 @@ export const SequenceRelatedSearchResults: React.FC<Props> = ({
     {}
   );
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [relationshipFilterLabels, setRelationshipFilterLabels] =
+    useState<string[]>();
 
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
@@ -77,11 +79,16 @@ export const SequenceRelatedSearchResults: React.FC<Props> = ({
   const { data, hasNextPage, fetchNextPage, isLoading } =
     useRelatedSequenceQuery({
       resourceExternalId,
-      relationshipFilter: { labels },
+      relationshipFilter: { labels: relationshipFilterLabels },
       sequenceFilter,
       query: debouncedQuery,
       sortBy,
     });
+
+  const { data: relationshipLabels } = useRelationshipLabels({
+    resourceExternalId,
+    relationshipResourceTypes: ['sequence'],
+  });
 
   const handleFilterChange = (newValue: InternalSequenceFilters) => {
     setSequenceFilter((prevState) => ({ ...prevState, ...newValue }));
@@ -114,6 +121,11 @@ export const SequenceRelatedSearchResults: React.FC<Props> = ({
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
+          <RelationshipFilter
+            options={relationshipLabels}
+            onChange={setRelationshipFilterLabels}
+            value={relationshipFilterLabels}
+          />
           <SequenceTableFilters
             filter={sequenceFilter}
             onFilterChange={handleFilterChange}

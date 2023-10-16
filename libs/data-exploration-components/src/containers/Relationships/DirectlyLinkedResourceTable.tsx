@@ -16,7 +16,7 @@ import { useAssetIdsQuery } from '@data-exploration-lib/domain-layer';
 
 import { ResourceItem, ResourceType } from '../../types';
 
-export const LinkedResourceTable = ({
+export const DirectlyLinkedResourceTable = ({
   isGroupingFilesEnabled,
   type,
   parentResource,
@@ -37,28 +37,27 @@ export const LinkedResourceTable = ({
     resourceType: convertResourceType(parentResource.type),
     resourceId: { id: parentResource.id },
     isDocumentsApiEnabled,
+    enabled: parentResource.type === 'asset' || type === 'asset',
   });
 
   const filter = useMemo(() => {
-    return {
-      assetSubtreeIds: assetIds.map((assetId) => {
-        return { value: assetId };
-      }),
-    };
+    return assetIds.map((assetId) => {
+      return { value: assetId };
+    });
   }, [assetIds]);
 
   switch (type) {
     case 'asset':
       return (
         <AssetLinkedSearchResults
-          defaultFilter={filter}
+          defaultFilter={{ parentIds: filter }}
           onClick={(row) => onItemClicked(row.id)}
         />
       );
     case 'event':
       return (
         <EventLinkedSearchResults
-          defaultFilter={filter}
+          defaultFilter={{ assetIds: filter }}
           onClick={(el) => onItemClicked(el.id)}
           onParentAssetClick={onParentAssetClick}
         />
@@ -67,7 +66,7 @@ export const LinkedResourceTable = ({
       return (
         <FileLinkedSearchResults
           isDocumentsApiEnabled={isDocumentsApiEnabled}
-          defaultFilter={filter}
+          defaultFilter={{ assetIds: filter }}
           isGroupingFilesEnabled={isGroupingFilesEnabled}
           onClick={(el) => onItemClicked(el.id)}
           onParentAssetClick={onParentAssetClick}
@@ -76,7 +75,7 @@ export const LinkedResourceTable = ({
     case 'sequence':
       return (
         <SequenceLinkedSearchResults
-          defaultFilter={filter}
+          defaultFilter={{ assetIds: filter }}
           onClick={(el) => onItemClicked(el.id)}
           onParentAssetClick={onParentAssetClick}
         />
@@ -85,7 +84,7 @@ export const LinkedResourceTable = ({
     case 'timeSeries':
       return (
         <TimeseriesLinkedSearchResults
-          defaultFilter={filter}
+          defaultFilter={{ assetIds: filter }}
           onClick={(el) => onItemClicked(el.id)}
           onParentAssetClick={onParentAssetClick}
         />

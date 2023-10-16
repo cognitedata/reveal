@@ -83,6 +83,7 @@
   "DIRECTORY_PREFIX": "Directory prefix",
   "DIRECT_ASSET": "Direct asset",
   "DIRECT_CHILDREN": "Direct children",
+  "DIRECTLY_LINKED_RESOURCE_TYPE": "Directly linked {{resourceType}} ({{count}})",
   "DISABLED_HIDE_EMPTY_BUTTON_TOOLTIP_CONTENT": "All loaded time series are empty. Button will be enabled when at least 1 time series has datapoints",
   "DISTANCE_MEASURING_TOOL": "Distance measuring tool",
   "DOCUMENT_UPLOADER_DATASET_ID_PLACEHOLDER": "Data set ID (optional)",

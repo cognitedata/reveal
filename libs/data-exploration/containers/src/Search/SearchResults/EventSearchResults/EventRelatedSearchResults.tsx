@@ -20,8 +20,10 @@ import {
   TableSortBy,
   WithDetailViewData,
   useRelatedEventsQuery,
+  useRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
 
+import { RelationshipFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { EventTableFilters } from './EventTableFilters';
@@ -38,19 +40,19 @@ const visibleColumns = [
 
 interface Props {
   resourceExternalId?: string;
-  labels?: string[];
   onClick?: (item: WithDetailViewData<InternalEventsData>) => void;
 }
 
 export const EventRelatedSearchResults: React.FC<Props> = ({
   resourceExternalId,
-  labels,
   onClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
   const [debouncedQuery] = useDebounce(query, 300);
   const [eventFilter, setEventFilter] = useState<InternalEventsFilters>({});
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [relationshipFilterLabels, setRelationshipFilterLabels] =
+    useState<string[]>();
 
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
@@ -72,12 +74,17 @@ export const EventRelatedSearchResults: React.FC<Props> = ({
   const { data, hasNextPage, fetchNextPage, isLoading } = useRelatedEventsQuery(
     {
       resourceExternalId,
-      relationshipFilter: { labels },
+      relationshipFilter: { labels: relationshipFilterLabels },
       eventFilter,
       query: debouncedQuery,
       sortBy,
     }
   );
+
+  const { data: relationshipLabels } = useRelationshipLabels({
+    resourceExternalId,
+    relationshipResourceTypes: ['event'],
+  });
 
   const handleFilterChange = (newValue: InternalEventsFilters) => {
     setEventFilter((prevState) => ({ ...prevState, ...newValue }));
@@ -110,6 +117,11 @@ export const EventRelatedSearchResults: React.FC<Props> = ({
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
+          <RelationshipFilter
+            options={relationshipLabels}
+            onChange={setRelationshipFilterLabels}
+            value={relationshipFilterLabels}
+          />
           <EventTableFilters
             filter={eventFilter}
             onFilterChange={handleFilterChange}

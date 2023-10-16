@@ -1,26 +1,18 @@
 import head from 'lodash/head';
 
-import {
-  AggregateResponse,
-  CogniteClient,
-  CursorResponse,
-  IdEither,
-} from '@cognite/sdk';
+import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
-
-import { convertIdEither } from '../utils';
 
 type Payload = {
   resourceType: SdkResourceType;
   assetIds: number[];
-  linkedResourceIds?: IdEither[];
 };
 
-export const getLinkedResourcesCount = (
+export const getDirectlyLinkedResourcesCount = (
   sdk: CogniteClient,
   payload: Payload
 ) => {
-  const { resourceType, assetIds, linkedResourceIds } = payload;
+  const { resourceType, assetIds } = payload;
 
   return sdk
     .post<CursorResponse<AggregateResponse[]>>(
@@ -31,15 +23,8 @@ export const getLinkedResourcesCount = (
         },
         data: {
           filter: {
-            assetSubtreeIds: assetIds.map((id) => ({ id })),
+            assetIds,
           },
-          advancedFilter: linkedResourceIds
-            ? {
-                or: linkedResourceIds.map((linkedResourceId) =>
-                  convertIdEither('equals', linkedResourceId)
-                ),
-              }
-            : undefined,
         },
       }
     )
