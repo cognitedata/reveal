@@ -1,6 +1,7 @@
 import { type ReactElement } from 'react';
 
 import { ToolBar, Tooltip, Button } from '@cognite/cogs.js';
+import { RevealToolbar } from '@cognite/reveal-react-components';
 
 import {
   setTool,
@@ -19,6 +20,11 @@ export const CadToolBarTools = (): ReactElement => {
 
   return (
     <ToolBar direction="vertical">
+      <>
+        <Tooltip content="Slider" position="right">
+          <RevealToolbar.SlicerButton />
+        </Tooltip>
+      </>
       <>
         <Tooltip content="Add contextualization" position="right">
           <Button
