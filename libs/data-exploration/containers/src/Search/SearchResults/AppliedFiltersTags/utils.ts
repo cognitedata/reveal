@@ -74,7 +74,7 @@ export const formatValue = (
 
     if (input.max) {
       return t('BEFORE_DATE', `Before ${formatDate(input.max as number)}`, {
-        date: formatDate(input.min as number),
+        date: formatDate(input.max as number),
       });
     }
   }
