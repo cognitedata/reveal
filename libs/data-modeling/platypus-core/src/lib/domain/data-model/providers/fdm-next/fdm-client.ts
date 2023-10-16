@@ -10,7 +10,6 @@ import { FlexibleDataModelingClient } from '../../boundaries/fdm-client';
 import {
   ConflictMode,
   CreateDataModelTransformationDTO,
-  DeleteInstancesDTO,
   FetchDataModelTransformationsDTO,
   FetchFilteredRowsCountDTO,
   FetchPublishedRowsCountDTO,
@@ -317,27 +316,6 @@ export class FdmClient implements FlexibleDataModelingClient {
         })
         .then(() => ({ items: dto.items }));
     }
-  }
-
-  /**
-   * Deletes Data Model Type Instances (data)
-   * @param dto
-   */
-  deleteInstances(dto: DeleteInstancesDTO): Promise<boolean> {
-    return this.instancesApiService
-      .delete({
-        items: dto.items.map((el) => ({
-          externalId: el.externalId,
-          instanceType: dto.type,
-          space: dto.space,
-        })),
-      })
-      .then(({ items }) => {
-        if (items.length !== dto.items.length) {
-          throw `Only ${items.length}/${dto.items.length} of the selected rows are deleted.`;
-        }
-        return Promise.resolve(true);
-      });
   }
 
   /**

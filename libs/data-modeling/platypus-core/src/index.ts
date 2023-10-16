@@ -29,3 +29,4 @@ export * from './lib/domain/data-model/commands/delete-data-model';
 export * from './lib/domain/data-model/commands/create-space';
 export * from './lib/domain/data-model/commands/list-spaces';
 export * from './lib/domain/data-model/commands/run-graphql-query';
+export * from './lib/domain/data-model/commands/delete-instances';

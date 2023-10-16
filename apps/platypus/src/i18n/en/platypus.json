@@ -9,7 +9,9 @@
   "add-instance-button": "Add instance",
   "are_you_sure_to_delete_data_row_1": "Are you sure you want to delete ",
   "are_you_sure_to_delete_data_row_2": "?",
-  "are_you_sure_to_delete_data_row_3": "This will delete the content of the instance.",
+  "are_you_sure_to_delete_data_row_3": "Contents of this instance will be deleted.",
+  "are_you_sure_to_delete_selected_rows_row_1": "Are you sure you want to delete these instances?",
+  "are_you_sure_to_delete_selected_rows_row_2": "Contents of the selected instances will be permanently deleted.",
   "breaking_changes_data_model": "There are breaking changes in the data model",
   "breaking_changes_new_version": "Publishing will create a new version of the data model.",
   "breaking_changes_text": "There are breaking changes in your data model.",
@@ -297,5 +299,6 @@
   "vote_question": "When should we start working on that?",
   "vote_response": "Thanks for voting!",
   "yes_sure_to_delete_data_model": "Yes, I want to delete the data model.",
-  "yes_sure_to_delete_data_row": "Yes, I want to delete"
+  "yes_sure_to_delete_data_row": "Yes, I want to delete",
+  "yes_sure_to_delete_multiple_rows": "Yes, I'm sure I want to delete the selected instances"
 }

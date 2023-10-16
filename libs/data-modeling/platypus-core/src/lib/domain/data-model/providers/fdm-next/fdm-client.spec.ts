@@ -1,10 +1,6 @@
 import { PlatypusError } from '../../../../boundaries/types';
 import { IGraphQlSchemaValidator } from '../../boundaries';
-import {
-  DeleteInstancesDTO,
-  IngestInstancesDTO,
-  PublishDataModelVersionDTO,
-} from '../../dto';
+import { IngestInstancesDTO, PublishDataModelVersionDTO } from '../../dto';
 import { DataModelTypeDefsType, DataModelVersionStatus } from '../../types';
 
 import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
@@ -16,9 +12,6 @@ const instancesApiMock = {
       Promise.resolve({
         items: dto.items,
       })
-    ),
-    delete: jest.fn((dto: DeleteInstancesDTO[]) =>
-      Promise.resolve({ items: dto })
     ),
   },
 } as any;

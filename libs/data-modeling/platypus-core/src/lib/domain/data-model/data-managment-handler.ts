@@ -3,17 +3,16 @@ import { Result } from '../../boundaries/types';
 import { FlexibleDataModelingClient } from './boundaries';
 import {
   CreateDataModelTransformationDTO,
-  DeleteInstancesDTO,
-  ListDataDTO,
   FetchDataModelTransformationsDTO,
+  FetchFilteredRowsCountDTO,
   FetchPublishedRowsCountDTO,
+  GetByExternalIdDTO,
   IngestEdgeDTO,
   IngestInstancesDTO,
   IngestInstancesResponseDTO,
+  ListDataDTO,
   PublishedRowsCountMap,
   SearchDataDTO,
-  GetByExternalIdDTO,
-  FetchFilteredRowsCountDTO,
 } from './dto';
 import { PaginatedResponse } from './types';
 
@@ -83,17 +82,6 @@ export class DataManagementHandler {
     return this.fdmClient.createTransformation(dto);
   }
 
-  deleteData(dto: Omit<DeleteInstancesDTO, 'type'>): Promise<Result<boolean>> {
-    if (!dto.items.length) {
-      return Promise.resolve(Result.ok(true));
-    }
-
-    return this.fdmClient
-      .deleteInstances({ ...dto, type: 'node' })
-      .then(() => Result.ok(true))
-      .catch((error) => Result.fail(error));
-  }
-
   ingestNodes(
     dto: Omit<IngestInstancesDTO, 'type'>
   ): Promise<IngestInstancesResponseDTO> {
@@ -107,12 +95,5 @@ export class DataManagementHandler {
       ...dto,
       type: 'edge',
     });
-  }
-
-  deleteEdges(dto: Omit<DeleteInstancesDTO, 'type'>) {
-    if (!dto.items.length) {
-      return Promise.resolve(Result.ok(true));
-    }
-    return this.fdmClient.deleteInstances({ ...dto, type: 'edge' });
   }
 }

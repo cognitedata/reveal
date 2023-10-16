@@ -136,6 +136,7 @@ export const DataPreviewTable = forwardRef<
       useSelectedDataModelVersion(version, dataModelExternalId, space);
 
     const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
+    const deleteInstancesCommand = useInjection(TOKENS.deleteInstancesCommand);
     const queryBuilder = new MixerQueryBuilder();
 
     const draftRowsData = useSelector(
@@ -621,7 +622,7 @@ export const DataPreviewTable = forwardRef<
         });
 
       if (updatedRowData.space !== e.oldValue) {
-        dataManagementHandler.deleteData({
+        deleteInstancesCommand.execute({
           /*
             PG3 does not currently set a value to null if we pass null when doing a partial
             update (overwrite: false), but rather it will ignore that value. Therefore in
@@ -630,6 +631,7 @@ export const DataPreviewTable = forwardRef<
           space: e.oldValue,
           items: [updatedRowData],
           dataModelExternalId,
+          type: 'node',
         });
       }
 
@@ -652,33 +654,14 @@ export const DataPreviewTable = forwardRef<
         type: 'node',
         dataModelExternalId,
         space,
-        items: selectedRows.map((row) => ({ externalId: row.externalId })),
+        items: selectedRows.map((row) => ({
+          externalId: row.externalId,
+          space: row.space,
+        })),
       };
 
       deleteRowsMutation.mutate(dto, {
-        onSettled: (result, error) => {
-          let isError = false;
-          let errorMessage = '';
-
-          if (error) {
-            isError = true;
-            errorMessage = error.message;
-          }
-
-          if (result?.isFailure) {
-            isError = true;
-            errorMessage = result.error.message;
-          }
-
-          if (isError) {
-            track('ManualPopulation.Delete', { success: false });
-            Notification({
-              type: 'error',
-              message: errorMessage,
-            });
-            setIsDeleteRowsModalVisible(false);
-            return;
-          }
+        onSuccess: () => {
           track('ManualPopulation.Delete', { success: true });
 
           gridRef.current?.api.refreshInfiniteCache();
@@ -709,6 +692,18 @@ export const DataPreviewTable = forwardRef<
           });
           setIsDeleteRowsModalVisible(false);
           refetchPublishedRowsCountMap({ exact: true, cancelRefetch: true });
+        },
+        onError: (error) => {
+          // in some cases, we are returning just a string instead of an object
+          const errorMessage = error.message || error;
+
+          track('ManualPopulation.Delete', { success: false });
+          Notification({
+            type: 'error',
+            message: errorMessage as string,
+          });
+          setIsDeleteRowsModalVisible(false);
+          return;
         },
       });
     }, [
@@ -748,7 +743,13 @@ export const DataPreviewTable = forwardRef<
           <DeleteRowsModal
             isVisible={isDeleteRowsModalVisible}
             isDeleting={deleteRowsMutation.isLoading}
-            singleRowExternalId={singleSelectedRowExternalId}
+            selectedRowsExternalIds={(selectedDraftRows || [])
+              .map((el) => el.externalId)
+              .concat(
+                (gridRef.current?.api.getSelectedRows() || []).map(
+                  (el) => el.externalId
+                )
+              )}
             onCancel={() => setIsDeleteRowsModalVisible(false)}
             onDelete={handleDeleteRows}
           />

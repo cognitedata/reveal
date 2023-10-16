@@ -3,7 +3,6 @@ import { GraphQLInputObjectType } from 'graphql';
 import {
   ConflictMode,
   CreateDataModelTransformationDTO,
-  DeleteInstancesDTO,
   FetchDataModelTransformationsDTO,
   FetchFilteredRowsCountDTO,
   FetchPublishedRowsCountDTO,
@@ -84,12 +83,6 @@ export interface FlexibleDataModelingClient {
    * @param dto
    */
   ingestInstances(dto: IngestInstancesDTO): Promise<IngestInstancesResponseDTO>;
-
-  /**
-   * Deletes Data Model Type Instances (data)
-   * @param dto
-   */
-  deleteInstances(dto: DeleteInstancesDTO): Promise<boolean | void>;
 
   /**
    * Returns the transformations created for the specified data model type.

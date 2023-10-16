@@ -5,67 +5,71 @@ import { Checkbox, Modal } from '@cognite/cogs.js';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 
 export const DeleteRowsModal = ({
+  selectedRowsExternalIds,
   isVisible,
   isDeleting,
   onCancel,
   onDelete,
-  singleRowExternalId,
 }: {
+  selectedRowsExternalIds?: string[];
   isVisible: boolean;
   isDeleting: boolean;
   onCancel: VoidFunction;
   onDelete: VoidFunction;
-  singleRowExternalId?: string | undefined;
 }) => {
   const { t } = useTranslation('previewDataRowsDeleteDialog');
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
 
-  const descriptionText = singleRowExternalId ? (
-    <>
-      <p>
+  console.log('selectedRowsExternalIds', selectedRowsExternalIds);
+
+  const descriptionText =
+    selectedRowsExternalIds?.length === 1 ? (
+      <>
+        <p>
+          {t(
+            'are_you_sure_to_delete_data_row_1',
+            'Are you sure you want to delete '
+          )}
+          <strong>{selectedRowsExternalIds[0]}</strong>
+          {t('are_you_sure_to_delete_data_row_2', '?')}
+        </p>
+        <p>
+          {t(
+            'are_you_sure_to_delete_data_row_3',
+            'Contents of this instance will be deleted.'
+          )}
+        </p>
+      </>
+    ) : (
+      <>
+        <p>
+          {t(
+            'are_you_sure_to_delete_selected_rows_row_1',
+            'Are you sure you want to delete these instances?'
+          )}
+        </p>
+        <p>
+          {t(
+            'are_you_sure_to_delete_selected_rows_row_2',
+            'Contents of the selected instances will be permanently deleted.'
+          )}
+        </p>
+      </>
+    );
+  const confirmationText =
+    selectedRowsExternalIds?.length === 1 ? (
+      <>
+        {t('yes_sure_to_delete_data_row', "Yes, I'm sure I want to delete ")}
+        <strong>{selectedRowsExternalIds[0]}</strong>
+      </>
+    ) : (
+      <>
         {t(
-          'are_you_sure_to_delete_data_row_1',
-          'Are you sure you want to delete '
+          'yes_sure_to_delete_multiple_rows',
+          "Yes, I'm sure I want to delete the selected instances"
         )}
-        <strong>{singleRowExternalId}</strong>
-        {t('are_you_sure_to_delete_data_row_2', '?')}
-      </p>
-      <p>
-        {t(
-          'are_you_sure_to_delete_data_row_3',
-          'Contents of this instance will be deleted.'
-        )}
-      </p>
-    </>
-  ) : (
-    <>
-      <p>
-        {t(
-          'are_you_sure_to_delete_data_row_1',
-          'Are you sure you want to delete these instances?'
-        )}
-      </p>
-      <p>
-        {t(
-          'are_you_sure_to_delete_data_row_2',
-          'Contents of these instances will be deleted.'
-        )}
-      </p>
-    </>
-  );
-  const confirmationText = singleRowExternalId ? (
-    <>
-      {t('yes_sure_to_delete_data_row', "Yes, I'm sure I want to delete ")}
-      <strong>{singleRowExternalId}</strong>
-    </>
-  ) : (
-    <>
-      {t(
-        'yes_sure_to_delete_data_row',
-        "Yes, I'm sure I want to delete these instances"
-      )}
-    </>
-  );
+      </>
+    );
 
   return (
     <Modal
@@ -83,6 +87,7 @@ export const DeleteRowsModal = ({
     >
       <div>
         {descriptionText}
+        <br />
         <div className="confirmDelete">
           <Checkbox
             name="ConfirmDelete"

@@ -25,10 +25,10 @@ export function useNodesDeleteMutation({
     dataModelType.name
   );
   const queryClient = useQueryClient();
-  const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
-  return useMutation<Result<boolean>, PlatypusError, DeleteInstancesDTO>(
+  const deleteInstancesCommand = useInjection(TOKENS.deleteInstancesCommand);
+  return useMutation<boolean, PlatypusError, DeleteInstancesDTO>(
     (dto) => {
-      return dataManagementHandler.deleteData(dto);
+      return deleteInstancesCommand.execute({ ...dto, type: 'node' });
     },
     {
       onSuccess: (_, request) => {

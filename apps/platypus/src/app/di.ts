@@ -11,6 +11,7 @@ import {
   DataModelsApiService,
   DateUtils,
   DeleteDataModelCommand,
+  DeleteInstancesCommand,
   FdmClient,
   FdmMixerApiService,
   FetchDataModelQuery,
@@ -68,6 +69,9 @@ export const TOKENS = {
   createSpaceCommand: token<CreateSpaceCommand>('createSpaceCommand'),
   listSpacesQuery: token<ListSpacesQuery>('listSpacesQuery'),
   runGraphQlQuery: token<RunGraphqlQuery>('runGraphQlQuery'),
+  deleteInstancesCommand: token<DeleteInstancesCommand>(
+    'deleteInstancesCommand'
+  ),
 };
 
 export const rootInjector = new Container();
@@ -174,4 +178,9 @@ rootInjector
 rootInjector
   .bind(TOKENS.runGraphQlQuery)
   .toInstance(() => RunGraphqlQuery.create(getCogniteSDKClient()))
+  .inResolutionScope();
+
+rootInjector
+  .bind(TOKENS.deleteInstancesCommand)
+  .toInstance(() => DeleteInstancesCommand.create(getCogniteSDKClient()))
   .inResolutionScope();
