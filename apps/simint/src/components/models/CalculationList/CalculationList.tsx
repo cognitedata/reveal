@@ -45,6 +45,7 @@ import { TRACKING_EVENTS } from '../../../utils/metrics/constants';
 import { trackUsage } from '../../../utils/metrics/tracking';
 import { isSuccessResponse } from '../../../utils/responseUtils';
 import { GraphicContainer } from '../../shared/elements';
+import { NoResults } from '../../shared/NoResults';
 
 import { CalculationRunTypeIndicator } from './CalculationRunTypeIndicator';
 import { CalculationScheduleIndicator } from './CalculationScheduleIndicator';
@@ -307,7 +308,11 @@ export function CalculationList({
         <IconWrapper>
           <img alt="" src={RuleMonitoring} />
         </IconWrapper>
-        No configured calculations
+        <NoResults
+          data-testid="no-calculation-results"
+          bodyText="Create your first simulation routine to get started"
+          headerText="No simulation routines found"
+        />
       </GraphicContainer>
     ) : (
       <ConfiguredCalculationList>

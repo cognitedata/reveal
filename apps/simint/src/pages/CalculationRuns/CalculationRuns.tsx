@@ -7,13 +7,7 @@ import capitalize from 'lodash/capitalize';
 import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
-import {
-  Button,
-  DateRange,
-  Illustrations,
-  Select,
-  Skeleton,
-} from '@cognite/cogs.js';
+import { Button, DateRange, Select, Skeleton } from '@cognite/cogs.js';
 import type {
   CalculationRun,
   CalculationRunMetadata,
@@ -21,6 +15,8 @@ import type {
   ModelFile,
   SimulatorConfigDetails,
 } from '@cognite/simconfig-api-sdk/rtk';
+
+import { NoResults } from '../../components/shared/NoResults';
 
 import { CalculationRunList } from './CalculationRunList';
 import { generateOptions } from './options';
@@ -169,29 +165,26 @@ export function CalculationRuns({
     // check for false because hasRunsInProject can be undefined
     if (hasRunsInProject === false) {
       return (
-        <NoResultsContainer data-testid="no-runs-container">
-          <Illustrations.Solo
-            css={{ marginBottom: '20px' }}
-            type="EmptyStateSearch"
-          />
-
-          <h5>No simulator runs found</h5>
-          <span>Create your first simulation routine to get started</span>
-          <Button
-            css={{ marginTop: '24px' }}
-            data-testid="create-routine-button"
-            icon="ExternalLink"
-            iconPlacement="right"
-            onClick={() => {
-              navigate({
-                to: createRoutineUrl,
-              });
-            }}
-            type="primary"
-          >
-            Create Routine
-          </Button>
-        </NoResultsContainer>
+        <NoResults
+          action={
+            <Button
+              data-testid="create-routine-button"
+              icon="ExternalLink"
+              iconPlacement="right"
+              onClick={() => {
+                navigate({
+                  to: createRoutineUrl,
+                });
+              }}
+              type="primary"
+            >
+              Create Routine
+            </Button>
+          }
+          bodyText="Create your first simulation routine to get started"
+          data-testid="no-runs-container"
+          headerText="No simulator runs found"
+        />
       );
     }
 
@@ -213,17 +206,11 @@ export function CalculationRuns({
         )}
 
         {!calculationRuns.length && !isFetching ? (
-          <NoResultsContainer data-testid="no-results-container">
-            <Illustrations.Solo
-              css={{ marginBottom: '20px' }}
-              type="EmptyStateSearch"
-            />
-
-            <h5>No results available</h5>
-            <span>
-              Please refine your filters or update the search parameters
-            </span>
-          </NoResultsContainer>
+          <NoResults
+            bodyText="Please refine your filters or update the search parameters"
+            data-testid="no-results-container"
+            headerText="No results available"
+          />
         ) : null}
       </>
     );
@@ -241,25 +228,6 @@ const initialDateRange = {
   eventStartTime: formatISO(sub(new Date(), { days: 7 })),
   eventEndTime: formatISO(new Date()),
 };
-
-const NoResultsContainer = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-
-  h5 {
-    font-size: var(--cogs-t5-font-size);
-    margin: 0 0 8px;
-  }
-
-  span {
-    width: 495px;
-    text-align: center;
-    font-size: 12px;
-  }
-`;
 
 const CalculationRunsContainer = styled.div`
   display: flex;
