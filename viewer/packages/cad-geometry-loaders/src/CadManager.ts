@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import { Group, Object3D, Box3Helper } from 'three';
 
 import { Subscription, Observable, auditTime, buffer } from 'rxjs';
 
@@ -15,11 +16,15 @@ import { MetricsLogger } from '@reveal/metrics';
 import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
 import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { CDF_TO_VIEWER_TRANSFORMATION, SceneHandler } from '@reveal/utilities';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
+
+  _boxGroup = new Group();
+  _boxMap = new Map<number, Box3Helper>();
 
   private readonly _cadModelMap: Map<string, CadNode> = new Map();
   private readonly _subscription: Subscription = new Subscription();
@@ -66,12 +71,15 @@ export class CadManager {
   constructor(
     materialManger: CadMaterialManager,
     cadModelFactory: CadModelFactory,
-    cadModelUpdateHandler: CadModelUpdateHandler
+    cadModelUpdateHandler: CadModelUpdateHandler,
+    sceneHandler: SceneHandler
   ) {
     this._materialManager = materialManger;
     this._cadModelFactory = cadModelFactory;
     this._cadModelUpdateHandler = cadModelUpdateHandler;
     this._materialManager.on('materialsChanged', this._materialsChangedListener);
+
+    sceneHandler.addCustomObject(this._boxGroup);
 
     const consumeNextSector = (sector: ConsumedSector) => {
       const cadModel = this._cadModelMap.get(sector.modelIdentifier);
@@ -85,8 +93,15 @@ export class CadManager {
         sector.geometryBatchingQueue.length > 0 &&
         sector.levelOfDetail === LevelOfDetail.Detailed
       ) {
+        const model = this._cadModelMap.get(sector.modelIdentifier)!;
+        const box = new Box3Helper(sector.metadata.geometryBoundingBox.clone().applyMatrix4(
+          model.getCdfToDefaultModelTransformation()));
+        this._boxGroup.add(box);
+        this._boxMap.set(sector.metadata.id, box);
         cadModel.batchGeometry(sector.geometryBatchingQueue, sector.metadata.id);
       } else if (sector.levelOfDetail === LevelOfDetail.Discarded) {
+        this._boxGroup.remove(this._boxMap.get(sector.metadata.id)!);
+        this._boxMap.delete(sector.metadata.id);
         cadModel.removeBatchedSectorGeometries(sector.metadata.id);
       }
 
@@ -146,6 +161,10 @@ export class CadManager {
   resetRedraw(): void {
     this._needsRedraw = false;
     [...this._cadModelMap.values()].some(m => m.resetRedraw());
+  }
+
+  get boxMap(): Map<number, Box3Helper> {
+    return this._boxMap;
   }
 
   get needsRedraw(): boolean {

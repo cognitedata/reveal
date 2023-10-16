@@ -283,6 +283,10 @@ export class DefaultCameraManager implements CameraManager {
     this._controls.update(deltaTime);
   }
 
+  public setKeyboardSpeedFactor(factor: number): void {
+    this._controls.options = { keyboardSpeed: factor };
+  }
+
   dispose(): void {
     this.isDisposed = true;
     this._controls.dispose();

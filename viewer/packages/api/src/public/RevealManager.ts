@@ -23,9 +23,11 @@ import {
 } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
-import { CameraManager } from '@reveal/camera-manager';
+import { CameraManager, DefaultCameraManager, ProxyCameraManager } from '@reveal/camera-manager';
 
 import { ModelIdentifier } from '@reveal/data-providers';
+import assert from 'assert';
+import { min } from 'lodash';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -76,7 +78,14 @@ export class RevealManager {
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
 
     this._cameraManager = cameraManager;
-    this._onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => (this._cameraInMotion = true);
+    console.log('Creating onCameraChange for camera ', cameraManager);
+    this._onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => {
+      this._cameraInMotion = true;
+      const cameraManager = (this._cameraManager as ProxyCameraManager).innerCameraManager;
+      if (cameraManager instanceof DefaultCameraManager) {
+        this.setCameraSpeedFactor(cameraManager);
+      }
+    };
     this._onCameraStop = () => (this._cameraInMotion = false);
     this._cameraManager.on('cameraChange', this._onCameraChange);
     this._cameraManager.on('cameraStop', this._onCameraStop);
@@ -105,6 +114,22 @@ export class RevealManager {
 
     this._cameraManager.off('cameraChange', this._onCameraChange);
     this._cameraManager.off('cameraStop', this._onCameraStop);
+  }
+
+  private setCameraSpeedFactor(cameraManager: DefaultCameraManager): void {
+    const pos = cameraManager.getCamera().position;
+    let minContainingBoxDimension = 50;
+    let minDist = 1e9;
+    const v = new THREE.Vector3();
+    [...this._cadManager.boxMap.values()].forEach(
+      b => {
+        if (b.box.containsPoint(pos)) {
+          minContainingBoxDimension = Math.min(min(b.box.getSize(v).toArray())!, minContainingBoxDimension);
+        }
+        minDist = Math.min(minDist, b.box.distanceToPoint(pos));
+      }
+    );
+    cameraManager.setKeyboardSpeedFactor(Math.max(0.1, minContainingBoxDimension / 60, minDist / 60));
   }
 
   public requestRedraw(): void {

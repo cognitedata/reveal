@@ -87,13 +87,12 @@ export type ComboControlsOptions = {
   keyboardRotationSpeedAzimuth: number;
   keyboardRotationSpeedPolar: number;
   mouseFirstPersonRotationSpeed: number;
-  keyboardDollySpeed: number;
-  keyboardPanSpeed: number;
+  keyboardSpeed: number;
 
   /**
    * How much quicker keyboard navigation will be with 'shift' pressed
    */
-  keyboardSpeedFactor: number;
+  keyboardTurboSpeedFactor: number;
   pinchEpsilon: number;
   pinchPanSpeed: number;
   EPSILON: number;
@@ -161,9 +160,8 @@ export class ComboControls extends EventDispatcher {
     keyboardRotationSpeedAzimuth: defaultKeyboardRotationSpeed,
     keyboardRotationSpeedPolar: defaultKeyboardRotationSpeed * 0.8,
     mouseFirstPersonRotationSpeed: defaultPointerRotationSpeed * 2,
-    keyboardDollySpeed: 2,
-    keyboardPanSpeed: 10,
-    keyboardSpeedFactor: 3,
+    keyboardSpeed: 2,
+    keyboardTurboSpeedFactor: 0.3,
     pinchEpsilon: 2,
     pinchPanSpeed: 1,
     EPSILON: 0.001,
@@ -696,7 +694,7 @@ export class ComboControls extends EventDispatcher {
   }
 
   private handleDollyFromKeyboard(timeScale: number): void {
-    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardSpeedFactor : 1;
+    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardTurboSpeedFactor : 1;
     const moveDirection = this._keyboard.getKeyboardMovementValue('KeyW', 'KeyS');
     if (moveDirection === 0) {
       return;
@@ -705,7 +703,7 @@ export class ComboControls extends EventDispatcher {
     const booleanMoveDirection = moveDirection === 1;
     const dollyDeltaDistance = this.getDollyDeltaDistance(
       booleanMoveDirection,
-      speedFactor * this._options.keyboardDollySpeed * timeScale
+      speedFactor * this._options.keyboardSpeed * timeScale
     );
     this.dolly(0, 0, dollyDeltaDistance, true);
     this._firstPersonMode = true;
@@ -720,10 +718,10 @@ export class ComboControls extends EventDispatcher {
     }
 
     this._firstPersonMode = true;
-    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardSpeedFactor : 1;
-    this.pan(
-      timeScale * speedFactor * this._options.keyboardPanSpeed * horizontalMovement,
-      timeScale * speedFactor * this._options.keyboardPanSpeed * verticalMovement
+    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardTurboSpeedFactor : 1;
+    this.panLeft(
+      timeScale * speedFactor * this._options.keyboardSpeed * horizontalMovement);
+    this.panUp(timeScale * speedFactor * this._options.keyboardSpeed * verticalMovement
     );
   }
 
@@ -783,9 +781,9 @@ export class ComboControls extends EventDispatcher {
 
     // half of the fov is center to top of screen
     // @ts-ignore
-    if (_camera.isPerspectiveCamera) {
+    /* if (_camera.isPerspectiveCamera) {
       targetDistance *= Math.tan((((_camera as PerspectiveCamera).fov / 2) * Math.PI) / 180);
-    }
+    } */
 
     // we actually don't use screenWidth, since perspective camera is fixed to screen height
     this.panLeft((2 * deltaX * targetDistance) / _domElement.clientHeight);

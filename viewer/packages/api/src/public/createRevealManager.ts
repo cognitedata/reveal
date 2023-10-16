@@ -162,7 +162,7 @@ export function createRevealManager(
   const cadManager = createCadManager(modelMetadataProvider, modelDataProvider, cadMaterialManager, {
     ...revealOptions.internal?.cad,
     continuousModelStreaming: revealOptions.continuousModelStreaming
-  });
+  }, sceneHandler);
   return new RevealManager(
     cadManager,
     pointCloudManager,
