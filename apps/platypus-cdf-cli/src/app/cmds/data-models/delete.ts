@@ -1,11 +1,16 @@
+import {
+  DeleteDataModelCommand,
+  FetchDataModelQuery,
+} from '@fusion/data-modeling';
 import { DataModelDTO } from '@platypus-core/domain/data-model/providers/fdm-next/dto/dms-data-model-dtos';
 import { Arguments } from 'yargs';
 
 import { CLICommand } from '../../common/cli-command';
 import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
+import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 import Response, { DEBUG as _DEBUG } from '../../utils/logger';
 
-import { getDataModelsHandler } from './utils';
+import { getFdmV3MixerApiService } from './utils';
 
 const DEBUG = _DEBUG.extend('data-models:delete');
 
@@ -44,23 +49,30 @@ type DataModelDeleteCommandArgs = BaseArgs & {
 
 export class DeleteCmd extends CLICommand {
   async execute(args: Arguments<DataModelDeleteCommandArgs>) {
-    const dataModelsHandler = getDataModelsHandler();
-    DEBUG('dataModelsHandler initialized');
+    const mixerApiService = getFdmV3MixerApiService();
+
+    const deleteCommand = DeleteDataModelCommand.create(getCogniteSDKClient());
+    const fetchDataModelQuery = new FetchDataModelQuery(mixerApiService);
+
+    DEBUG('fetchDataModelQuery initialized');
 
     Response.info(
       `Deleting "${args['external-id']}". This can take a few minutes...`
     );
 
-    const dataModelResponse = await dataModelsHandler.fetch({
-      dataModelId: args['external-id'],
-      space: args.space,
-    });
-    if (!dataModelResponse.isSuccess) {
+    let dataModelResponse;
+    try {
+      // eslint-disable-next-line
+      dataModelResponse = await fetchDataModelQuery.execute({
+        dataModelId: args['external-id'],
+        space: args.space,
+      });
+    } catch {
       Response.error('The data model specified does not exist.');
       return;
     }
 
-    const response = await dataModelsHandler.delete(
+    const response = await deleteCommand.execute(
       {
         externalId: args['external-id'],
         space: args['space'],
@@ -68,15 +80,11 @@ export class DeleteCmd extends CLICommand {
       args['deleteTypes'] || false
     );
 
-    if (!response.isSuccess) {
-      throw response.error;
-    }
-
-    const { referencedViews } = response.getValue();
+    const { referencedViews } = response;
 
     DEBUG(
       'Data model was created successfully, %o',
-      JSON.stringify(response.getValue(), null, 2)
+      JSON.stringify(response, null, 2)
     );
     Response.success(
       `Data model "${args['external-id']}" has been deleted successfully`

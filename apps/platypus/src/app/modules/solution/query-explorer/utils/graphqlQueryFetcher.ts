@@ -11,24 +11,16 @@ export default {
     version: string,
     space: string
   ): Promise<ExecutionResult> => {
-    const solutionSchemaHandler = rootInjector.get(
-      TOKENS.dataModelVersionHandler
-    );
+    const runGraphQlQuery = rootInjector.get(TOKENS.runGraphQlQuery);
     return new Promise((resolve, reject) => {
-      solutionSchemaHandler
-        .runQuery({
+      runGraphQlQuery
+        .execute({
           graphQlParams,
           dataModelId,
           schemaVersion: version,
           space,
         })
-        .then((result) => {
-          if (!result.isSuccess) {
-            reject(result.error);
-          }
-
-          resolve(result.getValue().data);
-        })
+        .then((result) => resolve(result.data))
         .catch((error) => {
           if (error.code !== 409) {
             Notification({ type: 'error', message: error.message });

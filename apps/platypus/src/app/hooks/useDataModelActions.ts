@@ -4,45 +4,34 @@ import {
   DataModel,
   DataModelVersion,
   PlatypusError,
-  Result,
 } from '@platypus/platypus-core';
 import { useQuery } from '@tanstack/react-query';
 
 import { Notification } from '../components/Notification/Notification';
 import { TOKENS } from '../di';
+import { apiCommandFuncWrapper } from '../utils/api-callback-wrappers';
 import { QueryKeys } from '../utils/queryKeys';
 
 import { useErrorLogger } from './useErrorLogger';
 import { useInjection } from './useInjection';
 import { useSelectedDataModelVersion } from './useSelectedDataModelVersion';
 
-async function dataModelHandlerFuncWrapper<T>(
-  callableFn: () => Promise<Result<T>>
-) {
-  const result = await callableFn();
-  if (!result.isSuccess) {
-    Notification({ type: 'error', message: result.error.message });
-    throw result.error;
-  }
-  return result.getValue();
-}
-
 export const useDataModels = () => {
-  const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
+  const dataModelsHandler = useInjection(TOKENS.listDataModelsQuery);
 
   return useQuery(QueryKeys.DATA_MODEL_LIST, async () =>
-    dataModelHandlerFuncWrapper<DataModel[]>(() => dataModelsHandler.list())
+    apiCommandFuncWrapper<DataModel[]>(() => dataModelsHandler.execute())
   );
 };
 
 export const useDataModel = (dataModelExternalId: string, space: string) => {
-  const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
+  const fetchDataModelQuery = useInjection(TOKENS.fetchDataModelQuery);
 
   return useQuery(
     QueryKeys.DATA_MODEL(space, dataModelExternalId),
     async () =>
-      await dataModelHandlerFuncWrapper<DataModel>(() =>
-        dataModelsHandler.fetch({
+      await apiCommandFuncWrapper<DataModel>(() =>
+        fetchDataModelQuery.execute({
           dataModelId: dataModelExternalId,
           space,
         })
@@ -54,13 +43,15 @@ export const useDataModelVersions = (
   dataModelExternalId: string,
   space: string
 ) => {
-  const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
+  const fetchDataModelVersionsQuery = useInjection(
+    TOKENS.fetchDataModelVersionsQuery
+  );
 
   return useQuery<DataModelVersion[], PlatypusError>(
     QueryKeys.DATA_MODEL_VERSION_LIST(space, dataModelExternalId),
     async () =>
-      await dataModelHandlerFuncWrapper<DataModelVersion[]>(() =>
-        dataModelVersionHandler.versions({
+      await apiCommandFuncWrapper<DataModelVersion[]>(() =>
+        fetchDataModelVersionsQuery.execute({
           externalId: dataModelExternalId || '',
           space,
         })

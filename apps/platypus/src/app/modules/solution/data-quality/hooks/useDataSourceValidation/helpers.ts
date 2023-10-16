@@ -1,19 +1,21 @@
-import sdk from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
 
+import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
 import { RuleRunDto } from '../../api/codegen';
 
 import { ValidationStatus } from './types';
 
 /** Creates an auth session needed to start a validation job. */
-export const createSession = () =>
-  sdk
+export const createSession = () => {
+  const sdk = getCogniteSDKClient();
+  return sdk
     .post(`/api/v1/projects/${getProject()}/sessions`, {
       data: {
         items: [{ tokenExchange: true }],
       },
     })
     .then((res) => res.data.items[0]);
+};
 
 /**
  * Returns validation status based on the latest rule runs.

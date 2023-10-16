@@ -1,22 +1,22 @@
-import { SpaceInstance } from '@platypus/platypus-core';
+import { SpaceInstanceDTO } from '@platypus/platypus-core';
 import { useQuery } from '@tanstack/react-query';
 import { useInjection } from 'brandi-react';
 
 import { TOKENS } from '../di';
+import { apiCommandFuncWrapper } from '../utils/api-callback-wrappers';
 import { QueryKeys } from '../utils/queryKeys';
 
 export const useSpaces = () => {
-  const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
+  const listSpacesQuery = useInjection(TOKENS.listSpacesQuery);
   const listSpacesMaxLimit = 1000;
 
-  return useQuery<SpaceInstance[], string | any>(
+  return useQuery<SpaceInstanceDTO[], string | any>(
     QueryKeys.SPACES_LIST,
-    async () => {
-      const result = await dataModelsHandler.getSpaces({
-        limit: listSpacesMaxLimit,
-      });
-      if (result.isFailure) throw result.error;
-      return result.getValue();
-    }
+    async () =>
+      apiCommandFuncWrapper<SpaceInstanceDTO[]>(() =>
+        listSpacesQuery.execute({
+          limit: listSpacesMaxLimit,
+        })
+      )
   );
 };

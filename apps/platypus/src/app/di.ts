@@ -3,22 +3,27 @@ import {
   GraphQlSchemaValidator,
 } from '@platypus/platypus-common-utils';
 import {
-  DataModelsHandler,
-  DataModelVersionHandler,
-  DataModelTypeDefsHandler,
-  TransformationApiService,
-  DateUtils,
-  TimeUtils,
-  StorageProviderFactory,
+  CreateDataModelCommand,
+  CreateSpaceCommand,
   DataManagementHandler,
-  FdmClient,
-  FlexibleDataModelingClient,
-  SpacesApiService,
-  FdmMixerApiService,
-  ContainersApiService,
-  ViewsApiService,
+  DataModelTypeDefsHandler,
+  DataModelVersionHandler,
   DataModelsApiService,
+  DateUtils,
+  DeleteDataModelCommand,
+  FdmClient,
+  FdmMixerApiService,
+  FetchDataModelQuery,
+  FetchDataModelVersionsQuery,
+  FlexibleDataModelingClient,
   InstancesApiService,
+  ListDataModelsQuery,
+  ListSpacesQuery,
+  RunGraphqlQuery,
+  StorageProviderFactory,
+  TimeUtils,
+  TransformationApiService,
+  UpdateDataModelCommand,
 } from '@platypus/platypus-core';
 import { Container, token } from 'brandi';
 
@@ -34,7 +39,6 @@ export const TOKENS = {
   storageProviderFactory: token<StorageProviderFactory>(
     'storageProviderFactory'
   ),
-  dataModelsHandler: token<DataModelsHandler>('dataModelsHandler'),
   dataModelVersionHandler: token<DataModelVersionHandler>(
     'dataModelVersionHandler'
   ),
@@ -47,6 +51,23 @@ export const TOKENS = {
     'transformationsApiService'
   ),
   fdmClient: token<FlexibleDataModelingClient>('fdmClient'),
+  listDataModelsQuery: token<ListDataModelsQuery>('listDataModelsQuery'),
+  fetchDataModelQuery: token<FetchDataModelQuery>('fetchDataModelQuery'),
+  fetchDataModelVersionsQuery: token<FetchDataModelVersionsQuery>(
+    'fetchDataModelVersionsQuery'
+  ),
+  createDataModelCommand: token<CreateDataModelCommand>(
+    'createDataModelCommand'
+  ),
+  updateDataModelCommand: token<UpdateDataModelCommand>(
+    'updateDataModelCommand'
+  ),
+  deleteDataModelCommand: token<DeleteDataModelCommand>(
+    'deleteDataModelCommand'
+  ),
+  createSpaceCommand: token<CreateSpaceCommand>('createSpaceCommand'),
+  listSpacesQuery: token<ListSpacesQuery>('listSpacesQuery'),
+  runGraphQlQuery: token<RunGraphqlQuery>('runGraphQlQuery'),
 };
 
 export const rootInjector = new Container();
@@ -57,10 +78,6 @@ rootInjector
   .toInstance(() => {
     const sdkClient = getCogniteSDKClient();
     return new FdmClient(
-      new SpacesApiService(sdkClient),
-      new ContainersApiService(sdkClient),
-      new ViewsApiService(sdkClient),
-      new DataModelsApiService(sdkClient),
       new FdmMixerApiService(sdkClient),
       new TransformationApiService(sdkClient),
       new InstancesApiService(sdkClient),
@@ -82,17 +99,6 @@ rootInjector
 rootInjector
   .bind(TOKENS.storageProviderFactory)
   .toInstance(StorageProviderFactoryImpl)
-  .inSingletonScope();
-
-rootInjector
-  .bind(TOKENS.dataModelsHandler)
-  .toInstance(() => {
-    const sdkClient = getCogniteSDKClient();
-    return new DataModelsHandler(
-      rootInjector.get(TOKENS.fdmClient),
-      new DataModelsApiService(sdkClient)
-    );
-  })
   .inSingletonScope();
 
 rootInjector
@@ -124,3 +130,48 @@ rootInjector
   .bind(TOKENS.transformationsApiService)
   .toInstance(() => new TransformationApiService(getCogniteSDKClient()))
   .inSingletonScope();
+
+rootInjector
+  .bind(TOKENS.listDataModelsQuery)
+  .toInstance(() => ListDataModelsQuery.create(getCogniteSDKClient()))
+  .inResolutionScope();
+
+rootInjector
+  .bind(TOKENS.fetchDataModelQuery)
+  .toInstance(() => FetchDataModelQuery.create(getCogniteSDKClient()))
+  .inResolutionScope();
+
+rootInjector
+  .bind(TOKENS.fetchDataModelVersionsQuery)
+  .toInstance(() => FetchDataModelVersionsQuery.create(getCogniteSDKClient()))
+  .inResolutionScope();
+
+rootInjector
+  .bind(TOKENS.createDataModelCommand)
+  .toInstance(() => CreateDataModelCommand.create(getCogniteSDKClient()))
+  .inResolutionScope();
+
+rootInjector
+  .bind(TOKENS.updateDataModelCommand)
+  .toInstance(() => UpdateDataModelCommand.create(getCogniteSDKClient()))
+  .inResolutionScope();
+
+rootInjector
+  .bind(TOKENS.deleteDataModelCommand)
+  .toInstance(() => DeleteDataModelCommand.create(getCogniteSDKClient()))
+  .inResolutionScope();
+
+rootInjector
+  .bind(TOKENS.listSpacesQuery)
+  .toInstance(() => ListSpacesQuery.create(getCogniteSDKClient()))
+  .inResolutionScope();
+
+rootInjector
+  .bind(TOKENS.createSpaceCommand)
+  .toInstance(() => CreateSpaceCommand.create(getCogniteSDKClient()))
+  .inResolutionScope();
+
+rootInjector
+  .bind(TOKENS.runGraphQlQuery)
+  .toInstance(() => RunGraphqlQuery.create(getCogniteSDKClient()))
+  .inResolutionScope();

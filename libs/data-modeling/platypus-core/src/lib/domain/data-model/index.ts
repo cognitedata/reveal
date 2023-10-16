@@ -1,4 +1,3 @@
-export * from './data-models-handler';
 export * from './data-model-version-handler';
 export * from './data-managment-handler';
 export * from './types';
@@ -7,4 +6,3 @@ export * from './validators';
 export * from './services';
 export * from './constants';
 export * from './utils';
-export * from './providers/fdm-next';

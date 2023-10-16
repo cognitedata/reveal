@@ -92,21 +92,6 @@ export const setupGraphql = (
       )
     );
 
-    // Provides hover details when it is triggered
-    providers.push(
-      monaco.languages.registerHoverProvider(
-        config.languageId,
-        new HoverAdapter(worker)
-      )
-    );
-    // Provides actions when there is an error
-    providers.push(
-      monaco.languages.registerCodeActionProvider(
-        config.languageId,
-        new CodeActionProvider(worker)
-      )
-    );
-
     // codelens
     providers.push(
       editorInstance.registerCommand('openDataPreview', (ctx, ...args) => {

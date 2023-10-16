@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-import { Validator } from '@platypus/platypus-core';
-import { SpaceIdValidator } from '@platypus-core/domain/data-model/validators/space-id-validator';
+import { Validator, SpaceIdValidator } from '@platypus/platypus-core';
 
 import { Input, Modal } from '@cognite/cogs.js';
 

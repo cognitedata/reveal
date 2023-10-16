@@ -1,7 +1,6 @@
 import {
   CreateDataModelDTO,
   DataModel,
-  Result,
   UpdateDataModelDTO,
 } from '@platypus/platypus-core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,21 +12,16 @@ import { QueryKeys } from '../../../utils/queryKeys';
 
 export function useDataModelMutation() {
   const queryClient = useQueryClient();
-  const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
+  const createDataModelCommand = useInjection(TOKENS.createDataModelCommand);
+  const updateDataModelCommand = useInjection(TOKENS.updateDataModelCommand);
 
   return {
-    create: useMutation<Result<DataModel>, PlatypusError, CreateDataModelDTO>(
+    create: useMutation<DataModel, PlatypusError, CreateDataModelDTO>(
       (dto) => {
-        return dataModelsHandler.create(dto);
+        return createDataModelCommand.execute(dto);
       },
       {
-        onSuccess: (result) => {
-          if (result.isFailure) {
-            return;
-          }
-
-          const dataModel = result.getValue();
-
+        onSuccess: (dataModel) => {
           // update cached list
           queryClient.cancelQueries(QueryKeys.DATA_MODEL_LIST);
           queryClient.setQueryData<DataModel[]>(
@@ -52,14 +46,12 @@ export function useDataModelMutation() {
         },
       }
     ),
-    update: useMutation<Result<DataModel>, PlatypusError, UpdateDataModelDTO>(
+    update: useMutation<DataModel, PlatypusError, UpdateDataModelDTO>(
       (dto) => {
-        return dataModelsHandler.update(dto);
+        return updateDataModelCommand.execute(dto);
       },
       {
-        onSuccess: (result) => {
-          const dataModel = result.getValue();
-
+        onSuccess: (dataModel) => {
           // update cached data model detail
           queryClient.cancelQueries(
             QueryKeys.DATA_MODEL(dataModel.space, dataModel.id)

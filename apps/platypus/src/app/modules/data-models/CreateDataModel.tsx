@@ -66,19 +66,8 @@ export const CreateDataModel = ({
             return;
           }
 
-          if (result.isFailure) {
-            Notification({
-              type: 'error',
-              message: result.error.message,
-            });
-
-            return;
-          }
-
           track('DataModel.Create');
-          const dataModelPath = `/${result.getValue().space}/${
-            result.getValue().id
-          }/${DEFAULT_VERSION_PATH}`;
+          const dataModelPath = `/${result.space}/${result.id}/${DEFAULT_VERSION_PATH}`;
           // save create action to user history
           if (dataModelName.trim())
             userHistoryService.logNewResourceEdit({
@@ -95,6 +84,12 @@ export const CreateDataModel = ({
             ),
           });
           navigate(dataModelPath);
+        },
+        onError: (error) => {
+          Notification({
+            type: 'error',
+            message: error.message,
+          });
         },
       }
     );

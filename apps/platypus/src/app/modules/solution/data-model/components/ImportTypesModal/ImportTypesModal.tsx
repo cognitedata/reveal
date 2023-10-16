@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { DataModel, DataModelVersion } from '@platypus/platypus-core';
 import { parse, DocumentNode, print, Kind } from 'graphql';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import {
   Flex,
   Modal,
@@ -13,6 +12,7 @@ import {
   CheckboxGroup,
 } from '@cognite/cogs.js';
 
+import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
 import { FormLabel } from '../../../../../components/FormLabel/FormLabel';
 import { Notification } from '../../../../../components/Notification/Notification';
 import {
@@ -240,6 +240,7 @@ export const ImportTypesModal: React.FC<ImportTypesModalProps> = (props) => {
     // Need to fetch the views and versions for the selected data model version
     if (selectedDataModelVersion) {
       (async () => {
+        const sdk = getCogniteSDKClient();
         const version = await sdk.post(
           `/api/v1/projects/${sdk.project}/models/datamodels/byids`,
           {

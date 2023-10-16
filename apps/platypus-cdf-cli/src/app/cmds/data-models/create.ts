@@ -1,19 +1,19 @@
 import {
+  CreateDataModelCommand,
+  DataModelDescriptionValidator,
   DataModelExternalIdValidator,
   DataModelNameValidator,
-  DataModelDescriptionValidator,
-  SpaceIdValidator,
   DataUtils,
-  Validator,
   PlatypusValidationError,
+  SpaceIdValidator,
+  Validator,
 } from '@platypus/platypus-core';
 import { Arguments, Argv } from 'yargs';
 
 import { CLICommand } from '../../common/cli-command';
 import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
+import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 import Response, { DEBUG as _DEBUG } from '../../utils/logger';
-
-import { getDataModelsHandler } from './utils';
 
 const DEBUG = _DEBUG.extend('data-models:create');
 
@@ -93,8 +93,10 @@ export class CreateCmd extends CLICommand {
       );
     }
 
-    const dataModelsHandler = getDataModelsHandler();
-    DEBUG('dataModelsHandler initialized');
+    const createDataModelCommand = CreateDataModelCommand.create(
+      getCogniteSDKClient()
+    );
+    DEBUG('createDataModelCommand initialized');
 
     const createDataModelArgs = {
       name: args.name,
@@ -103,15 +105,11 @@ export class CreateCmd extends CLICommand {
       description: (args['description'] || '') as string,
     };
 
-    const response = await dataModelsHandler.create(createDataModelArgs);
-
-    if (!response.isSuccess) {
-      throw response.error;
-    }
+    const response = await createDataModelCommand.execute(createDataModelArgs);
 
     DEBUG(
       'Data model was created successfully, %o',
-      JSON.stringify(response.getValue(), null, 2)
+      JSON.stringify(response, null, 2)
     );
     Response.success(
       `Data model "${args.name}" has been created successfully.`

@@ -1,30 +1,23 @@
+import { ListDataModelsQuery } from '@fusion/data-modeling';
+
 import { CLICommand } from '../../../common/cli-command';
+import { getCogniteSDKClient } from '../../../utils/cogniteSdk';
 import Response, { DEBUG as _DEBUG } from '../../../utils/logger';
-import { getDataModelsHandler } from '../utils';
 
 const DEBUG = _DEBUG.extend('solutions:api:list');
 export class SolutionsApiSpecsListCommand extends CLICommand {
   async execute() {
-    const dataModelsHandler = getDataModelsHandler();
-    DEBUG('dataModelsHandler initialized');
+    const listDataModelsQry = ListDataModelsQuery.create(getCogniteSDKClient());
+    DEBUG('listDataModelsQry initialized');
 
-    const apisResponse = await dataModelsHandler.list();
-
-    if (!apisResponse.isSuccess) {
-      throw apisResponse.error;
-    }
+    const apisResponse = await listDataModelsQry.execute();
 
     DEBUG(
       'List of apis retrieved successfully, %o',
-      JSON.stringify(apisResponse.getValue(), null, 2)
+      JSON.stringify(apisResponse, null, 2)
     );
 
-    Response.success(
-      apisResponse
-        .getValue()
-        .map((api) => api.id)
-        .join('\n')
-    );
+    Response.success(apisResponse.map((api) => api.id).join('\n'));
   }
 }
 

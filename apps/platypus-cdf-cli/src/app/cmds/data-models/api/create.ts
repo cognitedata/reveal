@@ -1,7 +1,9 @@
+import { CreateDataModelCommand } from '@fusion/data-modeling';
+
 import { CLICommand } from '../../../common/cli-command';
 import { CommandArgument, CommandArgumentType } from '../../../types';
+import { getCogniteSDKClient } from '../../../utils/cogniteSdk';
 import Response, { DEBUG as _DEBUG } from '../../../utils/logger';
-import { getDataModelsHandler } from '../utils';
 
 export const commandArgs = [
   {
@@ -25,21 +27,20 @@ export const commandArgs = [
 const DEBUG = _DEBUG.extend('solutions:api:create');
 export class CreateApiSpecCommand extends CLICommand {
   async execute(args) {
-    const dataModelsHandler = getDataModelsHandler();
-    DEBUG('dataModelsHandler initialized');
+    const createDataModelCommand = CreateDataModelCommand.create(
+      getCogniteSDKClient()
+    );
 
-    const response = await dataModelsHandler.create({
+    DEBUG('createDataModelCommand initialized');
+
+    const response = await createDataModelCommand.execute({
       name: args.externalId,
       description: args.description,
     });
 
-    if (!response.isSuccess) {
-      throw response.error;
-    }
-
     DEBUG(
       'Api was created successfully, %o',
-      JSON.stringify(response.getValue(), null, 2)
+      JSON.stringify(response, null, 2)
     );
     Response.success(
       `Api - "${args.externalId}" has been created successfully`

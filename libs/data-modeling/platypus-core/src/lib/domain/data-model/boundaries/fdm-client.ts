@@ -2,83 +2,30 @@ import { GraphQLInputObjectType } from 'graphql';
 
 import {
   ConflictMode,
-  CreateDataModelDTO,
   CreateDataModelTransformationDTO,
-  DeleteDataModelDTO,
   DeleteInstancesDTO,
-  ListDataDTO,
-  FetchDataModelDTO,
   FetchDataModelTransformationsDTO,
-  FetchDataModelVersionDTO,
+  FetchFilteredRowsCountDTO,
   FetchPublishedRowsCountDTO,
-  GraphQLQueryResponse,
+  GetByExternalIdDTO,
   IngestInstancesDTO,
   IngestInstancesResponseDTO,
-  ListDataModelVersionsDTO,
+  ListDataDTO,
   PublishDataModelVersionDTO,
   PublishedRowsCountMap,
-  RunQueryDTO,
   SearchDataDTO,
-  UpdateDataModelDTO,
-  GetByExternalIdDTO,
-  DeleteDataModelOutput,
-  FetchFilteredRowsCountDTO,
 } from '../dto';
-import { ListSpacesDTO } from '../providers/fdm-next/dto/dms-space-dtos';
 import {
   BuiltInType,
   CdfResourceInstance,
-  DataModel,
   DataModelTransformation,
   DataModelValidationError,
   DataModelVersion,
   PaginatedResponse,
-  SpaceDTO,
-  SpaceInstance,
 } from '../types';
 
 export interface FlexibleDataModelingClient {
   version: string;
-  /**
-   * Lists the available Data Models
-   * @returns
-   */
-  listDataModels(): Promise<DataModel[]>;
-
-  /**
-   * List Data Model Versions
-   * @param dto
-   */
-  listDataModelVersions(
-    dto: ListDataModelVersionsDTO
-  ): Promise<DataModelVersion[]>;
-
-  /**
-   * Fetch the specified DataModel
-   * @param dto FetchDataModelDTO
-   * @returns
-   */
-  fetchDataModel(dto: FetchDataModelDTO): Promise<DataModel>;
-
-  /**
-   * Fetch data model version details, GraphQL Schema...etc.
-   * @param dto
-   */
-  fetchDataModelVersion(
-    dto: FetchDataModelVersionDTO
-  ): Promise<DataModelVersion>;
-
-  /**
-   * Creates new Data Model
-   * @param dto CreateDataModelDTO
-   */
-  createDataModel(dto: CreateDataModelDTO): Promise<DataModel>;
-
-  /**
-   * Updates Data Model metadata (name, description...etc.)
-   * @param dto CreateDataModelDTO
-   */
-  updateDataModel(dto: UpdateDataModelDTO): Promise<DataModel>;
 
   /**
    * Publishes new or updates the current data model version
@@ -91,15 +38,6 @@ export interface FlexibleDataModelingClient {
     dto: PublishDataModelVersionDTO,
     conflictMode: ConflictMode
   ): Promise<DataModelVersion>;
-
-  /**
-   * Deletes the specified Data Model including all versions
-   * And the data related with it.
-   */
-  deleteDataModel(
-    dto: DeleteDataModelDTO,
-    deleteViews: boolean
-  ): Promise<DeleteDataModelOutput>;
 
   /**
    * Validates Data Model GraphQL.
@@ -122,12 +60,6 @@ export interface FlexibleDataModelingClient {
     graphql: string,
     builtInTypes: BuiltInType[]
   ): DataModelValidationError[];
-
-  /**
-   * Run GraphQL query against a Data Model Version
-   * @param dto
-   */
-  runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse>;
 
   /**
    * Returns the data as Paginated Response for a type.
@@ -170,17 +102,6 @@ export interface FlexibleDataModelingClient {
   createTransformation(
     dto: CreateDataModelTransformationDTO
   ): Promise<DataModelTransformation>;
-
-  /**
-   * Fetch all spaces.
-   */
-  getSpaces(dto?: ListSpacesDTO): Promise<SpaceInstance[]>;
-
-  /**
-   * Creates a new space for data models.
-   * @param dto
-   */
-  createSpace(dto: SpaceDTO): Promise<SpaceInstance>;
 
   /**
    * Fetches the number of filtered rows by type

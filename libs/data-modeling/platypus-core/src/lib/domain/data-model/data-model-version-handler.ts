@@ -7,11 +7,7 @@ import { mixerApiBuiltInTypes } from './constants';
 import {
   ConflictMode,
   CreateDataModelVersionDTO,
-  FetchDataModelVersionDTO,
-  GraphQLQueryResponse,
-  ListDataModelVersionsDTO,
   PublishDataModelVersionDTO,
-  RunQueryDTO,
 } from './dto';
 import {
   DataModelValidationError,
@@ -21,39 +17,6 @@ import {
 
 export class DataModelVersionHandler {
   constructor(private fdmClient: FlexibleDataModelingClient) {}
-
-  /**
-   * Fetch data model version
-   * @param dto
-   */
-  version(dto: FetchDataModelVersionDTO): Promise<Result<DataModelVersion>> {
-    const validationResult = this.validateField(dto, ['externalId']);
-
-    if (!validationResult.valid) {
-      return Promise.reject(Result.fail(validationResult.errors));
-    }
-
-    return this.fdmClient
-      .fetchDataModelVersion(dto)
-      .then((res) => Result.ok(res))
-      .catch((error: PlatypusError) => Result.fail(error));
-  }
-
-  /**
-   * List Data Model Versions
-   * @param dto
-   */
-  versions(dto: ListDataModelVersionsDTO): Promise<Result<DataModelVersion[]>> {
-    const validationResult = this.validateField(dto, ['externalId']);
-    if (!validationResult.valid) {
-      return Promise.reject(Result.fail(validationResult.errors));
-    }
-
-    return this.fdmClient
-      .listDataModelVersions(dto)
-      .then((res) => Result.ok(res))
-      .catch((error) => Result.fail(error));
-  }
 
   async validate(
     dto: CreateDataModelVersionDTO,
@@ -126,23 +89,6 @@ export class DataModelVersionHandler {
       .publishDataModelVersion(publishDataModelVersionDto, conflictMode)
       .then((dataModelVersion) => Result.ok(dataModelVersion))
       .catch((error: PlatypusError) => Result.fail(error));
-  }
-
-  /**
-   * Run GraphQL query against a Data Model Version
-   * @param dto
-   */
-  runQuery(dto: RunQueryDTO): Promise<Result<GraphQLQueryResponse>> {
-    const validationResult = this.validateField(dto, ['dataModelId']);
-
-    if (!validationResult.valid) {
-      return Promise.reject(Result.fail(validationResult.errors));
-    }
-
-    return this.fdmClient
-      .runQuery(dto)
-      .then((response) => Result.ok(response))
-      .catch((error: PlatypusError) => Promise.reject(error));
   }
 
   private validateField(dto: DTO, fields: string[]): ValidatorResult {

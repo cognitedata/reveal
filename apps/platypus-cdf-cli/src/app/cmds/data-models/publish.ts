@@ -3,9 +3,10 @@ import { readFileSync } from 'fs';
 import {
   CreateDataModelVersionDTO,
   DataModel,
-  DataModelsHandler,
   DataModelVersionHandler,
   DataModelVersionValidator,
+  FetchDataModelQuery,
+  FetchDataModelVersionsQuery,
   PlatypusValidationError,
   Validator,
 } from '@platypus/platypus-core';
@@ -13,13 +14,10 @@ import { Arguments, Argv } from 'yargs';
 
 import { CLICommand } from '../../common/cli-command';
 import { BaseArgs, CommandArgument, CommandArgumentType } from '../../types';
+import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 import Response, { DEBUG as _DEBUG } from '../../utils/logger';
 
-import {
-  autoIncrementVersion,
-  getDataModelsHandler,
-  getDataModelVersionsHandler,
-} from './utils';
+import { autoIncrementVersion, getDataModelVersionsHandler } from './utils';
 
 const DEBUG = _DEBUG.extend('data-models:publish');
 
@@ -93,7 +91,6 @@ type DataModelPublishCommandArgs = BaseArgs & {
 
 export class PublishCmd extends CLICommand {
   private dataModelVersionsHandler: DataModelVersionHandler;
-  private dataModelsHandler: DataModelsHandler;
 
   builder<T>(yargs: Argv<T>): Argv {
     yargs.usage(`
@@ -108,9 +105,15 @@ export class PublishCmd extends CLICommand {
   async execute(args: Arguments<DataModelPublishCommandArgs>) {
     const validator = new Validator(args);
 
+    const fetchDataModelQuery = FetchDataModelQuery.create(
+      getCogniteSDKClient()
+    );
+    const fetchDataVersionsQuery = FetchDataModelVersionsQuery.create(
+      getCogniteSDKClient()
+    );
+
     this.dataModelVersionsHandler = getDataModelVersionsHandler();
-    this.dataModelsHandler = getDataModelsHandler();
-    DEBUG('dataModelVersionsHandler initialized');
+    DEBUG('fetchDataVersionsQuery initialized');
 
     let graphqlSchema;
     try {
@@ -120,12 +123,13 @@ export class PublishCmd extends CLICommand {
       return;
     }
 
-    const dataModelVersionsResponse =
-      await this.dataModelsHandler.fetchVersions({
-        dataModelId: args['external-id'],
+    let dataModelVersionsResponse;
+    try {
+      dataModelVersionsResponse = await fetchDataVersionsQuery.execute({
+        externalId: args['external-id'],
         space: args.space,
       });
-    if (!dataModelVersionsResponse.isSuccess) {
+    } catch {
       Response.error(
         'The data model specified does not exist. Create a data model first before publishing a new version.'
       );
@@ -133,7 +137,7 @@ export class PublishCmd extends CLICommand {
     }
 
     let dataModelResponse: DataModel;
-    const versions = dataModelVersionsResponse.getValue();
+    const versions = dataModelVersionsResponse;
     let previousVersion = versions
       .sort(
         // latest first
@@ -154,12 +158,10 @@ export class PublishCmd extends CLICommand {
         return;
       }
 
-      dataModelResponse = (
-        await this.dataModelsHandler.fetch({
-          dataModelId: args['external-id'],
-          space: args.space,
-        })
-      ).getValue();
+      dataModelResponse = await fetchDataModelQuery.execute({
+        dataModelId: args['external-id'],
+        space: args.space,
+      });
     }
 
     const {

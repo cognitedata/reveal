@@ -6,6 +6,7 @@ import { useCdfUserHistoryService } from '@user-history';
 
 import { createLink } from '@cognite/cdf-utilities';
 
+import { Notification } from '../../components/Notification/Notification';
 import { SUB_APP_PATH } from '../../constants';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useDataModelMutation } from '../../modules/data-models/hooks/useDataModelMutation';
@@ -52,6 +53,12 @@ export const DataModelSettingsModal = ({
             });
           }
           onRequestClose();
+        },
+        onError: (error) => {
+          Notification({
+            type: 'error',
+            message: error.message,
+          });
         },
       }
     );

@@ -1,7 +1,9 @@
+import { FetchDataModelVersionsQuery } from '@fusion/data-modeling';
+
 import { CLICommand } from '../../../../common/cli-command';
 import { CommandArgumentType } from '../../../../types';
+import { getCogniteSDKClient } from '../../../../utils/cogniteSdk';
 import Response, { DEBUG as _DEBUG } from '../../../../utils/logger';
-import { getDataModelVersionsHandler } from '../../utils';
 
 export const commandArgs = [
   {
@@ -16,18 +18,16 @@ export const commandArgs = [
 const DEBUG = _DEBUG.extend('solutions:api:versions:list');
 export class SolutionsApiSpecVersionsListCommand extends CLICommand {
   async execute(args) {
-    const dataModelVersionsHandler = getDataModelVersionsHandler();
-    DEBUG('dataModelVersionsHandler initialized');
+    const fetchDataModelVersionsQuery = FetchDataModelVersionsQuery.create(
+      getCogniteSDKClient()
+    );
+    DEBUG('fetchDataModelVersionsQuery initialized');
 
-    const apiVersionsResult = await dataModelVersionsHandler.versions({
+    const apiVersionsResult = await fetchDataModelVersionsQuery.execute({
       externalId: args.externalId,
     });
 
-    if (!apiVersionsResult.isSuccess) {
-      throw apiVersionsResult.error;
-    }
-
-    const apiVersionsList = apiVersionsResult.getValue();
+    const apiVersionsList = apiVersionsResult;
     DEBUG(
       'List of api versions retrieved successfully, %o',
       JSON.stringify(apiVersionsList, null, 2)

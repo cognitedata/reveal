@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-import sdk from '@cognite/cdf-sdk-singleton';
-
+import { getCogniteSDKClient } from '../../../../../../../environments/cogniteSdk';
 import { Notification } from '../../../../../../components/Notification/Notification';
 import { useTranslation } from '../../../../../../hooks/useTranslation';
 import { useLoadDataSource } from '../../../hooks';
@@ -25,6 +24,7 @@ export const useDownloadReport = () => {
 
   const downloadReport = async ({ fileType }: DownloadReportOptions) => {
     if (!dataSource) return;
+    const sdk = getCogniteSDKClient();
 
     setDownloadLoading(true);
     try {

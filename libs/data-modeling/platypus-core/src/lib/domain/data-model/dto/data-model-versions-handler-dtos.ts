@@ -1,19 +1,5 @@
 import { DataModelVersion, DataModelVersionStatus } from '../types';
 
-export interface FetchDataModelVersionDTO {
-  /** Data Model externalId */
-  externalId: string;
-  space: string;
-  version: string;
-}
-
-export interface ListDataModelVersionsDTO {
-  /** Data Model externalId */
-  externalId: string;
-  space?: string;
-  version?: string;
-}
-
 export interface CreateDataModelVersionDTO {
   /** Data Model externalId */
   externalId: string;

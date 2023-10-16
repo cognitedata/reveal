@@ -29,7 +29,7 @@ export const DeleteDataModel = ({
 
   const [deleting, setDeleting] = useState<boolean>(false);
   const [deleteDataTypes, _setDeleteDataTypes] = useState<boolean>(false);
-  const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
+  const deleteDataModelCommand = useInjection(TOKENS.deleteDataModelCommand);
   const localStorageProvider = useInjection(
     TOKENS.storageProviderFactory
   ).getProvider(StorageProviderType.localStorage);
@@ -37,80 +37,78 @@ export const DeleteDataModel = ({
 
   const onDeleteDataModel = (dataModelExternalId: string) => {
     setDeleting(true);
-    dataModelsHandler
-      .delete(
+    deleteDataModelCommand
+      .execute(
         { externalId: dataModelExternalId, space: dataModel.space },
         deleteDataTypes
       )
       .then((result) => {
         track('DataModel.Delete', {
-          deletedViews: result.getValue().referencedViews?.length,
+          deletedViews: result.referencedViews?.length,
         });
-        if (result.error) {
-          Notification({
-            type: 'error',
-            message: result.error.name,
-          });
-        } else {
-          const { referencedViews } = result.getValue();
+        const { referencedViews } = result;
 
-          const hasReferencedView =
-            referencedViews && referencedViews.length > 0;
+        const hasReferencedView = referencedViews && referencedViews.length > 0;
 
-          const referencedViewsText =
-            deleteDataTypes && hasReferencedView
-              ? `\nViews: \n${referencedViews
-                  .map((el) => `- ${el.externalId}`)
-                  .join('\n')}
+        const referencedViewsText =
+          deleteDataTypes && hasReferencedView
+            ? `\nViews: \n${referencedViews
+                .map((el) => `- ${el.externalId}`)
+                .join('\n')}
                 ${t(
                   'not_deleted_text',
                   'are not deleted because they are used in other data models. For details, click: '
                 )}`
-              : '';
+            : '';
 
-          const copyButton = (
-            <Button
-              size="small"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                navigator.clipboard.writeText(
-                  JSON.stringify(
-                    {
-                      message:
-                        'Successfully deleted, but some data types were kept because they are still used by other data models.',
-                      referencedViews,
-                    },
-                    null,
-                    2
-                  )
-                );
-              }}
-            >
-              {t('copy', 'Copy Details')}
-            </Button>
-          );
-          Notification({
-            type: 'success',
-            message: `"${dataModel.name || NoNameDisplayName}" ${t(
-              'success_data_model_deleted',
-              `was deleted.`
-            )} ${referencedViewsText}`,
-            extra: deleteDataTypes && hasReferencedView ? copyButton : null,
-          });
+        const copyButton = (
+          <Button
+            size="small"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              navigator.clipboard.writeText(
+                JSON.stringify(
+                  {
+                    message:
+                      'Successfully deleted, but some data types were kept because they are still used by other data models.',
+                    referencedViews,
+                  },
+                  null,
+                  2
+                )
+              );
+            }}
+          >
+            {t('copy', 'Copy Details')}
+          </Button>
+        );
+        Notification({
+          type: 'success',
+          message: `"${dataModel.name || NoNameDisplayName}" ${t(
+            'success_data_model_deleted',
+            `was deleted.`
+          )} ${referencedViewsText}`,
+          extra: deleteDataTypes && hasReferencedView ? copyButton : null,
+        });
 
-          localStorageProvider.removeItem(
-            getLocalDraftKey(dataModel.id, dataModel.space)
-          );
-          queryClient.removeQueries(
-            QueryKeys.DATA_MODEL(dataModel.space, dataModel.id)
-          );
-          queryClient.removeQueries(
-            QueryKeys.DATA_MODEL_VERSION_LIST(dataModel.space, dataModel.id)
-          );
-          onCancel();
-          onAfterDeleting();
-        }
+        localStorageProvider.removeItem(
+          getLocalDraftKey(dataModel.id, dataModel.space)
+        );
+        queryClient.removeQueries(
+          QueryKeys.DATA_MODEL(dataModel.space, dataModel.id)
+        );
+        queryClient.removeQueries(
+          QueryKeys.DATA_MODEL_VERSION_LIST(dataModel.space, dataModel.id)
+        );
+        onCancel();
+        onAfterDeleting();
+      })
+      .catch((error) => {
+        Notification({
+          type: 'error',
+          message: error.name || error.message,
+        });
       });
   };
 

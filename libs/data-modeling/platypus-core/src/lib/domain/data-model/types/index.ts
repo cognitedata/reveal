@@ -71,14 +71,3 @@ export type DataModelTransformation = CreateDataModelTransformationDTO & {
 export interface CdfResourceInstance extends KeyValueMap {
   externalId: string;
 }
-
-export interface SpaceDTO {
-  space: string;
-  description?: string;
-  name?: string;
-}
-
-export interface SpaceInstance extends SpaceDTO {
-  createdTime: number;
-  lastUpdatedTime: number;
-}

@@ -1,27 +1,17 @@
 import { GraphQlSchemaValidator } from '@platypus/platypus-common-utils';
 import {
-  DataModelsHandler,
   DataModelVersionHandler,
-  TransformationApiService,
   FdmClient,
   FdmMixerApiService,
-  SpacesApiService,
-  ContainersApiService,
-  ViewsApiService,
-  DataModelsApiService,
+  TransformationApiService,
+  InstancesApiService,
 } from '@platypus/platypus-core';
-import { InstancesApiService } from '@platypus-core/domain/data-model/providers/fdm-next/services/data-modeling-api/instances-api.service';
 
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
 export const getFdmV3MixerApiService = () => {
   const client = getCogniteSDKClient();
   return new FdmMixerApiService(client);
-};
-
-export const getFdmV3SpacesApiService = () => {
-  const client = getCogniteSDKClient();
-  return new SpacesApiService(client);
 };
 
 export const getTransformationsApiService = () => {
@@ -31,21 +21,10 @@ export const getTransformationsApiService = () => {
 
 export const getFlexibleDataModelingClient = () => {
   return new FdmClient(
-    getFdmV3SpacesApiService(),
-    new ContainersApiService(getCogniteSDKClient()),
-    new ViewsApiService(getCogniteSDKClient()),
-    new DataModelsApiService(getCogniteSDKClient()),
     getFdmV3MixerApiService(),
     getTransformationsApiService(),
     new InstancesApiService(getCogniteSDKClient()),
     new GraphQlSchemaValidator()
-  );
-};
-
-export const getDataModelsHandler = () => {
-  return new DataModelsHandler(
-    getFlexibleDataModelingClient(),
-    new DataModelsApiService(getCogniteSDKClient())
   );
 };
 
