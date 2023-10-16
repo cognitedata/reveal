@@ -7,7 +7,7 @@
       "jest",
       "node"
     ],
-    "esModuleInterop": true
+    "esModuleInterop": true,
   },
   "include": [
     "**/*.test.ts",

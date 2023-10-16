@@ -1,4 +1,7 @@
-import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
+import {
+  TypeDefsParserService,
+  GraphQlSchemaValidator,
+} from '@platypus/platypus-common-utils';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
 import type {
   Position,
@@ -58,11 +61,8 @@ export class FdmGraphQLDmlWorker {
       if (!graphqlCode) {
         return [];
       }
-      const graphQlUtils = new GraphQlUtilsService();
-      const markers = graphQlUtils.validate(
-        graphqlCode,
-        this.createData.options
-      );
+      const graphQlUtils = new GraphQlSchemaValidator();
+      const markers = graphQlUtils.validate(graphqlCode).errors;
       return markers;
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -125,7 +125,7 @@ export class FdmGraphQLDmlWorker {
    */
   public async setGraphQlSchema(graphQlString: string) {
     try {
-      const graphQlUtils = new GraphQlUtilsService();
+      const graphQlUtils = new TypeDefsParserService();
       if (!graphQlString) {
         // eslint-disable-next-line no-console
         console.log(

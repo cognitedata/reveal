@@ -1,25 +1,31 @@
-import { IGraphQlUtilsService } from '../boundaries';
-import { mixerApiBuiltInTypes } from '../constants';
-import { UpdateDataModelFieldDTO } from '../dto';
+import {
+  IGraphQlSchemaValidator,
+  IDataModelTypeDefsBuilderService,
+} from './boundaries';
+import { mixerApiBuiltInTypes } from './constants';
+import { UpdateDataModelFieldDTO } from './dto';
 import {
   DataModelTypeDefsField,
   DataModelTypeDefs,
   DataModelTypeDefsType,
   BuiltInType,
   DataModelTypeDefsTypeKind,
-} from '../types';
-export class DataModelTypeDefsBuilderService {
-  constructor(private graphqlService: IGraphQlUtilsService) {}
+} from './types';
+export class DataModelTypeDefsHandler {
+  constructor(
+    private typeDefsBuilder: IDataModelTypeDefsBuilderService,
+    private graphQlSchemaValidator: IGraphQlSchemaValidator
+  ) {}
 
   parseSchema(
     graphQlSchema: string,
     views: { externalId: string; version: string }[]
   ): DataModelTypeDefs {
-    return this.graphqlService.parseSchema(graphQlSchema, views);
+    return this.typeDefsBuilder.parseSchema(graphQlSchema, views);
   }
 
   buildSchemaString(): string {
-    const schema = this.graphqlService.generateSdl();
+    const schema = this.typeDefsBuilder.generateSdl();
     return schema;
   }
 
@@ -29,7 +35,7 @@ export class DataModelTypeDefsBuilderService {
     kind: DataModelTypeDefsTypeKind,
     directive?: string
   ): DataModelTypeDefs {
-    const newType = this.graphqlService.addType(name, kind, directive);
+    const newType = this.typeDefsBuilder.addType(name, kind, directive);
     const newState = {
       ...state,
       types: [...state.types, newType],
@@ -54,7 +60,7 @@ export class DataModelTypeDefsBuilderService {
       });
     });
 
-    const updatedType = this.graphqlService.updateType(oldTypeName, {
+    const updatedType = this.typeDefsBuilder.updateType(oldTypeName, {
       name: newTypeName,
     });
 
@@ -80,7 +86,7 @@ export class DataModelTypeDefsBuilderService {
       });
     });
 
-    this.graphqlService.removeType(typeName);
+    this.typeDefsBuilder.removeType(typeName);
 
     return {
       ...newState,
@@ -101,7 +107,7 @@ export class DataModelTypeDefsBuilderService {
     ) {
       return this.updateField(state, typeName, fieldName, props);
     }
-    const newField = this.graphqlService.addField(typeName, fieldName, props);
+    const newField = this.typeDefsBuilder.addField(typeName, fieldName, props);
     return {
       ...state,
       types: state.types.map((type: DataModelTypeDefsType) =>
@@ -118,7 +124,7 @@ export class DataModelTypeDefsBuilderService {
     fieldName: string,
     updates: Partial<UpdateDataModelFieldDTO>
   ): DataModelTypeDefs {
-    const updatedField = this.graphqlService.updateTypeField(
+    const updatedField = this.typeDefsBuilder.updateTypeField(
       typeName,
       fieldName,
       updates
@@ -144,7 +150,7 @@ export class DataModelTypeDefsBuilderService {
     typeName: string,
     fieldName: string
   ): DataModelTypeDefs {
-    this.graphqlService.removeField(typeName, fieldName);
+    this.typeDefsBuilder.removeField(typeName, fieldName);
     const newState = {
       ...state,
       types: state.types.map((type: DataModelTypeDefsType) =>
@@ -171,11 +177,12 @@ export class DataModelTypeDefsBuilderService {
 
   /** Clears the state */
   clear() {
-    this.graphqlService.clear();
+    this.typeDefsBuilder.clear();
   }
 
-  /** Clears the state */
+  /** Validates Data Model GraphQL.
+   * Checks for sytax errors, unsupported features, breaking changes */
   validate(graphQlString: string) {
-    return this.graphqlService.validate(graphQlString);
+    return this.graphQlSchemaValidator.validate(graphQlString).errors;
   }
 }

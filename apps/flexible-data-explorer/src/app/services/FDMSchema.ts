@@ -1,4 +1,4 @@
-import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
+import { TypeDefsParserService } from '@platypus/platypus-common-utils';
 
 import { BASE_FIELDS } from './constants';
 import { DataModelByIdResponse, DataModelTypeDefs, DataModelV2 } from './types';
@@ -109,7 +109,7 @@ export class FDMSchema {
       throw new Error('NO SCHEMA FOUND');
     }
 
-    return new GraphQlUtilsService().parseSchema(graphQlDml);
+    return new TypeDefsParserService().parseSchema(graphQlDml);
   }
 
   private isPrimitive(type: string) {

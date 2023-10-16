@@ -2,7 +2,7 @@ import fs from 'fs';
 import path, { join } from 'path';
 
 import { generate } from '@genql/cli';
-import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
+import { TypeDefsParserService } from '@platypus/platypus-common-utils';
 import {
   DataModelTypeDefsType,
   mixerApiBuiltInTypes,
@@ -275,7 +275,7 @@ export const getModelTypes = async (
     throw new Error('Version does not exist');
   }
 
-  return new GraphQlUtilsService().parseSchema(data.graphQlDml, data.views);
+  return new TypeDefsParserService().parseSchema(data.graphQlDml, data.views);
 };
 
 const getTypeString = (types: DataModelTypeDefsType[]) => {

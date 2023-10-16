@@ -1,6 +1,8 @@
-import { IGraphQlUtilsService } from '../boundaries';
-
-import { DataModelTypeDefsBuilderService } from './data-model-type-defs-builder.service';
+import {
+  IGraphQlSchemaValidator,
+  IDataModelTypeDefsBuilderService,
+} from './boundaries';
+import { DataModelTypeDefsHandler } from './data-model-type-defs-handler';
 
 const schemaMock = `
 type Person @template {
@@ -106,8 +108,12 @@ const dataModelMock = {
     },
   ],
 };
+
+const graphQlValidatorMock = {
+  validate: jest.fn(() => ({ valid: true, errors: [] })),
+} as unknown as IGraphQlSchemaValidator;
 describe('DataModelTypeDefsBuilderService Test', () => {
-  const graphqlUtilsMock = {
+  const typeDefsBuilderMock = {
     addField: jest.fn().mockImplementation((type, name, params) => ({
       name: params.name,
       type: params.type,
@@ -158,10 +164,13 @@ describe('DataModelTypeDefsBuilderService Test', () => {
     clear: jest.fn(),
     validate: jest.fn(),
     setType: jest.fn(),
-  } as IGraphQlUtilsService;
+  } as IDataModelTypeDefsBuilderService;
 
   const createInstance = () => {
-    return new DataModelTypeDefsBuilderService(graphqlUtilsMock);
+    return new DataModelTypeDefsHandler(
+      typeDefsBuilderMock,
+      graphQlValidatorMock
+    );
   };
 
   it('should work', () => {
@@ -172,13 +181,13 @@ describe('DataModelTypeDefsBuilderService Test', () => {
   it('should parse schema', () => {
     const service = createInstance();
     service.parseSchema('', []);
-    expect(graphqlUtilsMock.parseSchema).toBeCalled();
+    expect(typeDefsBuilderMock.parseSchema).toBeCalled();
   });
 
   it('should convert data model to sdl', () => {
     const service = createInstance();
     service.buildSchemaString();
-    expect(graphqlUtilsMock.generateSdl).toBeCalled();
+    expect(typeDefsBuilderMock.generateSdl).toBeCalled();
   });
 
   it('should add type', () => {

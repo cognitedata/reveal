@@ -1,4 +1,10 @@
 {
   "name": "@platypus/platypus-common-utils",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "sideEffects": false,
+  "dependencies": {
+    "graphql": "^16.6.0",
+    "graphql-extra": "^0.2.2",
+    "graphql-language-service": "^5.1.3"
+  }
 }

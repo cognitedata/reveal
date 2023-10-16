@@ -1,8 +1,11 @@
-import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
+import {
+  GraphQLTypeDefsBuilderService,
+  GraphQlSchemaValidator,
+} from '@platypus/platypus-common-utils';
 import {
   DataModelsHandler,
   DataModelVersionHandler,
-  DataModelTypeDefsBuilderService,
+  DataModelTypeDefsHandler,
   TransformationApiService,
   DateUtils,
   TimeUtils,
@@ -36,7 +39,7 @@ export const TOKENS = {
     'dataModelVersionHandler'
   ),
   dataModelsApiService: token<DataModelsApiService>('dataModelsApiService'),
-  dataModelTypeDefsBuilderService: token<DataModelTypeDefsBuilderService>(
+  dataModelTypeDefsBuilderService: token<DataModelTypeDefsHandler>(
     'dataModelTypeDefsBuilderService'
   ),
   DataManagementHandler: token<DataManagementHandler>('DataManagementHandler'),
@@ -59,9 +62,9 @@ rootInjector
       new ViewsApiService(sdkClient),
       new DataModelsApiService(sdkClient),
       new FdmMixerApiService(sdkClient),
-      new GraphQlUtilsService(),
       new TransformationApiService(sdkClient),
-      new InstancesApiService(sdkClient)
+      new InstancesApiService(sdkClient),
+      new GraphQlSchemaValidator()
     );
   })
   .inSingletonScope();
@@ -95,18 +98,18 @@ rootInjector
 rootInjector
   .bind(TOKENS.dataModelVersionHandler)
   .toInstance(
-    () =>
-      new DataModelVersionHandler(
-        rootInjector.get(TOKENS.fdmClient),
-        new GraphQlUtilsService()
-      )
+    () => new DataModelVersionHandler(rootInjector.get(TOKENS.fdmClient))
   )
   .inSingletonScope();
 
 rootInjector
   .bind(TOKENS.dataModelTypeDefsBuilderService)
   .toInstance(
-    () => new DataModelTypeDefsBuilderService(new GraphQlUtilsService())
+    () =>
+      new DataModelTypeDefsHandler(
+        new GraphQLTypeDefsBuilderService(),
+        new GraphQlSchemaValidator()
+      )
   )
   .inSingletonScope();
 

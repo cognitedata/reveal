@@ -13,8 +13,6 @@ import {
   StyledLink,
 } from './elements';
 
-export { OptionType };
-
 export type DataModelSpaceSelectProps = {
   isDisabled?: boolean;
   onChange: (selectedSpace: OptionType<string>) => void;

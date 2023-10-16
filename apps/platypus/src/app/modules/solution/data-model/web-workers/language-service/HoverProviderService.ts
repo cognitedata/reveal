@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
+import { TypeDefsParserService } from '@platypus/platypus-common-utils';
 import {
   DataModelTypeDefs,
   DataModelTypeDefsField,
@@ -12,9 +12,9 @@ import { DOCUMENTATION_LINK } from './constants';
 import { HoverItem, LocationTypesMap } from './types';
 
 export class HoverProviderService {
-  private graphQlUtils: GraphQlUtilsService;
+  private graphQlUtils: TypeDefsParserService;
   constructor() {
-    this.graphQlUtils = new GraphQlUtilsService();
+    this.graphQlUtils = new TypeDefsParserService();
   }
   getHoverInformation(
     dataModelTypeDefs: DataModelTypeDefs,

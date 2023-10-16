@@ -1,3 +1,4 @@
+import { ValidationRule } from '../../../boundaries/validation';
 import { UpdateDataModelFieldDTO } from '../dto';
 import {
   DataModelTypeDefs,
@@ -9,7 +10,7 @@ import {
 
 export * from './fdm-client';
 
-export interface IGraphQlUtilsService {
+export interface IDataModelTypeDefsParserService {
   /**
    * Parse graphql schema string
    * and converts into SolutonDataModel
@@ -27,6 +28,19 @@ export interface IGraphQlUtilsService {
    */
   generateSdl(): string;
 
+  /**
+   * Set complete type object into AST
+   * @param typeName
+   * @param type
+   */
+  setType(typeName: string, type: DataModelTypeDefsType): void;
+
+  /** Clears the state */
+  clear(): void;
+}
+
+export interface IDataModelTypeDefsBuilderService
+  extends IDataModelTypeDefsParserService {
   /**
    * Adds new type into AST
    * @param name
@@ -50,13 +64,6 @@ export interface IGraphQlUtilsService {
    * @param typeName
    */
   removeType(typeName: string): void;
-
-  /**
-   * Set complete type object into AST
-   * @param typeName
-   * @param type
-   */
-  setType(typeName: string, type: DataModelTypeDefsType): void;
 
   /**
    * Adds new field for the specified type into AST
@@ -88,19 +95,21 @@ export interface IGraphQlUtilsService {
    * @param fieldName
    */
   removeField(typeName: string, fieldName: string): void;
+}
 
-  /** Clears the state */
-  clear(): void;
-
-  /**
-   * Validates GraphQl Schema String
-   *
-   * Validation runs synchronously, returning an array of encountered errors, or
-   * an empty array if no errors were encountered and the document is valid. */
-  validate(
-    graphQlString: string,
-    options?: {
-      useExtendedSdl: boolean;
-    }
-  ): DataModelValidationError[];
+export type GraphQlValidationResult = {
+  valid: boolean;
+  errors: DataModelValidationError[];
+};
+/**
+ * Validates GraphQl Schema String
+ *
+ * Validation runs synchronously, returning an array of encountered errors, or
+ * an empty array if no errors were encountered and the document is valid.
+ *
+ * This is just the abstraction to keep the core package clean without additional dependencies and side effects.
+ * The actual implementation is in the platypus-common-utils package.
+ * */
+export interface IGraphQlSchemaValidator extends ValidationRule {
+  validate(graphQlSchema: string): GraphQlValidationResult;
 }

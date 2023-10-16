@@ -1,4 +1,4 @@
-import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
+import { GraphQlSchemaValidator } from '@platypus/platypus-common-utils';
 import {
   DataModelsHandler,
   DataModelVersionHandler,
@@ -36,9 +36,9 @@ export const getFlexibleDataModelingClient = () => {
     new ViewsApiService(getCogniteSDKClient()),
     new DataModelsApiService(getCogniteSDKClient()),
     getFdmV3MixerApiService(),
-    new GraphQlUtilsService(),
     getTransformationsApiService(),
-    new InstancesApiService(getCogniteSDKClient())
+    new InstancesApiService(getCogniteSDKClient()),
+    new GraphQlSchemaValidator()
   );
 };
 
@@ -50,10 +50,7 @@ export const getDataModelsHandler = () => {
 };
 
 export const getDataModelVersionsHandler = () => {
-  return new DataModelVersionHandler(
-    getFlexibleDataModelingClient(),
-    new GraphQlUtilsService()
-  );
+  return new DataModelVersionHandler(getFlexibleDataModelingClient());
 };
 
 export const autoIncrementVersion = (currentVersion: string) => {

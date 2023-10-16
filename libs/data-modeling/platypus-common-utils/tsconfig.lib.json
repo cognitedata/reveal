@@ -1,14 +1,23 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "jsx": "react",
-    "allowJs": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "outDir": "../../../dist/out-tsc",
+    "allowJs": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
-  "include": ["**/*.ts"]
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/__mock__/*",
+    "jest.config.ts"
+  ],
+  "include": [
+    "**/*.ts"
+  ]
 }

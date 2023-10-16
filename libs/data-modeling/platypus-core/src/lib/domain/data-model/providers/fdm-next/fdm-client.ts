@@ -8,7 +8,7 @@ import uniqBy from 'lodash/uniqBy';
 
 import { PlatypusDmlError, PlatypusError } from '../../../../boundaries/types';
 import { DataUtils } from '../../../../boundaries/utils/data-utils';
-import { IGraphQlUtilsService } from '../../boundaries';
+import { IGraphQlSchemaValidator } from '../../boundaries';
 import { FlexibleDataModelingClient } from '../../boundaries/fdm-client';
 import {
   ConflictMode,
@@ -73,6 +73,7 @@ export class FdmClient implements FlexibleDataModelingClient {
   private validationErrorDataMapper: DataModelValidationErrorDataMapper;
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
   private queryBuilder: MixerQueryBuilder;
+
   version = 'stable';
 
   constructor(
@@ -81,9 +82,9 @@ export class FdmClient implements FlexibleDataModelingClient {
     private viewsApi: ViewsApiService,
     private dataModelsApi: DataModelsApiService,
     private mixerApiService: FdmMixerApiService,
-    private graphqlService: IGraphQlUtilsService,
     private transformationApiService: TransformationApiService,
-    private instancesApiService: InstancesApiService
+    private instancesApiService: InstancesApiService,
+    private graphQlValidator: IGraphQlSchemaValidator
   ) {
     this.spacesApi = spacesApi;
     this.mixerApiService = mixerApiService;
@@ -467,9 +468,7 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @param builtInTypes
    */
   validateGraphql(graphql: string): DataModelValidationError[] {
-    return this.graphqlService.validate(graphql, {
-      useExtendedSdl: true,
-    });
+    return this.graphQlValidator.validate(graphql).errors;
   }
   /**
    * Run GraphQL query against a Data Model Version

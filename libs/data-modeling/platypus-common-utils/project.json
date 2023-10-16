@@ -9,13 +9,15 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "rootDir": ".",
+        "format": ["esm", "cjs"],
         "outputPath": "dist/libs/@platypus/platypus-common-utils",
         "tsConfig": "libs/data-modeling/platypus-common-utils/tsconfig.lib.json",
         "project": "libs/data-modeling/platypus-common-utils/package.json",
         "entryFile": "libs/data-modeling/platypus-common-utils/src/index.ts",
         "external": ["react/jsx-runtime"],
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-        "compiler": "babel",
+        "compiler": "tsc",
+        "skipTypeField": true,
         "assets": [
           {
             "glob": "libs/data-modeling/platypus-common-utils/README.md",
@@ -23,7 +25,7 @@
             "output": "."
           }
         ],
-        "updateBuildableProjectDepsInPackageJson": true
+        "updateBuildableProjectDepsInPackageJson": false
       }
     },
     "lint": {

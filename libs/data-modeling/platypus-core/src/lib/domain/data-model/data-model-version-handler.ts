@@ -2,7 +2,7 @@ import { DTO, PlatypusError, Result } from '../../boundaries/types';
 import { Validator, ValidatorResult } from '../../boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
 
-import { FlexibleDataModelingClient, IGraphQlUtilsService } from './boundaries';
+import { FlexibleDataModelingClient } from './boundaries';
 import { mixerApiBuiltInTypes } from './constants';
 import {
   ConflictMode,
@@ -20,10 +20,7 @@ import {
 } from './types';
 
 export class DataModelVersionHandler {
-  constructor(
-    private fdmClient: FlexibleDataModelingClient,
-    private graphqlService: IGraphQlUtilsService
-  ) {}
+  constructor(private fdmClient: FlexibleDataModelingClient) {}
 
   /**
    * Fetch data model version
