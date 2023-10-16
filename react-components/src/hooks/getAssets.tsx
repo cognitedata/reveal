@@ -27,8 +27,7 @@ export const getAssets = (
       })
     );
 
-    const flattenedAssests = assetsPromises.flat();
-    const assets = keyBy(flattenedAssests, 'id');
+    const assets = keyBy(assetsPromises.flat(), 'id');
     return assets;
   };
 
