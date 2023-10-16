@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -26,15 +26,19 @@ export interface AppsTableProps {
 export const AppsTable = (props: AppsTableProps) => {
   const [deleteAppId, setDeleteAppId] = useState<string | null>(null);
 
-  const dataSource = props.apps.map((app) => ({
-    key: app.fileExternalId,
-    name: app.name,
-    description: app.description,
-    creator: app.creator,
-    appId: app.fileExternalId,
-    published: app.published,
-    createdAt: app.createdAt,
-  }));
+  const dataSource = useMemo(
+    () =>
+      props.apps.map((app) => ({
+        key: app.fileExternalId,
+        name: app.name,
+        description: app.description,
+        creator: app.creator,
+        appId: app.fileExternalId,
+        published: app.published,
+        createdAt: app.createdAt,
+      })),
+    [props.apps]
+  );
 
   dataSource.sort((a, b) => {
     return a.createdAt > b.createdAt ? -1 : 1;
