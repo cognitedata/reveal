@@ -10,6 +10,7 @@ import {
 } from '@cognite/reveal';
 import { useReveal, RevealToolbar } from '@cognite/reveal-react-components';
 
+import { ANNOTATION_RADIUS_FACTOR } from '../../../../../pages/ContextualizeEditor/constants';
 import {
   CubeAnnotation,
   ToolType,
@@ -107,7 +108,10 @@ export const PointCloudToolBarTools = ({
       ) {
         return;
       }
-
+      const distance = viewer.cameraManager
+        .getCamera()
+        .position.distanceTo(intersection.point);
+      const CubeSize = distance * ANNOTATION_RADIUS_FACTOR;
       const cubeAnnotation: CubeAnnotation = {
         position: {
           x: intersection.point.x,
@@ -115,9 +119,9 @@ export const PointCloudToolBarTools = ({
           z: intersection.point.z,
         },
         size: {
-          x: 2,
-          y: 2,
-          z: 2,
+          x: CubeSize,
+          y: CubeSize,
+          z: CubeSize,
         },
       };
       setPendingAnnotation(cubeAnnotation);
