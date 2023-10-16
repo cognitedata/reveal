@@ -100,7 +100,7 @@ export default function SectionSetup(): JSX.Element {
                 data-testid="diagrams-selection-info"
               />
               <Body level={2} style={{ whiteSpace: 'nowrap' }}>
-                will be linked to asdasd
+                will be linked to
               </Body>
               {getLinkedResources()}
               <Body level={2}>on</Body>

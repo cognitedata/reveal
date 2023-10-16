@@ -19,6 +19,7 @@ import {
   ResourceObjectType,
   Workflow,
   Filter,
+  ResourceStatus,
 } from '../types';
 
 export const getActiveWorkflowId = createSelector(
@@ -464,23 +465,7 @@ export const workflowAllResourcesStatusSelector = (
           return retrieveItemsStatus(state[type].items.retrieve.byId, filter);
         return defaultStatus;
       });
-      return {
-        done:
-          resourceStatuses.filter(
-            (status: { done: boolean; loading: boolean; error: boolean }) =>
-              status.done
-          ).length > 0,
-        loading:
-          resourceStatuses.filter(
-            (status: { done: boolean; loading: boolean; error: boolean }) =>
-              status.loading
-          ).length > 0,
-        error:
-          resourceStatuses.filter(
-            (status: { done: boolean; loading: boolean; error: boolean }) =>
-              status.error
-          ).length > 0,
-      };
+      return aggregateResourceStatus(resourceStatuses);
     }
   );
 
@@ -620,3 +605,18 @@ const retrieveItemsStatus = (items: any, filter: any) => {
 
   return { done, loading, error };
 };
+
+export const aggregateResourceStatus = (
+  resourceStatuses: ResourceStatus[]
+) => ({
+  // Determine if all "done" statuses are true
+  done: resourceStatuses.every((status: ResourceStatus) => status.done),
+  // Check if there is at least one "loading" status
+  loading:
+    resourceStatuses.filter((status: ResourceStatus) => status.loading).length >
+    0,
+  // Check if there is at least one "error" status
+  error:
+    resourceStatuses.filter((status: ResourceStatus) => status.error).length >
+    0,
+});

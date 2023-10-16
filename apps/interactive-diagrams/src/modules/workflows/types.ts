@@ -13,6 +13,12 @@ export type ResourceSelection = {
   filter: any;
 };
 
+export type ResourceStatus = {
+  done: boolean;
+  loading: boolean;
+  error: boolean;
+};
+
 export type MatchFields = {
   assets?: keyof Asset | string;
   files?: keyof FileInfo | string;
