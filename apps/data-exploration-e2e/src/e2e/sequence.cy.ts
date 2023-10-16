@@ -85,4 +85,10 @@ describe('Sequence', () => {
 
     cy.clearSearchInput();
   });
+
+  it('should be able to load more', () => {
+    cy.getTableById('sequence-search-results').shouldLoadMore(
+      SEQUENCE_LIST_ALIAS
+    );
+  });
 });

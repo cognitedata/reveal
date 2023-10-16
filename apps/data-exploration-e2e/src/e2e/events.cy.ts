@@ -73,4 +73,8 @@ describe('Events', () => {
 
     cy.clearSearchInput();
   });
+
+  it('should be able to load more', () => {
+    cy.getTableById('event-search-results').shouldLoadMore(EVENT_LIST_ALIAS);
+  });
 });

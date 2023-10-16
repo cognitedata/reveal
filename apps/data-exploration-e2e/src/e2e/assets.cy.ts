@@ -98,4 +98,11 @@ describe('Assets', () => {
 
     cy.clearSearchInput();
   });
+
+  it('should be able to load more', () => {
+    cy.getTableById('asset-search-results').shouldLoadMore(ASSET_LIST_ALIAS);
+
+    cy.clickIconButton('Asset hierarchy');
+    cy.getTableById('asset-tree-table').shouldLoadMore(ASSET_LIST_ALIAS);
+  });
 });

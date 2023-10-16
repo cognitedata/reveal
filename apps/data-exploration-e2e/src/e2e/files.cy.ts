@@ -93,4 +93,8 @@ describe('Files', () => {
     cy.findByTestId('document-uploader-modal').clickIconButton('Close');
     cy.findByTestId('document-uploader-modal').should('not.exist');
   });
+
+  it('should be able to load more', () => {
+    cy.getTableById('documents-search-results').shouldLoadMore(FILE_LIST_ALIAS);
+  });
 });

@@ -146,4 +146,10 @@ describe('Timeseries', () => {
     cy.clickButton('Chart Preview');
     cy.findByTestId('pivot-range-picker').should('not.be.visible');
   });
+
+  it('should be able to load more', () => {
+    cy.getTableById('timeseries-search-results').shouldLoadMore(
+      TIMESERIES_LIST_ALIAS
+    );
+  });
 });
