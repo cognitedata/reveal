@@ -63,12 +63,17 @@ export const PointCloudContextualizeThreeDViewer = ({
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
-  const { isResourceSelectorOpen, pendingAnnotation, viewer } =
-    useContextualizeThreeDViewerStore((state) => ({
-      isResourceSelectorOpen: state.isResourceSelectorOpen,
-      pendingAnnotation: state.pendingAnnotation,
-      viewer: state.threeDViewer,
-    }));
+  const {
+    isResourceSelectorOpen,
+    pendingAnnotation,
+    viewer,
+    selectedAnnotationId,
+  } = useContextualizeThreeDViewerStore((state) => ({
+    isResourceSelectorOpen: state.isResourceSelectorOpen,
+    pendingAnnotation: state.pendingAnnotation,
+    viewer: state.threeDViewer,
+    selectedAnnotationId: state.selectedAnnotationId,
+  }));
 
   const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
     'COGNITE_CONTEXTUALIZE_EDITOR_RESOURCE_SELECTOR_WIDTH',
@@ -136,6 +141,9 @@ export const PointCloudContextualizeThreeDViewer = ({
     });
     if (pointCloudModel === undefined) return;
 
+    if (selectedAnnotationId !== null) {
+      deleteCdfAnnotation(sdk, selectedAnnotationId);
+    }
     createCdfThreeDAnnotation({
       sdk,
       modelId,

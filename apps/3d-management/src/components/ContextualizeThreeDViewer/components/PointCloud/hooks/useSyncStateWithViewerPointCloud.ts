@@ -320,9 +320,6 @@ export const useSyncStateWithViewerPointCloud = () => {
     box.position.copy(box3.getCenter(new THREE.Vector3()));
 
     box.name = HOVERING_ANNOTATION_ID;
-    const transformControls = useTransformControls.current;
-    if (transformControls === null) return;
-    transformControls.setMode(TransformMode.TRANSLATE);
 
     addObject(threeDViewer, box);
   }, [threeDViewer, annotations, modelId, hoveredAnnotationId]);
