@@ -9,6 +9,7 @@ import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
+import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
 
 /**
  * Filter for finding annotations related to an asset
@@ -18,6 +19,24 @@ export type Image360AnnotationAssetFilter = {
    * Reference to the wanted asset
    */
   assetRef: IdEither;
+};
+
+/**
+ * Asset search return type, including information about the image in which the asset is found
+ */
+export type AssetAnnotationImage360Info = {
+  /**
+   * Reference to the relevant asset
+   */
+  annotationInfo: ImageAssetLinkAnnotationInfo;
+  /**
+   * The image entity in which the asset was found
+   */
+  imageEntity: Image360;
+  /**
+   * The image revision in which the asset was found
+   */
+  imageRevision: Image360Revision;
 };
 
 /**
@@ -113,6 +132,16 @@ export interface Image360Collection {
 
   /**
    * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations
+   *
+   * @deprecated Use {@link Image360Collection.getAnnotationsInfo}
    */
   getAssetIds(): Promise<IdEither[]>;
+
+  /**
+   * Get IDs of all CDF assets and related image/revision associated with this
+   * 360 image collection through CDF annotations
+   *
+   * @param assets What source data to pull the annotation info from
+   */
+  getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info[]>;
 }

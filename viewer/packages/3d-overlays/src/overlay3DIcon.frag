@@ -14,8 +14,8 @@ in vec3 vColor;
 out vec4 fragmentColor;
 
 void main() {
-  vec4 colorSample = texture(colorTexture, gl_PointCoord); 
-  
+  vec4 colorSample = texture(colorTexture, gl_PointCoord);
+
   float computedAlpha = colorSample.a;
   vec3 computedColor = colorSample.rgb;
 
@@ -23,8 +23,8 @@ void main() {
     vec4 maskSample = texture(maskTexture, gl_PointCoord);
 
     computedAlpha = colorSample.a + (1. - colorSample.a) * maskSample.r;
-    computedColor = mix(vColor * maskSample.r, colorSample.rgb, colorSample.a);
+    computedColor = mix(colorSample.rgb, vColor, maskSample.r);
   #endif
-  
+
   fragmentColor = vec4(computedColor * colorTint, computedAlpha * collectionOpacity);
 }

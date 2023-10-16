@@ -22,13 +22,13 @@ export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCachePro
 export {
   useClickedNodeData,
   type ClickedNodeData,
-  type NodeDataResult
+  type FdmNodeDataResult
 } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
 export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
 export { use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
-export { useUrlStateParam } from './hooks/useUrlStateParam';
+export { useSlicerUrlParams, useLayersUrlParams } from './hooks/useUrlStateParam';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
