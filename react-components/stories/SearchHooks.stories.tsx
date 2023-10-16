@@ -7,137 +7,245 @@ import {
   RevealContainer,
   RevealToolbar,
   type AddResourceOptions,
-  type FdmAssetStylingGroup,
-  useMappedEdgesForRevisions,
-  AddReveal3DModelOptions
+  type AddReveal3DModelOptions
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useState, useEffect, useMemo } from 'react';
+import { type ReactElement, useState, useMemo, useEffect } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
-import { useSearchMappedEquipmentAssetMappings, useSearchMappedEquipmentFDM } from '../src/hooks/useSearchMappedEquipment';
+import {
+  useAllMappedEquipmentFDM,
+  useSearchMappedEquipmentFDM
+} from '../src/hooks/useSearchMappedEquipmentFDM';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
+import {
+  useAllMappedEquipmentAssetMappings,
+  useSearchMappedEquipmentAssetMappings
+} from '../src/hooks/useSearchMappedEquipmentAssetMappings';
+import { isEqual } from 'lodash';
+import { type NodeItem } from '../src/utilities/FdmSDK';
 
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
+const spacesToSearch = ['fdx-boys'];
 
 type Equipment = {
-    view: string;
-    externalId: string;
-    space: string;
-    properties?: Record<string, any>;
-}
+  view: string;
+  externalId: string;
+  space: string;
+  properties?: Record<string, any>;
+};
 
-const StoryContent = ({ resources }: { resources: AddResourceOptions[]}): ReactElement => {
-    const [stylingGroups, setStylingGroups] = useState<FdmAssetStylingGroup[]>([]);
-    const [mappedEquipment, setMappedEquipment] = useState<Equipment[]>([]);
-    const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isSearchHookEnabled, setIsSearchHookEnabled] = useState<boolean>(false);
-  
+const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
+  const [tempSearchQuery, setTempSearchQuery] = useState<string>('');
+  const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
+  const [searchMethod, setSearchMethod] = useState<
+    'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
+  >('fdmSearch');
 
-  const filteredResources = resources.filter((resource): resource is AddReveal3DModelOptions => 'modelId' in resource);
+  const filteredResources = resources.filter(
+    (resource): resource is AddReveal3DModelOptions => 'modelId' in resource
+  );
 
-    const { data: searchData } = useSearchMappedEquipmentFDM(searchQuery, ['fdx-boys'], 50, sdk);
+  const { data: searchData } = useSearchMappedEquipmentFDM(
+    mainSearchQuery,
+    spacesToSearch,
+    filteredResources,
+    100,
+    sdk
+  );
 
-  const { data, hasNextPage, isFetching, fetchNextPage } = useSearchMappedEquipmentAssetMappings(searchQuery, filteredResources, 50, sdk);
+  const { data: assetSearchData } = useSearchMappedEquipmentAssetMappings(
+    mainSearchQuery,
+    filteredResources,
+    50,
+    sdk
+  );
+
+  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, spacesToSearch, sdk);
+
+  const {
+    data: allAssets,
+    isFetching,
+    hasNextPage,
+    fetchNextPage
+  } = useAllMappedEquipmentAssetMappings(filteredResources, sdk);
 
   useEffect(() => {
-    if (hasNextPage && !isFetching) {
-      fetchNextPage();
+    if (searchMethod !== 'allAssets') return;
+
+    if (!isFetching && hasNextPage !== undefined) {
+      void fetchNextPage();
     }
-  }, [hasNextPage, fetchNextPage, isFetching]);
+  }, [searchMethod, isFetching, hasNextPage, fetchNextPage]);
 
-  useEffect(() => {
-    console.log('Current data', data);
-  }, [data])
+  const filteredEquipment = useMemo(() => {
+    if (searchMethod === 'allFdm') {
+      return (
+        allEquipment?.filter((equipment) => {
+          const isInExternalId = equipment.externalId
+            .toLowerCase()
+            .includes(mainSearchQuery.toLowerCase());
+          const isInProperties = Object.values(equipment.properties).some((viewProperties) =>
+            Object.values(viewProperties).some((property) =>
+              Object.values(property).some(
+                (value) => (value as string)?.toLowerCase().includes(mainSearchQuery.toLowerCase())
+              )
+            )
+          );
 
-    
-    const filteredEquipment = useMemo(() => {
-      if (!isSearchHookEnabled) {
-        return mappedEquipment.filter((equipment) => {
-          return equipment.externalId.toLowerCase().includes(searchQuery.toLowerCase());
-        });
+          return isInExternalId || isInProperties;
+        }) ?? []
+      );
+    } else if (searchMethod === 'allAssets') {
+      const transformedAssets =
+        allAssets?.pages
+          .flat()
+          .map((mapping) => mapping.assets)
+          .flat() ?? [];
+
+      const filteredAssets =
+        transformedAssets.filter((asset) => {
+          const isInName = asset.name.toLowerCase().includes(mainSearchQuery.toLowerCase());
+          const isInDescription = asset.description
+            ?.toLowerCase()
+            .includes(mainSearchQuery.toLowerCase());
+
+          return isInName || isInDescription;
+        }) ?? [];
+
+      const mappedAssets: Equipment[] = filteredAssets.map((asset) => {
+        return {
+          view: 'Asset',
+          externalId: asset.id + '',
+          space: 'Whole project',
+          properties: {
+            name: asset.name,
+            description: asset.description
+          }
+        };
+      });
+
+      return mappedAssets;
+    } else if (searchMethod === 'assetSearch') {
+      if (assetSearchData === undefined) {
+        return [];
       }
 
+      const searchedEquipment: Equipment[] = assetSearchData.map((asset) => {
+        return {
+          view: 'Asset',
+          externalId: asset.id + '',
+          space: 'Whole project',
+          properties: {
+            name: asset.name,
+            description: asset.description
+          }
+        };
+      });
+
+      return searchedEquipment;
+    } else if (searchMethod === 'fdmSearch') {
       if (searchData === undefined) {
         return [];
       }
 
-      const searchedEquipment: Equipment[] = searchData.map((searchResult) => {
-        return searchResult.instances.map((instance) => {
-          return {
-            view: searchResult.view.externalId,
-            externalId: instance.externalId,
-            space: instance.space,
-            properties: instance.properties
-          };
-        });
-      }).flat();
+      const searchedEquipment: Equipment[] = searchData
+        .map((searchResult) => {
+          return searchResult.instances.map((instance) => {
+            return {
+              view: searchResult.view.externalId,
+              externalId: instance.externalId,
+              space: instance.space,
+              properties: instance.properties
+            };
+          });
+        })
+        .flat();
 
       return searchedEquipment;
-    }, [searchQuery, mappedEquipment, searchData, isSearchHookEnabled])
-  
-    return (<>
-        <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-            <ReactQueryDevtools position='bottom-right' />
-            <RevealResourcesFitCameraOnLoad
-                resources={resources}
-                defaultResourceStyling={{
-                    cad: {
-                        default: { color: new Color('#efefef') },
-                        mapped: { color: new Color('#c5cbff') }
-                    }
-                }}
-                instanceStyling={stylingGroups}
-            />
-            <RevealToolbar />
-            <MappedEquipmentHookHandler resources={filteredResources} setMappedEquipment={setMappedEquipment} />
-        </RevealContainer>
-        <h1>Mapped equipment</h1>
-        <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '0 8px 8px 0' }}>
-            <input onInput={(event) => setSearchQuery((event.target as HTMLInputElement).value)}></input>
-            <button onClick={() => { }}>Search</button>
-            <button onClick={() => setIsSearchHookEnabled((prev) => !prev)}>Switch search hook</button>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, height: 200, overflow: 'scroll' }} >
-            {filteredEquipment.map((equipment) => (
-                <div key={equipment.externalId} style={{ border: '1px solid green' }}>
-                    <b >{equipment.view + ' '}</b>
-                    <span>{equipment.externalId + ' '}</span>
-                    <span><b>Space:</b> {equipment.space + ' '}</span>
-                {equipment.properties &&
-                  Object.keys(equipment.properties).map((key) => {
-                    return <span><b>{key}</b> {equipment?.properties?.[key] + ' '}</span>
-                    })}
-                </div>
-            ))}
-        </div>
+    } else {
+      return [];
+    }
+  }, [mainSearchQuery, allEquipment, searchData, allAssets, assetSearchData, searchMethod]);
+
+  return (
+    <>
+      <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
+        <ReactQueryDevtools position="bottom-right" />
+        <RevealResourcesFitCameraOnLoad
+          resources={resources}
+          defaultResourceStyling={{
+            cad: {
+              default: { color: new Color('#efefef') },
+              mapped: { color: new Color('#c5cbff') }
+            }
+          }}
+        />
+        <RevealToolbar />
+      </RevealContainer>
+      <h1>Mapped equipment</h1>
+      <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '0 8px 8px 0' }}>
+        <input
+          onInput={(event) => {
+            setTempSearchQuery((event.target as HTMLInputElement).value);
+          }}></input>
+        <button
+          onClick={() => {
+            setMainSearchQuery(tempSearchQuery);
+          }}>
+          Search
+        </button>
+        <button
+          onClick={() => {
+            setSearchMethod('allFdm');
+          }}>
+          All FDM mappings search
+        </button>
+        <button
+          onClick={() => {
+            setSearchMethod('fdmSearch');
+          }}>
+          Fdm search hook
+        </button>
+        <button
+          onClick={() => {
+            setSearchMethod('allAssets');
+          }}>
+          All asset mappings search
+        </button>
+        <button
+          onClick={() => {
+            setSearchMethod('assetSearch');
+          }}>
+          Asset search hook
+        </button>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          height: 200,
+          overflow: 'scroll'
+        }}>
+        {filteredEquipment.map((equipment) => (
+          <div key={equipment.externalId} style={{ border: '1px solid green' }}>
+            <b>
+              {((equipment as Equipment)?.view ?? determineViewFromQueryResultNodeItem(equipment)) +
+                ' '}
+            </b>
+            <span>{equipment.externalId + ' '}</span>
+            <span>
+              <b>Space:</b> {equipment.space + ' '}
+            </span>
+            {equipment.properties !== undefined && JSON.stringify(equipment.properties)}
+          </div>
+        ))}
+      </div>
     </>
-    );
-};
-
-const MappedEquipmentHookHandler = ({ resources, setMappedEquipment}: { resources: AddReveal3DModelOptions[], setMappedEquipment: (mappedEquipment: Equipment[]) => void }) => {
-    const { data } = useMappedEdgesForRevisions(resources, true);
-
-    useEffect(() => {
-        if (data === undefined) {
-            console.log('Data is undefined');
-            return
-        }
-
-        const mappedEquipment: Equipment [] = [];
-
-        data.forEach((value, key) => {
-            const currentModelEquipment = value.map((edge) => ({ view: edge.view?.externalId ?? 'None', externalId: edge.edge.startNode.externalId, space: edge.edge.startNode.space }));
-            mappedEquipment.push(...currentModelEquipment);
-        });
-
-        setMappedEquipment(mappedEquipment);
-    }, [data]);
-
-    return <></>
+  );
 };
 
 const meta = {
@@ -153,8 +261,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 3282558010084460,
-        revisionId: 4932190516335812,
+        modelId: 7227641388924978,
+        revisionId: 3261647608405033,
         styling: {
           default: {
             color: new Color('#efefef')
@@ -167,10 +275,18 @@ export const Main: Story = {
     ]
   },
   render: ({ resources }) => {
-      return (
-        <QueryClientProvider client={queryClient}>
-            <StoryContent resources={resources} />
-        </QueryClientProvider>
+    return (
+      <QueryClientProvider client={queryClient}>
+        <StoryContent resources={resources} />
+      </QueryClientProvider>
     );
   }
 };
+
+function determineViewFromQueryResultNodeItem(nodeItem: NodeItem | Equipment): string {
+  return findNonZeroProperty(nodeItem?.properties?.[spacesToSearch[0]]) ?? 'Unknown';
+}
+
+function findNonZeroProperty(properties?: Record<string, any>): string | undefined {
+  return Object.keys(properties ?? {}).find((key) => !isEqual(properties?.[key], {}));
+}

@@ -7,6 +7,8 @@ import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 
 type InstanceType = 'node' | 'edge';
 
+type EdgeDirection = 'source' | 'destination';
+
 export type Item = {
   instanceType: InstanceType;
 } & DmsUniqueIdentifier;
@@ -19,6 +21,48 @@ export type Source = {
 export type DmsUniqueIdentifier = {
   space: string;
   externalId: string;
+};
+
+export type ResultSetExpression = (NodeResultSetExpression | EdgeResultSetExpression) & {
+  limit?: number;
+  sort?: any[];
+};
+
+export type NodeResultSetExpression = {
+  nodes: {
+    filter?: any;
+    from?: any;
+    through?: any;
+    chainTo?: EdgeDirection;
+  };
+};
+
+export type EdgeResultSetExpression = {
+  edges: {
+    filter?: any;
+    chainTo?: EdgeDirection;
+    from?: any;
+    nodeFilter?: any;
+    maxDistance?: number;
+    direction?: 'outwards' | 'inwards';
+    limitEach?: number;
+  };
+};
+
+type SourceProperties = {
+  source: Source;
+  properties: readonly string[];
+};
+
+export type Query = {
+  with: Record<string, ResultSetExpression>;
+  select: Record<string, QuerySelect>;
+  parameters?: Record<string, string | number>;
+  cursors?: Record<string, string>;
+};
+
+type QuerySelect = {
+  sources: readonly SourceProperties[];
 };
 
 export type EdgeItem<EdgeProperties = Record<string, unknown>> = {
@@ -70,6 +114,13 @@ export type InspectResultList = {
   }>;
 };
 
+type SelectKey<T extends Query> = keyof T['select'];
+
+export type QueryResult<T extends Query> = {
+  items: Record<SelectKey<T>, NodeItem[]>;
+  nextCursor: Record<SelectKey<T>, string> | undefined;
+};
+
 export type ExternalIdsResultList<PropertyType> = {
   items: Array<NodeItem<PropertyType>>;
   typing?: Record<
@@ -111,6 +162,7 @@ export class FdmSDK {
   private readonly _listEndpoint: string;
   private readonly _inspectEndpoint: string;
   private readonly _searchEndpoint: string;
+  private readonly _queryEndpoint: string;
   private readonly _listViewsEndpoint: string;
 
   constructor(sdk: CogniteClient) {
@@ -121,6 +173,7 @@ export class FdmSDK {
     const viewsBaseUrl = `${baseUrl}/api/v1/projects/${project}/models/views`;
 
     this._listEndpoint = `${instancesBaseUrl}/list`;
+    this._queryEndpoint = `${instancesBaseUrl}/query`;
     this._byIdsEndpoint = `${instancesBaseUrl}/byids`;
     this._inspectEndpoint = `${instancesBaseUrl}/inspect`;
     this._searchEndpoint = `${instancesBaseUrl}/search`;
@@ -129,15 +182,19 @@ export class FdmSDK {
     this._sdk = sdk;
   }
 
-  public async listViews(space: string, includeInheritedProperties: boolean = true): Promise<{ views: Array<ViewItem> }> {
-
-    const result = await this._sdk.get(this._listViewsEndpoint, { params: {
-      includeInheritedProperties, space
-    }
+  public async listViews(
+    space: string,
+    includeInheritedProperties: boolean = true
+  ): Promise<{ views: ViewItem[] }> {
+    const result = await this._sdk.get(this._listViewsEndpoint, {
+      params: {
+        includeInheritedProperties,
+        space
+      }
     });
-    
+
     if (result.status === 200) {
-      return { views: result.data.items as Array<ViewItem>};
+      return { views: result.data.items as ViewItem[] };
     }
     throw new Error(`Failed to list views. Status: ${result.status}`);
   }
@@ -148,8 +205,8 @@ export class FdmSDK {
     instanceType?: InstanceType,
     limit?: number,
     filter?: any,
-    properties?: Array<string>,
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> 
+    properties?: string[]
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>;
 
   public async searchInstances<PropertiesType = Record<string, unknown>>(
     searchedView: Source,
@@ -157,8 +214,8 @@ export class FdmSDK {
     instanceType?: 'edge',
     limit?: number,
     filter?: any,
-    properties?: Array<string>,
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }> 
+    properties?: string[]
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
 
   public async searchInstances<PropertiesType = Record<string, unknown>>(
     searchedView: Source,
@@ -166,8 +223,8 @@ export class FdmSDK {
     instanceType?: 'node',
     limit?: number,
     filter?: any,
-    properties?: Array<string>,
-  ): Promise<{ instances: Array<NodeItem<PropertiesType>> }> 
+    properties?: string[]
+  ): Promise<{ instances: Array<NodeItem<PropertiesType>> }>;
 
   public async searchInstances<PropertiesType = Record<string, unknown>>(
     searchedView: Source,
@@ -175,8 +232,8 @@ export class FdmSDK {
     instanceType?: InstanceType,
     limit: number = 1000,
     filter?: any,
-    properties?: Array<string>,
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>  {
+    properties?: string[]
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> {
     const data: any = { view: searchedView, query, instanceType, filter, properties, limit };
 
     const result = await this._sdk.post(this._searchEndpoint, { data });
@@ -194,14 +251,17 @@ export class FdmSDK {
     instanceType: InstanceType,
     source?: Source,
     cursor?: string
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>>; nextCursor?: string }>;
+  ): Promise<{
+    instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>>;
+    nextCursor?: string;
+  }>;
 
   public async filterInstances<PropertiesType = Record<string, any>>(
     filter: any,
     instanceType: 'node',
     source?: Source,
     cursor?: string
-  ): Promise<{ instances: Array<any>; nextCursor?: string }>;
+  ): Promise<{ instances: Array<NodeItem<PropertiesType>>; nextCursor?: string }>;
 
   public async filterInstances<PropertiesType = Record<string, any>>(
     filter: any,
@@ -215,7 +275,10 @@ export class FdmSDK {
     instanceType: InstanceType,
     source: Source,
     cursor?: string
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>>; nextCursor?: string }> {
+  ): Promise<{
+    instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>>;
+    nextCursor?: string;
+  }> {
     const data: any = { filter, instanceType };
     if (source !== null) {
       data.sources = [{ source }];
@@ -230,7 +293,9 @@ export class FdmSDK {
       throw new Error(`Failed to fetch instances. Status: ${result.status}`);
     }
 
-    const typedResult = result.data.items as Array<EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>>;
+    const typedResult = result.data.items as Array<
+      EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>
+    >;
 
     hoistInstanceProperties(source, typedResult);
 
@@ -239,23 +304,24 @@ export class FdmSDK {
       nextCursor: result.data.nextCursor
     };
   }
+
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: any,
     instanceType: InstanceType,
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>;
 
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: any,
     instanceType: 'edge',
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
 
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: any,
     instanceType: 'edge',
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
 
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: any,
@@ -307,9 +373,20 @@ export class FdmSDK {
 
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
+
+  public async queryNodesAndEdges<const T extends Query>(query: T): Promise<QueryResult<T>> {
+    const result = await this._sdk.post(this._queryEndpoint, { data: query });
+    if (result.status === 200) {
+      return { items: result.data.items, nextCursor: result.data.nextCursor };
+    }
+    throw new Error(`Failed to fetch instances. Status: ${result.status}`);
+  }
 }
 
-function hoistInstanceProperties(source: Source, instances: Array<EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>>): void {
+function hoistInstanceProperties(
+  source: Source,
+  instances: Array<EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>>
+): void {
   if (source === undefined) {
     return;
   }

@@ -24,7 +24,7 @@ export function SDKProvider({ sdk, children }: Props): React.ReactElement {
 export const useSDK = (userSdk?: CogniteClient): CogniteClient => {
   const sdk = useContext(SdkContext);
   if (sdk === null) {
-    if (userSdk) {
+    if (userSdk !== undefined) {
       return userSdk;
     }
 
