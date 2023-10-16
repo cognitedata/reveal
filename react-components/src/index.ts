@@ -29,7 +29,6 @@ export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeC
 export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
 export { use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
 export { useSlicerUrlParams, useLayersUrlParams } from './hooks/useUrlStateParam';
-export { useReveal360Annotations } from './hooks/useReveal360Annotations';
 export { use360Annotations } from './hooks/use360Annotations';
 
 // Higher order components
