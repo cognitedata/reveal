@@ -17,7 +17,7 @@ import { SYSTEM_3D_EDGE_SOURCE, SYSTEM_3D_NODE_TYPE } from '../utilities/globalD
 import { type AddModelOptions } from '@cognite/reveal';
 import { isEqual } from 'lodash';
 
-type SeachResultsWithView = { view: Source; instances: NodeItem[] };
+export type SeachResultsWithView = { view: Source; instances: NodeItem[] };
 
 export const useSearchMappedEquipmentFDM = (
   query: string,
