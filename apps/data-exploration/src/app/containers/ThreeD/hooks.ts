@@ -806,7 +806,7 @@ export const getSecondaryModelQueryFn =
       } catch {
         return Promise.reject({
           message:
-            'The selected 3D model is not supported and can not be loaded. If the 3D model is very old, try uploading a new revision under Upload 3D models in Fusion.',
+            'The selected 3D model is not supported and can not be loaded. If the 3D model is very old, try uploading a new revision under Manage 3D data in Fusion.',
         });
       }
     } else if (!applied && hasAdded) {
