@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import styled from 'styled-components';
 
 import { Loader, SearchEmpty } from '@data-exploration/components';
+import { RowSelectionState, Updater } from '@tanstack/react-table';
 import noop from 'lodash/noop';
 
 import {
@@ -20,6 +21,7 @@ import {
 } from '../ResourceDetails';
 
 import { ResourceSelection } from './ResourceSelector';
+import { extractResourcesFromSelection, getResourceSelection } from './utils';
 
 type Props = {
   item?: ResourceItem;
@@ -36,7 +38,8 @@ type Props = {
   visibleResources?: ResourceType[];
   isDocumentsApiEnabled?: boolean;
   showSelectButton?: boolean;
-} & Partial<SelectableItemsProps>;
+  onSelect?: (selection: ResourceSelection, resources: ResourceItem[]) => void;
+} & Omit<Partial<SelectableItemsProps>, 'onSelect'>;
 
 const Centered = styled.div`
   display: flex;
@@ -71,15 +74,37 @@ export const ResourceSelectorDetails = ({
   isDocumentsApiEnabled = true,
   showSelectButton,
 }: Props) => {
+  const handleSelect = useCallback(
+    (
+      updater?: Updater<RowSelectionState>,
+      currentData?: ResourceItem[],
+      resourceType?: ResourceType
+    ) => {
+      const selection = getResourceSelection({
+        item,
+        selectedRows,
+        updater,
+        currentData,
+        resourceType,
+      });
+      const resources = extractResourcesFromSelection(selection);
+
+      onSelect(selection, resources);
+    },
+    [item, onSelect, selectedRows]
+  );
+
   const commonProps = {
     closable,
-    onSelect,
+    onSelect: handleSelect,
     selectedRows,
     selectionMode,
     visibleResources,
     showSelectButton,
   };
+
   let content: React.ReactNode = placeholder || <Loader />;
+
   if (item) {
     switch (item.type) {
       case 'asset': {

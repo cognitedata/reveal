@@ -1,16 +1,20 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 
 import styled from 'styled-components';
 
 import { Button, Chip, IconType } from '@cognite/cogs.js';
 
-import { useTranslation } from '@data-exploration-lib/core';
+import {
+  ResourceSelectionMode,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 import { TitleName } from '../../Common';
 
 interface Props {
   icon?: IconType | ReactNode;
   title: string;
+  selectionMode?: ResourceSelectionMode;
   isSelected?: boolean;
   showSelectButton?: boolean;
   onSelectClicked?: () => void;
@@ -21,12 +25,25 @@ export const ResourceDetailsHeader: React.FC<Props> = ({
   title,
   icon,
   showSelectButton,
+  selectionMode,
   isSelected,
   onSelectClicked,
   onClose,
   closable = true,
 }) => {
   const { t } = useTranslation();
+
+  const selectButtonText = useMemo(() => {
+    if (selectionMode === 'multiple') {
+      if (isSelected) {
+        return t('SELECTED', 'Selected');
+      }
+      return t('SELECT', 'Select');
+    }
+    return t('ADD', 'Add');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSelected, selectionMode]);
+
   return (
     <Container>
       <TitleRowWrapper data-testid="title-row-wrapper">
@@ -43,7 +60,7 @@ export const ResourceDetailsHeader: React.FC<Props> = ({
             disabled={isSelected}
             onClick={onSelectClicked}
           >
-            {isSelected ? t('SELECTED', 'Selected') : t('SELECT', 'Select')}
+            {selectButtonText}
           </Button>
         )}
         {closable && (

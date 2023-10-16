@@ -14,6 +14,7 @@ import {
   APPLICATION_ID,
   ResourceType,
   useTranslation,
+  ResourceSelectionMode,
 } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
@@ -53,7 +54,7 @@ interface Props {
   closable?: boolean;
   onClose?: () => void;
   selectedRows?: ResourceSelection;
-  selectionMode?: 'single' | 'multiple';
+  selectionMode?: ResourceSelectionMode;
   visibleResources?: ResourceType[];
   isDocumentsApiEnabled?: boolean;
   showSelectButton?: boolean;
@@ -154,10 +155,12 @@ export const DocumentDetails: FC<
   );
 
   const enableDetailTableSelection = selectionMode === 'multiple';
+
   return (
     <ResourceDetailsTemplate
       title={parentDocument?.name || ''}
       icon="Documents"
+      selectionMode={selectionMode}
       isSelected={isSelected}
       closable={closable}
       onClose={onClose}

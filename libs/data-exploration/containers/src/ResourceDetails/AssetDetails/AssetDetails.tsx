@@ -7,6 +7,7 @@ import { Collapse, Title } from '@cognite/cogs.js';
 
 import {
   EMPTY_OBJECT,
+  ResourceSelectionMode,
   ResourceType,
   SelectableItemsProps,
   useTranslation,
@@ -47,7 +48,7 @@ export const onOpenResources = (resourceType: ResourceType, id: number) => {
 interface Props {
   assetId: number;
   isSelected: boolean;
-  selectionMode?: 'single' | 'multiple';
+  selectionMode?: ResourceSelectionMode;
   closable?: boolean;
   onClose?: () => void;
   selectedRows?: ResourceSelection;
@@ -153,10 +154,12 @@ export const AssetDetails: FC<
   );
 
   const enableDetailTableSelection = selectionMode === 'multiple';
+
   return (
     <ResourceDetailsTemplate
       title={asset ? asset.name : ''}
       icon="Assets"
+      selectionMode={selectionMode}
       isSelected={isSelected}
       closable={closable}
       onClose={onClose}

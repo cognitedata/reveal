@@ -10,7 +10,9 @@ export default {
     '@cognite/unified-file-viewer':
       '<rootDir>/../../../node_modules/@cognite/unified-file-viewer/dist/index.js',
   },
-  transformIgnorePatterns: ['node_modules/(?!@cognite/unified-file-viewer)'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(es-cookie|lodash-es|@cognite/unified-file-viewer))',
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/libs/data-exploration/containers',
   collectCoverage: true,

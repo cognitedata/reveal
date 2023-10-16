@@ -9,6 +9,7 @@ import { TimeseriesChart } from '@cognite/plotting-components';
 
 import {
   EMPTY_OBJECT,
+  ResourceSelectionMode,
   ResourceType,
   SelectableItemsProps,
   ViewType,
@@ -49,7 +50,7 @@ interface Props {
   isSelected: boolean;
   closable?: boolean;
   onClose?: () => void;
-  selectionMode?: 'single' | 'multiple';
+  selectionMode?: ResourceSelectionMode;
   selectedRows?: ResourceSelection;
   visibleResources?: ResourceType[];
   showSelectButton?: boolean;
@@ -145,10 +146,12 @@ export const TimeseriesDetails: FC<
   );
 
   const enableDetailTableSelection = selectionMode === 'multiple';
+
   return (
     <ResourceDetailsTemplate
       title={timeseries ? timeseries.name || '' : ''}
       icon="Timeseries"
+      selectionMode={selectionMode}
       isSelected={isSelected}
       closable={closable}
       onClose={onClose}

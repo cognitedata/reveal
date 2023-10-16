@@ -6,6 +6,7 @@ import { Collapse, Title } from '@cognite/cogs.js';
 
 import {
   EMPTY_OBJECT,
+  ResourceSelectionMode,
   ResourceType,
   SelectableItemsProps,
   useTranslation,
@@ -46,7 +47,7 @@ interface Props {
   closable?: boolean;
   onClose?: () => void;
   selectedRows?: ResourceSelection;
-  selectionMode?: 'single' | 'multiple';
+  selectionMode?: ResourceSelectionMode;
   visibleResources?: ResourceType[];
   showSelectButton?: boolean;
 }
@@ -144,10 +145,12 @@ export const EventDetails: FC<
   );
 
   const enableDetailTableSelection = selectionMode === 'multiple';
+
   return (
     <ResourceDetailsTemplate
       title={parentEvent?.type || ''}
       icon="Events"
+      selectionMode={selectionMode}
       isSelected={isSelected}
       closable={closable}
       onClose={onClose}

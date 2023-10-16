@@ -6,6 +6,7 @@ import { Collapse, Title } from '@cognite/cogs.js';
 
 import {
   EMPTY_OBJECT,
+  ResourceSelectionMode,
   ResourceType,
   SelectableItemsProps,
   ViewType,
@@ -38,7 +39,6 @@ import {
   TIME_SERIES,
 } from '../constant';
 import { StyledCollapse } from '../elements';
-import { SelectionType } from '../types';
 import { getResourcesVisibility } from '../utils';
 
 interface Props {
@@ -47,7 +47,7 @@ interface Props {
   closable?: boolean;
   onClose?: () => void;
   selectedRows?: ResourceSelection;
-  selectionMode?: SelectionType;
+  selectionMode?: ResourceSelectionMode;
   visibleResources?: ResourceType[];
   showSelectButton?: boolean;
 }
@@ -154,6 +154,7 @@ export const SequenceDetails: FC<
     <ResourceDetailsTemplate
       title={parentSequence?.name || ''}
       icon="Sequences"
+      selectionMode={selectionMode}
       isSelected={isSelected}
       closable={closable}
       onClose={onClose}

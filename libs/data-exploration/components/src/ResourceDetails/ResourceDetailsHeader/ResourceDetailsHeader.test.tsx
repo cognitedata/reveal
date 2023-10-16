@@ -49,7 +49,7 @@ describe('ResourceDetailsHeader', () => {
       isSelected: true,
       showSelectButton: true,
     });
-    expect(screen.getByText('Selected')).toBeInTheDocument();
+    expect(screen.getByText('Add')).toBeInTheDocument();
   });
 
   test('renders unselected state when isSelected is false', () => {
@@ -58,7 +58,7 @@ describe('ResourceDetailsHeader', () => {
       isSelected: false,
       showSelectButton: true,
     });
-    expect(screen.getByText('Select')).toBeInTheDocument();
+    expect(screen.getByText('Add')).toBeInTheDocument();
   });
 
   test('renders TitleRowWrapper with correct styles', () => {

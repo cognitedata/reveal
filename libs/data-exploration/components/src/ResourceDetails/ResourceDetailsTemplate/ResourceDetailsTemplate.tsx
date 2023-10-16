@@ -4,11 +4,14 @@ import styled from 'styled-components';
 
 import { IconType } from '@cognite/cogs.js';
 
+import { ResourceSelectionMode } from '@data-exploration-lib/core';
+
 import { ResourceDetailsHeader } from '../ResourceDetailsHeader';
 
 interface Props {
   icon?: IconType | ReactNode;
   title: string;
+  selectionMode?: ResourceSelectionMode;
   isSelected?: boolean;
   showSelectButton?: boolean;
   onSelectClicked?: () => void;
@@ -20,6 +23,7 @@ export const ResourceDetailsTemplate: React.FC<
 > = ({
   icon,
   title,
+  selectionMode,
   isSelected,
   showSelectButton = true,
   onSelectClicked,
@@ -33,6 +37,7 @@ export const ResourceDetailsTemplate: React.FC<
         <ResourceDetailsHeader
           title={title}
           icon={icon}
+          selectionMode={selectionMode}
           isSelected={isSelected}
           showSelectButton={showSelectButton}
           onClose={onClose}

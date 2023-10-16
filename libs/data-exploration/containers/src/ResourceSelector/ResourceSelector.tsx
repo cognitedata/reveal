@@ -6,9 +6,6 @@ import {
   BulkActionBar,
   ExplorationFilterToggle,
 } from '@data-exploration/components';
-import { RowSelectionState, Updater } from '@tanstack/react-table';
-import isEmpty from 'lodash/isEmpty';
-import mapValues from 'lodash/mapValues';
 import noop from 'lodash/noop';
 import { useDebounce } from 'use-debounce';
 
@@ -48,7 +45,7 @@ const DEFAULT_VISIBLE_RESOURCE_TABS: ResourceType[] = [
   'timeSeries',
 ];
 
-const initialSelectedRows: Record<ResourceType, any> = {
+export const INITIAL_SELECTED_ROWS: Record<ResourceType, any> = {
   asset: {},
   file: {},
   timeSeries: {},
@@ -106,8 +103,12 @@ export const ResourceSelector = ({
   const [previewItem, setPreviewItem] = useState<ResourceItem>();
   const { t } = useTranslation();
 
-  const [selectedRows, setSelectedRows] =
-    useState<ResourceSelection>(initialSelectedRows);
+  const [selectedRows, setSelectedRows] = useState<ResourceSelection>(
+    INITIAL_SELECTED_ROWS
+  );
+  const [selectedResources, setSelectedResources] = useState<ResourceItem[]>(
+    []
+  );
 
   useEffect(() => {
     if (initialSelectedResource === undefined) {
@@ -128,72 +129,27 @@ export const ResourceSelector = ({
   }, [initialTab]);
 
   const [debouncedQuery] = useDebounce(query, 100);
-  const allSelectedRows = useMemo(
-    () =>
-      Object.entries(selectedRows)
-        .filter(([_, value]) => !isEmpty(value))
-        .reduce((acc, item) => {
-          acc.push(
-            ...Object.values(item[1]).map((value) => ({
-              ...value,
-              type: item[0] as ResourceType,
-            }))
-          );
-          return acc;
-        }, [] as ResourceItem[]),
-    [selectedRows]
-  );
 
   const actionBarOptions = useMemo(
     () =>
-      allSelectedRows.map((value) => ({
+      selectedResources.map((value) => ({
         name: value.externalId || `${value.id}`,
         type: value.type,
       })),
-    [allSelectedRows]
+    [selectedResources]
   );
 
-  const onDetailRowSelection = useCallback(
-    (
-      updater?: Updater<RowSelectionState>,
-      currentData?: ResourceItem[],
-      resourceType?: ResourceType
-    ) => {
-      setSelectedRows((prev) => {
-        if (!updater || !currentData || !resourceType) {
-          return {
-            ...prev,
-            [previewItem!.type]: {
-              ...prev[previewItem!.type],
-              [previewItem!.id]: previewItem,
-            },
-          };
-        }
-
-        if (typeof updater === 'function') {
-          return {
-            ...prev,
-            [resourceType]: mapValues(
-              updater(
-                mapValues(prev[resourceType], (resourceItem) => {
-                  return Boolean(resourceItem?.id);
-                })
-              ),
-              (_, key) => {
-                return currentData.find((item) => String(item?.id) === key);
-              }
-            ),
-          };
-        }
-        return {
-          ...prev,
-          [resourceType]: mapValues(updater, function (_, key) {
-            return currentData.find((item) => String(item?.id) === key);
-          }),
-        };
-      });
+  const handleAddResources = useCallback(
+    (resources: ResourceItem[]) => {
+      if (selectionMode === 'single') {
+        onSelect(resources[0] as any);
+      }
+      if (selectionMode === 'multiple') {
+        onSelect(resources as any);
+      }
+      setSelectedRows(INITIAL_SELECTED_ROWS);
     },
-    [previewItem]
+    [onSelect, selectionMode]
   );
 
   const selectedResourceTabs = visibleResourceTabs.map((tab) => {
@@ -273,7 +229,9 @@ export const ResourceSelector = ({
       );
     return <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />;
   });
-  const isBulkActionBarVisible = actionBarOptions.length > 0;
+
+  const isBulkActionBarVisible =
+    selectionMode === 'multiple' && actionBarOptions.length > 0;
 
   return (
     <ResourceSelectorWrapper>
@@ -366,7 +324,11 @@ export const ResourceSelector = ({
               onClose={() => setPreviewItem(undefined)}
               selectionMode={selectionMode}
               selectedRows={selectedRows}
-              onSelect={onDetailRowSelection}
+              onSelect={(selection, resources) => {
+                setSelectedRows(selection);
+                setSelectedResources(resources);
+                handleAddResources(resources);
+              }}
               isSelected={Boolean(
                 selectedRows[previewItem.type][previewItem.id]
               )}
@@ -388,11 +350,7 @@ export const ResourceSelector = ({
       >
         <Button
           icon="Add"
-          onClick={() => {
-            if (selectionMode === 'multiple') onSelect(allSelectedRows as any);
-            if (selectionMode === 'single') onSelect(allSelectedRows[0] as any);
-            setSelectedRows(initialSelectedRows);
-          }}
+          onClick={() => handleAddResources(selectedResources)}
           inverted
           type="primary"
           disabled={shouldDisableAddButton}
@@ -402,7 +360,7 @@ export const ResourceSelector = ({
         <BulkActionBar.Separator />
         <Button
           icon="Close"
-          onClick={() => setSelectedRows(initialSelectedRows)}
+          onClick={() => setSelectedRows(INITIAL_SELECTED_ROWS)}
           inverted
         />
       </BulkActionBar>
