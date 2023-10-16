@@ -182,7 +182,7 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
   };
 
   return (
-    <Sidebar visible={visible}>
+    <Sidebar visible={visible} data-testid="dataprofiling-sidebar-container">
       <TopContainer>
         {/* Sidebar header */}
         <TopContainerTitle>

@@ -67,6 +67,7 @@ const DateTimePicker = (props: Props) => {
         <TimePeriodMenu
           onPeriodChange={handlePeriodChange}
           optionSelected={selectedPeriodOption.selectedPeriod}
+          data-testid="timep-period-selector"
         />
       )}
     </Flex>
