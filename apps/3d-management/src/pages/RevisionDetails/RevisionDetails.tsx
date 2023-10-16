@@ -9,7 +9,6 @@ import dayjs from 'dayjs';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import { Tooltip, Button, Flex, Icon } from '@cognite/cogs.js';
-import { useFlag } from '@cognite/react-feature-flags';
 import { Revision3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
@@ -89,9 +88,6 @@ export const RevisionDetails = () => {
   const metrics = useMetrics('3D.Revisions');
   const params = useParams<RevisionDetailsParams>();
   const navigate = useNavigate();
-  const { isEnabled: contextualizeEditorFeatureFlagIsEnabled } = useFlag(
-    '3D_MANAGEMENT_contextualize_editor'
-  );
 
   const { flow } = getFlow();
 
@@ -302,21 +298,6 @@ export const RevisionDetails = () => {
             >
               {revision.published ? 'Unpublish' : 'Publish'}
             </Button>
-            {contextualizeEditorFeatureFlagIsEnabled && (
-              <Button
-                className="left-button"
-                type="secondary"
-                onClick={() => {
-                  navigate(
-                    createLink(
-                      `/3d-models/contextualize-editor/${modelId}/revisions/${revisionId}`
-                    )
-                  );
-                }}
-              >
-                Contextualize
-              </Button>
-            )}
           </PermissioningHintWrapper>
           <PermissioningHintWrapper hasPermission={hasDeleteCapabilities}>
             <div className="right-button">

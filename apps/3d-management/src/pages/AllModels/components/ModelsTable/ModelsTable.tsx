@@ -23,6 +23,8 @@ import EmptyState from '../EmptyState';
 import { EmptyStateOptions } from '../EmptyState/EmptyState';
 import { TableOperations } from '../TableOperations';
 
+import ThreeDContextualizeButton from './ThreeDContextualizeButton';
+
 const NestedTable = styled(Table)`
   && td:last-child {
     padding: 0 48px 0 8px;
@@ -125,6 +127,10 @@ class ModelsTable extends React.Component<Props> {
         sorter: (a, b) => +a.createdTime - +b.createdTime,
         sortOrder:
           (sortObj?.columnKey === 'createdTime' && sortObj?.order) || null,
+      },
+      {
+        key: 'contextualizationEditor',
+        render: (_, record) => <ThreeDContextualizeButton record={record} />,
       },
     ];
   }
