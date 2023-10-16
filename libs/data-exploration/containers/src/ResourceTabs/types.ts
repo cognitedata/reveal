@@ -1,7 +1,8 @@
 import { TabProps } from '@cognite/cogs.js';
 
-export interface ResourceTabProps extends TabProps {
+export interface ResourceTabProps<TFilter> extends TabProps {
   query?: string;
-  filter?: any;
+  filter?: TFilter;
+  defaultFilter?: TFilter;
   isDocumentsApiEnabled?: boolean;
 }

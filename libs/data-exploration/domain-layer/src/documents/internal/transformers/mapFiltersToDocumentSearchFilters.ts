@@ -16,6 +16,7 @@ export type DocumentProperties = {
   author: string[];
   'sourceFile|source': string[];
   type: string[];
+  'sourceFile|mimeType': string[];
   externalId: string;
   id: number;
   metadata: string;
@@ -31,6 +32,7 @@ export const mapFiltersToDocumentSearchFilters = (
     source,
     author,
     type,
+    mimeType,
     createdTime,
     lastUpdatedTime,
     assetSubtreeIds,
@@ -61,6 +63,7 @@ export const mapFiltersToDocumentSearchFilters = (
     .in('author', author)
     .in('sourceFile|source', source)
     .in('type', type)
+    .in('sourceFile|mimeType', mimeType)
     .equals('id', internalId)
     .inAssetSubtree('sourceFile|assetIds', () => {
       return assetSubtreeIds?.reduce((acc, { value }) => {

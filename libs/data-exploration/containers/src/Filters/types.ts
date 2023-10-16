@@ -17,6 +17,7 @@ export interface BaseFilter<TFilter> {
   // themselves, meaning it takes in filter and network request to determine
   // what options to show and if the filter should be disabled
   filter?: TFilter;
+  defaultFilter?: TFilter;
 }
 
 export interface CommonFilterProps {
@@ -49,11 +50,3 @@ export interface MultiSelectOptionType<TValue> {
   count?: number;
   value: TValue;
 }
-
-export type NewFiltersType =
-  | InternalAssetFilters
-  | InternalTimeseriesFilters
-  | InternalFilesFilters
-  | InternalDocumentFilter
-  | InternalEventsFilters
-  | InternalSequenceFilters;

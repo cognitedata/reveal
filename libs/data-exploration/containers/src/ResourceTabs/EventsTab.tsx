@@ -1,4 +1,5 @@
 import {
+  InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
@@ -8,7 +9,11 @@ import { CounterTab } from './elements';
 import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 import { ResourceTabProps } from './types';
 
-export const EventsTab = ({ query, filter, ...rest }: ResourceTabProps) => {
+export const EventsTab = ({
+  query,
+  filter = {},
+  ...rest
+}: ResourceTabProps<InternalEventsFilters>) => {
   const { t } = useTranslation();
   const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
   const { data, isLoading } = useEventsAggregateCountQuery(

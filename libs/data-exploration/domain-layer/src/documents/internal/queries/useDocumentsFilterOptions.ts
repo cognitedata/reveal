@@ -2,8 +2,12 @@ import { useMemo } from 'react';
 
 import omit from 'lodash/omit';
 
-import { InternalDocumentFilter } from '@data-exploration-lib/core';
+import {
+  InternalDocumentFilter,
+  mergeInternalFilters,
+} from '@data-exploration-lib/core';
 
+import { pickFilterDataByDefaultFilter } from '../../../utils';
 import { mergeDynamicFilterOptions } from '../../../utils/mergeDynamicFilterOptions';
 import { useDocumentsUniqueValuesByProperty } from '../../service';
 import { DocumentProperty, DocumentSourceProperty } from '../../service/types';
@@ -13,6 +17,7 @@ interface Props {
   property: Exclude<DocumentProperty, 'labels'> | DocumentSourceProperty;
   searchQuery?: string;
   filter?: InternalDocumentFilter;
+  defaultFilter?: InternalDocumentFilter;
   query?: string;
 }
 
@@ -20,6 +25,7 @@ export const useDocumentsFilterOptions = ({
   property,
   searchQuery,
   filter = {},
+  defaultFilter = {},
   query,
 }: Props) => {
   const {
@@ -34,15 +40,19 @@ export const useDocumentsFilterOptions = ({
   const { data: dynamicData = [] } = useDocumentsUniqueValuesByProperty({
     property,
     filter: mapFiltersToDocumentSearchFilters(
-      omit(filter, property),
+      mergeInternalFilters(omit(filter, property), defaultFilter),
       searchQuery
     ),
     query,
   });
 
+  const filterData = useMemo(() => {
+    return pickFilterDataByDefaultFilter(data, defaultFilter, property);
+  }, [data, defaultFilter, property]);
+
   const options = useMemo(() => {
-    return mergeDynamicFilterOptions(data, dynamicData);
-  }, [data, dynamicData]);
+    return mergeDynamicFilterOptions(filterData, dynamicData);
+  }, [filterData, dynamicData]);
 
   return {
     options,

@@ -1,4 +1,5 @@
 import {
+  InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
@@ -8,7 +9,11 @@ import { CounterTab } from './elements';
 import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 import { ResourceTabProps } from './types';
 
-export const TimeseriesTab = ({ query, filter, ...rest }: ResourceTabProps) => {
+export const TimeseriesTab = ({
+  query,
+  filter = {},
+  ...rest
+}: ResourceTabProps<InternalTimeseriesFilters>) => {
   const timeseriesSearchConfig =
     useGetSearchConfigFromLocalStorage('timeSeries');
   const { t } = useTranslation();

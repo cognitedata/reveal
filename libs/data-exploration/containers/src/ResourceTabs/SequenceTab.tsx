@@ -1,4 +1,5 @@
 import {
+  InternalSequenceFilters,
   useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
@@ -8,7 +9,11 @@ import { CounterTab } from './elements';
 import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 import { ResourceTabProps } from './types';
 
-export const SequenceTab = ({ query, filter, ...rest }: ResourceTabProps) => {
+export const SequenceTab = ({
+  query,
+  filter = {},
+  ...rest
+}: ResourceTabProps<InternalSequenceFilters>) => {
   const { t } = useTranslation();
   const sequenceSearchConfig = useGetSearchConfigFromLocalStorage('sequence');
   const {

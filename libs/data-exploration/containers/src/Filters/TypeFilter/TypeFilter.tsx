@@ -74,6 +74,7 @@ const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
     property: 'type',
     searchQuery: props.query,
     filter: props.filter,
+    defaultFilter: props.defaultFilter,
     query,
   });
 

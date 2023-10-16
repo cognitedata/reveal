@@ -1,4 +1,7 @@
 import {
+  InternalDocumentFilter,
+  InternalFilesFilters,
+  mergeInternalFilters,
   useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
@@ -12,10 +15,11 @@ import { ResourceTabProps } from './types';
 
 export const FilesTab = ({
   query,
-  filter,
+  filter = {},
+  defaultFilter = {},
   isDocumentsApiEnabled = true,
   ...rest
-}: ResourceTabProps) => {
+}: ResourceTabProps<InternalDocumentFilter | InternalFilesFilters>) => {
   const { t } = useTranslation();
 
   // Legacy support for old filter style it will be deleted again
@@ -30,7 +34,13 @@ export const FilesTab = ({
   const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
   const { data: filteredDocumentCount = 0, isLoading } =
     useDocumentFilteredAggregateCount(
-      { filters: filter, query },
+      {
+        filters: mergeInternalFilters(
+          filter,
+          defaultFilter
+        ) as InternalDocumentFilter,
+        query,
+      },
       documentSearchConfig,
       {
         enabled: isDocumentsApiEnabled,

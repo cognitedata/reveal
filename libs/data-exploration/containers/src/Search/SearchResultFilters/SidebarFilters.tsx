@@ -26,68 +26,36 @@ interface Props extends FilterProps {
 export const SidebarFilters: React.FC<Props> = ({
   enableDocumentLabelsFilter,
   resourceType,
-  onFilterChange,
-  filter,
-  onResetFilterClick,
-  query,
   isDocumentsApiEnabled = true,
+  ...commonProps
 }) => {
   usePrefetchAllLabelsQuery();
 
   const renderCustomResourceTypeFilter = () => {
     switch (resourceType) {
       case 'charts': {
-        return (
-          <ChartsFilters
-            query={query}
-            filter={filter}
-            onFilterChange={onFilterChange}
-            onResetFilterClick={onResetFilterClick}
-          />
-        );
+        return <ChartsFilters {...commonProps} />;
       }
       case 'asset': {
-        return (
-          <AssetFilters
-            query={query}
-            filter={filter}
-            onFilterChange={onFilterChange}
-            onResetFilterClick={onResetFilterClick}
-          />
-        );
+        return <AssetFilters {...commonProps} />;
       }
       case 'event': {
-        return (
-          <EventFilters
-            query={query}
-            filter={filter}
-            onFilterChange={onFilterChange}
-            onResetFilterClick={onResetFilterClick}
-          />
-        );
+        return <EventFilters {...commonProps} />;
       }
       case 'timeSeries': {
-        return (
-          <TimeseriesFilters
-            query={query}
-            filter={filter}
-            onFilterChange={onFilterChange}
-            onResetFilterClick={onResetFilterClick}
-          />
-        );
+        return <TimeseriesFilters {...commonProps} />;
       }
       case 'file': {
         if (isDocumentsApiEnabled) {
           return (
             <FileFilters
-              query={query}
-              filter={filter}
-              onFilterChange={onFilterChange}
-              onResetFilterClick={onResetFilterClick}
+              {...commonProps}
               enableDocumentLabelsFilter={enableDocumentLabelsFilter}
             />
           );
         }
+
+        const { filter, onFilterChange, onResetFilterClick } = commonProps;
 
         return (
           <OldFilesFilter
@@ -99,14 +67,7 @@ export const SidebarFilters: React.FC<Props> = ({
       }
 
       case 'sequence': {
-        return (
-          <SequenceFilters
-            query={query}
-            filter={filter}
-            onFilterChange={onFilterChange}
-            onResetFilterClick={onResetFilterClick}
-          />
-        );
+        return <SequenceFilters {...commonProps} />;
       }
       default: {
         return null;
@@ -127,12 +88,7 @@ export const SidebarFilters: React.FC<Props> = ({
   return (
     <Container>
       <BaseFilterCollapse>
-        <CommonFilters
-          query={query}
-          filter={filter}
-          onFilterChange={onFilterChange}
-          onResetFilterClick={onResetFilterClick}
-        />
+        <CommonFilters {...commonProps} />
         {renderCustomResourceTypeFilter()}
       </BaseFilterCollapse>
     </Container>

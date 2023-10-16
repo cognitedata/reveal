@@ -16,6 +16,7 @@ import { Button, Divider, Flex, Input } from '@cognite/cogs.js';
 
 import {
   EMPTY_OBJECT,
+  FilterState,
   ResourceItem,
   ResourceSelectorFilter,
   ResourceType,
@@ -79,6 +80,7 @@ export type ResourceSelectorProps = {
   shouldShowPreviews?: boolean;
   shouldOnlyShowPreviewPane?: boolean;
   shouldDisableAddButton?: boolean;
+  defaultFilter?: Partial<FilterState>;
 } & SelectionProps;
 
 export const ResourceSelector = ({
@@ -93,6 +95,7 @@ export const ResourceSelector = ({
   shouldShowPreviews = true,
   shouldOnlyShowPreviewPane = false,
   shouldDisableAddButton = false,
+  defaultFilter = {},
 }: ResourceSelectorProps) => {
   const { filterState, updateFilterType, resetFilterType } =
     useFilterState(initialFilter);
@@ -236,6 +239,9 @@ export const ResourceSelector = ({
               ? filterState.document
               : filterState.file),
           }}
+          defaultFilter={
+            isDocumentsApiEnabled ? defaultFilter.document : defaultFilter.file
+          }
           isDocumentsApiEnabled={isDocumentsApiEnabled}
           label={t('FILES', 'Files')}
         />
@@ -278,6 +284,7 @@ export const ResourceSelector = ({
             enableDocumentLabelsFilter
             isDocumentsApiEnabled={isDocumentsApiEnabled}
             filter={filterState}
+            defaultFilter={defaultFilter}
             onFilterChange={(resourceType, currentFilter) => {
               updateFilterType(resourceType, currentFilter);
             }}
@@ -323,6 +330,7 @@ export const ResourceSelector = ({
               selectedRows={selectedRows}
               setSelectedRows={setSelectedRows}
               filter={filterState}
+              defaultFilter={defaultFilter}
               selectionMode={selectionMode}
               query={debouncedQuery}
               resourceType={activeKey}

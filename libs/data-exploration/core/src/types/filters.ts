@@ -30,6 +30,7 @@ export interface FilterState {
 export interface FilterProps {
   query: string;
   filter: FilterState;
+  defaultFilter?: Partial<FilterState>;
   onFilterChange: (
     resourceType: FilterResourceType,
     filter: FilterState[keyof FilterState]
@@ -80,6 +81,7 @@ export interface InternalDocumentFilter extends InternalCommonFilters {
   author?: string[];
   source?: string[];
   type?: string[];
+  mimeType?: string[];
   metadata?: { key: string; value: string }[];
   labels?: { label?: string; value: string }[];
 }
@@ -146,3 +148,11 @@ export type Filters = {
   event: InternalEventsFilters;
   document: InternalDocumentFilter;
 };
+
+export type InternalFilters =
+  | InternalAssetFilters
+  | InternalTimeseriesFilters
+  | InternalFilesFilters
+  | InternalDocumentFilter
+  | InternalEventsFilters
+  | InternalSequenceFilters;

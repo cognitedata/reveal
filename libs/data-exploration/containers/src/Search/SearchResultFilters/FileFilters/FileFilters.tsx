@@ -25,6 +25,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
   enableDocumentLabelsFilter,
   query,
   filter,
+  defaultFilter = {},
   onFilterChange,
   onResetFilterClick,
   ...rest
@@ -32,6 +33,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
   const { t } = useTranslation();
 
   const documentFilter = filter.document;
+  const defaultDocumentFilter = defaultFilter.document;
   const isResetButtonVisible = hasObjectAnyProperty(documentFilter, [
     'labels',
     'metadata',
@@ -52,6 +54,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
         <MetadataFilter.Files
           query={query}
           filter={documentFilter}
+          defaultFilter={defaultDocumentFilter}
           values={documentFilter.metadata}
           onChange={(newMetadata) => {
             onFilterChange('document', {
@@ -62,6 +65,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
         <TypeFilter.File
           query={query}
           filter={documentFilter}
+          defaultFilter={defaultDocumentFilter}
           value={documentFilter.type}
           onChange={(newFilters) =>
             onFilterChange('document', { type: newFilters })
@@ -72,6 +76,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
           <LabelFilter.File
             query={query}
             filter={documentFilter}
+            defaultFilter={defaultDocumentFilter}
             value={documentFilter.labels}
             onChange={(newFilters) =>
               onFilterChange('document', { labels: newFilters })
@@ -83,6 +88,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
         <AuthorFilter.File
           query={query}
           filter={documentFilter}
+          defaultFilter={defaultDocumentFilter}
           value={documentFilter.author}
           onChange={(newFilters) =>
             onFilterChange('document', { author: newFilters })
@@ -93,6 +99,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
         <SourceFilter.File
           query={query}
           filter={documentFilter}
+          defaultFilter={defaultDocumentFilter}
           value={documentFilter.source}
           onChange={(newSources) =>
             onFilterChange('document', {

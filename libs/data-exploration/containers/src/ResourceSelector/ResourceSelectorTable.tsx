@@ -29,6 +29,7 @@ import { ResourceSelection } from './ResourceSelector';
 export const ResourceSelectorTable = ({
   resourceType,
   filter,
+  defaultFilter = {},
   query,
   selectedRows,
   selectionMode,
@@ -41,6 +42,7 @@ export const ResourceSelectorTable = ({
 }: {
   resourceType: ResourceType;
   filter: FilterState;
+  defaultFilter?: Partial<FilterState>;
   query?: string;
   selectedRows: ResourceSelection;
   setSelectedRows: Dispatch<SetStateAction<ResourceSelection>>;
@@ -51,6 +53,8 @@ export const ResourceSelectorTable = ({
   isDocumentsApiEnabled?: boolean;
   isBulkActionBarVisible?: boolean;
 }) => {
+  const filterStateKey = resourceType.toLowerCase() as keyof FilterState;
+
   const commonProps = {
     shouldShowPreviews,
     enableSelection: selectionMode === 'multiple',
@@ -59,8 +63,9 @@ export const ResourceSelectorTable = ({
     selectedRows: selectedRows[resourceType],
     filter: {
       ...filter.common,
-      ...filter[resourceType.toLowerCase() as keyof FilterState],
+      ...filter[filterStateKey],
     },
+    defaultFilter: defaultFilter[filterStateKey],
     onRowSelection: (
       updater: Updater<RowSelectionState>,
       data: ResourceItem[]
@@ -124,6 +129,7 @@ export const ResourceSelectorTable = ({
           {...commonProps}
           hideUploadButton={true}
           filter={{ ...filter.common, ...filter.document }}
+          defaultFilter={defaultFilter.document}
         />
       );
     case 'event':

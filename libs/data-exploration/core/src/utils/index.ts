@@ -1,6 +1,7 @@
 export * from './date';
 export * from './files';
 export * from './files';
+export * from './filters';
 export * from './getHiddenColumns';
 export * from './getMetadataValueByKey';
 export * from './getMetadataValueByKey';

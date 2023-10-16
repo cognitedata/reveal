@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useMemo } from 'react';
 
 import {
   UploadButton,
@@ -15,6 +15,7 @@ import {
   CLOSE_DROPDOWN_EVENT,
   DATA_EXPLORATION_COMPONENT,
   InternalDocumentFilter,
+  mergeInternalFilters,
   useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
@@ -38,6 +39,7 @@ export interface DocumentSearchResultsProps
   id?: string;
   query?: string;
   filter: InternalDocumentFilter;
+  defaultFilter?: InternalDocumentFilter;
   onClick: (item: InternalDocument) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
@@ -53,6 +55,7 @@ export const DocumentSearchResults = ({
   isDocumentsGPTEnabled,
   query = '',
   filter = {},
+  defaultFilter = {},
   onClick,
   onRootAssetClick,
   id,
@@ -75,9 +78,17 @@ export const DocumentSearchResults = ({
 
   const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
 
+  const mergedFilter = useMemo(() => {
+    return mergeInternalFilters(filter, defaultFilter);
+  }, [defaultFilter, filter]);
+
   const { results, isLoading, fetchNextPage, hasNextPage } =
     useDocumentSearchResultWithMatchingLabelsQuery(
-      { filter, query: isDocumentsGPTEnabled ? realQuery : query, sortBy },
+      {
+        filter: mergedFilter,
+        query: isDocumentsGPTEnabled ? realQuery : query,
+        sortBy,
+      },
       { keepPreviousData: true },
       documentSearchConfig
     );
@@ -86,7 +97,7 @@ export const DocumentSearchResults = ({
   const { data: aggregateCount = 0 } = useDocumentFilteredAggregateCount(
     {
       query,
-      filters: filter,
+      filters: mergedFilter,
     },
     documentSearchConfig
   );
