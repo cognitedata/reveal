@@ -152,6 +152,7 @@ export const CadContextualizeThreeDViewer = ({
           <ResourceSelector
             selectionMode="single"
             visibleResourceTabs={['asset']}
+            shouldDisableAddButton={selectedNodeIds.length === 0}
             onSelect={(item) => {
               handleResourceSelectorSelect(item.id);
             }}
