@@ -7,6 +7,7 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { MeasurementTool } from '@cognite/reveal/tools';
 import { FEET_TO_INCHES, METERS_TO_FEET } from '../../utilities/constants';
+import { useTranslation } from '../i18n/I18n';
 
 const distancesInFeetAndMeters = (distanceInMeters: number): string => {
   const distanceInFeet = distanceInMeters * METERS_TO_FEET;
@@ -17,6 +18,7 @@ const distancesInFeetAndMeters = (distanceInMeters: number): string => {
 
 export const MeasurementButton = (): ReactElement => {
   const viewer = useReveal();
+  const { t } = useTranslation();
   const [measurementEnabled, setMeasurementEnabled] = useState<boolean>(false);
 
   const measurementTool = useMemo(() => {
@@ -56,7 +58,10 @@ export const MeasurementButton = (): ReactElement => {
   }, [measurementEnabled]);
 
   return (
-    <CogsTooltip content={'Distance measuring tool'} placement="right" appendTo={document.body}>
+    <CogsTooltip
+      content={t('MEASUREMENTS', 'Distance measuring tool')}
+      placement="right"
+      appendTo={document.body}>
       <Button
         type="ghost"
         icon="Ruler"

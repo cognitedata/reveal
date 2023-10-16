@@ -6,6 +6,7 @@ import { useState, type ReactElement } from 'react';
 import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type QualitySettings } from './SettingsContainer/types';
 import { HighFidelityContainer } from './SettingsContainer/HighFidelityContainer';
+import { useTranslation } from '../i18n/I18n';
 
 type CustomSettingsProps = {
   customSettingsContent?: ReactElement;
@@ -18,10 +19,14 @@ export const SettingsButton = ({
   lowQualitySettings,
   highQualitySettings
 }: CustomSettingsProps): ReactElement => {
+  const { t } = useTranslation();
   const [settingsActive, setSettingsActive] = useState<boolean>(false);
 
   return (
-    <CogsTooltip content={'Settings'} placement="right" appendTo={document.body}>
+    <CogsTooltip
+      content={t('SETTINGS', 'Settings')}
+      placement="right"
+      appendTo={document.body}>
       <Dropdown
         appendTo={document.body}
         onClickOutside={() => {

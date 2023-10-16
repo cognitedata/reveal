@@ -9,12 +9,14 @@ import styled from 'styled-components';
 import { MouseNavigation } from './Help/MouseNavigation';
 import { TouchNavigation } from './Help/TouchNavigation';
 import { KeyboardNavigation } from './Help/KeyboardNavigation';
+import { useTranslation } from '../i18n/I18n';
 
 export const HelpButton = (): ReactElement => {
+  const { t } = useTranslation();
   const [helpActive, setHelpActive] = useState<boolean>(false);
 
   return (
-    <CogsTooltip content={'Help'} placement="right" appendTo={document.body}>
+    <CogsTooltip content={t('HELP', 'Help')} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={document.body}
         onClickOutside={() => {

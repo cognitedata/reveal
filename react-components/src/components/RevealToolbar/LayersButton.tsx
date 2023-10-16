@@ -17,6 +17,7 @@ import { use3DModelName } from '../../hooks/use3DModelName';
 import { isEqual } from 'lodash';
 import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
 import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
+import { useTranslation } from '../i18n/I18n';
 
 type LayersButtonProps = {
   storeStateInUrl?: boolean;
@@ -24,6 +25,7 @@ type LayersButtonProps = {
 
 export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): ReactElement => {
   const viewer = useReveal();
+  const { t } = useTranslation();
   const revealContainerElement = useRevealContainerElement();
   const [layersUrlState] = useLayersUrlParams();
   const { cadLayers, pointCloudLayers, image360Layers } = layersUrlState;
@@ -185,7 +187,10 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
   }, [updated3DResourcesLayerData]);
 
   return (
-    <CogsTooltip content={'Filter 3D resource layers'} placement="right" appendTo={document.body}>
+    <CogsTooltip
+      content={t('LAYERS_FILTER', 'Filter 3D resource layers')}
+      placement="right"
+      appendTo={document.body}>
       <Dropdown
         appendTo={revealContainerElement ?? document.body}
         content={
