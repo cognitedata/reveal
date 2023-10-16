@@ -8,6 +8,7 @@ import {
 import { Elements } from 'react-flow-renderer';
 import { useParams } from 'react-router-dom';
 
+import { useCdfUserHistoryService } from '@user-history';
 import { flow } from 'lodash';
 import get from 'lodash/get';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -92,6 +93,7 @@ import {
   ALERTING_FILTER,
   DATAPROFILING_SIDEBAR_KEY,
 } from '../../utils/constants';
+import { createInternalLink } from '../../utils/link';
 import {
   makeDefaultTranslations,
   translationKeys,
@@ -193,7 +195,9 @@ const ChartViewPage = () => {
     activeSidebar === EVENT_SIDEBAR_KEY
   );
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY);
-  const { chartId = '' } = useParams<{ chartId: string }>();
+  const { chartId = '' } = useParams<{
+    chartId: string;
+  }>();
   /**
    * Get local initialized chart
    */
@@ -265,6 +269,8 @@ const ChartViewPage = () => {
 
   const chartScreenshotRef = useRef<HTMLDivElement | null>(null);
   const { takeScreenshot } = useScreenshot({ ref: chartScreenshotRef });
+
+  const userHistoryService = useCdfUserHistoryService();
 
   useEffect(() => {
     trackUsage('PageView.ChartView', {
@@ -373,6 +379,19 @@ const ChartViewPage = () => {
     showDataProfilingSidebar,
     // setActiveSidebarQuery, // don't add this here, it will cause infinite loop
   ]);
+
+  /**
+   * Log new resource view to user history service
+   */
+  useEffect(() => {
+    if (chart?.id && chart?.name) {
+      userHistoryService.logNewResourceView({
+        application: 'charts',
+        name: chart.name,
+        path: createInternalLink(chart.id),
+      });
+    }
+  }, [chart?.id, chart?.name, userHistoryService]);
 
   const openNodeEditor = useCallback(() => {
     setWorkspaceMode('editor');

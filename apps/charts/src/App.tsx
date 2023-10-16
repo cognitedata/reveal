@@ -23,11 +23,12 @@ import Routes from './app/pages/Routes';
 import { DataExplorationProvider } from '@data-exploration-components/context/DataExplorationContext';
 import * as Sentry from '@sentry/react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { UserHistoryProvider } from '@user-history';
 import { RecoilRoot } from 'recoil';
 
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import { getProject } from '@cognite/cdf-utilities';
-import { ToastContainer } from '@cognite/cogs.js';
+import { getCluster, getProject } from '@cognite/cdf-utilities';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
 import config from './app/config/config';
@@ -66,39 +67,49 @@ if (config.sentryDSN && !isDevelopment) {
 const flow = getFlow();
 
 export const RootApp = () => {
-  const { data: userInfo } = useUserInfo();
+  const { data: userInfo, isFetched } = useUserInfo();
+
+  const project = getProject();
+  const cluster = getCluster() ?? undefined;
+  const userId = userInfo?.id;
+
+  if (!isFetched) {
+    return <Loader />;
+  }
 
   return (
-    <FlagProvider
-      apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-      appName="cdf-charts-ui"
-      projectName={getProject()}
-    >
-      <GlobalStyles>
-        <DataExplorationProvider
-          flow={flow.flow}
-          userInfo={userInfo}
-          sdk={sdk}
-          overrideURLMap={{
-            pdfjsWorkerSrc:
-              '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
-          }}
-        >
-          <Sentry.ErrorBoundary
-            // Todo(DEGR-2403) Add a better error placeholder
-            fallback={<p>An error has occurred</p>}
-            showDialog
+    <UserHistoryProvider cluster={cluster} project={project} userId={userId}>
+      <FlagProvider
+        apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+        appName="cdf-charts-ui"
+        projectName={getProject()}
+      >
+        <GlobalStyles>
+          <DataExplorationProvider
+            flow={flow.flow}
+            userInfo={userInfo}
+            sdk={sdk}
+            overrideURLMap={{
+              pdfjsWorkerSrc:
+                '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+            }}
           >
-            <RecoilRoot>
-              <Router>
-                <ToastContainer style={{ top: '5em' }} />
-                <Routes />
-              </Router>
-            </RecoilRoot>
-          </Sentry.ErrorBoundary>
-        </DataExplorationProvider>
-      </GlobalStyles>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </FlagProvider>
+            <Sentry.ErrorBoundary
+              // Todo(DEGR-2403) Add a better error placeholder
+              fallback={<p>An error has occurred</p>}
+              showDialog
+            >
+              <RecoilRoot>
+                <Router>
+                  <ToastContainer style={{ top: '5em' }} />
+                  <Routes />
+                </Router>
+              </RecoilRoot>
+            </Sentry.ErrorBoundary>
+          </DataExplorationProvider>
+        </GlobalStyles>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </FlagProvider>
+    </UserHistoryProvider>
   );
 };

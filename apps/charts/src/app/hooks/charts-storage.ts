@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCdfUserHistoryService } from '@user-history';
 import { isUndefined, omitBy } from 'lodash';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
@@ -13,6 +14,8 @@ import {
   fetchUserCharts,
   updateChart,
 } from '@cognite/charts-lib';
+
+import { createInternalLink } from '../utils/link';
 
 import { useUserInfo } from './useUserInfo';
 
@@ -71,6 +74,7 @@ export const useUpdateChart = () => {
   const cache = useQueryClient();
   const { data } = useUserInfo();
   const project = getProject();
+  const userHistoryService = useCdfUserHistoryService();
 
   return useMutation(
     async (chart: Chart) => {
@@ -126,6 +130,16 @@ export const useUpdateChart = () => {
       onError(error, chart) {
         Sentry.captureException(error);
         cache.invalidateQueries(['chart', chart.id]);
+      },
+      onSuccess(_, chart) {
+        /**
+         * Log new resource edit to user history service
+         */
+        userHistoryService.logNewResourceEdit({
+          application: 'charts',
+          name: chart.name,
+          path: createInternalLink(chart.id),
+        });
       },
       onSettled() {
         cache.invalidateQueries(['charts']);
