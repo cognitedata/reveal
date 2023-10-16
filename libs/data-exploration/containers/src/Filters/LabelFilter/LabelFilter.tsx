@@ -1,3 +1,7 @@
+import styled from 'styled-components';
+
+import { Infobar } from '@cognite/cogs.js';
+
 import {
   DATA_EXPLORATION_COMPONENT,
   InternalAssetFilters,
@@ -58,6 +62,11 @@ export const LabelFilter = <TFilter,>({
       isSearchable
       isClearable
       addNilOption={addNilOption}
+      menuListFooter={
+        <FooterInfoBar>
+          {t('LABEL_MENU_FOOTER', 'Tip: Search for Labels is case sensitive')}
+        </FooterInfoBar>
+      }
     />
   );
 };
@@ -113,3 +122,8 @@ export const DocumentLabelFilter = (
 
 LabelFilter.Asset = AssetLabelFilter;
 LabelFilter.File = DocumentLabelFilter;
+
+const FooterInfoBar = styled(Infobar).attrs({ type: 'warning' })`
+  border-radius: 6px;
+  border: 1px solid rgba(255, 187, 0, 0.2);
+`;

@@ -26,6 +26,7 @@ MenuListComponentProps<OptionType>) => {
     onInputChange = noop,
     onMenuInputFocus,
     onMenuInputBlur,
+    menuListFooter,
   } = props.selectProps;
 
   // reducing the height of the search input if it's enabled
@@ -71,6 +72,7 @@ MenuListComponentProps<OptionType>) => {
         <components.MenuList {...props} maxHeight={maxHeight}>
           {children}
         </components.MenuList>
+        {menuListFooter}
       </MenuListContent>
     </MenuListWrapper>
   );

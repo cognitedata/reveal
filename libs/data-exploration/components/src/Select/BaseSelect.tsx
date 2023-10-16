@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { InputActionMeta, NamedProps } from 'react-select';
 
 import styled from 'styled-components';
@@ -30,6 +30,7 @@ export interface BaseSelectProps<ValueType>
   cogsTheme?: Theme;
   addNilOption?: boolean;
   isError?: boolean;
+  menuListFooter?: ReactNode;
   onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
 }
 
@@ -41,6 +42,7 @@ export const BaseSelect = <ValueType,>({
   isLoading,
   isSearchable,
   placeholder,
+  menuListFooter = <></>,
   ...rest
 }: BaseSelectProps<ValueType>) => {
   const { t } = useTranslation();
@@ -158,6 +160,7 @@ export const BaseSelect = <ValueType,>({
           onMenuInputFocus={() => setMenuInputIsFocused(true)}
           onMenuInputBlur={() => setMenuInputIsFocused(false)}
           addNilOption={addNilOption}
+          menuListFooter={menuListFooter}
         />
       </CogsSelectWrapper>
     </Tooltip>
