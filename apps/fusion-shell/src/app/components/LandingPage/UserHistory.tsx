@@ -140,9 +140,14 @@ export default function UserHistory(props: UserHistoryProps) {
             $isExpand={isUserHistoryTableExpanded}
           >
             {displayResources.map((item, index) => {
-              const resourceApp = rawAppsData.find(
-                (appItem) => `/${item?.application}` === appItem?.linkTo
-              ); // useApplications are saved as subAppPath in Navigation
+              const resourceApp = rawAppsData.find((appItem) => {
+                let matches = `/${item?.application}` === appItem?.linkTo;
+                // This doesn't match the name and url, so we need a special condition.
+                if (item?.application === 'industry-canvas') {
+                  matches = appItem?.linkTo === '/industrial-canvas';
+                }
+                return matches;
+              }); // useApplications are saved as subAppPath in Navigation
 
               return (
                 <Link

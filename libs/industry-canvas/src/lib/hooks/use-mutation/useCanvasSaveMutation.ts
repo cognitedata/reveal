@@ -1,14 +1,17 @@
 import { captureException } from '@sentry/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCdfUserHistoryService } from '@user-history';
 
 import { toast } from '@cognite/cogs.js';
 
 import { QueryKeys, TOAST_POSITION } from '../../constants';
 import type { IndustryCanvasService } from '../../services/IndustryCanvasService';
 import { SerializedCanvasDocument } from '../../types';
+import { getCanvasLink } from '../../utils/getCanvasLink';
 
 export const useCanvasSaveMutation = (service: IndustryCanvasService) => {
   const queryClient = useQueryClient();
+  const userHistoryService = useCdfUserHistoryService();
 
   return useMutation(
     [QueryKeys.SAVE_CANVAS],
@@ -75,6 +78,17 @@ export const useCanvasSaveMutation = (service: IndustryCanvasService) => {
         toast.error('Failed to update canvas', {
           toastId: 'industry-canvas-update-error',
           position: TOAST_POSITION,
+        });
+      },
+      onSuccess: (updatedCanvas) => {
+        if (!updatedCanvas) {
+          return;
+        }
+
+        userHistoryService.logNewResourceEdit({
+          application: 'industry-canvas',
+          name: updatedCanvas.name,
+          path: getCanvasLink(updatedCanvas.externalId),
         });
       },
       onSettled: (updatedCanvas) => {

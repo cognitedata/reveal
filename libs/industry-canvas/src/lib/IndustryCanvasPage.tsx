@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { ResourceSelector } from '@data-exploration/containers';
 import { GraphQlQueryFlow, useCopilotContext } from '@fusion/copilot-core';
+import { useCdfUserHistoryService } from '@user-history';
 
 import { createLink, PageTitle } from '@cognite/cdf-utilities';
 import {
@@ -317,6 +318,18 @@ export const IndustryCanvasPage = () => {
     });
     setHasZoomedToFitOnInitialLoad(true);
   }, [hasZoomedToFitOnInitialLoad, unifiedViewerRef, containers]);
+
+  const userHistoryService = useCdfUserHistoryService();
+
+  useEffect(() => {
+    if (activeCanvas?.externalId && activeCanvas?.name) {
+      userHistoryService.logNewResourceView({
+        application: 'industry-canvas',
+        name: activeCanvas?.name,
+        path: getCanvasLink(activeCanvas.externalId),
+      });
+    }
+  }, [activeCanvas?.externalId, activeCanvas?.name, userHistoryService]);
 
   const { onKeyDown, onKeyUp } = useKeyboardShortcuts(unifiedViewerRef);
 
