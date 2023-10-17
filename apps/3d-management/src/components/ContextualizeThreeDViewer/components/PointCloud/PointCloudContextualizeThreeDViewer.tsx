@@ -132,7 +132,7 @@ export const PointCloudContextualizeThreeDViewer = ({
     createCdfThreeDAnnotation({
       sdk,
       modelId,
-      assetRefId: assetId,
+      assetId,
       pointCloudModel,
       cubeAnnotation: pendingAnnotation,
     }).then(() => {

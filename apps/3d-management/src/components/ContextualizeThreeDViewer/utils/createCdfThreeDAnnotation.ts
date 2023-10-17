@@ -9,13 +9,13 @@ export const createCdfThreeDAnnotation = async ({
   cubeAnnotation,
   sdk,
   modelId,
-  assetRefId,
+  assetId,
   pointCloudModel,
 }: {
   cubeAnnotation: CubeAnnotation;
   sdk: CogniteClient;
   modelId: number;
-  assetRefId: number;
+  assetId: number;
   pointCloudModel: CognitePointCloudModel;
 }) => {
   const defaultModelToCdfTransformation = pointCloudModel
@@ -43,12 +43,12 @@ export const createCdfThreeDAnnotation = async ({
       annotatedResourceId: modelId,
       annotatedResourceType: 'threedmodel',
       annotationType: 'pointcloud.BoundingVolume',
-      status: assetRefId ? 'suggested' : 'approved',
+      status: assetId ? 'suggested' : 'approved',
       creatingApp: '3d-management',
       creatingUser: '3d-management',
       creatingAppVersion: '0.0.1',
       data: {
-        assetRef: { id: assetRefId },
+        assetRef: { id: assetId },
         region: [
           {
             box: {
