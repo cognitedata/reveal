@@ -6,6 +6,8 @@ import {
   PointerEventData,
 } from '@cognite/reveal';
 
+import { assignStylesToCadModel } from '../../../utils/assignStylesToCadModel';
+import { refreshCadContextualizedStyledIndices } from '../../../utils/refreshCadContextualizedStyledIndices';
 import {
   setSelectedNodeIds,
   useCadContextualizeStore,
@@ -31,6 +33,8 @@ export const useCadOnClickHandler = () => {
     selectedNodeIdsList,
     contextualizedNodes,
     contextualizedNodesStyleIndex,
+    selectedNodeIdsStyleIndex,
+    highlightedNodeIdsStyleIndex,
   } = useCadContextualizeStore((state) => ({
     modelId: state.modelId,
     revisionId: state.revisionId,
@@ -38,16 +42,9 @@ export const useCadOnClickHandler = () => {
     selectedNodeIdsList: state.selectedNodeIds,
     contextualizedNodes: state.contextualizedNodes,
     contextualizedNodesStyleIndex: state.contextualizedNodesStyleIndex,
+    selectedNodeIdsStyleIndex: state.selectedNodeIdsStyleIndex,
+    highlightedNodeIdsStyleIndex: state.highlightedNodeIdsStyleIndex,
   }));
-
-  const refreshContextualizedNodeStylesFromTreeIds = useCallback(() => {
-    const contextualizedIndex = contextualizedNodesStyleIndex.getIndexSet();
-    contextualizedIndex.clear();
-    contextualizedNodes?.forEach((node) => {
-      contextualizedIndex.add(node.treeIndex);
-    });
-    contextualizedNodesStyleIndex.updateSet(contextualizedIndex);
-  }, [contextualizedNodesStyleIndex, contextualizedNodes]);
 
   const onClick = useCallback(
     async (event: PointerEventData) => {
@@ -66,9 +63,23 @@ export const useCadOnClickHandler = () => {
 
       if (model === undefined) return;
 
+      // if there is no styled assigned to the model, then assign it first
+      if (model.styledNodeCollections.length === 0) {
+        assignStylesToCadModel({
+          model,
+          selectedNodeIdsStyleIndex,
+          contextualizedNodesStyleIndex,
+          highlightedNodeIdsStyleIndex,
+        });
+      }
       const nodeId = await model.mapTreeIndexToNodeId(intersection.treeIndex);
 
-      refreshContextualizedNodeStylesFromTreeIds();
+      if (contextualizedNodes) {
+        refreshCadContextualizedStyledIndices({
+          contextualizedNodesStyleIndex,
+          contextualizedNodes,
+        });
+      }
 
       if (selectedNodeIdsList.includes(nodeId)) {
         setSelectedNodeIds(selectedNodeIdsList.filter((id) => id !== nodeId));
@@ -81,8 +92,11 @@ export const useCadOnClickHandler = () => {
       modelId,
       revisionId,
       threeDViewer,
-      refreshContextualizedNodeStylesFromTreeIds,
+      contextualizedNodes,
       selectedNodeIdsList,
+      selectedNodeIdsStyleIndex,
+      contextualizedNodesStyleIndex,
+      highlightedNodeIdsStyleIndex,
     ]
   );
 

@@ -1,6 +1,10 @@
 import { create } from 'zustand';
 
-import { Cognite3DViewer, TreeIndexNodeCollection } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  CogniteCadModel,
+  TreeIndexNodeCollection,
+} from '@cognite/reveal';
 import { AssetMapping3D } from '@cognite/sdk';
 
 // TODO: Improve naming of the tools
@@ -14,12 +18,15 @@ type RootState = {
   threeDViewer: Cognite3DViewer | null;
   tool: ToolType;
   modelId: number | null;
+  model: CogniteCadModel | null;
   revisionId: number | null;
   isModelLoaded: boolean;
   selectedNodeIds: Array<number>;
   contextualizedNodes: AssetMapping3D[] | null;
   selectedNodeIdsStyleIndex: TreeIndexNodeCollection;
   contextualizedNodesStyleIndex: TreeIndexNodeCollection;
+  highlightedNodeIdsStyleIndex: TreeIndexNodeCollection;
+  hoveredAnnotationByAssetId: number | null;
 };
 
 const initialState: RootState = {
@@ -27,12 +34,15 @@ const initialState: RootState = {
   threeDViewer: null,
   tool: ToolType.ADD_ANNOTATION,
   modelId: null,
+  model: null,
   revisionId: null,
   isModelLoaded: false,
   selectedNodeIds: [],
   contextualizedNodes: null,
   selectedNodeIdsStyleIndex: new TreeIndexNodeCollection(),
   contextualizedNodesStyleIndex: new TreeIndexNodeCollection(),
+  highlightedNodeIdsStyleIndex: new TreeIndexNodeCollection(),
+  hoveredAnnotationByAssetId: null,
 };
 
 export const useCadContextualizeStore = create<RootState>(() => initialState);
@@ -81,6 +91,13 @@ export const setModelId = (modelId: number) => {
   }));
 };
 
+export const setModel = (model: CogniteCadModel) => {
+  useCadContextualizeStore.setState((prevState) => ({
+    ...prevState,
+    model,
+  }));
+};
+
 export const setRevisionId = (revisionId: number) => {
   useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
@@ -122,10 +139,21 @@ export const setContextualizedNodesStyleIndex = (
   }));
 };
 
-// TODO: we will keep the same naming as for PCs for now to keep consistency. We will change it once we define a proper naming
-export const setHoveredAnnotation = (annotation: AssetMapping3D | null) => {
+export const setHighlightedNodeIdsStyleIndex = (
+  highlightedNodeIdsStyleIndex: TreeIndexNodeCollection
+) => {
   useCadContextualizeStore.setState((prevState) => ({
     ...prevState,
-    hoveredAnnotation: annotation,
+    highlightedNodeIdsStyleIndex,
+  }));
+};
+
+// TODO: we will keep the same naming as for PCs for now to keep consistency. We will change it once we define a proper naming
+export const setHoveredAnnotation = (
+  hoveredAnnotationByAssetId: number | null
+) => {
+  useCadContextualizeStore.setState((prevState) => ({
+    ...prevState,
+    hoveredAnnotationByAssetId: hoveredAnnotationByAssetId,
   }));
 };

@@ -15,6 +15,8 @@ export const saveCdfThreeDCadContextualization = async ({
   nodeIds: Array<number>;
   assetId: number;
 }) => {
+  if (nodeIds.length === 0) return;
+
   const mappings = nodeIds.map(
     (nodeId): AssetMapping3DBase => ({ nodeId, assetId })
   );

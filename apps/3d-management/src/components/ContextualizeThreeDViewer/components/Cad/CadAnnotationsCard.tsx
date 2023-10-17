@@ -115,7 +115,7 @@ export const CadAnnotationsCard = ({
               alignItems="center"
               onClick={() => onZoomToAnnotation(annotation.assetId)}
               onMouseEnter={() => {
-                setHoveredAnnotation(annotation);
+                setHoveredAnnotation(annotation.assetId);
               }}
               onMouseLeave={() => {
                 setHoveredAnnotation(null);
