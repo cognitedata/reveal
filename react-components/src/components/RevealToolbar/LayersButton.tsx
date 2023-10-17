@@ -188,7 +188,7 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
 
   return (
     <CogsTooltip
-      content={t('LAYERS_FILTER', 'Filter 3D resource layers')}
+      content={t('LAYERS_FILTER_TOOLTIP', 'Filter 3D resource layers')}
       placement="right"
       appendTo={document.body}>
       <Dropdown

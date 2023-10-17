@@ -59,7 +59,7 @@ export const MeasurementButton = (): ReactElement => {
 
   return (
     <CogsTooltip
-      content={t('MEASUREMENTS', 'Distance measuring tool')}
+      content={t('MEASUREMENTS_TOOLTIP', 'Distance measuring tool')}
       placement="right"
       appendTo={document.body}>
       <Button

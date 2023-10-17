@@ -16,7 +16,7 @@ export const HelpButton = (): ReactElement => {
   const [helpActive, setHelpActive] = useState<boolean>(false);
 
   return (
-    <CogsTooltip content={t('HELP', 'Help')} placement="right" appendTo={document.body}>
+    <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={document.body}
         onClickOutside={() => {

@@ -89,7 +89,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   }
 
   return (
-    <CogsTooltip content={t('SLICE', 'Slice')} placement="right" appendTo={document.body}>
+    <CogsTooltip content={t('SLICE_TOOLTIP', 'Slice')} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={() => document.body}
         onClickOutside={() => {

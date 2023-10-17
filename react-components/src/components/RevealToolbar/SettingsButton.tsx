@@ -23,7 +23,10 @@ export const SettingsButton = ({
   const [settingsActive, setSettingsActive] = useState<boolean>(false);
 
   return (
-    <CogsTooltip content={t('SETTINGS', 'Settings')} placement="right" appendTo={document.body}>
+    <CogsTooltip
+      content={t('SETTINGS_TOOLTIP', 'Settings')}
+      placement="right"
+      appendTo={document.body}>
       <Dropdown
         appendTo={document.body}
         onClickOutside={() => {
