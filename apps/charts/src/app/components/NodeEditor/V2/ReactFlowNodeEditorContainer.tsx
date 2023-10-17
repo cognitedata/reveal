@@ -497,7 +497,7 @@ const ReactFlowNodeEditorContainer = ({
         translations={t}
       />
       <CloseButton
-        data-testid="close-button"
+        data-testid="node-editor-close-button"
         icon="Close"
         type="ghost"
         onClick={() => {
