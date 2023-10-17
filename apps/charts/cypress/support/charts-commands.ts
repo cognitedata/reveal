@@ -6,6 +6,9 @@ declare namespace Cypress {
     deleteChart(): void;
     selectChart(chartName: string): void;
     addTimeseries(timeseriesName: string): void;
+    deleteEventFilter(eventNumber: number): void;
+    duplicateEventFilter(): void;
+    closeSidebar(sidebarContainerID: string): void;
   }
 }
 
@@ -47,4 +50,26 @@ Cypress.Commands.add('addTimeseries', (timeseriesName: string) => {
   });
 
   cy.get('input[type="checkbox"]').eq(0).check();
+});
+
+Cypress.Commands.add('deleteEventFilter', (eventNumber: number) => {
+  cy.get('footer button[aria-label="Delete"]').eq(eventNumber).click();
+
+  cy.contains('Confirm').click();
+});
+
+Cypress.Commands.add('duplicateEventFilter', () => {
+  cy.get('[aria-label="Duplicate"]').eq(0).click();
+
+  cy.contains('Confirm').click();
+
+  cy.contains('New event filter 1 (Duplicate)').should('exist');
+});
+
+Cypress.Commands.add('closeSidebar', (sidebarContainerID: string) => {
+  cy.get(`[data-testid=${sidebarContainerID}]`)
+    .should('exist')
+    .within(() => {
+      cy.get('.cogs-icon--type-close').should('exist').parent('button').click();
+    });
 });

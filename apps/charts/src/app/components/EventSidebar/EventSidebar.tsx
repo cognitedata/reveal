@@ -188,7 +188,7 @@ const EventSidebar = memo(
     }, [chart, updateChart]);
 
     return (
-      <Sidebar visible={visible}>
+      <Sidebar visible={visible} data-testid="events-sidebar-container">
         <TopContainer>
           <TopContainerTitle>
             <Icon size={21} type="Events" />
