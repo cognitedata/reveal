@@ -45,6 +45,9 @@ export const updateCdfThreeDAnnotation = async ({
     .premultiply(defaultModelToCdfTransformation)
     .transpose();
 
+  const assetLink =
+    annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+
   const data: AnnotationData = {
     region: [
       {
@@ -53,22 +56,23 @@ export const updateCdfThreeDAnnotation = async ({
         },
       },
     ],
-    assetRef:
-      (annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink)
-        ?.assetRef ?? undefined,
+    assetRef: assetLink?.assetRef ?? undefined,
   };
-
+  const hasAssetRef = assetLink?.assetRef !== undefined;
   const changes: AnnotationChangeById[] = [
     {
       id: annotation.id,
       update: {
+        status: {
+          // Set approved if it has assetRef set
+          set: hasAssetRef ? 'approved' : annotation.status,
+        },
         data: {
           set: data,
         },
       },
     },
   ];
-
   await sdk.annotations.update(changes);
   setPendingAnnotation(null);
 };

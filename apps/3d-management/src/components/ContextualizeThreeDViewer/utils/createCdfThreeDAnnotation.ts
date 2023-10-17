@@ -43,7 +43,7 @@ export const createCdfThreeDAnnotation = async ({
       annotatedResourceId: modelId,
       annotatedResourceType: 'threedmodel',
       annotationType: 'pointcloud.BoundingVolume',
-      status: 'suggested',
+      status: assetRefId ? 'suggested' : 'approved',
       creatingApp: '3d-management',
       creatingUser: '3d-management',
       creatingAppVersion: '0.0.1',
