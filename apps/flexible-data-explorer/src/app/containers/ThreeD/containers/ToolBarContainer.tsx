@@ -1,6 +1,6 @@
 import { FormEventHandler } from 'react';
 
-import { Button, Menu } from '@cognite/cogs.js';
+import { Button, Menu, Tooltip } from '@cognite/cogs.js';
 import {
   withCameraStateUrlParam,
   RevealToolbar,
@@ -73,11 +73,20 @@ const ToolBarContent = ({
   );
 };
 
-const FocusButton = ({ onClick }: { onClick: (() => void) | undefined }) => (
-  <Button
-    type="ghost"
-    icon="Collapse"
-    aria-label="Focus asset"
-    onClick={onClick}
-  />
-);
+const FocusButton = ({ onClick }: { onClick: (() => void) | undefined }) => {
+  const { t } = useTranslation();
+  return (
+    <Tooltip
+      content={t('3D_TOOLBAR_FOCUS_SELECTED_EQUIPMENT')}
+      placement="right"
+      appendTo={document.body}
+    >
+      <Button
+        type="ghost"
+        icon="Collapse"
+        aria-label="Focus asset"
+        onClick={onClick}
+      />
+    </Tooltip>
+  );
+};
