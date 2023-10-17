@@ -18,7 +18,6 @@ export const saveCdfThreeDCadContextualization = async ({
   const mappings = nodeIds.map(
     (nodeId): AssetMapping3DBase => ({ nodeId, assetId })
   );
-
   await createCdfThreeDCadContextualization({
     sdk,
     modelId,

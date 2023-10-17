@@ -12,7 +12,11 @@ import {
 } from '@tanstack/react-query';
 
 import { RevealContainer } from '@cognite/reveal-react-components';
-import { CogniteClient } from '@cognite/sdk';
+import {
+  AssetMapping3D,
+  AssetMapping3DBase,
+  CogniteClient,
+} from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
@@ -26,6 +30,7 @@ import { saveCdfThreeDCadContextualization } from '../../utils/saveCdfThreeDCadC
 
 import { CadRevealContent } from './CadRevealContent';
 import { useCadOnClickHandler } from './hooks/useCadOnClickHandler';
+import { useCadZoomToAnnotation } from './hooks/useCadZoomToAnnotation';
 import { useSyncCadStateWithViewer } from './hooks/useSyncCadStateWithViewer';
 import {
   useCadContextualizeStore,
@@ -40,12 +45,56 @@ const fetchContextualizedNodes = async ({
 }: QueryFunctionContext<[string, CogniteClient, number, number]>) => {
   const [_key, sdk, modelId, revisionId] = queryKey;
 
-  return await getCdfCadContextualization({
+  const contextualizedNodes = await getCdfCadContextualization({
     sdk,
     modelId,
     revisionId,
     nodeId: undefined,
+    assetId: undefined,
   });
+
+  // Array treeshaking: remove potential duplicated mappings between same assetId to the same nodeId
+  // It's just a safeguard in case the duplicated mappings still have for old mappings
+  // TODO: we can remove it once we create a robust asset mappings creation without duplications and when there is no duplicated in any model.
+  const contextualizedNodesFiltered: AssetMapping3D[] | null =
+    contextualizedNodes?.filter(
+      (annotation, index, self) =>
+        self.findIndex(
+          (item) =>
+            item.assetId === annotation.assetId &&
+            item.nodeId === annotation.nodeId
+        ) === index
+    ) || null;
+
+  return contextualizedNodesFiltered;
+};
+
+const deleteCadCdfAnnotation = async ({
+  sdk,
+  modelId,
+  revisionId,
+  assetId,
+}: {
+  sdk: CogniteClient;
+  modelId: number;
+  revisionId: number;
+  assetId: number | undefined;
+}) => {
+  const mappedNodes = await getCdfCadContextualization({
+    sdk,
+    modelId,
+    revisionId,
+    nodeId: undefined,
+    assetId,
+  });
+
+  const mappings = mappedNodes.map(
+    (node): AssetMapping3DBase => ({
+      nodeId: node.nodeId,
+      assetId: node.assetId,
+    })
+  );
+  await sdk.assetMappings3D.delete(modelId, revisionId, mappings);
 };
 
 type ContextualizeThreeDViewerProps = {
@@ -98,6 +147,42 @@ export const CadContextualizeThreeDViewer = ({
     }
   );
 
+  const mutationDeletion = useMutation(
+    (params: {
+      sdk: CogniteClient;
+      modelId: number;
+      revisionId: number;
+      assetId: number;
+    }) =>
+      deleteCadCdfAnnotation({
+        sdk: params.sdk,
+        modelId: params.modelId,
+        revisionId: params.revisionId,
+        assetId: params.assetId,
+      }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([
+          'cadContextualization',
+          sdk,
+          modelId,
+          revisionId,
+        ]);
+      },
+    }
+  );
+
+  const onZoomToAnnotation = useCadZoomToAnnotation();
+
+  const onDeleteAnnotation = (annotationByAssetId: number) => {
+    mutationDeletion.mutate({
+      sdk,
+      modelId,
+      revisionId,
+      assetId: annotationByAssetId,
+    });
+  };
+
   useEffect(() => {
     if (contextualizedNodes === undefined) return;
 
@@ -128,11 +213,23 @@ export const CadContextualizeThreeDViewer = ({
 
   const handleResourceSelectorSelect = async (assetId: number) => {
     setSelectedNodeIds([]);
+
+    // Avoid duplicating asset mappings (same assetId with same nodeId)
+    let nodeIdsFiltered: number[] = selectedNodeIds;
+    if (contextualizedNodes) {
+      nodeIdsFiltered = selectedNodeIds.filter(
+        (nodeId) =>
+          !contextualizedNodes.find(
+            (item) => item.assetId === assetId && item.nodeId === nodeId
+          )
+      );
+    }
+
     mutation.mutate({
       sdk,
       modelId,
       revisionId,
-      nodeIds: selectedNodeIds,
+      nodeIds: nodeIdsFiltered,
       assetId,
     });
   };
@@ -145,7 +242,12 @@ export const CadContextualizeThreeDViewer = ({
       >
         <ThreeDViewerStyled>
           <RevealContainer sdk={sdk} color={defaultRevealColor}>
-            <CadRevealContent modelId={modelId} revisionId={revisionId} />
+            <CadRevealContent
+              modelId={modelId}
+              revisionId={revisionId}
+              onDeleteAnnotation={onDeleteAnnotation}
+              onZoomToAnnotation={onZoomToAnnotation}
+            />
           </RevealContainer>
         </ThreeDViewerStyled>
         {isResourceSelectorOpen && (

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { Button, Colors, Body, Flex, InputExp } from '@cognite/cogs.js';
-import { AnnotationModel } from '@cognite/sdk/dist/src';
+import { AnnotationModel } from '@cognite/sdk';
 
 import { FLOATING_ELEMENT_MARGIN } from '../../../pages/ContextualizeEditor/constants';
 import { useAnnotationModelsWithAsset } from '../hooks/useAnnotationModelsWithAsset';

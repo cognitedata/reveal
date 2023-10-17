@@ -121,3 +121,11 @@ export const setContextualizedNodesStyleIndex = (
     contextualizedNodesStyleIndex,
   }));
 };
+
+// TODO: we will keep the same naming as for PCs for now to keep consistency. We will change it once we define a proper naming
+export const setHoveredAnnotation = (annotation: AssetMapping3D | null) => {
+  useCadContextualizeStore.setState((prevState) => ({
+    ...prevState,
+    hoveredAnnotation: annotation,
+  }));
+};

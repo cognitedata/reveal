@@ -27,16 +27,22 @@ import {
 type RevealContentProps = {
   modelId: number;
   revisionId: number;
+  onDeleteAnnotation: (annotationByAssetId: number) => void;
+  onZoomToAnnotation: (annotationByAssetId: number) => void;
 };
 
 export const CadRevealContent = ({
   modelId,
   revisionId,
+  onDeleteAnnotation,
+  onZoomToAnnotation,
 }: RevealContentProps) => {
   const viewer = useReveal();
-  const { isResourceSelectorOpen } = useCadContextualizeStore((state) => ({
-    isResourceSelectorOpen: state.isResourceSelectorOpen,
-  }));
+  const { isResourceSelectorOpen, contextualizedNodes } =
+    useCadContextualizeStore((state) => ({
+      isResourceSelectorOpen: state.isResourceSelectorOpen,
+      contextualizedNodes: state.contextualizedNodes,
+    }));
 
   const handleOnClickResourceSelector = () => {
     if (isResourceSelectorOpen) {
@@ -92,7 +98,13 @@ export const CadRevealContent = ({
           onClick={handleOnClickResourceSelector}
         />
       </StyledResourceSelectorButtonWrapper>
-      <CadAnnotationsCard />
+      <CadAnnotationsCard
+        annotations={contextualizedNodes}
+        onDeleteAnnotation={(annotationByAssetId) => {
+          onDeleteAnnotation(annotationByAssetId);
+        }}
+        onZoomToAnnotation={onZoomToAnnotation}
+      />
     </>
   );
 };
