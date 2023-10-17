@@ -36,9 +36,9 @@ const Container = styled.div`
 `;
 
 const Content = styled.div<{ compact?: boolean; fullscreen?: boolean }>`
-  ${(props) => (props.compact ? `max-width: 1024px;` : '')}
+  ${(props) => (props.compact ? `max-width: 1024px;` : '')};
   width: 100%;
-  ${({ fullscreen }) => fullscreen && `min-width: 100%;`}
+  ${({ fullscreen }) => fullscreen && `min-width: 100%;`};
   height: 100%;
   display: flex;
   flex-direction: column;

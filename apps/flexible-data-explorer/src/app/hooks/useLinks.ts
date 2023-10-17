@@ -1,7 +1,8 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import {
+  createLink,
   getCluster,
   getEnvFromCluster,
   getProject,
@@ -28,82 +29,87 @@ export const useLinks = () => {
   const project = getProject();
   const env = useGetEnv();
 
-  const basename = useMemo(
-    () => (pathname.startsWith('/explore') ? '/explore' : ''),
+  const createInternalLink = useCallback(
+    (path: string, fusionQP?: Record<string, any>) => {
+      if (pathname.startsWith('/explore')) {
+        return `/explore${path}`;
+      }
+      return createLink(`/search${path}`, fusionQP);
+    },
     [pathname]
   );
 
   const homePageLink = useCallback(
     (dataModel: DataModelV2) => {
-      return `${basename}/${dataModel.externalId}/${dataModel.space}/${dataModel.version}`;
+      return createInternalLink(
+        `/${dataModel.externalId}/${dataModel.space}/${dataModel.version}`
+      );
     },
-    [basename]
+    [createInternalLink]
   );
 
   const searchPageLink = useCallback(() => {
-    return `${basename}/search`;
-  }, [basename]);
+    return createInternalLink('/search');
+  }, [createInternalLink]);
 
   const instancePageLink = useCallback(
     (dataModel?: Partial<DataModelV2>, instance?: Partial<Instance>) => {
-      return [
-        basename,
-        dataModel?.externalId,
-        dataModel?.space,
-        dataModel?.version,
-        instance?.dataType,
-        instance?.instanceSpace,
-        instance?.externalId
-          ? encodeURIComponent(instance?.externalId)
-          : undefined,
-      ]
-        .filter((item) => item !== undefined)
-        .join('/');
+      return createInternalLink(
+        [
+          '',
+          dataModel?.externalId,
+          dataModel?.space,
+          dataModel?.version,
+          instance?.dataType,
+          instance?.instanceSpace,
+          instance?.externalId
+            ? encodeURIComponent(instance?.externalId)
+            : undefined,
+        ]
+          .filter((item) => item !== undefined)
+          .join('/')
+      );
     },
-    [basename]
+    [createInternalLink]
   );
 
   const filePageLink = useCallback(
     (externalId: string | number) => {
-      return `${basename}/file/${encodeURIComponent(externalId)}`;
+      return createInternalLink(`/file/${encodeURIComponent(externalId)}`);
     },
-    [basename]
+    [createInternalLink]
   );
 
   const timeseriesPageLink = useCallback(
-    (externalId: string | number) => {
-      return `${basename}/timeseries/${encodeURIComponent(externalId)}`;
+    (externalId: string | number, queryParams?: Record<string, any>) => {
+      return createInternalLink(
+        `/timeseries/${encodeURIComponent(externalId)}`,
+        queryParams
+      );
     },
-    [basename]
+    [createInternalLink]
   );
 
   const sequencePageLink = useCallback(
     (externalId: string | number) => {
-      return `${basename}/file/${encodeURIComponent(externalId)}`;
+      return createInternalLink(`/file/${encodeURIComponent(externalId)}`);
     },
-    [basename]
+    [createInternalLink]
   );
 
-  const canvasAppLink = useCallback(
-    (query: string) => {
-      return `https://${FUSION_URL}/${project}/industrial-canvas?cluster=${cluster}&env=${env}&${query}`;
-    },
-    [cluster, env, project]
-  );
+  const canvasAppLink = useCallback((query: Record<string, any>) => {
+    return createLink('/industrial-canvas', query);
+  }, []);
 
-  const chartsAppLink = useCallback(
-    (query: string) => {
-      return `https://${FUSION_URL}/${project}/charts?cluster=${cluster}&env=${env}&${query}`;
-    },
-    [cluster, env, project]
-  );
+  const chartsAppLink = useCallback((query: Record<string, any>) => {
+    return createLink(`/charts`, query);
+  }, []);
 
   const classicExplorerLink = useCallback(() => {
-    return `https://${FUSION_URL}/${project}/explore/search?cluster=${cluster}&env=${env}`;
-  }, [cluster, env, project]);
+    return createLink(`/explore/search`);
+  }, []);
 
   return {
-    basename,
     homePageLink,
     searchPageLink,
     instancePageLink,

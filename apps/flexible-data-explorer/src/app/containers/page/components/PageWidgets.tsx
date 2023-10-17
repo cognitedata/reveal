@@ -65,7 +65,7 @@ const Content = styled.div<{ hasExpandedWidget: boolean }>`
         grid-auto-rows: 65px;
       `;
     }
-  }}
+  }};
 `;
 
 const Container = styled.div<{ hasExpandedWidget: boolean }>`
@@ -78,5 +78,5 @@ const Container = styled.div<{ hasExpandedWidget: boolean }>`
         height: 100%;
       `;
     }
-  }}
+  }};
 `;

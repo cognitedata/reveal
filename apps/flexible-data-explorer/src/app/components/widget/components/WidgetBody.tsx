@@ -66,5 +66,5 @@ const Container = styled.div<Pick<BaseWidgetProps, 'fullWidth' | 'noPadding'>>`
         padding: 0;
       `;
     }
-  }}
+  }};
 `;

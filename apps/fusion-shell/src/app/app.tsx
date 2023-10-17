@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { FUSION_PATH as FDX_PATH } from '@flexible-data-explorer/app/constants/common';
 import { UserHistoryProvider } from '@user-history';
 
 import { SubAppWrapper, getCluster, getProject } from '@cognite/cdf-utilities';
@@ -13,6 +15,9 @@ import LandingPage from './components/LandingPage/LandingPage';
 import Navigation from './components/Navigation';
 import { UserProfilePage } from './components/UserProfilePage/UserProfilePage';
 import { useUserInformation } from './hooks';
+
+// eslint-disable-next-line @nx/enforce-module-boundaries
+const FDXApp = lazy(() => import('@flexible-data-explorer/app/ShellApp'));
 
 const RoutesWrapper = styled.div`
   height: 100%;
@@ -56,6 +61,14 @@ export function App() {
               <Route
                 path={`${routerBasename}/profile`}
                 element={<UserProfilePage />}
+              />
+              <Route
+                path={`${routerBasename}${FDX_PATH}/*`}
+                element={
+                  <Suspense fallback={<Loader />}>
+                    <FDXApp />
+                  </Suspense>
+                }
               />
             </Routes>
           </RoutesWrapper>

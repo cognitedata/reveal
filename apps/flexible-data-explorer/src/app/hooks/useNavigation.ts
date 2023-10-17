@@ -6,7 +6,7 @@ import queryString from 'query-string';
 import { DateRange, ValueByDataType } from '../containers/Filter';
 import { Instance } from '../services/types';
 import { ContainerReference } from '../types';
-import { createSearchParams } from '../utils/router';
+import { createSearchParams, splitPathAndParams } from '../utils/router';
 
 import { useLinks } from './useLinks';
 import {
@@ -59,8 +59,11 @@ export const useNavigation = () => {
         selectedInstance: options.selectedInstance ?? selectedInstance,
       });
 
+      const baseLink = splitPathAndParams(searchPageLink());
+      baseLink.params.forEach((val, key) => queryParams.append(key, val));
+
       navigate({
-        pathname: searchPageLink(),
+        pathname: baseLink.path,
         search: queryParams.toString(),
       });
     },
@@ -70,13 +73,11 @@ export const useNavigation = () => {
   const toHomePage = useCallback(
     (space: string, dataModel: string, version: string) => {
       navigate(
-        {
-          pathname: homePageLink({
-            externalId: dataModel,
-            space,
-            version,
-          }),
-        },
+        homePageLink({
+          externalId: dataModel,
+          space,
+          version,
+        }),
         {
           replace: true,
         }
@@ -116,21 +117,24 @@ export const useNavigation = () => {
       // Assure that we are looking at the dashboard of the instance
       queryParams.set('viewMode', options.viewMode ?? 'list');
 
-      const pathname = instancePageLink(
-        {
-          externalId: dataModel,
-          space,
-          version,
-        },
-        {
-          dataType,
-          instanceSpace,
-          externalId,
-        }
+      const baseLink = splitPathAndParams(
+        instancePageLink(
+          {
+            externalId: dataModel,
+            space,
+            version,
+          },
+          {
+            dataType,
+            instanceSpace,
+            externalId,
+          }
+        )
       );
+      baseLink.params.forEach((val, key) => queryParams.append(key, val));
 
       navigate({
-        pathname,
+        pathname: baseLink.path,
         search: queryParams.toString(),
       });
     },
@@ -150,8 +154,11 @@ export const useNavigation = () => {
         queryParams.delete('expandedId');
       }
 
+      const baseLink = splitPathAndParams(timeseriesPageLink(externalId));
+      baseLink.params.forEach((val, key) => queryParams.append(key, val));
+
       navigate({
-        pathname: timeseriesPageLink(externalId),
+        pathname: baseLink.path,
         search: queryParams.toString(),
       });
     },
@@ -171,8 +178,11 @@ export const useNavigation = () => {
         queryParams.delete('expandedId');
       }
 
+      const baseLink = splitPathAndParams(filePageLink(externalId));
+      baseLink.params.forEach((val, key) => queryParams.append(key, val));
+
       navigate({
-        pathname: filePageLink(externalId),
+        pathname: baseLink.path,
         search: queryParams.toString(),
       });
     },
@@ -192,8 +202,11 @@ export const useNavigation = () => {
         queryParams.delete('expandedId');
       }
 
+      const baseLink = splitPathAndParams(sequencePageLink(externalId));
+      baseLink.params.forEach((val, key) => queryParams.append(key, val));
+
       navigate({
-        pathname: sequencePageLink(externalId),
+        pathname: baseLink.path,
         search: queryParams.toString(),
       });
     },
@@ -251,12 +264,11 @@ export const useNavigation = () => {
   }, [navigate]);
 
   const toCharts = (timeseriesId: number, dateRange?: DateRange) => {
-    const queryObj = {
+    const query = {
       timeserieIds: timeseriesId,
       startTime: dateRange ? dateRange[0].getTime() : undefined,
       endTime: dateRange ? dateRange[1].getTime() : undefined,
     };
-    const query = queryString.stringify(queryObj);
 
     window.open(chartsAppLink(query), '_blank');
   };
@@ -267,11 +279,12 @@ export const useNavigation = () => {
       JSON.stringify([containerReference])
     );
 
-    const query = queryString.stringify({
-      initializeWithContainerReferences,
-    });
-
-    window.open(canvasAppLink(query), '_blank');
+    window.open(
+      canvasAppLink({
+        initializeWithContainerReferences,
+      }),
+      '_blank'
+    );
   };
 
   const goBack = useCallback(() => {

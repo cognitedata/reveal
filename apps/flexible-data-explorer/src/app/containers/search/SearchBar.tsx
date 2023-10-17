@@ -248,7 +248,7 @@ const Container = styled.div<{
     return css`
       border-radius: 10px;
     `;
-  }}
+  }};
 `;
 
 const Content = styled.div`

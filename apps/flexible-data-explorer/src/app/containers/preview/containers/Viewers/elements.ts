@@ -10,5 +10,5 @@ export const PreviewContainer = styled.div<{ disableOverflow?: boolean }>`
     !disableOverflow &&
     css`
       overflow: hidden;
-    `}
+    `};
 `;

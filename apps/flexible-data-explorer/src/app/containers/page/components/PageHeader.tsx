@@ -82,7 +82,7 @@ const Header = styled.div`
 
 const Actions = styled.div<{ align?: 'left' | 'right' }>`
   ${({ align }) =>
-    align === 'left' ? 'margin-right: auto;' : 'margin-left: auto;'}
+    align === 'left' ? 'margin-right: auto;' : 'margin-left: auto;'};
   gap: 8px;
   display: flex;
 `;

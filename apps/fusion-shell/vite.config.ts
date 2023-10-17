@@ -6,7 +6,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl';
 import react from '@vitejs/plugin-react';
 import PrefixWrap from 'postcss-prefixwrap';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import macrosPlugin from 'vite-plugin-babel-macros';
 import svgr from 'vite-plugin-svgr';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
@@ -64,6 +64,13 @@ const generateSubappImportMapsPlugin = () => ({
 export default defineConfig({
   cacheDir: '../../node_modules/.vite/fusion',
 
+  resolve: {
+    dedupe: ['@cognite/plotting-components'],
+    alias: {
+      fs: require.resolve('rollup-plugin-node-builtins'),
+    },
+  },
+
   server: {
     port: 4200,
     host: '127.0.0.1',
@@ -112,7 +119,18 @@ export default defineConfig({
   ],
 
   define: {
-    'process.env': '({})',
+    'process.platform': `'${process.platform}'`,
+    ...Object.entries({
+      NODE_ENV: 'development',
+      ...loadEnv('development', process.cwd(), 'REACT_APP_'),
+      ...loadEnv('development', process.cwd(), 'PUBLIC_URL'),
+    }).reduce(
+      (obj, [key, value]) => ({
+        ...obj,
+        [`process.env.${key}`]: JSON.stringify(value),
+      }),
+      {}
+    ),
   },
 
   // Uncomment this if you are using workers.

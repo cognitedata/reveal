@@ -67,8 +67,6 @@ const LinkTimeseriesPage: React.FC<
     return <>{children}</>;
   }
 
-  const pathname = timeseriesPageLink(externalId);
-
   const queryParams = new URLSearchParams(search);
 
   if (queryParams.has('expandedId')) {
@@ -76,7 +74,7 @@ const LinkTimeseriesPage: React.FC<
   }
 
   return (
-    <StyledLink to={{ pathname, search: queryParams.toString() }}>
+    <StyledLink to={timeseriesPageLink(externalId, queryParams)}>
       {children}
     </StyledLink>
   );

@@ -211,7 +211,7 @@ const Wrapper = styled.div`
   }
 
   .botui_app_container {
-    width: 100%; // mobile-first
+    width: 100%;
     height: 100%;
     line-height: 1;
 
@@ -262,7 +262,7 @@ const Wrapper = styled.div`
     opacity: 0;
     transform: translateX(-10px);
   }
-  ${CopilotPurpleOverride}
+  ${CopilotPurpleOverride};
 `;
 
 const Overlay = styled(Flex)<{ $showOverlay: boolean; $isExpanded: boolean }>`

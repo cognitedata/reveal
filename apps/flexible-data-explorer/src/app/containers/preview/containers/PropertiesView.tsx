@@ -53,9 +53,9 @@ export const ListContainer = styled.div`
   flex-direction: column;
 `;
 
+// Design wants the border to go edge-to-edge in the container.
+// Instance preview container has a global padding that I don't not want to touch.
 export const ListItem = styled.div`
-  // Design wants the border to go edge-to-edge in the container.
-  // Instance preview container has a global padding that I don't not want to touch.
   margin: 0 -12px;
   padding: 8px 16px;
   display: flex;

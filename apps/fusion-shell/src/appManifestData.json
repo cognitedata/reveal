@@ -269,5 +269,11 @@
       "production": "https://cdf-vision-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/vision" }]
+  },
+  {
+    "key": "cdf-flexible-data-explorer",
+    "appName": "@cognite/cdf-flexible-data-explorer",
+    "hosting": false,
+    "routes": [{ "route": "/:tenantName/search" }]
   }
 ]

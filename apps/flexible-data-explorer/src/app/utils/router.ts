@@ -1,5 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 import isObject from 'lodash/isObject';
+import queryString from 'query-string';
 
 export const createSearchParams = (
   params: Record<string, string | object | undefined>
@@ -19,4 +20,11 @@ export const createSearchParams = (
   });
 
   return validatedParams;
+};
+
+export const splitPathAndParams = (fullPath: string) => {
+  const url = queryString.parseUrl(fullPath);
+  const params = new URLSearchParams(queryString.stringify(url.query));
+
+  return { path: url.url, params };
 };

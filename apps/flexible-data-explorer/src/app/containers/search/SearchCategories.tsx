@@ -161,7 +161,7 @@ const Content = styled.div<{ selected?: boolean }>`
         color: #3b82f6 !important;
         font-weight: 600;
       }
-    `}
+    `};
 `;
 
 const NameText = styled(Typography.Body)``;

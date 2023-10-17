@@ -183,7 +183,7 @@ export const AIResults = () => {
 };
 
 const Wrapper = styled.div`
-  ${CopilotPurpleOverride}
+  ${CopilotPurpleOverride};
   --cogs-border--status-neutral--strong: #6f3be4;
 
   && > div {

@@ -1,3 +1,6 @@
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { FUSION_PATH as FDX_PATH } from '@flexible-data-explorer/app/constants/common';
+
 import images from '../../assets/images';
 import { TranslationKeys } from '../../i18n';
 import { AppItem, RawAppItem } from '../types';
@@ -153,6 +156,15 @@ export const rawAppsData: RawAppItem[] = [
     importMapApp: '@cognite/cdf-data-exploration',
     img: images.ExplorerAppImg,
     ariaLabel: 'Go to Data Explorer',
+  },
+  {
+    category: 'explore',
+    internalId: 'flexible-data-explorer',
+    icon: 'Search',
+    linkTo: FDX_PATH,
+    importMapApp: '@cognite/cdf-flexible-data-explorer',
+    img: images.FDXImg,
+    ariaLabel: 'Go to Search',
   },
   {
     category: 'explore',
@@ -351,19 +363,77 @@ export type QuickLink = {
   ariaLabel: string;
 };
 
+export type QuickLinkApp =
+  | {
+      id: string;
+      preview: true;
+      visible: boolean;
+      alternative: QuickLinkApp;
+    }
+  | {
+      id: string;
+      preview: false;
+    };
+
 export type QuickLinks = Record<
   'suggestions' | 'integrate' | 'explore' | 'build' | 'popular' | 'recent',
-  string[]
+  QuickLinkApp[]
 >;
 
-export const getQuickLinks = () => {
+export const getQuickLinks = (flags: Record<string, boolean>) => {
   const quickLinks: QuickLinks = {
-    suggestions: ['extractors', 'data-explorer', 'charts'],
-    integrate: ['extractors', 'raw-explorer', 'transformations'],
-    explore: ['data-explorer', 'vision-explorer', 'data-catalog'],
-    build: ['charts', 'fdm', 'functions'],
+    suggestions: [
+      {
+        id: 'flexible-data-explorer',
+        preview: true,
+        visible: flags['flexible-data-explorer'],
+        alternative: {
+          id: 'data-explorer',
+          preview: false,
+        },
+      },
+      {
+        id: 'industry-canvas',
+        preview: true,
+        visible: flags['industry-canvas'],
+        alternative: { id: 'transformations', preview: false },
+      },
+      { id: 'charts', preview: false },
+    ],
+    integrate: [
+      { id: 'extractors', preview: false },
+      { id: 'raw-explorer', preview: false },
+      { id: 'transformations', preview: false },
+    ],
+    explore: [
+      { id: 'data-explorer', preview: false },
+      { id: 'vision-explorer', preview: false },
+      { id: 'data-catalog', preview: false },
+    ],
+    build: [
+      { id: 'charts', preview: false },
+      { id: 'fdm', preview: false },
+      { id: 'functions', preview: false },
+    ],
     recent: [],
-    popular: ['data-explorer', 'raw-explorer', 'transformations'],
+    popular: [
+      {
+        id: 'flexible-data-explorer',
+        preview: true,
+        visible: flags['flexible-data-explorer'],
+        alternative: {
+          id: 'data-explorer',
+          preview: false,
+        },
+      },
+      {
+        id: 'industry-canvas',
+        preview: true,
+        visible: flags['industry-canvas'],
+        alternative: { id: 'transformations', preview: false },
+      },
+      { id: 'charts', preview: false },
+    ],
   };
 
   return { quickLinks };

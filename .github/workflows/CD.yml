@@ -68,7 +68,7 @@ jobs:
         uses: './scripts/github-actions/nx-get-affected'
         with:
           base: 'HEAD~1'
-          projects: '*shell'
+          projects: 'fusion-shell'
           isRelease: 'true'
           branchName: ${{ github.ref_name }}
 

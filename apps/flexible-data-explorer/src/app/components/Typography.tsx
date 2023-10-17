@@ -68,7 +68,7 @@ const BodyWrapper = styled.p<Props>`
             text-transform: uppercase;
           }
         `
-      : ''}
+      : ''};
 
   overflow: hidden;
   font-feature-settings: 'ss04' on;
@@ -119,7 +119,7 @@ const TitleWrapper = styled.h1<Props>`
             text-transform: uppercase;
           }
         `
-      : ''}
+      : ''};
 
   ${({ size }) => {
     if (size === 'xsmall') {

@@ -8,7 +8,11 @@
       "executor": "nx:noop",
       "dependsOn": [
         {
-          "projects": ["cdf-sdk-singleton", "cdf-route-tracker"],
+          "projects": [
+            "cdf-sdk-singleton",
+            "cdf-route-tracker",
+            "flexible-data-explorer"
+          ],
           "target": "build-single-spa"
         }
       ]

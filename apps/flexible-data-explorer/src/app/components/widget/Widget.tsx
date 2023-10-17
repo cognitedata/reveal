@@ -82,5 +82,5 @@ const Container = styled.div<BaseWidgetProps>`
       grid-row: span ${props.rows || 1};
       width: 100%;
     `;
-  }}
+  }};
 `;

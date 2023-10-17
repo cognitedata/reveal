@@ -533,6 +533,7 @@ jobs:
           AFFECTED_APPS: ${{ needs.setup.outputs.affected-apps }}
           PULL_REQUEST_NUMBER: ${{ github.event.number }}
           CYPRESS_FUSION_SHELL_E2E_AAD_PASSWORD: ${{ secrets.CYPRESS_FUSION_SHELL_E2E_AAD_PASSWORD }}
+          NODE_OPTIONS: '--max_old_space_size=8192'
         # execute Cypress using a custom test command
         with:
           # let's make sure our tests pass on Chrome browser
@@ -576,6 +577,7 @@ jobs:
         env:
           CLIENT_ID: ${{ secrets.DATA_EXPLORER_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.DATA_EXPLORER_CLIENT_SECRET }}
+          NODE_OPTIONS: '--max_old_space_size=8192'
 
           # used in simint
           CLIENT_ID_CHARTS_AZUREDEV: ${{ secrets.CLIENT_ID_CHARTS_AZUREDEV }}

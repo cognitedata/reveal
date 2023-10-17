@@ -386,7 +386,7 @@ pods {
 
       stage('Build fusion-shell') {
         container('apphosting') {
-          sh(script: "yarn nx build fusion-shell");
+          sh(script: "NODE_OPTIONS=--max_old_space_size=8192 yarn nx build fusion-shell");
         }
 
         container('docker') {

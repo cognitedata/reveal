@@ -11,6 +11,7 @@ import EmptyStateImg from './EmptyState.svg';
 import ExplorerAppImg from './Explorer.svg';
 import ExtractionPipelinesAppImg from './ExtractionPipelines.svg';
 import ExtractorsAppImg from './Extractor.svg';
+import FDXImg from './FDX.svg';
 import FlowsAppImg from './Flows.svg';
 import ImageAndVideoManagementAppImg from './ImageAndVideoManagement.svg';
 import IndustryCanvasAppImg from './IndustryCanvas.svg';
@@ -40,6 +41,7 @@ const images = {
   ExplorerAppImg,
   ExtractorsAppImg,
   ExtractionPipelinesAppImg,
+  FDXImg,
   FlowsAppImg,
   ImageAndVideoManagementAppImg,
   IndustryCanvasAppImg,

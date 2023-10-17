@@ -76,7 +76,7 @@ const Actions = styled.div<{ align: 'left' | 'right' }>`
         `
       : css`
           justify-content: flex-end;
-        `}
+        `};
 
   width: 100%;
   display: flex;

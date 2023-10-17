@@ -30,6 +30,7 @@ const CDFHelpCenter = ({
                 helpCenterOptions[helpOption as keyof typeof helpCenterOptions];
               return (
                 <StyledHelpCenterMenuOption
+                  key={helpOption}
                   href={helpResource.link}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -39,7 +40,7 @@ const CDFHelpCenter = ({
                     })
                   }
                 >
-                  <Menu.Item key={helpOption}>
+                  <Menu.Item>
                     <StyledIcon type={helpResource.icon} />
                     {helpResource.title}
                   </Menu.Item>

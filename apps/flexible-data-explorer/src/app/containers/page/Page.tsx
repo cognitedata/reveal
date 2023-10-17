@@ -37,5 +37,5 @@ const PageContainer = styled.div<{ $disableScrollbarGutter?: boolean }>`
         scrollbar-gutter: stable both-edges;
       `;
     }
-  }}
+  }};
 `;

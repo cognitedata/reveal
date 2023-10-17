@@ -56,7 +56,8 @@ export function generateCSPHeader(appManifests: AppManifest[]) {
       const envs: Environment[] = ['staging', 'preview', 'production'];
       for (const env of envs) {
         // we can ignore when the hosting is pointing to the same domain (we serve the file)
-        if (hosting[env].startsWith('/')) continue;
+        if (typeof hosting === 'boolean' || hosting[env].startsWith('/'))
+          continue;
         appendHeader(cspHeaderGroups, hosting[env]);
       }
     });

@@ -15,8 +15,9 @@ type RouteConfig = {
 
 const matcher = (config: RouteConfig) => match(config.route, { end: false });
 
-const applications: RegisterApplicationConfig[] = appManifests.map(
-  (appConfig) => {
+const applications: RegisterApplicationConfig[] = appManifests
+  .filter((app) => app.hosting)
+  .map((appConfig) => {
     return {
       name: appConfig.appName,
       app: () => System.import(appConfig.appName),
@@ -24,8 +25,7 @@ const applications: RegisterApplicationConfig[] = appManifests.map(
         return matchesAny(location, appConfig.routes.map(matcher));
       },
     };
-  }
-);
+  });
 
 applications.forEach((applicationConfig) => {
   registerApplication(applicationConfig);

@@ -89,7 +89,7 @@ const ButtonWrapper = styled(Flex)<{ $visible: boolean }>`
       props.$visible &&
       css`
         border-radius: 50%;
-      `}
+      `};
     transition: all 0.4s;
   }
 
@@ -128,7 +128,7 @@ const ButtonWrapper = styled(Flex)<{ $visible: boolean }>`
         #2e1065 100%
       );
       border-radius: 50%;
-    `}
+    `};
 
   box-shadow: 0px 1px 16px 4px rgba(79, 82, 104, 0.1),
     0px 1px 8px rgba(79, 82, 104, 0.08), 0px 1px 2px rgba(79, 82, 104, 0.24);

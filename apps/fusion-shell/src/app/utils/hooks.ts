@@ -9,12 +9,18 @@ import { getCluster } from '@cognite/cdf-utilities';
 import { useFlag } from '@cognite/react-feature-flags';
 import { useSearch } from '@cognite/sdk-react-query-hooks';
 
+import { appManifests } from '../../appManifests';
 import { SearchItem } from '../components/GlobalSearch/ResourcesMenuGroup';
 import { AppItem, Token } from '../types';
 
 import { useImportMapApps } from './useImportMapApps';
 
 export const useExperimentalFeatures = () => {
+  const { isEnabled: isFDXEnabled } = useFlag('FDX_in_Fusion', {
+    fallback: false,
+    forceRerender: true,
+  });
+
   const { isEnabled: isWorkflowsEnabled } = useFlag('DATA_OPS_workflows', {
     fallback: false,
     forceRerender: true,
@@ -109,7 +115,11 @@ export const useExperimentalFeatures = () => {
     forceRerender: true,
   });
 
+  // NOTE
+  // If you add or remove a flag from here, please also check sections/sections.ts
+  // for correct configuration in landing page quick links from `getQuickLinks` function
   const experimentalFeatures: Record<string, boolean> = {
+    'flexible-data-explorer': isFDXEnabled,
     jupyter: isDSHubEnabled, // This is the old DSHub that we should remove
     notebook: isJupyterNotebooksEnabled,
     streamlit: isStreamLitEnabled,
@@ -138,7 +148,12 @@ export const useFeatureToggledItems = <T extends AppItem>(items: T[]) => {
   const experimentalFeatures = useExperimentalFeatures();
 
   return items
-    .filter((item) => importMapApps?.includes(item.importMapApp))
+    .filter(
+      (item) =>
+        importMapApps?.includes(item.importMapApp) ||
+        appManifests.find((app) => app.appName === item.importMapApp)
+          ?.hosting === false
+    )
     .filter((item) => !item.hideInCluster?.includes(cluster))
     .filter((item) => {
       if (experimentalFeatures[item.internalId] !== undefined) {

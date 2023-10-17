@@ -11,12 +11,14 @@ import { useFlag } from '@cognite/react-feature-flags';
 
 import { TranslationKeys, useTranslation } from '../../../i18n';
 import {
+  QuickLinkApp,
   QuickLinks as TypeQuickLinks,
   getAllAppsData,
   getQuickLinks,
   getQuickLinksFilter,
   rawAppsData,
 } from '../../sections/sections';
+import { AppItem } from '../../types';
 import { useExperimentalFeatures } from '../../utils/hooks';
 import { trackUsage } from '../../utils/metrics';
 import { StyledPreviewTag } from '../AllApps/AppListItem';
@@ -43,7 +45,7 @@ export default function QuickLinks(): JSX.Element {
   const [activeLink, setActiveLink] = useState<string | undefined>(undefined);
 
   const { appsData } = getAllAppsData(t);
-  const { quickLinks } = getQuickLinks();
+  const { quickLinks } = getQuickLinks(experimentalFeatures);
   const quickLinksFilters = getQuickLinksFilter();
 
   const [displayQuickLinks, setDisplayQuickLinks] =
@@ -108,6 +110,16 @@ export default function QuickLinks(): JSX.Element {
   const onMouseHoverLinkHandler = (isHover: boolean, linkKey: string) =>
     setActiveLink(isHover ? linkKey : undefined);
 
+  const findAppItem = (app?: QuickLinkApp): AppItem | undefined => {
+    if (!app) {
+      return undefined;
+    }
+    if (app.preview === false || app.visible) {
+      return appsData.find((item) => app.id === item.internalId);
+    }
+    return findAppItem(app.alternative);
+  };
+
   return (
     <QuickLinksWrapper direction="column" gap={24}>
       <StyledTitle level={4}>{t('title-quick-access')}</StyledTitle>
@@ -157,8 +169,9 @@ export default function QuickLinks(): JSX.Element {
       >
         {displayQuickLinks[
           appliedQuickLinkFilter as keyof typeof quickLinks
-        ].map((appLink) => {
-          const appItem = appsData.find((item) => appLink === item?.internalId); // useApplications are saved as subAppPath in Navigation
+        ].map((linkApp) => {
+          const appItem = findAppItem(linkApp);
+
           if (!appItem) {
             return undefined;
           }
