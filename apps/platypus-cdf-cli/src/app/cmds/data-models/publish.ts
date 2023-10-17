@@ -133,7 +133,17 @@ export class PublishCmd extends CLICommand {
       Response.error(
         'The data model specified does not exist. Create a data model first before publishing a new version.'
       );
-      return;
+      throw new PlatypusValidationError(
+        'The data model specified does not exist. Create a data model first before publishing a new version.',
+        'NOT_FOUND',
+        [
+          {
+            status: 404,
+            message:
+              'The data model specified does not exist. Create a data model first before publishing a new version.',
+          },
+        ]
+      );
     }
 
     let dataModelResponse: DataModel;
