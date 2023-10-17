@@ -27,7 +27,7 @@ export const Image360HistoricalPanel = ({
 
   return (
     <Container isExpanded={revisionDetailsExpanded}>
-      <Tooltip content="360 Image historical details">
+      <Tooltip content={t('IMAGES_360_DETAILS_TOOLTIP', '360 Image historical details')}>
         <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
           {!revisionDetailsExpanded && (
             <div style={{ width: 'fit-content' }}>
