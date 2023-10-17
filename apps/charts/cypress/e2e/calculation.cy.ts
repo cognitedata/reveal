@@ -15,7 +15,7 @@ describe('Add calculation', () => {
     cy.addCalculation();
 
     cy.log('close node editor');
-    cy.getBySel('close-button').click();
+    cy.getBySel('node-editor-close-button').click();
 
     cy.log('new calculation should be added to the table');
     cy.get('tbody').find('tr').should('have.length', 2);
