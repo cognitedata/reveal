@@ -3,106 +3,200 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Image360CollectionContainer, RevealContainer } from '../src';
-import { CogniteClient } from '@cognite/sdk';
+import {
+  RevealContainer,
+  RevealToolbar,
+  type AddResourceOptions,
+  type AddImageCollection360Options
+} from '../src';
 import { Color } from 'three';
-import { type ReactElement } from 'react';
-import { QueryClient } from '@tanstack/query-core';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { use360Annotations } from '../src/hooks/use360Annotations';
-import styled from 'styled-components';
+import { type ReactElement, useState, useMemo } from 'react';
+import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
+import {
+  useAllAssetsMapped360Annotations,
+  useSearchAssetsMapped360Annotations
+} from '../src/hooks/useSearchAssetsMapped360Annotations';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { isEqual } from 'lodash';
+
+const queryClient = new QueryClient();
+const sdk = createSdkByUrlToken();
+
+type Equipment = {
+  view: string;
+  externalId: string;
+  space: string;
+  properties?: Record<string, any>;
+};
+
+const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
+  const [tempSearchQuery, setTempSearchQuery] = useState<string>('');
+  const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
+  const [searchMethod, setSearchMethod] = useState<'allAnnotationAssets' | 'annotationAssetSearch'>(
+    'allAnnotationAssets'
+  );
+
+  const filteredResources = resources.filter(
+    (resource): resource is AddImageCollection360Options => 'siteId' in resource
+  );
+  const siteIds = filteredResources.map((filteredResource) => {
+    return filteredResource.siteId;
+  });
+
+  const { data: assetSearchData } = useSearchAssetsMapped360Annotations(
+    siteIds,
+    sdk,
+    mainSearchQuery
+  );
+
+  const { data: allAssets } = useAllAssetsMapped360Annotations(siteIds, 50, sdk);
+
+  const filteredEquipment = useMemo(() => {
+    if (searchMethod === 'allAnnotationAssets') {
+      const transformedAssets = allAssets?.flat() ?? [];
+
+      const filteredAssets =
+        transformedAssets.filter((asset) => {
+          const isInName = asset.name.toLowerCase().includes(mainSearchQuery.toLowerCase());
+          const isInDescription = asset.description
+            ?.toLowerCase()
+            .includes(mainSearchQuery.toLowerCase());
+
+          return isInName || isInDescription;
+        }) ?? [];
+
+      const mappedAssets: Equipment[] = filteredAssets.map((asset) => {
+        return {
+          view: 'Asset',
+          externalId: asset.id + '',
+          space: 'Whole project',
+          properties: {
+            name: asset.name,
+            description: asset.description
+          }
+        };
+      });
+
+      return mappedAssets;
+    } else if (searchMethod === 'annotationAssetSearch') {
+      if (assetSearchData === undefined) {
+        return [];
+      }
+
+      const searchedEquipment: Equipment[] = assetSearchData.map((asset) => {
+        return {
+          view: 'Asset',
+          externalId: asset.id + '',
+          space: 'Whole project',
+          properties: {
+            name: asset.name,
+            description: asset.description
+          }
+        };
+      });
+
+      return searchedEquipment;
+    } else {
+      return [];
+    }
+  }, [mainSearchQuery, allAssets, assetSearchData, searchMethod]);
+
+  return (
+    <>
+      <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
+        <ReactQueryDevtools position="bottom-right" />
+        <RevealResourcesFitCameraOnLoad
+          resources={resources}
+          defaultResourceStyling={{
+            cad: {
+              default: { color: new Color('#efefef') },
+              mapped: { color: new Color('#c5cbff') }
+            }
+          }}
+        />
+        <RevealToolbar />
+      </RevealContainer>
+      <h1>Mapped Annotation</h1>
+      <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '0 8px 8px 0' }}>
+        <input
+          onInput={(event) => {
+            setTempSearchQuery((event.target as HTMLInputElement).value);
+          }}></input>
+        <button
+          onClick={() => {
+            setMainSearchQuery(tempSearchQuery);
+          }}>
+          Search
+        </button>
+        <button
+          onClick={() => {
+            setSearchMethod('allAnnotationAssets');
+          }}>
+          All annotation asset mappings
+        </button>
+        <button
+          onClick={() => {
+            setSearchMethod('annotationAssetSearch');
+          }}>
+          Annotation asset search hook
+        </button>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          height: 200,
+          overflow: 'scroll'
+        }}>
+        {filteredEquipment.map((equipment) => (
+          <div key={equipment.externalId} style={{ border: '1px solid green' }}>
+            <b>{(equipment?.view ?? determineViewFromQueryResultNodeItem(equipment)) + ' '}</b>
+            <span>{equipment.externalId + ' '}</span>
+            <span>
+              <b>Space:</b> {equipment.space + ' '}
+            </span>
+            {equipment.properties !== undefined && JSON.stringify(equipment.properties)}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
 
 const meta = {
-  title: 'Example/AnnotationAsset',
-  component: Image360CollectionContainer,
+  title: 'Example/AnnotationSearchHooks',
+  component: StoryContent,
   tags: ['autodocs']
-} satisfies Meta<typeof Image360CollectionContainer>;
+} satisfies Meta<typeof StoryContent>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const token = new URLSearchParams(window.location.search).get('token') ?? '';
-const sdk = new CogniteClient({
-  appId: 'reveal.example',
-  baseUrl: 'https://greenfield.cognitedata.com',
-  project: '3d-test',
-  getToken: async () => await Promise.resolve(token)
-});
-
-const TableContainer = styled.div`
-  max-height: 300px;
-  overflow-y: auto;
-`;
-
-const StyledTable = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-
-  th,
-  td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ccc;
-  }
-
-  th {
-    background-color: #f2f2f2;
-  }
-`;
-
-type AnnotationAssetElementsProps = {
-  siteId: string;
-};
-
-function AnnotationAssetElements({ siteId }: AnnotationAssetElementsProps): ReactElement {
-  const annotations = use360Annotations(sdk, [siteId] ?? ['celanese1']);
-
-  return (
-    <>
-      {annotations.length > 0 && (
-        <TableContainer>
-          <StyledTable>
-            <thead>
-              <tr>
-                {Object.keys(annotations[0]).map((key) => (
-                  <th key={key}>{key}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {annotations.map((item, index) => (
-                <tr key={index}>
-                  {Object.values(item).map((value, i) => (
-                    <td key={i}>
-                      {typeof value === 'object' && value instanceof Date
-                        ? value.toString()
-                        : value}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </StyledTable>
-        </TableContainer>
-      )}
-    </>
-  );
-}
-
-const queryClient = new QueryClient();
-
 export const Main: Story = {
   args: {
-    siteId: 'celanese1'
+    resources: [
+      {
+        siteId: 'XOM-HCU1_north_v02'
+      }
+    ]
   },
-  render: ({ siteId }) => (
-    <>
-      <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-        <Image360CollectionContainer siteId={siteId} />
-      </RevealContainer>
+  render: ({ resources }) => {
+    return (
       <QueryClientProvider client={queryClient}>
-        <AnnotationAssetElements siteId={siteId} />
+        <StoryContent resources={resources} />
       </QueryClientProvider>
-    </>
-  )
+    );
+  }
 };
+
+function determineViewFromQueryResultNodeItem(nodeItem: Equipment): string {
+  return findNonZeroProperty(nodeItem?.properties?.[0]) ?? 'Unknown';
+}
+
+function findNonZeroProperty(properties?: Record<string, any>): string | undefined {
+  return Object.keys(properties ?? {}).find((key) => !isEqual(properties?.[key], {}));
+}
