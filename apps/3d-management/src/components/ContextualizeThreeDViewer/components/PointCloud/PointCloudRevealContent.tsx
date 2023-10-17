@@ -1,8 +1,6 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 
 import styled from 'styled-components';
-
-import { head } from 'lodash';
 
 import { Button, ToolBar } from '@cognite/cogs.js';
 import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
@@ -13,18 +11,18 @@ import {
 } from '@cognite/reveal-react-components';
 
 import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
-import { useIntersectAnnotationVolumesOnClick } from '../../hooks/useIntersectAnnotationBoundsOnClick';
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
   setModelLoaded,
+  setSelectedAnnotationId,
   ToolType,
   useContextualizeThreeDViewerStore,
-  setSelectedAnnotationId,
 } from '../../useContextualizeThreeDViewerStore';
 import { AnnotationsCard } from '../AnnotationsCard';
 import { SelectedAnnotationBoxToolbar } from '../SelectedAnnotationToolbar';
 
+import { Annotations } from './Annotations';
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 interface RevealContentProps {
@@ -35,19 +33,28 @@ interface RevealContentProps {
   onUpdateCdfThreeDAnnotation: () => void;
 }
 
-interface SelectedAnnotationToolbarProps {
+type SelectedAnnotationToolbarProps = {
+  onDeleteAnnotation: (annotationId: number) => void;
   onUpdateCdfThreeDAnnotation: () => void;
-}
-
+};
 const SelectedAnnotationToolbar: FC<SelectedAnnotationToolbarProps> = ({
+  onDeleteAnnotation,
   onUpdateCdfThreeDAnnotation,
-}) => {
+}: SelectedAnnotationToolbarProps) => {
   const { tool, selectedAnnotationId, transformMode } =
     useContextualizeThreeDViewerStore((state) => ({
       tool: state.tool,
       selectedAnnotationId: state.selectedAnnotationId,
       transformMode: state.transformMode,
     }));
+
+  const handleDeleteClicked = useCallback(() => {
+    if (selectedAnnotationId === null) {
+      return;
+    }
+    setSelectedAnnotationId(null);
+    onDeleteAnnotation(selectedAnnotationId);
+  }, [selectedAnnotationId, onDeleteAnnotation]);
 
   if (tool !== ToolType.SELECT_TOOL || selectedAnnotationId === null) {
     return <></>;
@@ -57,6 +64,7 @@ const SelectedAnnotationToolbar: FC<SelectedAnnotationToolbarProps> = ({
     <SelectedAnnotationBoxToolbar
       transformMode={transformMode}
       onUpdateCdfThreeDAnnotation={onUpdateCdfThreeDAnnotation}
+      onDeleteClicked={handleDeleteClicked}
     />
   );
 };
@@ -69,20 +77,12 @@ export const PointCloudRevealContent = ({
   onUpdateCdfThreeDAnnotation,
 }: RevealContentProps) => {
   const viewer = useReveal();
-  const { isResourceSelectorOpen, annotations, tool } =
+  const { isResourceSelectorOpen, annotations } =
     useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       annotations: state.annotations,
       tool: state.tool,
     }));
-
-  useIntersectAnnotationVolumesOnClick(
-    (intersectedAnnotationData) =>
-      setSelectedAnnotationId(
-        head(intersectedAnnotationData)?.annotationId ?? null
-      ),
-    { enabled: tool === ToolType.SELECT_TOOL }
-  );
 
   const handleModelOnLoad = (model: CogniteModel) => {
     setModelLoaded();
@@ -110,7 +110,9 @@ export const PointCloudRevealContent = ({
         onLoad={handleModelOnLoad}
       />
 
-      <PointCloudToolBar onDeleteAnnotation={onDeleteAnnotation} />
+      <Annotations />
+
+      <PointCloudToolBar />
 
       <StyledResourceSelectorButtonWrapper>
         <Button
@@ -129,6 +131,7 @@ export const PointCloudRevealContent = ({
       </StyledResourceSelectorButtonWrapper>
       <SelectedAnnotationToolbar
         onUpdateCdfThreeDAnnotation={onUpdateCdfThreeDAnnotation}
+        onDeleteAnnotation={onDeleteAnnotation}
       />
       <AnnotationsCard
         annotations={annotations}

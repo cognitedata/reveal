@@ -20,6 +20,8 @@ export const STEP_POINT_SIZE = 0.1;
 export const ANNOTATION_SUGGESTED_COLOR = 0xffff00; // yellow
 export const ANNOTATION_APPROVED_COLOR = 0x00ff00; // green
 export const ANNOTATION_REJECTED_COLOR = 0xff0000; // red
+export const ANNOTATION_LINE_WIDTH = 3;
+export const ANNOTATION_SELECTED_LINE_WIDTH = 10;
 export const ANNOTATION_CYLINDER_RADIUS_MARGIN = 0.2; // 20 % percent extra margin on the cylinder radius
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;

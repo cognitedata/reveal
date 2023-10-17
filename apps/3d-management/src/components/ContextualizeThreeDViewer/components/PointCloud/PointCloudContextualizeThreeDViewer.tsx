@@ -6,7 +6,6 @@ import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
 import {
   QueryFunctionContext,
-  useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
@@ -21,6 +20,7 @@ import {
   defaultRevealColor,
 } from '../../../../pages/ContextualizeEditor/constants';
 import { useLocalStorage } from '../../../../utils/useLocalStorage';
+import { useAnnotationMutation } from '../../hooks/useAnnotationsMutation';
 import {
   setModelId,
   setPendingAnnotation,
@@ -42,13 +42,6 @@ const fetchAnnotations = async ({
 }: QueryFunctionContext<[string, CogniteClient, number]>) => {
   const [_key, sdk, modelId] = queryKey;
   return await getCdfAnnotations(sdk, modelId);
-};
-
-const deleteCdfAnnotation = async (
-  sdk: CogniteClient,
-  annotationId: number
-) => {
-  return await sdk.annotations.delete([{ id: annotationId }]);
 };
 
 type ContextualizeThreeDViewerProps = {
@@ -85,15 +78,7 @@ export const PointCloudContextualizeThreeDViewer = ({
     fetchAnnotations
   );
 
-  const mutation = useMutation(
-    (annotationId: number) => deleteCdfAnnotation(sdk, annotationId),
-    {
-      onSuccess: () => {
-        // Invalidate to refetch
-        queryClient.invalidateQueries(['annotations', sdk, modelId]);
-      },
-    }
-  );
+  const mutation = useAnnotationMutation();
 
   const onZoomToAnnotation = useZoomToAnnotation();
   const updateCdfThreeDAnnotation = useUpdateCdfThreeDAnnotation();
@@ -142,7 +127,7 @@ export const PointCloudContextualizeThreeDViewer = ({
     if (pointCloudModel === undefined) return;
 
     if (selectedAnnotationId !== null) {
-      deleteCdfAnnotation(sdk, selectedAnnotationId);
+      mutation.mutate(selectedAnnotationId);
     }
     createCdfThreeDAnnotation({
       sdk,

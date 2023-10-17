@@ -11,19 +11,14 @@ import {
   setPendingAnnotation,
   CubeAnnotation,
 } from '../../../useContextualizeThreeDViewerStore';
-import { createAnnotationsAsWireframes } from '../../../utils/annotations/annotationUtils';
 import { getAnnotationAsBox3 } from '../../../utils/annotations/getAnnotationAsBox3';
-import {
-  createTransformControls,
-  TransformMode,
-} from '../../../utils/createTransformControls';
+import { createTransformControls } from '../../../utils/createTransformControls';
 import { getCognitePointCloudModel } from '../../../utils/getCognitePointCloudModel';
 import { hideBoundingVolumes } from '../../../utils/hideBoundingVolumes';
 import { showBoundingVolumes } from '../../../utils/showBoundingVolumes';
 
 const HOVERING_ANNOTATION_ID = 'hovered-annotation';
 const PENDING_ANNOTATION_ID = 'pending-annotation';
-const ANNOTATION_AS_WIREFRAME_ID = 'annotation-as-wireframe';
 
 // Reveal should add a method that list all of the 3D objects in the scene.
 // For now, I'm using this cache to keep track of the objects that is added to the scene.
@@ -51,11 +46,9 @@ export const useSyncStateWithViewerPointCloud = () => {
   const {
     annotations,
     hoveredAnnotationId,
-    isModelLoaded,
     modelId,
     pendingAnnotation,
     shouldShowBoundingVolumes,
-    shouldShowWireframes,
     threeDViewer,
     tool,
     visualizationOptions,
@@ -64,11 +57,9 @@ export const useSyncStateWithViewerPointCloud = () => {
   } = useContextualizeThreeDViewerStore((state) => ({
     annotations: state.annotations,
     hoveredAnnotationId: state.hoveredAnnotationId,
-    isModelLoaded: state.isModelLoaded,
     modelId: state.modelId,
     pendingAnnotation: state.pendingAnnotation,
     shouldShowBoundingVolumes: state.shouldShowBoundingVolumes,
-    shouldShowWireframes: state.shouldShowWireframes,
     threeDViewer: state.threeDViewer,
     tool: state.tool,
     visualizationOptions: state.visualizationOptions,
@@ -229,52 +220,13 @@ export const useSyncStateWithViewerPointCloud = () => {
     });
     if (pointCloudModel === undefined) return;
 
-    if (shouldShowBoundingVolumes || tool === ToolType.DELETE_ANNOTATION) {
+    if (shouldShowBoundingVolumes) {
       showBoundingVolumes(pointCloudModel);
       return;
     }
 
     hideBoundingVolumes(threeDViewer, pointCloudModel);
   }, [shouldShowBoundingVolumes, threeDViewer, modelId, tool]);
-
-  // Sync all annotation wireframes with viewer.
-  useEffect(() => {
-    if (threeDViewer === null) return;
-    if (isModelLoaded === false) return;
-
-    removeObjectByName(threeDViewer, ANNOTATION_AS_WIREFRAME_ID);
-
-    if (!shouldShowWireframes || annotations === null || modelId === null)
-      return;
-
-    const pointCloudModel = getCognitePointCloudModel({
-      modelId,
-      viewer: threeDViewer,
-    });
-    if (pointCloudModel === undefined) return;
-    const filteredAnnotations =
-      selectedAnnotationId !== null && pendingAnnotation !== null
-        ? annotations.filter(
-            (annotation) => annotation.id !== selectedAnnotationId
-          )
-        : annotations;
-
-    const group = createAnnotationsAsWireframes(
-      threeDViewer,
-      filteredAnnotations,
-      pointCloudModel.getCdfToDefaultModelTransformation()
-    );
-    group.name = ANNOTATION_AS_WIREFRAME_ID;
-    addObject(threeDViewer, group);
-  }, [
-    shouldShowWireframes,
-    threeDViewer,
-    annotations,
-    modelId,
-    isModelLoaded,
-    pendingAnnotation,
-    selectedAnnotationId,
-  ]);
 
   // Sync hovered annotation with viewer.
   useEffect(() => {

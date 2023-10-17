@@ -12,12 +12,13 @@ import { TransformMode } from '../utils/createTransformControls';
 import ToolTooltip from './ToolTooltip';
 interface AnnotationBoxToolbarContentProps {
   onUpdateCdfThreeDAnnotation: (annotation) => void;
+  onDeleteClicked?: () => void;
   transformMode: TransformMode | null;
 }
 
 export const SelectedAnnotationBoxToolbarContent: FC<
   AnnotationBoxToolbarContentProps
-> = ({ transformMode, onUpdateCdfThreeDAnnotation }) => {
+> = ({ transformMode, onUpdateCdfThreeDAnnotation, onDeleteClicked }) => {
   return (
     <Container>
       <ToolBar direction="horizontal">
@@ -66,7 +67,13 @@ export const SelectedAnnotationBoxToolbarContent: FC<
           key="scale tooltip"
           content={<ToolTooltip label="Delete Box" keys={['DEL']} />}
         >
-          <Button key="delete" icon="Delete" type="ghost" aria-label="Scale" />
+          <Button
+            key="delete"
+            icon="Delete"
+            type="ghost"
+            aria-label="Scale"
+            onClick={onDeleteClicked}
+          />
         </Tooltip>
       </ToolBar>
     </Container>
