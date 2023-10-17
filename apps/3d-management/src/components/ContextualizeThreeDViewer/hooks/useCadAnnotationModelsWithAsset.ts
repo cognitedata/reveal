@@ -58,8 +58,16 @@ export const useCadAnnotationModelsWithAsset = (
       return a.asset.name.localeCompare(b.asset.name);
     });
 
+  const resultFiltered: AnnotationModelWithAsset[] | null =
+    result?.filter(
+      (annotationModel, index, self) =>
+        self.findIndex(
+          (item) => item.asset?.id === annotationModel.asset?.id
+        ) === index
+    ) || null;
+
   return {
-    data: result,
+    data: resultFiltered,
     isLoading,
     isError,
     error,

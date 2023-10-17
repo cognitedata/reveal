@@ -6,7 +6,7 @@ import { getCogniteCadModel } from '../../../utils/getCogniteCadModel';
 import { useCadContextualizeStore } from '../useCadContextualizeStore';
 
 const FIT_CAMERA_TO_BOUNDING_BOX_ANIMATION_DURATION_MS = 1000;
-const FIT_CAMERA_TO_BOUNDING_BOX_RADIUS_FACTOR = 5;
+const FIT_CAMERA_TO_BOUNDING_BOX_RADIUS_FACTOR = 2;
 
 type UseZoomToAnnotationReturnType = (annotationId: number) => void;
 
@@ -32,15 +32,39 @@ export const useCadZoomToAnnotation = (): UseZoomToAnnotationReturnType => {
       });
       if (model === undefined) return;
 
-      const annotationsForAssetId = contextualizedNodes?.filter(
+      const annotationsPerAssetId = contextualizedNodes?.filter(
         (annotation) => annotation.assetId === annotationByAssetId
       );
-      if (annotationsForAssetId === undefined) return;
+      if (annotationsPerAssetId === undefined) return;
 
       const matrix4 = model.getCdfToDefaultModelTransformation();
-      const box3 = new THREE.Box3();
+      const globalBox = new THREE.Box3();
+
+      const groupOfNodes = new THREE.Group();
+
+      // get all the nodes and add each to a group in order to generate the global bounding box
+      await Promise.all(
+        annotationsPerAssetId.map(async (annotation) => {
+          const box = await model.getBoundingBoxByNodeId(annotation.nodeId);
+          const mesh = new THREE.Mesh(
+            new THREE.BoxGeometry(),
+            new THREE.MeshBasicMaterial()
+          );
+
+          mesh.geometry.boundingBox = box.clone();
+          groupOfNodes.add(mesh);
+        })
+      );
+      groupOfNodes.matrixWorld.multiply(matrix4);
+      globalBox.setFromObject(groupOfNodes);
+
+      threeDViewer.fitCameraToBoundingBox(
+        globalBox,
+        FIT_CAMERA_TO_BOUNDING_BOX_ANIMATION_DURATION_MS,
+        FIT_CAMERA_TO_BOUNDING_BOX_RADIUS_FACTOR
+      );
     },
-    [contextualizedNodes, modelId, threeDViewer]
+    [contextualizedNodes, modelId, revisionId, threeDViewer]
   );
 
   return zoomToAnnotation;

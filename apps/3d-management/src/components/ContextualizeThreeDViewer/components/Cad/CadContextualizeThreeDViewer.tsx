@@ -25,7 +25,9 @@ import {
   defaultRevealColor,
 } from '../../../../pages/ContextualizeEditor/constants';
 import { useLocalStorage } from '../../../../utils/useLocalStorage';
+import { assignStylesToCadModel } from '../../utils/assignStylesToCadModel';
 import { getCdfCadContextualization } from '../../utils/getCdfCadContextualization';
+import { getCogniteCadModel } from '../../utils/getCogniteCadModel';
 import { saveCdfThreeDCadContextualization } from '../../utils/saveCdfThreeDCadContextualization';
 
 import { CadRevealContent } from './CadRevealContent';
@@ -109,13 +111,27 @@ export const CadContextualizeThreeDViewer = ({
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
-  const { isResourceSelectorOpen, selectedNodeIds } = useCadContextualizeStore(
-    (state) => ({
-      isResourceSelectorOpen: state.isResourceSelectorOpen,
-      threeDViewer: state.threeDViewer,
-      selectedNodeIds: state.selectedNodeIds,
-    })
-  );
+  const {
+    isResourceSelectorOpen,
+    selectedNodeIds,
+    isModelLoaded,
+    threeDViewer,
+    model,
+    selectedNodeIdsStyleIndex,
+    contextualizedNodesStyleIndex,
+    highlightedNodeIdsStyleIndex,
+  } = useCadContextualizeStore((state) => ({
+    isResourceSelectorOpen: state.isResourceSelectorOpen,
+    threeDViewer: state.threeDViewer,
+    model: state.model,
+    selectedNodeIds: state.selectedNodeIds,
+    isModelLoaded: state.isModelLoaded,
+    modelId: state.modelId,
+    revisionId: state.revisionId,
+    selectedNodeIdsStyleIndex: state.selectedNodeIdsStyleIndex,
+    contextualizedNodesStyleIndex: state.contextualizedNodesStyleIndex,
+    highlightedNodeIdsStyleIndex: state.highlightedNodeIdsStyleIndex,
+  }));
 
   const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
     'COGNITE_CONTEXTUALIZE_EDITOR_RESOURCE_SELECTOR_WIDTH',
@@ -198,6 +214,43 @@ export const CadContextualizeThreeDViewer = ({
   useCadOnClickHandler();
 
   useEffect(() => {
+    if (!isModelLoaded) return;
+    if (!threeDViewer) return;
+    if (!model) return;
+
+    // Gets the actual model from the viewer, even the model state is updated
+    // Potential bug in Reveal because the model from the state is not linked to the CadMaterialManager yet.
+    // So we use the state as a safeguard and then get the actual model from the viewer
+    // TODO: investigate a better way to not use model state for this
+    const cadModel = getCogniteCadModel({
+      modelId,
+      revisionId,
+      viewer: threeDViewer,
+    });
+    if (cadModel === undefined) return;
+
+    // assign styles for the model
+    assignStylesToCadModel({
+      model: cadModel,
+      selectedNodeIdsStyleIndex,
+      contextualizedNodesStyleIndex,
+      highlightedNodeIdsStyleIndex,
+    });
+
+    // reset selected nodes from cache when loading this main component initially
+    setSelectedNodeIds([]);
+  }, [
+    isModelLoaded,
+    threeDViewer,
+    modelId,
+    model,
+    revisionId,
+    selectedNodeIdsStyleIndex,
+    contextualizedNodesStyleIndex,
+    highlightedNodeIdsStyleIndex,
+  ]);
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.stopPropagation();
@@ -213,6 +266,8 @@ export const CadContextualizeThreeDViewer = ({
 
   const handleResourceSelectorSelect = async (assetId: number) => {
     setSelectedNodeIds([]);
+
+    if (selectedNodeIds.length === 0) return;
 
     // Avoid duplicating asset mappings (same assetId with same nodeId)
     let nodeIdsFiltered: number[] = selectedNodeIds;

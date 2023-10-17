@@ -1,6 +1,6 @@
 import { Color } from 'three';
 
-import { DefaultNodeAppearance } from '@cognite/reveal';
+import { DefaultNodeAppearance, NodeOutlineColor } from '@cognite/reveal';
 import { QualitySettings } from '@cognite/reveal-react-components';
 
 export const CONTEXTUALIZE_EDITOR_HEADER_HEIGHT = 40;
@@ -56,4 +56,8 @@ export const HighQualitySettings: QualitySettings = {
 export const CAD_STYLE = {
   SELECTED: DefaultNodeAppearance.Highlighted,
   CONTEXTUALIZED_COLOR: new Color(0.6, 0.2, 0.78),
+  HIGHLIGHTED: {
+    color: new Color(0.5, 0.2, 0.9),
+    outlineColor: NodeOutlineColor.White,
+  },
 };

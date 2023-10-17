@@ -256,7 +256,7 @@ export const IndustryCanvasHomePage = () => {
       content={t(translationKeys.COMMON_CANVAS_DUPLICATE, 'Duplicate canvas')}
     >
       <Button
-        type="ghost-destructive"
+        type="ghost"
         icon="Duplicate"
         disabled={isCreatingCanvas}
         aria-label={t(

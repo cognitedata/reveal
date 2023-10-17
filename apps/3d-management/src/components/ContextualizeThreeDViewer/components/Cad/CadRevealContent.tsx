@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Color } from 'three';
 
 import { Button, ToolBar } from '@cognite/cogs.js';
-import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
+import { DefaultCameraManager, CogniteCadModel } from '@cognite/reveal';
 import {
   CadModelContainer,
   useReveal,
@@ -19,6 +19,7 @@ import { CadToolBar } from './CadToolBar/CadToolBar';
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
+  setModel,
   setModelLoaded,
   setThreeDViewer,
   useCadContextualizeStore,
@@ -52,17 +53,17 @@ export const CadRevealContent = ({
     onOpenResourceSelector();
   };
 
-  const handleModelOnLoad = (model: CogniteModel) => {
+  const handleModelOnLoad = (modelLoaded: CogniteCadModel) => {
     setModelLoaded();
-
+    setModel(modelLoaded);
     if (!(viewer?.cameraManager instanceof DefaultCameraManager)) {
       console.warn(
         'Camera manager is not DefaultCameraManager, so click to change camera target will not work.'
       );
       return;
     }
-    viewer.loadCameraFromModel(model);
-    viewer.fitCameraToModel(model);
+    viewer.loadCameraFromModel(modelLoaded);
+    viewer.fitCameraToModel(modelLoaded);
     viewer.cameraManager.setCameraControlsOptions({
       changeCameraTargetOnClick: true,
       mouseWheelAction: 'zoomToCursor',
