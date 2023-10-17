@@ -12,6 +12,7 @@ declare namespace Cypress {
     duplicateThreshold(duplicateThresholdName: string): void;
     deleteThreshold(eventNumber: number): void;
     selectFirstOption(selector: string): void;
+    addThreshold(value: string, min: string, max: string): void;
   }
 }
 
@@ -97,3 +98,29 @@ Cypress.Commands.add('selectFirstOption', (selector: string) => {
       cy.get('.cogs-select__option').first().should('exist').click();
     });
 });
+
+Cypress.Commands.add(
+  'addThreshold',
+  (value: string, min: string, max: string) => {
+    cy.get('[aria-label="Add threshold"]', { timeout: 10000 })
+      .should('exist')
+      .click();
+
+    cy.selectFirstOption('thresholds-sidebar-container');
+
+    cy.getBySel('thresholds-sidebar-container')
+      .should('exist')
+      .within(() => {
+        cy.get('[aria-label="ChevronDown"]').click();
+        cy.contains('Under').click();
+      });
+
+    cy.contains('Filter length').click();
+
+    cy.get('input[placeholder="Value"]').type(value);
+
+    cy.get('input[placeholder="Min"]').type(min);
+
+    cy.get('input[placeholder="Max"]').type(max);
+  }
+);

@@ -16,26 +16,7 @@ describe('Thresholds', () => {
       .should('exist')
       .click();
 
-    cy.get('[aria-label="Add threshold"]', { timeout: 10000 })
-      .should('exist')
-      .click();
-
-    cy.selectFirstOption('thresholds-sidebar-container');
-
-    cy.getBySel('thresholds-sidebar-container')
-      .should('exist')
-      .within(() => {
-        cy.get('[aria-label="ChevronDown"]').click();
-        cy.contains('Under').click();
-      });
-
-    cy.contains('Filter length').click();
-
-    cy.get('input[placeholder="Value"]').type('10');
-
-    cy.get('input[placeholder="Min"]').type('1');
-
-    cy.get('input[placeholder="Max"]').type('5');
+    cy.addThreshold('10', '1', '5');
 
     cy.duplicateThreshold(DUPLICATE_THRESHOLD_NAME);
     cy.deleteThreshold(0);
