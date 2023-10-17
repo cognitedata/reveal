@@ -121,6 +121,45 @@ describe('Update Chart Thresholds', () => {
     });
   });
 
+  it('should remove a threshold when using a filter function', () => {
+    const existingChart: Chart = {
+      version: 1,
+      id: 'bb6bdbcb-625f-4ef3-bac5-03cca68b062d',
+      name: 'Demo: Power Consumption',
+      thresholdCollection: [
+        {
+          id: 'bb6bdbcb-625f-4ef3-bac5-03cca61b064d',
+          name: 'New threshold',
+          type: 'under',
+          visible: true,
+          filter: {},
+        },
+      ],
+      user: 'shekhar.sharma@cognite.com',
+      dateTo: '2021-11-12T20:21:40.881Z',
+      dateFrom: '2020-04-25T07:05:31.547Z',
+      createdAt: 1647350374178,
+      updatedAt: 1651506075740,
+    };
+
+    const updatedChart = removeChartThreshold(
+      existingChart,
+      (threshold: ChartThreshold) => threshold.type !== 'under'
+    );
+
+    expect(updatedChart).toEqual({
+      version: 1,
+      id: 'bb6bdbcb-625f-4ef3-bac5-03cca68b062d',
+      name: 'Demo: Power Consumption',
+      thresholdCollection: [],
+      user: 'shekhar.sharma@cognite.com',
+      dateTo: '2021-11-12T20:21:40.881Z',
+      dateFrom: '2020-04-25T07:05:31.547Z',
+      createdAt: 1647350374178,
+      updatedAt: 1651506075740,
+    });
+  });
+
   it('should update threshold name', () => {
     const existingChart: Chart = {
       version: 1,

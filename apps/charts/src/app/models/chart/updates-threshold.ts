@@ -49,14 +49,27 @@ export const addChartThreshold = (
  * Properties
  * -----------------------------------------------------------------------------
  * @param chart                   - A current chart instance to update
- * @param id                      - The ID of threshold that needs to be removed.
+ * @param idOrFilterCallback      - The ID of threshold that needs to be remove, or a filter function
  * @returns Chart                 - Returns updated CHART object with given threshold removed
  */
-export const removeChartThreshold = (chart: Chart, id: string) => {
+
+type filterThresholdCallback = (item: ChartThreshold) => boolean;
+export const removeChartThreshold = (
+  chart: Chart,
+  idOrFilterCallback: string | filterThresholdCallback
+) => {
+  let filterFn: filterThresholdCallback;
+
+  if (typeof idOrFilterCallback === 'string') {
+    filterFn = (item) => item.id !== idOrFilterCallback;
+  } else {
+    filterFn = idOrFilterCallback;
+  }
+
   return {
-    ...chart!,
+    ...chart,
     thresholdCollection: [
-      ...(chart?.thresholdCollection || []).filter((item) => item.id !== id),
+      ...(chart?.thresholdCollection || []).filter(filterFn),
     ],
   };
 };

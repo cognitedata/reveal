@@ -8,5 +8,6 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/charts',
+  setupFilesAfterEnv: ['./src/setupTests.js'],
   transformIgnorePatterns: ['node_modules/(?!(es-cookie|lodash-es))'],
 };

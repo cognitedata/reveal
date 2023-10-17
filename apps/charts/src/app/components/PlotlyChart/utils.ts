@@ -7,6 +7,7 @@ import {
   ChartWorkflow,
   LineStyle,
   ScheduledCalculation,
+  formatNumberWithSuffix,
 } from '@cognite/charts-lib';
 import {
   CogniteEvent,
@@ -568,7 +569,7 @@ export function generateLayout({
   dragmode,
   highlightedTimeseriesId,
 }: any): any {
-  const horizontalMargin = isPreview && !showYAxis ? 0 : 20;
+  const horizontalMargin = isPreview && !showYAxis ? 0 : 30;
   const verticallMargin = isPreview && !showYAxis ? 0 : 30;
 
   const layout = {
@@ -674,9 +675,9 @@ export function generateLayout({
         let y0 = 0;
         let y1 = 0;
 
-        const thresholdColor = series.find(
-          (s: any) => s.id === ths.sourceId
-        ).color;
+        const thresholdColor = ths.color
+          ? ths.color
+          : series.find((s: any) => s.id === ths.sourceId).color;
 
         switch (ths.type) {
           case 'under':
@@ -694,13 +695,27 @@ export function generateLayout({
             y1 = ths.upperLimit || 0;
         }
 
+        (layout.annotations as any[]).push({
+          x: showYAxis ? yAxisValues.width * index + 0.025 : -0.015,
+          xanchor: showYAxis ? 'right' : 'left',
+          y: parseFloat(String(y0)),
+          xref: 'paper',
+          yref: `y${index ? index + 1 : '0'}`,
+          text: formatNumberWithSuffix(parseFloat(String(y0)), 1),
+          showarrow: false,
+          bgcolor: thresholdColor,
+          font: {
+            color: '#ffffff',
+          },
+          borderpad: 4,
+          visible: isThresholdValid(ths) && ths.visible,
+        });
+
         (layout.shapes as any[]).push({
           visible: isThresholdValid(ths) && ths.visible,
           xref: 'paper',
           yref: `y${index ? index + 1 : '0'}`,
-          x0: showYAxis
-            ? yAxisValues.width * (seriesData.length - 1) + 0.0195
-            : -0.015,
+          x0: showYAxis ? yAxisValues.width * index + 0.0195 : -0.015,
           x1: 1.015,
           y0: parseFloat(String(y0)),
           y1: parseFloat(String(y1)),
@@ -709,7 +724,7 @@ export function generateLayout({
           line: {
             dash: 'dot',
             color: thresholdColor,
-            width: 1,
+            width: 1.5,
           },
         });
       });

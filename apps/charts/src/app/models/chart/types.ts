@@ -183,6 +183,8 @@ export type ChartThreshold = {
   type: 'under' | 'over' | 'between';
   calls?: ThresholdCallRef[];
   filter: ChartThresholdEventFilter;
+  addedBy?: 'alertSidebar' | 'monitoringSidebar';
+  color?: string;
 };
 
 export type ChartEventFilters = {

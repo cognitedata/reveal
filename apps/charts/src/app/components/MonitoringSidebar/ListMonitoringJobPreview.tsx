@@ -11,8 +11,14 @@ import { Timeseries } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
 import { useUserProfileQuery } from '../../common/providers/useUserProfileQuery';
+import { MONITORING_THRESHOLD_ID } from '../../domain/monitoring/constants';
 import { useSearchParam } from '../../hooks/navigation';
 import { useTranslations } from '../../hooks/translations';
+import { useChartAtom } from '../../models/chart/atom';
+import {
+  addChartThreshold,
+  removeChartThreshold,
+} from '../../models/chart/updates-threshold';
 import { trackUsage } from '../../services/metrics';
 import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
@@ -58,6 +64,7 @@ const ListMonitoringJobPreview = ({
   showLastAlert = true,
   trackingInfo,
 }: Props) => {
+  const [chart, setChart] = useChartAtom();
   const { data: timeseriesDef } = useCdfItems<Timeseries>(
     'timeseries',
     [{ id: monitoringJob.model.timeseriesId }],
@@ -142,24 +149,23 @@ const ListMonitoringJobPreview = ({
   const name = timeseriesName || (timeseriesDef && head(timeseriesDef)?.name);
   const { id, externalId } = monitoringJob;
 
-  const handleSubscribe = () => {
-    createSubscription({
-      channelID: monitoringJob.channelId,
-      subscribers: userProfile ? [userProfile] : [],
-    });
-    trackUsage('Sidebar.Monitoring.Subscribe', {
-      monitoringJob: externalId,
-      folder: trackingInfo?.folderName,
-      filter: trackingInfo?.filter,
-    });
-  };
+  const handleToggleSubscription = () => {
+    let event;
+    if (!isSubscribed) {
+      createSubscription({
+        channelID: monitoringJob.channelId,
+        subscribers: userProfile ? [userProfile] : [],
+      });
+      event = 'Sidebar.Monitoring.Subscribe';
+    } else {
+      deleteSubscription({
+        channelID: monitoringJob.channelId,
+        subscribers: userProfile ? [userProfile] : [],
+      });
+      event = 'Sidebar.Monitoring.Unsubscribe';
+    }
 
-  const handleUnsubscribe = () => {
-    deleteSubscription({
-      channelID: monitoringJob.channelId,
-      subscribers: userProfile ? [userProfile] : [],
-    });
-    trackUsage('Sidebar.Monitoring.Unsubscribe', {
+    trackUsage(event, {
       monitoringJob: externalId,
       folder: trackingInfo?.folderName,
       filter: trackingInfo?.filter,
@@ -167,9 +173,44 @@ const ListMonitoringJobPreview = ({
   };
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isHighlighted, setisHighlighted] = useState(
+    showHighlightedBorder && Number(monitoringJobIdParam || 0) === id
+  );
+
+  useEffect(() => {
+    const targetTimeseries = chart?.timeSeriesCollection?.find(
+      (timeSeries) => timeSeries.tsId === monitoringJob.model.timeseriesId
+    );
+
+    if (targetTimeseries) {
+      const thresholdId = `${MONITORING_THRESHOLD_ID}-${monitoringJob.id}`;
+      if (isHighlighted) {
+        setChart((oldChart) =>
+          addChartThreshold(oldChart!, {
+            id: thresholdId,
+            name: thresholdId,
+            visible: true,
+            sourceId: targetTimeseries.id,
+            upperLimit: monitoringJob.model.upperThreshold,
+            type: 'under',
+            filter: {},
+            addedBy: 'monitoringSidebar',
+            color: '#BF0A36',
+          })
+        );
+      } else {
+        setChart((oldChart) => {
+          const chartWithoutTHreshold = removeChartThreshold(
+            oldChart!,
+            thresholdId
+          );
+          return chartWithoutTHreshold;
+        });
+      }
+    }
+  }, [chart?.timeSeriesCollection, isHighlighted, monitoringJob, setChart]);
+
   const [, setShowAlerts] = useSearchParam(MONITORING_SIDEBAR_SHOW_ALERTS);
-  const isHighlighted =
-    showHighlightedBorder && Number(monitoringJobIdParam || 0) === id;
   const handleClickAlerts = () => {
     setShowAlerts('true');
     setMonitoringJobIdParam(`${id}`);
@@ -188,9 +229,15 @@ const ListMonitoringJobPreview = ({
   return (
     <MonitoringJobPreview
       key={externalId}
+      onClick={() => {
+        setisHighlighted(!isHighlighted);
+      }}
       style={
         isHighlighted
-          ? { border: '1px solid var(--cogs-text-icon--interactive--default)' }
+          ? {
+              border:
+                '1px solid var(--border-interactive-toggled-pressed, #2B3A88)',
+            }
           : {}
       }
     >
@@ -206,21 +253,14 @@ const ListMonitoringJobPreview = ({
           subscriptionStatusLoading ? (
             <SubscriptionLoader type="Loader" />
           ) : (
-            <>
-              {isSubscribed ? (
-                <ActionButton
-                  size="small"
-                  icon="BellFilled"
-                  onClick={handleUnsubscribe}
-                />
-              ) : (
-                <ActionButton
-                  size="small"
-                  icon="Bell"
-                  onClick={handleSubscribe}
-                />
-              )}
-            </>
+            <ActionButton
+              size="small"
+              icon={isSubscribed ? 'BellFilled' : 'Bell'}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleToggleSubscription();
+              }}
+            />
           )}
         </Col>
         <Col span={2}>
@@ -245,7 +285,10 @@ const ListMonitoringJobPreview = ({
             <ActionButton
               size="small"
               icon="EllipsisVertical"
-              onClick={() => setIsOpen(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpen(!isOpen);
+              }}
               style={{ marginLeft: '4px' }}
             />
           </Dropdown>

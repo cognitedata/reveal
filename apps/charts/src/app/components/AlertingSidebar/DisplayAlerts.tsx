@@ -2,6 +2,11 @@ import { useState } from 'react';
 
 import { Collapse, Flex, Body } from '@cognite/cogs.js';
 
+import { useChartAtom } from '../../models/chart/atom';
+import {
+  addChartThreshold,
+  removeChartThreshold,
+} from '../../models/chart/updates-threshold';
 import { trackUsage } from '../../services/metrics';
 import {
   CollapsePanelTitle,
@@ -29,14 +34,49 @@ export const DisplayAlerts = ({
   jobs,
   onViewMonitoringJobs,
 }: DisplayAlertsProps) => {
-  const [activeKeys, setActiveKeys] = useState([]);
+  const [activeKey, setActiveKey] = useState(undefined);
+  const [chart, setChart] = useChartAtom();
+  const handleToggleAccordion = (key: any) => {
+    if (key.length) {
+      setActiveKey(key[key.length - 1]);
 
-  const handleToggleAccordian = (key: any) => {
-    setActiveKeys(key);
+      const targetJob = jobs!.find(
+        (job) => job.externalId === key[key.length - 1]
+      );
+
+      if (targetJob) {
+        const targetTimeseries = chart?.timeSeriesCollection?.find(
+          (timeSeries) => timeSeries.tsId === targetJob.model.timeseriesId
+        );
+
+        if (targetTimeseries) {
+          setChart((oldChart) =>
+            addChartThreshold(oldChart!, {
+              id: targetJob.externalId,
+              name: targetJob.externalId,
+              visible: true,
+              sourceId: targetTimeseries.id,
+              upperLimit: targetJob.model.upperThreshold,
+              type: 'under',
+              filter: {},
+              addedBy: 'alertSidebar',
+              color: '#BF0A36',
+            })
+          );
+        }
+      }
+    } else {
+      if (activeKey) {
+        setChart((oldChart) => {
+          return removeChartThreshold(oldChart!, activeKey);
+        });
+      }
+      setActiveKey(undefined);
+    }
     trackUsage('Sidebar.Alerting.ToggleAlert', { alert: key });
   };
 
-  if (activeKeys.length === 0 && isFetching) {
+  if (activeKey === undefined && isFetching) {
     return <LoadingRow lines={30} />;
   }
   if (isError === true || jobs?.length === 0 || !jobs) {
@@ -45,8 +85,8 @@ export const DisplayAlerts = ({
   return (
     <>
       <SidebarCollapseAlert
-        activeKey={activeKeys}
-        onChange={handleToggleAccordian}
+        activeKey={activeKey}
+        onChange={handleToggleAccordion}
         expandIcon={({ isActive }) => (
           <ExpandIcon $active={Boolean(isActive)} type="ChevronDownSmall" />
         )}

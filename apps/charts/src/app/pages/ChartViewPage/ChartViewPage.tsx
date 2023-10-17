@@ -75,6 +75,7 @@ import {
   updateSourceCollectionOrder,
   updateVisibilityForAllSources,
 } from '../../models/chart/updates';
+import { removeChartThreshold } from '../../models/chart/updates-threshold';
 import { eventResultsAtom } from '../../models/event-results/atom';
 import interactionsAtom from '../../models/interactions/atom';
 import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
@@ -380,6 +381,28 @@ const ChartViewPage = () => {
     // setActiveSidebarQuery, // don't add this here, it will cause infinite loop
   ]);
 
+  useEffect(() => {
+    if (!showMonitoringSidebar) {
+      setChart((oldChart) =>
+        removeChartThreshold(
+          oldChart!,
+          (threshold) => threshold.addedBy !== 'monitoringSidebar'
+        )
+      );
+    }
+  }, [showMonitoringSidebar]);
+
+  useEffect(() => {
+    if (!showAlertingSidebar) {
+      setChart((oldChart) =>
+        removeChartThreshold(
+          oldChart!,
+          (threshold) => threshold.addedBy !== 'alertSidebar'
+        )
+      );
+    }
+  }, [showAlertingSidebar]);
+
   /**
    * Log new resource view to user history service
    */
@@ -538,6 +561,7 @@ const ChartViewPage = () => {
   const handleCloseMonitoringSidebar = useCallback(() => {
     setShowMonitoringSidebar(false);
     setActiveSidebarQuery('');
+
     trackUsage('Sidebar.Monitoring.Close');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
@@ -1111,32 +1135,6 @@ const ChartViewPage = () => {
               <NotificationIndicator />
             </div>
           )}
-          {isDataProfilingEnabled && (
-            <Tooltip content={t['Data Profiling']} position="left">
-              <Button
-                icon="Profiling"
-                aria-label="Toggle data profiling sidebar"
-                toggled={showDataProfilingSidebar}
-                onClick={() => handleDataProfilingSidebarToggle()}
-              />
-            </Tooltip>
-          )}
-          <Tooltip content={t.Events} position="left">
-            <Button
-              icon="Events"
-              aria-label="Toggle events sidebar"
-              toggled={showEventSidebar}
-              onClick={() => handleEventSidebarToggle()}
-            />
-          </Tooltip>
-          <Tooltip content={t.Threshold} position="left">
-            <Button
-              icon="Threshold"
-              aria-label="Toggle threshold sidebar"
-              toggled={showThresholdSidebar}
-              onClick={() => handleThresholdSidebarToggle()}
-            />
-          </Tooltip>
           {isMonitoringFeatureEnabled && (
             <Tooltip content={t['Monitoring']} position="left">
               {isUserProfileLoading && !isUserProfileError ? (
@@ -1166,6 +1164,32 @@ const ChartViewPage = () => {
               )}
             </Tooltip>
           )}
+          <Tooltip content={t.Threshold} position="left">
+            <Button
+              icon="Threshold"
+              aria-label="Toggle threshold sidebar"
+              toggled={showThresholdSidebar}
+              onClick={() => handleThresholdSidebarToggle()}
+            />
+          </Tooltip>
+          {isDataProfilingEnabled && (
+            <Tooltip content={t['Data Profiling']} position="left">
+              <Button
+                icon="Profiling"
+                aria-label="Toggle data profiling sidebar"
+                toggled={showDataProfilingSidebar}
+                onClick={() => handleDataProfilingSidebarToggle()}
+              />
+            </Tooltip>
+          )}
+          <Tooltip content={t.Events} position="left">
+            <Button
+              icon="Events"
+              aria-label="Toggle events sidebar"
+              toggled={showEventSidebar}
+              onClick={() => handleEventSidebarToggle()}
+            />
+          </Tooltip>
         </Toolbar>
       </ChartViewContainer>
     </>

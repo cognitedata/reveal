@@ -253,8 +253,8 @@ describe('generateLayout', () => {
 
     expect(result).toEqual({
       margin: {
-        l: 20,
-        r: 20,
+        l: 30,
+        r: 30,
         b: 30,
         t: 30,
       },
@@ -413,8 +413,8 @@ describe('generateLayout', () => {
 
     expect(result).toEqual({
       margin: {
-        l: 20,
-        r: 20,
+        l: 30,
+        r: 30,
         b: 30,
         t: 30,
       },
@@ -511,8 +511,8 @@ describe('generateLayout', () => {
 
     expect(result).toEqual({
       margin: {
-        l: 20,
-        r: 20,
+        l: 30,
+        r: 30,
         b: 30,
         t: 30,
       },
@@ -725,8 +725,8 @@ describe('generateLayout', () => {
 
     expect(result).toEqual({
       margin: {
-        l: 20,
-        r: 20,
+        l: 30,
+        r: 30,
         b: 30,
         t: 30,
       },
@@ -939,8 +939,8 @@ describe('generateLayout', () => {
 
     expect(result).toEqual({
       margin: {
-        l: 20,
-        r: 20,
+        l: 30,
+        r: 30,
         b: 30,
         t: 30,
       },

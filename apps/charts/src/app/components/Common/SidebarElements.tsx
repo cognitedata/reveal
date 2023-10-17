@@ -21,7 +21,7 @@ export const Toolbar = styled.aside`
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding: 4rem 10px 0;
+    padding: 1rem 10px 0;
     row-gap: 1rem;
   }
 `;
