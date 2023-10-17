@@ -13,6 +13,7 @@ import {
 
 import {
   ANNOTATION_APPROVED_COLOR,
+  ANNOTATION_CONTEXTUALIZED_COLOR,
   ANNOTATION_CYLINDER_RADIUS_MARGIN,
   ANNOTATION_LINE_WIDTH,
   ANNOTATION_REJECTED_COLOR,
@@ -26,6 +27,7 @@ import { createCylinderGeometry } from './createCylinderGeometry';
 const UP_AXIS = new Vector3(0, 1, 0);
 
 enum Status {
+  Contextualized, // This state is Approved and has AssetRef != undefined
   Approved,
   Suggested,
   Rejected,
@@ -40,10 +42,12 @@ export class AnnotationsView {
   public selectedLineWidth: number = ANNOTATION_SELECTED_LINE_WIDTH;
 
   // All needed materials
+  private contextualizedLineMaterial: LineMaterial;
   private approvedLineMaterial: LineMaterial;
   private suggestedLineMaterial: LineMaterial;
   private rejectedLineMaterial: LineMaterial;
 
+  private contextualizedSelectedLineMaterial: LineMaterial;
   private approvedSelectedLineMaterial: LineMaterial;
   private suggestedSelectedLineMaterial: LineMaterial;
   private rejectedSelectedLineMaterial: LineMaterial;
@@ -68,35 +72,44 @@ export class AnnotationsView {
       threeDViewer.domElement.clientWidth,
       threeDViewer.domElement.clientHeight
     );
-
     // Create all needed materials upfront
-    this.approvedLineMaterial = this.createLineMaterial(
+    this.contextualizedLineMaterial = createLineMaterial(
+      Status.Contextualized,
+      this.lineWidth,
+      resolution
+    );
+    this.approvedLineMaterial = createLineMaterial(
       Status.Approved,
       this.lineWidth,
       resolution
     );
-    this.suggestedLineMaterial = this.createLineMaterial(
+    this.suggestedLineMaterial = createLineMaterial(
       Status.Suggested,
       this.lineWidth,
       resolution
     );
-    this.rejectedLineMaterial = this.createLineMaterial(
+    this.rejectedLineMaterial = createLineMaterial(
       Status.Rejected,
       this.lineWidth,
       resolution
     );
 
-    this.approvedSelectedLineMaterial = this.createLineMaterial(
+    this.contextualizedSelectedLineMaterial = createLineMaterial(
+      Status.Contextualized,
+      this.selectedLineWidth,
+      resolution
+    );
+    this.approvedSelectedLineMaterial = createLineMaterial(
       Status.Approved,
       this.selectedLineWidth,
       resolution
     );
-    this.suggestedSelectedLineMaterial = this.createLineMaterial(
+    this.suggestedSelectedLineMaterial = createLineMaterial(
       Status.Suggested,
       this.selectedLineWidth,
       resolution
     );
-    this.rejectedSelectedLineMaterial = this.createLineMaterial(
+    this.rejectedSelectedLineMaterial = createLineMaterial(
       Status.Rejected,
       this.selectedLineWidth,
       resolution
@@ -234,6 +247,11 @@ export class AnnotationsView {
 
   private getLineMaterial(status: Status, selected: boolean): LineMaterial {
     switch (status) {
+      case Status.Contextualized:
+        return selected
+          ? this.contextualizedSelectedLineMaterial
+          : this.contextualizedLineMaterial;
+
       case Status.Approved:
         return selected
           ? this.approvedSelectedLineMaterial
@@ -249,20 +267,6 @@ export class AnnotationsView {
           ? this.rejectedSelectedLineMaterial
           : this.rejectedLineMaterial;
     }
-  }
-
-  private createLineMaterial(
-    status: Status,
-    lineWidth: number,
-    resolution: THREE.Vector2
-  ): LineMaterial {
-    const color = getColorByStatus(status);
-    return new LineMaterial({
-      color: color,
-      linewidth: lineWidth,
-      resolution: resolution,
-      dashed: false,
-    });
   }
 
   //==================================================
@@ -293,7 +297,9 @@ export class AnnotationsView {
     if (volume.region.length === 0) {
       return null;
     }
-    const status = getStatusFromString(annotation.status);
+    const assetId = volume.assetRef?.id;
+
+    const status = getStatusFromString(annotation.status, assetId);
     const group = new Group();
     group.userData = new UserData(annotation.id, status); // Set the status and id
     const material = this.getLineMaterial(status, false);
@@ -386,6 +392,20 @@ class UserData {
 // FUNCTIONS
 //==================================================
 
+function createLineMaterial(
+  status: Status,
+  lineWidth: number,
+  resolution: THREE.Vector2
+): LineMaterial {
+  const color = getColorByStatus(status);
+  return new LineMaterial({
+    color: color,
+    linewidth: lineWidth,
+    resolution: resolution,
+    dashed: false,
+  });
+}
+
 function* getAllWireframes(root: Object3D | null): Generator<Wireframe> {
   if (!root) {
     return;
@@ -400,7 +420,13 @@ function* getAllWireframes(root: Object3D | null): Generator<Wireframe> {
   }
 }
 
-function getStatusFromString(status: string): Status {
+function getStatusFromString(
+  status: string,
+  assetId: number | undefined
+): Status {
+  if (assetId) {
+    return Status.Contextualized;
+  }
   if (status === 'approved') {
     return Status.Approved;
   }
@@ -412,6 +438,8 @@ function getStatusFromString(status: string): Status {
 
 function getColorByStatus(status: Status): number {
   switch (status) {
+    case Status.Contextualized:
+      return ANNOTATION_CONTEXTUALIZED_COLOR;
     case Status.Approved:
       return ANNOTATION_APPROVED_COLOR;
     case Status.Suggested:
