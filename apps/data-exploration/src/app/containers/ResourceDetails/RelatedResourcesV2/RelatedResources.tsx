@@ -1,5 +1,7 @@
 import { useContext, useState } from 'react';
 
+import styled from 'styled-components/macro';
+
 import {
   LinkedResourceTable,
   RelationshipTableV2,
@@ -100,13 +102,25 @@ export const RelatedResources: React.FC<RelatedResourcesProps> = ({
   };
 
   return (
-    <>
+    <RelatedResourcesWrapper>
       <LinkTypeOptions
         resource={resource}
         relatedResourcesType={relatedResourcesType}
         onChange={setLinkType}
       />
-      {renderContent()}
-    </>
+
+      <ContentWrapper>{renderContent()}</ContentWrapper>
+    </RelatedResourcesWrapper>
   );
 };
+
+const RelatedResourcesWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const ContentWrapper = styled.div`
+  height: 100%;
+  overflow-y: auto;
+`;
