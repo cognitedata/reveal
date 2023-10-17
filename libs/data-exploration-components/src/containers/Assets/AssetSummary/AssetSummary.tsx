@@ -15,7 +15,7 @@ import { Asset } from '@cognite/sdk';
 
 import {
   getHiddenColumns,
-  InternalSequenceFilters,
+  InternalAssetFilters,
   isObjectEmpty,
   isSummaryCardDataCountExceed,
   useDeepMemo,
@@ -44,7 +44,7 @@ export const AssetSummary = ({
 }: {
   query?: string;
   onRowClick?: (row: Asset) => void;
-  filter?: InternalSequenceFilters;
+  filter?: InternalAssetFilters;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;

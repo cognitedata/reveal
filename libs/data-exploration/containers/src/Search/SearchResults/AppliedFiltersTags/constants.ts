@@ -1,5 +1,7 @@
 export const CUSTOM_FILTER_TITLE: Record<string, string> = {
-  assetSubtreeIds: 'Asset',
+  assetIds: 'Directly linked to',
+  parentIds: 'Directly linked to',
+  assetSubtreeIds: 'Linked to',
   createdTime: 'Created Time',
   lastUpdatedTime: 'Updated Time',
   externalIdPrefix: 'External ID',

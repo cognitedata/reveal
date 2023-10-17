@@ -11,7 +11,7 @@ import {
   SourceFilter,
   DataSetFilter,
   ExternalIdFilter,
-  AssetSelectFilter,
+  AssetSelectFilterOld,
 } from '@data-exploration/containers';
 import { omit } from 'lodash';
 
@@ -121,7 +121,7 @@ const EventFilterForm = ({
           });
         }}
       />
-      <AssetSelectFilter.Common
+      <AssetSelectFilterOld.Common
         value={adaptedFilters.assetSubtreeIds}
         onChange={(newFilters) => {
           handleUpdateFilters({

@@ -8,11 +8,13 @@ import {
 } from '@data-exploration-lib/core';
 
 import {
+  AssetFilterType,
   AssetSelectFilter,
   DataSetFilter,
   DateFilter,
   ExternalIdFilter,
   InternalIdFilter,
+  MultiSelectFilterValue,
 } from '../../../Filters';
 import { TempMultiSelectFix } from '../elements';
 
@@ -23,6 +25,16 @@ export const CommonFilters: React.FC<FilterProps> = ({
   ...rest
 }) => {
   const { t } = useTranslation();
+
+  const handleChangeAssetSelectFilter = (
+    newFilters: MultiSelectFilterValue<number> | undefined,
+    assetFilterType: AssetFilterType
+  ) => {
+    if (assetFilterType === AssetFilterType.AllLinked) {
+      return onFilterChange('common', { assetSubtreeIds: newFilters });
+    }
+    return onFilterChange('common', { assetIds: newFilters });
+  };
 
   return (
     <BaseFilterCollapse.Panel
@@ -42,10 +54,11 @@ export const CommonFilters: React.FC<FilterProps> = ({
         />
 
         <AssetSelectFilter.Common
-          value={filter.common.assetSubtreeIds}
-          onChange={(newFilters) =>
-            onFilterChange('common', { assetSubtreeIds: newFilters })
-          }
+          value={{
+            [AssetFilterType.AllLinked]: filter.common.assetSubtreeIds,
+            [AssetFilterType.DirectlyLinked]: filter.common.assetIds,
+          }}
+          onChange={handleChangeAssetSelectFilter}
           addNilOption
         />
 

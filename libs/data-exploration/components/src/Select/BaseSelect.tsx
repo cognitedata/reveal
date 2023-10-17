@@ -31,6 +31,7 @@ export interface BaseSelectProps<ValueType>
   addNilOption?: boolean;
   isError?: boolean;
   menuListFooter?: ReactNode;
+  renderHeader?: () => React.ReactNode;
   onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
 }
 
@@ -43,13 +44,14 @@ export const BaseSelect = <ValueType,>({
   isSearchable,
   placeholder,
   menuListFooter = <></>,
+  menuIsOpen: menuIsOpenProp,
   ...rest
 }: BaseSelectProps<ValueType>) => {
   const { t } = useTranslation();
 
   const [selectIsFocused, setSelectIsFocused] = useState(false);
   const [menuInputIsFocused, setMenuInputIsFocused] = useState(false);
-  const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [menuIsOpen, setMenuIsOpen] = useState(menuIsOpenProp ?? false);
 
   const options = useMemo(() => {
     if (!addNilOption) {
@@ -127,8 +129,8 @@ export const BaseSelect = <ValueType,>({
   // }
 
   useEffect(() => {
-    setMenuIsOpen(selectIsFocused || menuInputIsFocused);
-  }, [menuInputIsFocused, selectIsFocused]);
+    setMenuIsOpen(menuIsOpenProp ?? (selectIsFocused || menuInputIsFocused));
+  }, [menuInputIsFocused, menuIsOpenProp, selectIsFocused]);
 
   return (
     <Tooltip

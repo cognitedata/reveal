@@ -16,7 +16,5 @@
   "[js]": {
     "editor.formatOnSave": false
   },
-  "eslint.validate": [
-    "json"
-  ]
+  "eslint.validate": ["json"]
 }
