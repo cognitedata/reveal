@@ -34,7 +34,7 @@ export const interceptEventList = () => {
   }).as(EVENT_LIST_ALIAS);
 };
 
-export const interceptFileList = () => {
+export const interceptDocumentsSearch = () => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/documents/search',
     method: 'POST',

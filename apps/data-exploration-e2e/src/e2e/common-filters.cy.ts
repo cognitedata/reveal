@@ -14,7 +14,7 @@ import {
   TIMESERIES_LIST_ALIAS,
   interceptAssetList,
   interceptEventList,
-  interceptFileList,
+  interceptDocumentsSearch,
   interceptSequenceList,
   interceptTimeseriesList,
 } from '../support/interceptions/interceptions';
@@ -38,7 +38,7 @@ describe('Common filters', () => {
   beforeEach(() => {
     interceptAssetList();
     interceptTimeseriesList();
-    interceptFileList();
+    interceptDocumentsSearch();
     interceptEventList();
     interceptSequenceList();
   });

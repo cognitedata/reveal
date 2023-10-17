@@ -7,7 +7,7 @@ import {
 } from '../support/constant';
 import {
   FILE_LIST_ALIAS,
-  interceptFileList,
+  interceptDocumentsSearch,
 } from '../support/interceptions/interceptions';
 
 describe('Search - files', () => {
@@ -28,7 +28,7 @@ describe('Search - files', () => {
   });
 
   beforeEach(() => {
-    interceptFileList();
+    interceptDocumentsSearch();
   });
 
   afterEach(() => {
@@ -50,7 +50,7 @@ describe('Search - files', () => {
     cy.performSearch(FILE_CONTENT);
     cy.wait(`@${FILE_LIST_ALIAS}`);
 
-    cy.shouldExistMatchLabelBy('Fuzzy', 'Content');
+    cy.shouldExistFuzzyMatchLabelBy('Content');
   });
 
   it('should search by: External ID', () => {

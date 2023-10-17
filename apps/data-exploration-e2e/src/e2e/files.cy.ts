@@ -1,7 +1,7 @@
 import { FILE_ID, FILE_NAME } from '../support/constant';
 import {
   FILE_LIST_ALIAS,
-  interceptFileList,
+  interceptDocumentsSearch,
 } from '../support/interceptions/interceptions';
 
 describe('Files', () => {
@@ -11,7 +11,7 @@ describe('Files', () => {
   });
 
   beforeEach(() => {
-    interceptFileList();
+    interceptDocumentsSearch();
   });
 
   it('should go to files tab', () => {

@@ -4,6 +4,8 @@ import {
   ASSET_ID,
   ASSET_METADATA,
   ASSET_NAME,
+  ASSET_NAME_FUZZY_SEARCH_PHRASE,
+  NO_RESULTS_TEXT,
 } from '../support/constant';
 import {
   ASSET_LIST_ALIAS,
@@ -85,5 +87,20 @@ describe('Assets - Search', () => {
       .should('exist');
 
     cy.shouldExistExactMatchLabelBy('Metadata "Description"');
+  });
+
+  it('should fuzzy search by: Name', () => {
+    cy.performSearch(ASSET_NAME_FUZZY_SEARCH_PHRASE);
+    cy.wait(`@${ASSET_LIST_ALIAS}`);
+
+    cy.openSearchConfig();
+    cy.disableFuzzySearch('Name');
+    cy.saveSearchConfig();
+    cy.findAllByText(NO_RESULTS_TEXT).should('be.visible');
+
+    cy.openSearchConfig();
+    cy.enableFuzzySearch('Name');
+    cy.saveSearchConfig();
+    cy.shouldExistFuzzyMatchLabelBy('Name');
   });
 });

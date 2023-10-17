@@ -1,6 +1,6 @@
 import {
   FILE_LIST_ALIAS,
-  interceptFileList,
+  interceptDocumentsSearch,
 } from '../support/interceptions/interceptions';
 
 describe('Files - Filters', () => {
@@ -13,7 +13,7 @@ describe('Files - Filters', () => {
   });
 
   beforeEach(() => {
-    interceptFileList();
+    interceptDocumentsSearch();
   });
 
   afterEach(() => {

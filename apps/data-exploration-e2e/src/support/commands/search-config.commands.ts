@@ -20,6 +20,11 @@ type SearchConfigProperty =
   | 'Unit'
   | 'Subtype';
 
+type FuzzySearchConfigProperty = Extract<
+  SearchConfigProperty,
+  'Name' | 'Description / Content'
+>;
+
 const openSearchConfig = () => {
   cy.log('Open search config');
   cy.clickButton('Config');
@@ -50,13 +55,12 @@ const enableSearchConfig = (
   property: SearchConfigProperty
 ) => {
   cy.getSearchConfigOption(column, property)
-    .as('searchConfigOption')
     .parent()
     .find('input[type="checkbox"]')
     .then((checkbox) => {
       if (checkbox.is(':not(:checked)')) {
         cy.log(`enable search config for "${column} => ${property}"`);
-        cy.get('@searchConfigOption').click({ force: true });
+        cy.wrap(checkbox).click();
       } else {
         cy.log(
           `search config for "${column} => ${property}" is already enabled`
@@ -70,17 +74,47 @@ const disableSearchConfig = (
   property: SearchConfigProperty
 ) => {
   cy.getSearchConfigOption(column, property)
-    .as('searchConfigOption')
     .parent()
     .find('input[type="checkbox"]')
     .then((checkbox) => {
       if (checkbox.is(':checked')) {
         cy.log(`disable search config for "${column} => ${property}"`);
-        cy.get('@searchConfigOption').click({ force: true });
+        cy.wrap(checkbox).click();
       } else {
         cy.log(
           `search config for "${column} => ${property}" is already disabled`
         );
+      }
+    });
+};
+
+const enableFuzzySearch = (property: FuzzySearchConfigProperty) => {
+  cy.getSearchConfigOption('Common', property)
+    .closest('div')
+    .findByTestId('fuzzy-search-toggle')
+    .find('input[role="switch"]')
+    .then((toggle) => {
+      if (toggle.is(':not(:checked)')) {
+        cy.log(`enable fuzzy search: ${property}`);
+        cy.wrap(toggle).click();
+      } else {
+        cy.log(`fuzzy search for "${property}" is already enabled`);
+      }
+    });
+};
+
+const disableFuzzySearch = (property: FuzzySearchConfigProperty) => {
+  cy.getSearchConfigOption('Common', property)
+    .closest('div')
+    .findByTestId('fuzzy-search-toggle')
+    .find('input[role="switch"]')
+    .then((toggle) => {
+      console.log('toggle', toggle.is(':checked'));
+      if (toggle.is(':checked')) {
+        cy.log(`disable fuzzy search: ${property}`);
+        cy.wrap(toggle).click();
+      } else {
+        cy.log(`fuzzy search for "${property}" is already disabled`);
       }
     });
 };
@@ -91,6 +125,8 @@ Cypress.Commands.add('closeSearchConfig', closeSearchConfig);
 Cypress.Commands.add('getSearchConfigOption', getSearchConfigOption);
 Cypress.Commands.add('enableSearchConfig', enableSearchConfig);
 Cypress.Commands.add('disableSearchConfig', disableSearchConfig);
+Cypress.Commands.add('enableFuzzySearch', enableFuzzySearch);
+Cypress.Commands.add('disableFuzzySearch', disableFuzzySearch);
 
 export interface SearchConfigCommands {
   openSearchConfig: () => void;
@@ -108,4 +144,6 @@ export interface SearchConfigCommands {
     column: SearchConfigColumn,
     property: SearchConfigProperty
   ) => void;
+  enableFuzzySearch: (property: FuzzySearchConfigProperty) => void;
+  disableFuzzySearch: (property: FuzzySearchConfigProperty) => void;
 }
