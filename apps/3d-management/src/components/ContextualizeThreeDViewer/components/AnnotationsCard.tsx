@@ -121,7 +121,9 @@ export const AnnotationsCard = ({
                 setHoveredAnnotationId(null);
               }}
             >
-              <span>{asset?.name ?? `Annotation ID: ${annotation.id}`}</span>
+              <StyledAnnotationName>
+                <span>{asset?.name ?? `Annotation ID: ${annotation.id}`}</span>
+              </StyledAnnotationName>
               <Button
                 type="ghost"
                 size="small"
@@ -140,6 +142,11 @@ export const AnnotationsCard = ({
 const StyledAnnotationCardHeader = styled(Flex)`
   padding-bottom: 8px;
   gap: 6px;
+`;
+
+const StyledAnnotationName = styled(Body)`
+  overflow: hidden;
+  text-overflow: clip;
 `;
 
 const StyledAnnotationListItem = styled(Flex)`
