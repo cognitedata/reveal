@@ -9,8 +9,9 @@ declare namespace Cypress {
     deleteEventFilter(eventNumber: number): void;
     duplicateEventFilter(): void;
     closeSidebar(sidebarContainerID: string): void;
-    duplicateThreshold(): void;
+    duplicateThreshold(duplicateThresholdName: string): void;
     deleteThreshold(eventNumber: number): void;
+    selectFirstOption(selector: string): void;
   }
 }
 
@@ -76,14 +77,23 @@ Cypress.Commands.add('closeSidebar', (sidebarContainerID: string) => {
     });
 });
 
-Cypress.Commands.add('duplicateThreshold', () => {
+Cypress.Commands.add('duplicateThreshold', (duplicateThresholdName: string) => {
   cy.get('[aria-label="Duplicate"]').eq(0).click();
 
-  cy.contains('New threshold 1 (Duplicate)').should('exist');
+  cy.contains(duplicateThresholdName).should('exist');
 });
 
 Cypress.Commands.add('deleteThreshold', (eventNumber: number) => {
   cy.get('footer button[aria-label="Delete"]').eq(eventNumber).click();
 
   cy.contains('Confirm').click();
+});
+
+Cypress.Commands.add('selectFirstOption', (selector: string) => {
+  cy.getBySel(selector)
+    .should('exist')
+    .within(() => {
+      cy.contains('Select...').click();
+      cy.get('.cogs-select__option').first().should('exist').click();
+    });
 });

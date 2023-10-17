@@ -1,4 +1,4 @@
-import { TIMESERIES_NAME } from '../support/constant';
+import { TIMESERIES_NAME, DUPLICATE_THRESHOLD_NAME } from '../support/constant';
 import { getUrl } from '../utils/getUrl';
 
 describe('Thresholds', () => {
@@ -20,12 +20,7 @@ describe('Thresholds', () => {
       .should('exist')
       .click();
 
-    cy.getBySel('thresholds-sidebar-container')
-      .should('exist')
-      .within(() => {
-        cy.contains('Select...').click();
-        cy.get('.cogs-select__option').first().should('exist').click();
-      });
+    cy.selectFirstOption('thresholds-sidebar-container');
 
     cy.getBySel('thresholds-sidebar-container')
       .should('exist')
@@ -42,7 +37,7 @@ describe('Thresholds', () => {
 
     cy.get('input[placeholder="Max"]').type('5');
 
-    cy.duplicateThreshold();
+    cy.duplicateThreshold(DUPLICATE_THRESHOLD_NAME);
     cy.deleteThreshold(0);
     cy.deleteThreshold(0);
 
