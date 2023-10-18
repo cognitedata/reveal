@@ -67,7 +67,7 @@ export const useNavigation = () => {
         search: queryParams.toString(),
       });
     },
-    [searchPageLink, navigate, viewMode]
+    [searchPageLink, navigate, viewMode, selectedInstance]
   );
 
   const toHomePage = useCallback(

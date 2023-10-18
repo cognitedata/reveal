@@ -48,7 +48,7 @@
 
   "RECENTLY_VIEWED_TITLE": "Recently viewed {{count}}",
   "RECENTLY_VIEWED_EMPTY_TITLE": "No recently viewed items",
-  "RECENTLY_VIEWED_EMPTY_BODY": "Once you start using Cognite Data Fusion, you can see your recent activities here",
+  "RECENTLY_VIEWED_EMPTY_BODY": "Once you start using Cognite Data Fusion, you can see your recently viewed items here",
 
   "FILTER_BUTTON": "Filters",
   "FILTER_APPLY_BUTTON": "Apply",

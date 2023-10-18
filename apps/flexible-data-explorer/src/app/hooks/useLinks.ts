@@ -1,33 +1,12 @@
 import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import {
-  createLink,
-  getCluster,
-  getEnvFromCluster,
-  getProject,
-} from '@cognite/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 
 import { DataModelV2, Instance } from '../services/types';
 
-const FUSION_URL = 'fusion.cognite.com';
-
-const useGetEnv = () => {
-  const env = getEnvFromCluster();
-
-  // In Fusion, for the EU1-1 cluster (api.cognitedata.com) there are no need of env. variable
-  if (env === 'api' || !env) {
-    return '';
-  }
-
-  return env;
-};
-
 export const useLinks = () => {
   const { pathname } = useLocation();
-  const cluster = getCluster();
-  const project = getProject();
-  const env = useGetEnv();
 
   const createInternalLink = useCallback(
     (path: string, fusionQP?: Record<string, any>) => {
