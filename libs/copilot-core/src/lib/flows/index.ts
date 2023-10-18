@@ -6,3 +6,6 @@ export * from './infield/InFieldDocumentQueryFlow';
 export * from './infield/InFieldDocumentSummaryFlow';
 export * from './infield/InFieldWorkorderFlow';
 export * from './python/PythonAppBuilderFlow';
+export * from './python/CodeExplainFlow';
+export * from './python/CodeGenerateFlow';
+export * from './python/CodeRepairFlow';

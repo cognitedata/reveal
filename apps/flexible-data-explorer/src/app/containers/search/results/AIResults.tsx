@@ -70,7 +70,6 @@ export const AIResults = () => {
 
       runFlow(graphQLFlow, {
         prompt,
-        sdk: sdk,
         selectedDataModels:
           dataModels?.map((el) => ({
             dataModel: el.externalId,
@@ -113,7 +112,7 @@ export const AIResults = () => {
           }
         });
     },
-    [graphQLFlow, runFlow, sdk]
+    [graphQLFlow, runFlow]
   );
 
   useEffect(() => {
@@ -133,7 +132,6 @@ export const AIResults = () => {
       queryType: copilotMessage?.queryType || '',
       relevantTypes: copilotMessage?.relevantTypes || [],
       prompt: '...',
-      sdk: sdk,
       query: copilotMessage?.graphql.query || '',
       variables: {
         ...copilotMessage?.graphql.variables,

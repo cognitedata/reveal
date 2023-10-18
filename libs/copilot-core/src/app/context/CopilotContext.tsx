@@ -39,7 +39,7 @@ type CopilotRunFlowFn = <
   B extends CopilotBotResponse
 >(
   flow: Flow<A, B>,
-  input?: A | null,
+  input?: Omit<A, 'sdk'> | null,
   showInChat?: boolean,
   initialMessage?: CopilotMessage
 ) => Promise<B>;
@@ -49,7 +49,7 @@ type CopilotRegisterFlowFn = <
   B extends CopilotBotResponse
 >(enableFlow: {
   flow: Flow<A, B>;
-  input?: Partial<{ [a in keyof A]: () => A[a] }>;
+  input?: Partial<{ [a in keyof A]: () => Promise<A[a]> | A[a] }>;
   messageActions?: Partial<{
     [key in B['type']]: (data: B) => CopilotAction[];
   }>;
@@ -227,10 +227,10 @@ export const CopilotContextProvider = ({
     async (flow, input, showInChat = true, initialMessage) => {
       const defaultFields = Object.entries(
         defaultGetters[flow.constructor.name] || {}
-      ).reduce((prev, [key, value]) => {
+      ).reduce(async (prev, [key, value]) => {
         return {
           ...prev,
-          [key]: value(),
+          [key]: await value(),
         };
       }, {} as { [key: string]: any });
       let intermediateResponse: Omit<CopilotBotResponse, 'replyTo'>;
@@ -292,7 +292,7 @@ export const CopilotContextProvider = ({
         }
         return intermediateResponse! as any;
       } else if (input) {
-        return await flow!.run(input);
+        return await flow!.run(input as any);
       }
       throw new Error(
         'Must provide a input for a flow that does not support chat (chatRun implemented)'

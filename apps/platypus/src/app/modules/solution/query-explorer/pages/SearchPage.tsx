@@ -84,7 +84,6 @@ export const SearchPage = ({
         flow,
         {
           prompt: searchText,
-          sdk: getCogniteSDKClient(),
           selectedDataModels: [
             {
               dataModel: selectedDataModelVersion.externalId,
@@ -150,7 +149,7 @@ export const SearchPage = ({
       },
     });
     return () => unmount();
-  }, [registerFlow]);
+  }, [flow, messages, registerFlow, selectedDataModelVersion, track]);
 
   useEffect(() => {
     if (graphQLQuery) {

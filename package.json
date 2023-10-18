@@ -29,7 +29,7 @@
     "@cognite/e2e-auth": "^1.0.4",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#f9df4edf48e3ae88281f5babe405299d8256b43f",
     "@cognite/kuiper_js": "^0.3.0",
-    "@cognite/llm-hub": "^0.1.5",
+    "@cognite/llm-hub": "^0.1.6",
     "@cognite/metrics": "^2.0.0",
     "@cognite/react-document-table": "^1.22.2",
     "@cognite/react-errors": "^1.0.4",
