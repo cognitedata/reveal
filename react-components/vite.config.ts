@@ -5,7 +5,7 @@ import dts from 'vite-plugin-dts';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { exec } from 'node:child_process';
 
-export default defineConfig(({ command }) => {
+export default defineConfig(({ command, mode }) => {
   return {
     plugins: [
       react(),
@@ -13,7 +13,7 @@ export default defineConfig(({ command }) => {
       externalizeDeps({
         devDeps: true
       }),
-      yalcPush(command)
+      yalcPush(command, mode)
     ],
     build: {
       lib: {
@@ -29,8 +29,8 @@ export default defineConfig(({ command }) => {
   };
 });
 
-function yalcPush(command: 'build' | 'serve'): PluginOption {
-  if (process.env.YALC !== 'true' && command === 'build') {
+function yalcPush(command: 'build' | 'serve', mode: string): PluginOption {
+  if (process.env.YALC !== 'true' || command === 'build' || mode === 'test') {
     return false;
   }
   return {
