@@ -150,6 +150,7 @@ const StyledAnnotationCardHeader = styled(Flex)`
 const StyledAnnotationName = styled(Body)`
   overflow: hidden;
   text-overflow: clip;
+  white-space: nowrap;
 `;
 
 const StyledAnnotationListItem = styled(Flex)`
