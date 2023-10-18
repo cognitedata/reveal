@@ -32,8 +32,6 @@ import {
   useFlagDocumentsApiEnabled,
   useBreakJourneyPromptState,
 } from '../../hooks';
-import { useQueryString } from '../../hooks/hooks';
-import { SEARCH_KEY } from '../../utils/constants';
 import { trackUsage } from '../../utils/Metrics';
 import { SearchResultWrapper } from '../elements';
 
@@ -48,6 +46,7 @@ export type Filters = {
 };
 
 type Props = {
+  query?: string;
   filters?: Filters;
   setCurrentResourceType?: (
     type?: ResourceType | undefined,
@@ -59,6 +58,7 @@ type Props = {
 };
 
 export const AllTab = ({
+  query,
   filters = {},
   setCurrentResourceType = noop,
   showAllResultsWithEmptyFilters = false,
@@ -75,7 +75,6 @@ export const AllTab = ({
 }: Props) => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
-  const [query] = useQueryString(SEARCH_KEY);
   const [pushJourney] = usePushJourney();
   const [journeyLength] = useJourneyLength();
   const [, setPromptOpen] = useBreakJourneyPromptState();
