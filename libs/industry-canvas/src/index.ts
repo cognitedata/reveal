@@ -5,6 +5,7 @@ export type { ContainerReference } from './lib/types';
 export * from './lib/IndustryCanvasPage';
 export * from './lib/IndustryCanvasHomePage';
 export * from './lib/common';
+export * from './lib/hooks/useLocalStorageCommunication';
 export * from './lib/hooks/use-query/useListCanvases';
 export * from './lib/services/IndustryCanvasService';
 

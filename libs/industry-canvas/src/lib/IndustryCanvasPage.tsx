@@ -56,6 +56,7 @@ import { useContainerAnnotations } from './hooks/useContainerAnnotations';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import useLocalStorage from './hooks/useLocalStorage';
+import useLocalStorageCommunication from './hooks/useLocalStorageCommunication';
 import useManagedTool from './hooks/useManagedTool';
 import useNodes from './hooks/useNodes';
 import useOnAddContainerReferences from './hooks/useOnAddContainerReferences';
@@ -300,6 +301,12 @@ export const IndustryCanvasPage = () => {
   // useCopilotGqlResolver(sdk, onAddContainerReferences);
 
   useRefocusCanvasWhenPanesClose({ unifiedViewerRef });
+
+  useLocalStorageCommunication(
+    unifiedViewerRef,
+    activeCanvas,
+    onAddContainerReferences
+  );
 
   useEffect(() => {
     if (unifiedViewerRef === null || hasZoomedToFitOnInitialLoad) {
@@ -741,6 +748,7 @@ const TitleRowWrapper = styled.div`
   h1 {
     margin: 0px;
   }
+
   display: flex;
   align-items: center;
   flex-wrap: nowrap;

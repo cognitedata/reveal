@@ -7,7 +7,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.5, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.EQUALS,
               comparisonValue: 0.5,
               then: 'green',
@@ -33,7 +33,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.1, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.EQUALS,
               comparisonValue: 0.5,
               then: 'green',
@@ -61,7 +61,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.1, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.NOT_EQUALS,
               comparisonValue: 0.5,
               then: 'green',
@@ -87,7 +87,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.5, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.NOT_EQUALS,
               comparisonValue: 0.5,
               then: 'green',
@@ -115,7 +115,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.6, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.GREATER_THAN,
               comparisonValue: 0.5,
               then: 'green',
@@ -141,7 +141,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.4, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.GREATER_THAN,
               comparisonValue: 0.5,
               then: 'green',
@@ -169,7 +169,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.6, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.GREATER_THAN_OR_EQUAL,
               comparisonValue: 0.5,
               then: 'green',
@@ -195,7 +195,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.5, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.GREATER_THAN_OR_EQUAL,
               comparisonValue: 0.5,
               then: 'green',
@@ -208,7 +208,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.4, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.GREATER_THAN_OR_EQUAL,
               comparisonValue: 0.5,
               then: 'green',
@@ -236,7 +236,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.4, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.LESS_THAN,
               comparisonValue: 0.5,
               then: 'green',
@@ -262,7 +262,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.6, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.LESS_THAN,
               comparisonValue: 0.5,
               then: 'green',
@@ -290,7 +290,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.4, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.LESS_THAN_OR_EQUAL,
               comparisonValue: 0.5,
               then: 'green',
@@ -316,7 +316,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.5, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.LESS_THAN_OR_EQUAL,
               comparisonValue: 0.5,
               then: 'green',
@@ -329,7 +329,7 @@ describe('applyRules', () => {
         expect(
           applyRules(0.6, [
             {
-              id: 1,
+              id: '1',
               condition: Condition.LESS_THAN_OR_EQUAL,
               comparisonValue: 0.5,
               then: 'green',
@@ -358,13 +358,13 @@ describe('applyRules', () => {
       expect(
         applyRules(0.5, [
           {
-            id: 1,
+            id: '1',
             condition: Condition.EQUALS,
             comparisonValue: 0.5,
             then: 'green',
           },
           {
-            id: 2,
+            id: '2',
             condition: Condition.EQUALS,
             comparisonValue: 0.5,
             then: 'red',
@@ -377,13 +377,13 @@ describe('applyRules', () => {
       expect(
         applyRules(0.5, [
           {
-            id: 1,
+            id: '1',
             condition: Condition.EQUALS,
             comparisonValue: 0.5,
             then: 'green',
           },
           {
-            id: 2,
+            id: '2',
             condition: Condition.GREATER_THAN,
             comparisonValue: 0.6,
             then: 'red',
