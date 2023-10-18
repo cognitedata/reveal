@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -7,7 +7,6 @@ import {
   ExplorationFilterToggle,
 } from '@data-exploration/components';
 import noop from 'lodash/noop';
-import { useDebounce } from 'use-debounce';
 
 import { Button, Divider, Flex, Input } from '@cognite/cogs.js';
 
@@ -18,6 +17,7 @@ import {
   ResourceSelectorFilter,
   ExtendedResourceItem,
   ResourceType,
+  useDebouncedQuery,
   useDialog,
   useTranslation,
   ViewType,
@@ -91,6 +91,11 @@ export const ResourceSelector = ({
   const { filterState, updateFilterType, resetFilterType } =
     useFilterState(initialFilter);
   const [query, setQuery] = useState<string>('');
+  const [localQuery, setLocalQuery] = useDebouncedQuery<string>(
+    (newValue) => setQuery(newValue || ''),
+    query
+  );
+
   const { isOpen: showFilter, toggle: onToggleFilter } = useDialog();
 
   const [activeKey, setActiveKey] = useState(initialTab);
@@ -126,8 +131,6 @@ export const ResourceSelector = ({
     setActiveKey(initialTab);
   }, [initialTab]);
 
-  const [debouncedQuery] = useDebounce(query, 100);
-
   const actionBarOptions = useMemo(
     () =>
       selectedResources.map((value) => ({
@@ -151,6 +154,10 @@ export const ResourceSelector = ({
     [onSelect, selectionMode, extendedProperties]
   );
 
+  const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    setLocalQuery(event.target.value);
+  };
+
   const selectedResourceTabs = visibleResourceTabs.map((tab) => {
     if (tab === 'charts')
       return (
@@ -158,7 +165,7 @@ export const ResourceSelector = ({
           key={tab}
           tabKey={ViewType.Charts}
           label={t('CHARTS', 'Charts')}
-          query={debouncedQuery}
+          query={query}
           filter={filterState.charts}
         />
       );
@@ -168,7 +175,7 @@ export const ResourceSelector = ({
           key={tab}
           tabKey={ViewType.Asset}
           label={t('ASSETS', 'Assets')}
-          query={debouncedQuery}
+          query={query}
           filter={{ ...filterState.common, ...filterState.asset }}
         />
       );
@@ -177,7 +184,7 @@ export const ResourceSelector = ({
         <EventsTab
           key={tab}
           tabKey={ViewType.Event}
-          query={debouncedQuery}
+          query={query}
           filter={{ ...filterState.common, ...filterState.event }}
           label={t('EVENTS', 'Events')}
         />
@@ -187,7 +194,7 @@ export const ResourceSelector = ({
         <FilesTab
           key={tab}
           tabKey={ViewType.File}
-          query={debouncedQuery}
+          query={query}
           filter={{
             ...filterState.common,
             ...(isDocumentsApiEnabled
@@ -206,7 +213,7 @@ export const ResourceSelector = ({
         <TimeseriesTab
           key={tab}
           tabKey={ViewType.TimeSeries}
-          query={debouncedQuery}
+          query={query}
           filter={{
             ...filterState.common,
             ...filterState.timeSeries,
@@ -218,7 +225,7 @@ export const ResourceSelector = ({
       return (
         <SequenceTab
           tabKey={ViewType.Sequence}
-          query={debouncedQuery}
+          query={query}
           filter={{
             ...filterState.common,
             ...filterState.sequence,
@@ -226,7 +233,7 @@ export const ResourceSelector = ({
           label={t('SEQUENCES', 'Sequences')}
         />
       );
-    return <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />;
+    return <ThreeDTab tabKey={ViewType.ThreeD} query={query} />;
   });
 
   const isBulkActionBarVisible =
@@ -269,8 +276,8 @@ export const ResourceSelector = ({
                 fullWidth
                 icon="Search"
                 placeholder={t('SEARCH_PLACEHOLDER', 'Search...')}
-                onChange={(ev) => setQuery(ev.target.value)}
-                value={query}
+                onChange={onChangeHandler}
+                value={localQuery}
               />
             </InputWrapper>
           </SearchInputContainer>
@@ -288,7 +295,7 @@ export const ResourceSelector = ({
               filter={filterState}
               defaultFilter={defaultFilter}
               selectionMode={selectionMode}
-              query={debouncedQuery}
+              query={query}
               resourceType={activeKey}
               isDocumentsApiEnabled={isDocumentsApiEnabled}
               shouldShowPreviews={shouldShowPreviews}

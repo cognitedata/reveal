@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import styled from 'styled-components';
 
@@ -6,7 +6,7 @@ import debounce from 'lodash/debounce';
 
 import { Input } from '@cognite/cogs.js';
 
-import { useTranslation } from '@data-exploration-lib/core';
+import { useDebouncedQuery, useTranslation } from '@data-exploration-lib/core';
 
 import { EXPLORATION } from '../../constants/metrics';
 import { useQueryString } from '../../hooks/hooks';
@@ -16,15 +16,10 @@ import { trackUsage } from '../../utils/Metrics';
 export const ExplorationSearchBar = () => {
   const { t } = useTranslation();
   const [urlQuery, setUrlQuery] = useQueryString(SEARCH_KEY);
-  const debouncedSetUrlQuery = debounce(setUrlQuery, 500);
-  const [localQuery, setLocalQuery] = useState(urlQuery);
-
-  useEffect(() => {
-    if (localQuery !== urlQuery) {
-      debouncedSetUrlQuery(localQuery);
-    }
-    return () => debouncedSetUrlQuery.cancel();
-  }, [debouncedSetUrlQuery, localQuery, urlQuery]);
+  const [localQuery, setLocalQuery] = useDebouncedQuery<string>(
+    (newValue) => setUrlQuery(newValue || ''),
+    urlQuery
+  );
 
   const track = debounce((value: string) => {
     trackUsage(EXPLORATION.SEARCH.GLOBAL, { query: value });
