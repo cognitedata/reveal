@@ -2,7 +2,10 @@ import { useEffect } from 'react';
 
 import { getCogniteCadModel } from '../../../../../components/ContextualizeThreeDViewer/utils/getCogniteCadModel';
 import { refreshCadContextualizedStyledIndices } from '../../../utils/refreshCadContextualizedStyledIndices';
-import { useCadContextualizeStore } from '../useCadContextualizeStore';
+import {
+  useCadContextualizeStore,
+  resetCadContextualizeThreeDViewerStore,
+} from '../useCadContextualizeStore';
 
 export const useSyncCadStateWithViewer = () => {
   const {
@@ -28,6 +31,13 @@ export const useSyncCadStateWithViewer = () => {
     highlightedNodeIdsStyleIndex: state.highlightedNodeIdsStyleIndex,
     hoveredAnnotationByAssetId: state.hoveredAnnotationByAssetId,
   }));
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      resetCadContextualizeThreeDViewerStore();
+    };
+  }, []);
 
   // Update selected nodes in the viewer
   useEffect(() => {

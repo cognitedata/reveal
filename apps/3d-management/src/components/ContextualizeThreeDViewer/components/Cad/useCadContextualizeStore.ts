@@ -157,3 +157,7 @@ export const setHoveredAnnotation = (
     hoveredAnnotationByAssetId: hoveredAnnotationByAssetId,
   }));
 };
+
+export const resetCadContextualizeThreeDViewerStore = () => {
+  useCadContextualizeStore.setState(initialState);
+};
