@@ -165,7 +165,8 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         tableColumns.created,
         {
           ...tableColumns.rootAsset(onRootAssetClick),
-          accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
+          accessorFn: (doc) =>
+            doc?.sourceFile.assetIds?.length && doc.sourceFile.assetIds[0],
         },
         tableColumns.assets(onRootAssetClick),
         tableColumns.externalId(
