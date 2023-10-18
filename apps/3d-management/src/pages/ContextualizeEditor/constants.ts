@@ -7,7 +7,7 @@ export const CONTEXTUALIZE_EDITOR_HEADER_HEIGHT = 40;
 export const FLOATING_ELEMENT_MARGIN = 15;
 export const DEFAULT_RIGHT_SIDE_PANEL_WIDTH = 500;
 
-export const defaultRevealColor = new Color(0x000000);
+export const defaultRevealColor = new Color(0x4a4a4b);
 
 export const DEFAULT_POINT_BUDGET = 3_000_000;
 export const DEFAULT_CAD_BUDGET = 10_000_000;
