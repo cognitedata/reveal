@@ -32,6 +32,19 @@ yarn test:once:unittests
 - click `Apply override`
 - your local code is now available under the `dev.fusion.cogniteapp.com` address
 
+## Running application in fusion
+
+1. Start local development server
+   ```
+   nx serve interactive-diagrams
+   ```
+2. Navigate to [dev.fusion.cogniteapp.com](dev.fusion.cogniteapp.com)
+3. Run `importMapOverrides.enableUI()` in the console
+4. Click the <img width="32" valign="bottom" src="https://user-images.githubusercontent.com/6615090/165697621-dc80186c-2bdc-4f1c-90a1-d7ab4f985efc.png"> button that appears in the bottom right corner
+5. Find `@cognite/cdf-context-ui-pnid` module name and click on the row including it
+6. Override using `https://localhost:3010/index.js` (port might differ depending on your local settings)
+7. Click `Apply override` and refresh ✨
+
 ## Running local copy offline
 
 - clone [CDF-hub](https://github.com/cognitedata/cdf-hub) - `git clone https://github.com/cognitedata/cdf-hub.git`

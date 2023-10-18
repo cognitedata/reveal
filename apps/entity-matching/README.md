@@ -43,6 +43,22 @@ To avoid doing this multiple times, enable this flag on Chrome:
 nx test entity-matching
 ```
 
+## E2E Testing
+
+Read [Setup](https://github.com/cognitedata/fusion#setup-1) for setup the credentials.
+
+### Run the tests
+
+To run the platypus e2e tests from the terminal using a headless browser, make sure the [mock server is running](https://github.com/cognitedata/fusion#run-the-tests), and then from another terminal window, run:
+
+`nx run entity-matching:e2e`
+
+To run them in the Cypress GUI:
+
+`nx run entity-matching:e2e --watch`
+
+You can optionally run the e2e tests using the `Nx Console` VSCode extension by clicking to run `e2e` and then choosing the `entity-matching` project.
+
 ## Internationalization with Locize in Fusion
 
 Follow the guide [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3519545557/Internationalization+with+Locize+in+Fusion)
