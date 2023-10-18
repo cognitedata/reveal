@@ -14,7 +14,7 @@ import {
   defaultRevealColor,
   defaultViewerOptions,
 } from '../../constants/threeD';
-import { useSiteConfig } from '../../hooks/useConfig';
+import { useSelectedSiteConfig } from '../../hooks/useConfig';
 import { Instance } from '../../services/types';
 
 import { MappedEquipmentContextHandler } from './containers/MappedEquipmentContextHandler';
@@ -28,7 +28,7 @@ export const ThreeDContent: React.FC<Props> = ({ focusOnInstance }) => {
   const sdk = useSDK();
   const isRevealInitialized = useIsRevealInitialized();
 
-  const siteConfig = useSiteConfig();
+  const siteConfig = useSelectedSiteConfig();
 
   const threeDResources = siteConfig?.threeDResources;
 

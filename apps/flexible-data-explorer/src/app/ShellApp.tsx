@@ -17,9 +17,9 @@ import { translations } from '../i18n';
 import { queryClient } from './queryClient';
 import AppRoutes from './Routes';
 
-const App = () => {
-  const projectName = 'flexible-data-explorer';
+const projectName = 'flexible-data-explorer';
 
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastContainer />

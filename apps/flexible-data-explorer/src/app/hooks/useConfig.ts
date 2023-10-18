@@ -15,7 +15,7 @@ export const useProjectConfig = () => {
   );
 };
 
-export const useSiteConfig = () => {
+export const useSelectedSiteConfig = () => {
   const [selectedSite] = useSelectedSiteLocalStorage();
 
   const config = useProjectConfig();
@@ -27,7 +27,7 @@ export const useSiteConfig = () => {
   // Development purposes only
   if (selectedSite === 'Custom') {
     return {
-      name: ' ',
+      name: 'Custom',
     };
   }
 

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Timeseries } from '@cognite/sdk';
 import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 
-import { useSiteConfig } from '../../../../hooks/useConfig';
+import { useSelectedSiteConfig } from '../../../../hooks/useConfig';
 import {
   useDataTypeFilterParams,
   useSearchQueryParams,
@@ -11,7 +11,7 @@ import {
 import { buildTimeseriesFilter } from '../../../../utils/filterBuilder';
 
 export const useTimeseriesSearchQuery = (limit?: number) => {
-  const siteConfig = useSiteConfig();
+  const siteConfig = useSelectedSiteConfig();
 
   const [query] = useSearchQueryParams();
 

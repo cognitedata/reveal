@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { useSiteConfig } from '../../../hooks/useConfig';
+import { useSelectedSiteConfig } from '../../../hooks/useConfig';
 import {
   useSearchFilterParams,
   useSearchQueryParams,
@@ -13,7 +13,7 @@ import { queryKeys } from '../../queryKeys';
 
 export const useSearchDataTypesQuery = () => {
   const client = useFDM();
-  const config = useSiteConfig();
+  const config = useSelectedSiteConfig();
 
   const [query] = useSearchQueryParams();
   const [filters] = useSearchFilterParams();

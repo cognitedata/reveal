@@ -10,8 +10,8 @@
   "GENERAL_AND": "and",
   "GENERAL_LOAD_MORE": "Load more",
 
-  "HOMEPAGE_HEADER": "Search for data  in {{site}}",
-  "AI_HOMEPAGE_HEADER": "Search for data using AI in {{site}}",
+  "HOMEPAGE_HEADER": "Search for data in",
+  "AI_HOMEPAGE_HEADER": "Search for data using AI in",
 
   "SEARCH_PLACEHOLDER": "Search...",
   "SEARCH_BAR_SEARCH_FOR": "Search for \"{{query}}\"",
@@ -23,7 +23,7 @@
   "SEARCH_BAR_SWITCH_LIST_VIEW": "List view",
   "SEARCH_BAR_SWITCH_3D_VIEW": "3D view",
 
-  "SEARCH_RESULTS_HEADER": "Search results from data in {{site}}",
+  "SEARCH_RESULTS_HEADER": "Search results from data in",
   "SEARCH_RESULTS_EMPTY_TITLE": "No results",
   "SEARCH_RESULTS_EMPTY_BODY": "We could not find any results for your query",
   "SEARCH_CATEGORIES_HEADER": "Categories",

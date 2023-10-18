@@ -11,7 +11,7 @@ import {
   defaultRevealColor,
   defaultViewerOptions,
 } from '../../../constants/threeD';
-import { useSiteConfig } from '../../../hooks/useConfig';
+import { useSelectedSiteConfig } from '../../../hooks/useConfig';
 import { useViewModeParams } from '../../../hooks/useParams';
 import { useInstanceThreeDEntryQuery } from '../../../services/instances/generic/hooks/useInstanceThreeD';
 import { RevealContent } from '../../ThreeD/containers/RevealContent';
@@ -25,7 +25,7 @@ export const ThreeDWidget: React.FC<ThreeDWidgetProps> = () => {
 
   const { data, status, isFetched } = useInstanceThreeDEntryQuery();
 
-  const siteConfig = useSiteConfig();
+  const siteConfig = useSelectedSiteConfig();
 
   const modelIdentifiers = siteConfig?.threeDResources;
 

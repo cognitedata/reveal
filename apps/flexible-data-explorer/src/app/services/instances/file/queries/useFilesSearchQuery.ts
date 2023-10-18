@@ -4,7 +4,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 
-import { useSiteConfig } from '../../../../hooks/useConfig';
+import { useSelectedSiteConfig } from '../../../../hooks/useConfig';
 import {
   useDataTypeFilterParams,
   useSearchQueryParams,
@@ -14,7 +14,7 @@ import { queryKeys } from '../../../queryKeys';
 
 export const useFilesSearchQuery = (limit?: number) => {
   const sdk = useSDK();
-  const siteConfig = useSiteConfig();
+  const siteConfig = useSelectedSiteConfig();
 
   const [query] = useSearchQueryParams();
 
