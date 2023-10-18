@@ -450,7 +450,7 @@ export const selectors: {
     state.historyState.index < state.historyState.history.length - 1,
 };
 
-export const addContainerReferences = ({
+export const addContainerReferences = async ({
   sdk,
   unifiedViewer,
   containerReferences,
@@ -462,36 +462,30 @@ export const addContainerReferences = ({
   if (unifiedViewer === null) {
     throw new Error('UnifiedViewer is not initialized');
   }
-
-  return Promise.all(
-    addDimensionsToContainerReferencesIfNotExists(
-      containerReferences,
-      serializeCanvasState(
-        selectors.canvasState(useIndustrialCanvasStore.getState())
+  return addContainerConfigs({
+    containerConfigs: await Promise.all(
+      addDimensionsToContainerReferencesIfNotExists(
+        containerReferences,
+        serializeCanvasState(
+          selectors.canvasState(useIndustrialCanvasStore.getState())
+        )
+      ).map((containerReference) =>
+        resolveContainerConfig(sdk, containerReference)
       )
-    ).map(async (containerReference) => {
-      const containerConfig = await resolveContainerConfig(
-        sdk,
-        containerReference
-      );
-
-      return addContainerConfig({
-        containerConfig,
-      });
-    })
-  );
+    ),
+  });
 };
 
-export const addContainerConfig = ({
-  containerConfig,
+export const addContainerConfigs = ({
+  containerConfigs,
 }: {
-  containerConfig: IndustryCanvasContainerConfig;
+  containerConfigs: IndustryCanvasContainerConfig[];
 }) => {
   pushHistoryState((prevState: IndustryCanvasState) => ({
     ...prevState,
-    nodes: [...prevState.nodes, containerConfig],
+    nodes: [...prevState.nodes, ...containerConfigs],
   }));
-  return containerConfig;
+  return containerConfigs;
 };
 
 export const updateContainerById = ({
