@@ -8,7 +8,6 @@ export const LANGUAGES = [
   { code: 'fr', label: 'Français' },
   { code: 'it', label: 'Italiano' },
   { code: 'nl', label: 'Nederlands' },
-  { code: 'nb', label: 'Norsk' },
   { code: 'pt', label: 'Português' },
   { code: 'sv', label: 'Svenska' },
   { code: 'ko', label: '한국어' },
