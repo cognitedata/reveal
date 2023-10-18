@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import { Alert } from 'antd';
 
-import { createLink, PageTitle, SecondaryTopbar } from '@cognite/cdf-utilities';
+import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 
 import { useTranslation } from '@data-exploration-lib/core';
 
@@ -47,7 +47,6 @@ export const ThreeDTitle = ({
   if (error && !image360SiteId) {
     return (
       <>
-        <PageTitle title={id?.toString() ?? image360SiteId ?? 'No id'} />
         <SecondaryTopbar
           goBackFallback={goBackFallback}
           title={id?.toString() ?? image360SiteId ?? 'No id'}
@@ -59,9 +58,6 @@ export const ThreeDTitle = ({
 
   return (
     <>
-      <PageTitle
-        title={getMainModelTitle(t, apiThreeDModel, image360SiteData)}
-      />
       <SecondaryTopbar
         goBackFallback={goBackFallback}
         title={getMainModelTitle(t, apiThreeDModel, image360SiteData)}

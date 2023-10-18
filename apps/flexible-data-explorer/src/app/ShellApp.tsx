@@ -28,7 +28,7 @@ const App = () => {
         login={() => loginAndAuthIfNeeded()}
       >
         <SDKProvider sdk={sdk}>
-          <SubAppWrapper title="Flexible Data Explorer">
+          <SubAppWrapper title="Search">
             <FusionStyles>
               <I18nWrapper
                 translations={translations}

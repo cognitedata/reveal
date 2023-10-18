@@ -16,9 +16,8 @@ import {
 import styled from 'styled-components/macro';
 import { useDebounce } from 'use-debounce';
 
-import { PageTitle } from '@cognite/cdf-utilities';
 import { Flex, Tabs } from '@cognite/cogs.js';
-import { getTitle, ResourceType } from '@cognite/data-exploration';
+import { ResourceType } from '@cognite/data-exploration';
 
 import { useTranslation, ViewType } from '@data-exploration-lib/core';
 import {
@@ -64,12 +63,6 @@ import { BreakJourneyPrompt } from './BreakJourneyPrompt';
 import { DetailsOverlay } from './DetailsOverlay';
 import { ExplorationFilterToggle } from './ExplorationFilterToggle';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
-
-const getPageTitle = (query: string, resourceType?: ResourceType): string => {
-  return `${query}${query ? ' in' : ''} ${
-    resourceType ? getTitle(resourceType, true) : 'All'
-  }`;
-};
 
 function SearchPage() {
   // start fetching metadata keys as early as possible
@@ -280,7 +273,6 @@ export const SearchResultsPage = () => {
 
   return (
     <ThreeDSearchContextProvider>
-      <PageTitle title={getPageTitle(query, resourceType)} />
       <SearchPage />
     </ThreeDSearchContextProvider>
   );

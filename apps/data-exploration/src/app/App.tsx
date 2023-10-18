@@ -64,7 +64,7 @@ export default () => {
         <ErrorBoundary>
           <QueryClientProvider client={queryClient}>
             <AuthContainer
-              title="Data Exploration"
+              title="Data exploration"
               sdk={sdk}
               login={loginAndAuthIfNeeded}
             >
