@@ -31,3 +31,8 @@ export const CommonColumnWrapper = styled.div`
 `;
 
 export const CommonWrapper = styled(Flex)``;
+
+export const SearchConfigContainerWrapper = styled(Flex)`
+  width: fit-content;
+  overflow: hidden;
+`;

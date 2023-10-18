@@ -3,8 +3,6 @@ import React from 'react';
 import { SearchConfigModal } from '@data-exploration/components';
 import useLocalStorageState from 'use-local-storage-state';
 
-import { Flex } from '@cognite/cogs.js';
-
 import {
   FilterIdType,
   searchConfigData as searchConfigDefaultData,
@@ -14,6 +12,7 @@ import {
 } from '@data-exploration-lib/core';
 
 import { CommonColumn } from './CommonColumn';
+import { SearchConfigContainerWrapper } from './elements';
 import { ResourceColumns } from './ResourceColumns';
 
 type Props = {
@@ -126,7 +125,7 @@ export const SearchConfig: React.FC<Props> = ({
         onSave();
       }}
     >
-      <Flex data-testid="search-config" style={{ overflow: 'hidden' }}>
+      <SearchConfigContainerWrapper data-testid="search-config">
         <CommonColumn
           searchConfigData={configData}
           onChange={onChangeCommonHandler}
@@ -137,7 +136,7 @@ export const SearchConfig: React.FC<Props> = ({
           onChange={onChangeHandler}
           isDocumentsApiEnabled={isDocumentsApiEnabled}
         />
-      </Flex>
+      </SearchConfigContainerWrapper>
     </SearchConfigModal>
   );
 };
