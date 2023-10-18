@@ -132,8 +132,7 @@ async function get360ImageAnnotations(
     })
   );
 
-  const image360Annotations = annotationArray.flat();
-  return image360Annotations;
+  return annotationArray.flat();
 }
 
 async function listFileIds(filter: FileFilterProps, sdk: CogniteClient): Promise<number[]> {
