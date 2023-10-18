@@ -134,16 +134,10 @@ function WorkflowRow({
   const { data: hasTSRead, isFetching: isFetchingReadCapabilities } =
     useAclPermissions(TIMESERIES_ACL, 'READ');
 
-  const { data: hasSessionList } = useAclPermissions(SESSION_ACL, 'LIST');
   const { data: hasSessionCreate } = useAclPermissions(SESSION_ACL, 'CREATE');
-  const { data: hasSessionDelete } = useAclPermissions(SESSION_ACL, 'DELETE');
 
   const canCreateScheduledCalculations =
-    hasTSWrite &&
-    hasTSRead &&
-    hasSessionList &&
-    hasSessionCreate &&
-    hasSessionDelete;
+    hasTSWrite && hasTSRead && hasSessionCreate;
 
   const isFetchingCapabilities =
     isFetchingWriteCapabilities || isFetchingReadCapabilities;
@@ -406,9 +400,7 @@ function WorkflowRow({
           capabilities={[
             hasTSWrite ? '' : `${TIMESERIES_ACL}:WRITE`,
             hasTSRead ? '' : `${TIMESERIES_ACL}:READ`,
-            hasSessionList ? '' : `${SESSION_ACL}:LIST`,
             hasSessionCreate ? '' : `${SESSION_ACL}:CREATE`,
-            hasSessionDelete ? '' : `${SESSION_ACL}:DELETE`,
           ].filter(Boolean)}
         />
       ) : null}

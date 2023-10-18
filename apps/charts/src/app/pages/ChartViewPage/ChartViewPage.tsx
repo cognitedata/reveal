@@ -150,16 +150,9 @@ const ChartViewPage = () => {
   );
 
   const { data: hasTSRead } = useAclPermissions(TIMESERIES_ACL, 'READ');
-  const { data: hasSessionList } = useAclPermissions(SESSION_ACL, 'LIST');
   const { data: hasSessionCreate } = useAclPermissions(SESSION_ACL, 'CREATE');
-  const { data: hasSessionDelete } = useAclPermissions(SESSION_ACL, 'DELETE');
 
-  const isMonitoringAccessible =
-    hasTSRead &&
-    hasSessionList &&
-    hasSessionCreate &&
-    hasSessionDelete &&
-    !!userProfile;
+  const isMonitoringAccessible = hasTSRead && hasSessionCreate && !!userProfile;
 
   const isAlertingAccessible = hasTSRead && !!userProfile;
 
@@ -931,9 +924,7 @@ const ChartViewPage = () => {
             ? ['User Profiles']
             : [
                 hasTSRead ? '' : `${TIMESERIES_ACL}:READ`,
-                hasSessionList ? '' : `${SESSION_ACL}:LIST`,
                 hasSessionCreate ? '' : `${SESSION_ACL}:CREATE`,
-                hasSessionDelete ? '' : `${SESSION_ACL}:DELETE`,
               ].filter(Boolean)
         }
         onOk={handleAccessDeniedModalClose}

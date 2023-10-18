@@ -238,7 +238,7 @@ export const MOCK_CAPABILITIES = [
   },
   {
     sessionsAcl: {
-      actions: ['LIST', 'CREATE', 'DELETE'],
+      actions: ['CREATE'],
       scope: {
         all: {},
       },
