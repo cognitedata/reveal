@@ -296,7 +296,13 @@ export const CadContextualizeThreeDViewer = ({
         onSecondaryPaneSizeChange={setRightSidePanelWidth}
       >
         <ThreeDViewerStyled>
-          <RevealContainer sdk={sdk} color={defaultRevealColor}>
+          <RevealContainer
+            sdk={sdk}
+            color={defaultRevealColor}
+            viewerOptions={{
+              loadingIndicatorStyle: { placement: 'topRight', opacity: 1 },
+            }}
+          >
             <CadRevealContent
               modelId={modelId}
               revisionId={revisionId}

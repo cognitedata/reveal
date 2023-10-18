@@ -16,7 +16,13 @@ export const FileLink = ({ fileId }: { fileId: number }) => {
   const file = useFiles([fileId]);
 
   const onClickFile = () => {
-    navigate(createLink(`/explore/file/${fileId}/info`));
+    navigate(
+      createLink(`/explore/search/file`, {
+        journey: `file-${fileId}`,
+        'full-page': true,
+        'selected-tab': 'info',
+      })
+    );
   };
 
   if (file.error) {

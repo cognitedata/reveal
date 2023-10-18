@@ -109,9 +109,9 @@ export const updatePendingAnnotation = (deltaAnnotation: {
       pendingAnnotation: {
         position: deltaAnnotation.position,
         size: {
-          x: pendingAnnotation.size.x * deltaAnnotation.scale.x,
-          y: pendingAnnotation.size.y * deltaAnnotation.scale.y,
-          z: pendingAnnotation.size.z * deltaAnnotation.scale.z,
+          x: pendingAnnotation.size.x * Math.abs(deltaAnnotation.scale.x),
+          y: pendingAnnotation.size.y * Math.abs(deltaAnnotation.scale.y),
+          z: pendingAnnotation.size.z * Math.abs(deltaAnnotation.scale.z),
         },
       },
     };

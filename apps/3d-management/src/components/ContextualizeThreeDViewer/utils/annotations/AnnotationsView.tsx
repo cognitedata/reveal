@@ -6,6 +6,7 @@ import { Wireframe } from 'three/examples/jsm/lines/Wireframe';
 import { Cognite3DViewer } from '@cognite/reveal';
 import {
   AnnotationModel,
+  AnnotationStatus,
   AnnotationsBoundingVolume,
   AnnotationsBox,
   AnnotationsCylinder,
@@ -299,7 +300,7 @@ export class AnnotationsView {
     }
     const assetId = volume.assetRef?.id;
 
-    const status = getStatusFromString(annotation.status, assetId);
+    const status = getStatus(annotation.status, assetId);
     const group = new Group();
     group.userData = new UserData(annotation.id, status); // Set the status and id
     const material = this.getLineMaterial(status, false);
@@ -420,8 +421,8 @@ function* getAllWireframes(root: Object3D | null): Generator<Wireframe> {
   }
 }
 
-function getStatusFromString(
-  status: string,
+function getStatus(
+  status: AnnotationStatus,
   assetId: number | undefined
 ): Status {
   if (assetId) {

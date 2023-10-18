@@ -10,10 +10,16 @@ import styled from 'styled-components';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk, { getToken, getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { isDevelopment, isStaging } from '@cognite/cdf-utilities';
 import { Flex } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 let notebook_origin = 'https://notebook-standalone.cogniteapp.com';
+
+if (isStaging() || isDevelopment()) {
+  notebook_origin = 'https://notebook-standalone.staging.cogniteapp.com';
+}
+
 if ((window as any).CDF_NOTEBOOK_ORIGIN_OVERRIDE) {
   notebook_origin = (window as any).CDF_NOTEBOOK_ORIGIN_OVERRIDE;
 }

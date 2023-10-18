@@ -94,6 +94,7 @@
   "WIDGET_VIEW_LIST": "List",
 
   "3D_TOOLBAR_CAD_COLOR_TOGGLE": "Original CAD coloring",
+  "3D_TOOLBAR_FOCUS_SELECTED_EQUIPMENT": "Focus selected equipment",
 
   "PROPERTIES_WIDGET_NAME": "Properties",
   "PROPERTIES_WIDGET_SEARCH_INPUT_PLACEHOLDER": "Filter by name...",

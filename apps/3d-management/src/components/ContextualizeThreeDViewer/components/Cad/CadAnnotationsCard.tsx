@@ -70,7 +70,7 @@ export const CadAnnotationsCard = ({
       style={{
         position: 'absolute',
         top: FLOATING_ELEMENT_MARGIN,
-        right: FLOATING_ELEMENT_MARGIN,
+        left: FLOATING_ELEMENT_MARGIN,
         backgroundColor: 'white',
         border: '1px solid #d9d9d9',
         borderRadius: '8px',
@@ -121,10 +121,12 @@ export const CadAnnotationsCard = ({
                 setHoveredAnnotation(null);
               }}
             >
-              <span>
-                {asset?.name ??
-                  `Annotation for asset ID: ${annotation.assetId}`}
-              </span>
+              <StyledAnnotationName>
+                <span>
+                  {asset?.name ??
+                    `Annotation for asset ID: ${annotation.assetId}`}
+                </span>
+              </StyledAnnotationName>
               <Button
                 type="ghost"
                 size="small"
@@ -143,6 +145,11 @@ export const CadAnnotationsCard = ({
 const StyledAnnotationCardHeader = styled(Flex)`
   padding-bottom: 8px;
   gap: 6px;
+`;
+
+const StyledAnnotationName = styled(Body)`
+  overflow: hidden;
+  text-overflow: clip;
 `;
 
 const StyledAnnotationListItem = styled(Flex)`

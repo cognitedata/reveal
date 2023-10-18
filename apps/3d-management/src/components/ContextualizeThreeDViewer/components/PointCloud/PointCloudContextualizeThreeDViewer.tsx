@@ -132,7 +132,7 @@ export const PointCloudContextualizeThreeDViewer = ({
     createCdfThreeDAnnotation({
       sdk,
       modelId,
-      assetRefId: assetId,
+      assetId,
       pointCloudModel,
       cubeAnnotation: pendingAnnotation,
     }).then(() => {
@@ -150,7 +150,13 @@ export const PointCloudContextualizeThreeDViewer = ({
         onSecondaryPaneSizeChange={setRightSidePanelWidth}
       >
         <ThreeDViewerStyled>
-          <RevealContainer sdk={sdk} color={defaultRevealColor}>
+          <RevealContainer
+            sdk={sdk}
+            color={defaultRevealColor}
+            viewerOptions={{
+              loadingIndicatorStyle: { placement: 'topRight', opacity: 1 },
+            }}
+          >
             <PointCloudRevealContent
               modelId={modelId}
               revisionId={revisionId}
