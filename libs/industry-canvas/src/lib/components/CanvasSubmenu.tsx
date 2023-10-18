@@ -30,6 +30,7 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
   const { t } = useTranslation();
   return (
     <StyledSubmenu
+      appendTo="parent"
       key={`submenu-${canvas.externalId}`}
       content={
         <StyledMenu isActiveCanvas={isActiveCanvas}>
@@ -98,6 +99,7 @@ const StyledSubmenu = styled(Menu.Submenu)`
 
 const StyledMenu = styled(Menu)<{ isActiveCanvas: boolean }>`
   position: absolute;
+  left: 10px;
   top: ${(prop) => (prop.isActiveCanvas ? -10 : 0)}px;
 `;
 
