@@ -74,6 +74,23 @@ const initializeTranslations = (
     defaultNS: defaultNamespace,
   };
 
+  if (i18next.isInitialized) {
+    // if initialized, then dont change default, but add new name space with resources.
+    Object.entries(translations).forEach(([language, resource]) => {
+      i18next.addResourceBundle(
+        language,
+        defaultNamespace || addNamespace || '',
+        resource[defaultNamespace || addNamespace || ''],
+        true,
+        true
+      );
+    });
+    if (defaultNamespace) {
+      i18next.setDefaultNamespace(defaultNamespace);
+    }
+    return Promise.resolve();
+  }
+
   if (shouldUseLocizeBackend) {
     return i18next
       .use(locizePlugin)
@@ -93,23 +110,6 @@ const initializeTranslations = (
           referenceLng: 'en',
         },
       });
-  }
-
-  if (i18next.isInitialized) {
-    // if initialized, then dont change default, but add new name space with resources.
-    Object.entries(translations).forEach(([language, resource]) => {
-      i18next.addResourceBundle(
-        language,
-        defaultNamespace || addNamespace || '',
-        resource[defaultNamespace || addNamespace || ''],
-        true,
-        true
-      );
-    });
-    if (defaultNamespace) {
-      i18next.setDefaultNamespace(defaultNamespace);
-    }
-    return Promise.resolve();
   }
 
   return i18next
