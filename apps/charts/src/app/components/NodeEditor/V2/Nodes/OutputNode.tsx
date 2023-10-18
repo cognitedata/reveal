@@ -37,7 +37,10 @@ const OutputNode = memo(({ data, selected }: NodeProps<OutputNodeData>) => {
   }, [name]);
 
   return (
-    <NodeWrapper className={selected ? 'selected' : ''}>
+    <NodeWrapper
+      data-testid="output-nodeWrapper"
+      className={selected ? 'selected' : ''}
+    >
       <NodeHandle id="datapoints" type="target" position={Position.Left} />
       <div>{t.Output}</div>
       {readOnly ? (

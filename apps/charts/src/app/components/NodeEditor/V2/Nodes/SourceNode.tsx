@@ -74,7 +74,10 @@ const SourceNode = memo<NodeProps<SourceNodeData>>(({ id, data, selected }) => {
       isActionBarVisible={selected && !readOnly}
       translations={t}
     >
-      <NodeWrapper className={selected ? 'selected' : ''}>
+      <NodeWrapper
+        data-testid="source-nodeWrapper"
+        className={selected ? 'selected' : ''}
+      >
         <span>{t.Source}</span>
         <NodeHandle id="result" type="source" position={Position.Right} />
         {readOnly || !isInputVisible ? (

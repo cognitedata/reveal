@@ -49,7 +49,7 @@ const SourceListDropdown = ({
     typeof canvasSize.height === 'number' ? canvasSize.height - 50 : undefined;
 
   return (
-    <SourceDropdownMenu>
+    <SourceDropdownMenu data-testid="source-dropdown-menu">
       <Menu.Header>{t['Select wanted sources']}</Menu.Header>
       <SourcesContainer maxHeight={maxHeight}>
         {sources.map((source) => (
