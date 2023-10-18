@@ -13,8 +13,8 @@ https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3682697292/...create+a+ne
 2. Navigate to [dev.fusion.cogniteapp.com](dev.fusion.cogniteapp.com)
 3. Run `importMapOverrides.enableUI()` in the console
 4. Click the <img width="32" valign="bottom" src="https://user-images.githubusercontent.com/6615090/165697621-dc80186c-2bdc-4f1c-90a1-d7ab4f985efc.png"> button that appears in the bottom right corner
-5. Find `@cognite/cdf-data-exploration` module name and click on the row including it
-6. Override using `https://localhost:3001/index.js` (port might differ depending on your local settings)
+5. Find `@cognite/cdf-ui-entity-matching` module name and click on the row including it
+6. Override using `https://localhost:3010/index.js` (port might differ depending on your local settings)
 7. Click `Apply override` and refresh ✨
 
 ## Running application against mock server
