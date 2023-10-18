@@ -43,7 +43,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
 
   return (
     <Container>
-      <BaseFilterInput
+      <BaseFilterInput.Single
         {...rest}
         type="number"
         placeholder={PLACEHOLDER}
@@ -66,7 +66,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
 
       <TextChip>{t('FILTER_AND_OPERATION')}</TextChip>
 
-      <BaseFilterInput
+      <BaseFilterInput.Single
         {...rest}
         type="number"
         placeholder={PLACEHOLDER}

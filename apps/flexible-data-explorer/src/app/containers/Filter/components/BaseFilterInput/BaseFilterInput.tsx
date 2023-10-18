@@ -1,83 +1,30 @@
-import { ChangeEvent, useMemo, useState } from 'react';
-
-import isEmpty from 'lodash/isEmpty';
 import styled from 'styled-components/macro';
 
-import {
-  Input as CogsInput,
-  BaseInputProps as CogsBaseInputProps,
-  IconType,
-} from '@cognite/cogs.js';
-
-import { formatDate, isDate } from '../../../../utils/date';
-import { Suggestion } from '../../types';
 import { SuggestionsDropdown } from '../SuggestionsDropdown';
 
-export interface BaseFilterInputProps<T extends string | number | Date>
-  extends Omit<CogsBaseInputProps, 'onChange' | 'value'> {
+import { InputMulti, InputSingle } from './components';
+import {
+  BaseFilterInputBaseProps,
+  BaseFilterInputSuggestionsProps,
+} from './types';
+import { transformValue } from './utils';
+
+export interface BaseFilterInputSingleProps<T extends string | number | Date>
+  extends BaseFilterInputBaseProps,
+    BaseFilterInputSuggestionsProps {
   value?: T;
-  showSuggestions?: boolean;
-  suggestions?: Suggestion[];
-  isLoading?: boolean;
   onChange?: (value?: T) => void;
 }
 
-export const BaseFilterInput = <T extends string | number | Date>({
+const BaseFilterInputSingle = <T extends string | number | Date>({
   showSuggestions,
   suggestions,
-  isLoading,
-  type,
-  value,
   onChange,
-  icon,
-  iconPlacement,
   ...rest
-}: BaseFilterInputProps<T>) => {
-  const [isInputFocused, setInputFocused] = useState(false);
-
-  const inputIcon: IconType = useMemo(() => {
-    if (isLoading) {
-      return 'Loader';
-    }
-    return icon as IconType;
-  }, [icon, isLoading]);
-
-  const inputIconPlacement = useMemo(() => {
-    if (isLoading) {
-      return 'right';
-    }
-    return iconPlacement;
-  }, [iconPlacement, isLoading]);
-
-  const convertedValue = useMemo(() => {
-    if (type === 'datetime-local') {
-      if (isDate(value)) {
-        return formatDate(value, 'YYYY-MM-DDTHH:mm');
-      }
-      return undefined;
-    }
-    return value as string | number | undefined;
-  }, [type, value]);
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-
-    if (isEmpty(inputValue)) {
-      onChange?.(undefined);
-      return;
-    }
-
-    if (type === 'number') {
-      onChange?.(Number(inputValue) as T);
-      return;
-    }
-
-    if (type === 'datetime-local') {
-      onChange?.(new Date(inputValue) as T);
-      return;
-    }
-
-    onChange?.(inputValue as T);
+}: BaseFilterInputSingleProps<T>) => {
+  const handleSelectSuggestion = (suggestion: string) => {
+    const transformedValue = transformValue<T>(suggestion);
+    onChange?.(transformedValue);
   };
 
   return (
@@ -85,25 +32,55 @@ export const BaseFilterInput = <T extends string | number | Date>({
       <SuggestionsDropdown
         showSuggestions={showSuggestions}
         suggestions={suggestions}
-        onSelectSuggestion={(suggestion) => onChange?.(suggestion as T)}
+        onSelectSuggestion={handleSelectSuggestion}
       >
-        <CogsInput
-          {...rest}
-          type={type}
-          value={convertedValue}
-          onChange={handleChange}
-          icon={inputIcon}
-          iconPlacement={inputIconPlacement}
-          onFocus={() => setInputFocused(true)}
-          onBlur={() => setInputFocused(false)}
-          autoFocus={isInputFocused}
-        />
+        <InputSingle onChange={onChange} {...rest} />
       </SuggestionsDropdown>
     </Container>
   );
 };
 
+export interface BaseFilterInputMultiProps<T extends string | number>
+  extends BaseFilterInputBaseProps,
+    BaseFilterInputSuggestionsProps {
+  value?: T[];
+  onChange?: (value?: T[]) => void;
+}
+
+const BaseFilterInputMulti = <T extends string | number>({
+  showSuggestions,
+  suggestions,
+  value = [],
+  onChange,
+  ...rest
+}: BaseFilterInputMultiProps<T>) => {
+  const handleSelectSuggestion = (suggestion: string) => {
+    const transformedValue = transformValue<T>(suggestion);
+    const newValue = transformedValue ? [...value, transformedValue] : value;
+    onChange?.(newValue);
+  };
+
+  return (
+    <Container>
+      <SuggestionsDropdown
+        showSuggestions={showSuggestions}
+        suggestions={suggestions}
+        onSelectSuggestion={handleSelectSuggestion}
+      >
+        <InputMulti onChange={onChange} {...rest} />
+      </SuggestionsDropdown>
+    </Container>
+  );
+};
+
+export const BaseFilterInput = {
+  Single: BaseFilterInputSingle,
+  Multi: BaseFilterInputMulti,
+};
+
 const Container = styled.div`
+  position: relative;
+
   input,
   .input-wrapper {
     width: 100%;

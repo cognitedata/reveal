@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { useTranslation } from '../../../../../hooks/useTranslation';
 import { useSearchAggregateValuesQuery } from '../../../../../services/instances/generic/queries/useInstanceSearchAggregatesQuery';
 import { BaseFilterInput } from '../../../components';
@@ -12,9 +14,10 @@ export const StringInput: React.FC<StringInputProps> = ({
   value,
   ...rest
 }) => {
-  const { t } = useTranslation();
+  const [inputValue, setInputValue] = useState<string>('');
 
-  const query = useDeboucedValue(value);
+  const { t } = useTranslation();
+  const query = useDeboucedValue(inputValue);
 
   const { data: suggestions = [], isLoading: isSuggestionsLoading } =
     useSearchAggregateValuesQuery({
@@ -24,13 +27,14 @@ export const StringInput: React.FC<StringInputProps> = ({
     });
 
   return (
-    <BaseFilterInput
+    <BaseFilterInput.Single
       {...rest}
       value={value}
       type="text"
       placeholder={t('FILTER_TEXT_INPUT_PLACEHOLDER')}
       suggestions={suggestions}
       isLoading={isSuggestionsLoading}
+      onInputChange={setInputValue}
     />
   );
 };

@@ -1,6 +1,42 @@
-import { formatBigNumbersWithSuffix, formatNumber, isNumeric } from '../number';
+import {
+  formatBigNumbersWithSuffix,
+  formatNumber,
+  isNumber,
+  isNumeric,
+} from '../number';
 
 describe('number', () => {
+  describe('isNumber', () => {
+    it('should return true for valid numbers', () => {
+      const validNumbers = [42, 3.14, -100, 0];
+      validNumbers.forEach((value) => {
+        expect(isNumber(value)).toBe(true);
+      });
+    });
+
+    it('should return false for non-numeric values', () => {
+      const numericStrings = ['42', '3.14', '-100', '0'];
+      const nonNumericValues = ['Hello', true, false, 'abc123', {}, []];
+      [...numericStrings, ...nonNumericValues].forEach((value) => {
+        expect(isNumber(value)).toBe(false);
+      });
+    });
+
+    it('should return false for NaN', () => {
+      expect(isNumber(NaN)).toBe(false);
+    });
+
+    it('should return false for null and undefined', () => {
+      expect(isNumber(null)).toBe(false);
+      expect(isNumber(undefined)).toBe(false);
+    });
+
+    it('should return false for date objects', () => {
+      const date = new Date();
+      expect(isNumber(date)).toBe(false);
+    });
+  });
+
   describe('isNumeric', () => {
     it('should return true for valid numeric strings', () => {
       const validNumericStrings = ['123', '-456', '0', '123.45'];

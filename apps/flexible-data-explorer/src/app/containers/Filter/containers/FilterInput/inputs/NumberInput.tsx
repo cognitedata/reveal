@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import isUndefined from 'lodash/isUndefined';
 
 import { useTranslation } from '../../../../../hooks/useTranslation';
@@ -17,9 +19,10 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   value,
   ...rest
 }) => {
-  const { t } = useTranslation();
+  const [inputValue, setInputValue] = useState<string>('');
 
-  const query = useDeboucedValue(value);
+  const { t } = useTranslation();
+  const query = useDeboucedValue(inputValue);
 
   const { data: suggestions = [], isLoading: isSuggestionsLoading } =
     useSearchAggregateValuesQuery({
@@ -29,13 +32,14 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     });
 
   return (
-    <BaseFilterInput
+    <BaseFilterInput.Single
       {...rest}
       type="number"
       value={value}
       placeholder={t('FILTER_NUMBER_INPUT_PLACEHOLDER')}
       suggestions={suggestions}
       isLoading={isSuggestionsLoading}
+      onInputChange={setInputValue}
     />
   );
 };
@@ -55,7 +59,7 @@ export const NumberInputLessThan: React.FC<NumberInputProps> = ({
     });
 
   return (
-    <BaseFilterInput
+    <BaseFilterInput.Single
       {...rest}
       type="number"
       placeholder={t('FILTER_NUMBER_INPUT_PLACEHOLDER')}
@@ -83,7 +87,7 @@ export const NumberInputGreaterThan: React.FC<NumberInputProps> = ({
     });
 
   return (
-    <BaseFilterInput
+    <BaseFilterInput.Single
       {...rest}
       type="number"
       placeholder={t('FILTER_NUMBER_INPUT_PLACEHOLDER')}

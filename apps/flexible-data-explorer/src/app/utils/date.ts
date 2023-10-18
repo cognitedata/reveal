@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import isString from 'lodash/isString';
 
 export const getTimestamp = (date: Date) => {
   return dayjs(date).valueOf();

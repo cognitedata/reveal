@@ -1,3 +1,22 @@
+import isLodashNumber from 'lodash/isNumber';
+
+/**
+ * Checkes for both value and type.
+ * @example isNumber(100) -> true
+ * @example isNumber('100') -> false
+ */
+export const isNumber = (value: unknown): value is number => {
+  if (Number.isNaN(value)) {
+    return false;
+  }
+  return isLodashNumber(value);
+};
+
+/**
+ * Checkes only for the value.
+ * @example isNumber('100') -> true
+ * @example isNumber('100abc') -> false
+ */
 export const isNumeric = (value: string) => {
   return /^-?\d+(\.\d+)?$/.test(value);
 };

@@ -21,8 +21,8 @@ export const DateRangeInput: React.FC<DateRangeInputProps> = ({
 
   return (
     <Container>
-      <BaseFilterInput
-        type="datetime-local"
+      <BaseFilterInput.Single
+        type="date"
         value={min}
         onChange={(newMin) => {
           setMin(newMin);
@@ -35,8 +35,8 @@ export const DateRangeInput: React.FC<DateRangeInputProps> = ({
 
       <TextChip>{t('FILTER_AND_OPERATION')}</TextChip>
 
-      <BaseFilterInput
-        type="datetime-local"
+      <BaseFilterInput.Single
+        type="date"
         value={max}
         onChange={(newMax) => {
           setMax(newMax);
