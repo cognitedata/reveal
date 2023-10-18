@@ -13,6 +13,7 @@ declare namespace Cypress {
     deleteThreshold(eventNumber: number): void;
     selectFirstOption(selector: string): void;
     addThreshold(value: string, min: string, max: string): void;
+    addCalculation(): void;
   }
 }
 
@@ -124,3 +125,30 @@ Cypress.Commands.add(
     cy.get('input[placeholder="Max"]').type(max);
   }
 );
+
+Cypress.Commands.add('addCalculation', () => {
+  cy.get('[data-testid="chart-action-btn"]', { timeout: 20000 }).click();
+
+  cy.contains('Add calculation').click();
+
+  cy.getBySel('output-nodeWrapper')
+    .trigger('mousedown', { which: 1 })
+    .trigger('mousemove', { clientX: 0, clientY: 0 })
+    .trigger('mouseup', { force: true });
+
+  cy.contains('Add node').click();
+  cy.contains('Source').click();
+
+  cy.getBySel('source-dropdown-menu')
+    .should('exist')
+    .within(() => {
+      cy.get('button[type="button"]').click();
+    });
+
+  cy.getBySel('source-nodeWrapper').click();
+
+  cy.get('[aria-label="FullScreen"]').click();
+
+  cy.get('[data-handlepos="right"]').trigger('mousedown', { which: 1 });
+  cy.get('[data-handlepos="left"]').trigger('mousemove').trigger('mouseup');
+});
