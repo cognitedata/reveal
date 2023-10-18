@@ -1,9 +1,7 @@
 import { useMemo, useRef } from 'react';
 
 import {
-  DataModelTypeDefs,
   DataModelTypeDefsType,
-  DataModelVersion,
   KeyValueMap,
   PlatypusError,
   Result,
@@ -13,6 +11,7 @@ import noop from 'lodash/noop';
 
 import { PrimitiveTypes } from '@cognite/cog-data-grid';
 
+import { useDMContext } from '../../../../context/DMContext';
 import { TOKENS } from '../../../../di';
 import { useInjection } from '../../../../hooks/useInjection';
 
@@ -20,26 +19,21 @@ import { useFetchFilteredRowsCount } from './useFetchFilteredRowsCount';
 
 export type ListDataSourceProps = {
   dataModelType: DataModelTypeDefsType;
-  dataModelTypeDefs: DataModelTypeDefs;
-  dataModelVersion: DataModelVersion;
   instanceSpace: string;
   onError?: (error: any) => void;
 };
 
 export const useNestedListDataSource = ({
   dataModelType,
-  dataModelTypeDefs,
-  dataModelVersion,
   instanceSpace,
   onError,
 }: ListDataSourceProps) => {
+  const { typeDefs: dataModelTypeDefs, selectedDataModel } = useDMContext();
   const cursor = useRef('');
   const hasNextPage = useRef(false);
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   const { mutate: getFilteredRowsCount } = useFetchFilteredRowsCount({
-    dataModelExternalId: dataModelVersion.externalId,
     dataModelType,
-    space: dataModelVersion.space,
   });
   const dataSource: IDatasource = useMemo(
     () => ({
@@ -63,7 +57,7 @@ export const useNestedListDataSource = ({
         if (isCustomType) {
           return dataManagementHandler
             .getDataById({
-              dataModelExternalId: dataModelVersion.externalId,
+              dataModelExternalId: selectedDataModel.externalId,
               nestedCursors: {
                 [field]: hasNextPage.current ? cursor.current : '',
               },
@@ -78,9 +72,9 @@ export const useNestedListDataSource = ({
               dataModelTypeDefs,
               nestedLimit: limit,
               limitFields: [field],
-              dataModelSpace: dataModelVersion.space,
+              dataModelSpace: selectedDataModel.space,
               instanceSpace,
-              version: dataModelVersion.version,
+              version: selectedDataModel.version,
             })
             .then((response) => {
               const result = response.getValue();
@@ -98,15 +92,15 @@ export const useNestedListDataSource = ({
               );
               getFilteredRowsCount({
                 dataModelType,
-                dataModelId: dataModelVersion.externalId,
-                version: dataModelVersion.version,
+                dataModelId: selectedDataModel.externalId,
+                version: selectedDataModel.version,
                 filter: {
                   [field]:
                     searchTerm && isCustomType
                       ? { externalId: { eq: searchTerm } }
                       : {},
                 },
-                space: dataModelVersion.space,
+                space: selectedDataModel.space,
               });
               params.successCallback(callbackData, lastRow);
             })
@@ -143,13 +137,12 @@ export const useNestedListDataSource = ({
     }),
     [
       dataManagementHandler,
-      dataModelVersion.externalId,
-      dataModelVersion.space,
-      dataModelVersion.version,
+      selectedDataModel,
       dataModelType,
       dataModelTypeDefs,
       instanceSpace,
       onError,
+      getFilteredRowsCount,
     ]
   );
 

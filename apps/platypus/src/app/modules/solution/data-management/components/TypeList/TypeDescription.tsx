@@ -1,48 +1,34 @@
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
+import { DataModelTypeDefsType } from '@fusion/data-modeling';
 
 import { Detail } from '@cognite/cogs.js';
 
 import { useManualPopulationFeatureFlag } from '../../../../../flags';
 import useSelector from '../../../../../hooks/useSelector';
 import { useGetFilteredRowsCount } from '../../hooks/useGetFilteredRowsCount';
+import { usePublishedRowsCountMapByType } from '../../hooks/usePublishedRowsCountMapByType';
 
 import * as S from './elements';
 
-export type TypeDescriptionProps = {
-  dataModelType: DataModelTypeDefsType;
-  publishedRowsCount: number;
-  isLoading: boolean;
-};
-
-export const TypeDescription: React.FC<TypeDescriptionProps> = ({
+export const TypeDescription = ({
   dataModelType,
-  publishedRowsCount,
-  isLoading,
+}: {
+  dataModelType: DataModelTypeDefsType;
 }) => {
+  const { data: publishedRowsCountMap = {}, isLoading } =
+    usePublishedRowsCountMapByType();
   const { isEnabled: isManualPopulationEnabled } =
     useManualPopulationFeatureFlag();
   const draftRowsData = useSelector(
-    (state) => state.dataManagement.draftRows[dataModelType.name || ''] || []
+    (state) => state.dataManagement.draftRows[dataModelType?.name || ''] || []
   );
-  const { dataModelExternalId, space } = useParams() as {
-    dataModelExternalId: string;
-    space: string;
-    version: string;
-  };
-
-  const filteredRowsCount = useGetFilteredRowsCount({
-    dataModelType,
-    dataModelExternalId,
-    space,
-  });
+  const filteredRowsCount = useGetFilteredRowsCount();
 
   const activeRowsCount =
     filteredRowsCount !== null && filteredRowsCount !== undefined
       ? filteredRowsCount
-      : publishedRowsCount;
+      : publishedRowsCountMap[dataModelType?.name || ''];
 
   const description = useMemo(
     () =>

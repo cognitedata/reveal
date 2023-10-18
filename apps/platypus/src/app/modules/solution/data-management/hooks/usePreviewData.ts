@@ -1,5 +1,3 @@
-import { useParams } from 'react-router-dom';
-
 import {
   DataModelTypeDefsType,
   PlatypusValidationError,
@@ -9,16 +7,13 @@ import { useQuery } from '@tanstack/react-query';
 
 import { KeyValueMap } from '@cognite/cog-data-grid';
 
+import { useDMContext } from '../../../../context/DMContext';
 import { TOKENS } from '../../../../di';
-import { useDataModelTypeDefs } from '../../../../hooks/useDataModelActions';
 import { useInjection } from '../../../../hooks/useInjection';
-import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
 import { QueryKeys } from '../../../../utils/queryKeys';
 
 export const usePreviewData = (
   params: {
-    dataModelExternalId: string;
-    dataModelSpace: string;
     dataModelType: DataModelTypeDefsType;
     externalId: string;
     instanceSpace: string;
@@ -31,8 +26,6 @@ export const usePreviewData = (
   options?: { enabled?: boolean }
 ) => {
   const {
-    dataModelExternalId,
-    dataModelSpace,
     dataModelType,
     externalId,
     instanceSpace,
@@ -40,22 +33,17 @@ export const usePreviewData = (
     nestedFilters,
     nestedLimit = 10,
   } = params;
-  const { version } = useParams() as { version: string };
 
-  const dataModelTypeDefs = useDataModelTypeDefs(
-    dataModelExternalId,
-    version,
-    dataModelSpace
-  );
-
-  const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(version, dataModelExternalId, dataModelSpace);
+  const {
+    typeDefs: dataModelTypeDefs,
+    selectedDataModel: selectedDataModelVersion,
+  } = useDMContext();
 
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   return useQuery<KeyValueMap | null>(
     QueryKeys.PREVIEW_DATA(
       instanceSpace,
-      dataModelExternalId,
+      selectedDataModelVersion.externalId,
       dataModelType?.name,
       selectedDataModelVersion.version,
       externalId,
@@ -66,8 +54,8 @@ export const usePreviewData = (
     async () => {
       return dataManagementHandler
         .getDataById({
-          dataModelExternalId,
-          dataModelSpace,
+          dataModelExternalId: selectedDataModelVersion.externalId,
+          dataModelSpace: selectedDataModelVersion.space,
           dataModelType,
           dataModelTypeDefs,
           externalId,

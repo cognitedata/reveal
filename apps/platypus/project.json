@@ -29,6 +29,10 @@
           {
             "entryName": "suggestions-worker",
             "entryPath": "apps/platypus/src/app/modules/solution/data-management/components/SuggestionsModal/suggestions.worker.ts"
+          },
+          {
+            "entryName": "dm-worker",
+            "entryPath": "apps/platypus/src/app/context/dm.worker.ts"
           }
         ]
       }
@@ -55,6 +59,11 @@
           {
             "input": "./dist/apps/platypus-workers",
             "glob": "suggestions-worker.js",
+            "output": "."
+          },
+          {
+            "input": "./dist/apps/platypus-workers",
+            "glob": "dm-worker.js",
             "output": "."
           }
         ],

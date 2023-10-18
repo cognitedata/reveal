@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { DataModelTypeDefsType, KeyValueMap } from '@platypus/platypus-core';
+import { KeyValueMap } from '@platypus/platypus-core';
 import { ICellRendererParams } from 'ag-grid-community';
 
 import { Button, Flex, Chip, Modal } from '@cognite/cogs.js';
 
+import { useDMContext } from '../../../../../../context/DMContext';
 import { useGraphViewerFeatureFlag } from '../../../../../../flags';
 import { useMixpanel } from '../../../../../../hooks/useMixpanel';
 import { useTranslation } from '../../../../../../hooks/useTranslation';
@@ -27,9 +28,7 @@ export const IdCellRenderer = React.memo((props: IdCellRendererProps) => {
   const handleAddClick = () => {
     props.onRowAdd(props.data);
   };
-  const { dataModelType } = props.context as {
-    dataModelType: DataModelTypeDefsType;
-  };
+  const { selectedDataType: dataModelType } = useDMContext();
   return (
     <Flex justifyContent="space-between" alignItems="center">
       <IdCellValueText>{props.value}</IdCellValueText>
@@ -74,7 +73,7 @@ export const IdCellRenderer = React.memo((props: IdCellRendererProps) => {
             initialNodes={[
               {
                 externalId: props.value,
-                __typename: dataModelType.name,
+                __typename: dataModelType!.name,
                 space: props.data.space,
                 id: getNodeId(props.data),
               },

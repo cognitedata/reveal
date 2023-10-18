@@ -12,10 +12,11 @@ import {
   Textarea,
 } from '@cognite/cogs.js';
 
+import { useDMContext } from '../../../../../context/DMContext';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 import { RuleDto, RuleSeverity } from '../../api/codegen';
 import { RequiredWrapper } from '../../components';
-import { useLoadDataScopes, useDataModel } from '../../hooks';
+import { useLoadDataScopes } from '../../hooks';
 import { useShowUpsertSuccess } from '../hooks';
 
 import { UpsertRuleFooter } from './components/UpsertRuleFooter';
@@ -44,7 +45,9 @@ export const UpsertRuleDrawer = ({
   const { isLoading, upsertRule } = useUpsertRule();
   const { showUpsertSuccess } = useShowUpsertSuccess();
 
-  const dataTypeOptions = useDataModel().dataModel.views.map((type) => ({
+  const { selectedDataModel } = useDMContext();
+
+  const dataTypeOptions = selectedDataModel.views.map((type) => ({
     label: type.externalId,
     value: type.externalId,
   }));

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { StorageProviderType } from '@fusion/data-modeling';
 import uniqueId from 'lodash/uniqueId';
@@ -14,6 +14,7 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
+import { useDMContext } from '../../context/DMContext';
 import { TOKENS } from '../../di';
 import { useNavigate } from '../../flags/useNavigate';
 import { useInjection } from '../../hooks/useInjection';
@@ -39,11 +40,9 @@ const HAS_SEEN_EXPERIMENTAL_FEATURES = 'HAS_SEEN_EXPERIMENTAL_FEATURES';
 
 export const SideBarMenu = ({ items }: SideBarProps) => {
   const [hasSeenTooltip, setLocalHasSeenTooltip] = useState(true);
-  const { dataModelExternalId, version, space } = useParams<{
-    dataModelExternalId: string;
-    version: string;
-    space: string;
-  }>();
+  const { selectedDataModel } = useDMContext();
+
+  const { externalId: dataModelExternalId, version, space } = selectedDataModel;
 
   const { t } = useTranslation('Sidebar menu');
 

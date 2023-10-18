@@ -1,7 +1,6 @@
 import 'graphiql/graphiql.min.css';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -22,9 +21,8 @@ import {
 } from '@cognite/cogs.js';
 
 import { getCogniteSDKClient } from '../../../../../environments/cogniteSdk';
-import { useDataModelTypeDefs } from '../../../../hooks/useDataModelActions';
+import { useDMContext } from '../../../../context/DMContext';
 import { useMixpanel } from '../../../../hooks/useMixpanel';
-import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
 import zIndex from '../../../../utils/zIndex';
 import { RelationViewer } from '../../data-management/components/RelationViewer/RelationViewer';
 import {
@@ -35,15 +33,7 @@ import { GraphqlCodeEditor } from '../../data-model/components/GraphqlCodeEditor
 import { QueryExplorer } from '../components/QueryExplorer';
 import graphqlQueryFetcher from '../utils/graphqlQueryFetcher';
 
-export interface QueryExplorerPageProps {
-  dataModelExternalId: string;
-  space: string;
-}
-
-export const SearchPage = ({
-  dataModelExternalId,
-  space,
-}: QueryExplorerPageProps) => {
+export const SearchPage = () => {
   const { track } = useMixpanel();
   const [searchText, setSearchText] = useState('');
   const [isQueryExplorerVisible, setQueryExplorerVisible] = useState(false);
@@ -56,16 +46,8 @@ export const SearchPage = ({
   >(undefined);
   const [result, setResult] = useState<any>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
-  const { version } = useParams() as { version: string };
 
-  const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(version, dataModelExternalId, space);
-
-  const dataModelTypeDefs = useDataModelTypeDefs(
-    dataModelExternalId,
-    version,
-    space
-  );
+  const { typeDefs: dataModelTypeDefs, selectedDataModel } = useDMContext();
 
   const flow = useMemo(
     () => new GraphQlQueryFlow({ sdk: getCogniteSDKClient() }),
@@ -86,9 +68,9 @@ export const SearchPage = ({
           prompt: searchText,
           selectedDataModels: [
             {
-              dataModel: selectedDataModelVersion.externalId,
-              version: selectedDataModelVersion.version,
-              space: selectedDataModelVersion.space,
+              dataModel: selectedDataModel.externalId,
+              version: selectedDataModel.version,
+              space: selectedDataModel.space,
             },
           ],
         },
@@ -119,9 +101,9 @@ export const SearchPage = ({
         selectedDataModels: () => {
           return [
             {
-              dataModel: selectedDataModelVersion.externalId,
-              version: selectedDataModelVersion.version,
-              space: selectedDataModelVersion.space,
+              dataModel: selectedDataModel.externalId,
+              version: selectedDataModel.version,
+              space: selectedDataModel.space,
             },
           ];
         },
@@ -149,7 +131,7 @@ export const SearchPage = ({
       },
     });
     return () => unmount();
-  }, [flow, messages, registerFlow, selectedDataModelVersion, track]);
+  }, [registerFlow, selectedDataModel, track, messages, flow]);
 
   useEffect(() => {
     if (graphQLQuery) {
@@ -159,9 +141,9 @@ export const SearchPage = ({
       graphqlQueryFetcher
         .fetcher(
           graphQLQuery,
-          dataModelExternalId,
-          selectedDataModelVersion.version,
-          space
+          selectedDataModel.externalId,
+          selectedDataModel.version,
+          selectedDataModel.space
         )
         .then((data) => {
           setIsSearching(false);
@@ -177,13 +159,7 @@ export const SearchPage = ({
           setError(JSON.stringify(e, null, 2));
         });
     }
-  }, [
-    graphQLQuery,
-    dataModelExternalId,
-    selectedDataModelVersion.version,
-    space,
-    track,
-  ]);
+  }, [graphQLQuery, selectedDataModel, track]);
 
   const tableData = useMemo(
     () => (result ? (Object.values(result)[0] as any)['items'] : []),
@@ -379,9 +355,6 @@ export const SearchPage = ({
             </p>
             <div style={{ position: 'relative', flex: 1 }}>
               <QueryExplorer
-                space={space}
-                dataModelExternalId={dataModelExternalId}
-                schemaVersion={selectedDataModelVersion.version}
                 defaultVariables={graphQLQuery?.variables}
                 defaultQuery={graphQLQuery?.query}
                 onQueryChange={(query) => {

@@ -20,9 +20,9 @@ import {
 
 import { SplitPanelLayout } from '../../../../../components/Layouts/SplitPanelLayout';
 import { Notification } from '../../../../../components/Notification/Notification';
+import { useDMContext } from '../../../../../context/DMContext';
 import { useMixpanel } from '../../../../../hooks/useMixpanel';
 import { useTranslation } from '../../../../../hooks/useTranslation';
-import { DataPreviewTableProps } from '../DataPreviewTable/DataPreviewTable';
 
 import { TypeColumnSelect } from './TypeColumnSelect';
 import { useSuggestions } from './useSuggestions';
@@ -44,37 +44,24 @@ const INITIAL_SELECTED_COLUMN = ['externalId'];
 type SuggestionsModalProps = {
   onCancel: (column?: string) => void;
   onConfirm: (column: string, data: KeyValueMap[], rejected: string[]) => void;
-  dataModelInfo: DataPreviewTableProps;
   defaultColumn?: string;
 };
 
 export const SuggestionsModal = ({
   onCancel,
   onConfirm,
-  dataModelInfo,
   defaultColumn,
 }: SuggestionsModalProps) => {
   const { track } = useMixpanel();
   const { t } = useTranslation('Suggestions');
 
-  const {
-    dataModelType,
-    dataModelTypeDefs,
-    dataModelExternalId,
-    version,
-    space,
-  } = dataModelInfo;
-  const { acceptMatches, rejectMatches, getRejectedMatches } = useSuggestions({
-    dataModelType,
-    dataModelTypeDefs,
-    dataModelExternalId,
-    version,
-    space,
-  });
+  const { typeDefs: dataModelTypeDefs, selectedDataType: dataType } =
+    useDMContext();
+  const { acceptMatches, rejectMatches, getRejectedMatches } = useSuggestions();
 
   const rejectedMatches = getRejectedMatches();
 
-  const propertiesForMatching = dataModelType.fields.filter(
+  const propertiesForMatching = dataType!.fields.filter(
     (el) => !el.type.list && el.type.custom
   );
 
@@ -115,7 +102,6 @@ export const SuggestionsModal = ({
 
   const { isLoading, suggestionsResult } = useSuggestionsResult({
     matchConfidence: confidence,
-    dataModelInfo,
     selectedSourceColumns,
     selectedTargetColumns,
     targetTypeDef,
@@ -185,7 +171,7 @@ export const SuggestionsModal = ({
         },
         selectedSourceColumns,
         selectedTargetColumns,
-        sourceName: dataModelType.name,
+        sourceName: dataType!.name,
         targetName: targetTypeDef?.name || '',
         isAllSelected,
       }),
@@ -194,7 +180,7 @@ export const SuggestionsModal = ({
     [
       selectedSourceColumns,
       selectedTargetColumns,
-      dataModelType.name,
+      dataType,
       targetTypeDef,
       gridService,
       isAllSelected,
@@ -301,7 +287,7 @@ export const SuggestionsModal = ({
                     <Flex direction="row" gap={20} alignItems="center">
                       <div style={{ flex: 1, position: 'relative', width: 0 }}>
                         <TypeColumnSelect
-                          type={dataModelType}
+                          type={dataType!}
                           selected={selectedSourceColumns}
                           onChange={setSelectedSourceColumns}
                         />

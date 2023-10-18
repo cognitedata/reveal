@@ -1,29 +1,28 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { DataModel } from '@platypus/platypus-core';
 import { useCdfUserHistoryService } from '@user-history';
 
 import { createLink } from '@cognite/cdf-utilities';
 
 import { Notification } from '../../components/Notification/Notification';
 import { SUB_APP_PATH } from '../../constants';
+import { useDMContext } from '../../context/DMContext';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useDataModelMutation } from '../../modules/data-models/hooks/useDataModelMutation';
 import { DataModelDetailModal } from '../DataModelDetailModal/DataModelDetailModal';
 
 export type DataModelSettingsModalProps = {
-  dataModel: DataModel;
   onRequestClose: () => void;
   visible: boolean;
 };
 
 export const DataModelSettingsModal = ({
-  dataModel,
   onRequestClose,
   visible,
 }: DataModelSettingsModalProps) => {
-  const { name, description, id: externalId, space, version } = dataModel;
+  const { selectedDataModel } = useDMContext();
+  const { name, description, externalId, space, version } = selectedDataModel;
   const { pathname: dataModelPathname } = useLocation();
   const userHistoryService = useCdfUserHistoryService();
 
@@ -38,7 +37,7 @@ export const DataModelSettingsModal = ({
       {
         description: dataModelDescription,
         externalId,
-        name: dataModelName,
+        name: dataModelName || '',
         space,
         version,
       },

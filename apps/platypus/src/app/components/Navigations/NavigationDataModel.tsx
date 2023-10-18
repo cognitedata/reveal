@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { DataModelVersion } from '@platypus/platypus-core';
 
@@ -14,15 +13,11 @@ import {
 } from '@cognite/cogs.js';
 
 import { DOCS_LINKS } from '../../constants';
+import { useDMContext } from '../../context/DMContext';
 import { TOKENS } from '../../di';
 import { useNavigate } from '../../flags/useNavigate';
-import {
-  useDataModel,
-  useDataModelVersions,
-} from '../../hooks/useDataModelActions';
 import { useInjection } from '../../hooks/useInjection';
 import { useMixpanel } from '../../hooks/useMixpanel';
-import { useSelectedDataModelVersion } from '../../hooks/useSelectedDataModelVersion';
 import useSelector from '../../hooks/useSelector';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useDraftRows } from '../../modules/solution/data-management/hooks/useDraftRows';
@@ -32,7 +27,6 @@ import { useLocalDraft } from '../../modules/solution/data-model/hooks/useLocalD
 import { SchemaEditorMode } from '../../modules/solution/data-model/types';
 import { useDataModelState } from '../../modules/solution/hooks/useDataModelState';
 import { DataModelState } from '../../redux/reducers/global/dataModelReducer';
-import { DEFAULT_VERSION_PATH } from '../../utils/config';
 import { DataModelSettingsModal } from '../DataModelSettingsModal/DataModelSettingsModal';
 import { SchemaVersionDropdown } from '../SchemaVersionDropdown/SchemaVersionDropdown';
 
@@ -59,40 +53,27 @@ export const NavigationDataModel = () => {
     }
     return 'data-modeling';
   })();
-  const { dataModelExternalId, space, version } = useParams() as {
-    dataModelExternalId: string;
-    space: string;
-    version: string;
-  };
-  const { data: dataModel } = useDataModel(dataModelExternalId, space);
-  const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(version, dataModelExternalId, space);
+  const {
+    selectedDataModel,
+    versions: dataModelVersions,
+    latestDataModel,
+  } = useDMContext();
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation('data-model-navigation');
   const { track } = useMixpanel();
 
-  const { data: dataModelVersions } = useDataModelVersions(
-    dataModelExternalId,
-    space
-  );
+  const { externalId: dataModelExternalId, space } = selectedDataModel;
 
   const fdmClient = useInjection(TOKENS.fdmClient);
-
-  const { dataModelVersion: latestDataModelVersion } =
-    useSelectedDataModelVersion(
-      DEFAULT_VERSION_PATH,
-      dataModelExternalId,
-      space
-    );
 
   const { getLocalDraft, getRemoteAndLocalSchemas } = useLocalDraft(
     dataModelExternalId,
     space,
-    latestDataModelVersion
+    latestDataModel
   );
 
-  const localDraft = getLocalDraft(selectedDataModelVersion.version);
+  const localDraft = getLocalDraft(selectedDataModel.version);
 
   const { editorMode } = useSelector<DataModelState>(
     (state) => state.dataModel
@@ -138,7 +119,7 @@ export const NavigationDataModel = () => {
     we're in a newly created data model, return an array with a default data model version
     */
     if (!localDraft && dataModelVersions?.length === 0) {
-      return [selectedDataModelVersion];
+      return [selectedDataModel];
     } else {
       return getRemoteAndLocalSchemas(dataModelVersions || []);
     }
@@ -256,9 +237,9 @@ export const NavigationDataModel = () => {
           >
             <Flex>
               <StyledTitle level="2" strong>
-                {dataModel?.name}
+                {selectedDataModel?.name}
               </StyledTitle>
-              <StyledExternalId level="2">{`(${dataModel?.id})`}</StyledExternalId>
+              <StyledExternalId level="2">{`(${selectedDataModel?.externalId})`}</StyledExternalId>
             </Flex>
             <Chip
               size="x-small"
@@ -270,7 +251,7 @@ export const NavigationDataModel = () => {
           </Flex>
         </StyledFlex>
 
-        {selectedDataModelVersion ? (
+        {selectedDataModel ? (
           <SchemaVersionDropdown
             onVersionSelect={(solutionSchema) => {
               track('DataModel.Versions.Select', {
@@ -283,7 +264,7 @@ export const NavigationDataModel = () => {
               editorMode === SchemaEditorMode.Edit &&
               localDraft
                 ? localDraft
-                : selectedDataModelVersion
+                : selectedDataModel
             }
             versions={getDataModelHeaderSchemas()}
           />
@@ -296,25 +277,24 @@ export const NavigationDataModel = () => {
     <StyledTopBar>
       {showPowerBIModal && (
         <PowerBIModal
-          dataModel={selectedDataModelVersion}
+          dataModel={selectedDataModel}
           onRequestClose={() => setShowPowerBIModal(false)}
         />
       )}
       {showEndpointModal && (
         <EndpointModal
-          endpoint={fdmClient.getQueryEndpointUrl(selectedDataModelVersion)}
+          endpoint={fdmClient.getQueryEndpointUrl(selectedDataModel)}
           onRequestClose={() => setShowEndpointModal(false)}
         />
       )}
 
-      {dataModel && (
+      {selectedDataModel && (
         <>
           {renderTitleButton()}
           {renderTopBarRight()}
           {isSettingsModalVisible && (
             <DataModelSettingsModal
               visible
-              dataModel={dataModel}
               onRequestClose={() => setIsSettingsModalVisible(false)}
             />
           )}

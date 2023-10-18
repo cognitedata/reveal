@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import { Tooltip, Button, Flex, Chip, Divider } from '@cognite/cogs.js';
 
 import { PageToolbar } from '../../../../../components/PageToolbar/PageToolbar';
+import { useDMContext } from '../../../../../context/DMContext';
 import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
@@ -35,8 +36,6 @@ type Props = {
   space: string;
   suggestionsAvailable?: boolean;
   title: string;
-  typeName: string;
-  viewVersion?: string;
 };
 
 export function PreviewPageHeader({
@@ -58,9 +57,10 @@ export function PreviewPageHeader({
   space,
   suggestionsAvailable = false,
   title,
-  typeName,
-  viewVersion,
 }: Props) {
+  const { selectedDataType: dataType, selectedDataModel } = useDMContext();
+  const { name: typeName } = dataType!;
+  const viewVersion = dataType?.version || selectedDataModel.version;
   const { t } = useTranslation('DataPreview');
   const isTransformationsEnabled = useTransformationsFeatureFlag();
   const { isEnabled: isManualPopulationEnabled } =

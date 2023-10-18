@@ -2,9 +2,7 @@ import { ReactElement, useEffect, useState } from 'react';
 
 import {
   BultinFieldTypeNames,
-  DataModelTypeDefs,
   DataModelTypeDefsType,
-  DataModelVersion,
   KeyValueMap,
 } from '@platypus/platypus-core';
 
@@ -17,6 +15,7 @@ import { SDKProvider } from '@cognite/sdk-provider';
 
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
 import { FilePreview } from '../../../../../components/FilePreview/FilePreview';
+import { useDMContext } from '../../../../../context/DMContext';
 import { usePreviewData } from '../../hooks/usePreviewData';
 
 import { SidePanelTitle } from './data-preview-side-panel-title';
@@ -40,9 +39,6 @@ export type CollapsiblePanelContainerProps = {
   children: ReactElement;
   data: DataPreviewSidebarData | undefined;
   onClose: VoidFunction;
-  dataModelType: DataModelTypeDefsType;
-  dataModelTypeDefs: DataModelTypeDefs;
-  dataModelVersion: DataModelVersion;
 };
 
 type SidebarCustomData =
@@ -54,21 +50,13 @@ export const CustomDataTypes = ['TimeSeries', 'File', 'Sequence'];
 
 export const CollapsiblePanelContainer: React.FC<
   CollapsiblePanelContainerProps
-> = ({
-  children,
-  data,
-  onClose,
-  dataModelTypeDefs,
-  dataModelVersion,
-  dataModelType,
-}) => {
+> = ({ children, data, onClose }) => {
+  const { selectedDataType: dataModelType } = useDMContext();
   const [resources, setResources] = useState<SidebarCustomData | undefined>();
 
   const { data: previewData } = usePreviewData(
     {
-      dataModelExternalId: dataModelVersion.externalId,
-      dataModelSpace: dataModelVersion.space,
-      dataModelType: dataModelType,
+      dataModelType: dataModelType!,
       externalId: data?.instanceExternalId || '',
       instanceSpace: data?.instanceSpace || '',
       nestedLimit: 0,
@@ -210,11 +198,9 @@ export const CollapsiblePanelContainer: React.FC<
     } else if (data.isList) {
       return (
         <ListPreview
-          externalId={data.instanceExternalId}
           field={data.fieldName}
-          dataModelType={dataModelType}
-          dataModelTypeDefs={dataModelTypeDefs}
-          dataModelVersion={dataModelVersion}
+          dataModelType={dataModelType!}
+          externalId={data.instanceExternalId}
           instanceSpace={data.instanceSpace}
         />
       );
@@ -234,8 +220,6 @@ export const CollapsiblePanelContainer: React.FC<
             (previewData?.[data.fieldName] as { externalId: string }).externalId
           }
           dataModelType={data.fieldType!}
-          dataModelExternalId={dataModelVersion.externalId}
-          dataModelSpace={dataModelVersion.space}
           instanceSpace={data.instanceSpace}
         />
       );
@@ -250,7 +234,7 @@ export const CollapsiblePanelContainer: React.FC<
             title={
               <SidePanelTitle
                 fieldName={data?.fieldName || ''}
-                dataModelTypeName={dataModelType.name}
+                dataModelTypeName={dataModelType!.name}
               />
             }
             onCloseClick={onClose}

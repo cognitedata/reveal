@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Navigate, Outlet, Route, Routes, useParams } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 
 import { StyledPageWrapper } from '../../components/Layouts/elements';
 import { PageLayout } from '../../components/Layouts/PageLayout';
@@ -9,8 +9,8 @@ import {
   SideBarMenu,
 } from '../../components/Navigations/SideBarMenu';
 import { Spinner } from '../../components/Spinner/Spinner';
+import { useDMContext } from '../../context/DMContext';
 import { useDataQualityFeatureFlag, useGPTSearch } from '../../flags';
-import { useDataModelVersions } from '../../hooks/useDataModelActions';
 import { useTranslation } from '../../hooks/useTranslation';
 
 const DataModelPage = lazy<any>(() =>
@@ -45,15 +45,9 @@ const SearchPage = lazy<any>(() =>
 export const DataLayout = () => {
   const { t } = useTranslation('SolutionDataModel');
   const { isEnabled: isGPTEnabled } = useGPTSearch();
-  const { dataModelExternalId, space } = useParams<{
-    dataModelExternalId: string;
-    space: string;
-  }>();
 
-  const { data: versions = [] } = useDataModelVersions(
-    dataModelExternalId!,
-    space!
-  );
+  const { selectedDataModel, versions } = useDMContext();
+  const { externalId: dataModelExternalId, space } = selectedDataModel;
 
   const hasNoPublishedVersion = versions.length === 0;
 
@@ -136,12 +130,7 @@ export const DataLayout = () => {
         <Route index element={<DataModelPage />} />
         <Route
           path="data-management/:subSolutionPage"
-          element={
-            <DataManagementPage
-              dataModelExternalId={dataModelExternalId}
-              space={space}
-            />
-          }
+          element={<DataManagementPage />}
         />
 
         {isDataQualityEnabled && (

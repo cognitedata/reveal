@@ -8,6 +8,7 @@ import { useFlag } from '@cognite/react-feature-flags';
 
 import { VersionSelectorToolbar } from '../../../../../components/VersionSelectorToolbar';
 import config from '../../../../../config/config';
+import { useDMContext } from '../../../../../context/DMContext';
 import { useCapabilities } from '../../../../../hooks/useCapabilities';
 import { useMixpanel } from '../../../../../hooks/useMixpanel';
 import useSelector from '../../../../../hooks/useSelector';
@@ -20,42 +21,37 @@ import { SchemaEditorMode } from '../../types';
 import { DiscardButton, ReturnButton, ImportTypesButton } from './elements';
 
 export interface DataModelHeaderProps {
-  dataModelExternalId: string;
-  dataModelSpace: string;
-  dataModelVersions: DataModelVersion[] | undefined;
   isSaving: boolean;
   isUpdating: boolean;
   editorHasError: boolean;
-  latestDataModelVersion: DataModelVersion;
   localDraft: DataModelVersion | null | undefined;
   onDiscardClick: () => void;
   onImportTypesClick: () => void;
   onPublishClick: () => void;
   onDataModelVersionSelect: (schema: DataModelVersion) => void;
-  selectedDataModelVersion: DataModelVersion;
   title: string;
 }
 
 export const DataModelHeader = ({
-  dataModelExternalId,
-  dataModelSpace,
-  dataModelVersions,
   isSaving,
   isUpdating,
-  latestDataModelVersion,
   localDraft,
   onDiscardClick,
   onPublishClick,
   onDataModelVersionSelect,
   onImportTypesClick,
-  selectedDataModelVersion,
   title,
   editorHasError,
 }: DataModelHeaderProps) => {
+  const {
+    latestDataModel: latestDataModelVersion,
+    selectedDataModel,
+    versions: dataModelVersions,
+  } = useDMContext();
   const { t } = useTranslation('DataModelHeader');
 
   const dataModelsWriteAcl = useCapabilities('dataModelsAcl', ['WRITE'], {
-    space: dataModelSpace,
+    space: selectedDataModel.space,
     checkAll: false,
   });
 
@@ -77,8 +73,8 @@ export const DataModelHeader = ({
   } = useDataModelState();
 
   const { removeLocalDraft, setLocalDraft } = useLocalDraft(
-    dataModelExternalId,
-    dataModelSpace,
+    selectedDataModel.externalId,
+    selectedDataModel.space,
     latestDataModelVersion
   );
 
@@ -92,7 +88,7 @@ export const DataModelHeader = ({
       updateGraphQlSchema(localDraft.schema);
     } else {
       setLocalDraft({
-        ...selectedDataModelVersion,
+        ...selectedDataModel,
         status: DataModelVersionStatus.DRAFT,
       });
     }
@@ -113,7 +109,7 @@ export const DataModelHeader = ({
     setSelectedDataModelVersion(latestDataModelVersion);
 
     track('DataModel.Draft.Delete', {
-      dataModel: dataModelExternalId,
+      dataModel: selectedDataModel.externalId,
     });
 
     onDiscardClick();
@@ -179,7 +175,7 @@ export const DataModelHeader = ({
             disabled={
               !isDirty ||
               !graphQlSchema ||
-              selectedDataModelVersion.schema === graphQlSchema ||
+              selectedDataModel.schema === graphQlSchema ||
               editorHasError
             }
             style={{ marginRight: '8px' }}
@@ -190,7 +186,7 @@ export const DataModelHeader = ({
       );
     }
 
-    if (selectedDataModelVersion.version !== latestDataModelVersion.version) {
+    if (selectedDataModel.version !== latestDataModelVersion.version) {
       return (
         <Flex style={{ flexGrow: 1 }}>
           <Flex

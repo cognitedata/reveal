@@ -8,23 +8,13 @@ import { Body } from '@cognite/cogs.js';
 import { usePreviewData } from '../../../hooks/usePreviewData';
 
 export const InstancePreview = (props: {
-  dataModelExternalId: string;
   dataModelType: DataModelTypeDefsType;
-  dataModelSpace: string;
   externalId: string;
   instanceSpace: string;
 }) => {
-  const {
-    dataModelExternalId,
-    dataModelSpace,
-    dataModelType,
-    externalId,
-    instanceSpace,
-  } = props;
+  const { dataModelType, externalId, instanceSpace } = props;
 
   const { data: previewData } = usePreviewData({
-    dataModelExternalId,
-    dataModelSpace,
     dataModelType,
     externalId,
     instanceSpace,

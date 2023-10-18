@@ -12,10 +12,10 @@ import {
   Textarea,
 } from '@cognite/cogs.js';
 
+import { useDMContext } from '../../../../../context/DMContext';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 import { DataScopeDto } from '../../api/codegen';
 import { RequiredWrapper } from '../../components';
-import { useDataModel } from '../../hooks';
 import { useShowUpsertSuccess } from '../hooks';
 
 import {
@@ -76,7 +76,9 @@ export const UpsertDataScopeModal = ({
       enableReinitialize: true,
     });
 
-  const dataTypeOptions = useDataModel().dataModel.views.map((type) => ({
+  const { selectedDataModel } = useDMContext();
+
+  const dataTypeOptions = selectedDataModel.views.map((type) => ({
     label: type.externalId,
     value: type.externalId,
   }));

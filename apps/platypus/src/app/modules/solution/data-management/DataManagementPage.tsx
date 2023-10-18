@@ -13,15 +13,7 @@ const PreviewPage = lazy<any>(() =>
   }))
 );
 
-export interface DataManagementPageProps {
-  dataModelExternalId: string;
-  space: string;
-}
-
-export const DataManagementPage = ({
-  dataModelExternalId,
-  space,
-}: DataManagementPageProps) => {
+export const DataManagementPage = () => {
   const { subSolutionPage } = useParams() as {
     subSolutionPage: string;
     version: string;
@@ -33,7 +25,7 @@ export const DataManagementPage = ({
   const Preview = (
     <StyledPage style={tab !== 'preview' ? { display: 'none' } : {}}>
       <Suspense fallback={<Spinner />}>
-        <PreviewPage dataModelExternalId={dataModelExternalId} space={space} />
+        <PreviewPage />
       </Suspense>
     </StyledPage>
   );

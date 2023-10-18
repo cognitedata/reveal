@@ -1,13 +1,10 @@
 import React, { useMemo, useState } from 'react';
 
-import {
-  DataModelTypeDefs,
-  DataModelTypeDefsType,
-} from '@platypus/platypus-core';
 import { ICellRendererParams } from 'ag-grid-community';
 
 import { Body, Flex, Icon, Tooltip } from '@cognite/cogs.js';
 
+import { useDMContext } from '../../../../../../context/DMContext';
 import { useTranslation } from '../../../../../../hooks/useTranslation';
 import { usePreviewData } from '../../../hooks/usePreviewData';
 
@@ -17,23 +14,16 @@ const DEBOUNCE_HOVER_TIME = 500;
 export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
   const { t } = useTranslation('CustomCellRenderer');
   const [_, setIsHovered] = useState(false);
-  const { dataModelExternalId, dataModelType, dataModelTypeDefs, space } =
-    props.context as {
-      dataModelExternalId: string;
-      dataModelType: DataModelTypeDefsType;
-      dataModelTypeDefs: DataModelTypeDefs;
-      space: string;
-      version: string;
-    };
-
+  const { selectedDataType: dataModelType, typeDefs: dataModelTypeDefs } =
+    useDMContext();
   const columnType = useMemo(
     () =>
       dataModelTypeDefs?.types.find(
         (type) =>
           type.name ===
-          dataModelType.fields.find(
+          dataModelType?.fields.find(
             (field) => props.colDef?.field === field.name
-          )!.type.name
+          )?.type.name
       ),
     [dataModelTypeDefs, dataModelType, props.colDef]
   );
@@ -50,8 +40,6 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
 
   const { data: previewData, refetch } = usePreviewData(
     {
-      dataModelExternalId,
-      dataModelSpace: space,
       dataModelType: columnType!,
       externalId: props.value?.externalId,
       instanceSpace: props.value?.space,

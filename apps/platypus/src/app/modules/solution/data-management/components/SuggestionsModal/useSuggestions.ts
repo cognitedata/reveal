@@ -3,20 +3,19 @@ import { useCallback } from 'react';
 import { KeyValueMap, StorageProviderType } from '@platypus/platypus-core';
 import { useQueryClient } from '@tanstack/react-query';
 
+import { useDMContext } from '../../../../../context/DMContext';
 import { TOKENS } from '../../../../../di';
 import { useInjection } from '../../../../../hooks/useInjection';
 import { QueryKeys } from '../../../../../utils/queryKeys';
-import { DataPreviewTableProps } from '../DataPreviewTable/DataPreviewTable';
 
 const REJECTED_SUGGESTIONS_KEY = 'REJECTED_SUGGESTIONS';
 
-export const useSuggestions = ({
-  dataModelType,
-  dataModelTypeDefs,
-  dataModelExternalId,
-  version,
-  space,
-}: DataPreviewTableProps) => {
+export const useSuggestions = () => {
+  const {
+    typeDefs: dataModelTypeDefs,
+    selectedDataType: dataModelType,
+    selectedDataModel: { externalId: dataModelExternalId, version, space },
+  } = useDMContext();
   const queryClient = useQueryClient();
   const sessionStorageHandler = useInjection(
     TOKENS.storageProviderFactory
@@ -25,7 +24,7 @@ export const useSuggestions = ({
 
   const acceptMatches = useCallback(
     async (data: KeyValueMap[]) => {
-      if (data.length !== 0 && dataModelType.version) {
+      if (data.length !== 0 && dataModelType && dataModelType.version) {
         await dataManagementHandler.ingestNodes({
           space,
           instanceSpace: space,
@@ -63,19 +62,19 @@ export const useSuggestions = ({
   const getRejectedMatches = useCallback(
     () =>
       sessionStorageHandler.getItem(
-        `${REJECTED_SUGGESTIONS_KEY}-${dataModelExternalId}-${version}-${dataModelType.name}`
+        `${REJECTED_SUGGESTIONS_KEY}-${dataModelExternalId}-${version}-${dataModelType?.name}`
       ) || [],
-    [sessionStorageHandler, dataModelType.name, dataModelExternalId, version]
+    [sessionStorageHandler, dataModelType?.name, dataModelExternalId, version]
   );
 
   const rejectMatches = useCallback(
     async (rejected: string[]) => {
       sessionStorageHandler.setItem(
-        `${REJECTED_SUGGESTIONS_KEY}-${dataModelExternalId}-${version}-${dataModelType.name}`,
+        `${REJECTED_SUGGESTIONS_KEY}-${dataModelExternalId}-${version}-${dataModelType?.name}`,
         rejected
       );
     },
-    [sessionStorageHandler, dataModelType.name, dataModelExternalId, version]
+    [sessionStorageHandler, dataModelType?.name, dataModelExternalId, version]
   );
 
   return { acceptMatches, rejectMatches, getRejectedMatches };

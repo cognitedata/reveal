@@ -25,7 +25,7 @@ export const QueryKeys = {
   PUBLISHED_ROWS_COUNT_BY_TYPE: (
     space: string,
     datamodelId: string,
-    dataModelTypeName: string
+    dataModelTypeName?: string
   ) =>
     [
       'PUBLISHED_ROWS_COUNT_BY_TYPE',
@@ -36,7 +36,7 @@ export const QueryKeys = {
   FILTERED_ROWS_COUNT: (
     space: string,
     datamodelId: string,
-    dataModelTypeName: string
+    dataModelTypeName?: string
   ) => ['FILTERED_ROWS_COUNT', space, datamodelId, dataModelTypeName] as const,
   TRANSFORMATION: (space: string, type: string, version: string) =>
     ['TRANSFORMATION', space, type, version] as const,

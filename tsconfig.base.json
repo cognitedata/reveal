@@ -97,10 +97,6 @@
       ],
       "@industry-canvas-ui/*": ["apps/industry-canvas-ui/src/*"],
       "@interactive-diagrams/*": ["apps/interactive-diagrams/src/*"],
-      "@platypus-app/*": [
-        "apps/platypus/src/app/*",
-        "apps/platypus/src/environments/environment.ts"
-      ],
       "@platypus-core/*": ["libs/data-modeling/platypus-core/src/lib/*"],
       "@platypus/@cognite/fdm-client": [
         "libs/@cognite/fdm-client/src/index.ts"

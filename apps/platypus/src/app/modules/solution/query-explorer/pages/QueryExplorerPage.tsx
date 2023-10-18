@@ -1,35 +1,19 @@
 import 'graphiql/graphiql.min.css';
 
-import { useParams } from 'react-router-dom';
-
 import { BasicPlaceholder } from '../../../../components/BasicPlaceholder/BasicPlaceholder';
 import { PageContentLayout } from '../../../../components/Layouts/PageContentLayout';
-import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
+import { useDMContext } from '../../../../context/DMContext';
 import { QueryExplorer } from '../components/QueryExplorer';
 
-export interface QueryExplorerPageProps {
-  dataModelExternalId: string;
-  space: string;
-}
-
-export const QueryExplorerPage = ({
-  dataModelExternalId,
-  space,
-}: QueryExplorerPageProps) => {
-  const { version } = useParams() as { version: string };
-
-  const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(version, dataModelExternalId, space);
+export const QueryExplorerPage = () => {
+  const { selectedDataModel } = useDMContext();
 
   return (
     <PageContentLayout>
       <PageContentLayout.Body>
-        {selectedDataModelVersion.version ? (
+        {selectedDataModel.version ? (
           <QueryExplorer
-            key={`${dataModelExternalId}_${selectedDataModelVersion.version}_${space}`}
-            dataModelExternalId={dataModelExternalId}
-            space={space}
-            schemaVersion={selectedDataModelVersion.version}
+            key={`${selectedDataModel.externalId}_${selectedDataModel.version}_${selectedDataModel.space}`}
           />
         ) : (
           <BasicPlaceholder

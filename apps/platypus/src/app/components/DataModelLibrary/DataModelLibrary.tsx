@@ -16,6 +16,7 @@ import {
   SegmentedControl,
 } from '@cognite/cogs.js';
 
+import { DMContextProvider } from '../../context/DMContext';
 import { useTranslation } from '../../hooks/useTranslation';
 import { GraphqlCodeEditor } from '../../modules/solution/data-model/components/GraphqlCodeEditor/GraphqlCodeEditor';
 import { SchemaVisualizer } from '../SchemaVisualizer/SchemaVisualizer';
@@ -337,9 +338,14 @@ export const DataModelLibrary = ({
               </Flex>
               <div style={{ width: '100%', flex: 1 }}>
                 {selectedView === 'visualizer' ? (
-                  <SchemaVisualizer
-                    graphQLSchemaString={selectedDataModel.versions[0].dml}
-                  />
+                  <DMContextProvider
+                    space=""
+                    externalId=""
+                    version=""
+                    overrideGraphQLDML={selectedDataModel.versions[0].dml}
+                  >
+                    <SchemaVisualizer />
+                  </DMContextProvider>
                 ) : (
                   <GraphqlCodeEditor
                     code={selectedDataModel.versions[0].dml}

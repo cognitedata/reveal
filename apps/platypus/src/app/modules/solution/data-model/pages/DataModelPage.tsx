@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import {
   ErrorType,
@@ -29,13 +29,12 @@ import {
 } from '../../../../components/PageToolbar/PageToolbar';
 import { SchemaVisualizer } from '../../../../components/SchemaVisualizer/SchemaVisualizer';
 import { SUB_APP_PATH } from '../../../../constants';
+import { DMContextProvider, useDMContext } from '../../../../context/DMContext';
 import { TOKENS } from '../../../../di';
 import { useNavigate } from '../../../../flags/useNavigate';
-import { useDataModelVersions } from '../../../../hooks/useDataModelActions';
 import { useInjection } from '../../../../hooks/useInjection';
 import { useMixpanel } from '../../../../hooks/useMixpanel';
 import { usePersistedState } from '../../../../hooks/usePersistedState';
-import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
 import useSelector from '../../../../hooks/useSelector';
 import { useTranslation } from '../../../../hooks/useTranslation';
 import { DataModelState } from '../../../../redux/reducers/global/dataModelReducer';
@@ -93,18 +92,22 @@ export const DataModelPage = () => {
   const userHistoryService = useCdfUserHistoryService();
 
   const navigate = useNavigate();
-  const { dataModelExternalId, space, version } = useParams() as {
-    dataModelExternalId: string;
-    space: string;
-    version: string;
-  };
 
   const { t } = useTranslation('SolutionDataModel');
 
   const { track } = useMixpanel();
+  const {
+    selectedDataModel: selectedDataModelVersion,
+    versions: dataModelVersions,
+    refetchDataModelVersions,
+    latestDataModel,
+  } = useDMContext();
+  const {
+    externalId: dataModelExternalId,
+    space,
+    version,
+  } = selectedDataModelVersion;
 
-  const { data: dataModelVersions, refetch: refetchDataModelVersions } =
-    useDataModelVersions(dataModelExternalId, space);
   const queryClient = useQueryClient();
   const { currentTypeName, editorMode, graphQlSchema, typeDefs } =
     useSelector<DataModelState>((state) => state.dataModel);
@@ -116,18 +119,10 @@ export const DataModelPage = () => {
     switchDataModelVersion,
   } = useDataModelState();
 
-  const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(version, dataModelExternalId, space);
-  const { dataModelVersion: latestDataModelVersion } =
-    useSelectedDataModelVersion(
-      DEFAULT_VERSION_PATH,
-      dataModelExternalId,
-      space
-    );
   const { removeLocalDraft, getLocalDraft } = useLocalDraft(
     dataModelExternalId,
     space,
-    latestDataModelVersion
+    latestDataModel
   );
 
   const localDraft = getLocalDraft(selectedDataModelVersion.version);
@@ -404,7 +399,7 @@ export const DataModelPage = () => {
   const handleDiscardClick = () => {
     track('DataModel.Draft.Delete');
     dataModelTypeDefsBuilder.clear();
-    updateGraphQlSchema(latestDataModelVersion.schema);
+    updateGraphQlSchema(latestDataModel.schema);
   };
 
   const handleImportTypesClick = () => {
@@ -417,20 +412,15 @@ export const DataModelPage = () => {
       <PageContentLayout>
         <PageContentLayout.Header>
           <DataModelHeader
-            dataModelExternalId={dataModelExternalId}
-            dataModelSpace={space}
-            dataModelVersions={dataModelVersions}
             isSaving={saving}
             isUpdating={updating}
             editorHasError={editorHasError}
-            latestDataModelVersion={latestDataModelVersion}
             localDraft={localDraft}
             onDiscardClick={handleDiscardClick}
             onImportTypesClick={handleImportTypesClick}
             onPublishClick={handleClickPublish}
             title={t('data_model_title', 'Data model')}
             onDataModelVersionSelect={handleDataModelVersionSelect}
-            selectedDataModelVersion={selectedDataModelVersion}
           />
         </PageContentLayout.Header>
         <PageContentLayout.Body style={{ flexDirection: 'row' }}>
@@ -440,9 +430,6 @@ export const DataModelPage = () => {
                 <EditorPanel
                   editorMode={editorMode}
                   setEditorHasError={setEditorHasError}
-                  space={space}
-                  version={selectedDataModelVersion.version}
-                  externalId={dataModelExternalId}
                   isPublishing={saving || updating}
                   errorsByGroup={errorsByGroup}
                   setErrorsByGroup={setErrorsByGroup}
@@ -469,15 +456,21 @@ export const DataModelPage = () => {
                   )}
                 </PageToolbar>
                 <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
-                  <SchemaVisualizer
-                    active={currentTypeName || undefined}
-                    graphQLSchemaString={graphQlSchema}
-                    onNodeClick={(nodeName) => setCurrentTypeName(nodeName)}
-                    isVisualizerOn={
-                      typeDefs.types.length <= MAX_TYPES_VISUALIZABLE ||
-                      isVisualizerOn
-                    }
-                  />
+                  <DMContextProvider
+                    overrideGraphQLDML={graphQlSchema}
+                    space={space}
+                    externalId={dataModelExternalId}
+                    version={version}
+                  >
+                    <SchemaVisualizer
+                      active={currentTypeName || undefined}
+                      onNodeClick={(nodeName) => setCurrentTypeName(nodeName)}
+                      isVisualizerOn={
+                        typeDefs.types.length <= MAX_TYPES_VISUALIZABLE ||
+                        isVisualizerOn
+                      }
+                    />
+                  </DMContextProvider>
                 </ErrorBoundary>
               </Flex>
             }

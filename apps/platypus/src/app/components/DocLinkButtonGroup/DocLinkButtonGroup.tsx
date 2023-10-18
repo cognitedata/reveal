@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 
 import { DOCS_LINKS } from '../../constants';
+import { useDMContext } from '../../context/DMContext';
 import { TOKENS } from '../../di';
 import { useInjection } from '../../hooks/useInjection';
 import { useMixpanel } from '../../hooks/useMixpanel';
-import { useSelectedDataModelVersion } from '../../hooks/useSelectedDataModelVersion';
 import { useTranslation } from '../../hooks/useTranslation';
 import { EndpointModal } from '../../modules/solution/data-model/components/EndpointModal';
 
@@ -22,16 +21,10 @@ export const DocLinkButtonGroup = ({
   docsLinkUrl,
   cliLink = DOCS_LINKS.CLI,
 }: DocLinkButtonGroupProps) => {
-  const { dataModelExternalId, space, version } = useParams() as {
-    dataModelExternalId: string;
-    space: string;
-    version: string;
-  };
+  const { selectedDataModel } = useDMContext();
 
   const { track } = useMixpanel();
 
-  const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(version, dataModelExternalId, space);
   const { t } = useTranslation('DataModelHeader');
   const [showEndpointModal, setShowEndpointModal] = useState(false);
 
@@ -40,7 +33,7 @@ export const DocLinkButtonGroup = ({
     <>
       {showEndpointModal && (
         <EndpointModal
-          endpoint={fdmClient.getQueryEndpointUrl(selectedDataModelVersion)}
+          endpoint={fdmClient.getQueryEndpointUrl(selectedDataModel)}
           onRequestClose={() => setShowEndpointModal(false)}
         />
       )}

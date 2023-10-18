@@ -8,14 +8,11 @@ import { BulkPopulationButton } from './BulkPopulationButton';
 
 const mockGetMissingPermissions = jest.fn();
 
-jest.mock(
-  '@platypus-app/modules/solution/data-management/hooks/useDataManagemenPageUI',
-  () => ({
-    useDataManagementPageUI: () => ({
-      getMissingPermissions: mockGetMissingPermissions,
-    }),
-  })
-);
+jest.mock('../../hooks/useDataManagemenPageUI', () => ({
+  useDataManagementPageUI: () => ({
+    getMissingPermissions: mockGetMissingPermissions,
+  }),
+}));
 
 describe('BulkPopulationButton', () => {
   it('disables button if there are missing permissions', () => {

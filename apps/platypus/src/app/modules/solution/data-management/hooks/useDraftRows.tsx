@@ -38,22 +38,27 @@ export const useDraftRows = () => {
     },
     [dispatch]
   );
-  const setSelectedType = (
-    dataModelExternalId: string,
-    selectedVersion: string,
-    selectedType: DataModelTypeDefsType
-  ) => {
-    dispatch(
-      dataManagementActions.setSelectedType({
-        dataModelExternalId,
-        selectedVersion,
-        selectedType,
-      })
-    );
-  };
+  const setSelectedType = useCallback(
+    (
+      dataModelExternalId: string,
+      selectedVersion: string,
+      selectedType: DataModelTypeDefsType
+    ) => {
+      dispatch(
+        dataManagementActions.setSelectedType({
+          dataModelExternalId,
+          selectedVersion,
+          selectedType,
+        })
+      );
+    },
+    [dispatch]
+  );
 
-  const deleteSelectedRows = () =>
-    dispatch(dataManagementActions.deleteSelectedDraftRows());
+  const deleteSelectedRows = useCallback(
+    () => dispatch(dataManagementActions.deleteSelectedDraftRows()),
+    [dispatch]
+  );
 
   return {
     setDraftRows,

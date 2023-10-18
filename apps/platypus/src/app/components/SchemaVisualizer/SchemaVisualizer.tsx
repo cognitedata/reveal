@@ -1,26 +1,17 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { BuiltInType } from '@platypus/platypus-core';
-import { Kind, parse } from 'graphql';
+import { BuiltInType, DataModelTypeDefsType } from '@platypus/platypus-core';
 import noop from 'lodash/noop';
 import styled, { CSSProperties } from 'styled-components/macro';
 
 import { Body, Button, Colors, Flex, Modal, Title } from '@cognite/cogs.js';
 
+import { useDMContext } from '../../context/DMContext';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useMixpanel } from '../../hooks/useMixpanel';
 import { useTranslation } from '../../hooks/useTranslation';
 import {
-  getInterfaceTypes,
   getLinkedNodes,
-  getObjectTypes,
-  getUnionTypes,
   SchemaDefinitionNode,
 } from '../../utils/graphql-utils';
 import zIndex from '../../utils/zIndex';
@@ -37,7 +28,6 @@ import { Spinner } from '../Spinner/Spinner';
 
 import { FullNode } from './nodes/FullNode';
 import { SmallNode } from './nodes/SmallNode';
-import { UnionNode } from './nodes/UnionNode';
 import {
   getLinkText,
   getNodeId,
@@ -56,19 +46,17 @@ export interface SchemaVisualizerConfig {
 const OFFSET_TOP = 2;
 export const SchemaVisualizer = React.memo(
   ({
-    graphQLSchemaString,
     active,
     isVisualizerOn = true,
     onNodeClick = noop,
   }: {
-    graphQLSchemaString?: string;
     active?: string;
     isVisualizerOn?: boolean;
     onNodeClick?: (nodeName: string) => void;
     /* Customize the Visualizer rendering */
   }) => {
     const { t } = useTranslation('Schema Visualizer');
-    const [nodes, setNodes] = useState<(Node & SchemaDefinitionNode)[]>([]);
+    const [nodes, setNodes] = useState<(Node & DataModelTypeDefsType)[]>([]);
     const [links, setLinks] = useState<Link[]>([]);
     const [highlightedIds, setHighlightedIds] = useState<string[]>([]);
 
@@ -77,23 +65,15 @@ export const SchemaVisualizer = React.memo(
     const [searchFilterValue, setSearchFilterValue] = useState('');
     const [isVisualizerExpanded, setIsVisualizerExpanded] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const graphRef = useRef<GraphFns | null>(null);
 
     const { track } = useMixpanel();
 
+    const { typeDefs } = useDMContext();
+
     useEffect(() => {
-      track('DataModel.Visualize', { isOpen: isVisualizerExpanded });
-    }, [isVisualizerExpanded, track]);
-
-    const schemaTypes = useMemo(() => {
-      setErrorMessage('');
-      if (!graphQLSchemaString || graphQLSchemaString.trim() === '') {
-        setIsLoading(false);
-        return [];
-      }
-
       if (!isVisualizerOn) {
         setErrorMessage(
           t(
@@ -102,24 +82,14 @@ export const SchemaVisualizer = React.memo(
           )
         );
         setIsLoading(false);
-        return [];
+      } else {
+        setErrorMessage('');
       }
+    }, [isVisualizerOn, t]);
 
-      try {
-        const { definitions } = parse(graphQLSchemaString || '');
-        return definitions;
-      } catch {
-        // TODO: Add sentry
-        setErrorMessage(
-          t(
-            'visualizer_validation_error',
-            "There's a validation error in your data model."
-          )
-        );
-        setIsLoading(false);
-        return [];
-      }
-    }, [t, graphQLSchemaString, setErrorMessage, isVisualizerOn]);
+    useEffect(() => {
+      track('DataModel.Visualize', { isOpen: isVisualizerExpanded });
+    }, [isVisualizerExpanded, track]);
 
     const [popover, setPopover] = useState<React.ReactNode | undefined>(
       undefined
@@ -128,36 +98,31 @@ export const SchemaVisualizer = React.memo(
     const debouncedSearchValue = useDebounce(searchFilterValue, 100);
 
     useEffect(() => {
-      if (schemaTypes) {
-        const objectTypes: SchemaDefinitionNode[] = [
-          ...getObjectTypes(schemaTypes),
-          ...getInterfaceTypes(schemaTypes),
-          ...getUnionTypes(schemaTypes),
-        ];
-        const filteredObjectTypes = objectTypes?.filter((objectType) =>
-          objectType.name.value
+      if (typeDefs.types) {
+        const filteredObjectTypes = typeDefs.types?.filter((objectType) =>
+          objectType.name
             .toLowerCase()
             .includes(debouncedSearchValue.toLowerCase().trim())
         );
         setNodes(
           filteredObjectTypes.map((type) => ({
-            title: type.name.value,
+            title: type.name,
             id: getNodeId(type),
             ...type,
-          })) as (Node & SchemaDefinitionNode)[]
+          })) as (Node & DataModelTypeDefsType)[]
         );
         setLinks(
           filteredObjectTypes.reduce((prev, current) => {
             const linkedNodes = getLinkedNodes(
-              current.name.value,
+              current.name,
               filteredObjectTypes
             );
             const newLinks = linkedNodes.map((linkedNode) => ({
               source: getNodeId(current),
               target: getNodeId(linkedNode.type),
               id: linkedNode.field
-                ? `${current.name.value}.${linkedNode.field}`
-                : `${current.name.value}-${linkedNode.type.name.value}`,
+                ? `${current.name}.${linkedNode.field}`
+                : `${current.name}-${linkedNode.type.name}`,
             }));
             return prev.concat(
               newLinks.concat(
@@ -168,49 +133,41 @@ export const SchemaVisualizer = React.memo(
         );
         rerenderHandler();
       }
-    }, [schemaTypes, debouncedSearchValue]);
+    }, [typeDefs, debouncedSearchValue]);
 
     // because of async function, we need to debounce by 100 by default
     const rerenderHandler = (debounce = 100) => {
       setTimeout(() => graphRef.current?.forceRerender(), debounce);
     };
 
-    const renderNode = useCallback<RenderNodeFunction<SchemaDefinitionNode>>(
+    const renderNode = useCallback<RenderNodeFunction<DataModelTypeDefsType>>(
       (item, fullRender) => {
         const nodeWidth = getNodeWidth(item);
         let content = <p>Loading&hellip;</p>;
         switch (item.kind) {
-          case 'ObjectTypeDefinition': {
+          case 'type': {
             if (showHeaderOnly) {
-              content = <SmallNode key={item.name.value} item={item} />;
+              content = <SmallNode key={item.name} item={item} />;
             } else {
               content = (
-                <FullNode
-                  key={item.name.value}
-                  item={item}
-                  fullRender={fullRender}
-                />
+                <FullNode key={item.name} item={item} fullRender={fullRender} />
               );
             }
             break;
           }
-          case 'InterfaceTypeDefinition': {
+          case 'interface': {
             if (showHeaderOnly) {
-              content = <SmallNode key={item.name.value} item={item} />;
+              content = <SmallNode key={item.name} item={item} />;
             } else {
               content = (
                 <FullNode
-                  key={item.name.value}
+                  key={item.name}
                   item={item}
                   fullRender={fullRender}
                   isInterface
                 />
               );
             }
-            break;
-          }
-          case 'UnionTypeDefinition': {
-            content = <UnionNode key={item.name.value} item={item} />;
             break;
           }
         }
@@ -222,12 +179,7 @@ export const SchemaVisualizer = React.memo(
             key={item.id}
             title={item.title}
             onClick={() => {
-              if (
-                item.kind === 'ObjectTypeDefinition' ||
-                item.kind === 'InterfaceTypeDefinition'
-              ) {
-                onNodeClick(item.title);
-              }
+              onNodeClick(item.title);
             }}
             onMouseEnter={() => {
               // Highlight links when hovering a node
@@ -251,7 +203,7 @@ export const SchemaVisualizer = React.memo(
       [active, links, showHeaderOnly]
     );
 
-    const renderLink = useCallback<RenderLinkFunction<SchemaDefinitionNode>>(
+    const renderLink = useCallback<RenderLinkFunction<DataModelTypeDefsType>>(
       (item) => {
         const id = getLinkId(item);
         if (id.endsWith('-hover')) {
@@ -289,17 +241,11 @@ export const SchemaVisualizer = React.memo(
       [highlightedIds]
     );
 
-    const getNodeWidthHeight = useCallback((node: SchemaDefinitionNode) => {
-      switch (node.kind) {
-        case Kind.OBJECT_TYPE_DEFINITION:
-        case Kind.INTERFACE_TYPE_DEFINITION:
-          return {
-            width: NODE_WIDTH,
-            height: getConnectorHeight((node.fields || []).length + 1),
-          };
-        default:
-          return { width: NODE_WIDTH, height: 0 };
-      }
+    const getNodeWidthHeight = useCallback((node: DataModelTypeDefsType) => {
+      return {
+        width: NODE_WIDTH,
+        height: getConnectorHeight((node.fields || []).length + 1),
+      };
     }, []);
 
     const renderGraph = () => (
@@ -355,7 +301,7 @@ export const SchemaVisualizer = React.memo(
             <i>{errorMessage}</i>
           </Flex>
         ) : (
-          <Graph<SchemaDefinitionNode>
+          <Graph<DataModelTypeDefsType>
             graphRef={graphRef}
             nodes={nodes}
             links={links}
@@ -373,8 +319,8 @@ export const SchemaVisualizer = React.memo(
                   // Highlight link and its source and target on hover
                   setHighlightedIds([
                     getLinkId(data).replace('-hover', ''),
-                    (data.source as SchemaDefinitionNode).name.value,
-                    (data.target as SchemaDefinitionNode).name.value,
+                    (data.source as SchemaDefinitionNode).name,
+                    (data.target as SchemaDefinitionNode).name,
                   ]);
                   setPopover(
                     <Popover

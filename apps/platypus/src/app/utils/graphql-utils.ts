@@ -1,75 +1,43 @@
-import { DirectiveProps } from '@platypus/platypus-core';
 import {
-  DefinitionNode,
-  InterfaceTypeDefinitionNode,
-  ObjectTypeDefinitionNode,
-  TypeNode,
-  UnionTypeDefinitionNode,
-} from 'graphql';
+  DataModelTypeDefsFieldType,
+  DataModelTypeDefsType,
+  DirectiveProps,
+} from '@platypus/platypus-core';
 
-export type SchemaDefinitionNode =
-  | ObjectTypeDefinitionNode
-  | InterfaceTypeDefinitionNode
-  | UnionTypeDefinitionNode;
-
-export const isFieldRequired = (type: TypeNode): boolean => {
-  switch (type?.kind) {
-    case 'NamedType':
-      return false;
-    case 'NonNullType':
-      return true;
-    case 'ListType':
-      return isFieldRequired(type.type);
-  }
-  return false;
-};
+export type SchemaDefinitionNode = DataModelTypeDefsType;
 
 export const doesFieldHaveDirective = (
   directives: DirectiveProps[],
   directiveName: string
 ) => directives.some((directive) => directive.name === directiveName);
 
-export const getFieldType = (type: TypeNode): string => {
-  switch (type?.kind) {
-    case 'NamedType':
-      return type.name.value;
-    case 'ListType':
-    case 'NonNullType':
-      return getFieldType(type.type);
-    default:
-      return '';
+export const renderFieldType = (type: DataModelTypeDefsFieldType): string => {
+  let name = type.name;
+  if (type.list) {
+    name = `[${name}]`;
   }
-};
-
-export const renderFieldType = (type: TypeNode): string => {
-  switch (type?.kind) {
-    case 'NamedType':
-      return type.name.value;
-    case 'ListType':
-      return `[${renderFieldType(type.type)}]`;
-    case 'NonNullType':
-      return renderFieldType(type.type).concat('!');
-    default:
-      return '';
+  if (type.nonNull) {
+    name = `${name}!`;
   }
+  return name;
 };
 
 export const getLinkedNodes = (
   schemaName: string,
-  schemas: SchemaDefinitionNode[]
+  schemas: DataModelTypeDefsType[]
 ) => {
-  const schemaNode = schemas.find((schema) => schema.name.value === schemaName);
-  const linkedNodes: { type: SchemaDefinitionNode; field?: string }[] = [];
+  const schemaNode = schemas.find((schema) => schema.name === schemaName);
+  const linkedNodes: { type: DataModelTypeDefsType; field?: string }[] = [];
   switch (schemaNode?.kind) {
-    case 'ObjectTypeDefinition': {
+    case 'type': {
       const fieldsTypes = schemaNode?.fields?.map((el) => ({
-        type: getFieldType(el.type),
-        name: el.name.value,
+        type: el.type.name,
+        name: el.name,
       }));
       if (fieldsTypes) {
         fieldsTypes.forEach(({ name, type }) => {
           const typeDef = schemas.find(
-            (schemaType) => schemaType.name.value === type
+            (schemaType) => schemaType.name === type
           );
           if (typeDef) {
             linkedNodes.push({ type: typeDef, field: name });
@@ -78,44 +46,15 @@ export const getLinkedNodes = (
       }
       break;
     }
-    case 'InterfaceTypeDefinition': {
-      const linkedInterfaces = schemas.filter(
-        (schemaType) =>
-          schemaType.kind === 'ObjectTypeDefinition' &&
-          schemaType.interfaces?.some(
-            (el) => el.name.value === schemaNode.name.value
-          )
+    case 'interface': {
+      const linkedInterfaces = schemas.filter((schemaType) =>
+        schemaType.interfaces?.some((el) => el === schemaNode.name)
       );
       linkedInterfaces.forEach((type) => {
         linkedNodes.push({ type });
       });
       break;
     }
-    case 'UnionTypeDefinition': {
-      schemaNode.types?.forEach((type) => {
-        const schemaType = schemas.find(
-          (schema) => schema.name.value === type.name.value
-        );
-        if (schemaType) {
-          linkedNodes.push({ type: schemaType });
-        }
-      });
-      break;
-    }
   }
   return linkedNodes;
 };
-export const getObjectTypes = (schemaTypes: readonly DefinitionNode[]) =>
-  schemaTypes.filter(
-    (schemaType) => schemaType.kind === 'ObjectTypeDefinition'
-  ) as ObjectTypeDefinitionNode[];
-
-export const getUnionTypes = (schemaTypes: readonly DefinitionNode[]) =>
-  schemaTypes.filter(
-    (schemaType) => schemaType.kind === 'UnionTypeDefinition'
-  ) as UnionTypeDefinitionNode[];
-
-export const getInterfaceTypes = (schemaTypes: readonly DefinitionNode[]) =>
-  schemaTypes.filter(
-    (schemaType) => schemaType.kind === 'InterfaceTypeDefinition'
-  ) as InterfaceTypeDefinitionNode[];

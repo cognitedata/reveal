@@ -1,44 +1,28 @@
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 
+import { useDMContext } from '../../../../../context/DMContext';
 import { usePreviewTableData } from '../../hooks/usePreviewTableData';
-import { DataPreviewTableProps } from '../DataPreviewTable/DataPreviewTable';
 
 import { SuggestionsTableData } from './SuggestionsModal';
 import { useFindSuggestions } from './useFindSuggestions';
-
 export const useSuggestionsResult = ({
   selectedColumn,
   targetTypeDef,
   matchConfidence,
   selectedSourceColumns,
   selectedTargetColumns,
-  dataModelInfo,
 }: {
   selectedColumn?: string;
   targetTypeDef?: DataModelTypeDefsType;
   matchConfidence: number;
   selectedSourceColumns: string[];
   selectedTargetColumns: string[];
-  dataModelInfo: DataPreviewTableProps;
 }) => {
+  const { selectedDataType: dataType } = useDMContext();
   const { data: sourceRecords, isFetching: isFetchingSource } =
-    usePreviewTableData(
-      dataModelInfo.dataModelExternalId,
-      dataModelInfo.space,
-      dataModelInfo.version,
-      1000,
-      dataModelInfo.dataModelType,
-      dataModelInfo.dataModelTypeDefs
-    );
+    usePreviewTableData(1000, dataType);
   const { data: targetRecords, isFetching: isFetchingTarget } =
-    usePreviewTableData(
-      dataModelInfo.dataModelExternalId,
-      dataModelInfo.space,
-      dataModelInfo.version,
-      100_000,
-      targetTypeDef,
-      dataModelInfo.dataModelTypeDefs
-    );
+    usePreviewTableData(100_000, targetTypeDef);
 
   const isFetchingRecords = isFetchingSource || isFetchingTarget;
 

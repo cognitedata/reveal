@@ -9,11 +9,11 @@ import render from '../../../tests/render';
 
 import { DataModelsList } from './DataModelsList';
 
-jest.mock('@platypus-app/hooks/useMixpanel');
-jest.mock('@platypus-app/hooks/useCapabilities');
-jest.mock('@platypus-app/hooks/useDataModelActions');
+jest.mock('../../../hooks/useMixpanel');
+jest.mock('../../../hooks/useCapabilities');
+jest.mock('../../../hooks/useDataModelActions');
 
-jest.mock('@platypus-app/components/DataModelLibrary/DataModelLibrary', () => {
+jest.mock('../../../components/DataModelLibrary/DataModelLibrary', () => {
   return {
     DataModelLibrary: () => <p>Mock</p>,
   };

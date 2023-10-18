@@ -1,8 +1,6 @@
-import {
-  DataModelTypeDefsType,
-  DeleteInstancesDTO,
-  Result,
-} from '@platypus/platypus-core';
+import { useMemo } from 'react';
+
+import { DeleteInstancesDTO, Result } from '@platypus/platypus-core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { TOKENS } from '../../../../di';
@@ -10,19 +8,15 @@ import { useInjection } from '../../../../hooks/useInjection';
 import { PlatypusError } from '../../../../types';
 import { QueryKeys } from '../../../../utils/queryKeys';
 
-export function useNodesDeleteMutation({
-  dataModelExternalId,
-  dataModelType,
-  space,
-}: {
-  dataModelExternalId: string;
-  dataModelType: DataModelTypeDefsType;
-  space: string;
-}) {
-  const aggregationsQueryKey = QueryKeys.PUBLISHED_ROWS_COUNT_BY_TYPE(
-    space,
-    dataModelExternalId,
-    dataModelType.name
+export const useNodesDeleteMutation = () => {
+  const aggregationsQueryKey = useMemo(
+    () =>
+      QueryKeys.PUBLISHED_ROWS_COUNT_BY_TYPE(
+        'space',
+        ' dataModelExternalId',
+        'dataModelType?.name'
+      ),
+    []
   );
   const queryClient = useQueryClient();
   const deleteInstancesCommand = useInjection(TOKENS.deleteInstancesCommand);
@@ -47,4 +41,4 @@ export function useNodesDeleteMutation({
       },
     }
   );
-}
+};

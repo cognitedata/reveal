@@ -1,13 +1,13 @@
 import React from 'react';
 
 import '@cognite/cogs.js/dist/cogs.css';
-import config from '@platypus-app/config/config';
 import { makeDecorator } from '@storybook/addons';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ContainerProvider } from 'brandi-react';
 
 import { CogniteClient } from '@cognite/sdk';
 
+import config from '../src/app/config/config';
 import { rootInjector } from '../src/app/di';
 import { queryClient } from '../src/app/queryClient';
 import AppProviders from '../src/app/tests/AppProviders';

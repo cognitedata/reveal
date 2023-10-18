@@ -1,11 +1,6 @@
+import { DataModelTypeDefsType } from '@fusion/data-modeling';
 import { SimulationLinkDatum } from 'd3';
-import {
-  InterfaceTypeDefinitionNode,
-  Kind,
-  ObjectTypeDefinitionNode,
-} from 'graphql';
 
-import { getFieldType, SchemaDefinitionNode } from '../../utils/graphql-utils';
 import { Node } from '../Graph/GraphEngine';
 
 export const NODE_WIDTH = 240;
@@ -18,28 +13,28 @@ export const getConnectorHeight = (index: number) =>
   NODE_HEADER_HEIGHT / 2;
 
 export const getLinkEndOffset =
-  (d: SimulationLinkDatum<Node & SchemaDefinitionNode>) =>
+  (d: SimulationLinkDatum<Node & DataModelTypeDefsType>) =>
   (showHeaderOnly = false) => {
-    const sourceNode = d.source as SchemaDefinitionNode & Node;
-    const targetNode = d.target as SchemaDefinitionNode & Node;
+    const sourceNode = d.source as DataModelTypeDefsType & Node;
+    const targetNode = d.target as DataModelTypeDefsType & Node;
 
-    const sourceNodeName = sourceNode.name.value;
-    const targetNodeName = targetNode.name.value;
+    const sourceNodeName = sourceNode.name;
+    const targetNodeName = targetNode.name;
 
     const sourceNodeWidth = getNodeWidth(sourceNode);
 
     const targetNodeWidth = getNodeWidth(targetNode);
 
     const sourcePropertyIndex =
-      sourceNode.kind === 'ObjectTypeDefinition'
+      sourceNode.kind === 'type'
         ? sourceNode.fields?.findIndex((el) =>
-            getFieldType(el.type).includes(targetNodeName)
+            el.type.name.includes(targetNodeName)
           )
         : -1;
     const targetPropertyIndex =
-      targetNode.kind === 'ObjectTypeDefinition'
+      targetNode.kind === 'type'
         ? targetNode.fields?.findIndex((el) =>
-            getFieldType(el.type).includes(sourceNodeName)
+            el.type.name.includes(sourceNodeName)
           )
         : -1;
 
@@ -60,60 +55,52 @@ export const getLinkEndOffset =
   };
 
 export const getLinkText = (
-  d: SimulationLinkDatum<SchemaDefinitionNode & Node>
+  d: SimulationLinkDatum<DataModelTypeDefsType & Node>
 ) => {
-  const sourceNode = d.source as SchemaDefinitionNode & Node;
-  const targetNode = d.target as SchemaDefinitionNode & Node;
+  const sourceNode = d.source as DataModelTypeDefsType & Node;
+  const targetNode = d.target as DataModelTypeDefsType & Node;
 
-  const sourceNodeName = sourceNode.name.value;
-  const targetNodeName = targetNode.name.value;
+  const sourceNodeName = sourceNode.name;
+  const targetNodeName = targetNode.name;
 
   // for Object types, the height could be tied to the property type
   const sourceProperty =
-    sourceNode.kind === 'ObjectTypeDefinition'
-      ? sourceNode.fields?.find((el) =>
-          getFieldType(el.type).includes(targetNodeName)
-        )
+    sourceNode.kind === 'type'
+      ? sourceNode.fields?.find((el) => el.type.name.includes(targetNodeName))
       : undefined;
   const targetProperty =
-    targetNode.kind === 'ObjectTypeDefinition'
-      ? targetNode.fields?.find((el) =>
-          getFieldType(el.type).includes(sourceNodeName)
-        )
+    targetNode.kind === 'type'
+      ? targetNode.fields?.find((el) => el.type.name.includes(sourceNodeName))
       : undefined;
 
   const sourceItemString = `${sourceNodeName}${
-    sourceProperty ? `.${sourceProperty.name.value}` : ''
+    sourceProperty ? `.${sourceProperty.name}` : ''
   }`;
   const targetItemString = `${targetNodeName}${
-    targetProperty ? `.${targetProperty.name.value}` : ''
+    targetProperty ? `.${targetProperty.name}` : ''
   }`;
 
   return `${sourceItemString} -> ${targetItemString}`;
 };
 
-export const getNodeWidth = (_node: SchemaDefinitionNode & Node) => {
+export const getNodeWidth = (_node: DataModelTypeDefsType & Node) => {
   return NODE_WIDTH;
 };
 
-export const getTypeDirective = (
-  item: ObjectTypeDefinitionNode | InterfaceTypeDefinitionNode
-): string => {
+export const getTypeDirective = (item: DataModelTypeDefsType): string => {
   if (!item.directives || !item.directives.length) {
-    if (item.kind === Kind.INTERFACE_TYPE_DEFINITION) {
+    if (item.kind === 'interface') {
       return 'Interface';
     }
     return 'Type';
   }
 
-  return item.directives[0].name.value;
+  return item.directives[0].name;
 };
 
 export const capitalizeFirst = (text: string): string =>
   text.substring(0, 1).toUpperCase() + text.substring(1);
 
-export const getNodeId = (type: SchemaDefinitionNode) => {
-  return `${type.name.value}-${
-    type.kind === Kind.OBJECT_TYPE_DEFINITION ? type.fields?.length : ''
-  }`;
+export const getNodeId = (type: DataModelTypeDefsType) => {
+  return `${type.name}-${type.kind === 'type' ? type.fields?.length : ''}`;
 };

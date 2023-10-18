@@ -1,6 +1,5 @@
 import { Provider as ReduxProvider } from 'react-redux';
 
-// import GlobalStyles from '@platypus-app/GlobalStyles';
 import { Store } from 'redux';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';

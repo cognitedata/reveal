@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Notification } from '../../../../components/Notification/Notification';
+import { useDMContext } from '../../../../context/DMContext';
 import { useTranslation } from '../../../../hooks/useTranslation';
 import {
   DataSourceDto,
@@ -14,7 +15,6 @@ import {
 } from '../api/codegen';
 
 import { useAccessControl } from './useAccessControl';
-import { useDataModel } from './useDataModel';
 
 /** Load a data source by using the data model id, data model space and data model version.
  *
@@ -27,7 +27,7 @@ export const useLoadDataSource = (): {
   const queryClient = useQueryClient();
   const { t } = useTranslation('useLoadDataSource');
 
-  const { dataModel, isLoading: isLoadingDataModel } = useDataModel();
+  const { selectedDataModel } = useDMContext();
 
   const { canWriteDataValidation, isLoading: isLoadingAccess } =
     useAccessControl();
@@ -47,13 +47,12 @@ export const useLoadDataSource = (): {
   } = useCreateDataSources({ mutationKey: ['createDataSource'] });
 
   const isLoading =
-    isLoadingDataModel ||
     isLoadingAccess ||
     isLoadingDataSources ||
     isRefetchingDataSources ||
     isLoadingCreateDataSource;
 
-  const dataSource = findDataSource(dataSourcesData?.items, dataModel);
+  const dataSource = findDataSource(dataSourcesData?.items, selectedDataModel);
 
   // This effect can be triggered concurrently by multiple components using 'useLoadDataSource' hook.
   // Therefore, it requires unconventional handling without using a dependency array.
@@ -70,7 +69,7 @@ export const useLoadDataSource = (): {
     // Try to find an existing data source in the fetched list
     const existingDataSource = findDataSource(
       dataSourcesData?.items,
-      dataModel
+      selectedDataModel
     );
     if (existingDataSource) return;
 
@@ -89,9 +88,9 @@ export const useLoadDataSource = (): {
       if (createDataSourceStatus === 'idle') {
         const newDataSource: DataSourceDraft = {
           externalId: uuidv4(),
-          dataModelId: dataModel.externalId,
-          dataModelSpaceId: dataModel.space,
-          dataModelVersion: dataModel.version,
+          dataModelId: selectedDataModel.externalId,
+          dataModelSpaceId: selectedDataModel.space,
+          dataModelVersion: selectedDataModel.version,
         };
 
         createDataSourceMutation(

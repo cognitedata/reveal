@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import {
-  DataModelTypeDefsType,
   RequiredFieldValidator,
   Validator,
   getOneToManyModelName,
@@ -11,6 +10,7 @@ import {
 import { createLink } from '@cognite/cdf-utilities';
 import { Modal, OptionType } from '@cognite/cogs.js';
 
+import { useDMContext } from '../../../../../context/DMContext';
 import { useCustomTypeNames } from '../../../../../hooks/useDataModelActions';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 import { generateId } from '../../../../../utils/uuid';
@@ -23,22 +23,14 @@ import {
 type Option = OptionType<any>;
 
 export interface CreateTransformationModalProps {
-  dataModelExternalId: string;
-  dataModelType: DataModelTypeDefsType;
-  dataModelVersion: string;
   onRequestClose: () => void;
-  space: string;
-  viewVersion: string;
 }
 
 export const CreateTransformationModal = ({
-  dataModelExternalId,
-  dataModelType,
-  dataModelVersion,
   onRequestClose,
-  space,
-  viewVersion,
 }: CreateTransformationModalProps) => {
+  const { selectedDataModel, selectedDataType: dataType } = useDMContext();
+
   const { t } = useTranslation('CreateTransformationModal');
 
   const [selectedRelationship, setSelectedRelationship] = useState<Option>();
@@ -46,30 +38,29 @@ export const CreateTransformationModal = ({
   const [transformationType, setTransformationType] = useState(
     TransformationType.Data
   );
-  const customTypesNames = useCustomTypeNames(
-    dataModelExternalId,
-    dataModelVersion,
-    space
-  );
+  const customTypesNames = useCustomTypeNames();
 
   const createTransformationMutation = useTransformationCreateMutation();
 
   const [transformationExternalId] = useState(generateId());
   const transformationName = selectedRelationship
     ? getOneToManyModelName(
-        dataModelType.name,
+        dataType!.name,
         selectedRelationship.value,
-        viewVersion
+        dataType?.version || selectedDataModel.version
       )
-    : getVersionedExternalId(dataModelType.name, viewVersion);
+    : getVersionedExternalId(
+        dataType!.name,
+        dataType?.version || selectedDataModel.version
+      );
 
-  const relationships: Option[] = dataModelType.fields
+  const relationships: Option[] = dataType!.fields
     .filter((field) => {
       return field.type.list && customTypesNames.includes(field.type.name);
     })
     .map((field) => ({
       value: field.name,
-      label: `${dataModelType.name}.${field.name}`,
+      label: `${dataType!.name}.${field.name}`,
     }));
 
   const validator = new Validator({
@@ -92,15 +83,15 @@ export const CreateTransformationModal = ({
     createTransformationMutation.mutate(
       {
         destination: selectedRelationship ? 'edges' : 'nodes',
-        space,
+        space: selectedDataModel.space,
         oneToManyFieldName: selectedRelationship
           ? selectedRelationship.value
           : undefined,
         transformationExternalId,
         dataSetId: selectedDataSet,
         transformationName,
-        typeName: dataModelType.name,
-        version: viewVersion,
+        typeName: dataType!.name,
+        version: dataType?.version || selectedDataModel.version,
       },
       {
         onSuccess: (transformation) => {

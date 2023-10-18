@@ -1,10 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
-import {
-  DataModelTypeDefs,
-  DataModelTypeDefsType,
-  DataModelVersion,
-} from '@platypus/platypus-core';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { GridReadyEvent } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -23,8 +19,6 @@ export type ListPreviewProps = {
   externalId: string;
   field: string;
   dataModelType: DataModelTypeDefsType;
-  dataModelTypeDefs: DataModelTypeDefs;
-  dataModelVersion: DataModelVersion;
   instanceSpace: string;
 };
 
@@ -32,8 +26,6 @@ export const ListPreview: React.FC<ListPreviewProps> = ({
   externalId,
   field,
   dataModelType,
-  dataModelTypeDefs,
-  dataModelVersion,
   instanceSpace,
 }) => {
   const { t } = useTranslation('DataPreviewCollapsiblePanelContainer');
@@ -63,8 +55,6 @@ export const ListPreview: React.FC<ListPreviewProps> = ({
 
   const nestedListDataSource = useNestedListDataSource({
     dataModelType,
-    dataModelTypeDefs,
-    dataModelVersion,
     instanceSpace,
     onError,
   });
@@ -77,8 +67,6 @@ export const ListPreview: React.FC<ListPreviewProps> = ({
   );
 
   const { data: defaultData = { [field]: [] } } = usePreviewData({
-    dataModelExternalId: dataModelVersion.externalId,
-    dataModelSpace: dataModelVersion.space,
     dataModelType,
     externalId,
     instanceSpace,

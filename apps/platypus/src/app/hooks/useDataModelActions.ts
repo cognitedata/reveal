@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import {
   DataModel,
   DataModelVersion,
@@ -7,14 +5,12 @@ import {
 } from '@platypus/platypus-core';
 import { useQuery } from '@tanstack/react-query';
 
-import { Notification } from '../components/Notification/Notification';
+import { useDMContext } from '../context/DMContext';
 import { TOKENS } from '../di';
 import { apiCommandFuncWrapper } from '../utils/api-callback-wrappers';
 import { QueryKeys } from '../utils/queryKeys';
 
-import { useErrorLogger } from './useErrorLogger';
 import { useInjection } from './useInjection';
-import { useSelectedDataModelVersion } from './useSelectedDataModelVersion';
 
 export const useDataModels = () => {
   const dataModelsHandler = useInjection(TOKENS.listDataModelsQuery);
@@ -59,61 +55,12 @@ export const useDataModelVersions = (
   );
 };
 
-export const useDataModelTypeDefs = (
-  dataModelExternalId: string,
-  selectedVersionNumber: string,
-  space: string
-) => {
+export const useCustomTypeNames = () => {
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
   );
-  const errorLogger = useErrorLogger();
 
-  const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(
-      selectedVersionNumber,
-      dataModelExternalId,
-      space
-    );
+  const { typeDefs } = useDMContext();
 
-  const memoizedDataModelTypeDefs = useMemo(() => {
-    // Do not remove, it fixes really bad bug with stale data
-    if (!selectedDataModelVersion.schema) {
-      return { types: [] };
-    }
-    try {
-      const dataModelTypeDefs = dataModelTypeDefsBuilder.parseSchema(
-        selectedDataModelVersion.schema,
-        selectedDataModelVersion.views
-      );
-
-      return dataModelTypeDefs;
-      // eslint-disable-next-line
-    } catch (err: any) {
-      errorLogger.log(err);
-      Notification({ type: 'error', message: err.message });
-    }
-
-    return { types: [] };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDataModelVersion.schema]);
-
-  return memoizedDataModelTypeDefs;
-};
-
-export const useCustomTypeNames = (
-  dataModelExternalId: string,
-  selectedVersionNumber: string,
-  space: string
-) => {
-  const dataModelTypeDefsBuilder = useInjection(
-    TOKENS.dataModelTypeDefsBuilderService
-  );
-  const dataModelTypeDefs = useDataModelTypeDefs(
-    dataModelExternalId,
-    selectedVersionNumber,
-    space
-  );
-
-  return dataModelTypeDefsBuilder.getCustomTypesNames(dataModelTypeDefs);
+  return dataModelTypeDefsBuilder.getCustomTypesNames(typeDefs);
 };

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useCapabilities } from '../../../../hooks/useCapabilities';
@@ -27,11 +27,15 @@ export const useDataManagementPageUI = () => {
     return missingPermissions;
   };
 
-  const toggleShouldShowDraftRows = () =>
-    dispatch(dataManagementActions.toggleShouldShowDraftRows());
+  const toggleShouldShowDraftRows = useCallback(
+    () => dispatch(dataManagementActions.toggleShouldShowDraftRows()),
+    [dispatch]
+  );
 
-  const toggleShouldShowPublishedRows = () =>
-    dispatch(dataManagementActions.toggleShouldShowPublishedRows());
+  const toggleShouldShowPublishedRows = useCallback(
+    () => dispatch(dataManagementActions.toggleShouldShowPublishedRows()),
+    [dispatch]
+  );
 
   return {
     toggleShouldShowDraftRows,

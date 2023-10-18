@@ -4,43 +4,26 @@ import { DataModelTypeDefsType } from '@platypus/platypus-core';
 
 import { Body, Input } from '@cognite/cogs.js';
 
-import { usePublishedRowsCountMapByType } from '../../hooks/usePublishedRowsCountMapByType';
+import { useDMContext } from '../../../../../context/DMContext';
+import { isEdgeType } from '../../utils';
 
 import * as S from './elements';
 import { TypeDescription } from './TypeDescription';
 
 export type TypeListProps = {
-  items?: DataModelTypeDefsType[];
-  selectedTypeName?: string;
-  placeholder?: string;
   onClick: (item: DataModelTypeDefsType) => void;
-  dataModelExternalId: string;
-  space: string;
 };
 
-export const TypeList = ({
-  items,
-  placeholder,
-  onClick,
-  selectedTypeName,
-  dataModelExternalId,
-  space,
-}: TypeListProps) => {
+export const TypeList = ({ onClick }: TypeListProps) => {
+  const { typeDefs, selectedDataType: dataType } = useDMContext();
   const [filter, setFilter] = useState('');
-
-  const { data: publishedRowsCountMap, isLoading } =
-    usePublishedRowsCountMapByType({
-      dataModelExternalId,
-      dataModelTypes: items || [],
-      space,
-    });
 
   return (
     <S.TypeList data-cy="types-list-panel">
       <S.FilterContainer>
         <Input
           fullWidth
-          placeholder={placeholder}
+          placeholder="Filter"
           value={filter}
           data-cy="types-list-filter"
           css={{}}
@@ -48,16 +31,16 @@ export const TypeList = ({
         ></Input>
       </S.FilterContainer>
       <S.ItemContainer>
-        {items
+        {typeDefs.types
+          // we dont support edge types
+          ?.filter((type) => !isEdgeType(type))
           ?.filter(({ name }) => name.match(new RegExp(filter, 'gi')))
           ?.map((dataModelType) => (
             <S.Item
               key={dataModelType.name}
               data-cy="types-list-item"
               data-testid={dataModelType.name}
-              className={
-                selectedTypeName === dataModelType.name ? 'active' : ''
-              }
+              className={dataType?.name === dataModelType.name ? 'active' : ''}
               onClick={() => {
                 onClick(dataModelType);
               }}
@@ -70,13 +53,7 @@ export const TypeList = ({
               >
                 {dataModelType.name}
               </Body>
-              <TypeDescription
-                dataModelType={dataModelType}
-                publishedRowsCount={
-                  publishedRowsCountMap?.[dataModelType.name] || 0
-                }
-                isLoading={isLoading}
-              />
+              <TypeDescription dataModelType={dataModelType} />
             </S.Item>
           ))}
       </S.ItemContainer>

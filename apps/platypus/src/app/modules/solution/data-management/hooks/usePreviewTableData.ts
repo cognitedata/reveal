@@ -1,27 +1,28 @@
-import {
-  DataModelTypeDefs,
-  DataModelTypeDefsType,
-} from '@platypus/platypus-core';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { DMSRecord } from '@platypus-core/domain/suggestions';
 import { useQuery } from '@tanstack/react-query';
 
+import { useDMContext } from '../../../../context/DMContext';
 import { TOKENS } from '../../../../di';
 import { useInjection } from '../../../../hooks/useInjection';
-import { useSelectedDataModelVersion } from '../../../../hooks/useSelectedDataModelVersion';
 import { QueryKeys } from '../../../../utils/queryKeys';
 
 export const usePreviewTableData = (
-  dataModelExternalId: string,
-  space: string,
-  version: string,
   maxNumberOfRecords: number,
-  dataModelType?: DataModelTypeDefsType,
-  dataModelTypeDefs?: DataModelTypeDefs
+  dataModelType?: DataModelTypeDefsType
 ) => {
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
 
-  const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(version, dataModelExternalId, space);
+  const {
+    typeDefs: dataModelTypeDefs,
+    selectedDataModel: selectedDataModelVersion,
+  } = useDMContext();
+
+  const {
+    space,
+    externalId: dataModelExternalId,
+    version,
+  } = selectedDataModelVersion;
   return useQuery<DMSRecord[]>(
     QueryKeys.PREVIEW_TABLE_DATA(
       space,

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { DataModelTypeDefsField } from '@platypus/platypus-core';
 import { SimulationLinkDatum } from 'd3';
@@ -15,9 +14,8 @@ import {
   Node,
 } from '../../../../../components/Graph/GraphEngine';
 import { Spinner } from '../../../../../components/Spinner/Spinner';
-import { useDataModelTypeDefs } from '../../../../../hooks/useDataModelActions';
+import { useDMContext } from '../../../../../context/DMContext';
 import { useMixpanel } from '../../../../../hooks/useMixpanel';
-import { useSelectedDataModelVersion } from '../../../../../hooks/useSelectedDataModelVersion';
 import { CustomDataTypes } from '../DataPreviewTable/collapsible-panel-container';
 
 import { RelationNode } from './RelationNode';
@@ -58,20 +56,12 @@ export const RelationViewer = <
     }[];
   }>({});
 
-  const { dataModelExternalId, space, version } = useParams() as {
-    dataModelExternalId: string;
-    space: string;
-    version: string;
-  };
+  const {
+    typeDefs: dataModelTypeDefs,
+    selectedDataModel: selectedDataModelVersion,
+  } = useDMContext();
 
-  const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(version, dataModelExternalId, space);
-
-  const dataModelTypeDefs = useDataModelTypeDefs(
-    dataModelExternalId,
-    version,
-    space
-  );
+  const { externalId: dataModelExternalId, space } = selectedDataModelVersion;
   const onClick = useCallback(
     (node: T & { __typename: string; id: string; x?: number; y?: number }) => {
       setSelectedItem((currentSelectedSet) => {

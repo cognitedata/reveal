@@ -15,6 +15,7 @@ import { Checkbox, Icon } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { Spinner } from '../../../../components/Spinner/Spinner';
+import { useDMContext } from '../../../../context/DMContext';
 import { TOKENS } from '../../../../di';
 import { useInjection } from '../../../../hooks/useInjection';
 import { useMixpanel } from '../../../../hooks/useMixpanel';
@@ -24,9 +25,6 @@ import graphQlQueryFetcher from '../utils/graphqlQueryFetcher';
 import { QueryExplorerContainer } from './elements';
 
 type QueryExplorerType = {
-  dataModelExternalId: string;
-  space: string;
-  schemaVersion: string;
   defaultQuery?: string;
   defaultVariables?: any;
   onQueryChange?: (newVar: { query: string; variables?: any }) => void;
@@ -40,13 +38,11 @@ const explorer = explorerPlugin({
 });
 
 export const QueryExplorer = ({
-  dataModelExternalId,
-  schemaVersion,
-  space,
   onQueryChange,
   defaultQuery,
   defaultVariables,
 }: QueryExplorerType) => {
+  const { selectedDataModel } = useDMContext();
   const localStorageProvider = useInjection(
     TOKENS.storageProviderFactory
   ).getProvider(StorageProviderType.localStorage);
@@ -55,12 +51,12 @@ export const QueryExplorer = ({
   const graphiqlStorageApi = useMemo(
     () =>
       new GraphiqlStorageProvider(
-        space,
-        dataModelExternalId,
-        schemaVersion,
+        selectedDataModel.space,
+        selectedDataModel.externalId,
+        selectedDataModel.version,
         localStorageProvider
       ),
-    [localStorageProvider, schemaVersion, dataModelExternalId, space]
+    [localStorageProvider, selectedDataModel]
   );
 
   const [gqlSchema, setGqlSchema] = useState<GraphQLSchema>();
@@ -74,9 +70,9 @@ export const QueryExplorer = ({
   const fetcher = useMemo(() => {
     return createGraphiQLFetcher({
       url: fdmClient.getQueryEndpointUrl({
-        externalId: dataModelExternalId,
-        version: schemaVersion,
-        space,
+        externalId: selectedDataModel.externalId,
+        version: selectedDataModel.version,
+        space: selectedDataModel.space,
       }),
       headers: sdk.getDefaultRequestHeaders(),
       fetch: (...params) => {
@@ -89,9 +85,7 @@ export const QueryExplorer = ({
     sdk,
     sdk.getDefaultRequestHeaders(),
     fdmClient,
-    dataModelExternalId,
-    space,
-    schemaVersion,
+    selectedDataModel,
   ]);
 
   useEffect(() => {
@@ -106,7 +100,7 @@ export const QueryExplorer = ({
   }, [onQueryChange, explorerQuery, explorerVariables]);
 
   useEffect(() => {
-    if (isReady || !dataModelExternalId || !schemaVersion) {
+    if (isReady) {
       return;
     }
 
@@ -116,9 +110,9 @@ export const QueryExplorer = ({
           query: getIntrospectionQuery(),
           operationName: 'IntrospectionQuery',
         },
-        dataModelExternalId,
-        schemaVersion,
-        space
+        selectedDataModel.externalId,
+        selectedDataModel.version,
+        selectedDataModel.space
       )
       .then((result: any) => {
         setIsReady(true);
@@ -127,14 +121,7 @@ export const QueryExplorer = ({
       .catch(() => {
         setIsReady(true);
       });
-  }, [
-    isReady,
-    schemaVersion,
-    dataModelExternalId,
-    space,
-    setIsReady,
-    graphiqlStorageApi,
-  ]);
+  }, [isReady, selectedDataModel, setIsReady, graphiqlStorageApi]);
 
   if (!isReady) {
     return <Spinner />;

@@ -1,5 +1,3 @@
-import { useParams } from 'react-router-dom';
-
 import { Flex } from '@cognite/cogs.js';
 
 import { useCustomTypeNames } from '../../../../../hooks/useDataModelActions';
@@ -15,11 +13,6 @@ interface UIEditorProps {
 }
 
 export function UIEditor({ disabled }: UIEditorProps) {
-  const { dataModelExternalId, space, version } = useParams() as {
-    dataModelExternalId: string;
-    space: string;
-    version: string;
-  };
   const { setCurrentTypeName } = useDataModelState();
   const {
     createType,
@@ -30,11 +23,7 @@ export function UIEditor({ disabled }: UIEditorProps) {
     removeField,
   } = useTypeDefActions();
   const { currentTypeName, typeDefs } = useSelector((state) => state.dataModel);
-  const customTypesNames = useCustomTypeNames(
-    dataModelExternalId,
-    version,
-    space
-  );
+  const customTypesNames = useCustomTypeNames();
 
   const currentType = typeDefs.types.find(
     (type) => type.name === currentTypeName

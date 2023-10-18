@@ -9,8 +9,8 @@ import {
   Size,
 } from '../../../../../components/PageToolbar/PageToolbar';
 import { Spinner } from '../../../../../components/Spinner/Spinner';
+import { useDMContext } from '../../../../../context/DMContext';
 import { useUIEditorFeatureFlag } from '../../../../../flags';
-import { useDataModelVersions } from '../../../../../hooks/useDataModelActions';
 import useSelector from '../../../../../hooks/useSelector';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 import { DataModelState } from '../../../../../redux/reducers/global/dataModelReducer';
@@ -28,25 +28,21 @@ const GraphqlCodeEditor = React.lazy(() =>
 );
 
 export interface EditorPanelProps {
-  externalId: string;
   editorMode: SchemaEditorMode;
   isPublishing: boolean;
   errorsByGroup: ErrorsByGroup;
   setErrorsByGroup: (errors: ErrorsByGroup) => void;
   setEditorHasError: (hasError: boolean) => void;
-  space: string;
-  version: string;
 }
 
 export const EditorPanel: React.FC<EditorPanelProps> = ({
-  externalId,
   editorMode,
-  space,
   isPublishing,
   errorsByGroup,
   setErrorsByGroup,
   setEditorHasError,
 }) => {
+  const { selectedDataModel, versions: dataModelVersionList } = useDMContext();
   const { t } = useTranslation('EditorPanel');
   const { isEnabled: isUIEditorFlagEnabled } = useUIEditorFeatureFlag();
 
@@ -55,10 +51,6 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
 
   const [currentView, setCurrentView] = useState('code');
 
-  const { data: dataModelVersionList } = useDataModelVersions(
-    externalId,
-    space
-  );
   const { graphQlSchema, currentTypeName, typeDefs } =
     useSelector<DataModelState>((state) => state.dataModel);
 
@@ -107,8 +99,8 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
         <Suspense fallback={<Spinner />}>
           <GraphqlCodeEditor
             key={`graphql-code-editor-version-${dataModelVersionList?.length}`}
-            space={space}
-            dataModelExternalId={externalId}
+            space={selectedDataModel.space}
+            dataModelExternalId={selectedDataModel.externalId}
             currentTypeName={currentTypeName || undefined}
             typeDefs={typeDefs}
             code={graphQlSchema}
