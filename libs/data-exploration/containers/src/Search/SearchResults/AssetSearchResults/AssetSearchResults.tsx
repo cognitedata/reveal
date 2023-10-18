@@ -106,6 +106,17 @@ export const AssetSearchResults = ({
     return {};
   }, [activeIds]);
 
+  const handleFilterChange = (newValue: Record<string, unknown>) => {
+    if (newValue.parentIds) {
+      onFilterChange?.({
+        ...newValue,
+        assetIds: newValue.parentIds,
+      });
+    } else {
+      onFilterChange?.(newValue);
+    }
+  };
+
   const tableHeaders = (
     <StyledTableHeader justifyContent="space-between" alignItems="center">
       <SearchResultToolbar
@@ -168,7 +179,7 @@ export const AssetSearchResults = ({
           tableSubHeaders={
             <AppliedFiltersTags
               filter={filter}
-              onFilterChange={onFilterChange}
+              onFilterChange={handleFilterChange}
               icon="Assets"
             />
           }
@@ -192,7 +203,7 @@ export const AssetSearchResults = ({
           tableSubHeaders={
             <AppliedFiltersTags
               filter={filter}
-              onFilterChange={onFilterChange}
+              onFilterChange={handleFilterChange}
               icon="Assets"
             />
           }
