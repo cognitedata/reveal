@@ -18,7 +18,7 @@ export const useAnnotationsCount = ({
 
   const annotatedFileIdsOfAsset = useAnnotatedFileIdsOfAsset({
     assetId: resource.id,
-    enabled: resource.type === 'asset',
+    enabled: resource.type === 'asset' && resourceType === 'file',
   });
 
   const fileAnnotationsResourceIds = useFileAnnotationsResourceIds(
@@ -26,7 +26,7 @@ export const useAnnotationsCount = ({
     resource.type === 'file'
   );
 
-  if (resource.type === 'asset') {
+  if (resource.type === 'asset' && resourceType === 'file') {
     return {
       data: annotatedFileIdsOfAsset.data.length,
       isLoading: annotatedFileIdsOfAsset.isInitialLoading,

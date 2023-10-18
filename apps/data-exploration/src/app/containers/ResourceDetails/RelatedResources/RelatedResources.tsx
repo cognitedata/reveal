@@ -73,7 +73,7 @@ export const RelatedResources = ({
     ? newCount.relationshipsCount
     : relationshipCount;
   const assetIdsCount = isNewCountsEnabled
-    ? newCount.assetIdsCount
+    ? newCount.directlyLinkedResourcesCount
     : assetIdCount;
   const linkedResourcesCount = isNewCountsEnabled
     ? newCount.linkedResourcesCount

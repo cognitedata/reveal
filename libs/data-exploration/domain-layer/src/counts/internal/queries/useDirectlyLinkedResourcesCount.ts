@@ -22,11 +22,14 @@ export const useDirectlyLinkedResourcesCount = ({
     isDocumentsApiEnabled,
   });
 
-  const { data = 0, isLoading } = useDirectlyLinkedResourcesCountQuery({
+  const { data = 0, isInitialLoading } = useDirectlyLinkedResourcesCountQuery({
     resourceType: convertToSdkResourceType(resourceType),
     assetIds,
     isDocumentsApiEnabled,
   });
 
-  return { data, isLoading };
+  return {
+    data,
+    isLoading: isInitialLoading,
+  };
 };

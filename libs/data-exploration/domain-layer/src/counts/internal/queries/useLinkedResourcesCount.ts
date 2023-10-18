@@ -24,12 +24,15 @@ export const useLinkedResourcesCount = ({
     isDocumentsApiEnabled,
   });
 
-  const { data = 0, isLoading } = useLinkedResourcesCountQuery({
+  const { data = 0, isInitialLoading } = useLinkedResourcesCountQuery({
     resourceType: convertToSdkResourceType(resourceType),
     assetIds,
     linkedResourceIds,
     isDocumentsApiEnabled,
   });
 
-  return { data, isLoading };
+  return {
+    data,
+    isLoading: isInitialLoading,
+  };
 };
