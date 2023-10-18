@@ -10,13 +10,13 @@ import {
   useContextualizeThreeDViewerStore,
   setPendingAnnotation,
   CubeAnnotation,
+  resetContextualizeThreeDViewerStore,
 } from '../../../useContextualizeThreeDViewerStore';
 import { getAnnotationAsBox3 } from '../../../utils/annotations/getAnnotationAsBox3';
 import { createTransformControls } from '../../../utils/createTransformControls';
 import { getCognitePointCloudModel } from '../../../utils/getCognitePointCloudModel';
 import { hideBoundingVolumes } from '../../../utils/hideBoundingVolumes';
 import { showBoundingVolumes } from '../../../utils/showBoundingVolumes';
-
 const HOVERING_ANNOTATION_ID = 'hovered-annotation';
 const PENDING_ANNOTATION_ID = 'pending-annotation';
 
@@ -68,6 +68,13 @@ export const useSyncStateWithViewerPointCloud = () => {
   }));
   const useTransformControls = useRef<TransformControls | null>(null);
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      resetContextualizeThreeDViewerStore();
+    };
+  }, []);
+
   useEffect(() => {
     if (threeDViewer === null) return;
     if (useTransformControls.current === null) {
@@ -107,9 +114,6 @@ export const useSyncStateWithViewerPointCloud = () => {
     if (threeDViewer === null) return;
     if (modelId === null) return;
 
-    const transformControls = useTransformControls.current;
-    if (transformControls === null) return;
-
     if (tool !== ToolType.SELECT_TOOL) {
       return;
     }
@@ -142,14 +146,7 @@ export const useSyncStateWithViewerPointCloud = () => {
       ),
     };
     setPendingAnnotation(cubeAnnotation);
-  }, [
-    threeDViewer,
-    useTransformControls,
-    tool,
-    selectedAnnotationId,
-    annotations,
-    modelId,
-  ]);
+  }, [threeDViewer, tool, selectedAnnotationId, annotations, modelId]);
 
   // Sync pending annotation with viewer.
   useEffect(() => {

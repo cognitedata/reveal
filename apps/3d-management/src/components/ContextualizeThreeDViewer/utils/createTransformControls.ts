@@ -22,7 +22,7 @@ export const createTransformControls = (
 
   addDraggingChangedListener(transformControls, viewer);
   addChangeListener(transformControls, viewer);
-  addKeydownListener();
+  addKeydownListener(viewer);
   addMouseUpListener(transformControls);
   return transformControls;
 };
@@ -43,7 +43,6 @@ const onKeydown = (event: KeyboardEvent): void => {
   switch (event.code) {
     case 'KeyT':
       setTransformMode(TransformMode.TRANSLATE);
-
       break;
     case 'KeyG':
       setTransformMode(TransformMode.SCALE);
@@ -51,45 +50,69 @@ const onKeydown = (event: KeyboardEvent): void => {
   }
 };
 
+const onMouseUp = (transformControls: TransformControls): void => {
+  if (transformControls.object === undefined) return;
+
+  updatePendingAnnotation({
+    position: {
+      x: transformControls.object.position.x,
+      y: transformControls.object.position.y,
+      z: transformControls.object.position.z,
+    },
+    scale: {
+      x: transformControls.object.scale.x,
+      y: transformControls.object.scale.y,
+      z: transformControls.object.scale.z,
+    },
+  });
+};
+
 const addDraggingChangedListener = (
   transformControls: TransformControls,
   viewer: Cognite3DViewer
-): void => {
-  transformControls.addEventListener('dragging-changed', (event) => {
-    onDraggingChanged(event, viewer);
-  });
+): (() => void) => {
+  const onDraggingChangedHandler = (event) => onDraggingChanged(event, viewer);
+  transformControls.addEventListener(
+    'dragging-changed',
+    onDraggingChangedHandler
+  );
+
+  return () => {
+    transformControls.removeEventListener(
+      'dragging-changed',
+      onDraggingChangedHandler
+    );
+  };
 };
 
 const addChangeListener = (
   transformControls: TransformControls,
   viewer: Cognite3DViewer
-): void => {
-  transformControls.addEventListener('change', () => {
-    onChange(viewer);
-  });
+): (() => void) => {
+  const onChangeHandler = () => onChange(viewer);
+  transformControls.addEventListener('change', onChangeHandler);
+
+  return () => {
+    transformControls.removeEventListener('change', onChangeHandler);
+  };
 };
 
-const addKeydownListener = (): void => {
-  window.addEventListener('keydown', (event) => {
-    onKeydown(event);
-  });
+const addKeydownListener = (viewer: Cognite3DViewer): (() => void) => {
+  const onKeydownHandler = (event) => onKeydown(event);
+  viewer.domElement.addEventListener('keydown', onKeydownHandler);
+
+  return () => {
+    viewer.domElement.removeEventListener('keydown', onKeydownHandler);
+  };
 };
 
-const addMouseUpListener = (transformControls: TransformControls): void => {
-  transformControls.addEventListener('mouseUp', () => {
-    if (transformControls.object === undefined) return;
+const addMouseUpListener = (
+  transformControls: TransformControls
+): (() => void) => {
+  const onMouseUpHandler = () => onMouseUp(transformControls);
+  transformControls.addEventListener('mouseUp', onMouseUpHandler);
 
-    updatePendingAnnotation({
-      position: {
-        x: transformControls.object.position.x,
-        y: transformControls.object.position.y,
-        z: transformControls.object.position.z,
-      },
-      scale: {
-        x: transformControls.object.scale.x,
-        y: transformControls.object.scale.y,
-        z: transformControls.object.scale.z,
-      },
-    });
-  });
+  return () => {
+    transformControls.removeEventListener('mouseUp', onMouseUpHandler);
+  };
 };

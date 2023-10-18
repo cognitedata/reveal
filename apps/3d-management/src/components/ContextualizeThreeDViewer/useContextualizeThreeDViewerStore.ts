@@ -208,3 +208,7 @@ export const setSelectedAnnotationId = (annotationId: number | null) => {
     selectedAnnotationId: annotationId,
   }));
 };
+
+export const resetContextualizeThreeDViewerStore = () => {
+  useContextualizeThreeDViewerStore.setState(initialState);
+};
