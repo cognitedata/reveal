@@ -16,6 +16,19 @@ describe('applyRules', () => {
         ).toEqual('green');
       });
 
+      it('should return the then value if the value equals the comparison value as a string', () => {
+        expect(
+          applyRules(0.5, [
+            {
+              id: '1',
+              condition: Condition.EQUALS,
+              comparisonValue: '0.5',
+              then: 'green',
+            },
+          ])
+        ).toEqual('green');
+      });
+
       it('should return undefined if the value does not equal the comparison value', () => {
         expect(
           applyRules(0.1, [
@@ -23,6 +36,19 @@ describe('applyRules', () => {
               id: 1,
               condition: Condition.EQUALS,
               comparisonValue: 0.5,
+              then: 'green',
+            },
+          ])
+        ).toEqual(undefined);
+      });
+
+      it('should return undefined if the comparison value is not a number string', () => {
+        expect(
+          applyRules(0.1, [
+            {
+              id: '1',
+              condition: Condition.EQUALS,
+              comparisonValue: 'not a number',
               then: 'green',
             },
           ])
@@ -44,6 +70,19 @@ describe('applyRules', () => {
         ).toEqual('green');
       });
 
+      it('should return the then value if the value does not equal the comparison value as a string', () => {
+        expect(
+          applyRules(0.1, [
+            {
+              id: '1',
+              condition: Condition.NOT_EQUALS,
+              comparisonValue: '0.5',
+              then: 'green',
+            },
+          ])
+        ).toEqual('green');
+      });
+
       it('should return undefined if the value equals the comparison value', () => {
         expect(
           applyRules(0.5, [
@@ -51,6 +90,19 @@ describe('applyRules', () => {
               id: 1,
               condition: Condition.NOT_EQUALS,
               comparisonValue: 0.5,
+              then: 'green',
+            },
+          ])
+        ).toEqual(undefined);
+      });
+
+      it('should return undefined if the comparison value is not a number string', () => {
+        expect(
+          applyRules(0.1, [
+            {
+              id: '1',
+              condition: Condition.NOT_EQUALS,
+              comparisonValue: 'not a number',
               then: 'green',
             },
           ])
@@ -72,6 +124,19 @@ describe('applyRules', () => {
         ).toEqual('green');
       });
 
+      it('should return the then value if the value is greater than the comparison value as a string', () => {
+        expect(
+          applyRules(0.6, [
+            {
+              id: '1',
+              condition: Condition.GREATER_THAN,
+              comparisonValue: '0.5',
+              then: 'green',
+            },
+          ])
+        ).toEqual('green');
+      });
+
       it('should return undefined if the value is not greater than the comparison value', () => {
         expect(
           applyRules(0.4, [
@@ -79,6 +144,19 @@ describe('applyRules', () => {
               id: 1,
               condition: Condition.GREATER_THAN,
               comparisonValue: 0.5,
+              then: 'green',
+            },
+          ])
+        ).toEqual(undefined);
+      });
+
+      it('should return undefined if the comparison value is not a number string', () => {
+        expect(
+          applyRules(0.4, [
+            {
+              id: '1',
+              condition: Condition.GREATER_THAN,
+              comparisonValue: 'not a number',
               then: 'green',
             },
           ])
@@ -94,6 +172,19 @@ describe('applyRules', () => {
               id: 1,
               condition: Condition.GREATER_THAN_OR_EQUAL,
               comparisonValue: 0.5,
+              then: 'green',
+            },
+          ])
+        ).toEqual('green');
+      });
+
+      it('should return the then value if the value is greater than the comparison value as a string', () => {
+        expect(
+          applyRules(0.6, [
+            {
+              id: '1',
+              condition: Condition.GREATER_THAN_OR_EQUAL,
+              comparisonValue: '0.5',
               then: 'green',
             },
           ])
@@ -125,6 +216,19 @@ describe('applyRules', () => {
           ])
         ).toEqual(undefined);
       });
+
+      it('should return undefined if the comparison value is not a number string', () => {
+        expect(
+          applyRules(0.4, [
+            {
+              id: '1',
+              condition: Condition.GREATER_THAN_OR_EQUAL,
+              comparisonValue: 'not a number',
+              then: 'green',
+            },
+          ])
+        ).toEqual(undefined);
+      });
     });
 
     describe(Condition.LESS_THAN, () => {
@@ -135,6 +239,19 @@ describe('applyRules', () => {
               id: 1,
               condition: Condition.LESS_THAN,
               comparisonValue: 0.5,
+              then: 'green',
+            },
+          ])
+        ).toEqual('green');
+      });
+
+      it('should return the then value if the value is less than the comparison value as a string', () => {
+        expect(
+          applyRules(0.4, [
+            {
+              id: '1',
+              condition: Condition.LESS_THAN,
+              comparisonValue: '0.5',
               then: 'green',
             },
           ])
@@ -153,6 +270,19 @@ describe('applyRules', () => {
           ])
         ).toEqual(undefined);
       });
+
+      it('should return undefined if the value is not a number string', () => {
+        expect(
+          applyRules(0.6, [
+            {
+              id: '1',
+              condition: Condition.LESS_THAN,
+              comparisonValue: 'not a number',
+              then: 'green',
+            },
+          ])
+        ).toEqual(undefined);
+      });
     });
 
     describe(Condition.LESS_THAN_OR_EQUAL, () => {
@@ -163,6 +293,19 @@ describe('applyRules', () => {
               id: 1,
               condition: Condition.LESS_THAN_OR_EQUAL,
               comparisonValue: 0.5,
+              then: 'green',
+            },
+          ])
+        ).toEqual('green');
+      });
+
+      it('should return the then value if the value is less than the comparison value as a string', () => {
+        expect(
+          applyRules(0.4, [
+            {
+              id: '1',
+              condition: Condition.LESS_THAN_OR_EQUAL,
+              comparisonValue: '0.5',
               then: 'green',
             },
           ])
@@ -189,6 +332,19 @@ describe('applyRules', () => {
               id: 1,
               condition: Condition.LESS_THAN_OR_EQUAL,
               comparisonValue: 0.5,
+              then: 'green',
+            },
+          ])
+        ).toEqual(undefined);
+      });
+
+      it('should return undefined if the comparison value is not a number string', () => {
+        expect(
+          applyRules(0.6, [
+            {
+              id: '1',
+              condition: Condition.LESS_THAN_OR_EQUAL,
+              comparisonValue: 'not a number',
               then: 'green',
             },
           ])

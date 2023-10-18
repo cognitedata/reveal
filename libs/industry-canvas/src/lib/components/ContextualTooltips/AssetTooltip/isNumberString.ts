@@ -1,4 +1,4 @@
-const isNumberString = (value: string): boolean => {
+const isNumberString = (value: string | unknown): boolean => {
   return !isNaN(Number(value));
 };
 
