@@ -8,6 +8,7 @@ import {
   ResourceTypeTabs,
   ResourceSelectorDrawer,
 } from '@data-exploration/containers';
+import { useQueryClient } from '@tanstack/react-query';
 import { Modal, Steps, message } from 'antd';
 
 import {
@@ -43,7 +44,7 @@ import { ResourceType } from './types';
 import { useThreeDPermissions } from './useThreeDPermissions';
 
 const INITIAL_WIDTH_RESOURCE_SELECTOR = 700;
-
+const RUN_ASSET_TAG_DETECTION_LABEL = 'run_asset_tag_detection';
 const { Step } = Steps;
 
 const TabsContainer = styled.div`
@@ -92,6 +93,7 @@ export const AllModels = () => {
   const props = useParams();
 
   const sdk = useSDK();
+  const queryClient = useQueryClient();
   const [currentResourceType, setCurrentResourceType] =
     useState<ResourceType>('3D models');
 
@@ -102,14 +104,19 @@ export const AllModels = () => {
   const [newModelName, setNewModelName] = useState('');
   const [currentUploadStep, setCurrentUploadStep] = useState<number>(0);
   const [createdModel, setCreatedModel] = useState<Model3D>();
-
   const [isResourceSelectorOpen, setIsResourceSelectorOpen] = useState(false);
   const [isAssetTagModalVisible, setIsAssetTagModalVisible] = useState(false);
+  const [
+    isInvalidFileExtensionModalVisible,
+    setIsInvalidFileExtensionModalVisible,
+  ] = useState(false);
   const [selectedResourceItem, setSelectedResourceItem] =
     useState<ResourceItem | null>(null);
   const [selectedImage360Collection, setSelectedImage360Collection] = useState<
     string | null
   >(null);
+  const [isConfirmAssetTagDetectionMode, setIsConfirmAssetTagDetectionMode] =
+    useState(true);
 
   const isFormFilled = newModelName.length > 0;
 
@@ -127,6 +134,12 @@ export const AllModels = () => {
   const closeAssetTagModal = () => {
     setIsAssetTagModalVisible(false);
     onCloseResourceSelector();
+    setIsConfirmAssetTagDetectionMode(true);
+  };
+
+  const closeInvalidFileExtensionModal = () => {
+    setIsInvalidFileExtensionModalVisible(false);
+    closeAssetTagModal();
   };
 
   const onCloseResourceSelector = () => {
@@ -138,15 +151,27 @@ export const AllModels = () => {
   };
 
   const handleThreeSixtyContextualization = () => {
-    closeAssetTagModal();
+    setIsConfirmAssetTagDetectionMode(false);
     if (selectedResourceItem === null || selectedImage360Collection === null) {
       return;
     }
+
     updateFilesMetadataFor360Contextualization({
       sdk,
       selectedResourceItem,
       selectedImage360Collection,
+      handleInvalidFileExtensions,
     });
+
+    setTimeout(() => {
+      queryClient.invalidateQueries([
+        'fileCountAggregateByLabel',
+        sdk,
+        selectedImage360Collection,
+        RUN_ASSET_TAG_DETECTION_LABEL,
+      ]);
+      closeAssetTagModal();
+    }, 7500); // Timer required to allow the metadata update to propagate to the file count aggregate query.
   };
 
   const nextStep = () => {
@@ -173,9 +198,34 @@ export const AllModels = () => {
     [setIsAssetTagModalVisible]
   );
 
+  const handleInvalidFileExtensions = () => {
+    setIsInvalidFileExtensionModalVisible(true);
+  };
+
   const onRunAssetTagClick = (image360id: string) => {
     setSelectedImage360Collection(image360id);
     onOpenResourceSelector();
+  };
+
+  const setCogsModalContent = () => {
+    const collectionName = (
+      <span style={{ fontWeight: 'bold' }}>{selectedImage360Collection}</span>
+    );
+    const hierarchyId = (
+      <span style={{ fontWeight: 'bold' }}>
+        {selectedResourceItem?.externalId}
+      </span>
+    );
+
+    if (!isConfirmAssetTagDetectionMode) {
+      return <p>Preparing files for Asset Tag Detection, please wait.</p>;
+    }
+
+    return (
+      <p>
+        Do you want to match {collectionName} with {hierarchyId}?
+      </p>
+    );
   };
 
   const { data: models } = modelsQuery;
@@ -354,22 +404,33 @@ export const AllModels = () => {
       </Modal>
 
       <CogsModal
-        title="Run Asset tag detection"
+        title={
+          isConfirmAssetTagDetectionMode
+            ? 'Run Asset Tag Detection'
+            : 'Preparing files...'
+        }
         visible={isAssetTagModalVisible}
         onOk={handleThreeSixtyContextualization}
         onCancel={closeAssetTagModal}
+        hideFooter={!isConfirmAssetTagDetectionMode}
+        closable={isConfirmAssetTagDetectionMode}
+        icon={!isConfirmAssetTagDetectionMode ? 'Loader' : undefined}
       >
-        <p>
-          Do you want to run Asset tag detection on image360collection{' '}
-          <span style={{ fontWeight: 'bold' }}>
-            {selectedImage360Collection}
-          </span>{' '}
-          with asset hierarchy{' '}
-          <span style={{ fontWeight: 'bold' }}>
-            {selectedResourceItem?.externalId}
-          </span>
-          ?
-        </p>
+        {setCogsModalContent()}
+      </CogsModal>
+      <CogsModal
+        title="Error: Invalid file extension."
+        visible={isInvalidFileExtensionModalVisible}
+        onOk={closeInvalidFileExtensionModal}
+        onCancel={closeInvalidFileExtensionModal}
+        icon="Error"
+      >
+        Invalid file extensions for the images in{' '}
+        <span style={{ fontWeight: 'bold' }}>{selectedImage360Collection}</span>
+        . The images should have one of the following file extensions:{' '}
+        <span style={{ fontWeight: 'bold' }}>.jpg</span>,
+        <span style={{ fontWeight: 'bold' }}> .jpeg</span> or{' '}
+        <span style={{ fontWeight: 'bold' }}>.png</span>.
       </CogsModal>
     </AllModelsWrapper>
   );
