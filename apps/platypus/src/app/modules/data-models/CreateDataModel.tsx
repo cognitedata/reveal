@@ -73,7 +73,7 @@ export const CreateDataModel = ({
             userHistoryService.logNewResourceEdit({
               application: SUB_APP_PATH,
               name: dataModelName.trim(),
-              path: createLink(dataModelPath),
+              path: createLink(`/data-models${dataModelPath}`),
             });
 
           Notification({

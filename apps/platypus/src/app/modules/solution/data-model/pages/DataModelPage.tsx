@@ -363,7 +363,7 @@ export const DataModelPage = () => {
           userHistoryService.logNewResourceEdit({
             application: SUB_APP_PATH,
             name: dataModelExternalId.trim(), // how to get data-model name here?
-            path: createLink(publishedVersionPath),
+            path: createLink(`/data-models${publishedVersionPath}`),
           });
 
         Notification({
