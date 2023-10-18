@@ -9,6 +9,8 @@ type InstanceType = 'node' | 'edge';
 
 type EdgeDirection = 'source' | 'destination';
 
+type InstanceFilter = any;
+
 export type Item = {
   instanceType: InstanceType;
 } & DmsUniqueIdentifier;
@@ -30,7 +32,7 @@ export type ResultSetExpression = (NodeResultSetExpression | EdgeResultSetExpres
 
 export type NodeResultSetExpression = {
   nodes: {
-    filter?: any;
+    filter?: InstanceFilter;
     from?: any;
     through?: any;
     chainTo?: EdgeDirection;
@@ -39,10 +41,10 @@ export type NodeResultSetExpression = {
 
 export type EdgeResultSetExpression = {
   edges: {
-    filter?: any;
+    filter?: InstanceFilter;
     chainTo?: EdgeDirection;
-    from?: any;
-    nodeFilter?: any;
+    from?: string;
+    nodeFilter?: InstanceFilter;
     maxDistance?: number;
     direction?: 'outwards' | 'inwards';
     limitEach?: number;
@@ -199,39 +201,43 @@ export class FdmSDK {
     throw new Error(`Failed to list views. Status: ${result.status}`);
   }
 
+  // eslint-disable-next-line no-dupe-class-members
   public async searchInstances<PropertiesType = Record<string, unknown>>(
     searchedView: Source,
     query: string,
     instanceType?: InstanceType,
     limit?: number,
-    filter?: any,
+    filter?: InstanceFilter,
     properties?: string[]
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>;
 
+  // eslint-disable-next-line no-dupe-class-members
   public async searchInstances<PropertiesType = Record<string, unknown>>(
     searchedView: Source,
     query: string,
     instanceType?: 'edge',
     limit?: number,
-    filter?: any,
+    filter?: InstanceFilter,
     properties?: string[]
   ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
 
+  // eslint-disable-next-line no-dupe-class-members
   public async searchInstances<PropertiesType = Record<string, unknown>>(
     searchedView: Source,
     query: string,
     instanceType?: 'node',
     limit?: number,
-    filter?: any,
+    filter?: InstanceFilter,
     properties?: string[]
   ): Promise<{ instances: Array<NodeItem<PropertiesType>> }>;
 
+  // eslint-disable-next-line no-dupe-class-members
   public async searchInstances<PropertiesType = Record<string, unknown>>(
     searchedView: Source,
     query: string,
     instanceType?: InstanceType,
     limit: number = 1000,
-    filter?: any,
+    filter?: InstanceFilter,
     properties?: string[]
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> {
     const data: any = { view: searchedView, query, instanceType, filter, properties, limit };
@@ -246,8 +252,9 @@ export class FdmSDK {
     throw new Error(`Failed to search for instances. Status: ${result.status}`);
   }
 
+  // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: any,
+    filter: InstanceFilter,
     instanceType: InstanceType,
     source?: Source,
     cursor?: string
@@ -256,22 +263,25 @@ export class FdmSDK {
     nextCursor?: string;
   }>;
 
+  // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: any,
+    filter: InstanceFilter,
     instanceType: 'node',
     source?: Source,
     cursor?: string
   ): Promise<{ instances: Array<NodeItem<PropertiesType>>; nextCursor?: string }>;
 
+  // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: any,
+    filter: InstanceFilter,
     instanceType: 'edge',
     source?: Source,
     cursor?: string
   ): Promise<{ instances: Array<EdgeItem<PropertiesType>>; nextCursor?: string }>;
 
+  // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: any,
+    filter: InstanceFilter,
     instanceType: InstanceType,
     source: Source,
     cursor?: string
@@ -305,26 +315,30 @@ export class FdmSDK {
     };
   }
 
+  // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: any,
+    filter: InstanceFilter,
     instanceType: InstanceType,
     source?: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>;
 
+  // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: any,
+    filter: InstanceFilter,
     instanceType: 'edge',
     source?: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
 
+  // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: any,
+    filter: InstanceFilter,
     instanceType: 'edge',
     source?: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
 
+  // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: any,
+    filter: InstanceFilter,
     instanceType: InstanceType,
     source?: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> {

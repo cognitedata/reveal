@@ -25,6 +25,7 @@ import {
 } from '../src/hooks/useSearchMappedEquipmentAssetMappings';
 import { isEqual } from 'lodash';
 import { type NodeItem } from '../src/utilities/FdmSDK';
+import { Button, Input } from '@cognite/cogs.js';
 
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
@@ -89,9 +90,11 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
             .includes(mainSearchQuery.toLowerCase());
           const isInProperties = Object.values(equipment.properties).some((viewProperties) =>
             Object.values(viewProperties).some((property) =>
-              Object.values(property).some(
-                (value) => (value as string)?.toLowerCase().includes(mainSearchQuery.toLowerCase())
-              )
+              Object.values(property).some((value) => {
+                const valueAsString =
+                  typeof value === 'object' ? (value as any)?.externalId : value?.toString();
+                return valueAsString?.toLowerCase().includes(mainSearchQuery.toLowerCase());
+              })
             )
           );
 
@@ -186,41 +189,50 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         <RevealToolbar />
       </RevealContainer>
       <h1>Mapped equipment</h1>
-      <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '0 8px 8px 0' }}>
-        <input
+      <div style={{ display: 'flex', flexDirection: 'row', gap: 8, padding: '0 8px 8px 0' }}>
+        <Input
           onInput={(event) => {
             setTempSearchQuery((event.target as HTMLInputElement).value);
-          }}></input>
-        <button
+          }}></Input>
+        <Button
+          size="small"
           onClick={() => {
             setMainSearchQuery(tempSearchQuery);
           }}>
           Search
-        </button>
-        <button
+        </Button>
+        <Button
+          size="small"
+          type={searchMethod === 'allFdm' ? 'primary' : 'secondary'}
           onClick={() => {
             setSearchMethod('allFdm');
           }}>
           All FDM mappings search
-        </button>
-        <button
+        </Button>
+        <Button
+          size="small"
+          type={searchMethod === 'fdmSearch' ? 'primary' : 'secondary'}
           onClick={() => {
             setSearchMethod('fdmSearch');
           }}>
-          Fdm search hook
-        </button>
-        <button
+          FDM search hook
+        </Button>
+        <Button
+          size="small"
+          type={searchMethod === 'allAssets' ? 'primary' : 'secondary'}
           onClick={() => {
             setSearchMethod('allAssets');
           }}>
           All asset mappings search
-        </button>
-        <button
+        </Button>
+        <Button
+          size="small"
+          type={searchMethod === 'assetSearch' ? 'primary' : 'secondary'}
           onClick={() => {
             setSearchMethod('assetSearch');
           }}>
           Asset search hook
-        </button>
+        </Button>
       </div>
       <div
         style={{
@@ -230,8 +242,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           height: 200,
           overflow: 'scroll'
         }}>
-        {filteredEquipment.map((equipment) => (
-          <div key={equipment.externalId} style={{ border: '1px solid green' }}>
+        {filteredEquipment.map((equipment, index) => (
+          <div key={equipment.externalId + index} style={{ border: '1px solid green' }}>
             <b>
               {((equipment as Equipment)?.view ?? determineViewFromQueryResultNodeItem(equipment)) +
                 ' '}
@@ -261,8 +273,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 7227641388924978,
-        revisionId: 3261647608405033,
+        modelId: 3282558010084460,
+        revisionId: 4932190516335812,
         styling: {
           default: {
             color: new Color('#efefef')

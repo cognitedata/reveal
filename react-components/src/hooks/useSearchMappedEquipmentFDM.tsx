@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk';
 import { useMemo } from 'react';
 import {
   type EdgeItem,
@@ -60,16 +60,20 @@ export const useSearchMappedEquipmentFDM = (
 
       for (const view of viewsToSearch) {
         const result = await fdmSdk.searchInstances(view, query, 'node', limit);
-        searchResults.push({ view, instances: result.instances });
+
+        searchResults.push({
+          view,
+          instances: result.instances.map((nodeItem) => removeEmptyProperties(nodeItem))
+        });
       }
 
-      const filteredSearchResults = filterSearchResultsByMappedTo3DModels(
+      const filteredSearchResults = await filterSearchResultsByMappedTo3DModels(
         fdmSdk,
         searchResults,
         models
       );
 
-      return await filteredSearchResults;
+      return filteredSearchResults;
     },
     { staleTime: Infinity }
   );
@@ -93,24 +97,24 @@ export const useAllMappedEquipmentFDM = (
     ['reveal', 'react-components', 'all-mapped-equipment-fdm', spacesToSearch],
     async () => {
       const viewsToSearch = await viewsToSearchPromise;
+      const query = createMappedEquipmentQuery(models, viewsToSearch, 10000);
 
-      let currentPage = await fdmSdk.queryNodesAndEdges(
-        createMappedEquipmentQuery(models, viewsToSearch)
+      let currentPage = await fdmSdk.queryNodesAndEdges(query);
+
+      const mappedEquipment = currentPage.items.mapped_nodes.map((node) =>
+        removeEmptyProperties(node)
       );
 
-      const mappedEquipment: NodeItem[] = currentPage.items.mapped_nodes as NodeItem[];
-
       while (!isEqual(currentPage.nextCursor, {})) {
-        const query = createMappedEquipmentQuery(
-          models,
-          viewsToSearch,
-          10000,
-          currentPage.nextCursor
-        );
+        query.cursors = currentPage.nextCursor;
 
         currentPage = await fdmSdk.queryNodesAndEdges(query);
 
-        mappedEquipment.push(...(currentPage.items.mapped_nodes as NodeItem[]));
+        for (const node of currentPage.items.mapped_nodes) {
+          const cleanedNode = removeEmptyProperties(node);
+
+          mappedEquipment.push(cleanedNode);
+        }
       }
 
       return mappedEquipment;
@@ -118,6 +122,25 @@ export const useAllMappedEquipmentFDM = (
     { staleTime: Infinity }
   );
 };
+
+function removeEmptyProperties(node: NodeItem): NodeItem {
+  Object.keys(node.properties).forEach((space) => {
+    const currentSpaceProperties = node.properties[space];
+    const newProperties: Record<string, Record<string, unknown>> = {};
+
+    Object.keys(currentSpaceProperties).forEach((view) => {
+      const currentViewProperties = currentSpaceProperties[view];
+
+      if (Object.keys(currentViewProperties).length !== 0) {
+        newProperties[view] = currentViewProperties;
+      }
+    });
+
+    node.properties[space] = newProperties;
+  });
+
+  return node;
+}
 
 async function getViewsToSearch(fdmSdk: FdmSDK, spacesToSearch: string[]): Promise<Source[]> {
   const viewsPromises = spacesToSearch.map(async (space, index) => {
@@ -149,40 +172,42 @@ function convertQueryNodeItemsToSearchResultsWithViews(
   queryItems: NodeItem[]
 ): SeachResultsWithView[] {
   return queryItems.reduce<SeachResultsWithView[]>((acc, fdmNode) => {
-    Object.keys(fdmNode.properties).forEach((space) => {
-      const currentSpaceProperties = fdmNode.properties[space];
+    const cleanedNode = removeEmptyProperties(fdmNode);
+
+    Object.keys(cleanedNode.properties).forEach((space) => {
+      const currentSpaceProperties = cleanedNode.properties[space];
 
       const fdmNodeView = Object.keys(currentSpaceProperties)
         .find((key) => !isEqual(currentSpaceProperties[key], {}))
         ?.split('/');
 
-      if (fdmNodeView === undefined) {
+      if (fdmNodeView === undefined || fdmNodeView.length !== 2) {
         return acc;
       }
 
       const fdmNodeViewExternalId = fdmNodeView[0];
       const fdmNodeViewVersion = fdmNodeView[1];
 
-      const currentView = acc.find(
+      const currentSearchResultWithView = acc.find(
         (searchResultsWithView) =>
           searchResultsWithView.view.externalId === fdmNodeViewExternalId &&
           searchResultsWithView.view.space === space
       );
 
-      if (currentView === undefined) {
+      if (currentSearchResultWithView === undefined) {
         acc.push({
           view: {
-            space: fdmNode.space,
+            space: cleanedNode.space,
             externalId: fdmNodeViewExternalId,
             version: fdmNodeViewVersion,
             type: 'view'
           },
-          instances: [fdmNode]
+          instances: [cleanedNode]
         });
         return acc;
       }
 
-      currentView.instances.push(fdmNode);
+      currentSearchResultWithView.instances.push(cleanedNode);
     });
 
     return acc;
