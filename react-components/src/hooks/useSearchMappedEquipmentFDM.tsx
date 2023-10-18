@@ -63,7 +63,7 @@ export const useSearchMappedEquipmentFDM = (
 
         searchResults.push({
           view,
-          instances: result.instances.map((nodeItem) => removeEmptyProperties(nodeItem))
+          instances: result.instances
         });
       }
 
@@ -123,9 +123,9 @@ export const useAllMappedEquipmentFDM = (
   );
 };
 
-function removeEmptyProperties(node: NodeItem): NodeItem {
-  Object.keys(node.properties).forEach((space) => {
-    const currentSpaceProperties = node.properties[space];
+function removeEmptyProperties(queryResultNode: NodeItem): NodeItem {
+  Object.keys(queryResultNode.properties).forEach((space) => {
+    const currentSpaceProperties = queryResultNode.properties[space];
     const newProperties: Record<string, Record<string, unknown>> = {};
 
     Object.keys(currentSpaceProperties).forEach((view) => {
@@ -136,10 +136,10 @@ function removeEmptyProperties(node: NodeItem): NodeItem {
       }
     });
 
-    node.properties[space] = newProperties;
+    queryResultNode.properties[space] = newProperties;
   });
 
-  return node;
+  return queryResultNode;
 }
 
 async function getViewsToSearch(fdmSdk: FdmSDK, spacesToSearch: string[]): Promise<Source[]> {
