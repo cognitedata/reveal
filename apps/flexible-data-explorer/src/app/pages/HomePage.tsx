@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { AIDisclaimer } from '../components/links/AIDisclaimer';
-import { DataExplorerLink } from '../components/links/DataExplorerLink';
 import { Categories } from '../containers/category/Categories';
 import { Page } from '../containers/page/Page';
 import { AILabels } from '../containers/search/components/AILabels';
@@ -39,7 +38,7 @@ export const HomePage = () => {
           <SearchBar options={SEARCH_BAR_OPTIONS} />
         </SearchBarContainer>
 
-        {isAIEnabled ? <AIDisclaimer /> : <DataExplorerLink />}
+        {isAIEnabled && <AIDisclaimer />}
 
         {isCopilotEnabled && (
           <AISwitchContainer>
