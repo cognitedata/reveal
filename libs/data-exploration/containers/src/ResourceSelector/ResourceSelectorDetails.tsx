@@ -21,7 +21,7 @@ import {
 } from '../ResourceDetails';
 
 import { ResourceSelection } from './ResourceSelector';
-import { extractResourcesFromSelection, getResourceSelection } from './utils';
+import { getResourceSelection } from './utils';
 
 type Props = {
   item?: ResourceItem;
@@ -38,7 +38,7 @@ type Props = {
   visibleResources?: ResourceType[];
   isDocumentsApiEnabled?: boolean;
   showSelectButton?: boolean;
-  onSelect?: (selection: ResourceSelection, resources: ResourceItem[]) => void;
+  onSelect?: (selection: ResourceSelection) => void;
 } & Omit<Partial<SelectableItemsProps>, 'onSelect'>;
 
 const Centered = styled.div`
@@ -87,9 +87,7 @@ export const ResourceSelectorDetails = ({
         currentData,
         resourceType,
       });
-      const resources = extractResourcesFromSelection(selection);
-
-      onSelect(selection, resources);
+      onSelect(selection);
     },
     [item, onSelect, selectedRows]
   );

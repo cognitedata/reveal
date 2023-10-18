@@ -78,7 +78,7 @@ describe('getResourceSelection', () => {
     expect(result).toStrictEqual({
       ...INITIAL_SELECTED_ROWS,
       asset: {
-        0: undefined,
+        0: { id: 0, type: 'asset' },
         1: { id: 1, type: 'asset' },
       },
     });

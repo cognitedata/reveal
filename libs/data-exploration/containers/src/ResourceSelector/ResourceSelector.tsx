@@ -37,6 +37,7 @@ import { ChartsTab } from './Charts';
 import { ResourceSelectorDetails } from './ResourceSelectorDetails';
 import { ResourceSelectorTable } from './ResourceSelectorTable';
 import { useFilterState } from './useFilterState';
+import { extractResourcesFromSelection } from './utils';
 
 const DEFAULT_VISIBLE_RESOURCE_TABS: ResourceType[] = [
   'asset',
@@ -139,15 +140,16 @@ export const ResourceSelector = ({
     [selectedResources]
   );
 
-  const handleAddResources = useCallback(
-    (resources: ResourceItem[]) => {
+  const handleResourceSelection = useCallback(
+    (selection: ResourceSelection) => {
+      const resources = extractResourcesFromSelection(selection);
+      setSelectedRows(selection);
+      setSelectedResources(resources);
+
       if (selectionMode === 'single') {
         onSelect(resources[0] as any);
+        setSelectedRows(INITIAL_SELECTED_ROWS);
       }
-      if (selectionMode === 'multiple') {
-        onSelect(resources as any);
-      }
-      setSelectedRows(INITIAL_SELECTED_ROWS);
     },
     [onSelect, selectionMode]
   );
@@ -286,7 +288,6 @@ export const ResourceSelector = ({
           <MainContainer>
             <ResourceSelectorTable
               selectedRows={selectedRows}
-              setSelectedRows={setSelectedRows}
               filter={filterState}
               defaultFilter={defaultFilter}
               selectionMode={selectionMode}
@@ -307,6 +308,7 @@ export const ResourceSelector = ({
               onClick={({ id, externalId }) => {
                 setPreviewItem({ id, externalId, type: activeKey });
               }}
+              onSelect={handleResourceSelection}
               isBulkActionBarVisible={isBulkActionBarVisible}
             />
           </MainContainer>
@@ -324,11 +326,7 @@ export const ResourceSelector = ({
               onClose={() => setPreviewItem(undefined)}
               selectionMode={selectionMode}
               selectedRows={selectedRows}
-              onSelect={(selection, resources) => {
-                setSelectedRows(selection);
-                setSelectedResources(resources);
-                handleAddResources(resources);
-              }}
+              onSelect={handleResourceSelection}
               isSelected={Boolean(
                 selectedRows[previewItem.type][previewItem.id]
               )}
@@ -350,7 +348,10 @@ export const ResourceSelector = ({
       >
         <Button
           icon="Add"
-          onClick={() => handleAddResources(selectedResources)}
+          onClick={() => {
+            onSelect(selectedResources as any);
+            setSelectedRows(INITIAL_SELECTED_ROWS);
+          }}
           inverted
           type="primary"
           disabled={shouldDisableAddButton}

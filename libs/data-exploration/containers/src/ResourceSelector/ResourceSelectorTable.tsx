@@ -1,7 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
-
 import { RowSelectionState, Updater } from '@tanstack/react-table';
-import { mapValues } from 'lodash';
 import noop from 'lodash/noop';
 
 import { ChartsSdkInitialisationGuard } from '@cognite/charts-lib';
@@ -25,6 +22,7 @@ import {
 
 import { ChartsSearchResults } from './Charts';
 import { ResourceSelection } from './ResourceSelector';
+import { getResourceSelection } from './utils';
 
 export const ResourceSelectorTable = ({
   resourceType,
@@ -33,11 +31,11 @@ export const ResourceSelectorTable = ({
   query,
   selectedRows,
   selectionMode,
-  setSelectedRows,
   onFilterChange,
   isDocumentsApiEnabled = true,
   shouldShowPreviews = true,
   onClick = noop,
+  onSelect = noop,
   isBulkActionBarVisible,
 }: {
   resourceType: ResourceType;
@@ -45,9 +43,9 @@ export const ResourceSelectorTable = ({
   defaultFilter?: Partial<FilterState>;
   query?: string;
   selectedRows: ResourceSelection;
-  setSelectedRows: Dispatch<SetStateAction<ResourceSelection>>;
   selectionMode?: ResourceSelectionMode;
   onClick?: (item: ResourceItems) => void;
+  onSelect?: (selection: ResourceSelection) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   shouldShowPreviews?: boolean;
   isDocumentsApiEnabled?: boolean;
@@ -68,33 +66,15 @@ export const ResourceSelectorTable = ({
     defaultFilter: defaultFilter[filterStateKey],
     onRowSelection: (
       updater: Updater<RowSelectionState>,
-      data: ResourceItem[]
+      currentData: ResourceItem[]
     ) => {
-      setSelectedRows((prev) => {
-        if (typeof updater === 'function') {
-          const selectedRowIds = updater(
-            mapValues(prev[resourceType], (resourceItem) => {
-              return Boolean(resourceItem?.id);
-            })
-          );
-
-          return {
-            ...prev,
-            [resourceType]: mapValues(selectedRowIds, (_, key) => {
-              return (
-                data.find((item) => String(item.id) === key) ||
-                prev[resourceType][key]
-              );
-            }),
-          };
-        }
-        return {
-          ...prev,
-          [resourceType]: mapValues(updater, (_, key) => {
-            return data.find((item) => String(item.id) === key);
-          }),
-        };
+      const selection = getResourceSelection({
+        selectedRows,
+        updater,
+        currentData,
+        resourceType,
       });
+      onSelect(selection);
     },
     onClick,
     onFilterChange,
@@ -108,7 +88,7 @@ export const ResourceSelectorTable = ({
           <ChartsSearchResults
             {...commonProps}
             filter={filter.charts}
-            onClick={(item) => console.log('RST, CSR on click; item: ', item)}
+            onClick={noop}
           />
         </ChartsSdkInitialisationGuard>
       );

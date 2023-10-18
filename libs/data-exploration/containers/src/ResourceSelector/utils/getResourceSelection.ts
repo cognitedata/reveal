@@ -18,11 +18,15 @@ export const getResourceSelection = ({
   currentData?: ResourceItem[];
   resourceType?: ResourceType;
 }): ResourceSelection => {
-  if (!item || !selectedRows) {
+  if (!selectedRows) {
     return INITIAL_SELECTED_ROWS;
   }
 
   if (!updater || !currentData || !resourceType) {
+    if (!item) {
+      return INITIAL_SELECTED_ROWS;
+    }
+
     return {
       ...selectedRows,
       [item.type]: {
@@ -42,7 +46,10 @@ export const getResourceSelection = ({
           })
         ),
         (_, key) => {
-          return currentData.find((el) => String(el?.id) === key);
+          return (
+            currentData.find((el) => String(el?.id) === key) ||
+            selectedRows[resourceType][key]
+          );
         }
       ),
     };
