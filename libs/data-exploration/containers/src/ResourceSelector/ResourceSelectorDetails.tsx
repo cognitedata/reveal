@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { Dispatch, SetStateAction, useCallback } from 'react';
 
 import styled from 'styled-components';
 
@@ -8,6 +8,7 @@ import noop from 'lodash/noop';
 
 import {
   ResourceItem,
+  ExtendedResourceItem,
   ResourceType,
   SelectableItemsProps,
 } from '@data-exploration-lib/core';
@@ -22,6 +23,7 @@ import {
 
 import { ResourceSelection } from './ResourceSelector';
 import { getResourceSelection } from './utils';
+import { mapExtendedProperties } from './utils/mapExtendedProperties';
 
 type Props = {
   item?: ResourceItem;
@@ -38,7 +40,11 @@ type Props = {
   visibleResources?: ResourceType[];
   isDocumentsApiEnabled?: boolean;
   showSelectButton?: boolean;
+
   onSelect?: (selection: ResourceSelection) => void;
+  setExtendedProperties?: Dispatch<
+    SetStateAction<Record<number, ExtendedResourceItem> | undefined>
+  >;
 } & Omit<Partial<SelectableItemsProps>, 'onSelect'>;
 
 const Centered = styled.div`
@@ -73,6 +79,7 @@ export const ResourceSelectorDetails = ({
   visibleResources = [],
   isDocumentsApiEnabled = true,
   showSelectButton,
+  setExtendedProperties,
 }: Props) => {
   const handleSelect = useCallback(
     (
@@ -87,6 +94,7 @@ export const ResourceSelectorDetails = ({
         currentData,
         resourceType,
       });
+
       onSelect(selection);
     },
     [item, onSelect, selectedRows]
@@ -102,6 +110,16 @@ export const ResourceSelectorDetails = ({
   };
 
   let content: React.ReactNode = placeholder || <Loader />;
+
+  const onDateRangeChangeHandler = (
+    dateRange: Record<number, [Date, Date]>,
+    selectedItem: ResourceItem
+  ) => {
+    if (!setExtendedProperties) return;
+    setExtendedProperties((prevState) =>
+      mapExtendedProperties(dateRange, selectedItem, prevState)
+    );
+  };
 
   if (item) {
     switch (item.type) {
@@ -145,6 +163,9 @@ export const ResourceSelectorDetails = ({
             timeseriesId={item.id}
             isSelected={isSelected}
             onClose={onClose}
+            onDateRangeChange={(dateRange) => {
+              onDateRangeChangeHandler(dateRange, item);
+            }}
             {...commonProps}
           />
         );

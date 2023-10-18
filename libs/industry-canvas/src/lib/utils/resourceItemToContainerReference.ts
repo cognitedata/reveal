@@ -1,11 +1,19 @@
-import { ResourceItem } from '@cognite/data-exploration';
+import { ExtendedResourceItem } from '@data-exploration-lib/core';
 
 import { ContainerReference, ContainerReferenceType } from '../types';
 
 const resourceItemToContainerReference = (
-  resourceItem: ResourceItem
+  resourceItem: ExtendedResourceItem
 ): ContainerReference => {
   if (resourceItem.type === 'timeSeries') {
+    if (resourceItem?.dateRange && resourceItem?.dateRange.length === 2) {
+      return {
+        type: ContainerReferenceType.TIMESERIES,
+        resourceId: resourceItem.id,
+        startDate: String(resourceItem?.dateRange[0]),
+        endDate: String(resourceItem?.dateRange[1]),
+      };
+    }
     return {
       type: ContainerReferenceType.TIMESERIES,
       resourceId: resourceItem.id,

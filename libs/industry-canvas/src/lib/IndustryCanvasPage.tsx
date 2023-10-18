@@ -19,17 +19,15 @@ import {
   toast,
   Tooltip,
 } from '@cognite/cogs.js';
-import {
-  isNotUndefined,
-  ResourceItem,
-  Splitter,
-} from '@cognite/data-exploration';
+import { isNotUndefined, Splitter } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   UnifiedViewer,
   ZoomToFitMode,
   isAnnotation,
 } from '@cognite/unified-file-viewer';
+
+import { ExtendedResourceItem } from '@data-exploration-lib/core';
 
 import { translationKeys } from './common';
 import { ToggleButton } from './components/buttons';
@@ -353,7 +351,7 @@ export const IndustryCanvasPage = () => {
   };
 
   const onAddResourcePress = async (
-    results?: ResourceItem | ResourceItem[]
+    results?: ExtendedResourceItem | ExtendedResourceItem[]
   ) => {
     console.log('ICP; selection results: ', results);
     if (isCanvasLocked) {

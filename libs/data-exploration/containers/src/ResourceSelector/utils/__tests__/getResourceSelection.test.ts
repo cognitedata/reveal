@@ -1,11 +1,11 @@
 import { RowSelectionState } from '@tanstack/react-table';
 
-import { ResourceItem } from '@data-exploration-lib/core';
-
 import {
   INITIAL_SELECTED_ROWS,
-  ResourceSelection,
-} from '../../ResourceSelector';
+  ResourceItem,
+} from '@data-exploration-lib/core';
+
+import { ResourceSelection } from '../../ResourceSelector';
 import { getResourceSelection } from '../getResourceSelection';
 
 describe('getResourceSelection', () => {

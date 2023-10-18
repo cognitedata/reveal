@@ -1,7 +1,6 @@
-import {
-  INITIAL_SELECTED_ROWS,
-  ResourceSelection,
-} from '../../ResourceSelector';
+import { INITIAL_SELECTED_ROWS } from '@data-exploration-lib/core';
+
+import { ResourceSelection } from '../../ResourceSelector';
 import { extractResourcesFromSelection } from '../extractResourcesFromSelection';
 
 describe('extractResourcesFromSelection', () => {

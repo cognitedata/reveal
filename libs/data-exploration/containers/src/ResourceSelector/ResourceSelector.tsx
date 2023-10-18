@@ -16,10 +16,12 @@ import {
   FilterState,
   ResourceItem,
   ResourceSelectorFilter,
+  ExtendedResourceItem,
   ResourceType,
   useDialog,
   useTranslation,
   ViewType,
+  INITIAL_SELECTED_ROWS,
 } from '@data-exploration-lib/core';
 
 import {
@@ -37,7 +39,7 @@ import { ChartsTab } from './Charts';
 import { ResourceSelectorDetails } from './ResourceSelectorDetails';
 import { ResourceSelectorTable } from './ResourceSelectorTable';
 import { useFilterState } from './useFilterState';
-import { extractResourcesFromSelection } from './utils';
+import { mapAllSelectedRows } from './utils/mapAllSelectedRows';
 
 const DEFAULT_VISIBLE_RESOURCE_TABS: ResourceType[] = [
   'asset',
@@ -46,16 +48,6 @@ const DEFAULT_VISIBLE_RESOURCE_TABS: ResourceType[] = [
   'timeSeries',
 ];
 
-export const INITIAL_SELECTED_ROWS: Record<ResourceType, any> = {
-  asset: {},
-  file: {},
-  timeSeries: {},
-  sequence: {},
-  threeD: {},
-  event: {},
-  charts: {},
-};
-
 type SelectionProps =
   | {
       selectionMode: 'single';
@@ -63,6 +55,7 @@ type SelectionProps =
     }
   | { selectionMode: 'multiple'; onSelect?: (items: ResourceItem[]) => void };
 
+// use this type from core.
 export type ResourceSelection = Record<
   ResourceType,
   Record<string, ResourceItem>
@@ -101,7 +94,7 @@ export const ResourceSelector = ({
   const { isOpen: showFilter, toggle: onToggleFilter } = useDialog();
 
   const [activeKey, setActiveKey] = useState(initialTab);
-  const [previewItem, setPreviewItem] = useState<ResourceItem>();
+  const [previewItem, setPreviewItem] = useState<ExtendedResourceItem>();
   const { t } = useTranslation();
 
   const [selectedRows, setSelectedRows] = useState<ResourceSelection>(
@@ -110,6 +103,10 @@ export const ResourceSelector = ({
   const [selectedResources, setSelectedResources] = useState<ResourceItem[]>(
     []
   );
+
+  const [extendedProperties, setExtendedProperties] = useState<
+    Record<number, ExtendedResourceItem> | undefined
+  >(undefined);
 
   useEffect(() => {
     if (initialSelectedResource === undefined) {
@@ -142,7 +139,7 @@ export const ResourceSelector = ({
 
   const handleResourceSelection = useCallback(
     (selection: ResourceSelection) => {
-      const resources = extractResourcesFromSelection(selection);
+      const resources = mapAllSelectedRows(selection, extendedProperties);
       setSelectedRows(selection);
       setSelectedResources(resources);
 
@@ -151,7 +148,7 @@ export const ResourceSelector = ({
         setSelectedRows(INITIAL_SELECTED_ROWS);
       }
     },
-    [onSelect, selectionMode]
+    [onSelect, selectionMode, extendedProperties]
   );
 
   const selectedResourceTabs = visibleResourceTabs.map((tab) => {
@@ -333,6 +330,7 @@ export const ResourceSelector = ({
               visibleResources={visibleResourceTabs}
               isDocumentsApiEnabled={isDocumentsApiEnabled}
               showSelectButton={shouldOnlyShowPreviewPane ? false : undefined}
+              setExtendedProperties={setExtendedProperties}
             />
           )}
         </ResourcePreviewSidebarWrapper>

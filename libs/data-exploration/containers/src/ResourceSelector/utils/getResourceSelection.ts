@@ -1,9 +1,13 @@
 import { RowSelectionState, Updater } from '@tanstack/react-table';
 import mapValues from 'lodash/mapValues';
 
-import { ResourceItem, ResourceType } from '@data-exploration-lib/core';
+import {
+  INITIAL_SELECTED_ROWS,
+  ResourceItem,
+  ResourceType,
+} from '@data-exploration-lib/core';
 
-import { INITIAL_SELECTED_ROWS, ResourceSelection } from '../ResourceSelector';
+import { ResourceSelection } from '../ResourceSelector';
 
 export const getResourceSelection = ({
   item,

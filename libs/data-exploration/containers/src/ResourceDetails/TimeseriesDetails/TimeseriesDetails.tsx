@@ -1,8 +1,9 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 
 import { ResourceDetailsTemplate } from '@data-exploration/components';
+import noop from 'lodash/noop';
 
 import { Collapse, Title } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
@@ -54,6 +55,7 @@ interface Props {
   selectedRows?: ResourceSelection;
   visibleResources?: ResourceType[];
   showSelectButton?: boolean;
+  onDateRangeChange?: (dateRange: Record<number, [Date, Date]>) => void;
 }
 export const TimeseriesDetails: FC<
   Props & Pick<SelectableItemsProps, 'onSelect'>
@@ -67,6 +69,7 @@ export const TimeseriesDetails: FC<
   selectionMode,
   visibleResources = [],
   showSelectButton,
+  onDateRangeChange = noop,
 }) => {
   const {
     data,
@@ -77,6 +80,17 @@ export const TimeseriesDetails: FC<
     return data ? data[0] : undefined;
   }, [data]);
   const { t } = useTranslation();
+
+  const [dateRange, setDateRange] = React.useState<
+    Record<number, [Date, Date]> | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (dateRange) {
+      onDateRangeChange(dateRange);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateRange]);
 
   const {
     isAssetVisible,
@@ -145,6 +159,22 @@ export const TimeseriesDetails: FC<
     { enabled: isQueryEnabled && isSequenceVisible }
   );
 
+  const onCloseHandler = () => {
+    onClose && onClose();
+    setDateRange(undefined);
+  };
+
+  const onDateRangeChangeHandler = (
+    range: [Date, Date],
+    selectedTimeseriesId: number
+  ) => {
+    setDateRange((prevState) => {
+      if (!prevState || prevState[selectedTimeseriesId] !== range)
+        return { ...prevState, [selectedTimeseriesId]: range };
+      return prevState;
+    });
+  };
+
   const enableDetailTableSelection = selectionMode === 'multiple';
 
   return (
@@ -154,7 +184,7 @@ export const TimeseriesDetails: FC<
       selectionMode={selectionMode}
       isSelected={isSelected}
       closable={closable}
-      onClose={onClose}
+      onClose={onCloseHandler}
       onSelectClicked={onSelect}
       showSelectButton={showSelectButton}
     >
@@ -168,6 +198,10 @@ export const TimeseriesDetails: FC<
               timeseries={{ id: timeseries.id }}
               height={400}
               quickTimePeriodOptions={['1D', '1W', '1Y']}
+              onChangeDateRange={(range) =>
+                onDateRangeChangeHandler(range, timeseries.id)
+              }
+              dateRange={dateRange && dateRange[timeseries.id]}
             />
           </Collapse.Panel>
         ) : null}

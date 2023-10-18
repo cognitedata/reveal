@@ -1,3 +1,5 @@
+import { ResourceType } from '../types';
+
 export const DASH = '–'; // mostly used to display empty record in UI
 export const UNIT_SEPARATOR = String.fromCharCode(31); // Unit separator; between fields of a record, or members of a row.
 export const SPACE = String.fromCharCode(32); // Space, the internationally recommended thousands separator. (source: https://en.wikipedia.org/wiki/Decimal_separator)
@@ -22,3 +24,13 @@ export enum ViewType {
 export const SUB_APP_PATH = 'explore';
 
 export const SUMMERY_CARD_DATA_ROWS = 5;
+
+export const INITIAL_SELECTED_ROWS: Record<ResourceType, any> = {
+  asset: {},
+  file: {},
+  timeSeries: {},
+  sequence: {},
+  threeD: {},
+  event: {},
+  charts: {},
+};

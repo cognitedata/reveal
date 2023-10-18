@@ -115,6 +115,10 @@ export type ResourceItem = {
   type: ResourceType;
 };
 
+export type ExtendedResourceItem = ResourceItem & {
+  dateRange?: [Date, Date];
+};
+
 export type ResourceItemState = ResourceItem & {
   state: 'disabled' | 'active' | 'selected';
 };
@@ -153,3 +157,8 @@ export interface RelationshipLabels {
 }
 
 export type ResourceSelectorFilter = Partial<FilterState>;
+
+export type ResourceSelection = Record<
+  ResourceType,
+  Record<string, ResourceItem>
+>;
