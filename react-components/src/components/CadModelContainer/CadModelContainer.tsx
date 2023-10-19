@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type ReactElement, useEffect, useState } from 'react';
+import { type ReactElement, useEffect, useState, useRef } from 'react';
 import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Matrix4 } from 'three';
@@ -13,6 +13,7 @@ import {
 } from './useApplyCadModelStyling';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
+import { cloneDeep, isEqual } from 'lodash';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
@@ -33,6 +34,7 @@ export function CadModelContainer({
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const [layersUrlState] = useLayersUrlParams();
+  const initializingModel = useRef<AddModelOptions | undefined>(undefined);
   const { cadLayers } = layersUrlState;
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(
@@ -44,6 +46,11 @@ export function CadModelContainer({
   const { modelId, revisionId, geometryFilter } = addModelOptions;
 
   useEffect(() => {
+    if (isEqual(initializingModel.current, addModelOptions)) {
+      return;
+    }
+
+    initializingModel.current = cloneDeep(addModelOptions);
     addModel(modelId, revisionId, transform)
       .then((model) => {
         onLoad?.(model);
