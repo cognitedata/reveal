@@ -108,10 +108,7 @@ export const AssetSearchResults = ({
 
   const handleFilterChange = (newValue: Record<string, unknown>) => {
     if (newValue.parentIds) {
-      onFilterChange?.({
-        ...newValue,
-        assetIds: newValue.parentIds,
-      });
+      onFilterChange?.({ assetIds: newValue.parentIds });
     } else {
       onFilterChange?.(newValue);
     }
