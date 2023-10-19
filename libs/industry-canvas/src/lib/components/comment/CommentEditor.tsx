@@ -1,4 +1,4 @@
-import { useEffect, forwardRef, MutableRefObject } from 'react';
+import { useEffect, forwardRef, MutableRefObject, useCallback } from 'react';
 
 import styled from 'styled-components';
 
@@ -7,8 +7,9 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
-import { EditorThemeClasses, LexicalEditor } from 'lexical';
+import { EditorState, EditorThemeClasses, LexicalEditor } from 'lexical';
 
 import { MentionNode } from './MentionNode';
 import MentionsPlugin from './MentionsPlugin';
@@ -52,9 +53,12 @@ export function EditorRefPlugin({
   }
   return null;
 }
-
+type EditorProps = {
+  initialValue?: string;
+  onEditorChange?: (stringifiedEditorState: string) => void;
+};
 export const CommentEditor = forwardRef(function CommentEditor(
-  { setEditorTextContent }: { setEditorTextContent: (content: string) => void },
+  { initialValue, onEditorChange }: EditorProps,
   ref: any
 ) {
   const initialConfig = {
@@ -62,22 +66,25 @@ export const CommentEditor = forwardRef(function CommentEditor(
     theme,
     onError,
     nodes: [MentionNode],
+    editorState: initialValue,
   };
-
+  const onChange = useCallback(
+    (state: EditorState) => {
+      if (onEditorChange) {
+        onEditorChange(JSON.stringify(state.toJSON()));
+      }
+    },
+    [onEditorChange]
+  );
   return (
     <div style={{ position: 'relative' }}>
       <LexicalComposer initialConfig={initialConfig}>
         <PlainTextPlugin
-          contentEditable={
-            <StyledContentEditable
-              onKeyUp={(e) =>
-                setEditorTextContent(e.currentTarget.textContent ?? '')
-              }
-            />
-          }
+          contentEditable={<StyledContentEditable />}
           placeholder={<Placeholder>Write a comment...</Placeholder>}
           ErrorBoundary={LexicalErrorBoundary}
         />
+        <OnChangePlugin onChange={onChange} />
         <HistoryPlugin />
         <AutoFocusPlugin />
         <MentionsPlugin />

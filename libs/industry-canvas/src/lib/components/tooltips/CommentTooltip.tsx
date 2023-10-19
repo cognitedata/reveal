@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -30,6 +30,10 @@ import {
   getTextContentFromEditorState,
 } from '../../services/comments/utils';
 import {
+  INITIAL_EDITOR_VALUE,
+  useCommentEditorState,
+} from '../../state/useCommentEditorState';
+import {
   createPendingComment,
   onDeleteRequest,
 } from '../../state/useIndustrialCanvasStore';
@@ -47,7 +51,11 @@ type CommentTooltipCoreProps = {
   users: UserProfile[];
   onCreate: (content: string) => void;
   onDelete?: () => void;
+  isSendDisabled: boolean;
+  initialValue: string;
+  onEditorChange: (content: string) => void;
 };
+
 export const CommentTooltipCore = ({
   isTooltipOpen,
   onOpen,
@@ -56,10 +64,12 @@ export const CommentTooltipCore = ({
   onCreate,
   onDelete,
   users,
+  isSendDisabled,
+  onEditorChange,
+  initialValue,
 }: CommentTooltipCoreProps) => {
   const { t } = useTranslation();
   const { userProfile } = useUserProfile();
-  const [rawTextContent, setRawTextContent] = useState<string>('');
   const commentsContainerRef = useRef<HTMLDivElement>(null);
 
   const editorRef = useRef<LexicalEditor>(null);
@@ -74,7 +84,6 @@ export const CommentTooltipCore = ({
     editorRef.current?.update(() => {
       $getRoot().clear();
     });
-    setRawTextContent('');
   };
   const onCreateWrapper = () => {
     if (editorRef.current === null) {
@@ -119,12 +128,13 @@ export const CommentTooltipCore = ({
             <Flex style={{ flex: 1 }} gap={8} direction="column">
               <CommentEditor
                 ref={editorRef}
-                setEditorTextContent={setRawTextContent}
+                initialValue={initialValue}
+                onEditorChange={onEditorChange}
               />
               <Flex gap={8} direction="row-reverse">
                 <Button
                   type="primary"
-                  disabled={rawTextContent.length === 0}
+                  disabled={isSendDisabled}
                   onClick={onCreateWrapper}
                 >
                   {t(translationKeys.COMMENT_TOOLTIP_SEND, 'Send')}
@@ -187,10 +197,19 @@ export const CommentTooltip = ({
 
   const { mutateAsync: upsertComment } = useCommentsUpsertMutation();
   const { mutate: deleteComments } = useCommentsDeleteMutation();
+  const initialEditorState = useCommentEditorState(
+    (state) => state.initialEditorState
+  );
+  const setInitialEditorState = useCommentEditorState(
+    (state) => state.setInitialEditorState
+  );
 
   const setOpen = useCallback(
     (id: string | null) =>
       setSearchParams((currentParams) => {
+        if (id !== commentTooltipId) {
+          setInitialEditorState(INITIAL_EDITOR_VALUE);
+        }
         if (id !== null) {
           currentParams.set('commentTooltipId', id);
         } else {
@@ -198,7 +217,7 @@ export const CommentTooltip = ({
         }
         return currentParams;
       }),
-    [setSearchParams]
+    [commentTooltipId, setInitialEditorState, setSearchParams]
   );
   const onCreate = useCallback(
     (content: string) => {
@@ -284,8 +303,12 @@ export const CommentTooltip = ({
     }
     setOpen(null);
   }, [isPendingComment, setOpen]);
+  const isSendDisabled = initialEditorState === INITIAL_EDITOR_VALUE;
   return (
     <CommentTooltipCore
+      isSendDisabled={isSendDisabled}
+      onEditorChange={setInitialEditorState}
+      initialValue={initialEditorState}
       isTooltipOpen={isTooltipOpen}
       onOpen={() => setOpen(commentAnnotation.id)}
       onClose={onClose}
