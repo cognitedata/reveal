@@ -64,4 +64,3 @@ export type {
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
-export type { AugmentedMapping } from './hooks/types';
