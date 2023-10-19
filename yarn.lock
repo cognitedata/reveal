@@ -1883,22 +1883,6 @@
     styled-components "^5.2.1"
     use-local-storage-state "^10.0.0"
 
-"@cognite/cdf-i18n-utils@^0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-i18n-utils/-/cdf-i18n-utils-0.7.5.tgz#16959af3b49554211d10be2fc2e6115a7f02d291"
-  integrity sha512-6Q9hq8xv+4uB/xOeyg2nwHBfLVlZv1NXeGIUsIb3xgYlt0jyQrrlE9a2MdOkb/j+B4pvXhWkj1KPYx9Om11osA==
-  dependencies:
-    cross-spawn "^7.0.3"
-    dotenv "^16.0.0"
-    i18next "^21.6.13"
-    i18next-locize-backend "^5.0.1"
-    locize "^2.4.5"
-    locize-cli "^7.14.6"
-    node-fetch "^2.6.7"
-    react-i18next "^11.15.6"
-    tslib "^2.0.0"
-    yargs "^17.4.1"
-
 "@cognite/cdf-ui-cli@^1.0.0", "@cognite/cdf-ui-cli@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@cognite/cdf-ui-cli/-/cdf-ui-cli-1.1.1.tgz#f2075021763d102aef18fc2b83d295c2622a56a5"
@@ -1923,28 +1907,6 @@
     "@codemirror/search" "^6.0.0"
     "@codemirror/state" "^6.0.0"
     "@codemirror/view" "^6.0.0"
-    "@uiw/codemirror-themes" "^4.11.4"
-    "@uiw/react-codemirror" "^4.11.4"
-    antd "^4.22.4"
-    copy-to-clipboard "^3.3.2"
-    query-string "^7.0.1"
-    styled-components "^5.3.3"
-
-"@cognite/cdf-utilities@^3.5.0":
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-3.5.0.tgz#add666dc687f2b9488bd04f2309bcd6df6081885"
-  integrity sha512-2k63n1iNPiYYowu+TnHkhSsMLCcV80D+h9TAfjzP3pxiHpFtVuB5G2ceTiPomFOvFElgTUt/w1Rjaos12sumKw==
-  dependencies:
-    "@codemirror/autocomplete" "^6.0.0"
-    "@codemirror/commands" "^6.0.0"
-    "@codemirror/language" "^6.0.0"
-    "@codemirror/lint" "^6.0.0"
-    "@codemirror/search" "^6.0.0"
-    "@codemirror/state" "^6.0.0"
-    "@codemirror/view" "^6.0.0"
-    "@cognite/sdk" "^7.19.1"
-    "@cognite/sdk-provider" "^2.0.6"
-    "@lezer/highlight" "^1.0.0"
     "@uiw/codemirror-themes" "^4.11.4"
     "@uiw/react-codemirror" "^4.11.4"
     antd "^4.22.4"
@@ -2414,13 +2376,11 @@
     use-event-callback "^0.1.0"
     use-key-hook "^1.3.0"
 
-"@cognite/reveal-react-components@0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.16.0.tgz#a228da12157ea3934be8e23bb20b88d2f73a577c"
-  integrity sha512-ec5+IMBaDzog50M7TyFbdS7kqyQT0O9MicmOqzW0k5SUfN8TQpcQNc6UIOtOrYyXvY1a4izp1uQqSR93FFFT5w==
+"@cognite/reveal-react-components@0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.17.0.tgz#09d019f76994535d5d01909afdd017d2bcee9a4c"
+  integrity sha512-PJ1/mHl+Btr6qwUkQKb+0XC9w4Qk5O8gGkBT5SRCudEjE/R5xm6evMxBfgrvwF44ooj0yLuyCkJfDvthCI10zg==
   dependencies:
-    "@cognite/cdf-i18n-utils" "^0.7.5"
-    "@cognite/cdf-utilities" "^3.5.0"
     "@tanstack/react-query" "^4.29.19"
     assert "^2.0.0"
     lodash "^4.17.21"
@@ -16382,13 +16342,6 @@ cronstrue@^2.27.0:
   resolved "https://registry.yarnpkg.com/cronstrue/-/cronstrue-2.31.0.tgz#73205a6753a245aac08b4f1f2e925f8c2989d711"
   integrity sha512-A1cyfGyLSRdvT9MNn/pggoCTlvxnJyiCUItU9XHSXk89ZyK2YY9q9q7Rf4j8NhV9YwN1BjB0wimZlvKYb/9Bwg==
 
-cross-fetch@3.1.5:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.5.tgz#e1389f44d9e7ba767907f7af8454787952ab534f"
-  integrity sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==
-  dependencies:
-    node-fetch "2.6.7"
-
 cross-fetch@3.1.6:
   version "3.1.6"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.6.tgz#bae05aa31a4da760969756318feeee6e70f15d6c"
@@ -22375,13 +22328,6 @@ i18next-localstorage-backend@^4.1.1:
   dependencies:
     "@babel/runtime" "^7.20.6"
 
-i18next-locize-backend@^5.0.1:
-  version "5.1.5"
-  resolved "https://registry.yarnpkg.com/i18next-locize-backend/-/i18next-locize-backend-5.1.5.tgz#e05089fcd12f02610510419c9d9cb834ea20061a"
-  integrity sha512-sdaEDQ/8eqC/5Sa1I5dLLY9807jraTZY9clYfiJgxlQmdGqx8UaS3p4y5oshPtjjkQ8O/RxIfbQIw3NEhjOmgQ==
-  dependencies:
-    cross-fetch "3.1.5"
-
 i18next-locize-backend@^6.2.2:
   version "6.2.3"
   resolved "https://registry.yarnpkg.com/i18next-locize-backend/-/i18next-locize-backend-6.2.3.tgz#1da1b215e9b810d72d1c3321ceda0c043d314c91"
@@ -22395,13 +22341,6 @@ i18next-resources-to-backend@1.1.4:
   integrity sha512-hMyr9AOmIea17AOaVe1srNxK/l3mbk81P7Uf3fdcjlw3ehZy3UNTd0OP3EEi6yu4J02kf9jzhCcjokz6AFlEOg==
   dependencies:
     "@babel/runtime" "^7.21.5"
-
-i18next@^21.6.13:
-  version "21.10.0"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-21.10.0.tgz#85429af55fdca4858345d0e16b584ec29520197d"
-  integrity sha512-YeuIBmFsGjUfO3qBmMOc0rQaun4mIpGKET5WDwvu8lU7gvwpcariZLNtL0Fzj+zazcHUrlXHiptcFhBMFaxzfg==
-  dependencies:
-    "@babel/runtime" "^7.17.2"
 
 i18next@^23.2.3:
   version "23.4.6"
@@ -26532,7 +26471,7 @@ locize-lastused@^3.2.1:
   dependencies:
     cross-fetch "3.1.6"
 
-locize@^2.4.5, locize@^2.4.6:
+locize@^2.4.6:
   version "2.4.6"
   resolved "https://registry.yarnpkg.com/locize/-/locize-2.4.6.tgz#aa36c38027a7158868c9ab4928e22fa8997dd282"
   integrity sha512-o3X2/v8D+zuWAJRWuooEZbwblRQMJ5WYaT/4Psgek1+HXgqvb3TeZ7BUHaLc+oX2DK3TFSjSDqEFrSRVdu+B3A==
@@ -33001,7 +32940,7 @@ react-hotkeys@^2.0.0:
   dependencies:
     prop-types "^15.6.1"
 
-react-i18next@11.18.4, react-i18next@11.18.6, react-i18next@^11.15.6:
+react-i18next@11.18.4, react-i18next@11.18.6:
   version "11.18.6"
   resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.18.6.tgz#e159c2960c718c1314f1e8fcaa282d1c8b167887"
   integrity sha512-yHb2F9BiT0lqoQDt8loZ5gWP331GwctHz9tYQ8A2EIEUu+CcEdjBLQWli1USG3RdWQt3W+jqQLg/d4rrQR96LA==
@@ -40128,7 +40067,7 @@ yargs@^16.0.0, yargs@^16.2.0:
     y18n "^5.0.5"
     yargs-parser "^20.2.2"
 
-yargs@^17.0.0, yargs@^17.0.1, yargs@^17.3.1, yargs@^17.4.1, yargs@^17.5.1, yargs@^17.6.2, yargs@^17.7.1, yargs@^17.7.2:
+yargs@^17.0.0, yargs@^17.0.1, yargs@^17.3.1, yargs@^17.5.1, yargs@^17.6.2, yargs@^17.7.1, yargs@^17.7.2:
   version "17.7.2"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-17.7.2.tgz#991df39aca675a192b816e1e0363f9d75d2aa269"
   integrity sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==

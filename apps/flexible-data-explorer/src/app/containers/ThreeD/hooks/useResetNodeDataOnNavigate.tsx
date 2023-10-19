@@ -17,8 +17,8 @@ export function useResetNodeDataOnNavigate(
 
   useEffect(() => {
     if (
-      clickedNodeData?.fdmNode?.externalId === externalId &&
-      clickedNodeData?.fdmNode?.space === space
+      clickedNodeData?.fdmResult?.fdmNodes[0]?.externalId === externalId &&
+      clickedNodeData?.fdmResult?.fdmNodes[0]?.space === space
     ) {
       return;
     }

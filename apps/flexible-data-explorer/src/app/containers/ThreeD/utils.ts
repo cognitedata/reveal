@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
 
 import { Cognite3DViewer, CogniteModel } from '@cognite/reveal';
-import { ThreeDModelMappings } from '@cognite/reveal-react-components/dist/hooks/types';
+import { ThreeDModelFdmMappings } from '@cognite/reveal-react-components/dist/hooks/types';
 import { BoundingBox3D } from '@cognite/sdk';
 
 export function getBoundingBoxCenter(boundingBox: BoundingBox3D) {
@@ -23,7 +23,7 @@ export function getCogniteModel(
 
 export function getNodesFromModelsMappings(
   externalId = '',
-  mappings?: ThreeDModelMappings[]
+  mappings?: ThreeDModelFdmMappings[]
 ) {
   const selectedModelMappings = mappings?.find(
     (modelMappings) => modelMappings.mappings.get(externalId) !== undefined

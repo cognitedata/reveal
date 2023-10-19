@@ -31,9 +31,14 @@ export function useNavigateOnClick(
 
     lastClickedData.current = clickedNodeData;
 
+    const fdmViews = clickedNodeData?.fdmResult?.views;
+    const fdmNodes = clickedNodeData?.fdmResult?.fdmNodes;
+
     if (
-      clickedNodeData?.view === undefined ||
-      clickedNodeData?.fdmNode === undefined
+      fdmViews === undefined ||
+      fdmNodes === undefined ||
+      fdmViews.length === 0 ||
+      fdmNodes.length === 0
     ) {
       if (isSearchPage) {
         setSelectedInstance(undefined);
@@ -44,25 +49,26 @@ export function useNavigateOnClick(
       return;
     }
 
+    const fdmNode = fdmNodes[0];
+    const fdmView = fdmViews[0];
+
     if (isSearchPage) {
       setSelectedInstance({
-        externalId: clickedNodeData.fdmNode.externalId,
-        instanceSpace: clickedNodeData.fdmNode.space,
-        dataType: clickedNodeData.view.externalId,
+        externalId: fdmNode.externalId,
+        instanceSpace: fdmNode.space,
+        dataType: fdmView.externalId,
       });
 
       return;
     }
 
-    const dataModel = client.getDataModelByDataType(
-      clickedNodeData.view.externalId
-    );
+    const dataModel = client.getDataModelByDataType(fdmView.externalId);
 
     setSelectedInstance(undefined);
     toInstancePage(
-      clickedNodeData.view.externalId,
-      clickedNodeData.fdmNode.space,
-      clickedNodeData.fdmNode.externalId,
+      fdmView.externalId,
+      fdmNode.space,
+      fdmNode.externalId,
       {
         dataModel: dataModel?.externalId,
         space: dataModel?.space,
