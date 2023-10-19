@@ -137,6 +137,10 @@ export function PointCloudContainer({
 }
 
 function applyStyling(model: CognitePointCloudModel, styling: PointCloudModelStyling): void {
+  const currentStyling = model.getDefaultPointCloudAppearance();
+  if (currentStyling.visible === false) {
+    return;
+  }
   if (styling.defaultStyle !== undefined) {
     model.setDefaultPointCloudAppearance(styling.defaultStyle);
   }
