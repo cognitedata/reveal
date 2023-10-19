@@ -5,12 +5,10 @@ import { CogniteClient } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   ContainerConfig,
-  ContainerType,
   UnifiedViewer,
   UnifiedViewerEventListenerMap,
   UnifiedViewerEventType,
   UpdateRequestSource,
-  getContainerConfigFromFileInfo,
 } from '@cognite/unified-file-viewer';
 
 import { RuleType } from '../components/ContextualTooltips/AssetTooltip/types';
@@ -97,11 +95,10 @@ const preprocessContainerUpdates = async (
   },
   sdk: CogniteClient
 ): Promise<ContainerConfig[]> => {
-  if (source === undefined) {
-    return containers;
+  if (source === UpdateRequestSource.CLIPBOARD) {
+    return reresolveContainerConfigsFromClipboard(containers, sdk);
   }
-
-  return reresolveContainerConfigsFromClipboard(containers, sdk);
+  return containers;
 };
 
 const useOnUpdateRequest = ({
@@ -119,12 +116,13 @@ const useOnUpdateRequest = ({
           { source, containers },
           sdk
         ),
+        source,
         annotations,
         unifiedViewer,
         trackUsage,
       });
     },
-    [unifiedViewer, trackUsage]
+    [sdk, unifiedViewer, trackUsage]
   );
 };
 

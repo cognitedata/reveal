@@ -360,7 +360,6 @@ export const IndustryCanvasPage = () => {
   const onAddResourcePress = async (
     results?: ExtendedResourceItem | ExtendedResourceItem[]
   ) => {
-    console.log('ICP; selection results: ', results);
     if (isCanvasLocked) {
       return;
     }

@@ -23,6 +23,7 @@ import {
   UnifiedViewerEventType,
   isAnnotation,
   isContainerConfig,
+  UpdateRequestSource,
 } from '@cognite/unified-file-viewer';
 
 import {
@@ -532,11 +533,13 @@ const setFileUploadDataFromPastedImageContainer = (
 export const shamefulOnUpdateRequest = ({
   containers: updatedContainers,
   annotations: updatedAnnotations,
+  source,
   trackUsage,
   unifiedViewer,
 }: {
   containers: ContainerConfig[];
   annotations: Annotation[];
+  source: UpdateRequestSource | undefined;
   trackUsage: TrackUsageFn;
   unifiedViewer: UnifiedViewer | null;
 }) => {
@@ -574,7 +577,16 @@ export const shamefulOnUpdateRequest = ({
     createPendingComment(updatedAnnotation);
   }
 
-  pushHistoryState(({ nodes, ...otherState }) => {
+  // If the update request occurred because of the nodes being auto resized, do
+  // *not* push the updated nodes to the history stack, since we don't want the
+  // application to be able to undo/redo the auto-resizing operations. If auto
+  // resizing is enabled, UFV manages the resizing of the containers for us.
+  const updateHistoryFn =
+    source === UpdateRequestSource.AUTO_RESIZE
+      ? replaceLatestHistoryState
+      : pushHistoryState;
+
+  updateHistoryFn(({ nodes, ...otherState }) => {
     const updatedAnnotation = updatedAnnotations[0];
     const hasAnnotationBeenCreated =
       updatedAnnotation !== undefined &&
@@ -799,6 +811,29 @@ export const pushHistoryState = (
           : stateUpdateOrFn,
       ],
       index: nextHistoryIndex,
+    };
+  });
+};
+
+export const replaceLatestHistoryState = (
+  stateUpdateOrFn:
+    | IndustryCanvasState
+    | ((state: IndustryCanvasState) => IndustryCanvasState)
+) => {
+  setHistoryState((prevHistoryState) => {
+    const currentCanvasState = prevHistoryState.history[prevHistoryState.index];
+    const prevHistoryTruncated = prevHistoryState.history.slice(
+      0,
+      prevHistoryState.index
+    );
+    return {
+      history: [
+        ...prevHistoryTruncated,
+        typeof stateUpdateOrFn === 'function'
+          ? stateUpdateOrFn(currentCanvasState)
+          : stateUpdateOrFn,
+      ],
+      index: prevHistoryState.index,
     };
   });
 };
