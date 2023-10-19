@@ -13,7 +13,7 @@ Try to answer these questions:
 Please remember to add relevant labels as well.
 -->
 
-Closes [DX-XXX](https://cognitedata.atlassian.net/browse/DX-XXX) <!--(mention JIRA ticket/s)-->
+Closes [UX-XXXX] <!--(mention JIRA ticket/s, bot will automatically link them)-->
 
 ## Steps to run/test this
 
