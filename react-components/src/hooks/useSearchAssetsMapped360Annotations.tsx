@@ -8,16 +8,14 @@ import {
   type AnnotationsBoundingVolume,
   type Asset,
   type CogniteClient,
-  type IdEither,
   type AnnotationModel
 } from '@cognite/sdk';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { chunk, uniqBy } from 'lodash';
 
 export const useAllAssetsMapped360Annotations = (
-  siteIds: string[],
-  limit: number = 100,
-  sdk: CogniteClient
+  sdk: CogniteClient,
+  siteIds: string[]
 ): UseQueryResult<Asset[]> => {
   return useQuery(
     ['reveal', 'react-components', 'all-assets-mapped-360-annotations', siteIds],
@@ -36,17 +34,17 @@ export const useSearchAssetsMapped360Annotations = (
   sdk: CogniteClient,
   query: string
 ): UseQueryResult<Asset[]> => {
+  const { data: assetMappings, isFetched } = useAllAssetsMapped360Annotations(sdk, siteIds);
+
   return useQuery(
     ['reveal', 'react-components', 'search-assets-mapped-360-annotations', query, siteIds],
     async () => {
       if (query === '') {
-        const assetMappings = await getAssetsMapped360Annotations(sdk, siteIds);
         return assetMappings;
       }
-      const assetMappings = await getAssetsMapped360Annotations(sdk, siteIds);
 
       const filteredSearchedAssets =
-        assetMappings.filter((asset) => {
+        assetMappings?.filter((asset) => {
           const isInName = asset.name.toLowerCase().includes(query.toLowerCase());
           const isInDescription = asset.description?.toLowerCase().includes(query.toLowerCase());
 
@@ -56,7 +54,8 @@ export const useSearchAssetsMapped360Annotations = (
       return filteredSearchedAssets;
     },
     {
-      staleTime: Infinity
+      staleTime: Infinity,
+      enabled: isFetched && assetMappings !== undefined
     }
   );
 };
@@ -78,17 +77,24 @@ async function get360AnnotationAssets(
 ): Promise<Asset[]> {
   const annotationMapping = image360Annotations.map((annotation) => ({
     assetId:
-      ((annotation.data as AnnotationsBoundingVolume).assetRef?.id as number) ??
-      ((annotation.data as AnnotationsBoundingVolume).assetRef?.externalId as string)
+      (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
+      (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId ??
+      undefined
   }));
 
   const uniqueAnnotationMapping = uniqBy(annotationMapping, 'assetId');
 
   const assets = chunk(uniqueAnnotationMapping, 1000).map(async (uniqueAssetsChunk) => {
     const retrievedAssets = await sdk.assets.retrieve(
-      uniqueAssetsChunk.map(({ assetId }) => ({
-        [typeof assetId === 'number' ? 'id' : 'externalId']: assetId
-      })) as unknown as IdEither[],
+      uniqueAssetsChunk.map(({ assetId }) => {
+        if (typeof assetId === 'number') {
+          return { id: assetId };
+        } else if (typeof assetId === 'string') {
+          return { externalId: assetId };
+        } else {
+          throw new Error(`Invalid assetId: ${assetId}`);
+        }
+      }),
       { ignoreUnknownIds: true }
     );
     return retrievedAssets;
@@ -99,10 +105,10 @@ async function get360AnnotationAssets(
 
 async function get360ImagesFileIds(siteIds: string[], sdk: CogniteClient): Promise<number[]> {
   const fileIdListPromises = siteIds.map(async (siteId) => {
-    const req = {
+    const req: FileFilterProps = {
       metadata: { site_id: siteId }
     };
-    const fileIds = await listFileIds(req as FileFilterProps, sdk);
+    const fileIds = await listFileIds(req, sdk);
     return fileIds;
   });
 
@@ -118,21 +124,18 @@ async function get360ImageAnnotations(
   const annotationArray = await Promise.all(
     chunk(fileIdsList, 1000).map(async (fileIdsChunk) => {
       const filter: AnnotationFilterProps = {
-        annotatedResourceIds: fileIdsChunk?.map((id) => ({ id })) ?? [],
+        annotatedResourceIds: fileIdsChunk.map((id) => ({ id })),
         annotatedResourceType: 'file',
         annotationType: 'images.AssetLink'
       };
-      const annotations = await sdk.annotations
-        .list({
-          limit: 1000,
-          filter
-        })
-        .autoPagingToArray({ limit: Infinity });
+      const { items: annotations } = await sdk.annotations.list({
+        filter
+      });
       return annotations;
     })
   );
 
-  return annotationArray.flat();
+  return annotationArray.flatMap((annotations) => annotations);
 }
 
 async function listFileIds(filter: FileFilterProps, sdk: CogniteClient): Promise<number[]> {

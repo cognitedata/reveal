@@ -52,7 +52,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     mainSearchQuery
   );
 
-  const { data: allAssets } = useAllAssetsMapped360Annotations(siteIds, 50, sdk);
+  const { data: allAssets } = useAllAssetsMapped360Annotations(sdk, siteIds);
 
   const filteredEquipment = useMemo(() => {
     if (searchMethod === 'allAnnotationAssets') {
@@ -180,7 +180,7 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        siteId: 'XOM-HCU1_north_v02'
+        siteId: 'celanese1'
       }
     ]
   },
