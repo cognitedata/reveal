@@ -1,3 +1,5 @@
+import { getAppUrl } from '@fusion/shared/cypress';
+
 import { BASE_URL, CLUSTER, ENV, OVERRIDE_URL, PROJECT } from '../config';
 
 type ResourceTab =
@@ -20,7 +22,9 @@ const fusionLogin = () => {
 };
 
 const navigateToExplorer = () => {
-  cy.contains('Data Explorer').click();
+  const url = getAppUrl(BASE_URL, PROJECT, 'explore', CLUSTER);
+
+  cy.visit(url);
   cy.url().should('include', `${BASE_URL}/${PROJECT}/explore`);
 };
 

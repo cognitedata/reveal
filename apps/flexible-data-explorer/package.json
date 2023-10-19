@@ -7,7 +7,8 @@
     "test": "../../scripts/test.sh flexible-data-explorer",
     "lint": "../../scripts/lint.sh flexible-data-explorer",
     "lint:fix": "../../scripts/lint.sh --fix flexible-data-explorer",
-    "storybook": "cd ../../ && nx run flexible-data-explorer:storybook"
+    "storybook": "cd ../../ && nx run flexible-data-explorer:storybook",
+    "cypress:dev": "./scripts/cypress-dev.sh"
   },
   "browserslist": {
     "production": [
