@@ -13,8 +13,12 @@ import {
 
 import { RuleType } from '../components/ContextualTooltips/AssetTooltip/types';
 import containerConfigToContainerReference from '../containerConfigToContainerReference';
-import { shamefulOnUpdateRequest } from '../state/useIndustrialCanvasStore';
+import {
+  setFileUploadDataFromPastedImageContainer,
+  shamefulOnUpdateRequest,
+} from '../state/useIndustrialCanvasStore';
 import { CanvasNode, isIndustryCanvasContainerConfig } from '../types';
+import { isPastedImageContainer } from '../utils/dataUrlUtils';
 import useMetrics from '../utils/tracking/useMetrics';
 
 import resolveContainerConfig from './utils/resolveContainerConfig';
@@ -111,6 +115,14 @@ const useOnUpdateRequest = ({
 
   return useCallback(
     async ({ source, containers, annotations }) => {
+      if (source === UpdateRequestSource.CLIPBOARD) {
+        const pastedImageContainers = containers.filter(isPastedImageContainer);
+        if (pastedImageContainers.length === 1) {
+          setFileUploadDataFromPastedImageContainer(pastedImageContainers[0]);
+          return;
+        }
+      }
+
       shamefulOnUpdateRequest({
         containers: await preprocessContainerUpdates(
           { source, containers },

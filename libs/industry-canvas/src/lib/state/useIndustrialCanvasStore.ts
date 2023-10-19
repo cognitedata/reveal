@@ -512,7 +512,7 @@ export const updateContainerById = ({
   }));
 };
 
-const setFileUploadDataFromPastedImageContainer = (
+export const setFileUploadDataFromPastedImageContainer = (
   container: ImageContainerProps
 ): void => {
   if (container?.x === undefined || container?.y === undefined) {
@@ -544,13 +544,6 @@ export const shamefulOnUpdateRequest = ({
   unifiedViewer: UnifiedViewer | null;
 }) => {
   const rootState = useIndustrialCanvasStore.getState();
-
-  const pastedImageContainers = updatedContainers.filter(
-    isPastedImageContainer
-  );
-  if (pastedImageContainers.length === 1) {
-    setFileUploadDataFromPastedImageContainer(pastedImageContainers[0]);
-  }
 
   const validUpdatedContainers = updatedContainers.filter(
     isIndustryCanvasContainerConfig
