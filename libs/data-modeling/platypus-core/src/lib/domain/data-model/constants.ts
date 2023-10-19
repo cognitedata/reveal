@@ -66,6 +66,12 @@ export const mixerApiBuiltInTypes = [
     fieldDirective: true,
   },
   {
+    name: 'unit',
+    type: 'DIRECTIVE',
+    body: `directive @unit(space: String, externalId: String) on FIELD_DEFINITION`,
+    fieldDirective: true,
+  },
+  {
     name: 'relation',
     type: 'DIRECTIVE',
     body: `

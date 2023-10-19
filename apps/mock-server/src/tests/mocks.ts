@@ -305,6 +305,7 @@ directive @import(dataModel: _DataModelRef) on OBJECT | INTERFACE
 
 directive @default(value: String) on FIELD_DEFINITION
 
+directive @unit(space: String, externalId: String) on FIELD_DEFINITION
 
 """
 Specifies if a type will be used for representing edge properties

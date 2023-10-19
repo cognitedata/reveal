@@ -371,6 +371,10 @@ describe('CodeCompletionServiceTest', () => {
         }),
         expect.objectContaining({
           kind: 3,
+          label: 'unit',
+        }),
+        expect.objectContaining({
+          kind: 3,
           label: 'relation',
         }),
       ],
