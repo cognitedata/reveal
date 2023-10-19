@@ -15,6 +15,7 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealContainer/SDKProvider';
+import { chunk } from 'lodash';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -118,18 +119,30 @@ async function getAssetMappingsByModels(
   limit: number = 1000,
   assetIdsFilter?: number[]
 ): Promise<ModelMappings[]> {
+  const chunkedFilter = chunk(assetIdsFilter, 100);
+
   const mappedEquipmentPromises = models.map(async (model) => {
-    const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
-      filter: assetIdsFilter === undefined ? undefined : { assetIds: assetIdsFilter },
-      limit
+    if (assetIdsFilter === undefined) {
+      const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
+        limit
+      });
+      return [{ mappings, model }];
+    }
+
+    const chunkedPromises = chunkedFilter.map(async (chunk) => {
+      const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
+        filter: { assetIds: chunk },
+        limit
+      });
+      return { mappings, model };
     });
 
-    return { mappings, model };
+    return await Promise.all(chunkedPromises);
   });
 
   const mappedEquipment = await Promise.all(mappedEquipmentPromises);
 
-  return mappedEquipment;
+  return mappedEquipment.flat();
 }
 
 async function getAssetsFromAssetMappings(

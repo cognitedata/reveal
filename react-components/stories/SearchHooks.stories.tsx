@@ -60,7 +60,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const { data: assetSearchData } = useSearchMappedEquipmentAssetMappings(
     mainSearchQuery,
     filteredResources,
-    50,
+    100,
     sdk
   );
 
@@ -273,8 +273,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 3282558010084460,
-        revisionId: 4932190516335812,
+        modelId: 7227641388924978,
+        revisionId: 3261647608405033,
         styling: {
           default: {
             color: new Color('#efefef')

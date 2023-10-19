@@ -11,6 +11,8 @@ type EdgeDirection = 'source' | 'destination';
 
 type InstanceFilter = any;
 
+type ViewPropertyReference = any;
+
 export type Item = {
   instanceType: InstanceType;
 } & DmsUniqueIdentifier;
@@ -33,8 +35,8 @@ export type ResultSetExpression = (NodeResultSetExpression | EdgeResultSetExpres
 export type NodeResultSetExpression = {
   nodes: {
     filter?: InstanceFilter;
-    from?: any;
-    through?: any;
+    from?: string;
+    through?: ViewPropertyReference;
     chainTo?: EdgeDirection;
   };
 };
