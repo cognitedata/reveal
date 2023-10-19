@@ -10,7 +10,7 @@ export const useGetLabelName = (): ((externalId: string) => string) => {
       const labelName = labelsNameMap[externalId];
 
       if (labelName) {
-        return `${labelName} (${externalId})`;
+        return `${externalId} (${labelName})`;
       }
 
       return fallback || externalId;
