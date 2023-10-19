@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState, CSSProperties, ReactNode } from 'react';
 
 import styled from 'styled-components';
 
 import { EmptyState, Loader } from '@data-exploration/components';
+import noop from 'lodash/noop';
 
 import { createLink } from '@cognite/cdf-utilities';
 import {
@@ -45,7 +46,7 @@ const RowItem = ({
   title,
   onClick,
 }: {
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   title: string | number;
   onClick?: () => void;
 }) => (
@@ -99,7 +100,7 @@ export const AssetSmallPreview = ({
   statusText,
   selectionMode = 'none',
   isSelected = false,
-  onSelect = () => {},
+  onSelect = noop,
   hideTitle = false,
 }: {
   assetId: number;
@@ -144,7 +145,7 @@ export const AssetSmallPreview = ({
     );
   }
   if (selected) {
-    let content: React.ReactNode = null;
+    let content: ReactNode = null;
     if (selected.type === 'files') {
       content = <FileSmallPreview fileId={selected.id} />;
     }

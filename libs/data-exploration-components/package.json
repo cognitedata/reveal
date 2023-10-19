@@ -1,6 +1,7 @@
 {
   "name": "@cognite/data-exploration",
   "version": "3.3.2",
+  "type": "module",
   "scripts": {
     "build": "../../scripts/.build.sh prod data-exploration-components",
     "lint": "eslint src --max-warnings 0 --ext .js,.jsx,.ts,.tsx",

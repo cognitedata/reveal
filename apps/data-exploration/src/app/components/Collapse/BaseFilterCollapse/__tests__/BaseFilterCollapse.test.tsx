@@ -1,17 +1,18 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
-import render from '../../../../../testUtils/render';
 import { RESET } from '../../../Buttons/constants';
 import { BaseFilterPanel, BaseFilterPanelProps } from '../BaseFilterCollapse';
 
 describe('BaseFilterPanel', () => {
   const initRender = (props?: Partial<BaseFilterPanelProps>) => {
-    render(BaseFilterPanel, undefined, {
-      title: 'Test title',
-      infoContent: 'Info content',
-      children: <div></div>,
-      ...props,
-    });
+    render(
+      <BaseFilterPanel
+        title="Test title"
+        infoContent="Info content"
+        children={<div></div>}
+        {...props}
+      />
+    );
   };
 
   it('should render base filter panel', async () => {

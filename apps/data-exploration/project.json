@@ -101,7 +101,6 @@
       }
     },
     "test": {
-      "dependsOn": ["^build"],
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/data-exploration"],
       "options": {

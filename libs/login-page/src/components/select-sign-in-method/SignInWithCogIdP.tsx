@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 import { useQuery } from '@tanstack/react-query';
-import { noop } from 'lodash-es';
+import noop from 'lodash/noop';
 import { parse } from 'query-string';
 
 import { Icon, PromoChip } from '@cognite/cogs.js';
