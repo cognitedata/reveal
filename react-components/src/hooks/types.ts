@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type Node3D, type CogniteExternalId, type AssetMapping3D } from '@cognite/sdk';
+import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 
 export type ThreeDModelFdmMappings = {
   modelId: number;
@@ -35,12 +35,4 @@ export type LayersUrlStateParam = {
   image360Layers?: Image360LayersUrlStateParam[];
   cadLayers?: CadLayersUrlStateParam[];
   pointCloudLayers?: PointCloudLayersUrlStateParam[];
-};
-
-export type AugmentedMapping = Partial<AssetMapping3D> & {
-  name: string;
-  description?: string;
-  annotationId?: number;
-  createdTime?: Date;
-  lastUpdatedTime?: Date;
 };
