@@ -242,15 +242,17 @@ function useJoinStylingGroups(
 }
 
 function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
-  return styleGroup.reduce((accumulatedGroups, currentGroup) => {
-    const existingGroupWithModel = accumulatedGroups.find(group => group.model === currentGroup.model);
+  return styleGroup.reduce<ModelStyleGroup[]>((accumulatedGroups, currentGroup) => {
+    const existingGroupWithModel = accumulatedGroups.find(
+      (group) => group.model === currentGroup.model
+    );
     if (existingGroupWithModel !== undefined) {
       existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
     } else {
       accumulatedGroups.push({ ...currentGroup });
     }
     return accumulatedGroups;
-  }, [] as ModelStyleGroup[]);
+  }, []);
 }
 
 function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {
