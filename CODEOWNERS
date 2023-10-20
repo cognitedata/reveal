@@ -59,9 +59,9 @@ apps/interactive-diagrams         @cognitedata/matchmakers
 # 3D / Reveal
 apps/3d-management                @cognitedata/3d-reveal-viewer-team @cognitedata/3d-point-cloud-team @cognitedata/3d-backend-team
 
-# Migrated CDF-UX Subapps
-apps/data-catalog                 @cognitedata/cdf-user-experience
-apps/access-management            @cognitedata/cdf-user-experience
+# Authronauts
+apps/data-catalog                 @cognitedata/authronauts
+apps/access-management            @cognitedata/authronauts
 
 # data onboarding
 apps/extraction-pipelines         @cognitedata/data-management
