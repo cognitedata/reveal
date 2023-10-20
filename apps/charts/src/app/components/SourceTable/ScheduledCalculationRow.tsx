@@ -3,8 +3,8 @@ import { DraggableProvided } from 'react-beautiful-dnd';
 
 import {
   ChartWorkflow,
-  SCHEDULED_CALCULATIONS_ACL,
   ScheduledCalculation,
+  TIMESERIES_ACL,
 } from '@cognite/charts-lib';
 import { Button, Tooltip } from '@cognite/cogs.js';
 
@@ -107,15 +107,11 @@ export const ScheduledCalculationRow = ({
     customUnitLabel,
   } = scheduledCalculation;
 
-  const { data: hasSCWrite } = useAclPermissions(
-    SCHEDULED_CALCULATIONS_ACL,
-    'WRITE'
-  );
-  const { data: hasSCRead } = useAclPermissions(
-    SCHEDULED_CALCULATIONS_ACL,
-    'READ'
-  );
-  const canDeleteScheduledCalculations = hasSCWrite && hasSCRead;
+  const { data: hasTSWrite } = useAclPermissions(TIMESERIES_ACL, 'WRITE');
+  const { data: hasTSRead } = useAclPermissions(TIMESERIES_ACL, 'READ');
+
+  const canDeleteScheduledCalculations = hasTSWrite && hasTSRead;
+
   const isWorkspaceMode = mode === 'workspace';
   const { mutateAsync: deleteScheduledCalculation } =
     useScheduledCalculationDeleteMutate();
@@ -279,8 +275,8 @@ export const ScheduledCalculationRow = ({
                 visible={accessDeniedModalOpen}
                 onOk={() => setAccessDeniedModalOpen(false)}
                 capabilities={[
-                  hasSCWrite ? '' : `${SCHEDULED_CALCULATIONS_ACL}:WRITE`,
-                  hasSCRead ? '' : `${SCHEDULED_CALCULATIONS_ACL}:READ`,
+                  hasTSRead ? '' : `${TIMESERIES_ACL}:READ`,
+                  hasTSWrite ? '' : `${TIMESERIES_ACL}:WRITE`,
                 ].filter(Boolean)}
               />
             )}
