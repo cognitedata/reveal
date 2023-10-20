@@ -18,7 +18,6 @@ import { useMemo } from 'react';
 import {
   type NodeId,
   type FdmEdgeWithNode,
-  type ModelRevisionKey,
   type AssetId,
   type ModelRevisionAssetNodesResult
 } from '../components/NodeCacheProvider/types';
