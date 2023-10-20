@@ -55,7 +55,7 @@ export class CognitePointCloudModel {
   /**
    * Used to clean up memory.
    */
-  dispose(): void {}
+  dispose(): void { }
 
   // eslint-disable-next-line jsdoc/require-description
   /**
@@ -245,6 +245,24 @@ export class CognitePointCloudModel {
    */
   set pointShape(shape: PointShape) {
     this.pointCloudNode.pointShape = shape;
+  }
+
+  /**
+   * Sets the model visibility.
+   * @example
+   * ```js
+   * model.visible = false
+   * ```
+   */
+  set visible(value: boolean) {
+    this.pointCloudNode.visible = value;
+  }
+
+  /**
+   * Returns the model visibility.
+   */
+  get visible(): boolean {
+    return this.pointCloudNode.visible;
   }
 
   /**
