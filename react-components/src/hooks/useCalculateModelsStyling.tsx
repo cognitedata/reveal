@@ -243,19 +243,15 @@ function useJoinStylingGroups(
 }
 
 function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
-  const auxillaryMap = new Map<ModelRevisionKey, ModelStyleGroup>();
-
-  styleGroup.forEach(({ model, styleGroup }) => {
-    const key = `${model.modelId}/${model.revisionId}` as const;
-    const storedGroup = auxillaryMap.get(key);
-    if (storedGroup !== undefined) {
-      storedGroup.styleGroup.push(...styleGroup);
+  return styleGroup.reduce((accumulatedGroups, currentGroup) => {
+    const existingGroupWithModel = accumulatedGroups.find(group => group.model === currentGroup.model);
+    if (existingGroupWithModel !== undefined) {
+      existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
     } else {
-      auxillaryMap.set(key, { model, styleGroup });
+      accumulatedGroups.push({ ...currentGroup });
     }
-  });
-
-  return [...auxillaryMap.values()];
+    return accumulatedGroups;
+  }, [] as ModelStyleGroup[]);
 }
 
 function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {
