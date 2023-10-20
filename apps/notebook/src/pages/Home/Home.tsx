@@ -2,6 +2,7 @@ import React, {
   useCallback,
   useEffect,
   useRef,
+  useState,
   ForwardedRef,
   useImperativeHandle,
 } from 'react';
@@ -11,7 +12,7 @@ import styled from 'styled-components';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk, { getToken, getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { isDevelopment, isStaging } from '@cognite/cdf-utilities';
-import { Flex } from '@cognite/cogs.js';
+import { Flex, Modal } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 let notebook_origin = 'https://notebook-standalone.cogniteapp.com';
@@ -95,6 +96,32 @@ const Home = React.forwardRef(
 
     useImperativeHandle(ref, () => myIframe.current as any);
 
+    /**
+     * Detect multiple tabs with same page open
+     * This is a temporary workaround for https://cognitedata.atlassian.net/browse/AI-270 and should be removed when the bug is fixed
+     */
+    const [showMultipleTabsWarning, setShowMultipleTabsWarning] =
+      useState<boolean>(false);
+    useEffect(() => {
+      // Broadcast that you're opening a page.
+      localStorage.cdf_notebook_open_page = Date.now();
+      window.addEventListener('storage', storageEventListener, false);
+
+      function storageEventListener(e: StorageEvent) {
+        if (e.key === 'cdf_notebook_open_page') {
+          // Listen if anybody else is opening the same page!
+          localStorage.cdf_notebook_page_lock = Date.now();
+        }
+        if (e.key === 'cdf_notebook_page_lock') {
+          setShowMultipleTabsWarning(true);
+        }
+      }
+
+      return () => {
+        window.removeEventListener('storage', storageEventListener);
+      };
+    });
+
     return (
       <Flex style={{ height: '100%' }}>
         <IFrame
@@ -104,6 +131,16 @@ const Home = React.forwardRef(
             isEnabled ? '' : '&aiDisabled'
           }}`}
         ></IFrame>
+        <Modal
+          visible={showMultipleTabsWarning}
+          title="Duplicate Jupyter Tabs Detected"
+          closable={false}
+          hideFooter
+        >
+          We are currently fixing a bug that can occur when working on Jupyter
+          notebooks across multiple tabs. In the meantime, please close all
+          duplicate tabs and refresh the page.
+        </Modal>
       </Flex>
     );
   }
