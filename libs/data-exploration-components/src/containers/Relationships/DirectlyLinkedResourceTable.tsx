@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 
+import { EmptyState } from '@data-exploration/components';
 import {
   AssetLinkedSearchResults,
   EventLinkedSearchResults,
@@ -7,6 +8,7 @@ import {
   SequenceLinkedSearchResults,
   TimeseriesLinkedSearchResults,
 } from '@data-exploration/containers';
+import isEmpty from 'lodash/isEmpty';
 
 import {
   convertResourceType,
@@ -33,7 +35,7 @@ export const DirectlyLinkedResourceTable = ({
 }) => {
   const { t } = useTranslation();
 
-  const { data: assetIds = [] } = useAssetIdsQuery({
+  const { data: assetIds = [], isInitialLoading } = useAssetIdsQuery({
     resourceType: convertResourceType(parentResource.type),
     resourceId: { id: parentResource.id },
     isDocumentsApiEnabled,
@@ -45,6 +47,10 @@ export const DirectlyLinkedResourceTable = ({
       return { value: assetId };
     });
   }, [assetIds]);
+
+  if (isEmpty(assetIds)) {
+    return <EmptyState isLoading={isInitialLoading} />;
+  }
 
   switch (type) {
     case 'asset':
