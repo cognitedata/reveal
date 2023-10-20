@@ -49,14 +49,18 @@ export const getOrgUserInvitationsByResource = async ({
 
 type Props = {
   externalId?: string;
+  isEnabled?: boolean;
 };
 
-export const useAuth2InvitationsByResource = ({ externalId }: Props) => {
+export const useAuth2InvitationsByResource = ({
+  externalId,
+  isEnabled,
+}: Props) => {
   const { data, isLoading, isError, isFetched } = useQuery(
     [QueryKeys.AUTH2_USERS_BY_RESOURCE, externalId],
     () => getOrgUserInvitationsByResource({ externalId }),
     {
-      enabled: externalId !== undefined,
+      enabled: isEnabled,
       retry: (failureCount, error) => {
         if (error instanceof Response && error.status === 401) {
           return false;
