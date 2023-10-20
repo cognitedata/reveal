@@ -50,7 +50,11 @@ export const DirectlyLinkedResourceTable = ({
     case 'asset':
       return (
         <AssetLinkedSearchResults
-          defaultFilter={{ parentIds: filter }}
+          defaultFilter={
+            parentResource.type === 'asset'
+              ? { parentIds: filter }
+              : { assetIds: filter }
+          }
           onClick={(row) => onItemClicked(row.id)}
         />
       );

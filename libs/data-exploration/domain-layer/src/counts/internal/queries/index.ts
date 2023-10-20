@@ -6,5 +6,3 @@ export * from './useRelatedResourcesCount';
 export * from './useRelationshipsCount';
 export * from './useTotalRelatedResourcesCount';
 export * from './useTotalRelatedResourcesCounts';
-export * from './useNonLinkedRelatedResourcesCount';
-export * from './useNonLinkedRelatedResourcesIds';

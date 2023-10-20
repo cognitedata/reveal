@@ -1,12 +1,13 @@
 import uniq from 'lodash/uniq';
 
-import { CogniteExternalId, Relationship } from '@cognite/sdk';
+import { CogniteExternalId } from '@cognite/sdk';
 
 import { ResourceType, ResourceTypes } from '@data-exploration-lib/core';
 
+import { ExtendedRelationship } from '../../service';
+
 export const transformToRelatedResourceExternalIds = (
-  relationships: Relationship[],
-  resourceExternalId?: string
+  relationships: ExtendedRelationship[]
 ) => {
   const result: Record<ResourceType, CogniteExternalId[]> = {
     [ResourceTypes.Asset]: [],
@@ -19,11 +20,16 @@ export const transformToRelatedResourceExternalIds = (
   };
 
   relationships.forEach(
-    ({ sourceType, sourceExternalId, targetType, targetExternalId }) => {
-      if (sourceExternalId !== resourceExternalId) {
+    ({
+      relation,
+      sourceType,
+      sourceExternalId,
+      targetType,
+      targetExternalId,
+    }) => {
+      if (relation === 'Source') {
         result[sourceType].push(sourceExternalId);
-      }
-      if (targetExternalId !== resourceExternalId) {
+      } else {
         result[targetType].push(targetExternalId);
       }
     }

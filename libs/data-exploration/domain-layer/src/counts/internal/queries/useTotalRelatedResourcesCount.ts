@@ -3,9 +3,7 @@ import { ResourceType } from '@data-exploration-lib/core';
 import { BaseResourceProps } from '../types';
 
 import { useAnnotationsCount } from './useAnnotationsCount';
-import { useDirectlyLinkedResourcesCount } from './useDirectlyLinkedResourcesCount';
 import { useLinkedResourcesCount } from './useLinkedResourcesCount';
-import { useNonLinkedRelatedResourcesCount } from './useNonLinkedRelatedResourcesCount';
 import { useRelationshipsCount } from './useRelationshipsCount';
 
 export const useTotalRelatedResourcesCount = ({
@@ -17,15 +15,14 @@ export const useTotalRelatedResourcesCount = ({
   resourceType: ResourceType;
   isDocumentsApiEnabled?: boolean;
 }) => {
-  const annotations = useAnnotationsCount({ resource, resourceType });
-
-  const linkedResources = useLinkedResourcesCount({
+  const annotations = useAnnotationsCount({
     resource,
     resourceType,
     isDocumentsApiEnabled,
+    ignoreLinkedResources: true,
   });
 
-  const directlyLinkedResources = useDirectlyLinkedResourcesCount({
+  const linkedResources = useLinkedResourcesCount({
     resource,
     resourceType,
     isDocumentsApiEnabled,
@@ -35,27 +32,15 @@ export const useTotalRelatedResourcesCount = ({
     resource,
     resourceType,
     isDocumentsApiEnabled,
+    ignoreLinkedResources: true,
   });
 
-  const nonLinkedRelatedResources = useNonLinkedRelatedResourcesCount({
-    resource,
-    resourceType,
-    isDocumentsApiEnabled,
-  });
-
-  const count =
-    annotations.data +
-    directlyLinkedResources.data +
-    linkedResources.data +
-    relationships.data -
-    nonLinkedRelatedResources.data;
+  const count = annotations.data + linkedResources.data + relationships.data;
 
   const isLoading =
     annotations.isLoading ||
-    directlyLinkedResources.isLoading ||
     linkedResources.isLoading ||
-    relationships.isLoading ||
-    nonLinkedRelatedResources.isLoading;
+    relationships.isLoading;
 
   return { data: count, isLoading };
 };
