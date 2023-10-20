@@ -25,7 +25,15 @@ export function Image360CollectionContainer({
   const [layersUrlState] = useLayersUrlParams();
   const { image360Layers } = layersUrlState;
 
+  const initializingSiteId = useRef<string | undefined>(undefined);
+
   useEffect(() => {
+    if (initializingSiteId.current === siteId) {
+      return;
+    }
+
+    initializingSiteId.current = siteId;
+
     void add360Collection();
     return remove360Collection;
   }, [siteId]);
