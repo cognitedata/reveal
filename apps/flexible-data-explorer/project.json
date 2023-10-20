@@ -169,6 +169,10 @@
         }
       },
       "configurations": {
+        "development": {
+          "browser": "chrome",
+          "watch": true
+        },
         "production": {
           "devServerTarget": "flexible-data-explorer:serve:production"
         }

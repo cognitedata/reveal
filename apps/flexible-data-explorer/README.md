@@ -21,6 +21,32 @@ Ownership: [team-explorers](https://cognitedata.slack.com/archives/C041Y4SJXC6) 
 nx test flexible-data-explorer
 ```
 
+## Running Cypress locally
+
+### Preconditions:
+
+In order to run Cypress locally you need:
+
+- To get the client id and secret from LastPass (if you don't see it ask in #team-explorers for access)
+- The content from the keys goes in `./apps/flexible-data-explorer/private-keys`. The file names should be
+  - client-id.json
+  - client-secret.json
+
+### Start Cypress:
+
+In ./apps/flexible-data-explorer/ directory run:
+
+```shell
+yarn cypress:dev
+```
+
+This script will:
+
+- start the `fusion-shell` server (if not already running)
+- start Cypress in `run` mode
+
+Working example can be found here `apps/flexible-data-explorer/cypress/e2e/app.cy.ts`
+
 ## Linting
 
 ```

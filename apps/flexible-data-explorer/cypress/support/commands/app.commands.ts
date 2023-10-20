@@ -8,7 +8,7 @@ const navigateToApp = () => {
 
   cy.visit(url);
   cy.url().should('include', `${BASE_URL}/${PROJECT}/search`);
-  cy.get('.cogs-loader', { timeout: 20000 }).should('not.exist');
+  cy.get('.cogs-loader', { timeout: 30000 }).should('not.exist');
 };
 
 const setupDataModelSelection = () => {

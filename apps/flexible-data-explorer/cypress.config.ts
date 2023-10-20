@@ -8,11 +8,7 @@ export default defineConfig({
     ...nxE2EPreset(__filename, { cypressDir: 'cypress', bundler: 'vite' }),
     chromeWebSecurity: false,
     testIsolation: false,
-    env: {
-      ORG: 'cog-dss',
-      PROJECT: 'dss-dev',
-      CLUSTER: 'greenfield.cognitedata.com',
-    },
+    env: process.env,
     async setupNodeEvents(
       on: Cypress.PluginEvents,
       config: Cypress.PluginConfigOptions
