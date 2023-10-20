@@ -45,14 +45,15 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
     };
   }, [filter, defaultFilter]);
 
-  const { data, hasNextPage, fetchNextPage } = useSequenceSearchResultQuery(
-    {
-      query: debouncedQuery,
-      filter: sequenceFilter,
-      sortBy,
-    },
-    sequenceSearchConfig
-  );
+  const { data, isLoading, hasNextPage, fetchNextPage } =
+    useSequenceSearchResultQuery(
+      {
+        query: debouncedQuery,
+        filter: sequenceFilter,
+        sortBy,
+      },
+      sequenceSearchConfig
+    );
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
@@ -69,6 +70,7 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
         onParentAssetClick(directAsset.id);
       }}
       data={data}
+      isDataLoading={isLoading}
       sorting={sortBy}
       enableSorting
       onSort={(props) => setSortBy(props)}

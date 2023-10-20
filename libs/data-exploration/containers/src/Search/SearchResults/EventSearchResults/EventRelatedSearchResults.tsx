@@ -2,12 +2,10 @@ import React, { useMemo, useState } from 'react';
 
 import {
   DefaultPreviewFilter,
-  EmptyState,
   Table,
   getTableColumns,
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
-import isEmpty from 'lodash/isEmpty';
 import { useDebounce } from 'use-debounce';
 
 import {
@@ -90,10 +88,6 @@ export const EventRelatedSearchResults: React.FC<Props> = ({
     setEventFilter((prevState) => ({ ...prevState, ...newValue }));
   };
 
-  if (isEmpty(data)) {
-    return <EmptyState isLoading={isLoading} />;
-  }
-
   return (
     <Table
       id="event-related-search-results"
@@ -107,6 +101,7 @@ export const EventRelatedSearchResults: React.FC<Props> = ({
       sorting={sortBy}
       onSort={setSortBy}
       data={data}
+      isDataLoading={isLoading}
       hasNextPage={hasNextPage}
       fetchMore={fetchNextPage}
       tableSubHeaders={

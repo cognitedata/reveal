@@ -29,7 +29,7 @@ type FileGroupingTableProps = {
     | InternalDocument[];
   onItemClicked?: (file: any) => void;
   hasNextPage?: boolean;
-  isLoadingMore?: boolean;
+  isLoading?: boolean;
   fetchMore?: (...args: any[]) => any;
 };
 const convertFilesToDocs = <
@@ -53,7 +53,7 @@ export const FileGroupingTable = ({
   data = [],
   onItemClicked,
   hasNextPage,
-  isLoadingMore,
+  isLoading,
   fetchMore,
 }: FileGroupingTableProps) => {
   const docs: TableDocument[] = useMemo(() => {
@@ -75,7 +75,7 @@ export const FileGroupingTable = ({
   }, [data]);
 
   if (isEmpty(docs)) {
-    return <EmptyState isLoading={isLoadingMore} />;
+    return <EmptyState isLoading={isLoading} />;
   }
 
   return (
@@ -89,7 +89,7 @@ export const FileGroupingTable = ({
       <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
         <LoadMore
           hasNextPage={hasNextPage}
-          isLoadingMore={isLoadingMore}
+          isLoadingMore={isLoading}
           fetchMore={fetchMore}
         />
       </LoadMoreButtonWrapper>

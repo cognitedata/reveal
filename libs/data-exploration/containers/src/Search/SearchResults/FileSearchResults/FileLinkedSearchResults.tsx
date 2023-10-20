@@ -154,6 +154,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
                   query={debouncedQuery}
                   filter={fileFilters}
                   currentView={currentView}
+                  isLoading={isFilesLoading}
                   setCurrentView={setCurrentView}
                   onItemClicked={(file) => onClick(file)}
                 />
@@ -163,7 +164,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
                   onItemClicked={(file) => onClick(file)}
                   hasNextPage={hasNextPage}
                   fetchMore={fetchNextPage}
-                  isLoadingMore={isDocumentsLoading}
+                  isLoading={isDocumentsLoading}
                 />
               )}
             </GroupingTableWrapper>

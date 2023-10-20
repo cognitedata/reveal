@@ -2,12 +2,10 @@ import React, { useMemo, useState } from 'react';
 
 import {
   DefaultPreviewFilter,
-  EmptyState,
   Table,
   getTableColumns,
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
-import isEmpty from 'lodash/isEmpty';
 import { useDebounce } from 'use-debounce';
 
 import { Document, FileInfo } from '@cognite/sdk';
@@ -142,10 +140,6 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
     setDocumentFilter((prevState) => ({ ...prevState, ...newValue }));
   };
 
-  if (isEmpty(data)) {
-    return <EmptyState isLoading={isLoading} />;
-  }
-
   if (currentView === 'tree') {
     return (
       <GroupingTableContainer>
@@ -181,11 +175,16 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
 
         <GroupingTableWrapper>
           {isDocumentsApiEnabled ? (
-            <FileGroupingTable data={data} onItemClicked={onClick} />
+            <FileGroupingTable
+              data={data}
+              isLoading={isLoading}
+              onItemClicked={onClick}
+            />
           ) : (
             <OldFileGroupTable
               query={debouncedQuery}
               currentView={currentView}
+              isLoading={isLoading}
               setCurrentView={setCurrentView}
               onItemClicked={onClick}
             />
@@ -208,6 +207,7 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
       sorting={sortBy}
       onSort={setSortBy}
       data={data}
+      isDataLoading={isLoading}
       hasNextPage={hasNextPage}
       fetchMore={fetchNextPage}
       tableSubHeaders={
