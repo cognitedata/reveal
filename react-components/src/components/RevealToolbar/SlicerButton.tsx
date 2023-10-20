@@ -48,8 +48,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
     }
 
     const box = new Box3();
-    const tempBox = new Box3();
-    viewer.models.forEach((model) => box.union(model.getModelBoundingBox(tempBox, true)));
+    viewer.models.forEach((model) => box.union(model.getModelBoundingBox(undefined, true)));
 
     const newMaxY = box.max.y;
     const newMinY = box.min.y;
