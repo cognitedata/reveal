@@ -7,6 +7,11 @@ export const SYSTEM_SPACE_3D_SCHEMA = 'cdf_3d_schema'; // Data model, views, con
 
 export const INSTANCE_SPACE_3D_DATA = 'cog_3d_data'; // Instances of 3D models
 
+export const SYSTEM_3D_NODE_TYPE: DmsUniqueIdentifier = {
+  externalId: 'Cdf3dEntity',
+  space: SYSTEM_SPACE_3D_SCHEMA
+};
+
 // Type of edge that connects equipment to 3D
 export const SYSTEM_3D_EDGE_TYPE: DmsUniqueIdentifier = {
   externalId: 'cdf3dEntityConnection',
