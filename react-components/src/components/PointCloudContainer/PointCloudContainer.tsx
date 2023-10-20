@@ -9,12 +9,13 @@ import {
   AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
 
-import { useEffect, type ReactElement, useState } from 'react';
+import { useEffect, type ReactElement, useState, useRef } from 'react';
 import { Matrix4 } from 'three';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
+import { cloneDeep, isEqual } from 'lodash';
 
 export type AnnotationIdStylingGroup = {
   annotationIds: number[];
@@ -48,8 +49,15 @@ export function PointCloudContainer({
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const [layersUrlState] = useLayersUrlParams();
   const { pointCloudLayers } = layersUrlState;
+  const initializingModel = useRef<AddModelOptions | undefined>(undefined);
 
   useEffect(() => {
+    if (isEqual(initializingModel.current, addModelOptions)) {
+      return;
+    }
+
+    initializingModel.current = cloneDeep(addModelOptions);
+
     addModel(modelId, revisionId, transform)
       .then((pointCloudModel) => {
         onLoad?.(pointCloudModel);
