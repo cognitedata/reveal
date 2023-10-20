@@ -74,8 +74,7 @@
     "path-browserify": "1.0.1",
     "random-seed": "0.3.0",
     "rxjs": "7.8.1",
-    "skmeans": "0.11.3",
-    "sparse-octree": "7.1.8"
+    "skmeans": "0.11.3"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.38.2",
@@ -130,6 +129,7 @@
     "remove-files-webpack-plugin": "1.5.0",
     "resize-observer-polyfill": "1.5.1",
     "shx": "0.3.4",
+    "sparse-octree": "7.1.8",
     "stats.js": "0.17.0",
     "three": "0.155.0",
     "ts-jest": "29.1.1",
