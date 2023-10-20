@@ -79,28 +79,32 @@ async function get360AnnotationAssets(
     assetId:
       (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
       (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId ??
-      undefined
+      ''
   }));
 
-  const uniqueAnnotationMapping = uniqBy(annotationMapping, 'assetId');
+  const filteredAnnotationMapping = annotationMapping.filter(
+    (annotation) => annotation.assetId !== ''
+  );
 
-  const assets = chunk(uniqueAnnotationMapping, 1000).map(async (uniqueAssetsChunk) => {
-    const retrievedAssets = await sdk.assets.retrieve(
-      uniqueAssetsChunk.map(({ assetId }) => {
-        if (typeof assetId === 'number') {
-          return { id: assetId };
-        } else if (typeof assetId === 'string') {
-          return { externalId: assetId };
-        } else {
-          throw new Error(`Invalid assetId: ${assetId}`);
-        }
-      }),
-      { ignoreUnknownIds: true }
-    );
-    return retrievedAssets;
-  });
+  const uniqueAnnotationMapping = uniqBy(filteredAnnotationMapping, 'assetId');
 
-  return (await Promise.all(assets)).flat();
+  const assets = await Promise.all(
+    chunk(uniqueAnnotationMapping, 1000).map(async (uniqueAssetsChunk) => {
+      const retrievedAssets = await sdk.assets.retrieve(
+        uniqueAssetsChunk.map(({ assetId }) => {
+          if (typeof assetId === 'number') {
+            return { id: assetId };
+          } else {
+            return { externalId: assetId };
+          }
+        }),
+        { ignoreUnknownIds: true }
+      );
+      return retrievedAssets;
+    })
+  );
+
+  return assets.flat();
 }
 
 async function get360ImagesFileIds(siteIds: string[], sdk: CogniteClient): Promise<number[]> {
