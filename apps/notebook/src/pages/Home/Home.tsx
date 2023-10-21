@@ -98,7 +98,8 @@ const Home = React.forwardRef(
 
     /**
      * Detect multiple tabs with same page open
-     * This is a temporary workaround for https://cognitedata.atlassian.net/browse/AI-270 and should be removed when the bug is fixed
+     * This is a temporary workaround for https://cognitedata.atlassian.net/browse/AI-270 and should be removed when the bug is fixed.
+     * For an explanation how this routine works, see https://adnan-tech.com/detect-multiple-tabs-opened-at-same-time-javascript/
      */
     const [showMultipleTabsWarning, setShowMultipleTabsWarning] =
       useState<boolean>(false);
@@ -137,9 +138,8 @@ const Home = React.forwardRef(
           closable={false}
           hideFooter
         >
-          We are currently fixing a bug that can occur when working on Jupyter
-          notebooks across multiple tabs. In the meantime, please close all
-          duplicate tabs and refresh the page.
+          Working with Jupyter notebooks concurrently in multiple tabs is not
+          yet supported. Please close all duplicate tabs and refresh the page.
         </Modal>
       </Flex>
     );
