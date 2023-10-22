@@ -10,6 +10,7 @@ type GptRequest = {
   temperature?: number;
   maxTokens?: number;
   topP?: number;
+  model?: string;
 };
 
 type GptMessageResult = {
@@ -32,7 +33,7 @@ export const getChatCompletions = async (
 ): Promise<GptMessageResult[]> => {
   const url = `/api/v1/projects/${sdk.project}/gpt/chat/completions`;
   const response = (await sdk.post(url, {
-    data: request,
+    data: { ...request, model: 'gpt-35-turbo-16k' },
     withCredentials: true,
   })) as GptCompletionResponse;
 
