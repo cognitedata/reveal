@@ -30,7 +30,7 @@ export const getChatCompletions = async (
   request: GptRequest,
   sdk: CogniteClient
 ): Promise<GptMessageResult[]> => {
-  const url = `/api/v1/projects/${sdk.project}/context/gpt/chat/completions`;
+  const url = `/api/v1/projects/${sdk.project}/gpt/chat/completions`;
   const response = (await sdk.post(url, {
     data: request,
     withCredentials: true,
