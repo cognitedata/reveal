@@ -1,50 +1,37 @@
-import { useMemo } from 'react';
-import { Link, useMatch } from 'react-location';
+import { Link } from 'react-location';
 
 import format from 'date-fns/format';
 import styled from 'styled-components/macro';
 
-import { Chip, Illustrations, Tooltip } from '@cognite/cogs.js';
+import { Chip, Tooltip } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 
-import type { AppLocationGenerics } from '../../../routes';
 import { createCdfLink } from '../../../utils/createCdfLink';
+import { NoResults } from '../../shared/NoResults';
+
+export type Model = ModelFile & {
+  isActive: boolean;
+  simulatorName: string;
+};
 
 interface ModelListProps {
   isModalLibraryEmpty: boolean;
-  modelFiles: ModelFile[];
+  modelFiles: Model[];
   className?: string;
 }
-
-const isModelActive = (modelName: string) => {
-  const encodedModelName = encodeURIComponent(modelName);
-  const path = window.location.pathname;
-  return path.split('/').includes(encodedModelName);
-};
 
 export function ModelList({
   modelFiles,
   className,
   isModalLibraryEmpty,
 }: ModelListProps) {
-  const {
-    data: { definitions },
-  } = useMatch<AppLocationGenerics>();
-
-  const simulatorsConfig = useMemo(
-    () => definitions?.simulatorsConfig,
-    [definitions]
-  );
-
   if (!modelFiles.length && !isModalLibraryEmpty) {
     return (
-      <EmptyState>
-        <Illustrations.Solo type="EmptyStateSearch" />
-        <h5>No models found</h5>
-        <span>
-          Try adjusting your search and filter to improve your search.
-        </span>
-      </EmptyState>
+      <NoResults
+        data-testid="no-results-container"
+        bodyText="Please refine your filters or update the search parameters"
+        headerText="No results available"
+      />
     );
   }
 
@@ -53,9 +40,7 @@ export function ModelList({
       {modelFiles.map((modelFile) => (
         <li key={modelFile.id}>
           <Link
-            className={
-              isModelActive(modelFile.metadata.modelName) ? `active` : undefined
-            }
+            className={modelFile.isActive ? `active` : undefined}
             role="link"
             to={createCdfLink(
               `/model-library/models/${encodeURIComponent(
@@ -83,11 +68,7 @@ export function ModelList({
                   Version {modelFile.metadata.version}
                 </div>
                 <ul>
-                  <li>
-                    {simulatorsConfig?.filter(
-                      ({ key }) => key === modelFile.metadata.simulator
-                    )?.[0].name ?? modelFile.metadata.simulator}
-                  </li>
+                  <li>{modelFile.simulatorName}</li>
                   {modelFile.metadata.unitSystem && (
                     <li>{modelFile.metadata.unitSystem}</li>
                   )}
@@ -154,21 +135,5 @@ const ModelListElement = styled.ul`
         }
       }
     }
-  }
-`;
-
-const EmptyState = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  flex-direction: column;
-  text-align: center;
-
-  h5 {
-    font-size: var(--cogs-t5-font-size);
-  }
-  span {
-    width: 250px;
   }
 `;

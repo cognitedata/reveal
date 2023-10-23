@@ -5,16 +5,11 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
 import { getProject } from '@cognite/cdf-utilities';
-import {
-  Button,
-  Illustrations,
-  Input,
-  Pagination,
-  Skeleton,
-} from '@cognite/cogs.js';
+import { Button, Input, Pagination, Skeleton } from '@cognite/cogs.js';
 import { useGetModelFileListV2Query } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelDetails, ModelList } from '../../components/models';
+import { NoResults } from '../../components/shared/NoResults';
 import type { AppLocationGenerics } from '../../routes';
 import { capabilitiesSlice } from '../../store/capabilities';
 import { selectIsLabelsEnabled } from '../../store/capabilities/selectors';
@@ -30,6 +25,12 @@ import {
 } from '../../utils/pagination';
 
 import { LabelsFilter } from './LabelsFilter';
+
+const isModelActive = (modelName: string) => {
+  const encodedModelName = encodeURIComponent(modelName);
+  const path = window.location.pathname;
+  return path.split('/').includes(encodedModelName);
+};
 
 type ItemsPerPage = React.ComponentProps<typeof Pagination>['itemsPerPage'];
 
@@ -84,7 +85,7 @@ export function ModelLibrary() {
           ? modelFile.name.toLowerCase().includes(modelNameFilter)
           : true
       ),
-    [modelFiles?.modelFileList, modelNameFilter]
+    [definitions?.simulatorsConfig, modelFiles?.modelFileList, modelNameFilter]
   );
 
   const deleteHandleOnModelLibrary = () => {
@@ -121,7 +122,16 @@ export function ModelLibrary() {
     setItemsPerPage(itemsPerPage as ItemsPerPage);
   };
 
-  const slicedModelFiles = paginateData(modelFileList, pageNumber);
+  const slicedModelFiles = paginateData(modelFileList, pageNumber).map(
+    (modelFile) => ({
+      ...modelFile,
+      isActive: isModelActive(modelFile.metadata.modelName),
+      simulatorName:
+        definitions?.simulatorsConfig?.filter(
+          ({ key }) => key === modelFile.metadata.simulator
+        )?.[0].name ?? modelFile.metadata.simulator,
+    })
+  );
   const totalPages = getTotalPages(modelFileList);
 
   return (
@@ -193,20 +203,17 @@ export function ModelLibrary() {
           />
         )}
         {isModalLibraryEmpty && (
-          <NoModelsContainer>
-            <Illustrations.Solo type="Simulation" />
-            <h5>No simulator models found</h5>
-            {!(modelNameFilter.length > 0) && (
-              <>
-                <span>Create your first model to get started</span>
-                <Link to={createCdfLink(`/model-library/new-model`)}>
-                  <Button icon="Add" type="primary">
-                    Create model
-                  </Button>
-                </Link>
-              </>
-            )}
-          </NoModelsContainer>
+          <NoResults
+            bodyText="Create your first model to get started"
+            headerText="No simulator models found"
+            action={
+              <Link to={createCdfLink(`/model-library/new-model`)}>
+                <Button icon="Add" type="primary">
+                  Create model
+                </Button>
+              </Link>
+            }
+          />
         )}
       </ModelLibraryContent>
     </ModelLibraryContainer>
@@ -228,26 +235,6 @@ const ModelLibraryContainer = styled.div`
   display: flex;
   flex: 1 1 0;
   overflow: auto;
-`;
-
-const NoModelsContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-  height: 100%;
-
-  h5 {
-    font-size: var(--cogs-t5-font-size);
-    margin: 0;
-  }
-
-  span {
-    font-size: 12px;
-    margin-bottom: 16px;
-    margin-top: 8px;
-  }
 `;
 
 const ModelLibrarySidebar = styled.aside`
