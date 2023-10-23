@@ -291,7 +291,7 @@ export class FdmNodeCache {
       'edge',
       SYSTEM_3D_EDGE_SOURCE
     );
-    return mappings.edges;
+    return mappings.instances;
   }
 
   private getOrCreateRevisionCache(modelId: number, revisionId: number): RevisionFdmNodeCache {

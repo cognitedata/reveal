@@ -248,6 +248,24 @@ export class CognitePointCloudModel {
   }
 
   /**
+   * Sets the model visibility.
+   * @example
+   * ```js
+   * model.visible = false
+   * ```
+   */
+  set visible(value: boolean) {
+    this.pointCloudNode.visible = value;
+  }
+
+  /**
+   * Returns the model visibility.
+   */
+  get visible(): boolean {
+    return this.pointCloudNode.visible;
+  }
+
+  /**
    * Sets the clipping planes for this model. They will be combined with the
    * global clipping planes.
    */
