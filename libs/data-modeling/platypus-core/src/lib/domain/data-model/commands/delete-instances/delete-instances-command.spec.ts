@@ -40,7 +40,7 @@ describe('DeleteInstancesCommand Test', () => {
         space: 'testSpace',
         dataModelExternalId: 'testSpaceName',
       })
-    ).rejects.toEqual('No rows selected!');
+    ).resolves.toEqual(true);
   });
 
   it('should delete selected items', async () => {

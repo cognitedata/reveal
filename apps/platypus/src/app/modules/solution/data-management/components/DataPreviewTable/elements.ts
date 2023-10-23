@@ -37,6 +37,9 @@ export const StyledDataPreviewTable = styled.div`
   .ag-row:hover .network {
     opacity: 1;
   }
+  .ag-root-wrapper-body {
+    min-height: 300px;
+  }
 `;
 
 export const NoRowsOverlay = styled.span`

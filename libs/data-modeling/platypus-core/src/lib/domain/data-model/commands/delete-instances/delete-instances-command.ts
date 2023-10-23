@@ -17,7 +17,7 @@ export class DeleteInstancesCommand implements Command<boolean> {
    */
   execute(dto: DeleteInstancesDTO): Promise<boolean> {
     if (!dto.items.length) {
-      return Promise.reject('No rows selected!');
+      return Promise.resolve(true);
     }
 
     return this.instancesApiService
