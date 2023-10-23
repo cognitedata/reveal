@@ -30,9 +30,9 @@ const ReviewTagBar = ({
   onReject: (annotation: ExtendedAnnotation) => void;
 }) => {
   const { t } = useTranslation();
+  const resourceType = getResourceTypeFromExtendedAnnotation(annotation);
 
   const resourceLink = useMemo(() => {
-    const resourceType = getResourceTypeFromExtendedAnnotation(annotation);
     const resourceId = getResourceIdFromExtendedAnnotation(annotation);
 
     if (isUndefined(resourceType) || isUndefined(resourceId)) {
@@ -40,16 +40,14 @@ const ReviewTagBar = ({
     }
 
     return createLink(`/explore/${resourceType}/${resourceId}`);
-  }, [annotation]);
+  }, [annotation, resourceType]);
 
   return (
     <ReviewTagWrapper>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        {getResourceTypeFromExtendedAnnotation(annotation) && (
+        {resourceType && (
           <ResourceIcons
-            type={
-              getResourceTypeFromExtendedAnnotation(annotation) as ResourceType
-            }
+            type={resourceType as ResourceType}
             style={{
               background: 'white',
               color: 'black',
@@ -58,15 +56,16 @@ const ReviewTagBar = ({
           />
         )}
         <Body level={2} strong>
-          {getResourceTypeFromExtendedAnnotation(annotation)
-            ? capitalizeFirstLetter(
-                getResourceTypeFromExtendedAnnotation(annotation)
+          {resourceType
+            ? t(
+                resourceType.toUpperCase(),
+                capitalizeFirstLetter(resourceType) || resourceType
               )
             : t('UNLINKED_TAG', 'Unlinked tag')}
         </Body>
       </div>
       <StyledTag>
-        {getExtendedAnnotationLabel(annotation) || 'N/A'}{' '}
+        {getExtendedAnnotationLabel(annotation) || t('NOT_AVAILABLE', 'N/A')}{' '}
         {resourceLink && (
           <Link href={resourceLink} target="_blank">
             <StyledIcon type="ArrowUpRight" />
