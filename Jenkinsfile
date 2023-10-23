@@ -25,7 +25,7 @@ static final String[] APPLICATIONS = [
   'notebook',
   'fusion-shell',
   'simint',
-  'flows'
+  'flows',
   'diagram-parsing'
 ]
 
