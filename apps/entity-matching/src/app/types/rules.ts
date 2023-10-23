@@ -17,12 +17,14 @@ export type Rule = {
 };
 
 export type RuleMatch = {
+  score: number;
   source: { id: number } & Record<string, unknown>;
   target: { id: number } & Record<string, unknown>;
 };
 
 export type AppliedRule = {
   numberOfMatches: number;
+  averageScore: number;
   matches: RuleMatch[];
   rule: Rule;
 };
