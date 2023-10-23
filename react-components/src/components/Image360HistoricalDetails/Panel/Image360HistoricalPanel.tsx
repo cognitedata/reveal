@@ -5,7 +5,7 @@
 import { Chip, Tooltip } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from '../../../common/i18n';
+import { useTranslation } from '../../i18n/I18n';
 
 export type Image360HistoricalPanelProps = {
   revisionCount?: number;
@@ -27,24 +27,24 @@ export const Image360HistoricalPanel = ({
 
   return (
     <Container isExpanded={revisionDetailsExpanded}>
-      <Tooltip content="360 Image historical details">
+      <Tooltip content={t('IMAGES_360_DETAILS_TOOLTIP', '360 Image historical details')}>
         <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
           {!revisionDetailsExpanded && (
-            <>
+            <div style={{ width: 'fit-content' }}>
               <StyledChip
                 icon="History"
                 iconPlacement="right"
-                label={t('IMAGES_360_DETAILS')}
+                label={t('IMAGES_360_DETAILS', 'Details')}
                 hideTooltip
               />
               <StyledChipCount label={count} hideTooltip />
-            </>
+            </div>
           )}
           {revisionDetailsExpanded && (
             <StyledChip
               icon="PushRight"
               iconPlacement="right"
-              label={t('IMAGES_360_DETAILS')}
+              label={t('IMAGES_360_DETAILS', 'Details')}
               hideTooltip
             />
           )}
@@ -59,7 +59,6 @@ const StyledToolBar = styled.div<{ isExpanded: boolean }>`
   bottom: 30px;
   display: flex;
   flex-direction: row;
-  padding: 0px 0px 0px 5px;
   background: #ffffff;
 
   ${({ isExpanded }) =>
@@ -106,11 +105,11 @@ const StyledChipCount = styled(Chip)`
 
 const Container = styled.div<{ isExpanded: boolean }>`
   position: relative;
-  left: calc(100% - 150px);
-  width: 140px;
+  left: calc(100% - 200px);
+  width: fit-content;
   height: 28px;
   background-color: white;
-  padding: 4px 2px;
+  padding: 4px 4px;
   align-items: center;
   display: flex;
   border-radius: 6px;

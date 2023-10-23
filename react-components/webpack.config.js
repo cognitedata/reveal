@@ -35,9 +35,7 @@ export default (_, argv) => {
     },
     externals: [
       nodeExternals({
-        importType: 'module',
-        // TODO: Remove this when we have a better solution than bundling the dependencies
-        allowlist: ['@cognite/cdf-i18n-utils', '@cognite/cdf-utilities']
+        importType: 'module'
       })
     ],
     resolve: {

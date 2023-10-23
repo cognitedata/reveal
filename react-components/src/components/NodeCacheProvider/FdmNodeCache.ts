@@ -38,7 +38,7 @@ import { partition } from 'lodash';
 
 import assert from 'assert';
 import { fetchNodesForNodeIds, inspectNodes } from './requests';
-import { type ThreeDModelMappings } from '../../hooks/types';
+import { type ThreeDModelFdmMappings } from '../../hooks/types';
 
 export class FdmNodeCache {
   private readonly _revisionNodeCaches = new Map<ModelRevisionKey, RevisionFdmNodeCache>();
@@ -56,7 +56,7 @@ export class FdmNodeCache {
   public async getMappingsForFdmIds(
     externalIds: DmsUniqueIdentifier[],
     modelRevisionIds: ModelRevisionId[]
-  ): Promise<ThreeDModelMappings[]> {
+  ): Promise<ThreeDModelFdmMappings[]> {
     const [cachedModelRevisionIds, nonCachedModelRevisionIds] = partition(
       modelRevisionIds,
       (id) => {
@@ -79,7 +79,7 @@ export class FdmNodeCache {
   private getCachedModelMappings(
     modelRevisionIds: ModelRevisionId[],
     externalIds: DmsUniqueIdentifier[]
-  ): ThreeDModelMappings[] {
+  ): ThreeDModelFdmMappings[] {
     const inputExternalIdSet = new Set<FdmKey>(
       externalIds.map((id) => createFdmKey(id.space, id.externalId))
     );
@@ -92,7 +92,7 @@ export class FdmNodeCache {
   private getCachedModelMappingForRevision(
     modelRevisionId: ModelRevisionId,
     relevantFdmKeySet: Set<FdmKey>
-  ): ThreeDModelMappings {
+  ): ThreeDModelFdmMappings {
     const revisionCache = this.getOrCreateRevisionCache(
       modelRevisionId.modelId,
       modelRevisionId.revisionId
@@ -116,7 +116,7 @@ export class FdmNodeCache {
   private async getNonCachedModelMappings(
     uniqueIds: DmsUniqueIdentifier[],
     modelRevisions: ModelRevisionId[]
-  ): Promise<ThreeDModelMappings[]> {
+  ): Promise<ThreeDModelFdmMappings[]> {
     if (modelRevisions.length === 0 || uniqueIds.length === 0) {
       return [];
     }
@@ -143,7 +143,7 @@ export class FdmNodeCache {
     { modelId, revisionId }: ModelRevisionId,
     edges: FdmEdgeWithNode[] | undefined,
     relevantFdmKeySet: Set<FdmKey>
-  ): ThreeDModelMappings {
+  ): ThreeDModelFdmMappings {
     if (edges === undefined || edges.length === 0)
       return { modelId, revisionId, mappings: new Map<CogniteExternalId, Node3D[]>() };
 
@@ -291,7 +291,7 @@ export class FdmNodeCache {
       'edge',
       SYSTEM_3D_EDGE_SOURCE
     );
-    return mappings.edges;
+    return mappings.instances;
   }
 
   private getOrCreateRevisionCache(modelId: number, revisionId: number): RevisionFdmNodeCache {

@@ -18,6 +18,7 @@ import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
+import { type AssetMappingStylingGroup } from '../src/components/Reveal3DResources/types';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -58,29 +59,47 @@ export const Main: Story = {
 };
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
-  const [stylingGroups, setStylingGroups] = useState<FdmAssetStylingGroup[]>([]);
+  const [stylingGroups, setStylingGroups] = useState<
+    Array<FdmAssetStylingGroup | AssetMappingStylingGroup>
+  >([]);
   const cameraNavigation = useCameraNavigation();
   const nodeData = useClickedNodeData();
 
   useEffect(() => {
-    if (nodeData?.fdmNode === undefined) {
-      setStylingGroups([]);
-      return;
-    }
-
-    setStylingGroups([
-      {
-        fdmAssetExternalIds: [
-          { externalId: nodeData.fdmNode.externalId, space: nodeData.fdmNode.space }
-        ],
-        style: { cad: DefaultNodeAppearance.Highlighted }
-      }
-    ]);
-
-    void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, nodeData.fdmNode.space);
-
     console.log('Clicked node data', nodeData);
-  }, [nodeData?.fdmNode]);
+    if (nodeData?.fdmResult !== undefined) {
+      setStylingGroups([
+        {
+          fdmAssetExternalIds: [
+            {
+              externalId: nodeData.fdmResult.fdmNodes[0].externalId,
+              space: nodeData.fdmResult.fdmNodes[0].space
+            }
+          ],
+          style: { cad: DefaultNodeAppearance.Highlighted }
+        }
+      ]);
+
+      void cameraNavigation.fitCameraToInstance(
+        nodeData.fdmResult.fdmNodes[0].externalId,
+        nodeData.fdmResult.fdmNodes[0].space
+      );
+    } else if (nodeData?.assetMappingResult !== undefined) {
+      setStylingGroups([
+        {
+          assetIds: nodeData.assetMappingResult.assetIds,
+          style: { cad: DefaultNodeAppearance.Highlighted }
+        }
+      ]);
+
+      void cameraNavigation.fitCameraToModelNode(
+        nodeData.intersection.model.revisionId,
+        nodeData.assetMappingResult.cadNode.id
+      );
+    } else {
+      setStylingGroups([]);
+    }
+  }, [nodeData]);
 
   return (
     <>

@@ -539,6 +539,8 @@ export class CognitePointCloudModel {
     // (undocumented)
     readonly type: SupportedModelTypes;
     unassignStyledObjectCollection(objectCollection: PointCloudObjectCollection): void;
+    set visible(value: boolean);
+    get visible(): boolean;
     get visiblePointCount(): number;
 }
 
