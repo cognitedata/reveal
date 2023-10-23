@@ -103,9 +103,6 @@ export class PickingHandler {
     const scene = new THREE.Scene();
     const depthInput = { ...input, scene, cadNodes };
 
-    // Calculate depth position and distance.
-    const depthResult = await this.intersectCadNodeDepth(depthInput, async);
-
     // Identify the treeIndex associated with the position.
     // Get CadNodes which are visible.
     const visibleCadNodes = cadNodes.filter(node => node.visible);
@@ -114,7 +111,7 @@ export class PickingHandler {
 
     try {
       for (const cadNodeData of filteredCadNodes) {
-        // Skip cad node when hit distance is larger than already hit node.
+        // Skip cad node when its bounds is further away than any already hit position.
         const minIntersectCadNodeDistance = cadNodeData.intersectPosition.distanceTo(input.camera.position);
         if (results.some(cadNodeResult => cadNodeResult.distance < minIntersectCadNodeDistance)) {
           continue;
@@ -123,9 +120,10 @@ export class PickingHandler {
         // Make current CadNode visible & hide others
         visibleCadNodes.forEach(p => (p.visible = false));
         cadNodeData.cadNode.visible = true;
-
         const treeIndex = await this.intersectCadNodeTreeIndex(cadNodeData.cadNode, input, async);
         if (treeIndex) {
+          // Assuming we have depth anywhere we hit a treeIndex
+          const depthResult = await this.intersectCadNodeDepth(depthInput, async);
           const result: IntersectCadNodesResult = {
             distance: depthResult.distance,
             point: depthResult.point,
@@ -162,7 +160,12 @@ export class PickingHandler {
     return candidateCadNodes;
 
     function getIntersection(cadNode: CadNode, ray: THREE.Ray): [CadNode, THREE.Vector3 | null] {
-      return [cadNode, ray.intersectBox(getWorldSpaceNodeBounds(cadNode), new THREE.Vector3())];
+      const nodeBounds = getWorldSpaceNodeBounds(cadNode);
+      // If we are inside the box, set the intersection point to the ray origin point
+      return [
+        cadNode,
+        nodeBounds.containsPoint(ray.origin) ? ray.origin : ray.intersectBox(nodeBounds, new THREE.Vector3())
+      ];
     }
 
     function getWorldSpaceNodeBounds(node: CadNode): THREE.Box3 {
