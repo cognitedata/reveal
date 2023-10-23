@@ -149,6 +149,15 @@ export const rawAppsData: RawAppItem[] = [
     ariaLabel: 'Go to Document Search',
   },
   {
+    category: 'contextualize',
+    internalId: 'diagram-parsing',
+    icon: 'DocumentText',
+    linkTo: '/diagram-parsing',
+    importMapApp: '@cognite/cdf-diagram-parsing',
+    img: images.InteractiveEDsAppImg,
+    ariaLabel: 'Go to Diagram Parsing',
+  },
+  {
     category: 'explore',
     internalId: 'data-explorer',
     icon: 'Search',
