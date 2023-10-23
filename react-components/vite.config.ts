@@ -13,7 +13,7 @@ export default defineConfig(({ command }) => {
       externalizeDeps({
         devDeps: true
       }),
-      yalcPush(command)
+      yalcPush()
     ],
     build: {
       lib: {
@@ -29,8 +29,8 @@ export default defineConfig(({ command }) => {
   };
 });
 
-function yalcPush(command: 'build' | 'serve'): PluginOption {
-  if (process.env.YALC !== 'true' && command === 'build') {
+function yalcPush(): PluginOption {
+  if (process.env.YALC !== 'true') {
     return false;
   }
   return {

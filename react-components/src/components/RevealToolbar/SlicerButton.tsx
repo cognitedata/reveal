@@ -12,6 +12,7 @@ import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@co
 import styled from 'styled-components';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { useSlicerUrlParams } from '../../hooks/useUrlStateParam';
+import { useTranslation } from '../i18n/I18n';
 
 type SliceState = {
   minHeight: number;
@@ -26,6 +27,7 @@ type SlicerButtonProps = {
 
 export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): ReactElement => {
   const viewer = useReveal();
+  const { t } = useTranslation();
   const { reveal3DResourcesCount } = useReveal3DResourcesCount();
   const [slicerUrlState, setSlicerUrlState] = useSlicerUrlParams();
   const { top, bottom } = storeStateInUrl ? slicerUrlState : { top: 1, bottom: 0 };
@@ -46,7 +48,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
     }
 
     const box = new Box3();
-    viewer.models.forEach((model) => box.union(model.getModelBoundingBox()));
+    viewer.models.forEach((model) => box.union(model.getModelBoundingBox(undefined, true)));
 
     const newMaxY = box.max.y;
     const newMinY = box.min.y;
@@ -87,7 +89,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   }
 
   return (
-    <CogsTooltip content={'Slice'} placement="right" appendTo={document.body}>
+    <CogsTooltip content={t('SLICE_TOOLTIP', 'Slice')} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={() => document.body}
         onClickOutside={() => {
