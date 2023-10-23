@@ -39,7 +39,7 @@
   "COMMON_CANVAS_MAKE_COPY": "Duplicate canvas",
   "COMMON_CANVAS_DELETE_DISABLED": "A canvas can only be deleted by its owner",
   "COMMON_CANVAS_LINK_COPY": "Copy canvas link",
-  "COMMON_CANVAS_RENAME": "Rename",
+  "COMMON_CANVAS_RENAME": "Rename \"{{title}}\"",
   "COMMON_CREATE_CANVAS": "Create new canvas",
   "CONDITIONAL_FORMATTING_ADD_RULE": "Add rule",
   "CONDITIONAL_FORMATTING_SAVE": "Save",

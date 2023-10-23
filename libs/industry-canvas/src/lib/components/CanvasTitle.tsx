@@ -1,4 +1,4 @@
-import {
+import React, {
   useState,
   useEffect,
   SetStateAction,
@@ -8,12 +8,14 @@ import {
 
 import styled from 'styled-components';
 
-import { Button, Input, Heading, Tooltip } from '@cognite/cogs.js';
+import { Button, Heading, Tooltip } from '@cognite/cogs.js';
 
 import { translationKeys } from '../common';
 import { useTranslation } from '../hooks/useTranslation';
 import { IndustryCanvasContextType } from '../IndustryCanvasContext';
 import { DEFAULT_CANVAS_NAME } from '../services/IndustryCanvasService';
+
+import AutoSizingInput from './AutoSizingInput/AutoSizingInput';
 
 type CanvasTitleProps = Pick<
   IndustryCanvasContextType,
@@ -103,30 +105,19 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
     setIsEditingTitle(true);
   };
 
-  return (
-    <StyledCanvasTitle
-      $isEditable={isEditingTitle}
-      level={5}
-      onClick={onCanvasTitleClick}
-    >
-      {isEditingTitle ? (
-        <Input
-          autoFocus
-          style={{ maxWidth: '300px' }}
-          onChange={(e) => setName(e.target.value)}
-          onBlur={onEditCanvasName}
-          value={name}
-          ref={(ref) => setInputRef(ref)}
-        />
-      ) : (
-        <Tooltip
-          content={t(translationKeys.COMMON_CANVAS_RENAME, 'Rename')}
-          placement="bottom"
-        >
-          <span>{name}</span>
-        </Tooltip>
-      )}
-      {activeCanvas !== undefined && isEditingTitle && (
+  if (isEditingTitle && activeCanvas !== undefined) {
+    return (
+      <EditableContainer>
+        <AutoSizingInputContainer>
+          <AutoSizingInput
+            autoFocus
+            minWidth={100}
+            onChange={(e) => setName(e.target.value)}
+            onBlur={onEditCanvasName}
+            value={name}
+            ref={(ref) => setInputRef(ref)}
+          />
+        </AutoSizingInputContainer>
         <Button
           icon="Checkmark"
           aria-label={t(translationKeys.COMMON_CANVAS_RENAME, 'Rename')}
@@ -136,14 +127,65 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
           style={{ marginLeft: 8 }}
           type="ghost"
         />
-      )}
+      </EditableContainer>
+    );
+  }
+
+  return (
+    <StyledCanvasTitle
+      $isEditable={isEditingTitle}
+      level={5}
+      onClick={onCanvasTitleClick}
+    >
+      <TitleContent>
+        <Tooltip
+          content={t(translationKeys.COMMON_CANVAS_RENAME, {
+            defaultValue: 'Rename',
+            title: name,
+          })}
+          placement="bottom-start"
+        >
+          <span>{name}</span>
+        </Tooltip>
+      </TitleContent>
     </StyledCanvasTitle>
   );
 };
 
+const TitleContent = styled.div`
+  max-width: 100%;
+  height: 1em;
+  line-height: 1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const EditableContainer = styled.div`
+  margin-left: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
+
+  // This is coming from Heading level 5, but we are not setting
+  // the letter-spacing property as it's not measurable by the canvas comp.
+  font-size: var(--cogs-h5-font-size);
+  font-weight: 600;
+`;
+
+const AutoSizingInputContainer = styled.div`
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 1;
+  overflow: hidden;
+`;
+
 const StyledCanvasTitle = styled(Heading)<{ $isEditable: boolean }>`
-  && {
-    padding: ${({ $isEditable }) => ($isEditable ? '0' : '0 8px')};
-    margin-left: 8px;
-  }
+  display: flex;
+  flex-direction: row;
+  padding: ${({ $isEditable }) => ($isEditable ? '0' : '0 8px')};
+  margin-left: 8px;
+  overflow: hidden;
+  align-items: center;
 `;
