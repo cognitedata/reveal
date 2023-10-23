@@ -546,7 +546,7 @@ __metadata:
     "@types/jest-image-snapshot": 6.2.2
     "@types/jsdom": 21.1.4
     "@types/lodash": 4.14.200
-    "@types/mixpanel-browser": 2.47.3
+    "@types/mixpanel-browser": 2.47.4
     "@types/node": 18.18.5
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.5
@@ -1966,10 +1966,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mixpanel-browser@npm:2.47.3":
-  version: 2.47.3
-  resolution: "@types/mixpanel-browser@npm:2.47.3"
-  checksum: 7ca14ec29f7a4cd29389c1a96395dae90d48e01d363e209d34b6b89fd78bed9baf735057a7ecdeb0a4e47c85e2448d98e270ba5e72575000e07d011f71fdd49d
+"@types/mixpanel-browser@npm:2.47.4":
+  version: 2.47.4
+  resolution: "@types/mixpanel-browser@npm:2.47.4"
+  checksum: 8aa670f39a69f91dec86db0c81044779c1aff56a1b5e04f1c756c92df472622e67dff60d19b66582b0c2bef46be62c31f893d96e199f9a0ad39eb5c6e413349d
   languageName: node
   linkType: hard
 
