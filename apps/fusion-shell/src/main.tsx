@@ -13,6 +13,9 @@ import { AppWrapper } from './AppWrapper';
 import './single-spa';
 import './styles.css';
 
+// 'global' has to be defined on the window in order to make the 'onboarding guide' work for FDX.
+window.global ||= window;
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

@@ -16,10 +16,17 @@ const setupDataModelSelection = () => {
   cy.selectDataModel(PREFERRED_DATA_MODEL);
 };
 
+const skipOnboardingGuide = () => {
+  cy.clearLocalStorage(`onboarding-modal-popup`);
+  cy.clickButton('Close');
+};
+
 Cypress.Commands.add('navigateToApp', navigateToApp);
 Cypress.Commands.add('setupDataModelSelection', setupDataModelSelection);
+Cypress.Commands.add('skipOnboardingGuide', skipOnboardingGuide);
 
 export interface AppCommands {
   navigateToApp: () => void;
   setupDataModelSelection: () => void;
+  skipOnboardingGuide: () => void;
 }

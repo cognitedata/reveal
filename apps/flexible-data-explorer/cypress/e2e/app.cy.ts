@@ -1,6 +1,7 @@
 describe('flexible-data-explorer', () => {
   before(() => {
     cy.navigateToApp();
+    cy.skipOnboardingGuide();
     cy.setupDataModelSelection();
   });
 
