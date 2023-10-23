@@ -1,9 +1,6 @@
 [workspace]
-
-members = [
-  "packages/pointclouds/wasm"
-]
-
+resolver = "2"
+members = ["packages/pointclouds/wasm"]
 
 [profile.release]
 # This makes the compiled code faster and smaller, but it makes compiling slower,
