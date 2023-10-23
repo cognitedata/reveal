@@ -180,7 +180,7 @@ export const DataPreviewTable = () => {
 
   const handleRowPublish = useCallback(
     (row: KeyValueMap) => {
-      if (!viewVersion) {
+      if (!viewVersion && !row._draftStatus) {
         Notification({
           type: 'error',
           message: t(
@@ -194,7 +194,7 @@ export const DataPreviewTable = () => {
         instanceSpace: row.space || space,
         space,
         model: [dataModelExternalId, `${dataModelType.name}_${viewVersion}`],
-        version: viewVersion,
+        version: viewVersion!,
         items: [sanitizeRow(row) as { externalId: string }],
         dataModelExternalId,
         dataModelType,
@@ -510,7 +510,7 @@ export const DataPreviewTable = () => {
   Technique borrowed from https://stackoverflow.com/a/64294316
   */
   const handleCellValueChanged = (e: ValueSetterParams) => {
-    if (!viewVersion) {
+    if (!viewVersion && !e.data._draftStatus) {
       Notification({
         type: 'error',
         message: t(
@@ -559,7 +559,7 @@ export const DataPreviewTable = () => {
         instanceSpace: updatedRowData.space || space,
         model: [dataModelExternalId, `${dataModelType.name}_${viewVersion}`],
         items: [updatedRowData],
-        version: viewVersion,
+        version: viewVersion!,
         dataModelExternalId,
         dataModelType,
         dataModelTypeDefs,

@@ -94,14 +94,6 @@ jobs:
           # Run the cypress tests
           command: yarn nx run platypus:e2e:${{ matrix.configuration }}
 
-      - name: Upload cypress artifacts
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: platypus-failed-cypress-tests-recordings
-          path: dist/cypress/apps/platypus/videos
-          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
-
       # Disabling codecov from here, to not interfere with nx_ci
       # - name: Combine CodeCov reports
       #   run: |

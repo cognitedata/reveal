@@ -286,13 +286,13 @@
           "env": {
             "FDM_VERSION": "3"
           },
-          "ignoreTestFiles": "**/@(manual-data-ingestion.cy.ts|suggestions.cy.ts)"
+          "ignoreTestFiles": "**/@(suggestions.cy.ts)"
         },
         "mockV3": {
           "env": {
             "FDM_VERSION": "3"
           },
-          "ignoreTestFiles": "**/@(manual-data-ingestion.cy.ts|suggestions.cy.ts)"
+          "ignoreTestFiles": "**/@(suggestions.cy.ts)"
         }
       },
       "defaultConfiguration": "e2e"

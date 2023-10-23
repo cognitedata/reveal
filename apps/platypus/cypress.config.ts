@@ -6,7 +6,7 @@ export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, { cypressDir: 'cypress' }),
     modifyObstructiveCode: false,
-    video: true,
+    video: false,
     videosFolder: '../../dist/cypress/apps/platypus/videos',
     screenshotsFolder: '../../dist/cypress/apps/platypus/screenshots',
     chromeWebSecurity: false,

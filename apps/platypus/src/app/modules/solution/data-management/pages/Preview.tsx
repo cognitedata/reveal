@@ -14,14 +14,29 @@ export const Preview = () => {
   const location = useLocation();
   const [_, setSearchParams] = useSearchParams();
 
-  const { typeDefs, selectedDataType: dataType } = useDMContext();
-  const { clearState } = useDraftRows();
+  const {
+    typeDefs,
+    selectedDataType: dataType,
+    selectedDataModel,
+  } = useDMContext();
+  const { clearState, setSelectedType } = useDraftRows();
 
   useEffect(() => {
+    // There are parts of the screen that are using redux
+    // that depends on the selected type, so we need to make sure
+    // that we set the selected type on init and on type click
+    if (dataType) {
+      setSelectedType(
+        selectedDataModel.externalId,
+        selectedDataModel.version,
+        dataType!
+      );
+    }
     return () => {
       clearState();
     };
-  }, [clearState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clearState, setSelectedType]);
 
   const { t } = useTranslation('DataPreview');
 
@@ -29,6 +44,11 @@ export const Preview = () => {
     // make sure we preserve any existing query params
     const params = new URLSearchParams(location.search);
     params.set('type', typeDefs.types[0].name);
+    setSelectedType(
+      selectedDataModel.externalId,
+      selectedDataModel.version,
+      dataType!
+    );
 
     return (
       <Navigate
@@ -49,6 +69,11 @@ export const Preview = () => {
           onClick={(item) => {
             setSearchParams((params) => {
               params.set('type', item.name);
+              setSelectedType(
+                selectedDataModel.externalId,
+                selectedDataModel.version,
+                item
+              );
               return params;
             });
           }}

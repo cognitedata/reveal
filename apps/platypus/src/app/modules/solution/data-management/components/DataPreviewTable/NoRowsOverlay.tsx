@@ -70,7 +70,12 @@ export const NoRowsOverlay = ({
       {addDataHelpText && <Body level={2}>{addDataHelpText}</Body>}
       <S.NoRowsOverlayButtons>
         {isManualPopulationEnabled && (
-          <Button type="primary" icon="Add" onClick={createNewDraftRow}>
+          <Button
+            type="primary"
+            icon="Add"
+            data-cy="create-new-row-btn"
+            onClick={createNewDraftRow}
+          >
             {t('add-instance-button', 'Add instance')}
           </Button>
         )}
