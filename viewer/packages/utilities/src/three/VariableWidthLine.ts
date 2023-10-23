@@ -3,9 +3,9 @@
  */
 
 import { Color, Object3D, Vector3 } from 'three';
-import { Line2 } from 'three/examples/jsm/lines/Line2';
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
-import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
+import { LineMaterial } from './lines/LineMaterial';
+import { LineGeometry } from './lines/LineGeometry';
+import { Line2 } from './lines/Line2';
 
 export class VariableWidthLine {
   private readonly _geometry: LineGeometry;
