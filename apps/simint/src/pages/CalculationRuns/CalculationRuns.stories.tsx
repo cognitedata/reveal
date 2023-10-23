@@ -1,3 +1,4 @@
+import React from 'react';
 import { ReactLocation, Router } from 'react-location';
 
 import { expect } from '@storybook/jest';
