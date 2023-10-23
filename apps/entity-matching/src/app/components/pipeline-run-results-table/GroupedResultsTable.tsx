@@ -60,7 +60,13 @@ const GroupedResultsTable = ({
   };
 
   const coloredRules = run.generatedRules?.map((rule) =>
-    colorRule(rule.conditions ?? [], rule.extractors ?? [], rule.matches ?? [])
+    colorRule(
+      0,
+      0,
+      rule.conditions ?? [],
+      rule.extractors ?? [],
+      rule.matches ?? []
+    )
   );
 
   const selectedRuleKeys = useMemo(() => {

@@ -67,6 +67,8 @@ export type ColoredExtractor = {
 };
 
 export type ColoredRule = {
+  numberOfMatches: number;
+  averageScore: number;
   matches: RuleMatch[];
   conditions: RuleCondition[];
   extractors: ColoredExtractor[];
@@ -88,6 +90,8 @@ type ExtendedCondition = RuleCondition & {
  * @param rule - a single rule to color
  */
 export const colorRule = (
+  numberOfMatches: number,
+  averageScore: number,
   conditions: RuleCondition[],
   extractors: RuleExtractor[],
   matches: RuleMatch[]
@@ -129,13 +133,13 @@ export const colorRule = (
     return colorRegexGroups(match, mappedExtractors, extendedConditions);
   });
 
-  const coloredRule = {
+  return {
+    numberOfMatches: numberOfMatches,
+    averageScore: averageScore,
     conditions: conditions,
     extractors: coloredExtractors,
     matches: coloredMatches,
   };
-
-  return coloredRule;
 };
 
 /**
