@@ -31,28 +31,28 @@ export const PointCloudLayersContainer = ({
   const indeterminate = pointCloudLayerData.some((data) => !data.isToggled);
 
   const handlePointCloudVisibility = (model: CognitePointCloudModel): void => {
-    const updatedPointCloudModels = pointCloudLayerData.map((data) => {
+    pointCloudLayerData.forEach((data) => {
       if (data.model === model) {
         data.isToggled = !data.isToggled;
-        model.setDefaultPointCloudAppearance({ visible: data.isToggled });
+        model.visible = data.isToggled;
       }
       return data;
     });
     viewer.requestRedraw();
     layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
       ...prevResourcesStates,
-      pointCloudLayerData: updatedPointCloudModels
+      pointCloudLayerData: pointCloudLayerData
     }));
 
     if (storeStateInUrl !== undefined) {
-      onChange(updatedPointCloudModels);
+      onChange(pointCloudLayerData);
     }
   };
 
   const handleAllPointCloudModelsVisibility = (visible: boolean): void => {
     pointCloudLayerData.forEach((data) => {
       data.isToggled = visible;
-      data.model.setDefaultPointCloudAppearance({ visible });
+      data.model.visible = visible;
     });
     viewer.requestRedraw();
 
