@@ -1,6 +1,7 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Adapted from threejs examples
  */
+
 import { LineSegments2 } from './LineSegments2';
 import { LineGeometry } from './LineGeometry';
 import { LineMaterial } from './LineMaterial';

@@ -1,6 +1,7 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Adapted from threejs examples
  */
+
 import { ShaderLib, ShaderMaterial, UniformsLib, UniformsUtils, Vector2, Color } from 'three';
 import type { ShaderMaterialParameters } from 'three';
 

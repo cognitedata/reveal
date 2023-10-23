@@ -1,6 +1,7 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Adapted from threejs examples
  */
+
 import {
   Box3,
   BufferGeometry,

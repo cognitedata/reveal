@@ -538,14 +538,14 @@ __metadata:
     "@cognite/sdk": 8.3.0
     "@microsoft/api-extractor": ^7.33.6
     "@tweenjs/tween.js": 19.0.0
-    "@types/dat.gui": 0.7.10
+    "@types/dat.gui": 0.7.11
     "@types/gl": ^6.0.2
     "@types/glob": 8.1.0
-    "@types/jest": 29.5.5
-    "@types/jest-environment-puppeteer": 5.0.4
-    "@types/jest-image-snapshot": 6.2.1
-    "@types/jsdom": 21.1.3
-    "@types/lodash": 4.14.199
+    "@types/jest": 29.5.6
+    "@types/jest-environment-puppeteer": 5.0.5
+    "@types/jest-image-snapshot": 6.2.2
+    "@types/jsdom": 21.1.4
+    "@types/lodash": 4.14.200
     "@types/mixpanel-browser": 2.47.3
     "@types/node": 18.18.5
     "@types/random-seed": 0.3.3
@@ -606,7 +606,7 @@ __metadata:
     tsc-alias: 1.8.8
     typescript: 5.2.2
     wasm-pack: 0.12.1
-    webpack: 5.88.2
+    webpack: 5.89.0
     webpack-cli: 5.1.4
     webpack-dev-server: 4.15.1
     webpack-node-externals: 3.0.0
@@ -1743,10 +1743,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/dat.gui@npm:0.7.10":
-  version: 0.7.10
-  resolution: "@types/dat.gui@npm:0.7.10"
-  checksum: 1b5835edc213dd78b03a71c8fd1fe360eadee39b420ccb73c5dc9a04b09866bed099711b21b2c46f7b85b0d6e062564b617c9e610b147d74a81b77380d7c39ec
+"@types/dat.gui@npm:0.7.11":
+  version: 0.7.11
+  resolution: "@types/dat.gui@npm:0.7.11"
+  checksum: 9b5365c750f3d5b65b45ff42e53f441d93e1c0bb0e6d6f61ac1a75b9926947c601b9f6a1cf5f6f5b2739777e461e0b49d34675dba7961a57259d946c5addbfc8
   languageName: node
   linkType: hard
 
@@ -1874,29 +1874,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest-environment-puppeteer@npm:5.0.4":
-  version: 5.0.4
-  resolution: "@types/jest-environment-puppeteer@npm:5.0.4"
+"@types/jest-environment-puppeteer@npm:5.0.5":
+  version: 5.0.5
+  resolution: "@types/jest-environment-puppeteer@npm:5.0.5"
   dependencies:
     "@jest/types": ">=24 <=27"
     "@types/puppeteer": ^5.4.0
     jest-environment-node: ">=24 <=27"
-  checksum: 6ac8a2aa62573b8d95e6c3fb9b69f1272e2337f521d43ac18326c712452a662bcaec8fc52303dceed1256aded0cd4ebe4d8e95c4826d12a4a2a1995846247c31
+  checksum: 4b9ffb4bc439426acd78a1365060637e0bfee9ea6529daa7486e9c2be1dfb6c3d3b63925c3e0da4f30383de386baa40db3db028189d7441041e3d30519146d23
   languageName: node
   linkType: hard
 
-"@types/jest-image-snapshot@npm:6.2.1":
-  version: 6.2.1
-  resolution: "@types/jest-image-snapshot@npm:6.2.1"
+"@types/jest-image-snapshot@npm:6.2.2":
+  version: 6.2.2
+  resolution: "@types/jest-image-snapshot@npm:6.2.2"
   dependencies:
     "@types/jest": "*"
     "@types/pixelmatch": "*"
     ssim.js: ^3.1.1
-  checksum: 6e736bf7f75751420964be11af8b03666ee5f135442051b5f023f350aca5ab5727e5723cc1ec8481e29e29422fc1ae61c4dd73615a18989a666bf5cb27206578
+  checksum: 165842f61db774edfddc0f4ad3a1dd5710a2bae732893c02523ce72b5563c2961dd79264f8471f846fffe7a5cf7dc0b45afe8e63d2c7e21ed19d2be425b7d320
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*, @types/jest@npm:29.5.5":
+"@types/jest@npm:*":
   version: 29.5.5
   resolution: "@types/jest@npm:29.5.5"
   dependencies:
@@ -1906,14 +1906,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsdom@npm:21.1.3":
-  version: 21.1.3
-  resolution: "@types/jsdom@npm:21.1.3"
+"@types/jest@npm:29.5.6":
+  version: 29.5.6
+  resolution: "@types/jest@npm:29.5.6"
+  dependencies:
+    expect: ^29.0.0
+    pretty-format: ^29.0.0
+  checksum: fa13a27bd1c8efd0381a419478769d0d6d3a8e93e1952d7ac3a16274e8440af6f73ed6f96ac1ff00761198badf2ee226b5ab5583a5d87a78d609ea78da5c5a24
+  languageName: node
+  linkType: hard
+
+"@types/jsdom@npm:21.1.4":
+  version: 21.1.4
+  resolution: "@types/jsdom@npm:21.1.4"
   dependencies:
     "@types/node": "*"
     "@types/tough-cookie": "*"
     parse5: ^7.0.0
-  checksum: be8e42eb2d24db8abd3a19a229ce2c2e5d0809351765d9053272604ddf1df04fd16ff193eee9a2d79130952c4f91ee995148deae836a4d43451e64db8a698281
+  checksum: 915f619111dadd8d1bb7f12b6736c9d2e486911e1aed086de5fb003e7e40ae1e368da322dc04f2122ef47faf40ca75b9315ae2df3e8011f882dcf84660fb0d68
   languageName: node
   linkType: hard
 
@@ -1935,10 +1945,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.199":
-  version: 4.14.199
-  resolution: "@types/lodash@npm:4.14.199"
-  checksum: e68d1fcbbfce953ed87b296a628573f62939227bcda0c934954e862b421e8a34c5e71cad6fea27b9980567909e6a4698f09025692958e36d64ea9ed99ec6fb2e
+"@types/lodash@npm:4.14.200":
+  version: 4.14.200
+  resolution: "@types/lodash@npm:4.14.200"
+  checksum: 6471f8bb5da692a6ecf03a8da4935bfbc341e67ee9bcb4f5730bfacff0c367232548f0a01e8ac5ea18c6fe78fb085d502494e33ccb47a7ee87cbdee03b47d00d
   languageName: node
   linkType: hard
 
@@ -11251,7 +11261,44 @@ typescript@~4.8.4:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.88.2, webpack@npm:^5":
+"webpack@npm:5.89.0":
+  version: 5.89.0
+  resolution: "webpack@npm:5.89.0"
+  dependencies:
+    "@types/eslint-scope": ^3.7.3
+    "@types/estree": ^1.0.0
+    "@webassemblyjs/ast": ^1.11.5
+    "@webassemblyjs/wasm-edit": ^1.11.5
+    "@webassemblyjs/wasm-parser": ^1.11.5
+    acorn: ^8.7.1
+    acorn-import-assertions: ^1.9.0
+    browserslist: ^4.14.5
+    chrome-trace-event: ^1.0.2
+    enhanced-resolve: ^5.15.0
+    es-module-lexer: ^1.2.1
+    eslint-scope: 5.1.1
+    events: ^3.2.0
+    glob-to-regexp: ^0.4.1
+    graceful-fs: ^4.2.9
+    json-parse-even-better-errors: ^2.3.1
+    loader-runner: ^4.2.0
+    mime-types: ^2.1.27
+    neo-async: ^2.6.2
+    schema-utils: ^3.2.0
+    tapable: ^2.1.1
+    terser-webpack-plugin: ^5.3.7
+    watchpack: ^2.4.0
+    webpack-sources: ^3.2.3
+  peerDependenciesMeta:
+    webpack-cli:
+      optional: true
+  bin:
+    webpack: bin/webpack.js
+  checksum: 43fe0dbc30e168a685ef5a86759d5016a705f6563b39a240aa00826a80637d4a3deeb8062e709d6a4b05c63e796278244c84b04174704dc4a37bedb0f565c5ed
+  languageName: node
+  linkType: hard
+
+"webpack@npm:^5":
   version: 5.88.2
   resolution: "webpack@npm:5.88.2"
   dependencies:
