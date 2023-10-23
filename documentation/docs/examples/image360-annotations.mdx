@@ -45,11 +45,16 @@ Setting individual style can be done directly on an `Image360Annotation` object.
 revision
   .getAnnotations()
   .then(annotations =>
-    annotations
-      .filter(annotation => annotation.annotation.creatingUser === 'user0')
-      .forEach(annotation => annotation.setVisible(false))
+    {
+      annotations
+        .filter(annotation => annotation.annotation.creatingUser === 'user0')
+        .forEach(annotation => annotation.setVisible(false));
+      viewer.requestRedraw();
+    }
   );
 ```
+
+Changes to individual styles are not visible until the next render, thus one should issue a call to `viewer.requestRedraw()` after applying styles to image annotations.
 
 Since annotations are lazy-loaded, it is usually appropriate to only first apply styling upon entering the relevant revision. This can be done e.g. through registering a listener on the collection:
 
@@ -57,7 +62,7 @@ Since annotations are lazy-loaded, it is usually appropriate to only first apply
 collection.on('image360Entered', (entity, revision) => {
   revision
     .getAnnotations()
-    .then(annotations => styleAnnotations(annotations));
+    .then(annotations => { styleAnnotations(annotations); viewer.requestRedraw(); });
 });
 ```
 
@@ -72,7 +77,10 @@ viewer.on('click', event => {
   viewer.get360AnnotationIntersectionFromPixel(
     event.offsetX, event.offsetY
   ).then(
-    intersection => intersection?.annotation.setColor(new THREE.Color(0, 0, 1))
+    intersection => {
+      intersection?.annotation.setColor(new THREE.Color(0, 0, 1));
+      viewer.requestRedraw();
+    }
   );
 });
 ```
