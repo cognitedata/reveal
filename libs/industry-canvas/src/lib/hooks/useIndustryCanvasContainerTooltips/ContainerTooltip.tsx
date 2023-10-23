@@ -62,6 +62,9 @@ type ContainerTooltipProps = {
   setIsLoadingSummary: (isLoading: boolean) => void;
 };
 
+const getContainerNameFromType = (containerType: ContainerType): string =>
+  String(containerType).split('Container')[0];
+
 const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
   selectedContainer,
   containers,
@@ -709,7 +712,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                       }
                     )
                   : t(translationKeys.CONTAINER_TOOLTIP_SUMMARIZE, {
-                      type: selectedContainer.type,
+                      type: getContainerNameFromType(selectedContainer.type),
                       defaultValue: 'Summarize the {{type}} (Experimental)',
                     })
               }
@@ -720,7 +723,9 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                     ? t(
                         translationKeys.CONTAINER_TOOLTIP_SUMMARIZATION_UNAVAILABLE,
                         {
-                          type: selectedContainer.type,
+                          type: getContainerNameFromType(
+                            selectedContainer.type
+                          ),
                           defaultValue:
                             'Summarization is unavailable for this {{type}} (Experimental)',
                         }

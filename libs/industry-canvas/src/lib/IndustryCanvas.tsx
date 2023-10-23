@@ -33,6 +33,7 @@ import { UseOnUpdateSelectedAnnotationReturnType } from './hooks/useOnUpdateSele
 import useRenderContextMenu from './hooks/useRenderContextMenux';
 import { useTimeseriesPlural } from './hooks/useTimeseriesPlural';
 import { UseTooltipsOptionsReturnType } from './hooks/useTooltipsOptions';
+import { useTranslation } from './hooks/useTranslation';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
 import type { Comment } from './services/comments/types';
 import {
@@ -103,6 +104,7 @@ export const IndustryCanvas = ({
   onUpdateTooltipsOptions,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
+  const { t } = useTranslation();
 
   const {
     interactionState,
@@ -145,7 +147,8 @@ export const IndustryCanvas = ({
         getContainerSummarizationSticky(
           containerConfig,
           summary,
-          isMultiPageDocument
+          isMultiPageDocument,
+          t
         ),
       ],
       containers: [],

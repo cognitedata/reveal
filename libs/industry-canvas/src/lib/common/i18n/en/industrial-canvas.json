@@ -59,6 +59,8 @@
   "HOMEPAGE_TABLE_UPDATED_AT_COLUMN": "Updated at",
   "INPUT_FILENAME_FILE_UPLOAD": "File name",
   "LOADING_CANVASES": "Loading canvases...",
+  "SUMMARIZATION_STICKY_SUMMARY": "Summary",
+  "SUMMARIZATION_STICKY_OF_PAGE": " of page {{pageNumber}}",
   "ME": "Me",
   "MODAL_ADD_RESOURCE_TO_CANVAS_CANVAS_NOT_FOUND": "Unable to find canvas with id {{id}}. Please refresh the page and try again",
   "MODAL_ADD_RESOURCE_TO_CANVAS_NEW_CANVAS_PLACEHOLDER": "New canvas...",
