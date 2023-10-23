@@ -25,6 +25,9 @@ export default defineConfig(({ command, mode }) => {
         formats: ['es']
       },
       sourcemap: command === 'build'
+    },
+    test: {
+      include: ['tests/unit-tests/**/*.{test,spec}.?(c|m)[jt]s?(x)']
     }
   };
 });
