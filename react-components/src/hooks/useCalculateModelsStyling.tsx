@@ -18,7 +18,6 @@ import { useMemo } from 'react';
 import {
   type NodeId,
   type FdmEdgeWithNode,
-  type ModelRevisionKey,
   type AssetId,
   type ModelRevisionAssetNodesResult
 } from '../components/NodeCacheProvider/types';
@@ -243,19 +242,17 @@ function useJoinStylingGroups(
 }
 
 function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
-  const auxillaryMap = new Map<ModelRevisionKey, ModelStyleGroup>();
-
-  styleGroup.forEach(({ model, styleGroup }) => {
-    const key = `${model.modelId}/${model.revisionId}` as const;
-    const storedGroup = auxillaryMap.get(key);
-    if (storedGroup !== undefined) {
-      storedGroup.styleGroup.push(...styleGroup);
+  return styleGroup.reduce<ModelStyleGroup[]>((accumulatedGroups, currentGroup) => {
+    const existingGroupWithModel = accumulatedGroups.find(
+      (group) => group.model === currentGroup.model
+    );
+    if (existingGroupWithModel !== undefined) {
+      existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
     } else {
-      auxillaryMap.set(key, { model, styleGroup });
+      accumulatedGroups.push({ ...currentGroup });
     }
-  });
-
-  return [...auxillaryMap.values()];
+    return accumulatedGroups;
+  }, []);
 }
 
 function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {

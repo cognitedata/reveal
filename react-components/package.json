@@ -20,6 +20,8 @@
     "build-storybook": "storybook build",
     "tsc": "tsc",
     "lint": "eslint . --cache",
+    "test": "vitest run --dom",
+    "test:watch": "vitest watch --dom",
     "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace reveal-react-components --path ./src/common/i18n && yarn sort-keys",
     "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace reveal-react-components --path ./src/common/i18n",
     "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace reveal-react-components --path ./src/common/i18n",
@@ -52,6 +54,7 @@
     "@storybook/react-vite": "^7.4.3",
     "@storybook/testing-library": "0.2.2",
     "@tanstack/react-query-devtools": "^4.29.19",
+    "@testing-library/react": "^14.0.0",
     "@types/lodash": "^4.14.190",
     "@types/react": "18.2.7",
     "@types/react-dom": "^18.2.7",
@@ -68,8 +71,9 @@
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "latest",
+    "happy-dom": "^12.9.1",
     "locize-cli": "^7.14.6",
-    "moq.ts": "^10.0.6",
+    "moq.ts": "^10.0.8",
     "prettier": "^3.0.0",
     "prop-types": "15.8.1",
     "react": "18.2.0",
@@ -83,7 +87,8 @@
     "typescript": "5.2.2",
     "vite": "^4.4.9",
     "vite-plugin-dts": "^3.5.3",
-    "vite-plugin-externalize-deps": "^0.7.0"
+    "vite-plugin-externalize-deps": "^0.7.0",
+    "vitest": "^0.34.6"
   },
   "packageManager": "yarn@3.6.4",
   "files": [

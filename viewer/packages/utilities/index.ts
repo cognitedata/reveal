@@ -54,6 +54,10 @@ export {
   pixelToNormalizedDeviceCoordinates
 } from './src/worldToViewport';
 
+export { Line2 } from './src/three/lines/Line2';
+export { LineGeometry } from './src/three/lines/LineGeometry';
+export { LineMaterial } from './src/three/lines/LineMaterial';
+
 export { DeferredPromise } from './src/DeferredPromise';
 
 export { SceneHandler } from './src/SceneHandler';
