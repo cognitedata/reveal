@@ -15,8 +15,9 @@ import { isDevelopment, isStaging } from '@cognite/cdf-utilities';
 import { Flex, Modal } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
-let notebook_origin = 'https://notebook-standalone.cogniteapp.com';
+import { useMetrics } from '../../hooks/useMetrics';
 
+let notebook_origin = 'https://notebook-standalone.cogniteapp.com';
 if (isStaging() || isDevelopment()) {
   notebook_origin = 'https://notebook-standalone.staging.cogniteapp.com';
 }
@@ -26,6 +27,8 @@ if ((window as any).CDF_NOTEBOOK_ORIGIN_OVERRIDE) {
 }
 
 export const NOTEBOOK_ORIGIN = notebook_origin;
+
+const TRACKED_EVENTS = ['NotebookCopilotEvent', 'jupyterliteEvent'];
 
 // Every 2 minutes
 const INTERVAL = 2 * 60 * 1000;
@@ -65,12 +68,17 @@ const Home = React.forwardRef(
       });
     }, []);
 
-    // Add handler from notebook
+    // Add handler for messages from notebook
+    const { track } = useMetrics();
     useEffect(() => {
       trackEvent('Notebook.Start');
       const handler = async (event: MessageEvent<any>) => {
         if (event.data === 'getToken') {
           await fetchAndSendToken();
+        }
+
+        if (TRACKED_EVENTS.includes(event?.data?.event)) {
+          track(event.data);
         }
       };
 
@@ -78,7 +86,7 @@ const Home = React.forwardRef(
       return () => {
         window.removeEventListener('message', handler);
       };
-    }, [fetchAndSendToken]);
+    }, [fetchAndSendToken, track]);
 
     // Add interval for checking token
     useEffect(() => {
@@ -114,6 +122,7 @@ const Home = React.forwardRef(
           localStorage.cdf_notebook_page_lock = Date.now();
         }
         if (e.key === 'cdf_notebook_page_lock') {
+          trackEvent('NotebookMultipleTabsWarning');
           setShowMultipleTabsWarning(true);
         }
       }
