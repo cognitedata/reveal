@@ -542,7 +542,7 @@ __metadata:
     "@types/gl": ^6.0.2
     "@types/glob": 8.1.0
     "@types/jest": 29.5.6
-    "@types/jest-environment-puppeteer": 5.0.4
+    "@types/jest-environment-puppeteer": 5.0.5
     "@types/jest-image-snapshot": 6.2.1
     "@types/jsdom": 21.1.3
     "@types/lodash": 4.14.199
@@ -1874,14 +1874,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest-environment-puppeteer@npm:5.0.4":
-  version: 5.0.4
-  resolution: "@types/jest-environment-puppeteer@npm:5.0.4"
+"@types/jest-environment-puppeteer@npm:5.0.5":
+  version: 5.0.5
+  resolution: "@types/jest-environment-puppeteer@npm:5.0.5"
   dependencies:
     "@jest/types": ">=24 <=27"
     "@types/puppeteer": ^5.4.0
     jest-environment-node: ">=24 <=27"
-  checksum: 6ac8a2aa62573b8d95e6c3fb9b69f1272e2337f521d43ac18326c712452a662bcaec8fc52303dceed1256aded0cd4ebe4d8e95c4826d12a4a2a1995846247c31
+  checksum: 4b9ffb4bc439426acd78a1365060637e0bfee9ea6529daa7486e9c2be1dfb6c3d3b63925c3e0da4f30383de386baa40db3db028189d7441041e3d30519146d23
   languageName: node
   linkType: hard
 
