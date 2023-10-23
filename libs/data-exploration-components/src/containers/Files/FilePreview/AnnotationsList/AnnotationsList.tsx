@@ -50,6 +50,7 @@ const AnnotationsList = ({
 
   const [filterType, setFilterType] = useState<AnnotationType>('all');
   const [filteredList, setFilteredList] = useState<ExtendedAnnotation[]>([]);
+  const translatedType = t(type.toUpperCase(), type);
 
   const filteredListIdsEither = uniq(
     filteredList.map(getResourceIdFromExtendedAnnotation)
@@ -177,7 +178,10 @@ const AnnotationsList = ({
         </SegmentedControl>
         <ListWrapper>
           <div>
-            {filteredList.length} {type}{' '}
+            {t(`RESOURCE_COUNT`, `${filteredList.length} ${type}`, {
+              count: filteredList.length,
+              type: translatedType,
+            })}
           </div>
           {filteredItemWithName.length ? (
             filteredItemWithName.map((an) =>
@@ -240,17 +244,27 @@ const ListWrapper = styled.div`
   overflow: auto;
 `;
 
-const EmptyState = ({ type }: { type: AnnotationType }) => (
-  <div
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'column',
-      height: '100%',
-    }}
-  >
-    <Illustrations.Solo type="EmptyStateSearch" />
-    <p>No {type !== 'all' ? type : ''} tags found.</p>
-  </div>
-);
+const EmptyState = ({ type }: { type: AnnotationType }) => {
+  const { t } = useTranslation();
+  const translatedType = t(type.toUpperCase(), type);
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        height: '100%',
+      }}
+    >
+      <Illustrations.Solo type="EmptyStateSearch" />
+      <p>
+        {type !== 'all'
+          ? t(`NO_ANNOTATION_TYPE_TAGS_FOUND`, `No ${type} tags found.`, {
+              type: translatedType,
+            })
+          : t('NO_TAGS_FOUND', 'No tags found')}
+      </p>
+    </div>
+  );
+};
