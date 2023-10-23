@@ -80,7 +80,7 @@ module.exports = env => {
     },
     externals: [
       nodeExternals({
-        allowlist: [/^@reveal/]
+        allowlist: [/^@reveal/, /sparse-octree/]
       })
     ],
     output: {
