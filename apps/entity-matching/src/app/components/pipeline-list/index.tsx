@@ -3,7 +3,7 @@ import { Flex, Icon, Colors } from '@cognite/cogs.js';
 import { useEMPipelines } from '../../hooks/entity-matching-pipelines';
 
 import PipelineListEmpty from './PipelineListEmpty';
-import PipelineTable from './PipelineTable';
+import PipelineTable, { collectPages } from './PipelineTable';
 
 export default function PipelineList() {
   const { data, isInitialLoading } = useEMPipelines();
@@ -22,7 +22,7 @@ export default function PipelineList() {
 
   return (
     <div data-testid="pipelines">
-      {data?.length ? (
+      {collectPages(data!).length ? (
         <PipelineTable dataTestId="pipelines-table" />
       ) : (
         <PipelineListEmpty />

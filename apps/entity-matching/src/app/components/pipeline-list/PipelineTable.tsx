@@ -1,6 +1,8 @@
 import { Key, useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import { InfiniteData } from '@tanstack/react-query';
+
 import {
   ColumnType,
   notification,
@@ -16,22 +18,35 @@ import {
 } from '../../common/constants';
 import {
   Pipeline,
-  PipelineWithLatestRun,
   useDeleteEMPipeline,
   useDuplicateEMPipeline,
-  useEMPipelinesWithLatestRuns,
+  useEMPipelines,
 } from '../../hooks/entity-matching-pipelines';
 import { PipelineTableTypes } from '../../types/types';
 import LatestRunCell from '../latest-run-cell';
 import PipelineActionsMenu from '../pipeline-actions-menu/PipelineActionsMenu';
 import PipelineName from '../pipeline-name/PipelineName';
 
-type PipelineListTableRecord = { key: string } & PipelineWithLatestRun;
+type PipelineListTableRecord = { key: string } & Pipeline;
 
 type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
   title: string;
   key: PipelineTableTypes;
 };
+
+type Items<T> = {
+  items: T[];
+};
+
+export const collectPages = <T extends { name: string }>(
+  data: InfiniteData<Items<T>>
+): T[] =>
+  data
+    ? data.pages.reduce(
+        (accumulator: T[], page) => [...accumulator, ...page.items],
+        []
+      )
+    : [];
 
 const PipelineTable = ({
   dataTestId,
@@ -40,7 +55,7 @@ const PipelineTable = ({
 }): JSX.Element => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [searchParams] = useSearchParams('');
-  const { data, isInitialLoading } = useEMPipelinesWithLatestRuns();
+  const { data, isInitialLoading } = useEMPipelines();
   const { mutate: deletePipeline } = useDeleteEMPipeline();
   const { mutate: duplicatePipeline } = useDuplicateEMPipeline();
   const { t } = useTranslation();
@@ -59,10 +74,9 @@ const PipelineTable = ({
     onChange: handleToggleCheckbox,
   };
 
-  const dataSource = useMemo(
-    () => data?.map((a) => ({ ...a, key: a.id.toString() })) || [],
-    [data]
-  );
+  const pipelines = useMemo(() => {
+    return collectPages(data!).map((p) => ({ ...p, key: p.id.toString() }));
+  }, [data]);
 
   const handleDuplicate = useCallback(
     (pipeline: Pipeline) => {
@@ -143,15 +157,14 @@ const PipelineTable = ({
         title: t('last-run'),
         dataIndex: 'latestRun',
         key: 'latestRun',
-        render: (value: PipelineWithLatestRun['latestRun']) => (
-          <LatestRunCell latestRun={value} />
+        render: (_, record) => (
+          <LatestRunCell id={record.id} lastRun={record.lastRun} />
         ),
         sorter: (
           rowA: PipelineListTableRecord,
           rowB: PipelineListTableRecord
         ) =>
-          (rowA?.latestRun?.createdTime ?? 0) -
-          (rowB?.latestRun?.createdTime ?? 0),
+          (rowA?.lastRun?.createdTime ?? 0) - (rowB?.lastRun?.createdTime ?? 0),
       },
       {
         title: '',
@@ -166,7 +179,6 @@ const PipelineTable = ({
                   onDuplicatePipeline={() => handleDuplicate(record)}
                   pipeline={record}
                   onDeletePipeline={() => handleDeletePipeline(record.id)}
-                  latestRun={record.latestRun}
                   dataTestId="pipeline-actions"
                 />
               }
@@ -189,11 +201,11 @@ const PipelineTable = ({
   const pipelinesList = useMemo(
     () =>
       searchParam
-        ? dataSource?.filter((pipeline) =>
+        ? pipelines?.filter((pipeline) =>
             (pipeline.name || pipeline.id.toString()).includes(searchParam)
           )
-        : dataSource,
-    [dataSource, searchParam]
+        : pipelines,
+    [pipelines, searchParam]
   );
 
   if (isInitialLoading) {

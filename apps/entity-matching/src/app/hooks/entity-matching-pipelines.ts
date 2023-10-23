@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import {
   QueryKey,
   useQuery,
@@ -5,18 +7,20 @@ import {
   UseQueryOptions,
   useMutation,
   UseMutationOptions,
-  QueryClient,
-  FetchQueryOptions,
+  UseInfiniteQueryOptions,
+  useInfiniteQuery,
 } from '@tanstack/react-query';
 
 import { toast } from '@cognite/cogs.js';
-import { CogniteClient, CogniteError } from '@cognite/sdk';
+import { CogniteClient, CogniteError, ListResponse } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { DEFAULT_MODEL_FEATURE_TYPE } from '../common/constants';
 import { EMFeatureType, ModelMapping } from '../context/QuickMatchContext';
 import { PipelineSourceType, TargetType } from '../types/api';
 import { RuleCondition, RuleExtractor, RuleMatch } from '../types/rules';
+
+import { JobStatus } from './types';
 
 export type Pipeline = {
   id: number;
@@ -38,93 +42,48 @@ export type Pipeline = {
   };
   generateRules?: boolean;
   useExistingMatches?: boolean;
+  lastRun?: EMPipelineRun;
 };
 
-export type PipelineWithLatestRun = Pipeline & {
-  latestRun?: EMPipelineRun;
-};
+const betaHeader = { 'cdf-version': 'beta' };
 
-const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
+const getEMPipelinesKey = (): QueryKey => ['entitymatching', 'pipelines'];
 
-const getPipelines = (sdk: CogniteClient) =>
-  sdk
-    .post<{ items: Pipeline[] }>(
-      `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/list`,
-      { data: { limit: 1000 } }
+const getPipelines = (sdk: CogniteClient, cursor?: string) => {
+  const limit = 100;
+  const params = cursor !== undefined ? { limit, cursor: cursor } : { limit };
+
+  return sdk
+    .get<{ items: Pipeline[]; nextCursor?: string }>(
+      `/api/v1/projects/${sdk.project}/context/entitymatching/pipelines`,
+      { params, headers: betaHeader }
     )
-    .then((r) => r.data.items);
-
-const fetchPipelines = (
-  sdk: CogniteClient,
-  queryClient: QueryClient,
-  options?: FetchQueryOptions<Pipeline[], CogniteClient>
-) => {
-  return queryClient.fetchQuery(
-    getEMPipelinesKey(),
-    () => getPipelines(sdk),
-    options
-  );
+    .then(({ data }) => data);
 };
 
 export const useEMPipelines = (
-  opts?: UseQueryOptions<Pipeline[], CogniteError>
+  opts?: UseInfiniteQueryOptions<ListResponse<Pipeline[]>, CogniteError>
 ) => {
   const sdk = useSDK();
-  const qc = useQueryClient();
-  return useQuery<Pipeline[], CogniteError>(
+  const query = useInfiniteQuery<ListResponse<Pipeline[]>, CogniteError>(
     getEMPipelinesKey(),
-    () => getPipelines(sdk),
+    ({ pageParam = undefined }) => getPipelines(sdk, pageParam),
     {
-      onSuccess(items) {
-        items.forEach((i) => qc.setQueryData(getEMPipelineKey(i.id), i));
-      },
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
       ...opts,
     }
   );
+
+  useEffect(() => {
+    if (query.hasNextPage && !query.isFetching) {
+      query.fetchNextPage();
+    }
+  }, [query]);
+
+  return query;
 };
 
-const getEMPipelinesWithLatestRunsKey = (): QueryKey => [
-  ...getEMPipelinesKey(),
-  'latest-runs',
-];
-export const useEMPipelinesWithLatestRuns = (
-  opts: UseQueryOptions<PipelineWithLatestRun[], CogniteError> = {
-    enabled: true,
-  }
-) => {
-  const sdk = useSDK();
-  const queryClient = useQueryClient();
-
-  return useQuery(
-    getEMPipelinesWithLatestRunsKey(),
-    async () => {
-      const emPipelines = await fetchPipelines(sdk, queryClient);
-
-      const latestRuns = await sdk
-        .post<{ items: EMPipelineRun[] }>(
-          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/run/latest`,
-          {
-            data: {
-              items: emPipelines?.map(({ id }) => ({ id })),
-            },
-          }
-        )
-        .then((r) => r.data.items);
-
-      return (
-        emPipelines?.map((pipeline) => ({
-          ...pipeline,
-          latestRun: latestRuns.find(
-            ({ pipelineId }) => pipelineId === pipeline.id
-          ),
-        })) ?? []
-      );
-    },
-    opts
-  );
-};
-
-const getEMPipelineKey = (id: number): QueryKey => ['em', 'pipelines', id];
+const getEMPipelineKey = (id: number): QueryKey => [...getEMPipelinesKey(), id];
 export const useEMPipeline = (
   id: number,
   opts?: UseQueryOptions<Pipeline, CogniteError>
@@ -134,11 +93,11 @@ export const useEMPipeline = (
     getEMPipelineKey(id),
     () =>
       sdk
-        .post<{ items: Pipeline[]; nextCursor?: string }>(
-          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/byids`,
-          { data: { items: [{ id }] } }
+        .get<Pipeline>(
+          `/api/v1/projects/${sdk.project}/context/entitymatching/pipelines/${id}`,
+          { headers: betaHeader }
         )
-        .then((r) => r.data.items[0]),
+        .then((r) => r.data),
     opts
   );
 };
@@ -150,9 +109,9 @@ export const useDeleteEMPipeline = (
   const queryClient = useQueryClient();
   return useMutation(
     ({ id }: { id: number }) =>
-      sdk.post<{ items: Pipeline[]; nextCursor?: string }>(
-        `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/delete`,
-        { data: { items: [{ id }] } }
+      sdk.post<{}>(
+        `/api/v1/projects/${sdk.project}/context/entitymatching/pipelines/delete`,
+        { data: { items: [{ id }] }, headers: betaHeader }
       ),
     {
       ...opts,
@@ -174,30 +133,35 @@ export const useCreatePipeline = (
   return useMutation<Pipeline, CogniteError, PipelineCreateParams>(
     async ({ name, description }) => {
       return sdk
-        .post<Pipeline>(
-          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines`,
+        .post<{ items: Pipeline[] }>(
+          `/api/v1/projects/${sdk.project}/context/entitymatching/pipelines`,
           {
             data: {
-              name,
-              description,
-              sources: {
-                dataSetIds: [],
-                resource: 'time_series',
-              },
-              targets: {
-                dataSetIds: [],
-                resource: 'assets',
-              },
-              modelParameters: {
-                featureType: DEFAULT_MODEL_FEATURE_TYPE,
-                matchFields: [{ source: 'name', target: 'name' }],
-              },
+              items: [
+                {
+                  name,
+                  description,
+                  sources: {
+                    dataSetIds: [],
+                    resource: 'time_series',
+                  },
+                  targets: {
+                    dataSetIds: [],
+                    resource: 'assets',
+                  },
+                  modelParameters: {
+                    featureType: DEFAULT_MODEL_FEATURE_TYPE,
+                    matchFields: [{ source: 'name', target: 'name' }],
+                  },
+                },
+              ],
             },
+            headers: betaHeader,
           }
         )
         .then((r) => {
-          if (r.status === 200) {
-            return r.data;
+          if (r.status === 201 && r.data.items.length === 1) {
+            return r.data.items[0];
           } else {
             return Promise.reject(r);
           }
@@ -241,7 +205,7 @@ export const useUpdatePipeline = (
       }, {} as Record<string, unknown>);
       return sdk
         .post<Pipeline>(
-          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/update`,
+          `/api/v1/projects/${sdk.project}/context/entitymatching/pipelines/update`,
           {
             data: {
               items: [
@@ -251,6 +215,7 @@ export const useUpdatePipeline = (
                 },
               ],
             },
+            headers: betaHeader,
           }
         )
         .then((r) => {
@@ -306,14 +271,19 @@ export const useDuplicateEMPipeline = () => {
       >
     ) =>
       sdk.post<Pipeline>(
-        `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines`,
+        `/api/v1/projects/${sdk.project}/context/entitymatching/pipelines`,
         {
           data: {
-            name: `${pipeline.name ?? pipeline.id} copy`,
-            description: pipeline.description,
-            sources: pipeline.sources,
-            targets: pipeline.targets,
+            items: [
+              {
+                name: `${pipeline.name ?? pipeline.id} copy`,
+                description: pipeline.description,
+                sources: pipeline.sources,
+                targets: pipeline.targets,
+              },
+            ],
           },
+          headers: betaHeader,
         }
       ),
     {
@@ -323,8 +293,6 @@ export const useDuplicateEMPipeline = () => {
     }
   );
 };
-
-type EMPipelineRunStatus = 'Queued' | 'Running' | 'Completed' | 'Failed';
 
 type EMPipelineMatchType = 'previously-confirmed' | 'model';
 
@@ -347,12 +315,11 @@ export type EMPipelineGeneratedRule = {
 };
 
 export type EMPipelineRun = {
-  status: EMPipelineRunStatus;
+  status: JobStatus;
   createdTime: number;
   startTime: number | null;
   statusTime: number;
   jobId: number;
-  pipelineId?: number;
   matches?: EMPipelineRunMatch[];
   generatedRules?: EMPipelineGeneratedRule[];
 };
@@ -377,12 +344,8 @@ export const useRunEMPipeline = (
     async (variables: RunEMPipelineMutationVariables) =>
       sdk
         .post<EMPipelineRun>(
-          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/run`,
-          {
-            data: {
-              id: variables.id,
-            },
-          }
+          `/api/v1/projects/${sdk.project}/context/entitymatching/pipelines/${variables.id}/runs`,
+          { headers: betaHeader }
         )
         .then((r) => r.data),
 
@@ -396,11 +359,9 @@ export const useRunEMPipeline = (
   );
 };
 
-const geEMPipelineRunKey = (pipelineId: number, jobId?: number): QueryKey => [
-  'em',
-  'pipeline',
-  pipelineId,
-  'run',
+const getEMPipelineRunKey = (pipelineId: number, jobId?: number): QueryKey => [
+  ...getEMPipelineKey(pipelineId),
+  'runs',
   jobId,
 ];
 export const useEMPipelineRun = (
@@ -411,11 +372,12 @@ export const useEMPipelineRun = (
   const sdk = useSDK();
 
   return useQuery<EMPipelineRun, CogniteError, EMPipelineRun>(
-    geEMPipelineRunKey(pipelineId, jobId),
+    getEMPipelineRunKey(pipelineId, jobId),
     async () =>
       sdk
         .get<EMPipelineRun>(
-          `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/run/${jobId}`
+          `/api/v1/projects/${sdk.project}/context/entitymatching/pipelines/${pipelineId}/runs/${jobId}`,
+          { headers: betaHeader }
         )
         .then((r) => r.data),
     options
