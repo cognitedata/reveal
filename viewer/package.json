@@ -81,7 +81,7 @@
     "@azure/msal-browser": "2.38.2",
     "@cognite/sdk": "8.3.0",
     "@microsoft/api-extractor": "^7.33.6",
-    "@types/dat.gui": "0.7.10",
+    "@types/dat.gui": "0.7.11",
     "@types/gl": "^6.0.2",
     "@types/glob": "8.1.0",
     "@types/jest": "29.5.5",
