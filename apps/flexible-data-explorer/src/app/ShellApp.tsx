@@ -1,5 +1,9 @@
-import { ErrorBoundary } from 'react-error-boundary';
-
+import { Copilot } from '@fusion/copilot-core';
+import {
+  Orientation,
+  OrientationProvider,
+} from '@fusion/shared/user-onboarding-components';
+import * as Sentry from '@sentry/react';
 import {
   QueryErrorResetBoundary,
   QueryClientProvider,
@@ -8,59 +12,69 @@ import {
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
-import { Button, Loader, ToastContainer } from '@cognite/cogs.js';
-import { SDKProvider } from '@cognite/sdk-provider';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
+import { RevealKeepAlive } from '@cognite/reveal-react-components';
+import { SDKProvider, useSDK } from '@cognite/sdk-provider';
 
 import FusionStyles from '../FusionStyles';
 import { translations } from '../i18n';
 
+import { ErrorFallback } from './components/ErrorFallback';
+import { Onboarding } from './containers/onboarding/Onboarding';
 import { queryClient } from './queryClient';
 import AppRoutes from './Routes';
 
 const projectName = 'flexible-data-explorer';
 
 const App = () => {
+  const client = useSDK();
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <ToastContainer />
-      <AuthWrapper
-        loadingScreen={<Loader />}
-        login={() => loginAndAuthIfNeeded()}
-      >
-        <SDKProvider sdk={sdk}>
-          <SubAppWrapper title="Search">
-            <FusionStyles>
-              <I18nWrapper
-                translations={translations}
-                addNamespace={projectName}
-              >
-                <QueryErrorResetBoundary>
-                  {({ reset }) => (
-                    <ErrorBoundary
-                      onReset={reset}
-                      fallbackRender={({ resetErrorBoundary }) => (
-                        <center>
-                          There was an error!
-                          <Button
-                            onClick={() => {
-                              resetErrorBoundary();
+    <OrientationProvider>
+      <Orientation />
+      <QueryClientProvider client={queryClient}>
+        <ToastContainer />
+        <AuthWrapper
+          loadingScreen={<Loader />}
+          login={() => loginAndAuthIfNeeded()}
+        >
+          <SDKProvider sdk={sdk}>
+            <SubAppWrapper title="Search">
+              <FusionStyles>
+                <I18nWrapper
+                  translations={translations}
+                  addNamespace={projectName}
+                >
+                  <QueryErrorResetBoundary>
+                    {({ reset }) => (
+                      <Sentry.ErrorBoundary
+                        fallback={({ error, eventId, resetError }) => (
+                          <ErrorFallback
+                            error={error}
+                            eventId={eventId}
+                            onResetClick={() => {
+                              reset();
+                              resetError();
                             }}
-                          >
-                            Try again!
-                          </Button>
-                        </center>
-                      )}
-                    >
-                      <AppRoutes />
-                    </ErrorBoundary>
-                  )}
-                </QueryErrorResetBoundary>
-              </I18nWrapper>
-            </FusionStyles>
-          </SubAppWrapper>
-        </SDKProvider>
-      </AuthWrapper>
-    </QueryClientProvider>
+                          />
+                        )}
+                      >
+                        <Copilot sdk={client} showChatButton={false}>
+                          <Onboarding />
+                          <RevealKeepAlive>
+                            <AppRoutes />
+                          </RevealKeepAlive>
+                        </Copilot>
+                      </Sentry.ErrorBoundary>
+                    )}
+                  </QueryErrorResetBoundary>
+                </I18nWrapper>
+              </FusionStyles>
+            </SubAppWrapper>
+          </SDKProvider>
+        </AuthWrapper>
+      </QueryClientProvider>
+    </OrientationProvider>
   );
 };
 
