@@ -16,7 +16,11 @@ export const useRelatedResourcesCount = ({
   resourceType: ResourceType;
   isDocumentsApiEnabled?: boolean;
 }) => {
-  const annotations = useAnnotationsCount({ resource, resourceType });
+  const annotations = useAnnotationsCount({
+    resource,
+    resourceType,
+    isDocumentsApiEnabled,
+  });
 
   const linkedResources = useLinkedResourcesCount({
     resource,

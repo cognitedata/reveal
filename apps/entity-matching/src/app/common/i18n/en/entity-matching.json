@@ -194,6 +194,7 @@
   "rule-match-items": "{{count}} pairs matches this rule",
   "rules-apply": "Apply",
   "rules-fields": "Fields",
+  "rules-average-score": "Average score",
   "rules-matches": "Matches",
   "rules-pattern": "Pattern",
   "run-model": "Run model",

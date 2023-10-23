@@ -30,6 +30,7 @@ type AppliedRuleTableRecordCT = ColumnType<AppliedRuleTableRecord> & {
     | 'source'
     | 'target'
     | 'fields'
+    | 'averageScore'
     | 'numberOfMatches'
     | 'matches'
     | 'expandable';
@@ -69,13 +70,21 @@ export default function AppliedRulesTable({
         ),
       },
       {
+        title: t('rules-average-score'),
+        key: 'averageScore',
+        width: 200,
+        sorter: (a: ColoredRule, b: ColoredRule) =>
+          a.averageScore - b.averageScore,
+        render: (rule: ColoredRule) =>
+          rule.averageScore.toLocaleString(undefined, { style: 'percent' }),
+      },
+      {
         title: t('rules-matches'),
         key: 'numberOfMatches',
         width: 100,
         sorter: (a: ColoredRule, b: ColoredRule) =>
-          (a.matches?.length ?? 0) - (b.matches?.length ?? 0),
-        render: (rule: ColoredRule) =>
-          rule.matches?.length.toLocaleString() ?? '0',
+          a.numberOfMatches - b.numberOfMatches,
+        render: (rule: ColoredRule) => rule.numberOfMatches.toLocaleString(),
       },
       {
         title: '',
@@ -101,7 +110,13 @@ export default function AppliedRulesTable({
   const appliedRulesList = useMemo(
     () =>
       appliedRules?.map((rule, i) => ({
-        ...colorRule(rule.rule.conditions, rule.rule.extractors, rule.matches),
+        ...colorRule(
+          rule.numberOfMatches,
+          rule.averageScore,
+          rule.rule.conditions,
+          rule.rule.extractors,
+          rule.matches
+        ),
         key: i,
       })) || [],
     [appliedRules]

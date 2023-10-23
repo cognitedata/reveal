@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import { uniq } from 'lodash';
+
 import {
   TooltipAnchorPosition,
   TooltipConfig,
@@ -26,10 +28,10 @@ const useLiveSensorValuesTooltips = ({
   liveSensorRulesByAnnotationIdByTimeseriesId: LiveSensorRulesByAnnotationIdByTimeseriesId;
 }): TooltipConfig[] => {
   const { data: timeseriesByTsId } = useTimeseriesPlural(
-    getTimeseriesIdsFlat(timeseriesIdsByAnnotationId)
+    uniq(getTimeseriesIdsFlat(timeseriesIdsByAnnotationId))
   );
   const { data: valueByTsId } = useTimeseriesLatestValues(
-    getTimeseriesIdsFlat(timeseriesIdsByAnnotationId)
+    uniq(getTimeseriesIdsFlat(timeseriesIdsByAnnotationId))
   );
 
   const liveSensorValueTooltips: TooltipConfig[] = useMemo(() => {

@@ -50,7 +50,7 @@ export const DataModelSelector: React.FC = () => {
     !isLoading && !isError && Boolean(dataModels) && dataModels?.length === 0;
 
   return (
-    <Container>
+    <Container data-testid="data-model-selector">
       <Content>
         <InfoContent>
           <Overline level={3}>
@@ -78,6 +78,7 @@ export const DataModelSelector: React.FC = () => {
             const isSelected = selectedDataModels.includes(item);
             return (
               <Card
+                data-testid={`data-model-${item.name}-${item.version}-${item.space}`}
                 key={`${item.externalId}-${item.space}`}
                 onClick={() => setSelectedDataModel(item)}
                 isSelected={isSelected}

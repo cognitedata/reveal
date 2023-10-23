@@ -32,6 +32,10 @@ export class CdfUserHistoryService {
   }
 
   logNewResourceEdit(resource: Omit<CdfResourceUsage, 'timestamp'>) {
+    if (!resource.application || !resource.name || !resource.path) {
+      return;
+    }
+
     const timestamp = new Date().getTime().toString();
     const resourceList = this.data.editedResources.filter(
       (ele) => ele.path !== resource.path
@@ -46,6 +50,10 @@ export class CdfUserHistoryService {
   }
 
   logNewResourceView(resource: Omit<CdfResourceUsage, 'timestamp'>) {
+    if (!resource.application || !resource.name || !resource.path) {
+      return;
+    }
+
     const timestamp = new Date().getTime().toString();
     const resourceList = this.data.viewedResources.filter(
       (ele) => ele.path !== resource.path

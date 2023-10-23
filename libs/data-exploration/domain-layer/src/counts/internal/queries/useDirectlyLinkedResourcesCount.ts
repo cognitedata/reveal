@@ -16,20 +16,29 @@ export const useDirectlyLinkedResourcesCount = ({
   resourceType: ResourceType;
   isDocumentsApiEnabled: boolean;
 }) => {
-  const { data: assetIds = [] } = useAssetIdsQuery({
+  const assetIdsQuery = useAssetIdsQuery({
     resourceType: convertToSdkResourceType(resource.type),
     resourceId: getResourceId(resource),
     isDocumentsApiEnabled,
+    enabled: resource.type === 'asset' || resourceType === 'asset',
   });
 
-  const { data = 0, isInitialLoading } = useDirectlyLinkedResourcesCountQuery({
+  const directResourcesQuery = useDirectlyLinkedResourcesCountQuery({
     resourceType: convertToSdkResourceType(resourceType),
-    assetIds,
+    assetIds: assetIdsQuery.data,
     isDocumentsApiEnabled,
+    enabled: resource.type === 'asset',
   });
+
+  if (resource.type === 'asset') {
+    return {
+      data: directResourcesQuery.data || 0,
+      isLoading: directResourcesQuery.isInitialLoading,
+    };
+  }
 
   return {
-    data,
-    isLoading: isInitialLoading,
+    data: assetIdsQuery.data?.length || 0,
+    isLoading: assetIdsQuery.isInitialLoading,
   };
 };

@@ -5,18 +5,20 @@ import { CogniteClient } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   ContainerConfig,
-  ContainerType,
   UnifiedViewer,
   UnifiedViewerEventListenerMap,
   UnifiedViewerEventType,
   UpdateRequestSource,
-  getContainerConfigFromFileInfo,
 } from '@cognite/unified-file-viewer';
 
 import { RuleType } from '../components/ContextualTooltips/AssetTooltip/types';
 import containerConfigToContainerReference from '../containerConfigToContainerReference';
-import { shamefulOnUpdateRequest } from '../state/useIndustrialCanvasStore';
+import {
+  setFileUploadDataFromPastedImageContainer,
+  shamefulOnUpdateRequest,
+} from '../state/useIndustrialCanvasStore';
 import { CanvasNode, isIndustryCanvasContainerConfig } from '../types';
+import { isPastedImageContainer } from '../utils/dataUrlUtils';
 import useMetrics from '../utils/tracking/useMetrics';
 
 import resolveContainerConfig from './utils/resolveContainerConfig';
@@ -97,11 +99,10 @@ const preprocessContainerUpdates = async (
   },
   sdk: CogniteClient
 ): Promise<ContainerConfig[]> => {
-  if (source === undefined) {
-    return containers;
+  if (source === UpdateRequestSource.CLIPBOARD) {
+    return reresolveContainerConfigsFromClipboard(containers, sdk);
   }
-
-  return reresolveContainerConfigsFromClipboard(containers, sdk);
+  return containers;
 };
 
 const useOnUpdateRequest = ({
@@ -114,17 +115,26 @@ const useOnUpdateRequest = ({
 
   return useCallback(
     async ({ source, containers, annotations }) => {
+      if (source === UpdateRequestSource.CLIPBOARD) {
+        const pastedImageContainers = containers.filter(isPastedImageContainer);
+        if (pastedImageContainers.length === 1) {
+          setFileUploadDataFromPastedImageContainer(pastedImageContainers[0]);
+          return;
+        }
+      }
+
       shamefulOnUpdateRequest({
         containers: await preprocessContainerUpdates(
           { source, containers },
           sdk
         ),
+        source,
         annotations,
         unifiedViewer,
         trackUsage,
       });
     },
-    [unifiedViewer, trackUsage]
+    [sdk, unifiedViewer, trackUsage]
   );
 };
 

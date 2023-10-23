@@ -43,14 +43,15 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
     };
   }, [filter, defaultFilter]);
 
-  const { data, hasNextPage, fetchNextPage } = useEventsSearchResultQuery(
-    {
-      query: debouncedQuery,
-      eventsFilters,
-      eventsSortBy: sortBy,
-    },
-    eventSearchConfig
-  );
+  const { data, isLoading, hasNextPage, fetchNextPage } =
+    useEventsSearchResultQuery(
+      {
+        query: debouncedQuery,
+        eventsFilters,
+        eventsSortBy: sortBy,
+      },
+      eventSearchConfig
+    );
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
@@ -67,6 +68,7 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
         onParentAssetClick(directAsset.id);
       }}
       data={data}
+      isDataLoading={isLoading}
       sorting={sortBy}
       enableSorting
       onSort={(props) => setSortBy(props)}

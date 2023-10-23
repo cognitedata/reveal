@@ -104,6 +104,7 @@ import {
   DEFAULT_CONTAINER_MAX_WIDTH,
 } from './utils/dimensions';
 import { getCanvasLink } from './utils/getCanvasLink';
+import { isCogniteIdPUsedToSignIn } from './utils/isCogniteIdPUsedToSignIn';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 import useMetrics from './utils/tracking/useMetrics';
@@ -204,10 +205,14 @@ export const IndustryCanvasPage = () => {
   });
   useTrackCanvasViewed(activeCanvas);
 
-  const { invitationsByResource, isFetched: isInvitationsByResourceFetched } =
-    useAuth2InvitationsByResource({
-      externalId: activeCanvas?.externalId,
-    });
+  const isCogniteIdP = isCogniteIdPUsedToSignIn();
+  const {
+    invitationsByResource = [],
+    isFetched: isInvitationsByResourceFetched,
+  } = useAuth2InvitationsByResource({
+    externalId: activeCanvas?.externalId,
+    isEnabled: isCogniteIdP && activeCanvas?.externalId !== undefined,
+  });
   const isUserProfileInvitedToCanvas = invitationsByResource.some(
     (invitedUser) => invitedUser.userIdentifier === userProfile.userIdentifier
   );
@@ -360,7 +365,6 @@ export const IndustryCanvasPage = () => {
   const onAddResourcePress = async (
     results?: ExtendedResourceItem | ExtendedResourceItem[]
   ) => {
-    console.log('ICP; selection results: ', results);
     if (isCanvasLocked) {
       return;
     }

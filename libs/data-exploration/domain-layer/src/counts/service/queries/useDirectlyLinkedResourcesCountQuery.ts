@@ -15,10 +15,12 @@ export const useDirectlyLinkedResourcesCountQuery = ({
   resourceType,
   assetIds,
   isDocumentsApiEnabled,
+  enabled = true,
 }: {
   resourceType: SdkResourceType;
   assetIds?: number[];
   isDocumentsApiEnabled: boolean;
+  enabled?: boolean;
 }) => {
   const sdk = useSDK();
 
@@ -44,7 +46,7 @@ export const useDirectlyLinkedResourcesCountQuery = ({
       });
     },
     {
-      enabled: !isEmpty(assetIds),
+      enabled: enabled && !isEmpty(assetIds),
     }
   );
 };

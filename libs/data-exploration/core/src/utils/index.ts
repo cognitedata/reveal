@@ -17,6 +17,7 @@ export * from './number';
 export * from './number';
 export * from './object';
 export * from './sleep';
+export * from './sort';
 export * from './store';
 export * from './string';
 export * from './string';

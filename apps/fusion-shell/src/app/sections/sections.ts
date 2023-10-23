@@ -385,9 +385,9 @@ export type QuickLinkApp =
     };
 
 export type QuickLinks = Record<
-  'suggestions' | 'integrate' | 'explore' | 'build' | 'popular' | 'recent',
+  'suggestions' | 'integrate' | 'explore' | 'build' | 'popular',
   QuickLinkApp[]
->;
+> & { recent: string[] };
 
 export const getQuickLinks = (flags: Record<string, boolean>) => {
   const quickLinks: QuickLinks = {

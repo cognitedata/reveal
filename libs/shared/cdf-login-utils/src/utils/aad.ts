@@ -1,5 +1,5 @@
 import { PublicClientApplication } from '@azure/msal-browser';
-import { noop } from 'lodash-es';
+import noop from 'lodash/noop';
 
 import { ADFS } from '@cognite/sdk-core';
 

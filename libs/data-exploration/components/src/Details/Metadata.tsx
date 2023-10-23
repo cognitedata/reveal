@@ -8,6 +8,7 @@ import {
   DASH,
   DATA_EXPLORATION_COMPONENT,
   isValidUrl,
+  sortAlphanumeric,
   useDebounceTrackUsage,
   useMetrics,
   useTranslation,
@@ -66,14 +67,10 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
             return <TooltipCell text={value} />;
           },
           sortingFn: (rowA, rowB, columnId) => {
-            const valueA = rowA.getValue(columnId);
-            const valueB = rowB.getValue(columnId);
+            const valueA = String(rowA.getValue(columnId));
+            const valueB = String(rowB.getValue(columnId));
 
-            if (!Number.isNaN(valueA) && !Number.isNaN(valueB)) {
-              return Number(valueA) - Number(valueB);
-            }
-
-            return String(valueA).localeCompare(String(valueB));
+            return sortAlphanumeric(valueA, valueB);
           },
         },
       ] as ColumnDef<DataSource>[],

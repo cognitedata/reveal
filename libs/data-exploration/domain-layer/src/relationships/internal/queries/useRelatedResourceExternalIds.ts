@@ -25,8 +25,8 @@ export const useRelatedResourceExternalIds = ({
   });
 
   const transformedData = useMemo(() => {
-    return transformToRelatedResourceExternalIds(data, resourceExternalId);
-  }, [data, resourceExternalId]);
+    return transformToRelatedResourceExternalIds(data);
+  }, [data]);
 
   return {
     data: transformedData,

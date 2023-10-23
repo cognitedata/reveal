@@ -155,6 +155,28 @@
       "options": {
         "command": "test-storybook -c apps/flexible-data-explorer/.storybook --url=http://localhost:4400"
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/flexible-data-explorer/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "flexible-data-explorer:serve",
+        "env": {
+          "ORG": "cog-dss",
+          "PROJECT": "dss-dev",
+          "CLUSTER": "greenfield.cognitedata.com"
+        }
+      },
+      "configurations": {
+        "development": {
+          "browser": "chrome",
+          "watch": true
+        },
+        "production": {
+          "devServerTarget": "flexible-data-explorer:serve:production"
+        }
+      }
     }
   },
   "namedInputs": {

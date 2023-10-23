@@ -22,12 +22,14 @@ export const generateAppliedRules = (
       if (!(key in appliedRules)) {
         appliedRules[key] = {
           numberOfMatches: 0,
+          averageScore: 0,
           matches: [],
           rule: rule,
         };
       }
 
       appliedRules[key].matches.push({
+        score: prediction.match.score,
         source: prediction.source,
         target: prediction.match.target,
       });
@@ -36,6 +38,11 @@ export const generateAppliedRules = (
 
   return Object.values(appliedRules).map((r) => {
     r.numberOfMatches = r.matches.length;
+    if (r.matches.length > 0) {
+      r.averageScore =
+        r.matches.reduce((sum, match) => sum + match.score, 0) /
+        r.matches.length;
+    }
     return r;
   });
 };

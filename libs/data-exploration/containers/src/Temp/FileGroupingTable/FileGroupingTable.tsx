@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { EmptyState } from '@data-exploration/components';
+import isEmpty from 'lodash/isEmpty';
+
 import { Document, DocumentTable } from '@cognite/react-document-table';
 import { FileInfo } from '@cognite/sdk';
 
@@ -11,6 +14,7 @@ type FileGroupingTableProps = {
   query?: string;
   filter?: InternalFilesFilters;
   currentView: string;
+  isLoading?: boolean;
   setCurrentView: (view: string) => void;
   onItemClicked?: (file: any) => void;
 };
@@ -32,6 +36,7 @@ const convertFilesToDocs = (files: FileInfo[] = []): Document[] => {
 export const FileGroupingTable = ({
   query,
   filter,
+  isLoading,
   onItemClicked,
 }: FileGroupingTableProps) => {
   const { items: files } = useResourceResults<FileInfo>(
@@ -40,7 +45,12 @@ export const FileGroupingTable = ({
     filter,
     1000
   );
+
   const docs: Document[] = convertFilesToDocs(files);
+
+  if (isEmpty(docs)) {
+    return <EmptyState isLoading={isLoading} />;
+  }
 
   return (
     <DocumentTable

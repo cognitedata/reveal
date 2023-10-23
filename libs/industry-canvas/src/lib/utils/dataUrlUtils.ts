@@ -12,7 +12,7 @@ export const isPastedImageContainer = (
 ): container is ImageContainerProps =>
   // Images pasted from the clipboard don't have metadata attached and are given as data uri's
   container.type === ContainerType.IMAGE &&
-  container.metadata === undefined &&
+  Object.keys(container.metadata).length === 0 &&
   isImageDataUrl(container.url);
 
 export const dataUrlToFile = async (

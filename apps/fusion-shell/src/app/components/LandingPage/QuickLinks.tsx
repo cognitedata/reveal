@@ -84,7 +84,7 @@ export default function QuickLinks(): JSX.Element {
       setDisplayQuickLinks((prevValue) => ({
         ...prevValue,
         recent: recentlyUsedApplications.reduce(
-          (acc: any[], app: CdfApplicationUsage) => {
+          (acc: string[], app: CdfApplicationUsage) => {
             const resourceApp = rawAppsData.find(
               (appItem) => app?.name === appItem?.linkTo // useApplications are saved as subAppPath in Navigation and quick links are saved with reference of app internalId in sections.ts
             );
@@ -110,9 +110,9 @@ export default function QuickLinks(): JSX.Element {
   const onMouseHoverLinkHandler = (isHover: boolean, linkKey: string) =>
     setActiveLink(isHover ? linkKey : undefined);
 
-  const findAppItem = (app?: QuickLinkApp): AppItem | undefined => {
-    if (!app) {
-      return undefined;
+  const findAppItem = (app: QuickLinkApp | string): AppItem | undefined => {
+    if (typeof app === 'string') {
+      return appsData.find((item) => app === item.internalId);
     }
     if (app.preview === false || app.visible) {
       return appsData.find((item) => app.id === item.internalId);

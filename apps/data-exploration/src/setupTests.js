@@ -17,9 +17,6 @@ jest.mock('mixpanel-browser', () => {
     },
   };
 });
-jest.mock('@data-exploration-app/utils/Metrics', () => ({
-  trackUsage: jest.fn(),
-}));
 
 jest.mock('@cognite/unified-file-viewer', () => {
   return {
@@ -36,9 +33,6 @@ jest.mock('@cognite/unified-file-viewer', () => {
   };
 });
 
-jest.mock('@cognite/cdf-utilities', () => ({
-  createLink: jest.fn(),
-}));
 jest.mock('@cognite/sdk-provider', () => {
   return {
     useSDK: jest.fn(),

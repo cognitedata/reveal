@@ -17,15 +17,13 @@ declare global {
     interface Chainable
       extends AppCommands,
         ButtonCommands,
+        CommonCommands,
         DatePickerCommands,
         FilterCommands,
         InterceptionCommands,
         SearchCommand,
         SearchConfigCommands,
-        TableCommands,
-        CommonCommands {
-      login(email: string, password: string): void;
-    }
+        TableCommands {}
   }
 }
 

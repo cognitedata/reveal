@@ -48,9 +48,11 @@ const CanvasVisibilityModal: React.FC<CanvasVisibilityModalProps> = ({
 
   const [selectedUsers, setSelectedUsers] = useState<UserProfile[]>([]);
 
-  const { invitationsByResource, isFetched } = useAuth2InvitationsByResource({
-    externalId: canvas?.externalId,
-  });
+  const { invitationsByResource = [], isFetched } =
+    useAuth2InvitationsByResource({
+      externalId: canvas?.externalId,
+      isEnabled: isCogniteIdP && canvas?.externalId !== undefined,
+    });
 
   const { mutate: revokeInvitation } = useAuth2RevokeInvitationsMutation({
     externalId: canvas?.externalId,

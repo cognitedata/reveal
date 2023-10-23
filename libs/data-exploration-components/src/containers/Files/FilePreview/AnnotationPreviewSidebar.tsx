@@ -386,9 +386,14 @@ const AnnotationPreviewSidebar = ({
                 type="ghost"
               />
               <Breadcrumb>
-                <Breadcrumb.Item>{capitalize(type)}</Breadcrumb.Item>
+                {type && (
+                  <Breadcrumb.Item>
+                    {t(type.toUpperCase(), capitalize(type))}
+                  </Breadcrumb.Item>
+                )}
                 <Breadcrumb.Item>
-                  {getExtendedAnnotationLabel(annotation) || 'N/A'}
+                  {getExtendedAnnotationLabel(annotation) ||
+                    t('NOT_AVAILABLE', 'N/A')}
                 </Breadcrumb.Item>
               </Breadcrumb>
             </BreadcrumbContainer>

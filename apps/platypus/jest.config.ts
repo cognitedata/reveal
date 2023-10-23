@@ -11,8 +11,9 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/platypus',
   setupFilesAfterEnv: ['./src/app/setupTests.ts'],
-  collectCoverage: true,
-  collectCoverageFrom: ['./src/app/**/*.{ts,tsx}'],
+  codeCoverage: true,
+  collectCoverageFrom: ['./src/app/**/*.{ts,tsx}', '!./src/app/CorsWorker.ts'],
+  silent: true,
   moduleNameMapper: {
     'd3(.*)': '<rootDir>/../../node_modules/d3$1/dist/d3$1.min.js',
   },

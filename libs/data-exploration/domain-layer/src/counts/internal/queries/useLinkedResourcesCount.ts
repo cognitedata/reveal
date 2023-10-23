@@ -11,17 +11,20 @@ export const useLinkedResourcesCount = ({
   resourceType,
   linkedResourceIds,
   isDocumentsApiEnabled,
+  enabled = true,
 }: {
   resource: BaseResourceProps;
   resourceType: ResourceType;
   linkedResourceIds?: IdEither[];
   isDocumentsApiEnabled: boolean;
+  enabled?: boolean;
 }) => {
   const { data: assetIds = [] } = useAssetIdsQuery({
     resourceType: convertToSdkResourceType(resource.type),
     resourceId:
       resourceType !== 'file' ? getResourceId(resource) : { id: resource?.id },
     isDocumentsApiEnabled,
+    enabled,
   });
 
   const { data = 0, isInitialLoading } = useLinkedResourcesCountQuery({
@@ -29,6 +32,7 @@ export const useLinkedResourcesCount = ({
     assetIds,
     linkedResourceIds,
     isDocumentsApiEnabled,
+    enabled,
   });
 
   return {

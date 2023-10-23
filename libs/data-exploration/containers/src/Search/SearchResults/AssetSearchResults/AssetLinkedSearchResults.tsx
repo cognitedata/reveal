@@ -37,11 +37,12 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
     };
   }, [filter, defaultFilter]);
 
-  const { data, hasNextPage, fetchNextPage } = useAssetsSearchResultQuery({
-    query: debouncedQuery,
-    assetFilter,
-    sortBy,
-  });
+  const { data, isLoading, hasNextPage, fetchNextPage } =
+    useAssetsSearchResultQuery({
+      query: debouncedQuery,
+      assetFilter,
+      sortBy,
+    });
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
@@ -59,6 +60,7 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
       sorting={sortBy}
       onSort={setSortBy}
       data={data}
+      isDataLoading={isLoading}
       hasNextPage={hasNextPage}
       fetchMore={fetchNextPage}
       tableSubHeaders={

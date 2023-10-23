@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Trans } from 'react-i18next';
 
+import * as Sentry from '@sentry/react';
+
 import { Flex, Body, Checkbox, Modal } from '@cognite/cogs.js';
 
 import { useTranslations } from '../../hooks/translations';
@@ -43,6 +45,8 @@ export const ScheduledCalculationDeleteModal = ({
         try {
           setIsDeleting(true);
           await onOk(deleteTimeseries);
+        } catch (error) {
+          Sentry.captureException(error);
         } finally {
           setIsDeleting(false);
         }

@@ -83,6 +83,15 @@ export default function UserHistory(props: UserHistoryProps) {
   const displayResources =
     userHistoryService.getCdfUserHistoryResources()[displayResourceType];
 
+  const filteredResourcesToDisplay = displayResources.filter((item) => {
+    return (
+      typeof item.application === 'string' &&
+      typeof item.name === 'string' &&
+      typeof item.path === 'string' &&
+      typeof item.timestamp === 'string'
+    );
+  });
+
   return (
     <UserHistoryWrapper
       justifyContent="flex-start"
@@ -124,7 +133,10 @@ export default function UserHistory(props: UserHistoryProps) {
         )}
       </Flex>
       {isResourcesLoading && <UserHistoryLoadingSkeleton />}
-      {!isResourcesLoading && getCdfUserHistoryResources && isResourcesEmpty ? (
+      {!isResourcesLoading &&
+      getCdfUserHistoryResources &&
+      isResourcesEmpty &&
+      filteredResourcesToDisplay.length === 0 ? (
         <UserHistoryEmptyState {...props} />
       ) : (
         <UserHistoryTable
@@ -139,7 +151,7 @@ export default function UserHistory(props: UserHistoryProps) {
             className="uh-row-container"
             $isExpand={isUserHistoryTableExpanded}
           >
-            {displayResources.map((item, index) => {
+            {filteredResourcesToDisplay.map((item, index) => {
               const resourceApp = rawAppsData.find((appItem) => {
                 let matches = `/${item?.application}` === appItem?.linkTo;
                 // This doesn't match the name and url, so we need a special condition.
@@ -176,7 +188,7 @@ export default function UserHistory(props: UserHistoryProps) {
                       <UserHistoryResourceIcon app={resourceApp} />
                       <Flex direction="column" alignItems="flex-start">
                         <Body level={2} className="uh-title">
-                          {item?.name}
+                          {item?.name ?? '-'}
                         </Body>
                         <Body level={3} muted className="uh-desc">
                           {t(

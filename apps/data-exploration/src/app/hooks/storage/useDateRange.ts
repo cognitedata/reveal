@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { TIME_SELECT } from '@data-exploration-components/containers';
+import { TIME_SELECT } from '@data-exploration-lib/core';
 
 import { TIMESERIES_TABLE_DATE_RANGE_KEY } from '../../utils/constants';
 import { getProject } from '../../utils/URLUtils';
