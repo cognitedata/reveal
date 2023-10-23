@@ -1595,7 +1595,6 @@ export enum WellKnownAsprsPointClassCodes {
     TransmissionTower = 15,
     // (undocumented)
     Unclassified = 1,
-    UserDefinableOffset = 64,
     // (undocumented)
     Water = 9,
     WireConductor = 14,
