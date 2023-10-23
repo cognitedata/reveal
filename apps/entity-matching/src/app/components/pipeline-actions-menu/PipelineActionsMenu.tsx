@@ -4,14 +4,13 @@ import { Menu, Modal, Divider } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import {
-  PipelineWithLatestRun,
+  Pipeline,
   useRunEMPipeline,
 } from '../../hooks/entity-matching-pipelines';
 import { getContainer } from '../../utils';
 
 type PipelineActionsMenuProps = {
-  pipeline: PipelineWithLatestRun;
-  latestRun?: PipelineWithLatestRun['latestRun'];
+  pipeline: Pipeline;
   dataTestId?: string;
   onDuplicatePipeline?: () => void;
   onDeletePipeline: () => void;
@@ -24,7 +23,7 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
 
   const onCancelDeletePipeline = () => setDeleteModalVisible(false);
 
-  const rerun = props.pipeline?.latestRun?.status;
+  const rerun = props.pipeline?.lastRun?.status;
   const running = rerun === 'Queued' || rerun === 'Running';
 
   const handleReRunPipeline = (id: number) => {
@@ -51,7 +50,7 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
   return (
     <>
       <Menu>
-        {props.latestRun && (
+        {props.pipeline.lastRun && (
           <>
             <Menu.Item
               icon="Play"
