@@ -78,10 +78,10 @@ Cypress.Commands.add('publishSchema', (version, confirmModal = true) => {
     //vscode blows up and throws errors everywhere in this file,
     //but also in the tests using these functions
     //using Cypress.env for now
-    if (Cypress.env('FDM_VERSION') === '3') {
-      cy.getBySel('publish-new-version-input').clear();
-      cy.getBySel('publish-new-version-input').click().type(version);
-    }
+    // if (Cypress.env('FDM_VERSION') === '3') {
+    cy.getBySel('publish-new-version-input').clear();
+    cy.getBySel('publish-new-version-input').click().type(version);
+    // }
   }
 
   if (confirmModal) {
