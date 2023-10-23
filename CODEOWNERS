@@ -67,7 +67,7 @@ apps/access-management            @cognitedata/authronauts
 apps/extraction-pipelines         @cognitedata/data-management
 apps/extractor-downloads          @cognitedata/data-management
 apps/flows                        @cognitedata/data-management
-apps/diagram-parsing              @cognitedata/matchmakers @cognitedata/Team Kali     
+apps/diagram-parsing              @cognitedata/matchmakers @cognitedata/team-kali     
 
 libs/shared/cdf-utilities         @cognitedata/cdf-user-experience
 
