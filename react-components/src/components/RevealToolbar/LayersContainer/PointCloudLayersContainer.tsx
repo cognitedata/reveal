@@ -31,17 +31,15 @@ export const PointCloudLayersContainer = ({
   const indeterminate = pointCloudLayerData.some((data) => !data.isToggled);
 
   const handlePointCloudVisibility = (model: CognitePointCloudModel): void => {
-    pointCloudLayerData.forEach((data) => {
-      if (data.model === model) {
-        data.isToggled = !data.isToggled;
-        model.visible = data.isToggled;
-      }
-      return data;
-    });
+    const affectedPointCloudData = pointCloudLayerData.find((data) => data.model === model);
+    if (affectedPointCloudData !== undefined) {
+      affectedPointCloudData.isToggled = !affectedPointCloudData.isToggled;
+      model.visible = affectedPointCloudData.isToggled;
+    }
     viewer.requestRedraw();
     layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
       ...prevResourcesStates,
-      pointCloudLayerData: pointCloudLayerData
+      pointCloudLayerData
     }));
 
     if (storeStateInUrl !== undefined) {
