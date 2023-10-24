@@ -288,7 +288,9 @@ export class FDMClientV2 extends BaseFDMClient {
       };
     });
 
-    const payload = query(constructPayload);
+    const payload = query(constructPayload, null, {
+      operationName: 'searchDataTypes',
+    });
 
     const result = await this.gqlRequest<Record<DataType, SearchResponse>>(
       payload
