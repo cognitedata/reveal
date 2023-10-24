@@ -21,6 +21,7 @@ export class CodeRepairFlow extends Flow<
         client_code: code,
         error_message: errorMessage,
         sdk,
+        model: 'gpt-4',
         message: '',
       });
 

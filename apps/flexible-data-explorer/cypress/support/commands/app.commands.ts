@@ -14,6 +14,7 @@ const navigateToApp = () => {
 const setupDataModelSelection = () => {
   cy.clearSelectedDataModels();
   cy.selectDataModel(PREFERRED_DATA_MODEL);
+  cy.confirmDataModelSelection();
 };
 
 const skipOnboardingGuide = () => {

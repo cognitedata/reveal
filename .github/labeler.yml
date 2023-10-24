@@ -43,6 +43,10 @@ interactive-diagrams:
   - apps/interactive-diagrams/*
   - apps/interactive-diagrams/**/*
 
+diagram-parsing:
+  - apps/diagram-parsing/*
+  - apps/diagram-parsing/**/*
+
 extraction-pipelines:
   - apps/extraction-pipelines/*
   - apps/extraction-pipelines/**/*

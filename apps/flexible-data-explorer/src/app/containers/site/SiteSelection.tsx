@@ -20,7 +20,7 @@ export const SiteSelection: React.FC<PropsWithChildren> = ({ children }) => {
       visible={value}
       onClickOutside={setFalse}
       content={
-        <Menu style={{ width: 288 }}>
+        <Menu style={{ width: 288 }} data-testid="site-selection-menu">
           <Menu.Section label="Sites">
             {config.sites.map((site) => (
               <Menu.Item
