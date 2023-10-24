@@ -129,7 +129,7 @@ const Home = React.forwardRef(
           data-testid="iframe-for-notebook"
           ref={myIframe}
           src={`${NOTEBOOK_ORIGIN}/lab/index.html?nocache=${Date.now()}${
-            isEnabled ? '' : '&aiDisabled'
+            isEnabled ? '' : '&aiDisabled=true'
           }}`}
         ></IFrame>
         <Modal
