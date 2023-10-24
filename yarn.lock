@@ -2376,19 +2376,19 @@
     use-event-callback "^0.1.0"
     use-key-hook "^1.3.0"
 
-"@cognite/reveal-react-components@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.17.0.tgz#09d019f76994535d5d01909afdd017d2bcee9a4c"
-  integrity sha512-PJ1/mHl+Btr6qwUkQKb+0XC9w4Qk5O8gGkBT5SRCudEjE/R5xm6evMxBfgrvwF44ooj0yLuyCkJfDvthCI10zg==
+"@cognite/reveal-react-components@0.18.0":
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.18.0.tgz#d6a038b5ed3b38d66cc55fa5b75c894e6aac17aa"
+  integrity sha512-FKFzxCyahSI8Bhr8XDY1qZsbRVVqcUg60xef9VK70DWqkwqP6gk6Jvuzx/nkNJ920YQ9yplY2ikigYmq0aCJKg==
   dependencies:
     "@tanstack/react-query" "^4.29.19"
     assert "^2.0.0"
     lodash "^4.17.21"
 
-"@cognite/reveal@4.4.3":
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.4.3.tgz#f1a60a7f8c7dd21b8413f254870a9bd1d7682454"
-  integrity sha512-qn20c7fzt75tYkYC7abuZgo7d2Qf1WMXpXJ6I5Bzk4g7q+Nl6yLEwLD8wjch8W/qbav4O0im5UNR7qapMbmNtg==
+"@cognite/reveal@4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.5.0.tgz#c0a759f8645948468cbcda288325c4e58ce74cc1"
+  integrity sha512-9di6ZLc4VN4iZNS1/0DN8Ai79iLceVt0U/P/48YVXzFxChSpOPNdsyMqqnFKuSTDf0qSEOAGOX3ZYH/IIW8Hfw==
   dependencies:
     "@tweenjs/tween.js" "19.0.0"
     assert "2.1.0"
@@ -2403,7 +2403,6 @@
     random-seed "0.3.0"
     rxjs "7.8.1"
     skmeans "0.11.3"
-    sparse-octree "7.1.8"
 
 "@cognite/reveal@^4.4.2":
   version "4.4.2"
@@ -10927,7 +10926,7 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/jest@*":
+"@types/jest@*", "@types/jest@^29.5.5":
   version "29.5.5"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.5.5.tgz#727204e06228fe24373df9bae76b90f3e8236a2a"
   integrity sha512-ebylz2hnsWR9mYvmBFbXJXr+33UPc4+ZdxyDXh5w0FlPBTfCVN3wPL+kuOiQt3xvrK419v7XWeAs+AeOksafXg==
@@ -10958,14 +10957,6 @@
   dependencies:
     jest-diff "^26.0.0"
     pretty-format "^26.0.0"
-
-"@types/jest@^29.5.5":
-  version "29.5.5"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-29.5.5.tgz#727204e06228fe24373df9bae76b90f3e8236a2a"
-  integrity sha512-ebylz2hnsWR9mYvmBFbXJXr+33UPc4+ZdxyDXh5w0FlPBTfCVN3wPL+kuOiQt3xvrK419v7XWeAs+AeOksafXg==
-  dependencies:
-    expect "^29.0.0"
-    pretty-format "^29.0.0"
 
 "@types/js-beautify@^1.14.1":
   version "1.14.1"
