@@ -84,6 +84,7 @@ export const FileGroupingTable = ({
         docs={docs}
         docTypes={docTypes}
         handleDocumentClick={onItemClicked}
+        unknownCategoryName="Unknown"
       />
 
       <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
