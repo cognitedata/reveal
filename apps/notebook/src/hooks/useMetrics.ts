@@ -66,7 +66,9 @@ export const trackUsage = <T extends keyof TrackingEvent>(
       mixpanelEventKey = 'NotebookCopilot';
       break;
     default:
-      throw new Error(`Unknown event type: ${eventData.event}`);
+      console.warn(
+        `notebook::useMetrics: Unknown event type: ${eventData.event}`
+      );
   }
   return _mixpanel.cdf_jupyterlite.track(
     `${mixpanelEventKey}.${eventData.data.eventName}`,
