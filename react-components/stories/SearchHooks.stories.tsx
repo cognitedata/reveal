@@ -8,7 +8,9 @@ import {
   RevealToolbar,
   type AddResourceOptions,
   type AddReveal3DModelOptions,
-  type AddImageCollection360Options
+  type AddImageCollection360Options,
+  useSearchReveal360ImageAnnotationAssets,
+  useReveal
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useMemo, useEffect } from 'react';
@@ -31,6 +33,7 @@ import {
 import { isEqual } from 'lodash';
 import { type NodeItem } from '../src/utilities/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
+import { type Asset } from '@cognite/sdk';
 
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
@@ -47,8 +50,11 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [tempSearchQuery, setTempSearchQuery] = useState<string>('');
   const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
   const [searchMethod, setSearchMethod] = useState<
-    'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
+    'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch' | 'reveal360Assets'
   >('allAssets');
+  const [revealAnnotationAssets, setRevealAnnotationAssets] = useState<Asset[]>([]);
+
+  const reveal = useReveal();
 
   const filteredResources = resources.filter(
     (resource): resource is AddReveal3DModelOptions => 'modelId' in resource
@@ -92,6 +98,14 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   );
 
   const { data: allAnnotationAssets } = useAllAssetsMapped360Annotations(sdk, siteIds);
+
+  useEffect(() => {
+    if (reveal === undefined) return;
+    console.log('Reveal is defined', reveal);
+    const { data: allAnnotationAssets } = useSearchReveal360ImageAnnotationAssets(mainSearchQuery);
+    if (allAnnotationAssets === undefined) return;
+    setRevealAnnotationAssets(allAnnotationAssets.map((annotationAsset) => annotationAsset.asset));
+  }, [reveal, mainSearchQuery]);
 
   useEffect(() => {
     if (searchMethod !== 'allAssets') return;
@@ -192,6 +206,24 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         .flat();
 
       return searchedEquipment;
+    } else if (searchMethod === 'reveal360Assets') {
+      if (revealAnnotationAssets === undefined) {
+        return [];
+      }
+
+      const searchedEquipment: Equipment[] = revealAnnotationAssets.map((revealAnnotationAsset) => {
+        return {
+          view: 'Asset',
+          externalId: revealAnnotationAsset.asset.id + '',
+          space: 'Whole project',
+          properties: {
+            name: revealAnnotationAsset.asset.name,
+            description: revealAnnotationAsset.asset.description
+          }
+        };
+      });
+
+      return searchedEquipment;
     } else {
       return [];
     }
@@ -203,6 +235,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     allAnnotationAssets,
     assetSearchData,
     annotationAssetSearchData,
+    revealAnnotationAssets,
     searchMethod
   ]);
 
