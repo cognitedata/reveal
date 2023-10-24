@@ -1824,7 +1824,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": ^0.7.5
     "@cognite/cdf-utilities": ^3.5.0
     "@cognite/cogs.js": ^9.17.0
-    "@cognite/reveal": 4.5.0
+    "@cognite/reveal": 4.5.1
     "@cognite/sdk": ^8.2.0
     "@storybook/addon-essentials": 7.4.3
     "@storybook/addon-interactions": 7.4.3
@@ -1875,16 +1875,16 @@ __metadata:
     vitest: ^0.34.6
   peerDependencies:
     "@cognite/cogs.js": ">=9"
-    "@cognite/reveal": 4.5.0
+    "@cognite/reveal": ^4.5.0
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:4.5.0":
-  version: 4.5.0
-  resolution: "@cognite/reveal@npm:4.5.0"
+"@cognite/reveal@npm:4.5.1":
+  version: 4.5.1
+  resolution: "@cognite/reveal@npm:4.5.1"
   dependencies:
     "@tweenjs/tween.js": 19.0.0
     assert: 2.1.0
@@ -1899,10 +1899,11 @@ __metadata:
     random-seed: 0.3.0
     rxjs: 7.8.1
     skmeans: 0.11.3
+    sparse-octree: 7.1.8
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.155.0
-  checksum: 26d7a03c897efe87c0f67df9599a43243fa0dbc53e2701b5e48cc86db83a3b5498ce6787e13a66c8b59589086050bd50e0ecd43b327d1bc37c1641bcc9ce64c1
+  checksum: a9611fc366c89fda61c560ad67326b3633ccd757817fa19040f739d42c6eefc38e0b43528941c18b56ac0c81ad5bb0d6ede82304962d0510028f782e27d0c3ad
   languageName: node
   linkType: hard
 
@@ -14920,6 +14921,15 @@ __metadata:
   version: 1.1.5
   resolution: "space-separated-tokens@npm:1.1.5"
   checksum: 8ef68f1cfa8ccad316b7f8d0df0919d0f1f6d32101e8faeee34ea3a923ce8509c1ad562f57388585ee4951e92d27afa211ed0a077d3d5995b5ba9180331be708
+  languageName: node
+  linkType: hard
+
+"sparse-octree@npm:7.1.8":
+  version: 7.1.8
+  resolution: "sparse-octree@npm:7.1.8"
+  peerDependencies:
+    three: 0.x.x
+  checksum: 07074c703cd9cee9e3c1becc0b125356ffcea72713d47c4229b1ba3cd56ffbf68223c4a75586a0c6923a56e322b6383dd37b37e58c83471d2632e111a60c0a71
   languageName: node
   linkType: hard
 
