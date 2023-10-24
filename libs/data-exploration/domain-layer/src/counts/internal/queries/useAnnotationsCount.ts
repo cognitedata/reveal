@@ -8,8 +8,9 @@ import {
   useAnnotatedFileIdsOfAsset,
   useFileAnnotationsResourceIds,
 } from '../../../annotations';
+import { useValidResourcesCountQuery } from '../../service';
 import { BaseResourceProps } from '../types';
-import { getResourceId } from '../utils';
+import { convertToSdkResourceType, getResourceId } from '../utils';
 
 import { useLinkedResourcesCount } from './useLinkedResourcesCount';
 
@@ -36,24 +37,24 @@ export const useAnnotationsCount = ({
     resource.type === 'file'
   );
 
-  const { data, isLoading } = useMemo(() => {
+  const { data, isDataLoading } = useMemo(() => {
     if (resource.type === 'asset' && resourceType === 'file') {
       return {
         data: annotatedFileIdsOfAsset.data,
-        isLoading: annotatedFileIdsOfAsset.isInitialLoading,
+        isDataLoading: annotatedFileIdsOfAsset.isInitialLoading,
       };
     }
 
     if (resource.type === 'file') {
       return {
         data: fileAnnotationsResourceIds.data[resourceType],
-        isLoading: fileAnnotationsResourceIds.isInitialLoading,
+        isDataLoading: fileAnnotationsResourceIds.isInitialLoading,
       };
     }
 
     return {
       data: [],
-      isLoading: false,
+      isDataLoading: false,
     };
   }, [
     annotatedFileIdsOfAsset.data,
@@ -64,23 +65,36 @@ export const useAnnotationsCount = ({
     resourceType,
   ]);
 
+  const annotationsResourceIds = useMemo(() => {
+    return data.map((id) => ({ id }));
+  }, [data]);
+
+  const validCount = useValidResourcesCountQuery({
+    resourceType: convertToSdkResourceType(resourceType),
+    resourceIds: annotationsResourceIds,
+    isDocumentsApiEnabled,
+  });
+
   const linkedResources = useLinkedResourcesCount({
     resource,
     resourceType,
     isDocumentsApiEnabled,
-    linkedResourceIds: data.map((id) => ({ id })),
-    enabled: !isEmpty(data) && ignoreLinkedResources,
+    linkedResourceIds: annotationsResourceIds,
+    enabled: !isEmpty(annotationsResourceIds) && ignoreLinkedResources,
   });
 
-  if (!isEmpty(data) && ignoreLinkedResources) {
+  const count = validCount.data || 0;
+  const isLoading = isDataLoading || validCount.isInitialLoading;
+
+  if (!isEmpty(annotationsResourceIds) && ignoreLinkedResources) {
     return {
-      data: data.length - linkedResources.data,
+      data: count - linkedResources.data,
       isLoading: isLoading || linkedResources.isLoading,
     };
   }
 
   return {
-    data: data.length,
+    data: count,
     isLoading,
   };
 };
