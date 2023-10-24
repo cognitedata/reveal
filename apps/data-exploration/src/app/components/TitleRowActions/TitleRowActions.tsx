@@ -2,11 +2,13 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import { CanvasButton } from '@fusion/industry-canvas';
+
 import { ResourceItem } from '@data-exploration-lib/core';
 
+import { useFlagIndustryCanvas } from '../../hooks/flags/useFlagIndustryCanvas';
 import { DateFilter } from '../ResourceTitleRow';
 
-import CanvasButton from './CanvasButton';
 import DownloadButton from './DownloadButton';
 import { FullscreenButton } from './FullscreenButton';
 import { PreviewCloseButton } from './PreviewCloseButton';
@@ -27,6 +29,7 @@ export const TitleRowActions = ({
   hideDefaultCloseActions,
 }: TitleRowActionsProps) => {
   const activeId = item.id;
+  const isIndustryCanvasEnabled = useFlagIndustryCanvas();
 
   if (item.type === 'threeD') {
     return <StyledSpace>{afterDefaultActions}</StyledSpace>;
@@ -36,7 +39,7 @@ export const TitleRowActions = ({
     <StyledSpace>
       {beforeDefaultActions}
       <DownloadButton item={item} dateFilter={dateFilter} />
-      <CanvasButton item={item} />
+      {isIndustryCanvasEnabled && <CanvasButton item={item} />}
       {afterDefaultActions}
       {!hideDefaultCloseActions && activeId && (
         <>

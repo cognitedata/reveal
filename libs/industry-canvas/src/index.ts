@@ -11,6 +11,8 @@ export * from './lib/services/IndustryCanvasService';
 
 export * from './lib/services/comments/CommentService';
 
+export { default as CanvasButton } from './lib/components/CanvasButton';
+
 export { IndustryCanvasProvider } from './lib/IndustryCanvasContext';
 export * from './lib/UserProfileProvider';
 export { SpaceProvider } from './lib/SpaceProvider';
