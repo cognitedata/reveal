@@ -60,6 +60,16 @@
     "routes": [{ "route": "/:tenantName/interactive-diagrams" }]
   },
   {
+    "key": "cdf-diagram-parsing",
+    "appName": "@cognite/cdf-diagram-parsing",
+    "hosting": {
+      "staging": "https://cdf-diagram-parsing-staging.web.app",
+      "preview": "https://cdf-diagram-parsing-staging.web.app",
+      "production": "https://cdf-diagram-parsing-prod.cogniteapp.com"
+    },
+    "routes": [{ "route": "/:tenantName/diagram-parsing" }]
+  },
+  {
     "key": "cdf-contextualization-ui",
     "appName": "@cognite/cdf-contextualization-ui",
     "hosting": {
