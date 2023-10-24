@@ -57,8 +57,8 @@
       ],
       "@data-catalog-app/*": ["apps/data-catalog/src/app/*"],
       "@data-exploration-app/*": ["apps/data-exploration/src/app/*"],
-      "@data-exploration-components/*": [
-        "libs/data-exploration-components/src/*"
+      "@data-exploration-components": [
+        "libs/data-exploration-components/src/index.ts"
       ],
       "@data-exploration-lib/core": ["libs/data-exploration/core/src/index.ts"],
       "@data-exploration-lib/domain-layer": [

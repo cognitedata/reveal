@@ -14,7 +14,6 @@ import {
   getSelectedResourceId,
 } from '@data-exploration-lib/core';
 
-import { useResourceEditable } from '../../context/ResourceSelectionContext';
 import {
   useGetJourney,
   useJourneyLength,
@@ -40,7 +39,6 @@ export const FileSearchResultView = () => {
   const [journeyLength] = useJourneyLength();
   const [, setPromptOpen] = useBreakJourneyPromptState();
   const [debouncedQuery] = useDebounce(query, 100);
-  const editable = useResourceEditable();
 
   // Here we need to parse params to find selected file's id.
   const selectedFileId = getSelectedResourceId('file', firstJourney);
@@ -74,7 +72,7 @@ export const FileSearchResultView = () => {
             showCount
             selectedRow={selectedRow}
             filter={fileFilter}
-            allowEdit={editable} // ??
+            allowEdit={true} // ??
             onClick={handleRowClick}
             onDirectAssetClick={handleParentAssetClick}
             onFilterChange={(newValue: Record<string, unknown>) =>
@@ -84,7 +82,6 @@ export const FileSearchResultView = () => {
           />
         ) : (
           <DocumentSearchResults
-            enableAdvancedFilters={isDocumentsApiEnabled}
             isDocumentsGPTEnabled={isDocumentsGPTEnabled}
             query={query}
             selectedRow={selectedRow}

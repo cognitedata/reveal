@@ -4,11 +4,12 @@ import Highlighter from 'react-highlight-words';
 
 import styled from 'styled-components';
 
-import { TimeseriesChart } from '@data-exploration-components/containers';
 import dayjs from 'dayjs';
 
 import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
+
+import { TimeseriesChart } from '@data-exploration-components';
 
 import { useTranslations } from '../../hooks/translations';
 import { removeIllegalCharacters } from '../../utils/text';

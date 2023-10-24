@@ -1,11 +1,7 @@
-import React from 'react';
-
 import styled from 'styled-components';
 
-import { OptionValue } from '@data-exploration-components/components/SearchNew/Filters/types';
-
 import { Body } from '@cognite/cogs.js';
-import { AssetSelect } from '@cognite/data-exploration';
+import { AssetSelect, OptionValue } from '@cognite/data-exploration';
 
 export const AssetSelector = (props: {
   assets: number[] | undefined;

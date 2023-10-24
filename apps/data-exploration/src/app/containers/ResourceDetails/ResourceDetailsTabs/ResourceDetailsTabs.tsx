@@ -84,7 +84,7 @@ export const ResourceDetailsTabs = ({
     counts: oldCounts,
     hasMoreRelationships,
     isLoading: isOldCountsLoading,
-  } = useRelatedResourceCounts(parentResource, isDocumentsApiEnabled);
+  } = useRelatedResourceCounts(parentResource);
 
   const { data: newCounts, isLoading: isNewCountsLoading } =
     useTotalRelatedResourcesCounts({

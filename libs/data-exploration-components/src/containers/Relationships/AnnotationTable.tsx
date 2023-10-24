@@ -15,12 +15,7 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { useUniqueCdfItems } from '../../hooks';
-import {
-  convertResourceType,
-  ResourceItem,
-  ResourceType,
-  SelectableItemsProps,
-} from '../../types';
+import { convertResourceType, ResourceItem, ResourceType } from '../../types';
 
 type Props = {
   parentResource: ResourceItem;
@@ -33,7 +28,7 @@ export function AnnotationTable({
   type,
   onItemClicked,
   onParentAssetClick,
-}: Props & SelectableItemsProps) {
+}: Props) {
   const { t } = useTranslation();
 
   const {

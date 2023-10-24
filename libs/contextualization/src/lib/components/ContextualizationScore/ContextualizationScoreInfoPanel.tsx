@@ -2,10 +2,11 @@ import { useState, useRef } from 'react';
 
 import styled from 'styled-components';
 
-import { SyntaxHelperWrapper } from '@data-exploration-components/components/SearchQueryInfoPanel/elements';
 import { Content } from 'antd/lib/layout/layout';
 
 import { SegmentedControl } from '@cognite/cogs.js';
+
+import { SyntaxHelperWrapper } from '@data-exploration-components';
 
 import { JobStatus } from '../../types';
 import { ADVANCED_JOINS_INFO_TABS } from '../constants';

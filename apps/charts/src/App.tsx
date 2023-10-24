@@ -20,7 +20,6 @@ import {
 //eslint-disable-next-line import/order
 import Routes from './app/pages/Routes';
 
-import { DataExplorationProvider } from '@data-exploration-components/context/DataExplorationContext';
 import * as Sentry from '@sentry/react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { UserHistoryProvider } from '@user-history';
@@ -30,6 +29,8 @@ import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { getCluster, getProject } from '@cognite/cdf-utilities';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
+
+import { DataExplorationProvider } from '@data-exploration-components';
 
 import config from './app/config/config';
 import { useUserInfo } from './app/hooks/useUserInfo';

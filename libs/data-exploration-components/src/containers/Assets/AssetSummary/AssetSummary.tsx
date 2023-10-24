@@ -37,7 +37,6 @@ export const AssetSummary = ({
   filter = {},
   onAllResultsClick,
   onRowClick = noop,
-  isAdvancedFiltersEnabled = false,
   showAllResultsWithEmptyFilters = false,
   selectedResourceExternalId: resourceExternalId,
   annotationIds = [],
@@ -48,7 +47,6 @@ export const AssetSummary = ({
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
-  isAdvancedFiltersEnabled?: boolean;
   showAllResultsWithEmptyFilters?: boolean;
   selectedResourceExternalId?: string;
   annotationIds?: number[];
@@ -141,9 +139,7 @@ export const AssetSummary = ({
         }
         enableColumnResizing={false}
         onRowClick={onRowClick}
-        renderCellSubComponent={
-          isAdvancedFiltersEnabled ? SubCellMatchingLabels : undefined
-        }
+        renderCellSubComponent={SubCellMatchingLabels}
         onChangeSearchInput={setMetadataKeyQuery}
       />
     </SummaryCardWrapper>

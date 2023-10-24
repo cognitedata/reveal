@@ -16,7 +16,8 @@ import {
   Flex,
 } from '@cognite/cogs.js';
 
-import { TIME_SELECT } from '../../containers';
+import { TIME_SELECT } from '@data-exploration-lib/core';
+
 import { Divider } from '../Common';
 
 import {

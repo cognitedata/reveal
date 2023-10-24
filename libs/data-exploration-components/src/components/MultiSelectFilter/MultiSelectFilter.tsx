@@ -4,8 +4,8 @@ import { OptionType } from '@cognite/cogs.js';
 
 import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
 
-import { OptionValue } from '../SearchNew/Filters/types';
 import { MultiSelect, MultiSelectProps } from '../Select/MultiSelect';
+import { OptionValue } from '../types';
 
 import { FilterTitle } from './elements';
 import { formatValue, isNilOption } from './utils';

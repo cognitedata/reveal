@@ -7,7 +7,6 @@ export const AppContextProvider = ({
   flow,
   overrideURLMap,
   userInfo,
-  isAdvancedFiltersEnabled,
   trackUsage,
   isDocumentsApiEnabled,
 }: AppContextProps & { children: any }) => {
@@ -17,7 +16,6 @@ export const AppContextProvider = ({
         flow,
         overrideURLMap,
         userInfo,
-        isAdvancedFiltersEnabled,
         trackUsage,
         isDocumentsApiEnabled,
       }}

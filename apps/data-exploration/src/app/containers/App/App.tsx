@@ -14,12 +14,7 @@ import {
 import { useSDK } from '@cognite/sdk-provider';
 
 import { ids } from '../../../cogs-variables';
-import { ResourceActionsProvider } from '../../context/ResourceActionsContext';
-import { ResourceSelectionProvider } from '../../context/ResourceSelectionContext';
-import {
-  useFlagAdvancedFilters,
-  useFlagDocumentsApiEnabled,
-} from '../../hooks';
+import { useFlagDocumentsApiEnabled } from '../../hooks';
 import { useUserInformation } from '../../hooks/hooks';
 import { trackUsage } from '../../utils/Metrics';
 
@@ -36,7 +31,6 @@ export default function App({ useInShell = false }: { useInShell?: boolean }) {
   const sdk = useSDK();
   const { flow } = getFlow();
   const { data: userInfo, isFetched } = useUserInformation();
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
 
   const project = getProject();
@@ -51,31 +45,26 @@ export default function App({ useInShell = false }: { useInShell?: boolean }) {
     <Suspense fallback={<Spinner />}>
       <UserHistoryProvider cluster={cluster} project={project} userId={userId}>
         <FileContextualizationContextProvider>
-          <ResourceSelectionProvider allowEdit mode="none">
-            <ResourceActionsProvider>
-              <DataExplorationProvider
-                flow={flow as Flow}
-                sdk={sdk}
-                userInfo={userInfo}
-                styleScopeId={ids.styleScope}
-                overrideURLMap={{
-                  pdfjsWorkerSrc:
-                    '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
-                }}
-                trackUsage={trackUsage}
-                isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
-                isDocumentsApiEnabled={isDocumentsApiEnabled}
-              >
-                {useInShell ? (
-                  <Exploration />
-                ) : (
-                  <Routes>
-                    <Route path="/explore/*" element={<Exploration />} />
-                  </Routes>
-                )}
-              </DataExplorationProvider>
-            </ResourceActionsProvider>
-          </ResourceSelectionProvider>
+          <DataExplorationProvider
+            flow={flow as Flow}
+            sdk={sdk}
+            userInfo={userInfo}
+            styleScopeId={ids.styleScope}
+            overrideURLMap={{
+              pdfjsWorkerSrc:
+                '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+            }}
+            trackUsage={trackUsage}
+            isDocumentsApiEnabled={isDocumentsApiEnabled}
+          >
+            {useInShell ? (
+              <Exploration />
+            ) : (
+              <Routes>
+                <Route path="/explore/*" element={<Exploration />} />
+              </Routes>
+            )}
+          </DataExplorationProvider>
         </FileContextualizationContextProvider>
       </UserHistoryProvider>
     </Suspense>

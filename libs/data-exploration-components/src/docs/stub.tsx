@@ -4,12 +4,6 @@ import { AssetListScope, IdEither } from '@cognite/sdk';
 
 import { documents, sequences } from '@data-exploration-lib/core';
 
-import {
-  ResourcePreviewObserver,
-  ResourcePreviewProps,
-  OpenSelectorProps,
-  ResourceSelector,
-} from '../context';
 import { assets, rootAssets } from '../stubs/assets';
 import { datasets } from '../stubs/datasets';
 import { events } from '../stubs/events';
@@ -20,16 +14,6 @@ import { timeseries } from '../stubs/timeseries';
 import { datapoints } from '../stubs/timeseriesDatapoints';
 
 const UNSPLASH_URL = 'https://unsplash.it/300/400';
-
-export const ResourcePreviewContextFunctions = (_: ResourcePreviewObserver) =>
-  null;
-export const ResourcePreviewPropsFunctions = (_: ResourcePreviewProps) => null;
-
-export const ResourceSelectorContextFunctions = (_: ResourceSelector) => null;
-
-export const ResourceSelectorPropsFunctions: React.FC<OpenSelectorProps> = (
-  _: OpenSelectorProps
-) => null;
 
 export const sdkMock = {
   project: 'cog-dss',

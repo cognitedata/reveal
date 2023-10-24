@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import decodeJwt, { JwtPayload } from 'jwt-decode';
 
-import sdk, { getUserInformation, getToken } from '@cognite/cdf-sdk-singleton';
+import sdk, { getToken, getUserInformation } from '@cognite/cdf-sdk-singleton';
 
 const COG_IDP_ISS = 'https://auth.cognite.com';
 

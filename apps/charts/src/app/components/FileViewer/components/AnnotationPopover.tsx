@@ -1,4 +1,3 @@
-import { TimeseriesChart } from '@data-exploration-components/containers';
 import dayjs from 'dayjs';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components/macro';
@@ -12,6 +11,8 @@ import {
   Heading,
   Colors,
 } from '@cognite/cogs.js';
+
+import { TimeseriesChart } from '@data-exploration-components';
 
 import {
   useAsset,

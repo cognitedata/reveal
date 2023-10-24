@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -26,7 +26,6 @@ import { useFileAnnotationsResourceIds } from '@data-exploration-lib/domain-laye
 
 import { BreadcrumbsV2 } from '../../components/Breadcrumbs/BreadcrumbsV2';
 import ResourceTitleRow from '../../components/ResourceTitleRow';
-import ResourceSelectionContext from '../../context/ResourceSelectionContext';
 import {
   useEndJourney,
   usePushJourney,
@@ -54,15 +53,10 @@ export const FileDetail = ({
   actions?: React.ReactNode;
 }) => {
   const [editMode, setEditMode] = useState<boolean>(false);
-  const { resourcesState, setResourcesState } = useContext(
-    ResourceSelectionContext
-  );
+
   const { t } = useTranslation();
   const [pushJourney] = usePushJourney();
-  const isActive = resourcesState.some(
-    // eslint-disable-next-line lodash/prefer-matches
-    (el) => el.state === 'active' && el.id === fileId && el.type === 'file'
-  );
+
   const { flow } = getFlow();
   const { data: filesAcl } = usePermissions(flow as any, 'filesAcl', 'WRITE');
   const { data: annotationsAcl } = usePermissions(
@@ -90,16 +84,6 @@ export const FileDetail = ({
   const handleTabChange = (newTab: string) => {
     setSelectedTab(newTab);
   };
-
-  useEffect(() => {
-    if (fileId && !isActive) {
-      setResourcesState(
-        resourcesState
-          .filter((el) => el.state !== 'active')
-          .concat([{ id: fileId, type: 'file', state: 'active' }])
-      );
-    }
-  }, [isActive, resourcesState, fileId, setResourcesState]);
 
   const { data: annotationList } = useFileAnnotationsResourceIds({
     id: fileId,

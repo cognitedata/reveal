@@ -192,7 +192,7 @@
         }
       },
       "defaultConfiguration": "fusion",
-      "dependsOn": ["build-worker"]
+      "dependsOn": ["^build", "build-worker"]
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
