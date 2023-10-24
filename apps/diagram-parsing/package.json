@@ -1,0 +1,24 @@
+{
+  "name": "@cognite/cdf-diagram-parsing",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev diagram-parsing",
+    "build": "../../scripts/build.sh production diagram-parsing",
+    "test": "../../scripts/test.sh diagram-parsing",
+    "lint": "../../scripts/lint.sh diagram-parsing",
+    "lint:fix": "../../scripts/lint.sh --fix diagram-parsing"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {}
+}

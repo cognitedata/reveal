@@ -83,6 +83,14 @@ export const useExperimentalFeatures = () => {
     forceRerender: true,
   });
 
+  const { isEnabled: isDiagramParsingEnabled } = useFlag(
+    'FUSION_DIAGRAM_PARSING',
+    {
+      fallback: false,
+      forceRerender: true,
+    }
+  );
+
   // // Re-enable this if you need to hide Charts behind a feature flag.
   // const { isEnabled: isChartsUIEnabled } = useFlag('CHARTS_UI', {
   //   fallback: false,
@@ -135,6 +143,7 @@ export const useExperimentalFeatures = () => {
     'coding-conventions': isCodingConventionsEnabled,
     'industry-canvas': isIndustryCanvasEnabled,
     infield: !isInfieldDisabled,
+    'diagram-parsing': isDiagramParsingEnabled,
     // // Re-enable this if you need to hide Charts behind a feature flag.
     // charts: isChartsUIEnabled,
   };

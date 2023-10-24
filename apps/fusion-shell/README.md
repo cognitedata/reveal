@@ -99,6 +99,7 @@ Deployments is done through Spinnaker. Jenkins will build a dockerimage containi
 - [cdf-ui-extraction-pipelines](https://github.com/cognitedata/cdf-ui-extraction-pipelines)
 - [cdf-ui-entity-matching](/apps/extraction-pipelines)
 - [cdf-ui-interactive-diagrams](/apps/interactive-diagrams)
+- [cdf-diagram-parsing](/apps/diagram-parsing)
 - [cdf-ui-vision](/apps/vision)
 - [cdf-ui-document-search](/apps/cdf-document-search)
 - [cdf-ui-data-exploration](/apps/data-exploration)
