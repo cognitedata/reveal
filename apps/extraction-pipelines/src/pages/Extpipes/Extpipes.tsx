@@ -252,7 +252,9 @@ export default function CombinedComponent() {
   return (
     <StyledPageContainer>
       <PageWrapperColumn>
-        <Heading level={3}>{t('extraction-pipeline', { count: 0 })}</Heading>
+        <Heading level={3} data-testid="extraction-pipelines-page-title">
+          {t('extraction-pipeline', { count: 0 })}
+        </Heading>
         <Flex>
           {!hasExtractionPipelinesCapability || !hasExtractionRunsCapability ? (
             <ErrorComponent
