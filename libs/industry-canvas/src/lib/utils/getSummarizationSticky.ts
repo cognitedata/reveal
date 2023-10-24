@@ -5,6 +5,8 @@ import {
 } from '@cognite/unified-file-viewer';
 
 import { STICKY_ANNOTATION_COLOR_MAP } from '../colors';
+import { translationKeys } from '../common';
+import { TFunctionType } from '../hooks/useTranslation';
 import { SHARED_STICKY_TOOL_OPTIONS } from '../state/useIndustrialCanvasStore';
 import { IndustryCanvasContainerConfig } from '../types';
 
@@ -13,12 +15,15 @@ const STICKY_SIZE = 300;
 const getContainerSummarizationSticky = (
   containerConfig: IndustryCanvasContainerConfig,
   summary: string,
-  isMultiPageDocument: boolean
+  isMultiPageDocument: boolean,
+  translateFn: TFunctionType
 ): Annotation => {
   const offset = (2 * STICKY_SIZE) / 3;
   const pageLabel =
     containerConfig.type === ContainerType.DOCUMENT && isMultiPageDocument
-      ? ` of page ${containerConfig.page ?? 1}`
+      ? translateFn(translationKeys.SUMMARIZATION_STICKY_OF_PAGE, {
+          pageNumber: containerConfig.page,
+        })
       : '';
   return {
     id: `${containerConfig.id}-summarization-sticky`,
@@ -38,7 +43,10 @@ const getContainerSummarizationSticky = (
       borderWidth: SHARED_STICKY_TOOL_OPTIONS.borderWidth,
       borderRadius: SHARED_STICKY_TOOL_OPTIONS.borderRadius,
     },
-    text: `Summary${pageLabel}: ${summary}`,
+    text: `${translateFn(
+      translationKeys.SUMMARIZATION_STICKY_SUMMARY,
+      'Summary'
+    )}${pageLabel}: ${summary}`,
   };
 };
 

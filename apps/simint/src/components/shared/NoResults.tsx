@@ -31,9 +31,10 @@ export const NoResults = ({
 };
 
 const Wrapper = styled.div`
+  align-items: center;
   display: flex;
   flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
   height: 100%;
+  justify-content: center;
+  text-align: center;
 `;

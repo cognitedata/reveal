@@ -168,7 +168,10 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           accessorFn: (doc) =>
             doc?.sourceFile.assetIds?.length && doc.sourceFile.assetIds[0],
         },
-        tableColumns.assets(onRootAssetClick),
+        {
+          ...tableColumns.assets(onRootAssetClick),
+          accessorFn: (doc) => doc?.sourceFile?.assetIds,
+        },
         tableColumns.externalId(
           getHighlightQuery(documentSearchConfig?.externalId.enabled, query)
         ),

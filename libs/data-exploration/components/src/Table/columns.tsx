@@ -120,9 +120,13 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
       enableSorting: false,
       cell: ({ getValue, row }) => {
         const data = row.original;
-        const assetIdValue = getValue<number>();
-        const ids = assetIdValue
-          ? [{ id: assetIdValue }]
+        const assetIdValue = getValue<number | number[]>();
+        const assetIds = Array.isArray(assetIdValue)
+          ? assetIdValue
+          : [assetIdValue];
+
+        const ids = assetIds.length
+          ? assetIds.map((val) => ({ id: val }))
           : data.assetIds?.map((val) => ({ id: val }));
 
         const handleOnDirectAssetClick = (directAsset: Asset) => {
