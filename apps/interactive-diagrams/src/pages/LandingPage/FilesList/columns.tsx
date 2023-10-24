@@ -2,10 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { FileSmallPreview } from '@data-exploration-components/containers';
-
 import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+
+import { FileSmallPreview } from '@data-exploration-components';
 
 import { Flex, Popover, Dropdown } from '../../../components/Common';
 import DetectedTags from '../../../components/DetectedTags';

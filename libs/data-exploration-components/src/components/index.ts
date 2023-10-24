@@ -2,14 +2,7 @@ export * from './Buttons';
 export * from './Chart';
 export * from './Common';
 export * from './Search';
-export {
-  DataSetFilterV2,
-  AssetFiltersV2,
-  ByAssetFilterV2,
-  AggregatedEventFilterV2,
-  NumberFilter,
-  SourceFilter,
-} from './SearchNew';
+export type { OptionValue } from './types';
 export * from './InfoGrid/InfoGrid';
 export * from './FilterForm/FilterForm';
 export * from './Splitter/Splitter';

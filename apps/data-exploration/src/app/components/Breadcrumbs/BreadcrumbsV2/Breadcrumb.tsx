@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { Resource } from '@data-exploration-components/hooks';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
 import {
+  Resource,
   convertResourceType,
   ResourceType,
-} from '@data-exploration-components/types';
-
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+} from '@data-exploration-components';
 
 import { BreadcrumbItem } from './BreadcrumbItem';
 import { BreadcrumbItemIcon } from './BreadcrumbItemIcon';

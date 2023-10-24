@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import styled from 'styled-components/macro';
 
@@ -11,7 +11,6 @@ import {
 
 import { ResourceType, ResourceItem } from '@data-exploration-lib/core';
 
-import ResourceSelectionContext from '../../../context/ResourceSelectionContext';
 import {
   useFlagDocumentsApiEnabled,
   useFlagFileCategorization,
@@ -36,18 +35,6 @@ export const RelatedResources: React.FC<RelatedResourcesProps> = ({
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
 
   const [linkType, setLinkType] = useState<LinkType>();
-
-  // These stuff will be removed once the annotation table is re-implemented.
-  const { mode, onSelect, resourcesState } = useContext(
-    ResourceSelectionContext
-  );
-  const isSelected = (item: ResourceItem) => {
-    return resourcesState.some(
-      (el) =>
-        // eslint-disable-next-line lodash/prefer-matches
-        el.state === 'selected' && el.id === item.id && el.type === item.type
-    );
-  };
 
   const renderContent = () => {
     switch (linkType) {
@@ -89,9 +76,6 @@ export const RelatedResources: React.FC<RelatedResourcesProps> = ({
           <AnnotationTable
             parentResource={resource}
             type={relatedResourcesType}
-            selectionMode={mode}
-            onSelect={onSelect}
-            isSelected={isSelected}
             {...rest}
           />
         );

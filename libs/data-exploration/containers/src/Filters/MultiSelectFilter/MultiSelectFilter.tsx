@@ -1,7 +1,7 @@
 // import {
 //   MultiSelect,
 //   MultiSelectProps,
-// } from '@data-exploration-components/components';
+// } from '@data-exploration-components'
 
 import { InputActionMeta } from 'react-select';
 

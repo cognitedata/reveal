@@ -1,6 +1,5 @@
 import React, { useEffect, useContext } from 'react';
 
-import { FilePreview as CogniteFilePreview } from '@data-exploration-components/containers';
 import { Alert } from 'antd';
 import isMatch from 'lodash/isMatch';
 
@@ -9,6 +8,8 @@ import { Icon } from '@cognite/cogs.js';
 import { ErrorFeedback } from '@cognite/data-exploration';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import { FilePreview as CogniteFilePreview } from '@data-exploration-components';
 
 import { APPLICATION_ID } from '../constants';
 import { ResourceSelectionContext } from '../context';

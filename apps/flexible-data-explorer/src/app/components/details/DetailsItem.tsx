@@ -6,7 +6,7 @@ import { Body, Button, Link, Tooltip } from '@cognite/cogs.js';
 
 import { useClipboard } from '../../hooks/useClipboard';
 import { useTranslation } from '../../hooks/useTranslation';
-// import { useClipboard } from '@data-exploration-components/hooks';
+// import { useClipboard } from '@data-exploration-components';
 
 type DetailsItemProps = {
   name: string;

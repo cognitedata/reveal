@@ -1,10 +1,10 @@
 /// <reference types="vitest" />
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import macrosPlugin from 'vite-plugin-babel-macros';
 import svgr from 'vite-plugin-svgr';
-import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig((configType) => {
   const NODE_ENV = configType.mode.toLowerCase();
@@ -55,14 +55,6 @@ export default defineConfig((configType) => {
       host: 'localhost',
     },
 
-    plugins: [
-      basicSsl(),
-      svgr(),
-      react(),
-      viteTsConfigPaths({
-        projects: ['../../tsconfig.base.json', './tsconfig.json'],
-      }),
-      macrosPlugin(),
-    ],
+    plugins: [basicSsl(), svgr(), react(), nxViteTsPaths(), macrosPlugin()],
   };
 });

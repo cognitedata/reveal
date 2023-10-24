@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { TimeseriesChart } from '@data-exploration-components/containers';
 import dayjs from 'dayjs';
 import { compact } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,6 +18,8 @@ import { Chart, ChartTimeSeries } from '@cognite/charts-lib';
 import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { TimeseriesChart } from '@data-exploration-components';
 
 import {
   useMyCharts,
