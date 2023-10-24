@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import './utils/test/matchMedia';
 import noop from 'lodash/noop';
 import './cdf-route-tracker.d.ts';
-import 'babel-polyfill';
+import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('@cognite/cdf-sdk-singleton', () => {
   return {

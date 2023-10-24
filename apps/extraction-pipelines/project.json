@@ -67,9 +67,13 @@
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
+      "defaultConfiguration": "development",
       "options": {
         "buildTarget": "extraction-pipelines:build",
-        "hmr": true
+        "hmr": true,
+        "port": 3033,
+        "ssl": true,
+        "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com"
       },
       "configurations": {
         "development": {
@@ -85,8 +89,7 @@
           "buildTarget": "extraction-pipelines:build:production",
           "hmr": false
         }
-      },
-      "defaultConfiguration": "development"
+      }
     },
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -97,11 +100,35 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/extraction-pipelines"],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/extraction-pipelines/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/extraction-pipelines/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "extraction-pipelines:serve",
+        "port": 3001,
+        "env": {
+          "ORG": "cog-e2e",
+          "PROJECT": "e2e-greenfield",
+          "CLUSTER": "greenfield.cognitedata.com",
+          "IDP_INTERNAL_ID": "09f375ff-13b6-4d58-95fd-869b098d4808"
+        }
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "extraction-pipelines:serve:production"
+        },
+        "e2e": {
+          "devServerTarget": "extraction-pipelines:serve:production"
+        }
+      },
+      "defaultConfiguration": "e2e"
     }
   },
   "tags": [],
