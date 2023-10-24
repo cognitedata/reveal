@@ -7,7 +7,8 @@ import {
   RevealContainer,
   RevealToolbar,
   type AddResourceOptions,
-  type AddReveal3DModelOptions
+  type AddReveal3DModelOptions,
+  type AddImageCollection360Options
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useMemo, useEffect } from 'react';
@@ -23,6 +24,10 @@ import {
   useAllMappedEquipmentAssetMappings,
   useSearchMappedEquipmentAssetMappings
 } from '../src/hooks/useSearchMappedEquipmentAssetMappings';
+import {
+  useAllAssetsMapped360Annotations,
+  useSearchAssetsMapped360Annotations
+} from '../src/hooks/useSearchAssetsMapped360Annotations';
 import { isEqual } from 'lodash';
 import { type NodeItem } from '../src/utilities/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
@@ -43,7 +48,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
   const [searchMethod, setSearchMethod] = useState<
     'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
-  >('fdmSearch');
+  >('allAssets');
 
   const filteredResources = resources.filter(
     (resource): resource is AddReveal3DModelOptions => 'modelId' in resource
@@ -72,6 +77,21 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     hasNextPage,
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(filteredResources, sdk);
+
+  const filtered360ImageResources = resources.filter(
+    (resource): resource is AddImageCollection360Options => 'siteId' in resource
+  );
+  const siteIds = filtered360ImageResources.map((filteredResource) => {
+    return filteredResource.siteId;
+  });
+
+  const { data: annotationAssetSearchData } = useSearchAssetsMapped360Annotations(
+    siteIds,
+    sdk,
+    mainSearchQuery
+  );
+
+  const { data: allAnnotationAssets } = useAllAssetsMapped360Annotations(sdk, siteIds);
 
   useEffect(() => {
     if (searchMethod !== 'allAssets') return;
@@ -108,8 +128,10 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           .map((mapping) => mapping.assets)
           .flat() ?? [];
 
+      const mergedAssets = [...transformedAssets, ...(allAnnotationAssets ?? [])];
+
       const filteredAssets =
-        transformedAssets.filter((asset) => {
+        mergedAssets.filter((asset) => {
           const isInName = asset.name.toLowerCase().includes(mainSearchQuery.toLowerCase());
           const isInDescription = asset.description
             ?.toLowerCase()
@@ -136,7 +158,9 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         return [];
       }
 
-      const searchedEquipment: Equipment[] = assetSearchData.map((asset) => {
+      const megredAssetSearchData = [...assetSearchData, ...(annotationAssetSearchData ?? [])];
+
+      const searchedEquipment: Equipment[] = megredAssetSearchData.map((asset) => {
         return {
           view: 'Asset',
           externalId: asset.id + '',
@@ -171,7 +195,16 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     } else {
       return [];
     }
-  }, [mainSearchQuery, allEquipment, searchData, allAssets, assetSearchData, searchMethod]);
+  }, [
+    mainSearchQuery,
+    allEquipment,
+    searchData,
+    allAssets,
+    allAnnotationAssets,
+    assetSearchData,
+    annotationAssetSearchData,
+    searchMethod
+  ]);
 
   return (
     <>
@@ -282,7 +315,8 @@ export const Main: Story = {
           mapped: {
             color: new Color('#c5cbff')
           }
-        }
+        },
+        siteId: 'celanese1'
       }
     ]
   },
