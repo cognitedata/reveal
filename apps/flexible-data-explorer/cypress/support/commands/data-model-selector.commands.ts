@@ -22,7 +22,9 @@ const selectDataModel = ({ name, version, space }: DataModelInfo) => {
     .findByTestId(`data-model-${name}-${version}-${space}`)
     .scrollIntoView()
     .click();
+};
 
+const confirmDataModelSelection = () => {
   cy.getDataModelSelector().clickButton('Confirm');
   cy.getDataModelSelector().should('not.exist');
 };
@@ -30,9 +32,11 @@ const selectDataModel = ({ name, version, space }: DataModelInfo) => {
 Cypress.Commands.add('getDataModelSelector', getDataModelSelector);
 Cypress.Commands.add('clearSelectedDataModels', clearSelectedDataModels);
 Cypress.Commands.add('selectDataModel', selectDataModel);
+Cypress.Commands.add('confirmDataModelSelection', confirmDataModelSelection);
 
 export interface DataModelSelectorCommands {
   getDataModelSelector: () => Cypress.Chainable<JQuery<HTMLElement>>;
   clearSelectedDataModels: () => void;
   selectDataModel: (info: DataModelInfo) => void;
+  confirmDataModelSelection: () => void;
 }
