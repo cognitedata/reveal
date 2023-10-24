@@ -84,32 +84,32 @@ export const Image360HistoricalDetails = ({
   }, [revisionDetailsExpanded]);
 
   return (
-      <DetailsContainer style={{ minWidth }}>
-        {
-          <>
-            <Image360HistoricalPanel
+    <DetailsContainer style={{ minWidth }}>
+      {
+        <>
+          <Image360HistoricalPanel
+            key={uniqueId()}
+            revisionCount={revisionCollection.length}
+            revisionDetailsExpanded={revisionDetailsExpanded}
+            setRevisionDetailsExpanded={setRevisionDetailsExpanded}
+            fallbackLanguage={fallbackLanguage}
+          />
+          {revisionDetailsExpanded && (
+            <Image360HistoricalSummary
+              ref={newScrollPosition}
               key={uniqueId()}
-              revisionCount={revisionCollection.length}
-              revisionDetailsExpanded={revisionDetailsExpanded}
-          setRevisionDetailsExpanded={setRevisionDetailsExpanded}
-          fallbackLanguage={fallbackLanguage}
-            />
-            {revisionDetailsExpanded && (
-              <Image360HistoricalSummary
-                ref={newScrollPosition}
-                key={uniqueId()}
               viewer={viewer}
-                stationId={image360Entity?.id}
-                stationName={image360Entity?.label}
-                activeRevision={activeRevision}
-                setActiveRevision={setActiveRevision}
+              stationId={image360Entity?.id}
+              stationName={image360Entity?.label}
+              activeRevision={activeRevision}
+              setActiveRevision={setActiveRevision}
               revisionCollection={revisionCollection}
               fallbackLanguage={fallbackLanguage}
-              />
-            )}
-          </>
-        }
-      </DetailsContainer>
+            />
+          )}
+        </>
+      }
+    </DetailsContainer>
   );
 };
 

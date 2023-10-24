@@ -8,7 +8,10 @@ import { getLanguage } from './utils';
 
 const I18nContext = createContext<I18nContent | null>(null);
 
-const useTranslationContent = (overrideLanguage?: string | undefined, enabled: boolean = true): I18nContent => {
+const useTranslationContent = (
+  overrideLanguage?: string | undefined,
+  enabled: boolean = true
+): I18nContent => {
   const initialLanguage = overrideLanguage ?? getLanguage() ?? 'en';
   const [currentLanguage, setCurrentLanguage] = useState(initialLanguage);
   const [translations, setTranslations] = useState<Translations>({});
@@ -67,7 +70,6 @@ const useTranslationContent = (overrideLanguage?: string | undefined, enabled: b
   return { currentLanguage, t: translate };
 };
 
-
 /**
  * Use translation
  * @param fallbackLanguage Will be selected as language in cases where I18nContext is not available.
@@ -77,7 +79,9 @@ export const useTranslation = (fallbackLanguage?: string | undefined): I18nConte
   const overrideTranslationContent = useTranslationContent(fallbackLanguage, element === null);
 
   if (element === null && fallbackLanguage === undefined) {
-    throw new Error('useTranslation must be used within a I18nContextProvider, or a fallback language must be provided');
+    throw new Error(
+      'useTranslation must be used within a I18nContextProvider, or a fallback language must be provided'
+    );
   }
 
   if (element !== null) {
@@ -89,9 +93,5 @@ export const useTranslation = (fallbackLanguage?: string | undefined): I18nConte
 
 export const I18nContextProvider = ({ appLanguage, children }: I18nProps): ReactElement => {
   const i18nContent = useTranslationContent(appLanguage);
-  return (
-    <I18nContext.Provider value={i18nContent}>
-      {children}
-    </I18nContext.Provider>
-  );
+  return <I18nContext.Provider value={i18nContent}>{children}</I18nContext.Provider>;
 };
