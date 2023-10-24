@@ -16,6 +16,7 @@ declare module '@cognite/cdf-sdk-singleton' {
     | 'UNKNOWN';
 
   export declare function getFlow(): { flow: Flow };
+  export declare function getToken(): Promise<string>;
   export declare function getUserInformation(): Promise<{
     displayName?: string;
     id: string;

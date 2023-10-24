@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { GridTable } from '@data-exploration-components/components';
+import { GridTable } from '@data-exploration-components';
 
 import { TableDataItem } from '../../types';
 import { GridViewProps } from '../FileTable/types';

@@ -7,13 +7,15 @@
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
+      "compiler": "swc",
+      "format": ["esm"],
       "options": {
         "outputPath": "dist/libs/data-exploration/domain-layer",
         "main": "libs/data-exploration/domain-layer/src/index.ts",
         "tsConfig": "libs/data-exploration/domain-layer/tsconfig.lib.json",
-        "assets": ["libs/data-exploration/domain-layer/*.md"]
-      },
-      "compiler": "swc"
+        "assets": ["libs/data-exploration/domain-layer/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
+      }
     },
     "lint": {
       "executor": "@nx/linter:eslint",

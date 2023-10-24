@@ -39,7 +39,6 @@ export const EventSummary = ({
   onAllResultsClick,
   onRowClick = noop,
   onDirectAssetClick = noop,
-  isAdvancedFiltersEnabled = false,
   showAllResultsWithEmptyFilters = false,
   selectedResourceExternalId: resourceExternalId,
   annotationIds = [],
@@ -51,7 +50,6 @@ export const EventSummary = ({
   ) => void;
   onRowClick?: (row: CogniteEvent) => void;
   onDirectAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
-  isAdvancedFiltersEnabled?: boolean;
   showAllResultsWithEmptyFilters?: boolean;
   selectedResourceExternalId?: string;
   annotationIds?: number[];
@@ -144,9 +142,7 @@ export const EventSummary = ({
         }
         enableColumnResizing={false}
         onRowClick={onRowClick}
-        renderCellSubComponent={
-          isAdvancedFiltersEnabled ? SubCellMatchingLabels : undefined
-        }
+        renderCellSubComponent={SubCellMatchingLabels}
         onChangeSearchInput={setMetadataKeyQuery}
       />
     </SummaryCardWrapper>

@@ -1,15 +1,14 @@
 import styled from 'styled-components';
 
+import { Body, Colors, Detail, Flex, Title } from '@cognite/cogs.js';
+
 import {
   ArrowsNavigation,
   Rotate,
   WASDNavigation,
   PinchRight,
   Mouse,
-} from '@data-exploration-components/graphics';
-
-import { Body, Colors, Detail, Flex, Title } from '@cognite/cogs.js';
-
+} from '@data-exploration-components';
 import { useTranslation } from '@data-exploration-lib/core';
 
 interface HelpMenuSectionProps {

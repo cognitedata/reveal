@@ -38,7 +38,6 @@ export const TimeseriesSummary = ({
   onAllResultsClick,
   onRowClick,
   onRootAssetClick,
-  isAdvancedFiltersEnabled = false,
   showAllResultsWithEmptyFilters = false,
   selectedResourceExternalId: resourceExternalId,
   annotationIds = [],
@@ -50,7 +49,6 @@ export const TimeseriesSummary = ({
   ) => void;
   onRowClick?: (row: Timeseries) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
-  isAdvancedFiltersEnabled?: boolean;
   showAllResultsWithEmptyFilters?: boolean;
   selectedResourceExternalId?: string;
   annotationIds?: number[];
@@ -148,9 +146,7 @@ export const TimeseriesSummary = ({
             onAllResultsClick={onAllResultsClick}
           />
         }
-        renderCellSubComponent={
-          isAdvancedFiltersEnabled ? SubCellMatchingLabels : undefined
-        }
+        renderCellSubComponent={SubCellMatchingLabels}
         enableColumnResizing={false}
         onRowClick={onRowClick}
         onChangeSearchInput={setMetadataKeyQuery}

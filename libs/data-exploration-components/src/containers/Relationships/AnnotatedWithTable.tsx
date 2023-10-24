@@ -8,7 +8,7 @@ import {
 
 import { FileInfo } from '@cognite/sdk';
 
-import { ResourceItem, SelectableItemsProps } from '../../types';
+import { ResourceItem } from '../../types';
 
 import {
   FileSwitcherWrapper,
@@ -23,7 +23,7 @@ export const AnnotatedWithTable = ({
   resource: ResourceItem;
   onItemClicked: (id: number) => void;
   isGroupingFilesEnabled?: boolean;
-} & SelectableItemsProps) => {
+}) => {
   const [currentView, setCurrentView] = useState<string>(
     isGroupingFilesEnabled ? 'tree' : 'list'
   );

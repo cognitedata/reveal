@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import { StyledInfobox } from '@data-exploration-components/components/SearchQueryInfoPanel/elements';
-
 import { Body, Chip } from '@cognite/cogs.js';
+
+import { StyledInfobox } from '@data-exploration-components';
 
 import { ImproveYourScore } from './ImproveYourScore';
 

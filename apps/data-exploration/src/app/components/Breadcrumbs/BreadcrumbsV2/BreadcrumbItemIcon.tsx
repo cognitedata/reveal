@@ -1,6 +1,6 @@
-import { ResourceType } from '@data-exploration-components/types';
-
 import { Icon } from '@cognite/cogs.js';
+
+import { ResourceType } from '@data-exploration-components';
 
 export const BreadcrumbItemIcon = ({ type }: { type: ResourceType }) => {
   switch (type) {

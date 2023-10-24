@@ -1,7 +1,3 @@
-import { Resource } from '@data-exploration-components/hooks';
-import { ResourceType } from '@data-exploration-components/types';
-import { renderTitle } from '@data-exploration-components/utils';
-
 import {
   Asset,
   CogniteEvent,
@@ -9,6 +5,12 @@ import {
   Sequence,
   Timeseries,
 } from '@cognite/sdk/dist/src';
+
+import {
+  Resource,
+  ResourceType,
+  renderTitle,
+} from '@data-exploration-components';
 
 export const getBreadcrumbTitle = (
   type: ResourceType,

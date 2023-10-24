@@ -482,7 +482,7 @@ export const useTaggedAnnotationCount = (
 export const useRelatedResourceCount = (
   resource: ResourceItem,
   tabType: ResourceType,
-  isAdvancedFiltersEnabled = false
+  isDocumentsApiEnabled = false
 ) => {
   const isAsset = resource.type === 'asset';
   const isFile = resource.type === 'file';
@@ -497,7 +497,7 @@ export const useRelatedResourceCount = (
     convertResourceType(tabType),
     { assetSubtreeIds: [{ id: resource.id }] },
     {
-      enabled: isAsset && !isAdvancedFiltersEnabled && !!resource.id,
+      enabled: isAsset && !isDocumentsApiEnabled && !!resource.id,
       staleTime: 60 * 1000,
     }
   );
@@ -511,7 +511,7 @@ export const useRelatedResourceCount = (
       filters: { assetSubtreeIds: [{ value: resource.id }] },
     },
     undefined,
-    { enabled: isFileTab && isAdvancedFiltersEnabled }
+    { enabled: isFileTab && isDocumentsApiEnabled }
   );
 
   const {
@@ -576,7 +576,7 @@ export const useRelatedResourceCount = (
     count += annotationCount;
   }
 
-  if (isFileTab && fileCount && isAdvancedFiltersEnabled) {
+  if (isFileTab && fileCount && isDocumentsApiEnabled) {
     count += fileCount;
   }
 
@@ -595,9 +595,7 @@ export const useRelatedResourceCount = (
 };
 
 export const useRelatedResourceCounts = (
-  resource: ResourceItem,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isAdvancedFiltersEnabled = false
+  resource: ResourceItem
 ): {
   counts: { [key in ResourceType]?: number };
   hasMoreRelationships: { [key in ResourceType]?: boolean };

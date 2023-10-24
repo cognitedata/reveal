@@ -6,7 +6,7 @@ import { OptionType } from '@cognite/cogs.js';
 
 import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 
-import { OptionValue } from '../SearchNew/Filters/types';
+import { OptionValue } from '../types';
 
 export const isNilOption = <ValueType>({ value }: OptionType<ValueType>) => {
   if (!isUndefined(value) && isString(value) && value === NIL_FILTER_VALUE) {

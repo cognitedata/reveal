@@ -12,8 +12,7 @@ import {
   useList,
 } from '@cognite/sdk-react-query-hooks';
 
-import { MultiSelectFilter } from '../../../components';
-import { OptionValue } from '../../../components/SearchNew/Filters/types';
+import { MultiSelectFilter, OptionValue } from '../../../components';
 
 export type AssetSelectProps = Omit<Props<OptionTypeBase>, 'theme'> & {
   title: string;

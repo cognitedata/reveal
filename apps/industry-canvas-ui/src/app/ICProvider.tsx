@@ -1,13 +1,12 @@
 import React from 'react';
 
-import { AppContextProvider } from '@data-exploration-components/context/AppContext';
-import { FileContextualizationContextProvider } from '@data-exploration-components/context/FileContextualization';
-import { ResourcePreviewProvider } from '@data-exploration-components/context/ResourcePreviewContext';
-import { ResourceSelectorProvider } from '@data-exploration-components/context/ResourceSelectorContext';
-
 import { CogniteClient } from '@cognite/sdk';
 import { SDKProvider } from '@cognite/sdk-provider';
 
+import {
+  AppContextProvider,
+  FileContextualizationContextProvider,
+} from '@data-exploration-components';
 import { Flow, OverrideURLMap } from '@data-exploration-lib/core';
 
 export type DataExplorationProviderProps = {
@@ -15,7 +14,6 @@ export type DataExplorationProviderProps = {
   overrideURLMap?: OverrideURLMap;
   sdk: CogniteClient;
   userInfo: any;
-  isAdvancedFiltersEnabled?: boolean;
 };
 
 export const ICProvider = ({
@@ -24,7 +22,6 @@ export const ICProvider = ({
   overrideURLMap,
   sdk,
   userInfo,
-  isAdvancedFiltersEnabled = false,
 }: DataExplorationProviderProps & {
   children: React.ReactNode;
 }) => {
@@ -34,14 +31,9 @@ export const ICProvider = ({
         flow={flow}
         overrideURLMap={overrideURLMap}
         userInfo={userInfo}
-        isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
       >
         <FileContextualizationContextProvider>
-          <ResourcePreviewProvider>
-            <ResourceSelectorProvider appendStyles={true}>
-              {children}
-            </ResourceSelectorProvider>
-          </ResourcePreviewProvider>
+          {children}
         </FileContextualizationContextProvider>
       </AppContextProvider>
     </SDKProvider>

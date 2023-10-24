@@ -26,7 +26,7 @@ import {
   InternalAssetTreeData,
 } from '@data-exploration-lib/domain-layer';
 
-import { SelectableItemsProps, TableStateProps } from '../../../types';
+import { TableStateProps } from '../../../types';
 
 const visibleColumns = ['name', 'rootId'];
 
@@ -44,8 +44,7 @@ export const AssetDetailsTreeTable = ({
   selectedRows?: Record<string, boolean>;
   scrollIntoViewRow?: string | number; //Scroll into center row when the selectedRows changes
   tableSubHeaders?: React.ReactElement;
-} & SelectableItemsProps &
-  TableStateProps) => {
+} & TableStateProps) => {
   const [rootExpanded, setRootExpanded] = useState<ExpandedState>({});
 
   const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();

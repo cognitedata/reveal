@@ -38,7 +38,6 @@ export const SequenceSummary = ({
   onAllResultsClick,
   onRowClick,
   onRootAssetClick,
-  isAdvancedFiltersEnabled = false,
   showAllResultsWithEmptyFilters = false,
   selectedResourceExternalId: resourceExternalId,
   annotationIds = [],
@@ -50,7 +49,6 @@ export const SequenceSummary = ({
   ) => void;
   onRowClick?: (row: Sequence) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
-  isAdvancedFiltersEnabled?: boolean;
   showAllResultsWithEmptyFilters?: boolean;
   selectedResourceExternalId?: string;
   annotationIds?: number[];
@@ -143,9 +141,7 @@ export const SequenceSummary = ({
         }
         enableColumnResizing={false}
         onRowClick={onRowClick}
-        renderCellSubComponent={
-          isAdvancedFiltersEnabled ? SubCellMatchingLabels : undefined
-        }
+        renderCellSubComponent={SubCellMatchingLabels}
         query={query}
         onChangeSearchInput={setMetadataKeyQuery}
       />

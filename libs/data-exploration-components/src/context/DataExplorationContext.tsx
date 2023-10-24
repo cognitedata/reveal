@@ -14,8 +14,6 @@ import {
 
 import { AppContextProvider } from './AppContext';
 import { FileContextualizationContextProvider } from './FileContextualization';
-import { ResourcePreviewProvider } from './ResourcePreviewContext';
-import { ResourceSelectorProvider } from './ResourceSelectorContext';
 
 export type DataExplorationProviderProps = {
   flow: Flow;
@@ -24,7 +22,6 @@ export type DataExplorationProviderProps = {
   userInfo: any;
   styleScopeId?: string;
   trackUsage?: (event: string, metadata?: MetricsMetadata) => void;
-  isAdvancedFiltersEnabled?: boolean;
   isDocumentsApiEnabled?: boolean;
 };
 
@@ -36,7 +33,6 @@ export const DataExplorationProvider = ({
   userInfo,
   styleScopeId,
   trackUsage,
-  isAdvancedFiltersEnabled = false,
   isDocumentsApiEnabled = true,
 }: DataExplorationProviderProps & {
   children: React.ReactNode;
@@ -80,14 +76,11 @@ export const DataExplorationProvider = ({
         flow={flow}
         overrideURLMap={overrideURLMap}
         userInfo={userInfo}
-        isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
         trackUsage={trackUsage}
         isDocumentsApiEnabled={isDocumentsApiEnabled}
       >
         <FileContextualizationContextProvider>
-          <ResourcePreviewProvider>
-            <ResourceSelectorProvider>{children}</ResourceSelectorProvider>
-          </ResourcePreviewProvider>
+          {children}
         </FileContextualizationContextProvider>
       </AppContextProvider>
     </SDKProvider>

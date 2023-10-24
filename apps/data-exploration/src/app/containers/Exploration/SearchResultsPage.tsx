@@ -30,7 +30,6 @@ import {
 
 import { GPTInfobar } from '../../components/GPTInfobar';
 import { EXPLORATION } from '../../constants/metrics';
-import { useResourceFilter } from '../../context/ResourceSelectionContext';
 import {
   useFlagDocumentGPT,
   useFlagDocumentLabelsFilter,
@@ -38,6 +37,7 @@ import {
 } from '../../hooks';
 import { useCurrentResourceType, useQueryString } from '../../hooks/hooks';
 import {
+  useAllFilters,
   useAssetFilters,
   useCommonFilters,
   useEventsFilters,
@@ -253,17 +253,17 @@ function SearchPage() {
 
 export const SearchResultsPage = () => {
   const [resourceType] = useCurrentResourceType();
+  const allFilters = useAllFilters();
 
   const [query] = useQueryString(SEARCH_KEY);
-  const filter = useResourceFilter(resourceType);
 
   useEffect(() => {
     trackUsage('Exploration.TabChange', { tab: resourceType });
   }, [resourceType]);
 
   useEffect(() => {
-    trackUsage('Exploration.Filter', { tab: resourceType, filter });
-  }, [resourceType, filter]);
+    trackUsage('Exploration.Filter', { tab: resourceType, filter: allFilters });
+  }, [resourceType, allFilters]);
 
   useEffect(() => {
     if (query) {

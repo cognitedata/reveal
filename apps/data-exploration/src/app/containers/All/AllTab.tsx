@@ -28,7 +28,6 @@ import { EXPLORATION } from '../../constants/metrics';
 import {
   useJourneyLength,
   usePushJourney,
-  useFlagAdvancedFilters,
   useFlagDocumentsApiEnabled,
   useBreakJourneyPromptState,
 } from '../../hooks';
@@ -73,7 +72,6 @@ export const AllTab = ({
     charts: [],
   },
 }: Props) => {
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
   const [pushJourney] = usePushJourney();
   const [journeyLength] = useJourneyLength();
@@ -109,7 +107,6 @@ export const AllTab = ({
       <AllTabContainer>
         <AssetSummary
           showAllResultsWithEmptyFilters={showAllResultsWithEmptyFilters}
-          isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
           filter={filters.asset || filters.common}
           query={query}
           onRowClick={(row) =>
@@ -121,7 +118,6 @@ export const AllTab = ({
         />
         <TimeseriesSummary
           showAllResultsWithEmptyFilters={showAllResultsWithEmptyFilters}
-          isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
           filter={filters.timeSeries || filters.common}
           query={query}
           onRowClick={(row) =>
@@ -165,7 +161,6 @@ export const AllTab = ({
         )}
         <EventSummary
           showAllResultsWithEmptyFilters={showAllResultsWithEmptyFilters}
-          isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
           filter={filters.event || filters.common}
           query={query}
           onRowClick={(row) =>
@@ -182,7 +177,6 @@ export const AllTab = ({
           showAllResultsWithEmptyFilters={showAllResultsWithEmptyFilters}
           filter={filters.sequence || filters.common}
           query={query}
-          isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
           onRowClick={(row) =>
             handleSummaryRowClick(ResourceTypes.Sequence, row.id)
           }

@@ -18,7 +18,6 @@ export type AppContextProps = {
   flow: Flow;
   overrideURLMap?: OverrideURLMap;
   userInfo: any;
-  isAdvancedFiltersEnabled: boolean;
   trackUsage?: (event: string, metadata?: MetricsMetadata) => void;
   isDocumentsApiEnabled?: boolean;
 };
