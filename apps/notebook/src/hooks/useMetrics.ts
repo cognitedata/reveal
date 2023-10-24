@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import mixpanel from 'mixpanel-browser';
 
-import { useSDK } from '@cognite/sdk-provider';
+import sdk from '@cognite/cdf-sdk-singleton';
 
 mixpanel.init('5c4d853e7c3b77b1eb4468d5329b278c', {}, 'cdf_jupyterlite');
 const _mixpanel = mixpanel as unknown as { [key in string]: typeof mixpanel };
@@ -29,8 +29,8 @@ type TrackingEvent = {
   RequestGenerateCode: { prompt: string };
 };
 
-type BaseEventData = {
-  event: 'jupyterLiteEvent' | 'NotebookCopilotEvent';
+export type BaseEventData = {
+  event: 'JupyterLiteEvent' | 'NotebookCopilotEvent';
   data: {
     eventName: keyof TrackingEvent;
     data: TrackingEvent[keyof TrackingEvent];
@@ -38,19 +38,14 @@ type BaseEventData = {
 };
 
 export const useMetrics = () => {
-  const sdk = useSDK();
-
-  const track = useCallback(
-    (eventData: BaseEventData) => {
-      return trackUsage(
-        eventData,
-        eventData.data.data,
-        sdk.project,
-        sdk.getBaseUrl()
-      );
-    },
-    [sdk]
-  );
+  const track = useCallback((eventData: BaseEventData) => {
+    return trackUsage(
+      eventData,
+      eventData.data.data,
+      sdk.project,
+      sdk.getBaseUrl()
+    );
+  }, []);
   return {
     track,
   };
@@ -64,7 +59,7 @@ export const trackUsage = <T extends keyof TrackingEvent>(
 ) => {
   let mixpanelEventKey;
   switch (eventData.event) {
-    case 'jupyterLiteEvent':
+    case 'JupyterLiteEvent':
       mixpanelEventKey = 'Notebook';
       break;
     case 'NotebookCopilotEvent':
