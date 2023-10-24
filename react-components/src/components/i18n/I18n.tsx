@@ -8,20 +8,16 @@ import { getLanguage } from './utils';
 
 const I18nContext = createContext<I18nContent | null>(null);
 
-export const useTranslation = (): I18nContent => {
-  const element = useContext(I18nContext);
-  if (element === null) {
-    throw new Error('useTranslation must be used within a I18nContextProvider');
-  }
-  return element;
-};
-
-export const I18nContextProvider = ({ appLanguage, children }: I18nProps): ReactElement => {
-  const initialLanguage = appLanguage ?? getLanguage() ?? 'en';
+const useTranslationContent = (overrideLanguage?: string | undefined, enabled: boolean = true): I18nContent => {
+  const initialLanguage = overrideLanguage ?? getLanguage() ?? 'en';
   const [currentLanguage, setCurrentLanguage] = useState(initialLanguage);
   const [translations, setTranslations] = useState<Translations>({});
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
     const handleLanguageChange = (): void => {
       const newLanguage = getLanguage();
       if (newLanguage !== undefined && newLanguage !== currentLanguage) {
@@ -37,6 +33,10 @@ export const I18nContextProvider = ({ appLanguage, children }: I18nProps): React
   }, []);
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
     const loadTranslations = async (): Promise<void> => {
       try {
         const translationModule = await import(
@@ -64,8 +64,33 @@ export const I18nContextProvider = ({ appLanguage, children }: I18nProps): React
     return key;
   };
 
+  return { currentLanguage, t: translate };
+};
+
+
+/**
+ * Use translation
+ * @param fallbackLanguage Will be selected as language in cases where I18nContext is not available.
+ */
+export const useTranslation = (fallbackLanguage?: string | undefined): I18nContent => {
+  const element = useContext(I18nContext);
+  const overrideTranslationContent = useTranslationContent(fallbackLanguage, element === null);
+
+  if (element === null && fallbackLanguage === undefined) {
+    throw new Error('useTranslation must be used within a I18nContextProvider, or a fallback language must be provided');
+  }
+
+  if (element !== null) {
+    return element;
+  }
+
+  return overrideTranslationContent;
+};
+
+export const I18nContextProvider = ({ appLanguage, children }: I18nProps): ReactElement => {
+  const i18nContent = useTranslationContent(appLanguage);
   return (
-    <I18nContext.Provider value={{ currentLanguage, t: translate }}>
+    <I18nContext.Provider value={i18nContent}>
       {children}
     </I18nContext.Provider>
   );
