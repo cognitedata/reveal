@@ -25,7 +25,9 @@ const ListHeader = () => {
           <Flex direction="column" gap={24}>
             <Flex gap={18} alignItems="center">
               <Icon type="Export" size={28} />
-              <Title level={2}>{t('extract-data')}</Title>
+              <Title level={2} data-testid="extractor-download-page-title">
+                {t('extract-data')}
+              </Title>
             </Flex>
           </Flex>
         </Flex>
