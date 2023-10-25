@@ -40,8 +40,9 @@ export const PointCloudToolBar = () => {
           lowQualitySettings={LowQualitySettings}
           highQualitySettings={HighQualitySettings}
         />
-        <AddAnnotationToolBar />
       </StyledToolBar>
+
+      <AddAnnotationToolBar />
     </>
   );
 };
