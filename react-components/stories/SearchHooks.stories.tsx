@@ -49,6 +49,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [searchMethod, setSearchMethod] = useState<
     'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
   >('allAssets');
+
   const filteredResources = resources.filter(
     (resource): resource is AddReveal3DModelOptions => 'modelId' in resource
   );
