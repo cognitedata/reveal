@@ -40,6 +40,10 @@ export {
   type ModelMappingsWithAssets
 } from './hooks/useSearchMappedEquipmentAssetMappings';
 export { useSlicerUrlParams, useLayersUrlParams } from './hooks/useUrlStateParam';
+export {
+  useSearchAssetsMapped360Annotations,
+  useAllAssetsMapped360Annotations
+} from './hooks/useSearchAssetsMapped360Annotations';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
