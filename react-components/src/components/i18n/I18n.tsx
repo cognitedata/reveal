@@ -73,16 +73,12 @@ const useTranslationContent = (
 /**
  * Use translation
  * @param fallbackLanguage Will be selected as language in cases where I18nContext is not available.
+ * Should only be used in components for which we want to support usage outside RevealContainer.
  */
 export const useTranslation = (fallbackLanguage?: string | undefined): I18nContent => {
   const element = useContext(I18nContext);
-  const overrideTranslationContent = useTranslationContent(fallbackLanguage, element === null);
-
-  if (element === null && fallbackLanguage === undefined) {
-    throw new Error(
-      'useTranslation must be used within a I18nContextProvider, or a fallback language must be provided'
-    );
-  }
+  const defaultLanguage = getLanguage() ?? 'en';
+  const overrideTranslationContent = useTranslationContent(fallbackLanguage ?? defaultLanguage, element === null);
 
   if (element !== null) {
     return element;
