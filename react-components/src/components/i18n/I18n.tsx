@@ -76,15 +76,18 @@ const useTranslationContent = (
  * Should only be used in components for which we want to support usage outside RevealContainer.
  */
 export const useTranslation = (fallbackLanguage?: string | undefined): I18nContent => {
-  const element = useContext(I18nContext);
+  const i18nContent = useContext(I18nContext);
   const defaultLanguage = getLanguage() ?? 'en';
-  const overrideTranslationContent = useTranslationContent(fallbackLanguage ?? defaultLanguage, element === null);
+  const fallbackI18nContent = useTranslationContent(
+    fallbackLanguage ?? defaultLanguage,
+    i18nContent === null
+  );
 
-  if (element !== null) {
-    return element;
+  if (i18nContent !== null) {
+    return i18nContent;
   }
 
-  return overrideTranslationContent;
+  return fallbackI18nContent;
 };
 
 export const I18nContextProvider = ({ appLanguage, children }: I18nProps): ReactElement => {
