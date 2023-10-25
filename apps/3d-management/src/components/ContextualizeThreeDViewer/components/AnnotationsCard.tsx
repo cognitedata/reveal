@@ -101,38 +101,42 @@ export const AnnotationsCard = ({
 
       {shouldShowAnnotationList && (
         <AnnotationListContainer>
-          <InputExp
+          <StyledInputExp
             fullWidth
-            placeholder="Search annotations"
+            placeholder="Search asset name, ID, annotation ID"
             value={searchValue}
             onChange={(event) => setSearchValue(event.target.value)}
           />
 
-          {filteredAnnotationsWithAssets.map(({ annotation, asset }) => (
-            <StyledAnnotationListItem
-              key={annotation.id}
-              justifyContent="space-between"
-              alignItems="center"
-              onClick={() => onZoomToAnnotation(annotation.id)}
-              onMouseEnter={() => {
-                setHoveredAnnotationId(annotation.id);
-              }}
-              onMouseLeave={() => {
-                setHoveredAnnotationId(null);
-              }}
-            >
-              <StyledAnnotationName>
-                <span>{asset?.name ?? `Annotation ID: ${annotation.id}`}</span>
-              </StyledAnnotationName>
-              <Button
-                type="ghost"
-                size="small"
-                icon="Delete"
-                aria-label="Delete annotation"
-                onClick={() => onDeleteAnnotation(annotation)}
-              />
-            </StyledAnnotationListItem>
-          ))}
+          <ScrollableContainer>
+            {filteredAnnotationsWithAssets.map(({ annotation, asset }) => (
+              <StyledAnnotationListItem
+                key={annotation.id}
+                justifyContent="space-between"
+                alignItems="center"
+                onClick={() => onZoomToAnnotation(annotation.id)}
+                onMouseEnter={() => {
+                  setHoveredAnnotationId(annotation.id);
+                }}
+                onMouseLeave={() => {
+                  setHoveredAnnotationId(null);
+                }}
+              >
+                <StyledAnnotationName>
+                  <span>
+                    {asset?.name ?? `Annotation ID: ${annotation.id}`}
+                  </span>
+                </StyledAnnotationName>
+                <Button
+                  type="ghost"
+                  size="small"
+                  icon="Delete"
+                  aria-label="Delete annotation"
+                  onClick={() => onDeleteAnnotation(annotation)}
+                />
+              </StyledAnnotationListItem>
+            ))}
+          </ScrollableContainer>
         </AnnotationListContainer>
       )}
     </div>
@@ -180,7 +184,14 @@ const StyledCount = styled.div`
 const AnnotationListContainer = styled.div`
   border-top: 1px solid #d9d9d9;
   padding-bottom: 8px;
+`;
 
+const StyledInputExp = styled(InputExp)`
+  margin-bottom: 4px;
+  margin-top: 4px;
+`;
+
+const ScrollableContainer = styled.div`
   max-height: 300px;
   overflow-y: auto;
   overflow-x: hidden;
