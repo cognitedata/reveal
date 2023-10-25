@@ -28,7 +28,7 @@ if ((window as any).CDF_NOTEBOOK_ORIGIN_OVERRIDE) {
 
 export const NOTEBOOK_ORIGIN = notebook_origin;
 
-const TRACKED_EVENTS = ['NotebookCopilotEvent', 'jupyterliteEvent'];
+const TRACKED_EVENTS = ['NotebookCopilotEvent', 'NotebookEvent'];
 
 // Every 2 minutes
 const INTERVAL = 2 * 60 * 1000;
