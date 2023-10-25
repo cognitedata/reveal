@@ -196,4 +196,6 @@ export const ResourceSelectorDetails = ({
 
 const ResourcePreviewSidebarContainer = styled.div`
   min-width: 360px;
+  display: flex;
+  flex-grow: 1;
 `;

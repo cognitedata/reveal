@@ -418,6 +418,8 @@ const MainContainer = styled(Flex)<{ isFilterFeatureEnabled?: boolean }>`
 `;
 
 const ResourcePreviewSidebarWrapper = styled.div<{ isOnlyPane?: boolean }>`
+  align-self: stretch;
+  display: flex;
   width: 370px;
   margin: 12px;
   flex: 1;
