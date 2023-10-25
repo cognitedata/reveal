@@ -60,6 +60,7 @@ export const TimePeriodSelect: React.FC<TimePeriodSelectProps> = ({
       options={adaptedOptions}
       value={selectedTimePeriod && { label: selectedTimePeriod }}
       onChange={handleChange}
+      menuPortalTarget={document.body}
     />
   );
 };

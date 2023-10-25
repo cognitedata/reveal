@@ -2,12 +2,7 @@
 // @ts-nocheck
 import React from 'react';
 
-import {
-  Tooltip as CogsTooltip,
-  Modal,
-  Dropdown,
-  Select,
-} from '@cognite/cogs.js';
+import { Tooltip as CogsTooltip, Modal, Dropdown } from '@cognite/cogs.js';
 
 import 'monaco-editor/dev/vs/editor/editor.main.css';
 import '@react-awesome-query-builder/ui/css/styles.css';
@@ -36,11 +31,6 @@ Modal.defaultProps = {
 Dropdown.defaultProps = {
   ...Dropdown.defaultProps,
   appendTo: getContainer,
-};
-
-Select.defaultProps = {
-  ...Select.defaultProps,
-  menuPortalTarget: getContainer(),
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
