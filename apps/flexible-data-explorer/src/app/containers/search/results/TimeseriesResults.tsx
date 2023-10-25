@@ -63,7 +63,7 @@ export const TimeseriesResults: React.FC<Props> = ({ selected }) => {
             key={item.id}
             id={item.externalId || item.id}
           >
-            <Link.TimeseriesPage externalId={item.externalId}>
+            <Link.TimeseriesPage externalId={item.externalId || item.id}>
               <SearchResults.Item
                 name={
                   item.name ||
