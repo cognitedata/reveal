@@ -69,7 +69,7 @@ async function getReveal360Annotations(
 ): Promise<
   Array<{
     asset: Asset;
-    annotation: AssetAnnotationImage360Info;
+    assetAnnotationImage360Info: AssetAnnotationImage360Info;
   }>
 > {
   const image30Collections = reveal.get360ImageCollections();
@@ -105,12 +105,12 @@ async function getReveal360Annotations(
 
       return {
         asset,
-        annotation: annotationInfo
+        assetAnnotationImage360Info: annotationInfo
       };
     })
     .filter((item) => item.asset !== undefined) as Array<{
     asset: Asset;
-    annotation: AssetAnnotationImage360Info;
+    assetAnnotationImage360Info: AssetAnnotationImage360Info;
   }>;
 
   return assetsWithAnnotations;

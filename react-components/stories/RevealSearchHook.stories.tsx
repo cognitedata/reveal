@@ -3,12 +3,15 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import React from 'react';
 import {
   RevealContainer,
   RevealToolbar,
   useSearchReveal360ImageAnnotationAssets,
-  Image360CollectionContainer
+  Image360CollectionContainer,
+  useReveal
 } from '../src';
+import { type AssetAnnotationImage360Info, type ImageAnnotationObject } from '@cognite/reveal';
 import { Color } from 'three';
 import { type ReactElement, useState, useMemo } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
@@ -26,6 +29,7 @@ type Equipment = {
   externalId: string;
   space: string;
   properties?: Record<string, any>;
+  image360Info: AssetAnnotationImage360Info;
 };
 
 const StoryContent = ({ siteId }: { siteId: string }): ReactElement => {
@@ -48,6 +52,7 @@ const StoryContent = ({ siteId }: { siteId: string }): ReactElement => {
 function RevealSearchContent(): ReactElement {
   const [tempSearchQuery, setTempSearchQuery] = useState<string>('');
   const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
+  const reveal = useReveal();
   const [searchMethod, setSearchMethod] = useState<'allReveal360Assets' | 'reveal360AssetsSearch'>(
     'allReveal360Assets'
   );
@@ -79,7 +84,8 @@ function RevealSearchContent(): ReactElement {
           properties: {
             name: revealAnnotationAsset.asset.name,
             description: revealAnnotationAsset.asset.description
-          }
+          },
+          image360Info: revealAnnotationAsset.assetAnnotationImage360Info
         };
       });
 
@@ -97,7 +103,8 @@ function RevealSearchContent(): ReactElement {
           properties: {
             name: revealAnnotationAsset.asset.name,
             description: revealAnnotationAsset.asset.description
-          }
+          },
+          image360Info: revealAnnotationAsset.assetAnnotationImage360Info
         };
       });
 
@@ -106,6 +113,31 @@ function RevealSearchContent(): ReactElement {
       return [];
     }
   }, [mainSearchQuery, searchMethod, allAnnotationAssets, isFetched]);
+
+  const showAnnotation = async (
+    assetAnnotationImage360Info: AssetAnnotationImage360Info
+  ): Promise<void> => {
+    if (assetAnnotationImage360Info === undefined || reveal === undefined) {
+      return;
+    }
+
+    try {
+      await reveal.enter360Image(
+        assetAnnotationImage360Info.imageEntity,
+        assetAnnotationImage360Info.imageRevision
+      );
+
+      const annotations = await assetAnnotationImage360Info.imageRevision.getAnnotations();
+      const foundAnnotation = annotations.find((annotation: ImageAnnotationObject) => {
+        return annotation.id === assetAnnotationImage360Info.annotationId;
+      });
+      if (foundAnnotation !== undefined) {
+        reveal.cameraManager.setCameraState({ target: foundAnnotation.getCenter() });
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+  };
 
   return (
     <>
@@ -140,7 +172,15 @@ function RevealSearchContent(): ReactElement {
           overflow: 'scroll'
         }}>
         {filteredEquipment.map((equipment, index) => (
-          <div key={equipment.externalId + index} style={{ border: '1px solid green' }}>
+          <div
+            key={equipment.externalId + index}
+            style={{ border: '1px solid green' }}
+            onClick={async (event: React.MouseEvent<HTMLDivElement>) => {
+              event.preventDefault();
+              await showAnnotation(equipment.image360Info).catch((error) => {
+                console.warn(error);
+              });
+            }}>
             <b>{(equipment?.view ?? determineViewFromQueryResultNodeItem(equipment)) + ' '}</b>
             <span>{equipment.externalId + ' '}</span>
             <span>
