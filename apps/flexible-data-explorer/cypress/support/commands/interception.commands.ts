@@ -1,9 +1,11 @@
 import { Interception } from 'cypress/types/net-stubbing';
 import get from 'lodash/get';
 
-import { requestAlias } from '../interceptions';
+import { RequestAlias, interceptions } from '../interceptions';
 
-type RequestAlias = keyof typeof requestAlias;
+const interceptRequest = (alias: RequestAlias) => {
+  return interceptions[alias]();
+};
 
 const waitForRequest = (alias: RequestAlias) => {
   return cy.wait(`@${alias}`);
@@ -23,6 +25,7 @@ const payloadShouldContain = (
   expect(serializedPayload).to.include(serializedTarget);
 };
 
+Cypress.Commands.add('interceptRequest', interceptRequest);
 Cypress.Commands.add('waitForRequest', waitForRequest);
 Cypress.Commands.add(
   'payloadShouldContain',
@@ -31,6 +34,7 @@ Cypress.Commands.add(
 );
 
 export interface InterceptionCommands {
+  interceptRequest: (alias: RequestAlias) => void;
   waitForRequest: (alias: RequestAlias) => Cypress.Chainable<Interception>;
   payloadShouldContain: (
     interception: Interception,
