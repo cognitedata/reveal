@@ -15,8 +15,9 @@ import { isDevelopment, isStaging } from '@cognite/cdf-utilities';
 import { Flex, Modal } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
-let notebook_origin = 'https://notebook-standalone.cogniteapp.com';
+import { BaseEventData, TrackingEvent } from '../../utils/types';
 
+let notebook_origin = 'https://notebook-standalone.cogniteapp.com';
 if (isStaging() || isDevelopment()) {
   notebook_origin = 'https://notebook-standalone.staging.cogniteapp.com';
 }
@@ -26,6 +27,12 @@ if ((window as any).CDF_NOTEBOOK_ORIGIN_OVERRIDE) {
 }
 
 export const NOTEBOOK_ORIGIN = notebook_origin;
+
+const TRACKED_EVENTS = ['NotebookCopilotEvent', 'NotebookEvent'];
+const typesafeTrack = <T extends keyof TrackingEvent>(
+  eventName: string,
+  payload: TrackingEvent[T]
+) => trackEvent(eventName, payload);
 
 // Every 2 minutes
 const INTERVAL = 2 * 60 * 1000;
@@ -65,12 +72,19 @@ const Home = React.forwardRef(
       });
     }, []);
 
-    // Add handler from notebook
+    // Add handler for messages from notebook
     useEffect(() => {
       trackEvent('Notebook.Start');
       const handler = async (event: MessageEvent<any>) => {
         if (event.data === 'getToken') {
           await fetchAndSendToken();
+        }
+
+        const eventData: BaseEventData = event?.data;
+        if (TRACKED_EVENTS.includes(eventData?.event)) {
+          const eventActor = eventData.event.replace('Event', '');
+          const { eventName } = event.data.data;
+          typesafeTrack(`${eventActor}.${eventName}`, event.data.data.data);
         }
       };
 
@@ -114,6 +128,7 @@ const Home = React.forwardRef(
           localStorage.cdf_notebook_page_lock = Date.now();
         }
         if (e.key === 'cdf_notebook_page_lock') {
+          trackEvent('Notebook.MultipleTabsWarning');
           setShowMultipleTabsWarning(true);
         }
       }
