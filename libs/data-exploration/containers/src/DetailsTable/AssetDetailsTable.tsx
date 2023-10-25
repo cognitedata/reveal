@@ -50,7 +50,7 @@ export const AssetDetailsTable = (
         {...props}
         columns={columns}
         hiddenColumns={hiddenColumns}
-        columnSelectionLimit={2}
+        columnSelectionLimit={4}
         showLoadButton
         enableSelection
         onChangeSearchInput={setMetadataKeyQuery}

@@ -55,7 +55,7 @@ export const FileDetailsTable = (
       <Table
         columns={columns}
         hiddenColumns={hiddenColumns}
-        columnSelectionLimit={2}
+        columnSelectionLimit={4}
         showLoadButton
         enableSelection
         {...props}
