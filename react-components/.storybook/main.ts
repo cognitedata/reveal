@@ -15,6 +15,7 @@ const config: StorybookConfig = {
   core: {
     builder: '@storybook/builder-vite'
   },
+  staticDirs: ['../stories/public'],
   async viteFinal(config, { configType }) {
     if (config.plugins !== undefined) {
       remove(config.plugins, (plugin) => {

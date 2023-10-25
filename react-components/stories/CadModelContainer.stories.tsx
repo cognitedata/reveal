@@ -72,8 +72,9 @@ const sdk = createSdkByUrlToken();
 export const Main: Story = {
   args: {
     addModelOptions: {
-      modelId: 1791160622840317,
-      revisionId: 498427137020189
+      localPath: '/primitives',
+      modelId: -1,
+      revisionId: -1
     },
     styling: {
       defaultStyle: { color: new Color('red') }
