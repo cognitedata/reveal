@@ -195,7 +195,7 @@ function RevealSearchContent(): ReactElement {
 }
 
 const meta = {
-  title: 'Example/RevealSearchHooks',
+  title: 'Example/RevealAnnotationSearchHook',
   component: StoryContent,
   tags: ['autodocs']
 } satisfies Meta<typeof StoryContent>;
