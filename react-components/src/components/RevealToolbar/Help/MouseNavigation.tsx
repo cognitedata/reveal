@@ -13,8 +13,12 @@ import {
 import { Section } from './Section';
 import { useTranslation } from '../../i18n/I18n';
 
-export const MouseNavigation = (): ReactElement => {
-  const { t } = useTranslation();
+export type MouseNavigationProps = {
+  fallbackLanguage?: string;
+};
+
+export const MouseNavigation = ({ fallbackLanguage }: MouseNavigationProps): ReactElement => {
+  const { t } = useTranslation(fallbackLanguage);
   return (
     <Section
       title={t('MOUSE_NAVIGATION_TITLE', 'Mouse')}
