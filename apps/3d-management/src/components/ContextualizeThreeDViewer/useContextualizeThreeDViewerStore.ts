@@ -26,9 +26,8 @@ const DEFAULT_VISUALIZATION_OPTIONS: VisualizationOptions = {
 };
 
 export enum ToolType {
-  NONE = 'none',
-  ADD_ANNOTATION = 'addAnnotation',
   SELECT_TOOL = 'selectTool',
+  ADD_ANNOTATION = 'addAnnotation',
 }
 
 type RootState = {
@@ -51,7 +50,7 @@ const initialState: RootState = {
   pendingAnnotation: null,
   isResourceSelectorOpen: true,
   threeDViewer: null,
-  tool: ToolType.NONE,
+  tool: ToolType.ADD_ANNOTATION,
   shouldShowBoundingVolumes: false,
   shouldShowWireframes: true,
   modelId: null,
