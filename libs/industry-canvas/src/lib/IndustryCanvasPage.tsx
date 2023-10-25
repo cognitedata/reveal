@@ -25,6 +25,7 @@ import {
   UnifiedViewer,
   ZoomToFitMode,
   isAnnotation,
+  getSupportedMimeTypes,
 } from '@cognite/unified-file-viewer';
 
 import { ExtendedResourceItem } from '@data-exploration-lib/core';
@@ -705,6 +706,11 @@ export const IndustryCanvasPage = () => {
             shouldOnlyShowPreviewPane={
               resourceSelectorProps?.shouldOnlyShowPreviewPane
             }
+            defaultFilter={{
+              document: {
+                mimeType: getSupportedMimeTypes(),
+              },
+            }}
           />
         )}
         {!isResourceSelectorOpen && isCommentsPaneOpen && (
