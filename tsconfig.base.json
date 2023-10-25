@@ -95,9 +95,11 @@
       "@fusion/shared/user-onboarding-components": [
         "libs/shared/user-onboarding-components/src/index.ts"
       ],
+
       "@industry-canvas-ui/*": ["apps/industry-canvas-ui/src/*"],
       "@interactive-diagrams/*": ["apps/interactive-diagrams/src/*"],
       "@platypus-core/*": ["libs/data-modeling/platypus-core/src/lib/*"],
+
       "@platypus/@cognite/fdm-client": [
         "libs/@cognite/fdm-client/src/index.ts"
       ],

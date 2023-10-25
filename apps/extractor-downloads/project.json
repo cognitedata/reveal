@@ -70,7 +70,10 @@
       "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "extractor-downloads:build",
-        "hmr": true
+        "hmr": true,
+        "port": 3033,
+        "ssl": true,
+        "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com"
       },
       "configurations": {
         "development": {
@@ -103,6 +106,30 @@
         "jestConfig": "apps/extractor-downloads/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/extraction-pipelines/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "extraction-pipelines:serve",
+        "port": 3001,
+        "env": {
+          "ORG": "cog-e2e",
+          "PROJECT": "e2e-greenfield",
+          "CLUSTER": "greenfield.cognitedata.com",
+          "IDP_INTERNAL_ID": "09f375ff-13b6-4d58-95fd-869b098d4808"
+        }
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "extraction-pipelines:serve:production"
+        },
+        "e2e": {
+          "devServerTarget": "extraction-pipelines:serve:production"
+        }
+      },
+      "defaultConfiguration": "e2e"
     }
   },
   "tags": [],
