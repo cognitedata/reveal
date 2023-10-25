@@ -128,8 +128,8 @@ function RevealSearchContent(): ReactElement {
       );
 
       const annotations = await assetAnnotationImage360Info.imageRevision.getAnnotations();
-      const foundAnnotation = annotations.find((annotation: any) => {
-        return annotation.id === assetAnnotationImage360Info.annotationId;
+      const foundAnnotation = annotations.find((annotationObj: any) => {
+        return annotationObj.annotation.id === assetAnnotationImage360Info.annotationInfo.id;
       });
       if (foundAnnotation !== undefined) {
         reveal.cameraManager.setCameraState({ target: foundAnnotation.getCenter() });
