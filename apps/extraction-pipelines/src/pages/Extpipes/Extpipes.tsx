@@ -10,7 +10,15 @@ import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Button, Flex, Heading, Loader, Modal, Tabs } from '@cognite/cogs.js';
+import {
+  Button,
+  ChipProps,
+  Flex,
+  Heading,
+  Loader,
+  Modal,
+  Tabs,
+} from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
@@ -161,9 +169,15 @@ const Extpipes: FunctionComponent = () => {
 
   const tabs = useMemo(() => {
     return tabKeys.map((tabKey: string) => (
-      <Tabs.Tab tabKey={tabKey} label={t('extractors', { context: tabKey })} />
+      <Tabs.Tab
+        tabKey={tabKey}
+        label={t('extractors', { context: tabKey })}
+        chipRight={
+          tabKey === 'hosted' ? getBetaTagChip(tab === 'hosted') : undefined
+        }
+      />
     ));
-  }, [tabKeys, t]);
+  }, [tabKeys, t, tab]);
 
   return (
     <StyledContainer>
@@ -269,6 +283,34 @@ export default function CombinedComponent() {
     </StyledPageContainer>
   );
 }
+
+const getBetaTagChip = (selected: boolean) => {
+  let commonStyles: ChipProps = {
+    label: 'Beta',
+    size: 'small',
+    appearance: 'solid',
+    hideTooltip: true,
+    style: {
+      borderRadius: '100px',
+      fontWeight: 500,
+      padding: '5px 8px',
+    },
+  };
+  if (selected) {
+    commonStyles = {
+      ...commonStyles,
+      type: 'neutral',
+      prominence: 'strong',
+      style: {
+        ...commonStyles.style,
+        backgroundColor:
+          'linear-gradient( 45deg, rgb(200, 68, 219) 0%, rgb(73, 103, 251) 100% )',
+        color: 'var(--cogs-text-icon--strong--inverted)',
+      },
+    };
+  }
+  return commonStyles;
+};
 
 const VerticalSpace = styled.div`
   height: 16px;
