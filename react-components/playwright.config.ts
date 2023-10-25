@@ -10,7 +10,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 
-const PORT = 5678;
+const PORT = 6006;
 
 export default defineConfig({
   testDir: './tests/visual-tests',
