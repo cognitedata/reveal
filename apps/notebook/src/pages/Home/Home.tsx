@@ -128,7 +128,7 @@ const Home = React.forwardRef(
           localStorage.cdf_notebook_page_lock = Date.now();
         }
         if (e.key === 'cdf_notebook_page_lock') {
-          trackEvent('NotebookMultipleTabsWarning');
+          trackEvent('Notebook.MultipleTabsWarning');
           setShowMultipleTabsWarning(true);
         }
       }
