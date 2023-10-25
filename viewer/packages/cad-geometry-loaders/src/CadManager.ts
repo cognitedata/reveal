@@ -47,13 +47,7 @@ export class CadManager {
 
   set budget(budget: CadModelBudget) {
     this._cadModelUpdateHandler.budget = budget;
-
-    // This gives cache size of 200 on desktop on default budget
-    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 200 / defaultDesktopCadModelBudget.maximumRenderCost;
-
-    for (const model of this._cadModelMap.values()) {
-      model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
-    }
+    this.updateCacheSizeBasedOnBudget(budget);
   }
 
   /**
@@ -207,6 +201,7 @@ export class CadManager {
     model.addEventListener('update', this._markNeedsRedrawBound);
     this._cadModelMap.set(model.cadModelIdentifier, model);
     this._cadModelUpdateHandler.addModel(model);
+    this.updateCacheSizeBasedOnBudget(this.budget);
     return model;
   }
 
@@ -220,6 +215,19 @@ export class CadManager {
 
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._cadModelUpdateHandler.getLoadingStateObserver();
+  }
+
+  /**
+   * Sets the Memory Cache size for all loaded models to the current budget
+   * @param budget The budget to calculate cache size by
+   */
+  private updateCacheSizeBasedOnBudget(budget: CadModelBudget) {
+    // This gives cache size of 200 on desktop on default budget
+    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 200 / defaultDesktopCadModelBudget.maximumRenderCost;
+
+    for (const model of this._cadModelMap.values()) {
+      model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
+    }
   }
 
   private markNeedsRedraw(): void {
