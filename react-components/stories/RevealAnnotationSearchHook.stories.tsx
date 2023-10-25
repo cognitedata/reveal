@@ -11,7 +11,7 @@ import {
   Image360CollectionContainer,
   useReveal
 } from '../src';
-import { type AssetAnnotationImage360Info, type ImageAnnotationObject } from '@cognite/reveal';
+import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 import { Color } from 'three';
 import { type ReactElement, useState, useMemo } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
