@@ -75,11 +75,6 @@ export const PointCloudToolBarTools = (): ReactElement => {
   }, [viewer, pendingAnnotation, tool]);
 
   const handleToolClick = (toolType: ToolType) => {
-    if (tool === toolType) {
-      setTool(ToolType.NONE);
-      return;
-    }
-
     setTool(toolType);
   };
 
