@@ -2,6 +2,8 @@ import { useContext } from 'react';
 
 import styled from 'styled-components';
 
+import { CanvasButton } from '@fusion/industry-canvas';
+
 import { Divider, Flex } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
@@ -31,9 +33,12 @@ export const ThreeDTopbar = ({
   mainImage360Data,
 }: ThreeDTopbarProps): JSX.Element => {
   const {
+    viewState,
+    revisionId,
     secondaryModels,
     setSecondaryModels,
     images360,
+    selectedAssetId,
     setImages360,
     setSecondaryObjectsVisibilityState,
     secondaryObjectsVisibilityState,
@@ -129,6 +134,17 @@ export const ThreeDTopbar = ({
             >
               {t('POINTS_OF_INTEREST', 'Points of interest')}
             </ModelTypeButton>
+          )}
+          {model !== undefined && mainRevision !== undefined && (
+            <CanvasButton
+              item={{
+                type: 'threeD',
+                id: model.id,
+                subId: revisionId,
+                selectedAssetId: selectedAssetId,
+                camera: viewState?.camera,
+              }}
+            />
           )}
         </Flex>
       </Flex>

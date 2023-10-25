@@ -8,7 +8,7 @@ import { Button, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
-  type ResourceItem,
+  type ExtendedResourceItem,
   getSearchParams,
   useTranslation,
 } from '@data-exploration-lib/core';
@@ -24,7 +24,7 @@ import isSupportedResourceItemHelper from '../utils/isSupportedResourceItem';
 import resourceItemToContainerReference from '../utils/resourceItemToContainerReference';
 
 type CanvasButtonProps = {
-  item: ResourceItem;
+  item: ExtendedResourceItem;
 };
 
 const CanvasButton: React.FC<CanvasButtonProps> = ({ item }) => {

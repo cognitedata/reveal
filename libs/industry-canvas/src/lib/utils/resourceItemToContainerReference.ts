@@ -41,6 +41,19 @@ const resourceItemToContainerReference = (
     };
   }
 
+  if (resourceItem.type === 'threeD') {
+    if (resourceItem.subId === undefined) {
+      throw new Error('subId cannot be undefined for threeD resources');
+    }
+    return {
+      type: ContainerReferenceType.THREE_D,
+      modelId: resourceItem.id,
+      revisionId: resourceItem.subId,
+      initialAssetId: resourceItem.selectedAssetId,
+      camera: resourceItem.camera,
+    };
+  }
+
   throw new Error('Unsupported resource type');
 };
 

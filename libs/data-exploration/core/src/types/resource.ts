@@ -1,6 +1,7 @@
 import { RowSelectionState, Updater } from '@tanstack/react-table';
 
 import { AllIconTypes } from '@cognite/cogs.js';
+import type { ViewerState } from '@cognite/reveal';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
 import { FilterState } from './filters';
@@ -111,12 +112,15 @@ export function getIcon(type: ResourceType): AllIconTypes {
 
 export type ResourceItem = {
   id: number;
+  subId?: number; // E.g., the revisionId for threeD resources
   externalId?: string;
   type: ResourceType;
 };
 
 export type ExtendedResourceItem = ResourceItem & {
   dateRange?: [Date, Date];
+  camera?: ViewerState['camera'];
+  selectedAssetId?: number;
 };
 
 export type ResourceItemState = ResourceItem & {
