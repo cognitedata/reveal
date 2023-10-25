@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
+import { withSuppressRevealEvents } from '@cognite/reveal-react-components';
 
 import {
   ToolType,
@@ -10,6 +11,9 @@ import {
 import { TransformMode } from '../../utils/createTransformControls';
 import { StyledInformation } from '../PointCloud/PointCloudToolBar/PointCloudToolBar';
 import ToolTooltip from '../ToolTooltip';
+
+const LEFT = 67;
+const BOTTOM = 60;
 
 export const AddAnnotationToolBar = () => {
   const { pendingAnnotation, tool, transformMode } =
@@ -25,7 +29,7 @@ export const AddAnnotationToolBar = () => {
 
   if (pendingAnnotation === null) {
     return (
-      <StyledInformation left={45} bottom={45}>
+      <StyledInformation left={LEFT} bottom={BOTTOM}>
         Click on the model
         <br />
         to add an annotation
@@ -69,8 +73,8 @@ export const AddAnnotationToolBar = () => {
   );
 };
 
-const StyledAddAnnotationToolBar = styled.div`
+const StyledAddAnnotationToolBar = styled(withSuppressRevealEvents(ToolBar))`
   position: absolute;
-  bottom: 92px;
-  left: 48px;
+  left: ${LEFT}px;
+  bottom: ${BOTTOM}px;
 `;
