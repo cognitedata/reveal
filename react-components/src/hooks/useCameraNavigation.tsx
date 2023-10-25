@@ -7,7 +7,7 @@ import { useReveal } from '../components/RevealContainer/RevealContext';
 import { useFdmNodeCache } from '../components/NodeCacheProvider/NodeCacheProvider';
 
 export type CameraNavigationActions = {
-  fitCameraToAllModels: () => void;
+  fitCameraToAllModels: (duration?: number) => void;
   fitCameraToModelNode: (revisionId: number, nodeId: number) => Promise<void>;
   fitCameraToInstance: (externalId: string, space: string) => Promise<void>;
   fitCameraToState: (cameraState: CameraState) => void;
@@ -17,12 +17,12 @@ export const useCameraNavigation = (): CameraNavigationActions => {
   const fdmNodeCache = useFdmNodeCache();
   const viewer = useReveal();
 
-  const fitCameraToAllModels = (): void => {
+  const fitCameraToAllModels = (duration?: number): void => {
     const models = viewer.models;
     if (models.length === 0) {
       return;
     }
-    viewer.fitCameraToModels(models, undefined, true);
+    viewer.fitCameraToModels(models, duration, true);
   };
 
   const fitCameraToModelNode = async (revisionId: number, nodeId: number): Promise<void> => {

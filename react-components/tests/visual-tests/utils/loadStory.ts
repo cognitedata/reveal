@@ -7,7 +7,7 @@ type StoryName = keyof typeof storyOutput.stories extends `${infer T}--${string}
 /** Load Storybook story for Playwright testing */
 export async function loadStory(page: Page, storyID: StoryName): Promise<void> {
   const search = new URLSearchParams({ viewMode: 'story', id: `${storyID}--main` });
-  await page.goto(`iframe.html?${search.toString()}`, { waitUntil: 'networkidle' });
+  await page.goto(`iframe.html?${search.toString()}`, { waitUntil: 'networkidle', timeout: 60000 });
 
   // wait for page to finish rendering before starting test
   await page.waitForSelector('#storybook-root');
