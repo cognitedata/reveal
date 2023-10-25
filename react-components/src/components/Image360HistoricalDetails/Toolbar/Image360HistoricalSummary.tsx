@@ -25,6 +25,7 @@ export type Image360HistoricalSummaryProps = {
   revisionCollection: Image360RevisionDetails[];
   activeRevision: number;
   setActiveRevision: (index: number) => void;
+  fallbackLanguage?: string;
 };
 
 export const Image360HistoricalSummary = forwardRef(
@@ -35,11 +36,12 @@ export const Image360HistoricalSummary = forwardRef(
       revisionCollection,
       activeRevision,
       setActiveRevision,
-      viewer
+      viewer,
+      fallbackLanguage
     }: Image360HistoricalSummaryProps,
     ref: React.ForwardedRef<number>
   ) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(fallbackLanguage);
     const gridContainerRef = useRef<HTMLDivElement>(null);
 
     const onRevisionChanged = async (

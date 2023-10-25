@@ -11,8 +11,12 @@ import { TouchNavigation } from './Help/TouchNavigation';
 import { KeyboardNavigation } from './Help/KeyboardNavigation';
 import { useTranslation } from '../i18n/I18n';
 
-export const HelpButton = (): ReactElement => {
-  const { t } = useTranslation();
+export type HelpButtonProps = {
+  fallbackLanguage?: string;
+};
+
+export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement => {
+  const { t } = useTranslation(fallbackLanguage);
   const [helpActive, setHelpActive] = useState<boolean>(false);
 
   return (
@@ -24,9 +28,9 @@ export const HelpButton = (): ReactElement => {
         }}
         content={
           <StyledMenu>
-            <MouseNavigation />
-            <KeyboardNavigation />
-            <TouchNavigation />
+            <MouseNavigation fallbackLanguage={fallbackLanguage} />
+            <KeyboardNavigation fallbackLanguage={fallbackLanguage} />
+            <TouchNavigation fallbackLanguage={fallbackLanguage} />
           </StyledMenu>
         }
         placement="right">

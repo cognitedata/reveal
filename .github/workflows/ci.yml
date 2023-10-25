@@ -58,7 +58,7 @@ jobs:
         id: cargo_cache
         with:
           path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
       - name: Download cargo packages and ensure Cargo.lock up to date
         if: steps.cargo_cache.outputs.cache-hit != 'true'
