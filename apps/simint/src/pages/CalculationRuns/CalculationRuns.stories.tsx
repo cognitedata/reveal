@@ -3,7 +3,7 @@ import { ReactLocation, Router } from 'react-location';
 
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@testing-library/react';
+import { within } from '@storybook/testing-library';
 import noop from 'lodash/noop';
 
 import { CalculationRun } from '@cognite/simconfig-api-sdk/rtk';

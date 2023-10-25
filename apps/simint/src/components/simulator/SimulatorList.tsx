@@ -38,39 +38,39 @@ export function SimulatorList({
           setActiveKey(key);
         }}
       >
-        {simulators.map((simulator, index) => (
-          <Collapse.Panel
-            header={
-              <div
-                className="simulator-header"
-                id={`simulator-header-${index}`}
-              >
-                <span className="simulator">
-                  {
-                    data?.simulatorsConfig?.filter(
-                      ({ key }) => key === simulator.simulator
-                    )?.[0].name
-                  }
-                </span>
-                <span className="connector">{simulator.connectorName}</span>
-                <SimulatorStatusLabel
-                  simulator={simulator}
-                  title={simulator.simulator}
-                  onMenuBar={false}
-                />
-              </div>
-            }
-            key={`${
-              simulator.connectorName ?? Math.random()
-            }-simulator-list-entry-collapse`}
-          >
-            <SimulatorInformation
-              // eslint-disable-next-line react/no-array-index-key
-              key={`simulator-info-${index}`}
-              simulatorInstance={simulator}
-            />
-          </Collapse.Panel>
-        ))}
+        {simulators.map((simulator, index) => {
+          const simulatorName = data?.simulatorsConfig?.find(
+            ({ key }) => key === simulator.simulator
+          )?.name;
+
+          return (
+            <Collapse.Panel
+              header={
+                <div
+                  className="simulator-header"
+                  id={`simulator-header-${index}`}
+                >
+                  <span className="simulator">{simulatorName}</span>
+                  <span className="connector">{simulator.connectorName}</span>
+                  <SimulatorStatusLabel
+                    simulator={simulator}
+                    title={simulator.simulator}
+                    onMenuBar={false}
+                  />
+                </div>
+              }
+              key={`${
+                simulator.connectorName ?? Math.random()
+              }-simulator-list-entry-collapse`}
+            >
+              <SimulatorInformation
+                // eslint-disable-next-line react/no-array-index-key
+                key={`simulator-info-${index}`}
+                simulatorInstance={simulator}
+              />
+            </Collapse.Panel>
+          );
+        })}
       </Collapse>
     </SimulatorListContainer>
   );

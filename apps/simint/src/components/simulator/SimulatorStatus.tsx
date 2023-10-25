@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
+import { createLink } from '@cognite/cdf-utilities';
 import { Button, Skeleton, Tooltip } from '@cognite/cogs.js';
 import {
   useGetDefinitionsQuery,
@@ -30,63 +32,90 @@ export function SimulatorStatus() {
     [definitions]
   );
 
-  const { data: simulatorsList, isLoading: isLoadingSimulatorsList } =
-    useGetSimulatorsListV2Query(
-      { project },
-      { pollingInterval: HEARTBEAT_POLL_INTERVAL }
-    );
+  const { data: simulatorsList } = useGetSimulatorsListV2Query(
+    { project },
+    {
+      pollingInterval: HEARTBEAT_POLL_INTERVAL,
+    }
+  );
 
-  if (isLoadingSimulatorsList) {
-    return <Skeleton.Rectangle width="100px" />;
+  const navigate = useNavigate();
+
+  if (!simulatorsList) {
+    return <Skeleton.Rectangle data-testid="skeleton" width="100px" />;
   }
 
-  if (!simulatorsList?.simulators?.length) {
-    return null;
-  }
-
-  const simulators = simulatorsList.simulators.slice(
+  const simulators = (simulatorsList.simulators || []).slice(
     0,
     HEADER_VISIBLE_SIMULATORS_COUNT
   );
-  const simulatorsOverflow = simulatorsList.simulators.slice(
+  const simulatorsOverflow = (simulatorsList.simulators || []).slice(
     HEADER_VISIBLE_SIMULATORS_COUNT
   );
 
   return (
     <SimulatorStatusContainer>
-      {simulators.map((simulator, index) => (
-        <div
-          id={`simulator-status-${index}`}
-          // eslint-disable-next-line react/no-array-index-key
-          key={`
-          ${simulator.connectorName ?? Math.random()}
-          -${simulator.dataSetId ?? Math.random()}
-          -simulator-status-${index}
-          `}
+      <Tooltip
+        content={
+          simulatorsList.simulators?.length
+            ? 'Setup a new simulator connector to expand your integration capabilities.'
+            : 'Setup your first simulator connector to get started. With a working connector you can create simulation routines with a compatible simulator.'
+        }
+        position="bottom"
+        maxWidth={200}
+      >
+        <Button
+          icon={simulatorsList.simulators?.length ? 'Add' : undefined}
+          type={simulatorsList.simulators?.length ? 'secondary' : 'primary'}
+          aria-label="Add connector"
+          onClick={() => {
+            navigate({
+              to: createLink('/extractors'),
+            });
+          }}
         >
-          <SimulatorTooltip
-            content={
-              <SimulatorList
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${
-                  simulator.connectorName ?? Math.random()
-                }-simulator-tooltip-list-${index}`}
-                simulators={[simulator]}
-              />
-            }
+          {simulatorsList.simulators?.length
+            ? undefined
+            : 'Connect to simulator'}
+        </Button>
+      </Tooltip>
+      {simulators.map((simulator, index) => {
+        const simulatorConfig = simulatorsConfig?.find(
+          ({ key }) => key === simulator.simulator
+        );
+
+        const simulatorName = simulatorConfig?.name ?? simulator.simulator;
+
+        return (
+          <div
+            id={`simulator-status-${index}`}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`
+        ${simulator.connectorName ?? Math.random()}
+        -${simulator.dataSetId ?? Math.random()}
+        -simulator-status-${index}
+        `}
           >
-            <SimulatorStatusLabel
-              simulator={simulator}
-              title={
-                simulatorsConfig?.filter(
-                  ({ key }) => key === simulator.simulator
-                )?.[0].name ?? simulator.simulator
+            <SimulatorTooltip
+              content={
+                <SimulatorList
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${
+                    simulator.connectorName ?? Math.random()
+                  }-simulator-tooltip-list-${index}`}
+                  simulators={[simulator]}
+                />
               }
-              isMain
-            />
-          </SimulatorTooltip>
-        </div>
-      ))}
+            >
+              <SimulatorStatusLabel
+                simulator={simulator}
+                title={simulatorName}
+                isMain
+              />
+            </SimulatorTooltip>
+          </div>
+        );
+      })}
 
       {simulatorsOverflow.length ? (
         <div>
@@ -99,7 +128,7 @@ export function SimulatorStatus() {
               iconPlacement="right"
             >
               +
-              {simulatorsList.simulators.length -
+              {(simulatorsList.simulators || []).length -
                 HEADER_VISIBLE_SIMULATORS_COUNT}
             </Button>
           </SimulatorTooltip>
