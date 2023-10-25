@@ -10,19 +10,20 @@ import {
 } from '@cognite/reveal';
 import { type Reveal360AnnotationAssetData } from './types';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { type Asset } from '@cognite/sdk';
+import { type CogniteClient, type Asset } from '@cognite/sdk';
 import { useSDK } from '../components/RevealContainer/SDKProvider';
 import { chunk } from 'lodash';
 
 export const useReveal360ImageAnnotationAssets = (): UseQueryResult<
   Reveal360AnnotationAssetData[]
 > => {
+  const sdk = useSDK();
   const reveal = useReveal();
 
   return useQuery(
     ['reveal', 'react-components', 'reveal-assets-mapped-360-annotations'],
     async () => {
-      const revealAnnotationAssets = await getReveal360Annotations(reveal);
+      const revealAnnotationAssets = await getReveal360Annotations(sdk, reveal);
       return revealAnnotationAssets;
     },
     {
@@ -62,7 +63,10 @@ export const useSearchReveal360ImageAnnotationAssets = (
   );
 };
 
-async function getReveal360Annotations(reveal: Cognite3DViewer): Promise<
+async function getReveal360Annotations(
+  sdk: CogniteClient,
+  reveal: Cognite3DViewer
+): Promise<
   Array<{
     asset: Asset;
     annotation: AssetAnnotationImage360Info;
@@ -70,26 +74,49 @@ async function getReveal360Annotations(reveal: Cognite3DViewer): Promise<
 > {
   const image30Collections = reveal.get360ImageCollections();
   const annotationsInfo: AssetAnnotationImage360Info[] = [];
-  image30Collections.map(async (image360Collection: Image360Collection): Promise<void> => {
-    const annotations = await image360Collection.getAnnotationsInfo('assets');
-    annotationsInfo.push(...annotations);
-  });
-
-  const assetIds = annotationsInfo.flatMap((annotation) =>
-    [
-      annotation.annotationInfo.data.assetRef?.id,
-      annotation.annotationInfo.data.assetRef?.externalId
-    ].filter((id) => id !== undefined)
+  await Promise.all(
+    image30Collections.map(async (image360Collection: Image360Collection) => {
+      const annotations = await image360Collection.getAnnotationsInfo('assets');
+      annotationsInfo.push(...annotations);
+    })
   );
 
-  const assets = await getAssets(assetIds);
-  const assetsWithAnnotations = matchAssetsWithAnnotations(assets, annotationsInfo);
+  const filteredAssetIds = new Set<string | number>();
+
+  annotationsInfo.forEach((annotation) => {
+    const assetId =
+      annotation.annotationInfo.data.assetRef?.id ??
+      annotation.annotationInfo.data.assetRef?.externalId;
+
+    if (assetId !== undefined) {
+      filteredAssetIds.add(assetId);
+    }
+  });
+
+  const assets = await getAssets(sdk, Array.from(filteredAssetIds));
+
+  const assetsWithAnnotations = annotationsInfo
+    .map((annotationInfo) => {
+      const asset = assets.find(
+        (asset) =>
+          asset.id === annotationInfo.annotationInfo.data.assetRef?.id ||
+          asset.externalId === annotationInfo.annotationInfo.data.assetRef?.externalId
+      );
+
+      return {
+        asset,
+        annotation: annotationInfo
+      };
+    })
+    .filter((item) => item.asset !== undefined) as Array<{
+    asset: Asset;
+    annotation: AssetAnnotationImage360Info;
+  }>;
 
   return assetsWithAnnotations;
 }
 
-async function getAssets(assetIds: Array<string | number>): Promise<Asset[]> {
-  const sdk = useSDK();
+async function getAssets(sdk: CogniteClient, assetIds: Array<string | number>): Promise<Asset[]> {
   const assets = await Promise.all(
     chunk(assetIds, 1000).map(async (assetsChunk) => {
       const retrievedAssets = await sdk.assets.retrieve(
@@ -107,32 +134,4 @@ async function getAssets(assetIds: Array<string | number>): Promise<Asset[]> {
   );
 
   return assets.flat();
-}
-
-function matchAssetsWithAnnotations(
-  assets: Asset[],
-  annotationsInfo: AssetAnnotationImage360Info[]
-): Array<{
-  asset: Asset;
-  annotation: AssetAnnotationImage360Info;
-}> {
-  return annotationsInfo
-    .map((annotationInfo: AssetAnnotationImage360Info | undefined) => {
-      const asset = assets.find(
-        (asset) =>
-          asset.id === annotationInfo?.annotationInfo.data.assetRef?.id ||
-          asset.externalId === annotationInfo?.annotationInfo.data.assetRef?.externalId
-      );
-
-      if (asset !== undefined) {
-        return { asset, annotation: annotationInfo };
-      }
-      return null;
-    })
-    .filter(
-      (item: { asset: Asset; annotation: AssetAnnotationImage360Info } | null) => item !== null
-    ) as Array<{
-    asset: Asset;
-    annotation: AssetAnnotationImage360Info;
-  }>;
 }
