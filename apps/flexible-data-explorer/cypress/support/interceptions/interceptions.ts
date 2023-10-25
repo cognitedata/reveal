@@ -1,8 +1,9 @@
 import get from 'lodash/get';
 
 import { requestAlias } from './requestAlias';
+import { RequestAlias, RequestIntercept } from './types';
 
-export const interceptSearchDataTypes = () => {
+const interceptSearchDataTypes = () => {
   cy.intercept(
     {
       url: '**/graphql',
@@ -16,4 +17,8 @@ export const interceptSearchDataTypes = () => {
       }
     }
   );
+};
+
+export const interceptions: Record<RequestAlias, RequestIntercept> = {
+  searchDataTypes: interceptSearchDataTypes,
 };
