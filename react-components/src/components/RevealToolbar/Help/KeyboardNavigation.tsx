@@ -13,8 +13,12 @@ import {
 } from './elements';
 import { useTranslation } from '../../i18n/I18n';
 
-export const KeyboardNavigation = (): ReactElement => {
-  const { t } = useTranslation();
+export type KeyboardNavigationProps = {
+  fallbackLanguage?: string;
+};
+
+export const KeyboardNavigation = ({ fallbackLanguage }: KeyboardNavigationProps): ReactElement => {
+  const { t } = useTranslation(fallbackLanguage);
   return (
     <Section
       title={t('KEYBOARD_NAVIGATION_TITLE', 'Keyboard')}
