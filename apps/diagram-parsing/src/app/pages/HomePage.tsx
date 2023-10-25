@@ -9,7 +9,7 @@ export const HomePage = () => {
     <>
       <Heading>{t('contextualize-engineering-diagrams')}</Heading>
 
-      <Body>Under development...</Body>
+      <Body size="large">Under development...</Body>
     </>
   );
 };
