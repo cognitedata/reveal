@@ -3,7 +3,7 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { isEmpty } from 'lodash';
+import { isEmpty, isUndefined } from 'lodash';
 
 import { useLinks } from '../hooks/useLinks';
 import { ViewMode } from '../hooks/useParams';
@@ -63,7 +63,7 @@ const LinkTimeseriesPage: React.FC<
   const { search } = useLocation();
   const { timeseriesPageLink } = useLinks();
 
-  if (!externalId) {
+  if (isUndefined(externalId)) {
     return <>{children}</>;
   }
 
