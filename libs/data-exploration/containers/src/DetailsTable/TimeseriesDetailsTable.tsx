@@ -55,7 +55,7 @@ export const TimeseriesDetailsTable = (
       <Table<InternalTimeseriesData>
         columns={columns}
         hiddenColumns={hiddenColumns}
-        columnSelectionLimit={2}
+        columnSelectionLimit={4}
         onChangeSearchInput={setMetadataKeyQuery}
         showLoadButton
         enableSelection
