@@ -1,6 +1,6 @@
 import { type ReactElement, useEffect } from 'react';
 
-import { ToolBar, Tooltip, Button } from '@cognite/cogs.js';
+import { Tooltip, Button } from '@cognite/cogs.js';
 import { useReveal, RevealToolbar } from '@cognite/reveal-react-components';
 
 import { ANNOTATION_RADIUS_FACTOR } from '../../../../../pages/ContextualizeEditor/constants';
@@ -79,7 +79,7 @@ export const PointCloudToolBarTools = (): ReactElement => {
   };
 
   return (
-    <ToolBar direction="vertical">
+    <>
       <>
         <Tooltip content="Slider" position="right">
           <RevealToolbar.SlicerButton />
@@ -123,6 +123,6 @@ export const PointCloudToolBarTools = (): ReactElement => {
           />
         </Tooltip>
       </>
-    </ToolBar>
+    </>
   );
 };
