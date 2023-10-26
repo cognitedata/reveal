@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { LexicalEditor, $getRoot } from 'lexical';
+import { LexicalEditor, CLEAR_EDITOR_COMMAND } from 'lexical';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -71,7 +71,6 @@ export const CommentTooltipCore = ({
   const { t } = useTranslation();
   const { userProfile } = useUserProfile();
   const commentsContainerRef = useRef<HTMLDivElement>(null);
-
   const editorRef = useRef<LexicalEditor>(null);
   useEffect(() => {
     if (isTooltipOpen && commentsContainerRef.current) {
@@ -81,10 +80,9 @@ export const CommentTooltipCore = ({
   }, [comments, isTooltipOpen]);
 
   const clearEditor = () => {
-    editorRef.current?.update(() => {
-      $getRoot().clear();
-    });
+    editorRef.current?.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
   };
+
   const onCreateWrapper = () => {
     if (editorRef.current === null) {
       return;

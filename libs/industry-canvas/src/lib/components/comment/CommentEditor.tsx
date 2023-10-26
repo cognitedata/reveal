@@ -2,6 +2,7 @@ import { useEffect, forwardRef, MutableRefObject, useCallback } from 'react';
 
 import styled from 'styled-components';
 
+import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -84,6 +85,7 @@ export const CommentEditor = forwardRef(function CommentEditor(
           placeholder={<Placeholder>Write a comment...</Placeholder>}
           ErrorBoundary={LexicalErrorBoundary}
         />
+        <ClearEditorPlugin />
         <OnChangePlugin onChange={onChange} />
         <HistoryPlugin />
         <AutoFocusPlugin />

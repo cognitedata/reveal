@@ -182,7 +182,7 @@ function MentionsMenuItem({
     >
       <Flex justifyContent="space-between" alignItems="center">
         <Flex alignItems="center" gap={10}>
-          <Avatar text={option.profile.displayName} />
+          <Avatar text={option.profile.displayName} tooltip={false} />
           <Body size="small" strong>
             {option.profile.displayName}
           </Body>
