@@ -34,9 +34,19 @@ import getLegacyToken, { logout as legacyLogout } from './legacy';
 import { UserInfo } from './types';
 import { getIDP } from './utils';
 
+export type TokenRetreivalOpts = {
+  auth0_ignoreCache?: boolean;
+};
+
 export class FusionTokenProvider {
+  getTokenOpts: TokenRetreivalOpts = {};
+
   getAppId() {
     return 'fusion.cognite.com';
+  }
+
+  setTokenRetreivalOpts(opts: TokenRetreivalOpts) {
+    this.getTokenOpts = opts;
   }
 
   async getToken(): Promise<string> {
@@ -55,11 +65,13 @@ export class FusionTokenProvider {
         );
       }
       case 'AUTH0': {
+        const opts = this.getTokenOpts;
         return getAuth0AccessToken(
           idp.appConfiguration.clientId,
           idp.authority,
           // eslint-disable-next-line
-          (idp as Auth0Response).appConfiguration.audience!
+          (idp as Auth0Response).appConfiguration.audience!,
+          opts.auth0_ignoreCache
         );
       }
       case 'KEYCLOAK': {

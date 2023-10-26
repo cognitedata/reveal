@@ -1,7 +1,7 @@
 import { IDPType, redirectToLogin } from '@cognite/login-utils';
 import { CogniteClient } from '@cognite/sdk';
 
-import { FusionTokenProvider } from './fusionTokenProvider';
+import { FusionTokenProvider, TokenRetreivalOpts } from './fusionTokenProvider';
 import { UserInfo } from './types';
 import { getBaseUrl, getCluster, getProject, getUrl } from './utils';
 
@@ -46,6 +46,10 @@ export function getFlow(): { flow: IDPType | undefined } {
   return sdkTokenProvider.getFlow() as { flow: IDPType | undefined };
 }
 
+export function setTokenRetreivalOpts(opts: TokenRetreivalOpts) {
+  sdkTokenProvider.setTokenRetreivalOpts(opts);
+}
+
 export async function getToken() {
   // cyToken is used for e2e-tests
   const cyToken = localStorage.getItem('CY_TOKEN');
@@ -72,7 +76,7 @@ export function loginAndAuthIfNeeded(): Promise<void> {
     authInit = sdkSingleton
       .authenticate()
       // eslint-disable-next-line
-      .then(() => {})
+      .then(() => { })
       .catch(() => {
         redirectToLogin();
       });

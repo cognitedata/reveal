@@ -27,7 +27,8 @@ export async function getUserInformation(
 export async function getAccessToken(
   clientId: string,
   domain: string,
-  audience: string
+  audience: string,
+  ignoreCache = false
 ) {
   const auth0 = await createAuth0Client({
     domain,
@@ -37,7 +38,7 @@ export async function getAccessToken(
     useRefreshTokens: true,
     redirect_uri: window.location.href,
   });
-  const token = await auth0.getTokenSilently();
+  const token = await auth0.getTokenSilently({ ignoreCache });
   if (!token) {
     throw new Error('Token not found');
   }
