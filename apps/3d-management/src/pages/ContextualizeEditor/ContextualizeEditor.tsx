@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 
 import ContextualizeThreeDViewer from '../../components/ContextualizeThreeDViewer';
 
-import { ContextualizeEditorHeader } from './ContextualizeEditorHeader';
+import { ContextualizeEditorHeader } from './ContextualizeEditorHeader/ContextualizeEditorHeader';
 
 type ContextualizeEditorParams = {
   modelId: string;

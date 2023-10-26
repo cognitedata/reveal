@@ -3,7 +3,7 @@ import { Color } from 'three';
 import { DefaultNodeAppearance, NodeOutlineColor } from '@cognite/reveal';
 import { QualitySettings } from '@cognite/reveal-react-components';
 
-export const CONTEXTUALIZE_EDITOR_HEADER_HEIGHT = 40;
+export const CONTEXTUALIZE_EDITOR_HEADER_HEIGHT = 45;
 export const FLOATING_ELEMENT_MARGIN = 15;
 export const DEFAULT_RIGHT_SIDE_PANEL_WIDTH = 500;
 

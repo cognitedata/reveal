@@ -18,7 +18,7 @@ export function ModelRoutes() {
         element={FallbackWrapper(RevisionDetails)}
       />
       <Route
-        path="/:tenant/3d-models/contextualize-editor/:modelId/revisions/:revisionId/*"
+        path="/:tenant/3d-models/contextualize-editor/:modelId/revisions/:revisionId"
         element={FallbackWrapper(ContextualizeEditor)}
       />
       <Route path="*" element={FallbackWrapper(NoAccessPage)} />

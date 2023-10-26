@@ -15,9 +15,9 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
-import { useThreeDModelName } from '../../components/ContextualizeThreeDViewer/hooks/useThreeDModelName';
+import { CONTEXTUALIZE_EDITOR_HEADER_HEIGHT } from '../constants';
 
-import { CONTEXTUALIZE_EDITOR_HEADER_HEIGHT } from './constants';
+import RevisionDropdownMenu from './RevisionDropdownMenu';
 
 type ContextualizeEditorHeaderProps = {
   modelId: string;
@@ -30,42 +30,38 @@ export const ContextualizeEditorHeader = ({
 }: ContextualizeEditorHeaderProps) => {
   const navigate = useNavigate();
   const modelIdNumber = Number(modelId);
-  const modelName = useThreeDModelName(modelIdNumber) ?? modelId;
+  const revisionIdNumber = Number(revisionId);
 
-  const handleGoBackToIndustryCanvasButtonClick = () => {
+  const handleGoBackToThreeDModelsButtonClick = () => {
     navigate(createLink(`/3d-models`));
   };
 
   const onOpenInDataExplorer = () => {
-    // Open in new tab
     window.open(createLink(`/explore/threeD/${modelId}`), '_blank');
   };
 
   return (
     <TitleRowWrapper>
-      <PreviewLinkWrapper>
-        <Flex alignItems="center" gap={8}>
-          <Tooltip content="Go back to model page" position="bottom">
-            <Button
-              icon="ArrowLeft"
-              aria-label="Go back to model page"
-              onClick={handleGoBackToIndustryCanvasButtonClick}
-            />
-          </Tooltip>
-          <Heading level={5}>Contextualization Editor</Heading>
-        </Flex>
-      </PreviewLinkWrapper>
-
       <StyledGoBackWrapper>
-        <StyledInfoContainer>
-          <StyledInfoText>
-            <Heading level={5}>{modelName}</Heading>
-          </StyledInfoText>
-          <StyledInfoText>Revision: {revisionId}</StyledInfoText>
-        </StyledInfoContainer>
-
+        <Tooltip content="Go back to model page" position="bottom">
+          <Button
+            icon="ArrowLeft"
+            aria-label="Go back to model page"
+            onClick={handleGoBackToThreeDModelsButtonClick}
+          />
+        </Tooltip>
+        <RevisionDropdownMenu
+          modelId={modelIdNumber}
+          revisionId={revisionIdNumber}
+        />
         <Divider direction="vertical" length="20px" endcap="round" />
+      </StyledGoBackWrapper>
 
+      <TitleWrapper>
+        <Heading level={5}>Contextualization editor</Heading>
+      </TitleWrapper>
+
+      <MoreOptionsWrapper>
         <Dropdown
           content={
             <Menu>
@@ -80,27 +76,17 @@ export const ContextualizeEditorHeader = ({
         >
           <Button icon="EllipsisHorizontal" aria-label="More options" />
         </Dropdown>
-      </StyledGoBackWrapper>
+      </MoreOptionsWrapper>
     </TitleRowWrapper>
   );
 };
 
 const TitleRowWrapper = styled.div`
-  h1 {
-    margin: 0px;
-  }
   display: flex;
-  align-items: center;
   flex-wrap: nowrap;
   padding: 10px 12px;
   height: ${CONTEXTUALIZE_EDITOR_HEADER_HEIGHT}px;
   border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
-`;
-
-const PreviewLinkWrapper = styled.div`
-  overflow: hidden;
-  vertical-align: bottom;
-  flex: 1 1 auto;
 `;
 
 const StyledGoBackWrapper = styled.div`
@@ -110,15 +96,16 @@ const StyledGoBackWrapper = styled.div`
   align-items: center;
 `;
 
-const StyledInfoContainer = styled.div`
-  padding: 10px 12px;
-  border-radius: 4px;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+const TitleWrapper = styled.div`
+  flex: 1 1 auto;
+  text-align: center; /* Center the title */
+  padding: 0 15% 0 0;
+  overflow: hidden;
 `;
 
-const StyledInfoText = styled.p`
-  margin: 0;
-  font-size: 12px;
+const MoreOptionsWrapper = styled.div`
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 `;

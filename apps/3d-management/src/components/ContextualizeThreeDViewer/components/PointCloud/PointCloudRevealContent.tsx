@@ -103,6 +103,7 @@ export const PointCloudRevealContent = ({
   return (
     <>
       <PointCloudContainer
+        key={revisionId}
         addModelOptions={{
           modelId: modelId,
           revisionId: revisionId,
