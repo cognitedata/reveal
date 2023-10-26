@@ -7,10 +7,39 @@ type StoryName = keyof typeof storyOutput.stories extends `${infer T}--${string}
 /** Load Storybook story for Playwright testing */
 export async function loadStory(page: Page, storyID: StoryName): Promise<void> {
   const search = new URLSearchParams({ viewMode: 'story', id: `${storyID}--main` });
-  await page.goto(`iframe.html?${search.toString()}`, { waitUntil: 'networkidle', timeout: 60000 });
+  await page.goto(`iframe.html?${search.toString()}`, {
+    waitUntil: 'load',
+    timeout: 60000
+  });
+
+  const storyDoneLocator = page.locator('#story-done');
 
   // wait for page to finish rendering before starting test
-  await page.waitForSelector('#storybook-root');
+  await Promise.all([viewerLoadingSettled(page), storyDoneLocator.waitFor({ state: 'attached' })]);
+}
 
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+// waits for loading spinner to settle indicating that the viewer is ready
+async function viewerLoadingSettled(page: Page): Promise<void> {
+  const spinner = page.locator('.reveal-viewer-spinner--loading');
+  await spinner.waitFor({ state: 'attached' });
+  await spinner.evaluate(async (spinner) => {
+    await new Promise<void>((resolve) => {
+      let debounceSettled: ReturnType<typeof setTimeout> | undefined;
+      new MutationObserver(() => {
+        if (!(spinner.className as string).includes('loading')) {
+          if (debounceSettled !== undefined) {
+            return;
+          }
+          debounceSettled = setTimeout(() => {
+            resolve();
+          }, 100);
+        } else {
+          if (debounceSettled !== undefined) {
+            clearTimeout(debounceSettled);
+            debounceSettled = undefined;
+          }
+        }
+      }).observe(spinner, { attributes: true });
+    });
+  });
 }
