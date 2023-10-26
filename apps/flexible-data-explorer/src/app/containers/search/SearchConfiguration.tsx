@@ -7,7 +7,10 @@ import { Body, Icon, Title, Tooltip } from '@cognite/cogs.js';
 import { ModalConfirm } from '../../components/confirm/ModalConfirm';
 import { useProjectConfig, useSelectedSiteConfig } from '../../hooks/useConfig';
 import { useDataModelsLocalStorage } from '../../hooks/useLocalStorage';
-import { useAISearchParams } from '../../hooks/useParams';
+import {
+  useAISearchParams,
+  useSearchCategoryParams,
+} from '../../hooks/useParams';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useSelectedDataModels } from '../../services/useSelectedDataModels';
 import { SiteSelection } from '../site/SiteSelection';
@@ -25,6 +28,7 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
   const selectedSite = useSelectedSiteConfig();
   const selectedDataModels = useSelectedDataModels();
   const [, setSelectedDataModels] = useDataModelsLocalStorage();
+  const [, setCategory] = useSearchCategoryParams();
 
   const dataModels = selectedDataModels?.map((item) => item.externalId);
 
@@ -33,6 +37,11 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
     !config || selectedSite?.name === 'Custom';
 
   const Wrapper: any = header ? Title : MainTextBody;
+
+  const handleClick = () => {
+    setSelectedDataModels(undefined);
+    setCategory(undefined);
+  };
 
   return (
     <Container>
@@ -55,10 +64,7 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
             title="Are you sure you want to change the data models?"
             content="By confirming, you will lose all your current selections!"
           >
-            <StyledBody
-              onClick={() => setSelectedDataModels(undefined)}
-              $isHeader={header}
-            >
+            <StyledBody onClick={() => handleClick()} $isHeader={header}>
               {dataModels?.splice(0, 2).join(', ') || '...'}
               <Tooltip wrapped content={dataModels?.join(', ')}>
                 <>
