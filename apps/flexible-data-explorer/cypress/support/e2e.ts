@@ -16,6 +16,7 @@
 // Import commands.ts using ES2015 syntax:
 import './commands';
 import './injectToken';
+import './setupTestsE2E';
 
 Cypress.on('uncaught:exception', (err) => {
   // returning false here prevents Cypress from failing the test

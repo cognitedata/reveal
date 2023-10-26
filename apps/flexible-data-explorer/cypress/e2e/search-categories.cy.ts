@@ -2,8 +2,6 @@ const GENERIC_CATEGORIES = ['Person', 'Actor', 'Movie', 'Director', 'Review'];
 
 describe('Search categories', () => {
   before(() => {
-    cy.navigateToApp();
-    cy.setupDataModelSelection();
     cy.performEmptySearch();
   });
 

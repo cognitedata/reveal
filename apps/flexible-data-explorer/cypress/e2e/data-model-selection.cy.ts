@@ -1,9 +1,4 @@
 describe('Data model selection', () => {
-  before(() => {
-    cy.navigateToApp();
-    cy.setupDataModelSelection();
-  });
-
   it('should select single data model', () => {
     cy.clickIconButton('ChevronDown');
     cy.findByTestId('site-selection-menu').findByText('Custom').click();
