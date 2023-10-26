@@ -101,7 +101,10 @@ export const DataModelSelector: React.FC = () => {
       </Content>
       <ActionContainer>
         <Body level={3}>
-          Selected {selectedDataModels.length} / {MAX_DATA_MODELS} data models
+          {t('DATA_MODEL_SELECTED_DATA_MODELS', {
+            selectedDataModelsLength: selectedDataModels.length,
+            maxDataModels: MAX_DATA_MODELS,
+          })}
         </Body>
         <Button
           type="primary"

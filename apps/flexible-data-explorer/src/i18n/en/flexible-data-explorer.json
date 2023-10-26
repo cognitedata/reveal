@@ -45,6 +45,9 @@
   "DATA_MODEL_SELECTOR_ERROR_BODY": "There were some struggles to fetch data models",
   "DATA_MODEL_SELECTOR_EMPTY_TITLE": "No data models found",
   "DATA_MODEL_SELECTOR_EMPTY_BODY": "There were no data models found. Please contact your administrator to get access to data models",
+  "DATA_MODEL_SELECTED_DATA_MODELS": "Selected {{selectedDataModelsLength}}/{{maxDataModels}} data models",
+  "DATA_MODEL_CHANGE_CONFIRMATION": "By confirming, you will lose all your current selections!",
+  "DATA_MODEL_CHANGE_QUESTION": "Are you sure you want to change the data models?",
 
   "RECENTLY_VIEWED_TITLE": "Recently viewed {{count}}",
   "RECENTLY_VIEWED_EMPTY_TITLE": "No recently viewed items",
@@ -145,6 +148,7 @@
   "AI_GQL_AGGREGATE_CHAIN_FOUND_RESULTS": "Where {{key}} is {{value}}",
   "AI_GQL_AGGREGATE_CHAIN_FOUND_RESULTS_DETAILS": "*{{aggregate}}* of {{key}} is {{value}}",
   "AI_LEARN_MORE": "Learn more",
+  "AI_SELECT_QUESTION_TYPE": "Select a question type",
 
   "ERROR_TITLE": "Something went wrong",
   "ERROR_BACK_TO_HOME": "Back to home",

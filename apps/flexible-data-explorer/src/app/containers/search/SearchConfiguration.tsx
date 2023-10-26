@@ -61,8 +61,8 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
 
         {shouldShowDataModelSelection && (
           <ModalConfirm
-            title="Are you sure you want to change the data models?"
-            content="By confirming, you will lose all your current selections!"
+            title={t('DATA_MODEL_CHANGE_QUESTION')}
+            content={t('DATA_MODEL_CHANGE_CONFIRMATION')}
           >
             <StyledBody onClick={() => handleClick()} $isHeader={header}>
               {dataModels?.splice(0, 2).join(', ') || '...'}

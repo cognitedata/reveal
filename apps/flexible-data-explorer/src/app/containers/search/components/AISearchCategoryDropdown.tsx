@@ -13,7 +13,7 @@ export const AISearchCategoryDropdown: React.FC = () => {
     <Dropdown
       content={
         <Menu style={{ minWidth: 540 }}>
-          <Menu.Section label="Select a question type">
+          <Menu.Section label={t('AI_SELECT_QUESTION_TYPE')}>
             <Menu.Item>
               <Flex>
                 <Body size="small" style={{ flex: 1 }}>
