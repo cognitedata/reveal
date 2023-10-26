@@ -5,6 +5,8 @@ import {
   ChartWorkflow,
   SESSION_ACL,
   TIMESERIES_ACL,
+  formatValueForDisplay,
+  DatapointsSummary,
 } from '@cognite/charts-lib';
 import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -16,12 +18,10 @@ import {
 } from '../../hooks/translations';
 import { WorkflowState } from '../../models/calculation-results/types';
 import { trackUsage } from '../../services/metrics';
-import { formatValueForDisplay } from '../../utils/numbers';
 import {
   makeDefaultTranslations,
   translationKeys,
 } from '../../utils/translations';
-import { DatapointsSummary } from '../../utils/units';
 import { AccessDeniedModal } from '../AccessDeniedModal/AccessDeniedModal';
 import AlertIcon from '../AlertIcon/AlertIcon';
 import AppearanceDropdown from '../AppearanceDropdown/AppearanceDropdown';

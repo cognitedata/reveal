@@ -3,9 +3,7 @@ import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 
 import { StatisticsResultResults } from '@cognite/calculation-backend';
-
-import { formatValueForDisplay } from '../../utils/numbers';
-import { getUnitConverter } from '../../utils/units';
+import { formatValueForDisplay, getUnitConverter } from '@cognite/charts-lib';
 
 const Plot = createPlotlyComponent(Plotly);
 

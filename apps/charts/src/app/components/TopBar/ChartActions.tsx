@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 
 import { useRecoilState } from 'recoil';
 
+import { useUserInfo } from '@cognite/charts-lib';
 import { Button, Dropdown, toast, Divider } from '@cognite/cogs.js';
 
 import { currentDateRangeLocale } from '../../config/locale';
 import { useDeleteChart, useUpdateChart } from '../../hooks/charts-storage';
 import { useTranslations } from '../../hooks/translations';
 import { useIsChartOwner } from '../../hooks/user';
-import { useUserInfo } from '../../hooks/useUserInfo';
 import chartAtom from '../../models/chart/atom';
 import { duplicateChart } from '../../models/chart/helpers';
 import { updateChartDateRange } from '../../models/chart/updates';

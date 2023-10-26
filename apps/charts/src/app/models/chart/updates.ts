@@ -22,6 +22,8 @@ import {
   SourceCollectionData,
   CollectionType,
   StorableNode,
+  AxisUpdate,
+  getEntryColor,
 } from '@cognite/charts-lib';
 import { Timeseries } from '@cognite/sdk';
 
@@ -33,9 +35,7 @@ import {
   NodeTypes,
 } from '../../components/NodeEditor/V2/types';
 import { initializeParameterValues } from '../../components/NodeEditor/V2/utils';
-import { AxisUpdate } from '../../components/PlotlyChart/utils';
 import { calcDeepCloneAndReplaceNodeElementsId } from '../../utils/calculations';
-import { getEntryColor } from '../../utils/colors';
 
 import { removeItem, addItem } from './helpers';
 

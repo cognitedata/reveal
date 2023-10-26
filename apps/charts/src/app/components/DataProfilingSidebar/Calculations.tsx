@@ -7,11 +7,15 @@ import { Elements } from 'react-flow-renderer';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { Chart, ChartSource, ChartWorkflowV2 } from '@cognite/charts-lib';
+import {
+  Chart,
+  ChartSource,
+  ChartWorkflowV2,
+  getEntryColor,
+} from '@cognite/charts-lib';
 import { Switch } from '@cognite/cogs.js';
 
 import { addWorkflow, removeSource } from '../../models/chart/updates';
-import { getEntryColor } from '../../utils/colors';
 import { makeDefaultTranslations } from '../../utils/translations';
 import { NodeDataDehydratedVariants, NodeTypes } from '../NodeEditor/V2/types';
 

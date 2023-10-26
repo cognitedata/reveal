@@ -1,7 +1,11 @@
 import { ComponentProps, useState } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';
 
-import { ChartTimeSeries } from '@cognite/charts-lib';
+import {
+  ChartTimeSeries,
+  DatapointsSummary,
+  formatValueForDisplay,
+} from '@cognite/charts-lib';
 import { Button, Popconfirm } from '@cognite/cogs.js';
 
 import { useLinkedAsset } from '../../hooks/cdf-assets';
@@ -11,12 +15,10 @@ import {
 } from '../../hooks/translations';
 import { TimeseriesEntry } from '../../models/timeseries-results/types';
 import { trackUsage } from '../../services/metrics';
-import { formatValueForDisplay } from '../../utils/numbers';
 import {
   makeDefaultTranslations,
   translationKeys,
 } from '../../utils/translations';
-import { DatapointsSummary } from '../../utils/units';
 import AppearanceDropdown from '../AppearanceDropdown/AppearanceDropdown';
 import TranslatedEditableText from '../EditableText/TranslatedEditableText';
 import { PnidButton } from '../SearchResultTable/PnidButton';

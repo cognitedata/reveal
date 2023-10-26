@@ -9,8 +9,7 @@ import { locizePlugin } from 'locize';
 import LocizeLastusedPlugin, { LocizeLastusedOptions } from 'locize-lastused';
 
 import { SELECTED_LANGUAGE_LS_KEY } from '@cognite/cdf-utilities';
-
-import { isDevelopment, isPR, isProduction } from '../utils/environment';
+import { isDevelopment, isPR, isProduction } from '@cognite/charts-lib';
 
 import config from './config';
 

@@ -2,6 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { getProject } from '@cognite/cdf-utilities';
+import { useUserInfo } from '@cognite/charts-lib';
 import {
   Button,
   Input,
@@ -17,7 +18,6 @@ import { OpenInCharts } from '../../components/OpenInCharts/OpenInCharts';
 import { currentStartPageLayout } from '../../config/startPagePreference';
 import useCreateChart from '../../hooks/charts/mutations/useCreateChart';
 import { useComponentTranslations } from '../../hooks/translations';
-import { useUserInfo } from '../../hooks/useUserInfo';
 import { trackUsage } from '../../services/metrics';
 import { createInternalLink } from '../../utils/link';
 import {

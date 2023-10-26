@@ -1,4 +1,4 @@
-import { units } from '../../utils/units';
+import { units } from '@cognite/charts-lib';
 
 export const getDisplayUnit = (
   preferredUnit: string | undefined,

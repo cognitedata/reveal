@@ -8,6 +8,13 @@ import {
   LineStyle,
   ScheduledCalculation,
   formatNumberWithSuffix,
+  DEFAULT_EVENT_COLOR,
+  hexToRGBA,
+  roundToSignificantDigits,
+  isThresholdValid,
+  convertUnits,
+  convertThresholdUnits,
+  units,
 } from '@cognite/charts-lib';
 import {
   CogniteEvent,
@@ -20,10 +27,6 @@ import { WorkflowState } from '../../models/calculation-results/types';
 import { ChartEventResults } from '../../models/event-results/types';
 import { ScheduledCalculationsDataMap } from '../../models/scheduled-calculation-results/types';
 import { TimeseriesEntry } from '../../models/timeseries-results/types';
-import { DEFAULT_EVENT_COLOR, hexToRGBA } from '../../utils/colors';
-import { roundToSignificantDigits } from '../../utils/numbers';
-import { isThresholdValid } from '../../utils/threshold';
-import { convertUnits, convertThresholdUnits, units } from '../../utils/units';
 import { isEventSelected } from '../EventSidebar/helpers';
 
 export type PlotlyEventData = {

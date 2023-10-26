@@ -1,8 +1,7 @@
 import { selector } from 'recoil';
 
-import { Chart } from '@cognite/charts-lib';
+import { Chart, getUnitConvertedDatapointsSummary } from '@cognite/charts-lib';
 
-import { getUnitConvertedDatapointsSummary } from '../../utils/units';
 import chartAtom from '../chart/atom';
 
 import { scheduledCalculationDataAtom } from './atom';

@@ -5,5 +5,8 @@ export * from './firebase';
 export * from './constants';
 export * from './utils';
 export * from './components';
+export * from './environment';
+export * from './utils';
+export * from './services';
 export { useFirebaseInit } from './useFirebaseInit';
 export { ChartsSdkInitialisationGuard } from './ChartsSdkInitialisationGuard';

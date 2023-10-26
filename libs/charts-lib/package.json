@@ -1,5 +1,5 @@
 {
-  "name": "charts-lib",
+  "name": "@cognite/charts-lib",
   "version": "0.0.1",
   "type": "commonjs"
 }

@@ -1,5 +1,7 @@
 import { modulo } from './numbers';
 
+export const DEFAULT_EVENT_COLOR = '#009d9a';
+
 const availableColorsKey = 'availableColorsKey';
 
 export const availableColors = [
@@ -18,8 +20,6 @@ export const availableColors = [
   '#8a3800',
   '#a56eff',
 ];
-
-export const DEFAULT_EVENT_COLOR = '#009d9a';
 
 export function getColor(value: number) {
   return availableColors[modulo(value, availableColors.length)];
@@ -63,6 +63,7 @@ export function getEntryColor(primaryId: string, secondaryId: string) {
 
   return getColor(value);
 }
+
 // need to use Fillcolor with rgba as value type to set specific opacity
 export const hexToRGBA = (hex: string | undefined, alpha?: number) => {
   if (!hex) {

@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { isEqual } from 'lodash';
 import { useDebounce } from 'use-debounce';
 
+import { calculateGranularity } from '@cognite/charts-lib';
 import { DatapointsMultiQuery, Timeseries } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -15,7 +16,6 @@ import { useChartAtom } from '../models/chart/atom';
 import { useScheduledCalculationData } from '../models/scheduled-calculation-results/atom';
 import { fetchRawOrAggregatedDatapoints } from '../services/cdf-api';
 import { CHART_POINTS_PER_SERIES } from '../utils/constants';
-import { calculateGranularity } from '../utils/timeseries';
 
 export const ScheduledCalculationCollectionEffects = () => {
   const [chart] = useChartAtom();

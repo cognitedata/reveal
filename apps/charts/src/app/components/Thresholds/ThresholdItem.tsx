@@ -8,6 +8,8 @@ import {
   ChartThresholdEventFilter,
   ChartTimeSeries,
   ChartWorkflow,
+  isThresholdValid,
+  getUnitConverter,
 } from '@cognite/charts-lib';
 import {
   Button,
@@ -20,12 +22,10 @@ import {
 
 import useThresholdsResults from '../../hooks/threshold-calculations';
 import { convertMSToDisplay } from '../../utils/date';
-import { isThresholdValid } from '../../utils/threshold';
 import {
   makeDefaultTranslations,
   translationKeys,
 } from '../../utils/translations';
-import { getUnitConverter } from '../../utils/units';
 import {
   ReverseSwitch,
   ExpandIcon,

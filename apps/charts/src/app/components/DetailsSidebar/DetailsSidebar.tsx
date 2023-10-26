@@ -10,7 +10,11 @@ import {
   StatisticsResultResults,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
-import { ChartSource } from '@cognite/charts-lib';
+import {
+  ChartSource,
+  formatValueForDisplay,
+  getUnitConverter,
+} from '@cognite/charts-lib';
 import {
   Button,
   Icon,
@@ -23,9 +27,7 @@ import {
 import { useTranslations } from '../../hooks/translations';
 import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
 import { SourceCircle, SourceSquare } from '../../pages/ChartViewPage/elements';
-import { formatValueForDisplay } from '../../utils/numbers';
 import { makeDefaultTranslations } from '../../utils/translations';
-import { getUnitConverter } from '../../utils/units';
 import {
   Sidebar,
   ContentOverflowWrapper,

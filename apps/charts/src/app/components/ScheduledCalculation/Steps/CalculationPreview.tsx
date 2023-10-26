@@ -6,13 +6,13 @@ import { memo, useMemo } from 'react';
 
 import { isBefore, sub } from 'date-fns';
 
+import { PlotlyChart } from '@cognite/charts-lib';
 import { Icon } from '@cognite/cogs.js';
 
 import { useGetWorkflow } from '../../../domain/chart/internal/queries/useGetWorkflow';
 import { useCalculationPreviewData } from '../../../domain/scheduled-calculation/service/queries/useCalculationPreviewData';
 import { useTranslations } from '../../../hooks/translations';
 import { makeDefaultTranslations } from '../../../utils/translations';
-import PlotlyChart from '../../PlotlyChart/PlotlyChart';
 
 import { PreviewStatus } from './elements';
 

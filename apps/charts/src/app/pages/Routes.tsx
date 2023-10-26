@@ -5,14 +5,13 @@ import * as Sentry from '@sentry/react';
 
 import { getFlow } from '@cognite/auth-utils';
 import { getProject, getCluster } from '@cognite/cdf-utilities';
-import { useFirebaseInit } from '@cognite/charts-lib';
+import { useFirebaseInit, useUserInfo } from '@cognite/charts-lib';
 import { Loader, toast } from '@cognite/cogs.js';
 import { parseEnvFromCluster } from '@cognite/login-utils';
 
 import ErrorToast from '../components/ErrorToast/ErrorToast';
 import PageLayout from '../components/Layout/PageLayout';
 import SecondaryTopBar from '../components/SecondaryTopBar/SecondaryTopBar';
-import { useUserInfo } from '../hooks/useUserInfo';
 import { identifyUserForMetrics } from '../services/metrics';
 
 import ChartListPage from './ChartListPage/ChartListPage';

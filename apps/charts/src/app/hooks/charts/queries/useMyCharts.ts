@@ -2,9 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
 import { getProject } from '@cognite/cdf-utilities';
-import { fetchUserCharts } from '@cognite/charts-lib';
+import { fetchUserCharts, useUserInfo } from '@cognite/charts-lib';
 
-import { useUserInfo } from '../../useUserInfo';
 import { ChartItem } from '../types';
 
 const useMyCharts = () => {

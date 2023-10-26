@@ -1,8 +1,7 @@
-import { Interpolation, LineStyle } from '@cognite/charts-lib';
+import { Interpolation, LineStyle, availableColors } from '@cognite/charts-lib';
 import { Menu, Flex } from '@cognite/cogs.js';
 
 import { trackUsage } from '../../services/metrics';
-import { availableColors } from '../../utils/colors';
 import { makeDefaultTranslations } from '../../utils/translations';
 
 import {

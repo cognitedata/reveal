@@ -2,7 +2,11 @@ import { ComponentProps } from 'react';
 
 import { Meta, Story } from '@storybook/react';
 
-import { ChartListContext, ChartListContextInterface } from '../context';
+import {
+  ChartListContext,
+  ChartListContextInterface,
+} from '@cognite/charts-lib';
+
 import { PreviewPlotContainerMock } from '../mocks';
 
 import ChartListGridItem from './ChartListGridItem';

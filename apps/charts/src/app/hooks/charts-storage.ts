@@ -13,11 +13,10 @@ import {
   fetchPublicCharts,
   fetchUserCharts,
   updateChart,
+  useUserInfo,
 } from '@cognite/charts-lib';
 
 import { createInternalLink } from '../utils/link';
-
-import { useUserInfo } from './useUserInfo';
 
 export const useMyCharts = () => {
   const { data: { id, mail } = {} } = useUserInfo();

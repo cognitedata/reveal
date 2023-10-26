@@ -3,7 +3,7 @@ import {
   isPR,
   isProduction,
   isStaging,
-} from '../utils/environment';
+} from '@cognite/charts-lib';
 
 const env = process.env ?? {};
 

@@ -2,6 +2,7 @@ import { useContext } from 'react';
 
 import { Skeleton } from 'antd';
 
+import { ChartListContext } from '@cognite/charts-lib';
 import {
   A,
   Detail,
@@ -18,7 +19,6 @@ import {
 } from '../../../utils/translations';
 import { RenderWhenOnScreen } from '../../RenderWhenOnScreen/RenderWhenOnScreen';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
-import { ChartListContext } from '../context';
 import formatOwner from '../formatOwner';
 import { ChartListProps } from '../types';
 

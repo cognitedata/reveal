@@ -7,11 +7,11 @@ import {
   Chart,
   ChartWorkflowV2,
   ScheduledCalculation,
+  useUserInfo,
 } from '@cognite/charts-lib';
 import { Icon, toast } from '@cognite/cogs.js';
 
 import { useIsChartOwner } from '../../hooks/user';
-import { useUserInfo } from '../../hooks/useUserInfo';
 import { availableWorkflows } from '../../models/calculation-results/selectors';
 import {
   updateScheduledCalculation,

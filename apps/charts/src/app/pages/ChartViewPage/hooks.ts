@@ -34,9 +34,9 @@ import {
 import { useOperations } from '../../models/operations/atom';
 import { useScheduledCalculationDataValue } from '../../models/scheduled-calculation-results/atom';
 import {
+  waitForStatisticsToFinish,
   fetchStatisticsResult,
   waitForCalculationToFinish,
-  waitForStatisticsToFinish,
 } from '../../services/calculation-backend';
 import { getHash } from '../../utils/hash';
 

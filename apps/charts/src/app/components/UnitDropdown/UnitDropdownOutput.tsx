@@ -1,8 +1,7 @@
 import React from 'react';
 
+import { units, UnitTypes } from '@cognite/charts-lib';
 import { Menu } from '@cognite/cogs.js';
-
-import { units, UnitTypes } from '../../utils/units';
 
 type Props = {
   inputUnitOption: any;

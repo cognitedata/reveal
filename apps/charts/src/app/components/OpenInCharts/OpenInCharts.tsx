@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import { compact } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Chart, ChartTimeSeries } from '@cognite/charts-lib';
+import { Chart, ChartTimeSeries, useUserInfo } from '@cognite/charts-lib';
 import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
@@ -28,7 +28,6 @@ import {
 } from '../../hooks/charts-storage';
 import { useSearchParam, useClearSearchParams } from '../../hooks/navigation';
 import { useTranslations } from '../../hooks/translations';
-import { useUserInfo } from '../../hooks/useUserInfo';
 import { addTimeseries, convertTSToChartTS } from '../../models/chart/updates';
 import { calculateDefaultYAxis } from '../../utils/axis';
 import { createInternalLink } from '../../utils/link';

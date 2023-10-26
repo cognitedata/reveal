@@ -9,7 +9,7 @@ import {
   Calculation,
   CalculationResultQueryAggregateEnum,
 } from '@cognite/calculation-backend';
-import { ChartWorkflowV2 } from '@cognite/charts-lib';
+import { ChartWorkflowV2, calculateGranularity } from '@cognite/charts-lib';
 
 import { getStepsFromWorkflow } from '../components/NodeEditor/transforms';
 import { isWorkflowRunnable } from '../components/NodeEditor/utils';
@@ -25,7 +25,6 @@ import { updateWorkflow } from '../models/chart/updates';
 import { useOperations } from '../models/operations/atom';
 import { CHART_POINTS_PER_SERIES } from '../utils/constants';
 import { getHash } from '../utils/hash';
-import { calculateGranularity } from '../utils/timeseries';
 
 export function CalculationCollectionEffects() {
   const [chart] = useRecoilState(chartAtom);

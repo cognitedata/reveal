@@ -8,11 +8,14 @@ import { Meta, Story } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-import { ChartTimeSeries, ChartWorkflow } from '@cognite/charts-lib';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+  DatapointsSummary,
+} from '@cognite/charts-lib';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { makeDefaultTranslations } from '../../utils/translations';
-import { DatapointsSummary } from '../../utils/units';
 
 import SourceTable from './SourceTable';
 

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 import styled from 'styled-components/macro';
 
+import { units, UnitTypes } from '@cognite/charts-lib';
 import { Menu } from '@cognite/cogs.js';
 
-import { units, UnitTypes } from '../../utils/units';
 import TranslatedEditableText from '../EditableText/TranslatedEditableText';
 
 type Props = {

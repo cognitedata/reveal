@@ -27,13 +27,13 @@ import { RecoilRoot } from 'recoil';
 
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { getCluster, getProject } from '@cognite/cdf-utilities';
+import { useUserInfo } from '@cognite/charts-lib';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
 import { DataExplorationProvider } from '@data-exploration-components';
 
 import config from './app/config/config';
-import { useUserInfo } from './app/hooks/useUserInfo';
 import { isDevelopment } from './app/utils/environment';
 import GlobalStyles from './GlobalStyles';
 

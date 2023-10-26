@@ -18,7 +18,10 @@ import {
   CreateThresholdsParams,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
-import { ChartThreshold } from '@cognite/charts-lib';
+import {
+  ChartThreshold,
+  fetchCalculationQueryResult,
+} from '@cognite/charts-lib';
 import { DatapointAggregate, DatapointsMultiQuery } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -28,7 +31,6 @@ import {
   createStatistics,
   createDataProfiling,
   createThreshold,
-  fetchCalculationQueryResult,
   fetchCalculationResult,
   fetchCalculationStatus,
   fetchStatisticsResult,

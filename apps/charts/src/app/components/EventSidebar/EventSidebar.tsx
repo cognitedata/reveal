@@ -9,7 +9,11 @@ import { isNil, omit, omitBy } from 'lodash';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Chart, ChartEventFilters } from '@cognite/charts-lib';
+import {
+  Chart,
+  ChartEventFilters,
+  DEFAULT_EVENT_COLOR,
+} from '@cognite/charts-lib';
 import {
   Button,
   Collapse,
@@ -29,7 +33,6 @@ import {
 } from '../../models/chart/updates-event-filters';
 import { activeEventFilterIdAtom } from '../../models/event-results/atom';
 import { ChartEventResults } from '../../models/event-results/types';
-import { DEFAULT_EVENT_COLOR } from '../../utils/colors';
 import { makeDefaultTranslations } from '../../utils/translations';
 import { ColorDropdown } from '../AppearanceDropdown/AppearanceDropdown';
 import {

@@ -1,6 +1,6 @@
 import { Skeleton } from 'antd';
 
-import PlotlyChart from '../PlotlyChart';
+import { PlotlyChart } from '@cognite/charts-lib';
 
 interface Props {
   /** Hex color for the line. Default is blue `#0000FF` */

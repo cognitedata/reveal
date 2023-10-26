@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Skeleton } from 'antd';
 
-import { Chart } from '@cognite/charts-lib';
+import { Chart, ChartListContext } from '@cognite/charts-lib';
 import {
   A,
   Flex,
@@ -17,7 +17,6 @@ import {
 
 import { RenderWhenOnScreen } from '../../RenderWhenOnScreen/RenderWhenOnScreen';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
-import { ChartListContext } from '../context';
 import formatOwner from '../formatOwner';
 
 interface Props {

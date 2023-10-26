@@ -18,14 +18,13 @@ import {
   StatusStatusEnum,
   ThresholdResult,
   CreateThresholdsParams,
-  CalculationResultQuery,
   CalculationResultDatapointsInner,
 } from '@cognite/calculation-backend';
 import { getCluster } from '@cognite/cdf-utilities';
+import { fetchCalculationQueryResult } from '@cognite/charts-lib';
 import { parseEnvFromCluster } from '@cognite/login-utils';
 import {
   CogniteClient,
-  DatapointAggregate,
   DatapointsMultiQuery,
   DoubleDatapoint,
 } from '@cognite/sdk';
@@ -55,9 +54,6 @@ async function getConfig(sdk: CogniteClient): Promise<Configuration> {
   await sdk.get('/api/v1/token/inspect');
   const { Authorization } = sdk.getDefaultRequestHeaders();
   const cluster = getCluster();
-
-  // @ts-ignore
-  const sdkClientBaseUrl = sdk.httpClient.getBaseUrl();
 
   if (!Authorization) {
     throw new Error('Authorization header missing');
@@ -110,24 +106,6 @@ export async function fetchCalculationResult(
   return data;
 }
 
-function getResultQueriesFromDatapointMultiQuery(
-  query: DatapointsMultiQuery
-): CalculationResultQuery[] {
-  if (!query.aggregates?.length) {
-    return [];
-  }
-
-  return query.aggregates.map((aggregate) => {
-    return {
-      start_time: new Date(query.start || new Date()).getTime(),
-      end_time: new Date(query.end || new Date()).getTime(),
-      aggregate: aggregate as CalculationResultQuery['aggregate'],
-      granularity: query.granularity,
-      limit: query.limit,
-    };
-  });
-}
-
 export async function fetchCalculationQueriesResult(
   sdk: CogniteClient,
   ids: string[],
@@ -136,77 +114,6 @@ export async function fetchCalculationQueriesResult(
   return Promise.all(
     ids.map((callId) => fetchCalculationQueryResult(sdk, callId, query))
   );
-}
-
-export async function fetchCalculationQueryResult(
-  sdk: CogniteClient,
-  id: string,
-  query: DatapointsMultiQuery
-): Promise<WorkflowResult> {
-  const config = await getConfig(sdk);
-  const api = await new CalculationsApi(config);
-
-  if (!query.aggregates?.length) {
-    const inputQuery: CalculationResultQuery = {
-      start_time: new Date(query.start || new Date()).getTime(),
-      end_time: new Date(query.end || new Date()).getTime(),
-    };
-
-    const { data } = await api.createGraphCalculationResultQuery(
-      sdk.project,
-      id,
-      inputQuery
-    );
-
-    return {
-      id,
-      datapoints: (data.datapoints || []).map((datapoint) => {
-        return {
-          timestamp: new Date(datapoint.timestamp),
-          value: datapoint.value,
-        };
-      }),
-      warnings: data.warnings,
-      error: data.error,
-      isDownsampled: data.exceeded_server_limits,
-    };
-  }
-
-  const queries = getResultQueriesFromDatapointMultiQuery(query);
-
-  const queryResultPromises = queries.map(async (q) => {
-    return {
-      aggregate: q.aggregate,
-      result: (await api.createGraphCalculationResultQuery(sdk.project, id, q))
-        .data,
-    };
-  });
-
-  const queryResults = await Promise.all(queryResultPromises);
-
-  const datapoints: DatapointAggregate[] = (
-    queryResults[0].result.datapoints || []
-  ).map((dp, index) => {
-    return {
-      timestamp: new Date(dp.timestamp),
-      ...(query.aggregates || []).reduce((output, aggregate) => {
-        return {
-          ...output,
-          [aggregate]: (queryResults.find(
-            (queryResult) => queryResult.aggregate === aggregate
-          )?.result.datapoints || [])[index].value,
-        };
-      }, {}),
-    };
-  });
-
-  return {
-    id,
-    datapoints,
-    warnings: queryResults[0].result.warnings,
-    error: queryResults[0].result.error,
-    isDownsampled: queryResults[0].result.exceeded_server_limits,
-  };
 }
 
 export async function waitForCalculationToFinish(

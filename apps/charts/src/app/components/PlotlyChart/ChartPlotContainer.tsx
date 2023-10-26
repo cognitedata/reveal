@@ -2,7 +2,12 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
 
-import { Chart } from '@cognite/charts-lib';
+import {
+  Chart,
+  PlotlyChart,
+  ChartingContainer,
+  PlotNavigationUpdate,
+} from '@cognite/charts-lib';
 
 import { WorkflowState } from '../../models/calculation-results/types';
 import { updateSourceAxisForChart } from '../../models/chart/updates';
@@ -12,8 +17,6 @@ import { InteractionData } from '../../models/interactions/types';
 import { ScheduledCalculationsDataMap } from '../../models/scheduled-calculation-results/types';
 import { TimeseriesEntry } from '../../models/timeseries-results/types';
 
-import { ChartingContainer } from './elements';
-import PlotlyChart, { PlotNavigationUpdate } from './PlotlyChart';
 import { cleanTimeseriesCollection, cleanWorkflowCollection } from './utils';
 
 type Props = {

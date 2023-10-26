@@ -9,8 +9,7 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 import styled from 'styled-components/macro';
 
 import { DataProfilingResultResults } from '@cognite/calculation-backend';
-
-import { formatValueForDisplay } from '../../utils/numbers';
+import { formatValueForDisplay } from '@cognite/charts-lib';
 
 import EmptyState from './EmptyState';
 

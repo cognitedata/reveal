@@ -23,6 +23,8 @@ import {
   ScheduledCalculation,
   TIMESERIES_ACL,
   SESSION_ACL,
+  getUnitConverter,
+  getEntryColor,
 } from '@cognite/charts-lib';
 import { toast, Loader, Button, Tooltip, Chip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -83,7 +85,6 @@ import { scheduledCalculationSummaries } from '../../models/scheduled-calculatio
 import { timeseriesAtom } from '../../models/timeseries-results/atom';
 import { timeseriesSummaries } from '../../models/timeseries-results/selectors';
 import { startTimer, stopTimer, trackUsage } from '../../services/metrics';
-import { getEntryColor } from '../../utils/colors';
 import {
   SEARCH_KEY,
   ACTIVE_SIDEBAR_KEY,
@@ -99,7 +100,6 @@ import {
   makeDefaultTranslations,
   translationKeys,
 } from '../../utils/translations';
-import { getUnitConverter } from '../../utils/units';
 import { Modes } from '../types';
 
 import { ChartActionButton } from './ChartActionButton';

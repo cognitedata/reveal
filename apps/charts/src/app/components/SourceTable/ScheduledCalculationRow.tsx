@@ -5,6 +5,8 @@ import {
   ChartWorkflow,
   ScheduledCalculation,
   TIMESERIES_ACL,
+  formatValueForDisplay,
+  DatapointsSummary,
 } from '@cognite/charts-lib';
 import { Button, Tooltip } from '@cognite/cogs.js';
 
@@ -15,12 +17,10 @@ import {
   useTranslations,
 } from '../../hooks/translations';
 import { ScheduledCalculationData } from '../../models/scheduled-calculation-results/types';
-import { formatValueForDisplay } from '../../utils/numbers';
 import {
   makeDefaultTranslations,
   translationKeys,
 } from '../../utils/translations';
-import { DatapointsSummary } from '../../utils/units';
 import { AccessDeniedModal } from '../AccessDeniedModal/AccessDeniedModal';
 import AppearanceDropdown from '../AppearanceDropdown/AppearanceDropdown';
 import { ScheduledCalculationDeleteModal } from '../ScheduledCalculation/ScheduledCalculationDeleteModal';

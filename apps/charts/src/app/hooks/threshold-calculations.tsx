@@ -8,12 +8,11 @@ import {
   CreateThresholdsParams,
   ThresholdResult,
 } from '@cognite/calculation-backend';
-import { ChartThreshold } from '@cognite/charts-lib';
+import { ChartThreshold, isThresholdValid } from '@cognite/charts-lib';
 
 import { useChartAtom } from '../models/chart/atom';
 import { updateChartThresholdProperties } from '../models/chart/updates-threshold';
 import { getHash } from '../utils/hash';
-import { isThresholdValid } from '../utils/threshold';
 
 import {
   useCreateThreshold,

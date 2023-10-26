@@ -1,4 +1,8 @@
-import { getColor, availableColors, getEntryColor, hexToRGBA } from './colors';
+/**
+ * @jest-environment jsdom
+ */
+
+import { hexToRGBA, getColor, availableColors, getEntryColor } from './colors';
 
 describe('Colors', () => {
   it('handles numbers', () => expect(getColor(1)).toBe(availableColors[1]));

@@ -1,7 +1,13 @@
 import dayjs from 'dayjs';
 import { range, last } from 'lodash';
 
-import { ChartTimeSeries, ChartWorkflow } from '@cognite/charts-lib';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+  calculateGranularity,
+  getGranularityInMS,
+  fetchCalculationQueryResult,
+} from '@cognite/charts-lib';
 import {
   DatapointAggregates,
   DatapointsMultiQuery,
@@ -15,14 +21,9 @@ import {
 
 import {
   fetchCalculationQueriesResult,
-  fetchCalculationQueryResult,
   fetchCalculationResult,
 } from '../../services/calculation-backend';
 import { pAll } from '../../utils/helpers';
-import {
-  calculateGranularity,
-  getGranularityInMS,
-} from '../../utils/timeseries';
 
 const CELL_LIMIT = 10000;
 

@@ -1,8 +1,9 @@
 import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
 
+import { isDevelopment, isProduction, isStaging } from '@cognite/charts-lib';
+
 import config from '../config/config';
-import { isDevelopment, isProduction, isStaging } from '../utils/environment';
 
 const mixpanelConfig = {
   prefix: 'Charts',

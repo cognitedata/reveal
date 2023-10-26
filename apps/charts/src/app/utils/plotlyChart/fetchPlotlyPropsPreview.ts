@@ -2,18 +2,17 @@ import { ComponentProps } from 'react';
 
 import dayjs from 'dayjs';
 
-import { Chart } from '@cognite/charts-lib';
+import { Chart, PlotlyChart, calculateGranularity } from '@cognite/charts-lib';
 import { CogniteClient, DatapointsMultiQuery } from '@cognite/sdk';
 
-import PlotlyChart from '../../components/PlotlyChart/PlotlyChart';
 import {
   cleanTimeseriesCollection,
   cleanWorkflowCollection,
 } from '../../components/PlotlyChart/utils';
 import { WorkflowState } from '../../models/calculation-results/types';
 import { TimeseriesEntry } from '../../models/timeseries-results/types';
-import { calculateGranularity } from '../timeseries';
 
+// TODO: is it used anywhere?
 const fetchPlotlyPropsPreview = async (
   chart: Chart | undefined = undefined,
   sdk: CogniteClient,
