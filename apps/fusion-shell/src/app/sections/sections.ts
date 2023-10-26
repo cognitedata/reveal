@@ -169,7 +169,7 @@ export const rawAppsData: RawAppItem[] = [
   {
     category: 'explore',
     internalId: 'flexible-data-explorer',
-    icon: 'Search',
+    icon: 'SearchFDX',
     linkTo: FDX_PATH,
     importMapApp: '@cognite/cdf-flexible-data-explorer',
     img: images.FDXImg,
