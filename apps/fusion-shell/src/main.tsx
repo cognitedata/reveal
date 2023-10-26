@@ -6,15 +6,20 @@ import * as ReactDOM from 'react-dom/client';
 
 import cogsLabStyles from '@cognite/cogs-lab/dist/cogs-lab.css?inline';
 import otherStyles from '@cognite/cogs.js/dist/cogs.css?inline';
+import { getBaseHostname } from '@cognite/login-utils';
 
 import { STYLE_SCOPE } from './app/utils/constants';
 import { AppWrapper } from './AppWrapper';
-
+import { setupSentry } from './sentry';
 import './single-spa';
 import './styles.css';
 
 // 'global' has to be defined on the window in order to make the 'onboarding guide' work for FDX.
 window.global ||= window;
+
+if (getBaseHostname() === 'fusion.cognite.com') {
+  setupSentry();
+}
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

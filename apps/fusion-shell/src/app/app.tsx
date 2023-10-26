@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { FUSION_PATH as FDX_PATH } from '@flexible-data-explorer/app/constants/common';
+import * as Sentry from '@sentry/react';
 import { UserHistoryProvider } from '@user-history';
 
 import { SubAppWrapper, getCluster, getProject } from '@cognite/cdf-utilities';
@@ -25,6 +26,8 @@ const RoutesWrapper = styled.div`
     height: 100%;
   }
 `;
+
+const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
 
 export function App() {
   const routerBasename = '/:project';
@@ -52,7 +55,7 @@ export function App() {
           />
 
           <RoutesWrapper>
-            <Routes>
+            <SentryRoutes>
               <Route
                 path={routerBasename}
                 element={<LandingPage isReleaseBanner={isReleaseBanner} />}
@@ -70,7 +73,7 @@ export function App() {
                   </Suspense>
                 }
               />
-            </Routes>
+            </SentryRoutes>
           </RoutesWrapper>
         </BrowserRouter>
       </SubAppWrapper>
