@@ -4,17 +4,27 @@ import { CogniteClient } from '@cognite/sdk';
 import { Flow } from '../../CogniteBaseFlow';
 import { CopilotCodeResponse } from '../../types';
 
-type Fields = { prompt: string; currentCode?: string; sdk: CogniteClient };
+type Fields = {
+  prompt: string;
+  currentCode?: string;
+  sdk: CogniteClient;
+  previousCells: string;
+};
 
 export class CodeGenerateFlow extends Flow<Fields, CopilotCodeResponse> {
   label = 'Generate code';
   description = 'Generate python code based on user input';
 
-  run: Flow<Fields, CopilotCodeResponse>['run'] = async ({ prompt, sdk }) => {
+  run: Flow<Fields, CopilotCodeResponse>['run'] = async ({
+    prompt,
+    sdk,
+    previousCells,
+  }) => {
     const { result: code } = await GeneratePython.run({
       query: prompt,
       message: prompt,
       model: 'gpt-4',
+      previousCells: previousCells,
       sdk,
     });
 

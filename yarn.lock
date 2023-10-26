@@ -2251,10 +2251,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/kuiper_js/-/kuiper_js-0.3.0.tgz#aa8d6bef950375ee4bb1878f68570ec7434562e5"
   integrity sha512-8fznyHjQtBJZX52VwqKDSARI3XxyNe4HlclUtzFCWF1QJtqyUwrkqMxSThjzR+32ucVXGmo3szUnDYSYJrBj/g==
 
-"@cognite/llm-hub@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.1.6.tgz#7f168afdcb729149066b7f2e511df4b334cbf60e"
-  integrity sha512-HE9yfQKbVQ3wHThogwZHAqqXqv5yj+8krQrybRUlY4enGawgwLHdI8Vs+PVDiAFB+fi0OtEf6YvgygzTv4fiHw==
+"@cognite/llm-hub@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.1.7.tgz#74f19821ed4288a219c095c85808585b24d5c365"
+  integrity sha512-RWJcfuv0zQv7MPHO2N4VQ6J2zdob7XcEJl2LCQCb3vTofBEyYaDtYsKi9E3hcZr9VDHqMB2R6EMFeZPeF3coFg==
   dependencies:
     "@types/express" "^4.17.17"
     "@types/jest" "^29.5.5"
