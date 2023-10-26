@@ -84,6 +84,13 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
+      - name: Install playwright browsers
+        working-directory: react-components
+        continue-on-error: false
+        run: yarn playwright install
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
       - name: Visual regression tests
         working-directory: react-components
         continue-on-error: false
