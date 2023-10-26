@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.17.0",
+  "version": "0.19.1",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -29,7 +29,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
-    "@cognite/reveal": "4.4.3",
+    "@cognite/reveal": "^4.5.0",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
@@ -43,7 +43,7 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.5.0",
     "@cognite/cogs.js": "^9.17.0",
-    "@cognite/reveal": "4.4.3",
+    "@cognite/reveal": "4.5.1",
     "@cognite/sdk": "^8.2.0",
     "@storybook/addon-essentials": "7.4.3",
     "@storybook/addon-interactions": "7.4.3",
@@ -58,7 +58,7 @@
     "@types/lodash": "^4.14.190",
     "@types/react": "18.2.7",
     "@types/react-dom": "^18.2.7",
-    "@types/styled-components": "5.1.28",
+    "@types/styled-components": "5.1.29",
     "@types/three": "0.155.1",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@vitejs/plugin-react": "^4.0.4",
