@@ -55,7 +55,7 @@ export const ExpandButton = ({
   }
 
   return (
-    <Tooltip content={t('Fit view', 'Fit view')} placement="right">
+    <Tooltip content={t('FIT_VIEW', 'Fit view')} placement="right">
       <FullWidthButton
         icon="ExpandAlternative"
         aria-label="Fit to view"
