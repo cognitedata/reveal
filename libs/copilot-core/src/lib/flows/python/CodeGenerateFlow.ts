@@ -23,7 +23,6 @@ export class CodeGenerateFlow extends Flow<Fields, CopilotCodeResponse> {
     const { result: code } = await GeneratePython.run({
       query: prompt,
       message: prompt,
-      model: 'gpt-4',
       previousCells: previousCells,
       sdk,
     });

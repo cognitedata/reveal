@@ -1,6 +1,6 @@
 {
   "name": "@cognite/copilot-core",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "dependencies": {
     "@cognite/z-index": "^0.2.3",
     "@monaco-editor/react": "^4.5.1",

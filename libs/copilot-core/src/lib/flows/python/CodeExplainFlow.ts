@@ -14,7 +14,6 @@ export class CodeExplainFlow extends Flow<Fields, CopilotBotTextResponse> {
     const { result: explaination } = await ExplainPython.run({
       query: '',
       message: code,
-      model: 'gpt-4',
       sdk,
     });
 
