@@ -35,7 +35,7 @@ export const SearchCategories = () => {
   }
 
   return (
-    <Container>
+    <Container data-testid="search-categories">
       <Content
         selected={isSelected(undefined)}
         onClick={() => handleSelectionClick(undefined)}

@@ -125,6 +125,7 @@ export const SearchBar: React.FC<Props> = ({
             />
           )}
           <StyledInput
+            data-testid="search-bar"
             onKeyUp={(e) => {
               if (e.key === 'Enter' || e.keyCode === 13) {
                 e.preventDefault();

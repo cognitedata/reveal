@@ -31,7 +31,7 @@ export const TimeseriesResults: React.FC<Props> = ({ selected }) => {
   }
 
   return (
-    <SearchResults>
+    <SearchResults data-testid="timeseries-results">
       <SearchResults.Header title="Time series">
         <RelationshipFilter
           dataType="Timeseries"

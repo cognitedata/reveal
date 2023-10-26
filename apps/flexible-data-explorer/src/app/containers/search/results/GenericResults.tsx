@@ -54,7 +54,7 @@ export const GenericResults: React.FC<Props> = ({
   }, [normalizedValues, page]);
 
   return (
-    <SearchResults key={dataType}>
+    <SearchResults key={dataType} data-testid={`generic-results-${dataType}`}>
       <SearchResults.Header
         title={type?.displayName || type?.name || dataType}
         description={type?.description}

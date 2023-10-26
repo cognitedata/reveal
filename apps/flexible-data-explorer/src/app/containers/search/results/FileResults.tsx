@@ -28,7 +28,7 @@ export const FileResults: React.FC<Props> = ({ selected }) => {
   }
 
   return (
-    <SearchResults>
+    <SearchResults data-testid="file-results">
       <SearchResults.Header title="Files">
         <RelationshipFilter
           dataType="Files"

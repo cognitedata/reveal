@@ -2,6 +2,8 @@ import { PropsWithChildren } from 'react';
 
 import styled from 'styled-components';
 
+import get from 'lodash/get';
+
 import { SearchResultsBody } from './components/SearchResultsBody';
 import { SearchResultsFooter } from './components/SearchResultsFooter';
 import { SearchResultsHeader } from './components/SearchResultsHeader';
@@ -10,12 +12,15 @@ import { SearchResultsItem } from './components/SearchResultsItem';
 export const SearchResults = ({
   children,
   empty,
+  ...rest
 }: PropsWithChildren<{ empty?: boolean }>) => {
   if (empty) {
     return null;
   }
 
-  return <Container>{children}</Container>;
+  return (
+    <Container data-testid={get(rest, 'data-testid')}>{children}</Container>
+  );
 };
 
 SearchResults.Header = SearchResultsHeader;

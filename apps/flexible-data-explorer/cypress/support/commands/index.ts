@@ -5,6 +5,7 @@ import { ButtonCommands } from './button.commands';
 import { CommonCommands } from './common.commands';
 import { DataModelSelectorCommands } from './data-model-selector.commands';
 import { InterceptionCommands } from './interception.commands';
+import { SearchCommands } from './search.commands';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -15,7 +16,8 @@ declare global {
         ButtonCommands,
         CommonCommands,
         DataModelSelectorCommands,
-        InterceptionCommands {}
+        InterceptionCommands,
+        SearchCommands {}
   }
 }
 
@@ -24,3 +26,4 @@ export * from './button.commands';
 export * from './common.commands';
 export * from './data-model-selector.commands';
 export * from './interception.commands';
+export * from './search.commands';
