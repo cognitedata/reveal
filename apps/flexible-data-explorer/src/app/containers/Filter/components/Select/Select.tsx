@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 
+import get from 'lodash/get';
 import head from 'lodash/head';
 import isUndefined from 'lodash/isUndefined';
 
@@ -22,6 +23,7 @@ export const Select = <T extends string>({
   value,
   defaultSelectFirstOption = true,
   onChange,
+  ...rest
 }: SelectProps<T>) => {
   const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState<OptionType<T>>();
@@ -45,7 +47,7 @@ export const Select = <T extends string>({
   }, [defaultSelectFirstOption, selectOptions, selectedOption, value, t]);
 
   return (
-    <SelectWrapper>
+    <SelectWrapper data-testid={get(rest, 'data-testid')}>
       <CogsSelect
         disableTyping
         disabled={options.length < 2}

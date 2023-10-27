@@ -34,6 +34,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   return (
     <BaseFilterInput.Single
       {...rest}
+      data-testid="number-input"
       type="number"
       value={value}
       placeholder={t('FILTER_NUMBER_INPUT_PLACEHOLDER')}
@@ -61,6 +62,7 @@ export const NumberInputLessThan: React.FC<NumberInputProps> = ({
   return (
     <BaseFilterInput.Single
       {...rest}
+      data-testid="number-input"
       type="number"
       placeholder={t('FILTER_NUMBER_INPUT_PLACEHOLDER')}
       showSuggestions={false}
@@ -89,6 +91,7 @@ export const NumberInputGreaterThan: React.FC<NumberInputProps> = ({
   return (
     <BaseFilterInput.Single
       {...rest}
+      data-testid="number-input"
       type="number"
       placeholder={t('FILTER_NUMBER_INPUT_PLACEHOLDER')}
       showSuggestions={false}

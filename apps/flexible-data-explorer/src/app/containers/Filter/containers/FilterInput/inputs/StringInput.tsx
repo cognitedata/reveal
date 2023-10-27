@@ -29,6 +29,7 @@ export const StringInput: React.FC<StringInputProps> = ({
   return (
     <BaseFilterInput.Single
       {...rest}
+      data-testid="string-input"
       value={value}
       type="text"
       placeholder={t('FILTER_TEXT_INPUT_PLACEHOLDER')}

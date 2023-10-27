@@ -1,6 +1,6 @@
 import { getAppUrl } from '@fusion/shared/cypress';
 
-import { BASE_URL, CLUSTER, PROJECT } from '../constants/app';
+import { BASE_URL, CLUSTER, PROJECT } from '../constants/appConfig';
 import { PREFERRED_DATA_MODEL } from '../constants/dataModels';
 
 const navigateToApp = () => {

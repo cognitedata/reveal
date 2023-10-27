@@ -15,6 +15,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 
   return (
     <Input
+      data-testid="search-input"
       type="text"
       variant="noBorder"
       placeholder={t('FILTER_SEARCH_INPUT_PLACEHOLDER')}

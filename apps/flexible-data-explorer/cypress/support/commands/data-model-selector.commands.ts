@@ -1,4 +1,4 @@
-import { PROJECT } from '../constants/app';
+import { PROJECT } from '../constants/appConfig';
 
 type DataModelInfo = {
   name: string;

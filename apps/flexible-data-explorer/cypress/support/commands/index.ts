@@ -4,6 +4,7 @@ import { AppCommands } from './app.commands';
 import { ButtonCommands } from './button.commands';
 import { CommonCommands } from './common.commands';
 import { DataModelSelectorCommands } from './data-model-selector.commands';
+import { FilterCommands } from './filter.commands';
 import { InterceptionCommands } from './interception.commands';
 import { SearchCommands } from './search.commands';
 
@@ -16,6 +17,7 @@ declare global {
         ButtonCommands,
         CommonCommands,
         DataModelSelectorCommands,
+        FilterCommands,
         InterceptionCommands,
         SearchCommands {}
   }
@@ -25,5 +27,6 @@ export * from './app.commands';
 export * from './button.commands';
 export * from './common.commands';
 export * from './data-model-selector.commands';
+export * from './filter.commands';
 export * from './interception.commands';
 export * from './search.commands';

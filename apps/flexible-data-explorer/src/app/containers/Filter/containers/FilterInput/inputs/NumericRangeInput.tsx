@@ -45,6 +45,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
     <Container>
       <BaseFilterInput.Single
         {...rest}
+        data-testid="number-input-min"
         type="number"
         placeholder={PLACEHOLDER}
         value={min}
@@ -68,6 +69,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
 
       <BaseFilterInput.Single
         {...rest}
+        data-testid="number-input-max"
         type="number"
         placeholder={PLACEHOLDER}
         value={max}

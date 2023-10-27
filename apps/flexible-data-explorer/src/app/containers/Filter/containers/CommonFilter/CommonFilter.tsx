@@ -76,6 +76,7 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
         />
 
         <Select<Operator>
+          data-testid="operator-selector"
           options={operators}
           value={operator}
           onChange={handleChangeOperator}

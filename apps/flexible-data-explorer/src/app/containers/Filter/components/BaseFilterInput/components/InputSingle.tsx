@@ -47,8 +47,6 @@ export const InputSingle = <T extends string | number | Date>({
     const transformedInputValue = transformValue<T>(inputValue, type);
 
     if (isUndefined(transformedInputValue)) {
-      onChange?.(undefined);
-      onInputChange?.('');
       return;
     }
 
