@@ -17,7 +17,7 @@ export const SearchResultsHeader: React.FC<React.PropsWithChildren<Props>> = ({
   description,
 }) => {
   return (
-    <Container>
+    <Container data-testid="search-results-header">
       <CategoryChip icon={getIcon(title)} />
       <span>
         <Title level={6}>{title}</Title>

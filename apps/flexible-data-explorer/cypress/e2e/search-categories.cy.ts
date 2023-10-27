@@ -10,17 +10,20 @@ describe('Search categories', () => {
 
     GENERIC_CATEGORIES.forEach((category) => {
       cy.findByTestId(`generic-results-${category}`)
+        .findByTestId('search-results-header')
         .scrollIntoView()
         .containsExact(category)
         .should('be.visible');
     });
 
     cy.findByTestId('timeseries-results')
+      .findByTestId('search-results-header')
       .scrollIntoView()
       .containsExact('Time series')
       .should('be.visible');
 
     cy.findByTestId('file-results')
+      .findByTestId('search-results-header')
       .scrollIntoView()
       .containsExact('Files')
       .should('be.visible');
@@ -33,6 +36,7 @@ describe('Search categories', () => {
     GENERIC_CATEGORIES.forEach((category) => {
       cy.selectSearchCategory(category);
       cy.findByTestId(`generic-results-${category}`)
+        .findByTestId('search-results-header')
         .containsExact(category)
         .should('be.visible');
     });
@@ -41,12 +45,16 @@ describe('Search categories', () => {
   it('should be able to view timeseries results', () => {
     cy.selectSearchCategory('Time series');
     cy.findByTestId('timeseries-results')
+      .findByTestId('search-results-header')
       .containsExact('Time series')
       .should('be.visible');
   });
 
   it('should be able to view file results', () => {
     cy.selectSearchCategory('File');
-    cy.findByTestId('file-results').containsExact('Files').should('be.visible');
+    cy.findByTestId('file-results')
+      .findByTestId('search-results-header')
+      .containsExact('Files')
+      .should('be.visible');
   });
 });
