@@ -7,7 +7,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: process.env.CI !== undefined,
   retries: process.env.CI !== undefined ? 2 : 0,
-  workers: '50%',
+  workers: process.env.CI !== undefined ? '100%' : '50%',
   reporter: 'html',
   snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
   use: {
