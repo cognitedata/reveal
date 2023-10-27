@@ -7,9 +7,13 @@ import { RevealContainer } from '@cognite/reveal-react-components';
 export const defaultResourceStyling = {
   cad: {
     default: { color: new Color('#efefef') },
-    mapped: { color: new Color('#c5cbff') },
+    mapped: { color: new Color('#D3D7F0') },
   },
 } as const;
+
+export const resultStyling = {
+  cad: { color: new Color('#A2B1FF'), renderInFront: true },
+};
 
 export const defaultViewerOptions: ComponentProps<
   typeof RevealContainer

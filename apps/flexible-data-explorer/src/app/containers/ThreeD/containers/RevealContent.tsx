@@ -11,7 +11,12 @@ import {
   FdmAssetStylingGroup,
 } from '@cognite/reveal-react-components';
 
-import { defaultResourceStyling } from '../../../constants/threeD';
+import {
+  defaultResourceStyling,
+  resultStyling,
+} from '../../../constants/threeD';
+import { useSearchQueryParams } from '../../../hooks/useParams';
+import { useSearchMappedEquipment } from '../../../providers/Mapped3DEquipmentProvider';
 import { Instance } from '../../../services/types';
 import { useHandleSelectedInstance } from '../hooks/useHandleSelectedInstance';
 import { useInitialCameraNavigation } from '../hooks/useInitialCameraNavigation';
@@ -73,10 +78,12 @@ export const RevealContent = ({
     focusNode
   );
 
-  const instanceStyling = computeInstanceStyling(
-    instanceExternalId,
-    instanceSpace
-  );
+  const searchResultStyling = useSearchResultStyling();
+
+  const instanceStyling = [
+    ...(computeInstanceStyling(instanceExternalId, instanceSpace) ?? []),
+    ...searchResultStyling,
+  ];
 
   const handleResourcesAdded = useCallback(() => {
     setResourcesMounted(true);
@@ -107,6 +114,29 @@ export const RevealContent = ({
     </>
   );
 };
+
+function useSearchResultStyling() {
+  const mappedEquipmentSearchResult = useSearchMappedEquipment(true);
+  const [query] = useSearchQueryParams();
+
+  return useMemo<FdmAssetStylingGroup[]>(() => {
+    if (mappedEquipmentSearchResult?.data === undefined || query === '') {
+      return [];
+    }
+
+    const fdmIds = [...Object.values(mappedEquipmentSearchResult.data)].flatMap(
+      (v) => v.items
+    );
+    return [
+      {
+        fdmAssetExternalIds: fdmIds,
+        style: {
+          cad: resultStyling.cad,
+        },
+      },
+    ];
+  }, [mappedEquipmentSearchResult]);
+}
 
 function computeInstanceStyling(
   externalId: string | undefined,
