@@ -79,7 +79,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
       >
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
-            <SubAppWrapper title="Fusion Demo App">
+            <SubAppWrapper title="Jupyter Notebooks">
               <AuthWrapper
                 loadingScreen={<Loader />}
                 login={() => loginAndAuthIfNeeded(project, env)}
