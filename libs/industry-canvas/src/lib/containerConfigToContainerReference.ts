@@ -76,6 +76,8 @@ const containerConfigToContainerReference = (
       y: containerConfig.y,
       width: containerConfig.width,
       height: containerConfig.height,
+      unscaledWidth: containerConfig.unscaledWidth,
+      unscaledHeight: containerConfig.unscaledHeight,
       resourceId: containerConfig.eventId,
       label: containerConfig.label,
     };
@@ -89,6 +91,8 @@ const containerConfigToContainerReference = (
       y: containerConfig.y,
       width: containerConfig.width,
       height: containerConfig.height,
+      unscaledWidth: containerConfig.unscaledWidth,
+      unscaledHeight: containerConfig.unscaledHeight,
       resourceId: containerConfig.assetId,
       label: containerConfig.label,
     };

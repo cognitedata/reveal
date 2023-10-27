@@ -28,7 +28,17 @@ const getEventTableTitle = (event: CogniteEvent): string => {
 
 const resolveEventContainerConfig = async (
   sdk: CogniteClient,
-  { id, resourceId, x, y, width, height, label }: EventContainerReference
+  {
+    id,
+    resourceId,
+    x,
+    y,
+    width,
+    height,
+    unscaledWidth,
+    unscaledHeight,
+    label,
+  }: EventContainerReference
 ): Promise<IndustryCanvasContainerConfig> => {
   const events = await sdk.events.retrieve([{ id: resourceId }]);
 
@@ -47,6 +57,8 @@ const resolveEventContainerConfig = async (
     y: y,
     width: width ?? DEFAULT_EVENT_WIDTH,
     height: height ?? DEFAULT_EVENT_HEIGHT,
+    unscaledWidth: unscaledWidth,
+    unscaledHeight: unscaledHeight,
     eventId: resourceId,
     shouldAutoSize: true,
     metadata: {

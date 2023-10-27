@@ -31,6 +31,9 @@ export type Dimensions = {
   height?: number;
   maxWidth?: number;
   maxHeight?: number;
+  // Currently only used for React containers
+  unscaledWidth?: number;
+  unscaledHeight?: number;
 };
 
 export type FileContainerReference = {

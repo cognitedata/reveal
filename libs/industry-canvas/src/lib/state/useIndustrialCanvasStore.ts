@@ -24,6 +24,7 @@ import {
   isAnnotation,
   isContainerConfig,
   UpdateRequestSource,
+  AnnotationType,
 } from '@cognite/unified-file-viewer';
 
 import {
@@ -62,7 +63,7 @@ import {
   isIndustryCanvasContainerConfig,
   isSpecificFilterForContainerId,
 } from '../types';
-import { dataUrlToFile, isPastedImageContainer } from '../utils/dataUrlUtils';
+import { dataUrlToFile } from '../utils/dataUrlUtils';
 import { addDimensionsToContainerReferencesIfNotExists } from '../utils/dimensions/index';
 import { TrackUsageFn } from '../utils/tracking/createTrackUsage';
 import { serializeCanvasState } from '../utils/utils';
@@ -525,6 +526,13 @@ export const setFileUploadDataFromPastedImageContainer = (
   });
 };
 
+const isValidAnnotation = (annotation: Annotation): boolean => {
+  if (annotation.type === AnnotationType.TEXT) {
+    return annotation.text.length !== 0;
+  }
+  return true;
+};
+
 // Shameful: This is doing way too many things, and doing so imperatively, let's clean this up
 // - Persisting of comments should happen as a side effect, not imperatively here.
 // - The search params should be updated as a side effect, not imperatively here.
@@ -548,14 +556,18 @@ export const shamefulOnUpdateRequest = ({
   const validUpdatedContainers = updatedContainers.filter(
     isIndustryCanvasContainerConfig
   );
-  if (validUpdatedContainers.length === 0 && updatedAnnotations.length === 0) {
+  const validUpdatedAnnotations = updatedAnnotations.filter(isValidAnnotation);
+  if (
+    validUpdatedContainers.length === 0 &&
+    validUpdatedAnnotations.length === 0
+  ) {
     return;
   }
 
   const toolType = rootState.toolType;
-  const updatedAnnotation = updatedAnnotations[0];
-  // Augment the annotation with the comment metadata if the tool is comment
+  const updatedAnnotation = validUpdatedAnnotations[0];
 
+  // Augment the annotation with the comment metadata if the tool is comment
   if (
     updatedAnnotation !== undefined &&
     isRectangleAnnotation(updatedAnnotation) &&
@@ -580,10 +592,10 @@ export const shamefulOnUpdateRequest = ({
       : pushHistoryState;
 
   updateHistoryFn(({ nodes, ...otherState }) => {
-    const updatedAnnotation = updatedAnnotations[0];
+    const updatedAnnotation = validUpdatedAnnotations[0];
     const hasAnnotationBeenCreated =
       updatedAnnotation !== undefined &&
-      updatedAnnotations.length === 1 &&
+      validUpdatedAnnotations.length === 1 &&
       !nodes.some((node) => node.id === updatedAnnotation.id);
 
     if (hasAnnotationBeenCreated) {
@@ -617,7 +629,7 @@ export const shamefulOnUpdateRequest = ({
       ...otherState,
       nodes: getNextUpdatedNodes(nodes, [
         ...validUpdatedContainers,
-        ...updatedAnnotations,
+        ...validUpdatedAnnotations,
       ]),
     };
   });

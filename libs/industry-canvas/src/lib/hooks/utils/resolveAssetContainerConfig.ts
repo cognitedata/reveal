@@ -14,7 +14,17 @@ import {
 
 const resolveAssetContainerConfig = async (
   sdk: CogniteClient,
-  { id, resourceId, x, y, width, height, label }: AssetContainerReference
+  {
+    id,
+    resourceId,
+    x,
+    y,
+    width,
+    height,
+    unscaledWidth,
+    unscaledHeight,
+    label,
+  }: AssetContainerReference
 ): Promise<IndustryCanvasContainerConfig> => {
   const assets = await sdk.assets.retrieve([{ id: resourceId }]);
 
@@ -32,6 +42,8 @@ const resolveAssetContainerConfig = async (
     y: y,
     width: width ?? DEFAULT_ASSET_WIDTH,
     height: height ?? DEFAULT_ASSET_HEIGHT,
+    unscaledWidth: unscaledWidth,
+    unscaledHeight: unscaledHeight,
     shouldAutoSize: true,
     assetId: resourceId,
     metadata: {

@@ -70,7 +70,13 @@ export const dtoAssetCentricContainerReferenceToContainerReference = (
     containerReferenceType === ContainerReferenceType.EVENT ||
     containerReferenceType === ContainerReferenceType.ASSET
   ) {
-    return { ...filteredCommonProps, type: containerReferenceType, resourceId };
+    return {
+      ...filteredCommonProps,
+      type: containerReferenceType,
+      resourceId,
+      unscaledWidth: properties.unscaledWidth,
+      unscaledHeight: properties.unscaledHeight,
+    };
   }
 
   assertNever(
