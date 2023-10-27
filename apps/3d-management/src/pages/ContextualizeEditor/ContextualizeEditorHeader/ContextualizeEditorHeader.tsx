@@ -6,7 +6,6 @@ import { createLink } from '@cognite/cdf-utilities';
 import {
   Button,
   Colors,
-  Divider,
   Dropdown,
   Flex,
   Heading,
@@ -54,7 +53,6 @@ export const ContextualizeEditorHeader = ({
           modelId={modelIdNumber}
           revisionId={revisionIdNumber}
         />
-        <Divider direction="vertical" length="20px" endcap="round" />
       </StyledGoBackWrapper>
 
       <TitleWrapper>

@@ -20,10 +20,7 @@ import { useThreeDModelName } from '../../../components/ContextualizeThreeDViewe
 import { ThreeDModelType } from '../../../components/ContextualizeThreeDViewer/types';
 import { getThreeDModelType } from '../../../components/ContextualizeThreeDViewer/utils/getThreeDModelType';
 
-type RevisionDropdownMenuProps = {
-  modelId: number;
-  revisionId: number;
-};
+// Link to data-explorer that employs the same pattern: data-exploration/src/app/containers/ThreeD/title/MenuItems/MainThreeDModelMenuItem.tsx
 
 type RevisionOpts<T> = UseQueryOptions<Revision3DWithIndex[], unknown, T>;
 
@@ -46,6 +43,11 @@ export const useRevisionIndex = (
   });
 };
 
+type RevisionDropdownMenuProps = {
+  modelId: number;
+  revisionId: number;
+};
+
 const RevisionDropdownMenu: React.FC<RevisionDropdownMenuProps> = ({
   modelId,
   revisionId,
@@ -60,9 +62,10 @@ const RevisionDropdownMenu: React.FC<RevisionDropdownMenuProps> = ({
 
   const [isRevisionDropdownOpen, setIsRevisionDropdownOpen] = useState(false);
   const { data: revisionIndex } = useRevisionIndex(modelId, revisionId, {
-    enabled: !!revisionId,
+    enabled: Boolean(revisionId),
   });
   const modelName = useThreeDModelName(modelId) ?? modelId;
+
   useEffect(() => {
     const loadThreeDModel = async () => {
       const threeDModelType = await getThreeDModelType(
@@ -90,9 +93,6 @@ const RevisionDropdownMenu: React.FC<RevisionDropdownMenuProps> = ({
     loadThreeDModel();
   }, [sdk, modelId, revisionId]);
 
-  const toggleRevisionDropdown = () => {
-    setIsRevisionDropdownOpen(!isRevisionDropdownOpen);
-  };
   if (!modelId) {
     return (
       <Menu>
@@ -102,6 +102,10 @@ const RevisionDropdownMenu: React.FC<RevisionDropdownMenuProps> = ({
       </Menu>
     );
   }
+
+  const toggleRevisionDropdown = () => {
+    setIsRevisionDropdownOpen(!isRevisionDropdownOpen);
+  };
 
   return (
     <>
