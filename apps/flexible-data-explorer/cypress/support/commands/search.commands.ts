@@ -1,5 +1,9 @@
 const performSearch = (searchString: string) => {
-  cy.findByTestId('search-bar').click().clear().type(searchString);
+  cy.findByTestId('search-bar')
+    .click()
+    .clear()
+    .type(searchString)
+    .type('{enter}');
 };
 
 const clearSearchInput = () => {
@@ -16,19 +20,39 @@ const selectSearchCategory = (searchCategory: string) => {
   cy.log(`Select search category: ${searchCategory}`);
 
   cy.findByTestId('search-categories')
-    .contains(searchCategory)
+    .containsExact(searchCategory)
     .should('be.visible')
     .click();
+};
+
+const performGlobalSearchCategory = (category: string) => {
+  cy.findByTestId('search-bar')
+    .click()
+    .clear()
+    .type(category)
+    .pressKeyTab()
+    .type('{enter}');
+};
+
+const removeCategory = (category: string) => {
+  cy.clickIconButton(`Remove ${category}`);
 };
 
 Cypress.Commands.add('performSearch', performSearch);
 Cypress.Commands.add('clearSearchInput', clearSearchInput);
 Cypress.Commands.add('performEmptySearch', performEmptySearch);
 Cypress.Commands.add('selectSearchCategory', selectSearchCategory);
+Cypress.Commands.add(
+  'performGlobalSearchCategory',
+  performGlobalSearchCategory
+);
+Cypress.Commands.add('removeCategory', removeCategory);
 
 export interface SearchCommands {
   performSearch: (searchString: string) => void;
   clearSearchInput: () => void;
   performEmptySearch: () => void;
   selectSearchCategory: (item: string) => void;
+  performGlobalSearchCategory: (category: string) => void;
+  removeCategory: (category: string) => void;
 }

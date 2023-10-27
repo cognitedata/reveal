@@ -1,11 +1,37 @@
 const GENERIC_CATEGORIES = ['Person', 'Actor', 'Movie', 'Director', 'Review'];
 
 describe('Search categories', () => {
-  before(() => {
-    cy.performEmptySearch();
+  it('should perform global search using category card', () => {
+    const category = 'Person';
+
+    cy.findAllByTestId('category-card')
+      .containsExact(category)
+      .should('be.visible')
+      .click();
+
+    cy.findByTestId(`generic-results-${category}`)
+      .findByTestId('search-results-header')
+      .containsExact(category)
+      .should('be.visible');
+
+    cy.goBack();
+  });
+
+  it('should perform global search', () => {
+    const category = 'Person';
+
+    cy.performGlobalSearchCategory(category);
+    cy.findByTestId(`generic-results-${category}`)
+      .findByTestId('search-results-header')
+      .containsExact(category)
+      .should('be.visible');
+
+    cy.goBack();
+    cy.removeCategory(category);
   });
 
   it('should be able to view all search results', () => {
+    cy.performEmptySearch();
     cy.selectSearchCategory('All');
 
     GENERIC_CATEGORIES.forEach((category) => {

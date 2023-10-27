@@ -19,7 +19,7 @@ export const CategoryCard: React.FC<Props> = React.memo(
     const { t } = useTranslation();
 
     return (
-      <Container onClick={() => onClick?.(type)}>
+      <Container data-testid="category-card" onClick={() => onClick?.(type)}>
         <Header>
           <CategoryChip icon={getIcon(type)} />
         </Header>
