@@ -46,6 +46,15 @@ export function SimulatorInformation({
       { skip: !connectorName || simulatorType === '' }
     );
 
+  const elapsedTimeText = connectorStatusUpdatedTime
+    ? `(Elapsed time: ${formatDistanceToNow(
+        new Date(connectorStatusUpdatedTime),
+        {
+          addSuffix: false,
+        }
+      )})`
+    : ``;
+
   return (
     <SimulatorInformationContainer data-cy="simulator-information-container">
       <SimulatorInformationList
@@ -80,29 +89,26 @@ export function SimulatorInformation({
             <div>
               <StyledLoader type="Loader" />
               Running calculation
+              {elapsedTimeText}
             </div>
           ) : connectorStatus === 'PARSING_MODEL' ? (
             <div>
               <StyledLoader type="Loader" />
               Parsing model
+              {elapsedTimeText}
             </div>
           ) : connectorStatus === 'CHECKING_LICENSE' ? (
             <div>
               <StyledLoader type="Loader" />
               Checking license
+              {elapsedTimeText}
             </div>
           ) : connectorStatus === 'NONE_REPORTED' ? (
             <div>-</div>
           ) : (
             <></>
           )}
-          {connectorStatus !== 'NONE_REPORTED' &&
-            `(Elapsed time: ${formatDistanceToNow(
-              new Date(connectorStatusUpdatedTime),
-              {
-                addSuffix: false,
-              }
-            )})`}
+          {elapsedTimeText}
         </dd>
       </SimulatorInformationList>
 
