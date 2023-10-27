@@ -25,18 +25,11 @@ import { SelectedAnnotationBoxToolbar } from '../SelectedAnnotationToolbar';
 import { Annotations } from './Annotations';
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
-interface RevealContentProps {
-  modelId: number;
-  revisionId: number;
-  onDeleteAnnotation: (annotationId: number) => void;
-  onZoomToAnnotation: (annotationId: number) => void;
-  onUpdateCdfThreeDAnnotation: () => void;
-}
-
 type SelectedAnnotationToolbarProps = {
   onDeleteAnnotation: (annotationId: number) => void;
   onUpdateCdfThreeDAnnotation: () => void;
 };
+
 const SelectedAnnotationToolbar: FC<SelectedAnnotationToolbarProps> = ({
   onDeleteAnnotation,
   onUpdateCdfThreeDAnnotation,
@@ -69,11 +62,19 @@ const SelectedAnnotationToolbar: FC<SelectedAnnotationToolbarProps> = ({
   );
 };
 
+type RevealContentProps = {
+  modelId: number;
+  revisionId: number;
+  onDeleteAnnotation: (annotationId: number) => void;
+  onSelectAnnotation: (annotationId: number) => void;
+  onUpdateCdfThreeDAnnotation: () => void;
+};
+
 export const PointCloudRevealContent = ({
   modelId,
   revisionId,
   onDeleteAnnotation,
-  onZoomToAnnotation,
+  onSelectAnnotation,
   onUpdateCdfThreeDAnnotation,
 }: RevealContentProps) => {
   const viewer = useReveal();
@@ -139,7 +140,7 @@ export const PointCloudRevealContent = ({
         onDeleteAnnotation={(annotation) => {
           onDeleteAnnotation(annotation.id);
         }}
-        onZoomToAnnotation={onZoomToAnnotation}
+        onSelectAnnotation={onSelectAnnotation}
       />
     </>
   );

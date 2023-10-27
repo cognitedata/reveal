@@ -12,13 +12,13 @@ import { setHoveredAnnotationId } from '../useContextualizeThreeDViewerStore';
 type AnnotationsCardProps = {
   annotations: AnnotationModel[] | null;
   onDeleteAnnotation: (annotation: AnnotationModel) => void;
-  onZoomToAnnotation: (annotationId: number) => void;
+  onSelectAnnotation: (annotationId: number) => void;
 };
 
 export const AnnotationsCard = ({
   annotations,
   onDeleteAnnotation,
-  onZoomToAnnotation,
+  onSelectAnnotation,
 }: AnnotationsCardProps) => {
   const divRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -114,7 +114,7 @@ export const AnnotationsCard = ({
                 key={annotation.id}
                 justifyContent="space-between"
                 alignItems="center"
-                onClick={() => onZoomToAnnotation(annotation.id)}
+                onClick={() => onSelectAnnotation(annotation.id)}
                 onMouseEnter={() => {
                   setHoveredAnnotationId(annotation.id);
                 }}

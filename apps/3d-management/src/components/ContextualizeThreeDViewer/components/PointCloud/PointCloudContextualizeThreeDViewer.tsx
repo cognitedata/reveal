@@ -27,6 +27,8 @@ import {
   useContextualizeThreeDViewerStore,
   setAnnotations,
   setSelectedAnnotationId,
+  setTool,
+  ToolType,
 } from '../../useContextualizeThreeDViewerStore';
 import { getCdfAnnotations } from '../../utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from '../../utils/createCdfThreeDAnnotation';
@@ -73,30 +75,33 @@ export const PointCloudContextualizeThreeDViewer = ({
     DEFAULT_RIGHT_SIDE_PANEL_WIDTH
   );
 
-  const { data: annotations } = useQuery(
-    ['annotations', sdk, modelId],
-    fetchAnnotations
-  );
-
-  const mutation = useAnnotationMutation();
-
-  const onZoomToAnnotation = useZoomToAnnotation();
-  const updateCdfThreeDAnnotation = useUpdateCdfThreeDAnnotation();
-
-  const onDeleteAnnotation = (annotationId: number) => {
-    mutation.mutate(annotationId);
-  };
-
-  // use effects hooks
   useEffect(() => {
     setModelId(modelId);
   }, [modelId]);
 
+  const { data: annotations } = useQuery(
+    ['annotations', sdk, modelId],
+    fetchAnnotations
+  );
   useEffect(() => {
     if (annotations === undefined) return;
 
     setAnnotations(annotations);
   }, [annotations]);
+
+  const onZoomToAnnotation = useZoomToAnnotation();
+  const onSelectAnnotation = (annotationId: number) => {
+    setTool(ToolType.SELECT_TOOL);
+    setSelectedAnnotationId(annotationId);
+    onZoomToAnnotation(annotationId);
+  };
+
+  const mutation = useAnnotationMutation();
+  const onDeleteAnnotation = (annotationId: number) => {
+    mutation.mutate(annotationId);
+  };
+
+  const updateCdfThreeDAnnotation = useUpdateCdfThreeDAnnotation();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -161,7 +166,7 @@ export const PointCloudContextualizeThreeDViewer = ({
               modelId={modelId}
               revisionId={revisionId}
               onDeleteAnnotation={onDeleteAnnotation}
-              onZoomToAnnotation={onZoomToAnnotation}
+              onSelectAnnotation={onSelectAnnotation}
               onUpdateCdfThreeDAnnotation={updateCdfThreeDAnnotation}
             />
           </RevealContainer>
