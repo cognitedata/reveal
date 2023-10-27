@@ -78,7 +78,9 @@ export const RevealContent = ({
     focusNode
   );
 
-  const searchResultStyling = useSearchResultStyling();
+  const shouldStyleSearchResult =
+    disablePreviewCard !== undefined ? !disablePreviewCard : true;
+  const searchResultStyling = useSearchResultStyling(shouldStyleSearchResult);
 
   const instanceStyling = [
     ...(computeInstanceStyling(instanceExternalId, instanceSpace) ?? []),
@@ -115,8 +117,8 @@ export const RevealContent = ({
   );
 };
 
-function useSearchResultStyling() {
-  const mappedEquipmentSearchResult = useSearchMappedEquipment(true);
+const useSearchResultStyling = (enable: boolean) => {
+  const mappedEquipmentSearchResult = useSearchMappedEquipment(enable);
   const [query] = useSearchQueryParams();
 
   return useMemo<FdmAssetStylingGroup[]>(() => {
@@ -136,7 +138,7 @@ function useSearchResultStyling() {
       },
     ];
   }, [mappedEquipmentSearchResult]);
-}
+};
 
 function computeInstanceStyling(
   externalId: string | undefined,
