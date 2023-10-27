@@ -132,23 +132,23 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
   }
 
   return (
-    <StyledCanvasTitle
-      $isEditable={isEditingTitle}
-      level={5}
-      onClick={onCanvasTitleClick}
+    <Tooltip
+      content={t(translationKeys.COMMON_CANVAS_RENAME, {
+        defaultValue: 'Rename',
+        title: name,
+      })}
+      placement="bottom-start"
     >
-      <TitleContent>
-        <Tooltip
-          content={t(translationKeys.COMMON_CANVAS_RENAME, {
-            defaultValue: 'Rename',
-            title: name,
-          })}
-          placement="bottom-start"
-        >
+      <StyledCanvasTitle
+        $isEditable={isEditingTitle}
+        level={5}
+        onClick={onCanvasTitleClick}
+      >
+        <TitleContent>
           <span>{name}</span>
-        </Tooltip>
-      </TitleContent>
-    </StyledCanvasTitle>
+        </TitleContent>
+      </StyledCanvasTitle>
+    </Tooltip>
   );
 };
 

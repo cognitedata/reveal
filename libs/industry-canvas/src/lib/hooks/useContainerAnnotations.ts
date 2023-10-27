@@ -86,7 +86,7 @@ export const useContainerAnnotations = ({
           return [];
         }
         const approvedAnnotations = annotations.filter(
-          (annotation) => annotation.status === 'approved'
+          (annotation) => annotation.status !== 'rejected'
         );
         return getExtendedAnnotationsFromAnnotationsApi(
           approvedAnnotations,

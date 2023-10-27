@@ -299,8 +299,8 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
 
 const ShapeToolbar = styled.div`
   position: absolute;
-  top: 144px;
-  left: 48px;
+  top: 160px;
+  left: 55px;
 `;
 
 export default ToolbarComponent;

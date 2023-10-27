@@ -513,7 +513,10 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 </Menu>
               }
             >
-              <Tooltip content={t(translationKeys.OPEN_IN, 'Open in...')}>
+              <Tooltip
+                content={t(translationKeys.OPEN_IN, 'Open in...')}
+                appendTo={document.body}
+              >
                 <Button
                   onClick={() =>
                     setShouldShowDropdown(

@@ -267,6 +267,8 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
             'Show canvases'
           )}
           position="bottom"
+          // attaching the tooltip to document.body to not break the style of parent container
+          appendTo={document.body}
         >
           <NavigationButton
             aria-label={t(
