@@ -72,14 +72,16 @@ async function getReveal360Annotations(
     assetAnnotationImage360Info: AssetAnnotationImage360Info;
   }>
 > {
-  const image30Collections = reveal.get360ImageCollections();
-  const annotationsInfo: AssetAnnotationImage360Info[] = [];
-  await Promise.all(
-    image30Collections.map(async (image360Collection: Image360Collection) => {
+  const image360Collections = reveal.get360ImageCollections();
+
+  const annotationsInfoPromise = await Promise.all(
+    image360Collections.map(async (image360Collection: Image360Collection) => {
       const annotations = await image360Collection.getAnnotationsInfo('assets');
-      annotationsInfo.push(...annotations);
+      return annotations;
     })
   );
+
+  const annotationsInfo = annotationsInfoPromise.flat();
 
   const filteredAssetIds = new Set<string | number>();
 
@@ -108,10 +110,13 @@ async function getReveal360Annotations(
         assetAnnotationImage360Info: annotationInfo
       };
     })
-    .filter((item) => item.asset !== undefined) as Array<{
-    asset: Asset;
-    assetAnnotationImage360Info: AssetAnnotationImage360Info;
-  }>;
+    .filter(
+      (
+        item
+      ): item is { asset: Asset; assetAnnotationImage360Info: AssetAnnotationImage360Info } => {
+        return item.asset !== undefined;
+      }
+    );
 
   return assetsWithAnnotations;
 }
