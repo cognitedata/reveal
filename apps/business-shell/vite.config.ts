@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import macrosPlugin from 'vite-plugin-babel-macros';
 import svgr from 'vite-plugin-svgr';
+import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig((configType) => {
   const NODE_ENV = configType.mode.toLowerCase();
@@ -55,6 +56,14 @@ export default defineConfig((configType) => {
       host: 'localhost',
     },
 
-    plugins: [basicSsl(), svgr(), react(), nxViteTsPaths(), macrosPlugin()],
+    plugins: [
+      basicSsl(),
+      svgr(),
+      react(),
+      viteTsConfigPaths({
+        root: '../../',
+      }),
+      macrosPlugin(),
+    ],
   };
 });

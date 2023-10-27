@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { DEFAULT_DATE_RANGE } from '@cognite/plotting-components';
+import { Button, Dropdown } from '@fdx/components';
+import { Page } from '@fdx/modules/page/Page';
+import { PropertiesWidget } from '@fdx/modules/widgets/Properties/PropertiesWidget';
+import { TimeseriesWidget } from '@fdx/modules/widgets/Timeseries/TimeseriesWidget';
+import { useTimeseriesByIdQuery } from '@fdx/services/instances/timeseries/queries/useTimeseriesByIdQuery';
+import { useOpenIn } from '@fdx/shared/hooks/useOpenIn';
+import { useRecentlyVisited } from '@fdx/shared/hooks/useRecentlyVisited';
+import { DateRange } from '@fdx/shared/types/filters';
 
-import { Button } from '../../components/buttons/Button';
-import { Dropdown } from '../../components/dropdown/Dropdown';
-import { DateRange } from '../../containers/Filter/types';
-import { Page } from '../../containers/page/Page';
-import { PropertiesWidget } from '../../containers/widgets';
-import { TimeseriesWidget } from '../../containers/widgets/Timeseries/TimeseriesWidget';
-import { useOpenIn } from '../../hooks/useOpenIn';
-import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
-import { useTimeseriesByIdQuery } from '../../services/instances/timeseries/queries/useTimeseriesByIdQuery';
+import { DEFAULT_DATE_RANGE } from '@cognite/plotting-components';
 
 export const TimeseriesPage = () => {
   const { externalId } = useParams();
@@ -30,6 +29,9 @@ export const TimeseriesPage = () => {
   };
 
   const handleNavigateToCanvasClick = () => {
+    if (!data?.id) {
+      return;
+    }
     openAssetCentricResourceItemInCanvas({ id: data?.id, type: 'timeSeries' });
   };
 

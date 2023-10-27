@@ -1,5 +1,5 @@
-import { Page } from '../containers/page/Page';
-import { ThreeDSplitView } from '../containers/ThreeD/containers/ThreeDSplitView';
+import { Page } from '@fdx/modules/page/Page';
+import { ThreeDSplitView } from '@fdx/modules/ThreeD/modules/ThreeDSplitView';
 
 export const ThreeDPage = () => {
   return (

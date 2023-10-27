@@ -2,15 +2,21 @@ import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { SearchBar } from './containers/search/SearchBar';
-import { useViewModeParams } from './hooks/useParams';
+import { SearchBar } from '@fdx/modules/search/SearchBar';
+import { DataModelSelector } from '@fdx/modules/selectors/DataModelSelector';
+import { useTypesDataModelsQuery } from '@fdx/services/dataModels/query/useTypesDataModelQuery';
+import { useViewModeParams } from '@fdx/shared/hooks/useParams';
+import { useSelectedDataModels } from '@fdx/shared/hooks/useSelectedDataModels';
+import { FDMProvider } from '@fdx/shared/providers/FDMProvider';
+
+import { Loader } from '@cognite/cogs.js';
+
 import { HomePage } from './pages/HomePage';
 import { FilePage } from './pages/Instances/FilePage';
 import { InstancesPage } from './pages/Instances/InstancesPage';
 import { TimeseriesPage } from './pages/Instances/TimeseriesPage';
 import { SearchPage } from './pages/SearchPage';
 import { ThreeDPage } from './pages/ThreeDPage';
-import { FDMProvider } from './providers/FDMProvider';
 
 const ViewContainer = () => {
   const [viewMode] = useViewModeParams();
@@ -23,11 +29,22 @@ const ViewContainer = () => {
 };
 
 const Routes = () => {
+  const dataModels = useSelectedDataModels();
+  const { data, isLoading } = useTypesDataModelsQuery();
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (!dataModels) {
+    return <DataModelSelector />;
+  }
+
   return (
     <ReactRoutes>
       <Route
         element={
-          <FDMProvider>
+          <FDMProvider data={data}>
             <Outlet />
           </FDMProvider>
         }

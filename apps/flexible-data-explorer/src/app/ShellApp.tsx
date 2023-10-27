@@ -1,3 +1,6 @@
+import { ErrorFallback } from '@fdx/components';
+import { Onboarding } from '@fdx/modules/onboarding/Onboarding';
+import { translations } from '@fdx/shared/common/i18n';
 import { Copilot } from '@fusion/copilot-core';
 import {
   Orientation,
@@ -17,10 +20,7 @@ import { RevealKeepAlive } from '@cognite/reveal-react-components';
 import { SDKProvider, useSDK } from '@cognite/sdk-provider';
 
 import FusionStyles from '../FusionStyles';
-import { translations } from '../i18n';
 
-import { ErrorFallback } from './components/ErrorFallback';
-import { Onboarding } from './containers/onboarding/Onboarding';
 import { queryClient } from './queryClient';
 import AppRoutes from './Routes';
 

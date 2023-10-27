@@ -67,7 +67,7 @@ Follow the guide [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3
 > const Component = () => <p>{t('GENERAL_HELLO')}</p>;
 > ```
 
-**NOTE:** The source of truth is the english translation file (found in 'src/i18n/en/flexible-data-explorer.json'). All translation keys have to adhere to key-value pair in that file.
+**NOTE:** The source of truth is the english translation file (found in 'libs/flexible-data-explorer/shared/src/common/i18n/en/flexible-data-explorer.json'). All translation keys have to adhere to key-value pair in that file.
 
 ## Troubleshooting
 

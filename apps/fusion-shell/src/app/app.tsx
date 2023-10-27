@@ -3,8 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { FUSION_PATH as FDX_PATH } from '@flexible-data-explorer/app/constants/common';
+import { FUSION_PATH as FDX_PATH } from '@fdx/shared/constants/common';
 import * as Sentry from '@sentry/react';
 import { UserHistoryProvider } from '@user-history';
 

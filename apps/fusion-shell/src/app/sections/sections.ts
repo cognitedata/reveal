@@ -1,5 +1,4 @@
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { FUSION_PATH as FDX_PATH } from '@flexible-data-explorer/app/constants/common';
+import { FUSION_PATH as FDX_PATH } from '@fdx/shared/constants/common';
 
 import images from '../../assets/images';
 import { TranslationKeys } from '../../i18n';

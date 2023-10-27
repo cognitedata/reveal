@@ -3,6 +3,9 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+import { useAuthContext } from '@fdx/shared/common/auth/AuthProvider';
+import { TopBar } from '@fdx/shared/common/topbar/top-bar';
+import zIndex from '@fdx/shared/utils/zIndex';
 import { Copilot } from '@fusion/copilot-core';
 import {
   QueryErrorResetBoundary,
@@ -14,11 +17,8 @@ import { Button, ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
-import { useAuthContext } from './common/auth/AuthProvider';
-import { TopBar } from './common/topbar/top-bar';
 import { queryClient } from './queryClient';
 import Routes from './Routes';
-import zIndex from './utils/zIndex';
 
 function App() {
   const { client } = useAuthContext();

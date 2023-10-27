@@ -1,6 +1,6 @@
-import { CogniteClient } from '@cognite/sdk';
+import { DataModelV2 } from '@fdx/shared/types/services';
 
-import { DataModelV2 } from '../src/app/services/types';
+import { CogniteClient } from '@cognite/sdk';
 
 import { PROJECT } from './constants';
 

@@ -45,6 +45,12 @@ if [ "$project" = "industry-canvas" ]; then
   project="industrial-canvas"
 fi
 
+# if flexible-dat-explorer, use different path
+if [ "$project" = "flexible-data-explorer" ]; then
+  path=libs/flexible-data-explorer/shared/src/common/i18n
+  project="flexible-data-explorer"
+fi
+
 
 # Docs can be found here
 # https://github.com/cognitedata/cdf-ui-i18n-utils/blob/main/bin/README.md

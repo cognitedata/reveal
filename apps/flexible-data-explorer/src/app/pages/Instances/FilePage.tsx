@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Button } from '../../components/buttons/Button';
-import { Dropdown } from '../../components/dropdown/Dropdown';
-import { Page } from '../../containers/page/Page';
-import { FileWidget, PropertiesWidget } from '../../containers/widgets';
-import { useOpenIn } from '../../hooks/useOpenIn';
-import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
-import { useFileByIdQuery } from '../../services/instances/file/queries/useFileByIdQuery';
+import { Button, Dropdown } from '@fdx/components';
+import { Page } from '@fdx/modules/page/Page';
+import { FileWidget } from '@fdx/modules/widgets/File/FileWidget';
+import { PropertiesWidget } from '@fdx/modules/widgets/Properties/PropertiesWidget';
+import { useFileByIdQuery } from '@fdx/services/instances/file/queries/useFileByIdQuery';
+import { useOpenIn } from '@fdx/shared/hooks/useOpenIn';
+import { useRecentlyVisited } from '@fdx/shared/hooks/useRecentlyVisited';
 
 export const FilePage = () => {
   const { externalId } = useParams();
@@ -17,6 +17,9 @@ export const FilePage = () => {
   const { data, isLoading, isFetched, status } = useFileByIdQuery(externalId);
 
   const handleNavigateToCanvasClick = () => {
+    if (!data?.id) {
+      return;
+    }
     openAssetCentricResourceItemInCanvas({ id: data?.id, type: 'file' });
   };
 

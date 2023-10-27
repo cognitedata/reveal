@@ -1,18 +1,17 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Button } from '../../components/buttons/Button';
-import { Dropdown } from '../../components/dropdown/Dropdown';
-import { Page } from '../../containers/page/Page';
-import { PropertiesWidget } from '../../containers/widgets/Properties/PropertiesWidget';
-import { RelationshipDirectWidget } from '../../containers/widgets/RelationshipDirect/RelationshipDirect';
-import { RelationshipEdgesWidget } from '../../containers/widgets/RelationshipEdges/RelationshipEdgesWidget';
-import { ThreeDWidget } from '../../containers/widgets/ThreeD/ThreeDWidget';
-import { useOpenIn } from '../../hooks/useOpenIn';
-import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
-import { useFDM } from '../../providers/FDMProvider';
-import { useInstancesQuery } from '../../services/instances/generic/queries/useInstanceByIdQuery';
-import { ContainerReferenceType } from '../../types';
+import { Button, Dropdown } from '@fdx/components';
+import { Page } from '@fdx/modules/page/Page';
+import { PropertiesWidget } from '@fdx/modules/widgets/Properties/PropertiesWidget';
+import { RelationshipDirectWidget } from '@fdx/modules/widgets/RelationshipDirect/RelationshipDirect';
+import { RelationshipEdgesWidget } from '@fdx/modules/widgets/RelationshipEdges/RelationshipEdgesWidget';
+import { ThreeDWidget } from '@fdx/modules/widgets/ThreeD/ThreeDWidget';
+import { useInstancesQuery } from '@fdx/services/instances/generic/queries/useInstanceByIdQuery';
+import { useOpenIn } from '@fdx/shared/hooks/useOpenIn';
+import { useRecentlyVisited } from '@fdx/shared/hooks/useRecentlyVisited';
+import { useFDM } from '@fdx/shared/providers/FDMProvider';
+import { ContainerReferenceType } from '@fdx/shared/types/canvas';
 
 export const InstancesPage = () => {
   const { dataType, dataModel, space, version } = useParams();

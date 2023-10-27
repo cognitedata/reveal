@@ -2,15 +2,15 @@ import { useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { AIDisclaimer } from '../components/links/AIDisclaimer';
-import { Categories } from '../containers/category/Categories';
-import { Page } from '../containers/page/Page';
-import { AILabels } from '../containers/search/components/AILabels';
-import { AISwitch } from '../containers/search/components/AISwitch';
-import { SearchBar } from '../containers/search/SearchBar';
-import { SearchConfiguration } from '../containers/search/SearchConfiguration';
-import { useIsCogpilotEnabled } from '../hooks/useFlag';
-import { useAISearchParams } from '../hooks/useParams';
+import { AIDisclaimer } from '@fdx/components';
+import { Categories } from '@fdx/modules/category/Categories';
+import { Page } from '@fdx/modules/page/Page';
+import { AILabels } from '@fdx/modules/search/components/AILabels';
+import { AISwitch } from '@fdx/modules/search/components/AISwitch';
+import { SearchBar } from '@fdx/modules/search/SearchBar';
+import { SearchConfiguration } from '@fdx/modules/search/SearchConfiguration';
+import { useIsCogpilotEnabled } from '@fdx/shared/hooks/useFlag';
+import { useAISearchParams } from '@fdx/shared/hooks/useParams';
 
 const SEARCH_BAR_OPTIONS = {
   filterMenuMaxHeight: '50vh',

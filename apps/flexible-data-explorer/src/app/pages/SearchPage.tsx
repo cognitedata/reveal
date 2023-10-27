@@ -2,12 +2,12 @@ import { Suspense } from 'react';
 
 import styled from 'styled-components';
 
-import { Page } from '../containers/page/Page';
-import { AIResults } from '../containers/search/results/AIResults';
-import { SearchResults } from '../containers/search/results/SearchResults';
-import { SearchCategories } from '../containers/search/SearchCategories';
-import { SearchConfiguration } from '../containers/search/SearchConfiguration';
-import { useAISearchParams } from '../hooks/useParams';
+import { Page } from '@fdx/modules/page/Page';
+import { AIResults } from '@fdx/modules/search/results/AIResults';
+import { SearchResults } from '@fdx/modules/search/results/SearchResults';
+import { SearchCategories } from '@fdx/modules/search/SearchCategories';
+import { SearchConfiguration } from '@fdx/modules/search/SearchConfiguration';
+import { useAISearchParams } from '@fdx/shared/hooks/useParams';
 
 export const SearchPage = () => {
   const [isAIEnabled] = useAISearchParams();

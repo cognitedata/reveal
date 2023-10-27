@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+import { localStorageKeys } from '@fdx/shared/constants/localStorageKeys';
+import { FDMProvider } from '@fdx/shared/providers/FDMProvider';
 import { makeDecorator } from '@storybook/addons';
 import { QueryClientProvider } from '@tanstack/react-query';
 
 import { SDKProvider } from '@cognite/sdk-provider';
 
-import { localStorageKeys } from '../src/app/constants/localStorageKeys';
-import { FDMProvider } from '../src/app/providers/FDMProvider';
 import { queryClient } from '../src/app/queryClient';
 
 import { NO_PARAMETER, PROJECT } from './constants';

@@ -17,7 +17,8 @@ import '@react-awesome-query-builder/ui/css/styles.css';
 // import styleScope from './styleScope';
 const styleScope = 'flexible-data-explorer-style-scope';
 
-export const getContainer = () => document.getElementsByClassName(styleScope);
+export const getContainer = () =>
+  document.getElementsByClassName(styleScope)[0];
 
 // This will override the appendTo prop on all Tooltips used from cogs
 // For tooltips to work on fusion this is needed.

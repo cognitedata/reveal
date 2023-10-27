@@ -1,9 +1,7 @@
 import React from 'react';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { useProjectConfig } from '@flexible-data-explorer/app/hooks/useConfig';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { useSelectedSiteLocalStorage } from '@flexible-data-explorer/app/hooks/useLocalStorage';
+import { useProjectConfig } from '@fdx/shared/hooks/useConfig';
+import { useSelectedSiteLocalStorage } from '@fdx/shared/hooks/useLocalStorage';
 
 import {
   Avatar,
