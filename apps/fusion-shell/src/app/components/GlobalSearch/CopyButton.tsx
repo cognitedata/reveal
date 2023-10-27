@@ -43,7 +43,7 @@ const StyledButton = styled(Button)`
   background: ${Colors['decorative--grayscale--white']};
   border: 1px solid ${Colors['border--muted']};
   border-radius: 4px;
-  width: 90px;
+  width: fit-content;
   & svg {
     min-width: 16px;
   }
