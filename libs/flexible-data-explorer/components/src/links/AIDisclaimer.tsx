@@ -8,13 +8,13 @@ import { Body, Flex } from '@cognite/cogs.js';
 
 export const AIDisclaimer = () => {
   const { t } = useTranslation();
-  const { classicExplorerLink } = useLinks();
+  const { cogniteSearchDocs } = useLinks();
 
   return (
     <Wrapper gap={4}>
       <Body size="small">{t('AI_DISCLAIMER')}</Body>
       <StyledLink
-        href={classicExplorerLink()}
+        href={cogniteSearchDocs()}
         target="_blank"
         rel="noopener noreferrer"
       >

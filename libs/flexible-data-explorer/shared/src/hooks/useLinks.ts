@@ -88,6 +88,10 @@ export const useLinks = () => {
     return createLink(`/explore/search`);
   }, []);
 
+  const cogniteSearchDocs = useCallback(() => {
+    return 'https://docs.cognite.com/cdf/explore/search/#search-using-artificial-intelligence';
+  }, []);
+
   return {
     homePageLink,
     searchPageLink,
@@ -99,5 +103,6 @@ export const useLinks = () => {
     canvasAppLink,
     chartsAppLink,
     classicExplorerLink,
+    cogniteSearchDocs,
   };
 };
