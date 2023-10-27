@@ -25,7 +25,11 @@
     "src/__mocks__/**.*",
     "src/app/common/test/**.*",
     "jest.config.ts",
-    "src/app/setupTests.ts"
+    "src/app/setupTests.ts",
+    "**/*.stories.ts",
+    "**/*.stories.js",
+    "**/*.stories.jsx",
+    "**/*.stories.tsx"
   ],
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
 }

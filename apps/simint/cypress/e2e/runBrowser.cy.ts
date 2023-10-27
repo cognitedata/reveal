@@ -3,12 +3,6 @@ import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
 import { getUrl } from '../utils/getUrl';
 
 describe('Run Browser', () => {
-  beforeEach(() => {
-    cy.visit(getUrl());
-    cy.ensurePageFinishedLoading();
-    cy.findByRole('tab', { name: /run browser/i }).click();
-  });
-
   it('Renders empty state when there are runs in the project', () => {
     cy.intercept('/apps/v1/projects/*/simconfig/v2/calculations/runs?*', {
       calculationRunList: [],
@@ -20,6 +14,10 @@ describe('Run Browser', () => {
         fixture: 'simulators',
       }
     ).as('getSimulators');
+
+    cy.visit(getUrl());
+    cy.ensurePageFinishedLoading();
+    cy.findByRole('tab', { name: /run browser/i }).click();
 
     cy.findByTestId('no-results-container').should('exist');
   });
@@ -45,6 +43,10 @@ describe('Run Browser', () => {
     cy.intercept('/apps/v1/projects/*/simconfig/v2/models?*', {
       fixture: 'models',
     }).as('getModels');
+
+    cy.visit(getUrl());
+    cy.ensurePageFinishedLoading();
+    cy.findByRole('tab', { name: /run browser/i }).click();
 
     cy.findByTestId('no-runs-container').should('exist');
 
@@ -77,6 +79,10 @@ describe('Run Browser', () => {
     cy.intercept('/apps/v1/projects/*/simconfig/v2/models?*', {
       modelFileList: [],
     }).as('getModels');
+
+    cy.visit(getUrl());
+    cy.ensurePageFinishedLoading();
+    cy.findByRole('tab', { name: /run browser/i }).click();
 
     // create button goes to the right place
     cy.findByTestId('create-routine-button').click();

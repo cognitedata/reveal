@@ -3,21 +3,19 @@ import { useState } from 'react';
 import { Menu, Modal, Divider } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
-import {
-  Pipeline,
-  useRunEMPipeline,
-} from '../../hooks/entity-matching-pipelines';
+import { Pipeline } from '../../hooks/entity-matching-pipelines';
 import { getContainer } from '../../utils';
 
 type PipelineActionsMenuProps = {
   pipeline: Pipeline;
   dataTestId?: string;
+  onRerunPipeline: () => void;
   onDuplicatePipeline?: () => void;
   onDeletePipeline: () => void;
 };
 const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
-  const { dataTestId, onDuplicatePipeline, onDeletePipeline } = props;
-  const { mutateAsync: runEMPipeline } = useRunEMPipeline();
+  const { dataTestId, onRerunPipeline, onDuplicatePipeline, onDeletePipeline } =
+    props;
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const { t } = useTranslation();
 
@@ -25,10 +23,6 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
 
   const rerun = props.pipeline?.lastRun?.status;
   const running = rerun === 'Queued' || rerun === 'Running';
-
-  const handleReRunPipeline = (id: number) => {
-    runEMPipeline({ id });
-  };
 
   let itemText;
 
@@ -55,7 +49,7 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
             <Menu.Item
               icon="Play"
               iconPlacement="left"
-              onClick={() => handleReRunPipeline(props.pipeline.id)}
+              onClick={() => onRerunPipeline()}
               disabled={running}
             >
               {itemText}

@@ -27,7 +27,6 @@ export type Pipeline = {
   name: string;
   description: string;
   owner: string;
-  run: string;
   sources: {
     dataSetIds: { id: number }[];
     resource: PipelineSourceType;
@@ -103,15 +102,15 @@ export const useEMPipeline = (
 };
 
 export const useDeleteEMPipeline = (
-  opts?: UseMutationOptions<unknown, CogniteError, { id: number }>
+  opts?: UseMutationOptions<unknown, CogniteError, { ids: number[] }>
 ) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
   return useMutation(
-    ({ id }: { id: number }) =>
+    ({ ids }: { ids: number[] }) =>
       sdk.post<{}>(
         `/api/v1/projects/${sdk.project}/context/entitymatching/pipelines/delete`,
-        { data: { items: [{ id }] }, headers: betaHeader }
+        { data: { items: ids.map((id) => ({ id })) }, headers: betaHeader }
       ),
     {
       ...opts,

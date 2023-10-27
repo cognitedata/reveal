@@ -142,7 +142,7 @@
   "pipeline-list-table-column-title-name": "Name",
   "pipeline-list-table-column-title-owner": "Owner",
   "pipeline-notification-delete-error": "Something went wrong. Failed to delete pipeline.",
-  "pipeline-notification-delete-success": "The pipeline {{name}} was deleted.",
+  "pipeline-notification-delete-success": "The pipeline {{id}} was deleted.",
   "pipeline-notification-duplicate-error": "Something went wrong. Failed to duplicate pipeline.",
   "pipeline-notification-duplicate-success": "The pipeline {{name}} was duplicated.",
   "pipeline-run-not-found-title": "Pipeline run not found",

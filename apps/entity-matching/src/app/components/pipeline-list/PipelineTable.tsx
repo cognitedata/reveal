@@ -1,27 +1,15 @@
-import { Key, useCallback, useMemo, useState } from 'react';
+import { Key, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { InfiniteData } from '@tanstack/react-query';
-
-import {
-  ColumnType,
-  notification,
-  RowSelectionType,
-  Table,
-} from '@cognite/cdf-utilities';
-import { Button, Dropdown, Loader } from '@cognite/cogs.js';
+import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
+import { Button, Dropdown } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import {
   PAGINATION_SETTINGS,
   SOURCE_TABLE_QUERY_KEY,
 } from '../../common/constants';
-import {
-  Pipeline,
-  useDeleteEMPipeline,
-  useDuplicateEMPipeline,
-  useEMPipelines,
-} from '../../hooks/entity-matching-pipelines';
+import { Pipeline } from '../../hooks/entity-matching-pipelines';
 import { PipelineTableTypes } from '../../types/types';
 import LatestRunCell from '../latest-run-cell';
 import PipelineActionsMenu from '../pipeline-actions-menu/PipelineActionsMenu';
@@ -34,30 +22,21 @@ type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
   key: PipelineTableTypes;
 };
 
-type Items<T> = {
-  items: T[];
-};
-
-export const collectPages = <T extends { name: string }>(
-  data: InfiniteData<Items<T>>
-): T[] =>
-  data
-    ? data.pages.reduce(
-        (accumulator: T[], page) => [...accumulator, ...page.items],
-        []
-      )
-    : [];
-
 const PipelineTable = ({
   dataTestId,
+  pipelineList,
+  handleReRunPipeline,
+  handleDuplicate,
+  handleDeletePipeline,
 }: {
   dataTestId?: string;
+  pipelineList: Pipeline[];
+  handleReRunPipeline: (id: number) => void;
+  handleDuplicate: (pipeline: Pipeline) => void;
+  handleDeletePipeline: (ids: number) => void;
 }): JSX.Element => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [searchParams] = useSearchParams('');
-  const { data, isInitialLoading } = useEMPipelines();
-  const { mutate: deletePipeline } = useDeleteEMPipeline();
-  const { mutate: duplicatePipeline } = useDuplicateEMPipeline();
   const { t } = useTranslation();
   const searchParam = searchParams.get(SOURCE_TABLE_QUERY_KEY) || '';
 
@@ -75,65 +54,11 @@ const PipelineTable = ({
   };
 
   const pipelines = useMemo(() => {
-    return collectPages(data!).map((p) => ({ ...p, key: p.id.toString() }));
-  }, [data]);
-
-  const handleDuplicate = useCallback(
-    (pipeline: Pipeline) => {
-      duplicatePipeline(
-        {
-          id: pipeline.id,
-          name: pipeline.name,
-          description: pipeline.description,
-          sources: pipeline.sources,
-          targets: pipeline.targets,
-        },
-        {
-          // eslint-disable-next-line @typescript-eslint/no-shadow
-          onSuccess: (_: unknown, pipeline) => {
-            notification.success({
-              message: t('notification-success'),
-              description: t('pipeline-notification-duplicate-success', {
-                name: pipeline?.name,
-              }),
-            });
-          },
-          onError: () => {
-            notification.error({
-              message: t('error'),
-              description: t('pipeline-notification-duplicate-error'),
-            });
-          },
-        }
-      );
-    },
-    [duplicatePipeline, t]
-  );
-
-  const handleDeletePipeline = useCallback(
-    (id: number) => {
-      deletePipeline(
-        { id },
-        {
-          onSuccess: () => {
-            notification.success({
-              message: t('notification-success'),
-              description: t('pipeline-notification-delete-success', {
-                name: id,
-              }),
-            });
-          },
-          onError: () => {
-            notification.error({
-              message: t('error'),
-              description: t('pipeline-notification-delete-error'),
-            });
-          },
-        }
-      );
-    },
-    [deletePipeline, t]
-  );
+    return pipelineList.map((p) => ({
+      ...p,
+      key: p.id.toString(),
+    }));
+  }, [pipelineList]);
 
   const columns: PipelineListTableRecordCT[] = useMemo(
     () => [
@@ -176,8 +101,9 @@ const PipelineTable = ({
             <Dropdown
               content={
                 <PipelineActionsMenu
-                  onDuplicatePipeline={() => handleDuplicate(record)}
                   pipeline={record}
+                  onRerunPipeline={() => handleReRunPipeline(record.id)}
+                  onDuplicatePipeline={() => handleDuplicate(record)}
                   onDeletePipeline={() => handleDeletePipeline(record.id)}
                   dataTestId="pipeline-actions"
                 />
@@ -195,7 +121,7 @@ const PipelineTable = ({
         },
       },
     ],
-    [handleDeletePipeline, handleDuplicate, t]
+    [handleDeletePipeline, handleDuplicate, handleReRunPipeline, t]
   );
 
   const pipelinesList = useMemo(
@@ -207,10 +133,6 @@ const PipelineTable = ({
         : pipelines,
     [pipelines, searchParam]
   );
-
-  if (isInitialLoading) {
-    return <Loader />;
-  }
 
   return (
     <>
