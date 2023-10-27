@@ -13,23 +13,21 @@ import { OnTrackEvent } from '../../metrics';
 
 export type SidebarLocale = {
   // TODO: provide detailed descriptions
-  personalInfoTabBtnText: string;
-  languageTabBtnText: string;
+  personalInfoTabBtnText?: string;
+  languageTabBtnText?: string;
 };
 
 export type LanguageTabLocale = {
   // TODO: provide detailed descriptions
-  title: string;
-  languageFieldLabel: string;
+  languageFieldLabel?: string;
 };
 
 export type PersonalInfoTabLocale = {
   // TODO: provide detailed descriptions
-  title: string;
-  nameFieldLabel: string;
-  nameFieldHelpText: string;
-  emailFieldLabel: string;
-  emailFieldHelpText: string;
+  nameFieldLabel?: string;
+  nameFieldHelpText?: string;
+  emailFieldLabel?: string;
+  emailFieldHelpText?: string;
 };
 
 export type ProfileHeaderLocale = {
@@ -77,12 +75,11 @@ export const UserProfilePage = ({
       {
         key: 'info',
         icon: 'User',
-        title: sidebarLocale?.personalInfoTabBtnText || 'Personal info',
+        title: sidebarLocale?.personalInfoTabBtnText || 'Personal information',
         content: (
           <PersonalInfoTab
             userInfo={{ email, name }}
             isUserInfoLoading={isUserInfoLoading}
-            title={personalInfoTabLocale?.title}
             nameFieldLabel={personalInfoTabLocale?.nameFieldLabel}
             nameFieldHelpText={personalInfoTabLocale?.nameFieldHelpText}
             emailFieldLabel={personalInfoTabLocale?.emailFieldLabel}
@@ -99,7 +96,6 @@ export const UserProfilePage = ({
             selectedLanguage={selectedLanguage}
             supportedLanguages={supportedLanguages}
             onLanguageChange={onLanguageChange}
-            title={languageTabLocale?.title}
             languageFieldLabel={languageTabLocale?.languageFieldLabel}
             onTrackEvent={onTrackEvent}
           />
@@ -110,7 +106,6 @@ export const UserProfilePage = ({
     email,
     isUserInfoLoading,
     languageTabLocale?.languageFieldLabel,
-    languageTabLocale?.title,
     name,
     onLanguageChange,
     onTrackEvent,
@@ -118,7 +113,6 @@ export const UserProfilePage = ({
     personalInfoTabLocale?.emailFieldLabel,
     personalInfoTabLocale?.nameFieldHelpText,
     personalInfoTabLocale?.nameFieldLabel,
-    personalInfoTabLocale?.title,
     selectedLanguage,
     sidebarLocale?.languageTabBtnText,
     sidebarLocale?.personalInfoTabBtnText,

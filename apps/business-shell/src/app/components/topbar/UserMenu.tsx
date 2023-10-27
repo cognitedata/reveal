@@ -36,6 +36,7 @@ const UserMenu = (): JSX.Element => {
           }}
         />
       }
+      hideOnSelect={true}
     >
       <Avatar tooltip={false} text={name} />
     </Dropdown>

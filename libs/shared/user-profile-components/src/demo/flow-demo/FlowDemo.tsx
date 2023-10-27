@@ -36,6 +36,7 @@ const Topbar = (): JSX.Element => {
                   onLogoutClick={() => null}
                 />
               ),
+              hideOnSelect: true,
             },
           ]}
         />
@@ -77,7 +78,6 @@ export const FlowDemo = (): JSX.Element => {
                   title: 'Custom Tab',
                   content: (
                     <TabContent.Container>
-                      <TabContent.Title>Custom Tab</TabContent.Title>
                       <TabContent.Body>Custom Tab Content</TabContent.Body>
                     </TabContent.Container>
                   ),

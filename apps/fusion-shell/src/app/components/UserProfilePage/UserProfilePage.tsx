@@ -31,7 +31,6 @@ export const UserProfilePage = (): JSX.Element => {
       supportedLanguages={SUPPORTED_LANGUAGES as Language[]}
       languageTabLocale={{
         languageFieldLabel: t('language-field-label'),
-        title: t('language-tab-title'),
       }}
       sidebarLocale={{
         languageTabBtnText: t('profile-tab-language-title'),
@@ -42,7 +41,6 @@ export const UserProfilePage = (): JSX.Element => {
         emailFieldLabel: t('email-field-label'),
         nameFieldHelpText: t('name-field-help-text'),
         nameFieldLabel: t('name-field-label'),
-        title: t('personal-info-tab-title'),
       }}
       profileHeaderLocale={{
         backBtnText: t('profile-header-back-btn-text'),

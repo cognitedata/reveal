@@ -9,7 +9,6 @@ type LanguageTabProps = {
   selectedLanguage: Language;
   supportedLanguages: Language[];
   onLanguageChange: (language: Language | undefined) => void;
-  title?: string;
   languageFieldLabel?: string;
   onTrackEvent?: OnTrackEvent;
 };
@@ -18,8 +17,7 @@ export const LanguageTab = ({
   selectedLanguage,
   supportedLanguages = DEFAULT_SUPPORTED_LANGUAGES,
   onLanguageChange,
-  title = 'Language',
-  languageFieldLabel = 'Language',
+  languageFieldLabel = 'Preferred language',
   onTrackEvent,
 }: LanguageTabProps): JSX.Element => {
   const options = supportedLanguages
@@ -31,7 +29,6 @@ export const LanguageTab = ({
 
   return (
     <TabContent.Container>
-      <TabContent.Title>{title}</TabContent.Title>
       <TabContent.Body>
         <Select
           label={languageFieldLabel}

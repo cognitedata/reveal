@@ -1,6 +1,6 @@
 {
   "name": "@cognite/user-profile-components",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "license": "UNLICENSED",
   "sideEffects": false,
   "types": "index.esm.d.ts",

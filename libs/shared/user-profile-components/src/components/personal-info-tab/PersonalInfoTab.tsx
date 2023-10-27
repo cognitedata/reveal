@@ -6,7 +6,6 @@ import { TabContent } from '../tab-content/TabContent';
 export type PersonalInfoTabProps = {
   userInfo?: UserInfo;
   isUserInfoLoading?: boolean;
-  title?: string;
   nameFieldLabel?: string;
   nameFieldHelpText?: string;
   emailFieldLabel?: string;
@@ -16,7 +15,6 @@ export type PersonalInfoTabProps = {
 export const PersonalInfoTab = ({
   userInfo,
   isUserInfoLoading,
-  title = 'Personal info',
   nameFieldLabel = 'Name',
   nameFieldHelpText = 'Contact your administrator if you want to change your name',
   emailFieldLabel = 'Email address',
@@ -27,7 +25,6 @@ export const PersonalInfoTab = ({
 
   return (
     <TabContent.Container>
-      <TabContent.Title>{title}</TabContent.Title>
       <TabContent.Body>
         <InputExp
           disabled

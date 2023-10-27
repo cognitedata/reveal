@@ -52,7 +52,6 @@ export const UserProfilePage = (): JSX.Element => {
         languageTabBtnText: t('LANGUAGE_TAB_BTN_TEXT'),
       }}
       personalInfoTabLocale={{
-        title: t('PERSONAL_INFO_TAB_TITLE'),
         nameFieldLabel: t('NAME_FIELD_LABEL'),
         nameFieldHelpText: t('NAME_FIELD_HELP_TEXT'),
         emailFieldLabel: t('EMAIL_FIELD_LABEL'),
@@ -62,7 +61,6 @@ export const UserProfilePage = (): JSX.Element => {
         backBtnText: t('BACK_TO_PREV_BTN_TEXT'),
       }}
       languageTabLocale={{
-        title: t('LANGUAGE_TAB_TITLE'),
         languageFieldLabel: t('LANGUAGE_FIELD_LABEL'),
       }}
       onTrackEvent={(eventName, metaData) => {
