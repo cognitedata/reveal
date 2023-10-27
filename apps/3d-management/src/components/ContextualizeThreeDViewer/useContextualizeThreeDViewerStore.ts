@@ -50,7 +50,7 @@ const initialState: RootState = {
   pendingAnnotation: null,
   isResourceSelectorOpen: true,
   threeDViewer: null,
-  tool: ToolType.ADD_ANNOTATION,
+  tool: ToolType.SELECT_TOOL,
   shouldShowBoundingVolumes: false,
   shouldShowWireframes: true,
   modelId: null,
