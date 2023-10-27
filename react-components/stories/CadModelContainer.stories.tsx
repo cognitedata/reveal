@@ -35,7 +35,7 @@ export const Main: Story = {
     styling: {
       defaultStyle: { color: new Color('red') }
     },
-    transform: new Matrix4().makeTranslation(0, 10, 0)
+    transform: new Matrix4().makeTranslation(0, 10 + (Math.random() > 0.5 ? 3 : 0), 0)
   },
   render: ({ addModelOptions, transform, styling }) => {
     return (
