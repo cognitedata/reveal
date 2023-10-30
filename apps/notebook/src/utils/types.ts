@@ -3,6 +3,7 @@ export type TrackingEvent = {
   CancelExplainCode: { code: string; hangSeconds: string };
   CancelGenerateCode: { inputValue: string };
   ChooseExplainCode: undefined;
+  ChromeIncognitoDetected: undefined;
   ChooseGenerateCode: undefined;
   DisableCopilotPlugin: undefined;
   OpenCopilotWidget: undefined;

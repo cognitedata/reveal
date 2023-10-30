@@ -28,6 +28,17 @@ if ((window as any).CDF_NOTEBOOK_ORIGIN_OVERRIDE) {
 }
 
 export const NOTEBOOK_ORIGIN = notebook_origin;
+const DUPLICATE_TAB_WARNING_TITLE = 'Duplicate Jupyter Tabs Detected';
+const DUPLICATE_TAB_WARNING_MESSAGE =
+  'Working with Jupyter notebooks concurrently in multiple tabs is not yet supported. Please close all duplicate tabs and refresh the page.';
+
+const CHROME_INCOGNITO_WARNING_TITLE = 'Chrome Incognito Mode Detected';
+const CHROME_INCOGNITO_WARNING_MESSAGE =
+  'You need to enable third party cookies to use Jupyter notebooks in Google Chrome incognito mode.';
+
+const FIREFOX_WARNING_TITLE = 'Firefox Detected';
+const FIREFOX_WARNING_MESSAGE =
+  'Firefox is currently not supported. Please use another browser and refresh the page.';
 
 const TRACKED_EVENTS = ['NotebookCopilotEvent', 'NotebookEvent'];
 const typesafeTrack = <T extends keyof TrackingEvent>(
@@ -48,6 +59,12 @@ const Home = React.forwardRef(
     ref: ForwardedRef<HTMLIFrameElement | null>
   ) => {
     const myIframe = useRef<HTMLIFrameElement>(null);
+    const [showChromeIncognitoWarning, setShowChromeIncognitoWarning] =
+      useState<boolean>(false);
+    const [showFirefoxWarning, setShowFirefoxWarning] =
+      useState<boolean>(false);
+    const [showMultipleTabsWarning, setShowMultipleTabsWarning] =
+      useState<boolean>(false);
 
     const { isEnabled } = useFlag('NOTEBOOK_AI_CODEGEN');
 
@@ -87,6 +104,13 @@ const Home = React.forwardRef(
           const { eventName } = event.data.data;
           typesafeTrack(`${eventActor}.${eventName}`, event.data.data.data);
         }
+
+        if (
+          eventData.event === 'NotebookEvent' &&
+          eventData.data.eventName === 'ChromeIncognitoDetected'
+        ) {
+          setShowChromeIncognitoWarning(true);
+        }
       };
 
       window.addEventListener('message', handler, false);
@@ -94,6 +118,13 @@ const Home = React.forwardRef(
         window.removeEventListener('message', handler);
       };
     }, [fetchAndSendToken]);
+
+    useEffect(() => {
+      if (navigator.userAgent.includes('Firefox')) {
+        trackEvent(`Notebook.FirefoxDetected`);
+        setShowFirefoxWarning(true);
+      }
+    }, []);
 
     // Add interval for checking token
     useEffect(() => {
@@ -116,8 +147,7 @@ const Home = React.forwardRef(
      * This is a temporary workaround for https://cognitedata.atlassian.net/browse/AI-270 and should be removed when the bug is fixed.
      * For an explanation how this routine works, see https://adnan-tech.com/detect-multiple-tabs-opened-at-same-time-javascript/
      */
-    const [showMultipleTabsWarning, setShowMultipleTabsWarning] =
-      useState<boolean>(false);
+
     useEffect(() => {
       // Broadcast that you're opening a page.
       localStorage.cdf_notebook_open_page = Date.now();
@@ -145,22 +175,34 @@ const Home = React.forwardRef(
         <div style={{ flex: 1 }}>
           <IFrame
             data-testid="iframe-for-notebook"
-            style={{ border: 'none' }}
             ref={myIframe}
             src={`${NOTEBOOK_ORIGIN}/lab/index.html?nocache=${Date.now()}${
               isEnabled ? '' : '&aiDisabled=true'
             }}`}
           ></IFrame>
         </div>
-        <Modal
-          visible={showMultipleTabsWarning}
-          title="Duplicate Jupyter Tabs Detected"
-          closable={false}
-          hideFooter
-        >
-          Working with Jupyter notebooks concurrently in multiple tabs is not
-          yet supported. Please close all duplicate tabs and refresh the page.
-        </Modal>
+        {(showChromeIncognitoWarning ||
+          showFirefoxWarning ||
+          showMultipleTabsWarning) && (
+          <Modal
+            visible
+            title={
+              showChromeIncognitoWarning
+                ? CHROME_INCOGNITO_WARNING_TITLE
+                : showFirefoxWarning
+                ? FIREFOX_WARNING_TITLE
+                : DUPLICATE_TAB_WARNING_TITLE
+            }
+            closable={false}
+            hideFooter
+          >
+            {showChromeIncognitoWarning
+              ? CHROME_INCOGNITO_WARNING_MESSAGE
+              : showFirefoxWarning
+              ? FIREFOX_WARNING_MESSAGE
+              : DUPLICATE_TAB_WARNING_MESSAGE}
+          </Modal>
+        )}
       </Flex>
     );
   }
