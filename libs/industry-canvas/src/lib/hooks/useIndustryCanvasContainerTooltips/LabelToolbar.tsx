@@ -31,6 +31,7 @@ const LabelToolbar: React.FC<LabelToolbarProps> = ({
       if (e.key === 'Escape') {
         onClose();
       }
+      e.stopPropagation();
     };
 
     inputRef.addEventListener('keydown', handleKeyDown);
@@ -38,7 +39,7 @@ const LabelToolbar: React.FC<LabelToolbarProps> = ({
     return () => {
       inputRef.removeEventListener('keydown', handleKeyDown);
     };
-  }, [inputRef, localLabel, onSave]);
+  }, [inputRef, localLabel, onSave, onClose]);
 
   return (
     <AlignmentWrapper>
