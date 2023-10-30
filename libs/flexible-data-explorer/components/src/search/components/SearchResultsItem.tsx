@@ -63,6 +63,7 @@ export const SearchResultsItem: React.FC<Props> = ({
 
   return (
     <Container
+      data-testid={`${name}-${description}`}
       role="button"
       tabIndex={0}
       onClick={onClick}

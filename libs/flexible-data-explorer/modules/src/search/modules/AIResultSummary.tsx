@@ -128,7 +128,7 @@ export const AIResultSummary = ({
 
   return (
     <>
-      <Header>
+      <Header data-testid="ai-summary">
         <CogPilotIcon />
         <Flex direction="column" gap={8} style={{ width: '100%' }}>
           {groupedResults.length > 0 && (
@@ -140,7 +140,7 @@ export const AIResultSummary = ({
           {/* <Body size="medium" inverted strong>
             {resultText}
           </Body> */}
-          <Flex alignItems="center">
+          <Flex alignItems="center" data-testid="ai-summary-filter-section">
             <Body size="medium" muted inverted style={{ flex: 1 }}>
               {t('AI_FILTER_APPLIED', {
                 filter: copilotMessage?.summary || '',
@@ -167,9 +167,9 @@ export const AIResultSummary = ({
       {copilotMessage && (
         <CopilotActions message={copilotMessage} actions={[]} />
       )}
-      {copilotMessage && (
+      {copilotMessage && isFilterBuilderVisible && (
         <AIFilterBuilder
-          visible={isFilterBuilderVisible}
+          visible
           space={copilotMessage.dataModel.space}
           dataModelExternalId={copilotMessage.dataModel.externalId}
           type={copilotMessage.dataModel.view}

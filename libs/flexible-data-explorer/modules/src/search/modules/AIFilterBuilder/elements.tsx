@@ -325,6 +325,7 @@ export const InputWidget = (
 
   return (
     <Input
+      data-testid="ai-filter-input"
       key="widget"
       disabled={readonly}
       fullWidth

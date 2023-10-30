@@ -111,7 +111,7 @@ export const AIResultAggregateChart = ({
 
   return (
     <>
-      <ChartCanvas ref={chartContainer}></ChartCanvas>
+      <ChartCanvas ref={chartContainer} data-testid="ai-chart"></ChartCanvas>
     </>
   );
 };

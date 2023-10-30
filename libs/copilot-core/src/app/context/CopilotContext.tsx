@@ -292,7 +292,7 @@ export const CopilotContextProvider = ({
         }
         return intermediateResponse! as any;
       } else if (input) {
-        return await flow!.run(input as any);
+        return await flow!.run({ ...input, sdk } as any);
       }
       throw new Error(
         'Must provide a input for a flow that does not support chat (chatRun implemented)'
