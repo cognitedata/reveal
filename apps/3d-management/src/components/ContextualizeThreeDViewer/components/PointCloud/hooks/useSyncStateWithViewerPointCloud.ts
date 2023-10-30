@@ -5,6 +5,7 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 
 import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 
+import { ANNOTATION_RADIUS_FACTOR } from '../../../../../pages/ContextualizeEditor/constants';
 import {
   ToolType,
   useContextualizeThreeDViewerStore,
@@ -15,8 +16,6 @@ import {
 import { getAnnotationAsBox3 } from '../../../utils/annotations/getAnnotationAsBox3';
 import { createTransformControls } from '../../../utils/createTransformControls';
 import { getCognitePointCloudModel } from '../../../utils/getCognitePointCloudModel';
-import { hideBoundingVolumes } from '../../../utils/hideBoundingVolumes';
-import { showBoundingVolumes } from '../../../utils/showBoundingVolumes';
 const HOVERING_ANNOTATION_ID = 'hovered-annotation';
 const PENDING_ANNOTATION_ID = 'pending-annotation';
 
@@ -48,7 +47,6 @@ export const useSyncStateWithViewerPointCloud = () => {
     hoveredAnnotationId,
     modelId,
     pendingAnnotation,
-    shouldShowBoundingVolumes,
     threeDViewer,
     tool,
     visualizationOptions,
@@ -59,7 +57,6 @@ export const useSyncStateWithViewerPointCloud = () => {
     hoveredAnnotationId: state.hoveredAnnotationId,
     modelId: state.modelId,
     pendingAnnotation: state.pendingAnnotation,
-    shouldShowBoundingVolumes: state.shouldShowBoundingVolumes,
     threeDViewer: state.threeDViewer,
     tool: state.tool,
     visualizationOptions: state.visualizationOptions,
@@ -81,6 +78,45 @@ export const useSyncStateWithViewerPointCloud = () => {
       useTransformControls.current = createTransformControls(threeDViewer);
     }
   });
+
+  useEffect(() => {
+    if (threeDViewer === null) return;
+
+    const onClick = async (event) => {
+      const intersection = await threeDViewer.getIntersectionFromPixel(
+        event.offsetX,
+        event.offsetY
+      );
+      if (
+        intersection === null ||
+        tool !== ToolType.ADD_ANNOTATION ||
+        pendingAnnotation !== null
+      ) {
+        return;
+      }
+      const distance = threeDViewer.cameraManager
+        .getCamera()
+        .position.distanceTo(intersection.point);
+      const CubeSize = distance * ANNOTATION_RADIUS_FACTOR;
+      const cubeAnnotation: CubeAnnotation = {
+        position: {
+          x: intersection.point.x,
+          y: intersection.point.y,
+          z: intersection.point.z,
+        },
+        size: {
+          x: CubeSize,
+          y: CubeSize,
+          z: CubeSize,
+        },
+      };
+      setPendingAnnotation(cubeAnnotation);
+    };
+    threeDViewer.on('click', onClick);
+    return () => {
+      threeDViewer.off('click', onClick);
+    };
+  }, [threeDViewer, pendingAnnotation, tool]);
 
   // sync visualizationOptions with viewer
   useEffect(() => {
@@ -205,25 +241,6 @@ export const useSyncStateWithViewerPointCloud = () => {
     tool,
     transformMode,
   ]);
-
-  // Sync annotation points with viewer.
-  useEffect(() => {
-    if (threeDViewer === null) return;
-    if (modelId === null) return;
-
-    const pointCloudModel = getCognitePointCloudModel({
-      modelId,
-      viewer: threeDViewer,
-    });
-    if (pointCloudModel === undefined) return;
-
-    if (shouldShowBoundingVolumes) {
-      showBoundingVolumes(pointCloudModel);
-      return;
-    }
-
-    hideBoundingVolumes(threeDViewer, pointCloudModel);
-  }, [shouldShowBoundingVolumes, threeDViewer, modelId, tool]);
 
   // Sync hovered annotation with viewer.
   useEffect(() => {

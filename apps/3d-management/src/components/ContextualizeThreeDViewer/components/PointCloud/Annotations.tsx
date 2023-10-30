@@ -25,14 +25,14 @@ export const Annotations: FC = () => {
     tool,
     selectedAnnotationId,
     modelId,
-    shouldShowWireframes,
+    isWireframesVisible,
     isModelLoaded,
   } = useContextualizeThreeDViewerStore((state) => ({
     annotations: state.annotations,
     tool: state.tool,
     selectedAnnotationId: state.selectedAnnotationId,
     modelId: state.modelId,
-    shouldShowWireframes: state.shouldShowWireframes,
+    isWireframesVisible: state.isWireframesVisible,
     isModelLoaded: state.isModelLoaded,
   }));
 
@@ -50,7 +50,7 @@ export const Annotations: FC = () => {
 
       setSelectedAnnotationId(intersectedAnnotationId);
     },
-    { enabled: tool === ToolType.SELECT_TOOL && shouldShowWireframes }
+    { enabled: tool === ToolType.SELECT_TOOL && isWireframesVisible }
   );
 
   useGenerateAnnotationWireframes(
@@ -63,14 +63,14 @@ export const Annotations: FC = () => {
   useSetSelectedWireframe(annotationsView, selectedAnnotationId);
 
   useEffect(() => {
-    if (shouldShowWireframes) {
+    if (isWireframesVisible) {
       annotationsView.show();
     } else {
       annotationsView.hide();
       setSelectedAnnotationId(null);
     }
     viewer.requestRedraw();
-  }, [shouldShowWireframes, annotationsView, viewer, annotations, matrix]);
+  }, [isWireframesVisible, annotationsView, viewer, annotations, matrix]);
 
   useEffect(() => {
     if (tool !== ToolType.SELECT_TOOL) {

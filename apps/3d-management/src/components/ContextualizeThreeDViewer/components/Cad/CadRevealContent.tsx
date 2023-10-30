@@ -115,6 +115,6 @@ const StyledResourceSelectorButtonWrapper = styled(
 )`
   position: absolute;
   right: ${FLOATING_ELEMENT_MARGIN}px;
-  /* The 3px is to vertically align it with the splitter handle */
-  top: calc(50% + 3px);
+  /* The 2px is to vertically align it with the splitter handle */
+  top: calc(50% - 2px);
 `;

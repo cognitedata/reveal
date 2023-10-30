@@ -35,8 +35,7 @@ type RootState = {
   isResourceSelectorOpen: boolean;
   threeDViewer: Cognite3DViewer | null;
   tool: ToolType;
-  shouldShowBoundingVolumes: boolean;
-  shouldShowWireframes: boolean;
+  isWireframesVisible: boolean;
   modelId: number | null;
   isModelLoaded: boolean;
   annotations: AnnotationModel[] | null;
@@ -51,8 +50,7 @@ const initialState: RootState = {
   isResourceSelectorOpen: true,
   threeDViewer: null,
   tool: ToolType.SELECT_TOOL,
-  shouldShowBoundingVolumes: false,
-  shouldShowWireframes: true,
+  isWireframesVisible: true,
   modelId: null,
   isModelLoaded: false,
   annotations: null,
@@ -148,17 +146,10 @@ export const setAnnotations = (annotations: AnnotationModel[]) => {
   }));
 };
 
-export const toggleShouldShowBoundingVolumes = () => {
+export const toggleWireframesVisibility = () => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
-    shouldShowBoundingVolumes: !prevState.shouldShowBoundingVolumes,
-  }));
-};
-
-export const toggleShouldShowWireframes = () => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
-    ...prevState,
-    shouldShowWireframes: !prevState.shouldShowWireframes,
+    isWireframesVisible: !prevState.isWireframesVisible,
   }));
 };
 

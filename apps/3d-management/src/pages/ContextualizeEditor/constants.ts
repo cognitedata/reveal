@@ -27,7 +27,7 @@ export const ANNOTATION_CYLINDER_RADIUS_MARGIN = 0.2; // 20 % percent extra marg
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
-export const LowQualitySettings: QualitySettings = {
+export const LOW_QUALITY_SETTINGS: QualitySettings = {
   cadBudget: {
     maximumRenderCost: DEFAULT_CAD_BUDGET,
     highDetailProximityThreshold: 100,
@@ -41,7 +41,7 @@ export const LowQualitySettings: QualitySettings = {
   },
 };
 
-export const HighQualitySettings: QualitySettings = {
+export const HIGH_QUALITY_SETTINGS: QualitySettings = {
   cadBudget: {
     maximumRenderCost: 2 * DEFAULT_CAD_BUDGET,
     highDetailProximityThreshold: 100,

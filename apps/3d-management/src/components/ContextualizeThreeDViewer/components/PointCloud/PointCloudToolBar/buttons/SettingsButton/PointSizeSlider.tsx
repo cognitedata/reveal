@@ -8,11 +8,11 @@ import {
   MAX_POINT_SIZE,
   MIN_POINT_SIZE,
   STEP_POINT_SIZE,
-} from '../../../../pages/ContextualizeEditor/constants';
+} from '../../../../../../../pages/ContextualizeEditor/constants';
 import {
   useContextualizeThreeDViewerStore,
   updateVisualizationOptions,
-} from '../../useContextualizeThreeDViewerStore';
+} from '../../../../../useContextualizeThreeDViewerStore';
 
 export const PointSizeSlider = (): React.ReactElement => {
   const { visualizationOptions } = useContextualizeThreeDViewerStore(

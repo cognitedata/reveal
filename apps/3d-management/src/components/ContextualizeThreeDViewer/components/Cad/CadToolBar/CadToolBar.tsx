@@ -8,13 +8,20 @@ import {
 
 import { FLOATING_ELEMENT_MARGIN } from '../../../../../pages/ContextualizeEditor/constants';
 
-import { CadToolBarTools } from './CadToolBarTools';
+import { AddContextualizationButton, SlicerButton } from './buttons';
 
 export const CadToolBar = () => {
   return (
     <StyledToolBar>
-      <RevealToolbar.FitModelsButton />
-      <CadToolBarTools />
+      <>
+        <RevealToolbar.FitModelsButton />
+      </>
+      <>
+        <SlicerButton />
+      </>
+      <>
+        <AddContextualizationButton />
+      </>
     </StyledToolBar>
   );
 };

@@ -6,7 +6,7 @@ import { PointColorType } from '@cognite/reveal';
 import {
   useContextualizeThreeDViewerStore,
   updateVisualizationOptions,
-} from '../../useContextualizeThreeDViewerStore';
+} from '../../../../../useContextualizeThreeDViewerStore';
 
 export const ColorTypeSelector = (): React.ReactElement => {
   const { visualizationOptions } = useContextualizeThreeDViewerStore(

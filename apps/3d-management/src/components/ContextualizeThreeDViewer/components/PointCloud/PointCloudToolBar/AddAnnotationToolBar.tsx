@@ -13,8 +13,8 @@ import ToolTooltip from '../../ToolTooltip';
 
 import { StyledInformation } from './PointCloudToolBar';
 
-const LEFT = 75;
-const BOTTOM = 72;
+const LEFT = 71;
+const BOTTOM = 69;
 
 export const AddAnnotationToolBar = () => {
   const { pendingAnnotation, tool, transformMode } =
