@@ -1,8 +1,8 @@
-const GENERIC_CATEGORIES = ['Person', 'Actor', 'Movie', 'Director', 'Review'];
+const GENERIC_CATEGORIES = ['Work item', 'Work order', 'Asset'];
 
 describe('Search categories', () => {
-  it('should perform global search using category card', () => {
-    const category = 'Person';
+  it('should perform global search by category card', () => {
+    const category = 'Asset';
 
     cy.findAllByTestId('category-card')
       .containsExact(category)
@@ -17,8 +17,8 @@ describe('Search categories', () => {
     cy.goBack();
   });
 
-  it('should perform global search', () => {
-    const category = 'Person';
+  it('should perform global search by category', () => {
+    const category = 'Asset';
 
     cy.performGlobalSearchCategory(category);
     cy.findByTestId(`generic-results-${category}`)
@@ -35,7 +35,7 @@ describe('Search categories', () => {
     cy.selectSearchCategory('All');
 
     GENERIC_CATEGORIES.forEach((category) => {
-      cy.findByTestId(`generic-results-${category}`)
+      cy.getGenericResults(category)
         .findByTestId('search-results-header')
         .scrollIntoView()
         .containsExact(category)
@@ -61,7 +61,7 @@ describe('Search categories', () => {
   it('should be able to view generic search results', () => {
     GENERIC_CATEGORIES.forEach((category) => {
       cy.selectSearchCategory(category);
-      cy.findByTestId(`generic-results-${category}`)
+      cy.getGenericResults(category)
         .findByTestId('search-results-header')
         .containsExact(category)
         .should('be.visible');

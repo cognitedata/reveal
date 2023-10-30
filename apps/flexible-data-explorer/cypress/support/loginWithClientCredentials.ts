@@ -4,8 +4,8 @@ export const loginWithAzureClientCredentials = async (
   clientId: string,
   clientSecret: string
 ) => {
-  const authority = `https://login.microsoftonline.com/dssbycognite.onmicrosoft.com`;
-  const scopes = [`https://greenfield.cognitedata.com/.default`];
+  const authority = `https://login.microsoftonline.com/cognitedata.com`;
+  const scopes = [`https://api.cognitedata.com/.default`];
 
   const cca = new ConfidentialClientApplication({
     auth: {

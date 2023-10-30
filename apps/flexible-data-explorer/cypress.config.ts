@@ -14,8 +14,8 @@ export default defineConfig({
       config: Cypress.PluginConfigOptions
     ) {
       const result = await loginWithAzureClientCredentials(
-        config.env.CLIENT_ID,
-        config.env.CLIENT_SECRET
+        config.env.FDX_CLIENT_ID,
+        config.env.FDX_CLIENT_SECRET
       );
 
       config.env.ACCESS_TOKEN = result.accessToken;

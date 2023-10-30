@@ -10,18 +10,20 @@ describe('Filter - Generic', () => {
   });
 
   it('Should be able to filter by string properties', () => {
-    const value = 'Aamir Bashir';
+    cy.selectSearchCategory('Work item');
 
-    cy.openFilterInSearchResults('generic-results-Person')
-      .searchAndClickOption('name')
+    const value = 'Test work-item';
+
+    cy.openFilterInSearchResults('generic-results-WorkItem')
+      .searchAndClickOption('title')
       .selectOperator(Operator.NOT_STARTS_WITH)
       .inputString(value)
       .clickFilterApplyButton();
 
     cy.waitForRequest('searchDataTypes').payloadShouldContain({
-      filterPerson: {
+      filterWorkItem: {
         not: {
-          name: {
+          title: {
             prefix: value,
           },
         },
@@ -29,74 +31,77 @@ describe('Filter - Generic', () => {
     });
 
     cy.log('Remove applied filter');
-    cy.clickIconButton(`Remove name doesn't start with ${value}`);
+    cy.clickIconButton(`Remove title doesn't start with ${value}`);
     cy.waitForRequest('searchDataTypes');
   });
 
   it('Should be able to filter by numeric properties', () => {
-    const value = 35;
+    cy.selectSearchCategory('Work order');
 
-    cy.openFilterInSearchResults('generic-results-Person')
-      .searchAndClickOption('age')
+    const value = 24;
+
+    cy.openFilterInSearchResults('generic-results-WorkOrder')
+      .searchAndClickOption('durationHours')
       .selectOperator(Operator.LESS_THAN)
       .inputNumber(value)
       .clickFilterApplyButton();
 
     cy.waitForRequest('searchDataTypes').payloadShouldContain({
-      filterPerson: {
-        age: {
+      filterWorkOrder: {
+        durationHours: {
           lt: value,
         },
       },
     });
 
     cy.log('Remove applied filter');
-    cy.clickIconButton(`Remove age is less than ${value}`);
+    cy.clickIconButton(`Remove durationHours is less than ${value}`);
     cy.waitForRequest('searchDataTypes');
   });
 
   it('Should be able to filter by boolean properties', () => {
-    cy.openFilterInSearchResults('generic-results-Person')
-      .searchAndClickOption('age')
-      .selectOperator(Operator.IS_SET)
+    cy.selectSearchCategory('Work item');
 
+    cy.openFilterInSearchResults('generic-results-WorkItem')
+      .searchAndClickOption('isCompleted')
+      .selectOperator(Operator.IS_SET)
       .clickFilterApplyButton();
 
     cy.waitForRequest('searchDataTypes').payloadShouldContain({
-      filterPerson: {
-        age: {
+      filterWorkItem: {
+        isCompleted: {
           isNull: false,
         },
       },
     });
 
     cy.log('Remove applied filter');
-    cy.clickIconButton(`Remove age is set`);
+    cy.clickIconButton(`Remove isCompleted is set`);
     cy.waitForRequest('searchDataTypes');
   });
 
   it('Should be able to filter by Date properties', () => {
+    cy.selectSearchCategory('Asset');
+
     const value = new Date(`10/30/2020`);
 
-    cy.selectSearchCategory('Movie');
-
-    cy.openFilterInSearchResults('generic-results-Movie')
+    cy.openFilterInSearchResults('generic-results-Asset')
       .scrollIntoView()
-      .searchAndClickOption('releaseDate')
+      .searchAndClickOption('createdDate')
       .selectOperator(Operator.BEFORE)
       .inputDate(value)
       .clickFilterApplyButton();
 
     cy.waitForRequest('searchDataTypes').payloadShouldContain({
-      filterMovie: {
-        releaseDate: {
+      filterAsset: {
+        createdDate: {
           lt: value,
         },
       },
     });
 
     cy.log('Remove applied filter');
-    cy.clickIconButton(`Remove releaseDate is before ${formatDate(value)}`);
+    cy.clickIconButton(`Remove createdDate is before ${formatDate(value)}`);
     cy.waitForRequest('searchDataTypes');
   });
 });
