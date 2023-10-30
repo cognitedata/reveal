@@ -15,6 +15,7 @@ import { isDevelopment, isStaging } from '@cognite/cdf-utilities';
 import { Flex, Modal } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
+import SecondaryTopBar from '../../components/SecondaryTopBar';
 import { BaseEventData, TrackingEvent } from '../../utils/types';
 
 let notebook_origin = 'https://notebook-standalone.cogniteapp.com';
@@ -139,14 +140,18 @@ const Home = React.forwardRef(
     });
 
     return (
-      <Flex style={{ height: '100%' }}>
-        <IFrame
-          data-testid="iframe-for-notebook"
-          ref={myIframe}
-          src={`${NOTEBOOK_ORIGIN}/lab/index.html?nocache=${Date.now()}${
-            isEnabled ? '' : '&aiDisabled=true'
-          }}`}
-        ></IFrame>
+      <Flex style={{ height: '100%', overflow: 'hidden' }} direction="column">
+        <SecondaryTopBar />
+        <div style={{ flex: 1 }}>
+          <IFrame
+            data-testid="iframe-for-notebook"
+            style={{ border: 'none' }}
+            ref={myIframe}
+            src={`${NOTEBOOK_ORIGIN}/lab/index.html?nocache=${Date.now()}${
+              isEnabled ? '' : '&aiDisabled=true'
+            }}`}
+          ></IFrame>
+        </div>
         <Modal
           visible={showMultipleTabsWarning}
           title="Duplicate Jupyter Tabs Detected"
