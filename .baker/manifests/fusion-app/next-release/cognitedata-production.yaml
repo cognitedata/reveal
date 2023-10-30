@@ -187,7 +187,7 @@ data:
     \"max-age=63072000; includeSubdomains\";\n     add_header X-Content-Type-Options
     nosniff;\n     add_header Content-Security-Policy-Report-Only \"default-src 'self'
     https://*.preview.cogniteapp.com https://*.web.app https://*.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*
-    sentry.io; script-src 'self' https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/
+    sentry.io; script-src 'self' https://fast.chameleon.io https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/
     https://cdn.cogniteapp.com https://*.preview.cogniteapp.com https://*.web.app
     https://*.cogniteapp.com https://storage.googleapis.com/opint-pr-server/* https://cdn.jsdelivr.net/npm/monaco-editor@0.36.1/;
     connect-src 'self' wss: blob: data: https: https://*.preview.cogniteapp.com https://*.web.app
@@ -203,10 +203,10 @@ data:
     https://storage.googleapis.com/opint-pr-server/*; media-src 'self' https://*.cognitedata.com
     https://*.preview.cogniteapp.com https://*.web.app https://*.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*;
     form-action https://*.preview.cogniteapp.com https://*.web.app https://*.cogniteapp.com
-    https://storage.googleapis.com/opint-pr-server/*; img-src 'self' blob: data: https://*.cognitedata.com
-    https://auth.cognite.com https://*.preview.cogniteapp.com https://*.web.app https://*.cogniteapp.com
-    https://storage.googleapis.com/opint-pr-server/* https://apps-cdn.cogniteapp.com;
-    frame-src * 'self'; report-uri https://o124058.ingest.sentry.io/api/5177031/security/?sentry_key=e1b43d071a3446bfabfca7d239864bc1;\";\n
+    https://storage.googleapis.com/opint-pr-server/*; img-src 'self' blob: data: https://fast.chameleon.io
+    https://*.cognitedata.com https://auth.cognite.com https://*.preview.cogniteapp.com
+    https://*.web.app https://*.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*
+    https://apps-cdn.cogniteapp.com; frame-src * 'self'; report-uri https://o124058.ingest.sentry.io/api/5177031/security/?sentry_key=e1b43d071a3446bfabfca7d239864bc1;\";\n
     \  }\n\n   location ~ /subapps-import-map.json$ {\n     try_files /subapps-import-map-preview.json
     =404;\n     add_header Cache-Control \"max-age=0, no-cache, no-store, must-revalidate\";\n
     \  }\n\n   location ~ /assets/.+\\.(js|png|jpg|jpeg|map|svg|css|woff2)$ {\n     expires
