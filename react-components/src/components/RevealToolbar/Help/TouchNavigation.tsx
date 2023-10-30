@@ -12,8 +12,12 @@ import {
 import { TouchZoom, TouchPan, TouchSelect } from './Graphics/Touch';
 import { useTranslation } from '../../i18n/I18n';
 
-export const TouchNavigation = (): ReactElement => {
-  const { t } = useTranslation();
+export type TouchNavigationProps = {
+  fallbackLanguage?: string;
+};
+
+export const TouchNavigation = ({ fallbackLanguage }: TouchNavigationProps): ReactElement => {
+  const { t } = useTranslation(fallbackLanguage);
   return (
     <Section
       title={t('TOUCH_NAVIGATION_TITLE', 'Touch')}

@@ -53,7 +53,7 @@ export function Image360Details({ appLanguage }: Image360DetailsProps): ReactEle
               viewer={viewer}
               image360Entity={enteredEntity}
               onExpand={handleExpand}
-              appLanguage={appLanguage}
+              fallbackLanguage={appLanguage}
             />
           </Image360HistoricalPanel>
           <ExitButtonContainer>

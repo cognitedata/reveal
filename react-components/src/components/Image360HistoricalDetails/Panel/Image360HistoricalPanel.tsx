@@ -11,14 +11,16 @@ export type Image360HistoricalPanelProps = {
   revisionCount?: number;
   revisionDetailsExpanded: boolean;
   setRevisionDetailsExpanded: (detailed: boolean) => void;
+  fallbackLanguage?: string;
 };
 
 export const Image360HistoricalPanel = ({
   revisionCount,
   revisionDetailsExpanded,
-  setRevisionDetailsExpanded
+  setRevisionDetailsExpanded,
+  fallbackLanguage
 }: Image360HistoricalPanelProps): ReactElement => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(fallbackLanguage);
   const count = revisionCount?.toString();
 
   const onDetailsClick = (): void => {
