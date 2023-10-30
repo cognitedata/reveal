@@ -18,9 +18,10 @@ export const assignStylesToCadModel = async ({
     CAD_STYLE.SELECTED
   );
 
-  model.assignStyledNodeCollection(contextualizedNodesStyleIndex, {
-    color: CAD_STYLE.CONTEXTUALIZED_COLOR,
-  });
+  model.assignStyledNodeCollection(
+    contextualizedNodesStyleIndex,
+    CAD_STYLE.CONTEXTUALIZED_COLOR
+  );
 
   model.assignStyledNodeCollection(
     highlightedNodeIdsStyleIndex,

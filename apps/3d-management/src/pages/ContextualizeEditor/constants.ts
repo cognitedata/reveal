@@ -21,6 +21,7 @@ export const ANNOTATION_CONTEXTUALIZED_COLOR = 0xd46ae2; // magenta
 export const ANNOTATION_SUGGESTED_COLOR = 0xffff00; // yellow
 export const ANNOTATION_APPROVED_COLOR = 0x00ff00; // green
 export const ANNOTATION_REJECTED_COLOR = 0xff0000; // red
+export const ANNOTATION_HIGHLIGHTED_COLOR = 0xffff00; // yellow
 export const ANNOTATION_LINE_WIDTH = 3;
 export const ANNOTATION_SELECTED_LINE_WIDTH = 10;
 export const ANNOTATION_CYLINDER_RADIUS_MARGIN = 0.2; // 20 % percent extra margin on the cylinder radius
@@ -56,9 +57,12 @@ export const HIGH_QUALITY_SETTINGS: QualitySettings = {
 
 export const CAD_STYLE = {
   SELECTED: DefaultNodeAppearance.Highlighted,
-  CONTEXTUALIZED_COLOR: new Color(0.6, 0.2, 0.78),
+  CONTEXTUALIZED_COLOR: {
+    color: new Color(ANNOTATION_CONTEXTUALIZED_COLOR),
+    outlineColor: NodeOutlineColor.NoOutline,
+  },
   HIGHLIGHTED: {
-    color: new Color(0.5, 0.2, 0.9),
+    color: new Color(ANNOTATION_HIGHLIGHTED_COLOR),
     outlineColor: NodeOutlineColor.White,
   },
 };
