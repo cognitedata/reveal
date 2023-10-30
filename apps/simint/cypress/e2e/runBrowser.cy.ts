@@ -15,9 +15,11 @@ describe('Run Browser', () => {
       }
     ).as('getSimulators');
 
-    cy.visit(getUrl());
+    cy.visit(getUrl('/calculations/runs'));
     cy.ensurePageFinishedLoading();
-    cy.findByRole('tab', { name: /run browser/i }).click();
+
+    cy.wait('@getSimulators');
+    cy.wait('@getCalculationRuns');
 
     cy.findByTestId('no-results-container').should('exist');
   });
@@ -26,6 +28,10 @@ describe('Run Browser', () => {
     cy.intercept('/apps/v1/projects/*/simconfig/v2/calculations/runs?*', {
       calculationRunList: [],
     }).as('getCalculationRuns');
+
+    cy.intercept('/apps/v1/projects/*/simconfig/v2/simulators?').as(
+      'getSimulators'
+    );
 
     cy.fixture('simulators').then((simulators: SimulatorInstance[]) => {
       cy.intercept(
@@ -36,7 +42,7 @@ describe('Run Browser', () => {
             calculationsRuns: 0,
           })),
         }
-      ).as('getSimulators');
+      ).as('getSimulatorsWithDetails');
     });
 
     // stub models response so we can be sure where the create button links to
@@ -44,9 +50,18 @@ describe('Run Browser', () => {
       fixture: 'models',
     }).as('getModels');
 
-    cy.visit(getUrl());
+    cy.intercept('/apps/v1/projects/*/simconfig/definitions').as(
+      'getDefinitions'
+    );
+
+    cy.visit(getUrl('/calculations/runs'));
     cy.ensurePageFinishedLoading();
-    cy.findByRole('tab', { name: /run browser/i }).click();
+
+    cy.wait('@getCalculationRuns');
+    cy.wait('@getSimulators');
+    cy.wait('@getSimulatorsWithDetails');
+    cy.wait('@getModels');
+    cy.wait('@getDefinitions');
 
     cy.findByTestId('no-runs-container').should('exist');
 
@@ -80,9 +95,12 @@ describe('Run Browser', () => {
       modelFileList: [],
     }).as('getModels');
 
-    cy.visit(getUrl());
+    cy.visit(getUrl('/calculations/runs'));
     cy.ensurePageFinishedLoading();
-    cy.findByRole('tab', { name: /run browser/i }).click();
+
+    cy.wait('@getCalculationRuns');
+    cy.wait('@getSimulators');
+    cy.wait('@getModels');
 
     // create button goes to the right place
     cy.findByTestId('create-routine-button').click();
