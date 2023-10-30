@@ -4,6 +4,14 @@
   "sourceRoot": "libs/charts-lib/src",
   "projectType": "library",
   "targets": {
+    "npm": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "outputPath": "dist/libs/charts-lib",
+        "commands": ["./scripts/npm.sh"]
+      }
+    },
     "build": {
       "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],

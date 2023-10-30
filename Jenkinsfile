@@ -40,6 +40,7 @@ static final Map<String, String> NPM_PACKAGES = [
   'cdf-ui-i18n-utils': "dist/libs/shared/cdf-ui-i18n-utils",
   'cdf-utilities': 'dist/libs/shared/cdf-utilities',
   'cdf-login-utils': 'dist/libs/shared/cdf-login-utils',
+  'charts-lib': 'dist/libs/charts-lib',
   'chameleon': 'dist/libs/shared/chameleon',
 ]
 
