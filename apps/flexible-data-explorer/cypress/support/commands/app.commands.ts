@@ -1,7 +1,6 @@
 import { getAppUrl } from '@fusion/shared/cypress';
 
-import { BASE_URL, CLUSTER, PROJECT } from '../constants/appConfig';
-import { PREFERRED_DATA_MODEL } from '../constants/dataModels';
+import { BASE_URL, CLUSTER, PROJECT, SITE } from '../constants/appConfig';
 
 const navigateToApp = () => {
   const url = getAppUrl(BASE_URL, PROJECT, 'search', CLUSTER);
@@ -11,10 +10,8 @@ const navigateToApp = () => {
   cy.get('.cogs-loader', { timeout: 30000 }).should('not.exist');
 };
 
-const setupDataModelSelection = () => {
-  cy.clearSelectedDataModels();
-  cy.selectDataModel(PREFERRED_DATA_MODEL);
-  cy.confirmDataModelSelection();
+const setupSiteSelection = () => {
+  window.localStorage.setItem(`selected-site-${PROJECT}`, JSON.stringify(SITE));
 };
 
 const skipOnboardingGuide = () => {
@@ -26,13 +23,13 @@ const resetAISearchCache = () => {
 };
 
 Cypress.Commands.add('navigateToApp', navigateToApp);
-Cypress.Commands.add('setupDataModelSelection', setupDataModelSelection);
+Cypress.Commands.add('setupSiteSelection', setupSiteSelection);
 Cypress.Commands.add('skipOnboardingGuide', skipOnboardingGuide);
 Cypress.Commands.add('resetAISearchCache', resetAISearchCache);
 
 export interface AppCommands {
   navigateToApp: () => void;
-  setupDataModelSelection: () => void;
+  setupSiteSelection: () => void;
   skipOnboardingGuide: () => void;
   resetAISearchCache: () => void;
 }

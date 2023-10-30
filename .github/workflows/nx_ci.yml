@@ -579,6 +579,9 @@ jobs:
           CLIENT_SECRET: ${{ secrets.DATA_EXPLORER_CLIENT_SECRET }}
           NODE_OPTIONS: '--max_old_space_size=8192'
 
+          FDX_CLIENT_ID: ${{ secrets.COG_DEMO_CLIENT_ID }}
+          FDX_CLIENT_SECRET: ${{ secrets.COG_DEMO_CLIENT_SECRET }}
+
           # used in simint
           CLIENT_ID_CHARTS_AZUREDEV: ${{ secrets.CLIENT_ID_CHARTS_AZUREDEV }}
           CLIENT_SECRET_CHARTS_AZUREDEV: ${{ secrets.CLIENT_SECRET_CHARTS_AZUREDEV }}

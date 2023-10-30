@@ -17,7 +17,7 @@ fi
 
 # start cypress
 echo "Starting Cypress on development environment"
-CLIENT_ID="$client_id" CLIENT_SECRET="$client_secret" nx run flexible-data-explorer:e2e:development &
+FDX_CLIENT_ID="$client_id" FDX_CLIENT_SECRET="$client_secret" nx run flexible-data-explorer:e2e:development &
 pid_cypress=$!
 
 wait

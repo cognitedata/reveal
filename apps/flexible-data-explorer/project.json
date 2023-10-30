@@ -163,9 +163,9 @@
         "testingType": "e2e",
         "devServerTarget": "flexible-data-explorer:serve",
         "env": {
-          "ORG": "cog-dss",
-          "PROJECT": "dss-dev",
-          "CLUSTER": "greenfield.cognitedata.com"
+          "ORG": "cog-demo",
+          "PROJECT": "lervik-industries",
+          "CLUSTER": "api.cognitedata.com"
         }
       },
       "configurations": {
