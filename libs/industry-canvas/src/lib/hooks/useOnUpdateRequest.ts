@@ -12,6 +12,7 @@ import {
 } from '@cognite/unified-file-viewer';
 
 import { RuleType } from '../components/ContextualTooltips/AssetTooltip/types';
+import { MetricEvent } from '../constants';
 import containerConfigToContainerReference from '../containerConfigToContainerReference';
 import {
   setFileUploadDataFromPastedImageContainer,
@@ -119,6 +120,10 @@ const useOnUpdateRequest = ({
         const pastedImageContainers = containers.filter(isPastedImageContainer);
         if (pastedImageContainers.length === 1) {
           setFileUploadDataFromPastedImageContainer(pastedImageContainers[0]);
+          trackUsage(MetricEvent.SCREENSHOT_PASTED, {
+            width: pastedImageContainers[0].width,
+            height: pastedImageContainers[0].height,
+          });
           return;
         }
       }

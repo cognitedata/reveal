@@ -39,6 +39,8 @@ export enum MetricEvent {
   DOWNLOAD_AS_PDF_CLICKED = 'IC.DownloadAsPdf.Clicked',
   SHOW_CONNECTION_LINES_TOGGLED = 'IC.ShowConnectionLines.Toggled',
   ADD_DATA_BUTTON_CLICKED = 'IC.AddDataButton.Clicked',
+  LOCAL_FILE_DRAG_AND_DROPPED = 'IC.LocalFileDragAndDropped',
+  SCREENSHOT_PASTED = 'IC.ScreenshotPasted',
 }
 
 export enum QueryKeys {

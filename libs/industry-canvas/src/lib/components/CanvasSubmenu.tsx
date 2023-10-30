@@ -48,7 +48,10 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
               iconPlacement="left"
               onClick={onRenameCanvasClick}
             >
-              {t(translationKeys.COMMON_CANVAS_RENAME, 'Rename')}
+              {t(translationKeys.COMMON_CANVAS_RENAME, {
+                defaultValue: 'Rename',
+                title: canvas.name,
+              })}
             </Menu.Item>
           )}
           <Menu.Item

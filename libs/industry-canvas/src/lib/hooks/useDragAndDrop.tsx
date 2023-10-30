@@ -3,8 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from '@cognite/cogs.js';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 
-import { TOAST_POSITION } from '../constants';
+import { MetricEvent, TOAST_POSITION } from '../constants';
 import { setFileUploadData } from '../state/useIndustrialCanvasStore';
+import useMetrics from '../utils/tracking/useMetrics';
 
 type UseDragAndDropProps = {
   unifiedViewerRef: UnifiedViewer | null;
@@ -12,6 +13,7 @@ type UseDragAndDropProps = {
 
 export const useDragAndDrop = ({ unifiedViewerRef }: UseDragAndDropProps) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const trackUsage = useMetrics();
 
   const onDrop = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
@@ -51,8 +53,11 @@ export const useDragAndDrop = ({ unifiedViewerRef }: UseDragAndDropProps) => {
         file: [...event.dataTransfer.files][0],
         relativePointerPosition,
       });
+      trackUsage(MetricEvent.LOCAL_FILE_DRAG_AND_DROPPED, {
+        type: event.dataTransfer.files[0].type,
+      });
     },
-    [unifiedViewerRef]
+    [unifiedViewerRef, trackUsage]
   );
 
   useEffect(() => {
