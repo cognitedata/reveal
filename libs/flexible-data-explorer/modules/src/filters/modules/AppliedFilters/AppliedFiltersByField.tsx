@@ -36,6 +36,7 @@ export const AppliedFiltersByField: React.FC<AppliedFiltersByFieldProps> = ({
 
         return (
           <Chip
+            data-testid="applied-filter-chip"
             key={label}
             type={APPLIED_FILTER_CHIP_TYPE}
             label={label}
