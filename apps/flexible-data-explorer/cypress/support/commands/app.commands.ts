@@ -21,13 +21,18 @@ const skipOnboardingGuide = () => {
   cy.clearLocalStorage(`onboarding-modal-popup`);
   cy.clickButton('Close');
 };
+const resetAISearchCache = () => {
+  cy.clearLocalStorage('recently-searched-ai-results-dss-dev');
+};
 
 Cypress.Commands.add('navigateToApp', navigateToApp);
 Cypress.Commands.add('setupDataModelSelection', setupDataModelSelection);
 Cypress.Commands.add('skipOnboardingGuide', skipOnboardingGuide);
+Cypress.Commands.add('resetAISearchCache', resetAISearchCache);
 
 export interface AppCommands {
   navigateToApp: () => void;
   setupDataModelSelection: () => void;
   skipOnboardingGuide: () => void;
+  resetAISearchCache: () => void;
 }

@@ -249,19 +249,16 @@ export const AIFilterBuilder = ({
   const sdk = useSDK();
 
   useEffect(() => {
-    if (visible) {
-      setState({
-        tree: QbUtils.checkTree(
-          QbUtils.loadTree(
-            (constructJsonTreeFromFilter(initialFilter) as JsonTree) ||
-              queryValue
-          ),
-          config
+    setState({
+      tree: QbUtils.checkTree(
+        QbUtils.loadTree(
+          (constructJsonTreeFromFilter(initialFilter) as JsonTree) || queryValue
         ),
-        config: config,
-      });
-    }
-  }, [initialFilter, config, visible]);
+        config
+      ),
+      config: config,
+    });
+  }, [initialFilter, config]);
 
   useEffect(() => {
     new FdmMixerApiService(sdk)
@@ -348,9 +345,9 @@ export const AIFilterBuilder = ({
       okText={t('AI_FILTER_CONFIRM_UPDATE')}
       onCancel={onCancel}
     >
-      <Wrapper>
+      <Wrapper data-testid="ai-query-builder">
         <Query
-          {...config}
+          {...state.config}
           value={state.tree}
           onChange={onChange}
           renderBuilder={renderBuilder}

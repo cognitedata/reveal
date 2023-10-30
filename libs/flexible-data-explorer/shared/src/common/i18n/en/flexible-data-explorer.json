@@ -136,7 +136,7 @@
   "AI_FILTER_APPLIED": "Filter applied: {{filter}}",
   "AI_FILTER_ERROR": "Unable to create filter",
   "AI_SEARCH_RESULTS_GENERATED_DISCLAIMER": "You can inspect and adjust the applied filter or try another search.",
-  "AI_FILTER_CONFIRM_UPDATE": "Update filters and response",
+  "AI_FILTER_CONFIRM_UPDATE": "Update filters",
   "AI_NORMAL_SEARCH_SWITCH": "Search",
   "AI_AI_SEARCH_SWITCH": "Search using AI",
   "AI_LOADING_SEARCH": "Searching results...",

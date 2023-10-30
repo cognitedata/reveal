@@ -1,8 +1,7 @@
-import { useTranslation } from 'react-i18next';
-
 import styled from 'styled-components';
 
 import { useLinks } from '@fdx/shared/hooks/useLinks';
+import { useTranslation } from '@fdx/shared/hooks/useTranslation';
 
 import { Body, Flex } from '@cognite/cogs.js';
 
@@ -18,7 +17,7 @@ export const AIDisclaimer = () => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <span>{t('AI_LEARN_MORE')}</span>
+        <Body size="small">{t('AI_LEARN_MORE')}</Body>
       </StyledLink>
     </Wrapper>
   );
