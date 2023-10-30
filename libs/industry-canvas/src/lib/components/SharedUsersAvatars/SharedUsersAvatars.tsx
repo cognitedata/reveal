@@ -16,7 +16,12 @@ const SharedUsersAvatars: React.FC<SharedUsersAvatarsProps> = ({
   return (
     <AvatarGroup prominence="muted" overflow={4} size={size}>
       {users.map((user) => (
-        <Avatar key={user.userIdentifier} size={size} text={user.displayName} />
+        <Avatar
+          style={{ pointerEvents: 'none' }}
+          key={user.userIdentifier}
+          size={size}
+          text={user.displayName}
+        />
       ))}
     </AvatarGroup>
   );
