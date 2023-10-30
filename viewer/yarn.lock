@@ -590,7 +590,7 @@ __metadata:
     path-browserify: 1.0.1
     prettier: 3.0.3
     process: 0.11.10
-    puppeteer: 21.4.0
+    puppeteer: 21.4.1
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -9121,9 +9121,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:21.4.0":
-  version: 21.4.0
-  resolution: "puppeteer-core@npm:21.4.0"
+"puppeteer-core@npm:21.4.1":
+  version: 21.4.1
+  resolution: "puppeteer-core@npm:21.4.1"
   dependencies:
     "@puppeteer/browsers": 1.8.0
     chromium-bidi: 0.4.32
@@ -9131,18 +9131,18 @@ __metadata:
     debug: 4.3.4
     devtools-protocol: 0.0.1191157
     ws: 8.14.2
-  checksum: f170eee19256933c9f072a80eea282a902a507f3cbac3a630dcca910ba7321b46af5128adc26b89d8efb2728f5c71282ec70dde99458de1a0af8e903e9d7dc35
+  checksum: 535dcd6b40a213224d603ae4a0f51fb9b4b06976113da025f2cb6703370d42de034aee3dc6903c616b193d068a92f03c1519061a4b789be5544763c4dd2473dd
   languageName: node
   linkType: hard
 
-"puppeteer@npm:21.4.0":
-  version: 21.4.0
-  resolution: "puppeteer@npm:21.4.0"
+"puppeteer@npm:21.4.1":
+  version: 21.4.1
+  resolution: "puppeteer@npm:21.4.1"
   dependencies:
     "@puppeteer/browsers": 1.8.0
     cosmiconfig: 8.3.6
-    puppeteer-core: 21.4.0
-  checksum: 42a2d99147d5a94d827e417a16d519ccf5f9e0baf64efabbae7158136b443c166ac5eb36877d1d849f196de270910eb7391825edfc9eb782da04238e9e087e70
+    puppeteer-core: 21.4.1
+  checksum: 538c61777b152cb2b87384e597c0fd1499823f6e8c0c9bcfab9121b0617de10bceb5f2da72c2d4f5c15b96d51a0a2e748466fa856b50f7091448416038ff663d
   languageName: node
   linkType: hard
 
