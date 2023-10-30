@@ -40,6 +40,7 @@ static final Map<String, String> NPM_PACKAGES = [
   'cdf-ui-i18n-utils': "dist/libs/shared/cdf-ui-i18n-utils",
   'cdf-utilities': 'dist/libs/shared/cdf-utilities',
   'cdf-login-utils': 'dist/libs/shared/cdf-login-utils',
+  'chameleon': 'dist/libs/shared/chameleon',
 ]
 
 // This is the Firebase site mapping.

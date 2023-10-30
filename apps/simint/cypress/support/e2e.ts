@@ -54,3 +54,7 @@ beforeEach(() => {
     { cacheAcrossSpecs: true }
   );
 });
+
+afterEach(() => {
+  cy.resetE2eTestSession();
+});

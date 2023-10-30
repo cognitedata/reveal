@@ -1691,6 +1691,11 @@
     react-transition-group "^4.4.5"
     scroll-into-view-if-needed "^2.2.29"
 
+"@chamaeleonidae/chmln@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@chamaeleonidae/chmln/-/chmln-1.0.1.tgz#93f6e8686a3089e1220ad85374e916f92c39c19e"
+  integrity sha512-Ys9LkOzDtjsUY9bbwFU0SbPqpXAjHCmDGZ7N90hEZdncRomgXGUi/BUvzVNsyPk97EpH9JtlrYHcIZhtGPDaXQ==
+
 "@choojs/findup@^0.2.0":
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/@choojs/findup/-/findup-0.2.1.tgz#ac13c59ae7be6e1da64de0779a0a7f03d75615a3"

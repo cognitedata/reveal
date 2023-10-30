@@ -30,6 +30,7 @@ Cypress.Commands.add(
         'no-cors': true,
       },
     }).then(({ body }) => {
+      window.sessionStorage.setItem('isE2eTest', 'true');
       window.localStorage.setItem('CY_TOKEN', body.access_token);
       window.localStorage.setItem(
         '@cognite/fusion/selected-idp-details',

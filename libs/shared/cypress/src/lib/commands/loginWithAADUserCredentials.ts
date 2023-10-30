@@ -20,6 +20,7 @@ function loginViaAAD(
   password: string
 ) {
   cy.visit(url);
+  cy.setE2eTestSession();
   cy.getBySel(idpInternalId).click();
 
   // Login to your AAD tenant.

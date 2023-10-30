@@ -5,3 +5,5 @@ import './getBySelLike';
 import './loginWithAADClientCredentials';
 import './loginWithAADUserCredentials';
 import './setImportMapOverrides';
+import './resetE2eTestSession';
+import './setE2eTestSession';

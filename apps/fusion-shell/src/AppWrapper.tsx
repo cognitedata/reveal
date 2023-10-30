@@ -12,6 +12,7 @@ import App from './app/app';
 import AntStyles from './app/styles/AntStyles';
 import GlobalStyle from './app/styles/GlobalStyle';
 import { AuthContainer } from './AuthContainer';
+import { ChameleonWrapper } from './ChameleonWrapper';
 import { translations } from './i18n';
 
 const RedirectApp = lazy(() => import('@cognite/redirect-page'));
@@ -55,9 +56,11 @@ export const AppWrapper = () => {
         <I18nWrapper translations={translations} defaultNamespace="navigation">
           <QueryClientProvider client={queryClient}>
             <AuthContainer>
-              <RecoilRoot>
-                <App />
-              </RecoilRoot>
+              <ChameleonWrapper>
+                <RecoilRoot>
+                  <App />
+                </RecoilRoot>
+              </ChameleonWrapper>
             </AuthContainer>
           </QueryClientProvider>
         </I18nWrapper>
