@@ -11,6 +11,7 @@
     "@azure/msal-node": "^1.3.3",
     "@babel/helper-environment-visitor": "^7.16.5",
     "@botui/react": "^1.1.5",
+    "@chamaeleonidae/chmln": "^1.0.1",
     "@codemirror/autocomplete": "^6.8.0",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/lang-sql": "^6.5.2",

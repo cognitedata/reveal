@@ -1,0 +1,8 @@
+{
+  "name": "@cognite/chameleon",
+  "version": "0.0.1",
+  "dependencies": {
+    "@chamaeleonidae/chmln": "^1.0.1",
+    "react": "18.2.0"
+  }
+}

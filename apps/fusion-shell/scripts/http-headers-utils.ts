@@ -20,7 +20,7 @@ export function generateCSPHeader(appManifests: AppManifest[]) {
       "'self' https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*",
     ],
     'script-src': [
-      "'self' 'unsafe-eval' 'unsafe-inline' https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/ https://cdn.cogniteapp.com https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/* https://cdn.jsdelivr.net/npm/monaco-editor@0.36.1/",
+      "'self' 'unsafe-eval' 'unsafe-inline' https://fast.chameleon.io https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/ https://cdn.cogniteapp.com https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/* https://cdn.jsdelivr.net/npm/monaco-editor@0.36.1/",
     ],
     'connect-src': [
       "'self' wss: blob: data: https: https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*",

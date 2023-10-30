@@ -29,6 +29,7 @@
         "libs/shared/cdf-sdk-singleton/src/index.ts"
       ],
       "@cognite/cdf-utilities": ["libs/shared/cdf-utilities/src/index.ts"],
+      "@cognite/chameleon": ["libs/shared/chameleon/src/index.ts"],
       "@cognite/charts-lib": ["libs/charts-lib/src/index.ts"],
       "@cognite/cog-data-grid": [
         "libs/data-modeling/cog-data-grid/src/index.ts"
