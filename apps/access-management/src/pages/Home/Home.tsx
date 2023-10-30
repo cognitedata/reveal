@@ -4,12 +4,9 @@ import styled from 'styled-components';
 
 import { useTranslation } from '@access-management/common/i18n';
 import { usePermissions } from '@access-management/hooks';
-import APIKeys from '@access-management/pages/APIKeys';
 import Groups from '@access-management/pages/Groups';
-import IDP from '@access-management/pages/IDP';
 import OIDC from '@access-management/pages/OIDC';
 import SecurityCategories from '@access-management/pages/SecurityCategories';
-import ServiceAccounts from '@access-management/pages/ServiceAccounts';
 import UserProfiles from '@access-management/pages/UserProfiles';
 import {
   useQueryClient,
@@ -113,12 +110,9 @@ export default function () {
       <Routes>
         <Route index element={<Groups />} />
         <Route path="/groups" element={<Groups />} />
-        <Route path="/api-keys" element={<APIKeys />} />
-        <Route path="/idp" element={<IDP />} />
         <Route path="/oidc" element={<OIDC />} />
         <Route path="/user-profiles" element={<UserProfiles />} />
         <Route path="/security-categories" element={<SecurityCategories />} />
-        <Route path="/service-accounts" element={<ServiceAccounts />} />
       </Routes>
     </StyledAppContainerDiv>
   );

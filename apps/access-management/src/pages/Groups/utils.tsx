@@ -64,7 +64,6 @@ const nameToAclTypeMap = {
 };
 
 const getCapabilityNameTranslationKey = {
-  apikeys: 'api-keys',
   securitycategories: 'security-categories',
   '3d': '3d',
   timeseries: 'time-series',

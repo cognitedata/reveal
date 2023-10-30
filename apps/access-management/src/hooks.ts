@@ -1,20 +1,11 @@
-import { useTranslation } from '@access-management/common/i18n';
-import { LEGACY_SESSION_TOKEN_KEY } from '@access-management/utils/constants';
 import { sleep } from '@access-management/utils/utils';
 import {
   useMutation,
   UseMutationOptions,
   useQuery,
-  useQueryClient,
 } from '@tanstack/react-query';
-import { notification } from 'antd';
 
-import {
-  getFlow,
-  getToken,
-  getUserInformation,
-} from '@cognite/cdf-sdk-singleton';
-import { getEnv, getProject } from '@cognite/cdf-utilities';
+import { getFlow, getUserInformation } from '@cognite/cdf-sdk-singleton';
 import {
   CogniteCapability,
   CogniteClient,
@@ -100,65 +91,8 @@ export const useUpdateGroup = (
   return useMutation(getUpdater(sdk), o);
 };
 
-export const useRefreshToken = () => {
-  const env = getEnv() || 'api';
-  const project = getProject();
-
-  const refreshToken = async () => {
-    const sessionStorageKey = `${LEGACY_SESSION_TOKEN_KEY}_${env}_${project}`;
-    sessionStorage.removeItem(sessionStorageKey);
-    await getToken();
-  };
-
-  return { refreshToken };
-};
-
 export const forUnitTests = {
   getUpdater,
-};
-
-export const useListServiceAccounts = (isLegacyFlow: boolean) => {
-  const sdk = useSDK();
-  return useQuery(['service-accounts'], () => sdk.serviceAccounts.list(), {
-    enabled: isLegacyFlow,
-  });
-};
-
-const deleteServiceAccount =
-  (sdk: CogniteClient, project: string) => async (accountIds: number[]) => {
-    await sdk.post(`/api/v1/projects/${project}/serviceaccounts/delete`, {
-      data: {
-        items: accountIds,
-      },
-    });
-  };
-
-export const useDeleteServiceAccounts = (project: string) => {
-  const { t } = useTranslation();
-  const sdk = useSDK();
-  const client = useQueryClient();
-  return useMutation(deleteServiceAccount(sdk, project), {
-    onMutate() {
-      notification.info({
-        key: 'delete-legacy-service-accounts',
-        message: t('legacy-service-account-delete-progress'),
-      });
-    },
-    onSuccess() {
-      notification.success({
-        key: 'delete-legacy-service-accounts',
-        message: t('legacy-service-account-delete-success'),
-      });
-      client.invalidateQueries(['service-accounts']);
-    },
-    onError() {
-      notification.error({
-        key: 'delete-legacy-service-accounts',
-        message: t('legacy-service-account-delete-fail'),
-        description: t('legacy-service-account-delete-error'),
-      });
-    },
-  });
 };
 
 export const useUserInformation = () => {

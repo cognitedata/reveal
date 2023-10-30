@@ -1,13 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { useTranslation } from '@access-management/common/i18n';
-import {
-  useGroups,
-  usePermissions,
-  useListServiceAccounts,
-} from '@access-management/hooks';
+import { useGroups, usePermissions } from '@access-management/hooks';
 import { AccessConfigurationWarning } from '@access-management/pages/components/AccessConfigurationWarning';
-import LegacyServiceAccountsWarning from '@access-management/pages/OIDC/LegacyServiceAccountsWarning';
 import { getContainer } from '@access-management/utils/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -25,7 +20,6 @@ import {
 } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
 import { Button, Icon } from '@cognite/cogs.js';
 import { Group } from '@cognite/sdk';
@@ -40,8 +34,6 @@ const { Text } = Typography;
 export default function Groups() {
   const { t } = useTranslation();
   const sdk = useSDK();
-  const { flow } = getFlow();
-  const legacyFlow = flow === 'COGNITE_AUTH';
   const client = useQueryClient();
 
   const [showNewGroupDrawer, setShowNew] = useState(false);
@@ -70,37 +62,12 @@ export default function Groups() {
   );
 
   const { data: groups, isFetched: groupsFetched } = useGroups(true);
-  const { data: serviceAccounts } = useListServiceAccounts(legacyFlow);
 
   useEffect(() => {
     if (project?.defaultGroupId === localDefaultGroup) {
       setLocalDefaultGroup(undefined);
     }
   }, [project, localDefaultGroup]);
-
-  const { mutate: setDefaultGroup } = useMutation(
-    async ({
-      name,
-      defaultGroupId,
-    }: {
-      name: string;
-      defaultGroupId: number;
-    }) => {
-      await sdk.projects.updateProject(name, {
-        update: {
-          defaultGroupId: { set: defaultGroupId },
-        },
-      });
-    },
-    {
-      onSuccess(_, { name }) {
-        client.invalidateQueries(['project', name]);
-      },
-      onMutate({ defaultGroupId }) {
-        setLocalDefaultGroup(defaultGroupId);
-      },
-    }
-  );
 
   const { mutateAsync: deleteGroup } = useMutation(
     (id: number) => sdk.groups.delete([id]),
@@ -215,19 +182,6 @@ export default function Groups() {
         return <>{t('capabilities-no-permission-specified')}</>;
       },
     },
-    legacyFlow
-      ? {
-          title: t('service-accounts'),
-          dataIndex: 'id',
-          align: 'center',
-          render(id: number) {
-            return (
-              serviceAccounts?.filter((a) => a.groups?.includes(id)).length || 0
-            );
-          },
-        }
-      : false,
-
     {
       title: t('actions'),
       key: 'actions',
@@ -247,19 +201,6 @@ export default function Groups() {
               >
                 Edit
               </Menu.Item>
-              {legacyFlow && item.id !== project?.defaultGroupId && (
-                <Menu.Item
-                  onClick={() =>
-                    project?.name &&
-                    setDefaultGroup({
-                      name: project?.name,
-                      defaultGroupId: item.id,
-                    })
-                  }
-                >
-                  {t('set-as-default')}
-                </Menu.Item>
-              )}
               <Menu.Item
                 data-testid="access-management-delete-group-button"
                 onClick={() =>
@@ -294,9 +235,6 @@ export default function Groups() {
   return (
     <>
       <AccessConfigurationWarning />
-      {serviceAccounts?.length ? (
-        <LegacyServiceAccountsWarning accounts={serviceAccounts} />
-      ) : null}
       <Row justify="space-between">
         <Col>
           <Input.Search
