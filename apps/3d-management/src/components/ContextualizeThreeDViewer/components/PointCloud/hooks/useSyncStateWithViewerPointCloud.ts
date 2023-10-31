@@ -80,8 +80,7 @@ export const useSyncStateWithViewerPointCloud = () => {
   });
 
   useEffect(() => {
-    if (tool !== ToolType.ADD_ANNOTATION || pendingAnnotation === null) return;
-
+    if (tool !== ToolType.ADD_ANNOTATION) return;
     const onClick = async (event) => {
       const intersection = await viewer.getIntersectionFromPixel(
         event.offsetX,
