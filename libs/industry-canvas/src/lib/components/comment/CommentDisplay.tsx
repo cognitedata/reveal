@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
-import { Body, Chip, Flex, Overline, Avatar, Divider } from '@cognite/cogs.js';
+import { Body, Chip, Flex, Overline, Avatar } from '@cognite/cogs.js';
 
 import { USER_IDENTIFIER_REGEXP } from '../../constants';
 import { Comment } from '../../services/comments/types';
@@ -91,7 +91,6 @@ export const CommentDisplay = ({
                 {renderCommentText(el.text, users)}
               </Flex>
             </Flex>
-            <Divider />
           </Fragment>
         );
       })}

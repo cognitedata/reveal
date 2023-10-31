@@ -121,6 +121,7 @@ export const CommentTooltipCore = ({
               sortOrder="ASC"
             />
           </CommentsContainer>
+          <Divider />
           <Flex className="comment-input" gap={16}>
             <Avatar text={userProfile.displayName} />
             <Flex style={{ flex: 1 }} gap={8} direction="column">
@@ -387,7 +388,7 @@ const CommentWrapper = styled(Flex)`
 
 const CommentsContainer = styled.div`
   max-height: 350px;
-  overflow-x: scroll;
+  overflow-y: scroll;
 `;
 
 const getInitials = (name: string) =>

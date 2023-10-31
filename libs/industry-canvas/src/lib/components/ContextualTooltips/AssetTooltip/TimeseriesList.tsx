@@ -54,6 +54,7 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
             inverted
             size="medium"
             icon="ListSearch"
+            style={{ marginRight: '3px' }}
             aria-label={t(
               translationKeys.FIND_RELATED_TIMESERIES,
               'Find related time series'
@@ -93,7 +94,7 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
                   type="ghost"
                   inverted
                   icon={isPinned ? 'PinAlternativeOff' : 'PinAlternative'}
-                  size="medium"
+                  size="small"
                   aria-label={
                     isPinned
                       ? t(
@@ -120,7 +121,7 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
                   type="ghost"
                   inverted
                   icon="Add"
-                  size="medium"
+                  size="small"
                   aria-label={t(
                     translationKeys.TOOLTIP_TIMESERIES_ADD_TO_CANVAS,
                     'Add timeseries'
