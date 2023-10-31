@@ -9,7 +9,6 @@ import { useSearchParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import {
   Button,
   ChipProps,
@@ -60,19 +59,16 @@ const CreateExtpipeModal = (props: {
 
 const Extpipes: FunctionComponent = () => {
   const { t } = useTranslation();
-  const { flow } = getFlow();
   useEffect(() => {
     trackUsage({ t: 'Overview' });
   }, []);
 
   const { data: hasExtractionPipelinesCreateCapability } = usePermissions(
-    flow as any,
     'extractionPipelinesAcl',
     'WRITE'
   );
 
   const { data: hasHostedExtractionPipelinesCreateCapability } = usePermissions(
-    flow as any,
     'hostedExtractorsAcl',
     'WRITE'
   );
@@ -240,17 +236,16 @@ const StyledActionBar = styled.div`
 
 export default function CombinedComponent() {
   const { t } = useTranslation();
-  const { flow } = getFlow();
   const {
     data: hasExtractionPipelinesCapability,
     isInitialLoading: loadingExtractionPipelinesPermission,
     refetch: refetchExtractionPipelinesPermission,
-  } = usePermissions(flow as any, 'extractionPipelinesAcl', 'READ');
+  } = usePermissions('extractionPipelinesAcl', 'READ');
   const {
     isInitialLoading: loadingExtractionRunsPermission,
     data: hasExtractionRunsCapability,
     refetch: refetchExtractionRunsPermission,
-  } = usePermissions(flow as any, 'extractionRunsAcl', 'READ');
+  } = usePermissions('extractionRunsAcl', 'READ');
 
   const refetch = useCallback(() => {
     (async () => {

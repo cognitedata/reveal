@@ -8,7 +8,6 @@ import { FileInfo } from '@data-exploration/containers';
 import { useCdfUserHistoryService } from '@user-history';
 import isEmpty from 'lodash/isEmpty';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Tabs, Infobar } from '@cognite/cogs.js';
 import {
   FilePreview as CogniteFilePreview,
@@ -58,13 +57,8 @@ export const FileDetail = ({
   const { t } = useTranslation();
   const [pushJourney] = usePushJourney();
 
-  const { flow } = getFlow();
-  const { data: filesAcl } = usePermissions(flow as any, 'filesAcl', 'WRITE');
-  const { data: annotationsAcl } = usePermissions(
-    flow as any,
-    'annotationsAcl',
-    'WRITE'
-  );
+  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
+  const { data: annotationsAcl } = usePermissions('annotationsAcl', 'WRITE');
   const writeAccess = filesAcl && annotationsAcl;
 
   const { resourceType } = useParams<{

@@ -1,10 +1,8 @@
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
 
 import styled from 'styled-components';
 
 import { Colors, Icon } from '@cognite/cogs.js';
-
-import { AppContext } from '@data-exploration-lib/core';
 
 import { NoAccessPage } from './components/NoAccessPage';
 import { SetupIndustrialCanvasPage } from './components/SetupIndustrialCanvasPage';
@@ -39,7 +37,6 @@ export const SpaceProvider: React.FC<SpaceProviderProps> = ({
   requiredReadScopes,
   requiredDatamodelWriteScopes,
 }) => {
-  const context = useContext(AppContext);
   const scope =
     requiredReadScopes !== undefined
       ? { spaceIdScope: { spaceIds: requiredReadScopes } }
@@ -50,42 +47,22 @@ export const SpaceProvider: React.FC<SpaceProviderProps> = ({
       : undefined;
 
   const { data: hasDataModelReadAcl, isLoading: isLoadingHasDataModelReadAcl } =
-    usePermissions(context?.flow as any, 'dataModelsAcl', 'READ', scope, {
-      enabled: !!context?.flow,
-    });
+    usePermissions('dataModelsAcl', 'READ', scope);
 
   const {
     data: hasDataModelWriteAcl,
     isLoading: isLoadingHasDataModelWriteAcl,
-  } = usePermissions(
-    context?.flow as any,
-    'dataModelsAcl',
-    'WRITE',
-    writeDataModelScope,
-    { enabled: !!context?.flow }
-  );
+  } = usePermissions('dataModelsAcl', 'WRITE', writeDataModelScope);
 
   const {
     data: hasDataModelInstancesReadAcl,
     isLoading: isLoadingHasDataModelInstancesReadAcl,
-  } = usePermissions(
-    context?.flow as any,
-    'dataModelInstancesAcl',
-    'READ',
-    scope,
-    { enabled: !!context?.flow }
-  );
+  } = usePermissions('dataModelInstancesAcl', 'READ', scope);
 
   const {
     data: hasDataModelInstancesWriteAcl,
     isLoading: isLoadingHasDataModelInstancesWriteAcl,
-  } = usePermissions(
-    context?.flow as any,
-    'dataModelInstancesAcl',
-    'WRITE',
-    scope,
-    { enabled: !!context?.flow }
-  );
+  } = usePermissions('dataModelInstancesAcl', 'WRITE', scope);
 
   const { mutateAsync: createSpace, isLoading: isCreatingSpace } =
     useCreateSpaceMutation();

@@ -2,10 +2,7 @@ import { UseQueryOptions } from '@tanstack/react-query';
 
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 
-import type { Flow } from '@data-exploration-lib/core';
-
 export const usePermissions = (
-  flow: Flow,
   capability: string,
   action?: string,
   scope?: { spaceIdScope: { spaceIds: string[] } },
