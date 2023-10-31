@@ -239,6 +239,7 @@ const IndustryCanvasFileUploadModal: React.FC<
           onChange={(value: OptionType<DataSetOption['value']>[]) => {
             setSelectedDataSet(value.at(-1));
           }}
+          menuPortalTarget={document.body}
         />
 
         {shouldShowExifToggle && (

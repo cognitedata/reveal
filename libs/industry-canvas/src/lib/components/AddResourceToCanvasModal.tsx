@@ -191,6 +191,7 @@ export const AddResourceToCanvasModal: React.FC<
               options={selectOptions}
               value={selectedCanvas}
               onChange={setSelectedCanvas}
+              menuPortalTarget={document.body}
             />
           </Flex>
         </Flex>
