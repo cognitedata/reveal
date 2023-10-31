@@ -51,6 +51,12 @@ if [ "$project" = "flexible-data-explorer" ]; then
   project="flexible-data-explorer"
 fi
 
+# if navigation, use different path
+if [ "$project" = "navigation" ]; then
+  path=apps/fusion-shell/src/i18n/translations
+  project="navigation"
+fi
+
 
 # Docs can be found here
 # https://github.com/cognitedata/cdf-ui-i18n-utils/blob/main/bin/README.md
