@@ -19,6 +19,9 @@ export type Item = {
 
 export type Source = {
   type: 'view';
+} & SimpleSource;
+
+export type SimpleSource = {
   version: string;
 } & DmsUniqueIdentifier;
 
@@ -47,6 +50,7 @@ export type EdgeResultSetExpression = {
     chainTo?: EdgeDirection;
     from?: string;
     nodeFilter?: InstanceFilter;
+    terminationFilter?: InstanceFilter;
     maxDistance?: number;
     direction?: 'outwards' | 'inwards';
     limitEach?: number;
@@ -66,7 +70,7 @@ export type Query = {
 };
 
 type QuerySelect = {
-  sources: readonly SourceProperties[];
+  sources?: readonly SourceProperties[];
 };
 
 export type EdgeItem<EdgeProperties = Record<string, unknown>> = {
@@ -121,7 +125,7 @@ export type InspectResultList = {
 type SelectKey<T extends Query> = keyof T['select'];
 
 export type QueryResult<T extends Query> = {
-  items: Record<SelectKey<T>, NodeItem[]>;
+  items: Record<SelectKey<T>, NodeItem[] | EdgeItem[]>;
   nextCursor: Record<SelectKey<T>, string> | undefined;
 };
 
