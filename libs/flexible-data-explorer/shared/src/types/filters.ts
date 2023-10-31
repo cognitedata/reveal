@@ -70,14 +70,18 @@ export interface DataType {
   description?: string;
 }
 
-export interface DataTypeOption extends DataType {
-  fields: Field[];
+export interface DataTypeOption<T = unknown> extends DataType {
+  fields: Field<T>[];
 }
 
 export type FieldType = 'string' | 'number' | 'date' | 'boolean';
 
-export interface Field {
-  name: string;
+export type Property<T = unknown> = DeepKeyOf<T> extends never
+  ? string
+  : DeepKeyOf<T>;
+
+export interface Field<T = unknown> {
+  id: Property<T>;
   displayName?: string;
   type: FieldType;
   operators?: Operator[];
@@ -85,7 +89,7 @@ export interface Field {
 
 export type ValueByDataType = Record<string, ValueByField>;
 
-export type ValueByField = Record<string, FieldValue>;
+export type ValueByField<T = unknown> = Record<Property<T>, FieldValue>;
 
 export interface FieldValue {
   operator: Operator;

@@ -11,7 +11,7 @@ export const getFilteredFields = (
     return fields;
   }
 
-  return fields.filter(({ name }) => {
-    return name.toLowerCase().includes(search);
+  return fields.filter(({ id }) => {
+    return id.toLowerCase().includes(search);
   });
 };

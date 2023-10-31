@@ -40,7 +40,7 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
 
     const updatedValue = {
       ...value,
-      [selectedField.name]: {
+      [selectedField.id]: {
         operator,
         value: newValue,
         type: selectedField.type,
@@ -57,7 +57,7 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
         dataType={name}
         displayName={displayName}
         field={selectedField}
-        value={value[selectedField.name]}
+        value={value[selectedField.id]}
         onBackClick={() => setSelectedField(undefined)}
         onApplyClick={handleApplyClick}
       />

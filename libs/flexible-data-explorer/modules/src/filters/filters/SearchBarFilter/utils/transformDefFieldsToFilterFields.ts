@@ -17,7 +17,7 @@ export const transformDefFieldsToFilterFields = (
       }
 
       return {
-        name,
+        id: name,
         displayName,
         type: fieldType,
       };

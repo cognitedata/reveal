@@ -76,7 +76,7 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
     <div onKeyUp={handleEnterPress}>
       <Menu>
         <MenuHeader
-          title={field.displayName || field.name}
+          title={field.displayName || field.id}
           subtitle={displayName || dataType}
           onBackClick={onBackClick}
         />
@@ -94,7 +94,7 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
           value={value}
           onChange={setValue}
           dataType={dataType}
-          field={field.name}
+          field={field.id}
         />
 
         <ApplyButton

@@ -10,12 +10,12 @@ export const timeseries: DataTypeOption = {
     //   operators: [Operator.STARTS_WITH],
     // },
     {
-      name: 'Asset',
+      id: 'Asset',
       type: 'string',
       operators: [Operator.STARTS_WITH],
     },
     {
-      name: 'External ID',
+      id: 'External ID',
       type: 'string',
       operators: [Operator.STARTS_WITH],
     },
@@ -25,17 +25,17 @@ export const timeseries: DataTypeOption = {
     //   operators: [Operator.EQUALS],
     // },
     {
-      name: 'Is Step',
+      id: 'Is Step',
       type: 'boolean',
       operators: [Operator.IS_TRUE, Operator.IS_FALSE],
     },
     {
-      name: 'Is String',
+      id: 'Is String',
       type: 'boolean',
       operators: [Operator.IS_TRUE, Operator.IS_FALSE],
     },
     {
-      name: 'Created Time',
+      id: 'Created Time',
       type: 'date',
       operators: [
         Operator.BEFORE,
@@ -46,7 +46,7 @@ export const timeseries: DataTypeOption = {
       ],
     },
     {
-      name: 'Updated Time',
+      id: 'Updated Time',
       type: 'date',
       operators: [
         Operator.BEFORE,

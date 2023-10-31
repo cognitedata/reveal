@@ -18,7 +18,7 @@ export const files: DataTypeOption = {
     //   ],
     // },
     {
-      name: 'Asset',
+      id: 'Asset',
       type: 'number',
       operators: [
         Operator.CONTAINS,
@@ -26,9 +26,9 @@ export const files: DataTypeOption = {
         ...EXISTANCE_OPERATORS,
       ],
     },
-    { name: 'External ID', type: 'string' },
+    { id: 'External ID', type: 'string' },
     {
-      name: 'Internal ID',
+      id: 'Internal ID',
       type: 'number',
       operators: [
         Operator.CONTAINS,
@@ -38,18 +38,18 @@ export const files: DataTypeOption = {
       ],
     },
     {
-      name: 'Label',
+      id: 'Label',
       type: 'string',
       operators: [...EXISTANCE_OPERATORS],
     },
     {
-      name: 'Type',
+      id: 'Type',
       type: 'string',
       operators: [Operator.EQUALS, Operator.NOT_EQUALS, ...EXISTANCE_OPERATORS],
     },
-    { name: 'Author', type: 'string' },
-    { name: 'Source', type: 'string' },
-    { name: 'Created Time', type: 'date' },
-    { name: 'Updated Time', type: 'date' },
+    { id: 'Author', type: 'string' },
+    { id: 'Source', type: 'string' },
+    { id: 'Created Time', type: 'date' },
+    { id: 'Updated Time', type: 'date' },
   ],
 };

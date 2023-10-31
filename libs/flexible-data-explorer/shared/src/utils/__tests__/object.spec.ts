@@ -1,4 +1,4 @@
-import { toFlatPropertyMap } from '../object';
+import { isObjectEmpty, toFlatPropertyMap } from '../object';
 
 describe('object', () => {
   describe('toFlatPropertyMap', () => {
@@ -52,6 +52,36 @@ describe('object', () => {
       };
 
       expect(toFlatPropertyMap(nestedObject)).toEqual(expectedFlatMap);
+    });
+  });
+
+  describe('isObjectEmpty', () => {
+    it('should return true for an empty object', () => {
+      expect(isObjectEmpty({})).toBe(true);
+    });
+
+    it('should return true for an undefined object', () => {
+      expect(isObjectEmpty(undefined)).toBe(true);
+    });
+
+    it('should return true for an object with all empty properties', () => {
+      expect(isObjectEmpty({ prop1: undefined, prop2: null, prop3: {} })).toBe(
+        true
+      );
+    });
+
+    it('should return false for an object with non-empty properties', () => {
+      expect(isObjectEmpty({ prop1: 42, prop2: 'Hello' })).toBe(false);
+    });
+
+    it('should return true for an empty object (type checking)', () => {
+      const obj: Record<string, unknown> = {};
+      expect(isObjectEmpty(obj)).toBe(true);
+    });
+
+    it('should return true for an undefined object (type checking)', () => {
+      const obj: Record<string, unknown> | undefined = undefined;
+      expect(isObjectEmpty(obj)).toBe(true);
     });
   });
 });

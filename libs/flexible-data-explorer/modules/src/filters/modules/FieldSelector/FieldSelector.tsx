@@ -60,8 +60,8 @@ export const FieldSelector: React.FC<FieldSelectorProps> = ({
           {filteredFields.map((field) => {
             return (
               <MenuItem
-                key={field.name}
-                title={field.name}
+                key={field.id}
+                title={field.id}
                 icon={getMenuItemIcon(field.type)}
                 onClick={() => onSelectField(field)}
               />
