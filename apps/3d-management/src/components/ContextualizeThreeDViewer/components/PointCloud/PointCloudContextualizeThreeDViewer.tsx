@@ -86,6 +86,9 @@ export const PointCloudContextualizeThreeDViewer = ({
 
   const mutation = useAnnotationMutation();
   const onDeleteAnnotation = (annotationId: number) => {
+    if (selectedAnnotationId === annotationId) {
+      setSelectedAnnotationId(null);
+    }
     mutation.mutate(annotationId);
   };
 
@@ -102,6 +105,12 @@ export const PointCloudContextualizeThreeDViewer = ({
       }
       if (event.key === 'Enter') {
         updateCdfThreeDAnnotation();
+      }
+      if (event.key === 'Backspace') {
+        if (selectedAnnotationId === null) return;
+
+        onDeleteAnnotation(selectedAnnotationId);
+        setPendingAnnotation(null);
       }
       if (event.key === 'v') {
         setTool(ToolType.SELECT_TOOL);
