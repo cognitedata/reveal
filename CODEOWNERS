@@ -10,7 +10,8 @@
 /bin/                             @cognitedata/fusion-maintainers
 /scripts/                         @cognitedata/fusion-maintainers
 /tools/                           @cognitedata/fusion-maintainers
-/*                                @cognitedata/fusion-maintainers
+/apps/fusion-shell                @cognitedata/fusion-maintainers
+*                                 @cognitedata/fusion-maintainers
 
 # Platypus
 apps/mock-server                  @cognitedata/cdf-user-experience
