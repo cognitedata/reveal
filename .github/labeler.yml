@@ -7,7 +7,6 @@ platypus:
 data-explorer:
   - apps/data-exploration/*
   - apps/data-exploration/**/*
-
   - libs/data-exploration-components/*
   - libs/data-exploration-components/**/*
   - libs/data-exploration/**

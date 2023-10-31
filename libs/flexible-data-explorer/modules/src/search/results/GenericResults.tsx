@@ -20,8 +20,10 @@ interface Props {
   values?: { items: any[] };
   type?: DataModelTypeDefsType;
   selected?: boolean;
+  disablePreview?: (selectedInstance: Instance) => boolean;
   disable3dPreview?: boolean;
   onItemHover?: (item: any) => void;
+  onItemClick?: (selectedInstance: Instance) => void;
   renderHoverButton?: (selectedInstance: Instance) => React.ReactNode;
 }
 export const GenericResults: React.FC<Props> = ({
@@ -31,7 +33,9 @@ export const GenericResults: React.FC<Props> = ({
   selected,
   selectedExternalId,
   disable3dPreview,
+  disablePreview,
   renderHoverButton,
+  onItemClick,
 }) => {
   const { t } = useTranslation();
   const client = useFDM();
@@ -117,13 +121,25 @@ export const GenericResults: React.FC<Props> = ({
               dataModel={dataModel}
               instance={instance}
               disableViewer={disable3dPreview}
+              disabled={disablePreview?.(instance)}
             >
-              <Link.GenericPage instance={instance} dataModel={dataModel}>
+              <Link.GenericPage
+                disabled={!!onItemClick}
+                instance={instance}
+                dataModel={dataModel}
+              >
                 <SearchResults.Item
                   name={item.name ?? item.externalId}
                   description={item.description}
                   properties={properties}
                   selected={item.externalId === selectedExternalId}
+                  onClick={() =>
+                    onItemClick?.({
+                      externalId: item.externalId,
+                      instanceSpace: item.space,
+                      dataType,
+                    })
+                  }
                   customHoverButton={renderHoverButton?.({
                     externalId: item.externalId,
                     instanceSpace: item.space,

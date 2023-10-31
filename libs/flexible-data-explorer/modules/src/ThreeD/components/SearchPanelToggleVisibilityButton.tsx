@@ -45,6 +45,6 @@ const ButtonBackground = styled.div`
   box-shadow: 0px 0px 2px 0px rgba(79, 82, 104, 0.24),
     0px 0px 0px 0px rgba(79, 82, 104, 0.08),
     0px 0px 16px 0px rgba(79, 82, 104, 0.1);
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
 `;

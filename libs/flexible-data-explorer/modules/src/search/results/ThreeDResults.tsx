@@ -4,14 +4,15 @@ import { useSearchDataTypesQuery } from '@fdx/services/dataTypes/queries/useSear
 import {
   useSearchCategoryParams,
   useSelectedInstanceParams,
+  useViewModeParams,
 } from '@fdx/shared/hooks/useParams';
 import { useTranslation } from '@fdx/shared/hooks/useTranslation';
 import { useFDM } from '@fdx/shared/providers/FDMProvider';
 import { Instance } from '@fdx/shared/types/services';
+import { isEqual } from 'lodash';
 
 import { EmptyState, Skeleton } from '@cognite/cogs.js';
 
-import { ZoomTo3DButton } from '../../ThreeD/modules/ZoomTo3DButton';
 import { useSearchMappedEquipment } from '../../ThreeD/providers/Mapped3DEquipmentProvider';
 import { useSearchDataTypeSortedByKeys } from '../hooks/useSearchDataTypeSortedByKeys';
 import { useSearchThreeDMappedSortedByKeys } from '../hooks/useSearchThreeDMappedSortedByKeys';
@@ -33,7 +34,8 @@ export const ThreeDResults: React.FC<Props> = ({
   const client = useFDM();
   const { t } = useTranslation();
   const [category] = useSearchCategoryParams();
-  const [selectedInstance] = useSelectedInstanceParams();
+  const [, setViewMode] = useViewModeParams();
+  const [selectedInstance, setSelectedInstance] = useSelectedInstanceParams();
 
   const { data: mappedEquipment, isLoading: isMappedDataLoading } =
     useSearchMappedEquipment(displayOnlyMapped3dData);
@@ -72,18 +74,16 @@ export const ThreeDResults: React.FC<Props> = ({
           body={t('SEARCH_RESULTS_EMPTY_BODY')}
           illustration="EmptyStateSearchSad"
         />
+        <Link onClick={() => setViewMode('list')}>
+          {t('SEARCH_RESULTS_3D_NO_RESULTS_C2A')}
+        </Link>
       </EmptyStateWrapper>
     );
   }
 
-  const renderZoomTo3dButton = (value: Instance) => {
-    return (
-      <ZoomTo3DButton
-        selectedInstance={value}
-        is3dMapped={displayOnlyMapped3dData}
-        onZoomButtonClick={onZoomButtonClick}
-      />
-    );
+  const handleOnClick = (instance: Instance) => {
+    setSelectedInstance(instance);
+    onZoomButtonClick?.(instance);
   };
 
   const renderSearchDataType = (
@@ -114,7 +114,11 @@ export const ThreeDResults: React.FC<Props> = ({
         values={values}
         disable3dPreview
         selected={selected}
-        renderHoverButton={renderZoomTo3dButton}
+        onItemClick={handleOnClick}
+        disablePreview={(instance) => {
+          return isEqual(instance, selectedInstance);
+        }}
+        // renderHoverButton={renderZoomTo3dButton}
       />
     );
   };
@@ -139,4 +143,8 @@ const EmptyStateWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+`;
+
+const Link = styled.a`
+  text-decoration: underline;
 `;

@@ -78,8 +78,8 @@ const StyledSearchPanelToggleVisibilityButton = styled(
   SearchPanelToggleVisibilityButton
 )`
   position: absolute;
-  right: -65px;
-  top: 16px;
+  right: -72px;
+  top: 10px;
   z-index: ${zIndex.THREED_SEARCH_PANEL_BUTTON};
 `;
 

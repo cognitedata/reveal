@@ -29,6 +29,7 @@
   "SEARCH_CATEGORIES_HEADER": "Categories",
   "SEARCH_CATEGORIES_ALL_OPTION": "All",
   "SEARCH_RESULTS_3D_FILTER_ALL_OPTION": "All objects",
+  "SEARCH_RESULTS_3D_NO_RESULTS_C2A": "Try searching in list view instead",
   "SEARCH_RESULTS_3D_FILTER_ALL_OPTION_DESCRIPTION": "All objects are displayed",
   "SEARCH_RESULTS_3D_FILTER_MAPPED_OPTION": "Available in 3D",
   "SEARCH_RESULTS_3D_FILTER_MAPPED_OPTION_DESCRIPTION": "Only 3D contextualised objects are displayed",

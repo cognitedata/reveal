@@ -18,12 +18,13 @@ const LinkGenericPage: React.FC<
     instance?: Instance;
     dataModel?: DataModelV2;
     options?: { viewMode?: ViewMode };
+    disabled?: boolean;
   }>
-> = ({ instance, dataModel, options, children }) => {
+> = ({ instance, dataModel, disabled, options, children }) => {
   const { instancePageLink } = useLinks();
   const { search } = useLocation();
 
-  if (isEmpty(dataModel) || isEmpty(instance)) {
+  if (disabled || isEmpty(dataModel) || isEmpty(instance)) {
     return <>{children}</>;
   }
 

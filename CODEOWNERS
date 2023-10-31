@@ -25,9 +25,9 @@ apps/data-exploration             @cognitedata/explorers
 apps/flexible-data-explorer       @cognitedata/explorers
 apps/cdf-document-search          @cognitedata/matchmakers @cognitedata/discover
 
-
 libs/data-exploration/            @cognitedata/explorers
 libs/data-exploration-components  @cognitedata/explorers
+libs/flexible-data-explorer/      @cognitedata/explorers
 libs/shared/plotting-components   @cognitedata/explorers
 
 # Team UFV
