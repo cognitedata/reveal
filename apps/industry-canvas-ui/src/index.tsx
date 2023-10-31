@@ -12,6 +12,7 @@ import { AppWrapper } from './AppWrapper';
 if (getEnvironment() === 'production') {
   Sentry.init({
     dsn: 'https://2224caf03cb469976ae74b8234c1f6f2@o124058.ingest.sentry.io/4505873114333184',
+    enabled: !window.location.href.includes('e2e'),
     integrations: [
       new Sentry.BrowserTracing({
         // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
