@@ -46,9 +46,6 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.intercept('POST', 'api/v1/projects/platypus/models/instances').as(
       'ingestInstance'
     );
-    cy.intercept('POST', 'api/v1/projects/platypus/models/instances/delete', {
-      statusCode: 200,
-    }).as('deleteInstance');
 
     cy.get('div[role="gridcell"][col-id="title"]')
       .should('be.visible')
@@ -63,9 +60,6 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
       // expect(interception!.response!.body.items[0].title).to.include(
       //   'Not John Doe'
       // );
-    });
-    cy.wait('@deleteInstance').then((interception) => {
-      expect(interception!.response!.statusCode).to.equal(200);
     });
   });
 

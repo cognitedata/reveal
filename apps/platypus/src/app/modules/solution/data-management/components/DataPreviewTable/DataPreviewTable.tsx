@@ -110,7 +110,6 @@ export const DataPreviewTable = () => {
     useColumnSelectionFeatureFlag();
 
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
-  const deleteInstancesCommand = useInjection(TOKENS.deleteInstancesCommand);
   const queryBuilder = new MixerQueryBuilder();
 
   const draftRowsData = useSelector(
@@ -598,20 +597,6 @@ export const DataPreviewTable = () => {
           e.api.refreshCells({ columns: [e.column], rowNodes: [e.node!] });
         }
       });
-
-    if (updatedRowData.space !== e.oldValue) {
-      deleteInstancesCommand.execute({
-        /*
-            PG3 does not currently set a value to null if we pass null when doing a partial
-            update (overwrite: false), but rather it will ignore that value. Therefore in
-            order to be able to set values to null we need overwrite: true
-            */
-        space: e.oldValue,
-        items: [updatedRowData],
-        dataModelExternalId,
-        type: 'node',
-      });
-    }
 
     return true;
   };

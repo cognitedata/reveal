@@ -164,12 +164,17 @@ export const buildGridConfig = (
             // Mixer API supports sorting only on primitives (not array and not custom types)
             sortable: !field.type.custom && !isList && !builtInDataField,
             filter: !nativeFilter || getColFilter(field),
-            editable:
-              isManualPopulationEnabled &&
-              !isList &&
-              field.name !== 'lastUpdatedTime' &&
-              field.name !== 'createdTime' &&
-              field.name !== 'externalId',
+            editable: (row) => {
+              return (
+                (isManualPopulationEnabled &&
+                  !isList &&
+                  field.name !== 'lastUpdatedTime' &&
+                  field.name !== 'createdTime' &&
+                  field.name !== 'externalId' &&
+                  field.name !== 'space') ||
+                (field.name === 'space' && row.data._draftStatus !== undefined)
+              );
+            },
             cellEditorParams: {
               isRequired: field.type.nonNull,
             },
