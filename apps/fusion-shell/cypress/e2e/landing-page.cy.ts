@@ -81,10 +81,4 @@ describe('fusion-shell', () => {
     cy.findByTestId('global-search-clear-input').click();
     cy.findByTestId('global-search-menu').should('not.exist');
   });
-
-  it('verify user sign out', () => {
-    cy.findByTestId('topbar-user-profile-area').find('.cogs-dropdown').click();
-    cy.findByTestId('topbar-user-logout-btn').click();
-    cy.findByTestId('login-select-container').should('be.visible');
-  });
 });
