@@ -53,6 +53,7 @@ export const ThreeDViewer: React.FC<Props> = ({ instance, dataModel }) => {
           instanceExternalId={instance.externalId}
           instanceSpace={instance.instanceSpace}
           hideToolbar
+          disablePreviewCard
           focusNode
         />
       </RevealContainer>
