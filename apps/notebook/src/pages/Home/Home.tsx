@@ -174,6 +174,7 @@ const Home = React.forwardRef(
         <SecondaryTopBar />
         <div style={{ flex: 1 }}>
           <IFrame
+            style={{ border: 'none' }}
             data-testid="iframe-for-notebook"
             ref={myIframe}
             src={`${NOTEBOOK_ORIGIN}/lab/index.html?nocache=${Date.now()}${
