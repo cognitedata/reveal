@@ -5,11 +5,13 @@ import styled from 'styled-components';
 import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { withSuppressRevealEvents } from '@cognite/reveal-react-components';
 
-import { FLOATING_ELEMENT_MARGIN } from '../../../pages/ContextualizeEditor/constants';
 import { setTransformMode } from '../useContextualizeThreeDViewerStore';
 import { TransformMode } from '../utils/createTransformControls';
 
 import ToolTooltip from './ToolTooltip';
+
+const LEFT = 165;
+const BOTTOM = 108;
 interface AnnotationBoxToolbarContentProps {
   onUpdateCdfThreeDAnnotation: (annotation) => void;
   onDeleteClicked?: () => void;
@@ -86,8 +88,8 @@ export const SelectedAnnotationBoxToolbar = withSuppressRevealEvents(
 
 const Container = styled.div`
   position: absolute;
-  bottom: ${FLOATING_ELEMENT_MARGIN}px;
-  left: 50%;
+  left: ${LEFT}px;
+  bottom: ${BOTTOM}px;
   transform: translateX(-50%);
   background-color: white;
   border-radius: 8px;
