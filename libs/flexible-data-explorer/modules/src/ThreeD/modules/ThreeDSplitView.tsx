@@ -59,7 +59,7 @@ export const ThreeDSplitView = () => {
           />
         </SearchResultsContainer>
 
-        <ThreeDContentContainer>
+        <ThreeDContentContainer data-testid="three-d-canvas">
           <ThreeDContent focusOnInstance={focusOnInstance} />
         </ThreeDContentContainer>
       </SplitLayout>

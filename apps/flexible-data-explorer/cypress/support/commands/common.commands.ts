@@ -22,7 +22,11 @@ const pressKeyTab = (subject: JQuery<HTMLElement>) => {
   return cy.wrap(subject);
 };
 
-Cypress.Commands.add('containsExact', { prevSubject: true }, containsExact);
+Cypress.Commands.add(
+  'containsExact',
+  { prevSubject: 'optional' },
+  containsExact
+);
 Cypress.Commands.add('goBack', goBack);
 Cypress.Commands.add('hover', { prevSubject: true }, hover);
 Cypress.Commands.add('pressKeyTab', { prevSubject: 'optional' }, pressKeyTab);

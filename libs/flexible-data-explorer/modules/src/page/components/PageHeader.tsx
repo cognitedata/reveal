@@ -28,7 +28,7 @@ export const PageHeader: React.FC<PropsWithChildren<Props>> = ({
   const hasContent = title || subtitle || header || loading;
 
   return (
-    <Header>
+    <Header data-testid="page-header">
       <Content>
         {onBackClick && (
           <Button
