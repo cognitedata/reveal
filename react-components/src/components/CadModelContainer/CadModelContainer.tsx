@@ -37,11 +37,7 @@ export function CadModelContainer({
   const initializingModel = useRef<AddModelOptions | undefined>(undefined);
   const { cadLayers } = layersUrlState;
 
-  const [model, setModel] = useState<CogniteCadModel | undefined>(
-    viewer.models.find(
-      (m) => m.modelId === addModelOptions.modelId && m.revisionId === addModelOptions.revisionId
-    ) as CogniteCadModel | undefined
-  );
+  const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
 
   const { modelId, revisionId, geometryFilter } = addModelOptions;
 
