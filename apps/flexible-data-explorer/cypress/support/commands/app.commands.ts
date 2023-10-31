@@ -19,7 +19,7 @@ const skipOnboardingGuide = () => {
   cy.clickButton('Close');
 };
 const resetAISearchCache = () => {
-  cy.clearLocalStorage('recently-searched-ai-results-dss-dev');
+  cy.clearLocalStorage(`recently-searched-ai-results-${PROJECT}`);
 };
 
 Cypress.Commands.add('navigateToApp', navigateToApp);

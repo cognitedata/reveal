@@ -1,5 +1,4 @@
-// This should be fixed and enabled
-describe.skip('AI search', () => {
+describe('AI search', () => {
   it('should display ai welcome page', () => {
     cy.clickButton('Search using AI');
     cy.contains('Search for data using AI in').should('be.visible');
@@ -7,18 +6,17 @@ describe.skip('AI search', () => {
 
   it('should allow search from suggestions', () => {
     cy.getBySel('search-bar').should('be.visible').click();
-    cy.contains('Help me find all directors').should('be.visible');
+    cy.contains('Help me find all work orders').should('be.visible');
   });
 
   it('should allow search from text', () => {
-    cy.performSearch('All movies made in 2012');
+    cy.performSearch('All workorders duration of 2 hours');
   });
 
   it('should show search results', () => {
-    cy.getBySel('Movie-Argo')
+    cy.getBySel('"WorkOrder-<PH> VEDLIKEHOLD AV PSD VENTILER *** (*** month)"')
       .should('be.visible')
-      .should('contain.text', 'MovieArgo')
-      .should('contain.text', '2012');
+      .should('contain.text', '2');
   });
 
   it('should show and change filters', () => {
@@ -26,18 +24,18 @@ describe.skip('AI search', () => {
     cy.findByTestId('ai-query-builder')
       .should('be.visible')
       .should('contain.text', 'Equals')
-      .should('contain.text', 'releasedYear');
-    cy.findByTestId('ai-filter-input').clear().type('2014');
+      .should('contain.text', 'durationHours');
+    cy.findByTestId('ai-filter-input').clear().type('3');
     cy.clickButton('Update filters');
-    cy.findByTestId('ai-summary-filter-section').should('contain.text', '2014');
+    cy.findByTestId('ai-summary-filter-section').should('contain.text', '3');
   });
 
   it('should allow aggregation', () => {
-    cy.performSearch('count of movies made in 2010s');
+    cy.performSearch('count of workorders by duration');
     cy.findByTestId('ai-chart').should('be.visible');
     cy.findByTestId('ai-summary').should(
       'contain.text',
-      'Where releasedYear is 2014'
+      'Where durationHours is 2'
     );
   });
 });
