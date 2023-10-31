@@ -9,7 +9,6 @@ import {
 import { JobMetricsGroup, Warning } from '@transformations/hooks';
 import { Items, Job, Schema, TransformationRead } from '@transformations/types';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { CodeEditorTheme, createLink } from '@cognite/cdf-utilities';
 import { IconType } from '@cognite/cogs.js';
 import { IDPType } from '@cognite/login-utils';
@@ -23,14 +22,7 @@ export const isLegacyAuth = (flow: IDPType) => {
 export const shouldUseApiKeysAsDestinationCredentials = (
   transformation: TransformationRead
 ): boolean => {
-  const { flow } = getFlow();
-  const isLoggedInUsingLegacyAuth = isLegacyAuth(flow);
-
-  return (
-    transformation.hasSourceApiKey ||
-    transformation.hasDestinationApiKey ||
-    isLoggedInUsingLegacyAuth
-  );
+  return transformation.hasSourceApiKey || transformation.hasDestinationApiKey;
 };
 
 export const getContainer = () => {

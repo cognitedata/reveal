@@ -6,13 +6,11 @@ import {
 } from '@tanstack/react-query';
 import { isEqual as equal } from 'lodash';
 
-import { IDPType } from '@cognite/login-utils';
 import {
   AggregateResponse,
   CogniteClient,
   Group,
   IdEither,
-  SingleCogniteCapability,
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -278,21 +276,20 @@ const cleanupBody = (body?: any) => {
  *
  * ## Example
  * ```typescript
- * const { data: hasAssetRead } = usePermissions(flow, 'assetsAcl', 'READ');
- * const { data: hasAssetWrite} = usePermissions(flow, 'assetsAcl', 'WRITE');
- * const { data: hasAssetRead } = usePermissions(flow, 'assetsAcl', 'READ', { all: {} });
+ * const { data: hasAssetRead } = usePermissions('assetsAcl', 'READ');
+ * const { data: hasAssetWrite} = usePermissions('assetsAcl', 'WRITE');
+ * const { data: hasAssetRead } = usePermissions('assetsAcl', 'READ', { all: {} });
  * ```
  */
 
 export const usePermissions = (
-  flow: IDPType,
   capability: string,
   action?: string,
   scope?: any,
   options?: UseQueryOptions<Capability[]>,
   projects?: string[]
 ) => {
-  const { data, ...queryProps } = useCapabilities(flow, options);
+  const { data, ...queryProps } = useCapabilities(options);
   const capabilities =
     data?.filter(
       (c) =>
@@ -335,38 +332,6 @@ export const useGroup = (
   };
 };
 
-const groupCapabilities = async (sdk: CogniteClient) => {
-  const groups = await sdk.groups.list();
-  const capabilities: Capability[] = [];
-
-  groups.forEach((g) => {
-    g.capabilities?.forEach((c) => {
-      const acl = Object.keys(c).filter((k) =>
-        k.includes('Acl')
-      )[0] as keyof SingleCogniteCapability;
-      const { actions, scope }: { actions: string[]; scope: any } = c[acl];
-
-      const preExisting = capabilities.find(
-        (c) => c.acl === acl && equal(scope, c.scope)
-      );
-
-      if (preExisting) {
-        preExisting.actions = preExisting.actions.concat(actions);
-      } else {
-        capabilities.push({
-          acl,
-          actions,
-          scope,
-        });
-      }
-    });
-  });
-  return capabilities.map((c) => ({
-    ...c,
-    actions: [...new Set(c.actions)],
-  }));
-};
-
 const tokenCapability = async (sdk: CogniteClient): Promise<Capability[]> => {
   const { data } = await sdk.get('/api/v1/token/inspect');
 
@@ -386,22 +351,12 @@ const tokenCapability = async (sdk: CogniteClient): Promise<Capability[]> => {
   });
 };
 
-export const useCapabilities = (
-  flow: IDPType,
-  options?: UseQueryOptions<Capability[]>
-) => {
+export const useCapabilities = (options?: UseQueryOptions<Capability[]>) => {
   const sdk = useSDK();
-  const nativeTokens = flow !== 'COGNITE_AUTH';
 
   return useQuery<Capability[]>(
     capabilitiesKey(),
-    () => {
-      if (nativeTokens) {
-        return tokenCapability(sdk);
-      } else {
-        return groupCapabilities(sdk);
-      }
-    },
+    () => tokenCapability(sdk),
     options
   );
 };

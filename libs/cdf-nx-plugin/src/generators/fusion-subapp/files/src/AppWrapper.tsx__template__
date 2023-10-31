@@ -1,10 +1,5 @@
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  SubAppWrapper,
-  AuthWrapper,
-  getEnv,
-  getProject,
-} from '@cognite/cdf-utilities';
+import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 import './set-public-path';
@@ -19,8 +14,6 @@ import { translations } from './app/common/i18n';
 
 export const AppWrapper = () => {
   const projectName = "<%= projectName %>";
-  const project = getProject();
-  const env = getEnv();
 
   useEffect(() => {
     cogsStyles.use();
@@ -32,7 +25,7 @@ export const AppWrapper = () => {
   return (
     <GlobalStyles>
       <% if (internationalization) { %><I18nWrapper translations={translations} defaultNamespace={projectName}><% } %>
-        <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
+        <AuthWrapper login={() => loginAndAuthIfNeeded()}>
           <SubAppWrapper title={projectName}>
               <App />
           </SubAppWrapper>

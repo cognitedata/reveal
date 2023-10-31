@@ -37,6 +37,10 @@ export default function App() {
   const { data: userInfo } = useUserInformation();
   const { isEnabled } = useFlag('COGNITE_COPILOT');
 
+  if (!flow) {
+    throw new Error('Flow is undefined');
+  }
+
   return (
     <Suspense fallback={<Spinner />}>
       <Copilot sdk={sdk} showChatButton={isEnabled}>

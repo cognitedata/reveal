@@ -7,7 +7,7 @@ import { useDatasetsListQuery } from '@data-exploration-lib/domain-layer';
 export const DatasetSelector = (
   props: Omit<SelectProps<string>, 'options'>
 ) => {
-  const { data: capabilities } = useCapabilities('COGNITE_IDP');
+  const { data: capabilities } = useCapabilities();
   const timeSeriesWriteScopedIds: string[] =
     capabilities
       ?.filter(

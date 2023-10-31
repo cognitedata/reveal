@@ -2,7 +2,6 @@ import { FunctionComponent, PropsWithChildren } from 'react';
 
 import styled from 'styled-components';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import { Button, Colors, Icon, Link, Table } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
@@ -43,9 +42,7 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
   const { extpipeTableColumns } = useExtpipeTableColumns();
   const { extpipes, dataSet } = dataSetWithExtpipes;
 
-  const { flow } = getFlow();
   const permissionsExtractionPipelines = usePermissions(
-    flow,
     'extractionPipelinesAcl',
     'WRITE'
   );

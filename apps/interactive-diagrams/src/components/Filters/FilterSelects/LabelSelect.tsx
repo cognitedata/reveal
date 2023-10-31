@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { LabelDefinition } from '@cognite/sdk';
 import { useList, usePermissions } from '@cognite/sdk-react-query-hooks';
 
@@ -15,8 +14,7 @@ type Props = {
 
 export const LabelSelect = (props: Props) => {
   const { selectedLabels, onLabelsSelected } = props;
-  const { flow } = getFlow();
-  const { data: hasPermission } = usePermissions(flow, 'labelsAcl', 'READ');
+  const { data: hasPermission } = usePermissions('labelsAcl', 'READ');
   const { data: labels } = useList<LabelDefinition>(
     'labels',
     { filter: {}, limit: 1000 },

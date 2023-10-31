@@ -5,7 +5,7 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 
-import { getFlow, getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import {
   CogniteCapability,
   CogniteClient,
@@ -13,7 +13,6 @@ import {
   SingleCogniteCapability,
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { usePermissions as _usePermissions } from '@cognite/sdk-react-query-hooks';
 
 export const useGroups = (all = false) => {
   const sdk = useSDK();
@@ -61,11 +60,6 @@ export const useGroups = (all = false) => {
         }
       });
   });
-};
-
-export const usePermissions = (key: string, type?: string, scope?: any) => {
-  const { flow } = getFlow();
-  return _usePermissions(flow, key, type, scope);
 };
 
 const getUpdater = (sdk: CogniteClient) => async (g: Group) => {

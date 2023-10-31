@@ -1,35 +1,20 @@
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-const { flow } = getFlow();
 
 export const useThreeDPermissions = () => {
-  const { data: hasThreeDReadCapability } = usePermissions(
-    flow as any,
-    'threedAcl',
-    'READ'
-  );
+  const { data: hasThreeDReadCapability } = usePermissions('threedAcl', 'READ');
   const { data: hasThreeDCreateCapability, isFetched: isFetchedThreeDCreate } =
-    usePermissions(flow as any, 'threedAcl', 'CREATE');
+    usePermissions('threedAcl', 'CREATE');
   const { data: hasFilesWriteCapability, isFetched: isFetchedFilesWrite } =
-    usePermissions(flow as any, 'filesAcl', 'WRITE');
+    usePermissions('filesAcl', 'WRITE');
 
-  const { data: hasFilesReadCapability } = usePermissions(
-    flow as any,
-    'filesAcl',
-    'READ'
-  );
+  const { data: hasFilesReadCapability } = usePermissions('filesAcl', 'READ');
 
   const { data: hasLabelsWriteCapability } = usePermissions(
-    flow as any,
     'labelsAcl',
     'WRITE'
   );
 
-  const { data: hasLabelsReadCapability } = usePermissions(
-    flow as any,
-    'labelsAcl',
-    'READ'
-  );
+  const { data: hasLabelsReadCapability } = usePermissions('labelsAcl', 'READ');
 
   return {
     hasThreeDReadCapability,

@@ -13,6 +13,8 @@ export type AuthenticatedUser = {
   project?: string;
 };
 
+export type { UserInfo };
+
 const urlCluster = getCluster();
 const project = getProject();
 
@@ -76,7 +78,7 @@ export function loginAndAuthIfNeeded(): Promise<void> {
     authInit = sdkSingleton
       .authenticate()
       // eslint-disable-next-line
-      .then(() => { })
+      .then(() => {})
       .catch(() => {
         redirectToLogin();
       });

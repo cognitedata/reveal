@@ -3,7 +3,6 @@ import { Routes, Route, useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useTranslation } from '@access-management/common/i18n';
-import { usePermissions } from '@access-management/hooks';
 import Groups from '@access-management/pages/Groups';
 import OIDC from '@access-management/pages/OIDC';
 import SecurityCategories from '@access-management/pages/SecurityCategories';
@@ -17,6 +16,7 @@ import Menu from 'antd/lib/menu';
 
 import { createLink, getEnvFromCluster } from '@cognite/cdf-utilities';
 import { Title, Loader, Button } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 export default function () {
   const { t } = useTranslation();

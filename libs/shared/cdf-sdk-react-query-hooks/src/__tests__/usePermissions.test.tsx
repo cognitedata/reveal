@@ -30,56 +30,43 @@ const capabilities = [
     projectScope: { projects: ['test-project-2'] },
   },
 ];
-const groupsResponse = [{ capabilities }];
 const tokenInspectResponse = { data: { capabilities } };
 
 describe('usePermissions', () => {
-  test('Returns true if the user has the given capability for any scope (Legacy Login)', async () => {
+  test('Returns true if the user has the given capability for any scope', async () => {
     useSDK.mockReturnValue({
-      groups: {
-        list: jest.fn().mockResolvedValue(groupsResponse),
-      },
+      get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
 
-    const { result } = renderHook(
-      () => usePermissions('COGNITE_AUTH', 'labelsAcl', 'WRITE'),
-      {
-        wrapper: renderWithReactQueryCacheProvider(),
-      }
-    );
+    const { result } = renderHook(() => usePermissions('labelsAcl', 'WRITE'), {
+      wrapper: renderWithReactQueryCacheProvider(),
+    });
     await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
 
     expect(result.current.data).toEqual(true);
   });
-  test("Returns false if the user doesn't have the given capability for any scope (Legacy Login)", async () => {
+  test("Returns false if the user doesn't have the given capability for any scope", async () => {
     useSDK.mockReturnValue({
-      groups: {
-        list: jest.fn().mockResolvedValue(groupsResponse),
-      },
+      get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
 
-    const { result } = renderHook(
-      () => usePermissions('COGNITE_AUTH', 'filesAcl', 'WRITE'),
-      {
-        wrapper: renderWithReactQueryCacheProvider(),
-      }
-    );
+    const { result } = renderHook(() => usePermissions('filesAcl', 'WRITE'), {
+      wrapper: renderWithReactQueryCacheProvider(),
+    });
     await waitFor(() => {
       return result.current.isSuccess;
     });
 
     expect(result.current.data).toEqual(false);
   });
-  test('Returns true if the user has the given capability for given scope (Legacy Login)', async () => {
+  test('Returns true if the user has the given capability for given scope', async () => {
     useSDK.mockReturnValue({
-      groups: {
-        list: jest.fn().mockResolvedValue(groupsResponse),
-      },
+      get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
 
     const { result } = renderHook(
       () =>
-        usePermissions('COGNITE_AUTH', 'labelsAcl', 'WRITE', {
+        usePermissions('labelsAcl', 'WRITE', {
           datasetScope: { ids: [10101010] },
         }),
       {
@@ -90,16 +77,14 @@ describe('usePermissions', () => {
 
     expect(result.current.data).toEqual(true);
   });
-  test('Returns false if the user has the given capability for the given scope (Legacy Login)', async () => {
+  test('Returns false if the user has the given capability for the given scope', async () => {
     useSDK.mockReturnValue({
-      groups: {
-        list: jest.fn().mockResolvedValue(groupsResponse),
-      },
+      get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
 
     const { result: labelsWriteCheck1 } = renderHook(
       () =>
-        usePermissions('COGNITE_AUTH', 'labelsAcl', 'WRITE', {
+        usePermissions('labelsAcl', 'WRITE', {
           all: {},
         }),
       {
@@ -112,7 +97,7 @@ describe('usePermissions', () => {
 
     const { result: labelsWriteCheck2 } = renderHook(
       () =>
-        usePermissions('COGNITE_AUTH', 'labelsAcl', 'WRITE', {
+        usePermissions('labelsAcl', 'WRITE', {
           datasetScope: { ids: [20202020] },
         }),
       {
@@ -125,7 +110,7 @@ describe('usePermissions', () => {
 
     const { result: labelsWriteCheck3 } = renderHook(
       () =>
-        usePermissions('COGNITE_AUTH', 'filesAcl', 'WRITE', {
+        usePermissions('filesAcl', 'WRITE', {
           datasetScope: { ids: [10101010] },
         }),
       {
@@ -140,25 +125,7 @@ describe('usePermissions', () => {
     expect(labelsWriteCheck2.current.data).toEqual(false);
     expect(labelsWriteCheck3.current.data).toEqual(false);
   });
-  test('Returns true if the user has the given capability for any scope (Legacy Login)', async () => {
-    useSDK.mockReturnValue({
-      get: jest.fn().mockResolvedValue(tokenInspectResponse),
-    });
-
-    const { result } = renderHook(
-      () => usePermissions('AZURE_AD', 'labelsAcl', 'WRITE'),
-      {
-        wrapper: renderWithReactQueryCacheProvider(),
-      }
-    );
-
-    await waitFor(() => expect(result.current.isSuccess).toBeTruthy(), {
-      timeout: 10000,
-    });
-
-    expect(result.current.data).toBeTruthy();
-  });
-  test("Returns false if the user doesn't have the given capability for any scope (Legacy Login)", async () => {
+  test("Returns false if the user doesn't have the given capability for any scope", async () => {
     useSDK.mockReturnValue({
       get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
@@ -175,14 +142,14 @@ describe('usePermissions', () => {
 
     expect(result.current.data).toEqual(false);
   });
-  test('Returns true if the user has the given capability for given scope (Legacy Login)', async () => {
+  test('Returns true if the user has the given capability for given scope', async () => {
     useSDK.mockReturnValue({
       get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
 
     const { result } = renderHook(
       () =>
-        usePermissions('AZURE_AD', 'labelsAcl', 'WRITE', {
+        usePermissions('labelsAcl', 'WRITE', {
           datasetScope: { ids: [10101010] },
         }),
       {
@@ -200,7 +167,7 @@ describe('usePermissions', () => {
 
     const { result } = renderHook(
       () =>
-        usePermissions('AZURE_AD', 'labelsAcl', 'WRITE', undefined, undefined, [
+        usePermissions('labelsAcl', 'WRITE', undefined, undefined, [
           'test-project',
         ]),
       {
@@ -218,14 +185,9 @@ describe('usePermissions', () => {
 
     const { result } = renderHook(
       () =>
-        usePermissions(
-          'AZURE_AD',
-          'notificationsAcl',
-          'READ',
-          undefined,
-          undefined,
-          ['not-mentioned-project']
-        ),
+        usePermissions('notificationsAcl', 'READ', undefined, undefined, [
+          'not-mentioned-project',
+        ]),
       {
         wrapper: renderWithReactQueryCacheProvider(),
       }
@@ -241,14 +203,9 @@ describe('usePermissions', () => {
 
     const { result } = renderHook(
       () =>
-        usePermissions(
-          'AZURE_AD',
-          'monitoringAcl',
-          'READ',
-          undefined,
-          undefined,
-          ['different-project']
-        ),
+        usePermissions('monitoringAcl', 'READ', undefined, undefined, [
+          'different-project',
+        ]),
       {
         wrapper: renderWithReactQueryCacheProvider(),
       }
@@ -263,7 +220,7 @@ describe('usePermissions', () => {
     });
 
     const { result } = renderHook(
-      () => usePermissions('AZURE_AD', 'notificationsAcl', 'WRITE'),
+      () => usePermissions('notificationsAcl', 'WRITE'),
       {
         wrapper: renderWithReactQueryCacheProvider(),
       }
@@ -272,14 +229,14 @@ describe('usePermissions', () => {
 
     expect(result.current.data).toEqual(true);
   });
-  test('Returns false if the user has the given capability for the given scope (Legacy Login)', async () => {
+  test('Returns false if the user has the given capability for the given scope', async () => {
     useSDK.mockReturnValue({
       get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
 
     const { result: labelsWriteCheck1 } = renderHook(
       () =>
-        usePermissions('AZURE_AD', 'labelsAcl', 'WRITE', {
+        usePermissions('labelsAcl', 'WRITE', {
           all: {},
         }),
       {
@@ -292,7 +249,7 @@ describe('usePermissions', () => {
 
     const { result: labelsWriteCheck2 } = renderHook(
       () =>
-        usePermissions('AZURE_AD', 'labelsAcl', 'WRITE', {
+        usePermissions('labelsAcl', 'WRITE', {
           datasetScope: { ids: [20202020] },
         }),
       {
@@ -305,7 +262,7 @@ describe('usePermissions', () => {
 
     const { result: labelsWriteCheck3 } = renderHook(
       () =>
-        usePermissions('AZURE_AD', 'filesAcl', 'WRITE', {
+        usePermissions('filesAcl', 'WRITE', {
           datasetScope: { ids: [10101010] },
         }),
       {

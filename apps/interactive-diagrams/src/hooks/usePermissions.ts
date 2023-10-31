@@ -1,4 +1,3 @@
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 type Permission = {
@@ -7,55 +6,21 @@ type Permission = {
 };
 
 export const useAllNeededPermissions = () => {
-  const { flow } = getFlow();
-  const { data: filesWritePermission } = usePermissions(
-    flow,
-    'filesAcl',
-    'WRITE'
-  );
-  const { data: filesReadPermission } = usePermissions(
-    flow,
-    'filesAcl',
-    'READ'
-  );
+  const { data: filesWritePermission } = usePermissions('filesAcl', 'WRITE');
+  const { data: filesReadPermission } = usePermissions('filesAcl', 'READ');
   // TODO: remove events:read as required permission once annotation migration is complete
-  const { data: eventsWritePermission } = usePermissions(
-    flow,
-    'eventsAcl',
-    'WRITE'
-  );
-  const { data: eventsReadPermission } = usePermissions(
-    flow,
-    'eventsAcl',
-    'READ'
-  );
+  const { data: eventsWritePermission } = usePermissions('eventsAcl', 'WRITE');
+  const { data: eventsReadPermission } = usePermissions('eventsAcl', 'READ');
   const { data: annotationsWritePermission } = usePermissions(
-    flow,
     'annotationsAcl',
     'WRITE'
   );
-  const { data: assetsReadPermission } = usePermissions(
-    flow,
-    'assetsAcl',
-    'READ'
-  );
-  const { data: dsReadPermission } = usePermissions(
-    flow,
-    'datasetsAcl',
-    'READ'
-  );
-  const { data: groupsListPermission } = usePermissions(
-    flow,
-    'groupsAcl',
-    'LIST'
-  );
-  const { data: groupsReadPermission } = usePermissions(
-    flow,
-    'groupsAcl',
-    'READ'
-  );
-  const { data: labelsReadAcl } = usePermissions(flow, 'labelsAcl', 'READ');
-  const { data: labelsWriteAcl } = usePermissions(flow, 'labelsAcl', 'WRITE');
+  const { data: assetsReadPermission } = usePermissions('assetsAcl', 'READ');
+  const { data: dsReadPermission } = usePermissions('datasetsAcl', 'READ');
+  const { data: groupsListPermission } = usePermissions('groupsAcl', 'LIST');
+  const { data: groupsReadPermission } = usePermissions('groupsAcl', 'READ');
+  const { data: labelsReadAcl } = usePermissions('labelsAcl', 'READ');
+  const { data: labelsWriteAcl } = usePermissions('labelsAcl', 'WRITE');
 
   const allPermissions: Permission[] = [
     { label: 'files:write', hasPermission: filesWritePermission },

@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { notification } from 'antd';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import { getUrlWithQueryParams } from '../utils/config';
@@ -17,9 +16,8 @@ export default function MissingPermissionFeedback(props: Props) {
   const { acl, type } = props;
   const navigate = useNavigate();
   const { project } = useParams<{ project: string }>();
-  const { flow } = getFlow();
-  const { data: hasPermission } = usePermissions(flow, acl, type);
-  const { data: groupPermission } = usePermissions(flow, 'groupsAcl', 'WRITE');
+  const { data: hasPermission } = usePermissions(acl, type);
+  const { data: groupPermission } = usePermissions('groupsAcl', 'WRITE');
 
   const nav = useMemo(
     () => (event: SyntheticEvent) => {

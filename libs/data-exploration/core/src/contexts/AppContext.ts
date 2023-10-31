@@ -1,14 +1,10 @@
 import React from 'react';
 
+import { IDPType } from '@cognite/login-utils';
+
 import { MetricsMetadata } from '../hooks';
 
-export type Flow =
-  | 'COGNITE_AUTH'
-  | 'AZURE_AD'
-  | 'ADFS'
-  | 'OAUTH_GENERIC'
-  | 'FAKE_IDP'
-  | 'UNKNOWN';
+export type Flow = IDPType | 'FAKE_IDP' | 'UNKNOWN';
 
 export type OverrideURLMap = {
   pdfjsWorkerSrc?: string;

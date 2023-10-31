@@ -35,14 +35,12 @@ const FileReview = ({
   const context = useContext(AppContext);
   const { t } = useTranslation();
   const { data: labelsReadAcl } = usePermissions(
-    context?.flow! as any,
     'labelsAcl',
     'READ',
     undefined,
     { enabled: !!context?.flow }
   );
   const { data: labelsWriteAcl } = usePermissions(
-    context?.flow! as any,
     'labelsAcl',
     'WRITE',
     undefined,

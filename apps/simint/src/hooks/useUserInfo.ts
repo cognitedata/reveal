@@ -37,7 +37,7 @@ const getUserInformationInternal = async (): Promise<UserInfo> => {
 };
 
 export const useUserInfo = () => {
-  const { data, isLoading, isFetched } = useQuery<UserInfo>(
+  const { data, isLoading, isFetched } = useQuery<unknown, unknown, UserInfo>(
     ['user-info'],
     // @ts-expect-error
     window.Cypress ? getUserInformationInternal : getUserInformation

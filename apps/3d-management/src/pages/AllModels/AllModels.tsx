@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import { Modal, Steps, message } from 'antd';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button, Flex, Input } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
@@ -96,16 +95,11 @@ export const AllModels = () => {
     }
   };
 
-  const { flow } = getFlow();
-  const { data: hasThreedReadCapability } = usePermissions(
-    flow as any,
-    'threedAcl',
-    'READ'
-  );
+  const { data: hasThreedReadCapability } = usePermissions('threedAcl', 'READ');
   const { data: hasThreedCreateCapability, isFetched: isFetchedThreedCreate } =
-    usePermissions(flow as any, 'threedAcl', 'CREATE');
+    usePermissions('threedAcl', 'CREATE');
   const { data: hasFilesWriteCapability, isFetched: isFetchedFilesWrite } =
-    usePermissions(flow as any, 'filesAcl', 'WRITE');
+    usePermissions('filesAcl', 'WRITE');
 
   const modelsQuery = useModels({ enabled: hasThreedReadCapability });
   const { data: models } = modelsQuery;

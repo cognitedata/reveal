@@ -10,12 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthWrapper,
-  getEnv,
-  getProject,
-  SubAppWrapper,
-} from '@cognite/cdf-utilities';
+import { AuthWrapper, getProject, SubAppWrapper } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 import { FlagProvider, useFlag } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
@@ -36,7 +31,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-const env = getEnv();
 const project = getProject();
 
 const App = () => {
@@ -82,7 +76,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
             <SubAppWrapper title="Jupyter Notebooks">
               <AuthWrapper
                 loadingScreen={<Loader />}
-                login={() => loginAndAuthIfNeeded(project, env)}
+                login={() => loginAndAuthIfNeeded()}
               >
                 {children}
               </AuthWrapper>

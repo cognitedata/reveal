@@ -37,15 +37,9 @@ export const RelationshipTableV2 = ({
   const context = useContext(AppContext);
 
   const { data: relationshipPermission, isFetched: permissionFetched } =
-    usePermissions(
-      context?.flow! as any,
-      'relationshipsAcl',
-      'READ',
-      undefined,
-      {
-        enabled: Boolean(context?.flow),
-      }
-    );
+    usePermissions('relationshipsAcl', 'READ', undefined, {
+      enabled: Boolean(context?.flow),
+    });
 
   // Do we show same relationship table for files and documents(files tab when advanced filters disabled)?
   // TODO needs to add the table related to documents

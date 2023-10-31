@@ -28,9 +28,6 @@ describe('fusion-subapp generator', () => {
     expect(config).toBeDefined();
 
     expect(appTree.isFile('test-app/src/set-public-path.ts')).toBeTruthy();
-    expect(
-      appTree.isFile('test-app/src/cognite-cdf-sdk-singleton.d.ts')
-    ).toBeTruthy();
   });
 
   it('should add internationalization support', async () => {

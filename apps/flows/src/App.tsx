@@ -12,12 +12,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthWrapper,
-  getEnv,
-  getProject,
-  SubAppWrapper,
-} from '@cognite/cdf-utilities';
+import { AuthWrapper, getProject, SubAppWrapper } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
@@ -29,7 +24,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-const env = getEnv();
 const project = getProject();
 const ROOT_PATH = `/:tenant/${CANVAS_PATH}`;
 
@@ -50,7 +44,7 @@ const App = () => {
               <SubAppWrapper title="Workflows">
                 <AuthWrapper
                   loadingScreen={<Loader />}
-                  login={() => loginAndAuthIfNeeded(project, env)}
+                  login={() => loginAndAuthIfNeeded()}
                 >
                   <SDKProvider sdk={sdk}>
                     <BrowserRouter>

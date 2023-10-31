@@ -78,6 +78,10 @@ export const RootApp = () => {
     return <Loader />;
   }
 
+  if (!flow.flow) {
+    throw new Error('Flow is undefined');
+  }
+
   return (
     <UserHistoryProvider cluster={cluster} project={project} userId={userId}>
       <FlagProvider

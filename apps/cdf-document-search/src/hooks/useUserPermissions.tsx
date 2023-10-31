@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getFlow, getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 type Permission = {
@@ -13,22 +13,20 @@ export const useUserInformation = () => {
 };
 
 export const useUserPermissions = () => {
-  const { flow } = getFlow();
   const { data: filesWritePermission, isLoading: filesWriteLoading } =
-    usePermissions(flow, 'filesAcl', 'WRITE');
+    usePermissions('filesAcl', 'WRITE');
   const { data: filesReadPermission, isLoading: filesReadLoading } =
-    usePermissions(flow, 'filesAcl', 'READ');
+    usePermissions('filesAcl', 'READ');
   const { data: labelsWriteAcl, isLoading: labelsWriteLoading } =
-    usePermissions(flow, 'labelsAcl', 'WRITE');
+    usePermissions('labelsAcl', 'WRITE');
   const { data: labelsReadAcl, isLoading: labelsReadLoading } = usePermissions(
-    flow,
     'labelsAcl',
     'READ'
   );
   const { data: documentPipelinesWrite, isLoading: pipelinesWriteLoading } =
-    usePermissions(flow, 'documentPipelinesAcl', 'WRITE');
+    usePermissions('documentPipelinesAcl', 'WRITE');
   const { data: documentPipelinesRead, isLoading: pipelinesReadLoading } =
-    usePermissions(flow, 'documentPipelinesAcl', 'READ');
+    usePermissions('documentPipelinesAcl', 'READ');
 
   const isLoading =
     filesWriteLoading &&

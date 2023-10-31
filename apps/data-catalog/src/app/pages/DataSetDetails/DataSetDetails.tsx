@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import copy from 'copy-to-clipboard';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import {
   Flex,
@@ -80,12 +79,7 @@ const DataSetDetails = (): JSX.Element => {
 
   const { setSelectedDataSet } = useSelectedDataSet();
 
-  const { flow } = getFlow();
-  const { data: hasWritePermissions } = usePermissions(
-    flow,
-    'datasetsAcl',
-    'WRITE'
-  );
+  const { data: hasWritePermissions } = usePermissions('datasetsAcl', 'WRITE');
 
   // TODO: add this once we have new Menu
   const { updateDataSetVisibility, isLoading: _isUpdatingDataSetVisibility } =

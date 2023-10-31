@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Tooltip } from 'antd';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button } from '@cognite/cogs.js';
 import { ResourceItem } from '@cognite/data-exploration';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
@@ -16,15 +15,10 @@ export const EditFileButton = ({
   onClick: () => void;
   isActive: boolean;
 }) => {
-  const { flow } = getFlow();
-  const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
+  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
   // TODO: remove events:write once the migration to Annotations API is completed
-  const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
-  const { data: annotationsAcl } = usePermissions(
-    flow,
-    'annotationsAcl',
-    'WRITE'
-  );
+  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
+  const { data: annotationsAcl } = usePermissions('annotationsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl && annotationsAcl;
 
   if (type !== 'file') {

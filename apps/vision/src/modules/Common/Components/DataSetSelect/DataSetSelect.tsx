@@ -43,8 +43,6 @@ export const DataSetSelect = ({
   );
   const { flow } = getFlow();
   const { data: canReadDataSets } = usePermissions(
-    // @ts-ignore
-    flow!,
     'datasetsAcl',
     'READ',
     undefined,

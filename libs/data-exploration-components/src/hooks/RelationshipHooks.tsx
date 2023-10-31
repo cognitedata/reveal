@@ -125,15 +125,9 @@ const extractRelationshipLabels = (
 export const useRelationships = (externalId?: string, type?: ResourceType) => {
   const context = useContext(AppContext);
   const { data: hasRelationshipRead, isFetched: permissionFetched } =
-    usePermissions(
-      context?.flow! as any,
-      'relationshipsAcl',
-      'READ',
-      undefined,
-      {
-        enabled: !!context?.flow,
-      }
-    );
+    usePermissions('relationshipsAcl', 'READ', undefined, {
+      enabled: !!context?.flow,
+    });
   const enabled = !!(permissionFetched && hasRelationshipRead && !!externalId);
 
   const sourceRelationships = useInfiniteList<Relationship>(

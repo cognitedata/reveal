@@ -8,7 +8,7 @@ import {
 
 import { useQueryClient } from '@tanstack/react-query';
 
-import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Modal, Input, Icon, Chip, Flex, toast } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
@@ -44,9 +44,8 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
   const [createVisible, setCreateVisible] = useState<boolean>(false);
   const [nameField, setNameField] = useState<string>('');
 
-  const { flow } = getFlow();
-  const { data: hasRawList } = usePermissions(flow, 'rawAcl', 'LIST');
-  const { data: hasRawRead } = usePermissions(flow, 'rawAcl', 'READ');
+  const { data: hasRawList } = usePermissions('rawAcl', 'LIST');
+  const { data: hasRawRead } = usePermissions('rawAcl', 'READ');
 
   const hasRawPermissions = hasRawList && hasRawRead;
 

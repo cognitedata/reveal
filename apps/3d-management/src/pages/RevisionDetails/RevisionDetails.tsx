@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { Card, message, Modal } from 'antd';
 import dayjs from 'dayjs';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import { Tooltip, Button, Flex, Icon } from '@cognite/cogs.js';
 import { Revision3D } from '@cognite/sdk';
@@ -89,16 +88,14 @@ export const RevisionDetails = () => {
   const params = useParams<RevisionDetailsParams>();
   const navigate = useNavigate();
 
-  const { flow } = getFlow();
-
   const {
     data: hasUpdateCapabilities,
     isFetched: isFetchedUpdateCapabilities,
-  } = usePermissions(flow as any, 'threedAcl', 'UPDATE');
+  } = usePermissions('threedAcl', 'UPDATE');
   const {
     data: hasDeleteCapabilities,
     isFetched: isFetchedDeleteCapabilities,
-  } = usePermissions(flow as any, 'threedAcl', 'DELETE');
+  } = usePermissions('threedAcl', 'DELETE');
 
   const revisionId = Number(params.revisionId);
   const modelId = Number(params.modelId);

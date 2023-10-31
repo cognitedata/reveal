@@ -3,7 +3,6 @@ import { useMemo, useState } from 'react';
 import isArray from 'lodash/isArray';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { TableNoResults } from '@cognite/cdf-utilities';
 import { Button, Flex, Icon, Chip, Checkbox, Table } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
@@ -62,12 +61,7 @@ const DataSetsList = (): JSX.Element => {
   const { updateDataSetVisibility, isLoading: isUpdatingDataSetVisibility } =
     useUpdateDataSetVisibility();
 
-  const { flow } = getFlow();
-  const { data: hasWritePermissions } = usePermissions(
-    flow,
-    'datasetsAcl',
-    'WRITE'
-  );
+  const { data: hasWritePermissions } = usePermissions('datasetsAcl', 'WRITE');
 
   const dataSetsList = useMemo(() => {
     return handleDataSetsFilters(

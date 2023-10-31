@@ -10,8 +10,8 @@ import { SDKProvider } from '@cognite/sdk-provider';
 import { translations } from '../../common/i18n/index';
 
 import { PipelineList } from '.';
-import { pipelineListFix } from './pipelineList';
 import { PipelineListProps } from './PipelineList';
+import { pipelineListFix } from './pipelineListFix';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

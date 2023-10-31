@@ -6,8 +6,7 @@ export const useUserId = () => {
   const { data: userData } = useQuery(['user', 'info'], getUserInformation);
 
   const { mail = 'UNKNOWN' } = userData || {};
-  const username =
-    userData?.displayName ?? userData?.id ?? userData?.email ?? userData?.mail;
+  const username = userData?.displayName ?? userData?.id ?? userData?.mail;
 
   return { mail, username };
 };

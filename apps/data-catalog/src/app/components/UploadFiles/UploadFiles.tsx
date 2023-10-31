@@ -8,7 +8,7 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import isString from 'lodash/isString';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Button, Icon, Popconfirm, toast } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
@@ -97,12 +97,7 @@ const UploadFiles = ({
   setChangesSaved,
 }: UploadFileProps): JSX.Element => {
   const { t } = useTranslation();
-  const { flow } = getFlow();
-  const filesReadCapability = usePermissions(
-    flow,
-    nameToAclTypeMap.files,
-    'READ'
-  );
+  const filesReadCapability = usePermissions(nameToAclTypeMap.files, 'READ');
   const isMissingReadAccess =
     !filesReadCapability.isFetching && !filesReadCapability.data;
   const [isUploading, setIsUploading] = useState<boolean>(false);

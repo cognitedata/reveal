@@ -160,7 +160,6 @@ export const DocumentSearchResults = ({
   }, [query, sdk]);
 
   const { data: hasEditPermissions } = usePermissions(
-    context?.flow as any,
     'filesAcl',
     'WRITE',
     undefined,

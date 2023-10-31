@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import { AuthWrapper, getEnv, getProject } from '@cognite/cdf-utilities';
+import { AuthWrapper, getProject } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
@@ -15,7 +15,6 @@ import GlobalStyles from './GlobalStyles';
 export const AppWrapper = () => {
   const projectName = 'copilot';
   const project = getProject();
-  const env = getEnv();
 
   useEffect(() => {
     cogsStyles.use();
@@ -34,7 +33,7 @@ export const AppWrapper = () => {
     >
       <GlobalStyles>
         <I18nWrapper translations={translations} defaultNamespace={projectName}>
-          <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
+          <AuthWrapper login={() => loginAndAuthIfNeeded()}>
             <App />
           </AuthWrapper>
         </I18nWrapper>

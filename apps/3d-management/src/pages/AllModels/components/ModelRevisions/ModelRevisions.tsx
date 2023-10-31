@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import { message, Card, Modal } from 'antd';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import { Button, Colors, Flex, Icon, Input } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
@@ -73,13 +72,12 @@ export default function ModelRevisions({ model }: Props) {
 
   const revisionsQuery = useRevisions(model.id);
 
-  const { flow } = getFlow();
   const { data: hasThreedDeleteCapability, isFetched: isFetchedThreedDelete } =
-    usePermissions(flow as any, 'threedAcl', 'DELETE');
+    usePermissions('threedAcl', 'DELETE');
   const { data: hasThreedCreateCapability, isFetched: isFetchedThreedCreate } =
-    usePermissions(flow as any, 'threedAcl', 'CREATE');
+    usePermissions('threedAcl', 'CREATE');
   const { data: hasFilesWriteCapability, isFetched: isFetchedFilesWrite } =
-    usePermissions(flow as any, 'filesAcl', 'WRITE');
+    usePermissions('filesAcl', 'WRITE');
 
   const showDeleteModelButton = hasThreedDeleteCapability;
   const showButtons = hasThreedCreateCapability && hasFilesWriteCapability;

@@ -3,7 +3,6 @@ import React, { useEffect, useContext } from 'react';
 import { Alert } from 'antd';
 import isMatch from 'lodash/isMatch';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Icon } from '@cognite/cogs.js';
 import { ErrorFeedback } from '@cognite/data-exploration';
 import { FileInfo } from '@cognite/sdk';
@@ -40,15 +39,10 @@ export const FilePreview = ({
     (el: { state: string; id: number; type: string }) =>
       isMatch(el, { state: 'active', id: fileId, type: 'file' })
   );
-  const { flow } = getFlow();
-  const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
-  const { data: annotationsAcl } = usePermissions(
-    flow,
-    'annotationsAcl',
-    'WRITE'
-  );
+  const { data: filesAcl } = usePermissions('filesAcl', 'WRITE');
+  const { data: annotationsAcl } = usePermissions('annotationsAcl', 'WRITE');
   // TODO: remove events:write once the migration to Annotations API is completed
-  const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
+  const { data: eventsAcl } = usePermissions('eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl && annotationsAcl;
 
   useEffect(() => {

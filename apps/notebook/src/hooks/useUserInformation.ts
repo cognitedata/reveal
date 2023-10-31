@@ -30,11 +30,15 @@ export const getUserProfile = async (
     `/api/v1/projects/${client.project}/profiles/me`
   );
   if (response.status === 403) {
-    return await getUserInformation();
+    return {
+      ...(await getUserInformation()),
+      lastUpdatedTime: Date.now(),
+      userIdentifier: 'anonymous',
+    };
   }
   const userInfo = await getUserInformation();
   return {
     ...response.data,
-    email: response.data.email || userInfo.email || userInfo.mail,
+    email: response.data.email || userInfo.mail,
   };
 };

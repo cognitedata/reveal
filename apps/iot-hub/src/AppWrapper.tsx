@@ -2,12 +2,7 @@ import { useEffect } from 'react';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  SubAppWrapper,
-  AuthWrapper,
-  getEnv,
-  getProject,
-} from '@cognite/cdf-utilities';
+import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 import './set-public-path';
@@ -18,8 +13,6 @@ import GlobalStyles from './GlobalStyles';
 
 export const AppWrapper = () => {
   const projectName = 'iot-hub';
-  const project = getProject();
-  const env = getEnv();
 
   useEffect(() => {
     cogsStyles.use();
@@ -31,7 +24,7 @@ export const AppWrapper = () => {
   return (
     <GlobalStyles>
       <I18nWrapper translations={translations} defaultNamespace={projectName}>
-        <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
+        <AuthWrapper login={() => loginAndAuthIfNeeded()}>
           <SubAppWrapper title={projectName}>
             <IoTProvider>
               <App />

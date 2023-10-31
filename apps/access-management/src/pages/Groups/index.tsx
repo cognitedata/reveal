@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useTranslation } from '@access-management/common/i18n';
-import { useGroups, usePermissions } from '@access-management/hooks';
+import { useGroups } from '@access-management/hooks';
 import { AccessConfigurationWarning } from '@access-management/pages/components/AccessConfigurationWarning';
 import { getContainer } from '@access-management/utils/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -24,6 +24,7 @@ import { getProject } from '@cognite/cdf-utilities';
 import { Button, Icon } from '@cognite/cogs.js';
 import { Group } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import CapabilityTag from './CapabilityTag';
 import GroupDrawer from './GroupDrawer';
