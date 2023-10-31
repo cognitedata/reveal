@@ -44,6 +44,10 @@ export {
   useSearchAssetsMapped360Annotations,
   useAllAssetsMapped360Annotations
 } from './hooks/useSearchAssetsMapped360Annotations';
+export {
+  useReveal360ImageAnnotationAssets,
+  useSearchReveal360ImageAnnotationAssets
+} from './hooks/useSearchReveal360ImageAnnotationAssets';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
