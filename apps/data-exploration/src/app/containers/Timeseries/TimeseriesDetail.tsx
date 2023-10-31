@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { Loader, Metadata } from '@data-exploration/components';
 import { TimeseriesInfo } from '@data-exploration/containers';
 import { useCdfUserHistoryService } from '@user-history';
+import isUndefined from 'lodash/isUndefined';
 
 import { Tabs } from '@cognite/cogs.js';
 import { ErrorFeedback } from '@cognite/data-exploration';
@@ -83,6 +84,15 @@ export const TimeseriesDetail = ({
     }
   }, [isTimeseriesFetched, timeseries]);
 
+  const allResourcesFilter = useMemo(() => {
+    if (!timeseries || isUndefined(timeseries.assetId)) {
+      return {};
+    }
+    return {
+      assetSubtreeIds: [{ value: timeseries.assetId }],
+    };
+  }, [timeseries]);
+
   if (!timeseriesId || !Number.isFinite(timeseriesId)) {
     return (
       <>
@@ -114,10 +124,6 @@ export const TimeseriesDetail = ({
       </>
     );
   }
-
-  const filter = {
-    assetIds: timeseries.assetId ? [{ value: timeseries.assetId }] : [],
-  };
 
   return (
     <>
@@ -170,9 +176,7 @@ export const TimeseriesDetail = ({
                 tabKey="all-resources"
               >
                 <AllTab
-                  filters={{
-                    asset: filter,
-                  }}
+                  filters={{ common: allResourcesFilter }}
                   setCurrentResourceType={(type) =>
                     type && setSelectedTab(type)
                   }

@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { EventInfo } from '@data-exploration/containers';
 import { useCdfUserHistoryService } from '@user-history';
+import isEmpty from 'lodash/isEmpty';
 import styled from 'styled-components/macro';
 
 import { Tabs } from '@cognite/cogs.js';
@@ -79,6 +80,17 @@ export const EventDetail = ({
     }
   }, [isEventFetched, event]);
 
+  const allResourcesFilter = useMemo(() => {
+    if (!event || !event.assetIds || isEmpty(event.assetIds)) {
+      return {};
+    }
+    return {
+      assetSubtreeIds: event.assetIds.map((id) => ({
+        value: id,
+      })),
+    };
+  }, [event]);
+
   if (!eventId || !Number.isFinite(eventId)) {
     return (
       <>
@@ -111,10 +123,6 @@ export const EventDetail = ({
       </>
     );
   }
-
-  const filter = {
-    assetIds: event.assetIds ? event.assetIds.map((id) => ({ value: id })) : [],
-  };
 
   return (
     <EventDetailWrapper data-testid="event-detail">
@@ -150,11 +158,7 @@ export const EventDetail = ({
             tabKey="all-resources"
           >
             <AllTab
-              filters={{
-                asset: filter,
-                file: filter,
-                sequence: filter,
-              }}
+              filters={{ common: allResourcesFilter }}
               selectedResourceExternalId={event.externalId}
               setCurrentResourceType={(type) => type && setSelectedTab(type)}
             />

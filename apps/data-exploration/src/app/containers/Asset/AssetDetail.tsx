@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { AssetInfo } from '@data-exploration/containers';
 import { useCdfUserHistoryService } from '@user-history';
+import isUndefined from 'lodash/isUndefined';
 import styled from 'styled-components/macro';
 
 import { Tabs } from '@cognite/cogs.js';
@@ -96,6 +97,15 @@ export const AssetDetail = ({
     }
   }, [isAssetFetched, asset]);
 
+  const allResourcesFilter = useMemo(() => {
+    if (!asset || isUndefined(asset.id)) {
+      return {};
+    }
+    return {
+      assetSubtreeIds: [{ value: asset.id }],
+    };
+  }, [asset]);
+
   if (!isAssetFetched) {
     return <Loader />;
   }
@@ -161,7 +171,7 @@ export const AssetDetail = ({
             tabKey="all-resources"
           >
             <AllTab
-              filters={{ common: { assetSubtreeIds: [{ value: asset.id }] } }}
+              filters={{ common: allResourcesFilter }}
               setCurrentResourceType={(type) => type && setSelectedTab(type)}
               selectedResourceExternalId={asset.externalId}
             />

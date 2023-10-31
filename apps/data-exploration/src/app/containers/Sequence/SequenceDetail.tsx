@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { SequenceInfo } from '@data-exploration/containers';
 import { useCdfUserHistoryService } from '@user-history';
+import isUndefined from 'lodash/isUndefined';
 import styled from 'styled-components/macro';
 
 import { Tabs } from '@cognite/cogs.js';
@@ -80,6 +81,15 @@ export const SequenceDetail = ({
     }
   }, [isSequenceFetched, sequence]);
 
+  const allResourcesFilter = useMemo(() => {
+    if (!sequence || isUndefined(sequence.assetId)) {
+      return {};
+    }
+    return {
+      assetSubtreeIds: [{ value: sequence.assetId }],
+    };
+  }, [sequence]);
+
   if (!isSequenceFetched) {
     return <Loader />;
   }
@@ -104,9 +114,7 @@ export const SequenceDetail = ({
       </>
     );
   }
-  const filter = {
-    assetIds: sequence.assetId ? [{ value: sequence.assetId }] : [],
-  };
+
   return (
     <SequenceDetailWrapper data-testid="sequence-detail">
       <BreadcrumbsV2 />
@@ -148,11 +156,7 @@ export const SequenceDetail = ({
             tabKey="all-resources"
           >
             <AllTab
-              filters={{
-                asset: filter,
-                file: filter,
-                sequence: filter,
-              }}
+              filters={{ common: allResourcesFilter }}
               selectedResourceExternalId={sequence.externalId}
               setCurrentResourceType={(type) => type && setSelectedTab(type)}
             />

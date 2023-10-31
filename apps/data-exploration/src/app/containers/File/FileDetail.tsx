@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { Loader, Metadata } from '@data-exploration/components';
 import { FileInfo } from '@data-exploration/containers';
 import { useCdfUserHistoryService } from '@user-history';
+import isEmpty from 'lodash/isEmpty';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Tabs, Infobar } from '@cognite/cogs.js';
@@ -118,6 +119,17 @@ export const FileDetail = ({
     }
   }, [fileInfo]);
 
+  const allResourcesFilter = useMemo(() => {
+    if (!fileInfo || !fileInfo.assetIds || isEmpty(fileInfo.assetIds)) {
+      return {};
+    }
+    return {
+      assetSubtreeIds: fileInfo.assetIds.map((id) => ({
+        value: id,
+      })),
+    };
+  }, [fileInfo]);
+
   if (isLoading) {
     return <Loader />;
   }
@@ -137,12 +149,6 @@ export const FileDetail = ({
       <>{t('FILE_ID_NOT_FOUND', `File ${fileId} not found!`, { fileId })}</>
     );
   }
-
-  const filter = {
-    assetSubtreeIds: fileInfo.assetIds
-      ? fileInfo.assetIds.map((id) => ({ value: id }))
-      : [],
-  };
 
   return (
     <FileDetailWrapper data-testid="file-detail">
@@ -208,9 +214,7 @@ export const FileDetail = ({
             tabKey="all-resources"
           >
             <AllTab
-              filters={{
-                asset: filter,
-              }}
+              filters={{ common: allResourcesFilter }}
               selectedResourceExternalId={fileInfo.externalId}
               setCurrentResourceType={(type) => type && setSelectedTab(type)}
               resourceAnnotationList={annotationList}
