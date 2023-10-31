@@ -38,7 +38,7 @@ export function ModelList({
   return (
     <ModelListElement className={className}>
       {modelFiles.map((modelFile) => (
-        <li key={modelFile.id}>
+        <li key={modelFile.id} data-testid="model-element">
           <Link
             className={modelFile.isActive ? `active` : undefined}
             role="link"

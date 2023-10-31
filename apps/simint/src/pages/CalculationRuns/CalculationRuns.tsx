@@ -217,7 +217,7 @@ export function CalculationRuns({
   };
 
   return (
-    <CalculationRunsContainer>
+    <CalculationRunsContainer data-testid="calc-run-filter-form">
       {renderFilters()}
       {renderRuns()}
     </CalculationRunsContainer>

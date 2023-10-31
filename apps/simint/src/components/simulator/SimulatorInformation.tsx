@@ -56,23 +56,23 @@ export function SimulatorInformation({
     : ``;
 
   return (
-    <SimulatorInformationContainer data-cy="simulator-information-container">
+    <SimulatorInformationContainer data-testid="simulator-information-container">
       <SimulatorInformationList
-        data-cy="simulator-information-list"
+        data-testid="simulator-information-list"
         id="simulator-info-details"
       >
         <dt>Last seen</dt>
-        <dd data-cy="last-seen">
+        <dd data-testid="last-seen">
           {formatDistanceToNow(new Date(heartbeat), { addSuffix: true })}
         </dd>
         <dt>Data set</dt>
-        <dd data-cy="data-set">{dataSetName}</dd>
+        <dd data-testid="data-set">{dataSetName}</dd>
         <dt>Connector version</dt>
-        <dd data-cy="connector-version">{connectorVersion}</dd>
+        <dd data-testid="connector-version">{connectorVersion}</dd>
         <dt>Simulator version</dt>
-        <dd data-cy="simulator-version">{simulatorVersion}</dd>
+        <dd data-testid="simulator-version">{simulatorVersion}</dd>
         <dt>License</dt>
-        <dd data-cy="license-info">
+        <dd data-testid="license-info">
           {licenseStatus}
           {licenseLastCheckedTime
             ? ` (Last check ${formatDistanceToNow(
@@ -84,7 +84,7 @@ export function SimulatorInformation({
             : ''}
         </dd>
         <dt>Connector Status</dt>
-        <dd data-cy="connector-status">
+        <dd data-testid="connector-status">
           {connectorStatus === 'RUNNING_CALCULATION' ? (
             <div>
               <StyledLoader type="Loader" />
@@ -120,15 +120,15 @@ export function SimulatorInformation({
             header="Data set details"
             key={`${simulator}-${connectorName}-dataset-details`}
           >
-            <SimulatorInformationList data-cy="simulator-information-list-details">
+            <SimulatorInformationList data-testid="simulator-information-list-details">
               <dt>Model files</dt>
-              <dd data-cy="model-files">{simulatorDetails.models}</dd>
+              <dd data-testid="model-files">{simulatorDetails.models}</dd>
               <dt>Calculation files</dt>
-              <dd data-cy="calculation-files">
+              <dd data-testid="calculation-files">
                 {simulatorDetails.calculations}
               </dd>
               <dt>Calculation run events</dt>
-              <dd data-cy="calculation-run-events">
+              <dd data-testid="calculation-run-events">
                 {simulatorDetails.calculationsRuns}
               </dd>
             </SimulatorInformationList>

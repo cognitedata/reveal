@@ -91,15 +91,26 @@ export function ModelVersionList({
         {slicedModels.map((modelFile) => (
           <CollapsePanel
             header={
-              <div className="version-header">
+              <div
+                className="version-header"
+                data-testid="model-version-collapse-header"
+              >
                 <div className="entry">
                   <div className="description">Version</div>
-                  <div className="value">{modelFile.metadata.version}</div>
+                  <div
+                    className="value"
+                    data-testid="model-version-number-value"
+                  >
+                    {modelFile.metadata.version}
+                  </div>
                 </div>
 
                 <div className="entry">
                   <div className="description">Description</div>
-                  <div className="value">
+                  <div
+                    className="value"
+                    data-testid="model-version-description-value"
+                  >
                     {modelFile.metadata.description.length >=
                     DESCRIPTION_CUTOFF_LENGTH ? (
                       <>

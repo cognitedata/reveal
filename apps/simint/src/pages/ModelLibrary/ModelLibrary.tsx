@@ -135,7 +135,7 @@ export function ModelLibrary() {
   const totalPages = getTotalPages(modelFileList);
 
   return (
-    <ModelLibraryContainer data-cy="model-library-container">
+    <ModelLibraryContainer data-testid="model-library-container">
       <ModelLibrarySidebar>
         {!isModalLibraryEmpty && (
           <div className="new-model">

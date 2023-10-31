@@ -48,7 +48,11 @@ export function CalculationRunList({
           startTime: run.startTime,
         };
         return (
-          <div className="grid-row" key={run.id}>
+          <div
+            data-testid="calculation-run-event"
+            className="grid-row"
+            key={run.id}
+          >
             <span className="simulators">
               {simulatorConfig.filter(({ key }) => key === run.source)?.[0]
                 ?.name ?? run.source}

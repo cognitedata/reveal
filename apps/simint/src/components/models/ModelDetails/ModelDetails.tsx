@@ -337,6 +337,7 @@ export function ModelDetails({
             key={tab.key}
             label={tab.label}
             tabKey={tab.key}
+            data-testid={`model-tab-${tab.key}`}
           >
             {selectedTab === 'calculations' && (
               <SegmentedControlWrapper>

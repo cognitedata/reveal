@@ -19,10 +19,10 @@ export function MenuBar() {
   const isLabelsEnabled = useSelector(selectIsLabelsEnabled);
 
   return (
-    <div data-cy="top-bar">
+    <div data-testid="top-bar">
       <TopBar>
         {isLabelsEnabled && <LabelsModal isOpen={isOpen} setOpen={setOpen} />}
-        <TopBar.Left>
+        <TopBar.Left data-testid="topbar-left">
           <TopBar.Navigation
             links={[
               {

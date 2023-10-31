@@ -89,6 +89,7 @@ export function SimulatorStatus() {
         return (
           <div
             id={`simulator-status-${index}`}
+            data-testid={`simulator-status-${index}`}
             // eslint-disable-next-line react/no-array-index-key
             key={`
         ${simulator.connectorName ?? Math.random()}

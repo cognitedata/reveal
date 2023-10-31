@@ -49,6 +49,7 @@ export function SimulatorList({
                 <div
                   className="simulator-header"
                   id={`simulator-header-${index}`}
+                  data-testid={`simulator-header-${index}`}
                 >
                   <span className="simulator">{simulatorName}</span>
                   <span className="connector">{simulator.connectorName}</span>
