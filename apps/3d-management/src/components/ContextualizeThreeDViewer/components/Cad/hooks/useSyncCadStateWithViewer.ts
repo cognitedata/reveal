@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import { useReveal } from '@cognite/reveal-react-components';
+
 import { getCogniteCadModel } from '../../../../../components/ContextualizeThreeDViewer/utils/getCogniteCadModel';
 import { refreshCadContextualizedStyledIndices } from '../../../utils/refreshCadContextualizedStyledIndices';
 import {
@@ -8,11 +10,12 @@ import {
 } from '../useCadContextualizeStore';
 
 export const useSyncCadStateWithViewer = () => {
+  const viewer = useReveal();
+
   const {
     modelId,
     revisionId,
     isModelLoaded,
-    threeDViewer,
     selectedNodeIds,
     contextualizedNodes,
     selectedNodeIdsStyleIndex,
@@ -23,7 +26,6 @@ export const useSyncCadStateWithViewer = () => {
     modelId: state.modelId,
     revisionId: state.revisionId,
     isModelLoaded: state.isModelLoaded,
-    threeDViewer: state.threeDViewer,
     selectedNodeIds: state.selectedNodeIds,
     selectedNodeIdsStyleIndex: state.selectedNodeIdsStyleIndex,
     contextualizedNodes: state.contextualizedNodes,
@@ -44,17 +46,17 @@ export const useSyncCadStateWithViewer = () => {
     if (!isModelLoaded) return;
     if (modelId === null) return;
     if (revisionId === null) return;
-    if (threeDViewer === null) return;
+
     const cadModel = getCogniteCadModel({
       modelId,
       revisionId,
-      viewer: threeDViewer,
+      viewer,
     });
     if (cadModel === undefined) return;
 
     // Reset all nodes
     cadModel.removeAllStyledNodeCollections();
-  }, [modelId, revisionId, threeDViewer, isModelLoaded]);
+  }, [modelId, revisionId, viewer, isModelLoaded]);
 
   // Update selected nodes in the viewer
   useEffect(() => {
@@ -63,12 +65,11 @@ export const useSyncCadStateWithViewer = () => {
     const updateSelectedNodes = async () => {
       if (modelId === null) return;
       if (revisionId === null) return;
-      if (threeDViewer === null) return;
 
       const cadModel = getCogniteCadModel({
         modelId,
         revisionId,
-        viewer: threeDViewer,
+        viewer,
       });
       if (cadModel === undefined) return;
 
@@ -95,7 +96,7 @@ export const useSyncCadStateWithViewer = () => {
     selectedNodeIds,
     modelId,
     revisionId,
-    threeDViewer,
+    viewer,
     isModelLoaded,
     contextualizedNodesStyleIndex,
     selectedNodeIdsStyleIndex,
@@ -108,7 +109,6 @@ export const useSyncCadStateWithViewer = () => {
     const updateContextualizedNodes = async () => {
       if (modelId === null) return;
       if (revisionId === null) return;
-      if (threeDViewer === null) return;
       if (contextualizedNodes === null) return;
 
       const contextualizedTreeIds = contextualizedNodes.map(
@@ -130,13 +130,11 @@ export const useSyncCadStateWithViewer = () => {
     contextualizedNodes,
     modelId,
     revisionId,
-    threeDViewer,
     contextualizedNodesStyleIndex,
   ]);
 
   // Sync hovered annotation with viewer.
   useEffect(() => {
-    if (threeDViewer === null) return;
     if (modelId === null) return;
 
     if (contextualizedNodes) {
@@ -165,7 +163,6 @@ export const useSyncCadStateWithViewer = () => {
     // selectedNodeIdsStyleIndex.updateSet(selectedIndex);
     contextualizedNodesStyleIndex.updateSet(contextualizedIndex);
   }, [
-    threeDViewer,
     contextualizedNodes,
     modelId,
     highlightedNodeIdsStyleIndex,

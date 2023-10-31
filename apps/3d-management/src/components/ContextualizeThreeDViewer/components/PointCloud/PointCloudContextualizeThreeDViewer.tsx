@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import styled from 'styled-components';
 
@@ -10,6 +10,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
+import { Cognite3DViewer } from '@cognite/reveal';
 import { RevealContainer } from '@cognite/reveal-react-components';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
@@ -27,16 +28,12 @@ import {
   useContextualizeThreeDViewerStore,
   setAnnotations,
   setSelectedAnnotationId,
-  setTool,
-  ToolType,
 } from '../../useContextualizeThreeDViewerStore';
 import { getCdfAnnotations } from '../../utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from '../../utils/createCdfThreeDAnnotation';
 import { getCognitePointCloudModel } from '../../utils/getCognitePointCloudModel';
 
-import { useSyncStateWithViewerPointCloud } from './hooks/useSyncStateWithViewerPointCloud';
 import { useUpdateCdfThreeDAnnotation } from './hooks/useUpdateCdfThreeDAnnotation';
-import { useZoomToAnnotation } from './hooks/useZoomToAnnotation';
 import { PointCloudRevealContent } from './PointCloudRevealContent';
 
 const fetchAnnotations = async ({
@@ -57,18 +54,14 @@ export const PointCloudContextualizeThreeDViewer = ({
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
+  const viewerRef = useRef<Cognite3DViewer | null>(null);
 
-  const {
-    isResourceSelectorOpen,
-    pendingAnnotation,
-    viewer,
-    selectedAnnotationId,
-  } = useContextualizeThreeDViewerStore((state) => ({
-    isResourceSelectorOpen: state.isResourceSelectorOpen,
-    pendingAnnotation: state.pendingAnnotation,
-    viewer: state.threeDViewer,
-    selectedAnnotationId: state.selectedAnnotationId,
-  }));
+  const { isResourceSelectorOpen, pendingAnnotation, selectedAnnotationId } =
+    useContextualizeThreeDViewerStore((state) => ({
+      isResourceSelectorOpen: state.isResourceSelectorOpen,
+      pendingAnnotation: state.pendingAnnotation,
+      selectedAnnotationId: state.selectedAnnotationId,
+    }));
 
   const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
     'COGNITE_CONTEXTUALIZE_EDITOR_RESOURCE_SELECTOR_WIDTH',
@@ -89,19 +82,14 @@ export const PointCloudContextualizeThreeDViewer = ({
     setAnnotations(annotations);
   }, [annotations]);
 
-  const onZoomToAnnotation = useZoomToAnnotation();
-  const onSelectAnnotation = (annotationId: number) => {
-    setTool(ToolType.SELECT_TOOL);
-    setSelectedAnnotationId(annotationId);
-    onZoomToAnnotation(annotationId);
-  };
-
   const mutation = useAnnotationMutation();
   const onDeleteAnnotation = (annotationId: number) => {
     mutation.mutate(annotationId);
   };
 
-  const updateCdfThreeDAnnotation = useUpdateCdfThreeDAnnotation();
+  const updateCdfThreeDAnnotation = useUpdateCdfThreeDAnnotation({
+    viewer: viewerRef.current,
+  });
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -123,6 +111,7 @@ export const PointCloudContextualizeThreeDViewer = ({
   });
 
   const saveAnnotationToCdf = (assetId: number) => {
+    const viewer = viewerRef.current;
     if (viewer === null || pendingAnnotation === null) return;
 
     const pointCloudModel = getCognitePointCloudModel({
@@ -146,8 +135,6 @@ export const PointCloudContextualizeThreeDViewer = ({
     });
   };
 
-  useSyncStateWithViewerPointCloud();
-
   return (
     <>
       <StyledSplitter
@@ -166,8 +153,10 @@ export const PointCloudContextualizeThreeDViewer = ({
               modelId={modelId}
               revisionId={revisionId}
               onDeleteAnnotation={onDeleteAnnotation}
-              onSelectAnnotation={onSelectAnnotation}
               onUpdateCdfThreeDAnnotation={updateCdfThreeDAnnotation}
+              onSetViewerRef={(viewer) => {
+                viewerRef.current = viewer;
+              }}
             />
           </RevealContainer>
         </ThreeDViewerStyled>

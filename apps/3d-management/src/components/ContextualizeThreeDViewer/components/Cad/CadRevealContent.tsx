@@ -5,7 +5,11 @@ import styled from 'styled-components';
 import { Color } from 'three';
 
 import { Button, ToolBar } from '@cognite/cogs.js';
-import { DefaultCameraManager, CogniteCadModel } from '@cognite/reveal';
+import {
+  DefaultCameraManager,
+  CogniteCadModel,
+  Cognite3DViewer,
+} from '@cognite/reveal';
 import {
   CadModelContainer,
   useReveal,
@@ -16,12 +20,14 @@ import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/c
 
 import { CadAnnotationsCard } from './CadAnnotationsCard';
 import { CadToolBar } from './CadToolBar/CadToolBar';
+import { useCadOnClickHandler } from './hooks/useCadOnClickHandler';
+import { useCadZoomToAnnotation } from './hooks/useCadZoomToAnnotation';
+import { useSyncCadStateWithViewer } from './hooks/useSyncCadStateWithViewer';
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
   setModel,
   setModelLoaded,
-  setThreeDViewer,
   useCadContextualizeStore,
 } from './useCadContextualizeStore';
 
@@ -29,14 +35,14 @@ type RevealContentProps = {
   modelId: number;
   revisionId: number;
   onDeleteAnnotation: (annotationByAssetId: number) => void;
-  onZoomToAnnotation: (annotationByAssetId: number) => void;
+  onSetViewerRef: (viewer: Cognite3DViewer) => void;
 };
 
 export const CadRevealContent = ({
   modelId,
   revisionId,
   onDeleteAnnotation,
-  onZoomToAnnotation,
+  onSetViewerRef,
 }: RevealContentProps) => {
   const viewer = useReveal();
   const { isResourceSelectorOpen, contextualizedNodes } =
@@ -44,6 +50,14 @@ export const CadRevealContent = ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       contextualizedNodes: state.contextualizedNodes,
     }));
+
+  useEffect(() => {
+    onSetViewerRef(viewer);
+  }, [viewer, onSetViewerRef]);
+
+  useSyncCadStateWithViewer();
+  useCadOnClickHandler();
+  const onZoomToAnnotation = useCadZoomToAnnotation();
 
   const handleOnClickResourceSelector = () => {
     if (isResourceSelectorOpen) {
@@ -69,10 +83,6 @@ export const CadRevealContent = ({
       mouseWheelAction: 'zoomToCursor',
     });
   };
-
-  useEffect(() => {
-    setThreeDViewer(viewer);
-  }, [viewer]);
 
   return (
     <>

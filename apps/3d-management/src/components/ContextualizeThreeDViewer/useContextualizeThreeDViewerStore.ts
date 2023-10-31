@@ -1,7 +1,7 @@
 import isEqual from 'lodash/isEqual';
 import { create } from 'zustand';
 
-import { Cognite3DViewer, PointColorType } from '@cognite/reveal';
+import { PointColorType } from '@cognite/reveal';
 import { AnnotationModel } from '@cognite/sdk';
 
 import { DEFAULT_POINT_SIZE } from '../../pages/ContextualizeEditor/constants';
@@ -33,7 +33,6 @@ export enum ToolType {
 type RootState = {
   pendingAnnotation: CubeAnnotation | null;
   isResourceSelectorOpen: boolean;
-  threeDViewer: Cognite3DViewer | null;
   tool: ToolType;
   isWireframesVisible: boolean;
   modelId: number | null;
@@ -48,7 +47,6 @@ type RootState = {
 const initialState: RootState = {
   pendingAnnotation: null,
   isResourceSelectorOpen: true,
-  threeDViewer: null,
   tool: ToolType.SELECT_TOOL,
   isWireframesVisible: true,
   modelId: null,
@@ -113,13 +111,6 @@ export const updatePendingAnnotation = (deltaAnnotation: {
       },
     };
   });
-};
-
-export const setThreeDViewer = (model: Cognite3DViewer) => {
-  useContextualizeThreeDViewerStore.setState((prevState) => ({
-    ...prevState,
-    threeDViewer: model,
-  }));
 };
 
 export const setModelLoaded = () => {

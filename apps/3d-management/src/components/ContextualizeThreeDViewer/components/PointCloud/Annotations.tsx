@@ -18,7 +18,14 @@ import { getCognitePointCloudModel } from '../../utils/getCognitePointCloudModel
 
 export const Annotations: FC = () => {
   const viewer = useReveal();
-  const annotationsView = useMemo(() => new AnnotationsView(viewer), [viewer]);
+  const annotationsView = useMemo(
+    () =>
+      new AnnotationsView({
+        clientWidth: viewer.domElement.clientWidth,
+        clientHeight: viewer.domElement.clientHeight,
+      }),
+    [viewer]
+  );
 
   const {
     annotations,

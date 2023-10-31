@@ -5,6 +5,7 @@ import {
   Intersection,
   PointerEventData,
 } from '@cognite/reveal';
+import { useReveal } from '@cognite/reveal-react-components';
 
 import { assignStylesToCadModel } from '../../../utils/assignStylesToCadModel';
 import { refreshCadContextualizedStyledIndices } from '../../../utils/refreshCadContextualizedStyledIndices';
@@ -26,10 +27,11 @@ const isCadIntersection = (
 };
 
 export const useCadOnClickHandler = () => {
+  const viewer = useReveal();
+
   const {
     modelId,
     revisionId,
-    threeDViewer,
     selectedNodeIdsList,
     contextualizedNodes,
     contextualizedNodesStyleIndex,
@@ -38,7 +40,6 @@ export const useCadOnClickHandler = () => {
   } = useCadContextualizeStore((state) => ({
     modelId: state.modelId,
     revisionId: state.revisionId,
-    threeDViewer: state.threeDViewer,
     selectedNodeIdsList: state.selectedNodeIds,
     contextualizedNodes: state.contextualizedNodes,
     contextualizedNodesStyleIndex: state.contextualizedNodesStyleIndex,
@@ -51,16 +52,14 @@ export const useCadOnClickHandler = () => {
       // TODO: Display a user friendly error message if the model is not found
       if (!modelId) return;
       if (!revisionId) return;
-      if (!threeDViewer) return;
 
-      const intersection = await threeDViewer.getIntersectionFromPixel(
+      const intersection = await viewer.getIntersectionFromPixel(
         event.offsetX,
         event.offsetY
       );
       if (!isCadIntersection(intersection)) return;
 
       const model = intersection.model;
-
       if (model === undefined) return;
 
       // if there is no styled assigned to the model, then assign it first
@@ -91,7 +90,7 @@ export const useCadOnClickHandler = () => {
     [
       modelId,
       revisionId,
-      threeDViewer,
+      viewer,
       contextualizedNodes,
       selectedNodeIdsList,
       selectedNodeIdsStyleIndex,
@@ -101,9 +100,9 @@ export const useCadOnClickHandler = () => {
   );
 
   useEffect(() => {
-    threeDViewer?.on('click', onClick);
+    viewer?.on('click', onClick);
     return () => {
-      threeDViewer?.off('click', onClick);
+      viewer?.off('click', onClick);
     };
-  }, [onClick, threeDViewer]);
+  }, [onClick, viewer]);
 };

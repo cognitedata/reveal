@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 
 import * as THREE from 'three';
 
+import { useReveal } from '@cognite/reveal-react-components';
+
 import { getCogniteCadModel } from '../../../utils/getCogniteCadModel';
 import { useCadContextualizeStore } from '../useCadContextualizeStore';
 
@@ -11,24 +13,25 @@ const FIT_CAMERA_TO_BOUNDING_BOX_RADIUS_FACTOR = 2;
 type UseZoomToAnnotationReturnType = (annotationId: number) => void;
 
 export const useCadZoomToAnnotation = (): UseZoomToAnnotationReturnType => {
-  const { threeDViewer, modelId, revisionId, contextualizedNodes } =
-    useCadContextualizeStore((state) => ({
-      threeDViewer: state.threeDViewer,
+  const viewer = useReveal();
+
+  const { modelId, revisionId, contextualizedNodes } = useCadContextualizeStore(
+    (state) => ({
       contextualizedNodes: state.contextualizedNodes,
       modelId: state.modelId,
       revisionId: state.revisionId,
-    }));
+    })
+  );
 
   const zoomToAnnotation = useCallback(
     async (annotationByAssetId: number) => {
-      if (threeDViewer === null) return;
       if (modelId === null) return;
       if (revisionId === null) return;
 
       const model = getCogniteCadModel({
         modelId,
         revisionId,
-        viewer: threeDViewer,
+        viewer,
       });
       if (model === undefined) return;
 
@@ -58,13 +61,13 @@ export const useCadZoomToAnnotation = (): UseZoomToAnnotationReturnType => {
       groupOfNodes.matrixWorld.multiply(matrix4);
       globalBox.setFromObject(groupOfNodes);
 
-      threeDViewer.fitCameraToBoundingBox(
+      viewer.fitCameraToBoundingBox(
         globalBox,
         FIT_CAMERA_TO_BOUNDING_BOX_ANIMATION_DURATION_MS,
         FIT_CAMERA_TO_BOUNDING_BOX_RADIUS_FACTOR
       );
     },
-    [contextualizedNodes, modelId, revisionId, threeDViewer]
+    [contextualizedNodes, modelId, revisionId, viewer]
   );
 
   return zoomToAnnotation;

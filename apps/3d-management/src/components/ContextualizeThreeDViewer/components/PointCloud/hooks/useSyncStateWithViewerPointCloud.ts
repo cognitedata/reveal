@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 
 import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
+import { useReveal } from '@cognite/reveal-react-components';
 
 import { ANNOTATION_RADIUS_FACTOR } from '../../../../../pages/ContextualizeEditor/constants';
 import {
@@ -42,12 +43,13 @@ const removeObjectByName = (viewer: Cognite3DViewer, name: string) => {
 };
 
 export const useSyncStateWithViewerPointCloud = () => {
+  const viewer = useReveal();
+
   const {
     annotations,
     hoveredAnnotationId,
     modelId,
     pendingAnnotation,
-    threeDViewer,
     tool,
     visualizationOptions,
     transformMode,
@@ -57,7 +59,6 @@ export const useSyncStateWithViewerPointCloud = () => {
     hoveredAnnotationId: state.hoveredAnnotationId,
     modelId: state.modelId,
     pendingAnnotation: state.pendingAnnotation,
-    threeDViewer: state.threeDViewer,
     tool: state.tool,
     visualizationOptions: state.visualizationOptions,
     transformMode: state.transformMode,
@@ -73,28 +74,22 @@ export const useSyncStateWithViewerPointCloud = () => {
   }, []);
 
   useEffect(() => {
-    if (threeDViewer === null) return;
     if (useTransformControls.current === null) {
-      useTransformControls.current = createTransformControls(threeDViewer);
+      useTransformControls.current = createTransformControls(viewer);
     }
   });
 
   useEffect(() => {
-    if (threeDViewer === null) return;
+    if (tool !== ToolType.ADD_ANNOTATION || pendingAnnotation === null) return;
 
     const onClick = async (event) => {
-      const intersection = await threeDViewer.getIntersectionFromPixel(
+      const intersection = await viewer.getIntersectionFromPixel(
         event.offsetX,
         event.offsetY
       );
-      if (
-        intersection === null ||
-        tool !== ToolType.ADD_ANNOTATION ||
-        pendingAnnotation !== null
-      ) {
-        return;
-      }
-      const distance = threeDViewer.cameraManager
+      if (intersection === null) return;
+
+      const distance = viewer.cameraManager
         .getCamera()
         .position.distanceTo(intersection.point);
       const CubeSize = distance * ANNOTATION_RADIUS_FACTOR;
@@ -112,26 +107,24 @@ export const useSyncStateWithViewerPointCloud = () => {
       };
       setPendingAnnotation(cubeAnnotation);
     };
-    threeDViewer.on('click', onClick);
+
+    viewer.on('click', onClick);
     return () => {
-      threeDViewer.off('click', onClick);
+      viewer.off('click', onClick);
     };
-  }, [threeDViewer, pendingAnnotation, tool]);
+  }, [viewer, pendingAnnotation, tool]);
 
   // sync visualizationOptions with viewer
   useEffect(() => {
-    if (threeDViewer === null) return;
-
-    for (const model of threeDViewer.models)
+    for (const model of viewer.models)
       if (model instanceof CognitePointCloudModel) {
         model.pointSize = visualizationOptions.pointSize;
         model.pointColorType = visualizationOptions.pointColor;
       }
-  }, [visualizationOptions, threeDViewer]);
+  }, [visualizationOptions, viewer]);
 
   // sync transformControls with state
   useEffect(() => {
-    if (threeDViewer === null) return;
     const transformControls = useTransformControls.current;
     if (transformControls === null) return;
     if (transformMode === null) {
@@ -143,11 +136,10 @@ export const useSyncStateWithViewerPointCloud = () => {
     transformControls.setMode(transformMode);
     transformControls.visible = true;
     transformControls.enabled = true;
-  }, [threeDViewer, useTransformControls, transformMode]);
+  }, [useTransformControls, transformMode]);
 
   // sync select tool with viewer
   useEffect(() => {
-    if (threeDViewer === null) return;
     if (modelId === null) return;
 
     if (tool !== ToolType.SELECT_TOOL) {
@@ -164,14 +156,14 @@ export const useSyncStateWithViewerPointCloud = () => {
 
     const pointCloudModel = getCognitePointCloudModel({
       modelId,
-      viewer: threeDViewer,
+      viewer,
     });
     if (pointCloudModel === undefined) return;
     const matrix4 = pointCloudModel.getCdfToDefaultModelTransformation();
     const box3 = getAnnotationAsBox3(annotation, matrix4);
     if (box3 === undefined) return;
 
-    removeObjectByName(threeDViewer, PENDING_ANNOTATION_ID);
+    removeObjectByName(viewer, PENDING_ANNOTATION_ID);
 
     const cubeAnnotation: CubeAnnotation = {
       position: box3.getCenter(new THREE.Vector3()),
@@ -182,14 +174,12 @@ export const useSyncStateWithViewerPointCloud = () => {
       ),
     };
     setPendingAnnotation(cubeAnnotation);
-  }, [threeDViewer, tool, selectedAnnotationId, annotations, modelId]);
+  }, [viewer, tool, selectedAnnotationId, annotations, modelId]);
 
   // Sync pending annotation with viewer.
   useEffect(() => {
-    if (threeDViewer === null) return;
-
     // Remove previous pending annotation(s) from the viewer.
-    removeObjectByName(threeDViewer, PENDING_ANNOTATION_ID);
+    removeObjectByName(viewer, PENDING_ANNOTATION_ID);
 
     if (tool !== ToolType.ADD_ANNOTATION && tool !== ToolType.SELECT_TOOL) {
       setPendingAnnotation(null);
@@ -222,7 +212,7 @@ export const useSyncStateWithViewerPointCloud = () => {
     );
 
     newAnnotationCube.position.copy(point);
-    addObject(threeDViewer, newAnnotationCube);
+    addObject(viewer, newAnnotationCube);
     const transformControls = useTransformControls.current;
     if (transformControls === null) return;
 
@@ -233,22 +223,15 @@ export const useSyncStateWithViewerPointCloud = () => {
     } else {
       transformControls.setMode(transformMode);
     }
-    threeDViewer.addObject3D(transformControls);
-  }, [
-    pendingAnnotation,
-    useTransformControls,
-    threeDViewer,
-    tool,
-    transformMode,
-  ]);
+    viewer.addObject3D(transformControls);
+  }, [pendingAnnotation, useTransformControls, viewer, tool, transformMode]);
 
   // Sync hovered annotation with viewer.
   useEffect(() => {
-    if (threeDViewer === null) return;
     if (modelId === null) return;
 
     // Remove previous hovered annotation(s) from the viewer.
-    removeObjectByName(threeDViewer, 'hovered-annotation');
+    removeObjectByName(viewer, 'hovered-annotation');
 
     // Add new hovered annotation(s) to the viewer.
     const annotation = annotations?.find(
@@ -258,7 +241,7 @@ export const useSyncStateWithViewerPointCloud = () => {
 
     const pointCloudModel = getCognitePointCloudModel({
       modelId,
-      viewer: threeDViewer,
+      viewer,
     });
     if (pointCloudModel === undefined) return;
 
@@ -287,6 +270,6 @@ export const useSyncStateWithViewerPointCloud = () => {
 
     box.name = HOVERING_ANNOTATION_ID;
 
-    addObject(threeDViewer, box);
-  }, [threeDViewer, annotations, modelId, hoveredAnnotationId]);
+    addObject(viewer, box);
+  }, [viewer, annotations, modelId, hoveredAnnotationId]);
 };

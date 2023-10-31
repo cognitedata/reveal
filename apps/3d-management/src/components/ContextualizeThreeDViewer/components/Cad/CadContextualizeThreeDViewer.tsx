@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import styled from 'styled-components';
 
@@ -11,6 +11,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
+import { Cognite3DViewer } from '@cognite/reveal';
 import { RevealContainer } from '@cognite/reveal-react-components';
 import {
   AssetMapping3D,
@@ -31,9 +32,6 @@ import { getCogniteCadModel } from '../../utils/getCogniteCadModel';
 import { saveCdfThreeDCadContextualization } from '../../utils/saveCdfThreeDCadContextualization';
 
 import { CadRevealContent } from './CadRevealContent';
-import { useCadOnClickHandler } from './hooks/useCadOnClickHandler';
-import { useCadZoomToAnnotation } from './hooks/useCadZoomToAnnotation';
-import { useSyncCadStateWithViewer } from './hooks/useSyncCadStateWithViewer';
 import {
   useCadContextualizeStore,
   setContextualizedNodes,
@@ -110,19 +108,18 @@ export const CadContextualizeThreeDViewer = ({
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
+  const viewerRef = useRef<Cognite3DViewer | null>(null);
 
   const {
     isResourceSelectorOpen,
     selectedNodeIds,
     isModelLoaded,
-    threeDViewer,
     model,
     selectedNodeIdsStyleIndex,
     contextualizedNodesStyleIndex,
     highlightedNodeIdsStyleIndex,
   } = useCadContextualizeStore((state) => ({
     isResourceSelectorOpen: state.isResourceSelectorOpen,
-    threeDViewer: state.threeDViewer,
     model: state.model,
     selectedNodeIds: state.selectedNodeIds,
     isModelLoaded: state.isModelLoaded,
@@ -188,8 +185,6 @@ export const CadContextualizeThreeDViewer = ({
     }
   );
 
-  const onZoomToAnnotation = useCadZoomToAnnotation();
-
   const onDeleteAnnotation = (annotationByAssetId: number) => {
     mutationDeletion.mutate({
       sdk,
@@ -210,12 +205,11 @@ export const CadContextualizeThreeDViewer = ({
     setRevisionId(revisionId);
   }, [modelId, revisionId]);
 
-  useSyncCadStateWithViewer();
-  useCadOnClickHandler();
-
   useEffect(() => {
+    const viewer = viewerRef.current;
+
+    if (!viewer) return;
     if (!isModelLoaded) return;
-    if (!threeDViewer) return;
     if (!model) return;
 
     // Gets the actual model from the viewer, even the model state is updated
@@ -225,7 +219,7 @@ export const CadContextualizeThreeDViewer = ({
     const cadModel = getCogniteCadModel({
       modelId,
       revisionId,
-      viewer: threeDViewer,
+      viewer,
     });
     if (cadModel === undefined) return;
 
@@ -241,7 +235,7 @@ export const CadContextualizeThreeDViewer = ({
     setSelectedNodeIds([]);
   }, [
     isModelLoaded,
-    threeDViewer,
+    viewerRef,
     modelId,
     model,
     revisionId,
@@ -307,7 +301,9 @@ export const CadContextualizeThreeDViewer = ({
               modelId={modelId}
               revisionId={revisionId}
               onDeleteAnnotation={onDeleteAnnotation}
-              onZoomToAnnotation={onZoomToAnnotation}
+              onSetViewerRef={(viewer) => {
+                viewerRef.current = viewer;
+              }}
             />
           </RevealContainer>
         </ThreeDViewerStyled>

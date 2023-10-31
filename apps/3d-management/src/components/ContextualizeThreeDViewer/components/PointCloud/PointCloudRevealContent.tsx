@@ -1,9 +1,13 @@
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 
 import styled from 'styled-components';
 
 import { Button, ToolBar } from '@cognite/cogs.js';
-import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
+import {
+  DefaultCameraManager,
+  CogniteModel,
+  Cognite3DViewer,
+} from '@cognite/reveal';
 import {
   useReveal,
   PointCloudContainer,
@@ -16,6 +20,7 @@ import {
   onOpenResourceSelector,
   setModelLoaded,
   setSelectedAnnotationId,
+  setTool,
   ToolType,
   useContextualizeThreeDViewerStore,
 } from '../../useContextualizeThreeDViewerStore';
@@ -23,6 +28,8 @@ import { AnnotationsCard } from '../AnnotationsCard';
 import { SelectedAnnotationBoxToolbar } from '../SelectedAnnotationToolbar';
 
 import { Annotations } from './Annotations';
+import { useSyncStateWithViewerPointCloud } from './hooks/useSyncStateWithViewerPointCloud';
+import { useZoomToAnnotation } from './hooks/useZoomToAnnotation';
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 type SelectedAnnotationToolbarProps = {
@@ -64,18 +71,18 @@ const SelectedAnnotationToolbar: FC<SelectedAnnotationToolbarProps> = ({
 
 type RevealContentProps = {
   modelId: number;
-  revisionId: number;
   onDeleteAnnotation: (annotationId: number) => void;
-  onSelectAnnotation: (annotationId: number) => void;
+  onSetViewerRef: (viewer: Cognite3DViewer) => void;
   onUpdateCdfThreeDAnnotation: () => void;
+  revisionId: number;
 };
 
 export const PointCloudRevealContent = ({
   modelId,
-  revisionId,
   onDeleteAnnotation,
-  onSelectAnnotation,
+  onSetViewerRef,
   onUpdateCdfThreeDAnnotation,
+  revisionId,
 }: RevealContentProps) => {
   const viewer = useReveal();
   const { isResourceSelectorOpen, annotations } =
@@ -84,6 +91,19 @@ export const PointCloudRevealContent = ({
       annotations: state.annotations,
       tool: state.tool,
     }));
+
+  useEffect(() => {
+    onSetViewerRef(viewer);
+  }, [viewer, onSetViewerRef]);
+
+  useSyncStateWithViewerPointCloud();
+
+  const onZoomToAnnotation = useZoomToAnnotation();
+  const onSelectAnnotation = (annotationId: number) => {
+    setTool(ToolType.SELECT_TOOL);
+    setSelectedAnnotationId(annotationId);
+    onZoomToAnnotation(annotationId);
+  };
 
   const handleModelOnLoad = (model: CogniteModel) => {
     setModelLoaded();

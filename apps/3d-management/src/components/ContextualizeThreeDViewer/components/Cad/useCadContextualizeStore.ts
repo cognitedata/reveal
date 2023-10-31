@@ -1,10 +1,6 @@
 import { create } from 'zustand';
 
-import {
-  Cognite3DViewer,
-  CogniteCadModel,
-  TreeIndexNodeCollection,
-} from '@cognite/reveal';
+import { CogniteCadModel, TreeIndexNodeCollection } from '@cognite/reveal';
 import { AssetMapping3D } from '@cognite/sdk';
 
 // TODO: Improve naming of the tools
@@ -15,7 +11,6 @@ export enum ToolType {
 
 type RootState = {
   isResourceSelectorOpen: boolean;
-  threeDViewer: Cognite3DViewer | null;
   tool: ToolType;
   modelId: number | null;
   model: CogniteCadModel | null;
@@ -31,7 +26,6 @@ type RootState = {
 
 const initialState: RootState = {
   isResourceSelectorOpen: true,
-  threeDViewer: null,
   tool: ToolType.ADD_ANNOTATION,
   modelId: null,
   model: null,
@@ -59,13 +53,6 @@ export const onCloseResourceSelector = () => {
     ...prevState,
     isResourceSelectorOpen: false,
     pendingAnnotation: null,
-  }));
-};
-
-export const setThreeDViewer = (viewer: Cognite3DViewer) => {
-  useCadContextualizeStore.setState((prevState) => ({
-    ...prevState,
-    threeDViewer: viewer,
   }));
 };
 

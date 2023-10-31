@@ -3,7 +3,6 @@ import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe';
 
-import { Cognite3DViewer } from '@cognite/reveal';
 import {
   AnnotationModel,
   AnnotationStatus,
@@ -68,10 +67,10 @@ export class AnnotationsView {
   // CONSTRUCTORS
   //==================================================
 
-  constructor(threeDViewer: Cognite3DViewer) {
+  constructor(clientRect: { clientWidth: number; clientHeight: number }) {
     const resolution = new Vector2(
-      threeDViewer.domElement.clientWidth,
-      threeDViewer.domElement.clientHeight
+      clientRect.clientWidth,
+      clientRect.clientHeight
     );
     // Create all needed materials upfront
     this.contextualizedLineMaterial = createLineMaterial(
