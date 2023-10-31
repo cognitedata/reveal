@@ -5,6 +5,7 @@ import {
   setTool,
   useContextualizeThreeDViewerStore,
 } from '../../../../useContextualizeThreeDViewerStore';
+import ToolTooltip from '../../../ToolTooltip';
 
 export const AddAnnotationButton = () => {
   const { tool } = useContextualizeThreeDViewerStore((state) => ({
@@ -12,7 +13,10 @@ export const AddAnnotationButton = () => {
   }));
 
   return (
-    <Tooltip content="Add annotation" position="right">
+    <Tooltip
+      content={<ToolTooltip label="Create" keys={['B']} />}
+      position="right"
+    >
       <Button
         icon="AddLarge"
         type="ghost"

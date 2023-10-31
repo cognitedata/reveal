@@ -12,11 +12,11 @@ export const AddContextualizationButton = () => {
   }));
 
   return (
-    <Tooltip content="Add contextualization" position="right">
+    <Tooltip content="Create" position="right">
       <Button
         icon="AddLarge"
         type="ghost"
-        aria-label="Add contextualization tool"
+        aria-label="Create tool"
         toggled={tool === ToolType.ADD_ANNOTATION}
         onClick={() => setTool(ToolType.ADD_ANNOTATION)}
       />

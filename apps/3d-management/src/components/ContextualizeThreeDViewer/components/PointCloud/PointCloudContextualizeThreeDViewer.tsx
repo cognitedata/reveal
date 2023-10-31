@@ -28,6 +28,8 @@ import {
   useContextualizeThreeDViewerStore,
   setAnnotations,
   setSelectedAnnotationId,
+  ToolType,
+  setTool,
 } from '../../useContextualizeThreeDViewerStore';
 import { getCdfAnnotations } from '../../utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from '../../utils/createCdfThreeDAnnotation';
@@ -100,6 +102,12 @@ export const PointCloudContextualizeThreeDViewer = ({
       }
       if (event.key === 'Enter') {
         updateCdfThreeDAnnotation();
+      }
+      if (event.key === 'v') {
+        setTool(ToolType.SELECT_TOOL);
+      }
+      if (event.key === 'b') {
+        setTool(ToolType.ADD_ANNOTATION);
       }
     };
 

@@ -27,7 +27,7 @@ export const SelectedAnnotationBoxToolbarContent: FC<
         <>
           <Tooltip
             key="translate"
-            content={<ToolTooltip label="Move Box" keys={['t']} />}
+            content={<ToolTooltip label="Transform" keys={['t']} />}
           >
             <Button
               icon="ResizeWidth"
@@ -39,7 +39,7 @@ export const SelectedAnnotationBoxToolbarContent: FC<
           </Tooltip>
           <Tooltip
             key="scale tooltip"
-            content={<ToolTooltip label="Scale Box" keys={['g']} />}
+            content={<ToolTooltip label="Scale" keys={['g']} />}
           >
             <Button
               key="scale"
@@ -52,9 +52,7 @@ export const SelectedAnnotationBoxToolbarContent: FC<
           </Tooltip>
           <Tooltip
             key="update annotation"
-            content={
-              <ToolTooltip label="Update Annotation Box" keys={['ENTER']} />
-            }
+            content={<ToolTooltip label="Update" keys={['ENTER']} />}
           >
             <Button
               key="scale"
@@ -67,7 +65,7 @@ export const SelectedAnnotationBoxToolbarContent: FC<
         </>
         <Tooltip
           key="scale tooltip"
-          content={<ToolTooltip label="Delete Box" keys={['DEL']} />}
+          content={<ToolTooltip label="Delete" keys={['BACKSPACE']} />}
         >
           <Button
             key="delete"

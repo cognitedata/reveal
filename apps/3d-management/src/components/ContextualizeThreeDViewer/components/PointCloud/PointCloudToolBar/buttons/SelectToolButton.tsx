@@ -5,6 +5,7 @@ import {
   setTool,
   useContextualizeThreeDViewerStore,
 } from '../../../../useContextualizeThreeDViewerStore';
+import ToolTooltip from '../../../ToolTooltip';
 
 export const SelectToolButton = () => {
   const { tool } = useContextualizeThreeDViewerStore((state) => ({
@@ -12,7 +13,10 @@ export const SelectToolButton = () => {
   }));
 
   return (
-    <Tooltip content="Select tool" position="right">
+    <Tooltip
+      content={<ToolTooltip label="Select" keys={['V']} />}
+      position="right"
+    >
       <Button
         icon="Cursor"
         type="ghost"

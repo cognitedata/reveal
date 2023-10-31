@@ -43,7 +43,7 @@ export const AddAnnotationToolBar = () => {
       <>
         <Tooltip
           key="translate"
-          content={<ToolTooltip label="Move Box" keys={['t']} />}
+          content={<ToolTooltip label="Transform" keys={['t']} />}
         >
           <Button
             key="translate tooltip"
@@ -56,7 +56,7 @@ export const AddAnnotationToolBar = () => {
         </Tooltip>
         <Tooltip
           key="scale tooltip"
-          content={<ToolTooltip label="Scale Box" keys={['g']} />}
+          content={<ToolTooltip label="Scale" keys={['g']} />}
         >
           <Button
             key="scale"
