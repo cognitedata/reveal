@@ -4,7 +4,7 @@
     "appName": "@cognite/cdf-3d-management",
     "hosting": {
       "staging": "https://cdf-3d-management-staging.web.app",
-      "preview": "https://cdf-3d-management-preview.web.app",
+      "preview": "https://cdf-3d-management-staging.web.app",
       "production": "https://cdf-3d-management-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/3d-models" }]
