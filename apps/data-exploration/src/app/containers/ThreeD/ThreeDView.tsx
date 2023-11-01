@@ -10,6 +10,7 @@ import styled from 'styled-components';
 
 import { useQueryClient } from '@tanstack/react-query';
 
+import { getLanguage } from '@cognite/cdf-i18n-utils';
 import { Colors, Flex } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
@@ -20,7 +21,10 @@ import {
   Image360Collection,
   Intersection,
 } from '@cognite/reveal';
-import { Image360HistoricalDetails } from '@cognite/reveal-react-components';
+import {
+  Image360HistoricalDetails,
+  RevealToolbar,
+} from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { EXPLORATION } from '../../constants/metrics';
@@ -52,7 +56,6 @@ import { ThreeDTitle } from './title/ThreeDTitle';
 import {
   ExpandButton,
   FocusAssetButton,
-  HelpButton,
   PointToPointMeasurementButton,
   ShareButton,
 } from './toolbar';
@@ -76,6 +79,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const useOverlays = useFlagAssetMappingsOverlays();
   const pointCloudSearchFeatureFlag = useFlagPointCloudSearch();
   const usePointsOfInterestFeatureFlag = useFlagPointsOfInterestFeature();
+  const appLanguage = getLanguage();
 
   useEffect(() => {
     if (modelId) {
@@ -415,7 +419,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                     <StyledToolBarDivider />
                     <HighQualityToggle viewer={revealViewer} />
                     <ShareButton />
-                    <HelpButton />
+                    <RevealToolbar.HelpButton fallbackLanguage={appLanguage} />
                   </StyledToolBar>
                 )}
                 <Image360HistoricalPanel
@@ -426,6 +430,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                       viewer={revealViewer}
                       image360Entity={image360Entity!}
                       onExpand={handleExpand}
+                      fallbackLanguage={appLanguage}
                     />
                   )}
                 </Image360HistoricalPanel>

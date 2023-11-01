@@ -23,7 +23,6 @@ import { EXPLORATION } from '../../../constants/metrics';
 import { trackUsage } from '../../../utils/Metrics';
 import { distancesInFeetAndMeters, fitCameraToAsset } from '../utils';
 
-export { default as HelpButton } from './help-button';
 export { default as ShareButton } from './share-button';
 
 export const HomeButton = () => {
