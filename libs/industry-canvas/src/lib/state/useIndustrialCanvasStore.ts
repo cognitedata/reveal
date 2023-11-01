@@ -530,6 +530,11 @@ const isValidAnnotation = (annotation: Annotation): boolean => {
   if (annotation.type === AnnotationType.TEXT) {
     return annotation.text.length !== 0;
   }
+  if (annotation.type === AnnotationType.ELLIPSE) {
+    return typeof annotation.radius === 'number'
+      ? annotation.radius > 0
+      : annotation.radius.x > 0 && annotation.radius.y > 0;
+  }
   return true;
 };
 
