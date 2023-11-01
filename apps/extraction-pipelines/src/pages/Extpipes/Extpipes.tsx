@@ -176,7 +176,7 @@ const Extpipes: FunctionComponent = () => {
   }, [tabKeys, t, tab]);
 
   return (
-    <StyledContainer>
+    <StyledContainer data-testid="extpipes-container">
       <CreateExtpipeModal
         visible={isCreateExtpipeModalOpen}
         close={closeCreateDialog}

@@ -9,5 +9,6 @@ describe('Extraction Pipelines home page', () => {
     cy.getBySel('extraction-pipelines-page-title')
       .should('exist')
       .contains(/Extraction pipelines/);
+    cy.get('[data-testId="extpipes-container"]');
   });
 });
