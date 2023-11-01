@@ -40,7 +40,6 @@ const FIREFOX_WARNING_TITLE = 'Firefox Detected';
 const FIREFOX_WARNING_MESSAGE =
   'Firefox is currently not supported. Please use another browser and refresh the page.';
 
-const TRACKED_EVENTS = ['NotebookCopilotEvent', 'NotebookEvent'];
 const typesafeTrack = <T extends keyof TrackingEvent>(
   eventName: string,
   payload: TrackingEvent[T]
@@ -99,10 +98,9 @@ const Home = React.forwardRef(
         }
 
         const eventData: BaseEventData = event?.data;
-        if (TRACKED_EVENTS.includes(eventData?.event)) {
-          const eventActor = eventData.event.replace('Event', '');
-          const { eventName } = event.data.data;
-          typesafeTrack(`${eventActor}.${eventName}`, event.data.data.data);
+        if (eventData?.event?.startsWith('Notebook')) {
+          const { eventName, data } = eventData.data;
+          typesafeTrack(`${eventData.event}.${eventName}`, data);
         }
 
         if (
