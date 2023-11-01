@@ -9,6 +9,7 @@ import { DASH, useTranslation } from '@data-exploration-lib/core';
 import {
   DetailedMapping,
   useDetailedMappingsByAssetIdQuery,
+  usePointcloudsByAssetId,
 } from '@data-exploration-lib/domain-layer';
 
 import { TimeDisplay } from '../TimeDisplay';
@@ -25,7 +26,7 @@ export const ThreeDModelCellLink = ({
       size="small"
       href={createLink(`/explore/threeD/${mapping.model.id}`, {
         selectedAssetId: assetId,
-        revisionId: mapping.revisionId,
+        revisionId: mapping.revision.id,
       })}
       alignVertically="left"
     >
@@ -58,7 +59,7 @@ export const ThreeDModelCellDropdown = ({
                 key={id}
                 href={createLink(`/explore/threeD/${id}`, {
                   selectedAssetId: assetId,
-                  revisionId: mapping.revisionId,
+                  revisionId: mapping.revision.id,
                 })}
               >
                 {mapping.model.name} (
@@ -85,10 +86,13 @@ export const ThreeDModelCellDropdown = ({
 };
 
 export const ThreeDModelCell = ({ assetId }: { assetId: number }) => {
-  const { data: mappings, isFetched } =
-    useDetailedMappingsByAssetIdQuery(assetId);
+  const { data: cadMappings } = useDetailedMappingsByAssetIdQuery(assetId);
 
-  if (!isFetched || !mappings?.length) {
+  const { data: pcMappings } = usePointcloudsByAssetId(assetId);
+
+  const mappings = (cadMappings ?? []).concat(pcMappings ?? []);
+
+  if (mappings.length === 0) {
     return <>{DASH}</>;
   }
 

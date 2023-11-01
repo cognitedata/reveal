@@ -41,8 +41,8 @@ const ThreeDButton: React.FC<ThreeDButtonProps> = ({
   const onClick = async () => {
     const mapping = mappings[0];
     onAddThreeD({
-      modelId: mapping.modelId,
-      revisionId: mapping.revisionId,
+      modelId: mapping.model.id,
+      revisionId: mapping.revision.id,
       initialAssetId: assetId,
     });
   };

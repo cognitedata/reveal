@@ -213,6 +213,8 @@ export const queryKeys = {
     [...queryKeys.retrieveAsset(id), 'detailed-mappings'] as const,
   retrieveThreeDModel: (id: number) =>
     [...queryKeys.all, '3d-model', id] as const,
+  retrieveAssetReverseAnnotationLookup: (assetId: number) =>
+    [...queryKeys.all, '3d-model', 'asset', assetId] as const,
   retrieveThreeDRevision: (modelId: number, revisionId: number) =>
     [
       ...queryKeys.retrieveThreeDModel(modelId),
