@@ -132,7 +132,7 @@
   },
   "tags": [],
   "pipeline": {
-    "releaseStrategy": "single-branch",
+    "releaseStrategy": "multi-branch",
     "previewPackageName": "@cognite/cdf-3d-management"
   }
 }

@@ -129,7 +129,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'vision': 'single-branch',
   'data-catalog': 'multi-branch',
   'raw-explorer': 'multi-branch',
-  '3d-management': 'single-branch',
+  '3d-management': 'multi-branch',
   'transformations': 'multi-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
