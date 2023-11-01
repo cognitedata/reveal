@@ -139,6 +139,7 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
                       : undefined
                   }
                   disabled={onSetConditionalFormattingClick !== undefined}
+                  appendTo={document.body}
                 >
                   <Menu.Item
                     iconPlacement="left"
