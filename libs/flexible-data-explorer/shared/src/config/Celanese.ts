@@ -176,17 +176,17 @@ export const celaneseConfig: ProjectConfig[] = [
           {
             externalId: 'AssetHierarchyDOM',
             space: 'EDG-COR-ALL-DMD',
-            version: '1_0_11',
-          },
-          {
-            externalId: 'LaboratoryDOM',
-            space: 'EDG-COR-ALL-DMD',
-            version: '1_0_3',
+            version: '2_1_0',
           },
           {
             externalId: 'MaintenanceDOM',
             space: 'EDG-COR-ALL-DMD',
-            version: '1_0_3',
+            version: '2_0_0',
+          },
+          {
+            externalId: 'IncidentDOM',
+            space: 'EDG-COR-ALL-DMD',
+            version: '1_0_5',
           },
           {
             externalId: 'MaterialDOM',
@@ -194,7 +194,11 @@ export const celaneseConfig: ProjectConfig[] = [
             version: '1_0_0',
           },
         ],
-        instanceSpaces: ['SAP-COR-ALL-DAT', 'REF-COR-ALL-DAT'],
+        instanceSpaces: [
+          'OEC-CLK-ALL-DAT',
+          'SAP-CLK-ALL-DAT',
+          'REF-COR-ALL-DAT',
+        ],
 
         threeDResources: [
           // Cad Models

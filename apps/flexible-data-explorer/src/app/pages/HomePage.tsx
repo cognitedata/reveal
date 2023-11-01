@@ -34,6 +34,7 @@ export const HomePage = () => {
         </AILabelsContainer>
 
         <SearchConfiguration header />
+
         <SearchBarContainer className="search-bar-container">
           <SearchBar options={SEARCH_BAR_OPTIONS} />
         </SearchBarContainer>
