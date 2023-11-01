@@ -18,6 +18,7 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
+    "newLine": "lf",
     "esModuleInterop": true,
     "declaration": true,
     "baseUrl": ".",
