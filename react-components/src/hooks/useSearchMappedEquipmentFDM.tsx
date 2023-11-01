@@ -11,7 +11,9 @@ import {
   type ViewItem,
   type Query,
   type SimpleSource,
-  type DmsUniqueIdentifier
+  type DmsUniqueIdentifier,
+  type Space,
+  type ExternalId
 } from '../utilities/FdmSDK';
 import { useSDK } from '../components/RevealContainer/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
@@ -25,6 +27,8 @@ import { type AddModelOptions } from '@cognite/reveal';
 import { isEqual } from 'lodash';
 
 export type SeachResultsWithView = { view: Source; instances: NodeItem[] };
+
+type FdmKey = `${Space}/${ExternalId}`;
 
 export const useSearchMappedEquipmentFDM = (
   query: string,
@@ -120,17 +124,14 @@ export const useAllMappedEquipmentFDM = (
 
         currentPage = await fdmSdk.queryNodesAndEdges(query);
 
-        for (const node of currentPage.items.mapped_nodes as NodeItem[]) {
-          const cleanedNode = removeEmptyProperties(node);
+        const cleanedNodes = currentPage.items.mapped_nodes.map((node) =>
+          removeEmptyProperties(node as NodeItem)
+        );
+        const cleanedNodesParents = currentPage.items.mapped_nodes_2.map((node) =>
+          removeEmptyProperties(node as NodeItem)
+        );
 
-          mappedEquipment.push(cleanedNode);
-        }
-
-        for (const node of currentPage.items.mapped_nodes_2 as NodeItem[]) {
-          const cleanedNode = removeEmptyProperties(node);
-
-          mappedEquipment.push(cleanedNode);
-        }
+        mappedEquipment.push(...cleanedNodes.concat(cleanedNodesParents));
       }
 
       return mappedEquipment;
@@ -466,11 +467,11 @@ async function filterSearchResultsByMappedTo3DModels(
 }
 
 function checkInstanceWithMappedEquipmentMaps(
-  mappedEquipmentFirstLevelMap: Record<string, EdgeItem>,
-  equipmentSecondLevelMap: Record<string, EdgeItem>,
+  mappedEquipmentFirstLevelMap: Record<FdmKey, EdgeItem>,
+  equipmentSecondLevelMap: Record<FdmKey, EdgeItem>,
   instance: NodeItem
 ): boolean {
-  const key = `${instance.space}/${instance.externalId}`;
+  const key: FdmKey = `${instance.space}/${instance.externalId}`;
   const directRelationProperties = getDirectRelationProperties(instance);
   const isMappedFirstLevel = mappedEquipmentFirstLevelMap[key] !== undefined;
   const isSecondLevelWithEdge = equipmentSecondLevelMap[key] !== undefined;
@@ -483,7 +484,7 @@ function checkInstanceWithMappedEquipmentMaps(
   if (isSecondLevelWithEdge) {
     const { space, externalId } = equipmentSecondLevelMap[key].endNode;
 
-    const secondLevelKey = `${space}/${externalId}`;
+    const secondLevelKey: FdmKey = `${space}/${externalId}`;
     const isMappedWithEdge = mappedEquipmentFirstLevelMap[secondLevelKey] !== undefined;
 
     return isMappedWithEdge;

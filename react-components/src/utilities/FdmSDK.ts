@@ -6,12 +6,13 @@ import { type CogniteClient } from '@cognite/sdk';
 import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 
 type InstanceType = 'node' | 'edge';
-
 type EdgeDirection = 'source' | 'destination';
 
 type InstanceFilter = any;
-
 type ViewPropertyReference = any;
+
+export type ExternalId = string;
+export type Space = string;
 
 export type Item = {
   instanceType: InstanceType;
@@ -26,8 +27,8 @@ export type SimpleSource = {
 } & DmsUniqueIdentifier;
 
 export type DmsUniqueIdentifier = {
-  space: string;
-  externalId: string;
+  space: Space;
+  externalId: ExternalId;
 };
 
 export type ResultSetExpression = (NodeResultSetExpression | EdgeResultSetExpression) & {
