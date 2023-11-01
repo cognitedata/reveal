@@ -10,6 +10,7 @@ import { useSelectedSiteConfig } from '@fdx/shared/hooks/useConfig';
 import { useSelectedInstanceParams } from '@fdx/shared/hooks/useParams';
 import { Instance } from '@fdx/shared/types/services';
 
+import { getLanguage } from '@cognite/cdf-i18n-utils';
 import {
   RevealContainer,
   AddReveal3DModelOptions,
@@ -26,6 +27,7 @@ interface Props {
 
 export const ThreeDContent: React.FC<Props> = ({ focusOnInstance }) => {
   const sdk = useSDK();
+  const appLanguage = getLanguage();
   const isRevealInitialized = useIsRevealInitialized();
 
   const siteConfig = useSelectedSiteConfig();
@@ -63,6 +65,7 @@ export const ThreeDContent: React.FC<Props> = ({ focusOnInstance }) => {
       sdk={sdk}
       color={defaultRevealColor}
       viewerOptions={defaultViewerOptions}
+      appLanguage={appLanguage}
     >
       <MappedEquipmentContextHandler modelsOptions={threeDModels} />
       <RevealContent

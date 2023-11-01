@@ -8,6 +8,7 @@ import { useSearchQueryParams } from '@fdx/shared/hooks/useParams';
 import { Instance } from '@fdx/shared/types/services';
 import { Vector3 } from 'three';
 
+import { getLanguage } from '@cognite/cdf-i18n-utils';
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import {
   AddResourceOptions,
@@ -51,6 +52,7 @@ export const RevealContent = ({
 }: Props) => {
   const [resourceMounted, setResourcesMounted] = useState(false);
   const [hasOriginalCadColors, setHasOriginalCadColors] = useState(false);
+  const appLanguage = getLanguage();
 
   const instance = createInstanceIfDefined(instanceExternalId, instanceSpace);
 
@@ -111,7 +113,7 @@ export const RevealContent = ({
         instanceStyling={instanceStyling}
         onResourcesAdded={handleResourcesAdded}
       />
-      {resourceMounted && <Image360Details />}
+      {resourceMounted && <Image360Details appLanguage={appLanguage} />}
       {!disablePreviewCard && <PreviewCard nodeData={selectedInstance} />}
     </>
   );
