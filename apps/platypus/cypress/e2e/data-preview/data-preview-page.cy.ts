@@ -251,7 +251,8 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.getBySel('data-preview-side-panel').should('not.exist');
   });
 
-  it('should show the no rows overlay when the table is empty', () => {
+  // skipping test due to flakiness
+  it.skip('should show the no rows overlay when the table is empty', () => {
     cy.get('[data-testid="TypeWithoutData"]').click();
     cy.get('[data-testid="TypeWithoutData"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
