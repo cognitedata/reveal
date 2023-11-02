@@ -14,7 +14,11 @@ import {
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
 
-import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
+import { useMetrics } from '../../../../hooks/useMetrics';
+import {
+  FLOATING_ELEMENT_MARGIN,
+  POINT_CLOUD_EDITOR_METRIC_PREFIX,
+} from '../../../../pages/ContextualizeEditor/constants';
 import {
   onCloseResourceSelector,
   onOpenResourceSelector,
@@ -33,7 +37,10 @@ import { useZoomToAnnotation } from './hooks/useZoomToAnnotation';
 import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 type SelectedAnnotationToolbarProps = {
-  onDeleteAnnotation: (annotationId: number) => void;
+  onDeleteAnnotation: (
+    annotationId: number,
+    metricsOptions?: { source: string }
+  ) => void;
   onUpdateCdfThreeDAnnotation: () => void;
 };
 
@@ -53,7 +60,9 @@ const SelectedAnnotationToolbar: FC<SelectedAnnotationToolbarProps> = ({
       return;
     }
     setSelectedAnnotationId(null);
-    onDeleteAnnotation(selectedAnnotationId);
+    onDeleteAnnotation(selectedAnnotationId, {
+      source: 'SelectedAnnotationToolbar.button',
+    });
   }, [selectedAnnotationId, onDeleteAnnotation]);
 
   if (tool !== ToolType.SELECT_TOOL || selectedAnnotationId === null) {
@@ -84,6 +93,7 @@ export const PointCloudRevealContent = ({
   onUpdateCdfThreeDAnnotation,
   revisionId,
 }: RevealContentProps) => {
+  const metrics = useMetrics(POINT_CLOUD_EDITOR_METRIC_PREFIX);
   const viewer = useReveal();
   const { isResourceSelectorOpen, annotations } =
     useContextualizeThreeDViewerStore((state) => ({
@@ -159,6 +169,7 @@ export const PointCloudRevealContent = ({
         annotations={annotations}
         onDeleteAnnotation={(annotation) => {
           onDeleteAnnotation(annotation.id);
+          metrics.track('Annotation.Deleted', { source: 'annotationsCard' });
         }}
         onSelectAnnotation={onSelectAnnotation}
       />

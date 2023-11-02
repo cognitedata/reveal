@@ -206,7 +206,7 @@ export const RevisionDetails = () => {
             )}`,
           },
         ]}
-        help="https://docs.cognite.com/cdf/3d/guides/3dmodels_upload.html"
+        helpUrl="https://docs.cognite.com/cdf/3d/guides/3dmodels_upload.html"
       />
 
       <Card>

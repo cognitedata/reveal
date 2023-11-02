@@ -91,7 +91,7 @@ export const useSyncStateWithViewerPointCloud = () => {
       const distance = viewer.cameraManager
         .getCamera()
         .position.distanceTo(intersection.point);
-      const CubeSize = distance * ANNOTATION_RADIUS_FACTOR;
+      const cubeSize = distance * ANNOTATION_RADIUS_FACTOR;
       const cubeAnnotation: CubeAnnotation = {
         position: {
           x: intersection.point.x,
@@ -99,9 +99,9 @@ export const useSyncStateWithViewerPointCloud = () => {
           z: intersection.point.z,
         },
         size: {
-          x: CubeSize,
-          y: CubeSize,
-          z: CubeSize,
+          x: cubeSize,
+          y: cubeSize,
+          z: cubeSize,
         },
       };
       setPendingAnnotation(cubeAnnotation);

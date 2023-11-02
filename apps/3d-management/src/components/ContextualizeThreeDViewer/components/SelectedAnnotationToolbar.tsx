@@ -18,7 +18,7 @@ interface AnnotationBoxToolbarContentProps {
   transformMode: TransformMode | null;
 }
 
-export const SelectedAnnotationBoxToolbarContent: FC<
+const SelectedAnnotationBoxToolbarContent: FC<
   AnnotationBoxToolbarContentProps
 > = ({ transformMode, onUpdateCdfThreeDAnnotation, onDeleteClicked }) => {
   return (

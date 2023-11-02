@@ -57,6 +57,7 @@ const LeftPane = styled.div`
   float: left;
   display: inline;
 `;
+
 interface PageHeaderProps {
   title: string | JSX.Element;
   subtitle?: string | JSX.Element;
@@ -64,7 +65,7 @@ interface PageHeaderProps {
   rightItem?: React.ReactElement;
   leftItem?: React.ReactElement;
   ornamentColor?: string;
-  help?: string;
+  helpUrl?: string;
 }
 
 export const PageHeader = ({
@@ -74,24 +75,24 @@ export const PageHeader = ({
   rightItem,
   leftItem,
   ornamentColor,
-  help,
+  helpUrl,
 }: PageHeaderProps) => {
-  const metrics = useMetrics('Help');
+  const metrics = useMetrics('3D');
+  const [isHelpVisible, setIsHelpVisible] = useState(false);
 
-  const [helpVisible, setHelpVisible] = useState(false);
   return (
     <div style={{ marginBottom: '22px', width: '100%' }}>
-      {help && (
+      {helpUrl && (
         <Drawer
           footer={null}
           width="60%"
           title="Cognite Docs"
-          visible={helpVisible}
-          onCancel={() => setHelpVisible(false)}
+          visible={isHelpVisible}
+          onCancel={() => setIsHelpVisible(false)}
           getContainer={getContainer}
         >
           <Iframe
-            url={help}
+            url={helpUrl}
             width="100%"
             height="100%"
             loading="eager"
@@ -99,6 +100,7 @@ export const PageHeader = ({
           />
         </Drawer>
       )}
+
       <div
         style={{
           width: '100%',
@@ -108,7 +110,7 @@ export const PageHeader = ({
         {breadcrumbs && (
           <BreadcrumbsWrapper>
             <Breadcrumbs breadcrumbs={breadcrumbs} />
-            {help && (
+            {helpUrl && (
               <Tooltip
                 title="Help"
                 placement="left"
@@ -117,11 +119,11 @@ export const PageHeader = ({
                 <Button
                   type="ghost"
                   onClick={() => {
-                    metrics.track('Clicked help', {
-                      url: help,
+                    metrics.track('Help.Clicked', {
+                      url: helpUrl,
                       projectName,
                     });
-                    setHelpVisible(true);
+                    setIsHelpVisible(true);
                   }}
                   aria-label="Help"
                   size="small"

@@ -16,7 +16,11 @@ import {
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
 
-import { FLOATING_ELEMENT_MARGIN } from '../../../../pages/ContextualizeEditor/constants';
+import { useMetrics } from '../../../../hooks/useMetrics';
+import {
+  CAD_EDITOR_METRIC_PREFIX,
+  FLOATING_ELEMENT_MARGIN,
+} from '../../../../pages/ContextualizeEditor/constants';
 
 import { CadAnnotationsCard } from './CadAnnotationsCard';
 import { CadToolBar } from './CadToolBar/CadToolBar';
@@ -44,6 +48,7 @@ export const CadRevealContent = ({
   onDeleteAnnotation,
   onSetViewerRef,
 }: RevealContentProps) => {
+  const metrics = useMetrics(CAD_EDITOR_METRIC_PREFIX);
   const viewer = useReveal();
   const { isResourceSelectorOpen, contextualizedNodes } =
     useCadContextualizeStore((state) => ({
@@ -113,6 +118,7 @@ export const CadRevealContent = ({
         annotations={contextualizedNodes}
         onDeleteAnnotation={(annotationByAssetId) => {
           onDeleteAnnotation(annotationByAssetId);
+          metrics.track('Annotation.Deleted', { source: 'AnnotationCard' });
         }}
         onZoomToAnnotation={onZoomToAnnotation}
       />

@@ -15,10 +15,12 @@ import { RevealContainer } from '@cognite/reveal-react-components';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { useMetrics } from '../../../../hooks/useMetrics';
 import {
   CONTEXTUALIZE_EDITOR_HEADER_HEIGHT,
   DEFAULT_RIGHT_SIDE_PANEL_WIDTH,
   defaultRevealColor,
+  POINT_CLOUD_EDITOR_METRIC_PREFIX,
 } from '../../../../pages/ContextualizeEditor/constants';
 import { useLocalStorage } from '../../../../utils/useLocalStorage';
 import { useAnnotationMutation } from '../../hooks/useAnnotationsMutation';
@@ -54,6 +56,7 @@ export const PointCloudContextualizeThreeDViewer = ({
   modelId,
   revisionId,
 }: ContextualizeThreeDViewerProps) => {
+  const metrics = useMetrics(POINT_CLOUD_EDITOR_METRIC_PREFIX);
   const sdk = useSDK();
   const queryClient = useQueryClient();
   const viewerRef = useRef<Cognite3DViewer | null>(null);
@@ -71,6 +74,10 @@ export const PointCloudContextualizeThreeDViewer = ({
   );
 
   useEffect(() => {
+    metrics.track('Opened');
+  }, [metrics]);
+
+  useEffect(() => {
     setModelId(modelId);
   }, [modelId]);
 
@@ -85,11 +92,15 @@ export const PointCloudContextualizeThreeDViewer = ({
   }, [annotations]);
 
   const mutation = useAnnotationMutation();
-  const onDeleteAnnotation = (annotationId: number) => {
+  const onDeleteAnnotation = (
+    annotationId: number,
+    metricsOptions?: { source: string }
+  ) => {
     if (selectedAnnotationId === annotationId) {
       setSelectedAnnotationId(null);
     }
     mutation.mutate(annotationId);
+    metrics.track('Annotation.Deleted', metricsOptions);
   };
 
   const updateCdfThreeDAnnotation = useUpdateCdfThreeDAnnotation({
@@ -109,7 +120,9 @@ export const PointCloudContextualizeThreeDViewer = ({
       if (event.key === 'Backspace') {
         if (selectedAnnotationId === null) return;
 
-        onDeleteAnnotation(selectedAnnotationId);
+        onDeleteAnnotation(selectedAnnotationId, {
+          source: 'keyboard.BACKSPACE',
+        });
         setPendingAnnotation(null);
       }
       if (event.key === 'v') {
@@ -138,7 +151,9 @@ export const PointCloudContextualizeThreeDViewer = ({
     if (pointCloudModel === undefined) return;
 
     if (selectedAnnotationId !== null) {
-      mutation.mutate(selectedAnnotationId);
+      onDeleteAnnotation(selectedAnnotationId, {
+        source: 'replacing-annotation',
+      });
     }
     createCdfThreeDAnnotation({
       sdk,
@@ -147,6 +162,8 @@ export const PointCloudContextualizeThreeDViewer = ({
       pointCloudModel,
       cubeAnnotation: pendingAnnotation,
     }).then(() => {
+      metrics.track('Annotation.Created');
+
       // Invalidate to refetch
       queryClient.invalidateQueries(['annotations', sdk, modelId]);
     });

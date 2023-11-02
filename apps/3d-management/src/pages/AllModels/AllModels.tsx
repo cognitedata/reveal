@@ -199,7 +199,7 @@ export const AllModels = () => {
       <PageHeader
         title={APP_TITLE}
         breadcrumbs={[{ title: APP_TITLE, path: '/3d-models' }]}
-        help="https://docs.cognite.com/cdf/3d/"
+        helpUrl="https://docs.cognite.com/cdf/3d/"
         rightItem={
           <TableOperations>
             <PermissioningHintWrapper hasPermission={showAddModelButton}>

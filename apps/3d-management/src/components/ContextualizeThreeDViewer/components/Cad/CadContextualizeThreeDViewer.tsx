@@ -20,7 +20,9 @@ import {
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { useMetrics } from '../../../../hooks/useMetrics';
 import {
+  CAD_EDITOR_METRIC_PREFIX,
   CONTEXTUALIZE_EDITOR_HEADER_HEIGHT,
   DEFAULT_RIGHT_SIDE_PANEL_WIDTH,
   defaultRevealColor,
@@ -106,6 +108,7 @@ export const CadContextualizeThreeDViewer = ({
   modelId,
   revisionId,
 }: ContextualizeThreeDViewerProps) => {
+  const metrics = useMetrics(CAD_EDITOR_METRIC_PREFIX);
   const sdk = useSDK();
   const queryClient = useQueryClient();
   const viewerRef = useRef<Cognite3DViewer | null>(null);
@@ -140,6 +143,15 @@ export const CadContextualizeThreeDViewer = ({
     fetchContextualizedNodes
   );
 
+  useEffect(() => {
+    metrics.track('Opened');
+  }, [metrics]);
+
+  useEffect(() => {
+    setModelId(modelId);
+    setRevisionId(revisionId);
+  }, [modelId, revisionId]);
+
   const mutation = useMutation(
     (params: {
       sdk: CogniteClient;
@@ -150,6 +162,9 @@ export const CadContextualizeThreeDViewer = ({
     }) => saveCdfThreeDCadContextualization(params),
     {
       onSuccess: () => {
+        metrics.track('Annotation.Created', {
+          numNodes: selectedNodeIds.length,
+        });
         queryClient.invalidateQueries([
           'cadContextualization',
           sdk,
@@ -175,6 +190,7 @@ export const CadContextualizeThreeDViewer = ({
       }),
     {
       onSuccess: () => {
+        metrics.track('Annotation.Deleted');
         queryClient.invalidateQueries([
           'cadContextualization',
           sdk,
@@ -199,11 +215,6 @@ export const CadContextualizeThreeDViewer = ({
 
     setContextualizedNodes(contextualizedNodes);
   }, [contextualizedNodes]);
-
-  useEffect(() => {
-    setModelId(modelId);
-    setRevisionId(revisionId);
-  }, [modelId, revisionId]);
 
   useEffect(() => {
     const viewer = viewerRef.current;

@@ -331,7 +331,7 @@ export const AllModels = () => {
     <AllModelsWrapper>
       <BreadcrumbsThreeDManagement
         breadcrumbs={[{ title: APP_TITLE, path: '/3d-models' }]}
-        help="https://docs.cognite.com/cdf/3d/"
+        helpUrl="https://docs.cognite.com/cdf/3d/"
       ></BreadcrumbsThreeDManagement>
       <TabsContainer>
         <ResourceTypeTabs
