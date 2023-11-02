@@ -202,6 +202,7 @@ export const IndustryCanvasHomePage = () => {
   const renderNewCanvasButton = () => (
     <div>
       <Button
+        data-testid="create-new-canvas-button"
         icon="Add"
         iconPlacement="left"
         type="primary"

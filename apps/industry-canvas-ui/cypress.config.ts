@@ -8,4 +8,7 @@ export default defineConfig({
     chromeWebSecurity: true,
   },
   env: process.env,
+  video: true,
+  viewportWidth: 1920,
+  viewportHeight: 1080,
 });

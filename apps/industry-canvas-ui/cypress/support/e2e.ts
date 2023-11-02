@@ -22,6 +22,7 @@ import {
   AADPassword,
   project,
 } from '../config';
+import './industry-canvas-commands';
 
 // The code bellow works perfectly fine, there is some weird linting
 // @ts-ignore
@@ -29,6 +30,14 @@ Cypress.on('uncaught:exception', (err) => {
   // returning false here prevents Cypress from
   // failing the test
   if (err.message.includes('cluster not found')) {
+    return false;
+  }
+  // this can be removed after resolve AH-2142
+  if (
+    err.message.includes(
+      `Cannot read properties of undefined (reading 'setAttrs')`
+    )
+  ) {
     return false;
   }
 });
