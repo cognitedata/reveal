@@ -6,6 +6,7 @@ import {
   TableProps,
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
+import noop from 'lodash/noop';
 
 import { CogniteEvent } from '@cognite/sdk';
 
@@ -16,9 +17,11 @@ import { useEventsMetadataColumns } from '../Search';
 
 import { Wrapper } from './elements';
 
-export const EventDetailsTable = (
-  props: Omit<TableProps<InternalEventsData>, 'columns'>
-) => {
+export const EventDetailsTable = ({
+  onRowClick = noop,
+  onRowSelection = noop,
+  ...props
+}: Omit<TableProps<InternalEventsData>, 'columns'>) => {
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
   const { metadataColumns, setMetadataKeyQuery } = useEventsMetadataColumns();
@@ -45,6 +48,18 @@ export const EventDetailsTable = (
 
   const hiddenColumns = getHiddenColumns(columns, ['type', 'description']);
 
+  const onRowClickHandler = (row: InternalEventsData) => {
+    if (props.enableSelection) {
+      onRowClick(row);
+      return;
+    }
+
+    onRowSelection(
+      (old) => ({ ...old, [String(row.id)]: true }),
+      [{ id: row.id, externalId: row.externalId, type: 'event' }]
+    );
+  };
+
   return (
     <Wrapper>
       <Table<InternalEventsData>
@@ -54,6 +69,7 @@ export const EventDetailsTable = (
         onChangeSearchInput={setMetadataKeyQuery}
         showLoadButton
         enableSelection
+        onRowClick={onRowClickHandler}
         {...props}
       />
     </Wrapper>

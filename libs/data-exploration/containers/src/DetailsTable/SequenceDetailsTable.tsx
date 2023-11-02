@@ -6,6 +6,7 @@ import {
   TableProps,
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
+import noop from 'lodash/noop';
 
 import { Sequence } from '@cognite/sdk';
 
@@ -16,9 +17,11 @@ import { useSequencesMetadataColumns } from '../Search';
 
 import { Wrapper } from './elements';
 
-export const SequenceDetailsTable = (
-  props: Omit<TableProps<InternalSequenceData>, 'columns'>
-) => {
+export const SequenceDetailsTable = ({
+  onRowClick = noop,
+  onRowSelection = noop,
+  ...props
+}: Omit<TableProps<InternalSequenceData>, 'columns'>) => {
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
 
@@ -43,6 +46,18 @@ export const SequenceDetailsTable = (
   );
   const hiddenColumns = getHiddenColumns(columns, ['name', 'description']);
 
+  const onRowClickHandler = (row: InternalSequenceData) => {
+    if (props.enableSelection) {
+      onRowClick(row);
+      return;
+    }
+
+    onRowSelection(
+      (old) => ({ ...old, [String(row.id)]: true }),
+      [{ id: row.id, externalId: row.externalId, type: 'sequence' }]
+    );
+  };
+
   return (
     <Wrapper>
       <Table<InternalSequenceData>
@@ -52,6 +67,7 @@ export const SequenceDetailsTable = (
         onChangeSearchInput={setMetadataKeyQuery}
         showLoadButton
         enableSelection
+        onRowClick={onRowClickHandler}
         {...props}
       />
     </Wrapper>

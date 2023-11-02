@@ -6,6 +6,7 @@ import {
   TableProps,
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
+import noop from 'lodash/noop';
 
 import { FileInfo } from '@cognite/sdk';
 
@@ -17,9 +18,11 @@ import {
 
 import { Wrapper } from './elements';
 
-export const FileDetailsTable = (
-  props: Omit<TableProps<InternalDocument | FileInfo>, 'columns'>
-) => {
+export const FileDetailsTable = ({
+  onRowClick = noop,
+  onRowSelection = noop,
+  ...props
+}: Omit<TableProps<InternalDocument | FileInfo>, 'columns'>) => {
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
   const { data: metadataKeys } = useDocumentsMetadataKeys();
@@ -50,6 +53,17 @@ export const FileDetailsTable = (
   );
   const hiddenColumns = getHiddenColumns(columns, ['name', 'content']);
 
+  const onRowClickHandler = (row: InternalDocument | FileInfo) => {
+    if (props.enableSelection) {
+      return onRowClick(row);
+    }
+
+    onRowSelection(
+      (old) => ({ ...old, [String(row.id)]: true }),
+      [{ id: row.id, externalId: row.externalId, type: 'file' }]
+    );
+  };
+
   return (
     <Wrapper>
       <Table
@@ -58,6 +72,7 @@ export const FileDetailsTable = (
         columnSelectionLimit={4}
         showLoadButton
         enableSelection
+        onRowClick={onRowClickHandler}
         {...props}
       />
     </Wrapper>

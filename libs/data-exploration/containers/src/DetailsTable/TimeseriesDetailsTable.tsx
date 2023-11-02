@@ -6,6 +6,7 @@ import {
   TableProps,
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
+import noop from 'lodash/noop';
 
 import { Timeseries } from '@cognite/sdk';
 
@@ -17,9 +18,11 @@ import { TimeseriesLastReading } from '../Timeseries';
 
 import { Wrapper } from './elements';
 
-export const TimeseriesDetailsTable = (
-  props: Omit<TableProps<InternalTimeseriesData>, 'columns'>
-) => {
+export const TimeseriesDetailsTable = ({
+  onRowClick = noop,
+  onRowSelection = noop,
+  ...props
+}: Omit<TableProps<InternalTimeseriesData>, 'columns'>) => {
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
 
@@ -50,6 +53,18 @@ export const TimeseriesDetailsTable = (
   }, [metadataColumns]);
   const hiddenColumns = getHiddenColumns(columns, ['name', 'description']);
 
+  const onRowClickHandler = (row: InternalTimeseriesData) => {
+    if (props.enableSelection) {
+      onRowClick(row);
+      return;
+    }
+
+    onRowSelection(
+      (old) => ({ ...old, [String(row.id)]: true }),
+      [{ id: row.id, externalId: row.externalId, type: 'timeSeries' }]
+    );
+  };
+
   return (
     <Wrapper>
       <Table<InternalTimeseriesData>
@@ -59,6 +74,7 @@ export const TimeseriesDetailsTable = (
         onChangeSearchInput={setMetadataKeyQuery}
         showLoadButton
         enableSelection
+        onRowClick={onRowClickHandler}
         {...props}
       />
     </Wrapper>

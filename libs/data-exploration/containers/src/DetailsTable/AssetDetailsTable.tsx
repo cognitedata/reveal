@@ -6,6 +6,7 @@ import {
   TableProps,
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
+import noop from 'lodash/noop';
 
 import { getHiddenColumns, useTranslation } from '@data-exploration-lib/core';
 import {
@@ -17,9 +18,11 @@ import { useAssetsMetadataColumns } from '../Search';
 
 import { Wrapper } from './elements';
 
-export const AssetDetailsTable = (
-  props: Omit<TableProps<InternalAssetData>, 'columns'>
-) => {
+export const AssetDetailsTable = ({
+  onRowClick = noop,
+  onRowSelection = noop,
+  ...props
+}: Omit<TableProps<InternalAssetData>, 'columns'>) => {
   const { t } = useTranslation();
   const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
   const tableColumns = getTableColumns(t);
@@ -44,6 +47,18 @@ export const AssetDetailsTable = (
   );
   const hiddenColumns = getHiddenColumns(columns, ['name', 'description']);
 
+  const onRowClickHandler = (row: InternalAssetData) => {
+    if (props.enableSelection) {
+      onRowClick(row);
+      return;
+    }
+
+    onRowSelection(
+      (old) => ({ ...old, [String(row.id)]: true }),
+      [{ id: row.id, externalId: row.externalId, type: 'asset' }]
+    );
+  };
+
   return (
     <Wrapper>
       <Table<InternalAssetData>
@@ -52,8 +67,8 @@ export const AssetDetailsTable = (
         hiddenColumns={hiddenColumns}
         columnSelectionLimit={4}
         showLoadButton
-        enableSelection
         onChangeSearchInput={setMetadataKeyQuery}
+        onRowClick={onRowClickHandler}
       />
     </Wrapper>
   );
