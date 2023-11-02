@@ -16,7 +16,6 @@ import {
   getSelectedIdpDetails,
   useIdp,
   useLoginInfo,
-  useValidatedLegacyProjects,
 } from '@cognite/login-utils';
 
 import { useTranslation } from '../../../../i18n';
@@ -27,13 +26,10 @@ export const ProjectDropdown = () => {
   const { internalId } = getSelectedIdpDetails() ?? {};
   const { data: loginInfo, isFetched: didFetchLoginInfo } = useLoginInfo();
 
-  const { data: legacyProjectsByCluster } = useValidatedLegacyProjects(true);
-  const { validLegacyProjects = [] } = legacyProjectsByCluster || {};
-
   const { data: idp } = useIdp(internalId);
   const loginFlowsByCluster = useMemo(() => {
-    return getLoginFlowsByCluster(loginInfo, idp, validLegacyProjects);
-  }, [idp, loginInfo, validLegacyProjects]);
+    return getLoginFlowsByCluster(idp);
+  }, [idp]);
 
   const handleGoBackToLoginPage = () => {
     window.location.href = '/';
@@ -64,7 +60,6 @@ export const ProjectDropdown = () => {
           key={cluster}
           idp={loginFlowsByCluster[cluster].idp}
           isMultiCluster={Object.keys(loginFlowsByCluster).length > 1}
-          legacyProjects={loginFlowsByCluster[cluster].legacyProjects}
         />
       ))}
       <Menu.Divider />

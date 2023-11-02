@@ -1,7 +1,7 @@
 import React from 'react';
 
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import { DataExplorationProvider, Flow } from '@cognite/data-exploration';
+import { DataExplorationProvider } from '@cognite/data-exploration';
 
 import { ids } from './cogs-variables';
 import { useUserInformation } from './hooks/useUserInformation';
@@ -9,11 +9,15 @@ import { useUserInformation } from './hooks/useUserInformation';
 export const DataExplorationWrapper = ({ children }: { children: any }) => {
   const { flow } = getFlow();
   const { data: userInfo } = useUserInformation();
+
+  if (!flow) {
+    throw new Error('Flow is not defined');
+  }
+
   return (
     <DataExplorationProvider
-      flow={flow as Flow}
+      flow={flow}
       userInfo={userInfo}
-      // @ts-ignore:next-line
       sdk={sdk}
       styleScopeId={ids.styleScope}
       overrideURLMap={{

@@ -10,10 +10,7 @@ import {
   DomainResponse,
   IDPResponse,
   KeycloakResponse,
-  LegacyProject,
   LoginInfoError,
-  ValidatedLegacyProject,
-  ValidatedLegacyProjectsQueryReturnType,
 } from '../types';
 import {
   getAADB2CToken,
@@ -25,8 +22,6 @@ import {
   getPca,
   getProjects,
   getUserManager,
-  groupLegacyProjectsByValidationStatus,
-  validateLegacyProject,
   getDlc,
   cogIdpAsResponse,
   cogIdpInternalId,
@@ -49,12 +44,6 @@ import { getKeycloakQueryKey, useKeycloakProjects } from './keycloak';
 
 const getLoginInfoQueryKey = () => [BASE_QUERY_KEY, 'login-info'];
 const getIdpQueryKey = (...args: string[]) => [BASE_QUERY_KEY, 'idp', ...args];
-const getValidatedLegacyProjectKey = (projectName: string, cluster: string) => [
-  BASE_QUERY_KEY,
-  'validated-legacy-project',
-  projectName,
-  cluster,
-];
 
 export const useLoginInfo = (
   options: { enabled: boolean } = { enabled: true }
@@ -297,65 +286,3 @@ export const useIdpProjectsFromAllClusters = (
     tokenResponse.isError ? { ...tokenResponse, data: null } : projects[i]
   );
 };
-
-export function useValidatedLegacyProjects(
-  shouldGroupProjects: false
-): ValidatedLegacyProjectsQueryReturnType<false>;
-export function useValidatedLegacyProjects(
-  shouldGroupProjects: true
-): ValidatedLegacyProjectsQueryReturnType<true>;
-export function useValidatedLegacyProjects(
-  shouldGroupProjects: boolean
-):
-  | ValidatedLegacyProjectsQueryReturnType<false>
-  | ValidatedLegacyProjectsQueryReturnType<true> {
-  const {
-    data: loginInfo,
-    error: loginInfoError,
-    isFetched: isLoginInfoFetched,
-  } = useLoginInfo();
-  const { legacyProjects } = loginInfo ?? {
-    legacyProjects: [] as LegacyProject[],
-  };
-
-  const queries = useQueries({
-    queries: legacyProjects.map((legacyProject) => ({
-      queryKey: getValidatedLegacyProjectKey(
-        legacyProject.projectName,
-        legacyProject.cluster
-      ),
-      queryFn: () => validateLegacyProject(legacyProject),
-      enabled: isLoginInfoFetched,
-    })),
-  });
-
-  const isFetched = queries.every((query) => query.isFetched);
-  const isFetching = queries.some((query) => query.isFetching);
-  const isLoading = queries.some((query) => query.isLoading);
-
-  const data = isFetched
-    ? (queries
-        .map((query) => query.data)
-        .filter(Boolean) as ValidatedLegacyProject[])
-    : [];
-
-  if (shouldGroupProjects) {
-    return {
-      data: groupLegacyProjectsByValidationStatus(data),
-      error: loginInfoError!,
-      isError: !!loginInfoError,
-      isFetched,
-      isFetching,
-      isLoading,
-    };
-  }
-
-  return {
-    data: data,
-    error: loginInfoError!,
-    isError: !!loginInfoError,
-    isFetched,
-    isFetching,
-    isLoading,
-  };
-}

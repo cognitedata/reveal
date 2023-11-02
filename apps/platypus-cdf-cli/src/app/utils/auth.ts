@@ -14,10 +14,6 @@ export const getAuthToken = (arg: ProjectConfig & BaseArgs) => async () => {
   const baseUrl = `https://${arg.cluster}.cognitedata.com`;
 
   switch (arg.authType) {
-    case AUTH_TYPE.APIKEY: {
-      DEBUG('Getting token via APIKEY');
-      return arg.apiKey;
-    }
     case AUTH_TYPE.PKCE: {
       DEBUG('Getting token via PKCE');
       try {

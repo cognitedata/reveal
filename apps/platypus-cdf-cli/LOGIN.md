@@ -9,7 +9,6 @@ We namely support these login methods:
 - Interactive Login - PKCE (for normal users)
 - Device Code (for normal users on machines without browsers)
 - Client Secret / Machine Tokens (for Machines)
-- API-KEY or Legacy (_not recommended_)
 
 ## Interactive Login - PKCE
 
@@ -104,12 +103,3 @@ Please make sure you have added your app registration to the correct groups for 
 
 Please reach out in [Cognite Hub](https://hub.cognite.com) or `#topic-templates` in slack!
 
-## **Legacy Auth** is supported (but not-recomended), to use legacy auth with `API_KEY` please use the following command
-
-`cdf login [project_name] --auth-type=legacy --api-key=<api_key>`
-
-alternatively you can also use
-
-`API_KEY=<api_key> cdf login [project_name] --auth-type=legacy`
-
-> by default `[project_name]` is set to `platypus`

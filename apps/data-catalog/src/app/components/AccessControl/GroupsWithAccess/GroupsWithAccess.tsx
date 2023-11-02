@@ -13,7 +13,6 @@ import {
 interface GroupsWithAccessProps {
   dataSetId: number;
   groups: Group[];
-  isOidcEnv: boolean;
 }
 
 interface CapShape {

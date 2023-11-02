@@ -9,7 +9,6 @@ import { getAllSetOwnersFromGroups } from '../../../utils';
 interface OwnersProps {
   dataSetId: number;
   groups: Group[];
-  isOidcEnv: boolean;
 }
 
 const Owners = (props: OwnersProps) => {

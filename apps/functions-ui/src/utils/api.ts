@@ -100,17 +100,15 @@ export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
 export const createFunctionCall = async ({
   id,
   data,
-  isOIDC,
 }: {
   id: number;
   data: any;
-  isOIDC?: boolean;
 }): Promise<CallResponse> => {
   if (!id) {
     throw new Error('id missing');
   }
 
-  const { nonce } = isOIDC && (await createSession());
+  const { nonce } = await createSession();
   return sdk
     .post(`/api/v1/projects/${getProject()}/functions/${id}/call`, {
       data: { data: data || {}, nonce },
@@ -278,9 +276,4 @@ export const createSession = (clientCredentials?: {
       },
     })
     .then((response) => response?.data.items[0]);
-};
-
-export const isOIDCFlow = () => {
-  const { flow } = getFlow();
-  return flow !== 'COGNITE_AUTH';
 };

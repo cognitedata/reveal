@@ -3,7 +3,7 @@ import React, { useState, useEffect, SyntheticEvent } from 'react';
 import ErrorFeedback from '@functions-ui/components/Common/atoms/ErrorFeedback';
 import FunctionCallResponse from '@functions-ui/components/FunctionCallResponse';
 import FunctionCallStatus from '@functions-ui/components/FunctionCallStatus';
-import { createFunctionCall, isOIDCFlow } from '@functions-ui/utils/api';
+import { createFunctionCall } from '@functions-ui/utils/api';
 import { useCall, useFunction } from '@functions-ui/utils/hooks';
 import { callsKey, sortFunctionKey } from '@functions-ui/utils/queryKeys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -108,7 +108,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
     e.stopPropagation();
     const formattedInputData =
       inputData === '' ? undefined : JSON.parse(inputData);
-    createCall({ id, data: formattedInputData, isOIDC: isOIDCFlow() });
+    createCall({ id, data: formattedInputData });
   };
 
   return (

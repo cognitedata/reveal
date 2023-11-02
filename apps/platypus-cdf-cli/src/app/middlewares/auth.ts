@@ -83,10 +83,6 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
       arg.authType = AUTH_TYPE.PKCE;
       arg['auth-type'] = AUTH_TYPE.PKCE;
 
-      if (arg.apiKey) {
-        arg.authType = AUTH_TYPE.APIKEY;
-        arg['auth-type'] = AUTH_TYPE.APIKEY;
-      }
       if (arg.clientSecret) {
         arg.authType = AUTH_TYPE.CLIENT_SECRET;
         arg['auth-type'] = AUTH_TYPE.CLIENT_SECRET;
@@ -137,7 +133,6 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
       [AUTH_CONFIG.TENANT]: projectConfig.tenant,
       [AUTH_CONFIG.PROJECT]: projectConfig.project,
       [AUTH_CONFIG.AUTH_TYPE]: projectConfig.authType,
-      [AUTH_CONFIG.API_KEY]: projectConfig.apiKey,
     });
 
     setCogniteSDKClient(client);

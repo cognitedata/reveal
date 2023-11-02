@@ -267,7 +267,7 @@ const cleanupBody = (body?: any) => {
 };
 
 /**
- * This hook uses the groups API for legacy auth flow and token/inspect for OIDC.
+ * This hook uses the token/inspect for OIDC.
  * It returns false until the groups are fetched. You can use `isLoading` or
  * `isFetching` booleans to check loading state.
  *

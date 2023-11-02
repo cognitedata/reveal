@@ -1,6 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
 
-import { AUTH_TYPE, CONSTANTS } from '../constants';
+import { CONSTANTS } from '../constants';
 import { BaseArgs, ProjectConfig } from '../types';
 
 import { getAuthToken } from './auth';
@@ -14,7 +14,7 @@ export const setCogniteSDKClient = (newClient: CogniteClient) => {
 };
 
 export const createSdkClient = (authArgs: ProjectConfig & BaseArgs) => {
-  const { cluster, authType, project } = authArgs;
+  const { cluster, project } = authArgs;
   const baseUrl = `https://${cluster}.cognitedata.com`;
   const appId = CONSTANTS.APP_ID;
 
@@ -29,8 +29,8 @@ export const createSdkClient = (authArgs: ProjectConfig & BaseArgs) => {
     : new CogniteClient({
         appId,
         project,
-        baseUrl: authType === AUTH_TYPE.APIKEY ? '' : baseUrl,
-        apiKeyMode: authType === AUTH_TYPE.APIKEY,
+        baseUrl: baseUrl,
+        apiKeyMode: false,
         getToken: getAuthToken(authArgs),
       });
 

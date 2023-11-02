@@ -5,7 +5,6 @@ import { useTranslation } from '../../common/i18n';
 import {
   ContentWrapper,
   CREATE_GROUP_ACCESS_DOC,
-  isOidcEnv,
   LoaderWrapper,
 } from '../../utils';
 
@@ -19,7 +18,6 @@ interface AccessControlProps {
 
 const AccessControl = ({ dataSetId, writeProtected }: AccessControlProps) => {
   const { t } = useTranslation();
-  const isOidc = isOidcEnv();
 
   const { groups = [], isLoading } = useCdfGroups();
 
@@ -37,16 +35,12 @@ const AccessControl = ({ dataSetId, writeProtected }: AccessControlProps) => {
         <>
           <Title level={4}>{t('access-control-owners-of-this-data-set')}</Title>
           <Body level={2}>{t('access-control-p1')}</Body>
-          <Owners dataSetId={dataSetId} groups={groups} isOidcEnv={isOidc} />
+          <Owners dataSetId={dataSetId} groups={groups} />
           <br />
         </>
       )}
       <Title level={4}>{t('access-control-groups-with-access-scoped')}</Title>
-      <GroupsWithAccess
-        dataSetId={dataSetId}
-        groups={groups ?? []}
-        isOidcEnv={isOidc}
-      />
+      <GroupsWithAccess dataSetId={dataSetId} groups={groups ?? []} />
       <Body level={2}>
         {t('access-control-p2')}{' '}
         <a

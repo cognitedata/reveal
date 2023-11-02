@@ -15,7 +15,6 @@ import { Icon } from '@cognite/cogs.js';
 import {
   FileContextualizationContextProvider,
   DataExplorationProvider,
-  Flow,
 } from '@cognite/data-exploration';
 
 import { ids } from '../../cogs-variables';
@@ -76,13 +75,17 @@ export default function App() {
     trackUsage('App.navigation');
   }, [location]);
 
+  if (!flow) {
+    throw new Error('Flow is not defined');
+  }
+
   return (
     <Suspense fallback={<Icon type="Loader" />}>
       <FileContextualizationContextProvider>
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>
             <DataExplorationProvider
-              flow={flow as Flow}
+              flow={flow}
               userInfo={userInfo}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore:next-line

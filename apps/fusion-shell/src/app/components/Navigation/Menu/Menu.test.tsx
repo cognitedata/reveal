@@ -93,7 +93,7 @@ describe('Menu', () => {
       .spyOn(featureFlags, 'useFlag')
       .mockImplementation(mockUseFlagToHideTag);
     renderWithQueryClient(
-      <SectionWrapper flow="COGNITE_AUTH" section={mockSection} />
+      <SectionWrapper flow="AZURE_AD" section={mockSection} />
     );
     const experimental = screen.queryByText('Preview');
     expect(experimental).toBeFalsy();
@@ -104,7 +104,7 @@ describe('Menu', () => {
       .spyOn(featureFlags, 'useFlag')
       .mockImplementation(mockUseFlagToShowTag);
     renderWithQueryClient(
-      <SectionWrapper flow="COGNITE_AUTH" section={mockSection} />
+      <SectionWrapper flow="AZURE_AD" section={mockSection} />
     );
     const experimental = screen.queryAllByText('Preview');
     expect(experimental).toBeTruthy();

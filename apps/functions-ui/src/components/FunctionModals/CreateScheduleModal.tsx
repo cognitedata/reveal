@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import {
-  createSchedule as createScheduleApi,
-  isOIDCFlow,
-} from '@functions-ui/utils/api';
+import { createSchedule as createScheduleApi } from '@functions-ui/utils/api';
 import { allSchedulesKey } from '@functions-ui/utils/queryKeys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, Form, Input, Alert, notification } from 'antd';
@@ -64,8 +61,6 @@ export default function CreateScheduleModal({
   const [clientSecret, setClientSecret] = useState('');
   const [data, setData] = useState('');
 
-  const isOIDC = isOIDCFlow();
-
   const handleScheduleNameChange = (evt: { target: { value: string } }) => {
     setScheduleName({ value: evt.target.value, touched: true });
   };
@@ -121,7 +116,6 @@ export default function CreateScheduleModal({
   };
 
   const canBeSubmitted =
-    (isOIDCFlow() || !!externalId) &&
     isValidScheduleName(scheduleName.value) &&
     isValidCronExpression(cronExpression.value) &&
     isValidDescription(description) &&
@@ -197,34 +191,26 @@ export default function CreateScheduleModal({
               allowClear
             />
           </Form.Item>
-          {isOIDC && (
-            <>
-              <Form.Item
-                label="Client ID"
-                required
-                style={{ fontWeight: 'bold' }}
-              >
-                <Input
-                  name="clientId"
-                  value={clientId}
-                  onChange={handleClientIdChange}
-                  allowClear
-                />
-              </Form.Item>
-              <Form.Item
-                label="Client Secret"
-                required
-                style={{ fontWeight: 'bold' }}
-              >
-                <Input.Password
-                  name="clientSecret"
-                  value={clientSecret}
-                  onChange={handleClientSecretChange}
-                  allowClear
-                />
-              </Form.Item>
-            </>
-          )}
+          <Form.Item label="Client ID" required style={{ fontWeight: 'bold' }}>
+            <Input
+              name="clientId"
+              value={clientId}
+              onChange={handleClientIdChange}
+              allowClear
+            />
+          </Form.Item>
+          <Form.Item
+            label="Client Secret"
+            required
+            style={{ fontWeight: 'bold' }}
+          >
+            <Input.Password
+              name="clientSecret"
+              value={clientSecret}
+              onChange={handleClientSecretChange}
+              allowClear
+            />
+          </Form.Item>
           <Form.Item
             label="Description"
             validateStatus={
@@ -282,13 +268,9 @@ export default function CreateScheduleModal({
                     description,
                     cronExpression: cronExpression.value,
                     data: data === '' ? {} : JSON.parse(data),
-                    ...(isOIDC
-                      ? { functionId: id }
-                      : { functionExternalId: externalId }),
+                    functionId: id,
                   },
-                  clientCredentials: isOIDC
-                    ? { clientId, clientSecret }
-                    : undefined,
+                  clientCredentials: { clientId, clientSecret },
                 });
               }}
               htmlType="submit"

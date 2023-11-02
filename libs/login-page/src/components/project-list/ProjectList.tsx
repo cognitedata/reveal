@@ -4,15 +4,12 @@ import { Colors } from '@cognite/cogs.js';
 import {
   parseEnvLabelFromCluster,
   IDPResponse,
-  LegacyProject,
-  sortLegacyProjectsByName,
   AADError,
 } from '@cognite/login-utils';
 
 import { useTranslation } from '../../common/i18n';
 import SelectAADProjects from '../../components/select-project/SelectAADProject';
 import SelectProjects from '../../components/select-project/SelectProject';
-import SignInWithLegacy from '../../components/select-sign-in-method/SignInWithLegacy';
 
 type ProjectListProps = {
   cluster: string;
@@ -27,7 +24,6 @@ type ProjectListProps = {
   idpProjectsIsFetched?: boolean;
   isMultiCluster?: boolean;
   isSignInRequiredLabelShown?: boolean;
-  legacyProjects?: LegacyProject[];
 };
 
 const ProjectList = ({
@@ -37,22 +33,19 @@ const ProjectList = ({
   idpProjectsError,
   idpProjectsIsFetched,
   isMultiCluster,
-  isSignInRequiredLabelShown,
-  legacyProjects = [],
 }: ProjectListProps): JSX.Element => {
   const { t } = useTranslation();
 
   if (
-    !legacyProjects.length &&
-    (!idp ||
-      (idp.type !== 'AZURE_AD' &&
-        idpProjectsIsFetched &&
-        !idpProjectsError &&
-        !idpProjects?.length) ||
-      (idp.type === 'AZURE_AD' &&
-        idpProjectsIsFetched &&
-        !(idpProjectsError as AADError)?.errorMessage &&
-        !idpProjects?.length))
+    !idp ||
+    (idp.type !== 'AZURE_AD' &&
+      idpProjectsIsFetched &&
+      !idpProjectsError &&
+      !idpProjects?.length) ||
+    (idp.type === 'AZURE_AD' &&
+      idpProjectsIsFetched &&
+      !(idpProjectsError as AADError)?.errorMessage &&
+      !idpProjects?.length)
   ) {
     return <></>;
   }
@@ -68,8 +61,6 @@ const ProjectList = ({
   ) {
     return <></>;
   }
-
-  const sortedLegacyProjects = sortLegacyProjectsByName(legacyProjects);
 
   return (
     <StyledProjectList>
@@ -99,13 +90,6 @@ const ProjectList = ({
           projects={idpProjects ?? []}
         />
       )}
-      {sortedLegacyProjects.map((legacyProject) => (
-        <SignInWithLegacy
-          key={legacyProject.internalId}
-          isSignInRequiredLabelShown={isSignInRequiredLabelShown}
-          {...legacyProject}
-        />
-      ))}
     </StyledProjectList>
   );
 };

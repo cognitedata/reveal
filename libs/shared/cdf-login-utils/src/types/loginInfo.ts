@@ -1,7 +1,6 @@
 import { CogIdpProject } from './cogniteIdp';
 
 export const IDP_TYPES = [
-  'COGNITE_AUTH',
   'AZURE_AD',
   'ADFS2016',
   'AUTH0',
@@ -31,7 +30,6 @@ export interface AppDomain {
   idpIds?: string[];
   imageRectangle?: ImageConfig;
   imageSquare?: ImageConfig;
-  legacyProjectIds?: string[];
   notes?: string;
   defaultIdpId?: string;
   defaultProject?: string;
@@ -39,7 +37,7 @@ export interface AppDomain {
 
 interface IDP {
   internalId: string;
-  type: Exclude<IDPType, 'COGNITE_AUTH'>;
+  type: IDPType;
   label?: string;
   authority: string;
   clusters: string[];
@@ -69,23 +67,6 @@ export interface App extends Record<string, any> {
   notes?: string;
 }
 
-export type LegacyProject = {
-  internalId: string;
-  type: 'COGNITE_AUTH';
-  projectName: string;
-  cluster: string;
-};
-
-export type ValidatedLegacyProject = {
-  isValid?: boolean;
-  error?: string;
-} & LegacyProject;
-
-export interface ProcessedDomain extends AppDomain {
-  idpMap: Record<string, IDP>;
-  legacyProjectMap: Record<string, LegacyProject>;
-}
-
 // API response types
 
 export type Img = {
@@ -94,14 +75,10 @@ export type Img = {
 };
 
 export interface DomainResponse
-  extends Omit<
-    AppDomain,
-    'idpIDs' | 'legacyProjectIds' | 'imageRectangle' | 'imageSquare'
-  > {
+  extends Omit<AppDomain, 'idpIDs' | 'imageRectangle' | 'imageSquare'> {
   domain: string;
   internalId: string;
   label: string;
-  legacyProjects: LegacyProject[];
   idps: IDPResponse[];
   imageSquare?: Img;
   imageRectangle?: Img;
@@ -145,17 +122,3 @@ export interface Auth0Response extends IDP {
     clientId: string;
   };
 }
-
-export type ValidatedLegacyProjectsQueryReturnType<ShouldGroupProjects> = {
-  data: ShouldGroupProjects extends true
-    ? {
-        validLegacyProjects: ValidatedLegacyProject[];
-        invalidLegacyProjects: ValidatedLegacyProject[];
-      }
-    : ValidatedLegacyProject[];
-  error?: LoginInfoError;
-  isError: boolean;
-  isFetched: boolean;
-  isFetching: boolean;
-  isLoading: boolean;
-};

@@ -17,8 +17,6 @@
   "got-it": "分かりました",
   "help": "ヘルプ",
   "invalid-domain-name": "無効な組織名",
-  "legacy-projects-not-available": "これらのプロジェクトは利用できません。上記のリストにお探しのプロジェクトがない場合は CDF 管理者にご連絡ください。",
-  "legacy-projects-not-available-with-count_other": "{{count}} プロジェクトが利用不可",
   "no-access-step-1a": "Azureへの登録: ",
   "no-access-step-1b": "{{cluster}}",
   "no-access-step-2a": "アクセスの同意: ",

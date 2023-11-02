@@ -1,7 +1,6 @@
 export enum AUTH_TYPE {
   PKCE = 'interactive',
   CLIENT_SECRET = 'clientSecret',
-  APIKEY = 'legacy',
   DEVICE_CODE = 'deviceCode',
 }
 
@@ -27,7 +26,6 @@ export enum AUTH_CONFIG {
   TENANT = 'tenant',
   CLUSTER = 'cluster',
   PROJECT = 'project',
-  API_KEY = 'apiKey',
 }
 
 export const CONSTANTS = {

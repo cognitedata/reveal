@@ -9,7 +9,6 @@ import { getCluster, getProject } from '@cognite/cdf-utilities';
 import {
   FileContextualizationContextProvider,
   DataExplorationProvider,
-  Flow,
 } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -41,12 +40,16 @@ export default function App({ useInShell = false }: { useInShell?: boolean }) {
     return <Loader />;
   }
 
+  if (!flow) {
+    throw new Error('Flow is not defined');
+  }
+
   return (
     <Suspense fallback={<Spinner />}>
       <UserHistoryProvider cluster={cluster} project={project} userId={userId}>
         <FileContextualizationContextProvider>
           <DataExplorationProvider
-            flow={flow as Flow}
+            flow={flow}
             sdk={sdk}
             userInfo={userInfo}
             styleScopeId={ids.styleScope}

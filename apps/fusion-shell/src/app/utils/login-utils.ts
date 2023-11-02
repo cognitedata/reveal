@@ -38,9 +38,7 @@ export const checkIfUserHasAccessToProject = async (projectName: string) => {
         : await (async () => {
             try {
               const idp = await getIDP();
-              if (idp?.type !== 'COGNITE_AUTH') {
-                return idp.clusters;
-              }
+              return idp.clusters;
             } catch {
               return undefined;
             }
@@ -60,18 +58,6 @@ export const checkIfUserHasAccessToProject = async (projectName: string) => {
       }
       break;
     }
-    case 'COGNITE_AUTH':
-      try {
-        const loggedIn = await sdk
-          .get<{ data: { loggedIn: boolean } }>('/login/status')
-          .then((r) => r.data?.data?.loggedIn);
-        if (!loggedIn) {
-          redirectToLogin();
-        }
-      } catch {
-        redirectToLogin();
-      }
-      break;
     default:
       break;
   }

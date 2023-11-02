@@ -19,7 +19,6 @@ export type LoginArgs = BaseArgs & {
   [AUTH_CONFIG.TENANT]: string;
   [AUTH_CONFIG.CLUSTER]: string;
   [AUTH_CONFIG.AUTH_TYPE]: AUTH_TYPE;
-  [AUTH_CONFIG.API_KEY]: string;
 };
 
 export interface ProjectConfig extends Omit<LoginArgs, keyof BaseArgs> {

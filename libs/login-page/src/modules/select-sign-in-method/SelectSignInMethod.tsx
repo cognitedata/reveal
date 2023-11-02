@@ -1,13 +1,9 @@
-import React, { useMemo } from 'react';
-
 import styled from 'styled-components';
 
-import { Accordion, Button, Colors, Loader } from '@cognite/cogs.js';
+import { Accordion, Button, Loader } from '@cognite/cogs.js';
 import {
   IDPResponse,
   useLoginInfo,
-  useValidatedLegacyProjects,
-  getLegacyProjectsByCluster,
   KeycloakResponse,
   AADB2CResponse,
   usePublicCogniteIdpOrg,
@@ -30,9 +26,7 @@ import {
 import ApplicationNotFound from '../../components/errors/ApplicationNotFound';
 import DomainNotFound from '../../components/errors/DomainNotFound';
 import GenericError from '../../components/errors/GenericError';
-import InvalidLegacyProjectInfo from '../../components/errors/InvalidLegacyProjectInfo';
 import LoginHelp from '../../components/login-help';
-import ProjectList from '../../components/project-list/ProjectList';
 import SignInWithAAD from '../../components/select-sign-in-method/SignInWithAAD';
 import SignInWithAADB2C from '../../components/select-sign-in-method/SignInWithAADB2C';
 import SignInWithADFS2016 from '../../components/select-sign-in-method/SignInWithADFS2016';
@@ -211,13 +205,6 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
   // We timeout after 5s to avoid blocking legacy DLC logins if CogIdP doesn't answer.
   const { data: publicCogIdpOrg, isFetched: isPublicCogIdpOrgFetched } =
     usePublicCogniteIdpOrg({ timeout: 5000 });
-  const { data: legacyProjectsByCluster } = useValidatedLegacyProjects(true);
-  const { validLegacyProjects = [], invalidLegacyProjects = [] } =
-    legacyProjectsByCluster || {};
-
-  const validLegacyProjectsByCluster = useMemo(() => {
-    return getLegacyProjectsByCluster(validLegacyProjects);
-  }, [validLegacyProjects]);
 
   const onHelpClick = () =>
     window.open('https://docs.cognite.com/cdf/sign-in.html', '_blank')?.focus();
@@ -293,31 +280,6 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
         <StyledIdpListOuter>
           {renderSignInButtons(activePublicCogIdpOrg, sortedIdps)}
         </StyledIdpListOuter>
-
-        {loginInfo?.idps?.length && loginInfo?.legacyProjects?.length ? (
-          <StyledDividerContainer>
-            <StyledDivider />
-            {t('or')}
-            <StyledDivider />
-          </StyledDividerContainer>
-        ) : (
-          <></>
-        )}
-        {Object.keys(validLegacyProjectsByCluster)?.map((cluster) => (
-          <ProjectList
-            cluster={cluster}
-            isMultiCluster={
-              Object.keys(validLegacyProjectsByCluster).length > 1
-            }
-            legacyProjects={validLegacyProjectsByCluster[cluster]}
-            key={cluster}
-          />
-        ))}
-        {invalidLegacyProjects?.length ? (
-          <InvalidLegacyProjectInfo invalidProjects={invalidLegacyProjects} />
-        ) : (
-          <></>
-        )}
       </StyledContent>
       <StyledFooter>
         <Button
@@ -333,31 +295,6 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
     </StyledSelectSignInMethodContainer>
   );
 };
-
-const StyledDividerContainer = styled.div`
-  align-items: center;
-  color: ${Colors['text-icon--muted']};
-  display: flex;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-  margin: 24px 0;
-  width: 100%;
-`;
-
-const StyledDivider = styled.div`
-  background-color: ${Colors['border--muted']};
-  flex: 1;
-  height: 1px;
-
-  :first-child {
-    margin-right: 12px;
-  }
-
-  :last-child {
-    margin-left: 12px;
-  }
-`;
 
 const StyledIdpListOuter = styled.div`
   display: flex;

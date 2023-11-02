@@ -42,7 +42,7 @@ describe('CreateScheduleModal', () => {
     });
 
     it('should have input areas for all the necessary information', () => {
-      // should have schedule name, description, cronExpression, data
+      // should have schedule name, description, cronExpression, data, clientId, clientSecret
       const wrapper = wrap(
         <CreateScheduleModal
           onCancel={jest.fn()}
@@ -50,7 +50,7 @@ describe('CreateScheduleModal', () => {
         />
       );
       const allFormItems = wrapper.find(Form.Item);
-      expect(allFormItems).toHaveLength(4);
+      expect(allFormItems).toHaveLength(6);
       const allFormItemsLabels = allFormItems.map((i) => i.text());
       expect(allFormItemsLabels).toContain('Schedule Name');
       expect(allFormItemsLabels).toContain('Description');
@@ -58,6 +58,8 @@ describe('CreateScheduleModal', () => {
         'Cron ExpressionThe time zone for the cron expression is UTC'
       );
       expect(allFormItemsLabels).toContain('Data');
+      expect(allFormItemsLabels).toContain('Client ID');
+      expect(allFormItemsLabels).toContain('Client Secret');
       wrapper.unmount();
     });
 

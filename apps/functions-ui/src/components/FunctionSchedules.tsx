@@ -5,7 +5,6 @@ import DeleteScheduleButton from '@functions-ui/components/buttons/DeleteSchedul
 import ViewInputDataButton from '@functions-ui/components/buttons/ViewInputDataButton';
 import LoadingIcon from '@functions-ui/components/LoadingIcon';
 import { Schedule } from '@functions-ui/types';
-import { isOIDCFlow } from '@functions-ui/utils/api';
 import { useSchedules } from '@functions-ui/utils/hooks';
 import { Table, Alert, List } from 'antd';
 import cronstrue from 'cronstrue';
@@ -113,9 +112,7 @@ export default function FunctionSchedules({ externalId, id }: Props) {
 
   return (
     <>
-      {isOIDCFlow() || externalId ? (
-        <CreateScheduleButton externalId={externalId} id={id} />
-      ) : null}
+      <CreateScheduleButton externalId={externalId} id={id} />
       <Table
         rowKey={(s) => s.id.toString()}
         pagination={{ pageSize: 25, showSizeChanger: false }}

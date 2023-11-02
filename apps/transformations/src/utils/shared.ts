@@ -11,13 +11,8 @@ import { Items, Job, Schema, TransformationRead } from '@transformations/types';
 
 import { CodeEditorTheme, createLink } from '@cognite/cdf-utilities';
 import { IconType } from '@cognite/cogs.js';
-import { IDPType } from '@cognite/login-utils';
 
 import { ColorStatus } from './types';
-
-export const isLegacyAuth = (flow: IDPType) => {
-  return flow === 'COGNITE_AUTH';
-};
 
 export const shouldUseApiKeysAsDestinationCredentials = (
   transformation: TransformationRead

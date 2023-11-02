@@ -144,7 +144,6 @@
   "owner-with-name": "オーナー {{ownerName}}",
   "owner_other": "オーナー",
   "parent-external-id": "親の External ID",
-  "please-select-the-service-accounts": "サービスアカウントを選択してください",
   "please-try-again": "もう一度お試しください",
   "raw-section-document-tables": "RAW ステージング領域に既にデータが存在する場合、新しい Data set で使用するテーブルを記述します",
   "raw-section-enter-database-name": "データベース名を入力してください",

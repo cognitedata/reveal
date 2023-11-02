@@ -1,9 +1,6 @@
 import React, { useContext } from 'react';
 
-import { IDPType } from '@cognite/login-utils';
 import { CogniteClient } from '@cognite/sdk';
-
-export type Flow = IDPType | 'FAKE_IDP' | 'UNKNOWN';
 
 const SDKContext = React.createContext<CogniteClient | null>(null);
 SDKContext.displayName = 'CogniteSdkProvider';

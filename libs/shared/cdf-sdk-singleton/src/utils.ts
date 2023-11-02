@@ -4,7 +4,6 @@ import {
   getSelectedIdpDetails,
   IDPResponse,
   getDlc,
-  LegacyProject,
   cogIdpInternalId,
   cogIdpAsResponse,
 } from '@cognite/login-utils';
@@ -41,7 +40,7 @@ export const getUrl = (
   return url;
 };
 
-export async function getIDP(): Promise<IDPResponse | LegacyProject> {
+export async function getIDP(): Promise<IDPResponse> {
   const { internalId } = getSelectedIdpDetails() ?? {};
 
   if (internalId === cogIdpInternalId) {
@@ -49,7 +48,7 @@ export async function getIDP(): Promise<IDPResponse | LegacyProject> {
   }
 
   const dlc = await getDlc();
-  const { idps, legacyProjects } = dlc;
+  const { idps } = dlc;
   if (!internalId && idps.length === 1) {
     return idps[0];
   }
@@ -57,9 +56,7 @@ export async function getIDP(): Promise<IDPResponse | LegacyProject> {
     throw new Error('IDP not selected');
   }
 
-  const idp =
-    idps.find((idp) => idp.internalId === internalId) ||
-    legacyProjects.find((l) => l.internalId === internalId);
+  const idp = idps.find((idp) => idp.internalId === internalId);
   if (!idp) {
     throw new Error('IDP not found');
   }
@@ -69,8 +66,7 @@ export async function getIDP(): Promise<IDPResponse | LegacyProject> {
 const getDomainConfigCluster = async (): Promise<string | undefined> => {
   try {
     const idp = await getIDP();
-    const clusters =
-      idp.type !== 'COGNITE_AUTH' ? (idp as IDPResponse)?.clusters : undefined;
+    const clusters = (idp as IDPResponse)?.clusters;
     if (clusters?.length === 1) {
       return clusters[0];
     }

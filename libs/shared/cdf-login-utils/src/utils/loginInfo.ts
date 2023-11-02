@@ -1,176 +1,26 @@
-import {
-  DomainResponse,
-  IDPResponse,
-  LegacyProject,
-  ValidatedLegacyProject,
-} from '../types';
+import { DomainResponse, IDPResponse } from '../types';
 
-export const getLegacyProjectsByCluster = (
-  legacyProjects?: LegacyProject[]
-) => {
-  const legacyProjectsByCluster: Record<string, LegacyProject[]> = {};
-  legacyProjects?.forEach((legacyProject) => {
-    if (!legacyProjectsByCluster[legacyProject.cluster]) {
-      legacyProjectsByCluster[legacyProject.cluster] = [];
-    }
-    legacyProjectsByCluster[legacyProject.cluster].push(legacyProject);
-  });
-
-  return legacyProjectsByCluster;
-};
-
-const getValidLegacyProjectsInLoginFlows = (
-  loginFlowsByCluster: Record<
-    string,
-    { idp?: IDPResponse; legacyProjects: LegacyProject[] }
-  >,
-  validLegacyProjects: LegacyProject[]
-) => {
-  let validatedLoginFlowsByCluster: Record<
-    string,
-    { idp?: IDPResponse; legacyProjects: LegacyProject[] }
-  > = {};
-
-  Object.keys(loginFlowsByCluster).forEach((cluster) => {
-    validatedLoginFlowsByCluster[cluster] = {
-      ...loginFlowsByCluster[cluster],
-      legacyProjects: [],
-    };
-    loginFlowsByCluster[cluster].legacyProjects.forEach((legacyProject) => {
-      const isValidProject = validLegacyProjects.find(
-        (validLegacyProject) =>
-          legacyProject.cluster === validLegacyProject.cluster &&
-          legacyProject.projectName === validLegacyProject.projectName
-      );
-      if (isValidProject) {
-        validatedLoginFlowsByCluster[cluster].legacyProjects.push(
-          legacyProject
-        );
-      }
-    });
-  });
-
-  return validatedLoginFlowsByCluster;
-};
-
-export const getLoginFlowsByCluster = (
-  loginInfo?: DomainResponse,
-  idp?: IDPResponse,
-  validLegacyProjects?: LegacyProject[]
-) => {
-  const loginFlowsByCluster: Record<
-    string,
-    { idp?: IDPResponse; legacyProjects: LegacyProject[] }
-  > = {};
+export const getLoginFlowsByCluster = (idp?: IDPResponse) => {
+  const loginFlowsByCluster: Record<string, { idp?: IDPResponse }> = {};
 
   // For CogIdp, it's the same IdP for all login flows.
   if (idp?.type === 'COGNITE_IDP') {
     idp.clusters.forEach((cluster) => {
-      loginFlowsByCluster[cluster] = {
-        idp,
-        legacyProjects: [],
-      };
+      loginFlowsByCluster[cluster] = { idp };
     });
     return loginFlowsByCluster;
   }
 
-  const legacyProjectsByCluster = getLegacyProjectsByCluster(
-    loginInfo?.legacyProjects
-  );
-  Object.keys(legacyProjectsByCluster).forEach((cluster) => {
-    if (!loginFlowsByCluster[cluster]) {
-      loginFlowsByCluster[cluster] = {
-        legacyProjects: [],
-      };
-    }
-    loginFlowsByCluster[cluster].legacyProjects =
-      legacyProjectsByCluster[cluster];
-  });
-
   if (idp) {
     idp?.clusters.forEach((idpCluster) => {
       if (!loginFlowsByCluster[idpCluster]) {
-        loginFlowsByCluster[idpCluster] = { legacyProjects: [] };
+        loginFlowsByCluster[idpCluster] = {};
       }
       loginFlowsByCluster[idpCluster].idp = idp;
     });
   }
 
-  if (validLegacyProjects?.length && Object.keys(loginFlowsByCluster)?.length) {
-    return getValidLegacyProjectsInLoginFlows(
-      loginFlowsByCluster,
-      validLegacyProjects
-    );
-  }
-
   return loginFlowsByCluster;
-};
-
-export const validateLegacyProject = (
-  legacyProject: LegacyProject
-): Promise<ValidatedLegacyProject> => {
-  const { cluster, projectName } = legacyProject;
-  const queryParams = new URLSearchParams({
-    app: 'cdf',
-    project: projectName,
-    redirectUrl: window.location.origin,
-  });
-
-  return fetch(`https://${cluster}/login/redirect?${queryParams}`, {
-    redirect: 'manual',
-  })
-    .then((response) => {
-      const { status, type } = response;
-      if (type === 'opaqueredirect') {
-        return { ...legacyProject, isValid: true };
-      }
-      // Check: If project can be invalid for any other reason/err code
-      if (status === 400) {
-        return { ...legacyProject, isValid: false };
-      } else {
-        return { ...legacyProject, isValid: false };
-      }
-    })
-    .catch(() => {
-      return { ...legacyProject, isValid: false };
-    });
-};
-
-export const groupLegacyProjectsByValidationStatus = (
-  validatedLegacyProjects: ValidatedLegacyProject[] = []
-): {
-  validLegacyProjects: ValidatedLegacyProject[];
-  invalidLegacyProjects: ValidatedLegacyProject[];
-} => {
-  const { validLegacyProjects, invalidLegacyProjects } =
-    validatedLegacyProjects.reduce(
-      (acc, cur) => {
-        if (cur.isValid) {
-          acc.validLegacyProjects.push(cur);
-        } else {
-          acc.invalidLegacyProjects.push(cur);
-        }
-        return acc;
-      },
-      {
-        validLegacyProjects: [] as ValidatedLegacyProject[],
-        invalidLegacyProjects: [] as ValidatedLegacyProject[],
-      }
-    );
-
-  return { validLegacyProjects, invalidLegacyProjects };
-};
-
-export const sortLegacyProjectsByName = (legacyProjects?: LegacyProject[]) => {
-  return (legacyProjects ?? []).sort(
-    (projectA: LegacyProject, projectB: LegacyProject) => {
-      const projectNameA = (projectA.projectName ?? '').toLocaleLowerCase();
-      const projectNameB = (projectB.projectName ?? '').toLocaleLowerCase();
-      if (projectNameA < projectNameB) return -1;
-      if (projectNameA > projectNameB) return 1;
-      return 0;
-    }
-  );
 };
 
 export const sortIDPsByLabel = (idps?: IDPResponse[]) => {
@@ -307,7 +157,6 @@ const hardcodedDlcResponses: Record<string, DomainResponse> = {
     ],
     internalId: '6f3eeac2-2057-418c-8231-87646fb9fc61',
     label: 'Internal Cognite ADFS2016 test environment',
-    legacyProjects: [],
   },
   'sapc-01': {
     domain: 'sacp-01',
@@ -326,7 +175,6 @@ const hardcodedDlcResponses: Record<string, DomainResponse> = {
     ],
     internalId: 'b4ab319b-6474-434c-b939-affb3c0a2ee8',
     label: 'Saudi Aramco Extended Private Cloud',
-    legacyProjects: [],
   },
 };
 

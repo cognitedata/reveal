@@ -5,7 +5,7 @@ import isString from 'lodash/isString';
 import moment from 'moment';
 import queryString from 'query-string';
 
-import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { createLink, getCluster } from '@cognite/cdf-utilities';
 
 import { TranslationKeys } from '../common/i18n';
@@ -338,12 +338,6 @@ export const azureClusters: string[] = [
   'westeurope-1',
   'az-eastus-1',
 ];
-
-export const isOidcEnv = () => {
-  if (isAizeEnv()) return true;
-  const { flow } = getFlow();
-  return flow !== 'COGNITE_AUTH';
-};
 
 export const isNextRelease = () => {
   return window.location.hostname.includes('next-release');

@@ -9,7 +9,6 @@ import { useTranslation } from '../../common/i18n';
 import theme from '../../styles/theme';
 import { Col, DataSet, FieldLabel, IconWrapper, RawTable } from '../../utils';
 import Drawer from '../Drawer';
-import { OidcCheck } from '../OidcCheck/OidcCheck';
 
 import { RawSection } from './raw/RawSection';
 
@@ -153,23 +152,6 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
               noOptionsMessage={() => t('enter-sources-to-your-data-set')}
               options={sourcesOptions}
             />
-            <OidcCheck>
-              <FieldLabel>{t('service-accounts')}</FieldLabel>
-              <CreatableSelect
-                isMulti
-                css={{ maxWidth: '600px', background: theme.blandColor }}
-                menuPlacement="bottom"
-                value={selectedExtractors}
-                onChange={(options: any) => {
-                  setSelectedExtractors([...options]);
-                  props.setChangesSaved(false);
-                }}
-                placeholder={t('please-select-the-service-accounts')}
-                isClearable
-                closeMenuOnSelect
-                options={[]}
-              />
-            </OidcCheck>
           </Col>
           <Col span={6}>
             <IconWrapper>

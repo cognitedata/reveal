@@ -11,7 +11,6 @@ import {
   removeSelectedIdpDetails,
   useIdp,
   useLoginInfo,
-  useValidatedLegacyProjects,
   useIdpProjectsFromAllClusters,
   AADError,
   usePca,
@@ -27,7 +26,6 @@ import {
   StyledSelectSignInMethodContainer,
 } from '../../components/containers';
 import ApplicationNotFound from '../../components/errors/ApplicationNotFound';
-import InvalidLegacyProjectInfo from '../../components/errors/InvalidLegacyProjectInfo';
 import ProjectList from '../../components/project-list/ProjectList';
 
 import AADLogoutButton from './AADLogoutButton';
@@ -49,13 +47,9 @@ const SelectProject = (): JSX.Element => {
   const { data: idp, isFetched: isFetchedIdp } = useIdp(internalId);
   const pca = usePca(idp?.appConfiguration.clientId, idp?.authority);
 
-  const { data: legacyProjectsByCluster } = useValidatedLegacyProjects(true);
-  const { invalidLegacyProjects = [], validLegacyProjects = [] } =
-    legacyProjectsByCluster || {};
-
   const loginFlowsByCluster = useMemo(() => {
-    return getLoginFlowsByCluster(loginInfo, idp, validLegacyProjects);
-  }, [idp, loginInfo, validLegacyProjects]);
+    return getLoginFlowsByCluster(idp);
+  }, [idp]);
 
   const projectsFromAllClusters = useIdpProjectsFromAllClusters(
     Object.keys(loginFlowsByCluster),
@@ -127,9 +121,6 @@ const SelectProject = (): JSX.Element => {
     return <Icon type="Loader" />;
   }
 
-  const hasNoLegacyProjects = Object.values(loginFlowsByCluster).every(
-    ({ legacyProjects }) => !legacyProjects.length
-  );
   const hasNoAzureProjects =
     idp?.type === 'AZURE_AD' &&
     projectsFromAllClusters.every(
@@ -150,8 +141,7 @@ const SelectProject = (): JSX.Element => {
         <StyledDescription>{t('select-project')}</StyledDescription>
       </StyledContainerHeader>
       <StyledContent $isBordered>
-        {hasNoLegacyProjects &&
-        (!idp || hasNoAzureProjects || hasNoOtherProjects) ? (
+        {!idp || hasNoAzureProjects || hasNoOtherProjects ? (
           <ApplicationNotFound />
         ) : (
           <>
@@ -169,16 +159,8 @@ const SelectProject = (): JSX.Element => {
                 }
                 isMultiCluster={Object.keys(loginFlowsByCluster).length > 1}
                 isSignInRequiredLabelShown
-                legacyProjects={loginFlowsByCluster[cluster].legacyProjects}
               />
             ))}
-            {invalidLegacyProjects?.length ? (
-              <InvalidLegacyProjectInfo
-                invalidProjects={invalidLegacyProjects}
-              />
-            ) : (
-              <></>
-            )}
           </>
         )}
       </StyledContent>

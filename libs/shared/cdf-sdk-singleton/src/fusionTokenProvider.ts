@@ -30,7 +30,6 @@ import {
   getUserInfo as getKeycloakUserInfo,
   logout as keycloakLogout,
 } from './keycloak';
-import getLegacyToken, { logout as legacyLogout } from './legacy';
 import { UserInfo } from './types';
 import { getIDP } from './utils';
 
@@ -54,9 +53,6 @@ export class FusionTokenProvider {
     switch (idp.type) {
       case 'AZURE_AD': {
         return getAADAccessToken(idp.authority, idp.appConfiguration.clientId);
-      }
-      case 'COGNITE_AUTH': {
-        return getLegacyToken();
       }
       case 'ADFS2016': {
         return getADFSAccessToken(
@@ -160,10 +156,6 @@ export class FusionTokenProvider {
       }
       case 'ADFS2016': {
         adfsLogout(idp.authority);
-        break;
-      }
-      case 'COGNITE_AUTH': {
-        legacyLogout();
         break;
       }
       case 'KEYCLOAK': {

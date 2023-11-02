@@ -3,7 +3,6 @@ export const loginInfoMockData = {
     "domain": "cog-appdev",
     "internalId": "7de0f091-27b8-487a-8867-b011908523e0",
     "label": "App Dev Journey",
-    "legacyProjects": [],
     "idps": [
         {
             "internalId": "a5bc6507-2644-4004-87eb-efdb3124e3e2",

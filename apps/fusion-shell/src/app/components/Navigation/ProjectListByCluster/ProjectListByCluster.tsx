@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { Colors, Detail } from '@cognite/cogs.js';
 import {
   IDPResponse,
-  LegacyProject,
   parseEnvLabelFromCluster,
   useIdpProjects,
 } from '@cognite/login-utils';
@@ -18,20 +17,18 @@ type ProjectListByClusterProps = {
   cluster: string;
   idp?: IDPResponse;
   isMultiCluster?: boolean;
-  legacyProjects?: LegacyProject[];
 };
 
 const ProjectListByCluster = ({
   cluster,
   idp,
   isMultiCluster,
-  legacyProjects = [],
 }: ProjectListByClusterProps): JSX.Element => {
   const { t } = useTranslation();
   const { data: idpProjects = [], isFetched: didFetchIdpProjects } =
     useIdpProjects(cluster, idp);
 
-  if (didFetchIdpProjects && !idpProjects.length && !legacyProjects?.length) {
+  if (didFetchIdpProjects && !idpProjects.length) {
     return <></>;
   }
 
