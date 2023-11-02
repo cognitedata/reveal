@@ -11,12 +11,9 @@ describe('getChipRightPropsForResourceCounter', () => {
   });
 
   it('should return expected output with isLoading false', () => {
-    expect(
-      getChipRightPropsForResourceCounter(10, false).chipRight
-    ).toStrictEqual({
-      label: '10',
-      size: 'x-small',
-      tooltipProps: { content: '10' },
-    });
+    const props = getChipRightPropsForResourceCounter(10, false).chipRight;
+    expect(props).toHaveProperty('label', '10');
+    expect(props).toHaveProperty('size', 'x-small');
+    expect(props?.tooltipProps).toHaveProperty('content', '10');
   });
 });

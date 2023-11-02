@@ -18,7 +18,10 @@ export const getChipRightPropsForResourceCounter = (
       : {
           label: shortendCount,
           size: 'x-small',
-          tooltipProps: { content: withThousandSeparator(count, ',') },
+          tooltipProps: {
+            content: withThousandSeparator(count, ','),
+            appendTo: document.body,
+          },
         },
   };
 };
