@@ -9,10 +9,12 @@ import { UserHistoryProvider } from '@user-history';
 
 import { SubAppWrapper, getCluster, getProject } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 
 import AllApps from './components/AllApps';
 import LandingPage from './components/LandingPage/LandingPage';
 import Navigation from './components/Navigation';
+import NewLandingPage from './components/NewLandingPage/LandingPage';
 import { UserProfilePage } from './components/UserProfilePage/UserProfilePage';
 import { useUserInformation } from './hooks';
 
@@ -35,6 +37,9 @@ export function App() {
   const cluster = getCluster() ?? undefined;
   const { data: user, isFetched } = useUserInformation();
   const userId = user?.id;
+  const { isEnabled: isNewLandingPageEnabled } = useFlag(
+    'FUSION_UI_NEW_LANDING_PAGE_RELEASE_DEC_2023'
+  );
 
   const [isReleaseBanner, setReleaseBanner] = useState<string>(
     () => localStorage.getItem(`isCDFReleaseBanner`) || 'true'
@@ -43,6 +48,12 @@ export function App() {
   if (!isFetched) {
     return <Loader />;
   }
+
+  const landingPage = isNewLandingPageEnabled ? (
+    <NewLandingPage isReleaseBanner={isReleaseBanner} />
+  ) : (
+    <LandingPage isReleaseBanner={isReleaseBanner} />
+  );
 
   return (
     <UserHistoryProvider cluster={cluster} project={project} userId={userId}>
@@ -55,10 +66,7 @@ export function App() {
 
           <RoutesWrapper>
             <SentryRoutes>
-              <Route
-                path={routerBasename}
-                element={<LandingPage isReleaseBanner={isReleaseBanner} />}
-              />
+              <Route path={routerBasename} element={landingPage} />
               <Route path={`${routerBasename}/apps`} element={<AllApps />} />
               <Route
                 path={`${routerBasename}/profile`}
