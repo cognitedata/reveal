@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
 import { GraphQlQueryFlow, useCopilotContext } from '@fusion/copilot-core';
 import { useCdfUserHistoryService } from '@user-history';
@@ -19,7 +20,6 @@ import {
   toast,
   Tooltip,
 } from '@cognite/cogs.js';
-import { isNotUndefined, Splitter } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   UnifiedViewer,
@@ -106,6 +106,7 @@ import {
 } from './utils/dimensions';
 import { getCanvasLink } from './utils/getCanvasLink';
 import { isCogniteIdPUsedToSignIn } from './utils/isCogniteIdPUsedToSignIn';
+import { isNotUndefined } from './utils/isNotUndefined';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 import useMetrics from './utils/tracking/useMetrics';

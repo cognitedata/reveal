@@ -3,8 +3,6 @@ import SplitterLayout from 'react-splitter-layout';
 
 import styled, { css } from 'styled-components';
 
-import { Colors } from '@cognite/cogs.js';
-
 import { SIDEBAR_RESIZE_EVENT, zIndex } from '@data-exploration-lib/core';
 
 import handleSvg from './handle';
@@ -63,10 +61,6 @@ const SplitterWrapper = styled.div(
     width: 100%;
     overflow-y: auto;
     position: relative;
-
-    button.cogs-menu-item {
-      color: ${Colors['decorative--grayscale--black']};
-    }
 
     .splitter-layout {
       display: flex;
