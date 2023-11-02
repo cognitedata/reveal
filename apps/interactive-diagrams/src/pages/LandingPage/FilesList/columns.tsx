@@ -11,12 +11,10 @@ import { Flex, Popover, Dropdown } from '../../../components/Common';
 import DetectedTags from '../../../components/DetectedTags';
 import DiagramReviewStatus from '../../../components/DiagramReviewStatus';
 import InteractiveIcon from '../../../components/InteractiveIcon';
-import { FileWithAnnotations } from '../../../hooks';
 import { trackUsage, PNID_METRICS } from '../../../utils/Metrics';
 import { dateSorter, stringCompare } from '../../../utils/utils';
 
 import { FileContextMenu } from './FileContextMenu';
-import { sortFilesByAnnotations } from './utils';
 
 const ActionsButtons = styled(Flex)`
   & > * {
@@ -63,8 +61,6 @@ export const getColumns = (onFileView: (file: FileInfo) => void) =>
       title: 'Linked to',
       key: 'tags',
       render: (_: any, file: FileInfo) => <DetectedTags fileId={file.id} />,
-      sorter: (a: FileWithAnnotations, b: FileWithAnnotations) =>
-        sortFilesByAnnotations(a, b),
     },
 
     {

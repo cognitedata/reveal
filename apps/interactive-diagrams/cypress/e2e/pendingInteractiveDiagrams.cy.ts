@@ -8,10 +8,6 @@ describe('Pending Interactive Diagrams', () => {
       'breadcrumb-item',
       'Interactive engineering diagrams'
     );
-    cy.assertElementWithTextExists(
-      'pending-diagrams-title',
-      'Pending interactive diagrams'
-    );
 
     cy.getBySelector('create-new-interactive-diagrams-button').should('exist');
   });

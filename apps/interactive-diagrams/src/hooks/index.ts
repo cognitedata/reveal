@@ -1,6 +1,6 @@
 export * from './CustomHooks';
 export * from './useActiveWorkflow';
-export * from './useAnnotatedFiles';
+export * from './usePendingDiagramFiles';
 export * from './useAnnotationsForFiles';
 export * from './useInterval';
 export * from './useItems';

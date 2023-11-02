@@ -6,7 +6,6 @@ import { createLink } from '@cognite/cdf-utilities';
 import { FileInfo } from '@cognite/sdk';
 
 import { Table } from '../../../components/Common';
-import { FileWithAnnotations } from '../../../hooks';
 import { PNID_METRICS, trackUsage } from '../../../utils/Metrics';
 import { stringContains } from '../../../utils/utils';
 
@@ -14,13 +13,18 @@ import { getColumns } from './columns';
 
 type Props = {
   query: string;
-  files?: FileWithAnnotations[];
+  files?: FileInfo[];
   selectedDiagramsIds: number[];
   setSelectedDiagramsIds: React.Dispatch<React.SetStateAction<number[]>>;
 };
 
 export default function FilesList(props: Props) {
-  const { query, files, selectedDiagramsIds, setSelectedDiagramsIds } = props;
+  const {
+    query,
+    files = [],
+    selectedDiagramsIds,
+    setSelectedDiagramsIds,
+  } = props;
 
   const onFileView = (file: FileInfo): void => {
     const fileId = file.id ?? file.externalId;
@@ -35,11 +39,9 @@ export default function FilesList(props: Props) {
   const handleSearchFiles = () => {
     if (query.trim()?.length) {
       trackUsage(PNID_METRICS.landingPage.useSearch);
-      return (files ?? []).filter((file) =>
-        stringContains(file.name, query)
-      ) as FileInfo[];
+      return files.filter((file) => stringContains(file.name, query));
     }
-    return files as FileInfo[];
+    return files;
   };
 
   const diagrams = handleSearchFiles();

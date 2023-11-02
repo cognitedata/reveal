@@ -5,7 +5,7 @@ import { FileRequestFilter } from '@cognite/sdk';
 
 import { Flex, PageTitle } from '../../components/Common';
 import { DiagramsSettingsBar } from '../../containers';
-import { useAnnotatedFiles } from '../../hooks';
+import { usePendingDiagramFiles } from '../../hooks';
 import { useWorkflowCreateNew } from '../../modules/workflows';
 import { trackUsage, PNID_METRICS } from '../../utils/Metrics';
 
@@ -19,7 +19,7 @@ export default function LandingPage() {
   const [filters, setFilter] = useState<FileRequestFilter>({});
   const [selectedDiagramsIds, setSelectedDiagramsIds] = useState<number[]>([]);
   const { createWorkflow } = useWorkflowCreateNew();
-  const { annotatedFiles: files = [], isLoading } = useAnnotatedFiles(filters);
+  const { files = [], isLoading } = usePendingDiagramFiles(filters);
 
   const isFilterEmpty = !Object.keys(filters?.filter ?? {}).length;
   const areDiagramsSelected = Boolean(selectedDiagramsIds?.length);
