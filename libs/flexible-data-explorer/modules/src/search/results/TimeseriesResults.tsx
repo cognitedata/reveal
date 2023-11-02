@@ -4,12 +4,17 @@ import { EmptyState, Link, SearchResults } from '@fdx/components';
 import { useTimeseriesSearchQuery } from '@fdx/services/instances/timeseries';
 import { useSearchFilterParams } from '@fdx/shared/hooks/useParams';
 import { useTranslation } from '@fdx/shared/hooks/useTranslation';
+import { ValueByField } from '@fdx/shared/types/filters';
 
 import { Button, formatDate, Skeleton } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
+import { Timeseries } from '@cognite/sdk';
 
 import { InstancePreview } from '../../preview/InstancePreview';
-import { RelationshipFilter } from '../../widgets/RelationshipEdges/Filters';
+import {
+  RelationshipFilter,
+  RelationshipFilterAction,
+} from '../../widgets/RelationshipEdges/RelationshipFilter';
 
 import { PAGE_SIZE, PAGE_SIZE_SELECTED } from './constants';
 
@@ -25,6 +30,17 @@ export const TimeseriesResults: React.FC<Props> = ({ selected }) => {
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isLoading } =
     useTimeseriesSearchQuery(selected ? PAGE_SIZE_SELECTED : PAGE_SIZE);
 
+  const handleFilterChange = (
+    value: ValueByField<Timeseries>,
+    action: RelationshipFilterAction
+  ) => {
+    const nextFilters = {
+      ...filters,
+      Timeseries: value,
+    };
+    setFilters(nextFilters, action === 'add' ? 'TimeSeries' : undefined);
+  };
+
   if (isLoading) {
     return <Skeleton.List lines={3} />;
   }
@@ -32,20 +48,9 @@ export const TimeseriesResults: React.FC<Props> = ({ selected }) => {
   return (
     <SearchResults data-testid="timeseries-results">
       <SearchResults.Header title="Time series">
-        <RelationshipFilter
-          dataType="Timeseries"
+        <RelationshipFilter.Timeseries
           value={filters?.['Timeseries']}
-          onChange={(value, action) => {
-            const nextFilters = {
-              ...filters,
-              Timeseries: value,
-            };
-
-            setFilters(
-              nextFilters,
-              action === 'add' ? 'TimeSeries' : undefined
-            );
-          }}
+          onChange={handleFilterChange}
         />
       </SearchResults.Header>
 

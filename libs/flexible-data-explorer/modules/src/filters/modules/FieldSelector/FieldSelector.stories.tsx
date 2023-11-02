@@ -11,7 +11,7 @@ export const Example: ComponentStory<typeof FieldSelector> = (args) => (
   <FieldSelector {...args} />
 );
 Example.args = {
-  name: 'Movies',
+  title: 'Movies',
   fields: [
     { id: 'Title', type: 'string' },
     { id: 'Gross', type: 'number' },

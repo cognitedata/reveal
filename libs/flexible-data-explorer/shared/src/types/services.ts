@@ -173,3 +173,7 @@ export type DataModelTypeDefs = {
   types: DataModelTypeDefsType[];
   directives?: DirectiveProps[];
 };
+
+export type ACDMAggregateFilter = {
+  aggregateFilter?: { prefix: { value: string } };
+};

@@ -3,6 +3,7 @@ export * from './BaseFilterInput';
 export * from './elements';
 export * from './EmptyState';
 export * from './ErrorState';
+export * from './LoadingState';
 export * from './Menu';
 export * from './MenuFooterButton';
 export * from './MenuHeader';

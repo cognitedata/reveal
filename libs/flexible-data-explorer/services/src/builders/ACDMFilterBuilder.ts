@@ -262,7 +262,7 @@ class BaseACDMFilterBuilder<T extends Resource> {
   }
 
   search<K extends DeepKeyOf<T>>(key: K, value?: string) {
-    if (!isUndefined(value)) {
+    if (!isUndefined(value) && !isEmpty(value)) {
       const property = this.getProperty(key);
 
       this.filters = [
@@ -303,10 +303,15 @@ type BuilderFn<T extends Resource, V = ValueType> = (
   value: V
 ) => ACDMFilterBuilder<T>;
 
+export type ACDMAdvancedFilter<T extends Resource> = ACDMFilter<
+  T,
+  DeepKeyOf<T>
+>;
+
 export class ACDMFilterBuilder<
   T extends Resource
 > extends BaseACDMFilterBuilder<T> {
-  private builders: Record<Operator, BuilderFn<T, any>> = {
+  private actions: Record<Operator, BuilderFn<T, any>> = {
     [Operator.STARTS_WITH]: this.startsWith,
     [Operator.NOT_STARTS_WITH]: this.notStartsWith,
     [Operator.CONTAINS]: this.contains,
@@ -329,15 +334,29 @@ export class ACDMFilterBuilder<
     [Operator.IS_NOT_SET]: this.isNotSet,
   };
 
-  private getBuilderByOperator(operator: Operator) {
-    return this.builders[operator] as BuilderFn<T>;
+  private getBuilder(operator: Operator): BuilderFn<T> {
+    const action = this.actions[operator];
+    return action.bind(this);
   }
 
-  construct<K extends DeepKeyOf<T>>(key: K, fieldValue: FieldValue) {
-    const { operator, value } = fieldValue;
-    const builder = this.getBuilderByOperator(operator);
+  private getFieldValue(input?: FieldValue | (() => FieldValue | undefined)) {
+    if (input instanceof Function) {
+      return input();
+    }
+    return input;
+  }
 
-    builder(key, value);
+  construct<K extends DeepKeyOf<T>>(
+    key: K,
+    input?: FieldValue | (() => FieldValue | undefined)
+  ) {
+    const fieldValue = this.getFieldValue(input);
+
+    if (!isUndefined(fieldValue)) {
+      const { operator, value } = fieldValue;
+      const builder = this.getBuilder(operator);
+      builder(key, value);
+    }
 
     return this;
   }

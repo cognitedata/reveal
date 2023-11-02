@@ -1,4 +1,5 @@
 import { useTranslation } from '@fdx/shared/hooks/useTranslation';
+import styled from 'styled-components/macro';
 
 import { Input } from '@cognite/cogs.js';
 
@@ -14,13 +15,20 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Input
-      data-testid="search-input"
-      type="text"
-      variant="noBorder"
-      placeholder={t('FILTER_SEARCH_INPUT_PLACEHOLDER')}
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-    />
+    <Wrapper>
+      <Input
+        data-testid="search-input"
+        fullWidth
+        type="text"
+        variant="noBorder"
+        placeholder={t('FILTER_SEARCH_INPUT_PLACEHOLDER')}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  height: 100%;
+`;

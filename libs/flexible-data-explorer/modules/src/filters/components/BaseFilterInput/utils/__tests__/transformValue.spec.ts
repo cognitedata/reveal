@@ -1,10 +1,10 @@
 import { transformValue } from '../transformValue';
 
 describe('transformValue', () => {
-  it('should transform empty input to undefined', () => {
+  it('should handle empty input', () => {
     const inputValue = '';
     const result = transformValue(inputValue);
-    expect(result).toBeUndefined();
+    expect(result).toBe(inputValue);
   });
 
   it('should transform text input', () => {

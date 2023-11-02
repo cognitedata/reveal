@@ -1,34 +1,11 @@
-import {
-  AggregateResponse,
-  CogniteClient,
-  CursorResponse,
-  TimeseriesFilter,
-} from '@cognite/sdk';
+import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
+
+import { TimeseriesAggregateRequestPayload } from '../types';
 
 export const getTimeseriesAggregate = <ResponseType = AggregateResponse>(
   sdk: CogniteClient,
-  query?: string,
-  filter?: TimeseriesFilter
+  payload: TimeseriesAggregateRequestPayload
 ) => {
-  const payload = {} as any;
-
-  if (filter) {
-    payload['filter'] = filter;
-  }
-
-  if (query) {
-    payload['advancedFilter'] = {
-      and: [
-        {
-          search: {
-            property: ['name'],
-            value: query,
-          },
-        },
-      ],
-    };
-  }
-
   return sdk
     .post<CursorResponse<ResponseType[]>>(
       `/api/v1/projects/${sdk.project}/timeseries/aggregate`,

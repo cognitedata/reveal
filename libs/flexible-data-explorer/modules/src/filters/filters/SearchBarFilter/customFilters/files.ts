@@ -1,7 +1,5 @@
 import { DataTypeOption, Operator } from '@fdx/shared/types/filters';
 
-const EXISTANCE_OPERATORS = [Operator.IS_SET, Operator.IS_NOT_SET];
-
 export const files: DataTypeOption = {
   name: 'Files',
   displayName: 'File',
@@ -20,32 +18,28 @@ export const files: DataTypeOption = {
     {
       id: 'Asset',
       type: 'number',
-      operators: [
-        Operator.CONTAINS,
-        Operator.NOT_CONTAINS,
-        ...EXISTANCE_OPERATORS,
-      ],
+      operators: [Operator.EQUALS, Operator.IS_SET, Operator.IS_NOT_SET],
     },
     { id: 'External ID', type: 'string' },
     {
       id: 'Internal ID',
       type: 'number',
-      operators: [
-        Operator.CONTAINS,
-        Operator.NOT_CONTAINS,
-        Operator.EQUALS,
-        ...EXISTANCE_OPERATORS,
-      ],
+      operators: [Operator.EQUALS, Operator.IS_SET, Operator.IS_NOT_SET],
     },
     {
       id: 'Label',
       type: 'string',
-      operators: [...EXISTANCE_OPERATORS],
+      operators: [Operator.IS_SET, Operator.IS_NOT_SET],
     },
     {
       id: 'Type',
       type: 'string',
-      operators: [Operator.EQUALS, Operator.NOT_EQUALS, ...EXISTANCE_OPERATORS],
+      operators: [
+        Operator.EQUALS,
+        Operator.NOT_EQUALS,
+        Operator.IS_SET,
+        Operator.IS_NOT_SET,
+      ],
     },
     { id: 'Author', type: 'string' },
     { id: 'Source', type: 'string' },

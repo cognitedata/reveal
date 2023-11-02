@@ -1,11 +1,30 @@
-import { FieldType, Operator } from '@fdx/shared/types/filters';
+import {
+  BooleanOperator,
+  DateOperator,
+  ExistanceOperator,
+  NumberOperator,
+  Operator,
+  StringOperator,
+} from '@fdx/shared/types/filters';
 
-const EXISTANCE_OPERATORS = [Operator.IS_SET, Operator.IS_NOT_SET];
+type DefaultOperators = {
+  string: StringOperator[];
+  number: NumberOperator[];
+  date: DateOperator[];
+  boolean: BooleanOperator[];
+};
 
-export const DEFAULT_OPERATORS: Record<FieldType, Operator[]> = {
+export const EXISTANCE_OPERATORS: ExistanceOperator[] = [
+  Operator.IS_SET,
+  Operator.IS_NOT_SET,
+];
+
+export const DEFAULT_OPERATORS: DefaultOperators = {
   string: [
     Operator.STARTS_WITH,
     Operator.NOT_STARTS_WITH,
+    Operator.EQUALS,
+    Operator.NOT_EQUALS,
     ...EXISTANCE_OPERATORS,
   ],
   number: [

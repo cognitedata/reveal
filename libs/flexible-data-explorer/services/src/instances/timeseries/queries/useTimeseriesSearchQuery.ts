@@ -5,10 +5,10 @@ import {
   useDataTypeFilterParams,
   useSearchQueryParams,
 } from '@fdx/shared/hooks/useParams';
-import { buildTimeseriesFilter } from '@fdx/shared/utils/filterBuilder';
 
-import { Timeseries } from '@cognite/sdk';
-import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
+import { buildTimeseriesAdvancedFilter } from '../transformers';
+
+import { useTimeseriesListQuery } from './useTimeseriesListQuery';
 
 export const useTimeseriesSearchQuery = (limit?: number) => {
   const siteConfig = useSelectedSiteConfig();
@@ -16,21 +16,19 @@ export const useTimeseriesSearchQuery = (limit?: number) => {
   const [query] = useSearchQueryParams();
 
   const [timeseriesFilterParams] = useDataTypeFilterParams('Timeseries');
-  const filter = useMemo(
-    () => buildTimeseriesFilter(timeseriesFilterParams, siteConfig),
-    [timeseriesFilterParams, siteConfig]
+
+  const advancedFilter = useMemo(
+    () =>
+      buildTimeseriesAdvancedFilter({
+        params: timeseriesFilterParams,
+        query,
+        config: siteConfig,
+      }),
+    [timeseriesFilterParams, query, siteConfig]
   );
 
-  const { data, ...rest } = useInfiniteSearch<Timeseries>(
-    'timeseries',
-    query,
+  return useTimeseriesListQuery({
+    advancedFilter,
     limit,
-    filter
-  );
-
-  const results = useMemo(() => {
-    return data?.pages.flat() || [];
-  }, [data]);
-
-  return { data: results, ...rest };
+  });
 };

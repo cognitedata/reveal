@@ -11,27 +11,31 @@ import {
 import { CommonFilter } from '../CommonFilter';
 import { FieldSelector } from '../FieldSelector';
 
-export interface FilterBuilderByFieldProps {
+export interface FilterBuilderByFieldProps<T = unknown> {
   name: string;
   displayName?: string;
-  fields: Field[];
-  value?: ValueByField;
+  fields: Field<T>[];
+  value?: ValueByField<T>;
   onBackClick?: () => void;
-  onChange: (value: ValueByField) => void;
+  onChange: (value: ValueByField<T>) => void;
+  onSearchInputChange?: (value: string) => void;
   isError?: boolean;
+  isLoading?: boolean;
 }
 
-export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
+export const FilterBuilderByField = <T,>({
   name,
   displayName,
   fields,
   value: initialValue = {},
   onBackClick,
   onChange,
+  onSearchInputChange,
   isError,
-}) => {
-  const [selectedField, setSelectedField] = useState<Field>();
-  const [value, setValue] = useState<ValueByField>(initialValue);
+  isLoading,
+}: FilterBuilderByFieldProps<T>) => {
+  const [selectedField, setSelectedField] = useState<Field<T>>();
+  const [value, setValue] = useState<ValueByField<T>>(initialValue);
 
   const handleApplyClick = (operator: Operator, newValue: ValueType) => {
     if (!selectedField) {
@@ -66,12 +70,13 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
 
   return (
     <FieldSelector
-      name={name}
-      displayName={displayName}
+      title={displayName || name}
       fields={fields}
       onBackClick={onBackClick}
       onSelectField={setSelectedField}
+      onSearchInputChange={onSearchInputChange}
       isError={isError}
+      isLoading={isLoading}
     />
   );
 };

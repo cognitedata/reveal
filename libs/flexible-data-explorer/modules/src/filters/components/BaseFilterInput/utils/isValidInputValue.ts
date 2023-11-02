@@ -1,6 +1,5 @@
 import { isDate } from '@fdx/shared/utils/date';
 import { isNumeric } from '@fdx/shared/utils/number';
-import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
 
@@ -22,7 +21,7 @@ export const isValidInputValue = (
       return isNumeric(String(inputValue));
 
     case 'text':
-      return isString(inputValue) && !isEmpty(inputValue);
+      return isString(inputValue);
 
     default:
       return false;

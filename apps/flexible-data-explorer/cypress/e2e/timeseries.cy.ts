@@ -7,6 +7,7 @@ describe('Timeseries ', () => {
   it('Should be able to preview timeseries ', () => {
     const timeseries = '12ws';
 
+    cy.performSearch(timeseries);
     cy.containsExact(timeseries).click();
 
     cy.findByTestId('page-header')

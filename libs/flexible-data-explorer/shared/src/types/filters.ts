@@ -22,6 +22,40 @@ export enum Operator {
   IS_NOT_SET = 'FILTER_OPERATOR_NOT_SET',
 }
 
+export type ExistanceOperator = Operator.IS_SET | Operator.IS_NOT_SET;
+
+export type StringOperator =
+  | Operator.STARTS_WITH
+  | Operator.NOT_STARTS_WITH
+  | Operator.EQUALS
+  | Operator.NOT_EQUALS
+  | ExistanceOperator;
+
+export type NumberOperator =
+  | Operator.BETWEEN
+  | Operator.NOT_BETWEEN
+  | Operator.GREATER_THAN
+  | Operator.LESS_THAN
+  | Operator.EQUALS
+  | Operator.NOT_EQUALS
+  | ExistanceOperator;
+
+export type DateOperator =
+  | Operator.BEFORE
+  | Operator.NOT_BEFORE
+  | Operator.BETWEEN
+  | Operator.NOT_BETWEEN
+  | Operator.AFTER
+  | Operator.NOT_AFTER
+  | Operator.ON
+  | Operator.NOT_ON
+  | ExistanceOperator;
+
+export type BooleanOperator =
+  | Operator.IS_TRUE
+  | Operator.IS_FALSE
+  | ExistanceOperator;
+
 export type NumericRange = [number, number];
 
 export type DateRange = [Date, Date];
@@ -80,16 +114,38 @@ export type Property<T = unknown> = DeepKeyOf<T> extends never
   ? string
   : DeepKeyOf<T>;
 
-export interface Field<T = unknown> {
+interface BaseField<T = unknown> {
   id: Property<T>;
   displayName?: string;
-  type: FieldType;
-  operators?: Operator[];
+  exist?: boolean;
 }
+interface StringField<T = unknown> extends BaseField<T> {
+  type: 'string';
+  operators?: StringOperator[];
+}
+interface NumberField<T = unknown> extends BaseField<T> {
+  type: 'number';
+  operators?: NumberOperator[];
+}
+interface DateField<T = unknown> extends BaseField<T> {
+  type: 'date';
+  operators?: DateOperator[];
+}
+interface BooleanField<T = unknown> extends BaseField<T> {
+  type: 'boolean';
+  operators?: BooleanOperator[];
+}
+export type Field<T = unknown> =
+  | StringField<T>
+  | NumberField<T>
+  | DateField<T>
+  | BooleanField<T>;
 
 export type ValueByDataType = Record<string, ValueByField>;
 
-export type ValueByField<T = unknown> = Record<Property<T>, FieldValue>;
+// TODO: Fix type
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type ValueByField<T = unknown> = Record<string, FieldValue>;
 
 export interface FieldValue {
   operator: Operator;

@@ -150,11 +150,23 @@ export const queryKeys = {
   ],
   fileContainer: (file?: FileInfo) => [...queryKeys.all, 'file', file] as const,
 
+  timeseriesList: (filter?: any) => [
+    ...queryKeys.all,
+    'timeseries',
+    'list',
+    filter,
+  ],
   aggregateTimeseries: (query: string, filter?: any) => [
     ...queryKeys.all,
     'timeseries',
     'aggregate',
     query,
     filter,
+  ],
+  timeseriesMetadataKeys: (query?: string) => [
+    ...queryKeys.all,
+    'timeseries',
+    'metadata-keys',
+    query,
   ],
 };

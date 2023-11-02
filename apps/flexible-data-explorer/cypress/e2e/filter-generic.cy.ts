@@ -15,7 +15,7 @@ describe('Filter - Generic', () => {
     const value = 'Test work-item';
 
     cy.openFilterInSearchResults('generic-results-WorkItem')
-      .searchAndClickOption('title')
+      .searchAndClickOption(': title')
       .selectOperator(Operator.NOT_STARTS_WITH)
       .inputString(value)
       .clickFilterApplyButton();
@@ -38,24 +38,24 @@ describe('Filter - Generic', () => {
   it('Should be able to filter by numeric properties', () => {
     cy.selectSearchCategory('Work order');
 
-    const value = 24;
+    const value = 50;
 
     cy.openFilterInSearchResults('generic-results-WorkOrder')
-      .searchAndClickOption('durationHours')
+      .searchAndClickOption('percentage progress')
       .selectOperator(Operator.LESS_THAN)
       .inputNumber(value)
       .clickFilterApplyButton();
 
     cy.waitForRequest('searchDataTypes').payloadShouldContain({
       filterWorkOrder: {
-        durationHours: {
+        percentageProgress: {
           lt: value,
         },
       },
     });
 
     cy.log('Remove applied filter');
-    cy.clickIconButton(`Remove durationHours is less than ${value}`);
+    cy.clickIconButton(`Remove percentageProgress is less than ${value}`);
     cy.waitForRequest('searchDataTypes');
   });
 
@@ -63,7 +63,7 @@ describe('Filter - Generic', () => {
     cy.selectSearchCategory('Work item');
 
     cy.openFilterInSearchResults('generic-results-WorkItem')
-      .searchAndClickOption('isCompleted')
+      .searchAndClickOption('completed')
       .selectOperator(Operator.IS_SET)
       .clickFilterApplyButton();
 
@@ -87,7 +87,7 @@ describe('Filter - Generic', () => {
 
     cy.openFilterInSearchResults('generic-results-Asset')
       .scrollIntoView()
-      .searchAndClickOption('createdDate')
+      .searchAndClickOption('created date')
       .selectOperator(Operator.BEFORE)
       .inputDate(value)
       .clickFilterApplyButton();
