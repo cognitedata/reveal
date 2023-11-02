@@ -121,7 +121,6 @@ export default defineConfig({
   define: {
     'process.platform': `'${process.platform}'`,
     ...Object.entries({
-      NODE_ENV: 'development',
       ...loadEnv('development', process.cwd(), 'REACT_APP_'),
       ...loadEnv('development', process.cwd(), 'PUBLIC_URL'),
     }).reduce(
