@@ -87,7 +87,7 @@ jobs:
           target: 'e2e'
           # fusion-shell-e2e and platypus-cdf-cli run in their own jobs
           # the other excluded apps need additional work to successfully run
-          exclude: 'fusion-shell, platypus-cdf-cli, data-exploration-e2e, platypus'
+          exclude: 'fusion-shell, platypus-cdf-cli, data-exploration-e2e'
 
       - name: 'Get affected storybook projects to build'
         id: affected-storybook
@@ -598,8 +598,10 @@ jobs:
         with:
           browser: chrome
           # start the shell and wait for it to be ready
-          start: yarn nx run fusion-shell:preview:production
-          wait-on: https://local.cognite.ai:4200
+          start: |
+            yarn nx run fusion-shell:preview:production
+            yarn nx serve mock-server
+          wait-on: 'https://local.cognite.ai:4200, http://localhost:4002'
           wait-on-timeout: 300
           # run the e2e test target for the given project
           command: yarn nx run ${{ matrix.project }}:e2e:ci

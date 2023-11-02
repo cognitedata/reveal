@@ -2,7 +2,7 @@ import { getUrl } from '../../utils/url';
 
 describe('Data model list - Access control', () => {
   beforeEach(() => {
-    cy.request('http://localhost:4200/reset');
+    cy.request('http://localhost:4201/reset');
   });
   it('cannot access data model according to token', () => {
     cy.mockUserToken();

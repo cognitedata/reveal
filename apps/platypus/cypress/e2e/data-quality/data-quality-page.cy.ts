@@ -24,7 +24,7 @@ describe('Platypus Data Quality Page', () => {
     );
 
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
-    cy.request('http://localhost:4200/reset');
+    cy.request('http://localhost:4201/reset');
     cy.visit(getUrl('/blog/blog/latest/data-quality'));
     cy.ensurePageFinishedLoading();
   });

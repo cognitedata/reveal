@@ -4,7 +4,7 @@ import { getUrl } from '../../utils/url';
 describe('Platypus Data Preview Page - Preview', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
-    cy.request('http://localhost:4200/reset');
+    cy.request('http://localhost:4201/reset');
     cy.visit(getUrl('/blog/blog/latest/data-management/preview'));
     cy.ensurePageFinishedLoading();
   });
@@ -251,7 +251,6 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.getBySel('data-preview-side-panel').should('not.exist');
   });
 
-  //This passes, but should fail
   it('should show the no rows overlay when the table is empty', () => {
     cy.get('[data-testid="TypeWithoutData"]').click();
     cy.get('[data-testid="TypeWithoutData"]').should('have.class', 'active');

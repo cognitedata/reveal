@@ -7,7 +7,7 @@ describe('Platypus Data Preview Page - Column Selection', () => {
       '@cognite.fusion.data-modeling.platypus.DEVX_COLUMN_SELECTION',
       'TRUE'
     );
-    cy.request('http://localhost:4200/reset');
+    cy.request('http://localhost:4201/reset');
     cy.visit(getUrl('/blog/blog/latest/data-management/preview'));
     cy.ensurePageFinishedLoading();
   });

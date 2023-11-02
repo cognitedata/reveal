@@ -2,7 +2,7 @@ import { getUrl } from '../../utils/url';
 
 describe('Data Model Page - UI editor', () => {
   beforeEach(() => {
-    cy.request('http://localhost:4200/reset').then(() => {
+    cy.request('http://localhost:4201/reset').then(() => {
       cy.visit(getUrl('/blog/blog/latest'));
       cy.ensurePageFinishedLoading();
       cy.openUiEditorTab();

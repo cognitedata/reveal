@@ -3,7 +3,7 @@ import { getUrl } from '../../utils/url';
 describe('Data models list - List data models', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
-    cy.request('http://localhost:4200/reset');
+    cy.request('http://localhost:4201/reset');
     cy.visit(getUrl(''));
     cy.ensurePageFinishedLoading();
   });

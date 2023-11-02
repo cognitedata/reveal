@@ -275,11 +275,12 @@
     },
     "e2e": {
       "executor": "@nx/cypress:cypress",
+      "dependsOn": ["build-worker"],
       "options": {
         "cypressConfig": "apps/platypus/cypress.config.ts",
         "testingType": "e2e",
         "devServerTarget": "platypus:serve:mock",
-        "port": 4200
+        "port": 4201
       },
       "configurations": {
         "e2e": {
@@ -289,6 +290,12 @@
           "ignoreTestFiles": "**/@(suggestions.cy.ts)"
         },
         "mockV3": {
+          "env": {
+            "FDM_VERSION": "3"
+          },
+          "ignoreTestFiles": "**/@(suggestions.cy.ts)"
+        },
+        "ci": {
           "env": {
             "FDM_VERSION": "3"
           },

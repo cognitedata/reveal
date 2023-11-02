@@ -2,7 +2,7 @@ import { getFDMVersion, getUrl } from '../../utils';
 
 describe('Data model page - Local drafts', () => {
   beforeEach(() => {
-    cy.request('http://localhost:4200/reset');
+    cy.request('http://localhost:4201/reset');
     cy.visit(getUrl('/blog/blog/latest'));
     cy.ensurePageFinishedLoading();
   });

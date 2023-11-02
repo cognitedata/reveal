@@ -12,7 +12,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     //   '@cognite.fusion.data-modeling.platypus.DEVX_MATCHMAKER_SUGGESTIONS_UI',
     //   'true'
     // );
-    cy.request('http://localhost:4200/reset');
+    cy.request('http://localhost:4201/reset');
     cy.visit(getUrl('/blog/blog/latest/data-management/preview'));
     cy.ensurePageFinishedLoading();
   });

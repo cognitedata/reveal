@@ -2,7 +2,7 @@ import { getFDMVersion, getUrl } from '../../utils';
 
 describe('Data models list - Create data model', () => {
   beforeEach(() => {
-    cy.request('http://localhost:4200/reset');
+    cy.request('http://localhost:4201/reset');
     cy.visit(getUrl(''));
     cy.ensurePageFinishedLoading();
   });

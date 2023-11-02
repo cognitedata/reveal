@@ -69,7 +69,7 @@ Cypress.Commands.add('getCogsToast', (type, ...args) => {
 });
 
 Cypress.Commands.add('mockUserToken', () => {
-  cy.request('POST', 'http://localhost:4200/api/v1/token/inspect', {
+  cy.request('POST', 'http://localhost:4201/api/v1/token/inspect', {
     subject: 'OcJ9QWErtY35I-uzLiS2Razr7-i3ayRFG3oY5wbS-12345',
     projects: [
       {
