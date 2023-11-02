@@ -11,7 +11,11 @@ import { OptionType } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { CreateSessionVariables, useCreateSession } from './sessions';
+import {
+  CreateSessionVariables,
+  revokeSessionId,
+  useCreateSession,
+} from './sessions';
 
 type UpdateWithExternalId<T, P extends keyof T> = {
   externalId: string;
@@ -357,7 +361,9 @@ type CreateMQTTDestinationVariables = Omit<
   credentials: CreateSessionVariables;
 };
 
-export const useCreateMQTTDestination = () => {
+export const useCreateMQTTDestination = (
+  options?: UseMutationOptions<unknown, unknown, CreateMQTTDestinationVariables>
+) => {
   const sdk = useSDK();
 
   const { mutateAsync: createSession } = useCreateSession();
@@ -382,8 +388,14 @@ export const useCreateMQTTDestination = () => {
           },
         }
       )
-      .then((r) => r.data.items[0]);
-  });
+      .then((r) => r.data.items[0])
+      .catch(async (reason) => {
+        if (session) {
+          await revokeSessionId(sdk, session.id);
+        }
+        throw reason;
+      });
+  }, options);
 };
 
 // JOBS

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import styled from 'styled-components';
 
@@ -37,6 +37,13 @@ export const StepThree = ({
       );
     }, []),
   });
+
+  const onChangeDestinationType = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFieldValue('destinationExternalIdToCreate', e.target.value);
+    },
+    [setFieldValue]
+  );
   return (
     <FormFieldRadioGroup
       direction="column"
@@ -81,9 +88,7 @@ export const StepThree = ({
                   required: true,
                   text: t('form-sink-external-id'),
                 }}
-                onChange={(e) =>
-                  setFieldValue('destinationExternalIdToCreate', e.target.value)
-                }
+                onChange={onChangeDestinationType}
                 status={
                   errors.destinationExternalIdToCreate ? 'critical' : undefined
                 }
@@ -107,9 +112,7 @@ export const StepThree = ({
                   required: true,
                   text: t('form-sink-external-id'),
                 }}
-                onChange={(e) =>
-                  setFieldValue('destinationExternalIdToCreate', e.target.value)
-                }
+                onChange={onChangeDestinationType}
                 status={
                   errors.destinationExternalIdToCreate ? 'critical' : undefined
                 }

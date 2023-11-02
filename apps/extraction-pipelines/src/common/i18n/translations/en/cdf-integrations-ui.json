@@ -425,5 +425,6 @@
   "topic-filter-guide-step-3-cat-2-bullet-2": "Your own user credentials will be used to create the new sink. This means the sink will use your credentials towards CDF.",
   "topic-filter-guide-step-3-cat-3": "Create new sink with client credentials:",
   "topic-filter-guide-step-3-cat-3-bullet-1": "Sink external ID: Create an unique ID for your new sink.",
-  "topic-filter-guide-step-3-cat-3-bullet-2": "Use client credentials to give this new sink permission to upload data to CDF. That means this sink is registered on client credentials."
+  "topic-filter-guide-step-3-cat-3-bullet-2": "Use client credentials to give this new sink permission to upload data to CDF. That means this sink is registered on client credentials.",
+  "sink-with-external-id-already-exists": "A sink with that external ID already exists"
 }

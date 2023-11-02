@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { getProject } from '@cognite/cdf-utilities';
+import { CogniteClient } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 
 export type CreateSessionVariables =
@@ -38,4 +39,24 @@ export const useCreateSession = () => {
       })
       .then((r) => r.data.items[0]);
   });
+};
+
+export const revokeSessionId = async (
+  sdk: CogniteClient,
+  sessionId: number
+) => {
+  try {
+    const result = await sdk.post<{ items: Session[] }>(
+      `/api/v1/projects/${getProject()}/sessions/revoke`,
+      {
+        data: {
+          items: [{ id: sessionId }],
+        },
+      }
+    );
+    return result.data.items[0];
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error occurred while revoking session');
+  }
 };

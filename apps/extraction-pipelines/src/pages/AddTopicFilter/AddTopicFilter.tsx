@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 
-import { Colors, Divider, Flex, Heading } from '@cognite/cogs.js';
+import { Colors, Divider, Flex, Heading, toast } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { BottomBar, TopBar } from '../../components/ToolBars';
@@ -39,7 +39,38 @@ export const AddTopicFilter = () => {
 
   const { data: source } = useMQTTSourceWithMetrics(sourceExternalId);
 
-  const { mutateAsync: createDestination } = useCreateMQTTDestination();
+  const { mutateAsync: createDestination } = useCreateMQTTDestination({
+    onError: (e: unknown) => {
+      const error = e as {
+        message: string;
+        errorMessage: string;
+        status: number;
+      };
+
+      if (error.status === 409) {
+        if (
+          values.destinationOption === 'client-credentials' ||
+          values.destinationOption === 'current-user'
+        ) {
+          setErrors({
+            destinationExternalIdToCreate: t(
+              'sink-with-external-id-already-exists'
+            ),
+          });
+        }
+      } else {
+        toast.error(error.message, {
+          autoClose: 3000,
+          type: 'dark',
+          style: {
+            backgroundColor: `var(--surface-muted, #262626)`,
+            color: `var(--text-icon-strong, rgba(255, 255, 255, 0.95))`,
+          },
+          position: 'bottom-left',
+        });
+      }
+    },
+  });
   const { mutateAsync: createJob } = useCreateMQTTJob({
     onSuccess: () => {
       notification.success({
@@ -122,7 +153,7 @@ export const AddTopicFilter = () => {
     return errors;
   };
 
-  const { errors, handleSubmit, setFieldValue, values } = useFormik<
+  const { errors, handleSubmit, setFieldValue, values, setErrors } = useFormik<
     CreateJobsFormValues & { useSampleData?: boolean }
   >({
     initialValues: {
@@ -190,7 +221,7 @@ export const AddTopicFilter = () => {
           val.topicFilters.map((topicFilter) => {
             return createJob({
               destinationId: destinationExternalId!,
-              externalId: `${source?.externalId}-${val.selectedDestinationExternalId}-${topicFilter}`,
+              externalId: `${source?.externalId}-${destinationExternalId}-${topicFilter}`,
               format: {
                 type: format ?? 'cognite',
                 ...(mappingId && { mappingId }),
