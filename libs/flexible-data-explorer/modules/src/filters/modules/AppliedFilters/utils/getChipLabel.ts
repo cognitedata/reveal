@@ -7,20 +7,18 @@ import { formatValue } from './formatValue';
 
 export interface Props {
   dataType?: string;
-  field: string;
   fieldValue: FieldValue;
   t: TFunction;
 }
 
 export const getChipLabel = ({
   dataType = '',
-  field,
   fieldValue,
   t,
 }: Props): string => {
-  const { operator, value, type } = fieldValue;
+  const { label, operator, value, type } = fieldValue;
 
-  const prefix = `${dataType} ${field} ${t(operator, {
+  const prefix = `${dataType} ${label} ${t(operator, {
     postProcess: 'lowercase',
   })}`.trim();
 

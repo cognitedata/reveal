@@ -19,6 +19,14 @@ const interceptSearchDataTypes = () => {
   );
 };
 
+const interceptTimeseriesList = () => {
+  cy.intercept({
+    url: '**/timeseries/list',
+    method: 'POST',
+  }).as(requestAlias.timeseriesList);
+};
+
 export const interceptions: Record<RequestAlias, RequestIntercept> = {
   searchDataTypes: interceptSearchDataTypes,
+  timeseriesList: interceptTimeseriesList,
 };

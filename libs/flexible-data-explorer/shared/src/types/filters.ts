@@ -148,6 +148,7 @@ export type ValueByDataType = Record<string, ValueByField>;
 export type ValueByField<T = unknown> = Record<string, FieldValue>;
 
 export interface FieldValue {
+  label: string;
   operator: Operator;
   value: ValueType;
   type: FieldType;

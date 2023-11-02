@@ -47,6 +47,8 @@ describe('filter', () => {
   });
 
   describe('convertDateFieldToNumericField', () => {
+    const label: string = 'label';
+
     it('should handle undefined value', () => {
       const result = convertDateFieldToNumericField();
       expect(result).toBeUndefined();
@@ -54,6 +56,7 @@ describe('filter', () => {
 
     it('should return the same field value for numeric field', () => {
       const value: FieldValue = {
+        label,
         operator: Operator.EQUALS,
         value: 0,
         type: 'number',
@@ -64,6 +67,7 @@ describe('filter', () => {
 
     it('should return the same field value for numeric range field', () => {
       const value: FieldValue = {
+        label,
         operator: Operator.BETWEEN,
         value: [0, 1],
         type: 'number',
@@ -75,6 +79,7 @@ describe('filter', () => {
     it('should convert date field into numeric field', () => {
       const date = new Date();
       const value: FieldValue = {
+        label,
         operator: Operator.ON,
         value: date,
         type: 'date',
@@ -89,6 +94,7 @@ describe('filter', () => {
     it('should convert date range field into numeric range field', () => {
       const dateRange: DateRange = [new Date(), new Date()];
       const value: FieldValue = {
+        label,
         operator: Operator.BETWEEN,
         value: dateRange,
         type: 'date',
@@ -102,6 +108,7 @@ describe('filter', () => {
 
     it('should return undefined', () => {
       const stringValue: FieldValue = {
+        label,
         operator: Operator.STARTS_WITH,
         value: 'test',
         type: 'string',
@@ -109,6 +116,7 @@ describe('filter', () => {
       expect(convertDateFieldToNumericField(stringValue)).toBeUndefined();
 
       const booleanValue: FieldValue = {
+        label,
         operator: Operator.IS_TRUE,
         value: true,
         type: 'boolean',

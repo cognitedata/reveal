@@ -20,9 +20,9 @@ describe('transformValue', () => {
   });
 
   it('should transform date input', () => {
-    const inputValue = '2023-09-15';
+    const inputValue = '2023-01-01T00:00';
     const result = transformValue<Date>(inputValue, 'date');
-    expect(result).toEqual(new Date('2023-09-15'));
+    expect(result).toEqual(new Date(inputValue));
   });
 
   it('should handle invalid text inputs', () => {

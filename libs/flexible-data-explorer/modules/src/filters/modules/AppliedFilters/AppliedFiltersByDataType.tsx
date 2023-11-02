@@ -39,7 +39,7 @@ export const AppliedFiltersByDataType: React.FC<
     <ChipGroup {...APPLIED_FILTERS_CHIP_GROUP_PROPS}>
       {Object.entries(value).flatMap(([dataType, valueByField]) => {
         return Object.entries(valueByField).map(([field, fieldValue]) => {
-          const label = getChipLabel({ dataType, field, fieldValue, t });
+          const label = getChipLabel({ dataType, fieldValue, t });
 
           return (
             <Chip

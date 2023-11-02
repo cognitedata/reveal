@@ -1,5 +1,4 @@
 import isArray from 'lodash/isArray';
-import isDate from 'lodash/isDate';
 import isNumber from 'lodash/isNumber';
 
 import {
@@ -8,6 +7,8 @@ import {
   NumericRange,
   ValueType,
 } from '../types/filters';
+
+import { isDate } from './date';
 
 export const isNumericRange = (value: ValueType): value is NumericRange => {
   return isArray(value) && isNumber(value[0]) && isNumber(value[1]);
@@ -20,7 +21,7 @@ export const isDateRange = (value: ValueType): value is DateRange => {
 export const convertDateRangeToNumericRange = (
   value: DateRange
 ): NumericRange => {
-  return [value[0].valueOf(), value[1].valueOf()];
+  return [new Date(value[0]).valueOf(), new Date(value[1]).valueOf()];
 };
 
 export const convertDateFieldToNumericField = (
@@ -30,24 +31,26 @@ export const convertDateFieldToNumericField = (
     return undefined;
   }
 
-  const { value } = fieldValue;
+  const { value, type } = fieldValue;
 
-  if (isNumber(value) || isNumericRange(value)) {
+  if (type === 'number' && (isNumber(value) || isNumericRange(value))) {
     return fieldValue;
   }
 
-  if (isDate(value)) {
-    return {
-      ...fieldValue,
-      value: value.valueOf(),
-    };
-  }
+  if (type === 'date') {
+    if (isDate(value)) {
+      return {
+        ...fieldValue,
+        value: new Date(value).valueOf(),
+      };
+    }
 
-  if (isDateRange(value)) {
-    return {
-      ...fieldValue,
-      value: convertDateRangeToNumericRange(value),
-    };
+    if (isDateRange(value)) {
+      return {
+        ...fieldValue,
+        value: convertDateRangeToNumericRange(value),
+      };
+    }
   }
 
   return undefined;

@@ -42,9 +42,10 @@ export const FilterBuilderByField = <T,>({
       return;
     }
 
-    const updatedValue = {
+    const updatedValue: ValueByField<T> = {
       ...value,
       [selectedField.id]: {
+        label: selectedField.displayName || selectedField.id,
         operator,
         value: newValue,
         type: selectedField.type,

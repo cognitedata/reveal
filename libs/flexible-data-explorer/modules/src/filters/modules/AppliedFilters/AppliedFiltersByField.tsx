@@ -32,7 +32,7 @@ export const AppliedFiltersByField: React.FC<AppliedFiltersByFieldProps> = ({
   return (
     <ChipGroup {...APPLIED_FILTERS_CHIP_GROUP_PROPS}>
       {Object.entries(value).map(([field, fieldValue]) => {
-        const label = getChipLabel({ field, fieldValue, t });
+        const label = getChipLabel({ fieldValue, t });
 
         return (
           <Chip

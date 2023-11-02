@@ -5,6 +5,7 @@ import {
   getLocalDate,
   getTimestamp,
   isDate,
+  isValidDateString,
   isValidFDMDate,
 } from '../date';
 
@@ -66,6 +67,14 @@ describe('date', () => {
       const invalidDate = new Date('invalid-date-string');
       expect(isDate(invalidDate)).toBe(false);
     });
+
+    it('should return false for a number', () => {
+      expect(isDate(0)).toBe(false);
+    });
+
+    it('should return true for a date string', () => {
+      expect(isDate('2023-09-15')).toBe(true);
+    });
   });
 
   describe('formatDate', () => {
@@ -89,6 +98,19 @@ describe('date', () => {
       const expectedFormattedDate = dayjs(inputDate).format(customFormat);
 
       expect(formattedDate).toBe(expectedFormattedDate);
+    });
+  });
+
+  describe('isValidDateString', () => {
+    it('should return true for valid date strings', () => {
+      expect(isValidDateString('2023-01-01')).toBe(true);
+      expect(isValidDateString('2023-01-01T00:00')).toBe(true);
+    });
+
+    it('should return false for date strings with invalid formats', () => {
+      expect(isValidDateString('01-01-2023')).toBe(false);
+      expect(isValidDateString('2023/01/01')).toBe(false);
+      expect(isValidDateString('2023/01/01T00:00')).toBe(false);
     });
   });
 

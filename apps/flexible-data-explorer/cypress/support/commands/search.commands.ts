@@ -38,7 +38,13 @@ const performGlobalSearchCategory = (category: string) => {
 };
 
 const removeCategory = (category: string) => {
+  cy.log(`Remove category: ${category}`);
   cy.clickIconButton(`Remove ${category}`);
+};
+
+const removeAppliedFilter = (filterLabel: string) => {
+  cy.log(`Remove: ${filterLabel}`);
+  cy.clickIconButton(`Remove ${filterLabel}`);
 };
 
 const getGenericResults = (category: string) => {
@@ -56,6 +62,7 @@ Cypress.Commands.add(
   performGlobalSearchCategory
 );
 Cypress.Commands.add('removeCategory', removeCategory);
+Cypress.Commands.add('removeAppliedFilter', removeAppliedFilter);
 Cypress.Commands.add('getGenericResults', getGenericResults);
 
 export interface SearchCommands {
@@ -65,6 +72,7 @@ export interface SearchCommands {
   selectSearchCategory: (item: string) => void;
   performGlobalSearchCategory: (category: string) => void;
   removeCategory: (category: string) => void;
+  removeAppliedFilter: (filterLabel: string) => void;
   getGenericResults: (
     category: string
   ) => Cypress.Chainable<JQuery<HTMLElement>>;

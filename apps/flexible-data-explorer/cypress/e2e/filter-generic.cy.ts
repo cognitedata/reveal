@@ -12,10 +12,11 @@ describe('Filter - Generic', () => {
   it('Should be able to filter by string properties', () => {
     cy.selectSearchCategory('Work item');
 
+    const field = 'title';
     const value = 'Test work-item';
 
     cy.openFilterInSearchResults('generic-results-WorkItem')
-      .searchAndClickOption(': title')
+      .searchAndClickOption(field)
       .selectOperator(Operator.NOT_STARTS_WITH)
       .inputString(value)
       .clickFilterApplyButton();
@@ -30,18 +31,18 @@ describe('Filter - Generic', () => {
       },
     });
 
-    cy.log('Remove applied filter');
-    cy.clickIconButton(`Remove title doesn't start with ${value}`);
+    cy.removeAppliedFilter(`${field} doesn't start with ${value}`);
     cy.waitForRequest('searchDataTypes');
   });
 
   it('Should be able to filter by numeric properties', () => {
     cy.selectSearchCategory('Work order');
 
+    const field = 'percentage progress';
     const value = 50;
 
     cy.openFilterInSearchResults('generic-results-WorkOrder')
-      .searchAndClickOption('percentage progress')
+      .searchAndClickOption(field)
       .selectOperator(Operator.LESS_THAN)
       .inputNumber(value)
       .clickFilterApplyButton();
@@ -54,16 +55,17 @@ describe('Filter - Generic', () => {
       },
     });
 
-    cy.log('Remove applied filter');
-    cy.clickIconButton(`Remove percentageProgress is less than ${value}`);
+    cy.removeAppliedFilter(`${field} is less than ${value}`);
     cy.waitForRequest('searchDataTypes');
   });
 
   it('Should be able to filter by boolean properties', () => {
+    const field = 'completed';
+
     cy.selectSearchCategory('Work item');
 
     cy.openFilterInSearchResults('generic-results-WorkItem')
-      .searchAndClickOption('completed')
+      .searchAndClickOption(field)
       .selectOperator(Operator.IS_SET)
       .clickFilterApplyButton();
 
@@ -75,19 +77,19 @@ describe('Filter - Generic', () => {
       },
     });
 
-    cy.log('Remove applied filter');
-    cy.clickIconButton(`Remove isCompleted is set`);
+    cy.removeAppliedFilter(`${field} is set`);
     cy.waitForRequest('searchDataTypes');
   });
 
   it('Should be able to filter by Date properties', () => {
     cy.selectSearchCategory('Asset');
 
+    const field = 'created date';
     const value = new Date(`10/30/2020`);
 
     cy.openFilterInSearchResults('generic-results-Asset')
       .scrollIntoView()
-      .searchAndClickOption('created date')
+      .searchAndClickOption(field)
       .selectOperator(Operator.BEFORE)
       .inputDate(value)
       .clickFilterApplyButton();
@@ -100,8 +102,7 @@ describe('Filter - Generic', () => {
       },
     });
 
-    cy.log('Remove applied filter');
-    cy.clickIconButton(`Remove createdDate is before ${formatDate(value)}`);
+    cy.removeAppliedFilter(`${field} is before ${formatDate(value)}`);
     cy.waitForRequest('searchDataTypes');
   });
 });
