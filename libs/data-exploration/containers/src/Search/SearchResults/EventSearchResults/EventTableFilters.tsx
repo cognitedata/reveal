@@ -25,16 +25,19 @@ export const EventTableFilters = ({ filter, onFilterChange }: Props) => {
             sources: newSources,
           })
         }
+        menuPortalTarget={document.body}
       />
       <TypeFilter.Event
         filter={filter}
         value={filter.type}
         onChange={(newFilters) => onFilterChange({ type: newFilters })}
+        menuPortalTarget={document.body}
       />
       <SubTypeFilter.Event
         filter={filter}
         value={filter.subtype}
         onChange={(newFilters) => onFilterChange({ subtype: newFilters })}
+        menuPortalTarget={document.body}
       />
       <MetadataFilter.Events
         filter={filter}

@@ -29,6 +29,7 @@ export interface BaseMultiSelectFilterProps<TFilter, TValue = string>
   onChange?: (newValue?: MultiSelectFilterValue<TValue>) => void;
   onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
+  menuPortalTarget?: HTMLElement;
 }
 
 export interface BaseNestedFilterProps<TFilter>
@@ -37,6 +38,7 @@ export interface BaseNestedFilterProps<TFilter>
   values?: { key: string; value: string }[];
   onChange?: (selection: { key: string; value: string }[]) => void;
   menuProps?: CheckboxSelectProps['menuProps'];
+  menuPortalTarget?: HTMLElement;
 }
 
 export interface MultiSelectOptionType<TValue> {

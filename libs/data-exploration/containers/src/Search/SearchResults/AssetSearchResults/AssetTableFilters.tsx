@@ -22,6 +22,7 @@ export const AssetTableFilters: React.FC<Props> = ({
         value={filter.labels}
         onChange={(newFilters) => onFilterChange({ labels: newFilters })}
         addNilOption
+        menuPortalTarget={document.body}
       />
       <SourceFilter.Asset
         filter={filter}
@@ -31,6 +32,7 @@ export const AssetTableFilters: React.FC<Props> = ({
             sources: newSources,
           })
         }
+        menuPortalTarget={document.body}
       />
       <MetadataFilter.Assets
         filter={filter}

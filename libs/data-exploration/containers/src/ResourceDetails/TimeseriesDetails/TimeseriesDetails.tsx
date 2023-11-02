@@ -2,7 +2,10 @@ import React, { FC, useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { ResourceDetailsTemplate } from '@data-exploration/components';
+import {
+  DefaultPreviewFilter,
+  ResourceDetailsTemplate,
+} from '@data-exploration/components';
 import noop from 'lodash/noop';
 
 import { Collapse, Title } from '@cognite/cogs.js';
@@ -15,14 +18,17 @@ import {
   SelectableItemsProps,
   ViewType,
   useTranslation,
+  InternalTimeseriesFilters,
+  InternalEventsFilters,
+  InternalAssetFilters,
 } from '@data-exploration-lib/core';
 import {
-  useAssetsByIdQuery,
-  useEventsListQuery,
-  useFileSearchQuery,
+  useAssetsSearchResultQuery,
+  useEventsSearchResultQuery,
   useSequenceListQuery,
+  useShamefulDocumentsQuery,
   useTimeseriesByIdsQuery,
-  useTimeseriesListQuery,
+  useTimeseriesSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 
 import {
@@ -34,6 +40,10 @@ import {
 } from '../../DetailsTable';
 import { TimeseriesInfo } from '../../Info';
 import { ResourceSelection } from '../../ResourceSelector';
+import { AssetTableFilters } from '../../Search/SearchResults/AssetSearchResults/AssetTableFilters';
+import { EventTableFilters } from '../../Search/SearchResults/EventSearchResults/EventTableFilters';
+import { FileTableFiltersDocument } from '../../Search/SearchResults/FileSearchResults/FileTableFilters';
+import { TimeseriesTableFilters } from '../../Search/SearchResults/TimeseriesSearchResults/TimeseriesTableFilters';
 import {
   ASSETS,
   DETAILS,
@@ -44,6 +54,7 @@ import {
   SEQUENCES,
   TIME_SERIES,
 } from '../constant';
+import { useLocalFilterState } from '../hooks';
 import { getResourcesVisibility } from '../utils';
 
 interface Props {
@@ -56,6 +67,7 @@ interface Props {
   visibleResources?: ResourceType[];
   showSelectButton?: boolean;
   onDateRangeChange?: (dateRange: Record<number, [Date, Date]>) => void;
+  isDocumentsApiEnabled?: boolean;
 }
 export const TimeseriesDetails: FC<
   Props & Pick<SelectableItemsProps, 'onSelect'>
@@ -70,6 +82,7 @@ export const TimeseriesDetails: FC<
   visibleResources = [],
   showSelectButton,
   onDateRangeChange = noop,
+  isDocumentsApiEnabled = true,
 }) => {
   const {
     data,
@@ -102,20 +115,84 @@ export const TimeseriesDetails: FC<
 
   const assetIds = timeseries?.assetId ? [timeseries.assetId] : [];
 
-  const isQueryEnabled = assetIds.length > 0;
-  const { data: relatedAssets = [], isInitialLoading: isAssetsLoading } =
-    useAssetsByIdQuery(
-      assetIds.map((id) => ({ id })),
-      { enabled: isTimeseriesFetched && isQueryEnabled }
-    );
+  const isQueryEnabled = isTimeseriesFetched && assetIds.length > 0;
+
+  const filter = {
+    assetSubtreeIds: assetIds.map((value) => ({
+      value,
+    })),
+  };
+
+  const {
+    query: fileQuery,
+    setQuery: setFileQuery,
+    debouncedQuery: debouncedFileSearchQuery,
+    setFilter: setFileFilter,
+    composedFilter: composedFileFilter,
+    sortBy: fileSortBy,
+    setSortBy: setFileSortBy,
+  } = useLocalFilterState<any>({ baseFilter: filter });
+
+  const {
+    query: timeseriesQuery,
+    setQuery: setTimeseriesQuery,
+    debouncedQuery: debouncedTimeseriesSearchQuery,
+    setFilter: setTimeseriesFilter,
+    composedFilter: composedTimeseriesFilter,
+    sortBy: timeseriesSortBy,
+    setSortBy: setTimeseriesSortBy,
+  } = useLocalFilterState<InternalTimeseriesFilters>({ baseFilter: filter });
+
+  const {
+    query: eventQuery,
+    setQuery: setEventQuery,
+    debouncedQuery: debouncedEventSearchQuery,
+    setFilter: setEventFilter,
+    composedFilter: composedEventFilter,
+    sortBy: eventSortBy,
+    setSortBy: setEventSortBy,
+  } = useLocalFilterState<InternalEventsFilters>({ baseFilter: filter });
+
+  const {
+    query: assetQuery,
+    setQuery: setAssetQuery,
+    debouncedQuery: debouncedAssetSearchQuery,
+    setFilter: setAssetFilter,
+    composedFilter: composedAssetFilter,
+    sortBy: assetSortBy,
+    setSortBy: setAssetSortBy,
+  } = useLocalFilterState<InternalAssetFilters>({ baseFilter: filter });
+
+  const {
+    data: relatedAssets = [],
+    hasNextPage: assetsHasNextPage,
+    fetchNextPage: assetsFetchNextPage,
+    isInitialLoading: isAssetsLoading,
+  } = useAssetsSearchResultQuery(
+    {
+      query: debouncedAssetSearchQuery,
+      assetFilter: composedAssetFilter,
+      sortBy: assetSortBy,
+      limit: 10,
+    },
+    { enabled: isQueryEnabled && isAssetVisible && assetIds.length > 0 }
+  );
+
   const {
     hasNextPage: hasEventNextPage,
     fetchNextPage: hasEventFetchNextPage,
     isInitialLoading: isEventsLoading,
     data: events,
-  } = useEventsListQuery(
-    { filter: { assetIds } },
-    { enabled: isQueryEnabled && isEventVisible }
+  } = useEventsSearchResultQuery(
+    {
+      eventsFilters: composedEventFilter,
+      eventsSortBy: eventSortBy,
+      query: debouncedEventSearchQuery,
+    },
+    undefined,
+    {
+      enabled: isQueryEnabled && isEventVisible,
+    }
   );
 
   const {
@@ -123,26 +200,34 @@ export const TimeseriesDetails: FC<
     fetchNextPage: hasTimeseriesFetchNextPage,
     isInitialLoading: isTimeseriesLoading,
     data: relatedTimeseries,
-  } = useTimeseriesListQuery(
-    { filter: { assetIds } },
-    { enabled: isQueryEnabled && isTimeseriesVisible }
+  } = useTimeseriesSearchResultQuery(
+    {
+      query: debouncedTimeseriesSearchQuery,
+      filter: composedTimeseriesFilter,
+      sortBy: timeseriesSortBy,
+    },
+    undefined,
+    {
+      enabled: isQueryEnabled && isTimeseriesVisible,
+    }
   );
 
   const {
+    results: relatedDocuments = [],
     hasNextPage: hasDocumentsNextPage,
     fetchNextPage: hasDocumentsFetchNextPage,
     isInitialLoading: isDocumentsLoading,
-    results: relatedDocuments = [],
-  } = useFileSearchQuery(
+  } = useShamefulDocumentsQuery(
     {
-      filter: {
-        assetSubtreeIds: assetIds.map((value) => ({
-          id: value,
-        })),
-      },
+      sortBy: fileSortBy,
+      query: debouncedFileSearchQuery,
+      filter: composedFileFilter,
       limit: 10,
     },
-    { enabled: isQueryEnabled && isFileVisible }
+    {
+      isDocumentsApiEnabled,
+      isEnabled: isQueryEnabled && isFileVisible,
+    }
   );
 
   const {
@@ -228,6 +313,22 @@ export const TimeseriesDetails: FC<
               onRowSelection={(updater, currentAssets) =>
                 onSelect?.(updater, currentAssets, ViewType.Asset)
               }
+              hasNextPage={assetsHasNextPage}
+              fetchMore={assetsFetchNextPage}
+              enableSorting
+              sorting={assetSortBy}
+              onSort={setAssetSortBy}
+              tableHeaders={
+                <DefaultPreviewFilter
+                  query={assetQuery}
+                  onQueryChange={setAssetQuery}
+                >
+                  <AssetTableFilters
+                    filter={composedAssetFilter}
+                    onFilterChange={setAssetFilter}
+                  />
+                </DefaultPreviewFilter>
+              }
             />
           </Collapse.Panel>
         )}
@@ -246,6 +347,20 @@ export const TimeseriesDetails: FC<
               selectedRows={selectedRows?.timeSeries || EMPTY_OBJECT}
               onRowSelection={(updater, currentTimeseries) =>
                 onSelect?.(updater, currentTimeseries, ViewType.TimeSeries)
+              }
+              enableSorting
+              sorting={timeseriesSortBy}
+              onSort={setTimeseriesSortBy}
+              tableHeaders={
+                <DefaultPreviewFilter
+                  query={timeseriesQuery}
+                  onQueryChange={setTimeseriesQuery}
+                >
+                  <TimeseriesTableFilters
+                    filter={composedTimeseriesFilter}
+                    onFilterChange={setTimeseriesFilter}
+                  />
+                </DefaultPreviewFilter>
               }
             />
           </Collapse.Panel>
@@ -266,6 +381,22 @@ export const TimeseriesDetails: FC<
               onRowSelection={(updater, currentFiles) =>
                 onSelect?.(updater, currentFiles, ViewType.File)
               }
+              enableSorting={isDocumentsApiEnabled}
+              sorting={fileSortBy}
+              onSort={setFileSortBy}
+              tableHeaders={
+                isDocumentsApiEnabled ? (
+                  <DefaultPreviewFilter
+                    query={fileQuery}
+                    onQueryChange={setFileQuery}
+                  >
+                    <FileTableFiltersDocument
+                      filter={composedFileFilter}
+                      onFilterChange={setFileFilter}
+                    />
+                  </DefaultPreviewFilter>
+                ) : undefined
+              }
             />
           </Collapse.Panel>
         )}
@@ -284,6 +415,20 @@ export const TimeseriesDetails: FC<
               selectedRows={selectedRows?.event || EMPTY_OBJECT}
               onRowSelection={(updater, currentEvents) =>
                 onSelect?.(updater, currentEvents, ViewType.Event)
+              }
+              enableSorting
+              sorting={eventSortBy}
+              onSort={setEventSortBy}
+              tableHeaders={
+                <DefaultPreviewFilter
+                  query={eventQuery}
+                  onQueryChange={setEventQuery}
+                >
+                  <EventTableFilters
+                    filter={composedEventFilter}
+                    onFilterChange={setEventFilter}
+                  />
+                </DefaultPreviewFilter>
               }
             />
           </Collapse.Panel>

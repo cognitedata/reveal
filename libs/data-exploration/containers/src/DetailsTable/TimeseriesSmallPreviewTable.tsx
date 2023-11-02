@@ -2,6 +2,8 @@ import React, { FC } from 'react';
 
 import styled from 'styled-components';
 
+import { TableProps } from '@data-exploration/components';
+
 import { Button } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
 
@@ -24,9 +26,15 @@ interface Props {
   selectedRows?: ResourceSelection;
 }
 
-// TODO: Fix typo TimeseriesSmallPreviewTable
-export const TimesereisSmallPreviewTable: FC<
-  Props & Partial<Pick<SelectableItemsProps, 'onSelect'>>
+export const TimeseriesSmallPreviewTable: FC<
+  Props &
+    Partial<Pick<SelectableItemsProps, 'onSelect'>> &
+    Partial<
+      Pick<
+        TableProps<InternalTimeseriesData>,
+        'enableSorting' | 'sorting' | 'onSort' | 'tableHeaders'
+      >
+    >
 > = ({
   data,
   fetchMore,
@@ -35,6 +43,8 @@ export const TimesereisSmallPreviewTable: FC<
   enableDetailTableSelection,
   selectedRows,
   onSelect,
+  tableHeaders,
+  enableSorting = false,
 }) => {
   const [selected, setSelected] = React.useState<number | undefined>(undefined);
   const { t } = useTranslation();
@@ -49,12 +59,14 @@ export const TimesereisSmallPreviewTable: FC<
         isLoadingMore={isLoading}
         enableSelection={enableDetailTableSelection}
         selectedRows={selectedRows?.timeSeries || {}}
+        enableSorting={enableSorting}
         onRowSelection={(updater, currentTimeseries) => {
           onSelect?.(updater, currentTimeseries, 'timeSeries');
         }}
         onRowClick={(row) => {
           setSelected(row.id);
         }}
+        tableHeaders={tableHeaders}
       />
     );
   }

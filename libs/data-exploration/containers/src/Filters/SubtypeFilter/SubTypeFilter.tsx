@@ -20,11 +20,13 @@ interface BaseSubTypeFilterProps<TFilter>
   onChange?: (subtype: string | string[]) => void;
   onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
+  menuPortalTarget?: HTMLElement;
 }
 
 export interface SubTypeFilterProps<TFilter>
   extends BaseSubTypeFilterProps<TFilter> {
   options: MultiSelectOptionType<string>[];
+  menuPortalTarget?: HTMLElement;
 }
 
 export function SubTypeFilter<TFilter>({

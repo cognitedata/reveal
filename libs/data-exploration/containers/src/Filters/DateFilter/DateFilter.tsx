@@ -45,6 +45,7 @@ interface DateFilterProps {
   onChange: (
     newValue: { min?: number; max?: number } | undefined | null
   ) => void;
+  menuPortalTarget?: HTMLElement;
 }
 
 type PeriodType = 'none' | 'before' | 'during' | 'after' | 'null';
@@ -54,6 +55,7 @@ export const DateFilter = ({
   onChange,
   label,
   enableNull = false,
+  menuPortalTarget,
 }: DateFilterProps) => {
   const { t } = useTranslation();
   const trackUsage = useMetrics();
@@ -146,6 +148,7 @@ export const DateFilter = ({
         isClearable={false}
         blurInputOnSelect
         menuPosition="fixed"
+        menuPortalTarget={menuPortalTarget}
         isMulti={false}
         cogsTheme="grey"
         onChange={handleOnChange}

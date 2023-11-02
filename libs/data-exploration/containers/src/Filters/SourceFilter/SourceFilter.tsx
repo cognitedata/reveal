@@ -27,6 +27,7 @@ import { transformOptionsForMultiselectFilter } from '../utils';
 export interface SourceFilterProps<TFilter>
   extends BaseMultiSelectFilterProps<TFilter> {
   options: MultiSelectOptionType<string>[];
+  menuPortalTarget?: HTMLElement;
 }
 
 interface BaseFileSourceFilterProps<TFilter>
@@ -37,6 +38,7 @@ interface BaseFileSourceFilterProps<TFilter>
   onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   query?: string;
   addNilOption?: boolean;
+  menuPortalTarget?: HTMLElement;
 }
 export interface FileSourceFilterProps<TFilter>
   extends BaseFileSourceFilterProps<TFilter> {
@@ -110,7 +112,9 @@ export const BaseFileSourceFilter = <TFilter,>({
 };
 
 const AssetSourceFilter = (
-  props: BaseMultiSelectFilterProps<InternalAssetFilters>
+  props: BaseMultiSelectFilterProps<InternalAssetFilters> & {
+    menuPortalTarget?: HTMLElement;
+  }
 ) => {
   const [query, setQuery] = useDebouncedState<string>();
 

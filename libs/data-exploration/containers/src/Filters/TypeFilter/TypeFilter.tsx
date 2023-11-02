@@ -24,6 +24,7 @@ interface BaseTypeFilterProps<TFilter>
   onChange?: (type: string | string[]) => void;
   onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
+  menuPortalTarget?: HTMLElement;
 }
 
 export interface TypeFilterProps<TFilter> extends BaseTypeFilterProps<TFilter> {

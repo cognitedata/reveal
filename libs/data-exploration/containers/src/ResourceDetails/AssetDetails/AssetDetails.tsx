@@ -1,12 +1,19 @@
 import React, { FC, useMemo } from 'react';
 
-import { ResourceDetailsTemplate } from '@data-exploration/components';
+import {
+  DefaultPreviewFilter,
+  ResourceDetailsTemplate,
+} from '@data-exploration/components';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Collapse, Title } from '@cognite/cogs.js';
 
 import {
   EMPTY_OBJECT,
+  InternalAssetFilters,
+  InternalDocumentFilter,
+  InternalEventsFilters,
+  InternalTimeseriesFilters,
   ResourceSelectionMode,
   ResourceType,
   SelectableItemsProps,
@@ -18,7 +25,7 @@ import {
   useTimeseriesSearchResultQuery,
   useAssetsSearchResultQuery,
   useSequenceSearchResultQuery,
-  useFileSearchQuery,
+  useShamefulDocumentsQuery,
 } from '@data-exploration-lib/domain-layer';
 
 import {
@@ -26,10 +33,14 @@ import {
   EventDetailsTable,
   FileDetailsTable,
   SequenceDetailsTable,
-  TimesereisSmallPreviewTable,
+  TimeseriesSmallPreviewTable,
 } from '../../DetailsTable';
 import { AssetInfo } from '../../Info';
 import { ResourceSelection } from '../../ResourceSelector';
+import { AssetTableFilters } from '../../Search/SearchResults/AssetSearchResults/AssetTableFilters';
+import { EventTableFilters } from '../../Search/SearchResults/EventSearchResults/EventTableFilters';
+import { FileTableFiltersDocument } from '../../Search/SearchResults/FileSearchResults/FileTableFilters';
+import { TimeseriesTableFilters } from '../../Search/SearchResults/TimeseriesSearchResults/TimeseriesTableFilters';
 import {
   ASSETS,
   DETAILS,
@@ -40,6 +51,7 @@ import {
   TIME_SERIES,
 } from '../constant';
 import { StyledCollapse } from '../elements';
+import { useLocalFilterState } from '../hooks';
 import { getResourcesVisibility } from '../utils';
 export const onOpenResources = (resourceType: ResourceType, id: number) => {
   const link = createLink(`/explore/search/${resourceType}/${id}`);
@@ -54,7 +66,9 @@ interface Props {
   selectedRows?: ResourceSelection;
   visibleResources?: ResourceType[];
   showSelectButton?: boolean;
+  isDocumentsApiEnabled?: boolean;
 }
+
 export const AssetDetails: FC<
   Props & Pick<SelectableItemsProps, 'onSelect'>
 > = ({
@@ -67,12 +81,13 @@ export const AssetDetails: FC<
   selectedRows,
   visibleResources = [],
   showSelectButton,
+  isDocumentsApiEnabled = true,
 }) => {
+  const { t } = useTranslation();
   const { data } = useAssetsByIdQuery([{ id: assetId }]);
   const asset = useMemo(() => {
     return data ? data[0] : undefined;
   }, [data]);
-  const { t } = useTranslation();
 
   const {
     isAssetVisible,
@@ -85,18 +100,61 @@ export const AssetDetails: FC<
   const filter = { assetSubtreeIds: [{ value: assetId }] };
 
   const {
+    query: fileQuery,
+    setQuery: setFileQuery,
+    debouncedQuery: debouncedFileSearchQuery,
+    setFilter: setFileFilter,
+    composedFilter: composedFileFilter,
+    sortBy: fileSortBy,
+    setSortBy: setFileSortBy,
+  } = useLocalFilterState<InternalDocumentFilter>({ baseFilter: filter });
+
+  const {
+    query: timeseriesQuery,
+    setQuery: setTimeseriesQuery,
+    debouncedQuery: debouncedTimeseriesSearchQuery,
+    setFilter: setTimeseriesFilter,
+    composedFilter: composedTimeseriesFilter,
+    sortBy: timeseriesSortBy,
+    setSortBy: setTimeseriesSortBy,
+  } = useLocalFilterState<InternalTimeseriesFilters>({ baseFilter: filter });
+
+  const {
+    query: eventQuery,
+    setQuery: setEventQuery,
+    debouncedQuery: debouncedEventSearchQuery,
+    setFilter: setEventFilter,
+    composedFilter: composedEventFilter,
+    sortBy: eventSortBy,
+    setSortBy: setEventSortBy,
+  } = useLocalFilterState<InternalEventsFilters>({ baseFilter: filter });
+
+  const {
+    query: assetQuery,
+    setQuery: setAssetQuery,
+    debouncedQuery: debouncedAssetSearchQuery,
+    setFilter: setAssetFilter,
+    composedFilter: composedAssetFilter,
+    sortBy: assetSortBy,
+    setSortBy: setAssetSortBy,
+  } = useLocalFilterState<InternalAssetFilters>({ baseFilter: filter });
+
+  const {
     results: relatedFiles = [],
     hasNextPage: fileHasNextPage,
     fetchNextPage: fileFetchNextPage,
     isInitialLoading: isFileLoading,
-  } = useFileSearchQuery(
+  } = useShamefulDocumentsQuery(
     {
-      filter: {
-        assetSubtreeIds: [{ id: assetId }],
-      },
+      sortBy: fileSortBy,
+      query: debouncedFileSearchQuery,
+      filter: composedFileFilter,
       limit: 10,
     },
-    { enabled: isFileVisible }
+    {
+      isDocumentsApiEnabled,
+      isEnabled: isFileVisible,
+    }
   );
 
   const {
@@ -106,7 +164,9 @@ export const AssetDetails: FC<
     isInitialLoading: isTimeseriesLoading,
   } = useTimeseriesSearchResultQuery(
     {
-      filter,
+      sortBy: timeseriesSortBy,
+      query: debouncedTimeseriesSearchQuery,
+      filter: composedTimeseriesFilter,
       limit: 10,
     },
     undefined,
@@ -120,7 +180,9 @@ export const AssetDetails: FC<
     isInitialLoading: isEventLoading,
   } = useEventsSearchResultQuery(
     {
-      eventsFilters: filter,
+      eventsSortBy: eventSortBy,
+      query: debouncedEventSearchQuery,
+      eventsFilters: composedEventFilter,
       limit: 10,
     },
     undefined,
@@ -134,7 +196,9 @@ export const AssetDetails: FC<
     isInitialLoading: isAssetsLoading,
   } = useAssetsSearchResultQuery(
     {
-      assetFilter: filter,
+      query: debouncedAssetSearchQuery,
+      assetFilter: composedAssetFilter,
+      sortBy: assetSortBy,
       limit: 10,
     },
     { enabled: isAssetVisible }
@@ -189,13 +253,27 @@ export const AssetDetails: FC<
               onRowSelection={(updater, currentAssets) =>
                 onSelect?.(updater, currentAssets, 'asset')
               }
+              enableSorting
+              sorting={assetSortBy}
+              onSort={setAssetSortBy}
+              tableHeaders={
+                <DefaultPreviewFilter
+                  query={assetQuery}
+                  onQueryChange={setAssetQuery}
+                >
+                  <AssetTableFilters
+                    filter={composedAssetFilter}
+                    onFilterChange={setAssetFilter}
+                  />
+                </DefaultPreviewFilter>
+              }
             />
           </Collapse.Panel>
         )}
 
         {isTimeseriesVisible && (
           <Collapse.Panel header={<h4>{t('TIMESERIES', TIME_SERIES)}</h4>}>
-            <TimesereisSmallPreviewTable
+            <TimeseriesSmallPreviewTable
               data={relatedTimeseries}
               fetchMore={timeseriesFetchNextPage}
               hasNextPage={timeseriesHasNextPage}
@@ -203,6 +281,20 @@ export const AssetDetails: FC<
               enableDetailTableSelection={enableDetailTableSelection}
               selectedRows={selectedRows}
               onSelect={onSelect}
+              enableSorting
+              sorting={timeseriesSortBy}
+              onSort={setTimeseriesSortBy}
+              tableHeaders={
+                <DefaultPreviewFilter
+                  query={timeseriesQuery}
+                  onQueryChange={setTimeseriesQuery}
+                >
+                  <TimeseriesTableFilters
+                    filter={composedTimeseriesFilter}
+                    onFilterChange={setTimeseriesFilter}
+                  />
+                </DefaultPreviewFilter>
+              }
             />
           </Collapse.Panel>
         )}
@@ -219,6 +311,22 @@ export const AssetDetails: FC<
               onRowSelection={(updater, currentFiles) =>
                 onSelect?.(updater, currentFiles, 'file')
               }
+              enableSorting={isDocumentsApiEnabled}
+              sorting={fileSortBy}
+              onSort={setFileSortBy}
+              tableHeaders={
+                isDocumentsApiEnabled ? (
+                  <DefaultPreviewFilter
+                    query={fileQuery}
+                    onQueryChange={setFileQuery}
+                  >
+                    <FileTableFiltersDocument
+                      filter={composedFileFilter}
+                      onFilterChange={setFileFilter}
+                    />
+                  </DefaultPreviewFilter>
+                ) : undefined
+              }
             />
           </Collapse.Panel>
         )}
@@ -234,6 +342,20 @@ export const AssetDetails: FC<
               selectedRows={selectedRows?.event || {}}
               onRowSelection={(updater, currentEvents) =>
                 onSelect?.(updater, currentEvents, 'event')
+              }
+              enableSorting
+              sorting={eventSortBy}
+              onSort={setEventSortBy}
+              tableHeaders={
+                <DefaultPreviewFilter
+                  query={eventQuery}
+                  onQueryChange={setEventQuery}
+                >
+                  <EventTableFilters
+                    filter={composedEventFilter}
+                    onFilterChange={setEventFilter}
+                  />
+                </DefaultPreviewFilter>
               }
             />
           </Collapse.Panel>

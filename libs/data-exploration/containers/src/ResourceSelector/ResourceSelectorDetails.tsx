@@ -107,6 +107,7 @@ export const ResourceSelectorDetails = ({
     selectionMode,
     visibleResources,
     showSelectButton,
+    isDocumentsApiEnabled,
   };
 
   let content: React.ReactNode = placeholder || <Loader />;
@@ -140,7 +141,6 @@ export const ResourceSelectorDetails = ({
             documentId={item.id}
             isSelected={isSelected}
             onClose={onClose}
-            isDocumentsApiEnabled={isDocumentsApiEnabled}
             {...commonProps}
           />
         );

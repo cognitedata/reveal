@@ -21,6 +21,7 @@ import { BaseMultiSelectFilterProps, MultiSelectOptionType } from '../types';
 
 interface Props<TFilter> extends BaseMultiSelectFilterProps<TFilter> {
   options: MultiSelectOptionType<string>[];
+  menuPortalTarget?: HTMLElement;
 }
 
 export const LabelFilter = <TFilter,>({
@@ -31,6 +32,7 @@ export const LabelFilter = <TFilter,>({
   onInputChange,
   isError,
   isLoading,
+  menuPortalTarget,
 }: Props<TFilter>) => {
   const { t } = useTranslation();
   const trackUsage = useMetrics();
@@ -62,6 +64,7 @@ export const LabelFilter = <TFilter,>({
       isSearchable
       isClearable
       addNilOption={addNilOption}
+      menuPortalTarget={menuPortalTarget}
       menuListFooter={
         <FooterInfoBar>
           {t('LABEL_MENU_FOOTER', 'Tip: Search for Labels is case sensitive')}
@@ -72,7 +75,9 @@ export const LabelFilter = <TFilter,>({
 };
 
 const AssetLabelFilter = (
-  props: BaseMultiSelectFilterProps<InternalAssetFilters>
+  props: BaseMultiSelectFilterProps<InternalAssetFilters> & {
+    menuPortalTarget?: HTMLElement;
+  }
 ) => {
   const [query, setQuery] = useDebouncedState<string>();
 

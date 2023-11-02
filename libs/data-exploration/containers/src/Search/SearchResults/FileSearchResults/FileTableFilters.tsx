@@ -67,6 +67,7 @@ export const FileTableFiltersDocument = ({
         filter={filter}
         value={filter.labels}
         onChange={(newFilters) => onFilterChange({ labels: newFilters })}
+        menuPortalTarget={document.body}
       />
       <SourceFilter.File
         filter={filter}
@@ -76,11 +77,13 @@ export const FileTableFiltersDocument = ({
             source: newSources,
           })
         }
+        menuPortalTarget={document.body}
       />
       <TypeFilter.File
         filter={filter}
         value={filter.type}
         onChange={(newValue) => onFilterChange({ type: newValue as any })}
+        menuPortalTarget={document.body}
       />
       <MetadataFilter.Files
         filter={filter}
@@ -88,6 +91,7 @@ export const FileTableFiltersDocument = ({
         onChange={(newMetadata) => {
           onFilterChange({ metadata: newMetadata });
         }}
+        menuPortalTarget={document.body}
       />
     </PreviewFilterDropdown>
   );

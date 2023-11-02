@@ -16,6 +16,7 @@ export const TimeseriesTableFilters = ({ filter, onFilterChange }: Props) => {
         filter={filter}
         value={filter.unit}
         onChange={(newUnit) => onFilterChange({ unit: newUnit })}
+        menuPortalTarget={document.body}
       />
       <DateFilter.Updated
         value={filter.lastUpdatedTime}
@@ -24,6 +25,7 @@ export const TimeseriesTableFilters = ({ filter, onFilterChange }: Props) => {
             lastUpdatedTime: newValue || undefined,
           })
         }
+        menuPortalTarget={document.body}
       />
       <MetadataFilter.Timeseries
         filter={filter}

@@ -22,6 +22,7 @@ interface BaseUnitFilterProps<TFilter>
   onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   addNilOption?: boolean;
   query?: string;
+  menuPortalTarget?: HTMLElement;
 }
 
 export interface UnitFilterProps<TFilter> extends BaseUnitFilterProps<TFilter> {

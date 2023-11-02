@@ -5,3 +5,4 @@ export * from './useDocumentsLabelsFilterOptions';
 export * from './useDocumentsMetadataFilterOptions';
 export * from './useFilePreviewURL';
 export * from './useRelatedDocumentsQuery';
+export * from './useShamefulDocumentsQuery';
