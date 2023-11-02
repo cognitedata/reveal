@@ -1,3 +1,13 @@
 {
-  "contextualize-engineering-diagrams": "Contextualize engineering diagrams"
+  "contextualize-engineering-diagrams": "Contextualize engineering diagrams",
+  "datasets-error-load": "Could not load the data sets",
+  "datasets-error-nothing-found": "No data sets found",
+  "diagram-parsing": "Diagram parsing",
+  "no-files-help-body": "Here you can add your files for contextualization",
+  "no-files-help-title": "No pending diagrams yet",
+  "page-header-subtitle": "Connect your data and files through contextualization",
+  "page-not-found-body": "Please check your URL and try again",
+  "page-not-found-title": "Page not found",
+  "site_one": "Site",
+  "site_other": "Sites"
 }

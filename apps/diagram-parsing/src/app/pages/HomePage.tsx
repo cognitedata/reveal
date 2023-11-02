@@ -1,15 +1,24 @@
-import { Heading, Body } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 
+import { PageHeader, SitesSideBarContainer } from '../components';
 import { useTranslation } from '../hooks/useTranslation';
+
+import { FilesView } from '.';
 
 export const HomePage = () => {
   const { t } = useTranslation();
 
   return (
     <>
-      <Heading>{t('contextualize-engineering-diagrams')}</Heading>
+      <PageHeader
+        title={t('contextualize-engineering-diagrams')}
+        subtitle={t('page-header-subtitle')}
+      />
 
-      <Body size="large">Under development...</Body>
+      <Flex>
+        <SitesSideBarContainer />
+        <FilesView />
+      </Flex>
     </>
   );
 };

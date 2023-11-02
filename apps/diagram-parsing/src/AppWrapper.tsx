@@ -12,6 +12,7 @@ import GlobalStyles from './GlobalStyles';
 
 export const AppWrapper = () => {
   const projectName = 'diagram-parsing';
+  const projectTitle = 'Diagram parsing';
 
   useEffect(() => {
     cogsStyles.use();
@@ -24,7 +25,7 @@ export const AppWrapper = () => {
     <GlobalStyles>
       <I18nWrapper translations={translations} defaultNamespace={projectName}>
         <AuthWrapper login={() => loginAndAuthIfNeeded()}>
-          <SubAppWrapper title={projectName}>
+          <SubAppWrapper title={projectTitle}>
             <App />
           </SubAppWrapper>
         </AuthWrapper>
