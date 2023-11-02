@@ -7,7 +7,7 @@ import '@testing-library/cypress/add-commands';
 // 4 sec causing tests to fail, this check will wait a bit longer (9 sec)
 // if any loaders are present in the dom, making tests a lot more stable
 Cypress.Commands.add('ensurePageFinishedLoading', () => {
-  const timeoutInMs = 9000;
+  const timeoutInMs = 20000;
 
   // Make sure app has started loading elements,
   // or else checks below will pass before loaders are added to DOM
