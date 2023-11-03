@@ -63,8 +63,8 @@ void main() {
 
     mat4 modelToView = modelViewMatrix * treeIndexWorldTransform;
 
-    vec3 centerA = a_centerA;
-    vec3 centerB = a_centerB;
+    vec3 centerA = mul3(treeIndexWorldTransform, a_centerA);
+    vec3 centerB = mul3(treeIndexWorldTransform, a_centerB);
 
     vec3 center = 0.5 * (centerA + centerB);
     float halfHeight = 0.5 * length(centerA - centerB);
@@ -85,7 +85,7 @@ void main() {
 
     mat3 billboardWorldScaleRotation = mat3(halfHeight * lDir, a_radius * left, a_radius * up);
     vec3 localBillboardPosition = center + billboardWorldScaleRotation * position;
-    vec3 viewBillboardPosition = mul3(modelToView, localBillboardPosition);
+    vec3 viewBillboardPosition = mul3(modelViewMatrix, localBillboardPosition);
 
     // Due to numeric instability when near and far planes are relatively close to each other,
     // we just clamp near to a relatively low constant when checking whether we're inside the cylinder
@@ -103,20 +103,20 @@ void main() {
     v_angles[0] = a_angle;
     v_angles[1] = a_arcAngle;
 
-    v_modelBasis[0] = normalize(normalMatrix * a_localXAxis);
+    v_modelBasis[0] = normalize(normalMatrix * (treeIndexWorldTransform * vec4(a_localXAxis, 0.0)).xyz);
     v_modelBasis[2] = normalize(normalMatrix * dir);
     v_modelBasis[1] = normalize(cross(v_modelBasis[2], v_modelBasis[0]));
 
-    float radius = length((modelToView * vec4(a_localXAxis * a_radius, 0.0)).xyz);
+    float radius = length((modelViewMatrix * vec4(a_localXAxis * a_radius, 0.0)).xyz);
 
-    v_centerB = mul3(modelToView, centerB);
+    v_centerB = mul3(modelViewMatrix, centerB);
     v_radius = radius;
 
     float planeAngleA = acos(dot(normalize(a_planeA.xyz), normalize(vec3(0.0, 0.0, 1.0))));
     float planeAngleB = acos(dot(normalize(a_planeB.xyz), normalize(vec3(0.0, 0.0, -1.0))));
 
     vec4 planeA = a_planeA;
-    planeA.w = length((modelToView * vec4(halfHeight * 2.0 * dir, 0.0)).xyz) - tan(planeAngleA) * radius;
+    planeA.w = length((modelViewMatrix * vec4(halfHeight * 2.0 * dir, 0.0)).xyz) - tan(planeAngleA) * radius;
 
     vec4 planeB = a_planeB;
     planeB.w = tan(planeAngleB) * radius;
