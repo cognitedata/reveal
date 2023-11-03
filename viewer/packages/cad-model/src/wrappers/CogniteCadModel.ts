@@ -210,18 +210,28 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * @param transformMatrix   Transformation to apply.
    * @param boundingBox       Optional bounding box for the nodes before any transformation is applied. If given, it is assumed that all the nodes' geometry fit inside.
    */
-  setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4, boundingBox?: THREE.Box3): void {
+  setNodeTransform(
+    treeIndices: NumericRange,
+    transformMatrix: THREE.Matrix4,
+    boundingBox?: THREE.Box3,
+    space: 'model' | 'world' = 'world'
+  ): void {
     MetricsLogger.trackCadNodeTransformOverridden(treeIndices.count, transformMatrix);
-    this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
 
     // Metadata bounding boxes are in CDF space. Precompute the necessary transformations once.
-    const cdfToModelTransform = this.getModelTransformation()
+    const cdfToWorldTransform = this.getModelTransformation()
       .clone()
       .multiply(this.getCdfToDefaultModelTransformation());
-    const modelToCdfTransform = cdfToModelTransform.clone().invert();
+    const modelToCdfTransform = cdfToWorldTransform.clone().invert();
 
     // Convert the transform to CDF space
-    const transformMatrixCdf = modelToCdfTransform.clone().multiply(transformMatrix).multiply(cdfToModelTransform);
+    const transformMatrixCdf = modelToCdfTransform.clone().multiply(transformMatrix).multiply(cdfToWorldTransform);
+
+    if (space === 'world') {
+      this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrixCdf);
+    } else if (space === 'model') {
+      this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
+    }
 
     // Transform bounding box to CDF space, if given
     let nodeBoundingBox: THREE.Box3 | undefined;

@@ -43,8 +43,8 @@ import quadVert from '../glsl/sector/instancedMesh.vert';
 import torusSegmentFrag from '../glsl/sector/primitives/torusSegment.frag';
 import torusSegmentVert from '../glsl/sector/primitives/torusSegment.vert';
 
-import trapeziumFrag from '../glsl/sector/primitives/cone.frag';
-import trapeziumVert from '../glsl/sector/primitives/cone.vert';
+import trapeziumFrag from '../glsl/sector/primitives/trapezium.frag';
+import trapeziumVert from '../glsl/sector/primitives/trapezium.vert';
 
 import pointCloudNormalizeFrag from '../glsl/pointcloud/normalize.frag';
 import pointCloudNormalizeVert from '../glsl/pointcloud/normalize.vert';

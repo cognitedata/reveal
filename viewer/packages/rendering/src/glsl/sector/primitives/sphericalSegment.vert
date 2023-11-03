@@ -7,8 +7,7 @@
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
+uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 uniform vec3 cameraPosition;
@@ -49,8 +48,6 @@ void main() {
 
     v_treeIndexPacked = packTreeIndex(a_treeIndex);
     v_color = a_color;
-
-    mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
     vec3 lDir;
     float distanceToCenterOfSegment = a_verticalRadius - a_height * 0.5;

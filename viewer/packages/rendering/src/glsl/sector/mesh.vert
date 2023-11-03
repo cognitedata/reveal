@@ -5,8 +5,7 @@
 #pragma glslify: import('../base/determineNodeAppearance.glsl')
 #pragma glslify: import('../base/determineVisibility.glsl')
 
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
+uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform vec2 treeIndexTextureSize;
 uniform vec2 transformOverrideTextureSize;
@@ -53,7 +52,7 @@ void main() {
       transformOverrideTexture
     );
 
-    vec4 modelViewPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4(position, 1.0);
+    vec4 modelViewPosition = modelViewMatrix * treeIndexWorldTransform * vec4(position, 1.0);
     v_viewPosition = modelViewPosition.xyz;
 
 #if defined(IS_TEXTURED)
