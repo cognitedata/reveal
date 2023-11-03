@@ -123,7 +123,7 @@ void main() {
     v_W.w = surfacePoint.z;
     v_U.w = surfacePoint.x;
 
-    mat4 modelToTransformOffset = treeIndexWorldTransform;
+    mat4 modelToTransformOffset = modelViewMatrix * treeIndexWorldTransform;
 
     float radiusB = length((modelToTransformOffset * vec4(a_localXAxis * a_radiusB, 0.0)).xyz);
     float radiusA = length((modelToTransformOffset * vec4(a_localXAxis * a_radiusA, 0.0)).xyz);
