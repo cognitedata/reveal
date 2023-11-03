@@ -4,9 +4,6 @@
 
 import glsl from 'glslify';
 
-import simpleMeshFrag from '../glsl/sector/simple.frag';
-import simpleMeshVert from '../glsl/sector/simple.vert';
-
 import meshFrag from '../glsl/sector/mesh.frag';
 import meshVert from '../glsl/sector/mesh.vert';
 
@@ -61,17 +58,10 @@ import blitVert from '../glsl/post-processing/unit-orthographic-passthrough.vert
 import depthBlendFrag from '../glsl/post-processing/depthBlendBlit.frag';
 import depthBlendVert from '../glsl/post-processing/unit-orthographic-passthrough.vert';
 
-import sectorCoverageFrag from '../glsl/sector/sectorCoverage.frag';
-import sectorCoverageVert from '../glsl/sector/sectorCoverage.vert';
-
 export const sectorShaders = {
   // ----------------
   // "Regular" meshes
   // ----------------
-  simpleMesh: {
-    fragment: glsl(simpleMeshFrag),
-    vertex: glsl(simpleMeshVert)
-  },
   detailedMesh: {
     fragment: glsl(meshFrag),
     vertex: glsl(meshVert)
@@ -160,12 +150,4 @@ export const blitShaders = {
 export const depthBlendBlitShaders = {
   fragment: glsl(depthBlendFrag),
   vertex: glsl(depthBlendVert)
-};
-
-/**
- * Shaders use to estimate how many pixels a sector covers on screen.
- */
-export const coverageShaders = {
-  fragment: glsl(sectorCoverageFrag),
-  vertex: glsl(sectorCoverageVert)
 };

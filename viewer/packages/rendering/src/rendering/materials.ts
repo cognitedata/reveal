@@ -22,7 +22,6 @@ export interface Materials {
   ellipsoidSegment: THREE.RawShaderMaterial;
   instancedMesh: THREE.RawShaderMaterial;
   triangleMesh: THREE.RawShaderMaterial;
-  simple: THREE.RawShaderMaterial;
   texturedMaterials: { [key: string]: THREE.RawShaderMaterial };
 }
 
@@ -253,21 +252,6 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const simpleMaterial = new THREE.RawShaderMaterial({
-    name: 'Low detail material',
-    clipping: true,
-    clippingPlanes,
-    uniforms: {
-      inverseModelMatrix: {
-        value: new THREE.Matrix4()
-      }
-    },
-    side: THREE.FrontSide,
-    fragmentShader: sectorShaders.simpleMesh.fragment,
-    vertexShader: sectorShaders.simpleMesh.vertex,
-    glslVersion: THREE.GLSL3
-  });
-
   const allMaterials = {
     box: boxMaterial,
     circle: circleMaterial,
@@ -283,7 +267,6 @@ export function createMaterials(
     ellipsoidSegment: ellipsoidSegmentMaterial,
     instancedMesh: instancedMeshMaterial,
     triangleMesh: triangleMeshMaterial,
-    simple: simpleMaterial,
     texturedMaterials: {}
   };
 
