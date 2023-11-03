@@ -68,7 +68,10 @@ void main() {
 
     vec3 normalWithOffset = normalize((treeIndexWorldTransform * vec4(a_normal, 0)).xyz);
 
-    height = dot(centerA - centerB, normalWithOffset);
+    vec3 centerAInCameraSpace = (modelViewMatrix * vec4(centerA, 1.0)).xyz;
+    vec3 centerBInCameraSpace = (modelViewMatrix * vec4(centerB, 1.0)).xyz;
+
+    height = dot(normalize(centerA - centerB), normalWithOffset) * length(centerAInCameraSpace - centerBInCameraSpace);
 
     vec3 lDir;
     vec3 center = 0.5 * (centerA + centerB);
