@@ -433,7 +433,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   /**
    * Fetches a bounding box from the CDF by the nodeId.
    * @param nodeId
-   * @param box Optional. Used to write result to.
+   * @param outBox Optional. Used to write result to.
    * @example
    * ```js
    * const box = new THREE.Box3()
@@ -446,8 +446,11 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * const box = await model.getBoundingBoxByNodeId(nodeId);
    * ```
    */
-  async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
-    return this.getBoundingBoxByNodeIds([nodeId], box);
+  async getBoundingBoxByNodeId(nodeId: number, outBox?: THREE.Box3): Promise<THREE.Box3> {
+    const boxList = await this.getBoundingBoxesByNodeIds([nodeId]);
+    const box = outBox ??  new THREE.Box3();
+    box.copy(boxList[0]);
+    return box;
   }
 
   /**
@@ -465,13 +468,11 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * const box = await model.getBoundingBoxByNodeIds([158239, 192837]);
    * ```
    */
-  async getBoundingBoxByNodeIds(nodeIds: number[], box?: THREE.Box3): Promise<THREE.Box3> {
+  async getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<THREE.Box3[]> {
     try {
-      box = box ?? new THREE.Box3();
       const boxesResponse = await this.nodesApiClient.getBoundingBoxesByNodeIds(this.modelId, this.revisionId, nodeIds);
-      box.copy(boxesResponse.reduce((currentBox, nextBox) => currentBox.union(nextBox)));
-      box.applyMatrix4(this.cadModel.modelMatrix);
-      return box;
+      const boxesWorldSpace = boxesResponse.map(box => box.applyMatrix4(this.cadModel.modelMatrix));
+      return boxesWorldSpace;
     } catch (error) {
       MetricsLogger.trackError(error as Error, {
         moduleName: 'CogniteCadModel',

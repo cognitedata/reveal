@@ -100,9 +100,7 @@ describe(CogniteCadModel.name, () => {
   });
 
   test('getBoundingBoxByNodeIds() modifies out-parameter', async () => {
-    const bbox = new THREE.Box3();
-    const result = await model.getBoundingBoxByNodeIds([1, 2], bbox);
-    expect(result).toBe(bbox);
+    const result = await model.getBoundingBoxesByNodeIds([1, 2]);
     expect(result).toEqual(new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(3, 3, 3)));
   });
 
