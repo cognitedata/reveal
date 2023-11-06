@@ -15,7 +15,6 @@ export interface Materials {
   quad: THREE.RawShaderMaterial;
   cone: THREE.RawShaderMaterial;
   eccentricCone: THREE.RawShaderMaterial;
-  sphericalSegment: THREE.RawShaderMaterial;
   torusSegment: THREE.RawShaderMaterial;
   generalCylinder: THREE.RawShaderMaterial;
   trapezium: THREE.RawShaderMaterial;
@@ -211,21 +210,6 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const sphericalSegmentMaterial = new THREE.RawShaderMaterial({
-    name: 'Primitives (Spherical segment)',
-    clipping: true,
-    clippingPlanes,
-    uniforms: {
-      inverseModelMatrix: {
-        value: new THREE.Matrix4()
-      }
-    },
-    vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
-    fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
-  });
-
   const triangleMeshMaterial = new THREE.RawShaderMaterial({
     name: 'Triangle meshes',
     clipping: true,
@@ -260,7 +244,6 @@ export function createMaterials(
     quad: quadMaterial,
     cone: coneMaterial,
     eccentricCone: eccentricConeMaterial,
-    sphericalSegment: sphericalSegmentMaterial,
     torusSegment: torusSegmentMaterial,
     generalCylinder: generalCylinderMaterial,
     trapezium: trapeziumMaterial,
