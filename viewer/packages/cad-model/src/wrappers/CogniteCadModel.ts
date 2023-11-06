@@ -108,6 +108,10 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
         this.customSectorBounds.updateNodeSectors(treeIndex, [newSectorId]);
       }
     };
+    const cdfToWorldTransform = this.getModelTransformation()
+      .clone()
+      .multiply(this.getCdfToDefaultModelTransformation());
+    this.nodeTransformProvider.setCdfToWorldTransform(cdfToWorldTransform);
   }
 
   /**
@@ -218,6 +222,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   ): void {
     MetricsLogger.trackCadNodeTransformOverridden(treeIndices.count, transformMatrix);
 
+    this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix, space);
+
     // Metadata bounding boxes are in CDF space. Precompute the necessary transformations once.
     const cdfToWorldTransform = this.getModelTransformation()
       .clone()
@@ -226,12 +232,6 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
     // Convert the transform to CDF space
     const transformMatrixCdf = modelToCdfTransform.clone().multiply(transformMatrix).multiply(cdfToWorldTransform);
-
-    if (space === 'world') {
-      this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrixCdf);
-    } else if (space === 'model') {
-      this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
-    }
 
     // Transform bounding box to CDF space, if given
     let nodeBoundingBox: THREE.Box3 | undefined;
@@ -274,7 +274,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   ): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     const boundingBox = await this.getBoundingBoxByTreeIndex(treeIndex);
-    await this.setNodeTransform(treeIndices, transform, boundingBox);
+    this.setNodeTransform(treeIndices, transform, boundingBox);
     return treeIndices.count;
   }
 
@@ -385,6 +385,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    */
   setModelTransformation(matrix: THREE.Matrix4): void {
     this.cadNode.setModelTransformation(matrix);
+    const cdfToWorldTransform = matrix.clone().multiply(this.getCdfToDefaultModelTransformation());
+    this.nodeTransformProvider.setCdfToWorldTransform(cdfToWorldTransform);
   }
 
   /**

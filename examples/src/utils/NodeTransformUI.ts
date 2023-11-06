@@ -42,50 +42,56 @@ export class NodeTransformUI {
     this.model = model;
 
     const transformControls = new TransformControls(this.viewer.cameraManager.getCamera(), this.viewer.domElement);
-    transformControls.setMode('scale');
+    transformControls.setMode('translate');
     viewer.addObject3D(transformControls);
 
-    viewer.on('click', async ({ offsetX, offsetY }) => {
-      const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
+    const translation = new THREE.Matrix4().makeTranslation(-5, 0, 0);
 
-      if (intersection === null) {
-        return;
-      }
+    const modelRotation = new THREE.Matrix4().makeRotationY(Math.PI / 2);
+    model.setNodeTransform(new NumericRange(1, 1), translation, undefined, 'world');
+    model.setModelTransformation(modelRotation);
 
-      const treeIndex: number | undefined = (intersection as CadIntersection)?.treeIndex;
+    // viewer.on('click', async ({ offsetX, offsetY }) => {
+    //   const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
 
-      if (treeIndex === undefined) {
-        return;
-      }
+    //   if (intersection === null) {
+    //     return;
+    //   }
 
-      model.getBoundingBoxByTreeIndex(treeIndex).then(boundingBox => {
-        const boxMesh = new THREE.Object3D();
-        transformControls.attach(boxMesh);
-        viewer.addObject3D(boxMesh);
+    //   const treeIndex: number | undefined = (intersection as CadIntersection)?.treeIndex;
 
-        const center = boundingBox.getCenter(new THREE.Vector3());
+    //   if (treeIndex === undefined) {
+    //     return;
+    //   }
 
-        const modelToWorld = new THREE.Matrix4();
-        const worldToModel = new THREE.Matrix4();
+    //   model.getBoundingBoxByTreeIndex(treeIndex).then(boundingBox => {
+    //     const boxMesh = new THREE.Object3D();
+    //     transformControls.attach(boxMesh);
+    //     viewer.addObject3D(boxMesh);
 
-        modelToWorld.setPosition(center);
-        worldToModel.copy(modelToWorld.clone().invert());
+    //     const center = boundingBox.getCenter(new THREE.Vector3());
 
-        transformControls.addEventListener('dragging-changed', event => {
-          if (event.value) {
-            viewer.cameraManager.deactivate();
-          } else {
-            viewer.cameraManager.activate();
-          }
-        });
+    //     const modelToWorld = new THREE.Matrix4();
+    //     const worldToModel = new THREE.Matrix4();
 
-        transformControls.addEventListener('change', event => {
-          const matrixOverride = modelToWorld.clone().multiply(boxMesh.matrix.clone().multiply(worldToModel));
-          model.setNodeTransform(new NumericRange(treeIndex, 1), matrixOverride, undefined, 'world');
-          viewer.requestRedraw();
-        });
-      });
-    });
+    //     modelToWorld.setPosition(center);
+    //     worldToModel.copy(modelToWorld.clone().invert());
+
+    //     transformControls.addEventListener('dragging-changed', event => {
+    //       if (event.value) {
+    //         viewer.cameraManager.deactivate();
+    //       } else {
+    //         viewer.cameraManager.activate();
+    //       }
+    //     });
+
+    //     transformControls.addEventListener('change', event => {
+    //       const matrixOverride = modelToWorld.clone().multiply(boxMesh.matrix.clone().multiply(worldToModel));
+    //       model.setNodeTransform(new NumericRange(treeIndex, 1), matrixOverride, undefined, 'world');
+    //       viewer.requestRedraw();
+    //     });
+    //   });
+    // });
 
     const nodeTransformGui = gui.addFolder('Manuel node transform');
     const translationGui = nodeTransformGui.addFolder('Translation');
