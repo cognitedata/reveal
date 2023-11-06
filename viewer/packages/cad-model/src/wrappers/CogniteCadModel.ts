@@ -433,7 +433,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   /**
    * Fetches a bounding box from the CDF by the nodeId.
    * @param nodeId
-   * @param outBox Optional. Used to write result to.
+   * @param box Optional. Used to write result to.
    * @example
    * ```js
    * const box = new THREE.Box3()
@@ -446,11 +446,11 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * const box = await model.getBoundingBoxByNodeId(nodeId);
    * ```
    */
-  async getBoundingBoxByNodeId(nodeId: number, outBox?: THREE.Box3): Promise<THREE.Box3> {
+  async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
     const boxList = await this.getBoundingBoxesByNodeIds([nodeId]);
-    const box = outBox ??  new THREE.Box3();
-    box.copy(boxList[0]);
-    return box;
+    const outBox = box ??  new THREE.Box3();
+    outBox.copy(boxList[0]);
+    return outBox;
   }
 
   /**
