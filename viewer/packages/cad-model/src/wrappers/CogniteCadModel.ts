@@ -213,6 +213,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * @param treeIndices       Tree indices of nodes to apply the transformation to.
    * @param transformMatrix   Transformation to apply.
    * @param boundingBox       Optional bounding box for the nodes before any transformation is applied. If given, it is assumed that all the nodes' geometry fit inside.
+   * @param space             Space to apply the transformation in. Defaults to 'world'.
    */
   setNodeTransform(
     treeIndices: NumericRange,
@@ -266,15 +267,17 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * @param treeIndex
    * @param transform
    * @param applyToChildren
+   * @param space
    */
   async setNodeTransformByTreeIndex(
     treeIndex: number,
     transform: THREE.Matrix4,
-    applyToChildren = true
+    applyToChildren = true,
+    space: 'model' | 'world' = 'world'
   ): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     const boundingBox = await this.getBoundingBoxByTreeIndex(treeIndex);
-    this.setNodeTransform(treeIndices, transform, boundingBox);
+    this.setNodeTransform(treeIndices, transform, boundingBox, space);
     return treeIndices.count;
   }
 
