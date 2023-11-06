@@ -455,6 +455,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange>;
     getBoundingBoxByNodeId(nodeId: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
     getBoundingBoxByTreeIndex(treeIndex: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
+    getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<THREE_2.Box3[]>;
     getCameraConfiguration(): CameraConfiguration | undefined;
     getCdfToDefaultModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     getDefaultNodeAppearance(): NodeAppearance;
@@ -481,8 +482,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     setDefaultNodeAppearance(appearance: NodeAppearance): void;
     setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setModelTransformation(matrix: THREE_2.Matrix4): void;
-    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4, boundingBox?: THREE_2.Box3): void;
-    setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean): Promise<number>;
+    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4, boundingBox?: THREE_2.Box3, space?: 'model' | 'world'): void;
+    setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean, space?: 'model' | 'world'): Promise<number>;
     get styledNodeCollections(): {
         nodeCollection: NodeCollection;
         appearance: NodeAppearance;
