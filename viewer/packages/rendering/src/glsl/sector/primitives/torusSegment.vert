@@ -5,9 +5,7 @@
 #pragma glslify: import('../../base/determineNodeAppearance.glsl')
 #pragma glslify: import('../../base/determineVisibility.glsl')
 
-uniform mat4 inverseModelMatrix;
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
+uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 uniform vec2 treeIndexTextureSize;
@@ -67,9 +65,9 @@ void main() {
     vec3 objectNormal = normalize(transformed.xyz - center);
 
     v_color = a_color;
-    v_normal = normalMatrix * normalize(inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(objectNormal, 0.0)).xyz;
+    v_normal = normalMatrix * normalize(treeIndexWorldTransform * vec4(objectNormal, 0.0)).xyz;
 
-    vec4 modelViewPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4(transformed, 1.0);
+    vec4 modelViewPosition = modelViewMatrix * treeIndexWorldTransform * vec4(transformed, 1.0);
 
     vViewPosition = modelViewPosition.xyz;
 

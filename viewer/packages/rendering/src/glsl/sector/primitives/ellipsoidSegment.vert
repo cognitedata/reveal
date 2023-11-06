@@ -8,8 +8,7 @@
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
+uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 uniform vec3 cameraPosition;
@@ -61,13 +60,9 @@ void main() {
       transformOverrideTexture
     );
 
-    mat4 modelViewMatrix = viewMatrix * modelMatrix;
+    vec3 centerWithOffset = mul3(treeIndexWorldTransform, a_center).xyz;
 
-    mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
-
-    vec3 centerWithOffset = mul3(modelTransformOffset, a_center).xyz;
-
-    vec3 normalWithOffset = (modelTransformOffset * vec4(a_normal, 0)).xyz;
+    vec3 normalWithOffset = (treeIndexWorldTransform * vec4(a_normal, 0)).xyz;
 
     vec3 lDir;
     float distanceToCenterOfSegment = a_verticalRadius - a_height * 0.5;
