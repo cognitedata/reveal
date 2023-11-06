@@ -3,7 +3,7 @@
  */
 import assert from 'assert';
 import minBy from 'lodash/minBy';
-import { BufferGeometry, Group, InstancedMesh, InterleavedBufferAttribute, RawShaderMaterial } from 'three';
+import { BufferGeometry, Group, InstancedMesh, InterleavedBufferAttribute, RawShaderMaterial, Sphere } from 'three';
 import { Materials, setModelRenderLayers, StyledTreeIndexSets } from '@reveal/rendering';
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import {
