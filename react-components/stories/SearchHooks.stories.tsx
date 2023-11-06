@@ -48,7 +48,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
   const [searchMethod, setSearchMethod] = useState<
     'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
-  >('allAssets');
+  >('fdmSearch');
 
   const filteredResources = resources.filter(
     (resource): resource is AddReveal3DModelOptions => 'modelId' in resource
@@ -306,8 +306,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 7227641388924978,
-        revisionId: 3261647608405033,
+        modelId: 3282558010084460,
+        revisionId: 4932190516335812,
         styling: {
           default: {
             color: new Color('#efefef')

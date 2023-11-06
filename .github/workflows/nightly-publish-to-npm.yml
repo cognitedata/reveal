@@ -6,6 +6,7 @@ on:
 jobs:
   deploy-to-npm:
     runs-on: ubuntu-latest
+    environment: CD
     steps:
       - uses: actions/checkout@v4
         with:
