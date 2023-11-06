@@ -26,6 +26,7 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.should-run == 'true' }}
     runs-on: ubuntu-latest
+    environment: CI
     steps:
       - uses: actions/checkout@v4
         with:

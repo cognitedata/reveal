@@ -4,6 +4,7 @@ on: workflow_dispatch
 jobs:
   locize-sync:
     runs-on: ubuntu-latest
+    environment: CI
     steps:
       - uses: actions/checkout@v4
         with:
