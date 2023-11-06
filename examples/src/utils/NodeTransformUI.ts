@@ -34,7 +34,8 @@ export class NodeTransformUI {
   };
 
   private attachTransformControls = {
-    attach: true
+    attach: false,
+    mode: 'translate'
   };
 
   constructor(viewer: Cognite3DViewer, gui: dat.GUI, model: CogniteCadModel) {
@@ -42,56 +43,8 @@ export class NodeTransformUI {
     this.model = model;
 
     const transformControls = new TransformControls(this.viewer.cameraManager.getCamera(), this.viewer.domElement);
-    transformControls.setMode('translate');
-    viewer.addObject3D(transformControls);
 
-    const translation = new THREE.Matrix4().makeTranslation(-5, 0, 0);
-
-    const modelRotation = new THREE.Matrix4().makeRotationY(Math.PI / 2);
-    model.setNodeTransform(new NumericRange(1, 1), translation, undefined, 'world');
-    model.setModelTransformation(modelRotation);
-
-    // viewer.on('click', async ({ offsetX, offsetY }) => {
-    //   const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
-
-    //   if (intersection === null) {
-    //     return;
-    //   }
-
-    //   const treeIndex: number | undefined = (intersection as CadIntersection)?.treeIndex;
-
-    //   if (treeIndex === undefined) {
-    //     return;
-    //   }
-
-    //   model.getBoundingBoxByTreeIndex(treeIndex).then(boundingBox => {
-    //     const boxMesh = new THREE.Object3D();
-    //     transformControls.attach(boxMesh);
-    //     viewer.addObject3D(boxMesh);
-
-    //     const center = boundingBox.getCenter(new THREE.Vector3());
-
-    //     const modelToWorld = new THREE.Matrix4();
-    //     const worldToModel = new THREE.Matrix4();
-
-    //     modelToWorld.setPosition(center);
-    //     worldToModel.copy(modelToWorld.clone().invert());
-
-    //     transformControls.addEventListener('dragging-changed', event => {
-    //       if (event.value) {
-    //         viewer.cameraManager.deactivate();
-    //       } else {
-    //         viewer.cameraManager.activate();
-    //       }
-    //     });
-
-    //     transformControls.addEventListener('change', event => {
-    //       const matrixOverride = modelToWorld.clone().multiply(boxMesh.matrix.clone().multiply(worldToModel));
-    //       model.setNodeTransform(new NumericRange(treeIndex, 1), matrixOverride, undefined, 'world');
-    //       viewer.requestRedraw();
-    //     });
-    //   });
-    // });
+    this.setupTransformTool(this.viewer, this.model, transformControls);
 
     const nodeTransformGui = gui.addFolder('Manuel node transform');
     const translationGui = nodeTransformGui.addFolder('Translation');
@@ -112,6 +65,9 @@ export class NodeTransformUI {
 
     const toolTransform = gui.addFolder('Tool node transform');
     toolTransform.add(this.attachTransformControls, 'attach').name('Attach transform controls');
+    toolTransform
+      .add(this.attachTransformControls, 'mode', ['translate', 'rotate'])
+      .onChange(() => transformControls.setMode(this.attachTransformControls.mode));
   }
 
   apply() {
@@ -126,5 +82,52 @@ export class NodeTransformUI {
 
     const matrix = new THREE.Matrix4().multiplyMatrices(translation, rotation);
     this.model.setNodeTransform(new NumericRange(this.range.from, this.range.count), matrix, undefined, 'world');
+  }
+
+  setupTransformTool(viewer: Cognite3DViewer, model: CogniteCadModel, transformControls: TransformControls) {
+    transformControls.setMode(this.attachTransformControls.mode);
+    viewer.addObject3D(transformControls);
+
+    viewer.on('click', async ({ offsetX, offsetY }) => {
+      if (!this.attachTransformControls.attach) {
+        transformControls.detach();
+        return;
+      }
+      const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
+      const treeIndex: number | undefined = (intersection as CadIntersection)?.treeIndex;
+
+      if (intersection === null || treeIndex === undefined) {
+        transformControls.detach();
+        return;
+      }
+
+      const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
+      const boxMesh = new THREE.Object3D();
+      transformControls.attach(boxMesh);
+      viewer.addObject3D(boxMesh);
+
+      const center = boundingBox.getCenter(new THREE.Vector3());
+      boxMesh.position.copy(center);
+
+      const modelToWorld = new THREE.Matrix4();
+      const worldToModel = new THREE.Matrix4();
+
+      modelToWorld.setPosition(center);
+      worldToModel.copy(modelToWorld.clone().invert());
+
+      transformControls.addEventListener('dragging-changed', event => {
+        if (event.value) {
+          viewer.cameraManager.deactivate();
+        } else {
+          viewer.cameraManager.activate();
+        }
+      });
+
+      transformControls.addEventListener('change', event => {
+        const matrixOverride = boxMesh.matrix.clone().multiply(worldToModel);
+        model.setNodeTransform(new NumericRange(treeIndex, 1), matrixOverride, undefined, 'world');
+        viewer.requestRedraw();
+      });
+    });
   }
 }
