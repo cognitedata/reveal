@@ -78,9 +78,9 @@
     "sparse-octree": "7.1.8"
   },
   "devDependencies": {
-    "@azure/msal-browser": "2.38.2",
+    "@azure/msal-browser": "2.38.3",
     "@cognite/sdk": "8.3.0",
-    "@microsoft/api-extractor": "^7.38.1",
+    "@microsoft/api-extractor": "7.38.0",
     "@types/dat.gui": "0.7.11",
     "@types/gl": "^6.0.2",
     "@types/glob": "8.1.0",
