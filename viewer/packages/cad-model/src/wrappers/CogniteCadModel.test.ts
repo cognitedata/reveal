@@ -101,7 +101,9 @@ describe(CogniteCadModel.name, () => {
 
   test('getBoundingBoxByNodeIds() modifies out-parameter', async () => {
     const result = await model.getBoundingBoxesByNodeIds([1, 2]);
-    expect(result).toEqual(new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(3, 3, 3)));
+    expect(result).toEqual([1, 2].map(
+      i => new THREE.Box3(new THREE.Vector3(i, i, i), new THREE.Vector3(i + 1, i + 1, i + 1))
+    ));
   });
 
   test('setModelTransform() changes custom transform, not source transform', () => {
