@@ -19,8 +19,6 @@ export default class NodeTransformVisualTest extends ViewerVisualTestFixture {
     const modelTransform = new THREE.Matrix4().makeTranslation(25, -5, 5);
     modelTransform.multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(Math.PI / 4, Math.PI / 2, 0)));
 
-    model.setModelTransformation(modelTransform);
-
     if (model instanceof CogniteCadModel) {
       const scale = new THREE.Matrix4().makeScale(3, 3, 3);
       const rotation = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(Math.PI / 6, 0, 0));
@@ -36,6 +34,8 @@ export default class NodeTransformVisualTest extends ViewerVisualTestFixture {
         );
       });
     }
+
+    model.setModelTransformation(modelTransform);
 
     return Promise.resolve();
   }
