@@ -455,6 +455,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange>;
     getBoundingBoxByNodeId(nodeId: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
     getBoundingBoxByTreeIndex(treeIndex: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
+    getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<THREE_2.Box3[]>;
     getCameraConfiguration(): CameraConfiguration | undefined;
     getCdfToDefaultModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     getDefaultNodeAppearance(): NodeAppearance;
