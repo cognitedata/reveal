@@ -6,12 +6,13 @@ import { type CogniteClient } from '@cognite/sdk';
 import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 
 type InstanceType = 'node' | 'edge';
-
 type EdgeDirection = 'source' | 'destination';
 
 type InstanceFilter = any;
-
 type ViewPropertyReference = any;
+
+export type ExternalId = string;
+export type Space = string;
 
 export type Item = {
   instanceType: InstanceType;
@@ -19,12 +20,15 @@ export type Item = {
 
 export type Source = {
   type: 'view';
+} & SimpleSource;
+
+export type SimpleSource = {
   version: string;
 } & DmsUniqueIdentifier;
 
 export type DmsUniqueIdentifier = {
-  space: string;
-  externalId: string;
+  space: Space;
+  externalId: ExternalId;
 };
 
 export type ResultSetExpression = (NodeResultSetExpression | EdgeResultSetExpression) & {
@@ -47,6 +51,7 @@ export type EdgeResultSetExpression = {
     chainTo?: EdgeDirection;
     from?: string;
     nodeFilter?: InstanceFilter;
+    terminationFilter?: InstanceFilter;
     maxDistance?: number;
     direction?: 'outwards' | 'inwards';
     limitEach?: number;
@@ -66,7 +71,7 @@ export type Query = {
 };
 
 type QuerySelect = {
-  sources: readonly SourceProperties[];
+  sources?: readonly SourceProperties[];
 };
 
 export type EdgeItem<EdgeProperties = Record<string, unknown>> = {
@@ -121,7 +126,7 @@ export type InspectResultList = {
 type SelectKey<T extends Query> = keyof T['select'];
 
 export type QueryResult<T extends Query> = {
-  items: Record<SelectKey<T>, NodeItem[]>;
+  items: Record<SelectKey<T>, NodeItem[] | EdgeItem[]>;
   nextCursor: Record<SelectKey<T>, string> | undefined;
 };
 

@@ -182,7 +182,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.38.2, @azure/msal-browser@npm:^2.11.0":
+"@azure/msal-browser@npm:2.38.3":
+  version: 2.38.3
+  resolution: "@azure/msal-browser@npm:2.38.3"
+  dependencies:
+    "@azure/msal-common": 13.3.1
+  checksum: 633483cae20f41f0eeb06dae8c053f4981de06b9ac5af4d79f48d64ea66cb4eab1c5954ae108e6467f7a0e073cbbf0849c97a99385e9d9db2432cac4240e8dc6
+  languageName: node
+  linkType: hard
+
+"@azure/msal-browser@npm:^2.11.0":
   version: 2.38.2
   resolution: "@azure/msal-browser@npm:2.38.2"
   dependencies:
@@ -195,6 +204,13 @@ __metadata:
   version: 13.3.0
   resolution: "@azure/msal-common@npm:13.3.0"
   checksum: 334c2d4cee12064ef80ce949cc2c6e02ac54f5931b522e0592512ce12738206fd4558158205d6ed73a01a3227fd2e95965c1cb08bd302d5e3bf1099b81385b3d
+  languageName: node
+  linkType: hard
+
+"@azure/msal-common@npm:13.3.1":
+  version: 13.3.1
+  resolution: "@azure/msal-common@npm:13.3.1"
+  checksum: 59fff7d4b3b92f35b51014ce891e625a899116ee9d8496d985fd301eaa0d7084a3a3a3f35246fc56f27ce4ff6b2074027e1f0665e493b7057cbab001a161602b
   languageName: node
   linkType: hard
 
@@ -1883,7 +1899,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
-    "@azure/msal-browser": 2.38.2
+    "@azure/msal-browser": 2.38.3
     "@codemirror/lang-javascript": 6.2.1
     "@docusaurus/core": 2.4.3
     "@docusaurus/preset-classic": 2.4.3
@@ -1903,7 +1919,7 @@ __metadata:
     replace: 1.2.2
     rimraf: 5.0.5
     styled-components: 5.3.11
-    typedoc: 0.25.2
+    typedoc: 0.25.3
     typedoc-plugin-markdown: 3.16.0
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 5.2.2
@@ -12092,9 +12108,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.25.2":
-  version: 0.25.2
-  resolution: "typedoc@npm:0.25.2"
+"typedoc@npm:0.25.3":
+  version: 0.25.3
+  resolution: "typedoc@npm:0.25.3"
   dependencies:
     lunr: ^2.3.9
     marked: ^4.3.0
@@ -12104,7 +12120,7 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x
   bin:
     typedoc: bin/typedoc
-  checksum: 5b6e24bae7498bb542aaba495378ed5a3e13c76eb04a1ae95b506f76bda4d517847101fb05a7eab3f6b79357d1e2ac6f4747d39792395329b72e463f7effda65
+  checksum: 060a8f798b32a0e70aa3b16e04d95b56fcfabf54f75fdff74fd9ddeed8860db3ba030d153f8b535b409a9d8825856252bc59f401619e5e3e2f71d3b9e0de606a
   languageName: node
   linkType: hard
 
