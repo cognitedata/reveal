@@ -35,7 +35,7 @@ export const useCameraNavigation = (): CameraNavigationActions => {
       return;
     }
 
-    const nodeBoundingBoxes = await (model as CogniteCadModel).getBoundingBoxByNodeIds(nodeIds);
+    const nodeBoundingBoxes = await (model as CogniteCadModel).getBoundingBoxesByNodeIds(nodeIds);
     const unionedBox = nodeBoundingBoxes.reduce(
       (currentBox, nextBox) => currentBox.union(nextBox),
       new Box3()
