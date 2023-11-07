@@ -323,7 +323,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     const instancedMesh = new InstancedMesh(instanceBufferGeometry, material, 0);
     instancedMesh.visible = false;
     instancedMesh.frustumCulled = false;
-    instancedMesh.boundingSphere = new Sphere(); // Creates a dummy bounding sphere to avoid a calculated sphere on first render. The THREEjs calculated sphere is never updated after the first calculate, so the calculated sphere is misleading after we add data to the batch)
+    instancedMesh.boundingSphere = new Sphere(); // Unused, to avoid a calculated sphere on first render
 
     instancedMesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
       (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(instancedMesh.matrixWorld).invert();

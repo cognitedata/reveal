@@ -35,8 +35,7 @@ export class GltfSectorLoader {
 
       const group = new AutoDisposeGroup();
 
-      // Note: This bounding box includes instanced meshes etc and may not be an accurate representation of the TriangleMesh bounding box.
-      const geometryBoundingBox = sector.metadata.geometryBoundingBox;
+      const wholeSectorBoundingBox = sector.metadata.geometryBoundingBox;
 
       const parsedSectorGeometry = await this._gltfSectorParser.parseSector(sectorByteBuffer);
 
@@ -81,7 +80,7 @@ export class GltfSectorLoader {
             });
             break;
           case RevealGeometryCollectionType.TriangleMesh:
-            this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh, geometryBoundingBox);
+            this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh, wholeSectorBoundingBox);
             break;
           case RevealGeometryCollectionType.TexturedTriangleMesh:
             const material = this._materialManager.addTexturedMeshMaterial(
@@ -89,7 +88,7 @@ export class GltfSectorLoader {
               sector.metadata.id,
               parsedGeometry.texture!
             );
-            this.createMesh(group, parsedGeometry.geometryBuffer, material, geometryBoundingBox);
+            this.createMesh(group, parsedGeometry.geometryBuffer, material, wholeSectorBoundingBox);
             break;
           default:
             assertNever(type);
