@@ -5,16 +5,26 @@
 import { type CadIntersection, type PointerEventData } from '@cognite/reveal';
 import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
-import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
-import { type Node3D } from '@cognite/sdk';
+import { useFdm3dNodeDataPromises } from '../components/NodeCacheProvider/NodeCacheProvider';
+import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
+import { type FdmNodeDataPromises } from '../components/NodeCacheProvider/types';
+import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
+import { type NodeAssetMappingResult } from '../components/NodeCacheProvider/AssetMappingCache';
 
-export type NodeDataResult = {
-  fdmNode: DmsUniqueIdentifier;
-  view: Source;
+export type AssetMappingDataResult = {
   cadNode: Node3D;
+  assetIds: CogniteInternalId[];
 };
 
-export type ClickedNodeData = Partial<NodeDataResult> & {
+export type FdmNodeDataResult = {
+  fdmNodes: DmsUniqueIdentifier[];
+  cadNode: Node3D;
+  views?: Source[];
+};
+
+export type ClickedNodeData = {
+  fdmResult?: FdmNodeDataResult;
+  assetMappingResult?: AssetMappingDataResult;
   intersection: CadIntersection;
 };
 
@@ -22,7 +32,6 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
   const viewer = useReveal();
 
   const [cadIntersection, setCadIntersection] = useState<CadIntersection | undefined>(undefined);
-  const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>(undefined);
 
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
@@ -44,44 +53,91 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     };
   }, [viewer]);
 
-  const nodeData = useFdm3dNodeData(
+  const nodeDataPromises = useFdm3dNodeDataPromises(
     cadIntersection?.model.modelId,
     cadIntersection?.model.revisionId,
     cadIntersection?.treeIndex
   ).data;
 
+  const assetMappingResult = useAssetMappingForTreeIndex(
+    cadIntersection?.model.modelId,
+    cadIntersection?.model.revisionId,
+    cadIntersection?.treeIndex
+  ).data;
+
+  return useCombinedClickedNodeData(nodeDataPromises, assetMappingResult, cadIntersection);
+};
+
+const useCombinedClickedNodeData = (
+  fdmPromises: FdmNodeDataPromises | undefined,
+  assetMappings: NodeAssetMappingResult | undefined,
+  cadIntersection: CadIntersection | undefined
+): ClickedNodeData | undefined => {
+  const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>();
+  const fdmData = useFdmData(fdmPromises);
+
   useEffect(() => {
-    if (isWaitingForQueryResult()) {
-      return;
-    }
-
-    const nodeDataList = nodeData ?? [];
-
     if (cadIntersection === undefined) {
       setClickedNodeData(undefined);
       return;
     }
 
-    if (nodeDataList.length === 0) {
-      setClickedNodeData({
-        intersection: cadIntersection
-      });
+    const assetMappingData =
+      assetMappings?.node === undefined
+        ? undefined
+        : {
+            cadNode: assetMappings.node,
+            assetIds: assetMappings.mappings.map((mapping) => mapping.assetId)
+          };
+
+    setClickedNodeData({
+      fdmResult: fdmData,
+      assetMappingResult: assetMappingData,
+      intersection: cadIntersection
+    });
+  }, [cadIntersection, fdmData, assetMappings?.node]);
+
+  return clickedNodeData;
+};
+
+const useFdmData = (
+  fdmPromises: FdmNodeDataPromises | undefined
+): FdmNodeDataResult | undefined => {
+  const [fdmData, setFdmData] = useState<FdmNodeDataResult | undefined>();
+
+  useEffect(() => {
+    if (fdmPromises === undefined) {
+      setFdmData(undefined);
       return;
     }
 
-    const chosenNode = nodeDataList[0];
+    void setData(fdmPromises);
 
-    setClickedNodeData({
-      intersection: cadIntersection,
-      fdmNode: chosenNode.edge.startNode,
-      view: chosenNode.view,
-      cadNode: chosenNode.node
-    });
+    async function setData(promises: FdmNodeDataPromises): Promise<void> {
+      const cadAndFdmNodes = await promises.cadAndFdmNodesPromise;
 
-    function isWaitingForQueryResult(): boolean {
-      return nodeData === undefined && cadIntersection !== undefined;
+      if (cadAndFdmNodes === undefined || cadAndFdmNodes.fdmIds.length === 0) {
+        return;
+      }
+
+      setFdmData({
+        fdmNodes: cadAndFdmNodes.fdmIds,
+        cadNode: cadAndFdmNodes.cadNode
+      });
+
+      const views = await promises.viewsPromise;
+
+      if (views === undefined || views.length === 0) {
+        return;
+      }
+
+      setFdmData({
+        fdmNodes: cadAndFdmNodes.fdmIds,
+        cadNode: cadAndFdmNodes.cadNode,
+        views
+      });
     }
-  }, [nodeData]);
+  }, [fdmPromises]);
 
-  return clickedNodeData;
+  return fdmData;
 };

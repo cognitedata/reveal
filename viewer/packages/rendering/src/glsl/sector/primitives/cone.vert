@@ -8,8 +8,7 @@
 #pragma glslify: import('../../base/determineVisibility.glsl')
 
 uniform mat4 inverseModelMatrix;
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
+uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 uniform vec3 cameraPosition;
@@ -65,12 +64,8 @@ void main() {
       transformOverrideTexture
     );
 
-    mat4 modelViewMatrix = viewMatrix * modelMatrix;
-
-    mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
-
-    vec3 centerA = mul3(modelTransformOffset, a_centerA);
-    vec3 centerB = mul3(modelTransformOffset, a_centerB);
+    vec3 centerA = mul3(treeIndexWorldTransform, a_centerA);
+    vec3 centerB = mul3(treeIndexWorldTransform, a_centerB);
 
     vec3 center = 0.5 * (centerA + centerB);
     float halfHeight = 0.5 * length(centerA - centerB);
@@ -121,14 +116,14 @@ void main() {
 
     // compute basis for cone
     v_W.xyz = dir;
-    v_U.xyz = (modelTransformOffset * vec4(a_localXAxis, 0.0)).xyz;
+    v_U.xyz = (treeIndexWorldTransform * vec4(a_localXAxis, 0.0)).xyz;
     v_W.xyz = normalize(normalMatrix * v_W.xyz);
     v_U.xyz = normalize(normalMatrix * v_U.xyz);
     // We pack surfacePoint as w-components of U and W
     v_W.w = surfacePoint.z;
     v_U.w = surfacePoint.x;
 
-    mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
+    mat4 modelToTransformOffset = modelViewMatrix * treeIndexWorldTransform;
 
     float radiusB = length((modelToTransformOffset * vec4(a_localXAxis * a_radiusB, 0.0)).xyz);
     float radiusA = length((modelToTransformOffset * vec4(a_localXAxis * a_radiusA, 0.0)).xyz);

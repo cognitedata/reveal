@@ -8,11 +8,11 @@
     "module": "ES2020",
     "declaration": true,
     "declarationDir": "dist",
-    "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
+    "isolatedModules": true,
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*", "stories/**/*"]
+  "include": ["src/**/*", "stories/**/*", "tests/**/*", "vite.config.ts"],
 }

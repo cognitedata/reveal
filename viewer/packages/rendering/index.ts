@@ -25,7 +25,6 @@ export { DEFAULT_CLASSIFICATION } from './src/pointcloud-rendering/classificatio
 export { RenderMode } from './src/rendering/RenderMode';
 export { RenderLayer, setModelRenderLayers } from './src/utilities/renderUtilities';
 export { StyledTreeIndexSets } from './src/utilities/types';
-export { coverageShaders } from './src/rendering/shaders';
 
 export { Materials } from './src/rendering/materials';
 export { PointCloudMaterial, OctreeMaterialParams } from './src/pointcloud-rendering';

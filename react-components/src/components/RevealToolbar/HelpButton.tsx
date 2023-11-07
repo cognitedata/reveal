@@ -9,12 +9,18 @@ import styled from 'styled-components';
 import { MouseNavigation } from './Help/MouseNavigation';
 import { TouchNavigation } from './Help/TouchNavigation';
 import { KeyboardNavigation } from './Help/KeyboardNavigation';
+import { useTranslation } from '../i18n/I18n';
 
-export const HelpButton = (): ReactElement => {
+export type HelpButtonProps = {
+  fallbackLanguage?: string;
+};
+
+export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement => {
+  const { t } = useTranslation(fallbackLanguage);
   const [helpActive, setHelpActive] = useState<boolean>(false);
 
   return (
-    <CogsTooltip content={'Help'} placement="right" appendTo={document.body}>
+    <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={document.body}
         onClickOutside={() => {
@@ -22,9 +28,9 @@ export const HelpButton = (): ReactElement => {
         }}
         content={
           <StyledMenu>
-            <MouseNavigation />
-            <KeyboardNavigation />
-            <TouchNavigation />
+            <MouseNavigation fallbackLanguage={fallbackLanguage} />
+            <KeyboardNavigation fallbackLanguage={fallbackLanguage} />
+            <TouchNavigation fallbackLanguage={fallbackLanguage} />
           </StyledMenu>
         }
         placement="right">

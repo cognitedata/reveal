@@ -9,7 +9,11 @@ import { useReveal } from '../..';
 import { type Image360 } from '@cognite/reveal';
 import { Button } from '@cognite/cogs.js';
 
-export function Image360Details(): ReactElement {
+type Image360DetailsProps = {
+  appLanguage?: string;
+};
+
+export function Image360Details({ appLanguage }: Image360DetailsProps): ReactElement {
   const viewer = useReveal();
   const [enteredEntity, setEnteredEntity] = useState<Image360 | undefined>();
   const [is360HistoricalPanelExpanded, setIs360HistoricalPanelExpanded] = useState<boolean>(false);
@@ -49,6 +53,7 @@ export function Image360Details(): ReactElement {
               viewer={viewer}
               image360Entity={enteredEntity}
               onExpand={handleExpand}
+              fallbackLanguage={appLanguage}
             />
           </Image360HistoricalPanel>
           <ExitButtonContainer>

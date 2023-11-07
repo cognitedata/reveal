@@ -29,6 +29,7 @@ export class Image360UI {
 
     console.log('Clicked annotation with data: ', intersection.annotation.annotation.data);
     intersection.annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
+    this.viewer.requestRedraw();
     this._lastAnnotation = intersection.annotation;
   }
 

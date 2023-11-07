@@ -7,12 +7,52 @@ import styled from 'styled-components';
 import { CadModelLayersContainer } from './CadModelLayersContainer';
 import { Image360CollectionLayerContainer } from './Image360LayersContainer';
 import { PointCloudLayersContainer } from './PointCloudLayersContainer';
-import { type ReactElement } from 'react';
-import { type Reveal3DResourcesLayersProps } from './types';
+import { useState, type ReactElement, useEffect } from 'react';
+import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useReveal } from '../../RevealContainer/RevealContext';
+import { useLayersUrlParams } from '../../../hooks/useUrlStateParam';
 
 const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): ReactElement => {
   const viewer = useReveal();
+  const [, setLayersUrlState] = useLayersUrlParams();
+  const [layersContainerState, setLayersContainerState] = useState<Reveal3DResourcesLayerStates>({
+    cadLayerData: [],
+    pointCloudLayerData: [],
+    image360LayerData: []
+  });
+
+  useEffect(() => {
+    const { cadLayerData, pointCloudLayerData, image360LayerData } = layersContainerState;
+    const cadLayers = cadLayerData.map((data) => {
+      const index = viewer.models.indexOf(data.model);
+      return {
+        revisionId: data.model.revisionId,
+        applied: data.isToggled,
+        index
+      };
+    });
+    const pointCloudLayers = pointCloudLayerData.map((data) => {
+      const index = viewer.models.indexOf(data.model);
+      return {
+        revisionId: data.model.revisionId,
+        applied: data.isToggled,
+        index
+      };
+    });
+
+    const image360Layers = image360LayerData.map((data) => {
+      return {
+        siteId: data.image360.id,
+        applied: data.isToggled
+      };
+    });
+    setLayersUrlState({
+      cadLayers,
+      pointCloudLayers,
+      image360Layers
+    });
+  }, [layersContainerState]);
+
   return (
     <>
       {(viewer.models.length > 0 || viewer.get360ImageCollections().length > 0) && (
@@ -21,9 +61,26 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
             onClick={(event: MouseEvent) => {
               event.stopPropagation();
             }}>
-            <CadModelLayersContainer layerProps={props} />
-            <PointCloudLayersContainer layerProps={props} />
-            <Image360CollectionLayerContainer layerProps={props} />
+            <CadModelLayersContainer
+              layerProps={props}
+              onChange={(cadLayerData: Reveal3DResourcesLayerStates['cadLayerData']) => {
+                setLayersContainerState((prev) => ({ ...prev, cadLayerData }));
+              }}
+            />
+            <PointCloudLayersContainer
+              layerProps={props}
+              onChange={(
+                pointCloudLayerData: Reveal3DResourcesLayerStates['pointCloudLayerData']
+              ) => {
+                setLayersContainerState((prev) => ({ ...prev, pointCloudLayerData }));
+              }}
+            />
+            <Image360CollectionLayerContainer
+              layerProps={props}
+              onChange={(image360LayerData: Reveal3DResourcesLayerStates['image360LayerData']) => {
+                setLayersContainerState((prev) => ({ ...prev, image360LayerData }));
+              }}
+            />
           </StyledMenu>
         </Container>
       )}

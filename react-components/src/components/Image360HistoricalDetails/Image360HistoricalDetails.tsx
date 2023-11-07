@@ -14,12 +14,14 @@ export type Image360HistoricalDetailsProps = {
   viewer: Cognite3DViewer;
   image360Entity?: Image360;
   onExpand?: (isExpanded: boolean) => void;
+  fallbackLanguage?: string;
 };
 
 export const Image360HistoricalDetails = ({
   viewer,
   image360Entity,
-  onExpand
+  onExpand,
+  fallbackLanguage
 }: Image360HistoricalDetailsProps): ReactElement => {
   const [revisionDetailsExpanded, setRevisionDetailsExpanded] = useState<boolean>(false);
   const [activeRevision, setActiveRevision] = useState<number>(0);
@@ -90,6 +92,7 @@ export const Image360HistoricalDetails = ({
             revisionCount={revisionCollection.length}
             revisionDetailsExpanded={revisionDetailsExpanded}
             setRevisionDetailsExpanded={setRevisionDetailsExpanded}
+            fallbackLanguage={fallbackLanguage}
           />
           {revisionDetailsExpanded && (
             <Image360HistoricalSummary
@@ -101,6 +104,7 @@ export const Image360HistoricalDetails = ({
               activeRevision={activeRevision}
               setActiveRevision={setActiveRevision}
               revisionCollection={revisionCollection}
+              fallbackLanguage={fallbackLanguage}
             />
           )}
         </>

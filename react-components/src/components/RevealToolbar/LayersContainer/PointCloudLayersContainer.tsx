@@ -9,43 +9,48 @@ import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type CognitePointCloudModel } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
-import { type Reveal3DResourcesLayersProps } from './types';
+import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
-import { useTranslation } from '../../../common/i18n';
+import { useTranslation } from '../../i18n/I18n';
 
 export const PointCloudLayersContainer = ({
-  layerProps
+  layerProps,
+  onChange
 }: {
   layerProps: Reveal3DResourcesLayersProps;
+  onChange: (cadState: Reveal3DResourcesLayerStates['pointCloudLayerData']) => void;
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);
   const { pointCloudLayerData } = layerProps.reveal3DResourcesLayerData;
+  const { storeStateInUrl } = layerProps;
   const count = pointCloudLayerData.length.toString();
   const someModelVisible = !pointCloudLayerData.every((data) => !data.isToggled);
   const indeterminate = pointCloudLayerData.some((data) => !data.isToggled);
 
   const handlePointCloudVisibility = (model: CognitePointCloudModel): void => {
-    const updatedPointCloudModels = pointCloudLayerData.map((data) => {
-      if (data.model === model) {
-        data.isToggled = !data.isToggled;
-        model.setDefaultPointCloudAppearance({ visible: data.isToggled });
-      }
-      return data;
-    });
+    const affectedPointCloudData = pointCloudLayerData.find((data) => data.model === model);
+    if (affectedPointCloudData !== undefined) {
+      affectedPointCloudData.isToggled = !affectedPointCloudData.isToggled;
+      model.visible = affectedPointCloudData.isToggled;
+    }
     viewer.requestRedraw();
     layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
       ...prevResourcesStates,
-      pointCloudLayerData: updatedPointCloudModels
+      pointCloudLayerData
     }));
+
+    if (storeStateInUrl !== undefined) {
+      onChange(pointCloudLayerData);
+    }
   };
 
   const handleAllPointCloudModelsVisibility = (visible: boolean): void => {
     pointCloudLayerData.forEach((data) => {
       data.isToggled = visible;
-      data.model.setDefaultPointCloudAppearance({ visible });
+      data.model.visible = visible;
     });
     viewer.requestRedraw();
 
@@ -53,8 +58,11 @@ export const PointCloudLayersContainer = ({
       ...prevResourcesStates,
       pointCloudLayerData
     }));
-  };
 
+    if (storeStateInUrl !== undefined) {
+      onChange(pointCloudLayerData);
+    }
+  };
   const pointCloudModelContent = (): ReactElement => {
     return (
       <StyledSubMenu
@@ -103,7 +111,7 @@ export const PointCloudLayersContainer = ({
                 setVisible(true);
               }}
             />
-            <StyledLabel> {t('POINT_CLOUDS')} </StyledLabel>
+            <StyledLabel> {t('POINT_CLOUDS', 'Point clouds')} </StyledLabel>
             <StyledChipCount label={count} hideTooltip type="neutral" />
           </Flex>
         </Menu.Submenu>

@@ -6,6 +6,7 @@
 
 import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
+import { AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 import { AnnotationStatus } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -65,6 +66,13 @@ export interface AreaCollection {
     // (undocumented)
     readonly isEmpty: boolean;
 }
+
+// @public
+export type AssetAnnotationImage360Info = {
+    annotationInfo: ImageAssetLinkAnnotationInfo;
+    imageEntity: Image360;
+    imageRevision: Image360Revision;
+};
 
 // @public
 export class AssetNodeCollection extends NodeCollection {
@@ -448,6 +456,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange>;
     getBoundingBoxByNodeId(nodeId: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
     getBoundingBoxByTreeIndex(treeIndex: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
+    getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<THREE_2.Box3[]>;
     getCameraConfiguration(): CameraConfiguration | undefined;
     getCdfToDefaultModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     getDefaultNodeAppearance(): NodeAppearance;
@@ -474,8 +483,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     setDefaultNodeAppearance(appearance: NodeAppearance): void;
     setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setModelTransformation(matrix: THREE_2.Matrix4): void;
-    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4, boundingBox?: THREE_2.Box3): void;
-    setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean): Promise<number>;
+    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4, boundingBox?: THREE_2.Box3, space?: 'model' | 'world'): void;
+    setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean, space?: 'model' | 'world'): Promise<number>;
     get styledNodeCollections(): {
         nodeCollection: NodeCollection;
         appearance: NodeAppearance;
@@ -532,6 +541,8 @@ export class CognitePointCloudModel {
     // (undocumented)
     readonly type: SupportedModelTypes;
     unassignStyledObjectCollection(objectCollection: PointCloudObjectCollection): void;
+    set visible(value: boolean);
+    get visible(): boolean;
     get visiblePointCount(): number;
 }
 
@@ -560,7 +571,7 @@ export abstract class CombineNodeCollectionBase extends NodeCollection {
 }
 
 // @public (undocumented)
-export class ComboControls extends EventDispatcher {
+export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement);
     get cameraRawRotation(): Quaternion;
     // (undocumented)
@@ -585,8 +596,18 @@ export class ComboControls extends EventDispatcher {
     // (undocumented)
     triggerCameraChangeEvent: () => void;
     // (undocumented)
-    update: (deltaTime: number, forceUpdate?: boolean) => boolean;
+    update: (deltaTimeS: number, forceUpdate?: boolean) => boolean;
 }
+
+// @public
+export type ComboControlsEventType = {
+    cameraChange: {
+        camera: {
+            position: Vector3;
+            target: Vector3;
+        };
+    };
+};
 
 // @public
 export type ComboControlsOptions = {
@@ -802,10 +823,12 @@ export type HtmlOverlayToolOptions = {
 // @public
 export interface Image360 {
     getActiveRevision(): Image360Revision;
+    getIconColor(): Color | 'default';
     getRevisions(): Image360Revision[];
     readonly id: string;
     readonly image360Visualization: Image360Visualization;
     readonly label: string | undefined;
+    setIconColor(color: Color | 'default'): void;
     readonly transform: THREE.Matrix4;
 }
 
@@ -852,6 +875,8 @@ export type Image360AnnotationIntersection = {
 // @public
 export interface Image360Collection {
     findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+    getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info[]>;
+    // @deprecated
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
     readonly id: string;
@@ -876,6 +901,11 @@ export type Image360EnteredDelegate = (image360: Image360, revision: Image360Rev
 export type Image360ExitedDelegate = () => void;
 
 // @public
+export type Image360IconStyle = {
+    color?: Color;
+};
+
+// @public
 export interface Image360Revision {
     readonly date: Date | undefined;
     getAnnotations(): Promise<Image360Annotation[]>;
@@ -886,6 +916,11 @@ export interface Image360Revision {
 export interface Image360Visualization {
     opacity: number;
 }
+
+// @public
+export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
+    data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
+};
 
 // @public (undocumented)
 export class IndexSet {
@@ -908,7 +943,9 @@ export class IndexSet {
     // (undocumented)
     forEachRange(visitor: (range: NumericRange) => void): void;
     // (undocumented)
-    hasIntersectionWith(otherSet: IndexSet | Map<number, number> | Set<number>): boolean;
+    hasIntersectionWith(otherSet: IndexSet | Set<number>): boolean;
+    // (undocumented)
+    hasIntersectionWithMap(otherMap: Map<number, number>): boolean;
     // (undocumented)
     intersectWith(otherSet: IndexSet): IndexSet;
     // (undocumented)
@@ -1577,7 +1614,6 @@ export enum WellKnownAsprsPointClassCodes {
     TransmissionTower = 15,
     // (undocumented)
     Unclassified = 1,
-    UserDefinableOffset = 64,
     // (undocumented)
     Water = 9,
     WireConductor = 14,

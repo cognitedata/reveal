@@ -5,6 +5,18 @@
 import { Image360Revision } from './Image360Revision';
 import { Image360Visualization } from './Image360Visualization';
 
+import { Color } from 'three';
+
+/**
+ * Image360 icon style
+ */
+export type Image360IconStyle = {
+  /**
+   * A color tint to apply to the 360 icon
+   */
+  color?: Color;
+};
+
 /**
  * A single 360 image "station", which may consist of several revisions
  * captured in approximately the same location
@@ -46,4 +58,16 @@ export interface Image360 {
    * @returns The active revision.
    */
   getActiveRevision(): Image360Revision;
+
+  /**
+   * Get a copy of the color assigned to the icon of this entity
+   *
+   * @returns The currently assign color, or 'default' if none is assigned
+   */
+  getIconColor(): Color | 'default';
+
+  /**
+   * Assign a color to the icon of this entity
+   */
+  setIconColor(color: Color | 'default'): void;
 }

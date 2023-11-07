@@ -27,7 +27,7 @@ describe(MultiBufferBatchingManager.name, () => {
       geometryGroup,
       materials,
       styledIndexSets,
-      new TreeIndexToSectorsMap(),
+      new TreeIndexToSectorsMap(10),
       1024,
       numberOfInstanceBuffers
     );

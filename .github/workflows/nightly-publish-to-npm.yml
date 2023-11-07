@@ -6,8 +6,9 @@ on:
 jobs:
   deploy-to-npm:
     runs-on: ubuntu-latest
+    environment: CD
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
 

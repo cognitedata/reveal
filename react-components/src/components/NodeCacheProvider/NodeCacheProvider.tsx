@@ -6,12 +6,12 @@ import { type ReactElement, type ReactNode, createContext, useContext, useMemo }
 import { FdmNodeCache } from './FdmNodeCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
-import { type FdmEdgeWithNode, type ModelRevisionToEdgeMap } from './types';
+import { type FdmNodeDataPromises, type ModelRevisionToEdgeMap } from './types';
 
 import assert from 'assert';
 import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 import { type TypedReveal3DModel } from '../Reveal3DResources/types';
-import { type ThreeDModelMappings } from '../../hooks/types';
+import { type ThreeDModelFdmMappings } from '../../hooks/types';
 import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 
@@ -50,11 +50,11 @@ export const useMappedEdgesForRevisions = (
   );
 };
 
-export const useFdm3dNodeData = (
+export const useFdm3dNodeDataPromises = (
   modelId: number | undefined,
   revisionId: number | undefined,
   treeIndex: number | undefined
-): UseQueryResult<Array<Required<FdmEdgeWithNode>>> => {
+): UseQueryResult<FdmNodeDataPromises> => {
   const content = useFdmNodeCache();
 
   const enableQuery =
@@ -67,7 +67,7 @@ export const useFdm3dNodeData = (
     ['reveal', 'react-components', 'tree-index-to-external-id', modelId, revisionId, treeIndex],
     async () => {
       assert(enableQuery);
-      return await content.cache.getClosestParentExternalId(modelId, revisionId, treeIndex);
+      return content.cache.getClosestParentDataPromises(modelId, revisionId, treeIndex);
     },
     {
       enabled: enableQuery
@@ -80,7 +80,7 @@ export const useFdm3dNodeData = (
 export const useFdmAssetMappings = (
   fdmAssetExternalIds: DmsUniqueIdentifier[],
   models: TypedReveal3DModel[]
-): UseQueryResult<ThreeDModelMappings[]> => {
+): UseQueryResult<ThreeDModelFdmMappings[]> => {
   const nodeCacheContent = useFdmNodeCache();
 
   return useQuery(

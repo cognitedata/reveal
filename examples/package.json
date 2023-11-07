@@ -29,8 +29,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "stats.js": "0.17.0",
-    "styled-components": "5.3.10",
-    "three-stdlib": "2.23.10"
+    "styled-components": "5.3.10"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.5",
@@ -40,12 +39,12 @@
     "@types/react-dom": "18.2.4",
     "@types/stats.js": "^0.17.0",
     "@types/styled-components": "^5.1.26",
-    "@types/three": "0.155.1",
+    "@types/three": "0.158.1",
     "css-loader": "^6.7.1",
     "dotenv-webpack": "^7.1.0",
     "html-webpack-plugin": "^5.5.0",
     "prettier": "^2.8.4",
-    "three": "0.155.0",
+    "three": "0.158.0",
     "ts-loader": "9.4.4",
     "typescript": "^5.0.4",
     "webpack": "^5.76.0",

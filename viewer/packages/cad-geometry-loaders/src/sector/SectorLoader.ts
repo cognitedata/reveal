@@ -31,7 +31,7 @@ const SectorLoadingBatchSize = 20;
  */
 export class SectorLoader {
   private readonly _modelStateHandler: ModelStateHandler;
-  private readonly _progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void;
+  private readonly _progressHelper: ProgressReportHelper;
   private readonly _collectStatisticsCallback: (spent: SectorLoadingSpent) => void;
   private readonly _sectorCuller: SectorCuller;
   private readonly _continuousModelStreaming: boolean;
@@ -52,7 +52,7 @@ export class SectorLoader {
 
     this._modelStateHandler = modelStateHandler;
     this._collectStatisticsCallback = collectStatisticsCallback;
-    this._progressCallback = progressCallback;
+    this._progressHelper = new ProgressReportHelper(progressCallback);
     this._continuousModelStreaming = continuousModelStreaming;
   }
 
@@ -86,14 +86,18 @@ export class SectorLoader {
       hasSectorChanged(sector.modelIdentifier, sector.metadata.id, sector.levelOfDetail)
     );
 
-    const progressHelper = new ProgressReportHelper(this._progressCallback);
-    progressHelper.start(changedSectors.length);
+    this._progressHelper.reset(changedSectors.length);
 
     this._batchId++;
     const currentBatchId = this._batchId;
 
     for (const batch of chunk(changedSectors, SectorLoadingBatchSize)) {
-      const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, progressHelper);
+      if (currentBatchId !== this._batchId) {
+        // Stop processing this batch as a new batch has started, and will discard results from old batches.
+        this._progressHelper.reportNewSectorsLoaded(batch.length);
+        continue;
+      }
+      const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, this._progressHelper);
       const consumedPromises = this.startLoadingBatch(filteredSectors, cadModels);
       for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
         const resolvedSector = consumed.result;
@@ -103,11 +107,16 @@ export class SectorLoader {
             resolvedSector.metadata.id,
             resolvedSector.levelOfDetail
           );
-          yield resolvedSector;
+          yield resolvedSector; // progress will be reported when sector is loaded by CadManager
+        } else {
+          this._progressHelper.reportNewSectorsLoaded(1);
         }
-        progressHelper.reportNewSectorsLoaded(1);
       }
     }
+  }
+
+  reportNewSectorsLoaded(loadedCountChange: number): void {
+    this._progressHelper.reportNewSectorsLoaded(loadedCountChange);
   }
 
   private shouldLoad(input: DetermineSectorsPayload) {
@@ -156,8 +165,8 @@ class ProgressReportHelper {
     this._progressCallback = reportCb;
   }
 
-  start(sectorsScheduled: number) {
-    this._sectorsScheduled = sectorsScheduled;
+  reset(sectorsScheduledChange: number) {
+    this._sectorsScheduled += sectorsScheduledChange - this._sectorsLoaded;
     this._sectorsLoaded = 0;
     this._sectorsCulled = 0;
     this.triggerCallback();
