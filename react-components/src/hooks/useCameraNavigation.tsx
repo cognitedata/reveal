@@ -8,7 +8,7 @@ import { useFdmNodeCache } from '../components/NodeCacheProvider/NodeCacheProvid
 import { Box3 } from 'three';
 
 export type CameraNavigationActions = {
-  fitCameraToAllModels: () => void;
+  fitCameraToAllModels: (duration?: number) => void;
   fitCameraToModelNode: (revisionId: number, nodeId: number) => Promise<void>;
   fitCameraToModelNodes: (revisionId: number, nodeids: number[]) => Promise<void>;
   fitCameraToInstance: (externalId: string, space: string) => Promise<void>;
@@ -20,12 +20,12 @@ export const useCameraNavigation = (): CameraNavigationActions => {
   const fdmNodeCache = useFdmNodeCache();
   const viewer = useReveal();
 
-  const fitCameraToAllModels = (): void => {
+  const fitCameraToAllModels = (duration?: number): void => {
     const models = viewer.models;
     if (models.length === 0) {
       return;
     }
-    viewer.fitCameraToModels(models, undefined, true);
+    viewer.fitCameraToModels(models, duration, true);
   };
 
   const fitCameraToModelNodes = async (revisionId: number, nodeIds: number[]): Promise<void> => {

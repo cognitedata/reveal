@@ -16,7 +16,7 @@ import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reve
 import { AssetMappingCacheProvider } from '../NodeCacheProvider/AssetMappingCacheProvider';
 import { I18nContextProvider } from '../i18n/I18n';
 
-type RevealContainerProps = {
+export type RevealContainerProps = {
   color?: Color;
   sdk: CogniteClient;
   appLanguage?: string;
