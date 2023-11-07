@@ -12,7 +12,7 @@ export type CameraNavigationActions = {
   fitCameraToModelNode: (revisionId: number, nodeId: number) => Promise<void>;
   fitCameraToModelNodes: (revisionId: number, nodeids: number[]) => Promise<void>;
   fitCameraToInstance: (externalId: string, space: string) => Promise<void>;
-  fitCameraToInstances: (instances: { externalId: string, space: string }[]) => Promise<void>;
+  fitCameraToInstances: (instances: Array<{ externalId: string; space: string }>) => Promise<void>;
   fitCameraToState: (cameraState: CameraState) => void;
 };
 
@@ -36,15 +36,20 @@ export const useCameraNavigation = (): CameraNavigationActions => {
     }
 
     const nodeBoundingBoxes = await (model as CogniteCadModel).getBoundingBoxByNodeIds(nodeIds);
-    const unionedBox = nodeBoundingBoxes.reduce((currentBox, nextBox) => currentBox.union(nextBox), new Box3());
+    const unionedBox = nodeBoundingBoxes.reduce(
+      (currentBox, nextBox) => currentBox.union(nextBox),
+      new Box3()
+    );
     viewer.cameraManager.fitCameraToBoundingBox(unionedBox);
   };
 
   const fitCameraToModelNode = async (revisionId: number, nodeId: number): Promise<void> => {
-    return fitCameraToModelNodes(revisionId, [nodeId]);
+    await fitCameraToModelNodes(revisionId, [nodeId]);
   };
 
-  const fitCameraToInstances = async (instances: { externalId: string, space: string }[]): Promise<void> => {
+  const fitCameraToInstances = async (
+    instances: Array<{ externalId: string; space: string }>
+  ): Promise<void> => {
     const modelsRevisionIds = viewer.models.map((model) => ({
       modelId: model.modelId,
       revisionId: model.revisionId
@@ -54,12 +59,10 @@ export const useCameraNavigation = (): CameraNavigationActions => {
       await fdmNodeCache.cache.getMappingsForFdmIds(instances, modelsRevisionIds)
     ).find((model) => model.mappings.size > 0);
 
-    const nodeIds = [...(modelMappings?.mappings.values() ?? [])].flat().map(node => node.id);
+    const nodeIds = [...(modelMappings?.mappings.values() ?? [])].flat().map((node) => node.id);
 
     if (modelMappings === undefined || nodeIds.length === 0) {
-      await Promise.reject(
-        new Error(`Could not find a connected model to instances ${instances}`)
-      );
+      await Promise.reject(new Error(`Could not find a model connected to the instances`));
       return;
     }
 
@@ -67,7 +70,7 @@ export const useCameraNavigation = (): CameraNavigationActions => {
   };
 
   const fitCameraToInstance = async (externalId: string, space: string): Promise<void> => {
-    return fitCameraToInstances([{ externalId, space }]);
+    await fitCameraToInstances([{ externalId, space }]);
   };
 
   const fitCameraToState = (cameraState: CameraState): void => {
