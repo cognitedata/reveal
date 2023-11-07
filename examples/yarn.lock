@@ -174,23 +174,9 @@
   dependencies:
     commander "^2.15.1"
 
-"@cognite/reveal@../viewer":
-  version "4.6.0"
-  dependencies:
-    "@tweenjs/tween.js" "19.0.0"
-    assert "2.1.0"
-    async-mutex "0.4.0"
-    glslify "7.1.1"
-    glslify-import "3.1.0"
-    html2canvas "^1.4.1"
-    lodash "4.17.21"
-    loglevel "1.8.1"
-    mixpanel-browser "2.47.0"
-    path-browserify "1.0.1"
-    random-seed "0.3.0"
-    rxjs "7.8.1"
-    skmeans "0.11.3"
-    sparse-octree "7.1.8"
+"@cognite/reveal@link:../viewer":
+  version "0.0.0"
+  uid ""
 
 "@cognite/sdk-core@^4.9.0":
   version "4.9.0"
