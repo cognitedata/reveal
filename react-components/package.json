@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.20.1",
+  "version": "0.21.0",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -30,7 +30,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
-    "@cognite/reveal": "^4.5.0",
+    "@cognite/reveal": "^4.6.0",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
@@ -44,7 +44,7 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.5.0",
     "@cognite/cogs.js": "^9.17.0",
-    "@cognite/reveal": "4.5.1",
+    "@cognite/reveal": "4.6.0",
     "@cognite/sdk": "^8.2.0",
     "@playwright/test": "^1.39.0",
     "@storybook/addon-essentials": "7.4.3",
@@ -62,7 +62,7 @@
     "@types/react": "18.2.7",
     "@types/react-dom": "^18.2.7",
     "@types/styled-components": "5.1.29",
-    "@types/three": "0.155.1",
+    "@types/three": "0.158.1",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@vitejs/plugin-react": "^4.0.4",
     "eslint": "^8.0.1",
@@ -86,7 +86,7 @@
     "storybook": "7.4.3",
     "style-loader": "^3.3.3",
     "styled-components": "5.3.11",
-    "three": "0.155.0",
+    "three": "0.158.0",
     "ts-loader": "9.5.0",
     "typescript": "5.2.2",
     "vite": "^4.4.9",

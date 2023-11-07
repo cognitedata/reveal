@@ -455,6 +455,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange>;
     getBoundingBoxByNodeId(nodeId: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
     getBoundingBoxByTreeIndex(treeIndex: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
+    getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<THREE_2.Box3[]>;
     getCameraConfiguration(): CameraConfiguration | undefined;
     getCdfToDefaultModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     getDefaultNodeAppearance(): NodeAppearance;
@@ -569,7 +570,7 @@ export abstract class CombineNodeCollectionBase extends NodeCollection {
 }
 
 // @public (undocumented)
-export class ComboControls extends EventDispatcher {
+export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement);
     get cameraRawRotation(): Quaternion;
     // (undocumented)
@@ -596,6 +597,16 @@ export class ComboControls extends EventDispatcher {
     // (undocumented)
     update: (deltaTimeS: number, forceUpdate?: boolean) => boolean;
 }
+
+// @public
+export type ComboControlsEventType = {
+    cameraChange: {
+        camera: {
+            position: Vector3;
+            target: Vector3;
+        };
+    };
+};
 
 // @public
 export type ComboControlsOptions = {

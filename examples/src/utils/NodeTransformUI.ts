@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { CadIntersection, Cognite3DViewer, CogniteCadModel, NumericRange } from '@cognite/reveal';
 
 import * as dat from 'dat.gui';
-import { TransformControls } from 'three-stdlib';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 
 export class NodeTransformUI {
   private viewer: Cognite3DViewer;
@@ -35,7 +35,7 @@ export class NodeTransformUI {
 
   private attachTransformControls = {
     attach: false,
-    mode: 'translate'
+    mode: 'translate' as const
   };
 
   constructor(viewer: Cognite3DViewer, gui: dat.GUI, model: CogniteCadModel) {
@@ -66,7 +66,7 @@ export class NodeTransformUI {
     const toolTransform = gui.addFolder('Tool node transform');
     toolTransform.add(this.attachTransformControls, 'attach').name('Attach transform controls');
     toolTransform
-      .add(this.attachTransformControls, 'mode', ['translate', 'rotate'])
+      .add(this.attachTransformControls, 'mode', ['translate', 'rotate'] as const)
       .onChange(() => transformControls.setMode(this.attachTransformControls.mode));
   }
 
