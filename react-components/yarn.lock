@@ -1824,7 +1824,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": ^0.7.5
     "@cognite/cdf-utilities": ^3.5.0
     "@cognite/cogs.js": ^9.17.0
-    "@cognite/reveal": 4.5.1
+    "@cognite/reveal": 4.6.0
     "@cognite/sdk": ^8.2.0
     "@storybook/addon-essentials": 7.4.3
     "@storybook/addon-interactions": 7.4.3
@@ -1875,16 +1875,16 @@ __metadata:
     vitest: ^0.34.6
   peerDependencies:
     "@cognite/cogs.js": ">=9"
-    "@cognite/reveal": ^4.5.0
+    "@cognite/reveal": ^4.6.0
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:4.5.1":
-  version: 4.5.1
-  resolution: "@cognite/reveal@npm:4.5.1"
+"@cognite/reveal@npm:4.6.0":
+  version: 4.6.0
+  resolution: "@cognite/reveal@npm:4.6.0"
   dependencies:
     "@tweenjs/tween.js": 19.0.0
     assert: 2.1.0
@@ -1902,8 +1902,8 @@ __metadata:
     sparse-octree: 7.1.8
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
-    three: 0.155.0
-  checksum: a9611fc366c89fda61c560ad67326b3633ccd757817fa19040f739d42c6eefc38e0b43528941c18b56ac0c81ad5bb0d6ede82304962d0510028f782e27d0c3ad
+    three: 0.158.0
+  checksum: b71b2f9fec71159dea199f07546a5615a9e8199a7357d7aff92cd1e71c9d03256731d5c94cd3e4a82d2bec09ef99fbb41b3fe1b4bdd0e7e9b72f312401b33758
   languageName: node
   linkType: hard
 

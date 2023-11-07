@@ -117,6 +117,7 @@ const useFdmData = (
       const cadAndFdmNodes = await promises.cadAndFdmNodesPromise;
 
       if (cadAndFdmNodes === undefined || cadAndFdmNodes.fdmIds.length === 0) {
+        setFdmData(undefined);
         return;
       }
 
