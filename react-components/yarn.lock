@@ -1551,6 +1551,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.22.6, @babel/runtime@npm:^7.23.2":
+  version: 7.23.2
+  resolution: "@babel/runtime@npm:7.23.2"
+  dependencies:
+    regenerator-runtime: ^0.14.0
+  checksum: 6c4df4839ec75ca10175f636d6362f91df8a3137f86b38f6cd3a4c90668a0fe8e9281d320958f4fbd43b394988958585a17c3aab2a4ea6bf7316b22916a371fb
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.22.15, @babel/template@npm:^7.22.5":
   version: 7.22.15
   resolution: "@babel/template@npm:7.22.15"
@@ -1774,15 +1783,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs.js@npm:^9.17.0":
-  version: 9.17.0
-  resolution: "@cognite/cogs.js@npm:9.17.0"
+"@cognite/cogs.js@npm:9.62.0":
+  version: 9.62.0
+  resolution: "@cognite/cogs.js@npm:9.62.0"
   dependencies:
     "@emotion/react": 11.10.6
     "@emotion/styled": 11.10.6
     "@mui/base": 5.0.0-alpha.97
     "@mui/joy": 5.0.0-alpha.41
     "@mui/material": 5.9.2
+    "@mui/x-date-pickers": 6.11.0
+    "@mui/x-date-pickers-pro": 6.11.0
+    "@mui/x-license-pro": 6.10.2
     "@notionhq/client": 2.2.3
     "@react-hook/resize-observer": 1.2.6
     "@tippyjs/react": 4.2.6
@@ -1791,7 +1803,7 @@ __metadata:
     classnames: 2.3.2
     color: 3.2.1
     csstype: 2.6.10
-    dayjs: 1.11.7
+    dayjs: ^1.11.7
     deepdash: 5.3.9
     dotenv-flow: 3.2.0
     focus-visible: 5.2.0
@@ -1813,7 +1825,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: f2098b89053ce90e8413953170d2504f2d616da5afe942c536c391880e41d7c0d41291e490e6cfec15f0a96f4a43a91689fb67b85fc8aaaf72482f8e4db03af9
+  checksum: d4aac54f7e9f418085d075986e64093c512f74f97697c18f54d986bb1bdd5d8e52d7eb94c1b292cdea734d31e41006c053e8c554894645eb8f466d530c138680
   languageName: node
   linkType: hard
 
@@ -1823,7 +1835,7 @@ __metadata:
   dependencies:
     "@cognite/cdf-i18n-utils": ^0.7.5
     "@cognite/cdf-utilities": ^3.5.0
-    "@cognite/cogs.js": ^9.17.0
+    "@cognite/cogs.js": 9.62.0
     "@cognite/reveal": 4.5.1
     "@cognite/sdk": ^8.2.0
     "@storybook/addon-essentials": 7.4.3
@@ -1862,6 +1874,7 @@ __metadata:
     prop-types: 15.8.1
     react: 18.2.0
     react-dom: 18.2.0
+    react-draggable: ^4.4.5
     react-router-dom: ^6.15.0
     storybook: 7.4.3
     style-loader: ^3.3.3
@@ -1874,7 +1887,7 @@ __metadata:
     vite-plugin-externalize-deps: ^0.7.0
     vitest: ^0.34.6
   peerDependencies:
-    "@cognite/cogs.js": ">=9"
+    "@cognite/cogs.js": ">9"
     "@cognite/reveal": ^4.5.0
     react: ">=18"
     react-dom: ">=18"
@@ -3224,6 +3237,133 @@ __metadata:
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
   checksum: b5d3fff9153b6104d732b01363410a6472f06869d48e73d3d1ee38cf2b1255eaafb1afb90c48bb446143d312a434fd30e7b1664bf10941a2c610b7759cfd0a2e
+  languageName: node
+  linkType: hard
+
+"@mui/utils@npm:^5.13.7, @mui/utils@npm:^5.14.1":
+  version: 5.14.16
+  resolution: "@mui/utils@npm:5.14.16"
+  dependencies:
+    "@babel/runtime": ^7.23.2
+    "@types/prop-types": ^15.7.9
+    prop-types: ^15.8.1
+    react-is: ^18.2.0
+  peerDependencies:
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 4f2fab609447ccd09d237b0136f6f3122b0a4c9864b1cebe6bd8a26350d3fb3cffb8b23b26af4fa9f34f74fffcb2d549285ce75a7185fcde39e14241aa06e129
+  languageName: node
+  linkType: hard
+
+"@mui/x-date-pickers-pro@npm:6.11.0":
+  version: 6.11.0
+  resolution: "@mui/x-date-pickers-pro@npm:6.11.0"
+  dependencies:
+    "@babel/runtime": ^7.22.6
+    "@mui/utils": ^5.14.1
+    "@mui/x-date-pickers": 6.11.0
+    "@mui/x-license-pro": 6.10.2
+    clsx: ^1.2.1
+    prop-types: ^15.8.1
+    react-transition-group: ^4.4.5
+  peerDependencies:
+    "@emotion/react": ^11.9.0
+    "@emotion/styled": ^11.8.1
+    "@mui/base": ^5.0.0-alpha.87
+    "@mui/material": ^5.8.6
+    "@mui/system": ^5.8.0
+    date-fns: ^2.25.0
+    date-fns-jalali: ^2.13.0-0
+    dayjs: ^1.10.7
+    luxon: ^3.0.2
+    moment: ^2.29.4
+    moment-hijri: ^2.1.2
+    moment-jalaali: ^0.7.4 || ^0.8.0 || ^0.9.0 || ^0.10.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@emotion/react":
+      optional: true
+    "@emotion/styled":
+      optional: true
+    date-fns:
+      optional: true
+    date-fns-jalali:
+      optional: true
+    dayjs:
+      optional: true
+    luxon:
+      optional: true
+    moment:
+      optional: true
+    moment-hijri:
+      optional: true
+    moment-jalaali:
+      optional: true
+  checksum: 74089df1bd2b0880d3fd8b47ed0d1caa3e71e7ce6b17c28655c0070abc6bf2586e83e05ddb4feea97fca81441c607091ea2a91c2eb72ce16e78beb2a5c4a0f88
+  languageName: node
+  linkType: hard
+
+"@mui/x-date-pickers@npm:6.11.0":
+  version: 6.11.0
+  resolution: "@mui/x-date-pickers@npm:6.11.0"
+  dependencies:
+    "@babel/runtime": ^7.22.6
+    "@mui/utils": ^5.14.1
+    "@types/react-transition-group": ^4.4.6
+    clsx: ^1.2.1
+    prop-types: ^15.8.1
+    react-transition-group: ^4.4.5
+  peerDependencies:
+    "@emotion/react": ^11.9.0
+    "@emotion/styled": ^11.8.1
+    "@mui/base": ^5.0.0-alpha.87
+    "@mui/material": ^5.8.6
+    "@mui/system": ^5.8.0
+    date-fns: ^2.25.0
+    date-fns-jalali: ^2.13.0-0
+    dayjs: ^1.10.7
+    luxon: ^3.0.2
+    moment: ^2.29.4
+    moment-hijri: ^2.1.2
+    moment-jalaali: ^0.7.4 || ^0.8.0 || ^0.9.0 || ^0.10.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@emotion/react":
+      optional: true
+    "@emotion/styled":
+      optional: true
+    date-fns:
+      optional: true
+    date-fns-jalali:
+      optional: true
+    dayjs:
+      optional: true
+    luxon:
+      optional: true
+    moment:
+      optional: true
+    moment-hijri:
+      optional: true
+    moment-jalaali:
+      optional: true
+  checksum: a9cb726b5c42aaaae94a37797d311ebf2402868c9fb583a72ff72e32cd381e114b5b55dac03d2d15b545a5f08f4a111750db28c5d68101f8803d3557cbec355b
+  languageName: node
+  linkType: hard
+
+"@mui/x-license-pro@npm:6.10.2":
+  version: 6.10.2
+  resolution: "@mui/x-license-pro@npm:6.10.2"
+  dependencies:
+    "@babel/runtime": ^7.22.6
+    "@mui/utils": ^5.13.7
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0
+  checksum: facacd6aa216fbb7b25eedbd815140fbc620250156670d9424c221fac47402a745f10e6d59bb02685eadff6f41af76c308ab3762cd267482bcd2dc5d79bbdc4f
   languageName: node
   linkType: hard
 
@@ -5488,6 +5628,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prop-types@npm:^15.7.9":
+  version: 15.7.9
+  resolution: "@types/prop-types@npm:15.7.9"
+  checksum: c7591d3ff7593e243908a07e1d3e2bb6e8879008af5800d8378115a90d0fdf669a1cae72a6d7f69e59c4fa7bb4c8ed61f6ebc1c520fe110c6f2b03ac02414072
+  languageName: node
+  linkType: hard
+
 "@types/qs@npm:*, @types/qs@npm:^6.9.5":
   version: 6.9.7
   resolution: "@types/qs@npm:6.9.7"
@@ -5545,6 +5692,15 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: 0872143821d7ee20a1d81e965f8b1e837837f11cd2206973f1f98655751992d9390304d58bac192c9cd923eca95bff107d8c9e3364a180240d5c2a6fd70fd7c3
+  languageName: node
+  linkType: hard
+
+"@types/react-transition-group@npm:^4.4.6":
+  version: 4.4.8
+  resolution: "@types/react-transition-group@npm:4.4.8"
+  dependencies:
+    "@types/react": "*"
+  checksum: ad7ba2bce97631fda9d89b4ed9772489bd050fec3ccd7563041b206dbe219d37d22e0d7731b1f90f56e89daf40e69ba16beba8066c42165bf8a584533feb6a2c
   languageName: node
   linkType: hard
 
@@ -7709,14 +7865,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:1.11.7":
-  version: 1.11.7
-  resolution: "dayjs@npm:1.11.7"
-  checksum: 5003a7c1dd9ed51385beb658231c3548700b82d3548c0cfbe549d85f2d08e90e972510282b7506941452c58d32136d6362f009c77ca55381a09c704e9f177ebb
-  languageName: node
-  linkType: hard
-
-"dayjs@npm:1.x":
+"dayjs@npm:1.x, dayjs@npm:^1.11.7":
   version: 1.11.10
   resolution: "dayjs@npm:1.11.10"
   checksum: a6b5a3813b8884f5cd557e2e6b7fa569f4c5d0c97aca9558e38534af4f2d60daafd3ff8c2000fed3435cfcec9e805bcebd99f90130c6d1c5ef524084ced588c4
@@ -13808,6 +13957,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-draggable@npm:^4.4.5":
+  version: 4.4.6
+  resolution: "react-draggable@npm:4.4.6"
+  dependencies:
+    clsx: ^1.1.1
+    prop-types: ^15.8.1
+  peerDependencies:
+    react: ">= 16.3.0"
+    react-dom: ">= 16.3.0"
+  checksum: 9b15aac59244873ac4561c5a2bead43a56e18d406e0a5f242bd4f9d151c074530c02b99387983104bf43417292f9cf8d063e554ed08d88792235e3fbc965f1b8
+  languageName: node
+  linkType: hard
+
 "react-element-to-jsx-string@npm:^15.0.0":
   version: 15.0.0
   resolution: "react-element-to-jsx-string@npm:15.0.0"
@@ -14030,7 +14192,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-transition-group@npm:^4.3.0, react-transition-group@npm:^4.4.1, react-transition-group@npm:^4.4.2":
+"react-transition-group@npm:^4.3.0, react-transition-group@npm:^4.4.1, react-transition-group@npm:^4.4.2, react-transition-group@npm:^4.4.5":
   version: 4.4.5
   resolution: "react-transition-group@npm:4.4.5"
   dependencies:
