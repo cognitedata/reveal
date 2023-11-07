@@ -5,7 +5,7 @@ import { CogniteClient, Node3D } from '@cognite/sdk';
 import { TreeIndexNodeCollection } from '@cognite/reveal';
 import { NumericRange } from '@cognite/reveal';
 import { DefaultNodeAppearance } from '@cognite/reveal';
-import { TransformControls } from 'three-stdlib';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 
 export class InspectNodeUI {
   private readonly _uiFolder: dat.GUI;
