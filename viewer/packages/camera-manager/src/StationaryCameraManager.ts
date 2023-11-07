@@ -83,7 +83,6 @@ export class StationaryCameraManager implements CameraManager {
     // and pointerleave events, as these have the same semantics.
     this._domElement.addEventListener('pointerup', this.onPointerUp);
     this._domElement.addEventListener('pointercancel', this.onPointerUp);
-    this._domElement.addEventListener('pointerleave', this.onPointerUp);
   }
 
   deactivate(): void {
@@ -91,7 +90,6 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement.removeEventListener('pointermove', this.onPointerMove);
     this._domElement.removeEventListener('pointerup', this.onPointerUp);
     this._domElement.removeEventListener('pointercancel', this.onPointerUp);
-    this._domElement.removeEventListener('pointerleave', this.onPointerUp);
     this._domElement.removeEventListener('wheel', this.zoomCamera);
   }
 
