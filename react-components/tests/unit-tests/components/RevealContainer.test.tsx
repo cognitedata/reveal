@@ -1,13 +1,13 @@
 import { describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { RevealContainer } from '../../src';
+import { RevealContainer } from '../../../src';
 import { It, Mock } from 'moq.ts';
 import { type CogniteClient } from '@cognite/sdk';
-import { RevealKeepAliveContext } from '../../src/components/RevealKeepAlive/RevealKeepAliveContext';
+import { RevealKeepAliveContext } from '../../../src/components/RevealKeepAlive/RevealKeepAliveContext';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { type FC, useRef } from 'react';
-import { type FdmNodeCache } from '../../src/components/NodeCacheProvider/FdmNodeCache';
-import { type AssetMappingCache } from '../../src/components/NodeCacheProvider/AssetMappingCache';
+import { type FdmNodeCache } from '../../../src/components/NodeCacheProvider/FdmNodeCache';
+import { type AssetMappingCache } from '../../../src/components/NodeCacheProvider/AssetMappingCache';
 
 describe(RevealContainer.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {

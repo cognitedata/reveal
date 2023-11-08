@@ -8,10 +8,14 @@ const config: StorybookConfig = {
     '@storybook/addon-essentials',
     '@storybook/addon-interactions'
   ],
+  features: {
+    buildStoriesJson: true
+  },
   framework: '@storybook/react-vite',
   core: {
     builder: '@storybook/builder-vite'
   },
+  staticDirs: ['../stories/public'],
   async viteFinal(config, { configType }) {
     if (config.plugins !== undefined) {
       remove(config.plugins, (plugin) => {

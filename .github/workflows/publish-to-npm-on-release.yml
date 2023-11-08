@@ -1,8 +1,10 @@
 name: Publish Package to NPM
 on:
+  workflow_dispatch:
   release:
     types:
       - published
+
 jobs:
   deploy-to-npm:
     runs-on: ubuntu-latest
@@ -13,10 +15,10 @@ jobs:
           persist-credentials: false
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 16
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
           always-auth: true
 
       - name: Setup Cognite CICD

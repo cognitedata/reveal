@@ -35,6 +35,8 @@ export class GltfSectorLoader {
 
       const group = new AutoDisposeGroup();
 
+      const wholeSectorBoundingBox = sector.metadata.geometryBoundingBox;
+
       const parsedSectorGeometry = await this._gltfSectorParser.parseSector(sectorByteBuffer);
 
       const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
@@ -78,7 +80,7 @@ export class GltfSectorLoader {
             });
             break;
           case RevealGeometryCollectionType.TriangleMesh:
-            this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
+            this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh, wholeSectorBoundingBox);
             break;
           case RevealGeometryCollectionType.TexturedTriangleMesh:
             const material = this._materialManager.addTexturedMeshMaterial(
@@ -86,7 +88,7 @@ export class GltfSectorLoader {
               sector.metadata.id,
               parsedGeometry.texture!
             );
-            this.createMesh(group, parsedGeometry.geometryBuffer, material);
+            this.createMesh(group, parsedGeometry.geometryBuffer, material, wholeSectorBoundingBox);
             break;
           default:
             assertNever(type);
@@ -127,10 +129,18 @@ export class GltfSectorLoader {
     return treeIndexSet;
   }
 
-  private createMesh(group: AutoDisposeGroup, geometry: THREE.BufferGeometry, material: THREE.RawShaderMaterial) {
+  private createMesh(
+    group: AutoDisposeGroup,
+    geometry: THREE.BufferGeometry,
+    material: THREE.RawShaderMaterial,
+    geometryBoundingBox: THREE.Box3
+  ) {
+    // Assigns an approximate bounding-sphere to the geometry to avoid recalculating this on first render
+    geometry.boundingSphere = geometryBoundingBox.getBoundingSphere(new THREE.Sphere());
+
     const mesh = new THREE.Mesh(geometry, material);
     group.add(mesh);
-    mesh.frustumCulled = false;
+    mesh.frustumCulled = false; // Note: Frustum culling does not play well with node-transforms
 
     mesh.userData.treeIndices = this.createTreeIndexSet(geometry);
 
