@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { IndexSet, determinePowerOfTwoDimensions, NumericRange } from '@reveal/utilities';
 import { NodeAppearanceProvider, NodeAppearance, DefaultNodeAppearance } from '@reveal/cad-styling';
-
+import assert from 'assert';
 export class NodeAppearanceTextureBuilder {
   private _defaultAppearance: NodeAppearance = {};
   private readonly _styleProvider: NodeAppearanceProvider;
@@ -21,16 +21,30 @@ export class NodeAppearanceTextureBuilder {
   private readonly _infrontNodesTreeIndices: IndexSet;
   private readonly _visibleNodesTreeIndices: IndexSet;
 
+  private readonly _defaultAppearanceTextureIterations: number;
+
   constructor(treeIndexCount: number, styleProvider: NodeAppearanceProvider) {
     this._allTreeIndices = new IndexSet();
     this._allTreeIndices.addRange(new NumericRange(0, treeIndexCount));
     this._styleProvider = styleProvider;
     this._styleProvider.on('changed', this._handleStylesChangedListener);
+    const overrideColorPerTreeIndexTexture = (this._overrideColorPerTreeIndexTexture =
+      allocateOverrideColorPerTreeIndexTexture(treeIndexCount));
 
-    this._overrideColorPerTreeIndexTexture = allocateOverrideColorPerTreeIndexTexture(treeIndexCount);
-    this._overrideColorDefaultAppearanceRgba = new Uint8ClampedArray(
-      this._overrideColorPerTreeIndexTexture.image.data.length
+    assert(
+      THREE.MathUtils.isPowerOfTwo(overrideColorPerTreeIndexTexture.image.data.length),
+      'Code below depends on the overrideColorPerTreeIndexTexture being a power of two length. Feel free to improve this.'
     );
+    const textureLength = overrideColorPerTreeIndexTexture.image.data.length;
+    const optimalDefaultAppearanceArraySize = Math.pow(2, 21); // ~2mill. Profiled to be be faster than allocating the whole chunk, while saving ~60MB memory compared to allocating the whole 4k texture
+    const defaultAppearanceTextureIterations = THREE.MathUtils.ceilPowerOfTwo(
+      Math.max(1, textureLength / optimalDefaultAppearanceArraySize)
+    );
+
+    this._overrideColorDefaultAppearanceRgba = new Uint8ClampedArray(
+      this._overrideColorPerTreeIndexTexture.image.data.length / defaultAppearanceTextureIterations
+    );
+    this._defaultAppearanceTextureIterations = defaultAppearanceTextureIterations;
     this._regularNodesTreeIndices = new IndexSet();
     this._ghostedNodesTreeIndices = new IndexSet();
     this._infrontNodesTreeIndices = new IndexSet();
@@ -116,8 +130,14 @@ export class NodeAppearanceTextureBuilder {
 
   private populateTexture(rgbaBuffer: Uint8ClampedArray) {
     // Fill texture with default style
-    rgbaBuffer.set(this._overrideColorDefaultAppearanceRgba); // Note! This is basically memcpy(), i.e. fast
-
+    console.time('populate');
+    for (let offsetMultiplier = 0; offsetMultiplier < this._defaultAppearanceTextureIterations; offsetMultiplier++) {
+      rgbaBuffer.set(
+        this._overrideColorDefaultAppearanceRgba,
+        offsetMultiplier * this._overrideColorDefaultAppearanceRgba.length
+      ); // Note! This is basically memcpy(), i.e. fast
+    }
+    console.timeEnd('populate');
     // Apply individual styles
     this._styleProvider.applyStyles((treeIndices, appearance) => {
       // Translate from style to magic values in textures
@@ -209,7 +229,6 @@ export class NodeAppearanceTextureBuilder {
 function allocateOverrideColorPerTreeIndexTexture(treeIndexCount: number): THREE.DataTexture {
   const { width, height } = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = width * height;
-
   // Color and style override texture
   const overrideColorPerTreeIndexTexture = new THREE.DataTexture(
     new Uint8ClampedArray(4 * textureElementCount),
