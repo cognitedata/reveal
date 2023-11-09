@@ -8,31 +8,26 @@ import { WidgetHeader } from './WidgetHeader';
 import { WidgetBody } from './WidgetBody';
 
 type WidgetProps = {
+  isMinimized: boolean;
   children?: ReactNode;
   [x: string]: any;
 };
 
 const BaseWidget = (
-  { children, ...props }: WidgetProps,
+  { isMinimized, children, ...props }: WidgetProps,
   ref: ForwardedRef<HTMLDivElement>
 ): ReactElement => {
   return (
-    <Container ref={ref} {...props}>
+    <Container isMinimized={isMinimized} ref={ref} {...props}>
       {children}
     </Container>
   );
 };
 
-const Container = styled.div`
-  position: absolute;
-  left: calc(40% - 20px);
-  top: 50px;
-  width: auto;
-  height: auto;
-  min-width: 60%;
+const Container = styled.div<{ isMinimized: boolean }>`
+  height: 100%;
+  min-width: 20%;
   min-height: 10%;
-  max-width: 60%;
-  max-height: 80%;
   border-radius: 10px;
   display: flex;
   flex-direction: column;

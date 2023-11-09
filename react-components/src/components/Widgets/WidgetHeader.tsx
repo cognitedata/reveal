@@ -5,7 +5,7 @@ import { type ReactNode, type PropsWithChildren, type FC, type ReactElement } fr
 
 import styled, { css } from 'styled-components';
 
-import { Body, Icon, type IconType, Tooltip } from '@cognite/cogs.js';
+import { Body, Icon, Tooltip } from '@cognite/cogs.js';
 
 type Props = {
   header?: string;
@@ -24,44 +24,22 @@ export const WidgetHeader: FC<PropsWithChildren<Props>> = ({
   alignActions
 }): ReactElement => {
   const actionsAlignment = alignActions ?? 'right';
-  const getIcon = (type: string): IconType => {
-    switch (type) {
-      case 'workorders':
-        return 'WorkOrders';
-      case 'assets':
-        return 'Assets';
-      case 'document':
-        return 'Document';
-      case 'timeseries':
-        return 'Timeseries';
-      default:
-        return 'Component';
-    }
-  };
 
   return (
-    <Container>
+    <Container className="widget-header">
       {Boolean(header ?? title ?? subtitle) && (
         <Content>
           <Cell>
             {type !== undefined && header !== undefined && (
               <Tooltip content={type}>
-                <StyledIcon size={16} type={getIcon(type)} />
+                <StyledIcon size={16} type={'Component'} />
               </Tooltip>
             )}
-            <HeaderText>{header}</HeaderText>
+            <div>
+              <HeaderText>{header}</HeaderText>
+              <Body size="small">{subtitle}</Body>
+            </div>
           </Cell>
-
-          <Cell>
-            {type !== undefined && header === undefined && (
-              <Tooltip content={type}>
-                <StyledIcon type={getIcon(type)} />
-              </Tooltip>
-            )}
-            {/* TODO: Fix this */}
-          </Cell>
-
-          <Body level={6}>{subtitle}</Body>
         </Content>
       )}
 
@@ -113,9 +91,12 @@ const Cell = styled.div`
 `;
 
 const HeaderText = styled(Body)`
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 20px;
 `;
 
 const StyledIcon = styled(Icon)`
   height: 16px !important;
+  size: 36px !important;
 `;
