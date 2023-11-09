@@ -26,6 +26,7 @@ export class ResizeHandler {
   private readonly _resizeObserver: ResizeObserver | undefined;
 
   private _shouldResize: boolean = false;
+  private _cameraMoving: boolean = false;
 
   constructor(renderer: WebGLRenderer, cameraManager: CameraManager, resizeOptions?: ResizeHandlerOptions) {
     this._stoppedCameraResolutionThreshold =
@@ -36,14 +37,11 @@ export class ResizeHandler {
     this._cameraManager = cameraManager;
 
     this._onCameraChangeCallback = () => {
-      this._currentResolutionThreshold = Math.min(
-        this._movingResolutionFactor * getPhysicalSize(renderer),
-        this._stoppedCameraResolutionThreshold
-      );
+      this._cameraMoving = true;
       this._shouldResize = true;
     };
     this._onCameraStopCallback = () => {
-      this._currentResolutionThreshold = this._stoppedCameraResolutionThreshold;
+      this._cameraMoving = false;
       this._shouldResize = true;
     };
 
@@ -126,8 +124,9 @@ export class ResizeHandler {
 
     const [virtualWidth, virtualHeight] = getVirtualDomElementWidthAndHeight(canvas);
 
-    const newVirtualWidth = Math.round(virtualWidth * downScale);
-    const newVirtualHeight = Math.round(virtualHeight * downScale);
+    const movingFactor = this._cameraMoving ? this._movingResolutionFactor : 1;
+    const newVirtualWidth = Math.round(virtualWidth * downScale * movingFactor);
+    const newVirtualHeight = Math.round(virtualHeight * downScale * movingFactor);
     const newAspectRatio = newVirtualWidth / newVirtualHeight;
 
     if (camera.aspect !== newAspectRatio) {
