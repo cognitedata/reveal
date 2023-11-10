@@ -46,9 +46,9 @@ export class NodeAppearanceTextureBuilder {
     function determineDefaultAppearanceTextureSize(inputTextureLength: number): { length: number; iterations: number } {
       assert(
         THREE.MathUtils.isPowerOfTwo(inputTextureLength),
-        'Code below depends on the overrideColorPerTreeIndexTexture being a power of two length. Feel free to improve this.'
+        'Expected inputTextureLength to be power of 2. Was length ' + inputTextureLength + '.' // Should never happen due to implementation of allocateOverrideColorPerTreeIndexTexture creating a Po2 texture.
       );
-      const optimalDefaultAppearanceArraySize = Math.pow(2, 21); // ~2mill. Profiled to be be faster than allocating the whole chunk, while saving ~60MB memory compared to allocating the whole 4k texture
+      const optimalDefaultAppearanceArraySize = Math.pow(2, 21); // ~2mill. Fast, while keeping memory overhead low.
       const defaultAppearanceTextureIterationsToFitInputTexture = THREE.MathUtils.ceilPowerOfTwo(
         Math.max(1, inputTextureLength / optimalDefaultAppearanceArraySize)
       );
@@ -136,15 +136,10 @@ export class NodeAppearanceTextureBuilder {
 
   private populateTexture(rgbaBuffer: Uint8ClampedArray) {
     // Fill texture with default style
-    console.time('populate');
-    for (let offsetMultiplier = 0; offsetMultiplier < this._defaultAppearanceTextureIterations; offsetMultiplier++) {
-      // Resetting buffer in multiple passes to save memory for the _overrideColorDefaultAppearanceRgba while being faster than allocating an equal array
-      rgbaBuffer.set(
-        this._overrideColorDefaultAppearanceRgba,
-        offsetMultiplier * this._overrideColorDefaultAppearanceRgba.length
-      ); // Note! This is basically memcpy(), i.e. fast
+    for (let i = 0; i < this._defaultAppearanceTextureIterations; i++) {
+      rgbaBuffer.set(this._overrideColorDefaultAppearanceRgba, i * this._overrideColorDefaultAppearanceRgba.length); // Note! This is basically memcpy(), i.e. fast
     }
-    console.timeEnd('populate');
+
     // Apply individual styles
     this._styleProvider.applyStyles((treeIndices, appearance) => {
       // Translate from style to magic values in textures
