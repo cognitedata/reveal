@@ -551,7 +551,7 @@ __metadata:
     "@types/random-seed": "npm:0.3.4"
     "@types/skmeans": "npm:0.11.6"
     "@types/stats": "npm:0.16.30"
-    "@types/three": "npm:0.158.1"
+    "@types/three": "npm:0.158.2"
     "@types/tween.js": "npm:18.5.1"
     "@typescript-eslint/eslint-plugin": "npm:6.9.1"
     "@typescript-eslint/parser": "npm:6.9.1"
@@ -2091,15 +2091,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.158.1":
-  version: 0.158.1
-  resolution: "@types/three@npm:0.158.1"
+"@types/three@npm:0.158.2":
+  version: 0.158.2
+  resolution: "@types/three@npm:0.158.2"
   dependencies:
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     fflate: "npm:~0.6.10"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 76b1027c24a7cad83bf038a9b6bfc0e4572ec400ecd3a54cea424fd315e78dbbe5952751ae250186c182a7bde4d2b11c64586100aeeedc73f765a150b7a4b73f
+  checksum: 6ce40499cb87ec88a4b3bfe662005052ada3413692efe62bc3a1958b1608aef8282613da150191af7312d114aec98326e2274d246c12f34db5dd7faf3beea132
   languageName: node
   linkType: hard
 
