@@ -28,11 +28,10 @@ export class NodeAppearanceTextureBuilder {
     this._allTreeIndices.addRange(new NumericRange(0, treeIndexCount));
     this._styleProvider = styleProvider;
     this._styleProvider.on('changed', this._handleStylesChangedListener);
-    const overrideColorPerTreeIndexTexture = (this._overrideColorPerTreeIndexTexture =
-      allocateOverrideColorPerTreeIndexTexture(treeIndexCount));
+    this._overrideColorPerTreeIndexTexture = allocateOverrideColorPerTreeIndexTexture(treeIndexCount);
 
     const defaultAppearanceRgbaSize = determineDefaultAppearanceTextureSize(
-      overrideColorPerTreeIndexTexture.image.data.length
+      this._overrideColorPerTreeIndexTexture.image.data.length
     );
     this._overrideColorDefaultAppearanceRgba = new Uint8ClampedArray(defaultAppearanceRgbaSize.length);
     this._defaultAppearanceTextureIterations = defaultAppearanceRgbaSize.iterations;
