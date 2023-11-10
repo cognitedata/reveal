@@ -176,7 +176,7 @@ export class PointCloudNode extends Group {
    * Returns a list of sorted classification codes present in the model.
    * @returns A sorted list of classification codes from the model.
    */
-  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes, color: Color }> {
+  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes; color: Color }> {
     return this._classificationHandler.classes;
   }
 
