@@ -4,12 +4,14 @@
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
-import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
+import { type QueryResult, type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 
 export function use3dRelatedEdgeConnections(
   fdmId: DmsUniqueIdentifier | undefined
 ): UseQueryResult<
-  Related3dEdgesQueryType & { parameters: { instanceExternalId: string; instanceSpace: string } }
+  QueryResult<
+    Related3dEdgesQueryType & { parameters: { instanceExternalId: string; instanceSpace: string } }
+  >
 > {
   const fdmSdk = useFdmSdk();
 
@@ -17,7 +19,7 @@ export function use3dRelatedEdgeConnections(
     ['reveal-react-components', 'get-3d-related-edge-connections'],
     async () =>
       await fdmSdk.queryNodesAndEdges({
-        ...Related3dEdgesQuery,
+        ...related3dEdgesQuery,
         parameters: {
           instanceExternalId: fdmId?.externalId ?? '',
           instanceSpace: fdmId?.space ?? ''
@@ -27,9 +29,9 @@ export function use3dRelatedEdgeConnections(
   );
 }
 
-type Related3dEdgesQueryType = typeof Related3dEdgesQuery;
+type Related3dEdgesQueryType = typeof related3dEdgesQuery;
 
-const Related3dEdgesQuery = {
+const related3dEdgesQuery = {
   with: {
     start_instance: {
       nodes: {
