@@ -31,26 +31,32 @@ export class NodeAppearanceTextureBuilder {
     const overrideColorPerTreeIndexTexture = (this._overrideColorPerTreeIndexTexture =
       allocateOverrideColorPerTreeIndexTexture(treeIndexCount));
 
-    assert(
-      THREE.MathUtils.isPowerOfTwo(overrideColorPerTreeIndexTexture.image.data.length),
-      'Code below depends on the overrideColorPerTreeIndexTexture being a power of two length. Feel free to improve this.'
+    const defaultAppearanceRgbaSize = determineDefaultAppearanceTextureSize(
+      overrideColorPerTreeIndexTexture.image.data.length
     );
-    const textureLength = overrideColorPerTreeIndexTexture.image.data.length;
-    const optimalDefaultAppearanceArraySize = Math.pow(2, 21); // ~2mill. Profiled to be be faster than allocating the whole chunk, while saving ~60MB memory compared to allocating the whole 4k texture
-    const defaultAppearanceTextureIterations = THREE.MathUtils.ceilPowerOfTwo(
-      Math.max(1, textureLength / optimalDefaultAppearanceArraySize)
-    );
-
-    this._overrideColorDefaultAppearanceRgba = new Uint8ClampedArray(
-      this._overrideColorPerTreeIndexTexture.image.data.length / defaultAppearanceTextureIterations
-    );
-    this._defaultAppearanceTextureIterations = defaultAppearanceTextureIterations;
+    this._overrideColorDefaultAppearanceRgba = new Uint8ClampedArray(defaultAppearanceRgbaSize.length);
+    this._defaultAppearanceTextureIterations = defaultAppearanceRgbaSize.iterations;
     this._regularNodesTreeIndices = new IndexSet();
     this._ghostedNodesTreeIndices = new IndexSet();
     this._infrontNodesTreeIndices = new IndexSet();
     this._visibleNodesTreeIndices = new IndexSet();
 
     this.setDefaultAppearance(DefaultNodeAppearance.Default);
+
+    function determineDefaultAppearanceTextureSize(inputTextureLength: number): { length: number; iterations: number } {
+      assert(
+        THREE.MathUtils.isPowerOfTwo(inputTextureLength),
+        'Code below depends on the overrideColorPerTreeIndexTexture being a power of two length. Feel free to improve this.'
+      );
+      const optimalDefaultAppearanceArraySize = Math.pow(2, 21); // ~2mill. Profiled to be be faster than allocating the whole chunk, while saving ~60MB memory compared to allocating the whole 4k texture
+      const defaultAppearanceTextureIterationsToFitInputTexture = THREE.MathUtils.ceilPowerOfTwo(
+        Math.max(1, inputTextureLength / optimalDefaultAppearanceArraySize)
+      );
+
+      const size = inputTextureLength / defaultAppearanceTextureIterationsToFitInputTexture;
+
+      return { length: size, iterations: defaultAppearanceTextureIterationsToFitInputTexture };
+    }
   }
 
   getDefaultAppearance(): NodeAppearance {
@@ -132,6 +138,7 @@ export class NodeAppearanceTextureBuilder {
     // Fill texture with default style
     console.time('populate');
     for (let offsetMultiplier = 0; offsetMultiplier < this._defaultAppearanceTextureIterations; offsetMultiplier++) {
+      // Resetting buffer in multiple passes to save memory for the _overrideColorDefaultAppearanceRgba while being faster than allocating an equal array
       rgbaBuffer.set(
         this._overrideColorDefaultAppearanceRgba,
         offsetMultiplier * this._overrideColorDefaultAppearanceRgba.length
