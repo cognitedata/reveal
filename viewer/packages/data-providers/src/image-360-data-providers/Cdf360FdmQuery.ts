@@ -4,7 +4,7 @@
 
 const cdf360ImageSchemaSpace = 'cdf_360_image_schema';
 
-const query = {
+const Image360CollectionQuery = {
   with: {
     image_collection: {
       nodes: {
@@ -103,15 +103,6 @@ const query = {
             'timeTaken',
             'label'
           ]
-        },
-        {
-          source: {
-            type: 'view',
-            space: 'aSpace',
-            externalId: 'aExternalId',
-            version: 'v1'
-          },
-          properties: ['asdasd']
         }
       ]
     },
@@ -131,11 +122,11 @@ const query = {
   }
 } as const;
 
-export type Cdf360FdmQuery = typeof query;
+export type Cdf360FdmQuery = typeof Image360CollectionQuery;
 
 export function get360CollectionQuery(
   externalId: string,
   space: string
 ): Cdf360FdmQuery & { parameters: { collectionExternalId: string; collectionSpace: string } } {
-  return { ...query, parameters: { collectionExternalId: externalId, collectionSpace: space } };
+  return { ...Image360CollectionQuery, parameters: { collectionExternalId: externalId, collectionSpace: space } };
 }

@@ -10,7 +10,7 @@ import {
   Image360FileDescriptor,
   ImageAssetLinkAnnotationInfo
 } from '../types';
-import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk';
+import { AnnotationModel, IdEither } from '@cognite/sdk';
 
 type Local360ImagesDescriptor = {
   translation: {
@@ -107,7 +107,7 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
     );
   }
 
-  getFilesByAssetRef(_assetId: IdEither): Promise<CogniteInternalId[]> {
+  getFilesByAssetRef(_assetId: IdEither): Promise<IdEither[]> {
     return Promise.resolve([]);
   }
 

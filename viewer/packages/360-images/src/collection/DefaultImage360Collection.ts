@@ -16,13 +16,7 @@ import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360Annotation } from '../annotation/Image360Annotation';
-import {
-  AnnotationsCogniteAnnotationTypesImagesAssetLink,
-  IdEither,
-  CogniteInternalId,
-  InternalId,
-  ExternalId
-} from '@cognite/sdk';
+import { AnnotationsCogniteAnnotationTypesImagesAssetLink, IdEither, InternalId, ExternalId } from '@cognite/sdk';
 
 import { Image360DataProvider, Image360FileDescriptor } from '@reveal/data-providers';
 import { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
@@ -231,7 +225,7 @@ export class DefaultImage360Collection implements Image360Collection {
     filter: Image360AnnotationAssetFilter
   ): Promise<Image360AnnotationAssetQueryResult[]> {
     const imageIds = await this._image360DataProvider.getFilesByAssetRef(filter.assetRef);
-    const imageIdSet = new Set<CogniteInternalId>(imageIds);
+    const imageIdSet = new Set<IdEither>(imageIds);
 
     const entityAnnotationsPromises = this.image360Entities.map(getEntityAnnotationsForAsset);
     const entityAnnotations = await Promise.all(entityAnnotationsPromises);
@@ -251,7 +245,7 @@ export class DefaultImage360Collection implements Image360Collection {
     async function getRevisionAnnotationsForAsset(revision: Image360RevisionEntity): Promise<Image360Annotation[]> {
       const relevantDescriptors = revision
         .getDescriptors()
-        .faceDescriptors.filter(desc => isInternalId(desc.fileId) && imageIdSet.has(desc.fileId.id));
+        .faceDescriptors.filter(desc => isInternalId(desc.fileId) && imageIdSet.has(desc.fileId));
 
       if (relevantDescriptors.length === 0) {
         return [];
@@ -325,7 +319,7 @@ export class DefaultImage360Collection implements Image360Collection {
     return this.image360Entities.reduce((map, entity) => {
       entity.getRevisions().forEach(revision => {
         const descriptors = revision.getDescriptors().faceDescriptors;
-        descriptors.forEach(descriptor => map.set(descriptor.fileId, { entity, revision }));
+        descriptors.forEach(descriptor => map.set((descriptor.fileId as { id: number }).id, { entity, revision }));
       });
       return map;
     }, new Map<number, { entity: Image360; revision: Image360Revision }>());

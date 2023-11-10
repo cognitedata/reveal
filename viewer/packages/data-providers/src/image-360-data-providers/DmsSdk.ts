@@ -74,15 +74,14 @@ export type EdgeResultSetExpression = {
 };
 
 type SelectKey<T extends Query> = keyof T['select'];
-
-type Sources<T extends Query, K extends SelectKey<T>> = T['select'][K]['sources'];
-
-type Asd<T extends Query, K extends SelectKey<T>> = keyof Sources<T, K>;
+type Sources<T extends Query, K extends SelectKey<T>> = T['select'][K]['sources'][0];
+type MainSource<T extends Query, K extends SelectKey<T>> = Sources<T, K>['source'];
+type MainSourceProperties<T extends Query, K extends SelectKey<T>> = Sources<T, K>['properties'];
 
 type ResultExpressionProperties<T extends Query, K extends SelectKey<T>> = {
-  [V in Sources<T, K>[number]['source']['space']]: {
-    [Q in `${Sources<T, K>[number]['source']['externalId']}/${Sources<T, K>[number]['source']['version']}`]: {
-      [B in Sources<T, K>[number]['properties'][number]]: string | number | { externalId: string; space: string };
+  [V in MainSource<T, K>['space']]: {
+    [Q in `${MainSource<T, K>['externalId']}/${MainSource<T, K>['version']}`]: {
+      [B in MainSourceProperties<T, K>[number]]: string | number | InstanceIdentifier;
     };
   };
 };
@@ -103,16 +102,12 @@ type QueryResult<T extends Query> = {
 
 export class DmsSDK {
   private readonly _sdk: CogniteClient;
-  // private readonly _byIdsEndpoint: string;
-  // private readonly _listEndpoint: string;
   private readonly _queryEndpoint: string;
 
   constructor(sdk: CogniteClient) {
     const baseUrl = sdk.getBaseUrl();
     const project = sdk.project;
 
-    // this._listEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/list`;
-    // this._byIdsEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/byids`;
     this._queryEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/query`;
 
     this._sdk = sdk;
@@ -126,34 +121,3 @@ export class DmsSDK {
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 }
-
-// public async getInstancesByExternalIds<T>(items: Item[], source: Source): Promise<(T & { externalId: string })[]> {
-//   const result = await this._sdk.post(this._byIdsEndpoint, { data: { items, sources: [{ source }] } });
-//   if (result.status === 200) {
-//     return result.data.items.map((item: any) => {
-//       return { ...item.properties[source.space][`${source.externalId}/1`], externalId: item.externalId };
-//     });
-//   }
-//   throw new Error(`Failed to fetch instances. Status: ${result.status}`);
-// }
-
-// public async filterInstances(
-//   filter: any,
-//   instanceType: InstanceType,
-//   source?: Source,
-//   cursor?: string
-// ): Promise<{ edges: EdgeItem[]; nextCursor?: string }> {
-//   const data: any = { filter, instanceType };
-//   if (source) {
-//     data.sources = [{ source }];
-//   }
-//   if (cursor) {
-//     data.cursor = cursor;
-//   }
-
-//   const result = await this._sdk.post(this._listEndpoint, { data });
-//   if (result.status === 200) {
-//     return { edges: result.data.items as EdgeItem[], nextCursor: result.data.nextCursor };
-//   }
-//   throw new Error(`Failed to fetch instances. Status: ${result.status}`);
-// }

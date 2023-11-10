@@ -1,12 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import {
-  AnnotationModel,
-  AnnotationsCogniteAnnotationTypesImagesAssetLink,
-  CogniteInternalId,
-  IdEither
-} from '@cognite/sdk';
+import { AnnotationModel, AnnotationsCogniteAnnotationTypesImagesAssetLink, IdEither } from '@cognite/sdk';
 import * as THREE from 'three';
 
 export type Image360AnnotationFilterDelegate = (annotation: AnnotationModel) => boolean;
@@ -21,7 +16,7 @@ export interface BinaryFileProvider {
 
 export interface Image360AnnotationProvider {
   get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]>;
-  getFilesByAssetRef(assetId: IdEither): Promise<CogniteInternalId[]>;
+  getFilesByAssetRef(assetId: IdEither): Promise<IdEither[]>;
 }
 
 export interface Image360DescriptorProvider<T> {
