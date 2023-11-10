@@ -90,10 +90,11 @@ export class ClassificationHandler {
     return this._classification;
   }
 
-  get classes(): Array<{ name: string; code: number }> {
+  get classes(): Array<{ name: string; code: number, color: Color }> {
     const codesAndNames = Object.entries(this._classNameToCodeMap).map(nameAndCode => ({
       name: nameAndCode[0],
-      code: nameAndCode[1].code
+      code: nameAndCode[1].code,
+      color: nameAndCode[1].rgb.clone()
     }));
 
     return codesAndNames.sort((a, b) => a.code - b.code);

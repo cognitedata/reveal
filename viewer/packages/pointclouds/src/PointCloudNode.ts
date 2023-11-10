@@ -14,7 +14,7 @@ import { ClassificationHandler } from './ClassificationHandler';
 
 import { CompletePointCloudAppearance, StyledPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 
-import { Matrix4, Group, Box3 } from 'three';
+import { Matrix4, Group, Box3, Color } from 'three';
 
 export class PointCloudNode extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
@@ -176,7 +176,7 @@ export class PointCloudNode extends Group {
    * Returns a list of sorted classification codes present in the model.
    * @returns A sorted list of classification codes from the model.
    */
-  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes }> {
+  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes, color: Color }> {
     return this._classificationHandler.classes;
   }
 

@@ -169,7 +169,7 @@ export class CognitePointCloudModel {
    * Names will be the custom names provided by the user, or a default one if none have been provided.
    * @returns A sorted list of classification codes and names from the model.
    */
-  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes }> {
+  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes, color: THREE.Color }> {
     return this.pointCloudNode.getClasses();
   }
 
