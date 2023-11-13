@@ -543,7 +543,7 @@ __metadata:
     "@types/glob": "npm:8.1.0"
     "@types/jest": "npm:29.5.8"
     "@types/jest-environment-puppeteer": "npm:5.0.6"
-    "@types/jest-image-snapshot": "npm:6.2.2"
+    "@types/jest-image-snapshot": "npm:6.2.3"
     "@types/jsdom": "npm:21.1.4"
     "@types/lodash": "npm:4.14.200"
     "@types/mixpanel-browser": "npm:2.47.4"
@@ -1878,14 +1878,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest-image-snapshot@npm:6.2.2":
-  version: 6.2.2
-  resolution: "@types/jest-image-snapshot@npm:6.2.2"
+"@types/jest-image-snapshot@npm:6.2.3":
+  version: 6.2.3
+  resolution: "@types/jest-image-snapshot@npm:6.2.3"
   dependencies:
     "@types/jest": "npm:*"
     "@types/pixelmatch": "npm:*"
     ssim.js: "npm:^3.1.1"
-  checksum: 8680e331d5ed037569301431802d229766313e459b782b43a23bbeb766b2964dc4891017a477222732db6fca9ccb5964146a0512b93c8bc7a4483dd999d1dbb9
+  checksum: 744ba27c67941a49c2ead155ded8b2326db9bc6d5508e842401402537d48a870e0b6630a6e356e368fbfa4a2b03c3a313f86ee4c81ec6d4c043eb174eb8a7ffb
   languageName: node
   linkType: hard
 
