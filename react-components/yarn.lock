@@ -1711,9 +1711,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs.js@npm:9.62.0":
-  version: 9.62.0
-  resolution: "@cognite/cogs.js@npm:9.62.0"
+"@cognite/cogs.js@npm:^9.17.0":
+  version: 9.69.0
+  resolution: "@cognite/cogs.js@npm:9.69.0"
   dependencies:
     "@emotion/react": "npm:11.10.6"
     "@emotion/styled": "npm:11.10.6"
@@ -1753,7 +1753,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: d3770e6fa515c85d539132d37544155203ec52761454627c96a9b15d63b9ea6a0dca059bca22b3b175089d36c008bc8a2347d6ae53d91eac92470616c6bb9877
+  checksum: 03beb4eafc10e5c2c7b0b5b77779c185cb801851aad38f67645522b42415b200a30ee62a185b2c552601a3f81e0c10477605beee90a24473122518982d41bbb6
   languageName: node
   linkType: hard
 
@@ -1763,7 +1763,7 @@ __metadata:
   dependencies:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.5.0"
-    "@cognite/cogs.js": "npm:9.62.0"
+    "@cognite/cogs.js": "npm:^9.17.0"
     "@cognite/reveal": "npm:4.6.0"
     "@cognite/sdk": "npm:^8.2.0"
     "@playwright/test": "npm:^1.39.0"

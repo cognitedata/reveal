@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.22.0",
+  "version": "0.22.1",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -43,7 +43,7 @@
   "devDependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.5.0",
-    "@cognite/cogs.js": "9.62.0",
+    "@cognite/cogs.js": "^9.17.0",
     "@cognite/reveal": "4.6.0",
     "@cognite/sdk": "^8.2.0",
     "@playwright/test": "^1.39.0",
