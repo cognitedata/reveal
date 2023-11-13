@@ -31,6 +31,10 @@ export type DmsUniqueIdentifier = {
   externalId: ExternalId;
 };
 
+export type ViewQueryFilter = {
+  view: Source;
+};
+
 export type ResultSetExpression = (NodeResultSetExpression | EdgeResultSetExpression) & {
   limit?: number;
   sort?: any[];
@@ -173,6 +177,7 @@ export class FdmSDK {
   private readonly _searchEndpoint: string;
   private readonly _queryEndpoint: string;
   private readonly _listViewsEndpoint: string;
+  private readonly _viewsByIdEndpoint: string;
 
   constructor(sdk: CogniteClient) {
     const baseUrl = sdk.getBaseUrl();
@@ -187,6 +192,7 @@ export class FdmSDK {
     this._inspectEndpoint = `${instancesBaseUrl}/inspect`;
     this._searchEndpoint = `${instancesBaseUrl}/search`;
     this._listViewsEndpoint = viewsBaseUrl;
+    this._viewsByIdEndpoint = `${viewsBaseUrl}/byids`;
 
     this._sdk = sdk;
   }
@@ -392,6 +398,14 @@ export class FdmSDK {
       return result.data as InspectResultList;
     }
 
+    throw new Error(`Failed to fetch instances. Status: ${result.status}`);
+  }
+
+  public async getViewsByIds(views: Source[]): Promise<{ items: ViewItem[] }> {
+    const result = await this._sdk.post(this._viewsByIdEndpoint, { data: { items: views.map(view => ({ externalId: view.externalId, space: view.space, version: view.version}))  } });
+    if (result.status === 200) {
+      return result.data;
+    }
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 

@@ -16,7 +16,7 @@ export function use3dRelatedEdgeConnections(
   const fdmSdk = useFdmSdk();
 
   return useQuery(
-    ['reveal-react-components', 'get-3d-related-edge-connections'],
+    ['reveal-react-components', 'get-3d-related-edge-connections', fdmId?.externalId, fdmId?.space],
     async () =>
       await fdmSdk.queryNodesAndEdges({
         ...related3dEdgesQuery,
