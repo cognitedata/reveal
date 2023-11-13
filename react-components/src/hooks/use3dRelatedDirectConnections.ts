@@ -21,10 +21,12 @@ export function use3dRelatedDirectConnections(
       });
 
       const view = views.items[0].inspectionResults.involvedViewsAndContainers.views[0];
-      const instanceContent = (await fdmSdk.getByExternalIds<Record<string, unknown>>(
-        [{ instanceType: 'node', ...assertedInstance }],
-        view
-      )).items[0];
+      const instanceContent = (
+        await fdmSdk.getByExternalIds<Record<string, unknown>>(
+          [{ instanceType: 'node', ...assertedInstance }],
+          view
+        )
+      ).items[0];
 
       const directlyRelatedObjects = Object.values(instanceContent.properties)
         .map((spaceScope) =>
