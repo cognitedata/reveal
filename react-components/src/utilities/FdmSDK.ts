@@ -402,7 +402,15 @@ export class FdmSDK {
   }
 
   public async getViewsByIds(views: Source[]): Promise<{ items: ViewItem[] }> {
-    const result = await this._sdk.post(this._viewsByIdEndpoint, { data: { items: views.map(view => ({ externalId: view.externalId, space: view.space, version: view.version}))  } });
+    const result = await this._sdk.post(this._viewsByIdEndpoint, {
+      data: {
+        items: views.map((view) => ({
+          externalId: view.externalId,
+          space: view.space,
+          version: view.version
+        }))
+      }
+    });
     if (result.status === 200) {
       return result.data;
     }

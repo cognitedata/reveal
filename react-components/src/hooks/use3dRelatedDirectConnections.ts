@@ -2,11 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 
-import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 
-export function use3dRelatedDirectConnections(instance: DmsUniqueIdentifier | undefined): UseQueryResult<DmsUniqueIdentifier[]> {
+export function use3dRelatedDirectConnections(
+  instance: DmsUniqueIdentifier | undefined
+): UseQueryResult<DmsUniqueIdentifier[]> {
   const fdmSdk = useFdmSdk();
 
   return useQuery(
@@ -24,13 +26,31 @@ export function use3dRelatedDirectConnections(instance: DmsUniqueIdentifier | un
         view
       );
 
-      const directlyRelatedObjects = Object.values(newInstance.items[0].properties).map(spaceScope => Object.values(spaceScope).map(fieldValues => Object.values(fieldValues).filter((value: any): value is DmsUniqueIdentifier => value.externalId !== undefined && value.space !== undefined)).flat()).flat();
+      const directlyRelatedObjects = Object.values(newInstance.items[0].properties)
+        .map((spaceScope) =>
+          Object.values(spaceScope)
+            .map((fieldValues) =>
+              Object.values(fieldValues).filter(
+                (value: any): value is DmsUniqueIdentifier =>
+                  value.externalId !== undefined && value.space !== undefined
+              )
+            )
+            .flat()
+        )
+        .flat();
 
+      const relatedViewResult = await fdmSdk.inspectInstances({
+        inspectionOperations: { involvedViewsAndContainers: {} },
+        items: directlyRelatedObjects.map((fdmId) => ({ ...fdmId, instanceType: 'node' }))
+      });
 
-      const relatedViewResult = await fdmSdk.inspectInstances({ inspectionOperations: { involvedViewsAndContainers: {} },
-                                                                items: directlyRelatedObjects.map(fdmId => ({ ...fdmId, instanceType: 'node' }))});
-
-      const relatedViewsWithInstanceIndex = relatedViewResult.items.map((item, ind) => item.inspectionResults.involvedViewsAndContainers.views.map(view => [ind, view] as const)).flat();
+      const relatedViewsWithInstanceIndex = relatedViewResult.items
+        .map((item, ind) =>
+          item.inspectionResults.involvedViewsAndContainers.views.map(
+            (view) => [ind, view] as const
+          )
+        )
+        .flat();
 
       const viewProps = await fdmSdk.getViewsByIds(
         relatedViewsWithInstanceIndex.map(([_ind, view]) => view)
@@ -38,7 +58,7 @@ export function use3dRelatedDirectConnections(instance: DmsUniqueIdentifier | un
 
       const threeDRelatedViews = relatedViewsWithInstanceIndex.filter(([index, _view]) => {
         const propsForView = viewProps.items[index];
-        return Object.keys(propsForView.properties).some(propName => propName === 'inModel3d');
+        return Object.keys(propsForView.properties).some((propName) => propName === 'inModel3d');
       });
 
       return threeDRelatedViews.map(([index, _view]) => directlyRelatedObjects[index]);
