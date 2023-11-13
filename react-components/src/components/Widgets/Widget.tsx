@@ -31,9 +31,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   background-color: white;
-  box-shadow:
-    0px 1px 1px 1px rgba(79, 82, 104, 0.06),
-    0px 1px 2px 1px rgba(79, 82, 104, 0.04);
 `;
 
 const Widget = React.forwardRef(BaseWidget) as any;

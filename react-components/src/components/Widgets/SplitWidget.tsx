@@ -10,6 +10,7 @@ import Draggable, { type DraggableData, type DraggableEvent } from 'react-dragga
 import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
+import { HEIGHT_FACTOR, WIDTH_FACTOR, X_OFFSET, Y_OFFSET } from './constants';
 
 type SplitWidgetProps = {
   title?: string;
@@ -40,8 +41,8 @@ export const SplitWidget = ({
       const parentWidth = parentContainerElement.clientWidth;
       const parentHeight = parentContainerElement.clientHeight;
 
-      const width = isMinimized ? 300 : parentWidth * 0.6;
-      const height = isMinimized ? 48 : parentHeight * 0.8;
+      const width = isMinimized ? 300 : parentWidth * WIDTH_FACTOR;
+      const height = isMinimized ? 48 : parentHeight * HEIGHT_FACTOR;
 
       setSize({ width, height });
     };
@@ -71,14 +72,11 @@ export const SplitWidget = ({
       top: parentTop
     } = parentContainerElement.getBoundingClientRect();
 
-    const xOffset = 150;
-    const yOffset = 75;
-
     if (
-      left + width - xOffset < parentLeft ||
+      left + width - X_OFFSET < parentLeft ||
       top < parentTop ||
-      left + xOffset > parentWidth ||
-      top + yOffset > parentHeight
+      left + X_OFFSET > parentWidth ||
+      top + Y_OFFSET > parentHeight
     ) {
       // Prevent moving beyond the canvas
       return;
@@ -130,4 +128,7 @@ const StyledComponent = styled.div<{ isMinimized: boolean }>`
   min-width: 20%;
   min-height: 10%;
   max-width: ${({ isMinimized }) => (isMinimized ? '300px' : '100%')};
+  box-shadow:
+    0px 1px 1px 1px rgba(79, 82, 104, 0.06),
+    0px 1px 2px 1px rgba(79, 82, 104, 0.04);
 `;
