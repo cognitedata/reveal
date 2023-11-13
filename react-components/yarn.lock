@@ -1843,7 +1843,7 @@ __metadata:
     "@types/react": "npm:18.2.7"
     "@types/react-dom": "npm:^18.2.7"
     "@types/styled-components": "npm:5.1.29"
-    "@types/three": "npm:0.158.1"
+    "@types/three": "npm:0.158.2"
     "@typescript-eslint/eslint-plugin": "npm:^6.7.0"
     "@vitejs/plugin-react": "npm:^4.0.4"
     assert: "npm:^2.0.0"
@@ -5836,15 +5836,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.158.1":
-  version: 0.158.1
-  resolution: "@types/three@npm:0.158.1"
+"@types/three@npm:0.158.2":
+  version: 0.158.2
+  resolution: "@types/three@npm:0.158.2"
   dependencies:
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     fflate: "npm:~0.6.10"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 76b1027c24a7cad83bf038a9b6bfc0e4572ec400ecd3a54cea424fd315e78dbbe5952751ae250186c182a7bde4d2b11c64586100aeeedc73f765a150b7a4b73f
+  checksum: 6ce40499cb87ec88a4b3bfe662005052ada3413692efe62bc3a1958b1608aef8282613da150191af7312d114aec98326e2274d246c12f34db5dd7faf3beea132
   languageName: node
   linkType: hard
 
