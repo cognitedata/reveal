@@ -8,23 +8,22 @@ import { WidgetHeader } from './WidgetHeader';
 import { WidgetBody } from './WidgetBody';
 
 type WidgetProps = {
-  isMinimized: boolean;
   children?: ReactNode;
   [x: string]: any;
 };
 
 const BaseWidget = (
-  { isMinimized, children, ...props }: WidgetProps,
+  { children, ...props }: WidgetProps,
   ref: ForwardedRef<HTMLDivElement>
 ): ReactElement => {
   return (
-    <Container isMinimized={isMinimized} ref={ref} {...props}>
+    <Container ref={ref} {...props}>
       {children}
     </Container>
   );
 };
 
-const Container = styled.div<{ isMinimized: boolean }>`
+const Container = styled.div`
   height: 100%;
   min-width: 20%;
   min-height: 10%;

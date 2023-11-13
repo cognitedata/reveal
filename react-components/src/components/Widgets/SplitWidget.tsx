@@ -11,27 +11,36 @@ import { useRevealContainerElement } from '../RevealContainer/RevealContainerEle
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 
-type PreviewWidgetProps = {
-  children?: ReactNode;
+type SplitWidgetProps = {
+  title?: string;
+  subtitle?: string;
+  header?: string;
+  type?: string;
+  children: ReactNode;
 };
 
-export const PreviewWidget = ({ children }: PreviewWidgetProps): ReactElement => {
+export const SplitWidget = ({
+  title,
+  subtitle,
+  header,
+  type,
+  children
+}: SplitWidgetProps): ReactElement => {
   const [isMinimized, setIsMinimized] = useState(false);
-  const [isOpen, setOpen] = useState(true);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState({ width: 0, height: 0 });
-  const containerElement = useRevealContainerElement();
+  const parentContainerElement = useRevealContainerElement();
 
-  if (containerElement === undefined) {
+  if (parentContainerElement === undefined) {
     return <></>;
   }
 
   useEffect(() => {
     const updateSize = (): void => {
-      const parentWidth = containerElement.clientWidth;
-      const parentHeight = containerElement.clientHeight;
+      const parentWidth = parentContainerElement.clientWidth;
+      const parentHeight = parentContainerElement.clientHeight;
 
-      const width = isMinimized ? 300 : parentWidth * 0.4;
+      const width = isMinimized ? 300 : parentWidth * 0.6;
       const height = isMinimized ? 48 : parentHeight * 0.8;
 
       setSize({ width, height });
@@ -50,10 +59,6 @@ export const PreviewWidget = ({ children }: PreviewWidgetProps): ReactElement =>
     setIsMinimized((prev) => !prev);
   };
 
-  const handleClose = (): void => {
-    setOpen(false);
-  };
-
   const handleDrag = (event: DraggableEvent, data: DraggableData): void => {
     event.stopPropagation();
 
@@ -64,10 +69,10 @@ export const PreviewWidget = ({ children }: PreviewWidgetProps): ReactElement =>
       height: parentHeight,
       left: parentLeft,
       top: parentTop
-    } = containerElement.getBoundingClientRect();
+    } = parentContainerElement.getBoundingClientRect();
 
     const xOffset = 150;
-    const yOffset = 50;
+    const yOffset = 75;
 
     if (
       left + width - xOffset < parentLeft ||
@@ -88,22 +93,18 @@ export const PreviewWidget = ({ children }: PreviewWidgetProps): ReactElement =>
         <ResizableBox
           width={size.width}
           height={size.height}
-          resizeHandles={isMinimized ? [] : ['sw', 'se', 'nw', 'ne', 'w', 'e', 'n', 's']}
+          resizeHandles={isMinimized ? [] : ['se']}
           onResize={(_event, { size }) => {
             setSize(size);
           }}>
-          <Widget isMinimized={isMinimized}>
-            <Widget.Header
-              title="Widget component"
-              type="3D"
-              header="Test Header"
-              subtitle="Test subtitle">
+          <Widget>
+            <Widget.Header title={title} type={type} header={header} subtitle={subtitle}>
               <Button
                 type="ghost"
                 icon={isMinimized ? 'Expand' : 'Collapse'}
                 onClick={handleExpand}
               />
-              <Button type="ghost" icon="Close" onClick={handleClose} />
+              <Button type="ghost" icon="Close" />
             </Widget.Header>
 
             <Widget.Body>{!isMinimized && <WidgetContent>{children}</WidgetContent>}</Widget.Body>
@@ -122,7 +123,7 @@ const WidgetContent = styled.div`
 
 const StyledComponent = styled.div<{ isMinimized: boolean }>`
   position: absolute;
-  left: ${({ isMinimized }) => (isMinimized ? 'calc(80% - 20px)' : 'calc(40% - 20px)')};
+  left: ${({ isMinimized }) => (isMinimized ? 'calc(75% - 20px)' : 'calc(40% - 20px)')};
   top: 50px;
   width: ${({ isMinimized }) => (isMinimized ? '300px' : '100%')};
   height: auto;

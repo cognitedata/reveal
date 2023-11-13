@@ -28,7 +28,7 @@
     "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace reveal-react-components --path ./src/common/i18n"
   },
   "peerDependencies": {
-    "@cognite/cogs.js": ">9",
+    "@cognite/cogs.js": ">=9",
     "@cognite/reveal": "^4.5.0",
     "react": ">=18",
     "react-dom": ">=18",
