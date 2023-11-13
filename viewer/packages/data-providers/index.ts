@@ -5,6 +5,7 @@ export { CdfModelDataProvider } from './src/model-data-providers/CdfModelDataPro
 export { CdfModelIdentifier } from './src/model-identifiers/CdfModelIdentifier';
 export { CdfModelMetadataProvider } from './src/metadata-providers/CdfModelMetadataProvider';
 export { Cdf360ImageEventProvider } from './src/image-360-data-providers/Cdf360ImageEventProvider';
+export { Cdf360EventDescriptorProvider } from './src/image-360-data-providers/DescriptorProviders/Cdf360EventDescriptorProvider';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/metadata-providers/LocalModelMetadataProvider';

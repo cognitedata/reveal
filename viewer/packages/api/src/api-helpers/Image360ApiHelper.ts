@@ -17,7 +17,7 @@ import {
   Image360AnnotationIntersection,
   Image360AnnotationFilterOptions
 } from '@reveal/360-images';
-import { Cdf360ImageEventProvider } from '@reveal/data-providers';
+import { Cdf360EventDescriptorProvider, Cdf360ImageEventProvider } from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
   determineCurrentDevice,
@@ -77,7 +77,8 @@ export class Image360ApiHelper {
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
     iconsOptions?: IconsOptions
   ) {
-    const image360DataProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const Image360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
+    const image360DataProvider = new Cdf360ImageEventProvider(cogniteClient, Image360EventDescriptorProvider);
     const device = determineCurrentDevice();
     const image360EntityFactory = new Image360CollectionFactory(
       image360DataProvider,
