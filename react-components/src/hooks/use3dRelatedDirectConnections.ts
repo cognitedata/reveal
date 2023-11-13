@@ -39,24 +39,24 @@ export function use3dRelatedDirectConnections(
         )
         .flat();
 
-      const relatedViewResult = await fdmSdk.inspectInstances({
+      const relatedObjectInspectionsResult = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViewsAndContainers: {} },
         items: directlyRelatedObjects.map((fdmId) => ({ ...fdmId, instanceType: 'node' }))
       });
 
-      const relatedViewsWithInstanceIndex = relatedViewResult.items
-        .map((item, ind) =>
-          item.inspectionResults.involvedViewsAndContainers.views.map(
-            (view) => [ind, view] as const
-          )
-        )
+      const relatedObjectsViewLists = relatedObjectInspectionsResult.items.map(
+        (item) => item.inspectionResults.involvedViewsAndContainers.views
+      );
+
+      const relatedObjectViewsWithObjectIndex = relatedObjectsViewLists
+        .map((viewList, objectInd) => viewList.map((view) => [objectInd, view] as const))
         .flat();
 
       const viewProps = await fdmSdk.getViewsByIds(
-        relatedViewsWithInstanceIndex.map(([_ind, view]) => view)
+        relatedObjectViewsWithObjectIndex.map(([_ind, view]) => view)
       );
 
-      const threeDRelatedViews = relatedViewsWithInstanceIndex.filter(([index, _view]) => {
+      const threeDRelatedViews = relatedObjectViewsWithObjectIndex.filter(([index, _view]) => {
         const propsForView = viewProps.items[index];
         return Object.keys(propsForView.properties).some((propName) => propName === 'inModel3d');
       });
