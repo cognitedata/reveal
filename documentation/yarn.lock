@@ -1911,7 +1911,7 @@ __metadata:
     clsx: 2.0.0
     copyfiles: 2.4.1
     cross-env: 7.0.3
-    docusaurus-plugin-typedoc: 0.20.2
+    docusaurus-plugin-typedoc: 0.21.0
     ieee754: 1.2.1
     query-string: 8.1.0
     react: 18.2.0
@@ -1919,8 +1919,8 @@ __metadata:
     replace: 1.2.2
     rimraf: 5.0.5
     styled-components: 5.3.11
-    typedoc: 0.25.2
-    typedoc-plugin-markdown: 3.16.0
+    typedoc: 0.25.3
+    typedoc-plugin-markdown: 3.17.1
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 5.2.2
   languageName: unknown
@@ -5769,13 +5769,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-typedoc@npm:0.20.2":
-  version: 0.20.2
-  resolution: "docusaurus-plugin-typedoc@npm:0.20.2"
+"docusaurus-plugin-typedoc@npm:0.21.0":
+  version: 0.21.0
+  resolution: "docusaurus-plugin-typedoc@npm:0.21.0"
   peerDependencies:
     typedoc: ">=0.24.0"
     typedoc-plugin-markdown: ">=3.15.0"
-  checksum: 05f6b6154f7fcb87061466a833ad83d2894f501f96c2df49f86ad04d4199abdb7fe561f72c4de9520fa43ac0d4be5d9a86cfe2bd5c1e568b41ddb80b4253f542
+  checksum: 7714028b39caab961c7b2ce2373c950efe1212bb2dce68fc9ccfe1d2c80ecd55cd1cf8d8853e29fb359171a77dc6986e20486451f06042fbe0e515cb2edb1bc0
   languageName: node
   linkType: hard
 
@@ -12088,14 +12088,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-plugin-markdown@npm:3.16.0":
-  version: 3.16.0
-  resolution: "typedoc-plugin-markdown@npm:3.16.0"
+"typedoc-plugin-markdown@npm:3.17.1":
+  version: 3.17.1
+  resolution: "typedoc-plugin-markdown@npm:3.17.1"
   dependencies:
     handlebars: ^4.7.7
   peerDependencies:
     typedoc: ">=0.24.0"
-  checksum: e6ddcd36cf28c15bfa84072323e44b34ea10e6ee8f712518805e8a066a70fd2f9a6672fe6eade806ef377ab622b7e36743f0b338b531a494ec920b7f9b853ce6
+  checksum: f12494bfc98ef532be63fb5e7630ff0aa2de17bb22b1d0b6260c416fe8b62cb537ddd3576cadc90c57c4aae2371722994ed873dc3220b23660e149a3eb676c04
   languageName: node
   linkType: hard
 
@@ -12108,9 +12108,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.25.2":
-  version: 0.25.2
-  resolution: "typedoc@npm:0.25.2"
+"typedoc@npm:0.25.3":
+  version: 0.25.3
+  resolution: "typedoc@npm:0.25.3"
   dependencies:
     lunr: ^2.3.9
     marked: ^4.3.0
@@ -12120,7 +12120,7 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x
   bin:
     typedoc: bin/typedoc
-  checksum: 5b6e24bae7498bb542aaba495378ed5a3e13c76eb04a1ae95b506f76bda4d517847101fb05a7eab3f6b79357d1e2ac6f4747d39792395329b72e463f7effda65
+  checksum: 060a8f798b32a0e70aa3b16e04d95b56fcfabf54f75fdff74fd9ddeed8860db3ba030d153f8b535b409a9d8825856252bc59f401619e5e3e2f71d3b9e0de606a
   languageName: node
   linkType: hard
 

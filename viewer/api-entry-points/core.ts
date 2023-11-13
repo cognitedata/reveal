@@ -19,6 +19,7 @@ export {
   CameraState,
   ComboControls,
   ComboControlsOptions,
+  ComboControlsEventType,
   CameraEventDelegate,
   CameraChangeDelegate,
   CameraStopDelegate

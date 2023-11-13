@@ -112,7 +112,12 @@ export type ComboControlsOptions = {
 const defaultPointerRotationSpeed = Math.PI / 360; // half degree per pixel
 const defaultKeyboardRotationSpeed = defaultPointerRotationSpeed * 10;
 
-export class ComboControls extends EventDispatcher {
+/**
+ * The event type for events emitted by {@link ComboControls}.
+ */
+export type ComboControlsEventType = { cameraChange: { camera: { position: Vector3; target: Vector3 } } };
+
+export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   public dispose: () => void;
 
   private _temporarilyDisableDamping: boolean = false;

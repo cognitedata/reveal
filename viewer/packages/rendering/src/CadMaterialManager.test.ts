@@ -105,12 +105,12 @@ describe('CadMaterialManager', () => {
     for (const material of iterateMaterials(manager.getModelMaterials('1'))) {
       expect(material.clipIntersection).toBeFalse();
       expect(material.clipping).toBeTrue();
-      expect(material.clippingPlanes.length).toBe(4);
+      expect(material.clippingPlanes?.length).toBe(4);
     }
     for (const material of iterateMaterials(manager.getModelMaterials('2'))) {
       expect(material.clipIntersection).toBeFalse();
       expect(material.clipping).toBeTrue();
-      expect(material.clippingPlanes.length).toBe(3);
+      expect(material.clippingPlanes?.length).toBe(3);
     }
   });
 });

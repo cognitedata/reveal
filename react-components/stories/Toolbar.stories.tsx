@@ -6,18 +6,19 @@ import type { Meta, StoryObj } from '@storybook/react';
 import {
   CadModelContainer,
   type QualitySettings,
-  RevealContainer,
   RevealToolbar,
   withSuppressRevealEvents,
   withCameraStateUrlParam,
   useGetCameraStateFromUrlParam,
   useCameraNavigation
 } from '../src';
-import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 import styled from 'styled-components';
 import { Button, Menu, ToolBar, type ToolBarButton } from '@cognite/cogs.js';
 import { type ReactElement, useState, useEffect } from 'react';
+import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
+import { RevealStoryContainer } from './utilities/RevealStoryContainer';
+import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -27,14 +28,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-const token = new URLSearchParams(window.location.search).get('token') ?? '';
-const sdk = new CogniteClient({
-  appId: 'reveal.example',
-  baseUrl: 'https://greenfield.cognitedata.com',
-  project: '3d-test',
-  getToken: async () => await Promise.resolve(token)
-});
 
 const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(ToolBar)))`
   position: absolute;
@@ -99,13 +92,10 @@ const exampleLowQualitySettings: QualitySettings = {
 
 export const Main: Story = {
   args: {
-    addModelOptions: {
-      modelId: 1791160622840317,
-      revisionId: 498427137020189
-    }
+    addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
   render: ({ addModelOptions }) => (
-    <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
+    <RevealStoryContainer color={new Color(0x4a4a4a)}>
       <FitToUrlCameraState />
       <CadModelContainer addModelOptions={addModelOptions} />
       <RevealToolbar
@@ -118,7 +108,7 @@ export const Main: Story = {
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
         <RevealToolbar.SlicerButton />
       </MyCustomToolbar>
-    </RevealContainer>
+    </RevealStoryContainer>
   )
 };
 
@@ -127,6 +117,7 @@ function FitToUrlCameraState(): ReactElement {
   const cameraNavigation = useCameraNavigation();
 
   useEffect(() => {
+    signalStoryReadyForScreenshot();
     const currentCameraState = getCameraState();
     if (currentCameraState === undefined) return;
     cameraNavigation.fitCameraToState(currentCameraState);

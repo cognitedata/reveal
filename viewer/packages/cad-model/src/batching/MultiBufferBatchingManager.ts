@@ -3,7 +3,7 @@
  */
 import assert from 'assert';
 import minBy from 'lodash/minBy';
-import { BufferGeometry, Group, InstancedMesh, InterleavedBufferAttribute, RawShaderMaterial } from 'three';
+import { BufferGeometry, Group, InstancedMesh, InterleavedBufferAttribute, RawShaderMaterial, Sphere } from 'three';
 import { Materials, setModelRenderLayers, StyledTreeIndexSets } from '@reveal/rendering';
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import {
@@ -323,6 +323,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     const instancedMesh = new InstancedMesh(instanceBufferGeometry, material, 0);
     instancedMesh.visible = false;
     instancedMesh.frustumCulled = false;
+    instancedMesh.boundingSphere = new Sphere(); // Unused, to avoid a calculated sphere on first render
 
     instancedMesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
       (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(instancedMesh.matrixWorld).invert();

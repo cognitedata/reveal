@@ -80,3 +80,5 @@ export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
 export type { SplitWidget } from './components/Widgets/SplitWidget';
+export { use3dRelatedEdgeConnections } from './hooks/use3dRelatedEdgeConnections';
+export { use3dRelatedDirectConnections } from './hooks/use3dRelatedDirectConnections';
