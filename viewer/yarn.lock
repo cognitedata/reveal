@@ -1801,9 +1801,9 @@ __metadata:
   linkType: hard
 
 "@types/gl@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "@types/gl@npm:6.0.2"
-  checksum: f1141decfce882e294459c5793be293f0b430e2cfa3389fe63eef2d505f1c9490635d6e8175d101683069307bf677cfc9670554485fb1156d0f287930a4fcc5c
+  version: 6.0.5
+  resolution: "@types/gl@npm:6.0.5"
+  checksum: 6099866fc6ea9573ccc2b60b0076ecf3afd146ed03d556b23068f87d9940c5c5c2c057405468a1cd28e1fd35fb406b02962f56d7c7147a9cd9dac37b178f7465
   languageName: node
   linkType: hard
 
