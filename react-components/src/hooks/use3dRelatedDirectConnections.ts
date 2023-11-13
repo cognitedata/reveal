@@ -21,12 +21,14 @@ export function use3dRelatedDirectConnections(
       });
 
       const view = views.items[0].inspectionResults.involvedViewsAndContainers.views[0];
-      const newInstance = await fdmSdk.getByExternalIds<Record<string, unknown>>(
-        [{ instanceType: 'node', ...assertedInstance }],
-        view
-      );
+      const instanceContent = (
+        await fdmSdk.getByExternalIds<Record<string, unknown>>(
+          [{ instanceType: 'node', ...assertedInstance }],
+          view
+        )
+      ).items[0];
 
-      const directlyRelatedObjects = Object.values(newInstance.items[0].properties)
+      const directlyRelatedObjects = Object.values(instanceContent.properties)
         .map((spaceScope) =>
           Object.values(spaceScope)
             .map((fieldValues) =>
@@ -38,6 +40,10 @@ export function use3dRelatedDirectConnections(
             .flat()
         )
         .flat();
+
+      if (directlyRelatedObjects.length === 0) {
+        return [];
+      }
 
       const relatedObjectInspectionsResult = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViewsAndContainers: {} },
