@@ -1889,7 +1889,7 @@ __metadata:
     vite-plugin-externalize-deps: ^0.7.0
     vitest: ^0.34.6
   peerDependencies:
-    "@cognite/cogs.js": ">9"
+    "@cognite/cogs.js": ">=9"
     "@cognite/reveal": ^4.5.0
     react: ">=18"
     react-dom: ">=18"
