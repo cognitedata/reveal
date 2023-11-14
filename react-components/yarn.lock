@@ -2038,14 +2038,14 @@ __metadata:
   linkType: hard
 
 "@cognite/sdk@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@cognite/sdk@npm:8.2.0"
+  version: 8.3.0
+  resolution: "@cognite/sdk@npm:8.3.0"
   dependencies:
     "@cognite/sdk-core": "npm:^4.9.0"
     "@types/geojson": "npm:^7946.0.8"
     geojson: "npm:^0.5.0"
     lodash: "npm:^4.17.11"
-  checksum: edcf2c32ad21d910d11babd75ab2a3f746518b27ba62757906d0ec4baec50fb4e1a49f8a09b4bdb0195c7e524132128a9a7f2bc0d9e6b81d834e5076f5296e73
+  checksum: e391e80e7e1ba269926557a31b0454f5d42e8e8e0188217959912a2725d1528fc48cd8bd4efcad9bfb8ae600ea23445a8eac70002c7215438eb9b9c86fcaf451
   languageName: node
   linkType: hard
 
