@@ -3,7 +3,7 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
-import { Query, QueryResult } from './types';
+import { Query, QueryNextCursors, QueryResult } from './types';
 
 export class DataModelsSdk {
   private readonly _sdk: CogniteClient;
@@ -18,8 +18,11 @@ export class DataModelsSdk {
     this._sdk = sdk;
   }
 
-  public async queryNodesAndEdges<const T extends Query>(query: T): Promise<QueryResult<T>> {
-    const result = await this._sdk.post(this._queryEndpoint, { data: query });
+  public async queryNodesAndEdges<const T extends Query>(
+    query: T,
+    nextCursor?: QueryNextCursors<T>
+  ): Promise<QueryResult<T>> {
+    const result = await this._sdk.post(this._queryEndpoint, { data: { cursors: nextCursor, ...query } });
     if (result.status === 200) {
       return { ...result.data.items, nextCursor: result.data.nextCursor };
     }

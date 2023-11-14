@@ -198,6 +198,8 @@ type ResultExpression<T extends Query, K extends SelectKey<T>> = {
   properties: ResultExpressionProperties<T, K>;
 };
 
+export type QueryNextCursors<T extends Query> = { [K in SelectKey<T>]?: string | undefined };
+
 export type QueryResult<T extends Query> = {
   [K in SelectKey<T>]: ResultExpression<T, K>[];
-} & { nextCursor: { [K in SelectKey<T>]: string[] } };
+} & { nextCursor?: QueryNextCursors<T> };

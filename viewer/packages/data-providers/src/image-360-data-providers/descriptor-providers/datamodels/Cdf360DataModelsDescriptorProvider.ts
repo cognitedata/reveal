@@ -7,7 +7,8 @@ import {
   Historical360ImageSet,
   Image360Descriptor,
   Image360DescriptorProvider,
-  Image360FileDescriptor
+  Image360FileDescriptor,
+  QueryNextCursors
 } from '../../../types';
 import { Cdf360FdmQuery, get360CollectionQuery } from './get360CollectionQuery';
 import assert from 'assert';
@@ -21,9 +22,16 @@ export type UniqueIdentifier = {
 };
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<Cdf360FdmQuery>>>;
-type Image360Result = QueryResult['images'];
-type Image360InstanceResult = QueryResult['images'][number];
-type Image360ResultProperties = Image360InstanceResult['properties']['cdf_360_image_schema']['Image360/v1'];
+
+type ImageResult = QueryResult['images'];
+type ImageInstanceResult = QueryResult['images'][number];
+type ImageResultProperties = ImageInstanceResult['properties']['cdf_360_image_schema']['Image360/v1'];
+
+type ExhaustedQueryResult = {
+  image_collection: QueryResult['image_collection'];
+  images: QueryResult['images'];
+  stations: QueryResult['stations'];
+};
 
 export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorProvider<UniqueIdentifier> {
   private readonly _dmsSdk: DataModelsSdk;
@@ -35,11 +43,10 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
   }
 
   public async get360ImageDescriptors(
-    { image360CollectionExternalId, space }: UniqueIdentifier,
+    collectionIdentifier: UniqueIdentifier,
     _: boolean
   ): Promise<Historical360ImageSet[]> {
-    const query = get360CollectionQuery(image360CollectionExternalId, space);
-    const { image_collection, images } = await this._dmsSdk.queryNodesAndEdges(query);
+    const { image_collection, images } = await this.queryCollection(collectionIdentifier);
 
     if (image_collection.length === 0) {
       return [];
@@ -56,7 +63,47 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
     );
   }
 
-  private async getFileDescriptors(images: Image360Result) {
+  private async queryCollection({
+    image360CollectionExternalId,
+    space
+  }: UniqueIdentifier): Promise<ExhaustedQueryResult> {
+    const result: ExhaustedQueryResult = {
+      image_collection: [],
+      images: [],
+      stations: []
+    };
+
+    const query = get360CollectionQuery(image360CollectionExternalId, space);
+
+    const imageLimit = query.with.images.limit;
+
+    let nextCursor: QueryNextCursors<Cdf360FdmQuery> | undefined = undefined;
+    let hasNext = true;
+
+    while (hasNext) {
+      const {
+        image_collection,
+        images,
+        stations,
+        nextCursor: currentCursor
+      }: QueryResult = await this._dmsSdk.queryNodesAndEdges(query, nextCursor);
+      if (result.image_collection.length === 0) {
+        result.image_collection.push(...image_collection);
+      }
+      result.images.push(...images);
+      result.stations.push(...stations);
+
+      hasNext = images.length === imageLimit;
+      nextCursor = {
+        images: currentCursor?.images,
+        stations: currentCursor?.stations
+      };
+    }
+
+    return result;
+  }
+
+  private async getFileDescriptors(images: ImageResult) {
     const imageProps = images.map(image => image.properties.cdf_360_image_schema['Image360/v1']);
     const cubeMapExternalIds = imageProps.flatMap(imageProp => [
       { externalId: imageProp.cubeMapFront } as ExternalId,
@@ -82,7 +129,7 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
   private getHistorical360ImageSet(
     collectionId: string,
     collectionLabel: string,
-    image: Image360InstanceResult,
+    image: ImageInstanceResult,
     fileInfos: FileInfo[]
   ): Historical360ImageSet {
     const imageProps = image.properties.cdf_360_image_schema['Image360/v1'];
@@ -97,7 +144,7 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
     };
   }
 
-  private getImageRevision(imageProps: Image360ResultProperties, fileInfos: FileInfo[]): Image360Descriptor {
+  private getImageRevision(imageProps: ImageResultProperties, fileInfos: FileInfo[]): Image360Descriptor {
     return {
       faceDescriptors: getFaceDescriptors(),
       timestamp: imageProps.timeTaken as number
