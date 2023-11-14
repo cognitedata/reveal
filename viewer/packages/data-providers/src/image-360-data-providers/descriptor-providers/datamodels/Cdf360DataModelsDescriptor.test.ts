@@ -19,7 +19,7 @@ describe(Cdf360DataModelsDescriptorProvider.name, () => {
     const descriptors = await provider.get360ImageDescriptors(
       {
         space: 'christjt-test-system-360',
-        image360CollectionExternalId: 'Hibernia_RS2'
+        image360CollectionExternalId: 'c_RC_2'
       },
       true
     );

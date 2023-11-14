@@ -66,10 +66,16 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
       { externalId: imageProp.cubeMapTop } as ExternalId,
       { externalId: imageProp.cubeMapBottom } as ExternalId
     ]);
-    const externalIdBatches = chunk(cubeMapExternalIds, 1000);
-    const fileInfos = (
-      await Promise.all(externalIdBatches.map(batch => this._cogniteSdk.files.retrieve(batch)))
-    ).flatMap(p => p);
+    const externalIdBatches = chunk(chunk(cubeMapExternalIds, 1000), 15);
+
+    const fileInfos: FileInfo[] = [];
+    for (const parallelBatches of externalIdBatches) {
+      const batchFileInfos = (
+        await Promise.all(parallelBatches.map(batch => this._cogniteSdk.files.retrieve(batch)))
+      ).flatMap(p => p);
+      fileInfos.push(...batchFileInfos);
+    }
+
     return chunk(fileInfos, 6);
   }
 
@@ -105,29 +111,29 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
           mimeType: fileInfos[0].mimeType!
         },
         {
-          fileId: fileInfos[0].id,
+          fileId: fileInfos[1].id,
           face: 'back',
-          mimeType: fileInfos[0].mimeType!
+          mimeType: fileInfos[1].mimeType!
         },
         {
-          fileId: fileInfos[0].id,
+          fileId: fileInfos[2].id,
           face: 'left',
-          mimeType: fileInfos[0].mimeType!
+          mimeType: fileInfos[2].mimeType!
         },
         {
-          fileId: fileInfos[0].id,
+          fileId: fileInfos[3].id,
           face: 'right',
-          mimeType: fileInfos[0].mimeType!
+          mimeType: fileInfos[3].mimeType!
         },
         {
-          fileId: fileInfos[0].id,
+          fileId: fileInfos[4].id,
           face: 'top',
-          mimeType: fileInfos[0].mimeType!
+          mimeType: fileInfos[5].mimeType!
         },
         {
-          fileId: fileInfos[0].id,
+          fileId: fileInfos[5].id,
           face: 'bottom',
-          mimeType: fileInfos[0].mimeType!
+          mimeType: fileInfos[5].mimeType!
         }
       ] as Image360FileDescriptor[];
     }

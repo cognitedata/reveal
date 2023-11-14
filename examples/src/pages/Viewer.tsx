@@ -423,6 +423,13 @@ export function Viewer() {
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
+      const now = performance.now();
+      await viewer.add360ImageSet('datamodels', {
+        image360CollectionExternalId: 'Hibernia_RS2',
+        space: 'christjt-test-system-360'
+      });
+      console.log('Loading 360 images took', performance.now() - now, 'ms');
+
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
