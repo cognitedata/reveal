@@ -549,7 +549,7 @@ __metadata:
     "@types/mixpanel-browser": "npm:2.47.5"
     "@types/node": "npm:18.18.9"
     "@types/random-seed": "npm:0.3.5"
-    "@types/skmeans": "npm:0.11.6"
+    "@types/skmeans": "npm:0.11.7"
     "@types/stats": "npm:0.16.30"
     "@types/three": "npm:0.158.2"
     "@types/tween.js": "npm:18.5.1"
@@ -2054,10 +2054,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/skmeans@npm:0.11.6":
-  version: 0.11.6
-  resolution: "@types/skmeans@npm:0.11.6"
-  checksum: 0609e3d12526cd815788caadd858362f33c1da8add3caeac0a1d56d52cd4a18e67c4ee1a0541f7c3dad25d3e200c4afd65e68692a60b9c1f93c738c56444a31b
+"@types/skmeans@npm:0.11.7":
+  version: 0.11.7
+  resolution: "@types/skmeans@npm:0.11.7"
+  checksum: 5c27b5f661a2f4adf4d75ccda1a0482b230e96870643370bef7810f1cf0c883a95fd0d16bcc98b89ab462d74975600a0fde1f7f3740b6a193d57d6f58321da3b
   languageName: node
   linkType: hard
 
