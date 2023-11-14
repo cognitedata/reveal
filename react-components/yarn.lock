@@ -1842,7 +1842,7 @@ __metadata:
     "@types/node": "npm:^20.8.7"
     "@types/react": "npm:18.2.7"
     "@types/react-dom": "npm:^18.2.7"
-    "@types/styled-components": "npm:5.1.29"
+    "@types/styled-components": "npm:5.1.30"
     "@types/three": "npm:0.158.2"
     "@typescript-eslint/eslint-plugin": "npm:^6.7.0"
     "@vitejs/plugin-react": "npm:^4.0.4"
@@ -5825,14 +5825,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/styled-components@npm:5.1.29":
-  version: 5.1.29
-  resolution: "@types/styled-components@npm:5.1.29"
+"@types/styled-components@npm:5.1.30":
+  version: 5.1.30
+  resolution: "@types/styled-components@npm:5.1.30"
   dependencies:
     "@types/hoist-non-react-statics": "npm:*"
     "@types/react": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: da14b84e9504b550f2ca53e71b6323aebd4965eaa1cfd3f4c6061e9c95f86497a33c7d45cfda5d383ab26c1a97c96a1804952965ff2252182a219681603f2a1f
+  checksum: 26e4fe70fb964727a67e91526412a0e8bd0cf02cc082cab43a2581b4fe189b719c4e0f4fd7f6246762665fe184d001b0f332ef0607ad7dbe916a62974453a763
   languageName: node
   linkType: hard
 
