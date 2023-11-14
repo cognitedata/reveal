@@ -11415,12 +11415,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"laravelphp@npm:2.0.3":
-  version: 2.0.3
-  resolution: "laravelphp@npm:2.0.3"
+"laravelphp@npm:2.0.4":
+  version: 2.0.4
+  resolution: "laravelphp@npm:2.0.4"
   dependencies:
-    php-parser: "npm:3.0.1"
-  checksum: f7069aeecde7df39166936157fa70331c854bd544d1573cc5daea2c82b738b51af3cb403f4b9a9692ac9f3316aa41767478fc9ca7a6d3eef46c44b7fe1af21fb
+    php-parser: "npm:3.1.5"
+  checksum: b6b60bf55d21ef2212ed1440f940cae88b55ec7191d48382ecd4f4978778d4fb4db23dbe1819b99d2d613c9dd0cceba2edafef12186f89f9d5acbe569e1055c8
   languageName: node
   linkType: hard
 
@@ -11505,8 +11505,8 @@ __metadata:
   linkType: hard
 
 "locize-cli@npm:^7.14.6":
-  version: 7.14.8
-  resolution: "locize-cli@npm:7.14.8"
+  version: 7.14.11
+  resolution: "locize-cli@npm:7.14.11"
   dependencies:
     "@js.properties/properties": "npm:0.5.4"
     android-string-resource: "npm:2.3.9"
@@ -11523,10 +11523,10 @@ __metadata:
     https-proxy-agent: "npm:5.0.1"
     ini: "npm:3.0.1"
     js-yaml: "npm:4.1.0"
-    laravelphp: "npm:2.0.3"
+    laravelphp: "npm:2.0.4"
     lodash.clonedeep: "npm:4.5.0"
     mkdirp: "npm:2.1.6"
-    node-fetch: "npm:2.6.8"
+    node-fetch: "npm:2.7.0"
     resx: "npm:2.0.4"
     rimraf: "npm:3.0.2"
     strings-file: "npm:0.0.5"
@@ -11535,7 +11535,7 @@ __metadata:
     xlsx: "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
   bin:
     locize: bin/locize
-  checksum: 438f5ae39e7814b73de933021f17e2abdf9a2fbb704f23ec9fe0425eb2d3409009fd1c8c168aa34178747dae257a8ab616b6183d36ebb1524f1672a96d3e2741
+  checksum: 0e4444f0d3d9e7f015f303e309c790e3e57c04975a76356acfc2dfb09a62843a815f6a05039c388189d9ca5cf469ba51242006692b8ace57ddef81c4811b18bf
   languageName: node
   linkType: hard
 
@@ -12226,9 +12226,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2.6.8":
-  version: 2.6.8
-  resolution: "node-fetch@npm:2.6.8"
+"node-fetch@npm:2.7.0, node-fetch@npm:^2.6.7":
+  version: 2.7.0
+  resolution: "node-fetch@npm:2.7.0"
   dependencies:
     whatwg-url: "npm:^5.0.0"
   peerDependencies:
@@ -12236,7 +12236,7 @@ __metadata:
   peerDependenciesMeta:
     encoding:
       optional: true
-  checksum: 497d0e24985ba59eee37c25d4515b263cd9c92febcdc8606288f1a516d127c70123ce524318b66abe55ccefabda2a1c2bee8d3538f1a234a71ceee599b5cdb55
+  checksum: b24f8a3dc937f388192e59bcf9d0857d7b6940a2496f328381641cb616efccc9866e89ec43f2ec956bbd6c3d3ee05524ce77fe7b29ccd34692b3a16f237d6676
   languageName: node
   linkType: hard
 
@@ -12251,20 +12251,6 @@ __metadata:
     encoding:
       optional: true
   checksum: 72f94498d547e322207575b2778e7b3d969b0d73f35a19f258c7fb982bf0ae96e5a3a518477300ba1dd2bd22e6b05be074648ed88448c5cf1a9b7d23c6529d1a
-  languageName: node
-  linkType: hard
-
-"node-fetch@npm:^2.6.7":
-  version: 2.7.0
-  resolution: "node-fetch@npm:2.7.0"
-  dependencies:
-    whatwg-url: "npm:^5.0.0"
-  peerDependencies:
-    encoding: ^0.1.0
-  peerDependenciesMeta:
-    encoding:
-      optional: true
-  checksum: b24f8a3dc937f388192e59bcf9d0857d7b6940a2496f328381641cb616efccc9866e89ec43f2ec956bbd6c3d3ee05524ce77fe7b29ccd34692b3a16f237d6676
   languageName: node
   linkType: hard
 
@@ -12839,10 +12825,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"php-parser@npm:3.0.1":
-  version: 3.0.1
-  resolution: "php-parser@npm:3.0.1"
-  checksum: 6a8f6b4c702ea31a0cca234d2e37d4de290319231e58b6ac7092f301491a35ebc8a01a33f60a750f1f3cedefc653625345abd38e454fce6c471c61a1ac306aa7
+"php-parser@npm:3.1.5":
+  version: 3.1.5
+  resolution: "php-parser@npm:3.1.5"
+  checksum: da3b12f22bd5ab55c22b1aeabe5c33c008a3e954ed379decbc04099aa46da26deeab6261d9e2bc3c8457ff15986b3dac7ae44025d46d74d29d2efe0da13990c0
   languageName: node
   linkType: hard
 
