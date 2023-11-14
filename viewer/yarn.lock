@@ -548,7 +548,7 @@ __metadata:
     "@types/lodash": "npm:4.14.201"
     "@types/mixpanel-browser": "npm:2.47.5"
     "@types/node": "npm:18.18.9"
-    "@types/random-seed": "npm:0.3.4"
+    "@types/random-seed": "npm:0.3.5"
     "@types/skmeans": "npm:0.11.6"
     "@types/stats": "npm:0.16.30"
     "@types/three": "npm:0.158.2"
@@ -2007,10 +2007,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/random-seed@npm:0.3.4":
-  version: 0.3.4
-  resolution: "@types/random-seed@npm:0.3.4"
-  checksum: fff76e8e3ebb3cf063319baf09e4ea1b5d616208132b2850ed370464468a713e489a7c715d2ed9eb59d36d7efe539226bed05230585a418747d0b08ef61a8ebf
+"@types/random-seed@npm:0.3.5":
+  version: 0.3.5
+  resolution: "@types/random-seed@npm:0.3.5"
+  checksum: 360ffc711c2e2b2f2bb4a43fe77759d1bd4110fc06820f77cc6d1d9009f8ea476b3b029bb4a10462dd3010a54803e8acd4f8d5da2ee72a5b899a2b98a3e5edad
   languageName: node
   linkType: hard
 
