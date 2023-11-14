@@ -7,7 +7,7 @@ import {
   Image360DescriptorProvider,
   Image360EventDescriptor,
   Image360FileDescriptor
-} from '../../types';
+} from '../../../types';
 import { Log } from '@reveal/logger';
 import uniqBy from 'lodash/uniqBy';
 import range from 'lodash/range';
