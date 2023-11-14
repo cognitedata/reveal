@@ -62,7 +62,6 @@
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@types/react-resizable": "^3",
-    "@types/styled-components": "^5.1.30",
     "@types/three": "0.158.2",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@vitejs/plugin-react": "^4.0.4",

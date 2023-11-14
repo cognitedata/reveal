@@ -1783,7 +1783,6 @@ __metadata:
     "@types/react": "npm:^18.2.37"
     "@types/react-dom": "npm:^18.2.15"
     "@types/react-resizable": "npm:^3"
-    "@types/styled-components": "npm:^5.1.30"
     "@types/three": "npm:0.158.2"
     "@typescript-eslint/eslint-plugin": "npm:^6.7.0"
     "@vitejs/plugin-react": "npm:^4.0.4"
@@ -5573,16 +5572,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/hoist-non-react-statics@npm:*":
-  version: 3.3.5
-  resolution: "@types/hoist-non-react-statics@npm:3.3.5"
-  dependencies:
-    "@types/react": "npm:*"
-    hoist-non-react-statics: "npm:^3.3.0"
-  checksum: b645b062a20cce6ab1245ada8274051d8e2e0b2ee5c6bd58215281d0ec6dae2f26631af4e2e7c8abe238cdcee73fcaededc429eef569e70908f82d0cc0ea31d7
-  languageName: node
-  linkType: hard
-
 "@types/http-errors@npm:*":
   version: 2.0.4
   resolution: "@types/http-errors@npm:2.0.4"
@@ -5835,17 +5824,6 @@ __metadata:
   version: 0.17.3
   resolution: "@types/stats.js@npm:0.17.3"
   checksum: 4f84a012f630532877f62959b6335d3fa081ccaac15ce3f1f916741db265bda22b9c927d7efc9cc3389ffd60919a370673cb0b4e7221d580c571031e94b689fd
-  languageName: node
-  linkType: hard
-
-"@types/styled-components@npm:^5.1.30":
-  version: 5.1.30
-  resolution: "@types/styled-components@npm:5.1.30"
-  dependencies:
-    "@types/hoist-non-react-statics": "npm:*"
-    "@types/react": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: 26e4fe70fb964727a67e91526412a0e8bd0cf02cc082cab43a2581b4fe189b719c4e0f4fd7f6246762665fe184d001b0f332ef0607ad7dbe916a62974453a763
   languageName: node
   linkType: hard
 
@@ -10233,7 +10211,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.0.0, hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1":
+"hoist-non-react-statics@npm:^3.0.0, hoist-non-react-statics@npm:^3.3.1":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
