@@ -60,7 +60,7 @@ import {
   ProxyCameraManager,
   CameraStopDelegate
 } from '@reveal/camera-manager';
-import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
+import { CdfModelIdentifier, File3dFormat, UniqueIdentifier } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
 
@@ -777,6 +777,12 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Adds a set of 360 images to the scene from the /datamodels API in Cognite Data Fusion.
+   * @param datasource The data data source which holds the references to the 360 image sets.
+   * @param dataModelIdentifier The search parameters to apply when querying Cognite Datamodels that contains the 360 images.
+   */
+  async add360ImageSet(datasource: 'datamodels', dataModelIdentifier: UniqueIdentifier): Promise<Image360Collection>;
+  /**
    * Adds a set of 360 images to the scene from the /events API in Cognite Data Fusion.
    * @param datasource The CDF data source which holds the references to the 360 image sets.
    * @param eventFilter The metadata filter to apply when querying events that contains the 360 images.
@@ -791,32 +797,35 @@ export class Cognite3DViewer {
     datasource: 'events',
     eventFilter: { [key: string]: string },
     add360ImageOptions?: AddImage360Options
+  ): Promise<Image360Collection>;
+
+  /* eslint-disable jsdoc/require-jsdoc */
+  async add360ImageSet(
+    datasource: 'events' | 'datamodels',
+    sourceParameters: { [key: string]: string } | UniqueIdentifier,
+    add360ImageOptions?: AddImage360Options
   ): Promise<Image360Collection> {
-    if (datasource !== 'events') {
-      throw new Error(`'${datasource}' is an unknown datasource for 360 images`);
+    if (datasource !== 'events' && datasource !== 'datamodels') {
+      throw new Error(`${datasource} is an unknown datasource from 360 images`);
     }
 
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error('Adding 360 image sets is only supported when connecting to Cognite Data Fusion');
     }
-
     const collectionTransform = add360ImageOptions?.collectionTransform ?? new THREE.Matrix4();
     const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
 
     const image360Collection = await this._image360ApiHelper.add360ImageSet(
-      eventFilter,
+      sourceParameters,
       collectionTransform,
       preMultipliedRotation,
       add360ImageOptions?.annotationFilter
     );
-
     const numberOf360Images = image360Collection.image360Entities.length;
-
     MetricsLogger.trackEvent('360ImageCollectionAdded', {
       datasource,
       numberOf360Images
     });
-
     return image360Collection;
   }
 

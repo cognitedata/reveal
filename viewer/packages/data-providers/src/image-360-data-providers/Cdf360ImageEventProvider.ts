@@ -10,7 +10,6 @@ import {
   CogniteClient,
   FileLink,
   IdEither,
-  Metadata,
   CogniteInternalId,
   AnnotationsCogniteAnnotationTypesImagesAssetLink,
   AnnotationData,
@@ -26,16 +25,16 @@ import {
 } from '../types';
 import { Image360Provider } from '../Image360Provider';
 
-export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
+export class Cdf360ImageProvider<T> implements Image360Provider<T> {
   private readonly _client: CogniteClient;
-  private readonly _descriptorProvider: Image360DescriptorProvider<Metadata>;
-  constructor(client: CogniteClient, descriptorProvider: Image360DescriptorProvider<Metadata>) {
+  private readonly _descriptorProvider: Image360DescriptorProvider<T>;
+  constructor(client: CogniteClient, descriptorProvider: Image360DescriptorProvider<T>) {
     this._client = client;
     this._descriptorProvider = descriptorProvider;
   }
 
   public async get360ImageDescriptors(
-    metadataFilter: Metadata,
+    metadataFilter: T,
     preMultipliedRotation: boolean
   ): Promise<Historical360ImageSet[]> {
     return this._descriptorProvider.get360ImageDescriptors(metadataFilter, preMultipliedRotation);

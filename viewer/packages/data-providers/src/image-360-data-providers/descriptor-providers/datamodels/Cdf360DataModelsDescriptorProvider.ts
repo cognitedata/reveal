@@ -15,7 +15,7 @@ import { Euler, Matrix4 } from 'three';
 import { DataModelsSdk } from '../../../DataModelsSdk';
 import chunk from 'lodash/chunk';
 
-export type DM360CollectionIdentifier = {
+export type UniqueIdentifier = {
   space: string;
   image360CollectionExternalId: string;
 };
@@ -25,7 +25,7 @@ type Image360Result = QueryResult['images'];
 type Image360InstanceResult = QueryResult['images'][number];
 type Image360ResultProperties = Image360InstanceResult['properties']['cdf_360_image_schema']['Image360/v1'];
 
-export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorProvider<DM360CollectionIdentifier> {
+export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorProvider<UniqueIdentifier> {
   private readonly _dmsSdk: DataModelsSdk;
   private readonly _cogniteSdk: CogniteClient;
 
@@ -35,7 +35,7 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
   }
 
   public async get360ImageDescriptors(
-    { image360CollectionExternalId, space }: DM360CollectionIdentifier,
+    { image360CollectionExternalId, space }: UniqueIdentifier,
     _: boolean
   ): Promise<Historical360ImageSet[]> {
     const query = get360CollectionQuery(image360CollectionExternalId, space);
