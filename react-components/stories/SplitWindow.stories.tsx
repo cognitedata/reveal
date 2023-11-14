@@ -46,7 +46,7 @@ export const Main: Story = {
       <>
         <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
           <PointCloudContainer addModelOptions={addModelOptions} />
-          <SuppressedDiv classname="suppresed-div">
+          <SuppressedDiv>
             <SplitWidget>{<SecondaryRevealContainer />} </SplitWidget>
           </SuppressedDiv>
         </RevealContainer>

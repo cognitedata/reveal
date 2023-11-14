@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useState, type ReactElement } from 'react';
+import { useState, type ReactElement, type MouseEvent } from 'react';
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { type CogniteCadModel } from '@cognite/reveal';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
@@ -76,7 +76,7 @@ export const CadModelLayersContainer = ({
   const cadModelContent = (): ReactElement => {
     return (
       <StyledSubMenu
-        onClick={(event: MouseEvent) => {
+        onClick={(event: MouseEvent<HTMLElement>) => {
           event.stopPropagation();
         }}>
         {cadLayerData.map((data) => (
@@ -110,8 +110,7 @@ export const CadModelLayersContainer = ({
           onClickOutside={() => {
             setVisible(false);
           }}
-          content={cadModelContent()}
-          title="CAD models">
+          content={cadModelContent()}>
           <Flex direction="row" justifyContent="space-between" gap={4}>
             <Checkbox
               checked={someModelVisible}

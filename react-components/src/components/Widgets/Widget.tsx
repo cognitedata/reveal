@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { type ReactElement, type ReactNode, type ForwardedRef } from 'react';
+import React, { type ReactNode, type ForwardedRef, type ReactElement } from 'react';
 import styled from 'styled-components';
 import { WidgetHeader } from './WidgetHeader';
 import { WidgetBody } from './WidgetBody';
@@ -33,7 +33,14 @@ const Container = styled.div`
   background-color: white;
 `;
 
-const Widget = React.forwardRef(BaseWidget) as any;
+type WidgetType = {
+  Header: typeof WidgetHeader;
+  Body: typeof WidgetBody;
+} & React.ForwardRefExoticComponent<
+  React.PropsWithoutRef<WidgetProps> & React.RefAttributes<HTMLDivElement>
+>;
+
+const Widget = React.forwardRef(BaseWidget) as WidgetType;
 
 Widget.Header = WidgetHeader;
 Widget.Body = WidgetBody;

@@ -104,7 +104,6 @@ export const SplitWidget = ({
               />
               <Button type="ghost" icon="Close" />
             </Widget.Header>
-
             <Widget.Body>{!isMinimized && <WidgetContent>{children}</WidgetContent>}</Widget.Body>
           </Widget>
         </ResizableBox>

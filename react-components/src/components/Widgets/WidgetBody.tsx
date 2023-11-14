@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type ReactElement, type PropsWithChildren, type ReactNode } from 'react';
+import { type PropsWithChildren, type ReactNode, type ReactElement } from 'react';
 import styled from 'styled-components';
 
 export const WidgetBody = ({ children }: PropsWithChildren): ReactElement => {
