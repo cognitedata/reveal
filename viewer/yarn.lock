@@ -536,7 +536,7 @@ __metadata:
   dependencies:
     "@azure/msal-browser": "npm:2.38.3"
     "@cognite/sdk": "npm:8.3.0"
-    "@microsoft/api-extractor": "npm:7.38.2"
+    "@microsoft/api-extractor": "npm:7.38.3"
     "@tweenjs/tween.js": "npm:19.0.0"
     "@types/dat.gui": "npm:0.7.12"
     "@types/gl": "npm:^6.0.2"
@@ -1124,9 +1124,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@microsoft/api-extractor@npm:7.38.2":
-  version: 7.38.2
-  resolution: "@microsoft/api-extractor@npm:7.38.2"
+"@microsoft/api-extractor@npm:7.38.3":
+  version: 7.38.3
+  resolution: "@microsoft/api-extractor@npm:7.38.3"
   dependencies:
     "@microsoft/api-extractor-model": "npm:7.28.2"
     "@microsoft/tsdoc": "npm:0.14.2"
@@ -1142,7 +1142,7 @@ __metadata:
     typescript: "npm:~5.0.4"
   bin:
     api-extractor: bin/api-extractor
-  checksum: abe0494610fe5fe6396f35955906d06e40b3f07782b2d54100df10fb7728e4a38a4411fd67d3ec0b4a9dbb9f80cbffcf4a9942c0444a1539ffaaaff328160151
+  checksum: e40f964693dc5aaaf6e0a653faac6565ec05eac572619ca03fc91bdde85edc16a3db898dac7ff389041a6cc9edd22fc1d7e9aeab792a4cb76f932d5155c165c0
   languageName: node
   linkType: hard
 
