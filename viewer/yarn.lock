@@ -536,20 +536,20 @@ __metadata:
   dependencies:
     "@azure/msal-browser": "npm:2.38.3"
     "@cognite/sdk": "npm:8.3.0"
-    "@microsoft/api-extractor": "npm:7.38.2"
+    "@microsoft/api-extractor": "npm:7.38.3"
     "@tweenjs/tween.js": "npm:19.0.0"
     "@types/dat.gui": "npm:0.7.12"
     "@types/gl": "npm:^6.0.2"
     "@types/glob": "npm:8.1.0"
     "@types/jest": "npm:29.5.8"
-    "@types/jest-environment-puppeteer": "npm:5.0.5"
-    "@types/jest-image-snapshot": "npm:6.2.2"
-    "@types/jsdom": "npm:21.1.4"
-    "@types/lodash": "npm:4.14.200"
-    "@types/mixpanel-browser": "npm:2.47.4"
-    "@types/node": "npm:18.18.8"
-    "@types/random-seed": "npm:0.3.4"
-    "@types/skmeans": "npm:0.11.6"
+    "@types/jest-environment-puppeteer": "npm:5.0.6"
+    "@types/jest-image-snapshot": "npm:6.2.3"
+    "@types/jsdom": "npm:21.1.5"
+    "@types/lodash": "npm:4.14.201"
+    "@types/mixpanel-browser": "npm:2.47.5"
+    "@types/node": "npm:18.18.9"
+    "@types/random-seed": "npm:0.3.5"
+    "@types/skmeans": "npm:0.11.7"
     "@types/stats": "npm:0.16.30"
     "@types/three": "npm:0.158.2"
     "@types/tween.js": "npm:18.5.1"
@@ -563,7 +563,7 @@ __metadata:
     eslint: "npm:8.53.0"
     eslint-config-prettier: "npm:9.0.0"
     eslint-plugin-header: "npm:3.1.1"
-    eslint-plugin-jsdoc: "npm:46.8.2"
+    eslint-plugin-jsdoc: "npm:46.9.0"
     eslint-plugin-lodash: "npm:7.4.0"
     eslint-plugin-prettier: "npm:5.0.1"
     eslint-plugin-unused-imports: "npm:3.0.0"
@@ -590,7 +590,7 @@ __metadata:
     path-browserify: "npm:1.0.1"
     prettier: "npm:3.0.3"
     process: "npm:0.11.10"
-    puppeteer: "npm:21.5.0"
+    puppeteer: "npm:21.5.1"
     random-seed: "npm:0.3.0"
     raw-loader: "npm:4.0.2"
     remove-files-webpack-plugin: "npm:1.5.0"
@@ -650,14 +650,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@es-joy/jsdoccomment@npm:~0.40.1":
-  version: 0.40.1
-  resolution: "@es-joy/jsdoccomment@npm:0.40.1"
+"@es-joy/jsdoccomment@npm:~0.41.0":
+  version: 0.41.0
+  resolution: "@es-joy/jsdoccomment@npm:0.41.0"
   dependencies:
-    comment-parser: "npm:1.4.0"
+    comment-parser: "npm:1.4.1"
     esquery: "npm:^1.5.0"
     jsdoc-type-pratt-parser: "npm:~4.0.0"
-  checksum: 6501c292067b261be553cdc0dca97cc7075c012a5cf283b26e8baa2f5544f487019244af3283c5503f18a5d1d5ba68d00b7581b9fa321866603bf34b3288a1b7
+  checksum: ea581983f32ccc6550f0cb8a1d7178c74c4cbf18add8e18725b2db5ea6021016b49fb93e55e928caf7f2d08007779c0cda71c3fbbfdb92400ebc4f3a07c993f9
   languageName: node
   linkType: hard
 
@@ -1124,9 +1124,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@microsoft/api-extractor@npm:7.38.2":
-  version: 7.38.2
-  resolution: "@microsoft/api-extractor@npm:7.38.2"
+"@microsoft/api-extractor@npm:7.38.3":
+  version: 7.38.3
+  resolution: "@microsoft/api-extractor@npm:7.38.3"
   dependencies:
     "@microsoft/api-extractor-model": "npm:7.28.2"
     "@microsoft/tsdoc": "npm:0.14.2"
@@ -1142,7 +1142,7 @@ __metadata:
     typescript: "npm:~5.0.4"
   bin:
     api-extractor: bin/api-extractor
-  checksum: abe0494610fe5fe6396f35955906d06e40b3f07782b2d54100df10fb7728e4a38a4411fd67d3ec0b4a9dbb9f80cbffcf4a9942c0444a1539ffaaaff328160151
+  checksum: e40f964693dc5aaaf6e0a653faac6565ec05eac572619ca03fc91bdde85edc16a3db898dac7ff389041a6cc9edd22fc1d7e9aeab792a4cb76f932d5155c165c0
   languageName: node
   linkType: hard
 
@@ -1867,25 +1867,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest-environment-puppeteer@npm:5.0.5":
-  version: 5.0.5
-  resolution: "@types/jest-environment-puppeteer@npm:5.0.5"
+"@types/jest-environment-puppeteer@npm:5.0.6":
+  version: 5.0.6
+  resolution: "@types/jest-environment-puppeteer@npm:5.0.6"
   dependencies:
     "@jest/types": "npm:>=24 <=27"
     "@types/puppeteer": "npm:^5.4.0"
     jest-environment-node: "npm:>=24 <=27"
-  checksum: 4b9ffb4bc439426acd78a1365060637e0bfee9ea6529daa7486e9c2be1dfb6c3d3b63925c3e0da4f30383de386baa40db3db028189d7441041e3d30519146d23
+  checksum: 1f14d4be2b14d4e548e8ebdff0fef927b8a5a7541b64335fc4844fdc550b5cf617de0fca990739aa4d8a9c9a91609bd9703873e7a78350a9545c30cb85860f5a
   languageName: node
   linkType: hard
 
-"@types/jest-image-snapshot@npm:6.2.2":
-  version: 6.2.2
-  resolution: "@types/jest-image-snapshot@npm:6.2.2"
+"@types/jest-image-snapshot@npm:6.2.3":
+  version: 6.2.3
+  resolution: "@types/jest-image-snapshot@npm:6.2.3"
   dependencies:
     "@types/jest": "npm:*"
     "@types/pixelmatch": "npm:*"
     ssim.js: "npm:^3.1.1"
-  checksum: 8680e331d5ed037569301431802d229766313e459b782b43a23bbeb766b2964dc4891017a477222732db6fca9ccb5964146a0512b93c8bc7a4483dd999d1dbb9
+  checksum: 744ba27c67941a49c2ead155ded8b2326db9bc6d5508e842401402537d48a870e0b6630a6e356e368fbfa4a2b03c3a313f86ee4c81ec6d4c043eb174eb8a7ffb
   languageName: node
   linkType: hard
 
@@ -1909,14 +1909,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsdom@npm:21.1.4":
-  version: 21.1.4
-  resolution: "@types/jsdom@npm:21.1.4"
+"@types/jsdom@npm:21.1.5":
+  version: 21.1.5
+  resolution: "@types/jsdom@npm:21.1.5"
   dependencies:
     "@types/node": "npm:*"
     "@types/tough-cookie": "npm:*"
     parse5: "npm:^7.0.0"
-  checksum: 97a3bd39e1ae202118356f488afae5899db5cfe948b22ddcc2871ad4d6d6f45ed518d9b21d65b03c952534def9496f51915fb0cfc00dad51009b596b38d926d8
+  checksum: 90388cae141f912a282078494db2f9feb018ba6f70efbebe9be5477c52b29bf7e49636d0250003f07a42941624044d4e2e1730f22d63c5d4171f3ffa68637dd3
   languageName: node
   linkType: hard
 
@@ -1938,10 +1938,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.200":
-  version: 4.14.200
-  resolution: "@types/lodash@npm:4.14.200"
-  checksum: aed5943a4f43b898c18e7148b6ad825dba4611230c8dc12126f20ab4ffc9250794d9134fca0c17218ad7594879835438e9c95e57b801ca6c8da0d3fbc6ef811d
+"@types/lodash@npm:4.14.201":
+  version: 4.14.201
+  resolution: "@types/lodash@npm:4.14.201"
+  checksum: 9b56a2a650880045343055e63c7ad73df97188453aa3de8375dc97670748d467f6f4a3b59d689f4ae45dd947d4c0b3ecd873763910336238736056dce20cfe56
   languageName: node
   linkType: hard
 
@@ -1959,10 +1959,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mixpanel-browser@npm:2.47.4":
-  version: 2.47.4
-  resolution: "@types/mixpanel-browser@npm:2.47.4"
-  checksum: d7efd7af2335f26c340dfee36c889dd4a4e064609753847dee40b976a6c07031bcc68247c3dd3f3b6f402b84406b1e5947b2a11478384c20169611f9a81b2b26
+"@types/mixpanel-browser@npm:2.47.5":
+  version: 2.47.5
+  resolution: "@types/mixpanel-browser@npm:2.47.5"
+  checksum: 57f196a07d2775334ae2dad7eb76f454d392371fdaf7b7f66a36a52a4ce2c60ab293a90e6b508c7e053b3b9ac1ac3b8c84f9d45a63bb9d54410380afe9a36cf3
   languageName: node
   linkType: hard
 
@@ -1973,12 +1973,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.18.8":
-  version: 18.18.8
-  resolution: "@types/node@npm:18.18.8"
+"@types/node@npm:18.18.9":
+  version: 18.18.9
+  resolution: "@types/node@npm:18.18.9"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 25346cda374c3bb630a9055cf8b7dd49729d53502b81ba647336f459c751f66c73ae9ba755a63d7bd05b07afa2c90b5627af985998ef5cdb0bafb2db5ec7b520
+  checksum: ebd98b117c868edc597807cd0dab214b6110b9cd5ee406632641d0cf5b8bd7cb199caaac657a046d9203c441dbcfb3c71154ffa2d615ec89f80e6972143e6ec8
   languageName: node
   linkType: hard
 
@@ -2007,10 +2007,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/random-seed@npm:0.3.4":
-  version: 0.3.4
-  resolution: "@types/random-seed@npm:0.3.4"
-  checksum: fff76e8e3ebb3cf063319baf09e4ea1b5d616208132b2850ed370464468a713e489a7c715d2ed9eb59d36d7efe539226bed05230585a418747d0b08ef61a8ebf
+"@types/random-seed@npm:0.3.5":
+  version: 0.3.5
+  resolution: "@types/random-seed@npm:0.3.5"
+  checksum: 360ffc711c2e2b2f2bb4a43fe77759d1bd4110fc06820f77cc6d1d9009f8ea476b3b029bb4a10462dd3010a54803e8acd4f8d5da2ee72a5b899a2b98a3e5edad
   languageName: node
   linkType: hard
 
@@ -2054,10 +2054,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/skmeans@npm:0.11.6":
-  version: 0.11.6
-  resolution: "@types/skmeans@npm:0.11.6"
-  checksum: 0609e3d12526cd815788caadd858362f33c1da8add3caeac0a1d56d52cd4a18e67c4ee1a0541f7c3dad25d3e200c4afd65e68692a60b9c1f93c738c56444a31b
+"@types/skmeans@npm:0.11.7":
+  version: 0.11.7
+  resolution: "@types/skmeans@npm:0.11.7"
+  checksum: 5c27b5f661a2f4adf4d75ccda1a0482b230e96870643370bef7810f1cf0c883a95fd0d16bcc98b89ab462d74975600a0fde1f7f3740b6a193d57d6f58321da3b
   languageName: node
   linkType: hard
 
@@ -3625,10 +3625,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"comment-parser@npm:1.4.0":
-  version: 1.4.0
-  resolution: "comment-parser@npm:1.4.0"
-  checksum: 3ce7a975946ebb0d8410b6713a371e25b5a144b633dd7c6e502c18c9a4e4f1f9167ed0eaa90b07cbc18e91ee061b99c2889d6bed88cd7f0dc32ed1bbac89008a
+"comment-parser@npm:1.4.1":
+  version: 1.4.1
+  resolution: "comment-parser@npm:1.4.1"
+  checksum: 16a3260b5e77819ebd9c99b0b65c7d6723b1ff73487bac9ce2d8f016a2847dd689e8663b88e1fad1444bbea89847c42f785708ac86a2c55f614f7095249bbf6b
   languageName: node
   linkType: hard
 
@@ -4559,13 +4559,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:46.8.2":
-  version: 46.8.2
-  resolution: "eslint-plugin-jsdoc@npm:46.8.2"
+"eslint-plugin-jsdoc@npm:46.9.0":
+  version: 46.9.0
+  resolution: "eslint-plugin-jsdoc@npm:46.9.0"
   dependencies:
-    "@es-joy/jsdoccomment": "npm:~0.40.1"
+    "@es-joy/jsdoccomment": "npm:~0.41.0"
     are-docs-informative: "npm:^0.0.2"
-    comment-parser: "npm:1.4.0"
+    comment-parser: "npm:1.4.1"
     debug: "npm:^4.3.4"
     escape-string-regexp: "npm:^4.0.0"
     esquery: "npm:^1.5.0"
@@ -4574,7 +4574,7 @@ __metadata:
     spdx-expression-parse: "npm:^3.0.1"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 240c92f4ca3dccabf9606e5df53fe08b1c5ad99a72ec3f9fd4a166bb3ca00505f8989745cca99e95e75e7d040998e94d3100b5b42dc57a69ee9135f7cd54ae55
+  checksum: 0dd20688047c2acf9e816e8b541c56cb4b2660f02fd99e27b4ef6b4505dff0d14596134e40efb351a629f91e4fc2ceab517a071efd650ad2c3d6e4d9c461f650
   languageName: node
   linkType: hard
 
@@ -9105,9 +9105,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:21.5.0":
-  version: 21.5.0
-  resolution: "puppeteer-core@npm:21.5.0"
+"puppeteer-core@npm:21.5.1":
+  version: 21.5.1
+  resolution: "puppeteer-core@npm:21.5.1"
   dependencies:
     "@puppeteer/browsers": "npm:1.8.0"
     chromium-bidi: "npm:0.4.33"
@@ -9115,18 +9115,18 @@ __metadata:
     debug: "npm:4.3.4"
     devtools-protocol: "npm:0.0.1203626"
     ws: "npm:8.14.2"
-  checksum: ea6694ed150d435b18462d8615aa58d151714197d5fded378ba3fe80ec8786fefdef530e46c33a073b0e795988b4ce15293c9ae20c0af307879e97c74ad70632
+  checksum: 824cde6fa2797e8f32ee3a22e4cfa66940c66e4948abb90fdb650e7764e01c77799161ec610e32e9a1e4a0e9a9ff159793c7ff11f3ce2e0b1e4c1d5a7d2fabf0
   languageName: node
   linkType: hard
 
-"puppeteer@npm:21.5.0":
-  version: 21.5.0
-  resolution: "puppeteer@npm:21.5.0"
+"puppeteer@npm:21.5.1":
+  version: 21.5.1
+  resolution: "puppeteer@npm:21.5.1"
   dependencies:
     "@puppeteer/browsers": "npm:1.8.0"
     cosmiconfig: "npm:8.3.6"
-    puppeteer-core: "npm:21.5.0"
-  checksum: 01683f2fbb35d3b466510eac8b196da9fa51fb74c86b13e8a6a7cdc8e06a738481f5022c560b1db8c96011ee573c0cf8c87a2a158e09ad6981622436faf9a609
+    puppeteer-core: "npm:21.5.1"
+  checksum: 91a6e4af38a517e3b0359a79ce2a30bcacd5256881d3f85c65a4ee322218d1fcf4f2d6536af3647c230c3375068ddc898c4fd5ac2ad5948c16c195e6035b2c02
   languageName: node
   linkType: hard
 
