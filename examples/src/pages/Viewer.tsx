@@ -423,14 +423,6 @@ export function Viewer() {
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
-      const now = performance.now();
-      const col = await viewer.add360ImageSet('datamodels', {
-        image360CollectionExternalId: 'xom-hcu1_north_v02',
-        space: 'christjt-test-system-360'
-      });
-      viewer.enter360Image(col.image360Entities[0], col.image360Entities[0].getRevisions()[0]);
-      console.log('Loading 360 images took', performance.now() - now, 'ms');
-
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
