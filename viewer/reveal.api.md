@@ -508,6 +508,7 @@ export class CognitePointCloudModel {
     getClasses(): Array<{
         name: string;
         code: number | WellKnownAsprsPointClassCodes;
+        color: THREE_2.Color;
     }>;
     getDefaultPointCloudAppearance(): PointCloudAppearance;
     // (undocumented)
