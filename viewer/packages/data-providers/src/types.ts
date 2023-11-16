@@ -62,7 +62,7 @@ export type Historical360ImageSet = Image360EventDescriptor & {
 };
 
 export type Image360Descriptor = {
-  timestamp?: number;
+  timestamp?: number | string;
   faceDescriptors: Image360FileDescriptor[];
 };
 

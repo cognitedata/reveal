@@ -8,6 +8,7 @@ import {
   Image360Descriptor,
   Image360DescriptorProvider,
   Image360FileDescriptor,
+  InstanceIdentifier,
   QueryNextCursors
 } from '../../../types';
 import { Cdf360FdmQuery, get360CollectionQuery } from './get360CollectionQuery';
@@ -15,6 +16,9 @@ import assert from 'assert';
 import { Euler, Matrix4 } from 'three';
 import { DataModelsSdk } from '../../../DataModelsSdk';
 import chunk from 'lodash/chunk';
+import zip from 'lodash/zip';
+import groupBy from 'lodash/groupBy';
+import partition from 'lodash/partition';
 
 export type UniqueIdentifier = {
   space: string;
@@ -58,9 +62,32 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
     const collectionId = collection.externalId;
     const collectionLabel = collection.properties.cdf_360_image_schema['Image360Collection/v1'].label as string;
     const fileDescriptors = await this.getFileDescriptors(images);
-    return images.map((image, n) =>
-      this.getHistorical360ImageSet(collectionId, collectionLabel, image, fileDescriptors[n])
-    );
+
+    assert(images.length === fileDescriptors.length, 'Expected each 360 image to have 6 faces');
+
+    const imagesGroupedWithFileDescriptors = zip(images, fileDescriptors)
+      .filter(
+        (imageWithFileInfo): imageWithFileInfo is [ImageInstanceResult, FileInfo[]] =>
+          imageWithFileInfo[0] !== undefined && imageWithFileInfo[1] !== undefined
+      )
+      .map(([image, fileDescriptors]: [ImageInstanceResult, FileInfo[]]) => {
+        return { image, fileDescriptors } as { image: ImageInstanceResult; fileDescriptors: FileInfo[] };
+      });
+
+    const [imagesWithoutStation, imagesWithStation] = partition(imagesGroupedWithFileDescriptors, image => {
+      return image.image.properties.cdf_360_image_schema['Image360/v1'].station === undefined;
+    });
+
+    const groups = groupBy(imagesWithStation, asd => {
+      const station = asd.image.properties.cdf_360_image_schema['Image360/v1'].station as InstanceIdentifier;
+      return `${station.externalId}-${station.space}`;
+    });
+
+    return Object.values(groups)
+      .concat(imagesWithoutStation.map(p => [p]))
+      .map(imageWithFileDescriptors => {
+        return this.getHistorical360ImageSet(collectionId, collectionLabel, imageWithFileDescriptors);
+      });
   }
 
   private async queryCollection({
@@ -129,25 +156,24 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
   private getHistorical360ImageSet(
     collectionId: string,
     collectionLabel: string,
-    image: ImageInstanceResult,
-    fileInfos: FileInfo[]
+    imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: FileInfo[] }[]
   ): Historical360ImageSet {
-    const imageProps = image.properties.cdf_360_image_schema['Image360/v1'];
-
+    const mainImageProps = imageFileDescriptors[0].image.properties.cdf_360_image_schema['Image360/v1'];
+    const id = imageFileDescriptors[0].image.externalId;
     return {
       collectionId,
       collectionLabel,
-      id: image.externalId,
-      imageRevisions: [this.getImageRevision(imageProps, fileInfos)],
-      label: imageProps.label as string,
-      transform: this.getRevisionTransform(imageProps as any)
+      id,
+      imageRevisions: imageFileDescriptors.map(p => this.getImageRevision(mainImageProps, p.fileDescriptors)),
+      label: mainImageProps.label as string,
+      transform: this.getRevisionTransform(mainImageProps as any)
     };
   }
 
   private getImageRevision(imageProps: ImageResultProperties, fileInfos: FileInfo[]): Image360Descriptor {
     return {
       faceDescriptors: getFaceDescriptors(),
-      timestamp: imageProps.timeTaken as number
+      timestamp: imageProps.timeTaken as string
     };
 
     function getFaceDescriptors(): Image360FileDescriptor[] {
