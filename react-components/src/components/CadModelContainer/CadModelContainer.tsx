@@ -47,7 +47,7 @@ export function CadModelContainer({
     }
 
     initializingModel.current = cloneDeep(addModelOptions);
-    addModel(modelId, revisionId, transform)
+    addModel(addModelOptions, transform)
       .then((model) => {
         onLoad?.(model);
         setRevealResourcesCount(viewer.models.length);
@@ -72,8 +72,7 @@ export function CadModelContainer({
   return <></>;
 
   async function addModel(
-    modelId: number,
-    revisionId: number,
+    addModelOptions: AddModelOptions,
     transform?: Matrix4
   ): Promise<CogniteCadModel> {
     const cadModel = await getOrAddModel();
@@ -95,7 +94,7 @@ export function CadModelContainer({
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CogniteCadModel);
       }
-      return await viewer.addCadModel({ modelId, revisionId });
+      return await viewer.addCadModel(addModelOptions);
     }
   }
 
