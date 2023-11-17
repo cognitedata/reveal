@@ -19,6 +19,7 @@ import {
   WIDGET_WINDOW_Y_OFFSET
 } from './constants';
 import { useTranslation } from '../i18n/I18n';
+import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 
 type WindowWidgetProps = {
   title?: string;
@@ -76,7 +77,7 @@ export const WindowWidget = ({
   };
 
   return (
-    <StyledComponent isMinimized={isMinimized}>
+    <WidgetComponent isMinimized={isMinimized}>
       <Draggable onDrag={handleDrag} position={position} handle=".widget-header">
         <ResizableBox
           width={size.width}
@@ -109,7 +110,7 @@ export const WindowWidget = ({
           </Widget>
         </ResizableBox>
       </Draggable>
-    </StyledComponent>
+    </WidgetComponent>
   );
 };
 
@@ -169,3 +170,5 @@ const StyledComponent = styled.div<{ isMinimized: boolean }>`
     0px 1px 1px 1px rgba(79, 82, 104, 0.06),
     0px 1px 2px 1px rgba(79, 82, 104, 0.04);
 `;
+
+const WidgetComponent = withSuppressRevealEvents(StyledComponent);

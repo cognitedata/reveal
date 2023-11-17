@@ -3,15 +3,9 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  CadModelContainer,
-  RevealContainer,
-  withSuppressRevealEvents,
-  PointCloudContainer
-} from '../src';
+import { CadModelContainer, RevealContainer, PointCloudContainer } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
-import styled from 'styled-components';
 import { type ReactElement } from 'react';
 import { WindowWidget } from '../src/components/Widgets/WindowWidget';
 
@@ -32,8 +26,6 @@ const sdk = new CogniteClient({
   getToken: async () => await Promise.resolve(token)
 });
 
-const SuppressedDiv = withSuppressRevealEvents(styled.div``);
-
 export const Main: Story = {
   args: {
     addModelOptions: {
@@ -46,11 +38,9 @@ export const Main: Story = {
       <>
         <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
           <PointCloudContainer addModelOptions={addModelOptions} />
-          <SuppressedDiv>
-            <WindowWidget>
-              <SecondaryRevealContainer />
-            </WindowWidget>
-          </SuppressedDiv>
+          <WindowWidget>
+            <SecondaryRevealContainer />
+          </WindowWidget>
         </RevealContainer>
       </>
     );
