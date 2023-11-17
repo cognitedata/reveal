@@ -5,7 +5,6 @@
 import React, { type ReactNode, type ForwardedRef, type ReactElement } from 'react';
 import styled from 'styled-components';
 import { WidgetHeader } from './WidgetHeader';
-import { WidgetBody } from './WidgetBody';
 
 type WidgetProps = {
   children?: ReactNode;
@@ -35,7 +34,6 @@ const Container = styled.div`
 
 type WidgetType = {
   Header: typeof WidgetHeader;
-  Body: typeof WidgetBody;
 } & React.ForwardRefExoticComponent<
   React.PropsWithoutRef<WidgetProps> & React.RefAttributes<HTMLDivElement>
 >;
@@ -43,6 +41,5 @@ type WidgetType = {
 const Widget = React.forwardRef(BaseWidget) as WidgetType;
 
 Widget.Header = WidgetHeader;
-Widget.Body = WidgetBody;
 
 export default Widget;

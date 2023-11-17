@@ -13,7 +13,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 import styled from 'styled-components';
 import { type ReactElement } from 'react';
-import { SplitWidget } from '../src/components/Widgets/SplitWidget';
+import { WindowWidget } from '../src/components/Widgets/WindowWidget';
 
 const meta = {
   title: 'Example/SplitWindow',
@@ -47,7 +47,9 @@ export const Main: Story = {
         <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
           <PointCloudContainer addModelOptions={addModelOptions} />
           <SuppressedDiv>
-            <SplitWidget>{<SecondaryRevealContainer />} </SplitWidget>
+            <WindowWidget>
+              <SecondaryRevealContainer />
+            </WindowWidget>
           </SuppressedDiv>
         </RevealContainer>
       </>

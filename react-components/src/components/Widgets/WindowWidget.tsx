@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type ReactElement, useState, type ReactNode, useEffect } from 'react';
 import styled from 'styled-components';
 import Widget from './Widget';
@@ -10,9 +10,17 @@ import Draggable, { type DraggableData, type DraggableEvent } from 'react-dragga
 import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
-import { HEIGHT_FACTOR, WIDTH_FACTOR, X_OFFSET, Y_OFFSET } from './constants';
+import {
+  WIDGET_HEIGHT_FACTOR,
+  WIDGET_WIDTH_FACTOR,
+  WIDGET_WINDOW_MIN_HEIGHT,
+  WIDGET_WINDOW_MIN_WIDTH,
+  WIDGET_WINDOW_X_OFFSET,
+  WIDGET_WINDOW_Y_OFFSET
+} from './constants';
+import { useTranslation } from '../i18n/I18n';
 
-type SplitWidgetProps = {
+type WindowWidgetProps = {
   title?: string;
   subtitle?: string;
   header?: string;
@@ -20,41 +28,23 @@ type SplitWidgetProps = {
   children: ReactNode;
 };
 
-export const SplitWidget = ({
+export const WindowWidget = ({
   title,
   subtitle,
   header,
   type,
   children
-}: SplitWidgetProps): ReactElement => {
+}: WindowWidgetProps): ReactElement => {
+  const { t } = useTranslation();
   const [isMinimized, setIsMinimized] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [size, setSize] = useState({ width: 0, height: 0 });
   const parentContainerElement = useRevealContainerElement();
 
   if (parentContainerElement === undefined) {
     return <></>;
   }
 
-  useEffect(() => {
-    const updateSize = (): void => {
-      const parentWidth = parentContainerElement.clientWidth;
-      const parentHeight = parentContainerElement.clientHeight;
-
-      const width = isMinimized ? 300 : parentWidth * WIDTH_FACTOR;
-      const height = isMinimized ? 48 : parentHeight * HEIGHT_FACTOR;
-
-      setSize({ width, height });
-    };
-
-    updateSize();
-
-    window.addEventListener('resize', updateSize);
-
-    return () => {
-      window.removeEventListener('resize', updateSize);
-    };
-  }, [isMinimized]);
+  const size = useResize(parentContainerElement, isMinimized);
 
   const handleExpand = (): void => {
     setIsMinimized((prev) => !prev);
@@ -73,10 +63,10 @@ export const SplitWidget = ({
     } = parentContainerElement.getBoundingClientRect();
 
     if (
-      left + width - X_OFFSET < parentLeft ||
+      left + width - WIDGET_WINDOW_X_OFFSET < parentLeft ||
       top < parentTop ||
-      left + X_OFFSET > parentWidth ||
-      top + Y_OFFSET > parentHeight
+      left + WIDGET_WINDOW_X_OFFSET > parentLeft + parentWidth ||
+      top + WIDGET_WINDOW_Y_OFFSET > parentTop + parentHeight
     ) {
       // Prevent moving beyond the canvas
       return;
@@ -91,20 +81,31 @@ export const SplitWidget = ({
         <ResizableBox
           width={size.width}
           height={size.height}
-          resizeHandles={isMinimized ? [] : ['se']}
-          onResize={(_event, { size }) => {
-            setSize(size);
-          }}>
+          resizeHandles={isMinimized ? [] : ['se']}>
           <Widget>
             <Widget.Header title={title} type={type} header={header} subtitle={subtitle}>
-              <Button
-                type="ghost"
-                icon={isMinimized ? 'Expand' : 'Collapse'}
-                onClick={handleExpand}
-              />
-              <Button type="ghost" icon="Close" />
+              <CogsTooltip
+                content={
+                  isMinimized
+                    ? t('WIDGET_WINDOW_EXPAND', 'Expand')
+                    : t('WIDGET_WINDOW_MINIMIZE', 'Minimize')
+                }
+                placement="top"
+                appendTo={document.body}>
+                <Button
+                  type="ghost"
+                  icon={isMinimized ? 'Expand' : 'Collapse'}
+                  onClick={handleExpand}
+                />
+              </CogsTooltip>
+              <CogsTooltip
+                content={t('WIDGET_WINDOW_CLOSE', 'Close')}
+                placement="top"
+                appendTo={document.body}>
+                <Button type="ghost" icon="Close" />
+              </CogsTooltip>
             </Widget.Header>
-            <Widget.Body>{!isMinimized && <WidgetContent>{children}</WidgetContent>}</Widget.Body>
+            <WidgetBody>{!isMinimized && <WidgetContent>{children}</WidgetContent>}</WidgetBody>
           </Widget>
         </ResizableBox>
       </Draggable>
@@ -112,10 +113,47 @@ export const SplitWidget = ({
   );
 };
 
+const useResize = (
+  parentContainerElement: HTMLElement,
+  isMinimized: boolean
+): {
+  width: number;
+  height: number;
+} => {
+  const [size, setSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const updateSize = (): void => {
+      const parentWidth = parentContainerElement.clientWidth;
+      const parentHeight = parentContainerElement.clientHeight;
+
+      const width = isMinimized ? WIDGET_WINDOW_MIN_WIDTH : parentWidth * WIDGET_WIDTH_FACTOR;
+      const height = isMinimized ? WIDGET_WINDOW_MIN_HEIGHT : parentHeight * WIDGET_HEIGHT_FACTOR;
+
+      setSize({ width, height });
+    };
+
+    updateSize();
+
+    window.addEventListener('resize', updateSize);
+
+    return () => {
+      window.removeEventListener('resize', updateSize);
+    };
+  }, [isMinimized, parentContainerElement]);
+
+  return size;
+};
+
 const WidgetContent = styled.div`
   width: 100%;
   height: 100%;
   padding: 0px 10px 10px 10px;
+`;
+
+const WidgetBody = styled.div`
+  height: 100%;
+  overflow: auto;
 `;
 
 const StyledComponent = styled.div<{ isMinimized: boolean }>`
