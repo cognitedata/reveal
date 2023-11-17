@@ -5,7 +5,7 @@ import dts from 'vite-plugin-dts';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { exec } from 'node:child_process';
 
-export default defineConfig(({ command }) => {
+export default defineConfig(({ command, mode }) => {
   return {
     plugins: [
       react(),
@@ -25,6 +25,9 @@ export default defineConfig(({ command }) => {
         formats: ['es']
       },
       sourcemap: command === 'build'
+    },
+    test: {
+      include: ['tests/unit-tests/**/*.{test,spec}.?(c|m)[jt]s?(x)']
     }
   };
 });

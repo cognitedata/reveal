@@ -14,5 +14,5 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*", "stories/**/*", "tests/**/*", "vite.config.ts"],
+  "include": ["src/**/*", "stories/**/*", "tests/**/*", "vite.config.ts", "playwright.config.ts"],
 }

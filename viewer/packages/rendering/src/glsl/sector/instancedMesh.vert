@@ -5,8 +5,7 @@
 #pragma glslify: import('../base/determineNodeAppearance.glsl')
 #pragma glslify: import('../base/determineVisibility.glsl')
 
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
+uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform vec2 treeIndexTextureSize;
 uniform vec2 transformOverrideTextureSize;
@@ -46,7 +45,7 @@ void main() {
     v_color = a_color;
 
     vec3 transformed = (a_instanceMatrix * vec4(position, 1.0)).xyz;
-    vec4 modelViewPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4(transformed, 1.0);
+    vec4 modelViewPosition = modelViewMatrix * treeIndexWorldTransform * vec4(transformed, 1.0);
     v_viewPosition = modelViewPosition.xyz;
     gl_Position = projectionMatrix * modelViewPosition;
 }
