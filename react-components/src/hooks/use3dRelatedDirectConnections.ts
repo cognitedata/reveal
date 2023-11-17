@@ -4,7 +4,7 @@
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
-import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
+import { type Source, type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 
 export function use3dRelatedDirectConnections(
   instance: DmsUniqueIdentifier | undefined
@@ -58,12 +58,14 @@ export function use3dRelatedDirectConnections(
         .map((viewList, objectInd) => viewList.map((view) => [objectInd, view] as const))
         .flat();
 
-      const viewProps = await fdmSdk.getViewsByIds(
-        relatedObjectViewsWithObjectIndex.map(([_ind, view]) => view)
+      const [deduplicatedViews, deduplicatedViewsIndexMap] = createDeduplicatedListAndIndexMap(
+        relatedObjectViewsWithObjectIndex
       );
 
-      const threeDRelatedViews = relatedObjectViewsWithObjectIndex.filter(([index, _view]) => {
-        const propsForView = viewProps.items[index];
+      const viewProps = await fdmSdk.getViewsByIds(deduplicatedViews);
+
+      const threeDRelatedViews = relatedObjectViewsWithObjectIndex.filter((_, viewIndex) => {
+        const propsForView = viewProps.items[deduplicatedViewsIndexMap.get(viewIndex) ?? 0];
         return Object.keys(propsForView.properties).some((propName) => propName === 'inModel3d');
       });
 
@@ -73,4 +75,28 @@ export function use3dRelatedDirectConnections(
       enabled: instance !== undefined
     }
   );
+}
+
+function createDeduplicatedListAndIndexMap(
+  viewsWithObjectIndex: Array<readonly [number, Source]>
+): [Source[], Map<number, number>] {
+  const deduplicatedViews: Source[] = [];
+  const deduplicatedViewsIndexMap = new Map<number, number>();
+  viewsWithObjectIndex.forEach(([_index, view], viewIndex) => {
+    const duplicateIndex = deduplicatedViews.findIndex(
+      (potentialDuplicate) =>
+        potentialDuplicate.externalId === view.externalId &&
+        potentialDuplicate.space === view.space &&
+        potentialDuplicate.version === view.version
+    );
+
+    if (duplicateIndex >= 0) {
+      deduplicatedViewsIndexMap.set(viewIndex, duplicateIndex);
+    } else {
+      deduplicatedViewsIndexMap.set(viewIndex, deduplicatedViews.length);
+      deduplicatedViews.push(view);
+    }
+  });
+
+  return [deduplicatedViews, deduplicatedViewsIndexMap];
 }
