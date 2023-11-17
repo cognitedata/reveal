@@ -536,7 +536,7 @@ __metadata:
   dependencies:
     "@azure/msal-browser": "npm:2.38.3"
     "@cognite/sdk": "npm:8.3.0"
-    "@microsoft/api-extractor": "npm:7.38.2"
+    "@microsoft/api-extractor": "npm:7.38.3"
     "@tweenjs/tween.js": "npm:19.0.0"
     "@types/dat.gui": "npm:0.7.12"
     "@types/gl": "npm:^6.0.2"
@@ -563,7 +563,7 @@ __metadata:
     eslint: "npm:8.53.0"
     eslint-config-prettier: "npm:9.0.0"
     eslint-plugin-header: "npm:3.1.1"
-    eslint-plugin-jsdoc: "npm:46.8.2"
+    eslint-plugin-jsdoc: "npm:46.9.0"
     eslint-plugin-lodash: "npm:7.4.0"
     eslint-plugin-prettier: "npm:5.0.1"
     eslint-plugin-unused-imports: "npm:3.0.0"
@@ -650,14 +650,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@es-joy/jsdoccomment@npm:~0.40.1":
-  version: 0.40.1
-  resolution: "@es-joy/jsdoccomment@npm:0.40.1"
+"@es-joy/jsdoccomment@npm:~0.41.0":
+  version: 0.41.0
+  resolution: "@es-joy/jsdoccomment@npm:0.41.0"
   dependencies:
-    comment-parser: "npm:1.4.0"
+    comment-parser: "npm:1.4.1"
     esquery: "npm:^1.5.0"
     jsdoc-type-pratt-parser: "npm:~4.0.0"
-  checksum: 6501c292067b261be553cdc0dca97cc7075c012a5cf283b26e8baa2f5544f487019244af3283c5503f18a5d1d5ba68d00b7581b9fa321866603bf34b3288a1b7
+  checksum: ea581983f32ccc6550f0cb8a1d7178c74c4cbf18add8e18725b2db5ea6021016b49fb93e55e928caf7f2d08007779c0cda71c3fbbfdb92400ebc4f3a07c993f9
   languageName: node
   linkType: hard
 
@@ -1124,9 +1124,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@microsoft/api-extractor@npm:7.38.2":
-  version: 7.38.2
-  resolution: "@microsoft/api-extractor@npm:7.38.2"
+"@microsoft/api-extractor@npm:7.38.3":
+  version: 7.38.3
+  resolution: "@microsoft/api-extractor@npm:7.38.3"
   dependencies:
     "@microsoft/api-extractor-model": "npm:7.28.2"
     "@microsoft/tsdoc": "npm:0.14.2"
@@ -1142,7 +1142,7 @@ __metadata:
     typescript: "npm:~5.0.4"
   bin:
     api-extractor: bin/api-extractor
-  checksum: abe0494610fe5fe6396f35955906d06e40b3f07782b2d54100df10fb7728e4a38a4411fd67d3ec0b4a9dbb9f80cbffcf4a9942c0444a1539ffaaaff328160151
+  checksum: e40f964693dc5aaaf6e0a653faac6565ec05eac572619ca03fc91bdde85edc16a3db898dac7ff389041a6cc9edd22fc1d7e9aeab792a4cb76f932d5155c165c0
   languageName: node
   linkType: hard
 
@@ -3625,10 +3625,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"comment-parser@npm:1.4.0":
-  version: 1.4.0
-  resolution: "comment-parser@npm:1.4.0"
-  checksum: 3ce7a975946ebb0d8410b6713a371e25b5a144b633dd7c6e502c18c9a4e4f1f9167ed0eaa90b07cbc18e91ee061b99c2889d6bed88cd7f0dc32ed1bbac89008a
+"comment-parser@npm:1.4.1":
+  version: 1.4.1
+  resolution: "comment-parser@npm:1.4.1"
+  checksum: 16a3260b5e77819ebd9c99b0b65c7d6723b1ff73487bac9ce2d8f016a2847dd689e8663b88e1fad1444bbea89847c42f785708ac86a2c55f614f7095249bbf6b
   languageName: node
   linkType: hard
 
@@ -4559,13 +4559,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:46.8.2":
-  version: 46.8.2
-  resolution: "eslint-plugin-jsdoc@npm:46.8.2"
+"eslint-plugin-jsdoc@npm:46.9.0":
+  version: 46.9.0
+  resolution: "eslint-plugin-jsdoc@npm:46.9.0"
   dependencies:
-    "@es-joy/jsdoccomment": "npm:~0.40.1"
+    "@es-joy/jsdoccomment": "npm:~0.41.0"
     are-docs-informative: "npm:^0.0.2"
-    comment-parser: "npm:1.4.0"
+    comment-parser: "npm:1.4.1"
     debug: "npm:^4.3.4"
     escape-string-regexp: "npm:^4.0.0"
     esquery: "npm:^1.5.0"
@@ -4574,7 +4574,7 @@ __metadata:
     spdx-expression-parse: "npm:^3.0.1"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 240c92f4ca3dccabf9606e5df53fe08b1c5ad99a72ec3f9fd4a166bb3ca00505f8989745cca99e95e75e7d040998e94d3100b5b42dc57a69ee9135f7cd54ae55
+  checksum: 0dd20688047c2acf9e816e8b541c56cb4b2660f02fd99e27b4ef6b4505dff0d14596134e40efb351a629f91e4fc2ceab517a071efd650ad2c3d6e4d9c461f650
   languageName: node
   linkType: hard
 

@@ -34,6 +34,7 @@ export const useSearchMappedEquipmentFDM = (
   query: string,
   spacesToSearch: string[],
   models: AddModelOptions[],
+  instancesFilter: any,
   limit: number = 100,
   userSdk?: CogniteClient
 ): UseQueryResult<SeachResultsWithView[]> => {
@@ -64,13 +65,22 @@ export const useSearchMappedEquipmentFDM = (
           result.items.mapped_nodes.concat(result.items.mapped_nodes_2) as NodeItem[]
         );
 
-        return transformedResults;
+        const combinedWithOtherViews = viewsToSearch.map((view) => ({
+          view,
+          instances:
+            transformedResults.find(
+              (result) =>
+                result.view.externalId === view.externalId && result.view.space === view.space
+            )?.instances ?? []
+        }));
+
+        return combinedWithOtherViews;
       }
 
       const searchResults: SeachResultsWithView[] = [];
 
       for (const view of viewsToSearch) {
-        const result = await fdmSdk.searchInstances(view, query, 'node', limit);
+        const result = await fdmSdk.searchInstances(view, query, 'node', limit, instancesFilter);
 
         searchResults.push({
           view,
@@ -273,11 +283,11 @@ function createMappedEquipmentMaps(
   models: AddModelOptions[],
   spacesToSearch: string[]
 ): {
-  mappedEquipmentFirstLevelMap: Record<string, EdgeItem>;
-  equipmentSecondLevelMap: Record<string, EdgeItem>;
+  mappedEquipmentFirstLevelMap: Record<string, EdgeItem[]>;
+  equipmentSecondLevelMap: Record<string, EdgeItem[]>;
 } {
-  const mappedEquipmentFirstLevelMap: Record<string, EdgeItem> = {};
-  const equipmentSecondLevelMap: Record<string, EdgeItem> = {};
+  const mappedEquipmentFirstLevelMap: Record<string, EdgeItem[]> = {};
+  const equipmentSecondLevelMap: Record<string, EdgeItem[]> = {};
 
   for (const edge of allEdges) {
     const { space: endSpace, externalId: endExternalId } = edge.endNode;
@@ -292,14 +302,17 @@ function createMappedEquipmentMaps(
     if (endSpace === INSTANCE_SPACE_3D_DATA && isModelsMapped) {
       const key = `${space}/${externalId}`;
 
-      mappedEquipmentFirstLevelMap[key] = edge;
+      const keyEdges = mappedEquipmentFirstLevelMap[key];
+      mappedEquipmentFirstLevelMap[key] = keyEdges !== undefined ? keyEdges.concat(edge) : [edge];
       continue;
     }
 
     if (spacesToSearch.includes(endSpace)) {
       const key = `${space}/${externalId}`;
 
-      equipmentSecondLevelMap[key] = edge;
+      const keyEdges = equipmentSecondLevelMap[key];
+
+      equipmentSecondLevelMap[key] = keyEdges !== undefined ? keyEdges.concat(edge) : [edge];
       continue;
     }
   }
@@ -448,10 +461,6 @@ async function filterSearchResultsByMappedTo3DModels(
   );
 
   for (const searchResult of searchResults) {
-    if (searchResult.instances.length === 0) {
-      continue;
-    }
-
     const filteredInstances = searchResult.instances.filter((instance) =>
       checkInstanceWithMappedEquipmentMaps(
         mappedEquipmentFirstLevelMap,
@@ -467,8 +476,8 @@ async function filterSearchResultsByMappedTo3DModels(
 }
 
 function checkInstanceWithMappedEquipmentMaps(
-  mappedEquipmentFirstLevelMap: Record<FdmKey, EdgeItem>,
-  equipmentSecondLevelMap: Record<FdmKey, EdgeItem>,
+  mappedEquipmentFirstLevelMap: Record<FdmKey, EdgeItem[]>,
+  equipmentSecondLevelMap: Record<FdmKey, EdgeItem[]>,
   instance: NodeItem
 ): boolean {
   const key: FdmKey = `${instance.space}/${instance.externalId}`;
@@ -482,12 +491,14 @@ function checkInstanceWithMappedEquipmentMaps(
   }
 
   if (isSecondLevelWithEdge) {
-    const { space, externalId } = equipmentSecondLevelMap[key].endNode;
+    return equipmentSecondLevelMap[key].some((edge) => {
+      const { space, externalId } = edge.endNode;
 
-    const secondLevelKey: FdmKey = `${space}/${externalId}`;
-    const isMappedWithEdge = mappedEquipmentFirstLevelMap[secondLevelKey] !== undefined;
+      const secondLevelKey: FdmKey = `${space}/${externalId}`;
+      const isMappedWithEdge = mappedEquipmentFirstLevelMap[secondLevelKey] !== undefined;
 
-    return isMappedWithEdge;
+      return isMappedWithEdge;
+    });
   }
 
   if (isSecondLevelWithDirectRelation) {

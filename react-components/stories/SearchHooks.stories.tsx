@@ -58,6 +58,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     mainSearchQuery,
     spacesToSearch,
     filteredResources,
+    undefined,
     100,
     sdk
   );
