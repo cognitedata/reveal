@@ -1,4 +1,7 @@
-import { CogniteClient } from '@cognite/sdk/dist/src';
+/*!
+ * Copyright 2023 Cognite AS
+ */
+import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@reveal/api';
 import { createGlContext, mockClientAuthentication } from 'test-utilities';
 import { Camera, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
