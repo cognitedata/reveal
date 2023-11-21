@@ -3,40 +3,18 @@
  */
 
 import { MeasurementTool } from './MeasurementTool';
-import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 
 import { Cognite3DViewer } from '@reveal/api';
 
-import { CogniteClient } from '@cognite/sdk';
-import { Vector3, WebGLRenderer } from 'three';
+import { Vector3 } from 'three';
 
-import { jest } from '@jest/globals';
-
-const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
+import { mockViewer } from '../test-utils/mockViewer';
 
 describe(MeasurementTool.name, () => {
   let viewer: Cognite3DViewer;
 
   beforeEach(() => {
-    let renderer: THREE.WebGLRenderer;
-    let canvasContainer: HTMLElement;
-
-    const sdk = new CogniteClient({
-      appId: 'cognite.reveal.unittest',
-      project: 'dummy',
-      getToken: async () => 'dummy'
-    });
-    mockClientAuthentication(sdk);
-    const canvas = document.createElement('canvas');
-
-    renderer = new WebGLRenderer({ context, canvas });
-    renderer.render = jest.fn();
-
-    canvasContainer = document.createElement('div');
-    canvasContainer.style.width = '640px';
-    canvasContainer.style.height = '480px';
-
-    viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
+    viewer = mockViewer();
   });
 
   test('addMeasurement adds measurement', () => {

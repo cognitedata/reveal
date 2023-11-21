@@ -18,11 +18,6 @@ export function mockViewerComponents(): {
   camera: Camera;
   renderer: WebGLRenderer;
 } {
-  let canvasContainer: HTMLElement;
-  let viewer: Cognite3DViewer;
-  let camera: THREE.PerspectiveCamera;
-  let renderer: THREE.WebGLRenderer;
-
   const sdk = new CogniteClient({
     appId: 'cognite.reveal.unittest',
     project: 'dummy',
@@ -32,14 +27,14 @@ export function mockViewerComponents(): {
   const canvas = document.createElement('canvas');
   fakeGetBoundingClientRect(canvas, 0, 0, 128, 128);
 
-  renderer = new WebGLRenderer({ context, canvas });
+  const renderer = new WebGLRenderer({ context, canvas });
   renderer.render = jest.fn();
 
-  canvasContainer = document.createElement('div');
+  const canvasContainer = document.createElement('div');
   canvasContainer.style.width = '640px';
   canvasContainer.style.height = '480px';
 
-  camera = new PerspectiveCamera();
+  const camera = new PerspectiveCamera();
   camera.position.set(0, 0, 0);
   camera.near = 0.1;
   camera.far = 1.0;
@@ -47,7 +42,7 @@ export function mockViewerComponents(): {
   camera.updateProjectionMatrix();
   camera.updateMatrix();
 
-  viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
+  const viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
   jest.spyOn(viewer.cameraManager, 'getCamera').mockReturnValue(camera);
 
   renderer.setSize(128, 128);
@@ -60,7 +55,13 @@ export function mockViewerComponents(): {
   };
 }
 
-export function fakeGetBoundingClientRect(element: HTMLElement, x: number, y: number, width: number, height: number) {
+export function fakeGetBoundingClientRect(
+  element: HTMLElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number
+): void {
   const rect: DOMRect = {
     left: x,
     right: x + width,
