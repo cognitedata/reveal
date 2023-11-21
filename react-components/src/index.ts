@@ -13,6 +13,10 @@ export { Image360HistoricalDetails } from './components/Image360HistoricalDetail
 export { Image360Details } from './components/Image360Details/Image360Details';
 export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
 export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
+export {
+  useAddMeasurementsToUrl,
+  useGetMeasurementsFromUrlParam
+} from './components/RevealToolbar/MeasurementButtonWithUrlState';
 export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
 
 // Hooks
