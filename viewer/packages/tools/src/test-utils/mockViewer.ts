@@ -3,7 +3,7 @@
  */
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@reveal/api';
-import { createGlContext, mockClientAuthentication } from 'test-utilities';
+import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 import { Camera, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
 
 const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
