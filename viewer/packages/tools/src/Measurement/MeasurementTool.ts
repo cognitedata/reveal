@@ -10,9 +10,10 @@ import {
   MeasurementAddedDelegate,
   MeasurementStartedDelegate,
   MeasurementEndedDelegate,
-  MeasurementOptions
+  MeasurementOptions,
+  Measurement
 } from './types';
-import { MeasurementManager, Measurement } from './MeasurementManager';
+import { MeasurementManager } from './MeasurementManager';
 import { MeasurementLabels } from './MeasurementLabels';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import rulerSvg from '!!raw-loader!./styles/ruler.svg';
@@ -274,6 +275,26 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
+   * Adds a measurement directly. E.g. to restore a previous state programatically
+   */
+  addMeasurement(startPoint: THREE.Vector3, endPoint: THREE.Vector3): Measurement {
+    const measurementManager = new MeasurementManager(
+      this._viewer.domElement,
+      this._viewer.cameraManager.getCamera(),
+      this._geometryGroup,
+      this._options,
+      this._htmlOverlay,
+      startPoint
+    );
+    measurementManager.endMeasurement(endPoint);
+
+    this._measurements.push(measurementManager);
+    const measurement = measurementManager.getMeasurement();
+    this._events.measurementAdded.fire(measurement);
+    return measurement;
+  }
+
+  /**
    * Removes all measurements from the Cognite3DViewer.
    */
   removeAllMeasurements(): void {
@@ -406,7 +427,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       this._measurements.push(this._activeMeasurement);
       this._activeMeasurement = undefined;
       // To avoid issue when exiting measurement mode when a measurement 'added' event called
-      this._events.measurementAdded.fire(this._measurements[this._measurements.length - 1].getMeasurement());
+      this._events.measurementAdded.fire(measurement);
       this._viewer.domElement.removeEventListener('pointermove', this._handlePointerMove);
       this._viewer.domElement.removeEventListener('keydown', this._handleMeasurementCancel);
 
