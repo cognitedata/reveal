@@ -584,7 +584,7 @@ __metadata:
     jsdom: "npm:22.1.0"
     lodash: "npm:4.17.21"
     loglevel: "npm:1.8.1"
-    mixpanel-browser: "npm:2.47.0"
+    mixpanel-browser: "npm:2.48.1"
     moq.ts: "npm:10.0.8"
     nock: "npm:13.3.8"
     path-browserify: "npm:1.0.1"
@@ -8030,10 +8030,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mixpanel-browser@npm:2.47.0":
-  version: 2.47.0
-  resolution: "mixpanel-browser@npm:2.47.0"
-  checksum: f8a0ea3f23ceb37261c44e8ffff0cf1f74867553347bd5840082b966efe48bfbb21fdd58f3fbc7e9aa85a00f069f35b7166045f005f0bdad0a3b942a1a7b1082
+"mixpanel-browser@npm:2.48.1":
+  version: 2.48.1
+  resolution: "mixpanel-browser@npm:2.48.1"
+  checksum: 5dc47218cf2287e8e6b88888b345d63d2b4a9c102fcb867794ba61619ae37bbbbdedfc37a812658950684d3cac13bd0893bdfb0578c5037f953652db01c58b21
   languageName: node
   linkType: hard
 
