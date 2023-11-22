@@ -43,7 +43,7 @@ export class SectorNode extends THREE.Group {
 
     if (geometryGroup) {
       if (geometryGroup.isDisposed()) {
-        Log.warn('Tried to add an already disposed geometry group to sector ' + this.sectorId);
+        Log.warn('Tried to add an already disposed geometry group to sector', this.sectorId);
       } else {
         if (geometryGroup !== undefined) {
           geometryGroup.reference();
@@ -66,7 +66,8 @@ export class SectorNode extends THREE.Group {
 
   resetGeometry(): void {
     if (this._group !== undefined) {
-      this._group.dereference();
+      if (!this._group.isDisposed()) this._group.dereference();
+      else Log.warn('Tried to dereference an already disposed geometryGroup in sector', this.sectorId);
       this.remove(this._group);
     }
 
