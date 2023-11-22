@@ -204,7 +204,12 @@ async function getViewsToSearch(fdmSdk: FdmSDK, spacesToSearch: string[]): Promi
         return false;
       });
 
-      return isConnectedTo3DView;
+      const isAlreadyInMapped3DViews = mapped3DViews.some(
+        (mapped3DView) =>
+          mapped3DView.externalId === view.externalId && mapped3DView.space === view.space
+      );
+
+      return isConnectedTo3DView && !isAlreadyInMapped3DViews;
     });
 
     return convertViewItemsToSource(mapped3DViews.concat(mapped3DViewsParents));
@@ -445,6 +450,11 @@ async function filterSearchResultsByMappedTo3DModels(
   const directlyMappedNodes = searchResultsNodes
     .map((node) => getDirectRelationProperties(node))
     .flat();
+
+  if (searchResultsNodes.length === 0) {
+    console.log('Search resutls are empty', searchResults);
+    return searchResults;
+  }
 
   const mappedEquipmentQuery = createCheckMappedEquipmentQuery(
     searchResultsNodes,
