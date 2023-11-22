@@ -6,7 +6,7 @@ import { createGlContext } from './createGlContext';
 import { mockClientAuthentication } from './cogniteClientAuth';
 
 import { CogniteClient } from '@cognite/sdk';
-import { Cognite3DViewer } from '@reveal/api';
+import { Cognite3DViewer } from '../../packages/api';
 import { Camera, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
 
 import { jest } from '@jest/globals';
