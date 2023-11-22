@@ -8,7 +8,7 @@ import { Cognite3DViewer } from '@reveal/api';
 
 import { Vector3 } from 'three';
 
-import { mockViewer } from '../test-utils/mockViewer';
+import { mockViewer } from '../../../../test-utilities';
 
 describe(MeasurementTool.name, () => {
   let viewer: Cognite3DViewer;

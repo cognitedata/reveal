@@ -1,10 +1,15 @@
 /*!
  * Copyright 2023 Cognite AS
  */
+
+import { createGlContext } from './createGlContext';
+import { mockClientAuthentication } from './cogniteClientAuth';
+
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@reveal/api';
-import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 import { Camera, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
+
+import { jest } from '@jest/globals';
 
 const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
 

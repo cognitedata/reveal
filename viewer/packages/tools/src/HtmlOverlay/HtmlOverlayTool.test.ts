@@ -14,7 +14,7 @@ import {
 import { Cognite3DViewer } from '@reveal/api';
 
 import { jest } from '@jest/globals';
-import { fakeGetBoundingClientRect, mockViewerComponents } from '../test-utils/mockViewer';
+import { fakeGetBoundingClientRect, mockViewerComponents } from '../../../../test-utilities';
 
 describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;
