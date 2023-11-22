@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useMemo, type ReactElement, useState, useEffect, useCallback } from 'react';
+import { type ReactElement, useState, useEffect, useCallback } from 'react';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type Measurement, MeasurementTool } from '@cognite/reveal/tools';
@@ -33,10 +33,11 @@ export const MeasurementButton = ({
   const measurementTool = useInitializedMeasurementTool(storeStateInUrl);
   const persistMeasurementsToUrl = useAddMeasurementsToUrl(storeStateInUrl);
 
-  const measurementAddedCallback = useUpdateMeasurementsCallback((measurements) => {
+  const measurementAddedCallback = useCallback(() => {
+    const measurements = measurementTool.getAllMeasurements();
     onMeasurementsUpdate?.(measurements);
     persistMeasurementsToUrl(measurements);
-  }, measurementTool);
+  }, [measurementTool, onMeasurementsUpdate, persistMeasurementsToUrl]);
 
   const enterMeasurement = (): void => {
     viewer.domElement.style.cursor = 'crosshair';
@@ -89,8 +90,4 @@ export const MeasurementButton = ({
 const useUpdateMeasurementsCallback = (
   onMeasurementsUpdate: ((measurements: Measurement[]) => void) | undefined,
   measurementTool: MeasurementTool
-): (() => void) => {
-  return useCallback(() => {
-    onMeasurementsUpdate?.(measurementTool.getAllMeasurements());
-  }, [measurementTool, onMeasurementsUpdate]);
-};
+): (() => void) => {};
