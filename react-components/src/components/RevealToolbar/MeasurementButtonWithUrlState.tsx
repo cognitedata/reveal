@@ -2,9 +2,9 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useCallback, useMemo } from 'react';
+import { type ReactElement, useCallback, useMemo } from 'react';
 import { MeasurementButton, distancesInFeetAndMeters } from './MeasurementButton';
-import { Measurement, MeasurementTool } from '@cognite/reveal/tools';
+import { type Measurement, MeasurementTool } from '@cognite/reveal/tools';
 import { useReveal } from '../..';
 import { Vector3 } from 'three';
 
@@ -12,7 +12,7 @@ import { Vector3 } from 'three';
  * MeasurementButtonWithUrlstate - A measurementButton that automatically initializes
  * the tool from URL and updates the URL on change
  */
-export const MeasurementButtonWithUrlState = () => {
+export const MeasurementButtonWithUrlState = (): ReactElement => {
   const measurementTool = useMeasurementToolWithMeasurementsFromUrl();
 
   const addMeasurementsToUrl = useAddMeasurementsToUrl();
@@ -27,10 +27,10 @@ export const MeasurementButtonWithUrlState = () => {
 
 type SerializedMeasurement = number[];
 
-export const useGetMeasurementsFromUrlParam = (): (() => {
+export const useGetMeasurementsFromUrlParam = (): (() => Array<{
   startPoint: Vector3;
   endPoint: Vector3;
-}[]) => {
+}>) => {
   return useCallback(() => {
     const url = new URL(window.location.toString());
     const serializedMeasurements = url.searchParams.get('measurements');

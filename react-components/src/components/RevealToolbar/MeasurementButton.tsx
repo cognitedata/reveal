@@ -5,10 +5,9 @@
 import { useMemo, type ReactElement, useState, useEffect, useCallback } from 'react';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { Measurement, MeasurementTool } from '@cognite/reveal/tools';
+import { type Measurement, MeasurementTool } from '@cognite/reveal/tools';
 import { FEET_TO_INCHES, METERS_TO_FEET } from '../../utilities/constants';
 import { useTranslation } from '../i18n/I18n';
-import { Vector3 } from 'three';
 
 export const distancesInFeetAndMeters = (distanceInMeters: number): string => {
   const distanceInFeet = distanceInMeters * METERS_TO_FEET;
