@@ -30,7 +30,7 @@ jobs:
 
       - name: Install NPM dependencies
         working-directory: viewer
-        run: yarn install --immutable
+        run: apt install libxi-dev && yarn install --immutable
 
       - name: Build production version
         working-directory: viewer
