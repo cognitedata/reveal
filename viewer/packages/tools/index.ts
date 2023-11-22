@@ -32,7 +32,7 @@ export { Keyframe } from './src/Timeline/Keyframe';
 export { TimelineDateUpdateDelegate } from './src/Timeline/types';
 export { Cognite3DViewerToolBase } from './src/Cognite3DViewerToolBase';
 export { MeasurementTool } from './src/Measurement/MeasurementTool';
-export { Measurement } from './src/Measurement/MeasurementManager';
+export { Measurement } from './src/Measurement/types';
 export {
   DistanceToLabelDelegate,
   MeasurementOptions,
