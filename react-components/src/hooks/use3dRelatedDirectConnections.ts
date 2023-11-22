@@ -5,6 +5,7 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { type Source, type DmsUniqueIdentifier } from '../utilities/FdmSDK';
+import assert from 'assert';
 
 export function use3dRelatedDirectConnections(
   instance: DmsUniqueIdentifier | undefined
@@ -65,7 +66,9 @@ export function use3dRelatedDirectConnections(
       const viewProps = await fdmSdk.getViewsByIds(deduplicatedViews);
 
       const threeDRelatedViews = relatedObjectViewsWithObjectIndex.filter((_, viewIndex) => {
-        const propsForView = viewProps.items[deduplicatedViewsIndexMap.get(viewIndex) ?? 0];
+        const viewResultIndex = deduplicatedViewsIndexMap.get(viewIndex);
+        assert(viewResultIndex !== undefined);
+        const propsForView = viewProps.items[viewResultIndex];
         return Object.keys(propsForView.properties).some((propName) => propName === 'inModel3d');
       });
 
