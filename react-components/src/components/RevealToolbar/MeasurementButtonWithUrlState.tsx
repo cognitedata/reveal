@@ -9,7 +9,7 @@ import { useReveal } from '../..';
 import { Vector3 } from 'three';
 
 /**
- * MeasurementButtonWithURlstate - A measurementButton that automatically initializes
+ * MeasurementButtonWithUrlstate - A measurementButton that automatically initializes
  * the tool from URL and updates the URL on change
  */
 export const MeasurementButtonWithUrlState = () => {
