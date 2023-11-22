@@ -32,7 +32,7 @@ jobs:
         working-directory: viewer
         run: |
           sudo apt update
-          sudo apt install libxi-dev
+          sudo apt install libxi-dev libgl-dev libglx-dev
           yarn install --immutable
 
       - name: Build production version
