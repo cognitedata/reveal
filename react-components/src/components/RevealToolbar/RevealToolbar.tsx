@@ -10,7 +10,7 @@ import { SlicerButton } from './SlicerButton';
 import { SettingsButton } from './SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { MeasurementButton } from './MeasurementButton';
-import { MeasurementButtonWithUrlState } from './MeasurementButtonWithUrlState';
+import { MeasurementButtonWithUrlState } from './measurementUrlStateHooks';
 import { HelpButton } from './HelpButton';
 import { type QualitySettings } from './SettingsContainer/types';
 import styled from 'styled-components';

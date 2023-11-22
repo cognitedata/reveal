@@ -8,6 +8,7 @@ import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type Measurement, MeasurementTool } from '@cognite/reveal/tools';
 import { FEET_TO_INCHES, METERS_TO_FEET } from '../../utilities/constants';
 import { useTranslation } from '../i18n/I18n';
+import { useAddMeasurementsToUrl, useInitializedMeasurementTool } from './measurementUrlStateHooks';
 
 export const distancesInFeetAndMeters = (distanceInMeters: number): string => {
   const distanceInFeet = distanceInMeters * METERS_TO_FEET;
@@ -17,33 +18,25 @@ export const distancesInFeetAndMeters = (distanceInMeters: number): string => {
 };
 
 export type MeasurementButtonProps = {
-  measurementTool?: MeasurementTool;
+  storeStateInUrl?: boolean;
   onMeasurementsUpdate?: (measurements: Measurement[]) => void;
 };
 
 export const MeasurementButton = ({
-  measurementTool: inputMeasurementTool,
+  storeStateInUrl = true,
   onMeasurementsUpdate
 }: MeasurementButtonProps): ReactElement => {
   const viewer = useReveal();
   const { t } = useTranslation();
   const [measurementEnabled, setMeasurementEnabled] = useState<boolean>(false);
 
-  const measurementTool = useMemo(() => {
-    return (
-      inputMeasurementTool ??
-      new MeasurementTool(viewer, {
-        distanceToLabelCallback: (distanceInMeters: number) => {
-          return distancesInFeetAndMeters(distanceInMeters);
-        }
-      })
-    );
-  }, [viewer, inputMeasurementTool]);
+  const measurementTool = useInitializedMeasurementTool(storeStateInUrl);
+  const persistMeasurementsToUrl = useAddMeasurementsToUrl(storeStateInUrl);
 
-  const measurementAddedCallback = useUpdateMeasurementsCallback(
-    onMeasurementsUpdate,
-    measurementTool
-  );
+  const measurementAddedCallback = useUpdateMeasurementsCallback((measurements) => {
+    onMeasurementsUpdate?.(measurements);
+    persistMeasurementsToUrl(measurements);
+  }, measurementTool);
 
   const enterMeasurement = (): void => {
     viewer.domElement.style.cursor = 'crosshair';
