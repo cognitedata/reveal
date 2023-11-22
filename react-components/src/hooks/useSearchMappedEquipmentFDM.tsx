@@ -452,7 +452,6 @@ async function filterSearchResultsByMappedTo3DModels(
     .flat();
 
   if (searchResultsNodes.length === 0) {
-    console.log('Search resutls are empty', searchResults);
     return searchResults;
   }
 
