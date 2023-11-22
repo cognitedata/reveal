@@ -5,7 +5,7 @@
 import { type ReactElement, useState, useEffect, useCallback } from 'react';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { type Measurement, MeasurementTool } from '@cognite/reveal/tools';
+import { type Measurement } from '@cognite/reveal/tools';
 import { FEET_TO_INCHES, METERS_TO_FEET } from '../../utilities/constants';
 import { useTranslation } from '../i18n/I18n';
 import { useAddMeasurementsToUrl, useInitializedMeasurementTool } from './measurementUrlStateHooks';
@@ -86,8 +86,3 @@ export const MeasurementButton = ({
     </CogsTooltip>
   );
 };
-
-const useUpdateMeasurementsCallback = (
-  onMeasurementsUpdate: ((measurements: Measurement[]) => void) | undefined,
-  measurementTool: MeasurementTool
-): (() => void) => {};
