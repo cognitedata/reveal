@@ -41,7 +41,7 @@ export const MeasurementButton = ({
     );
   }, [viewer, inputMeasurementTool]);
 
-  const onPotentialMeasurementUpdate = useUpdateMeasurementsCallback(
+  const measurementAddedCallback = useUpdateMeasurementsCallback(
     onMeasurementsUpdate,
     measurementTool
   );
@@ -50,14 +50,14 @@ export const MeasurementButton = ({
     viewer.domElement.style.cursor = 'crosshair';
     measurementTool.enterMeasurementMode();
     measurementTool.visible(true);
-    measurementTool.on('added', onPotentialMeasurementUpdate);
+    measurementTool.on('added', measurementAddedCallback);
   };
 
   const exitMeasurement = (): void => {
     viewer.domElement.style.cursor = 'default';
     measurementTool.visible(false);
     measurementTool.exitMeasurementMode();
-    measurementTool.off('added', onPotentialMeasurementUpdate);
+    measurementTool.off('added', measurementAddedCallback);
   };
 
   const handleMeasurement = (_enable: boolean): void => {
