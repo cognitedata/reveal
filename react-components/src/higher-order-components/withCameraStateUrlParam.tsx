@@ -29,7 +29,7 @@ export function withCameraStateUrlParam<T extends object>(
       const url = new URL(window.location.toString());
       url.searchParams.set('cameraPosition', `[${position.x},${position.y},${position.z}]`);
       url.searchParams.set('cameraTarget', `[${target.x},${target.y},${target.z}]`);
-      window.history.pushState({}, '', url);
+      window.history.replaceState({}, '', url);
     };
 
     useEffect(() => {
