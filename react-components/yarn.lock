@@ -1764,7 +1764,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.5.0"
     "@cognite/cogs.js": "npm:^9.17.0"
-    "@cognite/reveal": "npm:4.6.0"
+    "@cognite/reveal": "npm:4.7.0"
     "@cognite/sdk": "npm:^8.2.0"
     "@playwright/test": "npm:^1.39.0"
     "@storybook/addon-essentials": "npm:7.5.3"
@@ -1820,16 +1820,16 @@ __metadata:
     vitest: "npm:^0.34.6"
   peerDependencies:
     "@cognite/cogs.js": ">=9"
-    "@cognite/reveal": ^4.6.0
+    "@cognite/reveal": ^4.7.0
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:4.6.0":
-  version: 4.6.0
-  resolution: "@cognite/reveal@npm:4.6.0"
+"@cognite/reveal@npm:4.7.0":
+  version: 4.7.0
+  resolution: "@cognite/reveal@npm:4.7.0"
   dependencies:
     "@tweenjs/tween.js": "npm:19.0.0"
     assert: "npm:2.1.0"
@@ -1839,7 +1839,7 @@ __metadata:
     html2canvas: "npm:^1.4.1"
     lodash: "npm:4.17.21"
     loglevel: "npm:1.8.1"
-    mixpanel-browser: "npm:2.47.0"
+    mixpanel-browser: "npm:2.48.1"
     path-browserify: "npm:1.0.1"
     random-seed: "npm:0.3.0"
     rxjs: "npm:7.8.1"
@@ -1848,7 +1848,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.158.0
-  checksum: 5d8d3ab9fdf750a4d652c7ebaf4ee0a150a77aa4edecc5dbea442486e31f18a6a409c7651b21baf2015d144ef6b41bef36ed612baf77da9115fefc589c3a3764
+  checksum: 43c191e642c87cbd8700c6fd5a1003614579a0cae5500a481b8802a43ed6f068dc67adc84da0ad21cd2e5f2dd3aeeb371d4328060f6ad75140f31967bbd5f2c4
   languageName: node
   linkType: hard
 
@@ -11658,10 +11658,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mixpanel-browser@npm:2.47.0":
-  version: 2.47.0
-  resolution: "mixpanel-browser@npm:2.47.0"
-  checksum: f8a0ea3f23ceb37261c44e8ffff0cf1f74867553347bd5840082b966efe48bfbb21fdd58f3fbc7e9aa85a00f069f35b7166045f005f0bdad0a3b942a1a7b1082
+"mixpanel-browser@npm:2.48.1":
+  version: 2.48.1
+  resolution: "mixpanel-browser@npm:2.48.1"
+  checksum: 5dc47218cf2287e8e6b88888b345d63d2b4a9c102fcb867794ba61619ae37bbbbdedfc37a812658950684d3cac13bd0893bdfb0578c5037f953652db01c58b21
   languageName: node
   linkType: hard
 

@@ -39,7 +39,6 @@ export {
   type ModelMappings,
   type ModelMappingsWithAssets
 } from './hooks/useSearchMappedEquipmentAssetMappings';
-export { useSlicerUrlParams, useLayersUrlParams } from './hooks/useUrlStateParam';
 export {
   useSearchAssetsMapped360Annotations,
   useAllAssetsMapped360Annotations

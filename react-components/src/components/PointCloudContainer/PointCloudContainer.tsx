@@ -14,7 +14,7 @@ import { Matrix4 } from 'three';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
+import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
 import { cloneDeep, isEqual } from 'lodash';
 
 export type AnnotationIdStylingGroup = {
