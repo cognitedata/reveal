@@ -12,7 +12,7 @@ import {
   modelExists
 } from './useApplyCadModelStyling';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
+import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
 import { cloneDeep, isEqual } from 'lodash';
 
 export type CogniteCadModelProps = {

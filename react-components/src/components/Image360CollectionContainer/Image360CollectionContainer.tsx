@@ -6,7 +6,7 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type AddImageCollection360Options } from '../..';
-import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
+import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
 
 type Image360CollectionContainerProps = {
   siteId: string;

@@ -16,7 +16,7 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { use3DModelName } from '../../hooks/use3DModelName';
 import { isEqual } from 'lodash';
 import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
-import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
+import { useLayersUrlParams } from './hooks/useUrlStateParam';
 import { useTranslation } from '../i18n/I18n';
 
 type LayersButtonProps = {
