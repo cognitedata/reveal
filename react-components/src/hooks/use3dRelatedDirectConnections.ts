@@ -59,14 +59,14 @@ export function use3dRelatedDirectConnections(
         .map((viewList, objectInd) => viewList.map((view) => [objectInd, view] as const))
         .flat();
 
-      const [deduplicatedViews, deduplicatedViewsIndexMap] = createDeduplicatedListAndIndexMap(
+      const [deduplicatedViews, viewToDeduplicatedIndexMap] = createDeduplicatediewToIndexMap(
         relatedObjectViewsWithObjectIndex
       );
 
       const viewProps = await fdmSdk.getViewsByIds(deduplicatedViews);
 
-      const threeDRelatedViews = relatedObjectViewsWithObjectIndex.filter((_, viewIndex) => {
-        const viewResultIndex = deduplicatedViewsIndexMap.get(viewIndex);
+      const threeDRelatedViews = relatedObjectViewsWithObjectIndex.filter(([_, view]) => {
+        const viewResultIndex = viewToDeduplicatedIndexMap.get(createViewKey(view));
         assert(viewResultIndex !== undefined);
         const propsForView = viewProps.items[viewResultIndex];
         return Object.keys(propsForView.properties).some((propName) => propName === 'inModel3d');
@@ -80,26 +80,26 @@ export function use3dRelatedDirectConnections(
   );
 }
 
-function createDeduplicatedListAndIndexMap(
-  viewsWithObjectIndex: Array<readonly [number, Source]>
-): [Source[], Map<number, number>] {
-  const deduplicatedViews: Source[] = [];
-  const deduplicatedViewsIndexMap = new Map<number, number>();
-  viewsWithObjectIndex.forEach(([_index, view], viewIndex) => {
-    const duplicateIndex = deduplicatedViews.findIndex(
-      (potentialDuplicate) =>
-        potentialDuplicate.externalId === view.externalId &&
-        potentialDuplicate.space === view.space &&
-        potentialDuplicate.version === view.version
-    );
+type ViewKey = `${string}/${string}/${string}`;
 
-    if (duplicateIndex >= 0) {
-      deduplicatedViewsIndexMap.set(viewIndex, duplicateIndex);
-    } else {
-      deduplicatedViewsIndexMap.set(viewIndex, deduplicatedViews.length);
+function createViewKey(source: Source): ViewKey {
+  return `${source.externalId}/${source.space}/${source.version}`;
+}
+
+function createDeduplicatediewToIndexMap(
+  viewsWithObjectIndex: Array<readonly [number, Source]>
+): [Source[], Map<ViewKey, number>] {
+  const deduplicatedViews: Source[] = [];
+  const viewToDeduplicatedIndexMap = new Map<ViewKey, number>();
+  viewsWithObjectIndex.forEach(([_index, view]) => {
+    const viewKey = createViewKey(view);
+    const deduplicatedIndex = viewToDeduplicatedIndexMap.get(viewKey);
+
+    if (deduplicatedIndex === undefined) {
+      viewToDeduplicatedIndexMap.set(viewKey, deduplicatedViews.length);
       deduplicatedViews.push(view);
     }
   });
 
-  return [deduplicatedViews, deduplicatedViewsIndexMap];
+  return [deduplicatedViews, viewToDeduplicatedIndexMap];
 }
