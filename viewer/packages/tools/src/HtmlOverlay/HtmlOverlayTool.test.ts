@@ -11,49 +11,21 @@ import {
   HtmlOverlayCreateClusterDelegate
 } from './HtmlOverlayTool';
 
-import { CogniteClient } from '@cognite/sdk';
-import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 import { Cognite3DViewer } from '@reveal/api';
 
 import { jest } from '@jest/globals';
-
-const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
+import { fakeGetBoundingClientRect, mockViewerComponents } from '../../../../test-utilities';
 
 describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;
   let viewer: Cognite3DViewer;
-  let camera: THREE.PerspectiveCamera;
   let renderer: THREE.WebGLRenderer;
 
   beforeEach(() => {
-    const sdk = new CogniteClient({
-      appId: 'cognite.reveal.unittest',
-      project: 'dummy',
-      getToken: async () => 'dummy'
-    });
-    mockClientAuthentication(sdk);
-    const canvas = document.createElement('canvas');
-    fakeGetBoundingClientRect(canvas, 0, 0, 128, 128);
-
-    renderer = new THREE.WebGLRenderer({ context, canvas });
-    renderer.render = jest.fn();
-
-    canvasContainer = document.createElement('div');
-    canvasContainer.style.width = '640px';
-    canvasContainer.style.height = '480px';
-
-    camera = new THREE.PerspectiveCamera();
-    camera.position.set(0, 0, 0);
-    camera.near = 0.1;
-    camera.far = 1.0;
-    camera.lookAt(new THREE.Vector3(0, 0, 1));
-    camera.updateProjectionMatrix();
-    camera.updateMatrix();
-
-    viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
-    jest.spyOn(viewer.cameraManager, 'getCamera').mockReturnValue(camera);
-
-    renderer.setSize(128, 128);
+    const components = mockViewerComponents();
+    viewer = components.viewer;
+    renderer = components.renderer;
+    canvasContainer = components.canvasContainer;
   });
 
   test('add() only accepts absolute position', () => {
@@ -274,18 +246,3 @@ describe(HtmlOverlayTool.name, () => {
     expect(compositeElement.parentElement).toBeNull();
   });
 });
-
-function fakeGetBoundingClientRect(element: HTMLElement, x: number, y: number, width: number, height: number) {
-  const rect: DOMRect = {
-    left: x,
-    right: x + width,
-    top: y,
-    bottom: y + height,
-    width: width,
-    height: height,
-    x,
-    y,
-    toJSON: () => {}
-  };
-  element.getBoundingClientRect = jest.fn(() => rect);
-}

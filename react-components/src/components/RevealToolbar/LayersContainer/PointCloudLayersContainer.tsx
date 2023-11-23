@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useState, type ReactElement } from 'react';
+import { useState, type ReactElement, type MouseEvent } from 'react';
 
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
@@ -66,7 +66,7 @@ export const PointCloudLayersContainer = ({
   const pointCloudModelContent = (): ReactElement => {
     return (
       <StyledSubMenu
-        onClick={(event: MouseEvent) => {
+        onClick={(event: MouseEvent<HTMLElement>) => {
           event.stopPropagation();
         }}>
         {pointCloudLayerData.map((data) => (
@@ -99,8 +99,7 @@ export const PointCloudLayersContainer = ({
           onClickOutside={() => {
             setVisible(false);
           }}
-          content={pointCloudModelContent()}
-          title="Point clouds">
+          content={pointCloudModelContent()}>
           <Flex direction="row" justifyContent="space-between">
             <Checkbox
               checked={someModelVisible}

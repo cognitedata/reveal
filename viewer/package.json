@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "repository": {
@@ -70,7 +70,7 @@
     "html2canvas": "^1.4.1",
     "lodash": "4.17.21",
     "loglevel": "1.8.1",
-    "mixpanel-browser": "2.47.0",
+    "mixpanel-browser": "2.48.1",
     "path-browserify": "1.0.1",
     "random-seed": "0.3.0",
     "rxjs": "7.8.1",
@@ -96,12 +96,12 @@
     "@types/stats": "0.16.30",
     "@types/three": "0.158.2",
     "@types/tween.js": "18.5.1",
-    "@typescript-eslint/eslint-plugin": "6.9.1",
-    "@typescript-eslint/parser": "6.9.1",
+    "@typescript-eslint/eslint-plugin": "6.11.0",
+    "@typescript-eslint/parser": "6.11.0",
     "concurrently": "8.2.2",
     "cross-env": "7.0.3",
     "dat.gui": "0.7.9",
-    "eslint": "8.53.0",
+    "eslint": "8.54.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-header": "3.1.1",
     "eslint-plugin-jsdoc": "46.9.0",
@@ -122,9 +122,9 @@
     "jsdom": "22.1.0",
     "moq.ts": "10.0.8",
     "nock": "13.3.8",
-    "prettier": "3.0.3",
+    "prettier": "3.1.0",
     "process": "0.11.10",
-    "puppeteer": "21.5.1",
+    "puppeteer": "21.5.2",
     "random-seed": "0.3.0",
     "raw-loader": "4.0.2",
     "remove-files-webpack-plugin": "1.5.0",
@@ -133,7 +133,7 @@
     "stats.js": "0.17.0",
     "three": "0.158.0",
     "ts-jest": "29.1.1",
-    "ts-loader": "9.5.0",
+    "ts-loader": "9.5.1",
     "tsc-alias": "1.8.8",
     "typescript": "5.2.2",
     "wasm-pack": "0.12.1",
@@ -156,5 +156,5 @@
   "files": [
     "dist"
   ],
-  "packageManager": "yarn@4.0.1"
+  "packageManager": "yarn@4.0.2"
 }

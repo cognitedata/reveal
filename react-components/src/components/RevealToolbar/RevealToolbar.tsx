@@ -3,7 +3,7 @@
  */
 
 import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
-import { ToolBar, type ToolBarProps } from '@cognite/cogs.js';
+import { Divider, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 import { LayersButton } from './LayersButton';
 import { SlicerButton } from './SlicerButton';
@@ -40,12 +40,12 @@ const DefaultContentWrapper = (props: CustomContent): ReactElement => {
       <LayersButton />
       <FitModelsButton />
 
-      <div className="cogs-toolbar-divider" />
+      <Divider weight="2px" length="75%" />
 
       <SlicerButton storeStateInUrl={props.storeStateInUrl} />
       <MeasurementButton />
 
-      <div className="cogs-toolbar-divider" />
+      <Divider weight="2px" length="75%" />
 
       <SettingsButton
         customSettingsContent={props.customSettingsContent}

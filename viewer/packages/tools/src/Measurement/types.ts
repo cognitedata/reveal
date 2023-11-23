@@ -2,6 +2,13 @@
  * Copyright 2022 Cognite AS
  */
 
+export type Measurement = {
+  readonly measurementId: number;
+  readonly startPoint: THREE.Vector3;
+  readonly endPoint: THREE.Vector3;
+  readonly distanceInMeters: number;
+};
+
 /**
  * Custom callback for users to change measurement label content.
  */
@@ -10,12 +17,7 @@ export type DistanceToLabelDelegate = (distanceInMeters: number) => string;
 /**
  * Delegate for measurement added events.
  */
-export type MeasurementAddedDelegate = (event: {
-  measurementId: number;
-  startPoint: THREE.Vector3;
-  endPoint: THREE.Vector3;
-  distanceInMeters: number;
-}) => void;
+export type MeasurementAddedDelegate = (measurement: Measurement) => void;
 
 /**
  * Delegate for measurement started events.

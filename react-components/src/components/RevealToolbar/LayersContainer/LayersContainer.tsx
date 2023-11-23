@@ -7,10 +7,10 @@ import styled from 'styled-components';
 import { CadModelLayersContainer } from './CadModelLayersContainer';
 import { Image360CollectionLayerContainer } from './Image360LayersContainer';
 import { PointCloudLayersContainer } from './PointCloudLayersContainer';
-import { useState, type ReactElement, useEffect } from 'react';
+import { useState, type ReactElement, useEffect, type MouseEvent } from 'react';
 import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
 import { useReveal } from '../../RevealContainer/RevealContext';
-import { useLayersUrlParams } from '../../../hooks/useUrlStateParam';
+import { useLayersUrlParams } from '../hooks/useUrlStateParam';
 
 const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): ReactElement => {
   const viewer = useReveal();
@@ -58,7 +58,7 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
       {(viewer.models.length > 0 || viewer.get360ImageCollections().length > 0) && (
         <Container>
           <StyledMenu
-            onClick={(event: MouseEvent) => {
+            onClick={(event: MouseEvent<HTMLElement>) => {
               event.stopPropagation();
             }}>
             <CadModelLayersContainer
