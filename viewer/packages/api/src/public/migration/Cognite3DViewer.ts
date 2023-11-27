@@ -81,7 +81,7 @@ import {
 } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
-import { AsyncSequencer, SequencerFunction } from './AsyncSequencer';
+import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
 
 type Cognite3DViewerEvents =
   | 'click'

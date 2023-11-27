@@ -55,7 +55,7 @@ export type SequencerFunction<T> = (region: () => Promise<T> | T) => Promise<T>;
  * the calls to the corresponding `loadData`.
  */
 export class AsyncSequencer {
-  private _lastPromise: Promise<void> = Promise.resolve();
+  private _currentPromise: Promise<void> = Promise.resolve();
 
   /**
    * Returns a `sequencer` function that guarantees that the
@@ -63,17 +63,22 @@ export class AsyncSequencer {
    * function, and before the next one's.
    */
   getNextSequencer<T>(): SequencerFunction<T> {
-    return async (region: () => Promise<T> | T) => {
-      const lastPromise = this._lastPromise;
-      const nextPromise = new Promise<T>(async resolve => {
-        await lastPromise;
+    const lastPromise = this._currentPromise;
+    let resolver: () => void;
 
-        const result = await region();
+    this._currentPromise = new Promise(res => {
+      resolver = res;
+    });
 
-        resolve(result);
-      });
-      this._lastPromise = nextPromise.then();
-      return nextPromise;
+    const func = async (region: () => T | Promise<T>): Promise<T> => {
+      await lastPromise;
+      const result = await region();
+
+      resolver();
+
+      return result;
     };
+
+    return func;
   }
 }
