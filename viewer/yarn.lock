@@ -544,7 +544,7 @@ __metadata:
     "@types/jest": "npm:29.5.10"
     "@types/jest-environment-puppeteer": "npm:5.0.6"
     "@types/jest-image-snapshot": "npm:6.2.3"
-    "@types/jsdom": "npm:21.1.5"
+    "@types/jsdom": "npm:21.1.6"
     "@types/lodash": "npm:4.14.201"
     "@types/mixpanel-browser": "npm:2.47.5"
     "@types/node": "npm:18.18.10"
@@ -1909,14 +1909,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsdom@npm:21.1.5":
-  version: 21.1.5
-  resolution: "@types/jsdom@npm:21.1.5"
+"@types/jsdom@npm:21.1.6":
+  version: 21.1.6
+  resolution: "@types/jsdom@npm:21.1.6"
   dependencies:
     "@types/node": "npm:*"
     "@types/tough-cookie": "npm:*"
     parse5: "npm:^7.0.0"
-  checksum: 90388cae141f912a282078494db2f9feb018ba6f70efbebe9be5477c52b29bf7e49636d0250003f07a42941624044d4e2e1730f22d63c5d4171f3ffa68637dd3
+  checksum: 423fcaf3ec57ca45bcdebb15bd18cbcef1daa472fd00b15af125d0a7783f572d78a610ce23177ace66667548a9d97e306d7185a4930ad7a002e612c3491e6765
   languageName: node
   linkType: hard
 
