@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@types/react": "18.2.37",
-    "@types/styled-components": "5.1.30",
+    "@types/styled-components": "5.1.32",
     "copyfiles": "2.4.1",
     "docusaurus-plugin-typedoc": "0.21.0",
     "replace": "1.2.2",
