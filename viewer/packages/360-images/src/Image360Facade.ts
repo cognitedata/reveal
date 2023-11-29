@@ -12,11 +12,14 @@ import { DefaultImage360Collection } from './collection/DefaultImage360Collectio
 import { IconCullingScheme } from './icons/IconCollection';
 import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
 import { Image360AnnotationFilterOptions } from './annotation/types';
+import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
 
 export class Image360Facade<T> {
   private readonly _image360Collections: DefaultImage360Collection[];
   private readonly _rayCaster: THREE.Raycaster;
   private readonly _image360Cache: Image360LoadingCache;
+
+  private readonly _loadSequencer = new AsyncSequencer();
 
   get collections(): DefaultImage360Collection[] {
     return this._image360Collections;
@@ -54,13 +57,16 @@ export class Image360Facade<T> {
     postTransform = new THREE.Matrix4(),
     preComputedRotation = true
   ): Promise<DefaultImage360Collection> {
+    const sequencer = this._loadSequencer.getNextSequencer();
+
     const image360Collection = await this._entityFactory.create(
       dataProviderFilter,
       postTransform,
       preComputedRotation,
       annotationFilter
     );
-    this._image360Collections.push(image360Collection);
+
+    await sequencer(() => this._image360Collections.push(image360Collection));
     return image360Collection;
   }
 

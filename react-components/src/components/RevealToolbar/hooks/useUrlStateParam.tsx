@@ -8,7 +8,7 @@ import {
   type CadLayersUrlStateParam,
   type PointCloudLayersUrlStateParam,
   type Image360LayersUrlStateParam
-} from './types';
+} from '../../../hooks/types';
 
 type SearchParamsHookResult = {
   url: URL;
