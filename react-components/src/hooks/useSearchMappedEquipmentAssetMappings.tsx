@@ -73,7 +73,12 @@ export const useAllMappedEquipmentAssetMappings = (
   const sdk = useSDK(userSdk);
 
   return useInfiniteQuery(
-    ['reveal', 'react-components', 'all-mapped-equipment-asset-mappings', models],
+    [
+      'reveal',
+      'react-components',
+      'all-mapped-equipment-asset-mappings',
+      ...models.map((model) => [model.modelId, model.revisionId])
+    ],
     async ({ pageParam = models.map((model) => ({ cursor: 'start', model })) }) => {
       const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
         const nextCursors = pageParam as Array<{
@@ -107,11 +112,25 @@ export const useAllMappedEquipmentAssetMappings = (
     },
     {
       staleTime: Infinity,
-      getNextPageParam: (lastPage) =>
-        lastPage.map(({ mappings, model }) => ({ cursor: mappings.nextCursor, model }))
+      getNextPageParam
     }
   );
 };
+
+function getNextPageParam(
+  lastPage: Array<{
+    mappings: ListResponse<AssetMapping3D>;
+    model: AddModelOptions;
+  }>
+): Array<{ cursor: string | undefined; model: AddModelOptions }> | undefined {
+  const nextCursors = lastPage
+    .map(({ mappings, model }) => ({ cursor: mappings.nextCursor, model }))
+    .filter((mappingModel) => mappingModel.cursor !== undefined);
+  if (nextCursors.length === 0) {
+    return undefined;
+  }
+  return nextCursors;
+}
 
 async function getAssetMappingsByModels(
   sdk: CogniteClient,
@@ -155,7 +174,7 @@ async function getAssetsFromAssetMappings(
       return { model, assets: [], mappings };
     }
 
-    const assets = await sdk.assets.retrieve(assetIds);
+    const assets = await sdk.assets.retrieve(assetIds, { ignoreUnknownIds: true });
 
     return { model, assets, mappings };
   });
