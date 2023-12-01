@@ -118,7 +118,7 @@ export const useAllMappedEquipmentAssetMappings = (
 };
 
 function getNextPageParam(
-  lastPage: Array<ModelMappingsWithAssets>
+  lastPage: ModelMappingsWithAssets[]
 ): Array<{ cursor: string | undefined; model: AddModelOptions }> | undefined {
   const nextCursors = lastPage
     .map(({ mappings, model }) => ({ cursor: mappings.nextCursor, model }))
