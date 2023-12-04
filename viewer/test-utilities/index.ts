@@ -21,3 +21,4 @@ export { yieldProcessing } from './src/wait';
 export { createRandomBox } from './src/createBoxes';
 
 export { Mutable } from './src/reflection';
+export { mockViewer, mockViewerComponents, fakeGetBoundingClientRect } from './src/viewerMock';

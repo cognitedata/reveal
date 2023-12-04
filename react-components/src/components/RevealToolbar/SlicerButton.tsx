@@ -11,7 +11,7 @@ import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@co
 
 import styled from 'styled-components';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { useSlicerUrlParams } from '../../hooks/useUrlStateParam';
+import { useSlicerUrlParams } from './hooks/useUrlStateParam';
 import { useTranslation } from '../i18n/I18n';
 
 type SliceState = {

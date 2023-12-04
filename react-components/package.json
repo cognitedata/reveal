@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.22.1",
+  "version": "0.24.0",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -30,7 +30,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
-    "@cognite/reveal": "^4.6.0",
+    "@cognite/reveal": "^4.7.0",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
@@ -44,7 +44,7 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.5.0",
     "@cognite/cogs.js": "^9.17.0",
-    "@cognite/reveal": "4.6.0",
+    "@cognite/reveal": "4.7.1",
     "@cognite/sdk": "^8.2.0",
     "@playwright/test": "^1.39.0",
     "@storybook/addon-essentials": "7.5.3",
@@ -59,9 +59,9 @@
     "@testing-library/react": "^14.0.0",
     "@types/lodash": "^4.14.190",
     "@types/node": "^20.8.7",
-    "@types/react": "18.2.7",
-    "@types/react-dom": "^18.2.7",
-    "@types/styled-components": "5.1.30",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@types/react-resizable": "^3",
     "@types/three": "0.158.2",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@vitejs/plugin-react": "^4.0.4",
@@ -82,19 +82,21 @@
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-draggable": "^4.4.6",
+    "react-resizable": "^3.0.5",
     "react-router-dom": "^6.15.0",
     "storybook": "7.5.3",
     "style-loader": "^3.3.3",
-    "styled-components": "5.3.11",
+    "styled-components": "^6.1.1",
     "three": "0.158.0",
-    "ts-loader": "9.5.0",
-    "typescript": "5.2.2",
+    "ts-loader": "9.5.1",
+    "typescript": "5.3.2",
     "vite": "^4.4.9",
     "vite-plugin-dts": "^3.5.3",
     "vite-plugin-externalize-deps": "^0.7.0",
     "vitest": "^0.34.6"
   },
-  "packageManager": "yarn@4.0.1",
+  "packageManager": "yarn@4.0.2",
   "files": [
     "dist"
   ]

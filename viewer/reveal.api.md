@@ -1012,18 +1012,13 @@ export { Keyframe_2 as Keyframe }
 // @public (undocumented)
 export type Measurement = {
     readonly measurementId: number;
-    readonly startPoint: THREE_2.Vector3;
-    readonly endPoint: THREE_2.Vector3;
+    readonly startPoint: THREE.Vector3;
+    readonly endPoint: THREE.Vector3;
     readonly distanceInMeters: number;
 };
 
 // @public
-export type MeasurementAddedDelegate = (event: {
-    measurementId: number;
-    startPoint: THREE.Vector3;
-    endPoint: THREE.Vector3;
-    distanceInMeters: number;
-}) => void;
+export type MeasurementAddedDelegate = (measurement: Measurement) => void;
 
 // @public
 export type MeasurementEndedDelegate = () => void;
@@ -1041,6 +1036,7 @@ export type MeasurementStartedDelegate = () => void;
 // @public
 export class MeasurementTool extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, options?: MeasurementOptions);
+    addMeasurement(startPoint: THREE_2.Vector3, endPoint: THREE_2.Vector3): Measurement;
     dispose(): void;
     enterMeasurementMode(): void;
     exitMeasurementMode(): void;

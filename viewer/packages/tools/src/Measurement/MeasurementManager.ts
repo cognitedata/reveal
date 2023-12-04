@@ -6,14 +6,7 @@ import * as THREE from 'three';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';
 import { MeasurementLine } from './MeasurementLine';
-import { MeasurementOptions } from './types';
-
-export type Measurement = {
-  readonly measurementId: number;
-  readonly startPoint: THREE.Vector3;
-  readonly endPoint: THREE.Vector3;
-  readonly distanceInMeters: number;
-};
+import { Measurement, MeasurementOptions } from './types';
 
 export class MeasurementManager {
   private readonly _measurementLabel: MeasurementLabels;
