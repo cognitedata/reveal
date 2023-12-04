@@ -338,7 +338,7 @@ export class ClusteredAreaCollection implements AreaCollection {
 // @public (undocumented)
 export class Cognite3DViewer {
     constructor(options: Cognite3DViewerOptions);
-    add360ImageSet(datasource: 'datamodels', dataModelIdentifier: UniqueIdentifier): Promise<Image360Collection>;
+    add360ImageSet(datasource: 'datamodels', dataModelIdentifier: Image360DataModelIdentifier): Promise<Image360Collection>;
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
@@ -887,6 +887,12 @@ export interface Image360Collection {
     setIconsVisibility(visible: boolean): void;
     targetRevisionDate: Date | undefined;
 }
+
+// @public
+export type Image360DataModelIdentifier = {
+    space: string;
+    image360CollectionExternalId: string;
+};
 
 // @public
 export type Image360EnteredDelegate = (image360: Image360, revision: Image360Revision) => void;
@@ -1553,12 +1559,6 @@ export class UnionNodeCollection extends CombineNodeCollectionBase {
     // (undocumented)
     serialize(): SerializedNodeCollection;
 }
-
-// @public (undocumented)
-export type UniqueIdentifier = {
-    space: string;
-    image360CollectionExternalId: string;
-};
 
 // @public (undocumented)
 export type ViewerState = {
