@@ -73,16 +73,14 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
         (imageWithFileInfo): imageWithFileInfo is [ImageInstanceResult, FileInfo[]] =>
           imageWithFileInfo[0] !== undefined && imageWithFileInfo[1] !== undefined
       )
-      .map(([image, fileDescriptors]: [ImageInstanceResult, FileInfo[]]) => {
-        return { image, fileDescriptors } as { image: ImageInstanceResult; fileDescriptors: FileInfo[] };
-      });
+      .map(([image, fileDescriptors]) => ({ image, fileDescriptors }));
 
     const [imagesWithoutStation, imagesWithStation] = partition(imagesGroupedWithFileDescriptors, image => {
       return image.image.properties.cdf_360_image_schema['Image360/v1'].station === undefined;
     });
 
-    const groups = groupBy(imagesWithStation, asd => {
-      const station = asd.image.properties.cdf_360_image_schema['Image360/v1'].station as InstanceIdentifier;
+    const groups = groupBy(imagesWithStation, imageResult => {
+      const station = imageResult.image.properties.cdf_360_image_schema['Image360/v1'].station as InstanceIdentifier;
       return `${station.externalId}-${station.space}`;
     });
 
@@ -123,7 +121,8 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
       result.images.push(...images);
       result.stations.push(...stations);
 
-      hasNext = images.length === imageLimit;
+      hasNext =
+        images.length === imageLimit && currentCursor?.images !== undefined && currentCursor?.stations !== undefined;
       nextCursor = {
         images: currentCursor?.images,
         stations: currentCursor?.stations
