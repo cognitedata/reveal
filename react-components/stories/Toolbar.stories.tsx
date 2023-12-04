@@ -107,6 +107,7 @@ export const Main: Story = {
         <RevealToolbar.FitModelsButton />
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
         <RevealToolbar.SlicerButton />
+        <RevealToolbar.ResetCameraButton />
       </MyCustomToolbar>
     </RevealStoryContainer>
   )
