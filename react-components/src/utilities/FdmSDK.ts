@@ -46,6 +46,7 @@ export type NodeResultSetExpression = {
     from?: string;
     through?: ViewPropertyReference;
     chainTo?: EdgeDirection;
+    direction?: 'outwards' | 'inwards';
   };
 };
 

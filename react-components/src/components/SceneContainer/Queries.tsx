@@ -56,7 +56,8 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
               version: 'v4'
             },
             identifier: 'skybox'
-          }
+          },
+          direction: 'outwards'
         }
       },
       groundPlaneEdges: {

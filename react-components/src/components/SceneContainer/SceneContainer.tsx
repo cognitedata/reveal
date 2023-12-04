@@ -85,9 +85,10 @@ export function SceneContainer({
         const skyboxKey = Object.keys(skyboxProps)[0]; // Get the first key
         const skyboxTypeKey = Object.keys(skyboxProps[skyboxKey])[0];
         skyboxProperties = skyboxProps[skyboxKey][skyboxTypeKey];
-        console.log(skyboxProperties);
 
-        const skyboxUrl = skyboxProperties.url;
+        const skyboxExternalId = skyboxProperties.file;
+        const skyBoxUrls = await sdk.files.getDownloadUrls([{ externalId: skyboxExternalId }]);
+        const skyboxUrl = skyBoxUrls[0].downloadUrl;
 
         const skyboxMesh = new THREE.Mesh(
           new THREE.SphereGeometry(300000, 0, 0),

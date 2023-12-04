@@ -79,8 +79,9 @@ export type SceneConfigurationProperties = {
 };
 
 export type SkyboxProperties = {
-  type: string;
-  url: string;
+  label: string;
+  isSpherical: boolean;
+  file: string;
 };
 
 export type GroundPlaneResponse = NodeResponse & {
