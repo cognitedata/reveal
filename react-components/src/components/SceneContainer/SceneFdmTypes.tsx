@@ -31,6 +31,7 @@ export type SceneResponse = {
     scene: SceneConfigurationResponse[];
     skybox: SkyboxResponse[];
     groundPlanes: GroundPlaneResponse[];
+    sceneModels: SceneModelsResponse[];
   };
   nextCursor: {
     scene: string;
@@ -48,6 +49,23 @@ export type SceneConfigurationResponse = NodeResponse & {
 
 export type SkyboxResponse = NodeResponse & {
   properties: Record<string, Record<string, SkyboxProperties>>;
+};
+
+export type SceneModelsResponse = EdgeResponse & {
+  properties: Record<string, Record<string, Cdf3dRevisionProperties>>;
+};
+
+export type SceneModelsProperties = {
+  revisionId: number;
+  translationX: number;
+  translationY: number;
+  translationZ: number;
+  eulerRotationX: number;
+  eulerRotationY: number;
+  eulerRotationZ: number;
+  scaleX: number;
+  scaleY: number;
+  scaleZ: number;
 };
 
 export type SceneConfigurationProperties = {
@@ -76,10 +94,10 @@ export type GroundPlaneProperties = {
 };
 
 export type Cdf3dRevisionProperties = {
+  revisionId: number;
   scaleX: number;
   scaleY: number;
   scaleZ: number;
-  revisionId: number;
   translationX: number;
   translationY: number;
   translationZ: number;

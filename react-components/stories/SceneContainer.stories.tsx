@@ -6,6 +6,7 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { SceneContainer } from '../src/components/SceneContainer/SceneContainer';
 import { Color } from 'three';
 import { type ReactElement } from 'react';
+import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/SceneContainer',
@@ -16,10 +17,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const sdk = createSdkByUrlToken();
+
 export const Main: Story = {
   args: {
     sceneExternalId: '<scene_external_id>',
-    sceneSpaceId: '<scene_space_id>'
+    sceneSpaceId: '<scene_space_id>',
+    sdk: sdk
   },
   render: ({ sceneExternalId, sceneSpaceId }) => {
     return (
@@ -30,7 +34,7 @@ export const Main: Story = {
   }
 };
 
-type CadModelContainerStoryContentProps = {
+type SceneContainerStoryContentProps = {
   sceneExternalId: string;
   sceneSpaceId: string;
 };
@@ -38,10 +42,10 @@ type CadModelContainerStoryContentProps = {
 const SceneContainerStoryContent = ({
   sceneExternalId,
   sceneSpaceId
-}: CadModelContainerStoryContentProps): ReactElement => {
+}: SceneContainerStoryContentProps): ReactElement => {
   return (
     <>
-      <SceneContainer sceneExternalId="" sceneSpaceId="" />
+      <SceneContainer sceneExternalId="" sceneSpaceId="" sdk={sdk} />
     </>
   );
 };

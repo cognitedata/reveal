@@ -1,12 +1,11 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type ReactElement, useEffect, useRef } from 'react';
-import { type CogniteModel, type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
+import { type ReactElement, useEffect, useRef, useState } from 'react';
+import { type CogniteModel, type AddModelOptions } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Matrix4 } from 'three';
 import * as THREE from 'three';
-import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { type Query } from '../../utilities/FdmSDK';
 import { useFdmSdk } from '../RevealContainer/SDKProvider';
 import { createGetSceneQuery } from './Queries';
@@ -15,25 +14,33 @@ import {
   type SceneResponse,
   type SkyboxProperties
 } from './SceneFdmTypes';
+import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
+import { PointCloudContainer } from '../..';
+import type CogniteClient from '@cognite/sdk/dist/src/cogniteClient';
 
 export type CogniteSceneProps = {
   sceneExternalId: string;
   sceneSpaceId: string;
+  sdk: CogniteClient;
 };
 
-export function SceneContainer({ sceneExternalId, sceneSpaceId }: CogniteSceneProps): ReactElement {
+type AddModelOptionsAndTransform = {
+  addModelOptions: AddModelOptions;
+  transform?: Matrix4;
+};
+
+export function SceneContainer({
+  sceneExternalId,
+  sceneSpaceId,
+  sdk
+}: CogniteSceneProps): ReactElement {
   const viewer = useReveal();
   const fdmSdk = useFdmSdk();
-  const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const skyboxRef = useRef<THREE.Object3D<THREE.Object3DEventMap>>();
   const groundPlaneRef = useRef<THREE.Object3D<THREE.Object3DEventMap>>();
-  const cadModelsRef = useRef<CogniteModel[]>([]);
-
-  useEffect(() => {
-    return () => {
-      void (async () => {})();
-    };
-  }, [skyboxRef, groundPlaneRef]);
+  const cadModelIds = useRef<AddModelOptionsAndTransform[]>([]);
+  const pointCloudIds = useRef<AddModelOptionsAndTransform[]>([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     const loadScene = async (query: Query): Promise<void> => {
@@ -69,7 +76,7 @@ export function SceneContainer({ sceneExternalId, sceneSpaceId }: CogniteScenePr
         console.log(groundPlaneProperties);
       });
 
-      // Unpack skybox
+      // Skybox
       const hasSkybox = scene.items.skybox.length > 0;
       let skyboxProperties: SkyboxProperties;
       if (hasSkybox) {
@@ -79,19 +86,19 @@ export function SceneContainer({ sceneExternalId, sceneSpaceId }: CogniteScenePr
         const skyboxTypeKey = Object.keys(skyboxProps[skyboxKey])[0];
         skyboxProperties = skyboxProps[skyboxKey][skyboxTypeKey];
         console.log(skyboxProperties);
-      }
 
-      // Skybox
-      const skyboxUrl = '';
-      const skyboxMesh = new THREE.Mesh(
-        new THREE.SphereGeometry(300000, 0, 0),
-        new THREE.MeshBasicMaterial({
-          side: THREE.BackSide,
-          map: new THREE.TextureLoader().load(skyboxUrl)
-        })
-      );
-      viewer.addObject3D(skyboxMesh);
-      skyboxRef.current = skyboxMesh;
+        const skyboxUrl = skyboxProperties.url;
+
+        const skyboxMesh = new THREE.Mesh(
+          new THREE.SphereGeometry(300000, 0, 0),
+          new THREE.MeshBasicMaterial({
+            side: THREE.BackSide,
+            map: new THREE.TextureLoader().load(skyboxUrl)
+          })
+        );
+        viewer.addObject3D(skyboxMesh);
+        skyboxRef.current = skyboxMesh;
+      }
 
       // Camera translation and rotation
       {
@@ -136,28 +143,76 @@ export function SceneContainer({ sceneExternalId, sceneSpaceId }: CogniteScenePr
         });
       }
 
-      const modelOptions: AddModelOptions[] = [];
-      const transform: Matrix4 = new Matrix4();
-      const modelId = 0;
-      const revisionId = 0;
-      modelOptions.push({ modelId, revisionId });
-      modelOptions.forEach((model) => {
-        addModels(model, transform)
-          .then((model) => {
-            setRevealResourcesCount(viewer.models.length);
+      const hasSceneModels = scene.items.sceneModels.length > 0;
+      console.log(hasSceneModels);
+      if (hasSceneModels) {
+        const sceneModels = scene.items.sceneModels;
+        void Promise.all(
+          sceneModels.map(async (sceneModel) => {
+            const sceneModelProps = sceneModel.properties;
+            const sceneModelKey = Object.keys(sceneModelProps)[0]; // Get the first key
+            const sceneModelTypeKey = Object.keys(sceneModelProps[sceneModelKey])[0];
+            const sceneModelProperties = sceneModelProps[sceneModelKey][sceneModelTypeKey];
+            console.log(sceneModelProperties);
+
+            const modelId: number = Number(sceneModel.endNode.externalId);
+            const revisionId: number = sceneModelProperties.revisionId;
+
+            if (isNaN(modelId)) {
+              throw new Error('Model id is not a number');
+            }
+            const addModelOptions: AddModelOptions = {
+              modelId,
+              revisionId
+            };
+
+            const transform = new Matrix4();
+            transform.set(
+              sceneModelProperties.scaleX,
+              0,
+              0,
+              sceneModelProperties.translationX,
+              0,
+              sceneModelProperties.scaleY,
+              0,
+              sceneModelProperties.translationY,
+              0,
+              0,
+              sceneModelProperties.scaleZ,
+              sceneModelProperties.translationZ,
+              0,
+              0,
+              0,
+              1
+            );
+
+            const modelType = await viewer.determineModelType(modelId, revisionId);
+            let model: CogniteModel;
+            switch (modelType) {
+              case 'cad':
+                model = await viewer.addCadModel(addModelOptions);
+                break;
+              case 'pointcloud':
+                model = await viewer.addPointCloudModel(addModelOptions);
+                break;
+              default:
+                throw new Error('Model is not supported');
+            }
             viewer.fitCameraToModel(model);
+            console.log('Fitting camera to model');
           })
-          .catch((error) => {
-            console.log(error);
-          });
-      });
+        );
+      }
+
+      setLoaded(true);
     };
 
-    const getSceneQuery = createGetSceneQuery('sceneconfig_batch_0', 'scene_space');
+    // Don't load when in initial state
+    console.log('SceneContainer');
+    // if (sceneExternalId !== '' && sceneSpaceId !== '') {
+    const getSceneQuery = createGetSceneQuery('my_scene_external_id', 'scene_space');
     void loadScene(getSceneQuery).then(async () => {
       console.log('loaded');
-      // await new Promise((resolve) => setTimeout(resolve, 5000));
-      // await cleanupScene();
     });
   }, [sceneExternalId, sceneSpaceId]);
 
@@ -172,39 +227,32 @@ export function SceneContainer({ sceneExternalId, sceneSpaceId }: CogniteScenePr
       viewer.removeObject3D(groundPlaneRef.current);
     }
     groundPlaneRef.current = undefined;
-
-    cadModelsRef.current.forEach((model) => {
-      viewer.removeModel(model);
-    });
   }
 
-  async function addModels(
-    addModelOptions: AddModelOptions,
-    transform?: Matrix4
-  ): Promise<CogniteCadModel> {
-    const cadModel = await getOrAddModel();
-    cadModelsRef.current.push(cadModel);
-
-    if (transform !== undefined) {
-      cadModel.setModelTransformation(transform);
-    }
-
-    console.log(cadModel.getModelTransformation());
-    return cadModel;
-
-    async function getOrAddModel(): Promise<CogniteCadModel> {
-      const viewerModel = viewer.models.find(
-        (model) =>
-          model.modelId === addModelOptions.modelId &&
-          model.revisionId === addModelOptions.revisionId &&
-          model.getModelTransformation().equals(transform ?? new Matrix4())
-      );
-      if (viewerModel !== undefined) {
-        return await Promise.resolve(viewerModel as CogniteCadModel);
-      }
-      return await viewer.addCadModel(addModelOptions);
-    }
-  }
-
-  return <></>;
+  return (
+    <>
+      {loaded &&
+        cadModelIds.current.map((options, index) => (
+          <CadModelContainer
+            key={index} // replace 'id' with the actual id property
+            addModelOptions={options.addModelOptions}
+            transform={options.transform}
+            styling={undefined}
+            onLoad={undefined}
+            onLoadError={undefined}
+          />
+        ))}
+      {loaded &&
+        pointCloudIds.current.map((options, index) => (
+          <PointCloudContainer
+            key={index} // replace 'id' with the actual id property
+            addModelOptions={options.addModelOptions}
+            transform={options.transform}
+            styling={undefined}
+            onLoad={undefined}
+            onLoadError={undefined}
+          />
+        ))}
+    </>
+  );
 }
