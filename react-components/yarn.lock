@@ -1764,7 +1764,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.5.0"
     "@cognite/cogs.js": "npm:^9.17.0"
-    "@cognite/reveal": "npm:4.7.0"
+    "@cognite/reveal": "npm:4.7.1"
     "@cognite/sdk": "npm:^8.2.0"
     "@playwright/test": "npm:^1.39.0"
     "@storybook/addon-essentials": "npm:7.5.3"
@@ -1827,9 +1827,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@cognite/reveal@npm:4.7.0"
+"@cognite/reveal@npm:4.7.1":
+  version: 4.7.1
+  resolution: "@cognite/reveal@npm:4.7.1"
   dependencies:
     "@tweenjs/tween.js": "npm:19.0.0"
     assert: "npm:2.1.0"
@@ -1848,7 +1848,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.158.0
-  checksum: 43c191e642c87cbd8700c6fd5a1003614579a0cae5500a481b8802a43ed6f068dc67adc84da0ad21cd2e5f2dd3aeeb371d4328060f6ad75140f31967bbd5f2c4
+  checksum: 14811412135363be1e5400e8f4fd5a2ad806fe4251d3968caafc99b6341343229783e814a3eef81c2d66f39a9f92a5e405c8ef26cd3100e275c23600299d7ec9
   languageName: node
   linkType: hard
 
@@ -5470,20 +5470,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^20.8.7":
-  version: 20.10.0
-  resolution: "@types/node@npm:20.10.0"
+  version: 20.10.3
+  resolution: "@types/node@npm:20.10.3"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: c7d5ddbdbf3491e2363135c9611eb6bfae90eda2957279237fa232bcb29cd0df1cc3ee149d6de9915b754262a531ee2d57d33c9ecd58d763e8ad4856113822f3
+  checksum: 7cb506abb0d570bb5133bd06a47115109a813b507323c985c3b4aef2993eed79b6bb62b82194cb5c558b4d349de3d199ee2e8c693b913065a1cd7f526cc65a68
   languageName: node
   linkType: hard
 
 "@types/node@npm:^18.0.0":
-  version: 18.18.13
-  resolution: "@types/node@npm:18.18.13"
+  version: 18.19.2
+  resolution: "@types/node@npm:18.19.2"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 5dcab799e39570a858741a13373a584529d0e6b81120c8a2118e158749d9ace291748644d760af554fe73ab3cebdd91500314bf1ecd17a746fabcae06ebf9eea
+  checksum: 122958ac4be81ea2b53da53de29441f8d98d572cc5c704c6bba788343281a47185a405cf0c650a702b7549e09584a7a39a51f27658088a8d8192163bcac079a0
   languageName: node
   linkType: hard
 
