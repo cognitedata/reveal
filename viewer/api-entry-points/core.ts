@@ -63,7 +63,11 @@ export {
   CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 
-export { PointCloudObjectMetadata, ImageAssetLinkAnnotationInfo, UniqueIdentifier } from '../packages/data-providers';
+export {
+  PointCloudObjectMetadata,
+  ImageAssetLinkAnnotationInfo,
+  Image360DataModelIdentifier
+} from '../packages/data-providers';
 
 export { CogniteCadModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from '../packages/cad-model';
 

@@ -8,7 +8,7 @@ export { Cdf360ImageProvider } from './src/image-360-data-providers/Cdf360ImageP
 export { Cdf360EventDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/events/Cdf360EventDescriptorProvider';
 export {
   Cdf360DataModelsDescriptorProvider,
-  UniqueIdentifier
+  Image360DataModelIdentifier
 } from './src/image-360-data-providers/descriptor-providers/datamodels/Cdf360DataModelsDescriptorProvider';
 export { Cdf360CombinedDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/Cdf360CombinedDescriptorProvider';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';

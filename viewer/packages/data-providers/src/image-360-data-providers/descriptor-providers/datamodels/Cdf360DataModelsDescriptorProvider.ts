@@ -20,7 +20,10 @@ import zip from 'lodash/zip';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 
-export type UniqueIdentifier = {
+/**
+ * An identifier uniquely determining an instance of a Cognite Data Model
+ */
+export type Image360DataModelIdentifier = {
   space: string;
   image360CollectionExternalId: string;
 };
@@ -37,7 +40,7 @@ type ExhaustedQueryResult = {
   stations: QueryResult['stations'];
 };
 
-export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorProvider<UniqueIdentifier> {
+export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorProvider<Image360DataModelIdentifier> {
   private readonly _dmsSdk: DataModelsSdk;
   private readonly _cogniteSdk: CogniteClient;
 
@@ -47,7 +50,7 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
   }
 
   public async get360ImageDescriptors(
-    collectionIdentifier: UniqueIdentifier,
+    collectionIdentifier: Image360DataModelIdentifier,
     _: boolean
   ): Promise<Historical360ImageSet[]> {
     const { image_collection, images } = await this.queryCollection(collectionIdentifier);
@@ -93,7 +96,7 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
   private async queryCollection({
     image360CollectionExternalId,
     space
-  }: UniqueIdentifier): Promise<ExhaustedQueryResult> {
+  }: Image360DataModelIdentifier): Promise<ExhaustedQueryResult> {
     const result: ExhaustedQueryResult = {
       image_collection: [],
       images: [],

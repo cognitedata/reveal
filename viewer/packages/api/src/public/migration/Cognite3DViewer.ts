@@ -60,7 +60,7 @@ import {
   ProxyCameraManager,
   CameraStopDelegate
 } from '@reveal/camera-manager';
-import { CdfModelIdentifier, File3dFormat, UniqueIdentifier } from '@reveal/data-providers';
+import { CdfModelIdentifier, File3dFormat, Image360DataModelIdentifier } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
 
@@ -781,7 +781,10 @@ export class Cognite3DViewer {
    * @param datasource The data data source which holds the references to the 360 image sets.
    * @param dataModelIdentifier The search parameters to apply when querying Cognite Datamodels that contains the 360 images.
    */
-  async add360ImageSet(datasource: 'datamodels', dataModelIdentifier: UniqueIdentifier): Promise<Image360Collection>;
+  async add360ImageSet(
+    datasource: 'datamodels',
+    dataModelIdentifier: Image360DataModelIdentifier
+  ): Promise<Image360Collection>;
   /**
    * Adds a set of 360 images to the scene from the /events API in Cognite Data Fusion.
    * @param datasource The CDF data source which holds the references to the 360 image sets.
@@ -802,7 +805,7 @@ export class Cognite3DViewer {
   /* eslint-disable jsdoc/require-jsdoc */
   async add360ImageSet(
     datasource: 'events' | 'datamodels',
-    sourceParameters: { [key: string]: string } | UniqueIdentifier,
+    sourceParameters: { [key: string]: string } | Image360DataModelIdentifier,
     add360ImageOptions?: AddImage360Options
   ): Promise<Image360Collection> {
     if (datasource !== 'events' && datasource !== 'datamodels') {

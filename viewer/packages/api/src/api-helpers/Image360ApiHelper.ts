@@ -22,7 +22,7 @@ import {
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
   Cdf360ImageProvider,
-  UniqueIdentifier
+  Image360DataModelIdentifier
 } from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
@@ -38,7 +38,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 
 export class Image360ApiHelper {
-  private readonly _image360Facade: Image360Facade<Metadata | UniqueIdentifier>;
+  private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
   private readonly _raycaster = new THREE.Raycaster();
@@ -148,7 +148,7 @@ export class Image360ApiHelper {
   }
 
   public async add360ImageSet(
-    collectionIdentifier: Metadata | UniqueIdentifier,
+    collectionIdentifier: Metadata | Image360DataModelIdentifier,
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean,
     annotationOptions?: Image360AnnotationFilterOptions
@@ -165,7 +165,7 @@ export class Image360ApiHelper {
     this._needsRedraw = true;
     return imageCollection;
 
-    function validateIds(image360Facade: Image360Facade<Metadata | UniqueIdentifier>) {
+    function validateIds(image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>) {
       if (!Cdf360CombinedDescriptorProvider.isFdmIdentifier(collectionIdentifier)) {
         const id: string | undefined = collectionIdentifier.site_id;
         if (id === undefined) {

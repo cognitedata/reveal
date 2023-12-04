@@ -13,7 +13,8 @@ import {
   CogniteInternalId,
   AnnotationsCogniteAnnotationTypesImagesAssetLink,
   AnnotationData,
-  AnnotationFilterProps
+  AnnotationFilterProps,
+  AnnotationsAssetRef
 } from '@cognite/sdk';
 import {
   Historical360ImageSet,
@@ -50,11 +51,8 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
   }
 
   public async getFilesByAssetRef(assetRef: IdEither): Promise<CogniteInternalId[]> {
-    // TODO: Use SDK properly when support for 'reverselookup' arrives (Håkon, May 11th 2023)
-    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/annotations/reverselookup`;
-
-    const filterObject: object = {
-      data: {
+    const response = await this._client.annotations
+      .reverseLookup({
         limit: 1000,
         filter: {
           annotatedResourceType: 'file',
@@ -63,11 +61,10 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
             assetRef
           }
         }
-      }
-    };
-    const response = await this._client.post(url, filterObject);
+      })
+      .autoPagingToArray();
 
-    return response.data.items.map((a: { id: number }) => a.id);
+    return response.map((a: AnnotationsAssetRef) => a.id).filter((id): id is number => id !== undefined);
   }
 
   public async get360ImageFiles(
