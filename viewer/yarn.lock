@@ -586,7 +586,7 @@ __metadata:
     loglevel: "npm:1.8.1"
     mixpanel-browser: "npm:2.48.1"
     moq.ts: "npm:10.0.8"
-    nock: "npm:13.3.8"
+    nock: "npm:13.4.0"
     path-browserify: "npm:1.0.1"
     prettier: "npm:3.1.0"
     process: "npm:0.11.10"
@@ -8192,14 +8192,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:13.3.8":
-  version: 13.3.8
-  resolution: "nock@npm:13.3.8"
+"nock@npm:13.4.0":
+  version: 13.4.0
+  resolution: "nock@npm:13.4.0"
   dependencies:
     debug: "npm:^4.1.0"
     json-stringify-safe: "npm:^5.0.1"
     propagate: "npm:^2.0.0"
-  checksum: a501ac3d2f464f199372a1316f3959e7daec3ff589580d474f2b62e01a79de2cedf0b7c30e1471de93cadba1a3effd1e53cc2eda48edbf1a7ad3278895db0407
+  checksum: 269c4d4e2ae250e0af361548ab0ba11a18831cfb3edfd8c6f6b1e4b02c7ffc3b1c8ac04ac33edfd3e114110f4836ab8bb8df398da893cd18fef47d9c256acf7f
   languageName: node
   linkType: hard
 
