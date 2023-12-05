@@ -7451,14 +7451,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"content-type@npm:1.0.4":
-  version: 1.0.4
-  resolution: "content-type@npm:1.0.4"
-  checksum: 5ea85c5293475c0cdf2f84e2c71f0519ced565840fb8cbda35997cb67cc45b879d5b9dbd37760c4041ca7415a3687f8a5f2f87b556b2aaefa49c0f3436a346d4
-  languageName: node
-  linkType: hard
-
-"content-type@npm:~1.0.4":
+"content-type@npm:1.0.5, content-type@npm:~1.0.4":
   version: 1.0.5
   resolution: "content-type@npm:1.0.5"
   checksum: 585847d98dc7fb8035c02ae2cb76c7a9bd7b25f84c447e5ed55c45c2175e83617c8813871b4ee22f368126af6b2b167df655829007b21aa10302873ea9c62662
@@ -9591,14 +9584,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gettext-converter@npm:1.2.3":
-  version: 1.2.3
-  resolution: "gettext-converter@npm:1.2.3"
+"gettext-converter@npm:1.2.4":
+  version: 1.2.4
+  resolution: "gettext-converter@npm:1.2.4"
   dependencies:
     arrify: "npm:^2.0.1"
-    content-type: "npm:1.0.4"
+    content-type: "npm:1.0.5"
     encoding: "npm:0.1.13"
-  checksum: efd23050404045e60c58a158f742406988322cff4c60cef5e90c1a61f4c67eae5fbc35b59756ae066385cd688f5faedf868792c311e28cfde7d3c6d64aa34e00
+  checksum: 11155f336e088613f670b0be7164c7c3af50cf0639325ae380ca0b872a6dc1ccb9ce0cfc1d5796c22d92756fe75aeff58859f012e1c072637b1a5952975b0a61
   languageName: node
   linkType: hard
 
@@ -11202,8 +11195,8 @@ __metadata:
   linkType: hard
 
 "locize-cli@npm:^7.14.6":
-  version: 7.14.13
-  resolution: "locize-cli@npm:7.14.13"
+  version: 7.14.14
+  resolution: "locize-cli@npm:7.14.14"
   dependencies:
     "@js.properties/properties": "npm:0.5.4"
     android-string-resource: "npm:2.3.9"
@@ -11216,7 +11209,7 @@ __metadata:
     dotenv: "npm:16.3.1"
     flat: "npm:5.0.2"
     fluent_conv: "npm:3.2.0"
-    gettext-converter: "npm:1.2.3"
+    gettext-converter: "npm:1.2.4"
     https-proxy-agent: "npm:5.0.1"
     ini: "npm:4.1.1"
     js-yaml: "npm:4.1.0"
@@ -11229,10 +11222,10 @@ __metadata:
     strings-file: "npm:0.0.5"
     tmexchange: "npm:2.0.5"
     xliff: "npm:6.2.0"
-    xlsx: "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
+    xlsx: "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
   bin:
     locize: bin/locize
-  checksum: ebf5539a434645a5d67f4de0c33771b0192521d02a803e328d562bbe5314a373d5e8415a706c8d694a06abbfcfb78147250fe90c2a938ef22ebd54a99c75d82b
+  checksum: 761c3770848e72486c137412263c405bacbe5bbf1f2d640dc3abc60a290fee41c62a42abd2e585bdc543fb0cd7bbff49a87d3f90a3e9b868acb4836549a961cf
   languageName: node
   linkType: hard
 
@@ -16532,12 +16525,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xlsx@https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz":
-  version: 0.19.3
-  resolution: "xlsx@https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
+"xlsx@https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz":
+  version: 0.20.0
+  resolution: "xlsx@https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
   bin:
     xlsx: ./bin/xlsx.njs
-  checksum: c3a8d113e2ecd7b6ceb8dd709fa569e8abc45370fcda37ac8a6cccf832bc959cc06255a3920b466d9dbf76583a3e95315f41d9d06ca7e622830d9acc14295378
+  checksum: 6fc94a69455db7edc9f4d92e1823018894b5c207ff9f4c9f500e16bb03e333b3caa52fc8b258288349e10105436d82ac92dfb26f6f87bbe294500f197b1b0997
   languageName: node
   linkType: hard
 
