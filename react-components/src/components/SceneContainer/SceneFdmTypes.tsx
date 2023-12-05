@@ -26,11 +26,24 @@ export type EdgeResponse = {
   };
 };
 
+export type Transformation3d = {
+  translationX: number;
+  translationY: number;
+  translationZ: number;
+  eulerRotationX: number;
+  eulerRotationY: number;
+  eulerRotationZ: number;
+  scaleX: number;
+  scaleY: number;
+  scaleZ: number;
+};
+
 export type SceneResponse = {
   items: {
     scene: SceneConfigurationResponse[];
     skybox: SkyboxResponse[];
     groundPlanes: GroundPlaneResponse[];
+    groundPlaneEdges: GroundPlaneEdgeResponse[];
     sceneModels: SceneModelsResponse[];
   };
   nextCursor: {
@@ -55,17 +68,8 @@ export type SceneModelsResponse = EdgeResponse & {
   properties: Record<string, Record<string, Cdf3dRevisionProperties>>;
 };
 
-export type SceneModelsProperties = {
+export type SceneModelsProperties = Transformation3d & {
   revisionId: number;
-  translationX: number;
-  translationY: number;
-  translationZ: number;
-  eulerRotationX: number;
-  eulerRotationY: number;
-  eulerRotationZ: number;
-  scaleX: number;
-  scaleY: number;
-  scaleZ: number;
 };
 
 export type SceneConfigurationProperties = {
@@ -92,6 +96,10 @@ export type GroundPlaneProperties = {
   file: string;
   label: string;
   wrapping: string;
+};
+
+export type GroundPlaneEdgeResponse = EdgeResponse & {
+  properties: Record<string, Record<string, Transformation3d>>;
 };
 
 export type Cdf3dRevisionProperties = {

@@ -10,9 +10,12 @@ import { type Query } from '../../utilities/FdmSDK';
 import { useFdmSdk } from '../RevealContainer/SDKProvider';
 import { createGetSceneQuery } from './Queries';
 import {
+  type GroundPlaneResponse,
   type GroundPlaneProperties,
   type SceneResponse,
-  type SkyboxProperties
+  type SkyboxProperties,
+  type GroundPlaneEdgeResponse,
+  type Transformation3d
 } from './SceneFdmTypes';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
 import { PointCloudContainer } from '../..';
@@ -60,38 +63,75 @@ export function SceneContainer({
       console.log(SceneConfigurationProperties);
 
       const hasGroundPlanes = scene.items.groundPlanes.length > 0;
-      const groundPlanesProperties: GroundPlaneProperties[] = [];
       if (hasGroundPlanes) {
         const groundPlanes = scene.items.groundPlanes;
-        groundPlanes.forEach((groundPlane) => {
-          const groundPlaneProps = groundPlane.properties;
-          const groundPlaneKey = Object.keys(groundPlaneProps)[0]; // Get the first key
-          const groundPlaneTypeKey = Object.keys(groundPlaneProps[groundPlaneKey])[0];
-          const groundPlaneProperties = groundPlaneProps[groundPlaneKey][groundPlaneTypeKey];
-          groundPlanesProperties.push(groundPlaneProperties);
-        });
-      }
+        const groundPlaneEdges = scene.items.groundPlaneEdges;
 
-      groundPlanesProperties.forEach((groundPlaneProperties) => {
-        console.log(groundPlaneProperties);
-      });
+        // Match groundplanes with their edges
+        const groundPlaneNodeAndEdgeMap = new Map<GroundPlaneResponse, GroundPlaneEdgeResponse>();
+        groundPlaneEdges.forEach((groundPlaneEdge) => {
+          const mappedGroundPlane = groundPlanes.find(
+            (groundPlane) => groundPlane.externalId === groundPlaneEdge.endNode.externalId
+          );
+          if (mappedGroundPlane !== undefined) {
+            groundPlaneNodeAndEdgeMap.set(mappedGroundPlane, groundPlaneEdge);
+          }
+        });
+
+        // Unpack early as we need to get download urls and want to batch them all into one request
+        const groundPlanePropertiesNodeAndEdgeMap = new Map<
+          GroundPlaneProperties,
+          Transformation3d
+        >();
+        groundPlaneNodeAndEdgeMap.forEach((groundPlaneEdge, groundPlane) => {
+          const groundPlaneProperties = extractProperties(
+            groundPlane.properties
+          ) as GroundPlaneProperties;
+          const groundPlaneEdgeProperties = extractProperties(groundPlaneEdge.properties);
+          groundPlanePropertiesNodeAndEdgeMap.set(groundPlaneProperties, groundPlaneEdgeProperties);
+        });
+
+        const groundPlaneTextureUrls = await sdk.files.getDownloadUrls(
+          Array.from(groundPlanePropertiesNodeAndEdgeMap.keys()).map((groundPlaneProperties) => ({
+            externalId: groundPlaneProperties.file
+          }))
+        );
+
+        let index = 0;
+        groundPlanePropertiesNodeAndEdgeMap.forEach(
+          (groundPlaneEdgeProperties, groundPlaneProperties) => {
+            const textureUrl = groundPlaneTextureUrls[index++].downloadUrl;
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.load(textureUrl, function (texture) {
+              const material = new THREE.MeshBasicMaterial({ map: texture });
+              const geometry = new THREE.PlaneGeometry(1000, 1000);
+              const mesh = new THREE.Mesh(geometry, material);
+              mesh.position.set(
+                groundPlaneEdgeProperties.translationX,
+                groundPlaneEdgeProperties.translationY,
+                groundPlaneEdgeProperties.translationZ
+              );
+              mesh.rotation.set(-Math.PI, 0, 0);
+              viewer.addObject3D(mesh);
+              groundPlaneRef.current = mesh;
+            });
+          }
+        );
+      }
 
       // Skybox
       const hasSkybox = scene.items.skybox.length > 0;
-      let skyboxProperties: SkyboxProperties;
       if (hasSkybox) {
-        const skybox = scene.items.skybox[0];
-        const skyboxProps = skybox.properties;
-        const skyboxKey = Object.keys(skyboxProps)[0]; // Get the first key
-        const skyboxTypeKey = Object.keys(skyboxProps[skyboxKey])[0];
-        skyboxProperties = skyboxProps[skyboxKey][skyboxTypeKey];
+        const skyboxProperties = extractProperties(
+          scene.items.skybox[0].properties
+        ) as SkyboxProperties;
 
         const skyboxExternalId = skyboxProperties.file;
         const skyBoxUrls = await sdk.files.getDownloadUrls([{ externalId: skyboxExternalId }]);
         const skyboxUrl = skyBoxUrls[0].downloadUrl;
 
         const skyboxMesh = new THREE.Mesh(
-          new THREE.SphereGeometry(300000, 0, 0),
+          new THREE.SphereGeometry(30000000, 0, 0),
           new THREE.MeshBasicMaterial({
             side: THREE.BackSide,
             map: new THREE.TextureLoader().load(skyboxUrl)
@@ -122,30 +162,7 @@ export function SceneContainer({
         viewer.cameraManager.setCameraState({ position, rotation });
       }
 
-      // Ground plane
-      {
-        const textureLoader = new THREE.TextureLoader();
-        const textureUrl = '';
-        textureLoader.load(textureUrl, function (texture) {
-          // Step 2: Create the material
-          const material = new THREE.MeshBasicMaterial({ map: texture });
-
-          // Step 3: Create the geometry
-          const geometry = new THREE.PlaneGeometry(1000, 1000);
-
-          // Step 4: Create the mesh
-          const mesh = new THREE.Mesh(geometry, material);
-          mesh.rotation.set(-Math.PI / 2, 0, 0);
-          mesh.translateZ(480);
-
-          // Step 5: Add the mesh to the scene
-          viewer.addObject3D(mesh);
-          groundPlaneRef.current = mesh;
-        });
-      }
-
       const hasSceneModels = scene.items.sceneModels.length > 0;
-      console.log(hasSceneModels);
       if (hasSceneModels) {
         const sceneModels = scene.items.sceneModels;
         void Promise.all(
@@ -200,7 +217,6 @@ export function SceneContainer({
                 throw new Error('Model is not supported');
             }
             viewer.fitCameraToModel(model);
-            console.log('Fitting camera to model');
           })
         );
       }
@@ -212,9 +228,13 @@ export function SceneContainer({
     console.log('SceneContainer');
     // if (sceneExternalId !== '' && sceneSpaceId !== '') {
     const getSceneQuery = createGetSceneQuery('my_scene_external_id', 'scene_space');
-    void loadScene(getSceneQuery).then(async () => {
-      console.log('loaded');
-    });
+    void loadScene(getSceneQuery)
+      .then(async () => {
+        console.log('loaded');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, [sceneExternalId, sceneSpaceId]);
 
   async function cleanupScene(): Promise<void> {
@@ -228,6 +248,14 @@ export function SceneContainer({
       viewer.removeObject3D(groundPlaneRef.current);
     }
     groundPlaneRef.current = undefined;
+  }
+
+  function extractProperties(object: any): any {
+    console.log(object);
+    const firstKey = Object.keys(object)[0];
+    const secondKey = Object.keys(object[firstKey])[0];
+    console.log(object[firstKey][secondKey]);
+    return object[firstKey][secondKey];
   }
 
   return (

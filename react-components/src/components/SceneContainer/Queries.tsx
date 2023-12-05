@@ -125,7 +125,19 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
           }
         ]
       },
-      groundPlaneEdges: {},
+      groundPlaneEdges: {
+        sources: [
+          {
+            source: {
+              type: 'view',
+              space: 'scene_space',
+              externalId: 'Cdf3dImage360Properties',
+              version: '27ff998bf60c1c'
+            },
+            properties: ['*']
+          }
+        ]
+      },
       groundPlanes: {
         sources: [
           {
