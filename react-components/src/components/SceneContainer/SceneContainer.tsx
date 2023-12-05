@@ -4,7 +4,7 @@
 import { type ReactElement, useEffect, useRef, useState } from 'react';
 import { type CogniteModel, type AddModelOptions } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
-import { Matrix4 } from 'three';
+import { type Matrix4 } from 'three';
 import * as THREE from 'three';
 import { type Query } from '../../utilities/FdmSDK';
 import { useFdmSdk } from '../RevealContainer/SDKProvider';
@@ -15,7 +15,8 @@ import {
   type SceneResponse,
   type SkyboxProperties,
   type GroundPlaneEdgeResponse,
-  type Transformation3d
+  type Transformation3d,
+  type SceneModelsProperties
 } from './SceneFdmTypes';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
 import { PointCloudContainer } from '../..';
@@ -53,14 +54,7 @@ export function SceneContainer({
       });
 
       const scene = res as any as SceneResponse;
-
-      const sceneConfiguration = scene.items.scene[0];
-      const sceneProps = sceneConfiguration.properties;
-      const sceneConfigurationKey = Object.keys(sceneProps)[0]; // Get the first key
-      const sceneConfigurationTypeKey = Object.keys(sceneProps[sceneConfigurationKey])[0];
-      const SceneConfigurationProperties =
-        sceneProps[sceneConfigurationKey][sceneConfigurationTypeKey];
-      console.log(SceneConfigurationProperties);
+      const SceneConfigurationProperties = extractProperties(scene.items.scene[0].properties);
 
       const hasGroundPlanes = scene.items.groundPlanes.length > 0;
       if (hasGroundPlanes) {
@@ -131,7 +125,7 @@ export function SceneContainer({
         const skyboxUrl = skyBoxUrls[0].downloadUrl;
 
         const skyboxMesh = new THREE.Mesh(
-          new THREE.SphereGeometry(30000000, 0, 0),
+          new THREE.SphereGeometry(9000000, 0, 0),
           new THREE.MeshBasicMaterial({
             side: THREE.BackSide,
             map: new THREE.TextureLoader().load(skyboxUrl)
@@ -143,8 +137,7 @@ export function SceneContainer({
 
       // Camera translation and rotation
       {
-        const { position, rotation } = viewer.cameraManager.getCameraState();
-        position.set(
+        const position = new THREE.Vector3(
           SceneConfigurationProperties.cameraTranslationX,
           SceneConfigurationProperties.cameraTranslationY,
           SceneConfigurationProperties.cameraTranslationZ
@@ -156,10 +149,14 @@ export function SceneContainer({
           SceneConfigurationProperties.cameraEulerRotationZ,
           'XYZ'
         );
-        const quaternion = new THREE.Quaternion().setFromEuler(euler);
-        rotation.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 
-        viewer.cameraManager.setCameraState({ position, rotation });
+        const quaternion = new THREE.Quaternion().setFromEuler(euler);
+        const vec = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
+
+        // There is a bug with setCameraState rotation, so must first set transform
+        // and then lookAt the correct direction
+        viewer.cameraManager.setCameraState({ position });
+        viewer.cameraManager.getCamera().lookAt(position.clone().add(vec));
       }
 
       const hasSceneModels = scene.items.sceneModels.length > 0;
@@ -167,11 +164,9 @@ export function SceneContainer({
         const sceneModels = scene.items.sceneModels;
         void Promise.all(
           sceneModels.map(async (sceneModel) => {
-            const sceneModelProps = sceneModel.properties;
-            const sceneModelKey = Object.keys(sceneModelProps)[0]; // Get the first key
-            const sceneModelTypeKey = Object.keys(sceneModelProps[sceneModelKey])[0];
-            const sceneModelProperties = sceneModelProps[sceneModelKey][sceneModelTypeKey];
-            console.log(sceneModelProperties);
+            const sceneModelProperties = extractProperties(
+              sceneModel.properties
+            ) as SceneModelsProperties;
 
             const modelId: number = Number(sceneModel.endNode.externalId);
             const revisionId: number = sceneModelProperties.revisionId;
@@ -184,25 +179,28 @@ export function SceneContainer({
               revisionId
             };
 
-            const transform = new Matrix4();
-            transform.set(
+            const transform = new THREE.Matrix4();
+            const scale = new THREE.Matrix4().makeScale(
               sceneModelProperties.scaleX,
-              0,
-              0,
-              sceneModelProperties.translationX,
-              0,
               sceneModelProperties.scaleY,
-              0,
-              sceneModelProperties.translationY,
-              0,
-              0,
-              sceneModelProperties.scaleZ,
-              sceneModelProperties.translationZ,
-              0,
-              0,
-              0,
-              1
+              sceneModelProperties.scaleZ
             );
+            const euler = new THREE.Euler(
+              sceneModelProperties.eulerRotationX,
+              sceneModelProperties.eulerRotationY,
+              sceneModelProperties.eulerRotationZ,
+              'XYZ'
+            );
+            const rotation = new THREE.Matrix4().makeRotationFromEuler(euler);
+            // Create translation matrix
+            const translation = new THREE.Matrix4().makeTranslation(
+              sceneModelProperties.translationX,
+              sceneModelProperties.translationY,
+              sceneModelProperties.translationZ
+            );
+
+            // Combine transformations
+            transform.multiply(scale).multiply(rotation).multiply(translation);
 
             const modelType = await viewer.determineModelType(modelId, revisionId);
             let model: CogniteModel;
@@ -216,7 +214,6 @@ export function SceneContainer({
               default:
                 throw new Error('Model is not supported');
             }
-            viewer.fitCameraToModel(model);
           })
         );
       }
@@ -224,9 +221,6 @@ export function SceneContainer({
       setLoaded(true);
     };
 
-    // Don't load when in initial state
-    console.log('SceneContainer');
-    // if (sceneExternalId !== '' && sceneSpaceId !== '') {
     const getSceneQuery = createGetSceneQuery('my_scene_external_id', 'scene_space');
     void loadScene(getSceneQuery)
       .then(async () => {
@@ -243,7 +237,6 @@ export function SceneContainer({
     }
     skyboxRef.current = undefined;
 
-    console.log(groundPlaneRef.current);
     if (groundPlaneRef.current !== null && groundPlaneRef.current !== undefined) {
       viewer.removeObject3D(groundPlaneRef.current);
     }
@@ -251,10 +244,8 @@ export function SceneContainer({
   }
 
   function extractProperties(object: any): any {
-    console.log(object);
     const firstKey = Object.keys(object)[0];
     const secondKey = Object.keys(object[firstKey])[0];
-    console.log(object[firstKey][secondKey]);
     return object[firstKey][secondKey];
   }
 
