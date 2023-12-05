@@ -1789,7 +1789,7 @@ __metadata:
     assert: "npm:^2.0.0"
     eslint: "npm:^8.0.1"
     eslint-config-prettier: "npm:^9.0.0"
-    eslint-config-standard-with-typescript: "npm:39.1.1"
+    eslint-config-standard-with-typescript: "npm:40.0.0"
     eslint-plugin-header: "npm:^3.1.1"
     eslint-plugin-import: "npm:^2.25.2"
     eslint-plugin-n: "npm:^16.0.0"
@@ -5470,20 +5470,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^20.8.7":
-  version: 20.10.0
-  resolution: "@types/node@npm:20.10.0"
+  version: 20.10.3
+  resolution: "@types/node@npm:20.10.3"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: c7d5ddbdbf3491e2363135c9611eb6bfae90eda2957279237fa232bcb29cd0df1cc3ee149d6de9915b754262a531ee2d57d33c9ecd58d763e8ad4856113822f3
+  checksum: 7cb506abb0d570bb5133bd06a47115109a813b507323c985c3b4aef2993eed79b6bb62b82194cb5c558b4d349de3d199ee2e8c693b913065a1cd7f526cc65a68
   languageName: node
   linkType: hard
 
 "@types/node@npm:^18.0.0":
-  version: 18.18.13
-  resolution: "@types/node@npm:18.18.13"
+  version: 18.19.2
+  resolution: "@types/node@npm:18.19.2"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 5dcab799e39570a858741a13373a584529d0e6b81120c8a2118e158749d9ace291748644d760af554fe73ab3cebdd91500314bf1ecd17a746fabcae06ebf9eea
+  checksum: 122958ac4be81ea2b53da53de29441f8d98d572cc5c704c6bba788343281a47185a405cf0c650a702b7549e09584a7a39a51f27658088a8d8192163bcac079a0
   languageName: node
   linkType: hard
 
@@ -8598,9 +8598,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-standard-with-typescript@npm:39.1.1":
-  version: 39.1.1
-  resolution: "eslint-config-standard-with-typescript@npm:39.1.1"
+"eslint-config-standard-with-typescript@npm:40.0.0":
+  version: 40.0.0
+  resolution: "eslint-config-standard-with-typescript@npm:40.0.0"
   dependencies:
     "@typescript-eslint/parser": "npm:^6.4.0"
     eslint-config-standard: "npm:17.1.0"
@@ -8611,7 +8611,7 @@ __metadata:
     eslint-plugin-n: "^15.0.0 || ^16.0.0 "
     eslint-plugin-promise: ^6.0.0
     typescript: "*"
-  checksum: 75b5e29b1ea07b88d9c388d81f1397c9bc0a1df350ad26d7fdb028e9c1660886111d9e73ac97973c21c8f5e11e1adcf389a70eeb25f8a4203a9610993dff9090
+  checksum: 37eaca690bd6302757600f0ad63c5e0720dffd3651fbcfcc748424ecab85cb38480243c48337ce7e9455fb87275dedb3607a486b68ac92182fc748e55926ea02
   languageName: node
   linkType: hard
 
