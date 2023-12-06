@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useState, type ReactElement } from 'react';
+import { useState, type ReactElement, type MouseEvent } from 'react';
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
@@ -74,7 +74,7 @@ export const Image360CollectionLayerContainer = ({
   const image360Content = (): ReactElement => {
     return (
       <StyledSubMenu
-        onClick={(event: MouseEvent) => {
+        onClick={(event: MouseEvent<HTMLElement>) => {
           event.stopPropagation();
         }}>
         {image360LayerData.map((data) => (
@@ -107,8 +107,7 @@ export const Image360CollectionLayerContainer = ({
           onClickOutside={() => {
             setVisible(false);
           }}
-          content={image360Content()}
-          title="360 images">
+          content={image360Content()}>
           <Flex direction="row" justifyContent="space-between">
             <Checkbox
               checked={someImagesVisible}

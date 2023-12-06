@@ -338,6 +338,7 @@ export class ClusteredAreaCollection implements AreaCollection {
 // @public (undocumented)
 export class Cognite3DViewer {
     constructor(options: Cognite3DViewerOptions);
+    add360ImageSet(datasource: 'datamodels', dataModelIdentifier: Image360DataModelIdentifier): Promise<Image360Collection>;
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
@@ -507,6 +508,7 @@ export class CognitePointCloudModel {
     getClasses(): Array<{
         name: string;
         code: number | WellKnownAsprsPointClassCodes;
+        color: THREE_2.Color;
     }>;
     getDefaultPointCloudAppearance(): PointCloudAppearance;
     // (undocumented)
@@ -887,6 +889,12 @@ export interface Image360Collection {
 }
 
 // @public
+export type Image360DataModelIdentifier = {
+    space: string;
+    image360CollectionExternalId: string;
+};
+
+// @public
 export type Image360EnteredDelegate = (image360: Image360, revision: Image360Revision) => void;
 
 // @public
@@ -1010,18 +1018,13 @@ export { Keyframe_2 as Keyframe }
 // @public (undocumented)
 export type Measurement = {
     readonly measurementId: number;
-    readonly startPoint: THREE_2.Vector3;
-    readonly endPoint: THREE_2.Vector3;
+    readonly startPoint: THREE.Vector3;
+    readonly endPoint: THREE.Vector3;
     readonly distanceInMeters: number;
 };
 
 // @public
-export type MeasurementAddedDelegate = (event: {
-    measurementId: number;
-    startPoint: THREE.Vector3;
-    endPoint: THREE.Vector3;
-    distanceInMeters: number;
-}) => void;
+export type MeasurementAddedDelegate = (measurement: Measurement) => void;
 
 // @public
 export type MeasurementEndedDelegate = () => void;
@@ -1039,6 +1042,7 @@ export type MeasurementStartedDelegate = () => void;
 // @public
 export class MeasurementTool extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, options?: MeasurementOptions);
+    addMeasurement(startPoint: THREE_2.Vector3, endPoint: THREE_2.Vector3): Measurement;
     dispose(): void;
     enterMeasurementMode(): void;
     exitMeasurementMode(): void;

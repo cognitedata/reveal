@@ -39,7 +39,6 @@ export {
   type ModelMappings,
   type ModelMappingsWithAssets
 } from './hooks/useSearchMappedEquipmentAssetMappings';
-export { useSlicerUrlParams, useLayersUrlParams } from './hooks/useUrlStateParam';
 export {
   useSearchAssetsMapped360Annotations,
   useAllAssetsMapped360Annotations
@@ -79,3 +78,6 @@ export type {
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
+export { WindowWidget } from './components/Widgets/WindowWidget';
+export { use3dRelatedEdgeConnections } from './hooks/use3dRelatedEdgeConnections';
+export { use3dRelatedDirectConnections } from './hooks/use3dRelatedDirectConnections';

@@ -3,7 +3,7 @@
  */
 
 import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
-import { ToolBar, type ToolBarProps } from '@cognite/cogs.js';
+import { Divider, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 import { LayersButton } from './LayersButton';
 import { SlicerButton } from './SlicerButton';
@@ -11,6 +11,7 @@ import { SettingsButton } from './SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { MeasurementButton } from './MeasurementButton';
 import { HelpButton } from './HelpButton';
+import { ShareButton } from './ShareButton';
 import { type QualitySettings } from './SettingsContainer/types';
 import styled from 'styled-components';
 
@@ -40,12 +41,16 @@ const DefaultContentWrapper = (props: CustomContent): ReactElement => {
       <LayersButton />
       <FitModelsButton />
 
-      <div className="cogs-toolbar-divider" />
+      <Divider weight="2px" length="75%" />
 
       <SlicerButton storeStateInUrl={props.storeStateInUrl} />
       <MeasurementButton />
 
-      <div className="cogs-toolbar-divider" />
+      <Divider weight="2px" length="75%" />
+
+      <ShareButton />
+
+      <Divider weight="2px" length="75%" />
 
       <SettingsButton
         customSettingsContent={props.customSettingsContent}
@@ -93,6 +98,7 @@ export const RevealToolbar = withSuppressRevealEvents(
   SlicerButton: typeof SlicerButton;
   LayersButton: typeof LayersButton;
   MeasurementButton: typeof MeasurementButton;
+  ShareButton: typeof ShareButton;
   SettingsButton: typeof SettingsButton;
   HelpButton: typeof HelpButton;
 };
@@ -101,5 +107,6 @@ RevealToolbar.FitModelsButton = FitModelsButton;
 RevealToolbar.SlicerButton = SlicerButton;
 RevealToolbar.LayersButton = LayersButton;
 RevealToolbar.MeasurementButton = MeasurementButton;
+RevealToolbar.ShareButton = ShareButton;
 RevealToolbar.SettingsButton = SettingsButton;
 RevealToolbar.HelpButton = HelpButton;

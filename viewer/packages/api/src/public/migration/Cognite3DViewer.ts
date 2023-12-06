@@ -60,7 +60,7 @@ import {
   ProxyCameraManager,
   CameraStopDelegate
 } from '@reveal/camera-manager';
-import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
+import { CdfModelIdentifier, File3dFormat, Image360DataModelIdentifier } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
 
@@ -81,6 +81,7 @@ import {
 } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
+import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -177,6 +178,11 @@ export class Cognite3DViewer {
   private _forceStopRendering: boolean = false;
 
   private readonly spinner: Spinner;
+
+  /**
+   * Enbles us to ensure models are added in the order their load is initialized.
+   */
+  private readonly _addModelSequencer: AsyncSequencer = new AsyncSequencer();
 
   private get revealManager(): RevealManager {
     return this._revealManagerHelper.revealManager;
@@ -707,15 +713,19 @@ export class Cognite3DViewer {
       );
     }
 
-    const type = await this.determineModelType(options.modelId, options.revisionId);
-    switch (type) {
-      case 'cad':
-        return this.addCadModel(options);
-      case 'pointcloud':
-        return this.addPointCloudModel(options);
-      default:
-        throw new Error('Model is not supported');
-    }
+    const modelLoadSequencer = this._addModelSequencer.getNextSequencer<void>();
+
+    return (async () => {
+      const type = await this.determineModelType(options.modelId, options.revisionId);
+      switch (type) {
+        case 'cad':
+          return this.addCadModelWithSequencer(options, modelLoadSequencer);
+        case 'pointcloud':
+          return this.addPointCloudModelWithSequencer(options, modelLoadSequencer);
+        default:
+          throw new Error('Model is not supported');
+      }
+    })();
   }
 
   /**
@@ -733,15 +743,26 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  async addCadModel(options: AddModelOptions): Promise<CogniteCadModel> {
+  addCadModel(options: AddModelOptions): Promise<CogniteCadModel> {
+    const modelLoaderSequencer = this._addModelSequencer.getNextSequencer<void>();
+    return this.addCadModelWithSequencer(options, modelLoaderSequencer);
+  }
+
+  private async addCadModelWithSequencer(
+    options: AddModelOptions,
+    modelLoadSequencer: SequencerFunction<void>
+  ): Promise<CogniteCadModel> {
     const nodesApiClient = this._dataSource.getNodesApiClient();
 
     const { modelId, revisionId } = options;
+
     const cadNode = await this._revealManagerHelper.addCadModel(options);
 
     const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
-    this._models.push(model3d);
-    this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
+    await modelLoadSequencer(() => {
+      this._models.push(model3d);
+      this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
+    });
 
     return model3d;
   }
@@ -761,21 +782,38 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
+  addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
+    const sequencerFunction = this._addModelSequencer.getNextSequencer<void>();
+    return this.addPointCloudModelWithSequencer(options, sequencerFunction);
+  }
+
+  private async addPointCloudModelWithSequencer(options: AddModelOptions, modelLoadSequencer: SequencerFunction<void>) {
     if (options.geometryFilter) {
       throw new Error('geometryFilter is not supported for point clouds');
     }
 
     const { modelId, revisionId } = options;
+
     const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
-    this._models.push(model);
 
-    this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
+    await modelLoadSequencer(() => {
+      this._models.push(model);
+      this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
+    });
 
     return model;
   }
 
+  /**
+   * Adds a set of 360 images to the scene from the /datamodels API in Cognite Data Fusion.
+   * @param datasource The data data source which holds the references to the 360 image sets.
+   * @param dataModelIdentifier The search parameters to apply when querying Cognite Datamodels that contains the 360 images.
+   */
+  async add360ImageSet(
+    datasource: 'datamodels',
+    dataModelIdentifier: Image360DataModelIdentifier
+  ): Promise<Image360Collection>;
   /**
    * Adds a set of 360 images to the scene from the /events API in Cognite Data Fusion.
    * @param datasource The CDF data source which holds the references to the 360 image sets.
@@ -791,32 +829,35 @@ export class Cognite3DViewer {
     datasource: 'events',
     eventFilter: { [key: string]: string },
     add360ImageOptions?: AddImage360Options
+  ): Promise<Image360Collection>;
+
+  /* eslint-disable jsdoc/require-jsdoc */
+  async add360ImageSet(
+    datasource: 'events' | 'datamodels',
+    sourceParameters: { [key: string]: string } | Image360DataModelIdentifier,
+    add360ImageOptions?: AddImage360Options
   ): Promise<Image360Collection> {
-    if (datasource !== 'events') {
-      throw new Error(`'${datasource}' is an unknown datasource for 360 images`);
+    if (datasource !== 'events' && datasource !== 'datamodels') {
+      throw new Error(`${datasource} is an unknown datasource from 360 images`);
     }
 
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error('Adding 360 image sets is only supported when connecting to Cognite Data Fusion');
     }
-
     const collectionTransform = add360ImageOptions?.collectionTransform ?? new THREE.Matrix4();
     const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
 
     const image360Collection = await this._image360ApiHelper.add360ImageSet(
-      eventFilter,
+      sourceParameters,
       collectionTransform,
       preMultipliedRotation,
       add360ImageOptions?.annotationFilter
     );
-
     const numberOf360Images = image360Collection.image360Entities.length;
-
     MetricsLogger.trackEvent('360ImageCollectionAdded', {
       datasource,
       numberOf360Images
     });
-
     return image360Collection;
   }
 

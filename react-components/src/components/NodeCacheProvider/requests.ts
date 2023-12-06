@@ -133,6 +133,9 @@ export async function fetchNodesForNodeIds(
   nodeIds: number[],
   cogniteClient: CogniteClient
 ): Promise<Node3D[]> {
+  if (nodeIds.length === 0) {
+    return [];
+  }
   return await cogniteClient.revisions3D.retrieve3DNodes(
     modelId,
     revisionId,
