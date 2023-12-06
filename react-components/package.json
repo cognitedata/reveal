@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.23.0",
+  "version": "0.24.1",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -44,7 +44,7 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.5.0",
     "@cognite/cogs.js": "^9.17.0",
-    "@cognite/reveal": "4.7.0",
+    "@cognite/reveal": "4.7.1",
     "@cognite/sdk": "^8.2.0",
     "@playwright/test": "^1.39.0",
     "@storybook/addon-essentials": "7.5.3",
@@ -67,7 +67,7 @@
     "@vitejs/plugin-react": "^4.0.4",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-config-standard-with-typescript": "39.1.1",
+    "eslint-config-standard-with-typescript": "40.0.0",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^16.0.0",

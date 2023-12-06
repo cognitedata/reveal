@@ -1764,7 +1764,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.5.0"
     "@cognite/cogs.js": "npm:^9.17.0"
-    "@cognite/reveal": "npm:4.7.0"
+    "@cognite/reveal": "npm:4.7.1"
     "@cognite/sdk": "npm:^8.2.0"
     "@playwright/test": "npm:^1.39.0"
     "@storybook/addon-essentials": "npm:7.5.3"
@@ -1789,7 +1789,7 @@ __metadata:
     assert: "npm:^2.0.0"
     eslint: "npm:^8.0.1"
     eslint-config-prettier: "npm:^9.0.0"
-    eslint-config-standard-with-typescript: "npm:39.1.1"
+    eslint-config-standard-with-typescript: "npm:40.0.0"
     eslint-plugin-header: "npm:^3.1.1"
     eslint-plugin-import: "npm:^2.25.2"
     eslint-plugin-n: "npm:^16.0.0"
@@ -1827,9 +1827,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@cognite/reveal@npm:4.7.0"
+"@cognite/reveal@npm:4.7.1":
+  version: 4.7.1
+  resolution: "@cognite/reveal@npm:4.7.1"
   dependencies:
     "@tweenjs/tween.js": "npm:19.0.0"
     assert: "npm:2.1.0"
@@ -1848,7 +1848,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.158.0
-  checksum: 43c191e642c87cbd8700c6fd5a1003614579a0cae5500a481b8802a43ed6f068dc67adc84da0ad21cd2e5f2dd3aeeb371d4328060f6ad75140f31967bbd5f2c4
+  checksum: 14811412135363be1e5400e8f4fd5a2ad806fe4251d3968caafc99b6341343229783e814a3eef81c2d66f39a9f92a5e405c8ef26cd3100e275c23600299d7ec9
   languageName: node
   linkType: hard
 
@@ -3360,13 +3360,13 @@ __metadata:
   linkType: hard
 
 "@playwright/test@npm:^1.39.0":
-  version: 1.40.0
-  resolution: "@playwright/test@npm:1.40.0"
+  version: 1.40.1
+  resolution: "@playwright/test@npm:1.40.1"
   dependencies:
-    playwright: "npm:1.40.0"
+    playwright: "npm:1.40.1"
   bin:
     playwright: cli.js
-  checksum: 46ebd396d37b3e438019229f5c84bf4a8614f455245a51fd2d77a05f6065aefc41af30f26882415607c9e4adc2bb1511bd1f1ba06d7870fae0b5525768240acb
+  checksum: 77bfc3d4a101fd996309de3a67256117f671952764404727e520a4d512ba2e528d8f9e0b28ef9b2851664a651a5d002a0b05993e313077a2fa640bb430f38b25
   languageName: node
   linkType: hard
 
@@ -5470,20 +5470,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^20.8.7":
-  version: 20.10.0
-  resolution: "@types/node@npm:20.10.0"
+  version: 20.10.3
+  resolution: "@types/node@npm:20.10.3"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: c7d5ddbdbf3491e2363135c9611eb6bfae90eda2957279237fa232bcb29cd0df1cc3ee149d6de9915b754262a531ee2d57d33c9ecd58d763e8ad4856113822f3
+  checksum: 7cb506abb0d570bb5133bd06a47115109a813b507323c985c3b4aef2993eed79b6bb62b82194cb5c558b4d349de3d199ee2e8c693b913065a1cd7f526cc65a68
   languageName: node
   linkType: hard
 
 "@types/node@npm:^18.0.0":
-  version: 18.18.13
-  resolution: "@types/node@npm:18.18.13"
+  version: 18.19.2
+  resolution: "@types/node@npm:18.19.2"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 5dcab799e39570a858741a13373a584529d0e6b81120c8a2118e158749d9ace291748644d760af554fe73ab3cebdd91500314bf1ecd17a746fabcae06ebf9eea
+  checksum: 122958ac4be81ea2b53da53de29441f8d98d572cc5c704c6bba788343281a47185a405cf0c650a702b7549e09584a7a39a51f27658088a8d8192163bcac079a0
   languageName: node
   linkType: hard
 
@@ -7451,14 +7451,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"content-type@npm:1.0.4":
-  version: 1.0.4
-  resolution: "content-type@npm:1.0.4"
-  checksum: 5ea85c5293475c0cdf2f84e2c71f0519ced565840fb8cbda35997cb67cc45b879d5b9dbd37760c4041ca7415a3687f8a5f2f87b556b2aaefa49c0f3436a346d4
-  languageName: node
-  linkType: hard
-
-"content-type@npm:~1.0.4":
+"content-type@npm:1.0.5, content-type@npm:~1.0.4":
   version: 1.0.5
   resolution: "content-type@npm:1.0.5"
   checksum: 585847d98dc7fb8035c02ae2cb76c7a9bd7b25f84c447e5ed55c45c2175e83617c8813871b4ee22f368126af6b2b167df655829007b21aa10302873ea9c62662
@@ -8598,9 +8591,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-standard-with-typescript@npm:39.1.1":
-  version: 39.1.1
-  resolution: "eslint-config-standard-with-typescript@npm:39.1.1"
+"eslint-config-standard-with-typescript@npm:40.0.0":
+  version: 40.0.0
+  resolution: "eslint-config-standard-with-typescript@npm:40.0.0"
   dependencies:
     "@typescript-eslint/parser": "npm:^6.4.0"
     eslint-config-standard: "npm:17.1.0"
@@ -8611,7 +8604,7 @@ __metadata:
     eslint-plugin-n: "^15.0.0 || ^16.0.0 "
     eslint-plugin-promise: ^6.0.0
     typescript: "*"
-  checksum: 75b5e29b1ea07b88d9c388d81f1397c9bc0a1df350ad26d7fdb028e9c1660886111d9e73ac97973c21c8f5e11e1adcf389a70eeb25f8a4203a9610993dff9090
+  checksum: 37eaca690bd6302757600f0ad63c5e0720dffd3651fbcfcc748424ecab85cb38480243c48337ce7e9455fb87275dedb3607a486b68ac92182fc748e55926ea02
   languageName: node
   linkType: hard
 
@@ -9591,14 +9584,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gettext-converter@npm:1.2.3":
-  version: 1.2.3
-  resolution: "gettext-converter@npm:1.2.3"
+"gettext-converter@npm:1.2.4":
+  version: 1.2.4
+  resolution: "gettext-converter@npm:1.2.4"
   dependencies:
     arrify: "npm:^2.0.1"
-    content-type: "npm:1.0.4"
+    content-type: "npm:1.0.5"
     encoding: "npm:0.1.13"
-  checksum: efd23050404045e60c58a158f742406988322cff4c60cef5e90c1a61f4c67eae5fbc35b59756ae066385cd688f5faedf868792c311e28cfde7d3c6d64aa34e00
+  checksum: 11155f336e088613f670b0be7164c7c3af50cf0639325ae380ca0b872a6dc1ccb9ce0cfc1d5796c22d92756fe75aeff58859f012e1c072637b1a5952975b0a61
   languageName: node
   linkType: hard
 
@@ -11202,8 +11195,8 @@ __metadata:
   linkType: hard
 
 "locize-cli@npm:^7.14.6":
-  version: 7.14.13
-  resolution: "locize-cli@npm:7.14.13"
+  version: 7.14.14
+  resolution: "locize-cli@npm:7.14.14"
   dependencies:
     "@js.properties/properties": "npm:0.5.4"
     android-string-resource: "npm:2.3.9"
@@ -11216,7 +11209,7 @@ __metadata:
     dotenv: "npm:16.3.1"
     flat: "npm:5.0.2"
     fluent_conv: "npm:3.2.0"
-    gettext-converter: "npm:1.2.3"
+    gettext-converter: "npm:1.2.4"
     https-proxy-agent: "npm:5.0.1"
     ini: "npm:4.1.1"
     js-yaml: "npm:4.1.0"
@@ -11229,10 +11222,10 @@ __metadata:
     strings-file: "npm:0.0.5"
     tmexchange: "npm:2.0.5"
     xliff: "npm:6.2.0"
-    xlsx: "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
+    xlsx: "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
   bin:
     locize: bin/locize
-  checksum: ebf5539a434645a5d67f4de0c33771b0192521d02a803e328d562bbe5314a373d5e8415a706c8d694a06abbfcfb78147250fe90c2a938ef22ebd54a99c75d82b
+  checksum: 761c3770848e72486c137412263c405bacbe5bbf1f2d640dc3abc60a290fee41c62a42abd2e585bdc543fb0cd7bbff49a87d3f90a3e9b868acb4836549a961cf
   languageName: node
   linkType: hard
 
@@ -11835,7 +11828,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.3.6":
+"nanoid@npm:^3.3.6, nanoid@npm:^3.3.7":
   version: 3.3.7
   resolution: "nanoid@npm:3.3.7"
   bin:
@@ -12534,27 +12527,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.40.0":
-  version: 1.40.0
-  resolution: "playwright-core@npm:1.40.0"
+"playwright-core@npm:1.40.1":
+  version: 1.40.1
+  resolution: "playwright-core@npm:1.40.1"
   bin:
     playwright-core: cli.js
-  checksum: 2ce5245988b0e89ed3359476a83ad724484da349eae42e6c9dd4162a2180b1d37fe1750df45473a5a04a1590cb093d9f0df81e607b7f5c2c161f881436ee1a00
+  checksum: b8945a5eec68a2772be537219c81f74b8fbd1545650c908c41fdcb2b9eb40f488968d1fb59c61ca58afb923af1e390dd621bba3099521fcd3d9a63ef3645a203
   languageName: node
   linkType: hard
 
-"playwright@npm:1.40.0, playwright@npm:^1.39.0":
-  version: 1.40.0
-  resolution: "playwright@npm:1.40.0"
+"playwright@npm:1.40.1, playwright@npm:^1.39.0":
+  version: 1.40.1
+  resolution: "playwright@npm:1.40.1"
   dependencies:
     fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.40.0"
+    playwright-core: "npm:1.40.1"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 56352a177e712598f30bbe6da69027a065cb9ee50df512e186dfc9e479a68bd60bab2fee9278e943ab75d4109ad062b88556f3e7efdabfd1f91f728ccceee631
+  checksum: 95cf79f1574accbff18fac4b876aa3811640314ee74cf4cd1c249398cd49824e55dc664039342a18d2d2fa4f5ad460ce91a97cb15942ab5d71c8ab04f442dc32
   languageName: node
   linkType: hard
 
@@ -12594,6 +12587,17 @@ __metadata:
     picocolors: "npm:^1.0.0"
     source-map-js: "npm:^1.0.2"
   checksum: 1a6653e72105907377f9d4f2cd341d8d90e3fde823a5ddea1e2237aaa56933ea07853f0f2758c28892a1d70c53bbaca200eb8b80f8ed55f13093003dbec5afa0
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.4.32":
+  version: 8.4.32
+  resolution: "postcss@npm:8.4.32"
+  dependencies:
+    nanoid: "npm:^3.3.7"
+    picocolors: "npm:^1.0.0"
+    source-map-js: "npm:^1.0.2"
+  checksum: 28084864122f29148e1f632261c408444f5ead0e0b9ea9bd9729d0468818ebe73fe5dc0075acd50c1365dbe639b46a79cba27d355ec857723a24bc9af0f18525
   languageName: node
   linkType: hard
 
@@ -16054,8 +16058,8 @@ __metadata:
   linkType: hard
 
 "vite-plugin-dts@npm:^3.5.3":
-  version: 3.6.3
-  resolution: "vite-plugin-dts@npm:3.6.3"
+  version: 3.6.4
+  resolution: "vite-plugin-dts@npm:3.6.4"
   dependencies:
     "@microsoft/api-extractor": "npm:^7.38.0"
     "@rollup/pluginutils": "npm:^5.0.5"
@@ -16069,7 +16073,7 @@ __metadata:
   peerDependenciesMeta:
     vite:
       optional: true
-  checksum: eb03afaf31afa4e41de63696a36eed8173fb9772b2163216374101b84a1c2c202cc1a9e1c33394300e7e9e7f6c065c274d6966af87444330f4f92d16d6b19892
+  checksum: 33c46aa1bb7d9d9b8948b6c0b9302c39fd7745aebf4efeb85968cf33034a5a3147baae0a4e488124423dbc7121456168bc5e454ab695bee46afa8ff6bbaa230b
   languageName: node
   linkType: hard
 
@@ -16083,12 +16087,12 @@ __metadata:
   linkType: hard
 
 "vite@npm:^3.0.0 || ^4.0.0 || ^5.0.0-0, vite@npm:^3.1.0 || ^4.0.0 || ^5.0.0-0":
-  version: 5.0.0
-  resolution: "vite@npm:5.0.0"
+  version: 5.0.5
+  resolution: "vite@npm:5.0.5"
   dependencies:
     esbuild: "npm:^0.19.3"
     fsevents: "npm:~2.3.3"
-    postcss: "npm:^8.4.31"
+    postcss: "npm:^8.4.32"
     rollup: "npm:^4.2.0"
   peerDependencies:
     "@types/node": ^18.0.0 || >=20.0.0
@@ -16118,13 +16122,13 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 9a247a5657330ede5c131e782f2fb2adda77d493db2d528524378706108c1560ca4fe9ec0a865e5250978f5e2649c4da690834d2aab4dbf6175f1782cff6bd03
+  checksum: f4cd6e6e38448bdb6dd4dc36c0b34a5c42944d88961b9df246e75a4c3237196b1c64b1afc563524405d1fe3f34e728b9dbfd8cbc5af4e0a03371033d8057fdfe
   languageName: node
   linkType: hard
 
 "vite@npm:^4.4.9":
-  version: 4.5.0
-  resolution: "vite@npm:4.5.0"
+  version: 4.5.1
+  resolution: "vite@npm:4.5.1"
   dependencies:
     esbuild: "npm:^0.18.10"
     fsevents: "npm:~2.3.2"
@@ -16158,7 +16162,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: b262ea4880ba7de8a77b0a665c771561ae3cb7f0d6c5b90e65298039755192550bf90cb96a2910d564506e2d499aa20e9becd330b835c34d414249083ac6e40c
+  checksum: 2ea9c030a5718ca0adaaa0ecc54402a725cff59131cf80bc84d0237f59c98168803ee59d23e697b98b1184be3af6c6edc2e81517f769c62159f11531b3341a4e
   languageName: node
   linkType: hard
 
@@ -16532,12 +16536,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xlsx@https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz":
-  version: 0.19.3
-  resolution: "xlsx@https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
+"xlsx@https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz":
+  version: 0.20.0
+  resolution: "xlsx@https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
   bin:
     xlsx: ./bin/xlsx.njs
-  checksum: c3a8d113e2ecd7b6ceb8dd709fa569e8abc45370fcda37ac8a6cccf832bc959cc06255a3920b466d9dbf76583a3e95315f41d9d06ca7e622830d9acc14295378
+  checksum: 6fc94a69455db7edc9f4d92e1823018894b5c207ff9f4c9f500e16bb03e333b3caa52fc8b258288349e10105436d82ac92dfb26f6f87bbe294500f197b1b0997
   languageName: node
   linkType: hard
 
