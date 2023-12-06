@@ -17,7 +17,13 @@ import {
   Image360AnnotationIntersection,
   Image360AnnotationFilterOptions
 } from '@reveal/360-images';
-import { Cdf360ImageEventProvider } from '@reveal/data-providers';
+import {
+  Cdf360CombinedDescriptorProvider,
+  Cdf360DataModelsDescriptorProvider,
+  Cdf360EventDescriptorProvider,
+  Cdf360ImageProvider,
+  Image360DataModelIdentifier
+} from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
   determineCurrentDevice,
@@ -32,7 +38,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 
 export class Image360ApiHelper {
-  private readonly _image360Facade: Image360Facade<Metadata>;
+  private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
   private readonly _raycaster = new THREE.Raycaster();
@@ -77,7 +83,13 @@ export class Image360ApiHelper {
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
     iconsOptions?: IconsOptions
   ) {
-    const image360DataProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const image360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
+    const image360DataModelsDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
+    const combinedDescriptorProvider = new Cdf360CombinedDescriptorProvider(
+      image360DataModelsDescriptorProvider,
+      image360EventDescriptorProvider
+    );
+    const image360DataProvider = new Cdf360ImageProvider(cogniteClient, combinedDescriptorProvider);
     const device = determineCurrentDevice();
     const image360EntityFactory = new Image360CollectionFactory(
       image360DataProvider,
@@ -136,21 +148,15 @@ export class Image360ApiHelper {
   }
 
   public async add360ImageSet(
-    eventFilter: Metadata,
+    collectionIdentifier: Metadata | Image360DataModelIdentifier,
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean,
     annotationOptions?: Image360AnnotationFilterOptions
   ): Promise<Image360Collection> {
-    const id: string | undefined = eventFilter.site_id;
-    if (id === undefined) {
-      throw new Error('Image set filter must contain site_id');
-    }
-    if (this._image360Facade.collections.map(collection => collection.id).includes(id)) {
-      throw new Error(`Image set with id=${id} has already been added`);
-    }
+    validateIds(this._image360Facade);
 
     const imageCollection = await this._image360Facade.create(
-      eventFilter,
+      collectionIdentifier,
       annotationOptions,
       collectionTransform,
       preMultipliedRotation
@@ -158,6 +164,28 @@ export class Image360ApiHelper {
 
     this._needsRedraw = true;
     return imageCollection;
+
+    function validateIds(image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>) {
+      if (!Cdf360CombinedDescriptorProvider.isFdmIdentifier(collectionIdentifier)) {
+        const id: string | undefined = collectionIdentifier.site_id;
+        if (id === undefined) {
+          throw new Error('Image set filter must contain site_id');
+        }
+        if (image360Facade.collections.map(collection => collection.id).includes(id)) {
+          throw new Error(`Image set with id=${id} has already been added`);
+        }
+      } else {
+        if (
+          image360Facade.collections
+            .map(collection => collection.id)
+            .includes(collectionIdentifier.image360CollectionExternalId)
+        ) {
+          throw new Error(
+            `Image set with id=${collectionIdentifier.image360CollectionExternalId} has already been added`
+          );
+        }
+      }
+    }
   }
 
   public getImageCollections(): Image360Collection[] {

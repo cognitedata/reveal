@@ -1904,10 +1904,10 @@ __metadata:
     "@docusaurus/core": 2.4.3
     "@docusaurus/preset-classic": 2.4.3
     "@docusaurus/remark-plugin-npm2yarn": 2.4.3
-    "@types/react": 18.2.38
+    "@types/react": 18.2.39
     "@types/styled-components": 5.1.32
-    "@uiw/codemirror-theme-material": 4.21.20
-    "@uiw/react-codemirror": 4.21.20
+    "@uiw/codemirror-theme-material": 4.21.21
+    "@uiw/react-codemirror": 4.21.21
     clsx: 2.0.0
     copyfiles: 2.4.1
     cross-env: 7.0.3
@@ -1919,7 +1919,7 @@ __metadata:
     replace: 1.2.2
     rimraf: 5.0.5
     styled-components: 5.3.11
-    typedoc: 0.25.3
+    typedoc: 0.25.4
     typedoc-plugin-markdown: 3.17.1
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 5.3.2
@@ -3488,14 +3488,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.2.38":
-  version: 18.2.38
-  resolution: "@types/react@npm:18.2.38"
+"@types/react@npm:18.2.39":
+  version: 18.2.39
+  resolution: "@types/react@npm:18.2.39"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 71f8c167173d32252be8b2d3c1c76b3570b94d2fbbd139da86d146be453626f5777e12c2781559119637520dbef9f91cffe968f67b5901618f29226d49fad326
+  checksum: 9bcb1f1f060f1bf8f4730fb1c7772d0323a6e707f274efee3b976c40d92af4677df4d88e9135faaacf34e13e02f92ef24eb7d0cbcf7fb75c1883f5623ccb19f4
   languageName: node
   linkType: hard
 
@@ -3624,9 +3624,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-extensions-basic-setup@npm:4.21.20":
-  version: 4.21.20
-  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.21.20"
+"@uiw/codemirror-extensions-basic-setup@npm:4.21.21":
+  version: 4.21.21
+  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.21.21"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/commands": ^6.0.0
@@ -3643,22 +3643,22 @@ __metadata:
     "@codemirror/search": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: 76a6caf05bbcf06c515c680ab952e79b8470ca10c9d8c3166fdb05310232239782b170da276b1dbf33900ca894332fc2aba3bd6955665b2c2580548c7e17cbc0
+  checksum: 5d96ec930be286b5e324ee8dd57128171c72a8e333b4b991a5c4f33a05420a638def3776bd1a77c5b88184f7d3cbc6828b5c9a42b3b490f51908bedf69eaa0f0
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-theme-material@npm:4.21.20":
-  version: 4.21.20
-  resolution: "@uiw/codemirror-theme-material@npm:4.21.20"
+"@uiw/codemirror-theme-material@npm:4.21.21":
+  version: 4.21.21
+  resolution: "@uiw/codemirror-theme-material@npm:4.21.21"
   dependencies:
-    "@uiw/codemirror-themes": 4.21.20
-  checksum: 40a590928701dbf3541e047566bc3de7d87d992c39ce1e52df0063fd4110a9e86f5273e4618d0ff94e16af61c680d39bcbe4d34f9ce39904357c3f4f9d18444b
+    "@uiw/codemirror-themes": 4.21.21
+  checksum: 2e182005fd8dbeb73511f76d45b3f5211d81b6ffc1aea9e62b5ec2849ac6ccbf82f058f4c1736e1041a86d14d142d6a54dfd34252f3d0ca9aac36875b3768ff2
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-themes@npm:4.21.20":
-  version: 4.21.20
-  resolution: "@uiw/codemirror-themes@npm:4.21.20"
+"@uiw/codemirror-themes@npm:4.21.21":
+  version: 4.21.21
+  resolution: "@uiw/codemirror-themes@npm:4.21.21"
   dependencies:
     "@codemirror/language": ^6.0.0
     "@codemirror/state": ^6.0.0
@@ -3667,19 +3667,19 @@ __metadata:
     "@codemirror/language": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: 883fe8810daa2cf13e2f0b3812ac7653b2df0a91df74564fbe19d09eeb535ff2a5a9e5a9477168e2fef1aef8a993099fce6c1862e8d181778e2f76e3576f16af
+  checksum: 3d3d791048a4eed8b5f62c7c89990407615ef6597b7aacfc2506a53e3e3b9b523c867bbc711e6d73cd713f353461073273a0ee055b0e94c69b11c1dbb53ae97f
   languageName: node
   linkType: hard
 
-"@uiw/react-codemirror@npm:4.21.20":
-  version: 4.21.20
-  resolution: "@uiw/react-codemirror@npm:4.21.20"
+"@uiw/react-codemirror@npm:4.21.21":
+  version: 4.21.21
+  resolution: "@uiw/react-codemirror@npm:4.21.21"
   dependencies:
     "@babel/runtime": ^7.18.6
     "@codemirror/commands": ^6.1.0
     "@codemirror/state": ^6.1.1
     "@codemirror/theme-one-dark": ^6.0.0
-    "@uiw/codemirror-extensions-basic-setup": 4.21.20
+    "@uiw/codemirror-extensions-basic-setup": 4.21.21
     codemirror: ^6.0.0
   peerDependencies:
     "@babel/runtime": ">=7.11.0"
@@ -3689,7 +3689,7 @@ __metadata:
     codemirror: ">=6.0.0"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 63ea348a922c535ff91c8bff1c1dac40ced0227d1c17139142dbc28017bb254cc32428a15686660ec4f4cd6935c574d627b6a4872910357af51da8e90faaf4da
+  checksum: 6a8500290bf0a739fd345221465b10112e0f758914bc8aa28ce0b9904b76489ae018d390f6a2d7dd7752b21f0ed87ba3fedb45b4185d04e4985abf0eb22e6d75
   languageName: node
   linkType: hard
 
@@ -12119,19 +12119,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.25.3":
-  version: 0.25.3
-  resolution: "typedoc@npm:0.25.3"
+"typedoc@npm:0.25.4":
+  version: 0.25.4
+  resolution: "typedoc@npm:0.25.4"
   dependencies:
     lunr: ^2.3.9
     marked: ^4.3.0
     minimatch: ^9.0.3
     shiki: ^0.14.1
   peerDependencies:
-    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x
+    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
   bin:
     typedoc: bin/typedoc
-  checksum: 060a8f798b32a0e70aa3b16e04d95b56fcfabf54f75fdff74fd9ddeed8860db3ba030d153f8b535b409a9d8825856252bc59f401619e5e3e2f71d3b9e0de606a
+  checksum: 6d441baa277c0db4d577db2932a7af316d175415841e2faf2e68e3eda6ad60356c54f56374f89c5233d7bd5c057b0337455e5d484d8463e1445e67c37a6d94eb
   languageName: node
   linkType: hard
 

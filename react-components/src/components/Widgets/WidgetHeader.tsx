@@ -71,6 +71,7 @@ const Actions = styled.div<{ align: 'left' | 'right' }>`
   width: 100%;
   display: flex;
   gap: 8px;
+  padding: 10px;
 `;
 
 const Content = styled.div`
