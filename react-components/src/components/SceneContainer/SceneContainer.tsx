@@ -2,9 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useRef, useState } from 'react';
-import { type CogniteModel, type AddModelOptions } from '@cognite/reveal';
+import { type AddModelOptions } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
-import { type Matrix4 } from 'three';
 import * as THREE from 'three';
 import { type Query } from '../../utilities/FdmSDK';
 import { useFdmSdk } from '../RevealContainer/SDKProvider';
@@ -18,19 +17,15 @@ import {
   type Transformation3d,
   type SceneModelsProperties
 } from './SceneFdmTypes';
-import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
-import { PointCloudContainer } from '../..';
+import { type AddResourceOptions, Reveal3DResources } from '../..';
 import type CogniteClient from '@cognite/sdk/dist/src/cogniteClient';
 
 export type CogniteSceneProps = {
   sceneExternalId: string;
   sceneSpaceId: string;
   sdk: CogniteClient;
-};
-
-type AddModelOptionsAndTransform = {
-  addModelOptions: AddModelOptions;
-  transform?: Matrix4;
+  onResourcesAdded?: () => void;
+  onResourceLoadError?: (error: any) => void;
 };
 
 export function SceneContainer({
@@ -41,10 +36,9 @@ export function SceneContainer({
   const viewer = useReveal();
   const fdmSdk = useFdmSdk();
   const skyboxRef = useRef<THREE.Object3D<THREE.Object3DEventMap>>();
-  const groundPlaneRef = useRef<THREE.Object3D<THREE.Object3DEventMap>>();
-  const cadModelIds = useRef<AddModelOptionsAndTransform[]>([]);
-  const pointCloudIds = useRef<AddModelOptionsAndTransform[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
+  const groundPlaneRef = useRef<Array<THREE.Object3D<THREE.Object3DEventMap>>>([]);
+  const resourceOptions = useRef<AddResourceOptions[]>([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const loadScene = async (query: Query): Promise<void> => {
@@ -107,7 +101,7 @@ export function SceneContainer({
               );
               mesh.rotation.set(-Math.PI, 0, 0);
               viewer.addObject3D(mesh);
-              groundPlaneRef.current = mesh;
+              groundPlaneRef.current.push(mesh);
             });
           }
         );
@@ -201,24 +195,15 @@ export function SceneContainer({
 
             // Combine transformations
             transform.multiply(scale).multiply(rotation).multiply(translation);
-
-            const modelType = await viewer.determineModelType(modelId, revisionId);
-            let model: CogniteModel;
-            switch (modelType) {
-              case 'cad':
-                model = await viewer.addCadModel(addModelOptions);
-                break;
-              case 'pointcloud':
-                model = await viewer.addPointCloudModel(addModelOptions);
-                break;
-              default:
-                throw new Error('Model is not supported');
-            }
+            resourceOptions.current.push({ ...addModelOptions, transform });
           })
         );
-      }
 
-      setLoaded(true);
+        resourceOptions.current.forEach((resource) => {
+          console.log(resource);
+        });
+        setLoaded(true);
+      }
     };
 
     const getSceneQuery = createGetSceneQuery('my_scene_external_id', 'scene_space');
@@ -238,9 +223,11 @@ export function SceneContainer({
     skyboxRef.current = undefined;
 
     if (groundPlaneRef.current !== null && groundPlaneRef.current !== undefined) {
-      viewer.removeObject3D(groundPlaneRef.current);
+      groundPlaneRef.current.forEach((groundPlane) => {
+        viewer.removeObject3D(groundPlane);
+      });
     }
-    groundPlaneRef.current = undefined;
+    groundPlaneRef.current.splice(0, groundPlaneRef.current.length);
   }
 
   function extractProperties(object: any): any {
@@ -249,30 +236,5 @@ export function SceneContainer({
     return object[firstKey][secondKey];
   }
 
-  return (
-    <>
-      {loaded &&
-        cadModelIds.current.map((options, index) => (
-          <CadModelContainer
-            key={index} // replace 'id' with the actual id property
-            addModelOptions={options.addModelOptions}
-            transform={options.transform}
-            styling={undefined}
-            onLoad={undefined}
-            onLoadError={undefined}
-          />
-        ))}
-      {loaded &&
-        pointCloudIds.current.map((options, index) => (
-          <PointCloudContainer
-            key={index} // replace 'id' with the actual id property
-            addModelOptions={options.addModelOptions}
-            transform={options.transform}
-            styling={undefined}
-            onLoad={undefined}
-            onLoadError={undefined}
-          />
-        ))}
-    </>
-  );
+  return <>{loaded && <Reveal3DResources resources={resourceOptions.current} />}</>;
 }

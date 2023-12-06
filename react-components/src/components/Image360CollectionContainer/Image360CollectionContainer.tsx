@@ -9,13 +9,13 @@ import { type AddImageCollection360Options } from '../..';
 import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
 
 type Image360CollectionContainerProps = {
-  siteId: string;
+  collectionId: { siteId: string } | { externalId: string; space: string };
   onLoad?: (image360: Image360Collection) => void;
   onLoadError?: (addOptions: AddImageCollection360Options, error: any) => void;
 };
 
 export function Image360CollectionContainer({
-  siteId,
+  collectionId,
   onLoad,
   onLoadError
 }: Image360CollectionContainerProps): ReactElement {
@@ -25,18 +25,20 @@ export function Image360CollectionContainer({
   const [layersUrlState] = useLayersUrlParams();
   const { image360Layers } = layersUrlState;
 
-  const initializingSiteId = useRef<string | undefined>(undefined);
+  const initializingSiteId = useRef<{ siteId: string } | { externalId: string } | undefined>(
+    undefined
+  );
 
   useEffect(() => {
-    if (initializingSiteId.current === siteId) {
+    if ('siteId' in collectionId && initializingSiteId.current === collectionId) {
       return;
     }
 
-    initializingSiteId.current = siteId;
+    initializingSiteId.current = collectionId;
 
     void add360Collection();
     return remove360Collection;
-  }, [siteId]);
+  }, [collectionId]);
 
   return <></>;
 
@@ -49,21 +51,29 @@ export function Image360CollectionContainer({
       })
       .catch((error: any) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
-        errorReportFunction({ siteId }, error);
+        errorReportFunction(collectionId, error);
       });
 
     async function getOrAdd360Collection(): Promise<Image360Collection> {
       const collections = viewer.get360ImageCollections();
+      const siteId = 'siteId' in collectionId ? collectionId.siteId : collectionId.externalId;
       const collection = collections.find((collection) => collection.id === siteId);
       if (collection !== undefined) {
         return collection;
       }
 
-      return await viewer.add360ImageSet(
-        'events',
-        { site_id: siteId },
-        { preMultipliedRotation: false }
-      );
+      if ('siteId' in collectionId) {
+        return await viewer.add360ImageSet(
+          'events',
+          { site_id: siteId },
+          { preMultipliedRotation: false }
+        );
+      } else {
+        return await viewer.add360ImageSet('datamodels', {
+          image360CollectionExternalId: collectionId.externalId,
+          space: collectionId.space
+        });
+      }
     }
   }
 
@@ -87,5 +97,9 @@ export function Image360CollectionContainer({
 }
 
 function defaultLoadErrorHandler(addOptions: AddImageCollection360Options, error: any): void {
-  console.warn(`Failed to load image collection ${addOptions.siteId}: ${JSON.stringify(error)}`);
+  console.warn(
+    `Failed to load image collection ${
+      'siteId' in addOptions ? addOptions.siteId : addOptions.externalId
+    }: ${JSON.stringify(error)}`
+  );
 }
