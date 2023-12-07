@@ -15,15 +15,24 @@ import {
   type SkyboxProperties,
   type GroundPlaneEdgeResponse,
   type Transformation3d,
-  type SceneModelsProperties
+  type SceneModelsProperties,
+  type Scene360ImageCollectionsProperties
 } from './SceneFdmTypes';
 import { type AddResourceOptions, Reveal3DResources } from '../..';
 import type CogniteClient from '@cognite/sdk/dist/src/cogniteClient';
+import {
+  type AddImageCollection360DatamodelsOptions,
+  type AssetMappingStylingGroup,
+  type DefaultResourceStyling,
+  type FdmAssetStylingGroup
+} from '../Reveal3DResources/types';
 
 export type CogniteSceneProps = {
   sceneExternalId: string;
   sceneSpaceId: string;
   sdk: CogniteClient;
+  defaultResourceStyling?: DefaultResourceStyling;
+  instanceStyling?: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (error: any) => void;
 };
@@ -31,7 +40,11 @@ export type CogniteSceneProps = {
 export function SceneContainer({
   sceneExternalId,
   sceneSpaceId,
-  sdk
+  sdk,
+  defaultResourceStyling,
+  instanceStyling,
+  onResourcesAdded,
+  onResourceLoadError
 }: CogniteSceneProps): ReactElement {
   const viewer = useReveal();
   const fdmSdk = useFdmSdk();
@@ -48,10 +61,9 @@ export function SceneContainer({
       });
 
       const scene = res as any as SceneResponse;
-      const SceneConfigurationProperties = extractProperties(scene.items.scene[0].properties);
+      const SceneConfigurationProperties = extractProperties(scene.items.myScene[0].properties);
 
-      const hasGroundPlanes = scene.items.groundPlanes.length > 0;
-      if (hasGroundPlanes) {
+      if (scene.items.groundPlanes.length > 0) {
         const groundPlanes = scene.items.groundPlanes;
         const groundPlaneEdges = scene.items.groundPlaneEdges;
 
@@ -86,30 +98,27 @@ export function SceneContainer({
         );
 
         let index = 0;
-        groundPlanePropertiesNodeAndEdgeMap.forEach(
-          (groundPlaneEdgeProperties, groundPlaneProperties) => {
-            const textureUrl = groundPlaneTextureUrls[index++].downloadUrl;
-            const textureLoader = new THREE.TextureLoader();
-            textureLoader.load(textureUrl, function (texture) {
-              const material = new THREE.MeshBasicMaterial({ map: texture });
-              const geometry = new THREE.PlaneGeometry(1000, 1000);
-              const mesh = new THREE.Mesh(geometry, material);
-              mesh.position.set(
-                groundPlaneEdgeProperties.translationX,
-                groundPlaneEdgeProperties.translationY,
-                groundPlaneEdgeProperties.translationZ
-              );
-              mesh.rotation.set(-Math.PI, 0, 0);
-              viewer.addObject3D(mesh);
-              groundPlaneRef.current.push(mesh);
-            });
-          }
-        );
+        groundPlanePropertiesNodeAndEdgeMap.forEach((groundPlaneEdgeProperties) => {
+          const textureUrl = groundPlaneTextureUrls[index++].downloadUrl;
+          const textureLoader = new THREE.TextureLoader();
+          textureLoader.load(textureUrl, function (texture) {
+            const material = new THREE.MeshBasicMaterial({ map: texture });
+            const geometry = new THREE.PlaneGeometry(1000, 1000);
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(
+              groundPlaneEdgeProperties.translationX,
+              groundPlaneEdgeProperties.translationY,
+              groundPlaneEdgeProperties.translationZ
+            );
+            mesh.rotation.set(-Math.PI, 0, 0);
+            viewer.addObject3D(mesh);
+            groundPlaneRef.current.push(mesh);
+          });
+        });
       }
 
       // Skybox
-      const hasSkybox = scene.items.skybox.length > 0;
-      if (hasSkybox) {
+      if (scene.items.skybox.length > 0) {
         const skyboxProperties = extractProperties(
           scene.items.skybox[0].properties
         ) as SkyboxProperties;
@@ -153,8 +162,7 @@ export function SceneContainer({
         viewer.cameraManager.getCamera().lookAt(position.clone().add(vec));
       }
 
-      const hasSceneModels = scene.items.sceneModels.length > 0;
-      if (hasSceneModels) {
+      if (scene.items.sceneModels.length > 0) {
         const sceneModels = scene.items.sceneModels;
         void Promise.all(
           sceneModels.map(async (sceneModel) => {
@@ -198,6 +206,51 @@ export function SceneContainer({
             resourceOptions.current.push({ ...addModelOptions, transform });
           })
         );
+      }
+
+      if (scene.items.image360CollectionsEdges.length > 0) {
+        const image360Collections = scene.items.image360CollectionsEdges;
+        void Promise.all(
+          image360Collections.map(async (image360Collection) => {
+            const Image360CollectionProperties = extractProperties(
+              image360Collection.properties
+            ) as Scene360ImageCollectionsProperties;
+
+            const externalId = Image360CollectionProperties.image360CollectionExternalId;
+            const space = Image360CollectionProperties.image360CollectionSpace;
+
+            if (externalId === '' || space === '') return;
+
+            const addModelOptions: AddImageCollection360DatamodelsOptions = {
+              externalId,
+              space
+            };
+
+            const transform = new THREE.Matrix4();
+            const scale = new THREE.Matrix4().makeScale(
+              Image360CollectionProperties.scaleX,
+              Image360CollectionProperties.scaleY,
+              Image360CollectionProperties.scaleZ
+            );
+            const euler = new THREE.Euler(
+              Image360CollectionProperties.eulerRotationX,
+              Image360CollectionProperties.eulerRotationY,
+              Image360CollectionProperties.eulerRotationZ,
+              'XYZ'
+            );
+            const rotation = new THREE.Matrix4().makeRotationFromEuler(euler);
+            // Create translation matrix
+            const translation = new THREE.Matrix4().makeTranslation(
+              Image360CollectionProperties.translationX,
+              Image360CollectionProperties.translationY,
+              Image360CollectionProperties.translationZ
+            );
+
+            // Combine transformations
+            transform.multiply(scale).multiply(rotation).multiply(translation);
+            resourceOptions.current.push({ ...addModelOptions, transform });
+          })
+        );
 
         resourceOptions.current.forEach((resource) => {
           console.log(resource);
@@ -228,6 +281,8 @@ export function SceneContainer({
       });
     }
     groundPlaneRef.current.splice(0, groundPlaneRef.current.length);
+
+    resourceOptions.current.splice(0, resourceOptions.current.length);
   }
 
   function extractProperties(object: any): any {
@@ -236,5 +291,16 @@ export function SceneContainer({
     return object[firstKey][secondKey];
   }
 
-  return <>{loaded && <Reveal3DResources resources={resourceOptions.current} />}</>;
+  return (
+    <>
+      {loaded && (
+        <Reveal3DResources
+          resources={resourceOptions.current}
+          defaultResourceStyling={defaultResourceStyling}
+          instanceStyling={instanceStyling}
+          onResourceLoadError={onResourceLoadError}
+        />
+      )}
+    </>
+  );
 }

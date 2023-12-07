@@ -7,7 +7,7 @@ import { type Query } from '../../utilities/FdmSDK';
 export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: string): Query {
   return {
     with: {
-      scene: {
+      myScene: {
         nodes: {
           filter: {
             and: [
@@ -30,7 +30,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
       },
       sceneModels: {
         edges: {
-          from: 'scene',
+          from: 'myScene',
           maxDistance: 1,
           direction: 'outwards',
           filter: {
@@ -45,9 +45,26 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
         },
         limit: 100
       },
+      image360CollectionsEdges: {
+        edges: {
+          from: 'myScene',
+          maxDistance: 1,
+          direction: 'outwards',
+          filter: {
+            equals: {
+              property: ['edge', 'type'],
+              value: {
+                space: 'scene_space',
+                externalId: 'SceneConfiguration.images360Collections'
+              }
+            }
+          }
+        },
+        limit: 100
+      },
       skybox: {
         nodes: {
-          from: 'scene',
+          from: 'myScene',
           through: {
             view: {
               type: 'view',
@@ -62,7 +79,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
       },
       groundPlaneEdges: {
         edges: {
-          from: 'scene',
+          from: 'myScene',
           maxDistance: 1,
           direction: 'outwards',
           filter: {
@@ -86,7 +103,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
       }
     },
     select: {
-      scene: {
+      myScene: {
         sources: [
           {
             source: {
@@ -95,7 +112,16 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
               externalId: 'SceneConfiguration',
               version: 'v4'
             },
-            properties: ['*']
+            properties: [
+              '*'
+              // 'name',
+              // 'cameraTranslationX',
+              // 'cameraTranslationY',
+              // 'cameraTranslationZ',
+              // 'cameraEulerRotationX',
+              // 'cameraEulerRotationY',
+              // 'cameraEulerRotationZ'
+            ]
           }
         ]
       },
@@ -108,7 +134,43 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
               externalId: 'Cdf3dRevisionProperties',
               version: '2190c9b6f5cb82'
             },
-            properties: ['*']
+            properties: [
+              'revisionId',
+              'translationX',
+              'translationY',
+              'translationZ',
+              'eulerRotationX',
+              'eulerRotationY',
+              'eulerRotationZ',
+              'scaleX',
+              'scaleY',
+              'scaleZ'
+            ]
+          }
+        ]
+      },
+      image360CollectionsEdges: {
+        sources: [
+          {
+            source: {
+              type: 'view',
+              space: 'scene_space',
+              externalId: 'Cdf3dImage360CollectionProperties2',
+              version: 'c29eeaabf97bf9'
+            },
+            properties: [
+              'image360CollectionExternalId',
+              'image360CollectionSpace',
+              'translationX',
+              'translationY',
+              'translationZ',
+              'eulerRotationX',
+              'eulerRotationY',
+              'eulerRotationZ',
+              'scaleX',
+              'scaleY',
+              'scaleZ'
+            ]
           }
         ]
       },
@@ -121,7 +183,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
               externalId: 'EnvironmentMap',
               version: 'c7574a9083b304'
             },
-            properties: ['*']
+            properties: ['label', 'file', 'isSpherical']
           }
         ]
       },
@@ -134,7 +196,17 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
               externalId: 'Cdf3dImage360Properties',
               version: '27ff998bf60c1c'
             },
-            properties: ['*']
+            properties: [
+              'translationX',
+              'translationY',
+              'translationZ',
+              'eulerRotationX',
+              'eulerRotationY',
+              'eulerRotationZ',
+              'scaleX',
+              'scaleY',
+              'scaleZ'
+            ]
           }
         ]
       },
@@ -147,7 +219,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
               externalId: 'TexturedPlane',
               version: '94f0d07f55b20b'
             },
-            properties: ['*']
+            properties: ['label', 'file', 'wrapping']
           }
         ]
       }

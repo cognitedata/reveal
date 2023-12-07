@@ -26,6 +26,21 @@ export type EdgeResponse = {
   };
 };
 
+export type SceneResponse = {
+  items: {
+    myScene: SceneConfigurationResponse[];
+    skybox: SkyboxResponse[];
+    groundPlanes: GroundPlaneResponse[];
+    groundPlaneEdges: GroundPlaneEdgeResponse[];
+    sceneModels: SceneModelsResponse[];
+    image360CollectionsEdges: Image360CollectionsResponse[];
+  };
+  nextCursor: {
+    scene: string;
+    skybox: string;
+  };
+};
+
 export type Transformation3d = {
   translationX: number;
   translationY: number;
@@ -38,38 +53,29 @@ export type Transformation3d = {
   scaleZ: number;
 };
 
-export type SceneResponse = {
-  items: {
-    scene: SceneConfigurationResponse[];
-    skybox: SkyboxResponse[];
-    groundPlanes: GroundPlaneResponse[];
-    groundPlaneEdges: GroundPlaneEdgeResponse[];
-    sceneModels: SceneModelsResponse[];
-  };
-  nextCursor: {
-    scene: string;
-    skybox: string;
-  };
-};
-
 export type SceneConfigurationResponse = NodeResponse & {
   properties: Record<string, Record<string, SceneConfigurationProperties>>;
 };
-
-// export type ModelPropertiesResponse = EdgeResponse & {
-//   properties: Record<string, Record<string, SceneConfigurationProperties>>;
-// };
 
 export type SkyboxResponse = NodeResponse & {
   properties: Record<string, Record<string, SkyboxProperties>>;
 };
 
 export type SceneModelsResponse = EdgeResponse & {
-  properties: Record<string, Record<string, Cdf3dRevisionProperties>>;
+  properties: Record<string, Record<string, SceneModelsProperties>>;
 };
 
 export type SceneModelsProperties = Transformation3d & {
   revisionId: number;
+};
+
+export type Image360CollectionsResponse = EdgeResponse & {
+  properties: Record<string, Record<string, Scene360ImageCollectionsProperties>>;
+};
+
+export type Scene360ImageCollectionsProperties = Transformation3d & {
+  image360CollectionExternalId: string;
+  image360CollectionSpace: string;
 };
 
 export type SceneConfigurationProperties = {
@@ -100,17 +106,4 @@ export type GroundPlaneProperties = {
 
 export type GroundPlaneEdgeResponse = EdgeResponse & {
   properties: Record<string, Record<string, Transformation3d>>;
-};
-
-export type Cdf3dRevisionProperties = {
-  revisionId: number;
-  scaleX: number;
-  scaleY: number;
-  scaleZ: number;
-  translationX: number;
-  translationY: number;
-  translationZ: number;
-  eulerRotationX: number;
-  eulerRotationY: number;
-  eulerRotationZ: number;
 };
