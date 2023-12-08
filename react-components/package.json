@@ -93,7 +93,7 @@
     "typescript": "5.3.2",
     "vite": "^4.4.9",
     "vite-plugin-dts": "^3.5.3",
-    "vite-plugin-externalize-deps": "^0.7.0",
+    "vite-plugin-externalize-deps": "^0.8.0",
     "vitest": "^0.34.6"
   },
   "packageManager": "yarn@4.0.2",

@@ -1918,7 +1918,7 @@ __metadata:
     typescript: "npm:5.3.2"
     vite: "npm:^4.4.9"
     vite-plugin-dts: "npm:^3.5.3"
-    vite-plugin-externalize-deps: "npm:^0.7.0"
+    vite-plugin-externalize-deps: "npm:^0.8.0"
     vitest: "npm:^0.34.6"
   peerDependencies:
     "@cognite/cogs.js": ">=9"
@@ -16006,12 +16006,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-externalize-deps@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "vite-plugin-externalize-deps@npm:0.7.0"
+"vite-plugin-externalize-deps@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "vite-plugin-externalize-deps@npm:0.8.0"
   peerDependencies:
-    vite: ^2.0.0 || ^3.0.0 || ^4.0.0
-  checksum: e0f37e146347898d34f88711dbd1b5c784eab772c26b1f01b58b76b0cc21d6f19c108e86245f6d029b0eade426766ad89000b7aa2ed50674e44b28f7df2088fa
+    vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
+  checksum: a87b7bc44c810e5ef16314d76ccdd442d27018ea3fae531d22fc6bd803c20e0de4268d981bfc5db604ceb382cd9f646804da84df5a77dac98914be8ddc15b6ec
   languageName: node
   linkType: hard
 
