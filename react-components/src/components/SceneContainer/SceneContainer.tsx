@@ -46,6 +46,7 @@ export function SceneContainer({
           resources={resourceOptions}
           defaultResourceStyling={defaultResourceStyling}
           instanceStyling={instanceStyling}
+          onResourcesAdded={onResourcesAdded}
           onResourceLoadError={onResourceLoadError}
         />
       }
