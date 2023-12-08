@@ -25,10 +25,18 @@ export const useSceneConfigQuery = (
   sceneSpaceExternalId: string
 ): UseQueryResult<Scene> => {
   const fdmSdk = useFdmSdk();
-  return useQuery(
-    ['reveal', 'react-components', 'sync-scene-config', sceneExternalId, sceneSpaceExternalId],
-    async () => {
-      const getSceneQuery = createGetSceneQuery('my_scene_external_id', 'scene_space');
+  return useQuery({
+    queryKey: [
+      'reveal',
+      'react-components',
+      'sync-scene-config',
+      sceneExternalId,
+      sceneSpaceExternalId
+    ],
+    enabled: sceneExternalId !== '' && sceneSpaceExternalId !== '',
+    staleTime: Infinity,
+    queryFn: async () => {
+      const getSceneQuery = createGetSceneQuery(sceneExternalId, sceneSpaceExternalId);
       const res = await fdmSdk.queryNodesAndEdges({
         ...getSceneQuery
       });
@@ -53,10 +61,9 @@ export const useSceneConfigQuery = (
         sceneModels: getSceneModels(sceneResponse),
         image360Collections: getImageCollections(sceneResponse)
       };
-      console.log(scene);
       return scene;
     }
-  );
+  });
 };
 
 function extractProperties(object: any): any {

@@ -21,9 +21,9 @@ const sdk = createSdkByUrlToken();
 
 export const Main: Story = {
   args: {
-    sceneExternalId: '<scene_external_id>',
-    sceneSpaceId: '<scene_space_id>',
-    sdk: sdk
+    sceneExternalId: '',
+    sceneSpaceId: '',
+    sdk
   },
   render: ({ sceneExternalId, sceneSpaceId }) => {
     return (
@@ -45,7 +45,7 @@ const SceneContainerStoryContent = ({
 }: SceneContainerStoryContentProps): ReactElement => {
   return (
     <>
-      <SceneContainer sceneExternalId="" sceneSpaceId="" sdk={sdk} />
+      <SceneContainer sceneExternalId={sceneExternalId} sceneSpaceId={sceneSpaceId} sdk={sdk} />
     </>
   );
 };

@@ -9,7 +9,10 @@ import {
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
 } from '../Reveal3DResources/types';
-import { useSyncSceneConfigWithViewer } from '../../hooks/useSyncSceneConfigWithViewer';
+import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesFromScene';
+import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
+import { useSkyboxFromScene } from '../../hooks/useSkyboxFromScene';
+import { useCameraFromScene } from '../../hooks/useCameraFromScene';
 
 export type CogniteSceneProps = {
   sdk: CogniteClient;
@@ -30,11 +33,11 @@ export function SceneContainer({
   onResourcesAdded,
   onResourceLoadError
 }: CogniteSceneProps): ReactElement {
-  const resourceOptions = useSyncSceneConfigWithViewer({
-    sdk,
-    sceneExternalId: 'my_scene_external_id',
-    sceneSpaceId: 'scene_space'
-  });
+  const resourceOptions = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
+
+  useCameraFromScene(sceneExternalId, sceneSpaceId);
+  useGroundPlaneFromScene(sdk, sceneExternalId, sceneSpaceId);
+  useSkyboxFromScene(sdk, sceneExternalId, sceneSpaceId);
 
   return (
     <>
