@@ -30,6 +30,7 @@ export function Image360CollectionContainer({
   );
 
   useEffect(() => {
+    console.log(collectionId);
     if ('siteId' in collectionId && initializingSiteId.current === collectionId) {
       return;
     }
@@ -63,6 +64,7 @@ export function Image360CollectionContainer({
       }
 
       if ('siteId' in collectionId) {
+        console.log('siteId in collectionId');
         return await viewer.add360ImageSet(
           'events',
           { site_id: siteId },

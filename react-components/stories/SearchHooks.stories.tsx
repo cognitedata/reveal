@@ -83,7 +83,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     (resource): resource is AddImageCollection360Options => 'siteId' in resource
   );
   const siteIds = filtered360ImageResources.map((filteredResource) => {
-    return filteredResource.siteId;
+    return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;
   });
 
   const { data: annotationAssetSearchData } = useSearchAssetsMapped360Annotations(
