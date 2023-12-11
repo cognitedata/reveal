@@ -55,14 +55,17 @@ export const useGroundPlaneFromScene = (
       const textureLoader = new THREE.TextureLoader();
       textureLoader.load(textureUrl, function (texture) {
         const material = new THREE.MeshBasicMaterial({ map: texture });
-        const geometry = new THREE.PlaneGeometry(1000, 1000);
+        const geometry = new THREE.PlaneGeometry(
+          10000 * groundPlane.scaleX,
+          10000 * groundPlane.scaleY
+        );
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(
           groundPlane.translationX,
           groundPlane.translationY,
           groundPlane.translationZ
         );
-        mesh.rotation.set(-Math.PI, 0, 0);
+        mesh.rotation.set(-Math.PI / 2, 0, 0);
         viewer.addObject3D(mesh);
         groundPlaneRef.current.push(mesh);
       });
