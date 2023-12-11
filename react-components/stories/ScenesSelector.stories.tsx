@@ -15,12 +15,12 @@ import {
 } from '../src';
 import { Color } from 'three';
 import styled from 'styled-components';
-import { Button, Dropdown, Menu, ToolBar, type ToolBarButton } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, ToolBar } from '@cognite/cogs.js';
 import { type ReactElement, useEffect, useState } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
-import { use3dScenes } from '../src/hooks/use3dScenes';
+import { use3dScenes } from '../src';
 
 const meta = {
   title: 'Example/SceneSelector',
@@ -36,15 +36,6 @@ const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(
   left: 20px;
   top: 70px;
 `;
-
-const exampleToolBarButtons: ToolBarButton[] = [
-  {
-    icon: 'Edit'
-  },
-  {
-    icon: 'World'
-  }
-];
 
 const SceneButton = ({
   setResources
@@ -104,7 +95,6 @@ export const Main: Story = {
         <MyCustomToolbar>
           <SceneButton setResources={setResources} />
           <RevealToolbar.FitModelsButton />
-          <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
           <RevealToolbar.SlicerButton />
         </MyCustomToolbar>
         <Reveal3DResources resources={resources} />
