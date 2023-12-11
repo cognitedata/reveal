@@ -20,7 +20,7 @@ import {
 } from '../components/SceneContainer/SceneTypes';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 
-export const useSceneConfigQuery = (
+export const useSceneConfig = (
   sceneExternalId: string,
   sceneSpaceExternalId: string
 ): UseQueryResult<Scene> => {

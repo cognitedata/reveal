@@ -3,9 +3,10 @@
  */
 
 import { useEffect, useRef } from 'react';
-import { useSceneConfigQuery } from './useSceneConfigQuery';
+import { useSceneConfig } from './useSceneConfig';
 import * as THREE from 'three';
 import { useReveal } from '..';
+import { useQuery } from '@tanstack/react-query';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
 
 export const useSkyboxFromScene = (
@@ -13,31 +14,40 @@ export const useSkyboxFromScene = (
   sceneExternalId: string,
   sceneSpaceId: string
 ): void => {
-  const scene = useSceneConfigQuery(sceneExternalId, sceneSpaceId);
+  const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
   const viewer = useReveal();
   const skyboxRef = useRef<THREE.Object3D<THREE.Object3DEventMap>>();
 
+  const skyboxUrl = useQuery(['reveal', 'react-components', 'skyboxUrl', scene.data], async () => {
+    if (scene.data === undefined || scene.data === null) {
+      return undefined;
+    }
+
+    if (scene.data.skybox !== undefined && scene.data.skybox !== null) {
+      const skyboxExternalId = scene.data.skybox.file;
+      const skyBoxUrls = await sdk.files.getDownloadUrls([{ externalId: skyboxExternalId }]);
+      const skyboxUrl = skyBoxUrls[0].downloadUrl;
+      return skyboxUrl;
+    }
+
+    return undefined;
+  });
+
   useEffect(() => {
     const loadSkybox = async (): Promise<void> => {
-      if (scene.data === undefined || scene.data === null) {
+      if (skyboxUrl.data === undefined || skyboxUrl.data === null) {
         return;
       }
 
-      if (scene.data.skybox !== undefined && scene.data.skybox !== null) {
-        const skyboxExternalId = scene.data.skybox.file;
-        const skyBoxUrls = await sdk.files.getDownloadUrls([{ externalId: skyboxExternalId }]);
-        const skyboxUrl = skyBoxUrls[0].downloadUrl;
-
-        const skyboxMesh = new THREE.Mesh(
-          new THREE.SphereGeometry(9000000, 0, 0),
-          new THREE.MeshBasicMaterial({
-            side: THREE.BackSide,
-            map: new THREE.TextureLoader().load(skyboxUrl)
-          })
-        );
-        viewer.addObject3D(skyboxMesh);
-        skyboxRef.current = skyboxMesh;
-      }
+      const skyboxMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(9000000, 0, 0),
+        new THREE.MeshBasicMaterial({
+          side: THREE.BackSide,
+          map: new THREE.TextureLoader().load(skyboxUrl.data)
+        })
+      );
+      viewer.addObject3D(skyboxMesh);
+      skyboxRef.current = skyboxMesh;
     };
     void loadSkybox();
 
@@ -48,5 +58,5 @@ export const useSkyboxFromScene = (
       }
       skyboxRef.current = undefined;
     };
-  }, [scene.data]);
+  }, [skyboxUrl]);
 };

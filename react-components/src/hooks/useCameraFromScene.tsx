@@ -3,12 +3,12 @@
  */
 
 import { useEffect } from 'react';
-import { useSceneConfigQuery } from './useSceneConfigQuery';
+import { useSceneConfig } from './useSceneConfig';
 import * as THREE from 'three';
 import { useReveal } from '..';
 
 export const useCameraFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
-  const scene = useSceneConfigQuery(sceneExternalId, sceneSpaceId);
+  const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
   const viewer = useReveal();
 
   useEffect(() => {

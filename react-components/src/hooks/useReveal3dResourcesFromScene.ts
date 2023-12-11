@@ -2,14 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useSceneConfigQuery } from './useSceneConfigQuery';
+import { useSceneConfig } from './useSceneConfig';
 import * as THREE from 'three';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
 import {
   type AddResourceOptions,
   type AddImageCollection360DatamodelsOptions
 } from '../components/Reveal3DResources/types';
-import { type AddModelOptions } from '@cognite/reveal';
+import { CDF_TO_VIEWER_TRANSFORMATION, type AddModelOptions } from '@cognite/reveal';
 import { useEffect, useState } from 'react';
 
 export type UseSyncSceneConfigWithViewerProps = {
@@ -22,7 +22,7 @@ export const useReveal3dResourcesFromScene = (
   sceneExternalId: string,
   sceneSpaceId: string
 ): AddResourceOptions[] => {
-  const scene = useSceneConfigQuery(sceneExternalId, sceneSpaceId);
+  const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
   const [resourceOptions, setResourceOptions] = useState<AddResourceOptions[]>([]);
 
   useEffect(() => {
@@ -52,6 +52,7 @@ export const useReveal3dResourcesFromScene = (
 
         // Combine transformations
         transform.compose(translation, quaternion, scale);
+        transform.multiply(CDF_TO_VIEWER_TRANSFORMATION);
         addResourceOptions.push({ ...addModelOptions, transform });
       });
 
