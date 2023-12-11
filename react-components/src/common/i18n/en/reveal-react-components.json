@@ -34,6 +34,7 @@
   "MOUSE_ZOOM": "Zoom / scroll",
   "PAN": "Pan",
   "POINT_CLOUDS": "Point clouds",
+  "RESET_CAMERA_TO_HOME": "Reset camera to home",
   "SETTINGS_TOOLTIP": "Settings",
   "SLICE_TOOLTIP": "Slice",
   "TOUCH_NAVIGATION_DESCRIPTION": "Use gestures to zoom, pan and select",
