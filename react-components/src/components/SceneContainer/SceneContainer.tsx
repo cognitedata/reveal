@@ -20,6 +20,7 @@ export type CogniteSceneProps = {
   sceneSpaceId: string;
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>;
+  disableDefaultCamera: boolean;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (error: any) => void;
 };
@@ -30,12 +31,13 @@ export function SceneContainer({
   sdk,
   defaultResourceStyling,
   instanceStyling,
+  disableDefaultCamera,
   onResourcesAdded,
   onResourceLoadError
 }: CogniteSceneProps): ReactElement {
   const resourceOptions = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
 
-  useCameraFromScene(sceneExternalId, sceneSpaceId);
+  if (!disableDefaultCamera) useCameraFromScene(sceneExternalId, sceneSpaceId);
   useGroundPlaneFromScene(sdk, sceneExternalId, sceneSpaceId);
   useSkyboxFromScene(sdk, sceneExternalId, sceneSpaceId);
 

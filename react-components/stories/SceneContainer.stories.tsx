@@ -23,6 +23,7 @@ export const Main: Story = {
   args: {
     sceneExternalId: 'my_scene_external_id',
     sceneSpaceId: 'scene_space',
+    disableDefaultCamera: false,
     sdk
   },
   render: ({ sceneExternalId, sceneSpaceId }) => {
@@ -45,7 +46,12 @@ const SceneContainerStoryContent = ({
 }: SceneContainerStoryContentProps): ReactElement => {
   return (
     <>
-      <SceneContainer sceneExternalId={sceneExternalId} sceneSpaceId={sceneSpaceId} sdk={sdk} />
+      <SceneContainer
+        sceneExternalId={sceneExternalId}
+        sceneSpaceId={sceneSpaceId}
+        disableDefaultCamera={false}
+        sdk={sdk}
+      />
     </>
   );
 };

@@ -1,24 +1,15 @@
 /*!
  * Copyright 2023 Cognite AS
  */
+
+import { type Transformation3d } from './SceneFdmTypes';
+
 export type Scene = {
   sceneConfiguration: SceneConfiguration;
   skybox: Skybox | undefined;
   groundPlanes: GroundPlane[];
   sceneModels: CadOrPointCloudModel[];
   image360Collections: Image360Collection[];
-};
-
-export type Transformation3d = {
-  translationX: number;
-  translationY: number;
-  translationZ: number;
-  eulerRotationX: number;
-  eulerRotationY: number;
-  eulerRotationZ: number;
-  scaleX: number;
-  scaleY: number;
-  scaleZ: number;
 };
 
 export type SceneConfiguration = {
