@@ -135,6 +135,9 @@ async function getAssetMappingsByModels(
   limit: number = 1000,
   assetIdsFilter?: number[]
 ): Promise<ModelMappings[]> {
+  const deduplicatedAssetIds = Array.from(new Set(assetIdsFilter));
+  const chunkedFilter = chunk(deduplicatedAssetIds, 100);
+
   const mappedEquipmentPromises = models.map(async (model) => {
     if (assetIdsFilter === undefined) {
       const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
@@ -142,9 +145,6 @@ async function getAssetMappingsByModels(
       });
       return [{ mappings, model }];
     }
-
-    const deduplicatedAssetIds = Array.from(new Set(assetIdsFilter));
-    const chunkedFilter = chunk(deduplicatedAssetIds, 100);
 
     const chunkedPromises = chunkedFilter.map(async (chunk) => {
       const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
