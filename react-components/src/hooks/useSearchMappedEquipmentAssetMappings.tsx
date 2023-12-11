@@ -135,8 +135,6 @@ async function getAssetMappingsByModels(
   limit: number = 1000,
   assetIdsFilter?: number[]
 ): Promise<ModelMappings[]> {
-  const chunkedFilter = chunk(assetIdsFilter, 100);
-
   const mappedEquipmentPromises = models.map(async (model) => {
     if (assetIdsFilter === undefined) {
       const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
@@ -144,6 +142,9 @@ async function getAssetMappingsByModels(
       });
       return [{ mappings, model }];
     }
+
+    const deduplicatedAssetIds = Array.from(new Set(assetIdsFilter));
+    const chunkedFilter = chunk(deduplicatedAssetIds, 100);
 
     const chunkedPromises = chunkedFilter.map(async (chunk) => {
       const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
@@ -166,12 +167,16 @@ async function getAssetsFromAssetMappings(
   modelsMappings: Array<{ model: AddModelOptions; mappings: ListResponse<AssetMapping3D[]> }>
 ): Promise<ModelMappingsWithAssets[]> {
   const mappingsWithAssetsPromises = modelsMappings.map(async ({ mappings, model }) => {
-    const assetIds = mappings.items.map((mapping) => ({ id: mapping.assetId }));
-    if (assetIds.length === 0) {
+    if (mappings.items.length === 0) {
       return { model, assets: [], mappings };
     }
 
-    const assets = await sdk.assets.retrieve(assetIds, { ignoreUnknownIds: true });
+    const deduplicatedAssetIds = Array.from(
+      new Set(mappings.items.map((mapping) => mapping.assetId))
+    );
+    const assetIdObjects = deduplicatedAssetIds.map((id) => ({ id }));
+
+    const assets = await sdk.assets.retrieve(assetIdObjects, { ignoreUnknownIds: true });
 
     return { model, assets, mappings };
   });
