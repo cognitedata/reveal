@@ -42,3 +42,54 @@ export type Reveal360AnnotationAssetData = {
   asset: Asset;
   assetAnnotationImage360Info: AssetAnnotationImage360Info;
 };
+
+export type Transformation3d = {
+  translationX: number;
+  translationY: number;
+  translationZ: number;
+  eulerRotationX: number;
+  eulerRotationY: number;
+  eulerRotationZ: number;
+  scaleX: number;
+  scaleY: number;
+  scaleZ: number;
+};
+
+export type SceneModelsProperties = Transformation3d & {
+  revisionId: number;
+};
+
+export type SceneConfigurationProperties = {
+  name: string;
+  cameraTranslationX: number;
+  cameraTranslationY: number;
+  cameraTranslationZ: number;
+  cameraEulerRotationX: number;
+  cameraEulerRotationY: number;
+  cameraEulerRotationZ: number;
+};
+
+export type SkyboxProperties = {
+  label: string;
+  isSpherical: boolean;
+  file: string;
+};
+
+export type GroundPlaneProperties = {
+  file: string;
+  label: string;
+  wrapping: string;
+};
+
+export type Cdf3dRevisionProperties = {
+  revisionId: number;
+  scaleX: number;
+  scaleY: number;
+  scaleZ: number;
+  translationX: number;
+  translationY: number;
+  translationZ: number;
+  eulerRotationX: number;
+  eulerRotationY: number;
+  eulerRotationZ: number;
+};
