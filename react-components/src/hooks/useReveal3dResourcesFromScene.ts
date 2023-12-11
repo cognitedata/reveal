@@ -39,23 +39,19 @@ export const useReveal3dResourcesFromScene = (
         };
 
         const transform = new THREE.Matrix4();
-        const scale = new THREE.Matrix4().makeScale(model.scaleX, model.scaleY, model.scaleZ);
-        const euler = new THREE.Euler(
-          model.eulerRotationX,
-          model.eulerRotationY,
-          model.eulerRotationZ,
-          'XYZ'
-        );
-        const rotation = new THREE.Matrix4().makeRotationFromEuler(euler);
-        // Create translation matrix
-        const translation = new THREE.Matrix4().makeTranslation(
+
+        const translation = new THREE.Vector3(
           model.translationX,
           model.translationY,
           model.translationZ
         );
+        const scale = new THREE.Vector3(model.scaleX, model.scaleY, model.scaleZ);
+        const quaternion = new THREE.Quaternion().setFromEuler(
+          new THREE.Euler(model.eulerRotationX, model.eulerRotationY, model.eulerRotationZ, 'XYZ')
+        );
 
         // Combine transformations
-        transform.multiply(scale).multiply(rotation).multiply(translation);
+        transform.compose(translation, quaternion, scale);
         addResourceOptions.push({ ...addModelOptions, transform });
       });
 

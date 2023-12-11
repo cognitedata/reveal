@@ -31,10 +31,8 @@ export const useCameraFromScene = (sceneExternalId: string, sceneSpaceId: string
 
     const quaternion = new THREE.Quaternion().setFromEuler(euler);
     const vec = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
+    vec.add(position);
 
-    // There is a bug with setCameraState rotation, so must first set transform
-    // and then lookAt the correct direction
-    viewer.cameraManager.setCameraState({ position });
-    viewer.cameraManager.getCamera().lookAt(position.clone().add(vec));
+    viewer.cameraManager.setCameraState({ target: vec });
   }, [scene.data]);
 };

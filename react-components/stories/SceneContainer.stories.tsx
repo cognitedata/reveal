@@ -21,8 +21,8 @@ const sdk = createSdkByUrlToken();
 
 export const Main: Story = {
   args: {
-    sceneExternalId: '',
-    sceneSpaceId: '',
+    sceneExternalId: 'my_scene_external_id',
+    sceneSpaceId: 'scene_space',
     sdk
   },
   render: ({ sceneExternalId, sceneSpaceId }) => {
