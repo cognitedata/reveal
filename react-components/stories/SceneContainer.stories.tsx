@@ -5,8 +5,10 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { SceneContainer } from '../src/components/SceneContainer/SceneContainer';
 import { Color } from 'three';
-import { type ReactElement } from 'react';
+import { useEffect, type ReactElement } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
+import { useReveal } from '../src';
+import { type DefaultCameraManager } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/SceneContainer',
@@ -44,6 +46,14 @@ const SceneContainerStoryContent = ({
   sceneExternalId,
   sceneSpaceId
 }: SceneContainerStoryContentProps): ReactElement => {
+  const reveal = useReveal();
+
+  useEffect(() => {
+    (reveal.cameraManager as DefaultCameraManager).setCameraControlsOptions({
+      changeCameraTargetOnClick: true,
+      mouseWheelAction: 'zoomToCursor'
+    });
+  }, [reveal]);
   return (
     <>
       <SceneContainer

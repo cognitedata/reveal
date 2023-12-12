@@ -11,6 +11,7 @@ import {
 } from '../components/Reveal3DResources/types';
 import { CDF_TO_VIEWER_TRANSFORMATION, type AddModelOptions } from '@cognite/reveal';
 import { useEffect, useState } from 'react';
+import { tr } from 'date-fns/locale';
 
 export type UseSyncSceneConfigWithViewerProps = {
   sdk: CogniteClient;
@@ -40,19 +41,32 @@ export const useReveal3dResourcesFromScene = (
 
         const transform = new THREE.Matrix4();
 
-        const translation = new THREE.Vector3(
+        // Default to 1 in scale if scale is set to 0
+        if (model.scaleX === 0) model.scaleX = 1;
+        if (model.scaleY === 0) model.scaleY = 1;
+        if (model.scaleZ === 0) model.scaleZ = 1;
+
+        transform.makeRotationFromEuler(
+          new THREE.Euler(
+            THREE.MathUtils.degToRad(model.eulerRotationX),
+            THREE.MathUtils.degToRad(model.eulerRotationY),
+            THREE.MathUtils.degToRad(model.eulerRotationZ),
+            'XYZ'
+          )
+        );
+
+        const scaleMatrix = new THREE.Matrix4().makeScale(model.scaleX, model.scaleY, model.scaleZ);
+        transform.multiply(scaleMatrix);
+
+        const translationMatrix = new THREE.Matrix4().makeTranslation(
           model.translationX,
           model.translationY,
           model.translationZ
         );
-        const scale = new THREE.Vector3(model.scaleX, model.scaleY, model.scaleZ);
-        const quaternion = new THREE.Quaternion().setFromEuler(
-          new THREE.Euler(model.eulerRotationX, model.eulerRotationY, model.eulerRotationZ, 'XYZ')
-        );
+        transform.premultiply(translationMatrix);
 
-        // Combine transformations
-        transform.compose(translation, quaternion, scale);
-        transform.multiply(CDF_TO_VIEWER_TRANSFORMATION);
+        transform.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+
         addResourceOptions.push({ ...addModelOptions, transform });
       });
 
