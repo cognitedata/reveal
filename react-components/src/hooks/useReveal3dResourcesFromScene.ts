@@ -11,7 +11,6 @@ import {
 } from '../components/Reveal3DResources/types';
 import { CDF_TO_VIEWER_TRANSFORMATION, type AddModelOptions } from '@cognite/reveal';
 import { useEffect, useState } from 'react';
-import { tr } from 'date-fns/locale';
 
 export type UseSyncSceneConfigWithViewerProps = {
   sdk: CogniteClient;

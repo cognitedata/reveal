@@ -12,7 +12,6 @@ import {
 import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesFromScene';
 import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
 import { useSkyboxFromScene } from '../../hooks/useSkyboxFromScene';
-import { useCameraFromScene } from '../../hooks/useCameraFromScene';
 
 export type SceneContainerProps = {
   sdk: CogniteClient;
@@ -31,7 +30,6 @@ export function SceneContainer({
   sdk,
   defaultResourceStyling,
   instanceStyling,
-  disableDefaultCamera,
   onResourcesAdded,
   onResourceLoadError
 }: SceneContainerProps): ReactElement {
