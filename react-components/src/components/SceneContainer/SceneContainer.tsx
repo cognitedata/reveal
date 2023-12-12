@@ -3,7 +3,7 @@
  */
 import { type ReactElement } from 'react';
 import { Reveal3DResources } from '../..';
-import type CogniteClient from '@cognite/sdk/dist/src/cogniteClient';
+import { type CogniteClient } from '@cognite/sdk';
 import {
   type AssetMappingStylingGroup,
   type DefaultResourceStyling,

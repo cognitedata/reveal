@@ -4,7 +4,7 @@
 
 import { useSceneConfig } from './useSceneConfig';
 import * as THREE from 'three';
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk';
 import {
   type AddResourceOptions,
   type AddImageCollection360DatamodelsOptions
@@ -26,7 +26,7 @@ export const useReveal3dResourcesFromScene = (
   const [resourceOptions, setResourceOptions] = useState<AddResourceOptions[]>([]);
 
   useEffect(() => {
-    if (scene.data !== undefined && scene.data !== null) {
+    if (scene.data !== undefined) {
       const addResourceOptions: AddResourceOptions[] = [];
       scene.data.sceneModels.forEach((model) => {
         if (isNaN(model.modelId)) {

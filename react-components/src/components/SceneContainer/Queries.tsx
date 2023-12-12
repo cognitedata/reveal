@@ -113,14 +113,13 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
               version: 'v4'
             },
             properties: [
-              '*'
-              // 'name',
-              // 'cameraTranslationX',
-              // 'cameraTranslationY',
-              // 'cameraTranslationZ',
-              // 'cameraEulerRotationX',
-              // 'cameraEulerRotationY',
-              // 'cameraEulerRotationZ'
+              'name',
+              'cameraTranslationX',
+              'cameraTranslationY',
+              'cameraTranslationZ',
+              'cameraEulerRotationX',
+              'cameraEulerRotationY',
+              'cameraEulerRotationZ'
             ]
           }
         ]

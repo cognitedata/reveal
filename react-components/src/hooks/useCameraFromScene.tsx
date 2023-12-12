@@ -12,7 +12,7 @@ export const useCameraFromScene = (sceneExternalId: string, sceneSpaceId: string
   const viewer = useReveal();
 
   useEffect(() => {
-    if (scene.data === undefined || scene.data === null) {
+    if (scene.data === undefined) {
       return;
     }
 
@@ -33,6 +33,6 @@ export const useCameraFromScene = (sceneExternalId: string, sceneSpaceId: string
     const vec = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
     vec.add(position);
 
-    viewer.cameraManager.setCameraState({ target: vec });
+    viewer.cameraManager.setCameraState({ position, target: vec });
   }, [scene.data]);
 };

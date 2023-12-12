@@ -7,7 +7,7 @@ import { useSceneConfig } from './useSceneConfig';
 import * as THREE from 'three';
 import { useReveal } from '..';
 import { useQuery } from '@tanstack/react-query';
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk';
 
 export const useSkyboxFromScene = (
   sdk: CogniteClient,
@@ -19,11 +19,11 @@ export const useSkyboxFromScene = (
   const skyboxRef = useRef<THREE.Object3D<THREE.Object3DEventMap>>();
 
   const skyboxUrl = useQuery(['reveal', 'react-components', 'skyboxUrl', scene.data], async () => {
-    if (scene.data === undefined || scene.data === null) {
+    if (scene.data === undefined) {
       return undefined;
     }
 
-    if (scene.data.skybox !== undefined && scene.data.skybox !== null) {
+    if (scene.data.skybox !== undefined) {
       const skyboxExternalId = scene.data.skybox.file;
       const skyBoxUrls = await sdk.files.getDownloadUrls([{ externalId: skyboxExternalId }]);
       const skyboxUrl = skyBoxUrls[0].downloadUrl;
@@ -35,7 +35,7 @@ export const useSkyboxFromScene = (
 
   useEffect(() => {
     const loadSkybox = async (): Promise<void> => {
-      if (skyboxUrl.data === undefined || skyboxUrl.data === null) {
+      if (skyboxUrl.data === undefined) {
         return;
       }
 

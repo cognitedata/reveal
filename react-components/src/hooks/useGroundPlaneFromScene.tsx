@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import { useSceneConfig } from './useSceneConfig';
 import * as THREE from 'three';
 import { useReveal } from '..';
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk';
 import { useQuery } from '@tanstack/react-query';
 
 export const useGroundPlaneFromScene = (
@@ -21,11 +21,11 @@ export const useGroundPlaneFromScene = (
   const groundPlaneUrls = useQuery(
     ['reveal', 'react-components', 'groundplaneUrls', scene.data],
     async () => {
-      if (scene.data === undefined || scene.data === null) {
+      if (scene.data === undefined) {
         return undefined;
       }
 
-      if (scene.data.skybox !== undefined && scene.data.skybox !== null) {
+      if (scene.data.skybox !== undefined) {
         return await sdk.files.getDownloadUrls(
           scene.data.groundPlanes.map((groundPlaneProperties) => ({
             externalId: groundPlaneProperties.file
@@ -38,20 +38,15 @@ export const useGroundPlaneFromScene = (
   );
 
   useEffect(() => {
-    if (scene.data === undefined || scene.data === null) {
+    if (scene.data === undefined || groundPlaneUrls.data === undefined) {
       return;
     }
 
-    if (groundPlaneUrls.data === undefined || groundPlaneUrls.data === null) {
-      return;
-    }
-
-    let index = 0;
-    scene.data.groundPlanes.forEach((groundPlane) => {
-      if (groundPlaneUrls.data === undefined || groundPlaneUrls.data === null) {
+    scene.data.groundPlanes.forEach((groundPlane, index) => {
+      if (groundPlaneUrls.data === undefined) {
         return;
       }
-      const textureUrl = groundPlaneUrls.data[index++].downloadUrl;
+      const textureUrl = groundPlaneUrls.data[index].downloadUrl;
       const textureLoader = new THREE.TextureLoader();
       textureLoader.load(textureUrl, function (texture) {
         const material = new THREE.MeshBasicMaterial({ map: texture });
@@ -73,11 +68,9 @@ export const useGroundPlaneFromScene = (
 
     return () => {
       // Cleanup function
-      if (groundPlaneRef.current !== null && groundPlaneRef.current !== undefined) {
-        groundPlaneRef.current.forEach((groundPlane) => {
-          viewer.removeObject3D(groundPlane);
-        });
-      }
+      groundPlaneRef.current.forEach((groundPlane) => {
+        viewer.removeObject3D(groundPlane);
+      });
       groundPlaneRef.current.splice(0, groundPlaneRef.current.length);
     };
   }, [scene.data, groundPlaneUrls.data]);
