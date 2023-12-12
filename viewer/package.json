@@ -118,7 +118,7 @@
     "jest-environment-jsdom": "29.7.0",
     "jest-extended": "4.0.2",
     "jest-image-snapshot": "6.3.0",
-    "jest-puppeteer": "9.0.1",
+    "jest-puppeteer": "9.0.2",
     "jsdom": "23.0.1",
     "moq.ts": "10.0.8",
     "nock": "13.4.0",
