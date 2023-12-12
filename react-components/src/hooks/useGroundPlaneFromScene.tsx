@@ -19,26 +19,26 @@ export const useGroundPlaneFromScene = (
   const groundPlaneRef = useRef<Array<THREE.Object3D<THREE.Object3DEventMap>>>([]);
 
   const groundPlaneUrls = useQuery(
-    ['reveal', 'react-components', 'groundplaneUrls', scene.data],
+    ['reveal', 'react-components', 'groundplaneUrls', scene.data ?? ''],
     async () => {
-      if (scene.data === undefined) {
-        return undefined;
+      if (scene.data === undefined || scene.data.skybox !== undefined) {
+        return [];
       }
 
-      if (scene.data.skybox !== undefined) {
-        return await sdk.files.getDownloadUrls(
-          scene.data.groundPlanes.map((groundPlaneProperties) => ({
-            externalId: groundPlaneProperties.file
-          }))
-        );
-      }
-
-      return undefined;
+      return await sdk.files.getDownloadUrls(
+        scene.data.groundPlanes.map((groundPlaneProperties) => ({
+          externalId: groundPlaneProperties.file
+        }))
+      );
     }
   );
 
   useEffect(() => {
-    if (scene.data === undefined || groundPlaneUrls.data === undefined) {
+    if (
+      scene.data === undefined ||
+      groundPlaneUrls.data === undefined ||
+      groundPlaneUrls.data.length === 0
+    ) {
       return;
     }
 

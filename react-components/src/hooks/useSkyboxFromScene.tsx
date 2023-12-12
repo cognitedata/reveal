@@ -18,24 +18,27 @@ export const useSkyboxFromScene = (
   const viewer = useReveal();
   const skyboxRef = useRef<THREE.Object3D<THREE.Object3DEventMap>>();
 
-  const skyboxUrl = useQuery(['reveal', 'react-components', 'skyboxUrl', scene.data], async () => {
-    if (scene.data === undefined) {
-      return undefined;
-    }
+  const skyboxUrl = useQuery(
+    ['reveal', 'react-components', 'skyboxUrl', scene.data ?? ''],
+    async () => {
+      if (scene.data === undefined) {
+        return '';
+      }
 
-    if (scene.data.skybox !== undefined) {
-      const skyboxExternalId = scene.data.skybox.file;
-      const skyBoxUrls = await sdk.files.getDownloadUrls([{ externalId: skyboxExternalId }]);
-      const skyboxUrl = skyBoxUrls[0].downloadUrl;
-      return skyboxUrl;
-    }
+      if (scene.data.skybox !== undefined) {
+        const skyboxExternalId = scene.data.skybox.file;
+        const skyBoxUrls = await sdk.files.getDownloadUrls([{ externalId: skyboxExternalId }]);
+        const skyboxUrl = skyBoxUrls[0].downloadUrl;
+        return skyboxUrl;
+      }
 
-    return undefined;
-  });
+      return '';
+    }
+  );
 
   useEffect(() => {
     const loadSkybox = async (): Promise<void> => {
-      if (skyboxUrl.data === undefined) {
+      if (skyboxUrl.data === undefined || skyboxUrl.data === '') {
         return;
       }
 
