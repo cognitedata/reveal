@@ -18,18 +18,22 @@ export const useGroundPlaneFromScene = (
   const viewer = useReveal();
   const groundPlaneRef = useRef<Array<THREE.Object3D<THREE.Object3DEventMap>>>([]);
 
-  const groundPlaneUrls = useQuery(
+  const groundPlanes = useQuery(
     ['reveal', 'react-components', 'groundplaneUrls', scene.data ?? ''],
     async () => {
       if (scene.data?.skybox === undefined || scene.data === null) {
         return [];
       }
 
-      return await sdk.files.getDownloadUrls(
+      const downloadUrls = await sdk.files.getDownloadUrls(
         scene.data.groundPlanes.map((groundPlaneProperties) => ({
           externalId: groundPlaneProperties.file
         }))
       );
+
+      return downloadUrls.map((url) => {
+        return new THREE.TextureLoader().load(url.downloadUrl);
+      });
     },
     { staleTime: Infinity }
   );
@@ -37,34 +41,31 @@ export const useGroundPlaneFromScene = (
   useEffect(() => {
     if (
       scene.data === undefined ||
-      groundPlaneUrls.data === undefined ||
-      groundPlaneUrls.data.length === 0
+      groundPlanes.data === undefined ||
+      groundPlanes.data.length === 0
     ) {
       return;
     }
 
     scene.data.groundPlanes.forEach((groundPlane, index) => {
-      if (groundPlaneUrls.data === undefined) {
+      if (groundPlanes.data === undefined) {
         return;
       }
-      const textureUrl = groundPlaneUrls.data[index].downloadUrl;
-      const textureLoader = new THREE.TextureLoader();
-      textureLoader.load(textureUrl, function (texture) {
-        const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-        const geometry = new THREE.PlaneGeometry(
-          10000 * groundPlane.scaleX,
-          10000 * groundPlane.scaleY
-        );
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(
-          groundPlane.translationX,
-          groundPlane.translationY,
-          groundPlane.translationZ
-        );
-        mesh.rotation.set(-Math.PI / 2, 0, 0);
-        viewer.addObject3D(mesh);
-        groundPlaneRef.current.push(mesh);
-      });
+      const texture = groundPlanes.data[index];
+      const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+      const geometry = new THREE.PlaneGeometry(
+        10000 * groundPlane.scaleX,
+        10000 * groundPlane.scaleY
+      );
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(
+        groundPlane.translationX,
+        groundPlane.translationY,
+        groundPlane.translationZ
+      );
+      mesh.rotation.set(-Math.PI / 2, 0, 0);
+      viewer.addObject3D(mesh);
+      groundPlaneRef.current.push(mesh);
     });
 
     return () => {
@@ -74,5 +75,5 @@ export const useGroundPlaneFromScene = (
       });
       groundPlaneRef.current.splice(0, groundPlaneRef.current.length);
     };
-  }, [scene.data, groundPlaneUrls.data]);
+  }, [groundPlanes.data]);
 };
