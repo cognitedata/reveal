@@ -21,20 +21,17 @@ export const useGroundPlaneFromScene = (
   const groundPlaneUrls = useQuery(
     ['reveal', 'react-components', 'groundplaneUrls', scene.data],
     async () => {
-      if (scene.data === undefined || scene.data === null) {
-        return undefined;
+      if (scene.data?.skybox === undefined || scene.data === null) {
+        return [];
       }
 
-      if (scene.data.skybox !== undefined && scene.data.skybox !== null) {
-        return await sdk.files.getDownloadUrls(
-          scene.data.groundPlanes.map((groundPlaneProperties) => ({
-            externalId: groundPlaneProperties.file
-          }))
-        );
-      }
-
-      return undefined;
-    }
+      return await sdk.files.getDownloadUrls(
+        scene.data.groundPlanes.map((groundPlaneProperties) => ({
+          externalId: groundPlaneProperties.file
+        }))
+      );
+    },
+    { staleTime: Infinity }
   );
 
   useEffect(() => {
@@ -46,23 +43,22 @@ export const useGroundPlaneFromScene = (
       return;
     }
 
-    let index = 0;
-    scene.data.groundPlanes.forEach((groundPlane) => {
+    scene.data.groundPlanes.forEach((groundPlane, index) => {
       if (groundPlaneUrls.data === undefined || groundPlaneUrls.data === null) {
         return;
       }
-      const textureUrl = groundPlaneUrls.data[index++].downloadUrl;
+      const textureUrl = groundPlaneUrls.data[index].downloadUrl;
       const textureLoader = new THREE.TextureLoader();
       textureLoader.load(textureUrl, function (texture) {
-        const material = new THREE.MeshBasicMaterial({ map: texture });
-        const geometry = new THREE.PlaneGeometry(1000, 1000);
+        const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+        const geometry = new THREE.PlaneGeometry(100000, 100000);
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(
           groundPlane.translationX,
           groundPlane.translationY,
           groundPlane.translationZ
         );
-        mesh.rotation.set(-Math.PI, 0, 0);
+        mesh.rotation.set(-Math.PI / 2, 0, 0);
         viewer.addObject3D(mesh);
         groundPlaneRef.current.push(mesh);
       });
