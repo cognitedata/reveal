@@ -9,7 +9,7 @@ import { useMemo } from 'react';
 import { type EdgeItem, FdmSDK, type Query } from '../utilities/FdmSDK';
 import { type AddReveal3DModelOptions } from '..';
 import { type Cdf3dRevisionProperties } from './types';
-import { Euler, Matrix4, Quaternion, Vector3 } from 'three';
+import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 export const use3dScenes = (
@@ -44,26 +44,38 @@ export const use3dScenes = (
               return acc;
             }
 
+            const transform = new Matrix4();
+
+            transform.makeRotationFromEuler(
+              new Euler(
+                MathUtils.degToRad(properties.eulerRotationX),
+                MathUtils.degToRad(properties.eulerRotationY),
+                MathUtils.degToRad(properties.eulerRotationZ)
+              )
+            );
+
+            fixModelScale(properties);
+
+            const scaleMatrix = new Matrix4().makeScale(
+              properties.scaleX,
+              properties.scaleY,
+              properties.scaleZ
+            );
+            transform.multiply(scaleMatrix);
+
+            const translation = new Matrix4().makeTranslation(
+              properties.translationX,
+              properties.translationY,
+              properties.translationZ
+            );
+            transform.premultiply(translation);
+
+            transform.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+
             const newModel = {
               modelId: newModelId,
               revisionId: newModelRevisionId,
-              transform: new Matrix4()
-                .compose(
-                  new Vector3(
-                    properties.translationX,
-                    properties.translationY,
-                    properties.translationZ
-                  ),
-                  new Quaternion().setFromEuler(
-                    new Euler(
-                      properties.eulerRotationX,
-                      properties.eulerRotationY,
-                      properties.eulerRotationZ
-                    )
-                  ),
-                  new Vector3(properties.scaleX, properties.scaleY, properties.scaleZ)
-                )
-                .premultiply(CDF_TO_VIEWER_TRANSFORMATION)
+              transform
             };
 
             if (sceneModels !== undefined) {
@@ -90,6 +102,20 @@ export const use3dScenes = (
     queryFunction
   );
 };
+
+function fixModelScale(modelProps: Cdf3dRevisionProperties): Cdf3dRevisionProperties {
+  if (modelProps.scaleX === 0) {
+    modelProps.scaleX = 1;
+  }
+  if (modelProps.scaleY === 0) {
+    modelProps.scaleY = 1;
+  }
+  if (modelProps.scaleZ === 0) {
+    modelProps.scaleZ = 1;
+  }
+
+  return modelProps;
+}
 
 function createGetScenesQuery(limit: number = 100): Query {
   return {
