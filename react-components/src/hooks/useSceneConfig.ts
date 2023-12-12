@@ -19,6 +19,7 @@ import {
   type Skybox
 } from '../components/SceneContainer/SceneTypes';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
+import { type Source, type FdmSDK } from '../utilities/FdmSDK';
 
 export const useSceneConfig = (
   sceneExternalId: string,
@@ -36,6 +37,25 @@ export const useSceneConfig = (
     enabled: sceneExternalId !== '' && sceneSpaceExternalId !== '',
     staleTime: Infinity,
     queryFn: async () => {
+      const sceneIsEnabledInProject = await sceneViewsExist(fdmSdk);
+      if (!sceneIsEnabledInProject) {
+        const emptyScene: Scene = {
+          sceneConfiguration: {
+            name: '',
+            cameraTranslationX: 0,
+            cameraTranslationY: 0,
+            cameraTranslationZ: 0,
+            cameraEulerRotationX: 0,
+            cameraEulerRotationY: 0,
+            cameraEulerRotationZ: 0
+          },
+          skybox: undefined,
+          groundPlanes: [],
+          sceneModels: [],
+          image360Collections: []
+        };
+        return emptyScene;
+      }
       const getSceneQuery = createGetSceneQuery(sceneExternalId, sceneSpaceExternalId);
       const res = await fdmSdk.queryNodesAndEdges({
         ...getSceneQuery
@@ -65,6 +85,52 @@ export const useSceneConfig = (
     }
   });
 };
+
+async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {
+  const neededViews: Source[] = [
+    {
+      type: 'view',
+      space: 'scene_space',
+      externalId: 'SceneConfiguration',
+      version: 'v55'
+    },
+    {
+      type: 'view',
+      space: 'scene_space',
+      externalId: 'Cdf3dRevisionProperties',
+      version: '2190c9b6f5cb82'
+    },
+    {
+      type: 'view',
+      space: 'scene_space',
+      externalId: 'Cdf3dImage360CollectionProperties2',
+      version: 'c29eeaabf97bf9'
+    },
+    {
+      type: 'view',
+      space: 'scene_space',
+      externalId: 'EnvironmentMap',
+      version: 'c7574a9083b304'
+    },
+    {
+      type: 'view',
+      space: 'scene_space',
+      externalId: 'Cdf3dImage360Properties',
+      version: '27ff998bf60c1c'
+    },
+    {
+      type: 'view',
+      space: 'scene_space',
+      externalId: 'TexturedPlane',
+      version: '94f0d07f55b20b'
+    }
+  ];
+  const views = await fdmSdk.getViewsByIds(neededViews);
+  if (views.items.length === neededViews.length) {
+    return true;
+  }
+  return false;
+}
 
 function extractProperties(object: any): any {
   const firstKey = Object.keys(object)[0];
