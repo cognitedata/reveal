@@ -92,7 +92,7 @@ async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {
       type: 'view',
       space: 'scene_space',
       externalId: 'SceneConfiguration',
-      version: 'v55'
+      version: 'v4'
     },
     {
       type: 'view',
