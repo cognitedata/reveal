@@ -41,7 +41,7 @@ const StoryContent = ({ siteId }: { siteId: string }): ReactElement => {
     <>
       <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
         <ReactQueryDevtools position="bottom-right" />
-        <Image360CollectionContainer siteId={siteId} onLoad={onLoad} />
+        <Image360CollectionContainer collectionId={{ siteId }} onLoad={onLoad} />
         <RevealToolbar />
         {resourcesLoaded && <RevealSearchContent />}
       </RevealContainer>
