@@ -70,7 +70,10 @@ export {
   type FdmAssetStylingGroup,
   type DefaultResourceStyling
 } from './components/Reveal3DResources/types';
-export type { SceneContainer, CogniteSceneProps } from './components/SceneContainer/SceneContainer';
+export type {
+  SceneContainer,
+  SceneContainerProps as CogniteSceneProps
+} from './components/SceneContainer/SceneContainer';
 export type {
   AddImageCollection360Options,
   AddResourceOptions,
