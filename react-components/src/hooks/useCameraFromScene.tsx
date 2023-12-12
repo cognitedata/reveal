@@ -23,9 +23,9 @@ export const useCameraFromScene = (sceneExternalId: string, sceneSpaceId: string
     );
 
     const euler = new THREE.Euler(
-      scene.data.sceneConfiguration.cameraEulerRotationX,
-      scene.data.sceneConfiguration.cameraEulerRotationY,
-      scene.data.sceneConfiguration.cameraEulerRotationZ,
+      THREE.MathUtils.degToRad(scene.data.sceneConfiguration.cameraEulerRotationX),
+      THREE.MathUtils.degToRad(scene.data.sceneConfiguration.cameraEulerRotationY),
+      THREE.MathUtils.degToRad(scene.data.sceneConfiguration.cameraEulerRotationZ),
       'XYZ'
     );
 

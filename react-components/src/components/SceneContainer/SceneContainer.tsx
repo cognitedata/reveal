@@ -37,7 +37,6 @@ export function SceneContainer({
 }: SceneContainerProps): ReactElement {
   const resourceOptions = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
 
-  if (!disableDefaultCamera) useCameraFromScene(sceneExternalId, sceneSpaceId);
   useGroundPlaneFromScene(sdk, sceneExternalId, sceneSpaceId);
   useSkyboxFromScene(sdk, sceneExternalId, sceneSpaceId);
 
