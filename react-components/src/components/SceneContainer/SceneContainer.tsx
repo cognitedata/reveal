@@ -3,7 +3,7 @@
  */
 import { type ReactElement } from 'react';
 import { Reveal3DResources } from '../..';
-import type CogniteClient from '@cognite/sdk/dist/src/cogniteClient';
+import { type CogniteClient } from '@cognite/sdk';
 import {
   type AssetMappingStylingGroup,
   type DefaultResourceStyling,
@@ -14,7 +14,7 @@ import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
 import { useSkyboxFromScene } from '../../hooks/useSkyboxFromScene';
 import { useCameraFromScene } from '../../hooks/useCameraFromScene';
 
-export type CogniteSceneProps = {
+export type SceneContainerProps = {
   sdk: CogniteClient;
   sceneExternalId: string;
   sceneSpaceId: string;
@@ -34,7 +34,7 @@ export function SceneContainer({
   disableDefaultCamera,
   onResourcesAdded,
   onResourceLoadError
-}: CogniteSceneProps): ReactElement {
+}: SceneContainerProps): ReactElement {
   const resourceOptions = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
 
   if (!disableDefaultCamera) useCameraFromScene(sceneExternalId, sceneSpaceId);

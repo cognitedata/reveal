@@ -7,7 +7,7 @@ import { useSceneConfig } from './useSceneConfig';
 import * as THREE from 'three';
 import { useReveal } from '..';
 import { useQuery } from '@tanstack/react-query';
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk';
 
 export const useSkyboxFromScene = (
   sdk: CogniteClient,
@@ -35,7 +35,7 @@ export const useSkyboxFromScene = (
 
   useEffect(() => {
     const loadSkybox = async (): Promise<void> => {
-      if (skyboxUrl.data === undefined || skyboxUrl.data === null) {
+      if (skyboxUrl.data === undefined || skyboxUrl.data === '') {
         return;
       }
 
