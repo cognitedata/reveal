@@ -8,9 +8,7 @@ import {
   type NodeItem,
   FdmSDK,
   type Source,
-  type ViewItem,
   type Query,
-  type SimpleSource,
   type DmsUniqueIdentifier,
   type Space,
   type ExternalId
@@ -19,7 +17,6 @@ import { useSDK } from '../components/RevealContainer/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import {
   SYSTEM_3D_EDGE_SOURCE,
-  SYSTEM_3D_NODE_TYPE,
   INSTANCE_SPACE_3D_DATA,
   SYSTEM_SPACE_3D_SCHEMA
 } from '../utilities/globalDataModels';
@@ -466,7 +463,10 @@ function getDirectRelationProperties(searchResultNode: NodeItem): DmsUniqueIdent
   return directRelations;
 }
 
-async function createSourcesFromViews(viewsToSearch: DmsUniqueIdentifier[], fdmSdk: FdmSDK) {
+async function createSourcesFromViews(
+  viewsToSearch: DmsUniqueIdentifier[],
+  fdmSdk: FdmSDK
+): Promise<Source[]> {
   const dataModelResult = await fdmSdk.listDataModels();
   const viewToVersionMap = new Map<string, string>(
     dataModelResult.items.flatMap((dataModel: any) =>
