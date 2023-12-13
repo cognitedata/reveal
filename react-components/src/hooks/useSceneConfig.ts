@@ -58,7 +58,7 @@ export const useSceneConfig = (
 
       const sceneResponse = queryResult as any as SceneResponse;
       const SceneConfigurationProperties = extractProperties(
-        sceneResponse.items.myScene[0].properties
+        sceneResponse.items.myScene[0]['properties']
       );
 
       const scene: Scene = {
@@ -86,39 +86,33 @@ async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {
   const neededViews: Source[] = [
     {
       type: 'view',
-      space: 'scene_space',
+      space: 'scene',
       externalId: 'SceneConfiguration',
-      version: 'v4'
+      version: 'v1'
     },
     {
       type: 'view',
-      space: 'scene_space',
-      externalId: 'Cdf3dRevisionProperties',
-      version: '2190c9b6f5cb82'
+      space: 'scene',
+      externalId: 'RevisionProperties',
+      version: 'v1'
     },
     {
       type: 'view',
-      space: 'scene_space',
-      externalId: 'Cdf3dImage360CollectionProperties2',
-      version: 'c29eeaabf97bf9'
+      space: 'scene',
+      externalId: 'Image360CollectionProperties',
+      version: 'v1'
     },
     {
       type: 'view',
-      space: 'scene_space',
+      space: 'scene',
       externalId: 'EnvironmentMap',
-      version: 'c7574a9083b304'
+      version: 'v1'
     },
     {
       type: 'view',
-      space: 'scene_space',
-      externalId: 'Cdf3dImage360Properties',
-      version: '27ff998bf60c1c'
-    },
-    {
-      type: 'view',
-      space: 'scene_space',
+      space: 'scene',
       externalId: 'TexturedPlane',
-      version: '94f0d07f55b20b'
+      version: 'v1'
     }
   ];
   const views = await fdmSdk.getViewsByIds(neededViews);

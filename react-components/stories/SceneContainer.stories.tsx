@@ -24,7 +24,7 @@ const sdk = createSdkByUrlToken();
 export const Main: Story = {
   args: {
     sceneExternalId: 'my_scene_external_id',
-    sceneSpaceId: 'scene_space',
+    sceneSpaceId: 'scene',
     disableDefaultCamera: false,
     sdk
   },

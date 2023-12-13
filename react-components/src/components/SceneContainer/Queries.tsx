@@ -37,7 +37,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
             equals: {
               property: ['edge', 'type'],
               value: {
-                space: 'scene_space',
+                space: 'scene',
                 externalId: 'SceneConfiguration.cdf3dModels'
               }
             }
@@ -54,7 +54,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
             equals: {
               property: ['edge', 'type'],
               value: {
-                space: 'scene_space',
+                space: 'scene',
                 externalId: 'SceneConfiguration.images360Collections'
               }
             }
@@ -68,9 +68,9 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
           through: {
             view: {
               type: 'view',
-              space: 'scene_space',
+              space: 'scene',
               externalId: 'SceneConfiguration',
-              version: 'v4'
+              version: 'v1'
             },
             identifier: 'skybox'
           },
@@ -86,7 +86,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
             equals: {
               property: ['edge', 'type'],
               value: {
-                space: 'scene_space',
+                space: 'scene',
                 externalId: 'SceneConfiguration.texturedGroundPlanes'
               }
             }
@@ -108,9 +108,9 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
           {
             source: {
               type: 'view',
-              space: 'scene_space',
+              space: 'scene',
               externalId: 'SceneConfiguration',
-              version: 'v4'
+              version: 'v1'
             },
             properties: [
               'name',
@@ -129,9 +129,9 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
           {
             source: {
               type: 'view',
-              space: 'scene_space',
-              externalId: 'Cdf3dRevisionProperties',
-              version: '2190c9b6f5cb82'
+              space: 'scene',
+              externalId: 'RevisionProperties',
+              version: 'v1'
             },
             properties: [
               'revisionId',
@@ -153,9 +153,9 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
           {
             source: {
               type: 'view',
-              space: 'scene_space',
-              externalId: 'Cdf3dImage360CollectionProperties2',
-              version: 'c29eeaabf97bf9'
+              space: 'scene',
+              externalId: 'Image360CollectionProperties',
+              version: 'v1'
             },
             properties: [
               'image360CollectionExternalId',
@@ -178,9 +178,9 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
           {
             source: {
               type: 'view',
-              space: 'scene_space',
+              space: 'scene',
               externalId: 'EnvironmentMap',
-              version: 'c7574a9083b304'
+              version: 'v1'
             },
             properties: ['label', 'file', 'isSpherical']
           }
@@ -191,9 +191,9 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
           {
             source: {
               type: 'view',
-              space: 'scene_space',
-              externalId: 'Cdf3dImage360Properties',
-              version: '27ff998bf60c1c'
+              space: 'cdf_3d_schema',
+              externalId: 'Transformation3d',
+              version: 'v1'
             },
             properties: [
               'translationX',
@@ -214,9 +214,9 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
           {
             source: {
               type: 'view',
-              space: 'scene_space',
+              space: 'scene',
               externalId: 'TexturedPlane',
-              version: '94f0d07f55b20b'
+              version: 'v1'
             },
             properties: ['label', 'file', 'wrapping']
           }
