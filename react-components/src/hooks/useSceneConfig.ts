@@ -21,47 +21,42 @@ import {
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { type Source, type FdmSDK } from '../utilities/FdmSDK';
 
+const DefaulScene: Scene = {
+  sceneConfiguration: {
+    name: '',
+    cameraTranslationX: 0,
+    cameraTranslationY: 0,
+    cameraTranslationZ: 0,
+    cameraEulerRotationX: 0,
+    cameraEulerRotationY: 0,
+    cameraEulerRotationZ: 0
+  },
+  skybox: undefined,
+  groundPlanes: [],
+  sceneModels: [],
+  image360Collections: []
+};
+
 export const useSceneConfig = (
   sceneExternalId: string,
   sceneSpaceExternalId: string
 ): UseQueryResult<Scene> => {
   const fdmSdk = useFdmSdk();
-  return useQuery({
-    queryKey: [
-      'reveal',
-      'react-components',
-      'sync-scene-config',
-      sceneExternalId,
-      sceneSpaceExternalId
-    ],
-    enabled: sceneExternalId !== '' && sceneSpaceExternalId !== '',
-    staleTime: Infinity,
-    queryFn: async () => {
-      const sceneIsEnabledInProject = await sceneViewsExist(fdmSdk);
-      if (!sceneIsEnabledInProject) {
-        const emptyScene: Scene = {
-          sceneConfiguration: {
-            name: '',
-            cameraTranslationX: 0,
-            cameraTranslationY: 0,
-            cameraTranslationZ: 0,
-            cameraEulerRotationX: 0,
-            cameraEulerRotationY: 0,
-            cameraEulerRotationZ: 0
-          },
-          skybox: undefined,
-          groundPlanes: [],
-          sceneModels: [],
-          image360Collections: []
-        };
-        return emptyScene;
+  return useQuery(
+    ['reveal', 'react-components', 'sync-scene-config', sceneExternalId, sceneSpaceExternalId],
+    async () => {
+      const isSceneEnabledInProject = await sceneViewsExist(fdmSdk);
+
+      if (!isSceneEnabledInProject) {
+        return DefaulScene;
       }
+
       const getSceneQuery = createGetSceneQuery(sceneExternalId, sceneSpaceExternalId);
-      const res = await fdmSdk.queryNodesAndEdges({
+      const queryResult = await fdmSdk.queryNodesAndEdges({
         ...getSceneQuery
       });
 
-      const sceneResponse = res as any as SceneResponse;
+      const sceneResponse = queryResult as any as SceneResponse;
       const SceneConfigurationProperties = extractProperties(
         sceneResponse.items.myScene[0].properties
       );
@@ -82,8 +77,9 @@ export const useSceneConfig = (
         image360Collections: getImageCollections(sceneResponse)
       };
       return scene;
-    }
-  });
+    },
+    { staleTime: Infinity }
+  );
 };
 
 async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {

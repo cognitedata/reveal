@@ -39,16 +39,12 @@ export function SceneContainer({
   useSkyboxFromScene(sdk, sceneExternalId, sceneSpaceId);
 
   return (
-    <>
-      {
-        <Reveal3DResources
-          resources={resourceOptions}
-          defaultResourceStyling={defaultResourceStyling}
-          instanceStyling={instanceStyling}
-          onResourcesAdded={onResourcesAdded}
-          onResourceLoadError={onResourceLoadError}
-        />
-      }
-    </>
+    <Reveal3DResources
+      resources={resourceOptions}
+      defaultResourceStyling={defaultResourceStyling}
+      instanceStyling={instanceStyling}
+      onResourcesAdded={onResourcesAdded}
+      onResourceLoadError={onResourceLoadError}
+    />
   );
 }

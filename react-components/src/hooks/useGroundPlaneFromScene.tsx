@@ -14,19 +14,19 @@ export const useGroundPlaneFromScene = (
   sceneExternalId: string,
   sceneSpaceId: string
 ): void => {
-  const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
+  const { data: scene } = useSceneConfig(sceneExternalId, sceneSpaceId);
   const viewer = useReveal();
   const groundPlaneRef = useRef<Array<THREE.Object3D<THREE.Object3DEventMap>>>([]);
 
-  const groundPlanes = useQuery(
-    ['reveal', 'react-components', 'groundplaneUrls', scene.data ?? ''],
+  const { data: groundPlanesUrls } = useQuery(
+    ['reveal', 'react-components', 'groundplaneUrls', scene ?? 'noSceneData'],
     async () => {
-      if (scene.data?.skybox === undefined || scene.data === null) {
+      if (scene?.skybox === undefined || scene === null) {
         return [];
       }
 
       const downloadUrls = await sdk.files.getDownloadUrls(
-        scene.data.groundPlanes.map((groundPlaneProperties) => ({
+        scene.groundPlanes.map((groundPlaneProperties) => ({
           externalId: groundPlaneProperties.file
         }))
       );
@@ -39,19 +39,15 @@ export const useGroundPlaneFromScene = (
   );
 
   useEffect(() => {
-    if (
-      scene.data === undefined ||
-      groundPlanes.data === undefined ||
-      groundPlanes.data.length === 0
-    ) {
+    if (scene === undefined || groundPlanesUrls === undefined || groundPlanesUrls.length === 0) {
       return;
     }
 
-    scene.data.groundPlanes.forEach((groundPlane, index) => {
-      if (groundPlanes.data === undefined) {
+    scene.groundPlanes.forEach((groundPlane, index) => {
+      if (groundPlanesUrls === undefined) {
         return;
       }
-      const texture = groundPlanes.data[index];
+      const texture = groundPlanesUrls[index];
       const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
       const geometry = new THREE.PlaneGeometry(
         10000 * groundPlane.scaleX,
@@ -75,5 +71,5 @@ export const useGroundPlaneFromScene = (
       });
       groundPlaneRef.current.splice(0, groundPlaneRef.current.length);
     };
-  }, [groundPlanes.data]);
+  }, [groundPlanesUrls]);
 };
