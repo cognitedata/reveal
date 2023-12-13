@@ -21,7 +21,7 @@ export const useGroundPlaneFromScene = (
   const groundPlanes = useQuery(
     ['reveal', 'react-components', 'groundplaneUrls', scene.data ?? ''],
     async () => {
-      if (scene.data?.skybox === undefined || scene.data === null) {
+      if (scene.data?.groundPlanes === undefined || scene.data === null) {
         return [];
       }
 
