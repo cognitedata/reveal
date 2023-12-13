@@ -33,6 +33,7 @@ type FdmKey = `${Space}/${ExternalId}`;
 export const useSearchMappedEquipmentFDM = (
   query: string,
   spacesToSearch: string[],
+  viewsToSearch: DmsUniqueIdentifier[],
   models: AddModelOptions[],
   instancesFilter: any,
   limit: number = 100,
@@ -46,26 +47,21 @@ export const useSearchMappedEquipmentFDM = (
 
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
 
-  const viewsToSearchPromise: Promise<Source[]> = useMemo(
-    async () => await getViewsToSearch(fdmSdk, spacesToSearch),
-    [spacesToSearch, fdmSdk]
-  );
-
   return useQuery(
-    ['reveal', 'react-components', 'search-mapped-fdm', query, models, viewsToSearchPromise],
+    ['reveal', 'react-components', 'search-mapped-fdm', query, models, viewsToSearch],
     async () => {
-      const viewsToSearch = await viewsToSearchPromise;
+      const viewsWithVersion = await createSourcesFromViews(viewsToSearch, fdmSdk);
 
       if (query === '') {
         const result = await fdmSdk.queryNodesAndEdges(
-          createMappedEquipmentQuery(models, viewsToSearch, limit)
+          createMappedEquipmentQuery(models, viewsWithVersion, limit)
         );
 
         const transformedResults = convertQueryNodeItemsToSearchResultsWithViews(
           result.items.mapped_nodes.concat(result.items.mapped_nodes_2) as NodeItem[]
         );
 
-        const combinedWithOtherViews = viewsToSearch.map((view) => ({
+        const combinedWithOtherViews = viewsWithVersion.map((view) => ({
           view,
           instances:
             transformedResults.find(
@@ -79,7 +75,7 @@ export const useSearchMappedEquipmentFDM = (
 
       const searchResults: SeachResultsWithView[] = [];
 
-      for (const view of viewsToSearch) {
+      for (const view of viewsWithVersion) {
         const result = await fdmSdk.searchInstances(view, query, 'node', limit, instancesFilter);
 
         searchResults.push({
@@ -103,23 +99,18 @@ export const useSearchMappedEquipmentFDM = (
 
 export const useAllMappedEquipmentFDM = (
   models: AddModelOptions[],
-  spacesToSearch: string[],
+  viewsToSearch: DmsUniqueIdentifier[],
   userSdk?: CogniteClient
 ): UseQueryResult<NodeItem[]> => {
   const sdk = useSDK(userSdk);
 
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
 
-  const viewsToSearchPromise: Promise<Source[]> = useMemo(
-    async () => await getViewsToSearch(fdmSdk, spacesToSearch),
-    [spacesToSearch, fdmSdk]
-  );
-
   return useQuery(
-    ['reveal', 'react-components', 'all-mapped-equipment-fdm', spacesToSearch],
+    ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch],
     async () => {
-      const viewsToSearch = await viewsToSearchPromise;
-      const query = createMappedEquipmentQuery(models, viewsToSearch, 10000);
+      const viewSources = await createSourcesFromViews(viewsToSearch, fdmSdk);
+      const query = createMappedEquipmentQuery(models, viewSources, 10000);
 
       let currentPage = await fdmSdk.queryNodesAndEdges(query);
 
@@ -169,65 +160,6 @@ function removeEmptyProperties(queryResultNode: NodeItem): NodeItem {
   return queryResultNode;
 }
 
-async function getViewsToSearch(fdmSdk: FdmSDK, spacesToSearch: string[]): Promise<Source[]> {
-  const viewsPromises = spacesToSearch.map(async (space, index) => {
-    const isUniqueSpace =
-      spacesToSearch.findIndex((spaceToSearch) => spaceToSearch === space) === index;
-
-    if (!isUniqueSpace) {
-      return [];
-    }
-
-    const viewsInSpace = await fdmSdk.listViews(space);
-
-    const mapped3DViews = viewsInSpace.views.filter((view) => {
-      const isImplementing3DEntity = view.implements.some(
-        (view) => view.externalId === SYSTEM_3D_NODE_TYPE.externalId
-      );
-
-      return isImplementing3DEntity;
-    });
-
-    const mapped3DViewsParents = viewsInSpace.views.filter((view) => {
-      const isConnectedTo3DView = Object.values(view.properties).some(({ type, source }) => {
-        const isDirectRelation = type?.type === 'direct';
-        const isEdge = source !== undefined;
-
-        if (isDirectRelation) {
-          return mapped3DViews.some((mapped3DView) => isEqualSource(mapped3DView, type.source));
-        }
-
-        if (isEdge) {
-          return mapped3DViews.some((mapped3DView) => isEqualSource(mapped3DView, source));
-        }
-
-        return false;
-      });
-
-      const isAlreadyInMapped3DViews = mapped3DViews.some(
-        (mapped3DView) =>
-          mapped3DView.externalId === view.externalId && mapped3DView.space === view.space
-      );
-
-      return isConnectedTo3DView && !isAlreadyInMapped3DViews;
-    });
-
-    return convertViewItemsToSource(mapped3DViews.concat(mapped3DViewsParents));
-  });
-
-  const views = await Promise.all(viewsPromises);
-
-  return views.flat();
-}
-
-function isEqualSource(source1: SimpleSource, source2: SimpleSource): boolean {
-  return (
-    source1.space === source2.space &&
-    source1.externalId === source2.externalId &&
-    source1.version === source2.version
-  );
-}
-
 function convertQueryNodeItemsToSearchResultsWithViews(
   queryItems: NodeItem[]
 ): SeachResultsWithView[] {
@@ -272,15 +204,6 @@ function convertQueryNodeItemsToSearchResultsWithViews(
 
     return acc;
   }, []);
-}
-
-function convertViewItemsToSource(viewItems: ViewItem[]): Source[] {
-  return viewItems.map((viewItem) => ({
-    space: viewItem.space,
-    type: 'view',
-    version: viewItem.version,
-    externalId: viewItem.externalId
-  }));
 }
 
 function createMappedEquipmentMaps(
@@ -541,4 +464,21 @@ function getDirectRelationProperties(searchResultNode: NodeItem): DmsUniqueIdent
   });
 
   return directRelations;
+}
+
+async function createSourcesFromViews(viewsToSearch: DmsUniqueIdentifier[], fdmSdk: FdmSDK) {
+  const dataModelResult = await fdmSdk.listDataModels();
+  const viewToVersionMap = new Map<string, string>(
+    dataModelResult.items.flatMap((dataModel: any) =>
+      dataModel.views.map(
+        (view: Source) => [`${view.space}/${view.externalId}`, view.version] as const
+      )
+    )
+  );
+
+  return viewsToSearch.map((view) => ({
+    ...view,
+    type: 'view' as const,
+    version: viewToVersionMap.get(`${view.space}/${view.externalId}`) ?? ''
+  }));
 }
