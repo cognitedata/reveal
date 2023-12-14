@@ -37,6 +37,7 @@ import { Image360StylingUI } from '../utils/Image360StylingUI';
 import { LoadGltfUi } from '../utils/LoadGltfUi';
 import { createFunnyButton } from '../utils/PageVariationUtils';
 import { getCogniteClient } from '../utils/example-helpers';
+import { LoadSplatUi } from '../utils/LoadSplatUi';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -422,6 +423,7 @@ export function Viewer() {
 
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
+	  new LoadSplatUi(gui.addFolder('Splat'), viewer);
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
