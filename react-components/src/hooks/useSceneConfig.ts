@@ -58,7 +58,7 @@ export const useSceneConfig = (
 
       const sceneResponse = queryResult as any as SceneResponse;
       const SceneConfigurationProperties = extractProperties(
-        sceneResponse.items.myScene[0]['properties']
+        sceneResponse.items.myScene[0].properties
       );
 
       const scene: Scene = {
