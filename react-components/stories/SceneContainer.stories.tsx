@@ -23,7 +23,7 @@ const sdk = createSdkByUrlToken();
 
 export const Main: Story = {
   args: {
-    sceneExternalId: 'anders_scene_1',
+    sceneExternalId: 'savelii_scene1',
     sceneSpaceId: 'scene',
     sdk
   },
