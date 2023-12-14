@@ -7,7 +7,7 @@ import { SceneContainer } from '../src/components/SceneContainer/SceneContainer'
 import { Color } from 'three';
 import { useEffect, type ReactElement } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { useReveal } from '../src';
+import { useReveal, useSceneDefaultCamera } from '../src';
 import { type DefaultCameraManager } from '@cognite/reveal';
 
 const meta = {
@@ -23,9 +23,8 @@ const sdk = createSdkByUrlToken();
 
 export const Main: Story = {
   args: {
-    sceneExternalId: 'my_scene_external_id',
+    sceneExternalId: 'anders_scene_1',
     sceneSpaceId: 'scene',
-    disableDefaultCamera: false,
     sdk
   },
   render: ({ sceneExternalId, sceneSpaceId }) => {
@@ -47,21 +46,19 @@ const SceneContainerStoryContent = ({
   sceneSpaceId
 }: SceneContainerStoryContentProps): ReactElement => {
   const reveal = useReveal();
+  const { fitCameraToSceneDefault } = useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
 
   useEffect(() => {
     (reveal.cameraManager as DefaultCameraManager).setCameraControlsOptions({
       changeCameraTargetOnClick: true,
       mouseWheelAction: 'zoomToCursor'
     });
-  }, [reveal]);
+
+    fitCameraToSceneDefault();
+  }, [reveal, fitCameraToSceneDefault]);
   return (
     <>
-      <SceneContainer
-        sceneExternalId={sceneExternalId}
-        sceneSpaceId={sceneSpaceId}
-        disableDefaultCamera={false}
-        sdk={sdk}
-      />
+      <SceneContainer sceneExternalId={sceneExternalId} sceneSpaceId={sceneSpaceId} sdk={sdk} />
     </>
   );
 };

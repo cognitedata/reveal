@@ -19,7 +19,6 @@ export type SceneContainerProps = {
   sceneSpaceId: string;
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>;
-  disableDefaultCamera: boolean;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (error: any) => void;
 };
