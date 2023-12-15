@@ -19,6 +19,7 @@ export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
 export { useReveal } from './components/RevealContainer/RevealContext';
 export { use3DModelName } from './hooks/use3DModelName';
 export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCacheProvider';
+export { useSceneDefaultCamera } from './hooks/useSceneDefaultCamera';
 export {
   useClickedNodeData,
   type ClickedNodeData,

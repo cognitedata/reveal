@@ -3,7 +3,6 @@
  */
 import { type ReactElement } from 'react';
 import { Reveal3DResources } from '../..';
-import { type CogniteClient } from '@cognite/sdk';
 import {
   type AssetMappingStylingGroup,
   type DefaultResourceStyling,
@@ -14,12 +13,10 @@ import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
 import { useSkyboxFromScene } from '../../hooks/useSkyboxFromScene';
 
 export type SceneContainerProps = {
-  sdk: CogniteClient;
   sceneExternalId: string;
   sceneSpaceId: string;
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>;
-  disableDefaultCamera: boolean;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (error: any) => void;
 };
@@ -27,7 +24,6 @@ export type SceneContainerProps = {
 export function SceneContainer({
   sceneExternalId,
   sceneSpaceId,
-  sdk,
   defaultResourceStyling,
   instanceStyling,
   onResourcesAdded,
@@ -35,20 +31,16 @@ export function SceneContainer({
 }: SceneContainerProps): ReactElement {
   const resourceOptions = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
 
-  useGroundPlaneFromScene(sdk, sceneExternalId, sceneSpaceId);
-  useSkyboxFromScene(sdk, sceneExternalId, sceneSpaceId);
+  useGroundPlaneFromScene(sceneExternalId, sceneSpaceId);
+  useSkyboxFromScene(sceneExternalId, sceneSpaceId);
 
   return (
-    <>
-      {
-        <Reveal3DResources
-          resources={resourceOptions}
-          defaultResourceStyling={defaultResourceStyling}
-          instanceStyling={instanceStyling}
-          onResourcesAdded={onResourcesAdded}
-          onResourceLoadError={onResourceLoadError}
-        />
-      }
-    </>
+    <Reveal3DResources
+      resources={resourceOptions}
+      defaultResourceStyling={defaultResourceStyling}
+      instanceStyling={instanceStyling}
+      onResourcesAdded={onResourcesAdded}
+      onResourceLoadError={onResourceLoadError}
+    />
   );
 }
