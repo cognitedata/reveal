@@ -34,16 +34,23 @@ export const useSkyboxFromScene = (
   );
 
   useEffect(() => {
-    if (skybox.data === undefined || skybox.data === null) {
+    if (skybox.data === undefined || skybox.data === null || scene.data === undefined) {
       return;
     }
 
     const skyboxMesh = new THREE.Mesh(
-      new THREE.SphereGeometry(1000000, 20, 20),
+      new THREE.SphereGeometry(10000000, 20, 20),
       new THREE.MeshBasicMaterial({
         side: THREE.BackSide,
         map: skybox.data
       })
+    );
+
+    // Center skybox around camera
+    skyboxMesh.position.set(
+      scene.data?.sceneConfiguration.cameraTranslationX,
+      scene.data?.sceneConfiguration.cameraTranslationY,
+      scene.data?.sceneConfiguration.cameraTranslationZ
     );
 
     viewer.addObject3D(skyboxMesh);
