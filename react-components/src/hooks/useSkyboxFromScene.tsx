@@ -7,26 +7,27 @@ import { useSceneConfig } from './useSceneConfig';
 import * as THREE from 'three';
 import { useReveal } from '..';
 import { useQuery } from '@tanstack/react-query';
-import { type CogniteClient } from '@cognite/sdk';
+import { useSDK } from '../components/RevealContainer/SDKProvider';
 
-export const useSkyboxFromScene = (
-  sdk: CogniteClient,
-  sceneExternalId: string,
-  sceneSpaceId: string
-): void => {
+export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
   const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
   const viewer = useReveal();
-  const skyboxRef = useRef<THREE.Object3D<THREE.Object3DEventMap>>();
+  const sdk = useSDK();
 
-  const skybox = useQuery(
+  const { data: skyboxTexture } = useQuery(
     ['reveal', 'react-components', 'skyboxUrl', scene.data],
     async () => {
-      if (scene.data?.skybox === undefined || scene.data === null) {
+      if (scene.data?.skybox === undefined) {
         return null;
       }
 
       const skyboxExternalId = scene.data.skybox.file;
       const skyBoxUrls = await sdk.files.getDownloadUrls([{ externalId: skyboxExternalId }]);
+
+      if (skyBoxUrls.length === 0) {
+        return null;
+      }
+
       const skyboxUrl = skyBoxUrls[0].downloadUrl;
       return new THREE.TextureLoader().load(skyboxUrl);
     },
@@ -34,27 +35,26 @@ export const useSkyboxFromScene = (
   );
 
   useEffect(() => {
-    if (skybox.data === undefined || skybox.data === null) {
+    if (skyboxTexture === undefined || skyboxTexture === null) {
       return;
     }
+    const skyboxGeometry = new THREE.SphereGeometry(1000000, 20, 20);
+    const skyboxMaterial = new THREE.MeshBasicMaterial({
+      side: THREE.BackSide,
+      map: skyboxTexture
+    });
 
-    const skyboxMesh = new THREE.Mesh(
-      new THREE.SphereGeometry(1000000, 20, 20),
-      new THREE.MeshBasicMaterial({
-        side: THREE.BackSide,
-        map: skybox.data
-      })
-    );
+    const skyboxMesh = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
 
     viewer.addObject3D(skyboxMesh);
-    skyboxRef.current = skyboxMesh;
 
     return () => {
       // Cleanup function
-      if (skyboxRef.current !== null && skyboxRef.current !== undefined) {
-        viewer.removeObject3D(skyboxRef.current);
-      }
-      skyboxRef.current = undefined;
+
+      skyboxGeometry.dispose();
+      skyboxTexture.dispose();
+      skyboxMesh.material.dispose();
+      viewer.removeObject3D(skyboxMesh);
     };
-  }, [skybox.data]);
+  }, [skyboxTexture]);
 };
