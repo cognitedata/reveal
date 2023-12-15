@@ -147,7 +147,7 @@ function createGetScenesQuery(limit: number = 100): Query {
               property: ['edge', 'type'],
               value: {
                 space: 'scene',
-                externalId: 'SceneConfiguration.cdf3dModels'
+                externalId: 'SceneConfiguration.model3ds'
               }
             }
           }

@@ -38,7 +38,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
               property: ['edge', 'type'],
               value: {
                 space: 'scene',
-                externalId: 'SceneConfiguration.cdf3dModels'
+                externalId: 'SceneConfiguration.model3ds'
               }
             }
           }
