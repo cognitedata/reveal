@@ -2,61 +2,67 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useSceneConfig } from './useSceneConfig';
 import * as THREE from 'three';
 import { useReveal } from '..';
 import { useQuery } from '@tanstack/react-query';
-import { type CogniteClient } from '@cognite/sdk';
+import { useSDK } from '../components/RevealContainer/SDKProvider';
 
-export const useSkyboxFromScene = (
-  sdk: CogniteClient,
-  sceneExternalId: string,
-  sceneSpaceId: string
-): void => {
+export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
   const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
   const viewer = useReveal();
-  const skyboxRef = useRef<THREE.Object3D<THREE.Object3DEventMap>>();
+  const sdk = useSDK();
 
-  const skyboxUrl = useQuery(
+  const { data: skyboxTexture } = useQuery(
     ['reveal', 'react-components', 'skyboxUrl', scene.data],
     async () => {
-      if (scene.data?.skybox === undefined || scene.data === null) {
-        return '';
+      if (scene.data?.skybox === undefined) {
+        return null;
       }
 
       const skyboxExternalId = scene.data.skybox.file;
       const skyBoxUrls = await sdk.files.getDownloadUrls([{ externalId: skyboxExternalId }]);
+
+      if (skyBoxUrls.length === 0) {
+        return null;
+      }
+
       const skyboxUrl = skyBoxUrls[0].downloadUrl;
-      return skyboxUrl;
+      return new THREE.TextureLoader().load(skyboxUrl);
     },
     { staleTime: Infinity }
   );
 
   useEffect(() => {
-    const loadSkybox = async (): Promise<void> => {
-      if (skyboxUrl.data === undefined || skyboxUrl.data === '') {
-        return;
-      }
+    if (skyboxTexture === undefined || skyboxTexture === null) {
+      return;
+    }
+    const skyboxGeometry = new THREE.SphereGeometry(1000000, 20, 20);
+    const skyboxMaterial = new THREE.MeshBasicMaterial({
+      side: THREE.BackSide,
+      map: skyboxTexture
+    });
 
-      const skyboxMesh = new THREE.Mesh(
-        new THREE.SphereGeometry(9000000, 0, 0),
-        new THREE.MeshBasicMaterial({
-          side: THREE.BackSide,
-          map: new THREE.TextureLoader().load(skyboxUrl.data)
-        })
-      );
-      viewer.addObject3D(skyboxMesh);
-      skyboxRef.current = skyboxMesh;
+    const skyboxMesh = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+
+    const onCameraChange = (position: THREE.Vector3): void => {
+      skyboxMesh.position.copy(position);
     };
-    void loadSkybox();
+
+    viewer.on('cameraChange', onCameraChange);
+
+    viewer.addObject3D(skyboxMesh);
 
     return () => {
       // Cleanup function
-      if (skyboxRef.current !== null && skyboxRef.current !== undefined) {
-        viewer.removeObject3D(skyboxRef.current);
-      }
-      skyboxRef.current = undefined;
+
+      skyboxGeometry.dispose();
+      skyboxTexture.dispose();
+      skyboxMesh.material.dispose();
+
+      viewer.removeObject3D(skyboxMesh);
+      viewer.off('cameraChange', onCameraChange);
     };
-  }, [skyboxUrl]);
+  }, [skyboxTexture]);
 };
