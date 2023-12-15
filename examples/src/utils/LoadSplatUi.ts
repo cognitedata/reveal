@@ -314,7 +314,8 @@ export class LoadSplatUi {
 			blendDst : THREE.OneMinusSrcAlphaFactor,
 			blendSrcAlpha: THREE.OneMinusDstAlphaFactor,
 			blendDstAlpha: THREE.OneFactor,
-			depthTest: false,
+			depthTest: true,
+			depthWrite: false,
 			transparent:true,
 			vertexColors:true,
 	});
