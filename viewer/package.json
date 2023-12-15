@@ -122,7 +122,7 @@
     "jsdom": "23.0.1",
     "moq.ts": "10.0.8",
     "nock": "13.4.0",
-    "prettier": "3.1.0",
+    "prettier": "3.1.1",
     "process": "0.11.10",
     "puppeteer": "21.6.0",
     "random-seed": "0.3.0",
