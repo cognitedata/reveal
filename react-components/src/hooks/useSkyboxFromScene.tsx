@@ -38,13 +38,24 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
     if (skyboxTexture === undefined || skyboxTexture === null) {
       return;
     }
-    const skyboxGeometry = new THREE.SphereGeometry(1000000, 20, 20);
+    const skyboxGeometry = new THREE.SphereGeometry(10000000, 20, 20);
     const skyboxMaterial = new THREE.MeshBasicMaterial({
       side: THREE.BackSide,
       map: skyboxTexture
     });
 
     const skyboxMesh = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+
+    // Center skybox around camera
+    // skyboxMesh.position.set(
+    //   scene.data?.sceneConfiguration.cameraTranslationX,
+    //   scene.data?.sceneConfiguration.cameraTranslationY,
+    //   scene.data?.sceneConfiguration.cameraTranslationZ
+    // );
+
+    viewer.on('cameraChange', (position, target) => {
+      skyboxMesh.position.copy(target);
+    });
 
     viewer.addObject3D(skyboxMesh);
 
