@@ -49,6 +49,10 @@ export const useSearchMappedEquipmentFDM = (
     async () => {
       const viewsWithVersion = await createSourcesFromViews(viewsToSearch, fdmSdk);
 
+      if (models.length === 0 || viewsToSearch.length === 0) {
+        return [];
+      }
+
       if (query === '') {
         const result = await fdmSdk.queryNodesAndEdges(
           createMappedEquipmentQuery(models, viewsWithVersion, limit)
