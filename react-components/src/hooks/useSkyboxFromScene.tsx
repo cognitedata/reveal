@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useSceneConfig } from './useSceneConfig';
 import * as THREE from 'three';
 import { useReveal } from '..';
@@ -38,7 +38,7 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
     if (skyboxTexture === undefined || skyboxTexture === null) {
       return;
     }
-    const skyboxGeometry = new THREE.SphereGeometry(10000000, 20, 20);
+    const skyboxGeometry = new THREE.SphereGeometry(1000000, 20, 20);
     const skyboxMaterial = new THREE.MeshBasicMaterial({
       side: THREE.BackSide,
       map: skyboxTexture
@@ -46,16 +46,11 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
 
     const skyboxMesh = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
 
-    // Center skybox around camera
-    // skyboxMesh.position.set(
-    //   scene.data?.sceneConfiguration.cameraTranslationX,
-    //   scene.data?.sceneConfiguration.cameraTranslationY,
-    //   scene.data?.sceneConfiguration.cameraTranslationZ
-    // );
+    const onCameraChange = (position: THREE.Vector3): void => {
+      skyboxMesh.position.copy(position);
+    };
 
-    viewer.on('cameraChange', (position, target) => {
-      skyboxMesh.position.copy(target);
-    });
+    viewer.on('cameraChange', onCameraChange);
 
     viewer.addObject3D(skyboxMesh);
 
@@ -65,7 +60,9 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
       skyboxGeometry.dispose();
       skyboxTexture.dispose();
       skyboxMesh.material.dispose();
+
       viewer.removeObject3D(skyboxMesh);
+      viewer.off('cameraChange', onCameraChange);
     };
   }, [skyboxTexture]);
 };

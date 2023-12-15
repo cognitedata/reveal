@@ -24,12 +24,11 @@ const sdk = createSdkByUrlToken();
 export const Main: Story = {
   args: {
     sceneExternalId: 'savelii_scene1',
-    sceneSpaceId: 'scene',
-    sdk
+    sceneSpaceId: 'scene'
   },
   render: ({ sceneExternalId, sceneSpaceId }) => {
     return (
-      <RevealStoryContainer color={new Color(0x4a4a4a)}>
+      <RevealStoryContainer color={new Color(0x4a4a4a)} sdk={sdk}>
         <SceneContainerStoryContent sceneExternalId={sceneExternalId} sceneSpaceId={sceneSpaceId} />
       </RevealStoryContainer>
     );
@@ -58,7 +57,7 @@ const SceneContainerStoryContent = ({
   }, [reveal, fitCameraToSceneDefault]);
   return (
     <>
-      <SceneContainer sceneExternalId={sceneExternalId} sceneSpaceId={sceneSpaceId} sdk={sdk} />
+      <SceneContainer sceneExternalId={sceneExternalId} sceneSpaceId={sceneSpaceId} />
     </>
   );
 };

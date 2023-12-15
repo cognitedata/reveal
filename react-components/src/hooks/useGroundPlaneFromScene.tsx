@@ -48,12 +48,14 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
       const texture = groundPlanesUrls[index];
       const material = new MeshBasicMaterial({ map: texture, side: DoubleSide });
       const geometry = new PlaneGeometry(10000 * groundPlane.scaleX, 10000 * groundPlane.scaleY);
+
       const mesh = new Mesh(geometry, material);
       mesh.position.set(
         groundPlane.translationX,
         groundPlane.translationY,
         groundPlane.translationZ
       );
+      mesh.rotation.set(-Math.PI / 2, 0, 0);
 
       mesh.position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
       viewer.addObject3D(mesh);
