@@ -21,7 +21,7 @@ import {
   SYSTEM_SPACE_3D_SCHEMA
 } from '../utilities/globalDataModels';
 import { type AddModelOptions } from '@cognite/reveal';
-import { isEqual } from 'lodash';
+import { isEqual, uniq } from 'lodash';
 
 export type SeachResultsWithView = { view: Source; instances: NodeItem[] };
 
@@ -29,7 +29,6 @@ type FdmKey = `${Space}/${ExternalId}`;
 
 export const useSearchMappedEquipmentFDM = (
   query: string,
-  spacesToSearch: string[],
   viewsToSearch: DmsUniqueIdentifier[],
   models: AddModelOptions[],
   instancesFilter: any,
@@ -41,8 +40,12 @@ export const useSearchMappedEquipmentFDM = (
   }
 
   const sdk = useSDK(userSdk);
-
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
+
+  const spacesToSearch = useMemo(
+    () => uniq(viewsToSearch.map((view) => view.space)),
+    [viewsToSearch]
+  );
 
   return useQuery(
     ['reveal', 'react-components', 'search-mapped-fdm', query, models, viewsToSearch],
