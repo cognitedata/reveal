@@ -27,6 +27,7 @@ type WindowWidgetProps = {
   header?: string;
   type?: string;
   children: ReactNode;
+  onClose?: () => void;
 };
 
 export const WindowWidget = ({
@@ -34,7 +35,8 @@ export const WindowWidget = ({
   subtitle,
   header,
   type,
-  children
+  children,
+  onClose
 }: WindowWidgetProps): ReactElement => {
   const { t } = useTranslation();
   const [isShown, setIsShown] = useState(true);
@@ -53,6 +55,9 @@ export const WindowWidget = ({
   };
 
   const handleClose = (): void => {
+    if (onClose !== undefined) {
+      onClose();
+    }
     setIsShown(false);
   };
 
@@ -82,8 +87,26 @@ export const WindowWidget = ({
   };
 
   return (
-    <WidgetComponent isMinimized={isMinimized}>
-      <Draggable onDrag={handleDrag} position={position} handle=".widget-header">
+    <WidgetComponent
+      isMinimized={isMinimized}
+      style={
+        isMinimized
+          ? {
+              position: 'absolute',
+              left: `${
+                parentContainerElement !== null && parentContainerElement !== undefined
+                  ? parentContainerElement.clientWidth * 0.75 - 20
+                  : 0
+              }px`,
+              top: '50px'
+            }
+          : {}
+      }>
+      <Draggable
+        onDrag={handleDrag}
+        position={isMinimized ? { x: 0, y: 0 } : position}
+        handle=".widget-header"
+        disabled={isMinimized}>
         <ResizableBox
           width={size.width}
           height={size.height}
@@ -167,7 +190,7 @@ const WidgetBody = styled.div`
 
 const StyledComponent = styled.div<{ isMinimized: boolean }>`
   position: absolute;
-  left: ${({ isMinimized }) => (isMinimized ? 'calc(75% - 20px)' : 'calc(40% - 20px)')};
+  left: ${({ isMinimized }) => (isMinimized ? '0px' : 'calc(60% - 20px)')};
   top: 50px;
   width: ${({ isMinimized }) => (isMinimized ? '300px' : '100%')};
   height: auto;
