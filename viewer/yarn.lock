@@ -590,7 +590,7 @@ __metadata:
     path-browserify: "npm:1.0.1"
     prettier: "npm:3.1.1"
     process: "npm:0.11.10"
-    puppeteer: "npm:21.6.0"
+    puppeteer: "npm:21.6.1"
     random-seed: "npm:0.3.0"
     raw-loader: "npm:4.0.2"
     remove-files-webpack-plugin: "npm:1.5.0"
@@ -9136,30 +9136,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:21.6.0":
-  version: 21.6.0
-  resolution: "puppeteer-core@npm:21.6.0"
+"puppeteer-core@npm:21.6.1":
+  version: 21.6.1
+  resolution: "puppeteer-core@npm:21.6.1"
   dependencies:
     "@puppeteer/browsers": "npm:1.9.0"
     chromium-bidi: "npm:0.5.1"
     cross-fetch: "npm:4.0.0"
     debug: "npm:4.3.4"
     devtools-protocol: "npm:0.0.1203626"
-    ws: "npm:8.14.2"
-  checksum: 4ea348b2ad5a33985f1b11012bde0d263b59bbc068e49a640906a079d5a69ec83fecc45cb5115263ecef4b4054bc1c71be13667357ff08f33a2105c87b8020d1
+    ws: "npm:8.15.1"
+  checksum: a3293c3b97dc14ae3b78c30ba8d4d52847c7052064f795884f1318a77480d67cc297507e382ee5546962a191c31919e66d667e6ad52ce96fd0760c334038bee6
   languageName: node
   linkType: hard
 
-"puppeteer@npm:21.6.0":
-  version: 21.6.0
-  resolution: "puppeteer@npm:21.6.0"
+"puppeteer@npm:21.6.1":
+  version: 21.6.1
+  resolution: "puppeteer@npm:21.6.1"
   dependencies:
     "@puppeteer/browsers": "npm:1.9.0"
     cosmiconfig: "npm:8.3.6"
-    puppeteer-core: "npm:21.6.0"
+    puppeteer-core: "npm:21.6.1"
   bin:
     puppeteer: lib/esm/puppeteer/node/cli.js
-  checksum: 2b4075bff9f5e9c742e3f43f0826fbb2a49fd8619aea5f5f7c68088350973f781b9652b2a76dc3d53a0ad71a96dc0e3cad332b4d18a1d7df5310f38aada1f0ff
+  checksum: ea9490a79df5de9a6f65aff7cc7a1d1071237e6446ab5f7a2c79ebb7c82337a9863e6078710ea7fab029d7be6ad19bad308f82d9571d3468044d467c8cbe0864
   languageName: node
   linkType: hard
 
@@ -11566,7 +11566,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:8.14.2, ws@npm:^8.13.0, ws@npm:^8.8.0":
+"ws@npm:8.15.1":
+  version: 8.15.1
+  resolution: "ws@npm:8.15.1"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 746a3102d43e8df7b09f5814bec858f12d10185a7abd655537f3291b687d440bb80fc9d1e082f8dee42d4d74307f78a96810e18a2c8e13053b003c6608c1c648
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.13.0, ws@npm:^8.8.0":
   version: 8.14.2
   resolution: "ws@npm:8.14.2"
   peerDependencies:
