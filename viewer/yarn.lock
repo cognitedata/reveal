@@ -543,7 +543,7 @@ __metadata:
     "@types/glob": "npm:8.1.0"
     "@types/jest": "npm:29.5.11"
     "@types/jest-environment-puppeteer": "npm:5.0.6"
-    "@types/jest-image-snapshot": "npm:6.3.0"
+    "@types/jest-image-snapshot": "npm:6.4.0"
     "@types/jsdom": "npm:21.1.6"
     "@types/lodash": "npm:4.14.202"
     "@types/mixpanel-browser": "npm:2.47.5"
@@ -579,7 +579,7 @@ __metadata:
     jest-canvas-mock: "npm:2.5.2"
     jest-environment-jsdom: "npm:29.7.0"
     jest-extended: "npm:4.0.2"
-    jest-image-snapshot: "npm:6.3.0"
+    jest-image-snapshot: "npm:6.4.0"
     jest-puppeteer: "npm:9.0.2"
     jsdom: "npm:23.0.1"
     lodash: "npm:4.17.21"
@@ -1878,14 +1878,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest-image-snapshot@npm:6.3.0":
-  version: 6.3.0
-  resolution: "@types/jest-image-snapshot@npm:6.3.0"
+"@types/jest-image-snapshot@npm:6.4.0":
+  version: 6.4.0
+  resolution: "@types/jest-image-snapshot@npm:6.4.0"
   dependencies:
     "@types/jest": "npm:*"
     "@types/pixelmatch": "npm:*"
     ssim.js: "npm:^3.1.1"
-  checksum: db49f8835f0a1b83f7e148af6dc7fa0378ab9b7b2a249bae2ac7d02cd718c80d9b8b0b37e275b180730c6024104d33a5115e3447dcbbc3389b43cbec510a9a1f
+  checksum: 80b423cf5f8ed3f608ada89d41c29b8cd0eaf0b3c1517ac0b8f2369764181ba08950918bd94960e9b36165c5d430d123b72962dd57852bcc05b1fc4ee803d8ff
   languageName: node
   linkType: hard
 
@@ -6981,9 +6981,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-image-snapshot@npm:6.3.0":
-  version: 6.3.0
-  resolution: "jest-image-snapshot@npm:6.3.0"
+"jest-image-snapshot@npm:6.4.0":
+  version: 6.4.0
+  resolution: "jest-image-snapshot@npm:6.4.0"
   dependencies:
     chalk: "npm:^4.0.0"
     get-stdin: "npm:^5.0.1"
@@ -6998,7 +6998,7 @@ __metadata:
   peerDependenciesMeta:
     jest:
       optional: true
-  checksum: 6a0566d58704bec9c544cde70b5197ee0db5377edeaadea88bad3cd247dc294b820b277f714ffd2c1e45e7e01601dfba82f080f9cc61a444caf34c73546f606f
+  checksum: 7afe59c0f4449429cd1f9e09d7bbf394cba1f711feaac376f7defddb33f287d2d13e3cd8bad3537d50581335968e384b0e9a7a227f8b78189ad508c994a19964
   languageName: node
   linkType: hard
 
