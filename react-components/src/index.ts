@@ -25,6 +25,7 @@ export {
   type FdmNodeDataResult
 } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
+export { use3dScenes } from './hooks/use3dScenes';
 export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
 export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
 export { use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
@@ -70,6 +71,10 @@ export {
   type FdmAssetStylingGroup,
   type DefaultResourceStyling
 } from './components/Reveal3DResources/types';
+export {
+  SceneContainer,
+  type SceneContainerProps
+} from './components/SceneContainer/SceneContainer';
 export type {
   AddImageCollection360Options,
   AddResourceOptions,
