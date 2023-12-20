@@ -6,8 +6,8 @@ import { type ReactElement, useCallback } from 'react';
 
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
-import { useCameraFromScene } from '../../hooks/useCameraFromScene';
 import { useCameraNavigation } from '../../hooks/useCameraNavigation';
+import { useSceneDefaultCamera } from '../../hooks/useSceneDefaultCamera';
 
 type ResetCameraButtonProps = {
   sceneExternalId?: string;
@@ -23,7 +23,7 @@ export const ResetCameraButton = ({
 
   const resetCameraToHomePosition = useCallback(() => {
     if (sceneExternalId !== undefined && sceneSpaceId !== undefined) {
-      useCameraFromScene(sceneExternalId, sceneSpaceId);
+      useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
     }
     cameraNavigation.fitCameraToAllModels();
   }, []);

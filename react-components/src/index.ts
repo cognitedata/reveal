@@ -26,7 +26,6 @@ export {
   type FdmNodeDataResult
 } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
-export { useCameraFromScene } from './hooks/useCameraFromScene';
 export { use3dScenes } from './hooks/use3dScenes';
 export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
 export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
