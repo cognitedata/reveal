@@ -543,7 +543,7 @@ __metadata:
     "@types/glob": "npm:8.1.0"
     "@types/jest": "npm:29.5.11"
     "@types/jest-environment-puppeteer": "npm:5.0.6"
-    "@types/jest-image-snapshot": "npm:6.3.0"
+    "@types/jest-image-snapshot": "npm:6.4.0"
     "@types/jsdom": "npm:21.1.6"
     "@types/lodash": "npm:4.14.202"
     "@types/mixpanel-browser": "npm:2.47.5"
@@ -563,7 +563,7 @@ __metadata:
     eslint: "npm:8.55.0"
     eslint-config-prettier: "npm:9.1.0"
     eslint-plugin-header: "npm:3.1.1"
-    eslint-plugin-jsdoc: "npm:46.9.0"
+    eslint-plugin-jsdoc: "npm:46.9.1"
     eslint-plugin-lodash: "npm:7.4.0"
     eslint-plugin-prettier: "npm:5.0.1"
     eslint-plugin-unused-imports: "npm:3.0.0"
@@ -579,7 +579,7 @@ __metadata:
     jest-canvas-mock: "npm:2.5.2"
     jest-environment-jsdom: "npm:29.7.0"
     jest-extended: "npm:4.0.2"
-    jest-image-snapshot: "npm:6.3.0"
+    jest-image-snapshot: "npm:6.4.0"
     jest-puppeteer: "npm:9.0.2"
     jsdom: "npm:23.0.1"
     lodash: "npm:4.17.21"
@@ -588,9 +588,9 @@ __metadata:
     moq.ts: "npm:10.0.8"
     nock: "npm:13.4.0"
     path-browserify: "npm:1.0.1"
-    prettier: "npm:3.1.0"
+    prettier: "npm:3.1.1"
     process: "npm:0.11.10"
-    puppeteer: "npm:21.6.0"
+    puppeteer: "npm:21.6.1"
     random-seed: "npm:0.3.0"
     raw-loader: "npm:4.0.2"
     remove-files-webpack-plugin: "npm:1.5.0"
@@ -610,7 +610,7 @@ __metadata:
     webpack-cli: "npm:5.1.4"
     webpack-dev-server: "npm:4.15.1"
     webpack-node-externals: "npm:3.0.0"
-    whatwg-fetch: "npm:3.6.19"
+    whatwg-fetch: "npm:3.6.20"
     workerize-loader: "npm:2.0.2"
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
@@ -1878,14 +1878,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest-image-snapshot@npm:6.3.0":
-  version: 6.3.0
-  resolution: "@types/jest-image-snapshot@npm:6.3.0"
+"@types/jest-image-snapshot@npm:6.4.0":
+  version: 6.4.0
+  resolution: "@types/jest-image-snapshot@npm:6.4.0"
   dependencies:
     "@types/jest": "npm:*"
     "@types/pixelmatch": "npm:*"
     ssim.js: "npm:^3.1.1"
-  checksum: db49f8835f0a1b83f7e148af6dc7fa0378ab9b7b2a249bae2ac7d02cd718c80d9b8b0b37e275b180730c6024104d33a5115e3447dcbbc3389b43cbec510a9a1f
+  checksum: 80b423cf5f8ed3f608ada89d41c29b8cd0eaf0b3c1517ac0b8f2369764181ba08950918bd94960e9b36165c5d430d123b72962dd57852bcc05b1fc4ee803d8ff
   languageName: node
   linkType: hard
 
@@ -4559,9 +4559,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:46.9.0":
-  version: 46.9.0
-  resolution: "eslint-plugin-jsdoc@npm:46.9.0"
+"eslint-plugin-jsdoc@npm:46.9.1":
+  version: 46.9.1
+  resolution: "eslint-plugin-jsdoc@npm:46.9.1"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.41.0"
     are-docs-informative: "npm:^0.0.2"
@@ -4571,10 +4571,10 @@ __metadata:
     esquery: "npm:^1.5.0"
     is-builtin-module: "npm:^3.2.1"
     semver: "npm:^7.5.4"
-    spdx-expression-parse: "npm:^3.0.1"
+    spdx-expression-parse: "npm:^4.0.0"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 0dd20688047c2acf9e816e8b541c56cb4b2660f02fd99e27b4ef6b4505dff0d14596134e40efb351a629f91e4fc2ceab517a071efd650ad2c3d6e4d9c461f650
+  checksum: 0b176d690738b3e5dad9bceccb8640b95070e8981ce0dce48227969d6c9fe972554aeccfc013bf231cf1eb51dacc3b0987c597b553f4b0e52f637f4587b509be
   languageName: node
   linkType: hard
 
@@ -6981,9 +6981,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-image-snapshot@npm:6.3.0":
-  version: 6.3.0
-  resolution: "jest-image-snapshot@npm:6.3.0"
+"jest-image-snapshot@npm:6.4.0":
+  version: 6.4.0
+  resolution: "jest-image-snapshot@npm:6.4.0"
   dependencies:
     chalk: "npm:^4.0.0"
     get-stdin: "npm:^5.0.1"
@@ -6998,7 +6998,7 @@ __metadata:
   peerDependenciesMeta:
     jest:
       optional: true
-  checksum: 6a0566d58704bec9c544cde70b5197ee0db5377edeaadea88bad3cd247dc294b820b277f714ffd2c1e45e7e01601dfba82f080f9cc61a444caf34c73546f606f
+  checksum: 7afe59c0f4449429cd1f9e09d7bbf394cba1f711feaac376f7defddb33f287d2d13e3cd8bad3537d50581335968e384b0e9a7a227f8b78189ad508c994a19964
   languageName: node
   linkType: hard
 
@@ -8969,12 +8969,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.1.0":
-  version: 3.1.0
-  resolution: "prettier@npm:3.1.0"
+"prettier@npm:3.1.1":
+  version: 3.1.1
+  resolution: "prettier@npm:3.1.1"
   bin:
     prettier: bin/prettier.cjs
-  checksum: e95e8f93c6b9aea2ac1e86bebe329bee90c8c50d9a23d1f593eba8d7f39b33b3641eb28785001505b6723c47895a5322ad12a2fb855b289cb7bae450ffc34425
+  checksum: 26a249f321b97d26c04483f1bf2eeb22e082a76f4222a2c922bebdc60111691aad4ec3979610e83942e0b956058ec361d9e9c81c185172264eb6db9aa678082b
   languageName: node
   linkType: hard
 
@@ -9136,30 +9136,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:21.6.0":
-  version: 21.6.0
-  resolution: "puppeteer-core@npm:21.6.0"
+"puppeteer-core@npm:21.6.1":
+  version: 21.6.1
+  resolution: "puppeteer-core@npm:21.6.1"
   dependencies:
     "@puppeteer/browsers": "npm:1.9.0"
     chromium-bidi: "npm:0.5.1"
     cross-fetch: "npm:4.0.0"
     debug: "npm:4.3.4"
     devtools-protocol: "npm:0.0.1203626"
-    ws: "npm:8.14.2"
-  checksum: 4ea348b2ad5a33985f1b11012bde0d263b59bbc068e49a640906a079d5a69ec83fecc45cb5115263ecef4b4054bc1c71be13667357ff08f33a2105c87b8020d1
+    ws: "npm:8.15.1"
+  checksum: a3293c3b97dc14ae3b78c30ba8d4d52847c7052064f795884f1318a77480d67cc297507e382ee5546962a191c31919e66d667e6ad52ce96fd0760c334038bee6
   languageName: node
   linkType: hard
 
-"puppeteer@npm:21.6.0":
-  version: 21.6.0
-  resolution: "puppeteer@npm:21.6.0"
+"puppeteer@npm:21.6.1":
+  version: 21.6.1
+  resolution: "puppeteer@npm:21.6.1"
   dependencies:
     "@puppeteer/browsers": "npm:1.9.0"
     cosmiconfig: "npm:8.3.6"
-    puppeteer-core: "npm:21.6.0"
+    puppeteer-core: "npm:21.6.1"
   bin:
     puppeteer: lib/esm/puppeteer/node/cli.js
-  checksum: 2b4075bff9f5e9c742e3f43f0826fbb2a49fd8619aea5f5f7c68088350973f781b9652b2a76dc3d53a0ad71a96dc0e3cad332b4d18a1d7df5310f38aada1f0ff
+  checksum: ea9490a79df5de9a6f65aff7cc7a1d1071237e6446ab5f7a2c79ebb7c82337a9863e6078710ea7fab029d7be6ad19bad308f82d9571d3468044d467c8cbe0864
   languageName: node
   linkType: hard
 
@@ -10048,13 +10048,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"spdx-expression-parse@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "spdx-expression-parse@npm:3.0.1"
+"spdx-expression-parse@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "spdx-expression-parse@npm:4.0.0"
   dependencies:
     spdx-exceptions: "npm:^2.1.0"
     spdx-license-ids: "npm:^3.0.0"
-  checksum: a1c6e104a2cbada7a593eaa9f430bd5e148ef5290d4c0409899855ce8b1c39652bcc88a725259491a82601159d6dc790bedefc9016c7472f7de8de7361f8ccde
+  checksum: 936be681fbf5edeec3a79c023136479f70d6edb3fd3875089ac86cd324c6c8c81add47399edead296d1d0af17ae5ce88c7f88885eb150b62c2ff6e535841ca6a
   languageName: node
   linkType: hard
 
@@ -11393,10 +11393,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"whatwg-fetch@npm:3.6.19":
-  version: 3.6.19
-  resolution: "whatwg-fetch@npm:3.6.19"
-  checksum: 257b130a06bc0fca4e3f15cb4a7b7822d12b7493c6743353e3a107b62ef2716f77fae35b4c81b4b8630e221aca30ea5b9770969db762d63336108f57bee9f963
+"whatwg-fetch@npm:3.6.20":
+  version: 3.6.20
+  resolution: "whatwg-fetch@npm:3.6.20"
+  checksum: 2b4ed92acd6a7ad4f626a6cb18b14ec982bbcaf1093e6fe903b131a9c6decd14d7f9c9ca3532663c2759d1bdf01d004c77a0adfb2716a5105465c20755a8c57c
   languageName: node
   linkType: hard
 
@@ -11566,7 +11566,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:8.14.2, ws@npm:^8.13.0, ws@npm:^8.8.0":
+"ws@npm:8.15.1":
+  version: 8.15.1
+  resolution: "ws@npm:8.15.1"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 746a3102d43e8df7b09f5814bec858f12d10185a7abd655537f3291b687d440bb80fc9d1e082f8dee42d4d74307f78a96810e18a2c8e13053b003c6608c1c648
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.13.0, ws@npm:^8.8.0":
   version: 8.14.2
   resolution: "ws@npm:8.14.2"
   peerDependencies:
