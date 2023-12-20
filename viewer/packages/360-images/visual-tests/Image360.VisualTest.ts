@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { Cdf360ImageEventProvider, Local360ImageProvider } from '@reveal/data-providers';
+import { Cdf360EventDescriptorProvider, Cdf360ImageProvider, Local360ImageProvider } from '@reveal/data-providers';
 import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
@@ -50,7 +50,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     this.setupGUI(entities);
 
-    this.setupMouseMoveEventHandler(renderer, entities, facade, camera);
+    this.setupMouseMoveEventHandler(renderer, facade, camera);
 
     this.setupMouseClickEventHandler(renderer, facade, camera, cameraControls);
   }
@@ -172,7 +172,6 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
   private setupMouseMoveEventHandler(
     renderer: THREE.WebGLRenderer,
-    entities: Image360Entity[],
     facade: CdfImage360Facade | LocalImage360Facade,
     camera: THREE.PerspectiveCamera
   ) {
@@ -249,7 +248,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }>;
     entities: Image360Entity[];
   }> {
-    const cdf360ImageProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
+    const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
     const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender, device);
     const image360Facade = new Image360Facade(image360Factory);
     const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), 0.1);
@@ -275,7 +275,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }>;
     entities: Image360Entity[];
   }> {
-    const cdf360ImageProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
+    const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
     const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender, device);
     const image360Facade = new Image360Facade(image360Factory);
 

@@ -37,18 +37,23 @@ export const WindowWidget = ({
   children
 }: WindowWidgetProps): ReactElement => {
   const { t } = useTranslation();
+  const [isShown, setIsShown] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const parentContainerElement = useRevealContainerElement();
 
-  if (parentContainerElement === undefined) {
+  const size = useResize(parentContainerElement, isMinimized);
+
+  if (parentContainerElement === undefined || !isShown) {
     return <></>;
   }
 
-  const size = useResize(parentContainerElement, isMinimized);
-
   const handleExpand = (): void => {
     setIsMinimized((prev) => !prev);
+  };
+
+  const handleClose = (): void => {
+    setIsShown(false);
   };
 
   const handleDrag = (event: DraggableEvent, data: DraggableData): void => {
@@ -103,7 +108,7 @@ export const WindowWidget = ({
                 content={t('WIDGET_WINDOW_CLOSE', 'Close')}
                 placement="top"
                 appendTo={document.body}>
-                <Button type="ghost" icon="Close" />
+                <Button type="ghost" icon="Close" onClick={handleClose} />
               </CogsTooltip>
             </Widget.Header>
             <WidgetBody>{!isMinimized && <WidgetContent>{children}</WidgetContent>}</WidgetBody>
@@ -115,7 +120,7 @@ export const WindowWidget = ({
 };
 
 const useResize = (
-  parentContainerElement: HTMLElement,
+  parentContainerElement: HTMLElement | undefined,
   isMinimized: boolean
 ): {
   width: number;
@@ -124,6 +129,9 @@ const useResize = (
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
+    if (parentContainerElement === undefined) {
+      return;
+    }
     const updateSize = (): void => {
       const parentWidth = parentContainerElement.clientWidth;
       const parentHeight = parentContainerElement.clientHeight;

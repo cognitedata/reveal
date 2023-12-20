@@ -46,6 +46,7 @@ export type NodeResultSetExpression = {
     from?: string;
     through?: ViewPropertyReference;
     chainTo?: EdgeDirection;
+    direction?: 'outwards' | 'inwards';
   };
 };
 
@@ -178,6 +179,7 @@ export class FdmSDK {
   private readonly _queryEndpoint: string;
   private readonly _listViewsEndpoint: string;
   private readonly _viewsByIdEndpoint: string;
+  private readonly _listDataModelsEndpoint: string;
 
   constructor(sdk: CogniteClient) {
     const baseUrl = sdk.getBaseUrl();
@@ -193,6 +195,7 @@ export class FdmSDK {
     this._searchEndpoint = `${instancesBaseUrl}/search`;
     this._listViewsEndpoint = viewsBaseUrl;
     this._viewsByIdEndpoint = `${viewsBaseUrl}/byids`;
+    this._listDataModelsEndpoint = `${baseUrl}/api/v1/projects/${project}/models/datamodels`;
 
     this._sdk = sdk;
   }
@@ -423,6 +426,14 @@ export class FdmSDK {
       return { items: result.data.items, nextCursor: result.data.nextCursor };
     }
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
+  }
+
+  public async listDataModels(): Promise<any> {
+    const result = await this._sdk.get(this._listDataModelsEndpoint, { params: { limit: 1000 } });
+    if (result.status === 200) {
+      return result.data;
+    }
+    throw new Error(`Failed to fetch data models. Status: ${result.status}`);
   }
 }
 

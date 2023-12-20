@@ -35,6 +35,11 @@ import { Button, Input } from '@cognite/cogs.js';
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
 const spacesToSearch = ['fdx-boys'];
+const viewsToSearch = [
+  { externalId: 'Equipment', space: 'fdx-boys' },
+  { externalId: 'WorkOrderMultiple', space: 'fdx-boys' },
+  { externalId: 'WorkOrderSingle', space: 'fdx-boys' }
+];
 
 type Equipment = {
   view: string;
@@ -56,7 +61,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   const { data: searchData } = useSearchMappedEquipmentFDM(
     mainSearchQuery,
-    spacesToSearch,
+    viewsToSearch,
     filteredResources,
     undefined,
     100,
@@ -70,7 +75,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     sdk
   );
 
-  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, spacesToSearch, sdk);
+  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch, sdk);
 
   const {
     data: allAssets,
@@ -83,7 +88,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     (resource): resource is AddImageCollection360Options => 'siteId' in resource
   );
   const siteIds = filtered360ImageResources.map((filteredResource) => {
-    return filteredResource.siteId;
+    return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;
   });
 
   const { data: annotationAssetSearchData } = useSearchAssetsMapped360Annotations(
