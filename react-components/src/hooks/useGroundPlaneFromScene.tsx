@@ -2,77 +2,80 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useSceneConfig } from './useSceneConfig';
-import * as THREE from 'three';
+import { DoubleSide, Mesh, MeshBasicMaterial, PlaneGeometry, TextureLoader } from 'three';
 import { useReveal } from '..';
-import { type CogniteClient } from '@cognite/sdk';
 import { useQuery } from '@tanstack/react-query';
+import { useSDK } from '../components/RevealContainer/SDKProvider';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
-export const useGroundPlaneFromScene = (
-  sdk: CogniteClient,
-  sceneExternalId: string,
-  sceneSpaceId: string
-): void => {
-  const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
+export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
+  const { data: scene } = useSceneConfig(sceneExternalId, sceneSpaceId);
+  const sdk = useSDK();
   const viewer = useReveal();
-  const groundPlaneRef = useRef<Array<THREE.Object3D<THREE.Object3DEventMap>>>([]);
 
-  const groundPlaneUrls = useQuery(
-    ['reveal', 'react-components', 'groundplaneUrls', scene.data ?? ''],
+  const { data: groundPlanesUrls } = useQuery(
+    ['reveal', 'react-components', 'groundplaneUrls', scene ?? 'noSceneData'],
     async () => {
-      if (scene.data?.skybox === undefined || scene.data === null) {
+      if (scene?.skybox === undefined) {
         return [];
       }
 
-      return await sdk.files.getDownloadUrls(
-        scene.data.groundPlanes.map((groundPlaneProperties) => ({
+      const downloadUrls = await sdk.files.getDownloadUrls(
+        scene.groundPlanes.map((groundPlaneProperties) => ({
           externalId: groundPlaneProperties.file
         }))
       );
+
+      return downloadUrls.map((url) => {
+        return new TextureLoader().load(url.downloadUrl);
+      });
     },
     { staleTime: Infinity }
   );
 
   useEffect(() => {
-    if (
-      scene.data === undefined ||
-      groundPlaneUrls.data === undefined ||
-      groundPlaneUrls.data.length === 0
-    ) {
+    if (scene === undefined || groundPlanesUrls === undefined || groundPlanesUrls.length === 0) {
       return;
     }
+    const groundMeshes: Mesh[] = [];
 
-    scene.data.groundPlanes.forEach((groundPlane, index) => {
-      if (groundPlaneUrls.data === undefined) {
+    scene.groundPlanes.forEach((groundPlane, index) => {
+      if (groundPlanesUrls === undefined) {
         return;
       }
-      const textureUrl = groundPlaneUrls.data[index].downloadUrl;
-      const textureLoader = new THREE.TextureLoader();
-      textureLoader.load(textureUrl, function (texture) {
-        const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-        const geometry = new THREE.PlaneGeometry(
-          10000 * groundPlane.scaleX,
-          10000 * groundPlane.scaleY
-        );
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(
-          groundPlane.translationX,
-          groundPlane.translationY,
-          groundPlane.translationZ
-        );
-        mesh.rotation.set(-Math.PI / 2, 0, 0);
-        viewer.addObject3D(mesh);
-        groundPlaneRef.current.push(mesh);
-      });
+      const texture = groundPlanesUrls[index];
+      const material = new MeshBasicMaterial({ map: texture, side: DoubleSide });
+      const geometry = new PlaneGeometry(10000 * groundPlane.scaleX, 10000 * groundPlane.scaleY);
+
+      const mesh = new Mesh(geometry, material);
+      mesh.position.set(
+        groundPlane.translationX,
+        groundPlane.translationY,
+        groundPlane.translationZ
+      );
+      mesh.rotation.set(-Math.PI / 2, 0, 0);
+
+      mesh.position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      viewer.addObject3D(mesh);
+
+      groundMeshes.push(mesh);
     });
 
     return () => {
       // Cleanup function
-      groundPlaneRef.current.forEach((groundPlane) => {
+      groundMeshes.forEach((groundPlane) => {
+        groundPlane.geometry.dispose();
+
+        const material = groundPlane.material as MeshBasicMaterial;
+        material.map?.dispose();
+        material.dispose();
+
         viewer.removeObject3D(groundPlane);
       });
-      groundPlaneRef.current.splice(0, groundPlaneRef.current.length);
+
+      groundMeshes.splice(0, groundMeshes.length);
     };
-  }, [scene.data, groundPlaneUrls.data]);
+  }, [groundPlanesUrls]);
 };
