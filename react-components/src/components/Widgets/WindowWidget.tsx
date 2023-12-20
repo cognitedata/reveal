@@ -28,6 +28,7 @@ type WindowWidgetProps = {
   type?: string;
   children: ReactNode;
   onClose?: () => void;
+  onResize?: () => void;
 };
 
 export const WindowWidget = ({
@@ -36,7 +37,8 @@ export const WindowWidget = ({
   header,
   type,
   children,
-  onClose
+  onClose,
+  onResize
 }: WindowWidgetProps): ReactElement => {
   const { t } = useTranslation();
   const [isShown, setIsShown] = useState(true);
@@ -44,7 +46,7 @@ export const WindowWidget = ({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const parentContainerElement = useRevealContainerElement();
 
-  const size = useResize(parentContainerElement, isMinimized);
+  const size = useResize(parentContainerElement, isMinimized, onResize);
 
   if (parentContainerElement === undefined || !isShown) {
     return <></>;
@@ -110,7 +112,8 @@ export const WindowWidget = ({
         <ResizableBox
           width={size.width}
           height={size.height}
-          resizeHandles={isMinimized ? [] : ['se']}>
+          resizeHandles={isMinimized ? [] : ['se']}
+          onResize={onResize}>
           <Widget>
             <Widget.Header title={title} type={type} header={header} subtitle={subtitle}>
               <CogsTooltip
@@ -144,10 +147,12 @@ export const WindowWidget = ({
 
 const useResize = (
   parentContainerElement: HTMLElement | undefined,
-  isMinimized: boolean
+  isMinimized: boolean,
+  onResize?: () => void
 ): {
   width: number;
   height: number;
+  onResize?: () => void;
 } => {
   const [size, setSize] = useState({ width: 0, height: 0 });
 
@@ -163,6 +168,9 @@ const useResize = (
       const height = isMinimized ? WIDGET_WINDOW_MIN_HEIGHT : parentHeight * WIDGET_HEIGHT_FACTOR;
 
       setSize({ width, height });
+      if (onResize !== undefined) {
+        onResize();
+      }
     };
 
     updateSize();
