@@ -7,8 +7,10 @@ import { SceneContainer } from '../src/components/SceneContainer/SceneContainer'
 import { Color } from 'three';
 import { useEffect, type ReactElement } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { useReveal, useSceneDefaultCamera } from '../src';
+import { RevealToolbar, useReveal, useSceneDefaultCamera, withSuppressRevealEvents } from '../src';
 import { type DefaultCameraManager } from '@cognite/reveal';
+import { ToolBar } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/SceneContainer',
@@ -21,6 +23,12 @@ type Story = StoryObj<typeof meta>;
 
 const sdk = createSdkByUrlToken();
 
+const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
+  position: absolute;
+  right: 20px;
+  top: 70px;
+`;
+
 export const Main: Story = {
   args: {
     sceneExternalId: 'savelii_scene1',
@@ -29,6 +37,12 @@ export const Main: Story = {
   render: ({ sceneExternalId, sceneSpaceId }) => {
     return (
       <RevealStoryContainer color={new Color(0x4a4a4a)} sdk={sdk}>
+        <MyCustomToolbar>
+          <RevealToolbar.ResetCameraButton
+            sceneExternalId={sceneExternalId}
+            sceneSpaceId={sceneSpaceId}
+          />
+        </MyCustomToolbar>
         <SceneContainerStoryContent sceneExternalId={sceneExternalId} sceneSpaceId={sceneSpaceId} />
       </RevealStoryContainer>
     );

@@ -47,8 +47,6 @@ export const useSceneDefaultCamera = (
     position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     target.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
-    console.log('position', position, 'target', target);
-
     return {
       fitCameraToSceneDefault: () => {
         viewer.cameraManager.setCameraState({ position, target });
