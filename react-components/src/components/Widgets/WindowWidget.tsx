@@ -4,7 +4,6 @@
 
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type ReactElement, useState, type ReactNode, useEffect } from 'react';
-import styled from 'styled-components';
 import Widget from './Widget';
 import Draggable, { type DraggableData, type DraggableEvent } from 'react-draggable';
 import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
@@ -12,6 +11,7 @@ import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import {
   WIDGET_HEIGHT_FACTOR,
+  WIDGET_INSIDE_WINDOW_MIN_HEIGHT,
   WIDGET_WIDTH_FACTOR,
   WIDGET_WINDOW_MIN_HEIGHT,
   WIDGET_WINDOW_MIN_WIDTH,
@@ -20,6 +20,7 @@ import {
 } from './constants';
 import { useTranslation } from '../i18n/I18n';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
+import { StyledComponent, WidgetBody, WidgetContent } from './elements';
 
 type WindowWidgetProps = {
   title?: string;
@@ -97,7 +98,7 @@ export const WindowWidget = ({
               position: 'absolute',
               left: `${
                 parentContainerElement !== null && parentContainerElement !== undefined
-                  ? parentContainerElement.clientWidth * 0.75 - 20
+                  ? parentContainerElement.clientWidth * 0.75
                   : 0
               }px`,
               top: '50px'
@@ -112,8 +113,9 @@ export const WindowWidget = ({
         <ResizableBox
           width={size.width}
           height={size.height}
-          resizeHandles={isMinimized ? [] : ['se']}
-          onResize={onResize}>
+          minConstraints={[WIDGET_WINDOW_MIN_WIDTH, WIDGET_INSIDE_WINDOW_MIN_HEIGHT]}
+          maxConstraints={[parentContainerElement.clientWidth, parentContainerElement.clientHeight]}
+          resizeHandles={isMinimized ? [] : ['se']}>
           <Widget>
             <Widget.Header title={title} type={type} header={header} subtitle={subtitle}>
               <CogsTooltip
@@ -184,30 +186,5 @@ const useResize = (
 
   return size;
 };
-
-const WidgetContent = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 0px 10px 10px 10px;
-`;
-
-const WidgetBody = styled.div`
-  height: 100%;
-  overflow: auto;
-`;
-
-const StyledComponent = styled.div<{ isMinimized: boolean }>`
-  position: absolute;
-  left: ${({ isMinimized }) => (isMinimized ? '0px' : 'calc(60% - 20px)')};
-  top: 50px;
-  width: ${({ isMinimized }) => (isMinimized ? '300px' : '100%')};
-  height: auto;
-  min-width: 20%;
-  min-height: 10%;
-  max-width: ${({ isMinimized }) => (isMinimized ? '300px' : '100%')};
-  box-shadow:
-    0px 1px 1px 1px rgba(79, 82, 104, 0.06),
-    0px 1px 2px 1px rgba(79, 82, 104, 0.04);
-`;
 
 const WidgetComponent = withSuppressRevealEvents(StyledComponent);
