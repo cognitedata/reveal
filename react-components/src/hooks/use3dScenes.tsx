@@ -25,6 +25,8 @@ export const use3dScenes = (
     try {
       const scenesQueryResult = await fdmSdk.queryNodesAndEdges(scenesQuery);
 
+      console.log('scenesQueryResult', scenesQueryResult);
+
       const scenesMap: Record<string, AddReveal3DModelOptions[]> =
         scenesQueryResult.items.sceneModels.reduce(
           (acc, item) => {
@@ -126,9 +128,9 @@ function createGetScenesQuery(limit: number = 100): Query {
             hasData: [
               {
                 type: 'view',
-                space: 'scene_space',
+                space: 'scene',
                 externalId: 'SceneConfiguration',
-                version: 'v4'
+                version: 'v1'
               }
             ]
           }
@@ -144,8 +146,8 @@ function createGetScenesQuery(limit: number = 100): Query {
             equals: {
               property: ['edge', 'type'],
               value: {
-                space: 'scene_space',
-                externalId: 'SceneConfiguration.cdf3dModels'
+                space: 'scene',
+                externalId: 'SceneConfiguration.model3ds'
               }
             }
           }
@@ -159,11 +161,19 @@ function createGetScenesQuery(limit: number = 100): Query {
           {
             source: {
               type: 'view',
-              space: 'scene_space',
+              space: 'scene',
               externalId: 'SceneConfiguration',
-              version: 'v4'
+              version: 'v1'
             },
-            properties: ['*']
+            properties: [
+              'name',
+              'cameraTranslationX',
+              'cameraTranslationY',
+              'cameraTranslationZ',
+              'cameraEulerRotationX',
+              'cameraEulerRotationY',
+              'cameraEulerRotationZ'
+            ]
           }
         ]
       },
@@ -172,9 +182,9 @@ function createGetScenesQuery(limit: number = 100): Query {
           {
             source: {
               type: 'view',
-              space: 'scene_space',
-              externalId: 'Cdf3dRevisionProperties',
-              version: '2190c9b6f5cb82'
+              space: 'scene',
+              externalId: 'RevisionProperties',
+              version: 'v1'
             },
             properties: ['*']
           }
