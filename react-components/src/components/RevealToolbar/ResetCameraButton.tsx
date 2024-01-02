@@ -19,15 +19,18 @@ export const ResetCameraButton = ({
 }: ResetCameraButtonProps): ReactElement => {
   const { t } = useTranslation();
   const cameraNavigation = useCameraNavigation();
-  const resetToDefault = useSceneDefaultCamera(sceneExternalId ?? '', sceneSpaceId ?? '');
+  const resetToDefaultSceneCamera = useSceneDefaultCamera(
+    sceneExternalId ?? '',
+    sceneSpaceId ?? ''
+  );
 
   const resetCameraToHomePosition = useCallback(() => {
     if (sceneExternalId !== undefined && sceneSpaceId !== undefined) {
-      resetToDefault.fitCameraToSceneDefault();
+      resetToDefaultSceneCamera.fitCameraToSceneDefault();
       return;
     }
     cameraNavigation.fitCameraToAllModels();
-  }, [sceneExternalId, sceneSpaceId, cameraNavigation, resetToDefault]);
+  }, [sceneExternalId, sceneSpaceId, cameraNavigation, resetToDefaultSceneCamera]);
 
   return (
     <CogsTooltip
