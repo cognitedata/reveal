@@ -42,14 +42,13 @@ export const WindowWidget = ({
   onResize
 }: WindowWidgetProps): ReactElement => {
   const { t } = useTranslation();
-  const [isShown, setIsShown] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const parentContainerElement = useRevealContainerElement();
 
   const size = useResize(parentContainerElement, isMinimized, onResize);
 
-  if (parentContainerElement === undefined || !isShown) {
+  if (parentContainerElement === undefined) {
     return <></>;
   }
 
@@ -61,7 +60,6 @@ export const WindowWidget = ({
     if (onClose !== undefined) {
       onClose();
     }
-    setIsShown(false);
   };
 
   const handleDrag = (event: DraggableEvent, data: DraggableData): void => {
@@ -115,7 +113,8 @@ export const WindowWidget = ({
           height={size.height}
           minConstraints={[WIDGET_WINDOW_MIN_WIDTH, WIDGET_INSIDE_WINDOW_MIN_HEIGHT]}
           maxConstraints={[parentContainerElement.clientWidth, parentContainerElement.clientHeight]}
-          resizeHandles={isMinimized ? [] : ['se']}>
+          resizeHandles={isMinimized ? [] : ['se']}
+          onResize={onResize}>
           <Widget>
             <Widget.Header title={title} type={type} header={header} subtitle={subtitle}>
               <CogsTooltip
