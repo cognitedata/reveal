@@ -86,7 +86,7 @@ const searchNodesWithViewsAndModels = async (
   instancesFilter: any,
   fdmSdk: FdmSDK,
   limit: number = 100
-) => {
+): Promise<SearchResultsWithView[]> => {
   if (query === '') {
     const result = await fdmSdk.queryNodesAndEdges(
       createMappedEquipmentQuery(models, sourcesToSearch, limit)
