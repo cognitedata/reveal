@@ -57,9 +57,7 @@ export const WindowWidget = ({
   };
 
   const handleClose = (): void => {
-    if (onClose !== undefined) {
-      onClose();
-    }
+    onClose?.();
   };
 
   const handleDrag = (event: DraggableEvent, data: DraggableData): void => {
@@ -169,9 +167,8 @@ const useResize = (
       const height = isMinimized ? WIDGET_WINDOW_MIN_HEIGHT : parentHeight * WIDGET_HEIGHT_FACTOR;
 
       setSize({ width, height });
-      if (onResize !== undefined) {
-        onResize();
-      }
+
+      onResize?.();
     };
 
     updateSize();
