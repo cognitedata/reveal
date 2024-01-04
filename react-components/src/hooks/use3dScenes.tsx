@@ -110,7 +110,10 @@ export const use3dScenes = (
     }
   };
 
-  return useQuery<Record<string, Scene3DModel>>(['cdf', '3d', 'scenes'], queryFunction);
+  return useQuery<Record<string, Scene3DModel>>(
+    ['reveal-react-components', 'cdf', '3d', 'scenes'],
+    queryFunction
+  );
 };
 
 function fixModelScale(modelProps: Cdf3dRevisionProperties): Cdf3dRevisionProperties {

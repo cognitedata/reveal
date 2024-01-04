@@ -11,7 +11,6 @@ import { RevealToolbar, useReveal, useSceneDefaultCamera, withSuppressRevealEven
 import { type DefaultCameraManager } from '@cognite/reveal';
 import { ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { SelectSceneButton } from '../src/components/RevealToolbar/SelectSceneButton';
 import { useSelectedScene } from '../src/hooks/useSelectedScene';
 
 const meta = {
@@ -45,7 +44,10 @@ export const Main: Story = {
             sceneExternalId={sceneExternalId}
             sceneSpaceId={sceneSpaceId}
           />
-          <SelectSceneButton selectedScene={selectedScene} setSelectedScene={setSelectedScene} />
+          <RevealToolbar.SelectSceneButton
+            selectedScene={selectedScene}
+            setSelectedScene={setSelectedScene}
+          />
         </MyCustomToolbar>
         <SceneContainerStoryContent
           sceneExternalId={
