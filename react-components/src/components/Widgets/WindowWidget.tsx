@@ -3,11 +3,11 @@
  */
 
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { type ReactElement, useState, type ReactNode, useEffect } from 'react';
+import { type ReactElement, useState, type ReactNode, useEffect, type SyntheticEvent } from 'react';
 import Widget from './Widget';
 import Draggable, { type DraggableData, type DraggableEvent } from 'react-draggable';
 import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
-import { ResizableBox } from 'react-resizable';
+import { ResizableBox, type ResizeCallbackData } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import {
   WIDGET_HEIGHT_FACTOR,
@@ -29,7 +29,7 @@ type WindowWidgetProps = {
   type?: string;
   children: ReactNode;
   onClose?: () => void;
-  onResize?: () => void;
+  onResize?: (width: number, height: number) => void;
 };
 
 export const WindowWidget = ({
@@ -46,7 +46,7 @@ export const WindowWidget = ({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const parentContainerElement = useRevealContainerElement();
 
-  const size = useResize(parentContainerElement, isMinimized, onResize);
+  const size = useParentResize(parentContainerElement, isMinimized, onResize);
 
   if (parentContainerElement === undefined) {
     return <></>;
@@ -85,6 +85,11 @@ export const WindowWidget = ({
     setPosition({ x, y });
   };
 
+  const handleResize = (_event: SyntheticEvent, data: ResizeCallbackData): void => {
+    const { size } = data;
+    onResize?.(size.width, size.height);
+  };
+
   return (
     <WidgetComponent
       isMinimized={isMinimized}
@@ -92,12 +97,7 @@ export const WindowWidget = ({
         isMinimized
           ? {
               position: 'absolute',
-              left: `${
-                parentContainerElement !== null && parentContainerElement !== undefined
-                  ? parentContainerElement.clientWidth * 0.75
-                  : 0
-              }px`,
-              top: '50px'
+              right: '10px'
             }
           : {}
       }>
@@ -112,7 +112,7 @@ export const WindowWidget = ({
           minConstraints={[WIDGET_WINDOW_MIN_WIDTH, WIDGET_INSIDE_WINDOW_MIN_HEIGHT]}
           maxConstraints={[parentContainerElement.clientWidth, parentContainerElement.clientHeight]}
           resizeHandles={isMinimized ? [] : ['se']}
-          onResize={onResize}>
+          onResize={handleResize}>
           <Widget>
             <Widget.Header title={title} type={type} header={header} subtitle={subtitle}>
               <CogsTooltip
@@ -144,14 +144,13 @@ export const WindowWidget = ({
   );
 };
 
-const useResize = (
+const useParentResize = (
   parentContainerElement: HTMLElement | undefined,
   isMinimized: boolean,
-  onResize?: () => void
+  onResize?: (width: number, height: number) => void
 ): {
   width: number;
   height: number;
-  onResize?: () => void;
 } => {
   const [size, setSize] = useState({ width: 0, height: 0 });
 
@@ -168,7 +167,7 @@ const useResize = (
 
       setSize({ width, height });
 
-      onResize?.();
+      onResize?.(width, height);
     };
 
     updateSize();

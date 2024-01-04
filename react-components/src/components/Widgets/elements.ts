@@ -17,7 +17,8 @@ export const WidgetBody = styled.div`
 
 export const StyledComponent = styled.div<{ isMinimized: boolean }>`
   position: absolute;
-  left: ${({ isMinimized }) => (isMinimized ? '0px' : 'calc(60% - 20px)')};
+  left: ${({ isMinimized }) => (isMinimized ? 'auto' : 'calc(60% - 20px)')};
+  right: ${({ isMinimized }) => (isMinimized ? '0px' : 'auto')};
   top: 50px;
   width: ${({ isMinimized }) => (isMinimized ? '300px' : '100%')};
   height: auto;
