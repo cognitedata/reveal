@@ -11,6 +11,8 @@ import { RevealToolbar, useReveal, useSceneDefaultCamera, withSuppressRevealEven
 import { type DefaultCameraManager } from '@cognite/reveal';
 import { ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { SelectSceneButton } from '../src/components/RevealToolbar/SelectSceneButton';
+import { useSelectedScene } from '../src/hooks/useSelectedScene';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/SceneContainer',
@@ -35,6 +37,7 @@ export const Main: Story = {
     sceneSpaceId: 'scene'
   },
   render: ({ sceneExternalId, sceneSpaceId }) => {
+    const [selectedScene, setSelectedScene] = useSelectedScene();
     return (
       <RevealStoryContainer color={new Color(0x4a4a4a)} sdk={sdk}>
         <MyCustomToolbar>
@@ -42,8 +45,14 @@ export const Main: Story = {
             sceneExternalId={sceneExternalId}
             sceneSpaceId={sceneSpaceId}
           />
+          <SelectSceneButton selectedScene={selectedScene} setSelectedScene={setSelectedScene} />
         </MyCustomToolbar>
-        <SceneContainerStoryContent sceneExternalId={sceneExternalId} sceneSpaceId={sceneSpaceId} />
+        <SceneContainerStoryContent
+          sceneExternalId={
+            selectedScene !== undefined ? selectedScene?.externalId : sceneExternalId
+          }
+          sceneSpaceId={selectedScene !== undefined ? selectedScene?.space : sceneSpaceId}
+        />
       </RevealStoryContainer>
     );
   }
