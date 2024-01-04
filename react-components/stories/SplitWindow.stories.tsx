@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { CadModelContainer, RevealContainer, PointCloudContainer } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
-import { type ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 import { WindowWidget } from '../src/components/Widgets/WindowWidget';
 
 const meta = {
@@ -34,13 +34,20 @@ export const Main: Story = {
     }
   },
   render: ({ addModelOptions }) => {
+    const [isWindowWidgetVisible, setIsWindowWidgetVisible] = useState(true);
+    const handleClose = (): void => {
+      setIsWindowWidgetVisible(false);
+    };
+
     return (
       <>
         <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
           <PointCloudContainer addModelOptions={addModelOptions} />
-          <WindowWidget>
-            <SecondaryRevealContainer />
-          </WindowWidget>
+          {isWindowWidgetVisible && (
+            <WindowWidget header="Widget Header" onClose={handleClose}>
+              <SecondaryRevealContainer />
+            </WindowWidget>
+          )}
         </RevealContainer>
       </>
     );
