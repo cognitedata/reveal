@@ -159,6 +159,17 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   };
 
   /**
+   * Camera rotation to be used by the camera instead of target-based rotation.
+   * This rotation is used only when set to non-default quaternion value (not identity rotation quaternion).
+   * Externally, value is updated by `CameraManager` when `setState` method with non-zero rotation is called. Automatically
+   * resets to default value when `setState` method is called with no rotation value.
+   */
+  public setViewTarget = (target: Vector3) => {
+    this._viewTarget.copy(target);
+    this.triggerCameraChangeEvent();
+  };
+
+  /**
    * Converts deltaTimeS to a time scale based on the target frames per second (FPS).
    *
    * @param deltaTimeS - The elapsed time since the last frame in seconds.
@@ -176,21 +187,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
       this._options.panDollyMinDistanceFactor * this._options.minDistance
     );
     return distance * (factor - 1);
-  }
-
-  //================================================
-  // INSTANCE METHODS: Setters
-  //================================================
-
-  /**
-   * Camera rotation to be used by the camera instead of target-based rotation.
-   * This rotation is used only when set to non-default quaternion value (not identity rotation quaternion).
-   * Externally, value is updated by `CameraManager` when `setState` method with non-zero rotation is called. Automatically
-   * resets to default value when `setState` method is called with no rotation value.
-   */
-  public setViewTarget(target: Vector3) {
-    this._viewTarget.copy(target);
-    this.triggerCameraChangeEvent();
   }
 
   //================================================
