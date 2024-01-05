@@ -207,7 +207,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     const firstPersonMode = this.handleKeyboard(deltaTimeS);
 
     if (this._accumulatedMouseMove.lengthSq() > 0) {
-      this.rotate(this._accumulatedMouseMove.x, this._accumulatedMouseMove.y);
+      this.rotate(this._accumulatedMouseMove);
       this._accumulatedMouseMove.set(0, 0);
     }
 
@@ -232,13 +232,11 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
       Math.abs(deltaTheta) > epsilon ||
       Math.abs(deltaPhi) > epsilon ||
       Math.abs(deltaRadius) > epsilon ||
-      !isVectorZero(this._deltaTarget, epsilon)
+      !isVectorAlmostZero(this._deltaTarget, epsilon)
     ) {
-      this._spherical.set(
-        this._spherical.radius + deltaRadius * deltaFactor,
-        this._spherical.phi + deltaPhi * deltaFactor,
-        this._spherical.theta + deltaTheta * deltaFactor
-      );
+      this._spherical.radius += deltaRadius * deltaFactor;
+      this._spherical.phi += deltaPhi * deltaFactor;
+      this._spherical.theta += deltaTheta * deltaFactor;
       this._target.add(this._deltaTarget.multiplyScalar(deltaFactor));
       changed = true;
     } else {
@@ -288,7 +286,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
         break;
     }
   };
-
   private readonly onMouseDown = (event: PointerEvent) => {
     if (!this._enabled) {
       return;
@@ -459,7 +456,8 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
         return;
       }
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
-      this.rotate(previousOffset.x - newOffset.x, previousOffset.y - newOffset.y);
+      previousOffset.sub(newOffset);
+      this.rotate(new Vector2().subVectors(previousOffset, newOffset));
       previousOffset = newOffset;
     };
 
@@ -485,12 +483,12 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     document.addEventListener('pointerup', onTouchEnd, { passive: false });
   }
 
-  private rotate(deltaX: number, deltaY: number) {
-    if (deltaX === 0 && deltaY === 0) {
+  private rotate(delta: Vector2) {
+    if (delta.x === 0 && delta.y === 0) {
       return;
     }
-    const azimuthAngle = this._options.pointerRotationSpeedAzimuth * deltaX;
-    const polarAngle = this._options.pointerRotationSpeedPolar * deltaY;
+    const azimuthAngle = this._options.pointerRotationSpeedAzimuth * delta.x;
+    const polarAngle = this._options.pointerRotationSpeedPolar * delta.y;
 
     const theta = MathUtils.clamp(
       this._sphericalEnd.theta + azimuthAngle,
@@ -956,7 +954,7 @@ function getFov(camera: PerspectiveCamera | OrthographicCamera): number {
   return 0;
 }
 
-function isVectorZero(vector: Vector3, epsilon: number): boolean {
+function isVectorAlmostZero(vector: Vector3, epsilon: number): boolean {
   return Math.abs(vector.x) <= epsilon && Math.abs(vector.y) <= epsilon && Math.abs(vector.z) <= epsilon;
 }
 
