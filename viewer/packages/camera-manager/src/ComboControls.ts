@@ -204,7 +204,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     // the target framerate
     const actualFPS = Math.min(1 / deltaTimeS, TARGET_FPS);
     const targetFPSOverActualFPS = TARGET_FPS / actualFPS;
-
     const firstPersonMode = this.handleKeyboard(deltaTimeS);
 
     if (this._accumulatedMouseMove.lengthSq() > 0) {
@@ -214,11 +213,10 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
     let deltaTheta = 0;
     if (firstPersonMode) {
-      deltaTheta += getShortestDeltaTheta(this._sphericalEnd.theta, this._spherical.theta);
+      deltaTheta = getShortestDeltaTheta(this._sphericalEnd.theta, this._spherical.theta);
     } else {
       deltaTheta = this._sphericalEnd.theta - this._spherical.theta;
     }
-
     const deltaPhi = this._sphericalEnd.phi - this._spherical.phi;
     const deltaRadius = this._sphericalEnd.radius - this._spherical.radius;
     this._deltaTarget.subVectors(this._targetEnd, this._target);
@@ -229,21 +227,18 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     const deltaFactor = wantDamping ? Math.min(this._options.dampingFactor * targetFPSOverActualFPS, 1) : 1;
     this._temporarilyDisableDamping = false;
 
-    const EPSILON = this._options.EPSILON;
+    const epsilon = this._options.EPSILON;
     if (
-      Math.abs(deltaTheta) > EPSILON ||
-      Math.abs(deltaPhi) > EPSILON ||
-      Math.abs(deltaRadius) > EPSILON ||
-      Math.abs(this._deltaTarget.x) > EPSILON ||
-      Math.abs(this._deltaTarget.y) > EPSILON ||
-      Math.abs(this._deltaTarget.z) > EPSILON
+      Math.abs(deltaTheta) > epsilon ||
+      Math.abs(deltaPhi) > epsilon ||
+      Math.abs(deltaRadius) > epsilon ||
+      !isVectorZero(this._deltaTarget, epsilon)
     ) {
       this._spherical.set(
         this._spherical.radius + deltaRadius * deltaFactor,
         this._spherical.phi + deltaPhi * deltaFactor,
         this._spherical.theta + deltaTheta * deltaFactor
       );
-
       this._target.add(this._deltaTarget.multiplyScalar(deltaFactor));
       changed = true;
     } else {
@@ -959,6 +954,10 @@ function getFov(camera: PerspectiveCamera | OrthographicCamera): number {
     return camera.fov;
   }
   return 0;
+}
+
+function isVectorZero(vector: Vector3, epsilon: number): boolean {
+  return Math.abs(vector.x) <= epsilon && Math.abs(vector.y) <= epsilon && Math.abs(vector.z) <= epsilon;
 }
 
 //================================================
