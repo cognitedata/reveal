@@ -9,10 +9,10 @@ import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 
 export type SceneListProps = {
   selectedScene: DmsUniqueIdentifier | undefined;
-  setSelectedScene: (scene?: DmsUniqueIdentifier | undefined) => void;
+  onSceneChange: (scene?: DmsUniqueIdentifier | undefined) => void;
 };
 
-export const SceneList = ({ selectedScene, setSelectedScene }: SceneListProps): ReactElement => {
+export const SceneList = ({ selectedScene, onSceneChange }: SceneListProps): ReactElement => {
   const { data } = use3dScenes();
 
   if (Object.keys(data ?? {}).length === 0) {
@@ -31,7 +31,7 @@ export const SceneList = ({ selectedScene, setSelectedScene }: SceneListProps): 
               selectedScene?.externalId === scene.externalId && selectedScene?.space === scene.space
             }
             onClick={() => {
-              setSelectedScene(scene);
+              onSceneChange(scene);
             }}>
             {scene.externalId}
           </Menu.Item>

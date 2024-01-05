@@ -16,7 +16,7 @@ export type SelectSceneButtonProps = {
 
 export const SelectSceneButton = ({
   selectedScene,
-  setSelectedScene
+  setSelectedScene: onSceneChange
 }: SelectSceneButtonProps): ReactElement => {
   const { data } = use3dScenes();
   const { t } = useTranslation();
@@ -36,7 +36,7 @@ export const SelectSceneButton = ({
         content={
           <Menu>
             <Menu.Header>Select 3D location</Menu.Header>
-            <SceneList selectedScene={selectedScene} setSelectedScene={setSelectedScene} />
+            <SceneList selectedScene={selectedScene} onSceneChange={onSceneChange} />
           </Menu>
         }>
         <Button icon="World" type="ghost" />

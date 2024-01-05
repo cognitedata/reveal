@@ -27,7 +27,6 @@ export {
 } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 export { use3dScenes } from './hooks/use3dScenes';
-export { useSelectedScene } from './hooks/useSelectedScene';
 export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
 export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
 export { use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
