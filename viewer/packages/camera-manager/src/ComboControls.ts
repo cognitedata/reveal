@@ -132,16 +132,31 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   // INSTANCE METHODS: Getters
   //================================================
 
-  public getScrollTarget(): Vector3 {
+  public getScrollTarget = (): Vector3 => {
     return this._scrollTarget.clone();
-  }
+  };
 
-  public getState() {
+  public getState = () => {
     return {
       target: this._target.clone(),
       position: this._camera.position.clone()
     };
-  }
+  };
+
+  public setScrollTarget = (target: Vector3) => {
+    this._scrollTarget.copy(target);
+  };
+
+  public setState = (position: Vector3, target: Vector3) => {
+    const offset = position.clone().sub(target);
+    this._targetEnd.copy(target);
+    this._sphericalEnd.setFromVector3(offset);
+    this._target.copy(this._targetEnd);
+    this._scrollTarget.copy(target);
+    this._spherical.copy(this._sphericalEnd);
+    this.update(1000 / TARGET_FPS, true);
+    this.triggerCameraChangeEvent();
+  };
 
   /**
    * Converts deltaTimeS to a time scale based on the target frames per second (FPS).
@@ -167,17 +182,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   // INSTANCE METHODS: Setters
   //================================================
 
-  public setState(position: Vector3, target: Vector3) {
-    const offset = position.clone().sub(target);
-    this._targetEnd.copy(target);
-    this._sphericalEnd.setFromVector3(offset);
-    this._target.copy(this._targetEnd);
-    this._scrollTarget.copy(target);
-    this._spherical.copy(this._sphericalEnd);
-    this.update(1000 / TARGET_FPS, true);
-    this.triggerCameraChangeEvent();
-  }
-
   /**
    * Camera rotation to be used by the camera instead of target-based rotation.
    * This rotation is used only when set to non-default quaternion value (not identity rotation quaternion).
@@ -189,15 +193,11 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this.triggerCameraChangeEvent();
   }
 
-  public setScrollTarget(target: Vector3) {
-    this._scrollTarget.copy(target);
-  }
-
   //================================================
   // INSTANCE METHODS: Public operations
   //================================================
 
-  public update(deltaTimeS: number, forceUpdate = false): boolean {
+  public update = (deltaTimeS: number, forceUpdate = false): boolean => {
     if (!forceUpdate && !this._enabled) {
       return false;
     }
@@ -259,9 +259,9 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     // Tell caller if camera has changed
     return changed;
-  }
+  };
 
-  public triggerCameraChangeEvent() {
+  public triggerCameraChangeEvent = () => {
     this.dispatchEvent({
       type: 'cameraChange',
       camera: {
@@ -269,7 +269,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
         target: this._target
       }
     });
-  }
+  };
 
   //================================================
   // INSTANCE METHODS: Event
