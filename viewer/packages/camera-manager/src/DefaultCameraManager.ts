@@ -5,7 +5,8 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
-import { ComboControls, ComboControlsOptions } from './ComboControls';
+import { ComboControls, getPixelCoordinatesToNormalized } from './ComboControls';
+import { ComboControlsOptions } from './ComboControlsOptions';
 
 import {
   CameraManagerCallbackData,
@@ -43,19 +44,18 @@ export class DefaultCameraManager implements CameraManager {
   };
 
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
-
   private readonly _controls: ComboControls;
   private readonly _camera: THREE.PerspectiveCamera;
   private readonly _domElement: HTMLElement;
   private readonly _inputHandler: InputHandler;
   private readonly _raycaster = new THREE.Raycaster();
 
-  private isDisposed = false;
+  private _isDisposed = false;
   private _nearAndFarNeedsUpdate = false;
 
   // The active/inactive state of this manager. Does not always match up with the controls
   // as these are temporarily disabled to block onWheel input during `zoomToCursor`-mode
-  private isEnabled = true;
+  private _isEnabled = true;
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
   private _onClick: ((event: PointerEvent) => void) | undefined = undefined;
@@ -74,6 +74,7 @@ export class DefaultCameraManager implements CameraManager {
     changeCameraTargetOnClick: false
   };
 
+  // NILS: Is this a copy contructor?
   private _cameraControlsOptions: Required<CameraControlsOptions> = {
     ...DefaultCameraManager.DefaultCameraControlsOptions
   };
@@ -162,9 +163,7 @@ export class DefaultCameraManager implements CameraManager {
     this.moveCameraTo(position, target, duration);
   }
 
-  /**
-   * Gets current Combo Controls options.
-   */
+  // Gets current Combo Controls options.
   getComboControlsOptions(): Readonly<ComboControlsOptions> {
     return this._controls.options;
   }
@@ -202,8 +201,9 @@ export class DefaultCameraManager implements CameraManager {
    * @param state Camera state.
    * **/
   setCameraState(state: CameraState): void {
-    if (state.rotation && state.target) throw new Error(`Rotation and target can't be set at the same time`);
-
+    if (state.rotation && state.target) {
+      throw new Error(`Rotation and target can't be set at the same time`);
+    }
     const newPosition = state.position ?? this._camera.position;
     const newRotation = (state.target ? new THREE.Quaternion() : state.rotation) ?? new THREE.Quaternion();
     const newTarget =
@@ -231,9 +231,9 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   activate(cameraManager?: CameraManager): void {
-    if (this.isEnabled) return;
+    if (this._isEnabled) return;
 
-    this.isEnabled = true;
+    this._isEnabled = true;
     this.setCameraControlsOptions(this._cameraControlsOptions);
     this._controls.enabled = true;
 
@@ -245,9 +245,9 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   deactivate(): void {
-    if (!this.isEnabled) return;
+    if (!this._isEnabled) return;
 
-    this.isEnabled = false;
+    this._isEnabled = false;
     this._controls.enabled = false;
     this.teardownControls(true);
   }
@@ -266,7 +266,7 @@ export class DefaultCameraManager implements CameraManager {
   setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
     this._cameraControlsOptions = { ...DefaultCameraManager.DefaultCameraControlsOptions, ...controlsOptions };
 
-    if (this.isEnabled) {
+    if (this._isEnabled) {
       // New EventListeners are added in 'setupControls', so to avoid “doubling” of some behaviours we need to tear down controls first.
       this.teardownControls(false);
       this.setupControls();
@@ -279,12 +279,11 @@ export class DefaultCameraManager implements CameraManager {
       this._nearAndFarNeedsUpdate = false;
       this._currentBoundingBox.copy(boundingBox);
     }
-
     this._controls.update(deltaTime);
   }
 
   dispose(): void {
-    this.isDisposed = true;
+    this._isDisposed = true;
     this._controls.dispose();
     this.teardownControls();
     disposeOfAllEventListeners(this._events);
@@ -293,20 +292,16 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number): void {
-    if (this.isDisposed) {
+    if (this._isDisposed) {
       return;
     }
-
-    const { _camera } = this;
-
-    duration = duration ?? this.calculateDefaultDuration(target.distanceTo(_camera.position));
-
+    duration = duration ?? this.calculateDefaultDuration(target.distanceTo(this._camera.position));
     const startTarget = this.calculateAnimationStartTarget(target);
-
+    const cameraPosition = this._camera.position;
     const from = {
-      x: _camera.position.x,
-      y: _camera.position.y,
-      z: _camera.position.z,
+      x: cameraPosition.x,
+      y: cameraPosition.y,
+      z: cameraPosition.z,
       targetX: startTarget.x,
       targetY: startTarget.y,
       targetZ: startTarget.z
@@ -327,7 +322,7 @@ export class DefaultCameraManager implements CameraManager {
 
     tween
       .onUpdate(() => {
-        if (this.isDisposed) {
+        if (this._isDisposed) {
           return;
         }
         tempPosition.set(from.x, from.y, from.z);
@@ -335,14 +330,13 @@ export class DefaultCameraManager implements CameraManager {
         if (!this._camera) {
           return;
         }
-
         this._controls.setState(tempPosition, tempTarget);
       })
       .onStop(() => {
         this._controls.setState(tempPosition, tempTarget);
       })
       .onComplete(() => {
-        if (this.isDisposed) {
+        if (this._isDisposed) {
           return;
         }
         this._domElement.removeEventListener('pointerdown', stopTween);
@@ -352,18 +346,14 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   private moveCameraTargetTo(target: THREE.Vector3, duration?: number): void {
-    if (this.isDisposed) {
+    if (this._isDisposed) {
       return;
     }
-
     if (duration === 0) {
       this._controls.setState(this._controls.getState().position, target);
       return;
     }
-
-    const { _camera, _controls: controls } = this;
-
-    duration = duration ?? this.calculateDefaultDuration(target.distanceTo(_camera.position));
+    duration = duration ?? this.calculateDefaultDuration(target.distanceTo(this._camera.position));
 
     const startTarget = this.calculateAnimationStartTarget(target);
     const from = {
@@ -384,10 +374,10 @@ export class DefaultCameraManager implements CameraManager {
     tween
       .onStart(() => {
         this.setComboControlsOptions({ lookAtViewTarget: true });
-        controls.setState(this._camera.position, target);
+        this._controls.setState(this._camera.position, target);
       })
       .onUpdate(() => {
-        if (this.isDisposed) {
+        if (this._isDisposed) {
           return;
         }
         tempTarget.set(from.targetX, from.targetY, from.targetZ);
@@ -395,15 +385,15 @@ export class DefaultCameraManager implements CameraManager {
           return;
         }
 
-        if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') controls.setScrollTarget(tempTarget);
-        controls.setViewTarget(tempTarget);
+        if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') this._controls.setScrollTarget(tempTarget);
+        this._controls.setViewTarget(tempTarget);
       })
       .onStop(() => {
         this.setComboControlsOptions({ lookAtViewTarget: false });
-        controls.setState(this._camera.position, tempTarget);
+        this._controls.setState(this._camera.position, tempTarget);
       })
       .onComplete(() => {
-        if (this.isDisposed) {
+        if (this._isDisposed) {
           return;
         }
 
@@ -418,7 +408,7 @@ export class DefaultCameraManager implements CameraManager {
 
   private updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
-    if (this.isDisposed) {
+    if (this._isDisposed) {
       return;
     }
     if (!this.automaticControlsSensitivity && !this.automaticNearFarPlane) {
@@ -442,12 +432,11 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   private calculateAnimationStartTarget(newTarget: THREE.Vector3): THREE.Vector3 {
-    const { _raycaster, _camera } = this;
-    _raycaster.setFromCamera(new THREE.Vector2(), _camera);
-    const distanceToTarget = newTarget.distanceTo(_camera.position);
-    const scaledDirection = _raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
+    this._raycaster.setFromCamera(new THREE.Vector2(), this._camera);
+    const distanceToTarget = newTarget.distanceTo(this._camera.position);
+    const scaledDirection = this._raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
 
-    return _raycaster.ray.origin.clone().add(scaledDirection);
+    return this._raycaster.ray.origin.clone().add(scaledDirection);
   }
 
   private createTweenAnimation(
@@ -457,7 +446,7 @@ export class DefaultCameraManager implements CameraManager {
   ): { tween: TWEEN.Tween; stopTween: (event: Event) => void } {
     const animation = new TWEEN.Tween(from);
     const stopTween = (event: Event) => {
-      if (this.isDisposed) {
+      if (this._isDisposed) {
         document.removeEventListener('keydown', stopTween);
         animation.stop();
         return;
@@ -513,13 +502,13 @@ export class DefaultCameraManager implements CameraManager {
    */
   private async calculateNewTarget(event: PointerEventData): Promise<THREE.Vector3> {
     const { offsetX, offsetY } = event;
-    const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
+    const pixelCoordinates = getPixelCoordinatesToNormalized(this._domElement, offsetX, offsetY);
 
     const modelRaycastData = await this._modelRaycastCallback(offsetX, offsetY);
 
     const newTarget =
       modelRaycastData.intersection?.point ??
-      this.calculateNewTargetWithoutModel(new THREE.Vector2(x, y), modelRaycastData.modelsBoundingBox);
+      this.calculateNewTargetWithoutModel(pixelCoordinates, modelRaycastData.modelsBoundingBox);
 
     return newTarget;
   }
@@ -539,8 +528,6 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   private handleMouseWheelActionChange(cameraControlsOptions: CameraControlsOptions) {
-    const { _controls: controls } = this;
-
     switch (cameraControlsOptions?.mouseWheelAction) {
       case 'zoomToTarget':
         this.setComboControlsOptions({ zoomToCursor: false });
@@ -550,7 +537,7 @@ export class DefaultCameraManager implements CameraManager {
         this.setComboControlsOptions({ zoomToCursor: true });
         break;
       case 'zoomToCursor':
-        controls.setScrollTarget(controls.getState().target);
+        this._controls.setScrollTarget(this._controls.getState().target);
         this.setComboControlsOptions({ useScrollTarget: true });
         this.setComboControlsOptions({ zoomToCursor: true });
         break;
@@ -637,25 +624,12 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  /**
-   * Convert pixel coordinates of the cursor to [-1,1]^2 coordinates.
-   * @param pixelX
-   * @param pixelY
-   */
-  private convertPixelCoordinatesToNormalized(pixelX: number, pixelY: number) {
-    const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
-    const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
-
-    return { x, y };
-  }
-
   private calculateDefaultDuration(distanceToCamera: number): number {
     let duration = distanceToCamera * 125; // 125ms per unit distance
     duration = Math.min(
       Math.max(duration, DefaultCameraManager.MinAnimationDuration),
       DefaultCameraManager.MaxAnimationDuration
     );
-
     return duration;
   }
 }
