@@ -34,7 +34,7 @@ export { use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
 export {
   useAllMappedEquipmentFDM,
   useSearchMappedEquipmentFDM,
-  type SeachResultsWithView
+  type SearchResultsWithView
 } from './hooks/useSearchMappedEquipmentFDM';
 export {
   useSearchMappedEquipmentAssetMappings,
