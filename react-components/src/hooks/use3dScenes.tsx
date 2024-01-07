@@ -12,44 +12,42 @@ import { type Cdf3dRevisionProperties } from './types';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
-export type Scene3DModel = {
-  externalId: string;
-  space: string;
-  addModelOptions: AddReveal3DModelOptions[];
-};
+export type Space = string;
+export type ExternalId = string;
 
 export const use3dScenes = (
   userSdk?: CogniteClient
-): UseQueryResult<Record<string, Scene3DModel>> => {
+): UseQueryResult<Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>> => {
   const sdk = useSDK(userSdk);
 
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
 
-  const queryFunction: QueryFunction<Record<string, Scene3DModel>> = async () => {
+  const queryFunction: QueryFunction<
+    Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>
+  > = async () => {
     const scenesQuery = createGetScenesQuery();
 
     try {
       const scenesQueryResult = await fdmSdk.queryNodesAndEdges(scenesQuery);
 
-      const sceneList: Scene3DModel[] = [];
-      scenesQueryResult.items.sceneModels.forEach(
-        (item) => {
+      const scenesMap: Record<
+        Space,
+        Record<ExternalId, AddReveal3DModelOptions[]>
+      > = scenesQueryResult.items.sceneModels.reduce(
+        (acc, item) => {
           const edge = item as EdgeItem;
 
-          const { externalId, space } = edge.startNode;
+          const { space, externalId } = edge.startNode;
 
           const properties = Object.values(
             Object.values(edge.properties)[0] as Record<string, unknown>
           )[0] as Cdf3dRevisionProperties;
-          const sceneModel = sceneList.find(
-            (scene) => scene.externalId === externalId && scene.space === space
-          );
 
           const newModelId = Number(edge.endNode.externalId);
           const newModelRevisionId = Number(properties?.revisionId);
 
           if (isNaN(newModelId) || isNaN(newModelRevisionId)) {
-            return;
+            return acc;
           }
 
           const transform = new Matrix4();
@@ -86,31 +84,31 @@ export const use3dScenes = (
             transform
           };
 
-          if (sceneModel !== undefined) {
-            sceneModel.addModelOptions.push(newModel);
-          } else {
-            sceneList.push({
-              externalId,
-              space,
-              addModelOptions: [newModel]
-            });
+          if (acc[space] === undefined) {
+            acc[space] = {};
           }
+          const spaceMap = acc[space];
+
+          if (spaceMap[externalId] === undefined) {
+            spaceMap[externalId] = [];
+          }
+          const externalIdMap = spaceMap[externalId];
+          externalIdMap.push(newModel);
+
+          return acc;
         },
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        {} as Scene3DModel[]
+        {} as Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>
       );
 
-      return sceneList.reduce<Record<string, Scene3DModel>>((acc, scene) => {
-        acc[scene.externalId + '-' + scene.space] = scene;
-        return acc;
-      }, {});
+      return scenesMap;
     } catch (error) {
       console.warn("Scene space doesn't exist or has no scenes with 3D models");
       return {};
     }
   };
 
-  return useQuery<Record<string, Scene3DModel>>(
+  return useQuery<Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>>(
     ['reveal-react-components', 'cdf', '3d', 'scenes'],
     queryFunction
   );

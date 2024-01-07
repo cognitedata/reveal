@@ -21,21 +21,20 @@ export const SceneList = ({ selectedScene, onSceneChange }: SceneListProps): Rea
 
   return (
     <>
-      {Object.keys(data ?? {}).map((sceneId) => {
+      {Object.keys(data ?? {}).map((space) => {
         if (data === undefined) return <></>;
-        const scene = data[sceneId];
-        return (
-          <Menu.Item
-            key={sceneId}
-            toggled={
-              selectedScene?.externalId === scene.externalId && selectedScene?.space === scene.space
-            }
-            onClick={() => {
-              onSceneChange(scene);
-            }}>
-            {scene.externalId}
-          </Menu.Item>
-        );
+        return Object.keys(data[space] ?? {}).map((externalId) => {
+          return (
+            <Menu.Item
+              key={`${space}-${externalId}`}
+              toggled={selectedScene?.externalId === externalId && selectedScene?.space === space}
+              onClick={() => {
+                onSceneChange({ externalId, space });
+              }}>
+              {externalId}
+            </Menu.Item>
+          );
+        });
       })}
     </>
   );
