@@ -1,5 +1,6 @@
 {
   "CAD_MODELS": "CAD モデル",
+  "COPY_URL_TO_SHARE": "URL をコピーして共有",
   "FIT_VIEW_TOOLTIP": "表示に合わせる",
   "HELP_TOOLTIP": "ヘルプ",
   "HIGH_FIDELITY": "ハイファイ",
@@ -32,10 +33,15 @@
   "MOUSE_ZOOM": "ズーム/スクロール",
   "PAN": "パン",
   "POINT_CLOUDS": "点群",
+  "RESET_CAMERA_TO_HOME": "カメラをホームにリセット",
+  "SCENE_SELECT_HEADER": "3D ロケーションを選択",
   "SETTINGS_TOOLTIP": "設定",
   "SLICE_TOOLTIP": "スライス",
   "TOUCH_NAVIGATION_DESCRIPTION": "ジェスチャーを使ってズーム、パン、選択",
   "TOUCH_NAVIGATION_TITLE": "タッチ",
   "TOUCH_SELECT": "タップして選択",
-  "TOUCH_ZOOM": "ズーム"
+  "TOUCH_ZOOM": "ズーム",
+  "WIDGET_WINDOW_CLOSE": "閉じる",
+  "WIDGET_WINDOW_EXPAND": "展開",
+  "WIDGET_WINDOW_MINIMIZE": "最小化"
 }

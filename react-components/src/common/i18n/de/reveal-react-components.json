@@ -1,5 +1,6 @@
 {
   "CAD_MODELS": "CAD-Modelle",
+  "COPY_URL_TO_SHARE": "URL kopieren und teilen",
   "FIT_VIEW_TOOLTIP": "Ansicht anpassen",
   "HELP_TOOLTIP": "Hilfe",
   "HIGH_FIDELITY": "Hohe Genauigkeit",
@@ -32,10 +33,15 @@
   "MOUSE_ZOOM": "Vergrößern/Scrollen",
   "PAN": "Panoramieren",
   "POINT_CLOUDS": "Punktwolken",
+  "RESET_CAMERA_TO_HOME": "Kamera auf Standardposition zurücksetzen",
+  "SCENE_SELECT_HEADER": "3D-Standort auswählen",
   "SETTINGS_TOOLTIP": "Einstellungen",
   "SLICE_TOOLTIP": "Segment",
   "TOUCH_NAVIGATION_DESCRIPTION": "Mit Gesten vergrößern, panoramieren und auswählen",
   "TOUCH_NAVIGATION_TITLE": "Toucheingabe",
   "TOUCH_SELECT": "Zur Auswahl tippen",
-  "TOUCH_ZOOM": "Vergrößern"
+  "TOUCH_ZOOM": "Vergrößern",
+  "WIDGET_WINDOW_CLOSE": "Schließen",
+  "WIDGET_WINDOW_EXPAND": "Erweitern",
+  "WIDGET_WINDOW_MINIMIZE": "Minimieren"
 }

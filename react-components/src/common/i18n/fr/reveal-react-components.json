@@ -1,5 +1,6 @@
 {
   "CAD_MODELS": "Modèles CAO",
+  "COPY_URL_TO_SHARE": "Copier l'URL à partager",
   "FIT_VIEW_TOOLTIP": "Adapter la vue",
   "HELP_TOOLTIP": "Aide",
   "HIGH_FIDELITY": "Haute fidélité",
@@ -32,10 +33,15 @@
   "MOUSE_ZOOM": "Zoom/Faire défiler",
   "PAN": "Panoramique",
   "POINT_CLOUDS": "Nuages de points",
+  "RESET_CAMERA_TO_HOME": "Remettre la camera en position d'origine",
+  "SCENE_SELECT_HEADER": "Choisir un emplacement 3D",
   "SETTINGS_TOOLTIP": "Paramètres",
   "SLICE_TOOLTIP": "Sectionnement",
   "TOUCH_NAVIGATION_DESCRIPTION": "Utiliser des gestes pour faire un zoom, un panoramique et une sélection",
   "TOUCH_NAVIGATION_TITLE": "Tactile",
   "TOUCH_SELECT": "Toucher pour sélectionner",
-  "TOUCH_ZOOM": "Zoom"
+  "TOUCH_ZOOM": "Zoom",
+  "WIDGET_WINDOW_CLOSE": "Fermer",
+  "WIDGET_WINDOW_EXPAND": "Développer",
+  "WIDGET_WINDOW_MINIMIZE": "Minimiser"
 }
