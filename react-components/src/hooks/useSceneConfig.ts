@@ -21,7 +21,7 @@ import {
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { type Source, type FdmSDK } from '../utilities/FdmSDK';
 
-const DefaulScene: Scene = {
+const DefaultScene: Scene = {
   sceneConfiguration: {
     name: '',
     cameraTranslationX: 0,
@@ -48,7 +48,7 @@ export const useSceneConfig = (
       const isSceneEnabledInProject = await sceneViewsExist(fdmSdk);
 
       if (!isSceneEnabledInProject) {
-        return DefaulScene;
+        return DefaultScene;
       }
 
       const getSceneQuery = createGetSceneQuery(sceneExternalId, sceneSpaceExternalId);

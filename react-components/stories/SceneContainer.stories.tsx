@@ -5,9 +5,15 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { SceneContainer } from '../src/components/SceneContainer/SceneContainer';
 import { Color } from 'three';
-import { useEffect, type ReactElement } from 'react';
+import { useEffect, type ReactElement, useState } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { RevealToolbar, useReveal, useSceneDefaultCamera, withSuppressRevealEvents } from '../src';
+import {
+  type DmsUniqueIdentifier,
+  RevealToolbar,
+  useReveal,
+  useSceneDefaultCamera,
+  withSuppressRevealEvents
+} from '../src';
 import { type DefaultCameraManager } from '@cognite/reveal';
 import { ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -35,6 +41,7 @@ export const Main: Story = {
     sceneSpaceId: 'scene'
   },
   render: ({ sceneExternalId, sceneSpaceId }) => {
+    const [selectedScene, setSelectedScene] = useState<DmsUniqueIdentifier | undefined>(undefined);
     return (
       <RevealStoryContainer color={new Color(0x4a4a4a)} sdk={sdk}>
         <MyCustomToolbar>
@@ -42,8 +49,17 @@ export const Main: Story = {
             sceneExternalId={sceneExternalId}
             sceneSpaceId={sceneSpaceId}
           />
+          <RevealToolbar.SelectSceneButton
+            selectedScene={selectedScene}
+            setSelectedScene={setSelectedScene}
+          />
         </MyCustomToolbar>
-        <SceneContainerStoryContent sceneExternalId={sceneExternalId} sceneSpaceId={sceneSpaceId} />
+        <SceneContainerStoryContent
+          sceneExternalId={
+            selectedScene !== undefined ? selectedScene?.externalId : sceneExternalId
+          }
+          sceneSpaceId={selectedScene !== undefined ? selectedScene?.space : sceneSpaceId}
+        />
       </RevealStoryContainer>
     );
   }
