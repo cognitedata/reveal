@@ -707,7 +707,6 @@ export class DefaultCameraManager implements CameraManager {
     getCameraControlsOptions(): CameraControlsOptions;
     // (undocumented)
     getCameraState(): Required<CameraState>;
-    // (undocumented)
     getComboControlsOptions(): Readonly<ComboControlsOptions>;
     set keyboardNavigationEnabled(enabled: boolean);
     get keyboardNavigationEnabled(): boolean;

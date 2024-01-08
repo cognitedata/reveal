@@ -171,7 +171,9 @@ export class DefaultCameraManager implements CameraManager {
     this.moveCameraTo(position, target, duration);
   }
 
-  // Gets current Combo Controls options.
+  /**
+   * Gets current Combo Controls options.
+   */
   getComboControlsOptions(): Readonly<ComboControlsOptions> {
     return this._controls.options;
   }
