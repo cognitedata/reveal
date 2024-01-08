@@ -39,7 +39,7 @@ export const ResetCameraButton = ({
       appendTo={document.body}>
       <Button
         type="ghost"
-        icon="Restore"
+        icon="Home"
         aria-label="Reset camera to home"
         onClick={resetCameraToHomePosition}
       />
