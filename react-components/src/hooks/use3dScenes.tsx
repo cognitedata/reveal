@@ -12,85 +12,62 @@ import { type Cdf3dRevisionProperties } from './types';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
+export type Space = string;
+export type ExternalId = string;
+
 export const use3dScenes = (
   userSdk?: CogniteClient
-): UseQueryResult<Record<string, AddReveal3DModelOptions[]>> => {
+): UseQueryResult<Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>> => {
   const sdk = useSDK(userSdk);
 
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
 
-  const queryFunction: QueryFunction<Record<string, AddReveal3DModelOptions[]>> = async () => {
+  const queryFunction: QueryFunction<
+    Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>
+  > = async () => {
     const scenesQuery = createGetScenesQuery();
 
     try {
       const scenesQueryResult = await fdmSdk.queryNodesAndEdges(scenesQuery);
 
-      console.log('scenesQueryResult', scenesQueryResult);
+      const scenesMap: Record<
+        Space,
+        Record<ExternalId, AddReveal3DModelOptions[]>
+      > = scenesQueryResult.items.sceneModels.reduce(
+        (acc, item) => {
+          const edge = item as EdgeItem;
 
-      const scenesMap: Record<string, AddReveal3DModelOptions[]> =
-        scenesQueryResult.items.sceneModels.reduce(
-          (acc, item) => {
-            const edge = item as EdgeItem;
+          const { space, externalId } = edge.startNode;
 
-            const { externalId } = edge.startNode;
+          const properties = Object.values(
+            Object.values(edge.properties)[0] as Record<string, unknown>
+          )[0] as Cdf3dRevisionProperties;
 
-            const properties = Object.values(
-              Object.values(edge.properties)[0] as Record<string, unknown>
-            )[0] as Cdf3dRevisionProperties;
-            const sceneModels = acc[externalId];
+          const newModelId = Number(edge.endNode.externalId);
+          const newModelRevisionId = Number(properties?.revisionId);
 
-            const newModelId = Number(edge.endNode.externalId);
-            const newModelRevisionId = Number(properties?.revisionId);
-
-            if (isNaN(newModelId) || isNaN(newModelRevisionId)) {
-              return acc;
-            }
-
-            const transform = new Matrix4();
-
-            transform.makeRotationFromEuler(
-              new Euler(
-                MathUtils.degToRad(properties.eulerRotationX),
-                MathUtils.degToRad(properties.eulerRotationY),
-                MathUtils.degToRad(properties.eulerRotationZ)
-              )
-            );
-
-            fixModelScale(properties);
-
-            const scaleMatrix = new Matrix4().makeScale(
-              properties.scaleX,
-              properties.scaleY,
-              properties.scaleZ
-            );
-            transform.multiply(scaleMatrix);
-
-            const translation = new Matrix4().makeTranslation(
-              properties.translationX,
-              properties.translationY,
-              properties.translationZ
-            );
-            transform.premultiply(translation);
-
-            transform.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
-
-            const newModel = {
-              modelId: newModelId,
-              revisionId: newModelRevisionId,
-              transform
-            };
-
-            if (sceneModels !== undefined) {
-              sceneModels.push(newModel);
-            } else {
-              acc[externalId] = [newModel];
-            }
-
+          if (isNaN(newModelId) || isNaN(newModelRevisionId)) {
             return acc;
-          },
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {} as Record<string, AddReveal3DModelOptions[]>
-        );
+          }
+
+          const newModel = createModelFromEdge(newModelId, newModelRevisionId, properties);
+
+          if (acc[space] === undefined) {
+            acc[space] = {};
+          }
+          const spaceMap = acc[space];
+
+          if (spaceMap[externalId] === undefined) {
+            spaceMap[externalId] = [];
+          }
+          const externalIdMap = spaceMap[externalId];
+          externalIdMap.push(newModel);
+
+          return acc;
+        },
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        {} as Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>
+      );
 
       return scenesMap;
     } catch (error) {
@@ -99,11 +76,51 @@ export const use3dScenes = (
     }
   };
 
-  return useQuery<Record<string, AddReveal3DModelOptions[]>>(
-    ['cdf', '3d', 'scenes'],
+  return useQuery<Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>>(
+    ['reveal-react-components', 'cdf', '3d', 'scenes'],
     queryFunction
   );
 };
+
+function createModelFromEdge(
+  newModelId: number,
+  newModelRevisionId: number,
+  properties: Cdf3dRevisionProperties
+): AddReveal3DModelOptions {
+  const transform = new Matrix4();
+
+  transform.makeRotationFromEuler(
+    new Euler(
+      MathUtils.degToRad(properties.eulerRotationX),
+      MathUtils.degToRad(properties.eulerRotationY),
+      MathUtils.degToRad(properties.eulerRotationZ)
+    )
+  );
+
+  fixModelScale(properties);
+
+  const scaleMatrix = new Matrix4().makeScale(
+    properties.scaleX,
+    properties.scaleY,
+    properties.scaleZ
+  );
+  transform.multiply(scaleMatrix);
+
+  const translation = new Matrix4().makeTranslation(
+    properties.translationX,
+    properties.translationY,
+    properties.translationZ
+  );
+  transform.premultiply(translation);
+
+  transform.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+
+  return {
+    modelId: newModelId,
+    revisionId: newModelRevisionId,
+    transform
+  };
+}
 
 function fixModelScale(modelProps: Cdf3dRevisionProperties): Cdf3dRevisionProperties {
   if (modelProps.scaleX === 0) {

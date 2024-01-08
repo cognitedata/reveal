@@ -21,9 +21,9 @@ import {
   SYSTEM_SPACE_3D_SCHEMA
 } from '../utilities/globalDataModels';
 import { type AddModelOptions } from '@cognite/reveal';
-import { isEqual, uniq } from 'lodash';
+import { isEqual, uniq, chunk } from 'lodash';
 
-export type SeachResultsWithView = { view: Source; instances: NodeItem[] };
+export type SearchResultsWithView = { view: Source; instances: NodeItem[] };
 
 type FdmKey = `${Space}/${ExternalId}`;
 
@@ -34,7 +34,7 @@ export const useSearchMappedEquipmentFDM = (
   instancesFilter: any,
   limit: number = 100,
   userSdk?: CogniteClient
-): UseQueryResult<SeachResultsWithView[]> => {
+): UseQueryResult<SearchResultsWithView[]> => {
   if (limit > 1000) {
     throw new Error('Limit cannot be greater than 1000');
   }
@@ -50,55 +50,81 @@ export const useSearchMappedEquipmentFDM = (
   return useQuery(
     ['reveal', 'react-components', 'search-mapped-fdm', query, models, viewsToSearch],
     async () => {
-      const viewsWithVersion = await createSourcesFromViews(viewsToSearch, fdmSdk);
-
       if (models.length === 0 || viewsToSearch.length === 0) {
         return [];
       }
 
-      if (query === '') {
-        const result = await fdmSdk.queryNodesAndEdges(
-          createMappedEquipmentQuery(models, viewsWithVersion, limit)
+      const sources = await createSourcesFromViews(viewsToSearch, fdmSdk);
+      const chunkedSources = chunk(sources, 10);
+
+      const queryResults: SearchResultsWithView[] = [];
+
+      for (const sourceChunk of chunkedSources) {
+        queryResults.push(
+          ...(await searchNodesWithViewsAndModels(
+            query,
+            spacesToSearch,
+            sourceChunk,
+            models,
+            instancesFilter,
+            fdmSdk,
+            limit
+          ))
         );
-
-        const transformedResults = convertQueryNodeItemsToSearchResultsWithViews(
-          result.items.mapped_nodes.concat(result.items.mapped_nodes_2) as NodeItem[]
-        );
-
-        const combinedWithOtherViews = viewsWithVersion.map((view) => ({
-          view,
-          instances:
-            transformedResults.find(
-              (result) =>
-                result.view.externalId === view.externalId && result.view.space === view.space
-            )?.instances ?? []
-        }));
-
-        return combinedWithOtherViews;
       }
-
-      const searchResults: SeachResultsWithView[] = [];
-
-      for (const view of viewsWithVersion) {
-        const result = await fdmSdk.searchInstances(view, query, 'node', limit, instancesFilter);
-
-        searchResults.push({
-          view,
-          instances: result.instances
-        });
-      }
-
-      const filteredSearchResults = await filterSearchResultsByMappedTo3DModels(
-        fdmSdk,
-        searchResults,
-        models,
-        spacesToSearch
-      );
-
-      return filteredSearchResults;
+      return queryResults;
     },
     { staleTime: Infinity }
   );
+};
+
+const searchNodesWithViewsAndModels = async (
+  query: string,
+  spacesToSearch: string[],
+  sourcesToSearch: Source[],
+  models: AddModelOptions[],
+  instancesFilter: any,
+  fdmSdk: FdmSDK,
+  limit: number = 100
+): Promise<SearchResultsWithView[]> => {
+  if (query === '') {
+    const result = await fdmSdk.queryNodesAndEdges(
+      createMappedEquipmentQuery(models, sourcesToSearch, limit)
+    );
+
+    const transformedResults = convertQueryNodeItemsToSearchResultsWithViews(
+      result.items.mapped_nodes.concat(result.items.mapped_nodes_2) as NodeItem[]
+    );
+
+    const combinedWithOtherViews = sourcesToSearch.map((view) => ({
+      view,
+      instances:
+        transformedResults.find(
+          (result) => result.view.externalId === view.externalId && result.view.space === view.space
+        )?.instances ?? []
+    }));
+
+    return combinedWithOtherViews;
+  }
+
+  const searchResults: SearchResultsWithView[] = [];
+
+  for (const view of sourcesToSearch) {
+    const result = await fdmSdk.searchInstances(view, query, 'node', limit, instancesFilter);
+
+    searchResults.push({
+      view,
+      instances: result.instances
+    });
+  }
+  const filteredSearchResults = await filterSearchResultsByMappedTo3DModels(
+    fdmSdk,
+    searchResults,
+    models,
+    spacesToSearch
+  );
+
+  return filteredSearchResults;
 };
 
 export const useAllMappedEquipmentFDM = (
@@ -114,29 +140,32 @@ export const useAllMappedEquipmentFDM = (
     ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch],
     async () => {
       const viewSources = await createSourcesFromViews(viewsToSearch, fdmSdk);
-      const query = createMappedEquipmentQuery(models, viewSources, 10000);
+      const queries = createChunkedMappedEquipmentQueries(models, viewSources, 10000);
 
-      let currentPage = await fdmSdk.queryNodesAndEdges(query);
+      const mappedEquipment: NodeItem[] = [];
+      for (const query of queries) {
+        let currentPage = await fdmSdk.queryNodesAndEdges(query);
 
-      const mappedNodes = currentPage.items.mapped_nodes as NodeItem[];
-      const mappedNodesParents = currentPage.items.mapped_nodes_2 as NodeItem[];
-      const mappedEquipment = mappedNodes
-        .concat(mappedNodesParents)
-        .map((node) => removeEmptyProperties(node));
-
-      while (!isEqual(currentPage.nextCursor, {})) {
-        query.cursors = currentPage.nextCursor;
-
-        currentPage = await fdmSdk.queryNodesAndEdges(query);
-
-        const cleanedNodes = currentPage.items.mapped_nodes.map((node) =>
-          removeEmptyProperties(node as NodeItem)
-        );
-        const cleanedNodesParents = currentPage.items.mapped_nodes_2.map((node) =>
-          removeEmptyProperties(node as NodeItem)
+        const mappedNodes = currentPage.items.mapped_nodes as NodeItem[];
+        const mappedNodesParents = currentPage.items.mapped_nodes_2 as NodeItem[];
+        mappedEquipment.push(
+          ...mappedNodes.concat(mappedNodesParents).map((node) => removeEmptyProperties(node))
         );
 
-        mappedEquipment.push(...cleanedNodes.concat(cleanedNodesParents));
+        while (!isEqual(currentPage.nextCursor, {})) {
+          query.cursors = currentPage.nextCursor;
+
+          currentPage = await fdmSdk.queryNodesAndEdges(query);
+
+          const cleanedNodes = currentPage.items.mapped_nodes.map((node) =>
+            removeEmptyProperties(node as NodeItem)
+          );
+          const cleanedNodesParents = currentPage.items.mapped_nodes_2.map((node) =>
+            removeEmptyProperties(node as NodeItem)
+          );
+
+          mappedEquipment.push(...cleanedNodes.concat(cleanedNodesParents));
+        }
       }
 
       return mappedEquipment;
@@ -166,8 +195,8 @@ function removeEmptyProperties(queryResultNode: NodeItem): NodeItem {
 
 function convertQueryNodeItemsToSearchResultsWithViews(
   queryItems: NodeItem[]
-): SeachResultsWithView[] {
-  return queryItems.reduce<SeachResultsWithView[]>((acc, fdmNode) => {
+): SearchResultsWithView[] {
+  return queryItems.reduce<SearchResultsWithView[]>((acc, fdmNode) => {
     const cleanedNode = removeEmptyProperties(fdmNode);
 
     Object.keys(cleanedNode.properties).forEach((space) => {
@@ -300,6 +329,18 @@ function createCheckMappedEquipmentQuery(
   };
 }
 
+function createChunkedMappedEquipmentQueries(
+  models: AddModelOptions[],
+  views: Source[],
+  limit: number = 10000,
+  cursors?: Record<string, string>
+): Query[] {
+  const viewChunks = chunk(views, 10);
+  return viewChunks.map((viewChunk) =>
+    createMappedEquipmentQuery(models, viewChunk, limit, cursors)
+  );
+}
+
 function createMappedEquipmentQuery(
   models: AddModelOptions[],
   views: Source[],
@@ -366,11 +407,11 @@ function createInModelsFilter(models: AddModelOptions[]): { in: any } {
 
 async function filterSearchResultsByMappedTo3DModels(
   fdmSdk: FdmSDK,
-  searchResults: SeachResultsWithView[],
+  searchResults: SearchResultsWithView[],
   models: AddModelOptions[],
   spacesToSearch: string[]
-): Promise<SeachResultsWithView[]> {
-  const filteredSearchResults: SeachResultsWithView[] = [];
+): Promise<SearchResultsWithView[]> {
+  const filteredSearchResults: SearchResultsWithView[] = [];
 
   const searchResultsNodes = searchResults.flatMap((result) => result.instances);
   const searchResultsViews = searchResults.map((result) => result.view);
@@ -476,16 +517,24 @@ async function createSourcesFromViews(
 ): Promise<Source[]> {
   const dataModelResult = await fdmSdk.listDataModels();
   const viewToVersionMap = new Map<string, string>(
-    dataModelResult.items.flatMap((dataModel: any) =>
-      dataModel.views.map(
+    dataModelResult.items.flatMap((dataModel: any) => {
+      return dataModel.views.map(
         (view: Source) => [`${view.space}/${view.externalId}`, view.version] as const
-      )
-    )
+      );
+    })
   );
 
-  return viewsToSearch.map((view) => ({
-    ...view,
-    type: 'view' as const,
-    version: viewToVersionMap.get(`${view.space}/${view.externalId}`) ?? ''
-  }));
+  return viewsToSearch.map((view) => {
+    const version = viewToVersionMap.get(`${view.space}/${view.externalId}`);
+    if (version === undefined) {
+      throw Error(
+        `Could not find version for view with space/externalId ${view.space}/${view.externalId}`
+      );
+    }
+    return {
+      ...view,
+      type: 'view' as const,
+      version
+    };
+  });
 }
