@@ -221,6 +221,7 @@ export type CameraConfiguration = {
 export type CameraControlsOptions = {
     mouseWheelAction?: 'zoomToTarget' | 'zoomPastCursor' | 'zoomToCursor';
     changeCameraTargetOnClick?: boolean;
+    changeCameraPositionOnDoubleClick?: boolean;
 };
 
 // @public
@@ -574,6 +575,7 @@ export abstract class CombineNodeCollectionBase extends NodeCollection {
 // @public (undocumented)
 export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement);
+    // (undocumented)
     get cameraRawRotation(): Quaternion;
     // (undocumented)
     dispose: () => void;
@@ -592,7 +594,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     setScrollTarget: (target: Vector3) => void;
     // (undocumented)
     setState: (position: Vector3, target: Vector3) => void;
-    // (undocumented)
     setViewTarget: (target: Vector3) => void;
     // (undocumented)
     triggerCameraChangeEvent: () => void;
@@ -610,7 +611,7 @@ export type ComboControlsEventType = {
     };
 };
 
-// @public
+// @public (undocumented)
 export type ComboControlsOptions = {
     enableDamping: boolean;
     dampingFactor: number;
@@ -706,6 +707,7 @@ export class DefaultCameraManager implements CameraManager {
     getCameraControlsOptions(): CameraControlsOptions;
     // (undocumented)
     getCameraState(): Required<CameraState>;
+    // (undocumented)
     getComboControlsOptions(): Readonly<ComboControlsOptions>;
     set keyboardNavigationEnabled(enabled: boolean);
     get keyboardNavigationEnabled(): boolean;
