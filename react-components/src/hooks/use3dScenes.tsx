@@ -50,39 +50,7 @@ export const use3dScenes = (
             return acc;
           }
 
-          const transform = new Matrix4();
-
-          transform.makeRotationFromEuler(
-            new Euler(
-              MathUtils.degToRad(properties.eulerRotationX),
-              MathUtils.degToRad(properties.eulerRotationY),
-              MathUtils.degToRad(properties.eulerRotationZ)
-            )
-          );
-
-          fixModelScale(properties);
-
-          const scaleMatrix = new Matrix4().makeScale(
-            properties.scaleX,
-            properties.scaleY,
-            properties.scaleZ
-          );
-          transform.multiply(scaleMatrix);
-
-          const translation = new Matrix4().makeTranslation(
-            properties.translationX,
-            properties.translationY,
-            properties.translationZ
-          );
-          transform.premultiply(translation);
-
-          transform.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
-
-          const newModel = {
-            modelId: newModelId,
-            revisionId: newModelRevisionId,
-            transform
-          };
+          const newModel = createModelFromEdge(newModelId, newModelRevisionId, properties);
 
           if (acc[space] === undefined) {
             acc[space] = {};
@@ -113,6 +81,46 @@ export const use3dScenes = (
     queryFunction
   );
 };
+
+function createModelFromEdge(
+  newModelId: number,
+  newModelRevisionId: number,
+  properties: Cdf3dRevisionProperties
+): AddReveal3DModelOptions {
+  const transform = new Matrix4();
+
+  transform.makeRotationFromEuler(
+    new Euler(
+      MathUtils.degToRad(properties.eulerRotationX),
+      MathUtils.degToRad(properties.eulerRotationY),
+      MathUtils.degToRad(properties.eulerRotationZ)
+    )
+  );
+
+  fixModelScale(properties);
+
+  const scaleMatrix = new Matrix4().makeScale(
+    properties.scaleX,
+    properties.scaleY,
+    properties.scaleZ
+  );
+  transform.multiply(scaleMatrix);
+
+  const translation = new Matrix4().makeTranslation(
+    properties.translationX,
+    properties.translationY,
+    properties.translationZ
+  );
+  transform.premultiply(translation);
+
+  transform.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+
+  return {
+    modelId: newModelId,
+    revisionId: newModelRevisionId,
+    transform
+  };
+}
 
 function fixModelScale(modelProps: Cdf3dRevisionProperties): Cdf3dRevisionProperties {
   if (modelProps.scaleX === 0) {
