@@ -36,13 +36,7 @@ export const useSceneDefaultCamera = (
     );
 
     const cameraState = viewer.cameraManager.getCameraState();
-
-    const target = CameraManagerHelper.calculateNewTargetFromRotation(
-      viewer.cameraManager.getCamera(),
-      rotation,
-      cameraState.target,
-      position
-    );
+    const target = position.clone().add(new Vector3(0, 0, -1).applyQuaternion(rotation));
 
     position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     target.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
