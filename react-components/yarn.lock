@@ -5737,20 +5737,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^20.8.7":
-  version: 20.10.5
-  resolution: "@types/node@npm:20.10.5"
+  version: 20.10.7
+  resolution: "@types/node@npm:20.10.7"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 4a378428d2c9f692b19801a5a3d20dc4c0ad5d4a3d103350f8b401af439941a9aa5efeadc8eb9db13c66c620318bc7f336abfc8934f82fd32c4a689d85068c6f
+  checksum: 4a1ba3fb7fc0a262c6b2d5ec763cec7abf5b5d6b2d277798ddbf05227f5778f9a806987821fd4d3eacd6f37c946ac61a9c64fb79ae4b84daaec12354158835a3
   languageName: node
   linkType: hard
 
 "@types/node@npm:^18.0.0":
-  version: 18.19.3
-  resolution: "@types/node@npm:18.19.3"
+  version: 18.19.5
+  resolution: "@types/node@npm:18.19.5"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: b95d0c0be342275e27d882bb6ca73c0b757d1672a121cae1fc3249eda4f86a8abeb5745e5c5c1150914bcfda323a3fc51526cd34e2097f8355bf7cbf12fa6bcb
+  checksum: 215bc65e464e5c9f042dc2e475298851dc4ba9cb68a3648ad816075b515fd1051bc19dcfab49f661938a64f40d62cc462e9c469c7aff971d1cda7095b52be9ec
   languageName: node
   linkType: hard
 
@@ -15455,8 +15455,8 @@ __metadata:
   linkType: hard
 
 "styled-components@npm:^6.1.1":
-  version: 6.1.3
-  resolution: "styled-components@npm:6.1.3"
+  version: 6.1.6
+  resolution: "styled-components@npm:6.1.6"
   dependencies:
     "@emotion/is-prop-valid": "npm:1.2.1"
     "@emotion/unitless": "npm:0.8.0"
@@ -15465,12 +15465,12 @@ __metadata:
     csstype: "npm:3.1.2"
     postcss: "npm:8.4.31"
     shallowequal: "npm:1.1.0"
-    stylis: "npm:4.3.0"
+    stylis: "npm:4.3.1"
     tslib: "npm:2.5.0"
   peerDependencies:
     react: ">= 16.8.0"
     react-dom: ">= 16.8.0"
-  checksum: 3ac7b86e305eab51fc91925437bc1ad751c99c4a25cb5013b24cd38d86eb917bc97e87460eb6cc46497ecdbf0527cce214b1f50ef74484229e547fdb8dfe8b14
+  checksum: d83a34317972ebf538f149762996af3f1465a445debc32ed7d1c520792b01118398a13b4db11382a9facc248bf101c79bc1a902478d1e8e29c220ba1d1c63939
   languageName: node
   linkType: hard
 
@@ -15481,10 +15481,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylis@npm:4.3.0":
-  version: 4.3.0
-  resolution: "stylis@npm:4.3.0"
-  checksum: 54eb1a13a9ec394a01a2e1a5ca8f856b96ecd8b85b8c04a24c0ff0aa8416798a6a1e9555f6a4345b6f088d03424f5a4376ea093d0ec73e419698415a3c8b59d0
+"stylis@npm:4.3.1":
+  version: 4.3.1
+  resolution: "stylis@npm:4.3.1"
+  checksum: 20b04044397c5c69e4b9f00b037159ba82b602c61d45f26d8def08577fd6ddc4b2853d86818548c1b404d29194a99b6495cca1733880afc845533ced843cb266
   languageName: node
   linkType: hard
 
