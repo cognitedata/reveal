@@ -5,7 +5,7 @@
   "HELP_TOOLTIP": "Help",
   "HIGH_FIDELITY": "High fidelity",
   "IMAGES_360": "360 images",
-  "IMAGES_360_DETAILS": "360 Details",
+  "IMAGES_360_DETAILS": "Details",
   "IMAGES_360_DETAILS_TOOLTIP": "360 Image historical details",
   "IMAGES_360_STATION": "Station :",
   "KEYBOARD_BACK": "Back",
@@ -22,7 +22,6 @@
   "KEYBOARD_RIGHT": "Right",
   "KEYBOARD_UP": "Up",
   "LAYERS_FILTER_TOOLTIP": "Filter 3D resource layers",
-  "SCENE_SELECT_HEADER": "Select 3D location",
   "MEASUREMENTS_TOOLTIP": "Distance measuring tool",
   "MOUSE_INSTRUCTIONS": "Click+drag",
   "MOUSE_NAVIGATION_DESCRIPTION": "Click and drag to rotate, and pan the view. Use mouse wheel to zoom the view. Left click to select",
@@ -35,13 +34,14 @@
   "PAN": "Pan",
   "POINT_CLOUDS": "Point clouds",
   "RESET_CAMERA_TO_HOME": "Reset camera to home",
+  "SCENE_SELECT_HEADER": "Select 3D location",
   "SETTINGS_TOOLTIP": "Settings",
   "SLICE_TOOLTIP": "Slice",
   "TOUCH_NAVIGATION_DESCRIPTION": "Use gestures to zoom, pan and select",
   "TOUCH_NAVIGATION_TITLE": "Touch",
   "TOUCH_SELECT": "Tap to select",
   "TOUCH_ZOOM": "Zoom",
-  "WIDGET_WINDOW_MINIMIZE": "Minimize",
   "WIDGET_WINDOW_CLOSE": "Close",
-  "WIDGET_WINDOW_EXPAND": "Expand"
+  "WIDGET_WINDOW_EXPAND": "Expand",
+  "WIDGET_WINDOW_MINIMIZE": "Minimize"
 }

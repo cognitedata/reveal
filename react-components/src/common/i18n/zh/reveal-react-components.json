@@ -1,5 +1,6 @@
 {
   "CAD_MODELS": "CAD 模型",
+  "COPY_URL_TO_SHARE": "复制 URL 以分享",
   "FIT_VIEW_TOOLTIP": "适应视图",
   "HELP_TOOLTIP": "帮助",
   "HIGH_FIDELITY": "高保真",
@@ -32,10 +33,15 @@
   "MOUSE_ZOOM": "缩放/滚动",
   "PAN": "平移",
   "POINT_CLOUDS": "点云",
+  "RESET_CAMERA_TO_HOME": "重置摄像头至默认位置",
+  "SCENE_SELECT_HEADER": "选择 3D 位置",
   "SETTINGS_TOOLTIP": "设置",
   "SLICE_TOOLTIP": "断层",
   "TOUCH_NAVIGATION_DESCRIPTION": "使用手势缩放、平移和选择",
   "TOUCH_NAVIGATION_TITLE": "触摸",
   "TOUCH_SELECT": "轻触选择",
-  "TOUCH_ZOOM": "缩放"
+  "TOUCH_ZOOM": "缩放",
+  "WIDGET_WINDOW_CLOSE": "关闭",
+  "WIDGET_WINDOW_EXPAND": "展开",
+  "WIDGET_WINDOW_MINIMIZE": "最小化"
 }
