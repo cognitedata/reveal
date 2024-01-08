@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useSceneConfig } from './useSceneConfig';
 import { Vector3, Quaternion, Euler, MathUtils } from 'three';
 import { useReveal } from '..';
-import { CDF_TO_VIEWER_TRANSFORMATION, CameraManagerHelper } from '@cognite/reveal';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 export const useSceneDefaultCamera = (
   sceneExternalId: string,
@@ -35,14 +35,7 @@ export const useSceneDefaultCamera = (
       )
     );
 
-    const cameraState = viewer.cameraManager.getCameraState();
-
-    const target = CameraManagerHelper.calculateNewTargetFromRotation(
-      viewer.cameraManager.getCamera(),
-      rotation,
-      cameraState.target,
-      position
-    );
+    const target = position.clone().add(new Vector3(0, 0, -1).applyQuaternion(rotation));
 
     position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     target.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
