@@ -10,8 +10,8 @@ import { jest } from '@jest/globals';
 
 describe(DefaultCameraManager.name, () => {
   const domElement = document.createElement('canvas');
-  const mockRaycastFunction = async (_1: number, _2: number) => {
-    return { intersection: null, modelsBoundingBox: new THREE.Box3() };
+  const mockRaycastFunction = async (_1: number, _2: number, _: boolean) => {
+    return { intersection: null, modelsBoundingBox: new THREE.Box3(), pickedBoundingBox: undefined };
   };
   let cameraManager: DefaultCameraManager;
 

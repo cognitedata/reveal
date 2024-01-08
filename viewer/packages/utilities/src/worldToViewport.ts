@@ -71,5 +71,15 @@ export function worldToViewportCoordinates(
  * Converts a pixel coordinate to normalized device coordinate (in range [-1, 1])
  */
 export function pixelToNormalizedDeviceCoordinates(x: number, y: number, width: number, height: number): THREE.Vector2 {
-  return new THREE.Vector2((x / width) * 2 - 1, (y / height) * -2 + 1);
+  return new THREE.Vector2((x / width) * 2 - 1, -(y / height) * 2 + 1);
+}
+
+export function getPixelCoordinatesToNormalized(
+  domElement: HTMLElement,
+  pixelX: number,
+  pixelY: number
+): THREE.Vector2 {
+  const x = (pixelX / domElement.clientWidth) * 2 - 1;
+  const y = (pixelY / domElement.clientHeight) * 2 - 1;
+  return new THREE.Vector2(x, -y);
 }

@@ -83,7 +83,7 @@ import {
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
-import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/getPixelCoordinatesToNormalized';
+import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/worldToViewport';
 
 type Cognite3DViewerEvents =
   | 'click'

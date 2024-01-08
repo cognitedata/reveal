@@ -33,7 +33,7 @@ import {
 } from '@reveal/utilities';
 
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
-import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/getPixelCoordinatesToNormalized';
+import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/worldToViewport';
 
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
@@ -645,7 +645,7 @@ export class DefaultCameraManager implements CameraManager {
     const pixelCoordinates = getPixelCoordinatesToNormalized(this._domElement, event.offsetX, event.offsetY);
     const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, true);
 
-    // If an object is piched, zoom in to the object (the target will be in the middle of the bounding box)
+    // If an object is picked, zoom in to the object (the target will be in the middle of the bounding box)
     if (modelRaycastData.pickedBoundingBox !== undefined) {
       this.fitCameraToBoundingBox(modelRaycastData.pickedBoundingBox, DefaultCameraManager.AnimationDuration);
       return;
