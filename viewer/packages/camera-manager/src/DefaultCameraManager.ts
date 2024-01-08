@@ -569,11 +569,11 @@ export class DefaultCameraManager implements CameraManager {
 
     const lastMousePosition = new THREE.Vector2();
 
-    const onWheel = async (e: WheelEvent) => {
+    const onWheel = async (event: WheelEvent) => {
       // Added because cameraControls are disabled when doing picking, so
       // preventDefault could be not called on wheel event and produce unwanted scrolling.
-      e.preventDefault();
-      const domElementRelativeOffset = clickOrTouchEventOffset(e, this._domElement);
+      event.preventDefault();
+      const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
 
       const currentTime = performance.now();
       const currentMousePosition = new THREE.Vector2(
@@ -596,10 +596,10 @@ export class DefaultCameraManager implements CameraManager {
         scrollStarted = true;
 
       const isZoomToCursor = this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor';
-      const wantNewScrollTarget = !scrollStarted && e.deltaY < 0;
+      const wantNewScrollTarget = !scrollStarted && event.deltaY < 0;
 
       lastMousePosition.copy(currentMousePosition);
-      wasLastScrollZoomOut = e.deltaY > 0;
+      wasLastScrollZoomOut = event.deltaY > 0;
       lastWheelEventTime = currentTime;
 
       if (wantNewScrollTarget && isZoomToCursor) {
@@ -608,7 +608,7 @@ export class DefaultCameraManager implements CameraManager {
         const pointerEventData = {
           offsetX: domElementRelativeOffset.offsetX,
           offsetY: domElementRelativeOffset.offsetY,
-          button: e.button
+          button: event.button
         };
 
         const newTarget = await this.calculateNewTarget(pointerEventData);

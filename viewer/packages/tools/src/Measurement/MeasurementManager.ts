@@ -7,7 +7,7 @@ import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';
 import { MeasurementLine } from './MeasurementLine';
 import { Measurement, MeasurementOptions } from './types';
-import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/getPixelCoordinatesToNormalized';
+import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/worldToViewport';
 
 export class MeasurementManager {
   private readonly _measurementLabel: MeasurementLabels;
