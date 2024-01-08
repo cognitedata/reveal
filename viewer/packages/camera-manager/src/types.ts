@@ -25,6 +25,15 @@ export type CameraControlsOptions = {
    *
    */
   changeCameraTargetOnClick?: boolean;
+
+  /**
+   * Enables or disables change of camera position on mouse doubke click. New target is then set to the point of the model under current cursor
+   * position and the a camera position is set half way to this point
+   *
+   * Default is false.
+   *
+   */
+  changeCameraPositionOnDoubleClick?: boolean;
 };
 
 export type ControlsState = {
@@ -110,6 +119,11 @@ export type CameraManagerCallbackData = {
    * Bounding box for all models on the scene
    */
   modelsBoundingBox: THREE.Box3;
+
+  /**
+   * Bounding box for the object (node in a model) that was picked
+   */
+  pickedBoundingBox: THREE.Box3 | undefined;
 };
 
 /**

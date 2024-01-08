@@ -21,6 +21,7 @@ import {
 import Keyboard from './Keyboard';
 import clamp from 'lodash/clamp';
 import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
+import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/getPixelCoordinatesToNormalized';
 
 /**
  * The event type for events emitted by {@link ComboControls}.
@@ -916,12 +917,6 @@ function getPinchInfo(domElement: HTMLElement, touches: PointerEvent[]) {
     distance,
     offsets
   };
-}
-
-export function getPixelCoordinatesToNormalized(domElement: HTMLElement, pixelX: number, pixelY: number): Vector2 {
-  const x = (pixelX / domElement.clientWidth) * 2 - 1;
-  const y = (pixelY / domElement.clientHeight) * -2 + 1;
-  return new Vector2(x, y);
 }
 
 // Function almost equal to mapLinear except it is behaving the same as clamp outside of specified range

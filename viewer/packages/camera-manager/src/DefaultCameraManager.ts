@@ -4,8 +4,9 @@
 
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
+import clamp from 'lodash/clamp';
 
-import { ComboControls, getPixelCoordinatesToNormalized } from './ComboControls';
+import { ComboControls } from './ComboControls';
 import { ComboControlsOptions } from './ComboControlsOptions';
 
 import {
@@ -32,6 +33,7 @@ import {
 } from '@reveal/utilities';
 
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
+import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/getPixelCoordinatesToNormalized';
 
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
@@ -57,9 +59,14 @@ export class DefaultCameraManager implements CameraManager {
   // as these are temporarily disabled to block onWheel input during `zoomToCursor`-mode
   private _isEnabled = true;
 
-  private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
+  private readonly _modelRaycastCallback: (
+    x: number,
+    y: number,
+    pickBoundingBox: boolean
+  ) => Promise<CameraManagerCallbackData>;
   private _onClick: ((event: PointerEvent) => void) | undefined = undefined;
   private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
+  private _onDoubleClick: ((event: PointerEventData) => void) | undefined = undefined;
 
   private static readonly AnimationDuration = 300;
   private static readonly MinAnimationDuration = 300;
@@ -71,7 +78,8 @@ export class DefaultCameraManager implements CameraManager {
   private static readonly MouseDistanceThresholdBetweenRaycasts = 5;
   private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
     mouseWheelAction: 'zoomPastCursor',
-    changeCameraTargetOnClick: false
+    changeCameraTargetOnClick: false,
+    changeCameraPositionOnDoubleClick: false
   };
 
   // NILS: Is this a copy contructor?
@@ -109,7 +117,7 @@ export class DefaultCameraManager implements CameraManager {
   constructor(
     domElement: HTMLElement,
     inputHandler: InputHandler,
-    raycastFunction: (x: number, y: number) => Promise<CameraManagerCallbackData>,
+    raycastFunction: (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>,
     camera?: THREE.PerspectiveCamera
   ) {
     this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
@@ -218,7 +226,6 @@ export class DefaultCameraManager implements CameraManager {
         : this._controls.getState().target);
 
     this._controls.cameraRawRotation.copy(newRotation);
-
     this._controls.setState(newPosition, newTarget);
   }
 
@@ -385,7 +392,9 @@ export class DefaultCameraManager implements CameraManager {
           return;
         }
 
-        if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') this._controls.setScrollTarget(tempTarget);
+        if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') {
+          this._controls.setScrollTarget(tempTarget);
+        }
         this._controls.setViewTarget(tempTarget);
       })
       .onStop(() => {
@@ -501,10 +510,8 @@ export class DefaultCameraManager implements CameraManager {
    * @param event PointerEvent that contains pointer location data.
    */
   private async calculateNewTarget(event: PointerEventData): Promise<THREE.Vector3> {
-    const { offsetX, offsetY } = event;
-    const pixelCoordinates = getPixelCoordinatesToNormalized(this._domElement, offsetX, offsetY);
-
-    const modelRaycastData = await this._modelRaycastCallback(offsetX, offsetY);
+    const pixelCoordinates = getPixelCoordinatesToNormalized(this._domElement, event.offsetX, event.offsetY);
+    const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, false);
 
     const newTarget =
       modelRaycastData.intersection?.point ??
@@ -520,6 +527,10 @@ export class DefaultCameraManager implements CameraManager {
     if (this._onClick !== undefined) {
       this._inputHandler.off('click', this._onClick as PointerEventDelegate);
       this._onClick = undefined;
+    }
+    if (this._onDoubleClick !== undefined) {
+      this._domElement.removeEventListener('dblclick', this._onDoubleClick);
+      this._onDoubleClick = undefined;
     }
     if (this._onWheel !== undefined && removeOnWheel) {
       this._domElement.removeEventListener('wheel', this._onWheel);
@@ -554,16 +565,9 @@ export class DefaultCameraManager implements CameraManager {
   private setupControls() {
     let scrollStarted = false;
     let wasLastScrollZoomOut = false;
-
     let lastWheelEventTime = 0;
 
     const lastMousePosition = new THREE.Vector2();
-
-    const onClick = async (e: PointerEventData) => {
-      this.setComboControlsOptions({ enableKeyboardNavigation: false });
-      const newTarget = await this.calculateNewTarget(e);
-      this.moveCameraTargetTo(newTarget, DefaultCameraManager.AnimationDuration);
-    };
 
     const onWheel = async (e: WheelEvent) => {
       // Added because cameraControls are disabled when doing picking, so
@@ -612,11 +616,16 @@ export class DefaultCameraManager implements CameraManager {
       }
     };
 
-    if (this._controls) this.handleMouseWheelActionChange(this._cameraControlsOptions);
-
+    if (this._controls) {
+      this.handleMouseWheelActionChange(this._cameraControlsOptions);
+    }
     if (this._cameraControlsOptions.changeCameraTargetOnClick && this._onClick === undefined) {
-      this._inputHandler.on('click', onClick);
-      this._onClick = onClick;
+      this._inputHandler.on('click', this.onClick);
+      this._onClick = this.onClick;
+    }
+    if (this._cameraControlsOptions.changeCameraPositionOnDoubleClick && this._onDoubleClick === undefined) {
+      this._domElement.addEventListener('dblclick', this.onDoubleClick);
+      this._onDoubleClick = this.onDoubleClick;
     }
     if (this._onWheel === undefined) {
       this._domElement.addEventListener('wheel', onWheel);
@@ -624,12 +633,36 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
+  private readonly onClick = async (event: PointerEventData) => {
+    this.setComboControlsOptions({ enableKeyboardNavigation: false });
+    const newTarget = await this.calculateNewTarget(event);
+    this.moveCameraTargetTo(newTarget, DefaultCameraManager.AnimationDuration);
+  };
+
+  private readonly onDoubleClick = async (event: PointerEventData) => {
+    this.setComboControlsOptions({ enableKeyboardNavigation: false });
+
+    const pixelCoordinates = getPixelCoordinatesToNormalized(this._domElement, event.offsetX, event.offsetY);
+    const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, true);
+
+    // If an object is piched, zoom in to the object (the target will be in the middle of the bounding box)
+    if (modelRaycastData.pickedBoundingBox !== undefined) {
+      this.fitCameraToBoundingBox(modelRaycastData.pickedBoundingBox, DefaultCameraManager.AnimationDuration);
+      return;
+    }
+    // If not particular object is picked, set camera position half way to the target
+    const newTarget =
+      modelRaycastData.intersection?.point ??
+      this.calculateNewTargetWithoutModel(pixelCoordinates, modelRaycastData.modelsBoundingBox);
+
+    const newPosition = new THREE.Vector3().subVectors(newTarget, this._camera.position);
+    newPosition.divideScalar(2);
+    newPosition.add(this._camera.position);
+    this.moveCameraTo(newPosition, newTarget, DefaultCameraManager.AnimationDuration);
+  };
+
   private calculateDefaultDuration(distanceToCamera: number): number {
-    let duration = distanceToCamera * 125; // 125ms per unit distance
-    duration = Math.min(
-      Math.max(duration, DefaultCameraManager.MinAnimationDuration),
-      DefaultCameraManager.MaxAnimationDuration
-    );
-    return duration;
+    const duration = distanceToCamera * 125; // 125ms per unit distance
+    return clamp(duration, DefaultCameraManager.MinAnimationDuration, DefaultCameraManager.MaxAnimationDuration);
   }
 }

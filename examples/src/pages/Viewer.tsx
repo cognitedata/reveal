@@ -135,7 +135,8 @@ export function Viewer() {
       viewer.on('sceneRendered', () => stats.end());
 
       const controlsOptions: CameraControlsOptions = {
-        changeCameraTargetOnClick: true,
+        changeCameraTargetOnClick: false,
+        changeCameraPositionOnDoubleClick: false,
         mouseWheelAction: 'zoomToCursor'
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
@@ -179,7 +180,8 @@ export function Viewer() {
         renderMode: 'Color',
         controls: {
           mouseWheelAction: 'zoomToCursor',
-          changeCameraTargetOnClick: true,
+          changeCameraTargetOnClick: false,
+          changeCameraPositionOnDoubleClick: false,
           cameraManager: 'Default'
         }
       };
@@ -409,6 +411,15 @@ export function Viewer() {
           cameraManager.setCameraControlsOptions({
             ...cameraManager.getCameraControlsOptions(),
             changeCameraTargetOnClick: value
+          });
+        });
+        controlsGui
+        .add(guiState.controls, 'changeCameraPositionOnDoubleClick')
+        .name('Change camera position on dblclick')
+        .onFinishChange(value => {
+          cameraManager.setCameraControlsOptions({
+            ...cameraManager.getCameraControlsOptions(),
+            changeCameraPositionOnDoubleClick: value
           });
         });
       controlsGui
