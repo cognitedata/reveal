@@ -125,6 +125,12 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this._enabled = newEnabledValue;
   }
 
+  /**
+   * Camera rotation to be used by the camera instead of target-based rotation.
+   * This rotation is used only when set to non-default quaternion value (not identity rotation quaternion).
+   * Externally, value is updated by `CameraManager` when `setState` method with non-zero rotation is called. Automatically
+   * resets to default value when `setState` method is called with no rotation value.
+   */
   get cameraRawRotation(): Quaternion {
     return this._rawCameraRotation;
   }
@@ -159,12 +165,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this.triggerCameraChangeEvent();
   };
 
-  /**
-   * Camera rotation to be used by the camera instead of target-based rotation.
-   * This rotation is used only when set to non-default quaternion value (not identity rotation quaternion).
-   * Externally, value is updated by `CameraManager` when `setState` method with non-zero rotation is called. Automatically
-   * resets to default value when `setState` method is called with no rotation value.
-   */
   public setViewTarget = (target: Vector3) => {
     this._viewTarget.copy(target);
     this.triggerCameraChangeEvent();

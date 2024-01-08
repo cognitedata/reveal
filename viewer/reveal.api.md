@@ -575,7 +575,6 @@ export abstract class CombineNodeCollectionBase extends NodeCollection {
 // @public (undocumented)
 export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement);
-    // (undocumented)
     get cameraRawRotation(): Quaternion;
     // (undocumented)
     dispose: () => void;
@@ -594,6 +593,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     setScrollTarget: (target: Vector3) => void;
     // (undocumented)
     setState: (position: Vector3, target: Vector3) => void;
+    // (undocumented)
     setViewTarget: (target: Vector3) => void;
     // (undocumented)
     triggerCameraChangeEvent: () => void;
@@ -611,7 +611,7 @@ export type ComboControlsEventType = {
     };
 };
 
-// @public (undocumented)
+// @public
 export type ComboControlsOptions = {
     enableDamping: boolean;
     dampingFactor: number;

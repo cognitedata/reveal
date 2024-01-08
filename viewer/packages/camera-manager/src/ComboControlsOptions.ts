@@ -2,6 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
+/**
+ * Exposed options for Combo Controls
+ */
 export type ComboControlsOptions = {
   enableDamping: boolean;
   dampingFactor: number;
