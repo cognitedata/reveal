@@ -1,5 +1,6 @@
 {
   "CAD_MODELS": "CAD-modellen",
+  "COPY_URL_TO_SHARE": "URL kopiëren om te delen",
   "FIT_VIEW_TOOLTIP": "Aanpassen aan weergave",
   "HELP_TOOLTIP": "Help",
   "HIGH_FIDELITY": "Zeer betrouwbaar",
@@ -32,10 +33,15 @@
   "MOUSE_ZOOM": "Zoomen / scrollen",
   "PAN": "Pannen",
   "POINT_CLOUDS": "Puntenwolken",
+  "RESET_CAMERA_TO_HOME": "Standaardinstellingen van camera herstellen",
+  "SCENE_SELECT_HEADER": "Selecteer 3D-locatie",
   "SETTINGS_TOOLTIP": "Instellingen",
   "SLICE_TOOLTIP": "Segment",
   "TOUCH_NAVIGATION_DESCRIPTION": "Gebruik gebaren om te zoomen, pannen en selecteren",
   "TOUCH_NAVIGATION_TITLE": "Aanraken",
   "TOUCH_SELECT": "Tikken om te selecteren",
-  "TOUCH_ZOOM": "Zoomen"
+  "TOUCH_ZOOM": "Zoomen",
+  "WIDGET_WINDOW_CLOSE": "Sluiten",
+  "WIDGET_WINDOW_EXPAND": "Uitvouwen",
+  "WIDGET_WINDOW_MINIMIZE": "Minimaliseren"
 }
