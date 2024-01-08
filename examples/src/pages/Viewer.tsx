@@ -413,7 +413,7 @@ export function Viewer() {
             changeCameraTargetOnClick: value
           });
         });
-        controlsGui
+      controlsGui
         .add(guiState.controls, 'changeCameraPositionOnDoubleClick')
         .name('Change camera position on dblclick')
         .onFinishChange(value => {
