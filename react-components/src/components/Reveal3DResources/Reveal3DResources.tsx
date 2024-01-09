@@ -169,7 +169,7 @@ async function getTypedModels(
 
   const resourceLoadResults = await Promise.all(modelTypePromises);
   const successfullyLoadedResources = resourceLoadResults.filter(
-    (p): p is TypedReveal3DModel => p.type !== ''
+    (p): p is TypedReveal3DModel => p.type === 'cad' || p.type === 'pointcloud'
   );
 
   return successfullyLoadedResources;
