@@ -885,11 +885,9 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private handleKeyboard(deltaTimeS: number): boolean {
-    console.log('a');
     if (!this._enabled || !this._options.enableKeyboardNavigation) {
       return false;
     }
-    console.log('b');
     const timeScale = this.getTimeScale(deltaTimeS);
     let handled = false;
     if (this.handleRotationFromKeyboard(timeScale)) handled = true;
