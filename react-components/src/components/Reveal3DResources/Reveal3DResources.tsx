@@ -59,7 +59,7 @@ export const Reveal3DResources = ({
   const image360CollectionAddOptions = resources.filter((resource) => {
     if ('siteId' in resource) return resource.siteId !== undefined;
     else if ('externalId' in resource) return resource.externalId !== undefined;
-    return true;
+    return false;
   });
 
   const onModelLoaded = (): void => {
@@ -169,7 +169,7 @@ async function getTypedModels(
 
   const resourceLoadResults = await Promise.all(modelTypePromises);
   const successfullyLoadedResources = resourceLoadResults.filter(
-    (p): p is TypedReveal3DModel => p.type !== ''
+    (p): p is TypedReveal3DModel => p.type === 'cad' || p.type === 'pointcloud'
   );
 
   return successfullyLoadedResources;
