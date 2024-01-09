@@ -43,7 +43,7 @@ class SplatBuffers {
 		this.opacityattribute = new THREE.InstancedBufferAttribute(new Float32Array(this.numInstances), 1); 
     }
 	
-	public updateSplatSorting(camera : any)
+	public updateSplatSorting(camera : any, iOrientation : THREE.Matrix3)
 	{
 		const positions = this.positionattribute_tmp.array;
 		const squared_distances = [];
@@ -51,7 +51,9 @@ class SplatBuffers {
 		let V = new THREE.Vector3();
 		for (let i = 0; i < positions.length; i += 3)
 		{
-			squared_distances.push(-V.set(positions[i + 0], positions[i + 1], positions[i + 2]).sub(camera.position).lengthSq()); // squared length of V = (splat.position - camera.position)
+			V.set(positions[i + 0], positions[i + 1], positions[i + 2]);
+			V.applyMatrix3( iOrientation );
+			squared_distances.push(-V.sub(camera.position).lengthSq()); // squared length of V = (splat.position - camera.position)
 		}
 		function argsort(arr : any) { return (Array.from(arr.keys())as number[]).sort((a : number, b : number) => arr[a] - arr[b]); }
 		const sortedIndices = argsort(squared_distances);
@@ -95,10 +97,19 @@ class SplatBuffers {
 export class LoadSplatUi {
   private readonly _viewer: Cognite3DViewer;
   private readonly _params = {
-    url: ''
+    url: '',
+	x: 0.,
+	y: 0.,
+	z: 0.
   };
 
   private splatBuffers: SplatBuffers | null = null;
+  
+  private uniforms: any = { 
+		//window.innerWidth, window.innerHeight
+		iResolution:   {value : new THREE.Vector2(1920, 1080)},
+		iOrientation:  {value : (new THREE.Matrix3()) }
+		};
 
   constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer) {
     this._viewer = viewer;
@@ -107,15 +118,18 @@ export class LoadSplatUi {
 
   private createGui(ui: dat.GUI): void {
     const actions = {
-      loadSplat: () => this.loadSplat(this._params.url),
+      loadSplat: () => this.loadSplat(this._params),
 	  sortSplat: () => this.sortSplats(),
     };
     ui.add(this._params, 'url').name('URL');
     ui.add(actions, 'loadSplat').name('Load Splat');
 	ui.add(actions, 'sortSplat').name('Sort splats');
+	ui.add(this._params, 'x').name('X');
+	ui.add(this._params, 'y').name('Y');
+	ui.add(this._params, 'z').name('Z');
   }
 
-  private loadSplat(url: string): void {
+  private loadSplat(params: any): void {
 	
 	const loader = new PLYLoader(); 
 	loader.setCustomPropertyNameMapping( {
@@ -124,12 +138,14 @@ export class LoadSplatUi {
 		splatrotation: ['rot_0', 'rot_1', 'rot_2', 'rot_3'],
 		splatopacity: ['opacity']
 	 } );  
-	  
+
+	const orientationMatrix:THREE.Matrix4 = new THREE.Matrix4();
+	orientationMatrix.makeRotationFromEuler(new THREE.Euler( params.x, params.x, params.z, 'XYZ' ));
     
-	url = '/point_cloud.ply';
+	const url:string = '/point_cloud.ply';
     loader.load(
       url,
-      plygeometry => this.addSplatToViewer(plygeometry),
+      plygeometry => this.addSplatToViewer(plygeometry, orientationMatrix),
       event => console.log(`Loading Splat: ${event.loaded}/${event.total}`)
     );
   }
@@ -139,11 +155,11 @@ export class LoadSplatUi {
 	  if(this.splatBuffers)
 	  {
 		  const camera : any = this._viewer.cameraManager.getCamera();
-		  this.splatBuffers.updateSplatSorting(camera);
+		  this.splatBuffers.updateSplatSorting(camera, this.uniforms.iOrientation.value);
 	  }
   }
 
-  private addSplatToViewer(this: LoadSplatUi, plygeometry : BufferGeometry): void {
+  private addSplatToViewer(this: LoadSplatUi, plygeometry : BufferGeometry, orientationMatrix:THREE.Matrix4): void {
 	  
 	let planegeo = new THREE.PlaneGeometry(1,1);
 	planegeo.setIndex([0, 1, 2, 1, 2, 3]);
@@ -165,6 +181,7 @@ export class LoadSplatUi {
 	out float opacity;
 
 	uniform vec2 iResolution;
+	uniform mat3 iOrientation;
 
 	const float PI = 3.14159265;
 
@@ -258,9 +275,10 @@ export class LoadSplatUi {
 		mat4 viewMatrix = modelViewMatrix;
 
 		mat3 Camera_Rotation = mat3(viewMatrix[0].xyz, viewMatrix[1].xyz, viewMatrix[2].xyz);
+				
 		vec3 view_pos = cameraPosition;
-		mat3 R = rotation * transpose(Camera_Rotation);
-		vec3 splat_center_camera = Camera_Rotation * (splatmean - view_pos);
+		mat3 R = rotation * transpose(Camera_Rotation * iOrientation);
+		vec3 splat_center_camera = Camera_Rotation * (iOrientation * splatmean - view_pos);
 
 		vec2 focal_xy = vec2(projectionMatrix[0][0], projectionMatrix[1][1]);
 		vec4 quad = splatQuad(splat_center_camera, splatscale, R, focal_xy);
@@ -297,15 +315,16 @@ export class LoadSplatUi {
 		gl_FragColor = vec4(vColor, alpha);
 	}`;
 
-	let uniforms = { iResolution:  {value : new THREE.Vector2(
-		1920, 1080
+	this.uniforms = { 
 		//window.innerWidth, window.innerHeight
-		)} };
+		iResolution:   {value : new THREE.Vector2(1920, 1080)},
+		iOrientation:  {value : (new THREE.Matrix3()).setFromMatrix4 ( orientationMatrix ) }
+		};
 
 	let shaderMaterial = new THREE.ShaderMaterial(
 	{	
 			side : THREE.DoubleSide, // required since vertices somethimes flip, atm
-			uniforms: uniforms,
+			uniforms: this.uniforms,
 			vertexShader : vertexShaderString,
 			fragmentShader : fragmentShaderString,
 			blending : THREE.CustomBlending,
@@ -322,7 +341,7 @@ export class LoadSplatUi {
 
 	this.splatBuffers = new SplatBuffers(plygeometry);
 	
-	function updateSplatSorting(splatBuffers: SplatBuffers, camera : any)
+	function updateSplatSorting(splatBuffers: SplatBuffers, camera : any, iOrientation : THREE.Matrix3)
 	{
 		const positions = splatBuffers.positionattribute_tmp.array;
 		const squared_distances = [];
@@ -330,7 +349,9 @@ export class LoadSplatUi {
 		let V = new THREE.Vector3();
 		for (let i = 0; i < positions.length; i += 3)
 		{
-			squared_distances.push(-V.set(positions[i + 0], positions[i + 1], positions[i + 2]).sub(camera.position).lengthSq()); // squared length of V = (splat.position - camera.position)
+			V.set(positions[i + 0], positions[i + 1], positions[i + 2]);
+			V.applyMatrix3( iOrientation );
+			squared_distances.push(-V.sub(camera.position).lengthSq()); // squared length of V = (splat.position - camera.position)
 		}
 		function argsort(arr : any) { return (Array.from(arr.keys())as number[]).sort((a : number, b : number) => arr[a] - arr[b]); }
 		const sortedIndices = argsort(squared_distances);
@@ -390,7 +411,7 @@ export class LoadSplatUi {
 	geometry.setAttribute('splatopacity', this.splatBuffers.opacityattribute);
 	
 	const camera : any = this._viewer.cameraManager.getCamera();
-	updateSplatSorting(this.splatBuffers, camera);
+	updateSplatSorting(this.splatBuffers, camera, this.uniforms.iOrientation.value);
 	
 	const splat = new THREE.InstancedMesh(geometry, shaderMaterial, this.splatBuffers.numInstances);
 	
