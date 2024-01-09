@@ -885,9 +885,11 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private handleKeyboard(deltaTimeS: number): boolean {
+    console.log('a');
     if (!this._enabled || !this._options.enableKeyboardNavigation) {
       return false;
     }
+    console.log('b');
     const timeScale = this.getTimeScale(deltaTimeS);
     let handled = false;
     if (this.handleRotationFromKeyboard(timeScale)) handled = true;
@@ -954,20 +956,16 @@ function isVectorAlmostZero(vector: Vector3, epsilon: number): boolean {
   return Math.abs(vector.x) <= epsilon && Math.abs(vector.y) <= epsilon && Math.abs(vector.z) <= epsilon;
 }
 
-// Cache for using tempory vectors to avoud allocations
+// Cache for using tempory vectors to avoid allocations
 class ReuseableVector3s {
-  private readonly _vectors: Array<Vector3>;
+  private readonly _vectors = new Array(10).fill(null).map(() => new Vector3());
   private _index: number = -1;
 
-  constructor() {
-    this._vectors = new Array<Vector3>(10);
-    for (let i = 0; i < this._vectors.length; i++) {
-      this._vectors[i] = new Vector3();
-    }
-  }
-
   public getNext(): Vector3 {
-    this._index = (this._index + 1) % this._vectors.length;
+    // Increment the index and wrap around if it exceeds the length of the array
+    this._index++;
+    this._index %= this._vectors.length;
+    // Return the vector at the new index
     return this._vectors[this._index];
   }
 }
