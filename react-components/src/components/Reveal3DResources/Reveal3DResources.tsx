@@ -59,7 +59,7 @@ export const Reveal3DResources = ({
   const image360CollectionAddOptions = resources.filter((resource) => {
     if ('siteId' in resource) return resource.siteId !== undefined;
     else if ('externalId' in resource) return resource.externalId !== undefined;
-    return true;
+    return false;
   });
 
   const onModelLoaded = (): void => {
