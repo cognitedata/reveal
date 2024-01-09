@@ -47,19 +47,16 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private readonly _targetEnd: Vector3 = new Vector3();
   private readonly _spherical: Spherical = new Spherical();
   private readonly _sphericalEnd: Spherical = new Spherical();
-
   private readonly _scrollTarget: Vector3 = new Vector3();
   private readonly _viewTarget: Vector3 = new Vector3();
+
   private readonly _rawCameraRotation = new Quaternion();
   private readonly _accumulatedMouseMove: Vector2 = new Vector2();
   private readonly _keyboard: Keyboard;
   private readonly _pointEventCache: Array<PointerEvent> = [];
 
-  // Temporary Vector3 used for calculations to avoid allocations
-  private readonly _reusableVector3: Vector3 = new Vector3();
-  private readonly _deltaTarget: Vector3 = new Vector3();
-  private readonly _offsetVector: Vector3 = new Vector3();
-  private readonly _panVector: Vector3 = new Vector3();
+  // Temporary objects used for calculations to avoid allocations
+  private readonly _reuseableVector3s = new ReuseableVector3s();
   private readonly _raycaster: Raycaster = new Raycaster();
 
   //================================================
@@ -190,6 +187,10 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return distance * (factor - 1);
   }
 
+  private newVector3(): Vector3 {
+    return this._reuseableVector3s.getNext();
+  }
+
   //================================================
   // INSTANCE METHODS: Public operations
   //================================================
@@ -216,7 +217,8 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     const deltaPhi = this._sphericalEnd.phi - this._spherical.phi;
     const deltaRadius = this._sphericalEnd.radius - this._spherical.radius;
-    this._deltaTarget.subVectors(this._targetEnd, this._target);
+
+    const deltaTarget = this.newVector3().subVectors(this._targetEnd, this._target);
 
     let changed = false;
 
@@ -229,12 +231,12 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
       Math.abs(deltaTheta) > epsilon ||
       Math.abs(deltaPhi) > epsilon ||
       Math.abs(deltaRadius) > epsilon ||
-      !isVectorAlmostZero(this._deltaTarget, epsilon)
+      !isVectorAlmostZero(deltaTarget, epsilon)
     ) {
       this._spherical.radius += deltaRadius * deltaFactor;
       this._spherical.phi += deltaPhi * deltaFactor;
       this._spherical.theta += deltaTheta * deltaFactor;
-      this._target.add(this._deltaTarget.multiplyScalar(deltaFactor));
+      this._target.add(deltaTarget.multiplyScalar(deltaFactor));
       changed = true;
     } else {
       this._spherical.copy(this._sphericalEnd);
@@ -510,9 +512,9 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this._reusableCamera.rotateY(this._options.firstPersonRotationFactor * deltaAzimuthAngle);
 
     const distToTarget = this._targetEnd.distanceTo(this._reusableCamera.position);
-    this._reusableCamera.getWorldDirection(this._reusableVector3);
-    this._targetEnd.addVectors(this._reusableCamera.position, this._reusableVector3.multiplyScalar(distToTarget));
-    this._sphericalEnd.setFromVector3(this._reusableVector3.subVectors(this._reusableCamera.position, this._targetEnd));
+    const vector = this._reusableCamera.getWorldDirection(this.newVector3());
+    this._targetEnd.addVectors(this._reusableCamera.position, vector.multiplyScalar(distToTarget));
+    this._sphericalEnd.setFromVector3(vector.subVectors(this._reusableCamera.position, this._targetEnd));
     this._sphericalEnd.makeSafe();
   }
 
@@ -597,10 +599,11 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private pan(deltaX: number, deltaY: number) {
-    this._offsetVector.copy(this._camera.position).sub(this._target);
+    const offsetVector = this.newVector3();
+    offsetVector.copy(this._camera.position).sub(this._target);
 
     let targetDistance = Math.max(
-      this._offsetVector.length(),
+      offsetVector.length(),
       this._options.panDollyMinDistanceFactor * this._options.minDistance
     );
 
@@ -616,15 +619,17 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private panLeft(distance: number) {
-    this._panVector.setFromMatrixColumn(this._camera.matrix, 0); // get X column of objectMatrix
-    this._panVector.multiplyScalar(-distance);
-    this._targetEnd.add(this._panVector);
+    const panVector = this.newVector3();
+    panVector.setFromMatrixColumn(this._camera.matrix, 0); // get X column of objectMatrix
+    panVector.multiplyScalar(-distance);
+    this._targetEnd.add(panVector);
   }
 
   private panUp(distance: number) {
-    this._panVector.setFromMatrixColumn(this._camera.matrix, 1); // get Y column of objectMatrix
-    this._panVector.multiplyScalar(distance);
-    this._targetEnd.add(this._panVector);
+    const panVector = this.newVector3();
+    panVector.setFromMatrixColumn(this._camera.matrix, 1); // get Y column of objectMatrix
+    panVector.multiplyScalar(distance);
+    this._targetEnd.add(panVector);
   }
 
   //================================================
@@ -652,7 +657,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this._reusableCamera.position.setFromSpherical(this._sphericalEnd).add(this._targetEnd);
     this._reusableCamera.lookAt(this._targetEnd);
 
-    const cameraDirection = this._reusableVector3.clone().setFromSpherical(this._sphericalEnd);
+    const cameraDirection = this.newVector3().setFromSpherical(this._sphericalEnd);
 
     if (moveOnlyTarget) {
       // move only target together with the camera, radius is constant (for 'w' and 's' keys movement)
@@ -665,7 +670,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number, cameraDirection: THREE.Vector3) {
     const isDollyIn = deltaDistance < 0 ? true : false;
-    const newTargetOffset = new Vector3();
+    const newTargetOffset = this.newVector3();
     let newRadius = this._sphericalEnd.radius;
 
     if (this._options.zoomToCursor) {
@@ -749,9 +754,9 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     // Here we use the law of sines to determine how far we want to move the target.
     // Direction is always determined by scrollTarget-target vector
-    const targetToScrollTargetVec = this._reusableVector3.subVectors(this._scrollTarget, this._target);
-    const cameraToTargetVec = new Vector3().subVectors(this._target, this._camera.position);
-    const cameraToScrollTargetVec = new Vector3().subVectors(this._scrollTarget, this._camera.position);
+    const targetToScrollTargetVec = this.newVector3().subVectors(this._scrollTarget, this._target);
+    const cameraToTargetVec = this.newVector3().subVectors(this._target, this._camera.position);
+    const cameraToScrollTargetVec = this.newVector3().subVectors(this._scrollTarget, this._camera.position);
 
     const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec);
     const targetScrollTargetCameraAngle = targetToScrollTargetVec
@@ -947,6 +952,24 @@ function getFov(camera: PerspectiveCamera | OrthographicCamera): number {
 
 function isVectorAlmostZero(vector: Vector3, epsilon: number): boolean {
   return Math.abs(vector.x) <= epsilon && Math.abs(vector.y) <= epsilon && Math.abs(vector.z) <= epsilon;
+}
+
+// Cache for using tempory vectors to avoud allocations
+class ReuseableVector3s {
+  private readonly _vectors: Array<Vector3>;
+  private _index: number = -1;
+
+  constructor() {
+    this._vectors = new Array<Vector3>(10);
+    for (let i = 0; i < this._vectors.length; i++) {
+      this._vectors[i] = new Vector3();
+    }
+  }
+
+  public getNext(): Vector3 {
+    this._index = (this._index + 1) % this._vectors.length;
+    return this._vectors[this._index];
+  }
 }
 
 //================================================
