@@ -36,6 +36,7 @@ import {
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
+import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
@@ -141,10 +142,6 @@ export class Image360ApiHelper {
   resetRedraw(): void {
     this._needsRedraw = false;
     this._image360Facade.collections.forEach(collection => collection.resetRedraw());
-  }
-
-  private getNormalizedOffset(x: number, y: number): THREE.Vector2 {
-    return new THREE.Vector2((x / this._domElement.clientWidth) * 2 - 1, 1 - (y / this._domElement.clientHeight) * 2);
   }
 
   public async add360ImageSet(
@@ -474,7 +471,7 @@ export class Image360ApiHelper {
       return undefined;
     }
 
-    const point = this.getNormalizedOffset(offsetX, offsetY);
+    const point = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
     this._raycaster.setFromCamera(point, this._activeCameraManager.getCamera());
 
     const annotation = currentEntity.intersectAnnotations(this._raycaster);

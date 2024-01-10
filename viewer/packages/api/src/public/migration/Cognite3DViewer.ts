@@ -58,7 +58,8 @@ import {
   CameraManager,
   CameraChangeDelegate,
   ProxyCameraManager,
-  CameraStopDelegate
+  CameraStopDelegate,
+  CameraManagerCallbackData
 } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat, Image360DataModelIdentifier } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
@@ -82,6 +83,7 @@ import {
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
+import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -1525,11 +1527,7 @@ export class Cognite3DViewer {
     const cadNodes = cadModels.map(x => x.cadNode);
     const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
 
-    const normalizedCoords = new THREE.Vector2(
-      (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
-      (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
-    );
-
+    const normalizedCoords = getNormalizedPixelCoordinates(this.renderer.domElement, offsetX, offsetY);
     const input: IntersectInput = {
       normalizedCoords,
       camera: this.cameraManager.getCamera(),
@@ -1594,10 +1592,24 @@ export class Cognite3DViewer {
    * input lag when zooming in and out. Default implementation is async. See PR #2405 for more info.
    * @private
    */
-  private async modelIntersectionCallback(offsetX: number, offsetY: number) {
+  private async modelIntersectionCallback(
+    offsetX: number,
+    offsetY: number,
+    pickBoundingBox: boolean
+  ): Promise<CameraManagerCallbackData> {
     const intersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
 
-    return { intersection, modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox };
+    const getBoundingBox = async (intersection: Intersection | null): Promise<THREE.Box3 | undefined> => {
+      if (intersection?.type !== 'cad') {
+        return undefined;
+      }
+      const model = intersection.model;
+      const treeIndex = intersection.treeIndex;
+      return model.getBoundingBoxByTreeIndex(treeIndex);
+    };
+
+    const pickedBoundingBox = pickBoundingBox ? await getBoundingBox(intersection) : undefined;
+    return { intersection, pickedBoundingBox, modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox };
   }
 
   /** @private */

@@ -221,6 +221,7 @@ export type CameraConfiguration = {
 export type CameraControlsOptions = {
     mouseWheelAction?: 'zoomToTarget' | 'zoomPastCursor' | 'zoomToCursor';
     changeCameraTargetOnClick?: boolean;
+    changeCameraPositionOnDoubleClick?: boolean;
 };
 
 // @public
