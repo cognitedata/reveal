@@ -426,5 +426,16 @@ export class LoadSplatUi {
 	}
 	
     this._viewer.addObject3D(splat);
+	
+	const splatSortingWorker = new Worker( new URL('./SplatSortingWorker.ts', import.meta.url) );
+	
+	const inputData = new Float64Array(1000).fill(1);
+	
+	splatSortingWorker.onmessage = (event: MessageEvent) => {
+	  const resultData = new Float64Array(event.data);
+	  console.log('Received result from worker:', resultData);
+	};
+	
+	splatSortingWorker.postMessage(inputData.buffer, { transfer : [inputData.buffer]} );
   }
 }
