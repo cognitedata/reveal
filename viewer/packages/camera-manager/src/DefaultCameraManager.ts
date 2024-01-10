@@ -166,7 +166,7 @@ export class DefaultCameraManager implements CameraManager {
 
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
     const { position, target } = fitCameraToBoundingBox(this._camera, box, radiusFactor);
-    this.moveCameraTo(position, target, duration, true);
+    this.moveCameraTo(position, target, duration);
   }
 
   /**
