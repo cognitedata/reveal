@@ -124,9 +124,9 @@ export class LoadSplatUi {
     ui.add(this._params, 'url').name('URL');
     ui.add(actions, 'loadSplat').name('Load Splat');
 	ui.add(actions, 'sortSplat').name('Sort splats');
-	ui.add(this._params, 'x').name('X');
-	ui.add(this._params, 'y').name('Y');
-	ui.add(this._params, 'z').name('Z');
+	ui.add(this._params, 'x',-3.14159265, 3.14159265).name('X').step(0.01);
+	ui.add(this._params, 'y',-3.14159265, 3.14159265).name('Y').step(0.01);
+	ui.add(this._params, 'z',-3.14159265, 3.14159265).name('Z').step(0.01);
   }
 
   private loadSplat(params: any): void {
@@ -140,7 +140,7 @@ export class LoadSplatUi {
 	 } );  
 
 	const orientationMatrix:THREE.Matrix4 = new THREE.Matrix4();
-	orientationMatrix.makeRotationFromEuler(new THREE.Euler( params.x, params.x, params.z, 'XYZ' ));
+	orientationMatrix.makeRotationFromEuler(new THREE.Euler( params.x, params.y, params.z, 'XYZ' ));
     
 	const url:string = '/point_cloud.ply';
     loader.load(
