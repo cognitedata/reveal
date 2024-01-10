@@ -302,7 +302,7 @@ export class DefaultCameraManager implements CameraManager {
     position: THREE.Vector3,
     target: THREE.Vector3,
     duration?: number,
-    setKeyboardNavigationEnabled?: boolean
+    keyboardNavigationEnabled = true
   ): void {
     if (this._isDisposed) {
       return;
@@ -351,16 +351,14 @@ export class DefaultCameraManager implements CameraManager {
         if (this._isDisposed) {
           return;
         }
-        if (setKeyboardNavigationEnabled) {
-          this.keyboardNavigationEnabled = true;
-        }
+        this.keyboardNavigationEnabled = keyboardNavigationEnabled;
         this._domElement.removeEventListener('pointerdown', stopTween);
       })
       .start(TWEEN.now());
     tween.update(TWEEN.now());
   }
 
-  private moveCameraTargetTo(target: THREE.Vector3, duration?: number, setKeyboardNavigationEnabled?: boolean): void {
+  private moveCameraTargetTo(target: THREE.Vector3, duration?: number, keyboardNavigationEnabled = true): void {
     if (this._isDisposed) {
       return;
     }
@@ -414,9 +412,7 @@ export class DefaultCameraManager implements CameraManager {
           return;
         }
         this.setComboControlsOptions({ lookAtViewTarget: false });
-        if (setKeyboardNavigationEnabled) {
-          this.keyboardNavigationEnabled = true;
-        }
+        this.keyboardNavigationEnabled = keyboardNavigationEnabled;
         this._domElement.removeEventListener('pointerdown', stopTween);
       })
       .start(TWEEN.now());
@@ -642,14 +638,14 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   private readonly onClick = async (event: PointerEventData) => {
-    const setKeyboardNavigationEnabled = this.keyboardNavigationEnabled;
+    const keyboardNavigationEnabled = this.keyboardNavigationEnabled;
     this.keyboardNavigationEnabled = false;
     const newTarget = await this.calculateNewTarget(event);
-    this.moveCameraTargetTo(newTarget, DefaultCameraManager.AnimationDuration, setKeyboardNavigationEnabled);
+    this.moveCameraTargetTo(newTarget, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
   };
 
   private readonly onDoubleClick = async (event: PointerEventData) => {
-    const setKeyboardNavigationEnabled = this.keyboardNavigationEnabled;
+    const keyboardNavigationEnabled = this.keyboardNavigationEnabled;
     this.keyboardNavigationEnabled = false;
 
     const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, event.offsetX, event.offsetY);
@@ -658,7 +654,7 @@ export class DefaultCameraManager implements CameraManager {
     // If an object is picked, zoom in to the object (the target will be in the middle of the bounding box)
     if (modelRaycastData.pickedBoundingBox !== undefined) {
       const { position, target } = fitCameraToBoundingBox(this._camera, modelRaycastData.pickedBoundingBox);
-      this.moveCameraTo(position, target, DefaultCameraManager.AnimationDuration, setKeyboardNavigationEnabled);
+      this.moveCameraTo(position, target, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
       return;
     }
     // If not particular object is picked, set camera position half way to the target
@@ -669,7 +665,7 @@ export class DefaultCameraManager implements CameraManager {
     const newPosition = new THREE.Vector3().subVectors(newTarget, this._camera.position);
     newPosition.divideScalar(2);
     newPosition.add(this._camera.position);
-    this.moveCameraTo(newPosition, newTarget, DefaultCameraManager.AnimationDuration, setKeyboardNavigationEnabled);
+    this.moveCameraTo(newPosition, newTarget, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
   };
 
   private calculateDefaultDuration(distanceToCamera: number): number {
