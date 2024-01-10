@@ -21,7 +21,7 @@ import {
 import Keyboard from './Keyboard';
 import clamp from 'lodash/clamp';
 import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
-import { getNormalizedPixelCoordinates } from '@reveal/utilities/src/worldToViewport';
+import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 
 /**
  * The event type for events emitted by {@link ComboControls}.

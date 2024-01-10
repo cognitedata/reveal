@@ -36,7 +36,7 @@ import {
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
-import { getNormalizedPixelCoordinates } from '@reveal/utilities/src/worldToViewport';
+import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
