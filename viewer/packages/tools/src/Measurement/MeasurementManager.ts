@@ -7,7 +7,7 @@ import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';
 import { MeasurementLine } from './MeasurementLine';
 import { Measurement, MeasurementOptions } from './types';
-import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/worldToViewport';
+import { getNormalizedPixelCoordinates } from '@reveal/utilities/src/worldToViewport';
 
 export class MeasurementManager {
   private readonly _measurementLabel: MeasurementLabels;
@@ -151,7 +151,7 @@ export class MeasurementManager {
   }
 
   private pointerTo3DPosition(offsetX: number, offsetY: number) {
-    const mouse = getPixelCoordinatesToNormalized(this._domElement, offsetX, offsetY);
+    const mouse = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
 
     // Set the origin of the Ray to camera.
     const origin = new THREE.Vector3();

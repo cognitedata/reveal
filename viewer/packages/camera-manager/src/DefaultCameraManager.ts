@@ -33,7 +33,7 @@ import {
 } from '@reveal/utilities';
 
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
-import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/worldToViewport';
+import { getNormalizedPixelCoordinates } from '@reveal/utilities/src/worldToViewport';
 
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
@@ -519,7 +519,7 @@ export class DefaultCameraManager implements CameraManager {
    * @param event PointerEvent that contains pointer location data.
    */
   private async calculateNewTarget(event: PointerEventData): Promise<THREE.Vector3> {
-    const pixelCoordinates = getPixelCoordinatesToNormalized(this._domElement, event.offsetX, event.offsetY);
+    const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, event.offsetX, event.offsetY);
     const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, false);
 
     const newTarget =
@@ -653,7 +653,7 @@ export class DefaultCameraManager implements CameraManager {
     const setKeyboardNavigationEnabled = this.keyboardNavigationEnabled;
     this.keyboardNavigationEnabled = false;
 
-    const pixelCoordinates = getPixelCoordinatesToNormalized(this._domElement, event.offsetX, event.offsetY);
+    const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, event.offsetX, event.offsetY);
     const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, true);
 
     // If an object is picked, zoom in to the object (the target will be in the middle of the bounding box)

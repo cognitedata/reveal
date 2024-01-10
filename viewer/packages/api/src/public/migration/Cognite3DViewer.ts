@@ -83,7 +83,7 @@ import {
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
-import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/worldToViewport';
+import { getNormalizedPixelCoordinates } from '@reveal/utilities/src/worldToViewport';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -1527,7 +1527,7 @@ export class Cognite3DViewer {
     const cadNodes = cadModels.map(x => x.cadNode);
     const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
 
-    const normalizedCoords = getPixelCoordinatesToNormalized(this.renderer.domElement, offsetX, offsetY);
+    const normalizedCoords = getNormalizedPixelCoordinates(this.renderer.domElement, offsetX, offsetY);
     const input: IntersectInput = {
       normalizedCoords,
       camera: this.cameraManager.getCamera(),

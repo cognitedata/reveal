@@ -21,7 +21,7 @@ import {
 import Keyboard from './Keyboard';
 import clamp from 'lodash/clamp';
 import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
-import { getPixelCoordinatesToNormalized } from '@reveal/utilities/src/worldToViewport';
+import { getNormalizedPixelCoordinates } from '@reveal/utilities/src/worldToViewport';
 
 /**
  * The event type for events emitted by {@link ComboControls}.
@@ -346,7 +346,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
 
-    const pixelCoordinates = getPixelCoordinatesToNormalized(
+    const pixelCoordinates = getNormalizedPixelCoordinates(
       this._domElement,
       domElementRelativeOffset.offsetX,
       domElementRelativeOffset.offsetY
