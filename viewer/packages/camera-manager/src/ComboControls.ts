@@ -59,7 +59,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private readonly _pointEventCache: Array<PointerEvent> = [];
 
   // Temporary objects used for calculations to avoid allocations
-  private readonly _reuseableVector3s = new ReuseableVector3s();
+  private readonly _reusableVector3s = new ReusableVector3s();
   private readonly _raycaster: Raycaster = new Raycaster();
 
   //================================================
@@ -191,7 +191,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private newVector3(): Vector3 {
-    return this._reuseableVector3s.getNext();
+    return this._reusableVector3s.getNext();
   }
 
   //================================================
@@ -958,7 +958,7 @@ function isVectorAlmostZero(vector: Vector3, epsilon: number): boolean {
 }
 
 // Cache for using tempory vectors to avoid allocations
-class ReuseableVector3s {
+class ReusableVector3s {
   private readonly _vectors = new Array(10).fill(null).map(() => new Vector3());
   private _index: number = -1;
 
