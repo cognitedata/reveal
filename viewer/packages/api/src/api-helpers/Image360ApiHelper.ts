@@ -29,14 +29,13 @@ import {
   determineCurrentDevice,
   EventTrigger,
   InputHandler,
-  pixelToNormalizedDeviceCoordinates,
+  getNormalizedPixelCoordinates,
   PointerEventData,
   SceneHandler
 } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
-import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
@@ -453,10 +452,7 @@ export class Image360ApiHelper {
   }
 
   public intersect360ImageIcons(offsetX: number, offsetY: number): Image360Entity | undefined {
-    const size = new THREE.Vector2(this._domElement.clientWidth, this._domElement.clientHeight);
-
-    const { x: width, y: height } = size;
-    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
+    const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
     const entity = this._image360Facade.intersect(
       new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
@@ -490,10 +486,7 @@ export class Image360ApiHelper {
   private setHoverIconOnIntersect(offsetX: number, offsetY: number) {
     this._interactionState.lastMousePosition = { offsetX, offsetY };
     this._image360Facade.allIconsSelected = false;
-    const size = new THREE.Vector2(this._domElement.clientWidth, this._domElement.clientHeight);
-
-    const { x: width, y: height } = size;
-    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
+    const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
     const entity = this._image360Facade.intersect(
       new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
