@@ -2,7 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 
-import { assertNever, clickOrTouchEventOffset, pixelToNormalizedDeviceCoordinates } from '@reveal/utilities';
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
@@ -19,6 +18,7 @@ import {
   CameraStopDelegate
 } from './types';
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
+import { assertNever, clickOrTouchEventOffset, getNormalizedPixelCoordinatesBySize } from '@reveal/utilities';
 
 export class StationaryCameraManager implements CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
@@ -285,7 +285,7 @@ export class StationaryCameraManager implements CameraManager {
   private getCursorRay(event: WheelEvent) {
     const { width, height } = this._domElement.getBoundingClientRect();
     const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
-    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
+    const ndcCoordinates = getNormalizedPixelCoordinatesBySize(offsetX, offsetY, width, height);
     const ray = new THREE.Vector3(ndcCoordinates.x, ndcCoordinates.y, 1)
       .unproject(this._camera)
       .sub(this._camera.position);
