@@ -103,20 +103,22 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   properties: FdmPropertyType<PropertyType>;
 };
 
+type InspectionOperations =
+  | { involvedContainers: Record<never, never>; involvedViews?: Record<never, never> }
+  | { involvedContainers?: Record<never, never>; involvedViews: Record<never, never> };
+
 export type InspectFilter = {
-  inspectionOperations: { involvedViewsAndContainers: Record<never, never> };
+  inspectionOperations: InspectionOperations;
   items: Array<{ instanceType: InstanceType; externalId: string; space: string }>;
 };
 
 export type InspectResult = {
-  involvedViewsAndContainers: {
-    containers: Array<{
-      type: 'container';
-      space: string;
-      externalId: string;
-    }>;
-    views: Source[];
-  };
+  involvedContainers: Array<{
+    type: 'container';
+    space: string;
+    externalId: string;
+  }>;
+  involvedViews: Source[];
 };
 
 export type InspectResultList = {
@@ -126,6 +128,31 @@ export type InspectResultList = {
     space: string;
     inspectionResults: InspectResult;
   }>;
+};
+
+export type OldFormatInspectFilter = {
+  inspectionOperations: { involvedViewsAndContainers: Record<never, never> };
+  items: Array<{ instanceType: InstanceType; externalId: string; space: string }>;
+};
+
+export type OldFormatInspectResultList = {
+  items: Array<{
+    instanceType: InstanceType;
+    externalId: string;
+    space: string;
+    inspectionResults: OldInspectResult;
+  }>;
+};
+
+export type OldInspectResult = {
+  involvedViewsAndContainers: {
+    containers: Array<{
+      type: 'container';
+      space: string;
+      externalId: string;
+    }>;
+    views: Source[];
+  };
 };
 
 type SelectKey<T extends Query> = keyof T['select'];
@@ -394,14 +421,39 @@ export class FdmSDK {
   }
 
   public async inspectInstances(inspectFilter: InspectFilter): Promise<InspectResultList> {
-    const data: any = inspectFilter;
-    const result = await this._sdk.post(this._inspectEndpoint, { data });
+    // Endpoint will soon have breaking changes, thus testing both new and old format
+    try {
+      const oldFormatInspectFilter: OldFormatInspectFilter = {
+        inspectionOperations: { involvedViewsAndContainers: {} },
+        items: inspectFilter.items ?? []
+      };
+      const result = await this._sdk.post(this._inspectEndpoint, { data: oldFormatInspectFilter });
 
-    if (result.status === 200) {
-      return result.data as InspectResultList;
+      if (result.status === 200) {
+        const oldFormatInspectResult = result.data as OldFormatInspectResultList;
+        return {
+          items: oldFormatInspectResult.items.map((item) => ({
+            ...item,
+            inspectionResults: {
+              involvedContainers: item.inspectionResults.involvedViewsAndContainers.containers,
+              involvedViews: item.inspectionResults.involvedViewsAndContainers.views
+            }
+          }))
+        };
+      }
+    } catch (e) {}
+
+    try {
+      const result = await this._sdk.post(this._inspectEndpoint, { data: inspectFilter });
+
+      if (result.status === 200) {
+        return result.data as InspectResultList;
+      }
+    } catch (e) {
+      throw new Error(`Failed to fetch instances`);
     }
 
-    throw new Error(`Failed to fetch instances. Status: ${result.status}`);
+    return { items: [] };
   }
 
   public async getViewsByIds(views: Source[]): Promise<{ items: ViewItem[] }> {
