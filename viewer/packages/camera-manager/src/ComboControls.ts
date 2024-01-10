@@ -23,6 +23,9 @@ import clamp from 'lodash/clamp';
 import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 
+const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
+const TARGET_FPS = 30;
+
 /**
  * The event type for events emitted by {@link ComboControls}.
  */
@@ -967,10 +970,3 @@ class ReuseableVector3s {
     return this._vectors[this._index];
   }
 }
-
-//================================================
-// LOCAL CONSTANTS
-//================================================
-
-const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
-const TARGET_FPS = 30;

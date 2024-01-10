@@ -82,7 +82,6 @@ export class DefaultCameraManager implements CameraManager {
     changeCameraPositionOnDoubleClick: false
   };
 
-  // NILS: Is this a copy contructor?
   private _cameraControlsOptions: Required<CameraControlsOptions> = {
     ...DefaultCameraManager.DefaultCameraControlsOptions
   };
