@@ -1600,18 +1600,11 @@ export class Cognite3DViewer {
     const intersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
 
     const getBoundingBox = async (intersection: Intersection | null): Promise<THREE.Box3 | undefined> => {
-      const cadIntersection = intersection as CadIntersection;
-      if (cadIntersection === undefined) {
+      if (intersection?.type !== 'cad') {
         return undefined;
       }
-      const model = cadIntersection?.model;
-      if (!model) {
-        return undefined;
-      }
-      const treeIndex = cadIntersection?.treeIndex;
-      if (treeIndex === undefined) {
-        return undefined;
-      }
+      const model = intersection.model;
+      const treeIndex = intersection.treeIndex;
       return model.getBoundingBoxByTreeIndex(treeIndex);
     };
 
