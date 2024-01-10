@@ -546,7 +546,7 @@ __metadata:
     "@types/jest-image-snapshot": "npm:6.4.0"
     "@types/jsdom": "npm:21.1.6"
     "@types/lodash": "npm:4.14.202"
-    "@types/mixpanel-browser": "npm:2.47.5"
+    "@types/mixpanel-browser": "npm:2.48.1"
     "@types/node": "npm:18.19.4"
     "@types/random-seed": "npm:0.3.5"
     "@types/skmeans": "npm:0.11.7"
@@ -563,7 +563,7 @@ __metadata:
     eslint: "npm:8.56.0"
     eslint-config-prettier: "npm:9.1.0"
     eslint-plugin-header: "npm:3.1.1"
-    eslint-plugin-jsdoc: "npm:46.9.1"
+    eslint-plugin-jsdoc: "npm:46.10.1"
     eslint-plugin-lodash: "npm:7.4.0"
     eslint-plugin-prettier: "npm:5.0.1"
     eslint-plugin-unused-imports: "npm:3.0.0"
@@ -1959,10 +1959,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mixpanel-browser@npm:2.47.5":
-  version: 2.47.5
-  resolution: "@types/mixpanel-browser@npm:2.47.5"
-  checksum: 57f196a07d2775334ae2dad7eb76f454d392371fdaf7b7f66a36a52a4ce2c60ab293a90e6b508c7e053b3b9ac1ac3b8c84f9d45a63bb9d54410380afe9a36cf3
+"@types/mixpanel-browser@npm:2.48.1":
+  version: 2.48.1
+  resolution: "@types/mixpanel-browser@npm:2.48.1"
+  checksum: 1079054959e21edaf629073df6c2ff4d5b01d0a438c26d4ee99e7ffa8cc2a75552138ea6b5c91384065159e27d6d59614ff0b27a771af55fecbee014735087e4
   languageName: node
   linkType: hard
 
@@ -4559,9 +4559,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:46.9.1":
-  version: 46.9.1
-  resolution: "eslint-plugin-jsdoc@npm:46.9.1"
+"eslint-plugin-jsdoc@npm:46.10.1":
+  version: 46.10.1
+  resolution: "eslint-plugin-jsdoc@npm:46.10.1"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.41.0"
     are-docs-informative: "npm:^0.0.2"
@@ -4573,8 +4573,8 @@ __metadata:
     semver: "npm:^7.5.4"
     spdx-expression-parse: "npm:^4.0.0"
   peerDependencies:
-    eslint: ^7.0.0 || ^8.0.0
-  checksum: 0b176d690738b3e5dad9bceccb8640b95070e8981ce0dce48227969d6c9fe972554aeccfc013bf231cf1eb51dacc3b0987c597b553f4b0e52f637f4587b509be
+    eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
+  checksum: 19e37f12fc83134115f38e143f64901fba10d41842ee83bbcd756d0041d1763e96a2dfa7e9d12edf33102b164e1212a6b61ece0a87eb7c80a3e26df4a3b339ac
   languageName: node
   linkType: hard
 
