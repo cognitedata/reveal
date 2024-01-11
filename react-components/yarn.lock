@@ -11224,8 +11224,8 @@ __metadata:
   linkType: hard
 
 "locize-cli@npm:^7.14.6":
-  version: 7.14.14
-  resolution: "locize-cli@npm:7.14.14"
+  version: 7.15.2
+  resolution: "locize-cli@npm:7.15.2"
   dependencies:
     "@js.properties/properties": "npm:0.5.4"
     android-string-resource: "npm:2.3.9"
@@ -11254,7 +11254,7 @@ __metadata:
     xlsx: "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
   bin:
     locize: bin/locize
-  checksum: 761c3770848e72486c137412263c405bacbe5bbf1f2d640dc3abc60a290fee41c62a42abd2e585bdc543fb0cd7bbff49a87d3f90a3e9b868acb4836549a961cf
+  checksum: f63040637f6c8c8bfd50416fab20303bf2d4e4371949c7494932b89d5c16aeddd686b6156b0f89ff276266acbe7b40d3fc8839ef7e40955da062480de3056456
   languageName: node
   linkType: hard
 
