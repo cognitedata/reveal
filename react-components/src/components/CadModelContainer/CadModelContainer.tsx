@@ -46,7 +46,7 @@ export function CadModelContainer({
       return;
     }
 
-    initializingModel.current = cloneDeep(addModelOptions);
+    initializingModel.current = addModelOptions;
     addModel(addModelOptions, transform)
       .then((model) => {
         onLoad?.(model);
