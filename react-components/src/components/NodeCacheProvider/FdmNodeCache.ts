@@ -267,7 +267,7 @@ export class FdmNodeCache {
 
     const dataWithViews = edges.map((edge, ind) => ({
       edge,
-      view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
+      view: nodeInspectionResults.items[ind].inspectionResults.involvedViews[0]
     }));
 
     return dataWithViews;
