@@ -29,7 +29,7 @@ import {
   determineCurrentDevice,
   EventTrigger,
   InputHandler,
-  pixelToNormalizedDeviceCoordinates,
+  getNormalizedPixelCoordinates,
   PointerEventData,
   SceneHandler
 } from '@reveal/utilities';
@@ -141,10 +141,6 @@ export class Image360ApiHelper {
   resetRedraw(): void {
     this._needsRedraw = false;
     this._image360Facade.collections.forEach(collection => collection.resetRedraw());
-  }
-
-  private getNormalizedOffset(x: number, y: number): THREE.Vector2 {
-    return new THREE.Vector2((x / this._domElement.clientWidth) * 2 - 1, 1 - (y / this._domElement.clientHeight) * 2);
   }
 
   public async add360ImageSet(
@@ -456,10 +452,7 @@ export class Image360ApiHelper {
   }
 
   public intersect360ImageIcons(offsetX: number, offsetY: number): Image360Entity | undefined {
-    const size = new THREE.Vector2(this._domElement.clientWidth, this._domElement.clientHeight);
-
-    const { x: width, y: height } = size;
-    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
+    const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
     const entity = this._image360Facade.intersect(
       new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
@@ -474,7 +467,7 @@ export class Image360ApiHelper {
       return undefined;
     }
 
-    const point = this.getNormalizedOffset(offsetX, offsetY);
+    const point = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
     this._raycaster.setFromCamera(point, this._activeCameraManager.getCamera());
 
     const annotation = currentEntity.intersectAnnotations(this._raycaster);
@@ -493,10 +486,7 @@ export class Image360ApiHelper {
   private setHoverIconOnIntersect(offsetX: number, offsetY: number) {
     this._interactionState.lastMousePosition = { offsetX, offsetY };
     this._image360Facade.allIconsSelected = false;
-    const size = new THREE.Vector2(this._domElement.clientWidth, this._domElement.clientHeight);
-
-    const { x: width, y: height } = size;
-    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
+    const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
     const entity = this._image360Facade.intersect(
       new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()

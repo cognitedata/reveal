@@ -51,7 +51,8 @@ export { getApproximateProjectedBounds, getScreenArea } from './src/projectedBou
 export {
   worldToNormalizedViewportCoordinates,
   worldToViewportCoordinates,
-  pixelToNormalizedDeviceCoordinates
+  getNormalizedPixelCoordinatesBySize,
+  getNormalizedPixelCoordinates
 } from './src/worldToViewport';
 
 export { Line2 } from './src/three/lines/Line2';
