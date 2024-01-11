@@ -4,9 +4,9 @@
 
 import { useMemo } from 'react';
 import { useSceneConfig } from './useSceneConfig';
-import { Vector3, Quaternion, Euler, MathUtils } from 'three';
+import { Vector3, Quaternion, Euler, MathUtils, Box3 } from 'three';
 import { useReveal } from '..';
-import { CDF_TO_VIEWER_TRANSFORMATION, CameraManagerHelper } from '@cognite/reveal';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 export const useSceneDefaultCamera = (
   sceneExternalId: string,
@@ -35,14 +35,16 @@ export const useSceneDefaultCamera = (
       )
     );
 
-    const cameraState = viewer.cameraManager.getCameraState();
-
-    const target = CameraManagerHelper.calculateNewTargetFromRotation(
-      viewer.cameraManager.getCamera(),
-      rotation,
-      cameraState.target,
-      position
+    // As a heuristic, use distance to center of all models' bounding
+    // boxes as target distance
+    const positionToSceneCenterDistance = position.distanceTo(
+      viewer.models
+        .reduce((acc, m) => acc.union(m.getModelBoundingBox()), new Box3())
+        .getCenter(new Vector3())
     );
+    const target = position
+      .clone()
+      .add(new Vector3(0, 0, -positionToSceneCenterDistance).applyQuaternion(rotation));
 
     position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     target.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);

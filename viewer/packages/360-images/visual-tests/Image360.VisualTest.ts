@@ -11,7 +11,7 @@ import {
   BeforeSceneRenderedDelegate,
   DeviceDescriptor,
   EventTrigger,
-  pixelToNormalizedDeviceCoordinates,
+  getNormalizedPixelCoordinates,
   SceneHandler
 } from '@reveal/utilities';
 import { CogniteClient } from '@cognite/sdk';
@@ -87,12 +87,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     let lastClicked: Image360Entity | undefined;
     renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
-      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
-        x,
-        y,
-        renderer.domElement.clientWidth,
-        renderer.domElement.clientHeight
-      );
+      const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
       const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
 
       if (entity === undefined) {
@@ -177,12 +172,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
   ) {
     renderer.domElement.addEventListener('mousemove', async event => {
       const { x, y } = event;
-      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
-        x,
-        y,
-        renderer.domElement.clientWidth,
-        renderer.domElement.clientHeight
-      );
+      const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
       const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
       if (entity === undefined) {
         this.render();

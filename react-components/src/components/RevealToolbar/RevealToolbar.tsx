@@ -15,6 +15,7 @@ import { ShareButton } from './ShareButton';
 import { ResetCameraButton } from './ResetCameraButton';
 import { type QualitySettings } from './SettingsContainer/types';
 import styled from 'styled-components';
+import { SelectSceneButton } from './SelectSceneButton';
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute;
@@ -103,6 +104,7 @@ export const RevealToolbar = withSuppressRevealEvents(
   SettingsButton: typeof SettingsButton;
   HelpButton: typeof HelpButton;
   ResetCameraButton: typeof ResetCameraButton;
+  SelectSceneButton: typeof SelectSceneButton;
 };
 
 RevealToolbar.FitModelsButton = FitModelsButton;
@@ -113,3 +115,4 @@ RevealToolbar.ShareButton = ShareButton;
 RevealToolbar.SettingsButton = SettingsButton;
 RevealToolbar.HelpButton = HelpButton;
 RevealToolbar.ResetCameraButton = ResetCameraButton;
+RevealToolbar.SelectSceneButton = SelectSceneButton;
