@@ -30,6 +30,7 @@ import {
   useAssetMappedNodesForRevisions,
   useNodesForAssets
 } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
+import { isSameCadModel } from '../utilities/isSameModel';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -227,9 +228,10 @@ function useJoinStylingGroups(
     }
     return models.map((model) => {
       const mappedStyleGroup =
-        modelsMappedStyleGroups.find((typedModel) => typedModel.model === model)?.styleGroup ?? [];
+        modelsMappedStyleGroups.find((typedModel) => isSameCadModel(typedModel.model, model))
+          ?.styleGroup ?? [];
       const instanceStyleGroups = modelInstanceStyleGroups
-        .filter((typedModel) => typedModel.model === model)
+        .filter((typedModel) => isSameCadModel(typedModel.model, model))
         .flatMap((typedModel) => typedModel.styleGroup);
       return {
         model,
@@ -243,13 +245,16 @@ function useJoinStylingGroups(
 
 function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
   return styleGroup.reduce<ModelStyleGroup[]>((accumulatedGroups, currentGroup) => {
-    const existingGroupWithModel = accumulatedGroups.find(
-      (group) => group.model === currentGroup.model
+    const existingGroupWithModel = accumulatedGroups.find((group) =>
+      isSameCadModel(group.model, currentGroup.model)
     );
     if (existingGroupWithModel !== undefined) {
       existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
     } else {
-      accumulatedGroups.push({ ...currentGroup });
+      accumulatedGroups.push({
+        model: currentGroup.model,
+        styleGroup: [...currentGroup.styleGroup]
+      });
     }
     return accumulatedGroups;
   }, []);
