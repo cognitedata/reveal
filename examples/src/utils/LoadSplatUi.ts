@@ -11,7 +11,51 @@ import dat from 'dat.gui';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js';
 
-class SplatBuffers {
+export class SplatSortingWorkerData
+{
+	public numInstances: number = 0;
+	
+	public positionattribute: Float32Array;
+	public colorattribute: Float32Array;
+	public rotationattribute: Float32Array;
+	public scaleattribute: Float32Array;
+	public opacityattribute: Float32Array;
+	
+	public positionattribute_tmp: Float32Array;
+	public colorattribute_tmp: Float32Array;
+	public scaleattribute_tmp: Float32Array;
+	public rotationattribute_tmp: Float32Array;
+	public opacityattribute_tmp: Float32Array;
+	
+	public camera_position : THREE.Vector3;
+	public iOrientation : THREE.Matrix3;
+	
+	public data : Float32Array;
+	
+	constructor(splatBuffers : SplatBuffers, camera_position : THREE.Vector3, iOrientation : THREE.Matrix3) {
+        
+		this.numInstances = splatBuffers.numInstances;
+		
+		this.positionattribute_tmp = new Float32Array(splatBuffers.positionattribute_tmp.array);
+		this.colorattribute_tmp    = new Float32Array(splatBuffers.colorattribute_tmp.array);
+		this.scaleattribute_tmp    = new Float32Array(splatBuffers.scaleattribute_tmp.array);
+		this.rotationattribute_tmp = new Float32Array(splatBuffers.rotationattribute_tmp.array);
+		this.opacityattribute_tmp  = new Float32Array(splatBuffers.opacityattribute_tmp.array); 
+		
+		this.colorattribute    = new Float32Array(splatBuffers.colorattribute.array );
+		this.scaleattribute    = new Float32Array(splatBuffers.scaleattribute.array );
+		this.rotationattribute = new Float32Array(splatBuffers.rotationattribute.array );
+		this.positionattribute = new Float32Array(splatBuffers.positionattribute.array );
+		this.opacityattribute  = new Float32Array(splatBuffers.opacityattribute.array );
+		
+		this.camera_position = camera_position;
+		this.iOrientation = iOrientation;
+		
+		this.data = new Float32Array(100000).fill(1.);
+    }
+}
+
+export class SplatBuffers {
 	public positionattribute: InstancedBufferAttribute;
 	public colorattribute:InstancedBufferAttribute;
 	public rotationattribute: InstancedBufferAttribute;
@@ -104,7 +148,8 @@ export class LoadSplatUi {
   };
 
   private splatBuffers: SplatBuffers | null = null;
-  
+  private splat : THREE.InstancedMesh | null = null;
+
   private uniforms: any = { 
 		//window.innerWidth, window.innerHeight
 		iResolution:   {value : new THREE.Vector2(1920, 1080)},
@@ -413,7 +458,7 @@ export class LoadSplatUi {
 	const camera : any = this._viewer.cameraManager.getCamera();
 	updateSplatSorting(this.splatBuffers, camera, this.uniforms.iOrientation.value);
 	
-	const splat = new THREE.InstancedMesh(geometry, shaderMaterial, this.splatBuffers.numInstances);
+	this.splat = new THREE.InstancedMesh(geometry, shaderMaterial, this.splatBuffers.numInstances);
 	
 	const position = new THREE.Vector3();
 	for(let i = 0; i < this.splatBuffers.numInstances; i++)
@@ -422,20 +467,83 @@ export class LoadSplatUi {
 		position.y = this.splatBuffers.positionattribute_tmp.getY(i);
 		position.z = this.splatBuffers.positionattribute_tmp.getZ(i);
 		matrix.makeTranslation(position);
-		splat.setMatrixAt(i, matrix);
+		this.splat.setMatrixAt(i, matrix);
 	}
 	
-    this._viewer.addObject3D(splat);
+    this._viewer.addObject3D(this.splat);
 	
 	const splatSortingWorker = new Worker( new URL('./SplatSortingWorker.ts', import.meta.url) );
 	
-	const inputData = new Float64Array(1000).fill(1);
+	let workerBuffers = new SplatSortingWorkerData(this.splatBuffers, camera.position, this.uniforms.iOrientation.value);
 	
 	splatSortingWorker.onmessage = (event: MessageEvent) => {
-	  const resultData = new Float64Array(event.data);
-	  console.log('Received result from worker:', resultData);
+		const receivedWorkerBuffers : SplatSortingWorkerData = event.data;
+		//console.log('Received result from worker:', receivedWorkerBuffers.data);
+
+		if(this.splat != null && this.splatBuffers != null)
+		{
+			this.splatBuffers.colorattribute.copyArray(receivedWorkerBuffers.colorattribute);
+			this.splatBuffers.scaleattribute.copyArray(receivedWorkerBuffers.scaleattribute);
+			this.splatBuffers.rotationattribute.copyArray(receivedWorkerBuffers.rotationattribute);
+			this.splatBuffers.positionattribute.copyArray(receivedWorkerBuffers.positionattribute);
+			this.splatBuffers.opacityattribute.copyArray(receivedWorkerBuffers.opacityattribute);
+		
+			this.splatBuffers.colorattribute.needsUpdate =
+			this.splatBuffers.scaleattribute.needsUpdate = 
+			this.splatBuffers.rotationattribute.needsUpdate = 
+			this.splatBuffers.positionattribute.needsUpdate = 
+			this.splatBuffers.opacityattribute.needsUpdate = true;
+		
+			workerBuffers = receivedWorkerBuffers;
+		
+			const camera : any = this._viewer.cameraManager.getCamera();
+			
+			workerBuffers.camera_position = camera.position;
+			workerBuffers.iOrientation = this.uniforms.iOrientation.value;
+			
+			splatSortingWorker.postMessage(
+				workerBuffers,
+				{ 
+					transfer : [
+						workerBuffers.data.buffer,
+						
+						workerBuffers.colorattribute.buffer,
+						workerBuffers.scaleattribute.buffer,
+						workerBuffers.rotationattribute.buffer,
+						workerBuffers.positionattribute.buffer,
+						workerBuffers.opacityattribute.buffer,
+						
+						workerBuffers.positionattribute_tmp.buffer,
+						workerBuffers.colorattribute_tmp.buffer,
+						workerBuffers.scaleattribute_tmp.buffer,
+						workerBuffers.rotationattribute_tmp.buffer,
+						workerBuffers.opacityattribute_tmp.buffer
+					]
+				}	
+			);
+			
+		}
 	};
 	
-	splatSortingWorker.postMessage(inputData.buffer, { transfer : [inputData.buffer]} );
+	splatSortingWorker.postMessage(
+		workerBuffers,
+		{ 
+			transfer : [
+				workerBuffers.data.buffer,
+				
+				workerBuffers.colorattribute.buffer,
+				workerBuffers.scaleattribute.buffer,
+				workerBuffers.rotationattribute.buffer,
+				workerBuffers.positionattribute.buffer,
+				workerBuffers.opacityattribute.buffer,
+				
+				workerBuffers.positionattribute_tmp.buffer,
+				workerBuffers.colorattribute_tmp.buffer,
+				workerBuffers.scaleattribute_tmp.buffer,
+				workerBuffers.rotationattribute_tmp.buffer,
+				workerBuffers.opacityattribute_tmp.buffer
+			]
+		}
+	);
   }
 }
