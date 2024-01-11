@@ -24,7 +24,7 @@ export const Main: Story = {
     return (
       <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
         <Image360CollectionContainer
-          siteId={'c_RC_2'}
+          collectionId={{ siteId: 'c_RC_2' }}
           onLoad={() => {
             setLoading(false);
           }}

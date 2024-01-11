@@ -3,20 +3,24 @@
  */
 import { CogniteClient } from '@cognite/sdk';
 
-export function createSdkByUrlToken(
-  baseUrl = 'https://greenfield.cognitedata.com',
-  project = '3d-test'
-): CogniteClient {
-  const token = new URLSearchParams(window.location.search).get('token') ?? '';
-  if (token === '') {
-    console.warn(
-      'No token provided in URL. Please provide a token in the URL as a query parameter named "token".'
-    );
+export function createSdkByUrlToken(): CogniteClient {
+  const token = new URLSearchParams(window.location.search).get('token');
+  const project = new URLSearchParams(window.location.search).get('project') ?? '3d-test';
+  const baseUrl =
+    new URLSearchParams(window.location.search).get('baseUrl') ??
+    'https://greenfield.cognitedata.com';
+  if (token !== null) {
+    return new CogniteClient({
+      appId: 'reveal-react-components.stories',
+      baseUrl,
+      project,
+      getToken: async () => await Promise.resolve(token)
+    });
   }
   return new CogniteClient({
-    appId: 'reveal.example',
-    baseUrl,
-    project,
-    getToken: async () => await Promise.resolve(token)
+    appId: 'reveal-react-components.stories',
+    baseUrl: '',
+    project: '',
+    getToken: async () => await Promise.resolve('')
   });
 }

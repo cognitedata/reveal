@@ -8,7 +8,8 @@ const preview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/
       }
-    }
+    },
+    layout: 'fullscreen'
   }
 };
 

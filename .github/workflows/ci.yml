@@ -29,6 +29,7 @@ jobs:
         with:
           filters: |
             should-run:
+              - '.github/**'
               - 'viewer/**'
               - 'documentation/**'
               - 'examples/**'
@@ -58,7 +59,7 @@ jobs:
         id: cargo_cache
         with:
           path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
       - name: Download cargo packages and ensure Cargo.lock up to date
         if: steps.cargo_cache.outputs.cache-hit != 'true'
@@ -86,7 +87,7 @@ jobs:
         id: cargo_cache
         with:
           path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
       - name: Check that yarn.lock is up to date
         working-directory: viewer
@@ -146,7 +147,7 @@ jobs:
         id: cargo_cache
         with:
           path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
       - name: Setup tools for coverage tests
         working-directory: viewer
@@ -182,7 +183,7 @@ jobs:
         id: cargo_cache
         with:
           path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
       - name: Execute visual tests
         id: viewerVisualTests
@@ -238,7 +239,7 @@ jobs:
         id: cargo_cache
         with:
           path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
       - name: Install NPM examples dependencies
         # Note! react-app-rewired doesn't work when we get deps from cache for some reason,
@@ -284,7 +285,7 @@ jobs:
         id: cargo_cache
         with:
           path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock', '**/rust-toolchain*', '**/Cargo.toml') }}
 
       - name: Build production version
         working-directory: viewer

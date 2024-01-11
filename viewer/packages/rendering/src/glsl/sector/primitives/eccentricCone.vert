@@ -8,8 +8,7 @@
 #pragma glslify: import('../../base/determineVisibility.glsl')
 
 uniform mat4 inverseModelMatrix;
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
+uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 uniform vec3 cameraPosition;
@@ -62,19 +61,17 @@ void main() {
       transformOverrideTexture
     );
 
-    mat4 modelViewMatrix = viewMatrix * modelMatrix;
+    mat4 modelToTransformOffset = modelViewMatrix * treeIndexWorldTransform;
 
-    mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
-    mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
+    vec3 centerA = mul3(treeIndexWorldTransform, a_centerA);
+    vec3 centerB = mul3(treeIndexWorldTransform, a_centerB);
 
-    vec3 centerA = mul3(modelTransformOffset, a_centerA);
-    vec3 centerB = mul3(modelTransformOffset, a_centerB);
+    vec3 normalWithOffset = normalize((treeIndexWorldTransform * vec4(a_normal, 0)).xyz);
 
-    vec3 normalWithOffset = normalize((modelTransformOffset * vec4(a_normal, 0)).xyz);
+    vec3 centerAInCameraSpace = (modelViewMatrix * vec4(centerA, 1.0)).xyz;
+    vec3 centerBInCameraSpace = (modelViewMatrix * vec4(centerB, 1.0)).xyz;
 
-    float uniformScaleFactor = length(mul3(modelMatrix, normalize(vec3(1.0))));
-
-    height = dot(centerA - centerB, normalWithOffset) * uniformScaleFactor;
+    height = dot(normalize(centerA - centerB), normalWithOffset) * length(centerAInCameraSpace - centerBInCameraSpace);
 
     vec3 lDir;
     vec3 center = 0.5 * (centerA + centerB);
@@ -111,8 +108,8 @@ void main() {
     // make sure the billboard will not overlap with cap geometry (flickering effect), not important if we write to depth buffer
     newPosition.x *= 1.0 - (a_radiusA * (position.x + 1.0) * 0.0025 / height);
 
-    v_centerA.xyz = mul3(viewMatrix, mul3(modelMatrix, centerA));
-    v_centerB.xyz = mul3(viewMatrix, mul3(modelMatrix, centerB));
+    v_centerA.xyz = mul3(modelViewMatrix, centerA);
+    v_centerB.xyz = mul3(modelViewMatrix, centerB);
 
     float radiusA = length((modelToTransformOffset * vec4(normalize(vec3(1.0)) * a_radiusA, 0.0)).xyz);
     float radiusB = length((modelToTransformOffset * vec4(normalize(vec3(1.0)) * a_radiusB, 0.0)).xyz);
@@ -127,7 +124,7 @@ void main() {
     mat3 inverseBillboardWorldRotation = transpose(billboardWorldRotation);
     vec3 cameraPosInCylinderSpace = inverseBillboardWorldRotation * (rayOrigin - center);
 
-    mat3 billboardWorldScaleRotation = mat3(0.5 * height * lDir * (1.0 / uniformScaleFactor), radiusIncludedDisplacement * left, radiusIncludedDisplacement * up);
+    mat3 billboardWorldScaleRotation = mat3(0.5 * height * lDir, radiusIncludedDisplacement * left, radiusIncludedDisplacement * up);
     vec3 localBillboardPosition = center + billboardWorldScaleRotation * newPosition;
     vec3 surfacePoint = mul3(modelViewMatrix, localBillboardPosition);
 

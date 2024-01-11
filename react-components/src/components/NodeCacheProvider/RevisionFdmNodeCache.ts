@@ -176,13 +176,13 @@ export class RevisionFdmNodeCache {
     );
 
     const views = nodeInspectionResults.items.map(
-      (item) => item.inspectionResults.involvedViewsAndContainers.views[0]
+      (item) => item.inspectionResults.involvedViews[0]
     );
 
     const dataWithViews = cadAndFdmIds.edges.map((edge, ind) => ({
       edge,
       cadNode: cadAndFdmIds.cadNode,
-      view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
+      view: nodeInspectionResults.items[ind].inspectionResults.involvedViews[0]
     }));
 
     this.setCacheDataForTreeIndices(ancestorIndicesWithSameMapping, dataWithViews);
@@ -201,7 +201,7 @@ export class RevisionFdmNodeCache {
     const ancestorMappings = await this.getMappingEdgesForAncestors(ancestors);
 
     if (ancestorMappings.length === 0) {
-      return { edges: [], ancestorsWithSameMapping: [], firstMappedAncestorTreeIndex: 0 };
+      return { edges: [], ancestorsWithSameMapping: ancestors, firstMappedAncestorTreeIndex: -1 };
     }
 
     const edgesWithCorrespondingTreeIndex = this.combineEdgesWithTreeIndex(
@@ -273,7 +273,7 @@ export class RevisionFdmNodeCache {
     allEdgesWithoutView.forEach((fdmEdgeWithNode, ind) => {
       const edgeWithView = {
         ...fdmEdgeWithNode,
-        view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
+        view: nodeInspectionResults.items[ind].inspectionResults.involvedViews[0]
       };
 
       this.insertTreeIndexMappings(edgeWithView.cadNode.treeIndex, edgeWithView);

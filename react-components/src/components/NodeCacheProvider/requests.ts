@@ -73,11 +73,13 @@ export async function getMappingEdgesForNodeIds(
     ]
   };
 
-  return await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
+  const instances = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
     filter,
     'edge',
     SYSTEM_3D_EDGE_SOURCE
   );
+
+  return { edges: instances.instances };
 }
 
 export async function inspectNodes(
@@ -92,7 +94,7 @@ export async function inspectNodes(
 
   for (const nodesChunk of chunkedNodes) {
     const chunkInspectionResults = await fdmClient.inspectInstances({
-      inspectionOperations: { involvedViewsAndContainers: {} },
+      inspectionOperations: { involvedViews: {} },
       items: nodesChunk.map((node) => ({
         instanceType: 'node',
         externalId: node.externalId,
@@ -131,6 +133,9 @@ export async function fetchNodesForNodeIds(
   nodeIds: number[],
   cogniteClient: CogniteClient
 ): Promise<Node3D[]> {
+  if (nodeIds.length === 0) {
+    return [];
+  }
   return await cogniteClient.revisions3D.retrieve3DNodes(
     modelId,
     revisionId,

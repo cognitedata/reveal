@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type ReactElement, useEffect, useState } from 'react';
+import { type ReactElement, useEffect, useState, useRef } from 'react';
 import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Matrix4 } from 'three';
@@ -12,7 +12,8 @@ import {
   modelExists
 } from './useApplyCadModelStyling';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { useLayersUrlParams } from '../../hooks/useUrlStateParam';
+import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
+import { cloneDeep, isEqual } from 'lodash';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
@@ -33,18 +34,20 @@ export function CadModelContainer({
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const [layersUrlState] = useLayersUrlParams();
+  const initializingModel = useRef<AddModelOptions | undefined>(undefined);
   const { cadLayers } = layersUrlState;
 
-  const [model, setModel] = useState<CogniteCadModel | undefined>(
-    viewer.models.find(
-      (m) => m.modelId === addModelOptions.modelId && m.revisionId === addModelOptions.revisionId
-    ) as CogniteCadModel | undefined
-  );
+  const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
 
   const { modelId, revisionId, geometryFilter } = addModelOptions;
 
   useEffect(() => {
-    addModel(modelId, revisionId, transform)
+    if (isEqual(initializingModel.current, addModelOptions)) {
+      return;
+    }
+
+    initializingModel.current = cloneDeep(addModelOptions);
+    addModel(addModelOptions, transform)
       .then((model) => {
         onLoad?.(model);
         setRevealResourcesCount(viewer.models.length);
@@ -69,8 +72,7 @@ export function CadModelContainer({
   return <></>;
 
   async function addModel(
-    modelId: number,
-    revisionId: number,
+    addModelOptions: AddModelOptions,
     transform?: Matrix4
   ): Promise<CogniteCadModel> {
     const cadModel = await getOrAddModel();
@@ -92,7 +94,7 @@ export function CadModelContainer({
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CogniteCadModel);
       }
-      return await viewer.addCadModel({ modelId, revisionId });
+      return await viewer.addCadModel(addModelOptions);
     }
   }
 

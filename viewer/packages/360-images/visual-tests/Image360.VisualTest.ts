@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { Cdf360ImageEventProvider, Local360ImageProvider } from '@reveal/data-providers';
+import { Cdf360EventDescriptorProvider, Cdf360ImageProvider, Local360ImageProvider } from '@reveal/data-providers';
 import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
@@ -11,7 +11,7 @@ import {
   BeforeSceneRenderedDelegate,
   DeviceDescriptor,
   EventTrigger,
-  pixelToNormalizedDeviceCoordinates,
+  getNormalizedPixelCoordinates,
   SceneHandler
 } from '@reveal/utilities';
 import { CogniteClient } from '@cognite/sdk';
@@ -50,7 +50,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     this.setupGUI(entities);
 
-    this.setupMouseMoveEventHandler(renderer, entities, facade, camera);
+    this.setupMouseMoveEventHandler(renderer, facade, camera);
 
     this.setupMouseClickEventHandler(renderer, facade, camera, cameraControls);
   }
@@ -87,12 +87,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     let lastClicked: Image360Entity | undefined;
     renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
-      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
-        x,
-        y,
-        renderer.domElement.clientWidth,
-        renderer.domElement.clientHeight
-      );
+      const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
       const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
 
       if (entity === undefined) {
@@ -172,18 +167,12 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
   private setupMouseMoveEventHandler(
     renderer: THREE.WebGLRenderer,
-    entities: Image360Entity[],
     facade: CdfImage360Facade | LocalImage360Facade,
     camera: THREE.PerspectiveCamera
   ) {
     renderer.domElement.addEventListener('mousemove', async event => {
       const { x, y } = event;
-      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
-        x,
-        y,
-        renderer.domElement.clientWidth,
-        renderer.domElement.clientHeight
-      );
+      const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
       const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
       if (entity === undefined) {
         this.render();
@@ -249,7 +238,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }>;
     entities: Image360Entity[];
   }> {
-    const cdf360ImageProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
+    const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
     const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender, device);
     const image360Facade = new Image360Facade(image360Factory);
     const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), 0.1);
@@ -275,7 +265,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }>;
     entities: Image360Entity[];
   }> {
-    const cdf360ImageProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
+    const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
     const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender, device);
     const image360Facade = new Image360Facade(image360Factory);
 

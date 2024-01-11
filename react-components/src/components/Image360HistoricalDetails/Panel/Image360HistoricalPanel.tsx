@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Chip, Tooltip } from '@cognite/cogs.js';
+import { Tooltip, CounterChip, Button } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from '../../i18n/I18n';
@@ -11,15 +11,16 @@ export type Image360HistoricalPanelProps = {
   revisionCount?: number;
   revisionDetailsExpanded: boolean;
   setRevisionDetailsExpanded: (detailed: boolean) => void;
+  fallbackLanguage?: string;
 };
 
 export const Image360HistoricalPanel = ({
   revisionCount,
   revisionDetailsExpanded,
-  setRevisionDetailsExpanded
+  setRevisionDetailsExpanded,
+  fallbackLanguage
 }: Image360HistoricalPanelProps): ReactElement => {
-  const { t } = useTranslation();
-  const count = revisionCount?.toString();
+  const { t } = useTranslation(fallbackLanguage);
 
   const onDetailsClick = (): void => {
     setRevisionDetailsExpanded(!revisionDetailsExpanded);
@@ -27,26 +28,16 @@ export const Image360HistoricalPanel = ({
 
   return (
     <Container isExpanded={revisionDetailsExpanded}>
-      <Tooltip content="360 Image historical details">
+      <Tooltip content={t('IMAGES_360_DETAILS_TOOLTIP', '360 Image historical details')}>
         <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
           {!revisionDetailsExpanded && (
-            <div style={{ width: 'fit-content' }}>
-              <StyledChip
-                icon="History"
-                iconPlacement="right"
-                label={t('IMAGES_360_DETAILS', 'Details')}
-                hideTooltip
-              />
-              <StyledChipCount label={count} hideTooltip />
-            </div>
+            <StyledButton type="tertiary">
+              {t('IMAGES_360_DETAILS', '360 Details')}
+              <StyledChipCount counter={revisionCount} label={' Historic'} />
+            </StyledButton>
           )}
           {revisionDetailsExpanded && (
-            <StyledChip
-              icon="PushRight"
-              iconPlacement="right"
-              label={t('IMAGES_360_DETAILS', 'Details')}
-              hideTooltip
-            />
+            <StyledButton type="tertiary">{t('IMAGES_360_DETAILS', '360 Details')}</StyledButton>
           )}
         </StyledToolBar>
       </Tooltip>
@@ -54,52 +45,37 @@ export const Image360HistoricalPanel = ({
   );
 };
 
+const StyledButton = styled(Button)`
+  && {
+    border-radius: 6px;
+    border: 1px;
+    width: fit-content;
+    padding: 0px;
+    grid-gap: 6px;
+
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+  }
+`;
+
 const StyledToolBar = styled.div<{ isExpanded: boolean }>`
   left: 30px;
   bottom: 30px;
   display: flex;
   flex-direction: row;
   background: #ffffff;
-
-  ${({ isExpanded }) =>
-    isExpanded &&
-    `
-    padding: 0px 0px 0px 25px;
-  `}
 `;
 
-const StyledChip = styled(Chip)`
+const StyledChipCount = styled(CounterChip)`
   && {
-    width: fit-content;
-    min-height: 20px;
-    max-height: 20px;
-    background-color: white;
-    border-radius: 2px;
-    color: rgba(0, 0, 0, 0.9);
-  }
-  .cogs-chip__icon--right {
-    transform: rotate(90deg);
-  }
-`;
-
-const StyledChipCount = styled(Chip)`
-  && {
-    background: #5874ff;
-    border-radius: 2px;
     width: fit-content;
     height: 20px;
     max-height: 20px;
     min-height: 20px;
     min-width: 20px;
-    padding: 4px;
-    color: #ffffff;
-
-    /* Font */
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 16px;
   }
 `;
 
@@ -109,7 +85,7 @@ const Container = styled.div<{ isExpanded: boolean }>`
   width: fit-content;
   height: 28px;
   background-color: white;
-  padding: 4px 4px;
+  padding: 8px 10px;
   align-items: center;
   display: flex;
   border-radius: 6px;

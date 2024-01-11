@@ -15,14 +15,12 @@ export interface Materials {
   quad: THREE.RawShaderMaterial;
   cone: THREE.RawShaderMaterial;
   eccentricCone: THREE.RawShaderMaterial;
-  sphericalSegment: THREE.RawShaderMaterial;
   torusSegment: THREE.RawShaderMaterial;
   generalCylinder: THREE.RawShaderMaterial;
   trapezium: THREE.RawShaderMaterial;
   ellipsoidSegment: THREE.RawShaderMaterial;
   instancedMesh: THREE.RawShaderMaterial;
   triangleMesh: THREE.RawShaderMaterial;
-  simple: THREE.RawShaderMaterial;
   texturedMaterials: { [key: string]: THREE.RawShaderMaterial };
 }
 
@@ -212,21 +210,6 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const sphericalSegmentMaterial = new THREE.RawShaderMaterial({
-    name: 'Primitives (Spherical segment)',
-    clipping: true,
-    clippingPlanes,
-    uniforms: {
-      inverseModelMatrix: {
-        value: new THREE.Matrix4()
-      }
-    },
-    vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
-    fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
-    side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
-  });
-
   const triangleMeshMaterial = new THREE.RawShaderMaterial({
     name: 'Triangle meshes',
     clipping: true,
@@ -253,21 +236,6 @@ export function createMaterials(
     glslVersion: THREE.GLSL3
   });
 
-  const simpleMaterial = new THREE.RawShaderMaterial({
-    name: 'Low detail material',
-    clipping: true,
-    clippingPlanes,
-    uniforms: {
-      inverseModelMatrix: {
-        value: new THREE.Matrix4()
-      }
-    },
-    side: THREE.FrontSide,
-    fragmentShader: sectorShaders.simpleMesh.fragment,
-    vertexShader: sectorShaders.simpleMesh.vertex,
-    glslVersion: THREE.GLSL3
-  });
-
   const allMaterials = {
     box: boxMaterial,
     circle: circleMaterial,
@@ -276,14 +244,12 @@ export function createMaterials(
     quad: quadMaterial,
     cone: coneMaterial,
     eccentricCone: eccentricConeMaterial,
-    sphericalSegment: sphericalSegmentMaterial,
     torusSegment: torusSegmentMaterial,
     generalCylinder: generalCylinderMaterial,
     trapezium: trapeziumMaterial,
     ellipsoidSegment: ellipsoidSegmentMaterial,
     instancedMesh: instancedMeshMaterial,
     triangleMesh: triangleMeshMaterial,
-    simple: simpleMaterial,
     texturedMaterials: {}
   };
 

@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import dat from 'dat.gui';
 import { Cognite3DViewer } from '@cognite/reveal';
-import { GLTFLoader, GLTF, TransformControls } from 'three-stdlib';
+import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 
 export class LoadGltfUi {
   private readonly _gizmos: TransformControls[] = [];

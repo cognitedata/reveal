@@ -13,7 +13,6 @@ import { Image360CollectionContainer } from '../Image360CollectionContainer/Imag
 import { useReveal } from '../RevealContainer/RevealContext';
 import {
   type AddReveal3DModelOptions,
-  type AddImageCollection360Options,
   type TypedReveal3DModel,
   type AddResourceOptions,
   type Reveal3DResourcesProps,
@@ -57,10 +56,11 @@ export const Reveal3DResources = ({
     defaultResourceStyling
   );
 
-  const image360CollectionAddOptions = resources.filter(
-    (resource): resource is AddImageCollection360Options =>
-      (resource as AddImageCollection360Options).siteId !== undefined
-  );
+  const image360CollectionAddOptions = resources.filter((resource) => {
+    if ('siteId' in resource) return resource.siteId !== undefined;
+    else if ('externalId' in resource) return resource.externalId !== undefined;
+    return false;
+  });
 
   const onModelLoaded = (): void => {
     onModelFailOrSucceed();
@@ -118,14 +118,26 @@ export const Reveal3DResources = ({
         );
       })}
       {image360CollectionAddOptions.map((addModelOption) => {
-        return (
-          <Image360CollectionContainer
-            key={`${addModelOption.siteId}`}
-            siteId={addModelOption.siteId}
-            onLoad={onModelLoaded}
-            onLoadError={onModelLoadedError}
-          />
-        );
+        if ('siteId' in addModelOption) {
+          return (
+            <Image360CollectionContainer
+              key={`${addModelOption.siteId}`}
+              collectionId={addModelOption}
+              onLoad={onModelLoaded}
+              onLoadError={onModelLoadedError}
+            />
+          );
+        } else if ('externalId' in addModelOption) {
+          return (
+            <Image360CollectionContainer
+              key={`${addModelOption.externalId}`}
+              collectionId={addModelOption}
+              onLoad={onModelLoaded}
+              onLoadError={onModelLoadedError}
+            />
+          );
+        }
+        return <></>;
       })}
     </>
   );
@@ -157,7 +169,7 @@ async function getTypedModels(
 
   const resourceLoadResults = await Promise.all(modelTypePromises);
   const successfullyLoadedResources = resourceLoadResults.filter(
-    (p): p is TypedReveal3DModel => p.type !== ''
+    (p): p is TypedReveal3DModel => p.type === 'cad' || p.type === 'pointcloud'
   );
 
   return successfullyLoadedResources;

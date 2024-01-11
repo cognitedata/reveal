@@ -221,6 +221,7 @@ export type CameraConfiguration = {
 export type CameraControlsOptions = {
     mouseWheelAction?: 'zoomToTarget' | 'zoomPastCursor' | 'zoomToCursor';
     changeCameraTargetOnClick?: boolean;
+    changeCameraPositionOnDoubleClick?: boolean;
 };
 
 // @public
@@ -338,6 +339,7 @@ export class ClusteredAreaCollection implements AreaCollection {
 // @public (undocumented)
 export class Cognite3DViewer {
     constructor(options: Cognite3DViewerOptions);
+    add360ImageSet(datasource: 'datamodels', dataModelIdentifier: Image360DataModelIdentifier): Promise<Image360Collection>;
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
@@ -455,6 +457,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange>;
     getBoundingBoxByNodeId(nodeId: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
     getBoundingBoxByTreeIndex(treeIndex: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
+    getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<THREE_2.Box3[]>;
     getCameraConfiguration(): CameraConfiguration | undefined;
     getCdfToDefaultModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     getDefaultNodeAppearance(): NodeAppearance;
@@ -481,8 +484,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     setDefaultNodeAppearance(appearance: NodeAppearance): void;
     setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setModelTransformation(matrix: THREE_2.Matrix4): void;
-    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4, boundingBox?: THREE_2.Box3): void;
-    setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean): Promise<number>;
+    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4, boundingBox?: THREE_2.Box3, space?: 'model' | 'world'): void;
+    setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean, space?: 'model' | 'world'): Promise<number>;
     get styledNodeCollections(): {
         nodeCollection: NodeCollection;
         appearance: NodeAppearance;
@@ -506,6 +509,7 @@ export class CognitePointCloudModel {
     getClasses(): Array<{
         name: string;
         code: number | WellKnownAsprsPointClassCodes;
+        color: THREE_2.Color;
     }>;
     getDefaultPointCloudAppearance(): PointCloudAppearance;
     // (undocumented)
@@ -539,6 +543,8 @@ export class CognitePointCloudModel {
     // (undocumented)
     readonly type: SupportedModelTypes;
     unassignStyledObjectCollection(objectCollection: PointCloudObjectCollection): void;
+    set visible(value: boolean);
+    get visible(): boolean;
     get visiblePointCount(): number;
 }
 
@@ -567,7 +573,7 @@ export abstract class CombineNodeCollectionBase extends NodeCollection {
 }
 
 // @public (undocumented)
-export class ComboControls extends EventDispatcher {
+export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement);
     get cameraRawRotation(): Quaternion;
     // (undocumented)
@@ -594,6 +600,16 @@ export class ComboControls extends EventDispatcher {
     // (undocumented)
     update: (deltaTimeS: number, forceUpdate?: boolean) => boolean;
 }
+
+// @public
+export type ComboControlsEventType = {
+    cameraChange: {
+        camera: {
+            position: Vector3;
+            target: Vector3;
+        };
+    };
+};
 
 // @public
 export type ComboControlsOptions = {
@@ -874,6 +890,12 @@ export interface Image360Collection {
 }
 
 // @public
+export type Image360DataModelIdentifier = {
+    space: string;
+    image360CollectionExternalId: string;
+};
+
+// @public
 export type Image360EnteredDelegate = (image360: Image360, revision: Image360Revision) => void;
 
 // @public
@@ -997,18 +1019,13 @@ export { Keyframe_2 as Keyframe }
 // @public (undocumented)
 export type Measurement = {
     readonly measurementId: number;
-    readonly startPoint: THREE_2.Vector3;
-    readonly endPoint: THREE_2.Vector3;
+    readonly startPoint: THREE.Vector3;
+    readonly endPoint: THREE.Vector3;
     readonly distanceInMeters: number;
 };
 
 // @public
-export type MeasurementAddedDelegate = (event: {
-    measurementId: number;
-    startPoint: THREE.Vector3;
-    endPoint: THREE.Vector3;
-    distanceInMeters: number;
-}) => void;
+export type MeasurementAddedDelegate = (measurement: Measurement) => void;
 
 // @public
 export type MeasurementEndedDelegate = () => void;
@@ -1026,6 +1043,7 @@ export type MeasurementStartedDelegate = () => void;
 // @public
 export class MeasurementTool extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, options?: MeasurementOptions);
+    addMeasurement(startPoint: THREE_2.Vector3, endPoint: THREE_2.Vector3): Measurement;
     dispose(): void;
     enterMeasurementMode(): void;
     exitMeasurementMode(): void;
@@ -1593,7 +1611,6 @@ export enum WellKnownAsprsPointClassCodes {
     TransmissionTower = 15,
     // (undocumented)
     Unclassified = 1,
-    UserDefinableOffset = 64,
     // (undocumented)
     Water = 9,
     WireConductor = 14,

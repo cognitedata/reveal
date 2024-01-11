@@ -53,7 +53,7 @@ export function Image360Details({ appLanguage }: Image360DetailsProps): ReactEle
               viewer={viewer}
               image360Entity={enteredEntity}
               onExpand={handleExpand}
-              appLanguage={appLanguage}
+              fallbackLanguage={appLanguage}
             />
           </Image360HistoricalPanel>
           <ExitButtonContainer>
@@ -88,7 +88,7 @@ const Image360HistoricalPanel = styled.div<{ isExpanded: boolean }>`
   height: fit-content;
   width: fit-content;
   max-width: 100%;
-  min-width: fill-available;
+  min-width: 100%;
   transition: transform 0.25s ease-in-out;
   transform: ${({ isExpanded }) => (isExpanded ? 'translateY(0)' : 'translateY(100%)')};
 `;
