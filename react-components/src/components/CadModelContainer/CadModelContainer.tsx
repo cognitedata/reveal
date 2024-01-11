@@ -13,7 +13,7 @@ import {
 } from './useApplyCadModelStyling';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
-import { cloneDeep, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
@@ -46,7 +46,7 @@ export function CadModelContainer({
       return;
     }
 
-    initializingModel.current = cloneDeep(addModelOptions);
+    initializingModel.current = addModelOptions;
     addModel(addModelOptions, transform)
       .then((model) => {
         onLoad?.(model);
