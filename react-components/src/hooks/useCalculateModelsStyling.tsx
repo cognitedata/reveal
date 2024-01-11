@@ -227,9 +227,17 @@ function useJoinStylingGroups(
     }
     return models.map((model) => {
       const mappedStyleGroup =
-        modelsMappedStyleGroups.find((typedModel) => typedModel.model === model)?.styleGroup ?? [];
+        modelsMappedStyleGroups.find(
+          (typedModel) =>
+            typedModel.model.revisionId === model.revisionId &&
+            typedModel.model.modelId === model.modelId
+        )?.styleGroup ?? [];
       const instanceStyleGroups = modelInstanceStyleGroups
-        .filter((typedModel) => typedModel.model === model)
+        .filter(
+          (typedModel) =>
+            typedModel.model.modelId === model.modelId &&
+            typedModel.model.revisionId === model.revisionId
+        )
         .flatMap((typedModel) => typedModel.styleGroup);
       return {
         model,
@@ -244,12 +252,17 @@ function useJoinStylingGroups(
 function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
   return styleGroup.reduce<ModelStyleGroup[]>((accumulatedGroups, currentGroup) => {
     const existingGroupWithModel = accumulatedGroups.find(
-      (group) => group.model === currentGroup.model
+      (group) =>
+        group.model.modelId === currentGroup.model.modelId &&
+        group.model.revisionId === currentGroup.model.revisionId
     );
     if (existingGroupWithModel !== undefined) {
       existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
     } else {
-      accumulatedGroups.push({ ...currentGroup });
+      accumulatedGroups.push({
+        model: currentGroup.model,
+        styleGroup: [...currentGroup.styleGroup]
+      });
     }
     return accumulatedGroups;
   }, []);
