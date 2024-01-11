@@ -1,7 +1,10 @@
-import { GeometryFilter } from '@cognite/reveal';
-import { CadModelOptions } from '../components/Reveal3DResources/types';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type GeometryFilter } from '@cognite/reveal';
+import { type CadModelOptions } from '../components/Reveal3DResources/types';
 
-export function isSameCadModel(model0: CadModelOptions, model1: CadModelOptions) {
+export function isSameCadModel(model0: CadModelOptions, model1: CadModelOptions): boolean {
   return (
     model0.modelId === model1.modelId &&
     model0.revisionId === model1.revisionId &&
@@ -16,7 +19,7 @@ export function isSameCadModel(model0: CadModelOptions, model1: CadModelOptions)
 function isSameGeometryFilter(
   filter0: GeometryFilter | undefined,
   filter1: GeometryFilter | undefined
-) {
+): boolean {
   if (filter0 === filter1) {
     return true;
   }
