@@ -94,7 +94,7 @@ export async function inspectNodes(
 
   for (const nodesChunk of chunkedNodes) {
     const chunkInspectionResults = await fdmClient.inspectInstances({
-      inspectionOperations: { involvedViewsAndContainers: {} },
+      inspectionOperations: { involvedViews: {} },
       items: nodesChunk.map((node) => ({
         instanceType: 'node',
         externalId: node.externalId,
