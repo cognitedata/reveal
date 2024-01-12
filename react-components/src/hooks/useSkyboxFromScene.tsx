@@ -51,7 +51,8 @@ function initializeSkybox(
   texture: THREE.Texture,
   viewer: Cognite3DViewer
 ): [THREE.Object3D, () => void] {
-  const skyboxGeometry = new THREE.SphereGeometry(1000, 20, 20);
+  const skyBoxRadius = 10;
+  const skyboxGeometry = new THREE.SphereGeometry(skyboxRadius, 20, 20);
   const skyboxMaterial = new THREE.MeshBasicMaterial({
     side: THREE.BackSide,
     map: texture
@@ -75,7 +76,9 @@ function initializeSkybox(
   ): void => {
     // Force low near-projection-plane to ensure the sphere geometry is in bounds
     (camera as any).lastNear = camera.near;
+    (camera as any).lastFar = camera.far;
     camera.near = 0.1;
+    camera.far = skyBoxRadius + 0.1;
     camera.updateProjectionMatrix();
   };
 
@@ -85,6 +88,7 @@ function initializeSkybox(
     camera: THREE.PerspectiveCamera
   ): void => {
     camera.near = (camera as any).lastNear;
+    camera.far = (camera as any).lastFar;
     camera.updateProjectionMatrix();
   };
 
