@@ -3,6 +3,7 @@
  */
 import * as THREE from 'three';
 import { CogniteInternalId } from '@cognite/sdk';
+import sortBy from 'lodash/sortBy';
 
 import { callActionWithIndicesAsync } from '../utilities/callActionWithIndicesAsync';
 
@@ -181,7 +182,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     } else {
       this._styledNodeCollections.push({ nodeCollection: nodeCollection, appearance, importance });
     }
-    this._styledNodeCollections.sort((a, b) => a.importance - b.importance);
+    sortBy(this._styledNodeCollections, sc => sc.importance); // Using lodash sortBy as array.sort is not stable
     this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance, importance);
   }
 

@@ -9,6 +9,7 @@ import { PrioritizedArea } from './prioritized/types';
 import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
 
 import debounce from 'lodash/debounce';
+import sortBy from 'lodash/sortBy';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.
@@ -91,7 +92,7 @@ export class NodeAppearanceProvider {
       const styledCollection: StyledNodeCollection = {
         nodeCollection: nodeCollection,
         appearance,
-        importance: importance,
+        importance,
         handleNodeCollectionChangedListener: () => {
           this.handleNodeCollectionChanged(styledCollection);
         }
@@ -103,7 +104,7 @@ export class NodeAppearanceProvider {
     }
 
     // Sort ascending, to set the most important styles last so they override the unimportant
-    this._styledCollections.sort((a, b) => a.importance - b.importance);
+    sortBy(this._styledCollections, sc => sc.importance); // Using lodash sortBy as array.sort is not stable
 
     if (appearance.prioritizedForLoadingHint) {
       this.notifyPrioritizedAreasChanged();
