@@ -64,16 +64,16 @@ function initializeSkybox(
   skyboxMesh.frustumCulled = false;
   (skyboxMesh as any).boundingBox = new THREE.Box3().makeEmpty();
 
-  const onCameraChange = (position: THREE.Vector3): void => {
-    skyboxMesh.position.copy(position);
-    skyboxMesh.updateMatrix();
-  };
-
   const onBeforeRender = (
     _renderer: THREE.WebGLRenderer,
     _scene: THREE.Scene,
     camera: THREE.PerspectiveCamera
   ): void => {
+    skyboxMesh.position.copy(camera.position);
+    skyboxMesh.updateMatrix();
+    skyboxMesh.updateMatrixWorld(true);
+    skyboxMesh.updateWorldMatrix(false, true);
+
     // Force low near-projection-plane to ensure the sphere geometry is in bounds
     (camera as any).lastNear = camera.near;
     (camera as any).lastFar = camera.far;
@@ -94,7 +94,6 @@ function initializeSkybox(
 
   skyboxMesh.onBeforeRender = onBeforeRender;
   skyboxMesh.onAfterRender = onAfterRender;
-  viewer.on('cameraChange', onCameraChange);
 
   return [
     skyboxMesh,
@@ -106,7 +105,6 @@ function initializeSkybox(
       skyboxMesh.material.dispose();
 
       viewer.removeObject3D(skyboxMesh);
-      viewer.off('cameraChange', onCameraChange);
     }
   ];
 }
