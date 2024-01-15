@@ -37,24 +37,24 @@ export class NodeStylingUI {
     this.createDefaultStylingUi(uiFolder.addFolder('Default styling'));
 
     const actions = {
-      removeLastAdded: () => this.removeLastAddedCollection(),
-      removeFirstAdded: () => this.removeFirstAddedCollection(),
+      removeLastAdded: () => this.removeMostImportantCollection(),
+      removeFirstAdded: () => this.removeLeastImportantCollection(),
       resetStyling: () => this.resetStyling()
     };
-    uiFolder.add(actions, 'removeFirstAdded').name('Remove first added');
-    uiFolder.add(actions, 'removeLastAdded').name('Remove last added');
+    uiFolder.add(actions, 'removeFirstAdded').name('Remove least important');
+    uiFolder.add(actions, 'removeLastAdded').name('Remove most important');
     uiFolder.add(actions, 'resetStyling').name('Reset styling');
   }
 
-  removeFirstAddedCollection(): void {
-    const [first] = this._model.styledNodeCollections;
+  removeLeastImportantCollection(): void {
+    const first = this._model.styledNodeCollections.at(0);
     if (first !== undefined) {
       this._model.unassignStyledNodeCollection(first.nodeCollection);
     }
   }
 
-  removeLastAddedCollection(): void {
-    const [, last] = this._model.styledNodeCollections;
+  removeMostImportantCollection(): void {
+    const last = this._model.styledNodeCollections.at(-1);
     if (last !== undefined) {
       this._model.unassignStyledNodeCollection(last.nodeCollection);
     }
@@ -68,28 +68,29 @@ export class NodeStylingUI {
   }
 
   private createByTreeIndexUi(ui: dat.GUI) {
-    const state = { from: 0, count: 1 };
+    const state = { from: 0, count: 1, importance: 0 };
     const createAppearanceCb = this.createNodeAppearanceUi(ui, DefaultNodeAppearance.Highlighted);
     const actions = {
       apply: () => {
         const appearance = createAppearanceCb();
         const nodes = new TreeIndexNodeCollection(new NumericRange(state.from, state.count));
-        this._model.assignStyledNodeCollection(nodes, appearance);
+        this._model.assignStyledNodeCollection(nodes, appearance, state.importance);
       }
     };
     ui.add(state, 'from', 0, this._model.nodeCount, 1).name('First tree index');
     ui.add(state, 'count', 1, this._model.nodeCount, 1).name('Node count');
+    ui.add(state, 'importance', -100, 100, 1).name('Importance');
     ui.add(actions, 'apply').name('Apply');
   }
 
   private createByNodePropertyUi(ui: dat.GUI) {
-    const state = { category: 'PDMS', property: 'Type', value: 'PIPE', showAreas: false };
+    const state = { category: 'PDMS', property: 'Type', value: 'PIPE', showAreas: false, importance: 0 };
     const createAppearanceCb = this.createNodeAppearanceUi(ui, DefaultNodeAppearance.Highlighted);
     const actions = {
       apply: async () => {
         const appearance = createAppearanceCb();
         const nodes = new PropertyFilterNodeCollection(this._client, this._model, { requestPartitions: 10 });
-        this._model.assignStyledNodeCollection(nodes, appearance);
+        this._model.assignStyledNodeCollection(nodes, appearance, state.importance);
         await nodes.executeFilter({ [state.category]: { [state.property]: state.value } });
         if (state.showAreas) {
           for (const area of nodes.getAreas().areas()) {
@@ -104,6 +105,7 @@ export class NodeStylingUI {
     ui.add(state, 'property').name('Property');
     ui.add(state, 'value').name('Value');
     ui.add(state, 'showAreas').name('Show bounds of areas');
+    ui.add(state, 'importance', -100, 100, 1).name('Importance');
     ui.add(actions, 'apply').name('Apply');
   }
 
