@@ -112,6 +112,10 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
         this.customSectorBounds.updateNodeSectors(treeIndex, [newSectorId]);
       }
     };
+    const cdfToWorldTransform = this.getModelTransformation()
+      .clone()
+      .multiply(this.getCdfToDefaultModelTransformation());
+    this.nodeTransformProvider.setCdfToWorldTransform(cdfToWorldTransform);
   }
 
   /**
@@ -215,19 +219,26 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * @param treeIndices       Tree indices of nodes to apply the transformation to.
    * @param transformMatrix   Transformation to apply.
    * @param boundingBox       Optional bounding box for the nodes before any transformation is applied. If given, it is assumed that all the nodes' geometry fit inside.
+   * @param space             Space to apply the transformation in. Defaults to 'world'.
    */
-  setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4, boundingBox?: THREE.Box3): void {
+  setNodeTransform(
+    treeIndices: NumericRange,
+    transformMatrix: THREE.Matrix4,
+    boundingBox?: THREE.Box3,
+    space: 'model' | 'world' = 'world'
+  ): void {
     MetricsLogger.trackCadNodeTransformOverridden(treeIndices.count, transformMatrix);
-    this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
+
+    this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix, space);
 
     // Metadata bounding boxes are in CDF space. Precompute the necessary transformations once.
-    const cdfToModelTransform = this.getModelTransformation()
+    const cdfToWorldTransform = this.getModelTransformation()
       .clone()
       .multiply(this.getCdfToDefaultModelTransformation());
-    const modelToCdfTransform = cdfToModelTransform.clone().invert();
+    const modelToCdfTransform = cdfToWorldTransform.clone().invert();
 
     // Convert the transform to CDF space
-    const transformMatrixCdf = modelToCdfTransform.clone().multiply(transformMatrix).multiply(cdfToModelTransform);
+    const transformMatrixCdf = modelToCdfTransform.clone().multiply(transformMatrix).multiply(cdfToWorldTransform);
 
     // Transform bounding box to CDF space, if given
     let nodeBoundingBox: THREE.Box3 | undefined;
@@ -247,8 +258,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
         // from this node are discovered at a later point, customSectorBounds.updateNodeSectors will be called through the
         // treeIndexToSectorsMap.onChange callback, which is setup in the constructor.
         const sectorIds = this.cadNode.treeIndexToSectorsMap.getSectorIdsForTreeIndex(treeIndex);
-        if (sectorIds.size) {
-          this.customSectorBounds.updateNodeSectors(treeIndex, Array.from(sectorIds));
+        if (sectorIds.length) {
+          this.customSectorBounds.updateNodeSectors(treeIndex, sectorIds);
         }
       }
 
@@ -262,15 +273,17 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * @param treeIndex
    * @param transform
    * @param applyToChildren
+   * @param space
    */
   async setNodeTransformByTreeIndex(
     treeIndex: number,
     transform: THREE.Matrix4,
-    applyToChildren = true
+    applyToChildren = true,
+    space: 'model' | 'world' = 'world'
   ): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     const boundingBox = await this.getBoundingBoxByTreeIndex(treeIndex);
-    await this.setNodeTransform(treeIndices, transform, boundingBox);
+    this.setNodeTransform(treeIndices, transform, boundingBox, space);
     return treeIndices.count;
   }
 
@@ -381,6 +394,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    */
   setModelTransformation(matrix: THREE.Matrix4): void {
     this.cadNode.setModelTransformation(matrix);
+    const cdfToWorldTransform = matrix.clone().multiply(this.getCdfToDefaultModelTransformation());
+    this.nodeTransformProvider.setCdfToWorldTransform(cdfToWorldTransform);
   }
 
   /**
@@ -453,14 +468,25 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * ```
    */
   async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+    const boxList = await this.getBoundingBoxesByNodeIds([nodeId]);
+    const outBox = box ?? new THREE.Box3();
+    outBox.copy(boxList[0]);
+    return outBox;
+  }
+
+  /**
+   * Fetches a bounding box from the CDF by a list of nodeIds.
+   * @param nodeIds
+   * @example
+   * ```js
+   * const box = await model.getBoundingBoxByNodeIds([158239, 192837]);
+   * ```
+   */
+  async getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<THREE.Box3[]> {
     try {
-      box = box ?? new THREE.Box3();
-      const boxesResponse = await this.nodesApiClient.getBoundingBoxesByNodeIds(this.modelId, this.revisionId, [
-        nodeId
-      ]);
-      box.copy(boxesResponse[0]);
-      box.applyMatrix4(this.cadModel.modelMatrix);
-      return box;
+      const boxesResponse = await this.nodesApiClient.getBoundingBoxesByNodeIds(this.modelId, this.revisionId, nodeIds);
+      const boxesWorldSpace = boxesResponse.map(box => box.applyMatrix4(this.cadModel.modelMatrix));
+      return boxesWorldSpace;
     } catch (error) {
       MetricsLogger.trackError(error as Error, {
         moduleName: 'CogniteCadModel',

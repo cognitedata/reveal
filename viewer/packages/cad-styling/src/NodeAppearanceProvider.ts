@@ -163,6 +163,13 @@ export class NodeAppearanceProvider {
     return this._styledCollections.some(x => x.nodeCollection.isLoading);
   }
 
+  dispose(): void {
+    this.scheduleNotifyChanged.cancel();
+    this._events.changed.unsubscribeAll();
+    this._events.loadingStateChanged.unsubscribeAll();
+    this._events.prioritizedAreasChanged.unsubscribeAll();
+  }
+
   private notifyChanged() {
     this._cachedPrioritizedAreas = undefined;
     this._events.changed.fire();

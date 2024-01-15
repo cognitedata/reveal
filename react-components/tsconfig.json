@@ -3,16 +3,16 @@
     "target": "ES6",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "jsx": "react-jsx",
     "module": "ES2020",
     "declaration": true,
     "declarationDir": "dist",
-    "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
+    "isolatedModules": true,
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*", "stories/**/*"]
+  "include": ["src/**/*", "stories/**/*", "tests/**/*", "vite.config.ts", "playwright.config.ts"],
 }

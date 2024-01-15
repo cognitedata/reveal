@@ -117,8 +117,8 @@ function createTightBoundingBox(data: ParsedEptData): THREE.Box3 {
 function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
   const geometry = new THREE.BufferGeometry();
 
-  function addAttributeIfPresent<TypedArray extends ArrayLike<number>>(
-    typedArrayConstructor: { new (data: ArrayBuffer): TypedArray },
+  function addAttributeIfPresent(
+    typedArrayConstructor: { new (data: ArrayBuffer): THREE.TypedArray },
     name: string,
     componentCount: number,
     data?: ArrayBuffer | undefined,
@@ -130,12 +130,12 @@ function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
     }
   }
 
-  addAttributeIfPresent<Float32Array>(Float32Array, 'position', 3, data.position);
-  addAttributeIfPresent<Uint8Array>(Uint8Array, 'indices', 4, data.indices);
-  addAttributeIfPresent<Uint8Array>(Uint8Array, 'color', 4, data.color, true);
-  addAttributeIfPresent<Float32Array>(Float32Array, 'intensity', 1, data.intensity);
-  addAttributeIfPresent<Uint8Array>(Uint8Array, 'classification', 1, data.classification);
-  addAttributeIfPresent<Uint16Array>(Uint16Array, 'objectId', 1, data.objectId);
+  addAttributeIfPresent(Float32Array, 'position', 3, data.position);
+  addAttributeIfPresent(Uint8Array, 'indices', 4, data.indices);
+  addAttributeIfPresent(Uint8Array, 'color', 4, data.color, true);
+  addAttributeIfPresent(Float32Array, 'intensity', 1, data.intensity);
+  addAttributeIfPresent(Uint8Array, 'classification', 1, data.classification);
+  addAttributeIfPresent(Uint16Array, 'objectId', 1, data.objectId);
 
   (geometry.attributes.indices as THREE.BufferAttribute).normalized = true;
 

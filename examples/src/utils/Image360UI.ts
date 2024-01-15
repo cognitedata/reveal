@@ -29,6 +29,7 @@ export class Image360UI {
 
     console.log('Clicked annotation with data: ', intersection.annotation.annotation.data);
     intersection.annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
+    this.viewer.requestRedraw();
     this._lastAnnotation = intersection.annotation;
   }
 
@@ -38,6 +39,7 @@ export class Image360UI {
 
   private params = {
     siteId: getSiteIdFromUrl() ?? '',
+    space: getSpaceFromUrl() ?? '',
     add: () => this.add360ImageSet(),
     remove: () => this.remove360ImageSet(),
     premultipliedRotation: false,
@@ -51,6 +53,10 @@ export class Image360UI {
     x: 0,
     y: 0,
     z: 0
+  };
+
+  private dataSource: { type: 'events' | 'dataModels' } = {
+    type: getSiteIdFromUrl() !== null && getSpaceFromUrl() === null ? 'events' : 'dataModels'
   };
 
   private rotation = {
@@ -76,13 +82,27 @@ export class Image360UI {
   };
 
   constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
-    const { params, imageRevisions, _collections: collections, selectedEntity } = this;
     this.viewer = viewer;
     this.gui = gui;
 
-    const optionsFolder = this.gui.addFolder('Add Options');
+    const optionsFolder = this.gui.addFolder('Add Options (Events)');
+    optionsFolder.hide();
+    const optionsFolderFdm = this.gui.addFolder('Add Options (Data Models)');
+    this.gui
+      .add(this.dataSource, 'type', ['events', 'dataModels'])
+      .name('Data source')
+      .onChange((a: 'events' | 'dataModels') => {
+        if (a === 'events') {
+          optionsFolder.show();
+          optionsFolderFdm.hide();
+        } else {
+          optionsFolder.hide();
+          optionsFolderFdm.show();
+        }
+      });
 
-    optionsFolder.add(params, 'siteId').name('Site ID');
+    // events
+    optionsFolder.add(this.params, 'siteId').name('Site ID');
 
     const translationGui = optionsFolder.addFolder('Translation');
     translationGui.add(this.translation, 'x').name('Translation X');
@@ -95,18 +115,22 @@ export class Image360UI {
     rotationGui.add(this.rotation, 'z').name('Rotation Axis Z');
     rotationGui.add(this.rotation, 'radians', 0, 2 * Math.PI, 0.001);
 
-    optionsFolder.add(params, 'premultipliedRotation').name('Pre-multiplied rotation');
+    optionsFolder.add(this.params, 'premultipliedRotation').name('Pre-multiplied rotation');
 
-    this.gui.add(params, 'add').name('Add image set');
-    this.gui.add(params, 'remove').name('Remove image set');
+    // data models
+    optionsFolderFdm.add(this.params, 'siteId').name('External ID');
+    optionsFolderFdm.add(this.params, 'space').name('Space');
+
+    this.gui.add(this.params, 'add').name('Add image set');
+    this.gui.add(this.params, 'remove').name('Remove image set');
 
     this.gui.add(this.opacity, 'alpha', 0, 1, 0.01).onChange(() => {
       this.entities.forEach(p => (p.image360Visualization.opacity = this.opacity.alpha));
       this.viewer.requestRedraw();
     });
 
-    gui.add(params, 'assetId').name('Asset ID');
-    gui.add(params, 'findAsset').name('Find asset');
+    gui.add(this.params, 'assetId').name('Asset ID');
+    gui.add(this.params, 'findAsset').name('Find asset');
 
     this.gui
       .add(this.iconCulling, 'radius', 0, 10000, 1)
@@ -132,37 +156,37 @@ export class Image360UI {
         }
       });
 
-    this.gui.add(params, 'saveToUrl').name('Save 360 site to URL');
-    this.gui.add(params, 'removeAll').name('Remove all 360 images');
+    this.gui.add(this.params, 'saveToUrl').name('Save 360 site to URL');
+    this.gui.add(this.params, 'removeAll').name('Remove all 360 images');
+
+    gui
+      .add(this.imageRevisions, 'targetDate')
+      .name('Revision date (Unix epoch time):')
+      .onChange(() => {
+        if (this.collections.length === 0) return;
+
+        const date =
+          this.imageRevisions.targetDate.length > 0 ? new Date(Number(this.imageRevisions.targetDate)) : undefined;
+        this.collections.forEach(p => (p.targetRevisionDate = date));
+        if (this.selectedEntity) viewer.enter360Image(this.selectedEntity);
+      });
+
+    gui
+      .add(this.imageRevisions, 'id')
+      .name('Current image revision')
+      .onChange(() => {
+        if (this.selectedEntity) {
+          const revisions = this.selectedEntity.getRevisions();
+          const index = Number(this.imageRevisions.id);
+          if (index >= 0 && index < revisions.length) {
+            viewer.enter360Image(this.selectedEntity, revisions[index]);
+          }
+        }
+      });
 
     //restore image 360
-    if (params.siteId.length > 0) {
+    if (this.params.siteId.length > 0) {
       this.add360ImageSet();
-      gui
-        .add(imageRevisions, 'targetDate')
-        .name('Revision date (Unix epoch time):')
-        .onChange(() => {
-          if (collections.length === 0) return;
-
-          const date = imageRevisions.targetDate.length > 0 ? new Date(Number(imageRevisions.targetDate)) : undefined;
-          collections.forEach(p => (p.targetRevisionDate = date));
-          if (selectedEntity) viewer.enter360Image(selectedEntity);
-        });
-
-      gui
-        .add(imageRevisions, 'id')
-        .name('Current image revision')
-        .onChange(() => {
-          if (selectedEntity) {
-            const revisions = selectedEntity.getRevisions();
-            const index = Number(imageRevisions.id);
-            if (index >= 0 && index < revisions.length) {
-              viewer.enter360Image(selectedEntity, revisions[index]);
-            }
-          }
-        });
-
-      gui.add(params, 'remove').name('Remove all 360 images');
     }
   }
 
@@ -179,9 +203,28 @@ export class Image360UI {
   }
 
   private async add360ImageSet() {
-    const { params, _collections: collections } = this;
+    if (this.params.siteId.length === 0) return;
 
-    if (params.siteId.length === 0) return;
+    const collection = await this.addCollection();
+
+    collection.setIconsVisibility(!this.iconCulling.hideAll);
+    collection.on('image360Entered', (entity, _) => {
+      this.selectedEntity = entity;
+    });
+    this.viewer.on('click', event => this.onAnnotationClicked(event));
+    this._collections.push(collection);
+    this.entities = this.entities.concat(collection.image360Entities);
+
+    this.viewer.requestRedraw();
+  }
+
+  private addCollection(): Promise<Image360Collection> {
+    if (this.dataSource.type === 'dataModels') {
+      return this.viewer.add360ImageSet('datamodels', {
+        image360CollectionExternalId: this.params.siteId,
+        space: this.params.space
+      });
+    }
 
     const rotationMatrix = new THREE.Matrix4().makeRotationAxis(
       new THREE.Vector3(this.rotation.x, this.rotation.y, this.rotation.z),
@@ -193,23 +236,15 @@ export class Image360UI {
       this.translation.z
     );
     const collectionTransform = translationMatrix.multiply(rotationMatrix);
-    const collection = await this.viewer.add360ImageSet(
+    return this.viewer.add360ImageSet(
       'events',
-      { site_id: params.siteId },
+      { site_id: this.params.siteId },
       {
         collectionTransform,
-        preMultipliedRotation: params.premultipliedRotation,
+        preMultipliedRotation: this.params.premultipliedRotation,
         annotationFilter: { status: 'all' }
       }
     );
-
-    collection.setIconsVisibility(!this.iconCulling.hideAll);
-    collection.on('image360Entered', (entity, _) => (this.selectedEntity = entity));
-    this.viewer.on('click', event => this.onAnnotationClicked(event));
-    collections.push(collection);
-    this.entities = this.entities.concat(collection.image360Entities);
-
-    this.viewer.requestRedraw();
   }
 
   private async set360IconCullingRestrictions() {
@@ -220,7 +255,7 @@ export class Image360UI {
   }
 
   private async removeAll360Images() {
-    await this.viewer.remove360Images(...this.entities);
+    this._collections.forEach(p => this.viewer.remove360ImageSet(p));
     this.entities = [];
     this._collections = [];
   }
@@ -241,6 +276,9 @@ export class Image360UI {
 
     const url = new URL(window.location.href);
     url.searchParams.set('siteId', params.siteId);
+    if (params.space.length > 0) {
+      url.searchParams.set('space', params.space);
+    }
     window.history.replaceState(null, document.title, url.toString());
   }
 
@@ -271,5 +309,11 @@ export class Image360UI {
 function getSiteIdFromUrl() {
   const url = new URL(window.location.href);
   const siteId = url.searchParams.get('siteId');
+  return siteId;
+}
+
+function getSpaceFromUrl() {
+  const url = new URL(window.location.href);
+  const siteId = url.searchParams.get('space');
   return siteId;
 }

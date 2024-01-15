@@ -36,6 +36,7 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
   private readonly _hoverSprite?: THREE.Sprite;
   private readonly _content: ContentType;
   private readonly _raycastBoundingSphere = new Sphere();
+  private readonly _defaultColor: Color;
 
   private _adaptiveScale = 1;
   private _visible = true;
@@ -58,6 +59,7 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
     this._hoverSprite = hoverSprite;
     this._content = content;
     this._color = color ?? this._color;
+    this._defaultColor = this._color;
 
     this._setAdaptiveScale = this.setupAdaptiveScaling(position);
 
@@ -127,9 +129,13 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
     }
   }
 
-  setColor(color: Color): void {
-    this._color = color;
-    this._events.parametersChange.fire({ color, visble: this.getVisible() });
+  setColor(color: Color | 'default'): void {
+    if (color === 'default') {
+      this._color = this._defaultColor;
+    } else {
+      this._color = color;
+    }
+    this._events.parametersChange.fire({ color: this._color, visble: this.getVisible() });
   }
 
   getColor(): Color {

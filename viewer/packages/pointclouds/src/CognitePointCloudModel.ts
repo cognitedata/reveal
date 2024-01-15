@@ -169,7 +169,7 @@ export class CognitePointCloudModel {
    * Names will be the custom names provided by the user, or a default one if none have been provided.
    * @returns A sorted list of classification codes and names from the model.
    */
-  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes }> {
+  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes; color: THREE.Color }> {
     return this.pointCloudNode.getClasses();
   }
 
@@ -245,6 +245,24 @@ export class CognitePointCloudModel {
    */
   set pointShape(shape: PointShape) {
     this.pointCloudNode.pointShape = shape;
+  }
+
+  /**
+   * Sets the model visibility.
+   * @example
+   * ```js
+   * model.visible = false
+   * ```
+   */
+  set visible(value: boolean) {
+    this.pointCloudNode.visible = value;
+  }
+
+  /**
+   * Returns the model visibility.
+   */
+  get visible(): boolean {
+    return this.pointCloudNode.visible;
   }
 
   /**

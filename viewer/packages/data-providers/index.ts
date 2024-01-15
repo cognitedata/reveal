@@ -4,7 +4,13 @@
 export { CdfModelDataProvider } from './src/model-data-providers/CdfModelDataProvider';
 export { CdfModelIdentifier } from './src/model-identifiers/CdfModelIdentifier';
 export { CdfModelMetadataProvider } from './src/metadata-providers/CdfModelMetadataProvider';
-export { Cdf360ImageEventProvider } from './src/image-360-data-providers/Cdf360ImageEventProvider';
+export { Cdf360ImageProvider } from './src/image-360-data-providers/Cdf360ImageProvider';
+export { Cdf360EventDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/events/Cdf360EventDescriptorProvider';
+export {
+  Cdf360DataModelsDescriptorProvider,
+  Image360DataModelIdentifier
+} from './src/image-360-data-providers/descriptor-providers/datamodels/Cdf360DataModelsDescriptorProvider';
+export { Cdf360CombinedDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/Cdf360CombinedDescriptorProvider';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/metadata-providers/LocalModelMetadataProvider';
@@ -30,5 +36,6 @@ export {
   Image360FileProvider,
   Image360Face,
   Image360Texture,
-  Image360FileDescriptor
+  Image360FileDescriptor,
+  ImageAssetLinkAnnotationInfo
 } from './src/types';

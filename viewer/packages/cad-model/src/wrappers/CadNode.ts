@@ -37,9 +37,11 @@ export class CadNode extends Object3D {
   private readonly _batchedGeometryMeshGroup: Group;
   private readonly _styledTreeIndexSets: StyledTreeIndexSets;
 
+  private _isDisposed: boolean = false;
+
   private _needsRedraw: boolean = false;
 
-  public readonly treeIndexToSectorsMap = new TreeIndexToSectorsMap();
+  public readonly treeIndexToSectorsMap;
 
   public readonly type = 'CadNode';
 
@@ -48,7 +50,7 @@ export class CadNode extends Object3D {
     this.name = 'Sector model';
     this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
-
+    this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
     const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier);
     const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier);
     const inFront = this._materialManager.getModelInFrontTreeIndices(model.modelIdentifier);
@@ -153,6 +155,10 @@ export class CadNode extends Object3D {
     return this._materialManager.getRenderMode();
   }
 
+  get isDisposed(): boolean {
+    return this._isDisposed;
+  }
+
   public loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
     return this._sectorRepository.loadSector(sector, abortSignal);
   }
@@ -203,6 +209,7 @@ export class CadNode extends Object3D {
   }
 
   public dispose(): void {
+    this.nodeAppearanceProvider.dispose();
     this.nodeAppearanceProvider.off('changed', this._setModelRenderLayers);
     this._sectorRepository.clearCache();
     this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier);
@@ -210,6 +217,7 @@ export class CadNode extends Object3D {
     this._rootSector?.dereferenceAllNodes();
     this._rootSector?.clear();
     this.clear();
+    this._isDisposed = true;
 
     delete this._geometryBatchingManager;
     // @ts-ignore

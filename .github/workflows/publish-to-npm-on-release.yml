@@ -1,21 +1,24 @@
 name: Publish Package to NPM
 on:
+  workflow_dispatch:
   release:
     types:
       - published
+
 jobs:
   deploy-to-npm:
     runs-on: ubuntu-latest
+    environment: CD
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
-          registry-url: 'https://registry.npmjs.org'
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
           always-auth: true
 
       - name: Setup Cognite CICD
@@ -27,7 +30,10 @@ jobs:
 
       - name: Install NPM dependencies
         working-directory: viewer
-        run: yarn install --immutable
+        run: |
+          sudo apt update
+          sudo apt install libxi-dev libgl-dev libglx-dev
+          yarn install --immutable
 
       - name: Build production version
         working-directory: viewer

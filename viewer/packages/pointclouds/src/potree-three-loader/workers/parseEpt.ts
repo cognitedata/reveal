@@ -19,10 +19,13 @@ export async function parseEpt(
   const offset = data.offset;
   const mins = data.mins;
 
-  const dimensions: Record<string, AttributeSchema> = schema.reduce((p, c) => {
-    p[c.name] = c;
-    return p;
-  }, {} as Record<string, AttributeSchema>);
+  const dimensions: Record<string, AttributeSchema> = schema.reduce(
+    (p, c) => {
+      p[c.name] = c;
+      return p;
+    },
+    {} as Record<string, AttributeSchema>
+  );
 
   const dimOffset = (name: string) => {
     let offset = 0;

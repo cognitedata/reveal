@@ -7,7 +7,7 @@ import {
   EventTrigger,
   DisposedDelegate,
   PointerEventData,
-  pixelToNormalizedDeviceCoordinates
+  getNormalizedPixelCoordinates
 } from '@reveal/utilities';
 import * as THREE from 'three';
 import {
@@ -304,14 +304,8 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
 
   private intersectPointsMarkers(mouseCoords: { offsetX: number; offsetY: number }): Overlay3DIcon<ContentType> | null {
     const { _viewer, _raycaster, _temporaryVec } = this;
-    const { clientWidth, clientHeight } = _viewer.domElement;
 
-    const { x, y } = pixelToNormalizedDeviceCoordinates(
-      mouseCoords.offsetX,
-      mouseCoords.offsetY,
-      clientWidth,
-      clientHeight
-    );
+    const { x, y } = getNormalizedPixelCoordinates(_viewer.domElement, mouseCoords.offsetX, mouseCoords.offsetY);
     const camera = _viewer.cameraManager.getCamera();
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     _raycaster.setFromCamera(_temporaryVec.set(x, y), camera);

@@ -61,20 +61,20 @@ function init() {
   document.body.appendChild(renderer.domElement);
 }
 
-function render(time: number) {
+function render(deltaTimeS: number) {
   currentControlsState = controls.getState();
 
-  if (keyboard.isPressed('c')) {
+  if (keyboard.isPressed('KeyC')) {
     controls.setState(currentControlsState.position, currentControlsState.target.add(new THREE.Vector3(-0.1, 0, 0)));
   }
-  if (keyboard.isPressed('b')) {
+  if (keyboard.isPressed('KeyB')) {
     controls.setState(currentControlsState.position, currentControlsState.target.add(new THREE.Vector3(0.1, 0, 0)));
   }
-  if (keyboard.isPressed('f')) {
+  if (keyboard.isPressed('KeyF')) {
     controls.setState(currentControlsState.position, currentControlsState.target.copy(new THREE.Vector3(3, 2, 0)));
   }
 
-  controls.update(time);
+  controls.update(deltaTimeS);
   sphere.position.copy(controls.getState().target);
   renderer.render(scene, camera);
 }

@@ -20,6 +20,7 @@ export class MeasurementLabels {
     const element = document.createElement('div');
     element.innerText = label;
     element.className = MeasurementLabels.stylesId;
+    element.style.position = 'absolute';
     return element;
   }
 

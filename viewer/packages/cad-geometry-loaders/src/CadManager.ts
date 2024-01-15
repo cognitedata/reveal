@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, auditTime, buffer } from 'rxjs';
 
 import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
@@ -35,6 +35,8 @@ export class CadManager {
   private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
   private readonly _materialsChangedListener = this.handleMaterialsChanged.bind(this);
 
+  private readonly _sectorBufferTime = 350;
+
   get materialManager(): CadMaterialManager {
     return this._materialManager;
   }
@@ -45,13 +47,7 @@ export class CadManager {
 
   set budget(budget: CadModelBudget) {
     this._cadModelUpdateHandler.budget = budget;
-
-    // This gives cache size of 200 on desktop on default budget
-    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 200 / defaultDesktopCadModelBudget.maximumRenderCost;
-
-    for (const model of this._cadModelMap.values()) {
-      model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
-    }
+    this.updateCacheSizeForAllLoadedModels(budget);
   }
 
   /**
@@ -107,9 +103,18 @@ export class CadManager {
       this.updateTreeIndexToSectorsMap(cadModel, sector);
     };
 
+    const consumeNextSectors = (sectors: ConsumedSector[]) => {
+      for (const sector of sectors) {
+        consumeNextSector(sector);
+      }
+      this._cadModelUpdateHandler.reportNewSectorsLoaded(sectors.length);
+    };
+
+    const consumedSectorsObservable = this._cadModelUpdateHandler.consumedSectorObservable();
+    const flushAt = consumedSectorsObservable.pipe(auditTime(this._sectorBufferTime));
     this._subscription.add(
-      this._cadModelUpdateHandler.consumedSectorObservable().subscribe({
-        next: consumeNextSector,
+      consumedSectorsObservable.pipe(buffer(flushAt)).subscribe({
+        next: consumeNextSectors,
         error: error => {
           MetricsLogger.trackError(error, {
             moduleName: 'CadManager',
@@ -196,6 +201,7 @@ export class CadManager {
     model.addEventListener('update', this._markNeedsRedrawBound);
     this._cadModelMap.set(model.cadModelIdentifier, model);
     this._cadModelUpdateHandler.addModel(model);
+    this.setCacheSizeForModel(model, this.budget);
     return model;
   }
 
@@ -209,6 +215,27 @@ export class CadManager {
 
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._cadModelUpdateHandler.getLoadingStateObserver();
+  }
+
+  /**
+   * Sets the Memory Cache size for all loaded models to the current budget
+   * @param budget The budget to calculate cache size by
+   */
+  private updateCacheSizeForAllLoadedModels(budget: CadModelBudget) {
+    for (const model of this._cadModelMap.values()) {
+      this.setCacheSizeForModel(model, budget);
+    }
+  }
+
+  /**
+   * Sets the Memory Cache size the model to the current budget
+   * @param model The model to update
+   * @param budget The budget to calculate cache size by
+   */
+  private setCacheSizeForModel(model: CadNode, budget: CadModelBudget) {
+    // This gives cache size of 200 on desktop on default budget
+    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 200 / defaultDesktopCadModelBudget.maximumRenderCost;
+    model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
   }
 
   private markNeedsRedraw(): void {

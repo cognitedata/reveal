@@ -19,11 +19,11 @@ const sdk = createSdkByUrlToken();
 
 export const Main: Story = {
   args: {
-    siteId: 'Hibernia_RS2'
+    collectionId: { siteId: 'Hibernia_RS2' }
   },
-  render: ({ siteId }) => (
+  render: ({ collectionId }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-      <Image360CollectionContainer siteId={siteId} />
+      <Image360CollectionContainer collectionId={collectionId} />
     </RevealContainer>
   )
 };

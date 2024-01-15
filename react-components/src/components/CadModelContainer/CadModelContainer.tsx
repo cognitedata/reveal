@@ -1,121 +1,127 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type ReactElement, useEffect, useState } from 'react';
-import {
-  type NodeAppearance,
-  type AddModelOptions,
-  type CogniteCadModel,
-  TreeIndexNodeCollection,
-  NodeIdNodeCollection,
-  DefaultNodeAppearance
-} from '@cognite/reveal';
+import { type ReactElement, useEffect, useState, useRef } from 'react';
+import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
-import { type Matrix4 } from 'three';
-import { useSDK } from '../RevealContainer/SDKProvider';
-import { type CogniteClient } from '@cognite/sdk';
+import { Matrix4 } from 'three';
+import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
+import {
+  type CadModelStyling,
+  useApplyCadModelStyling,
+  modelExists
+} from './useApplyCadModelStyling';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
+import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
+import { isEqual } from 'lodash';
 
-export type NodeStylingGroup = {
-  nodeIds: number[];
-  style?: NodeAppearance;
-};
-
-export type TreeIndexStylingGroup = {
-  treeIndices: number[];
-  style?: NodeAppearance;
-};
-
-export type CadModelStyling = {
-  defaultStyle?: NodeAppearance;
-  groups?: Array<NodeStylingGroup | TreeIndexStylingGroup>;
-};
-
-type CogniteCadModelProps = {
+export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
   styling?: CadModelStyling;
   transform?: Matrix4;
   onLoad?: (model: CogniteCadModel) => void;
+  onLoadError?: (options: AddModelOptions, error: any) => void;
 };
 
 export function CadModelContainer({
   addModelOptions,
   transform,
   styling,
-  onLoad
+  onLoad,
+  onLoadError
 }: CogniteCadModelProps): ReactElement {
-  const [model, setModel] = useState<CogniteCadModel>();
+  const cachedViewerRef = useRevealKeepAlive();
   const viewer = useReveal();
-  const sdk = useSDK();
+  const { setRevealResourcesCount } = useReveal3DResourcesCount();
+  const [layersUrlState] = useLayersUrlParams();
+  const initializingModel = useRef<AddModelOptions | undefined>(undefined);
+  const { cadLayers } = layersUrlState;
+
+  const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
 
   const { modelId, revisionId, geometryFilter } = addModelOptions;
 
   useEffect(() => {
-    addModel(modelId, revisionId, transform, onLoad).catch(console.error);
-    return removeModel;
+    if (isEqual(initializingModel.current, addModelOptions)) {
+      return;
+    }
+
+    initializingModel.current = addModelOptions;
+    addModel(addModelOptions, transform)
+      .then((model) => {
+        onLoad?.(model);
+        setRevealResourcesCount(viewer.models.length);
+        applyLayersState(model);
+      })
+      .catch((error) => {
+        const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
+        errorReportFunction(addModelOptions, error);
+      });
   }, [modelId, revisionId, geometryFilter]);
 
   useEffect(() => {
-    if (model === undefined || transform === undefined) return;
+    if (!modelExists(model, viewer) || transform === undefined) return;
+
     model.setModelTransformation(transform);
   }, [transform, model]);
 
-  useEffect(() => {
-    if (model === undefined || styling === undefined) return;
+  useApplyCadModelStyling(model, styling);
 
-    applyStyling(sdk, model, styling).catch(console.error);
-
-    return () => {
-      model.removeAllStyledNodeCollections();
-      model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-    };
-  }, [styling, model]);
+  useEffect(() => removeModel, [model]);
 
   return <></>;
 
   async function addModel(
-    modelId: number,
-    revisionId: number,
-    transform?: Matrix4,
-    onLoad?: (model: CogniteCadModel) => void
+    addModelOptions: AddModelOptions,
+    transform?: Matrix4
   ): Promise<CogniteCadModel> {
-    const cadModel = await viewer.addCadModel({ modelId, revisionId });
+    const cadModel = await getOrAddModel();
+
     if (transform !== undefined) {
       cadModel.setModelTransformation(transform);
     }
     setModel(cadModel);
-    onLoad?.(cadModel);
 
     return cadModel;
+
+    async function getOrAddModel(): Promise<CogniteCadModel> {
+      const viewerModel = viewer.models.find(
+        (model) =>
+          model.modelId === modelId &&
+          model.revisionId === revisionId &&
+          model.getModelTransformation().equals(transform ?? new Matrix4())
+      );
+      if (viewerModel !== undefined) {
+        return await Promise.resolve(viewerModel as CogniteCadModel);
+      }
+      return await viewer.addCadModel(addModelOptions);
+    }
   }
 
   function removeModel(): void {
-    if (model === undefined || !viewer.models.includes(model)) return;
+    if (!modelExists(model, viewer)) return;
+
+    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
+      return;
+
     viewer.removeModel(model);
     setModel(undefined);
   }
+
+  function applyLayersState(model: CogniteCadModel): void {
+    if (cadLayers === undefined) {
+      return;
+    }
+    const index = viewer.models.indexOf(model);
+    const urlLayerState = cadLayers.find(
+      (layer) => layer.revisionId === revisionId && layer.index === index
+    );
+    urlLayerState !== undefined && (model.visible = urlLayerState.applied);
+  }
 }
 
-async function applyStyling(
-  sdk: CogniteClient,
-  model: CogniteCadModel,
-  styling?: CadModelStyling
-): Promise<void> {
-  if (styling === undefined) return;
-
-  if (styling.defaultStyle !== undefined) {
-    model.setDefaultNodeAppearance(styling.defaultStyle);
-  }
-
-  if (styling.groups !== undefined) {
-    for (const group of styling.groups) {
-      if ('treeIndices' in group && group.style !== undefined) {
-        const nodes = new TreeIndexNodeCollection(group.treeIndices);
-        model.assignStyledNodeCollection(nodes, group.style);
-      } else if ('nodeIds' in group && group.style !== undefined) {
-        const nodes = new NodeIdNodeCollection(sdk, model);
-        await nodes.executeFilter(group.nodeIds);
-        model.assignStyledNodeCollection(nodes, group.style);
-      }
-    }
-  }
+function defaultLoadErrorHandler(addOptions: AddModelOptions, error: any): void {
+  console.warn(
+    `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
+  );
 }
