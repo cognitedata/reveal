@@ -30,8 +30,6 @@ export class SplatSortingWorkerData
 	public camera_position : THREE.Vector3;
 	public iOrientation : THREE.Matrix3;
 	
-	public data : Float32Array;
-	
 	constructor(splatBuffers : SplatBuffers, camera_position : THREE.Vector3, iOrientation : THREE.Matrix3) {
         
 		this.numInstances = splatBuffers.numInstances;
@@ -51,8 +49,44 @@ export class SplatSortingWorkerData
 		this.camera_position = camera_position;
 		this.iOrientation = iOrientation;
 		
-		this.data = new Float32Array(100000).fill(1.);
+		this.LinearizeData();
     }
+	
+	private LinearizeData()
+	{
+		const SH_C0 = 0.28209479177387814;
+		for (let i:number = 0; i < this.numInstances; i++)
+		{	
+			this.colorattribute_tmp[3*i+0] = 0.5 + SH_C0 * this.colorattribute_tmp[3 * i + 0];
+			this.colorattribute_tmp[3*i+1] = 0.5 + SH_C0 * this.colorattribute_tmp[3 * i + 1];
+			this.colorattribute_tmp[3*i+2] = 0.5 + SH_C0 * this.colorattribute_tmp[3 * i + 2];
+				
+			this.scaleattribute_tmp[3*i+0] = Math.exp(this.scaleattribute_tmp[3 * i + 0]);
+			this.scaleattribute_tmp[3*i+1] = Math.exp(this.scaleattribute_tmp[3 * i + 1]);
+			this.scaleattribute_tmp[3*i+2] = Math.exp(this.scaleattribute_tmp[3 * i + 2]);
+			
+			let qx = this.rotationattribute_tmp[4 * i + 1]; // NOTE ORDER!
+			let qy = this.rotationattribute_tmp[4 * i + 2]; // NOTE ORDER!
+			let qz = this.rotationattribute_tmp[4 * i + 3]; // NOTE ORDER!
+			let qw = this.rotationattribute_tmp[4 * i + 0]; // NOTE ORDER!
+			const norm = Math.sqrt(qx*qx + qy*qy + qz*qz + qw*qw);
+			qx = qx/norm;
+			qy = qy/norm;
+			qz = qz/norm;
+			qw = qw/norm;
+			
+			this.rotationattribute_tmp[4*i+0] = qx;
+			this.rotationattribute_tmp[4*i+1] = qy;
+			this.rotationattribute_tmp[4*i+2] = qz;
+			this.rotationattribute_tmp[4*i+3] = qw;
+			
+			this.positionattribute_tmp[3*i+0] = this.positionattribute_tmp[3 * i + 0];
+			this.positionattribute_tmp[3*i+1] = this.positionattribute_tmp[3 * i + 1];
+			this.positionattribute_tmp[3*i+2] = this.positionattribute_tmp[3 * i + 2];
+			
+			this.opacityattribute_tmp[i] = 1. / (1. + Math.exp(-this.opacityattribute_tmp[i]));
+		}
+	}
 }
 
 export class SplatBuffers {
@@ -163,12 +197,12 @@ export class LoadSplatUi {
 
   private createGui(ui: dat.GUI): void {
     const actions = {
-      loadSplat: () => this.loadSplat(this._params),
-	  sortSplat: () => this.sortSplats(),
+      loadSplat: () => this.loadSplat(this._params)//,
+	  //sortSplat: () => this.sortSplats(),
     };
     ui.add(this._params, 'url').name('URL');
     ui.add(actions, 'loadSplat').name('Load Splat');
-	ui.add(actions, 'sortSplat').name('Sort splats');
+	//ui.add(actions, 'sortSplat').name('Sort splats');
 	ui.add(this._params, 'x',-3.14159265, 3.14159265).name('X').step(0.01);
 	ui.add(this._params, 'y',-3.14159265, 3.14159265).name('Y').step(0.01);
 	ui.add(this._params, 'z',-3.14159265, 3.14159265).name('Z').step(0.01);
@@ -187,14 +221,14 @@ export class LoadSplatUi {
 	const orientationMatrix:THREE.Matrix4 = new THREE.Matrix4();
 	orientationMatrix.makeRotationFromEuler(new THREE.Euler( params.x, params.y, params.z, 'XYZ' ));
     
-	const url:string = '/point_cloud.ply';
+	const url:string = params.url;// '/point_cloud.ply';
     loader.load(
       url,
       plygeometry => this.addSplatToViewer(plygeometry, orientationMatrix),
       event => console.log(`Loading Splat: ${event.loaded}/${event.total}`)
     );
   }
-  
+
   private sortSplats()
   {
 	  if(this.splatBuffers)
@@ -368,7 +402,7 @@ export class LoadSplatUi {
 
 	let shaderMaterial = new THREE.ShaderMaterial(
 	{	
-			side : THREE.DoubleSide, // required since vertices somethimes flip, atm
+			side : THREE.DoubleSide, // required since vertices sometimes flip, atm
 			uniforms: this.uniforms,
 			vertexShader : vertexShaderString,
 			fragmentShader : fragmentShaderString,
@@ -478,7 +512,6 @@ export class LoadSplatUi {
 	
 	splatSortingWorker.onmessage = (event: MessageEvent) => {
 		const receivedWorkerBuffers : SplatSortingWorkerData = event.data;
-		//console.log('Received result from worker:', receivedWorkerBuffers.data);
 
 		if(this.splat != null && this.splatBuffers != null)
 		{
@@ -504,9 +537,7 @@ export class LoadSplatUi {
 			splatSortingWorker.postMessage(
 				workerBuffers,
 				{ 
-					transfer : [
-						workerBuffers.data.buffer,
-						
+					transfer : [						
 						workerBuffers.colorattribute.buffer,
 						workerBuffers.scaleattribute.buffer,
 						workerBuffers.rotationattribute.buffer,
@@ -528,9 +559,7 @@ export class LoadSplatUi {
 	splatSortingWorker.postMessage(
 		workerBuffers,
 		{ 
-			transfer : [
-				workerBuffers.data.buffer,
-				
+			transfer : [				
 				workerBuffers.colorattribute.buffer,
 				workerBuffers.scaleattribute.buffer,
 				workerBuffers.rotationattribute.buffer,
