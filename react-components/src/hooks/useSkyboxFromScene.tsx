@@ -51,7 +51,8 @@ function initializeSkybox(
   texture: THREE.Texture,
   viewer: Cognite3DViewer
 ): [THREE.Object3D, () => void] {
-  const skyboxGeometry = new THREE.SphereGeometry(1000, 20, 20);
+  const skyboxRadius = 10;
+  const skyboxGeometry = new THREE.SphereGeometry(skyboxRadius, 20, 20);
   const skyboxMaterial = new THREE.MeshBasicMaterial({
     side: THREE.BackSide,
     map: texture
@@ -63,19 +64,21 @@ function initializeSkybox(
   skyboxMesh.frustumCulled = false;
   (skyboxMesh as any).boundingBox = new THREE.Box3().makeEmpty();
 
-  const onCameraChange = (position: THREE.Vector3): void => {
-    skyboxMesh.position.copy(position);
-    skyboxMesh.updateMatrix();
-  };
-
   const onBeforeRender = (
     _renderer: THREE.WebGLRenderer,
     _scene: THREE.Scene,
     camera: THREE.PerspectiveCamera
   ): void => {
+    skyboxMesh.position.copy(camera.position);
+    skyboxMesh.updateMatrix();
+    skyboxMesh.updateMatrixWorld(true);
+    skyboxMesh.updateWorldMatrix(false, true);
+
     // Force low near-projection-plane to ensure the sphere geometry is in bounds
     (camera as any).lastNear = camera.near;
+    (camera as any).lastFar = camera.far;
     camera.near = 0.1;
+    camera.far = skyboxRadius + 0.1;
     camera.updateProjectionMatrix();
   };
 
@@ -85,12 +88,12 @@ function initializeSkybox(
     camera: THREE.PerspectiveCamera
   ): void => {
     camera.near = (camera as any).lastNear;
+    camera.far = (camera as any).lastFar;
     camera.updateProjectionMatrix();
   };
 
   skyboxMesh.onBeforeRender = onBeforeRender;
   skyboxMesh.onAfterRender = onAfterRender;
-  viewer.on('cameraChange', onCameraChange);
 
   return [
     skyboxMesh,
@@ -102,7 +105,6 @@ function initializeSkybox(
       skyboxMesh.material.dispose();
 
       viewer.removeObject3D(skyboxMesh);
-      viewer.off('cameraChange', onCameraChange);
     }
   ];
 }
