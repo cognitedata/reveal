@@ -70,7 +70,9 @@ describe(CogniteCadModel.name, () => {
     const collection = new TreeIndexNodeCollection();
     model.assignStyledNodeCollection(collection, originalAppearance);
     model.assignStyledNodeCollection(collection, updatedAppearance);
-    expect(model.styledNodeCollections).toEqual([{ nodeCollection: collection, appearance: updatedAppearance }]);
+    expect(model.styledNodeCollections).toEqual([
+      { nodeCollection: collection, importance: 0, appearance: updatedAppearance }
+    ]);
   });
 
   test('removeAllStyledNodeCollections removes all styled node collections', () => {
