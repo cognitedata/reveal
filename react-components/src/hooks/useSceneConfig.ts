@@ -151,19 +151,17 @@ function getSceneModels(sceneResponse: SceneResponse): CadOrPointCloudModel[] {
 
 function getImageCollections(sceneResponse: SceneResponse): Image360Collection[] {
   const imageCollections: Image360Collection[] = [];
-  if (sceneResponse.items.sceneModels.length > 0) {
+  if (sceneResponse.items.image360CollectionsEdges.length > 0) {
     const sceneModels = sceneResponse.items.image360CollectionsEdges;
     sceneModels.forEach((sceneModel) => {
       const imageCollectionProperties = extractProperties(
         sceneModel.properties
       ) as Scene360ImageCollectionsProperties;
-      if (!isNaN(Number(sceneModel.endNode.externalId))) {
-        const collection: Image360Collection = {
-          ...imageCollectionProperties
-        };
+      const collection: Image360Collection = {
+        ...imageCollectionProperties
+      };
 
-        imageCollections.push(collection);
-      }
+      imageCollections.push(collection);
     });
   }
   return imageCollections;
