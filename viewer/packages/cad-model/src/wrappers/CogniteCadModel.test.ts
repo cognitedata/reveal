@@ -87,6 +87,25 @@ describe(CogniteCadModel.name, () => {
     expect(model.styledNodeCollections).toBeEmpty();
   });
 
+  test('styled node collections are kept in order of importance', () => {
+    const collection1 = new TreeIndexNodeCollection();
+    const collection2 = new TreeIndexNodeCollection();
+    const collection3 = new TreeIndexNodeCollection();
+    const collection4 = new TreeIndexNodeCollection();
+
+    model.assignStyledNodeCollection(collection1, DefaultNodeAppearance.InFront, 0);
+    model.assignStyledNodeCollection(collection2, DefaultNodeAppearance.Ghosted, 3);
+    model.assignStyledNodeCollection(collection3, DefaultNodeAppearance.Hidden);
+    model.assignStyledNodeCollection(collection4, DefaultNodeAppearance.Default, 0);
+
+    expect(model.styledNodeCollections).toEqual([
+      { nodeCollection: collection1, importance: 0, appearance: DefaultNodeAppearance.InFront },
+      { nodeCollection: collection3, importance: 0, appearance: DefaultNodeAppearance.Hidden },
+      { nodeCollection: collection4, importance: 0, appearance: DefaultNodeAppearance.Default },
+      { nodeCollection: collection2, importance: 3, appearance: DefaultNodeAppearance.Ghosted }
+    ]);
+  });
+
   test('getBoundingBoxByTreeIndex() modifies out-parameter', async () => {
     const bbox = new THREE.Box3();
     const result = await model.getBoundingBoxByTreeIndex(1, bbox);
