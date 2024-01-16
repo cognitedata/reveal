@@ -100,9 +100,9 @@ describe(CogniteCadModel.name, () => {
 
     expect(model.styledNodeCollections).toEqual([
       { nodeCollection: collection1, importance: 0, appearance: DefaultNodeAppearance.InFront },
-      { nodeCollection: collection2, importance: 0, appearance: DefaultNodeAppearance.Hidden },
-      { nodeCollection: collection3, importance: 0, appearance: DefaultNodeAppearance.Default },
-      { nodeCollection: collection4, importance: 3, appearance: DefaultNodeAppearance.Ghosted }
+      { nodeCollection: collection3, importance: 0, appearance: DefaultNodeAppearance.Hidden },
+      { nodeCollection: collection4, importance: 0, appearance: DefaultNodeAppearance.Default },
+      { nodeCollection: collection2, importance: 3, appearance: DefaultNodeAppearance.Ghosted }
     ]);
   });
 
