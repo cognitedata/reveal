@@ -85,7 +85,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   private readonly cadModel: CadModelMetadata;
   private readonly nodesApiClient: NodesApiClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
-  private readonly _styledNodeCollections: {
+  private _styledNodeCollections: {
     nodeCollection: NodeCollection;
     appearance: NodeAppearance;
     importance: number;
@@ -182,7 +182,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     } else {
       this._styledNodeCollections.push({ nodeCollection: nodeCollection, appearance, importance });
     }
-    sortBy(this._styledNodeCollections, sc => sc.importance); // Using lodash sortBy as array.sort is not stable
+    this._styledNodeCollections = sortBy(this._styledNodeCollections, sc => sc.importance); // Using lodash sortBy as array.sort is not stable
     this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance, importance);
   }
 

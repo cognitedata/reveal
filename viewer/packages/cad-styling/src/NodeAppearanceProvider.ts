@@ -26,7 +26,7 @@ type StyledNodeCollection = {
 };
 
 export class NodeAppearanceProvider {
-  private readonly _styledCollections = new Array<StyledNodeCollection>();
+  private _styledCollections = new Array<StyledNodeCollection>();
   private _lastFiredLoadingState?: boolean;
   private _cachedPrioritizedAreas?: PrioritizedArea[] = undefined;
 
@@ -104,7 +104,7 @@ export class NodeAppearanceProvider {
     }
 
     // Sort ascending, to set the most important styles last so they override the unimportant
-    sortBy(this._styledCollections, sc => sc.importance); // Using lodash sortBy as array.sort is not stable
+    this._styledCollections = sortBy(this._styledCollections, sc => sc.importance); // Using lodash sortBy as array.sort is not stable
 
     if (appearance.prioritizedForLoadingHint) {
       this.notifyPrioritizedAreasChanged();
