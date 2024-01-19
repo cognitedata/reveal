@@ -120,7 +120,7 @@
     "jest-extended": "4.0.2",
     "jest-image-snapshot": "6.4.0",
     "jest-puppeteer": "9.0.2",
-    "jsdom": "23.1.0",
+    "jsdom": "23.2.0",
     "moq.ts": "10.0.8",
     "nock": "13.4.0",
     "prettier": "3.1.1",
