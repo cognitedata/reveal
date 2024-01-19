@@ -22,6 +22,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@asamuzakjp/dom-selector@npm:^2.0.1":
+  version: 2.0.2
+  resolution: "@asamuzakjp/dom-selector@npm:2.0.2"
+  dependencies:
+    bidi-js: "npm:^1.0.3"
+    css-tree: "npm:^2.3.1"
+    is-potential-custom-element-name: "npm:^1.0.1"
+  checksum: 04b32a68aa6de5d2b945c7cdf1a6a4e765ae3ac957dea12e86c1e2725a2889226125f04e983962b6d49a508c7a103144648ae45514c5dd56670dfaed6d07b2c3
+  languageName: node
+  linkType: hard
+
 "@azure/msal-browser@npm:2.38.3":
   version: 2.38.3
   resolution: "@azure/msal-browser@npm:2.38.3"
@@ -589,7 +600,7 @@ __metadata:
     jest-extended: "npm:4.0.2"
     jest-image-snapshot: "npm:6.4.0"
     jest-puppeteer: "npm:9.0.2"
-    jsdom: "npm:23.1.0"
+    jsdom: "npm:23.2.0"
     lodash: "npm:4.17.21"
     loglevel: "npm:1.8.1"
     mixpanel-browser: "npm:2.48.1"
@@ -3047,6 +3058,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bidi-js@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "bidi-js@npm:1.0.3"
+  dependencies:
+    require-from-string: "npm:^2.0.2"
+  checksum: c4341c7a98797efe3d186cd99d6f97e9030a4f959794ca200ef2ec0a678483a916335bba6c2c0608a21d04a221288a31c9fd0faa0cd9b3903b93594b42466a6a
+  languageName: node
+  linkType: hard
+
 "big.js@npm:^5.2.2":
   version: 5.2.2
   resolution: "big.js@npm:5.2.2"
@@ -3842,6 +3862,16 @@ __metadata:
     domutils: "npm:^2.6.0"
     nth-check: "npm:^2.0.0"
   checksum: 53743b2d08a502939377fc93c69060018cb5716a0ea32600597a34ec92d0346464df93c56eccafec5d3ee0f464b445c4844c9e59a9d69287c2cf85948c689c93
+  languageName: node
+  linkType: hard
+
+"css-tree@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "css-tree@npm:2.3.1"
+  dependencies:
+    mdn-data: "npm:2.0.30"
+    source-map-js: "npm:^1.0.1"
+  checksum: e5e39b82eb4767c664fa5c2cd9968c8c7e6b7fd2c0079b52680a28466d851e2826d5e64699c449d933c0e8ca0554beca43c41a9fcb09fb6a46139d462dbdf0df
   languageName: node
   linkType: hard
 
@@ -7283,10 +7313,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdom@npm:23.1.0":
-  version: 23.1.0
-  resolution: "jsdom@npm:23.1.0"
+"jsdom@npm:23.2.0":
+  version: 23.2.0
+  resolution: "jsdom@npm:23.2.0"
   dependencies:
+    "@asamuzakjp/dom-selector": "npm:^2.0.1"
     cssstyle: "npm:^4.0.1"
     data-urls: "npm:^5.0.0"
     decimal.js: "npm:^10.4.3"
@@ -7295,7 +7326,6 @@ __metadata:
     http-proxy-agent: "npm:^7.0.0"
     https-proxy-agent: "npm:^7.0.2"
     is-potential-custom-element-name: "npm:^1.0.1"
-    nwsapi: "npm:^2.2.7"
     parse5: "npm:^7.1.2"
     rrweb-cssom: "npm:^0.6.0"
     saxes: "npm:^6.0.0"
@@ -7313,7 +7343,7 @@ __metadata:
   peerDependenciesMeta:
     canvas:
       optional: true
-  checksum: 98524d36119f9e2c7fcd0a8be6ede3cd1b13b6de6a27bd89aeca698b6ded5e254edd430e9c6d1a8661ae5b51a7189aeb9b01b3e6d7a16583b752187778a4e563
+  checksum: 71ad2e769515a23896881233a30d292e03752a5b01329e668a73cf205f935b55bf0881f345c747c5b4faf6288d5a01d0b0dae7b9f3379fa73d014c5a990ca0a0
   languageName: node
   linkType: hard
 
@@ -7699,6 +7729,13 @@ __metadata:
   dependencies:
     once: "npm:~1.3.0"
   checksum: b7af78c8fee38ac8fbdb16d05b20a157a6e4df5469437c9e2bb08708ceb8d0fd233669460912fce991bcb9fdb870646835e97f54647b2e4ac3068453f8c16754
+  languageName: node
+  linkType: hard
+
+"mdn-data@npm:2.0.30":
+  version: 2.0.30
+  resolution: "mdn-data@npm:2.0.30"
+  checksum: e4944322bf3e0461a2daa2aee7e14e208960a036289531e4ef009e53d32bd41528350c070c4a33be867980443fe4c0523518d99318423cffa7c825fe7b1154e2
   languageName: node
   linkType: hard
 
@@ -8304,13 +8341,6 @@ __metadata:
   version: 2.2.4
   resolution: "nwsapi@npm:2.2.4"
   checksum: ee24b9d4dce1434c6a354ce4fc39b1074684681af4fd3a1f0b4972ccbca0ed379959824baf18f032337251c9ce27418201fa53ecb18feff327247348961e5707
-  languageName: node
-  linkType: hard
-
-"nwsapi@npm:^2.2.7":
-  version: 2.2.7
-  resolution: "nwsapi@npm:2.2.7"
-  checksum: 22c002080f0297121ad138aba5a6509e724774d6701fe2c4777627bd939064ecd9e1b6dc1c2c716bb7ca0b9f16247892ff2f664285202ac7eff6ec9543725320
   languageName: node
   linkType: hard
 
@@ -9827,6 +9857,13 @@ __metadata:
     ip: "npm:^2.0.0"
     smart-buffer: "npm:^4.2.0"
   checksum: 5074f7d6a13b3155fa655191df1c7e7a48ce3234b8ccf99afa2ccb56591c195e75e8bb78486f8e9ea8168e95a29573cbaad55b2b5e195160ae4d2ea6811ba833
+  languageName: node
+  linkType: hard
+
+"source-map-js@npm:^1.0.1":
+  version: 1.0.2
+  resolution: "source-map-js@npm:1.0.2"
+  checksum: 38e2d2dd18d2e331522001fc51b54127ef4a5d473f53b1349c5cca2123562400e0986648b52e9407e348eaaed53bce49248b6e2641e6d793ca57cb2c360d6d51
   languageName: node
   linkType: hard
 
