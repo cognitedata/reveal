@@ -50,7 +50,6 @@ export class DefaultCameraManager implements CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
   private readonly _domElement: HTMLElement;
   private readonly _inputHandler: InputHandler;
-  private readonly _raycaster = new THREE.Raycaster();
 
   private _isDisposed = false;
   private _nearAndFarNeedsUpdate = false;
@@ -64,13 +63,12 @@ export class DefaultCameraManager implements CameraManager {
     y: number,
     pickBoundingBox: boolean
   ) => Promise<CameraManagerCallbackData>;
+
   private _onClick: ((event: PointerEvent) => void) | undefined = undefined;
   private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
   private _onDoubleClick: ((event: PointerEventData) => void) | undefined = undefined;
 
   private static readonly AnimationDuration = 300;
-  private static readonly MinAnimationDuration = 300;
-  private static readonly MaxAnimationDuration = 1250;
   private static readonly MinDistance = 0.8;
   private static readonly MinZoomDistance = 0.4;
   private static readonly MinimalTimeBetweenRaycasts = 120;
@@ -119,13 +117,14 @@ export class DefaultCameraManager implements CameraManager {
     raycastFunction: (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>,
     camera?: THREE.PerspectiveCamera
   ) {
+    console.log('DefaultCameraManager');
     this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
-
     this._domElement = domElement;
     this._inputHandler = inputHandler;
     this._modelRaycastCallback = raycastFunction;
 
     this.setCameraControlsOptions(this._cameraControlsOptions);
+
     this._controls = new ComboControls(this._camera, domElement);
     this.setComboControlsOptions({ minZoomDistance: DefaultCameraManager.MinZoomDistance });
 
@@ -135,10 +134,11 @@ export class DefaultCameraManager implements CameraManager {
       this._nearAndFarNeedsUpdate = true;
     });
 
+    this.isEnabled = true;
     this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
   }
 
-  on(event: CameraManagerEventType, callback: CameraEventDelegate): void {
+  public on(event: CameraManagerEventType, callback: CameraEventDelegate): void {
     switch (event) {
       case 'cameraChange':
         this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
@@ -151,7 +151,7 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  off(event: CameraManagerEventType, callback: CameraEventDelegate): void {
+  public off(event: CameraManagerEventType, callback: CameraEventDelegate): void {
     switch (event) {
       case 'cameraChange':
         this._events.cameraChange.unsubscribe(callback as CameraChangeDelegate);
@@ -164,7 +164,7 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
+  public fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
     const { position, target } = fitCameraToBoundingBox(this._camera, box, radiusFactor);
     this.moveCameraTo(position, target, duration);
   }
@@ -172,7 +172,7 @@ export class DefaultCameraManager implements CameraManager {
   /**
    * Gets current Combo Controls options.
    */
-  getComboControlsOptions(): Readonly<ComboControlsOptions> {
+  public getComboControlsOptions(): Readonly<ComboControlsOptions> {
     return this._controls.options;
   }
 
@@ -180,26 +180,34 @@ export class DefaultCameraManager implements CameraManager {
    * Sets Combo Controls options.
    * Only provided options will be changed, any undefined options will be kept as is.
    */
-  setComboControlsOptions(options: Partial<ComboControlsOptions>): void {
+  public setComboControlsOptions(options: Partial<ComboControlsOptions>): void {
     this._controls.options = options;
   }
 
   /**
    * Sets whether keyboard control of the camera is enabled/disabled.
    */
-  set keyboardNavigationEnabled(enabled: boolean) {
+  public set keyboardNavigationEnabled(enabled: boolean) {
     this.setComboControlsOptions({ enableKeyboardNavigation: enabled });
   }
 
   /**
    * Whether keyboard control of the camera is enabled/disabled.
    */
-  get keyboardNavigationEnabled(): boolean {
+  public get keyboardNavigationEnabled(): boolean {
     return this.getComboControlsOptions().enableKeyboardNavigation;
   }
 
-  getCamera(): THREE.PerspectiveCamera {
+  public getCamera(): THREE.PerspectiveCamera {
     return this._camera;
+  }
+
+  private getCopyOfPosition(): THREE.Vector3 {
+    return this._camera.position.clone();
+  }
+
+  private getCopyOfTarget(): THREE.Vector3 {
+    return this._controls.getCopyOfTarget();
   }
 
   /**
@@ -208,11 +216,11 @@ export class DefaultCameraManager implements CameraManager {
    * empty rotation field.
    * @param state Camera state.
    * **/
-  setCameraState(state: CameraState): void {
+  public setCameraState(state: CameraState): void {
     if (state.rotation && state.target) {
       throw new Error(`Rotation and target can't be set at the same time`);
     }
-    const newPosition = state.position ?? this._camera.position;
+    const newPosition = state.position ?? this.getCopyOfPosition();
     const newRotation = (state.target ? new THREE.Quaternion() : state.rotation) ?? new THREE.Quaternion();
     const newTarget =
       state.target ??
@@ -220,29 +228,37 @@ export class DefaultCameraManager implements CameraManager {
         ? CameraManagerHelper.calculateNewTargetFromRotation(
             this._camera,
             state.rotation,
-            this._controls.getState().target,
+            this.getCopyOfTarget(),
             newPosition
           )
-        : this._controls.getState().target);
+        : this.getCopyOfTarget());
 
-    this._controls.cameraRawRotation.copy(newRotation);
-    this._controls.setState(newPosition, newTarget);
+    if (this._controls.enabled) {
+      this._controls.cameraRawRotation.copy(newRotation);
+    }
+    this.setPositionAndTarget(newPosition, newTarget);
   }
 
-  getCameraState(): Required<CameraState> {
+  public setPositionAndTarget(position: THREE.Vector3, target: THREE.Vector3): void {
+    if (this._controls.enabled) {
+      this._controls.setState(position, target);
+    }
+  }
+
+  public getCameraState(): Required<CameraState> {
     return {
-      position: this._camera.position.clone(),
+      position: this.getCopyOfPosition(),
       rotation: this._camera.quaternion.clone(),
-      target: this._controls.getState().target.clone()
+      target: this.getCopyOfTarget()
     };
   }
 
-  activate(cameraManager?: CameraManager): void {
-    if (this._isEnabled) return;
-
-    this._isEnabled = true;
+  public activate(cameraManager?: CameraManager): void {
+    if (this.isEnabled) {
+      return;
+    }
+    this.isEnabled = true;
     this.setCameraControlsOptions(this._cameraControlsOptions);
-    this._controls.enabled = true;
 
     if (cameraManager) {
       const previousState = cameraManager.getCameraState();
@@ -251,18 +267,27 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  deactivate(): void {
-    if (!this._isEnabled) return;
+  public set isEnabled(value: boolean) {
+    this._isEnabled = value;
+    this._controls.enabled = true;
+  }
 
-    this._isEnabled = false;
-    this._controls.enabled = false;
+  public get isEnabled(): boolean {
+    return this._isEnabled;
+  }
+
+  public deactivate(): void {
+    if (!this.isEnabled) {
+      return;
+    }
+    this.isEnabled = false;
     this.teardownControls(true);
   }
 
   /**
    * Gets current camera controls options.
    */
-  getCameraControlsOptions(): CameraControlsOptions {
+  public getCameraControlsOptions(): CameraControlsOptions {
     return this._cameraControlsOptions;
   }
 
@@ -270,26 +295,28 @@ export class DefaultCameraManager implements CameraManager {
    * Sets camera controls options to customize camera controls modes. See {@link CameraControlsOptions}.
    * @param controlsOptions JSON object with camera controls options.
    */
-  setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
+  public setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
     this._cameraControlsOptions = { ...DefaultCameraManager.DefaultCameraControlsOptions, ...controlsOptions };
 
-    if (this._isEnabled) {
+    if (this.isEnabled) {
       // New EventListeners are added in 'setupControls', so to avoid “doubling” of some behaviours we need to tear down controls first.
       this.teardownControls(false);
       this.setupControls();
     }
   }
 
-  update(deltaTime: number, boundingBox: THREE.Box3): void {
+  public update(deltaTime: number, boundingBox: THREE.Box3): void {
     if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
       this.updateCameraNearAndFar(this._camera, boundingBox);
       this._nearAndFarNeedsUpdate = false;
       this._currentBoundingBox.copy(boundingBox);
     }
-    this._controls.update(deltaTime);
+    if (this._controls.enabled) {
+      this._controls.update(deltaTime);
+    }
   }
 
-  dispose(): void {
+  public dispose(): void {
     this._isDisposed = true;
     this._controls.dispose();
     this.teardownControls();
@@ -297,6 +324,10 @@ export class DefaultCameraManager implements CameraManager {
     this._inputHandler.dispose();
     this._stopEventTrigger.dispose();
   }
+
+  //================================================
+  // INSTANCE METHODS: Move camera
+  //================================================
 
   private moveCameraTo(
     position: THREE.Vector3,
@@ -307,8 +338,8 @@ export class DefaultCameraManager implements CameraManager {
     if (this._isDisposed) {
       return;
     }
-    duration = duration ?? this.calculateDefaultDuration(target.distanceTo(this._camera.position));
-    const startTarget = this.calculateAnimationStartTarget(target);
+    duration = duration ?? calculateDefaultDuration(target.distanceTo(this.getCopyOfPosition()));
+    const startTarget = calculateAnimationStartTarget(this._camera, target);
     const cameraPosition = this._camera.position;
     const from = {
       x: cameraPosition.x,
@@ -342,10 +373,10 @@ export class DefaultCameraManager implements CameraManager {
         if (!this._camera) {
           return;
         }
-        this._controls.setState(tempPosition, tempTarget);
+        this.setPositionAndTarget(tempPosition, tempTarget);
       })
       .onStop(() => {
-        this._controls.setState(tempPosition, tempTarget);
+        this.setPositionAndTarget(tempPosition, tempTarget);
       })
       .onComplete(() => {
         if (this._isDisposed) {
@@ -363,12 +394,12 @@ export class DefaultCameraManager implements CameraManager {
       return;
     }
     if (duration === 0) {
-      this._controls.setState(this._controls.getState().position, target);
+      this.setPositionAndTarget(this._camera.position, target);
       return;
     }
-    duration = duration ?? this.calculateDefaultDuration(target.distanceTo(this._camera.position));
+    duration = duration ?? calculateDefaultDuration(target.distanceTo(this._camera.position));
 
-    const startTarget = this.calculateAnimationStartTarget(target);
+    const startTarget = calculateAnimationStartTarget(this._camera, target);
     const from = {
       targetX: startTarget.x,
       targetY: startTarget.y,
@@ -387,7 +418,7 @@ export class DefaultCameraManager implements CameraManager {
     tween
       .onStart(() => {
         this.setComboControlsOptions({ lookAtViewTarget: true });
-        this._controls.setState(this._camera.position, target);
+        this.setPositionAndTarget(this._camera.position, target);
       })
       .onUpdate(() => {
         if (this._isDisposed) {
@@ -405,7 +436,7 @@ export class DefaultCameraManager implements CameraManager {
       })
       .onStop(() => {
         this.setComboControlsOptions({ lookAtViewTarget: false });
-        this._controls.setState(this._camera.position, tempTarget);
+        this.setPositionAndTarget(this._camera.position, tempTarget);
       })
       .onComplete(() => {
         if (this._isDisposed) {
@@ -444,14 +475,6 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  private calculateAnimationStartTarget(newTarget: THREE.Vector3): THREE.Vector3 {
-    this._raycaster.setFromCamera(new THREE.Vector2(), this._camera);
-    const distanceToTarget = newTarget.distanceTo(this._camera.position);
-    const scaledDirection = this._raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
-
-    return this._raycaster.ray.origin.clone().add(scaledDirection);
-  }
-
   private createTweenAnimation(
     from: any,
     to: any,
@@ -482,25 +505,23 @@ export class DefaultCameraManager implements CameraManager {
     return { tween, stopTween };
   }
 
-  /**
-   * Calculates new target when raycaster doesn't have any intersections with the model.
-   * @param cursorPosition Cursor position for desired calculations.
-   * @param cursorPosition.x
-   * @param cursorPosition.y
-   */
-  private calculateNewTargetWithoutModel(cursorPosition: THREE.Vector2, modelsBoundingBox: THREE.Box3): THREE.Vector3 {
-    const modelSize = modelsBoundingBox.min.distanceTo(modelsBoundingBox.max);
+  //================================================
+  // INSTANCE METHODS: Calculations
+  //================================================
 
+  private calculateTargetByBoundingBox(cursorPosition: THREE.Vector2, boundingBox: THREE.Box3): THREE.Vector3 {
+    const modelSize = boundingBox.min.distanceTo(boundingBox.max);
     const lastScrollTargetDistance = this._controls.getScrollTarget().distanceTo(this._camera.position);
 
     const newTargetDistance =
       lastScrollTargetDistance <= this.getComboControlsOptions().minDistance
-        ? Math.min(this._camera.position.distanceTo(modelsBoundingBox.getCenter(new THREE.Vector3())), modelSize) / 2
+        ? Math.min(this._camera.position.distanceTo(boundingBox.getCenter(new THREE.Vector3())), modelSize) / 2
         : lastScrollTargetDistance;
 
-    this._raycaster.setFromCamera(cursorPosition, this._camera);
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(cursorPosition, this._camera);
 
-    const farPoint = this._raycaster.ray.direction
+    const farPoint = raycaster.ray.direction
       .clone()
       .normalize()
       .multiplyScalar(newTargetDistance)
@@ -509,19 +530,14 @@ export class DefaultCameraManager implements CameraManager {
     return farPoint;
   }
 
-  /**
-   * Calculates new camera target based on cursor position.
-   * @param event PointerEvent that contains pointer location data.
-   */
-  private async calculateNewTarget(event: PointerEventData): Promise<THREE.Vector3> {
-    const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, event.offsetX, event.offsetY);
-    const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, false);
+  private async calculateTargetByPixelCoordinates(x: number, y: number): Promise<THREE.Vector3> {
+    const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, x, y);
+    const modelRaycastData = await this._modelRaycastCallback(x, y, false);
 
-    const newTarget =
-      modelRaycastData.intersection?.point ??
-      this.calculateNewTargetWithoutModel(pixelCoordinates, modelRaycastData.modelsBoundingBox);
-
-    return newTarget;
+    if (modelRaycastData.intersection?.point) {
+      return modelRaycastData.intersection.point;
+    }
+    return this.calculateTargetByBoundingBox(pixelCoordinates, modelRaycastData.modelsBoundingBox);
   }
 
   /**
@@ -552,7 +568,7 @@ export class DefaultCameraManager implements CameraManager {
         this.setComboControlsOptions({ zoomToCursor: true });
         break;
       case 'zoomToCursor':
-        this._controls.setScrollTarget(this._controls.getState().target);
+        this._controls.setScrollTarget(this.getCopyOfTarget());
         this.setComboControlsOptions({ useScrollTarget: true });
         this.setComboControlsOptions({ zoomToCursor: true });
         break;
@@ -563,10 +579,27 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  /**
-   * Method for setting up camera controls listeners and values inside current controls class.
-   */
+  //================================================
+  // INSTANCE METHODS: Set up
+  //================================================
+
   private setupControls() {
+    this.setupWheel();
+
+    if (this._controls) {
+      this.handleMouseWheelActionChange(this._cameraControlsOptions);
+    }
+    if (this._cameraControlsOptions.changeCameraTargetOnClick && this._onClick === undefined) {
+      this._inputHandler.on('click', this.onClick);
+      this._onClick = this.onClick;
+    }
+    if (this._cameraControlsOptions.changeCameraPositionOnDoubleClick && this._onDoubleClick === undefined) {
+      this._domElement.addEventListener('dblclick', this.onDoubleClick);
+      this._onDoubleClick = this.onDoubleClick;
+    }
+  }
+
+  private setupWheel() {
     let scrollStarted = false;
     let wasLastScrollZoomOut = false;
     let lastWheelEventTime = 0;
@@ -577,21 +610,19 @@ export class DefaultCameraManager implements CameraManager {
       // Added because cameraControls are disabled when doing picking, so
       // preventDefault could be not called on wheel event and produce unwanted scrolling.
       event.preventDefault();
-      const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
+      const pixelPosition = clickOrTouchEventOffset(event, this._domElement);
 
       const currentTime = performance.now();
-      const currentMousePosition = new THREE.Vector2(
-        domElementRelativeOffset.offsetX,
-        domElementRelativeOffset.offsetY
-      );
+      const currentMousePosition = new THREE.Vector2(pixelPosition.offsetX, pixelPosition.offsetY);
 
       const onWheelTimeDelta = currentTime - lastWheelEventTime;
 
       const mouseDelta = currentMousePosition.distanceTo(lastMousePosition);
       const timeSinceLastPickingTookTooLong = onWheelTimeDelta > DefaultCameraManager.MaximumTimeBetweenRaycasts;
 
-      if (onWheelTimeDelta > DefaultCameraManager.MinimalTimeBetweenRaycasts) scrollStarted = false;
-
+      if (onWheelTimeDelta > DefaultCameraManager.MinimalTimeBetweenRaycasts) {
+        scrollStarted = false;
+      }
       if (
         !wasLastScrollZoomOut &&
         timeSinceLastPickingTookTooLong &&
@@ -608,39 +639,24 @@ export class DefaultCameraManager implements CameraManager {
 
       if (wantNewScrollTarget && isZoomToCursor) {
         scrollStarted = true;
-
-        const pointerEventData = {
-          offsetX: domElementRelativeOffset.offsetX,
-          offsetY: domElementRelativeOffset.offsetY,
-          button: event.button
-        };
-
-        const newTarget = await this.calculateNewTarget(pointerEventData);
+        const newTarget = await this.calculateTargetByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
         this._controls.setScrollTarget(newTarget);
       }
     };
-
-    if (this._controls) {
-      this.handleMouseWheelActionChange(this._cameraControlsOptions);
-    }
-    if (this._cameraControlsOptions.changeCameraTargetOnClick && this._onClick === undefined) {
-      this._inputHandler.on('click', this.onClick);
-      this._onClick = this.onClick;
-    }
-    if (this._cameraControlsOptions.changeCameraPositionOnDoubleClick && this._onDoubleClick === undefined) {
-      this._domElement.addEventListener('dblclick', this.onDoubleClick);
-      this._onDoubleClick = this.onDoubleClick;
-    }
     if (this._onWheel === undefined) {
       this._domElement.addEventListener('wheel', onWheel);
       this._onWheel = onWheel;
     }
   }
 
+  //================================================
+  // INSTANCE METHODS: Event Handlers
+  //================================================
+
   private readonly onClick = async (event: PointerEventData) => {
     const keyboardNavigationEnabled = this.keyboardNavigationEnabled;
     this.keyboardNavigationEnabled = false;
-    const newTarget = await this.calculateNewTarget(event);
+    const newTarget = await this.calculateTargetByPixelCoordinates(event.offsetX, event.offsetY);
     this.moveCameraTargetTo(newTarget, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
   };
 
@@ -660,16 +676,27 @@ export class DefaultCameraManager implements CameraManager {
     // If not particular object is picked, set camera position half way to the target
     const newTarget =
       modelRaycastData.intersection?.point ??
-      this.calculateNewTargetWithoutModel(pixelCoordinates, modelRaycastData.modelsBoundingBox);
+      this.calculateTargetByBoundingBox(pixelCoordinates, modelRaycastData.modelsBoundingBox);
 
     const newPosition = new THREE.Vector3().subVectors(newTarget, this._camera.position);
     newPosition.divideScalar(2);
     newPosition.add(this._camera.position);
     this.moveCameraTo(newPosition, newTarget, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
   };
+}
 
-  private calculateDefaultDuration(distanceToCamera: number): number {
-    const duration = distanceToCamera * 125; // 125ms per unit distance
-    return clamp(duration, DefaultCameraManager.MinAnimationDuration, DefaultCameraManager.MaxAnimationDuration);
-  }
+const MIN_ANIMATION_DURATION = 300;
+const MAX_ANIMATION_DURATION = 1250;
+
+function calculateDefaultDuration(distanceToCamera: number): number {
+  const duration = distanceToCamera * 125; // 125ms per unit distance
+  return clamp(duration, MIN_ANIMATION_DURATION, MAX_ANIMATION_DURATION);
+}
+
+function calculateAnimationStartTarget(camera: THREE.PerspectiveCamera, newTarget: THREE.Vector3): THREE.Vector3 {
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(new THREE.Vector2(), camera);
+  const distanceToTarget = newTarget.distanceTo(camera.position);
+  const scaledDirection = raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
+  return raycaster.ray.origin.clone().add(scaledDirection);
 }
