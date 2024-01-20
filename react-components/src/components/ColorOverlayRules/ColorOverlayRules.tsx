@@ -4,20 +4,25 @@
 import { useEffect, type ReactElement } from 'react';
 
 import {
+  type IdEither,
   type AssetMapping3D,
   type AssetMappings3DListFilter,
   type CogniteClient
 } from '@cognite/sdk';
-import { type AddModelOptions } from '@cognite/reveal';
+import { NodeIdNodeCollection, type AddModelOptions, DefaultNodeAppearance, CogniteCadModel } from '@cognite/reveal';
 import { useSDK } from '../RevealContainer/SDKProvider';
+import { useReveal } from '../..';
+
+type Rule = any;
 
 export type ColorOverlayProps = {
   addModelOptions: AddModelOptions;
-  rules: any;
+  rules: Rule[];
 };
 
 export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps): ReactElement {
   const cdfClient = useSDK();
+  const viewer = useReveal();
   console.log(' RULES', rules);
   console.log(' SDK', cdfClient);
 
@@ -25,8 +30,9 @@ export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps)
 
   useEffect(() => {
     const getContextualization = async (): Promise<void> => {
+
       // const models = sdk.models;
-      const contextualizedNodes = await getCdfCadContextualization({
+      const assetMappings = await getCdfCadContextualization({
         sdk: cdfClient,
         modelId,
         revisionId,
@@ -34,7 +40,50 @@ export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps)
         assetId: undefined
       });
 
-      console.log(' contextualizedNodes ', contextualizedNodes);
+      // remove duplicated
+      const uniqueContextualizedAssetIds = [...new Set(assetMappings.map((node) => node.assetId))];
+
+      const contextualizedThreeDNodeIds = assetMappings.map((node) => node.nodeId)
+
+      const contextualizedAssetIds = uniqueContextualizedAssetIds.map((id) => {
+        return { id };
+      }) as unknown as IdEither[];
+      console.log(' ids ', contextualizedAssetIds);
+      const contextualizedAssetNodes = await cdfClient.assets.retrieve(contextualizedAssetIds);
+
+      console.log(' viewer scene', viewer);
+      console.log(' rules ', rules);
+      console.log(' contextualizedNodes ', contextualizedThreeDNodeIds);
+      console.log(' contextualizedAssets ', contextualizedAssetNodes);
+
+      const model = viewer.models[0] as CogniteCadModel;
+      console.log(' model ', model);
+
+      const nodes = new NodeIdNodeCollection(cdfClient, model);
+
+      await nodes.executeFilter(contextualizedThreeDNodeIds);
+      model.assignStyledNodeCollection(nodes, DefaultNodeAppearance.Highlighted);
+
+      rules.forEach((rule) => {
+        const conditions = rule.conditions;
+        const isStringRule = rule.isStringRule as boolean;
+        if (rule.rulerTriggerType === 'metadata') {
+          contextualizedAssetNodes.forEach((asset) => {
+            rule.sourceField.forEach((sourceField: any) => {
+              const metadataFieldValue = asset.metadata?.[sourceField];
+              if (asset.metadata !== null && metadataFieldValue !== null) {
+                conditions.forEach((condition: { valueString: any }) => {
+                  if (isStringRule) {
+                    if (condition.valueString === metadataFieldValue) {
+
+                    }
+                  }
+                });
+              }
+            });
+          });
+        }
+      });
     };
     void getContextualization();
   }, []);

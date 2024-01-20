@@ -10,16 +10,18 @@ import {
   useClickedNodeData,
   useCameraNavigation,
   type AddResourceOptions,
-  type FdmAssetStylingGroup
+  type FdmAssetStylingGroup,
+  CadModelContainer
 } from '../src';
-import { Color } from 'three';
+import { Color, Matrix4 } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
-import { DefaultNodeAppearance } from '@cognite/reveal';
+import { AddModelOptions, DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 import { type AssetMappingStylingGroup } from '../src/components/Reveal3DResources/types';
 import { ColorOverlayRules } from '../src/components/ColorOverlayRules/ColorOverlayRules';
+import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 
 const meta = {
   title: 'Example/ColorOverlay',
@@ -36,8 +38,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 2231774635735416,
-        revisionId: 912809199849811,
+        modelId: 4319392643513894,
+        revisionId: 91463736617758,
         styling: {
           default: {
             color: new Color('#efefef')
@@ -60,83 +62,48 @@ export const Main: Story = {
 };
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
-  const [stylingGroups, setStylingGroups] = useState<
-    Array<FdmAssetStylingGroup | AssetMappingStylingGroup>
-  >([]);
-  const cameraNavigation = useCameraNavigation();
-  const nodeData = useClickedNodeData();
+  const [resourceIsLoaded, setResourceIsLoaded] = useState<boolean>(false);
 
   const modelOptions = {
-    modelId: 1791160622840317,
-    revisionId: 498427137020189
+    modelId: 4319392643513894,
+    revisionId: 91463736617758,
+    
   };
-
-  useEffect(() => {
-    console.log('Clicked node data', nodeData);
-    if (nodeData?.fdmResult !== undefined) {
-      setStylingGroups([
-        {
-          fdmAssetExternalIds: [
-            {
-              externalId: nodeData.fdmResult.fdmNodes[0].externalId,
-              space: nodeData.fdmResult.fdmNodes[0].space
-            }
-          ],
-          style: { cad: DefaultNodeAppearance.Highlighted }
-        }
-      ]);
-
-      void cameraNavigation.fitCameraToInstance(
-        nodeData.fdmResult.fdmNodes[0].externalId,
-        nodeData.fdmResult.fdmNodes[0].space
-      );
-    } else if (nodeData?.assetMappingResult !== undefined) {
-      setStylingGroups([
-        {
-          assetIds: nodeData.assetMappingResult.assetIds,
-          style: { cad: DefaultNodeAppearance.Highlighted }
-        }
-      ]);
-
-      void cameraNavigation.fitCameraToModelNode(
-        nodeData.intersection.model.revisionId,
-        nodeData.assetMappingResult.cadNode.id
-      );
-    } else {
-      setStylingGroups([]);
-    }
-  }, [nodeData]);
+  const transform = new Matrix4().makeTranslation(0, 10, 0);
+  const onLoaded = (): void => {
+    setResourceIsLoaded(true);
+  };
   const rulesTest = [
     {
-      name: 'Equipment type code',
-      valueSourceField: 'Equipment type code',
+      colorRuleName: 'ABC indication Rule',
+      rulerTriggerType: 'metadata',
+      sourceField: ['ABC indication', 'ABC indic.'],
       isStringRule: true,
       subHierarchyAggregationMethod: 'none',
-      relevantAssetMetadata: ['Equipment Type Code', 'Equipment Type'],
       threeDObjects: 'all',
-      rules: [
+      conditions: [
         {
-          valueString: 'XX',
+          valueString: 'D',
           color: '#FF0000FF'
         },
         {
-          valueString: 'TA',
+          valueString: 'L',
           color: '#00FF00FF'
         },
         {
-          valueString: 'GT',
+          valueString: 'S',
           color: '#0000FFFF'
         },
         {
-          valueString: 'HE',
+          valueString: 'M',
           color: '#00FFFFFF'
         },
         {
-          valueString: 'LC',
+          valueString: 'E',
           color: '#FF00FFFF'
         },
         {
-          valueString: 'AR',
+          valueString: 'F',
           color: '#FFFF00FF'
         }
       ]
@@ -168,21 +135,13 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           color: '#00ff00'
         }
       ]
-    }];
+    }
+  ];
   return (
     <>
-      <RevealResourcesFitCameraOnLoad
-        resources={resources}
-        defaultResourceStyling={{
-          cad: {
-            default: { color: new Color('#efefef') },
-            mapped: { color: new Color('#c5cbff') }
-          }
-        }}
-        instanceStyling={stylingGroups}
-      />
-      <ColorOverlayRules addModelOptions={modelOptions} rules={rulesTest} />
-      <RevealToolbar />
+      <RevealResourcesFitCameraOnLoad resources={resources} />
+      <CadModelContainer transform={transform} addModelOptions={modelOptions} onLoad={onLoaded} />
+      {resourceIsLoaded && <ColorOverlayRules addModelOptions={modelOptions} rules={rulesTest} />}
     </>
   );
 };
