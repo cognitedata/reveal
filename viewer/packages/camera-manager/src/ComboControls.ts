@@ -276,7 +276,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   private getDampingFactor(deltaTimeS: number) {
     if (!this._options.enableDamping) {
-      //console.log('!enableDamping ' + this._options.dampingFactor);
       return 1;
     }
     const actualFPS = Math.min(1 / deltaTimeS, TARGET_FPS);
@@ -659,7 +658,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     const panByDimension = (distance: number, dimension: number) => {
       const delta = this.newVector3();
       delta.setFromMatrixColumn(this._camera.matrix, dimension);
-      console.log(delta, distance);
       delta.multiplyScalar(-distance);
       this._targetEnd.add(delta);
     };
@@ -697,23 +695,17 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   private getRadiusAndDeltaTarget(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndDeltaTarget {
     if (this._options.zoomToCursor) {
-      if (this._options.useScrollTarget && deltaDistance < 0) {
-        // Dolly in
+      if (this._options.useScrollTarget) {
         return this.getRadiusAndDeltaTargetUsingScrollTarget(deltaDistance);
       } else {
-        return this.getRadiusAndDeltaTargetUsingLerp(pixelCoordinates, deltaDistance);
+        return this.getRadiusAndDeltaTargetUsingCursor(pixelCoordinates, deltaDistance);
       }
     } else {
-      return this.getRadiusAndDeltaTargetUsingLerp(new Vector2(0, 0), deltaDistance);
+      return this.getRadiusAndDeltaTargetUsingCursor(new Vector2(0, 0), deltaDistance);
     }
   }
 
-  private getRadiusAndDeltaTargetUsingLerp(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndDeltaTarget {
-    const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - getFov(this._camera) / 2));
-    const distFromCameraToCursor = Math.sqrt(
-      distFromCameraToScreenCenter * distFromCameraToScreenCenter + pixelCoordinates.lengthSq()
-    );
-    const ratio = distFromCameraToCursor / distFromCameraToScreenCenter;
+  private getRadiusAndDeltaTargetUsingCursor(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndDeltaTarget {
     const cameraVector = this.getCameraVectorEnd();
     const distanceToTarget = cameraVector.length();
     const isDollyOut = deltaDistance > 0 ? true : false;
@@ -730,10 +722,15 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
         return { deltaTarget: new Vector3(0, 0, 0), radius };
       }
     }
+    const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - getFov(this._camera) / 2));
+    const distFromCameraToCursor = Math.sqrt(
+      distFromCameraToScreenCenter * distFromCameraToScreenCenter + pixelCoordinates.lengthSq()
+    );
+    const ratio = distFromCameraToCursor / distFromCameraToScreenCenter;
     const distanceFromRayOrigin = -deltaDistance * ratio;
     cameraVector.multiplyScalar(deltaDistance);
 
-    const directionToTargetEnd = this.getDirectionTowards(pixelCoordinates, this._targetEnd);
+    const directionToTargetEnd = this.getDirectionTowards(pixelCoordinates, this._camera.position);
     const deltaTarget = cameraVector.addScaledVector(directionToTargetEnd, distanceFromRayOrigin);
     return { deltaTarget, radius };
   }
@@ -788,7 +785,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
       if (radius <= 0) {
         deltaTargetOffsetDistance = 0;
-
         if (distance > this._options.minZoomDistance) {
           radius = this._options.minZoomDistance;
           this._targetEnd.addScaledVector(cameraVector.normalize(), distanceToTarget - this._options.minZoomDistance);
@@ -845,8 +841,8 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
       return false;
     }
 
-    deltaAzimuthAngle *= -ROTATION_SPEED_FACTOR;
-    deltaPolarAngle *= -ROTATION_SPEED_FACTOR;
+    deltaAzimuthAngle *= ROTATION_SPEED_FACTOR;
+    deltaPolarAngle *= ROTATION_SPEED_FACTOR;
 
     this.setFirstPersonMode(true);
 

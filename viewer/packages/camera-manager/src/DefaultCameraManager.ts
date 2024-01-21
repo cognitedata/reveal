@@ -42,36 +42,8 @@ import { getNormalizedPixelCoordinates } from '@reveal/utilities';
  */
 export class DefaultCameraManager implements CameraManager {
   //================================================
-  // INSTANCE FIELDS
+  // CONSTANTS
   //================================================
-
-  private readonly _events = {
-    cameraChange: new EventTrigger<CameraChangeDelegate>()
-  };
-
-  private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
-  private readonly _controls: ComboControls;
-  private readonly _camera: THREE.PerspectiveCamera;
-  private readonly _domElement: HTMLElement;
-  private readonly _inputHandler: InputHandler;
-
-  private _isDisposed = false;
-  private _nearAndFarNeedsUpdate = false;
-
-  // The active/inactive state of this manager. Does not always match up with the controls
-  // as these are temporarily disabled to block onWheel input during `zoomToCursor`-mode
-  private _isEnabled = true;
-
-  private readonly _modelRaycastCallback: (
-    x: number,
-    y: number,
-    pickBoundingBox: boolean
-  ) => Promise<CameraManagerCallbackData>;
-
-  private _onClick: ((event: PointerEvent) => void) | undefined = undefined;
-  private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
-  private _onDoubleClick: ((event: PointerEventData) => void) | undefined = undefined;
-
   private static readonly AnimationDuration = 300;
   private static readonly MinDistance = 0.8;
   private static readonly MinZoomDistance = 0.4;
@@ -84,10 +56,10 @@ export class DefaultCameraManager implements CameraManager {
     changeCameraPositionOnDoubleClick: false
   };
 
-  private _cameraControlsOptions: Required<CameraControlsOptions> = {
-    ...DefaultCameraManager.DefaultCameraControlsOptions
-  };
-  private readonly _currentBoundingBox: THREE.Box3 = new THREE.Box3();
+  //================================================
+  // INSTANCE FIELDS: Public
+  //================================================
+
   /**
    * When false, camera near and far planes will not be updated automatically (defaults to true).
    * This can be useful when you have custom content in the 3D view and need to better
@@ -112,9 +84,42 @@ export class DefaultCameraManager implements CameraManager {
    */
   public automaticControlsSensitivity = true;
 
-  /**
-   * @internal
-   */
+  //================================================
+  // INSTANCE FIELDS: Private
+  //================================================
+
+  private readonly _events = { cameraChange: new EventTrigger<CameraChangeDelegate>() };
+  private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
+  private readonly _controls: ComboControls;
+  private readonly _camera: THREE.PerspectiveCamera;
+  private readonly _domElement: HTMLElement;
+  private readonly _inputHandler: InputHandler;
+
+  private _isDisposed = false;
+  private _nearAndFarNeedsUpdate = false;
+
+  // The active/inactive state of this manager. Does not always match up with the controls
+  // as these are temporarily disabled to block onWheel input during `zoomToCursor`-mode
+  private _isEnabled = true;
+
+  private _cameraControlsOptions: Required<CameraControlsOptions> = {
+    ...DefaultCameraManager.DefaultCameraControlsOptions
+  };
+  private readonly _currentBoundingBox: THREE.Box3 = new THREE.Box3();
+
+  //================================================
+  // INSTANCE FIELDS: Events
+  //================================================
+
+  private _onClick: ((event: PointerEvent) => void) | undefined = undefined;
+  private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
+  private _onDoubleClick: ((event: PointerEventData) => void) | undefined = undefined;
+
+  private readonly _modelRaycastCallback: (
+    x: number,
+    y: number,
+    pickBoundingBox: boolean
+  ) => Promise<CameraManagerCallbackData>;
 
   //================================================
   // CONSTRUCTOR
@@ -499,7 +504,7 @@ export class DefaultCameraManager implements CameraManager {
   // INSTANCE METHODS: Calculations
   //================================================
 
-  private getTargetByBoundingBox(cursorPosition: THREE.Vector2, boundingBox: THREE.Box3): THREE.Vector3 {
+  private getTargetByBoundingBox(pixelX: number, pixelY: number, boundingBox: THREE.Box3): THREE.Vector3 {
     const modelSize = boundingBox.min.distanceTo(boundingBox.max);
     const lastScrollTargetDistance = this._controls.getScrollTarget().distanceTo(this._camera.position);
 
@@ -509,7 +514,8 @@ export class DefaultCameraManager implements CameraManager {
         : lastScrollTargetDistance;
 
     const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(cursorPosition, this._camera);
+    const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, pixelX, pixelY);
+    raycaster.setFromCamera(pixelCoordinates, this._camera);
 
     const farPoint = raycaster.ray.direction
       .clone()
@@ -520,14 +526,13 @@ export class DefaultCameraManager implements CameraManager {
     return farPoint;
   }
 
-  private async getTargetByPixelCoordinates(x: number, y: number): Promise<THREE.Vector3> {
-    const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, x, y);
-    const modelRaycastData = await this._modelRaycastCallback(x, y, false);
+  private async getTargetByPixelCoordinates(pixelX: number, pixelY: number): Promise<THREE.Vector3> {
+    const modelRaycastData = await this._modelRaycastCallback(pixelX, pixelY, false);
 
     if (modelRaycastData.intersection?.point) {
       return modelRaycastData.intersection.point;
     }
-    return this.getTargetByBoundingBox(pixelCoordinates, modelRaycastData.modelsBoundingBox);
+    return this.getTargetByBoundingBox(pixelX, pixelY, modelRaycastData.modelsBoundingBox);
   }
 
   //================================================
@@ -602,17 +607,16 @@ export class DefaultCameraManager implements CameraManager {
       )
         scrollStarted = true;
 
-      const isZoomToCursor = this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor';
-      const wantNewScrollTarget = !scrollStarted && event.deltaY < 0;
-
-      lastMousePosition.copy(currentMousePosition);
       wasLastScrollZoomOut = event.deltaY > 0;
       lastWheelEventTime = currentTime;
 
-      if (wantNewScrollTarget && isZoomToCursor) {
+      lastMousePosition.copy(currentMousePosition);
+
+      const isZoomToCursor = this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor';
+      if (!scrollStarted && /*wasLastScrollZoomOut &&*/ isZoomToCursor) {
         scrollStarted = true;
-        const newTarget = await this.getTargetByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
-        this._controls.setScrollTarget(newTarget);
+        const scrollTarget = await this.getTargetByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
+        this._controls.setScrollTarget(scrollTarget);
       }
     };
     if (this._onWheel === undefined) {
@@ -651,7 +655,6 @@ export class DefaultCameraManager implements CameraManager {
     const keyboardNavigationEnabled = this.keyboardNavigationEnabled;
     this.keyboardNavigationEnabled = false;
 
-    const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, event.offsetX, event.offsetY);
     const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, true);
 
     // If an object is picked, zoom in to the object (the target will be in the middle of the bounding box)
@@ -663,7 +666,7 @@ export class DefaultCameraManager implements CameraManager {
     // If not particular object is picked, set camera position half way to the target
     const newTarget =
       modelRaycastData.intersection?.point ??
-      this.getTargetByBoundingBox(pixelCoordinates, modelRaycastData.modelsBoundingBox);
+      this.getTargetByBoundingBox(event.offsetX, event.offsetY, modelRaycastData.modelsBoundingBox);
 
     const newPosition = new THREE.Vector3().subVectors(newTarget, this._camera.position);
     newPosition.divideScalar(2);
