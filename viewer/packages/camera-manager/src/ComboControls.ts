@@ -222,8 +222,8 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return this.getCameraVector().add(this._target); // CameraPosition = Target + CameraVector
   }
 
-  private getCameraPositionEnd(): Vector3 {
-    return this.getCameraVectorEnd().add(this._targetEnd); // CameraPosition = Target + CameraVector
+  private getRealCameraVector(): Vector3 {
+    return this.newVector3().subVectors(this._camera.position, this._target); // CameraVector = CameraPosition - Target
   }
 
   private getCameraVector(): Vector3 {
@@ -250,9 +250,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private getPanDeltaDistanceForXY() {
-    const cameraVector = this.newVector3();
-    cameraVector.copy(this._camera.position).sub(this._target);
-
+    const cameraVector = this.getRealCameraVector();
     let targetDistance = Math.max(
       cameraVector.length(),
       this._options.panDollyMinDistanceFactor * this._options.minDistance
@@ -309,7 +307,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     this.handleKeyboard(deltaTimeS);
 
-    const deltaCameraOffset = sphericalSubstract(this._cameraVectorEnd, this._cameraVector);
+    const deltaCameraOffset = substractSpherical(this._cameraVectorEnd, this._cameraVector);
     const deltaTarget = this.newVector3().subVectors(this._targetEnd, this._target);
     const epsilon = this._options.EPSILON;
     const isChanged = !isVectorAlmostZero(deltaTarget, epsilon) || !isSphericalAlmostZero(deltaCameraOffset, epsilon);
@@ -754,7 +752,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     const targetOffsetToDeltaRatio = Math.abs(deltaTargetOffsetDistance / deltaDistance);
 
     // if target movement is too fast we want to slow it down a bit
-    const deltaDownscaleCoefficient = clampedMap(
+    const deltaDownscaleCoefficient = clampedMapLinear(
       targetOffsetToDeltaRatio,
       this._options.minDeltaRatio,
       this._options.maxDeltaRatio,
@@ -880,11 +878,19 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 // LOCAL FUNCTIONS
 //================================================
 
-function isIdentityQuaternion(q: THREE.Quaternion) {
+function isIdentityQuaternion(q: THREE.Quaternion): boolean {
   return q.x === 0 && q.y === 0 && q.z === 0 && q.w === 1;
 }
 
-function getHTMLOffset(domElement: HTMLElement, clientX: number, clientY: number) {
+function isVectorAlmostZero(value: Vector3, epsilon: number): boolean {
+  return Math.abs(value.x) <= epsilon && Math.abs(value.y) <= epsilon && Math.abs(value.z) <= epsilon;
+}
+
+function isSphericalAlmostZero(value: Spherical, epsilon: number): boolean {
+  return Math.abs(value.radius) <= epsilon && Math.abs(value.phi) <= epsilon && Math.abs(value.theta) <= epsilon;
+}
+
+function getHTMLOffset(domElement: HTMLElement, clientX: number, clientY: number): Vector2 {
   return new Vector2(clientX - domElement.offsetLeft, clientY - domElement.offsetTop);
 }
 
@@ -903,16 +909,7 @@ function getPinchInfo(domElement: HTMLElement, touches: PointerEvent[]) {
   };
 }
 
-// Function almost equal to mapLinear except it is behaving the same as clamp outside of specified range
-function clampedMap(value: number, xStart: number, xEnd: number, yStart: number, yEnd: number) {
-  if (value < xStart) value = yStart;
-  else if (value > xEnd) value = yEnd;
-  else value = MathUtils.mapLinear(value, xStart, xEnd, yStart, yEnd);
-
-  return value;
-}
-
-function getShortestDeltaTheta(theta1: number, theta2: number) {
+function getShortestDeltaTheta(theta1: number, theta2: number): number {
   const twoPi = 2 * Math.PI;
   const rawDeltaTheta = (theta1 % twoPi) - (theta2 % twoPi);
 
@@ -929,26 +926,7 @@ function getFov(camera: PerspectiveCamera | OrthographicCamera): number {
   return 0;
 }
 
-function isVectorAlmostZero(value: Vector3, epsilon: number): boolean {
-  return Math.abs(value.x) <= epsilon && Math.abs(value.y) <= epsilon && Math.abs(value.z) <= epsilon;
-}
-
-function isSphericalAlmostZero(value: Spherical, epsilon: number): boolean {
-  return Math.abs(value.radius) <= epsilon && Math.abs(value.phi) <= epsilon && Math.abs(value.theta) <= epsilon;
-}
-
-function addScaledSpherical(a: Spherical, b: Spherical, factor: number) {
-  // This calculation a = a + b * factor
-  a.radius += b.radius * factor;
-  a.phi += b.phi * factor;
-  a.theta += b.theta * factor;
-}
-
-function sphericalSubstract(a: Spherical, b: Spherical): Spherical {
-  return new Spherical(a.radius - b.radius, a.phi - b.phi, a.theta - b.theta);
-}
-
-function getWheelDelta(event: WheelEvent) {
+function getWheelDelta(event: WheelEvent): number {
   // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
   if (event.wheelDelta) {
     // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
@@ -974,6 +952,25 @@ function getWheelDelta(event: WheelEvent) {
  */
 function getTimeScale(deltaTimeS: number): number {
   return deltaTimeS * TARGET_FPS;
+}
+
+// Function almost equal to mapLinear except it is behaving the same as clamp outside of specified range
+function clampedMapLinear(value: number, xStart: number, xEnd: number, yStart: number, yEnd: number): number {
+  if (value < xStart) value = yStart;
+  else if (value > xEnd) value = yEnd;
+  else value = MathUtils.mapLinear(value, xStart, xEnd, yStart, yEnd);
+  return value;
+}
+
+function addScaledSpherical(a: Spherical, b: Spherical, factor: number) {
+  // This calculation a = a + b * factor
+  a.radius += b.radius * factor;
+  a.phi += b.phi * factor;
+  a.theta += b.theta * factor;
+}
+
+function substractSpherical(a: Spherical, b: Spherical): Spherical {
+  return new Spherical(a.radius - b.radius, a.phi - b.phi, a.theta - b.theta);
 }
 
 // Cache for using temporarily vectors to avoid allocations
