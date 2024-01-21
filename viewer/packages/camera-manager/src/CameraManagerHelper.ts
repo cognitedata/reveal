@@ -134,9 +134,7 @@ export class CameraManagerHelper {
         far = Math.max(far, dist);
       }
     }
-    far = Math.max(near * 2, far);
-
-    return far;
+    return Math.max(near * 2, far);
   }
 
   private static calculateCameraNear(
@@ -146,9 +144,7 @@ export class CameraManagerHelper {
   ): number {
     let near = combinedBbox.distanceToPoint(cameraPosition);
     near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
-    near = Math.max(0.1, near);
-
-    return near;
+    return Math.max(0.1, near);
   }
 
   private static getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): THREE.Vector3[] {
