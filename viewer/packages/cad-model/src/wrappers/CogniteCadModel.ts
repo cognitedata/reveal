@@ -3,6 +3,7 @@
  */
 import * as THREE from 'three';
 import { CogniteInternalId } from '@cognite/sdk';
+import sortBy from 'lodash/sortBy';
 
 import { callActionWithIndicesAsync } from '../utilities/callActionWithIndicesAsync';
 
@@ -84,7 +85,11 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   private readonly cadModel: CadModelMetadata;
   private readonly nodesApiClient: NodesApiClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
-  private readonly _styledNodeCollections: { nodeCollection: NodeCollection; appearance: NodeAppearance }[] = [];
+  private _styledNodeCollections: {
+    nodeCollection: NodeCollection;
+    appearance: NodeAppearance;
+    importance: number;
+  }[] = [];
   private readonly customSectorBounds: CustomSectorBounds;
 
   /**
@@ -160,6 +165,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    *
    * @param nodeCollection Dynamic set of nodes to apply the provided appearance to.
    * @param appearance Appearance to style the provided set with.
+   * @param importance The importance of this style. Can be used to manually order the order of styles, this can avoid the order of adding styles affecting the outcome. Optional and defaults to 0.
    * @example
    * ```js
    * model.setDefaultNodeAppearance({ rendererGhosted: true });
@@ -167,16 +173,17 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * model.assignStyledNodeCollection(visibleSet, { rendererGhosted: false });
    * ```
    */
-  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance): void {
+  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance, importance: number = 0): void {
     MetricsLogger.trackCadModelStyled(nodeCollection.classToken, appearance);
 
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index !== -1) {
       this._styledNodeCollections[index].appearance = appearance;
     } else {
-      this._styledNodeCollections.push({ nodeCollection: nodeCollection, appearance });
+      this._styledNodeCollections.push({ nodeCollection: nodeCollection, appearance, importance });
     }
-    this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance);
+    this._styledNodeCollections = sortBy(this._styledNodeCollections, sc => sc.importance); // Using lodash sortBy as array.sort is not stable
+    this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance, importance);
   }
 
   /**

@@ -1919,7 +1919,7 @@ __metadata:
     replace: 1.2.2
     rimraf: 5.0.5
     styled-components: 5.3.11
-    typedoc: 0.25.6
+    typedoc: 0.25.7
     typedoc-plugin-markdown: 3.17.1
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 5.3.3
@@ -6490,12 +6490,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.7":
-  version: 1.15.1
-  resolution: "follow-redirects@npm:1.15.1"
+  version: 1.15.4
+  resolution: "follow-redirects@npm:1.15.4"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 6aa4e3e3cdfa3b9314801a1cd192ba756a53479d9d8cca65bf4db3a3e8834e62139245cd2f9566147c8dfe2efff1700d3e6aefd103de4004a7b99985e71dd533
+  checksum: e178d1deff8b23d5d24ec3f7a94cde6e47d74d0dc649c35fc9857041267c12ec5d44650a0c5597ef83056ada9ea6ca0c30e7c4f97dbf07d035086be9e6a5b7b6
   languageName: node
   linkType: hard
 
@@ -12119,9 +12119,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.25.6":
-  version: 0.25.6
-  resolution: "typedoc@npm:0.25.6"
+"typedoc@npm:0.25.7":
+  version: 0.25.7
+  resolution: "typedoc@npm:0.25.7"
   dependencies:
     lunr: ^2.3.9
     marked: ^4.3.0
@@ -12131,7 +12131,7 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
   bin:
     typedoc: bin/typedoc
-  checksum: 8d5a29cbdac3a794edb4c29e8d4330332f5a7e2f3554f0eeef02a15ddd7bfad1d226b1d25eb551f5ea6a131258743f646e3c6c6a367a82ca7d47cb0825170864
+  checksum: 49c3bf923a3c9401b549e5843f8efaaac8fa28f8ec6bd8617187b5d9ba9932a3fa63dc3863b82389507ffc7d92908af0dce33780fffb4970cd0833274f6fa0cf
   languageName: node
   linkType: hard
 

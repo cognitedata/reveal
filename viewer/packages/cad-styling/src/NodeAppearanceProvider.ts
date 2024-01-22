@@ -9,6 +9,7 @@ import { PrioritizedArea } from './prioritized/types';
 import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
 
 import debounce from 'lodash/debounce';
+import sortBy from 'lodash/sortBy';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.
@@ -20,11 +21,12 @@ export type ApplyStyleDelegate = (treeIndices: IndexSet, appearance: NodeAppeara
 type StyledNodeCollection = {
   nodeCollection: NodeCollection;
   appearance: NodeAppearance;
+  importance: number;
   handleNodeCollectionChangedListener: () => void;
 };
 
 export class NodeAppearanceProvider {
-  private readonly _styledCollections = new Array<StyledNodeCollection>();
+  private _styledCollections = new Array<StyledNodeCollection>();
   private _lastFiredLoadingState?: boolean;
   private _cachedPrioritizedAreas?: PrioritizedArea[] = undefined;
 
@@ -79,15 +81,18 @@ export class NodeAppearanceProvider {
     }
   }
 
-  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance): void {
+  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance, importance: number = 0): void {
     const existingCollection = this._styledCollections.find(x => x.nodeCollection === nodeCollection);
     if (existingCollection !== undefined) {
       existingCollection.appearance = appearance;
+      existingCollection.importance = importance;
+
       this.handleNodeCollectionChanged(existingCollection);
     } else {
       const styledCollection: StyledNodeCollection = {
         nodeCollection: nodeCollection,
         appearance,
+        importance,
         handleNodeCollectionChangedListener: () => {
           this.handleNodeCollectionChanged(styledCollection);
         }
@@ -97,6 +102,9 @@ export class NodeAppearanceProvider {
       nodeCollection.on('changed', styledCollection.handleNodeCollectionChangedListener);
       this.scheduleNotifyChanged();
     }
+
+    // Sort ascending, to set the most important styles last so they override the unimportant
+    this._styledCollections = sortBy(this._styledCollections, sc => sc.importance); // Using lodash sortBy as array.sort is not stable
 
     if (appearance.prioritizedForLoadingHint) {
       this.notifyPrioritizedAreasChanged();

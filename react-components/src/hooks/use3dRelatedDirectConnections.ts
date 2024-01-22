@@ -17,11 +17,11 @@ export function use3dRelatedDirectConnections(
     async () => {
       const assertedInstance = instance ?? { space: '', externalId: '' };
       const views = await fdmSdk.inspectInstances({
-        inspectionOperations: { involvedViewsAndContainers: {} },
+        inspectionOperations: { involvedViews: {} },
         items: [{ instanceType: 'node', ...assertedInstance }]
       });
 
-      const view = views.items[0].inspectionResults.involvedViewsAndContainers.views[0];
+      const view = views.items[0].inspectionResults.involvedViews[0];
       const instanceContent = (
         await fdmSdk.getByExternalIds<Record<string, unknown>>(
           [{ instanceType: 'node', ...assertedInstance }],
@@ -47,12 +47,12 @@ export function use3dRelatedDirectConnections(
       }
 
       const relatedObjectInspectionsResult = await fdmSdk.inspectInstances({
-        inspectionOperations: { involvedViewsAndContainers: {} },
+        inspectionOperations: { involvedViews: {} },
         items: directlyRelatedObjects.map((fdmId) => ({ ...fdmId, instanceType: 'node' }))
       });
 
       const relatedObjectsViewLists = relatedObjectInspectionsResult.items.map(
-        (item) => item.inspectionResults.involvedViewsAndContainers.views
+        (item) => item.inspectionResults.involvedViews
       );
 
       const relatedObjectViewsWithObjectIndex = relatedObjectsViewLists

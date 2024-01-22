@@ -452,7 +452,7 @@ export abstract class Cognite3DViewerToolBase {
 
 // @public
 export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
-    assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance): void;
+    assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance, importance?: number): void;
     dispose(): void;
     getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange>;
     getBoundingBoxByNodeId(nodeId: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
