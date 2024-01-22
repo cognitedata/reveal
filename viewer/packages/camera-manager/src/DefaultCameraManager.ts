@@ -331,7 +331,7 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  public setPositionAndTarget(position: THREE.Vector3, target: THREE.Vector3): void {
+  private setPositionAndTarget(position: THREE.Vector3, target: THREE.Vector3): void {
     if (this._controls.enabled) {
       this._controls.setState(position, target);
     }
