@@ -45,7 +45,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private _firstPersonMode = false;
   private _enabled: boolean = true;
   private _options: ComboControlsOptions = CreateDefaultControlsOptions();
-
+  public temporarlyDisableKeyboard: boolean = false;
   private readonly _domElement: HTMLElement;
   private readonly _camera: PerspectiveCamera | OrthographicCamera;
 
@@ -713,7 +713,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     if (deltaZ !== 0) {
       const deltaDistance = this.getDollyDeltaDistanceForZ(deltaZ === 1, speedZ);
-      panByDimension(deltaDistance, 2); // +factor * deltaZ
+      panByDimension(-deltaDistance, 2); // +factor * deltaZ
     }
   }
 
@@ -853,6 +853,9 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     let handled = this.handleModeFromKeyboard();
     if (!this._options.enableKeyboardNavigation) {
+      return handled;
+    }
+    if (this.temporarlyDisableKeyboard) {
       return handled;
     }
     const timeScale = getTimeScale(deltaTimeS);

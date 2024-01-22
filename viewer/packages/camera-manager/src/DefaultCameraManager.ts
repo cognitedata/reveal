@@ -350,12 +350,7 @@ export class DefaultCameraManager implements CameraManager {
   // INSTANCE METHODS: Move camera
   //================================================
 
-  private moveCameraTo(
-    position: THREE.Vector3,
-    target: THREE.Vector3,
-    duration?: number,
-    keyboardNavigationEnabled = true
-  ): void {
+  private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number): void {
     if (this._isDisposed) {
       return;
     }
@@ -403,14 +398,14 @@ export class DefaultCameraManager implements CameraManager {
         if (this._isDisposed) {
           return;
         }
-        this.keyboardNavigationEnabled = keyboardNavigationEnabled;
+        this._controls.temporarlyDisableKeyboard = false;
         this._domElement.removeEventListener('pointerdown', stopTween);
       })
       .start(TWEEN.now());
     tween.update(TWEEN.now());
   }
 
-  private moveCameraTargetTo(target: THREE.Vector3, duration?: number, keyboardNavigationEnabled = true): void {
+  private moveCameraTargetTo(target: THREE.Vector3, duration?: number): void {
     if (this._isDisposed) {
       return;
     }
@@ -464,7 +459,7 @@ export class DefaultCameraManager implements CameraManager {
           return;
         }
         this.setComboControlsOptions({ lookAtViewTarget: false });
-        this.keyboardNavigationEnabled = keyboardNavigationEnabled;
+        this._controls.temporarlyDisableKeyboard = false;
         this._domElement.removeEventListener('pointerdown', stopTween);
       })
       .start(TWEEN.now());
@@ -484,7 +479,7 @@ export class DefaultCameraManager implements CameraManager {
         return;
       }
 
-      if (event.type !== 'keydown' || this.keyboardNavigationEnabled) {
+      if (event.type !== 'keydown' || !this._controls.temporarlyDisableKeyboard) {
         animation.stop();
         this._domElement.removeEventListener('pointerdown', stopTween);
         this._domElement.removeEventListener('wheel', stopTween);
@@ -645,22 +640,19 @@ export class DefaultCameraManager implements CameraManager {
   //================================================
 
   private readonly onClick = async (event: PointerEventData) => {
-    const keyboardNavigationEnabled = this.keyboardNavigationEnabled;
-    this.keyboardNavigationEnabled = false;
+    this._controls.temporarlyDisableKeyboard = true;
     const newTarget = await this.getTargetByPixelCoordinates(event.offsetX, event.offsetY);
-    this.moveCameraTargetTo(newTarget, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
+    this.moveCameraTargetTo(newTarget, DefaultCameraManager.AnimationDuration);
   };
 
   private readonly onDoubleClick = async (event: PointerEventData) => {
-    const keyboardNavigationEnabled = this.keyboardNavigationEnabled;
-    this.keyboardNavigationEnabled = false;
-
+    this._controls.temporarlyDisableKeyboard = true;
     const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, true);
 
     // If an object is picked, zoom in to the object (the target will be in the middle of the bounding box)
     if (modelRaycastData.pickedBoundingBox !== undefined) {
-      const { position, target } = fitCameraToBoundingBox(this._camera, modelRaycastData.pickedBoundingBox);
-      this.moveCameraTo(position, target, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
+      const { position, target } = fitCameraToBoundingBox(this._camera, modelRaycastData.pickedBoundingBox, 3);
+      this.moveCameraTo(position, target, DefaultCameraManager.AnimationDuration);
       return;
     }
     // If not particular object is picked, set camera position half way to the target
@@ -671,7 +663,7 @@ export class DefaultCameraManager implements CameraManager {
     const newPosition = new THREE.Vector3().subVectors(newTarget, this._camera.position);
     newPosition.divideScalar(2);
     newPosition.add(this._camera.position);
-    this.moveCameraTo(newPosition, newTarget, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
+    this.moveCameraTo(newPosition, newTarget, DefaultCameraManager.AnimationDuration);
   };
 
   //================================================
