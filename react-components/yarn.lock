@@ -2027,9 +2027,10 @@ __metadata:
   linkType: soft
 
 "@cognite/reveal@npm:^4.8.0":
-  version: 4.8.0
-  resolution: "@cognite/reveal@npm:4.8.0"
+  version: 4.9.0
+  resolution: "@cognite/reveal@npm:4.9.0"
   dependencies:
+    "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:19.0.0"
     assert: "npm:2.1.0"
     async-mutex: "npm:0.4.0"
@@ -2047,7 +2048,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.158.0
-  checksum: 246904b8e669d30df8ed8c29cbb1b964e2a036466b9a71cb9aa8ac3c2f841b72b47a64f3749e31cc0163184b28b1e98cc47a51d319f4a4f2e7af104ac6e0a01b
+  checksum: 543fa1b9f25b9ae94e9643e67a54b5a6d2e0515002f01ebef640206faffd9de2968486f72147e9f9ce4f1b72d173dba86dc8a218994330090d77087262a74aa8
   languageName: node
   linkType: hard
 
@@ -4141,6 +4142,15 @@ __metadata:
   dependencies:
     "@babel/runtime": "npm:^7.13.10"
   checksum: e25492cb8a683246161d781f0f3205f79507280a60f50eb763f06e8b6fa211b940b784aa581131ed76695bd5df5d1033a6246b43a6996cf8959a326fe4d3eb00
+  languageName: node
+  linkType: hard
+
+"@rajesh896/broprint.js@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@rajesh896/broprint.js@npm:2.1.1"
+  bin:
+    getDeviceId(): lib/index.js
+  checksum: 97a665db74901f63ff8249dcddb5b09937390baca0ec34787567b5635826decbd3e9cc00fa366129c01682e37d6f710a4ca11c3ab8422740cb2cd9b511d44bfc
   languageName: node
   linkType: hard
 
