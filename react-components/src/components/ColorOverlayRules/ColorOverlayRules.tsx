@@ -18,7 +18,7 @@ import {
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useReveal } from '../..';
 import { Color } from 'three';
-import { NodeAndRange } from './types';
+import { type NodeAndRange } from './types';
 
 type Rule = any;
 
@@ -60,8 +60,6 @@ export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps)
       console.log(' model ', model);
 
       rules.forEach((rule) => {
-        rule.nodeIdsStyleIndex = new TreeIndexNodeCollection();
-
         const conditions = rule.conditions;
         const isStringRule = rule.isStringRule as boolean;
 
@@ -70,39 +68,55 @@ export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps)
             rule.sourceField.forEach((sourceField: any) => {
               const metadataFieldValue = asset.metadata?.[sourceField];
               if (asset.metadata !== null && metadataFieldValue !== undefined) {
-                conditions.forEach(async (condition: { valueString: any; color: string }) => {
-                  if (isStringRule) {
-                    if (condition.valueString === metadataFieldValue) {
-                      const nodesFromThisAsset = assetMappings.filter(
-                        (mapping) => mapping.assetId === asset.id
-                      );
+                conditions.forEach(
+                  async (condition: {
+                    nodeIdsStyleIndex: TreeIndexNodeCollection;
+                    valueString: any;
+                    color: string;
+                  }) => {
+                    condition.nodeIdsStyleIndex = new TreeIndexNodeCollection();
+                    if (isStringRule) {
+                      if (condition.valueString === metadataFieldValue) {
+                        const nodesFromThisAsset = assetMappings.filter(
+                          (mapping) => mapping.assetId === asset.id
+                        );
 
-                      const treeNodes: NodeAndRange[] = await Promise.all(
-                        nodesFromThisAsset.map(async (nodeFromAsset) => {
-                          const subtreeRange = await model.getSubtreeTreeIndices(
-                            nodeFromAsset.treeIndex
-                          );
-                          const node: NodeAndRange = {
-                            nodeId: nodeFromAsset.nodeId,
-                            treeIndex: nodeFromAsset.treeIndex,
-                            subtreeRange
-                          };
-                          return node;
-                        })
-                      );
-                      const nodeIndexSet = rule.nodeIdsStyleIndex.getIndexSet();
-                      nodeIndexSet.clear();
-                      treeNodes.forEach((node) => {
-                        nodeIndexSet.addRange(node.subtreeRange);
-                      });
+                        const treeNodes: NodeAndRange[] = await Promise.all(
+                          nodesFromThisAsset.map(async (nodeFromAsset) => {
+                            const subtreeRange = await model.getSubtreeTreeIndices(
+                              nodeFromAsset.treeIndex
+                            );
+                            const node: NodeAndRange = {
+                              nodeId: nodeFromAsset.nodeId,
+                              treeIndex: nodeFromAsset.treeIndex,
+                              subtreeRange
+                            };
+                            return node;
+                          })
+                        );
+                        const nodeIndexSet = condition.nodeIdsStyleIndex.getIndexSet();
+                        nodeIndexSet.clear();
+                        treeNodes.forEach((node) => {
+                          nodeIndexSet.addRange(node.subtreeRange);
+                        });
 
-                      model.assignStyledNodeCollection(rule.nodeIdsStyleIndex, {
-                        color: new Color(condition.color)
-                      });
+                        model.assignStyledNodeCollection(condition.nodeIdsStyleIndex, {
+                          color: new Color(condition.color)
+                        });
 
+                        console.log(
+                          ' NODES FROM THE ASSET: ',
+                          asset,
+                          nodesFromThisAsset,
+                          treeNodes,
+                          rule,
+                          condition
+                        );
+
+                      }
                     }
                   }
-                });
+                );
               }
             });
           });
