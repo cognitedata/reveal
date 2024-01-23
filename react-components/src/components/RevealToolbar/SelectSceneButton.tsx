@@ -39,7 +39,7 @@ export const SelectSceneButton = ({
             <SceneList selectedScene={selectedScene} onSceneChange={onSceneChange} />
           </Menu>
         }>
-        <Button icon="World" type="ghost" />
+        <Button icon="World" aria-label="Select 3D location" type="ghost" />
       </Dropdown>
     </CogsTooltip>
   );
