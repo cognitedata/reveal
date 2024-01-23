@@ -6,7 +6,7 @@
 
 import { clickOrTouchEventOffset } from '@reveal/utilities';
 import remove from 'lodash/remove';
-import {
+import THREE, {
   EventDispatcher,
   MathUtils,
   MOUSE,
@@ -73,7 +73,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   // Temporary objects used for calculations to avoid allocations
   private readonly _reusableVector3s = new ReusableVector3s();
 
-  //  The camera always lookAt the Target
   //
   //            Orbit Mode
   //          , - ~ ~ ~ - ,
@@ -86,7 +85,8 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   //   ,  CameraVector\          ,
   //    ,              \        ,
   //      ,             \    , '
-  //        ' - , _  _ , # <------ CameraPosition
+  //        ' - , _  _ , #<--------------->#  <------ CameraPosition
+  //                         Translation
   //
   //        First persion Mode
   //          , - ~ ~ ~ - ,
@@ -99,10 +99,8 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   //   ,  CameraVector\          ,
   //    ,              \        ,
   //      ,             \    , '
-  //        ' - , _  _ , # <------ Target
-  //
-  //
-
+  //        ' - , _  _ , #<--------------->#  <------ Target
+  //                         Translation
   //================================================
   // CONSTRUCTOR
   //================================================
@@ -173,8 +171,12 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return this._rawCameraRotation;
   }
 
-  get isFirstPersonMode(): boolean {
+  public get isFirstPersonMode(): boolean {
     return this._firstPersonMode;
+  }
+
+  public get isTargetLocked(): boolean {
+    return true; //this.isFirstPersonMode;
   }
 
   //================================================
@@ -187,6 +189,10 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   public getCopyOfTarget(): Vector3 {
     return this._target.clone();
+  }
+
+  public getTarget(): Vector3 {
+    return this._target;
   }
 
   public getState = () => {
@@ -225,11 +231,11 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   // INSTANCE METHODS: Private Getters and setters
   //================================================
 
-  private getLookAt(): Vector3 {
+  public getLookAt(): Vector3 {
     if (this._options.lookAtViewTarget) {
       return this._viewTarget;
     }
-    if (this.isFirstPersonMode) {
+    if (this.isTargetLocked) {
       return this.newVector3().addVectors(this._target, this._translation);
     }
     return this._target;
@@ -237,7 +243,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   private getCameraPosition(): Vector3 {
     const position = this.getCameraVector().add(this._target); // CameraPosition = Target + CameraVector
-    if (this.isFirstPersonMode) {
+    if (this.isTargetLocked) {
       position.add(this._translation);
     }
     return position;
@@ -306,7 +312,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return this._reusableVector3s.getNext();
   }
 
-  private setFirstPersonMode(firstPersonMode: boolean): boolean {
+  public setFirstPersonMode(firstPersonMode: boolean): boolean {
     if (firstPersonMode == this.isFirstPersonMode) {
       return false;
     }
@@ -328,7 +334,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     if (!forceUpdate && !this._enabled) {
       return false;
     }
-    if (this._accumulatedMouseRotation.lengthSq() > 0) {
+    if (this._accumulatedMouseRotation.lengthSq() > 2) {
       this.rotate(this._accumulatedMouseRotation);
       this._accumulatedMouseRotation.set(0, 0);
     }
@@ -340,7 +346,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     let isChanged = !isVectorAlmostZero(deltaTarget, epsilon) || !isSphericalAlmostZero(deltaCameraVector, epsilon);
 
     let deltaOffset: Vector3 | null = null;
-    if (this.isFirstPersonMode) {
+    if (this.isTargetLocked) {
       deltaOffset = this.newVector3().subVectors(this._translationEnd, this._translation);
       if (!isChanged) {
         isChanged = !isVectorAlmostZero(deltaOffset, epsilon);
@@ -595,19 +601,90 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
   }
 
+  //
+  //            Orbit Mode
+  //          , - ~ ~ ~ - ,
+  //      , '               ' ,
+  //    ,                       ,       Formula used in both modes:
+  //   ,                         ,      CameraVector = CameraPosition - Target
+  //  ,          Target           ,     Target = CameraPosition - CameraVector
+  //  ,             *             , #   CameraPosition = Target + CameraVector
+  //  ,              \            ,  \
+  //   ,  CameraVector\          ,    \
+  //    ,              \        ,      \
+  //      ,             \    , '        \
+  //        ' - , _  _ , #<------------->#  <------ CameraPosition
+  //                         Translation
+  //
+  //        First persion Mode
+  //          , - ~ ~ ~ - ,
+  //      , '               ' ,
+  //    ,                       ,
+  //   ,                         ,
+  //  ,        CameraPosition     ,
+  //  ,             *             ,
+  //  ,              \            ,
+  //   ,  CameraVector\          ,
+  //    ,              \        ,
+  //      ,             \    , '
+  //        ' - , _  _ , #<--------------->#  <------ Target
+  //                         Translation
   private rotateByAngles(deltaAzimuthAngle: number, deltaPolarAngle: number) {
     if (deltaAzimuthAngle === 0 && deltaPolarAngle === 0) {
       return;
     }
+    //const sum = this.newVector3().subVectors(this._translationEnd, this.getCameraVectorEnd());
+
+    const translation = this._translation.clone();
+    const oldDistanceToTarget = this.newVector3()
+      .addVectors(this.getCameraVectorEnd(), this._translationEnd)
+      .lengthSq();
     if (this.isFirstPersonMode) {
       this._translationEnd.add(this.getCameraVectorEnd());
+    } else {
+      //this._translationEnd.add(this.getCameraVectorEnd());
+      // this._targetEnd.add(this.getCameraVectorEnd());
     }
     this._cameraVectorEnd.theta = this.getClampedAzimuthAngle(this._cameraVectorEnd.theta + deltaAzimuthAngle);
     this._cameraVectorEnd.phi = this.getClampedPolarAngle(this._cameraVectorEnd.phi + deltaPolarAngle);
     this._cameraVectorEnd.makeSafe();
 
+    const translationEnd = new Spherical().setFromVector3(this._translationEnd);
+    translationEnd.theta = this.getClampedAzimuthAngle(translationEnd.theta + deltaAzimuthAngle);
+    translationEnd.phi = this.getClampedPolarAngle(translationEnd.phi + deltaPolarAngle);
+    translationEnd.makeSafe();
+
     if (this.isFirstPersonMode) {
       this._translationEnd.sub(this.getCameraVectorEnd());
+    } else {
+      const axis = this.newVector3().crossVectors(this.getCameraVectorEnd(), this.getCameraVector());
+      axis.normalize();
+      console.log('..........................');
+      // console.log(this._target);
+      // console.log(this._cameraVector);
+      // console.log(this._translation);
+      // console.log(axis);
+      const angle = this.getCameraVector().angleTo(this.getCameraVectorEnd());
+      console.log('angle', (angle * 180) / 3.14);
+
+      const matrix = new THREE.Matrix4().makeRotationAxis(axis, -angle);
+
+      // e.normalize();
+      // e.multiplyScalar(this._translationEnd.length());
+
+      translation.applyMatrix4(matrix);
+      //sum.add(this.getCameraVectorEnd());
+
+      this._translationEnd.copy(translation);
+
+      const newDistanceToTarget = this.newVector3()
+        .addVectors(this.getCameraVectorEnd(), this._translationEnd)
+        .lengthSq();
+      console.log('oldDistanceToTarget ', oldDistanceToTarget);
+      console.log('newDistanceToTarget ', newDistanceToTarget);
+
+      this._translationEnd.setFromSpherical(translationEnd);
+      //this._translationEnd.add(e);
     }
   }
 
@@ -697,7 +774,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
       const delta = this.newVector3();
       delta.setFromMatrixColumn(this._camera.matrix, dimension);
       delta.multiplyScalar(-distance);
-      if (this.isFirstPersonMode) {
+      if (this.isTargetLocked) {
         this._translationEnd.add(delta);
       } else {
         this._targetEnd.add(delta);
@@ -732,7 +809,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number) {
     const result = this.getRadiusAndDeltaTarget(pixelCoordinates, deltaDistance);
     this._cameraVectorEnd.radius = result.radius;
-    if (this.isFirstPersonMode) {
+    if (this.isTargetLocked) {
       this._translationEnd.add(result.deltaTarget);
     } else {
       this._targetEnd.add(result.deltaTarget);
@@ -760,7 +837,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     let radius = distanceToTarget + deltaDistance;
     if (radius < this._options.minZoomDistance && !isDollyOut) {
       radius = distanceToTarget;
-      if (this._options.dynamicTarget && !this.isFirstPersonMode) {
+      if (this._options.dynamicTarget && !this.isTargetLocked) {
         // push targetEnd forward
         this._targetEnd.addScaledVector(cameraVector, Math.abs(deltaDistance));
       } else {
@@ -829,7 +906,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
       }
 
       if (radius <= 0) {
-        if (distance > this._options.minZoomDistance && !this.isFirstPersonMode) {
+        if (distance > this._options.minZoomDistance && !this.isTargetLocked) {
           radius = this._options.minZoomDistance;
           this._targetEnd.addScaledVector(cameraVector.normalize(), distanceToTarget - this._options.minZoomDistance);
         } else {
@@ -1025,7 +1102,7 @@ function substractSpherical(a: Spherical, b: Spherical): Spherical {
 
 // Cache for using temporarily vectors to avoid allocations
 class ReusableVector3s {
-  private readonly _vectors = new Array(10).fill(null).map(() => new Vector3());
+  private readonly _vectors = new Array(30).fill(null).map(() => new Vector3());
   private _index: number = -1;
 
   public getNext(): Vector3 {
