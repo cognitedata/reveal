@@ -1635,12 +1635,13 @@ export class Cognite3DViewer {
       }
     });
 
-    this._sceneHandler.customObjects.forEach(obj => {
-      bbox.setFromObject(obj);
-      if (!bbox.isEmpty()) {
-        combinedBbox.union(bbox);
-      }
-    });
+    if (false)
+      this._sceneHandler.customObjects.forEach(obj => {
+        bbox.setFromObject(obj);
+        if (!bbox.isEmpty()) {
+          combinedBbox.union(bbox);
+        }
+      });
   }
 
   /** @private */

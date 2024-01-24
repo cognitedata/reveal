@@ -902,14 +902,14 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private handleModeFromKeyboard(): boolean {
-    if (this._keyboard.isPressed('Digit0')) {
-      return this.setControlsType(ControlsType.Combo);
-    }
     if (this._keyboard.isPressed('Digit1')) {
       return this.setControlsType(ControlsType.FirstPerson);
     }
     if (this._keyboard.isPressed('Digit2')) {
       return this.setControlsType(ControlsType.Orbit);
+    }
+    if (this._keyboard.isPressed('Digit3')) {
+      return this.setControlsType(ControlsType.Combo);
     }
     return false;
   }
