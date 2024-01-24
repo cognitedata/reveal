@@ -43,19 +43,20 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   public dispose: () => void;
 
-  private _controlsType: ControlsType = ControlsType.Orbit;
+  private _controlsType: ControlsType = ControlsType.Combo;
   private _enabled: boolean = true;
   private _options: ComboControlsOptions = CreateDefaultControlsOptions();
   public temporarlyDisableKeyboard: boolean = false;
   private readonly _domElement: HTMLElement;
   private readonly _camera: PerspectiveCamera | OrthographicCamera;
 
+  // These are describe below in the ascii-art
   private readonly _target: Vector3 = new Vector3();
   private readonly _targetEnd: Vector3 = new Vector3();
   private readonly _cameraVector: Spherical = new Spherical();
   private readonly _cameraVectorEnd: Spherical = new Spherical();
 
-  // The Translation are used only if first person mode is enabled, it translates the camera
+  // The Translation are used only if NOT the ControlsType.Combo is enabled, it translates the camera
   // and the lookAt without changing the target or cameraVector.
   private readonly _translation: Vector3 = new Vector3();
   private readonly _translationEnd: Vector3 = new Vector3();
@@ -82,7 +83,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   //   ,  CameraVector\          ,
   //    ,              \        ,
   //      ,             \    , '
-  //        ' - , _  _ , # <------ CameraPosition
+  //        ' - , _  _ , # CameraPosition
   //
   //
   //       ControlsType.Orbit
@@ -96,7 +97,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   //   ,  CameraVector\          ,      Translation is the translation vector between the center of the sceen to the target
   //    ,              \        ,
   //      ,             \    , '
-  //        ' - , _  _ , #<--------------->#  <------ CameraPosition
+  //        ' - , _  _ , #<---------------># CameraPosition
   //                         Translation
   //
   //      ControlsType.FirstPerson
@@ -110,8 +111,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   //   ,  CameraVector\          ,
   //    ,              \        ,
   //      ,             \    , '
-  //        ' - , _  _ , #<--------------->#  <------ Target
-  //
+  //        ' - , _  _ , #<---------------># Target
   //                         Translation
   //================================================
   // CONSTRUCTOR
@@ -259,10 +259,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
       position.add(this._translation);
     }
     return position;
-  }
-
-  private getRealCameraVector(): Vector3 {
-    return this.newVector3().subVectors(this._camera.position, this._target); // CameraVector = CameraPosition - Target
   }
 
   private getCameraVector(): Vector3 {
@@ -733,9 +729,9 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     };
     // Do the actuall panning:
     if (deltaX !== 0 || deltaY !== 0) {
-      const targetDistance = this.getPanDeltaDistanceForXY();
+      const deltaDistance = this.getPanDeltaDistanceForXY();
       // we actually don't use screenWidth, since perspective camera is fixed to screen height
-      const factor = (2 * targetDistance) / this._domElement.clientHeight;
+      const factor = (2 * deltaDistance) / this._domElement.clientHeight;
       if (deltaX !== 0) panByDimension(+factor * deltaX, 0);
       if (deltaY !== 0) panByDimension(-factor * deltaY, 1);
     }
@@ -1053,27 +1049,27 @@ function clampedMapLinear(value: number, xStart: number, xEnd: number, yStart: n
 }
 
 function addScaledSpherical(a: Spherical, b: Spherical, factor: number) {
+  // This replace:
+  // a.radius += b.radius * factor;
+  // a.phi += b.phi * factor;
+  // a.theta += b.theta * factor;
+
   // This calculation a = a + b * factor
   const aa = new Vector3().setFromSpherical(a);
   const bb = new Vector3().setFromSpherical(b);
   aa.addScaledVector(bb, factor);
   a.setFromVector3(aa);
   a.makeSafe();
-
-  // a.radius += b.radius * factor;
-  // a.phi += b.phi * factor;
-  // a.theta += b.theta * factor;
 }
 
 function substractSpherical(a: Spherical, b: Spherical): Spherical {
+  //  This replace: new Spherical(a.radius - b.radius, a.phi - b.phi, a.theta - b.theta);
   const aa = new Vector3().setFromSpherical(a);
   const bb = new Vector3().setFromSpherical(b);
   aa.sub(bb);
   const result = new Spherical().setFromVector3(aa);
   result.makeSafe();
   return result;
-
-  //  return new Spherical(a.radius - b.radius, a.phi - b.phi, a.theta - b.theta);
 }
 
 // Cache for using temporarily vectors to avoid allocations
@@ -1088,40 +1084,4 @@ class ReusableVector3s {
     // Return the vector at the new index
     return this._vectors[this._index];
   }
-}
-
-function getRotationMatrixFromSphericalCoords(phi: number, theta: number) {
-  const position = new THREE.Vector3();
-  position.setFromSphericalCoords(1, phi, theta);
-
-  const target = new THREE.Vector3(0, 0, 0);
-  const up = new THREE.Vector3(0, 1, 0);
-
-  //const matrix = new THREE.Matrix4();
-  //matrix.lookAt(position, target, up);
-
-  //return matrix;
-
-  const sinPhi = Math.sin(phi);
-  const cosPhi = Math.cos(phi);
-  const sinTheta = Math.sin(theta);
-  const cosTheta = Math.cos(theta);
-
-  // Construct the rotation matrix
-  const matrix = new THREE.Matrix4();
-  const elements = matrix.elements;
-
-  elements[0] = sinPhi * cosTheta; // 0,0
-  elements[4] = cosPhi; // 0,1
-  elements[8] = sinPhi * sinTheta; // 0,2
-
-  elements[1] = -sinTheta; // 1,0
-  elements[5] = 0; // 1,1
-  elements[9] = cosTheta; // 1,2
-
-  elements[2] = cosPhi * cosTheta; // 2,0
-  elements[6] = -sinPhi; // 2,1
-  elements[10] = cosPhi * sinTheta; // 2,2
-
-  return matrix;
 }
