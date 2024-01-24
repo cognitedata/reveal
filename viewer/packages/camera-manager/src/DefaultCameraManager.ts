@@ -16,7 +16,8 @@ import {
   CameraChangeDelegate,
   CameraManagerEventType,
   CameraStopDelegate,
-  CameraEventDelegate
+  CameraEventDelegate,
+  ControlsType
 } from './types';
 
 import { CameraManager } from './CameraManager';
@@ -54,7 +55,10 @@ export class DefaultCameraManager implements CameraManager {
     mouseWheelAction: 'zoomPastCursor',
     changeCameraTargetOnClick: false,
     changeCameraPositionOnDoubleClick: false,
-    changeTargetOnlyOnClick: false
+    changeTargetOnlyOnClick: false,
+    controlsType: ControlsType.Combo,
+    showTarget: false,
+    showLookAt: false
   };
 
   //================================================
@@ -95,6 +99,9 @@ export class DefaultCameraManager implements CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
   private readonly _domElement: HTMLElement;
   private readonly _inputHandler: InputHandler;
+  private readonly _scene?: undefined | THREE.Scene;
+  private _targetObject: THREE.Mesh | undefined;
+  private _lookAtObject: THREE.Mesh | undefined;
 
   private _isDisposed = false;
   private _nearAndFarNeedsUpdate = false;
@@ -126,25 +133,6 @@ export class DefaultCameraManager implements CameraManager {
   // CONSTRUCTOR
   //================================================
 
-  private readonly _targetPoint: THREE.Mesh = new THREE.Mesh(
-    new THREE.SphereGeometry(0.2),
-    new THREE.MeshBasicMaterial({
-      color: '#FFFFFF', // --cogs-primary-inverted (dark)
-      transparent: true,
-      opacity: 0.8,
-      depthTest: false
-    })
-  );
-
-  private readonly _lookAtPoint: THREE.Mesh = new THREE.Mesh(
-    new THREE.SphereGeometry(0.2),
-    new THREE.MeshBasicMaterial({
-      color: '#FF0000', // --cogs-primary-inverted (dark)
-      transparent: true,
-      opacity: 0.8,
-      depthTest: false
-    })
-  );
   constructor(
     domElement: HTMLElement,
     inputHandler: InputHandler,
@@ -153,27 +141,20 @@ export class DefaultCameraManager implements CameraManager {
     scene?: THREE.Scene
   ) {
     this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
+    this._scene = scene;
     this._domElement = domElement;
     this._inputHandler = inputHandler;
     this._modelRaycastCallback = raycastFunction;
-    scene?.add(this._targetPoint);
-    scene?.add(this._lookAtPoint);
-
-    this.setCameraControlsOptions(this._cameraControlsOptions);
 
     this._controls = new ComboControls(this._camera, domElement);
+    this.setCameraControlsOptions(this._cameraControlsOptions);
     this.setComboControlsOptions({ minZoomDistance: DefaultCameraManager.MinZoomDistance });
 
     this._controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
       this._nearAndFarNeedsUpdate = true;
-
-      this._targetPoint.position.copy(this._controls.getTarget());
-      this._targetPoint.lookAt(this._camera.position);
-
-      this._lookAtPoint.position.copy(this._controls.getLookAt());
-      this._lookAtPoint.lookAt(this._camera.position);
+      this.updateObjects();
     });
 
     this.isEnabled = true;
@@ -352,6 +333,8 @@ export class DefaultCameraManager implements CameraManager {
    */
   public setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
     this._cameraControlsOptions = { ...DefaultCameraManager.DefaultCameraControlsOptions, ...controlsOptions };
+
+    this._controls.setControlsType(this._cameraControlsOptions.controlsType);
 
     if (this.isEnabled) {
       // New EventListeners are added in 'setupControls', so to avoid “doubling” of some behaviours we need to tear down controls first.
@@ -683,7 +666,9 @@ export class DefaultCameraManager implements CameraManager {
     this._controls.temporarlyDisableKeyboard = true;
     const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, true);
 
-    this._controls.setFirstPersonMode(false);
+    if (this._controls.controlsType == ControlsType.FirstPerson) {
+      this._controls.setControlsType(ControlsType.Orbit);
+    }
     // If an object is picked, zoom in to the object (the target will be in the middle of the bounding box)
     if (modelRaycastData.pickedBoundingBox !== undefined) {
       const { position, target } = fitCameraToBoundingBox(this._camera, modelRaycastData.pickedBoundingBox, 3);
@@ -700,6 +685,66 @@ export class DefaultCameraManager implements CameraManager {
     newPosition.add(this._camera.position);
     this.moveCameraTo(newPosition, newTarget, DefaultCameraManager.AnimationDuration);
   };
+
+  //================================================
+  // INSTANCE METHODS: Update helper Objects
+  //================================================
+
+  private createTargetObject(): THREE.Mesh {
+    return new THREE.Mesh(
+      new THREE.SphereGeometry(0.2),
+      new THREE.MeshBasicMaterial({
+        color: '#FFFFFF', // --cogs-primary-inverted (dark)
+        transparent: true,
+        opacity: 0.8,
+        depthTest: false
+      })
+    );
+  }
+
+  private createLookAtObject(): THREE.Mesh {
+    return new THREE.Mesh(
+      new THREE.SphereGeometry(0.2),
+      new THREE.MeshBasicMaterial({
+        color: '#FF0000', // --cogs-primary-inverted (dark)
+        transparent: true,
+        opacity: 0.8,
+        depthTest: false
+      })
+    );
+  }
+
+  private updateObjects() {
+    if (this._scene === undefined) {
+      return;
+    }
+    if (this._cameraControlsOptions.showTarget) {
+      if (!this._targetObject) {
+        this._targetObject = this.createTargetObject();
+        this._scene?.add(this._targetObject);
+      }
+      this._targetObject.position.copy(this._controls.getTarget());
+      this._targetObject.lookAt(this._camera.position);
+    } else {
+      if (this._targetObject) {
+        this._scene?.remove(this._targetObject);
+        this._targetObject = undefined;
+      }
+    }
+    if (this._cameraControlsOptions.showLookAt) {
+      if (!this._lookAtObject) {
+        this._lookAtObject = this.createLookAtObject();
+        this._scene?.add(this._lookAtObject);
+      }
+      this._lookAtObject.position.copy(this._controls.getLookAt());
+      this._lookAtObject.lookAt(this._camera.position);
+    } else {
+      if (this._lookAtObject) {
+        this._scene?.remove(this._lookAtObject);
+        this._lookAtObject = undefined;
+      }
+    }
+  }
 
   //================================================
   // INSTANCE METHODS: Misc

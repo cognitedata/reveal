@@ -28,6 +28,7 @@ const EVENT_CODES = [
   'KeyQ',
   'KeyS',
   'KeyW',
+  'Digit0',
   'Digit1',
   'Digit2'
 ] as const;

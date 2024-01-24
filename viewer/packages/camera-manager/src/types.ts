@@ -2,6 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
+export enum ControlsType {
+  Combo = 'combo',
+  FirstPerson = 'firstPerson',
+  Orbit = 'orbit'
+}
+
 export type CameraControlsOptions = {
   /**
    * Sets mouse wheel initiated action.
@@ -28,6 +34,9 @@ export type CameraControlsOptions = {
 
   changeTargetOnlyOnClick?: boolean;
 
+  showTarget?: boolean;
+  showLookAt?: boolean;
+
   /**
    * Enables or disables change of camera position on mouse doubke click. New target is then set to the point of the model under current cursor
    * position and the a camera position is set half way to this point
@@ -36,6 +45,7 @@ export type CameraControlsOptions = {
    *
    */
   changeCameraPositionOnDoubleClick?: boolean;
+  controlsType?: ControlsType;
 };
 
 export type ControlsState = {

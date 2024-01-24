@@ -20,6 +20,7 @@ import THREE, {
 import Keyboard from './Keyboard';
 import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
+import { ControlsType } from './types';
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
@@ -42,7 +43,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   public dispose: () => void;
 
-  private _firstPersonMode = false;
+  private _controlsType: ControlsType = ControlsType.Orbit;
   private _enabled: boolean = true;
   private _options: ComboControlsOptions = CreateDefaultControlsOptions();
   public temporarlyDisableKeyboard: boolean = false;
@@ -73,22 +74,35 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   // Temporary objects used for calculations to avoid allocations
   private readonly _reusableVector3s = new ReusableVector3s();
 
-  //
-  //            Orbit Mode
+  //        ControlsType.Combo
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
-  //    ,                       ,       Formula used in both modes:
-  //   ,                         ,      CameraVector = CameraPosition - Target
-  //  ,          Target           ,     Target = CameraPosition - CameraVector
-  //  ,             *             ,     CameraPosition = Target + CameraVector
+  //    ,                       ,       In this state the camera always rotating round the target
+  //   ,                         ,      which is in the center of the sceen.
+  //  ,          Target           ,
+  //  ,             *             ,     Translation is always (0,0,0)
   //  ,              \            ,
   //   ,  CameraVector\          ,
+  //    ,              \        ,
+  //      ,             \    , '
+  //        ' - , _  _ , # <------ CameraPosition
+  //
+  //
+  //       ControlsType.Orbit
+  //          , - ~ ~ ~ - ,
+  //      , '               ' ,
+  //    ,                       ,       Formula used are:
+  //   ,                         ,      CameraVector = CameraPosition - Target - Translation
+  //  ,          Target           ,     Target = CameraPosition - CameraVector - Translation
+  //  ,             *             ,     CameraPosition = Target + Translation + CameraVector
+  //  ,              \            ,
+  //   ,  CameraVector\          ,      Translation is the translation vector between the center of the sceen to the target
   //    ,              \        ,
   //      ,             \    , '
   //        ' - , _  _ , #<--------------->#  <------ CameraPosition
   //                         Translation
   //
-  //        First persion Mode
+  //      ControlsType.FirstPerson
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
   //    ,                       ,
@@ -100,6 +114,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   //    ,              \        ,
   //      ,             \    , '
   //        ' - , _  _ , #<--------------->#  <------ Target
+  //
   //                         Translation
   //================================================
   // CONSTRUCTOR
@@ -171,12 +186,12 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return this._rawCameraRotation;
   }
 
-  public get isFirstPersonMode(): boolean {
-    return this._firstPersonMode;
+  public get controlsType(): ControlsType {
+    return this._controlsType;
   }
 
   public get isTargetLocked(): boolean {
-    return true; //this.isFirstPersonMode;
+    return this.controlsType !== ControlsType.Combo;
   }
 
   //================================================
@@ -312,12 +327,12 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return this._reusableVector3s.getNext();
   }
 
-  public setFirstPersonMode(firstPersonMode: boolean): boolean {
-    if (firstPersonMode == this.isFirstPersonMode) {
+  public setControlsType(controlsType: ControlsType): boolean {
+    if (controlsType == this._controlsType) {
       return false;
     }
-    this._firstPersonMode = firstPersonMode;
-    if (!firstPersonMode) {
+    this._controlsType = controlsType;
+    if (this._controlsType === ControlsType.Combo) {
       this._target.add(this._translation);
       this._targetEnd.add(this._translationEnd);
       this._translation.set(0, 0, 0);
@@ -345,24 +360,24 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     const epsilon = this._options.EPSILON;
     let isChanged = !isVectorAlmostZero(deltaTarget, epsilon) || !isSphericalAlmostZero(deltaCameraVector, epsilon);
 
-    let deltaOffset: Vector3 | null = null;
+    let deltaTranslation: Vector3 | null = null;
     if (this.isTargetLocked) {
-      deltaOffset = this.newVector3().subVectors(this._translationEnd, this._translation);
+      deltaTranslation = this.newVector3().subVectors(this._translationEnd, this._translation);
       if (!isChanged) {
-        isChanged = !isVectorAlmostZero(deltaOffset, epsilon);
+        isChanged = !isVectorAlmostZero(deltaTranslation, epsilon);
       }
     }
     if (isChanged) {
       const dampningFactor = this.getDampingFactor(deltaTimeS);
       addScaledSpherical(this._cameraVector, deltaCameraVector, dampningFactor);
       this._target.addScaledVector(deltaTarget, dampningFactor);
-      if (deltaOffset !== null) {
-        this._translation.addScaledVector(deltaOffset, dampningFactor);
+      if (deltaTranslation !== null) {
+        this._translation.addScaledVector(deltaTranslation, dampningFactor);
       }
     } else {
       this._cameraVector.copy(this._cameraVectorEnd);
       this._target.copy(this._targetEnd);
-      if (deltaOffset !== null) {
+      if (deltaTranslation !== null) {
         this._translation.copy(this._translationEnd);
       }
     }
@@ -601,90 +616,34 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
   }
 
-  //
-  //            Orbit Mode
-  //          , - ~ ~ ~ - ,
-  //      , '               ' ,
-  //    ,                       ,       Formula used in both modes:
-  //   ,                         ,      CameraVector = CameraPosition - Target
-  //  ,          Target           ,     Target = CameraPosition - CameraVector
-  //  ,             *             , #   CameraPosition = Target + CameraVector
-  //  ,              \            ,  \
-  //   ,  CameraVector\          ,    \
-  //    ,              \        ,      \
-  //      ,             \    , '        \
-  //        ' - , _  _ , #<------------->#  <------ CameraPosition
-  //                         Translation
-  //
-  //        First persion Mode
-  //          , - ~ ~ ~ - ,
-  //      , '               ' ,
-  //    ,                       ,
-  //   ,                         ,
-  //  ,        CameraPosition     ,
-  //  ,             *             ,
-  //  ,              \            ,
-  //   ,  CameraVector\          ,
-  //    ,              \        ,
-  //      ,             \    , '
-  //        ' - , _  _ , #<--------------->#  <------ Target
-  //                         Translation
   private rotateByAngles(deltaAzimuthAngle: number, deltaPolarAngle: number) {
     if (deltaAzimuthAngle === 0 && deltaPolarAngle === 0) {
       return;
     }
-    //const sum = this.newVector3().subVectors(this._translationEnd, this.getCameraVectorEnd());
-
-    const translation = this._translation.clone();
-    const oldDistanceToTarget = this.newVector3()
-      .addVectors(this.getCameraVectorEnd(), this._translationEnd)
-      .lengthSq();
-    if (this.isFirstPersonMode) {
+    let cameraVector: Vector3 | null = null;
+    if (this.controlsType === ControlsType.FirstPerson) {
       this._translationEnd.add(this.getCameraVectorEnd());
-    } else {
-      //this._translationEnd.add(this.getCameraVectorEnd());
-      // this._targetEnd.add(this.getCameraVectorEnd());
+    } else if (this.controlsType === ControlsType.Orbit) {
+      cameraVector = this.getCameraVectorEnd();
     }
     this._cameraVectorEnd.theta = this.getClampedAzimuthAngle(this._cameraVectorEnd.theta + deltaAzimuthAngle);
     this._cameraVectorEnd.phi = this.getClampedPolarAngle(this._cameraVectorEnd.phi + deltaPolarAngle);
     this._cameraVectorEnd.makeSafe();
 
-    const translationEnd = new Spherical().setFromVector3(this._translationEnd);
-    translationEnd.theta = this.getClampedAzimuthAngle(translationEnd.theta + deltaAzimuthAngle);
-    translationEnd.phi = this.getClampedPolarAngle(translationEnd.phi + deltaPolarAngle);
-    translationEnd.makeSafe();
-
-    if (this.isFirstPersonMode) {
+    if (this.controlsType === ControlsType.FirstPerson) {
       this._translationEnd.sub(this.getCameraVectorEnd());
-    } else {
-      const axis = this.newVector3().crossVectors(this.getCameraVectorEnd(), this.getCameraVector());
+    } else if (this.controlsType === ControlsType.Orbit && cameraVector !== null) {
+      // rotate the _translationEnd the same way as the _cameraVectorEnd.
+      // This is not working perfectly, but it is good enough for now.
+      // I have tried other was, but all turn out to have the same result.
+      // The error is proporsional to the distance beetween the target and the lookat point and when both theta and phi is chenged
+      // It is something with the math which is not correct
+      const cameraVectorEnd = this.getCameraVectorEnd();
+      const axis = this.newVector3().crossVectors(cameraVector, cameraVectorEnd);
       axis.normalize();
-      console.log('..........................');
-      // console.log(this._target);
-      // console.log(this._cameraVector);
-      // console.log(this._translation);
-      // console.log(axis);
-      const angle = this.getCameraVector().angleTo(this.getCameraVectorEnd());
-      console.log('angle', (angle * 180) / 3.14);
-
-      const matrix = new THREE.Matrix4().makeRotationAxis(axis, -angle);
-
-      // e.normalize();
-      // e.multiplyScalar(this._translationEnd.length());
-
-      translation.applyMatrix4(matrix);
-      //sum.add(this.getCameraVectorEnd());
-
-      this._translationEnd.copy(translation);
-
-      const newDistanceToTarget = this.newVector3()
-        .addVectors(this.getCameraVectorEnd(), this._translationEnd)
-        .lengthSq();
-      console.log('oldDistanceToTarget ', oldDistanceToTarget);
-      console.log('newDistanceToTarget ', newDistanceToTarget);
-
-      this._translationEnd.setFromSpherical(translationEnd);
-      //this._translationEnd.add(e);
+      const angle = cameraVector.angleTo(cameraVectorEnd);
+      const matrix = new THREE.Matrix4().makeRotationAxis(axis, angle);
+      this._translationEnd.applyMatrix4(matrix);
     }
   }
 
@@ -774,11 +733,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
       const delta = this.newVector3();
       delta.setFromMatrixColumn(this._camera.matrix, dimension);
       delta.multiplyScalar(-distance);
-      if (this.isTargetLocked) {
-        this._translationEnd.add(delta);
-      } else {
-        this._targetEnd.add(delta);
-      }
+      this.translate(delta);
     };
     // Do the actuall panning:
     if (deltaX !== 0 || deltaY !== 0) {
@@ -791,6 +746,15 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     if (deltaZ !== 0) {
       const deltaDistance = this.getDollyDeltaDistanceForZ(deltaZ === 1, speedZ);
       panByDimension(-deltaDistance, 2); // +factor * deltaZ
+    }
+  }
+
+  private translate(delta: Vector3) {
+    if (delta.lengthSq() === 0) return;
+    if (this.isTargetLocked) {
+      this._translationEnd.add(delta);
+    } else {
+      this._targetEnd.add(delta);
     }
   }
 
@@ -809,11 +773,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number) {
     const result = this.getRadiusAndDeltaTarget(pixelCoordinates, deltaDistance);
     this._cameraVectorEnd.radius = result.radius;
-    if (this.isTargetLocked) {
-      this._translationEnd.add(result.deltaTarget);
-    } else {
-      this._targetEnd.add(result.deltaTarget);
-    }
+    this.translate(result.deltaTarget);
   }
 
   private getRadiusAndDeltaTarget(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndDeltaTarget {
@@ -942,11 +902,14 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private handleModeFromKeyboard(): boolean {
+    if (this._keyboard.isPressed('Digit0')) {
+      return this.setControlsType(ControlsType.Combo);
+    }
     if (this._keyboard.isPressed('Digit1')) {
-      return this.setFirstPersonMode(true);
+      return this.setControlsType(ControlsType.FirstPerson);
     }
     if (this._keyboard.isPressed('Digit2')) {
-      return this.setFirstPersonMode(false);
+      return this.setControlsType(ControlsType.Orbit);
     }
     return false;
   }
@@ -969,7 +932,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     deltaAzimuthAngle *= ROTATION_SPEED_FACTOR;
     deltaPolarAngle *= ROTATION_SPEED_FACTOR;
 
-    this.setFirstPersonMode(true);
+    if (this.controlsType === ControlsType.Orbit) this.setControlsType(ControlsType.FirstPerson);
 
     const polarAngle = this._cameraVectorEnd.phi;
     const azimuthAngle = this._cameraVectorEnd.theta;
@@ -1091,13 +1054,26 @@ function clampedMapLinear(value: number, xStart: number, xEnd: number, yStart: n
 
 function addScaledSpherical(a: Spherical, b: Spherical, factor: number) {
   // This calculation a = a + b * factor
-  a.radius += b.radius * factor;
-  a.phi += b.phi * factor;
-  a.theta += b.theta * factor;
+  const aa = new Vector3().setFromSpherical(a);
+  const bb = new Vector3().setFromSpherical(b);
+  aa.addScaledVector(bb, factor);
+  a.setFromVector3(aa);
+  a.makeSafe();
+
+  // a.radius += b.radius * factor;
+  // a.phi += b.phi * factor;
+  // a.theta += b.theta * factor;
 }
 
 function substractSpherical(a: Spherical, b: Spherical): Spherical {
-  return new Spherical(a.radius - b.radius, a.phi - b.phi, a.theta - b.theta);
+  const aa = new Vector3().setFromSpherical(a);
+  const bb = new Vector3().setFromSpherical(b);
+  aa.sub(bb);
+  const result = new Spherical().setFromVector3(aa);
+  result.makeSafe();
+  return result;
+
+  //  return new Spherical(a.radius - b.radius, a.phi - b.phi, a.theta - b.theta);
 }
 
 // Cache for using temporarily vectors to avoid allocations
@@ -1112,4 +1088,40 @@ class ReusableVector3s {
     // Return the vector at the new index
     return this._vectors[this._index];
   }
+}
+
+function getRotationMatrixFromSphericalCoords(phi: number, theta: number) {
+  const position = new THREE.Vector3();
+  position.setFromSphericalCoords(1, phi, theta);
+
+  const target = new THREE.Vector3(0, 0, 0);
+  const up = new THREE.Vector3(0, 1, 0);
+
+  //const matrix = new THREE.Matrix4();
+  //matrix.lookAt(position, target, up);
+
+  //return matrix;
+
+  const sinPhi = Math.sin(phi);
+  const cosPhi = Math.cos(phi);
+  const sinTheta = Math.sin(theta);
+  const cosTheta = Math.cos(theta);
+
+  // Construct the rotation matrix
+  const matrix = new THREE.Matrix4();
+  const elements = matrix.elements;
+
+  elements[0] = sinPhi * cosTheta; // 0,0
+  elements[4] = cosPhi; // 0,1
+  elements[8] = sinPhi * sinTheta; // 0,2
+
+  elements[1] = -sinTheta; // 1,0
+  elements[5] = 0; // 1,1
+  elements[9] = cosTheta; // 1,2
+
+  elements[2] = cosPhi * cosTheta; // 2,0
+  elements[6] = -sinPhi; // 2,1
+  elements[10] = cosPhi * sinTheta; // 2,2
+
+  return matrix;
 }
