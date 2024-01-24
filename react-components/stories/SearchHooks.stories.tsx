@@ -28,6 +28,10 @@ import {
   useAllAssetsMapped360Annotations,
   useSearchAssetsMapped360Annotations
 } from '../src/hooks/useSearchAssetsMapped360Annotations';
+import {
+  useAllAssetsMappedPointCloudAnnotations,
+  useSearchAssetsMappedPointCloudAnnotations
+} from '../src/hooks/useSearchAssetsMappedPointCloudAnnotations';
 import { isEqual } from 'lodash';
 import { type NodeItem } from '../src/utilities/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
@@ -99,6 +103,17 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   const { data: allAnnotationAssets } = useAllAssetsMapped360Annotations(sdk, siteIds);
 
+  const { data: pointCloudAssetSearchData } = useSearchAssetsMappedPointCloudAnnotations(
+    filteredResources,
+    sdk,
+    mainSearchQuery
+  );
+
+  const { data: allPointCloudAssets } = useAllAssetsMappedPointCloudAnnotations(
+    sdk,
+    filteredResources
+  );
+
   useEffect(() => {
     if (searchMethod !== 'allAssets') return;
 
@@ -134,7 +149,11 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           .map((mapping) => mapping.assets)
           .flat() ?? [];
 
-      const mergedAssets = [...transformedAssets, ...(allAnnotationAssets ?? [])];
+      const mergedAssets = [
+        ...transformedAssets,
+        ...(allAnnotationAssets ?? []),
+        ...(allPointCloudAssets ?? [])
+      ];
 
       const filteredAssets =
         mergedAssets.filter((asset) => {
@@ -164,7 +183,11 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         return [];
       }
 
-      const megredAssetSearchData = [...assetSearchData, ...(annotationAssetSearchData ?? [])];
+      const megredAssetSearchData = [
+        ...assetSearchData,
+        ...(annotationAssetSearchData ?? []),
+        ...(pointCloudAssetSearchData ?? [])
+      ];
 
       const searchedEquipment: Equipment[] = megredAssetSearchData.map((asset) => {
         return {
@@ -323,6 +346,10 @@ export const Main: Story = {
           }
         },
         siteId: 'celanese1'
+      },
+      {
+        modelId: 1350257070750400,
+        revisionId: 5110855034466831
       }
     ]
   },
