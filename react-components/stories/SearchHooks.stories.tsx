@@ -95,13 +95,13 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;
   });
 
-  const { data: annotationAssetSearchData } = useSearchAssetsMapped360Annotations(
+  const { data: asset360ImageSearchData } = useSearchAssetsMapped360Annotations(
     siteIds,
     sdk,
     mainSearchQuery
   );
 
-  const { data: allAnnotationAssets } = useAllAssetsMapped360Annotations(sdk, siteIds);
+  const { data: all360ImageAssets } = useAllAssetsMapped360Annotations(sdk, siteIds);
 
   const { data: pointCloudAssetSearchData } = useSearchAssetsMappedPointCloudAnnotations(
     filteredResources,
@@ -149,14 +149,14 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           .map((mapping) => mapping.assets)
           .flat() ?? [];
 
-      const mergedAssets = [
+      const combinedAssets = [
         ...transformedAssets,
-        ...(allAnnotationAssets ?? []),
+        ...(all360ImageAssets ?? []),
         ...(allPointCloudAssets ?? [])
       ];
 
       const filteredAssets =
-        mergedAssets.filter((asset) => {
+        combinedAssets.filter((asset) => {
           const isInName = asset.name.toLowerCase().includes(mainSearchQuery.toLowerCase());
           const isInDescription = asset.description
             ?.toLowerCase()
@@ -183,13 +183,13 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         return [];
       }
 
-      const megredAssetSearchData = [
+      const combinedAssetSearchData = [
         ...assetSearchData,
-        ...(annotationAssetSearchData ?? []),
+        ...(asset360ImageSearchData ?? []),
         ...(pointCloudAssetSearchData ?? [])
       ];
 
-      const searchedEquipment: Equipment[] = megredAssetSearchData.map((asset) => {
+      const searchedEquipment: Equipment[] = combinedAssetSearchData.map((asset) => {
         return {
           view: 'Asset',
           externalId: asset.id + '',
@@ -229,9 +229,9 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     allEquipment,
     searchData,
     allAssets,
-    allAnnotationAssets,
+    all360ImageAssets,
     assetSearchData,
-    annotationAssetSearchData,
+    asset360ImageSearchData,
     searchMethod
   ]);
 
