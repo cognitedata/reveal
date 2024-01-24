@@ -325,6 +325,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     this._controlsType = controlsType;
     if (this._controlsType === ControlsType.Combo) {
+      // This actually change target due to not change the camera position and lookAt
       this._target.add(this._translation);
       this._targetEnd.add(this._translationEnd);
       this._translation.set(0, 0, 0);
@@ -629,7 +630,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
       // This is not working perfectly, but it is good enough for now.
       // I have tried other was, but all turn out to have the same result.
       // The error is proporsional to the distance beetween the target and the lookat point and when both theta and phi is chenged
-      // It is something with the math which is not correct
+      // It is something with the math which is not correct, but the code itself is good.
       const cameraVectorEnd = this.getCameraVectorEnd();
       const axis = this.newVector3().crossVectors(cameraVector, cameraVectorEnd);
       axis.normalize();
