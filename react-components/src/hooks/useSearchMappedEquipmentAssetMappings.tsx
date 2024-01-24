@@ -33,9 +33,10 @@ export const useSearchMappedEquipmentAssetMappings = (
   userSdk?: CogniteClient
 ): UseQueryResult<Asset[]> => {
   const sdk = useSDK(userSdk);
+  const modelsKey = models.map((model) => [model.modelId, model.revisionId]);
 
   return useQuery(
-    ['reveal', 'react-components', 'search-mapped-asset-mappings', query, models],
+    ['reveal', 'react-components', 'search-mapped-asset-mappings', query, modelsKey],
     async () => {
       if (query === '') {
         const assetMappings = await getAssetMappingsByModels(sdk, models, limit);
@@ -45,7 +46,7 @@ export const useSearchMappedEquipmentAssetMappings = (
         return modelsAssets.map(({ assets }) => assets).flat();
       }
 
-      const searchedAssets = await sdk.assets.search({ search: { query }, limit });
+      const searchedAssets = await sdk.assets.search({ search: { query }, limit: 1000 });
       const assetMappings = await getAssetMappingsByModels(
         sdk,
         models,
