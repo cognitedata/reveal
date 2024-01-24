@@ -10,7 +10,6 @@ import {
   type CogniteClient
 } from '@cognite/sdk';
 import {
-  NodeIdNodeCollection,
   type AddModelOptions,
   type CogniteCadModel,
   TreeIndexNodeCollection
@@ -46,7 +45,8 @@ export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps)
         assetId: undefined
       });
 
-      const contextualizedThreeDNodeIds = assetMappings.map((node) => node.nodeId);
+      // const contextualizedThreeDNodeIds = assetMappings.map((node) => node.nodeId);
+
       // remove duplicated
       const uniqueContextualizedAssetIds = [...new Set(assetMappings.map((node) => node.assetId))];
 
@@ -59,61 +59,65 @@ export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps)
       const model = viewer.models[0] as CogniteCadModel;
       console.log(' model ', model);
 
+      // go through all the rules
       rules.forEach((rule) => {
         const conditions = rule.conditions;
         const isStringRule = rule.isStringRule as boolean;
 
+        // insert the node styles for each condition only once
+        conditions.forEach((condition: { nodeIdsStyleIndex: TreeIndexNodeCollection }) => {
+          condition.nodeIdsStyleIndex = new TreeIndexNodeCollection();
+        });
+
+        // if the type is metadata
         if (rule.rulerTriggerType === 'metadata') {
+          // go through all the contextualized assets
           contextualizedAssetNodes.forEach((asset) => {
+            // if it is more than one metadata field name
             rule.sourceField.forEach((sourceField: any) => {
+              // get the field value from the asset
               const metadataFieldValue = asset.metadata?.[sourceField];
-              if (asset.metadata !== null && metadataFieldValue !== undefined) {
+
+              // if the asset has the metadata with that specific field and a value,
+              // then go through all rule conditions
+              if (metadataFieldValue !== undefined) {
                 conditions.forEach(
                   async (condition: {
                     nodeIdsStyleIndex: TreeIndexNodeCollection;
                     valueString: any;
                     color: string;
                   }) => {
-                    condition.nodeIdsStyleIndex = new TreeIndexNodeCollection();
-                    if (isStringRule) {
-                      if (condition.valueString === metadataFieldValue) {
-                        const nodesFromThisAsset = assetMappings.filter(
-                          (mapping) => mapping.assetId === asset.id
-                        );
+                    // String rule and the value from the condition matches with the metadata field value
+                    if (isStringRule && condition.valueString === metadataFieldValue) {
+                      const nodesFromThisAsset = assetMappings.filter(
+                        (mapping) => mapping.assetId === asset.id
+                      );
 
-                        const treeNodes: NodeAndRange[] = await Promise.all(
-                          nodesFromThisAsset.map(async (nodeFromAsset) => {
-                            const subtreeRange = await model.getSubtreeTreeIndices(
-                              nodeFromAsset.treeIndex
-                            );
-                            const node: NodeAndRange = {
-                              nodeId: nodeFromAsset.nodeId,
-                              treeIndex: nodeFromAsset.treeIndex,
-                              subtreeRange
-                            };
-                            return node;
-                          })
-                        );
-                        const nodeIndexSet = condition.nodeIdsStyleIndex.getIndexSet();
-                        nodeIndexSet.clear();
-                        treeNodes.forEach((node) => {
-                          nodeIndexSet.addRange(node.subtreeRange);
-                        });
+                      // get the 3d nodes linked to the asset and with treeindex and subtreeRange
+                      const treeNodes: NodeAndRange[] = await Promise.all(
+                        nodesFromThisAsset.map(async (nodeFromAsset) => {
+                          const subtreeRange = await model.getSubtreeTreeIndices(
+                            nodeFromAsset.treeIndex
+                          );
+                          const node: NodeAndRange = {
+                            nodeId: nodeFromAsset.nodeId,
+                            treeIndex: nodeFromAsset.treeIndex,
+                            subtreeRange
+                          };
+                          return node;
+                        })
+                      );
 
-                        model.assignStyledNodeCollection(condition.nodeIdsStyleIndex, {
-                          color: new Color(condition.color)
-                        });
+                      // add the subtree range into the style index
+                      const nodeIndexSet = condition.nodeIdsStyleIndex.getIndexSet();
+                      treeNodes.forEach((node) => {
+                        nodeIndexSet.addRange(node.subtreeRange);
+                      });
 
-                        console.log(
-                          ' NODES FROM THE ASSET: ',
-                          asset,
-                          nodesFromThisAsset,
-                          treeNodes,
-                          rule,
-                          condition
-                        );
-
-                      }
+                      // assign the style with the color from the condition
+                      model.assignStyledNodeCollection(condition.nodeIdsStyleIndex, {
+                        color: new Color(condition.color)
+                      });
                     }
                   }
                 );
