@@ -46,7 +46,7 @@ export class DefaultCameraManager implements CameraManager {
   // CONSTANTS
   //================================================
   private static readonly AnimationDuration = 300;
-  private static readonly MinDistance = 0.8;
+  private static readonly MaximumMinDistance = 0.8; // For ComboColntrol.option.minDistance
   private static readonly MinZoomDistance = 0.4;
   private static readonly MinimalTimeBetweenRaycasts = 120;
   private static readonly MaximumTimeBetweenRaycasts = 200;
@@ -54,10 +54,10 @@ export class DefaultCameraManager implements CameraManager {
   private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
     mouseWheelAction: 'zoomPastCursor',
     changeCameraTargetOnClick: false,
-    changeCameraPositionOnDoubleClick: false,
     changeTargetOnlyOnClick: false,
+    changeCameraPositionOnDoubleClick: false,
     controlsType: ControlsType.Combo,
-    showTarget: false,
+    showTarget: true,
     showLookAt: false
   };
 
@@ -154,7 +154,7 @@ export class DefaultCameraManager implements CameraManager {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
       this._nearAndFarNeedsUpdate = true;
-      this.updateObjects();
+      this.updateVisibleObjects();
     });
 
     this.isEnabled = true;
@@ -254,16 +254,18 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  public fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    const { position, target } = fitCameraToBoundingBox(this._camera, box, radiusFactor);
+  public fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
+    console.log('fitCameraToBoundingBox', boundingBox);
+    const { position, target } = fitCameraToBoundingBox(this._camera, boundingBox, radiusFactor);
     this.moveCameraTo(position, target, duration);
   }
 
   public update(deltaTime: number, boundingBox: THREE.Box3): void {
     if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
-      this.updateCameraNearAndFar(this._camera, boundingBox);
       this._nearAndFarNeedsUpdate = false;
       this._currentBoundingBox.copy(boundingBox);
+      this.updateCameraNearAndFar();
+      this.updateControlsSensitivity();
     }
     if (this._controls.enabled) {
       this._controls.update(deltaTime);
@@ -692,7 +694,7 @@ export class DefaultCameraManager implements CameraManager {
 
   private createTargetObject(): THREE.Mesh {
     return new THREE.Mesh(
-      new THREE.SphereGeometry(0.2),
+      new THREE.SphereGeometry(1),
       new THREE.MeshBasicMaterial({
         color: '#FFFFFF', // --cogs-primary-inverted (dark)
         transparent: true,
@@ -704,7 +706,7 @@ export class DefaultCameraManager implements CameraManager {
 
   private createLookAtObject(): THREE.Mesh {
     return new THREE.Mesh(
-      new THREE.SphereGeometry(0.2),
+      new THREE.SphereGeometry(1),
       new THREE.MeshBasicMaterial({
         color: '#FF0000', // --cogs-primary-inverted (dark)
         transparent: true,
@@ -714,17 +716,24 @@ export class DefaultCameraManager implements CameraManager {
     );
   }
 
-  private updateObjects() {
+  private updateVisibleObjects() {
     if (this._scene === undefined) {
       return;
     }
-    if (this._cameraControlsOptions.showTarget) {
+    const getScale = (): number => {
+      const diagonal = this.getBoundingBoxDiagonal();
+      return Math.max(Math.min(diagonal / 200, 0.2), 0.1);
+    };
+
+    const show = this._controls.controlsType !== ControlsType.FirstPerson;
+    if (show && this._cameraControlsOptions.showTarget) {
       if (!this._targetObject) {
         this._targetObject = this.createTargetObject();
         this._scene?.add(this._targetObject);
       }
       this._targetObject.position.copy(this._controls.getTarget());
       this._targetObject.lookAt(this._camera.position);
+      this._targetObject.scale.setScalar(getScale());
     } else {
       if (this._targetObject) {
         this._scene?.remove(this._targetObject);
@@ -738,6 +747,7 @@ export class DefaultCameraManager implements CameraManager {
       }
       this._lookAtObject.position.copy(this._controls.getLookAt());
       this._lookAtObject.lookAt(this._camera.position);
+      this._lookAtObject.scale.setScalar(getScale());
     } else {
       if (this._lookAtObject) {
         this._scene?.remove(this._lookAtObject);
@@ -747,31 +757,45 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   //================================================
-  // INSTANCE METHODS: Misc
+  // INSTANCE METHODS: Updates
   //================================================
 
-  private updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
+  private updateCameraNearAndFar(): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this._isDisposed) {
       return;
     }
-    if (!this.automaticControlsSensitivity && !this.automaticNearFarPlane) {
+    if (!this.automaticNearFarPlane) {
       return;
     }
-    // Apply
-    if (this.automaticNearFarPlane) {
-      CameraManagerHelper.updateCameraNearAndFar(camera, combinedBbox);
-    }
-    if (this.automaticControlsSensitivity) {
-      const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
+    CameraManagerHelper.updateCameraNearAndFar(this._camera, this._currentBoundingBox);
+  }
 
-      // This is used to determine the speed of the camera when flying with ASDW.
-      // We want to either let it be controlled by the near plane if we are far away,
-      // but no more than a fraction of the bounding box of the system if inside
-      this.setComboControlsOptions({
-        minDistance: Math.min(Math.max(diagonal * 0.02, 0.1 * camera.near), DefaultCameraManager.MinDistance)
-      });
+  private updateControlsSensitivity(): void {
+    if (this._isDisposed) {
+      return;
     }
+    if (!this.automaticControlsSensitivity) {
+      return;
+    }
+    // This is used to determine the speed of the camera when flying with ASDW.
+    // We want to either let it be controlled by the near plane if we are far away,
+    // but no more than a fraction of the bounding box of the system if inside
+    const diagonal = this.getBoundingBoxDiagonal();
+    const diagonalMinDistance = diagonal * 0.002;
+    const nearMinDistance = 0.1 * this._camera.near;
+    let minDistance = Math.max(diagonalMinDistance, nearMinDistance);
+
+    // console.log('diagonal', diagonal);
+    // console.log('diagonalMinDistance', diagonalMinDistance);
+    // console.log('nearMinDistance', nearMinDistance);
+    minDistance = Math.min(minDistance, DefaultCameraManager.MaximumMinDistance);
+    console.log('minDistance', minDistance);
+    this.setComboControlsOptions({ minDistance: minDistance });
+  }
+
+  private getBoundingBoxDiagonal(): number {
+    return this._currentBoundingBox.min.distanceTo(this._currentBoundingBox.max);
   }
 }
 

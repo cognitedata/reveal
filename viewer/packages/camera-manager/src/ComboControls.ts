@@ -24,7 +24,7 @@ import { ControlsType } from './types';
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
-const ROTATION_SPEED_FACTOR = 0.2;
+const ROTATION_SPEED_FACTOR = 0.1;
 
 /**
  * The event type for events emitted by {@link ComboControls}.
@@ -50,9 +50,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private readonly _domElement: HTMLElement;
   private readonly _camera: PerspectiveCamera | OrthographicCamera;
 
-  // First persion mode: Camera is located in center of this sphere with Target on the surface
-  // Orbit mode        : Camera is located on the surface of the sphere with Target in center
-  // Se figure below
   private readonly _target: Vector3 = new Vector3();
   private readonly _targetEnd: Vector3 = new Vector3();
   private readonly _cameraVector: Spherical = new Spherical();
@@ -292,25 +289,24 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private getPanDeltaDistanceForXY() {
-    const cameraVector = this.getRealCameraVector();
-    let targetDistance = Math.max(
-      cameraVector.length(),
-      this._options.panDollyMinDistanceFactor * this._options.minDistance
-    );
+    let distance = this._options.panDollyMinDistanceFactor * this._options.minDistance;
+    if (this.controlsType === ControlsType.Combo) {
+      distance = Math.max(distance, this._cameraVectorEnd.radius);
+    }
     // half of the fov is center to top of screen
     if (this._camera instanceof PerspectiveCamera) {
-      targetDistance *= Math.tan(MathUtils.degToRad(this._camera.fov / 2));
+      distance *= Math.tan(MathUtils.degToRad(this._camera.fov / 2));
     }
-    return targetDistance;
+    return distance;
   }
 
   private getDollyDeltaDistanceForZ(dollyIn: boolean, steps: number = 1) {
+    let distance = this._options.panDollyMinDistanceFactor * this._options.minDistance;
+    if (this.controlsType === ControlsType.Combo) {
+      distance = Math.max(distance, this._cameraVectorEnd.radius);
+    }
     const zoomFactor = this._options.dollyFactor ** steps;
     const factor = dollyIn ? zoomFactor : 1 / zoomFactor;
-    const distance = Math.max(
-      this._cameraVectorEnd.radius,
-      this._options.panDollyMinDistanceFactor * this._options.minDistance
-    );
     return distance * (factor - 1);
   }
 
@@ -928,11 +924,12 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     if (deltaAzimuthAngle === 0 && deltaPolarAngle === 0) {
       return false;
     }
+    if (this.controlsType === ControlsType.Orbit) {
+      this.setControlsType(ControlsType.FirstPerson);
+    }
 
     deltaAzimuthAngle *= ROTATION_SPEED_FACTOR;
     deltaPolarAngle *= ROTATION_SPEED_FACTOR;
-
-    if (this.controlsType === ControlsType.Orbit) this.setControlsType(ControlsType.FirstPerson);
 
     const polarAngle = this._cameraVectorEnd.phi;
     const azimuthAngle = this._cameraVectorEnd.theta;
@@ -954,6 +951,9 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     const deltaZ = this._keyboard.getKeyboardMovementValue('KeyW', 'KeyS');
     if (deltaX === 0 && deltaY === 0 && deltaZ == 0) {
       return false;
+    }
+    if (this.controlsType === ControlsType.Orbit) {
+      this.setControlsType(ControlsType.FirstPerson);
     }
     const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardSpeedFactor : 1;
     const speedXY = timeScale * speedFactor * this._options.keyboardPanSpeed;
