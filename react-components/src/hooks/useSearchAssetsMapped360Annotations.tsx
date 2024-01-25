@@ -11,7 +11,7 @@ import {
   type AnnotationModel
 } from '@cognite/sdk';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { chunk, uniqBy } from 'lodash';
+import { chunk, uniq } from 'lodash';
 
 export const useAllAssetsMapped360Annotations = (
   sdk: CogniteClient,
@@ -83,7 +83,7 @@ async function get360AnnotationAssets(
     )
     .filter((annotation): annotation is string | number => annotation !== undefined);
 
-  const uniqueAnnotationMapping = uniqBy(annotationMapping, 'assetId');
+  const uniqueAnnotationMapping = uniq(annotationMapping);
 
   const assets = await Promise.all(
     chunk(uniqueAnnotationMapping, 1000).map(async (uniqueAssetsChunk) => {
