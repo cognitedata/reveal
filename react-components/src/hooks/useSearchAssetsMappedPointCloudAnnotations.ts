@@ -75,24 +75,20 @@ async function getPointCloudAnnotationAssets(
   pointCloudAnnotations: AnnotationModel[],
   sdk: CogniteClient
 ): Promise<Asset[]> {
-  const annotationMapping = pointCloudAnnotations.map((annotation) => ({
-    assetId:
-      (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
-      (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId ??
-      annotation.id ??
-      ''
-  }));
+  const annotationMapping = pointCloudAnnotations
+    .map(
+      (annotation) =>
+        (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
+        (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId
+    )
+    .filter((annotation): annotation is string | number => annotation !== undefined);
 
-  const filteredAnnotationMapping = annotationMapping.filter(
-    (annotation) => annotation.assetId !== ''
-  );
-
-  const uniqueAnnotationMapping = uniqBy(filteredAnnotationMapping, 'assetId');
+  const uniqueAnnotationMapping = uniqBy(annotationMapping, 'assetId');
 
   const assets = await Promise.all(
     chunk(uniqueAnnotationMapping, 1000).map(async (uniqueAssetsChunk) => {
       const retrievedAssets = await sdk.assets.retrieve(
-        uniqueAssetsChunk.map(({ assetId }) => {
+        uniqueAssetsChunk.map((assetId) => {
           if (typeof assetId === 'number') {
             return { id: assetId };
           } else {
