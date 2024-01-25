@@ -360,12 +360,12 @@ export class DefaultCameraManager implements CameraManager {
     }
   }
 
-  public set isEnabled(value: boolean) {
+  private set isEnabled(value: boolean) {
     this._isEnabled = value;
     this._controls.enabled = true;
   }
 
-  public get isEnabled(): boolean {
+  private get isEnabled(): boolean {
     return this._isEnabled;
   }
 
