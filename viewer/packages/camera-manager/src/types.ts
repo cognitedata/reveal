@@ -32,10 +32,13 @@ export type CameraControlsOptions = {
    */
   changeCameraTargetOnClick?: boolean;
 
+  /**
+   * Work when changeCameraTargetOnClick is true. Enables or disables weather the it should zoom to the target or let the camera standing still
+   *
+   * Default is false, which is zoom to target
+   *
+   */
   changeTargetOnlyOnClick?: boolean;
-
-  showTarget?: boolean;
-  showLookAt?: boolean;
 
   /**
    * Enables or disables change of camera position on mouse doubke click. New target is then set to the point of the model under current cursor
@@ -45,7 +48,30 @@ export type CameraControlsOptions = {
    *
    */
   changeCameraPositionOnDoubleClick?: boolean;
+
+  /**
+   * Set the initial controlsType on the camera
+   *
+   * Default is ControlsType.Combo as is was previously
+   *
+   */
   controlsType?: ControlsType;
+
+  /**
+   * Show taget as a white spot on the screen
+   *
+   * Default is false
+   *
+   */
+  showTarget?: boolean;
+
+  /**
+   * Show camera lookat position as a red spot on the screen
+   *
+   * Default is false
+   *
+   */
+  showLookAt?: boolean;
 };
 
 export type ControlsState = {

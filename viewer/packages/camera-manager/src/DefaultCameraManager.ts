@@ -11,13 +11,11 @@ import { ComboControlsOptions } from './ComboControlsOptions';
 
 import {
   CameraManagerCallbackData,
-  CameraControlsOptions,
   CameraState,
   CameraChangeDelegate,
   CameraManagerEventType,
   CameraStopDelegate,
-  CameraEventDelegate,
-  ControlsType
+  CameraEventDelegate
 } from './types';
 
 import { CameraManager } from './CameraManager';
@@ -35,6 +33,7 @@ import {
 
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
+import { CameraControlsOptions, ControlsType } from './CameraControlsOptions';
 
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
@@ -57,7 +56,7 @@ export class DefaultCameraManager implements CameraManager {
     changeTargetOnlyOnClick: false,
     changeCameraPositionOnDoubleClick: false,
     controlsType: ControlsType.Combo,
-    showTarget: true,
+    showTarget: false,
     showLookAt: false
   };
 
@@ -255,7 +254,6 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   public fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    console.log('fitCameraToBoundingBox', boundingBox);
     const { position, target } = fitCameraToBoundingBox(this._camera, boundingBox, radiusFactor);
     this.moveCameraTo(position, target, duration);
   }
@@ -786,11 +784,13 @@ export class DefaultCameraManager implements CameraManager {
     const nearMinDistance = 0.1 * this._camera.near;
     let minDistance = Math.max(diagonalMinDistance, nearMinDistance);
 
+    minDistance = Math.min(minDistance, DefaultCameraManager.MaximumMinDistance);
+
     // console.log('diagonal', diagonal);
     // console.log('diagonalMinDistance', diagonalMinDistance);
     // console.log('nearMinDistance', nearMinDistance);
-    minDistance = Math.min(minDistance, DefaultCameraManager.MaximumMinDistance);
-    console.log('minDistance', minDistance);
+    // console.log('minDistance', minDistance);
+
     this.setComboControlsOptions({ minDistance: minDistance });
   }
 

@@ -46,9 +46,9 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private _controlsType: ControlsType = ControlsType.Combo;
   private _enabled: boolean = true;
   private _options: ComboControlsOptions = CreateDefaultControlsOptions();
-  public temporarlyDisableKeyboard: boolean = false;
   private readonly _domElement: HTMLElement;
   private readonly _camera: PerspectiveCamera | OrthographicCamera;
+  public temporarlyDisableKeyboard: boolean = false;
 
   // These are describe below in the ascii-art
   private readonly _target: Vector3 = new Vector3();
@@ -289,6 +289,8 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     if (this.controlsType === ControlsType.Combo) {
       distance = Math.max(distance, this._cameraVectorEnd.radius);
     }
+    // The panning goes parallel to the screen, not perpendicular to the screen.
+    // So we get y = x * tan (a), where y is parallel to the screen
     // half of the fov is center to top of screen
     if (this._camera instanceof PerspectiveCamera) {
       distance *= Math.tan(MathUtils.degToRad(this._camera.fov / 2));
