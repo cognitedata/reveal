@@ -6,9 +6,10 @@
 
 import { clickOrTouchEventOffset } from '@reveal/utilities';
 import remove from 'lodash/remove';
-import THREE, {
+import {
   EventDispatcher,
   MathUtils,
+  Matrix4,
   MOUSE,
   OrthographicCamera,
   PerspectiveCamera,
@@ -183,11 +184,14 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return this._rawCameraRotation;
   }
 
+  /**
+   * Returns the current camera controls type
+   */
   public get controlsType(): ControlsType {
     return this._controlsType;
   }
 
-  public get isTargetLocked(): boolean {
+  private get isTargetLocked(): boolean {
     return this.controlsType !== ControlsType.Combo;
   }
 
@@ -195,29 +199,53 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   // INSTANCE METHODS: Pulic getters and setters
   //================================================
 
+  /**
+   * Returns the scroll target
+   */
   public getScrollTarget = (): Vector3 => {
     return this._scrollTarget.clone();
   };
 
-  public getCopyOfTarget(): Vector3 {
+  /**
+   * Returns the target
+   */
+  public getTarget(): Vector3 {
     return this._target.clone();
   }
 
-  public getTarget(): Vector3 {
+  /**
+   * Returns the position where the camera is looking at
+   */
+  public getLookAt(): Vector3 {
+    if (this._options.lookAtViewTarget) {
+      return this._viewTarget;
+    }
+    if (this.isTargetLocked) {
+      return this.newVector3().addVectors(this._target, this._translation);
+    }
     return this._target;
   }
 
+  /**
+   * Get the camera position and the target
+   */
   public getState = () => {
     return {
-      target: this.getCopyOfTarget(),
+      target: this.getTarget(),
       position: this._camera.position.clone()
     };
   };
 
+  /**
+   * Set the scroll target
+   */
   public setScrollTarget = (target: Vector3) => {
     this._scrollTarget.copy(target);
   };
 
+  /**
+   * Set the camera position and the target
+   */
   public setState = (position: Vector3, target: Vector3) => {
     this._translation.set(0, 0, 0);
     this._translationEnd.set(0, 0, 0);
@@ -234,24 +262,35 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this.triggerCameraChangeEvent();
   };
 
+  /**
+   * Set the view target
+   */
   public setViewTarget = (target: Vector3) => {
     this._viewTarget.copy(target);
     this.triggerCameraChangeEvent();
   };
 
+  /**
+   * Set the current camera controls
+   */
+  public setControlsType(controlsType: ControlsType): boolean {
+    if (controlsType == this._controlsType) {
+      return false;
+    }
+    this._controlsType = controlsType;
+    if (this._controlsType === ControlsType.Combo) {
+      // This actually change target due to not change the camera position and lookAt
+      this._target.add(this._translation);
+      this._targetEnd.add(this._translationEnd);
+      this._translation.set(0, 0, 0);
+      this._translationEnd.set(0, 0, 0);
+    }
+    return true;
+  }
+
   //================================================
   // INSTANCE METHODS: Private Getters and setters
   //================================================
-
-  public getLookAt(): Vector3 {
-    if (this._options.lookAtViewTarget) {
-      return this._viewTarget;
-    }
-    if (this.isTargetLocked) {
-      return this.newVector3().addVectors(this._target, this._translation);
-    }
-    return this._target;
-  }
 
   private getCameraPosition(): Vector3 {
     const position = this.getCameraVector().add(this._target); // CameraPosition = Target + CameraVector
@@ -319,21 +358,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   private newVector3(): Vector3 {
     return this._reusableVector3s.getNext();
-  }
-
-  public setControlsType(controlsType: ControlsType): boolean {
-    if (controlsType == this._controlsType) {
-      return false;
-    }
-    this._controlsType = controlsType;
-    if (this._controlsType === ControlsType.Combo) {
-      // This actually change target due to not change the camera position and lookAt
-      this._target.add(this._translation);
-      this._targetEnd.add(this._translationEnd);
-      this._translation.set(0, 0, 0);
-      this._translationEnd.set(0, 0, 0);
-    }
-    return true;
   }
 
   //================================================
@@ -630,14 +654,14 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     } else if (this.controlsType === ControlsType.Orbit && cameraVector !== null) {
       // rotate the _translationEnd the same way as the _cameraVectorEnd.
       // This is not working perfectly, but it is good enough for now.
-      // I have tried other was, but all turn out to have the same result.
-      // The error is proporsional to the distance beetween the target and the lookat point and when both theta and phi is chenged
+      // I have tried other ways, but all turn out to have the same result.
+      // The error is proporsional to the distance beetween the target and the lookat point and when both theta and phi is changed
       // It is something with the math which is not correct, but the code itself is good.
       const cameraVectorEnd = this.getCameraVectorEnd();
       const axis = this.newVector3().crossVectors(cameraVector, cameraVectorEnd);
       axis.normalize();
       const angle = cameraVector.angleTo(cameraVectorEnd);
-      const matrix = new THREE.Matrix4().makeRotationAxis(axis, angle);
+      const matrix = new Matrix4().makeRotationAxis(axis, angle);
       this._translationEnd.applyMatrix4(matrix);
     }
   }

@@ -2,7 +2,17 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
+import {
+  Box3,
+  Mesh,
+  MeshBasicMaterial,
+  PerspectiveCamera,
+  Quaternion,
+  Raycaster,
+  SphereGeometry,
+  Vector2,
+  Vector3
+} from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import clamp from 'lodash/clamp';
 
@@ -112,7 +122,8 @@ export class DefaultCameraManager implements CameraManager {
   private _cameraControlsOptions: Required<CameraControlsOptions> = {
     ...DefaultCameraManager.DefaultCameraControlsOptions
   };
-  private readonly _currentBoundingBox: THREE.Box3 = new THREE.Box3();
+
+  private readonly _currentBoundingBox: Box3 = new Box3();
 
   //================================================
   // INSTANCE FIELDS: Events
@@ -139,7 +150,7 @@ export class DefaultCameraManager implements CameraManager {
     camera?: THREE.PerspectiveCamera,
     scene?: THREE.Scene
   ) {
-    this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
+    this._camera = camera ?? new PerspectiveCamera(60, undefined, 0.1, 10000);
     this._scene = scene;
     this._domElement = domElement;
     this._inputHandler = inputHandler;
@@ -170,9 +181,9 @@ export class DefaultCameraManager implements CameraManager {
 
   public getCameraState(): Required<CameraState> {
     return {
-      position: this.getCopyOfPosition(),
+      position: this.getPosition(),
       rotation: this._camera.quaternion.clone(),
-      target: this.getCopyOfTarget()
+      target: this.getTarget()
     };
   }
 
@@ -186,18 +197,18 @@ export class DefaultCameraManager implements CameraManager {
     if (state.rotation && state.target) {
       throw new Error(`Rotation and target can't be set at the same time`);
     }
-    const newPosition = state.position ?? this.getCopyOfPosition();
-    const newRotation = (state.target ? new THREE.Quaternion() : state.rotation) ?? new THREE.Quaternion();
+    const newPosition = state.position ?? this.getPosition();
+    const newRotation = (state.target ? new Quaternion() : state.rotation) ?? new Quaternion();
     const newTarget =
       state.target ??
       (state.rotation
         ? CameraManagerHelper.calculateNewTargetFromRotation(
             this._camera,
             state.rotation,
-            this.getCopyOfTarget(),
+            this.getTarget(),
             newPosition
           )
-        : this.getCopyOfTarget());
+        : this.getTarget());
 
     if (this._controls.enabled) {
       this._controls.cameraRawRotation.copy(newRotation);
@@ -312,12 +323,12 @@ export class DefaultCameraManager implements CameraManager {
     this.setComboControlsOptions({ enableKeyboardNavigation: enabled });
   }
 
-  private getCopyOfPosition(): THREE.Vector3 {
+  private getPosition(): THREE.Vector3 {
     return this._camera.position.clone();
   }
 
-  private getCopyOfTarget(): THREE.Vector3 {
-    return this._controls.getCopyOfTarget();
+  private getTarget(): THREE.Vector3 {
+    return this._controls.getTarget();
   }
 
   /**
@@ -366,7 +377,7 @@ export class DefaultCameraManager implements CameraManager {
     if (this._isDisposed) {
       return;
     }
-    duration = duration ?? getDefaultDuration(target.distanceTo(this.getCopyOfPosition()));
+    duration = duration ?? getDefaultDuration(target.distanceTo(this.getPosition()));
     const startTarget = getAnimationStartTarget(this._camera, target);
     const cameraPosition = this._camera.position;
     const from = {
@@ -386,8 +397,8 @@ export class DefaultCameraManager implements CameraManager {
       targetZ: target.z
     };
 
-    const tempTarget = new THREE.Vector3();
-    const tempPosition = new THREE.Vector3();
+    const tempTarget = new Vector3();
+    const tempPosition = new Vector3();
 
     const { tween, stopTween } = this.createTweenAnimation(from, to, duration);
 
@@ -439,7 +450,7 @@ export class DefaultCameraManager implements CameraManager {
       targetZ: target.z
     };
 
-    const tempTarget = new THREE.Vector3();
+    const tempTarget = new Vector3();
 
     const { tween, stopTween } = this.createTweenAnimation(from, to, duration);
 
@@ -517,10 +528,10 @@ export class DefaultCameraManager implements CameraManager {
 
     const newTargetDistance =
       lastScrollTargetDistance <= this.getComboControlsOptions().minDistance
-        ? Math.min(this._camera.position.distanceTo(boundingBox.getCenter(new THREE.Vector3())), modelSize) / 2
+        ? Math.min(this._camera.position.distanceTo(boundingBox.getCenter(new Vector3())), modelSize) / 2
         : lastScrollTargetDistance;
 
-    const raycaster = new THREE.Raycaster();
+    const raycaster = new Raycaster();
     const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, pixelX, pixelY);
     raycaster.setFromCamera(pixelCoordinates, this._camera);
 
@@ -572,7 +583,7 @@ export class DefaultCameraManager implements CameraManager {
         this.setComboControlsOptions({ zoomToCursor: true });
         break;
       case 'zoomToCursor':
-        this._controls.setScrollTarget(this.getCopyOfTarget());
+        this._controls.setScrollTarget(this.getTarget());
         this.setComboControlsOptions({ useScrollTarget: true });
         this.setComboControlsOptions({ zoomToCursor: true });
         break;
@@ -588,7 +599,7 @@ export class DefaultCameraManager implements CameraManager {
     let wasLastScrollZoomOut = false;
     let lastWheelEventTime = 0;
 
-    const lastMousePosition = new THREE.Vector2();
+    const lastMousePosition = new Vector2();
 
     const onWheel = async (event: WheelEvent) => {
       // Added because cameraControls are disabled when doing picking, so
@@ -597,7 +608,7 @@ export class DefaultCameraManager implements CameraManager {
       const pixelPosition = clickOrTouchEventOffset(event, this._domElement);
 
       const currentTime = performance.now();
-      const currentMousePosition = new THREE.Vector2(pixelPosition.offsetX, pixelPosition.offsetY);
+      const currentMousePosition = new Vector2(pixelPosition.offsetX, pixelPosition.offsetY);
 
       const onWheelTimeDelta = currentTime - lastWheelEventTime;
 
@@ -680,7 +691,7 @@ export class DefaultCameraManager implements CameraManager {
       modelRaycastData.intersection?.point ??
       this.getTargetByBoundingBox(event.offsetX, event.offsetY, modelRaycastData.modelsBoundingBox);
 
-    const newPosition = new THREE.Vector3().subVectors(newTarget, this._camera.position);
+    const newPosition = new Vector3().subVectors(newTarget, this._camera.position);
     newPosition.divideScalar(2);
     newPosition.add(this._camera.position);
     this.moveCameraTo(newPosition, newTarget, DefaultCameraManager.AnimationDuration);
@@ -691,9 +702,9 @@ export class DefaultCameraManager implements CameraManager {
   //================================================
 
   private createTargetObject(): THREE.Mesh {
-    return new THREE.Mesh(
-      new THREE.SphereGeometry(1),
-      new THREE.MeshBasicMaterial({
+    return new Mesh(
+      new SphereGeometry(1),
+      new MeshBasicMaterial({
         color: '#FFFFFF', // --cogs-primary-inverted (dark)
         transparent: true,
         opacity: 0.8,
@@ -703,9 +714,9 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   private createLookAtObject(): THREE.Mesh {
-    return new THREE.Mesh(
-      new THREE.SphereGeometry(1),
-      new THREE.MeshBasicMaterial({
+    return new Mesh(
+      new SphereGeometry(1),
+      new MeshBasicMaterial({
         color: '#FF0000', // --cogs-primary-inverted (dark)
         transparent: true,
         opacity: 0.8,
@@ -808,8 +819,8 @@ function getDefaultDuration(distanceToCamera: number): number {
 }
 
 function getAnimationStartTarget(camera: THREE.PerspectiveCamera, newTarget: THREE.Vector3): THREE.Vector3 {
-  const raycaster = new THREE.Raycaster();
-  raycaster.setFromCamera(new THREE.Vector2(), camera);
+  const raycaster = new Raycaster();
+  raycaster.setFromCamera(new Vector2(), camera);
   const distanceToTarget = newTarget.distanceTo(camera.position);
   const scaledDirection = raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
   return raycaster.ray.origin.clone().add(scaledDirection);

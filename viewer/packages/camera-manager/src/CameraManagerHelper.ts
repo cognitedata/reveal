@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as THREE from 'three';
+import { Box3, PerspectiveCamera, Plane, Quaternion, Vector3 } from 'three';
 import range from 'lodash/range';
 import { fitCameraToBoundingBox } from '@reveal/utilities';
 
@@ -14,23 +14,23 @@ export class CameraManagerHelper {
    * Reusable buffers used by updateNearAndFarPlane function to avoid allocations.
    */
   private static readonly _updateNearAndFarPlaneBuffers = {
-    cameraPosition: new THREE.Vector3(),
-    cameraDirection: new THREE.Vector3(),
-    corners: new Array<THREE.Vector3>(
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3(),
-      new THREE.Vector3()
+    cameraPosition: new Vector3(),
+    cameraDirection: new Vector3(),
+    corners: new Array<Vector3>(
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3()
     )
   };
 
   private static readonly _calculateCameraFarBuffers = {
-    nearPlaneCoplanarPoint: new THREE.Vector3(),
-    nearPlane: new THREE.Plane()
+    nearPlaneCoplanarPoint: new Vector3(),
+    nearPlane: new Plane()
   };
   /**
    * Calculates camera target based on new camera rotation.
@@ -41,11 +41,11 @@ export class CameraManagerHelper {
    * @returns
    */
   static calculateNewTargetFromRotation(
-    camera: THREE.PerspectiveCamera,
-    rotation: THREE.Quaternion,
-    currentTarget: THREE.Vector3,
-    position: THREE.Vector3
-  ): THREE.Vector3 {
+    camera: PerspectiveCamera,
+    rotation: Quaternion,
+    currentTarget: Vector3,
+    position: Vector3
+  ): Vector3 {
     const distToTarget = currentTarget.clone().sub(camera.position);
     const tempCam = camera.clone();
 
@@ -53,7 +53,7 @@ export class CameraManagerHelper {
     tempCam.updateMatrix();
 
     const newTarget = tempCam
-      .getWorldDirection(new THREE.Vector3())
+      .getWorldDirection(new Vector3())
       .normalize()
       .multiplyScalar(distToTarget.length())
       .add(position);
@@ -67,9 +67,9 @@ export class CameraManagerHelper {
    * @param newTarget The target to compute rotation from
    * @returns New camera rotationg
    */
-  static calculateNewRotationFromTarget(camera: THREE.PerspectiveCamera, newTarget: THREE.Vector3): THREE.Quaternion {
-    return new THREE.Quaternion().setFromUnitVectors(
-      new THREE.Vector3(0, 0, -1),
+  static calculateNewRotationFromTarget(camera: PerspectiveCamera, newTarget: Vector3): Quaternion {
+    return new Quaternion().setFromUnitVectors(
+      new Vector3(0, 0, -1),
       newTarget.clone().sub(camera.position).normalize()
     );
   }
@@ -78,7 +78,7 @@ export class CameraManagerHelper {
    * @param camera Used camera instance.
    * @param combinedBbox Bounding box of all objects on the scene.
    */
-  static updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
+  static updateCameraNearAndFar(camera: PerspectiveCamera, combinedBbox: Box3): void {
     const { cameraPosition, cameraDirection, corners } = this._updateNearAndFarPlaneBuffers;
     this.getBoundingBoxCorners(combinedBbox, corners);
     camera.getWorldPosition(cameraPosition);
@@ -110,18 +110,18 @@ export class CameraManagerHelper {
    * @returns
    */
   static calculateCameraStateToFitBoundingBox(
-    camera: THREE.PerspectiveCamera,
-    box: THREE.Box3,
+    camera: PerspectiveCamera,
+    box: Box3,
     radiusFactor: number = 2
-  ): { position: THREE.Vector3; target: THREE.Vector3 } {
+  ): { position: Vector3; target: Vector3 } {
     return fitCameraToBoundingBox(camera, box, radiusFactor);
   }
 
   private static calculateCameraFar(
     near: number,
-    cameraPosition: THREE.Vector3,
-    cameraDirection: THREE.Vector3,
-    corners: Array<THREE.Vector3>
+    cameraPosition: Vector3,
+    cameraDirection: Vector3,
+    corners: Array<Vector3>
   ): number {
     const { nearPlane, nearPlaneCoplanarPoint } = this._calculateCameraFarBuffers;
 
@@ -137,18 +137,14 @@ export class CameraManagerHelper {
     return Math.max(near * 2, far);
   }
 
-  private static calculateCameraNear(
-    camera: THREE.PerspectiveCamera,
-    combinedBbox: THREE.Box3,
-    cameraPosition: THREE.Vector3
-  ): number {
+  private static calculateCameraNear(camera: PerspectiveCamera, combinedBbox: Box3, cameraPosition: Vector3): number {
     let near = combinedBbox.distanceToPoint(cameraPosition);
     near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
     return Math.max(0.1, near);
   }
 
-  private static getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): THREE.Vector3[] {
-    outBuffer = outBuffer || range(0, 8).map(_ => new THREE.Vector3());
+  private static getBoundingBoxCorners(bbox: Box3, outBuffer?: Vector3[]): Vector3[] {
+    outBuffer = outBuffer || range(0, 8).map(_ => new Vector3());
     if (outBuffer.length !== 8) {
       throw new Error(`outBuffer must hold exactly 8 elements, but holds ${outBuffer.length} elemnents`);
     }
