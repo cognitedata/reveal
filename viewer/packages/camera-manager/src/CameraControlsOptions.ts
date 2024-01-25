@@ -45,7 +45,8 @@ export type CameraControlsOptions = {
    * position and the a camera position is set half way to this point
    *
    * Default is false.
-   * @beta
+   * @jsdoc/check-tag-names
+   * @experimental
    */
   changeCameraPositionOnDoubleClick?: boolean;
 
@@ -53,7 +54,7 @@ export type CameraControlsOptions = {
    * Set the initial controlsType on the camera
    *
    * Default is ControlsType.Combo as is was previously
-   * @beta
+   * @experimental
    */
   controlsType?: ControlsType;
 
@@ -62,7 +63,7 @@ export type CameraControlsOptions = {
    * It is working when controlsType is ControlsType.Combo or ControlsType.Orbit
    *
    * Default is false
-   * @beta
+   * @experimental
    */
   showTarget?: boolean;
 
@@ -71,7 +72,7 @@ export type CameraControlsOptions = {
    * It is working when controlsType is ControlsType.Combo or ControlsType.Orbit
    *
    * Default is false
-   * @beta
+   * @experimental
    */
   showLookAt?: boolean;
 };

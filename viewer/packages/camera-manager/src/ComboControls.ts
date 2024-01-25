@@ -190,7 +190,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   /**
    * Returns the current camera controls type
-   * @beta
+   * @experimental
    */
   public get controlsType(): ControlsType {
     return this._controlsType;
@@ -277,7 +277,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   /**
    * Set the current camera controls
-   * @beta
+   * @experimental
    */
   public setControlsType(controlsType: ControlsType): boolean {
     if (controlsType == this._controlsType) {
