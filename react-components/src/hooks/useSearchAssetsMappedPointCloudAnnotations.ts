@@ -1,10 +1,10 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
+import { type AddModelOptions } from '@cognite/reveal';
 import {
   type AnnotationFilterProps,
-  type FileFilterProps,
   type AnnotationsBoundingVolume,
   type Asset,
   type CogniteClient,
@@ -13,14 +13,14 @@ import {
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { chunk, uniq } from 'lodash';
 
-export const useAllAssetsMapped360Annotations = (
+export const useAllAssetsMappedPointCloudAnnotations = (
   sdk: CogniteClient,
-  siteIds: string[]
+  models: AddModelOptions[]
 ): UseQueryResult<Asset[]> => {
   return useQuery(
-    ['reveal', 'react-components', 'all-assets-mapped-360-annotations', siteIds],
+    ['reveal', 'react-components', 'all-assets-mapped-point-cloud-annotations', models],
     async () => {
-      const assetMappings = await getAssetsMapped360Annotations(sdk, siteIds);
+      const assetMappings = await getAssetsMappedPointCloudAnnotations(sdk, models);
       return assetMappings;
     },
     {
@@ -29,15 +29,15 @@ export const useAllAssetsMapped360Annotations = (
   );
 };
 
-export const useSearchAssetsMapped360Annotations = (
-  siteIds: string[],
+export const useSearchAssetsMappedPointCloudAnnotations = (
+  models: AddModelOptions[],
   sdk: CogniteClient,
   query: string
 ): UseQueryResult<Asset[]> => {
-  const { data: assetMappings, isFetched } = useAllAssetsMapped360Annotations(sdk, siteIds);
+  const { data: assetMappings, isFetched } = useAllAssetsMappedPointCloudAnnotations(sdk, models);
 
   return useQuery(
-    ['reveal', 'react-components', 'search-assets-mapped-360-annotations', query, siteIds],
+    ['reveal', 'react-components', 'search-assets-mapped-point-cloud-annotations', query, models],
     async () => {
       if (query === '') {
         return assetMappings;
@@ -60,22 +60,22 @@ export const useSearchAssetsMapped360Annotations = (
   );
 };
 
-async function getAssetsMapped360Annotations(
+async function getAssetsMappedPointCloudAnnotations(
   sdk: CogniteClient,
-  siteIds: string[]
+  models: AddModelOptions[]
 ): Promise<Asset[]> {
-  const fileIdsList = await get360ImagesFileIds(siteIds, sdk);
-  const image360Annotations = await get360ImageAnnotations(fileIdsList, sdk);
-  const result = await get360AnnotationAssets(image360Annotations, sdk);
+  const modelIdList = models.map((model) => model.modelId);
+  const pointCloudAnnotations = await getPointCloudAnnotations(modelIdList, sdk);
+  const result = await getPointCloudAnnotationAssets(pointCloudAnnotations, sdk);
 
   return result;
 }
 
-async function get360AnnotationAssets(
-  image360Annotations: AnnotationModel[],
+async function getPointCloudAnnotationAssets(
+  pointCloudAnnotations: AnnotationModel[],
   sdk: CogniteClient
 ): Promise<Asset[]> {
-  const annotationMapping = image360Annotations
+  const annotationMapping = pointCloudAnnotations
     .map(
       (annotation) =>
         (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
@@ -104,30 +104,16 @@ async function get360AnnotationAssets(
   return assets.flat();
 }
 
-async function get360ImagesFileIds(siteIds: string[], sdk: CogniteClient): Promise<number[]> {
-  const fileIdListPromises = siteIds.map(async (siteId) => {
-    const req: FileFilterProps = {
-      metadata: { site_id: siteId }
-    };
-    const fileIds = await listFileIds(req, sdk);
-    return fileIds;
-  });
-
-  const fileIdsList = (await Promise.all(fileIdListPromises)).flat();
-
-  return fileIdsList;
-}
-
-async function get360ImageAnnotations(
-  fileIdsList: number[],
+async function getPointCloudAnnotations(
+  modelIdList: number[],
   sdk: CogniteClient
 ): Promise<AnnotationModel[]> {
   const annotationArray = await Promise.all(
-    chunk(fileIdsList, 1000).map(async (fileIdsChunk) => {
+    chunk(modelIdList, 1000).map(async (modelIdList) => {
       const filter: AnnotationFilterProps = {
-        annotatedResourceIds: fileIdsChunk.map((id) => ({ id })),
-        annotatedResourceType: 'file',
-        annotationType: 'images.AssetLink'
+        annotatedResourceIds: modelIdList.map((id) => ({ id })),
+        annotatedResourceType: 'threedmodel',
+        annotationType: 'pointcloud.BoundingVolume'
       };
       const annotations = await sdk.annotations
         .list({
@@ -140,14 +126,4 @@ async function get360ImageAnnotations(
   );
 
   return annotationArray.flatMap((annotations) => annotations);
-}
-
-async function listFileIds(filter: FileFilterProps, sdk: CogniteClient): Promise<number[]> {
-  const req = { filter, limit: 1000 };
-  const map = await sdk.files.list(req).autoPagingToArray({ limit: Infinity });
-
-  const fileInfo = await Promise.all(map.flat());
-  const list = fileInfo.map((file) => file.id);
-
-  return list;
 }
