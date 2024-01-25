@@ -8,23 +8,26 @@ import { type CogniteClient } from '@cognite/sdk';
 import { useMemo } from 'react';
 import { type EdgeItem, FdmSDK, type Query } from '../utilities/FdmSDK';
 import { type AddReveal3DModelOptions } from '..';
-import { type Cdf3dRevisionProperties } from './types';
+import { type SceneConfigurationProperties, type Cdf3dRevisionProperties } from './types';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 export type Space = string;
 export type ExternalId = string;
 
+export type SceneData = {
+  name: string;
+  modelOptions: AddReveal3DModelOptions[];
+};
+
 export const use3dScenes = (
   userSdk?: CogniteClient
-): UseQueryResult<Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>> => {
+): UseQueryResult<Record<Space, Record<ExternalId, SceneData>>> => {
   const sdk = useSDK(userSdk);
 
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
 
-  const queryFunction: QueryFunction<
-    Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>
-  > = async () => {
+  const queryFunction: QueryFunction<Record<Space, Record<ExternalId, SceneData>>> = async () => {
     const scenesQuery = createGetScenesQuery();
 
     try {
@@ -32,7 +35,7 @@ export const use3dScenes = (
 
       const scenesMap: Record<
         Space,
-        Record<ExternalId, AddReveal3DModelOptions[]>
+        Record<ExternalId, SceneData>
       > = scenesQueryResult.items.sceneModels.reduce(
         (acc, item) => {
           const edge = item as EdgeItem;
@@ -58,16 +61,27 @@ export const use3dScenes = (
           const spaceMap = acc[space];
 
           if (spaceMap[externalId] === undefined) {
-            spaceMap[externalId] = [];
+            spaceMap[externalId] = { name: '', modelOptions: [] };
           }
           const externalIdMap = spaceMap[externalId];
-          externalIdMap.push(newModel);
+          externalIdMap.modelOptions.push(newModel);
 
           return acc;
         },
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        {} as Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>
+        {} as Record<Space, Record<ExternalId, SceneData>>
       );
+
+      scenesQueryResult.items.scenes.forEach((scene) => {
+        const { space, externalId } = scene;
+
+        if (scenesMap[space]?.[externalId] !== undefined) {
+          const properties = Object.values(
+            Object.values(scene.properties)[0] as Record<string, unknown>
+          )[0] as SceneConfigurationProperties;
+          scenesMap[space][externalId].name = properties.name;
+        }
+      });
 
       return scenesMap;
     } catch (error) {
@@ -76,7 +90,7 @@ export const use3dScenes = (
     }
   };
 
-  return useQuery<Record<Space, Record<ExternalId, AddReveal3DModelOptions[]>>>(
+  return useQuery<Record<Space, Record<ExternalId, SceneData>>>(
     ['reveal-react-components', 'cdf', '3d', 'scenes'],
     queryFunction
   );
