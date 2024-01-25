@@ -998,16 +998,6 @@ function getPinchInfo(domElement: HTMLElement, touches: PointerEvent[]) {
   };
 }
 
-function getShortestDeltaTheta(theta1: number, theta2: number): number {
-  const twoPi = 2 * Math.PI;
-  const rawDeltaTheta = (theta1 % twoPi) - (theta2 % twoPi);
-
-  let deltaTheta = Math.min(Math.abs(rawDeltaTheta), twoPi - Math.abs(rawDeltaTheta));
-  const thetaSign = (deltaTheta === Math.abs(rawDeltaTheta) ? 1 : -1) * Math.sign(rawDeltaTheta);
-  deltaTheta *= thetaSign;
-  return deltaTheta;
-}
-
 function getFov(camera: PerspectiveCamera | OrthographicCamera): number {
   if (camera instanceof PerspectiveCamera) {
     return camera.fov;
@@ -1074,6 +1064,16 @@ function substractSpherical(a: Spherical, b: Spherical): Spherical {
   result.makeSafe();
   return result;
 }
+
+// function getShortestDeltaTheta(theta1: number, theta2: number): number {
+//   const twoPi = 2 * Math.PI;
+//   const rawDeltaTheta = (theta1 % twoPi) - (theta2 % twoPi);
+
+//   let deltaTheta = Math.min(Math.abs(rawDeltaTheta), twoPi - Math.abs(rawDeltaTheta));
+//   const thetaSign = (deltaTheta === Math.abs(rawDeltaTheta) ? 1 : -1) * Math.sign(rawDeltaTheta);
+//   deltaTheta *= thetaSign;
+//   return deltaTheta;
+// }
 
 // Cache for using temporarily vectors to avoid allocations
 class ReusableVector3s {
