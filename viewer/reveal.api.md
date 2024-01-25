@@ -580,7 +580,6 @@ export abstract class CombineNodeCollectionBase extends NodeCollection {
 export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement);
     get cameraRawRotation(): Quaternion;
-    // @beta
     get controlsType(): ControlsType;
     // (undocumented)
     dispose: () => void;
@@ -595,7 +594,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     getTarget(): Vector3;
     get options(): Readonly<ComboControlsOptions>;
     set options(options: Partial<ComboControlsOptions>);
-    // @beta
     setControlsType(controlsType: ControlsType): boolean;
     setScrollTarget: (target: Vector3) => void;
     setState: (position: Vector3, target: Vector3) => void;
