@@ -20,7 +20,7 @@ import THREE, {
 import Keyboard from './Keyboard';
 import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
-import { ControlsType } from './types';
+import { ControlsType } from './CameraControlsOptions';
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
