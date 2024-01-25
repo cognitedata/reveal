@@ -49,7 +49,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private _options: ComboControlsOptions = CreateDefaultControlsOptions();
   private readonly _domElement: HTMLElement;
   private readonly _camera: PerspectiveCamera | OrthographicCamera;
-  public temporarlyDisableKeyboard: boolean = false;
 
   // These are describe below in the ascii-art
   private readonly _target: Vector3 = new Vector3();
@@ -72,6 +71,11 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   // Temporary objects used for calculations to avoid allocations
   private readonly _reusableVector3s = new ReusableVector3s();
+
+  /**
+   @internal
+   */
+  public temporarlyDisableKeyboard: boolean = false;
 
   //        ControlsType.Combo
   //          , - ~ ~ ~ - ,

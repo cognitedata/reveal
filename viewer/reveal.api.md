@@ -221,7 +221,11 @@ export type CameraConfiguration = {
 export type CameraControlsOptions = {
     mouseWheelAction?: 'zoomToTarget' | 'zoomPastCursor' | 'zoomToCursor';
     changeCameraTargetOnClick?: boolean;
+    changeTargetOnlyOnClick?: boolean;
     changeCameraPositionOnDoubleClick?: boolean;
+    controlsType?: ControlsType;
+    showTarget?: boolean;
+    showLookAt?: boolean;
 };
 
 // @public
@@ -233,8 +237,8 @@ export interface CameraManager {
     deactivate(): void;
     // (undocumented)
     dispose(): void;
-    fitCameraToBoundingBox(boundingBox: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
-    getCamera(): THREE_2.PerspectiveCamera;
+    fitCameraToBoundingBox(boundingBox: Box3, duration?: number, radiusFactor?: number): void;
+    getCamera(): PerspectiveCamera;
     getCameraState(): Required<CameraState>;
     off(event: 'cameraChange', callback: CameraChangeDelegate): void;
     // (undocumented)
@@ -247,7 +251,7 @@ export interface CameraManager {
     // (undocumented)
     on(event: CameraManagerEventType, callback: CameraEventDelegate): void;
     setCameraState(state: CameraState): void;
-    update(deltaTime: number, boundingBox: THREE_2.Box3): void;
+    update(deltaTime: number, boundingBox: Box3): void;
 }
 
 // @public
@@ -255,13 +259,13 @@ export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[num
 
 // @public
 export class CameraManagerHelper {
-    static calculateCameraStateToFitBoundingBox(camera: THREE_2.PerspectiveCamera, box: THREE_2.Box3, radiusFactor?: number): {
-        position: THREE_2.Vector3;
-        target: THREE_2.Vector3;
+    static calculateCameraStateToFitBoundingBox(camera: PerspectiveCamera, box: Box3, radiusFactor?: number): {
+        position: Vector3;
+        target: Vector3;
     };
-    static calculateNewRotationFromTarget(camera: THREE_2.PerspectiveCamera, newTarget: THREE_2.Vector3): THREE_2.Quaternion;
-    static calculateNewTargetFromRotation(camera: THREE_2.PerspectiveCamera, rotation: THREE_2.Quaternion, currentTarget: THREE_2.Vector3, position: THREE_2.Vector3): THREE_2.Vector3;
-    static updateCameraNearAndFar(camera: THREE_2.PerspectiveCamera, combinedBbox: THREE_2.Box3): void;
+    static calculateNewRotationFromTarget(camera: PerspectiveCamera, newTarget: Vector3): Quaternion;
+    static calculateNewTargetFromRotation(camera: PerspectiveCamera, rotation: Quaternion, currentTarget: Vector3, position: Vector3): Vector3;
+    static updateCameraNearAndFar(camera: PerspectiveCamera, combinedBbox: Box3): void;
 }
 
 // @public (undocumented)
@@ -576,24 +580,23 @@ export abstract class CombineNodeCollectionBase extends NodeCollection {
 export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement);
     get cameraRawRotation(): Quaternion;
+    get controlsType(): ControlsType;
     // (undocumented)
     dispose: () => void;
     get enabled(): boolean;
     set enabled(newEnabledValue: boolean);
-    // (undocumented)
+    getLookAt(): Vector3;
     getScrollTarget: () => Vector3;
-    // (undocumented)
     getState: () => {
         target: Vector3;
         position: Vector3;
     };
+    getTarget(): Vector3;
     get options(): Readonly<ComboControlsOptions>;
     set options(options: Partial<ComboControlsOptions>);
-    // (undocumented)
+    setControlsType(controlsType: ControlsType): boolean;
     setScrollTarget: (target: Vector3) => void;
-    // (undocumented)
     setState: (position: Vector3, target: Vector3) => void;
-    // (undocumented)
     setViewTarget: (target: Vector3) => void;
     // (undocumented)
     triggerCameraChangeEvent: () => void;
@@ -692,6 +695,7 @@ export class DebugCameraTool extends Cognite3DViewerToolBase {
 
 // @public
 export class DefaultCameraManager implements CameraManager {
+    constructor(domElement: HTMLElement, inputHandler: InputHandler, raycastFunction: (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>, camera?: THREE.PerspectiveCamera, scene?: THREE.Scene);
     // (undocumented)
     activate(cameraManager?: CameraManager): void;
     automaticControlsSensitivity: boolean;
@@ -701,15 +705,15 @@ export class DefaultCameraManager implements CameraManager {
     // (undocumented)
     dispose(): void;
     // (undocumented)
-    fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
+    fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
     // (undocumented)
-    getCamera(): THREE_2.PerspectiveCamera;
+    getCamera(): THREE.PerspectiveCamera;
     getCameraControlsOptions(): CameraControlsOptions;
     // (undocumented)
     getCameraState(): Required<CameraState>;
     getComboControlsOptions(): Readonly<ComboControlsOptions>;
-    set keyboardNavigationEnabled(enabled: boolean);
     get keyboardNavigationEnabled(): boolean;
+    set keyboardNavigationEnabled(enabled: boolean);
     // (undocumented)
     off(event: CameraManagerEventType, callback: CameraEventDelegate): void;
     // (undocumented)
@@ -718,7 +722,7 @@ export class DefaultCameraManager implements CameraManager {
     setCameraState(state: CameraState): void;
     setComboControlsOptions(options: Partial<ComboControlsOptions>): void;
     // (undocumented)
-    update(deltaTime: number, boundingBox: THREE_2.Box3): void;
+    update(deltaTime: number, boundingBox: THREE.Box3): void;
 }
 
 // @public
