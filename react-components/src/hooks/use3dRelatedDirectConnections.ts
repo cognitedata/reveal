@@ -6,10 +6,11 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { type Source, type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 import assert from 'assert';
+import { FdmInstanceWithViewhView } from '../utilities/types';
 
 export function use3dRelatedDirectConnections(
   instance: DmsUniqueIdentifier | undefined
-): UseQueryResult<(DmsUniqueIdentifier & { view: Source })[]> {
+): UseQueryResult<FdmInstanceWithView[]> {
   const fdmSdk = useFdmSdk();
 
   return useQuery(

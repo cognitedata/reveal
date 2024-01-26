@@ -4,12 +4,13 @@
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
-import { type DmsUniqueIdentifier, Source } from '../utilities/FdmSDK';
+import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 import { zipWith } from 'lodash';
+import { FdmInstanceWithViewhView } from '../utilities/types';
 
 export function use3dRelatedEdgeConnections(
   fdmId: DmsUniqueIdentifier | undefined
-): UseQueryResult<(DmsUniqueIdentifier & { view: Source })[]> {
+): UseQueryResult<FdmInstanceWithView[]> {
   const fdmSdk = useFdmSdk();
 
   return useQuery(
