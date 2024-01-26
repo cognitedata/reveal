@@ -36,7 +36,7 @@ yarn && yarn run start
 
 If you now navigate to [localhost:3000](https://localhost:3000), the browser should show a simple 3D model with a UI.
 
-To show a model from your own CDF project, you must first configure Reveal to use your CDF credentials. Follows the steps in the section [Environment for Credentials](environment-for-credentials).
+To show a model from your own CDF project, you must first configure Reveal to use your CDF credentials. Follows the steps in the section [Credentials Environment](#Credentials-Environment).
 
 change the URL to `https://localhost:3000/?project=<project>&env=<environment>&modelId=<modelId>&revisionId=<revisionId>`.
 
@@ -85,7 +85,7 @@ source .env
 ```
 3. Run `yarn` again and be happy!
 
-## Environment for Credentials
+## Credentials Environment
 
 The examples are configured to run using any environment variables specified in the file `examples/.env`, which you create yourself.  The file `examples/.env.example` shows the expected JSON format of the value contained in this variable. You must fill in the appropriate values for your environment in this file; The tenant ID, client ID and the cluster of the CDF project you want to use.
 
