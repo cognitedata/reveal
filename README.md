@@ -44,7 +44,7 @@ Here, `<project>` is the name of the CDF project you want to connect to, `<envir
 
 ### Troubleshooting
 
-Sometimes, especially the first time you log in to an environment, you may get a 401 error in the browser, which, after clicking through, resets the browser window to the default model view. In this case, there should be a `#code=...`-segment appended to the URL in the browser. Copy the URL you tried to visit (including the project, environment and IDs), and paste it to the left of the `#`-sign in the URL, replacing everything that was there before. In other words, your URL should now look like
+Occasionally, and always the first time you login to an environment, you may get a 401 error in the browser, which, after clicking through, resets the browser window to the model with colorful shapes. In this case, there should be a `#code=...`-segment appended to the URL in the browser. Copy the URL you tried to visit (including the project, environment and IDs), and paste it to the left of the `#`-sign in the URL, replacing everything that was there before. In other words, your URL should now look like
 
 ```
 https://localhost:3000/?project=<project>&env=<environment>&modelId=<modelId>&revisionId=<revisionId>#code=<access token>
