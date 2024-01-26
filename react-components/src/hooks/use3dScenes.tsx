@@ -6,18 +6,25 @@ import { type QueryFunction, useQuery, type UseQueryResult } from '@tanstack/rea
 import { useSDK } from '../components/RevealContainer/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { useMemo } from 'react';
-import { type EdgeItem, FdmSDK, type Query } from '../utilities/FdmSDK';
+import { type EdgeItem, FdmSDK, type Query, type NodeItem } from '../utilities/FdmSDK';
 import { type AddReveal3DModelOptions } from '..';
-import { type SceneConfigurationProperties, type Cdf3dRevisionProperties } from './types';
+import {
+  type SceneConfigurationProperties,
+  type Cdf3dRevisionProperties,
+  type Transformation3d,
+  type Cdf3dImage360CollectionProperties
+} from './types';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type AddImageCollection360DatamodelsOptions } from '../components/Reveal3DResources/types';
 
 export type Space = string;
 export type ExternalId = string;
 
 export type SceneData = {
   name: string;
-  modelOptions: AddReveal3DModelOptions[];
+  cadModelOptions: AddReveal3DModelOptions[];
+  image360CollectionOptions: AddImageCollection360DatamodelsOptions[];
 };
 
 export const use3dScenes = (
@@ -33,56 +40,11 @@ export const use3dScenes = (
     try {
       const scenesQueryResult = await fdmSdk.queryNodesAndEdges(scenesQuery);
 
-      const scenesMap: Record<
-        Space,
-        Record<ExternalId, SceneData>
-      > = scenesQueryResult.items.sceneModels.reduce(
-        (acc, item) => {
-          const edge = item as EdgeItem;
+      const scenesMap = createMapOfScenes(scenesQueryResult.items.scenes);
+      populateSceneMapWithModels(scenesQueryResult.items.sceneModels, scenesMap);
+      populateSceneMapWith360Images(scenesQueryResult.items.scene360Collections, scenesMap);
 
-          const { space, externalId } = edge.startNode;
-
-          const properties = Object.values(
-            Object.values(edge.properties)[0] as Record<string, unknown>
-          )[0] as Cdf3dRevisionProperties;
-
-          const newModelId = Number(edge.endNode.externalId);
-          const newModelRevisionId = Number(properties?.revisionId);
-
-          if (isNaN(newModelId) || isNaN(newModelRevisionId)) {
-            return acc;
-          }
-
-          const newModel = createModelFromEdge(newModelId, newModelRevisionId, properties);
-
-          if (acc[space] === undefined) {
-            acc[space] = {};
-          }
-          const spaceMap = acc[space];
-
-          if (spaceMap[externalId] === undefined) {
-            spaceMap[externalId] = { name: '', modelOptions: [] };
-          }
-          const externalIdMap = spaceMap[externalId];
-          externalIdMap.modelOptions.push(newModel);
-
-          return acc;
-        },
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        {} as Record<Space, Record<ExternalId, SceneData>>
-      );
-
-      scenesQueryResult.items.scenes.forEach((scene) => {
-        const { space, externalId } = scene;
-
-        if (scenesMap[space]?.[externalId] !== undefined) {
-          const properties = Object.values(
-            Object.values(scene.properties)[0] as Record<string, unknown>
-          )[0] as SceneConfigurationProperties;
-          scenesMap[space][externalId].name = properties.name;
-        }
-      });
-
+      console.log('scenesMap', scenesMap);
       return scenesMap;
     } catch (error) {
       console.warn("Scene space doesn't exist or has no scenes with 3D models");
@@ -96,11 +58,99 @@ export const use3dScenes = (
   );
 };
 
-function createModelFromEdge(
-  newModelId: number,
-  newModelRevisionId: number,
-  properties: Cdf3dRevisionProperties
-): AddReveal3DModelOptions {
+function createMapOfScenes(
+  scenes: Array<NodeItem<Record<string, unknown>>> | Array<EdgeItem<Record<string, unknown>>>
+): Record<Space, Record<ExternalId, SceneData>> {
+  return scenes.reduce(
+    (acc, scene) => {
+      const { space, externalId } = scene;
+      const properties = Object.values(
+        Object.values(scene.properties)[0] as Record<string, unknown>
+      )[0] as SceneConfigurationProperties;
+      if (acc[space] === undefined) {
+        acc[space] = {};
+      }
+      if (acc[space][externalId] === undefined) {
+        acc[space][externalId] = {
+          name: properties.name,
+          cadModelOptions: [],
+          image360CollectionOptions: []
+        };
+      }
+
+      return acc;
+    },
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    {} as Record<Space, Record<ExternalId, SceneData>>
+  );
+}
+
+function populateSceneMapWithModels(
+  scene360Images:
+    | Array<NodeItem<Record<string, unknown>>>
+    | Array<EdgeItem<Record<string, unknown>>>,
+  scenesMap: Record<Space, Record<ExternalId, SceneData>>
+): void {
+  scene360Images.forEach((image) => {
+    const edge = image as EdgeItem;
+
+    const { space, externalId } = edge.startNode;
+
+    const properties = Object.values(
+      Object.values(edge.properties)[0] as Record<string, unknown>
+    )[0] as Cdf3dRevisionProperties;
+
+    const newModelId = Number(edge.endNode.externalId);
+    const newModelRevisionId = Number(properties?.revisionId);
+
+    if (isNaN(newModelId) || isNaN(newModelRevisionId)) {
+      return;
+    }
+
+    if (scenesMap[space]?.[externalId] === undefined) {
+      return;
+    }
+
+    const transform = createTransformFromEdge(properties);
+    const newModel = {
+      modelId: newModelId,
+      revisionId: newModelRevisionId,
+      transformation: transform
+    };
+
+    scenesMap[space]?.[externalId].cadModelOptions.push(newModel);
+  });
+}
+
+function populateSceneMapWith360Images(
+  scene360Images:
+    | Array<NodeItem<Record<string, unknown>>>
+    | Array<EdgeItem<Record<string, unknown>>>,
+  scenesMap: Record<Space, Record<ExternalId, SceneData>>
+): void {
+  scene360Images.forEach((imageCollection) => {
+    const edge = imageCollection as EdgeItem;
+
+    const { space, externalId } = edge.startNode;
+
+    const properties = Object.values(
+      Object.values(edge.properties)[0] as Record<string, unknown>
+    )[0] as Cdf3dImage360CollectionProperties;
+
+    if (scenesMap[space]?.[externalId] === undefined) {
+      return;
+    }
+
+    const newImage360Collection: AddImageCollection360DatamodelsOptions = {
+      externalId: properties.image360CollectionExternalId,
+      space: properties.image360CollectionSpace
+    };
+
+    scenesMap[space]?.[externalId].image360CollectionOptions.push(newImage360Collection);
+  });
+}
+
+function createTransformFromEdge(properties: Transformation3d): Matrix4 {
   const transform = new Matrix4();
 
   transform.makeRotationFromEuler(
@@ -129,14 +179,10 @@ function createModelFromEdge(
 
   transform.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
-  return {
-    modelId: newModelId,
-    revisionId: newModelRevisionId,
-    transform
-  };
+  return transform;
 }
 
-function fixModelScale(modelProps: Cdf3dRevisionProperties): Cdf3dRevisionProperties {
+function fixModelScale(modelProps: Transformation3d): Transformation3d {
   if (modelProps.scaleX === 0) {
     modelProps.scaleX = 1;
   }
@@ -184,6 +230,23 @@ function createGetScenesQuery(limit: number = 100): Query {
           }
         },
         limit
+      },
+      scene360Collections: {
+        edges: {
+          from: 'scenes',
+          maxDistance: 1,
+          direction: 'outwards',
+          filter: {
+            equals: {
+              property: ['edge', 'type'],
+              value: {
+                space: 'scene',
+                externalId: 'SceneConfiguration.images360Collections'
+              }
+            }
+          }
+        },
+        limit
       }
     },
     select: {
@@ -215,6 +278,19 @@ function createGetScenesQuery(limit: number = 100): Query {
               type: 'view',
               space: 'scene',
               externalId: 'RevisionProperties',
+              version: 'v1'
+            },
+            properties: ['*']
+          }
+        ]
+      },
+      scene360Collections: {
+        sources: [
+          {
+            source: {
+              type: 'view',
+              space: 'scene',
+              externalId: 'Image360CollectionProperties',
               version: 'v1'
             },
             properties: ['*']
