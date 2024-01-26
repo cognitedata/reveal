@@ -4,32 +4,44 @@
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
-import { type QueryResult, type DmsUniqueIdentifier } from '../utilities/FdmSDK';
+import { type DmsUniqueIdentifier, Source } from '../utilities/FdmSDK';
+import { zipWith } from 'lodash';
 
 export function use3dRelatedEdgeConnections(
   fdmId: DmsUniqueIdentifier | undefined
-): UseQueryResult<
-  QueryResult<
-    Related3dEdgesQueryType & { parameters: { instanceExternalId: string; instanceSpace: string } }
-  >
-> {
+): UseQueryResult<DmsUniqueIdentifier & { view: Source }[]> {
   const fdmSdk = useFdmSdk();
 
   return useQuery(
     ['reveal-react-components', 'get-3d-related-edge-connections', fdmId?.externalId, fdmId?.space],
-    async () =>
-      await fdmSdk.queryNodesAndEdges({
+    async () => {
+      const nodesResult = await fdmSdk.queryNodesAndEdges({
         ...related3dEdgesQuery,
         parameters: {
           instanceExternalId: fdmId?.externalId ?? '',
           instanceSpace: fdmId?.space ?? ''
         }
-      }),
+      });
+
+      const nodeIds = nodesResult.items.connected_objects_with_3d.map((obj) => ({
+        instanceType: 'node' as const,
+        externalId: obj.externalId,
+        space: obj.space
+      }));
+
+      const views = await fdmSdk.inspectInstances({
+        inspectionOperations: { involvedViews: {} },
+        items: nodeIds
+      });
+
+      return zipWith(nodeIds, views.items, (node, view) => ({
+        ...node,
+        view
+      }));
+    },
     { enabled: fdmId !== undefined }
   );
 }
-
-type Related3dEdgesQueryType = typeof related3dEdgesQuery;
 
 const related3dEdgesQuery = {
   with: {

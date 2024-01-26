@@ -9,7 +9,7 @@ import assert from 'assert';
 
 export function use3dRelatedDirectConnections(
   instance: DmsUniqueIdentifier | undefined
-): UseQueryResult<DmsUniqueIdentifier[]> {
+): UseQueryResult<(DmsUniqueIdentifier & { view: Source })[]> {
   const fdmSdk = useFdmSdk();
 
   return useQuery(
@@ -72,7 +72,10 @@ export function use3dRelatedDirectConnections(
         return Object.keys(propsForView.properties).some((propName) => propName === 'inModel3d');
       });
 
-      return threeDRelatedViews.map(([index, _view]) => directlyRelatedObjects[index]);
+      return threeDRelatedViews.map(([index, view]) => ({
+        ...directlyRelatedObjects[index],
+        view
+      }));
     },
     {
       enabled: instance !== undefined
