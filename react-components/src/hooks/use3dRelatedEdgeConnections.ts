@@ -6,7 +6,7 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 import { zipWith } from 'lodash';
-import { FdmInstanceWithView } from '../utilities/types';
+import { type FdmInstanceWithView } from '../utilities/types';
 
 export function use3dRelatedEdgeConnections(
   fdmId: DmsUniqueIdentifier | undefined
