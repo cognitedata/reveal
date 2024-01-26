@@ -9,7 +9,7 @@ import { zipWith } from 'lodash';
 
 export function use3dRelatedEdgeConnections(
   fdmId: DmsUniqueIdentifier | undefined
-): UseQueryResult<DmsUniqueIdentifier & { view: Source }[]> {
+): UseQueryResult<(DmsUniqueIdentifier & { view: Source })[]> {
   const fdmSdk = useFdmSdk();
 
   return useQuery(
