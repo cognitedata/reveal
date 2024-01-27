@@ -853,7 +853,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     const cameraVector = this.getCameraVectorEnd();
     const distanceToTarget = cameraVector.length();
     const isDollyOut = deltaDistance > 0 ? true : false;
-    cameraVector.normalize()12;
+    cameraVector.normalize();
 
     let radius = distanceToTarget + deltaDistance;
     if (radius < this._options.minZoomDistance && !isDollyOut) {
@@ -897,7 +897,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
     const targetOffsetToDeltaRatio = Math.abs(deltaTargetOffsetDistance / deltaDistance);
 
-    // if target movement is too fast we want to slow it down a bit123
+    // if target movement is too fast we want to slow it down a bit
     const deltaDownscaleCoefficient = clampedMapLinear(
       targetOffsetToDeltaRatio,
       this._options.minDeltaRatio,
