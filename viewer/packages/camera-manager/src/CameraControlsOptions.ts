@@ -2,8 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ControlsType } from './Flexible/ControlsType';
-
 export type CameraControlsOptions = {
   /**
    * Sets mouse wheel initiated action.
@@ -27,47 +25,4 @@ export type CameraControlsOptions = {
    *
    */
   changeCameraTargetOnClick?: boolean;
-
-  /**
-   * Work when changeCameraTargetOnClick is true. Enables or disables weather the it should zoom to the target or let the camera standing still
-   *
-   * Default is false, which is zoom to target
-   *
-   */
-  changeTargetOnlyOnClick?: boolean;
-
-  /**
-   * Enables or disables change of camera position on mouse doubke click. New target is then set to the point of the model under current cursor
-   * position and the a camera position is set half way to this point
-   *
-   * Default is false.
-   * @experimental
-   */
-  changeCameraPositionOnDoubleClick?: boolean;
-
-  /**
-   * Set the initial controlsType on the camera
-   *
-   * Default is ControlsType.Combo as is was previously
-   * @experimental
-   */
-  controlsType?: ControlsType;
-
-  /**
-   * Show taget as a white spot on the screen.
-   * It is working when controlsType is ControlsType.Combo or ControlsType.Orbit
-   *
-   * Default is false
-   * @experimental
-   */
-  showTarget?: boolean;
-
-  /**
-   * Show camera lookat position as a red spot on the screen.
-   * It is working when controlsType is ControlsType.Combo or ControlsType.Orbit
-   *
-   * Default is false
-   * @experimental
-   */
-  showLookAt?: boolean;
 };

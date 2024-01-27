@@ -291,8 +291,7 @@ export class Cognite3DViewer {
             this._domElement,
             this._mouseHandler,
             this.modelIntersectionCallback.bind(this),
-            undefined,
-            this._sceneHandler.scene
+            undefined
           )
         : new FlexibleCameraManager(
             this._domElement,

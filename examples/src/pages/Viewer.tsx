@@ -136,7 +136,6 @@ export function Viewer() {
 
       const controlsOptions: CameraControlsOptions = {
         changeCameraTargetOnClick: false,
-        changeCameraPositionOnDoubleClick: false,
         mouseWheelAction: 'zoomToCursor'
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
@@ -412,15 +411,6 @@ export function Viewer() {
           cameraManager.setCameraControlsOptions({
             ...cameraManager.getCameraControlsOptions(),
             changeCameraTargetOnClick: value
-          });
-        });
-      controlsGui
-        .add(guiState.controls, 'changeCameraPositionOnDoubleClick')
-        .name('Change camera position on dblclick')
-        .onFinishChange(value => {
-          cameraManager.setCameraControlsOptions({
-            ...cameraManager.getCameraControlsOptions(),
-            changeCameraPositionOnDoubleClick: value
           });
         });
       controlsGui
