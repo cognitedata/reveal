@@ -43,7 +43,8 @@ import {
 
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
-import { CameraControlsOptions, ControlsType } from './CameraControlsOptions';
+import { CameraControlsOptions } from './CameraControlsOptions';
+import { ControlsType } from './Flexible/ControlsType';
 
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with

@@ -19,35 +19,32 @@ import {
   Vector2,
   Vector3
 } from 'three';
-import Keyboard from './Keyboard';
-import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
+import Keyboard from './../Keyboard';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
-import { ControlsType } from './Flexible/ControlsType';
+import { ControlsType } from './ControlsType';
+import { ComboControlsEventType } from './../ComboControls';
+import { FlexibleControlsOptions } from './FlexibleControlsOptions';
+import { MouseWheelType } from './MouseActionType';
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
 const ROTATION_SPEED_FACTOR = 0.1;
-
-/**
- * The event type for events emitted by {@link ComboControls}.
- */
-export type ComboControlsEventType = { cameraChange: { camera: { position: Vector3; target: Vector3 } } };
 
 type RadiusAndDeltaTarget = {
   deltaTarget: Vector3;
   radius: number;
 };
 
-export class ComboControls extends EventDispatcher<ComboControlsEventType> {
+export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   //================================================
   // INSTANCE FIELDS
   //================================================
 
-  public dispose: () => void;
-
-  private _controlsType: ControlsType = ControlsType.Combo;
   private _enabled: boolean = true;
-  private _options: ComboControlsOptions = CreateDefaultControlsOptions();
+  public lookAtTempTarget = false;
+  public temporarlyDisableKeyboard: boolean = false;
+
+  private readonly _options: FlexibleControlsOptions;
   private readonly _domElement: HTMLElement;
   private readonly _camera: PerspectiveCamera | OrthographicCamera;
 
@@ -62,8 +59,8 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private readonly _translation: Vector3 = new Vector3();
   private readonly _translationEnd: Vector3 = new Vector3();
 
-  private readonly _scrollTarget: Vector3 = new Vector3(); // When using the wheel this is the maxiumum point to scroll to when mouseWheelAction === 'zoomToCursor'
-  private readonly _viewTarget: Vector3 = new Vector3(); // used as target when _options.lookAtViewTarget is true
+  private readonly _scrollCursor: Vector3 = new Vector3(); // When using the wheel this is the maxiumum point to scroll to when mouseWheelAction === 'ToCursor'
+  private readonly _tempTarget: Vector3 = new Vector3(); // used as target when lookAtTempTarget is true
 
   private readonly _rawCameraRotation = new Quaternion();
   private readonly _accumulatedMouseRotation: Vector2 = new Vector2();
@@ -72,11 +69,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   // Temporary objects used for calculations to avoid allocations
   private readonly _reusableVector3s = new ReusableVector3s();
-
-  /**
-   @internal
-   */
-  public temporarlyDisableKeyboard: boolean = false;
 
   //        ControlsType.Combo
   //          , - ~ ~ ~ - ,
@@ -123,53 +115,40 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   // CONSTRUCTOR
   //================================================
 
-  constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
+  constructor(
+    camera: PerspectiveCamera | OrthographicCamera,
+    domElement: HTMLElement,
+    options: FlexibleControlsOptions
+  ) {
     super();
     this._camera = camera;
     this._domElement = domElement;
+    this._options = options;
     this._keyboard = new Keyboard(this._domElement);
     this._cameraVector.setFromVector3(camera.position);
     this._cameraVectorEnd.copy(this._cameraVector);
 
     this.addEventListeners();
+  }
 
-    this.dispose = () => {
-      this.removeEventListeners();
-      // Dispose all keyboard events registered. REV-461!
-      this._keyboard.dispose();
-    };
+  public dispose() {
+    this.removeEventListeners();
+    // Dispose all keyboard events registered. REV-461!
+    this._keyboard.dispose();
   }
 
   //================================================
   // INSTANCE PROPERTIES:
   //================================================
 
-  /**
-   * Gets current Combo Controls options.
-   */
-  get options(): Readonly<ComboControlsOptions> {
+  get options(): FlexibleControlsOptions {
     return this._options;
   }
 
-  /**
-   * Sets Combo Controls options.
-   *
-   * Only the provided options will be changed, any undefined options will be kept as is.
-   */
-  set options(options: Partial<ComboControlsOptions>) {
-    this._options = { ...this._options, ...options };
-  }
-
-  /**
-   * Returns true if these controls are enabled.
-   */
   get enabled(): boolean {
     return this._enabled;
   }
 
-  /**
-   * Sets the enabled state of these controls.
-   */
   set enabled(newEnabledValue: boolean) {
     if (newEnabledValue && !this._enabled) {
       this.addEventListeners();
@@ -194,7 +173,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
    * @experimental
    */
   public get controlsType(): ControlsType {
-    return this._controlsType;
+    return this.options.controlsType;
   }
 
   private get isTargetLocked(): boolean {
@@ -205,35 +184,27 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   // INSTANCE METHODS: Pulic getters and setters
   //================================================
 
-  /**
-   * Returns the scroll target
-   */
-  public getScrollTarget = (): Vector3 => {
-    return this._scrollTarget.clone();
-  };
+  public getScrollCursor(): Vector3 {
+    return this._scrollCursor.clone();
+  }
 
-  /**
-   * Returns the target
-   */
   public getTarget(): Vector3 {
     return this._target.clone();
   }
 
-  /**
-   * Returns the position where the camera is looking at
-   */
   public getLookAt(): Vector3 {
-    if (this._options.lookAtViewTarget) {
-      return this._viewTarget;
+    if (this.lookAtTempTarget) {
+      return this.newVector3().addVectors(this._tempTarget, this._translation);
     }
     if (this.isTargetLocked) {
       return this.newVector3().addVectors(this._target, this._translation);
     }
     return this._target;
   }
+
   public getLookAtEnd(): Vector3 {
-    if (this._options.lookAtViewTarget) {
-      return this._viewTarget;
+    if (this.lookAtTempTarget) {
+      return this.newVector3().addVectors(this._tempTarget, this._translationEnd);
     }
     if (this.isTargetLocked) {
       return this.newVector3().addVectors(this._targetEnd, this._translationEnd);
@@ -241,32 +212,23 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return this._target;
   }
 
-  /**
-   * Get the camera position and the target
-   */
-  public getState = () => {
+  public getState() {
     return {
       target: this.getTarget(),
       position: this._camera.position.clone()
     };
-  };
+  }
 
-  /**
-   * Set the scroll target
-   */
-  public setScrollTarget = (target: Vector3) => {
-    this._scrollTarget.copy(target);
-  };
+  public setScrollCursor(target: Vector3) {
+    this._scrollCursor.copy(target);
+  }
 
-  /**
-   * Set the camera position and the target
-   */
-  public setState = (position: Vector3, target: Vector3) => {
+  public setState(position: Vector3, target: Vector3) {
     this._translation.set(0, 0, 0);
     this._translationEnd.set(0, 0, 0);
     this._target.copy(target);
     this._targetEnd.copy(target);
-    this._scrollTarget.copy(target);
+    this._scrollCursor.copy(target);
 
     // cameraVector = position - target
     const delta = position.clone().sub(target);
@@ -275,29 +237,23 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
     this.update(1000 / TARGET_FPS, true);
     this.triggerCameraChangeEvent();
-  };
+  }
 
-  /**
-   * Set the view target
-   */
-  public setViewTarget = (target: Vector3) => {
-    this._viewTarget.copy(target);
+  public setTempTarget(target: Vector3) {
+    this._tempTarget.copy(target);
     this.triggerCameraChangeEvent();
-  };
+  }
 
-  /**
-   * Set the current camera controls
-   * @experimental
-   */
   public setControlsType(controlsType: ControlsType): boolean {
-    if (controlsType == this._controlsType) {
+    if (controlsType == this.options.controlsType) {
       return false;
     }
-    this._controlsType = controlsType;
-    if (this._controlsType === ControlsType.Combo) {
+    this.options.controlsType = controlsType;
+    if (controlsType === ControlsType.Combo) {
       // This actually change target due to not change the camera position and lookAt
       this._target.add(this._translation);
       this._targetEnd.add(this._translationEnd);
+      this._scrollCursor.copy(this._target);
       this._translation.set(0, 0, 0);
       this._translationEnd.set(0, 0, 0);
     }
@@ -388,7 +344,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   // INSTANCE METHODS: Public operations
   //================================================
 
-  public update = (deltaTimeS: number, forceUpdate = false): boolean => {
+  public update(deltaTimeS: number, forceUpdate = false): boolean {
     if (!forceUpdate && !this._enabled) {
       return false;
     }
@@ -437,7 +393,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     // Tell caller if camera has changed
     return isChanged;
-  };
+  }
 
   public triggerCameraChangeEvent = () => {
     this.dispatchEvent({
@@ -890,15 +846,12 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private getRadiusAndDeltaTarget(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndDeltaTarget {
-    if (this._options.zoomToCursor) {
-      if (this._options.useScrollTarget) {
-        return this.getRadiusAndDeltaTargetUsingScrollTarget(deltaDistance);
-      } else {
-        return this.getRadiusAndDeltaTargetUsingCursor(pixelCoordinates, deltaDistance);
-      }
-    } else {
-      return this.getRadiusAndDeltaTargetUsingCursor(new Vector2(0, 0), deltaDistance);
+    if (this.options.realMouseWheelAction === MouseWheelType.ToCursor) {
+      return this.getRadiusAndDeltaTargetUsingScrollCursor(deltaDistance);
+    } else if (this.options.realMouseWheelAction === MouseWheelType.PastCursor) {
+      return this.getRadiusAndDeltaTargetUsingCursor(pixelCoordinates, deltaDistance);
     }
+    return this.getRadiusAndDeltaTargetUsingCursor(new Vector2(0, 0), deltaDistance);
   }
 
   private getRadiusAndDeltaTargetUsingCursor(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndDeltaTarget {
@@ -931,21 +884,21 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return { deltaTarget, radius };
   }
 
-  private getRadiusAndDeltaTargetUsingScrollTarget(deltaDistance: number): RadiusAndDeltaTarget {
+  private getRadiusAndDeltaTargetUsingScrollCursor(deltaDistance: number): RadiusAndDeltaTarget {
     // Here we use the law of sines to determine how far we want to move the target.
     // Direction is always determined by scrollTarget-target vector
-    const targetToScrollTargetVec = this.newVector3().subVectors(this._scrollTarget, this._target);
+    const targetToScrollCursorVec = this.newVector3().subVectors(this._scrollCursor, this._target);
     const cameraToTargetVec = this.newVector3().subVectors(this._target, this._camera.position);
-    const cameraToScrollTargetVec = this.newVector3().subVectors(this._scrollTarget, this._camera.position);
+    const cameraToScrollCursorVec = this.newVector3().subVectors(this._scrollCursor, this._camera.position);
 
-    const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec);
-    const targetScrollTargetCameraAngle = targetToScrollTargetVec
+    const targetCameraScrollCursorAngle = cameraToTargetVec.angleTo(cameraToScrollCursorVec);
+    const targetScrollCursorCameraAngle = targetToScrollCursorVec
       .clone()
       .negate()
-      .angleTo(cameraToScrollTargetVec.clone().negate());
+      .angleTo(cameraToScrollCursorVec.clone().negate());
 
     let deltaTargetOffsetDistance =
-      deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
+      deltaDistance * (Math.sin(targetCameraScrollCursorAngle) / Math.sin(targetScrollCursorCameraAngle));
 
     const targetOffsetToDeltaRatio = Math.abs(deltaTargetOffsetDistance / deltaDistance);
 
@@ -970,7 +923,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     let radius = distanceToTarget + deltaDistance;
 
     if (radius < this._options.minZoomDistance) {
-      const distance = this._scrollTarget.distanceTo(this._target);
+      const distance = this._scrollCursor.distanceTo(this._target);
 
       // stops camera from moving forward only if target became close to scroll target
       if (distance < this._options.minZoomDistance) {
@@ -989,7 +942,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
       }
     }
     // if we scroll out, we don't change the target
-    const deltaTarget = targetToScrollTargetVec.negate().normalize().multiplyScalar(deltaTargetOffsetDistance);
+    const deltaTarget = targetToScrollCursorVec.negate().normalize().multiplyScalar(deltaTargetOffsetDistance);
     return { deltaTarget, radius };
   }
 

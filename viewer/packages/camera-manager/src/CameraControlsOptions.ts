@@ -2,11 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export enum ControlsType {
-  Combo = 'combo',
-  FirstPerson = 'firstPerson',
-  Orbit = 'orbit'
-}
+import { ControlsType } from './Flexible/ControlsType';
 
 export type CameraControlsOptions = {
   /**
@@ -45,7 +41,6 @@ export type CameraControlsOptions = {
    * position and the a camera position is set half way to this point
    *
    * Default is false.
-   * @jsdoc/check-tag-names
    * @experimental
    */
   changeCameraPositionOnDoubleClick?: boolean;

@@ -140,9 +140,10 @@ export function Viewer() {
         mouseWheelAction: 'zoomToCursor'
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
-
-      cameraManager.setCameraControlsOptions(controlsOptions);
-
+      if (viewer.cameraManager instanceof DefaultCameraManager) 
+      {
+        cameraManager.setCameraControlsOptions(controlsOptions);
+      }
       cameraManagers = {
         Default: viewer.cameraManager as DefaultCameraManager,
         Custom: new CustomCameraManager(canvasWrapperRef.current!, new THREE.PerspectiveCamera(5, 1, 0.01, 1000))
@@ -217,7 +218,7 @@ export function Viewer() {
         viewer.loadCameraFromModel(model);
         if (model instanceof CogniteCadModel) {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, viewer, model);
-          new NodeTransformUI(viewer, gui.addFolder(`Node transform #${modelUi.cadModels.length}`), model);
+          // new NodeTransformUI(viewer, gui.addFolder(`Node transform #${modelUi.cadModels.length}`), model);
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         } else if (model instanceof CognitePointCloudModel) {
           const modelIndex = modelUi.pointCloudModels.length;
@@ -480,16 +481,16 @@ export function Viewer() {
         }
       });
 
-      new AxisViewTool(
-        viewer,
-        // Give some space for Stats.js overlay
-        {
-          position: {
-            corner: Corner.BottomRight,
-            padding: new THREE.Vector2(60, 0)
-          }
-        }
-      );
+      // new AxisViewTool(
+      //   viewer,
+      //   // Give some space for Stats.js overlay
+      //   {
+      //     position: {
+      //       corner: Corner.BottomRight,
+      //       padding: new THREE.Vector2(60, 0)
+      //     }
+      //   }
+      // );
     }
 
     main();
