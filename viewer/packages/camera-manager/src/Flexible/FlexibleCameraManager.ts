@@ -461,11 +461,7 @@ export class FlexibleCameraManager implements CameraManager {
 
     controlsSensitivity = Math.min(controlsSensitivity, this.options.maximumControlsSensitivity);
 
-    console.log('diagonal', diagonal);
-    console.log('diagonalFraction', diagonalFraction);
-    console.log('nearFraction', nearFraction);
-    console.log('controlsSensitivity', controlsSensitivity);
-
+    // 2
     this.options.controlsSensitivity = controlsSensitivity;
   }
 

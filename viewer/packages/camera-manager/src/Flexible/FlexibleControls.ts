@@ -30,8 +30,8 @@ const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
 const ROTATION_SPEED_FACTOR = 0.1;
 
-type RadiusAndDeltaTarget = {
-  deltaTarget: Vector3;
+type RadiusAndTranslation = {
+  translation: Vector3;
   radius: number;
 };
 
@@ -464,6 +464,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     const delta = getWheelDelta(event);
     const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
 
+    console.log('delta', delta);
+
     const pixelCoordinates = getNormalizedPixelCoordinates(
       this._domElement,
       domElementRelativeOffset.offsetX,
@@ -472,6 +474,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     const dollyIn = delta < 0;
     if (this._camera instanceof PerspectiveCamera) {
       const deltaDistance = this.getDollyDeltaForZ(dollyIn, Math.abs(delta));
+      console.log('deltaDistance', deltaDistance);
       this.dollyWithWheelScroll(pixelCoordinates, deltaDistance);
     } else if (this._camera instanceof OrthographicCamera) {
       const deltaDistance = Math.sign(delta) * this._options.orthographicCameraDollyFactor;
@@ -832,25 +835,25 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number) {
-    const result = this.getRadiusAndDeltaTarget(pixelCoordinates, deltaDistance);
+    const result = this.getRadiusAndTranslation(pixelCoordinates, deltaDistance);
     this._cameraVectorEnd.radius = result.radius;
-    this.translate(result.deltaTarget);
+    this.translate(result.translation);
   }
 
-  private getRadiusAndDeltaTarget(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndDeltaTarget {
+  private getRadiusAndTranslation(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndTranslation {
     if (this.options.realMouseWheelAction === WheelZoomType.ToCursor) {
-      return this.getRadiusAndDeltaTargetUsingScrollCursor(deltaDistance);
+      return this.getRadiusAndTranslationUsingScrollCursor(deltaDistance);
     } else if (this.options.realMouseWheelAction === WheelZoomType.PastCursor) {
-      return this.getRadiusAndDeltaTargetUsingCursor(pixelCoordinates, deltaDistance);
+      return this.getRadiusAndTranslationUsingCursor(pixelCoordinates, deltaDistance);
     }
-    return this.getRadiusAndDeltaTargetUsingCursor(new Vector2(0, 0), deltaDistance);
+    return this.getRadiusAndTranslationUsingCursor(new Vector2(0, 0), deltaDistance);
   }
 
-  private getRadiusAndDeltaTargetUsingCursor(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndDeltaTarget {
+  private getRadiusAndTranslationUsingCursor(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndTranslation {
     const cameraVector = this.getCameraVectorEnd();
     const distanceToTarget = cameraVector.length();
     const isDollyOut = deltaDistance > 0 ? true : false;
-    cameraVector.normalize().negate();
+    cameraVector.normalize()12;
 
     let radius = distanceToTarget + deltaDistance;
     if (radius < this._options.minZoomDistance && !isDollyOut) {
@@ -860,7 +863,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
         this._targetEnd.addScaledVector(cameraVector, Math.abs(deltaDistance));
       } else {
         // stops camera from moving forward
-        return { deltaTarget: new Vector3(0, 0, 0), radius };
+        return { translation: new Vector3(0, 0, 0), radius };
       }
     }
     const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - getFov(this._camera) / 2));
@@ -872,11 +875,11 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     cameraVector.multiplyScalar(deltaDistance);
 
     const directionToTargetEnd = this.getDirectionTowards(pixelCoordinates, this._camera.position);
-    const deltaTarget = cameraVector.addScaledVector(directionToTargetEnd, distanceFromRayOrigin);
-    return { deltaTarget, radius };
+    const translation = cameraVector.addScaledVector(directionToTargetEnd, distanceFromRayOrigin);
+    return { translation, radius };
   }
 
-  private getRadiusAndDeltaTargetUsingScrollCursor(deltaDistance: number): RadiusAndDeltaTarget {
+  private getRadiusAndTranslationUsingScrollCursor(deltaDistance: number): RadiusAndTranslation {
     // Here we use the law of sines to determine how far we want to move the target.
     // Direction is always determined by scrollTarget-target vector
     const targetToScrollCursorVec = this.newVector3().subVectors(this._scrollCursor, this._target);
@@ -894,7 +897,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
     const targetOffsetToDeltaRatio = Math.abs(deltaTargetOffsetDistance / deltaDistance);
 
-    // if target movement is too fast we want to slow it down a bit
+    // if target movement is too fast we want to slow it down a bit123
     const deltaDownscaleCoefficient = clampedMapLinear(
       targetOffsetToDeltaRatio,
       this._options.minDeltaRatio,
@@ -920,7 +923,6 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       // stops camera from moving forward only if target became close to scroll target
       if (distance < this._options.minZoomDistance) {
         radius = distanceToTarget;
-        return { deltaTarget: new Vector3(0, 0, 0), radius };
       }
 
       if (radius <= 0) {
@@ -930,12 +932,11 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
         } else {
           radius = distanceToTarget;
         }
-        return { deltaTarget: new Vector3(0, 0, 0), radius };
       }
     }
     // if we scroll out, we don't change the target
-    const deltaTarget = targetToScrollCursorVec.negate().normalize().multiplyScalar(deltaTargetOffsetDistance);
-    return { deltaTarget, radius };
+    const translation = targetToScrollCursorVec.negate().normalize().multiplyScalar(deltaTargetOffsetDistance);
+    return { translation, radius };
   }
 
   //================================================
