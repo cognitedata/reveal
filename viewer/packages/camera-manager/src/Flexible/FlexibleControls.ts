@@ -40,7 +40,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   // INSTANCE FIELDS
   //================================================
 
-  private _enabled: boolean = true;
+  private _isEnabled: boolean = true;
   public lookAtTempTarget = false;
   public temporarlyDisableKeyboard: boolean = false;
 
@@ -127,8 +127,6 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     this._keyboard = new Keyboard(this._domElement);
     this._cameraVector.setFromVector3(camera.position);
     this._cameraVectorEnd.copy(this._cameraVector);
-
-    this.addEventListeners();
   }
 
   public dispose() {
@@ -145,17 +143,12 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     return this._options;
   }
 
-  get enabled(): boolean {
-    return this._enabled;
+  get isEnabled(): boolean {
+    return this._isEnabled;
   }
 
-  set enabled(newEnabledValue: boolean) {
-    if (newEnabledValue && !this._enabled) {
-      this.addEventListeners();
-    } else if (!newEnabledValue && this._enabled) {
-      this.removeEventListeners();
-    }
-    this._enabled = newEnabledValue;
+  set isEnabled(isEnabled: boolean) {
+    this._isEnabled = isEnabled;
   }
 
   /**
@@ -303,28 +296,29 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     return position.sub(worldPoint).normalize().negate();
   }
 
-  private getPanDeltaDistanceForXY() {
-    let distance = this._options.panDollyMinDistanceFactor * this._options.minDistance;
+  private getPanDeltaForXY() {
+    let delta = this._options.panDollyMinDistanceFactor * this._options.controlsSensitivity;
     if (this.controlsType === ControlsType.Combo) {
-      distance = Math.max(distance, this._cameraVectorEnd.radius);
+      delta = Math.max(delta, this._cameraVectorEnd.radius);
     }
     // The panning goes parallel to the screen, not perpendicular to the screen.
     // So we get y = x * tan (a), where y is parallel to the screen
     // half of the fov is center to top of screen
     if (this._camera instanceof PerspectiveCamera) {
-      distance *= Math.tan(MathUtils.degToRad(this._camera.fov / 2));
+      delta *= Math.tan(MathUtils.degToRad(this._camera.fov / 2));
     }
-    return distance;
+    delta = (2 * delta) / this._domElement.clientHeight;
+    return delta;
   }
 
-  private getDollyDeltaDistanceForZ(dollyIn: boolean, steps: number = 1) {
-    let distance = this._options.panDollyMinDistanceFactor * this._options.minDistance;
+  private getDollyDeltaForZ(dollyIn: boolean, steps: number = 1) {
+    let delta = this._options.panDollyMinDistanceFactor * this._options.controlsSensitivity;
     if (this.controlsType === ControlsType.Combo) {
-      distance = Math.max(distance, this._cameraVectorEnd.radius);
+      delta = Math.max(delta, this._cameraVectorEnd.radius);
     }
     const zoomFactor = this._options.dollyFactor ** steps;
     const factor = dollyIn ? zoomFactor : 1 / zoomFactor;
-    return distance * (factor - 1);
+    return delta * (factor - 1);
   }
 
   private getDampingFactor(deltaTimeS: number) {
@@ -345,7 +339,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   //================================================
 
   public update(deltaTimeS: number, forceUpdate = false): boolean {
-    if (!forceUpdate && !this._enabled) {
+    if (!forceUpdate && !this.isEnabled) {
       return false;
     }
     if (this._accumulatedMouseRotation.lengthSq() > 2) {
@@ -410,6 +404,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   //================================================
 
   private readonly onPointerDown = (event: PointerEvent) => {
+    if (!this.isEnabled) return;
     switch (event.pointerType) {
       case 'mouse':
         this.onMouseDown(event);
@@ -423,9 +418,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     }
   };
   private readonly onMouseDown = (event: PointerEvent) => {
-    if (!this._enabled) {
-      return;
-    }
+    if (!this.isEnabled) return;
     this._cameraVectorEnd.copy(this._cameraVector);
     switch (event.button) {
       case MOUSE.LEFT: {
@@ -445,6 +438,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   };
 
   private readonly onPointerUp = (event: PointerEvent) => {
+    if (!this.isEnabled) return;
     switch (event.pointerType) {
       case 'mouse':
         this.onMouseUp();
@@ -458,13 +452,13 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   };
 
   private readonly onMouseUp = () => {
+    if (!this.isEnabled) return;
     this._accumulatedMouseRotation.set(0, 0);
   };
 
   private readonly onMouseWheel = (event: WheelEvent) => {
-    if (!this._enabled) {
-      return;
-    }
+    if (!this.isEnabled) return;
+    console.log('onMouseWheel');
     event.preventDefault();
 
     const delta = getWheelDelta(event);
@@ -477,7 +471,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     );
     const dollyIn = delta < 0;
     if (this._camera instanceof PerspectiveCamera) {
-      const deltaDistance = this.getDollyDeltaDistanceForZ(dollyIn, Math.abs(delta));
+      const deltaDistance = this.getDollyDeltaForZ(dollyIn, Math.abs(delta));
       this.dollyWithWheelScroll(pixelCoordinates, deltaDistance);
     } else if (this._camera instanceof OrthographicCamera) {
       const deltaDistance = Math.sign(delta) * this._options.orthographicCameraDollyFactor;
@@ -486,9 +480,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   };
 
   private readonly onTouchStart = (event: PointerEvent) => {
-    if (!this._enabled) {
-      return;
-    }
+    if (!this.isEnabled) return;
     event.preventDefault();
     this._cameraVectorEnd.copy(this._cameraVector);
 
@@ -507,15 +499,14 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   };
 
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
+    if (!this.isEnabled) return;
     if (event.type !== 'blur') {
       this._keyboard.disabled = false;
     }
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {
-    if (!this._enabled) {
-      return;
-    }
+    if (!this.isEnabled) return;
     event.preventDefault();
   };
 
@@ -523,9 +514,9 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   // INSTANCE METHODS: Operations
   //================================================
 
-  private addEventListeners() {
+  public addEventListeners() {
     this._domElement.addEventListener('pointerdown', this.onPointerDown);
-    this._domElement.addEventListener('wheel', event => this.onMouseWheel(event));
+    this._domElement.addEventListener('wheel', this.onMouseWheel);
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
 
     // canvas has no blur/focus by default, but it's possible to set tabindex on it,
@@ -575,6 +566,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
 
     const onTouchMove = (event: PointerEvent) => {
+      if (!this.isEnabled) return;
       if (this._pointEventCache.length !== 1) {
         return;
       }
@@ -585,6 +577,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     };
 
     const onTouchStart = (_event: PointerEvent) => {
+      if (!this.isEnabled) return;
       // if num fingers used don't equal 1 then we stop touch rotation
       if (this._pointEventCache.length !== 1) {
         dispose();
@@ -739,7 +732,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       const distanceFactor = initialPinchInfo.distance / pinchInfo.distance;
       // Min distance / 5 because on phones it is reasonable to get quite close to the target,
       // but we don't want to get too close since zooming slows down very close to target.
-      this._cameraVectorEnd.radius = Math.max(distanceFactor * initialRadius, this._options.minDistance / 5);
+      this._cameraVectorEnd.radius = Math.max(distanceFactor * initialRadius, this._options.controlsSensitivity / 5);
 
       // pan
       const deltaCenter = pinchInfo.center.clone().sub(previousPinchInfo.center);
@@ -806,15 +799,14 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     };
     // Do the actuall panning:
     if (deltaX !== 0 || deltaY !== 0) {
-      const deltaDistance = this.getPanDeltaDistanceForXY();
+      const delta = this.getPanDeltaForXY();
       // we actually don't use screenWidth, since perspective camera is fixed to screen height
-      const factor = (2 * deltaDistance) / this._domElement.clientHeight;
-      if (deltaX !== 0) panByDimension(+factor * deltaX, 0);
-      if (deltaY !== 0) panByDimension(-factor * deltaY, 1);
+      if (deltaX !== 0) panByDimension(+delta * deltaX, 0);
+      if (deltaY !== 0) panByDimension(-delta * deltaY, 1);
     }
     if (deltaZ !== 0) {
-      const deltaDistance = this.getDollyDeltaDistanceForZ(deltaZ === 1, speedZ);
-      panByDimension(-deltaDistance, 2); // +factor * deltaZ
+      const delta = this.getDollyDeltaForZ(deltaZ >= 1, speedZ);
+      panByDimension(-delta, 2);
     }
   }
 
@@ -863,7 +855,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     let radius = distanceToTarget + deltaDistance;
     if (radius < this._options.minZoomDistance && !isDollyOut) {
       radius = distanceToTarget;
-      if (this._options.dynamicTarget && !this.isTargetLocked) {
+      if (this._options.mouseWheelDynamicTarget && !this.isTargetLocked) {
         // push targetEnd forward
         this._targetEnd.addScaledVector(cameraVector, Math.abs(deltaDistance));
       } else {
@@ -912,8 +904,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     );
 
     if (
-      Math.abs(deltaDistance) > this._options.minDistance ||
-      Math.abs(deltaTargetOffsetDistance) > this._options.minDistance
+      Math.abs(deltaDistance) > this._options.controlsSensitivity ||
+      Math.abs(deltaTargetOffsetDistance) > this._options.controlsSensitivity
     ) {
       deltaDistance *= deltaDownscaleCoefficient;
       deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
@@ -951,33 +943,20 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   //================================================
 
   private handleKeyboard(deltaTimeS: number): boolean {
-    if (!this._enabled) {
+    if (!this._isEnabled) {
       return false;
     }
-    let handled = this.handleModeFromKeyboard();
     if (!this._options.enableKeyboardNavigation) {
-      return handled;
+      return false;
     }
     if (this.temporarlyDisableKeyboard) {
-      return handled;
+      return false;
     }
+    let handled = false;
     const timeScale = getTimeScale(deltaTimeS);
     if (this.handleRotationFromKeyboard(timeScale)) handled = true;
     if (this.handleMoveFromKeyboard(timeScale)) handled = true;
     return handled;
-  }
-
-  private handleModeFromKeyboard(): boolean {
-    if (this._keyboard.isPressed('Digit1')) {
-      return this.setControlsType(ControlsType.FirstPerson);
-    }
-    if (this._keyboard.isPressed('Digit2')) {
-      return this.setControlsType(ControlsType.Orbit);
-    }
-    if (this._keyboard.isPressed('Digit3')) {
-      return this.setControlsType(ControlsType.Combo);
-    }
-    return false;
   }
 
   private handleRotationFromKeyboard(timeScale: number): boolean {
@@ -1025,7 +1004,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (this.controlsType === ControlsType.Orbit) {
       this.setControlsType(ControlsType.FirstPerson);
     }
-    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardSpeedFactor : 1;
+    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardFastMoveFactor : 1;
     const speedXY = timeScale * speedFactor * this._options.keyboardPanSpeed;
     const speedZ = timeScale * speedFactor * this._options.keyboardDollySpeed;
 

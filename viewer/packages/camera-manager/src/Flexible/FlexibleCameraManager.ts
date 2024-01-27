@@ -42,35 +42,7 @@ import { WheelZoomType } from './WheelZoomType';
  */
 export class FlexibleCameraManager implements CameraManager {
   //================================================
-  // INSTANCE FIELDS: Public
-  //================================================
-
-  /**
-   * When false, camera near and far planes will not be updated automatically (defaults to true).
-   * This can be useful when you have custom content in the 3D view and need to better
-   * control the view frustum.
-   *
-   * When automatic camera near/far planes are disabled, you are responsible for setting
-   * this on your own.
-   * @example
-   * ```
-   * viewer.camera.near = 0.1;
-   * viewer.camera.far = 1000.0;
-   * viewer.camera.updateProjectionMatrix();
-   * ```
-   */
-  public automaticNearFarPlane = true;
-  /**
-   * When false, the sensitivity of the camera controls will not be updated automatically.
-   * This can be useful to better control the sensitivity of the 3D navigation.
-   *
-   * When not set, control the sensitivity of the camera using `viewer.cameraManager.cameraControls.minDistance`
-   * and `viewer.cameraManager.cameraControls.maxDistance`.
-   */
-  public automaticControlsSensitivity = true;
-
-  //================================================
-  // INSTANCE FIELDS: Private
+  // INSTANCE FIELDS:
   //================================================
 
   private readonly _events = { cameraChange: new EventTrigger<CameraChangeDelegate>() };
@@ -111,16 +83,17 @@ export class FlexibleCameraManager implements CameraManager {
     scene?: Scene
   ) {
     this._camera = camera ?? new PerspectiveCamera(60, undefined, 0.1, 10000);
+    this._controls = new FlexibleControls(this.camera, domElement, new FlexibleControlsOptions());
     this._domElement = domElement;
     this._inputHandler = inputHandler;
     this._modelRaycastCallback = raycastFunction;
-    this._controls = new FlexibleControls(this.camera, domElement, new FlexibleControlsOptions());
-
     if (scene) {
       this._visibleObjects = new FlexibleCameraObjects(scene);
     }
 
-    this.setupControls();
+    this.addEventListeners();
+    this._controls.addEventListeners(); // After this.addEventListeners();
+
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -168,7 +141,7 @@ export class FlexibleCameraManager implements CameraManager {
         ? CameraManagerHelper.calculateNewTargetFromRotation(this.camera, state.rotation, this.getTarget(), newPosition)
         : this.getTarget());
 
-    if (this.controls.enabled) {
+    if (this.controls.isEnabled) {
       this.controls.cameraRawRotation.copy(newRotation);
     }
     this.setPositionAndTarget(newPosition, newTarget);
@@ -178,8 +151,7 @@ export class FlexibleCameraManager implements CameraManager {
     if (this.isEnabled) {
       return;
     }
-    this.teardownControls();
-    this.setupControls();
+    this.isEnabled = true;
 
     if (cameraManager) {
       const previousState = cameraManager.getCameraState();
@@ -193,7 +165,6 @@ export class FlexibleCameraManager implements CameraManager {
       return;
     }
     this.isEnabled = false;
-    this.teardownControls();
   }
 
   public on(event: CameraManagerEventType, callback: CameraEventDelegate): void {
@@ -234,7 +205,7 @@ export class FlexibleCameraManager implements CameraManager {
       this.updateCameraNearAndFar();
       this.updateControlsSensitivity();
     }
-    if (this.controls.enabled) {
+    if (this.controls.isEnabled) {
       this.controls.update(deltaTime);
     }
   }
@@ -242,7 +213,7 @@ export class FlexibleCameraManager implements CameraManager {
   public dispose(): void {
     this._isDisposed = true;
     this.controls.dispose();
-    this.teardownControls();
+    this.removeEventListeners();
     disposeOfAllEventListeners(this._events);
     this._inputHandler.dispose();
     this._stopEventTrigger.dispose();
@@ -278,7 +249,7 @@ export class FlexibleCameraManager implements CameraManager {
 
   private set isEnabled(value: boolean) {
     this._isEnabled = value;
-    this.controls.enabled = true;
+    this.controls.isEnabled = true;
   }
 
   private getPosition(): Vector3 {
@@ -290,7 +261,7 @@ export class FlexibleCameraManager implements CameraManager {
   }
 
   public setPositionAndTarget(position: Vector3, target: Vector3): void {
-    if (this.controls.enabled) {
+    if (this.controls.isEnabled) {
       this.controls.setState(position, target);
     }
   }
@@ -304,7 +275,7 @@ export class FlexibleCameraManager implements CameraManager {
     const lastScrollCursorDistance = this.controls.getScrollCursor().distanceTo(this.camera.position);
 
     const newTargetDistance =
-      lastScrollCursorDistance <= this.options.minDistance
+      lastScrollCursorDistance <= this.options.controlsSensitivity
         ? Math.min(this.camera.position.distanceTo(boundingBox.getCenter(new Vector3())), modelSize) / 2
         : lastScrollCursorDistance;
 
@@ -334,17 +305,20 @@ export class FlexibleCameraManager implements CameraManager {
   // INSTANCE METHODS: Set up/tear down events
   //================================================
 
-  private setupControls() {
+  private addEventListeners() {
     this._inputHandler.on('click', this.onClick);
+    this.domElement.addEventListener('keydown', this.onKeyDown);
     this.domElement.addEventListener('dblclick', this.onDoubleClick);
-    this.setupWheel();
+    this.addWheelEventListener();
   }
 
-  private setupWheel() {
+  private addWheelEventListener() {
     let previousTime = 0;
     const previousCoords = new Vector2();
 
     const onWheel = async (event: WheelEvent) => {
+      if (!this.isEnabled) return;
+      console.log(this.options.realMouseWheelAction, this.options.controlsType);
       if (this.options.realMouseWheelAction !== WheelZoomType.ToCursor) {
         return;
       }
@@ -378,9 +352,10 @@ export class FlexibleCameraManager implements CameraManager {
     }
   }
 
-  private teardownControls(): void {
+  private removeEventListeners(): void {
     this._inputHandler.off('click', this.onClick);
     this.domElement.removeEventListener('dblclick', this.onDoubleClick);
+    this.domElement.removeEventListener('keydown', this.onKeyDown);
     if (this._onWheel !== undefined) {
       this.domElement.removeEventListener('wheel', this._onWheel);
       this._onWheel = undefined;
@@ -391,13 +366,27 @@ export class FlexibleCameraManager implements CameraManager {
   // INSTANCE METHODS: Event Handlers
   //================================================
 
+  private readonly onKeyDown = (event: KeyboardEvent) => {
+    if (!this.isEnabled) return;
+    if (!this.options.enableChangeControlsTypeOn123Key) return;
+    if (event.code == 'Digit1') {
+      return this.controls.setControlsType(ControlsType.FirstPerson);
+    } else if (event.code == 'Digit2') {
+      return this.controls.setControlsType(ControlsType.Orbit);
+    } else if (event.code == 'Digit3') {
+      return this.controls.setControlsType(ControlsType.Combo);
+    }
+  };
+
   private readonly onClick = async (event: PointerEventData) => {
+    if (!this.isEnabled) return;
     if (this.options.mouseClickType !== MouseActionType.None) {
       await this.mouseAction(event, this.options.mouseClickType);
     }
   };
 
   private readonly onDoubleClick = async (event: PointerEventData) => {
+    if (!this.isEnabled) return;
     if (this.options.mouseDoubleClickType !== MouseActionType.None) {
       await this.mouseAction(event, this.options.mouseDoubleClickType);
     }
@@ -449,7 +438,7 @@ export class FlexibleCameraManager implements CameraManager {
     if (this._isDisposed) {
       return;
     }
-    if (!this.automaticNearFarPlane) {
+    if (!this.options.automaticNearFarPlane) {
       return;
     }
     CameraManagerHelper.updateCameraNearAndFar(this.camera, this._currentBoundingBox);
@@ -459,25 +448,25 @@ export class FlexibleCameraManager implements CameraManager {
     if (this._isDisposed) {
       return;
     }
-    if (!this.automaticControlsSensitivity) {
+    if (!this.options.automaticControlsSensitivity) {
       return;
     }
     // This is used to determine the speed of the camera when flying with ASDW.
     // We want to either let it be controlled by the near plane if we are far away,
     // but no more than a fraction of the bounding box of the system if inside
     const diagonal = this.getBoundingBoxDiagonal();
-    const diagonalMinDistance = diagonal * 0.002;
-    const nearMinDistance = 0.1 * this.camera.near;
-    let minDistance = Math.max(diagonalMinDistance, nearMinDistance);
+    const diagonalFraction = diagonal * 0.002;
+    const nearFraction = 0.1 * this.camera.near;
+    let controlsSensitivity = Math.max(diagonalFraction, nearFraction);
 
-    minDistance = Math.min(minDistance, this.options.maximumMinDistance);
+    controlsSensitivity = Math.min(controlsSensitivity, this.options.maximumControlsSensitivity);
 
-    // console.log('diagonal', diagonal);
-    // console.log('diagonalMinDistance', diagonalMinDistance);
-    // console.log('nearMinDistance', nearMinDistance);
-    // console.log('minDistance', minDistance);
+    console.log('diagonal', diagonal);
+    console.log('diagonalFraction', diagonalFraction);
+    console.log('nearFraction', nearFraction);
+    console.log('controlsSensitivity', controlsSensitivity);
 
-    this.options.minDistance = minDistance;
+    this.options.controlsSensitivity = controlsSensitivity;
   }
 
   public getBoundingBoxDiagonal(): number {

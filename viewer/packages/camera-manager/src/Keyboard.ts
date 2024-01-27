@@ -27,10 +27,7 @@ const EVENT_CODES = [
   'KeyF',
   'KeyQ',
   'KeyS',
-  'KeyW',
-  'Digit1',
-  'Digit2',
-  'Digit3'
+  'KeyW'
 ] as const;
 
 type EventCode = (typeof EVENT_CODES)[number];
