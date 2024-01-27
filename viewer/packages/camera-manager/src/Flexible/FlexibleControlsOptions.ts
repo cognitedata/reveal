@@ -3,20 +3,21 @@
  */
 
 import { ControlsType } from './ControlsType';
-import { MouseActionType, MouseWheelType } from './MouseActionType';
+import { MouseActionType } from './MouseActionType';
+import { WheelZoomType } from './WheelZoomType';
 
 const DEFAULT_POINTER_ROTATION_SPEED = Math.PI / 360; // half degree per pixel
 const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 10;
 
 export class FlexibleControlsOptions {
-  mouseWheelAction = MouseWheelType.Auto;
+  mouseWheelAction = WheelZoomType.Auto;
   controlsType = ControlsType.Combo;
   showTarget = true;
   showLookAt = true;
 
-  get realMouseWheelAction(): MouseWheelType {
-    if (this.mouseWheelAction == MouseWheelType.Auto) {
-      return this.controlsType == ControlsType.FirstPerson ? MouseWheelType.PastCursor : MouseWheelType.ToCursor;
+  get realMouseWheelAction(): WheelZoomType {
+    if (this.mouseWheelAction == WheelZoomType.Auto) {
+      return this.controlsType == ControlsType.FirstPerson ? WheelZoomType.PastCursor : WheelZoomType.ToCursor;
     }
     return this.mouseWheelAction;
   }

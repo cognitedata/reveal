@@ -29,10 +29,11 @@ import {
 import { CameraManagerHelper } from './../CameraManagerHelper';
 import { CameraManager } from './../CameraManager';
 import { ControlsType } from './ControlsType';
-import { MouseActionType, MouseWheelType } from './MouseActionType';
+import { MouseActionType } from './MouseActionType';
 import { DebouncedCameraStopEventTrigger } from '../utils/DebouncedCameraStopEventTrigger';
 import { FlexibleCameraObjects } from './FlexibleCameraObjects';
 import { moveCameraTargetTo, moveCameraTo } from './moveCamera';
+import { WheelZoomType } from './WheelZoomType';
 
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
@@ -344,7 +345,7 @@ export class FlexibleCameraManager implements CameraManager {
     const previousCoords = new Vector2();
 
     const onWheel = async (event: WheelEvent) => {
-      if (this.options.realMouseWheelAction !== MouseWheelType.ToCursor) {
+      if (this.options.realMouseWheelAction !== WheelZoomType.ToCursor) {
         return;
       }
       console.log('Try set Target');

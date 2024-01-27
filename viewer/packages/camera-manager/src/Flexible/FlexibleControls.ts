@@ -24,7 +24,7 @@ import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 import { ControlsType } from './ControlsType';
 import { ComboControlsEventType } from './../ComboControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
-import { MouseWheelType } from './MouseActionType';
+import { WheelZoomType } from './WheelZoomType';
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
@@ -846,9 +846,9 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private getRadiusAndDeltaTarget(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndDeltaTarget {
-    if (this.options.realMouseWheelAction === MouseWheelType.ToCursor) {
+    if (this.options.realMouseWheelAction === WheelZoomType.ToCursor) {
       return this.getRadiusAndDeltaTargetUsingScrollCursor(deltaDistance);
-    } else if (this.options.realMouseWheelAction === MouseWheelType.PastCursor) {
+    } else if (this.options.realMouseWheelAction === WheelZoomType.PastCursor) {
       return this.getRadiusAndDeltaTargetUsingCursor(pixelCoordinates, deltaDistance);
     }
     return this.getRadiusAndDeltaTargetUsingCursor(new Vector2(0, 0), deltaDistance);
