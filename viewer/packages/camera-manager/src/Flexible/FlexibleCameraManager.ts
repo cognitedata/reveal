@@ -278,7 +278,7 @@ export class FlexibleCameraManager implements CameraManager {
     const lastScrollCursorDistance = this.controls.getScrollCursor().distanceTo(this.camera.position);
 
     const newTargetDistance =
-      lastScrollCursorDistance <= this.options.controlsSensitivity
+      lastScrollCursorDistance <= this.options.sensitivity
         ? Math.min(this.camera.position.distanceTo(boundingBox.getCenter(new Vector3())), modelSize) / 2
         : lastScrollCursorDistance;
 
@@ -361,7 +361,6 @@ export class FlexibleCameraManager implements CameraManager {
     if (this.options.realMouseWheelAction !== WheelZoomType.ToCursor) {
       return;
     }
-    console.log('Try set Target');
     // Added because cameraControls are disabled when doing picking, so
     // preventDefault could be not called on wheel event and produce unwanted scrolling.
     event.preventDefault();
@@ -382,7 +381,6 @@ export class FlexibleCameraManager implements CameraManager {
     }
     const scrollCursor = await this.getTargetByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
     this.controls.setScrollCursor(scrollCursor);
-    console.log('Target is set', scrollCursor);
     this._prevTime = currentTime;
   };
 
@@ -442,7 +440,7 @@ export class FlexibleCameraManager implements CameraManager {
     if (this._isDisposed) {
       return;
     }
-    if (!this.options.automaticControlsSensitivity) {
+    if (!this.options.automaticSensitivity) {
       return;
     }
     // This is used to determine the speed of the camera when flying with ASDW.
@@ -452,7 +450,7 @@ export class FlexibleCameraManager implements CameraManager {
     const diagonalFraction = diagonal * 0.002;
     const nearFraction = 0.1 * this.camera.near;
     const controlsSensitivity = Math.max(diagonalFraction, nearFraction);
-    this.options.controlsSensitivity = this.options.getLegalControlsSensitivity(controlsSensitivity);
+    this.options.sensitivity = this.options.getLegalSensitivity(controlsSensitivity);
   }
 
   public getBoundingBoxDiagonal(): number {

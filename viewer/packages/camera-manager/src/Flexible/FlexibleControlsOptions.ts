@@ -9,7 +9,7 @@ import { WheelZoomType } from './WheelZoomType';
 
 const DEFAULT_POINTER_ROTATION_SPEED = (0.1 * Math.PI) / 360; // half degree per pixel
 const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 10;
-const DEFAULT_MAXIMUM_CONTROLS_SENSITIVITY = 0.8;
+const DEFAULT_SENSITIVITY = 0.8;
 
 export class FlexibleControlsOptions {
   //================================================
@@ -49,9 +49,9 @@ export class FlexibleControlsOptions {
   public automaticNearFarPlane = true;
 
   // Controls sensitivity
-  public automaticControlsSensitivity = true; // If true controlsSensitivity will be calculated automatically
-  public maximumControlsSensitivity = DEFAULT_MAXIMUM_CONTROLS_SENSITIVITY; // For controlsSensitivity
-  public controlsSensitivity = DEFAULT_MAXIMUM_CONTROLS_SENSITIVITY;
+  public automaticSensitivity = true; // If true Sensitivity will be calculated automatically
+  public maximumSensitivity = DEFAULT_SENSITIVITY; // For Sensitivity
+  public sensitivity = DEFAULT_SENSITIVITY;
 
   // Rotation speed
   public pointerRotationSpeedAzimuth = DEFAULT_POINTER_ROTATION_SPEED;
@@ -76,7 +76,7 @@ export class FlexibleControlsOptions {
   public pinchEpsilon = 2;
   public pinchPanSpeed = 1;
 
-  // Used in getRadiusAndDeltaTargetUsingScrollCursor only
+  // Used in getDeltaDownscaleCoefficient only
   public minDeltaRatio = 1;
   public maxDeltaRatio = 8;
   public minDeltaDownscaleCoefficient = 0.1;
@@ -109,8 +109,8 @@ export class FlexibleControlsOptions {
     return MathUtils.clamp(polarAngle, this.minPolarAngle, this.maxPolarAngle);
   }
 
-  public getLegalControlsSensitivity(controlsSensitivity: number): number {
-    return Math.min(controlsSensitivity, this.maximumControlsSensitivity);
+  public getLegalSensitivity(controlsSensitivity: number): number {
+    return Math.min(controlsSensitivity, this.maximumSensitivity);
   }
 
   public getDeltaDownscaleCoefficient(targetOffsetToDeltaRatio: number): number {

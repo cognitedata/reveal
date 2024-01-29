@@ -124,7 +124,6 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
   public dispose(): void {
     this.removeEventListeners();
-    // Dispose all keyboard events registered. REV-461!
     this._keyboard.dispose();
   }
 
@@ -154,10 +153,6 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     return this._rawCameraRotation;
   }
 
-  /**
-   * Returns the current camera controls type
-   * @experimental
-   */
   public get controlsType(): ControlsType {
     return this.options.controlsType;
   }
@@ -262,7 +257,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private getPanDeltaForXY() {
-    let delta = this._options.panDollyMinDistanceFactor * this._options.controlsSensitivity;
+    let delta = this._options.panDollyMinDistanceFactor * this._options.sensitivity;
     if (this.controlsType === ControlsType.Combo) {
       delta = Math.max(delta, this._cameraVector.end.radius);
     }
@@ -277,7 +272,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private getDollyDeltaForZ(dollyIn: boolean, steps: number = 1) {
-    let delta = this._options.panDollyMinDistanceFactor * this._options.controlsSensitivity;
+    let delta = this._options.panDollyMinDistanceFactor * this._options.sensitivity;
     if (this.controlsType === ControlsType.Combo) {
       delta = Math.max(delta, this._cameraVector.end.radius);
     }
@@ -419,17 +414,11 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     event.preventDefault();
 
     const delta = getWheelDelta(event);
-    const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
-
-    const pixelCoordinates = getNormalizedPixelCoordinates(
-      this._domElement,
-      domElementRelativeOffset.offsetX,
-      domElementRelativeOffset.offsetY
-    );
-    const dollyIn = delta < 0;
+    const offset = clickOrTouchEventOffset(event, this._domElement);
+    const pixelCoords = getNormalizedPixelCoordinates(this._domElement, offset.offsetX, offset.offsetY);
     if (this._camera instanceof PerspectiveCamera) {
-      const deltaDistance = this.getDollyDeltaForZ(dollyIn, Math.abs(delta));
-      this.dollyWithWheelScroll(pixelCoordinates, deltaDistance);
+      const deltaDistance = this.getDollyDeltaForZ(delta < 0, Math.abs(delta));
+      this.dollyWithWheelScroll(pixelCoords, deltaDistance);
     } else if (this._camera instanceof OrthographicCamera) {
       const deltaDistance = Math.sign(delta) * this._options.orthographicCameraDollyFactor;
       this.dollyOrthographicCamera(deltaDistance);
@@ -581,12 +570,14 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (this.controlsType === ControlsType.FirstPerson) {
       this._translation.end.sub(this._cameraVector.getVectorEnd());
     } else if (this.controlsType === ControlsType.Orbit && cameraVector !== null) {
+      // Adjust the translation by rotating the entire vector from target to camera position.
+      // It is not working perfect, but it is good enough for now.
       const delta = this.newVector3().addVectors(this._translation.end, cameraVector);
       const deltaSpherical = new Spherical().setFromVector3(delta);
       deltaSpherical.theta += this._cameraVector.end.theta - prevCameraVectorEnd.theta;
       deltaSpherical.phi += this._cameraVector.end.phi - prevCameraVectorEnd.phi;
 
-      // Translation = Diff -  CameraVector;
+      // Translation = Diff -  CameraVector
       const newDelta = this.newVector3().setFromSpherical(deltaSpherical);
       const newTranslation = newDelta.sub(this._cameraVector.getVectorEnd());
       this._translation.end.copy(newTranslation);
@@ -616,7 +607,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       const distanceFactor = initialPinchInfo.distance / pinchInfo.distance;
       // Min distance / 5 because on phones it is reasonable to get quite close to the target,
       // but we don't want to get too close since zooming slows down very close to target.
-      this._cameraVector.end.radius = Math.max(distanceFactor * initialRadius, this._options.controlsSensitivity / 5);
+      this._cameraVector.end.radius = Math.max(distanceFactor * initialRadius, this._options.sensitivity / 5);
 
       // pan
       const deltaCenter = pinchInfo.center.clone().sub(previousPinchInfo.center);
@@ -778,8 +769,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
     const targetOffsetToDeltaRatio = Math.abs(deltaTargetOffsetDistance / deltaDistance);
     if (
-      Math.abs(deltaDistance) > this._options.controlsSensitivity ||
-      Math.abs(deltaTargetOffsetDistance) > this._options.controlsSensitivity
+      Math.abs(deltaDistance) > this._options.sensitivity ||
+      Math.abs(deltaTargetOffsetDistance) > this._options.sensitivity
     ) {
       // if target movement is too fast we want to slow it down a bit
       const deltaDownscaleCoefficient = this._options.getDeltaDownscaleCoefficient(targetOffsetToDeltaRatio);
