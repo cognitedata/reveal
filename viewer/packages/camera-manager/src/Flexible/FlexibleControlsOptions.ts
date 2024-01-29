@@ -36,7 +36,8 @@ export class FlexibleControlsOptions {
 
   // Used in FlexibleCameraManager
   public animationDuration = 300; // For animatiins
-  public maximumTimeBetweenRaycasts = 200; // For mouse wheel event
+  public minimumTimeBetweenRaycasts = 200; // For mouse wheel event
+  public maximumTimeBetweenRaycasts = 1000; // For mouse wheel event
   public mouseDistanceThresholdBetweenRaycasts = 5; // For mouse wheel event
 
   // Angles
@@ -53,8 +54,9 @@ export class FlexibleControlsOptions {
 
   // Controls sensitivity
   public automaticSensitivity = true; // If true Sensitivity will be calculated automatically
-  public maximumSensitivity = DEFAULT_SENSITIVITY; // For Sensitivity
   public sensitivity = DEFAULT_SENSITIVITY;
+  public sensitivityDiagonalFraction = 0.002; // sensitivity = boundingBox.diagonalLength * sensitivityDiagonalFraction
+  public maximumSensitivity = DEFAULT_SENSITIVITY; // Maximum sensitivity if calculated automatically
 
   // Rotation speed
   public pointerRotationSpeedAzimuth = DEFAULT_POINTER_ROTATION_SPEED;

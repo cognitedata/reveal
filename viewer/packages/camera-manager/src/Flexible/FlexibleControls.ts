@@ -756,7 +756,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
   private getRadiusAndTranslationUsingScrollCursor(deltaDistance: number): RadiusAndTranslation {
     // Here we use the law of sines to determine how far we want to move the target.
-    // Direction is always determined by scrollTarget-target vector
+    // Direction is always determined by scrollCursor-target vector
     const targetToScrollCursorVec = this.newVector3().subVectors(this._scrollCursor, this._target.value);
     const cameraToTargetVec = this.newVector3().subVectors(this._target.value, this._camera.position);
     const cameraToScrollCursorVec = this.newVector3().subVectors(this._scrollCursor, this._camera.position);

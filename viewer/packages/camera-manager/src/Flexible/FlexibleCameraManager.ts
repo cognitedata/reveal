@@ -277,7 +277,7 @@ export class FlexibleCameraManager implements CameraManager {
     const modelSize = boundingBox.min.distanceTo(boundingBox.max);
     const lastScrollCursorDistance = this.controls.getScrollCursor().distanceTo(this.camera.position);
 
-    const newTargetDistance =
+    const distance =
       lastScrollCursorDistance <= this.options.sensitivity
         ? Math.min(this.camera.position.distanceTo(boundingBox.getCenter(new Vector3())), modelSize) / 2
         : lastScrollCursorDistance;
@@ -286,12 +286,7 @@ export class FlexibleCameraManager implements CameraManager {
     const pixelCoordinates = getNormalizedPixelCoordinates(this.domElement, pixelX, pixelY);
     raycaster.setFromCamera(pixelCoordinates, this.camera);
 
-    const farPoint = raycaster.ray.direction
-      .clone()
-      .normalize()
-      .multiplyScalar(newTargetDistance)
-      .add(this.camera.position);
-
+    const farPoint = raycaster.ray.direction.clone().normalize().multiplyScalar(distance).add(this.camera.position);
     return farPoint;
   }
 
@@ -361,6 +356,9 @@ export class FlexibleCameraManager implements CameraManager {
     if (this.options.realMouseWheelAction !== WheelZoomType.ToCursor) {
       return;
     }
+    // Nils: Need this for a while to fine tune
+    console.log('mouseWheelAction: ', this.options.realMouseWheelAction);
+
     // Added because cameraControls are disabled when doing picking, so
     // preventDefault could be not called on wheel event and produce unwanted scrolling.
     event.preventDefault();
@@ -373,14 +371,17 @@ export class FlexibleCameraManager implements CameraManager {
     this._prevTime = currentTime;
     this._prevCoords.copy(currentCoords);
 
-    if (deltaTime < this.options.maximumTimeBetweenRaycasts) {
+    if (deltaTime <= this.options.minimumTimeBetweenRaycasts) {
       return;
     }
-    if (deltaCoords < this.options.mouseDistanceThresholdBetweenRaycasts) {
+    const hasWaited = deltaTime >= this.options.maximumTimeBetweenRaycasts;
+    const hasMoved = deltaCoords >= this.options.mouseDistanceThresholdBetweenRaycasts;
+    if (!(hasMoved && hasWaited)) {
       return;
     }
     const scrollCursor = await this.getTargetByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
     this.controls.setScrollCursor(scrollCursor);
+    console.log('onWheel set');
     this._prevTime = currentTime;
   };
 
@@ -447,10 +448,17 @@ export class FlexibleCameraManager implements CameraManager {
     // We want to either let it be controlled by the near plane if we are far away,
     // but no more than a fraction of the bounding box of the system if inside
     const diagonal = this.getBoundingBoxDiagonal();
-    const diagonalFraction = diagonal * 0.002;
+    const diagonalFraction = diagonal * this.options.sensitivityDiagonalFraction;
     const nearFraction = 0.1 * this.camera.near;
-    const controlsSensitivity = Math.max(diagonalFraction, nearFraction);
-    this.options.sensitivity = this.options.getLegalSensitivity(controlsSensitivity);
+    const sensitivity = Math.max(diagonalFraction, nearFraction);
+
+    this.options.sensitivity = this.options.getLegalSensitivity(sensitivity);
+
+    // Nils: Need this for a while to fine tune
+    // console.log('diagonalFraction:     ', diagonalFraction);
+    // console.log('nearFraction:         ', nearFraction);
+    // console.log('sensitivity:          ', sensitivity);
+    // console.log('sensitivity (finally):', this.options.sensitivity);
   }
 
   public getBoundingBoxDiagonal(): number {
