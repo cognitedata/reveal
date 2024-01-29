@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Spherical, Vector3 } from 'three';
+import { Vector3 } from 'three';
 
 export class DampedVector3 {
   public readonly value = new Vector3();
@@ -14,10 +14,6 @@ export class DampedVector3 {
     if (Math.abs(this.value.y - this.end.y) >= epsilon) return true;
     if (Math.abs(this.value.z - this.end.z) >= epsilon) return true;
     return false;
-  }
-
-  getSphericalEnd(): Spherical {
-    return new Spherical().setFromVector3(this.end);
   }
 
   clear(): void {

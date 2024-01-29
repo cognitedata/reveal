@@ -577,7 +577,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       deltaSpherical.theta += this._cameraVector.end.theta - prevCameraVectorEnd.theta;
       deltaSpherical.phi += this._cameraVector.end.phi - prevCameraVectorEnd.phi;
 
-      // Translation = Diff -  CameraVector
+      // Translation = Diff - CameraVector
       const newDelta = this.newVector3().setFromSpherical(deltaSpherical);
       const newTranslation = newDelta.sub(this._cameraVector.getVectorEnd());
       this._translation.end.copy(newTranslation);
