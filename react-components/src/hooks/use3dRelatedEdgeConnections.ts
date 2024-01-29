@@ -37,7 +37,7 @@ export function use3dRelatedEdgeConnections(
 
       return zipWith(nodeIds, views.items, (node, view) => ({
         ...node,
-        view
+        view: view.inspectionResults.involvedViews[0]
       }));
     },
     { enabled: fdmId !== undefined }

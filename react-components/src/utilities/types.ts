@@ -3,4 +3,4 @@
  */
 import { type DmsUniqueIdentifier, type Source } from './FdmSDK';
 
-export type FdmInstanceWithView = DmsUniqueIdentifier & Source;
+export type FdmInstanceWithView = DmsUniqueIdentifier & { view: Source };
