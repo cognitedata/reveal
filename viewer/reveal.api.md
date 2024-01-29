@@ -221,7 +221,6 @@ export type CameraConfiguration = {
 export type CameraControlsOptions = {
     mouseWheelAction?: 'zoomToTarget' | 'zoomPastCursor' | 'zoomToCursor';
     changeCameraTargetOnClick?: boolean;
-    changeCameraPositionOnDoubleClick?: boolean;
 };
 
 // @public
@@ -233,8 +232,8 @@ export interface CameraManager {
     deactivate(): void;
     // (undocumented)
     dispose(): void;
-    fitCameraToBoundingBox(boundingBox: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
-    getCamera(): THREE_2.PerspectiveCamera;
+    fitCameraToBoundingBox(boundingBox: Box3, duration?: number, radiusFactor?: number): void;
+    getCamera(): PerspectiveCamera;
     getCameraState(): Required<CameraState>;
     off(event: 'cameraChange', callback: CameraChangeDelegate): void;
     // (undocumented)
@@ -247,7 +246,7 @@ export interface CameraManager {
     // (undocumented)
     on(event: CameraManagerEventType, callback: CameraEventDelegate): void;
     setCameraState(state: CameraState): void;
-    update(deltaTime: number, boundingBox: THREE_2.Box3): void;
+    update(deltaTime: number, boundingBox: Box3): void;
 }
 
 // @public
@@ -255,13 +254,13 @@ export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[num
 
 // @public
 export class CameraManagerHelper {
-    static calculateCameraStateToFitBoundingBox(camera: THREE_2.PerspectiveCamera, box: THREE_2.Box3, radiusFactor?: number): {
-        position: THREE_2.Vector3;
-        target: THREE_2.Vector3;
+    static calculateCameraStateToFitBoundingBox(camera: PerspectiveCamera, box: Box3, radiusFactor?: number): {
+        position: Vector3;
+        target: Vector3;
     };
-    static calculateNewRotationFromTarget(camera: THREE_2.PerspectiveCamera, newTarget: THREE_2.Vector3): THREE_2.Quaternion;
-    static calculateNewTargetFromRotation(camera: THREE_2.PerspectiveCamera, rotation: THREE_2.Quaternion, currentTarget: THREE_2.Vector3, position: THREE_2.Vector3): THREE_2.Vector3;
-    static updateCameraNearAndFar(camera: THREE_2.PerspectiveCamera, combinedBbox: THREE_2.Box3): void;
+    static calculateNewRotationFromTarget(camera: PerspectiveCamera, newTarget: Vector3): Quaternion;
+    static calculateNewTargetFromRotation(camera: PerspectiveCamera, rotation: Quaternion, currentTarget: Vector3, position: Vector3): Vector3;
+    static updateCameraNearAndFar(camera: PerspectiveCamera, combinedBbox: Box3): void;
 }
 
 // @public (undocumented)
