@@ -139,8 +139,7 @@ export function Viewer() {
         mouseWheelAction: 'zoomToCursor'
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
-      if (viewer.cameraManager instanceof DefaultCameraManager) 
-      {
+      if (viewer.cameraManager instanceof DefaultCameraManager) {
         cameraManager.setCameraControlsOptions(controlsOptions);
       }
       cameraManagers = {
