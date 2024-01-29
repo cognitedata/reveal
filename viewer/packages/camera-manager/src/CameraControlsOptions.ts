@@ -25,4 +25,13 @@ export type CameraControlsOptions = {
    *
    */
   changeCameraTargetOnClick?: boolean;
+
+  /**
+   * Enables or disables change of camera position on mouse doubke click. New target is then set to the point of the model under current cursor
+   * position and the a camera position is set half way to this point
+   *
+   * Default is false.
+   *
+   */
+  changeCameraPositionOnDoubleClick?: boolean;
 };

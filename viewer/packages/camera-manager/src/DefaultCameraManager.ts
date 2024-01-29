@@ -65,6 +65,7 @@ export class DefaultCameraManager implements CameraManager {
     pickBoundingBox: boolean
   ) => Promise<CameraManagerCallbackData>;
   private _onClick: ((event: PointerEvent) => void) | undefined = undefined;
+  private _onDoubleClick: ((event: PointerEventData) => void) | undefined = undefined;
   private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
 
   private static readonly AnimationDuration = 300;
@@ -77,7 +78,8 @@ export class DefaultCameraManager implements CameraManager {
   private static readonly MouseDistanceThresholdBetweenRaycasts = 5;
   private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
     mouseWheelAction: 'zoomPastCursor',
-    changeCameraTargetOnClick: false
+    changeCameraTargetOnClick: false,
+    changeCameraPositionOnDoubleClick: false
   };
 
   private _cameraControlsOptions: Required<CameraControlsOptions> = {
@@ -530,6 +532,10 @@ export class DefaultCameraManager implements CameraManager {
       this._inputHandler.off('click', this._onClick as PointerEventDelegate);
       this._onClick = undefined;
     }
+    if (this._onDoubleClick !== undefined) {
+      this._domElement.removeEventListener('dblclick', this._onDoubleClick);
+      this._onDoubleClick = undefined;
+    }
     if (this._onWheel !== undefined && removeOnWheel) {
       this._domElement.removeEventListener('wheel', this._onWheel);
       this._onWheel = undefined;
@@ -621,6 +627,10 @@ export class DefaultCameraManager implements CameraManager {
       this._inputHandler.on('click', this.onClick);
       this._onClick = this.onClick;
     }
+    if (this._cameraControlsOptions.changeCameraPositionOnDoubleClick && this._onDoubleClick === undefined) {
+      this._domElement.addEventListener('dblclick', this.onDoubleClick);
+      this._onDoubleClick = this.onDoubleClick;
+    }
     if (this._onWheel === undefined) {
       this._domElement.addEventListener('wheel', onWheel);
       this._onWheel = onWheel;
@@ -634,6 +644,29 @@ export class DefaultCameraManager implements CameraManager {
     this.moveCameraTargetTo(newTarget, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
   };
 
+  private readonly onDoubleClick = async (event: PointerEventData) => {
+    const keyboardNavigationEnabled = this.keyboardNavigationEnabled;
+    this.keyboardNavigationEnabled = false;
+
+    const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, event.offsetX, event.offsetY);
+    const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, true);
+
+    // If an object is picked, zoom in to the object (the target will be in the middle of the bounding box)
+    if (modelRaycastData.pickedBoundingBox !== undefined) {
+      const { position, target } = fitCameraToBoundingBox(this._camera, modelRaycastData.pickedBoundingBox);
+      this.moveCameraTo(position, target, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
+      return;
+    }
+    // If not particular object is picked, set camera position half way to the target
+    const newTarget =
+      modelRaycastData.intersection?.point ??
+      this.calculateNewTargetWithoutModel(pixelCoordinates, modelRaycastData.modelsBoundingBox);
+
+    const newPosition = new THREE.Vector3().subVectors(newTarget, this._camera.position);
+    newPosition.divideScalar(2);
+    newPosition.add(this._camera.position);
+    this.moveCameraTo(newPosition, newTarget, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
+  };
   private calculateDefaultDuration(distanceToCamera: number): number {
     const duration = distanceToCamera * 125; // 125ms per unit distance
     return clamp(duration, DefaultCameraManager.MinAnimationDuration, DefaultCameraManager.MaxAnimationDuration);
