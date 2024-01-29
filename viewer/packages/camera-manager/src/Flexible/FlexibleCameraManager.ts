@@ -451,10 +451,8 @@ export class FlexibleCameraManager implements CameraManager {
     const diagonal = this.getBoundingBoxDiagonal();
     const diagonalFraction = diagonal * 0.002;
     const nearFraction = 0.1 * this.camera.near;
-    let controlsSensitivity = Math.max(diagonalFraction, nearFraction);
-
-    controlsSensitivity = Math.min(controlsSensitivity, this.options.maximumControlsSensitivity);
-    this.options.controlsSensitivity = controlsSensitivity;
+    const controlsSensitivity = Math.max(diagonalFraction, nearFraction);
+    this.options.controlsSensitivity = this.options.getLegalControlsSensitivity(controlsSensitivity);
   }
 
   public getBoundingBoxDiagonal(): number {

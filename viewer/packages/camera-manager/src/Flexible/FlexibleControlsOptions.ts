@@ -12,6 +12,10 @@ const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 10;
 const DEFAULT_MAXIMUM_CONTROLS_SENSITIVITY = 0.8;
 
 export class FlexibleControlsOptions {
+  //================================================
+  // INSTANCE FIELDS
+  //================================================
+
   // Main behaivor
   public controlsType = ControlsType.Combo;
 
@@ -24,12 +28,6 @@ export class FlexibleControlsOptions {
   public mouseWheelDynamicTarget = true;
   public mouseClickType = MouseActionType.None;
   public mouseDoubleClickType = MouseActionType.None;
-  public get realMouseWheelAction(): WheelZoomType {
-    if (this.mouseWheelAction == WheelZoomType.Auto) {
-      return this.controlsType == ControlsType.FirstPerson ? WheelZoomType.ToCursor : WheelZoomType.PastCursor;
-    }
-    return this.mouseWheelAction;
-  }
   public enableChangeControlsTypeOn123Key = true;
   public enableKeyboardNavigation = true;
 
@@ -88,11 +86,30 @@ export class FlexibleControlsOptions {
   public EPSILON = 0.001;
   public orthographicCameraDollyFactor = 0.3;
 
-  public getClampedAzimuthAngle(azimuthAngle: number): number {
+  //================================================
+  // INSTANCE PROPERTIES
+  //================================================
+
+  public get realMouseWheelAction(): WheelZoomType {
+    if (this.mouseWheelAction == WheelZoomType.Auto) {
+      return this.controlsType == ControlsType.FirstPerson ? WheelZoomType.ToCursor : WheelZoomType.PastCursor;
+    }
+    return this.mouseWheelAction;
+  }
+
+  //================================================
+  // INSTANCE METHODS: Getters
+  //================================================
+
+  public getLegalAzimuthAngle(azimuthAngle: number): number {
     return MathUtils.clamp(azimuthAngle, this.minAzimuthAngle, this.maxAzimuthAngle);
   }
 
-  public getClampedPolarAngle(polarAngle: number): number {
+  public getLegalPolarAngle(polarAngle: number): number {
     return MathUtils.clamp(polarAngle, this.minPolarAngle, this.maxPolarAngle);
+  }
+
+  public getLegalControlsSensitivity(controlsSensitivity: number): number {
+    return Math.min(controlsSensitivity, this.maximumControlsSensitivity);
   }
 }
