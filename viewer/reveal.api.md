@@ -20,6 +20,7 @@ import { Node3D } from '@cognite/sdk';
 import { OrthographicCamera } from 'three';
 import { PerspectiveCamera } from 'three';
 import { Quaternion } from 'three';
+import { Scene } from 'three';
 import * as THREE_2 from 'three';
 import { Vector3 } from 'three';
 
@@ -221,6 +222,7 @@ export type CameraConfiguration = {
 export type CameraControlsOptions = {
     mouseWheelAction?: 'zoomToTarget' | 'zoomPastCursor' | 'zoomToCursor';
     changeCameraTargetOnClick?: boolean;
+    changeCameraPositionOnDoubleClick?: boolean;
 };
 
 // @public
@@ -440,6 +442,7 @@ export interface Cognite3DViewerOptions {
     };
     sdk: CogniteClient;
     ssaoQualityHint?: 'medium' | 'high' | 'veryhigh' | 'disabled';
+    useFlexibleCameraManager?: boolean;
 }
 
 // @public
@@ -651,6 +654,16 @@ export type ComboControlsOptions = {
 // @public (undocumented)
 export type CompletePointCloudAppearance = Required<PointCloudAppearance>;
 
+// @public (undocumented)
+export enum ControlsType {
+    // (undocumented)
+    FirstPerson = "firstPerson",
+    // (undocumented)
+    Orbit = "orbit",
+    // (undocumented)
+    OrbitInCenter = "orbitInCenter"
+}
+
 // @public
 export enum Corner {
     // (undocumented)
@@ -764,6 +777,190 @@ export enum File3dFormat {
     // (undocumented)
     EptPointCloud = "ept-pointcloud",
     GltfCadModel = "gltf-directory"
+}
+
+// @public
+export class FlexibleCameraManager implements CameraManager {
+    constructor(domElement: HTMLElement, inputHandler: InputHandler, raycastFunction: (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>, camera?: PerspectiveCamera, scene?: Scene);
+    // (undocumented)
+    activate(cameraManager?: CameraManager): void;
+    // (undocumented)
+    get camera(): PerspectiveCamera;
+    // (undocumented)
+    get controls(): FlexibleControls;
+    // (undocumented)
+    deactivate(): void;
+    // (undocumented)
+    dispose(): void;
+    // (undocumented)
+    get domElement(): HTMLElement;
+    // (undocumented)
+    fitCameraToBoundingBox(boundingBox: Box3, duration?: number, radiusFactor?: number): void;
+    // (undocumented)
+    getBoundingBoxDiagonal(): number;
+    // (undocumented)
+    getCamera(): PerspectiveCamera;
+    // (undocumented)
+    getCameraState(): Required<CameraState>;
+    // (undocumented)
+    get isDisposed(): boolean;
+    // (undocumented)
+    get isEnabled(): boolean;
+    // (undocumented)
+    off(event: CameraManagerEventType, callback: CameraEventDelegate): void;
+    // (undocumented)
+    on(event: CameraManagerEventType, callback: CameraEventDelegate): void;
+    // (undocumented)
+    get options(): FlexibleControlsOptions;
+    setCameraState(state: CameraState): void;
+    // (undocumented)
+    setPositionAndTarget(position: Vector3, target: Vector3): void;
+    // (undocumented)
+    update(deltaTime: number, boundingBox: Box3): void;
+}
+
+// @public (undocumented)
+export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
+    constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement, options: FlexibleControlsOptions);
+    // (undocumented)
+    addEventListeners(): void;
+    get cameraRawRotation(): Quaternion;
+    // (undocumented)
+    get controlsType(): ControlsType;
+    // (undocumented)
+    dispose(): void;
+    // (undocumented)
+    getLookAt(): Vector3;
+    // (undocumented)
+    getLookAtEnd(): Vector3;
+    // (undocumented)
+    getScrollCursor(): Vector3;
+    // (undocumented)
+    getState(): {
+        target: Vector3;
+        position: Vector3;
+    };
+    // (undocumented)
+    getTarget(): Vector3;
+    // (undocumented)
+    get isEnabled(): boolean;
+    set isEnabled(isEnabled: boolean);
+    // (undocumented)
+    lookAtTempTarget: boolean;
+    // (undocumented)
+    get options(): FlexibleControlsOptions;
+    // (undocumented)
+    setControlsType(controlsType: ControlsType): boolean;
+    // (undocumented)
+    setScrollCursor(target: Vector3): void;
+    // (undocumented)
+    setState(position: Vector3, target: Vector3): void;
+    // (undocumented)
+    setTempTarget(target: Vector3): void;
+    // (undocumented)
+    temporarlyDisableKeyboard: boolean;
+    // (undocumented)
+    triggerCameraChangeEvent: () => void;
+    // (undocumented)
+    update(deltaTimeS: number, forceUpdate?: boolean): boolean;
+}
+
+// @public (undocumented)
+export class FlexibleControlsOptions {
+    // (undocumented)
+    animationDuration: number;
+    // (undocumented)
+    automaticNearFarPlane: boolean;
+    // (undocumented)
+    automaticSensitivity: boolean;
+    // (undocumented)
+    controlsType: ControlsType;
+    // (undocumented)
+    dampingFactor: number;
+    // (undocumented)
+    dollyFactor: number;
+    // (undocumented)
+    enableChangeControlsTypeOn123Key: boolean;
+    // (undocumented)
+    enableDamping: boolean;
+    // (undocumented)
+    enableKeyboardNavigation: boolean;
+    // (undocumented)
+    EPSILON: number;
+    // (undocumented)
+    getDeltaDownscaleCoefficient(targetOffsetToDeltaRatio: number): number;
+    // (undocumented)
+    getLegalAzimuthAngle(azimuthAngle: number): number;
+    // (undocumented)
+    getLegalPolarAngle(polarAngle: number): number;
+    // (undocumented)
+    getLegalSensitivity(controlsSensitivity: number): number;
+    // (undocumented)
+    keyboardDollySpeed: number;
+    // (undocumented)
+    keyboardFastMoveFactor: number;
+    // (undocumented)
+    keyboardPanSpeed: number;
+    // (undocumented)
+    keyboardRotationSpeedAzimuth: number;
+    // (undocumented)
+    keyboardRotationSpeedPolar: number;
+    // (undocumented)
+    maxAzimuthAngle: number;
+    // (undocumented)
+    maxDeltaDownscaleCoefficient: number;
+    // (undocumented)
+    maxDeltaRatio: number;
+    // (undocumented)
+    maximumSensitivity: number;
+    // (undocumented)
+    maximumTimeBetweenRaycasts: number;
+    // (undocumented)
+    maxPolarAngle: number;
+    // (undocumented)
+    maxZoom: number;
+    // (undocumented)
+    minAzimuthAngle: number;
+    // (undocumented)
+    minDeltaDownscaleCoefficient: number;
+    // (undocumented)
+    minDeltaRatio: number;
+    // (undocumented)
+    minPolarAngle: number;
+    // (undocumented)
+    minZoom: number;
+    // (undocumented)
+    minZoomDistance: number;
+    // (undocumented)
+    mouseClickType: MouseActionType;
+    // (undocumented)
+    mouseDistanceThresholdBetweenRaycasts: number;
+    // (undocumented)
+    mouseDoubleClickType: MouseActionType;
+    // (undocumented)
+    mouseWheelAction: WheelZoomType;
+    // (undocumented)
+    mouseWheelDynamicTarget: boolean;
+    // (undocumented)
+    orthographicCameraDollyFactor: number;
+    // (undocumented)
+    panDollyMinDistanceFactor: number;
+    // (undocumented)
+    pinchEpsilon: number;
+    // (undocumented)
+    pinchPanSpeed: number;
+    // (undocumented)
+    pointerRotationSpeedAzimuth: number;
+    // (undocumented)
+    pointerRotationSpeedPolar: number;
+    // (undocumented)
+    get realMouseWheelAction(): WheelZoomType;
+    // (undocumented)
+    sensitivity: number;
+    // (undocumented)
+    showLookAt: boolean;
+    // (undocumented)
+    showTarget: boolean;
 }
 
 // @public (undocumented)
@@ -1107,6 +1304,18 @@ export type ModelState = {
         appearance: SerializableNodeAppearance;
     }[];
 };
+
+// @public (undocumented)
+export enum MouseActionType {
+    // (undocumented)
+    None = "none",
+    // (undocumented)
+    SetTarget = "setTarget",
+    // (undocumented)
+    SetTargetAndCameraDirection = "setTargetAndCameraDirection",
+    // (undocumented)
+    SetTargetAndCameraPosition = "setTargetAndCameraPosition"
+}
 
 // @public
 export type NodeAppearance = {
@@ -1619,6 +1828,18 @@ export enum WellKnownAsprsPointClassCodes {
 
 // @public
 export type WellKnownUnit = 'Meters' | 'Centimeters' | 'Millimeters' | 'Micrometers' | 'Kilometers' | 'Feet' | 'Inches' | 'Yards' | 'Miles' | 'Mils' | 'Microinches';
+
+// @public
+export enum WheelZoomType {
+    // (undocumented)
+    Auto = "auto",
+    // (undocumented)
+    PastCursor = "pastCursor",
+    // (undocumented)
+    ToCursor = "toCursor",
+    // (undocumented)
+    ToTarget = "toTarget"
+}
 
 // (No @packageDocumentation comment for this package)
 
