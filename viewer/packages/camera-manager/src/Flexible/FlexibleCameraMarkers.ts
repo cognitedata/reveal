@@ -6,10 +6,10 @@ import { Mesh, MeshBasicMaterial, SphereGeometry, Scene, Object3D, Vector3 } fro
 import { ControlsType } from './ControlsType';
 import { FlexibleCameraManager } from './FlexibleCameraManager';
 
-export class FlexibleCameraObjects {
+export class FlexibleCameraMarkers {
   private readonly _scene?: undefined | Scene;
-  private _targetObject: Object3D | undefined;
-  private _lookAtObject: Object3D | undefined;
+  private _targetMarker: Object3D | undefined;
+  private _lookAtMarker: Object3D | undefined;
 
   //================================================
   // CONSTRUCTOR
@@ -23,47 +23,47 @@ export class FlexibleCameraObjects {
   // INSTANCE METHODS: Update helper Objects
   //================================================
 
-  public updateVisibleObjects(manager: FlexibleCameraManager): void {
+  public update(manager: FlexibleCameraManager): void {
     if (this._scene === undefined) {
       return;
     }
     const show = manager.controls.controlsType !== ControlsType.FirstPerson;
     if (show && manager.options.showTarget) {
-      if (!this._targetObject) {
-        this._targetObject = this.createTargetObject();
-        this._scene?.add(this._targetObject);
+      if (!this._targetMarker) {
+        this._targetMarker = this.createTargetMarker();
+        this._scene?.add(this._targetMarker);
       }
-      this.setPosition(this._targetObject, manager.controls.getTarget(), manager);
+      this.setPosition(this._targetMarker, manager.controls.getTarget(), manager);
     } else {
-      if (this._targetObject) {
-        this._scene?.remove(this._targetObject);
-        this._targetObject = undefined;
+      if (this._targetMarker) {
+        this._scene?.remove(this._targetMarker);
+        this._targetMarker = undefined;
       }
     }
     if (manager.options.showLookAt) {
-      if (!this._lookAtObject) {
-        this._lookAtObject = this.createLookAtObject();
-        this._scene?.add(this._lookAtObject);
+      if (!this._lookAtMarker) {
+        this._lookAtMarker = this.createLookAtMarker();
+        this._scene?.add(this._lookAtMarker);
       }
-      this.setPosition(this._lookAtObject, manager.controls.getLookAt(), manager);
+      this.setPosition(this._lookAtMarker, manager.controls.getLookAt(), manager);
     } else {
-      if (this._lookAtObject) {
-        this._scene?.remove(this._lookAtObject);
-        this._lookAtObject = undefined;
+      if (this._lookAtMarker) {
+        this._scene?.remove(this._lookAtMarker);
+        this._lookAtMarker = undefined;
       }
     }
   }
 
-  private setPosition(obj: Object3D, position: Vector3, manager: FlexibleCameraManager): void {
+  private setPosition(object3D: Object3D, position: Vector3, manager: FlexibleCameraManager): void {
     const diagonal = manager.getBoundingBoxDiagonal();
     const scale = Math.max(Math.min(diagonal / 200, 0.2), 0.1);
 
-    obj.position.copy(position);
-    obj.lookAt(manager.camera.position);
-    obj.scale.setScalar(scale);
+    object3D.position.copy(position);
+    object3D.lookAt(manager.camera.position);
+    object3D.scale.setScalar(scale);
   }
 
-  private createTargetObject(): Mesh {
+  private createTargetMarker(): Mesh {
     return new Mesh(
       new SphereGeometry(1),
       new MeshBasicMaterial({
@@ -75,7 +75,7 @@ export class FlexibleCameraObjects {
     );
   }
 
-  private createLookAtObject(): Mesh {
+  private createLookAtMarker(): Mesh {
     return new Mesh(
       new SphereGeometry(1),
       new MeshBasicMaterial({

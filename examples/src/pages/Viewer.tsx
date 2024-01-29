@@ -89,6 +89,7 @@ export function Viewer() {
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         logMetrics: false,
+        useFlexibleCameraManager: true,
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         pointCloudEffects: {
@@ -106,7 +107,7 @@ export function Viewer() {
         viewerOptions = {
           ...viewerOptions,
           // @ts-expect-error
-          _localModels: true
+          _localModels: true,
         };
       } else if (!project) {
         throw new Error(
@@ -470,16 +471,16 @@ export function Viewer() {
         }
       });
 
-      // new AxisViewTool(
-      //   viewer,
-      //   // Give some space for Stats.js overlay
-      //   {
-      //     position: {
-      //       corner: Corner.BottomRight,
-      //       padding: new THREE.Vector2(60, 0)
-      //     }
-      //   }
-      // );
+      new AxisViewTool(
+        viewer,
+        // Give some space for Stats.js overlay
+        {
+          position: {
+            corner: Corner.BottomRight,
+            padding: new THREE.Vector2(60, 0)
+          }
+        }
+      );
     }
 
     main();

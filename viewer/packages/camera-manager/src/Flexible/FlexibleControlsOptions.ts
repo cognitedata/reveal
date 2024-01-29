@@ -11,13 +11,16 @@ const DEFAULT_POINTER_ROTATION_SPEED = (0.1 * Math.PI) / 360; // half degree per
 const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 10;
 const DEFAULT_SENSITIVITY = 0.8;
 
+/**
+ * @experimental
+ */
 export class FlexibleControlsOptions {
   //================================================
   // INSTANCE FIELDS
   //================================================
 
   // Main behaivor
-  public controlsType = ControlsType.Combo;
+  public controlsType = ControlsType.Orbit;
 
   // Visualization
   public showTarget = true;
@@ -91,8 +94,8 @@ export class FlexibleControlsOptions {
   //================================================
 
   public get realMouseWheelAction(): WheelZoomType {
-    if (this.mouseWheelAction == WheelZoomType.Auto) {
-      return this.controlsType == ControlsType.FirstPerson ? WheelZoomType.ToCursor : WheelZoomType.PastCursor;
+    if (this.mouseWheelAction === WheelZoomType.Auto) {
+      return this.controlsType === ControlsType.FirstPerson ? WheelZoomType.ToCursor : WheelZoomType.PastCursor;
     }
     return this.mouseWheelAction;
   }

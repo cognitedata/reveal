@@ -15,6 +15,7 @@
  *
  * Default is 'zoomPastCursor'.
  *
+ * @experimental
  */
 
 export enum WheelZoomType {

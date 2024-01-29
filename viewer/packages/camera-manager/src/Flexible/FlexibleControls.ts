@@ -33,6 +33,9 @@ type RadiusAndTranslation = {
   radius: number;
 };
 
+/**
+ * @experimental
+ */
 export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   //================================================
   // INSTANCE FIELDS
@@ -158,7 +161,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private get isTargetLocked(): boolean {
-    return this.controlsType !== ControlsType.Combo;
+    return this.controlsType !== ControlsType.OrbitInCenter;
   }
 
   //================================================
@@ -227,7 +230,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       return false;
     }
     this.options.controlsType = controlsType;
-    if (controlsType === ControlsType.Combo) {
+    if (controlsType === ControlsType.OrbitInCenter) {
       // This actually change target due to not change the camera position and lookAt
       this._target.add(this._translation);
       this._translation.clear();
@@ -258,7 +261,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
   private getPanDeltaForXY() {
     let delta = this._options.panDollyMinDistanceFactor * this._options.sensitivity;
-    if (this.controlsType === ControlsType.Combo) {
+    if (this.controlsType === ControlsType.OrbitInCenter) {
       delta = Math.max(delta, this._cameraVector.end.radius);
     }
     // The panning goes parallel to the screen, not perpendicular to the screen.
@@ -273,7 +276,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
   private getDollyDeltaForZ(dollyIn: boolean, steps: number = 1) {
     let delta = this._options.panDollyMinDistanceFactor * this._options.sensitivity;
-    if (this.controlsType === ControlsType.Combo) {
+    if (this.controlsType === ControlsType.OrbitInCenter) {
       delta = Math.max(delta, this._cameraVector.end.radius);
     }
     const zoomFactor = this._options.dollyFactor ** steps;

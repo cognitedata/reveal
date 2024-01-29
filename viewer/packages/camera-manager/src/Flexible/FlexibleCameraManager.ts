@@ -31,14 +31,14 @@ import { CameraManager } from './../CameraManager';
 import { ControlsType } from './ControlsType';
 import { MouseActionType } from './MouseActionType';
 import { DebouncedCameraStopEventTrigger } from '../utils/DebouncedCameraStopEventTrigger';
-import { FlexibleCameraObjects } from './FlexibleCameraObjects';
+import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraTo } from './moveCamera';
 import { WheelZoomType } from './WheelZoomType';
 
 /**
- * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
- * keyboard and mouse navigation possibility. Supports automatic update of camera near and far
- * planes and animated change of camera position and target.
+ * Flexible implementation of {@link CameraManager}. The user can switch between Orbit, FirstPersion or OrbitInCenter
+ * Supports automatic update of camera near and far planes and animated change of camera position and target.
+ * @experimental
  */
 export class FlexibleCameraManager implements CameraManager {
   //================================================
@@ -51,7 +51,7 @@ export class FlexibleCameraManager implements CameraManager {
   private readonly _camera: PerspectiveCamera;
   private readonly _domElement: HTMLElement;
   private readonly _inputHandler: InputHandler;
-  private readonly _visibleObjects?: undefined | FlexibleCameraObjects;
+  private readonly _markers?: undefined | FlexibleCameraMarkers;
   private readonly _currentBoundingBox: Box3 = new Box3();
   private _isDisposed = false;
   private _nearAndFarNeedsUpdate = false;
@@ -91,7 +91,7 @@ export class FlexibleCameraManager implements CameraManager {
     this._inputHandler = inputHandler;
     this._modelRaycastCallback = raycastFunction;
     if (scene) {
-      this._visibleObjects = new FlexibleCameraObjects(scene);
+      this._markers = new FlexibleCameraMarkers(scene);
     }
 
     this.addEventListeners();
@@ -101,8 +101,8 @@ export class FlexibleCameraManager implements CameraManager {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
       this._nearAndFarNeedsUpdate = true;
-      if (this._visibleObjects) {
-        this._visibleObjects.updateVisibleObjects(this);
+      if (this._markers) {
+        this._markers.update(this);
       }
     });
 
@@ -338,7 +338,7 @@ export class FlexibleCameraManager implements CameraManager {
     } else if (event.code == 'Digit2') {
       return this.controls.setControlsType(ControlsType.Orbit);
     } else if (event.code == 'Digit3') {
-      return this.controls.setControlsType(ControlsType.Combo);
+      return this.controls.setControlsType(ControlsType.OrbitInCenter);
     }
   };
 

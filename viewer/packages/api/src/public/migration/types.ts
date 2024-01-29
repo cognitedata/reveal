@@ -188,6 +188,12 @@ export interface Cognite3DViewerOptions {
    * @internal
    */
   _localModels?: boolean;
+
+  /**
+   * Use the new the new flexiable camera manager or not, default not to be used.
+   * @experimental
+   */
+  useFlexibleCameraManager?: boolean;
 }
 
 /**
