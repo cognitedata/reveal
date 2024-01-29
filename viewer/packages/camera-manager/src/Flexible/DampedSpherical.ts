@@ -10,6 +10,13 @@ export class DampedSpherical {
   private readonly _vector = new Vector3();
   private readonly _vectorEnd = new Vector3();
 
+  isChanged(epsilon: number): boolean {
+    if (Math.abs(this.value.radius - this.end.radius) >= epsilon) return true;
+    if (Math.abs(this.value.phi - this.end.phi) >= epsilon) return true;
+    if (Math.abs(this.value.theta - this.end.theta) >= epsilon) return true;
+    return false;
+  }
+
   public getVector(): Vector3 {
     return this._vector.setFromSpherical(this.value);
   }
@@ -31,13 +38,6 @@ export class DampedSpherical {
 
   synchronizeEnd(): void {
     this.end.copy(this.value);
-  }
-
-  isChanged(epsilon: number): boolean {
-    if (Math.abs(this.value.radius - this.end.radius) >= epsilon) return true;
-    if (Math.abs(this.value.phi - this.end.phi) >= epsilon) return true;
-    if (Math.abs(this.value.theta - this.end.theta) >= epsilon) return true;
-    return false;
   }
 
   damp(dampningFactor: number): void {

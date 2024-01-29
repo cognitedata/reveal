@@ -11,7 +11,6 @@ import {
   OrthographicCamera,
   PerspectiveCamera,
   Quaternion,
-  Ray,
   Spherical,
   Vector2,
   Vector3
@@ -24,10 +23,10 @@ import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { WheelZoomType } from './WheelZoomType';
 import { DampedVector3 } from './DampedVector3';
 import { DampedSpherical } from './DampedSpherical';
+import { ReusableVector3s } from './ReusableVector3s';
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
-const ROTATION_SPEED_FACTOR = 0.1;
 
 type RadiusAndTranslation = {
   translation: Vector3;
@@ -63,8 +62,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   private readonly _keyboard: Keyboard;
   private readonly _pointEventCache: Array<PointerEvent> = [];
 
-  // Temporary objects used for calculations to avoid allocations
-  private readonly _reusableVector3s = new ReusableVector3s();
+  private readonly _reusableVector3s = new ReusableVector3s(); // Temporary objects used for calculations to avoid allocations
 
   //        ControlsType.Combo
   //          , - ~ ~ ~ - ,
@@ -562,8 +560,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (delta.x === 0 && delta.y === 0) {
       return;
     }
-    const deltaAzimuthAngle = ROTATION_SPEED_FACTOR * this._options.pointerRotationSpeedAzimuth * delta.x;
-    const deltaPolarAngle = ROTATION_SPEED_FACTOR * this._options.pointerRotationSpeedPolar * delta.y;
+    const deltaAzimuthAngle = this._options.pointerRotationSpeedAzimuth * delta.x;
+    const deltaPolarAngle = this._options.pointerRotationSpeedPolar * delta.y;
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
   }
 
@@ -779,20 +777,12 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       deltaDistance * (Math.sin(targetCameraScrollCursorAngle) / Math.sin(targetScrollCursorCameraAngle));
 
     const targetOffsetToDeltaRatio = Math.abs(deltaTargetOffsetDistance / deltaDistance);
-
-    // if target movement is too fast we want to slow it down a bit
-    const deltaDownscaleCoefficient = clampedMapLinear(
-      targetOffsetToDeltaRatio,
-      this._options.minDeltaRatio,
-      this._options.maxDeltaRatio,
-      this._options.maxDeltaDownscaleCoefficient,
-      this._options.minDeltaDownscaleCoefficient
-    );
-
     if (
       Math.abs(deltaDistance) > this._options.controlsSensitivity ||
       Math.abs(deltaTargetOffsetDistance) > this._options.controlsSensitivity
     ) {
+      // if target movement is too fast we want to slow it down a bit
+      const deltaDownscaleCoefficient = this._options.getDeltaDownscaleCoefficient(targetOffsetToDeltaRatio);
       deltaDistance *= deltaDownscaleCoefficient;
       deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
     }
@@ -849,7 +839,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       this._keyboard.getKeyboardMovementValue('ArrowLeft', 'ArrowRight') *
       timeScale;
 
-    let deltaPolarAngle =
+    const deltaPolarAngle =
       this._options.keyboardRotationSpeedPolar *
       this._keyboard.getKeyboardMovementValue('ArrowUp', 'ArrowDown') *
       timeScale;
@@ -860,17 +850,12 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (this.controlsType === ControlsType.Orbit) {
       this.setControlsType(ControlsType.FirstPerson);
     }
-
-    deltaAzimuthAngle *= ROTATION_SPEED_FACTOR;
-    deltaPolarAngle *= ROTATION_SPEED_FACTOR;
-
-    const polarAngle = this._cameraVector.end.phi;
     const azimuthAngle = this._cameraVector.end.theta;
     deltaAzimuthAngle = this._options.getLegalAzimuthAngle(azimuthAngle + deltaAzimuthAngle) - azimuthAngle;
 
     // Calculate the azimuth compensation factor. This adjusts the azimuth rotation
     // to make it feel more natural when looking straight up or straight down.
-    const deviationFromEquator = Math.abs(polarAngle - Math.PI / 2);
+    const deviationFromEquator = Math.abs(this._cameraVector.end.phi - Math.PI / 2);
     const azimuthCompensationFactor = Math.sin(Math.PI / 2 - deviationFromEquator);
     deltaAzimuthAngle *= azimuthCompensationFactor;
 
@@ -957,26 +942,4 @@ function getWheelDelta(event: WheelEvent): number {
  */
 function getTimeScale(deltaTimeS: number): number {
   return deltaTimeS * TARGET_FPS;
-}
-
-// Function almost equal to mapLinear except it is behaving the same as clamp outside of specified range
-function clampedMapLinear(value: number, xStart: number, xEnd: number, yStart: number, yEnd: number): number {
-  if (value < xStart) value = yStart;
-  else if (value > xEnd) value = yEnd;
-  else value = MathUtils.mapLinear(value, xStart, xEnd, yStart, yEnd);
-  return value;
-}
-
-// Cache for using temporarily vectors to avoid allocations
-class ReusableVector3s {
-  private readonly _vectors = new Array(30).fill(null).map(() => new Vector3());
-  private _index: number = -1;
-
-  public getNext(): Vector3 {
-    // Increment the index and wrap around if it exceeds the length of the array
-    this._index++;
-    this._index %= this._vectors.length;
-    // Return the vector at the new index
-    return this._vectors[this._index];
-  }
 }

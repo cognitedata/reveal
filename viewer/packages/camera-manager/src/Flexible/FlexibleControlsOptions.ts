@@ -7,7 +7,7 @@ import { ControlsType } from './ControlsType';
 import { MouseActionType } from './MouseActionType';
 import { WheelZoomType } from './WheelZoomType';
 
-const DEFAULT_POINTER_ROTATION_SPEED = Math.PI / 360; // half degree per pixel
+const DEFAULT_POINTER_ROTATION_SPEED = (0.1 * Math.PI) / 360; // half degree per pixel
 const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 10;
 const DEFAULT_MAXIMUM_CONTROLS_SENSITIVITY = 0.8;
 
@@ -111,5 +111,18 @@ export class FlexibleControlsOptions {
 
   public getLegalControlsSensitivity(controlsSensitivity: number): number {
     return Math.min(controlsSensitivity, this.maximumControlsSensitivity);
+  }
+
+  public getDeltaDownscaleCoefficient(targetOffsetToDeltaRatio: number): number {
+    if (targetOffsetToDeltaRatio < this.minDeltaRatio) return this.maxDeltaDownscaleCoefficient;
+    else if (targetOffsetToDeltaRatio > this.maxDeltaRatio) return this.minDeltaDownscaleCoefficient;
+    else
+      return MathUtils.mapLinear(
+        targetOffsetToDeltaRatio,
+        this.minDeltaRatio,
+        this.maxDeltaRatio,
+        this.maxDeltaDownscaleCoefficient,
+        this.minDeltaDownscaleCoefficient
+      );
   }
 }
