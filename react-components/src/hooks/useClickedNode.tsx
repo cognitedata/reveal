@@ -2,7 +2,11 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CadIntersection, type PointerEventData } from '@cognite/reveal';
+import {
+  type PointCloudIntersection,
+  type CadIntersection,
+  type PointerEventData
+} from '@cognite/reveal';
 import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeDataPromises } from '../components/NodeCacheProvider/NodeCacheProvider';
@@ -32,6 +36,9 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
   const viewer = useReveal();
 
   const [cadIntersection, setCadIntersection] = useState<CadIntersection | undefined>(undefined);
+  const [pointCloudIntersection, setPointCloudIntersection] = useState<
+    PointCloudIntersection | undefined
+  >(undefined);
 
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
@@ -40,6 +47,8 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
 
         if (intersection?.type === 'cad') {
           setCadIntersection(intersection);
+        } else if (intersection?.type === 'pointcloud') {
+          setPointCloudIntersection(intersection);
         } else {
           setCadIntersection(undefined);
         }
