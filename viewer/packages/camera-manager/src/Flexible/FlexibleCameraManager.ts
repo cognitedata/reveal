@@ -60,11 +60,14 @@ export class FlexibleCameraManager implements CameraManager {
   // as these are temporarily disabled to block onWheel input during `zoomToCursor`-mode
   private _isEnabled = true;
 
+  // For the wheel event
+  private _prevTime = 0;
+  private readonly _prevCoords = new Vector2();
+
   //================================================
   // INSTANCE FIELDS: Events
   //================================================
 
-  private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
   private readonly _modelRaycastCallback: (
     x: number,
     y: number,
@@ -156,7 +159,7 @@ export class FlexibleCameraManager implements CameraManager {
     if (cameraManager) {
       const previousState = cameraManager.getCameraState();
       this.setCameraState({ position: previousState.position, target: previousState.target });
-      this.getCamera().aspect = cameraManager.getCamera().aspect;
+      this.camera.aspect = cameraManager.getCamera().aspect;
     }
   }
 
@@ -309,57 +312,14 @@ export class FlexibleCameraManager implements CameraManager {
     this._inputHandler.on('click', this.onClick);
     this.domElement.addEventListener('keydown', this.onKeyDown);
     this.domElement.addEventListener('dblclick', this.onDoubleClick);
-    this.addWheelEventListener();
-  }
-
-  private addWheelEventListener() {
-    let previousTime = 0;
-    const previousCoords = new Vector2();
-
-    const onWheel = async (event: WheelEvent) => {
-      if (!this.isEnabled) return;
-      console.log(this.options.realMouseWheelAction, this.options.controlsType);
-      if (this.options.realMouseWheelAction !== WheelZoomType.ToCursor) {
-        return;
-      }
-      console.log('Try set Target');
-      // Added because cameraControls are disabled when doing picking, so
-      // preventDefault could be not called on wheel event and produce unwanted scrolling.
-      event.preventDefault();
-      const pixelPosition = clickOrTouchEventOffset(event, this.domElement);
-      const currentTime = performance.now();
-      const currentCoords = new Vector2(pixelPosition.offsetX, pixelPosition.offsetY);
-      const deltaTime = currentTime - previousTime;
-      const deltaCoords = currentCoords.distanceTo(previousCoords);
-
-      previousTime = currentTime;
-      previousCoords.copy(currentCoords);
-
-      if (deltaTime < this.options.maximumTimeBetweenRaycasts) {
-        return;
-      }
-      if (deltaCoords < this.options.mouseDistanceThresholdBetweenRaycasts) {
-        return;
-      }
-      const scrollCursor = await this.getTargetByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
-      this.controls.setScrollCursor(scrollCursor);
-      console.log('Target is set', scrollCursor);
-      previousTime = currentTime;
-    };
-    if (this._onWheel === undefined) {
-      this.domElement.addEventListener('wheel', onWheel);
-      this._onWheel = onWheel;
-    }
+    this.domElement.addEventListener('wheel', this.onWheel);
   }
 
   private removeEventListeners(): void {
     this._inputHandler.off('click', this.onClick);
     this.domElement.removeEventListener('dblclick', this.onDoubleClick);
     this.domElement.removeEventListener('keydown', this.onKeyDown);
-    if (this._onWheel !== undefined) {
-      this.domElement.removeEventListener('wheel', this._onWheel);
-      this._onWheel = undefined;
-    }
+    this.domElement.removeEventListener('wheel', this.onWheel);
   }
 
   //================================================
@@ -367,8 +327,12 @@ export class FlexibleCameraManager implements CameraManager {
   //================================================
 
   private readonly onKeyDown = (event: KeyboardEvent) => {
-    if (!this.isEnabled) return;
-    if (!this.options.enableChangeControlsTypeOn123Key) return;
+    if (!this.isEnabled) {
+      return;
+    }
+    if (!this.options.enableChangeControlsTypeOn123Key) {
+      return;
+    }
     if (event.code == 'Digit1') {
       return this.controls.setControlsType(ControlsType.FirstPerson);
     } else if (event.code == 'Digit2') {
@@ -390,6 +354,36 @@ export class FlexibleCameraManager implements CameraManager {
     if (this.options.mouseDoubleClickType !== MouseActionType.None) {
       await this.mouseAction(event, this.options.mouseDoubleClickType);
     }
+  };
+
+  private readonly onWheel = async (event: WheelEvent) => {
+    if (!this.isEnabled) return;
+    if (this.options.realMouseWheelAction !== WheelZoomType.ToCursor) {
+      return;
+    }
+    console.log('Try set Target');
+    // Added because cameraControls are disabled when doing picking, so
+    // preventDefault could be not called on wheel event and produce unwanted scrolling.
+    event.preventDefault();
+    const pixelPosition = clickOrTouchEventOffset(event, this.domElement);
+    const currentTime = performance.now();
+    const currentCoords = new Vector2(pixelPosition.offsetX, pixelPosition.offsetY);
+    const deltaTime = currentTime - this._prevTime;
+    const deltaCoords = currentCoords.distanceTo(this._prevCoords);
+
+    this._prevTime = currentTime;
+    this._prevCoords.copy(currentCoords);
+
+    if (deltaTime < this.options.maximumTimeBetweenRaycasts) {
+      return;
+    }
+    if (deltaCoords < this.options.mouseDistanceThresholdBetweenRaycasts) {
+      return;
+    }
+    const scrollCursor = await this.getTargetByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
+    this.controls.setScrollCursor(scrollCursor);
+    console.log('Target is set', scrollCursor);
+    this._prevTime = currentTime;
   };
 
   private async mouseAction(event: PointerEventData, mouseActionType: MouseActionType) {
@@ -460,8 +454,6 @@ export class FlexibleCameraManager implements CameraManager {
     let controlsSensitivity = Math.max(diagonalFraction, nearFraction);
 
     controlsSensitivity = Math.min(controlsSensitivity, this.options.maximumControlsSensitivity);
-
-    // 2
     this.options.controlsSensitivity = controlsSensitivity;
   }
 

@@ -281,14 +281,6 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     return this.newVector3().setFromSpherical(this._cameraVectorEnd);
   }
 
-  private getClampedAzimuthAngle(azimuthAngle: number): number {
-    return MathUtils.clamp(azimuthAngle, this._options.minAzimuthAngle, this._options.maxAzimuthAngle);
-  }
-
-  private getClampedPolarAngle(polarAngle: number): number {
-    return MathUtils.clamp(polarAngle, this._options.minPolarAngle, this._options.maxPolarAngle);
-  }
-
   private getDirectionTowards(pixelCoordinates: Vector2, worldPoint: Vector3): Vector3 {
     const position = this.newVector3();
     // unproject the mouse coordinates into 3D space
@@ -621,8 +613,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     } else if (this.controlsType === ControlsType.Orbit) {
       cameraVector = this.getCameraVectorEnd();
     }
-    this._cameraVectorEnd.theta = this.getClampedAzimuthAngle(this._cameraVectorEnd.theta + deltaAzimuthAngle);
-    this._cameraVectorEnd.phi = this.getClampedPolarAngle(this._cameraVectorEnd.phi + deltaPolarAngle);
+    this._cameraVectorEnd.theta = this.options.getClampedAzimuthAngle(this._cameraVectorEnd.theta + deltaAzimuthAngle);
+    this._cameraVectorEnd.phi = this.options.getClampedPolarAngle(this._cameraVectorEnd.phi + deltaPolarAngle);
     this._cameraVectorEnd.makeSafe();
 
     if (this.controlsType === ControlsType.FirstPerson) {
@@ -983,7 +975,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
     const polarAngle = this._cameraVectorEnd.phi;
     const azimuthAngle = this._cameraVectorEnd.theta;
-    deltaAzimuthAngle = this.getClampedAzimuthAngle(azimuthAngle + deltaAzimuthAngle) - azimuthAngle;
+    deltaAzimuthAngle = this._options.getClampedAzimuthAngle(azimuthAngle + deltaAzimuthAngle) - azimuthAngle;
 
     // Calculate the azimuth compensation factor. This adjusts the azimuth rotation
     // to make it feel more natural when looking straight up or straight down.

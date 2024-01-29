@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+import { MathUtils } from 'three/src/math/MathUtils';
 import { ControlsType } from './ControlsType';
 import { MouseActionType } from './MouseActionType';
 import { WheelZoomType } from './WheelZoomType';
@@ -86,4 +87,12 @@ export class FlexibleControlsOptions {
   // Others
   public EPSILON = 0.001;
   public orthographicCameraDollyFactor = 0.3;
+
+  public getClampedAzimuthAngle(azimuthAngle: number): number {
+    return MathUtils.clamp(azimuthAngle, this.minAzimuthAngle, this.maxAzimuthAngle);
+  }
+
+  public getClampedPolarAngle(polarAngle: number): number {
+    return MathUtils.clamp(polarAngle, this.minPolarAngle, this.maxPolarAngle);
+  }
 }
