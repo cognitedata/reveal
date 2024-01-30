@@ -44,7 +44,6 @@ export const use3dScenes = (
       populateSceneMapWithModels(scenesQueryResult.items.sceneModels, scenesMap);
       populateSceneMapWith360Images(scenesQueryResult.items.scene360Collections, scenesMap);
 
-      console.log('scenesMap', scenesMap);
       return scenesMap;
     } catch (error) {
       console.warn("Scene space doesn't exist or has no scenes with 3D models");
@@ -59,10 +58,10 @@ export const use3dScenes = (
 };
 
 function createMapOfScenes(
-  scenes: Array<NodeItem<Record<string, unknown>>> | Array<EdgeItem<Record<string, unknown>>>
+  scenes: NodeItem[] | EdgeItem[]
 ): Record<Space, Record<ExternalId, SceneData>> {
   return scenes.reduce(
-    (acc, scene) => {
+    (acc: Record<Space, Record<ExternalId, SceneData>>, scene: NodeItem | EdgeItem) => {
       const { space, externalId } = scene;
       const properties = Object.values(
         Object.values(scene.properties)[0] as Record<string, unknown>
@@ -80,15 +79,12 @@ function createMapOfScenes(
 
       return acc;
     },
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    {} as Record<Space, Record<ExternalId, SceneData>>
+    {}
   );
 }
 
 function populateSceneMapWithModels(
-  scene360Images:
-    | Array<NodeItem<Record<string, unknown>>>
-    | Array<EdgeItem<Record<string, unknown>>>,
+  scene360Images: NodeItem[] | EdgeItem[],
   scenesMap: Record<Space, Record<ExternalId, SceneData>>
 ): void {
   scene360Images.forEach((image) => {
@@ -123,9 +119,7 @@ function populateSceneMapWithModels(
 }
 
 function populateSceneMapWith360Images(
-  scene360Images:
-    | Array<NodeItem<Record<string, unknown>>>
-    | Array<EdgeItem<Record<string, unknown>>>,
+  scene360Images: NodeItem[] | EdgeItem[],
   scenesMap: Record<Space, Record<ExternalId, SceneData>>
 ): void {
   scene360Images.forEach((imageCollection) => {
