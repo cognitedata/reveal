@@ -27,6 +27,14 @@ export type SceneData = {
   image360CollectionOptions: AddImageCollection360DatamodelsOptions[];
 };
 
+type Use3dScenesQueryResult = {
+  scenes: Array<NodeItem<SceneConfigurationProperties>>;
+  sceneModels: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>;
+  scene360Collections: Array<
+    EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>
+  >;
+};
+
 export const use3dScenes = (
   userSdk?: CogniteClient
 ): UseQueryResult<Record<Space, Record<ExternalId, SceneData>>> => {
@@ -38,11 +46,21 @@ export const use3dScenes = (
     const scenesQuery = createGetScenesQuery();
 
     try {
-      const scenesQueryResult = await fdmSdk.queryNodesAndEdges(scenesQuery);
+      const queryResult = await fdmSdk.queryNodesAndEdges(scenesQuery);
 
-      const scenesMap = createMapOfScenes(scenesQueryResult.items.scenes);
-      populateSceneMapWithModels(scenesQueryResult.items.sceneModels, scenesMap);
-      populateSceneMapWith360Images(scenesQueryResult.items.scene360Collections, scenesMap);
+      const use3dScenesQueryResult: Use3dScenesQueryResult = {
+        scenes: queryResult.items.scenes as Array<NodeItem<SceneConfigurationProperties>>,
+        sceneModels: queryResult.items.sceneModels as Array<
+          EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>
+        >,
+        scene360Collections: queryResult.items.scene360Collections as Array<
+          EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>
+        >
+      };
+
+      const scenesMap = createMapOfScenes(use3dScenesQueryResult.scenes);
+      populateSceneMapWithModels(use3dScenesQueryResult.sceneModels, scenesMap);
+      populateSceneMapWith360Images(use3dScenesQueryResult.scene360Collections, scenesMap);
 
       return scenesMap;
     } catch (error) {
@@ -58,14 +76,15 @@ export const use3dScenes = (
 };
 
 function createMapOfScenes(
-  scenes: NodeItem[] | EdgeItem[]
+  scenes: Array<NodeItem<SceneConfigurationProperties>>
 ): Record<Space, Record<ExternalId, SceneData>> {
   return scenes.reduce(
-    (acc: Record<Space, Record<ExternalId, SceneData>>, scene: NodeItem | EdgeItem) => {
+    (
+      acc: Record<Space, Record<ExternalId, SceneData>>,
+      scene: NodeItem<SceneConfigurationProperties>
+    ) => {
       const { space, externalId } = scene;
-      const properties = Object.values(
-        Object.values(scene.properties)[0] as Record<string, unknown>
-      )[0] as SceneConfigurationProperties;
+      const properties = Object.values(Object.values(scene.properties)[0])[0];
       if (acc[space] === undefined) {
         acc[space] = {};
       }
@@ -84,17 +103,13 @@ function createMapOfScenes(
 }
 
 function populateSceneMapWithModels(
-  scene360Images: NodeItem[] | EdgeItem[],
+  scene360Images: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>,
   scenesMap: Record<Space, Record<ExternalId, SceneData>>
 ): void {
-  scene360Images.forEach((image) => {
-    const edge = image as EdgeItem;
-
+  scene360Images.forEach((edge) => {
     const { space, externalId } = edge.startNode;
 
-    const properties = Object.values(
-      Object.values(edge.properties)[0] as Record<string, unknown>
-    )[0] as Cdf3dRevisionProperties;
+    const properties = Object.values(Object.values(edge.properties)[0])[0];
 
     const newModelId = Number(edge.endNode.externalId);
     const newModelRevisionId = Number(properties?.revisionId);
@@ -119,17 +134,15 @@ function populateSceneMapWithModels(
 }
 
 function populateSceneMapWith360Images(
-  scene360Images: NodeItem[] | EdgeItem[],
+  scene360Images: Array<
+    EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>
+  >,
   scenesMap: Record<Space, Record<ExternalId, SceneData>>
 ): void {
-  scene360Images.forEach((imageCollection) => {
-    const edge = imageCollection as EdgeItem;
-
+  scene360Images.forEach((edge) => {
     const { space, externalId } = edge.startNode;
 
-    const properties = Object.values(
-      Object.values(edge.properties)[0] as Record<string, unknown>
-    )[0] as Cdf3dImage360CollectionProperties;
+    const properties = Object.values(Object.values(edge.properties)[0])[0];
 
     if (scenesMap[space]?.[externalId] === undefined) {
       return;
