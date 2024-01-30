@@ -46,21 +46,12 @@ export const use3dScenes = (
     const scenesQuery = createGetScenesQuery();
 
     try {
-      const queryResult = await fdmSdk.queryNodesAndEdges(scenesQuery);
+      const queryResult = (await fdmSdk.queryNodesAndEdges(scenesQuery))
+        .items as Use3dScenesQueryResult;
 
-      const use3dScenesQueryResult: Use3dScenesQueryResult = {
-        scenes: queryResult.items.scenes as Array<NodeItem<SceneConfigurationProperties>>,
-        sceneModels: queryResult.items.sceneModels as Array<
-          EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>
-        >,
-        scene360Collections: queryResult.items.scene360Collections as Array<
-          EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>
-        >
-      };
-
-      const scenesMap = createMapOfScenes(use3dScenesQueryResult.scenes);
-      populateSceneMapWithModels(use3dScenesQueryResult.sceneModels, scenesMap);
-      populateSceneMapWith360Images(use3dScenesQueryResult.scene360Collections, scenesMap);
+      const scenesMap = createMapOfScenes(queryResult.scenes);
+      populateSceneMapWithModels(queryResult.sceneModels, scenesMap);
+      populateSceneMapWith360Images(queryResult.scene360Collections, scenesMap);
 
       return scenesMap;
     } catch (error) {
