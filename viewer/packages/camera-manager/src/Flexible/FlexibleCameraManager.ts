@@ -282,12 +282,7 @@ export class FlexibleCameraManager implements CameraManager {
         ? Math.min(this.camera.position.distanceTo(boundingBox.getCenter(new Vector3())), modelSize) / 2
         : lastScrollCursorDistance;
 
-    const raycaster = new Raycaster();
-    const pixelCoordinates = getNormalizedPixelCoordinates(this.domElement, pixelX, pixelY);
-    raycaster.setFromCamera(pixelCoordinates, this.camera);
-
-    const farPoint = raycaster.ray.direction.clone().normalize().multiplyScalar(distance).add(this.camera.position);
-    return farPoint;
+    return this.controls.getPointBehindPixel(pixelX, pixelY, distance);
   }
 
   private async getTargetByPixelCoordinates(pixelX: number, pixelY: number): Promise<Vector3> {
@@ -379,6 +374,7 @@ export class FlexibleCameraManager implements CameraManager {
     if (!(hasMoved && hasWaited)) {
       return;
     }
+    
     const scrollCursor = await this.getTargetByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
     this.controls.setScrollCursor(scrollCursor);
     console.log('onWheel set');

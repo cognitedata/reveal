@@ -11,6 +11,7 @@ import {
   OrthographicCamera,
   PerspectiveCamera,
   Quaternion,
+  Raycaster,
   Spherical,
   Vector2,
   Vector3
@@ -804,6 +805,13 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     // if we scroll out, we don't change the target
     const translation = targetToScrollCursorVec.negate().normalize().multiplyScalar(deltaTargetOffsetDistance);
     return { translation, radius };
+  }
+
+  public getPointBehindPixel(pixelX: number, pixelY: number, distance: number): Vector3 {
+    const raycaster = new Raycaster();
+    const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, pixelX, pixelY);
+    raycaster.setFromCamera(pixelCoordinates, this._camera);
+    return raycaster.ray.at(distance, new Vector3());
   }
 
   //================================================
