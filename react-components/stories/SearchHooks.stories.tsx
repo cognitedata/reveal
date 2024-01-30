@@ -49,7 +49,7 @@ type Equipment = {
   view: string;
   externalId: string;
   space: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, Record<string, unknown>>;
 };
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {

@@ -197,6 +197,10 @@ export type ViewItem = {
   implements: Source[];
 };
 
+export type DataModelListResponse = {
+  items: Array<{ views: Source[] }>;
+};
+
 export class FdmSDK {
   private readonly _sdk: CogniteClient;
   private readonly _byIdsEndpoint: string;
@@ -245,7 +249,9 @@ export class FdmSDK {
   }
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<PropertiesType = Record<string, unknown>>(
+  public async searchInstances<
+    PropertiesType extends Record<string, unknown> = Record<string, unknown>
+  >(
     searchedView: Source,
     query: string,
     instanceType?: InstanceType,
@@ -255,7 +261,9 @@ export class FdmSDK {
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<PropertiesType = Record<string, unknown>>(
+  public async searchInstances<
+    PropertiesType extends Record<string, unknown> = Record<string, unknown>
+  >(
     searchedView: Source,
     query: string,
     instanceType?: 'edge',
@@ -275,7 +283,9 @@ export class FdmSDK {
   ): Promise<{ instances: Array<NodeItem<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<PropertiesType = Record<string, unknown>>(
+  public async searchInstances<
+    PropertiesType extends Record<string, unknown> = Record<string, unknown>
+  >(
     searchedView: Source,
     query: string,
     instanceType?: InstanceType,
@@ -288,7 +298,10 @@ export class FdmSDK {
     const result = await this._sdk.post(this._searchEndpoint, { data });
 
     if (result.status === 200) {
-      hoistInstanceProperties(searchedView, result.data.items);
+      hoistInstanceProperties(
+        searchedView,
+        result.data.items as Array<EdgeItem<PropertiesType>> | Array<NodeItem<PropertiesType>>
+      );
 
       return { instances: result.data.items };
     }
@@ -480,7 +493,7 @@ export class FdmSDK {
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 
-  public async listDataModels(): Promise<any> {
+  public async listDataModels(): Promise<DataModelListResponse> {
     const result = await this._sdk.get(this._listDataModelsEndpoint, { params: { limit: 1000 } });
     if (result.status === 200) {
       return result.data;
