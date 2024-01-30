@@ -38,7 +38,6 @@ import { Button, Input } from '@cognite/cogs.js';
 
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
-const spacesToSearch = ['fdx-boys'];
 const viewsToSearch = [
   { externalId: 'Equipment', space: 'fdx-boys' },
   { externalId: 'WorkOrderMultiple', space: 'fdx-boys' },
@@ -49,7 +48,7 @@ type Equipment = {
   view: string;
   externalId: string;
   space: string;
-  properties?: Record<string, Record<string, unknown>>;
+  properties?: Record<string, any>;
 };
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
@@ -363,7 +362,7 @@ export const Main: Story = {
 };
 
 function determineViewFromQueryResultNodeItem(nodeItem: NodeItem | Equipment): string {
-  return findNonZeroProperty(nodeItem?.properties?.[spacesToSearch[0]]) ?? 'Unknown';
+  return findNonZeroProperty(nodeItem?.properties) ?? 'Unknown';
 }
 
 function findNonZeroProperty(properties?: Record<string, any>): string | undefined {

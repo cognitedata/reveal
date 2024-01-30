@@ -28,7 +28,7 @@ type Equipment = {
   view: string;
   externalId: string;
   space: string;
-  properties?: Record<string, Record<string, unknown>>;
+  properties?: Record<string, any>;
   image360Info: AssetAnnotationImage360Info;
 };
 
@@ -217,8 +217,7 @@ export const Main: Story = {
 };
 
 function determineViewFromQueryResultNodeItem(nodeItem: Equipment): string {
-  const spacesToSearch = ['Whole project'];
-  return findNonZeroProperty(nodeItem?.properties?.[spacesToSearch[0]]) ?? 'Unknown';
+  return findNonZeroProperty(nodeItem?.properties) ?? 'Unknown';
 }
 
 function findNonZeroProperty(properties?: Record<string, any>): string | undefined {
