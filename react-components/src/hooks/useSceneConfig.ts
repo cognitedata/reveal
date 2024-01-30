@@ -20,6 +20,7 @@ import {
 } from '../components/SceneContainer/SceneTypes';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { type Source, type FdmSDK } from '../utilities/FdmSDK';
+import { type SceneConfigurationProperties } from './types';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -57,7 +58,7 @@ export const useSceneConfig = (
       });
 
       const sceneResponse = queryResult as any as SceneResponse;
-      const SceneConfigurationProperties = extractProperties(
+      const SceneConfigurationProperties = extractProperties<SceneConfigurationProperties>(
         sceneResponse.items.myScene[0]?.properties
       );
 
@@ -122,7 +123,7 @@ async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {
   return false;
 }
 
-function extractProperties(object: any): any {
+function extractProperties<T>(object: Record<string, Record<string, T>>): T {
   const firstKey = Object.keys(object)[0];
   const secondKey = Object.keys(object[firstKey])[0];
   return object[firstKey][secondKey];
@@ -133,9 +134,7 @@ function getSceneModels(sceneResponse: SceneResponse): CadOrPointCloudModel[] {
   if (sceneResponse.items.sceneModels.length > 0) {
     const sceneModels = sceneResponse.items.sceneModels;
     sceneModels.forEach((sceneModel) => {
-      const sceneModelProperties = extractProperties(
-        sceneModel.properties
-      ) as SceneModelsProperties;
+      const sceneModelProperties = extractProperties<SceneModelsProperties>(sceneModel.properties);
       if (!isNaN(Number(sceneModel.endNode.externalId))) {
         const model: CadOrPointCloudModel = {
           modelId: Number(sceneModel.endNode.externalId),
@@ -154,9 +153,9 @@ function getImageCollections(sceneResponse: SceneResponse): Image360Collection[]
   if (sceneResponse.items.image360CollectionsEdges.length > 0) {
     const sceneModels = sceneResponse.items.image360CollectionsEdges;
     sceneModels.forEach((sceneModel) => {
-      const imageCollectionProperties = extractProperties(
+      const imageCollectionProperties = extractProperties<Scene360ImageCollectionsProperties>(
         sceneModel.properties
-      ) as Scene360ImageCollectionsProperties;
+      );
       const collection: Image360Collection = {
         ...imageCollectionProperties
       };
@@ -180,12 +179,12 @@ function getGroundPlanes(sceneResponse: SceneResponse): GroundPlane[] {
       );
 
       if (mappedGroundPlane !== undefined) {
-        const { label, file, wrapping } = extractProperties(
+        const { label, file, wrapping } = extractProperties<GroundPlaneProperties>(
           mappedGroundPlane.properties
-        ) as GroundPlaneProperties;
-        const groundPlaneEdgeProperties = extractProperties(
+        );
+        const groundPlaneEdgeProperties = extractProperties<Transformation3d>(
           groundPlaneEdge.properties
-        ) as Transformation3d;
+        );
         const groundPlane: GroundPlane = {
           label,
           file,
@@ -204,9 +203,9 @@ function getSkybox(sceneResponse: SceneResponse): Skybox | undefined {
     return undefined;
   }
 
-  const { label, isSpherical, file } = extractProperties(
+  const { label, isSpherical, file } = extractProperties<SkyboxProperties>(
     sceneResponse.items.skybox[0].properties
-  ) as SkyboxProperties;
+  );
   return {
     label,
     isSpherical,
