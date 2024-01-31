@@ -28,7 +28,8 @@ export {
   FlexibleControlsOptions,
   WheelZoomType,
   ControlsType,
-  MouseActionType
+  MouseActionType,
+  CameraManagerCallbackData
 } from '../packages/camera-manager';
 
 export {
@@ -66,6 +67,7 @@ export {
   PointerEventDelegate,
   PointerEventData,
   DisposedDelegate,
+  InputHandler,
   CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 

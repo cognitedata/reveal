@@ -70,6 +70,9 @@ export type CameraStopDelegate = () => void;
  */
 export type CameraEventDelegate = CameraChangeDelegate | CameraStopDelegate;
 
+/**
+ * @beta
+ */
 export type CameraManagerCallbackData = {
   intersection: {
     /**
