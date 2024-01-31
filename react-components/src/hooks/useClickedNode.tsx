@@ -15,7 +15,6 @@ import { type FdmNodeDataPromises } from '../components/NodeCacheProvider/types'
 import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 import { type NodeAssetMappingResult } from '../components/NodeCacheProvider/AssetMappingCache';
 import { useObjectCollectionForAssets } from '../components/NodeCacheProvider/PointCloudObjectCollectionCacheProvider';
-// import { type PointCloudModelOptions } from '../components/Reveal3DResources/types';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
