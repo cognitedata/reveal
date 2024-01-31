@@ -54,7 +54,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   private readonly _target: DampedVector3 = new DampedVector3();
   private readonly _cameraVector: DampedSpherical = new DampedSpherical();
 
-  // The Translation are used only if NOT the ControlsType.Combo is enabled, it translates the camera
+  // The Translation are used only if NOT the ControlsType.OrbitInCenter is enabled, it translates the camera
   // and the lookAt without changing the target or cameraVector.
   private readonly _translation = new DampedVector3();
 
@@ -68,7 +68,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
   private readonly _reusableVector3s = new ReusableVector3s(); // Temporary objects used for calculations to avoid allocations
 
-  //        ControlsType.Combo
+  //        ControlsType.OrbitInCenter
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
   //    ,                       ,       In this state the camera always rotating round the target
@@ -253,18 +253,15 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     return position;
   }
 
-  private getDirectionTowards(pixelCoordinates: Vector2, worldPoint: Vector3): Vector3 {
+  private getDirectionTowards(pixelCoordinates: Vector2): Vector3 {
     const position = this.newVector3();
     // unproject the mouse coordinates into 3D space
     position.set(pixelCoordinates.x, pixelCoordinates.y, 0.5).unproject(this._camera);
-    return position.sub(worldPoint).normalize().negate();
+    return position.sub(this._camera.position).normalize();
   }
 
   private getPanDeltaForXY() {
-    let delta = this._options.panDollyMinDistanceFactor * this._options.sensitivity;
-    if (this.controlsType === ControlsType.OrbitInCenter) {
-      delta = Math.max(delta, this._cameraVector.end.radius);
-    }
+    let delta = this._options.sensitivity;
     // The panning goes parallel to the screen, not perpendicular to the screen.
     // So we get y = x * tan (a), where y is parallel to the screen
     // half of the fov is center to top of screen
@@ -276,11 +273,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private getDollyDeltaForZ(dollyIn: boolean, steps: number = 1) {
-    let delta = this._options.panDollyMinDistanceFactor * this._options.sensitivity;
-    if (this.controlsType === ControlsType.OrbitInCenter) {
-      delta = Math.max(delta, this._cameraVector.end.radius);
-    }
-    const zoomFactor = this._options.dollyFactor ** steps;
+    const delta = this._options.sensitivity;
+    const zoomFactor = this._options.dollyFactorForZ ** steps;
     const factor = dollyIn ? zoomFactor : 1 / zoomFactor;
     return delta * (factor - 1);
   }
@@ -421,7 +415,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     const offset = clickOrTouchEventOffset(event, this._domElement);
     const pixelCoords = getNormalizedPixelCoordinates(this._domElement, offset.offsetX, offset.offsetY);
     if (this._camera instanceof PerspectiveCamera) {
-      const deltaDistance = this.getDollyDeltaForZ(delta < 0, Math.abs(delta));
+      const deltaDistance = this.getDollyDeltaForZ(delta < 0, Math.abs(delta)) * this.options.wheelDollySpeed;
       this.dollyWithWheelScroll(pixelCoords, deltaDistance);
     } else if (this._camera instanceof OrthographicCamera) {
       const deltaDistance = Math.sign(delta) * this._options.orthographicCameraDollyFactor;
@@ -498,8 +492,13 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
     const onMouseMove = (event: PointerEvent) => {
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
-      const deltaOffset = previousOffset.clone().sub(newOffset);
-      this._accumulatedMouseRotation.add(deltaOffset);
+      if (this._keyboard.isCtrlPressed()) {
+        this.pan(0, 0, newOffset.y - previousOffset.y, this.options.mouseDollySpeed);
+      } else {
+        const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
+        const deltaOffset = previousOffset.clone().sub(newOffset);
+        this._accumulatedMouseRotation.add(deltaOffset);
+      }
       previousOffset = newOffset;
     };
 
@@ -553,8 +552,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (delta.x === 0 && delta.y === 0) {
       return;
     }
-    const deltaAzimuthAngle = this._options.pointerRotationSpeedAzimuth * delta.x;
-    const deltaPolarAngle = this._options.pointerRotationSpeedPolar * delta.y;
+    const deltaAzimuthAngle = this._options.mouseRotationSpeedAzimuth * delta.x;
+    const deltaPolarAngle = this._options.mouseRotationSpeedPolar * delta.y;
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
   }
 
@@ -653,10 +652,14 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
     const onMouseMove = (event: PointerEvent) => {
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
-      const deltaX = newOffset.x - previousOffset.x;
-      const deltaY = newOffset.y - previousOffset.y;
+      if (this._keyboard.isCtrlPressed()) {
+        this.pan(0, 0, newOffset.y - previousOffset.y, this.options.mouseDollySpeed);
+      } else {
+        const deltaX = newOffset.x - previousOffset.x;
+        const deltaY = newOffset.y - previousOffset.y;
+        this.pan(deltaX * this.options.mousePanSpeed, deltaY * this.options.mousePanSpeed);
+      }
       previousOffset = newOffset;
-      this.pan(deltaX, deltaY, 0);
     };
 
     const onMouseUp = () => {
@@ -668,24 +671,25 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     window.addEventListener('pointerup', onMouseUp, { passive: false });
   }
 
-  private pan(deltaX: number, deltaY: number, deltaZ: number, speedZ: number = 1) {
+  private pan(deltaX: number, deltaY: number, deltaZ: number = 0, speedZ: number = 1) {
     // Local function:
-    const panByDimension = (distance: number, dimension: number) => {
+    const panByDimension = (distance: number, dimension: number, noVerical: boolean) => {
       const delta = this.newVector3();
       delta.setFromMatrixColumn(this._camera.matrix, dimension);
       delta.multiplyScalar(-distance);
+      if (noVerical) delta.y = 0;
       this.translate(delta);
     };
-    // Do the actuall panning:
+    // Do the actual panning:
     if (deltaX !== 0 || deltaY !== 0) {
       const delta = this.getPanDeltaForXY();
       // we actually don't use screenWidth, since perspective camera is fixed to screen height
-      if (deltaX !== 0) panByDimension(+delta * deltaX, 0);
-      if (deltaY !== 0) panByDimension(-delta * deltaY, 1);
+      if (deltaX !== 0) panByDimension(+delta * deltaX, 0, false);
+      if (deltaY !== 0) panByDimension(-delta * deltaY, 1, false);
     }
     if (deltaZ !== 0) {
       const delta = this.getDollyDeltaForZ(deltaZ >= 1, speedZ);
-      panByDimension(-delta, 2);
+      panByDimension(-delta, 2, true);
     }
   }
 
@@ -706,34 +710,42 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     const camera = this._camera as OrthographicCamera;
     if (!camera) return;
     camera.zoom *= 1 - deltaDistance;
-    camera.zoom = MathUtils.clamp(camera.zoom, this._options.minZoom, this._options.maxZoom);
+    camera.zoom = MathUtils.clamp(camera.zoom, this._options.minOrthographicZoom, this._options.maxOrthographicZoom);
     camera.updateProjectionMatrix();
   }
 
   private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number) {
     const result = this.getRadiusAndTranslation(pixelCoordinates, deltaDistance);
-    this._cameraVector.end.radius = result.radius;
-    this.translate(result.translation);
+
+    if (true || this.controlsType === ControlsType.OrbitInCenter) {
+      const deltaCameraVector = this._cameraVector.end.clone();
+      deltaCameraVector.radius = result.radius - this._cameraVector.end.radius;
+      result.translation.add(this.newVector3().setFromSpherical(deltaCameraVector));
+      this.translate(result.translation);
+    } else {
+      this._cameraVector.end.radius = result.radius;
+      this.translate(result.translation);
+    }
   }
 
   private getRadiusAndTranslation(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndTranslation {
     if (this.options.realMouseWheelAction === WheelZoomType.ToCursor) {
-      return this.getRadiusAndTranslationUsingScrollCursor(deltaDistance);
+      return this.getRadiusAndTranslationByScrollCursor(deltaDistance);
     } else if (this.options.realMouseWheelAction === WheelZoomType.PastCursor) {
-      return this.getRadiusAndTranslationUsingCursor(pixelCoordinates, deltaDistance);
+      return this.getRadiusAndTranslationByDirection(pixelCoordinates, deltaDistance);
     }
-    return this.getRadiusAndTranslationUsingCursor(new Vector2(0, 0), deltaDistance);
+    return this.getRadiusAndTranslationByDirection(new Vector2(0, 0), deltaDistance);
   }
 
-  private getRadiusAndTranslationUsingCursor(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndTranslation {
+  private getRadiusAndTranslationByDirection(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndTranslation {
     const cameraVector = this._cameraVector.getVectorEnd();
-    const distanceToTarget = cameraVector.length();
-    const isDollyOut = deltaDistance > 0 ? true : false;
     cameraVector.normalize();
+    const isDollyOut = deltaDistance > 0 ? true : false;
 
-    let radius = distanceToTarget + deltaDistance;
+    const oldDistance = this._cameraVector.end.radius;
+    let radius = oldDistance + deltaDistance;
     if (radius < this._options.minZoomDistance && !isDollyOut) {
-      radius = distanceToTarget;
+      radius = oldDistance;
       if (this._options.mouseWheelDynamicTarget && !this.isTargetLocked) {
         // push targetEnd forward
         this._target.end.addScaledVector(cameraVector, Math.abs(deltaDistance));
@@ -742,6 +754,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
         return { translation: new Vector3(0, 0, 0), radius };
       }
     }
+    // This calculates how much the camera must be translated
     const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - getFov(this._camera) / 2));
     const distFromCameraToCursor = Math.sqrt(
       distFromCameraToScreenCenter * distFromCameraToScreenCenter + pixelCoordinates.lengthSq()
@@ -750,12 +763,12 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     const distanceFromRayOrigin = -deltaDistance * ratio;
     cameraVector.multiplyScalar(deltaDistance);
 
-    const directionToTargetEnd = this.getDirectionTowards(pixelCoordinates, this._camera.position);
-    const translation = cameraVector.addScaledVector(directionToTargetEnd, distanceFromRayOrigin);
+    const rayDirection = this.getDirectionTowards(pixelCoordinates.negate()).negate();
+    const translation = cameraVector.addScaledVector(rayDirection, distanceFromRayOrigin);
     return { translation, radius };
   }
 
-  private getRadiusAndTranslationUsingScrollCursor(deltaDistance: number): RadiusAndTranslation {
+  private getRadiusAndTranslationByScrollCursor(deltaDistance: number): RadiusAndTranslation {
     // Here we use the law of sines to determine how far we want to move the target.
     // Direction is always determined by scrollCursor-target vector
     const targetToScrollCursorVec = this.newVector3().subVectors(this._scrollCursor, this._target.value);

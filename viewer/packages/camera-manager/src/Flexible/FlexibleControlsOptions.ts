@@ -53,31 +53,34 @@ export class FlexibleControlsOptions {
   public automaticNearFarPlane = true;
 
   // Controls sensitivity
+  public sensitivity = DEFAULT_SENSITIVITY; // Smallest unit to move around
   public automaticSensitivity = true; // If true Sensitivity will be calculated automatically
-  public sensitivity = DEFAULT_SENSITIVITY;
   public sensitivityDiagonalFraction = 0.002; // sensitivity = boundingBox.diagonalLength * sensitivityDiagonalFraction
   public maximumSensitivity = DEFAULT_SENSITIVITY; // Maximum sensitivity if calculated automatically
 
   // Rotation speed
-  public pointerRotationSpeedAzimuth = DEFAULT_POINTER_ROTATION_SPEED;
-  public pointerRotationSpeedPolar = DEFAULT_POINTER_ROTATION_SPEED;
+  public mouseRotationSpeedAzimuth = DEFAULT_POINTER_ROTATION_SPEED;
+  public mouseRotationSpeedPolar = DEFAULT_POINTER_ROTATION_SPEED;
   public keyboardRotationSpeedAzimuth = DEFAULT_KEYBOARD_ROTATION_SPEED;
   public keyboardRotationSpeedPolar = DEFAULT_KEYBOARD_ROTATION_SPEED * 0.8;
 
-  // Zooming
+  // Wheel settings
   public minZoomDistance = 0.4;
-  public minZoom = 0;
-  public maxZoom = Infinity;
-  public dollyFactor = 0.99;
+  public dollyFactorForZ = 0.99;
+  public minOrthographicZoom = 0;
+  public maxOrthographicZoom = Infinity;
 
-  public panDollyMinDistanceFactor = 10.0;
+  // Mouse speed for dolly and pan
+  public wheelDollySpeed = 25;
+  public mousePanSpeed = 25;
+  public mouseDollySpeed = 100;
 
-  // Keyboard speed
-  public keyboardDollySpeed = 2;
-  public keyboardPanSpeed = 10;
-  public keyboardFastMoveFactor = 3;
+  // Keyboard speed for dolly and pan
+  public keyboardPanSpeed = 200;
+  public keyboardDollySpeed = 40;
+  public keyboardFastMoveFactor = 4;
 
-  // Pinch
+  // Pinch speeed
   public pinchEpsilon = 2;
   public pinchPanSpeed = 1;
 

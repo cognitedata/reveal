@@ -282,7 +282,7 @@ export class FlexibleCameraManager implements CameraManager {
         ? Math.min(this.camera.position.distanceTo(boundingBox.getCenter(new Vector3())), modelSize) / 2
         : lastScrollCursorDistance;
 
-    return this.controls.getPointBehindPixel(pixelX, pixelY, distance);
+    return this.getPointBehindPixel(pixelX, pixelY, distance);
   }
 
   private async getTargetByPixelCoordinates(pixelX: number, pixelY: number): Promise<Vector3> {
@@ -292,6 +292,13 @@ export class FlexibleCameraManager implements CameraManager {
       return modelRaycastData.intersection.point;
     }
     return this.getTargetByBoundingBox(pixelX, pixelY, modelRaycastData.modelsBoundingBox);
+  }
+
+  private getPointBehindPixel(pixelX: number, pixelY: number, distance: number): Vector3 {
+    const raycaster = new Raycaster();
+    const pixelCoordinates = getNormalizedPixelCoordinates(this.domElement, pixelX, pixelY);
+    raycaster.setFromCamera(pixelCoordinates, this.camera);
+    return raycaster.ray.at(distance, new Vector3());
   }
 
   //================================================
@@ -352,7 +359,7 @@ export class FlexibleCameraManager implements CameraManager {
       return;
     }
     // Nils: Need this for a while to fine tune
-    console.log('mouseWheelAction: ', this.options.realMouseWheelAction);
+    //console.log('mouseWheelAction: ', this.options.realMouseWheelAction);
 
     // Added because cameraControls are disabled when doing picking, so
     // preventDefault could be not called on wheel event and produce unwanted scrolling.
@@ -363,21 +370,23 @@ export class FlexibleCameraManager implements CameraManager {
     const deltaTime = currentTime - this._prevTime;
     const deltaCoords = currentCoords.distanceTo(this._prevCoords);
 
+    //console.log('......................');
+    if (deltaTime <= this.options.minimumTimeBetweenRaycasts) {
+      //console.log('mouseWheelAction: To short time', deltaTime);
+      return;
+    }
+    const timeHasChanged = deltaTime >= this.options.maximumTimeBetweenRaycasts;
+    const positionHasChanged = deltaCoords >= this.options.mouseDistanceThresholdBetweenRaycasts;
+    if (!positionHasChanged || !timeHasChanged) {
+      //console.log('mouseWheelAction: Nothing has changed', deltaTime, hasMoved, hasWaited);
+      return;
+    }
     this._prevTime = currentTime;
     this._prevCoords.copy(currentCoords);
 
-    if (deltaTime <= this.options.minimumTimeBetweenRaycasts) {
-      return;
-    }
-    const hasWaited = deltaTime >= this.options.maximumTimeBetweenRaycasts;
-    const hasMoved = deltaCoords >= this.options.mouseDistanceThresholdBetweenRaycasts;
-    if (!(hasMoved && hasWaited)) {
-      return;
-    }
-    
     const scrollCursor = await this.getTargetByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
     this.controls.setScrollCursor(scrollCursor);
-    console.log('onWheel set');
+    //console.log('mouseWheelAction set: ', scrollCursor);
     this._prevTime = currentTime;
   };
 

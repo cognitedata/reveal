@@ -30,6 +30,7 @@ export type RevealContainerProps = {
     | 'ssaoQualityHint'
     | 'pointCloudEffects'
     | 'enableEdges'
+    | 'useFlexibleCameraManager'
   >;
 };
 
