@@ -14,6 +14,10 @@ import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type FdmNodeDataPromises } from '../components/NodeCacheProvider/types';
 import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 import { type NodeAssetMappingResult } from '../components/NodeCacheProvider/AssetMappingCache';
+import {
+  type PointCloudObjectCollectionData,
+  useObjectCollectionForAssets
+} from '../components/NodeCacheProvider/PointCloudObjectCollectionCacheProvider';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -29,7 +33,8 @@ export type FdmNodeDataResult = {
 export type ClickedNodeData = {
   fdmResult?: FdmNodeDataResult;
   assetMappingResult?: AssetMappingDataResult;
-  intersection: CadIntersection;
+  pointCloudAssetMappingResult?: PointCloudObjectCollectionData;
+  intersection: CadIntersection | PointCloudIntersection;
 };
 
 export const useClickedNodeData = (): ClickedNodeData | undefined => {
@@ -47,10 +52,13 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
 
         if (intersection?.type === 'cad') {
           setCadIntersection(intersection);
+          setPointCloudIntersection(undefined);
         } else if (intersection?.type === 'pointcloud') {
           setPointCloudIntersection(intersection);
+          setCadIntersection(undefined);
         } else {
           setCadIntersection(undefined);
+          setPointCloudIntersection(undefined);
         }
       })();
     };
@@ -74,19 +82,31 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     cadIntersection?.treeIndex
   ).data;
 
-  return useCombinedClickedNodeData(nodeDataPromises, assetMappingResult, cadIntersection);
+  const pointCloudAssetMappingResult = useObjectCollectionForAssets(
+    pointCloudIntersection?.model.modelId,
+    pointCloudIntersection?.model.revisionId,
+    pointCloudIntersection?.annotationId
+  ).data;
+
+  return useCombinedClickedNodeData(
+    nodeDataPromises,
+    assetMappingResult,
+    pointCloudAssetMappingResult,
+    cadIntersection ?? pointCloudIntersection
+  );
 };
 
 const useCombinedClickedNodeData = (
   fdmPromises: FdmNodeDataPromises | undefined,
   assetMappings: NodeAssetMappingResult | undefined,
-  cadIntersection: CadIntersection | undefined
+  pointCloudAssetMappings: PointCloudObjectCollectionData | undefined,
+  intersection: CadIntersection | PointCloudIntersection | undefined
 ): ClickedNodeData | undefined => {
   const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>();
   const fdmData = useFdmData(fdmPromises);
 
   useEffect(() => {
-    if (cadIntersection === undefined) {
+    if (intersection === undefined) {
       setClickedNodeData(undefined);
       return;
     }
@@ -102,9 +122,10 @@ const useCombinedClickedNodeData = (
     setClickedNodeData({
       fdmResult: fdmData,
       assetMappingResult: assetMappingData,
-      intersection: cadIntersection
+      pointCloudAssetMappingResult: pointCloudAssetMappings,
+      intersection
     });
-  }, [cadIntersection, fdmData, assetMappings?.node]);
+  }, [intersection, fdmData, assetMappings?.node, pointCloudAssetMappings]);
 
   return clickedNodeData;
 };

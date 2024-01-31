@@ -4,29 +4,36 @@
 
 import {
   type PointCloudObjectMetadata,
-  type PointCloudObjectCollection,
   type CognitePointCloudModel,
-  AnnotationIdPointCloudObjectCollection
+  AnnotationIdPointCloudObjectCollection,
+  type Cognite3DViewer
 } from '@cognite/reveal';
+import { type ModelId, type RevisionId } from './types';
 import { useReveal } from '../RevealContainer/RevealContext';
 
 export class PointCloudObjectCollectionCache {
-  private readonly _modelToObjectCollecction = new Map<string, PointCloudObjectCollection>();
+  private readonly _reveal: Cognite3DViewer;
 
-  public getPointCloudObjectCollection(): Array<{
+  constructor(reveal: Cognite3DViewer | undefined) {
+    this._reveal = reveal ?? useReveal();
+  }
+
+  public getPointCloudObjectCollection(
+    modelId: ModelId,
+    revisionId: RevisionId
+  ): Array<{
     metadata: PointCloudObjectMetadata;
-    objectCollecction: AnnotationIdPointCloudObjectCollection;
+    objectCollection: AnnotationIdPointCloudObjectCollection;
   }> {
-    const reveal = useReveal();
-    if (reveal === undefined) {
+    if (this._reveal === null) {
       return [];
     }
-    const pointCloudModels = reveal.models.filter(
-      (model) => model.type === 'pointcloud'
+    const pointCloudModels = this._reveal.models.filter(
+      (model) => model.modelId === modelId && model.revisionId === revisionId
     ) as CognitePointCloudModel[];
     const pointCloudObjectCollection: Array<{
       metadata: PointCloudObjectMetadata;
-      objectCollecction: AnnotationIdPointCloudObjectCollection;
+      objectCollection: AnnotationIdPointCloudObjectCollection;
     }> = [];
 
     const pointCloudMappings = pointCloudModels.flatMap((pointCloudModel) => {
@@ -36,7 +43,7 @@ export class PointCloudObjectCollectionCache {
         ]);
         pointCloudObjectCollection.push({
           metadata: pointCloudObject,
-          objectCollecction: stylableObject
+          objectCollection: stylableObject
         });
       });
       return pointCloudObjectCollection;
@@ -44,14 +51,19 @@ export class PointCloudObjectCollectionCache {
     return pointCloudMappings;
   }
 
-  // public async getPointCloudObjectCollection(modelId: ModelId, revisionId: RevisionId) {
-  //   const key = modelRevisionToKey(modelId, revisionId);
-  //   const cached = this._modelToObjectCollecction.get(key);
-  //   if (cached !== undefined) {
-  //     return cached;
-  //   }
-  //   const collection = new PointCloudObjectCollection();
-  //   this._modelToObjectCollecction.set(key, collection);
-  //   return collection;
-  // }
+  public getPointCloudObjectCollectionForAssets(
+    modelId: ModelId,
+    revisionId: RevisionId,
+    annotationId: number
+  ): Array<{
+    metadata: PointCloudObjectMetadata;
+    objectCollection: AnnotationIdPointCloudObjectCollection;
+  }> {
+    const pointCloudMappings = this.getPointCloudObjectCollection(modelId, revisionId);
+    const filteredMappings = pointCloudMappings.filter((mapping) => {
+      const isAssetIdInMapping = annotationId === mapping.metadata.annotationId;
+      return isAssetIdInMapping;
+    });
+    return filteredMappings;
+  }
 }

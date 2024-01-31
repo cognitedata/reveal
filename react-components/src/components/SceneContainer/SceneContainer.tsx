@@ -4,6 +4,7 @@
 import { useEffect, type ReactElement } from 'react';
 import { Reveal3DResources, useSceneDefaultCamera } from '../..';
 import {
+  type PointCloudObjectCollectionStylingGroup,
   type AssetMappingStylingGroup,
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
@@ -17,6 +18,7 @@ export type SceneContainerProps = {
   sceneSpaceId: string;
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>;
+  pointCloudInstanceStyling?: PointCloudObjectCollectionStylingGroup[];
   onResourcesAdded?: () => void;
   onResourceLoadError?: (error: any) => void;
 };
@@ -26,6 +28,7 @@ export function SceneContainer({
   sceneSpaceId,
   defaultResourceStyling,
   instanceStyling,
+  pointCloudInstanceStyling,
   onResourcesAdded,
   onResourceLoadError
 }: SceneContainerProps): ReactElement {
@@ -44,6 +47,7 @@ export function SceneContainer({
       resources={resourceOptions}
       defaultResourceStyling={defaultResourceStyling}
       instanceStyling={instanceStyling}
+      pointCloudInstanceStyling={pointCloudInstanceStyling}
       onResourcesAdded={onResourcesAdded}
       onResourceLoadError={onResourceLoadError}
     />

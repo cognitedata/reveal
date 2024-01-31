@@ -8,7 +8,6 @@ import {
   type NodeCollection,
   NodeIdNodeCollection,
   TreeIndexNodeCollection,
-  type Cognite3DViewer,
   type IndexSet
 } from '@cognite/reveal';
 import { useEffect } from 'react';
@@ -16,6 +15,7 @@ import { useSDK } from '../RevealContainer/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { isEqual } from 'lodash';
 import { useReveal } from '../RevealContainer/RevealContext';
+import { modelExists } from '../../utilities/modelExists';
 
 export type NodeStylingGroup = {
   nodeIds: number[];
@@ -173,11 +173,4 @@ function isEqualStyle(styleA: NodeAppearance, styleB: NodeAppearance): boolean {
       : colorA.equals(colorB);
 
   return color && isEqual(restA, restB);
-}
-
-export function modelExists(
-  model: CogniteCadModel | undefined,
-  viewer: Cognite3DViewer
-): model is CogniteCadModel {
-  return model !== undefined && viewer.models.includes(model);
 }

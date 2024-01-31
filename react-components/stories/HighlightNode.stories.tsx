@@ -10,7 +10,8 @@ import {
   useClickedNodeData,
   useCameraNavigation,
   type AddResourceOptions,
-  type FdmAssetStylingGroup
+  type FdmAssetStylingGroup,
+  useReveal
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
@@ -18,7 +19,11 @@ import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
-import { type AssetMappingStylingGroup } from '../src/components/Reveal3DResources/types';
+import {
+  type PointCloudObjectCollectionStylingGroup,
+  type AssetMappingStylingGroup
+} from '../src/components/Reveal3DResources/types';
+import { PointCloudObjectCollectionData } from '../src/components/NodeCacheProvider/PointCloudObjectCollectionCacheProvider';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -45,6 +50,18 @@ export const Main: Story = {
             color: new Color('#c5cbff')
           }
         }
+      },
+      {
+        modelId: 1350257070750400,
+        revisionId: 5110855034466831,
+        styling: {
+          default: {
+            color: new Color('#efefef')
+          },
+          mapped: {
+            color: new Color('#c5cbff')
+          }
+        }
       }
     ]
   },
@@ -60,7 +77,7 @@ export const Main: Story = {
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [stylingGroups, setStylingGroups] = useState<
-    Array<FdmAssetStylingGroup | AssetMappingStylingGroup>
+    Array<FdmAssetStylingGroup | AssetMappingStylingGroup | PointCloudObjectCollectionStylingGroup>
   >([]);
   const cameraNavigation = useCameraNavigation();
   const nodeData = useClickedNodeData();
@@ -96,6 +113,15 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         nodeData.intersection.model.revisionId,
         nodeData.assetMappingResult.cadNode.id
       );
+    } else if (nodeData?.pointCloudAssetMappingResult !== undefined) {
+      setStylingGroups([
+        {
+          annotationIds: nodeData.pointCloudAssetMappingResult.map(
+            (collection) => collection.metadata.annotationId
+          ),
+          style: { pointcloud: DefaultNodeAppearance.Highlighted }
+        }
+      ]);
     } else {
       setStylingGroups([]);
     }
@@ -109,9 +135,14 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           cad: {
             default: { color: new Color('#efefef') },
             mapped: { color: new Color('#c5cbff') }
+          },
+          pointcloud: {
+            default: { color: new Color('#efefef') },
+            mapped: { color: new Color('#c5cbff') }
           }
         }}
-        instanceStyling={stylingGroups}
+        instanceStyling={stylingGroups as Array<FdmAssetStylingGroup | AssetMappingStylingGroup>}
+        pointCloudInstanceStyling={stylingGroups as PointCloudObjectCollectionStylingGroup[]}
       />
       <RevealToolbar />
     </>

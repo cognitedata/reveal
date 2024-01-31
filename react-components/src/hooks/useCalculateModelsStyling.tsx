@@ -54,6 +54,7 @@ export const useCalculateCadStyling = (
     defaultResourceStyling?.cad?.mapped
   );
   const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
+
   const joinedStyleGroups = useJoinStylingGroups(
     models,
     modelsMappedStyleGroups,

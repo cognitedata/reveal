@@ -37,7 +37,7 @@ export type CadModelOptions = { type: 'cad' } & AddModelOptions & { transform?: 
 export type PointCloudModelOptions = { type: 'pointcloud' } & AddModelOptions & {
     transform?: Matrix4;
   } & {
-    styling?: { default?: NodeAppearance };
+    styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
   };
 
 export type NodeDataResult = {
@@ -56,15 +56,21 @@ export type AssetMappingStylingGroup = {
   style: { cad: NodeAppearance };
 };
 
+export type PointCloudObjectCollectionStylingGroup = {
+  annotationIds: number[];
+  style: { pointcloud: NodeAppearance };
+};
+
 export type DefaultResourceStyling = {
   cad?: { default?: NodeAppearance; mapped?: NodeAppearance };
-  pointcloud?: { default: NodeAppearance };
+  pointcloud?: { default: NodeAppearance; mapped?: NodeAppearance };
 };
 
 export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>;
+  pointCloudInstanceStyling?: PointCloudObjectCollectionStylingGroup[];
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
 };
