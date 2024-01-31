@@ -14,7 +14,7 @@ import {
   CadModelContainer
 } from '../src';
 import { Color, Matrix4 } from 'three';
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useState, useEffect, useMemo } from 'react';
 import { AddModelOptions, DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -22,6 +22,17 @@ import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCa
 import { type AssetMappingStylingGroup } from '../src/components/Reveal3DResources/types';
 import { ColorOverlayRules } from '../src/components/ColorOverlayRules/ColorOverlayRules';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
+import {
+  BaseRuleApplication,
+  Expression,
+  ExpressionOperator,
+  Rule,
+  RuleSet,
+  StringCondition,
+  StringExpression,
+  StringTrigger
+} from '../src/components/ColorOverlayRules/types';
+import { FdmSDK } from '../src/utilities/FdmSDK';
 
 const meta = {
   title: 'Example/ColorOverlay',
@@ -63,13 +74,50 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   const modelOptions = {
     modelId: 4319392643513894,
-    revisionId: 91463736617758,
-    
+    revisionId: 91463736617758
   };
   const transform = new Matrix4().makeTranslation(0, 10, 0);
   const onLoaded = (): void => {
     setResourceIsLoaded(true);
   };
+
+  const stringTrigger: StringTrigger = {
+    type: 'metadata',
+    key: 'Wall thickness'
+  };
+  const stringCondition: StringCondition = {
+    type: 'equals',
+    parameter: ['test']
+  };
+  const concreteExpression: StringExpression = {
+    type: 'stringExpression',
+    trigger: stringTrigger,
+    condition: stringCondition
+  };
+  const expressionOperator: ExpressionOperator = {
+    type: 'or',
+    expressions: [concreteExpression]
+  };
+
+  const ruleOne: Rule = {
+    id: 'ruleId123',
+    name: 'rule one id',
+    expression: expressionOperator
+  };
+
+  const ruleApplicationOne: BaseRuleApplication = {
+    applicationId: 'threeDApplication',
+    fill: '#ff0000',
+    outline: '#000000',
+    rule: ruleOne
+  };
+  const ruleSet: RuleSet = {
+    rules: [ruleApplicationOne],
+    name: 'Rule Set test',
+    id: '12345'
+  };
+
+  console.log(' Rule Set ', ruleSet);
   const rulesTest = [
     {
       colorRuleName: 'ABC indication Rule',

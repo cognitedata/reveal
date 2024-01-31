@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useEffect, type ReactElement } from 'react';
+import { useEffect, type ReactElement, useMemo } from 'react';
 
 import {
   type IdEither,
@@ -18,6 +18,8 @@ import { useSDK } from '../RevealContainer/SDKProvider';
 import { useReveal } from '../..';
 import { Color } from 'three';
 import { type NodeAndRange } from './types';
+import { FdmSDK } from '../../utilities/FdmSDK';
+import { RULE_BASED_COLORING_SOURCE } from '../../utilities/globalDataModels';
 
 type Rule = any;
 
@@ -28,6 +30,8 @@ export type ColorOverlayProps = {
 
 export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps): ReactElement {
   const cdfClient = useSDK();
+  const fdmSdk = useMemo(() => new FdmSDK(cdfClient), [cdfClient]);
+
   const viewer = useReveal();
   console.log(' RULES', rules);
   console.log(' SDK', cdfClient);
@@ -36,6 +40,19 @@ export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps)
 
   useEffect(() => {
     const getContextualization = async (): Promise<void> => {
+      const ruleModel = await fdmSdk.getByExternalIds(
+        [
+          {
+            instanceType: 'node',
+            externalId: 'Rule_based_Coloring_Json',
+            space: 'rule_based_coloring_space'
+          }
+        ],
+        RULE_BASED_COLORING_SOURCE
+      );
+
+      console.log(' RULE MODEL ', ruleModel);
+
       // const models = sdk.models;
       const assetMappings = await getCdfCadContextualization({
         sdk: cdfClient,
