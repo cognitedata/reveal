@@ -495,7 +495,6 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       if (this._keyboard.isCtrlPressed()) {
         this.pan(0, 0, newOffset.y - previousOffset.y, this.options.mouseDollySpeed);
       } else {
-        const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
         const deltaOffset = previousOffset.clone().sub(newOffset);
         this._accumulatedMouseRotation.add(deltaOffset);
       }
@@ -652,11 +651,11 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
     const onMouseMove = (event: PointerEvent) => {
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
+      const deltaX = newOffset.x - previousOffset.x;
+      const deltaY = newOffset.y - previousOffset.y;
       if (this._keyboard.isCtrlPressed()) {
-        this.pan(0, 0, newOffset.y - previousOffset.y, this.options.mouseDollySpeed);
+        this.pan(0, 0, deltaY, this.options.mouseDollySpeed);
       } else {
-        const deltaX = newOffset.x - previousOffset.x;
-        const deltaY = newOffset.y - previousOffset.y;
         this.pan(deltaX * this.options.mousePanSpeed, deltaY * this.options.mousePanSpeed);
       }
       previousOffset = newOffset;
