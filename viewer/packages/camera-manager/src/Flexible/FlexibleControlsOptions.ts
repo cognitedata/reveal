@@ -12,7 +12,7 @@ const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 10;
 const DEFAULT_SENSITIVITY = 0.8;
 
 /**
- * @experimental
+ * @beta
  */
 export class FlexibleControlsOptions {
   //================================================

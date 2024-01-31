@@ -35,7 +35,7 @@ type RadiusAndTranslation = {
 };
 
 /**
- * @experimental
+ * @beta
  */
 export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   //================================================

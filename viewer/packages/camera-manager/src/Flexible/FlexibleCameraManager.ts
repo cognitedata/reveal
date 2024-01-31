@@ -38,7 +38,7 @@ import { WheelZoomType } from './WheelZoomType';
 /**
  * Flexible implementation of {@link CameraManager}. The user can switch between Orbit, FirstPersion or OrbitInCenter
  * Supports automatic update of camera near and far planes and animated change of camera position and target.
- * @experimental
+ * @beta
  */
 export class FlexibleCameraManager implements CameraManager {
   //================================================

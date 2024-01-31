@@ -442,6 +442,7 @@ export interface Cognite3DViewerOptions {
     };
     sdk: CogniteClient;
     ssaoQualityHint?: 'medium' | 'high' | 'veryhigh' | 'disabled';
+    // @beta
     useFlexibleCameraManager?: boolean;
 }
 
@@ -654,7 +655,7 @@ export type ComboControlsOptions = {
 // @public (undocumented)
 export type CompletePointCloudAppearance = Required<PointCloudAppearance>;
 
-// @public (undocumented)
+// @beta (undocumented)
 export enum ControlsType {
     // (undocumented)
     FirstPerson = "firstPerson",
@@ -779,7 +780,7 @@ export enum File3dFormat {
     GltfCadModel = "gltf-directory"
 }
 
-// @public
+// @beta
 export class FlexibleCameraManager implements CameraManager {
     constructor(domElement: HTMLElement, inputHandler: InputHandler, raycastFunction: (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>, camera?: PerspectiveCamera, scene?: Scene);
     // (undocumented)
@@ -819,7 +820,7 @@ export class FlexibleCameraManager implements CameraManager {
     update(deltaTime: number, boundingBox: Box3): void;
 }
 
-// @public (undocumented)
+// @beta (undocumented)
 export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement, options: FlexibleControlsOptions);
     // (undocumented)
@@ -833,6 +834,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     getLookAt(): Vector3;
     // (undocumented)
     getLookAtEnd(): Vector3;
+    // (undocumented)
+    getPointBehindPixel(pixelX: number, pixelY: number, distance: number): Vector3;
     // (undocumented)
     getScrollCursor(): Vector3;
     // (undocumented)
@@ -865,7 +868,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     update(deltaTimeS: number, forceUpdate?: boolean): boolean;
 }
 
-// @public (undocumented)
+// @beta (undocumented)
 export class FlexibleControlsOptions {
     // (undocumented)
     animationDuration: number;
@@ -878,7 +881,7 @@ export class FlexibleControlsOptions {
     // (undocumented)
     dampingFactor: number;
     // (undocumented)
-    dollyFactor: number;
+    dollyFactorForZ: number;
     // (undocumented)
     enableChangeControlsTypeOn123Key: boolean;
     // (undocumented)
@@ -916,9 +919,9 @@ export class FlexibleControlsOptions {
     // (undocumented)
     maximumTimeBetweenRaycasts: number;
     // (undocumented)
-    maxPolarAngle: number;
+    maxOrthographicZoom: number;
     // (undocumented)
-    maxZoom: number;
+    maxPolarAngle: number;
     // (undocumented)
     minAzimuthAngle: number;
     // (undocumented)
@@ -926,9 +929,11 @@ export class FlexibleControlsOptions {
     // (undocumented)
     minDeltaRatio: number;
     // (undocumented)
-    minPolarAngle: number;
+    minimumTimeBetweenRaycasts: number;
     // (undocumented)
-    minZoom: number;
+    minOrthographicZoom: number;
+    // (undocumented)
+    minPolarAngle: number;
     // (undocumented)
     minZoomDistance: number;
     // (undocumented)
@@ -936,7 +941,15 @@ export class FlexibleControlsOptions {
     // (undocumented)
     mouseDistanceThresholdBetweenRaycasts: number;
     // (undocumented)
+    mouseDollySpeed: number;
+    // (undocumented)
     mouseDoubleClickType: MouseActionType;
+    // (undocumented)
+    mousePanSpeed: number;
+    // (undocumented)
+    mouseRotationSpeedAzimuth: number;
+    // (undocumented)
+    mouseRotationSpeedPolar: number;
     // (undocumented)
     mouseWheelAction: WheelZoomType;
     // (undocumented)
@@ -944,23 +957,21 @@ export class FlexibleControlsOptions {
     // (undocumented)
     orthographicCameraDollyFactor: number;
     // (undocumented)
-    panDollyMinDistanceFactor: number;
-    // (undocumented)
     pinchEpsilon: number;
     // (undocumented)
     pinchPanSpeed: number;
-    // (undocumented)
-    pointerRotationSpeedAzimuth: number;
-    // (undocumented)
-    pointerRotationSpeedPolar: number;
     // (undocumented)
     get realMouseWheelAction(): WheelZoomType;
     // (undocumented)
     sensitivity: number;
     // (undocumented)
+    sensitivityDiagonalFraction: number;
+    // (undocumented)
     showLookAt: boolean;
     // (undocumented)
     showTarget: boolean;
+    // (undocumented)
+    wheelDollySpeed: number;
 }
 
 // @public (undocumented)
@@ -1305,7 +1316,7 @@ export type ModelState = {
     }[];
 };
 
-// @public (undocumented)
+// @beta (undocumented)
 export enum MouseActionType {
     // (undocumented)
     None = "none",
@@ -1829,7 +1840,7 @@ export enum WellKnownAsprsPointClassCodes {
 // @public
 export type WellKnownUnit = 'Meters' | 'Centimeters' | 'Millimeters' | 'Micrometers' | 'Kilometers' | 'Feet' | 'Inches' | 'Yards' | 'Miles' | 'Mils' | 'Microinches';
 
-// @public
+// @beta
 export enum WheelZoomType {
     // (undocumented)
     Auto = "auto",

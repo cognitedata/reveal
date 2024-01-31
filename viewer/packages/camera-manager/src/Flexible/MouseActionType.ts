@@ -3,7 +3,7 @@
  */
 
 /**
- * @experimental
+ * @beta
  */
 export enum MouseActionType {
   None = 'none',

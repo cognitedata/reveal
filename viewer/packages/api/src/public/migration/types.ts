@@ -191,7 +191,7 @@ export interface Cognite3DViewerOptions {
 
   /**
    * Use the new the new flexiable camera manager or not, default not to be used.
-   * @experimental
+   * @beta
    */
   useFlexibleCameraManager?: boolean;
 }
