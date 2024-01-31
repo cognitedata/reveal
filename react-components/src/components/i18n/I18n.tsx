@@ -42,9 +42,9 @@ const useTranslationContent = (
 
     const loadTranslations = async (): Promise<void> => {
       try {
-        const translationModule = await import(
+        const translationModule = (await import(
           `../../common/i18n/${currentLanguage}/reveal-react-components.json`
-        );
+        )) as { default: Translations };
         setTranslations(translationModule.default);
       } catch (error) {
         console.warn('Error loading translation file. Default language: English is loaded');
