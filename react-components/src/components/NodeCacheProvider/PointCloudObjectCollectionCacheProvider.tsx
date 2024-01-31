@@ -9,23 +9,9 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { PointCloudObjectCollectionCache } from './PointCloudObjectCollectionCache';
-import {
-  type PointCloudObjectMetadata,
-  type AnnotationIdPointCloudObjectCollection
-} from '@cognite/reveal';
 
 export type PointCloudObjectCollectionCacheContent = {
   cache: PointCloudObjectCollectionCache;
-};
-
-export type PointCloudObjectCollectionData = Array<{
-  metadata: PointCloudObjectMetadata;
-  objectCollection: AnnotationIdPointCloudObjectCollection;
-}>;
-
-export type ModelWithPointCloudObjectCollection = {
-  model: PointCloudModelOptions;
-  pointCloudObjectCollectionData: PointCloudObjectCollectionData;
 };
 
 const PointCloudObjectCollectionCacheContext = createContext<
@@ -46,7 +32,7 @@ const usePointCloudObjectCollectionCache = (): PointCloudObjectCollectionCache =
 
 export const usePointCloudObjectCollectionForRevisions = (
   model: PointCloudModelOptions[]
-): UseQueryResult<ModelWithPointCloudObjectCollection[]> => {
+): UseQueryResult<number[]> => {
   const pointCloudObjectCollectionCache = usePointCloudObjectCollectionCache();
 
   return useQuery(
@@ -57,11 +43,12 @@ export const usePointCloudObjectCollectionForRevisions = (
       ...model.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
     async () => {
-      const fetchData = model.flatMap((model) =>
-        pointCloudObjectCollectionCache.getPointCloudObjectCollection(
-          model.modelId,
-          model.revisionId
-        )
+      const fetchData = model.map(
+        async (model) =>
+          await pointCloudObjectCollectionCache.getPointCloudAnnotationsForModel(
+            model.modelId,
+            model.revisionId
+          )
       );
       return { model, pointCloudObjectCollectionData: fetchData };
     },
@@ -73,7 +60,7 @@ export const useObjectCollectionForAssets = (
   modelId: number | undefined,
   revisionId: number | undefined,
   annotationId: number | undefined
-): UseQueryResult<PointCloudObjectCollectionData> => {
+): UseQueryResult<number[]> => {
   const pointCloudObjectCollectionCache = usePointCloudObjectCollectionCache();
 
   return useQuery(
@@ -84,20 +71,20 @@ export const useObjectCollectionForAssets = (
       `${modelId}/${revisionId}`,
       annotationId
     ],
-    () => {
+    async () => {
       const validInputs =
         modelId !== undefined && revisionId !== undefined && annotationId !== undefined;
 
       if (!validInputs) {
         return [];
       }
-      const pointCloudObjectCollectionData =
-        pointCloudObjectCollectionCache.getPointCloudObjectCollectionForAssets(
+      const pointCloudAnnotationData =
+        pointCloudObjectCollectionCache.getPointCloudAnnotationsForAssets(
           modelId,
           revisionId,
           annotationId
         );
-      return pointCloudObjectCollectionData;
+      return await pointCloudAnnotationData;
     },
     { staleTime: Infinity, enabled: annotationId !== undefined }
   );
@@ -114,7 +101,7 @@ export function PointCloudObjectCollectionCacheProvider({
   const pointCloudObjectCollectionCache = useMemo(() => {
     const cache =
       revealKeepAliveData?.pointCloudObjectCollectionCache.current ??
-      new PointCloudObjectCollectionCache(revealKeepAliveData?.viewerRef.current);
+      new PointCloudObjectCollectionCache(cdfClient);
 
     const isRevealKeepAliveContextProvided = revealKeepAliveData !== undefined;
     if (isRevealKeepAliveContextProvided) {

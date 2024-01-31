@@ -2,68 +2,70 @@
  * Copyright 2024 Cognite AS
  */
 
-import {
-  type PointCloudObjectMetadata,
-  type CognitePointCloudModel,
-  AnnotationIdPointCloudObjectCollection,
-  type Cognite3DViewer
-} from '@cognite/reveal';
-import { type ModelId, type RevisionId } from './types';
-import { useReveal } from '../RevealContainer/RevealContext';
+import { type ModelRevisionKey, type ModelId, type RevisionId } from './types';
+import { type AnnotationFilterProps, type CogniteClient } from '@cognite/sdk';
+import { modelRevisionToKey } from './utils';
 
 export class PointCloudObjectCollectionCache {
-  private readonly _reveal: Cognite3DViewer;
+  private readonly _sdk: CogniteClient;
+  private readonly _modelToAnnotationMappings = new Map<ModelRevisionKey, Promise<number[]>>();
 
-  constructor(reveal: Cognite3DViewer | undefined) {
-    this._reveal = reveal ?? useReveal();
+  constructor(sdk: CogniteClient) {
+    this._sdk = sdk;
   }
 
-  public getPointCloudObjectCollection(
+  public async getPointCloudAnnotationsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Array<{
-    metadata: PointCloudObjectMetadata;
-    objectCollection: AnnotationIdPointCloudObjectCollection;
-  }> {
-    if (this._reveal === null) {
-      return [];
-    }
-    const pointCloudModels = this._reveal.models.filter(
-      (model) => model.modelId === modelId && model.revisionId === revisionId
-    ) as CognitePointCloudModel[];
-    const pointCloudObjectCollection: Array<{
-      metadata: PointCloudObjectMetadata;
-      objectCollection: AnnotationIdPointCloudObjectCollection;
-    }> = [];
+  ): Promise<number[]> {
+    const key = modelRevisionToKey(modelId, revisionId);
+    const cachedResult = this._modelToAnnotationMappings.get(key);
 
-    const pointCloudMappings = pointCloudModels.flatMap((pointCloudModel) => {
-      pointCloudModel.traverseStylableObjects((pointCloudObject) => {
-        const stylableObject = new AnnotationIdPointCloudObjectCollection([
-          pointCloudObject.annotationId
-        ]);
-        pointCloudObjectCollection.push({
-          metadata: pointCloudObject,
-          objectCollection: stylableObject
-        });
-      });
-      return pointCloudObjectCollection;
-    });
-    return pointCloudMappings;
+    if (cachedResult !== undefined) {
+      return await cachedResult;
+    }
+
+    return await this.fetchAndCacheMappingsForModel(modelId, revisionId);
   }
 
-  public getPointCloudObjectCollectionForAssets(
+  private async fetchAndCacheMappingsForModel(
+    modelId: ModelId,
+    revisionId: RevisionId
+  ): Promise<number[]> {
+    const key = modelRevisionToKey(modelId, revisionId);
+    const annotationMappings = this.fetchAnnotationMappingsForModel(modelId);
+
+    this._modelToAnnotationMappings.set(key, annotationMappings);
+    return await annotationMappings;
+  }
+
+  private async fetchAnnotationMappingsForModel(modelId: ModelId): Promise<number[]> {
+    const filter: AnnotationFilterProps = {
+      annotatedResourceIds: [{ id: modelId }],
+      annotatedResourceType: 'threedmodel',
+      annotationType: 'pointcloud.BoundingVolume'
+    };
+    const annotations = await this._sdk.annotations
+      .list({
+        filter,
+        limit: 1000
+      })
+      .autoPagingToArray({ limit: Infinity });
+    const annotationIds = annotations.map((annotation) => annotation.id);
+
+    return annotationIds;
+  }
+
+  public async getPointCloudAnnotationsForAssets(
     modelId: ModelId,
     revisionId: RevisionId,
     annotationId: number
-  ): Array<{
-    metadata: PointCloudObjectMetadata;
-    objectCollection: AnnotationIdPointCloudObjectCollection;
-  }> {
-    const pointCloudMappings = this.getPointCloudObjectCollection(modelId, revisionId);
-    const filteredMappings = pointCloudMappings.filter((mapping) => {
-      const isAssetIdInMapping = annotationId === mapping.metadata.annotationId;
+  ): Promise<number[]> {
+    const fetchedAnnotationIds = await this.getPointCloudAnnotationsForModel(modelId, revisionId);
+    const filteredAnnotationIds = fetchedAnnotationIds.filter((fetchedAnnotationId) => {
+      const isAssetIdInMapping = annotationId === fetchedAnnotationId;
       return isAssetIdInMapping;
     });
-    return filteredMappings;
+    return filteredAnnotationIds;
   }
 }

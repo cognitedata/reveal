@@ -10,8 +10,7 @@ import {
   useClickedNodeData,
   useCameraNavigation,
   type AddResourceOptions,
-  type FdmAssetStylingGroup,
-  useReveal
+  type FdmAssetStylingGroup
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
@@ -23,7 +22,6 @@ import {
   type PointCloudObjectCollectionStylingGroup,
   type AssetMappingStylingGroup
 } from '../src/components/Reveal3DResources/types';
-import { PointCloudObjectCollectionData } from '../src/components/NodeCacheProvider/PointCloudObjectCollectionCacheProvider';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -113,12 +111,10 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         nodeData.intersection.model.revisionId,
         nodeData.assetMappingResult.cadNode.id
       );
-    } else if (nodeData?.pointCloudAssetMappingResult !== undefined) {
+    } else if (nodeData?.pointCloudAnnotationMappingResult !== undefined) {
       setStylingGroups([
         {
-          annotationIds: nodeData.pointCloudAssetMappingResult.map(
-            (collection) => collection.metadata.annotationId
-          ),
+          annotationIds: nodeData.pointCloudAnnotationMappingResult,
           style: { pointcloud: DefaultNodeAppearance.Highlighted }
         }
       ]);

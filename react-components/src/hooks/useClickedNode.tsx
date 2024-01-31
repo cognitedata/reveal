@@ -14,10 +14,8 @@ import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type FdmNodeDataPromises } from '../components/NodeCacheProvider/types';
 import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 import { type NodeAssetMappingResult } from '../components/NodeCacheProvider/AssetMappingCache';
-import {
-  type PointCloudObjectCollectionData,
-  useObjectCollectionForAssets
-} from '../components/NodeCacheProvider/PointCloudObjectCollectionCacheProvider';
+import { useObjectCollectionForAssets } from '../components/NodeCacheProvider/PointCloudObjectCollectionCacheProvider';
+// import { type PointCloudModelOptions } from '../components/Reveal3DResources/types';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -33,7 +31,7 @@ export type FdmNodeDataResult = {
 export type ClickedNodeData = {
   fdmResult?: FdmNodeDataResult;
   assetMappingResult?: AssetMappingDataResult;
-  pointCloudAssetMappingResult?: PointCloudObjectCollectionData;
+  pointCloudAnnotationMappingResult?: number[];
   intersection: CadIntersection | PointCloudIntersection;
 };
 
@@ -99,7 +97,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
 const useCombinedClickedNodeData = (
   fdmPromises: FdmNodeDataPromises | undefined,
   assetMappings: NodeAssetMappingResult | undefined,
-  pointCloudAssetMappings: PointCloudObjectCollectionData | undefined,
+  pointCloudAssetMappings: number[] | undefined,
   intersection: CadIntersection | PointCloudIntersection | undefined
 ): ClickedNodeData | undefined => {
   const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>();
@@ -122,7 +120,7 @@ const useCombinedClickedNodeData = (
     setClickedNodeData({
       fdmResult: fdmData,
       assetMappingResult: assetMappingData,
-      pointCloudAssetMappingResult: pointCloudAssetMappings,
+      pointCloudAnnotationMappingResult: pointCloudAssetMappings,
       intersection
     });
   }, [intersection, fdmData, assetMappings?.node, pointCloudAssetMappings]);
