@@ -251,6 +251,16 @@ export interface CameraManager {
     update(deltaTime: number, boundingBox: Box3): void;
 }
 
+// @beta (undocumented)
+export type CameraManagerCallbackData = {
+    intersection: {
+        point: THREE.Vector3;
+        distanceToCamera: number;
+    } | null;
+    modelsBoundingBox: THREE.Box3;
+    pickedBoundingBox: THREE.Box3 | undefined;
+};
+
 // @public
 export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[number];
 
@@ -1170,6 +1180,17 @@ export class IndexSet {
     toRangeArray(): NumericRange[];
     // (undocumented)
     unionWith(otherSet: IndexSet): IndexSet;
+}
+
+// @public (undocumented)
+export class InputHandler {
+    constructor(domElement: HTMLElement);
+    // (undocumented)
+    dispose(): void;
+    // (undocumented)
+    off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
+    // (undocumented)
+    on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
 }
 
 // @public
