@@ -347,7 +347,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   };
 
   private readonly onDoubleClick = async (event: PointerEventData) => {
-    console.log(this.options.mouseDoubleClickType);
     if (!this.isEnabled) return;
     if (this.options.mouseDoubleClickType !== MouseActionType.None) {
       await this.mouseAction(event, this.options.mouseDoubleClickType);
@@ -395,7 +394,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     if (mouseActionType === MouseActionType.None) {
       return;
     }
-    console.log(mouseActionType);
     if (mouseActionType === MouseActionType.SetTarget) {
       if (this.controls.controlsType !== ControlsType.Orbit) {
         this.controls.setControlsType(ControlsType.Orbit);
