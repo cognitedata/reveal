@@ -76,24 +76,24 @@ export class CameraManagerHelper {
   /**
    * Updates near and far plane of the camera based on the bounding box.
    * @param camera Used camera instance.
-   * @param combinedBbox Bounding box of all objects on the scene.
+   * @param boundingBox Bounding box of all objects on the scene.
    */
-  static updateCameraNearAndFar(camera: PerspectiveCamera, combinedBbox: Box3): void {
+  static updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void {
     const { cameraPosition, cameraDirection, corners } = this._updateNearAndFarPlaneBuffers;
-    this.getBoundingBoxCorners(combinedBbox, corners);
+    this.getBoundingBoxCorners(boundingBox, corners);
     camera.getWorldPosition(cameraPosition);
     camera.getWorldDirection(cameraDirection);
 
     // 1. Compute nearest to fit the whole bbox (the case
     // where the camera is inside the box is ignored for now)
-    let near = this.calculateCameraNear(camera, combinedBbox, cameraPosition);
+    let near = this.calculateCameraNear(camera, boundingBox, cameraPosition);
 
     // 2. Compute the far distance to the distance from camera to furthest
     // corner of the boundingbox that is "in front" of the near plane
     const far = this.calculateCameraFar(near, cameraPosition, cameraDirection, corners);
 
     // 3. Handle when camera is inside the model by adjusting the near value
-    if (combinedBbox.containsPoint(cameraPosition)) {
+    if (boundingBox.containsPoint(cameraPosition)) {
       near = Math.min(0.1, far / 1000.0);
     }
 
@@ -105,16 +105,16 @@ export class CameraManagerHelper {
   /**
    * Calculates camera position and target that allows to see the content of provided bounding box.
    * @param camera Used camera instance.
-   * @param box Bounding box to be fitted.
+   * @param boundingBox Bounding box to be fitted.
    * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.
    * @returns
    */
   static calculateCameraStateToFitBoundingBox(
     camera: PerspectiveCamera,
-    box: Box3,
+    boundingBox: Box3,
     radiusFactor: number = 2
   ): { position: Vector3; target: Vector3 } {
-    return fitCameraToBoundingBox(camera, box, radiusFactor);
+    return fitCameraToBoundingBox(camera, boundingBox, radiusFactor);
   }
 
   private static calculateCameraFar(
@@ -137,20 +137,20 @@ export class CameraManagerHelper {
     return Math.max(near * 2, far);
   }
 
-  private static calculateCameraNear(camera: PerspectiveCamera, combinedBbox: Box3, cameraPosition: Vector3): number {
-    let near = combinedBbox.distanceToPoint(cameraPosition);
+  private static calculateCameraNear(camera: PerspectiveCamera, boundingBox: Box3, cameraPosition: Vector3): number {
+    let near = boundingBox.distanceToPoint(cameraPosition);
     near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
     return Math.max(0.1, near);
   }
 
-  private static getBoundingBoxCorners(bbox: Box3, outBuffer?: Vector3[]): Vector3[] {
+  private static getBoundingBoxCorners(boundingBox: Box3, outBuffer?: Vector3[]): Vector3[] {
     outBuffer = outBuffer || range(0, 8).map(_ => new Vector3());
     if (outBuffer.length !== 8) {
       throw new Error(`outBuffer must hold exactly 8 elements, but holds ${outBuffer.length} elemnents`);
     }
 
-    const min = bbox.min;
-    const max = bbox.max;
+    const min = boundingBox.min;
+    const max = boundingBox.max;
     outBuffer[0].set(min.x, min.y, min.z);
     outBuffer[1].set(max.x, min.y, min.z);
     outBuffer[2].set(min.x, max.y, min.z);

@@ -19,7 +19,7 @@
  */
 
 export enum WheelZoomType {
-  ToTarget = 'toTarget',
+  Center = 'center',
   PastCursor = 'pastCursor',
   ToCursor = 'toCursor',
   Auto = 'auto'

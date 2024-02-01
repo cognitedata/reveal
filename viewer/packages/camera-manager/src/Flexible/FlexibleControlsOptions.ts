@@ -9,7 +9,6 @@ import { WheelZoomType } from './WheelZoomType';
 
 const DEFAULT_POINTER_ROTATION_SPEED = (0.1 * Math.PI) / 360; // half degree per pixel
 const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 10;
-const DEFAULT_SENSITIVITY = 0.8;
 
 /**
  * @beta
@@ -30,7 +29,7 @@ export class FlexibleControlsOptions {
   public mouseWheelAction = WheelZoomType.Auto;
   public mouseWheelDynamicTarget = true;
   public mouseClickType = MouseActionType.None;
-  public mouseDoubleClickType = MouseActionType.None;
+  public mouseDoubleClickType = MouseActionType.SetTarget;
   public enableChangeControlsTypeOn123Key = true;
   public enableKeyboardNavigation = true;
 
@@ -53,10 +52,11 @@ export class FlexibleControlsOptions {
   public automaticNearFarPlane = true;
 
   // Controls sensitivity
-  public sensitivity = DEFAULT_SENSITIVITY; // Smallest unit to move around
+  public sensitivity = 0.4; // Smallest unit to move around
   public automaticSensitivity = true; // If true Sensitivity will be calculated automatically
-  public sensitivityDiagonalFraction = 0.002; // sensitivity = boundingBox.diagonalLength * sensitivityDiagonalFraction
-  public maximumSensitivity = DEFAULT_SENSITIVITY; // Maximum sensitivity if calculated automatically
+  public sensitivityDiagonalFraction = 0.001; // sensitivity = boundingBox.diagonalLength * sensitivityDiagonalFraction
+  public minSensitivity = 0.1; // Maximum sensitivity if calculated automatically
+  public maxSensitivity = 0.8; // Maximum sensitivity if calculated automatically
 
   // Rotation speed
   public mouseRotationSpeedAzimuth = DEFAULT_POINTER_ROTATION_SPEED;
@@ -65,20 +65,20 @@ export class FlexibleControlsOptions {
   public keyboardRotationSpeedPolar = DEFAULT_KEYBOARD_ROTATION_SPEED * 0.8;
 
   // Wheel settings
-  public minZoomDistance = 0.4;
+  public zoomFraction = 0.05;
   public dollyFactorForZ = 0.99;
   public minOrthographicZoom = 0;
   public maxOrthographicZoom = Infinity;
 
   // Mouse speed for dolly and pan
-  public wheelDollySpeed = 25;
+  public wheelDollySpeed = 1;
   public mousePanSpeed = 25;
   public mouseDollySpeed = 100;
 
   // Keyboard speed for dolly and pan
-  public keyboardPanSpeed = 200;
-  public keyboardDollySpeed = 40;
-  public keyboardFastMoveFactor = 4;
+  public keyboardPanSpeed = 50;
+  public keyboardDollySpeed = 100;
+  public keyboardFastMoveFactor = 5;
 
   // Pinch speeed
   public pinchEpsilon = 2;
@@ -105,6 +105,17 @@ export class FlexibleControlsOptions {
     return this.mouseWheelAction;
   }
 
+  public get shouldPick(): boolean {
+    switch (this.realMouseWheelAction) {
+      case WheelZoomType.ToCursor:
+      case WheelZoomType.PastCursor:
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
   //================================================
   // INSTANCE METHODS: Getters
   //================================================
@@ -118,7 +129,7 @@ export class FlexibleControlsOptions {
   }
 
   public getLegalSensitivity(controlsSensitivity: number): number {
-    return Math.min(controlsSensitivity, this.maximumSensitivity);
+    return MathUtils.clamp(controlsSensitivity, this.minSensitivity, this.maxSensitivity);
   }
 
   public getDeltaDownscaleCoefficient(targetOffsetToDeltaRatio: number): number {

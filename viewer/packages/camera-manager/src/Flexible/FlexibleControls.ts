@@ -29,11 +29,6 @@ import { ReusableVector3s } from './ReusableVector3s';
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
 
-type RadiusAndTranslation = {
-  translation: Vector3;
-  radius: number;
-};
-
 /**
  * @beta
  */
@@ -43,7 +38,6 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   //================================================
 
   private _isEnabled: boolean = true;
-  public lookAtTempTarget = false;
   public temporarlyDisableKeyboard: boolean = false;
 
   private readonly _options: FlexibleControlsOptions;
@@ -58,8 +52,10 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   // and the lookAt without changing the target or cameraVector.
   private readonly _translation = new DampedVector3();
 
-  private readonly _scrollCursor: Vector3 = new Vector3(); // When using the wheel this is the maxiumum point to scroll to when mouseWheelAction === 'ToCursor'
-  private readonly _tempTarget: Vector3 = new Vector3(); // used as target when lookAtTempTarget is true
+  // Temporary used, undefined if not in use
+  private _scrollDirection: Vector3 | undefined = undefined; // When using the wheel this is vector to the picked point from
+  private _scrollDistance = 0; // When using the wheel this is vector to the picked point from
+  private _tempTarget: Vector3 | undefined = undefined;
 
   private readonly _rawCameraRotation = new Quaternion();
   private readonly _accumulatedMouseRotation: Vector2 = new Vector2();
@@ -169,16 +165,12 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   // INSTANCE METHODS: Pulic getters and setters
   //================================================
 
-  public getScrollCursor(): Vector3 {
-    return this._scrollCursor.clone();
-  }
-
   public getTarget(): Vector3 {
     return this._target.value.clone();
   }
 
   public getLookAt(): Vector3 {
-    if (this.lookAtTempTarget) {
+    if (this._tempTarget) {
       return this.newVector3().addVectors(this._tempTarget, this._translation.value);
     }
     if (this.isTargetLocked) {
@@ -188,7 +180,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   public getLookAtEnd(): Vector3 {
-    if (this.lookAtTempTarget) {
+    if (this._tempTarget) {
       return this.newVector3().addVectors(this._tempTarget, this._translation.end);
     }
     if (this.isTargetLocked) {
@@ -204,25 +196,40 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     };
   }
 
-  public setScrollCursor(target: Vector3): void {
-    this._scrollCursor.copy(target);
+  public setScrollCursor(value: Vector3 | undefined): void {
+    if (!value) {
+      this._scrollDirection = undefined;
+      return;
+    } else if (!this._scrollDirection) {
+      this._scrollDirection = value?.clone();
+    } else {
+      this._scrollDirection.copy(value);
+    }
+    this._scrollDirection.sub(this._camera.position);
+    this._scrollDistance = this._scrollDirection.length();
+    this._scrollDirection.normalize();
+  }
+
+  public setTempTarget(value: Vector3 | undefined): void {
+    if (!value) {
+      this._tempTarget = undefined;
+    } else if (!this._tempTarget) {
+      this._tempTarget = value?.clone();
+    } else {
+      this._tempTarget.copy(value);
+    }
   }
 
   public setState(position: Vector3, target: Vector3): void {
     this._translation.clear();
     this._target.copy(target);
-    this._scrollCursor.copy(target);
+    //this._scrollCursor.copy(target);
 
     // cameraVector = position - target
     const delta = position.clone().sub(target);
     this._cameraVector.copy(delta);
 
     this.update(1000 / TARGET_FPS, true);
-    this.triggerCameraChangeEvent();
-  }
-
-  public setTempTarget(target: Vector3): void {
-    this._tempTarget.copy(target);
     this.triggerCameraChangeEvent();
   }
 
@@ -235,7 +242,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       // This actually change target due to not change the camera position and lookAt
       this._target.add(this._translation);
       this._translation.clear();
-      this._scrollCursor.copy(this._target.value);
+      //this._scrollCursor.copy(this._target.value);
     }
     this.triggerCameraChangeEvent();
     return true;
@@ -253,30 +260,22 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     return position;
   }
 
-  private getDirectionTowards(pixelCoordinates: Vector2): Vector3 {
-    const position = this.newVector3();
-    // unproject the mouse coordinates into 3D space
-    position.set(pixelCoordinates.x, pixelCoordinates.y, 0.5).unproject(this._camera);
-    return position.sub(this._camera.position).normalize();
-  }
-
-  private getPanDeltaForXY() {
-    let delta = this._options.sensitivity;
+  private getPanFactor() {
+    let speed = this._options.sensitivity;
     // The panning goes parallel to the screen, not perpendicular to the screen.
     // So we get y = x * tan (a), where y is parallel to the screen
     // half of the fov is center to top of screen
     if (this._camera instanceof PerspectiveCamera) {
-      delta *= Math.tan(MathUtils.degToRad(this._camera.fov / 2));
+      const fovFactor = Math.tan(MathUtils.degToRad(this._camera.fov / 2));
+      speed *= fovFactor; // 0.57
     }
-    delta = (2 * delta) / this._domElement.clientHeight;
-    return delta;
+    const factor = 2 / this._domElement.clientHeight;
+    speed *= factor; // 0.0015
+    return speed;
   }
 
-  private getDollyDeltaForZ(dollyIn: boolean, steps: number = 1) {
-    const delta = this._options.sensitivity;
-    const zoomFactor = this._options.dollyFactorForZ ** steps;
-    const factor = dollyIn ? zoomFactor : 1 / zoomFactor;
-    return delta * (factor - 1);
+  private getWheelSpeed(): number {
+    return this._options.sensitivity * this.options.wheelDollySpeed;
   }
 
   private getDampingFactor(deltaTimeS: number) {
@@ -304,7 +303,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       this.rotate(this._accumulatedMouseRotation);
       this._accumulatedMouseRotation.set(0, 0);
     }
-    this.handleKeyboard(deltaTimeS);
+    // Nils: Experiments with the timeScale to move smoothly
+    const isKeyPressed = this.handleKeyboard(deltaTimeS);
 
     const epsilon = this._options.EPSILON;
     let isChanged = this._target.isChanged(epsilon) || this._cameraVector.isChanged(epsilon);
@@ -313,7 +313,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       isChanged = this._translation.isChanged(epsilon);
     }
     if (isChanged) {
-      const dampningFactor = this.getDampingFactor(deltaTimeS);
+      const dampningFactor = isKeyPressed ? 1 : this.getDampingFactor(deltaTimeS);
       this._target.damp(dampningFactor);
       this._cameraVector.damp(dampningFactor);
       if (this.isTargetLocked) {
@@ -412,11 +412,11 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     event.preventDefault();
 
     const delta = getWheelDelta(event);
-    const offset = clickOrTouchEventOffset(event, this._domElement);
-    const pixelCoords = getNormalizedPixelCoordinates(this._domElement, offset.offsetX, offset.offsetY);
     if (this._camera instanceof PerspectiveCamera) {
-      const deltaDistance = this.getDollyDeltaForZ(delta < 0, Math.abs(delta)) * this.options.wheelDollySpeed;
-      this.dollyWithWheelScroll(pixelCoords, deltaDistance);
+      const deltaDistance = delta * this.getWheelSpeed();
+      const offset = clickOrTouchEventOffset(event, this._domElement);
+      const pixelCoords = getNormalizedPixelCoordinates(this._domElement, offset.offsetX, offset.offsetY);
+      this.dollyWithWheelScroll(pixelCoords, -deltaDistance);
     } else if (this._camera instanceof OrthographicCamera) {
       const deltaDistance = Math.sign(delta) * this._options.orthographicCameraDollyFactor;
       this.dollyOrthographicCamera(deltaDistance);
@@ -493,7 +493,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     const onMouseMove = (event: PointerEvent) => {
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
       if (this._keyboard.isCtrlPressed()) {
-        this.pan(0, 0, newOffset.y - previousOffset.y, this.options.mouseDollySpeed);
+        this.pan(0, 0, (newOffset.y - previousOffset.y) * this.options.mouseDollySpeed);
       } else {
         const deltaOffset = previousOffset.clone().sub(newOffset);
         this._accumulatedMouseRotation.add(deltaOffset);
@@ -654,7 +654,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       const deltaX = newOffset.x - previousOffset.x;
       const deltaY = newOffset.y - previousOffset.y;
       if (this._keyboard.isCtrlPressed()) {
-        this.pan(0, 0, deltaY, this.options.mouseDollySpeed);
+        this.pan(0, 0, deltaY * this.options.mouseDollySpeed);
       } else {
         this.pan(deltaX * this.options.mousePanSpeed, deltaY * this.options.mousePanSpeed);
       }
@@ -670,30 +670,34 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     window.addEventListener('pointerup', onMouseUp, { passive: false });
   }
 
-  private pan(deltaX: number, deltaY: number, deltaZ: number = 0, speedZ: number = 1) {
+  private pan(deltaX: number, deltaY: number, deltaZ: number = 0) {
     // Local function:
-    const panByDimension = (distance: number, dimension: number, noVerical: boolean) => {
+    const panByDimension = (distance: number, dimension: number, verical: boolean) => {
       const delta = this.newVector3();
       delta.setFromMatrixColumn(this._camera.matrix, dimension);
       delta.multiplyScalar(-distance);
-      if (noVerical) delta.y = 0;
+      if (verical) {
+        delta.x = 0;
+        delta.z = 0;
+      } else {
+        delta.y = 0;
+      }
       this.translate(delta);
     };
     // Do the actual panning:
     if (deltaX !== 0 || deltaY !== 0) {
-      const delta = this.getPanDeltaForXY();
-      // we actually don't use screenWidth, since perspective camera is fixed to screen height
-      if (deltaX !== 0) panByDimension(+delta * deltaX, 0, false);
-      if (deltaY !== 0) panByDimension(-delta * deltaY, 1, false);
+      const factor = this.getPanFactor();
+      if (deltaX !== 0) panByDimension(+factor * deltaX, 0, false); // Side to side
+      if (deltaY !== 0) panByDimension(-factor * deltaY, 1, true); // Up and down
     }
     if (deltaZ !== 0) {
-      const delta = this.getDollyDeltaForZ(deltaZ >= 1, speedZ);
-      panByDimension(-delta, 2, true);
+      const factor = this.getPanFactor();
+      panByDimension(factor * deltaZ, 2, false); // Forward and backward
     }
   }
 
   private translate(delta: Vector3) {
-    if (delta.lengthSq() === 0) return;
+    if (delta.manhattanLength() === 0) return;
     if (this.isTargetLocked) {
       this._translation.end.add(delta);
     } else {
@@ -714,116 +718,51 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number) {
-    const result = this.getRadiusAndTranslation(pixelCoordinates, deltaDistance);
-
-    if (true || this.controlsType === ControlsType.OrbitInCenter) {
-      const deltaCameraVector = this._cameraVector.end.clone();
-      deltaCameraVector.radius = result.radius - this._cameraVector.end.radius;
-      result.translation.add(this.newVector3().setFromSpherical(deltaCameraVector));
-      this.translate(result.translation);
-    } else {
-      this._cameraVector.end.radius = result.radius;
-      this.translate(result.translation);
-    }
+    const translation = this.getRadiusAndTranslation(pixelCoordinates, deltaDistance);
+    this.translate(translation);
   }
 
-  private getRadiusAndTranslation(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndTranslation {
-    if (this.options.realMouseWheelAction === WheelZoomType.ToCursor) {
-      return this.getRadiusAndTranslationByScrollCursor(deltaDistance);
-    } else if (this.options.realMouseWheelAction === WheelZoomType.PastCursor) {
-      return this.getRadiusAndTranslationByDirection(pixelCoordinates, deltaDistance);
+  private getRadiusAndTranslation(pixelCoordinates: Vector2, deltaDistance: number): Vector3 {
+    if (this.options.shouldPick) {
+      return this.getTranslationByScrollCursor(pixelCoordinates, deltaDistance);
     }
-    return this.getRadiusAndTranslationByDirection(new Vector2(0, 0), deltaDistance);
+    return this.getTranslationByDirection(new Vector2(0, 0), deltaDistance);
   }
 
-  private getRadiusAndTranslationByDirection(pixelCoordinates: Vector2, deltaDistance: number): RadiusAndTranslation {
-    const cameraVector = this._cameraVector.getVectorEnd();
-    cameraVector.normalize();
-    const isDollyOut = deltaDistance > 0 ? true : false;
-
-    const oldDistance = this._cameraVector.end.radius;
-    let radius = oldDistance + deltaDistance;
-    if (radius < this._options.minZoomDistance && !isDollyOut) {
-      radius = oldDistance;
-      if (this._options.mouseWheelDynamicTarget && !this.isTargetLocked) {
-        // push targetEnd forward
-        this._target.end.addScaledVector(cameraVector, Math.abs(deltaDistance));
-      } else {
-        // stops camera from moving forward
-        return { translation: new Vector3(0, 0, 0), radius };
-      }
-    }
-    // This calculates how much the camera must be translated
-    const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - getFov(this._camera) / 2));
-    const distFromCameraToCursor = Math.sqrt(
-      distFromCameraToScreenCenter * distFromCameraToScreenCenter + pixelCoordinates.lengthSq()
-    );
-    const ratio = distFromCameraToCursor / distFromCameraToScreenCenter;
-    const distanceFromRayOrigin = -deltaDistance * ratio;
-    cameraVector.multiplyScalar(deltaDistance);
-
-    const rayDirection = this.getDirectionTowards(pixelCoordinates.negate()).negate();
-    const translation = cameraVector.addScaledVector(rayDirection, distanceFromRayOrigin);
-    return { translation, radius };
-  }
-
-  private getRadiusAndTranslationByScrollCursor(deltaDistance: number): RadiusAndTranslation {
-    // Here we use the law of sines to determine how far we want to move the target.
-    // Direction is always determined by scrollCursor-target vector
-    const targetToScrollCursorVec = this.newVector3().subVectors(this._scrollCursor, this._target.value);
-    const cameraToTargetVec = this.newVector3().subVectors(this._target.value, this._camera.position);
-    const cameraToScrollCursorVec = this.newVector3().subVectors(this._scrollCursor, this._camera.position);
-
-    const targetCameraScrollCursorAngle = cameraToTargetVec.angleTo(cameraToScrollCursorVec);
-    const targetScrollCursorCameraAngle = targetToScrollCursorVec
-      .clone()
-      .negate()
-      .angleTo(cameraToScrollCursorVec.clone().negate());
-
-    let deltaTargetOffsetDistance =
-      deltaDistance * (Math.sin(targetCameraScrollCursorAngle) / Math.sin(targetScrollCursorCameraAngle));
-
-    const targetOffsetToDeltaRatio = Math.abs(deltaTargetOffsetDistance / deltaDistance);
-    if (
-      Math.abs(deltaDistance) > this._options.sensitivity ||
-      Math.abs(deltaTargetOffsetDistance) > this._options.sensitivity
-    ) {
-      // if target movement is too fast we want to slow it down a bit
-      const deltaDownscaleCoefficient = this._options.getDeltaDownscaleCoefficient(targetOffsetToDeltaRatio);
-      deltaDistance *= deltaDownscaleCoefficient;
-      deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
-    }
-    const cameraVector = this._cameraVector.getVectorEnd();
-    const distanceToTarget = cameraVector.length();
-    let radius = distanceToTarget + deltaDistance;
-
-    if (radius < this._options.minZoomDistance) {
-      const distance = this._scrollCursor.distanceTo(this._target.value);
-
-      // stops camera from moving forward only if target became close to scroll target
-      if (distance < this._options.minZoomDistance) {
-        radius = distanceToTarget;
-      }
-
-      if (radius <= 0) {
-        if (distance > this._options.minZoomDistance && !this.isTargetLocked) {
-          radius = this._options.minZoomDistance;
-          this._target.end.addScaledVector(cameraVector.normalize(), distanceToTarget - this._options.minZoomDistance);
-        } else {
-          radius = distanceToTarget;
-        }
-      }
-    }
-    // if we scroll out, we don't change the target
-    const translation = targetToScrollCursorVec.negate().normalize().multiplyScalar(deltaTargetOffsetDistance);
-    return { translation, radius };
-  }
-
-  public getPointBehindPixel(pixelX: number, pixelY: number, distance: number): Vector3 {
+  private getTranslationByDirection(pixelCoordinates: Vector2, deltaDistance: number): Vector3 {
     const raycaster = new Raycaster();
-    const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, pixelX, pixelY);
     raycaster.setFromCamera(pixelCoordinates, this._camera);
-    return raycaster.ray.at(distance, new Vector3());
+    const translation = raycaster.ray.direction;
+    translation.normalize();
+    translation.multiplyScalar(deltaDistance);
+    return translation;
+  }
+
+  private getTranslationByScrollCursor(pixelCoordinates: Vector2, deltaDistance: number): Vector3 {
+    if (this._scrollDirection === undefined) {
+      return this.getTranslationByDirection(pixelCoordinates, deltaDistance);
+    }
+    let step = this.options.zoomFraction * this._scrollDistance * Math.sign(deltaDistance);
+    if (this.options.realMouseWheelAction === WheelZoomType.PastCursor && Math.abs(step) < Math.abs(deltaDistance)) {
+      // If past or near the scroll cursor, go in equal steps
+      step = deltaDistance;
+    }
+    const prevScrollDistance = this._scrollDistance;
+    this._scrollDistance -= step;
+
+    if (
+      this.options.realMouseWheelAction === WheelZoomType.ToCursor &&
+      this._scrollDistance < this.options.sensitivity
+    ) {
+      // This avoid to close to the scroll cursor
+      this._scrollDistance = this.options.sensitivity;
+      step = prevScrollDistance - this._scrollDistance;
+      //console.log('Close to something');
+    }
+    //console.log(this._scrollDistance, step, deltaDistance, this.options.sensitivity);
+    const translation = this._scrollDirection.clone();
+    translation.multiplyScalar(step);
+    return translation;
   }
 
   //================================================
@@ -841,7 +780,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       return false;
     }
     let handled = false;
-    const timeScale = getTimeScale(deltaTimeS);
+    // Nils: Experiments with the timeScale to move smoothly
+    const timeScale = true ? 1 : getTimeScale(deltaTimeS);
     if (this.handleRotationFromKeyboard(timeScale)) handled = true;
     if (this.handleMoveFromKeyboard(timeScale)) handled = true;
     return handled;
@@ -881,6 +821,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     const deltaX = this._keyboard.getKeyboardMovementValue('KeyA', 'KeyD');
     const deltaY = this._keyboard.getKeyboardMovementValue('KeyE', 'KeyQ');
     const deltaZ = this._keyboard.getKeyboardMovementValue('KeyW', 'KeyS');
+
     if (deltaX === 0 && deltaY === 0 && deltaZ == 0) {
       return false;
     }
@@ -891,7 +832,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     const speedXY = timeScale * speedFactor * this._options.keyboardPanSpeed;
     const speedZ = timeScale * speedFactor * this._options.keyboardDollySpeed;
 
-    this.pan(speedXY * deltaX, speedXY * deltaY, deltaZ, speedZ);
+    this.pan(speedXY * deltaX, speedXY * deltaY, speedZ * deltaZ);
     return true;
   }
 }

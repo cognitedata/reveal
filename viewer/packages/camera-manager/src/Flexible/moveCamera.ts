@@ -103,7 +103,6 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
 
   tween
     .onStart(() => {
-      manager.controls.lookAtTempTarget = true;
       manager.setPositionAndTarget(manager.camera.position, target);
     })
     .onUpdate(() => {
@@ -116,18 +115,20 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
       }
       if (manager.options.realMouseWheelAction === WheelZoomType.ToCursor) {
         manager.controls.setScrollCursor(tempTarget);
+      } else {
+        manager.controls.setScrollCursor(undefined);
       }
       manager.controls.setTempTarget(tempTarget);
     })
     .onStop(() => {
-      manager.controls.lookAtTempTarget = false;
+      manager.controls.setTempTarget(undefined);
       manager.setPositionAndTarget(manager.camera.position, tempTarget);
     })
     .onComplete(() => {
       if (manager.isDisposed) {
         return;
       }
-      manager.controls.lookAtTempTarget = false;
+      manager.controls.setTempTarget(undefined);
       manager.controls.temporarlyDisableKeyboard = false;
       manager.domElement.removeEventListener('pointerdown', stopTween);
     })

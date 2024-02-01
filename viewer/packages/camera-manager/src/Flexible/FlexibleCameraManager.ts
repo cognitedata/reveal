@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Box3, PerspectiveCamera, Quaternion, Raycaster, Vector2, Vector3, Scene } from 'three';
+import { Box3, PerspectiveCamera, Quaternion, Raycaster, Vector2, Vector3, Scene, Ray } from 'three';
 
 import { FlexibleControls } from './FlexibleControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
@@ -33,7 +33,6 @@ import { MouseActionType } from './MouseActionType';
 import { DebouncedCameraStopEventTrigger } from '../utils/DebouncedCameraStopEventTrigger';
 import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraTo } from './moveCamera';
-import { WheelZoomType } from './WheelZoomType';
 
 /**
  * Flexible implementation of {@link CameraManager}. The user can switch between Orbit, FirstPersion or OrbitInCenter
@@ -273,31 +272,34 @@ export class FlexibleCameraManager implements CameraManager {
   // INSTANCE METHODS: Calculations
   //================================================
 
-  private getTargetByBoundingBox(pixelX: number, pixelY: number, boundingBox: Box3): Vector3 {
-    const modelSize = boundingBox.min.distanceTo(boundingBox.max);
-    const lastScrollCursorDistance = this.controls.getScrollCursor().distanceTo(this.camera.position);
-
-    const distance =
-      lastScrollCursorDistance <= this.options.sensitivity
-        ? Math.min(this.camera.position.distanceTo(boundingBox.getCenter(new Vector3())), modelSize) / 2
-        : lastScrollCursorDistance;
-
-    return this.getPointBehindPixel(pixelX, pixelY, distance);
-  }
-
-  private async getTargetByPixelCoordinates(pixelX: number, pixelY: number): Promise<Vector3> {
+  private async getPickedPointPixelCoordinates(pixelX: number, pixelY: number): Promise<Vector3> {
     const modelRaycastData = await this._modelRaycastCallback(pixelX, pixelY, false);
-
     if (modelRaycastData.intersection?.point) {
       return modelRaycastData.intersection.point;
     }
     return this.getTargetByBoundingBox(pixelX, pixelY, modelRaycastData.modelsBoundingBox);
   }
 
-  private getPointBehindPixel(pixelX: number, pixelY: number, distance: number): Vector3 {
+  private getTargetByBoundingBox(pixelX: number, pixelY: number, boundingBox: Box3): Vector3 {
     const raycaster = new Raycaster();
     const pixelCoordinates = getNormalizedPixelCoordinates(this.domElement, pixelX, pixelY);
     raycaster.setFromCamera(pixelCoordinates, this.camera);
+
+    // Try to intersect the bounding box
+    const closestIntersection = new Vector3();
+    const furthestIntersection = new Vector3();
+    const intersectionCount = intersectBox(raycaster.ray, boundingBox, closestIntersection, furthestIntersection);
+    if (intersectionCount === 1) {
+      return closestIntersection;
+    }
+    if (intersectionCount === 2) {
+      return furthestIntersection;
+    }
+    // Fallback to the old method
+    const diagonal = getDiagonal(boundingBox);
+    const center = boundingBox.getCenter(new Vector3());
+    const distanceToCenter = this.camera.position.distanceTo(center);
+    const distance = Math.min(distanceToCenter, diagonal) / 2;
     return raycaster.ray.at(distance, new Vector3());
   }
 
@@ -355,7 +357,7 @@ export class FlexibleCameraManager implements CameraManager {
 
   private readonly onWheel = async (event: WheelEvent) => {
     if (!this.isEnabled) return;
-    if (this.options.realMouseWheelAction !== WheelZoomType.ToCursor) {
+    if (!this.options.shouldPick) {
       return;
     }
     // Nils: Need this for a while to fine tune
@@ -384,9 +386,9 @@ export class FlexibleCameraManager implements CameraManager {
     this._prevTime = currentTime;
     this._prevCoords.copy(currentCoords);
 
-    const scrollCursor = await this.getTargetByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
+    const scrollCursor = await this.getPickedPointPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
     this.controls.setScrollCursor(scrollCursor);
-    //console.log('mouseWheelAction set: ', scrollCursor);
+    console.log('mouseWheelAction set: ', scrollCursor);
     this._prevTime = currentTime;
   };
 
@@ -395,10 +397,10 @@ export class FlexibleCameraManager implements CameraManager {
       return;
     }
     if (mouseActionType === MouseActionType.SetTarget) {
-      const newTarget = await this.getTargetByPixelCoordinates(event.offsetX, event.offsetY);
+      const newTarget = await this.getPickedPointPixelCoordinates(event.offsetX, event.offsetY);
       this.setPositionAndTarget(this.camera.position, newTarget);
     } else if (mouseActionType === MouseActionType.SetTargetAndCameraDirection) {
-      const newTarget = await this.getTargetByPixelCoordinates(event.offsetX, event.offsetY);
+      const newTarget = await this.getPickedPointPixelCoordinates(event.offsetX, event.offsetY);
       moveCameraTargetTo(this, newTarget, this.options.animationDuration);
     } else if (mouseActionType === MouseActionType.SetTargetAndCameraPosition) {
       if (this.controls.controlsType === ControlsType.FirstPerson) {
@@ -452,21 +454,90 @@ export class FlexibleCameraManager implements CameraManager {
     // This is used to determine the speed of the camera when flying with ASDW.
     // We want to either let it be controlled by the near plane if we are far away,
     // but no more than a fraction of the bounding box of the system if inside
-    const diagonal = this.getBoundingBoxDiagonal();
+    const diagonal = this.getBoundingBoxDiagonal2();
     const diagonalFraction = diagonal * this.options.sensitivityDiagonalFraction;
     const nearFraction = 0.1 * this.camera.near;
-    const sensitivity = Math.max(diagonalFraction, nearFraction);
 
-    this.options.sensitivity = this.options.getLegalSensitivity(sensitivity);
+    let sensitivity: number;
+    if (diagonalFraction < nearFraction) {
+      sensitivity = nearFraction;
+    } else {
+      sensitivity = this.options.getLegalSensitivity(diagonalFraction);
+    }
+    this.options.sensitivity = sensitivity;
 
     // Nils: Need this for a while to fine tune
-    // console.log('diagonalFraction:     ', diagonalFraction);
-    // console.log('nearFraction:         ', nearFraction);
-    // console.log('sensitivity:          ', sensitivity);
-    // console.log('sensitivity (finally):', this.options.sensitivity);
+    console.log('diagonalFraction:     ', diagonalFraction);
+    console.log('nearFraction:         ', nearFraction);
+    console.log('sensitivity:          ', sensitivity);
   }
 
   public getBoundingBoxDiagonal(): number {
-    return this._currentBoundingBox.min.distanceTo(this._currentBoundingBox.max);
+    return getDiagonal(this._currentBoundingBox);
   }
+  public getBoundingBoxDiagonal2(): number {
+    return getDiagonal2(this._currentBoundingBox);
+  }
+}
+
+function getDiagonal(boundingBox: Box3): number {
+  return boundingBox.min.distanceTo(boundingBox.max);
+}
+function getDiagonal2(boundingBox: Box3): number {
+  return Math.sqrt((boundingBox.min.x - boundingBox.max.x) ** 2 + (boundingBox.min.y - boundingBox.max.y) ** 2);
+}
+
+function intersectBox(ray: Ray, box: Box3, closestIntersection: Vector3, furthestIntersection: Vector3): number {
+  const invdirx = 1 / ray.direction.x;
+  const invdiry = 1 / ray.direction.y;
+  const invdirz = 1 / ray.direction.z;
+
+  const origin = ray.origin;
+  let tmin, tmax;
+  if (invdirx >= 0) {
+    tmin = (box.min.x - origin.x) * invdirx;
+    tmax = (box.max.x - origin.x) * invdirx;
+  } else {
+    tmin = (box.max.x - origin.x) * invdirx;
+    tmax = (box.min.x - origin.x) * invdirx;
+  }
+  let tymin, tymax;
+  if (invdiry >= 0) {
+    tymin = (box.min.y - origin.y) * invdiry;
+    tymax = (box.max.y - origin.y) * invdiry;
+  } else {
+    tymin = (box.max.y - origin.y) * invdiry;
+    tymax = (box.min.y - origin.y) * invdiry;
+  }
+  if (tmin > tymax || tymin > tmax) return 0;
+  if (tymin > tmin || isNaN(tmin)) tmin = tymin;
+  if (tymax < tmax || isNaN(tmax)) tmax = tymax;
+
+  let tzmin, tzmax;
+  if (invdirz >= 0) {
+    tzmin = (box.min.z - origin.z) * invdirz;
+    tzmax = (box.max.z - origin.z) * invdirz;
+  } else {
+    tzmin = (box.max.z - origin.z) * invdirz;
+    tzmax = (box.min.z - origin.z) * invdirz;
+  }
+
+  if (tmin > tzmax || tzmin > tmax) return 0;
+  if (tzmin > tmin || tmin !== tmin) tmin = tzmin;
+  if (tzmax < tmax || tmax !== tmax) tmax = tzmax;
+
+  // return point closest to the ray (positive side)
+  if (tmin > tmax) [tmin, tmax] = [tmax, tmin];
+
+  if (tmax < 0) return 0;
+  if (tmin >= 0 && tmax >= 0) {
+    closestIntersection = ray.at(tmin, closestIntersection);
+    furthestIntersection = ray.at(tmax, furthestIntersection);
+    return 2;
+  }
+  if (tmax >= 0) {
+    closestIntersection = ray.at(tmax, closestIntersection);
+    return 1;
+  }
+  return 0;
 }

@@ -8,7 +8,7 @@ import { FlexibleCameraManager } from './FlexibleCameraManager';
 
 export class FlexibleCameraMarkers {
   private readonly _scene?: undefined | Scene;
-  private _targetMarker: Object3D | undefined;
+  private _pivotMarker: Object3D | undefined;
   private _lookAtMarker: Object3D | undefined;
 
   //================================================
@@ -29,15 +29,15 @@ export class FlexibleCameraMarkers {
     }
     const show = manager.controls.controlsType !== ControlsType.FirstPerson;
     if (show && manager.options.showTarget) {
-      if (!this._targetMarker) {
-        this._targetMarker = this.createTargetMarker();
-        this._scene?.add(this._targetMarker);
+      if (!this._pivotMarker) {
+        this._pivotMarker = this.createPivotMarker();
+        this._scene?.add(this._pivotMarker);
       }
-      this.setPosition(this._targetMarker, manager.controls.getTarget(), manager);
+      this.setPosition(this._pivotMarker, manager.controls.getTarget(), manager);
     } else {
-      if (this._targetMarker) {
-        this._scene?.remove(this._targetMarker);
-        this._targetMarker = undefined;
+      if (this._pivotMarker) {
+        this._scene?.remove(this._pivotMarker);
+        this._pivotMarker = undefined;
       }
     }
     if (manager.options.showLookAt) {
@@ -63,7 +63,7 @@ export class FlexibleCameraMarkers {
     object3D.scale.setScalar(scale);
   }
 
-  private createTargetMarker(): Mesh {
+  private createPivotMarker(): Mesh {
     return new Mesh(
       new SphereGeometry(1),
       new MeshBasicMaterial({
