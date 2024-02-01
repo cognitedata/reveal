@@ -54,7 +54,7 @@ export {
   useSearchAssetsMappedPointCloudAnnotations
 } from './hooks/useSearchAssetsMappedPointCloudAnnotations';
 export {
-  usePointCloudAnnotationsForModel,
+  usePointCloudAnnotationsForModels,
   useAnnotationsFromModel
 } from './components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
 

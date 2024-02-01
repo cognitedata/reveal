@@ -8,6 +8,7 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
+import { type CognitePointCloudModel } from '@cognite/reveal';
 
 export type PointCloudAnnotationCacheContextContent = {
   cache: PointCloudAnnotationCache;
@@ -27,21 +28,28 @@ const usePointCloudAnnotationCache = (): PointCloudAnnotationCache => {
   return content.cache;
 };
 
-export const usePointCloudAnnotationsForModel = (
-  modelId: number | undefined,
-  revisionId: number | undefined
+export const usePointCloudAnnotationsForModels = (
+  model: CognitePointCloudModel[]
 ): UseQueryResult<number[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
   return useQuery(
-    ['reveal', 'react-components', 'models-pointcloud-annotations', `${modelId}/${revisionId}`],
+    [
+      'reveal',
+      'react-components',
+      'models-pointcloud-annotations',
+      ...model.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+    ],
     async () => {
-      if (modelId === undefined || revisionId === undefined) {
-        return [];
-      }
-      return await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(modelId, revisionId);
+      return model.map(
+        async (model) =>
+          await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
+            model.modelId,
+            model.revisionId
+          )
+      );
     },
-    { staleTime: Infinity, enabled: modelId !== undefined && revisionId !== undefined }
+    { staleTime: Infinity, enabled: model.length > 0 }
   );
 };
 
