@@ -36,7 +36,7 @@ describe(RevealContainer.name, () => {
       const isRevealContainerMountedRef = useRef<boolean>(true);
       const fdmNodeCache = useRef<FdmNodeCache | undefined>();
       const assetMappingCache = useRef<AssetMappingCache | undefined>();
-      const pointCloudObjectCollectionCache = useRef<PointCloudAnnotationCache>();
+      const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache>();
       return (
         <RevealKeepAliveContext.Provider
           value={{
@@ -44,7 +44,7 @@ describe(RevealContainer.name, () => {
             isRevealContainerMountedRef,
             fdmNodeCache,
             assetMappingCache,
-            pointCloudAnnotationCache: pointCloudObjectCollectionCache
+            pointCloudAnnotationCache
           }}>
           <RevealContainer sdk={sdkMock.object()} />
         </RevealKeepAliveContext.Provider>
