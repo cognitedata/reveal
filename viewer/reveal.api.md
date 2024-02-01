@@ -20,7 +20,6 @@ import { Node3D } from '@cognite/sdk';
 import { OrthographicCamera } from 'three';
 import { PerspectiveCamera } from 'three';
 import { Quaternion } from 'three';
-import { Scene } from 'three';
 import * as THREE_2 from 'three';
 import { Vector3 } from 'three';
 
@@ -251,28 +250,18 @@ export interface CameraManager {
     update(deltaTime: number, boundingBox: Box3): void;
 }
 
-// @beta (undocumented)
-export type CameraManagerCallbackData = {
-    intersection: {
-        point: THREE.Vector3;
-        distanceToCamera: number;
-    } | null;
-    modelsBoundingBox: THREE.Box3;
-    pickedBoundingBox: THREE.Box3 | undefined;
-};
-
 // @public
 export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[number];
 
 // @public
 export class CameraManagerHelper {
-    static calculateCameraStateToFitBoundingBox(camera: PerspectiveCamera, box: Box3, radiusFactor?: number): {
+    static calculateCameraStateToFitBoundingBox(camera: PerspectiveCamera, boundingBox: Box3, radiusFactor?: number): {
         position: Vector3;
         target: Vector3;
     };
     static calculateNewRotationFromTarget(camera: PerspectiveCamera, newTarget: Vector3): Quaternion;
     static calculateNewTargetFromRotation(camera: PerspectiveCamera, rotation: Quaternion, currentTarget: Vector3, position: Vector3): Vector3;
-    static updateCameraNearAndFar(camera: PerspectiveCamera, combinedBbox: Box3): void;
+    static updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void;
 }
 
 // @public (undocumented)
@@ -790,94 +779,6 @@ export enum File3dFormat {
     GltfCadModel = "gltf-directory"
 }
 
-// @beta
-export class FlexibleCameraManager implements CameraManager {
-    constructor(domElement: HTMLElement, inputHandler: InputHandler, raycastFunction: (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>, camera?: PerspectiveCamera, scene?: Scene);
-    // (undocumented)
-    activate(cameraManager?: CameraManager): void;
-    // (undocumented)
-    get camera(): PerspectiveCamera;
-    // (undocumented)
-    get controls(): FlexibleControls;
-    // (undocumented)
-    deactivate(): void;
-    // (undocumented)
-    dispose(): void;
-    // (undocumented)
-    get domElement(): HTMLElement;
-    // (undocumented)
-    fitCameraToBoundingBox(boundingBox: Box3, duration?: number, radiusFactor?: number): void;
-    // (undocumented)
-    getBoundingBoxDiagonal(): number;
-    // (undocumented)
-    getCamera(): PerspectiveCamera;
-    // (undocumented)
-    getCameraState(): Required<CameraState>;
-    // (undocumented)
-    get isDisposed(): boolean;
-    // (undocumented)
-    get isEnabled(): boolean;
-    // (undocumented)
-    off(event: CameraManagerEventType, callback: CameraEventDelegate): void;
-    // (undocumented)
-    on(event: CameraManagerEventType, callback: CameraEventDelegate): void;
-    // (undocumented)
-    get options(): FlexibleControlsOptions;
-    setCameraState(state: CameraState): void;
-    // (undocumented)
-    setPositionAndTarget(position: Vector3, target: Vector3): void;
-    // (undocumented)
-    update(deltaTime: number, boundingBox: Box3): void;
-}
-
-// @beta (undocumented)
-export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
-    constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement, options: FlexibleControlsOptions);
-    // (undocumented)
-    addEventListeners(): void;
-    get cameraRawRotation(): Quaternion;
-    // (undocumented)
-    get controlsType(): ControlsType;
-    // (undocumented)
-    dispose(): void;
-    // (undocumented)
-    getLookAt(): Vector3;
-    // (undocumented)
-    getLookAtEnd(): Vector3;
-    // (undocumented)
-    getPointBehindPixel(pixelX: number, pixelY: number, distance: number): Vector3;
-    // (undocumented)
-    getScrollCursor(): Vector3;
-    // (undocumented)
-    getState(): {
-        target: Vector3;
-        position: Vector3;
-    };
-    // (undocumented)
-    getTarget(): Vector3;
-    // (undocumented)
-    get isEnabled(): boolean;
-    set isEnabled(isEnabled: boolean);
-    // (undocumented)
-    lookAtTempTarget: boolean;
-    // (undocumented)
-    get options(): FlexibleControlsOptions;
-    // (undocumented)
-    setControlsType(controlsType: ControlsType): boolean;
-    // (undocumented)
-    setScrollCursor(target: Vector3): void;
-    // (undocumented)
-    setState(position: Vector3, target: Vector3): void;
-    // (undocumented)
-    setTempTarget(target: Vector3): void;
-    // (undocumented)
-    temporarlyDisableKeyboard: boolean;
-    // (undocumented)
-    triggerCameraChangeEvent: () => void;
-    // (undocumented)
-    update(deltaTimeS: number, forceUpdate?: boolean): boolean;
-}
-
 // @beta (undocumented)
 export class FlexibleControlsOptions {
     // (undocumented)
@@ -891,8 +792,6 @@ export class FlexibleControlsOptions {
     // (undocumented)
     dampingFactor: number;
     // (undocumented)
-    dollyFactorForZ: number;
-    // (undocumented)
     enableChangeControlsTypeOn123Key: boolean;
     // (undocumented)
     enableDamping: boolean;
@@ -900,8 +799,6 @@ export class FlexibleControlsOptions {
     enableKeyboardNavigation: boolean;
     // (undocumented)
     EPSILON: number;
-    // (undocumented)
-    getDeltaDownscaleCoefficient(targetOffsetToDeltaRatio: number): number;
     // (undocumented)
     getLegalAzimuthAngle(azimuthAngle: number): number;
     // (undocumented)
@@ -921,23 +818,15 @@ export class FlexibleControlsOptions {
     // (undocumented)
     maxAzimuthAngle: number;
     // (undocumented)
-    maxDeltaDownscaleCoefficient: number;
-    // (undocumented)
-    maxDeltaRatio: number;
-    // (undocumented)
-    maximumSensitivity: number;
-    // (undocumented)
     maximumTimeBetweenRaycasts: number;
     // (undocumented)
     maxOrthographicZoom: number;
     // (undocumented)
     maxPolarAngle: number;
     // (undocumented)
+    maxSensitivity: number;
+    // (undocumented)
     minAzimuthAngle: number;
-    // (undocumented)
-    minDeltaDownscaleCoefficient: number;
-    // (undocumented)
-    minDeltaRatio: number;
     // (undocumented)
     minimumTimeBetweenRaycasts: number;
     // (undocumented)
@@ -945,7 +834,7 @@ export class FlexibleControlsOptions {
     // (undocumented)
     minPolarAngle: number;
     // (undocumented)
-    minZoomDistance: number;
+    minSensitivity: number;
     // (undocumented)
     mouseClickType: MouseActionType;
     // (undocumented)
@@ -977,11 +866,15 @@ export class FlexibleControlsOptions {
     // (undocumented)
     sensitivityDiagonalFraction: number;
     // (undocumented)
+    get shouldPick(): boolean;
+    // (undocumented)
     showLookAt: boolean;
     // (undocumented)
     showTarget: boolean;
     // (undocumented)
     wheelDollySpeed: number;
+    // (undocumented)
+    zoomFraction: number;
 }
 
 // @public (undocumented)
@@ -1031,6 +924,12 @@ export type HtmlOverlayToolClusteringOptions = {
 export type HtmlOverlayToolOptions = {
     clusteringOptions?: HtmlOverlayToolClusteringOptions;
 };
+
+// @beta
+export interface IFlexibleCameraManager extends CameraManager {
+    // (undocumented)
+    get options(): FlexibleControlsOptions;
+}
 
 // @public
 export interface Image360 {
@@ -1866,11 +1765,11 @@ export enum WheelZoomType {
     // (undocumented)
     Auto = "auto",
     // (undocumented)
+    Center = "center",
+    // (undocumented)
     PastCursor = "pastCursor",
     // (undocumented)
-    ToCursor = "toCursor",
-    // (undocumented)
-    ToTarget = "toTarget"
+    ToCursor = "toCursor"
 }
 
 // (No @packageDocumentation comment for this package)
