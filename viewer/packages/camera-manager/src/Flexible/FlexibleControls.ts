@@ -864,13 +864,6 @@ function getPinchInfo(domElement: HTMLElement, touches: PointerEvent[]) {
   };
 }
 
-function getFov(camera: PerspectiveCamera | OrthographicCamera): number {
-  if (camera instanceof PerspectiveCamera) {
-    return camera.fov;
-  }
-  return 0;
-}
-
 function getWheelDelta(event: WheelEvent): number {
   // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
   if (event.wheelDelta) {

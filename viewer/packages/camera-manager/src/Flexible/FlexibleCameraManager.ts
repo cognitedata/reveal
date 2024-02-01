@@ -388,7 +388,7 @@ export class FlexibleCameraManager implements CameraManager {
 
     const scrollCursor = await this.getPickedPointPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
     this.controls.setScrollCursor(scrollCursor);
-    console.log('mouseWheelAction set: ', scrollCursor);
+    // console.log('mouseWheelAction set: ', scrollCursor);
     this._prevTime = currentTime;
   };
 
@@ -467,9 +467,9 @@ export class FlexibleCameraManager implements CameraManager {
     this.options.sensitivity = sensitivity;
 
     // Nils: Need this for a while to fine tune
-    console.log('diagonalFraction:     ', diagonalFraction);
-    console.log('nearFraction:         ', nearFraction);
-    console.log('sensitivity:          ', sensitivity);
+    // console.log('diagonalFraction:     ', diagonalFraction);
+    // console.log('nearFraction:         ', nearFraction);
+    // console.log('sensitivity:          ', sensitivity);
   }
 
   public getBoundingBoxDiagonal(): number {
