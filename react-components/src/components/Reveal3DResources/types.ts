@@ -31,14 +31,14 @@ export type AddReveal3DModelOptions = AddModelOptions & { transform?: Matrix4 } 
 export type TypedReveal3DModel = CadModelOptions | PointCloudModelOptions;
 
 export type CadModelOptions = { type: 'cad' } & AddModelOptions & { transform?: Matrix4 } & {
-    styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
-  };
+  styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
+};
 
 export type PointCloudModelOptions = { type: 'pointcloud' } & AddModelOptions & {
-    transform?: Matrix4;
-  } & {
-    styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
-  };
+  transform?: Matrix4;
+} & {
+  styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
+};
 
 export type NodeDataResult = {
   fdmNode: DmsUniqueIdentifier;
@@ -56,7 +56,7 @@ export type AssetMappingStylingGroup = {
   style: { cad: NodeAppearance };
 };
 
-export type PointCloudObjectCollectionStylingGroup = {
+export type PointCloudAnnotationStylingGroup = {
   annotationIds: number[];
   style: { pointcloud: NodeAppearance };
 };
@@ -70,7 +70,7 @@ export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>;
-  pointCloudInstanceStyling?: PointCloudObjectCollectionStylingGroup[];
+  pointCloudInstanceStyling?: PointCloudAnnotationStylingGroup[];
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
 };

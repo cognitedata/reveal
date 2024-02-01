@@ -4,7 +4,7 @@
 import { useEffect, type ReactElement } from 'react';
 import { Reveal3DResources, useSceneDefaultCamera } from '../..';
 import {
-  type PointCloudObjectCollectionStylingGroup,
+  type PointCloudAnnotationStylingGroup,
   type AssetMappingStylingGroup,
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
@@ -18,7 +18,7 @@ export type SceneContainerProps = {
   sceneSpaceId: string;
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>;
-  pointCloudInstanceStyling?: PointCloudObjectCollectionStylingGroup[];
+  pointCloudInstanceStyling?: PointCloudAnnotationStylingGroup[];
   onResourcesAdded?: () => void;
   onResourceLoadError?: (error: any) => void;
 };

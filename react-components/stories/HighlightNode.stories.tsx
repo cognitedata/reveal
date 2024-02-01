@@ -19,7 +19,7 @@ import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 import {
-  type PointCloudObjectCollectionStylingGroup,
+  type PointCloudAnnotationStylingGroup,
   type AssetMappingStylingGroup
 } from '../src/components/Reveal3DResources/types';
 
@@ -75,7 +75,7 @@ export const Main: Story = {
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [stylingGroups, setStylingGroups] = useState<
-    Array<FdmAssetStylingGroup | AssetMappingStylingGroup | PointCloudObjectCollectionStylingGroup>
+    Array<FdmAssetStylingGroup | AssetMappingStylingGroup | PointCloudAnnotationStylingGroup>
   >([]);
   const cameraNavigation = useCameraNavigation();
   const nodeData = useClickedNodeData();
@@ -138,7 +138,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           }
         }}
         instanceStyling={stylingGroups as Array<FdmAssetStylingGroup | AssetMappingStylingGroup>}
-        pointCloudInstanceStyling={stylingGroups as PointCloudObjectCollectionStylingGroup[]}
+        pointCloudInstanceStyling={stylingGroups as PointCloudAnnotationStylingGroup[]}
       />
       <RevealToolbar />
     </>

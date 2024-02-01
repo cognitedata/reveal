@@ -5,7 +5,7 @@ import { type NodeAppearance } from '@cognite/reveal';
 import {
   type DefaultResourceStyling,
   type PointCloudModelOptions,
-  type PointCloudObjectCollectionStylingGroup
+  type PointCloudAnnotationStylingGroup
 } from '../components/Reveal3DResources/types';
 import { useMemo } from 'react';
 import { type AnnotationIdStylingGroup } from '../components/PointCloudContainer/useApplyPointCloudStyling';
@@ -21,7 +21,7 @@ export type StyledPointCloudModel = {
 
 export const useCalculatePointCloudStyling = (
   models: PointCloudModelOptions[],
-  instanceGroups: PointCloudObjectCollectionStylingGroup[],
+  instanceGroups: PointCloudAnnotationStylingGroup[],
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledPointCloudModel[] => {
   const styledPointCloudModels = useCalculateMappedPointCloudStyling(
@@ -39,7 +39,7 @@ export const useCalculatePointCloudStyling = (
 
 function useCalculateInstanceStyling(
   models: PointCloudModelOptions[],
-  instanceGroups: PointCloudObjectCollectionStylingGroup[]
+  instanceGroups: PointCloudAnnotationStylingGroup[]
 ): StyledPointCloudModel[] {
   return useMemo(() => {
     return models.map((model) => {
@@ -49,7 +49,7 @@ function useCalculateInstanceStyling(
 }
 
 function calculateObjectCollectionMappingModelStyling(
-  instanceGroups: PointCloudObjectCollectionStylingGroup[],
+  instanceGroups: PointCloudAnnotationStylingGroup[],
   model: PointCloudModelOptions
 ): StyledPointCloudModel {
   const styleGroups = instanceGroups
@@ -70,30 +70,30 @@ function useCalculateMappedPointCloudStyling(
 ): StyledPointCloudModel[] {
   const modelsWithMappedCollection = useMemo(() => getMappedPointCloudModelsOptions(), [models]);
 
-  const { data: pointCloudObjectCollectionData } = usePointCloudAnnotationIdsForRevisions(
+  const { data: pointCloudAnnotationData } = usePointCloudAnnotationIdsForRevisions(
     modelsWithMappedCollection
   );
 
   const modelsMappedObjectCollectionStyleGroups = useMemo(() => {
     if (
       models.length === 0 ||
-      pointCloudObjectCollectionData === undefined ||
-      pointCloudObjectCollectionData.length === 0
+      pointCloudAnnotationData === undefined ||
+      pointCloudAnnotationData.length === 0
     ) {
       return [];
     }
 
-    return pointCloudObjectCollectionData.map((pointCloudObjectCollection) => {
+    return pointCloudAnnotationData.map((pointCloudAnnotationCollection) => {
       const modelStyle =
-        pointCloudObjectCollection.model.styling?.mapped ?? defaultMappedNodeAppearance;
+        pointCloudAnnotationCollection.model.styling?.mapped ?? defaultMappedNodeAppearance;
 
       const styleGroups: AnnotationIdStylingGroup[] =
         modelStyle !== undefined
-          ? [getMappedStyleGroupFromAnnotationIds([pointCloudObjectCollection], modelStyle)]
+          ? [getMappedStyleGroupFromAnnotationIds([pointCloudAnnotationCollection], modelStyle)]
           : [];
-      return { model: pointCloudObjectCollection.model, styleGroups };
+      return { model: pointCloudAnnotationCollection.model, styleGroups };
     });
-  }, [modelsWithMappedCollection, pointCloudObjectCollectionData, defaultMappedNodeAppearance]);
+  }, [modelsWithMappedCollection, pointCloudAnnotationData, defaultMappedNodeAppearance]);
 
   return modelsMappedObjectCollectionStyleGroups;
 

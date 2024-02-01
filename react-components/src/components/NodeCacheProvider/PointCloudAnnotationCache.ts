@@ -6,7 +6,7 @@ import { type ModelRevisionKey, type ModelId, type RevisionId } from './types';
 import { type AnnotationFilterProps, type CogniteClient } from '@cognite/sdk';
 import { modelRevisionToKey } from './utils';
 
-export class PointCloudObjectCollectionCache {
+export class PointCloudAnnotationCache {
   private readonly _sdk: CogniteClient;
   private readonly _modelToAnnotationMappings = new Map<ModelRevisionKey, Promise<number[]>>();
 
@@ -56,7 +56,7 @@ export class PointCloudObjectCollectionCache {
     return annotationIds;
   }
 
-  public async getPointCloudAnnotationsForAssets(
+  public async matchPointCloudAnnotationsForModel(
     modelId: ModelId,
     revisionId: RevisionId,
     annotationId: number
