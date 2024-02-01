@@ -784,8 +784,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       return false;
     }
     let handled = false;
-    // Nils: Experiments with the timeScale to move smoothly
-    const timeScale = true ? 1 : getTimeScale(deltaTimeS);
+    const timeScale = getTimeScale(deltaTimeS);
     if (this.handleRotationFromKeyboard(timeScale)) handled = true;
     if (this.handleMoveFromKeyboard(timeScale)) handled = true;
     return handled;
