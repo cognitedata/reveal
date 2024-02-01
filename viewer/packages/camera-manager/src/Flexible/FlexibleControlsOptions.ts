@@ -40,8 +40,8 @@ export class FlexibleControlsOptions {
   public mouseDistanceThresholdBetweenRaycasts = 5; // For mouse wheel event
 
   // Angles
-  public minPolarAngle = 0;
-  public maxPolarAngle = Math.PI;
+  public minPolarAngle = 0.001;
+  public maxPolarAngle = Math.PI - 0.001;
   public minAzimuthAngle = -Infinity;
   public maxAzimuthAngle = Infinity;
 
@@ -55,7 +55,7 @@ export class FlexibleControlsOptions {
   public sensitivity = 0.4; // Smallest unit to move around
   public automaticSensitivity = true; // If true Sensitivity will be calculated automatically
   public sensitivityDiagonalFraction = 0.001; // sensitivity = boundingBox.diagonalLength * sensitivityDiagonalFraction
-  public minSensitivity = 0.1; // Maximum sensitivity if calculated automatically
+  public minSensitivity = 0.1; // Minimum sensitivity if calculated automatically
   public maxSensitivity = 0.8; // Maximum sensitivity if calculated automatically
 
   // Rotation speed
@@ -66,7 +66,6 @@ export class FlexibleControlsOptions {
 
   // Wheel settings
   public zoomFraction = 0.05;
-  public dollyFactorForZ = 0.99;
   public minOrthographicZoom = 0;
   public maxOrthographicZoom = Infinity;
 
@@ -83,12 +82,6 @@ export class FlexibleControlsOptions {
   // Pinch speeed
   public pinchEpsilon = 2;
   public pinchPanSpeed = 1;
-
-  // Used in getDeltaDownscaleCoefficient only
-  public minDeltaRatio = 1;
-  public maxDeltaRatio = 8;
-  public minDeltaDownscaleCoefficient = 0.1;
-  public maxDeltaDownscaleCoefficient = 1;
 
   // Others
   public EPSILON = 0.001;
@@ -130,18 +123,5 @@ export class FlexibleControlsOptions {
 
   public getLegalSensitivity(controlsSensitivity: number): number {
     return MathUtils.clamp(controlsSensitivity, this.minSensitivity, this.maxSensitivity);
-  }
-
-  public getDeltaDownscaleCoefficient(targetOffsetToDeltaRatio: number): number {
-    if (targetOffsetToDeltaRatio < this.minDeltaRatio) return this.maxDeltaDownscaleCoefficient;
-    else if (targetOffsetToDeltaRatio > this.maxDeltaRatio) return this.minDeltaDownscaleCoefficient;
-    else
-      return MathUtils.mapLinear(
-        targetOffsetToDeltaRatio,
-        this.minDeltaRatio,
-        this.maxDeltaRatio,
-        this.maxDeltaDownscaleCoefficient,
-        this.minDeltaDownscaleCoefficient
-      );
   }
 }
