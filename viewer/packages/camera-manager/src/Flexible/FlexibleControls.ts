@@ -221,14 +221,22 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   public setState(position: Vector3, target: Vector3): void {
-    this._translation.clear();
-    this._target.copy(target);
-    //this._scrollCursor.copy(target);
+    if (this.controlsType === ControlsType.OrbitInCenter) {
+      // cameraVector = position - target
+      this._translation.clear();
+      const cameraVector = position.clone().sub(target);
+      this._cameraVector.copy(cameraVector);
+    } else {
+      const cameraVector = position.clone().sub(target);
+      cameraVector.normalize();
+      cameraVector.multiplyScalar(5);
+      this._cameraVector.copy(cameraVector);
 
-    // cameraVector = position - target
-    const delta = position.clone().sub(target);
-    this._cameraVector.copy(delta);
-
+      // Translation = CameraPosition - Target - CameraVector
+      const translation = position.clone().sub(target).sub(this._cameraVector.getVector());
+      this._translation.copy(translation);
+      this._target.copy(target);
+    }
     this.update(1000 / TARGET_FPS, true);
     this.triggerCameraChangeEvent();
   }
@@ -672,28 +680,24 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
   private pan(deltaX: number, deltaY: number, deltaZ: number = 0) {
     // Local function:
-    const panByDimension = (distance: number, dimension: number, verical: boolean) => {
+    const panByDimension = (distance: number, dimension: number, vertical: boolean) => {
       const delta = this.newVector3();
       delta.setFromMatrixColumn(this._camera.matrix, dimension);
-      delta.multiplyScalar(-distance);
-      if (verical) {
+      if (vertical) {
         delta.x = 0;
         delta.z = 0;
       } else {
         delta.y = 0;
       }
+      delta.normalize();
+      delta.multiplyScalar(-distance);
       this.translate(delta);
     };
     // Do the actual panning:
-    if (deltaX !== 0 || deltaY !== 0) {
-      const factor = this.getPanFactor();
-      if (deltaX !== 0) panByDimension(+factor * deltaX, 0, false); // Side to side
-      if (deltaY !== 0) panByDimension(-factor * deltaY, 1, true); // Up and down
-    }
-    if (deltaZ !== 0) {
-      const factor = this.getPanFactor();
-      panByDimension(factor * deltaZ, 2, false); // Forward and backward
-    }
+    const factor = this.getPanFactor();
+    if (deltaX !== 0) panByDimension(+factor * deltaX, 0, false); // Side to side
+    if (deltaY !== 0) panByDimension(-factor * deltaY, 1, true); // Up and down
+    if (deltaZ !== 0) panByDimension(+factor * deltaZ, 2, false); // Forward and backward
   }
 
   private translate(delta: Vector3) {

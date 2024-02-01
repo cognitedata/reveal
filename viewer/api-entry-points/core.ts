@@ -23,13 +23,11 @@ export {
   CameraEventDelegate,
   CameraChangeDelegate,
   CameraStopDelegate,
-  FlexibleControls,
-  FlexibleCameraManager,
+  IFlexibleCameraManager,
   FlexibleControlsOptions,
   WheelZoomType,
   ControlsType,
-  MouseActionType,
-  CameraManagerCallbackData
+  MouseActionType
 } from '../packages/camera-manager';
 
 export {
