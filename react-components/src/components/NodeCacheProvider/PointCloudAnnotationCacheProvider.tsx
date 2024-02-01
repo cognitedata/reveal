@@ -8,7 +8,7 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
-import { type CognitePointCloudModel } from '@cognite/reveal';
+import { type TypedReveal3DModel } from '../Reveal3DResources/types';
 
 export type PointCloudAnnotationCacheContextContent = {
   cache: PointCloudAnnotationCache;
@@ -29,7 +29,7 @@ const usePointCloudAnnotationCache = (): PointCloudAnnotationCache => {
 };
 
 export const usePointCloudAnnotationsForModels = (
-  model: CognitePointCloudModel[]
+  models: TypedReveal3DModel[]
 ): UseQueryResult<number[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
@@ -38,10 +38,10 @@ export const usePointCloudAnnotationsForModels = (
       'reveal',
       'react-components',
       'models-pointcloud-annotations',
-      ...model.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
     async () => {
-      return model.map(
+      return models.map(
         async (model) =>
           await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
             model.modelId,
@@ -49,13 +49,12 @@ export const usePointCloudAnnotationsForModels = (
           )
       );
     },
-    { staleTime: Infinity, enabled: model.length > 0 }
+    { staleTime: Infinity, enabled: models.length > 0 }
   );
 };
 
-export const useAnnotationsFromModel = (
-  modelId: number | undefined,
-  revisionId: number | undefined,
+export const useAnnotationsFromModels = (
+  models: TypedReveal3DModel[],
   annotationId: number | undefined
 ): UseQueryResult<number[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
@@ -64,27 +63,67 @@ export const useAnnotationsFromModel = (
     [
       'reveal',
       'react-components',
-      'annotation-pointcloud-for-model',
-      `${modelId}/${revisionId}`,
+      'annotation-pointcloud-for-models',
+      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
       annotationId
     ],
     async () => {
-      const validInputs =
-        modelId !== undefined && revisionId !== undefined && annotationId !== undefined;
-
-      if (!validInputs) {
+      if (annotationId === undefined) {
         return [];
       }
-      const matchedPointCloudAnnotation =
-        pointCloudAnnotationCache.matchPointCloudAnnotationsForModel(
-          modelId,
-          revisionId,
-          annotationId
-        );
-      return await matchedPointCloudAnnotation;
+      return await Promise.all(
+        models.map(
+          async (model) =>
+            await fetchAnnotationsForModel(
+              model.modelId,
+              model.revisionId,
+              annotationId,
+              pointCloudAnnotationCache
+            )
+        )
+      );
     },
     { staleTime: Infinity, enabled: annotationId !== undefined }
   );
+};
+
+export const useAnnotationsFromModel = (
+  modelId: number,
+  revisionId: number,
+  annotationId: number | undefined
+): UseQueryResult<number[]> => {
+  const pointCloudAnnotationCache = usePointCloudAnnotationCache();
+
+  return useQuery(
+    [
+      'reveal',
+      'react-components',
+      'annotation-pointcloud-for-a-model',
+      `${modelId}/${revisionId}`,
+      annotationId
+    ],
+    async () =>
+      await fetchAnnotationsForModel(modelId, revisionId, annotationId, pointCloudAnnotationCache),
+    { staleTime: Infinity, enabled: annotationId !== undefined }
+  );
+};
+
+const fetchAnnotationsForModel = async (
+  modelId: number,
+  revisionId: number,
+  annotationId: number | undefined,
+  pointCloudAnnotationCache: PointCloudAnnotationCache
+): Promise<number[]> => {
+  if (modelId === undefined || revisionId === undefined || annotationId === undefined) {
+    return [];
+  }
+
+  const matchedPointCloudAnnotation = pointCloudAnnotationCache.matchPointCloudAnnotationsForModel(
+    modelId,
+    revisionId,
+    annotationId
+  );
+  return await matchedPointCloudAnnotation;
 };
 
 export function PointCloudAnnotationCacheProvider({
