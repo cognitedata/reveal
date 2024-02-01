@@ -35,10 +35,10 @@ export const RevealStoryContainer = ({
   const isLocal = sdkInstance.project === '';
   const viewerRef = useRef<Cognite3DViewer | undefined>(
     viewer ??
-    (isLocal
-      ? // @ts-expect-error use local models
-      new Cognite3DViewer({ ...rest.viewerOptions, sdk: sdkInstance, _localModels: true })
-      : undefined)
+      (isLocal
+        ? // @ts-expect-error use local models
+          new Cognite3DViewer({ ...rest.viewerOptions, sdk: sdkInstance, _localModels: true })
+        : undefined)
   );
   const isRevealContainerMountedRef = useRef<boolean>(true);
   const fdmNodeCache = useRef<FdmNodeCache | undefined>();
