@@ -40,7 +40,7 @@ export class FlexibleCameraMarkers {
         this._pivotMarker = undefined;
       }
     }
-    if (manager.options.showLookAt) {
+    if (show && manager.options.showLookAt) {
       if (!this._lookAtMarker) {
         this._lookAtMarker = this.createLookAtMarker();
         this._scene?.add(this._lookAtMarker);
