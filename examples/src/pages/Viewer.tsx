@@ -107,7 +107,7 @@ export function Viewer() {
         viewerOptions = {
           ...viewerOptions,
           // @ts-expect-error
-          _localModels: true,
+          _localModels: true
         };
       } else if (!project) {
         throw new Error(
