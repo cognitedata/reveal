@@ -7,8 +7,8 @@ import { ControlsType } from './ControlsType';
 import { MouseActionType } from './MouseActionType';
 import { WheelZoomType } from './WheelZoomType';
 
-const DEFAULT_POINTER_ROTATION_SPEED = (0.1 * Math.PI) / 360; // half degree per pixel
-const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 10;
+const DEFAULT_POINTER_ROTATION_SPEED = (0.5 * Math.PI) / 360; // half degree per pixel
+const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 5;
 
 /**
  * @beta
@@ -29,7 +29,7 @@ export class FlexibleControlsOptions {
   public mouseWheelAction = WheelZoomType.Auto;
   public mouseWheelDynamicTarget = true;
   public mouseClickType = MouseActionType.None;
-  public mouseDoubleClickType = MouseActionType.SetTarget;
+  public mouseDoubleClickType = MouseActionType.SetTargetAndCameraPosition;
   public enableChangeControlsTypeOn123Key = true;
   public enableKeyboardNavigation = true;
 
@@ -75,8 +75,8 @@ export class FlexibleControlsOptions {
   public mouseDollySpeed = 100;
 
   // Keyboard speed for dolly and pan
-  public keyboardPanSpeed = 50;
-  public keyboardDollySpeed = 100;
+  public keyboardPanSpeed = 100;
+  public keyboardDollySpeed = 200;
   public keyboardFastMoveFactor = 5;
 
   // Pinch speeed

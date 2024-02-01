@@ -347,6 +347,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   };
 
   private readonly onDoubleClick = async (event: PointerEventData) => {
+    console.log(this.options.mouseDoubleClickType);
     if (!this.isEnabled) return;
     if (this.options.mouseDoubleClickType !== MouseActionType.None) {
       await this.mouseAction(event, this.options.mouseDoubleClickType);
@@ -394,14 +395,21 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     if (mouseActionType === MouseActionType.None) {
       return;
     }
+    console.log(mouseActionType);
     if (mouseActionType === MouseActionType.SetTarget) {
+      if (this.controls.controlsType !== ControlsType.Orbit) {
+        this.controls.setControlsType(ControlsType.Orbit);
+      }
       const newTarget = await this.getPickedPointPixelCoordinates(event.offsetX, event.offsetY);
       this.setPositionAndTarget(this.camera.position, newTarget);
     } else if (mouseActionType === MouseActionType.SetTargetAndCameraDirection) {
+      if (this.controls.controlsType !== ControlsType.Orbit) {
+        this.controls.setControlsType(ControlsType.Orbit);
+      }
       const newTarget = await this.getPickedPointPixelCoordinates(event.offsetX, event.offsetY);
       moveCameraTargetTo(this, newTarget, this.options.animationDuration);
     } else if (mouseActionType === MouseActionType.SetTargetAndCameraPosition) {
-      if (this.controls.controlsType === ControlsType.FirstPerson) {
+      if (this.controls.controlsType !== ControlsType.Orbit) {
         this.controls.setControlsType(ControlsType.Orbit);
       }
       this.setTargetAndCameraPosition(event);
