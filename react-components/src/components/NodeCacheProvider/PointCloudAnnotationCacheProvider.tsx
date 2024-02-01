@@ -3,7 +3,6 @@
  */
 
 import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
-import { type PointCloudModelOptions } from '../Reveal3DResources/types';
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSDK } from '../RevealContainer/SDKProvider';
@@ -28,28 +27,21 @@ const usePointCloudAnnotationCache = (): PointCloudAnnotationCache => {
   return content.cache;
 };
 
-export const usePointCloudAnnotationsForRevision = (
-  model: PointCloudModelOptions[]
+export const usePointCloudAnnotationsForModel = (
+  modelId: number | undefined,
+  revisionId: number | undefined
 ): UseQueryResult<number[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
   return useQuery(
-    [
-      'reveal',
-      'react-components',
-      'models-pointcloud-annotations',
-      ...model.map((model) => `${model.modelId}/${model.revisionId}`).sort()
-    ],
+    ['reveal', 'react-components', 'models-pointcloud-annotations', `${modelId}/${revisionId}`],
     async () => {
-      return model.map(
-        async (model) =>
-          await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
-            model.modelId,
-            model.revisionId
-          )
-      );
+      if (modelId === undefined || revisionId === undefined) {
+        return [];
+      }
+      return await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(modelId, revisionId);
     },
-    { staleTime: Infinity, enabled: model.length > 0 }
+    { staleTime: Infinity, enabled: modelId !== undefined && revisionId !== undefined }
   );
 };
 

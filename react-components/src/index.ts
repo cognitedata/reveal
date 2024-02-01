@@ -53,6 +53,10 @@ export {
   useAllAssetsMappedPointCloudAnnotations,
   useSearchAssetsMappedPointCloudAnnotations
 } from './hooks/useSearchAssetsMappedPointCloudAnnotations';
+export {
+  usePointCloudAnnotationsForModel,
+  useAnnotationsFromModel
+} from './components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';

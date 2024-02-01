@@ -117,7 +117,7 @@ function usePointCloudAnnotationIdsForRevisions(models: PointCloudModelOptions[]
     [
       'reveal',
       'react-components',
-      'models-pointcloud-object-collections',
+      'models-pointcloud-annotations',
       ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
     async () => {
