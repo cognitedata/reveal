@@ -78,7 +78,7 @@ export function useGetCameraStateFromUrlParam(): () => CameraStateTransform | un
 
   function getParsedVector(s: string): Vector3 | undefined {
     try {
-      return new Vector3().fromArray(JSON.parse(s));
+      return new Vector3().fromArray(JSON.parse(s) as [number, number, number]);
     } catch (e) {
       return undefined;
     }

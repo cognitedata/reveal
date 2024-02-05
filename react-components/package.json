@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.27.0",
+  "version": "0.28.2",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -67,7 +67,7 @@
     "@vitejs/plugin-react": "^4.0.4",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-config-standard-with-typescript": "40.0.0",
+    "eslint-config-standard-with-typescript": "43.0.1",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^16.0.0",

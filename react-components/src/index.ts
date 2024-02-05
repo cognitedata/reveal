@@ -87,6 +87,7 @@ export type {
 } from './components/Reveal3DResources/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
+export type { FdmInstanceWithView } from './utilities/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
 export { WindowWidget } from './components/Widgets/WindowWidget';
 export { use3dRelatedEdgeConnections } from './hooks/use3dRelatedEdgeConnections';
