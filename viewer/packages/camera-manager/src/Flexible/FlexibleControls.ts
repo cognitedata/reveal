@@ -165,7 +165,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (this._tempTarget) {
       return this._tempTarget;
     }
-    return this.newVector3().addVectors(this._cameraPosition.value, this._cameraVector.getVector());
+    return this.newVector3().addVectors(this._cameraPosition.value, this._cameraVector.getValueVector());
   }
 
   public getState(): { target: Vector3; position: Vector3 } {
@@ -221,7 +221,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       // This actually change target due to not change the camera position and lookAt
       // Target = DistanceToTarget * CameraVector + Position
       const distanceToTarget = this._cameraPosition.end.distanceTo(this._target.end);
-      const cameraVector = this._cameraVector.getVectorEnd();
+      const cameraVector = this._cameraVector.getEndVector();
       cameraVector.multiplyScalar(distanceToTarget);
 
       this._target.end.copy(cameraVector.add(this._cameraPosition.end));
@@ -541,7 +541,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       // Adust the camera position by
       // CameraPosition = Target - DistanceToTarget * CameraVector
       const distanceToTarget = this._cameraPosition.end.distanceTo(this._target.end);
-      const cameraVector = this._cameraVector.getVectorEnd();
+      const cameraVector = this._cameraVector.getEndVector();
       cameraVector.multiplyScalar(-distanceToTarget);
       this._cameraPosition.end.copy(cameraVector.add(this._target.end));
     } else if (this.controlsType === ControlsType.Orbit) {

@@ -7,8 +7,10 @@ import { Spherical, Vector3 } from 'three';
 export class DampedSpherical {
   public readonly value = new Spherical();
   public readonly end = new Spherical();
-  private readonly _vector = new Vector3();
-  private readonly _vectorEnd = new Vector3();
+
+  // Used as a temporary variable to avoid creating new objects
+  private readonly _valueVector = new Vector3();
+  private readonly _endVector = new Vector3();
 
   isChanged(epsilon: number): boolean {
     if (Math.abs(this.value.radius - this.end.radius) >= epsilon) return true;
@@ -17,23 +19,32 @@ export class DampedSpherical {
     return false;
   }
 
-  public getVector(): Vector3 {
-    return this._vector.setFromSpherical(this.value);
+  public getValueVector(): Vector3 {
+    return this._valueVector.setFromSpherical(this.value);
   }
 
-  public getVectorEnd(): Vector3 {
-    return this._vectorEnd.setFromSpherical(this.end);
+  public getEndVector(): Vector3 {
+    return this._endVector.setFromSpherical(this.end);
   }
 
-  copy(value: Vector3): void {
-    this.value.setFromVector3(value);
+  public setValueVector(vector: Vector3): void {
+    this.value.setFromVector3(vector);
     this.value.radius = 1;
     this.value.makeSafe();
+  }
+
+  public setEndVector(vector: Vector3): void {
+    this.end.setFromVector3(vector);
+    this.end.radius = 1;
+    this.end.makeSafe();
+  }
+
+  copy(vector: Vector3): void {
+    this.setValueVector(vector);
     this.synchronizeEnd();
   }
 
   synchronize(): void {
-    this.end.makeSafe();
     this.value.copy(this.end);
   }
 
@@ -42,12 +53,10 @@ export class DampedSpherical {
   }
 
   damp(dampningFactor: number): void {
-    const vector = this.getVector();
-    const vectorEnd = this.getVectorEnd();
+    const vector = this.getValueVector();
+    const vectorEnd = this.getEndVector();
     const delta = vectorEnd.sub(vector);
     vector.addScaledVector(delta, dampningFactor);
-    this.value.setFromVector3(vector);
-    this.value.radius = 1;
-    this.value.makeSafe();
+    this.setValueVector(vector);
   }
 }

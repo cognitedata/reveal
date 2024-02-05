@@ -10,9 +10,8 @@ export class DampedVector3 {
   public readonly end = new Vector3();
 
   // Used as a temporary variable to avoid creating new objects
-  private readonly _delta = new Vector3();
-  private readonly _endVector = new Vector3();
   private readonly _valueVector = new Vector3();
+  private readonly _endVector = new Vector3();
 
   isChanged(epsilon: number): boolean {
     if (Math.abs(this.value.x - this.end.x) >= epsilon) return true;
