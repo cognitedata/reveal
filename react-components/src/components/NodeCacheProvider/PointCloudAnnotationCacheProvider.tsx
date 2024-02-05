@@ -61,8 +61,7 @@ export const usePointCloudAnnotationMappingsForModels = (
 };
 
 export const usePointCloudAnnotationAssetForAssetId = (
-  modelId: number | undefined,
-  revisionId: number | undefined,
+  models: TypedReveal3DModel[],
   assetId: string | number | undefined
 ): UseQueryResult<AnnotationAssetMappingDataResult[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
@@ -72,17 +71,21 @@ export const usePointCloudAnnotationAssetForAssetId = (
       'reveal',
       'react-components',
       'annotation-pointcloud-for-a-model',
-      `${modelId}/${revisionId}`,
+      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
       assetId
     ],
     async () => {
-      const result = await fetchAnnotationsForAssetId(
-        modelId,
-        revisionId,
-        assetId,
-        pointCloudAnnotationCache
+      return await Promise.all(
+        models.map(async (model) => {
+          const result = await fetchAnnotationsForAssetId(
+            model.modelId,
+            model.revisionId,
+            assetId,
+            pointCloudAnnotationCache
+          );
+          return result ?? [];
+        })
       );
-      return result ?? [];
     },
     { staleTime: Infinity, enabled: assetId !== undefined }
   );
