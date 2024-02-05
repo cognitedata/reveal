@@ -60,8 +60,44 @@ export const usePointCloudAnnotationMappingsForModels = (
   );
 };
 
-export const usePointCloudAnnotationAssetForAssetId = (
+export const usePointCloudAnnotationMappingsForAssetIds = (
   models: TypedReveal3DModel[],
+  assetIds: Array<string | number> | undefined
+): UseQueryResult<AnnotationAssetMappingDataResult[]> => {
+  const pointCloudAnnotationCache = usePointCloudAnnotationCache();
+
+  return useQuery(
+    [
+      'reveal',
+      'react-components',
+      'all-annotation-mappings',
+      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
+      ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? [])
+    ],
+    async () => {
+      return await Promise.all(
+        models.map(async (model) => {
+          await Promise.all(
+            assetIds?.map(async (assetId) => {
+              const result = await fetchAnnotationsForAssetId(
+                model.modelId,
+                model.revisionId,
+                assetId,
+                pointCloudAnnotationCache
+              );
+              return result ?? [];
+            }) ?? []
+          );
+        })
+      );
+    },
+    { staleTime: Infinity, enabled: assetIds !== undefined && assetIds.length > 0 }
+  );
+};
+
+export const usePointCloudAnnotationMappingForAssetId = (
+  modelId: number | undefined,
+  revisionId: number | undefined,
   assetId: string | number | undefined
 ): UseQueryResult<AnnotationAssetMappingDataResult[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
@@ -70,22 +106,18 @@ export const usePointCloudAnnotationAssetForAssetId = (
     [
       'reveal',
       'react-components',
-      'annotation-pointcloud-for-a-model',
-      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
+      'asset-annotation-mapping-for-a-model',
+      `${modelId}/${revisionId}`,
       assetId
     ],
     async () => {
-      return await Promise.all(
-        models.map(async (model) => {
-          const result = await fetchAnnotationsForAssetId(
-            model.modelId,
-            model.revisionId,
-            assetId,
-            pointCloudAnnotationCache
-          );
-          return result ?? [];
-        })
+      const result = await fetchAnnotationsForAssetId(
+        modelId,
+        revisionId,
+        assetId,
+        pointCloudAnnotationCache
       );
+      return result ?? [];
     },
     { staleTime: Infinity, enabled: assetId !== undefined }
   );

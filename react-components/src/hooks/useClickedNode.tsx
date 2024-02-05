@@ -14,7 +14,7 @@ import { type Asset, type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type FdmNodeDataPromises } from '../components/NodeCacheProvider/types';
 import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 import { type NodeAssetMappingResult } from '../components/NodeCacheProvider/AssetMappingCache';
-import { usePointCloudAnnotationAssetForAssetId } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
+import { usePointCloudAnnotationMappingForAssetId } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -84,7 +84,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     cadIntersection?.treeIndex
   ).data;
 
-  const pointCloudAssetMappingResult = usePointCloudAnnotationAssetForAssetId(
+  const pointCloudAssetMappingResult = usePointCloudAnnotationMappingForAssetId(
     pointCloudIntersection?.model.modelId,
     pointCloudIntersection?.model.revisionId,
     pointCloudIntersection?.assetRef?.externalId ?? pointCloudIntersection?.assetRef?.id
