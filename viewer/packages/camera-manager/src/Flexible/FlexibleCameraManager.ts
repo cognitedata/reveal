@@ -35,11 +35,14 @@ import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraTo } from './moveCamera';
 import { IFlexibleCameraManager } from './IFlexibleCameraManager';
 
+type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
+
 /**
  * Flexible implementation of {@link CameraManager}. The user can switch between Orbit, FirstPersion or OrbitInCenter
  * Supports automatic update of camera near and far planes and animated change of camera position and target.
  * @beta
  */
+
 export class FlexibleCameraManager implements IFlexibleCameraManager {
   //================================================
   // INSTANCE FIELDS:
@@ -65,11 +68,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   // INSTANCE FIELDS: Events
   //================================================
 
-  private readonly _modelRaycastCallback: (
-    x: number,
-    y: number,
-    pickBoundingBox: boolean
-  ) => Promise<CameraManagerCallbackData>;
+  private readonly _raycastCallback: RaycastCallback;
 
   //================================================
   // CONSTRUCTOR
@@ -78,7 +77,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   constructor(
     domElement: HTMLElement,
     inputHandler: InputHandler,
-    raycastFunction: (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>,
+    raycastCallback: RaycastCallback,
     camera?: PerspectiveCamera,
     scene?: Scene
   ) {
@@ -86,7 +85,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this._controls = new FlexibleControls(this.camera, domElement, new FlexibleControlsOptions());
     this._domElement = domElement;
     this._inputHandler = inputHandler;
-    this._modelRaycastCallback = raycastFunction;
+    this._raycastCallback = raycastCallback;
     if (scene) {
       this._markers = new FlexibleCameraMarkers(scene);
     }
@@ -271,11 +270,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   //================================================
 
   private async getPickedPointPixelCoordinates(pixelX: number, pixelY: number): Promise<Vector3> {
-    const modelRaycastData = await this._modelRaycastCallback(pixelX, pixelY, false);
-    if (modelRaycastData.intersection?.point) {
-      return modelRaycastData.intersection.point;
+    const raycastResult = await this._raycastCallback(pixelX, pixelY, false);
+    if (raycastResult.intersection?.point) {
+      return raycastResult.intersection.point;
     }
-    return this.getTargetByBoundingBox(pixelX, pixelY, modelRaycastData.modelsBoundingBox);
+    return this.getTargetByBoundingBox(pixelX, pixelY, raycastResult.modelsBoundingBox);
   }
 
   private getTargetByBoundingBox(pixelX: number, pixelY: number, boundingBox: Box3): Vector3 {
@@ -416,17 +415,17 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   }
 
   private async setTargetAndCameraPosition(event: PointerEventData) {
-    const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, true);
+    const raycastResult = await this._raycastCallback(event.offsetX, event.offsetY, true);
     // If an object is picked, zoom in to the object (the target will be in the middle of the bounding box)
-    if (modelRaycastData.pickedBoundingBox !== undefined) {
-      const { position, target } = fitCameraToBoundingBox(this.camera, modelRaycastData.pickedBoundingBox, 3);
+    if (raycastResult.pickedBoundingBox !== undefined) {
+      const { position, target } = fitCameraToBoundingBox(this.camera, raycastResult.pickedBoundingBox, 3);
       moveCameraTo(this, position, target, this.options.animationDuration);
       return;
     }
     // If not particular object is picked, set camera position half way to the target
     const newTarget =
-      modelRaycastData.intersection?.point ??
-      this.getTargetByBoundingBox(event.offsetX, event.offsetY, modelRaycastData.modelsBoundingBox);
+      raycastResult.intersection?.point ??
+      this.getTargetByBoundingBox(event.offsetX, event.offsetY, raycastResult.modelsBoundingBox);
 
     const newPosition = new Vector3().subVectors(newTarget, this.camera.position);
     newPosition.divideScalar(2);
