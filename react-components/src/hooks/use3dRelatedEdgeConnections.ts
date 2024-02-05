@@ -30,6 +30,10 @@ export function use3dRelatedEdgeConnections(
         space: obj.space
       }));
 
+      if (nodeIds.length === 0) {
+        return [];
+      }
+
       const views = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
         items: nodeIds
