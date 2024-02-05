@@ -104,9 +104,9 @@ function getMappedStyleGroupFromAssetIds(
 
   return matchedAnnotationModels.length > 0
     ? {
-      annotationIds: matchedAnnotationModels.map((annotationModel) => annotationModel.id),
-      style: instanceGroup.style.pointcloud
-    }
+        annotationIds: matchedAnnotationModels.map((annotationModel) => annotationModel.id),
+        style: instanceGroup.style.pointcloud
+      }
     : undefined;
 }
 
