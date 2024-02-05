@@ -27,8 +27,9 @@ export class DampedSpherical {
 
   copy(value: Vector3): void {
     this.value.setFromVector3(value);
+    this.value.radius = 1;
     this.value.makeSafe();
-    this.end.copy(this.value);
+    this.synchronizeEnd();
   }
 
   synchronize(): void {
@@ -46,6 +47,7 @@ export class DampedSpherical {
     const delta = vectorEnd.sub(vector);
     vector.addScaledVector(delta, dampningFactor);
     this.value.setFromVector3(vector);
+    this.value.radius = 1;
     this.value.makeSafe();
   }
 }

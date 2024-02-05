@@ -3,11 +3,16 @@
  */
 
 import { Vector3 } from 'three';
+import { lerp } from 'three/src/math/MathUtils';
 
 export class DampedVector3 {
   public readonly value = new Vector3();
   public readonly end = new Vector3();
+
+  // Used as a temporary variable to avoid creating new objects
   private readonly _delta = new Vector3();
+  private readonly _endVector = new Vector3();
+  private readonly _valueVector = new Vector3();
 
   isChanged(epsilon: number): boolean {
     if (Math.abs(this.value.x - this.end.x) >= epsilon) return true;
@@ -36,7 +41,32 @@ export class DampedVector3 {
   }
 
   damp(dampningFactor: number): void {
-    const delta = this._delta.subVectors(this.end, this.value);
-    this.value.addScaledVector(delta, dampningFactor);
+    this.value.lerp(this.end, dampningFactor);
+  }
+
+  dampAsVectorAndCenter(dampningFactor: number, center: DampedVector3): void {
+    // Vector = Value - Center
+    const endVector = this._endVector.subVectors(this.end, center.end);
+    const valueVector = this._valueVector.subVectors(this.value, center.value);
+
+    const endLength = endVector.length();
+    const valueLength = valueVector.length();
+
+    endVector.normalize();
+    valueVector.normalize();
+
+    // Lerp vector
+    valueVector.lerp(endVector, dampningFactor);
+
+    // Lerp vector lenght
+    valueVector.normalize();
+    const length = lerp(valueLength, endLength, dampningFactor);
+    valueVector.multiplyScalar(length);
+
+    // Set the new value
+    this.value.copy(valueVector.add(center.value));
+
+    // Damp the center
+    center.damp(dampningFactor);
   }
 }

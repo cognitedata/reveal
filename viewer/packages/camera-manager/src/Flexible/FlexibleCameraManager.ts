@@ -82,7 +82,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     camera?: PerspectiveCamera,
     scene?: Scene
   ) {
-    this._camera = camera ?? new PerspectiveCamera(60, undefined, 0.1, 10000);
+    this._camera = camera ?? new PerspectiveCamera(45, undefined, 0.1, 10000);
     this._controls = new FlexibleControls(this.camera, domElement, new FlexibleControlsOptions());
     this._domElement = domElement;
     this._inputHandler = inputHandler;

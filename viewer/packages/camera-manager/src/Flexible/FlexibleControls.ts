@@ -12,14 +12,13 @@ import {
   PerspectiveCamera,
   Quaternion,
   Raycaster,
-  Spherical,
   Vector2,
   Vector3
 } from 'three';
-import Keyboard from './../Keyboard';
+import Keyboard from '../Keyboard';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 import { ControlsType } from './ControlsType';
-import { ComboControlsEventType } from './../ComboControls';
+import { ComboControlsEventType } from '../ComboControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { WheelZoomType } from './WheelZoomType';
 import { DampedVector3 } from './DampedVector3';
@@ -28,6 +27,8 @@ import { ReusableVector3s } from './ReusableVector3s';
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
+const UP_VECTOR = new Vector3(0, 1, 0);
+const RIGHT_VECTOR = new Vector3(1, 0, 0);
 
 /**
  * @beta
@@ -46,15 +47,12 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
   // These are describe below in the ascii-art
   private readonly _target: DampedVector3 = new DampedVector3();
+  private readonly _cameraPosition: DampedVector3 = new DampedVector3();
   private readonly _cameraVector: DampedSpherical = new DampedSpherical();
-
-  // The Translation are used only if NOT the ControlsType.OrbitInCenter is enabled, it translates the camera
-  // and the lookAt without changing the target or cameraVector.
-  private readonly _translation = new DampedVector3();
 
   // Temporary used, undefined if not in use
   private _scrollDirection: Vector3 | undefined = undefined; // When using the wheel this is vector to the picked point from
-  private _scrollDistance = 0; // When using the wheel this is vector to the picked point from
+  private _scrollDistance = 0; // When using the wheel this is the distance to the picked point
   private _tempTarget: Vector3 | undefined = undefined;
 
   private readonly _rawCameraRotation = new Quaternion();
@@ -67,44 +65,42 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   //        ControlsType.OrbitInCenter
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
-  //    ,                       ,       In this state the camera always rotating round the target
-  //   ,                         ,      which is in the center of the sceen.
+  //    ,                       ,   In this state the camera rotating round the target
+  //   ,                         ,  which is in the center of the sceen.
   //  ,          Target           ,
-  //  ,             *             ,     Translation is always (0,0,0)
-  //  ,              \            ,
-  //   ,  CameraVector\          ,
-  //    ,              \        ,
-  //      ,             \    , '
-  //        ' - , _  _ , # CameraPosition
+  //  ,             *    <--------* CameraPosition
+  //  ,               CameraVector,
+  //   ,                          ,
+  //    ,                       ,
+  //      ,                  , '
+  //        ' - , _  _ ,  -
   //
   //
   //       ControlsType.Orbit
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
-  //    ,                       ,       Formula used are:
-  //   ,                         ,      CameraVector = CameraPosition - Target - Translation
-  //  ,          Target           ,     Target = CameraPosition - CameraVector - Translation
-  //  ,             *             ,     CameraPosition = Target + Translation + CameraVector
-  //  ,              \            ,
-  //   ,  CameraVector\          ,      Translation is the translation vector between the center of the sceen to the target
-  //    ,              \        ,
-  //      ,             \    , '
-  //        ' - , _  _ , #<---------------># CameraPosition
-  //                         Translation
+  //    ,                       ,   In this state the camera rotating round the target
+  //   ,                         ,
+  //  ,          Target           ,
+  //  ,             *             ,
+  //  ,                           ,
+  //   ,                <--------* CameraPosition
+  //    ,          CameraVector ,
+  //      ,                  , '
+  //        ' - , _  _ ,  -
   //
   //      ControlsType.FirstPerson
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
   //    ,                       ,
+  //   ,                         ,   In this state the camera rotating round itself.
+  //  ,        CameraPosition     ,  The target is ignored.
+  //  ,             *----->       ,
+  //  ,          CameraVector     ,
   //   ,                         ,
-  //  ,        CameraPosition     ,
-  //  ,             *             ,
-  //  ,              \            ,
-  //   ,  CameraVector\          ,
-  //    ,              \        ,
-  //      ,             \    , '
-  //        ' - , _  _ , #<---------------># Target
-  //                         Translation
+  //    ,                       ,
+  //      ,                 , '
+  //        ' - , _  _ ,  -
   //================================================
   // CONSTRUCTOR
   //================================================
@@ -119,7 +115,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     this._domElement = domElement;
     this._options = options;
     this._keyboard = new Keyboard(this._domElement);
-    this._cameraVector.copy(camera.position);
+    this._cameraVector.copy(new Vector3(1, 0, 0));
   }
 
   public dispose(): void {
@@ -157,10 +153,6 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     return this.options.controlsType;
   }
 
-  private get isTargetLocked(): boolean {
-    return this.controlsType !== ControlsType.OrbitInCenter;
-  }
-
   //================================================
   // INSTANCE METHODS: Pulic getters and setters
   //================================================
@@ -171,22 +163,9 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
   public getLookAt(): Vector3 {
     if (this._tempTarget) {
-      return this.newVector3().addVectors(this._tempTarget, this._translation.value);
+      return this._tempTarget;
     }
-    if (this.isTargetLocked) {
-      return this.newVector3().addVectors(this._target.value, this._translation.value);
-    }
-    return this._target.value;
-  }
-
-  public getLookAtEnd(): Vector3 {
-    if (this._tempTarget) {
-      return this.newVector3().addVectors(this._tempTarget, this._translation.end);
-    }
-    if (this.isTargetLocked) {
-      return this.newVector3().addVectors(this._target.end, this._translation.end);
-    }
-    return this._target.value;
+    return this.newVector3().addVectors(this._cameraPosition.value, this._cameraVector.getVector());
   }
 
   public getState(): { target: Vector3; position: Vector3 } {
@@ -221,22 +200,14 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   public setState(position: Vector3, target: Vector3): void {
-    if (this.controlsType === ControlsType.OrbitInCenter) {
-      // cameraVector = position - target
-      this._translation.clear();
-      const cameraVector = position.clone().sub(target);
-      this._cameraVector.copy(cameraVector);
-    } else {
-      const cameraVector = position.clone().sub(target);
-      cameraVector.normalize();
-      cameraVector.multiplyScalar(5);
-      this._cameraVector.copy(cameraVector);
+    this._cameraPosition.copy(position);
+    this._target.copy(target);
 
-      // Translation = CameraPosition - Target - CameraVector
-      const translation = position.clone().sub(target).sub(this._cameraVector.getVector());
-      this._translation.copy(translation);
-      this._target.copy(target);
-    }
+    // CameraVector = Target - Position
+    const vector = this.newVector3().subVectors(target, position);
+    vector.normalize();
+    this._cameraVector.copy(vector);
+
     this.update(1000 / TARGET_FPS, true);
     this.triggerCameraChangeEvent();
   }
@@ -248,9 +219,13 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     this.options.controlsType = controlsType;
     if (controlsType === ControlsType.OrbitInCenter) {
       // This actually change target due to not change the camera position and lookAt
-      this._target.add(this._translation);
-      this._translation.clear();
-      //this._scrollCursor.copy(this._target.value);
+      // Target = DistanceToTarget * CameraVector + Position
+      const distanceToTarget = this._cameraPosition.end.distanceTo(this._target.end);
+      const cameraVector = this._cameraVector.getVectorEnd();
+      cameraVector.multiplyScalar(distanceToTarget);
+
+      this._target.end.copy(cameraVector.add(this._cameraPosition.end));
+      this._target.synchronize();
     }
     this.triggerCameraChangeEvent();
     return true;
@@ -260,14 +235,6 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   // INSTANCE METHODS: Private Getters and setters
   //================================================
 
-  private getCameraPosition(): Vector3 {
-    const position = this._cameraVector.getVector().add(this._target.value); // CameraPosition = Target + CameraVector
-    if (this.isTargetLocked) {
-      position.add(this._translation.value);
-    }
-    return position;
-  }
-
   private getPanFactor() {
     let speed = this._options.sensitivity;
     // The panning goes parallel to the screen, not perpendicular to the screen.
@@ -275,10 +242,14 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     // half of the fov is center to top of screen
     if (this._camera instanceof PerspectiveCamera) {
       const fovFactor = Math.tan(MathUtils.degToRad(this._camera.fov / 2));
-      speed *= fovFactor; // 0.57
+      speed *= fovFactor; // Typical value is 0.57
     }
     const factor = 2 / this._domElement.clientHeight;
-    speed *= factor; // 0.0015
+    speed *= factor; // Typical value is 0.0015
+
+    // const distanceToTarget = this._cameraPosition.end.distanceTo(this._target.end);
+    // const f = Math.max(distanceToTarget, 2) / 2;
+    // console.log(f);
     return speed;
   }
 
@@ -292,7 +263,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     }
     const actualFPS = Math.min(1 / deltaTimeS, TARGET_FPS);
     const targetFPSOverActualFPS = TARGET_FPS / actualFPS;
-    return Math.min(this._options.dampingFactor * targetFPSOverActualFPS, 1);
+    const dampingFactor = Math.min(this._options.dampingFactor * targetFPSOverActualFPS, 1);
+    return dampingFactor;
   }
 
   private newVector3(): Vector3 {
@@ -311,31 +283,25 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       this.rotate(this._accumulatedMouseRotation);
       this._accumulatedMouseRotation.set(0, 0);
     }
-    // Nils: Experiments with the timeScale to move smoothly
     const isKeyPressed = this.handleKeyboard(deltaTimeS);
-
     const epsilon = this._options.EPSILON;
-    let isChanged = this._target.isChanged(epsilon) || this._cameraVector.isChanged(epsilon);
+    const isChanged =
+      this._target.isChanged(epsilon) ||
+      this._cameraVector.isChanged(epsilon) ||
+      this._cameraPosition.isChanged(epsilon);
 
-    if (this.isTargetLocked && !isChanged) {
-      isChanged = this._translation.isChanged(epsilon);
-    }
-    if (isChanged) {
-      const dampningFactor = isKeyPressed ? 1 : this.getDampingFactor(deltaTimeS);
-      this._target.damp(dampningFactor);
+    const dampningFactor = isKeyPressed ? 1 : this.getDampingFactor(deltaTimeS);
+    if (isChanged && dampningFactor < 1) {
+      this._cameraPosition.dampAsVectorAndCenter(dampningFactor, this._target);
       this._cameraVector.damp(dampningFactor);
-      if (this.isTargetLocked) {
-        this._translation.damp(dampningFactor);
-      }
     } else {
       this._cameraVector.synchronize();
       this._target.synchronize();
-      if (this.isTargetLocked) {
-        this._translation.synchronize();
-      }
+      this._cameraPosition.synchronize();
     }
-    this._camera.position.copy(this.getCameraPosition());
-
+    this._camera.position.copy(this._cameraPosition.value);
+    this._camera.up.copy(UP_VECTOR);
+    this._camera.updateProjectionMatrix();
     if (isIdentityQuaternion(this._rawCameraRotation)) {
       this._camera.lookAt(this.getLookAt());
     } else {
@@ -344,8 +310,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (isChanged) {
       this.triggerCameraChangeEvent();
     }
-    // Tell caller if camera has changed
-    return isChanged;
+    return isChanged; // Tell caller if camera has changed
   }
 
   public triggerCameraChangeEvent = (): void => {
@@ -559,8 +524,9 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (delta.x === 0 && delta.y === 0) {
       return;
     }
-    const deltaAzimuthAngle = this._options.mouseRotationSpeedAzimuth * delta.x;
+    let deltaAzimuthAngle = this._options.mouseRotationSpeedAzimuth * delta.x;
     const deltaPolarAngle = this._options.mouseRotationSpeedPolar * delta.y;
+    deltaAzimuthAngle *= this.getAzimuthCompensationFactor();
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
   }
 
@@ -568,30 +534,47 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (deltaAzimuth === 0 && deltaPolar === 0) {
       return;
     }
-    const cameraVector = this._cameraVector.getVectorEnd();
-    if (this.controlsType === ControlsType.FirstPerson) {
-      this._translation.end.add(cameraVector);
+
+    if (this.controlsType === ControlsType.OrbitInCenter) {
+      this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
+
+      // Adust the camera position by
+      // CameraPosition = Target - DistanceToTarget * CameraVector
+      const distanceToTarget = this._cameraPosition.end.distanceTo(this._target.end);
+      const cameraVector = this._cameraVector.getVectorEnd();
+      cameraVector.multiplyScalar(-distanceToTarget);
+      this._cameraPosition.end.copy(cameraVector.add(this._target.end));
+    } else if (this.controlsType === ControlsType.Orbit) {
+      // Offset = Target - CameraPosition
+      const oldOffset = this.newVector3().subVectors(this._target.end, this._cameraPosition.end);
+      const oldCameraVectorEnd = this._cameraVector.end.clone();
+
+      this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
+
+      // Adust the camera position so the target point is the same on the screen
+      // Credits to Håkon Flatval for this solution
+      const oldQuat = new Quaternion().multiplyQuaternions(
+        new Quaternion().setFromAxisAngle(UP_VECTOR, oldCameraVectorEnd.theta),
+        new Quaternion().setFromAxisAngle(RIGHT_VECTOR, oldCameraVectorEnd.phi)
+      );
+      const newQuat = new Quaternion().multiplyQuaternions(
+        new Quaternion().setFromAxisAngle(UP_VECTOR, this._cameraVector.end.theta),
+        new Quaternion().setFromAxisAngle(RIGHT_VECTOR, this._cameraVector.end.phi)
+      );
+      const newOffset = oldOffset.applyQuaternion(oldQuat.conjugate()).applyQuaternion(newQuat);
+
+      // CameraPosition = Target - Offset
+      const newCameraPosition = this.newVector3().subVectors(this._target.end, newOffset);
+      this._cameraPosition.end.copy(newCameraPosition);
+    } else {
+      this.rawRotateByAngles(deltaAzimuth, deltaPolar);
     }
-    const prevCameraVectorEnd = this._cameraVector.end.clone();
+  }
+
+  private rawRotateByAngles(deltaAzimuth: number, deltaPolar: number) {
     this._cameraVector.end.theta = this.options.getLegalAzimuthAngle(this._cameraVector.end.theta + deltaAzimuth);
-    this._cameraVector.end.phi = this.options.getLegalAzimuthAngle(this._cameraVector.end.phi + deltaPolar);
+    this._cameraVector.end.phi = this.options.getLegalPolarAngle(this._cameraVector.end.phi + deltaPolar);
     this._cameraVector.end.makeSafe();
-
-    if (this.controlsType === ControlsType.FirstPerson) {
-      this._translation.end.sub(this._cameraVector.getVectorEnd());
-    } else if (this.controlsType === ControlsType.Orbit && cameraVector !== null) {
-      // Adjust the translation by rotating the entire vector from target to camera position.
-      // It is not working perfect, but it is good enough for now.
-      const delta = this.newVector3().addVectors(this._translation.end, cameraVector);
-      const deltaSpherical = new Spherical().setFromVector3(delta);
-      deltaSpherical.theta += this._cameraVector.end.theta - prevCameraVectorEnd.theta;
-      deltaSpherical.phi += this._cameraVector.end.phi - prevCameraVectorEnd.phi;
-
-      // Translation = Diff - CameraVector
-      const newDelta = this.newVector3().setFromSpherical(deltaSpherical);
-      const newTranslation = newDelta.sub(this._cameraVector.getVectorEnd());
-      this._translation.end.copy(newTranslation);
-    }
   }
 
   //================================================
@@ -702,11 +685,10 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
   private translate(delta: Vector3) {
     if (delta.manhattanLength() === 0) return;
-    if (this.isTargetLocked) {
-      this._translation.end.add(delta);
-    } else {
+    if (this.controlsType === ControlsType.OrbitInCenter) {
       this._target.end.add(delta);
     }
+    this._cameraPosition.end.add(delta);
   }
 
   //================================================
@@ -804,20 +786,22 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (deltaAzimuthAngle === 0 && deltaPolarAngle === 0) {
       return false;
     }
-    if (this.controlsType === ControlsType.Orbit) {
-      this.setControlsType(ControlsType.FirstPerson);
-    }
+    this.setControlsType(ControlsType.FirstPerson);
+
     const azimuthAngle = this._cameraVector.end.theta;
     deltaAzimuthAngle = this._options.getLegalAzimuthAngle(azimuthAngle + deltaAzimuthAngle) - azimuthAngle;
+    deltaAzimuthAngle *= this.getAzimuthCompensationFactor();
 
+    this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
+    return true;
+  }
+
+  private getAzimuthCompensationFactor(): number {
     // Calculate the azimuth compensation factor. This adjusts the azimuth rotation
     // to make it feel more natural when looking straight up or straight down.
     const deviationFromEquator = Math.abs(this._cameraVector.end.phi - Math.PI / 2);
     const azimuthCompensationFactor = Math.sin(Math.PI / 2 - deviationFromEquator);
-    deltaAzimuthAngle *= azimuthCompensationFactor;
-
-    this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
-    return true;
+    return azimuthCompensationFactor;
   }
 
   private handleMoveFromKeyboard(timeScale: number): boolean {
