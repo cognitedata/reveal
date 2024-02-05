@@ -491,6 +491,10 @@ function getDiagonal2(boundingBox: Box3): number {
   return Math.sqrt((boundingBox.min.x - boundingBox.max.x) ** 2 + (boundingBox.min.y - boundingBox.max.y) ** 2);
 }
 
+/**
+ * Finds 0, 1 or 2 intersection points, return number of intersections and
+ * sets the closest and furthest intersection points.
+ */
 function intersectBox(ray: Ray, box: Box3, closestIntersection: Vector3, furthestIntersection: Vector3): number {
   const invdirx = 1 / ray.direction.x;
   const invdiry = 1 / ray.direction.y;
