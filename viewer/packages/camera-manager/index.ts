@@ -11,9 +11,10 @@ export { ComboControlsOptions } from './src/ComboControlsOptions';
 export { CameraControlsOptions } from './src/CameraControlsOptions';
 export { DebouncedCameraStopEventTrigger } from './src/utils/DebouncedCameraStopEventTrigger';
 export { IFlexibleCameraManager } from './src/Flexible/IFlexibleCameraManager';
+export { FlexibleCameraManager } from './src/Flexible/FlexibleCameraManager';
 export { FlexibleControlsOptions } from './src/Flexible/FlexibleControlsOptions';
 export { WheelZoomType } from './src/Flexible/WheelZoomType';
-export { ControlsType } from './src/Flexible/ControlsType';
+export { FlexibleControlsType } from './src/Flexible/FlexibleControlsType';
 export { MouseActionType } from './src/Flexible/MouseActionType';
 
 export * from './src/types';

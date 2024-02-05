@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { Vector3 } from 'three';
@@ -39,11 +39,16 @@ export class DampedVector3 {
     this.value.copy(this.end);
   }
 
-  damp(dampningFactor: number): void {
-    this.value.lerp(this.end, dampningFactor);
+  damp(dampeningFactor: number): void {
+    this.value.lerp(this.end, dampeningFactor);
   }
 
-  dampAsVectorAndCenter(dampningFactor: number, center: DampedVector3): void {
+  /**
+   * Suppose this(DampedVector3) is the position that orbits around the center point (DampedVector3). This has to be damped as a vector
+   * instead of a point. It is used when the camera is orbiting around a center point.
+   * This function also damp the center, since it is dependend on the center damped position
+   * **/
+  dampAsVectorAndCenter(dampeningFactor: number, center: DampedVector3): void {
     // Vector = Value - Center
     const endVector = this._endVector.subVectors(this.end, center.end);
     const valueVector = this._valueVector.subVectors(this.value, center.value);
@@ -55,17 +60,17 @@ export class DampedVector3 {
     valueVector.normalize();
 
     // Lerp vector
-    valueVector.lerp(endVector, dampningFactor);
+    valueVector.lerp(endVector, dampeningFactor);
 
-    // Lerp vector lenght
+    // Lerp vector length
     valueVector.normalize();
-    const length = lerp(valueLength, endLength, dampningFactor);
+    const length = lerp(valueLength, endLength, dampeningFactor);
     valueVector.multiplyScalar(length);
+
+    // Damp the center
+    center.damp(dampeningFactor);
 
     // Set the new value
     this.value.copy(valueVector.add(center.value));
-
-    // Damp the center
-    center.damp(dampningFactor);
   }
 }

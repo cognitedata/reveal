@@ -84,7 +84,7 @@ import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
-import { FlexibleCameraManager } from '@reveal/camera-manager/src/Flexible/FlexibleCameraManager';
+import { FlexibleCameraManager } from '@reveal/camera-manager';
 
 type Cognite3DViewerEvents =
   | 'click'

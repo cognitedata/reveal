@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { Vector3 } from 'three';

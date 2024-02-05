@@ -1,13 +1,13 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { Mesh, MeshBasicMaterial, SphereGeometry, Scene, Object3D, Vector3 } from 'three';
-import { ControlsType } from './ControlsType';
+import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleCameraManager } from './FlexibleCameraManager';
 
 export class FlexibleCameraMarkers {
-  private readonly _scene?: undefined | Scene;
+  private readonly _scene?: Scene;
   private _pivotMarker: Object3D | undefined;
   private _lookAtMarker: Object3D | undefined;
 
@@ -15,7 +15,7 @@ export class FlexibleCameraMarkers {
   // CONSTRUCTOR
   //================================================
 
-  constructor(scene?: Scene) {
+  constructor(scene: Scene) {
     this._scene = scene;
   }
 
@@ -27,7 +27,7 @@ export class FlexibleCameraMarkers {
     if (this._scene === undefined) {
       return;
     }
-    const show = manager.controls.controlsType !== ControlsType.FirstPerson;
+    const show = manager.controls.controlsType !== FlexibleControlsType.FirstPerson;
     if (show && manager.options.showTarget) {
       if (!this._pivotMarker) {
         this._pivotMarker = this.createPivotMarker();

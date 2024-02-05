@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { clickOrTouchEventOffset } from '@reveal/utilities';
@@ -17,7 +17,7 @@ import {
 } from 'three';
 import Keyboard from '../Keyboard';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
-import { ControlsType } from './ControlsType';
+import { FlexibleControlsType } from './FlexibleControlsType';
 import { ComboControlsEventType } from '../ComboControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { WheelZoomType } from './WheelZoomType';
@@ -62,7 +62,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
   private readonly _reusableVector3s = new ReusableVector3s(); // Temporary objects used for calculations to avoid allocations
 
-  //        ControlsType.OrbitInCenter
+  //        FlexibleControlsType.OrbitInCenter
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
   //    ,                       ,   In this state the camera rotating round the target
@@ -76,7 +76,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   //        ' - , _  _ ,  -
   //
   //
-  //       ControlsType.Orbit
+  //       FlexibleControlsType.Orbit
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
   //    ,                       ,   In this state the camera rotating round the target
@@ -89,7 +89,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   //      ,                  , '
   //        ' - , _  _ ,  -
   //
-  //      ControlsType.FirstPerson
+  //      FlexibleControlsType.FirstPerson
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
   //    ,                       ,
@@ -149,7 +149,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     return this._rawCameraRotation;
   }
 
-  public get controlsType(): ControlsType {
+  public get controlsType(): FlexibleControlsType {
     return this.options.controlsType;
   }
 
@@ -216,12 +216,12 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     this.triggerCameraChangeEvent();
   }
 
-  public setControlsType(controlsType: ControlsType): boolean {
+  public setControlsType(controlsType: FlexibleControlsType): boolean {
     if (controlsType == this.options.controlsType) {
       return false;
     }
     this.options.controlsType = controlsType;
-    if (controlsType === ControlsType.OrbitInCenter) {
+    if (controlsType === FlexibleControlsType.OrbitInCenter) {
       // This actually change target due to not change the camera position and lookAt
       // Target = DistanceToTarget * CameraVector + Position
       const distanceToTarget = this._cameraPosition.end.distanceTo(this._target.end);
@@ -295,15 +295,15 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       this._cameraVector.isChanged(epsilon) ||
       this._cameraPosition.isChanged(epsilon);
 
-    const dampningFactor = isKeyPressed ? 1 : this.getDampingFactor(deltaTimeS);
-    if (isChanged && dampningFactor < 1) {
+    const dampeningFactor = isKeyPressed ? 1 : this.getDampingFactor(deltaTimeS);
+    if (isChanged && dampeningFactor < 1) {
       if (isRotated) {
-        this._cameraPosition.dampAsVectorAndCenter(dampningFactor, this._target);
+        this._cameraPosition.dampAsVectorAndCenter(dampeningFactor, this._target);
       } else {
-        this._target.damp(dampningFactor);
-        this._cameraPosition.damp(dampningFactor);
+        this._target.damp(dampeningFactor);
+        this._cameraPosition.damp(dampeningFactor);
       }
-      this._cameraVector.damp(dampningFactor);
+      this._cameraVector.damp(dampeningFactor);
     } else {
       this._cameraVector.synchronize();
       this._target.synchronize();
@@ -536,7 +536,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     }
     let deltaAzimuthAngle = this._options.mouseRotationSpeedAzimuth * delta.x;
     const deltaPolarAngle = this._options.mouseRotationSpeedPolar * delta.y;
-    if (this.controlsType == ControlsType.FirstPerson) {
+    if (this.controlsType == FlexibleControlsType.FirstPerson) {
       deltaAzimuthAngle *= this.getAzimuthCompensationFactor();
     }
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
@@ -555,7 +555,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       return;
     }
 
-    if (this.controlsType === ControlsType.OrbitInCenter) {
+    if (this.controlsType === FlexibleControlsType.OrbitInCenter) {
       this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
 
       // Adust the camera position by
@@ -564,7 +564,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       const cameraVector = this._cameraVector.getEndVector();
       cameraVector.multiplyScalar(-distanceToTarget);
       this._cameraPosition.end.copy(cameraVector.add(this._target.end));
-    } else if (this.controlsType === ControlsType.Orbit) {
+    } else if (this.controlsType === FlexibleControlsType.Orbit) {
       // Offset = Target - CameraPosition
       const oldOffset = this.newVector3().subVectors(this._target.end, this._cameraPosition.end);
       const oldCameraVectorEnd = this._cameraVector.end.clone();
@@ -707,7 +707,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
   private translate(delta: Vector3) {
     if (delta.manhattanLength() === 0) return;
-    if (this.controlsType === ControlsType.OrbitInCenter) {
+    if (this.controlsType === FlexibleControlsType.OrbitInCenter) {
       this._target.end.add(delta);
     }
     this._cameraPosition.end.add(delta);
@@ -808,7 +808,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (deltaAzimuthAngle === 0 && deltaPolarAngle === 0) {
       return false;
     }
-    this.setControlsType(ControlsType.FirstPerson);
+    this.setControlsType(FlexibleControlsType.FirstPerson);
 
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
     return true;
@@ -822,8 +822,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (deltaX === 0 && deltaY === 0 && deltaZ == 0) {
       return false;
     }
-    if (this.controlsType === ControlsType.Orbit) {
-      this.setControlsType(ControlsType.FirstPerson);
+    if (this.controlsType === FlexibleControlsType.Orbit) {
+      this.setControlsType(FlexibleControlsType.FirstPerson);
     }
     const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardFastMoveFactor : 1;
     const speedXY = timeScale * speedFactor * this._options.keyboardPanSpeed;

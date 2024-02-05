@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { Box3, PerspectiveCamera, Quaternion, Raycaster, Vector2, Vector3, Scene, Ray } from 'three';
@@ -28,7 +28,7 @@ import {
 } from './../types';
 import { CameraManagerHelper } from './../CameraManagerHelper';
 import { CameraManager } from './../CameraManager';
-import { ControlsType } from './ControlsType';
+import { FlexibleControlsType } from './FlexibleControlsType';
 import { MouseActionType } from './MouseActionType';
 import { DebouncedCameraStopEventTrigger } from '../utils/DebouncedCameraStopEventTrigger';
 import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
@@ -331,11 +331,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       return;
     }
     if (event.code == 'Digit1') {
-      return this.controls.setControlsType(ControlsType.FirstPerson);
+      return this.controls.setControlsType(FlexibleControlsType.FirstPerson);
     } else if (event.code == 'Digit2') {
-      return this.controls.setControlsType(ControlsType.Orbit);
+      return this.controls.setControlsType(FlexibleControlsType.Orbit);
     } else if (event.code == 'Digit3') {
-      return this.controls.setControlsType(ControlsType.OrbitInCenter);
+      return this.controls.setControlsType(FlexibleControlsType.OrbitInCenter);
     }
   };
 
@@ -395,21 +395,21 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       return;
     }
     if (mouseActionType === MouseActionType.SetTarget) {
-      if (this.controls.controlsType !== ControlsType.Orbit) {
-        this.controls.setControlsType(ControlsType.Orbit);
+      if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
+        this.controls.setControlsType(FlexibleControlsType.Orbit);
       }
       const newTarget = await this.getPickedPointPixelCoordinates(event.offsetX, event.offsetY);
       this.controls.setTarget(newTarget);
       this.controls.triggerCameraChangeEvent();
     } else if (mouseActionType === MouseActionType.SetTargetAndCameraDirection) {
-      if (this.controls.controlsType !== ControlsType.Orbit) {
-        this.controls.setControlsType(ControlsType.Orbit);
+      if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
+        this.controls.setControlsType(FlexibleControlsType.Orbit);
       }
       const newTarget = await this.getPickedPointPixelCoordinates(event.offsetX, event.offsetY);
       moveCameraTargetTo(this, newTarget, this.options.animationDuration);
     } else if (mouseActionType === MouseActionType.SetTargetAndCameraPosition) {
-      if (this.controls.controlsType !== ControlsType.Orbit) {
-        this.controls.setControlsType(ControlsType.Orbit);
+      if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
+        this.controls.setControlsType(FlexibleControlsType.Orbit);
       }
       this.setTargetAndCameraPosition(event);
     }

@@ -52,10 +52,10 @@ export class DampedSpherical {
     this.end.copy(this.value);
   }
 
-  damp(dampningFactor: number): void {
+  damp(dampeningFactor: number): void {
     const valueVector = this.getValueVector();
     const endVector = this.getEndVector();
-    valueVector.lerp(endVector, dampningFactor);
+    valueVector.lerp(endVector, dampeningFactor);
     this.setValueVector(valueVector);
   }
 }

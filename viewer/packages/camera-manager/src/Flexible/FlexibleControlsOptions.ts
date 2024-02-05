@@ -1,9 +1,9 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { MathUtils } from 'three/src/math/MathUtils';
-import { ControlsType } from './ControlsType';
+import { FlexibleControlsType } from './FlexibleControlsType';
 import { MouseActionType } from './MouseActionType';
 import { WheelZoomType } from './WheelZoomType';
 
@@ -20,7 +20,7 @@ export class FlexibleControlsOptions {
   //================================================
 
   // Main behaivor
-  public controlsType = ControlsType.Orbit;
+  public controlsType = FlexibleControlsType.Orbit;
 
   // Visualization
   public showTarget = true;
@@ -93,7 +93,7 @@ export class FlexibleControlsOptions {
 
   public get realMouseWheelAction(): WheelZoomType {
     if (this.mouseWheelAction === WheelZoomType.Auto) {
-      return this.controlsType === ControlsType.FirstPerson ? WheelZoomType.ToCursor : WheelZoomType.PastCursor;
+      return this.controlsType === FlexibleControlsType.FirstPerson ? WheelZoomType.ToCursor : WheelZoomType.PastCursor;
     }
     return this.mouseWheelAction;
   }
