@@ -566,7 +566,7 @@ __metadata:
     "@types/jsdom": "npm:21.1.6"
     "@types/lodash": "npm:4.14.202"
     "@types/mixpanel-browser": "npm:2.48.1"
-    "@types/node": "npm:18.19.10"
+    "@types/node": "npm:18.19.13"
     "@types/random-seed": "npm:0.3.5"
     "@types/skmeans": "npm:0.11.7"
     "@types/stats": "npm:0.16.30"
@@ -605,11 +605,11 @@ __metadata:
     loglevel: "npm:1.8.1"
     mixpanel-browser: "npm:2.48.1"
     moq.ts: "npm:10.0.8"
-    nock: "npm:13.5.0"
+    nock: "npm:13.5.1"
     path-browserify: "npm:1.0.1"
     prettier: "npm:3.2.4"
     process: "npm:0.11.10"
-    puppeteer: "npm:21.7.0"
+    puppeteer: "npm:21.10.0"
     random-seed: "npm:0.3.0"
     raw-loader: "npm:4.0.2"
     remove-files-webpack-plugin: "npm:1.5.0"
@@ -1994,12 +1994,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.19.10":
-  version: 18.19.10
-  resolution: "@types/node@npm:18.19.10"
+"@types/node@npm:18.19.13":
+  version: 18.19.13
+  resolution: "@types/node@npm:18.19.13"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 95795b1aee78f2ca364caa14aeec6d793581be2d228e0293180ef1fe700fc3af12aa28afe94ee042d794c60ba51dbf7ac94fbfa074dba35512812f5f5ed506a7
+  checksum: 7d83ee3b8e1548c9c6fd83e3e63854832eb4f07ea3f4c011a2e2a91c80e4a6a35c8b5dc095fd26e349abe0b63d0b2283f7ed079b4a6eff9468173a3f1e6c01c0
   languageName: node
   linkType: hard
 
@@ -3448,15 +3448,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromium-bidi@npm:0.5.2":
-  version: 0.5.2
-  resolution: "chromium-bidi@npm:0.5.2"
+"chromium-bidi@npm:0.5.6":
+  version: 0.5.6
+  resolution: "chromium-bidi@npm:0.5.6"
   dependencies:
     mitt: "npm:3.0.1"
-    urlpattern-polyfill: "npm:9.0.0"
+    urlpattern-polyfill: "npm:10.0.0"
   peerDependencies:
     devtools-protocol: "*"
-  checksum: ce16c1248eba1d6f849629c55342f3b4ea0fa5054ed818ef4237105c2f61ab00e1f51bfc5b9511a5ff14f37f45063f9ef3b61fd03d258d585dc5f08e3a9dc075
+  checksum: bd1986a9f0e1e11519efe5b2d1f17b42240558b9a6f18895bca6b411e71ba6cee58c37ed4d6bf2d2c776ddd2bdb55d647f6d1cb095bd20e82fab85ec631a982e
   languageName: node
   linkType: hard
 
@@ -3769,7 +3769,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cosmiconfig@npm:8.3.6, cosmiconfig@npm:^8.3.6":
+"cosmiconfig@npm:9.0.0":
+  version: 9.0.0
+  resolution: "cosmiconfig@npm:9.0.0"
+  dependencies:
+    env-paths: "npm:^2.2.1"
+    import-fresh: "npm:^3.3.0"
+    js-yaml: "npm:^4.1.0"
+    parse-json: "npm:^5.2.0"
+  peerDependencies:
+    typescript: ">=4.9.5"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 8bdf1dfbb6fdb3755195b6886dc0649a3c742ec75afa4cb8da7b070936aed22a4f4e5b7359faafe03180358f311dbc300d248fd6586c458203d376a40cc77826
+  languageName: node
+  linkType: hard
+
+"cosmiconfig@npm:^8.3.6":
   version: 8.3.6
   resolution: "cosmiconfig@npm:8.3.6"
   dependencies:
@@ -4146,10 +4163,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"devtools-protocol@npm:0.0.1203626":
-  version: 0.0.1203626
-  resolution: "devtools-protocol@npm:0.0.1203626"
-  checksum: 6708544c67c5ad1bdeb2b3cb648b864bfe56dc93398f780056535fb936a8e7b1f6d861d6dd2cbe8598e5d922f57ab59d4a0076f96521cf8aa4fc91e422ff9050
+"devtools-protocol@npm:0.0.1232444":
+  version: 0.0.1232444
+  resolution: "devtools-protocol@npm:0.0.1232444"
+  checksum: c2b56a501ed8cda9220e1dc8b12364732bdc2bbad7d16a00fbbcaae5bf8a07414b0dfec1224fa1c3d9ce5851eb952a21c086938e73891630a7a6c440e4a1f0b0
   languageName: node
   linkType: hard
 
@@ -4379,7 +4396,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"env-paths@npm:^2.2.0":
+"env-paths@npm:^2.2.0, env-paths@npm:^2.2.1":
   version: 2.2.1
   resolution: "env-paths@npm:2.2.1"
   checksum: 65b5df55a8bab92229ab2b40dad3b387fad24613263d103a97f91c9fe43ceb21965cd3392b1ccb5d77088021e525c4e0481adb309625d0cb94ade1d1fb8dc17e
@@ -8151,14 +8168,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:13.5.0":
-  version: 13.5.0
-  resolution: "nock@npm:13.5.0"
+"nock@npm:13.5.1":
+  version: 13.5.1
+  resolution: "nock@npm:13.5.1"
   dependencies:
     debug: "npm:^4.1.0"
     json-stringify-safe: "npm:^5.0.1"
     propagate: "npm:^2.0.0"
-  checksum: 347e6804d3eadb2ec81e3a0808b4cf8d826e5a6b52aa91b31db9c78c9afb58f0af0d1c941dff13d78ff99968b025dea9593f341cc515463270cb69d8e293c9cf
+  checksum: 92d57f8bb452af8c07e0a0813dd39c8b315718b60a075aceca5db241904b0d40867d2c6cd548ca6db880d014ed069920499a55497973a35df70e45e5c98f442a
   languageName: node
   linkType: hard
 
@@ -9034,30 +9051,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:21.7.0":
-  version: 21.7.0
-  resolution: "puppeteer-core@npm:21.7.0"
+"puppeteer-core@npm:21.10.0":
+  version: 21.10.0
+  resolution: "puppeteer-core@npm:21.10.0"
   dependencies:
     "@puppeteer/browsers": "npm:1.9.1"
-    chromium-bidi: "npm:0.5.2"
+    chromium-bidi: "npm:0.5.6"
     cross-fetch: "npm:4.0.0"
     debug: "npm:4.3.4"
-    devtools-protocol: "npm:0.0.1203626"
+    devtools-protocol: "npm:0.0.1232444"
     ws: "npm:8.16.0"
-  checksum: 154fe0253163930c6df351bd190e78405e61a7f1e9f3250879721bdb276262b7d39de351a0974a7b10674b069fa1fe6a6b83c4f32dc19d4a66283c0bdb6b74c4
+  checksum: a6507b74c763661215e2f6f6a695fd1a6d5abe84c8e021523e157fefa5d5203d0b9fdd918adb092f720a35386f10b2fbc067930a5f7e49caf3e151409c0d5f03
   languageName: node
   linkType: hard
 
-"puppeteer@npm:21.7.0":
-  version: 21.7.0
-  resolution: "puppeteer@npm:21.7.0"
+"puppeteer@npm:21.10.0":
+  version: 21.10.0
+  resolution: "puppeteer@npm:21.10.0"
   dependencies:
     "@puppeteer/browsers": "npm:1.9.1"
-    cosmiconfig: "npm:8.3.6"
-    puppeteer-core: "npm:21.7.0"
+    cosmiconfig: "npm:9.0.0"
+    puppeteer-core: "npm:21.10.0"
   bin:
     puppeteer: lib/esm/puppeteer/node/cli.js
-  checksum: e93f36e9eca2cab38ec91ac5d7f37226cac1d94c9c51d0ba49070cf5d76ede2df844073e458cb9ceb319542bff67b8131d05ba99bfc0215894ca0020919ffcfc
+  checksum: 921d07ad88bbf49551d87b5d68f84fbbe5bfccc52193e29c6b2e992ca0cba7d0a5eb51548c2683f3576f03ae1612c9964a081f4680765afd9e66252ae9de7fce
   languageName: node
   linkType: hard
 
@@ -10839,10 +10856,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"urlpattern-polyfill@npm:9.0.0":
-  version: 9.0.0
-  resolution: "urlpattern-polyfill@npm:9.0.0"
-  checksum: 63d59e08d58189d340e3acb0fb69c11d8f06da5e38c091cdac66cac07e4ca81378ad19cd1a923d5593a899603a0e607fe3ef793ef368fefbc1b2b840b24839b8
+"urlpattern-polyfill@npm:10.0.0":
+  version: 10.0.0
+  resolution: "urlpattern-polyfill@npm:10.0.0"
+  checksum: 346819dbe718e929988298d02a988b8ddfa601d08daaa7e69b1148eab699c86c0f0f933d68d8c8cf913166fe64156ed28904e673200d18ef7e9ed6b58cea3fc7
   languageName: node
   linkType: hard
 
