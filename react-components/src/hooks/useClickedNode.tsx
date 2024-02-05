@@ -117,9 +117,9 @@ const useCombinedClickedNodeData = (
       assetMappings?.node === undefined
         ? undefined
         : {
-          cadNode: assetMappings.node,
-          assetIds: assetMappings.mappings.map((mapping) => mapping.assetId)
-        };
+            cadNode: assetMappings.node,
+            assetIds: assetMappings.mappings.map((mapping) => mapping.assetId)
+          };
 
     setClickedNodeData({
       fdmResult: fdmData,

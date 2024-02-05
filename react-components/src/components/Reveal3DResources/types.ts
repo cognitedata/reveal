@@ -31,14 +31,14 @@ export type AddReveal3DModelOptions = AddModelOptions & { transform?: Matrix4 } 
 export type TypedReveal3DModel = CadModelOptions | PointCloudModelOptions;
 
 export type CadModelOptions = { type: 'cad' } & AddModelOptions & { transform?: Matrix4 } & {
-  styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
-};
+    styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
+  };
 
 export type PointCloudModelOptions = { type: 'pointcloud' } & AddModelOptions & {
-  transform?: Matrix4;
-} & {
-  styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
-};
+    transform?: Matrix4;
+  } & {
+    styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
+  };
 
 export type NodeDataResult = {
   fdmNode: DmsUniqueIdentifier;
