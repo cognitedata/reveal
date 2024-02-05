@@ -216,7 +216,7 @@ export function Viewer() {
         viewer.loadCameraFromModel(model);
         if (model instanceof CogniteCadModel) {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, viewer, model);
-          // new NodeTransformUI(viewer, gui.addFolder(`Node transform #${modelUi.cadModels.length}`), model);
+          new NodeTransformUI(viewer, gui.addFolder(`Node transform #${modelUi.cadModels.length}`), model);
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         } else if (model instanceof CognitePointCloudModel) {
           const modelIndex = modelUi.pointCloudModels.length;
