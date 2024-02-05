@@ -654,16 +654,6 @@ export type ComboControlsOptions = {
 // @public (undocumented)
 export type CompletePointCloudAppearance = Required<PointCloudAppearance>;
 
-// @beta (undocumented)
-export enum ControlsType {
-    // (undocumented)
-    FirstPerson = "firstPerson",
-    // (undocumented)
-    Orbit = "orbit",
-    // (undocumented)
-    OrbitInCenter = "orbitInCenter"
-}
-
 // @public
 export enum Corner {
     // (undocumented)
@@ -788,7 +778,7 @@ export class FlexibleControlsOptions {
     // (undocumented)
     automaticSensitivity: boolean;
     // (undocumented)
-    controlsType: ControlsType;
+    controlsType: FlexibleControlsType;
     // (undocumented)
     dampingFactor: number;
     // (undocumented)
@@ -852,8 +842,6 @@ export class FlexibleControlsOptions {
     // (undocumented)
     mouseWheelAction: WheelZoomType;
     // (undocumented)
-    mouseWheelDynamicTarget: boolean;
-    // (undocumented)
     orthographicCameraDollyFactor: number;
     // (undocumented)
     pinchEpsilon: number;
@@ -875,6 +863,16 @@ export class FlexibleControlsOptions {
     wheelDollySpeed: number;
     // (undocumented)
     zoomFraction: number;
+}
+
+// @beta (undocumented)
+export enum FlexibleControlsType {
+    // (undocumented)
+    FirstPerson = "firstPerson",
+    // (undocumented)
+    Orbit = "orbit",
+    // (undocumented)
+    OrbitInCenter = "orbitInCenter"
 }
 
 // @public (undocumented)
@@ -1079,17 +1077,6 @@ export class IndexSet {
     toRangeArray(): NumericRange[];
     // (undocumented)
     unionWith(otherSet: IndexSet): IndexSet;
-}
-
-// @public (undocumented)
-export class InputHandler {
-    constructor(domElement: HTMLElement);
-    // (undocumented)
-    dispose(): void;
-    // (undocumented)
-    off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
-    // (undocumented)
-    on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
 }
 
 // @public
