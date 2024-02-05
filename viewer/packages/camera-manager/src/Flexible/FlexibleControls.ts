@@ -297,13 +297,13 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
     const dampeningFactor = isKeyPressed ? 1 : this.getDampingFactor(deltaTimeS);
     if (isChanged && dampeningFactor < 1) {
+      this._cameraVector.damp(dampeningFactor);
       if (isRotated) {
         this._cameraPosition.dampAsVectorAndCenter(dampeningFactor, this._target);
       } else {
         this._target.damp(dampeningFactor);
         this._cameraPosition.damp(dampeningFactor);
       }
-      this._cameraVector.damp(dampeningFactor);
     } else {
       this._cameraVector.synchronize();
       this._target.synchronize();

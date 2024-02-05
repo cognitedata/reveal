@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { Spherical, Vector3 } from 'three';
@@ -53,9 +53,27 @@ export class DampedSpherical {
   }
 
   damp(dampeningFactor: number): void {
-    const valueVector = this.getValueVector();
-    const endVector = this.getEndVector();
-    valueVector.lerp(endVector, dampeningFactor);
-    this.setValueVector(valueVector);
+    DampedSpherical.dampSphericalVectors(this.value, this.end, dampeningFactor);
   }
+
+  static dampSphericalVectors(value: Spherical, end: Spherical, dampeningFactor: number): void {
+    const deltaPhi = end.phi - value.phi;
+    const deltaTheta = getShortestDeltaTheta(end.theta, value.theta);
+    const deltaRadius = end.radius - value.radius;
+
+    value.phi += deltaPhi * dampeningFactor;
+    value.theta += deltaTheta * dampeningFactor;
+    value.radius += deltaRadius * dampeningFactor;
+    value.makeSafe();
+  }
+}
+
+function getShortestDeltaTheta(theta1: number, theta2: number) {
+  const twoPi = 2 * Math.PI;
+  const rawDeltaTheta = (theta1 % twoPi) - (theta2 % twoPi);
+
+  let deltaTheta = Math.min(Math.abs(rawDeltaTheta), twoPi - Math.abs(rawDeltaTheta));
+  const thetaSign = (deltaTheta === Math.abs(rawDeltaTheta) ? 1 : -1) * Math.sign(rawDeltaTheta);
+  deltaTheta *= thetaSign;
+  return deltaTheta;
 }

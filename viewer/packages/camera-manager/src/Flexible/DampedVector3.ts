@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Vector3 } from 'three';
-import { lerp } from 'three/src/math/MathUtils';
+import { Spherical, Vector3 } from 'three';
+import { DampedSpherical } from './DampedSpherical';
 
 export class DampedVector3 {
   public readonly value = new Vector3();
@@ -12,6 +12,8 @@ export class DampedVector3 {
   // Used as a temporary variable to avoid creating new objects
   private readonly _valueVector = new Vector3();
   private readonly _endVector = new Vector3();
+  private readonly _valueSpherical = new Spherical();
+  private readonly _endSpherical = new Spherical();
 
   isChanged(epsilon: number): boolean {
     if (Math.abs(this.value.x - this.end.x) >= epsilon) return true;
@@ -50,27 +52,18 @@ export class DampedVector3 {
    * **/
   dampAsVectorAndCenter(dampeningFactor: number, center: DampedVector3): void {
     // Vector = Value - Center
-    const endVector = this._endVector.subVectors(this.end, center.end);
     const valueVector = this._valueVector.subVectors(this.value, center.value);
+    const endVector = this._endVector.subVectors(this.end, center.end);
+    const value = this._endSpherical.setFromVector3(valueVector);
+    const end = this._valueSpherical.setFromVector3(endVector);
 
-    const endLength = endVector.length();
-    const valueLength = valueVector.length();
+    DampedSpherical.dampSphericalVectors(value, end, dampeningFactor);
 
-    endVector.normalize();
-    valueVector.normalize();
-
-    // Lerp vector
-    valueVector.lerp(endVector, dampeningFactor);
-
-    // Lerp vector length
-    valueVector.normalize();
-    const length = lerp(valueLength, endLength, dampeningFactor);
-    valueVector.multiplyScalar(length);
-
-    // Damp the center
+    // Damp the center, center.value is then updated
     center.damp(dampeningFactor);
 
-    // Set the new value
+    // Set the new value on this by Value = Vector + center.value
+    valueVector.setFromSpherical(value);
     this.value.copy(valueVector.add(center.value));
   }
 }
