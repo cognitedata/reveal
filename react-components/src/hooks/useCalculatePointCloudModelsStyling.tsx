@@ -10,13 +10,25 @@ import {
 import { useMemo } from 'react';
 import { type AnnotationIdStylingGroup } from '../components/PointCloudContainer/useApplyPointCloudStyling';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { type AnnotationFilterProps, type CogniteClient } from '@cognite/sdk';
+import {
+  type AnnotationsBoundingVolume,
+  type AnnotationFilterProps,
+  type CogniteClient,
+  type AnnotationModel
+} from '@cognite/sdk';
 import { useSDK } from '../components/RevealContainer/SDKProvider';
 import { isSamePointCloudModel } from '../utilities/isSameModel';
+import { usePointCloudAnnotationMappingsForModels } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
+import { chunk, uniq } from 'lodash';
 
 export type StyledPointCloudModel = {
   model: PointCloudModelOptions;
   styleGroups: AnnotationIdStylingGroup[];
+};
+
+export type AnnotationModelDataResult = {
+  model: PointCloudModelOptions;
+  annotationModel: AnnotationModel[];
 };
 
 export const useCalculatePointCloudStyling = (
@@ -41,49 +53,82 @@ function useCalculateInstanceStyling(
   models: PointCloudModelOptions[],
   instanceGroups: PointCloudAnnotationStylingGroup[]
 ): StyledPointCloudModel[] {
-  return useMemo(() => {
-    return models.map((model) => {
-      return calculateObjectCollectionMappingModelStyling(instanceGroups, model);
-    });
-  }, [models, instanceGroups]);
+  const { data: pointCloudAnnotationMappings, isLoading } =
+    usePointCloudAnnotationMappingsForModels(models);
+
+  const { data: styledModels } = useQuery(
+    ['styledModels', pointCloudAnnotationMappings, instanceGroups, models, !isLoading],
+    () =>
+      pointCloudAnnotationMappings?.map((annotationMappings) => {
+        return calculateAnnotationMappingModelStyling(instanceGroups, annotationMappings);
+      }) ?? [],
+    {
+      enabled: !isLoading
+    }
+  );
+
+  return styledModels ?? [];
 }
 
-function calculateObjectCollectionMappingModelStyling(
+function calculateAnnotationMappingModelStyling(
   instanceGroups: PointCloudAnnotationStylingGroup[],
-  model: PointCloudModelOptions
+  annotationMapping: AnnotationModelDataResult
 ): StyledPointCloudModel {
-  const styleGroups = instanceGroups
-    .filter((group) => group.annotationIds !== undefined && group.annotationIds.length > 0)
-    .map((group) => {
-      return {
-        annotationIds: group.annotationIds,
-        style: group.style.pointcloud
-      };
-    });
+  const instanceGroup = instanceGroups.filter((group) => group.assetId !== undefined);
 
-  return { model, styleGroups };
+  const styleGroups = instanceGroup
+    .map((group) => {
+      return getMappedStyleGroupFromAssetIds(annotationMapping, group);
+    })
+    .filter((group): group is AnnotationIdStylingGroup => group !== undefined);
+
+  return { model: annotationMapping.model, styleGroups };
+}
+
+function getMappedStyleGroupFromAssetIds(
+  annotationMapping: AnnotationModelDataResult,
+  instanceGroup: PointCloudAnnotationStylingGroup
+): AnnotationIdStylingGroup | undefined {
+  const uniqueAnnotationIds = new Set<number>();
+  const matchedAnnotationModels = annotationMapping.annotationModel.filter((annotation) => {
+    const assetRef = (annotation.data as AnnotationsBoundingVolume).assetRef;
+    const isAssetIdInMapping =
+      instanceGroup.assetId === assetRef?.id ||
+      instanceGroup.assetId.toString() === assetRef?.externalId;
+    if (isAssetIdInMapping && !uniqueAnnotationIds.has(annotation.id)) {
+      uniqueAnnotationIds.add(annotation.id);
+      return true;
+    }
+    return false;
+  });
+
+  return matchedAnnotationModels.length > 0
+    ? {
+      annotationIds: matchedAnnotationModels.map((annotationModel) => annotationModel.id),
+      style: instanceGroup.style.pointcloud
+    }
+    : undefined;
 }
 
 function useCalculateMappedPointCloudStyling(
   models: PointCloudModelOptions[],
   defaultMappedNodeAppearance?: NodeAppearance
 ): StyledPointCloudModel[] {
-  const modelsWithMappedCollection = useMemo(() => getMappedPointCloudModelsOptions(), [models]);
+  const modelsWithStyledMapped = useMemo(() => getMappedPointCloudModelsOptions(), [models]);
 
-  const { data: pointCloudAnnotationData } = usePointCloudAnnotationIdsForRevisions(
-    modelsWithMappedCollection
-  );
+  const { data: pointCloudStyledModelAnnotationIds } =
+    usePointCloudAnnotationIdsForRevisions(modelsWithStyledMapped);
 
-  const modelsMappedObjectCollectionStyleGroups = useMemo(() => {
+  const modelsMappedAnnotationIdStyleGroups = useMemo(() => {
     if (
       models.length === 0 ||
-      pointCloudAnnotationData === undefined ||
-      pointCloudAnnotationData.length === 0
+      pointCloudStyledModelAnnotationIds === undefined ||
+      pointCloudStyledModelAnnotationIds.length === 0
     ) {
       return [];
     }
 
-    return pointCloudAnnotationData.map((pointCloudAnnotationCollection) => {
+    return pointCloudStyledModelAnnotationIds.map((pointCloudAnnotationCollection) => {
       const modelStyle =
         pointCloudAnnotationCollection.model.styling?.mapped ?? defaultMappedNodeAppearance;
 
@@ -93,9 +138,9 @@ function useCalculateMappedPointCloudStyling(
           : [];
       return { model: pointCloudAnnotationCollection.model, styleGroups };
     });
-  }, [modelsWithMappedCollection, pointCloudAnnotationData, defaultMappedNodeAppearance]);
+  }, [modelsWithStyledMapped, pointCloudStyledModelAnnotationIds, defaultMappedNodeAppearance]);
 
-  return modelsMappedObjectCollectionStyleGroups;
+  return modelsMappedAnnotationIdStyleGroups;
 
   function getMappedPointCloudModelsOptions(): PointCloudModelOptions[] {
     if (defaultMappedNodeAppearance !== undefined) {
@@ -144,7 +189,63 @@ async function getPointCloudAnnotationIds(modelId: number, sdk: CogniteClient): 
       limit: 1000
     })
     .autoPagingToArray({ limit: Infinity });
-  return annotations.flatMap((annotation) => annotation.id);
+  const mappedAnnotationIds = await getPointCloudAnnotationId(annotations, sdk);
+
+  return mappedAnnotationIds;
+}
+
+async function getPointCloudAnnotationId(
+  pointCloudAnnotations: AnnotationModel[],
+  sdk: CogniteClient
+): Promise<number[]> {
+  const annotationToAssetIdArray = pointCloudAnnotations
+    .map((annotation) => {
+      const assetIdOrExternalId: string | number =
+        (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
+        (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId ??
+        '';
+      return assetIdOrExternalId !== ''
+        ? { assetIdOrExternalId, annotationId: annotation.id }
+        : null;
+    })
+    .filter(
+      (item): item is { assetIdOrExternalId: string | number; annotationId: number } =>
+        item !== null
+    );
+
+  const uniqueAssetIdsOrExternalIds = uniq(
+    annotationToAssetIdArray.map((item) => item.assetIdOrExternalId)
+  );
+
+  const assetsResult = await Promise.all(
+    chunk(uniqueAssetIdsOrExternalIds, 1000).map(async (uniqueAssetsChunk) => {
+      const retrievedAssets = await sdk.assets.retrieve(
+        uniqueAssetsChunk.map((assetIdOrExternalId) => {
+          if (typeof assetIdOrExternalId === 'number') {
+            return { id: assetIdOrExternalId };
+          } else {
+            return { externalId: assetIdOrExternalId };
+          }
+        }),
+        { ignoreUnknownIds: true }
+      );
+      return retrievedAssets;
+    })
+  );
+
+  const assets = assetsResult.flat();
+
+  const annotationIds = assets
+    .map((asset) => {
+      const assetIdOrExternalId = asset.id ?? asset.externalId;
+      const annotationToAssetIdItem = annotationToAssetIdArray.find(
+        (item) => item.assetIdOrExternalId === assetIdOrExternalId
+      );
+      return annotationToAssetIdItem?.annotationId;
+    })
+    .filter((annotationId): annotationId is number => annotationId !== undefined);
+
+  return annotationIds;
 }
 
 function getMappedStyleGroupFromAnnotationIds(

@@ -54,8 +54,8 @@ export {
   useSearchAssetsMappedPointCloudAnnotations
 } from './hooks/useSearchAssetsMappedPointCloudAnnotations';
 export {
-  usePointCloudAnnotationsForModels,
-  useAnnotationsFromModels
+  usePointCloudAnnotationMappingsForModels
+  // usePointCloudAnnotationAssetsFromModels
 } from './components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
 
 // Higher order components
@@ -69,6 +69,7 @@ export {
   type PointCloudModelStyling,
   type AnnotationIdStylingGroup
 } from './components/PointCloudContainer/useApplyPointCloudStyling';
+export { type AnnotationModelDataResult } from './hooks/useCalculatePointCloudModelsStyling';
 export { type CogniteCadModelProps } from './components/CadModelContainer/CadModelContainer';
 export {
   type CadModelStyling,

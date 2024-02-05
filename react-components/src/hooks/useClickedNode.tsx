@@ -10,11 +10,11 @@ import {
 import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeDataPromises } from '../components/NodeCacheProvider/NodeCacheProvider';
-import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
+import { type Asset, type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type FdmNodeDataPromises } from '../components/NodeCacheProvider/types';
 import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 import { type NodeAssetMappingResult } from '../components/NodeCacheProvider/AssetMappingCache';
-import { useAnnotationsFromModel } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
+import { usePointCloudAnnotationAssetForAssetId } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -27,10 +27,15 @@ export type FdmNodeDataResult = {
   views?: Source[];
 };
 
+export type AnnotationAssetMappingDataResult = {
+  annotationId: number;
+  asset: Asset;
+};
+
 export type ClickedNodeData = {
   fdmResult?: FdmNodeDataResult;
   assetMappingResult?: AssetMappingDataResult;
-  pointCloudAnnotationMappingResult?: number[];
+  pointCloudAnnotationMappingResult?: AnnotationAssetMappingDataResult[];
   intersection: CadIntersection | PointCloudIntersection;
 };
 
@@ -79,10 +84,10 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     cadIntersection?.treeIndex
   ).data;
 
-  const pointCloudAssetMappingResult = useAnnotationsFromModel(
+  const pointCloudAssetMappingResult = usePointCloudAnnotationAssetForAssetId(
     pointCloudIntersection?.model.modelId,
     pointCloudIntersection?.model.revisionId,
-    pointCloudIntersection?.annotationId
+    pointCloudIntersection?.assetRef?.externalId ?? pointCloudIntersection?.assetRef?.id
   ).data;
 
   return useCombinedClickedNodeData(
@@ -96,7 +101,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
 const useCombinedClickedNodeData = (
   fdmPromises: FdmNodeDataPromises | undefined,
   assetMappings: NodeAssetMappingResult | undefined,
-  pointCloudAssetMappings: number[] | undefined,
+  pointCloudAssetMappings: AnnotationAssetMappingDataResult[] | undefined,
   intersection: CadIntersection | PointCloudIntersection | undefined
 ): ClickedNodeData | undefined => {
   const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>();
@@ -112,9 +117,9 @@ const useCombinedClickedNodeData = (
       assetMappings?.node === undefined
         ? undefined
         : {
-            cadNode: assetMappings.node,
-            assetIds: assetMappings.mappings.map((mapping) => mapping.assetId)
-          };
+          cadNode: assetMappings.node,
+          assetIds: assetMappings.mappings.map((mapping) => mapping.assetId)
+        };
 
     setClickedNodeData({
       fdmResult: fdmData,

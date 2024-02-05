@@ -114,7 +114,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     } else if (nodeData?.pointCloudAnnotationMappingResult !== undefined) {
       setStylingGroups([
         {
-          annotationIds: nodeData.pointCloudAnnotationMappingResult,
+          assetId: nodeData.pointCloudAnnotationMappingResult[0].asset.id,
           style: { pointcloud: DefaultNodeAppearance.Highlighted }
         }
       ]);

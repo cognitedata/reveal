@@ -39,5 +39,6 @@ export type ModelRevisionId = { modelId: number; revisionId: number };
 export type ModelRevisionKey = `${ModelId}/${RevisionId}`;
 export type FdmKey = `${string}/${string}`;
 export type ModelNodeIdKey = `${ModelId}/${RevisionId}/${NodeId}`;
+export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
 
 export type ModelRevisionToEdgeMap = Map<ModelRevisionKey, FdmEdgeWithNode[]>;
