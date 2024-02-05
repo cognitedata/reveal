@@ -47,8 +47,10 @@ export class AssetMappingCache {
       return { mappings: [] };
     }
 
-    const maxRelevantMappingTreeIndex = maxBy(relevantMappings, (mapping) => mapping.treeIndex)
-      ?.treeIndex;
+    const maxRelevantMappingTreeIndex = maxBy(
+      relevantMappings,
+      (mapping) => mapping.treeIndex
+    )?.treeIndex;
 
     assert(maxRelevantMappingTreeIndex !== undefined);
 
