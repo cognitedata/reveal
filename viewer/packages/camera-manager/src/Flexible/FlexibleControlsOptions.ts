@@ -28,14 +28,13 @@ export class FlexibleControlsOptions {
 
   // Mouse click, double click and wheel behaivor
   public mouseWheelAction = WheelZoomType.Auto;
-  public mouseWheelDynamicTarget = true;
   public mouseClickType = MouseActionType.None;
   public mouseDoubleClickType = MouseActionType.SetTargetAndCameraPosition;
   public enableChangeControlsTypeOn123Key = true;
   public enableKeyboardNavigation = true;
 
   // Used in FlexibleCameraManager
-  public animationDuration = 300; // For animatiins
+  public animationDuration = 300;
   public minimumTimeBetweenRaycasts = 200; // For mouse wheel event
   public maximumTimeBetweenRaycasts = 1000; // For mouse wheel event
   public mouseDistanceThresholdBetweenRaycasts = 5; // For mouse wheel event

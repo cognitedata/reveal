@@ -161,6 +161,10 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     return this._target.value.clone();
   }
 
+  public setTarget(value: Vector3): void {
+    this._target.copy(value);
+  }
+
   public getLookAt(): Vector3 {
     if (this._tempTarget) {
       return this._tempTarget;
@@ -279,7 +283,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     if (!forceUpdate && !this.isEnabled) {
       return false;
     }
-    if (this._accumulatedMouseRotation.lengthSq() > 2) {
+    const isRotated = this._accumulatedMouseRotation.lengthSq() > 1;
+    if (isRotated) {
       this.rotate(this._accumulatedMouseRotation);
       this._accumulatedMouseRotation.set(0, 0);
     }
@@ -292,7 +297,12 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
 
     const dampningFactor = isKeyPressed ? 1 : this.getDampingFactor(deltaTimeS);
     if (isChanged && dampningFactor < 1) {
-      this._cameraPosition.dampAsVectorAndCenter(dampningFactor, this._target);
+      if (isRotated) {
+        this._cameraPosition.dampAsVectorAndCenter(dampningFactor, this._target);
+      } else {
+        this._target.damp(dampningFactor);
+        this._cameraPosition.damp(dampningFactor);
+      }
       this._cameraVector.damp(dampningFactor);
     } else {
       this._cameraVector.synchronize();
@@ -577,7 +587,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       const newCameraPosition = this.newVector3().subVectors(this._target.end, newOffset);
       this._cameraPosition.end.copy(newCameraPosition);
     } else {
-      this.rawRotateByAngles(deltaAzimuth, deltaPolar);
+      this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
     }
   }
 

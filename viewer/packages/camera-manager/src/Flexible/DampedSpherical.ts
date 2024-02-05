@@ -53,10 +53,9 @@ export class DampedSpherical {
   }
 
   damp(dampningFactor: number): void {
-    const vector = this.getValueVector();
-    const vectorEnd = this.getEndVector();
-    const delta = vectorEnd.sub(vector);
-    vector.addScaledVector(delta, dampningFactor);
-    this.setValueVector(vector);
+    const valueVector = this.getValueVector();
+    const endVector = this.getEndVector();
+    valueVector.lerp(endVector, dampningFactor);
+    this.setValueVector(valueVector);
   }
 }

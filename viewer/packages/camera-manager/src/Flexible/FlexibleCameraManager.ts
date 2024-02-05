@@ -399,7 +399,8 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
         this.controls.setControlsType(ControlsType.Orbit);
       }
       const newTarget = await this.getPickedPointPixelCoordinates(event.offsetX, event.offsetY);
-      this.setPositionAndTarget(this.camera.position, newTarget);
+      this.controls.setTarget(newTarget);
+      this.controls.triggerCameraChangeEvent();
     } else if (mouseActionType === MouseActionType.SetTargetAndCameraDirection) {
       if (this.controls.controlsType !== ControlsType.Orbit) {
         this.controls.setControlsType(ControlsType.Orbit);
