@@ -526,8 +526,18 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     }
     let deltaAzimuthAngle = this._options.mouseRotationSpeedAzimuth * delta.x;
     const deltaPolarAngle = this._options.mouseRotationSpeedPolar * delta.y;
-    deltaAzimuthAngle *= this.getAzimuthCompensationFactor();
+    if (this.controlsType == ControlsType.FirstPerson) {
+      deltaAzimuthAngle *= this.getAzimuthCompensationFactor();
+    }
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
+  }
+
+  private getAzimuthCompensationFactor(): number {
+    // Calculate the azimuth compensation factor. This adjusts the azimuth rotation
+    // to make it feel more natural when looking straight up or straight down.
+    const deviationFromEquator = Math.abs(this._cameraVector.end.phi - Math.PI / 2);
+    const azimuthCompensationFactor = Math.sin(Math.PI / 2 - deviationFromEquator);
+    return azimuthCompensationFactor;
   }
 
   private rotateByAngles(deltaAzimuth: number, deltaPolar: number) {
@@ -647,7 +657,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       if (this._keyboard.isCtrlPressed()) {
         this.pan(0, 0, deltaY * this.options.mouseDollySpeed);
       } else {
-        this.pan(deltaX * this.options.mousePanSpeed, deltaY * this.options.mousePanSpeed);
+        this.pan(deltaX * this.options.mousePanSpeed, deltaY * this.options.mousePanSpeed, 0);
       }
       previousOffset = newOffset;
     };
@@ -661,16 +671,18 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     window.addEventListener('pointerup', onMouseUp, { passive: false });
   }
 
-  private pan(deltaX: number, deltaY: number, deltaZ: number = 0) {
+  private pan(deltaX: number, deltaY: number, deltaZ: number, keys = false) {
     // Local function:
     const panByDimension = (distance: number, dimension: number, vertical: boolean) => {
       const delta = this.newVector3();
       delta.setFromMatrixColumn(this._camera.matrix, dimension);
-      if (vertical) {
-        delta.x = 0;
-        delta.z = 0;
-      } else {
-        delta.y = 0;
+      if (keys) {
+        if (vertical) {
+          delta.x = 0;
+          delta.z = 0;
+        } else {
+          delta.y = 0;
+        }
       }
       delta.normalize();
       delta.multiplyScalar(-distance);
@@ -773,7 +785,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private handleRotationFromKeyboard(timeScale: number): boolean {
-    let deltaAzimuthAngle =
+    const deltaAzimuthAngle =
       this._options.keyboardRotationSpeedAzimuth *
       this._keyboard.getKeyboardMovementValue('ArrowLeft', 'ArrowRight') *
       timeScale;
@@ -788,20 +800,8 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     }
     this.setControlsType(ControlsType.FirstPerson);
 
-    const azimuthAngle = this._cameraVector.end.theta;
-    deltaAzimuthAngle = this._options.getLegalAzimuthAngle(azimuthAngle + deltaAzimuthAngle) - azimuthAngle;
-    deltaAzimuthAngle *= this.getAzimuthCompensationFactor();
-
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
     return true;
-  }
-
-  private getAzimuthCompensationFactor(): number {
-    // Calculate the azimuth compensation factor. This adjusts the azimuth rotation
-    // to make it feel more natural when looking straight up or straight down.
-    const deviationFromEquator = Math.abs(this._cameraVector.end.phi - Math.PI / 2);
-    const azimuthCompensationFactor = Math.sin(Math.PI / 2 - deviationFromEquator);
-    return azimuthCompensationFactor;
   }
 
   private handleMoveFromKeyboard(timeScale: number): boolean {
@@ -819,7 +819,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     const speedXY = timeScale * speedFactor * this._options.keyboardPanSpeed;
     const speedZ = timeScale * speedFactor * this._options.keyboardDollySpeed;
 
-    this.pan(speedXY * deltaX, speedXY * deltaY, speedZ * deltaZ);
+    this.pan(speedXY * deltaX, speedXY * deltaY, speedZ * deltaZ, true);
     return true;
   }
 }
