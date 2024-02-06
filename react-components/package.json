@@ -38,7 +38,8 @@
   "dependencies": {
     "@tanstack/react-query": "^4.29.19",
     "assert": "^2.0.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "rule-based-actions": "file:.yalc/rule-based-actions"
   },
   "devDependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",

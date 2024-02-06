@@ -17,26 +17,47 @@ import {
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useReveal } from '../..';
 import { Color } from 'three';
-import { type NodeAndRange } from './types';
 import { FdmSDK } from '../../utilities/FdmSDK';
 import { RULE_BASED_COLORING_SOURCE } from '../../utilities/globalDataModels';
-
-type Rule = any;
+import { RuleOutput, type Rule, type RuleOutputSet, NumericExpression, StringExpression, MetadataRuleTrigger, StringCondition, StringTrigger } from 'rule-based-actions/src/lib/types';
 
 export type ColorOverlayProps = {
   addModelOptions: AddModelOptions;
+  ruleSet: RuleOutputSet;
   rules: Rule[];
 };
 
-export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps): ReactElement {
+export function ColorOverlayRules({
+  addModelOptions,
+  ruleSet,
+  rules
+}: ColorOverlayProps): ReactElement {
   const cdfClient = useSDK();
   const fdmSdk = useMemo(() => new FdmSDK(cdfClient), [cdfClient]);
 
   const viewer = useReveal();
+  console.log(' RULESET', ruleSet);
   console.log(' RULES', rules);
   console.log(' SDK', cdfClient);
 
   const { modelId, revisionId } = addModelOptions;
+
+  const operatorSymbolsMap = new Map<string,string>();
+  operatorSymbolsMap.set("equals","==");
+  operatorSymbolsMap.set("notEquals","!=");
+  operatorSymbolsMap.set("lessThan","<");
+  operatorSymbolsMap.set("greaterThan",">");
+  operatorSymbolsMap.set("lessThanOrEquals","<=");
+  operatorSymbolsMap.set("greaterThanOrEquals",">=");
+
+  operatorSymbolsMap.set("contains",".contains(${{parameter}})");
+  operatorSymbolsMap.set("startsWith",".startsWith(${{parameter}})");
+  operatorSymbolsMap.set("endsWith",".endsWith(${{parameter}})");
+
+  operatorSymbolsMap.set("endsWith",".endsWith(${{parameter}})");
+
+  operatorSymbolsMap.set("within",">=${{lowerBoundInclusive}} && ${{asset}}.${{trigger.type}}[${{trigger.key}}]<=${{upperBoundInclusive}}");
+  operatorSymbolsMap.set("outside","<${{lowerBoundExclusive}} || ${{asset}}.${{trigger.type}}[${{trigger.key}}]>${{upperBoundExclusive}}");
 
   useEffect(() => {
     const getContextualization = async (): Promise<void> => {
@@ -76,8 +97,105 @@ export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps)
       const model = viewer.models[0] as CogniteCadModel;
       console.log(' model ', model);
 
+      const outputType = "color";
+
+      type RuleAndStyleIndex = {
+        rule: Rule;
+        styleIndex: TreeIndexNodeCollection;
+        ruleOutputParams: RuleOutput;
+      }
+
+      const ruleWithOutputs = ruleSet.rulesWithOutputs;
+
+      ruleWithOutputs.forEach((ruleWithOutput) => {
+
+        const { rule, outputs } = ruleWithOutput;
+        // Starting Expression
+        const expression = rule.expression;
+        let ruleGlobalStatement: string = "";
+        let initialOperator: string = "";
+        let initialExpression: string = "";
+
+        const outputSelected = outputs.find((output) => output.type === outputType);
+
+        if (!outputSelected) {
+          console.log('No rule output found for the type requested: ', outputType, outputs);
+          return;
+        }
+
+
+        const replaceDeclarationsWithValuesForStrings = (declaration: string, triggerData: StringTrigger, conditionData: StringCondition): string => {
+          declaration?.replace('${{parameter}}',conditionData.parameter);
+          declaration?.replace('${{trigger.type}}',triggerData.type);
+          declaration?.replace('${{trigger.key}}',triggerData.key);
+
+          return declaration;
+        }
+
+        const generateStringExpressionStatement = (expression: StringExpression): string => {
+          const { trigger, condition } = expression;
+          const operatorDeclaration = operatorSymbolsMap.get(condition.type);
+          if (!operatorDeclaration) return "";
+
+          const filledDeclaration = replaceDeclarationsWithValuesForStrings(operatorDeclaration, trigger, condition);
+
+          const stringExpression = "${{asset}}."+trigger.type+"['"+trigger.key+"']"+filledDeclaration+"'"+condition.parameter+"'";
+
+          return stringExpression;
+        }
+        const generateNumericExpressionStatement = (expression: NumericExpression): string => {
+          return "";
+        }
+
+      switch(expression.type) {
+        case 'or': {
+            initialOperator = " || ";
+            break;
+        }
+        case 'and': {
+          initialOperator = " && ";
+            break;
+        }
+        case 'not': {
+          initialOperator = " ! ";
+          break;
+        }
+        case 'numericExpression': {
+          initialExpression = generateNumericExpressionStatement(expression);
+          break;
+        }
+        case 'stringExpression': {
+          initialExpression = generateStringExpressionStatement(expression);
+          break;
+        }
+        default: {
+            //statements;
+            break;
+        }
+      }
+       ruleGlobalStatement = ruleGlobalStatement + initialExpression + initialOperator;
+
+
+       /* ruleOutputs.forEach((ruleOutput) => {
+          const ruleContent = rules.find((rule) => rule.id === ruleOutput.ruleId);
+          if (ruleContent !== undefined) {
+            const ruleContentAndStyleIndex: RuleAndStyleIndex = {
+              rule: ruleContent,
+              styleIndex: new TreeIndexNodeCollection(),
+              ruleOutputParams: ruleOutput,
+            };
+            generateRuleAndOutputFromContent(ruleContentAndStyleIndex);
+          }
+        });
+      }); */
+
+      /* const generateRuleAndOutputFromContent = (ruleContentAndStyleIndex: RuleAndStyleIndex) => {
+
+        ruleContentAndStyleIndex.
+      } */
+
       // go through all the rules
-      rules.forEach((rule) => {
+      /* rules.forEach((rule) => {
         const conditions = rule.conditions;
         const isStringRule = rule.isStringRule as boolean;
 
@@ -142,7 +260,7 @@ export function ColorOverlayRules({ addModelOptions, rules }: ColorOverlayProps)
             });
           });
         }
-      });
+      }); */
     };
     void getContextualization();
   }, []);
