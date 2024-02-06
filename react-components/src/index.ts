@@ -69,7 +69,7 @@ export {
   type PointCloudModelStyling,
   type AnnotationIdStylingGroup
 } from './components/PointCloudContainer/useApplyPointCloudStyling';
-export { type AnnotationModelDataResult } from './hooks/useCalculatePointCloudModelsStyling';
+export { type AnnotationAssetMappingDataResult } from './hooks/useClickedNode';
 export { type CogniteCadModelProps } from './components/CadModelContainer/CadModelContainer';
 export {
   type CadModelStyling,
