@@ -24,9 +24,6 @@ export class FlexibleCameraMarkers {
   //================================================
 
   public update(manager: FlexibleCameraManager): void {
-    if (this._scene === undefined) {
-      return;
-    }
     const show = manager.controls.controlsType !== FlexibleControlsType.FirstPerson;
     if (show && manager.options.showTarget) {
       if (!this._pivotMarker) {
