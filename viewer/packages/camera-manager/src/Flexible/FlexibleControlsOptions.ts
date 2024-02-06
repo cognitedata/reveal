@@ -79,7 +79,7 @@ export class FlexibleControlsOptions {
   public keyboardDollySpeed = 200;
   public keyboardFastMoveFactor = 5;
 
-  // Pinch speeed
+  // Pinch speed
   public pinchEpsilon = 2;
   public pinchPanSpeed = 1;
 

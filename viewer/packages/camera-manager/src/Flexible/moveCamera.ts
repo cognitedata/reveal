@@ -55,23 +55,20 @@ export function moveCameraTo(
       }
       tempPosition.set(from.x, from.y, from.z);
       tempTarget.set(from.targetX, from.targetY, from.targetZ);
-      if (!manager.camera) {
-        return;
-      }
       manager.setPositionAndTarget(tempPosition, tempTarget);
     })
     .onStop(() => {
+      manager.controls.temporarlyDisableKeyboard = false;
       manager.setPositionAndTarget(tempPosition, tempTarget);
     })
     .onComplete(() => {
+      manager.controls.temporarlyDisableKeyboard = false;
       if (manager.isDisposed) {
         return;
       }
-      manager.controls.temporarlyDisableKeyboard = false;
       manager.domElement.removeEventListener('pointerdown', stopTween);
     })
     .start(TWEEN.now());
-  tween.update(TWEEN.now());
 }
 
 export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vector3, duration?: number): void {
@@ -122,24 +119,24 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
     })
     .onStop(() => {
       manager.controls.setTempTarget(undefined);
+      manager.controls.temporarlyDisableKeyboard = false;
       manager.setPositionAndTarget(manager.camera.position, tempTarget);
     })
     .onComplete(() => {
+      manager.controls.setTempTarget(undefined);
+      manager.controls.temporarlyDisableKeyboard = false;
       if (manager.isDisposed) {
         return;
       }
-      manager.controls.setTempTarget(undefined);
-      manager.controls.temporarlyDisableKeyboard = false;
       manager.domElement.removeEventListener('pointerdown', stopTween);
     })
     .start(TWEEN.now());
-  tween.update(TWEEN.now());
 }
 
-function createTweenAnimation(
+function createTweenAnimation<T>(
   manager: FlexibleCameraManager,
-  from: any,
-  to: any,
+  from: T,
+  to: T,
   duration: number
 ): { tween: TWEEN.Tween; stopTween: (event: Event) => void } {
   const animation = new TWEEN.Tween(from);

@@ -18,7 +18,6 @@ import {
 import Keyboard from '../Keyboard';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 import { FlexibleControlsType } from './FlexibleControlsType';
-import { ComboControlsEventType } from '../ComboControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 import { DampedVector3 } from './DampedVector3';
@@ -30,10 +29,12 @@ const TARGET_FPS = 30;
 const UP_VECTOR = new Vector3(0, 1, 0);
 const RIGHT_VECTOR = new Vector3(1, 0, 0);
 
+export type FlexibleControlsEvent = { cameraChange: { camera: { position: Vector3; target: Vector3 } } };
+
 /**
  * @beta
  */
-export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
+export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   //================================================
   // INSTANCE FIELDS
   //================================================
@@ -217,7 +218,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   public setControlsType(controlsType: FlexibleControlsType): boolean {
-    if (controlsType == this.options.controlsType) {
+    if (controlsType === this.options.controlsType) {
       return false;
     }
     this.options.controlsType = controlsType;
@@ -572,7 +573,6 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
 
       // Adust the camera position so the target point is the same on the screen
-      // Credits to Håkon Flatval for this solution
       const oldQuat = new Quaternion().multiplyQuaternions(
         new Quaternion().setFromAxisAngle(UP_VECTOR, oldCameraVectorEnd.theta),
         new Quaternion().setFromAxisAngle(RIGHT_VECTOR, oldCameraVectorEnd.phi)
@@ -822,7 +822,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     const deltaY = this._keyboard.getKeyboardMovementValue('KeyE', 'KeyQ');
     const deltaZ = this._keyboard.getKeyboardMovementValue('KeyW', 'KeyS');
 
-    if (deltaX === 0 && deltaY === 0 && deltaZ == 0) {
+    if (deltaX === 0 && deltaY === 0 && deltaZ === 0) {
       return false;
     }
     if (this.controlsType === FlexibleControlsType.Orbit) {

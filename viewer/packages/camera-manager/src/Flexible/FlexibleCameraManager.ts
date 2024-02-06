@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Box3, PerspectiveCamera, Quaternion, Raycaster, Vector2, Vector3, Scene, Ray } from 'three';
+import { Box3, PerspectiveCamera, Raycaster, Vector2, Vector3, Scene, Ray } from 'three';
 
 import { FlexibleControls } from './FlexibleControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
@@ -48,7 +48,9 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   // INSTANCE FIELDS:
   //================================================
 
-  private readonly _events = { cameraChange: new EventTrigger<CameraChangeDelegate>() };
+  private readonly _events = {
+    cameraChange: new EventTrigger<CameraChangeDelegate>()
+  };
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private readonly _controls: FlexibleControls;
   private readonly _camera: PerspectiveCamera;
@@ -81,7 +83,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     camera?: PerspectiveCamera,
     scene?: Scene
   ) {
-    this._camera = camera ?? new PerspectiveCamera(45, undefined, 0.1, 10000);
+    this._camera = camera ?? new PerspectiveCamera(60, undefined, 0.1, 10000);
     this._controls = new FlexibleControls(this.camera, domElement, new FlexibleControlsOptions());
     this._domElement = domElement;
     this._inputHandler = inputHandler;
@@ -92,16 +94,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
 
     this.addEventListeners();
     this._controls.addEventListeners(); // After this.addEventListeners();
-
-    this.controls.addEventListener('cameraChange', event => {
-      const { position, target } = event.camera;
-      this._events.cameraChange.fire(position.clone(), target.clone());
-      this._nearAndFarNeedsUpdate = true;
-      if (this._markers) {
-        this._markers.update(this);
-      }
-    });
-
     this.isEnabled = true;
     this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
   }
@@ -133,15 +125,14 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       throw new Error(`Rotation and target can't be set at the same time`);
     }
     const newPosition = state.position ?? this.getPosition();
-    const newRotation = (state.target ? new Quaternion() : state.rotation) ?? new Quaternion();
     const newTarget =
       state.target ??
       (state.rotation
         ? CameraManagerHelper.calculateNewTargetFromRotation(this.camera, state.rotation, this.getTarget(), newPosition)
         : this.getTarget());
 
-    if (this.controls.isEnabled) {
-      this.controls.cameraRawRotation.copy(newRotation);
+    if (this.controls.isEnabled && state.rotation) {
+      this.controls.cameraRawRotation.copy(state.rotation);
     }
     this.setPositionAndTarget(newPosition, newTarget);
   }
@@ -309,6 +300,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this.domElement.addEventListener('keydown', this.onKeyDown);
     this.domElement.addEventListener('dblclick', this.onDoubleClick);
     this.domElement.addEventListener('wheel', this.onWheel);
+    this.controls.addEventListener('cameraChange', this.onCameraChange);
   }
 
   private removeEventListeners(): void {
@@ -316,11 +308,21 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this.domElement.removeEventListener('dblclick', this.onDoubleClick);
     this.domElement.removeEventListener('keydown', this.onKeyDown);
     this.domElement.removeEventListener('wheel', this.onWheel);
+    this.controls.removeEventListener('cameraChange', this.onCameraChange);
   }
 
   //================================================
   // INSTANCE METHODS: Event Handlers
   //================================================
+
+  private readonly onCameraChange = (event: { camera: { position: Vector3; target: Vector3 } }) => {
+    const { position, target } = event.camera;
+    this._events.cameraChange.fire(position.clone(), target.clone());
+    this._nearAndFarNeedsUpdate = true;
+    if (this._markers) {
+      this._markers.update(this);
+    }
+  };
 
   private readonly onKeyDown = (event: KeyboardEvent) => {
     if (!this.isEnabled) {
@@ -329,11 +331,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     if (!this.options.enableChangeControlsTypeOn123Key) {
       return;
     }
-    if (event.code == 'Digit1') {
+    if (event.code === 'Digit1') {
       return this.controls.setControlsType(FlexibleControlsType.FirstPerson);
-    } else if (event.code == 'Digit2') {
+    } else if (event.code === 'Digit2') {
       return this.controls.setControlsType(FlexibleControlsType.Orbit);
-    } else if (event.code == 'Digit3') {
+    } else if (event.code === 'Digit3') {
       return this.controls.setControlsType(FlexibleControlsType.OrbitInCenter);
     }
   };
@@ -458,7 +460,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     // This is used to determine the speed of the camera when flying with ASDW.
     // We want to either let it be controlled by the near plane if we are far away,
     // but no more than a fraction of the bounding box of the system if inside
-    const diagonal = this.getBoundingBoxDiagonal2();
+    const diagonal = this.getBoundingBoxDiagonalXY();
     const diagonalFraction = diagonal * this.options.sensitivityDiagonalFraction;
     const nearFraction = 0.1 * this.camera.near;
 
@@ -479,16 +481,16 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   public getBoundingBoxDiagonal(): number {
     return getDiagonal(this._currentBoundingBox);
   }
-  public getBoundingBoxDiagonal2(): number {
-    return getDiagonal2(this._currentBoundingBox);
+  public getBoundingBoxDiagonalXY(): number {
+    return getDiagonalXY(this._currentBoundingBox);
   }
 }
 
 function getDiagonal(boundingBox: Box3): number {
   return boundingBox.min.distanceTo(boundingBox.max);
 }
-function getDiagonal2(boundingBox: Box3): number {
-  return Math.sqrt((boundingBox.min.x - boundingBox.max.x) ** 2 + (boundingBox.min.y - boundingBox.max.y) ** 2);
+function getDiagonalXY(boundingBox: Box3): number {
+  return Math.sqrt((boundingBox.max.x - boundingBox.min.x) ** 2 + (boundingBox.max.y - boundingBox.min.y) ** 2);
 }
 
 /**
@@ -534,7 +536,6 @@ function intersectBox(ray: Ray, box: Box3, closestIntersection: Vector3, furthes
   if (tzmin > tmin || tmin !== tmin) tmin = tzmin;
   if (tzmax < tmax || tmax !== tmax) tmax = tzmax;
 
-  // return point closest to the ray (positive side)
   if (tmin > tmax) [tmin, tmax] = [tmax, tmin];
 
   if (tmax < 0) return 0;
