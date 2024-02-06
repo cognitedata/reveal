@@ -20,7 +20,7 @@ import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { ComboControlsEventType } from '../ComboControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
-import { WheelZoomType } from './WheelZoomType';
+import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 import { DampedVector3 } from './DampedVector3';
 import { DampedSpherical } from './DampedSpherical';
 import { ReusableVector3s } from './ReusableVector3s';
@@ -751,7 +751,10 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
       return this.getTranslationByDirection(pixelCoordinates, deltaDistance);
     }
     let step = this.options.zoomFraction * this._scrollDistance * Math.sign(deltaDistance);
-    if (this.options.realMouseWheelAction === WheelZoomType.PastCursor && Math.abs(step) < Math.abs(deltaDistance)) {
+    if (
+      this.options.realMouseWheelAction === FlexibleWheelZoomType.PastCursor &&
+      Math.abs(step) < Math.abs(deltaDistance)
+    ) {
       // If past or near the scroll cursor, go in equal steps
       step = deltaDistance;
     }
@@ -759,7 +762,7 @@ export class FlexibleControls extends EventDispatcher<ComboControlsEventType> {
     this._scrollDistance -= step;
 
     if (
-      this.options.realMouseWheelAction === WheelZoomType.ToCursor &&
+      this.options.realMouseWheelAction === FlexibleWheelZoomType.ToCursor &&
       this._scrollDistance < this.options.sensitivity
     ) {
       // This avoid to close to the scroll cursor

@@ -25,9 +25,9 @@ export {
   CameraStopDelegate,
   IFlexibleCameraManager,
   FlexibleControlsOptions,
-  WheelZoomType,
+  FlexibleWheelZoomType,
   FlexibleControlsType,
-  MouseActionType
+  FlexibleMouseActionType
 } from '../packages/camera-manager';
 
 export {

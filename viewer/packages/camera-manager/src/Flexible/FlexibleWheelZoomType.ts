@@ -18,7 +18,7 @@
  * @beta
  */
 
-export enum WheelZoomType {
+export enum FlexibleWheelZoomType {
   Center = 'center',
   PastCursor = 'pastCursor',
   ToCursor = 'toCursor',

@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 
 import { FlexibleCameraManager } from './FlexibleCameraManager';
 import clamp from 'lodash/clamp';
-import { WheelZoomType } from './WheelZoomType';
+import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 
 //================================================
 // INSTANCE METHODS: Move camera
@@ -113,7 +113,7 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
       if (!manager.camera) {
         return;
       }
-      if (manager.options.realMouseWheelAction === WheelZoomType.ToCursor) {
+      if (manager.options.realMouseWheelAction === FlexibleWheelZoomType.ToCursor) {
         manager.controls.setScrollCursor(tempTarget);
       } else {
         manager.controls.setScrollCursor(undefined);

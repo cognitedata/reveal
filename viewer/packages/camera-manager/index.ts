@@ -13,8 +13,8 @@ export { DebouncedCameraStopEventTrigger } from './src/utils/DebouncedCameraStop
 export { IFlexibleCameraManager } from './src/Flexible/IFlexibleCameraManager';
 export { FlexibleCameraManager } from './src/Flexible/FlexibleCameraManager';
 export { FlexibleControlsOptions } from './src/Flexible/FlexibleControlsOptions';
-export { WheelZoomType } from './src/Flexible/WheelZoomType';
+export { FlexibleWheelZoomType } from './src/Flexible/FlexibleWheelZoomType';
 export { FlexibleControlsType } from './src/Flexible/FlexibleControlsType';
-export { MouseActionType } from './src/Flexible/MouseActionType';
+export { FlexibleMouseActionType } from './src/Flexible/FlexibleMouseActionType';
 
 export * from './src/types';

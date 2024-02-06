@@ -29,7 +29,7 @@ import {
 import { CameraManagerHelper } from './../CameraManagerHelper';
 import { CameraManager } from './../CameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
-import { MouseActionType } from './MouseActionType';
+import { FlexibleMouseActionType } from './FlexibleMouseActionType';
 import { DebouncedCameraStopEventTrigger } from '../utils/DebouncedCameraStopEventTrigger';
 import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraTo } from './moveCamera';
@@ -340,14 +340,14 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
 
   private readonly onClick = async (event: PointerEventData) => {
     if (!this.isEnabled) return;
-    if (this.options.mouseClickType !== MouseActionType.None) {
+    if (this.options.mouseClickType !== FlexibleMouseActionType.None) {
       await this.mouseAction(event, this.options.mouseClickType);
     }
   };
 
   private readonly onDoubleClick = async (event: PointerEventData) => {
     if (!this.isEnabled) return;
-    if (this.options.mouseDoubleClickType !== MouseActionType.None) {
+    if (this.options.mouseDoubleClickType !== FlexibleMouseActionType.None) {
       await this.mouseAction(event, this.options.mouseDoubleClickType);
     }
   };
@@ -389,24 +389,24 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this._prevTime = currentTime;
   };
 
-  private async mouseAction(event: PointerEventData, mouseActionType: MouseActionType) {
-    if (mouseActionType === MouseActionType.None) {
+  private async mouseAction(event: PointerEventData, mouseActionType: FlexibleMouseActionType) {
+    if (mouseActionType === FlexibleMouseActionType.None) {
       return;
     }
-    if (mouseActionType === MouseActionType.SetTarget) {
+    if (mouseActionType === FlexibleMouseActionType.SetTarget) {
       if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
         this.controls.setControlsType(FlexibleControlsType.Orbit);
       }
       const newTarget = await this.getPickedPointPixelCoordinates(event.offsetX, event.offsetY);
       this.controls.setTarget(newTarget);
       this.controls.triggerCameraChangeEvent();
-    } else if (mouseActionType === MouseActionType.SetTargetAndCameraDirection) {
+    } else if (mouseActionType === FlexibleMouseActionType.SetTargetAndCameraDirection) {
       if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
         this.controls.setControlsType(FlexibleControlsType.Orbit);
       }
       const newTarget = await this.getPickedPointPixelCoordinates(event.offsetX, event.offsetY);
       moveCameraTargetTo(this, newTarget, this.options.animationDuration);
-    } else if (mouseActionType === MouseActionType.SetTargetAndCameraPosition) {
+    } else if (mouseActionType === FlexibleMouseActionType.SetTargetAndCameraPosition) {
       if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
         this.controls.setControlsType(FlexibleControlsType.Orbit);
       }

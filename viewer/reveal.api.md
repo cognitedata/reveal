@@ -826,13 +826,13 @@ export class FlexibleControlsOptions {
     // (undocumented)
     minSensitivity: number;
     // (undocumented)
-    mouseClickType: MouseActionType;
+    mouseClickType: FlexibleMouseActionType;
     // (undocumented)
     mouseDistanceThresholdBetweenRaycasts: number;
     // (undocumented)
     mouseDollySpeed: number;
     // (undocumented)
-    mouseDoubleClickType: MouseActionType;
+    mouseDoubleClickType: FlexibleMouseActionType;
     // (undocumented)
     mousePanSpeed: number;
     // (undocumented)
@@ -840,7 +840,7 @@ export class FlexibleControlsOptions {
     // (undocumented)
     mouseRotationSpeedPolar: number;
     // (undocumented)
-    mouseWheelAction: WheelZoomType;
+    mouseWheelAction: FlexibleWheelZoomType;
     // (undocumented)
     orthographicCameraDollyFactor: number;
     // (undocumented)
@@ -848,7 +848,7 @@ export class FlexibleControlsOptions {
     // (undocumented)
     pinchPanSpeed: number;
     // (undocumented)
-    get realMouseWheelAction(): WheelZoomType;
+    get realMouseWheelAction(): FlexibleWheelZoomType;
     // (undocumented)
     sensitivity: number;
     // (undocumented)
@@ -873,6 +873,30 @@ export enum FlexibleControlsType {
     Orbit = "orbit",
     // (undocumented)
     OrbitInCenter = "orbitInCenter"
+}
+
+// @beta (undocumented)
+export enum FlexibleMouseActionType {
+    // (undocumented)
+    None = "none",
+    // (undocumented)
+    SetTarget = "setTarget",
+    // (undocumented)
+    SetTargetAndCameraDirection = "setTargetAndCameraDirection",
+    // (undocumented)
+    SetTargetAndCameraPosition = "setTargetAndCameraPosition"
+}
+
+// @beta
+export enum FlexibleWheelZoomType {
+    // (undocumented)
+    Auto = "auto",
+    // (undocumented)
+    Center = "center",
+    // (undocumented)
+    PastCursor = "pastCursor",
+    // (undocumented)
+    ToCursor = "toCursor"
 }
 
 // @public (undocumented)
@@ -1222,18 +1246,6 @@ export type ModelState = {
         appearance: SerializableNodeAppearance;
     }[];
 };
-
-// @beta (undocumented)
-export enum MouseActionType {
-    // (undocumented)
-    None = "none",
-    // (undocumented)
-    SetTarget = "setTarget",
-    // (undocumented)
-    SetTargetAndCameraDirection = "setTargetAndCameraDirection",
-    // (undocumented)
-    SetTargetAndCameraPosition = "setTargetAndCameraPosition"
-}
 
 // @public
 export type NodeAppearance = {
@@ -1746,18 +1758,6 @@ export enum WellKnownAsprsPointClassCodes {
 
 // @public
 export type WellKnownUnit = 'Meters' | 'Centimeters' | 'Millimeters' | 'Micrometers' | 'Kilometers' | 'Feet' | 'Inches' | 'Yards' | 'Miles' | 'Mils' | 'Microinches';
-
-// @beta
-export enum WheelZoomType {
-    // (undocumented)
-    Auto = "auto",
-    // (undocumented)
-    Center = "center",
-    // (undocumented)
-    PastCursor = "pastCursor",
-    // (undocumented)
-    ToCursor = "toCursor"
-}
 
 // (No @packageDocumentation comment for this package)
 

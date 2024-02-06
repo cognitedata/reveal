@@ -5,7 +5,7 @@
 /**
  * @beta
  */
-export enum MouseActionType {
+export enum FlexibleMouseActionType {
   None = 'none',
   SetTarget = 'setTarget',
   SetTargetAndCameraDirection = 'setTargetAndCameraDirection',

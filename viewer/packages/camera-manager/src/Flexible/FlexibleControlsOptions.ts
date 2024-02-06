@@ -4,8 +4,8 @@
 
 import { MathUtils } from 'three/src/math/MathUtils';
 import { FlexibleControlsType } from './FlexibleControlsType';
-import { MouseActionType } from './MouseActionType';
-import { WheelZoomType } from './WheelZoomType';
+import { FlexibleMouseActionType } from './FlexibleMouseActionType';
+import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 
 const DEFAULT_POINTER_ROTATION_SPEED = (0.5 * Math.PI) / 360; // half degree per pixel
 const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 5;
@@ -27,9 +27,9 @@ export class FlexibleControlsOptions {
   public showLookAt = false;
 
   // Mouse click, double click and wheel behaivor
-  public mouseWheelAction = WheelZoomType.Auto;
-  public mouseClickType = MouseActionType.None;
-  public mouseDoubleClickType = MouseActionType.SetTargetAndCameraPosition;
+  public mouseWheelAction = FlexibleWheelZoomType.Auto;
+  public mouseClickType = FlexibleMouseActionType.None;
+  public mouseDoubleClickType = FlexibleMouseActionType.SetTargetAndCameraPosition;
   public enableChangeControlsTypeOn123Key = true;
   public enableKeyboardNavigation = true;
 
@@ -91,17 +91,19 @@ export class FlexibleControlsOptions {
   // INSTANCE PROPERTIES
   //================================================
 
-  public get realMouseWheelAction(): WheelZoomType {
-    if (this.mouseWheelAction === WheelZoomType.Auto) {
-      return this.controlsType === FlexibleControlsType.FirstPerson ? WheelZoomType.ToCursor : WheelZoomType.PastCursor;
+  public get realMouseWheelAction(): FlexibleWheelZoomType {
+    if (this.mouseWheelAction === FlexibleWheelZoomType.Auto) {
+      return this.controlsType === FlexibleControlsType.FirstPerson
+        ? FlexibleWheelZoomType.ToCursor
+        : FlexibleWheelZoomType.PastCursor;
     }
     return this.mouseWheelAction;
   }
 
   public get shouldPick(): boolean {
     switch (this.realMouseWheelAction) {
-      case WheelZoomType.ToCursor:
-      case WheelZoomType.PastCursor:
+      case FlexibleWheelZoomType.ToCursor:
+      case FlexibleWheelZoomType.PastCursor:
         return true;
 
       default:
