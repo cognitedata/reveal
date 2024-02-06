@@ -7,7 +7,7 @@ import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleCameraManager } from './FlexibleCameraManager';
 
 export class FlexibleCameraMarkers {
-  private readonly _scene?: Scene;
+  private readonly _scene: Scene;
   private _pivotMarker: Object3D | undefined;
   private _lookAtMarker: Object3D | undefined;
 
@@ -28,24 +28,24 @@ export class FlexibleCameraMarkers {
     if (show && manager.options.showTarget) {
       if (!this._pivotMarker) {
         this._pivotMarker = this.createPivotMarker();
-        this._scene?.add(this._pivotMarker);
+        this._scene.add(this._pivotMarker);
       }
       this.setPosition(this._pivotMarker, manager.controls.getTarget(), manager);
     } else {
       if (this._pivotMarker) {
-        this._scene?.remove(this._pivotMarker);
+        this._scene.remove(this._pivotMarker);
         this._pivotMarker = undefined;
       }
     }
     if (show && manager.options.showLookAt) {
       if (!this._lookAtMarker) {
         this._lookAtMarker = this.createLookAtMarker();
-        this._scene?.add(this._lookAtMarker);
+        this._scene.add(this._lookAtMarker);
       }
       this.setPosition(this._lookAtMarker, manager.controls.getLookAt(), manager);
     } else {
       if (this._lookAtMarker) {
-        this._scene?.remove(this._lookAtMarker);
+        this._scene.remove(this._lookAtMarker);
         this._lookAtMarker = undefined;
       }
     }
