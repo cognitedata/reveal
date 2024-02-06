@@ -560,13 +560,13 @@ __metadata:
     "@types/dat.gui": "npm:0.7.12"
     "@types/gl": "npm:^6.0.2"
     "@types/glob": "npm:8.1.0"
-    "@types/jest": "npm:29.5.11"
+    "@types/jest": "npm:29.5.12"
     "@types/jest-environment-puppeteer": "npm:5.0.6"
     "@types/jest-image-snapshot": "npm:6.4.0"
     "@types/jsdom": "npm:21.1.6"
     "@types/lodash": "npm:4.14.202"
     "@types/mixpanel-browser": "npm:2.48.1"
-    "@types/node": "npm:18.19.13"
+    "@types/node": "npm:18.19.14"
     "@types/random-seed": "npm:0.3.5"
     "@types/skmeans": "npm:0.11.7"
     "@types/stats": "npm:0.16.30"
@@ -609,7 +609,7 @@ __metadata:
     path-browserify: "npm:1.0.1"
     prettier: "npm:3.2.4"
     process: "npm:0.11.10"
-    puppeteer: "npm:21.10.0"
+    puppeteer: "npm:21.11.0"
     random-seed: "npm:0.3.0"
     raw-loader: "npm:4.0.2"
     remove-files-webpack-plugin: "npm:1.5.0"
@@ -1920,13 +1920,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.5.11":
-  version: 29.5.11
-  resolution: "@types/jest@npm:29.5.11"
+"@types/jest@npm:29.5.12":
+  version: 29.5.12
+  resolution: "@types/jest@npm:29.5.12"
   dependencies:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
-  checksum: 798f4c89407d9457bea1256de74c26f2b279f6c789c0e3311cd604cc75cdab333b9a29b00c51b0090d31abdf11cc788b4103282851a653bef6daf72edf97eef2
+  checksum: 312e8dcf92cdd5a5847d6426f0940829bca6fe6b5a917248f3d7f7ef5d85c9ce78ef05e47d2bbabc40d41a930e0e36db2d443d2610a9e3db9062da2d5c904211
   languageName: node
   linkType: hard
 
@@ -1994,12 +1994,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.19.13":
-  version: 18.19.13
-  resolution: "@types/node@npm:18.19.13"
+"@types/node@npm:18.19.14":
+  version: 18.19.14
+  resolution: "@types/node@npm:18.19.14"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 7d83ee3b8e1548c9c6fd83e3e63854832eb4f07ea3f4c011a2e2a91c80e4a6a35c8b5dc095fd26e349abe0b63d0b2283f7ed079b4a6eff9468173a3f1e6c01c0
+  checksum: c81d9f01ccaaa4f8a25c48fb888bd4dd5196562ebefccae6948d3b884eb3195f877826e12c5856d04690c215324c48b8d4c1d88c1e52d4428760c5612369b87b
   languageName: node
   linkType: hard
 
@@ -3448,15 +3448,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromium-bidi@npm:0.5.6":
-  version: 0.5.6
-  resolution: "chromium-bidi@npm:0.5.6"
+"chromium-bidi@npm:0.5.8":
+  version: 0.5.8
+  resolution: "chromium-bidi@npm:0.5.8"
   dependencies:
     mitt: "npm:3.0.1"
     urlpattern-polyfill: "npm:10.0.0"
   peerDependencies:
     devtools-protocol: "*"
-  checksum: bd1986a9f0e1e11519efe5b2d1f17b42240558b9a6f18895bca6b411e71ba6cee58c37ed4d6bf2d2c776ddd2bdb55d647f6d1cb095bd20e82fab85ec631a982e
+  checksum: 2eaa4d07ebee562f2a1ddbefea6b0e935ae78b51d2b6b7c38a9932b6168db56bae3a760c9bc8ddf2cbde6ff629b4402d45895db656e82e638c6a011801950afc
   languageName: node
   linkType: hard
 
@@ -9051,30 +9051,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:21.10.0":
-  version: 21.10.0
-  resolution: "puppeteer-core@npm:21.10.0"
+"puppeteer-core@npm:21.11.0":
+  version: 21.11.0
+  resolution: "puppeteer-core@npm:21.11.0"
   dependencies:
     "@puppeteer/browsers": "npm:1.9.1"
-    chromium-bidi: "npm:0.5.6"
+    chromium-bidi: "npm:0.5.8"
     cross-fetch: "npm:4.0.0"
     debug: "npm:4.3.4"
     devtools-protocol: "npm:0.0.1232444"
     ws: "npm:8.16.0"
-  checksum: a6507b74c763661215e2f6f6a695fd1a6d5abe84c8e021523e157fefa5d5203d0b9fdd918adb092f720a35386f10b2fbc067930a5f7e49caf3e151409c0d5f03
+  checksum: 44bda6ab4995a224358d6cf8bd877ed2251446fbe9e36c38325bf5e09fd7e783e27ba4a76046140a38bfdd3c47df8ded6597c832e418db3212bebfb193382692
   languageName: node
   linkType: hard
 
-"puppeteer@npm:21.10.0":
-  version: 21.10.0
-  resolution: "puppeteer@npm:21.10.0"
+"puppeteer@npm:21.11.0":
+  version: 21.11.0
+  resolution: "puppeteer@npm:21.11.0"
   dependencies:
     "@puppeteer/browsers": "npm:1.9.1"
     cosmiconfig: "npm:9.0.0"
-    puppeteer-core: "npm:21.10.0"
+    puppeteer-core: "npm:21.11.0"
   bin:
     puppeteer: lib/esm/puppeteer/node/cli.js
-  checksum: 921d07ad88bbf49551d87b5d68f84fbbe5bfccc52193e29c6b2e992ca0cba7d0a5eb51548c2683f3576f03ae1612c9964a081f4680765afd9e66252ae9de7fce
+  checksum: eab0eed6cdcf2fb5c975e6d8fcb35c40cf4b2c234e58987e752c1d89a66bb1c4286e0fcccab1272e09ee0c5d0ba47f7fbc68642b3ae21b90a7256956f02ea9fe
   languageName: node
   linkType: hard
 
