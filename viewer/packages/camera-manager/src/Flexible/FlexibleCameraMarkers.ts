@@ -2,14 +2,16 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Mesh, MeshBasicMaterial, SphereGeometry, Scene, Object3D, Vector3 } from 'three';
-import { FlexibleControlsType } from './FlexibleControlsType';
+import { Scene, Object3D, Vector3, Sprite, SpriteMaterial, CanvasTexture } from 'three';
 import { FlexibleCameraManager } from './FlexibleCameraManager';
+
+const RELATIVE_MARKER_SIZE = 0.02;
+const OUTER_COLOR = '#FF2222';
+const INNER_COLOR = '#FFFFFF';
 
 export class FlexibleCameraMarkers {
   private readonly _scene: Scene;
-  private _pivotMarker: Object3D | undefined;
-  private _lookAtMarker: Object3D | undefined;
+  private _targetMarker: Object3D | undefined;
 
   //================================================
   // CONSTRUCTOR
@@ -24,63 +26,58 @@ export class FlexibleCameraMarkers {
   //================================================
 
   public update(manager: FlexibleCameraManager): void {
-    const show = manager.controls.controlsType !== FlexibleControlsType.FirstPerson;
-    if (show && manager.options.showTarget) {
-      if (!this._pivotMarker) {
-        this._pivotMarker = this.createPivotMarker();
-        this._scene.add(this._pivotMarker);
+    if (manager.options.showTarget) {
+      if (!this._targetMarker) {
+        this._targetMarker = createSprite(OUTER_COLOR, INNER_COLOR);
+        this._scene.add(this._targetMarker);
+        this._targetMarker.visible = true;
       }
-      this.setPosition(this._pivotMarker, manager.controls.getTarget(), manager);
+      setPosition(this._targetMarker, manager.controls.getTarget(), manager);
     } else {
-      if (this._pivotMarker) {
-        this._scene.remove(this._pivotMarker);
-        this._pivotMarker = undefined;
-      }
-    }
-    if (show && manager.options.showLookAt) {
-      if (!this._lookAtMarker) {
-        this._lookAtMarker = this.createLookAtMarker();
-        this._scene.add(this._lookAtMarker);
-      }
-      this.setPosition(this._lookAtMarker, manager.controls.getLookAt(), manager);
-    } else {
-      if (this._lookAtMarker) {
-        this._scene.remove(this._lookAtMarker);
-        this._lookAtMarker = undefined;
+      if (this._targetMarker && this._targetMarker.visible) {
+        this._targetMarker.visible = false;
       }
     }
   }
+}
 
-  private setPosition(object3D: Object3D, position: Vector3, manager: FlexibleCameraManager): void {
-    const diagonal = manager.getBoundingBoxDiagonal();
-    const scale = Math.max(Math.min(diagonal / 200, 0.2), 0.1);
+function setPosition(object3D: Object3D, position: Vector3, manager: FlexibleCameraManager): void {
+  const distance = position.distanceTo(manager.camera.position);
+  const scale = RELATIVE_MARKER_SIZE * distance;
 
-    object3D.position.copy(position);
-    object3D.lookAt(manager.camera.position);
-    object3D.scale.setScalar(scale);
-  }
+  object3D.position.copy(position);
+  object3D.scale.setScalar(scale);
+  object3D.updateMatrixWorld();
+}
 
-  private createPivotMarker(): Mesh {
-    return new Mesh(
-      new SphereGeometry(1),
-      new MeshBasicMaterial({
-        color: '#FFFFFF', // --cogs-primary-inverted (dark)
-        transparent: true,
-        opacity: 0.8,
-        depthTest: false
-      })
-    );
-  }
+function createSprite(outerColor: string, innerColor: string): Sprite {
+  const texture = createTexture(25, 3, outerColor, innerColor);
+  const material = new SpriteMaterial({ map: texture, depthTest: false });
+  const sprite = new Sprite(material);
+  sprite.updateMatrixWorld();
+  sprite.visible = true;
+  return sprite;
+}
 
-  private createLookAtMarker(): Mesh {
-    return new Mesh(
-      new SphereGeometry(1),
-      new MeshBasicMaterial({
-        color: '#FF0000', // --cogs-primary-inverted (dark)
-        transparent: true,
-        opacity: 0.8,
-        depthTest: false
-      })
-    );
-  }
+function createTexture(textureSize: number, lineWidth: number, outerColor: string, innerColor: string): CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = textureSize;
+  canvas.height = textureSize;
+
+  const center = textureSize / 2;
+  const radius = textureSize / 2 - lineWidth - 1;
+  const context = canvas.getContext('2d')!;
+
+  context.beginPath();
+  context.fillStyle = innerColor;
+  context.ellipse(center, center, radius, radius, 0, 0, 2 * Math.PI);
+  context.fill();
+
+  context.beginPath();
+  context.strokeStyle = outerColor;
+  context.lineWidth = lineWidth;
+  context.ellipse(center, center, radius, radius, 0, 0, 2 * Math.PI);
+  context.stroke();
+
+  return new CanvasTexture(canvas);
 }

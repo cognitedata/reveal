@@ -24,7 +24,6 @@ export class FlexibleControlsOptions {
 
   // Visualization
   public showTarget = true;
-  public showLookAt = false;
 
   // Mouse click, double click and wheel behaivor
   public mouseWheelAction = FlexibleWheelZoomType.Auto;
