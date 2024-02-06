@@ -5,6 +5,7 @@
 import {
   AnnotationData,
   AnnotationModel,
+  AnnotationType,
   AnnotationsCogniteAnnotationTypesImagesAssetLink,
   AnnotationsObjectDetection
 } from '@cognite/sdk';
@@ -50,9 +51,7 @@ export class ImageAnnotationObject implements Image360Annotation {
   }
 
   public static createAnnotationObject(annotation: AnnotationModel, face: FaceType): ImageAnnotationObject | undefined {
-    const detection = annotation.data;
-
-    const objectData = ImageAnnotationObject.createObjectData(detection);
+    const objectData = ImageAnnotationObject.createObjectData(annotation.annotationType, annotation.data);
 
     if (objectData === undefined) {
       return undefined;
@@ -61,10 +60,13 @@ export class ImageAnnotationObject implements Image360Annotation {
     return new ImageAnnotationObject(annotation, face, objectData);
   }
 
-  private static createObjectData(detection: AnnotationData): ImageAnnotationObjectData | undefined {
-    if (isAnnotationsObjectDetection(detection)) {
+  private static createObjectData(
+    annotationType: AnnotationType,
+    detection: AnnotationData
+  ): ImageAnnotationObjectData | undefined {
+    if (isAnnotationsObjectDetection(annotationType, detection)) {
       return this.createObjectDetectionAnnotationData(detection);
-    } else if (isAnnotationAssetLink(detection)) {
+    } else if (isAnnotationAssetLink(annotationType, detection)) {
       return this.createAssetLinkAnnotationData(detection);
     } else {
       return undefined;
@@ -215,19 +217,24 @@ function createMaterial(): MeshBasicMaterial {
   });
 }
 
-function isAnnotationsObjectDetection(annotation: AnnotationData): annotation is AnnotationsObjectDetection {
+function isAnnotationsObjectDetection(
+  annotationType: AnnotationType,
+  annotation: AnnotationData
+): annotation is AnnotationsObjectDetection {
   const detection = annotation as AnnotationsObjectDetection;
   return (
+    annotationType === 'images.ObjectDetection' &&
     detection.label !== undefined &&
     (detection.boundingBox !== undefined || detection.polygon !== undefined || detection.polyline !== undefined)
   );
 }
 
 function isAnnotationAssetLink(
+  annotationType: AnnotationType,
   annotation: AnnotationData
 ): annotation is AnnotationsCogniteAnnotationTypesImagesAssetLink {
   const link = annotation as AnnotationsCogniteAnnotationTypesImagesAssetLink;
-  return link.text !== undefined && link.textRegion !== undefined;
+  return annotationType === 'images.AssetLink' && link.text !== undefined && link.textRegion !== undefined;
 }
 
 function createOutline(outlinePoints: Vector2[], color: Color): VariableWidthLine {
