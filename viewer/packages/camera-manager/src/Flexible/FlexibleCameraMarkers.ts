@@ -31,6 +31,8 @@ export class FlexibleCameraMarkers {
         this._targetMarker = createSprite(OUTER_COLOR, INNER_COLOR);
         this._scene.add(this._targetMarker);
         this._targetMarker.visible = true;
+      } else if (!this._targetMarker.visible) {
+        this._targetMarker.visible = true;
       }
       setPosition(this._targetMarker, manager.controls.getTarget(), manager);
     } else {
