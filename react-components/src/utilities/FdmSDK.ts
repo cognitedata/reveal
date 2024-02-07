@@ -130,31 +130,6 @@ export type InspectResultList = {
   }>;
 };
 
-export type OldFormatInspectFilter = {
-  inspectionOperations: { involvedViewsAndContainers: Record<never, never> };
-  items: Array<{ instanceType: InstanceType; externalId: string; space: string }>;
-};
-
-export type OldFormatInspectResultList = {
-  items: Array<{
-    instanceType: InstanceType;
-    externalId: string;
-    space: string;
-    inspectionResults: OldInspectResult;
-  }>;
-};
-
-export type OldInspectResult = {
-  involvedViewsAndContainers: {
-    containers: Array<{
-      type: 'container';
-      space: string;
-      externalId: string;
-    }>;
-    views: Source[];
-  };
-};
-
 type SelectKey<T extends Query> = keyof T['select'];
 
 export type QueryResult<T extends Query> = {
@@ -434,39 +409,12 @@ export class FdmSDK {
   }
 
   public async inspectInstances(inspectFilter: InspectFilter): Promise<InspectResultList> {
-    // Endpoint will soon have breaking changes, thus testing both new and old format
-    try {
-      const oldFormatInspectFilter: OldFormatInspectFilter = {
-        inspectionOperations: { involvedViewsAndContainers: {} },
-        items: inspectFilter.items ?? []
-      };
-      const result = await this._sdk.post(this._inspectEndpoint, { data: oldFormatInspectFilter });
+    const result = await this._sdk.post(this._inspectEndpoint, { data: inspectFilter });
 
-      if (result.status === 200) {
-        const oldFormatInspectResult = result.data as OldFormatInspectResultList;
-        return {
-          items: oldFormatInspectResult.items.map((item) => ({
-            ...item,
-            inspectionResults: {
-              involvedContainers: item.inspectionResults.involvedViewsAndContainers.containers,
-              involvedViews: item.inspectionResults.involvedViewsAndContainers.views
-            }
-          }))
-        };
-      }
-    } catch (e) {}
-
-    try {
-      const result = await this._sdk.post(this._inspectEndpoint, { data: inspectFilter });
-
-      if (result.status === 200) {
-        return result.data as InspectResultList;
-      }
-    } catch (e) {
-      throw new Error(`Failed to fetch instances`);
+    if (result.status === 200) {
+      return result.data as InspectResultList;
     }
-
-    return { items: [] };
+    throw new Error(`Failed to fetch instances`);
   }
 
   public async getViewsByIds(views: Source[]): Promise<{ items: ViewItem[] }> {

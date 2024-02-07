@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "4.9.0",
+  "version": "4.9.1",
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "repository": {
@@ -70,7 +70,7 @@
     "glslify-import": "3.1.0",
     "html2canvas": "^1.4.1",
     "lodash": "4.17.21",
-    "loglevel": "1.8.1",
+    "loglevel": "1.9.1",
     "mixpanel-browser": "2.48.1",
     "path-browserify": "1.0.1",
     "random-seed": "0.3.0",
@@ -85,20 +85,20 @@
     "@types/dat.gui": "0.7.12",
     "@types/gl": "^6.0.2",
     "@types/glob": "8.1.0",
-    "@types/jest": "29.5.11",
+    "@types/jest": "29.5.12",
     "@types/jest-environment-puppeteer": "5.0.6",
     "@types/jest-image-snapshot": "6.4.0",
     "@types/jsdom": "21.1.6",
     "@types/lodash": "4.14.202",
     "@types/mixpanel-browser": "2.48.1",
-    "@types/node": "18.19.13",
+    "@types/node": "18.19.14",
     "@types/random-seed": "0.3.5",
     "@types/skmeans": "0.11.7",
     "@types/stats": "0.16.30",
     "@types/three": "0.158.2",
     "@types/tween.js": "18.5.1",
-    "@typescript-eslint/eslint-plugin": "6.19.1",
-    "@typescript-eslint/parser": "6.19.1",
+    "@typescript-eslint/eslint-plugin": "6.20.0",
+    "@typescript-eslint/parser": "6.20.0",
     "concurrently": "8.2.2",
     "cross-env": "7.0.3",
     "dat.gui": "0.7.9",
@@ -125,7 +125,7 @@
     "nock": "13.5.1",
     "prettier": "3.2.4",
     "process": "0.11.10",
-    "puppeteer": "21.7.0",
+    "puppeteer": "21.11.0",
     "random-seed": "0.3.0",
     "raw-loader": "4.0.2",
     "remove-files-webpack-plugin": "1.5.0",
@@ -138,7 +138,7 @@
     "tsc-alias": "1.8.8",
     "typescript": "5.3.3",
     "wasm-pack": "0.12.1",
-    "webpack": "5.89.0",
+    "webpack": "5.90.1",
     "webpack-cli": "5.1.4",
     "webpack-dev-server": "4.15.1",
     "webpack-node-externals": "3.0.0",
@@ -157,5 +157,5 @@
   "files": [
     "dist"
   ],
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.1.0"
 }
