@@ -11,7 +11,6 @@ import { ComboControlsOptions } from './ComboControlsOptions';
 
 import {
   CameraManagerCallbackData,
-  CameraControlsOptions,
   CameraState,
   CameraChangeDelegate,
   CameraManagerEventType,
@@ -34,6 +33,7 @@ import {
 
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
+import { CameraControlsOptions } from './CameraControlsOptions';
 
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
@@ -65,8 +65,8 @@ export class DefaultCameraManager implements CameraManager {
     pickBoundingBox: boolean
   ) => Promise<CameraManagerCallbackData>;
   private _onClick: ((event: PointerEvent) => void) | undefined = undefined;
-  private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
   private _onDoubleClick: ((event: PointerEventData) => void) | undefined = undefined;
+  private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
 
   private static readonly AnimationDuration = 300;
   private static readonly MinAnimationDuration = 300;
@@ -667,7 +667,6 @@ export class DefaultCameraManager implements CameraManager {
     newPosition.add(this._camera.position);
     this.moveCameraTo(newPosition, newTarget, DefaultCameraManager.AnimationDuration, keyboardNavigationEnabled);
   };
-
   private calculateDefaultDuration(distanceToCamera: number): number {
     const duration = distanceToCamera * 125; // 125ms per unit distance
     return clamp(duration, DefaultCameraManager.MinAnimationDuration, DefaultCameraManager.MaxAnimationDuration);
