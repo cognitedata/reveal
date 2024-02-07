@@ -53,7 +53,7 @@ function useCalculateInstanceStyling(
     usePointCloudAnnotationMappingsForModels(models);
 
   const { data: styledModels } = useQuery(
-    ['styledModels', pointCloudAnnotationMappings, instanceGroups, models, isLoading],
+    ['styledModels', pointCloudAnnotationMappings, instanceGroups, models],
     () =>
       pointCloudAnnotationMappings?.map((annotationMappings) => {
         return calculateAnnotationMappingModelStyling(instanceGroups, annotationMappings);
