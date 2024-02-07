@@ -856,8 +856,6 @@ export class FlexibleControlsOptions {
     // (undocumented)
     get shouldPick(): boolean;
     // (undocumented)
-    showLookAt: boolean;
-    // (undocumented)
     showTarget: boolean;
     // (undocumented)
     wheelDollySpeed: number;
