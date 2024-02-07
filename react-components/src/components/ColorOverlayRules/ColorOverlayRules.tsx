@@ -19,7 +19,17 @@ import { useReveal } from '../..';
 import { Color } from 'three';
 import { FdmSDK } from '../../utilities/FdmSDK';
 import { RULE_BASED_COLORING_SOURCE } from '../../utilities/globalDataModels';
-import { RuleOutput, type Rule, type RuleOutputSet, NumericExpression, StringExpression, MetadataRuleTrigger, StringCondition, StringTrigger } from 'rule-based-actions/src/lib/types';
+import {
+  type RuleOutput,
+  type Rule,
+  type RuleOutputSet,
+  type NumericExpression,
+  type StringExpression,
+  MetadataRuleTrigger,
+  type StringCondition,
+  type StringTrigger,
+  type Expression
+} from 'rule-based-actions/src/lib/types';
 
 export type ColorOverlayProps = {
   addModelOptions: AddModelOptions;
@@ -42,24 +52,159 @@ export function ColorOverlayRules({
 
   const { modelId, revisionId } = addModelOptions;
 
-  const operatorSymbolsMap = new Map<string,string>();
-  operatorSymbolsMap.set("equals","==");
-  operatorSymbolsMap.set("notEquals","!=");
-  operatorSymbolsMap.set("lessThan","<");
-  operatorSymbolsMap.set("greaterThan",">");
-  operatorSymbolsMap.set("lessThanOrEquals","<=");
-  operatorSymbolsMap.set("greaterThanOrEquals",">=");
+  const operatorSymbolsMap = new Map<string, string>();
+  operatorSymbolsMap.set('equals', '==');
+  operatorSymbolsMap.set('notEquals', '!=');
+  operatorSymbolsMap.set('lessThan', '<');
+  operatorSymbolsMap.set('greaterThan', '>');
+  operatorSymbolsMap.set('lessThanOrEquals', '<=');
+  operatorSymbolsMap.set('greaterThanOrEquals', '>=');
 
-  operatorSymbolsMap.set("contains",".contains(${{parameter}})");
-  operatorSymbolsMap.set("startsWith",".startsWith(${{parameter}})");
-  operatorSymbolsMap.set("endsWith",".endsWith(${{parameter}})");
+  operatorSymbolsMap.set('contains', '.contains($<parameter>)');
+  operatorSymbolsMap.set('startsWith', '.startsWith($<parameter>)');
+  operatorSymbolsMap.set('endsWith', '.endsWith($<parameter>)');
 
-  operatorSymbolsMap.set("endsWith",".endsWith(${{parameter}})");
+  operatorSymbolsMap.set('endsWith', '.endsWith($<parameter>)');
 
-  operatorSymbolsMap.set("within",">=${{lowerBoundInclusive}} && ${{asset}}.${{trigger.type}}[${{trigger.key}}]<=${{upperBoundInclusive}}");
-  operatorSymbolsMap.set("outside","<${{lowerBoundExclusive}} || ${{asset}}.${{trigger.type}}[${{trigger.key}}]>${{upperBoundExclusive}}");
+  operatorSymbolsMap.set(
+    'within',
+    '>=$<lowerBoundInclusive> && $<asset}}.$<trigger.type>[$<trigger.key>]<=$<upperBoundInclusive>'
+  );
+  operatorSymbolsMap.set(
+    'outside',
+    '<$<lowerBoundExclusive> || $<asset}}.$<trigger.type>[$<trigger.key>]>$<upperBoundExclusive>'
+  );
+
+  const baseOperatorsMap = new Map<string, string>();
+
+  baseOperatorsMap.set('or', ' || ');
+  baseOperatorsMap.set('and', ' && ');
+  baseOperatorsMap.set('not', ' ! ');
 
   useEffect(() => {
+    const replaceDeclarationsWithValuesForStrings = (
+      declaration: string,
+      triggerData: StringTrigger,
+      conditionData: StringCondition
+    ): string => {
+      declaration?.replace('$<parameter>', conditionData.parameter);
+      declaration?.replace('$<trigger.type>', triggerData.type);
+      declaration?.replace('$<trigger.key>', triggerData.key);
+
+      return declaration;
+    };
+
+    const generateStringExpressionStatement = (expression: StringExpression): string => {
+      const { trigger, condition } = expression;
+      const operatorDeclaration = operatorSymbolsMap.get(condition.type);
+      if (operatorDeclaration === undefined) return '';
+
+      const stringExpression =
+        '$<asset>.' +
+        trigger.type +
+        "['" +
+        trigger.key +
+        "']" +
+        operatorDeclaration +
+        "'" +
+        condition.parameter +
+        "'";
+
+      const fullExpression = replaceDeclarationsWithValuesForStrings(
+        stringExpression,
+        trigger,
+        condition
+      );
+
+      /* const stringExpression =
+        '$<asset>.' +
+        trigger.type +
+        "['" +
+        trigger.key +
+        "']" +
+        filledDeclaration +
+        "'" +
+        condition.parameter +
+        "'"; */
+
+      return fullExpression;
+    };
+    const generateNumericExpressionStatement = (expression: NumericExpression): string => {
+      return 'NUMERIC';
+    };
+
+    const traverseExpressionOperator = (
+      levelStatementString: string,
+      expressions: Expression[],
+      levelExpressionOperator: string
+    ): string => {
+      let currentStatement: string = '';
+
+      console.log(' =========== ');
+      console.log(' levelStatementString: ', levelStatementString);
+      console.log(' expressions: ', expressions);
+      console.log(' levelExpressionOperator: ', levelExpressionOperator);
+
+      expressions.forEach((expression, index) => {
+        const innerOperator =
+          expressions.length > 1 && index > 0 ? baseOperatorsMap.get(levelExpressionOperator) : '';
+
+        levelStatementString =
+          expressions.length > 1 && index > 0
+            ? levelStatementString + innerOperator
+            : '' + innerOperator;
+        let innerStatementString: string = '';
+
+        switch (expression.type) {
+          case 'or': {
+            currentStatement = traverseExpressionOperator(
+              levelStatementString,
+              expression.expressions,
+              expression.type
+            );
+
+            innerStatementString = '(' + currentStatement + ')';
+            break;
+          }
+          case 'and': {
+            currentStatement = traverseExpressionOperator(
+              levelStatementString,
+              expression.expressions,
+              expression.type
+            );
+            innerStatementString = '(' + currentStatement + ')';
+            break;
+          }
+          case 'not': {
+            currentStatement = traverseExpressionOperator(
+              levelStatementString,
+              [expression.expression],
+              expression.type
+            );
+            innerStatementString = '(' + currentStatement + ')';
+            break;
+          }
+          case 'numericExpression': {
+            currentStatement = generateNumericExpressionStatement(expression);
+            innerStatementString = currentStatement;
+            break;
+          }
+          case 'stringExpression': {
+            currentStatement = generateStringExpressionStatement(expression);
+            innerStatementString = currentStatement;
+            break;
+          }
+          default: {
+            // statements;
+            break;
+          }
+        }
+        levelStatementString = levelStatementString + innerStatementString;
+      });
+
+      return levelStatementString;
+    };
+
     const getContextualization = async (): Promise<void> => {
       const ruleModel = await fdmSdk.getByExternalIds(
         [
@@ -97,86 +242,40 @@ export function ColorOverlayRules({
       const model = viewer.models[0] as CogniteCadModel;
       console.log(' model ', model);
 
-      const outputType = "color";
+      const outputType = 'color';
 
       type RuleAndStyleIndex = {
         rule: Rule;
         styleIndex: TreeIndexNodeCollection;
         ruleOutputParams: RuleOutput;
-      }
+      };
 
       const ruleWithOutputs = ruleSet.rulesWithOutputs;
 
       ruleWithOutputs.forEach((ruleWithOutput) => {
-
         const { rule, outputs } = ruleWithOutput;
         // Starting Expression
         const expression = rule.expression;
-        let ruleGlobalStatement: string = "";
-        let initialOperator: string = "";
-        let initialExpression: string = "";
+        let ruleGlobalStatement: string = '';
+        let initialOperator: string = '';
+        let initialExpression: string = '';
 
         const outputSelected = outputs.find((output) => output.type === outputType);
 
-        if (!outputSelected) {
+        if (outputSelected === undefined) {
           console.log('No rule output found for the type requested: ', outputType, outputs);
           return;
         }
+        ruleGlobalStatement = traverseExpressionOperator(
+          ruleGlobalStatement,
+          [expression],
+          expression.type
+        );
 
+        // ruleGlobalStatement = ruleGlobalStatement + initialExpression + initialOperator;
 
-        const replaceDeclarationsWithValuesForStrings = (declaration: string, triggerData: StringTrigger, conditionData: StringCondition): string => {
-          declaration?.replace('${{parameter}}',conditionData.parameter);
-          declaration?.replace('${{trigger.type}}',triggerData.type);
-          declaration?.replace('${{trigger.key}}',triggerData.key);
-
-          return declaration;
-        }
-
-        const generateStringExpressionStatement = (expression: StringExpression): string => {
-          const { trigger, condition } = expression;
-          const operatorDeclaration = operatorSymbolsMap.get(condition.type);
-          if (!operatorDeclaration) return "";
-
-          const filledDeclaration = replaceDeclarationsWithValuesForStrings(operatorDeclaration, trigger, condition);
-
-          const stringExpression = "${{asset}}."+trigger.type+"['"+trigger.key+"']"+filledDeclaration+"'"+condition.parameter+"'";
-
-          return stringExpression;
-        }
-        const generateNumericExpressionStatement = (expression: NumericExpression): string => {
-          return "";
-        }
-
-      switch(expression.type) {
-        case 'or': {
-            initialOperator = " || ";
-            break;
-        }
-        case 'and': {
-          initialOperator = " && ";
-            break;
-        }
-        case 'not': {
-          initialOperator = " ! ";
-          break;
-        }
-        case 'numericExpression': {
-          initialExpression = generateNumericExpressionStatement(expression);
-          break;
-        }
-        case 'stringExpression': {
-          initialExpression = generateStringExpressionStatement(expression);
-          break;
-        }
-        default: {
-            //statements;
-            break;
-        }
-      }
-       ruleGlobalStatement = ruleGlobalStatement + initialExpression + initialOperator;
-
-
-       /* ruleOutputs.forEach((ruleOutput) => {
+        console.log(' RULE GLOBAL ', ruleGlobalStatement);
+        /* ruleOutputs.forEach((ruleOutput) => {
           const ruleContent = rules.find((rule) => rule.id === ruleOutput.ruleId);
           if (ruleContent !== undefined) {
             const ruleContentAndStyleIndex: RuleAndStyleIndex = {
@@ -186,16 +285,15 @@ export function ColorOverlayRules({
             };
             generateRuleAndOutputFromContent(ruleContentAndStyleIndex);
           }
-        });
-      }); */
+        }); */
 
-      /* const generateRuleAndOutputFromContent = (ruleContentAndStyleIndex: RuleAndStyleIndex) => {
+        /* const generateRuleAndOutputFromContent = (ruleContentAndStyleIndex: RuleAndStyleIndex) => {
 
         ruleContentAndStyleIndex.
       } */
 
-      // go through all the rules
-      /* rules.forEach((rule) => {
+        // go through all the rules
+        /* rules.forEach((rule) => {
         const conditions = rule.conditions;
         const isStringRule = rule.isStringRule as boolean;
 
@@ -261,6 +359,7 @@ export function ColorOverlayRules({
           });
         }
       }); */
+      });
     };
     void getContextualization();
   }, []);
