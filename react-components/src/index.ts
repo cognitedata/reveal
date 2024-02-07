@@ -79,6 +79,7 @@ export {
 export {
   type Reveal3DResourcesProps,
   type FdmAssetStylingGroup,
+  type AssetStylingGroup,
   type DefaultResourceStyling
 } from './components/Reveal3DResources/types';
 export {
