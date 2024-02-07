@@ -251,10 +251,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
     const factor = 2 / this._domElement.clientHeight;
     speed *= factor; // Typical value is 0.0015
-
-    // const distanceToTarget = this._cameraPosition.end.distanceTo(this._target.end);
-    // const f = Math.max(distanceToTarget, 2) / 2;
-    // console.log(f);
     return speed;
   }
 
@@ -492,6 +488,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
     window.addEventListener('pointermove', onMouseMove, { passive: false });
     window.addEventListener('pointerup', onMouseUp, { passive: false });
+    window.addEventListener('blur', onMouseUp, { passive: false });
   }
 
   private startTouchRotation(initialEvent: PointerEvent) {
@@ -760,7 +757,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
     const prevScrollDistance = this._scrollDistance;
     this._scrollDistance -= step;
-
     if (
       this.options.realMouseWheelAction === FlexibleWheelZoomType.ToCursor &&
       this._scrollDistance < this.options.sensitivity
@@ -768,9 +764,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       // This avoid to close to the scroll cursor
       this._scrollDistance = this.options.sensitivity;
       step = prevScrollDistance - this._scrollDistance;
-      //console.log('Close to something');
     }
-    //console.log(this._scrollDistance, step, deltaDistance, this.options.sensitivity);
     const translation = this._scrollDirection.clone();
     translation.multiplyScalar(step);
     return translation;

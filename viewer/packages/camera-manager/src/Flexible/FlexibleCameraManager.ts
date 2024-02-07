@@ -359,9 +359,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     if (!this.options.shouldPick) {
       return;
     }
-    // Nils: Need this for a while to fine tune
-    //console.log('mouseWheelAction: ', this.options.realMouseWheelAction);
-
     // Added because cameraControls are disabled when doing picking, so
     // preventDefault could be not called on wheel event and produce unwanted scrolling.
     event.preventDefault();
@@ -371,15 +368,12 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     const deltaTime = currentTime - this._prevTime;
     const deltaCoords = currentCoords.distanceTo(this._prevCoords);
 
-    //console.log('......................');
     if (deltaTime <= this.options.minimumTimeBetweenRaycasts) {
-      //console.log('mouseWheelAction: To short time', deltaTime);
       return;
     }
     const timeHasChanged = deltaTime >= this.options.maximumTimeBetweenRaycasts;
     const positionHasChanged = deltaCoords >= this.options.mouseDistanceThresholdBetweenRaycasts;
     if (!positionHasChanged || !timeHasChanged) {
-      //console.log('mouseWheelAction: Nothing has changed', deltaTime, hasMoved, hasWaited);
       return;
     }
     this._prevTime = currentTime;
@@ -387,7 +381,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
 
     const scrollCursor = await this.getPickedPointPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
     this.controls.setScrollCursor(scrollCursor);
-    // console.log('mouseWheelAction set: ', scrollCursor);
     this._prevTime = currentTime;
   };
 
@@ -460,7 +453,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     // This is used to determine the speed of the camera when flying with ASDW.
     // We want to either let it be controlled by the near plane if we are far away,
     // but no more than a fraction of the bounding box of the system if inside
-    const diagonal = this.getBoundingBoxDiagonalXY();
+    const diagonal = this.getHorizontalDiagonal();
     const diagonalFraction = diagonal * this.options.sensitivityDiagonalFraction;
     const nearFraction = 0.1 * this.camera.near;
 
@@ -471,26 +464,21 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       sensitivity = this.options.getLegalSensitivity(diagonalFraction);
     }
     this.options.sensitivity = sensitivity;
-
-    // Nils: Need this for a while to fine tune
-    // console.log('diagonalFraction:     ', diagonalFraction);
-    // console.log('nearFraction:         ', nearFraction);
-    // console.log('sensitivity:          ', sensitivity);
   }
 
   public getBoundingBoxDiagonal(): number {
     return getDiagonal(this._currentBoundingBox);
   }
-  public getBoundingBoxDiagonalXY(): number {
-    return getDiagonalXY(this._currentBoundingBox);
+  public getHorizontalDiagonal(): number {
+    return getHorizontalDiagonal(this._currentBoundingBox);
   }
 }
 
 function getDiagonal(boundingBox: Box3): number {
   return boundingBox.min.distanceTo(boundingBox.max);
 }
-function getDiagonalXY(boundingBox: Box3): number {
-  return Math.sqrt((boundingBox.max.x - boundingBox.min.x) ** 2 + (boundingBox.max.y - boundingBox.min.y) ** 2);
+function getHorizontalDiagonal(boundingBox: Box3): number {
+  return Math.sqrt((boundingBox.max.x - boundingBox.min.x) ** 2 + (boundingBox.max.z - boundingBox.min.z) ** 2);
 }
 
 /**
