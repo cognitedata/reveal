@@ -7,7 +7,8 @@ import {
   type IdEither,
   type AssetMapping3D,
   type AssetMappings3DListFilter,
-  type CogniteClient
+  type CogniteClient,
+  Asset
 } from '@cognite/sdk';
 import {
   type AddModelOptions,
@@ -30,6 +31,7 @@ import {
   type StringTrigger,
   type Expression
 } from 'rule-based-actions/src/lib/types';
+import { NodeAndRange } from './types';
 
 export type ColorOverlayProps = {
   addModelOptions: AddModelOptions;
@@ -68,11 +70,11 @@ export function ColorOverlayRules({
 
   operatorSymbolsMap.set(
     'within',
-    '>=$<lowerBoundInclusive> && $<asset}}.$<trigger.type>[$<trigger.key>]<=$<upperBoundInclusive>'
+    '>=$<lowerBoundInclusive> && asset.$<trigger.type>[$<trigger.key>]<=$<upperBoundInclusive>'
   );
   operatorSymbolsMap.set(
     'outside',
-    '<$<lowerBoundExclusive> || $<asset}}.$<trigger.type>[$<trigger.key>]>$<upperBoundExclusive>'
+    '<$<lowerBoundExclusive> || asset.$<trigger.type>[$<trigger.key>]>$<upperBoundExclusive>'
   );
 
   const baseOperatorsMap = new Map<string, string>();
@@ -94,13 +96,24 @@ export function ColorOverlayRules({
       return declaration;
     };
 
+   /*  const replaceAssetDeclarationsWithValuesForStrings = (
+      declaration: string,
+      asset: Asset
+    ): string => {
+      declaration?.replace('$<asset>', asset.parameter);
+      declaration?.replace('$<trigger.type>', triggerData.type);
+      declaration?.replace('$<trigger.key>', triggerData.key);
+
+      return declaration;
+    }; */
+
     const generateStringExpressionStatement = (expression: StringExpression): string => {
       const { trigger, condition } = expression;
       const operatorDeclaration = operatorSymbolsMap.get(condition.type);
       if (operatorDeclaration === undefined) return '';
 
       const stringExpression =
-        '$<asset>.' +
+        'asset.' +
         trigger.type +
         "['" +
         trigger.key +
@@ -130,7 +143,7 @@ export function ColorOverlayRules({
       return fullExpression;
     };
     const generateNumericExpressionStatement = (expression: NumericExpression): string => {
-      return 'NUMERIC';
+      return 'true';
     };
 
     const traverseExpressionOperator = (
@@ -272,9 +285,32 @@ export function ColorOverlayRules({
           expression.type
         );
 
+
+        const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
+          rule,
+          styleIndex: new TreeIndexNodeCollection(),
+          ruleOutputParams: outputSelected
+        };
+
+        let response: boolean;
+
+        const statement = `
+          if (${ruleGlobalStatement}) {
+            response = true;
+          }
+          return response;`;
+
+          console.log(' STATEMENT ', statement);
+
+        contextualizedAssetNodes.forEach((asset) => {
+          // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
+          const result = new Function(statement)(asset);
+          console.log(' HERE: ', result);
+        });
+
         // ruleGlobalStatement = ruleGlobalStatement + initialExpression + initialOperator;
 
-        console.log(' RULE GLOBAL ', ruleGlobalStatement);
+        console.log(' RULE GLOBAL ', response, ruleGlobalStatement);
         /* ruleOutputs.forEach((ruleOutput) => {
           const ruleContent = rules.find((rule) => rule.id === ruleOutput.ruleId);
           if (ruleContent !== undefined) {
@@ -360,6 +396,36 @@ export function ColorOverlayRules({
         }
       }); */
       });
+
+
+
+     /*  const nodesFromThisAsset = assetMappings.filter(
+        (mapping) => mapping.assetId === asset.id
+      );
+ */
+      // get the 3d nodes linked to the asset and with treeindex and subtreeRange
+      /* const treeNodes: NodeAndRange[] = await Promise.all(
+        contextualizedAssetNodes.map(async (nodeFromAsset) => {
+          const subtreeRange = await model.getSubtreeTreeIndices(nodeFromAsset.treeIndex);
+          const node: NodeAndRange = {
+            nodeId: nodeFromAsset.nodeId,
+            treeIndex: nodeFromAsset.treeIndex,
+            subtreeRange
+          };
+          return node;
+        })
+      );
+
+      // add the subtree range into the style index
+      const nodeIndexSet = condition.nodeIdsStyleIndex.getIndexSet();
+      treeNodes.forEach((node) => {
+        nodeIndexSet.addRange(node.subtreeRange);
+      });
+
+      // assign the style with the color from the condition
+      model.assignStyledNodeCollection(condition.nodeIdsStyleIndex, {
+        color: new Color(condition.color)
+      }); */
     };
     void getContextualization();
   }, []);
