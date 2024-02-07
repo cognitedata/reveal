@@ -488,7 +488,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
     window.addEventListener('pointermove', onMouseMove, { passive: false });
     window.addEventListener('pointerup', onMouseUp, { passive: false });
-    window.addEventListener('blur', onMouseUp, { passive: false });
   }
 
   private startTouchRotation(initialEvent: PointerEvent) {
