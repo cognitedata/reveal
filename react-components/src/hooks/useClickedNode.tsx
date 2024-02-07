@@ -10,11 +10,12 @@ import {
 import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeDataPromises } from '../components/NodeCacheProvider/NodeCacheProvider';
-import { type Asset, type CogniteInternalId, type Node3D } from '@cognite/sdk';
+import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type FdmNodeDataPromises } from '../components/NodeCacheProvider/types';
 import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 import { type NodeAssetMappingResult } from '../components/NodeCacheProvider/AssetMappingCache';
 import { usePointCloudAnnotationMappingForAssetId } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
+import { type AnnotationAssetMappingDataResult } from './types';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -27,11 +28,6 @@ export type FdmNodeDataResult = {
   views?: Source[];
 };
 
-export type AnnotationAssetMappingDataResult = {
-  annotationId: number;
-  asset: Asset;
-};
-
 export type ClickedNodeData = {
   fdmResult?: FdmNodeDataResult;
   assetMappingResult?: AssetMappingDataResult;
@@ -42,9 +38,8 @@ export type ClickedNodeData = {
 export const useClickedNodeData = (): ClickedNodeData | undefined => {
   const viewer = useReveal();
 
-  const [cadIntersection, setCadIntersection] = useState<CadIntersection | undefined>(undefined);
-  const [pointCloudIntersection, setPointCloudIntersection] = useState<
-    PointCloudIntersection | undefined
+  const [intersection, setIntersection] = useState<
+    CadIntersection | PointCloudIntersection | undefined
   >(undefined);
 
   useEffect(() => {
@@ -52,15 +47,10 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
       void (async () => {
         const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
 
-        if (intersection?.type === 'cad') {
-          setCadIntersection(intersection);
-          setPointCloudIntersection(undefined);
-        } else if (intersection?.type === 'pointcloud') {
-          setPointCloudIntersection(intersection);
-          setCadIntersection(undefined);
+        if (intersection?.type === 'cad' || intersection?.type === 'pointcloud') {
+          setIntersection(intersection);
         } else {
-          setCadIntersection(undefined);
-          setPointCloudIntersection(undefined);
+          setIntersection(undefined);
         }
       })();
     };
@@ -73,28 +63,30 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
   }, [viewer]);
 
   const nodeDataPromises = useFdm3dNodeDataPromises(
-    cadIntersection?.model.modelId,
-    cadIntersection?.model.revisionId,
-    cadIntersection?.treeIndex
+    intersection?.model.modelId,
+    intersection?.model.revisionId,
+    intersection?.type === 'cad' ? intersection.treeIndex : undefined
   ).data;
 
   const assetMappingResult = useAssetMappingForTreeIndex(
-    cadIntersection?.model.modelId,
-    cadIntersection?.model.revisionId,
-    cadIntersection?.treeIndex
+    intersection?.model.modelId,
+    intersection?.model.revisionId,
+    intersection?.type === 'cad' ? intersection.treeIndex : undefined
   ).data;
 
   const pointCloudAssetMappingResult = usePointCloudAnnotationMappingForAssetId(
-    pointCloudIntersection?.model.modelId,
-    pointCloudIntersection?.model.revisionId,
-    pointCloudIntersection?.assetRef?.externalId ?? pointCloudIntersection?.assetRef?.id
+    intersection?.model.modelId,
+    intersection?.model.revisionId,
+    intersection?.type === 'pointcloud'
+      ? intersection.assetRef?.externalId ?? intersection.assetRef?.id
+      : undefined
   ).data;
 
   return useCombinedClickedNodeData(
     nodeDataPromises,
     assetMappingResult,
     pointCloudAssetMappingResult,
-    cadIntersection ?? pointCloudIntersection
+    intersection
   );
 };
 

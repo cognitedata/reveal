@@ -19,12 +19,13 @@ import {
 import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
 import { useCalculatePointCloudStyling } from '../../hooks/useCalculatePointCloudModelsStyling';
 import { type PointCloudModelStyling } from '../PointCloudContainer/useApplyPointCloudStyling';
+import { EMPTY_ARRAY } from '../../utilities/constants';
+import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
 
 export const Reveal3DResources = ({
   resources,
   defaultResourceStyling,
   instanceStyling,
-  pointCloudInstanceStyling,
   onResourcesAdded,
   onResourceLoadError
 }: Reveal3DResourcesProps): ReactElement => {
@@ -52,13 +53,13 @@ export const Reveal3DResources = ({
 
   const styledCadModelOptions = useCalculateCadStyling(
     cadModelOptions,
-    instanceStyling ?? [],
+    instanceStyling ?? EMPTY_ARRAY,
     defaultResourceStyling
   );
 
   const styledPointCloudModelOptions = useCalculatePointCloudStyling(
     pointCloudModelOptions,
-    pointCloudInstanceStyling ?? [],
+    instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
   );
 

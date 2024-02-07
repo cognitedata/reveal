@@ -8,9 +8,10 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
-import { type TypedReveal3DModel } from '../Reveal3DResources/types';
-import { type AnnotationAssetMappingDataResult } from '../../hooks/useClickedNode';
+import { type PointCloudModelOptions, type TypedReveal3DModel } from '../Reveal3DResources/types';
 import { type AnnotationModelDataResult } from '../../hooks/useCalculatePointCloudModelsStyling';
+import { type AnnotationAssetMappingDataResult } from '../../hooks/types';
+import { EMPTY_ARRAY } from '../../utilities/constants';
 
 export type PointCloudAnnotationCacheContextContent = {
   cache: PointCloudAnnotationCache;
@@ -28,6 +29,41 @@ const usePointCloudAnnotationCache = (): PointCloudAnnotationCache => {
   }
 
   return content.cache;
+};
+
+export const usePointCloudAnnotationModelsForModels = (
+  models: TypedReveal3DModel[]
+): UseQueryResult<
+  Array<{
+    model: PointCloudModelOptions;
+    annotationIds: number[];
+  }>
+> => {
+  const pointCloudAnnotationCache = usePointCloudAnnotationCache();
+
+  return useQuery(
+    [
+      'reveal',
+      'react-components',
+      'models-pointcloud-annotationmodels',
+      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+    ],
+    async () => {
+      return await Promise.all(
+        models.map(async (model) => {
+          const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
+            model.modelId,
+            model.revisionId
+          );
+          const annotationIds = annotationModel.map((annotation) => {
+            return annotation.id;
+          });
+          return { model, annotationIds };
+        })
+      );
+    },
+    { staleTime: Infinity, enabled: models.length > 0 }
+  );
 };
 
 export const usePointCloudAnnotationMappingsForModels = (
@@ -51,7 +87,12 @@ export const usePointCloudAnnotationMappingsForModels = (
           );
           return {
             model,
-            annotationModel
+            annotationModel: annotationModel.map((annotation) => {
+              return {
+                ...annotation,
+                data: annotation.data
+              };
+            })
           };
         })
       );
@@ -75,21 +116,18 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
       ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? [])
     ],
     async () => {
-      return await Promise.all(
+      const allAnnotationMappingsPromisesResult = await Promise.all(
         models.map(async (model) => {
-          await Promise.all(
-            assetIds?.map(async (assetId) => {
-              const result = await fetchAnnotationsForAssetId(
-                model.modelId,
-                model.revisionId,
-                assetId,
-                pointCloudAnnotationCache
-              );
-              return result ?? [];
-            }) ?? []
+          const result = await fetchAnnotationsForModel(
+            model.modelId,
+            model.revisionId,
+            assetIds,
+            pointCloudAnnotationCache
           );
+          return result ?? EMPTY_ARRAY;
         })
       );
+      return allAnnotationMappingsPromisesResult.flat();
     },
     { staleTime: Infinity, enabled: assetIds !== undefined && assetIds.length > 0 }
   );
@@ -111,43 +149,52 @@ export const usePointCloudAnnotationMappingForAssetId = (
       assetId
     ],
     async () => {
-      const result = await fetchAnnotationsForAssetId(
+      if (modelId === undefined || revisionId === undefined || assetId === undefined) {
+        return EMPTY_ARRAY;
+      }
+      const result = await fetchAnnotationsForModel(
         modelId,
         revisionId,
-        assetId,
+        [assetId],
         pointCloudAnnotationCache
       );
-      return result ?? [];
+      return result ?? EMPTY_ARRAY;
     },
     { staleTime: Infinity, enabled: assetId !== undefined }
   );
 };
 
-const fetchAnnotationsForAssetId = async (
+const fetchAnnotationsForModel = async (
   modelId: number | undefined,
   revisionId: number | undefined,
-  assetId: string | number | undefined,
+  assetIds: Array<string | number> | undefined,
   pointCloudAnnotationCache: PointCloudAnnotationCache
 ): Promise<AnnotationAssetMappingDataResult[] | undefined> => {
-  if (modelId === undefined || revisionId === undefined || assetId === undefined) {
+  if (modelId === undefined || revisionId === undefined || assetIds === undefined) {
     return undefined;
   }
 
-  const annotationMapping = await pointCloudAnnotationCache.matchPointCloudAnnotationsForModel(
-    modelId,
-    revisionId,
-    assetId
+  const annotationMappings = await Promise.all(
+    assetIds.map(
+      async (assetId) =>
+        await pointCloudAnnotationCache.matchPointCloudAnnotationsForModel(
+          modelId,
+          revisionId,
+          assetId
+        )
+    )
   );
 
-  const transformedAnnotationMapping = Array.from(annotationMapping.entries()).flatMap(
-    ([, mappings]) =>
+  const transformedAnnotationMappings = annotationMappings.flatMap((annotationMapping) =>
+    Array.from(annotationMapping.entries()).flatMap(([, mappings]) =>
       Array.from(mappings.entries()).map(([annotationId, asset]) => ({
         annotationId,
         asset
       }))
+    )
   );
 
-  return transformedAnnotationMapping;
+  return transformedAnnotationMappings;
 };
 
 export function PointCloudAnnotationCacheProvider({

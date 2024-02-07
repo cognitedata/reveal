@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import {
-  type AssetMappingStylingGroup,
+  type AssetStylingGroup,
   type CadModelOptions,
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
@@ -31,6 +31,7 @@ import {
   useNodesForAssets
 } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 import { isSameCadModel } from '../utilities/isSameModel';
+import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -46,7 +47,7 @@ export type StyledModel = {
 
 export const useCalculateCadStyling = (
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>,
+  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledModel[] => {
   const modelsMappedStyleGroups = useCalculateMappedStyling(
@@ -129,7 +130,7 @@ function useCalculateMappedStyling(
 
 function useCalculateInstanceStyling(
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>
+  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>
 ): ModelStyleGroup[] {
   const { data: fdmAssetMappings } = useFdmAssetMappings(
     instanceGroups
@@ -168,7 +169,7 @@ function useCalculateInstanceStyling(
 
 function useAssetMappingInstanceStyleGroups(
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>,
+  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
   modelAssetMappings: ModelRevisionAssetNodesResult[] | undefined
 ): ModelStyleGroup[] {
   return useMemo(() => {
@@ -188,7 +189,7 @@ function useAssetMappingInstanceStyleGroups(
 
 function useFdmInstanceStyleGroups(
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>,
+  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
   fdmAssetMappings: ThreeDModelFdmMappings[] | undefined
 ): ModelStyleGroup[] {
   return useMemo(() => {
@@ -208,14 +209,6 @@ function useFdmInstanceStyleGroups(
       return { model, styleGroup };
     });
   }, [models, instanceGroups, fdmAssetMappings]);
-}
-
-function isFdmAssetStylingGroup(instanceGroup: any): instanceGroup is FdmAssetStylingGroup {
-  return instanceGroup.fdmAssetExternalIds !== undefined && instanceGroup.style !== undefined;
-}
-
-function isAssetMappingStylingGroup(instanceGroup: any): instanceGroup is AssetMappingStylingGroup {
-  return instanceGroup.assetIds !== undefined && instanceGroup.style !== undefined;
 }
 
 function useJoinStylingGroups(
@@ -326,7 +319,7 @@ function calculateFdmCadModelStyling(
 }
 
 function calculateAssetMappingCadModelStyling(
-  stylingGroups: AssetMappingStylingGroup[],
+  stylingGroups: AssetStylingGroup[],
   nodeMap: Map<AssetId, Node3D>,
   model: CadModelOptions
 ): ModelStyleGroup {

@@ -51,14 +51,9 @@ export type FdmAssetStylingGroup = {
   style: { cad: NodeAppearance };
 };
 
-export type AssetMappingStylingGroup = {
+export type AssetStylingGroup = {
   assetIds: CogniteInternalId[];
-  style: { cad: NodeAppearance };
-};
-
-export type PointCloudAnnotationStylingGroup = {
-  assetId: CogniteInternalId;
-  style: { pointcloud: NodeAppearance };
+  style: { cad?: NodeAppearance; pointcloud?: NodeAppearance };
 };
 
 export type DefaultResourceStyling = {
@@ -69,8 +64,7 @@ export type DefaultResourceStyling = {
 export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
   defaultResourceStyling?: DefaultResourceStyling;
-  instanceStyling?: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>;
-  pointCloudInstanceStyling?: PointCloudAnnotationStylingGroup[];
+  instanceStyling?: Array<FdmAssetStylingGroup | AssetStylingGroup>;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
 };

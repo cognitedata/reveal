@@ -93,3 +93,8 @@ export type Cdf3dRevisionProperties = {
   eulerRotationY: number;
   eulerRotationZ: number;
 };
+
+export type AnnotationAssetMappingDataResult = {
+  annotationId: number;
+  asset: Asset;
+};

@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type CogniteInternalId } from '@cognite/sdk/dist/src';
+import { type CogniteInternalId } from '@cognite/sdk';
 import {
   type ModelRevisionId,
   type ModelAssetIdKey,
