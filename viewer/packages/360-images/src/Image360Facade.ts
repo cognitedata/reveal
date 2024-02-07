@@ -59,15 +59,22 @@ export class Image360Facade<T> {
   ): Promise<DefaultImage360Collection> {
     const sequencer = this._loadSequencer.getNextSequencer();
 
-    const image360Collection = await this._entityFactory.create(
-      dataProviderFilter,
-      postTransform,
-      preComputedRotation,
-      annotationFilter
-    );
+    try {
+      const image360Collection = await this._entityFactory.create(
+        dataProviderFilter,
+        postTransform,
+        preComputedRotation,
+        annotationFilter
+      );
+      await sequencer(() => {
+        this._image360Collections.push(image360Collection);
+      });
+      return image360Collection;
+    } catch (e) {
+      await sequencer(() => {});
+    }
 
-    await sequencer(() => this._image360Collections.push(image360Collection));
-    return image360Collection;
+    throw new Error('Failed to create Image360Collection');
   }
 
   public removeSet(collection: DefaultImage360Collection): void {

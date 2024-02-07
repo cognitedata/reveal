@@ -718,14 +718,19 @@ export class Cognite3DViewer {
     const modelLoadSequencer = this._addModelSequencer.getNextSequencer<void>();
 
     return (async () => {
-      const type = await this.determineModelType(options.modelId, options.revisionId);
-      switch (type) {
-        case 'cad':
-          return this.addCadModelWithSequencer(options, modelLoadSequencer);
-        case 'pointcloud':
-          return this.addPointCloudModelWithSequencer(options, modelLoadSequencer);
-        default:
-          throw new Error('Model is not supported');
+      try {
+        const type = await this.determineModelType(options.modelId, options.revisionId);
+        switch (type) {
+          case 'cad':
+            return this.addCadModelWithSequencer(options, modelLoadSequencer);
+          case 'pointcloud':
+            return this.addPointCloudModelWithSequencer(options, modelLoadSequencer);
+          default:
+            throw new Error('Model is not supported');
+        }
+      } catch (error) {
+        modelLoadSequencer(() => {});
+        throw new Error(`Failed to add model: ${error}`);
       }
     })();
   }
@@ -747,7 +752,12 @@ export class Cognite3DViewer {
    */
   addCadModel(options: AddModelOptions): Promise<CogniteCadModel> {
     const modelLoaderSequencer = this._addModelSequencer.getNextSequencer<void>();
-    return this.addCadModelWithSequencer(options, modelLoaderSequencer);
+    try {
+      return this.addCadModelWithSequencer(options, modelLoaderSequencer);
+    } catch (error) {
+      modelLoaderSequencer(() => {});
+      throw new Error(`Failed to add CAD model: ${error}`);
+    }
   }
 
   private async addCadModelWithSequencer(
@@ -765,7 +775,6 @@ export class Cognite3DViewer {
       this._models.push(model3d);
       this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
     });
-
     return model3d;
   }
 
