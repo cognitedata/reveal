@@ -68,10 +68,9 @@ export class CameraManagerHelper {
    * @returns New camera rotationg
    */
   static calculateNewRotationFromTarget(camera: THREE.PerspectiveCamera, newTarget: THREE.Vector3): THREE.Quaternion {
-    return new THREE.Quaternion().setFromUnitVectors(
-      new THREE.Vector3(0, 0, -1),
-      newTarget.clone().sub(camera.position).normalize()
-    );
+    const cameraClone = camera.clone();
+    cameraClone.lookAt(newTarget);
+    return new THREE.Quaternion().setFromEuler(cameraClone.rotation);
   }
   /**
    * Updates near and far plane of the camera based on the bounding box.
