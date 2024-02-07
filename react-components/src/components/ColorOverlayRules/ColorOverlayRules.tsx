@@ -29,7 +29,8 @@ import {
   MetadataRuleTrigger,
   type StringCondition,
   type StringTrigger,
-  type Expression
+  type Expression,
+  ColorRuleOutput
 } from 'rule-based-actions/src/lib/types';
 import { NodeAndRange } from './types';
 
@@ -84,127 +85,102 @@ export function ColorOverlayRules({
   baseOperatorsMap.set('not', ' ! ');
 
   useEffect(() => {
-    const replaceDeclarationsWithValuesForStrings = (
-      declaration: string,
-      triggerData: StringTrigger,
-      conditionData: StringCondition
-    ): string => {
-      declaration?.replace('$<parameter>', conditionData.parameter);
-      declaration?.replace('$<trigger.type>', triggerData.type);
-      declaration?.replace('$<trigger.key>', triggerData.key);
-
-      return declaration;
-    };
-
-   /*  const replaceAssetDeclarationsWithValuesForStrings = (
-      declaration: string,
-      asset: Asset
-    ): string => {
-      declaration?.replace('$<asset>', asset.parameter);
-      declaration?.replace('$<trigger.type>', triggerData.type);
-      declaration?.replace('$<trigger.key>', triggerData.key);
-
-      return declaration;
-    }; */
-
-    const generateStringExpressionStatement = (expression: StringExpression): string => {
+    const checkStringExpressionStatement = (
+      asset: Asset,
+      expression: StringExpression
+    ): boolean => {
       const { trigger, condition } = expression;
       const operatorDeclaration = operatorSymbolsMap.get(condition.type);
-      if (operatorDeclaration === undefined) return '';
+      if (operatorDeclaration === undefined || asset === undefined) return false;
 
-      const stringExpression =
-        'asset.' +
-        trigger.type +
-        "['" +
-        trigger.key +
-        "']" +
-        operatorDeclaration +
-        "'" +
-        condition.parameter +
-        "'";
+      let expressionResult: boolean = false;
 
-      const fullExpression = replaceDeclarationsWithValuesForStrings(
-        stringExpression,
-        trigger,
-        condition
-      );
+      switch (condition.type) {
+        case 'equals': {
+          expressionResult = asset[trigger.type]?.[trigger.key] === condition.parameter;
+          break;
+        }
+        case 'notEquals': {
+          expressionResult = asset[trigger.type]?.[trigger.key] !== condition.parameter;
+          break;
+        }
+        case 'contains': {
+          expressionResult =
+            asset[trigger.type]?.[trigger.key].includes(condition.parameter) ?? false;
+          break;
+        }
+        case 'startsWith': {
+          expressionResult =
+            asset[trigger.type]?.[trigger.key].startsWith(condition.parameter) ?? false;
+          break;
+        }
+        case 'endsWith': {
+          expressionResult =
+            asset[trigger.type]?.[trigger.key].endsWith(condition.parameter) ?? false;
+          break;
+        }
+      }
 
-      /* const stringExpression =
-        '$<asset>.' +
-        trigger.type +
-        "['" +
-        trigger.key +
-        "']" +
-        filledDeclaration +
-        "'" +
-        condition.parameter +
-        "'"; */
-
-      return fullExpression;
+      return expressionResult;
     };
-    const generateNumericExpressionStatement = (expression: NumericExpression): string => {
-      return 'true';
+    const checkNumericExpressionStatement = (
+      asset: Asset,
+      expression: NumericExpression
+    ): boolean => {
+      return true;
     };
 
-    const traverseExpressionOperator = (
-      levelStatementString: string,
+    const traverseExpression = (
+      asset: Asset,
       expressions: Expression[],
       levelExpressionOperator: string
-    ): string => {
-      let currentStatement: string = '';
+    ): boolean[] => {
+      let expressionResult: boolean = false;
 
       console.log(' =========== ');
-      console.log(' levelStatementString: ', levelStatementString);
       console.log(' expressions: ', expressions);
       console.log(' levelExpressionOperator: ', levelExpressionOperator);
 
-      expressions.forEach((expression, index) => {
-        const innerOperator =
-          expressions.length > 1 && index > 0 ? baseOperatorsMap.get(levelExpressionOperator) : '';
+      const expressionResults: boolean[] = [];
 
-        levelStatementString =
-          expressions.length > 1 && index > 0
-            ? levelStatementString + innerOperator
-            : '' + innerOperator;
-        let innerStatementString: string = '';
-
+      expressions.forEach((expression) => {
         switch (expression.type) {
           case 'or': {
-            currentStatement = traverseExpressionOperator(
-              levelStatementString,
+            const operatorResult = traverseExpression(
+              asset,
               expression.expressions,
               expression.type
             );
-
-            innerStatementString = '(' + currentStatement + ')';
+            expressionResult = operatorResult.find((result) => result) ?? false;
+            /*  innerStatementString = '(' + currentStatement + ')'; */
             break;
           }
           case 'and': {
-            currentStatement = traverseExpressionOperator(
-              levelStatementString,
+            const operatorResult = traverseExpression(
+              asset,
               expression.expressions,
               expression.type
             );
-            innerStatementString = '(' + currentStatement + ')';
+            expressionResult = operatorResult.find((result) => !result) ?? false;
+
+            /*  innerStatementString = '(' + currentStatement + ')'; */
             break;
           }
           case 'not': {
-            currentStatement = traverseExpressionOperator(
-              levelStatementString,
+            const operatorResult = traverseExpression(
+              asset,
               [expression.expression],
               expression.type
             );
-            innerStatementString = '(' + currentStatement + ')';
+            expressionResult = !operatorResult[0]; // TODO: make the not operator
             break;
           }
           case 'numericExpression': {
-            currentStatement = generateNumericExpressionStatement(expression);
-            innerStatementString = currentStatement;
+            expressionResult = checkNumericExpressionStatement(asset, expression);
             break;
           }
           case 'stringExpression': {
-            currentStatement = generateStringExpressionStatement(expression);
-            innerStatementString = currentStatement;
+            expressionResult = checkStringExpressionStatement(asset, expression);
             break;
           }
           default: {
@@ -212,10 +188,10 @@ export function ColorOverlayRules({
             break;
           }
         }
-        levelStatementString = levelStatementString + innerStatementString;
+        expressionResults.push(expressionResult);
       });
 
-      return levelStatementString;
+      return expressionResults;
     };
 
     const getContextualization = async (): Promise<void> => {
@@ -258,7 +234,6 @@ export function ColorOverlayRules({
       const outputType = 'color';
 
       type RuleAndStyleIndex = {
-        rule: Rule;
         styleIndex: TreeIndexNodeCollection;
         ruleOutputParams: RuleOutput;
       };
@@ -269,163 +244,59 @@ export function ColorOverlayRules({
         const { rule, outputs } = ruleWithOutput;
         // Starting Expression
         const expression = rule.expression;
-        let ruleGlobalStatement: string = '';
-        let initialOperator: string = '';
-        let initialExpression: string = '';
 
-        const outputSelected = outputs.find((output) => output.type === outputType);
+        const outputSelected = outputs.find(
+          (output) => output.type === outputType
+        ) as ColorRuleOutput;
+
+        const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
+          styleIndex: new TreeIndexNodeCollection(),
+          ruleOutputParams: outputSelected
+        };
 
         if (outputSelected === undefined) {
           console.log('No rule output found for the type requested: ', outputType, outputs);
           return;
         }
-        ruleGlobalStatement = traverseExpressionOperator(
-          ruleGlobalStatement,
-          [expression],
-          expression.type
-        );
 
+        contextualizedAssetNodes.map(async (assetNode) => {
+          const finalGlobalOutputResult = traverseExpression(
+            assetNode,
+            [expression],
+            expression.type
+          );
 
-        const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
-          rule,
-          styleIndex: new TreeIndexNodeCollection(),
-          ruleOutputParams: outputSelected
-        };
+          if (finalGlobalOutputResult[0]) {
+            const nodesFromThisAsset = assetMappings.filter(
+              (mapping) => mapping.assetId === assetNode.id
+            );
 
-        let response: boolean;
-
-        const statement = `
-          if (${ruleGlobalStatement}) {
-            response = true;
-          }
-          return response;`;
-
-          console.log(' STATEMENT ', statement);
-
-        contextualizedAssetNodes.forEach((asset) => {
-          // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-          const result = new Function(statement)(asset);
-          console.log(' HERE: ', result);
-        });
-
-        // ruleGlobalStatement = ruleGlobalStatement + initialExpression + initialOperator;
-
-        console.log(' RULE GLOBAL ', response, ruleGlobalStatement);
-        /* ruleOutputs.forEach((ruleOutput) => {
-          const ruleContent = rules.find((rule) => rule.id === ruleOutput.ruleId);
-          if (ruleContent !== undefined) {
-            const ruleContentAndStyleIndex: RuleAndStyleIndex = {
-              rule: ruleContent,
-              styleIndex: new TreeIndexNodeCollection(),
-              ruleOutputParams: ruleOutput,
-            };
-            generateRuleAndOutputFromContent(ruleContentAndStyleIndex);
-          }
-        }); */
-
-        /* const generateRuleAndOutputFromContent = (ruleContentAndStyleIndex: RuleAndStyleIndex) => {
-
-        ruleContentAndStyleIndex.
-      } */
-
-        // go through all the rules
-        /* rules.forEach((rule) => {
-        const conditions = rule.conditions;
-        const isStringRule = rule.isStringRule as boolean;
-
-        // insert the node styles for each condition only once
-        conditions.forEach((condition: { nodeIdsStyleIndex: TreeIndexNodeCollection }) => {
-          condition.nodeIdsStyleIndex = new TreeIndexNodeCollection();
-        });
-
-        // if the type is metadata
-        if (rule.rulerTriggerType === 'metadata') {
-          // go through all the contextualized assets
-          contextualizedAssetNodes.forEach((asset) => {
-            // if it is more than one metadata field name
-            rule.sourceField.forEach((sourceField: any) => {
-              // get the field value from the asset
-              const metadataFieldValue = asset.metadata?.[sourceField];
-
-              // if the asset has the metadata with that specific field and a value,
-              // then go through all rule conditions
-              if (metadataFieldValue !== undefined) {
-                conditions.forEach(
-                  async (condition: {
-                    nodeIdsStyleIndex: TreeIndexNodeCollection;
-                    valueString: any;
-                    color: string;
-                  }) => {
-                    // String rule and the value from the condition matches with the metadata field value
-                    if (isStringRule && condition.valueString === metadataFieldValue) {
-                      const nodesFromThisAsset = assetMappings.filter(
-                        (mapping) => mapping.assetId === asset.id
-                      );
-
-                      // get the 3d nodes linked to the asset and with treeindex and subtreeRange
-                      const treeNodes: NodeAndRange[] = await Promise.all(
-                        nodesFromThisAsset.map(async (nodeFromAsset) => {
-                          const subtreeRange = await model.getSubtreeTreeIndices(
-                            nodeFromAsset.treeIndex
-                          );
-                          const node: NodeAndRange = {
-                            nodeId: nodeFromAsset.nodeId,
-                            treeIndex: nodeFromAsset.treeIndex,
-                            subtreeRange
-                          };
-                          return node;
-                        })
-                      );
-
-                      // add the subtree range into the style index
-                      const nodeIndexSet = condition.nodeIdsStyleIndex.getIndexSet();
-                      treeNodes.forEach((node) => {
-                        nodeIndexSet.addRange(node.subtreeRange);
-                      });
-
-                      // assign the style with the color from the condition
-                      model.assignStyledNodeCollection(condition.nodeIdsStyleIndex, {
-                        color: new Color(condition.color)
-                      });
-                    }
-                  }
-                );
-              }
+            // get the 3d nodes linked to the asset and with treeindex and subtreeRange
+            const treeNodes: NodeAndRange[] = await Promise.all(
+              nodesFromThisAsset.map(async (nodeFromAsset) => {
+                const subtreeRange = await model.getSubtreeTreeIndices(nodeFromAsset.treeIndex);
+                const node: NodeAndRange = {
+                  nodeId: nodeFromAsset.nodeId,
+                  treeIndex: nodeFromAsset.treeIndex,
+                  subtreeRange
+                };
+                return node;
+              })
+            );
+            const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
+            treeNodes.forEach((node) => {
+              nodeIndexSet.addRange(node.subtreeRange);
             });
-          });
-        }
-      }); */
+
+            // assign the style with the color from the condition
+            model.assignStyledNodeCollection(ruleOutputAndStyleIndex.styleIndex, {
+              color: new Color(outputSelected.fill)
+            });
+          }
+
+          console.log(' ASSET ', assetNode, finalGlobalOutputResult);
+        });
       });
-
-
-
-     /*  const nodesFromThisAsset = assetMappings.filter(
-        (mapping) => mapping.assetId === asset.id
-      );
- */
-      // get the 3d nodes linked to the asset and with treeindex and subtreeRange
-      /* const treeNodes: NodeAndRange[] = await Promise.all(
-        contextualizedAssetNodes.map(async (nodeFromAsset) => {
-          const subtreeRange = await model.getSubtreeTreeIndices(nodeFromAsset.treeIndex);
-          const node: NodeAndRange = {
-            nodeId: nodeFromAsset.nodeId,
-            treeIndex: nodeFromAsset.treeIndex,
-            subtreeRange
-          };
-          return node;
-        })
-      );
-
-      // add the subtree range into the style index
-      const nodeIndexSet = condition.nodeIdsStyleIndex.getIndexSet();
-      treeNodes.forEach((node) => {
-        nodeIndexSet.addRange(node.subtreeRange);
-      });
-
-      // assign the style with the color from the condition
-      model.assignStyledNodeCollection(condition.nodeIdsStyleIndex, {
-        color: new Color(condition.color)
-      }); */
     };
     void getContextualization();
   }, []);
