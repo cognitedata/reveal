@@ -602,7 +602,7 @@ __metadata:
     jest-puppeteer: "npm:9.0.2"
     jsdom: "npm:23.2.0"
     lodash: "npm:4.17.21"
-    loglevel: "npm:1.8.1"
+    loglevel: "npm:1.9.1"
     mixpanel-browser: "npm:2.48.1"
     moq.ts: "npm:10.0.8"
     nock: "npm:13.5.1"
@@ -7699,10 +7699,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loglevel@npm:1.8.1":
-  version: 1.8.1
-  resolution: "loglevel@npm:1.8.1"
-  checksum: 10/36a786082a7e4f1d962de330122291da3a102b88dbde81a45eb92a045c38b0903783958ba39dce641440c0413da303410e7f2565f897bccad828853bd5974c86
+"loglevel@npm:1.9.1":
+  version: 1.9.1
+  resolution: "loglevel@npm:1.9.1"
+  checksum: 10/863cbbcddf850a937482c604e2d11586574a5110b746bb49c7cc04739e01f6035f6db841d25377106dd330bca7142d74995f15a97c5f3ea0af86d9472d4a99f4
   languageName: node
   linkType: hard
 
