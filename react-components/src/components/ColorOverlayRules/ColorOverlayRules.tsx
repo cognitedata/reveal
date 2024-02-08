@@ -8,7 +8,7 @@ import {
   type AssetMapping3D,
   type AssetMappings3DListFilter,
   type CogniteClient,
-  Asset
+  type Asset
 } from '@cognite/sdk';
 import {
   type AddModelOptions,
@@ -26,13 +26,11 @@ import {
   type RuleOutputSet,
   type NumericExpression,
   type StringExpression,
-  MetadataRuleTrigger,
-  type StringCondition,
-  type StringTrigger,
   type Expression,
-  ColorRuleOutput
+  type ColorRuleOutput,
+  type MetadataRuleTrigger
 } from 'rule-based-actions/src/lib/types';
-import { NodeAndRange } from './types';
+import { type NodeAndRange } from './types';
 
 export type ColorOverlayProps = {
   addModelOptions: AddModelOptions;
@@ -55,43 +53,12 @@ export function ColorOverlayRules({
 
   const { modelId, revisionId } = addModelOptions;
 
-  const operatorSymbolsMap = new Map<string, string>();
-  operatorSymbolsMap.set('equals', '==');
-  operatorSymbolsMap.set('notEquals', '!=');
-  operatorSymbolsMap.set('lessThan', '<');
-  operatorSymbolsMap.set('greaterThan', '>');
-  operatorSymbolsMap.set('lessThanOrEquals', '<=');
-  operatorSymbolsMap.set('greaterThanOrEquals', '>=');
-
-  operatorSymbolsMap.set('contains', '.contains($<parameter>)');
-  operatorSymbolsMap.set('startsWith', '.startsWith($<parameter>)');
-  operatorSymbolsMap.set('endsWith', '.endsWith($<parameter>)');
-
-  operatorSymbolsMap.set('endsWith', '.endsWith($<parameter>)');
-
-  operatorSymbolsMap.set(
-    'within',
-    '>=$<lowerBoundInclusive> && asset.$<trigger.type>[$<trigger.key>]<=$<upperBoundInclusive>'
-  );
-  operatorSymbolsMap.set(
-    'outside',
-    '<$<lowerBoundExclusive> || asset.$<trigger.type>[$<trigger.key>]>$<upperBoundExclusive>'
-  );
-
-  const baseOperatorsMap = new Map<string, string>();
-
-  baseOperatorsMap.set('or', ' || ');
-  baseOperatorsMap.set('and', ' && ');
-  baseOperatorsMap.set('not', ' ! ');
-
   useEffect(() => {
     const checkStringExpressionStatement = (
       asset: Asset,
       expression: StringExpression
     ): boolean => {
       const { trigger, condition } = expression;
-      const operatorDeclaration = operatorSymbolsMap.get(condition.type);
-      if (operatorDeclaration === undefined || asset === undefined) return false;
 
       let expressionResult: boolean = false;
 
@@ -127,7 +94,60 @@ export function ColorOverlayRules({
       asset: Asset,
       expression: NumericExpression
     ): boolean => {
-      return true;
+      // for now it will be only for metadata
+      const trigger = expression.trigger as MetadataRuleTrigger;
+      const condition = expression.condition;
+
+      let expressionResult: boolean = false;
+
+      switch (condition.type) {
+        case 'equals': {
+          const parameter = condition.parameters[0];
+          expressionResult = Number(asset[trigger.type]?.[trigger.key]) === parameter;
+          break;
+        }
+        case 'notEquals': {
+          const parameter = condition.parameters[0];
+          expressionResult = Number(asset[trigger.type]?.[trigger.key]) !== parameter;
+          break;
+        }
+        case 'lessThan': {
+          const parameter = condition.parameters[0];
+          expressionResult = Number(asset[trigger.type]?.[trigger.key]) < parameter;
+          break;
+        }
+        case 'greaterThan': {
+          const parameter = condition.parameters[0];
+          expressionResult = Number(asset[trigger.type]?.[trigger.key]) > parameter;
+          break;
+        }
+        case 'lessThanOrEquals': {
+          const parameter = condition.parameters[0];
+          expressionResult = Number(asset[trigger.type]?.[trigger.key]) <= parameter;
+          break;
+        }
+        case 'greaterThanOrEquals': {
+          const parameter = condition.parameters[0];
+          expressionResult = Number(asset[trigger.type]?.[trigger.key]) >= parameter;
+          break;
+        }
+        case 'within': {
+          const lower = condition.lowerBoundInclusive;
+          const upper = condition.upperBoundInclusive;
+          const value = Number(asset[trigger.type]?.[trigger.key]);
+          expressionResult = lower < value && value < upper;
+          break;
+        }
+        case 'outside': {
+          const lower = condition.lowerBoundExclusive;
+          const upper = condition.upperBoundExclusive;
+          const value = Number(asset[trigger.type]?.[trigger.key]);
+          expressionResult = value <= lower && upper <= value;
+          break;
+        }
+      }
+
+      return expressionResult;
     };
 
     const traverseExpression = (
@@ -136,10 +156,6 @@ export function ColorOverlayRules({
       levelExpressionOperator: string
     ): boolean[] => {
       let expressionResult: boolean = false;
-
-      console.log(' =========== ');
-      console.log(' expressions: ', expressions);
-      console.log(' levelExpressionOperator: ', levelExpressionOperator);
 
       const expressionResults: boolean[] = [];
 
@@ -152,7 +168,6 @@ export function ColorOverlayRules({
               expression.type
             );
             expressionResult = operatorResult.find((result) => result) ?? false;
-            /*  innerStatementString = '(' + currentStatement + ')'; */
             break;
           }
           case 'and': {
@@ -162,8 +177,6 @@ export function ColorOverlayRules({
               expression.type
             );
             expressionResult = operatorResult.find((result) => !result) ?? false;
-
-            /*  innerStatementString = '(' + currentStatement + ')'; */
             break;
           }
           case 'not': {
