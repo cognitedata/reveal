@@ -732,19 +732,21 @@ export class Cognite3DViewer {
     const modelLoadSequencer = this._addModelSequencer.getNextSequencer<void>();
 
     return (async () => {
+      let type: '' | SupportedModelTypes;
       try {
-        const type = await this.determineModelType(options.modelId, options.revisionId);
-        switch (type) {
-          case 'cad':
-            return this.addCadModelWithSequencer(options, modelLoadSequencer);
-          case 'pointcloud':
-            return this.addPointCloudModelWithSequencer(options, modelLoadSequencer);
-          default:
-            throw new Error('Model is not supported');
-        }
+        type = await this.determineModelType(options.modelId, options.revisionId);
       } catch (error) {
-        modelLoadSequencer(() => {});
+        await modelLoadSequencer(() => {});
         throw new Error(`Failed to add model: ${error}`);
+      }
+      switch (type) {
+        case 'cad':
+          return this.addCadModelWithSequencer(options, modelLoadSequencer);
+        case 'pointcloud':
+          return this.addPointCloudModelWithSequencer(options, modelLoadSequencer);
+        default:
+          await modelLoadSequencer(() => {});
+          throw new Error('Model is not supported');
       }
     })();
   }
@@ -766,30 +768,30 @@ export class Cognite3DViewer {
    */
   addCadModel(options: AddModelOptions): Promise<CogniteCadModel> {
     const modelLoaderSequencer = this._addModelSequencer.getNextSequencer<void>();
-    try {
-      return this.addCadModelWithSequencer(options, modelLoaderSequencer);
-    } catch (error) {
-      modelLoaderSequencer(() => {});
-      throw new Error(`Failed to add CAD model: ${error}`);
-    }
+    return this.addCadModelWithSequencer(options, modelLoaderSequencer);
   }
 
   private async addCadModelWithSequencer(
     options: AddModelOptions,
     modelLoadSequencer: SequencerFunction<void>
   ): Promise<CogniteCadModel> {
-    const nodesApiClient = this._dataSource.getNodesApiClient();
+    try {
+      const nodesApiClient = this._dataSource.getNodesApiClient();
 
-    const { modelId, revisionId } = options;
+      const { modelId, revisionId } = options;
 
-    const cadNode = await this._revealManagerHelper.addCadModel(options);
+      const cadNode = await this._revealManagerHelper.addCadModel(options);
 
-    const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
-    await modelLoadSequencer(() => {
-      this._models.push(model3d);
-      this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
-    });
-    return model3d;
+      const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
+      await modelLoadSequencer(() => {
+        this._models.push(model3d);
+        this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
+      });
+      return model3d;
+    } catch (error) {
+      await modelLoadSequencer(() => {});
+      throw new Error(`Failed to add CAD model: ${error}`);
+    }
   }
 
   /**
@@ -813,21 +815,26 @@ export class Cognite3DViewer {
   }
 
   private async addPointCloudModelWithSequencer(options: AddModelOptions, modelLoadSequencer: SequencerFunction<void>) {
-    if (options.geometryFilter) {
-      throw new Error('geometryFilter is not supported for point clouds');
+    try {
+      if (options.geometryFilter) {
+        throw new Error('geometryFilter is not supported for point clouds');
+      }
+
+      const { modelId, revisionId } = options;
+
+      const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
+      const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
+
+      await modelLoadSequencer(() => {
+        this._models.push(model);
+        this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
+      });
+
+      return model;
+    } catch (error) {
+      await modelLoadSequencer(() => {});
+      throw new Error(`Failed to add point cloud model: ${error}`);
     }
-
-    const { modelId, revisionId } = options;
-
-    const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
-    const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
-
-    await modelLoadSequencer(() => {
-      this._models.push(model);
-      this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
-    });
-
-    return model;
   }
 
   /**
