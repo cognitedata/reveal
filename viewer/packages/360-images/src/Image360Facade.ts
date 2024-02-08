@@ -72,9 +72,8 @@ export class Image360Facade<T> {
       return image360Collection;
     } catch (e) {
       await sequencer(() => {});
+      throw new Error('Failed to create Image360Collection');
     }
-
-    throw new Error('Failed to create Image360Collection');
   }
 
   public removeSet(collection: DefaultImage360Collection): void {
