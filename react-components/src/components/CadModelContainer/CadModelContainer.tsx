@@ -6,14 +6,11 @@ import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import {
-  type CadModelStyling,
-  useApplyCadModelStyling,
-  modelExists
-} from './useApplyCadModelStyling';
+import { type CadModelStyling, useApplyCadModelStyling } from './useApplyCadModelStyling';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
 import { isEqual } from 'lodash';
+import { modelExists } from '../../utilities/modelExists';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;

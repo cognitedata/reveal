@@ -12,6 +12,7 @@ import { type AssetId, type ModelId, type ModelRevisionKey, type RevisionId } fr
 import { maxBy } from 'lodash';
 import assert from 'assert';
 import { fetchNodesForNodeIds } from './requests';
+import { modelRevisionToKey } from './utils';
 
 export type NodeAssetMappingResult = { node?: Node3D; mappings: AssetMapping[] };
 
@@ -126,8 +127,4 @@ export class AssetMappingCache {
 
 function isValidAssetMapping(assetMapping: AssetMapping3D): assetMapping is AssetMapping {
   return assetMapping.treeIndex !== undefined && assetMapping.subtreeSize !== undefined;
-}
-
-function modelRevisionToKey(modelId: ModelId, revisionId: RevisionId): ModelRevisionKey {
-  return `${modelId}/${revisionId}`;
 }
