@@ -12,6 +12,7 @@ import { type PointCloudModelOptions, type TypedReveal3DModel } from '../Reveal3
 import { type AnnotationModelDataResult } from '../../hooks/useCalculatePointCloudModelsStyling';
 import { type AnnotationAssetMappingDataResult } from '../../hooks/types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
+import { filterUndefined } from '../../utilities/filterUndefined';
 
 export type PointCloudAnnotationCacheContextContent = {
   cache: PointCloudAnnotationCache;
@@ -185,13 +186,12 @@ const fetchAnnotationsForModel = async (
     )
   );
 
-  const transformedAnnotationMappings = annotationMappings.flatMap((annotationMapping) =>
-    Array.from(annotationMapping.entries()).flatMap(([, mappings]) =>
-      Array.from(mappings.entries()).map(([annotationId, asset]) => ({
-        annotationId,
-        asset
-      }))
-    )
+  const filteredAnnotationMappings = filterUndefined(annotationMappings);
+  const transformedAnnotationMappings = filteredAnnotationMappings.flatMap((annotationMapping) =>
+    Array.from(annotationMapping.entries()).map(([annotationId, asset]) => ({
+      annotationId,
+      asset
+    }))
   );
 
   return transformedAnnotationMappings;

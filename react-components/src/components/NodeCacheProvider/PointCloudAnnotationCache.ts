@@ -7,12 +7,12 @@ import {
   type AnnotationModel,
   type AnnotationFilterProps,
   type CogniteClient,
-  type Asset,
-  type AnnotationsBoundingVolume
+  type Asset
 } from '@cognite/sdk';
 import { modelRevisionToKey } from './utils';
 import { chunk, uniqBy } from 'lodash';
 import { getAssetIdOrExternalIdFromAnnotation } from '../../utilities/getAssetIdOrExternalIdFromAnnotation';
+import { filterUndefined } from '../../utilities/filterUndefined';
 
 export class PointCloudAnnotationCache {
   private readonly _sdk: CogniteClient;
@@ -53,9 +53,7 @@ export class PointCloudAnnotationCache {
     }
 
     const annotationModels = await this.fetchAnnotationForModel(modelId);
-    const filteredAnnotationModels = annotationModels.filter((annotationModel) => {
-      return (annotationModel.data as AnnotationsBoundingVolume).assetRef !== undefined;
-    });
+    const filteredAnnotationModels = filterUndefined(annotationModels);
 
     this._modelToAnnotationMappings.set(key, filteredAnnotationModels);
 
@@ -142,12 +140,12 @@ export class PointCloudAnnotationCache {
     modelId: ModelId,
     revisionId: RevisionId,
     assetId: string | number
-  ): Promise<Array<Map<number, Asset>>> {
+  ): Promise<Map<number, Asset> | undefined> {
     const fetchedAnnotationAssetMappings = await this.getPointCloudAnnotationAssetsForModel(
       modelId,
       revisionId
     );
-    return fetchedAnnotationAssetMappings.filter((assetMap) =>
+    return fetchedAnnotationAssetMappings?.find((assetMap) =>
       Array.from(assetMap.values()).some((asset) => asset.id === assetId)
     );
   }
