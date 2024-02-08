@@ -22,7 +22,12 @@ export {
   ComboControlsEventType,
   CameraEventDelegate,
   CameraChangeDelegate,
-  CameraStopDelegate
+  CameraStopDelegate,
+  IFlexibleCameraManager,
+  FlexibleControlsOptions,
+  FlexibleWheelZoomType,
+  FlexibleControlsType,
+  FlexibleMouseActionType
 } from '../packages/camera-manager';
 
 export {
