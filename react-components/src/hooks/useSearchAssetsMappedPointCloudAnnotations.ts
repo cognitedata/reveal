@@ -75,6 +75,7 @@ async function getPointCloudAnnotationAssets(
   pointCloudAnnotations: AnnotationModel[],
   sdk: CogniteClient
 ): Promise<Asset[]> {
+  // TODO: Replace the check for assetRef similar to Point Cloud Asset Styling
   const annotationMapping = pointCloudAnnotations
     .map(
       (annotation) =>

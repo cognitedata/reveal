@@ -10,13 +10,13 @@ import {
 import { useMemo } from 'react';
 import { type AnnotationIdStylingGroup } from '../components/PointCloudContainer/useApplyPointCloudStyling';
 import { useQuery } from '@tanstack/react-query';
-import { type AnnotationsBoundingVolume, type AnnotationModel } from '@cognite/sdk';
 import { isSamePointCloudModel } from '../utilities/isSameModel';
 import {
   usePointCloudAnnotationMappingsForModels,
   usePointCloudAnnotationIdsForModels
 } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
 import { EMPTY_ARRAY } from '../utilities/constants';
+import { type PointCloudAnnotationModel } from '../components/NodeCacheProvider/types';
 
 export type StyledPointCloudModel = {
   model: PointCloudModelOptions;
@@ -25,7 +25,7 @@ export type StyledPointCloudModel = {
 
 export type AnnotationModelDataResult = {
   model: PointCloudModelOptions;
-  annotationModel: Array<AnnotationModel & { data: AnnotationsBoundingVolume }>;
+  annotationModel: PointCloudAnnotationModel[];
 };
 
 export const useCalculatePointCloudStyling = (
