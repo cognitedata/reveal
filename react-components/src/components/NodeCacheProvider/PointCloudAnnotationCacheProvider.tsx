@@ -88,12 +88,7 @@ export const usePointCloudAnnotationMappingsForModels = (
           );
           return {
             model,
-            annotationModel: annotationModel.map((annotation) => {
-              return {
-                ...annotation,
-                data: annotation.data
-              };
-            })
+            annotationModel
           };
         })
       );
