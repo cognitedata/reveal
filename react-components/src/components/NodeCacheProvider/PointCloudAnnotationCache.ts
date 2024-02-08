@@ -54,10 +54,13 @@ export class PointCloudAnnotationCache {
 
     const annotationModels = await this.fetchAnnotationForModel(modelId);
     const filteredAnnotationModels = filterUndefined(annotationModels);
+    const filteredAnnotationModelsByAsset = filteredAnnotationModels.filter((annotation) => {
+      return getAssetIdOrExternalIdFromAnnotation(annotation) !== undefined;
+    });
 
-    this._modelToAnnotationMappings.set(key, filteredAnnotationModels);
+    this._modelToAnnotationMappings.set(key, filteredAnnotationModelsByAsset);
 
-    return filteredAnnotationModels;
+    return filteredAnnotationModelsByAsset;
   }
 
   private async fetchAndCacheAssetMappingsForModel(
@@ -90,22 +93,19 @@ export class PointCloudAnnotationCache {
     pointCloudAnnotations: AnnotationModel[],
     sdk: CogniteClient
   ): Promise<Array<Map<number, Asset>>> {
-    const annotationMapping = pointCloudAnnotations
-      .map((annotation) => {
-        const assetId = getAssetIdOrExternalIdFromAnnotation(annotation);
-        if (assetId === undefined) {
-          return undefined;
-        }
-        return {
-          annotationId: annotation.id,
-          assetId
-        };
-      })
-      .filter(
-        (mapping): mapping is { annotationId: number; assetId: number } => mapping !== undefined
-      );
+    const annotationMapping = pointCloudAnnotations.map((annotation) => {
+      const assetId = getAssetIdOrExternalIdFromAnnotation(annotation);
+      if (assetId === undefined) {
+        return undefined;
+      }
+      return {
+        annotationId: annotation.id,
+        assetId
+      };
+    });
+    const filteredAnnotationMapping = filterUndefined(annotationMapping);
 
-    const uniqueAnnotationMapping = uniqBy(annotationMapping, 'assetId');
+    const uniqueAnnotationMapping = uniqBy(filteredAnnotationMapping, 'assetId');
 
     const assetsResult = await Promise.all(
       chunk(uniqueAnnotationMapping, 1000).map(async (uniqueMappingChunk) => {
@@ -145,7 +145,8 @@ export class PointCloudAnnotationCache {
       modelId,
       revisionId
     );
-    return fetchedAnnotationAssetMappings?.find((assetMap) =>
+
+    return fetchedAnnotationAssetMappings.find((assetMap) =>
       Array.from(assetMap.values()).some((asset) => asset.id === assetId)
     );
   }
