@@ -81,15 +81,11 @@ export type GroundPlaneProperties = {
   wrapping: string;
 };
 
-export type Cdf3dRevisionProperties = {
+export type Cdf3dRevisionProperties = Transformation3d & {
   revisionId: number;
-  scaleX: number;
-  scaleY: number;
-  scaleZ: number;
-  translationX: number;
-  translationY: number;
-  translationZ: number;
-  eulerRotationX: number;
-  eulerRotationY: number;
-  eulerRotationZ: number;
+};
+
+export type Cdf3dImage360CollectionProperties = Transformation3d & {
+  image360CollectionExternalId: string;
+  image360CollectionSpace: string;
 };

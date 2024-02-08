@@ -31,7 +31,7 @@ export const SceneList = ({ selectedScene, onSceneChange }: SceneListProps): Rea
               onClick={() => {
                 onSceneChange({ externalId, space });
               }}>
-              {externalId}
+              {data[space][externalId].name}
             </Menu.Item>
           );
         });
