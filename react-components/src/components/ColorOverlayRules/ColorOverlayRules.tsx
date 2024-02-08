@@ -207,44 +207,12 @@ export function ColorOverlayRules({
       return expressionResults;
     };
 
-    const getContextualization = async (): Promise<void> => {
-      const ruleModel = await fdmSdk.getByExternalIds(
-        [
-          {
-            instanceType: 'node',
-            externalId: 'Rule_based_Coloring_Json',
-            space: 'rule_based_coloring_space'
-          }
-        ],
-        RULE_BASED_COLORING_SOURCE
-      );
-
-      console.log(' RULE MODEL ', ruleModel);
-
-      // const models = sdk.models;
-      const assetMappings = await getCdfCadContextualization({
-        sdk: cdfClient,
-        modelId,
-        revisionId,
-        nodeId: undefined,
-        assetId: undefined
-      });
-
-      // const contextualizedThreeDNodeIds = assetMappings.map((node) => node.nodeId);
-
-      // remove duplicated
-      const uniqueContextualizedAssetIds = [...new Set(assetMappings.map((node) => node.assetId))];
-
-      const contextualizedAssetIds = uniqueContextualizedAssetIds.map((id) => {
-        return { id };
-      }) as unknown as IdEither[];
-
-      const contextualizedAssetNodes = await cdfClient.assets.retrieve(contextualizedAssetIds);
-
-      const model = viewer.models[0] as CogniteCadModel;
-      console.log(' model ', model);
-
-      const outputType = 'color';
+    const generateRuleBasedActions = (
+      model: CogniteCadModel,
+      contextualizedAssetNodes: Asset[],
+      assetMappings: AssetMapping3D[]
+    ): void => {
+      const outputType = 'color'; // for now it only supports colors as the output
 
       type RuleAndStyleIndex = {
         styleIndex: TreeIndexNodeCollection;
@@ -310,6 +278,47 @@ export function ColorOverlayRules({
           console.log(' ASSET ', assetNode, finalGlobalOutputResult);
         });
       });
+    };
+
+    const getContextualization = async (): Promise<void> => {
+      const ruleModel = await fdmSdk.getByExternalIds(
+        [
+          {
+            instanceType: 'node',
+            externalId: 'Rule_based_Coloring_Json',
+            space: 'rule_based_coloring_space'
+          }
+        ],
+        RULE_BASED_COLORING_SOURCE
+      );
+
+      console.log(' RULE MODEL ', ruleModel);
+
+      // const models = sdk.models;
+      const assetMappings = await getCdfCadContextualization({
+        sdk: cdfClient,
+        modelId,
+        revisionId,
+        nodeId: undefined,
+        assetId: undefined
+      });
+
+      // const contextualizedThreeDNodeIds = assetMappings.map((node) => node.nodeId);
+
+      // remove duplicated
+      const uniqueContextualizedAssetIds = [...new Set(assetMappings.map((node) => node.assetId))];
+
+      const contextualizedAssetIds = uniqueContextualizedAssetIds.map((id) => {
+        return { id };
+      }) as unknown as IdEither[];
+
+      const contextualizedAssetNodes = await cdfClient.assets.retrieve(contextualizedAssetIds);
+
+      const model = viewer.models[0] as CogniteCadModel;
+      console.log(' model ', model);
+
+      generateRuleBasedActions(model, contextualizedAssetNodes, assetMappings);
+
     };
     void getContextualization();
   }, []);
