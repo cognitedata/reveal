@@ -4,7 +4,7 @@
 import { useEffect, type ReactElement } from 'react';
 import { Reveal3DResources, useSceneDefaultCamera } from '../..';
 import {
-  type AssetMappingStylingGroup,
+  type AssetStylingGroup,
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
 } from '../Reveal3DResources/types';
@@ -16,7 +16,7 @@ export type SceneContainerProps = {
   sceneExternalId: string;
   sceneSpaceId: string;
   defaultResourceStyling?: DefaultResourceStyling;
-  instanceStyling?: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>;
+  instanceStyling?: Array<FdmAssetStylingGroup | AssetStylingGroup>;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (error: any) => void;
 };
