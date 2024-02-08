@@ -14,7 +14,7 @@ import { type AnnotationsBoundingVolume, type AnnotationModel } from '@cognite/s
 import { isSamePointCloudModel } from '../utilities/isSameModel';
 import {
   usePointCloudAnnotationMappingsForModels,
-  usePointCloudAnnotationModelsForModels
+  usePointCloudAnnotationIdsForModels
 } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
 import { EMPTY_ARRAY } from '../utilities/constants';
 
@@ -111,7 +111,7 @@ function useCalculateMappedPointCloudStyling(
   const modelsWithStyledMapped = useMemo(() => getMappedPointCloudModelsOptions(), [models]);
 
   const { data: pointCloudStyledModelAnnotationIds } =
-    usePointCloudAnnotationModelsForModels(modelsWithStyledMapped);
+    usePointCloudAnnotationIdsForModels(modelsWithStyledMapped);
 
   const modelsMappedAnnotationIdStyleGroups = useMemo(() => {
     if (

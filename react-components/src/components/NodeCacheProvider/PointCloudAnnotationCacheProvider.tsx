@@ -31,7 +31,7 @@ const usePointCloudAnnotationCache = (): PointCloudAnnotationCache => {
   return content.cache;
 };
 
-export const usePointCloudAnnotationModelsForModels = (
+export const usePointCloudAnnotationIdsForModels = (
   models: TypedReveal3DModel[]
 ): UseQueryResult<
   Array<{
