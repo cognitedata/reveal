@@ -33,7 +33,7 @@ import { FlexibleMouseActionType } from './FlexibleMouseActionType';
 import { DebouncedCameraStopEventTrigger } from '../utils/DebouncedCameraStopEventTrigger';
 import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraTo } from './moveCamera';
-import { ControlsTypeChangeDelegate, IFlexibleCameraManager } from './IFlexibleCameraManager';
+import { FlexibleControlsTypeChangeDelegate, IFlexibleCameraManager } from './IFlexibleCameraManager';
 
 type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
 
@@ -50,7 +50,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
 
   private readonly _triggers = {
     cameraChange: new EventTrigger<CameraChangeDelegate>(),
-    controlsTypeChange: new EventTrigger<ControlsTypeChangeDelegate>()
+    controlsTypeChange: new EventTrigger<FlexibleControlsTypeChangeDelegate>()
   };
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private readonly _controls: FlexibleControls;
@@ -219,11 +219,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this.controls.setControlsType(value);
   }
 
-  public addControlsTypeChangeListener(callback: ControlsTypeChangeDelegate): void {
+  public addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
     this._triggers.controlsTypeChange.subscribe(callback);
   }
 
-  public removeControlsTypeChangeListener(callback: ControlsTypeChangeDelegate): void {
+  public removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
     this._triggers.controlsTypeChange.subscribe(callback);
   }
 

@@ -2,14 +2,13 @@
  * Copyright 2024 Cognite AS
  */
 
-import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { CameraManager } from '../CameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
 
 /**
  * @beta
  */
-export type ControlsTypeChangeDelegate = (controlsType: FlexibleControlsType) => void;
+export type FlexibleControlsTypeChangeDelegate = (controlsType: FlexibleControlsType) => void;
 
 /**
  * Flexible implementation of {@link CameraManager}. The user can switch between Orbit, FirstPersion or OrbitInCenter
@@ -17,10 +16,9 @@ export type ControlsTypeChangeDelegate = (controlsType: FlexibleControlsType) =>
  * @beta
  */
 export interface IFlexibleCameraManager extends CameraManager {
-  get options(): FlexibleControlsOptions;
   get controlsType(): FlexibleControlsType;
   set controlsType(value: FlexibleControlsType);
 
-  addControlsTypeChangeListener(callback: ControlsTypeChangeDelegate): void;
-  removeControlsTypeChangeListener(callback: ControlsTypeChangeDelegate): void;
+  addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
+  removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
 }
