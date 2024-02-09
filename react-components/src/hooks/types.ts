@@ -89,3 +89,8 @@ export type Cdf3dImage360CollectionProperties = Transformation3d & {
   image360CollectionExternalId: string;
   image360CollectionSpace: string;
 };
+
+export type AnnotationAssetMappingDataResult = {
+  annotationId: number;
+  asset: Asset;
+};

@@ -12,6 +12,7 @@ import { type AssetMappingCache } from '../../src/components/NodeCacheProvider/A
 import { type CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { createSdkByUrlToken } from './createSdkByUrlToken';
+import { type PointCloudAnnotationCache } from '../../src/components/NodeCacheProvider/PointCloudAnnotationCache';
 
 type RevealStoryContainerProps = Omit<RevealContainerProps, 'sdk'> & {
   sdk?: CogniteClient;
@@ -42,13 +43,15 @@ export const RevealStoryContainer = ({
   const isRevealContainerMountedRef = useRef<boolean>(true);
   const fdmNodeCache = useRef<FdmNodeCache | undefined>();
   const assetMappingCache = useRef<AssetMappingCache | undefined>();
+  const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache | undefined>();
   return (
     <RevealKeepAliveContext.Provider
       value={{
         viewerRef,
         isRevealContainerMountedRef,
         fdmNodeCache,
-        assetMappingCache
+        assetMappingCache,
+        pointCloudAnnotationCache
       }}>
       <RevealContainer sdk={sdkInstance} {...rest}>
         {children}
