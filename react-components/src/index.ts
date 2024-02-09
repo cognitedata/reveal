@@ -93,6 +93,7 @@ export type {
 } from './components/Reveal3DResources/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
+export { useFdmSdk } from './components/RevealContainer/SDKProvider';
 export type { FdmInstanceWithView } from './utilities/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
 export { WindowWidget } from './components/Widgets/WindowWidget';
