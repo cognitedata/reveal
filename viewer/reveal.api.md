@@ -874,6 +874,9 @@ export enum FlexibleControlsType {
 }
 
 // @beta (undocumented)
+export type FlexibleControlsTypeChangeDelegate = (controlsType: FlexibleControlsType) => void;
+
+// @beta (undocumented)
 export enum FlexibleMouseActionType {
     // (undocumented)
     None = "none",
@@ -948,7 +951,12 @@ export type HtmlOverlayToolOptions = {
 // @beta
 export interface IFlexibleCameraManager extends CameraManager {
     // (undocumented)
-    get options(): FlexibleControlsOptions;
+    addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
+    // (undocumented)
+    get controlsType(): FlexibleControlsType;
+    set controlsType(value: FlexibleControlsType);
+    // (undocumented)
+    removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
 }
 
 // @public
