@@ -133,15 +133,16 @@ function populateSceneMapWith360Images(
   scene360Images.forEach((edge) => {
     const { space, externalId } = edge.startNode;
 
-    const properties = Object.values(Object.values(edge.properties)[0])[0];
-
     if (scenesMap[space]?.[externalId] === undefined) {
       return;
     }
 
+    const properties = Object.values(Object.values(edge.properties)[0])[0];
+    const transform = createTransformFromEdge(properties);
     const newImage360Collection: AddImageCollection360DatamodelsOptions = {
       externalId: properties.image360CollectionExternalId,
-      space: properties.image360CollectionSpace
+      space: properties.image360CollectionSpace,
+      transform
     };
 
     scenesMap[space]?.[externalId].image360CollectionOptions.push(newImage360Collection);
