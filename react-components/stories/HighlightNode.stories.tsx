@@ -18,7 +18,7 @@ import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
-import { type AssetMappingStylingGroup } from '../src/components/Reveal3DResources/types';
+import { type AssetStylingGroup } from '../src/components/Reveal3DResources/types';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -45,6 +45,18 @@ export const Main: Story = {
             color: new Color('#c5cbff')
           }
         }
+      },
+      {
+        modelId: 1350257070750400,
+        revisionId: 5110855034466831,
+        styling: {
+          default: {
+            color: new Color('#efefef')
+          },
+          mapped: {
+            color: new Color('#c5cbff')
+          }
+        }
       }
     ]
   },
@@ -60,7 +72,7 @@ export const Main: Story = {
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [stylingGroups, setStylingGroups] = useState<
-    Array<FdmAssetStylingGroup | AssetMappingStylingGroup>
+    Array<FdmAssetStylingGroup | AssetStylingGroup>
   >([]);
   const cameraNavigation = useCameraNavigation();
   const nodeData = useClickedNodeData();
@@ -96,6 +108,13 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         nodeData.intersection.model.revisionId,
         nodeData.assetMappingResult.cadNode.id
       );
+    } else if (nodeData?.pointCloudAnnotationMappingResult !== undefined) {
+      setStylingGroups([
+        {
+          assetIds: [nodeData.pointCloudAnnotationMappingResult[0].asset.id],
+          style: { pointcloud: DefaultNodeAppearance.Highlighted }
+        }
+      ]);
     } else {
       setStylingGroups([]);
     }
@@ -107,6 +126,10 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         resources={resources}
         defaultResourceStyling={{
           cad: {
+            default: { color: new Color('#efefef') },
+            mapped: { color: new Color('#c5cbff') }
+          },
+          pointcloud: {
             default: { color: new Color('#efefef') },
             mapped: { color: new Color('#c5cbff') }
           }

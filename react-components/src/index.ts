@@ -53,6 +53,11 @@ export {
   useAllAssetsMappedPointCloudAnnotations,
   useSearchAssetsMappedPointCloudAnnotations
 } from './hooks/useSearchAssetsMappedPointCloudAnnotations';
+export {
+  usePointCloudAnnotationMappingsForModels,
+  usePointCloudAnnotationMappingsForAssetIds
+} from './components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
+export { type AnnotationAssetMappingDataResult } from './hooks/types';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
@@ -64,7 +69,7 @@ export {
 export {
   type PointCloudModelStyling,
   type AnnotationIdStylingGroup
-} from './components/PointCloudContainer/PointCloudContainer';
+} from './components/PointCloudContainer/useApplyPointCloudStyling';
 export { type CogniteCadModelProps } from './components/CadModelContainer/CadModelContainer';
 export {
   type CadModelStyling,
@@ -74,6 +79,7 @@ export {
 export {
   type Reveal3DResourcesProps,
   type FdmAssetStylingGroup,
+  type AssetStylingGroup,
   type DefaultResourceStyling
 } from './components/Reveal3DResources/types';
 export {
