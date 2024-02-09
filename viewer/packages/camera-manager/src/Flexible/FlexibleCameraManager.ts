@@ -135,16 +135,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     }
   }
 
-  public getCameraDirection(quaternion: THREE.Quaternion): THREE.Vector3 {
-    // Create a vector pointing in the default direction
-    const direction = new Vector3(0, 0, -1);
-
-    // Apply the quaternion to the vector
-    direction.applyQuaternion(quaternion);
-
-    return direction;
-  }
-
   public activate(cameraManager?: CameraManager): void {
     if (this.isEnabled) {
       return;
@@ -221,10 +211,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   // IMPLEMENTATION OF IFlexibleCameraManager (In correct order)
   //================================================
 
-  public get options(): FlexibleControlsOptions {
-    return this._controls.options;
-  }
-
   public get controlsType(): FlexibleControlsType {
     return this.controls.options.controlsType;
   }
@@ -244,6 +230,10 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   //================================================
   // INSTANCE METHODS: Setters and getters
   //================================================
+
+  public get options(): FlexibleControlsOptions {
+    return this._controls.options;
+  }
 
   public get controls(): FlexibleControls {
     return this._controls;
