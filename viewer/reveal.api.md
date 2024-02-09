@@ -948,7 +948,14 @@ export type HtmlOverlayToolOptions = {
 // @beta
 export interface IFlexibleCameraManager extends CameraManager {
     // (undocumented)
+    addControlsTypeChangeListener(callback: ControlsTypeChangeDelegate): void;
+    // (undocumented)
+    get controlsType(): FlexibleControlsType;
+    set controlsType(value: FlexibleControlsType);
+    // (undocumented)
     get options(): FlexibleControlsOptions;
+    // (undocumented)
+    removeControlsTypeChangeListener(callback: ControlsTypeChangeDelegate): void;
 }
 
 // @public
