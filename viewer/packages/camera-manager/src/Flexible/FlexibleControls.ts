@@ -55,7 +55,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   private _scrollDistance = 0; // When using the wheel this is the distance to the picked point
   private _tempTarget: Vector3 | undefined = undefined;
 
-  private readonly _accumulatedMouseRotation: Vector2 = new Vector2();
   private readonly _keyboard: Keyboard;
   private readonly _pointEventCache: Array<PointerEvent> = [];
 
@@ -293,19 +292,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (!forceUpdate && !this.isEnabled) {
       return false;
     }
-    const isRotated = this._accumulatedMouseRotation.lengthSq() > 1;
-    if (isRotated) {
-      this.rotate(this._accumulatedMouseRotation);
-      this._accumulatedMouseRotation.set(0, 0);
-    }
-    const isKeyPressed = this.handleKeyboard(deltaTimeS);
     const epsilon = this._options.EPSILON;
-    const isChanged =
-      this._target.isChanged(epsilon) ||
-      this._cameraVector.isChanged(epsilon) ||
-      this._cameraPosition.isChanged(epsilon);
-
+    const isKeyPressed = this.handleKeyboard(deltaTimeS);
+    const isRotated = this._cameraVector.isChanged(epsilon);
+    const isChanged = isRotated || this._target.isChanged(epsilon) || this._cameraPosition.isChanged(epsilon);
     const dampeningFactor = isKeyPressed ? 1 : this.getDampingFactor(deltaTimeS);
+
     if (isChanged && dampeningFactor < 1) {
       this._cameraVector.damp(dampeningFactor);
       if (isRotated) {
@@ -386,20 +378,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   private readonly onPointerUp = (event: PointerEvent) => {
     if (!this.isEnabled) return;
     switch (event.pointerType) {
-      case 'mouse':
-        this.onMouseUp();
-        break;
       case 'touch':
         remove(this._pointEventCache, ev => ev.pointerId === event.pointerId);
         break;
       default:
         break;
     }
-  };
-
-  private readonly onMouseUp = () => {
-    if (!this.isEnabled) return;
-    this._accumulatedMouseRotation.set(0, 0);
   };
 
   private readonly onMouseWheel = (event: WheelEvent) => {
@@ -489,11 +473,13 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       const position = getMousePosition(this._domElement, event.clientX, event.clientY);
       const deltaPosition = position.clone().sub(prevPosition);
       if (this._keyboard.isShiftPressed()) {
-        this.pan(0, 0, deltaPosition.y * this.options.mouseDollySpeed);
+        deltaPosition.multiplyScalar(this._options.mouseDollySpeed);
+        this.pan(0, 0, deltaPosition.y);
       } else if (this._keyboard.isCtrlPressed()) {
-        this.pan(deltaPosition.x * this.options.mousePanSpeed, deltaPosition.y * this.options.mousePanSpeed, 0);
+        deltaPosition.multiplyScalar(this._options.mousePanSpeed);
+        this.pan(deltaPosition.x, deltaPosition.y, 0);
       } else {
-        this._accumulatedMouseRotation.sub(deltaPosition);
+        this.rotate(deltaPosition);
       }
       prevPosition = position;
     };
@@ -516,8 +502,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
         return;
       }
       const position = getMousePosition(this._domElement, event.clientX, event.clientY);
-      prevPosition.sub(position);
-      this.rotate(new Vector2().subVectors(prevPosition, position));
+      this.rotate(new Vector2().subVectors(position, prevPosition));
       prevPosition = position;
     };
 
@@ -549,10 +534,13 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       return;
     }
     let deltaAzimuthAngle = this._options.mouseRotationSpeedAzimuth * delta.x;
-    const deltaPolarAngle = this._options.mouseRotationSpeedPolar * delta.y;
+    let deltaPolarAngle = this._options.mouseRotationSpeedPolar * delta.y;
+    // It is morre natural that the first persion rotate slower then the other modes
     if (this.controlsType == FlexibleControlsType.FirstPerson) {
-      deltaAzimuthAngle *= this.getAzimuthCompensationFactor();
+      deltaAzimuthAngle *= 0.5;
+      deltaPolarAngle *= 0.5;
     }
+    deltaAzimuthAngle *= this.getAzimuthCompensationFactor();
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
   }
 
@@ -561,7 +549,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     // to make it feel more natural when looking straight up or straight down.
     const deviationFromEquator = Math.abs(this._cameraVector.end.phi - Math.PI / 2);
     const azimuthCompensationFactor = Math.sin(Math.PI / 2 - deviationFromEquator);
-    return azimuthCompensationFactor;
+    return 0.5 + 0.5 * azimuthCompensationFactor;
   }
 
   private rotateByAngles(deltaAzimuth: number, deltaPolar: number) {
@@ -570,7 +558,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
 
     if (this.controlsType === FlexibleControlsType.OrbitInCenter) {
-      this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
+      this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
 
       // Adust the camera position by
       // CameraPosition = Target - DistanceToTarget * CameraVector
@@ -583,7 +571,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       const oldOffset = this.newVector3().subVectors(this._target.end, this._cameraPosition.end);
       const oldCameraVectorEnd = this._cameraVector.end.clone();
 
-      this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
+      this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
 
       // Adust the camera position so the target point is the same on the screen
       const oldQuat = new Quaternion().multiplyQuaternions(
@@ -600,7 +588,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       const newCameraPosition = this.newVector3().subVectors(this._target.end, newOffset);
       this._cameraPosition.end.copy(newCameraPosition);
     } else {
-      this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
+      this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
     }
   }
 
@@ -821,7 +809,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       return false;
     }
     this.setControlsType(FlexibleControlsType.FirstPerson);
-    this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
+    this.rotateByAngles(-deltaAzimuthAngle, -deltaPolarAngle);
     return true;
   }
 
