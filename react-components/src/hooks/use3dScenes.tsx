@@ -12,7 +12,9 @@ import {
   type SceneConfigurationProperties,
   type Cdf3dRevisionProperties,
   type Transformation3d,
-  type Cdf3dImage360CollectionProperties
+  type Cdf3dImage360CollectionProperties,
+  type GroundPlaneProperties,
+  type SkyboxProperties
 } from './types';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
@@ -25,6 +27,8 @@ export type SceneData = {
   name: string;
   cadModelOptions: AddReveal3DModelOptions[];
   image360CollectionOptions: AddImageCollection360DatamodelsOptions[];
+  groundPlanes: GroundPlaneProperties[];
+  skybox?: SkyboxProperties;
 };
 
 type Use3dScenesQueryResult = {
@@ -33,6 +37,9 @@ type Use3dScenesQueryResult = {
   scene360Collections: Array<
     EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>
   >;
+  sceneGroundPlanes: Array<NodeItem<GroundPlaneProperties>>;
+  sceneGroundPlaneEdges: Array<EdgeItem<Record<string, Record<string, Transformation3d>>>>;
+  sceneSkybox: Array<NodeItem<SkyboxProperties>>;
 };
 
 export const use3dScenes = (
@@ -49,9 +56,14 @@ export const use3dScenes = (
       const queryResult = (await fdmSdk.queryNodesAndEdges(scenesQuery))
         .items as Use3dScenesQueryResult;
 
-      const scenesMap = createMapOfScenes(queryResult.scenes);
+      const scenesMap = createMapOfScenes(queryResult.scenes, queryResult.sceneSkybox);
       populateSceneMapWithModels(queryResult.sceneModels, scenesMap);
       populateSceneMapWith360Images(queryResult.scene360Collections, scenesMap);
+      populateSceneMapWithGroundplanes(
+        queryResult.sceneGroundPlanes,
+        queryResult.sceneGroundPlaneEdges,
+        scenesMap
+      );
 
       return scenesMap;
     } catch (error) {
@@ -67,7 +79,8 @@ export const use3dScenes = (
 };
 
 function createMapOfScenes(
-  scenes: Array<NodeItem<SceneConfigurationProperties>>
+  scenes: Array<NodeItem<SceneConfigurationProperties>>,
+  skyboxes: Array<NodeItem<SkyboxProperties>>
 ): Record<Space, Record<ExternalId, SceneData>> {
   return scenes.reduce(
     (
@@ -80,10 +93,26 @@ function createMapOfScenes(
         acc[space] = {};
       }
       if (acc[space][externalId] === undefined) {
+        let skyboxObject: SkyboxProperties | undefined;
+        const skyboxIdentifier = properties.skybox;
+        if (skyboxIdentifier !== undefined) {
+          const connectedSkybox = skyboxes.find(
+            (skybox) =>
+              skybox.externalId === skyboxIdentifier.externalId &&
+              skybox.space === skyboxIdentifier.space
+          );
+          if (connectedSkybox !== undefined) {
+            const skyboxProperties = Object.values(Object.values(connectedSkybox.properties)[0])[0];
+            skyboxObject = skyboxProperties;
+          }
+        }
+
         acc[space][externalId] = {
           name: properties.name,
           cadModelOptions: [],
-          image360CollectionOptions: []
+          image360CollectionOptions: [],
+          groundPlanes: [],
+          skybox: skyboxObject
         };
       }
 
@@ -145,6 +174,40 @@ function populateSceneMapWith360Images(
     };
 
     scenesMap[space]?.[externalId].image360CollectionOptions.push(newImage360Collection);
+  });
+}
+
+function populateSceneMapWithGroundplanes(
+  sceneGroundPlanes: Array<NodeItem<GroundPlaneProperties>>,
+  sceneGroundPlaneEdges: Array<EdgeItem<Record<string, Record<string, Transformation3d>>>>,
+  scenesMap: Record<Space, Record<ExternalId, SceneData>>
+): void {
+  sceneGroundPlaneEdges.forEach((edge) => {
+    const { space, externalId } = edge.startNode;
+
+    const mappedGroundPlane = sceneGroundPlanes.find(
+      (groundPlane) =>
+        groundPlane.externalId === edge.endNode.externalId &&
+        groundPlane.space === edge.endNode.space
+    );
+
+    if (scenesMap[space]?.[externalId] === undefined) {
+      return;
+    }
+
+    if (mappedGroundPlane === undefined) {
+      return;
+    }
+
+    const groundPlaneEdgeProperties = Object.values(Object.values(edge.properties)[0])[0];
+    const groundPlaneProperties = Object.values(Object.values(mappedGroundPlane)[0])[0];
+
+    const groundPlane: GroundPlaneProperties = {
+      ...groundPlaneProperties,
+      ...groundPlaneEdgeProperties
+    };
+
+    scenesMap[space]?.[externalId].groundPlanes.push(groundPlane);
   });
 }
 
@@ -245,6 +308,46 @@ function createGetScenesQuery(limit: number = 100): Query {
           }
         },
         limit
+      },
+      sceneSkybox: {
+        nodes: {
+          from: 'scenes',
+          through: {
+            view: {
+              type: 'view',
+              space: 'scene',
+              externalId: 'SceneConfiguration',
+              version: 'v1'
+            },
+            identifier: 'skybox'
+          },
+          direction: 'outwards'
+        },
+        limit
+      },
+      sceneGroundPlaneEdges: {
+        edges: {
+          from: 'scenes',
+          maxDistance: 1,
+          direction: 'outwards',
+          filter: {
+            equals: {
+              property: ['edge', 'type'],
+              value: {
+                space: 'scene',
+                externalId: 'SceneConfiguration.texturedGroundPlanes'
+              }
+            }
+          }
+        },
+        limit
+      },
+      sceneGroundPlanes: {
+        nodes: {
+          from: 'sceneGroundPlaneEdges',
+          chainTo: 'destination'
+        },
+        limit
       }
     },
     select: {
@@ -259,6 +362,7 @@ function createGetScenesQuery(limit: number = 100): Query {
             },
             properties: [
               'name',
+              'skybox',
               'cameraTranslationX',
               'cameraTranslationY',
               'cameraTranslationZ',
@@ -292,6 +396,55 @@ function createGetScenesQuery(limit: number = 100): Query {
               version: 'v1'
             },
             properties: ['*']
+          }
+        ]
+      },
+      sceneSkybox: {
+        sources: [
+          {
+            source: {
+              type: 'view',
+              space: 'scene',
+              externalId: 'EnvironmentMap',
+              version: 'v1'
+            },
+            properties: ['label', 'file', 'isSpherical']
+          }
+        ]
+      },
+      sceneGroundPlaneEdges: {
+        sources: [
+          {
+            source: {
+              type: 'view',
+              space: 'cdf_3d_schema',
+              externalId: 'Transformation3d',
+              version: 'v1'
+            },
+            properties: [
+              'translationX',
+              'translationY',
+              'translationZ',
+              'eulerRotationX',
+              'eulerRotationY',
+              'eulerRotationZ',
+              'scaleX',
+              'scaleY',
+              'scaleZ'
+            ]
+          }
+        ]
+      },
+      sceneGroundPlanes: {
+        sources: [
+          {
+            source: {
+              type: 'view',
+              space: 'scene',
+              externalId: 'TexturedPlane',
+              version: 'v1'
+            },
+            properties: ['label', 'file', 'wrapping']
           }
         ]
       }

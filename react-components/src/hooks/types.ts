@@ -3,6 +3,7 @@
  */
 import { type Node3D, type CogniteExternalId, type Asset } from '@cognite/sdk';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
+import { type DmsUniqueIdentifier } from '..';
 
 export type ThreeDModelFdmMappings = {
   modelId: number;
@@ -61,6 +62,7 @@ export type SceneModelsProperties = Transformation3d & {
 
 export type SceneConfigurationProperties = {
   name: string;
+  skybox?: DmsUniqueIdentifier;
   cameraTranslationX: number;
   cameraTranslationY: number;
   cameraTranslationZ: number;
