@@ -92,10 +92,8 @@ export class NodeTransformUI {
   }
 
   private _onNodeClick = async ({ offsetX, offsetY }: { offsetX: number; offsetY: number }) => {
-    const transformControls = this._transformControls ?? this.createAndSetupTransformTool(this.viewer, this.model);
-
     if (!this.attachTransformControls.attach) {
-      transformControls.detach();
+      this._transformControls?.detach();
       return;
     }
     const intersection = await this.viewer.getIntersectionFromPixel(offsetX, offsetY);
@@ -103,9 +101,12 @@ export class NodeTransformUI {
     const treeIndex: number | undefined = (intersection as CadIntersection)?.treeIndex;
 
     if (intersection === null || treeIndex === undefined) {
-      transformControls.detach();
+      this._transformControls?.detach();
       return;
     }
+
+    const transformControls = this._transformControls ?? this.createAndSetupTransformTool(this.viewer, this.model);
+    this._transformControls = transformControls;
 
     const boundingBox = await this.model.getBoundingBoxByTreeIndex(treeIndex);
     const boxMesh = new THREE.Object3D();
