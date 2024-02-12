@@ -33,7 +33,7 @@ import { FlexibleMouseActionType } from './FlexibleMouseActionType';
 import { DebouncedCameraStopEventTrigger } from '../utils/DebouncedCameraStopEventTrigger';
 import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraTo } from './moveCamera';
-import { IFlexibleCameraManager } from './IFlexibleCameraManager';
+import { FlexibleControlsTypeChangeDelegate, IFlexibleCameraManager } from './IFlexibleCameraManager';
 
 type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
 
@@ -48,8 +48,9 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   // INSTANCE FIELDS:
   //================================================
 
-  private readonly _events = {
-    cameraChange: new EventTrigger<CameraChangeDelegate>()
+  private readonly _triggers = {
+    cameraChange: new EventTrigger<CameraChangeDelegate>(),
+    controlsTypeChange: new EventTrigger<FlexibleControlsTypeChangeDelegate>()
   };
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private readonly _controls: FlexibleControls;
@@ -124,17 +125,14 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     if (state.rotation && state.target) {
       throw new Error(`Rotation and target can't be set at the same time`);
     }
-    const newPosition = state.position ?? this.getPosition();
-    const newTarget =
-      state.target ??
-      (state.rotation
-        ? CameraManagerHelper.calculateNewTargetFromRotation(this.camera, state.rotation, this.getTarget(), newPosition)
-        : this.getTarget());
-
-    if (this.controls.isEnabled && state.rotation) {
-      this.controls.cameraRawRotation.copy(state.rotation);
+    const position = state.position ?? this.getPosition();
+    if (state.target) {
+      this.controls.setPositionAndTarget(position, state.target);
+    } else if (state.rotation) {
+      this.controls.setPositionAndRotation(position, state.rotation);
+    } else {
+      this.controls.setPositionAndTarget(position, this.getTarget());
     }
-    this.setPositionAndTarget(newPosition, newTarget);
   }
 
   public activate(cameraManager?: CameraManager): void {
@@ -160,7 +158,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   public on(event: CameraManagerEventType, callback: CameraEventDelegate): void {
     switch (event) {
       case 'cameraChange':
-        this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
+        this._triggers.cameraChange.subscribe(callback as CameraChangeDelegate);
         break;
       case 'cameraStop':
         this._stopEventTrigger.subscribe(callback as CameraStopDelegate);
@@ -173,7 +171,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   public off(event: CameraManagerEventType, callback: CameraEventDelegate): void {
     switch (event) {
       case 'cameraChange':
-        this._events.cameraChange.unsubscribe(callback as CameraChangeDelegate);
+        this._triggers.cameraChange.unsubscribe(callback as CameraChangeDelegate);
         break;
       case 'cameraStop':
         this._stopEventTrigger.unsubscribe(callback as CameraStopDelegate);
@@ -204,17 +202,37 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this._isDisposed = true;
     this.controls.dispose();
     this.removeEventListeners();
-    disposeOfAllEventListeners(this._events);
+    disposeOfAllEventListeners(this._triggers);
     this._inputHandler.dispose();
     this._stopEventTrigger.dispose();
   }
 
   //================================================
-  // INSTANCE METHODS
+  // IMPLEMENTATION OF IFlexibleCameraManager (In correct order)
+  //================================================
+
+  public get controlsType(): FlexibleControlsType {
+    return this.controls.options.controlsType;
+  }
+
+  public set controlsType(value: FlexibleControlsType) {
+    this.controls.setControlsType(value);
+  }
+
+  public addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
+    this._triggers.controlsTypeChange.subscribe(callback);
+  }
+
+  public removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
+    this._triggers.controlsTypeChange.subscribe(callback);
+  }
+
+  //================================================
+  // INSTANCE METHODS: Setters and getters
   //================================================
 
   public get options(): FlexibleControlsOptions {
-    return this.controls.options;
+    return this._controls.options;
   }
 
   public get controls(): FlexibleControls {
@@ -250,9 +268,16 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     return this.controls.getTarget();
   }
 
+  public getBoundingBoxDiagonal(): number {
+    return getDiagonal(this._currentBoundingBox);
+  }
+  public getHorizontalDiagonal(): number {
+    return getHorizontalDiagonal(this._currentBoundingBox);
+  }
+
   public setPositionAndTarget(position: Vector3, target: Vector3): void {
     if (this.controls.isEnabled) {
-      this.controls.setState(position, target);
+      this.controls.setPositionAndTarget(position, target);
     }
   }
 
@@ -301,6 +326,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this.domElement.addEventListener('dblclick', this.onDoubleClick);
     this.domElement.addEventListener('wheel', this.onWheel);
     this.controls.addEventListener('cameraChange', this.onCameraChange);
+    this.controls.addEventListener('controlsTypeChange', this.onControlsTypeChange);
   }
 
   private removeEventListeners(): void {
@@ -309,19 +335,24 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this.domElement.removeEventListener('keydown', this.onKeyDown);
     this.domElement.removeEventListener('wheel', this.onWheel);
     this.controls.removeEventListener('cameraChange', this.onCameraChange);
+    this.controls.removeEventListener('controlsTypeChange', this.onControlsTypeChange);
   }
 
   //================================================
   // INSTANCE METHODS: Event Handlers
   //================================================
 
-  private readonly onCameraChange = (event: { camera: { position: Vector3; target: Vector3 } }) => {
-    const { position, target } = event.camera;
-    this._events.cameraChange.fire(position.clone(), target.clone());
+  private readonly onCameraChange = (event: { content: { position: Vector3; target: Vector3 } }) => {
+    const { position, target } = event.content;
+    this._triggers.cameraChange.fire(position.clone(), target.clone());
     this._nearAndFarNeedsUpdate = true;
     if (this._markers) {
       this._markers.update(this);
     }
+  };
+
+  private readonly onControlsTypeChange = (event: { controlsType: FlexibleControlsType }) => {
+    this._triggers.controlsTypeChange.fire(event.controlsType);
   };
 
   private readonly onKeyDown = (event: KeyboardEvent) => {
@@ -464,13 +495,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       sensitivity = this.options.getLegalSensitivity(diagonalFraction);
     }
     this.options.sensitivity = sensitivity;
-  }
-
-  public getBoundingBoxDiagonal(): number {
-    return getDiagonal(this._currentBoundingBox);
-  }
-  public getHorizontalDiagonal(): number {
-    return getHorizontalDiagonal(this._currentBoundingBox);
   }
 }
 
