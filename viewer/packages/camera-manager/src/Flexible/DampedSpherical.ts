@@ -77,6 +77,28 @@ export class DampedSpherical {
     DampedSpherical.dampSphericalVectors(this.value, this.end, dampeningFactor);
   }
 
+  static correctPhi(value: Spherical): void {
+    // https://github.com/mrdoob/three.js/blob/master/src/math/Spherical.js
+    // When phi is outside the range  (-Pi/2, Pi/2), correct it so it is inside the range by
+    // rotatation the theta Pi radians and flipping the phi.
+
+    // First normalize so Phi is in the range (-Pi, Pi)
+    while (value.phi < -Math.PI) {
+      value.phi += 2 * Math.PI;
+    }
+    while (value.phi >= Math.PI) {
+      value.phi -= 2 * Math.PI;
+    }
+    // Flipping phi
+    if (value.phi < -Math.PI / 2) {
+      value.theta += Math.PI;
+      value.phi = -Math.PI - value.phi;
+    } else if (value.phi > Math.PI / 2) {
+      value.theta += Math.PI;
+      value.phi = Math.PI - value.phi;
+    }
+  }
+
   static dampSphericalVectors(value: Spherical, end: Spherical, dampeningFactor: number): void {
     const deltaPhi = end.phi - value.phi;
     const deltaTheta = getShortestDeltaTheta(end.theta, value.theta);
