@@ -23,13 +23,12 @@ import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 import { DampedVector3 } from './DampedVector3';
 import { DampedSpherical } from './DampedSpherical';
 import { ReusableVector3s } from './ReusableVector3s';
+import { FlexibleControlsEvent } from './FlexibleControlsEvent';
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
 const UP_VECTOR = new Vector3(0, 1, 0);
 const RIGHT_VECTOR = new Vector3(1, 0, 0);
-
-export type FlexibleControlsEvent = { cameraChange: { camera: { position: Vector3; target: Vector3 } } };
 
 /**
  * @beta
@@ -56,7 +55,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   private _scrollDistance = 0; // When using the wheel this is the distance to the picked point
   private _tempTarget: Vector3 | undefined = undefined;
 
-  private readonly _rawCameraRotation = new Quaternion();
   private readonly _accumulatedMouseRotation: Vector2 = new Vector2();
   private readonly _keyboard: Keyboard;
   private readonly _pointEventCache: Array<PointerEvent> = [];
@@ -140,16 +138,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._isEnabled = isEnabled;
   }
 
-  /**
-   * Camera rotation to be used by the camera instead of target-based rotation.
-   * This rotation is used only when set to non-default quaternion value (not identity rotation quaternion).
-   * Externally, value is updated by `CameraManager` when `setState` method with non-zero rotation is called. Automatically
-   * resets to default value when `setState` method is called with no rotation value.
-   */
-  get cameraRawRotation(): Quaternion {
-    return this._rawCameraRotation;
-  }
-
   public get controlsType(): FlexibleControlsType {
     return this.options.controlsType;
   }
@@ -204,7 +192,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
   }
 
-  public setState(position: Vector3, target: Vector3): void {
+  public setPositionAndTarget(position: Vector3, target: Vector3): void {
     this._cameraPosition.copy(position);
     this._target.copy(target);
 
@@ -213,6 +201,30 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     vector.normalize();
     this._cameraVector.copy(vector);
 
+    this.update(1000 / TARGET_FPS, true);
+    this.triggerCameraChangeEvent();
+  }
+
+  public setPositionAndDirection(position: Vector3, direction: Vector3): void {
+    this._cameraPosition.copy(position);
+    this._cameraVector.copy(direction);
+    this.update(1000 / TARGET_FPS, true);
+    this.triggerCameraChangeEvent();
+  }
+
+  public setPositionAndRotation(position: Vector3, rotation: Quaternion): void {
+    this._cameraPosition.copy(position);
+
+    const cameraVector = this.newVector3().set(0, 0, -1);
+    cameraVector.applyQuaternion(rotation);
+
+    if (DampedSpherical.isVertical(cameraVector)) {
+      // Looking from top or bottom, the theta must be defined in a proper way
+      const upVector = this.newVector3().set(0, 1, 0);
+      upVector.applyQuaternion(rotation);
+      this._cameraVector.setThetaFromVector(upVector);
+    }
+    this._cameraVector.copy(cameraVector);
     this.update(1000 / TARGET_FPS, true);
     this.triggerCameraChangeEvent();
   }
@@ -231,8 +243,9 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
       this._target.end.copy(cameraVector.add(this._cameraPosition.end));
       this._target.synchronize();
+      this.triggerCameraChangeEvent();
     }
-    this.triggerCameraChangeEvent();
+    this.triggerControlsTypeChangeEvent();
     return true;
   }
 
@@ -307,28 +320,30 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       this._cameraPosition.synchronize();
     }
     this._camera.position.copy(this._cameraPosition.value);
-    this._camera.up.copy(UP_VECTOR);
     this._camera.updateProjectionMatrix();
-    if (isIdentityQuaternion(this._rawCameraRotation)) {
-      this._camera.lookAt(this.getLookAt());
-    } else {
-      this._camera.setRotationFromQuaternion(this._rawCameraRotation);
-    }
+    this._camera.lookAt(this.getLookAt());
     if (isChanged) {
       this.triggerCameraChangeEvent();
     }
     return isChanged; // Tell caller if camera has changed
   }
 
-  public triggerCameraChangeEvent = (): void => {
+  public triggerCameraChangeEvent(): void {
     this.dispatchEvent({
       type: 'cameraChange',
-      camera: {
+      content: {
         position: this._camera.position,
         target: this._target.value
       }
     });
-  };
+  }
+
+  public triggerControlsTypeChangeEvent(): void {
+    this.dispatchEvent({
+      type: 'controlsTypeChange',
+      controlsType: this.options.controlsType
+    });
+  }
 
   //================================================
   // INSTANCE METHODS: Event
@@ -468,17 +483,19 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   //================================================
 
   private startMouseRotation(initialEvent: PointerEvent) {
-    let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
+    let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
 
     const onMouseMove = (event: PointerEvent) => {
-      const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
-      if (this._keyboard.isCtrlPressed()) {
-        this.pan(0, 0, (newOffset.y - previousOffset.y) * this.options.mouseDollySpeed);
+      const position = getMousePosition(this._domElement, event.clientX, event.clientY);
+      const deltaPosition = position.clone().sub(prevPosition);
+      if (this._keyboard.isShiftPressed()) {
+        this.pan(0, 0, deltaPosition.y * this.options.mouseDollySpeed);
+      } else if (this._keyboard.isCtrlPressed()) {
+        this.pan(deltaPosition.x * this.options.mousePanSpeed, deltaPosition.y * this.options.mousePanSpeed, 0);
       } else {
-        const deltaOffset = previousOffset.clone().sub(newOffset);
-        this._accumulatedMouseRotation.add(deltaOffset);
+        this._accumulatedMouseRotation.sub(deltaPosition);
       }
-      previousOffset = newOffset;
+      prevPosition = position;
     };
 
     const onMouseUp = () => {
@@ -491,17 +508,17 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   private startTouchRotation(initialEvent: PointerEvent) {
-    let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
+    let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
 
     const onTouchMove = (event: PointerEvent) => {
       if (!this.isEnabled) return;
       if (this._pointEventCache.length !== 1) {
         return;
       }
-      const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
-      previousOffset.sub(newOffset);
-      this.rotate(new Vector2().subVectors(previousOffset, newOffset));
-      previousOffset = newOffset;
+      const position = getMousePosition(this._domElement, event.clientX, event.clientY);
+      prevPosition.sub(position);
+      this.rotate(new Vector2().subVectors(prevPosition, position));
+      prevPosition = position;
     };
 
     const onTouchStart = (_event: PointerEvent) => {
@@ -654,18 +671,17 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   //================================================
 
   private startMousePan(initialEvent: PointerEvent) {
-    let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
+    let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
 
     const onMouseMove = (event: PointerEvent) => {
-      const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
-      const deltaX = newOffset.x - previousOffset.x;
-      const deltaY = newOffset.y - previousOffset.y;
-      if (this._keyboard.isCtrlPressed()) {
-        this.pan(0, 0, deltaY * this.options.mouseDollySpeed);
+      const position = getMousePosition(this._domElement, event.clientX, event.clientY);
+      const deltaPosition = position.clone().sub(prevPosition);
+      if (this._keyboard.isShiftPressed()) {
+        this.pan(0, 0, deltaPosition.y * this.options.mouseDollySpeed);
       } else {
-        this.pan(deltaX * this.options.mousePanSpeed, deltaY * this.options.mousePanSpeed, 0);
+        this.pan(deltaPosition.x * this.options.mousePanSpeed, deltaPosition.y * this.options.mousePanSpeed, 0);
       }
-      previousOffset = newOffset;
+      prevPosition = position;
     };
 
     const onMouseUp = () => {
@@ -805,7 +821,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       return false;
     }
     this.setControlsType(FlexibleControlsType.FirstPerson);
-
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
     return true;
   }
@@ -834,11 +849,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 // LOCAL FUNCTIONS
 //================================================
 
-function isIdentityQuaternion(q: THREE.Quaternion): boolean {
-  return q.x === 0 && q.y === 0 && q.z === 0 && q.w === 1;
-}
-
-function getHTMLOffset(domElement: HTMLElement, clientX: number, clientY: number): Vector2 {
+function getMousePosition(domElement: HTMLElement, clientX: number, clientY: number): Vector2 {
   return new Vector2(clientX - domElement.offsetLeft, clientY - domElement.offsetTop);
 }
 
@@ -847,7 +858,7 @@ function getPinchInfo(domElement: HTMLElement, touches: PointerEvent[]) {
     throw new Error('getPinchInfo only works if touches.length === 2');
   }
   const touchList = [touches[0], touches[1]];
-  const offsets = touchList.map(({ clientX, clientY }) => getHTMLOffset(domElement, clientX, clientY));
+  const offsets = touchList.map(({ clientX, clientY }) => getMousePosition(domElement, clientX, clientY));
   const center = offsets[0].clone().add(offsets[1]).multiplyScalar(0.5);
   const distance = offsets[0].distanceTo(offsets[1]);
   return {
