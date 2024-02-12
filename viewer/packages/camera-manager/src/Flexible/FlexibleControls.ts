@@ -726,11 +726,11 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number) {
-    const translation = this.getRadiusAndTranslation(pixelCoordinates, deltaDistance);
+    const translation = this.getTranslation(pixelCoordinates, deltaDistance);
     this.translate(translation);
   }
 
-  private getRadiusAndTranslation(pixelCoordinates: Vector2, deltaDistance: number): Vector3 {
+  private getTranslation(pixelCoordinates: Vector2, deltaDistance: number): Vector3 {
     if (this.options.shouldPick) {
       return this.getTranslationByScrollCursor(pixelCoordinates, deltaDistance);
     }
@@ -750,27 +750,31 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (this._scrollDirection === undefined) {
       return this.getTranslationByDirection(pixelCoordinates, deltaDistance);
     }
-    let step = this.options.zoomFraction * this._scrollDistance * Math.sign(deltaDistance);
-    if (
-      this.options.realMouseWheelAction === FlexibleWheelZoomType.PastCursor &&
-      Math.abs(step) < Math.abs(deltaDistance)
-    ) {
-      // If past or near the scroll cursor, go in equal steps
-      step = deltaDistance;
-    }
-    const prevScrollDistance = this._scrollDistance;
+    const step = this.getStep(deltaDistance);
     this._scrollDistance -= step;
-    if (
-      this.options.realMouseWheelAction === FlexibleWheelZoomType.ToCursor &&
-      this._scrollDistance < this.options.sensitivity
-    ) {
-      // This avoid to close to the scroll cursor
-      this._scrollDistance = this.options.sensitivity;
-      step = prevScrollDistance - this._scrollDistance;
-    }
     const translation = this._scrollDirection.clone();
+
     translation.multiplyScalar(step);
     return translation;
+  }
+
+  private getStep(deltaDistance: number): number {
+    const step = this.options.zoomFraction * this._scrollDistance * Math.sign(deltaDistance);
+    if (this.options.realMouseWheelAction === FlexibleWheelZoomType.PastCursor) {
+      const minStep = Math.abs(deltaDistance * 0.5);
+      if (Math.abs(step) < minStep) {
+        // If past or near the scroll cursor, go in equal steps
+        return minStep * Math.sign(deltaDistance);
+      }
+    }
+    if (this.options.realMouseWheelAction === FlexibleWheelZoomType.ToCursor) {
+      if (this._scrollDistance - step < this.options.sensitivity) {
+        // This avoid to close to the scroll cursor
+        // Can not get closer than options.sensitivity
+        return Math.max(0, this._scrollDistance - this.options.sensitivity);
+      }
+    }
+    return step;
   }
 
   //================================================
