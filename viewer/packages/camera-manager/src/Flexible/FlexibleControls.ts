@@ -535,7 +535,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
     let deltaAzimuthAngle = this._options.mouseRotationSpeedAzimuth * delta.x;
     let deltaPolarAngle = this._options.mouseRotationSpeedPolar * delta.y;
-    // It is morre natural that the first persion rotate slower then the other modes
+    // It is more natural that the first persion rotate slower then the other modes
     if (this.controlsType == FlexibleControlsType.FirstPerson) {
       deltaAzimuthAngle *= 0.5;
       deltaPolarAngle *= 0.5;
