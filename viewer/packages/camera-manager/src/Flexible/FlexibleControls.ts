@@ -12,6 +12,7 @@ import {
   PerspectiveCamera,
   Quaternion,
   Raycaster,
+  Spherical,
   Vector2,
   Vector3
 } from 'three';
@@ -602,16 +603,14 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       deltaAzimuthAngle *= 0.5;
       deltaPolarAngle *= 0.5;
     }
-    deltaAzimuthAngle *= this.getAzimuthCompensationFactor();
+    deltaAzimuthAngle *= 0.5 + 0.5 * this.getAzimuthCompensationFactor();
     this.rotateByAngles(deltaAzimuthAngle, deltaPolarAngle);
   }
 
-  private getAzimuthCompensationFactor(): number {
+  public getAzimuthCompensationFactor(): number {
     // Calculate the azimuth compensation factor. This adjusts the azimuth rotation
     // to make it feel more natural when looking straight up or straight down.
-    const deviationFromEquator = Math.abs(this._cameraVector.end.phi - Math.PI / 2);
-    const azimuthCompensationFactor = Math.sin(Math.PI / 2 - deviationFromEquator);
-    return 0.5 + 0.5 * azimuthCompensationFactor;
+    return Math.abs(Math.sin(this._cameraVector.end.phi));
   }
 
   public rotateByAngles(deltaAzimuth: number, deltaPolar: number): void {
