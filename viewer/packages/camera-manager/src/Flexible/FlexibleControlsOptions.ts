@@ -2,13 +2,13 @@
  * Copyright 2024 Cognite AS
  */
 
-import { MathUtils } from 'three/src/math/MathUtils';
+import { MathUtils } from 'three';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleMouseActionType } from './FlexibleMouseActionType';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 
 const DEFAULT_POINTER_ROTATION_SPEED = (0.5 * Math.PI) / 360; // half degree per pixel
-const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 5;
+const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 2.5;
 const DEFAULT_MIN_POLAR_ANGLE = 0.0001;
 
 /**
@@ -69,7 +69,7 @@ export class FlexibleControlsOptions {
   public maxOrthographicZoom = Infinity;
 
   // Mouse speed for dolly and pan
-  public wheelDollySpeed = 1;
+  public wheelDollySpeed = 0.5;
   public mousePanSpeed = 25;
   public mouseDollySpeed = 100;
 

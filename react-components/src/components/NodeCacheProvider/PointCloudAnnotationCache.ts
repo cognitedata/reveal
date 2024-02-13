@@ -129,7 +129,7 @@ export class PointCloudAnnotationCache {
 
     const annotationIdToAssetMap = new Map<number, Asset>();
     assets.forEach((asset) => {
-      uniqueAnnotationMapping.forEach((mapping) => {
+      filteredAnnotationMapping.forEach((mapping) => {
         if (mapping.assetId === asset.id) {
           annotationIdToAssetMap.set(mapping.annotationId, asset);
         }
