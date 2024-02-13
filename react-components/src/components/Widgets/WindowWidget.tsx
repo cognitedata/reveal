@@ -166,7 +166,6 @@ const useParentResize = (
 
       const width = isMinimized ? WIDGET_WINDOW_MIN_WIDTH : parentWidth * WIDGET_WIDTH_FACTOR;
       const height = isMinimized ? WIDGET_WINDOW_MIN_HEIGHT : parentHeight * WIDGET_HEIGHT_FACTOR;
-
       setSize({ width, height });
 
       onResize?.(width, height);
@@ -174,10 +173,11 @@ const useParentResize = (
 
     updateSize();
 
-    window.addEventListener('resize', updateSize);
+    const resizeObserver = new ResizeObserver(updateSize);
+    resizeObserver.observe(parentContainerElement);
 
     return () => {
-      window.removeEventListener('resize', updateSize);
+      resizeObserver.disconnect();
     };
   }, [isMinimized, parentContainerElement]);
 
