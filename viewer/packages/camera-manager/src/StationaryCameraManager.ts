@@ -214,8 +214,8 @@ export class StationaryCameraManager implements CameraManager {
 
     const euler = new Euler().setFromQuaternion(this._camera.quaternion, 'YXZ');
 
-    euler.x -= deltaY * sensitivityScaler * (this._camera.fov / this._defaultFOV);
-    euler.y -= deltaX * sensitivityScaler * (this._camera.fov / this._defaultFOV);
+    euler.x += deltaY * sensitivityScaler * (this._camera.fov / this._defaultFOV);
+    euler.y += deltaX * sensitivityScaler * (this._camera.fov / this._defaultFOV);
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
 
