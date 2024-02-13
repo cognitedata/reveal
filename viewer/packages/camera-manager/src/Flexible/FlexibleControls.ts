@@ -328,11 +328,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (!forceUpdate && !this.isEnabled) {
       return false;
     }
+    this.handleKeyboard(deltaTimeS);
+
     const epsilon = this._options.EPSILON;
-    const isKeyPressed = this.handleKeyboard(deltaTimeS);
     const isRotated = this._cameraVector.isChanged(epsilon);
     const isChanged = isRotated || this._target.isChanged(epsilon) || this._cameraPosition.isChanged(epsilon);
-    const dampeningFactor = isKeyPressed ? 1 : this.getDampingFactor(deltaTimeS);
+    const dampeningFactor = this.getDampingFactor(deltaTimeS);
 
     if (isChanged && dampeningFactor < 1) {
       this._cameraVector.damp(dampeningFactor);
