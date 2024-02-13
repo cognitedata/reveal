@@ -10,7 +10,6 @@ import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type CognitePointCloudModel } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
-import { useRevealContainerElement } from '../../RevealCanvas/RevealCanvasElementContext';
 import { useTranslation } from '../../i18n/I18n';
 
 export const PointCloudLayersContainer = ({
@@ -22,7 +21,6 @@ export const PointCloudLayersContainer = ({
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
-  // const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);
   const { pointCloudLayerData } = layerProps.reveal3DResourcesLayerData;
   const { storeStateInUrl } = layerProps;

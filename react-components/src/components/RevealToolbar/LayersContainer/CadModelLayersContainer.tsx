@@ -9,7 +9,6 @@ import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
-import { useRevealContainerElement } from '../../RevealCanvas/RevealCanvasElementContext';
 import { useTranslation } from '../../i18n/I18n';
 
 export const CadModelLayersContainer = ({
@@ -21,7 +20,6 @@ export const CadModelLayersContainer = ({
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
-  //   const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);
 
   const { cadLayerData } = layerProps.reveal3DResourcesLayerData;
