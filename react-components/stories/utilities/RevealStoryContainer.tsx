@@ -12,7 +12,7 @@ import { createSdkByUrlToken } from './createSdkByUrlToken';
 import { type PointCloudAnnotationCache } from '../../src/components/NodeCacheProvider/PointCloudAnnotationCache';
 import {
   RevealContext,
-  RevealContextProps
+  type RevealContextProps
 } from '../../src/components/RevealContext/RevealContext';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {

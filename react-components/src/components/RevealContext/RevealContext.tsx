@@ -1,7 +1,10 @@
-import { Cognite3DViewer, Cognite3DViewerOptions } from '@cognite/reveal';
-import { CogniteClient } from '@cognite/sdk/dist/src';
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-import { Color } from 'three';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { Cognite3DViewer, type Cognite3DViewerOptions } from '@cognite/reveal';
+import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { type Color } from 'three';
 import { I18nContextProvider } from '../i18n/I18n';
 import { ViewerContext } from '../RevealCanvas/ViewerContext';
 import { NodeCacheProvider } from '../NodeCacheProvider/NodeCacheProvider';

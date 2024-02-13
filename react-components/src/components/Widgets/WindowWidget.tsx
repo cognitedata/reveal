@@ -6,7 +6,6 @@ import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type ReactElement, useState, type ReactNode, useEffect, type SyntheticEvent } from 'react';
 import Widget from './Widget';
 import Draggable, { type DraggableData, type DraggableEvent } from 'react-draggable';
-import { useRevealContainerElement } from '../RevealCanvas/RevealCanvasElementContext';
 import { ResizableBox, type ResizeCallbackData } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import {
