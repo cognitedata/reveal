@@ -1963,7 +1963,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.5.0"
     "@cognite/cogs.js": "npm:^9.17.0"
-    "@cognite/reveal": "npm:^4.8.0"
+    "@cognite/reveal": "npm:^4.10.0"
     "@cognite/sdk": "npm:^8.2.0"
     "@playwright/test": "npm:^1.39.0"
     "@storybook/addon-essentials": "npm:7.6.12"
@@ -2019,26 +2019,26 @@ __metadata:
     vitest: "npm:^0.34.6"
   peerDependencies:
     "@cognite/cogs.js": ">=9"
-    "@cognite/reveal": ^4.7.0
+    "@cognite/reveal": ^4.10.0
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:^4.8.0":
-  version: 4.9.0
-  resolution: "@cognite/reveal@npm:4.9.0"
+"@cognite/reveal@npm:^4.10.0":
+  version: 4.10.0
+  resolution: "@cognite/reveal@npm:4.10.0"
   dependencies:
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:19.0.0"
     assert: "npm:2.1.0"
-    async-mutex: "npm:0.4.0"
+    async-mutex: "npm:0.4.1"
     glslify: "npm:7.1.1"
     glslify-import: "npm:3.1.0"
     html2canvas: "npm:^1.4.1"
     lodash: "npm:4.17.21"
-    loglevel: "npm:1.8.1"
+    loglevel: "npm:1.9.1"
     mixpanel-browser: "npm:2.48.1"
     path-browserify: "npm:1.0.1"
     random-seed: "npm:0.3.0"
@@ -2048,7 +2048,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.158.0
-  checksum: 10/543fa1b9f25b9ae94e9643e67a54b5a6d2e0515002f01ebef640206faffd9de2968486f72147e9f9ce4f1b72d173dba86dc8a218994330090d77087262a74aa8
+  checksum: 10/77fa388e20394a6f7a4cf20d4836e5d3ef9a60fc6ce7f2f9cfca13a44249ad03927fcac0ff24a33bd3e9adf9405e8149afd61a6fccb9db993580c8451f47b60c
   languageName: node
   linkType: hard
 
@@ -5552,20 +5552,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^20.8.7":
-  version: 20.11.16
-  resolution: "@types/node@npm:20.11.16"
+  version: 20.11.17
+  resolution: "@types/node@npm:20.11.17"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/751f50ec5c9332b11515e82fe37c71479ac4449b711280aa3c7910edf67b1e3f5ac00041512add543f9a892096a68356406998bf02a2c809a73d176c44c28414
+  checksum: 10/3342df87258d1c56154bcd4b85180f48675427b235971e6e6e2e037353f5a2ae9aaa05ba5df0fe1e2d2f1022c8d856fd39056b9d7f50ea30c0ca3214137cae1d
   languageName: node
   linkType: hard
 
 "@types/node@npm:^18.0.0":
-  version: 18.19.14
-  resolution: "@types/node@npm:18.19.14"
+  version: 18.19.15
+  resolution: "@types/node@npm:18.19.15"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/c81d9f01ccaaa4f8a25c48fb888bd4dd5196562ebefccae6948d3b884eb3195f877826e12c5856d04690c215324c48b8d4c1d88c1e52d4428760c5612369b87b
+  checksum: 10/cbd4bf49f6aa0e5e9b9d3dafd0f83cc21475f6fe846c8b59a264e508608aaad8cd48dfce95ee48cdf81d3139c35c03a9d4fcd613bf98cae7b61c7dc36bb6b195
   languageName: node
   linkType: hard
 
@@ -6635,12 +6635,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async-mutex@npm:0.4.0":
-  version: 0.4.0
-  resolution: "async-mutex@npm:0.4.0"
+"async-mutex@npm:0.4.1":
+  version: 0.4.1
+  resolution: "async-mutex@npm:0.4.1"
   dependencies:
     tslib: "npm:^2.4.0"
-  checksum: 10/4a55065aae8c7283e45e2a8ac38ba9812f030696640d650c4ec62cfd67e5d61bd698e67b758a81fcb845e2d5ea1d857106f9235cc4282ad40cd1944b26fde1b2
+  checksum: 10/7e9f77b112b8545beb6612493fae4a8d9d1d6c3f24fc22f4d6d05ce96d1e8d326ac3e743a804cc6d7bf24e7ef0267afb65bb127f99b2e433609684b38933ff1c
   languageName: node
   linkType: hard
 
@@ -11351,10 +11351,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loglevel@npm:1.8.1":
-  version: 1.8.1
-  resolution: "loglevel@npm:1.8.1"
-  checksum: 10/36a786082a7e4f1d962de330122291da3a102b88dbde81a45eb92a045c38b0903783958ba39dce641440c0413da303410e7f2565f897bccad828853bd5974c86
+"loglevel@npm:1.9.1":
+  version: 1.9.1
+  resolution: "loglevel@npm:1.9.1"
+  checksum: 10/863cbbcddf850a937482c604e2d11586574a5110b746bb49c7cc04739e01f6035f6db841d25377106dd330bca7142d74995f15a97c5f3ea0af86d9472d4a99f4
   languageName: node
   linkType: hard
 

@@ -15,6 +15,7 @@ import { RevealContainerElementContext } from './RevealContainerElementContext';
 import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { AssetMappingCacheProvider } from '../NodeCacheProvider/AssetMappingCacheProvider';
 import { I18nContextProvider } from '../i18n/I18n';
+import { PointCloudAnnotationCacheProvider } from '../NodeCacheProvider/PointCloudAnnotationCacheProvider';
 
 export type RevealContainerProps = {
   color?: Color;
@@ -30,6 +31,7 @@ export type RevealContainerProps = {
     | 'ssaoQualityHint'
     | 'pointCloudEffects'
     | 'enableEdges'
+    | 'useFlexibleCameraManager'
   >;
 };
 
@@ -86,9 +88,11 @@ export function RevealContainer({
             <RevealContext.Provider value={viewer}>
               <NodeCacheProvider>
                 <AssetMappingCacheProvider>
-                  <Reveal3DResourcesCountContextProvider>
-                    {createPortal(children, viewerDomElement.current)}
-                  </Reveal3DResourcesCountContextProvider>
+                  <PointCloudAnnotationCacheProvider>
+                    <Reveal3DResourcesCountContextProvider>
+                      {createPortal(children, viewerDomElement.current)}
+                    </Reveal3DResourcesCountContextProvider>
+                  </PointCloudAnnotationCacheProvider>
                 </AssetMappingCacheProvider>
               </NodeCacheProvider>
             </RevealContext.Provider>

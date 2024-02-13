@@ -24,6 +24,7 @@ export {
   CameraChangeDelegate,
   CameraStopDelegate,
   IFlexibleCameraManager,
+  FlexibleControlsTypeChangeDelegate,
   FlexibleControlsOptions,
   FlexibleWheelZoomType,
   FlexibleControlsType,
