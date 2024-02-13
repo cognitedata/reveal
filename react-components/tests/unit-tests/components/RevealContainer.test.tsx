@@ -8,6 +8,7 @@ import { type Cognite3DViewer } from '@cognite/reveal';
 import { type FC, useRef } from 'react';
 import { type FdmNodeCache } from '../../../src/components/NodeCacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../../../src/components/NodeCacheProvider/AssetMappingCache';
+import { type PointCloudAnnotationCache } from '../../../src/components/NodeCacheProvider/PointCloudAnnotationCache';
 
 describe(RevealContainer.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {
@@ -35,13 +36,15 @@ describe(RevealContainer.name, () => {
       const isRevealContainerMountedRef = useRef<boolean>(true);
       const fdmNodeCache = useRef<FdmNodeCache | undefined>();
       const assetMappingCache = useRef<AssetMappingCache | undefined>();
+      const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache>();
       return (
         <RevealKeepAliveContext.Provider
           value={{
             viewerRef,
             isRevealContainerMountedRef,
             fdmNodeCache,
-            assetMappingCache
+            assetMappingCache,
+            pointCloudAnnotationCache
           }}>
           <RevealContainer sdk={sdkMock.object()} />
         </RevealKeepAliveContext.Provider>

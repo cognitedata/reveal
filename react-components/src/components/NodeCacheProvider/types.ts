@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type Node3D } from '@cognite/sdk';
+import { type AnnotationModel, type AnnotationsBoundingVolume, type Node3D } from '@cognite/sdk';
 import { type EdgeItem, type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
 
@@ -39,5 +39,8 @@ export type ModelRevisionId = { modelId: number; revisionId: number };
 export type ModelRevisionKey = `${ModelId}/${RevisionId}`;
 export type FdmKey = `${string}/${string}`;
 export type ModelNodeIdKey = `${ModelId}/${RevisionId}/${NodeId}`;
+export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
 
 export type ModelRevisionToEdgeMap = Map<ModelRevisionKey, FdmEdgeWithNode[]>;
+
+export type PointCloudAnnotationModel = AnnotationModel & { data: AnnotationsBoundingVolume };

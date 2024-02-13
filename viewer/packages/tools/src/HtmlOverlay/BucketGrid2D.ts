@@ -1,13 +1,13 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
 import range from 'lodash/range';
 
 import { HtmlOverlayTool } from './HtmlOverlayTool';
+import { Box2, MathUtils } from 'three';
 
 type SimpleGrid2DElement<T> = {
-  bounds: THREE.Box2;
+  bounds: Box2;
   element: T;
 };
 
@@ -22,7 +22,7 @@ type SimpleGrid2DElement<T> = {
  */
 export class BucketGrid2D<T> {
   private readonly _dimensions: [width: number, height: number];
-  private readonly _bounds: THREE.Box2;
+  private readonly _bounds: Box2;
   private readonly _cells: SimpleGrid2DElement<T>[][];
   /**
    * Holds elements that has been removed from the collection using {@link BucketGrid2D.removeOverlappingElements}.
@@ -30,13 +30,13 @@ export class BucketGrid2D<T> {
    */
   private readonly _removedElements = new Set<T>();
 
-  constructor(bounds: THREE.Box2, dimensions: [width: number, height: number]) {
+  constructor(bounds: Box2, dimensions: [width: number, height: number]) {
     this._dimensions = dimensions;
     this._cells = range(0, dimensions[0] * dimensions[1]).map(() => new Array<SimpleGrid2DElement<T>>());
     this._bounds = bounds;
   }
 
-  insert(bounds: THREE.Box2, element: T): void {
+  insert(bounds: Box2, element: T): void {
     if (!this._bounds.intersectsBox(bounds)) {
       throw new Error('Element to be added must be partially inside grid');
     }
@@ -49,7 +49,7 @@ export class BucketGrid2D<T> {
     }
   }
 
-  *overlappingElements(bounds: THREE.Box2): Generator<T> {
+  *overlappingElements(bounds: Box2): Generator<T> {
     if (!this._bounds.intersectsBox(bounds)) {
       return;
     }
@@ -69,7 +69,7 @@ export class BucketGrid2D<T> {
     }
   }
 
-  *removeOverlappingElements(bounds: THREE.Box2): Generator<T> {
+  *removeOverlappingElements(bounds: Box2): Generator<T> {
     if (!this._bounds.intersectsBox(bounds)) {
       return;
     }
@@ -85,7 +85,7 @@ export class BucketGrid2D<T> {
     }
   }
 
-  private *cellsIntersecting(bounds: THREE.Box2): Generator<SimpleGrid2DElement<T>[]> {
+  private *cellsIntersecting(bounds: Box2): Generator<SimpleGrid2DElement<T>[]> {
     const { min, max } = this._bounds;
     const dimX = this._dimensions[0];
     const dimY = this._dimensions[1];
@@ -94,7 +94,7 @@ export class BucketGrid2D<T> {
     const relativeBoundsMinY = (bounds.min.y - min.y) / (max.y - min.y);
     const relativeBoundsMaxY = (bounds.max.y - min.y) / (max.y - min.y);
 
-    const clamp = THREE.MathUtils.clamp;
+    const clamp = MathUtils.clamp;
     const minI = clamp(Math.floor(dimX * relativeBoundsMinX), 0, dimX - 1);
     const maxI = clamp(Math.floor(dimX * relativeBoundsMaxX), 0, dimX - 1);
     const minJ = clamp(Math.floor(dimY * relativeBoundsMinY), 0, dimY - 1);

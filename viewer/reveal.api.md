@@ -339,7 +339,7 @@ export class ClusteredAreaCollection implements AreaCollection {
 // @public (undocumented)
 export class Cognite3DViewer {
     constructor(options: Cognite3DViewerOptions);
-    add360ImageSet(datasource: 'datamodels', dataModelIdentifier: Image360DataModelIdentifier): Promise<Image360Collection>;
+    add360ImageSet(datasource: 'datamodels', dataModelIdentifier: Image360DataModelIdentifier, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
@@ -874,6 +874,9 @@ export enum FlexibleControlsType {
 }
 
 // @beta (undocumented)
+export type FlexibleControlsTypeChangeDelegate = (controlsType: FlexibleControlsType) => void;
+
+// @beta (undocumented)
 export enum FlexibleMouseActionType {
     // (undocumented)
     None = "none",
@@ -948,7 +951,12 @@ export type HtmlOverlayToolOptions = {
 // @beta
 export interface IFlexibleCameraManager extends CameraManager {
     // (undocumented)
-    get options(): FlexibleControlsOptions;
+    addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
+    // (undocumented)
+    get controlsType(): FlexibleControlsType;
+    set controlsType(value: FlexibleControlsType);
+    // (undocumented)
+    removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
 }
 
 // @public

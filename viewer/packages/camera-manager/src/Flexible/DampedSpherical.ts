@@ -4,6 +4,8 @@
 
 import { Spherical, Vector3 } from 'three';
 
+const MAX_VERICAL_COMPONTENT = 0.999;
+
 export class DampedSpherical {
   public readonly value = new Spherical();
   public readonly end = new Spherical();
@@ -11,6 +13,10 @@ export class DampedSpherical {
   // Used as a temporary variable to avoid creating new objects
   private readonly _valueVector = new Vector3();
   private readonly _endVector = new Vector3();
+
+  public static isVertical(vector: Vector3): boolean {
+    return Math.abs(vector.y / vector.length()) > MAX_VERICAL_COMPONTENT;
+  }
 
   isChanged(epsilon: number): boolean {
     if (Math.abs(this.value.radius - this.end.radius) >= epsilon) return true;
@@ -28,15 +34,30 @@ export class DampedSpherical {
   }
 
   public setValueVector(vector: Vector3): void {
+    const oldTheta = this.value.theta;
     this.value.setFromVector3(vector);
+    if (DampedSpherical.isVertical(vector)) {
+      // If verical, keep the old theta, since the new value is arbitrarly
+      this.value.theta = oldTheta;
+    }
     this.value.radius = 1;
     this.value.makeSafe();
   }
 
   public setEndVector(vector: Vector3): void {
+    const oldTheta = this.end.theta;
     this.end.setFromVector3(vector);
+    if (DampedSpherical.isVertical(vector)) {
+      // If verical, keep the old theta, since the new value is arbitrarly
+      this.end.theta = oldTheta;
+    }
     this.end.radius = 1;
     this.end.makeSafe();
+  }
+
+  setThetaFromVector(vector: Vector3): void {
+    this.value.theta = new Spherical().setFromVector3(vector).theta;
+    this.end.theta = this.value.theta;
   }
 
   copy(vector: Vector3): void {
@@ -54,6 +75,28 @@ export class DampedSpherical {
 
   damp(dampeningFactor: number): void {
     DampedSpherical.dampSphericalVectors(this.value, this.end, dampeningFactor);
+  }
+
+  static correctPhi(value: Spherical): void {
+    // https://github.com/mrdoob/three.js/blob/master/src/math/Spherical.js
+    // When phi is outside the range  (-Pi/2, Pi/2), correct it so it is inside the range by
+    // rotatation the theta Pi radians and flipping the phi.
+
+    // First normalize so Phi is in the range (-Pi, Pi)
+    while (value.phi < -Math.PI) {
+      value.phi += 2 * Math.PI;
+    }
+    while (value.phi >= Math.PI) {
+      value.phi -= 2 * Math.PI;
+    }
+    // Flipping phi
+    if (value.phi < -Math.PI / 2) {
+      value.theta += Math.PI;
+      value.phi = -Math.PI - value.phi;
+    } else if (value.phi > Math.PI / 2) {
+      value.theta += Math.PI;
+      value.phi = Math.PI - value.phi;
+    }
   }
 
   static dampSphericalVectors(value: Spherical, end: Spherical, dampeningFactor: number): void {

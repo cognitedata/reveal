@@ -11,6 +11,7 @@ export { ComboControlsOptions } from './src/ComboControlsOptions';
 export { CameraControlsOptions } from './src/CameraControlsOptions';
 export { DebouncedCameraStopEventTrigger } from './src/utils/DebouncedCameraStopEventTrigger';
 export { IFlexibleCameraManager } from './src/Flexible/IFlexibleCameraManager';
+export { FlexibleControlsTypeChangeDelegate } from './src/Flexible/IFlexibleCameraManager';
 export { FlexibleCameraManager } from './src/Flexible/FlexibleCameraManager';
 export { FlexibleControlsOptions } from './src/Flexible/FlexibleControlsOptions';
 export { FlexibleWheelZoomType } from './src/Flexible/FlexibleWheelZoomType';
