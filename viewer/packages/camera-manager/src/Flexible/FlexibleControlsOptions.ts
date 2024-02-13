@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { MathUtils } from 'three/src/math/MathUtils';
+import { MathUtils } from 'three';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleMouseActionType } from './FlexibleMouseActionType';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
