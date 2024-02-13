@@ -86,6 +86,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   ) {
     this._camera = camera ?? new PerspectiveCamera(60, undefined, 0.1, 10000);
     this._controls = new FlexibleControls(this.camera, domElement, new FlexibleControlsOptions());
+    this._controls.getPickedPointByPixelCoordinates = this.getPickedPointByPixelCoordinates;
     this._domElement = domElement;
     this._inputHandler = inputHandler;
     this._raycastCallback = raycastCallback;
@@ -285,13 +286,13 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   // INSTANCE METHODS: Calculations
   //================================================
 
-  private async getPickedPointPixelCoordinates(pixelX: number, pixelY: number): Promise<Vector3> {
+  private readonly getPickedPointByPixelCoordinates = async (pixelX: number, pixelY: number): Promise<Vector3> => {
     const raycastResult = await this._raycastCallback(pixelX, pixelY, false);
     if (raycastResult.intersection?.point) {
       return raycastResult.intersection.point;
     }
     return this.getTargetByBoundingBox(pixelX, pixelY, raycastResult.modelsBoundingBox);
-  }
+  };
 
   private getTargetByBoundingBox(pixelX: number, pixelY: number, boundingBox: Box3): Vector3 {
     const raycaster = new Raycaster();
@@ -410,7 +411,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this._prevTime = currentTime;
     this._prevCoords.copy(currentCoords);
 
-    const scrollCursor = await this.getPickedPointPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
+    const scrollCursor = await this.getPickedPointByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
     this.controls.setScrollCursor(scrollCursor);
     this._prevTime = currentTime;
   };
@@ -423,14 +424,14 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
         this.controls.setControlsType(FlexibleControlsType.Orbit);
       }
-      const newTarget = await this.getPickedPointPixelCoordinates(event.offsetX, event.offsetY);
+      const newTarget = await this.getPickedPointByPixelCoordinates(event.offsetX, event.offsetY);
       this.controls.setTarget(newTarget);
       this.controls.triggerCameraChangeEvent();
     } else if (mouseActionType === FlexibleMouseActionType.SetTargetAndCameraDirection) {
       if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
         this.controls.setControlsType(FlexibleControlsType.Orbit);
       }
-      const newTarget = await this.getPickedPointPixelCoordinates(event.offsetX, event.offsetY);
+      const newTarget = await this.getPickedPointByPixelCoordinates(event.offsetX, event.offsetY);
       moveCameraTargetTo(this, newTarget, this.options.animationDuration);
     } else if (mouseActionType === FlexibleMouseActionType.SetTargetAndCameraPosition) {
       if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
