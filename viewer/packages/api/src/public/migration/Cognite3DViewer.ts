@@ -1643,13 +1643,13 @@ export class Cognite3DViewer {
     return { intersection, pickedBoundingBox, modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox };
   }
 
+  count = 0;
   /** @private */
   private recalculateBoundingBox() {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this.isDisposed) {
       return;
     }
-
     const { combinedBbox, bbox } = this._updateNearAndFarPlaneBuffers;
 
     combinedBbox.makeEmpty();
@@ -1667,6 +1667,10 @@ export class Cognite3DViewer {
       // Todo: Mark some of the object not to be included in the bounding box
       combinedBbox.union(bbox);
     });
+    this.count++;
+    if (this.count % 100 === 0) {
+      console.log('Final combined box: ', combinedBbox.clone());
+    }
   }
 
   /** @private */

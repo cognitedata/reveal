@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { RevealContainer } from '../../../src';
+import { RevealCanvas, RevealContext } from '../../../src';
 import { It, Mock } from 'moq.ts';
 import { type CogniteClient } from '@cognite/sdk';
 import { RevealKeepAliveContext } from '../../../src/components/RevealKeepAlive/RevealKeepAliveContext';
@@ -10,7 +10,7 @@ import { type FdmNodeCache } from '../../../src/components/NodeCacheProvider/Fdm
 import { type AssetMappingCache } from '../../../src/components/NodeCacheProvider/AssetMappingCache';
 import { type PointCloudAnnotationCache } from '../../../src/components/NodeCacheProvider/PointCloudAnnotationCache';
 
-describe(RevealContainer.name, () => {
+describe(RevealCanvas.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {
     const MockedReveal: FC = () => {
       const sdkMock = new Mock<CogniteClient>()
@@ -46,7 +46,9 @@ describe(RevealContainer.name, () => {
             assetMappingCache,
             pointCloudAnnotationCache
           }}>
-          <RevealContainer sdk={sdkMock.object()} />
+          <RevealContext sdk={sdkMock.object()}>
+            <RevealCanvas />
+          </RevealContext>
         </RevealKeepAliveContext.Provider>
       );
     };

@@ -12,10 +12,10 @@ import {
   type CogniteModel,
   type Image360Collection
 } from '@cognite/reveal';
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { use3DModelName } from '../../hooks/use3DModelName';
 import { isEqual } from 'lodash';
-import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
+import { useRevealContainerElement } from '../RevealCanvas/RevealCanvasElementContext';
 import { useLayersUrlParams } from './hooks/useUrlStateParam';
 import { useTranslation } from '../i18n/I18n';
 
@@ -26,7 +26,7 @@ type LayersButtonProps = {
 export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): ReactElement => {
   const viewer = useReveal();
   const { t } = useTranslation();
-  const revealContainerElement = useRevealContainerElement();
+  // const revealContainerElement = useRevealContainerElement();
   const [layersUrlState] = useLayersUrlParams();
   const { cadLayers, pointCloudLayers, image360Layers } = layersUrlState;
   const [visible, setVisible] = useState<boolean>(false);
@@ -192,7 +192,7 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
       placement="right"
       appendTo={document.body}>
       <Dropdown
-        appendTo={revealContainerElement ?? document.body}
+        appendTo={viewer.domElement ?? document.body}
         content={
           <LayersContainer
             props={{

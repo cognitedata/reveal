@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Reveal3DResources, RevealContainer } from '../src';
+import { Reveal3DResources, RevealCanvas, RevealContext } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
@@ -42,7 +42,7 @@ export const Main: Story = {
   },
   render: ({ resources }) => {
     return (
-      <RevealContainer
+      <RevealContext
         sdk={sdk}
         color={new Color(0x4a4a4a)}
         viewerOptions={{
@@ -51,15 +51,17 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <RevealResourcesFitCameraOnLoad
-          resources={resources}
-          onResourceLoadError={(resource, error) => {
-            console.log(
-              `Failed to load resource ${JSON.stringify(resource)}: ${JSON.stringify(error)}`
-            );
-          }}
-        />
-      </RevealContainer>
+        <RevealCanvas>
+          <RevealResourcesFitCameraOnLoad
+            resources={resources}
+            onResourceLoadError={(resource, error) => {
+              console.log(
+                `Failed to load resource ${JSON.stringify(resource)}: ${JSON.stringify(error)}`
+              );
+            }}
+          />
+        </RevealCanvas>
+      </RevealContext>
     );
   }
 };

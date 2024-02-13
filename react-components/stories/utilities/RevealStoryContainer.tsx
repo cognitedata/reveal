@@ -3,18 +3,19 @@
  */
 import { useRef, type ReactElement, useMemo } from 'react';
 import { RevealKeepAliveContext } from '../../src/components/RevealKeepAlive/RevealKeepAliveContext';
-import {
-  RevealContainer,
-  type RevealContainerProps
-} from '../../src/components/RevealContainer/RevealContainer';
+import { RevealCanvas } from '../../src/components/RevealCanvas/RevealCanvas';
 import { type FdmNodeCache } from '../../src/components/NodeCacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../../src/components/NodeCacheProvider/AssetMappingCache';
 import { type CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { createSdkByUrlToken } from './createSdkByUrlToken';
 import { type PointCloudAnnotationCache } from '../../src/components/NodeCacheProvider/PointCloudAnnotationCache';
+import {
+  RevealContext,
+  RevealContextProps
+} from '../../src/components/RevealContext/RevealContext';
 
-type RevealStoryContainerProps = Omit<RevealContainerProps, 'sdk'> & {
+type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
   viewer?: Cognite3DViewer;
 };
@@ -53,9 +54,9 @@ export const RevealStoryContainer = ({
         assetMappingCache,
         pointCloudAnnotationCache
       }}>
-      <RevealContainer sdk={sdkInstance} {...rest}>
-        {children}
-      </RevealContainer>
+      <RevealContext sdk={sdkInstance} {...rest}>
+        <RevealCanvas>{children}</RevealCanvas>
+      </RevealContext>
     </RevealKeepAliveContext.Provider>
   );
 };

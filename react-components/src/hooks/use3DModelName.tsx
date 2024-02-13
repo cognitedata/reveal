@@ -3,7 +3,7 @@
  */
 
 import { type QueryFunction, useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { useSDK } from '../components/RevealContainer/SDKProvider';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
 
 export const use3DModelName = (ids: number[]): UseQueryResult<string[] | undefined, unknown> => {
   const sdk = useSDK();

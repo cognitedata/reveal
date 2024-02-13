@@ -2,9 +2,10 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Image360CollectionContainer, RevealContainer } from '../src';
+import { Image360CollectionContainer, RevealCanvas } from '../src';
 import { Color } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
+import { RevealContext } from '../src/components/RevealContext/RevealContext';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/Image360CollectionContainer',
@@ -22,8 +23,10 @@ export const Main: Story = {
     collectionId: { siteId: 'Hibernia_RS2' }
   },
   render: ({ collectionId }) => (
-    <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-      <Image360CollectionContainer collectionId={collectionId} />
-    </RevealContainer>
+    <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+      <RevealCanvas>
+        <Image360CollectionContainer collectionId={collectionId} />
+      </RevealCanvas>
+    </RevealContext>
   )
 };
