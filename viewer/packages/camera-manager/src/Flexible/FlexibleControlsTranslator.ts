@@ -2,11 +2,13 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Line3, OrthographicCamera, PerspectiveCamera, Plane, Raycaster, Vector3 } from 'three';
+import { OrthographicCamera, PerspectiveCamera, Plane, Raycaster, Vector3 } from 'three';
 import { FlexibleControls } from './FlexibleControls';
 
 /**
  * @beta
+ * This class handles the translation of the camera.
+ * It tries to translate the camera so the same (x,y, z) point is below the mouse
  */
 export class FlexibleControlsTranslator {
   //================================================
@@ -14,10 +16,9 @@ export class FlexibleControlsTranslator {
   //================================================
 
   private readonly _controls: FlexibleControls;
-  private readonly _prevPickedPoint: Vector3 = new Vector3();
-  private readonly _plane: Plane = new Plane();
+  private readonly _prevPickedPoint = new Vector3();
+  private readonly _plane = new Plane();
   private _camera: PerspectiveCamera | OrthographicCamera | undefined;
-  private _distance: number = 0;
 
   //================================================
   // CONTRUCTORS
@@ -41,7 +42,6 @@ export class FlexibleControlsTranslator {
     }
     this._plane.setFromNormalAndCoplanarPoint(this._controls.cameraVector.getEndVector(), pickedPoint);
     this._camera = this._controls.camera.clone();
-    this._distance = pickedPoint.distanceTo(this._controls.cameraPosition.end);
     this._prevPickedPoint?.copy(pickedPoint);
     return true;
   }
@@ -54,24 +54,13 @@ export class FlexibleControlsTranslator {
     const raycaster = new Raycaster();
     raycaster.setFromCamera(pixelCoordinates, this._camera);
 
-    const line = convertRayToLine3(raycaster, this._distance * 2);
-    const pickedPoint = this._plane.intersectLine(line, new Vector3());
+    const pickedPoint = raycaster.ray.intersectPlane(this._plane, new Vector3());
     if (!pickedPoint) {
       return false;
     }
-    const translation = new Vector3().subVectors(this._prevPickedPoint, pickedPoint);
-    this._prevPickedPoint.copy(pickedPoint);
+    const translation = this._prevPickedPoint.sub(pickedPoint);
     this._controls.translate(translation);
+    this._prevPickedPoint.copy(pickedPoint);
     return true;
   }
-}
-
-//================================================
-// LOCAL FUNCTIONS
-//================================================
-
-function convertRayToLine3(raycaster: Raycaster, distance: number): Line3 {
-  const startPoint = raycaster.ray.origin;
-  const endPoint = raycaster.ray.direction.clone().multiplyScalar(distance).add(raycaster.ray.origin);
-  return new Line3(startPoint, endPoint);
 }

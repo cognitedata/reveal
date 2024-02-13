@@ -173,6 +173,10 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     return this._target.value.clone();
   }
 
+  public getTargetEnd(): Vector3 {
+    return this._target.value.clone();
+  }
+
   public setTarget(value: Vector3): void {
     this._target.copy(value);
   }
@@ -373,11 +377,11 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   // INSTANCE METHODS: Event
   //================================================
 
-  private readonly onPointerDown = (event: PointerEvent) => {
+  private readonly onPointerDown = async (event: PointerEvent) => {
     if (!this.isEnabled) return;
     switch (event.pointerType) {
       case 'mouse':
-        this.onMouseDown(event);
+        await this.onMouseDown(event);
         break;
       case 'touch':
         this._pointEventCache.push(event);
@@ -392,20 +396,72 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._cameraVector.synchronizeEnd();
     switch (event.button) {
       case MOUSE.LEFT: {
-        this.startMouseRotation(event);
+        await this.startMouse(event, false);
         break;
       }
-
       case MOUSE.RIGHT: {
         event.preventDefault();
-        await this.startMousePan(event);
+        await this.startMouse(event, true);
         break;
       }
-
       default:
         break;
     }
   };
+
+  private async startMouse(initialEvent: PointerEvent, isRight: boolean): Promise<void> {
+    let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
+    let rotator: FlexibleControlsRotator | undefined;
+    let translator: FlexibleControlsTranslator | undefined;
+
+    const onMouseMove = async (event: PointerEvent) => {
+      const position = this.getMousePosition(event);
+      const deltaPosition = position.clone().sub(prevPosition);
+      if (deltaPosition.x == 0 && deltaPosition.y == 0) {
+        return;
+      }
+      if (this._keyboard.isShiftPressed()) {
+        translator = undefined;
+        rotator = undefined;
+        // Zooming forwad backward
+        deltaPosition.multiplyScalar(this._options.mouseDollySpeed);
+        this.pan(0, 0, deltaPosition.y);
+      } else if (isRight || this._keyboard.isCtrlPressed()) {
+        rotator = undefined;
+        // Pan left, right, up or down
+        if (translator == null) {
+          translator = new FlexibleControlsTranslator(this);
+          await translator.initialize(event);
+        }
+        if (!translator.translate(event)) {
+          // If not, translate in a simpler way
+          deltaPosition.multiplyScalar(this._options.mousePanSpeed);
+          this.pan(deltaPosition.x, deltaPosition.y, 0);
+        }
+      } else if (!isRight) {
+        translator = undefined;
+        // Rotate
+        if (this.controlsType === FlexibleControlsType.FirstPerson) {
+          if (!rotator) {
+            rotator = new FlexibleControlsRotator(this);
+            await rotator.initialize(event);
+          }
+          rotator.rotate(event);
+        } else {
+          this.rotate(deltaPosition);
+        }
+      }
+      prevPosition = position;
+    };
+
+    const onMouseUp = () => {
+      window.removeEventListener('pointermove', onMouseMove);
+      window.removeEventListener('pointerup', onMouseUp);
+    };
+
+    window.addEventListener('pointermove', onMouseMove, { passive: false });
+    window.addEventListener('pointerup', onMouseUp, { passive: false });
+  }
 
   private readonly onPointerUp = (event: PointerEvent) => {
     if (!this.isEnabled) return;
@@ -498,37 +554,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   // INSTANCE METHODS: Rotate
   //================================================
 
-  private startMouseRotation(initialEvent: PointerEvent) {
-    let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
-
-    const hei = new FlexibleControlsRotator(this);
-    hei.initialize(initialEvent);
-
-    const onMouseMove = (event: PointerEvent) => {
-      const position = this.getMousePosition(event);
-      const deltaPosition = position.clone().sub(prevPosition);
-      if (this._keyboard.isShiftPressed()) {
-        deltaPosition.multiplyScalar(this._options.mouseDollySpeed);
-        this.pan(0, 0, deltaPosition.y);
-      } else if (this._keyboard.isCtrlPressed()) {
-        deltaPosition.multiplyScalar(this._options.mousePanSpeed);
-        this.pan(deltaPosition.x, deltaPosition.y, 0);
-      } else {
-        hei.rotate(event);
-        //this.rotate(deltaPosition);
-      }
-      prevPosition = position;
-    };
-
-    const onMouseUp = () => {
-      window.removeEventListener('pointermove', onMouseMove);
-      window.removeEventListener('pointerup', onMouseUp);
-    };
-
-    window.addEventListener('pointermove', onMouseMove, { passive: false });
-    window.addEventListener('pointerup', onMouseUp, { passive: false });
-  }
-
   private startTouchRotation(initialEvent: PointerEvent) {
     let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
 
@@ -594,7 +619,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
 
     if (this.controlsType === FlexibleControlsType.OrbitInCenter) {
-      this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
+      this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
 
       // Adust the camera position by
       // CameraPosition = Target - DistanceToTarget * CameraVector
@@ -607,7 +632,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       const oldOffset = this.newVector3().subVectors(this._target.end, this._cameraPosition.end);
       const oldCameraVectorEnd = this._cameraVector.end.clone();
 
-      this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
+      this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
 
       // Adust the camera position so the target point is the same on the screen
       const oldQuat = new Quaternion().multiplyQuaternions(
@@ -624,7 +649,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       const newCameraPosition = this.newVector3().subVectors(this._target.end, newOffset);
       this._cameraPosition.end.copy(newCameraPosition);
     } else {
-      this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
+      this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
     }
   }
 
@@ -693,32 +718,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   //================================================
   // INSTANCE METHODS: Pan
   //================================================
-
-  private async startMousePan(initialEvent: PointerEvent) {
-    let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
-    const translator = new FlexibleControlsTranslator(this);
-    await translator.initialize(initialEvent);
-
-    const onMouseMove = (event: PointerEvent) => {
-      const position = this.getMousePosition(event);
-      const deltaPosition = position.clone().sub(prevPosition);
-      if (this._keyboard.isShiftPressed()) {
-        this.pan(0, 0, deltaPosition.y * this.options.mouseDollySpeed);
-      } else {
-        if (!translator.translate(event))
-          this.pan(deltaPosition.x * this.options.mousePanSpeed, deltaPosition.y * this.options.mousePanSpeed, 0);
-      }
-      prevPosition = position;
-    };
-
-    const onMouseUp = () => {
-      window.removeEventListener('pointermove', onMouseMove);
-      window.removeEventListener('pointereup', onMouseUp);
-    };
-
-    window.addEventListener('pointermove', onMouseMove, { passive: false });
-    window.addEventListener('pointerup', onMouseUp, { passive: false });
-  }
 
   private pan(deltaX: number, deltaY: number, deltaZ: number, keys = false) {
     // Local function:
