@@ -12,7 +12,6 @@ import {
   PerspectiveCamera,
   Quaternion,
   Raycaster,
-  Spherical,
   Vector2,
   Vector3
 } from 'three';
