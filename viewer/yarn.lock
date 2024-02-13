@@ -566,7 +566,7 @@ __metadata:
     "@types/jsdom": "npm:21.1.6"
     "@types/lodash": "npm:4.14.202"
     "@types/mixpanel-browser": "npm:2.48.1"
-    "@types/node": "npm:18.19.14"
+    "@types/node": "npm:18.19.15"
     "@types/random-seed": "npm:0.3.5"
     "@types/skmeans": "npm:0.11.7"
     "@types/stats": "npm:0.16.30"
@@ -2035,12 +2035,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.19.14":
-  version: 18.19.14
-  resolution: "@types/node@npm:18.19.14"
+"@types/node@npm:18.19.15":
+  version: 18.19.15
+  resolution: "@types/node@npm:18.19.15"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/c81d9f01ccaaa4f8a25c48fb888bd4dd5196562ebefccae6948d3b884eb3195f877826e12c5856d04690c215324c48b8d4c1d88c1e52d4428760c5612369b87b
+  checksum: 10/cbd4bf49f6aa0e5e9b9d3dafd0f83cc21475f6fe846c8b59a264e508608aaad8cd48dfce95ee48cdf81d3139c35c03a9d4fcd613bf98cae7b61c7dc36bb6b195
   languageName: node
   linkType: hard
 
