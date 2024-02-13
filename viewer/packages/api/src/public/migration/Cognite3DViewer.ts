@@ -844,7 +844,8 @@ export class Cognite3DViewer {
    */
   async add360ImageSet(
     datasource: 'datamodels',
-    dataModelIdentifier: Image360DataModelIdentifier
+    dataModelIdentifier: Image360DataModelIdentifier,
+    add360ImageOptions?: AddImage360Options
   ): Promise<Image360Collection>;
   /**
    * Adds a set of 360 images to the scene from the /events API in Cognite Data Fusion.

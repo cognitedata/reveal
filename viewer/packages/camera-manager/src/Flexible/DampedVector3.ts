@@ -41,6 +41,10 @@ export class DampedVector3 {
     this.value.copy(this.end);
   }
 
+  synchronizeEnd(): void {
+    this.end.copy(this.value);
+  }
+
   damp(dampeningFactor: number): void {
     this.value.lerp(this.end, dampeningFactor);
   }
