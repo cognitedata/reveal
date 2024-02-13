@@ -34,7 +34,7 @@ export type InModel3dEdgeProperties = {
 // Source of view for Rule Based Coloring - not a system source yet.
 export const RULE_BASED_COLORING_SOURCE: Source = {
   type: 'view',
-  version: '6',
-  externalId: 'RuleSet',
+  version: '7',
+  externalId: 'FdmRuleOutputSet',
   space: 'rule_based_coloring_space'
 };

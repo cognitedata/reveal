@@ -19,10 +19,8 @@ import { useSDK } from '../RevealContainer/SDKProvider';
 import { useReveal } from '../..';
 import { Color } from 'three';
 import { FdmSDK } from '../../utilities/FdmSDK';
-import { RULE_BASED_COLORING_SOURCE } from '../../utilities/globalDataModels';
 import {
   type RuleOutput,
-  type Rule,
   type RuleOutputSet,
   type NumericExpression,
   type StringExpression,
@@ -35,21 +33,14 @@ import { type NodeAndRange } from './types';
 export type ColorOverlayProps = {
   addModelOptions: AddModelOptions;
   ruleSet: RuleOutputSet;
-  rules: Rule[];
 };
 
-export function ColorOverlayRules({
-  addModelOptions,
-  ruleSet,
-  rules
-}: ColorOverlayProps): ReactElement {
+export function ColorOverlayRules({ addModelOptions, ruleSet }: ColorOverlayProps): ReactElement {
   const cdfClient = useSDK();
   const fdmSdk = useMemo(() => new FdmSDK(cdfClient), [cdfClient]);
 
   const viewer = useReveal();
   console.log(' RULESET', ruleSet);
-  console.log(' RULES', rules);
-  console.log(' SDK', cdfClient);
 
   const { modelId, revisionId } = addModelOptions;
 
@@ -240,61 +231,78 @@ export function ColorOverlayRules({
           return;
         }
 
-        contextualizedAssetNodes.map(async (assetNode) => {
-          const finalGlobalOutputResult = traverseExpression(
-            assetNode,
-            [expression],
-            expression.type
-          );
-
-          if (finalGlobalOutputResult[0]) {
-            const nodesFromThisAsset = assetMappings.filter(
-              (mapping) => mapping.assetId === assetNode.id
+        // ======== OUTPUT - COLOR IN 3D
+        void Promise.all(
+          contextualizedAssetNodes.map(async (assetNode) => {
+            const finalGlobalOutputResult = traverseExpression(
+              assetNode,
+              [expression],
+              expression.type
             );
 
-            // get the 3d nodes linked to the asset and with treeindex and subtreeRange
-            const treeNodes: NodeAndRange[] = await Promise.all(
-              nodesFromThisAsset.map(async (nodeFromAsset) => {
-                const subtreeRange = await model.getSubtreeTreeIndices(nodeFromAsset.treeIndex);
-                const node: NodeAndRange = {
-                  nodeId: nodeFromAsset.nodeId,
-                  treeIndex: nodeFromAsset.treeIndex,
-                  subtreeRange
-                };
-                return node;
-              })
-            );
-            const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
-            treeNodes.forEach((node) => {
-              nodeIndexSet.addRange(node.subtreeRange);
-            });
+            if (finalGlobalOutputResult[0]) {
+              const nodesFromThisAsset = assetMappings.filter(
+                (mapping) => mapping.assetId === assetNode.id
+              );
 
-            // assign the style with the color from the condition
-            model.assignStyledNodeCollection(ruleOutputAndStyleIndex.styleIndex, {
-              color: new Color(outputSelected.fill)
-            });
-          }
+              // get the 3d nodes linked to the asset and with treeindex and subtreeRange
+              const treeNodes: NodeAndRange[] = await Promise.all(
+                nodesFromThisAsset.map(async (nodeFromAsset) => {
+                  const subtreeRange = await model.getSubtreeTreeIndices(nodeFromAsset.treeIndex);
+                  const node: NodeAndRange = {
+                    nodeId: nodeFromAsset.nodeId,
+                    treeIndex: nodeFromAsset.treeIndex,
+                    subtreeRange
+                  };
+                  return node;
+                })
+              );
+              const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
+              treeNodes.forEach((node) => {
+                nodeIndexSet.addRange(node.subtreeRange);
+              });
 
-          console.log(' ASSET ', assetNode, finalGlobalOutputResult);
-        });
+              // assign the style with the color from the condition
+              model.assignStyledNodeCollection(ruleOutputAndStyleIndex.styleIndex, {
+                color: new Color(outputSelected.fill)
+              });
+            }
+            console.log(' ASSET ', assetNode, finalGlobalOutputResult);
+          })
+        );
+
+        // =================================
       });
     };
 
     const getContextualization = async (): Promise<void> => {
-      const ruleModel = await fdmSdk.getByExternalIds(
-        [
-          {
-            instanceType: 'node',
-            externalId: 'Rule_based_Coloring_Json',
-            space: 'rule_based_coloring_space'
-          }
-        ],
-        RULE_BASED_COLORING_SOURCE
-      );
 
-      console.log(' RULE MODEL ', ruleModel);
+      const saveRule = await fdmSdk.createInstance([
+        {
+          instanceType: 'node',
+          space: 'rule_based_coloring_space',
+          externalId: 'Rule_based_Coloring_RuleTest2',
+          sources: [
+            {
+              properties: {
+                name: 'RuleSet for testing',
+                id: 'Rule_based_Coloring_RuleTest2',
+                createdAt: 11111111,
+                createdBy: 'daniel.priori@cognite.com',
+                rulesWithOutputs: JSON.parse(JSON.stringify(ruleSet)),
+                shamefulOutputTypes: ['color']
+              },
+              source: {
+                type: 'view',
+                space: 'rule_based_coloring_space',
+                externalId: 'FdmRuleOutputSet',
+                version: '7'
+              }
+            }
+          ]
+        }
+      ]);
 
-      // const models = sdk.models;
       const assetMappings = await getCdfCadContextualization({
         sdk: cdfClient,
         modelId,
@@ -318,7 +326,6 @@ export function ColorOverlayRules({
       console.log(' model ', model);
 
       generateRuleBasedActions(model, contextualizedAssetNodes, assetMappings);
-
     };
     void getContextualization();
   }, []);

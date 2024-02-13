@@ -23,20 +23,22 @@ import { type AssetMappingStylingGroup } from '../src/components/Reveal3DResourc
 import { ColorOverlayRules } from '../src/components/ColorOverlayRules/ColorOverlayRules';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 
-import { FdmSDK } from '../src/utilities/FdmSDK';
+import { ExternalIdsResultList, FdmSDK } from '../src/utilities/FdmSDK';
 import {
-  Expression,
-  StringCondition,
+  type Expression,
+  type StringCondition,
   type ExpressionOperator,
   type Rule,
   type RuleOutput,
   type RuleOutputSet,
   type RuleWithOutputs,
-  MetadataRuleTrigger,
-  ConcreteExpression,
-  StringTrigger,
-  NumericCondition
+  type MetadataRuleTrigger,
+  type ConcreteExpression,
+  type StringTrigger,
+  type NumericCondition
 } from 'rule-based-actions/src/lib/types';
+import { useSDK } from '../src/components/RevealContainer/SDKProvider';
+import { RULE_BASED_COLORING_SOURCE } from '../src/utilities/globalDataModels';
 
 const meta = {
   title: 'Example/ColorOverlay',
@@ -75,6 +77,9 @@ export const Main: Story = {
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [resourceIsLoaded, setResourceIsLoaded] = useState<boolean>(false);
+  const cdfClient = useSDK();
+
+  const fdmSdk = useMemo(() => new FdmSDK(cdfClient), [cdfClient]);
 
   const modelOptions = {
     modelId: 4319392643513894,
@@ -85,80 +90,9 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     setResourceIsLoaded(true);
   };
 
-  /*   const initialExpressionForRuleOne: ExpressionOperator = {
-    type: 'or',
-    expressions: [concreteExpressionOne, concreteExpressionTwo]
-  }; */
-
-  /*  const ruleOne: Rule = {
-    id: 'ruleId1',
-    name: 'rule one id',
-    expression: initialExpressionForRuleOne
-  }; */
-
-  /*   const ruleTwo: Rule = {
-    id: 'ruleId2',
-    name: 'rule two id',
-    expression: expressionOperator
-  };
-
-  const ruleThree: Rule = {
-    id: 'ruleId3',
-    name: 'rule three id',
-    expression: expressionOperator
-  };
-
-  const ruleFour: Rule = {
-    id: 'ruleId4',
-    name: 'rule four id',
-    expression: expressionOperator
-  };
- */
-  /*   const ruleApplicationOne: BaseRuleApplication = {
-    applicationId: 'threeDApplication',
-    fill: '#ACD123',
-    outline: '#000000',
-    ruleId: 'ruleId1'
-  };
-
-  const ruleApplicationTwo: BaseRuleApplication = {
-    applicationId: 'threeDApplication',
-    fill: '#00FF00',
-    outline: '#000000',
-    ruleId: 'ruleId2'
-  };
-
-  const ruleApplicationThree: BaseRuleApplication = {
-    applicationId: 'threeDApplication',
-    fill: '#FF0000',
-    outline: '#000000',
-    ruleId: 'ruleId3'
-  };
-
-  const ruleApplicationFour: BaseRuleApplication = {
-    applicationId: 'threeDApplication',
-    fill: '#FFFF00',
-    outline: '#000000',
-    ruleId: 'ruleId4'
-  }; */
-
-  /* const stringTriggerOne: MetadataRuleTrigger = {
-    type: 'metadata',
-    key: 'ABC indication'
-  };
-  const stringConditionOne: StringCondition = {
-    type: 'equals',
-    parameter: 'D'
-  };
-  const concreteExpressionOne: Expression = {
-    type: 'stringExpression',
-    trigger: stringTriggerOne,
-    condition: stringConditionOne
-  };
-
   const stringTriggerTwo: MetadataRuleTrigger = {
     type: 'metadata',
-    key: 'ABC indication'
+    key: 'ABC ind.'
   };
   const stringConditionTwo: StringCondition = {
     type: 'equals',
@@ -169,15 +103,19 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     trigger: stringTriggerTwo,
     condition: stringConditionTwo
   };
- */
+
+  const expressionForSecondGroup: ExpressionOperator = {
+    type: 'or',
+    expressions: [concreteExpressionTwo]
+  };
 
   const numericConditionTwoForGroupOne: StringCondition = {
-    type: 'notEquals',
-    parameter: 'C'
+    type: 'equals',
+    parameter: 'H'
   };
   const triggerForConcreteExprTwoGroupOne: StringTrigger = {
     type: 'metadata',
-    key: 'status'
+    key: 'ABC indic.'
   };
   const concreteExpressionTwoForGroupOne: ConcreteExpression = {
     type: 'stringExpression',
@@ -187,8 +125,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   const numericConditionOneForGroupOne: NumericCondition = {
     type: 'within',
-    lowerBoundInclusive: 10,
-    upperBoundInclusive: 30
+    lowerBoundInclusive: 1,
+    upperBoundInclusive: 20
   };
   const triggerForConcreteExprOneGroupOne: StringTrigger = {
     type: 'metadata',
@@ -207,11 +145,11 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   const stringTriggerOne: MetadataRuleTrigger = {
     type: 'metadata',
-    key: 'ABC indication'
+    key: 'ABC indic.'
   };
   const stringConditionOne: StringCondition = {
     type: 'equals',
-    parameter: 'D'
+    parameter: 'H'
   };
   const concreteExpressionOne: Expression = {
     type: 'stringExpression',
@@ -228,26 +166,33 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     type: 'color',
     fill: '#ff0000',
     outline: '#000000',
-    externalId: 'rule-output-external-id',
+    externalId: 'rule-output-external-id3'
+  };
+
+  const ruleOutputTwo: RuleOutput = {
+    type: 'color',
+    fill: '#ff0000',
+    outline: '#000000',
+    externalId: 'rule-output-external-id8'
   };
 
   const ruleOne: Rule = {
-    id: 'ruleid123', // uuid
+    id: 'ruleid4777', // uuid
     name: 'rule one',
     expression: expressionForInitialGroup
   };
 
   const ruleTwo: Rule = {
-    id: 'ruleid123456', // uuid
+    id: 'ruleid666', // uuid
     name: 'rule two',
-    expression: expressionForInitialGroup
+    expression: expressionForSecondGroup
   };
 
   const rules: Rule[] = [ruleOne, ruleTwo];
 
   const rulesWithOutputTwo: RuleWithOutputs = {
     rule: ruleTwo,
-    outputs: [ruleOutput]
+    outputs: [ruleOutputTwo]
   };
   const rulesWithOutput: RuleWithOutputs = {
     rule: ruleOne,
@@ -255,84 +200,36 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   };
   const ruleSet: RuleOutputSet = {
     rulesWithOutputs: [rulesWithOutput, rulesWithOutputTwo],
-    name: 'ABC indication Rule',
-    id: '12345',
+    name: 'ABC ind.',
+    id: '213213213',
     createdAt: Date.now(),
     createdBy: 'daniel.priori@cognite.com'
   };
+  useEffect(() => {
+    const getAllIstances = async (): Promise<any> => {
+      const versionedPropertiesKey = `${RULE_BASED_COLORING_SOURCE.externalId}/${RULE_BASED_COLORING_SOURCE.version}`;
 
-  console.log(' Rule Set ', ruleSet, rules /* , ruleTwo, ruleThree, ruleFour */);
+      const filter = {
+        in: {
+          property: [
+            RULE_BASED_COLORING_SOURCE.space,
+            versionedPropertiesKey,
+            'shamefulOutputTypes'
+          ],
+          values: ['color']
+        }
+      };
+      const mappings = await fdmSdk.filterAllInstances(filter, 'node', RULE_BASED_COLORING_SOURCE);
+      console.log(' RULE MODEL ', mappings);
+      return mappings;
+    };
+    void getAllIstances();
+  }, []);
 
-  /* const rulesTest = [
-    {
-      colorRuleName: 'ABC indication Rule',
-      rulerTriggerType: 'metadata',
-      sourceField: ['ABC indication', 'ABC indic.'],
-      isStringRule: true,
-      subHierarchyAggregationMethod: 'none',
-      threeDObjects: 'all',
-      conditions: [
-        {
-          valueString: 'D',
-          color: '#ACD123'
-        },
-        {
-          valueString: 'L',
-          color: '#00FF00'
-        },
-        {
-          valueString: 'S',
-          color: '#FF0000'
-        },
-        {
-          valueString: 'M',
-          color: '#FFFF00'
-        },
-        {
-          valueString: 'H',
-          color: '#FFDC00'
-        },
-        {
-          valueString: 'F',
-          color: '#CC00FF'
-        }
-      ]
-    },
-    {
-      colorRuleName: 'Scalar Test',
-      rulerTriggerType: 'metadata',
-      sourceField: ['Room'],
-      isStringRule: false,
-      subHierarchyAggregationMethod: 'none',
-      threeDObjects: 'all',
-      conditions: [
-        {
-          description: 'Below retiring limit',
-          valueMax: '1.0',
-          valueMin: '0.0',
-          color: '#ff0000'
-        },
-        {
-          description: 'Close to retiring limit',
-          valueMax: '1.5',
-          valueMin: '1.0',
-          color: '#ffdc00'
-        },
-        {
-          description: 'Nominal',
-          valueMax: '999.0',
-          valueMin: '1.5',
-          color: '#00ff00'
-        }
-      ]
-    }
-  ]; */
   return (
     <>
       <RevealResourcesFitCameraOnLoad onResourcesAdded={onLoaded} resources={resources} />
-      {resourceIsLoaded && (
-        <ColorOverlayRules addModelOptions={modelOptions} ruleSet={ruleSet} rules={rules} />
-      )}
+      {resourceIsLoaded && <ColorOverlayRules addModelOptions={modelOptions} ruleSet={ruleSet} />}
     </>
   );
 };

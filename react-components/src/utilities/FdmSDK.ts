@@ -207,6 +207,7 @@ export class FdmSDK {
   private readonly _listViewsEndpoint: string;
   private readonly _viewsByIdEndpoint: string;
   private readonly _listDataModelsEndpoint: string;
+  private readonly _createUpdateInstancesEndpoint: string;
 
   constructor(sdk: CogniteClient) {
     const baseUrl = sdk.getBaseUrl();
@@ -220,9 +221,10 @@ export class FdmSDK {
     this._byIdsEndpoint = `${instancesBaseUrl}/byids`;
     this._inspectEndpoint = `${instancesBaseUrl}/inspect`;
     this._searchEndpoint = `${instancesBaseUrl}/search`;
-    this._listViewsEndpoint = viewsBaseUrl;
-    this._viewsByIdEndpoint = `${viewsBaseUrl}/byids`;
     this._listDataModelsEndpoint = `${baseUrl}/api/v1/projects/${project}/models/datamodels`;
+    this._viewsByIdEndpoint = `${viewsBaseUrl}/byids`;
+    this._listViewsEndpoint = viewsBaseUrl;
+    this._createUpdateInstancesEndpoint = instancesBaseUrl;
 
     this._sdk = sdk;
   }
@@ -418,6 +420,29 @@ export class FdmSDK {
       return result.data;
     }
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
+  }
+
+  public async createInstance<PropertyType>(
+    queries: Array<{
+      instanceType: InstanceType;
+      externalId: string;
+      space: string;
+      sources: [{ source: Source; properties: any }];
+    }>
+  ): Promise<ExternalIdsResultList<PropertyType>> {
+    const data: any = {
+      items: queries,
+      autoCreateStartNodes: false,
+      autoCreateEndNodes: false,
+      skipOnVersionConflict: false,
+      replace: false
+    };
+
+    const result = await this._sdk.post(this._createUpdateInstancesEndpoint, { data });
+    if (result.status === 200) {
+      return result.data;
+    }
+    throw new Error(`Failed to create instances. Status: ${result.status}`);
   }
 
   public async inspectInstances(inspectFilter: InspectFilter): Promise<InspectResultList> {
