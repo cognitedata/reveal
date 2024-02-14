@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { RevealContainer, RevealKeepAlive } from '../src';
+import { RevealCanvas, RevealContext, RevealKeepAlive } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { useState, type ReactElement } from 'react';
@@ -50,31 +50,33 @@ const KeepAliveMockScenario = (): ReactElement => {
       {isKeepAliveMounted && (
         <RevealKeepAlive>
           {isRevealContainerMounted && (
-            <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-              {isResourcesMounted && (
-                <RevealResourcesFitCameraOnLoad
-                  resources={[
-                    {
-                      modelId: 1791160622840317,
-                      revisionId: 498427137020189,
-                      transform: new Matrix4().makeTranslation(40, 0, 0)
-                    },
-                    {
-                      modelId: 1791160622840317,
-                      revisionId: 498427137020189,
-                      transform: new Matrix4().makeTranslation(40, 10, 0)
-                    },
-                    {
-                      siteId: 'c_RC_2'
-                    },
-                    {
-                      modelId: 3865289545346058,
-                      revisionId: 4160448151596909
-                    }
-                  ]}
-                />
-              )}
-            </RevealContainer>
+            <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+              <RevealCanvas>
+                {isResourcesMounted && (
+                  <RevealResourcesFitCameraOnLoad
+                    resources={[
+                      {
+                        modelId: 1791160622840317,
+                        revisionId: 498427137020189,
+                        transform: new Matrix4().makeTranslation(40, 0, 0)
+                      },
+                      {
+                        modelId: 1791160622840317,
+                        revisionId: 498427137020189,
+                        transform: new Matrix4().makeTranslation(40, 10, 0)
+                      },
+                      {
+                        siteId: 'c_RC_2'
+                      },
+                      {
+                        modelId: 3865289545346058,
+                        revisionId: 4160448151596909
+                      }
+                    ]}
+                  />
+                )}
+              </RevealCanvas>
+            </RevealContext>
           )}
         </RevealKeepAlive>
       )}

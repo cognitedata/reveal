@@ -5,7 +5,7 @@
 import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useSDK } from '../RevealContainer/SDKProvider';
+import { useSDK } from '../RevealCanvas/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { type PointCloudModelOptions, type TypedReveal3DModel } from '../Reveal3DResources/types';

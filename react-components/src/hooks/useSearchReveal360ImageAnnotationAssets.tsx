@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useReveal } from '../components/RevealContainer/RevealContext';
+import { useReveal } from '../components/RevealCanvas/ViewerContext';
 import {
   type Cognite3DViewer,
   type AssetAnnotationImage360Info,
@@ -11,7 +11,7 @@ import {
 import { type Reveal360AnnotationAssetData } from './types';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type CogniteClient, type Asset } from '@cognite/sdk';
-import { useSDK } from '../components/RevealContainer/SDKProvider';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { chunk } from 'lodash';
 
 export const useReveal360ImageAnnotationAssets = (): UseQueryResult<

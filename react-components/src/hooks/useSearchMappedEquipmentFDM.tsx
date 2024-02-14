@@ -13,7 +13,7 @@ import {
   type Space,
   type ExternalId
 } from '../utilities/FdmSDK';
-import { useSDK } from '../components/RevealContainer/SDKProvider';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import {
   SYSTEM_3D_EDGE_SOURCE,
