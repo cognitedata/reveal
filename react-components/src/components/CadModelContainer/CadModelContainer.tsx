@@ -3,7 +3,7 @@
  */
 import { type ReactElement, useEffect, useState, useRef } from 'react';
 import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type CadModelStyling, useApplyCadModelStyling } from './useApplyCadModelStyling';

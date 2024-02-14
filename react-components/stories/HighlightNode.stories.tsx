@@ -4,13 +4,14 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  RevealContainer,
+  RevealCanvas,
   RevealToolbar,
   Reveal3DResources,
   useClickedNodeData,
   useCameraNavigation,
   type AddResourceOptions,
-  type FdmAssetStylingGroup
+  type FdmAssetStylingGroup,
+  RevealContext
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
@@ -62,10 +63,12 @@ export const Main: Story = {
   },
   render: ({ resources }) => {
     return (
-      <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-        <StoryContent resources={resources} />
-        <ReactQueryDevtools />
-      </RevealContainer>
+      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+        <RevealCanvas>
+          <StoryContent resources={resources} />
+          <ReactQueryDevtools />
+        </RevealCanvas>
+      </RevealContext>
     );
   }
 };
