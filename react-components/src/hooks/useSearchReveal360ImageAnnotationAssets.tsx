@@ -32,6 +32,33 @@ export const useReveal360ImageAnnotationAssets = (): UseQueryResult<
   );
 };
 
+export const useImage360AnnotationMappingsForAssetIds = (
+  assetIds: Array<string | number> | undefined
+): UseQueryResult<Reveal360AnnotationAssetData[]> => {
+  const { data: revealAnnotationAssets, isFetched } = useReveal360ImageAnnotationAssets();
+
+  return useQuery(
+    [
+      'reveal',
+      'react-components',
+      'image360-annotations-mappings',
+      ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? [])
+    ],
+    async () => {
+      if (assetIds === undefined || assetIds.length === 0) {
+        return [];
+      }
+      return revealAnnotationAssets?.filter((revealAnnotationAsset) => {
+        return assetIds.includes(revealAnnotationAsset.asset.id);
+      });
+    },
+    {
+      staleTime: Infinity,
+      enabled: assetIds !== undefined && revealAnnotationAssets !== undefined && isFetched
+    }
+  );
+};
+
 export const useSearchReveal360ImageAnnotationAssets = (
   query: string
 ): UseQueryResult<Reveal360AnnotationAssetData[]> => {

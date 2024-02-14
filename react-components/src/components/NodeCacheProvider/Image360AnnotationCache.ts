@@ -13,9 +13,16 @@ import assert from 'assert';
 import { getAssetIdOrExternalIdFromAnnotation } from './utils';
 import { fetchAnnotationAssets } from './AnnotationModelUtils';
 import { chunk } from 'lodash';
+import { useReveal } from '../RevealContainer/RevealContext';
+import {
+  type Cognite3DViewer,
+  type AssetAnnotationImage360Info,
+  type Image360Collection
+} from '@cognite/reveal';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;
+  private readonly _viewer: Cognite3DViewer;
   private readonly _imageCollecctionToAnnotationAssetMappings = new Map<
     string,
     Promise<Map<number, Asset>>
@@ -25,6 +32,7 @@ export class Image360AnnotationCache {
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
+    this._viewer = useReveal();
   }
 
   public async getImage360AnnotationsForSiteId(siteId: string): Promise<RevealAnnotationModel[]> {
@@ -54,19 +62,6 @@ export class Image360AnnotationCache {
     this._imageCollecctionToAnnotationAssetMappings.set(key, modelToAnnotationAssetMappings);
 
     return await modelToAnnotationAssetMappings;
-  }
-
-  public async matchImage360AnnotationsForSiteId(
-    siteId: string,
-    assetId: string | number
-  ): Promise<Map<number, Asset> | undefined> {
-    const fetchedAnnotationAssetMappings = await this.getImage360AnnotationAssetsForSiteId(siteId);
-
-    const assetIdNumber = typeof assetId === 'number' ? assetId : undefined;
-    const matchedAnnotations = Array.from(fetchedAnnotationAssetMappings.entries()).filter(
-      ([, asset]) => asset.id === assetIdNumber
-    );
-    return matchedAnnotations.length > 0 ? new Map(matchedAnnotations) : undefined;
   }
 
   private async fetchAnnotationForSiteId(siteId: string): Promise<RevealAnnotationModel[]> {
@@ -127,5 +122,76 @@ export class Image360AnnotationCache {
     const list = fileInfo.map((file) => file.id);
 
     return list;
+  }
+
+  private async getReveal360AnnotationInfo(): Promise<
+    Array<{
+      asset: Asset;
+      assetAnnotationImage360Info: AssetAnnotationImage360Info;
+    }>
+  > {
+    const image360Collections = this._viewer.get360ImageCollections();
+
+    const annotationsInfoPromise = await Promise.all(
+      image360Collections.map(async (image360Collection: Image360Collection) => {
+        const annotations = await image360Collection.getAnnotationsInfo('assets');
+        return annotations;
+      })
+    );
+
+    const annotationsInfo = annotationsInfoPromise.flat();
+
+    const filteredAssetIds = new Set<string | number>();
+    annotationsInfo.forEach((annotation) => {
+      const assetId = getAssetIdOrExternalIdFromAnnotation(annotation.annotationInfo);
+      if (assetId !== undefined) {
+        filteredAssetIds.add(assetId);
+      }
+    });
+
+    const assets = await this.getAssets(Array.from(filteredAssetIds));
+
+    const assetsWithAnnotations = annotationsInfo
+      .map((annotationInfo) => {
+        const asset = assets.find(
+          (asset) =>
+            asset.id === annotationInfo.annotationInfo.data.assetRef?.id ||
+            asset.externalId === annotationInfo.annotationInfo.data.assetRef?.externalId
+        );
+
+        return {
+          asset,
+          assetAnnotationImage360Info: annotationInfo
+        };
+      })
+      .filter(
+        (
+          item
+        ): item is { asset: Asset; assetAnnotationImage360Info: AssetAnnotationImage360Info } => {
+          return item.asset !== undefined;
+        }
+      );
+
+    return assetsWithAnnotations;
+  }
+
+  private async getAssets(assetIds: Array<string | number>): Promise<Asset[]> {
+    const assets = await Promise.all(
+      chunk(assetIds, 1000).map(async (assetsChunk) => {
+        const retrievedAssets = await this._sdk.assets.retrieve(
+          assetsChunk.map((assetId) => {
+            if (typeof assetId === 'number') {
+              return { id: assetId };
+            } else {
+              return { externalId: assetId };
+            }
+          }),
+          { ignoreUnknownIds: true }
+        );
+        return retrievedAssets;
+      })
+    );
+
+    return assets.flat();
   }
 }

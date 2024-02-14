@@ -9,9 +9,8 @@ import { useSDK } from '../RevealContainer/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { Image360AnnotationCache } from './Image360AnnotationCache';
 import { type AnnotationAssetMappingDataResult } from '../../hooks/types';
-import { EMPTY_ARRAY } from '../../utilities/constants';
-import { filterUndefined } from '../../utilities/filterUndefined';
 import { type RevealAnnotationModel } from './types';
+import { type Asset } from '@cognite/sdk/dist/src';
 
 export type Image360AnnotationDataResult = {
   siteId: string;
@@ -64,9 +63,8 @@ export const useImage360AnnotationMappingsForSiteIds = (
   );
 };
 
-export const useImage360AnnotationMappingsForAssetIds = (
-  siteIds: string[],
-  assetIds: Array<string | number> | undefined
+export const useImage360AnnotationAssetsForSiteIds = (
+  siteIds: string[]
 ): UseQueryResult<AnnotationAssetMappingDataResult[]> => {
   const image360AnnotationCache = useImage360AnnotationCache();
 
@@ -74,48 +72,68 @@ export const useImage360AnnotationMappingsForAssetIds = (
     [
       'reveal',
       'react-components',
-      'all-annotation-mappings-siteIds',
-      ...siteIds.map((siteId) => `${siteId}`),
-      ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? [])
+      'siteIds-image360-annotations-assets',
+      ...siteIds.map((siteId) => `${siteId}`)
     ],
     async () => {
-      const allAnnotationMappingsPromisesResult = await Promise.all(
+      const annotationMappingAssets = await Promise.all(
         siteIds.map(async (siteId) => {
-          const result = await fetchAnnotationsForModel(siteId, assetIds, image360AnnotationCache);
-          return result ?? EMPTY_ARRAY;
+          const annotationAssets =
+            await image360AnnotationCache.getImage360AnnotationAssetsForSiteId(siteId);
+          return annotationAssets;
         })
       );
-      return allAnnotationMappingsPromisesResult.flat();
+      const transformedAnnotationAssetMappings = annotationMappingAssets.flatMap(
+        (annotationMapping) =>
+          Array.from(annotationMapping.entries()).map(([annotationId, asset]) => ({
+            annotationId,
+            asset
+          }))
+      );
+
+      return transformedAnnotationAssetMappings;
     },
-    { staleTime: Infinity, enabled: assetIds !== undefined && assetIds.length > 0 }
+    { staleTime: Infinity, enabled: siteIds.length > 0 }
   );
 };
 
-const fetchAnnotationsForModel = async (
-  siteId: string | undefined,
-  assetIds: Array<string | number> | undefined,
-  image360AnnotationCache: Image360AnnotationCache
-): Promise<AnnotationAssetMappingDataResult[] | undefined> => {
-  if (siteId === undefined || assetIds === undefined) {
-    return undefined;
-  }
+export const useSearchAssetsMapped360Annotations = (
+  siteIds: string[],
+  query: string
+): UseQueryResult<Asset[]> => {
+  const image360AnnotationCache = useImage360AnnotationCache();
 
-  const annotationMappings = await Promise.all(
-    assetIds.map(
-      async (assetId) =>
-        await image360AnnotationCache.matchImage360AnnotationsForSiteId(siteId, assetId)
-    )
+  return useQuery(
+    ['reveal', 'react-components', 'search-assets-mapped-360-annotations', query, siteIds],
+    async () => {
+      const annotationMappingAssets = await Promise.all(
+        siteIds.map(async (siteId) => {
+          const annotationAssets =
+            await image360AnnotationCache.getImage360AnnotationAssetsForSiteId(siteId);
+          return annotationAssets;
+        })
+      );
+      const assets = annotationMappingAssets.flatMap((map: Map<number, Asset>) =>
+        Array.from(map.values())
+      );
+      if (query === '') {
+        return assets;
+      }
+
+      const filteredSearchedAssets =
+        assets.filter((asset) => {
+          const isInName = asset.name.toLowerCase().includes(query.toLowerCase());
+          const isInDescription = asset.description?.toLowerCase().includes(query.toLowerCase());
+
+          return isInName || isInDescription;
+        }) ?? [];
+
+      return filteredSearchedAssets;
+    },
+    {
+      staleTime: Infinity
+    }
   );
-
-  const filteredAnnotationMappings = filterUndefined(annotationMappings);
-  const transformedAnnotationMappings = filteredAnnotationMappings.flatMap((annotationMapping) =>
-    Array.from(annotationMapping.entries()).map(([annotationId, asset]) => ({
-      annotationId,
-      asset
-    }))
-  );
-
-  return transformedAnnotationMappings;
 };
 
 export function Image360AnnotationCacheProvider({
