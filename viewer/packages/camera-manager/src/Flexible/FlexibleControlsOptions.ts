@@ -27,7 +27,7 @@ export class FlexibleControlsOptions {
 
   // Mouse click, double click and wheel behaivor
   public mouseWheelAction = FlexibleWheelZoomType.Auto;
-  public mouseClickType = FlexibleMouseActionType.None;
+  public mouseClickType = FlexibleMouseActionType.SetTarget;
   public mouseDoubleClickType = FlexibleMouseActionType.SetTargetAndCameraPosition;
   public enableChangeControlsTypeOn123Key = true;
   public enableKeyboardNavigation = true;

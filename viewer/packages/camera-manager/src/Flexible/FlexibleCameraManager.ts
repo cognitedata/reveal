@@ -421,22 +421,16 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       return;
     }
     if (mouseActionType === FlexibleMouseActionType.SetTarget) {
-      if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
-        this.controls.setControlsType(FlexibleControlsType.Orbit);
+      if (this.controls.controlsType === FlexibleControlsType.FirstPerson) {
+        return;
       }
       const newTarget = await this.getPickedPointByPixelCoordinates(event.offsetX, event.offsetY);
       this.controls.setTarget(newTarget);
       this.controls.triggerCameraChangeEvent();
     } else if (mouseActionType === FlexibleMouseActionType.SetTargetAndCameraDirection) {
-      if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
-        this.controls.setControlsType(FlexibleControlsType.Orbit);
-      }
       const newTarget = await this.getPickedPointByPixelCoordinates(event.offsetX, event.offsetY);
       moveCameraTargetTo(this, newTarget, this.options.animationDuration);
     } else if (mouseActionType === FlexibleMouseActionType.SetTargetAndCameraPosition) {
-      if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
-        this.controls.setControlsType(FlexibleControlsType.Orbit);
-      }
       this.setTargetAndCameraPosition(event);
     }
   }
