@@ -46,7 +46,7 @@
     "docusaurus-plugin-typedoc": "0.22.0",
     "replace": "1.2.2",
     "rimraf": "5.0.5",
-    "typedoc": "0.25.7",
+    "typedoc": "0.25.8",
     "typedoc-plugin-markdown": "3.17.1",
     "typedoc-plugin-no-inherit": "1.4.0",
     "typescript": "5.3.3"
