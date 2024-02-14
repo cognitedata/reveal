@@ -72,7 +72,6 @@ export const use3dScenes = (
         scenesMap
       );
 
-      console.log('scenesMap', scenesMap);
       return scenesMap;
     } catch (error) {
       console.warn("Scene space doesn't exist or has no scenes with 3D models");
@@ -210,14 +209,10 @@ function populateSceneMapWithGroundplanes(
     }
 
     const groundPlaneEdgeProperties = Object.values(Object.values(edge.properties)[0])[0];
-    const { label, file, wrapping } = Object.values(
-      Object.values(mappedGroundPlane.properties)[0]
-    )[0];
+    const groundPlaneProperties = Object.values(Object.values(mappedGroundPlane.properties)[0])[0];
 
     const groundPlane: GroundPlane = {
-      label,
-      file,
-      wrapping,
+      ...groundPlaneProperties,
       ...groundPlaneEdgeProperties // Transformation3d
     };
 
