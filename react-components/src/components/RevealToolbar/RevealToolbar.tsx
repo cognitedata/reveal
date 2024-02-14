@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
+import { type ReactElement, type JSX, forwardRef, type Ref, ReactNode } from 'react';
 import { Divider, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 import { LayersButton } from './LayersButton';
@@ -28,16 +28,16 @@ const StyledToolBar = styled(ToolBar)`
   border: 1px solid rgba(83, 88, 127, 0.24);
 `;
 
-type RevealToolbarProps = ToolBarProps & CustomContent;
+export type RevealToolbarProps = ToolBarProps & CustomToolbarContent;
 
-type CustomContent = {
+export type CustomToolbarContent = {
   customSettingsContent?: JSX.Element;
   lowFidelitySettings?: Partial<QualitySettings>;
   highFidelitySettings?: Partial<QualitySettings>;
   storeStateInUrl?: boolean;
 };
 
-const DefaultContentWrapper = (props: CustomContent): ReactElement => {
+const DefaultContentWrapper = (props: CustomToolbarContent): ReactElement => {
   return (
     <>
       <LayersButton />

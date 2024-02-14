@@ -15,6 +15,7 @@ export { Image360HistoricalDetails } from './components/Image360HistoricalDetail
 export { Image360Details } from './components/Image360Details/Image360Details';
 export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
 export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
+export { RevealTopbar } from './components/RevealTopbar/RevealTopbar';
 export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
 
 // Hooks
