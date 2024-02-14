@@ -9,18 +9,15 @@ export function RevealCanvas({ children }: { children?: ReactNode }): ReactEleme
   const viewer = useReveal();
   const parentElement = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (parentElement.current !== null) {
+      parentElement.current.appendChild(viewer.domElement);
+    }
+  }, [parentElement.current]);
+
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'hidden' }} ref={parentElement}>
-      {mountChildren()}
+      {createPortal(children, viewer.domElement)}
     </div>
   );
-
-  function mountChildren(): ReactElement {
-    useEffect(() => {
-      if (parentElement.current !== null) {
-        parentElement.current.appendChild(viewer.domElement);
-      }
-    }, [parentElement.current]);
-    return <>{createPortal(children, viewer.domElement)}</>;
-  }
 }
