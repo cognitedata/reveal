@@ -18,6 +18,7 @@ export class FlexibleControlsTranslator {
   private readonly _controls: FlexibleControls;
   private readonly _prevPickedPoint = new Vector3();
   private readonly _plane = new Plane();
+  private readonly _raycaster = new Raycaster();
   private _camera: PerspectiveCamera | OrthographicCamera | undefined;
 
   //================================================
@@ -51,10 +52,9 @@ export class FlexibleControlsTranslator {
       return false;
     }
     const pixelCoordinates = this._controls.getNormalizedPixelCoordinates(event);
-    const raycaster = new Raycaster();
-    raycaster.setFromCamera(pixelCoordinates, this._camera);
+    this._raycaster.setFromCamera(pixelCoordinates, this._camera);
 
-    const pickedPoint = raycaster.ray.intersectPlane(this._plane, new Vector3());
+    const pickedPoint = this._raycaster.ray.intersectPlane(this._plane, new Vector3());
     if (!pickedPoint) {
       return false;
     }
