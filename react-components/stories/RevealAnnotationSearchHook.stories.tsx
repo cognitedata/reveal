@@ -5,11 +5,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import {
-  RevealContainer,
+  RevealCanvas,
   RevealToolbar,
   useSearchReveal360ImageAnnotationAssets,
   Image360CollectionContainer,
-  useReveal
+  useReveal,
+  RevealContext
 } from '../src';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 import { Color } from 'three';
@@ -39,12 +40,14 @@ const StoryContent = ({ siteId }: { siteId: string }): ReactElement => {
   };
   return (
     <>
-      <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-        <ReactQueryDevtools position="bottom-right" />
-        <Image360CollectionContainer collectionId={{ siteId }} onLoad={onLoad} />
-        <RevealToolbar />
-        {resourcesLoaded && <RevealSearchContent />}
-      </RevealContainer>
+      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+        <RevealCanvas>
+          <ReactQueryDevtools position="bottom-right" />
+          <Image360CollectionContainer collectionId={{ siteId }} onLoad={onLoad} />
+          <RevealToolbar />
+          {resourcesLoaded && <RevealSearchContent />}
+        </RevealCanvas>
+      </RevealContext>
     </>
   );
 };

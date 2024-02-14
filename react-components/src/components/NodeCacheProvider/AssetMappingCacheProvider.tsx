@@ -11,7 +11,7 @@ import {
 } from './AssetMappingCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type CogniteInternalId } from '@cognite/sdk';
-import { useSDK } from '../RevealContainer/SDKProvider';
+import { useSDK } from '../RevealCanvas/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import {
   type ModelRevisionId,

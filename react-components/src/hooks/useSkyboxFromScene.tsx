@@ -7,7 +7,7 @@ import { useSceneConfig } from './useSceneConfig';
 import * as THREE from 'three';
 import { useReveal } from '..';
 import { useQuery } from '@tanstack/react-query';
-import { useSDK } from '../components/RevealContainer/SDKProvider';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type Cognite3DViewer } from '@cognite/reveal';
 
 export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {

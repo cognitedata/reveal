@@ -3,7 +3,7 @@
  */
 
 import { type CameraState, type CogniteCadModel } from '@cognite/reveal';
-import { useReveal } from '../components/RevealContainer/RevealContext';
+import { useReveal } from '../components/RevealCanvas/ViewerContext';
 import { useFdmNodeCache } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { Box3 } from 'three';
 

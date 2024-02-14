@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { Vector2, type Vector3 } from 'three';
 
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { clamp } from 'lodash';
 

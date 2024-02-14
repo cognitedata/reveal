@@ -3,7 +3,7 @@
  */
 
 import { type QueryFunction, useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { useSDK } from '../components/RevealContainer/SDKProvider';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { useMemo } from 'react';
 import { type EdgeItem, FdmSDK, type Query, type NodeItem } from '../utilities/FdmSDK';

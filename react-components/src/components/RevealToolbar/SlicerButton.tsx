@@ -6,7 +6,7 @@ import { type ReactElement, useState, useEffect } from 'react';
 
 import { Box3, Plane, Vector3 } from 'three';
 
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
