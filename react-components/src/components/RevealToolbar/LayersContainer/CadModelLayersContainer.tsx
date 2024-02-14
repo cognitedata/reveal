@@ -3,13 +3,12 @@
  */
 
 import { useState, type ReactElement, type MouseEvent } from 'react';
-import { useReveal } from '../../RevealContainer/RevealContext';
+import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { type CogniteCadModel } from '@cognite/reveal';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
-import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 import { useTranslation } from '../../i18n/I18n';
 
 export const CadModelLayersContainer = ({
@@ -21,7 +20,6 @@ export const CadModelLayersContainer = ({
 }): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
-  const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);
 
   const { cadLayerData } = layerProps.reveal3DResourcesLayerData;
@@ -105,7 +103,7 @@ export const CadModelLayersContainer = ({
       }}>
       {cadLayerData.length > 0 && (
         <Menu.Submenu
-          appendTo={revealContainerElement ?? document.body}
+          appendTo={viewer.domElement ?? document.body}
           visible={visible}
           onClickOutside={() => {
             setVisible(false);

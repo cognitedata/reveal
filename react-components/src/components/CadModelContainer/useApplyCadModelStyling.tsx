@@ -11,10 +11,10 @@ import {
   type IndexSet
 } from '@cognite/reveal';
 import { useEffect } from 'react';
-import { useSDK } from '../RevealContainer/SDKProvider';
+import { useSDK } from '../RevealCanvas/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { isEqual } from 'lodash';
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { modelExists } from '../../utilities/modelExists';
 
 export type NodeStylingGroup = {

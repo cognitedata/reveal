@@ -8,7 +8,7 @@ import {
   type PointCloudAppearance,
   AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { useEffect } from 'react';
 import { modelExists } from '../../utilities/modelExists';
 
