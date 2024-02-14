@@ -619,14 +619,14 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
 
       // Adust the camera position so the target point is the same on the screen
-      const oldQuat = new Quaternion().multiplyQuaternions(
-        new Quaternion().setFromAxisAngle(UP_VECTOR, oldCameraVectorEnd.theta),
-        new Quaternion().setFromAxisAngle(RIGHT_VECTOR, oldCameraVectorEnd.phi)
-      );
-      const newQuat = new Quaternion().multiplyQuaternions(
-        new Quaternion().setFromAxisAngle(UP_VECTOR, this._cameraVector.end.theta),
-        new Quaternion().setFromAxisAngle(RIGHT_VECTOR, this._cameraVector.end.phi)
-      );
+      const temp = new Quaternion();
+      const oldQuat = new Quaternion()
+        .setFromAxisAngle(UP_VECTOR, oldCameraVectorEnd.theta)
+        .multiply(temp.setFromAxisAngle(RIGHT_VECTOR, oldCameraVectorEnd.phi));
+      const newQuat = new Quaternion()
+        .setFromAxisAngle(UP_VECTOR, this._cameraVector.end.theta)
+        .multiply(temp.setFromAxisAngle(RIGHT_VECTOR, this._cameraVector.end.phi));
+
       const newOffset = oldOffset.applyQuaternion(oldQuat.conjugate()).applyQuaternion(newQuat);
 
       // CameraPosition = Target - Offset
