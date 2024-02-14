@@ -25,6 +25,12 @@ export type ExternalId = string;
 
 export type SceneData = {
   name: string;
+  cameraTranslationX: number;
+  cameraTranslationY: number;
+  cameraTranslationZ: number;
+  cameraEulerRotationX: number;
+  cameraEulerRotationY: number;
+  cameraEulerRotationZ: number;
   cadModelOptions: AddReveal3DModelOptions[];
   image360CollectionOptions: AddImageCollection360DatamodelsOptions[];
   groundPlanes: GroundPlaneProperties[];
@@ -109,6 +115,12 @@ function createMapOfScenes(
 
         acc[space][externalId] = {
           name: properties.name,
+          cameraTranslationX: properties.cameraTranslationX,
+          cameraTranslationY: properties.cameraTranslationY,
+          cameraTranslationZ: properties.cameraTranslationZ,
+          cameraEulerRotationX: properties.cameraEulerRotationX,
+          cameraEulerRotationY: properties.cameraEulerRotationY,
+          cameraEulerRotationZ: properties.cameraEulerRotationZ,
           cadModelOptions: [],
           image360CollectionOptions: [],
           groundPlanes: [],
