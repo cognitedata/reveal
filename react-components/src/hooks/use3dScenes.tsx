@@ -19,6 +19,7 @@ import {
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type AddImageCollection360DatamodelsOptions } from '../components/Reveal3DResources/types';
+import { type GroundPlane, type Skybox } from '../components/SceneContainer/SceneTypes';
 
 export type Space = string;
 export type ExternalId = string;
@@ -33,8 +34,8 @@ export type SceneData = {
   cameraEulerRotationZ: number;
   cadModelOptions: AddReveal3DModelOptions[];
   image360CollectionOptions: AddImageCollection360DatamodelsOptions[];
-  groundPlanes: GroundPlaneProperties[];
-  skybox?: SkyboxProperties;
+  groundPlanes: GroundPlane[];
+  skybox?: Skybox;
 };
 
 type Use3dScenesQueryResult = {
@@ -71,6 +72,7 @@ export const use3dScenes = (
         scenesMap
       );
 
+      console.log('scenesMap', scenesMap);
       return scenesMap;
     } catch (error) {
       console.warn("Scene space doesn't exist or has no scenes with 3D models");
@@ -203,20 +205,20 @@ function populateSceneMapWithGroundplanes(
         groundPlane.space === edge.endNode.space
     );
 
-    if (scenesMap[space]?.[externalId] === undefined) {
-      return;
-    }
-
-    if (mappedGroundPlane === undefined) {
+    if (scenesMap[space]?.[externalId] === undefined || mappedGroundPlane === undefined) {
       return;
     }
 
     const groundPlaneEdgeProperties = Object.values(Object.values(edge.properties)[0])[0];
-    const groundPlaneProperties = Object.values(Object.values(mappedGroundPlane)[0])[0];
+    const { label, file, wrapping } = Object.values(
+      Object.values(mappedGroundPlane.properties)[0]
+    )[0];
 
-    const groundPlane: GroundPlaneProperties = {
-      ...groundPlaneProperties,
-      ...groundPlaneEdgeProperties
+    const groundPlane: GroundPlane = {
+      label,
+      file,
+      wrapping,
+      ...groundPlaneEdgeProperties // Transformation3d
     };
 
     scenesMap[space]?.[externalId].groundPlanes.push(groundPlane);
