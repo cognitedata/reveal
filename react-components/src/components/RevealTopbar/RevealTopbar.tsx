@@ -3,10 +3,10 @@
  */
 import { FitModelsButton } from '../RevealToolbar/FitModelsButton';
 import { LayersButton } from '../RevealToolbar/LayersButton';
-import { ReactNode, type ReactElement } from 'react';
+import { type ReactNode, type ReactElement } from 'react';
 import { SlicerButton } from '../RevealToolbar/SlicerButton';
 import styled from 'styled-components';
-import { CustomToolbarContent } from '../RevealToolbar/RevealToolbar';
+import { type CustomToolbarContent } from '../RevealToolbar/RevealToolbar';
 import { SettingsButton } from '../RevealToolbar/SettingsButton';
 import { HelpButton } from '../RevealToolbar/HelpButton';
 import { Divider } from '@cognite/cogs.js';

@@ -13,7 +13,7 @@ import {
 import { Color } from 'three';
 import { type ReactElement, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
-import { RevealStoryContainer, RevealStoryContext } from './utilities/RevealStoryContainer';
+import { RevealStoryContext } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 
 const meta = {
