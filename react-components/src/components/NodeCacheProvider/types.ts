@@ -43,4 +43,4 @@ export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
 
 export type ModelRevisionToEdgeMap = Map<ModelRevisionKey, FdmEdgeWithNode[]>;
 
-export type PointCloudAnnotationModel = AnnotationModel & { data: AnnotationsBoundingVolume };
+export type RevealAnnotationModel = AnnotationModel & { data: AnnotationsBoundingVolume };

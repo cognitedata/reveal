@@ -58,6 +58,7 @@ export {
   usePointCloudAnnotationMappingsForAssetIds
 } from './components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
 export { type AnnotationAssetMappingDataResult } from './hooks/types';
+export { useImage360AnnotationMappingsForAssetIds } from './components/NodeCacheProvider/Image360AnnotationCacheProvider';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';

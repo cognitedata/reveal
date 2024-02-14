@@ -16,7 +16,7 @@ import {
   usePointCloudAnnotationIdsForModels
 } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
 import { EMPTY_ARRAY } from '../utilities/constants';
-import { type PointCloudAnnotationModel } from '../components/NodeCacheProvider/types';
+import { type RevealAnnotationModel } from '../components/NodeCacheProvider/types';
 
 export type StyledPointCloudModel = {
   model: PointCloudModelOptions;
@@ -25,7 +25,7 @@ export type StyledPointCloudModel = {
 
 export type AnnotationModelDataResult = {
   model: PointCloudModelOptions;
-  annotationModel: PointCloudAnnotationModel[];
+  annotationModel: RevealAnnotationModel[];
 };
 
 export const useCalculatePointCloudStyling = (

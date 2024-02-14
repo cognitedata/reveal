@@ -2,6 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
+// TODO: remove this file
+
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import {
