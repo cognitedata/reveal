@@ -40,7 +40,7 @@ export const RevealContext = (props: RevealContextProps): ReactNode => {
     return new QueryClient();
   }, []);
 
-  if (viewer === undefined) return <></>;
+  if (viewer === null) return <></>;
 
   return (
     <SDKProvider sdk={props.sdk}>
@@ -67,9 +67,9 @@ const useRevealFromKeepAlive = ({
   color,
   sdk,
   viewerOptions
-}: RevealContextProps): Cognite3DViewer | undefined => {
+}: RevealContextProps): Cognite3DViewer | null => {
   const revealKeepAliveData = useRevealKeepAlive();
-  const [viewer, setViewer] = useState<Cognite3DViewer | undefined>();
+  const viewerRef = useRef<Cognite3DViewer | null>(null);
   const viewerDomElement = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const useRevealFromKeepAlive = ({
     };
   }, []);
 
-  return viewer;
+  return viewerRef.current;
 
   function getOrInitializeViewer(): Cognite3DViewer {
     const viewer =
@@ -97,7 +97,7 @@ const useRevealFromKeepAlive = ({
     }
     viewerDomElement.current = viewer.domElement;
     viewer.setBackgroundColor({ color, alpha: 1 });
-    setViewer(viewer);
+    viewerRef.current = viewer;
     return viewer;
   }
 };

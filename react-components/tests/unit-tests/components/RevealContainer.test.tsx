@@ -52,7 +52,8 @@ describe(RevealCanvas.name, () => {
         </RevealKeepAliveContext.Provider>
       );
     };
-    const { container } = render(<MockedReveal />);
+    const { container, rerender } = render(<MockedReveal />);
+    rerender(<MockedReveal />);
     expect(container.querySelector('canvas')).not.toBeNull();
     screen.debug();
   });
