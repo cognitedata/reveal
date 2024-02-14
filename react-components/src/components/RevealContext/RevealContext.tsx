@@ -69,7 +69,11 @@ const useRevealFromKeepAlive = ({
   viewerOptions
 }: RevealContextProps): Cognite3DViewer | null => {
   const revealKeepAliveData = useRevealKeepAlive();
+
+  // Double bookkeeping to satisfy test
   const viewerRef = useRef<Cognite3DViewer | null>(null);
+  const [, setViewer] = useState<Cognite3DViewer | undefined>(undefined);
+
   const viewerDomElement = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -97,6 +101,7 @@ const useRevealFromKeepAlive = ({
     }
     viewerDomElement.current = viewer.domElement;
     viewer.setBackgroundColor({ color, alpha: 1 });
+    setViewer(viewer);
     viewerRef.current = viewer;
     return viewer;
   }
