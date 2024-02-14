@@ -172,15 +172,11 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     return this._target.value.clone();
   }
 
-  public getTargetEnd(): Vector3 {
-    return this._target.value.clone();
-  }
-
   public setTarget(value: Vector3): void {
     this._target.copy(value);
   }
 
-  public getLookAt(): Vector3 {
+  private getLookAt(): Vector3 {
     if (this._tempTarget) {
       return this._tempTarget;
     }
@@ -194,7 +190,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     };
   }
 
-  public getMousePosition(event: PointerEvent): Vector2 {
+  private getMousePosition(event: PointerEvent): Vector2 {
     return getMousePosition(this._domElement, event.clientX, event.clientY);
   }
 
@@ -638,7 +634,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       const newCameraPosition = this.newVector3().subVectors(this._target.end, newOffset);
       this._cameraPosition.end.copy(newCameraPosition);
     } else {
-      this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
+      this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
     }
   }
 
