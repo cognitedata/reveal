@@ -280,6 +280,11 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       this.triggerCameraChangeEvent();
     }
     this.triggerControlsTypeChangeEvent();
+
+    // This shouldn't be here, but RevealManager listen to this in order to do a redraw
+    // Cannot triggerControlsTypeChangeEvent since it is not part of the predefined general events
+    // The scene must be redrawn because of the markers
+    this.triggerCameraChangeEvent();
     return true;
   }
 
