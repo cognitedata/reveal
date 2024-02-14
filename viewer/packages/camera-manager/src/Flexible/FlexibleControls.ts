@@ -26,7 +26,6 @@ import { ReusableVector3s } from './ReusableVector3s';
 import { FlexibleControlsEvent } from './FlexibleControlsEvent';
 import { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordinates';
 import { FlexibleControlsTranslator } from './FlexibleControlsTranslator';
-import { FlexibleControlsRotator } from './FlexibleControlsRotator';
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
@@ -412,7 +411,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   private async startMouse(initialEvent: PointerEvent, isRight: boolean): Promise<void> {
     let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
-    let rotator: FlexibleControlsRotator | undefined;
     let translator: FlexibleControlsTranslator | undefined;
 
     const onMouseMove = async (event: PointerEvent) => {
@@ -423,12 +421,10 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       }
       if (this._keyboard.isShiftPressed()) {
         translator = undefined;
-        rotator = undefined;
-        // Zooming forwad backward
+        // Zooming forward and backward
         deltaPosition.multiplyScalar(this._options.mouseDollySpeed);
         this.pan(0, 0, deltaPosition.y);
       } else if (isRight || this._keyboard.isCtrlPressed()) {
-        rotator = undefined;
         // Pan left, right, up or down
         if (translator == null) {
           translator = new FlexibleControlsTranslator(this);
@@ -441,25 +437,14 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
         }
       } else if (!isRight) {
         translator = undefined;
-        // Rotate
-        if (this.controlsType === FlexibleControlsType.FirstPerson) {
-          if (!rotator) {
-            rotator = new FlexibleControlsRotator(this);
-            await rotator.initialize(event);
-          }
-          rotator.rotate(event);
-        } else {
-          this.rotate(deltaPosition);
-        }
+        this.rotate(deltaPosition);
       }
       prevPosition = position;
     };
-
     const onMouseUp = () => {
       window.removeEventListener('pointermove', onMouseMove);
       window.removeEventListener('pointerup', onMouseUp);
     };
-
     window.addEventListener('pointermove', onMouseMove, { passive: false });
     window.addEventListener('pointerup', onMouseUp, { passive: false });
   }
