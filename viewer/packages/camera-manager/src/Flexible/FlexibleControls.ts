@@ -633,7 +633,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       const newCameraPosition = this.newVector3().subVectors(this._target.end, newOffset);
       this._cameraPosition.end.copy(newCameraPosition);
     } else {
-      this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
+      this.rawRotateByAngles(deltaAzimuth, -deltaPolar);
     }
   }
 
