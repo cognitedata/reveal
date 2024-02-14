@@ -175,7 +175,9 @@ function getGroundPlanes(sceneResponse: SceneResponse): GroundPlane[] {
     // Match groundplanes with their edges
     groundPlaneEdgeResponse.forEach((groundPlaneEdge) => {
       const mappedGroundPlane = groundPlaneResponse.find(
-        (groundPlane) => groundPlane.externalId === groundPlaneEdge.endNode.externalId
+        (groundPlane) =>
+          groundPlane.externalId === groundPlaneEdge.endNode.externalId &&
+          groundPlane.space === groundPlaneEdge.endNode.space
       );
 
       if (mappedGroundPlane !== undefined) {
