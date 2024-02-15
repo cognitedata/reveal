@@ -28,16 +28,16 @@ const StyledToolBar = styled(ToolBar)`
   border: 1px solid rgba(83, 88, 127, 0.24);
 `;
 
-type RevealToolbarProps = ToolBarProps & CustomContent;
+export type RevealToolbarProps = ToolBarProps & CustomToolbarContent;
 
-type CustomContent = {
+export type CustomToolbarContent = {
   customSettingsContent?: JSX.Element;
   lowFidelitySettings?: Partial<QualitySettings>;
   highFidelitySettings?: Partial<QualitySettings>;
   storeStateInUrl?: boolean;
 };
 
-const DefaultContentWrapper = (props: CustomContent): ReactElement => {
+const DefaultContentWrapper = (props: CustomToolbarContent): ReactElement => {
   return (
     <>
       <LayersButton />
