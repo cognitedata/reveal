@@ -46,10 +46,6 @@ export {
   useAllAssetsMapped360Annotations
 } from './hooks/useSearchAssetsMapped360Annotations';
 export {
-  useReveal360ImageAnnotationAssets,
-  useSearchReveal360ImageAnnotationAssets
-} from './hooks/useSearchReveal360ImageAnnotationAssets';
-export {
   useAllAssetsMappedPointCloudAnnotations,
   useSearchAssetsMappedPointCloudAnnotations
 } from './hooks/useSearchAssetsMappedPointCloudAnnotations';
@@ -59,6 +55,7 @@ export {
 } from './components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
 export { type AnnotationAssetMappingDataResult } from './hooks/types';
 export { useImage360AnnotationMappingsForAssetIds } from './components/NodeCacheProvider/Image360AnnotationCacheProvider';
+export { type Image360AnnotationAssetInfo } from './components/NodeCacheProvider/types';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';

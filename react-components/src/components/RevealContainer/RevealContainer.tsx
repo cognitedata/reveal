@@ -16,6 +16,7 @@ import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reve
 import { AssetMappingCacheProvider } from '../NodeCacheProvider/AssetMappingCacheProvider';
 import { I18nContextProvider } from '../i18n/I18n';
 import { PointCloudAnnotationCacheProvider } from '../NodeCacheProvider/PointCloudAnnotationCacheProvider';
+import { Image360AnnotationCacheProvider } from '../NodeCacheProvider/Image360AnnotationCacheProvider';
 
 export type RevealContainerProps = {
   color?: Color;
@@ -88,9 +89,11 @@ export function RevealContainer({
               <NodeCacheProvider>
                 <AssetMappingCacheProvider>
                   <PointCloudAnnotationCacheProvider>
-                    <Reveal3DResourcesCountContextProvider>
-                      {createPortal(children, viewerDomElement.current)}
-                    </Reveal3DResourcesCountContextProvider>
+                    <Image360AnnotationCacheProvider>
+                      <Reveal3DResourcesCountContextProvider>
+                        {createPortal(children, viewerDomElement.current)}
+                      </Reveal3DResourcesCountContextProvider>
+                    </Image360AnnotationCacheProvider>
                   </PointCloudAnnotationCacheProvider>
                 </AssetMappingCacheProvider>
               </NodeCacheProvider>

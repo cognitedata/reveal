@@ -8,9 +8,7 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { Image360AnnotationCache } from './Image360AnnotationCache';
-import { type AnnotationAssetMappingDataResult } from '../../hooks/types';
-import { type RevealAnnotationModel } from './types';
-import { type Asset } from '@cognite/sdk/dist/src';
+import { type Image360AnnotationAssetInfo, type RevealAnnotationModel } from './types';
 
 export type Image360AnnotationDataResult = {
   siteId: string;
@@ -35,103 +33,38 @@ const useImage360AnnotationCache = (): Image360AnnotationCache => {
   return content.cache;
 };
 
-export const useImage360AnnotationMappingsForSiteIds = (
-  siteIds: string[]
-): UseQueryResult<Image360AnnotationDataResult[]> => {
+export const useImage360AnnotationMappingsForAssetIds = (
+  assetIds: Array<string | number> | undefined,
+  siteIds: string[] | undefined
+): UseQueryResult<Image360AnnotationAssetInfo[]> => {
   const image360AnnotationCache = useImage360AnnotationCache();
 
   return useQuery(
     [
       'reveal',
       'react-components',
-      'siteIds-image360-annotations-mappings',
-      ...siteIds.map((siteId) => `${siteId}`)
+      'image360-annotations-info',
+      ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? []),
+      ...(siteIds?.map((siteId) => siteId).sort() ?? [])
     ],
     async () => {
-      return await Promise.all(
-        siteIds.map(async (siteId) => {
-          const annotationModel =
-            await image360AnnotationCache.getImage360AnnotationsForSiteId(siteId);
-          return {
-            siteId,
-            annotationModel
-          };
-        })
-      );
-    },
-    { staleTime: Infinity, enabled: siteIds.length > 0 }
-  );
-};
-
-export const useImage360AnnotationAssetsForSiteIds = (
-  siteIds: string[]
-): UseQueryResult<AnnotationAssetMappingDataResult[]> => {
-  const image360AnnotationCache = useImage360AnnotationCache();
-
-  return useQuery(
-    [
-      'reveal',
-      'react-components',
-      'siteIds-image360-annotations-assets',
-      ...siteIds.map((siteId) => `${siteId}`)
-    ],
-    async () => {
-      const annotationMappingAssets = await Promise.all(
-        siteIds.map(async (siteId) => {
-          const annotationAssets =
-            await image360AnnotationCache.getImage360AnnotationAssetsForSiteId(siteId);
-          return annotationAssets;
-        })
-      );
-      const transformedAnnotationAssetMappings = annotationMappingAssets.flatMap(
-        (annotationMapping) =>
-          Array.from(annotationMapping.entries()).map(([annotationId, asset]) => ({
-            annotationId,
-            asset
-          }))
-      );
-
-      return transformedAnnotationAssetMappings;
-    },
-    { staleTime: Infinity, enabled: siteIds.length > 0 }
-  );
-};
-
-export const useSearchAssetsMapped360Annotations = (
-  siteIds: string[],
-  query: string
-): UseQueryResult<Asset[]> => {
-  const image360AnnotationCache = useImage360AnnotationCache();
-
-  return useQuery(
-    ['reveal', 'react-components', 'search-assets-mapped-360-annotations', query, siteIds],
-    async () => {
-      const annotationMappingAssets = await Promise.all(
-        siteIds.map(async (siteId) => {
-          const annotationAssets =
-            await image360AnnotationCache.getImage360AnnotationAssetsForSiteId(siteId);
-          return annotationAssets;
-        })
-      );
-      const assets = annotationMappingAssets.flatMap((map: Map<number, Asset>) =>
-        Array.from(map.values())
-      );
-      if (query === '') {
-        return assets;
+      if (
+        assetIds === undefined ||
+        assetIds.length === 0 ||
+        siteIds === undefined ||
+        siteIds.length === 0
+      ) {
+        return [];
       }
-
-      const filteredSearchedAssets =
-        assets.filter((asset) => {
-          const isInName = asset.name.toLowerCase().includes(query.toLowerCase());
-          const isInDescription = asset.description?.toLowerCase().includes(query.toLowerCase());
-
-          return isInName || isInDescription;
-        }) ?? [];
-
-      return filteredSearchedAssets;
+      const annotationAssetInfo = await image360AnnotationCache.getReveal360Annotations(siteIds);
+      const filteredAnnotationAssetInfo = annotationAssetInfo.filter((annotationInfo) => {
+        return assetIds.includes(annotationInfo.asset.id);
+      });
+      return filteredAnnotationAssetInfo;
     },
     {
-      staleTime: Infinity
+      staleTime: Infinity,
+      enabled: assetIds !== undefined && siteIds !== undefined
     }
   );
 };
