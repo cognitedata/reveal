@@ -9,7 +9,6 @@ import {
   type CogniteCadModel,
   TreeIndexNodeCollection
 } from '@cognite/reveal';
-import { useSDK } from '../RevealContainer/SDKProvider';
 import { useReveal } from '../..';
 import { Color } from 'three';
 import {
@@ -19,9 +18,10 @@ import {
   type StringExpression,
   type Expression,
   type ColorRuleOutput,
-  type MetadataRuleTrigger
-} from 'rule-based-outputs/src/lib/types';
-import { type NodeAndRange } from './types';
+  type MetadataRuleTrigger,
+  type NodeAndRange
+} from './types';
+import { useSDK } from '../RevealCanvas/SDKProvider';
 
 export type ColorOverlayProps = {
   addModelOptions: AddModelOptions;
