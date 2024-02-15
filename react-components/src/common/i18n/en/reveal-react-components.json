@@ -43,5 +43,11 @@
   "TOUCH_ZOOM": "Zoom",
   "WIDGET_WINDOW_CLOSE": "Close",
   "WIDGET_WINDOW_EXPAND": "Expand",
-  "WIDGET_WINDOW_MINIMIZE": "Minimize"
+  "WIDGET_WINDOW_MINIMIZE": "Minimize",
+  "MODE_FIRST_PERSON_LABEL": "First Person",
+  "MODE_ORBIT_LABEL": "Orbit",
+  "MODE_ORBIT_IN_CENTER_LABEL": "Center Orbit",
+  "MODE_FIRST_PERSON_TOOLTIP": "Set Camera to First Person mode",
+  "MODE_ORBIT_TOOLTIP": "Set Camera to Orbit mode",
+  "MODE_ORBIT_IN_CENTER_TOOLTIP": "Set Camera to Orbit in Center mode"
 }
