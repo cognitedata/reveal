@@ -20,7 +20,7 @@ type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   viewer?: Cognite3DViewer;
 };
 
-export const RevealStoryContainer = ({
+export const RevealStoryContext = ({
   viewer,
   sdk,
   children,
@@ -55,8 +55,19 @@ export const RevealStoryContainer = ({
         pointCloudAnnotationCache
       }}>
       <RevealContext sdk={sdkInstance} {...rest}>
-        <RevealCanvas>{children}</RevealCanvas>
+        {children}
       </RevealContext>
     </RevealKeepAliveContext.Provider>
+  );
+};
+
+export const RevealStoryContainer = ({
+  children,
+  ...rest
+}: RevealStoryContainerProps): ReactElement => {
+  return (
+    <RevealStoryContext {...rest}>
+      <RevealCanvas>{children}</RevealCanvas>
+    </RevealStoryContext>
   );
 };
