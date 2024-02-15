@@ -1913,7 +1913,7 @@ __metadata:
     cross-env: 7.0.3
     docusaurus-plugin-typedoc: 0.22.0
     ieee754: 1.2.1
-    query-string: 8.1.0
+    query-string: 8.2.0
     react: 18.2.0
     react-dom: 18.2.0
     replace: 1.2.2
@@ -10199,14 +10199,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"query-string@npm:8.1.0":
-  version: 8.1.0
-  resolution: "query-string@npm:8.1.0"
+"query-string@npm:8.2.0":
+  version: 8.2.0
+  resolution: "query-string@npm:8.2.0"
   dependencies:
     decode-uri-component: ^0.4.1
     filter-obj: ^5.1.0
     split-on-first: ^3.0.0
-  checksum: 16fe49ab714f2b802bd31bc417876a38a82cd49bea01c0d6c37ca3439604c774752c8c66f9eda5ee33c268de2fc2a65e0e0e27aa97d8d98159af5c1fc838a017
+  checksum: 3e1949e52b94636214303105ba33c03222f8d0bb12fc6cb22e2e2142946899644db8efef8531c0ddb90b065dd053c8a1f36cac9adcc46aa04c44f20d65844237
   languageName: node
   linkType: hard
 
