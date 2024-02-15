@@ -2,9 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
+import { Vector2 } from 'three';
+
 /**
  * Determines clicked or touched coordinate as offset
- * @param event        An PointerEvent or WheelEvent.
+ * @param event     An PointerEvent or WheelEvent.
  * @param target    HTML element to find coordinates relative to.
  * @returns A struct containing coordinates relative to the HTML element provided.
  */
@@ -33,4 +35,15 @@ export function clickOrTouchEventOffset(
     offsetX: -1,
     offsetY: -1
   };
+}
+
+/**
+ * Determines clicked or touched coordinate as offset
+ * @param event     An PointerEvent or WheelEvent.
+ * @param target    HTML element to find coordinates relative to.
+ * @returns A Vector2 containing coordinates relative to the HTML element provided.
+ */
+export function getClickOrTouchEventPoint(event: PointerEvent | WheelEvent, target: HTMLElement): Vector2 {
+  const point = clickOrTouchEventOffset(event, target);
+  return new Vector2(point.offsetX, point.offsetY);
 }

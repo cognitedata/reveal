@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { clickOrTouchEventOffset } from '@reveal/utilities';
 import remove from 'lodash/remove';
 import {
   EventDispatcher,
@@ -16,7 +15,7 @@ import {
   Vector3
 } from 'three';
 import Keyboard from '../Keyboard';
-import { getNormalizedPixelCoordinates } from '@reveal/utilities';
+import { getNormalizedPixelCoordinates, getClickOrTouchEventPoint } from '@reveal/utilities';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
@@ -468,9 +467,9 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     const delta = getWheelDelta(event);
     if (this._camera instanceof PerspectiveCamera) {
       const deltaDistance = delta * this.getWheelSpeed();
-      const offset = clickOrTouchEventOffset(event, this._domElement);
-      const pixelCoords = getNormalizedPixelCoordinates(this._domElement, offset.offsetX, offset.offsetY);
-      this.dollyWithWheelScroll(pixelCoords, -deltaDistance);
+      const pixelCoords = getClickOrTouchEventPoint(event, this._domElement);
+      const normalizedCoords = getNormalizedPixelCoordinates(this._domElement, pixelCoords.x, pixelCoords.y);
+      this.dollyWithWheelScroll(normalizedCoords, -deltaDistance);
     } else if (this._camera instanceof OrthographicCamera) {
       const deltaDistance = Math.sign(delta) * this._options.orthographicCameraDollyFactor;
       this.dollyOrthographicCamera(deltaDistance);

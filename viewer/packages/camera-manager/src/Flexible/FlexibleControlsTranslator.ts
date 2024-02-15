@@ -51,8 +51,8 @@ export class FlexibleControlsTranslator {
     if (!this._camera) {
       return false;
     }
-    const pixelCoordinates = this._controls.getNormalizedPixelCoordinates(event);
-    this._raycaster.setFromCamera(pixelCoordinates, this._camera);
+    const normalizedCoords = this._controls.getNormalizedPixelCoordinates(event);
+    this._raycaster.setFromCamera(normalizedCoords, this._camera);
 
     const pickedPoint = this._raycaster.ray.intersectPlane(this._plane, new Vector3());
     if (!pickedPoint) {

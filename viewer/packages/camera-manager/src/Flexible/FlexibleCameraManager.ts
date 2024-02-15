@@ -14,10 +14,10 @@ import {
   disposeOfAllEventListeners,
   PointerEventData,
   fitCameraToBoundingBox,
-  clickOrTouchEventOffset
+  getNormalizedPixelCoordinates,
+  getClickOrTouchEventPoint
 } from '@reveal/utilities';
 
-import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 import {
   CameraChangeDelegate,
   CameraEventDelegate,
@@ -296,8 +296,8 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
 
   private getTargetByBoundingBox(pixelX: number, pixelY: number, boundingBox: Box3): Vector3 {
     const raycaster = new Raycaster();
-    const pixelCoordinates = getNormalizedPixelCoordinates(this.domElement, pixelX, pixelY);
-    raycaster.setFromCamera(pixelCoordinates, this.camera);
+    const normalizedCoords = getNormalizedPixelCoordinates(this.domElement, pixelX, pixelY);
+    raycaster.setFromCamera(normalizedCoords, this.camera);
 
     // Try to intersect the bounding box
     const closestIntersection = new Vector3();
@@ -394,9 +394,8 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     // Added because cameraControls are disabled when doing picking, so
     // preventDefault could be not called on wheel event and produce unwanted scrolling.
     event.preventDefault();
-    const pixelPosition = clickOrTouchEventOffset(event, this.domElement);
+    const currentCoords = getClickOrTouchEventPoint(event, this.domElement);
     const currentTime = performance.now();
-    const currentCoords = new Vector2(pixelPosition.offsetX, pixelPosition.offsetY);
     const deltaTime = currentTime - this._prevTime;
     const deltaCoords = currentCoords.distanceTo(this._prevCoords);
 
@@ -411,7 +410,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this._prevTime = currentTime;
     this._prevCoords.copy(currentCoords);
 
-    const scrollCursor = await this.getPickedPointByPixelCoordinates(pixelPosition.offsetX, pixelPosition.offsetY);
+    const scrollCursor = await this.getPickedPointByPixelCoordinates(currentCoords.x, currentCoords.y);
     this.controls.setScrollCursor(scrollCursor);
     this._prevTime = currentTime;
   };
