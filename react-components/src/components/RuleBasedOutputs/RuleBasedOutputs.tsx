@@ -1,15 +1,9 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useEffect, type ReactElement, useMemo } from 'react';
+import { useEffect, type ReactElement } from 'react';
 
-import {
-  type IdEither,
-  type AssetMapping3D,
-  type AssetMappings3DListFilter,
-  type CogniteClient,
-  type Asset
-} from '@cognite/sdk';
+import { type IdEither, type AssetMapping3D, type CogniteClient, type Asset } from '@cognite/sdk';
 import {
   type AddModelOptions,
   type CogniteCadModel,
@@ -18,7 +12,6 @@ import {
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { useReveal } from '../..';
 import { Color } from 'three';
-import { FdmSDK } from '../../utilities/FdmSDK';
 import {
   type RuleOutput,
   type RuleOutputSet,
@@ -27,7 +20,7 @@ import {
   type Expression,
   type ColorRuleOutput,
   type MetadataRuleTrigger
-} from 'rule-based-actions/src/lib/types';
+} from 'rule-based-outputs/src/lib/types';
 import { type NodeAndRange } from './types';
 
 export type ColorOverlayProps = {
@@ -35,9 +28,8 @@ export type ColorOverlayProps = {
   ruleSet: RuleOutputSet;
 };
 
-export function ColorOverlayRules({ addModelOptions, ruleSet }: ColorOverlayProps): ReactElement {
+export function RuleBasedOutputs({ addModelOptions, ruleSet }: ColorOverlayProps): ReactElement {
   const cdfClient = useSDK();
-  const fdmSdk = useMemo(() => new FdmSDK(cdfClient), [cdfClient]);
 
   const viewer = useReveal();
   console.log(' RULESET', ruleSet);
@@ -143,8 +135,8 @@ export function ColorOverlayRules({ addModelOptions, ruleSet }: ColorOverlayProp
 
     const traverseExpression = (
       asset: Asset,
-      expressions: Expression[],
-      levelExpressionOperator: string
+      expressions: Expression[]
+      // levelExpressionOperator: string
     ): boolean[] => {
       let expressionResult: boolean = false;
 
@@ -155,8 +147,8 @@ export function ColorOverlayRules({ addModelOptions, ruleSet }: ColorOverlayProp
           case 'or': {
             const operatorResult = traverseExpression(
               asset,
-              expression.expressions,
-              expression.type
+              expression.expressions
+              // expression.type
             );
             expressionResult = operatorResult.find((result) => result) ?? false;
             break;
@@ -164,8 +156,8 @@ export function ColorOverlayRules({ addModelOptions, ruleSet }: ColorOverlayProp
           case 'and': {
             const operatorResult = traverseExpression(
               asset,
-              expression.expressions,
-              expression.type
+              expression.expressions
+              // expression.type
             );
             expressionResult = operatorResult.find((result) => !result) ?? false;
             break;
@@ -173,8 +165,8 @@ export function ColorOverlayRules({ addModelOptions, ruleSet }: ColorOverlayProp
           case 'not': {
             const operatorResult = traverseExpression(
               asset,
-              [expression.expression],
-              expression.type
+              [expression.expression]
+              // expression.type
             );
             expressionResult = !operatorResult[0]; // TODO: make the not operator
             break;
@@ -198,7 +190,7 @@ export function ColorOverlayRules({ addModelOptions, ruleSet }: ColorOverlayProp
       return expressionResults;
     };
 
-    const generateRuleBasedActions = (
+    const generateRuleBasedOutputs = (
       model: CogniteCadModel,
       contextualizedAssetNodes: Asset[],
       assetMappings: AssetMapping3D[]
@@ -236,8 +228,8 @@ export function ColorOverlayRules({ addModelOptions, ruleSet }: ColorOverlayProp
           contextualizedAssetNodes.map(async (assetNode) => {
             const finalGlobalOutputResult = traverseExpression(
               assetNode,
-              [expression],
-              expression.type
+              [expression]
+              // expression.type
             );
 
             if (finalGlobalOutputResult[0]) {
@@ -276,33 +268,6 @@ export function ColorOverlayRules({ addModelOptions, ruleSet }: ColorOverlayProp
     };
 
     const getContextualization = async (): Promise<void> => {
-
-      const saveRule = await fdmSdk.createInstance([
-        {
-          instanceType: 'node',
-          space: 'rule_based_coloring_space',
-          externalId: 'Rule_based_Coloring_RuleTest2',
-          sources: [
-            {
-              properties: {
-                name: 'RuleSet for testing',
-                id: 'Rule_based_Coloring_RuleTest2',
-                createdAt: 11111111,
-                createdBy: 'daniel.priori@cognite.com',
-                rulesWithOutputs: JSON.parse(JSON.stringify(ruleSet)),
-                shamefulOutputTypes: ['color']
-              },
-              source: {
-                type: 'view',
-                space: 'rule_based_coloring_space',
-                externalId: 'FdmRuleOutputSet',
-                version: '7'
-              }
-            }
-          ]
-        }
-      ]);
-
       const assetMappings = await getCdfCadContextualization({
         sdk: cdfClient,
         modelId,
@@ -320,31 +285,22 @@ export function ColorOverlayRules({ addModelOptions, ruleSet }: ColorOverlayProp
         return { id };
       }) as unknown as IdEither[];
 
+      // get the assets with asset info from the asset ids
       const contextualizedAssetNodes = await cdfClient.assets.retrieve(contextualizedAssetIds);
 
+      // get the current model
       const model = viewer.models[0] as CogniteCadModel;
       console.log(' model ', model);
 
-      generateRuleBasedActions(model, contextualizedAssetNodes, assetMappings);
+      // generate rule based coloring
+      generateRuleBasedOutputs(model, contextualizedAssetNodes, assetMappings);
     };
+
     void getContextualization();
   }, []);
 
   return <></>;
 }
-
-const createFilter = ({
-  nodeId,
-  assetId
-}: {
-  nodeId: number | undefined;
-  assetId: number | undefined;
-}): AssetMappings3DListFilter => {
-  return {
-    nodeId,
-    assetId
-  };
-};
 
 const getCdfCadContextualization = async ({
   sdk,
@@ -359,7 +315,7 @@ const getCdfCadContextualization = async ({
   nodeId: number | undefined;
   assetId: number | undefined;
 }): Promise<AssetMapping3D[]> => {
-  const filter = createFilter({ nodeId, assetId });
+  const filter = { nodeId, assetId };
 
   return await sdk.assetMappings3D
     .list(modelId, revisionId, filter)
