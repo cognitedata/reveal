@@ -565,7 +565,7 @@ __metadata:
     "@types/jest-image-snapshot": "npm:6.4.0"
     "@types/jsdom": "npm:21.1.6"
     "@types/lodash": "npm:4.14.202"
-    "@types/mixpanel-browser": "npm:2.48.1"
+    "@types/mixpanel-browser": "npm:2.49.0"
     "@types/node": "npm:18.19.15"
     "@types/random-seed": "npm:0.3.5"
     "@types/skmeans": "npm:0.11.7"
@@ -603,7 +603,7 @@ __metadata:
     jsdom: "npm:23.2.0"
     lodash: "npm:4.17.21"
     loglevel: "npm:1.9.1"
-    mixpanel-browser: "npm:2.48.1"
+    mixpanel-browser: "npm:2.49.0"
     moq.ts: "npm:10.0.8"
     nock: "npm:13.5.1"
     path-browserify: "npm:1.0.1"
@@ -2021,10 +2021,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mixpanel-browser@npm:2.48.1":
-  version: 2.48.1
-  resolution: "@types/mixpanel-browser@npm:2.48.1"
-  checksum: 10/1079054959e21edaf629073df6c2ff4d5b01d0a438c26d4ee99e7ffa8cc2a75552138ea6b5c91384065159e27d6d59614ff0b27a771af55fecbee014735087e4
+"@types/mixpanel-browser@npm:2.49.0":
+  version: 2.49.0
+  resolution: "@types/mixpanel-browser@npm:2.49.0"
+  checksum: 10/8aa9f114098cd9e2b06314586d73934aa83a8116b7de61bd41208728aebd47daa30134a98c4af3d65c4e755fbbdb6c450058a34ad2204305587fbe8e27f844b3
   languageName: node
   linkType: hard
 
@@ -8084,10 +8084,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mixpanel-browser@npm:2.48.1":
-  version: 2.48.1
-  resolution: "mixpanel-browser@npm:2.48.1"
-  checksum: 10/5dc47218cf2287e8e6b88888b345d63d2b4a9c102fcb867794ba61619ae37bbbbdedfc37a812658950684d3cac13bd0893bdfb0578c5037f953652db01c58b21
+"mixpanel-browser@npm:2.49.0":
+  version: 2.49.0
+  resolution: "mixpanel-browser@npm:2.49.0"
+  checksum: 10/46b738792153caa35c083f3e23b208d48fac0f040074d2f36dc95bac49e86729676ffb599b4b50d814231c4ae8170110419e748a1cbe0d5432ea415f0fe8adc4
   languageName: node
   linkType: hard
 
