@@ -11,7 +11,7 @@ import {
   type AnnotationModel
 } from '@cognite/sdk';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { chunk, uniqBy } from 'lodash';
+import { chunk, uniq } from 'lodash';
 
 export const useAllAssetsMapped360Annotations = (
   sdk: CogniteClient,
@@ -75,23 +75,20 @@ async function get360AnnotationAssets(
   image360Annotations: AnnotationModel[],
   sdk: CogniteClient
 ): Promise<Asset[]> {
-  const annotationMapping = image360Annotations.map((annotation) => ({
-    assetId:
-      (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
-      (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId ??
-      ''
-  }));
+  const annotationMapping = image360Annotations
+    .map(
+      (annotation) =>
+        (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
+        (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId
+    )
+    .filter((annotation): annotation is string | number => annotation !== undefined);
 
-  const filteredAnnotationMapping = annotationMapping.filter(
-    (annotation) => annotation.assetId !== ''
-  );
-
-  const uniqueAnnotationMapping = uniqBy(filteredAnnotationMapping, 'assetId');
+  const uniqueAnnotationMapping = uniq(annotationMapping);
 
   const assets = await Promise.all(
     chunk(uniqueAnnotationMapping, 1000).map(async (uniqueAssetsChunk) => {
       const retrievedAssets = await sdk.assets.retrieve(
-        uniqueAssetsChunk.map(({ assetId }) => {
+        uniqueAssetsChunk.map((assetId) => {
           if (typeof assetId === 'number') {
             return { id: assetId };
           } else {
@@ -132,9 +129,12 @@ async function get360ImageAnnotations(
         annotatedResourceType: 'file',
         annotationType: 'images.AssetLink'
       };
-      const { items: annotations } = await sdk.annotations.list({
-        filter
-      });
+      const annotations = await sdk.annotations
+        .list({
+          filter,
+          limit: 1000
+        })
+        .autoPagingToArray({ limit: Infinity });
       return annotations;
     })
   );

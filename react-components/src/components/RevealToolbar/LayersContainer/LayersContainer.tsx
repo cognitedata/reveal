@@ -9,7 +9,7 @@ import { Image360CollectionLayerContainer } from './Image360LayersContainer';
 import { PointCloudLayersContainer } from './PointCloudLayersContainer';
 import { useState, type ReactElement, useEffect, type MouseEvent } from 'react';
 import { type Reveal3DResourcesLayerStates, type Reveal3DResourcesLayersProps } from './types';
-import { useReveal } from '../../RevealContainer/RevealContext';
+import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { useLayersUrlParams } from '../hooks/useUrlStateParam';
 
 const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): ReactElement => {

@@ -5,12 +5,9 @@ import { useRef, type ReactElement, useState, useEffect, useMemo } from 'react';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
 import { type CadModelStyling } from '../CadModelContainer/useApplyCadModelStyling';
-import {
-  PointCloudContainer,
-  type PointCloudModelStyling
-} from '../PointCloudContainer/PointCloudContainer';
+import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
 import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import {
   type AddReveal3DModelOptions,
   type TypedReveal3DModel,
@@ -20,6 +17,10 @@ import {
   type PointCloudModelOptions
 } from './types';
 import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
+import { useCalculatePointCloudStyling } from '../../hooks/useCalculatePointCloudModelsStyling';
+import { type PointCloudModelStyling } from '../PointCloudContainer/useApplyPointCloudStyling';
+import { EMPTY_ARRAY } from '../../utilities/constants';
+import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
 
 export const Reveal3DResources = ({
   resources,
@@ -52,7 +53,13 @@ export const Reveal3DResources = ({
 
   const styledCadModelOptions = useCalculateCadStyling(
     cadModelOptions,
-    instanceStyling ?? [],
+    instanceStyling ?? EMPTY_ARRAY,
+    defaultResourceStyling
+  );
+
+  const styledPointCloudModelOptions = useCalculatePointCloudStyling(
+    pointCloudModelOptions,
+    instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
   );
 
@@ -100,18 +107,18 @@ export const Reveal3DResources = ({
           />
         );
       })}
-      {pointCloudModelOptions.map((pointCloudModelOptions, index) => {
-        const { modelId, revisionId, transform, styling } = pointCloudModelOptions;
-        const defaultStyle = styling?.default ?? defaultResourceStyling?.pointcloud?.default;
+      {styledPointCloudModelOptions.map(({ styleGroups, model }, index) => {
+        const defaultStyle = model.styling?.default ?? defaultResourceStyling?.pointcloud?.default;
         const pcStyling: PointCloudModelStyling = {
-          defaultStyle
+          defaultStyle,
+          groups: styleGroups
         };
         return (
           <PointCloudContainer
-            key={`${modelId}/${revisionId}/${index}`}
-            addModelOptions={pointCloudModelOptions}
+            key={`${model.modelId}/${model.revisionId}/${index}`}
+            addModelOptions={model}
             styling={pcStyling}
-            transform={transform}
+            transform={model.transform}
             onLoad={onModelLoaded}
             onLoadError={onModelLoadedError}
           />

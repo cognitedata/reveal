@@ -3,22 +3,24 @@
  */
 import { useRef, type ReactElement, useMemo } from 'react';
 import { RevealKeepAliveContext } from '../../src/components/RevealKeepAlive/RevealKeepAliveContext';
-import {
-  RevealContainer,
-  type RevealContainerProps
-} from '../../src/components/RevealContainer/RevealContainer';
+import { RevealCanvas } from '../../src/components/RevealCanvas/RevealCanvas';
 import { type FdmNodeCache } from '../../src/components/NodeCacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../../src/components/NodeCacheProvider/AssetMappingCache';
 import { type CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { createSdkByUrlToken } from './createSdkByUrlToken';
+import { type PointCloudAnnotationCache } from '../../src/components/NodeCacheProvider/PointCloudAnnotationCache';
+import {
+  RevealContext,
+  type RevealContextProps
+} from '../../src/components/RevealContext/RevealContext';
 
-type RevealStoryContainerProps = Omit<RevealContainerProps, 'sdk'> & {
+type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
   viewer?: Cognite3DViewer;
 };
 
-export const RevealStoryContainer = ({
+export const RevealStoryContext = ({
   viewer,
   sdk,
   children,
@@ -42,17 +44,30 @@ export const RevealStoryContainer = ({
   const isRevealContainerMountedRef = useRef<boolean>(true);
   const fdmNodeCache = useRef<FdmNodeCache | undefined>();
   const assetMappingCache = useRef<AssetMappingCache | undefined>();
+  const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache | undefined>();
   return (
     <RevealKeepAliveContext.Provider
       value={{
         viewerRef,
         isRevealContainerMountedRef,
         fdmNodeCache,
-        assetMappingCache
+        assetMappingCache,
+        pointCloudAnnotationCache
       }}>
-      <RevealContainer sdk={sdkInstance} {...rest}>
+      <RevealContext sdk={sdkInstance} {...rest}>
         {children}
-      </RevealContainer>
+      </RevealContext>
     </RevealKeepAliveContext.Provider>
+  );
+};
+
+export const RevealStoryContainer = ({
+  children,
+  ...rest
+}: RevealStoryContainerProps): ReactElement => {
+  return (
+    <RevealStoryContext {...rest}>
+      <RevealCanvas>{children}</RevealCanvas>
+    </RevealStoryContext>
   );
 };

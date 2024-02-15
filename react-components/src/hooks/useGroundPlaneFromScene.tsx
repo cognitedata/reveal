@@ -7,7 +7,7 @@ import { useSceneConfig } from './useSceneConfig';
 import { DoubleSide, Mesh, MeshBasicMaterial, PlaneGeometry, TextureLoader } from 'three';
 import { useReveal } from '..';
 import { useQuery } from '@tanstack/react-query';
-import { useSDK } from '../components/RevealContainer/SDKProvider';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
@@ -18,7 +18,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
   const { data: groundPlanesUrls } = useQuery(
     ['reveal', 'react-components', 'groundplaneUrls', scene ?? 'noSceneData'],
     async () => {
-      if (scene?.skybox === undefined) {
+      if (scene?.groundPlanes === undefined || scene.groundPlanes.length === 0) {
         return [];
       }
 

@@ -4,6 +4,8 @@
 import '@cognite/cogs.js/dist/cogs.css';
 
 // Components
+export { RevealCanvas } from './components/RevealCanvas/RevealCanvas';
+export { RevealContext, type RevealContextProps } from './components/RevealContext/RevealContext';
 export { RevealContainer } from './components/RevealContainer/RevealContainer';
 export { Reveal3DResources } from './components/Reveal3DResources/Reveal3DResources';
 export { PointCloudContainer } from './components/PointCloudContainer/PointCloudContainer';
@@ -12,11 +14,12 @@ export { Image360CollectionContainer } from './components/Image360CollectionCont
 export { Image360HistoricalDetails } from './components/Image360HistoricalDetails/Image360HistoricalDetails';
 export { Image360Details } from './components/Image360Details/Image360Details';
 export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
-export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
+export { RevealToolbar, type RevealToolbarProps } from './components/RevealToolbar/RevealToolbar';
+export { RevealTopbar } from './components/RevealTopbar/RevealTopbar';
 export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
 
 // Hooks
-export { useReveal } from './components/RevealContainer/RevealContext';
+export { useReveal } from './components/RevealCanvas/ViewerContext';
 export { use3DModelName } from './hooks/use3DModelName';
 export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCacheProvider';
 export { useSceneDefaultCamera } from './hooks/useSceneDefaultCamera';
@@ -49,6 +52,15 @@ export {
   useReveal360ImageAnnotationAssets,
   useSearchReveal360ImageAnnotationAssets
 } from './hooks/useSearchReveal360ImageAnnotationAssets';
+export {
+  useAllAssetsMappedPointCloudAnnotations,
+  useSearchAssetsMappedPointCloudAnnotations
+} from './hooks/useSearchAssetsMappedPointCloudAnnotations';
+export {
+  usePointCloudAnnotationMappingsForModels,
+  usePointCloudAnnotationMappingsForAssetIds
+} from './components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
+export { type AnnotationAssetMappingDataResult } from './hooks/types';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
@@ -60,7 +72,7 @@ export {
 export {
   type PointCloudModelStyling,
   type AnnotationIdStylingGroup
-} from './components/PointCloudContainer/PointCloudContainer';
+} from './components/PointCloudContainer/useApplyPointCloudStyling';
 export { type CogniteCadModelProps } from './components/CadModelContainer/CadModelContainer';
 export {
   type CadModelStyling,
@@ -70,6 +82,7 @@ export {
 export {
   type Reveal3DResourcesProps,
   type FdmAssetStylingGroup,
+  type AssetStylingGroup,
   type DefaultResourceStyling
 } from './components/Reveal3DResources/types';
 export {
@@ -83,6 +96,7 @@ export type {
 } from './components/Reveal3DResources/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
+export type { FdmInstanceWithView } from './utilities/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
 export { WindowWidget } from './components/Widgets/WindowWidget';
 export { use3dRelatedEdgeConnections } from './hooks/use3dRelatedEdgeConnections';

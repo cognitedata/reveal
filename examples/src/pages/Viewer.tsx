@@ -136,13 +136,12 @@ export function Viewer() {
 
       const controlsOptions: CameraControlsOptions = {
         changeCameraTargetOnClick: false,
-        changeCameraPositionOnDoubleClick: false,
         mouseWheelAction: 'zoomToCursor'
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
-
-      cameraManager.setCameraControlsOptions(controlsOptions);
-
+      if (viewer.cameraManager instanceof DefaultCameraManager) {
+        cameraManager.setCameraControlsOptions(controlsOptions);
+      }
       cameraManagers = {
         Default: viewer.cameraManager as DefaultCameraManager,
         Custom: new CustomCameraManager(canvasWrapperRef.current!, new THREE.PerspectiveCamera(5, 1, 0.01, 1000))
@@ -414,15 +413,6 @@ export function Viewer() {
           });
         });
       controlsGui
-        .add(guiState.controls, 'changeCameraPositionOnDoubleClick')
-        .name('Change camera position on dblclick')
-        .onFinishChange(value => {
-          cameraManager.setCameraControlsOptions({
-            ...cameraManager.getCameraControlsOptions(),
-            changeCameraPositionOnDoubleClick: value
-          });
-        });
-      controlsGui
         .add(guiState.controls, 'cameraManager', cameraManagerTypes)
         .name('Camera manager type')
         .onFinishChange((value: 'Default' | 'Custom') => {
@@ -436,7 +426,6 @@ export function Viewer() {
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
-        console.log('2D coordinates', event);
         const start = performance.now();
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
@@ -449,7 +438,6 @@ export function Viewer() {
                   point,
                   `took ${(performance.now() - start).toFixed(1)} ms`
                 );
-
                 inspectNodeUi.inspectNode(intersection.model, treeIndex);
               }
               break;

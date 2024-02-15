@@ -130,31 +130,6 @@ export type InspectResultList = {
   }>;
 };
 
-export type OldFormatInspectFilter = {
-  inspectionOperations: { involvedViewsAndContainers: Record<never, never> };
-  items: Array<{ instanceType: InstanceType; externalId: string; space: string }>;
-};
-
-export type OldFormatInspectResultList = {
-  items: Array<{
-    instanceType: InstanceType;
-    externalId: string;
-    space: string;
-    inspectionResults: OldInspectResult;
-  }>;
-};
-
-export type OldInspectResult = {
-  involvedViewsAndContainers: {
-    containers: Array<{
-      type: 'container';
-      space: string;
-      externalId: string;
-    }>;
-    views: Source[];
-  };
-};
-
 type SelectKey<T extends Query> = keyof T['select'];
 
 export type QueryResult<T extends Query> = {
@@ -195,6 +170,10 @@ export type ViewItem = {
   properties: Record<string, Record<string, any>>;
   name: string;
   implements: Source[];
+};
+
+export type DataModelListResponse = {
+  items: Array<{ views: Source[] }>;
 };
 
 export class FdmSDK {
@@ -247,7 +226,9 @@ export class FdmSDK {
   }
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<PropertiesType = Record<string, unknown>>(
+  public async searchInstances<
+    PropertiesType extends Record<string, unknown> = Record<string, unknown>
+  >(
     searchedView: Source,
     query: string,
     instanceType?: InstanceType,
@@ -257,7 +238,9 @@ export class FdmSDK {
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<PropertiesType = Record<string, unknown>>(
+  public async searchInstances<
+    PropertiesType extends Record<string, unknown> = Record<string, unknown>
+  >(
     searchedView: Source,
     query: string,
     instanceType?: 'edge',
@@ -277,7 +260,9 @@ export class FdmSDK {
   ): Promise<{ instances: Array<NodeItem<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<PropertiesType = Record<string, unknown>>(
+  public async searchInstances<
+    PropertiesType extends Record<string, unknown> = Record<string, unknown>
+  >(
     searchedView: Source,
     query: string,
     instanceType?: InstanceType,
@@ -290,7 +275,10 @@ export class FdmSDK {
     const result = await this._sdk.post(this._searchEndpoint, { data });
 
     if (result.status === 200) {
-      hoistInstanceProperties(searchedView, result.data.items);
+      hoistInstanceProperties(
+        searchedView,
+        result.data.items as Array<EdgeItem<PropertiesType>> | Array<NodeItem<PropertiesType>>
+      );
 
       return { instances: result.data.items };
     }
@@ -446,39 +434,12 @@ export class FdmSDK {
   }
 
   public async inspectInstances(inspectFilter: InspectFilter): Promise<InspectResultList> {
-    // Endpoint will soon have breaking changes, thus testing both new and old format
-    try {
-      const oldFormatInspectFilter: OldFormatInspectFilter = {
-        inspectionOperations: { involvedViewsAndContainers: {} },
-        items: inspectFilter.items ?? []
-      };
-      const result = await this._sdk.post(this._inspectEndpoint, { data: oldFormatInspectFilter });
+    const result = await this._sdk.post(this._inspectEndpoint, { data: inspectFilter });
 
-      if (result.status === 200) {
-        const oldFormatInspectResult = result.data as OldFormatInspectResultList;
-        return {
-          items: oldFormatInspectResult.items.map((item) => ({
-            ...item,
-            inspectionResults: {
-              involvedContainers: item.inspectionResults.involvedViewsAndContainers.containers,
-              involvedViews: item.inspectionResults.involvedViewsAndContainers.views
-            }
-          }))
-        };
-      }
-    } catch (e) {}
-
-    try {
-      const result = await this._sdk.post(this._inspectEndpoint, { data: inspectFilter });
-
-      if (result.status === 200) {
-        return result.data as InspectResultList;
-      }
-    } catch (e) {
-      throw new Error(`Failed to fetch instances`);
+    if (result.status === 200) {
+      return result.data as InspectResultList;
     }
-
-    return { items: [] };
+    throw new Error(`Failed to fetch instances`);
   }
 
   public async getViewsByIds(views: Source[]): Promise<{ items: ViewItem[] }> {
@@ -505,7 +466,7 @@ export class FdmSDK {
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 
-  public async listDataModels(): Promise<any> {
+  public async listDataModels(): Promise<DataModelListResponse> {
     const result = await this._sdk.get(this._listDataModelsEndpoint, { params: { limit: 1000 } });
     if (result.status === 200) {
       return result.data;

@@ -84,6 +84,7 @@ import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
+import { FlexibleCameraManager } from '@reveal/camera-manager';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -284,9 +285,22 @@ export class Cognite3DViewer {
 
     this._mouseHandler = new InputHandler(this.domElement);
 
+    const useFlexibleCameraManager = options.useFlexibleCameraManager ?? false;
     const initialActiveCameraManager =
-      options.cameraManager ??
-      new DefaultCameraManager(this._domElement, this._mouseHandler, this.modelIntersectionCallback.bind(this));
+      options.cameraManager ?? useFlexibleCameraManager
+        ? new FlexibleCameraManager(
+            this._domElement,
+            this._mouseHandler,
+            this.modelIntersectionCallback.bind(this),
+            undefined,
+            this._sceneHandler.scene
+          )
+        : new DefaultCameraManager(
+            this._domElement,
+            this._mouseHandler,
+            this.modelIntersectionCallback.bind(this),
+            undefined
+          );
 
     this._activeCameraManager = new ProxyCameraManager(initialActiveCameraManager);
 
@@ -718,13 +732,20 @@ export class Cognite3DViewer {
     const modelLoadSequencer = this._addModelSequencer.getNextSequencer<void>();
 
     return (async () => {
-      const type = await this.determineModelType(options.modelId, options.revisionId);
+      let type: '' | SupportedModelTypes;
+      try {
+        type = await this.determineModelType(options.modelId, options.revisionId);
+      } catch (error) {
+        await modelLoadSequencer(() => {});
+        throw new Error(`Failed to add model: ${error}`);
+      }
       switch (type) {
         case 'cad':
           return this.addCadModelWithSequencer(options, modelLoadSequencer);
         case 'pointcloud':
           return this.addPointCloudModelWithSequencer(options, modelLoadSequencer);
         default:
+          await modelLoadSequencer(() => {});
           throw new Error('Model is not supported');
       }
     })();
@@ -754,19 +775,23 @@ export class Cognite3DViewer {
     options: AddModelOptions,
     modelLoadSequencer: SequencerFunction<void>
   ): Promise<CogniteCadModel> {
-    const nodesApiClient = this._dataSource.getNodesApiClient();
+    try {
+      const nodesApiClient = this._dataSource.getNodesApiClient();
 
-    const { modelId, revisionId } = options;
+      const { modelId, revisionId } = options;
 
-    const cadNode = await this._revealManagerHelper.addCadModel(options);
+      const cadNode = await this._revealManagerHelper.addCadModel(options);
 
-    const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
-    await modelLoadSequencer(() => {
-      this._models.push(model3d);
-      this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
-    });
-
-    return model3d;
+      const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
+      await modelLoadSequencer(() => {
+        this._models.push(model3d);
+        this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
+      });
+      return model3d;
+    } catch (error) {
+      await modelLoadSequencer(() => {});
+      throw new Error(`Failed to add CAD model: ${error}`);
+    }
   }
 
   /**
@@ -790,21 +815,26 @@ export class Cognite3DViewer {
   }
 
   private async addPointCloudModelWithSequencer(options: AddModelOptions, modelLoadSequencer: SequencerFunction<void>) {
-    if (options.geometryFilter) {
-      throw new Error('geometryFilter is not supported for point clouds');
+    try {
+      if (options.geometryFilter) {
+        throw new Error('geometryFilter is not supported for point clouds');
+      }
+
+      const { modelId, revisionId } = options;
+
+      const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
+      const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
+
+      await modelLoadSequencer(() => {
+        this._models.push(model);
+        this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
+      });
+
+      return model;
+    } catch (error) {
+      await modelLoadSequencer(() => {});
+      throw new Error(`Failed to add point cloud model: ${error}`);
     }
-
-    const { modelId, revisionId } = options;
-
-    const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
-    const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
-
-    await modelLoadSequencer(() => {
-      this._models.push(model);
-      this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
-    });
-
-    return model;
   }
 
   /**
@@ -814,7 +844,8 @@ export class Cognite3DViewer {
    */
   async add360ImageSet(
     datasource: 'datamodels',
-    dataModelIdentifier: Image360DataModelIdentifier
+    dataModelIdentifier: Image360DataModelIdentifier,
+    add360ImageOptions?: AddImage360Options
   ): Promise<Image360Collection>;
   /**
    * Adds a set of 360 images to the scene from the /events API in Cognite Data Fusion.
@@ -1628,12 +1659,13 @@ export class Cognite3DViewer {
         combinedBbox.union(bbox);
       }
     });
-
     this._sceneHandler.customObjects.forEach(obj => {
       bbox.setFromObject(obj);
-      if (!bbox.isEmpty()) {
-        combinedBbox.union(bbox);
+      if (bbox.isEmpty()) {
+        return;
       }
+      // Todo: Mark some of the object not to be included in the bounding box
+      combinedBbox.union(bbox);
     });
   }
 

@@ -4,11 +4,12 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  RevealContainer,
+  RevealCanvas,
   RevealToolbar,
   type AddResourceOptions,
   type AddReveal3DModelOptions,
-  type AddImageCollection360Options
+  type AddImageCollection360Options,
+  RevealContext
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useMemo, useEffect } from 'react';
@@ -28,13 +29,16 @@ import {
   useAllAssetsMapped360Annotations,
   useSearchAssetsMapped360Annotations
 } from '../src/hooks/useSearchAssetsMapped360Annotations';
+import {
+  useAllAssetsMappedPointCloudAnnotations,
+  useSearchAssetsMappedPointCloudAnnotations
+} from '../src/hooks/useSearchAssetsMappedPointCloudAnnotations';
 import { isEqual } from 'lodash';
 import { type NodeItem } from '../src/utilities/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
 
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
-const spacesToSearch = ['fdx-boys'];
 const viewsToSearch = [
   { externalId: 'Equipment', space: 'fdx-boys' },
   { externalId: 'WorkOrderMultiple', space: 'fdx-boys' },
@@ -91,13 +95,24 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;
   });
 
-  const { data: annotationAssetSearchData } = useSearchAssetsMapped360Annotations(
+  const { data: asset360ImageSearchData } = useSearchAssetsMapped360Annotations(
     siteIds,
     sdk,
     mainSearchQuery
   );
 
-  const { data: allAnnotationAssets } = useAllAssetsMapped360Annotations(sdk, siteIds);
+  const { data: all360ImageAssets } = useAllAssetsMapped360Annotations(sdk, siteIds);
+
+  const { data: pointCloudAssetSearchData } = useSearchAssetsMappedPointCloudAnnotations(
+    filteredResources,
+    sdk,
+    mainSearchQuery
+  );
+
+  const { data: allPointCloudAssets } = useAllAssetsMappedPointCloudAnnotations(
+    sdk,
+    filteredResources
+  );
 
   useEffect(() => {
     if (searchMethod !== 'allAssets') return;
@@ -134,10 +149,14 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           .map((mapping) => mapping.assets)
           .flat() ?? [];
 
-      const mergedAssets = [...transformedAssets, ...(allAnnotationAssets ?? [])];
+      const combinedAssets = [
+        ...transformedAssets,
+        ...(all360ImageAssets ?? []),
+        ...(allPointCloudAssets ?? [])
+      ];
 
       const filteredAssets =
-        mergedAssets.filter((asset) => {
+        combinedAssets.filter((asset) => {
           const isInName = asset.name.toLowerCase().includes(mainSearchQuery.toLowerCase());
           const isInDescription = asset.description
             ?.toLowerCase()
@@ -164,9 +183,13 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         return [];
       }
 
-      const megredAssetSearchData = [...assetSearchData, ...(annotationAssetSearchData ?? [])];
+      const combinedAssetSearchData = [
+        ...assetSearchData,
+        ...(asset360ImageSearchData ?? []),
+        ...(pointCloudAssetSearchData ?? [])
+      ];
 
-      const searchedEquipment: Equipment[] = megredAssetSearchData.map((asset) => {
+      const searchedEquipment: Equipment[] = combinedAssetSearchData.map((asset) => {
         return {
           view: 'Asset',
           externalId: asset.id + '',
@@ -206,27 +229,29 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     allEquipment,
     searchData,
     allAssets,
-    allAnnotationAssets,
+    all360ImageAssets,
     assetSearchData,
-    annotationAssetSearchData,
+    asset360ImageSearchData,
     searchMethod
   ]);
 
   return (
     <>
-      <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-        <ReactQueryDevtools position="bottom-right" />
-        <RevealResourcesFitCameraOnLoad
-          resources={resources}
-          defaultResourceStyling={{
-            cad: {
-              default: { color: new Color('#efefef') },
-              mapped: { color: new Color('#c5cbff') }
-            }
-          }}
-        />
-        <RevealToolbar />
-      </RevealContainer>
+      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+        <RevealCanvas>
+          <ReactQueryDevtools position="bottom-right" />
+          <RevealResourcesFitCameraOnLoad
+            resources={resources}
+            defaultResourceStyling={{
+              cad: {
+                default: { color: new Color('#efefef') },
+                mapped: { color: new Color('#c5cbff') }
+              }
+            }}
+          />
+          <RevealToolbar />
+        </RevealCanvas>
+      </RevealContext>
       <h1>Mapped equipment</h1>
       <div style={{ display: 'flex', flexDirection: 'row', gap: 8, padding: '0 8px 8px 0' }}>
         <Input
@@ -323,6 +348,10 @@ export const Main: Story = {
           }
         },
         siteId: 'celanese1'
+      },
+      {
+        modelId: 1350257070750400,
+        revisionId: 5110855034466831
       }
     ]
   },
@@ -336,7 +365,7 @@ export const Main: Story = {
 };
 
 function determineViewFromQueryResultNodeItem(nodeItem: NodeItem | Equipment): string {
-  return findNonZeroProperty(nodeItem?.properties?.[spacesToSearch[0]]) ?? 'Unknown';
+  return findNonZeroProperty(nodeItem?.properties) ?? 'Unknown';
 }
 
 function findNonZeroProperty(properties?: Record<string, any>): string | undefined {

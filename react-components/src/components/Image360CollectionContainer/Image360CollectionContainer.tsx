@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useRef } from 'react';
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type AddImageCollection360Options } from '../..';
@@ -30,7 +30,6 @@ export function Image360CollectionContainer({
   );
 
   useEffect(() => {
-    console.log(collectionId);
     if ('siteId' in collectionId && initializingSiteId.current === collectionId) {
       return;
     }
@@ -64,7 +63,6 @@ export function Image360CollectionContainer({
       }
 
       if ('siteId' in collectionId) {
-        console.log('siteId in collectionId');
         return await viewer.add360ImageSet(
           'events',
           { site_id: siteId },
