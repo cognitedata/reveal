@@ -6,7 +6,6 @@ import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type ReactElement, useState, type ReactNode, useEffect, type SyntheticEvent } from 'react';
 import Widget from './Widget';
 import Draggable, { type DraggableData, type DraggableEvent } from 'react-draggable';
-import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
 import { ResizableBox, type ResizeCallbackData } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import {
@@ -21,6 +20,7 @@ import {
 import { useTranslation } from '../i18n/I18n';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { StyledComponent, WidgetBody, WidgetContent } from './elements';
+import { useReveal } from '../..';
 
 type WindowWidgetProps = {
   title?: string;
@@ -44,7 +44,8 @@ export const WindowWidget = ({
   const { t } = useTranslation();
   const [isMinimized, setIsMinimized] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const parentContainerElement = useRevealContainerElement();
+  const viewer = useReveal();
+  const parentContainerElement = viewer.domElement;
 
   const size = useParentResize(parentContainerElement, isMinimized, onResize);
 
@@ -164,7 +165,6 @@ const useParentResize = (
 
       const width = isMinimized ? WIDGET_WINDOW_MIN_WIDTH : parentWidth * WIDGET_WIDTH_FACTOR;
       const height = isMinimized ? WIDGET_WINDOW_MIN_HEIGHT : parentHeight * WIDGET_HEIGHT_FACTOR;
-
       setSize({ width, height });
 
       onResize?.(width, height);
@@ -172,10 +172,11 @@ const useParentResize = (
 
     updateSize();
 
-    window.addEventListener('resize', updateSize);
+    const resizeObserver = new ResizeObserver(updateSize);
+    resizeObserver.observe(parentContainerElement);
 
     return () => {
-      window.removeEventListener('resize', updateSize);
+      resizeObserver.disconnect();
     };
   }, [isMinimized, parentContainerElement]);
 

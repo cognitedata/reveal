@@ -38,7 +38,7 @@ export class Image360UI {
   }
 
   private params = {
-    siteId: getSiteIdFromUrl() ?? '',
+    siteId: getSiteIdFromUrl() ?? '', // For instance: helideck-site-2-jpeg
     space: getSpaceFromUrl() ?? '',
     add: () => this.add360ImageSet(),
     remove: () => this.remove360ImageSet(),
@@ -56,7 +56,7 @@ export class Image360UI {
   };
 
   private dataSource: { type: 'events' | 'dataModels' } = {
-    type: getSiteIdFromUrl() !== null && getSpaceFromUrl() === null ? 'events' : 'dataModels'
+    type: getSpaceFromUrl() !== null && getSpaceFromUrl() !== '' ? 'dataModels' : 'events'
   };
 
   private rotation = {
@@ -85,9 +85,6 @@ export class Image360UI {
     this.viewer = viewer;
     this.gui = gui;
 
-    const optionsFolder = this.gui.addFolder('Add Options (Events)');
-    optionsFolder.hide();
-    const optionsFolderFdm = this.gui.addFolder('Add Options (Data Models)');
     this.gui
       .add(this.dataSource, 'type', ['events', 'dataModels'])
       .name('Data source')
@@ -101,6 +98,9 @@ export class Image360UI {
         }
       });
 
+    const optionsFolder = this.gui.addFolder('Add Options (Events)');
+    optionsFolder.hide();
+    const optionsFolderFdm = this.gui.addFolder('Add Options (Data Models)');
     // events
     optionsFolder.add(this.params, 'siteId').name('Site ID');
 

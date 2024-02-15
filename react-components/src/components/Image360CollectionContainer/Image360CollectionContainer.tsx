@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useRef } from 'react';
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type AddImageCollection360Options } from '../..';

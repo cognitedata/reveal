@@ -3,7 +3,7 @@
  */
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
+import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type Source, type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 import assert from 'assert';
 import { type FdmInstanceWithView } from '../utilities/types';

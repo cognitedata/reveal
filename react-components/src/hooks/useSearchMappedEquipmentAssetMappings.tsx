@@ -14,7 +14,7 @@ import {
   useInfiniteQuery,
   useQuery
 } from '@tanstack/react-query';
-import { useSDK } from '../components/RevealContainer/SDKProvider';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { chunk } from 'lodash';
 
 export type ModelMappings = {
