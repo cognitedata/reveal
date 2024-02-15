@@ -790,7 +790,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       }
     }
     if (this.options.realMouseWheelAction === FlexibleWheelZoomType.ToCursor) {
-      if (this._scrollDistance - step < this.options.sensitivity) {
+      if (deltaDistance > 0 && this._scrollDistance - step < this.options.sensitivity) {
         // This avoid to close to the scroll cursor
         // Can not get closer than options.sensitivity
         return Math.max(0, this._scrollDistance - this.options.sensitivity);
