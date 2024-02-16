@@ -48,6 +48,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
       const texture = groundPlanesUrls[index];
       const material = new MeshBasicMaterial({ map: texture, side: DoubleSide });
       const geometry = new PlaneGeometry(10000 * groundPlane.scaleX, 10000 * groundPlane.scaleY);
+      geometry.name = `CogniteGroundPlane`;
 
       const mesh = new Mesh(geometry, material);
       mesh.position.set(
