@@ -10,7 +10,7 @@ import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
 import { type Matrix4 } from 'three';
 
 type Image360CollectionContainerProps = {
-  collectionId: { siteId: string } | { externalId: string; space: string; transform?: Matrix4 };
+  collectionId: AddImageCollection360Options & { transform?: Matrix4 };
   onLoad?: (image360: Image360Collection) => void;
   onLoadError?: (addOptions: AddImageCollection360Options, error: any) => void;
 };
@@ -67,7 +67,7 @@ export function Image360CollectionContainer({
         return await viewer.add360ImageSet(
           'events',
           { site_id: siteId },
-          { preMultipliedRotation: false }
+          { collectionTransform: collectionId.transform, preMultipliedRotation: false }
         );
       } else {
         return await viewer.add360ImageSet(
