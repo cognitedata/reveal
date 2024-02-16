@@ -1630,8 +1630,15 @@ export class Cognite3DViewer {
   ): Promise<CameraManagerCallbackData> {
     const intersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
 
-    const getBoundingBox = async (intersection: Intersection | null): Promise<THREE.Box3 | undefined> => {
-      if (intersection?.type !== 'cad') {
+    if (intersection == null)
+      return {
+        intersection: null,
+        pickedBoundingBox: undefined,
+        modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox
+      };
+
+    const getBoundingBox = async (intersection: Intersection): Promise<THREE.Box3 | undefined> => {
+      if (intersection.type !== 'cad') {
         return undefined;
       }
       const model = intersection.model;

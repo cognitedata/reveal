@@ -291,6 +291,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     if (raycastResult.intersection?.point) {
       return raycastResult.intersection.point;
     }
+    // If no intersection, get the intersection from the bounding box
     return this.getTargetByBoundingBox(pixelX, pixelY, raycastResult.modelsBoundingBox);
   };
 
@@ -442,11 +443,19 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       moveCameraTo(this, position, target, this.options.animationDuration);
       return;
     }
-    // If not particular object is picked, set camera position half way to the target
-    const newTarget =
-      raycastResult.intersection?.point ??
-      this.getTargetByBoundingBox(event.offsetX, event.offsetY, raycastResult.modelsBoundingBox);
-
+    // If not particular bounding box is found, create it by camera distance
+    // This happen when picking at using point clouds
+    if (raycastResult.intersection?.point) {
+      const point = raycastResult.intersection.point;
+      const distance = raycastResult.intersection.distanceToCamera;
+      const boundingBox = new Box3(point.clone(), point.clone());
+      boundingBox.expandByScalar(0.1 * distance);
+      const { position, target } = fitCameraToBoundingBox(this.camera, boundingBox, 3);
+      moveCameraTo(this, position, target, this.options.animationDuration);
+      return;
+    }
+    // If not particular object is picked, set camera position half way to the edge of the modelsBoundingBox
+    const newTarget = this.getTargetByBoundingBox(event.offsetX, event.offsetY, raycastResult.modelsBoundingBox);
     const newPosition = new Vector3().subVectors(newTarget, this.camera.position);
     newPosition.divideScalar(2);
     newPosition.add(this.camera.position);
