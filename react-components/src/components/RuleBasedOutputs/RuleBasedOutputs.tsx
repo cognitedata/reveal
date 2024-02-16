@@ -4,11 +4,7 @@
 import { useEffect, type ReactElement } from 'react';
 
 import { type IdEither, type AssetMapping3D, type CogniteClient, type Asset } from '@cognite/sdk';
-import {
-  type AddModelOptions,
-  type CogniteCadModel,
-  TreeIndexNodeCollection
-} from '@cognite/reveal';
+import { type CogniteCadModel, TreeIndexNodeCollection } from '@cognite/reveal';
 import { useReveal } from '../..';
 import { Color } from 'three';
 import {
@@ -24,17 +20,17 @@ import {
 import { useSDK } from '../RevealCanvas/SDKProvider';
 
 export type ColorOverlayProps = {
-  addModelOptions: AddModelOptions;
   ruleSet: RuleOutputSet;
 };
 
-export function RuleBasedOutputs({ addModelOptions, ruleSet }: ColorOverlayProps): ReactElement {
+export function RuleBasedOutputs({ ruleSet }: ColorOverlayProps): ReactElement {
   const cdfClient = useSDK();
 
   const viewer = useReveal();
   console.log(' RULESET', ruleSet);
 
-  const { modelId, revisionId } = addModelOptions;
+  const model = viewer.models[0] as CogniteCadModel;
+  const { modelId, revisionId } = model;
 
   useEffect(() => {
     const checkStringExpressionStatement = (
@@ -204,13 +200,13 @@ export function RuleBasedOutputs({ addModelOptions, ruleSet }: ColorOverlayProps
 
       const ruleWithOutputs = ruleSet.rulesWithOutputs;
 
-      ruleWithOutputs.forEach((ruleWithOutput) => {
+      ruleWithOutputs.forEach((ruleWithOutput: { rule: any; outputs: any; }) => {
         const { rule, outputs } = ruleWithOutput;
         // Starting Expression
         const expression = rule.expression;
 
         const outputSelected = outputs.find(
-          (output) => output.type === outputType
+          (output: { type: string; }) => output.type === outputType
         ) as ColorRuleOutput;
 
         const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
@@ -228,6 +224,7 @@ export function RuleBasedOutputs({ addModelOptions, ruleSet }: ColorOverlayProps
           contextualizedAssetNodes.map(async (assetNode) => {
             const finalGlobalOutputResult = traverseExpression(
               assetNode,
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
               [expression]
               // expression.type
             );
@@ -287,10 +284,6 @@ export function RuleBasedOutputs({ addModelOptions, ruleSet }: ColorOverlayProps
 
       // get the assets with asset info from the asset ids
       const contextualizedAssetNodes = await cdfClient.assets.retrieve(contextualizedAssetIds);
-
-      // get the current model
-      const model = viewer.models[0] as CogniteCadModel;
-      console.log(' model ', model);
 
       // generate rule based coloring
       generateRuleBasedOutputs(model, contextualizedAssetNodes, assetMappings);
