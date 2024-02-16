@@ -64,7 +64,7 @@ function SetFlexibleControlsTypeButton(controlsType: FlexibleControlsType): Reac
   function getTooltip(controlsType: FlexibleControlsType): string {
     switch (controlsType) {
       case FlexibleControlsType.FirstPerson:
-        return translate('MODE_FIRST_PERSON_MODE_TOOLTIP', 'Set Camera to First Person mode');
+        return translate('MODE_FIRST_PERSON_MODE_TOOLTIP', 'Set Camera to Fly mode');
       case FlexibleControlsType.Orbit:
         return translate('MODE_ORBIT_MODE_TOOLTIP', 'Set Camera to Orbit mode');
       case FlexibleControlsType.OrbitInCenter:
@@ -77,7 +77,7 @@ function SetFlexibleControlsTypeButton(controlsType: FlexibleControlsType): Reac
   function getLabel(controlsType: FlexibleControlsType): string {
     switch (controlsType) {
       case FlexibleControlsType.FirstPerson:
-        return translate('MODEL_FIRST_PERSON_LABEL', 'First Person');
+        return translate('MODEL_FIRST_PERSON_LABEL', 'Fly');
       case FlexibleControlsType.Orbit:
         return translate('MODE_ORBIT_LABEL', 'Orbit');
       case FlexibleControlsType.OrbitInCenter:
@@ -93,8 +93,9 @@ function SetFlexibleControlsTypeButton(controlsType: FlexibleControlsType): Reac
         icon={getIcon(controlsType)}
         toggled={selectedValue === controlsType}
         aria-label={getLabel(controlsType)}
-        onClick={onClick}
-      />
+        onClick={onClick}>
+        <span>{getLabel(controlsType)}</span>
+      </Button>
     </CogsTooltip>
   );
 }
