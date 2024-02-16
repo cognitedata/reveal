@@ -9,7 +9,7 @@ import {
   useCameraNavigation,
   RevealTopbar,
   RevealCanvas,
-  DmsUniqueIdentifier
+  type DmsUniqueIdentifier
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useEffect, useState } from 'react';
