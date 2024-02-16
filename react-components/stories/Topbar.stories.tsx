@@ -8,13 +8,15 @@ import {
   useGetCameraStateFromUrlParam,
   useCameraNavigation,
   RevealTopbar,
-  RevealCanvas
+  RevealCanvas,
+  DmsUniqueIdentifier
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useEffect } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
+import { SceneSelectionDropdown } from '../src/components/RevealTopbar/SceneSelectionDropdown';
 
 const meta = {
   title: 'Example/Topbar',
@@ -32,11 +34,23 @@ export const Main: Story = {
   render: ({ addModelOptions }) => (
     <RevealStoryContext color={new Color(0x4a4a4a)}>
       <RevealTopbar />
-      <RevealCanvas />
-      <FitToUrlCameraState />
-      <CadModelContainer addModelOptions={addModelOptions} />
+      <RevealTopbar topbarContent={<TopbarContent />} />
+      <RevealCanvas>
+        <FitToUrlCameraState />
+        <CadModelContainer addModelOptions={addModelOptions} />
+      </RevealCanvas>
     </RevealStoryContext>
   )
+};
+
+const TopbarContent = () => {
+  const [scene, setScene] = useState<DmsUniqueIdentifier>();
+
+  return (
+    <>
+      <SceneSelectionDropdown selectedScene={scene} setSelectedScene={setScene} />
+    </>
+  );
 };
 
 function FitToUrlCameraState(): ReactElement {
