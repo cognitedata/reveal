@@ -7,7 +7,13 @@ export { transformCameraConfiguration } from './src/transformCameraConfiguration
 
 export { RandomColors } from './src/RandomColors';
 export { CameraConfiguration } from './src/CameraConfiguration';
-export { EventTrigger, clickOrTouchEventOffset, InputHandler, disposeOfAllEventListeners } from './src/events';
+export {
+  EventTrigger,
+  clickOrTouchEventOffset,
+  getClickOrTouchEventPoint,
+  InputHandler,
+  disposeOfAllEventListeners
+} from './src/events';
 export {
   DisposedDelegate,
   BeforeSceneRenderedDelegate,
