@@ -2,9 +2,9 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useCallback, useEffect, useState } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 
-import { Button, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
+import { SegmentedControl, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import {
   type CameraManager,
@@ -14,19 +14,17 @@ import {
 
 import { useTranslation } from '../i18n/I18n';
 
-export function SetFlexibleControlsOrbitButton(): ReactElement {
-  return SetFlexibleControlsTypeButton(FlexibleControlsType.Orbit);
+type CustomSettingsProps = {
+  includeOrbitInCenter?: boolean;
+};
+
+export function SetOrbitOrFirstPersonControlsType(): ReactElement {
+  return SetFlexibleControlsType({ includeOrbitInCenter: false });
 }
 
-export function SetFlexibleControlsOrbitInCenterButton(): ReactElement {
-  return SetFlexibleControlsTypeButton(FlexibleControlsType.OrbitInCenter);
-}
-
-export function SetFlexibleControlsFirstPersonButton(): ReactElement {
-  return SetFlexibleControlsTypeButton(FlexibleControlsType.FirstPerson);
-}
-
-function SetFlexibleControlsTypeButton(controlsType: FlexibleControlsType): ReactElement {
+export function SetFlexibleControlsType({
+  includeOrbitInCenter
+}: CustomSettingsProps): ReactElement {
   const viewer = useReveal();
   const manager = asFlexibleCameraManager(viewer.cameraManager);
   const { t: translate } = useTranslation();
@@ -51,51 +49,48 @@ function SetFlexibleControlsTypeButton(controlsType: FlexibleControlsType): Reac
     };
   }, []); // Should only be called once
 
-  const onClick = useCallback((): void => {
-    if (manager !== undefined) {
-      manager.controlsType = controlsType;
-    }
-  }, [manager]);
-
   if (manager === undefined) {
     return <></>;
-  }
-
-  function getTooltip(controlsType: FlexibleControlsType): string {
-    switch (controlsType) {
-      case FlexibleControlsType.FirstPerson:
-        return translate('MODE_FIRST_PERSON_MODE_TOOLTIP', 'Set Camera to Fly mode');
-      case FlexibleControlsType.Orbit:
-        return translate('MODE_ORBIT_MODE_TOOLTIP', 'Set Camera to Orbit mode');
-      case FlexibleControlsType.OrbitInCenter:
-        return translate('MODE_ORBIT_IN_CENTER_TOOLTIP', 'Set Camera to Orbit in Center mode');
-      default:
-        return 'Undefined';
-    }
   }
 
   function getLabel(controlsType: FlexibleControlsType): string {
     switch (controlsType) {
       case FlexibleControlsType.FirstPerson:
-        return translate('MODEL_FIRST_PERSON_LABEL', 'Fly');
+        return translate('CONTROLS_TYPE_FIRST_PERSON', 'Fly');
       case FlexibleControlsType.Orbit:
-        return translate('MODE_ORBIT_LABEL', 'Orbit');
+        return translate('CONTROLS_TYPE_ORBIT', 'Orbit');
       case FlexibleControlsType.OrbitInCenter:
-        return translate('MODE_ORBIT_IN_CENTER_LABEL', 'Center Orbit');
+        return translate('CONTROLS_TYPE_ORBIT_IN_CENTER', 'Center Orbit');
       default:
         return 'Undefined';
     }
   }
+
+  const options = [FlexibleControlsType.Orbit, FlexibleControlsType.FirstPerson];
+  if (includeOrbitInCenter ?? false) {
+    options.push(FlexibleControlsType.OrbitInCenter);
+  }
+
   return (
-    <CogsTooltip content={getTooltip(controlsType)} placement="right" appendTo={document.body}>
-      <Button
-        type="ghost"
-        icon={getIcon(controlsType)}
-        toggled={selectedValue === controlsType}
-        aria-label={getLabel(controlsType)}
-        onClick={onClick}>
-        <span>{getLabel(controlsType)}</span>
-      </Button>
+    <CogsTooltip
+      content={translate('CONTROLS_TYPE_TOOLTIP', 'Set Camera to Orbit or Fly mode')}
+      placement="right"
+      appendTo={document.body}>
+      <SegmentedControl
+        onButtonClicked={(controlsType: FlexibleControlsType) => {
+          if (manager !== undefined) {
+            manager.controlsType = controlsType;
+          }
+          setSelectedValue(controlsType);
+        }}
+        currentKey={selectedValue}
+        fullWidth>
+        {options.map((controlsType) => (
+          <SegmentedControl.Button key={controlsType} icon={getIcon(controlsType)}>
+            {getLabel(controlsType)}
+          </SegmentedControl.Button>
+        ))}
+      </SegmentedControl>
     </CogsTooltip>
   );
 }

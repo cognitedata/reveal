@@ -10,10 +10,7 @@ import { type CustomToolbarContent } from '../RevealToolbar/RevealToolbar';
 import { SettingsButton } from '../RevealToolbar/SettingsButton';
 import { HelpButton } from '../RevealToolbar/HelpButton';
 import { Divider } from '@cognite/cogs.js';
-import {
-  SetFlexibleControlsFirstPersonButton,
-  SetFlexibleControlsOrbitButton
-} from '../RevealToolbar/SetFlexibleControlsTypeButton';
+import { SetOrbitOrFirstPersonControlsType } from '../RevealToolbar/SetFlexibleControlsType';
 
 export type CustomTopbarContent = CustomToolbarContent & { topbarContent?: ReactNode };
 
@@ -23,8 +20,7 @@ const DefaultContentWrapper = (props: CustomTopbarContent): ReactElement => {
       <LayersButton />
       <SlicerButton />
       <FitModelsButton />
-      <SetFlexibleControlsOrbitButton />
-      <SetFlexibleControlsFirstPersonButton />
+      <SetOrbitOrFirstPersonControlsType />
       <Divider weight="1px" length="75%" direction="vertical" />
       <HelpButton />
       <SettingsButton
