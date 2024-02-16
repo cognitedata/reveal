@@ -19,6 +19,7 @@ export type AddImageCollection360EventsOptions = {
 export type AddImageCollection360DatamodelsOptions = {
   externalId: string;
   space: string;
+  transform?: Matrix4;
 };
 
 export type FdmPropertyType<NodeType> = Record<string, Record<string, NodeType>>;
