@@ -454,10 +454,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       moveCameraTo(this, position, target, this.options.animationDuration);
       return;
     }
-    // If not particular object is picked, set camera position half way to the edge of the modelsBoundingBox
+    // If not particular object is picked, move the camera position towards the edge of the modelsBoundingBox
+    const movePercentage = 0.33;
     const newTarget = this.getTargetByBoundingBox(event.offsetX, event.offsetY, raycastResult.modelsBoundingBox);
     const newPosition = new Vector3().subVectors(newTarget, this.camera.position);
-    newPosition.divideScalar(2);
+    newPosition.multiplyScalar(movePercentage);
     newPosition.add(this.camera.position);
     moveCameraTo(this, newPosition, newTarget, this.options.animationDuration);
   }
