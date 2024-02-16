@@ -4,6 +4,7 @@
 
 import { Scene, Object3D, Vector3, Sprite, SpriteMaterial, CanvasTexture } from 'three';
 import { FlexibleCameraManager } from './FlexibleCameraManager';
+import { FlexibleControlsType } from './FlexibleControlsType';
 
 const RELATIVE_MARKER_SIZE = 0.02;
 const OUTER_COLOR = '#FF2222';
@@ -26,7 +27,7 @@ export class FlexibleCameraMarkers {
   //================================================
 
   public update(manager: FlexibleCameraManager): void {
-    if (manager.options.showTarget) {
+    if (manager.options.showTarget && manager.options.controlsType !== FlexibleControlsType.FirstPerson) {
       if (!this._targetMarker) {
         this._targetMarker = createSprite(OUTER_COLOR, INNER_COLOR);
         this._scene.add(this._targetMarker);

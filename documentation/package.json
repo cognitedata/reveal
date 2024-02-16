@@ -34,7 +34,7 @@
     "clsx": "2.1.0",
     "cross-env": "7.0.3",
     "ieee754": "1.2.1",
-    "query-string": "8.1.0",
+    "query-string": "8.2.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "styled-components": "5.3.11"
