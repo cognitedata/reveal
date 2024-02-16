@@ -4,7 +4,12 @@
 import { useEffect, type ReactElement } from 'react';
 
 import { type IdEither, type AssetMapping3D, type CogniteClient, type Asset } from '@cognite/sdk';
-import { type CogniteCadModel, TreeIndexNodeCollection } from '@cognite/reveal';
+import {
+  type CogniteCadModel,
+  TreeIndexNodeCollection,
+  DefaultNodeAppearance,
+  NodeAppearance
+} from '@cognite/reveal';
 import { useReveal } from '../..';
 import { Color } from 'three';
 import {
@@ -20,7 +25,7 @@ import {
 import { useSDK } from '../RevealCanvas/SDKProvider';
 
 export type ColorOverlayProps = {
-  ruleSet: RuleOutputSet;
+  ruleSet: RuleOutputSet | undefined;
 };
 
 export function RuleBasedOutputs({ ruleSet }: ColorOverlayProps): ReactElement {
@@ -30,6 +35,17 @@ export function RuleBasedOutputs({ ruleSet }: ColorOverlayProps): ReactElement {
   console.log(' RULESET', ruleSet);
 
   const model = viewer.models[0] as CogniteCadModel;
+
+  // with no rule selected, return to the default appearance
+  if (ruleSet === undefined) {
+    model.removeAllStyledNodeCollections();
+
+    model.setDefaultNodeAppearance({
+      color: new Color('#efefef')
+    });
+    return <></>;
+  }
+
   const { modelId, revisionId } = model;
 
   useEffect(() => {
@@ -198,15 +214,15 @@ export function RuleBasedOutputs({ ruleSet }: ColorOverlayProps): ReactElement {
         ruleOutputParams: RuleOutput;
       };
 
-      const ruleWithOutputs = ruleSet.rulesWithOutputs;
+      const ruleWithOutputs = ruleSet?.rulesWithOutputs;
 
-      ruleWithOutputs.forEach((ruleWithOutput: { rule: any; outputs: any; }) => {
+      ruleWithOutputs?.forEach((ruleWithOutput: { rule: any; outputs: any }) => {
         const { rule, outputs } = ruleWithOutput;
         // Starting Expression
         const expression = rule.expression;
 
         const outputSelected = outputs.find(
-          (output: { type: string; }) => output.type === outputType
+          (output: { type: string }) => output.type === outputType
         ) as ColorRuleOutput;
 
         const ruleOutputAndStyleIndex: RuleAndStyleIndex = {

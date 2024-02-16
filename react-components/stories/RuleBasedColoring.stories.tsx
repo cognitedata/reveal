@@ -3,14 +3,14 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { RevealContainer, Reveal3DResources, type AddResourceOptions, RevealTopbar } from '../src';
+import { Reveal3DResources, RevealTopbar, RevealCanvas } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useState } from 'react';
+import { useState } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
-import { RuleBasedOutputsContainer } from '../src/components/RevealToolbar/RuleBasedOutputsContainer';
+import { RuleBasedOutputsContainer } from '../src/components/RevealTopbar/RuleBasedOutputsContainer';
+import { RevealStoryContext } from './utilities/RevealStoryContainer';
 
 const meta = {
   title: 'Example/RuleBasedColoring',
@@ -38,26 +38,18 @@ export const Main: Story = {
     ]
   },
   render: ({ resources }) => {
+    const [resourceIsLoaded, setResourceIsLoaded] = useState<boolean>(false);
+
+    const onLoaded = (): void => {
+      setResourceIsLoaded(true);
+    };
+
     return (
-      <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-        <StoryContent resources={resources} />
-        <ReactQueryDevtools />
-      </RevealContainer>
+      <RevealStoryContext color={new Color(0x4a4a4a)}>
+        {resourceIsLoaded && <RevealTopbar topbarContent={<RuleBasedOutputsContainer />} />}
+        <RevealCanvas />
+        <RevealResourcesFitCameraOnLoad onResourcesAdded={onLoaded} resources={resources} />
+      </RevealStoryContext>
     );
   }
-};
-
-const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
-  const [resourceIsLoaded, setResourceIsLoaded] = useState<boolean>(false);
-
-  const onLoaded = (): void => {
-    setResourceIsLoaded(true);
-  };
-
-  return (
-    <>
-      <RevealResourcesFitCameraOnLoad onResourcesAdded={onLoaded} resources={resources} />
-      {resourceIsLoaded && <RevealTopbar topbarContent={<RuleBasedOutputsContainer />} />}
-    </>
-  );
 };
