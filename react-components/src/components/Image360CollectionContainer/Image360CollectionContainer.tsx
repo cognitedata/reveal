@@ -7,15 +7,21 @@ import { type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type AddImageCollection360Options } from '../..';
 import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
+import {
+  type ImageCollectionModelStyling,
+  useApply360AnnotationStyling
+} from './useApply360AnnotationStyling';
 
 type Image360CollectionContainerProps = {
   collectionId: { siteId: string } | { externalId: string; space: string };
+  styling?: ImageCollectionModelStyling;
   onLoad?: (image360: Image360Collection) => void;
   onLoadError?: (addOptions: AddImageCollection360Options, error: any) => void;
 };
 
 export function Image360CollectionContainer({
   collectionId,
+  styling,
   onLoad,
   onLoadError
 }: Image360CollectionContainerProps): ReactElement {
@@ -39,6 +45,10 @@ export function Image360CollectionContainer({
     void add360Collection();
     return remove360Collection;
   }, [collectionId]);
+
+  if (modelRef.current !== undefined && styling !== undefined) {
+    useApply360AnnotationStyling(modelRef.current, styling);
+  }
 
   return <></>;
 

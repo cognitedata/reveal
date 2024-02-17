@@ -20,7 +20,12 @@ import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
 import { useCalculatePointCloudStyling } from '../../hooks/useCalculatePointCloudModelsStyling';
 import { type PointCloudModelStyling } from '../PointCloudContainer/useApplyPointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
+import {
+  isAssetMappingStylingGroup,
+  isFdmAssetStylingGroup,
+  isImage30AssetStylingGroup
+} from '../../utilities/StylingGroupUtils';
+import { useCalculateImage360Styling } from '../../hooks/useCalculateImage360Styling';
 
 export const Reveal3DResources = ({
   resources,
@@ -53,7 +58,7 @@ export const Reveal3DResources = ({
 
   const styledCadModelOptions = useCalculateCadStyling(
     cadModelOptions,
-    instanceStyling ?? EMPTY_ARRAY,
+    instanceStyling?.filter(isFdmAssetStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
   );
 
@@ -68,6 +73,14 @@ export const Reveal3DResources = ({
     else if ('externalId' in resource) return resource.externalId !== undefined;
     return false;
   });
+
+  const styledImage360Collections = useCalculateImage360Styling(
+    instanceStyling?.filter(isImage30AssetStylingGroup) ?? EMPTY_ARRAY
+  );
+  const styledImage360AddOptions = {
+    addOptions: image360CollectionAddOptions,
+    styleGroups: styledImage360Collections
+  };
 
   const onModelLoaded = (): void => {
     onModelFailOrSucceed();
