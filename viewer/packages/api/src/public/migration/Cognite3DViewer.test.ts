@@ -222,7 +222,7 @@ describe('Cognite3DViewer', () => {
     // Create 10 custom objects
     const customObjects: CustomObject[] = [];
     for (let i = 0; i < 10; i++) {
-      const obj = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
+      const obj = new THREE.Mesh(new THREE.SphereGeometry(i), new THREE.MeshBasicMaterial());
       customObjects.push(new CustomObject(obj));
     }
     // Add them to the viewer

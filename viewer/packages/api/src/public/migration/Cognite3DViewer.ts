@@ -1715,7 +1715,6 @@ export class Cognite3DViewer {
       if (bbox.isEmpty()) {
         return;
       }
-      // Todo: Mark some of the object not to be included in the bounding box
       combinedBbox.union(bbox);
     });
   }
