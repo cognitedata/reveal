@@ -345,6 +345,7 @@ export class Cognite3DViewer {
         [key: string]: string;
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
     addCadModel(options: AddModelOptions): Promise<CogniteCadModel>;
+    // @beta
     addCustomObject(customObject: CustomObject): void;
     addModel(options: AddModelOptions): Promise<CogniteModel>;
     addObject3D(object: THREE_2.Object3D): void;
@@ -398,6 +399,7 @@ export class Cognite3DViewer {
     // @deprecated
     remove360Images(...image360Entities: Image360[]): Promise<void>;
     remove360ImageSet(imageCollection: Image360Collection): void;
+    // @beta
     removeCustomObject(customObject: CustomObject): void;
     removeModel(model: CogniteModel): void;
     removeObject3D(object: THREE_2.Object3D): void;
@@ -669,7 +671,7 @@ export enum Corner {
     TopRight = 0
 }
 
-// @public
+// @beta
 export class CustomObject {
     constructor(object: Object3D);
     isPartOfBoundingBox: boolean;
