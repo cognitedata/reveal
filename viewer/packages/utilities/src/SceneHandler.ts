@@ -74,8 +74,6 @@ export class SceneHandler {
       const customObject = this._customObjects.find(customObject => customObject.object === object);
       if (customObject) {
         this.removeCustomObject(customObject);
-      } else {
-        this.scene.remove(object);
       }
     }
   }

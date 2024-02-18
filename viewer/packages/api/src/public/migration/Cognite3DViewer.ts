@@ -1064,6 +1064,7 @@ export class Cognite3DViewer {
    * customObject.isPartOfBoundingBox = false;
    * viewer.addCustomObject(customObject);
    * ```
+   * @beta
    */
   addCustomObject(customObject: CustomObject): void {
     if (this.isDisposed) {
@@ -1106,6 +1107,7 @@ export class Cognite3DViewer {
    * viewer.addCustomObject(sphere);
    * viewer.removeCustomObject(sphere);
    * ```
+   * @beta
    */
   removeCustomObject(customObject: CustomObject): void {
     if (this.isDisposed) {
