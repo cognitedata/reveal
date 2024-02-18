@@ -63,6 +63,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
 
       const customObject = new CustomObject(mesh);
       customObject.isPartOfBoundingBox = false;
+      customObject.shouldPick = true;
       viewer.addCustomObject(customObject);
 
       groundMeshes.push(customObject);
