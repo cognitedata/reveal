@@ -17,6 +17,7 @@ import { IdEither } from '@cognite/sdk';
 import { ListResponse } from '@cognite/sdk';
 import { Matrix4 } from 'three';
 import { Node3D } from '@cognite/sdk';
+import { Object3D } from 'three';
 import { OrthographicCamera } from 'three';
 import { PerspectiveCamera } from 'three';
 import { Quaternion } from 'three';
@@ -344,6 +345,7 @@ export class Cognite3DViewer {
         [key: string]: string;
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
     addCadModel(options: AddModelOptions): Promise<CogniteCadModel>;
+    addCustomObject(customObject: CustomObject): void;
     addModel(options: AddModelOptions): Promise<CogniteModel>;
     addObject3D(object: THREE_2.Object3D): void;
     addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel>;
@@ -396,6 +398,7 @@ export class Cognite3DViewer {
     // @deprecated
     remove360Images(...image360Entities: Image360[]): Promise<void>;
     remove360ImageSet(imageCollection: Image360Collection): void;
+    removeCustomObject(customObject: CustomObject): void;
     removeModel(model: CogniteModel): void;
     removeObject3D(object: THREE_2.Object3D): void;
     get renderParameters(): RenderParameters;
@@ -664,6 +667,13 @@ export enum Corner {
     TopLeft = 1,
     // (undocumented)
     TopRight = 0
+}
+
+// @public
+export class CustomObject {
+    constructor(object: Object3D);
+    isPartOfBoundingBox: boolean;
+    get object(): Object3D;
 }
 
 // @public

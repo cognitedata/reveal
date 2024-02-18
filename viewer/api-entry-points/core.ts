@@ -66,6 +66,7 @@ export {
   PointerEventDelegate,
   PointerEventData,
   DisposedDelegate,
+  CustomObject,
   CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 

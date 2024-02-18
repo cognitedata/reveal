@@ -69,6 +69,8 @@ export { DeferredPromise } from './src/DeferredPromise';
 
 export { SceneHandler } from './src/SceneHandler';
 
+export { CustomObject } from './src/CustomObject';
+
 export { CDF_TO_VIEWER_TRANSFORMATION } from './src/constants';
 
 export * from './src/workers/workerize-transferable';

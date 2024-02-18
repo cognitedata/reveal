@@ -83,7 +83,7 @@ import {
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
-import { getNormalizedPixelCoordinates } from '@reveal/utilities';
+import { getNormalizedPixelCoordinates, CustomObject } from '@reveal/utilities';
 import { FlexibleCameraManager } from '@reveal/camera-manager';
 
 type Cognite3DViewerEvents =
@@ -1052,6 +1052,32 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Add a CustomObject to the viewer.
+   * @param customObject
+   * @example
+   * ```js
+   * const sphere = new THREE.Mesh(
+   * new THREE.SphereGeometry(),
+   * new THREE.MeshBasicMaterial()
+   * );
+   * const customObject = CustomObject(sphere);
+   * customObject.isPartOfBoundingBox = false;
+   * viewer.addCustomObject(customObject);
+   * ```
+   */
+  addCustomObject(customObject: CustomObject): void {
+    if (this.isDisposed) {
+      return;
+    }
+    customObject.object.updateMatrixWorld(true);
+    this._sceneHandler.addCustomObject(customObject);
+    this.revealManager.requestRedraw();
+    if (customObject.isPartOfBoundingBox) {
+      this.recalculateBoundingBox();
+    }
+  }
+
+  /**
    * Remove a THREE.Object3D from the viewer.
    * @param object
    * @example
@@ -1068,6 +1094,28 @@ export class Cognite3DViewer {
     this._sceneHandler.removeCustomObject(object);
     this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
+  }
+
+  /**
+   * Remove a CustomObject from the viewer.
+   * @param customObject
+   * @example
+   * ```js
+   * const sphere = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
+   * const customObject = CustomObject(sphere);
+   * viewer.addCustomObject(sphere);
+   * viewer.removeCustomObject(sphere);
+   * ```
+   */
+  removeCustomObject(customObject: CustomObject): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this._sceneHandler.removeCustomObject(customObject);
+    this.revealManager.requestRedraw();
+    if (customObject.isPartOfBoundingBox) {
+      this.recalculateBoundingBox();
+    }
   }
 
   /**
@@ -1659,11 +1707,11 @@ export class Cognite3DViewer {
         combinedBbox.union(bbox);
       }
     });
-    this._sceneHandler.customObjects.forEach(obj => {
-      if (obj.name === 'CogniteGroundPlane') {
+    this._sceneHandler.customObjects.forEach(customObject => {
+      if (!customObject.isPartOfBoundingBox) {
         return;
       }
-      bbox.setFromObject(obj);
+      bbox.setFromObject(customObject.object);
       if (bbox.isEmpty()) {
         return;
       }
