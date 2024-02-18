@@ -85,6 +85,7 @@ import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
 import { getNormalizedPixelCoordinates, CustomObject } from '@reveal/utilities';
 import { FlexibleCameraManager } from '@reveal/camera-manager';
+import { CustomObjectIntersectInput } from '@reveal/utilities/src/customObject/CustomObjectIntersectInput';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -1680,6 +1681,42 @@ export class Cognite3DViewer {
   ): Promise<CameraManagerCallbackData> {
     const intersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
 
+    const normalizedCoords = getNormalizedPixelCoordinates(this.domElement, offsetX, offsetY);
+
+    const result: CameraManagerCallbackData = {
+      intersection,
+      modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox,
+      pickedBoundingBox: undefined
+    };
+
+    let closestDistanceToCamera = result.intersection?.distanceToCamera ?? undefined;
+    let customObjectIntersectInput: CustomObjectIntersectInput | undefined = undefined; // Lazy creation for speed
+
+    this._sceneHandler.customObjects.forEach(customObject => {
+      if (!customObject.shouldPick) {
+        return;
+      }
+      if (!customObjectIntersectInput) {
+        customObjectIntersectInput = new CustomObjectIntersectInput(
+          normalizedCoords,
+          this.cameraManager.getCamera(),
+          this.getGlobalClippingPlanes()
+        );
+      }
+      const customObjectIntersection = customObject.intersectIfCloser(
+        customObjectIntersectInput,
+        closestDistanceToCamera
+      );
+      if (!customObjectIntersection) {
+        return;
+      }
+      closestDistanceToCamera = customObjectIntersection.distanceToCamera;
+      result.intersection = customObjectIntersection;
+      if (pickBoundingBox) {
+        result.pickedBoundingBox = customObjectIntersection.boundingBox;
+      }
+    });
+
     const getBoundingBox = async (intersection: Intersection | null): Promise<THREE.Box3 | undefined> => {
       if (intersection?.type !== 'cad') {
         return undefined;
@@ -1688,9 +1725,10 @@ export class Cognite3DViewer {
       const treeIndex = intersection.treeIndex;
       return model.getBoundingBoxByTreeIndex(treeIndex);
     };
-
-    const pickedBoundingBox = pickBoundingBox ? await getBoundingBox(intersection) : undefined;
-    return { intersection, pickedBoundingBox, modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox };
+    if (pickBoundingBox && !result.pickedBoundingBox) {
+      result.pickedBoundingBox = await getBoundingBox(intersection);
+    }
+    return result;
   }
 
   /** @private */

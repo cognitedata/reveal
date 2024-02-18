@@ -20,8 +20,11 @@ import { Node3D } from '@cognite/sdk';
 import { Object3D } from 'three';
 import { OrthographicCamera } from 'three';
 import { PerspectiveCamera } from 'three';
+import { Plane } from 'three';
 import { Quaternion } from 'three';
+import { Raycaster } from 'three';
 import * as THREE_2 from 'three';
+import { Vector2 } from 'three';
 import { Vector3 } from 'three';
 
 // @public
@@ -674,8 +677,42 @@ export enum Corner {
 // @beta
 export class CustomObject {
     constructor(object: Object3D);
-    isPartOfBoundingBox: boolean;
+    intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
+    get isPartOfBoundingBox(): boolean;
+    set isPartOfBoundingBox(value: boolean);
     get object(): Object3D;
+    get shouldPick(): boolean;
+    set shouldPick(value: boolean);
+    get shouldPickBoundingBox(): boolean;
+    set shouldPickBoundingBox(value: boolean);
+}
+
+// @beta
+export class CustomObjectIntersectInput {
+    constructor(normalizedCoords: Vector2, camera: PerspectiveCamera, clippingPlanes: Plane[]);
+    // (undocumented)
+    readonly camera: PerspectiveCamera;
+    // (undocumented)
+    readonly clippingPlanes: Plane[] | null;
+    // (undocumented)
+    isVisible(point: Vector3): boolean;
+    // (undocumented)
+    readonly normalizedCoords: Vector2;
+    // (undocumented)
+    readonly raycaster: Raycaster;
+}
+
+// @beta
+export class CustomObjectIntersection {
+    constructor(customObject: CustomObject, point: Vector3, distanceToCamera: number);
+    // (undocumented)
+    boundingBox: Box3 | undefined;
+    // (undocumented)
+    readonly customObject: CustomObject;
+    // (undocumented)
+    distanceToCamera: number;
+    // (undocumented)
+    readonly point: Vector3;
 }
 
 // @public

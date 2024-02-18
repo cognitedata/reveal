@@ -18,7 +18,7 @@ import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import { SettableRenderTarget } from '../rendering/SettableRenderTarget';
-import { CustomObject } from '@reveal/utilities/src/CustomObject';
+import { CustomObject } from '@reveal/utilities/src/customObject/CustomObject';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
   private readonly _viewerScene: THREE.Scene;

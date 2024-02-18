@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import remove from 'lodash/remove';
-import { CustomObject } from './CustomObject';
+import { CustomObject } from './customObject/CustomObject';
 
 export class SceneHandler {
   private readonly _scene: THREE.Scene;
