@@ -11,7 +11,8 @@ import { Object3D } from 'three';
 export class CustomObject {
   private readonly _object: Object3D;
   /**
-   * Set or get whether it should be part of the combined bounding box or not
+   * Set or get whether it should be part of the combined bounding box or not.
+   * Default is true.
    */
   isPartOfBoundingBox: boolean = true;
 
