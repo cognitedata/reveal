@@ -69,6 +69,9 @@ export type SceneConfigurationProperties = {
   cameraEulerRotationX: number;
   cameraEulerRotationY: number;
   cameraEulerRotationZ: number;
+  cameraTargetX?: number;
+  cameraTargetY?: number;
+  cameraTargetZ?: number;
 };
 
 export type SkyboxProperties = {
