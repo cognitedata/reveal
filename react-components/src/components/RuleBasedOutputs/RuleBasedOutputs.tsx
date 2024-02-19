@@ -24,17 +24,17 @@ export function RuleBasedOutputs({ ruleSet }: ColorOverlayProps): ReactElement |
 
   const models = viewer.models;
 
-  // with no rule selected, return to the default appearance
-  if (ruleSet === undefined) {
-    models.forEach((model) => {
-      const currentModel = model as CogniteCadModel;
-      currentModel.removeAllStyledNodeCollections();
+  // clean up the appearance
+  models.forEach((model) => {
+    const currentModel = model as CogniteCadModel;
+    currentModel.removeAllStyledNodeCollections();
 
-      currentModel.setDefaultNodeAppearance({
-        color: new Color('#efefef')
-      });
+    currentModel.setDefaultNodeAppearance({
+      color: new Color('#efefef')
     });
+  });
 
+  if (ruleSet === undefined) {
     return <></>;
   }
 
@@ -67,7 +67,7 @@ export function RuleBasedOutputs({ ruleSet }: ColorOverlayProps): ReactElement |
     models.forEach((model) => {
       void getContextualization(model as CogniteCadModel);
     });
-  }, []);
+  }, [ruleSet]);
 
   return <></>;
 }

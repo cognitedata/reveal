@@ -232,7 +232,8 @@ export const generateRuleBasedOutputs = (
             color: new Color(outputSelected.fill)
           });
         }
-        console.log(' ASSET ', assetNode, finalGlobalOutputResult);
+        // debug
+        // console.log(' ASSET ', assetNode, finalGlobalOutputResult);
       })
     );
 

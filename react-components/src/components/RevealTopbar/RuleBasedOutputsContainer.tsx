@@ -9,7 +9,7 @@ import { RuleBasedOutputs } from '../RuleBasedOutputs/RuleBasedOutputs';
 import { RULE_BASED_OUTPUTS_VIEW } from '../RuleBasedOutputs/constants';
 import { FdmSDK } from '../../utilities/FdmSDK';
 import { useSDK } from '../RevealCanvas/SDKProvider';
-import { RuleAndEnabled } from '../RuleBasedOutputs/types';
+import { type RuleAndEnabled } from '../RuleBasedOutputs/types';
 
 export const RuleBasedOutputsContainer = (): ReactElement => {
   const [ruleInstances, setRuleInstances] = useState<RuleAndEnabled[]>();
@@ -29,7 +29,6 @@ export const RuleBasedOutputsContainer = (): ReactElement => {
         }
       };
       const result = await fdmSdk.filterAllInstances(filter, 'node', RULE_BASED_OUTPUTS_VIEW);
-      console.log(' RULE MODEL ', result);
 
       const rulesAndEnabled: RuleAndEnabled[] = [];
       result.instances.forEach((instance) => {
@@ -50,7 +49,6 @@ export const RuleBasedOutputsContainer = (): ReactElement => {
   }, [ruleInstances]);
 
   const onChange = (data: { target: { id: any; checked: boolean } }): void => {
-    console.log(' SWITCH ', data);
     ruleInstances?.forEach((item) => {
       item.isEnabled = false;
     });
