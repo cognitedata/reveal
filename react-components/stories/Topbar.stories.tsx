@@ -49,7 +49,7 @@ const TopbarContent = (): JSX.Element => {
   return (
     <>
       <SceneSelectionDropdown selectedScene={scene} setSelectedScene={setScene} />
-      <RevealToolbar.LayersButton storeStateInUrl={false} />
+      <RevealToolbar.LayersButton storeStateInUrl={true} />
       <RevealToolbar.HelpButton />
     </>
   );
