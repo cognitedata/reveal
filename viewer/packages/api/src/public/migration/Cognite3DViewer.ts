@@ -287,7 +287,7 @@ export class Cognite3DViewer {
 
     const useFlexibleCameraManager = options.useFlexibleCameraManager ?? false;
     const initialActiveCameraManager =
-      options.cameraManager ?? useFlexibleCameraManager
+      options.cameraManager ?? (useFlexibleCameraManager
         ? new FlexibleCameraManager(
             this._domElement,
             this._mouseHandler,
@@ -300,7 +300,7 @@ export class Cognite3DViewer {
             this._mouseHandler,
             this.modelIntersectionCallback.bind(this),
             undefined
-          );
+          ));
 
     this._activeCameraManager = new ProxyCameraManager(initialActiveCameraManager);
 
