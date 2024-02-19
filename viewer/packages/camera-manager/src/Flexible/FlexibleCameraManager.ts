@@ -188,6 +188,15 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   }
 
   public update(deltaTime: number, boundingBox: Box3): void {
+    // If the camera haven't set the position and target before, do it now
+    if (!this.controls.isInitialized) {
+      const { position, target } = fitCameraToBoundingBox(this.camera, boundingBox, 2);
+      this.setPositionAndTarget(position, target);
+      this.controls.isInitialized = true;
+      console.log('update init');
+    }
+    console.log('update');
+
     if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
       this._nearAndFarNeedsUpdate = false;
       this._currentBoundingBox.copy(boundingBox);
