@@ -123,7 +123,7 @@ const traverseExpression = (asset: Asset, expressions: Expression[]): boolean[] 
       }
       case 'not': {
         const operatorResult = traverseExpression(asset, [expression.expression]);
-        expressionResult = !operatorResult[0]; // TODO: make the not operator
+        expressionResult = !operatorResult[0];
         break;
       }
       case 'numericExpression': {
