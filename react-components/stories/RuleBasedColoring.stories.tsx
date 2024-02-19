@@ -6,7 +6,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealTopbar, RevealCanvas } from '../src';
 import { Color } from 'three';
 import { useState } from 'react';
-import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
 import { RuleBasedOutputsContainer } from '../src/components/RevealTopbar/RuleBasedOutputsContainer';
@@ -20,8 +19,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-const sdk = createSdkByUrlToken();
 
 export const Main: Story = {
   args: {
