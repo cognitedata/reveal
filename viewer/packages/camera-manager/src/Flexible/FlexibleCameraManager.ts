@@ -449,7 +449,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       moveCameraTo(this, position, target, this.options.animationDuration);
       return;
     }
-    // If not particular bounding box is found, create it by camera distance
+    // If no particular bounding box is found, create it by camera distance
     // This happen when picking at a point clouds
     if (raycastResult.intersection?.point) {
       const point = raycastResult.intersection.point;
