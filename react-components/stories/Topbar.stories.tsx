@@ -43,7 +43,7 @@ export const Main: Story = {
   )
 };
 
-const TopbarContent = (): JSX.Element => {
+const TopbarContent = (): ReactElement => {
   const [scene, setScene] = useState<DmsUniqueIdentifier>();
 
   return (
