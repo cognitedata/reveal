@@ -60,7 +60,6 @@ const RevealTopbarContainer = ({
 };
 
 export const RevealTopbar = RevealTopbarContainer as typeof RevealTopbarContainer & {
-
   SetFlexibleControlsType: typeof SetFlexibleControlsType;
   SetOrbitOrFistPersonControlsType: typeof SetOrbitOrFirstPersonControlsType;
   SceneSelectionDropdown: typeof SceneSelectionDropdown;
