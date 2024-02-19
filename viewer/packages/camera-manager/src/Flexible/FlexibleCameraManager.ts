@@ -193,10 +193,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       const { position, target } = fitCameraToBoundingBox(this.camera, boundingBox, 2);
       this.setPositionAndTarget(position, target);
       this.controls.isInitialized = true;
-      console.log('update init');
     }
-    console.log('update');
-
     if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
       this._nearAndFarNeedsUpdate = false;
       this._currentBoundingBox.copy(boundingBox);
