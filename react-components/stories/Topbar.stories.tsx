@@ -51,7 +51,7 @@ const TopbarContent = (): ReactElement => {
   return (
     <>
       <SceneSelectionDropdown selectedScene={scene} setSelectedScene={setScene} />
-      <RevealTopbar.SetOrbitOrFistPersonControlsType orientation="vertical" />
+      <RevealTopbar.SetOrbitOrFistPersonControlsType orientation="horizontal" />
       <RevealToolbar.LayersButton storeStateInUrl={true} />
       <RevealToolbar.HelpButton />
     </>

@@ -77,7 +77,7 @@ export function SetFlexibleControlsType({
     translateDelegate: translate
   };
 
-  return orientation ?? 'vertical' === 'vertical' ? (
+  return (orientation ?? 'vertical') === 'horizontal' ? (
     <SegmentedControlTypeSelector {...controlsTypeParameters} />
   ) : (
     <ButtonsControlTypeSelector {...controlsTypeParameters} />
