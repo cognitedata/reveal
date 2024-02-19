@@ -3,11 +3,17 @@
  */
 
 import { type NumericRange } from '@cognite/reveal';
+import { type EdgeItem } from '../../utilities/FdmSDK';
 
 export type NodeAndRange = {
   treeIndex: number;
   nodeId: number;
   subtreeRange: NumericRange;
+};
+
+export type RuleAndEnabled = {
+  isEnabled: boolean;
+  rule: EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>;
 };
 
 // =========== RULE BASED OUTPUT DATA MODEL

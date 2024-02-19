@@ -9,9 +9,10 @@ import { RuleBasedOutputs } from '../RuleBasedOutputs/RuleBasedOutputs';
 import { RULE_BASED_OUTPUTS_VIEW } from '../RuleBasedOutputs/constants';
 import { FdmSDK } from '../../utilities/FdmSDK';
 import { useSDK } from '../RevealCanvas/SDKProvider';
+import { RuleAndEnabled } from '../RuleBasedOutputs/types';
 
 export const RuleBasedOutputsContainer = (): ReactElement => {
-  const [ruleInstances, setRuleInstances] = useState<any>();
+  const [ruleInstances, setRuleInstances] = useState<RuleAndEnabled[]>();
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<any>();
   const sdk = useSDK();
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
@@ -29,7 +30,16 @@ export const RuleBasedOutputsContainer = (): ReactElement => {
       };
       const result = await fdmSdk.filterAllInstances(filter, 'node', RULE_BASED_OUTPUTS_VIEW);
       console.log(' RULE MODEL ', result);
-      setRuleInstances(result.instances);
+
+      const rulesAndEnabled: RuleAndEnabled[] = [];
+      result.instances.forEach((instance) => {
+        rulesAndEnabled.push({
+          isEnabled: false,
+          rule: instance
+        });
+      });
+
+      setRuleInstances(rulesAndEnabled);
     };
 
     void getAllInstances();
@@ -39,12 +49,21 @@ export const RuleBasedOutputsContainer = (): ReactElement => {
     console.log(' rule instances ', ruleInstances);
   }, [ruleInstances]);
 
-  const onChange = (data): void => {
+  const onChange = (data: { target: { id: any; checked: boolean } }): void => {
     console.log(' SWITCH ', data);
-    const selectedRule = ruleInstances.find((instance: { properties: { id: string } }) => {
-      return instance.properties.id === data.target.id && data.target.checked === true;
+    ruleInstances?.forEach((item) => {
+      item.isEnabled = false;
     });
+    const selectedRule = ruleInstances?.find((item) => {
+      return item.rule.properties.id === data.target.id && data.target.checked;
+    });
+
+    setRuleInstances(ruleInstances);
     setCurrentRuleSetEnabled(selectedRule);
+
+    if (selectedRule === undefined) return;
+    selectedRule.isEnabled = data.target.checked;
+
   };
 
   return (
@@ -60,30 +79,28 @@ export const RuleBasedOutputsContainer = (): ReactElement => {
               marginBottom: '20px'
             }}>
             <Menu.Header>Select The RuleSet</Menu.Header>
-            {ruleInstances?.map(
-              (rule: {
-                properties: {
-                  id: string | undefined;
-                  name: string | undefined;
-                };
-              }) => (
-                <Menu.Item key={rule.properties.id}>
-                  <Flex justifyContent="space-between" alignItems="center" gap={8}>
-                    <Flex gap={4} alignItems="center">
-                      <Icon type="ColorPalette" />
-                      {rule.properties.name}
-                    </Flex>
-                    <Switch id={rule.properties.id} name={rule.properties.id} onChange={onChange} />
+            {ruleInstances?.map((item) => (
+              <Menu.Item key={item.rule.properties.id}>
+                <Flex justifyContent="space-between" alignItems="center" gap={8}>
+                  <Flex gap={4} alignItems="center">
+                    <Icon type="ColorPalette" />
+                    {item.rule.properties.name}
                   </Flex>
-                </Menu.Item>
-              )
-            )}
+                  <Switch
+                    checked={item.isEnabled}
+                    id={item.rule.properties.id}
+                    name={item.rule.properties.id}
+                    onChange={onChange}
+                  />
+                </Flex>
+              </Menu.Item>
+            ))}
           </Menu>
         }>
         <Button icon="ChevronDown" aria-label="Select RuleSet" type="ghost" />
       </Dropdown>
-      {ruleInstances?.length > 0 && (
-        <RuleBasedOutputs ruleSet={currentRuleSetEnabled?.properties} />
+      {ruleInstances !== undefined && ruleInstances?.length > 0 && (
+        <RuleBasedOutputs ruleSet={currentRuleSetEnabled?.rule.properties} />
       )}
     </>
   );
