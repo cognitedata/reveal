@@ -18,7 +18,6 @@ import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForSc
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { SceneSelectionDropdown } from '../src/components/RevealTopbar/SceneSelectionDropdown';
-import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
 
 const meta = {
   title: 'Example/Topbar',

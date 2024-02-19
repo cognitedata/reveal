@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useEffect, useState, SetStateAction, useCallback } from 'react';
+import { type ReactElement, useEffect, useState, useCallback } from 'react';
 
 import { SegmentedControl, Tooltip as CogsTooltip, type IconType, Button } from '@cognite/cogs.js';
 import { useReveal } from '../RevealCanvas/ViewerContext';
@@ -87,7 +87,7 @@ export function SetFlexibleControlsType({
 const useListenToCameraManagerUpdate = (
   cameraManager: IFlexibleCameraManager | undefined,
   setSelectedControlsType: (controlsType: FlexibleControlsType) => void
-) => {
+): void => {
   useEffect(() => {
     if (cameraManager === undefined) {
       return;
@@ -111,20 +111,23 @@ const ButtonsControlTypeSelector = ({
   selectedControlsType,
   setSelectedControlsType,
   translateDelegate
-}: ControlTypeSelectionProps) => {
+}: ControlTypeSelectionProps): ReactElement => {
   return (
     <ButtonsContainer>
       {options.map((controlType) => (
         <CogsTooltip
           content={getLabel(translateDelegate, controlType)}
           placement="right"
-          appendTo={document.body}>
+          appendTo={document.body}
+          key={controlType}>
           <Button
             type="ghost"
             icon={getIcon(controlType)}
             toggled={selectedControlsType === controlType}
             aria-label={getLabel(translateDelegate, controlType)}
-            onClick={() => setSelectedControlsType(controlType)}></Button>
+            onClick={() => {
+              setSelectedControlsType(controlType);
+            }}></Button>
         </CogsTooltip>
       ))}
     </ButtonsContainer>
@@ -136,15 +139,15 @@ const SegmentedControlTypeSelector = ({
   selectedControlsType,
   setSelectedControlsType,
   translateDelegate
-}: ControlTypeSelectionProps) => (
+}: ControlTypeSelectionProps): ReactElement => (
   <CogsTooltip
     content={translateDelegate('CONTROLS_TYPE_TOOLTIP', 'Set Camera to Orbit or Fly mode')}
     placement="right"
     appendTo={document.body}>
     <SegmentedControl
-      onButtonClicked={(controlsType: FlexibleControlsType) =>
-        setSelectedControlsType(controlsType)
-      }
+      onButtonClicked={(controlsType: FlexibleControlsType) => {
+        setSelectedControlsType(controlsType);
+      }}
       currentKey={selectedControlsType}
       fullWidth>
       {options.map((controlsType) => (

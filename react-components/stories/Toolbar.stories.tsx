@@ -19,10 +19,7 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
-import {
-  SetFlexibleControlsType,
-  SetOrbitOrFirstPersonControlsType
-} from '../src/components/RevealToolbar/SetFlexibleControlsType';
+import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
 
 const meta = {
   title: 'Example/Toolbar',
