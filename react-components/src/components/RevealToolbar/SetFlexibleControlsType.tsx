@@ -30,11 +30,11 @@ export function SetFlexibleControlsType({
   const { t: translate } = useTranslation();
 
   // This value is redunant (react force me to do it)
-  const [selectedValue, setSelectedValue] = useState<FlexibleControlsType>(
+  const [selectedControlsType, setSelectedControlsType] = useState<FlexibleControlsType>(
     getDefaultValue(manager)
   );
   const update = (newControlsType: FlexibleControlsType): void => {
-    setSelectedValue(newControlsType);
+    setSelectedControlsType(newControlsType);
   };
 
   useEffect(() => {
@@ -81,9 +81,9 @@ export function SetFlexibleControlsType({
           if (manager !== undefined) {
             manager.controlsType = controlsType;
           }
-          setSelectedValue(controlsType);
+          setSelectedControlsType(controlsType);
         }}
-        currentKey={selectedValue}
+        currentKey={selectedControlsType}
         fullWidth>
         {options.map((controlsType) => (
           <SegmentedControl.Button key={controlsType} icon={getIcon(controlsType)}>
