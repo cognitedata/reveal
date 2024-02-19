@@ -54,6 +54,9 @@ export const WindowWidget = ({
   }
 
   const handleExpand = (): void => {
+    if (!isMinimized) {
+      setPosition({ x: 0, y: 0 });
+    }
     setIsMinimized((prev) => !prev);
   };
 
@@ -102,17 +105,13 @@ export const WindowWidget = ({
             }
           : {}
       }>
-      <Draggable
-        onDrag={handleDrag}
-        position={isMinimized ? { x: 0, y: 0 } : position}
-        handle=".widget-header"
-        disabled={isMinimized}>
+      <Draggable onDrag={handleDrag} position={position} handle=".widget-header">
         <ResizableBox
           width={size.width}
           height={size.height}
           minConstraints={[WIDGET_WINDOW_MIN_WIDTH, WIDGET_INSIDE_WINDOW_MIN_HEIGHT]}
           maxConstraints={[parentContainerElement.clientWidth, parentContainerElement.clientHeight]}
-          resizeHandles={isMinimized ? [] : ['se']}
+          resizeHandles={isMinimized ? [] : ['se', 'ne', 'e', 's']}
           onResize={handleResize}>
           <Widget>
             <Widget.Header title={title} type={type} header={header} subtitle={subtitle}>

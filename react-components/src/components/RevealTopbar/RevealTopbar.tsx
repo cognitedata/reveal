@@ -10,6 +10,7 @@ import { type CustomToolbarContent } from '../RevealToolbar/RevealToolbar';
 import { SettingsButton } from '../RevealToolbar/SettingsButton';
 import { HelpButton } from '../RevealToolbar/HelpButton';
 import { Divider } from '@cognite/cogs.js';
+import { SceneSelectionDropdown } from './SceneSelectionDropdown';
 
 export type CustomTopbarContent = CustomToolbarContent & { topbarContent?: ReactNode };
 
@@ -30,7 +31,7 @@ const DefaultContentWrapper = (props: CustomTopbarContent): ReactElement => {
   );
 };
 
-export const RevealTopbar = ({
+const RevealTopbarContainer = ({
   customSettingsContent,
   lowFidelitySettings,
   highFidelitySettings,
@@ -52,6 +53,12 @@ export const RevealTopbar = ({
     </StyledTopBar>
   );
 };
+
+export const RevealTopbar = RevealTopbarContainer as typeof RevealTopbarContainer & {
+  SceneSelectionDropdown: typeof SceneSelectionDropdown;
+};
+
+RevealTopbar.SceneSelectionDropdown = SceneSelectionDropdown;
 
 const StyledTopBar = styled.div`
   width: 100%;
