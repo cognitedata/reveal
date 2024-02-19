@@ -187,6 +187,7 @@ export class FdmSDK {
   private readonly _viewsByIdEndpoint: string;
   private readonly _listDataModelsEndpoint: string;
   private readonly _createUpdateInstancesEndpoint: string;
+  private readonly _deleteInstancesEndpoint: string;
 
   constructor(sdk: CogniteClient) {
     const baseUrl = sdk.getBaseUrl();
@@ -204,6 +205,7 @@ export class FdmSDK {
     this._viewsByIdEndpoint = `${viewsBaseUrl}/byids`;
     this._listViewsEndpoint = viewsBaseUrl;
     this._createUpdateInstancesEndpoint = instancesBaseUrl;
+    this._deleteInstancesEndpoint = `${instancesBaseUrl}/delete`;
 
     this._sdk = sdk;
   }
@@ -431,6 +433,24 @@ export class FdmSDK {
       return result.data;
     }
     throw new Error(`Failed to create instances. Status: ${result.status}`);
+  }
+
+  public async deleteInstance<PropertyType>(
+    queries: Array<{
+      instanceType: InstanceType;
+      externalId: string;
+      space: string;
+    }>
+  ): Promise<ExternalIdsResultList<PropertyType>> {
+    const data: any = {
+      items: queries
+    };
+
+    const result = await this._sdk.post(this._deleteInstancesEndpoint, { data });
+    if (result.status === 200) {
+      return result.data;
+    }
+    throw new Error(`Failed to delete instances. Status: ${result.status}`);
   }
 
   public async inspectInstances(inspectFilter: InspectFilter): Promise<InspectResultList> {
