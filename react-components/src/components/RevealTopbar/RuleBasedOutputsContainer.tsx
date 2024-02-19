@@ -10,12 +10,15 @@ import { RULE_BASED_OUTPUTS_VIEW } from '../RuleBasedOutputs/constants';
 import { FdmSDK } from '../../utilities/FdmSDK';
 import { useSDK } from '../RevealCanvas/SDKProvider';
 import { type RuleAndEnabled } from '../RuleBasedOutputs/types';
+import { useTranslation } from '../i18n/I18n';
 
 export const RuleBasedOutputsContainer = (): ReactElement => {
   const [ruleInstances, setRuleInstances] = useState<RuleAndEnabled[]>();
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<any>();
   const sdk = useSDK();
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -71,7 +74,7 @@ export const RuleBasedOutputsContainer = (): ReactElement => {
               overflow: 'auto',
               marginBottom: '20px'
             }}>
-            <Menu.Header>Select The RuleSet</Menu.Header>
+            <Menu.Header>{t('RULESET_SELECT_HEADER', 'Select The RuleSet')}</Menu.Header>
             {ruleInstances?.map((item) => (
               <Menu.Item key={item.rule.properties.id}>
                 <Flex justifyContent="space-between" alignItems="center" gap={8}>

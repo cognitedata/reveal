@@ -3,12 +3,10 @@
  */
 import { useEffect, type ReactElement } from 'react';
 
-import { type IdEither, type AssetMapping3D, type CogniteClient } from '@cognite/sdk';
 import { type CogniteCadModel } from '@cognite/reveal';
-import { useReveal } from '../..';
+import { useAllMappedEquipmentAssetMappings, useReveal } from '../..';
 import { Color } from 'three';
 import { type RuleOutputSet } from './types';
-import { useSDK } from '../RevealCanvas/SDKProvider';
 import { generateRuleBasedOutputs } from './utils';
 
 export type ColorOverlayProps = {
@@ -16,14 +14,19 @@ export type ColorOverlayProps = {
 };
 
 export function RuleBasedOutputs({ ruleSet }: ColorOverlayProps): ReactElement | undefined {
-  const cdfClient = useSDK();
-
   const viewer = useReveal();
 
   // only enabled whether has loaded models
   if (viewer.models === undefined || viewer.models.length === 0) return;
 
   const models = viewer.models;
+
+  const {
+    data: assetMappings,
+    isFetching,
+    hasNextPage,
+    fetchNextPage
+  } = useAllMappedEquipmentAssetMappings(models);
 
   // clean up the appearance
   models.forEach((model) => {
@@ -35,60 +38,38 @@ export function RuleBasedOutputs({ ruleSet }: ColorOverlayProps): ReactElement |
     });
   });
 
-  if (ruleSet === undefined) {
-    return <></>;
-  }
+  useEffect(() => {
+    if (!isFetching && hasNextPage !== undefined) {
+      void fetchNextPage();
+    }
+  }, [isFetching, hasNextPage, fetchNextPage]);
 
   useEffect(() => {
-    const getContextualization = async (model: CogniteCadModel): Promise<void> => {
-      const { modelId, revisionId } = model;
+    if (assetMappings === undefined || isFetching) return;
+    if (ruleSet === undefined) return;
 
-      const assetMappings = await getCdfCadContextualization({
-        sdk: cdfClient,
-        modelId,
-        revisionId,
-        nodeId: undefined,
-        assetId: undefined
-      });
+    const initializeRuleBasedOutputs = async (model: CogniteCadModel): Promise<void> => {
+      // parse assets and mappings
+      const flatAssetsMappingsList =
+        assetMappings?.pages
+          .flat()
+          .map((item) => item.mappings)
+          .flat() ?? [];
+      const flatMappings = flatAssetsMappingsList.map((node) => node.items).flat();
+      const contextualizedAssetNodes =
+        assetMappings?.pages
+          .flat()
+          .map((item) => item.assets)
+          .flat() ?? [];
 
-      // remove duplicated
-      const uniqueContextualizedAssetIds = [...new Set(assetMappings.map((node) => node.assetId))];
-
-      const contextualizedAssetIds = uniqueContextualizedAssetIds.map((id) => {
-        return { id };
-      }) as unknown as IdEither[];
-
-      // get the assets with asset info from the asset ids
-      const contextualizedAssetNodes = await cdfClient.assets.retrieve(contextualizedAssetIds);
-
-      // generate rule based coloring
-      generateRuleBasedOutputs(model, contextualizedAssetNodes, assetMappings, ruleSet);
+      // ========= Generate Rule Based Outputs
+      generateRuleBasedOutputs(model, contextualizedAssetNodes, flatMappings, ruleSet);
     };
 
     models.forEach((model) => {
-      void getContextualization(model as CogniteCadModel);
+      void initializeRuleBasedOutputs(model as CogniteCadModel);
     });
-  }, [ruleSet]);
+  }, [assetMappings, ruleSet, models]);
 
   return <></>;
 }
-
-const getCdfCadContextualization = async ({
-  sdk,
-  modelId,
-  revisionId,
-  nodeId,
-  assetId
-}: {
-  sdk: CogniteClient;
-  modelId: number;
-  revisionId: number;
-  nodeId: number | undefined;
-  assetId: number | undefined;
-}): Promise<AssetMapping3D[]> => {
-  const filter = { nodeId, assetId };
-
-  return await sdk.assetMappings3D
-    .list(modelId, revisionId, filter)
-    .autoPagingToArray({ limit: Infinity });
-};

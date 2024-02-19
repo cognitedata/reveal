@@ -11,7 +11,8 @@ import {
   type NumericExpression,
   type MetadataRuleTrigger,
   type Expression,
-  type RuleOutputSet
+  type RuleOutputSet,
+  type Rule
 } from './types';
 import { type CogniteCadModel, TreeIndexNodeCollection } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset } from '@cognite/sdk';
@@ -48,7 +49,6 @@ const checkStringExpressionStatement = (asset: Asset, expression: StringExpressi
   return expressionResult;
 };
 const checkNumericExpressionStatement = (asset: Asset, expression: NumericExpression): boolean => {
-  // for now it will be only for metadata
   const trigger = expression.trigger as MetadataRuleTrigger;
   const condition = expression.condition;
 
@@ -104,11 +104,7 @@ const checkNumericExpressionStatement = (asset: Asset, expression: NumericExpres
   return expressionResult;
 };
 
-const traverseExpression = (
-  asset: Asset,
-  expressions: Expression[]
-  // levelExpressionOperator: string
-): boolean[] => {
+const traverseExpression = (asset: Asset, expressions: Expression[]): boolean[] => {
   let expressionResult: boolean = false;
 
   const expressionResults: boolean[] = [];
@@ -116,29 +112,17 @@ const traverseExpression = (
   expressions.forEach((expression) => {
     switch (expression.type) {
       case 'or': {
-        const operatorResult = traverseExpression(
-          asset,
-          expression.expressions
-          // expression.type
-        );
+        const operatorResult = traverseExpression(asset, expression.expressions);
         expressionResult = operatorResult.find((result) => result) ?? false;
         break;
       }
       case 'and': {
-        const operatorResult = traverseExpression(
-          asset,
-          expression.expressions
-          // expression.type
-        );
+        const operatorResult = traverseExpression(asset, expression.expressions);
         expressionResult = operatorResult.find((result) => !result) ?? false;
         break;
       }
       case 'not': {
-        const operatorResult = traverseExpression(
-          asset,
-          [expression.expression]
-          // expression.type
-        );
+        const operatorResult = traverseExpression(asset, [expression.expression]);
         expressionResult = !operatorResult[0]; // TODO: make the not operator
         break;
       }
@@ -148,10 +132,6 @@ const traverseExpression = (
       }
       case 'stringExpression': {
         expressionResult = checkStringExpressionStatement(asset, expression);
-        break;
-      }
-      default: {
-        // statements;
         break;
       }
     }
@@ -176,7 +156,7 @@ export const generateRuleBasedOutputs = (
 
   const ruleWithOutputs = ruleSet?.rulesWithOutputs;
 
-  ruleWithOutputs?.forEach((ruleWithOutput: { rule: any; outputs: any }) => {
+  ruleWithOutputs?.forEach((ruleWithOutput: { rule: Rule; outputs: RuleOutput[] }) => {
     const { rule, outputs } = ruleWithOutput;
     // Starting Expression
     const expression = rule.expression;
@@ -185,15 +165,12 @@ export const generateRuleBasedOutputs = (
       (output: { type: string }) => output.type === outputType
     ) as ColorRuleOutput;
 
+    if (outputSelected === undefined) return;
+
     const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
       styleIndex: new TreeIndexNodeCollection(),
       ruleOutputParams: outputSelected
     };
-
-    if (outputSelected === undefined) {
-      console.log('No rule output found for the type requested: ', outputType, outputs);
-      return;
-    }
 
     // ======== OUTPUT - COLOR IN 3D
     void Promise.all(
@@ -202,7 +179,6 @@ export const generateRuleBasedOutputs = (
           assetNode,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           [expression]
-          // expression.type
         );
 
         if (finalGlobalOutputResult[0]) {
