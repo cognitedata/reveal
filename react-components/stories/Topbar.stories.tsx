@@ -18,6 +18,7 @@ import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForSc
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { SceneSelectionDropdown } from '../src/components/RevealTopbar/SceneSelectionDropdown';
+import { RuleBasedOutputsContainer } from '../src/components/RevealTopbar/RuleBasedOutputsContainer';
 
 const meta = {
   title: 'Example/Topbar',
@@ -50,6 +51,7 @@ const TopbarContent = (): ReactElement => {
     <>
       <SceneSelectionDropdown selectedScene={scene} setSelectedScene={setScene} />
       <RevealToolbar.LayersButton storeStateInUrl={true} />
+      <RuleBasedOutputsContainer />
       <RevealToolbar.HelpButton />
     </>
   );

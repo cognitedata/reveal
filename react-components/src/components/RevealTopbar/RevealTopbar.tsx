@@ -11,6 +11,7 @@ import { SettingsButton } from '../RevealToolbar/SettingsButton';
 import { HelpButton } from '../RevealToolbar/HelpButton';
 import { Divider } from '@cognite/cogs.js';
 import { SceneSelectionDropdown } from './SceneSelectionDropdown';
+import { RuleBasedOutputsContainer } from './RuleBasedOutputsContainer';
 
 export type CustomTopbarContent = CustomToolbarContent & { topbarContent?: ReactNode };
 
@@ -20,6 +21,7 @@ const DefaultContentWrapper = (props: CustomTopbarContent): ReactElement => {
       <LayersButton />
       <SlicerButton />
       <FitModelsButton />
+      <RuleBasedOutputsContainer />
       <Divider weight="1px" length="75%" direction="vertical" />
       <HelpButton />
       <SettingsButton

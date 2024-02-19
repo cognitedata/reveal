@@ -44,10 +44,6 @@ export const RuleBasedOutputsContainer = (): ReactElement => {
     void getAllInstances();
   }, []);
 
-  useEffect(() => {
-    console.log(' rule instances ', ruleInstances);
-  }, [ruleInstances]);
-
   const onChange = (data: { target: { id: any; checked: boolean } }): void => {
     ruleInstances?.forEach((item) => {
       item.isEnabled = false;

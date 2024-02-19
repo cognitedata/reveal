@@ -20,7 +20,8 @@ export function RuleBasedOutputs({ ruleSet }: ColorOverlayProps): ReactElement |
 
   const viewer = useReveal();
 
-  if (viewer.models.length === 0) return;
+  // only enabled whether has loaded models
+  if (viewer.models === undefined || viewer.models.length === 0) return;
 
   const models = viewer.models;
 
