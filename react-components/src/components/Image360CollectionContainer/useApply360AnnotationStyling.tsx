@@ -10,7 +10,7 @@ import {
 import { Color } from 'three';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { image360CollectionExists } from '../../utilities/modelExists';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { type CogniteInternalId } from '@cognite/sdk';
 
 export type AnnotationIdStylingGroup = {
@@ -24,14 +24,66 @@ export type ImageCollectionModelStyling = {
 };
 
 export const useApply360AnnotationStyling = (
-  imageCollection: Image360Collection,
-  styling: ImageCollectionModelStyling
+  imageCollection?: Image360Collection,
+  styling?: ImageCollectionModelStyling
 ): void => {
   const viewer = useReveal();
-  const lastStyledImageAnnotations: Image360Annotation[] = [];
+  let lastStyledImageAnnotations: Image360Annotation[] = [];
 
   const defaultStyle = styling?.defaultStyle ?? new Color(0xffffff);
   const styleGroups = styling?.groups;
+
+  useEffect(() => {
+    if (!image360CollectionExists(imageCollection, viewer)) return;
+    console.log('resetAnnotationStyling');
+
+    resetAnnotationStyling();
+  }, [defaultStyle, imageCollection]);
+
+  // const enableAnnotationStyling = useCallback(
+  //   async (_entity: Image360, revision: Image360Revision) => {
+  //     await revision.getAnnotations().then((annotations) => {
+  //       annotations.forEach((annotation) => {
+  //         annotation.setColor(defaultStyle);
+  //       });
+  //       viewer.requestRedraw();
+  //     });
+  //   },
+  //   [viewer, defaultStyle]
+  // );
+  const enableAnnotationStyling = useCallback(() => {
+    if (imageCollection === undefined) return;
+    console.log('enableAnnotationStyling');
+    imageCollection.setDefaultAnnotationStyle({
+      color: defaultStyle,
+      visible: undefined
+    });
+    viewer.requestRedraw();
+  }, [viewer, defaultStyle]);
+  const resetAnnotationStyling = useCallback(() => {
+    if (imageCollection === undefined) return;
+    console.log('resetAnnotationStyling');
+    imageCollection.setDefaultAnnotationStyle({
+      color: undefined,
+      visible: undefined
+    });
+    lastStyledImageAnnotations.forEach((a) => {
+      a.setColor(undefined);
+    });
+    lastStyledImageAnnotations = [];
+    viewer.requestRedraw();
+  }, [viewer]);
+
+  useEffect(() => {
+    if (imageCollection === undefined) return;
+    imageCollection.on('image360Entered', enableAnnotationStyling);
+    imageCollection.on('image360Exited', resetAnnotationStyling);
+
+    return () => {
+      imageCollection.off('image360Entered', enableAnnotationStyling);
+      imageCollection.off('image360Exited', resetAnnotationStyling);
+    };
+  }, [viewer, imageCollection]);
 
   useEffect(() => {
     if (!image360CollectionExists(imageCollection, viewer) || styleGroups === undefined) return;
@@ -48,11 +100,6 @@ export const useApply360AnnotationStyling = (
         visible: undefined
       });
     });
-
-    // lastStyledImageAnnotations.forEach((a) => {
-    //   a.setColor(undefined);
-    // });
-    // lastStyledImageAnnotations = [];
     viewer.requestRedraw();
   }, [defaultStyle, imageCollection]);
 };
@@ -65,9 +112,9 @@ async function applyStyling(
 ): Promise<void> {
   if (styling !== undefined) {
     for (const group of styling) {
-      if (group.assetId !== undefined) {
+      if (group.assetIds !== undefined) {
         const annotationInfo = await imageCollection.findImageAnnotations({
-          assetRef: { id: group.assetId }
+          assetRef: { id: group.assetIds[0] }
         });
 
         if (annotationInfo.length === 0) {
@@ -78,7 +125,7 @@ async function applyStyling(
           info.annotation.setColor(new Color('rgb(150, 150, 242)'));
         });
 
-        // lastStyledImageAnnotations = annotationInfo.map((i) => i.annotation);
+        lastStyledImageAnnotations = annotationInfo.map((i) => i.annotation);
         viewer.requestRedraw();
       }
     }

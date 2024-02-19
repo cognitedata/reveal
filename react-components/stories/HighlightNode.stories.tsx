@@ -14,11 +14,12 @@ import {
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
-import { DefaultNodeAppearance } from '@cognite/reveal';
+import { type CadIntersection, DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 import { type AssetStylingGroup } from '../src/components/Reveal3DResources/types';
+import { type AnnotationsBoundingVolume } from '@cognite/sdk/dist/src';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -57,6 +58,9 @@ export const Main: Story = {
             color: new Color('#c5cbff')
           }
         }
+      },
+      {
+        siteId: 'celanese1'
       }
     ]
   },
@@ -105,13 +109,28 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       ]);
 
       void cameraNavigation.fitCameraToModelNode(
-        nodeData.intersection.model.revisionId,
+        (nodeData.intersection as CadIntersection).model.revisionId,
         nodeData.assetMappingResult.cadNode.id
       );
     } else if (nodeData?.pointCloudAnnotationMappingResult !== undefined) {
       setStylingGroups([
         {
           assetIds: [nodeData.pointCloudAnnotationMappingResult[0].asset.id],
+          style: { pointcloud: DefaultNodeAppearance.Highlighted }
+        }
+      ]);
+    } else if (nodeData?.intersection !== undefined && 'annotation' in nodeData.intersection) {
+      const assetId =
+        (nodeData.intersection.annotation.annotation.data as AnnotationsBoundingVolume).assetRef
+          ?.externalId ??
+        (nodeData.intersection.annotation.annotation.data as AnnotationsBoundingVolume).assetRef
+          ?.id;
+      if (assetId === undefined) {
+        return;
+      }
+      setStylingGroups([
+        {
+          assetIds: [Number(assetId)],
           style: { pointcloud: DefaultNodeAppearance.Highlighted }
         }
       ]);

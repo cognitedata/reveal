@@ -5,25 +5,28 @@ import { type Image360Collection } from '@cognite/reveal';
 import { type AnnotationIdStylingGroup } from '../components/Image360CollectionContainer/useApply360AnnotationStyling';
 import { type Image360AssetStylingGroup } from '../components/Reveal3DResources/types';
 import { useReveal } from '../components/RevealContainer/RevealContext';
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 export type StyledImage360Collection = {
   imageCollection: Image360Collection;
   styleGroups: AnnotationIdStylingGroup[];
 };
 
-export const useCalculateImage360Styling = async (
+export const useCalculateImage360Styling = (
   instanceGroups: Image360AssetStylingGroup[]
-): Promise<StyledImage360Collection[]> => {
+): StyledImage360Collection[] => {
   const viewer = useReveal();
-  const imageCollections = useMemo(() => {
-    if (viewer === undefined) {
-      return [];
-    }
-    return viewer.get360ImageCollections();
-  }, [viewer]);
+  const [mappedInstanceGroups, setMappedInstanceGroups] = useState<StyledImage360Collection[]>([]);
 
-  const mappedInstanceGroups = await getMappedStylingGroups(imageCollections, instanceGroups);
+  useEffect(() => {
+    const imageCollections = viewer?.get360ImageCollections() ?? [];
+    getMappedStylingGroups(imageCollections, instanceGroups)
+      .then(setMappedInstanceGroups)
+      .catch((error) => {
+        console.warn('Error occurred while mapping styling groups:', error);
+      });
+  }, [viewer, instanceGroups]);
+
   return mappedInstanceGroups;
 };
 

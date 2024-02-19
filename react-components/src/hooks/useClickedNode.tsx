@@ -5,7 +5,8 @@
 import {
   type PointCloudIntersection,
   type CadIntersection,
-  type PointerEventData
+  type PointerEventData,
+  type Image360AnnotationIntersection
 } from '@cognite/reveal';
 import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
@@ -32,7 +33,7 @@ export type ClickedNodeData = {
   fdmResult?: FdmNodeDataResult;
   assetMappingResult?: AssetMappingDataResult;
   pointCloudAnnotationMappingResult?: AnnotationAssetMappingDataResult[];
-  intersection: CadIntersection | PointCloudIntersection;
+  intersection: CadIntersection | PointCloudIntersection | Image360AnnotationIntersection;
 };
 
 export const useClickedNodeData = (): ClickedNodeData | undefined => {
@@ -42,15 +43,28 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     CadIntersection | PointCloudIntersection | undefined
   >(undefined);
 
+  const [annotationIntersection, setAnnotationIntersection] = useState<
+    Image360AnnotationIntersection | undefined
+  >(undefined);
+
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async () => {
         const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+        const annotationIntersection = await viewer.get360AnnotationIntersectionFromPixel(
+          event.offsetX,
+          event.offsetY
+        );
+        console.log('intersection, annotationIntersection', intersection, annotationIntersection);
 
         if (intersection?.type === 'cad' || intersection?.type === 'pointcloud') {
           setIntersection(intersection);
         } else {
           setIntersection(undefined);
+        }
+
+        if (annotationIntersection !== null) {
+          setAnnotationIntersection(annotationIntersection);
         }
       })();
     };
@@ -86,7 +100,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     nodeDataPromises,
     assetMappingResult,
     pointCloudAssetMappingResult,
-    intersection
+    intersection ?? annotationIntersection
   );
 };
 
@@ -94,7 +108,11 @@ const useCombinedClickedNodeData = (
   fdmPromises: FdmNodeDataPromises | undefined,
   assetMappings: NodeAssetMappingResult | undefined,
   pointCloudAssetMappings: AnnotationAssetMappingDataResult[] | undefined,
-  intersection: CadIntersection | PointCloudIntersection | undefined
+  intersection:
+    | CadIntersection
+    | PointCloudIntersection
+    | Image360AnnotationIntersection
+    | undefined
 ): ClickedNodeData | undefined => {
   const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>();
   const fdmData = useFdmData(fdmPromises);

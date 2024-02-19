@@ -46,9 +46,7 @@ export function Image360CollectionContainer({
     return remove360Collection;
   }, [collectionId]);
 
-  if (modelRef.current !== undefined && styling !== undefined) {
-    useApply360AnnotationStyling(modelRef.current, styling);
-  }
+  useApply360AnnotationStyling(modelRef.current, styling);
 
   return <></>;
 
