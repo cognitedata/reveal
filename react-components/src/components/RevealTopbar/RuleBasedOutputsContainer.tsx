@@ -61,7 +61,6 @@ export const RuleBasedOutputsContainer = (): ReactElement => {
 
     if (selectedRule === undefined) return;
     selectedRule.isEnabled = data.target.checked;
-
   };
 
   return (
