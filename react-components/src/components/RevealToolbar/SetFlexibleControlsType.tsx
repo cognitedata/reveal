@@ -17,7 +17,7 @@ import styled from 'styled-components';
 
 type CustomSettingsProps = {
   includeOrbitInCenter?: boolean;
-  topbarLayout?: boolean;
+  orientation?: 'horizontal' | 'vertical';
 };
 
 type TranslateDelegate = (key: string, fallback?: string) => string;
@@ -37,7 +37,7 @@ export function SetOrbitOrFirstPersonControlsType(
 
 export function SetFlexibleControlsType({
   includeOrbitInCenter,
-  topbarLayout
+  orientation
 }: CustomSettingsProps): ReactElement {
   const viewer = useReveal();
   const flexibleCameraManager = asFlexibleCameraManager(viewer.cameraManager);
@@ -77,7 +77,7 @@ export function SetFlexibleControlsType({
     translateDelegate: translate
   };
 
-  return topbarLayout ?? false ? (
+  return orientation ?? 'vertical' === 'vertical' ? (
     <SegmentedControlTypeSelector {...controlsTypeParameters} />
   ) : (
     <ButtonsControlTypeSelector {...controlsTypeParameters} />
