@@ -35,7 +35,7 @@ export const SelectSceneButton = ({
         placement="right-start"
         content={
           <Menu>
-            <Menu.Header>t('SCENE_SELECT_HEADER', 'Select 3D location')</Menu.Header>
+            <Menu.Header>{t('SCENE_SELECT_HEADER', 'Select 3D location')}</Menu.Header>
             <SceneList selectedScene={selectedScene} onSceneChange={onSceneChange} />
           </Menu>
         }>

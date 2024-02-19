@@ -13,7 +13,7 @@ import {
   RevealToolbar
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useEffect, useState, type JSX } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
