@@ -70,7 +70,10 @@ export const useSceneConfig = (
           cameraTranslationZ: SceneConfigurationProperties.cameraTranslationZ,
           cameraEulerRotationX: SceneConfigurationProperties.cameraEulerRotationX,
           cameraEulerRotationY: SceneConfigurationProperties.cameraEulerRotationY,
-          cameraEulerRotationZ: SceneConfigurationProperties.cameraEulerRotationZ
+          cameraEulerRotationZ: SceneConfigurationProperties.cameraEulerRotationZ,
+          cameraTargetX: SceneConfigurationProperties.cameraTargetX,
+          cameraTargetY: SceneConfigurationProperties.cameraTargetY,
+          cameraTargetZ: SceneConfigurationProperties.cameraTargetZ
         },
         skybox: getSkybox(sceneResponse),
         groundPlanes: getGroundPlanes(sceneResponse),
