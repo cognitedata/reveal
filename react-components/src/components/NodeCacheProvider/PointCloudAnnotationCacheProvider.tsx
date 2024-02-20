@@ -211,7 +211,7 @@ export function PointCloudAnnotationCacheProvider({
     }
 
     return cache;
-  }, [cdfClient, revealKeepAliveData]);
+  }, [cdfClient]);
 
   return (
     <PointCloudAnnotationCacheContext.Provider value={{ cache: pointCloudAnnotationCache }}>

@@ -14,6 +14,7 @@ import {
   RevealContext,
   type RevealContextProps
 } from '../../src/components/RevealContext/RevealContext';
+import { Image360AnnotationCache } from '../../src/components/NodeCacheProvider/Image360AnnotationCache';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
@@ -45,6 +46,7 @@ export const RevealStoryContext = ({
   const fdmNodeCache = useRef<FdmNodeCache | undefined>();
   const assetMappingCache = useRef<AssetMappingCache | undefined>();
   const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache | undefined>();
+  const image360AnnotationCache = useRef<Image360AnnotationCache | undefined>();
   return (
     <RevealKeepAliveContext.Provider
       value={{
@@ -52,7 +54,8 @@ export const RevealStoryContext = ({
         isRevealContainerMountedRef,
         fdmNodeCache,
         assetMappingCache,
-        pointCloudAnnotationCache
+        pointCloudAnnotationCache,
+        image360AnnotationCache
       }}>
       <RevealContext sdk={sdkInstance} {...rest}>
         {children}

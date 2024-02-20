@@ -5,10 +5,10 @@
 import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useSDK } from '../RevealContainer/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { Image360AnnotationCache } from './Image360AnnotationCache';
 import { type Image360AnnotationAssetInfo, type RevealAnnotationModel } from './types';
+import { useSDK } from '../RevealCanvas/SDKProvider';
 
 export type Image360AnnotationDataResult = {
   siteId: string;
@@ -88,7 +88,7 @@ export function Image360AnnotationCacheProvider({
     }
 
     return cache;
-  }, [cdfClient, revealKeepAliveData]);
+  }, [cdfClient]);
 
   return (
     <Image360AnnotationCacheContext.Provider value={{ cache: image360AnnotationCache }}>

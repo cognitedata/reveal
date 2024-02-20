@@ -8,10 +8,10 @@ import {
   type Image360Collection
 } from '@cognite/reveal';
 import { Color } from 'three';
-import { useReveal } from '../RevealContainer/RevealContext';
 import { image360CollectionExists } from '../../utilities/modelExists';
 import { useCallback, useEffect } from 'react';
 import { type CogniteInternalId } from '@cognite/sdk';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 
 export type AnnotationIdStylingGroup = {
   assetIds: CogniteInternalId[];

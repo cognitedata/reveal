@@ -6,8 +6,8 @@ import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { type Image360AnnotationAssetInfo } from './types';
 import { getAssetIdOrExternalIdFromAnnotation } from './utils';
 import { chunk } from 'lodash';
-import { useReveal } from '../RevealContainer/RevealContext';
 import { type Cognite3DViewer, type Image360Collection } from '@cognite/reveal';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;

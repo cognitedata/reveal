@@ -77,7 +77,8 @@ export const Reveal3DResources = ({
   });
 
   const styledImage360Collections = useCalculateImage360Styling(
-    instanceStyling?.filter(isImage30AssetStylingGroup) ?? EMPTY_ARRAY
+    instanceStyling?.filter(isImage30AssetStylingGroup) ?? EMPTY_ARRAY,
+    defaultResourceStyling
   );
 
   const onModelLoaded = (): void => {
