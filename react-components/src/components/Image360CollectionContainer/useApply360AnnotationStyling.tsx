@@ -33,12 +33,12 @@ export const useApply360AnnotationStyling = (
   const defaultStyle = styling?.defaultStyle ?? new Color(0xffffff);
   const styleGroups = styling?.groups;
 
-  useEffect(() => {
-    if (!image360CollectionExists(imageCollection, viewer)) return;
-    console.log('resetAnnotationStyling');
+  // useEffect(() => {
+  //   if (!image360CollectionExists(imageCollection, viewer)) return;
+  //   // console.log('resetAnnotationStyling');
 
-    resetAnnotationStyling();
-  }, [defaultStyle, imageCollection]);
+  //   // resetAnnotationStyling();
+  // }, [defaultStyle, imageCollection]);
 
   // const enableAnnotationStyling = useCallback(
   //   async (_entity: Image360, revision: Image360Revision) => {
@@ -52,6 +52,7 @@ export const useApply360AnnotationStyling = (
   //   [viewer, defaultStyle]
   // );
   const enableAnnotationStyling = useCallback(() => {
+    console.log('Image 360 entered');
     if (imageCollection === undefined) return;
     console.log('enableAnnotationStyling');
     imageCollection.setDefaultAnnotationStyle({
@@ -61,6 +62,7 @@ export const useApply360AnnotationStyling = (
     viewer.requestRedraw();
   }, [viewer, defaultStyle]);
   const resetAnnotationStyling = useCallback(() => {
+    console.log('Image 360 exited');
     if (imageCollection === undefined) return;
     console.log('resetAnnotationStyling');
     imageCollection.setDefaultAnnotationStyle({
@@ -90,18 +92,6 @@ export const useApply360AnnotationStyling = (
 
     void applyStyling(imageCollection, styleGroups, lastStyledImageAnnotations, viewer);
   }, [styleGroups, imageCollection]);
-
-  useEffect(() => {
-    if (!image360CollectionExists(imageCollection, viewer)) return;
-
-    viewer.get360ImageCollections().forEach((collection) => {
-      collection.setDefaultAnnotationStyle({
-        color: undefined,
-        visible: undefined
-      });
-    });
-    viewer.requestRedraw();
-  }, [defaultStyle, imageCollection]);
 };
 
 async function applyStyling(
