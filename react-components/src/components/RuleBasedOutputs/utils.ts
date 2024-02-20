@@ -135,8 +135,7 @@ const traverseExpression = (
       }
       case 'and': {
         const operatorResult = traverseExpression(asset, expression.expressions);
-        expressionResult =
-          operatorResult.find((result) => (result !== undefined ? !result : false)) ?? false;
+        expressionResult = operatorResult.every((result) => result === true) ?? false;
         break;
       }
       case 'not': {
@@ -262,5 +261,5 @@ const applyNodeStyles = (
 const isMetadataTrigger = (
   trigger: MetadataRuleTrigger | TimeseriesRuleTrigger
 ): trigger is MetadataRuleTrigger => {
-  return (trigger as MetadataRuleTrigger).type !== 'metadata';
+  return trigger.type === 'metadata';
 };

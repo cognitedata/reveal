@@ -49,13 +49,13 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
     const initializeRuleBasedOutputs = async (model: CogniteCadModel): Promise<void> => {
       // parse assets and mappings
       const flatAssetsMappingsList =
-        assetMappings?.pages
+        assetMappings?.pages[0]
           .flat()
           .map((item) => item.mappings)
           .flat() ?? [];
       const flatMappings = flatAssetsMappingsList.map((node) => node.items).flat();
       const contextualizedAssetNodes =
-        assetMappings?.pages
+        assetMappings?.pages[0]
           .flat()
           .map((item) => item.assets)
           .flat() ?? [];
