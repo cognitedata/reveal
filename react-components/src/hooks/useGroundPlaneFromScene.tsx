@@ -7,7 +7,7 @@ import { useSceneConfig } from './useSceneConfig';
 import { DoubleSide, Mesh, MeshBasicMaterial, PlaneGeometry, TextureLoader } from 'three';
 import { useReveal } from '..';
 import { useQuery } from '@tanstack/react-query';
-import { useSDK } from '../components/RevealContainer/SDKProvider';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
@@ -48,6 +48,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
       const texture = groundPlanesUrls[index];
       const material = new MeshBasicMaterial({ map: texture, side: DoubleSide });
       const geometry = new PlaneGeometry(10000 * groundPlane.scaleX, 10000 * groundPlane.scaleY);
+      geometry.name = `CogniteGroundPlane`;
 
       const mesh = new Mesh(geometry, material);
       mesh.position.set(

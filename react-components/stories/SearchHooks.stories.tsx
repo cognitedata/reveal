@@ -4,11 +4,12 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  RevealContainer,
+  RevealCanvas,
   RevealToolbar,
   type AddResourceOptions,
   type AddReveal3DModelOptions,
-  type AddImageCollection360Options
+  type AddImageCollection360Options,
+  RevealContext
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useMemo, useEffect } from 'react';
@@ -236,19 +237,21 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   return (
     <>
-      <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-        <ReactQueryDevtools position="bottom-right" />
-        <RevealResourcesFitCameraOnLoad
-          resources={resources}
-          defaultResourceStyling={{
-            cad: {
-              default: { color: new Color('#efefef') },
-              mapped: { color: new Color('#c5cbff') }
-            }
-          }}
-        />
-        <RevealToolbar />
-      </RevealContainer>
+      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+        <RevealCanvas>
+          <ReactQueryDevtools position="bottom-right" />
+          <RevealResourcesFitCameraOnLoad
+            resources={resources}
+            defaultResourceStyling={{
+              cad: {
+                default: { color: new Color('#efefef') },
+                mapped: { color: new Color('#c5cbff') }
+              }
+            }}
+          />
+          <RevealToolbar />
+        </RevealCanvas>
+      </RevealContext>
       <h1>Mapped equipment</h1>
       <div style={{ display: 'flex', flexDirection: 'row', gap: 8, padding: '0 8px 8px 0' }}>
         <Input

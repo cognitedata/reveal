@@ -4,6 +4,8 @@
 import '@cognite/cogs.js/dist/cogs.css';
 
 // Components
+export { RevealCanvas } from './components/RevealCanvas/RevealCanvas';
+export { RevealContext, type RevealContextProps } from './components/RevealContext/RevealContext';
 export { RevealContainer } from './components/RevealContainer/RevealContainer';
 export { Reveal3DResources } from './components/Reveal3DResources/Reveal3DResources';
 export { PointCloudContainer } from './components/PointCloudContainer/PointCloudContainer';
@@ -12,11 +14,12 @@ export { Image360CollectionContainer } from './components/Image360CollectionCont
 export { Image360HistoricalDetails } from './components/Image360HistoricalDetails/Image360HistoricalDetails';
 export { Image360Details } from './components/Image360Details/Image360Details';
 export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
-export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
+export { RevealToolbar, type RevealToolbarProps } from './components/RevealToolbar/RevealToolbar';
+export { RevealTopbar } from './components/RevealTopbar/RevealTopbar';
 export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
 
 // Hooks
-export { useReveal } from './components/RevealContainer/RevealContext';
+export { useReveal } from './components/RevealCanvas/ViewerContext';
 export { use3DModelName } from './hooks/use3DModelName';
 export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCacheProvider';
 export { useSceneDefaultCamera } from './hooks/useSceneDefaultCamera';

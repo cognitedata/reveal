@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useRef } from 'react';
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type AddImageCollection360Options } from '../..';
@@ -11,9 +11,10 @@ import {
   type ImageCollectionModelStyling,
   useApply360AnnotationStyling
 } from './useApply360AnnotationStyling';
+import { type Matrix4 } from 'three';
 
 type Image360CollectionContainerProps = {
-  collectionId: { siteId: string } | { externalId: string; space: string };
+  collectionId: AddImageCollection360Options & { transform?: Matrix4 };
   styling?: ImageCollectionModelStyling;
   onLoad?: (image360: Image360Collection) => void;
   onLoadError?: (addOptions: AddImageCollection360Options, error: any) => void;
@@ -74,13 +75,17 @@ export function Image360CollectionContainer({
         return await viewer.add360ImageSet(
           'events',
           { site_id: siteId },
-          { preMultipliedRotation: false }
+          { collectionTransform: collectionId.transform, preMultipliedRotation: false }
         );
       } else {
-        return await viewer.add360ImageSet('datamodels', {
-          image360CollectionExternalId: collectionId.externalId,
-          space: collectionId.space
-        });
+        return await viewer.add360ImageSet(
+          'datamodels',
+          {
+            image360CollectionExternalId: collectionId.externalId,
+            space: collectionId.space
+          },
+          { collectionTransform: collectionId.transform }
+        );
       }
     }
   }

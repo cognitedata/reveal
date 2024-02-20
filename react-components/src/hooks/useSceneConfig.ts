@@ -18,7 +18,7 @@ import {
   type Scene,
   type Skybox
 } from '../components/SceneContainer/SceneTypes';
-import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
+import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type Source, type FdmSDK } from '../utilities/FdmSDK';
 import { type SceneConfigurationProperties } from './types';
 
@@ -175,7 +175,9 @@ function getGroundPlanes(sceneResponse: SceneResponse): GroundPlane[] {
     // Match groundplanes with their edges
     groundPlaneEdgeResponse.forEach((groundPlaneEdge) => {
       const mappedGroundPlane = groundPlaneResponse.find(
-        (groundPlane) => groundPlane.externalId === groundPlaneEdge.endNode.externalId
+        (groundPlane) =>
+          groundPlane.externalId === groundPlaneEdge.endNode.externalId &&
+          groundPlane.space === groundPlaneEdge.endNode.space
       );
 
       if (mappedGroundPlane !== undefined) {

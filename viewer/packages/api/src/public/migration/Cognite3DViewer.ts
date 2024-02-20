@@ -1660,6 +1660,9 @@ export class Cognite3DViewer {
       }
     });
     this._sceneHandler.customObjects.forEach(obj => {
+      if (obj.name === 'CogniteGroundPlane') {
+        return;
+      }
       bbox.setFromObject(obj);
       if (bbox.isEmpty()) {
         return;

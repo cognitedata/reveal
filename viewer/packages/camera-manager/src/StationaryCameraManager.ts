@@ -76,19 +76,19 @@ export class StationaryCameraManager implements CameraManager {
     this._camera.aspect = cameraManager.getCamera().aspect;
     this._camera.updateProjectionMatrix();
 
-    this._domElement.addEventListener('pointerdown', this.onPointerDown);
-    this._domElement.addEventListener('pointermove', this.onPointerMove);
+    window.addEventListener('pointerdown', this.onPointerDown);
+    window.addEventListener('pointermove', this.onPointerMove, { passive: false });
     this._domElement.addEventListener('wheel', this.zoomCamera);
     // The handler for pointerup is used for the pointercancel, pointerout
     // and pointerleave events, as these have the same semantics.
-    this._domElement.addEventListener('pointerup', this.onPointerUp);
+    window.addEventListener('pointerup', this.onPointerUp, { passive: false });
     this._domElement.addEventListener('pointercancel', this.onPointerUp);
   }
 
   deactivate(): void {
-    this._domElement.removeEventListener('pointerdown', this.onPointerDown);
-    this._domElement.removeEventListener('pointermove', this.onPointerMove);
-    this._domElement.removeEventListener('pointerup', this.onPointerUp);
+    window.removeEventListener('pointerdown', this.onPointerDown);
+    window.removeEventListener('pointermove', this.onPointerMove);
+    window.removeEventListener('pointerup', this.onPointerUp);
     this._domElement.removeEventListener('pointercancel', this.onPointerUp);
     this._domElement.removeEventListener('wheel', this.zoomCamera);
   }
@@ -195,7 +195,6 @@ export class StationaryCameraManager implements CameraManager {
       )!;
       this.rotateCamera(event, lastEvent);
     }
-
     // Update last move event
     const pointerIndex = this._pointerEventCache.findIndex(ev => ev.pointerId === event.pointerId);
     this._pointerEventCache[pointerIndex] = event;
@@ -214,8 +213,8 @@ export class StationaryCameraManager implements CameraManager {
 
     const euler = new Euler().setFromQuaternion(this._camera.quaternion, 'YXZ');
 
-    euler.x -= -deltaY * sensitivityScaler * (this._camera.fov / this._defaultFOV);
-    euler.y -= -deltaX * sensitivityScaler * (this._camera.fov / this._defaultFOV);
+    euler.x -= deltaY * sensitivityScaler * (this._camera.fov / this._defaultFOV);
+    euler.y -= deltaX * sensitivityScaler * (this._camera.fov / this._defaultFOV);
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
 

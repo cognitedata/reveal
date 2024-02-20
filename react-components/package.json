@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.29.1",
+  "version": "0.32.0",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -30,7 +30,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
-    "@cognite/reveal": "^4.7.0",
+    "@cognite/reveal": "^4.10.0",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
@@ -44,15 +44,15 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.5.0",
     "@cognite/cogs.js": "^9.17.0",
-    "@cognite/reveal": "^4.8.0",
+    "@cognite/reveal": "^4.10.0",
     "@cognite/sdk": "^8.2.0",
     "@playwright/test": "^1.39.0",
-    "@storybook/addon-essentials": "7.6.12",
-    "@storybook/addon-interactions": "7.6.12",
-    "@storybook/addon-links": "7.6.12",
-    "@storybook/blocks": "7.6.12",
+    "@storybook/addon-essentials": "7.6.15",
+    "@storybook/addon-interactions": "7.6.15",
+    "@storybook/addon-links": "7.6.15",
+    "@storybook/blocks": "7.6.15",
     "@storybook/builder-vite": "^7.4.2",
-    "@storybook/react": "7.6.12",
+    "@storybook/react": "7.6.15",
     "@storybook/react-vite": "^7.4.3",
     "@storybook/testing-library": "0.2.2",
     "@tanstack/react-query-devtools": "^4.29.19",
@@ -85,7 +85,7 @@
     "react-draggable": "^4.4.6",
     "react-resizable": "^3.0.5",
     "react-router-dom": "^6.15.0",
-    "storybook": "7.6.12",
+    "storybook": "7.6.15",
     "style-loader": "^3.3.3",
     "styled-components": "^6.1.1",
     "three": "0.158.0",
