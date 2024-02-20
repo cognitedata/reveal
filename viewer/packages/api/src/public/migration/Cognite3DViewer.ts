@@ -287,7 +287,8 @@ export class Cognite3DViewer {
 
     const useFlexibleCameraManager = options.useFlexibleCameraManager ?? false;
     const initialActiveCameraManager =
-      options.cameraManager ?? (useFlexibleCameraManager
+      options.cameraManager ??
+      (useFlexibleCameraManager
         ? new FlexibleCameraManager(
             this._domElement,
             this._mouseHandler,
