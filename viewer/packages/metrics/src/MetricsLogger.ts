@@ -108,8 +108,6 @@ export class MetricsLogger {
     if (MetricsLogger.globalMetricsLogger) {
       await this.globalMetricsLogger._initPromise;
       this.globalMetricsLogger.innerTrackEvent(eventName, eventProps);
-    } else {
-      console.warn('MetricsLogger not initialized');
     }
   }
 
