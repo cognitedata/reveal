@@ -46,13 +46,14 @@ export const Main: Story = {
       <RevealStoryContainer color={new Color(0x4a4a4a)} sdk={sdk}>
         <MyCustomToolbar>
           <RevealToolbar.ResetCameraButton
-            sceneExternalId={sceneExternalId}
-            sceneSpaceId={sceneSpaceId}
+            sceneExternalId={selectedScene?.externalId}
+            sceneSpaceId={selectedScene?.space}
           />
           <RevealToolbar.SelectSceneButton
             selectedScene={selectedScene}
             setSelectedScene={setSelectedScene}
           />
+          <RevealToolbar.FitModelsButton />
         </MyCustomToolbar>
         <SceneContainerStoryContent
           sceneExternalId={
