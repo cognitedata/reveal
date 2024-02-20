@@ -12,90 +12,104 @@ import {
   type MetadataRuleTrigger,
   type Expression,
   type RuleOutputSet,
-  type Rule
+  type Rule,
+  type TimeseriesRuleTrigger,
+  type RuleAndStyleIndex
 } from './types';
 import { type CogniteCadModel, TreeIndexNodeCollection } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset } from '@cognite/sdk';
+import { type FdmPropertyType } from '../Reveal3DResources/types';
 
-const checkStringExpressionStatement = (asset: Asset, expression: StringExpression): boolean => {
+const checkStringExpressionStatement = (
+  asset: Asset,
+  expression: StringExpression
+): boolean | undefined => {
   const { trigger, condition } = expression;
 
-  let expressionResult: boolean = false;
+  let expressionResult: boolean | undefined = false;
+
+  const assetTrigger = asset[trigger.type]?.[trigger.key];
 
   switch (condition.type) {
     case 'equals': {
-      expressionResult = asset[trigger.type]?.[trigger.key] === condition.parameter;
+      expressionResult = assetTrigger === condition.parameter;
       break;
     }
     case 'notEquals': {
-      expressionResult = asset[trigger.type]?.[trigger.key] !== condition.parameter;
+      expressionResult = assetTrigger !== condition.parameter;
       break;
     }
     case 'contains': {
-      expressionResult = asset[trigger.type]?.[trigger.key].includes(condition.parameter) ?? false;
+      expressionResult = assetTrigger?.includes(condition.parameter) ?? undefined;
       break;
     }
     case 'startsWith': {
-      expressionResult =
-        asset[trigger.type]?.[trigger.key].startsWith(condition.parameter) ?? false;
+      expressionResult = assetTrigger?.startsWith(condition.parameter) ?? undefined;
       break;
     }
     case 'endsWith': {
-      expressionResult = asset[trigger.type]?.[trigger.key].endsWith(condition.parameter) ?? false;
+      expressionResult = assetTrigger?.endsWith(condition.parameter) ?? undefined;
       break;
     }
   }
 
   return expressionResult;
 };
-const checkNumericExpressionStatement = (asset: Asset, expression: NumericExpression): boolean => {
-  const trigger = expression.trigger as MetadataRuleTrigger;
+const checkNumericExpressionStatement = (
+  asset: Asset,
+  expression: NumericExpression
+): boolean | undefined => {
+  if (!isMetadataTrigger(expression.trigger)) return undefined;
+
+  const trigger = expression.trigger;
   const condition = expression.condition;
 
   let expressionResult: boolean = false;
 
+  const assetTrigger = Number(asset[trigger.type]?.[trigger.key]);
+
   switch (condition.type) {
     case 'equals': {
       const parameter = condition.parameters[0];
-      expressionResult = Number(asset[trigger.type]?.[trigger.key]) === parameter;
+      expressionResult = assetTrigger === parameter;
       break;
     }
     case 'notEquals': {
       const parameter = condition.parameters[0];
-      expressionResult = Number(asset[trigger.type]?.[trigger.key]) !== parameter;
+      expressionResult = assetTrigger !== parameter;
       break;
     }
     case 'lessThan': {
       const parameter = condition.parameters[0];
-      expressionResult = Number(asset[trigger.type]?.[trigger.key]) < parameter;
+      expressionResult = assetTrigger < parameter;
       break;
     }
     case 'greaterThan': {
       const parameter = condition.parameters[0];
-      expressionResult = Number(asset[trigger.type]?.[trigger.key]) > parameter;
+      expressionResult = assetTrigger > parameter;
       break;
     }
     case 'lessThanOrEquals': {
       const parameter = condition.parameters[0];
-      expressionResult = Number(asset[trigger.type]?.[trigger.key]) <= parameter;
+      expressionResult = assetTrigger <= parameter;
       break;
     }
     case 'greaterThanOrEquals': {
       const parameter = condition.parameters[0];
-      expressionResult = Number(asset[trigger.type]?.[trigger.key]) >= parameter;
+      expressionResult = assetTrigger >= parameter;
       break;
     }
     case 'within': {
       const lower = condition.lowerBoundInclusive;
       const upper = condition.upperBoundInclusive;
-      const value = Number(asset[trigger.type]?.[trigger.key]);
+      const value = assetTrigger;
       expressionResult = lower < value && value < upper;
       break;
     }
     case 'outside': {
       const lower = condition.lowerBoundExclusive;
       const upper = condition.upperBoundExclusive;
-      const value = Number(asset[trigger.type]?.[trigger.key]);
+      const value = assetTrigger;
       expressionResult = value <= lower && upper <= value;
       break;
     }
@@ -104,10 +118,13 @@ const checkNumericExpressionStatement = (asset: Asset, expression: NumericExpres
   return expressionResult;
 };
 
-const traverseExpression = (asset: Asset, expressions: Expression[]): boolean[] => {
-  let expressionResult: boolean = false;
+const traverseExpression = (
+  asset: Asset,
+  expressions: Expression[]
+): Array<boolean | undefined> => {
+  let expressionResult: boolean | undefined = false;
 
-  const expressionResults: boolean[] = [];
+  const expressionResults: Array<boolean | undefined> = [];
 
   expressions.forEach((expression) => {
     switch (expression.type) {
@@ -118,12 +135,13 @@ const traverseExpression = (asset: Asset, expressions: Expression[]): boolean[] 
       }
       case 'and': {
         const operatorResult = traverseExpression(asset, expression.expressions);
-        expressionResult = operatorResult.find((result) => !result) ?? false;
+        expressionResult =
+          operatorResult.find((result) => (result !== undefined ? !result : false)) ?? false;
         break;
       }
       case 'not': {
         const operatorResult = traverseExpression(asset, [expression.expression]);
-        expressionResult = !operatorResult[0];
+        expressionResult = operatorResult[0] !== undefined ? !operatorResult[0] : false;
         break;
       }
       case 'numericExpression': {
@@ -145,14 +163,9 @@ export const generateRuleBasedOutputs = (
   model: CogniteCadModel,
   contextualizedAssetNodes: Asset[],
   assetMappings: AssetMapping3D[],
-  ruleSet: RuleOutputSet
+  ruleSet: RuleOutputSet | Record<string, any> | FdmPropertyType<Record<string, any>>
 ): void => {
   const outputType = 'color'; // for now it only supports colors as the output
-
-  type RuleAndStyleIndex = {
-    styleIndex: TreeIndexNodeCollection;
-    ruleOutputParams: RuleOutput;
-  };
 
   const ruleWithOutputs = ruleSet?.rulesWithOutputs;
 
@@ -167,52 +180,87 @@ export const generateRuleBasedOutputs = (
 
     if (outputSelected === undefined) return;
 
-    const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
-      styleIndex: new TreeIndexNodeCollection(),
-      ruleOutputParams: outputSelected
-    };
+    analyzeNodesAgainstExpression({
+      model,
+      contextualizedAssetNodes,
+      assetMappings,
+      expression,
+      outputSelected
+    });
+  });
+};
 
-    // ======== OUTPUT - COLOR IN 3D
-    void Promise.all(
-      contextualizedAssetNodes.map(async (assetNode) => {
-        const finalGlobalOutputResult = traverseExpression(
-          assetNode,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          [expression]
+const analyzeNodesAgainstExpression = ({
+  model,
+  contextualizedAssetNodes,
+  assetMappings,
+  expression,
+  outputSelected
+}: {
+  model: CogniteCadModel;
+  contextualizedAssetNodes: Asset[];
+  assetMappings: AssetMapping3D[];
+  expression: Expression;
+  outputSelected: ColorRuleOutput;
+}): void => {
+  void Promise.all(
+    contextualizedAssetNodes.map(async (assetNode) => {
+      const finalGlobalOutputResult = traverseExpression(assetNode, [expression]);
+
+      if (finalGlobalOutputResult[0] ?? false) {
+        const nodesFromThisAsset = assetMappings.filter(
+          (mapping) => mapping.assetId === assetNode.id
         );
 
-        if (finalGlobalOutputResult[0]) {
-          const nodesFromThisAsset = assetMappings.filter(
-            (mapping) => mapping.assetId === assetNode.id
-          );
+        // get the 3d nodes linked to the asset and with treeindex and subtreeRange
+        const treeNodes: NodeAndRange[] = await getThreeDNodesFromAsset(nodesFromThisAsset, model);
 
-          // get the 3d nodes linked to the asset and with treeindex and subtreeRange
-          const treeNodes: NodeAndRange[] = await Promise.all(
-            nodesFromThisAsset.map(async (nodeFromAsset) => {
-              const subtreeRange = await model.getSubtreeTreeIndices(nodeFromAsset.treeIndex);
-              const node: NodeAndRange = {
-                nodeId: nodeFromAsset.nodeId,
-                treeIndex: nodeFromAsset.treeIndex,
-                subtreeRange
-              };
-              return node;
-            })
-          );
-          const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
-          treeNodes.forEach((node) => {
-            nodeIndexSet.addRange(node.subtreeRange);
-          });
+        applyNodeStyles(treeNodes, outputSelected, model);
+      }
+    })
+  );
+};
 
-          // assign the style with the color from the condition
-          model.assignStyledNodeCollection(ruleOutputAndStyleIndex.styleIndex, {
-            color: new Color(outputSelected.fill)
-          });
-        }
-        // debug
-        // console.log(' ASSET ', assetNode, finalGlobalOutputResult);
-      })
-    );
+const getThreeDNodesFromAsset = async (
+  nodesFromThisAsset: AssetMapping3D[],
+  model: CogniteCadModel
+): Promise<NodeAndRange[]> => {
+  return await Promise.all(
+    nodesFromThisAsset.map(async (nodeFromAsset) => {
+      const subtreeRange = await model.getSubtreeTreeIndices(nodeFromAsset.treeIndex);
+      const node: NodeAndRange = {
+        nodeId: nodeFromAsset.nodeId,
+        treeIndex: nodeFromAsset.treeIndex,
+        subtreeRange
+      };
+      return node;
+    })
+  );
+};
 
-    // =================================
+const applyNodeStyles = (
+  treeNodes: NodeAndRange[],
+  outputSelected: ColorRuleOutput,
+  model: CogniteCadModel
+): void => {
+  const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
+    styleIndex: new TreeIndexNodeCollection(),
+    ruleOutputParams: outputSelected
+  };
+
+  const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
+  treeNodes.forEach((node) => {
+    nodeIndexSet.addRange(node.subtreeRange);
   });
+
+  // assign the style with the color from the condition
+  model.assignStyledNodeCollection(ruleOutputAndStyleIndex.styleIndex, {
+    color: new Color(outputSelected.fill)
+  });
+};
+
+const isMetadataTrigger = (
+  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger
+): trigger is MetadataRuleTrigger => {
+  return (trigger as MetadataRuleTrigger).type !== 'metadata';
 };

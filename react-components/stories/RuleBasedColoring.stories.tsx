@@ -8,7 +8,7 @@ import { Color } from 'three';
 import { useState } from 'react';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
-import { RuleBasedOutputsContainer } from '../src/components/RevealTopbar/RuleBasedOutputsContainer';
+import { RuleBasedOutputsButton } from '../src/components/RevealToolbar/RuleBasedOutputsButton';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
 
 const meta = {
@@ -43,7 +43,7 @@ export const Main: Story = {
 
     return (
       <RevealStoryContext color={new Color(0x4a4a4a)}>
-        {resourceIsLoaded && <RevealTopbar topbarContent={<RuleBasedOutputsContainer />} />}
+        {resourceIsLoaded && <RevealTopbar topbarContent={<RuleBasedOutputsButton />} />}
         <RevealCanvas />
         <RevealResourcesFitCameraOnLoad onResourcesAdded={onLoaded} resources={resources} />
       </RevealStoryContext>

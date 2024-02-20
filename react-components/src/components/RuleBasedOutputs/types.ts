@@ -2,19 +2,9 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type NumericRange } from '@cognite/reveal';
+import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
 import { type EdgeItem } from '../../utilities/FdmSDK';
-
-export type NodeAndRange = {
-  treeIndex: number;
-  nodeId: number;
-  subtreeRange: NumericRange;
-};
-
-export type RuleAndEnabled = {
-  isEnabled: boolean;
-  rule: EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>;
-};
+import { type FdmPropertyType } from '../Reveal3DResources/types';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
@@ -159,6 +149,24 @@ export type FdmRuleOutputSet = {
 
 // ======== GENERAL TYPES ==============
 
+export type RuleAndStyleIndex = {
+  styleIndex: TreeIndexNodeCollection;
+  ruleOutputParams: RuleOutput;
+};
+
+export type NodeAndRange = {
+  treeIndex: number;
+  nodeId: number;
+  subtreeRange: NumericRange;
+};
+
+export type RuleAndEnabled = {
+  isEnabled: boolean;
+  rule: EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>;
+};
+
+export type RuleRecord = EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>;
+
 export type InstanceType = 'node' | 'edge';
 
 export type Source = {
@@ -212,5 +220,3 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   deletedTime: number;
   properties: FdmPropertyType<PropertyType>;
 };
-
-export type FdmPropertyType<NodeType> = Record<string, Record<string, NodeType>>;

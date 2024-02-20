@@ -8,16 +8,14 @@ import { useAllMappedEquipmentAssetMappings, useReveal } from '../..';
 import { Color } from 'three';
 import { type RuleOutputSet } from './types';
 import { generateRuleBasedOutputs } from './utils';
+import { type FdmPropertyType } from '../Reveal3DResources/types';
 
 export type ColorOverlayProps = {
-  ruleSet: RuleOutputSet | undefined;
+  ruleSet: RuleOutputSet | Record<string, any> | FdmPropertyType<Record<string, any>> | undefined;
 };
 
-export function RuleBasedOutputs({ ruleSet }: ColorOverlayProps): ReactElement | undefined {
+export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactElement | undefined {
   const viewer = useReveal();
-
-  // only enabled whether has loaded models
-  if (viewer.models === undefined || viewer.models.length === 0) return;
 
   const models = viewer.models;
 
