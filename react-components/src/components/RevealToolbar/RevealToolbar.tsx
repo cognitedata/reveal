@@ -16,6 +16,7 @@ import { ResetCameraButton } from './ResetCameraButton';
 import { type QualitySettings } from './SettingsContainer/types';
 import styled from 'styled-components';
 import { SelectSceneButton } from './SelectSceneButton';
+import { RuleBasedOutputsButton } from './RuleBasedOutputsButton';
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute;
@@ -42,7 +43,7 @@ const DefaultContentWrapper = (props: CustomToolbarContent): ReactElement => {
     <>
       <LayersButton />
       <FitModelsButton />
-
+      <RuleBasedOutputsButton />
       <Divider weight="2px" length="75%" />
 
       <SlicerButton storeStateInUrl={props.storeStateInUrl} />
@@ -105,6 +106,7 @@ export const RevealToolbar = withSuppressRevealEvents(
   HelpButton: typeof HelpButton;
   ResetCameraButton: typeof ResetCameraButton;
   SelectSceneButton: typeof SelectSceneButton;
+  RuleBasedOutputsButton: typeof RuleBasedOutputsButton;
 };
 
 RevealToolbar.FitModelsButton = FitModelsButton;
@@ -116,3 +118,4 @@ RevealToolbar.SettingsButton = SettingsButton;
 RevealToolbar.HelpButton = HelpButton;
 RevealToolbar.ResetCameraButton = ResetCameraButton;
 RevealToolbar.SelectSceneButton = SelectSceneButton;
+RevealToolbar.RuleBasedOutputsButton = RuleBasedOutputsButton;
