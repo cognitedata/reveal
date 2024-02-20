@@ -40,6 +40,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   //================================================
 
   private _isEnabled: boolean = true;
+  private _isInitialized: boolean = false;
   public temporarlyDisableKeyboard: boolean = false;
 
   private readonly _options: FlexibleControlsOptions;
@@ -147,8 +148,16 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     return this._isEnabled;
   }
 
-  set isEnabled(isEnabled: boolean) {
-    this._isEnabled = isEnabled;
+  set isEnabled(value: boolean) {
+    this._isEnabled = value;
+  }
+
+  get isInitialized(): boolean {
+    return this._isInitialized;
+  }
+
+  set isInitialized(value: boolean) {
+    this._isInitialized = value;
   }
 
   public get controlsType(): FlexibleControlsType {
@@ -222,6 +231,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   public setPositionAndTarget(position: Vector3, target: Vector3): void {
+    this.isInitialized = true;
     this._cameraPosition.copy(position);
     this._target.copy(target);
 
@@ -235,6 +245,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   public setPositionAndDirection(position: Vector3, direction: Vector3): void {
+    this.isInitialized = true;
     this._cameraPosition.copy(position);
     this._cameraVector.copy(direction);
     this.update(1000 / TARGET_FPS, true);
@@ -242,6 +253,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   public setPositionAndRotation(position: Vector3, rotation: Quaternion): void {
+    this.isInitialized = true;
     this._cameraPosition.copy(position);
 
     const cameraVector = this.newVector3().set(0, 0, -1);
