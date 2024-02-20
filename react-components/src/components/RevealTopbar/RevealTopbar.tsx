@@ -15,6 +15,7 @@ import {
   SetOrbitOrFirstPersonControlsType
 } from '../RevealToolbar/SetFlexibleControlsType';
 import { SceneSelectionDropdown } from './SceneSelectionDropdown';
+import { RuleBasedOutputsButton } from '../RevealToolbar/RuleBasedOutputsButton';
 
 export type CustomTopbarContent = CustomToolbarContent & { topbarContent?: ReactNode };
 
@@ -24,6 +25,7 @@ const DefaultContentWrapper = (props: CustomTopbarContent): ReactElement => {
       <LayersButton />
       <SlicerButton />
       <FitModelsButton />
+      <RuleBasedOutputsButton />
       <SetOrbitOrFirstPersonControlsType />
       <Divider weight="1px" length="75%" direction="vertical" />
       <HelpButton />
@@ -63,11 +65,13 @@ export const RevealTopbar = RevealTopbarContainer as typeof RevealTopbarContaine
   SetFlexibleControlsType: typeof SetFlexibleControlsType;
   SetOrbitOrFistPersonControlsType: typeof SetOrbitOrFirstPersonControlsType;
   SceneSelectionDropdown: typeof SceneSelectionDropdown;
+  RuleBasedOutputsButton: typeof RuleBasedOutputsButton;
 };
 
 RevealTopbar.SetFlexibleControlsType = SetFlexibleControlsType;
 RevealTopbar.SetOrbitOrFistPersonControlsType = SetOrbitOrFirstPersonControlsType;
 RevealTopbar.SceneSelectionDropdown = SceneSelectionDropdown;
+RevealTopbar.RuleBasedOutputsButton = RuleBasedOutputsButton;
 
 const StyledTopBar = styled.div`
   width: 100%;
