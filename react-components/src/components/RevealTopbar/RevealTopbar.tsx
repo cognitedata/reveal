@@ -10,6 +10,12 @@ import { type CustomToolbarContent } from '../RevealToolbar/RevealToolbar';
 import { SettingsButton } from '../RevealToolbar/SettingsButton';
 import { HelpButton } from '../RevealToolbar/HelpButton';
 import { Divider } from '@cognite/cogs.js';
+import {
+  SetFlexibleControlsType,
+  SetOrbitOrFirstPersonControlsType
+} from '../RevealToolbar/SetFlexibleControlsType';
+import { SceneSelectionDropdown } from './SceneSelectionDropdown';
+import { RuleBasedOutputsButton } from '../RevealToolbar/RuleBasedOutputsButton';
 
 export type CustomTopbarContent = CustomToolbarContent & { topbarContent?: ReactNode };
 
@@ -19,6 +25,8 @@ const DefaultContentWrapper = (props: CustomTopbarContent): ReactElement => {
       <LayersButton />
       <SlicerButton />
       <FitModelsButton />
+      <RuleBasedOutputsButton />
+      <SetOrbitOrFirstPersonControlsType />
       <Divider weight="1px" length="75%" direction="vertical" />
       <HelpButton />
       <SettingsButton
@@ -30,7 +38,7 @@ const DefaultContentWrapper = (props: CustomTopbarContent): ReactElement => {
   );
 };
 
-export const RevealTopbar = ({
+const RevealTopbarContainer = ({
   customSettingsContent,
   lowFidelitySettings,
   highFidelitySettings,
@@ -52,6 +60,18 @@ export const RevealTopbar = ({
     </StyledTopBar>
   );
 };
+
+export const RevealTopbar = RevealTopbarContainer as typeof RevealTopbarContainer & {
+  SetFlexibleControlsType: typeof SetFlexibleControlsType;
+  SetOrbitOrFistPersonControlsType: typeof SetOrbitOrFirstPersonControlsType;
+  SceneSelectionDropdown: typeof SceneSelectionDropdown;
+  RuleBasedOutputsButton: typeof RuleBasedOutputsButton;
+};
+
+RevealTopbar.SetFlexibleControlsType = SetFlexibleControlsType;
+RevealTopbar.SetOrbitOrFistPersonControlsType = SetOrbitOrFirstPersonControlsType;
+RevealTopbar.SceneSelectionDropdown = SceneSelectionDropdown;
+RevealTopbar.RuleBasedOutputsButton = RuleBasedOutputsButton;
 
 const StyledTopBar = styled.div`
   width: 100%;

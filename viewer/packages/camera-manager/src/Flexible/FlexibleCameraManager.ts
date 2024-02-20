@@ -188,6 +188,12 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   }
 
   public update(deltaTime: number, boundingBox: Box3): void {
+    // If the camera haven't set the position and target before, do it now
+    if (!this.controls.isInitialized) {
+      const { position, target } = fitCameraToBoundingBox(this.camera, boundingBox, 2);
+      this.setPositionAndTarget(position, target);
+      this.controls.isInitialized = true;
+    }
     if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
       this._nearAndFarNeedsUpdate = false;
       this._currentBoundingBox.copy(boundingBox);
@@ -291,6 +297,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     if (raycastResult.intersection?.point) {
       return raycastResult.intersection.point;
     }
+    // If no intersection, get the intersection from the bounding box
     return this.getTargetByBoundingBox(pixelX, pixelY, raycastResult.modelsBoundingBox);
   };
 
@@ -442,13 +449,24 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       moveCameraTo(this, position, target, this.options.animationDuration);
       return;
     }
-    // If not particular object is picked, set camera position half way to the target
-    const newTarget =
-      raycastResult.intersection?.point ??
-      this.getTargetByBoundingBox(event.offsetX, event.offsetY, raycastResult.modelsBoundingBox);
-
+    // If no particular bounding box is found, create it by camera distance
+    // This happen when picking at a point clouds
+    if (raycastResult.intersection?.point) {
+      const point = raycastResult.intersection.point;
+      const distance = raycastResult.intersection.distanceToCamera;
+      const boundingBox = new Box3(point.clone(), point.clone());
+      const moveFraction = 0.1;
+      const radiusFactor = 3;
+      boundingBox.expandByScalar(moveFraction * distance);
+      const { position, target } = fitCameraToBoundingBox(this.camera, boundingBox, radiusFactor);
+      moveCameraTo(this, position, target, this.options.animationDuration);
+      return;
+    }
+    // If not particular object is picked, move the camera position towards the edge of the modelsBoundingBox
+    const moveFraction = 0.33;
+    const newTarget = this.getTargetByBoundingBox(event.offsetX, event.offsetY, raycastResult.modelsBoundingBox);
     const newPosition = new Vector3().subVectors(newTarget, this.camera.position);
-    newPosition.divideScalar(2);
+    newPosition.multiplyScalar(moveFraction);
     newPosition.add(this.camera.position);
     moveCameraTo(this, newPosition, newTarget, this.options.animationDuration);
   }

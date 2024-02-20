@@ -89,6 +89,7 @@ export function Viewer() {
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         logMetrics: false,
+        useFlexibleCameraManager: true,
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         pointCloudEffects: {

@@ -8,13 +8,17 @@ import {
   useGetCameraStateFromUrlParam,
   useCameraNavigation,
   RevealTopbar,
-  RevealCanvas
+  RevealCanvas,
+  type DmsUniqueIdentifier,
+  RevealToolbar
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useEffect } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
+import { SceneSelectionDropdown } from '../src/components/RevealTopbar/SceneSelectionDropdown';
+import { RuleBasedOutputsButton } from '../src/components/RevealToolbar/RuleBasedOutputsButton';
 
 const meta = {
   title: 'Example/Topbar',
@@ -30,13 +34,30 @@ export const Main: Story = {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
   render: ({ addModelOptions }) => (
-    <RevealStoryContext color={new Color(0x4a4a4a)}>
-      <RevealTopbar />
-      <RevealCanvas />
-      <FitToUrlCameraState />
-      <CadModelContainer addModelOptions={addModelOptions} />
+    <RevealStoryContext
+      viewerOptions={{ useFlexibleCameraManager: true }}
+      color={new Color(0x4a4a4a)}>
+      <RevealTopbar topbarContent={<TopbarContent />} />
+      <RevealCanvas>
+        <FitToUrlCameraState />
+        <CadModelContainer addModelOptions={addModelOptions} />
+      </RevealCanvas>
     </RevealStoryContext>
   )
+};
+
+const TopbarContent = (): ReactElement => {
+  const [scene, setScene] = useState<DmsUniqueIdentifier>();
+
+  return (
+    <>
+      <SceneSelectionDropdown selectedScene={scene} setSelectedScene={setScene} />
+      <RevealTopbar.SetOrbitOrFistPersonControlsType orientation="horizontal" />
+      <RevealToolbar.LayersButton storeStateInUrl={true} />
+      <RuleBasedOutputsButton />
+      <RevealToolbar.HelpButton />
+    </>
+  );
 };
 
 function FitToUrlCameraState(): ReactElement {
