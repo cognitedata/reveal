@@ -48,5 +48,7 @@
   "CONTROLS_TYPE_ORBIT": "Orbit",
   "CONTROLS_TYPE_ORBIT_IN_CENTER": "Center Orbit",
   "CONTROLS_TYPE_TOOLTIP": "Set camera to orbit or fly mode",
+  "SEARCH_PLACEHOLDER": "Search",
+  "SELECT_INDIVIDUAL_3D_MODELS": "Select individual models",
   "RULESET_SELECT_HEADER": "Select color overlay"
 }
