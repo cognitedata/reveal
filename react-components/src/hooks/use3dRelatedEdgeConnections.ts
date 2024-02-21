@@ -7,6 +7,7 @@ import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 import { zipWith } from 'lodash';
 import { type FdmInstanceWithView } from '../utilities/types';
+import assert from 'assert';
 
 export function use3dRelatedEdgeConnections(
   fdmId: DmsUniqueIdentifier | undefined
@@ -16,11 +17,12 @@ export function use3dRelatedEdgeConnections(
   return useQuery(
     ['reveal-react-components', 'get-3d-related-edge-connections', fdmId?.externalId, fdmId?.space],
     async () => {
+      assert(fdmId !== undefined);
       const nodesResult = await fdmSdk.queryNodesAndEdges({
         ...related3dEdgesQuery,
         parameters: {
-          instanceExternalId: fdmId?.externalId ?? '',
-          instanceSpace: fdmId?.space ?? ''
+          instanceExternalId: fdmId.externalId,
+          instanceSpace: fdmId.space
         }
       });
 

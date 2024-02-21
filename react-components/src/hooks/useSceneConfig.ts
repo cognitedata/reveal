@@ -21,6 +21,7 @@ import {
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type Source, type FdmSDK } from '../utilities/FdmSDK';
 import { type SceneConfigurationProperties } from './types';
+import { fdmViewsExist } from '../utilities/fdmViewsExist';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -39,13 +40,17 @@ const DefaultScene: Scene = {
 };
 
 export const useSceneConfig = (
-  sceneExternalId: string,
-  sceneSpaceExternalId: string
-): UseQueryResult<Scene> => {
+  sceneExternalId: string | undefined,
+  sceneSpaceExternalId: string | undefined
+): UseQueryResult<Scene | null> => {
   const fdmSdk = useFdmSdk();
   return useQuery(
     ['reveal', 'react-components', 'sync-scene-config', sceneExternalId, sceneSpaceExternalId],
     async () => {
+      if (sceneExternalId === undefined || sceneSpaceExternalId === undefined) {
+        return null;
+      }
+
       const isSceneEnabledInProject = await sceneViewsExist(fdmSdk);
 
       if (!isSceneEnabledInProject) {
@@ -119,11 +124,8 @@ async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {
       version: 'v1'
     }
   ];
-  const views = await fdmSdk.getViewsByIds(neededViews);
-  if (views.items.length === neededViews.length) {
-    return true;
-  }
-  return false;
+
+  return await fdmViewsExist(fdmSdk, neededViews);
 }
 
 function extractProperties<T>(object: Record<string, Record<string, T>>): T {
