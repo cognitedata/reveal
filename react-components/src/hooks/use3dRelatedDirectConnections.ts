@@ -16,16 +16,16 @@ export function use3dRelatedDirectConnections(
   return useQuery(
     ['reveal-react-components', 'get-3d-related-direct-connections'],
     async () => {
-      const assertedInstance = instance ?? { space: '', externalId: '' };
+      assert(instance !== undefined);
       const views = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
-        items: [{ instanceType: 'node', ...assertedInstance }]
+        items: [{ instanceType: 'node', ...instance }]
       });
 
       const view = views.items[0].inspectionResults.involvedViews[0];
       const instanceContent = (
         await fdmSdk.getByExternalIds<Record<string, unknown>>(
-          [{ instanceType: 'node', ...assertedInstance }],
+          [{ instanceType: 'node', ...instance }],
           view
         )
       ).items[0];

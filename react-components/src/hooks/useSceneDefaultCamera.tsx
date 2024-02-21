@@ -10,13 +10,16 @@ import { CDF_TO_VIEWER_TRANSFORMATION, type Cognite3DViewer } from '@cognite/rev
 import { type SceneConfiguration } from '../components/SceneContainer/SceneTypes';
 
 export const useSceneDefaultCamera = (
-  sceneExternalId: string,
-  sceneSpaceId: string
+  sceneExternalId: string | undefined,
+  sceneSpaceId: string | undefined
 ): { fitCameraToSceneDefault: () => void } => {
   const { data } = useSceneConfig(sceneExternalId, sceneSpaceId);
   const viewer = useReveal();
 
   return useMemo(() => {
+    if (data === null) {
+      return { fitCameraToSceneDefault: () => viewer.fitCameraToModels(viewer.models) };
+    }
     if (data === undefined) {
       return { fitCameraToSceneDefault: () => {} };
     }
