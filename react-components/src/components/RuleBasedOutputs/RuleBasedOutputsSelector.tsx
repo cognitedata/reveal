@@ -1,9 +1,9 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useEffect, type ReactElement } from 'react';
+import { useEffect, type ReactElement, useMemo } from 'react';
 
-import { type CogniteCadModel } from '@cognite/reveal';
+import { CogniteCadModel, CogniteModel } from '@cognite/reveal';
 import { useAllMappedEquipmentAssetMappings, useReveal } from '../..';
 import { Color } from 'three';
 import { type RuleOutputSet } from './types';
@@ -17,7 +17,9 @@ export type ColorOverlayProps = {
 export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactElement | undefined {
   const viewer = useReveal();
 
-  const models = viewer.models;
+  const models = useMemo(() => {
+    return viewer.models;
+  }, [viewer.models.length]);
 
   const {
     data: assetMappings,
@@ -26,24 +28,17 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(models);
 
-  // clean up the appearance
-  models.forEach((model) => {
-    const currentModel = model as CogniteCadModel;
-    currentModel.removeAllStyledNodeCollections();
-
-    currentModel.setDefaultNodeAppearance({
-      color: new Color('#efefef')
-    });
-  });
-
   useEffect(() => {
-    if (!isFetching && hasNextPage !== undefined) {
+    if (!isFetching && hasNextPage === true) {
       void fetchNextPage();
     }
   }, [isFetching, hasNextPage, fetchNextPage]);
 
   useEffect(() => {
     if (assetMappings === undefined || isFetching) return;
+
+    clearAllModelStyling(models);
+
     if (ruleSet === undefined) return;
 
     const initializeRuleBasedOutputs = async (model: CogniteCadModel): Promise<void> => {
@@ -71,4 +66,18 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
   }, [assetMappings, ruleSet, models]);
 
   return <></>;
+}
+
+function clearAllModelStyling(models: CogniteModel[]): void {
+  // clean up the appearance
+  models.forEach((model) => {
+    if (!(model instanceof CogniteCadModel)) {
+      return;
+    }
+    model.removeAllStyledNodeCollections();
+
+    model.setDefaultNodeAppearance({
+      color: new Color('#efefef')
+    });
+  });
 }

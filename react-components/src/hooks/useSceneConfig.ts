@@ -21,6 +21,7 @@ import {
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type Source, type FdmSDK } from '../utilities/FdmSDK';
 import { type SceneConfigurationProperties } from './types';
+import { fdmViewsExist } from '../utilities/fdmViewsExist';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -119,11 +120,8 @@ async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {
       version: 'v1'
     }
   ];
-  const views = await fdmSdk.getViewsByIds(neededViews);
-  if (views.items.length === neededViews.length) {
-    return true;
-  }
-  return false;
+
+  return fdmViewsExist(fdmSdk, neededViews);
 }
 
 function extractProperties<T>(object: Record<string, Record<string, T>>): T {
