@@ -3,7 +3,7 @@
  */
 import { useEffect, type ReactElement, useMemo } from 'react';
 
-import { CogniteCadModel, CogniteModel } from '@cognite/reveal';
+import { CogniteCadModel, type CogniteModel } from '@cognite/reveal';
 import { useAllMappedEquipmentAssetMappings, useReveal } from '../..';
 import { Color } from 'three';
 import { type RuleOutputSet } from './types';
