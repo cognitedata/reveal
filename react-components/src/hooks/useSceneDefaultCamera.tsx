@@ -18,7 +18,11 @@ export const useSceneDefaultCamera = (
 
   return useMemo(() => {
     if (data === null) {
-      return { fitCameraToSceneDefault: () => viewer.fitCameraToModels(viewer.models) };
+      return {
+        fitCameraToSceneDefault: () => {
+          viewer.fitCameraToModels(viewer.models);
+        }
+      };
     }
     if (data === undefined) {
       return { fitCameraToSceneDefault: () => {} };

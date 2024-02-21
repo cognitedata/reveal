@@ -125,7 +125,7 @@ async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {
     }
   ];
 
-  return fdmViewsExist(fdmSdk, neededViews);
+  return await fdmViewsExist(fdmSdk, neededViews);
 }
 
 function extractProperties<T>(object: Record<string, Record<string, T>>): T {

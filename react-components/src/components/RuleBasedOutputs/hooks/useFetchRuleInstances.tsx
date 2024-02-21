@@ -11,7 +11,7 @@ export const useFetchRuleInstances = (): UseQueryResult<RuleAndEnabled[], unknow
   const fdmSdk = useFdmSdk();
 
   return useQuery(['react-components', 'color-overlay-rules', 'all'], async () => {
-    const viewExists = fdmViewsExist(fdmSdk, [RULE_BASED_OUTPUTS_VIEW]);
+    const viewExists = await fdmViewsExist(fdmSdk, [RULE_BASED_OUTPUTS_VIEW]);
 
     if (!viewExists) {
       return [];
