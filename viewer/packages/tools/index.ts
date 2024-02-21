@@ -12,6 +12,8 @@ export {
 } from './src/HtmlOverlay/HtmlOverlayTool';
 export { DebugCameraTool } from './src/DebugCameraTool';
 export { AxisViewTool } from './src/AxisView/AxisViewTool';
+export { AxisGizmo } from './src/AxisGismo/AxisGizmo';
+export { AxisGizmoOptions } from './src/AxisGismo/AxisGizmoOptions';
 export {
   AxisBoxConfig,
   AxisBoxCompassConfig,
