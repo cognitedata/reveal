@@ -36,7 +36,12 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
   );
 
   useEffect(() => {
-    if (scene === undefined || groundPlanesUrls === undefined || groundPlanesUrls.length === 0) {
+    if (
+      scene === undefined ||
+      scene === null ||
+      groundPlanesUrls === undefined ||
+      groundPlanesUrls.length === 0
+    ) {
       return;
     }
     const groundMeshes: CustomObject[] = [];
