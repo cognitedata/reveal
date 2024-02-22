@@ -2,11 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Camera, Color, Matrix4, Vector3 } from 'three';
+import { Color, Matrix4, PerspectiveCamera, Vector3 } from 'three';
 import { AxisGizmoOptions } from './AxisGizmoOptions';
 import { Corner } from '@reveal/utilities';
+import { Cognite3DViewer } from '@reveal/api';
 
-export class AxisGizmo extends HTMLElement {
+export class AxisGizmo {
   //================================================
   // INSTANCE FIELDS
   //================================================
@@ -14,97 +15,50 @@ export class AxisGizmo extends HTMLElement {
   private readonly _axises: Axis[];
   private readonly _center: Vector3;
   private _selectedAxis: Axis | null = null;
+
+  private _viewer: Cognite3DViewer | null = null;
+  private _element: HTMLElement | null = null;
   private _canvas: HTMLCanvasElement | null = null;
   private _context: CanvasRenderingContext2D | null = null;
-  onAxisSelected: ((event: { axis: number; direction: Vector3 }) => void) | null = null;
 
-  private readonly _onMouseMove = this.onMouseMove.bind(this);
-  private readonly _onMouseOut = this.onMouseOut.bind(this);
+  private readonly _onPointerMove = this.onPointerMove.bind(this);
+  private readonly _onPointerOut = this.onPointerOut.bind(this);
   private readonly _onMouseClick = this.onMouseClick.bind(this);
+  private readonly _onStopPropagation = this.onStopPropagation.bind(this);
 
   //================================================
   // CONSTRUCTORS
   //================================================
 
-  constructor(options?: AxisGizmoOptions) {
-    super();
-    this._options = options ?? new AxisGizmoOptions();
-    this._axises = Axis.createAllAxises(this._options);
-
+  constructor() {
+    this._options = new AxisGizmoOptions();
     const delta = this._options.size / 2;
     this._center = new Vector3(delta, delta, 0);
-    this.innerHTML = '<canvas ></canvas>';
-    this.initializeStyle();
+    this._axises = Axis.createAllAxises(this._options);
   }
 
   //================================================
-  // OVERRIDES from HTMLElement
+  // INSTANCE METHODS: Public
   //================================================
 
-  /**
-   * Connected callback for the AxisGizmo element.
-   */
-  connectedCallback(): void {
-    this._canvas = this.querySelector('canvas');
+  public connect(viewer: Cognite3DViewer): void {
+    this._viewer = viewer;
+    this._element = this.createElement();
+    viewer.domElement.appendChild(this._element);
+    this._canvas = this._element.querySelector('canvas');
     if (!this._canvas) {
       return;
     }
-    this.addEventListener('click', (event: MouseEvent) => {
-      event.stopPropagation();
-    });
     this._context = this._canvas.getContext('2d');
-    this._canvas.addEventListener('mousemove', this._onMouseMove, false);
-    this._canvas.addEventListener('mouseout', this._onMouseOut, false);
-    this._canvas.addEventListener('click', this._onMouseClick, false);
+    this.addEventListeners();
   }
-
-  /**
-   * Callback called when the AxisGizmo element is disconnected from the DOM.
-   */
-  disconnectedCallback(): void {
-    if (!this._canvas) {
-      return;
-    }
-    this._canvas.removeEventListener('mousemove', this._onMouseMove, false);
-    this._canvas.removeEventListener('mouseout', this._onMouseOut, false);
-    this._canvas.removeEventListener('click', this._onMouseClick, false);
-  }
-
-  //================================================
-  // EVENTS
-  //================================================
-
-  private onMouseMove(event: MouseEvent) {
-    if (!this._canvas) {
-      return;
-    }
-    const rectangle = this._canvas.getBoundingClientRect();
-    const mousePosition = new Vector3(event.clientX - rectangle.left, event.clientY - rectangle.top, 0);
-    this._selectedAxis = this.getSelectedAxis(mousePosition);
-    this.update(null);
-  }
-
-  private onMouseOut(_: MouseEvent) {
-    this._selectedAxis = null;
-    this.update(null);
-  }
-
-  private onMouseClick(event: MouseEvent) {
-    if (this.onAxisSelected && this._selectedAxis !== null) {
-      this.onAxisSelected({ axis: this._selectedAxis.axis, direction: this._selectedAxis.direction.clone() });
-    }
-  }
-
-  //================================================
-  // INSTANCE METHODS
-  //================================================
 
   /**
    * Update the AxisGizmo based on the camera.
    * @param camera The camera to update the AxisGizmo with.
    * If the camera is null, use the previous camera rotation
    */
-  update(camera: Camera | null): void {
+  public update(camera: PerspectiveCamera | null): void {
     if (this._context == null || this._canvas == null) {
       return;
     }
@@ -119,39 +73,101 @@ export class AxisGizmo extends HTMLElement {
     // Sort the axis by it's z position
     this._axises.sort((a, b) => (a.bobblePosition.z > b.bobblePosition.z ? 1 : -1));
 
-    // Render it
-    clear(this._context, this._canvas);
     this.render();
   }
+
+  //================================================
+  // INSTANCE METHODS: Events
+  //================================================
+
+  private onPointerMove(event: PointerEvent) {
+    if (!this._canvas) {
+      return;
+    }
+    const rectangle = this._canvas.getBoundingClientRect();
+    const mousePosition = new Vector3(event.clientX - rectangle.left, event.clientY - rectangle.top, 0);
+    this._selectedAxis = this.getSelectedAxis(mousePosition);
+    this.update(null);
+  }
+
+  private onPointerOut(_event: PointerEvent) {
+    this._selectedAxis = null;
+    this.update(null);
+  }
+
+  private onMouseClick(event: MouseEvent) {
+    event.stopPropagation();
+
+    if (this._selectedAxis === null || this._viewer == null) {
+      return;
+    }
+    const cameraManager = this._viewer.cameraManager;
+    const { position, target } = cameraManager.getCameraState();
+    const distance = position.distanceTo(target);
+    const direction = this._selectedAxis.direction.clone().multiplyScalar(distance);
+    const positionToMoveTo = target.clone().add(direction);
+    cameraManager.setCameraState({ position: positionToMoveTo, target: target });
+  }
+
+  private onStopPropagation(event: PointerEvent) {
+    event.stopPropagation();
+  }
+
+  private readonly onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => {
+    if (this._viewer) {
+      this.update(this._viewer.cameraManager.getCamera());
+    }
+  };
 
   //================================================
   // INSTANCE METHODS: Private helpers
   //================================================
 
-  private initializeStyle() {
-    this.style.position = 'absolute';
-    this.style.zIndex = '1000';
-    this.style.height = this.style.width = this._options.size + 'px';
-    const margin = this._options.margin + 'px';
-    switch (this._options.corner) {
-      case Corner.TopRight:
-        this.style.top = this.style.right = margin;
-        break;
-      case Corner.BottomLeft:
-        this.style.bottom = this.style.left = margin;
-        break;
-      case Corner.BottomRight:
-        this.style.bottom = this.style.right = margin;
-        break;
-      default:
-        this.style.top = this.style.left = margin;
+  private addEventListeners(): void {
+    if (this._viewer) {
+      this._viewer.on('cameraChange', this.onCameraChange);
     }
+    const canvas = this._canvas;
+    if (!canvas) {
+      return;
+    }
+    canvas.addEventListener('pointermove', this._onPointerMove, false);
+    canvas.addEventListener('pointerout', this._onPointerOut, false);
+    canvas.addEventListener('pointerdown', this._onStopPropagation, false);
+    canvas.addEventListener('pointerup', this._onStopPropagation, false);
+    canvas.addEventListener('click', this._onMouseClick, false);
+  }
+
+  private removeEventListeners(): void {
+    if (this._viewer) {
+      this._viewer.off('cameraChange', this.onCameraChange);
+    }
+    const canvas = this._canvas;
+    if (!canvas) {
+      return;
+    }
+    canvas.removeEventListener('pointermove', this._onPointerMove, false);
+    canvas.removeEventListener('pointerout', this._onPointerOut, false);
+    canvas.removeEventListener('pointerdown', this._onStopPropagation, false);
+    canvas.removeEventListener('pointerup', this._onStopPropagation, false);
+    canvas.removeEventListener('click', this._onMouseClick, false);
+  }
+
+  private createElement(): HTMLElement {
+    const element: HTMLElement = document.createElement('div');
+    element.innerHTML = '<canvas ></canvas>';
+    initializeStyle(element, this._options);
+    return element;
   }
 
   private render() {
     if (this._context == null) {
       return;
     }
+    if (this._canvas) {
+      clear(this._context, this._canvas);
+    }
+
     if (this._selectedAxis !== null && this._options.focusCircleAlpha > 0) {
       this._context.globalAlpha = this._options.focusCircleAlpha;
       fillCircle(this._context, this._center, this._options.size / 2, this._options.focusCircleColor);
@@ -267,6 +283,30 @@ function drawText(
   context.fillText(label, position.x, position.y + options.fontYAdjust);
 }
 
+function initializeStyle(element: HTMLElement, options: AxisGizmoOptions) {
+  const style = element.style;
+  if (!style) {
+    return;
+  }
+  style.position = 'absolute';
+  style.zIndex = '1000';
+  style.height = style.width = options.size + 'px';
+  const margin = options.margin + 'px';
+  switch (options.corner) {
+    case Corner.TopRight:
+      style.top = style.right = margin;
+      break;
+    case Corner.BottomLeft:
+      style.bottom = style.left = margin;
+      break;
+    case Corner.BottomRight:
+      style.bottom = style.right = margin;
+      break;
+    default:
+      style.top = style.left = margin;
+  }
+}
+
 //================================================
 // HELPER CLASS
 //================================================
@@ -328,7 +368,7 @@ class Axis {
 
   private createLabel(): string {
     const labelPrefix = this.axis < 0 ? '-' : '';
-    const labelPostfix = this.axis == 1 ? 'X' : this.axis == 2 ? 'Y' : 'Z';
+    const labelPostfix = this.axis == 1 ? 'X' : this.axis == 2 ? 'Z' : 'Y';
     return labelPrefix + labelPostfix;
   }
 
