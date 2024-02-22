@@ -4,12 +4,12 @@
 
 import {
   type Cognite3DViewer,
-  type Image360Annotation,
-  type Image360Collection
+  type Image360Collection,
+  type Image360Annotation
 } from '@cognite/reveal';
 import { Color } from 'three';
 import { image360CollectionExists } from '../../utilities/modelExists';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { type CogniteInternalId } from '@cognite/sdk';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 
@@ -28,96 +28,87 @@ export const useApply360AnnotationStyling = (
   styling?: ImageCollectionModelStyling
 ): void => {
   const viewer = useReveal();
-  let lastStyledImageAnnotations: Image360Annotation[] = [];
+  const [lastStyledImageAnnotations, setLastStyledImageAnnotations] = useState<
+    Image360Annotation[]
+  >([]);
+
+  const abortController = useRef(new AbortController());
 
   const defaultStyle = styling?.defaultStyle ?? new Color(0xffffff);
   const styleGroups = styling?.groups;
 
-  // useEffect(() => {
-  //   if (!image360CollectionExists(imageCollection, viewer)) return;
-  //   // console.log('resetAnnotationStyling');
-
-  //   // resetAnnotationStyling();
-  // }, [defaultStyle, imageCollection]);
-
-  // const enableAnnotationStyling = useCallback(
-  //   async (_entity: Image360, revision: Image360Revision) => {
-  //     await revision.getAnnotations().then((annotations) => {
-  //       annotations.forEach((annotation) => {
-  //         annotation.setColor(defaultStyle);
-  //       });
-  //       viewer.requestRedraw();
-  //     });
-  //   },
-  //   [viewer, defaultStyle]
-  // );
   const enableAnnotationStyling = useCallback(() => {
-    console.log('Image 360 entered');
     if (imageCollection === undefined) return;
-    console.log('enableAnnotationStyling');
-    imageCollection.setDefaultAnnotationStyle({
-      color: defaultStyle,
-      visible: undefined
-    });
-    viewer.requestRedraw();
-  }, [viewer, defaultStyle]);
-  const resetAnnotationStyling = useCallback(() => {
-    console.log('Image 360 exited');
-    if (imageCollection === undefined) return;
-    console.log('resetAnnotationStyling');
-    imageCollection.setDefaultAnnotationStyle({
-      color: undefined,
-      visible: undefined
-    });
     lastStyledImageAnnotations.forEach((a) => {
       a.setColor(undefined);
     });
-    lastStyledImageAnnotations = [];
+    setLastStyledImageAnnotations([]);
+    imageCollection.setDefaultAnnotationStyle({
+      color: defaultStyle,
+      visible: true
+    });
     viewer.requestRedraw();
-  }, [viewer]);
+  }, [viewer, defaultStyle]);
 
   useEffect(() => {
     if (imageCollection === undefined) return;
     imageCollection.on('image360Entered', enableAnnotationStyling);
-    imageCollection.on('image360Exited', resetAnnotationStyling);
 
     return () => {
       imageCollection.off('image360Entered', enableAnnotationStyling);
-      imageCollection.off('image360Exited', resetAnnotationStyling);
     };
   }, [viewer, imageCollection]);
 
   useEffect(() => {
     if (!image360CollectionExists(imageCollection, viewer) || styleGroups === undefined) return;
 
-    void applyStyling(imageCollection, styleGroups, lastStyledImageAnnotations, viewer);
+    if (styleGroups.length === 0) {
+      enableAnnotationStyling();
+      abortController.current.abort();
+      abortController.current = new AbortController();
+    } else {
+      void applyStyling(
+        imageCollection,
+        styleGroups,
+        viewer,
+        enableAnnotationStyling,
+        setLastStyledImageAnnotations,
+        abortController.current.signal
+      );
+    }
   }, [styleGroups, imageCollection]);
 };
 
 async function applyStyling(
   imageCollection: Image360Collection,
   styling: AnnotationIdStylingGroup[],
-  lastStyledImageAnnotations: Image360Annotation[],
-  viewer: Cognite3DViewer
+  viewer: Cognite3DViewer,
+  enableAnnotationStyling: () => void,
+  setLastStyledImageAnnotations: (annotations: Image360Annotation[]) => void,
+  signal: AbortSignal
 ): Promise<void> {
-  if (styling !== undefined) {
-    for (const group of styling) {
-      if (group.assetIds !== undefined) {
-        const annotationInfo = await imageCollection.findImageAnnotations({
+  if (styling === undefined || styling.length === 0) return;
+
+  for (const group of styling) {
+    if (group.assetIds !== undefined) {
+      const annotationInfoPromise = group.assetIds.map(async (id) => {
+        return await imageCollection.findImageAnnotations({
           assetRef: { id: group.assetIds[0] }
         });
+      });
+      const annotationInfo = (await Promise.all(annotationInfoPromise)).flat();
 
-        if (annotationInfo.length === 0) {
-          return;
-        }
-
-        annotationInfo.forEach((info) => {
-          info.annotation.setColor(new Color('rgb(150, 150, 242)'));
-        });
-
-        lastStyledImageAnnotations = annotationInfo.map((i) => i.annotation);
-        viewer.requestRedraw();
+      if (annotationInfo.length === 0 || signal.aborted) {
+        return;
       }
+      enableAnnotationStyling();
+
+      annotationInfo.forEach((info) => {
+        info.annotation.setColor(new Color('rgb(150, 150, 242)'));
+      });
+      setLastStyledImageAnnotations(annotationInfo.map((i) => i.annotation));
+
+      viewer.requestRedraw();
     }
   }
 }

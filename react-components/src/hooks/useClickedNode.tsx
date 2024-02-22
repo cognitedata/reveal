@@ -55,7 +55,6 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
           event.offsetX,
           event.offsetY
         );
-        console.log('intersection, annotationIntersection', intersection, annotationIntersection);
 
         if (intersection?.type === 'cad' || intersection?.type === 'pointcloud') {
           setIntersection(intersection);
@@ -65,6 +64,8 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
 
         if (annotationIntersection !== null) {
           setAnnotationIntersection(annotationIntersection);
+        } else {
+          setAnnotationIntersection(undefined);
         }
       })();
     };

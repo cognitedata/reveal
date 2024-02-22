@@ -25,7 +25,6 @@ import {
   isFdmAssetStylingGroup,
   isImage30AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
-import { useCalculateImage360Styling } from '../../hooks/useCalculateImage360Styling';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { Color } from 'three';
 
@@ -76,10 +75,11 @@ export const Reveal3DResources = ({
     return false;
   });
 
-  const styledImage360Collections = useCalculateImage360Styling(
-    instanceStyling?.filter(isImage30AssetStylingGroup) ?? EMPTY_ARRAY,
-    defaultResourceStyling
-  );
+  const image360StyledGroup = instanceStyling?.filter(isImage30AssetStylingGroup) ?? EMPTY_ARRAY;
+  const styledImage360Collections = {
+    image360CollectionAddOptions,
+    image360StyledGroup
+  };
 
   const onModelLoaded = (): void => {
     onModelFailOrSucceed();
@@ -136,10 +136,8 @@ export const Reveal3DResources = ({
           />
         );
       })}
-      {image360CollectionAddOptions.map((addModelOption) => {
-        const stylingGroups = styledImage360Collections.flatMap(
-          (styledImage360) => styledImage360.styleGroups
-        );
+      {styledImage360Collections.image360CollectionAddOptions.map((addModelOption) => {
+        const stylingGroups = styledImage360Collections.image360StyledGroup;
         const image360Styling: ImageCollectionModelStyling = {
           defaultStyle: new Color(0xff0000),
           groups: stylingGroups
@@ -159,6 +157,7 @@ export const Reveal3DResources = ({
             <Image360CollectionContainer
               key={`${addModelOption.externalId}`}
               collectionId={addModelOption}
+              styling={image360Styling}
               onLoad={onModelLoaded}
               onLoadError={onModelLoadedError}
             />
