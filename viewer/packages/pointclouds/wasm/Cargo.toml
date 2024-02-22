@@ -13,25 +13,25 @@ license-file = "../../../../LICENSE"
 crate-type = ["cdylib"]
 
 [dependencies]
-wasm-bindgen = { version = "0.2.90", features = ["serde-serialize"] }
-web-sys = { version = "0.3.67", features = ["console"] }
+wasm-bindgen = { version = "0.2.91", features = ["serde-serialize"] }
+web-sys = { version = "0.3.68", features = ["console"] }
 
 serde = { version = "1.0.196", features = ["derive"] }
 serde-wasm-bindgen = "0.6.3"
 
-js-sys = "0.3.67"
+js-sys = "0.3.68"
 
 nalgebra = "0.32.3"
 nalgebra-glm = "0.18.0"
-wasm-bindgen-test = "0.3.40"
+wasm-bindgen-test = "0.3.41"
 
 console_error_panic_hook = "0.1.7"
 
 # These crates are used for running unit tests.
 [dev-dependencies]
-wasm-bindgen-test = "0.3.40"
+wasm-bindgen-test = "0.3.41"
 futures = "0.3.30"
-wasm-bindgen-futures = "0.4.40"
+wasm-bindgen-futures = "0.4.41"
 
 rand = "0.8.5"
 rand_chacha = "0.3.1"
