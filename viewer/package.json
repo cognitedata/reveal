@@ -95,7 +95,7 @@
     "@types/random-seed": "0.3.5",
     "@types/skmeans": "0.11.7",
     "@types/stats": "0.16.30",
-    "@types/three": "0.158.2",
+    "@types/three": "0.161.2",
     "@types/tween.js": "18.5.1",
     "@typescript-eslint/eslint-plugin": "6.21.0",
     "@typescript-eslint/parser": "6.21.0",
@@ -132,7 +132,7 @@
     "resize-observer-polyfill": "1.5.1",
     "shx": "0.3.4",
     "stats.js": "0.17.0",
-    "three": "0.158.0",
+    "three": "0.161.0",
     "ts-jest": "29.1.2",
     "ts-loader": "9.5.1",
     "tsc-alias": "1.8.8",
@@ -147,7 +147,7 @@
   },
   "peerDependencies": {
     "@cognite/sdk": "^7.16.0 || ^8.0.0",
-    "three": "0.158.0"
+    "three": "0.161.0"
   },
   "glslify": {
     "transform": [

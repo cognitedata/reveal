@@ -1982,7 +1982,7 @@ __metadata:
     "@types/react": "npm:^18.2.37"
     "@types/react-dom": "npm:^18.2.15"
     "@types/react-resizable": "npm:^3"
-    "@types/three": "npm:0.158.2"
+    "@types/three": "npm:0.161.2"
     "@typescript-eslint/eslint-plugin": "npm:^6.7.0"
     "@vitejs/plugin-react": "npm:^4.0.4"
     assert: "npm:^2.0.0"
@@ -2010,7 +2010,7 @@ __metadata:
     storybook: "npm:7.6.15"
     style-loader: "npm:^3.3.3"
     styled-components: "npm:^6.1.1"
-    three: "npm:0.158.0"
+    three: "npm:0.161.0"
     ts-loader: "npm:9.5.1"
     typescript: "npm:5.3.3"
     vite: "npm:^5.0.0"
@@ -5715,15 +5715,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.158.2":
-  version: 0.158.2
-  resolution: "@types/three@npm:0.158.2"
+"@types/three@npm:0.161.2":
+  version: 0.161.2
+  resolution: "@types/three@npm:0.161.2"
   dependencies:
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     fflate: "npm:~0.6.10"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/6ce40499cb87ec88a4b3bfe662005052ada3413692efe62bc3a1958b1608aef8282613da150191af7312d114aec98326e2274d246c12f34db5dd7faf3beea132
+  checksum: 10/4395d86db71c9be9ec04de048d2fbeb2ae43e7f66938a505950cb2c320b735431c7e6d88e1f7c776844efb079dc9b5788f81d0d4e7532baf4b0eb7bf38b433a0
   languageName: node
   linkType: hard
 
@@ -15339,10 +15339,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.158.0":
-  version: 0.158.0
-  resolution: "three@npm:0.158.0"
-  checksum: 10/0dcb30fde67495337d129af55f3e4ed5f16425bb55c8fe2ec871bbde8264bdbdf3141fce4733c4739fe394f7840c4b37f6210754f657cfe98554f8f9a02eeb92
+"three@npm:0.161.0":
+  version: 0.161.0
+  resolution: "three@npm:0.161.0"
+  checksum: 10/0e3b80b0848e0f7539b9408d1032aaef9d2386a3d9ce949803c8ce6eed47bfd13b4e22a5ce21016693601aee976887336521dc273859c5cbb95e2ff5f54837f1
   languageName: node
   linkType: hard
 
