@@ -117,7 +117,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   useEffect(() => {
     if (searchMethod !== 'allAssets') return;
 
-    if (!isFetching && hasNextPage !== undefined) {
+    if (!isFetching && hasNextPage === true) {
       void fetchNextPage();
     }
   }, [searchMethod, isFetching, hasNextPage, fetchNextPage]);

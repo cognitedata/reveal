@@ -9,7 +9,6 @@ import LayersContainer from './LayersContainer/LayersContainer';
 import {
   type CognitePointCloudModel,
   type CogniteCadModel,
-  type CogniteModel,
   type Image360Collection
 } from '@cognite/reveal';
 import { useReveal } from '../RevealCanvas/ViewerContext';
@@ -17,6 +16,7 @@ import { use3DModelName } from '../../hooks/use3DModelName';
 import { isEqual } from 'lodash';
 import { useLayersUrlParams } from './hooks/useUrlStateParam';
 import { useTranslation } from '../i18n/I18n';
+import { use3dModels } from '../../hooks/use3dModels';
 
 type LayersButtonProps = {
   storeStateInUrl?: boolean;
@@ -24,6 +24,7 @@ type LayersButtonProps = {
 
 export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): ReactElement => {
   const viewer = useReveal();
+  const models = use3dModels();
   const { t } = useTranslation();
   const [layersUrlState] = useLayersUrlParams();
   const { cadLayers, pointCloudLayers, image360Layers } = layersUrlState;
@@ -31,7 +32,6 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
 
   const [cadModelIds, setCadModelIds] = useState<number[]>([]);
   const [pointCloudModelIds, setPointCloudModelIds] = useState<number[]>([]);
-  const prevModelsRef = useRef<CogniteModel[]>([]);
 
   const [reveal3DResourcesLayerData, setReveal3DResourcesLayerData] =
     useState<Reveal3DResourcesLayerStates>({
@@ -67,27 +67,21 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
   useOutsideClick(ref);
 
   useEffect(() => {
-    const currentModels = viewer.models;
     // Compare the previous and current models to avoid infinite loop
-    if (prevModelsRef.current !== currentModels) {
-      prevModelsRef.current = currentModels;
-      const cadIds = currentModels
-        .filter((model) => model.type === 'cad')
-        .map((model) => model.modelId);
-      const pointCloudIds = currentModels
-        .filter((model) => model.type === 'pointcloud')
-        .map((model) => model.modelId);
+    const cadIds = models.filter((model) => model.type === 'cad').map((model) => model.modelId);
+    const pointCloudIds = models
+      .filter((model) => model.type === 'pointcloud')
+      .map((model) => model.modelId);
 
-      // Only update the state when the modelIds change
-      if (!isEqual(cadModelIds, cadIds)) {
-        setCadModelIds(cadIds);
-      }
-
-      if (!isEqual(pointCloudModelIds, pointCloudIds)) {
-        setPointCloudModelIds(pointCloudIds);
-      }
+    // Only update the state when the modelIds change
+    if (!isEqual(cadModelIds, cadIds)) {
+      setCadModelIds(cadIds);
     }
-  }, [viewer.models]);
+
+    if (!isEqual(pointCloudModelIds, pointCloudIds)) {
+      setPointCloudModelIds(pointCloudIds);
+    }
+  }, [models]);
 
   const updated3DResourcesLayerData: Reveal3DResourcesLayerStates = useMemo(() => {
     if (cadModelName.data === null && pointCloudModelName.data === null) {
@@ -97,10 +91,10 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
         image360LayerData: []
       };
     }
-    const updatedCadLayerData = viewer.models
+    const updatedCadLayerData = models
       .filter((model): model is CogniteCadModel => model.type === 'cad')
       .map((model, index) => fillCadLayerData(model, index));
-    const updatedPointCloudLayerData = viewer.models
+    const updatedPointCloudLayerData = models
       .filter((model): model is CognitePointCloudModel => model.type === 'pointcloud')
       .map((model, index) => fillPointCloudLayerData(model, index));
     const updatedImage360LayerData = viewer
@@ -173,12 +167,7 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
       pointCloudLayerData: updatedPointCloudLayerData,
       image360LayerData: updatedImage360LayerData
     };
-  }, [
-    viewer.models.length,
-    viewer.get360ImageCollections().length,
-    cadModelName.data,
-    pointCloudModelName.data
-  ]);
+  }, [models, viewer.get360ImageCollections().length, cadModelName.data, pointCloudModelName.data]);
 
   useEffect(() => {
     setReveal3DResourcesLayerData(updated3DResourcesLayerData);
