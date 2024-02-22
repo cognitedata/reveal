@@ -16,7 +16,7 @@ import { use3DModelName } from '../../hooks/use3DModelName';
 import { isEqual } from 'lodash';
 import { useLayersUrlParams } from './hooks/useUrlStateParam';
 import { useTranslation } from '../i18n/I18n';
-import { use3dModels } from '../..';
+import { use3dModels } from '../../hooks/use3dModels';
 
 type LayersButtonProps = {
   storeStateInUrl?: boolean;
@@ -167,7 +167,7 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
       pointCloudLayerData: updatedPointCloudLayerData,
       image360LayerData: updatedImage360LayerData
     };
-  }, [models, cadModelName.data, pointCloudModelName.data]);
+  }, [models, viewer.get360ImageCollections().length, cadModelName.data, pointCloudModelName.data]);
 
   useEffect(() => {
     setReveal3DResourcesLayerData(updated3DResourcesLayerData);
