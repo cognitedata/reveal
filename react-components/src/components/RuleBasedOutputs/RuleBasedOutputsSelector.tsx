@@ -17,10 +17,13 @@ export type ColorOverlayProps = {
 export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactElement | undefined {
   const viewer = useReveal();
 
+  const modelIdsString = viewer.models
+    .flatMap((model) => [model.modelId, model.revisionId])
+    .join(',');
+
   const models = useMemo(() => {
     return viewer.models;
-  }, [viewer.models.length]);
-
+  }, [modelIdsString]);
   const {
     data: assetMappings,
     isFetching,
