@@ -92,8 +92,13 @@ export class CustomObject {
     if (!intersectInput.isVisible(point)) {
       return undefined;
     }
-    const customObjectIntersection = new CustomObjectIntersection(this, point, distance);
-
+    const customObjectIntersection: CustomObjectIntersection = {
+      type: 'customObject',
+      customObject: this,
+      point,
+      distanceToCamera: distance,
+      boundingBox: undefined
+    };
     if (this.shouldPickBoundingBox) {
       const boundingBox = new Box3().setFromObject(this.object);
       if (!boundingBox.isEmpty()) {

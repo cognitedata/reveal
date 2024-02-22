@@ -57,25 +57,25 @@ export class SceneHandler {
     remove(this._cadModels, { cadNode });
   }
 
-  public addCustomObject(object: THREE.Object3D | CustomObject): void {
-    if (object instanceof CustomObject) {
-      this._customObjects.push(object);
-      this._scene.add(object.object);
-    } else {
-      this.addCustomObject(new CustomObject(object));
+  public addObject3D(object: THREE.Object3D): void {
+    this.addCustomObject(new CustomObject(object));
+  }
+
+  public addCustomObject(customObject: CustomObject): void {
+    this._customObjects.push(customObject);
+    this._scene.add(customObject.object);
+  }
+
+  public removeObject3D(object: THREE.Object3D): void {
+    const customObject = this._customObjects.find(customObject => customObject.object === object);
+    if (customObject) {
+      this.removeCustomObject(customObject);
     }
   }
 
-  public removeCustomObject(object: THREE.Object3D | CustomObject): void {
-    if (object instanceof CustomObject) {
-      this.scene.remove(object.object);
-      remove(this._customObjects, object);
-    } else {
-      const customObject = this._customObjects.find(customObject => customObject.object === object);
-      if (customObject) {
-        this.removeCustomObject(customObject);
-      }
-    }
+  public removeCustomObject(customObject: CustomObject): void {
+    this.scene.remove(customObject.object);
+    remove(this._customObjects, customObject);
   }
 
   public dispose(): void {

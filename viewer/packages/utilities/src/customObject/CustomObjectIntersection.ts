@@ -9,16 +9,20 @@ import { CustomObject } from './CustomObject';
  * This class is used as output intersecting custom objects
  * @beta
  */
-export class CustomObjectIntersection {
-  readonly customObject: CustomObject;
-  readonly point: Vector3;
-  boundingBox: Box3 | undefined = undefined;
+export type CustomObjectIntersection = {
+  /**
+   * The intersection type.
+   */
+  type: 'customObject';
+  /**
+   * Coordinate of the intersection.
+   */
+  point: Vector3;
+  /**
+   * Distance from the camera to the intersection.
+   */
   distanceToCamera: number;
 
-  constructor(customObject: CustomObject, point: Vector3, distanceToCamera: number) {
-    this.customObject = customObject;
-    this.point = point.clone();
-    this.distanceToCamera = distanceToCamera;
-    this.boundingBox = undefined;
-  }
-}
+  customObject: CustomObject;
+  boundingBox?: Box3;
+};

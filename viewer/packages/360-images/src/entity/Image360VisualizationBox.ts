@@ -125,7 +125,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     this.setAnnotationsVisibility(false);
     this._visualizationMesh = visualizationMesh;
 
-    this._sceneHandler.addCustomObject(this._visualizationMesh);
+    this._sceneHandler.addObject3D(this._visualizationMesh);
 
     function getFaceTexture(face: Image360Face['face']) {
       const texture = textures.find(p => p.face === face);
@@ -164,7 +164,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     if (this._visualizationMesh === undefined) {
       return;
     }
-    this._sceneHandler.removeCustomObject(this._visualizationMesh);
+    this._sceneHandler.removeObject3D(this._visualizationMesh);
     const imageContainerMaterial = this._visualizationMesh.material;
     const materials =
       imageContainerMaterial instanceof THREE.Material ? [imageContainerMaterial] : imageContainerMaterial;
