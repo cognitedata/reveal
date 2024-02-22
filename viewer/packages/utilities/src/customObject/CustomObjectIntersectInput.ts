@@ -11,10 +11,10 @@ import { Raycaster, Vector3, Vector2, PerspectiveCamera, Plane } from 'three';
 export class CustomObjectIntersectInput {
   readonly normalizedCoords: Vector2;
   readonly camera: PerspectiveCamera;
-  readonly clippingPlanes: Plane[] | null;
+  readonly clippingPlanes: Plane[] | undefined;
   readonly raycaster = new Raycaster();
 
-  constructor(normalizedCoords: Vector2, camera: PerspectiveCamera, clippingPlanes: Plane[]) {
+  constructor(normalizedCoords: Vector2, camera: PerspectiveCamera, clippingPlanes: Plane[] | undefined = undefined) {
     this.normalizedCoords = normalizedCoords;
     this.camera = camera;
     this.clippingPlanes = clippingPlanes;

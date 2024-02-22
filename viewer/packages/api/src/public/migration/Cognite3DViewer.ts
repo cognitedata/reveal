@@ -1722,7 +1722,7 @@ export class Cognite3DViewer {
       offsetY,
       modelIntersection?.distanceToCamera
     );
-    if (customObjectIntersection == null || modelIntersection == null) {
+    if (customObjectIntersection === undefined || modelIntersection === null) {
       // No intersection
       return {
         intersection: null,
@@ -1730,7 +1730,7 @@ export class Cognite3DViewer {
         modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox
       };
     }
-    if (customObjectIntersection != null) {
+    if (customObjectIntersection) {
       // Custom object intersection
       return {
         intersection: customObjectIntersection,
