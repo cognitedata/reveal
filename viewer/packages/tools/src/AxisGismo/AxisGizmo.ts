@@ -15,16 +15,20 @@ export class AxisGizmo {
   private readonly _axises: Axis[];
   private readonly _center: Vector3;
   private _selectedAxis: Axis | null = null;
+  private _isMouseInside = false;
+  private _inDragging = false;
 
   private _viewer: Cognite3DViewer | null = null;
   private _element: HTMLElement | null = null;
   private _canvas: HTMLCanvasElement | null = null;
   private _context: CanvasRenderingContext2D | null = null;
 
+  // binding of the event functions:
+  private readonly _onPointerDown = this.onPointerDown.bind(this);
+  private readonly _onPointerUp = this.onPointerUp.bind(this);
   private readonly _onPointerMove = this.onPointerMove.bind(this);
   private readonly _onPointerOut = this.onPointerOut.bind(this);
   private readonly _onMouseClick = this.onMouseClick.bind(this);
-  private readonly _onStopPropagation = this.onStopPropagation.bind(this);
 
   //================================================
   // CONSTRUCTORS
@@ -32,8 +36,8 @@ export class AxisGizmo {
 
   constructor() {
     this._options = new AxisGizmoOptions();
-    const delta = this._options.size / 2;
-    this._center = new Vector3(delta, delta, 0);
+    const halfSize = this._options.size / 2;
+    this._center = new Vector3(halfSize, halfSize, 0);
     this._axises = Axis.createAllAxises(this._options);
   }
 
@@ -53,12 +57,81 @@ export class AxisGizmo {
     this.addEventListeners();
   }
 
-  /**
-   * Update the AxisGizmo based on the camera.
-   * @param camera The camera to update the AxisGizmo with.
-   * If the camera is null, use the previous camera rotation
-   */
-  public update(camera: PerspectiveCamera | null): void {
+  public dispose(): void {
+    if (this._viewer && this._element) {
+      this._viewer.domElement.removeChild(this._element);
+    }
+    this.removeEventListeners();
+    this._viewer = null;
+    this._canvas = null;
+    this._context = null;
+    this._element = null;
+  }
+
+  //================================================
+  // INSTANCE METHODS: Events
+  //================================================
+
+  private onPointerDown(event: PointerEvent) {
+    event.stopPropagation();
+    this._inDragging = true;
+  }
+
+  private onPointerUp(event: PointerEvent) {
+    event.stopPropagation();
+    if (this._inDragging) {
+      this._inDragging = false;
+      if (this._selectedAxis === null || this._viewer == null) {
+        return;
+      }
+      const cameraManager = this._viewer.cameraManager;
+      const { position, target } = cameraManager.getCameraState();
+      const distance = position.distanceTo(target);
+      const direction = this._selectedAxis.direction.clone().multiplyScalar(distance);
+      const positionToMoveTo = target.clone().add(direction);
+      cameraManager.setCameraState({ position: positionToMoveTo, target: target });
+    }
+  }
+
+  private onPointerMove(event: PointerEvent) {
+    if (!this._canvas) {
+      return;
+    }
+    const rectangle = this._canvas.getBoundingClientRect();
+    const mousePosition = new Vector3(event.clientX - rectangle.left, event.clientY - rectangle.top, 0);
+    const selectedAxis = this.getSelectedAxis(mousePosition);
+
+    const isMouseInside = this.isMouseOver(mousePosition);
+    if (selectedAxis === this._selectedAxis && isMouseInside === this._isMouseInside) {
+      return;
+    }
+    this._isMouseInside = isMouseInside;
+    this._selectedAxis = selectedAxis;
+    this.updateAndRender(null);
+  }
+
+  private onPointerOut(_event: PointerEvent) {
+    this._inDragging = false;
+    this._isMouseInside = false;
+    this._selectedAxis = null;
+    this.updateAndRender(null);
+  }
+
+  private onMouseClick(event: MouseEvent) {
+    event.stopPropagation();
+  }
+
+  private readonly onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => {
+    if (this._viewer) {
+      this.updateAndRender(this._viewer.cameraManager.getCamera());
+    }
+  };
+
+  //================================================
+  // INSTANCE METHODS: Private helpers
+  //================================================
+
+  private updateAndRender(camera: PerspectiveCamera | null): void {
     if (this._context == null || this._canvas == null) {
       return;
     }
@@ -72,56 +145,8 @@ export class AxisGizmo {
     }
     // Sort the axis by it's z position
     this._axises.sort((a, b) => (a.bobblePosition.z > b.bobblePosition.z ? 1 : -1));
-
     this.render();
   }
-
-  //================================================
-  // INSTANCE METHODS: Events
-  //================================================
-
-  private onPointerMove(event: PointerEvent) {
-    if (!this._canvas) {
-      return;
-    }
-    const rectangle = this._canvas.getBoundingClientRect();
-    const mousePosition = new Vector3(event.clientX - rectangle.left, event.clientY - rectangle.top, 0);
-    this._selectedAxis = this.getSelectedAxis(mousePosition);
-    this.update(null);
-  }
-
-  private onPointerOut(_event: PointerEvent) {
-    this._selectedAxis = null;
-    this.update(null);
-  }
-
-  private onMouseClick(event: MouseEvent) {
-    event.stopPropagation();
-
-    if (this._selectedAxis === null || this._viewer == null) {
-      return;
-    }
-    const cameraManager = this._viewer.cameraManager;
-    const { position, target } = cameraManager.getCameraState();
-    const distance = position.distanceTo(target);
-    const direction = this._selectedAxis.direction.clone().multiplyScalar(distance);
-    const positionToMoveTo = target.clone().add(direction);
-    cameraManager.setCameraState({ position: positionToMoveTo, target: target });
-  }
-
-  private onStopPropagation(event: PointerEvent) {
-    event.stopPropagation();
-  }
-
-  private readonly onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => {
-    if (this._viewer) {
-      this.update(this._viewer.cameraManager.getCamera());
-    }
-  };
-
-  //================================================
-  // INSTANCE METHODS: Private helpers
-  //================================================
 
   private addEventListeners(): void {
     if (this._viewer) {
@@ -133,8 +158,8 @@ export class AxisGizmo {
     }
     canvas.addEventListener('pointermove', this._onPointerMove, false);
     canvas.addEventListener('pointerout', this._onPointerOut, false);
-    canvas.addEventListener('pointerdown', this._onStopPropagation, false);
-    canvas.addEventListener('pointerup', this._onStopPropagation, false);
+    canvas.addEventListener('pointerdown', this._onPointerDown, false);
+    canvas.addEventListener('pointerup', this._onPointerUp, false);
     canvas.addEventListener('click', this._onMouseClick, false);
   }
 
@@ -148,8 +173,8 @@ export class AxisGizmo {
     }
     canvas.removeEventListener('pointermove', this._onPointerMove, false);
     canvas.removeEventListener('pointerout', this._onPointerOut, false);
-    canvas.removeEventListener('pointerdown', this._onStopPropagation, false);
-    canvas.removeEventListener('pointerup', this._onStopPropagation, false);
+    canvas.removeEventListener('pointerdown', this._onPointerDown, false);
+    canvas.removeEventListener('pointerup', this._onPointerUp, false);
     canvas.removeEventListener('click', this._onMouseClick, false);
   }
 
@@ -167,15 +192,12 @@ export class AxisGizmo {
     if (this._canvas) {
       clear(this._context, this._canvas);
     }
-
-    if (this._selectedAxis !== null && this._options.focusCircleAlpha > 0) {
+    if (this._isMouseInside && this._options.focusCircleAlpha > 0) {
       this._context.globalAlpha = this._options.focusCircleAlpha;
-      fillCircle(this._context, this._center, this._options.size / 2, this._options.focusCircleColor);
+      fillCircle(this._context, this._center, this._options.radius, this._options.focusCircleColor);
       this._context.globalAlpha = 1;
     }
-
     const { bubbleRadius, primaryLineWidth, secondaryLineWidth, bobbleLineWidth } = this._options;
-
     for (const axis of this._axises) {
       const lightColor = axis.getLightColorInHex();
 
@@ -208,18 +230,22 @@ export class AxisGizmo {
     }
   }
 
+  private isMouseOver(mousePosition: Vector3): boolean {
+    return horizontalDistanceTo(mousePosition, this._center) < this._options.radius;
+  }
+
   private getSelectedAxis(mousePosition: Vector3): Axis | null {
-    if (mousePosition.distanceTo(this._center) > this._options.size / 2) {
+    if (!this.isMouseOver(mousePosition)) {
       return null;
     }
     // If the mouse is over the gizmo, find the closest axis bobble for highligting
     let closestDistance = Infinity;
     let selectedAxis: Axis | null = null;
     for (const axis of this._axises) {
-      const distance = mousePosition.distanceTo(axis.bobblePosition);
+      const distance = horizontalDistanceTo(mousePosition, axis.bobblePosition);
 
       // Only select the axis if its closer to the mouse than the previous or if its within its bubble circle
-      if (distance < closestDistance || distance < this._options.bubbleRadius) {
+      if (distance < closestDistance && distance < this._options.bubbleRadius) {
         closestDistance = distance;
         selectedAxis = axis;
       }
@@ -240,6 +266,10 @@ export class AxisGizmo {
 //================================================
 // FUNCTIONS: Helpers used internaly in this file
 //================================================
+
+function horizontalDistanceTo(a: Vector3, b: Vector3) {
+  return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+}
 
 function clear(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -291,7 +321,7 @@ function initializeStyle(element: HTMLElement, options: AxisGizmoOptions) {
   style.position = 'absolute';
   style.zIndex = '1000';
   style.height = style.width = options.size + 'px';
-  const margin = options.margin + 'px';
+  const margin = options.edgeMargin + 'px';
   switch (options.corner) {
     case Corner.TopRight:
       style.top = style.right = margin;
@@ -325,8 +355,12 @@ class Axis {
     this.axis = axis;
     this.direction = this.createDirection();
     this.bobblePosition = new Vector3();
-    this.label = this.createLabel();
-    const index = Math.abs(axis) - 1;
+    this.label = this.createLabel(options.yUp);
+    let index = Math.abs(axis) - 1;
+    if (options.yUp) {
+      if (index === 1) index = 2;
+      else if (index === 2) index = 1;
+    }
     this._lightColor = new Color(options.lightColors[index]);
     this._darkColor = new Color(options.darkColors[index]);
   }
@@ -366,10 +400,22 @@ class Axis {
     return minimum + (1 - minimum) * mix;
   }
 
-  private createLabel(): string {
+  private createLabel(yUp: boolean): string {
     const labelPrefix = this.axis < 0 ? '-' : '';
-    const labelPostfix = this.axis == 1 ? 'X' : this.axis == 2 ? 'Z' : 'Y';
-    return labelPrefix + labelPostfix;
+    return labelPrefix + this.getAxisName(yUp);
+  }
+
+  private getAxisName(yUp: boolean): string {
+    switch (Math.abs(this.axis)) {
+      case 1:
+        return 'X';
+      case 2:
+        return yUp ? 'Y' : 'Z';
+      case 3:
+        return yUp ? 'Z' : 'Y';
+      default:
+        return '';
+    }
   }
 
   private createDirection(): Vector3 {
