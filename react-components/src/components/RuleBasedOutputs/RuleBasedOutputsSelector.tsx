@@ -1,25 +1,22 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useEffect, type ReactElement, useMemo } from 'react';
+import { useEffect, type ReactElement } from 'react';
 
 import { CogniteCadModel, type CogniteModel } from '@cognite/reveal';
-import { useAllMappedEquipmentAssetMappings, useReveal } from '../..';
+import { useAllMappedEquipmentAssetMappings } from '../..';
 import { Color } from 'three';
 import { type RuleOutputSet } from './types';
 import { generateRuleBasedOutputs } from './utils';
 import { type FdmPropertyType } from '../Reveal3DResources/types';
+import { use3dModels } from '../../hooks/use3dModels';
 
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | Record<string, any> | FdmPropertyType<Record<string, any>> | undefined;
 };
 
 export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactElement | undefined {
-  const viewer = useReveal();
-
-  const models = useMemo(() => {
-    return viewer.models;
-  }, [viewer.models.length]);
+  const models = use3dModels();
 
   const {
     data: assetMappings,
