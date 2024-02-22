@@ -5,7 +5,7 @@
 import { useMemo } from 'react';
 import { useReveal } from '..';
 import { useReveal3DResourcesCount } from '../components/Reveal3DResources/Reveal3DResourcesCountContext';
-import { CogniteModel } from '@cognite/reveal';
+import { type CogniteModel } from '@cognite/reveal';
 
 export const use3dModels = (): CogniteModel[] => {
   const viewer = useReveal();
