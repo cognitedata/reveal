@@ -105,6 +105,7 @@ export function PointCloudContainer({
       return;
 
     viewer.removeModel(model);
+    setRevealResourcesCount(viewer.models.length);
     setModel(undefined);
   }
 
