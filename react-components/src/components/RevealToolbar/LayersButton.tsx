@@ -89,6 +89,14 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
     }
   }, [viewer.models]);
 
+  const modelIdsString =
+    viewer.models.map((model) => [model.modelId, model.revisionId]).join(',') +
+    ',' +
+    viewer
+      .get360ImageCollections()
+      .map((collection) => collection.id)
+      .join(',');
+
   const updated3DResourcesLayerData: Reveal3DResourcesLayerStates = useMemo(() => {
     if (cadModelName.data === null && pointCloudModelName.data === null) {
       return {
@@ -173,12 +181,7 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
       pointCloudLayerData: updatedPointCloudLayerData,
       image360LayerData: updatedImage360LayerData
     };
-  }, [
-    viewer.models.length,
-    viewer.get360ImageCollections().length,
-    cadModelName.data,
-    pointCloudModelName.data
-  ]);
+  }, [modelIdsString, cadModelName.data, pointCloudModelName.data]);
 
   useEffect(() => {
     setReveal3DResourcesLayerData(updated3DResourcesLayerData);
