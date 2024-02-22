@@ -94,6 +94,8 @@ jobs:
       - name: Check that yarn.lock is up to date
         working-directory: viewer
         continue-on-error: false
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
         run: yarn install --immutable
 
       - name: Check that Cargo.lock is up to date
