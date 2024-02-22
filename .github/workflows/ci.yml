@@ -52,6 +52,8 @@ jobs:
       - name: Install NPM dependencies
         if: steps.npm_cache.outputs.cache-hit != 'true'
         working-directory: viewer
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
         run: yarn install --immutable
 
       - name: Cache cargo registry
