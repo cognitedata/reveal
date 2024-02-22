@@ -1,18 +1,22 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useMemo } from 'react';
-import { useSDK } from '../../RevealCanvas/SDKProvider';
+import { useFdmSdk } from '../../RevealCanvas/SDKProvider';
 import { RULE_BASED_OUTPUTS_VIEW } from '../constants';
-import { FdmSDK } from '../../../utilities/FdmSDK';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type RuleAndEnabled } from '../types';
+import { fdmViewsExist } from '../../../utilities/fdmViewsExist';
 
 export const useFetchRuleInstances = (): UseQueryResult<RuleAndEnabled[], unknown> => {
-  const sdk = useSDK();
-  const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
+  const fdmSdk = useFdmSdk();
 
   return useQuery(['react-components', 'color-overlay-rules', 'all'], async () => {
+    const viewExists = await fdmViewsExist(fdmSdk, [RULE_BASED_OUTPUTS_VIEW]);
+
+    if (!viewExists) {
+      return [];
+    }
+
     const versionedPropertiesKey = `${RULE_BASED_OUTPUTS_VIEW.externalId}/${RULE_BASED_OUTPUTS_VIEW.version}`;
 
     const filter = {
