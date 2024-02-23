@@ -22,7 +22,7 @@ describe(SceneHandler.name, () => {
 
     const sceneHandler = new SceneHandler();
     sceneHandler.addCadModel(cadNodeMock, '0');
-    sceneHandler.addCustomObject(customObjectMesh);
+    sceneHandler.addObject3D(customObjectMesh);
 
     expect(sceneHandler.scene.children.length).toBe(2);
 

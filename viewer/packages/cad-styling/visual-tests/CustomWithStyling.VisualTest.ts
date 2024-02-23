@@ -31,7 +31,7 @@ export default class CustomWithStylingVisualTest extends StreamingVisualTestFixt
     const sphere = new THREE.SphereGeometry(5, 32, 16);
     const sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 'red' }));
     sphereMesh.position.set(12, -3, -2);
-    sceneHandler.addCustomObject(sphereMesh);
+    sceneHandler.addObject3D(sphereMesh);
 
     // Styles are not applied immidiatly, so wait a little for styling to take effect
     await new Promise(resolve => setTimeout(resolve, 100));
