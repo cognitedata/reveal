@@ -23,7 +23,7 @@ import {
   type Image360AssetStylingGroup,
   type AssetStylingGroup
 } from '../src/components/Reveal3DResources/types';
-import { type AnnotationsBoundingVolume } from '@cognite/sdk/dist/src';
+import { type AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk/dist/src';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -127,17 +127,21 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       ]);
     } else if (nodeData?.intersection !== undefined && 'annotation' in nodeData.intersection) {
       const assetId =
-        (nodeData.intersection.annotation.annotation.data as AnnotationsBoundingVolume).assetRef
-          ?.externalId ??
-        (nodeData.intersection.annotation.annotation.data as AnnotationsBoundingVolume).assetRef
-          ?.id;
+        (
+          nodeData.intersection.annotation.annotation
+            .data as AnnotationsCogniteAnnotationTypesImagesAssetLink
+        ).assetRef?.externalId ??
+        (
+          nodeData.intersection.annotation.annotation
+            .data as AnnotationsCogniteAnnotationTypesImagesAssetLink
+        ).assetRef?.id;
       if (assetId === undefined) {
         return;
       }
       setStylingGroups([
         {
           assetIds: [Number(assetId)],
-          style: new Color('#c5cbff')
+          style: { color: new Color('#c5cbff'), visible: true }
         }
       ]);
     } else {

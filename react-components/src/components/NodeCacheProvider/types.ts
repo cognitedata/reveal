@@ -5,7 +5,8 @@ import {
   type Asset,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
-  type Node3D
+  type Node3D,
+  type AnnotationsCogniteAnnotationTypesImagesAssetLink
 } from '@cognite/sdk';
 import { type EdgeItem, type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
@@ -49,7 +50,11 @@ export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
 
 export type ModelRevisionToEdgeMap = Map<ModelRevisionKey, FdmEdgeWithNode[]>;
 
-export type RevealAnnotationModel = AnnotationModel & { data: AnnotationsBoundingVolume };
+export type PointCloudAnnotationModel = AnnotationModel & { data: AnnotationsBoundingVolume };
+
+export type Image360AnnotationModel = AnnotationModel & {
+  data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
+};
 
 export type Image360AnnotationAssetInfo = {
   asset: Asset;

@@ -2,9 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type NodeAppearance, type AddModelOptions } from '@cognite/reveal';
+import {
+  type NodeAppearance,
+  type AddModelOptions,
+  type Image360AnnotationAppearance
+} from '@cognite/reveal';
 
-import { type Color, type Matrix4 } from 'three';
+import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk/dist/src';
 
@@ -59,13 +63,13 @@ export type AssetStylingGroup = {
 
 export type Image360AssetStylingGroup = {
   assetIds: CogniteInternalId[];
-  style: Color;
+  style: Image360AnnotationAppearance;
 };
 
 export type DefaultResourceStyling = {
   cad?: { default?: NodeAppearance; mapped?: NodeAppearance };
   pointcloud?: { default: NodeAppearance; mapped?: NodeAppearance };
-  image360?: { default: Color; mapped: Color };
+  image360?: { default: Image360AnnotationAppearance; mapped: Image360AnnotationAppearance };
 };
 
 export type Reveal3DResourcesProps = {

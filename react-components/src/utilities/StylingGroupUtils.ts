@@ -16,7 +16,7 @@ export function isAssetMappingStylingGroup(instanceGroup: any): instanceGroup is
   return instanceGroup.assetIds !== undefined && instanceGroup.style !== undefined;
 }
 
-export function isImage30AssetStylingGroup(
+export function isImage360AssetStylingGroup(
   instanceGroup: any
 ): instanceGroup is Image360AssetStylingGroup {
   return instanceGroup.assetIds !== undefined && instanceGroup.style !== undefined;

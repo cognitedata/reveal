@@ -4,19 +4,18 @@
 
 import { type CogniteClient } from '@cognite/sdk';
 import { type Image360AnnotationAssetInfo } from './types';
-import { getAssetIdOrExternalIdFromAnnotation } from './utils';
+import { getAssetIdOrExternalIdFromImage360Annotation } from './utils';
 import { type Cognite3DViewer, type Image360Collection } from '@cognite/reveal';
-import { useReveal } from '../RevealCanvas/ViewerContext';
 import { fetchAssetForAssetIds } from './AnnotationModelUtils';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer | undefined;
   private readonly _annotationToAssetMappings = new Map<string, Image360AnnotationAssetInfo[]>();
 
-  constructor(sdk: CogniteClient) {
+  constructor(sdk: CogniteClient, viewer: Cognite3DViewer | undefined) {
     this._sdk = sdk;
-    this._viewer = useReveal();
+    this._viewer = viewer;
   }
 
   public async getReveal360Annotations(siteIds: string[]): Promise<Image360AnnotationAssetInfo[]> {
@@ -37,6 +36,9 @@ export class Image360AnnotationCache {
   }
 
   private async getReveal360AnnotationInfo(): Promise<Image360AnnotationAssetInfo[]> {
+    if (this._viewer === undefined) {
+      return [];
+    }
     const image360Collections = this._viewer.get360ImageCollections();
 
     const annotationsInfoPromise = await Promise.all(
@@ -50,7 +52,7 @@ export class Image360AnnotationCache {
 
     const filteredAssetIds = new Set<string | number>();
     annotationsInfo.forEach((annotation) => {
-      const assetId = getAssetIdOrExternalIdFromAnnotation(annotation.annotationInfo);
+      const assetId = getAssetIdOrExternalIdFromImage360Annotation(annotation.annotationInfo);
       if (assetId !== undefined) {
         filteredAssetIds.add(assetId);
       }
@@ -59,21 +61,22 @@ export class Image360AnnotationCache {
     const assetsArray = await fetchAssetForAssetIds(Array.from(filteredAssetIds), this._sdk);
     const assets = new Map(assetsArray.map((asset) => [asset.id, asset]));
 
-    const assetsWithAnnotations = annotationsInfo.flatMap((annotationInfo) => {
-      const assetId = annotationInfo.annotationInfo.data.assetRef.id;
-      if (assetId !== undefined && assets.has(assetId)) {
-        const asset = assets.get(assetId);
-        if (asset !== undefined) {
-          return [
-            {
+    const assetsWithAnnotations: Image360AnnotationAssetInfo[] = annotationsInfo.reduce(
+      (acc: Image360AnnotationAssetInfo[], annotationInfo) => {
+        const assetId = annotationInfo.annotationInfo.data.assetRef.id;
+        if (assetId !== undefined && assets.has(assetId)) {
+          const asset = assets.get(assetId);
+          if (asset !== undefined) {
+            acc.push({
               asset,
               assetAnnotationImage360Info: annotationInfo
-            }
-          ];
+            });
+          }
         }
-      }
-      return [];
-    });
+        return acc;
+      },
+      []
+    );
 
     return assetsWithAnnotations;
   }

@@ -23,10 +23,9 @@ import { EMPTY_ARRAY } from '../../utilities/constants';
 import {
   isAssetMappingStylingGroup,
   isFdmAssetStylingGroup,
-  isImage30AssetStylingGroup
+  isImage360AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
-import { Color } from 'three';
 
 export const Reveal3DResources = ({
   resources,
@@ -75,11 +74,7 @@ export const Reveal3DResources = ({
     return false;
   });
 
-  const image360StyledGroup = instanceStyling?.filter(isImage30AssetStylingGroup) ?? EMPTY_ARRAY;
-  const styledImage360Collections = {
-    image360CollectionAddOptions,
-    image360StyledGroup
-  };
+  const image360StyledGroup = instanceStyling?.filter(isImage360AssetStylingGroup) ?? EMPTY_ARRAY;
 
   const onModelLoaded = (): void => {
     onModelFailOrSucceed();
@@ -136,26 +131,22 @@ export const Reveal3DResources = ({
           />
         );
       })}
-      {styledImage360Collections.image360CollectionAddOptions.map((addModelOption) => {
-        const stylingGroups = styledImage360Collections.image360StyledGroup;
+      {image360CollectionAddOptions.map((addModelOption) => {
         const image360Styling: ImageCollectionModelStyling = {
-          defaultStyle: defaultResourceStyling?.image360?.default ?? new Color(0xff0000),
-          groups: stylingGroups
+          defaultStyle: defaultResourceStyling?.image360?.default,
+          groups: image360StyledGroup
         };
+        let key;
         if ('siteId' in addModelOption) {
-          return (
-            <Image360CollectionContainer
-              key={`${addModelOption.siteId}`}
-              collectionId={addModelOption}
-              styling={image360Styling}
-              onLoad={onModelLoaded}
-              onLoadError={onModelLoadedError}
-            />
-          );
+          key = `${addModelOption.siteId}`;
         } else if ('externalId' in addModelOption) {
+          key = `${addModelOption.externalId}`;
+        }
+
+        if ('externalId' in addModelOption || 'siteId' in addModelOption) {
           return (
             <Image360CollectionContainer
-              key={`${addModelOption.externalId}`}
+              key={key}
               collectionId={addModelOption}
               styling={image360Styling}
               onLoad={onModelLoaded}
@@ -163,7 +154,7 @@ export const Reveal3DResources = ({
             />
           );
         }
-        return <></>;
+        return <> </>;
       })}
     </>
   );

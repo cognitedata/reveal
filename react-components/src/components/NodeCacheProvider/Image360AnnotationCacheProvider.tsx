@@ -7,12 +7,12 @@ import { type ReactElement, type ReactNode, createContext, useContext, useMemo }
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { Image360AnnotationCache } from './Image360AnnotationCache';
-import { type Image360AnnotationAssetInfo, type RevealAnnotationModel } from './types';
+import { type Image360AnnotationAssetInfo, type Image360AnnotationModel } from './types';
 import { useSDK } from '../RevealCanvas/SDKProvider';
 
 export type Image360AnnotationDataResult = {
   siteId: string;
-  annotationModel: RevealAnnotationModel[];
+  annotationModel: Image360AnnotationModel[];
 };
 
 export type Image360AnnotationCacheContextContent = {
@@ -80,7 +80,7 @@ export function Image360AnnotationCacheProvider({
   const image360AnnotationCache = useMemo(() => {
     const cache =
       revealKeepAliveData?.image360AnnotationCache.current ??
-      new Image360AnnotationCache(cdfClient);
+      new Image360AnnotationCache(cdfClient, revealKeepAliveData?.viewerRef.current);
 
     const isRevealKeepAliveContextProvided = revealKeepAliveData !== undefined;
     if (isRevealKeepAliveContextProvided) {

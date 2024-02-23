@@ -5,10 +5,10 @@
 import {
   type AnnotationFilterProps,
   type FileFilterProps,
-  type AnnotationsBoundingVolume,
   type Asset,
   type CogniteClient,
-  type AnnotationModel
+  type AnnotationModel,
+  type AnnotationsCogniteAnnotationTypesImagesAssetLink
 } from '@cognite/sdk';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { chunk, uniq } from 'lodash';
@@ -78,8 +78,8 @@ async function get360AnnotationAssets(
   const annotationMapping = image360Annotations
     .map(
       (annotation) =>
-        (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
-        (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId
+        (annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink).assetRef?.id ??
+        (annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink).assetRef?.externalId
     )
     .filter((annotation): annotation is string | number => annotation !== undefined);
 

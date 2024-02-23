@@ -5,7 +5,8 @@
 import {
   type Cognite3DViewer,
   type Image360Collection,
-  type Image360Annotation
+  type Image360Annotation,
+  type Image360AnnotationAppearance
 } from '@cognite/reveal';
 import { Color } from 'three';
 import { image360CollectionExists } from '../../utilities/modelExists';
@@ -15,12 +16,17 @@ import { useReveal } from '../RevealCanvas/ViewerContext';
 
 export type AnnotationIdStylingGroup = {
   assetIds: CogniteInternalId[];
-  style: Color;
+  style: Image360AnnotationAppearance;
 };
 
 export type ImageCollectionModelStyling = {
-  defaultStyle?: Color;
+  defaultStyle?: Image360AnnotationAppearance;
   groups?: AnnotationIdStylingGroup[];
+};
+
+const defaultStyling: Image360AnnotationAppearance = {
+  color: new Color('rgb(150, 150, 242)'),
+  visible: true
 };
 
 export const useApply360AnnotationStyling = (
@@ -34,28 +40,25 @@ export const useApply360AnnotationStyling = (
 
   const abortController = useRef(new AbortController());
 
-  const defaultStyle = styling?.defaultStyle ?? new Color(0xffffff);
+  const defaultStyle = styling?.defaultStyle ?? defaultStyling;
   const styleGroups = styling?.groups;
 
-  const enableAnnotationStyling = useCallback(() => {
+  const applyDefaultAnnotationStyling = useCallback(() => {
     if (imageCollection === undefined) return;
     lastStyledImageAnnotations.forEach((a) => {
       a.setColor(undefined);
     });
     setLastStyledImageAnnotations([]);
-    imageCollection.setDefaultAnnotationStyle({
-      color: defaultStyle,
-      visible: true
-    });
+    imageCollection.setDefaultAnnotationStyle(defaultStyle);
     viewer.requestRedraw();
-  }, [viewer, defaultStyle]);
+  }, [viewer, defaultStyle, styleGroups]);
 
   useEffect(() => {
     if (imageCollection === undefined) return;
-    imageCollection.on('image360Entered', enableAnnotationStyling);
+    imageCollection.on('image360Entered', applyDefaultAnnotationStyling);
 
     return () => {
-      imageCollection.off('image360Entered', enableAnnotationStyling);
+      imageCollection.off('image360Entered', applyDefaultAnnotationStyling);
     };
   }, [viewer, imageCollection]);
 
@@ -63,7 +66,7 @@ export const useApply360AnnotationStyling = (
     if (!image360CollectionExists(imageCollection, viewer) || styleGroups === undefined) return;
 
     if (styleGroups.length === 0) {
-      enableAnnotationStyling();
+      applyDefaultAnnotationStyling();
       abortController.current.abort();
       abortController.current = new AbortController();
     } else {
@@ -71,7 +74,7 @@ export const useApply360AnnotationStyling = (
         imageCollection,
         styleGroups,
         viewer,
-        enableAnnotationStyling,
+        applyDefaultAnnotationStyling,
         setLastStyledImageAnnotations,
         abortController.current.signal
       );
@@ -83,7 +86,7 @@ async function applyStyling(
   imageCollection: Image360Collection,
   styling: AnnotationIdStylingGroup[],
   viewer: Cognite3DViewer,
-  enableAnnotationStyling: () => void,
+  applyDefaultAnnotationStyling: () => void,
   setLastStyledImageAnnotations: (annotations: Image360Annotation[]) => void,
   signal: AbortSignal
 ): Promise<void> {
@@ -101,10 +104,10 @@ async function applyStyling(
       if (annotationInfo.length === 0 || signal.aborted) {
         return;
       }
-      enableAnnotationStyling();
+      applyDefaultAnnotationStyling();
 
       annotationInfo.forEach((info) => {
-        info.annotation.setColor(new Color('rgb(150, 150, 242)'));
+        info.annotation.setColor(group.style.color);
       });
       setLastStyledImageAnnotations(annotationInfo.map((i) => i.annotation));
 

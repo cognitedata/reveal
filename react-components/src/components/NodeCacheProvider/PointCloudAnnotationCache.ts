@@ -6,10 +6,10 @@ import {
   type ModelRevisionKey,
   type ModelId,
   type RevisionId,
-  type RevealAnnotationModel
+  type PointCloudAnnotationModel
 } from './types';
 import { type CogniteClient, type Asset, type AnnotationFilterProps } from '@cognite/sdk';
-import { getAssetIdOrExternalIdFromAnnotation, modelRevisionToKey } from './utils';
+import { getAssetIdOrExternalIdFromPointCloudAnnotation, modelRevisionToKey } from './utils';
 import { fetchAnnotationAssets } from './AnnotationModelUtils';
 import assert from 'assert';
 
@@ -22,7 +22,7 @@ export class PointCloudAnnotationCache {
 
   private readonly _modelToAnnotationMappings = new Map<
     ModelRevisionKey,
-    RevealAnnotationModel[]
+    PointCloudAnnotationModel[]
   >();
 
   constructor(sdk: CogniteClient) {
@@ -49,7 +49,7 @@ export class PointCloudAnnotationCache {
   public async getPointCloudAnnotationsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<RevealAnnotationModel[]> {
+  ): Promise<PointCloudAnnotationModel[]> {
     const key = modelRevisionToKey(modelId, revisionId);
     const cachedResult = this._modelToAnnotationMappings.get(key);
 
@@ -71,7 +71,7 @@ export class PointCloudAnnotationCache {
     return await annotationAssets;
   }
 
-  private async fetchAnnotationForModel(modelId: ModelId): Promise<RevealAnnotationModel[]> {
+  private async fetchAnnotationForModel(modelId: ModelId): Promise<PointCloudAnnotationModel[]> {
     const filter: AnnotationFilterProps = {
       annotatedResourceIds: [{ id: modelId }],
       annotatedResourceType: 'threedmodel',
@@ -89,9 +89,9 @@ export class PointCloudAnnotationCache {
       )
     );
     const filteredAnnotationModelsByAsset = annotationModels.filter((annotation) => {
-      return getAssetIdOrExternalIdFromAnnotation(annotation) !== undefined;
+      return getAssetIdOrExternalIdFromPointCloudAnnotation(annotation) !== undefined;
     });
-    return filteredAnnotationModelsByAsset as RevealAnnotationModel[];
+    return filteredAnnotationModelsByAsset as PointCloudAnnotationModel[];
   }
 
   public async matchPointCloudAnnotationsForModel(

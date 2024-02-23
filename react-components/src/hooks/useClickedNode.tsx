@@ -101,7 +101,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     nodeDataPromises,
     assetMappingResult,
     pointCloudAssetMappingResult,
-    intersection ?? annotationIntersection
+    annotationIntersection ?? intersection
   );
 };
 
