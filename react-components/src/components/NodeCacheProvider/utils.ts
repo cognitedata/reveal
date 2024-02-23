@@ -2,7 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type CogniteInternalId } from '@cognite/sdk';
+import {
+  type AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  type AnnotationModel,
+  type AnnotationsBoundingVolume,
+  type CogniteInternalId
+} from '@cognite/sdk';
 import {
   type ModelRevisionId,
   type ModelAssetIdKey,
@@ -20,4 +25,22 @@ export function modelRevisionAssetIdsToKey(
   assetId: CogniteInternalId
 ): ModelAssetIdKey {
   return `${modelRevisionId.modelId}/${modelRevisionId.revisionId}/${assetId}`;
+}
+
+export function getAssetIdOrExternalIdFromPointCloudAnnotation(
+  annotation: AnnotationModel
+): string | number | undefined {
+  return (
+    (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
+    (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId
+  );
+}
+
+export function getAssetIdOrExternalIdFromImage360Annotation(
+  annotation: AnnotationModel
+): string | number | undefined {
+  return (
+    (annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink).assetRef?.id ??
+    (annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink).assetRef?.externalId
+  );
 }

@@ -9,6 +9,7 @@ import { type FC, useRef } from 'react';
 import { type FdmNodeCache } from '../../../src/components/NodeCacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../../../src/components/NodeCacheProvider/AssetMappingCache';
 import { type PointCloudAnnotationCache } from '../../../src/components/NodeCacheProvider/PointCloudAnnotationCache';
+import { Image360AnnotationCache } from '../../../src/components/NodeCacheProvider/Image360AnnotationCache';
 
 describe(RevealCanvas.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {
@@ -37,6 +38,7 @@ describe(RevealCanvas.name, () => {
       const fdmNodeCache = useRef<FdmNodeCache | undefined>();
       const assetMappingCache = useRef<AssetMappingCache | undefined>();
       const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache>();
+      const image360AnnotationCache = useRef<Image360AnnotationCache | undefined>();
       return (
         <RevealKeepAliveContext.Provider
           value={{
@@ -44,7 +46,8 @@ describe(RevealCanvas.name, () => {
             isRevealContainerMountedRef,
             fdmNodeCache,
             assetMappingCache,
-            pointCloudAnnotationCache
+            pointCloudAnnotationCache,
+            image360AnnotationCache
           }}>
           <RevealContext sdk={sdkMock.object()}>
             <RevealCanvas />

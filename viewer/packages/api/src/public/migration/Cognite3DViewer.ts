@@ -22,7 +22,8 @@ import {
   DisposedDelegate,
   determineCurrentDevice,
   SceneHandler,
-  BeforeSceneRenderedDelegate
+  BeforeSceneRenderedDelegate,
+  CustomObjectIntersection
 } from '@reveal/utilities';
 
 import { SessionLogger, MetricsLogger } from '@reveal/metrics';
@@ -83,8 +84,9 @@ import {
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
-import { getNormalizedPixelCoordinates } from '@reveal/utilities';
+import { getNormalizedPixelCoordinates, CustomObject } from '@reveal/utilities';
 import { FlexibleCameraManager } from '@reveal/camera-manager';
+import { CustomObjectIntersectInput } from '@reveal/utilities/src/customObject/CustomObjectIntersectInput';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -1047,9 +1049,36 @@ export class Cognite3DViewer {
       return;
     }
     object.updateMatrixWorld(true);
-    this._sceneHandler.addCustomObject(object);
+    this._sceneHandler.addObject3D(object);
     this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
+  }
+
+  /**
+   * Add a CustomObject to the viewer.
+   * @param customObject
+   * @example
+   * ```js
+   * const sphere = new THREE.Mesh(
+   * new THREE.SphereGeometry(),
+   * new THREE.MeshBasicMaterial()
+   * );
+   * const customObject = CustomObject(sphere);
+   * customObject.isPartOfBoundingBox = false;
+   * viewer.addCustomObject(customObject);
+   * ```
+   * @beta
+   */
+  addCustomObject(customObject: CustomObject): void {
+    if (this.isDisposed) {
+      return;
+    }
+    customObject.object.updateMatrixWorld(true);
+    this._sceneHandler.addCustomObject(customObject);
+    this.revealManager.requestRedraw();
+    if (customObject.isPartOfBoundingBox) {
+      this.recalculateBoundingBox();
+    }
   }
 
   /**
@@ -1066,9 +1095,32 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    this._sceneHandler.removeCustomObject(object);
+    this._sceneHandler.removeObject3D(object);
     this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
+  }
+
+  /**
+   * Remove a CustomObject from the viewer.
+   * @param customObject
+   * @example
+   * ```js
+   * const sphere = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
+   * const customObject = CustomObject(sphere);
+   * viewer.addCustomObject(sphere);
+   * viewer.removeCustomObject(sphere);
+   * ```
+   * @beta
+   */
+  removeCustomObject(customObject: CustomObject): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this._sceneHandler.removeCustomObject(customObject);
+    this.revealManager.requestRedraw();
+    if (customObject.isPartOfBoundingBox) {
+      this.recalculateBoundingBox();
+    }
   }
 
   /**
@@ -1619,6 +1671,39 @@ export class Cognite3DViewer {
     return intersections.length > 0 ? intersections[0] : null;
   }
 
+  private getCustomObjectIntersectionIfCloser(
+    offsetX: number,
+    offsetY: number,
+    closestDistanceToCamera: number | undefined
+  ): CustomObjectIntersection | undefined {
+    let intersectInput: CustomObjectIntersectInput | undefined = undefined; // Lazy creation for speed
+    let closestIntersection: CustomObjectIntersection | undefined = undefined;
+    this._sceneHandler.customObjects.forEach(customObject => {
+      if (!customObject.shouldPick) {
+        return;
+      }
+      if (!intersectInput) {
+        intersectInput = this.createCustomObjectIntersectInput(offsetX, offsetY);
+      }
+      const intersection = customObject.intersectIfCloser(intersectInput, closestDistanceToCamera);
+      if (!intersection) {
+        return;
+      }
+      closestDistanceToCamera = intersection.distanceToCamera;
+      closestIntersection = intersection;
+    });
+    return closestIntersection;
+  }
+
+  private createCustomObjectIntersectInput(offsetX: number, offsetY: number): CustomObjectIntersectInput {
+    const normalizedCoords = getNormalizedPixelCoordinates(this.domElement, offsetX, offsetY);
+    return new CustomObjectIntersectInput(
+      normalizedCoords,
+      this.cameraManager.getCamera(),
+      this.getGlobalClippingPlanes()
+    );
+  }
+
   /**
    * Callback used by DefaultCameraManager to do model intersection. Made synchronous to avoid
    * input lag when zooming in and out. Default implementation is async. See PR #2405 for more info.
@@ -1629,8 +1714,30 @@ export class Cognite3DViewer {
     offsetY: number,
     pickBoundingBox: boolean
   ): Promise<CameraManagerCallbackData> {
-    const intersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
+    const modelIntersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
 
+    // Find any custom object intersection closer to the camera than the model intersection
+    const customObjectIntersection = this.getCustomObjectIntersectionIfCloser(
+      offsetX,
+      offsetY,
+      modelIntersection?.distanceToCamera
+    );
+    if (customObjectIntersection === undefined || modelIntersection === null) {
+      // No intersection
+      return {
+        intersection: null,
+        pickedBoundingBox: undefined,
+        modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox
+      };
+    }
+    if (customObjectIntersection) {
+      // Custom object intersection
+      return {
+        intersection: customObjectIntersection,
+        pickedBoundingBox: pickBoundingBox ? customObjectIntersection.boundingBox : undefined,
+        modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox
+      };
+    }
     const getBoundingBox = async (intersection: Intersection | null): Promise<THREE.Box3 | undefined> => {
       if (intersection?.type !== 'cad') {
         return undefined;
@@ -1639,9 +1746,12 @@ export class Cognite3DViewer {
       const treeIndex = intersection.treeIndex;
       return model.getBoundingBoxByTreeIndex(treeIndex);
     };
-
-    const pickedBoundingBox = pickBoundingBox ? await getBoundingBox(intersection) : undefined;
-    return { intersection, pickedBoundingBox, modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox };
+    // Model intersection
+    return {
+      intersection: modelIntersection,
+      pickedBoundingBox: pickBoundingBox ? await getBoundingBox(modelIntersection) : undefined,
+      modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox
+    };
   }
 
   /** @private */
@@ -1660,15 +1770,14 @@ export class Cognite3DViewer {
         combinedBbox.union(bbox);
       }
     });
-    this._sceneHandler.customObjects.forEach(obj => {
-      if (obj.name === 'CogniteGroundPlane') {
+    this._sceneHandler.customObjects.forEach(customObject => {
+      if (!customObject.isPartOfBoundingBox) {
         return;
       }
-      bbox.setFromObject(obj);
+      bbox.setFromObject(customObject.object);
       if (bbox.isEmpty()) {
         return;
       }
-      // Todo: Mark some of the object not to be included in the bounding box
       combinedBbox.union(bbox);
     });
   }

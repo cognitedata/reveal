@@ -20,7 +20,12 @@ import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
 import { useCalculatePointCloudStyling } from '../../hooks/useCalculatePointCloudModelsStyling';
 import { type PointCloudModelStyling } from '../PointCloudContainer/useApplyPointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
+import {
+  isAssetMappingStylingGroup,
+  isFdmAssetStylingGroup,
+  isImage360AssetStylingGroup
+} from '../../utilities/StylingGroupUtils';
+import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 
 export const Reveal3DResources = ({
   resources,
@@ -53,7 +58,7 @@ export const Reveal3DResources = ({
 
   const styledCadModelOptions = useCalculateCadStyling(
     cadModelOptions,
-    instanceStyling ?? EMPTY_ARRAY,
+    instanceStyling?.filter(isFdmAssetStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
   );
 
@@ -68,6 +73,8 @@ export const Reveal3DResources = ({
     else if ('externalId' in resource) return resource.externalId !== undefined;
     return false;
   });
+
+  const image360StyledGroup = instanceStyling?.filter(isImage360AssetStylingGroup) ?? EMPTY_ARRAY;
 
   const onModelLoaded = (): void => {
     onModelFailOrSucceed();
@@ -125,20 +132,23 @@ export const Reveal3DResources = ({
         );
       })}
       {image360CollectionAddOptions.map((addModelOption) => {
+        const image360Styling: ImageCollectionModelStyling = {
+          defaultStyle: defaultResourceStyling?.image360?.default,
+          groups: image360StyledGroup
+        };
+        let key;
         if ('siteId' in addModelOption) {
-          return (
-            <Image360CollectionContainer
-              key={`${addModelOption.siteId}`}
-              collectionId={addModelOption}
-              onLoad={onModelLoaded}
-              onLoadError={onModelLoadedError}
-            />
-          );
+          key = `${addModelOption.siteId}`;
         } else if ('externalId' in addModelOption) {
+          key = `${addModelOption.externalId}`;
+        }
+
+        if ('externalId' in addModelOption || 'siteId' in addModelOption) {
           return (
             <Image360CollectionContainer
-              key={`${addModelOption.externalId}`}
+              key={key}
               collectionId={addModelOption}
+              styling={image360Styling}
               onLoad={onModelLoaded}
               onLoadError={onModelLoadedError}
             />
