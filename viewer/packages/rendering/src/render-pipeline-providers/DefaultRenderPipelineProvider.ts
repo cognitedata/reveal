@@ -18,6 +18,7 @@ import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 import { SettableRenderTarget } from '../rendering/SettableRenderTarget';
+import { CustomObject } from '@reveal/utilities/src/customObject/CustomObject';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
   private readonly _viewerScene: THREE.Scene;
@@ -30,7 +31,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
     pointCloudNode: THREE.Object3D;
     modelIdentifier: symbol;
   }[];
-  private readonly _customObjects: THREE.Object3D[];
+  private readonly _customObjects: CustomObject[];
   private _autoResizeOutputTarget: boolean;
   private _outputRenderTarget: THREE.WebGLRenderTarget | null;
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
@@ -204,7 +205,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider, Se
 
     this._viewerScene.matrixWorldAutoUpdate = false;
 
-    this._customObjects?.forEach(customObject => customObject.updateMatrixWorld(true));
+    this._customObjects?.forEach(customObject => customObject.object.updateMatrixWorld(true));
 
     this.updateRenderTargetSizes(renderer);
   }

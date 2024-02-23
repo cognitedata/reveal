@@ -66,6 +66,9 @@ export {
   PointerEventDelegate,
   PointerEventData,
   DisposedDelegate,
+  CustomObject,
+  CustomObjectIntersection,
+  CustomObjectIntersectInput,
   CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 
