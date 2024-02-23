@@ -426,7 +426,7 @@ function moveCameraTo(
   const to = { t: 1 };
   const animation = new TWEEN.Tween(from);
   const tween = animation
-    .to(to, 2000)
+    .to(to, 200)
     .onUpdate(() => {
       tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
       tmpPosition.copy(offsetInCameraSpace);
