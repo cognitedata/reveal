@@ -99,22 +99,20 @@ export class AxisGizmo {
     const { position, target } = cameraManager.getCameraState();
     const distance = position.distanceTo(target);
 
-    const forward = this._selectedAxis.direction.clone();
-    const direction = forward.clone();
+    // Position = Target - direction * distanceToTarget
+    const direction = this._selectedAxis.direction.clone();
     direction.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    direction.multiplyScalar(distance).negate();
-    const positionToMoveTo = target.clone().add(direction);
+    direction.multiplyScalar(distance);
+    const newPosition = target.clone().sub(direction);
 
-    moveCameraTo(
-      this._viewer.cameraManager,
-      positionToMoveTo,
-      forward,
-      this._selectedAxis.upAxis,
-      this._selectedAxis.axis
-    );
-    if (this.updateSelectedAxis()) {
-      this.updateAndRender(cameraManager.getCamera());
-    }
+    const forward = this._selectedAxis.direction.clone().negate();
+    const upAxis = this._selectedAxis.upAxis;
+
+    forward.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    upAxis.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+
+    localMoveCameraTo(this._viewer.cameraManager, this._options.animationDuration, newPosition, forward, upAxis);
+    this.updateAndRender(cameraManager.getCamera());
   }
 
   private onPointerMove(event: PointerEvent) {
@@ -175,20 +173,19 @@ export class AxisGizmo {
     }
     if (camera) {
       // Calculate the rotation matrix from the camera and move the axises to the correct position
-      const matrix = new Matrix4().makeRotationFromEuler(camera.rotation);
-      matrix.invert();
-
-      const fromViewer = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
-
+      const matrix = new Matrix4().makeRotationFromEuler(camera.rotation).invert();
+      const fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
       for (const axis of this._axises) {
         const direction = axis.direction.clone();
         if (axis.axis === 0) {
           direction.negate();
         }
-        direction.applyMatrix4(fromViewer);
+        direction.applyMatrix4(fromViewerMatrix);
         direction.applyMatrix4(matrix);
         this.updateAxisPosition(direction, axis.bobblePosition);
       }
+      // Since the bobblePosition has changed, maybe the selectedAxis is changed
+      this.updateSelectedAxis();
     }
     // Sort the axis by it's z position
     this._axises.sort((a, b) => (a.bobblePosition.z > b.bobblePosition.z ? 1 : -1));
@@ -392,32 +389,23 @@ function initializeStyle(element: HTMLElement, options: AxisGizmoOptions) {
   }
 }
 
-function moveCameraTo(
+function localMoveCameraTo(
   cameraManager: CameraManager,
+  animationDuration: number,
   position: Vector3,
   direction: Vector3,
-  upAxis: Vector3,
-  axis: number
+  upAxis: Vector3
 ) {
   const { position: currentCameraPosition, target, rotation } = cameraManager.getCameraState();
 
   const offsetInCameraSpace = currentCameraPosition.clone().sub(target).applyQuaternion(rotation.clone().conjugate());
 
   // Create a new rotation from the direction and up axis
-  const forward = direction.clone().negate();
+  const forward = direction.clone();
   const up = upAxis.clone();
-
-  up.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-  forward.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
   const right = up.clone().cross(forward);
 
   const toRotation = new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(right, up, forward));
-
-  if (axis === 2) {
-    cameraManager.setCameraState({ position, rotation: toRotation });
-    return;
-  }
-
   const fromRotation = rotation.clone();
   const tmpPosition = new Vector3();
   const tmpRotation = new Quaternion();
@@ -426,7 +414,7 @@ function moveCameraTo(
   const to = { t: 1 };
   const animation = new TWEEN.Tween(from);
   const tween = animation
-    .to(to, 200)
+    .to(to, animationDuration)
     .onUpdate(() => {
       tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
       tmpPosition.copy(offsetInCameraSpace);
@@ -435,7 +423,8 @@ function moveCameraTo(
       cameraManager.setCameraState({ position: tmpPosition, rotation: tmpRotation });
     })
     .onComplete(() => {
-      cameraManager.setCameraState({ position, rotation: toRotation });
+      cameraManager.setCameraState({ position: tmpPosition, rotation: toRotation });
+      cameraManager.setCameraState({ position, target });
     })
     .start(TWEEN.now());
   tween.update(TWEEN.now());

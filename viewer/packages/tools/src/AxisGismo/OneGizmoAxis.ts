@@ -8,7 +8,7 @@ import { AxisGizmoOptions } from './AxisGizmoOptions';
 export class OneGizmoAxis {
   readonly direction: Vector3; // The camera direction towards the axis (negate of the axis direction)
   readonly upAxis: Vector3; // The camera up axis
-  readonly bobblePosition: Vector3;
+  readonly bobblePosition: Vector3; // The bobble position of the axis (changed by the camera)
   readonly label: string;
   readonly axis: number;
   readonly isPrimary: boolean;

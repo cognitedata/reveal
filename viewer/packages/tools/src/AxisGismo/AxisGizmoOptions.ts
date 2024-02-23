@@ -27,6 +27,7 @@ export class AxisGizmoOptions {
   public fontYAdjust = 1;
   public lightColors = [0xf73c3c, 0x178cf0, 0x6ccb26]; // Light color for the X, Y and Z-axis
   public darkColors = [0x942424, 0x0e5490, 0x417a17]; // Dark color for the X, Y and Z-axis
+  public animationDuration = 300; // In milliseconds
 
   private _font: string | undefined = undefined; // Lazy created due to speed
 

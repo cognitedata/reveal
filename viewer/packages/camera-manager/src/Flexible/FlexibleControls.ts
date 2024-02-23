@@ -61,6 +61,8 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   private readonly _pointEventCache: Array<PointerEvent> = [];
   private _getPickedPointByPixelCoordinates: GetPickedPointByPixelCoordinates | undefined;
 
+  private _rawCameraRotation: Quaternion | undefined = undefined;
+
   private readonly _reusableVector3s = new ReusableVector3s(); // Temporary objects used for calculations to avoid allocations
 
   //        FlexibleControlsType.OrbitInCenter
@@ -239,6 +241,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     const vector = this.newVector3().subVectors(target, position);
     vector.normalize();
     this._cameraVector.copy(vector);
+    this._rawCameraRotation = undefined;
 
     this.update(1000 / TARGET_FPS, true);
     this.triggerCameraChangeEvent();
@@ -248,6 +251,8 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this.isInitialized = true;
     this._cameraPosition.copy(position);
     this._cameraVector.copy(direction);
+    this._rawCameraRotation = undefined;
+
     this.update(1000 / TARGET_FPS, true);
     this.triggerCameraChangeEvent();
   }
@@ -258,6 +263,8 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
     const cameraVector = this.newVector3().set(0, 0, -1);
     cameraVector.applyQuaternion(rotation);
+
+    this._rawCameraRotation = rotation.clone();
 
     if (DampedSpherical.isVertical(cameraVector)) {
       // Looking from top or bottom, the theta must be defined in a proper way
@@ -361,7 +368,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
     this._camera.position.copy(this._cameraPosition.value);
     this._camera.updateProjectionMatrix();
-    this._camera.lookAt(this.getLookAt());
+
+    if (this._rawCameraRotation) {
+      this._camera.setRotationFromQuaternion(this._rawCameraRotation);
+    } else {
+      this._camera.lookAt(this.getLookAt());
+    }
     if (isChanged) {
       this.triggerCameraChangeEvent();
     }
