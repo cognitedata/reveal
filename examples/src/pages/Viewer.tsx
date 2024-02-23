@@ -474,6 +474,8 @@ export function Viewer() {
       const axisGizmo = new AxisGizmo();
       axisGizmo.connect(viewer);
 
+      viewer.addObject3D(new THREE.AxesHelper(10))
+
 
       //   new AxisViewTool(
       //   viewer,
