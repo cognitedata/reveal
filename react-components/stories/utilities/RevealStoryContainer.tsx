@@ -14,7 +14,7 @@ import {
   RevealContext,
   type RevealContextProps
 } from '../../src/components/RevealContext/RevealContext';
-import { Image360AnnotationCache } from '../../src/components/NodeCacheProvider/Image360AnnotationCache';
+import { type Image360AnnotationCache } from '../../src/components/NodeCacheProvider/Image360AnnotationCache';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
