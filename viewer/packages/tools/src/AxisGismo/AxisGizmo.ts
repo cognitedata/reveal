@@ -2,20 +2,24 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Color, Matrix4, PerspectiveCamera, Vector3 } from 'three';
+import { Matrix4, PerspectiveCamera, Quaternion, Vector3 } from 'three';
 import { AxisGizmoOptions } from './AxisGizmoOptions';
-import { Corner } from '@reveal/utilities';
+import { CDF_TO_VIEWER_TRANSFORMATION, Corner } from '@reveal/utilities';
 import { Cognite3DViewer } from '@reveal/api';
+import TWEEN from '@tweenjs/tween.js';
+import { OneGizmoAxis } from './OneGizmoAxis';
+import { CameraManager } from '@reveal/camera-manager';
 
 export class AxisGizmo {
   //================================================
   // INSTANCE FIELDS
   //================================================
   private readonly _options: AxisGizmoOptions;
-  private readonly _axises: Axis[];
+  private readonly _axises: OneGizmoAxis[];
   private readonly _center: Vector3;
-  private _selectedAxis: Axis | null = null;
-  private _isMouseInside = false;
+  private _mousePosition: Vector3 | undefined = undefined;
+  private _selectedAxis: OneGizmoAxis | undefined = undefined;
+  private _isMouseOver = false; // Keep track of this for highlighing the gizmo
   private _inDragging = false;
 
   private _viewer: Cognite3DViewer | null = null;
@@ -29,6 +33,7 @@ export class AxisGizmo {
   private readonly _onPointerMove = this.onPointerMove.bind(this);
   private readonly _onPointerOut = this.onPointerOut.bind(this);
   private readonly _onMouseClick = this.onMouseClick.bind(this);
+  private readonly _onMouseDoubleClick = this.onMouseDoubleClick.bind(this);
 
   //================================================
   // CONSTRUCTORS
@@ -38,7 +43,7 @@ export class AxisGizmo {
     this._options = new AxisGizmoOptions();
     const halfSize = this._options.size / 2;
     this._center = new Vector3(halfSize, halfSize, 0);
-    this._axises = Axis.createAllAxises(this._options);
+    this._axises = OneGizmoAxis.createAllAxises(this._options);
   }
 
   //================================================
@@ -79,17 +84,35 @@ export class AxisGizmo {
 
   private onPointerUp(event: PointerEvent) {
     event.stopPropagation();
-    if (this._inDragging) {
-      this._inDragging = false;
-      if (this._selectedAxis === null || this._viewer == null) {
-        return;
-      }
-      const cameraManager = this._viewer.cameraManager;
-      const { position, target } = cameraManager.getCameraState();
-      const distance = position.distanceTo(target);
-      const direction = this._selectedAxis.direction.clone().multiplyScalar(distance);
-      const positionToMoveTo = target.clone().add(direction);
-      cameraManager.setCameraState({ position: positionToMoveTo, target: target });
+    if (!this._inDragging) {
+      return;
+    }
+    this._inDragging = false;
+    if (this._viewer == null) {
+      return;
+    }
+    this.updateSelectedAxis();
+    if (!this._selectedAxis) {
+      return;
+    }
+    const cameraManager = this._viewer.cameraManager;
+    const { position, target } = cameraManager.getCameraState();
+    const distance = position.distanceTo(target);
+
+    const up = this._selectedAxis.createUpAxis();
+    const forward = this._selectedAxis.direction.clone();
+    if (this._selectedAxis.axis == 0) {
+      forward.negate();
+    }
+    // positionToMoveTo = target - direction * distance
+    const direction = forward.clone();
+    direction.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    direction.multiplyScalar(distance).negate();
+    const positionToMoveTo = target.clone().add(direction);
+
+    moveCameraTo(this._viewer.cameraManager, positionToMoveTo, forward, up, this._selectedAxis.axis);
+    if (this.updateSelectedAxis()) {
+      this.updateAndRender(cameraManager.getCamera());
     }
   }
 
@@ -98,22 +121,17 @@ export class AxisGizmo {
       return;
     }
     const rectangle = this._canvas.getBoundingClientRect();
-    const mousePosition = new Vector3(event.clientX - rectangle.left, event.clientY - rectangle.top, 0);
-    const selectedAxis = this.getSelectedAxis(mousePosition);
-
-    const isMouseInside = this.isMouseOver(mousePosition);
-    if (selectedAxis === this._selectedAxis && isMouseInside === this._isMouseInside) {
-      return;
+    this._mousePosition = new Vector3(event.clientX - rectangle.left, event.clientY - rectangle.top, 0);
+    if (this.updateSelectedAxis()) {
+      this.updateAndRender(null);
     }
-    this._isMouseInside = isMouseInside;
-    this._selectedAxis = selectedAxis;
-    this.updateAndRender(null);
   }
 
   private onPointerOut(_event: PointerEvent) {
     this._inDragging = false;
-    this._isMouseInside = false;
-    this._selectedAxis = null;
+    this._isMouseOver = false;
+    this._selectedAxis = undefined;
+    this._mousePosition = undefined;
     this.updateAndRender(null);
   }
 
@@ -121,8 +139,13 @@ export class AxisGizmo {
     event.stopPropagation();
   }
 
-  private readonly onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => {
+  private onMouseDoubleClick(event: MouseEvent) {
+    event.stopPropagation();
+  }
+
+  private readonly onCameraChange = (_position: Vector3, _target: Vector3) => {
     if (this._viewer) {
+      this.updateSelectedAxis();
       this.updateAndRender(this._viewer.cameraManager.getCamera());
     }
   };
@@ -130,6 +153,20 @@ export class AxisGizmo {
   //================================================
   // INSTANCE METHODS: Private helpers
   //================================================
+
+  private updateSelectedAxis(): boolean {
+    if (!this._canvas) {
+      return false;
+    }
+    const selectedAxis = this.getSelectedAxis();
+    const isMouseInside = this.isMouseOver();
+    if (selectedAxis === this._selectedAxis && isMouseInside === this._isMouseOver) {
+      return false;
+    }
+    this._isMouseOver = isMouseInside;
+    this._selectedAxis = selectedAxis;
+    return true; // Returns true if updated
+  }
 
   private updateAndRender(camera: PerspectiveCamera | null): void {
     if (this._context == null || this._canvas == null) {
@@ -139,8 +176,14 @@ export class AxisGizmo {
       // Calculate the rotation matrix from the camera and move the axises to the correct position
       const matrix = new Matrix4().makeRotationFromEuler(camera.rotation);
       matrix.invert();
+
+      const fromViewer = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+
       for (const axis of this._axises) {
-        this.updateAxisPosition(axis.direction.clone().applyMatrix4(matrix), axis.bobblePosition);
+        const direction = axis.direction.clone();
+        direction.applyMatrix4(fromViewer);
+        direction.applyMatrix4(matrix);
+        this.updateAxisPosition(direction, axis.bobblePosition);
       }
     }
     // Sort the axis by it's z position
@@ -161,6 +204,7 @@ export class AxisGizmo {
     canvas.addEventListener('pointerdown', this._onPointerDown, false);
     canvas.addEventListener('pointerup', this._onPointerUp, false);
     canvas.addEventListener('click', this._onMouseClick, false);
+    canvas.addEventListener('dblclick', this._onMouseDoubleClick, false);
   }
 
   private removeEventListeners(): void {
@@ -171,11 +215,12 @@ export class AxisGizmo {
     if (!canvas) {
       return;
     }
-    canvas.removeEventListener('pointermove', this._onPointerMove, false);
-    canvas.removeEventListener('pointerout', this._onPointerOut, false);
-    canvas.removeEventListener('pointerdown', this._onPointerDown, false);
-    canvas.removeEventListener('pointerup', this._onPointerUp, false);
-    canvas.removeEventListener('click', this._onMouseClick, false);
+    canvas.removeEventListener('pointermove', this._onPointerMove);
+    canvas.removeEventListener('pointerout', this._onPointerOut);
+    canvas.removeEventListener('pointerdown', this._onPointerDown);
+    canvas.removeEventListener('pointerup', this._onPointerUp);
+    canvas.removeEventListener('click', this._onMouseClick);
+    canvas.removeEventListener('dblclick', this._onMouseDoubleClick);
   }
 
   private createElement(): HTMLElement {
@@ -192,7 +237,7 @@ export class AxisGizmo {
     if (this._canvas) {
       clear(this._context, this._canvas);
     }
-    if (this._isMouseInside && this._options.focusCircleAlpha > 0) {
+    if (this._isMouseOver && this._options.focusCircleAlpha > 0) {
       this._context.globalAlpha = this._options.focusCircleAlpha;
       fillCircle(this._context, this._center, this._options.radius, this._options.focusCircleColor);
       this._context.globalAlpha = 1;
@@ -222,7 +267,7 @@ export class AxisGizmo {
     }
   }
 
-  private getTextColor(axis: Axis): string {
+  private getTextColor(axis: OneGizmoAxis): string {
     if (this._selectedAxis === axis) {
       return this._options.selectedTextColor;
     } else {
@@ -230,19 +275,25 @@ export class AxisGizmo {
     }
   }
 
-  private isMouseOver(mousePosition: Vector3): boolean {
-    return horizontalDistanceTo(mousePosition, this._center) < this._options.radius;
+  private isMouseOver(): boolean {
+    if (!this._mousePosition) {
+      return false;
+    }
+    return horizontalDistanceTo(this._mousePosition, this._center) < this._options.radius;
   }
 
-  private getSelectedAxis(mousePosition: Vector3): Axis | null {
-    if (!this.isMouseOver(mousePosition)) {
-      return null;
+  private getSelectedAxis(): OneGizmoAxis | undefined {
+    if (!this._mousePosition) {
+      return undefined;
+    }
+    if (!this.isMouseOver()) {
+      return undefined;
     }
     // If the mouse is over the gizmo, find the closest axis bobble for highligting
     let closestDistance = Infinity;
-    let selectedAxis: Axis | null = null;
+    let selectedAxis: OneGizmoAxis | undefined = undefined;
     for (const axis of this._axises) {
-      const distance = horizontalDistanceTo(mousePosition, axis.bobblePosition);
+      const distance = horizontalDistanceTo(this._mousePosition, axis.bobblePosition);
 
       // Only select the axis if its closer to the mouse than the previous or if its within its bubble circle
       if (distance < closestDistance && distance < this._options.bubbleRadius) {
@@ -337,100 +388,51 @@ function initializeStyle(element: HTMLElement, options: AxisGizmoOptions) {
   }
 }
 
-//================================================
-// HELPER CLASS
-//================================================
+function moveCameraTo(
+  cameraManager: CameraManager,
+  position: Vector3,
+  direction: Vector3,
+  upAxis: Vector3,
+  axis: number
+) {
+  const { position: currentCameraPosition, target, rotation } = cameraManager.getCameraState();
 
-class Axis {
-  readonly direction: Vector3;
-  readonly bobblePosition: Vector3;
-  readonly label: string;
-  readonly axis: number;
-  private readonly _lightColor: Color;
-  private readonly _darkColor: Color;
-  private readonly _mixedLightColor: Color = new Color();
-  private readonly _mixedDarkColor: Color = new Color();
+  const offsetInCameraSpace = currentCameraPosition.clone().sub(target).applyQuaternion(rotation.clone().conjugate());
 
-  private constructor(axis: number, options: AxisGizmoOptions) {
-    this.axis = axis;
-    this.direction = this.createDirection();
-    this.bobblePosition = new Vector3();
-    this.label = this.createLabel(options.yUp);
-    let index = Math.abs(axis) - 1;
-    if (options.yUp) {
-      if (index === 1) index = 2;
-      else if (index === 2) index = 1;
-    }
-    this._lightColor = new Color(options.lightColors[index]);
-    this._darkColor = new Color(options.darkColors[index]);
+  // Create a new rotation from the direction and up axis
+  const forward = direction.clone().negate();
+  const up = upAxis;
+
+  up.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+  forward.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+  const right = up.clone().cross(forward);
+
+  const toRotation = new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(right, up, forward));
+
+  if (axis === 2) {
+    cameraManager.setCameraState({ position, rotation: toRotation });
+    return;
   }
 
-  get isPrimary() {
-    return this.axis > 0;
-  }
+  const fromRotation = rotation.clone();
+  const tmpPosition = new Vector3();
+  const tmpRotation = new Quaternion();
 
-  public getLightColorInHex(): string {
-    return '#' + this.getLightColor().getHexString();
-  }
-
-  public getDarkColorInHex(): string {
-    return '#' + this.getDarkColor().getHexString();
-  }
-
-  private getLightColor(): Color {
-    // Mix the original color with black by the getColorFraction
-    this._mixedLightColor.copy(this._lightColor);
-    this._mixedLightColor.multiplyScalar(this.getColorFraction());
-    return this._mixedLightColor;
-  }
-
-  private getDarkColor(): Color {
-    // Mix the original color with black by the getColorFraction
-    this._mixedDarkColor.copy(this._darkColor);
-    this._mixedDarkColor.multiplyScalar(this.getColorFraction());
-    return this._mixedDarkColor;
-  }
-
-  private getColorFraction(): number {
-    // Normalize between 1 and 0, since z is in range -1 to 1
-    const mix = (this.bobblePosition.z + 1) / 2;
-
-    // Interpolate this value lineary from minimum to 1:
-    const minimum = 0.2;
-    return minimum + (1 - minimum) * mix;
-  }
-
-  private createLabel(yUp: boolean): string {
-    const labelPrefix = this.axis < 0 ? '-' : '';
-    return labelPrefix + this.getAxisName(yUp);
-  }
-
-  private getAxisName(yUp: boolean): string {
-    switch (Math.abs(this.axis)) {
-      case 1:
-        return 'X';
-      case 2:
-        return yUp ? 'Y' : 'Z';
-      case 3:
-        return yUp ? 'Z' : 'Y';
-      default:
-        return '';
-    }
-  }
-
-  private createDirection(): Vector3 {
-    const getCoord = (forAxis: number): number => {
-      return Math.abs(this.axis) == forAxis ? Math.sign(this.axis) : 0;
-    };
-    return new Vector3(getCoord(1), getCoord(2), getCoord(3));
-  }
-
-  public static createAllAxises(options: AxisGizmoOptions): Axis[] {
-    const axises: Axis[] = [];
-    for (let axis = 1; axis <= 3; axis++) {
-      axises.push(new Axis(axis, options));
-      axises.push(new Axis(-axis, options));
-    }
-    return axises;
-  }
+  const from = { t: 0 };
+  const to = { t: 1 };
+  const animation = new TWEEN.Tween(from);
+  const tween = animation
+    .to(to, 2000)
+    .onUpdate(() => {
+      tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
+      tmpPosition.copy(offsetInCameraSpace);
+      tmpPosition.applyQuaternion(tmpRotation);
+      tmpPosition.add(target);
+      cameraManager.setCameraState({ position: tmpPosition, rotation: tmpRotation });
+    })
+    .onComplete(() => {
+      cameraManager.setCameraState({ position, rotation: toRotation });
+    })
+    .start(TWEEN.now());
+  tween.update(TWEEN.now());
 }
