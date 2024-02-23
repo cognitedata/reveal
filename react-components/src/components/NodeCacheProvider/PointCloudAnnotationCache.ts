@@ -10,7 +10,7 @@ import {
 } from './types';
 import { type CogniteClient, type Asset, type AnnotationFilterProps } from '@cognite/sdk';
 import { getAssetIdOrExternalIdFromPointCloudAnnotation, modelRevisionToKey } from './utils';
-import { fetchAnnotationAssets } from './AnnotationModelUtils';
+import { fetchPointCloudAnnotationAssets } from './AnnotationModelUtils';
 import assert from 'assert';
 
 export class PointCloudAnnotationCache {
@@ -66,7 +66,7 @@ export class PointCloudAnnotationCache {
 
   private async fetchAndCacheAssetMappingsForModel(modelId: ModelId): Promise<Map<number, Asset>> {
     const annotationModels = await this.fetchAnnotationForModel(modelId);
-    const annotationAssets = fetchAnnotationAssets(annotationModels, this._sdk);
+    const annotationAssets = fetchPointCloudAnnotationAssets(annotationModels, this._sdk);
 
     return await annotationAssets;
   }

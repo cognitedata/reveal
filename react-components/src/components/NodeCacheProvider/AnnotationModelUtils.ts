@@ -7,7 +7,7 @@ import { filterUndefined } from '../../utilities/filterUndefined';
 import { type PointCloudAnnotationModel } from './types';
 import { getAssetIdOrExternalIdFromPointCloudAnnotation } from './utils';
 
-export async function fetchAnnotationAssets(
+export async function fetchPointCloudAnnotationAssets(
   annotations: PointCloudAnnotationModel[],
   sdk: CogniteClient
 ): Promise<Map<number, Asset>> {

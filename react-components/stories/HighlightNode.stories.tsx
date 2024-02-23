@@ -126,21 +126,18 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         }
       ]);
     } else if (nodeData?.intersection !== undefined && 'annotation' in nodeData.intersection) {
-      const assetId =
-        (
-          nodeData.intersection.annotation.annotation
-            .data as AnnotationsCogniteAnnotationTypesImagesAssetLink
-        ).assetRef?.externalId ??
-        (
-          nodeData.intersection.annotation.annotation
-            .data as AnnotationsCogniteAnnotationTypesImagesAssetLink
-        ).assetRef?.id;
-      if (assetId === undefined) {
+      const assetLinkData = nodeData.intersection.annotation.annotation
+        .data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+      let assetId = assetLinkData.assetRef?.id;
+      if (assetId === undefined && assetLinkData.assetRef?.externalId !== undefined) {
+        assetId = Number(assetLinkData.assetRef.externalId);
+      }
+      if (assetId === undefined || isNaN(assetId)) {
         return;
       }
       setStylingGroups([
         {
-          assetIds: [Number(assetId)],
+          assetIds: [assetId],
           style: { color: new Color('#c5cbff'), visible: true }
         }
       ]);
