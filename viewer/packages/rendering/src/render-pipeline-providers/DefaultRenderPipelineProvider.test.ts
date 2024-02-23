@@ -124,7 +124,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const sceneHandler = new SceneHandler();
 
-    sceneHandler.addCustomObject(new THREE.Object3D());
+    sceneHandler.addObject3D(new THREE.Object3D());
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),

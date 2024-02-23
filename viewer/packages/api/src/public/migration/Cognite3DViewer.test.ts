@@ -11,7 +11,7 @@ import { Cognite3DViewer } from './Cognite3DViewer';
 
 import nock from 'nock';
 import { Mock } from 'moq.ts';
-import { BeforeSceneRenderedDelegate, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
+import { BeforeSceneRenderedDelegate, CustomObject, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { createGlContext, mockClientAuthentication } from '../../../../../test-utilities';
 
 import { jest } from '@jest/globals';
@@ -214,6 +214,25 @@ describe('Cognite3DViewer', () => {
 
     expect(() => viewer.addObject3D(obj)).not.toThrowError();
     expect(() => viewer.removeObject3D(obj)).not.toThrowError();
+  });
+
+  test('viewer can add/remove CustomObject on scene', () => {
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+
+    // Create 10 custom objects
+    const customObjects: CustomObject[] = [];
+    for (let i = 0; i < 10; i++) {
+      const obj = new THREE.Mesh(new THREE.SphereGeometry(i), new THREE.MeshBasicMaterial());
+      customObjects.push(new CustomObject(obj));
+    }
+    // Add them to the viewer
+    for (const customObject of customObjects) {
+      expect(() => viewer.addCustomObject(customObject)).not.toThrowError();
+    }
+    // Remove them from the viewer
+    for (const customObject of customObjects) {
+      expect(() => viewer.removeCustomObject(customObject)).not.toThrowError();
+    }
   });
 
   test('beforeSceneRendered and sceneRendered triggers before/after rendering', () => {
