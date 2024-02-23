@@ -65,7 +65,7 @@ export type Image360AssetStylingGroup = {
 export type DefaultResourceStyling = {
   cad?: { default?: NodeAppearance; mapped?: NodeAppearance };
   pointcloud?: { default: NodeAppearance; mapped?: NodeAppearance };
-  image360?: { mapped: Color };
+  image360?: { default: Color; mapped: Color };
 };
 
 export type Reveal3DResourcesProps = {

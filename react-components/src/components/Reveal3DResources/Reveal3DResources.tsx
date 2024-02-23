@@ -139,7 +139,7 @@ export const Reveal3DResources = ({
       {styledImage360Collections.image360CollectionAddOptions.map((addModelOption) => {
         const stylingGroups = styledImage360Collections.image360StyledGroup;
         const image360Styling: ImageCollectionModelStyling = {
-          defaultStyle: new Color(0xff0000),
+          defaultStyle: defaultResourceStyling?.image360?.default ?? new Color(0xff0000),
           groups: stylingGroups
         };
         if ('siteId' in addModelOption) {
