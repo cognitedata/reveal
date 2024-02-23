@@ -46,7 +46,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     entities[1].setIconColor(new THREE.Color(1.0, 0.0, 1.0));
 
     const icons = entities.map(entity => entity.icon);
-    sceneHandler.addCustomObject(this.getOctreeVisualizationObject(icons));
+    sceneHandler.addObject3D(this.getOctreeVisualizationObject(icons));
 
     this.setupGUI(entities);
 
