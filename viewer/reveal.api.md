@@ -689,11 +689,11 @@ export class CustomObject {
 
 // @beta
 export class CustomObjectIntersectInput {
-    constructor(normalizedCoords: Vector2, camera: PerspectiveCamera, clippingPlanes: Plane[]);
+    constructor(normalizedCoords: Vector2, camera: PerspectiveCamera, clippingPlanes?: Plane[] | undefined);
     // (undocumented)
     readonly camera: PerspectiveCamera;
     // (undocumented)
-    readonly clippingPlanes: Plane[] | null;
+    readonly clippingPlanes: Plane[] | undefined;
     // (undocumented)
     isVisible(point: Vector3): boolean;
     // (undocumented)
@@ -703,17 +703,13 @@ export class CustomObjectIntersectInput {
 }
 
 // @beta
-export class CustomObjectIntersection {
-    constructor(customObject: CustomObject, point: Vector3, distanceToCamera: number);
-    // (undocumented)
-    boundingBox: Box3 | undefined;
-    // (undocumented)
-    readonly customObject: CustomObject;
-    // (undocumented)
+export type CustomObjectIntersection = {
+    type: 'customObject';
+    point: Vector3;
     distanceToCamera: number;
-    // (undocumented)
-    readonly point: Vector3;
-}
+    customObject: CustomObject;
+    boundingBox?: Box3;
+};
 
 // @public
 export interface DataSource {
