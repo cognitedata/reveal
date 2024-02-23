@@ -38,7 +38,7 @@ export async function fetchAnnotationAssets(
   return annotationIdToAssetMap;
 }
 
-async function fetchAssetForAssetIds(
+export async function fetchAssetForAssetIds(
   assetIds: Array<string | number>,
   sdk: CogniteClient
 ): Promise<Asset[]> {

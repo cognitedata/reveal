@@ -2,12 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Asset, type CogniteClient } from '@cognite/sdk';
+import { type CogniteClient } from '@cognite/sdk';
 import { type Image360AnnotationAssetInfo } from './types';
 import { getAssetIdOrExternalIdFromAnnotation } from './utils';
-import { chunk } from 'lodash';
 import { type Cognite3DViewer, type Image360Collection } from '@cognite/reveal';
 import { useReveal } from '../RevealCanvas/ViewerContext';
+import { fetchAssetForAssetIds } from './AnnotationModelUtils';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;
@@ -56,7 +56,7 @@ export class Image360AnnotationCache {
       }
     });
 
-    const assetsArray = await this.getAssets(Array.from(filteredAssetIds));
+    const assetsArray = await fetchAssetForAssetIds(Array.from(filteredAssetIds), this._sdk);
     const assets = new Map(assetsArray.map((asset) => [asset.id, asset]));
 
     const assetsWithAnnotations = annotationsInfo.flatMap((annotationInfo) => {
@@ -76,25 +76,5 @@ export class Image360AnnotationCache {
     });
 
     return assetsWithAnnotations;
-  }
-
-  private async getAssets(assetIds: Array<string | number>): Promise<Asset[]> {
-    const assets = await Promise.all(
-      chunk(assetIds, 1000).map(async (assetsChunk) => {
-        const retrievedAssets = await this._sdk.assets.retrieve(
-          assetsChunk.map((assetId) => {
-            if (typeof assetId === 'number') {
-              return { id: assetId };
-            } else {
-              return { externalId: assetId };
-            }
-          }),
-          { ignoreUnknownIds: true }
-        );
-        return retrievedAssets;
-      })
-    );
-
-    return assets.flat();
   }
 }
