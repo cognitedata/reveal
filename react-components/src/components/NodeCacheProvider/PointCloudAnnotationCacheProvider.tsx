@@ -13,6 +13,7 @@ import { type AnnotationModelDataResult } from '../../hooks/useCalculatePointClo
 import { type AnnotationAssetMappingDataResult } from '../../hooks/types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { filterUndefined } from '../../utilities/filterUndefined';
+import { type AnnotationId } from './types';
 
 export type PointCloudAnnotationCacheContextContent = {
   cache: PointCloudAnnotationCache;
@@ -37,7 +38,7 @@ export const usePointCloudAnnotationIdsForModels = (
 ): UseQueryResult<
   Array<{
     model: PointCloudModelOptions;
-    annotationIds: number[];
+    annotationIds: AnnotationId[];
   }>
 > => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
@@ -211,7 +212,7 @@ export function PointCloudAnnotationCacheProvider({
     }
 
     return cache;
-  }, [cdfClient, revealKeepAliveData]);
+  }, [cdfClient]);
 
   return (
     <PointCloudAnnotationCacheContext.Provider value={{ cache: pointCloudAnnotationCache }}>
