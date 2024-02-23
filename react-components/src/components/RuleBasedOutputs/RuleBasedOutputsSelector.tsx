@@ -58,7 +58,10 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
     };
 
     models.forEach((model) => {
-      void initializeRuleBasedOutputs(model as CogniteCadModel);
+      if (!(model instanceof CogniteCadModel)) {
+        return;
+      }
+      void initializeRuleBasedOutputs(model);
     });
   }, [assetMappings, ruleSet, models]);
 
