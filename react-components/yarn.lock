@@ -1727,7 +1727,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.5.0"
     "@cognite/cogs.js": "npm:^9.17.0"
-    "@cognite/reveal": "npm:^4.10.0"
+    "@cognite/reveal": "npm:^4.10.3"
     "@cognite/sdk": "npm:^8.2.0"
     "@playwright/test": "npm:^1.39.0"
     "@storybook/addon-essentials": "npm:7.6.16"
@@ -1783,16 +1783,16 @@ __metadata:
     vitest: "npm:^0.34.6"
   peerDependencies:
     "@cognite/cogs.js": ">=9"
-    "@cognite/reveal": ^4.10.0
+    "@cognite/reveal": ^4.10.3
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:^4.10.0":
-  version: 4.10.0
-  resolution: "@cognite/reveal@npm:4.10.0"
+"@cognite/reveal@npm:^4.10.3":
+  version: 4.10.3
+  resolution: "@cognite/reveal@npm:4.10.3"
   dependencies:
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:19.0.0"
@@ -1803,7 +1803,7 @@ __metadata:
     html2canvas: "npm:^1.4.1"
     lodash: "npm:4.17.21"
     loglevel: "npm:1.9.1"
-    mixpanel-browser: "npm:2.48.1"
+    mixpanel-browser: "npm:2.49.0"
     path-browserify: "npm:1.0.1"
     random-seed: "npm:0.3.0"
     rxjs: "npm:7.8.1"
@@ -1812,7 +1812,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.158.0
-  checksum: 10/77fa388e20394a6f7a4cf20d4836e5d3ef9a60fc6ce7f2f9cfca13a44249ad03927fcac0ff24a33bd3e9adf9405e8149afd61a6fccb9db993580c8451f47b60c
+  checksum: 10/0a3da926e226c47ba3aeb7969aca96fd26d206e0cfd2920f22cd81f24d7a8976509f4f42bbf87506635764dc8705bb29738df7e63aec288a288f634b619c2af2
   languageName: node
   linkType: hard
 
@@ -11664,10 +11664,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mixpanel-browser@npm:2.48.1":
-  version: 2.48.1
-  resolution: "mixpanel-browser@npm:2.48.1"
-  checksum: 10/5dc47218cf2287e8e6b88888b345d63d2b4a9c102fcb867794ba61619ae37bbbbdedfc37a812658950684d3cac13bd0893bdfb0578c5037f953652db01c58b21
+"mixpanel-browser@npm:2.49.0":
+  version: 2.49.0
+  resolution: "mixpanel-browser@npm:2.49.0"
+  checksum: 10/46b738792153caa35c083f3e23b208d48fac0f040074d2f36dc95bac49e86729676ffb599b4b50d814231c4ae8170110419e748a1cbe0d5432ea415f0fe8adc4
   languageName: node
   linkType: hard
 
