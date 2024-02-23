@@ -19,6 +19,7 @@ import {
 import { type CogniteCadModel, TreeIndexNodeCollection } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset } from '@cognite/sdk';
 import { type FdmPropertyType } from '../Reveal3DResources/types';
+import { filterUndefined } from '../../utilities/filterUndefined';
 
 const checkStringExpressionStatement = (
   asset: Asset,
@@ -168,7 +169,7 @@ export const generateRuleBasedOutputs = (
 
   const ruleWithOutputs = ruleSet?.rulesWithOutputs;
 
-  ruleWithOutputs?.forEach((ruleWithOutput: { rule: Rule; outputs: RuleOutput[] }) => {
+  ruleWithOutputs?.forEach(async (ruleWithOutput: { rule: Rule; outputs: RuleOutput[] }) => {
     const { rule, outputs } = ruleWithOutput;
     // Starting Expression
     const expression = rule.expression;
@@ -179,7 +180,7 @@ export const generateRuleBasedOutputs = (
 
     if (outputSelected === undefined) return;
 
-    analyzeNodesAgainstExpression({
+    await analyzeNodesAgainstExpression({
       model,
       contextualizedAssetNodes,
       assetMappings,
@@ -189,7 +190,7 @@ export const generateRuleBasedOutputs = (
   });
 };
 
-const analyzeNodesAgainstExpression = ({
+const analyzeNodesAgainstExpression = async ({
   model,
   contextualizedAssetNodes,
   assetMappings,
@@ -201,8 +202,8 @@ const analyzeNodesAgainstExpression = ({
   assetMappings: AssetMapping3D[];
   expression: Expression;
   outputSelected: ColorRuleOutput;
-}): void => {
-  void Promise.all(
+}): Promise<void> => {
+  const allTreeNodes = await Promise.all(
     contextualizedAssetNodes.map(async (assetNode) => {
       const finalGlobalOutputResult = traverseExpression(assetNode, [expression]);
 
@@ -212,12 +213,18 @@ const analyzeNodesAgainstExpression = ({
         );
 
         // get the 3d nodes linked to the asset and with treeindex and subtreeRange
-        const treeNodes: NodeAndRange[] = await getThreeDNodesFromAsset(nodesFromThisAsset, model);
+        const nodesAndRange: NodeAndRange[] = await getThreeDNodesFromAsset(
+          nodesFromThisAsset,
+          model
+        );
 
-        applyNodeStyles(treeNodes, outputSelected, model);
+        return nodesAndRange;
       }
     })
   );
+
+  const filteredAllTreeNodes = filterUndefined(allTreeNodes.flat());
+  applyNodeStyles(filteredAllTreeNodes, outputSelected, model);
 };
 
 const getThreeDNodesFromAsset = async (
