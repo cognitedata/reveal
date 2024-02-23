@@ -8,6 +8,7 @@ import { RevealKeepAliveContext } from './RevealKeepAliveContext';
 import { type FdmNodeCache } from '../NodeCacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../NodeCacheProvider/AssetMappingCache';
 import { type PointCloudAnnotationCache } from '../NodeCacheProvider/PointCloudAnnotationCache';
+import { type Image360AnnotationCache } from '../NodeCacheProvider/Image360AnnotationCache';
 
 export function RevealKeepAlive({ children }: { children?: ReactNode }): ReactElement {
   const viewerRef = useRef<Cognite3DViewer>();
@@ -15,6 +16,7 @@ export function RevealKeepAlive({ children }: { children?: ReactNode }): ReactEl
   const fdmNodeCache = useRef<FdmNodeCache>();
   const assetMappingCache = useRef<AssetMappingCache>();
   const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache>();
+  const image360AnnotationCache = useRef<Image360AnnotationCache>();
 
   useEffect(() => {
     return () => {
@@ -29,7 +31,8 @@ export function RevealKeepAlive({ children }: { children?: ReactNode }): ReactEl
         isRevealContainerMountedRef,
         fdmNodeCache,
         assetMappingCache,
-        pointCloudAnnotationCache
+        pointCloudAnnotationCache,
+        image360AnnotationCache
       }}>
       {children}
     </RevealKeepAliveContext.Provider>

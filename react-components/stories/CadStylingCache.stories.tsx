@@ -69,7 +69,6 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
 
       setPlatformStyling((prev): CadModelStyling | undefined => {
         if (prev?.groups === undefined) return prev;
-        console.log('New group', prev.groups);
 
         const newNodeIds = getRandomSubset(nodeIds, nodeIds.length * 0.8);
 
