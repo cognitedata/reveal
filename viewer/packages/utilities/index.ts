@@ -69,6 +69,10 @@ export { DeferredPromise } from './src/DeferredPromise';
 
 export { SceneHandler } from './src/SceneHandler';
 
+export { CustomObject } from './src/customObject/CustomObject';
+export { CustomObjectIntersectInput } from './src/customObject/CustomObjectIntersectInput';
+export { CustomObjectIntersection } from './src/customObject/CustomObjectIntersection';
+
 export { CDF_TO_VIEWER_TRANSFORMATION } from './src/constants';
 
 export * from './src/workers/workerize-transferable';

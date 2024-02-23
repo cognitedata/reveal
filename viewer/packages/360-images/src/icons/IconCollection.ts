@@ -105,7 +105,7 @@ export class IconCollection {
     this._pointsObject = iconsSprites;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
 
-    sceneHandler.addCustomObject(iconsSprites);
+    sceneHandler.addObject3D(iconsSprites);
   }
 
   private setIconClustersByLOD(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
@@ -178,7 +178,7 @@ export class IconCollection {
     sceneHandler: SceneHandler,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
   ): Overlay3DIcon[] {
-    sceneHandler.addCustomObject(this._hoverSprite);
+    sceneHandler.addObject3D(this._hoverSprite);
 
     const icons = points.map(
       point =>
@@ -214,7 +214,7 @@ export class IconCollection {
 
   public dispose(): void {
     this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
-    this._sceneHandler.removeCustomObject(this._pointsObject);
+    this._sceneHandler.removeObject3D(this._pointsObject);
     this._icons.forEach(icon => icon.dispose());
     this._icons.splice(0, this._icons.length);
     this._pointsObject.dispose();
