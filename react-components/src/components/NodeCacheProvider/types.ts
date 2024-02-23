@@ -60,3 +60,5 @@ export type Image360AnnotationAssetInfo = {
   asset: Asset;
   assetAnnotationImage360Info: AssetAnnotationImage360Info;
 };
+
+export type AnnotationId = number;

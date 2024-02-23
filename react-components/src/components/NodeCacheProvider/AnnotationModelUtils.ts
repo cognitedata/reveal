@@ -4,13 +4,13 @@
 import { type CogniteClient, type Asset } from '@cognite/sdk/dist/src';
 import { uniqBy, chunk } from 'lodash';
 import { filterUndefined } from '../../utilities/filterUndefined';
-import { type PointCloudAnnotationModel } from './types';
+import { type AnnotationId, type PointCloudAnnotationModel } from './types';
 import { getAssetIdOrExternalIdFromPointCloudAnnotation } from './utils';
 
 export async function fetchPointCloudAnnotationAssets(
   annotations: PointCloudAnnotationModel[],
   sdk: CogniteClient
-): Promise<Map<number, Asset>> {
+): Promise<Map<AnnotationId, Asset>> {
   const annotationMapping = annotations.map((annotation) => {
     const assetId = getAssetIdOrExternalIdFromPointCloudAnnotation(annotation);
     if (assetId === undefined) {

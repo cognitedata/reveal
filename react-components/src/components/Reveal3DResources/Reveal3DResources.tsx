@@ -154,7 +154,7 @@ export const Reveal3DResources = ({
             />
           );
         }
-        return <> </>;
+        return <></>;
       })}
     </>
   );

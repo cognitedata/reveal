@@ -66,12 +66,14 @@ export class Image360AnnotationCache {
         const assetId = annotationInfo.annotationInfo.data.assetRef.id;
         if (assetId !== undefined && assets.has(assetId)) {
           const asset = assets.get(assetId);
-          if (asset !== undefined) {
-            acc.push({
-              asset,
-              assetAnnotationImage360Info: annotationInfo
-            });
+          if (asset === undefined) {
+            return acc;
           }
+
+          acc.push({
+            asset,
+            assetAnnotationImage360Info: annotationInfo
+          });
         }
         return acc;
       },
