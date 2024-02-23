@@ -6,7 +6,8 @@ import { Color, Vector3 } from 'three';
 import { AxisGizmoOptions } from './AxisGizmoOptions';
 
 export class OneGizmoAxis {
-  readonly direction: Vector3;
+  readonly direction: Vector3; // The camera direction towards the axis (negate of the axis direction)
+  readonly upAxis: Vector3; // The camera up axis
   readonly bobblePosition: Vector3;
   readonly label: string;
   readonly axis: number;
@@ -20,6 +21,7 @@ export class OneGizmoAxis {
     this.axis = axis;
     this.isPrimary = isPrimary;
     this.direction = this.createDirection();
+    this.upAxis = this.createUpAxis();
     this.bobblePosition = new Vector3();
     this.label = this.createLabel(options.yUp);
     let index = axis;
@@ -80,8 +82,8 @@ export class OneGizmoAxis {
     }
   }
 
-  public createUpAxis(): Vector3 {
-    // Get the camera up axis with right handed axissystem and up is Z-axis
+  private createUpAxis(): Vector3 {
+    // Get the camera up axis with right handed axis-system and up is Z-axis
     switch (this.axis) {
       case 2:
         return this.isPrimary ? new Vector3(0, 1, 0) : new Vector3(0, -1, 0);
@@ -91,16 +93,13 @@ export class OneGizmoAxis {
   }
 
   private createDirection(): Vector3 {
-    // Get the direction for the axis with right handed axissystem and up is Z-axis
+    // Get the direction for the axis with right handed axis-system and up is Z-axis
     const getCoord = (forAxis: number): number => {
       return this.axis == forAxis ? 1 : 0;
     };
     const direction = new Vector3(getCoord(0), getCoord(1), getCoord(2));
-    if (!this.isPrimary) {
+    if (this.isPrimary) {
       direction.negate();
-    }
-    if (this.axis != 0) {
-      direction.negate(); // I don't understand way this is needed
     }
     return direction;
   }

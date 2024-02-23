@@ -99,18 +99,19 @@ export class AxisGizmo {
     const { position, target } = cameraManager.getCameraState();
     const distance = position.distanceTo(target);
 
-    const up = this._selectedAxis.createUpAxis();
     const forward = this._selectedAxis.direction.clone();
-    if (this._selectedAxis.axis == 0) {
-      forward.negate();
-    }
-    // positionToMoveTo = target - direction * distance
     const direction = forward.clone();
     direction.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     direction.multiplyScalar(distance).negate();
     const positionToMoveTo = target.clone().add(direction);
 
-    moveCameraTo(this._viewer.cameraManager, positionToMoveTo, forward, up, this._selectedAxis.axis);
+    moveCameraTo(
+      this._viewer.cameraManager,
+      positionToMoveTo,
+      forward,
+      this._selectedAxis.upAxis,
+      this._selectedAxis.axis
+    );
     if (this.updateSelectedAxis()) {
       this.updateAndRender(cameraManager.getCamera());
     }
@@ -181,6 +182,9 @@ export class AxisGizmo {
 
       for (const axis of this._axises) {
         const direction = axis.direction.clone();
+        if (axis.axis === 0) {
+          direction.negate();
+        }
         direction.applyMatrix4(fromViewer);
         direction.applyMatrix4(matrix);
         this.updateAxisPosition(direction, axis.bobblePosition);
@@ -401,7 +405,7 @@ function moveCameraTo(
 
   // Create a new rotation from the direction and up axis
   const forward = direction.clone().negate();
-  const up = upAxis;
+  const up = upAxis.clone();
 
   up.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
   forward.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
