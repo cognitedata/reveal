@@ -162,7 +162,7 @@ jobs:
           xvfb-run yarn run coverage
 
       - name: Publish to codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
 
   run-visual-tests:
     needs: [changes, populate-caches]
