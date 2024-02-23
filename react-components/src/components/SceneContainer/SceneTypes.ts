@@ -20,6 +20,9 @@ export type SceneConfiguration = {
   cameraEulerRotationX: number;
   cameraEulerRotationY: number;
   cameraEulerRotationZ: number;
+  cameraTargetX?: number;
+  cameraTargetY?: number;
+  cameraTargetZ?: number;
 };
 
 export type CadOrPointCloudModel = Transformation3d & {

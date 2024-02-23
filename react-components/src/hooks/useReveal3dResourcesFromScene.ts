@@ -27,7 +27,7 @@ export const useReveal3dResourcesFromScene = (
   const [resourceOptions, setResourceOptions] = useState<AddResourceOptions[]>([]);
 
   useEffect(() => {
-    if (scene.data === undefined) {
+    if (scene.data === undefined || scene.data === null) {
       return;
     }
     const addResourceOptions: AddResourceOptions[] = [];
