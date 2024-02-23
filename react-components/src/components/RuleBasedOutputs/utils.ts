@@ -159,17 +159,17 @@ const traverseExpression = (
   return expressionResults;
 };
 
-export const generateRuleBasedOutputs = (
+export const generateRuleBasedOutputs = async (
   model: CogniteCadModel,
   contextualizedAssetNodes: Asset[],
   assetMappings: AssetMapping3D[],
   ruleSet: RuleOutputSet | Record<string, any> | FdmPropertyType<Record<string, any>>
-): void => {
+): Promise<TreeIndexNodeCollection[]> => {
   const outputType = 'color'; // for now it only supports colors as the output
 
   const ruleWithOutputs = ruleSet?.rulesWithOutputs;
 
-  ruleWithOutputs?.forEach(async (ruleWithOutput: { rule: Rule; outputs: RuleOutput[] }) => {
+  return ruleWithOutputs?.map(async (ruleWithOutput: { rule: Rule; outputs: RuleOutput[] }) => {
     const { rule, outputs } = ruleWithOutput;
     // Starting Expression
     const expression = rule.expression;
@@ -180,7 +180,7 @@ export const generateRuleBasedOutputs = (
 
     if (outputSelected === undefined) return;
 
-    await analyzeNodesAgainstExpression({
+    return await analyzeNodesAgainstExpression({
       model,
       contextualizedAssetNodes,
       assetMappings,
@@ -202,7 +202,7 @@ const analyzeNodesAgainstExpression = async ({
   assetMappings: AssetMapping3D[];
   expression: Expression;
   outputSelected: ColorRuleOutput;
-}): Promise<void> => {
+}): Promise<TreeIndexNodeCollection> => {
   const allTreeNodes = await Promise.all(
     contextualizedAssetNodes.map(async (assetNode) => {
       const finalGlobalOutputResult = traverseExpression(assetNode, [expression]);
@@ -223,8 +223,9 @@ const analyzeNodesAgainstExpression = async ({
     })
   );
 
+  console.log(' ALL TREE NODES ', allTreeNodes);
   const filteredAllTreeNodes = filterUndefined(allTreeNodes.flat());
-  applyNodeStyles(filteredAllTreeNodes, outputSelected, model);
+  return applyNodeStyles(filteredAllTreeNodes, outputSelected, model);
 };
 
 const getThreeDNodesFromAsset = async (
@@ -245,10 +246,10 @@ const getThreeDNodesFromAsset = async (
 };
 
 const applyNodeStyles = (
-  treeNodes: Array<NodeAndRange | undefined>,
+  treeNodes: NodeAndRange[],
   outputSelected: ColorRuleOutput,
   model: CogniteCadModel
-): void => {
+): TreeIndexNodeCollection => {
   const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
     styleIndex: new TreeIndexNodeCollection(),
     ruleOutputParams: outputSelected
@@ -256,15 +257,19 @@ const applyNodeStyles = (
 
   const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
   treeNodes.forEach((node) => {
-    if (node !== undefined) {
-      nodeIndexSet.addRange(node.subtreeRange);
-    }
+    nodeIndexSet.addRange(node.subtreeRange);
   });
 
   // assign the style with the color from the condition
-  model.assignStyledNodeCollection(ruleOutputAndStyleIndex.styleIndex, {
-    color: new Color(outputSelected.fill)
-  });
+  model.assignStyledNodeCollection(
+    ruleOutputAndStyleIndex.styleIndex,
+    {
+      color: new Color(outputSelected.fill)
+    },
+    1
+  );
+
+  return ruleOutputAndStyleIndex.styleIndex;
 };
 
 const isMetadataTrigger = (
