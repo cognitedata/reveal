@@ -19,6 +19,7 @@ import {
 import { type CogniteCadModel, TreeIndexNodeCollection } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset } from '@cognite/sdk';
 import { type FdmPropertyType } from '../Reveal3DResources/types';
+import { filterUndefined } from '../../utilities/filterUndefined';
 
 const checkStringExpressionStatement = (
   asset: Asset,
@@ -222,7 +223,7 @@ const analyzeNodesAgainstExpression = async ({
     })
   );
 
-  const filteredAllTreeNodes = allTreeNodes.flat().filter((node) => node !== undefined);
+  const filteredAllTreeNodes = filterUndefined(allTreeNodes.flat());
   applyNodeStyles(filteredAllTreeNodes, outputSelected, model);
 };
 
@@ -244,7 +245,7 @@ const getThreeDNodesFromAsset = async (
 };
 
 const applyNodeStyles = (
-  treeNodes: Array<NodeAndRange | undefined>,
+  treeNodes: NodeAndRange[],
   outputSelected: ColorRuleOutput,
   model: CogniteCadModel
 ): void => {
@@ -255,9 +256,7 @@ const applyNodeStyles = (
 
   const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
   treeNodes.forEach((node) => {
-    if (node !== undefined) {
-      nodeIndexSet.addRange(node.subtreeRange);
-    }
+    nodeIndexSet.addRange(node.subtreeRange);
   });
 
   // assign the style with the color from the condition
