@@ -53,12 +53,14 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
           .map((item) => item.assets)
           .flat() ?? [];
 
-      // ========= Generate Rule Based Outputs
       generateRuleBasedOutputs(model, contextualizedAssetNodes, flatMappings, ruleSet);
     };
 
     models.forEach((model) => {
-      void initializeRuleBasedOutputs(model as CogniteCadModel);
+      if (!(model instanceof CogniteCadModel)) {
+        return;
+      }
+      void initializeRuleBasedOutputs(model);
     });
   }, [assetMappings, ruleSet, models]);
 
