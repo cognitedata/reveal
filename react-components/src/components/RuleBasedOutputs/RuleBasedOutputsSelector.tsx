@@ -53,7 +53,6 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
           .map((item) => item.assets)
           .flat() ?? [];
 
-      // ========= Generate Rule Based Outputs
       generateRuleBasedOutputs(model, contextualizedAssetNodes, flatMappings, ruleSet);
     };
 
