@@ -14,6 +14,7 @@ import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reve
 import { SDKProvider } from '../RevealCanvas/SDKProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
+import { Image360AnnotationCacheProvider } from '../NodeCacheProvider/Image360AnnotationCacheProvider';
 
 export type RevealContextProps = {
   color?: Color;
@@ -50,9 +51,11 @@ export const RevealContext = (props: RevealContextProps): ReactNode => {
             <NodeCacheProvider>
               <AssetMappingCacheProvider>
                 <PointCloudAnnotationCacheProvider>
-                  <Reveal3DResourcesCountContextProvider>
-                    {props.children}
-                  </Reveal3DResourcesCountContextProvider>
+                  <Image360AnnotationCacheProvider>
+                    <Reveal3DResourcesCountContextProvider>
+                      {props.children}
+                    </Reveal3DResourcesCountContextProvider>
+                  </Image360AnnotationCacheProvider>
                 </PointCloudAnnotationCacheProvider>
               </AssetMappingCacheProvider>
             </NodeCacheProvider>

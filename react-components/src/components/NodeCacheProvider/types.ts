@@ -1,9 +1,16 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type AnnotationModel, type AnnotationsBoundingVolume, type Node3D } from '@cognite/sdk';
+import {
+  type Asset,
+  type AnnotationModel,
+  type AnnotationsBoundingVolume,
+  type Node3D,
+  type AnnotationsCogniteAnnotationTypesImagesAssetLink
+} from '@cognite/sdk';
 import { type EdgeItem, type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
+import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 
 export type FdmCadEdge = EdgeItem<InModel3dEdgeProperties>;
 export type FdmEdgeWithNode = { edge: FdmCadEdge; cadNode: Node3D; view?: Source };
@@ -44,3 +51,14 @@ export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
 export type ModelRevisionToEdgeMap = Map<ModelRevisionKey, FdmEdgeWithNode[]>;
 
 export type PointCloudAnnotationModel = AnnotationModel & { data: AnnotationsBoundingVolume };
+
+export type Image360AnnotationModel = AnnotationModel & {
+  data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
+};
+
+export type Image360AnnotationAssetInfo = {
+  asset: Asset;
+  assetAnnotationImage360Info: AssetAnnotationImage360Info;
+};
+
+export type AnnotationId = number;
