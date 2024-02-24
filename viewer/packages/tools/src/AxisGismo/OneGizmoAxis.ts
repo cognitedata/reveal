@@ -10,16 +10,16 @@ import { AxisGizmoOptions } from './AxisGizmoOptions';
  * @beta
  */
 export class OneGizmoAxis {
+  readonly axis: number; // 0=X, 1=Y, 2=Z
+  readonly isPrimary: boolean; // True if positive direction, false if negative
   readonly direction: Vector3; // The camera direction towards the axis (negate of the axis direction)
   readonly upAxis: Vector3; // The camera up axis
   readonly bobblePosition: Vector3; // The bobble position of the axis (changed by the camera)
-  readonly label: string;
-  readonly axis: number;
-  readonly isPrimary: boolean;
+  readonly label: string; // The label of the axis
   private readonly _lightColor: Color;
   private readonly _darkColor: Color;
-  private readonly _mixedLightColor: Color = new Color();
-  private readonly _mixedDarkColor: Color = new Color();
+  private readonly _mixedLightColor: Color = new Color(); // Used to mix the light color with black
+  private readonly _mixedDarkColor: Color = new Color(); // Used to mix the dark color with black
 
   private constructor(axis: number, isPrimary: boolean, options: AxisGizmoOptions) {
     this.axis = axis;
@@ -69,8 +69,10 @@ export class OneGizmoAxis {
   }
 
   private createLabel(yUp: boolean): string {
-    const labelPrefix = this.isPrimary ? '' : '-';
-    return labelPrefix + this.getAxisName(yUp);
+    if (this.isPrimary) {
+      return this.getAxisName(yUp);
+    }
+    return '-' + this.getAxisName(yUp);
   }
 
   private getAxisName(yUp: boolean): string {
@@ -87,17 +89,15 @@ export class OneGizmoAxis {
   }
 
   private createUpAxis(): Vector3 {
-    // Get the camera up axis with right handed axis-system and up is Z-axis
-    switch (this.axis) {
-      case 2:
-        return this.isPrimary ? new Vector3(0, 1, 0) : new Vector3(0, -1, 0);
-      default:
-        return new Vector3(0, 0, 1);
+    // Get the camera up axis with right handed axis-system and Z-axis is up
+    if (this.axis == 2) {
+      return this.isPrimary ? new Vector3(0, 1, 0) : new Vector3(0, -1, 0);
     }
+    return new Vector3(0, 0, 1);
   }
 
   private createDirection(): Vector3 {
-    // Get the direction for the axis with right handed axis-system and up is Z-axis
+    // Get the direction for the axis with right handed axis-system and Z-axis is up
     const getCoord = (forAxis: number): number => {
       return this.axis == forAxis ? 1 : 0;
     };
