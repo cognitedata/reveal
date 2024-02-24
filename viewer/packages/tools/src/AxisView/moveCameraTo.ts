@@ -9,9 +9,9 @@ import { Matrix4, Quaternion, Vector3 } from 'three';
 
 export function moveCameraTo(
   cameraManager: CameraManager,
-  animationSpeed: number,
   targetAxis: Vector3,
-  targetUpAxis: Vector3
+  targetUpAxis: Vector3,
+  duration: number
 ): void {
   const { position: currentCameraPosition, target: target, rotation } = cameraManager.getCameraState();
   const offsetInCameraSpace = currentCameraPosition.clone().sub(target).applyQuaternion(rotation.clone().conjugate());
@@ -33,7 +33,7 @@ export function moveCameraTo(
   const animation = new TWEEN.Tween(from);
 
   const tween = animation
-    .to(to, animationSpeed)
+    .to(to, duration)
     .onUpdate(() => {
       tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
 

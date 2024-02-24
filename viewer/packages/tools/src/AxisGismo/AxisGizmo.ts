@@ -2,13 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Matrix4, PerspectiveCamera, Quaternion, Vector3 } from 'three';
+import { Matrix4, PerspectiveCamera, Vector3 } from 'three';
 import { AxisGizmoOptions } from './AxisGizmoOptions';
 import { CDF_TO_VIEWER_TRANSFORMATION, Corner } from '@reveal/utilities';
 import { Cognite3DViewer } from '@reveal/api';
-import TWEEN from '@tweenjs/tween.js';
 import { OneGizmoAxis } from './OneGizmoAxis';
-import { CameraManager } from '@reveal/camera-manager';
+import { moveCameraTo } from './moveCameraTo';
 
 export class AxisGizmo {
   //================================================
@@ -92,26 +91,25 @@ export class AxisGizmo {
       return;
     }
     this.updateSelectedAxis();
-    if (!this._selectedAxis) {
+    const axis = this.getAxisToUse();
+    if (!axis) {
       return;
     }
     const cameraManager = this._viewer.cameraManager;
     const { position, target } = cameraManager.getCameraState();
-    const distance = position.distanceTo(target);
-
-    // Position = Target - direction * distanceToTarget
-    const direction = this._selectedAxis.direction.clone();
-    direction.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    direction.multiplyScalar(distance);
-    const newPosition = target.clone().sub(direction);
-
-    const forward = this._selectedAxis.direction.clone().negate();
-    const upAxis = this._selectedAxis.upAxis;
+    const forward = axis.direction.clone().negate();
+    const upAxis = axis.upAxis;
 
     forward.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     upAxis.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
-    localMoveCameraTo(this._viewer.cameraManager, this._options.animationDuration, newPosition, forward, upAxis);
+    // Position = Target - direction * distanceToTarget
+    const distance = position.distanceTo(target);
+    const direction = forward.clone();
+    direction.multiplyScalar(distance);
+    const newPosition = target.clone().add(direction);
+
+    moveCameraTo(this._viewer.cameraManager, newPosition, forward, upAxis, this._options.animationDuration);
     this.updateAndRender(cameraManager.getCamera());
   }
 
@@ -150,7 +148,63 @@ export class AxisGizmo {
   };
 
   //================================================
-  // INSTANCE METHODS: Private helpers
+  // INSTANCE METHODS: Getters
+  //================================================
+
+  private getTextColor(axis: OneGizmoAxis): string {
+    if (this._selectedAxis === axis) {
+      return this._options.selectedTextColor;
+    } else {
+      return this._options.normalTextColor;
+    }
+  }
+
+  private isMouseOver(): boolean {
+    if (!this._mousePosition) {
+      return false;
+    }
+    return horizontalDistanceTo(this._mousePosition, this._center) < this._options.radius;
+  }
+
+  private getAxisToUse(): OneGizmoAxis | undefined {
+    const selectedAxis = this._selectedAxis;
+    if (!selectedAxis) {
+      return undefined;
+    }
+    // This behavior is according to blender. If click on an axis in center,
+    // use the opposite axis
+    const distance = horizontalDistanceTo(this._center, selectedAxis.bobblePosition);
+    if (distance > 1) {
+      return selectedAxis;
+    }
+    for (const otherAxis of this._axises) {
+      if (otherAxis.axis == selectedAxis.axis && otherAxis.isPrimary != selectedAxis.isPrimary) {
+        return otherAxis; // Opposite axis found
+      }
+    }
+    return selectedAxis;
+  }
+
+  private getSelectedAxis(): OneGizmoAxis | undefined {
+    if (!this._mousePosition) {
+      return undefined;
+    }
+    if (!this.isMouseOver()) {
+      return undefined;
+    }
+    // If the mouse is over the gizmo, find the one witch is under the mouse
+    // Go reverse sive the last is the most visible
+    for (let i = this._axises.length - 1; i >= 0; i--) {
+      const axis = this._axises[i];
+      const distance = horizontalDistanceTo(this._mousePosition, axis.bobblePosition);
+      if (distance <= this._options.bubbleRadius) {
+        return axis;
+      }
+    }
+  }
+
+  //================================================
+  // INSTANCE METHODS: Updating
   //================================================
 
   private updateSelectedAxis(): boolean {
@@ -192,6 +246,19 @@ export class AxisGizmo {
     this.render();
   }
 
+  private updateAxisPosition(position: Vector3, target: Vector3): void {
+    const padding = this._options.bubbleRadius - 1;
+    target.set(
+      position.x * (this._center.x - this._options.bubbleRadius / 2 - padding) + this._center.x,
+      this._center.y - position.y * (this._center.y - this._options.bubbleRadius / 2 - padding),
+      position.z
+    );
+  }
+
+  //================================================
+  // INSTANCE METHODS: Listeners administration
+  //================================================
+
   private addEventListeners(): void {
     if (this._viewer) {
       this._viewer.on('cameraChange', this.onCameraChange);
@@ -224,6 +291,10 @@ export class AxisGizmo {
     canvas.removeEventListener('dblclick', this._onMouseDoubleClick);
   }
 
+  //================================================
+  // INSTANCE METHODS: Graphics
+  //================================================
+
   private createElement(): HTMLElement {
     const element: HTMLElement = document.createElement('div');
     element.innerHTML = '<canvas ></canvas>';
@@ -238,6 +309,8 @@ export class AxisGizmo {
     if (this._canvas) {
       clear(this._context, this._canvas);
     }
+    setFont(this._context, this._options);
+
     if (this._isMouseOver && this._options.focusCircleAlpha > 0) {
       this._context.globalAlpha = this._options.focusCircleAlpha;
       fillCircle(this._context, this._center, this._options.radius, this._options.focusCircleColor);
@@ -266,52 +339,6 @@ export class AxisGizmo {
         drawText(this._context, axis.label, axis.bobblePosition, this._options, this.getTextColor(axis));
       }
     }
-  }
-
-  private getTextColor(axis: OneGizmoAxis): string {
-    if (this._selectedAxis === axis) {
-      return this._options.selectedTextColor;
-    } else {
-      return this._options.normalTextColor;
-    }
-  }
-
-  private isMouseOver(): boolean {
-    if (!this._mousePosition) {
-      return false;
-    }
-    return horizontalDistanceTo(this._mousePosition, this._center) < this._options.radius;
-  }
-
-  private getSelectedAxis(): OneGizmoAxis | undefined {
-    if (!this._mousePosition) {
-      return undefined;
-    }
-    if (!this.isMouseOver()) {
-      return undefined;
-    }
-    // If the mouse is over the gizmo, find the closest axis bobble for highligting
-    let closestDistance = Infinity;
-    let selectedAxis: OneGizmoAxis | undefined = undefined;
-    for (const axis of this._axises) {
-      const distance = horizontalDistanceTo(this._mousePosition, axis.bobblePosition);
-
-      // Only select the axis if its closer to the mouse than the previous or if its within its bubble circle
-      if (distance < closestDistance && distance < this._options.bubbleRadius) {
-        closestDistance = distance;
-        selectedAxis = axis;
-      }
-    }
-    return selectedAxis;
-  }
-
-  private updateAxisPosition(position: Vector3, target: Vector3): void {
-    const padding = this._options.bubbleRadius - 1;
-    target.set(
-      position.x * (this._center.x - this._options.bubbleRadius / 2 - padding) + this._center.x,
-      this._center.y - position.y * (this._center.y - this._options.bubbleRadius / 2 - padding),
-      position.z
-    );
   }
 }
 
@@ -351,6 +378,12 @@ function drawAxisLine(context: CanvasRenderingContext2D, p1: Vector3, p2: Vector
   context.stroke();
 }
 
+function setFont(context: CanvasRenderingContext2D, options: AxisGizmoOptions) {
+  context.font = options.getFont();
+  context.textBaseline = 'middle';
+  context.textAlign = 'center';
+}
+
 function drawText(
   context: CanvasRenderingContext2D,
   label: string,
@@ -358,10 +391,7 @@ function drawText(
   options: AxisGizmoOptions,
   color: string
 ) {
-  context.font = options.getFont();
   context.fillStyle = color;
-  context.textBaseline = 'middle';
-  context.textAlign = 'center';
   context.fillText(label, position.x, position.y + options.fontYAdjust);
 }
 
@@ -387,45 +417,4 @@ function initializeStyle(element: HTMLElement, options: AxisGizmoOptions) {
     default:
       style.top = style.left = margin;
   }
-}
-
-function localMoveCameraTo(
-  cameraManager: CameraManager,
-  animationDuration: number,
-  position: Vector3,
-  direction: Vector3,
-  upAxis: Vector3
-) {
-  const { position: currentCameraPosition, target, rotation } = cameraManager.getCameraState();
-
-  const offsetInCameraSpace = currentCameraPosition.clone().sub(target).applyQuaternion(rotation.clone().conjugate());
-
-  // Create a new rotation from the direction and up axis
-  const forward = direction.clone();
-  const up = upAxis.clone();
-  const right = up.clone().cross(forward);
-
-  const toRotation = new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(right, up, forward));
-  const fromRotation = rotation.clone();
-  const tmpPosition = new Vector3();
-  const tmpRotation = new Quaternion();
-
-  const from = { t: 0 };
-  const to = { t: 1 };
-  const animation = new TWEEN.Tween(from);
-  const tween = animation
-    .to(to, animationDuration)
-    .onUpdate(() => {
-      tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
-      tmpPosition.copy(offsetInCameraSpace);
-      tmpPosition.applyQuaternion(tmpRotation);
-      tmpPosition.add(target);
-      cameraManager.setCameraState({ position: tmpPosition, rotation: tmpRotation });
-    })
-    .onComplete(() => {
-      cameraManager.setCameraState({ position: tmpPosition, rotation: toRotation });
-      cameraManager.setCameraState({ position, target });
-    })
-    .start(TWEEN.now());
-  tween.update(TWEEN.now());
 }
