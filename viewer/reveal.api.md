@@ -139,6 +139,60 @@ export type AxisBoxFaceConfig = {
     faceColor?: THREE_2.Color;
 };
 
+// @beta
+export class AxisGizmo {
+    constructor();
+    // (undocumented)
+    connect(viewer: Cognite3DViewer): void;
+    // (undocumented)
+    dispose(): void;
+}
+
+// @beta
+export class AxisGizmoOptions {
+    // (undocumented)
+    animationDuration: number;
+    // (undocumented)
+    bobbleLineWidth: number;
+    // (undocumented)
+    bubbleRadius: number;
+    // (undocumented)
+    corner: Corner_2;
+    // (undocumented)
+    darkColors: number[];
+    // (undocumented)
+    edgeMargin: number;
+    // (undocumented)
+    focusCircleAlpha: number;
+    // (undocumented)
+    focusCircleColor: string;
+    // (undocumented)
+    fontFamily: string;
+    // (undocumented)
+    fontSize: string;
+    // (undocumented)
+    fontWeight: string;
+    // (undocumented)
+    fontYAdjust: number;
+    getFont(): string;
+    // (undocumented)
+    lightColors: number[];
+    // (undocumented)
+    normalTextColor: string;
+    // (undocumented)
+    primaryLineWidth: number;
+    // (undocumented)
+    get radius(): number;
+    // (undocumented)
+    secondaryLineWidth: number;
+    // (undocumented)
+    selectedTextColor: string;
+    // (undocumented)
+    size: number;
+    // (undocumented)
+    yUp: boolean;
+}
+
 // @public (undocumented)
 export class AxisViewTool extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, config?: AxisBoxConfig);

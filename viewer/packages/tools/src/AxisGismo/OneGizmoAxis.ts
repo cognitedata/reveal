@@ -5,6 +5,10 @@
 import { Color, Vector3 } from 'three';
 import { AxisGizmoOptions } from './AxisGizmoOptions';
 
+/**
+ * This class is used internally in AxisGizmo
+ * @beta
+ */
 export class OneGizmoAxis {
   readonly direction: Vector3; // The camera direction towards the axis (negate of the axis direction)
   readonly upAxis: Vector3; // The camera up axis

@@ -6,7 +6,7 @@ import { Corner } from '@reveal/utilities';
 
 /**
  * Options for styling the AxisGizmo
- *
+ * @beta
  */
 export class AxisGizmoOptions {
   public corner: Corner = Corner.BottomRight;

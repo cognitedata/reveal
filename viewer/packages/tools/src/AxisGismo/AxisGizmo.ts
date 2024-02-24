@@ -9,6 +9,10 @@ import { Cognite3DViewer } from '@reveal/api';
 import { OneGizmoAxis } from './OneGizmoAxis';
 import { moveCameraTo } from './moveCameraTo';
 
+/**
+ * Class for axis gizmo like the one in Blender
+ * @beta
+ */
 export class AxisGizmo {
   //================================================
   // INSTANCE FIELDS
