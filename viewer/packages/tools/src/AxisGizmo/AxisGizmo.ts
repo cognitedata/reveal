@@ -4,11 +4,12 @@
 
 import { Matrix4, PerspectiveCamera, Vector3 } from 'three';
 import { AxisGizmoOptions } from './AxisGizmoOptions';
-import { CDF_TO_VIEWER_TRANSFORMATION, Corner } from '@reveal/utilities';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@reveal/utilities';
 import { Cognite3DViewer } from '@reveal/api';
 import { OneGizmoAxis } from './OneGizmoAxis';
 import { CameraManager, IFlexibleCameraManager } from '@reveal/camera-manager';
-import { moveCameraTo } from '../AxisView/moveCameraTo';
+import { moveCameraTo } from '../utilities/moveCameraTo';
+import { Corner } from '../utilities/Corner';
 
 /**
  * Class for axis gizmo like the one in Blender

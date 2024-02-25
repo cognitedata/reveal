@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Corner } from '@reveal/utilities';
+import { Corner } from '../utilities/Corner';
 
 /**
  * Options for styling the AxisGizmo

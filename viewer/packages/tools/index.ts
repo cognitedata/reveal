@@ -18,10 +18,10 @@ export {
   AxisBoxConfig,
   AxisBoxCompassConfig,
   AxisBoxFaceConfig,
-  Corner,
   AbsolutePosition,
   RelativePosition
 } from './src/AxisView/types';
+export { Corner } from './src/utilities/Corner';
 export {
   Overlay3DTool,
   Overlay3DToolParameters,

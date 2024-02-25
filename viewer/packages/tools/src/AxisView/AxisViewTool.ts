@@ -8,20 +8,14 @@ import merge from 'lodash/merge';
 import glsl from 'glslify';
 
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
-import {
-  AxisBoxConfig,
-  defaultAxisBoxConfig,
-  AxisBoxFaceConfig,
-  Corner,
-  AbsolutePosition,
-  RelativePosition
-} from './types';
+import { AxisBoxConfig, defaultAxisBoxConfig, AxisBoxFaceConfig, AbsolutePosition, RelativePosition } from './types';
 import { MetricsLogger } from '@reveal/metrics';
 import { Cognite3DViewer } from '@reveal/api';
 
 import vertexShader from './shaders/axisTool.vert';
 import fragmentShader from './shaders/axisTool.frag';
-import { moveCameraTo } from './moveCameraTo';
+import { moveCameraTo } from '../utilities/moveCameraTo';
+import { Corner } from '../utilities/Corner';
 
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;

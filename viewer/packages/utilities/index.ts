@@ -69,7 +69,6 @@ export { DeferredPromise } from './src/DeferredPromise';
 
 export { SceneHandler } from './src/SceneHandler';
 
-export { Corner } from './src/Corner';
 export { CustomObject } from './src/customObject/CustomObject';
 export { CustomObjectIntersectInput } from './src/customObject/CustomObjectIntersectInput';
 export { CustomObjectIntersection } from './src/customObject/CustomObjectIntersection';
