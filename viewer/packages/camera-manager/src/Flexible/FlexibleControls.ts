@@ -11,6 +11,7 @@ import {
   PerspectiveCamera,
   Quaternion,
   Raycaster,
+  Spherical,
   Vector2,
   Vector3
 } from 'three';
@@ -25,12 +26,10 @@ import { ReusableVector3s } from './ReusableVector3s';
 import { FlexibleControlsEvent } from './FlexibleControlsEvent';
 import { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordinates';
 import { FlexibleControlsTranslator } from './FlexibleControlsTranslator';
-import { FlexibleCameraMoveProps as FlexibleCameraMoveProps } from './FlexibleCameraMoveProps';
+import { FlexibleControlsRotationHelper } from './FlexibleControlsRotationHelper';
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
-const UP_VECTOR = new Vector3(0, 1, 0);
-const RIGHT_VECTOR = new Vector3(1, 0, 0);
 const XYZ_EPSILON = 0.001; // Used for points
 const RAD_EPSILON = Math.PI / 10000; // Used for angles
 
@@ -142,6 +141,10 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   get camera(): PerspectiveCamera | OrthographicCamera {
     return this._camera;
+  }
+
+  get target(): DampedVector3 {
+    return this._target;
   }
 
   get cameraVector(): DampedSpherical {
@@ -366,25 +369,17 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     });
   }
 
-  public moveCameraTo(props: FlexibleCameraMoveProps): void {
-    if (props.factor >= 1) {
-      this._cameraVector.copySpherical(props.endDirection);
-      if (this.controlsType !== FlexibleControlsType.FirstPerson) {
-        this._cameraPosition.copy(props.endPosition);
-      }
+  public rotateCameraTo(startDirection: Spherical, endDirection: Spherical, factor: number): void {
+    const helper = new FlexibleControlsRotationHelper();
+    helper.begin(this);
+    if (factor >= 1) {
+      this._cameraVector.end.copy(endDirection);
     } else {
-      const direction = props.startDirection.clone();
-      DampedSpherical.dampSphericalVectors(direction, props.endDirection, props.factor);
-      this._cameraVector.copySpherical(direction);
-
-      if (this.controlsType !== FlexibleControlsType.FirstPerson) {
-        const position = new DampedVector3();
-        position.end.copy(props.endPosition);
-        position.value.copy(props.startPosition);
-        position.dampAsVectorAndCenter(props.factor, this._target);
-        this._cameraPosition.copy(position.value);
-      }
+      const direction = startDirection.clone();
+      DampedSpherical.dampSphericalVectors(direction, endDirection, factor);
+      this._cameraVector.end.copy(direction);
     }
+    helper.end(this);
     this.updateCameraAndTriggerCameraChangeEvent();
   }
 
@@ -668,40 +663,10 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (deltaAzimuth === 0 && deltaPolar === 0) {
       return;
     }
-
-    if (this.controlsType === FlexibleControlsType.OrbitInCenter) {
-      this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
-
-      // Adust the camera position by
-      // CameraPosition = Target - DistanceToTarget * CameraVector
-      const distanceToTarget = this._cameraPosition.end.distanceTo(this._target.end);
-      const cameraVector = this._cameraVector.getEndVector();
-      cameraVector.multiplyScalar(-distanceToTarget);
-      this._cameraPosition.end.copy(cameraVector.add(this._target.end));
-    } else if (this.controlsType === FlexibleControlsType.Orbit) {
-      // Offset = Target - CameraPosition
-      const oldOffset = this.newVector3().subVectors(this._target.end, this._cameraPosition.end);
-      const oldCameraVectorEnd = this._cameraVector.end.clone();
-
-      this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
-
-      // Adust the camera position so the target point is the same on the screen
-      const temp = new Quaternion();
-      const oldQuat = new Quaternion()
-        .setFromAxisAngle(UP_VECTOR, oldCameraVectorEnd.theta)
-        .multiply(temp.setFromAxisAngle(RIGHT_VECTOR, oldCameraVectorEnd.phi));
-      const newQuat = new Quaternion()
-        .setFromAxisAngle(UP_VECTOR, this._cameraVector.end.theta)
-        .multiply(temp.setFromAxisAngle(RIGHT_VECTOR, this._cameraVector.end.phi));
-
-      const newOffset = oldOffset.applyQuaternion(oldQuat.conjugate()).applyQuaternion(newQuat);
-
-      // CameraPosition = Target - Offset
-      const newCameraPosition = this.newVector3().subVectors(this._target.end, newOffset);
-      this._cameraPosition.end.copy(newCameraPosition);
-    } else {
-      this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
-    }
+    const helper = new FlexibleControlsRotationHelper();
+    helper.begin(this);
+    this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
+    helper.end(this);
   }
 
   private rawRotateByAngles(deltaAzimuth: number, deltaPolar: number) {

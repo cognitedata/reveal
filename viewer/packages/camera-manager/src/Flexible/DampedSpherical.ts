@@ -60,11 +60,6 @@ export class DampedSpherical {
     this.end.theta = this.value.theta;
   }
 
-  copySpherical(vector: Spherical): void {
-    this.value.copy(vector);
-    this.synchronizeEnd();
-  }
-
   copy(vector: Vector3): void {
     this.setValueVector(vector);
     this.synchronizeEnd();

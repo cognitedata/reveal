@@ -36,7 +36,6 @@ import { DebouncedCameraStopEventTrigger } from '../utils/DebouncedCameraStopEve
 import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraTo } from './moveCamera';
 import { FlexibleControlsTypeChangeDelegate, IFlexibleCameraManager } from './IFlexibleCameraManager';
-import { FlexibleCameraMoveProps } from './FlexibleCameraMoveProps';
 
 type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
 
@@ -229,28 +228,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this.controls.setControlsType(value);
   }
 
-  public moveCameraTo(endDirection: Vector3, endPosition: Vector3 | undefined, animationDuration: number): void {
-    if (endPosition === undefined) {
-      if (this.controlsType !== FlexibleControlsType.FirstPerson) {
-        const position = this.getPosition();
-        const target = this.getTarget();
-        const distance = position.distanceTo(target);
-        // Position = Target - forward * distanceToTarget
-        endPosition = target.addScaledVector(endDirection, -distance);
-      } else {
-        endPosition = this.getPosition();
-      }
-    }
-
-    const props: FlexibleCameraMoveProps = {
-      startDirection: this.controls.cameraVector.value.clone(),
-      startPosition: this.camera.position.clone(),
-      endDirection: new Spherical().setFromVector3(endDirection),
-      endPosition,
-      factor: 1
-    };
+  public rotateCameraTo(direction: Vector3, animationDuration: number): void {
     if (this.isDisposed) return;
 
+    const startDirection = this.controls.cameraVector.value.clone();
+    const endDirection = new Spherical().setFromVector3(direction);
     const from = { t: 0 };
     const to = { t: 1 };
     const animation = new TWEEN.Tween(from);
@@ -259,17 +241,17 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       .to(to, animationDuration)
       .onUpdate(() => {
         if (this.isDisposed) return;
-        this.controls.moveCameraTo({ ...props, factor: from.t });
+        this.controls.rotateCameraTo(startDirection, endDirection, from.t);
       })
       .onStop(() => {
         this.controls.temporarlyDisableKeyboard = false;
         if (this.isDisposed) return;
-        this.controls.moveCameraTo({ ...props, factor: 1 });
+        this.controls.rotateCameraTo(startDirection, endDirection, 1);
       })
       .onComplete(() => {
         this.controls.temporarlyDisableKeyboard = false;
         if (this.isDisposed) return;
-        this.controls.moveCameraTo({ ...props, factor: 1 });
+        this.controls.rotateCameraTo(startDirection, endDirection, 1);
       })
       .start(TWEEN.now());
     tween.update(TWEEN.now());

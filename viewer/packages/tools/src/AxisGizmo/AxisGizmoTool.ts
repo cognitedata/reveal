@@ -117,7 +117,7 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
 
     const flexibleCameraManager = asFlexibleCameraManager(this._viewer.cameraManager);
     if (flexibleCameraManager) {
-      flexibleCameraManager.moveCameraTo(forward.negate(), undefined, this._options.animationDuration);
+      flexibleCameraManager.rotateCameraTo(forward.negate(), this._options.animationDuration);
     } else {
       moveCameraTo(this._viewer.cameraManager, forward, upAxis, this._options.animationDuration);
     }
