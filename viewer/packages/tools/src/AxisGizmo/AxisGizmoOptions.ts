@@ -11,7 +11,7 @@ import { Corner } from '@reveal/utilities';
 export class AxisGizmoOptions {
   public corner: Corner = Corner.BottomRight;
   public yUp = false;
-  public size = 100;
+  public size = 110;
   public edgeMargin = 10;
   public bubbleRadius = 9;
   public primaryLineWidth = 3; // If 0 invisible

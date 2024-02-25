@@ -474,9 +474,6 @@ export function Viewer() {
       const axisGizmo = new AxisGizmo();
       axisGizmo.connect(viewer);
 
-      viewer.addObject3D(new THREE.AxesHelper(10))
-
-
       //   new AxisViewTool(
       //   viewer,
       //   // Give some space for Stats.js overlay
