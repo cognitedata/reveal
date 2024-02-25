@@ -11,8 +11,8 @@
     "@reveal/3d-overlays": "workspace:*",
     "@reveal/api": "workspace:*",
     "@reveal/cad-styling": "workspace:*",
+    "@reveal/camera-manager": "workspace",
     "@reveal/metrics": "workspace:*",
-    "@reveal/utilities": "workspace:*",
-    "@reveal/camera-manager": "workspace"
+    "@reveal/utilities": "workspace:*"
   }
 }
