@@ -2,10 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Box3, PerspectiveCamera, Raycaster, Vector2, Vector3, Scene, Ray } from 'three';
+import { Box3, PerspectiveCamera, Raycaster, Vector2, Vector3, Scene, Ray, Spherical } from 'three';
 
 import { FlexibleControls } from './FlexibleControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
+
+import TWEEN from '@tweenjs/tween.js';
 
 import {
   assertNever,
@@ -34,6 +36,7 @@ import { DebouncedCameraStopEventTrigger } from '../utils/DebouncedCameraStopEve
 import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraTo } from './moveCamera';
 import { FlexibleControlsTypeChangeDelegate, IFlexibleCameraManager } from './IFlexibleCameraManager';
+import { FlexibleCameraMoveProps } from './FlexibleCameraMoveProps';
 
 type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
 
@@ -226,6 +229,52 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this.controls.setControlsType(value);
   }
 
+  public moveCameraTo(endDirection: Vector3, endPosition: Vector3 | undefined, animationDuration: number): void {
+    if (endPosition === undefined) {
+      if (this.controlsType !== FlexibleControlsType.FirstPerson) {
+        const position = this.getPosition();
+        const target = this.getTarget();
+        const distance = position.distanceTo(target);
+        // Position = Target - forward * distanceToTarget
+        endPosition = target.addScaledVector(endDirection, -distance);
+      } else {
+        endPosition = this.getPosition();
+      }
+    }
+
+    const props: FlexibleCameraMoveProps = {
+      startDirection: this.controls.cameraVector.value.clone(),
+      startPosition: this.camera.position.clone(),
+      endDirection: new Spherical().setFromVector3(endDirection),
+      endPosition,
+      factor: 1
+    };
+    if (this.isDisposed) return;
+
+    const from = { t: 0 };
+    const to = { t: 1 };
+    const animation = new TWEEN.Tween(from);
+    this.controls.temporarlyDisableKeyboard = true;
+    const tween = animation
+      .to(to, animationDuration)
+      .onUpdate(() => {
+        if (this.isDisposed) return;
+        this.controls.moveCameraTo({ ...props, factor: from.t });
+      })
+      .onStop(() => {
+        this.controls.temporarlyDisableKeyboard = false;
+        if (this.isDisposed) return;
+        this.controls.moveCameraTo({ ...props, factor: 1 });
+      })
+      .onComplete(() => {
+        this.controls.temporarlyDisableKeyboard = false;
+        if (this.isDisposed) return;
+        this.controls.moveCameraTo({ ...props, factor: 1 });
+      })
+      .start(TWEEN.now());
+    tween.update(TWEEN.now());
+  }
+
   public addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
     this._triggers.controlsTypeChange.subscribe(callback);
   }
@@ -278,6 +327,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   public getBoundingBoxDiagonal(): number {
     return getDiagonal(this._currentBoundingBox);
   }
+
   public getHorizontalDiagonal(): number {
     return getHorizontalDiagonal(this._currentBoundingBox);
   }
@@ -432,7 +482,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       }
       const newTarget = await this.getPickedPointByPixelCoordinates(event.offsetX, event.offsetY);
       this.controls.setTarget(newTarget);
-      this.controls.triggerCameraChangeEvent();
+      this.controls.updateCameraAndTriggerCameraChangeEvent();
     } else if (mouseActionType === FlexibleMouseActionType.SetTargetAndCameraDirection) {
       const newTarget = await this.getPickedPointByPixelCoordinates(event.offsetX, event.offsetY);
       moveCameraTargetTo(this, newTarget, this.options.animationDuration);

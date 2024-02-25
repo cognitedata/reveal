@@ -7,7 +7,8 @@ import { AxisGizmoOptions } from './AxisGizmoOptions';
 import { CDF_TO_VIEWER_TRANSFORMATION, Corner } from '@reveal/utilities';
 import { Cognite3DViewer } from '@reveal/api';
 import { OneGizmoAxis } from './OneGizmoAxis';
-import { moveCameraTo } from './moveCameraTo';
+import { CameraManager, IFlexibleCameraManager } from '@reveal/camera-manager';
+import { moveCameraTo } from '../AxisView/moveCameraTo';
 
 /**
  * Class for axis gizmo like the one in Blender
@@ -100,20 +101,18 @@ export class AxisGizmo {
       return;
     }
     const cameraManager = this._viewer.cameraManager;
-    const { position, target } = cameraManager.getCameraState();
     const forward = axis.direction.clone().negate();
     const upAxis = axis.upAxis;
 
     forward.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     upAxis.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
-    // Position = Target - direction * distanceToTarget
-    const distance = position.distanceTo(target);
-    const direction = forward.clone();
-    direction.multiplyScalar(distance);
-    const newPosition = target.clone().add(direction);
-
-    moveCameraTo(this._viewer.cameraManager, newPosition, forward, upAxis, this._options.animationDuration);
+    const flexibleCameraManager = asFlexibleCameraManager(this._viewer.cameraManager);
+    if (flexibleCameraManager) {
+      flexibleCameraManager.moveCameraTo(forward.negate(), undefined, this._options.animationDuration);
+    } else {
+      moveCameraTo(this._viewer.cameraManager, forward, upAxis, this._options.animationDuration);
+    }
     this.updateAndRender(cameraManager.getCamera());
   }
 
@@ -232,6 +231,7 @@ export class AxisGizmo {
     if (camera) {
       // Calculate the rotation matrix from the camera and move the axises to the correct position
       const matrix = new Matrix4().makeRotationFromEuler(camera.rotation).invert();
+
       const fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
       for (const axis of this._axises) {
         const direction = axis.direction.clone();
@@ -250,13 +250,11 @@ export class AxisGizmo {
     this.render();
   }
 
-  private updateAxisPosition(position: Vector3, target: Vector3): void {
+  private updateAxisPosition(direction: Vector3, bobblePosition: Vector3): void {
     const padding = this._options.bubbleRadius - 1;
-    target.set(
-      position.x * (this._center.x - this._options.bubbleRadius / 2 - padding) + this._center.x,
-      this._center.y - position.y * (this._center.y - this._options.bubbleRadius / 2 - padding),
-      position.z
-    );
+    const offset = this._options.bubbleRadius / 2 + padding;
+    bobblePosition.set(direction.x * (this._center.x - offset), -direction.y * (this._center.y - offset), direction.z);
+    bobblePosition.add(this._center);
   }
 
   //================================================
@@ -301,8 +299,9 @@ export class AxisGizmo {
 
   private createElement(): HTMLElement {
     const element: HTMLElement = document.createElement('div');
-    element.innerHTML = '<canvas ></canvas>';
     initializeStyle(element, this._options);
+    // Note: Buggy framework: height and width must be set here regardless of what set in initializeStyle above
+    element.innerHTML = '<canvas height=' + this._options.size + ' width=' + this._options.size + '></canvas>';
     return element;
   }
 
@@ -315,6 +314,7 @@ export class AxisGizmo {
     }
     setFont(this._context, this._options);
 
+    // Draw the focus circle
     if (this._isMouseOver && this._options.focusCircleAlpha > 0) {
       this._context.globalAlpha = this._options.focusCircleAlpha;
       fillCircle(this._context, this._center, this._options.radius, this._options.focusCircleColor);
@@ -339,7 +339,7 @@ export class AxisGizmo {
           drawCircle(this._context, axis.bobblePosition, bubbleRadius - 1, bobbleLineWidth, lightColor);
         }
       }
-      if (axis.isPrimary || this._selectedAxis === axis) {
+      if (this._options.useGeoLabels || axis.isPrimary || this._selectedAxis === axis) {
         drawText(this._context, axis.label, axis.bobblePosition, this._options, this.getTextColor(axis));
       }
     }
@@ -406,7 +406,7 @@ function initializeStyle(element: HTMLElement, options: AxisGizmoOptions) {
   }
   style.position = 'absolute';
   style.zIndex = '1000';
-  style.height = style.width = options.size + 'px';
+  style.width = style.height = options.size + 'px';
   const margin = options.edgeMargin + 'px';
   switch (options.corner) {
     case Corner.TopRight:
@@ -421,4 +421,10 @@ function initializeStyle(element: HTMLElement, options: AxisGizmoOptions) {
     default:
       style.top = style.left = margin;
   }
+}
+
+function asFlexibleCameraManager(manager: CameraManager): IFlexibleCameraManager | undefined {
+  // instanceof don't work within React, so using safeguarding
+  const flexibleCameraManager = manager as IFlexibleCameraManager;
+  return flexibleCameraManager.controlsType === undefined ? undefined : flexibleCameraManager;
 }

@@ -27,7 +27,7 @@ export class OneGizmoAxis {
     this.direction = this.createDirection();
     this.upAxis = this.createUpAxis();
     this.bobblePosition = new Vector3();
-    this.label = this.createLabel(options.yUp);
+    this.label = options.useGeoLabels ? this.createGeoLabel() : this.createMathLabel(options.yUp);
     let index = axis;
     if (options.yUp) {
       if (index === 1) index = 2;
@@ -68,14 +68,28 @@ export class OneGizmoAxis {
     return minimum + (1 - minimum) * mix;
   }
 
-  private createLabel(yUp: boolean): string {
-    if (this.isPrimary) {
-      return this.getAxisName(yUp);
+  private createGeoLabel(): string {
+    switch (this.axis) {
+      case 0:
+        return this.isPrimary ? 'E' : 'W';
+      case 1:
+        return this.isPrimary ? 'N' : 'S';
+      case 2:
+        return this.isPrimary ? 'U' : 'D';
+      default:
+        return '';
     }
-    return '-' + this.getAxisName(yUp);
   }
 
-  private getAxisName(yUp: boolean): string {
+  private createMathLabel(yUp: boolean): string {
+    const name = this.getMathAxisName(yUp);
+    if (this.isPrimary) {
+      return name;
+    }
+    return '-' + name;
+  }
+
+  private getMathAxisName(yUp: boolean): string {
     switch (this.axis) {
       case 0:
         return 'X';

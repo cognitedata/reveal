@@ -4,6 +4,7 @@
 
 import { CameraManager } from '../CameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
+import { Vector3 } from 'three';
 
 /**
  * @beta
@@ -19,6 +20,7 @@ export interface IFlexibleCameraManager extends CameraManager {
   get controlsType(): FlexibleControlsType;
   set controlsType(value: FlexibleControlsType);
 
+  moveCameraTo(direction: Vector3, position: Vector3 | undefined, animationDuration: number): void;
   addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
   removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
 }

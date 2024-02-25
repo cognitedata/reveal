@@ -25,11 +25,14 @@ import { ReusableVector3s } from './ReusableVector3s';
 import { FlexibleControlsEvent } from './FlexibleControlsEvent';
 import { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordinates';
 import { FlexibleControlsTranslator } from './FlexibleControlsTranslator';
+import { FlexibleCameraMoveProps as FlexibleCameraMoveProps } from './FlexibleCameraMoveProps';
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
 const UP_VECTOR = new Vector3(0, 1, 0);
 const RIGHT_VECTOR = new Vector3(1, 0, 0);
+const XYZ_EPSILON = 0.001; // Used for points
+const RAD_EPSILON = Math.PI / 10000; // Used for angles
 
 /**
  * @beta
@@ -61,6 +64,9 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   private readonly _pointEventCache: Array<PointerEvent> = [];
   private _getPickedPointByPixelCoordinates: GetPickedPointByPixelCoordinates | undefined;
 
+  // This is a hack for overcome problems with the setting the Quaternion direction.
+  // This is normally done in animation of movements using setCameraState,
+  // which arguments does not fit into this control. (no direrction is given for instance)
   private _rawCameraRotation: Quaternion | undefined = undefined;
 
   private readonly _reusableVector3s = new ReusableVector3s(); // Temporary objects used for calculations to avoid allocations
@@ -243,8 +249,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._cameraVector.copy(vector);
     this._rawCameraRotation = undefined;
 
-    this.update(1000 / TARGET_FPS, true);
-    this.triggerCameraChangeEvent();
+    this.updateCameraAndTriggerCameraChangeEvent();
   }
 
   public setPositionAndDirection(position: Vector3, direction: Vector3): void {
@@ -253,8 +258,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._cameraVector.copy(direction);
     this._rawCameraRotation = undefined;
 
-    this.update(1000 / TARGET_FPS, true);
-    this.triggerCameraChangeEvent();
+    this.updateCameraAndTriggerCameraChangeEvent();
   }
 
   public setPositionAndRotation(position: Vector3, rotation: Quaternion): void {
@@ -273,8 +277,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       this._cameraVector.setThetaFromVector(upVector);
     }
     this._cameraVector.copy(cameraVector);
-    this.update(1000 / TARGET_FPS, true);
-    this.triggerCameraChangeEvent();
+    this.updateCameraAndTriggerCameraChangeEvent();
   }
 
   public setControlsType(controlsType: FlexibleControlsType): boolean {
@@ -291,7 +294,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
       this._target.end.copy(cameraVector.add(this._cameraPosition.end));
       this._target.synchronize();
-      this.triggerCameraChangeEvent();
+      this.updateCameraAndTriggerCameraChangeEvent();
     }
     this.triggerControlsTypeChangeEvent();
 
@@ -303,7 +306,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   //================================================
-  // INSTANCE METHODS: Private Getters and setters
+  // INSTANCE METHODS: Private Getters
   //================================================
 
   private getPanFactor() {
@@ -343,41 +346,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   //================================================
 
   public update(deltaTimeS: number, forceUpdate = false): boolean {
-    if (!forceUpdate && !this.isEnabled) {
-      return false;
-    }
-    this.handleKeyboard(deltaTimeS);
-
-    const epsilon = this._options.EPSILON;
-    const isRotated = this._cameraVector.isChanged(epsilon);
-    const isChanged = isRotated || this._target.isChanged(epsilon) || this._cameraPosition.isChanged(epsilon);
-    const dampeningFactor = this.getDampingFactor(deltaTimeS);
-
-    if (isChanged && dampeningFactor < 1) {
-      this._cameraVector.damp(dampeningFactor);
-      if (isRotated) {
-        this._cameraPosition.dampAsVectorAndCenter(dampeningFactor, this._target);
-      } else {
-        this._target.damp(dampeningFactor);
-        this._cameraPosition.damp(dampeningFactor);
-      }
-    } else {
-      this._cameraVector.synchronize();
-      this._target.synchronize();
-      this._cameraPosition.synchronize();
-    }
-    this._camera.position.copy(this._cameraPosition.value);
-    this._camera.updateProjectionMatrix();
-
-    if (this._rawCameraRotation) {
-      this._camera.setRotationFromQuaternion(this._rawCameraRotation);
-    } else {
-      this._camera.lookAt(this.getLookAt());
-    }
-    if (isChanged) {
-      this.triggerCameraChangeEvent();
-    }
-    return isChanged; // Tell caller if camera has changed
+    return this.updateCamera(deltaTimeS, forceUpdate);
   }
 
   public triggerCameraChangeEvent(): void {
@@ -395,6 +364,28 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       type: 'controlsTypeChange',
       controlsType: this.options.controlsType
     });
+  }
+
+  public moveCameraTo(props: FlexibleCameraMoveProps): void {
+    if (props.factor >= 1) {
+      this._cameraVector.copySpherical(props.endDirection);
+      if (this.controlsType !== FlexibleControlsType.FirstPerson) {
+        this._cameraPosition.copy(props.endPosition);
+      }
+    } else {
+      const direction = props.startDirection.clone();
+      DampedSpherical.dampSphericalVectors(direction, props.endDirection, props.factor);
+      this._cameraVector.copySpherical(direction);
+
+      if (this.controlsType !== FlexibleControlsType.FirstPerson) {
+        const position = new DampedVector3();
+        position.end.copy(props.endPosition);
+        position.value.copy(props.startPosition);
+        position.dampAsVectorAndCenter(props.factor, this._target);
+        this._cameraPosition.copy(position.value);
+      }
+    }
+    this.updateCameraAndTriggerCameraChangeEvent();
   }
 
   //================================================
@@ -558,6 +549,58 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
     window.removeEventListener('pointerup', this.onPointerUp);
     window.removeEventListener('pointerdown', this.onFocusChanged);
+  }
+
+  //================================================
+  // INSTANCE METHODS: Updating the camera
+  //================================================
+
+  public updateCameraAndTriggerCameraChangeEvent(): void {
+    // Call this when manually update the target, cameraVector or cameraPosition
+    // Thios update the camera without damening
+    if (!this.updateCamera(1000 / TARGET_FPS, true, true)) {
+      this.triggerCameraChangeEvent(); // Force trigger if not done in updateCamera
+    }
+  }
+
+  public updateCamera(deltaTimeS: number, forceUpdate = false, useDampening = true): boolean {
+    if (!forceUpdate && !this.isEnabled) {
+      return false;
+    }
+    this.handleKeyboard(deltaTimeS);
+
+    const isRotated = this._cameraVector.isChanged(RAD_EPSILON);
+    const isChange = isRotated || this._target.isChanged(XYZ_EPSILON) || this._cameraPosition.isChanged(XYZ_EPSILON);
+    const dampeningFactor = useDampening ? this.getDampingFactor(deltaTimeS) : 1;
+
+    if (isChange && dampeningFactor < 1) {
+      this._cameraVector.damp(dampeningFactor);
+      if (isRotated) {
+        this._cameraPosition.dampAsVectorAndCenter(dampeningFactor, this._target);
+      } else {
+        this._target.damp(dampeningFactor);
+        this._cameraPosition.damp(dampeningFactor);
+      }
+    } else {
+      this._cameraVector.synchronize();
+      this._target.synchronize();
+      this._cameraPosition.synchronize();
+    }
+    this._camera.position.copy(this._cameraPosition.value);
+    this._camera.updateProjectionMatrix();
+
+    if (this._rawCameraRotation) {
+      this._camera.setRotationFromQuaternion(this._rawCameraRotation);
+      this._camera.updateProjectionMatrix();
+    } else {
+      this._camera.lookAt(this.getLookAt());
+      this._camera.updateProjectionMatrix();
+    }
+    if (!isChange) {
+      return false;
+    }
+    this.triggerCameraChangeEvent();
+    return true; // Tell caller if camera has changed
   }
 
   //================================================

@@ -82,8 +82,6 @@ export class FlexibleControlsOptions {
   public pinchEpsilon = 2;
   public pinchPanSpeed = 1;
 
-  // Others
-  public EPSILON = 0.001;
   public orthographicCameraDollyFactor = 0.3;
 
   //================================================
