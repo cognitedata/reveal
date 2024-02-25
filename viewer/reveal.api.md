@@ -190,6 +190,8 @@ export class AxisGizmoOptions {
     // (undocumented)
     size: number;
     // (undocumented)
+    useGeoLabels: boolean;
+    // (undocumented)
     yUp: boolean;
 }
 
@@ -887,8 +889,6 @@ export class FlexibleControlsOptions {
     // (undocumented)
     enableKeyboardNavigation: boolean;
     // (undocumented)
-    EPSILON: number;
-    // (undocumented)
     getLegalAzimuthAngle(azimuthAngle: number): number;
     // (undocumented)
     getLegalPolarAngle(polarAngle: number): number;
@@ -1054,6 +1054,8 @@ export interface IFlexibleCameraManager extends CameraManager {
     // (undocumented)
     get controlsType(): FlexibleControlsType;
     set controlsType(value: FlexibleControlsType);
+    // (undocumented)
+    moveCameraTo(direction: Vector3, position: Vector3 | undefined, animationDuration: number): void;
     // (undocumented)
     removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
 }
