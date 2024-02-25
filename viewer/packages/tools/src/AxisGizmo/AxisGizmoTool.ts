@@ -10,12 +10,13 @@ import { OneGizmoAxis } from './OneGizmoAxis';
 import { CameraManager, IFlexibleCameraManager } from '@reveal/camera-manager';
 import { moveCameraTo } from '../utilities/moveCameraTo';
 import { Corner } from '../utilities/Corner';
+import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 
 /**
  * Class for axis gizmo like the one in Blender
  * @beta
  */
-export class AxisGizmo {
+export class AxisGizmoTool extends Cognite3DViewerToolBase {
   //================================================
   // INSTANCE FIELDS
   //================================================
@@ -45,10 +46,27 @@ export class AxisGizmo {
   //================================================
 
   constructor() {
+    super();
     this._options = new AxisGizmoOptions();
     const halfSize = this._options.size / 2;
     this._center = new Vector3(halfSize, halfSize, 0);
     this._axises = OneGizmoAxis.createAllAxises(this._options);
+  }
+
+  //================================================
+  // OVERRIDES of Cognite3DViewerToolBase
+  //================================================
+
+  public dispose(): void {
+    super.dispose();
+    if (this._viewer && this._element) {
+      this._viewer.domElement.removeChild(this._element);
+    }
+    this.removeEventListeners();
+    this._viewer = null;
+    this._canvas = null;
+    this._context = null;
+    this._element = null;
   }
 
   //================================================
@@ -65,17 +83,6 @@ export class AxisGizmo {
     }
     this._context = this._canvas.getContext('2d');
     this.addEventListeners();
-  }
-
-  public dispose(): void {
-    if (this._viewer && this._element) {
-      this._viewer.domElement.removeChild(this._element);
-    }
-    this.removeEventListeners();
-    this._viewer = null;
-    this._canvas = null;
-    this._context = null;
-    this._element = null;
   }
 
   //================================================

@@ -5,7 +5,7 @@
 import { Corner } from '../utilities/Corner';
 
 /**
- * Options for styling the AxisGizmo
+ * Options for styling the AxisGizmoTool
  * @beta
  */
 export class AxisGizmoOptions {

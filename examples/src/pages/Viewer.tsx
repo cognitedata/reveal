@@ -17,7 +17,7 @@ import {
   CogniteModel,
   AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
-import { DebugCameraTool, Corner, AxisViewTool, AxisGizmo } from '@cognite/reveal/tools';
+import { DebugCameraTool, Corner, AxisViewTool, AxisGizmoTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUIs } from '../utils/ClippingUIs';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -471,8 +471,8 @@ export function Viewer() {
         }
       });
 
-      const axisGizmo = new AxisGizmo();
-      axisGizmo.connect(viewer);
+      const axisGizmoTool = new AxisGizmoTool();
+      axisGizmoTool.connect(viewer);
 
       //   new AxisViewTool(
       //   viewer,

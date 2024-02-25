@@ -12,7 +12,7 @@ export {
 } from './src/HtmlOverlay/HtmlOverlayTool';
 export { DebugCameraTool } from './src/DebugCameraTool';
 export { AxisViewTool } from './src/AxisView/AxisViewTool';
-export { AxisGizmo } from './src/AxisGizmo/AxisGizmo';
+export { AxisGizmoTool } from './src/AxisGizmo/AxisGizmoTool';
 export { AxisGizmoOptions } from './src/AxisGizmo/AxisGizmoOptions';
 export {
   AxisBoxConfig,

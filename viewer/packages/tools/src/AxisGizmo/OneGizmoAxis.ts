@@ -6,7 +6,7 @@ import { Color, Vector3 } from 'three';
 import { AxisGizmoOptions } from './AxisGizmoOptions';
 
 /**
- * This class is used internally in AxisGizmo
+ * This class is used internally in AxisGizmoTool
  * @beta
  */
 export class OneGizmoAxis {
