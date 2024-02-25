@@ -140,15 +140,6 @@ export type AxisBoxFaceConfig = {
 };
 
 // @beta
-export class AxisGizmo {
-    constructor();
-    // (undocumented)
-    connect(viewer: Cognite3DViewer): void;
-    // (undocumented)
-    dispose(): void;
-}
-
-// @beta
 export class AxisGizmoOptions {
     // (undocumented)
     animationDuration: number;
@@ -160,8 +151,6 @@ export class AxisGizmoOptions {
     corner: Corner;
     // (undocumented)
     darkColors: number[];
-    // (undocumented)
-    edgeMargin: number;
     // (undocumented)
     focusCircleAlpha: number;
     // (undocumented)
@@ -192,7 +181,20 @@ export class AxisGizmoOptions {
     // (undocumented)
     useGeoLabels: boolean;
     // (undocumented)
+    xMargin: number;
+    // (undocumented)
+    yMargin: number;
+    // (undocumented)
     yUp: boolean;
+}
+
+// @beta
+export class AxisGizmoTool extends Cognite3DViewerToolBase {
+    constructor();
+    // (undocumented)
+    connect(viewer: Cognite3DViewer): void;
+    // (undocumented)
+    dispose(): void;
 }
 
 // @public (undocumented)
