@@ -12,6 +12,7 @@
     "@reveal/api": "workspace:*",
     "@reveal/cad-styling": "workspace:*",
     "@reveal/metrics": "workspace:*",
-    "@reveal/utilities": "workspace:*"
+    "@reveal/utilities": "workspace:*",
+    "@reveal/camera-manager": "workspace"
   }
 }
