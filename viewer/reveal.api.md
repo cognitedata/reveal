@@ -157,7 +157,7 @@ export class AxisGizmoOptions {
     // (undocumented)
     bubbleRadius: number;
     // (undocumented)
-    corner: Corner_2;
+    corner: Corner;
     // (undocumented)
     darkColors: number[];
     // (undocumented)
@@ -718,7 +718,7 @@ export type ComboControlsOptions = {
 // @public (undocumented)
 export type CompletePointCloudAppearance = Required<PointCloudAppearance>;
 
-// @public
+// @public (undocumented)
 export enum Corner {
     // (undocumented)
     BottomLeft = 2,
