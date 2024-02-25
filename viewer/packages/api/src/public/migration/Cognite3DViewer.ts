@@ -1722,7 +1722,7 @@ export class Cognite3DViewer {
       offsetY,
       modelIntersection?.distanceToCamera
     );
-    if (customObjectIntersection === undefined || modelIntersection === null) {
+    if (customObjectIntersection === undefined && modelIntersection === null) {
       // No intersection
       return {
         intersection: null,
