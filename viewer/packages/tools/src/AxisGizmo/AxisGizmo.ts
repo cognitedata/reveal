@@ -408,19 +408,24 @@ function initializeStyle(element: HTMLElement, options: AxisGizmoOptions) {
   style.position = 'absolute';
   style.zIndex = '1000';
   style.width = style.height = options.size + 'px';
-  const margin = options.edgeMargin + 'px';
+  const xMargin = options.xMargin + 'px';
+  const yMargin = options.yMargin + 'px';
   switch (options.corner) {
     case Corner.TopRight:
-      style.top = style.right = margin;
+      style.right = xMargin;
+      style.top = yMargin;
       break;
     case Corner.BottomLeft:
-      style.bottom = style.left = margin;
+      style.left = xMargin;
+      style.bottom = yMargin;
       break;
     case Corner.BottomRight:
-      style.bottom = style.right = margin;
+      style.right = xMargin;
+      style.bottom = yMargin;
       break;
     default:
-      style.top = style.left = margin;
+      style.left = xMargin;
+      style.top = yMargin;
   }
 }
 

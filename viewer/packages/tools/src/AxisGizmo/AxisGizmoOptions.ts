@@ -9,15 +9,16 @@ import { Corner } from '../utilities/Corner';
  * @beta
  */
 export class AxisGizmoOptions {
-  public corner: Corner = Corner.BottomRight;
-  public yUp = false;
   public size = 110;
-  public edgeMargin = 10;
-  public bubbleRadius = 9;
+  public corner: Corner = Corner.BottomRight;
+  public xMargin = 10; // Distance from corner in x-direction
+  public yMargin = 10; // // Distance from corner in y-direction
+  public bubbleRadius = 10;
   public primaryLineWidth = 3; // If 0 invisible
   public secondaryLineWidth = 0; // If 0 invisible
   public bobbleLineWidth = 2; // If 0 invisible, only used on secondary axis
   public useGeoLabels = true; // If true use EW-NS-UD, otherwise use XYZ or -XYZ
+  public yUp = false;
   public fontSize = '12px';
   public fontFamily = 'arial';
   public fontWeight = 'bold';
