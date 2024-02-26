@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { useReveal } from '..';
 import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
-import { type Cognite3DViewer } from '@cognite/reveal';
+import { type Cognite3DViewer, CustomObject } from '@cognite/reveal';
 
 export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
   const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
@@ -41,7 +41,9 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
     }
     const [skyboxMesh, cleanupFunction] = initializeSkybox(skyboxTexture, viewer);
 
-    viewer.addObject3D(skyboxMesh);
+    const customObject = new CustomObject(skyboxMesh);
+    customObject.isPartOfBoundingBox = false;
+    viewer.addCustomObject(customObject);
 
     return cleanupFunction;
   }, [skyboxTexture]);
