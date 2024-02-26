@@ -50,7 +50,7 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     this._options = option ? option : new AxisGizmoOptions();
     const halfSize = this._options.size / 2;
     this._center = new Vector3(halfSize, halfSize, 0);
-    this._axes = OneGizmoAxis.createAllAxises(this._options);
+    this._axes = OneGizmoAxis.createAllAxes(this._options);
   }
 
   //================================================
@@ -260,7 +260,7 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
       return;
     }
     if (camera) {
-      // Calculate the rotation matrix from the camera and move the axises to the correct position
+      // Calculate the rotation matrix from the camera and move the axes to the correct position
       const matrix = new Matrix4().makeRotationFromEuler(camera.rotation).invert();
 
       const fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();

@@ -122,12 +122,12 @@ export class OneGizmoAxis {
     return direction;
   }
 
-  public static createAllAxises(options: AxisGizmoOptions): OneGizmoAxis[] {
-    const axises: OneGizmoAxis[] = [];
+  public static createAllAxes(options: AxisGizmoOptions): OneGizmoAxis[] {
+    const axes: OneGizmoAxis[] = [];
     for (let axis = 0; axis <= 2; axis++) {
-      axises.push(new OneGizmoAxis(axis, true, options));
-      axises.push(new OneGizmoAxis(axis, false, options));
+      axes.push(new OneGizmoAxis(axis, true, options));
+      axes.push(new OneGizmoAxis(axis, false, options));
     }
-    return axises;
+    return axes;
   }
 }
