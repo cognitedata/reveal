@@ -473,17 +473,6 @@ export function Viewer() {
 
       const axisGizmoTool = new AxisGizmoTool();
       axisGizmoTool.connect(viewer);
-
-      //   new AxisViewTool(
-      //   viewer,
-      //   // Give some space for Stats.js overlay
-      //   {
-      //     position: {
-      //       corner: Corner.BottomRight,
-      //       padding: new THREE.Vector2(60, 0)
-      //     }
-      //   }
-      // );
     }
 
     main();

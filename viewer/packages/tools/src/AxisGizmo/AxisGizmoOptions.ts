@@ -9,11 +9,12 @@ import { Corner } from '../utilities/Corner';
  * @beta
  */
 export class AxisGizmoOptions {
-  public size = 110;
+  public size = 125;
   public corner: Corner = Corner.BottomRight;
   public xMargin = 10; // Distance from corner in x-direction
   public yMargin = 10; // // Distance from corner in y-direction
   public bubbleRadius = 10;
+  public insideMargin = 8; // Distance from the edge of the gizmo to the axis bobbles
   public primaryLineWidth = 3; // If 0 invisible
   public secondaryLineWidth = 0; // If 0 invisible
   public bobbleLineWidth = 2; // If 0 invisible, only used on secondary axis

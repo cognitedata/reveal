@@ -65,10 +65,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   // This is a hack for overcome problems with the setting the Quaternion direction.
   // This is normally done in animation of movements using setCameraState,
-  // which arguments does not fit into this control. (no direrction is given for instance)
+  // which arguments does not fit into this control. (no direction is given for instance)
   private _rawCameraRotation: Quaternion | undefined = undefined;
 
-  private readonly _reusableVector3s = new ReusableVector3s(); // Temporary objects used for calculations to avoid allocations
+  // Temporary objects used for calculations to avoid allocations
+  private readonly _reusableVector3s = new ReusableVector3s();
+  private readonly _rotationHelper = new FlexibleControlsRotationHelper();
 
   //        FlexibleControlsType.OrbitInCenter
   //          , - ~ ~ ~ - ,
@@ -370,8 +372,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   public rotateCameraTo(startDirection: Spherical, endDirection: Spherical, factor: number): void {
-    const helper = new FlexibleControlsRotationHelper();
-    helper.begin(this);
+    this._rotationHelper.begin(this);
     if (factor >= 1) {
       this._cameraVector.end.copy(endDirection);
     } else {
@@ -379,7 +380,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       DampedSpherical.dampSphericalVectors(direction, endDirection, factor);
       this._cameraVector.end.copy(direction);
     }
-    helper.end(this);
+    this._rotationHelper.end(this);
     this.updateCameraAndTriggerCameraChangeEvent();
   }
 
@@ -663,10 +664,9 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (deltaAzimuth === 0 && deltaPolar === 0) {
       return;
     }
-    const helper = new FlexibleControlsRotationHelper();
-    helper.begin(this);
+    this._rotationHelper.begin(this);
     this.rawRotateByAngles(-deltaAzimuth, deltaPolar);
-    helper.end(this);
+    this._rotationHelper.end(this);
   }
 
   private rawRotateByAngles(deltaAzimuth: number, deltaPolar: number) {

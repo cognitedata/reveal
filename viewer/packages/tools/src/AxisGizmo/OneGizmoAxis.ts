@@ -14,7 +14,7 @@ export class OneGizmoAxis {
   readonly isPrimary: boolean; // True if positive direction, false if negative
   readonly direction: Vector3; // The camera direction towards the axis (negate of the axis direction)
   readonly upAxis: Vector3; // The camera up axis
-  readonly bobblePosition: Vector3; // The bobble position of the axis (changed by the camera)
+  readonly bubblePosition: Vector3; // The bubble position of the axis (changed by the camera)
   readonly label: string; // The label of the axis
   private readonly _lightColor: Color;
   private readonly _darkColor: Color;
@@ -26,7 +26,7 @@ export class OneGizmoAxis {
     this.isPrimary = isPrimary;
     this.direction = this.createDirection();
     this.upAxis = this.createUpAxis();
-    this.bobblePosition = new Vector3();
+    this.bubblePosition = new Vector3();
     this.label = options.useGeoLabels ? this.createGeoLabel() : this.createMathLabel(options.yUp);
     let index = axis;
     if (options.yUp) {
@@ -61,7 +61,7 @@ export class OneGizmoAxis {
 
   private getColorFraction(): number {
     // Normalize between 1 and 0, since z is in range -1 to 1
-    const mix = (this.bobblePosition.z + 1) / 2;
+    const mix = (this.bubblePosition.z + 1) / 2;
 
     // Interpolate this value lineary from minimum to 1:
     const minimum = 0.2;

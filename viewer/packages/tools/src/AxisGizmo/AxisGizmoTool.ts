@@ -21,15 +21,15 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
   // INSTANCE FIELDS
   //================================================
   private readonly _options: AxisGizmoOptions;
-  private readonly _axises: OneGizmoAxis[];
+  private readonly _axes: OneGizmoAxis[];
   private readonly _center: Vector3;
   private _mousePosition: Vector3 | undefined = undefined;
   private _selectedAxis: OneGizmoAxis | undefined = undefined;
   private _isMouseOver = false; // Keep track of this for highlighing the gizmo
   private _inDragging = false;
 
-  private _viewer: Cognite3DViewer | null = null;
-  private _element: HTMLElement | null = null;
+  private _viewer: Cognite3DViewer | undefined = undefined;
+  private _element: HTMLElement | undefined = undefined;
   private _canvas: HTMLCanvasElement | null = null;
   private _context: CanvasRenderingContext2D | null = null;
 
@@ -45,12 +45,12 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
   // CONSTRUCTORS
   //================================================
 
-  constructor() {
+  constructor(option?: AxisGizmoOptions) {
     super();
-    this._options = new AxisGizmoOptions();
+    this._options = option ? option : new AxisGizmoOptions();
     const halfSize = this._options.size / 2;
     this._center = new Vector3(halfSize, halfSize, 0);
-    this._axises = OneGizmoAxis.createAllAxises(this._options);
+    this._axes = OneGizmoAxis.createAllAxises(this._options);
   }
 
   //================================================
@@ -63,19 +63,30 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
       this._viewer.domElement.removeChild(this._element);
     }
     this.removeEventListeners();
-    this._viewer = null;
+    this._viewer = undefined;
+    this._element = undefined;
     this._canvas = null;
     this._context = null;
-    this._element = null;
   }
 
   //================================================
   // INSTANCE METHODS: Public
   //================================================
 
+  /**
+   * Connects the AxisGizmoTool to a Cognite3DViewer instance.
+   * @param viewer The Cognite3DViewer instance to connect to.
+   * Note: After it is connected to the viewer the tool can not be moved or
+   * changed size by changing the fields: size, corner, yMargin and yMargin
+   * in the AxisGizmoOptions
+   */
+
   public connect(viewer: Cognite3DViewer): void {
     this._viewer = viewer;
     this._element = this.createElement();
+    if (!this._element) {
+      return;
+    }
     viewer.domElement.appendChild(this._element);
     this._canvas = this._element.querySelector('canvas');
     if (!this._canvas) {
@@ -85,27 +96,35 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     this.addEventListeners();
   }
 
+  public get options(): AxisGizmoOptions {
+    return this._options;
+  }
+
   //================================================
   // INSTANCE METHODS: Events
   //================================================
 
   private onPointerDown(event: PointerEvent) {
-    event.stopPropagation();
+    if (this._isMouseOver) {
+      event.stopPropagation();
+    }
     this._inDragging = true;
   }
 
   private onPointerUp(event: PointerEvent) {
-    event.stopPropagation();
+    if (this._isMouseOver) {
+      event.stopPropagation();
+    }
     if (!this._inDragging) {
       return;
     }
     this._inDragging = false;
-    if (this._viewer == null) {
-      return;
-    }
     this.updateSelectedAxis();
     const axis = this.getAxisToUse();
     if (!axis) {
+      return;
+    }
+    if (!this._viewer) {
       return;
     }
     const cameraManager = this._viewer.cameraManager;
@@ -131,7 +150,7 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     const rectangle = this._canvas.getBoundingClientRect();
     this._mousePosition = new Vector3(event.clientX - rectangle.left, event.clientY - rectangle.top, 0);
     if (this.updateSelectedAxis()) {
-      this.updateAndRender(null);
+      this.updateAndRender(undefined);
     }
   }
 
@@ -140,15 +159,19 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     this._isMouseOver = false;
     this._selectedAxis = undefined;
     this._mousePosition = undefined;
-    this.updateAndRender(null);
+    this.updateAndRender(undefined);
   }
 
   private onMouseClick(event: MouseEvent) {
-    event.stopPropagation();
+    if (this._isMouseOver) {
+      event.stopPropagation();
+    }
   }
 
   private onMouseDoubleClick(event: MouseEvent) {
-    event.stopPropagation();
+    if (this._isMouseOver) {
+      event.stopPropagation();
+    }
   }
 
   private readonly onCameraChange = (_position: Vector3, _target: Vector3) => {
@@ -184,11 +207,11 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     }
     // This behavior is according to blender. If click on an axis in center,
     // use the opposite axis
-    const distance = horizontalDistanceTo(this._center, selectedAxis.bobblePosition);
+    const distance = horizontalDistanceTo(this._center, selectedAxis.bubblePosition);
     if (distance > 1) {
       return selectedAxis;
     }
-    for (const otherAxis of this._axises) {
+    for (const otherAxis of this._axes) {
       if (otherAxis.axis == selectedAxis.axis && otherAxis.isPrimary != selectedAxis.isPrimary) {
         return otherAxis; // Opposite axis found
       }
@@ -205,9 +228,9 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     }
     // If the mouse is over the gizmo, find the one witch is under the mouse
     // Go reverse sive the last is the most visible
-    for (let i = this._axises.length - 1; i >= 0; i--) {
-      const axis = this._axises[i];
-      const distance = horizontalDistanceTo(this._mousePosition, axis.bobblePosition);
+    for (let i = this._axes.length - 1; i >= 0; i--) {
+      const axis = this._axes[i];
+      const distance = horizontalDistanceTo(this._mousePosition, axis.bubblePosition);
       if (distance <= this._options.bubbleRadius) {
         return axis;
       }
@@ -223,17 +246,17 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
       return false;
     }
     const selectedAxis = this.getSelectedAxis();
-    const isMouseInside = this.isMouseOver();
-    if (selectedAxis === this._selectedAxis && isMouseInside === this._isMouseOver) {
+    const isMouseOver = this.isMouseOver();
+    if (selectedAxis === this._selectedAxis && isMouseOver === this._isMouseOver) {
       return false;
     }
-    this._isMouseOver = isMouseInside;
+    this._isMouseOver = isMouseOver;
     this._selectedAxis = selectedAxis;
     return true; // Returns true if updated
   }
 
-  private updateAndRender(camera: PerspectiveCamera | null): void {
-    if (this._context == null || this._canvas == null) {
+  private updateAndRender(camera: PerspectiveCamera | undefined): void {
+    if (!this._context || !this._canvas) {
       return;
     }
     if (camera) {
@@ -241,28 +264,27 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
       const matrix = new Matrix4().makeRotationFromEuler(camera.rotation).invert();
 
       const fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
-      for (const axis of this._axises) {
+      for (const axis of this._axes) {
         const direction = axis.direction.clone();
         if (axis.axis === 0) {
           direction.negate();
         }
         direction.applyMatrix4(fromViewerMatrix);
         direction.applyMatrix4(matrix);
-        this.updateAxisPosition(direction, axis.bobblePosition);
+        this.updateAxisPosition(direction, axis.bubblePosition);
       }
-      // Since the bobblePosition has changed, maybe the selectedAxis is changed
+      // Since the bubblePosition has changed, maybe the selectedAxis is changed
       this.updateSelectedAxis();
     }
     // Sort the axis by it's z position
-    this._axises.sort((a, b) => (a.bobblePosition.z > b.bobblePosition.z ? 1 : -1));
+    this._axes.sort((a, b) => (a.bubblePosition.z > b.bubblePosition.z ? 1 : -1));
     this.render();
   }
 
-  private updateAxisPosition(direction: Vector3, bobblePosition: Vector3): void {
-    const padding = this._options.bubbleRadius - 1;
-    const offset = this._options.bubbleRadius / 2 + padding;
-    bobblePosition.set(direction.x * (this._center.x - offset), -direction.y * (this._center.y - offset), direction.z);
-    bobblePosition.add(this._center);
+  private updateAxisPosition(direction: Vector3, bubblePosition: Vector3): void {
+    const offset = this._options.bubbleRadius + this._options.insideMargin;
+    bubblePosition.set(direction.x * (this._center.x - offset), -direction.y * (this._center.y - offset), direction.z);
+    bubblePosition.add(this._center);
   }
 
   //================================================
@@ -305,8 +327,11 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
   // INSTANCE METHODS: Graphics
   //================================================
 
-  private createElement(): HTMLElement {
+  private createElement(): HTMLElement | undefined {
     const element: HTMLElement = document.createElement('div');
+    if (!element) {
+      return undefined;
+    }
     initializeStyle(element, this._options);
     // Note: Buggy framework: height and width must be set here regardless of what set in initializeStyle above
     element.innerHTML = '<canvas height=' + this._options.size + ' width=' + this._options.size + '></canvas>';
@@ -314,7 +339,7 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
   }
 
   private render() {
-    if (this._context == null) {
+    if (!this._context) {
       return;
     }
     if (this._canvas) {
@@ -329,26 +354,26 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
       this._context.globalAlpha = 1;
     }
     const { bubbleRadius, primaryLineWidth, secondaryLineWidth, bobbleLineWidth } = this._options;
-    for (const axis of this._axises) {
+    for (const axis of this._axes) {
       const lightColor = axis.getLightColorInHex();
 
       if (axis.isPrimary) {
         if (primaryLineWidth > 0) {
-          drawAxisLine(this._context, this._center, axis.bobblePosition, primaryLineWidth, lightColor);
+          drawAxisLine(this._context, this._center, axis.bubblePosition, primaryLineWidth, lightColor);
         }
-        fillCircle(this._context, axis.bobblePosition, bubbleRadius, lightColor);
+        fillCircle(this._context, axis.bubblePosition, bubbleRadius, lightColor);
       } else {
         const darkColor = axis.getDarkColorInHex();
         if (secondaryLineWidth > 0) {
-          drawAxisLine(this._context, this._center, axis.bobblePosition, secondaryLineWidth, lightColor);
+          drawAxisLine(this._context, this._center, axis.bubblePosition, secondaryLineWidth, lightColor);
         }
-        fillCircle(this._context, axis.bobblePosition, bubbleRadius, darkColor);
+        fillCircle(this._context, axis.bubblePosition, bubbleRadius, darkColor);
         if (bobbleLineWidth > 0) {
-          drawCircle(this._context, axis.bobblePosition, bubbleRadius - 1, bobbleLineWidth, lightColor);
+          drawCircle(this._context, axis.bubblePosition, bubbleRadius - 1, bobbleLineWidth, lightColor);
         }
       }
       if (this._options.useGeoLabels || axis.isPrimary || this._selectedAxis === axis) {
-        drawText(this._context, axis.label, axis.bobblePosition, this._options, this.getTextColor(axis));
+        drawText(this._context, axis.label, axis.bubblePosition, this._options, this.getTextColor(axis));
       }
     }
   }
