@@ -165,6 +165,8 @@ export class AxisGizmoOptions {
     fontYAdjust: number;
     getFont(): string;
     // (undocumented)
+    insideMargin: number;
+    // (undocumented)
     lightColors: number[];
     // (undocumented)
     normalTextColor: string;
@@ -190,11 +192,12 @@ export class AxisGizmoOptions {
 
 // @beta
 export class AxisGizmoTool extends Cognite3DViewerToolBase {
-    constructor();
-    // (undocumented)
+    constructor(option?: AxisGizmoOptions);
     connect(viewer: Cognite3DViewer): void;
     // (undocumented)
     dispose(): void;
+    // (undocumented)
+    get options(): AxisGizmoOptions;
 }
 
 // @public (undocumented)
@@ -720,7 +723,7 @@ export type ComboControlsOptions = {
 // @public (undocumented)
 export type CompletePointCloudAppearance = Required<PointCloudAppearance>;
 
-// @public (undocumented)
+// @public
 export enum Corner {
     // (undocumented)
     BottomLeft = 2,
@@ -1051,14 +1054,10 @@ export type HtmlOverlayToolOptions = {
 
 // @beta
 export interface IFlexibleCameraManager extends CameraManager {
-    // (undocumented)
     addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
-    // (undocumented)
     get controlsType(): FlexibleControlsType;
     set controlsType(value: FlexibleControlsType);
-    // (undocumented)
     removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
-    // (undocumented)
     rotateCameraTo(direction: Vector3, animationDuration: number): void;
 }
 
