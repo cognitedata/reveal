@@ -3,12 +3,19 @@
  */
 import { useEffect, type ReactElement, useState } from 'react';
 
-import { CogniteCadModel, TreeIndexNodeCollection, type CogniteModel } from '@cognite/reveal';
+import {
+  CogniteCadModel,
+  TreeIndexNodeCollection,
+  type CogniteModel,
+  NumericRange
+} from '@cognite/reveal';
 import { useAllMappedEquipmentAssetMappings } from '../..';
 import { Color } from 'three';
 import { type RuleOutputSet } from './types';
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
+import { type AssetMapping3D } from '@cognite/sdk/dist/src';
+import { filterUndefined } from '../../utilities/filterUndefined';
 
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
@@ -28,35 +35,46 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
 
   const cleanupNodeStylings = (
     models: CogniteModel[],
-    nodeCollectionStylings: TreeIndexNodeCollection[] | undefined
+    ruleBasedOutputNodeStyling: TreeIndexNodeCollection[] | undefined
   ): void => {
     // clean up the appearance
     models.forEach((model) => {
       if (!(model instanceof CogniteCadModel)) {
         return undefined;
       }
-      nodeCollectionStylings?.forEach((nodeStyling) => {
-        model.unassignStyledNodeCollection(nodeStyling);
+      ruleBasedOutputNodeStyling?.forEach((ruleBasedOutputNodeStyling) => {
+        const index = model.styledNodeCollections.findIndex(
+          (nodeStyling) => nodeStyling.nodeCollection === ruleBasedOutputNodeStyling
+        );
+        if (index !== -1) {
+          model.unassignStyledNodeCollection(ruleBasedOutputNodeStyling);
+        }
       });
     });
     setNodeCollectionStylings([]);
   };
 
-  const applyBasedNodeStyling = (models: CogniteModel[]): TreeIndexNodeCollection => {
-    const baseNodeStyling = new TreeIndexNodeCollection();
+  const applyBasedNodeStyling = (
+    model: CogniteModel,
+    assetMappings: AssetMapping3D[]
+  ): TreeIndexNodeCollection | undefined => {
+    if (!(model instanceof CogniteCadModel)) {
+      return;
+    }
 
-    models.forEach((model) => {
-      if (!(model instanceof CogniteCadModel)) {
-        return;
-      }
-      model.assignStyledNodeCollection(
-        baseNodeStyling,
-        {
-          color: new Color('#efefef')
-        },
-        1
-      );
+    const baseNodeStyling = new TreeIndexNodeCollection();
+    assetMappings?.forEach((assetMapping) => {
+      const range = new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize);
+      baseNodeStyling.getIndexSet().addRange(range);
     });
+
+    model.assignStyledNodeCollection(
+      baseNodeStyling,
+      {
+        color: new Color('#efefef')
+      },
+      1
+    );
     return baseNodeStyling;
   };
 
@@ -73,8 +91,6 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
 
     if (ruleSet === undefined) return;
 
-    const basedNodeStyling = applyBasedNodeStyling(models);
-
     const initializeRuleBasedOutputs = async (model: CogniteCadModel): Promise<void> => {
       // parse assets and mappings
       // TODO: refactor to be sure to filter only the mappings/assets for the current model within the pages
@@ -90,6 +106,8 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
           .map((item) => item.assets)
           .flat() ?? [];
 
+      const basedNodeStyling = applyBasedNodeStyling(model, flatMappings);
+
       const collectionStylings = await generateRuleBasedOutputs(
         model,
         contextualizedAssetNodes,
@@ -102,7 +120,10 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
         ruleNodeCollectionStylings.push(styling);
       }
 
-      const allNodeCollectionStyling = [basedNodeStyling, ...ruleNodeCollectionStylings];
+      const allNodeCollectionStyling = filterUndefined([
+        basedNodeStyling,
+        ...ruleNodeCollectionStylings
+      ]);
       setNodeCollectionStylings(allNodeCollectionStyling);
     };
 
