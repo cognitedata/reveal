@@ -81,7 +81,7 @@
   "devDependencies": {
     "@azure/msal-browser": "2.38.3",
     "@cognite/sdk": "8.3.0",
-    "@microsoft/api-extractor": "7.40.2",
+    "@microsoft/api-extractor": "7.40.6",
     "@types/dat.gui": "0.7.12",
     "@types/gl": "^6.0.2",
     "@types/glob": "8.1.0",
@@ -138,7 +138,7 @@
     "tsc-alias": "1.8.8",
     "typescript": "5.3.3",
     "wasm-pack": "0.12.1",
-    "webpack": "5.90.2",
+    "webpack": "5.90.3",
     "webpack-cli": "5.1.4",
     "webpack-dev-server": "4.15.1",
     "webpack-node-externals": "3.0.0",
