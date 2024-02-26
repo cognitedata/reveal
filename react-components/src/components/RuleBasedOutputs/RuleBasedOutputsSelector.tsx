@@ -26,6 +26,40 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(models);
 
+  const cleanupNodeStylings = (
+    models: CogniteModel[],
+    nodeCollectionStylings: TreeIndexNodeCollection[] | undefined
+  ): void => {
+    // clean up the appearance
+    models.forEach((model) => {
+      if (!(model instanceof CogniteCadModel)) {
+        return undefined;
+      }
+      nodeCollectionStylings?.forEach((nodeStyling) => {
+        model.unassignStyledNodeCollection(nodeStyling);
+      });
+    });
+    setNodeCollectionStylings([]);
+  };
+
+  const applyBasedNodeStyling = (models: CogniteModel[]): TreeIndexNodeCollection => {
+    const baseNodeStyling = new TreeIndexNodeCollection();
+
+    models.forEach((model) => {
+      if (!(model instanceof CogniteCadModel)) {
+        return;
+      }
+      model.assignStyledNodeCollection(
+        baseNodeStyling,
+        {
+          color: new Color('#efefef')
+        },
+        1
+      );
+    });
+    return baseNodeStyling;
+  };
+
   useEffect(() => {
     if (!isFetching && hasNextPage === true) {
       void fetchNextPage();
@@ -82,36 +116,3 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
 
   return <></>;
 }
-
-const cleanupNodeStylings = (
-  models: CogniteModel[],
-  nodeCollectionStylings: TreeIndexNodeCollection[] | undefined
-): void => {
-  // clean up the appearance
-  models.forEach((model) => {
-    if (!(model instanceof CogniteCadModel)) {
-      return undefined;
-    }
-    nodeCollectionStylings?.forEach((nodeStyling) => {
-      model.unassignStyledNodeCollection(nodeStyling);
-    });
-  });
-};
-
-const applyBasedNodeStyling = (models: CogniteModel[]): TreeIndexNodeCollection => {
-  const baseNodeStyling = new TreeIndexNodeCollection();
-
-  models.forEach((model) => {
-    if (!(model instanceof CogniteCadModel)) {
-      return;
-    }
-    model.assignStyledNodeCollection(
-      baseNodeStyling,
-      {
-        color: new Color('#efefef')
-      },
-      1
-    );
-  });
-  return baseNodeStyling;
-};
