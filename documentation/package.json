@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@azure/msal-browser": "2.38.3",
-    "@codemirror/lang-javascript": "6.2.1",
+    "@codemirror/lang-javascript": "6.2.2",
     "@docusaurus/core": "2.4.3",
     "@docusaurus/preset-classic": "2.4.3",
     "@docusaurus/remark-plugin-npm2yarn": "2.4.3",
