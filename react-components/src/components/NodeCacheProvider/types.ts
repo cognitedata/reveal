@@ -11,7 +11,7 @@ import {
 import { type EdgeItem, type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
-import { Vector3 } from 'three';
+import { type Vector3 } from 'three';
 
 export type FdmCadEdge = EdgeItem<InModel3dEdgeProperties>;
 export type FdmEdgeWithNode = { edge: FdmCadEdge; cadNode: Node3D; view?: Source };
