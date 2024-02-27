@@ -6,10 +6,6 @@ import { Scene, Object3D, Vector3, Sprite, SpriteMaterial, CanvasTexture } from 
 import { FlexibleCameraManager } from './FlexibleCameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
 
-const RELATIVE_MARKER_SIZE = 0.018;
-const OUTER_COLOR = '#FF2222';
-const INNER_COLOR = '#FFFFFF';
-
 export class FlexibleCameraMarkers {
   private readonly _scene: Scene;
   private _targetMarker: Object3D | undefined;
@@ -29,7 +25,7 @@ export class FlexibleCameraMarkers {
   public update(manager: FlexibleCameraManager): void {
     if (manager.options.showTarget && manager.options.controlsType !== FlexibleControlsType.FirstPerson) {
       if (!this._targetMarker) {
-        this._targetMarker = createSprite(OUTER_COLOR, INNER_COLOR);
+        this._targetMarker = createSprite(manager.options.outerMarkerColor, manager.options.innerMarkerColor);
         this._scene.add(this._targetMarker);
         this._targetMarker.visible = true;
       } else if (!this._targetMarker.visible) {

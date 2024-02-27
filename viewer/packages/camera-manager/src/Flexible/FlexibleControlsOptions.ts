@@ -22,9 +22,6 @@ export class FlexibleControlsOptions {
   // Main behaivor
   public controlsType = FlexibleControlsType.Orbit;
 
-  // Visualization
-  public showTarget = true;
-
   // Mouse click, double click and wheel behaivor
   public mouseWheelAction = FlexibleWheelZoomType.Auto;
   public mouseClickType = FlexibleMouseActionType.SetTarget;
@@ -83,7 +80,12 @@ export class FlexibleControlsOptions {
   public pinchPanSpeed = 1;
 
   public orthographicCameraDollyFactor = 0.3;
+
+  // Shaw target as a Marker settings
+  public showTarget = true;
   public relativeMarkerSize = 0.018;
+  public outerMarkerColor = '#FF2222';
+  public innerMarkerColor = '#FFFFFF';
 
   //================================================
   // INSTANCE PROPERTIES
