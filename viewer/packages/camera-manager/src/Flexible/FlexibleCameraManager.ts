@@ -2,10 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Box3, PerspectiveCamera, Raycaster, Vector2, Vector3, Scene, Ray } from 'three';
+import { Box3, PerspectiveCamera, Raycaster, Vector2, Vector3, Scene, Ray, Spherical } from 'three';
 
 import { FlexibleControls } from './FlexibleControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
+
+import TWEEN from '@tweenjs/tween.js';
 
 import {
   assertNever,
@@ -226,6 +228,35 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this.controls.setControlsType(value);
   }
 
+  public rotateCameraTo(direction: Vector3, animationDuration: number): void {
+    if (this.isDisposed) return;
+
+    const startDirection = this.controls.cameraVector.value.clone();
+    const endDirection = new Spherical().setFromVector3(direction);
+    const from = { t: 0 };
+    const to = { t: 1 };
+    const animation = new TWEEN.Tween(from);
+    this.controls.temporarlyDisableKeyboard = true;
+    const tween = animation
+      .to(to, animationDuration)
+      .onUpdate(() => {
+        if (this.isDisposed) return;
+        this.controls.rotateCameraTo(startDirection, endDirection, from.t);
+      })
+      .onStop(() => {
+        this.controls.temporarlyDisableKeyboard = false;
+        if (this.isDisposed) return;
+        this.controls.rotateCameraTo(startDirection, endDirection, 1);
+      })
+      .onComplete(() => {
+        this.controls.temporarlyDisableKeyboard = false;
+        if (this.isDisposed) return;
+        this.controls.rotateCameraTo(startDirection, endDirection, 1);
+      })
+      .start(TWEEN.now());
+    tween.update(TWEEN.now());
+  }
+
   public addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
     this._triggers.controlsTypeChange.subscribe(callback);
   }
@@ -278,6 +309,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   public getBoundingBoxDiagonal(): number {
     return getDiagonal(this._currentBoundingBox);
   }
+
   public getHorizontalDiagonal(): number {
     return getHorizontalDiagonal(this._currentBoundingBox);
   }
@@ -432,7 +464,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       }
       const newTarget = await this.getPickedPointByPixelCoordinates(event.offsetX, event.offsetY);
       this.controls.setTarget(newTarget);
-      this.controls.triggerCameraChangeEvent();
+      this.controls.updateCameraAndTriggerCameraChangeEvent();
     } else if (mouseActionType === FlexibleMouseActionType.SetTargetAndCameraDirection) {
       const newTarget = await this.getPickedPointByPixelCoordinates(event.offsetX, event.offsetY);
       moveCameraTargetTo(this, newTarget, this.options.animationDuration);

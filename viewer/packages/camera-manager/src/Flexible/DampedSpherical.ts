@@ -101,7 +101,13 @@ export class DampedSpherical {
 
   static dampSphericalVectors(value: Spherical, end: Spherical, dampeningFactor: number): void {
     const deltaPhi = end.phi - value.phi;
-    const deltaTheta = getShortestDeltaTheta(end.theta, value.theta);
+    let deltaTheta = getShortestDeltaTheta(end.theta, value.theta);
+
+    // If almost 180 degrees, force it to go the same direction because sometimes
+    // deltaTheta was Pi, and other times -Pi due to numerical errors.
+    if (deltaTheta > Math.PI - 0.0001) {
+      deltaTheta -= 2 * Math.PI;
+    }
     const deltaRadius = end.radius - value.radius;
 
     value.phi += deltaPhi * dampeningFactor;
