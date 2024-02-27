@@ -12,14 +12,16 @@ export {
 } from './src/HtmlOverlay/HtmlOverlayTool';
 export { DebugCameraTool } from './src/DebugCameraTool';
 export { AxisViewTool } from './src/AxisView/AxisViewTool';
+export { AxisGizmoTool } from './src/AxisGizmo/AxisGizmoTool';
+export { AxisGizmoOptions } from './src/AxisGizmo/AxisGizmoOptions';
 export {
   AxisBoxConfig,
   AxisBoxCompassConfig,
   AxisBoxFaceConfig,
-  Corner,
   AbsolutePosition,
   RelativePosition
 } from './src/AxisView/types';
+export { Corner } from './src/utilities/Corner';
 export {
   Overlay3DTool,
   Overlay3DToolParameters,
