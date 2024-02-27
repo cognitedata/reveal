@@ -83,6 +83,7 @@ export class FlexibleControlsOptions {
   public pinchPanSpeed = 1;
 
   public orthographicCameraDollyFactor = 0.3;
+  public relativeMarkerSize = 0.018;
 
   //================================================
   // INSTANCE PROPERTIES
