@@ -11,6 +11,7 @@ import {
 import { type EdgeItem, type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
+import { Vector3 } from 'three';
 
 export type FdmCadEdge = EdgeItem<InModel3dEdgeProperties>;
 export type FdmEdgeWithNode = { edge: FdmCadEdge; cadNode: Node3D; view?: Source };
@@ -59,6 +60,7 @@ export type Image360AnnotationModel = AnnotationModel & {
 export type Image360AnnotationAssetInfo = {
   asset: Asset;
   assetAnnotationImage360Info: AssetAnnotationImage360Info;
+  positions: Vector3[];
 };
 
 export type AnnotationId = number;

@@ -7,6 +7,7 @@ import { type Image360AnnotationAssetInfo } from './types';
 import { getAssetIdOrExternalIdFromImage360Annotation } from './utils';
 import { type Cognite3DViewer, type Image360Collection } from '@cognite/reveal';
 import { fetchAssetForAssetIds } from './AnnotationModelUtils';
+import { type Vector3 } from 'three';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;
@@ -69,10 +70,30 @@ export class Image360AnnotationCache {
           if (asset === undefined) {
             return acc;
           }
+          const centerPosition: Vector3[] = [];
+          const tranform = annotationInfo.imageEntity.transform;
+          const revisionAnnotationsPromise = annotationInfo.imageRevision.getAnnotations();
+          void revisionAnnotationsPromise.then((annotations) => {
+            annotations.forEach((revisionAnnotation) => {
+              if (
+                assetId ===
+                getAssetIdOrExternalIdFromImage360Annotation(revisionAnnotation.annotation)
+              ) {
+                const center = revisionAnnotation.getCenter().applyMatrix4(tranform);
+                if (center !== undefined) {
+                  centerPosition.push(center);
+                }
+              }
+            });
+          });
+          if (centerPosition.length === 0) {
+            return acc;
+          }
 
           acc.push({
             asset,
-            assetAnnotationImage360Info: annotationInfo
+            assetAnnotationImage360Info: annotationInfo,
+            positions: centerPosition
           });
         }
         return acc;
