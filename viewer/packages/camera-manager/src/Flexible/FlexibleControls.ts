@@ -629,14 +629,14 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     };
 
     const dispose = () => {
-      document.removeEventListener('pointerdown', onTouchStart);
+      this._domElement.removeEventListener('pointerdown', onTouchStart);
+      this._domElement.removeEventListener('pointerup', onTouchEnd);
       document.removeEventListener('pointermove', onTouchMove);
-      document.removeEventListener('pointerup', onTouchEnd);
     };
 
-    document.addEventListener('pointerdown', onTouchStart);
+    this._domElement.addEventListener('pointerdown', onTouchStart);
+    this._domElement.addEventListener('pointerup', onTouchEnd, { passive: false });
     document.addEventListener('pointermove', onTouchMove, { passive: false });
-    document.addEventListener('pointerup', onTouchEnd, { passive: false });
   }
 
   private rotate(delta: Vector2) {
