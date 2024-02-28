@@ -259,14 +259,14 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this._triggers.controlsTypeChange.subscribe(callback);
   }
 
-  public updateInnerBoundingBox(innerBoundingBox: Box3): void {
+  public updateModelBoundingBox(modelBoundingBox: Box3): void {
     // If the camera haven't set the position and target before, do it now
     if (!this.controls.isInitialized) {
-      const { position, target } = fitCameraToBoundingBox(this.camera, innerBoundingBox, 2);
+      const { position, target } = fitCameraToBoundingBox(this.camera, modelBoundingBox, 2);
       this.setPositionAndTarget(position, target);
       this.controls.isInitialized = true;
     }
-    this.updateControlsSensitivity(innerBoundingBox);
+    this.updateControlsSensitivity(modelBoundingBox);
   }
 
   //================================================

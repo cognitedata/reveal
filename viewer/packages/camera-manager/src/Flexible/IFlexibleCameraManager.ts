@@ -4,7 +4,7 @@
 
 import { CameraManager } from '../CameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
-import { Box3, Vector3 } from 'three';
+import { Vector3 } from 'three';
 
 /**
  * @beta
@@ -49,10 +49,4 @@ export interface IFlexibleCameraManager extends CameraManager {
    * @param callback - The callback function to be removed from the controls type change listeners.
    */
   removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
-
-  /**
-   * Updates the inner bounding box of the camera manager used for camera sensibility
-   * @param innerBoundingBox - The new inner bounding box.
-   */
-  updateInnerBoundingBox(innerBoundingBox: Box3): void;
 }
