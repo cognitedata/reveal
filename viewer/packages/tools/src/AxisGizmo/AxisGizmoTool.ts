@@ -94,6 +94,7 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     }
     this._context = this._canvas.getContext('2d');
     this.addEventListeners();
+    this.updateAndRender(this._viewer.cameraManager.getCamera());
   }
 
   public get options(): AxisGizmoOptions {
