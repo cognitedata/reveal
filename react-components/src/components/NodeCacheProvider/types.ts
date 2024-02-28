@@ -60,7 +60,7 @@ export type Image360AnnotationModel = AnnotationModel & {
 export type Image360AnnotationAssetInfo = {
   asset: Asset;
   assetAnnotationImage360Info: AssetAnnotationImage360Info;
-  positions: Vector3[];
+  position: Vector3;
 };
 
 export type AnnotationId = number;
