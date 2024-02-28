@@ -197,7 +197,7 @@ export class Cognite3DViewer {
    * Reusable buffers used by functions in Cognite3dViewer to avoid allocations.
    */
   private readonly _boundingBoxes = {
-    combinedBoundingbox: new THREE.Box3(),
+    nearFarPlaneBoundingbox: new THREE.Box3(),
     innerBoundingbox: new THREE.Box3(),
     temporaryBox: new THREE.Box3()
   };
@@ -1570,7 +1570,7 @@ export class Cognite3DViewer {
       const camera = this.cameraManager.getCamera();
       TWEEN.update(time);
       this.recalculateBoundingBox();
-      this._activeCameraManager.update(this.cameraManagerClock.getDelta(), this._boundingBoxes.combinedBoundingbox);
+      this._activeCameraManager.update(this.cameraManagerClock.getDelta(), this._boundingBoxes.nearFarPlaneBoundingbox);
 
       if (this._activeCameraManager instanceof FlexibleCameraManager) {
         this._activeCameraManager.updateInnerBoundingBox(this._boundingBoxes.innerBoundingbox);
@@ -1763,22 +1763,24 @@ export class Cognite3DViewer {
       return;
     }
 
-    const { combinedBoundingbox, innerBoundingbox, temporaryBox } = this._boundingBoxes;
-    combinedBoundingbox.makeEmpty();
+    const { nearFarPlaneBoundingbox, innerBoundingbox, temporaryBox } = this._boundingBoxes;
+    nearFarPlaneBoundingbox.makeEmpty();
     innerBoundingbox.makeEmpty();
 
     this._models.forEach(model => {
       model.getModelBoundingBox(temporaryBox);
-      if (!temporaryBox.isEmpty()) {
-        combinedBoundingbox.union(temporaryBox);
+      if (temporaryBox.isEmpty()) {
+        return;
       }
+      nearFarPlaneBoundingbox.union(temporaryBox);
+      innerBoundingbox.union(temporaryBox);
     });
     this._sceneHandler.customObjects.forEach(customObject => {
       temporaryBox.setFromObject(customObject.object);
       if (temporaryBox.isEmpty()) {
         return;
       }
-      combinedBoundingbox.union(temporaryBox);
+      nearFarPlaneBoundingbox.union(temporaryBox);
       if (!customObject.isPartOfBoundingBox) {
         return;
       }
