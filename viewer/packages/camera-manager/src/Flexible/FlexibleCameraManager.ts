@@ -189,22 +189,18 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     moveCameraTo(this, position, target, duration);
   }
 
-  public updateInnerBoundingBox(innerBoundingBox: Box3): void {
+  public update(deltaTime: number, boundingBox: Box3): void {
     // If the camera haven't set the position and target before, do it now
     if (!this.controls.isInitialized) {
-      const { position, target } = fitCameraToBoundingBox(this.camera, innerBoundingBox, 2);
+      const { position, target } = fitCameraToBoundingBox(this.camera, boundingBox, 2);
       this.setPositionAndTarget(position, target);
       this.controls.isInitialized = true;
     }
-    this.updateControlsSensitivity(innerBoundingBox);
-  }
-
-  public update(deltaTime: number, boundingBox: Box3): void {
-    // If the camera haven't set the position and target before, do it now
     if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
       this._nearAndFarNeedsUpdate = false;
       this._currentBoundingBox.copy(boundingBox);
-      this.updateCameraNearAndFar(boundingBox);
+      this.updateCameraNearAndFar();
+      this.updateControlsSensitivity();
     }
     if (this.controls.isEnabled) {
       this.controls.update(deltaTime);
@@ -308,6 +304,14 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
 
   private getTarget(): Vector3 {
     return this.controls.getTarget();
+  }
+
+  public getBoundingBoxDiagonal(): number {
+    return getDiagonal(this._currentBoundingBox);
+  }
+
+  public getHorizontalDiagonal(): number {
+    return getHorizontalDiagonal(this._currentBoundingBox);
   }
 
   public setPositionAndTarget(position: Vector3, target: Vector3): void {
@@ -503,7 +507,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   // INSTANCE METHODS: Updates
   //================================================
 
-  private updateCameraNearAndFar(boundingBox: Box3): void {
+  private updateCameraNearAndFar(): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this._isDisposed) {
       return;
@@ -511,10 +515,10 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     if (!this.options.automaticNearFarPlane) {
       return;
     }
-    CameraManagerHelper.updateCameraNearAndFar(this.camera, boundingBox);
+    CameraManagerHelper.updateCameraNearAndFar(this.camera, this._currentBoundingBox);
   }
 
-  private updateControlsSensitivity(boundingBox: Box3): void {
+  private updateControlsSensitivity(): void {
     if (this._isDisposed) {
       return;
     }
@@ -524,7 +528,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     // This is used to determine the speed of the camera when flying with ASDW.
     // We want to either let it be controlled by the near plane if we are far away,
     // but no more than a fraction of the bounding box of the system if inside
-    const diagonal = getHorizontalDiagonal(boundingBox);
+    const diagonal = this.getHorizontalDiagonal();
     const diagonalFraction = diagonal * this.options.sensitivityDiagonalFraction;
     const nearFraction = 0.1 * this.camera.near;
 
