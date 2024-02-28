@@ -139,6 +139,67 @@ export type AxisBoxFaceConfig = {
     faceColor?: THREE_2.Color;
 };
 
+// @beta
+export class AxisGizmoOptions {
+    // (undocumented)
+    animationDuration: number;
+    // (undocumented)
+    bobbleLineWidth: number;
+    // (undocumented)
+    bubbleRadius: number;
+    // (undocumented)
+    corner: Corner;
+    // (undocumented)
+    darkColors: number[];
+    // (undocumented)
+    focusCircleAlpha: number;
+    // (undocumented)
+    focusCircleColor: string;
+    // (undocumented)
+    fontFamily: string;
+    // (undocumented)
+    fontSize: string;
+    // (undocumented)
+    fontWeight: string;
+    // (undocumented)
+    fontYAdjust: number;
+    getFont(): string;
+    // (undocumented)
+    insideMargin: number;
+    // (undocumented)
+    lightColors: number[];
+    // (undocumented)
+    normalTextColor: string;
+    // (undocumented)
+    primaryLineWidth: number;
+    // (undocumented)
+    get radius(): number;
+    // (undocumented)
+    secondaryLineWidth: number;
+    // (undocumented)
+    selectedTextColor: string;
+    // (undocumented)
+    size: number;
+    // (undocumented)
+    useGeoLabels: boolean;
+    // (undocumented)
+    xMargin: number;
+    // (undocumented)
+    yMargin: number;
+    // (undocumented)
+    yUp: boolean;
+}
+
+// @beta
+export class AxisGizmoTool extends Cognite3DViewerToolBase {
+    constructor(option?: AxisGizmoOptions);
+    connect(viewer: Cognite3DViewer): void;
+    // (undocumented)
+    dispose(): void;
+    // (undocumented)
+    get options(): AxisGizmoOptions;
+}
+
 // @public (undocumented)
 export class AxisViewTool extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, config?: AxisBoxConfig);
@@ -833,13 +894,13 @@ export class FlexibleControlsOptions {
     // (undocumented)
     enableKeyboardNavigation: boolean;
     // (undocumented)
-    EPSILON: number;
-    // (undocumented)
     getLegalAzimuthAngle(azimuthAngle: number): number;
     // (undocumented)
     getLegalPolarAngle(polarAngle: number): number;
     // (undocumented)
     getLegalSensitivity(controlsSensitivity: number): number;
+    // (undocumented)
+    innerMarkerColor: string;
     // (undocumented)
     keyboardDollySpeed: number;
     // (undocumented)
@@ -889,11 +950,15 @@ export class FlexibleControlsOptions {
     // (undocumented)
     orthographicCameraDollyFactor: number;
     // (undocumented)
+    outerMarkerColor: string;
+    // (undocumented)
     pinchEpsilon: number;
     // (undocumented)
     pinchPanSpeed: number;
     // (undocumented)
     get realMouseWheelAction(): FlexibleWheelZoomType;
+    // (undocumented)
+    relativeMarkerSize: number;
     // (undocumented)
     sensitivity: number;
     // (undocumented)
@@ -995,13 +1060,11 @@ export type HtmlOverlayToolOptions = {
 
 // @beta
 export interface IFlexibleCameraManager extends CameraManager {
-    // (undocumented)
     addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
-    // (undocumented)
     get controlsType(): FlexibleControlsType;
     set controlsType(value: FlexibleControlsType);
-    // (undocumented)
     removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
+    rotateCameraTo(direction: Vector3, animationDuration: number): void;
 }
 
 // @public

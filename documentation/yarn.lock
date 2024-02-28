@@ -1805,9 +1805,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/lang-javascript@npm:6.2.1":
-  version: 6.2.1
-  resolution: "@codemirror/lang-javascript@npm:6.2.1"
+"@codemirror/lang-javascript@npm:6.2.2":
+  version: 6.2.2
+  resolution: "@codemirror/lang-javascript@npm:6.2.2"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/language": ^6.6.0
@@ -1816,7 +1816,7 @@ __metadata:
     "@codemirror/view": ^6.17.0
     "@lezer/common": ^1.0.0
     "@lezer/javascript": ^1.0.0
-  checksum: 3df38c4cced06195283a9a2a9365aaa7c8c1b157852b331bc3a118403f774bbba57d2a392de52f5e28d2b344a323bc0146bcf7c8ef8be2473f167d815e4a37cd
+  checksum: 66379942a8347dff2bd76d10ed7cf313bca83872f8336fdd3e14accfef23e7b690cd913c9d11a3854fba2b32299da07fc3275995327642c9ee43c2a8e538c19d
   languageName: node
   linkType: hard
 
@@ -1900,14 +1900,14 @@ __metadata:
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
     "@azure/msal-browser": 2.38.3
-    "@codemirror/lang-javascript": 6.2.1
+    "@codemirror/lang-javascript": 6.2.2
     "@docusaurus/core": 2.4.3
     "@docusaurus/preset-classic": 2.4.3
     "@docusaurus/remark-plugin-npm2yarn": 2.4.3
     "@types/react": 18.2.42
     "@types/styled-components": 5.1.34
-    "@uiw/codemirror-theme-material": 4.21.22
-    "@uiw/react-codemirror": 4.21.22
+    "@uiw/codemirror-theme-material": 4.21.23
+    "@uiw/react-codemirror": 4.21.23
     clsx: 2.1.0
     copyfiles: 2.4.1
     cross-env: 7.0.3
@@ -3624,9 +3624,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-extensions-basic-setup@npm:4.21.22":
-  version: 4.21.22
-  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.21.22"
+"@uiw/codemirror-extensions-basic-setup@npm:4.21.23":
+  version: 4.21.23
+  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.21.23"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/commands": ^6.0.0
@@ -3643,22 +3643,22 @@ __metadata:
     "@codemirror/search": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: 75e9f8fa8c9462d45e89d05b6bda5c82825fd0fc2a73c20c2c7b5f7d1d5fce6b0a43aefac3b5651877eb655f5b82ff1eba34f9db57acd69a4da6d4e75540d3fe
+  checksum: cd17481d9d9a9b620f961a4df6e8208bcabe98652ca6c18366a8688fbcc09d37a030694a70dcc010aaabe02c85c342acf9f80357c6853b57f1081af5b130bd26
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-theme-material@npm:4.21.22":
-  version: 4.21.22
-  resolution: "@uiw/codemirror-theme-material@npm:4.21.22"
+"@uiw/codemirror-theme-material@npm:4.21.23":
+  version: 4.21.23
+  resolution: "@uiw/codemirror-theme-material@npm:4.21.23"
   dependencies:
-    "@uiw/codemirror-themes": 4.21.22
-  checksum: 304b936aa5380c7e0a0a3517b85b52f43d475d26ed23c0d57cf3e5d3435ddded55cb0bb81bf4adf0663582ea491687a4839da544327fd81d7c9380eb99b180f6
+    "@uiw/codemirror-themes": 4.21.23
+  checksum: f0eea069c6f0357f75853be4720e4a577aa86d3e414f0585cf31a4495fa111b69cded91d2bc768316df83b9c7b393cc369357ec444aef66b361f6da5316b6329
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-themes@npm:4.21.22":
-  version: 4.21.22
-  resolution: "@uiw/codemirror-themes@npm:4.21.22"
+"@uiw/codemirror-themes@npm:4.21.23":
+  version: 4.21.23
+  resolution: "@uiw/codemirror-themes@npm:4.21.23"
   dependencies:
     "@codemirror/language": ^6.0.0
     "@codemirror/state": ^6.0.0
@@ -3667,19 +3667,19 @@ __metadata:
     "@codemirror/language": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: fef98f331f85595bde04cc18286f5d3c9d7ceeffb0858ab102dfbf92e74b5de9ca7aeeef5ccf2b22f0b13da79f2e8763abc349994bcc2b5c43f679d6024faab4
+  checksum: e1829eb8b470f1e3621a9e4c1aecae86cef10a9136b3327d7312e8f11bf5e4ca60cf1f695bb094fc4e718effc8f18350238a4229649bdb65c72213c336ce1a79
   languageName: node
   linkType: hard
 
-"@uiw/react-codemirror@npm:4.21.22":
-  version: 4.21.22
-  resolution: "@uiw/react-codemirror@npm:4.21.22"
+"@uiw/react-codemirror@npm:4.21.23":
+  version: 4.21.23
+  resolution: "@uiw/react-codemirror@npm:4.21.23"
   dependencies:
     "@babel/runtime": ^7.18.6
     "@codemirror/commands": ^6.1.0
     "@codemirror/state": ^6.1.1
     "@codemirror/theme-one-dark": ^6.0.0
-    "@uiw/codemirror-extensions-basic-setup": 4.21.22
+    "@uiw/codemirror-extensions-basic-setup": 4.21.23
     codemirror: ^6.0.0
   peerDependencies:
     "@babel/runtime": ">=7.11.0"
@@ -3689,7 +3689,7 @@ __metadata:
     codemirror: ">=6.0.0"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 3d3152c32cb017f419956ac729e0842181c1f2836f1199c991fb6aab27b4b372d994085f28b83e293288e5630556186a87f2bbed305de96fedee7e0902dc9529
+  checksum: 7d0209d947e1e57cf80ef44a097bb3af04d2bab2d6fc57deed91619a0db77e3d4289db8f03fb43906b2e324496d25c872fa99b83834f085c40ad95137ea4459c
   languageName: node
   linkType: hard
 
