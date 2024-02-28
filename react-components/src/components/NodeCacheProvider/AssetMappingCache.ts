@@ -106,7 +106,7 @@ export class AssetMappingCache {
     modelId: ModelId,
     revisionId: RevisionId,
     assetIds: CogniteInternalId[]
-  ): Promise<Map<AssetId, Node3D>> {
+  ): Promise<Map<AssetId, Node3D[]>> {
     const assetMappings = await this.getAssetMappingsForModel(modelId, revisionId);
     const relevantAssetIds = new Set(assetIds);
 
@@ -121,7 +121,18 @@ export class AssetMappingCache {
       this._sdk
     );
 
-    return new Map(nodes.map((node, index) => [relevantAssetMappings[index].assetId, node]));
+    return nodes.reduce((acc, node, index) => {
+      const key = relevantAssetMappings[index].assetId;
+      const nodesForAsset = acc.get(key);
+
+      if (nodesForAsset !== undefined) {
+        nodesForAsset.push(node);
+      } else {
+        acc.set(key, [node]);
+      }
+
+      return acc;
+    }, new Map<AssetId, Node3D[]>());
   }
 }
 
