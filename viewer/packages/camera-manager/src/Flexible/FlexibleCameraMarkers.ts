@@ -6,10 +6,6 @@ import { Scene, Object3D, Vector3, Sprite, SpriteMaterial, CanvasTexture } from 
 import { FlexibleCameraManager } from './FlexibleCameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
 
-const RELATIVE_MARKER_SIZE = 0.02;
-const OUTER_COLOR = '#FF2222';
-const INNER_COLOR = '#FFFFFF';
-
 export class FlexibleCameraMarkers {
   private readonly _scene: Scene;
   private _targetMarker: Object3D | undefined;
@@ -29,7 +25,7 @@ export class FlexibleCameraMarkers {
   public update(manager: FlexibleCameraManager): void {
     if (manager.options.showTarget && manager.options.controlsType !== FlexibleControlsType.FirstPerson) {
       if (!this._targetMarker) {
-        this._targetMarker = createSprite(OUTER_COLOR, INNER_COLOR);
+        this._targetMarker = createSprite(manager.options.outerMarkerColor, manager.options.innerMarkerColor);
         this._scene.add(this._targetMarker);
         this._targetMarker.visible = true;
       } else if (!this._targetMarker.visible) {
@@ -46,7 +42,7 @@ export class FlexibleCameraMarkers {
 
 function setPosition(object3D: Object3D, position: Vector3, manager: FlexibleCameraManager): void {
   const distance = position.distanceTo(manager.camera.position);
-  const scale = RELATIVE_MARKER_SIZE * distance;
+  const scale = manager.options.relativeMarkerSize * distance;
 
   object3D.position.copy(position);
   object3D.scale.setScalar(scale);
