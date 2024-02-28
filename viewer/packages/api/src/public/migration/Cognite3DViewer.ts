@@ -1570,11 +1570,12 @@ export class Cognite3DViewer {
       const camera = this.cameraManager.getCamera();
       TWEEN.update(time);
       this.recalculateBoundingBox();
-      this._activeCameraManager.update(this.cameraManagerClock.getDelta(), this._boundingBoxes.nearFarPlaneBoundingbox);
 
       if (this._activeCameraManager instanceof FlexibleCameraManager) {
         this._activeCameraManager.updateInnerBoundingBox(this._boundingBoxes.innerBoundingbox);
       }
+      this._activeCameraManager.update(this.cameraManagerClock.getDelta(), this._boundingBoxes.nearFarPlaneBoundingbox);
+
       this.revealManager.update(camera);
 
       const image360NeedsRedraw = this._image360ApiHelper?.needsRedraw ?? false;
