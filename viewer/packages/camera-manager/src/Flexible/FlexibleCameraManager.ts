@@ -399,9 +399,9 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       return;
     }
     if (event.code === 'Digit1') {
-      return this.controls.setControlsType(FlexibleControlsType.Orbit);
-    } else if (event.code === 'Digit2') {
       return this.controls.setControlsType(FlexibleControlsType.FirstPerson);
+    } else if (event.code === 'Digit2') {
+      return this.controls.setControlsType(FlexibleControlsType.Orbit);
     } else if (event.code === 'Digit3') {
       return this.controls.setControlsType(FlexibleControlsType.OrbitInCenter);
     }
