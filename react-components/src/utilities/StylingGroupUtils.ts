@@ -21,3 +21,9 @@ export function isImage360AssetStylingGroup(
 ): instanceGroup is Image360AssetStylingGroup {
   return instanceGroup.assetIds !== undefined && instanceGroup.style !== undefined;
 }
+
+export function isCadAssetMappingStylingGroup(
+  instanceGroup: any
+): instanceGroup is FdmAssetStylingGroup | AssetStylingGroup {
+  return isAssetMappingStylingGroup(instanceGroup) || isFdmAssetStylingGroup(instanceGroup);
+}

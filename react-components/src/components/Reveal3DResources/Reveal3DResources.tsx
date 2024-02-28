@@ -25,7 +25,7 @@ import {
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import {
   isAssetMappingStylingGroup,
-  isFdmAssetStylingGroup,
+  isCadAssetMappingStylingGroup,
   isImage360AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
@@ -61,7 +61,7 @@ export const Reveal3DResources = ({
 
   const styledCadModelOptions = useCalculateCadStyling(
     cadModelOptions,
-    instanceStyling?.filter(isFdmAssetStylingGroup) ?? EMPTY_ARRAY,
+    instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
   );
 
