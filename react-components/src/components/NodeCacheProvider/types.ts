@@ -25,7 +25,7 @@ export type FdmNodeDataPromises = {
 export type ModelRevisionAssetNodesResult = {
   modelId: ModelId;
   revisionId: RevisionId;
-  assetToNodeMap: Map<AssetId, Node3D>;
+  assetToNodeMap: Map<AssetId, Node3D[]>;
 };
 
 export type AncestorQueryResult = {
