@@ -900,6 +900,8 @@ export class FlexibleControlsOptions {
     // (undocumented)
     getLegalSensitivity(controlsSensitivity: number): number;
     // (undocumented)
+    innerMarkerColor: string;
+    // (undocumented)
     keyboardDollySpeed: number;
     // (undocumented)
     keyboardFastMoveFactor: number;
@@ -948,11 +950,15 @@ export class FlexibleControlsOptions {
     // (undocumented)
     orthographicCameraDollyFactor: number;
     // (undocumented)
+    outerMarkerColor: string;
+    // (undocumented)
     pinchEpsilon: number;
     // (undocumented)
     pinchPanSpeed: number;
     // (undocumented)
     get realMouseWheelAction(): FlexibleWheelZoomType;
+    // (undocumented)
+    relativeMarkerSize: number;
     // (undocumented)
     sensitivity: number;
     // (undocumented)
