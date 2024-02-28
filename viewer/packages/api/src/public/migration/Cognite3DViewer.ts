@@ -1048,6 +1048,7 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
+
     object.updateMatrixWorld(true);
     this._sceneHandler.addObject3D(object);
     this.revealManager.requestRedraw();
@@ -1679,6 +1680,9 @@ export class Cognite3DViewer {
     let intersectInput: CustomObjectIntersectInput | undefined = undefined; // Lazy creation for speed
     let closestIntersection: CustomObjectIntersection | undefined = undefined;
     this._sceneHandler.customObjects.forEach(customObject => {
+      if (!customObject.object.visible) {
+        return;
+      }
       if (!customObject.shouldPick) {
         return;
       }
@@ -1771,6 +1775,9 @@ export class Cognite3DViewer {
       }
     });
     this._sceneHandler.customObjects.forEach(customObject => {
+      if (!customObject.object.visible) {
+        return;
+      }
       if (!customObject.isPartOfBoundingBox) {
         return;
       }
