@@ -1059,6 +1059,7 @@ export interface IFlexibleCameraManager extends CameraManager {
     set controlsType(value: FlexibleControlsType);
     removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
     rotateCameraTo(direction: Vector3, animationDuration: number): void;
+    updateInnerBoundingBox(innerBoundingBox: Box3): void;
 }
 
 // @public
