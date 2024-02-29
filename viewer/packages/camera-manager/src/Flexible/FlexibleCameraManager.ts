@@ -62,8 +62,8 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   private readonly _markers?: undefined | FlexibleCameraMarkers;
   private readonly _currentBoundingBox: Box3 = new Box3();
   private _isDisposed = false;
+  private _isEnableClickAndDoubleClick = true;
   private _nearAndFarNeedsUpdate = false;
-  private _isEnabled = true;
 
   // For the wheel event
   private _prevTime = 0;
@@ -290,7 +290,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   }
 
   public get isEnabled(): boolean {
-    return this._isEnabled;
+    return this.controls.isEnabled;
+  }
+
+  public get isEnableClickAndDoubleClick(): boolean {
+    return this._isEnableClickAndDoubleClick;
   }
 
   public get isDisposed(): boolean {
@@ -298,8 +302,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   }
 
   private set isEnabled(value: boolean) {
-    this._isEnabled = value;
-    this.controls.isEnabled = true;
+    this.controls.isEnabled = value;
+  }
+
+  public set isEnableClickAndDoubleClick(value: boolean) {
+    this._isEnableClickAndDoubleClick = value;
   }
 
   private getPosition(): Vector3 {
@@ -408,14 +415,14 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   };
 
   private readonly onClick = async (event: PointerEventData) => {
-    if (!this.isEnabled) return;
+    if (!this.isEnabled || !this.isEnableClickAndDoubleClick) return;
     if (this.options.mouseClickType !== FlexibleMouseActionType.None) {
       await this.mouseAction(event, this.options.mouseClickType);
     }
   };
 
   private readonly onDoubleClick = async (event: PointerEventData) => {
-    if (!this.isEnabled) return;
+    if (!this.isEnabled || !this.isEnableClickAndDoubleClick) return;
     if (this.options.mouseDoubleClickType !== FlexibleMouseActionType.None) {
       await this.mouseAction(event, this.options.mouseDoubleClickType);
     }

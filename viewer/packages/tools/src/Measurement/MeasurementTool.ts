@@ -18,6 +18,7 @@ import { MeasurementLabels } from './MeasurementLabels';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import rulerSvg from '!!raw-loader!./styles/ruler.svg';
 import { MetricsLogger } from '@reveal/metrics';
+import { FlexibleCameraManager } from '@reveal/camera-manager';
 
 type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
 
@@ -242,6 +243,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._events.measurementStarted.fire();
     this._measurementMode = true;
     this._showMeasurements = true;
+
+    if (this._viewer.cameraManager instanceof FlexibleCameraManager) {
+      this._viewer.cameraManager.isEnableClickAndDoubleClick = false;
+    }
   }
 
   /**
@@ -256,6 +261,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._viewer.off('beforeSceneRendered', this._handleClippingPlanes);
     this._events.measurementEnded.fire();
     this._measurementMode = false;
+    if (this._viewer.cameraManager instanceof FlexibleCameraManager) {
+      this._viewer.cameraManager.isEnableClickAndDoubleClick = true;
+    }
   }
 
   /**
