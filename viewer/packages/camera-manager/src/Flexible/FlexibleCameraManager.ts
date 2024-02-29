@@ -189,12 +189,12 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     moveCameraTo(this, position, target, duration);
   }
 
-  public update(deltaTime: number, boundingBox: Box3): void {
+  public update(deltaTime: number, nearFarBoundingBox: Box3): void {
     // If the camera haven't set the position and target before, do it now
-    if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
+    if (this._nearAndFarNeedsUpdate || !nearFarBoundingBox.equals(this._currentBoundingBox)) {
       this._nearAndFarNeedsUpdate = false;
-      this._currentBoundingBox.copy(boundingBox);
-      this.updateCameraNearAndFar(boundingBox);
+      this._currentBoundingBox.copy(nearFarBoundingBox);
+      this.updateCameraNearAndFar(nearFarBoundingBox);
     }
     if (this.controls.isEnabled) {
       this.controls.update(deltaTime);
