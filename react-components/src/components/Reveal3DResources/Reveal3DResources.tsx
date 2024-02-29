@@ -18,7 +18,10 @@ import {
 } from './types';
 import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
 import { useCalculatePointCloudStyling } from '../../hooks/useCalculatePointCloudModelsStyling';
-import { type PointCloudModelStyling } from '../PointCloudContainer/useApplyPointCloudStyling';
+import {
+  type AnnotationIdStylingGroup,
+  type PointCloudModelStyling
+} from '../PointCloudContainer/useApplyPointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import {
   isAssetMappingStylingGroup,
@@ -74,7 +77,16 @@ export const Reveal3DResources = ({
     return false;
   });
 
-  const image360StyledGroup = instanceStyling?.filter(isImage360AssetStylingGroup) ?? EMPTY_ARRAY;
+  const image360StyledGroup =
+    instanceStyling
+      ?.filter(isImage360AssetStylingGroup)
+      .map((group) => {
+        return { assetIds: group.assetIds, style: group.style.image360 };
+      })
+      .filter(
+        (group): group is AnnotationIdStylingGroup & { assetIds: number[] } =>
+          group.style !== undefined
+      ) ?? EMPTY_ARRAY;
 
   const onModelLoaded = (): void => {
     onModelFailOrSucceed();

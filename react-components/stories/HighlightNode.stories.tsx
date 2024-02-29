@@ -88,7 +88,6 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const nodeData = useClickedNodeData();
 
   useEffect(() => {
-    console.log('Clicked node data', nodeData);
     if (nodeData?.fdmResult !== undefined) {
       setStylingGroups([
         {
@@ -138,7 +137,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       setStylingGroups([
         {
           assetIds: [assetId],
-          style: { color: new Color('#c5cbff'), visible: true }
+          style: { image360: { color: new Color('#c5cbff'), visible: true } }
         }
       ]);
     } else {

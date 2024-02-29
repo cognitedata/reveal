@@ -94,6 +94,7 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     }
     this._context = this._canvas.getContext('2d');
     this.addEventListeners();
+    this.updateAndRender(this._viewer.cameraManager.getCamera());
   }
 
   public get options(): AxisGizmoOptions {
@@ -127,14 +128,14 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     if (!this._viewer) {
       return;
     }
-    const cameraManager = this._viewer.cameraManager;
     const forward = axis.direction.clone().negate();
     const upAxis = axis.upAxis;
 
     forward.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     upAxis.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
-    const flexibleCameraManager = asFlexibleCameraManager(this._viewer.cameraManager);
+    const cameraManager = this._viewer.cameraManager;
+    const flexibleCameraManager = asFlexibleCameraManager(cameraManager);
     if (flexibleCameraManager) {
       flexibleCameraManager.rotateCameraTo(forward.negate(), this._options.animationDuration);
     } else {
