@@ -82,7 +82,8 @@ export {
   type Reveal3DResourcesProps,
   type FdmAssetStylingGroup,
   type AssetStylingGroup,
-  type DefaultResourceStyling
+  type DefaultResourceStyling,
+  type Image360AssetStylingGroup
 } from './components/Reveal3DResources/types';
 export {
   SceneContainer,
