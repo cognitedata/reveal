@@ -11,7 +11,6 @@ import {
   type Image360Collection
 } from '@cognite/reveal';
 import { fetchAssetForAssetIds } from './AnnotationModelUtils';
-import { Vector3 } from 'three';
 import { filterUndefined } from '../../utilities/filterUndefined';
 
 export class Image360AnnotationCache {
