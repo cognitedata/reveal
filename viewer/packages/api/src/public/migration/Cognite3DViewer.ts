@@ -196,9 +196,10 @@ export class Cognite3DViewer {
   /**
    * Reusable buffers used by functions in Cognite3dViewer to avoid allocations.
    */
-  private readonly _updateNearAndFarPlaneBuffers = {
-    combinedBbox: new THREE.Box3(),
-    bbox: new THREE.Box3()
+  private readonly _boundingBoxes = {
+    nearFarPlaneBoundingBox: new THREE.Box3(),
+    modelBoundingBox: new THREE.Box3(),
+    temporaryBox: new THREE.Box3()
   };
 
   /**
@@ -1570,10 +1571,13 @@ export class Cognite3DViewer {
       const camera = this.cameraManager.getCamera();
       TWEEN.update(time);
       this.recalculateBoundingBox();
-      this._activeCameraManager.update(
-        this.cameraManagerClock.getDelta(),
-        this._updateNearAndFarPlaneBuffers.combinedBbox
-      );
+
+      const innerCameraManager = this._activeCameraManager.innerCameraManager;
+      if (innerCameraManager instanceof FlexibleCameraManager) {
+        innerCameraManager.updateModelBoundingBox(this._boundingBoxes.modelBoundingBox);
+      }
+      this._activeCameraManager.update(this.cameraManagerClock.getDelta(), this._boundingBoxes.nearFarPlaneBoundingBox);
+
       this.revealManager.update(camera);
 
       const image360NeedsRedraw = this._image360ApiHelper?.needsRedraw ?? false;
@@ -1731,7 +1735,7 @@ export class Cognite3DViewer {
       return {
         intersection: null,
         pickedBoundingBox: undefined,
-        modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox
+        modelsBoundingBox: this._boundingBoxes.modelBoundingBox
       };
     }
     if (customObjectIntersection) {
@@ -1739,7 +1743,7 @@ export class Cognite3DViewer {
       return {
         intersection: customObjectIntersection,
         pickedBoundingBox: pickBoundingBox ? customObjectIntersection.boundingBox : undefined,
-        modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox
+        modelsBoundingBox: this._boundingBoxes.modelBoundingBox
       };
     }
     const getBoundingBox = async (intersection: Intersection | null): Promise<THREE.Box3 | undefined> => {
@@ -1754,7 +1758,7 @@ export class Cognite3DViewer {
     return {
       intersection: modelIntersection,
       pickedBoundingBox: pickBoundingBox ? await getBoundingBox(modelIntersection) : undefined,
-      modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox
+      modelsBoundingBox: this._boundingBoxes.modelBoundingBox
     };
   }
 
@@ -1765,27 +1769,31 @@ export class Cognite3DViewer {
       return;
     }
 
-    const { combinedBbox, bbox } = this._updateNearAndFarPlaneBuffers;
+    const { nearFarPlaneBoundingBox, modelBoundingBox, temporaryBox } = this._boundingBoxes;
+    nearFarPlaneBoundingBox.makeEmpty();
+    modelBoundingBox.makeEmpty();
 
-    combinedBbox.makeEmpty();
     this._models.forEach(model => {
-      model.getModelBoundingBox(bbox);
-      if (!bbox.isEmpty()) {
-        combinedBbox.union(bbox);
+      model.getModelBoundingBox(temporaryBox);
+      if (temporaryBox.isEmpty()) {
+        return;
       }
+      nearFarPlaneBoundingBox.union(temporaryBox);
+      modelBoundingBox.union(temporaryBox);
     });
     this._sceneHandler.customObjects.forEach(customObject => {
       if (!customObject.object.visible) {
         return;
       }
+      temporaryBox.setFromObject(customObject.object);
+      if (temporaryBox.isEmpty()) {
+        return;
+      }
+      nearFarPlaneBoundingBox.union(temporaryBox);
       if (!customObject.isPartOfBoundingBox) {
         return;
       }
-      bbox.setFromObject(customObject.object);
-      if (bbox.isEmpty()) {
-        return;
-      }
-      combinedBbox.union(bbox);
+      modelBoundingBox.union(temporaryBox);
     });
   }
 
