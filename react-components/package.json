@@ -74,7 +74,6 @@
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "latest",
-    "happy-dom": "^12.9.1",
     "locize-cli": "^7.14.6",
     "moq.ts": "^10.0.8",
     "playwright": "^1.39.0",
