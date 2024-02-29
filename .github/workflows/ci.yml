@@ -123,7 +123,7 @@ jobs:
           npx api-extractor run || (diff reveal.api.md api-extractor-temp/reveal.api.md && exit 1)
 
       - name: Upload dist/ artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: viewer
           path: viewer/dist/
@@ -203,7 +203,7 @@ jobs:
 
       - name: Upload image diffs for failed visual tests
         if: (steps.viewerVisualTests.outcome == 'failure')
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: image-diffs-${{ github.sha }}
           path: viewer/visual-tests/__diff_output__/*
@@ -317,7 +317,7 @@ jobs:
 
       - name: Upload documentation artifact
         if: ${{ contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: preview-docs
           path: documentation/build/
