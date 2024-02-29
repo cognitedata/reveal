@@ -223,7 +223,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Download viewer build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: viewer
           path: viewer/dist/
@@ -336,7 +336,7 @@ jobs:
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
 
       - name: Download documentation artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         if:
         with:
           name: preview-docs
