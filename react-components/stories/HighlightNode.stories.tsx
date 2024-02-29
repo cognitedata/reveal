@@ -88,7 +88,6 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const nodeData = useClickedNodeData();
 
   useEffect(() => {
-    console.log('Clicked node data', nodeData);
     if (nodeData?.fdmResult !== undefined) {
       setStylingGroups([
         {
