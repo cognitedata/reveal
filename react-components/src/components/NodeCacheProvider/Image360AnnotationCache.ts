@@ -72,48 +72,40 @@ export class Image360AnnotationCache {
   }
 
   private async getAssetWithAnnotationsMapped(
-    annotationsInfo: AssetAnnotationImage360Info[],
+    assetAnnotationImage360Infos: AssetAnnotationImage360Info[],
     assets: Map<number, Asset>
   ): Promise<Image360AnnotationAssetInfo[]> {
-    const assetsWithAnnotationsPromises = annotationsInfo
-      .filter((annotationInfo) => {
-        const assetId = annotationInfo?.annotationInfo?.data?.assetRef?.id;
+    const assetsWithAnnotationsPromises = assetAnnotationImage360Infos
+      .filter((assetAnnnotationImageInfo) => {
+        const assetId = assetAnnnotationImageInfo?.annotationInfo?.data?.assetRef?.id;
         return assetId !== undefined && assets.has(assetId);
       })
-      .map(async (annotationInfo) => {
-        const assetId = annotationInfo.annotationInfo.data.assetRef.id;
+      .map(async (assetAnnnotationImageInfo) => {
+        const assetId = assetAnnnotationImageInfo.annotationInfo.data.assetRef.id;
         if (assetId === undefined) {
           return undefined;
         }
+        const annotationId = assetAnnnotationImageInfo.annotationInfo.id;
         const asset = assets.get(assetId);
         if (asset === undefined) {
           return undefined;
         }
-        const transform = annotationInfo.imageEntity.transform;
-        const revisionAnnotations = await annotationInfo.imageRevision.getAnnotations();
+        const transform = assetAnnnotationImageInfo.imageEntity.transform;
+        const revisionAnnotations = await assetAnnnotationImageInfo.imageRevision.getAnnotations();
 
-        const centerPosition = new Vector3();
+        const filteredRevisionAnnotations = revisionAnnotations.find((revisionAnnotation) => {
+          return revisionAnnotation.annotation.id === annotationId;
+        });
 
-        for (const revisionAnnotation of revisionAnnotations) {
-          if (
-            assetId !== getAssetIdOrExternalIdFromImage360Annotation(revisionAnnotation.annotation)
-          ) {
-            continue;
-          }
-          const center = revisionAnnotation.getCenter().applyMatrix4(transform);
-          console.log('assetId, center', assetId, center);
-          if (center !== undefined) {
-            centerPosition.add(center);
-          }
-        }
-
-        if (centerPosition.length() === 0) {
+        if (filteredRevisionAnnotations === undefined) {
           return undefined;
         }
 
+        const centerPosition = filteredRevisionAnnotations.getCenter().applyMatrix4(transform);
+
         return {
           asset,
-          assetAnnotationImage360Info: annotationInfo,
+          assetAnnotationImage360Info: assetAnnnotationImageInfo,
           position: centerPosition
         };
       });

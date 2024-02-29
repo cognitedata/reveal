@@ -60,15 +60,7 @@ export const useImage360AnnotationMappingsForAssetIds = (
       const filteredAnnotationAssetInfo = annotationAssetInfo.filter((annotationInfo) => {
         return assetIds.includes(annotationInfo.asset.id);
       });
-      const uniqueAnnotationAssetInfo = Array.from(
-        filteredAnnotationAssetInfo
-          .reduce(
-            (map, item) => map.set(item.assetAnnotationImage360Info.annotationInfo.id, item),
-            new Map()
-          )
-          .values()
-      );
-      return uniqueAnnotationAssetInfo;
+      return filteredAnnotationAssetInfo;
     },
     {
       staleTime: Infinity,
