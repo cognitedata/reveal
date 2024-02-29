@@ -20,6 +20,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     '@typescript-eslint/no-misused-promises': 'off',
+    'no-console': [2, { allow: ['warn', 'error'] }],
     eqeqeq: ['error', 'always']
   },
   settings: {
