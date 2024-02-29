@@ -55,7 +55,7 @@ export const Main: Story = {
           <RevealResourcesFitCameraOnLoad
             resources={resources}
             onResourceLoadError={(resource, error) => {
-              console.log(
+              console.error(
                 `Failed to load resource ${JSON.stringify(resource)}: ${JSON.stringify(error)}`
               );
             }}
