@@ -3092,12 +3092,12 @@ __metadata:
   linkType: hard
 
 "@jridgewell/trace-mapping@npm:^0.3.20":
-  version: 0.3.24
-  resolution: "@jridgewell/trace-mapping@npm:0.3.24"
+  version: 0.3.23
+  resolution: "@jridgewell/trace-mapping@npm:0.3.23"
   dependencies:
     "@jridgewell/resolve-uri": ^3.1.0
     "@jridgewell/sourcemap-codec": ^1.4.14
-  checksum: 96f40a060a71a93b2f6c34dfc99370ed2078d6bf11b6b3c9077a0f81326f7fccc43ff5e2a08bf9de8b83431b9eee09706d2c54fd46150467659d2aa338406462
+  checksum: a4ebaf196a500c9a65a667ba873f7836ba76b0581ed1c6bd33450b8093182f1c4aeb9c66a4467419cffd15694faecfa027ffbeca3aea5de3d322aa7d6bc41802
   languageName: node
   linkType: hard
 
@@ -6542,9 +6542,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.668":
-  version: 1.4.689
-  resolution: "electron-to-chromium@npm:1.4.689"
-  checksum: b7f5242d8788132e8bf08f725c9711ff27474dc9f6b72cccf6b5ef22411f219d35747055fbc4e00c6286f4f8ddb3b625cd2724a0461b001e9832d212de2626d7
+  version: 1.4.687
+  resolution: "electron-to-chromium@npm:1.4.687"
+  checksum: c4c48db3aa1cc193d106aa3ea9244a1606e5c2873756ff7c8725d6178c903acd9a4c9fe9a613a85a7e9513fcbf3fb4d81832c0e2773419bea27a74b344d93853
   languageName: node
   linkType: hard
 
