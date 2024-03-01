@@ -2,14 +2,17 @@
  * Copyright 2024 Cognite AS
  */
 
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 import { AxisGizmoOptions, AxisGizmoTool } from '@cognite/reveal/tools';
 import { useReveal } from '..';
 
 export { AxisGizmoOptions };
 
-export const AxisGizmo = ({ options }: { options?: AxisGizmoOptions }) => {
+/**
+ * A React wrapper around the AxisGizmoTool from Reveal
+ */
+export const AxisGizmo = ({ options }: { options?: AxisGizmoOptions }): ReactNode => {
   const viewer = useReveal();
 
   useEffect(() => {
