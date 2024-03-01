@@ -112,10 +112,7 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     this._inDragging = true;
   }
 
-  private onPointerUp(event: PointerEvent) {
-    if (this._isMouseOver) {
-      event.stopPropagation();
-    }
+  private onPointerUp(_event: PointerEvent) {
     if (!this._inDragging) {
       return;
     }
@@ -355,24 +352,32 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
       this._context.globalAlpha = 1;
     }
     const { bubbleRadius, primaryLineWidth, secondaryLineWidth, bobbleLineWidth } = this._options;
+    const lineEnd = new Vector3();
     for (const axis of this._axes) {
+      this._context.globalAlpha = axis.getColorFraction();
       const lightColor = axis.getLightColorInHex();
+
+      // Calculate the end position of the axis line
+      const lineLength = this._center.distanceTo(axis.bubblePosition) - bubbleRadius;
+      lineEnd.subVectors(axis.bubblePosition, this._center).normalize().multiplyScalar(lineLength);
+      lineEnd.add(this._center);
 
       if (axis.isPrimary) {
         if (primaryLineWidth > 0) {
-          drawAxisLine(this._context, this._center, axis.bubblePosition, primaryLineWidth, lightColor);
+          drawAxisLine(this._context, this._center, lineEnd, primaryLineWidth, lightColor);
         }
         fillCircle(this._context, axis.bubblePosition, bubbleRadius, lightColor);
       } else {
         const darkColor = axis.getDarkColorInHex();
         if (secondaryLineWidth > 0) {
-          drawAxisLine(this._context, this._center, axis.bubblePosition, secondaryLineWidth, lightColor);
+          drawAxisLine(this._context, this._center, lineEnd, secondaryLineWidth, lightColor);
         }
         fillCircle(this._context, axis.bubblePosition, bubbleRadius, darkColor);
         if (bobbleLineWidth > 0) {
           drawCircle(this._context, axis.bubblePosition, bubbleRadius - 1, bobbleLineWidth, lightColor);
         }
       }
+      this._context.globalAlpha = 1;
       if (this._options.useGeoLabels || axis.isPrimary || this._selectedAxis === axis) {
         drawText(this._context, axis.label, axis.bubblePosition, this._options, this.getTextColor(axis));
       }
