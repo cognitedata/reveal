@@ -23,7 +23,7 @@ import {
   type Image360AssetStylingGroup,
   type AssetStylingGroup
 } from '../src/components/Reveal3DResources/types';
-import { type AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk/dist/src';
+import { type AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 
 const meta = {
   title: 'Example/HighlightNode',
