@@ -1727,7 +1727,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.5.0"
     "@cognite/cogs.js": "npm:^9.17.0"
-    "@cognite/reveal": "npm:^4.10.3"
+    "@cognite/reveal": "npm:^4.10.4"
     "@cognite/sdk": "npm:^8.2.0"
     "@playwright/test": "npm:^1.39.0"
     "@storybook/addon-essentials": "npm:7.6.17"
@@ -1783,16 +1783,16 @@ __metadata:
     vitest: "npm:^1.0.0"
   peerDependencies:
     "@cognite/cogs.js": ">=9"
-    "@cognite/reveal": ^4.10.3
+    "@cognite/reveal": ^4.10.4
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:^4.10.3":
-  version: 4.10.3
-  resolution: "@cognite/reveal@npm:4.10.3"
+"@cognite/reveal@npm:^4.10.4":
+  version: 4.10.4
+  resolution: "@cognite/reveal@npm:4.10.4"
   dependencies:
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:19.0.0"
@@ -1812,7 +1812,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.158.0
-  checksum: 10/0a3da926e226c47ba3aeb7969aca96fd26d206e0cfd2920f22cd81f24d7a8976509f4f42bbf87506635764dc8705bb29738df7e63aec288a288f634b619c2af2
+  checksum: 10/ad4a3436eebd3b044195a39eaaa25495bfe240fd28ddccd745007b98f942ab3a3e4da9a45a446ec049f1e5248f0cd21ca2e09850190ac3161d0cf804cc85a6de
   languageName: node
   linkType: hard
 
