@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { ReactNode, useEffect } from 'react';
+import { type ReactNode, useEffect } from 'react';
 
 import { AxisGizmoOptions, AxisGizmoTool } from '@cognite/reveal/tools';
 import { useReveal } from '..';
