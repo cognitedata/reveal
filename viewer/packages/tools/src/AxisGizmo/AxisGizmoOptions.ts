@@ -26,7 +26,7 @@ export class AxisGizmoOptions {
   public normalTextColor = '#151515';
   public selectedTextColor = '#FFFFFF';
   public focusCircleColor = '#888888';
-  public focusCircleAlpha = 0.33; // If 0 the focus circle is invisible
+  public focusCircleAlpha = 0.45; // If 0 the focus circle is invisible
   public fontYAdjust = 1;
   public lightColors = [0xf73c3c, 0x6ccb26, 0x178cf0]; // Light color for the X, Y and Z-axis
   public darkColors = [0x942424, 0x417a17, 0x0e5490]; // Dark color for the X, Y and Z-axis
