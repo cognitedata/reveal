@@ -430,12 +430,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       if (deltaPosition.x == 0 && deltaPosition.y == 0) {
         return;
       }
-      if (this._keyboard.isShiftPressed()) {
+      if (this._keyboard.isShiftPressedOnly()) {
         translator = undefined;
         // Zooming forward and backward
         deltaPosition.multiplyScalar(this._options.mouseDollySpeed);
         this.pan(0, 0, deltaPosition.y);
-      } else if (isRight || this._keyboard.isCtrlPressed()) {
+      } else if (isRight || this._keyboard.isCtrlPressedOnly()) {
         // Pan left, right, up or down
         if (translator == null) {
           translator = new FlexibleControlsTranslator(this);
