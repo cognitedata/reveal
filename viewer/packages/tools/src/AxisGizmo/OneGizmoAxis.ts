@@ -18,8 +18,6 @@ export class OneGizmoAxis {
   readonly label: string; // The label of the axis
   private readonly _lightColor: Color;
   private readonly _darkColor: Color;
-  private readonly _mixedLightColor: Color = new Color(); // Used to mix the light color with black
-  private readonly _mixedDarkColor: Color = new Color(); // Used to mix the dark color with black
 
   private constructor(axis: number, isPrimary: boolean, options: AxisGizmoOptions) {
     this.axis = axis;
@@ -38,33 +36,19 @@ export class OneGizmoAxis {
   }
 
   public getLightColorInHex(): string {
-    return '#' + this.getLightColor().getHexString();
+    return '#' + this._lightColor.getHexString();
   }
 
   public getDarkColorInHex(): string {
-    return '#' + this.getDarkColor().getHexString();
+    return '#' + this._darkColor.getHexString();
   }
 
-  private getLightColor(): Color {
-    // Mix the original color with black by the getColorFraction
-    this._mixedLightColor.copy(this._lightColor);
-    this._mixedLightColor.multiplyScalar(this.getColorFraction());
-    return this._mixedLightColor;
-  }
-
-  private getDarkColor(): Color {
-    // Mix the original color with black by the getColorFraction
-    this._mixedDarkColor.copy(this._darkColor);
-    this._mixedDarkColor.multiplyScalar(this.getColorFraction());
-    return this._mixedDarkColor;
-  }
-
-  private getColorFraction(): number {
+  public getColorFraction(): number {
     // Normalize between 1 and 0, since z is in range -1 to 1
     const mix = (this.bubblePosition.z + 1) / 2;
 
     // Interpolate this value lineary from minimum to 1:
-    const minimum = 0.2;
+    const minimum = 0.4;
     return minimum + (1 - minimum) * mix;
   }
 
