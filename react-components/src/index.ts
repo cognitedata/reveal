@@ -14,9 +14,11 @@ export { Image360CollectionContainer } from './components/Image360CollectionCont
 export { Image360HistoricalDetails } from './components/Image360HistoricalDetails/Image360HistoricalDetails';
 export { Image360Details } from './components/Image360Details/Image360Details';
 export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
+export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
+
 export { RevealToolbar, type RevealToolbarProps } from './components/RevealToolbar/RevealToolbar';
 export { RevealTopbar } from './components/RevealTopbar/RevealTopbar';
-export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
+export { AxisGizmo, AxisGizmoOptions } from './components/AxisGizmo';
 
 // Hooks
 export { useReveal } from './components/RevealCanvas/ViewerContext';
