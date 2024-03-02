@@ -39,7 +39,7 @@ const isEventCode = (value: string): value is EventCode => {
 
 export default class Keyboard {
   private readonly _keys = new Set<EventCode>();
-  private _isEnabled = false;
+  private _isEnabled = true;
   private readonly _domElement: HTMLElement;
 
   get isEnabled(): boolean {
@@ -60,7 +60,9 @@ export default class Keyboard {
 
   constructor(domElement: HTMLElement) {
     this._domElement = domElement;
-    this.isEnabled = true;
+    if (this._isEnabled) {
+      this.addEventListeners();
+    }
   }
 
   public isPressed(key: EventCode): boolean {
