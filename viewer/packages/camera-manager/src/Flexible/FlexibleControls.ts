@@ -409,13 +409,15 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._cameraVector.synchronizeEnd();
     switch (event.button) {
       case MOUSE.LEFT:
+        break;
+
       case MOUSE.RIGHT:
+        event.preventDefault();
         break;
 
       default:
         return;
     }
-    event.preventDefault();
     const mouseDragInfo = new MouseDragInfo(
       getMousePosition(this._domElement, event.clientX, event.clientY),
       event.button === MOUSE.RIGHT
@@ -512,11 +514,9 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
   };
 
-  private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
+  private readonly onFocusChanged = (_event: MouseEvent | TouchEvent | FocusEvent) => {
     if (!this.isEnabled) return;
-    if (event.type !== 'blur') {
-      this._keyboard.disabled = false;
-    }
+    this._keyboard.isEnabled = true;
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {
@@ -533,14 +533,14 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._domElement.addEventListener('wheel', this.onMouseWheel);
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
 
-    // canvas has no blur/focus by default, but it's possible to set tabindex on it,
+    // canvas has focus by default, but it's possible to set tabindex on it,
     // in that case events will be fired (we don't set tabindex here, but still support that case)
     this._domElement.addEventListener('focus', this.onFocusChanged);
-    this._domElement.addEventListener('blur', this.onFocusChanged);
+    this._domElement.addEventListener('pointerdown', this.onFocusChanged);
 
+    // These must be on the window
     window.addEventListener('pointermove', this.onPointerMove);
     window.addEventListener('pointerup', this.onPointerUp);
-    window.addEventListener('pointerdown', this.onFocusChanged);
   }
 
   private removeEventListeners() {
@@ -548,11 +548,10 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._domElement.removeEventListener('wheel', this.onMouseWheel);
     this._domElement.removeEventListener('contextmenu', this.onContextMenu);
     this._domElement.removeEventListener('focus', this.onFocusChanged);
-    this._domElement.removeEventListener('blur', this.onFocusChanged);
+    this._domElement.removeEventListener('pointerdown', this.onFocusChanged);
 
     window.removeEventListener('pointermove', this.onPointerMove);
     window.removeEventListener('pointerup', this.onPointerUp);
-    window.removeEventListener('pointerdown', this.onFocusChanged);
   }
 
   //================================================

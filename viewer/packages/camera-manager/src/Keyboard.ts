@@ -39,25 +39,28 @@ const isEventCode = (value: string): value is EventCode => {
 
 export default class Keyboard {
   private readonly _keys = new Set<EventCode>();
-  private _disabled = false;
+  private _isEnabled = false;
   private readonly _domElement: HTMLElement;
 
-  get disabled(): boolean {
-    return this._disabled;
+  get isEnabled(): boolean {
+    return this._isEnabled;
   }
 
-  set disabled(isDisabled: boolean) {
-    this._disabled = isDisabled;
-    if (isDisabled) {
-      this.removeEventListeners();
-    } else {
+  set isEnabled(value: boolean) {
+    if (this._isEnabled == value) {
+      return;
+    }
+    this._isEnabled = value;
+    if (this._isEnabled) {
       this.addEventListeners();
+    } else {
+      this.removeEventListeners();
     }
   }
 
   constructor(domElement: HTMLElement) {
     this._domElement = domElement;
-    this.addEventListeners();
+    this.isEnabled = true;
   }
 
   public isPressed(key: EventCode): boolean {

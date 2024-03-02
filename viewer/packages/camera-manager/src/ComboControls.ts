@@ -386,9 +386,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   };
 
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
-    if (event.type !== 'blur') {
-      this._keyboard.disabled = false;
-    }
+    this._keyboard.isEnabled = true;
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {
@@ -407,10 +405,9 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this._domElement.addEventListener('wheel', event => this.onMouseWheel(event));
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
 
-    // canvas has no blur/focus by default, but it's possible to set tabindex on it,
+    // canvas has focus by default, but it's possible to set tabindex on it,
     // in that case events will be fired (we don't set tabindex here, but still support that case)
     this._domElement.addEventListener('focus', this.onFocusChanged);
-    this._domElement.addEventListener('blur', this.onFocusChanged);
 
     window.addEventListener('pointerup', this.onPointerUp);
     window.addEventListener('pointerdown', this.onFocusChanged);
@@ -421,7 +418,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this._domElement.removeEventListener('wheel', this.onMouseWheel);
     this._domElement.removeEventListener('contextmenu', this.onContextMenu);
     this._domElement.removeEventListener('focus', this.onFocusChanged);
-    this._domElement.removeEventListener('blur', this.onFocusChanged);
 
     window.removeEventListener('pointerup', this.onPointerUp);
     window.removeEventListener('pointerdown', this.onFocusChanged);
