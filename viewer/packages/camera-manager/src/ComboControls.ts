@@ -387,6 +387,9 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
     this._keyboard.isEnabled = true;
+    if (event.type === 'focus') {
+      this._keyboard.clearPressedKeys();
+    }
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {

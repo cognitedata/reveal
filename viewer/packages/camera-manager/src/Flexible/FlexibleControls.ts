@@ -514,9 +514,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
   };
 
-  private readonly onFocusChanged = (_event: MouseEvent | TouchEvent | FocusEvent) => {
+  private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
     if (!this.isEnabled) return;
     this._keyboard.isEnabled = true;
+    if (event.type === 'focus') {
+      this._keyboard.clearPressedKeys();
+    }
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {

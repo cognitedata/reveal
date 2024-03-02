@@ -131,7 +131,7 @@ export default class Keyboard {
     this._keys.delete(event.code);
   };
 
-  private readonly clearPressedKeys = () => {
+  public readonly clearPressedKeys = (): void => {
     this._keys.clear();
   };
 }
