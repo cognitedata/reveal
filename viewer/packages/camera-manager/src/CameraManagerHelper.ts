@@ -88,7 +88,7 @@ export class CameraManagerHelper {
     let near = this.calculateCameraNear(camera, boundingBox, cameraPosition);
 
     // 2. Compute the far distance to the distance from camera to furthest
-    // corner of the boundingbox that is "in front" of the near plane
+    // corner of the bounding box that is "in front" of the near plane
     const far = this.calculateCameraFar(near, cameraPosition, cameraDirection, corners);
 
     // 3. Handle when camera is inside the model by adjusting the near value

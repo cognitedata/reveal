@@ -58,12 +58,15 @@ export type FdmAssetStylingGroup = {
 
 export type AssetStylingGroup = {
   assetIds: CogniteInternalId[];
-  style: { cad?: NodeAppearance; pointcloud?: NodeAppearance };
+  style: {
+    cad?: NodeAppearance;
+    pointcloud?: NodeAppearance;
+  };
 };
 
 export type Image360AssetStylingGroup = {
   assetIds: CogniteInternalId[];
-  style: Image360AnnotationAppearance;
+  style: { image360?: Image360AnnotationAppearance };
 };
 
 export type DefaultResourceStyling = {

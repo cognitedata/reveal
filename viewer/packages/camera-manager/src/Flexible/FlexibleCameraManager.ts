@@ -62,8 +62,8 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   private readonly _markers?: undefined | FlexibleCameraMarkers;
   private readonly _currentBoundingBox: Box3 = new Box3();
   private _isDisposed = false;
+  private _isEnableClickAndDoubleClick = true;
   private _nearAndFarNeedsUpdate = false;
-  private _isEnabled = true;
 
   // For the wheel event
   private _prevTime = 0;
@@ -189,18 +189,12 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     moveCameraTo(this, position, target, duration);
   }
 
-  public update(deltaTime: number, boundingBox: Box3): void {
+  public update(deltaTime: number, nearFarBoundingBox: Box3): void {
     // If the camera haven't set the position and target before, do it now
-    if (!this.controls.isInitialized) {
-      const { position, target } = fitCameraToBoundingBox(this.camera, boundingBox, 2);
-      this.setPositionAndTarget(position, target);
-      this.controls.isInitialized = true;
-    }
-    if (this._nearAndFarNeedsUpdate || !boundingBox.equals(this._currentBoundingBox)) {
+    if (this._nearAndFarNeedsUpdate || !nearFarBoundingBox.equals(this._currentBoundingBox)) {
       this._nearAndFarNeedsUpdate = false;
-      this._currentBoundingBox.copy(boundingBox);
-      this.updateCameraNearAndFar();
-      this.updateControlsSensitivity();
+      this._currentBoundingBox.copy(nearFarBoundingBox);
+      this.updateCameraNearAndFar(nearFarBoundingBox);
     }
     if (this.controls.isEnabled) {
       this.controls.update(deltaTime);
@@ -265,6 +259,16 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this._triggers.controlsTypeChange.subscribe(callback);
   }
 
+  public updateModelBoundingBox(modelBoundingBox: Box3): void {
+    // If the camera haven't set the position and target before, do it now
+    if (!this.controls.isInitialized) {
+      const { position, target } = fitCameraToBoundingBox(this.camera, modelBoundingBox, 2);
+      this.setPositionAndTarget(position, target);
+      this.controls.isInitialized = true;
+    }
+    this.updateControlsSensitivity(modelBoundingBox);
+  }
+
   //================================================
   // INSTANCE METHODS: Setters and getters
   //================================================
@@ -286,7 +290,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   }
 
   public get isEnabled(): boolean {
-    return this._isEnabled;
+    return this.controls.isEnabled;
+  }
+
+  public get isEnableClickAndDoubleClick(): boolean {
+    return this._isEnableClickAndDoubleClick;
   }
 
   public get isDisposed(): boolean {
@@ -294,8 +302,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   }
 
   private set isEnabled(value: boolean) {
-    this._isEnabled = value;
-    this.controls.isEnabled = true;
+    this.controls.isEnabled = value;
+  }
+
+  public set isEnableClickAndDoubleClick(value: boolean) {
+    this._isEnableClickAndDoubleClick = value;
   }
 
   private getPosition(): Vector3 {
@@ -304,14 +315,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
 
   private getTarget(): Vector3 {
     return this.controls.getTarget();
-  }
-
-  public getBoundingBoxDiagonal(): number {
-    return getDiagonal(this._currentBoundingBox);
-  }
-
-  public getHorizontalDiagonal(): number {
-    return getHorizontalDiagonal(this._currentBoundingBox);
   }
 
   public setPositionAndTarget(position: Vector3, target: Vector3): void {
@@ -412,14 +415,14 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   };
 
   private readonly onClick = async (event: PointerEventData) => {
-    if (!this.isEnabled) return;
+    if (!this.isEnabled || !this.isEnableClickAndDoubleClick) return;
     if (this.options.mouseClickType !== FlexibleMouseActionType.None) {
       await this.mouseAction(event, this.options.mouseClickType);
     }
   };
 
   private readonly onDoubleClick = async (event: PointerEventData) => {
-    if (!this.isEnabled) return;
+    if (!this.isEnabled || !this.isEnableClickAndDoubleClick) return;
     if (this.options.mouseDoubleClickType !== FlexibleMouseActionType.None) {
       await this.mouseAction(event, this.options.mouseDoubleClickType);
     }
@@ -507,7 +510,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   // INSTANCE METHODS: Updates
   //================================================
 
-  private updateCameraNearAndFar(): void {
+  private updateCameraNearAndFar(boundingBox: Box3): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this._isDisposed) {
       return;
@@ -515,10 +518,10 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     if (!this.options.automaticNearFarPlane) {
       return;
     }
-    CameraManagerHelper.updateCameraNearAndFar(this.camera, this._currentBoundingBox);
+    CameraManagerHelper.updateCameraNearAndFar(this.camera, boundingBox);
   }
 
-  private updateControlsSensitivity(): void {
+  private updateControlsSensitivity(boundingBox: Box3): void {
     if (this._isDisposed) {
       return;
     }
@@ -528,7 +531,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     // This is used to determine the speed of the camera when flying with ASDW.
     // We want to either let it be controlled by the near plane if we are far away,
     // but no more than a fraction of the bounding box of the system if inside
-    const diagonal = this.getHorizontalDiagonal();
+    const diagonal = getHorizontalDiagonal(boundingBox);
     const diagonalFraction = diagonal * this.options.sensitivityDiagonalFraction;
     const nearFraction = 0.1 * this.camera.near;
 

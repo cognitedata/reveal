@@ -2,11 +2,16 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type CogniteClient } from '@cognite/sdk';
+import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { type Image360AnnotationAssetInfo } from './types';
 import { getAssetIdOrExternalIdFromImage360Annotation } from './utils';
-import { type Cognite3DViewer, type Image360Collection } from '@cognite/reveal';
+import {
+  type AssetAnnotationImage360Info,
+  type Cognite3DViewer,
+  type Image360Collection
+} from '@cognite/reveal';
 import { fetchAssetForAssetIds } from './AnnotationModelUtils';
+import { filterUndefined } from '../../utilities/filterUndefined';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;
@@ -60,25 +65,51 @@ export class Image360AnnotationCache {
 
     const assetsArray = await fetchAssetForAssetIds(Array.from(filteredAssetIds), this._sdk);
     const assets = new Map(assetsArray.map((asset) => [asset.id, asset]));
+    const assetsWithAnnotations = await this.getAssetWithAnnotationsMapped(annotationsInfo, assets);
 
-    const assetsWithAnnotations: Image360AnnotationAssetInfo[] = annotationsInfo.reduce(
-      (acc: Image360AnnotationAssetInfo[], annotationInfo) => {
-        const assetId = annotationInfo.annotationInfo.data.assetRef.id;
-        if (assetId !== undefined && assets.has(assetId)) {
-          const asset = assets.get(assetId);
-          if (asset === undefined) {
-            return acc;
-          }
+    return assetsWithAnnotations;
+  }
 
-          acc.push({
-            asset,
-            assetAnnotationImage360Info: annotationInfo
-          });
+  private async getAssetWithAnnotationsMapped(
+    assetAnnotationImage360Infos: AssetAnnotationImage360Info[],
+    assets: Map<number, Asset>
+  ): Promise<Image360AnnotationAssetInfo[]> {
+    const assetsWithAnnotationsPromises = assetAnnotationImage360Infos
+      .filter((assetAnnnotationImageInfo) => {
+        const assetId = assetAnnnotationImageInfo?.annotationInfo?.data?.assetRef?.id;
+        return assetId !== undefined && assets.has(assetId);
+      })
+      .map(async (assetAnnnotationImageInfo) => {
+        const assetId = assetAnnnotationImageInfo.annotationInfo.data.assetRef.id;
+        if (assetId === undefined) {
+          return undefined;
         }
-        return acc;
-      },
-      []
-    );
+        const annotationId = assetAnnnotationImageInfo.annotationInfo.id;
+        const asset = assets.get(assetId);
+        if (asset === undefined) {
+          return undefined;
+        }
+        const transform = assetAnnnotationImageInfo.imageEntity.transform;
+        const revisionAnnotations = await assetAnnnotationImageInfo.imageRevision.getAnnotations();
+
+        const filteredRevisionAnnotations = revisionAnnotations.find((revisionAnnotation) => {
+          return revisionAnnotation.annotation.id === annotationId;
+        });
+
+        if (filteredRevisionAnnotations === undefined) {
+          return undefined;
+        }
+
+        const centerPosition = filteredRevisionAnnotations.getCenter().applyMatrix4(transform);
+
+        return {
+          asset,
+          assetAnnotationImage360Info: assetAnnnotationImageInfo,
+          position: centerPosition
+        };
+      });
+
+    const assetsWithAnnotations = filterUndefined(await Promise.all(assetsWithAnnotationsPromises));
 
     return assetsWithAnnotations;
   }
