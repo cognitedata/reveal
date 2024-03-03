@@ -1,10 +1,10 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
 import { type EdgeItem } from '../../utilities/FdmSDK';
-import { type FdmPropertyType } from '../Reveal3DResources/types';
+import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
@@ -154,10 +154,16 @@ export type RuleAndStyleIndex = {
   ruleOutputParams: RuleOutput;
 };
 
+export type AssetStylingGroupAndStyleIndex = {
+  styleIndex: TreeIndexNodeCollection;
+  assetStylingGroup: AssetStylingGroup;
+};
+
 export type NodeAndRange = {
   treeIndex: number;
   nodeId: number;
   subtreeRange: NumericRange;
+  assetId: number;
 };
 
 export type RuleAndEnabled = {

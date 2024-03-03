@@ -1,5 +1,5 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 import { useEffect, type ReactElement, useState } from 'react';
 
@@ -7,24 +7,30 @@ import {
   CogniteCadModel,
   TreeIndexNodeCollection,
   type CogniteModel,
-  NumericRange
+  NumericRange,
+  type NodeAppearance
 } from '@cognite/reveal';
 import { useAllMappedEquipmentAssetMappings } from '../..';
 import { Color } from 'three';
-import { type RuleOutputSet } from './types';
+import { type AssetStylingGroupAndStyleIndex } from './types';
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { type AssetMapping3D } from '@cognite/sdk/dist/src';
 import { filterUndefined } from '../../utilities/filterUndefined';
+import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
 
 export type ColorOverlayProps = {
-  ruleSet: RuleOutputSet | undefined;
+  ruleSet: Record<string, any> | FdmPropertyType<Record<string, any>> | undefined;
+  onRuleSetChanged?: (currentStylings: AssetStylingGroupAndStyleIndex[] | undefined) => void;
 };
 
-export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactElement | undefined {
+export function RuleBasedOutputsSelector({
+  ruleSet,
+  onRuleSetChanged
+}: ColorOverlayProps): ReactElement | undefined {
   const models = use3dModels();
 
-  const [nodeCollectionStylings, setNodeCollectionStylings] = useState<TreeIndexNodeCollection[]>();
+  const [stylingGroups, setStylingsGroups] = useState<AssetStylingGroupAndStyleIndex[]>();
 
   const {
     data: assetMappings,
@@ -35,29 +41,29 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
 
   const cleanupNodeStylings = (
     models: CogniteModel[],
-    ruleBasedOutputNodeStyling: TreeIndexNodeCollection[] | undefined
+    ruleBasedOutputStylingGroups: AssetStylingGroupAndStyleIndex[] | undefined
   ): void => {
     // clean up the appearance
     models.forEach((model) => {
       if (!(model instanceof CogniteCadModel)) {
         return undefined;
       }
-      ruleBasedOutputNodeStyling?.forEach((ruleBasedOutputNodeStyling) => {
+      ruleBasedOutputStylingGroups?.forEach((ruleBasedOutputStylingGroup) => {
         const index = model.styledNodeCollections.findIndex(
-          (nodeStyling) => nodeStyling.nodeCollection === ruleBasedOutputNodeStyling
+          (nodeStyling) => nodeStyling.nodeCollection === ruleBasedOutputStylingGroup.styleIndex
         );
         if (index !== -1) {
-          model.unassignStyledNodeCollection(ruleBasedOutputNodeStyling);
+          model.unassignStyledNodeCollection(ruleBasedOutputStylingGroup.styleIndex);
         }
       });
     });
-    setNodeCollectionStylings([]);
+    setStylingsGroups([]);
   };
 
   const applyBasedNodeStyling = (
     model: CogniteModel,
     assetMappings: AssetMapping3D[]
-  ): TreeIndexNodeCollection | undefined => {
+  ): AssetStylingGroupAndStyleIndex | undefined => {
     if (!(model instanceof CogniteCadModel)) {
       return;
     }
@@ -67,15 +73,20 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
       const range = new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize);
       baseNodeStyling.getIndexSet().addRange(range);
     });
+    const nodeAppearance: NodeAppearance = {
+      color: new Color('#efefef')
+    };
+    const assetStylingGroup: AssetStylingGroup = {
+      assetIds: assetMappings.map((node) => node.assetId),
+      style: { cad: nodeAppearance }
+    };
 
-    model.assignStyledNodeCollection(
-      baseNodeStyling,
-      {
-        color: new Color('#efefef')
-      },
-      1
-    );
-    return baseNodeStyling;
+    const baseStylingGroup: AssetStylingGroupAndStyleIndex = {
+      styleIndex: baseNodeStyling,
+      assetStylingGroup
+    };
+
+    return baseStylingGroup;
   };
 
   useEffect(() => {
@@ -85,9 +96,13 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
   }, [isFetching, hasNextPage, fetchNextPage]);
 
   useEffect(() => {
-    if (assetMappings === undefined || isFetching) return;
+    if (onRuleSetChanged !== undefined) onRuleSetChanged(stylingGroups);
+  }, [stylingGroups]);
 
-    cleanupNodeStylings(models, nodeCollectionStylings);
+  useEffect(() => {
+    if (assetMappings === undefined || models === undefined || isFetching) return;
+
+    setStylingsGroups([]);
 
     if (ruleSet === undefined) return;
 
@@ -115,7 +130,7 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
         ruleSet
       );
 
-      const ruleNodeCollectionStylings: TreeIndexNodeCollection[] = [];
+      const ruleNodeCollectionStylings: AssetStylingGroupAndStyleIndex[] = [];
       for await (const styling of collectionStylings) {
         ruleNodeCollectionStylings.push(styling);
       }
@@ -124,7 +139,7 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
         basedNodeStyling,
         ...ruleNodeCollectionStylings
       ]);
-      setNodeCollectionStylings(allNodeCollectionStyling);
+      setStylingsGroups(allNodeCollectionStyling);
     };
 
     models.forEach(async (model) => {
@@ -133,7 +148,7 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
       }
       await initializeRuleBasedOutputs(model);
     });
-  }, [assetMappings, ruleSet, models]);
+  }, [assetMappings, ruleSet]);
 
   return <></>;
 }

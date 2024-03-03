@@ -14,11 +14,20 @@ import {
 } from '@cognite/cogs.js';
 
 import { RuleBasedOutputsSelector } from '../RuleBasedOutputs/RuleBasedOutputsSelector';
-import { type RuleAndEnabled } from '../RuleBasedOutputs/types';
+import {
+  type AssetStylingGroupAndStyleIndex,
+  type RuleAndEnabled
+} from '../RuleBasedOutputs/types';
 import { useTranslation } from '../i18n/I18n';
 import { useFetchRuleInstances } from '../RuleBasedOutputs/hooks/useFetchRuleInstances';
+import { type AssetStylingGroup } from '../..';
 
-export const RuleBasedOutputsButton = (): ReactElement => {
+type RuleBasedOutputsButtonProps = {
+  onRuleSetStylingChanged?: (stylings: AssetStylingGroup[] | undefined) => void;
+};
+export const RuleBasedOutputsButton = ({
+  onRuleSetStylingChanged
+}: RuleBasedOutputsButtonProps): ReactElement => {
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
   const [ruleInstances, setRuleInstances] = useState<RuleAndEnabled[]>();
   const { t } = useTranslation();
@@ -46,10 +55,16 @@ export const RuleBasedOutputsButton = (): ReactElement => {
     selectedRule.isEnabled = data.target.checked;
   };
 
+  const ruleSetStylingChanged = (
+    stylingGroups: AssetStylingGroupAndStyleIndex[] | undefined
+  ): void => {
+    const assetStylingGroups = stylingGroups?.map((group) => group.assetStylingGroup);
+    if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(assetStylingGroups);
+  };
   return (
     <>
       <CogsTooltip
-        content={t('RULEBASED_TOOLTIP', 'Rule Based Color Overlays')}
+        content={t('RULESET_SELECT_HEADER', 'Select color overlay')}
         placement="right"
         appendTo={document.body}>
         <Dropdown
@@ -84,7 +99,10 @@ export const RuleBasedOutputsButton = (): ReactElement => {
         </Dropdown>
       </CogsTooltip>
       {ruleInstances !== undefined && ruleInstances?.length > 0 && (
-        <RuleBasedOutputsSelector ruleSet={currentRuleSetEnabled?.rule.properties} />
+        <RuleBasedOutputsSelector
+          onRuleSetChanged={ruleSetStylingChanged}
+          ruleSet={currentRuleSetEnabled?.rule.properties}
+        />
       )}
     </>
   );
