@@ -39,27 +39,6 @@ export function RuleBasedOutputsSelector({
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(models);
 
-  const cleanupNodeStylings = (
-    models: CogniteModel[],
-    ruleBasedOutputStylingGroups: AssetStylingGroupAndStyleIndex[] | undefined
-  ): void => {
-    // clean up the appearance
-    models.forEach((model) => {
-      if (!(model instanceof CogniteCadModel)) {
-        return undefined;
-      }
-      ruleBasedOutputStylingGroups?.forEach((ruleBasedOutputStylingGroup) => {
-        const index = model.styledNodeCollections.findIndex(
-          (nodeStyling) => nodeStyling.nodeCollection === ruleBasedOutputStylingGroup.styleIndex
-        );
-        if (index !== -1) {
-          model.unassignStyledNodeCollection(ruleBasedOutputStylingGroup.styleIndex);
-        }
-      });
-    });
-    setStylingsGroups([]);
-  };
-
   const applyBasedNodeStyling = (
     model: CogniteModel,
     assetMappings: AssetMapping3D[]
