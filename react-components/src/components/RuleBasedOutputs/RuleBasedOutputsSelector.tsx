@@ -8,7 +8,6 @@ import { useAllMappedEquipmentAssetMappings } from '../..';
 import { type AssetStylingGroupAndStyleIndex } from './types';
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
-import { filterUndefined } from '../../utilities/filterUndefined';
 import { type FdmPropertyType } from '../Reveal3DResources/types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 
