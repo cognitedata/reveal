@@ -48,11 +48,11 @@ export const RuleBasedOutputsButton = ({
       return item.rule.properties.id === data.target.id && data.target.checked;
     });
 
-    setRuleInstances(ruleInstances);
+    if (selectedRule !== undefined) {
+      selectedRule.isEnabled = data.target.checked;
+    }
     setCurrentRuleSetEnabled(selectedRule);
-
-    if (selectedRule === undefined) return;
-    selectedRule.isEnabled = data.target.checked;
+    setRuleInstances(ruleInstances);
   };
 
   const ruleSetStylingChanged = (
