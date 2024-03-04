@@ -173,26 +173,27 @@ export const generateRuleBasedOutputs = async (
   const outputType = 'color'; // for now it only supports colors as the output
 
   const ruleWithOutputs = ruleSet?.rulesWithOutputs;
+  return await Promise.all(
+    ruleWithOutputs?.map(async (ruleWithOutput: { rule: Rule; outputs: RuleOutput[] }) => {
+      const { rule, outputs } = ruleWithOutput;
+      // Starting Expression
+      const expression = rule.expression;
 
-  return ruleWithOutputs?.map(async (ruleWithOutput: { rule: Rule; outputs: RuleOutput[] }) => {
-    const { rule, outputs } = ruleWithOutput;
-    // Starting Expression
-    const expression = rule.expression;
+      const outputSelected = outputs.find(
+        (output: { type: string }) => output.type === outputType
+      ) as ColorRuleOutput;
 
-    const outputSelected = outputs.find(
-      (output: { type: string }) => output.type === outputType
-    ) as ColorRuleOutput;
+      if (outputSelected === undefined) return;
 
-    if (outputSelected === undefined) return;
-
-    return await analyzeNodesAgainstExpression({
-      model,
-      contextualizedAssetNodes,
-      assetMappings,
-      expression,
-      outputSelected
-    });
-  });
+      return await analyzeNodesAgainstExpression({
+        model,
+        contextualizedAssetNodes,
+        assetMappings,
+        expression,
+        outputSelected
+      });
+    })
+  );
 };
 
 const analyzeNodesAgainstExpression = async ({

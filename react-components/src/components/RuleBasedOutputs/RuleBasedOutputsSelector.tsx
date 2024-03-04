@@ -3,21 +3,14 @@
  */
 import { useEffect, type ReactElement, useState } from 'react';
 
-import {
-  CogniteCadModel,
-  TreeIndexNodeCollection,
-  type CogniteModel,
-  NumericRange,
-  type NodeAppearance
-} from '@cognite/reveal';
+import { CogniteCadModel } from '@cognite/reveal';
 import { useAllMappedEquipmentAssetMappings } from '../..';
-import { Color } from 'three';
 import { type AssetStylingGroupAndStyleIndex } from './types';
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
-import { type AssetMapping3D } from '@cognite/sdk/dist/src';
 import { filterUndefined } from '../../utilities/filterUndefined';
-import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
+import { type FdmPropertyType } from '../Reveal3DResources/types';
+import { EMPTY_ARRAY } from '../../utilities/constants';
 
 export type ColorOverlayProps = {
   ruleSet: Record<string, any> | FdmPropertyType<Record<string, any>> | undefined;
@@ -39,35 +32,6 @@ export function RuleBasedOutputsSelector({
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(models);
 
-  const applyBasedNodeStyling = (
-    model: CogniteModel,
-    assetMappings: AssetMapping3D[]
-  ): AssetStylingGroupAndStyleIndex | undefined => {
-    if (!(model instanceof CogniteCadModel)) {
-      return;
-    }
-
-    const baseNodeStyling = new TreeIndexNodeCollection();
-    assetMappings?.forEach((assetMapping) => {
-      const range = new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize);
-      baseNodeStyling.getIndexSet().addRange(range);
-    });
-    const nodeAppearance: NodeAppearance = {
-      color: new Color('#efefef')
-    };
-    const assetStylingGroup: AssetStylingGroup = {
-      assetIds: assetMappings.map((node) => node.assetId),
-      style: { cad: nodeAppearance }
-    };
-
-    const baseStylingGroup: AssetStylingGroupAndStyleIndex = {
-      styleIndex: baseNodeStyling,
-      assetStylingGroup
-    };
-
-    return baseStylingGroup;
-  };
-
   useEffect(() => {
     if (!isFetching && hasNextPage === true) {
       void fetchNextPage();
@@ -81,7 +45,7 @@ export function RuleBasedOutputsSelector({
   useEffect(() => {
     if (assetMappings === undefined || models === undefined || isFetching) return;
 
-    setStylingsGroups([]);
+    setStylingsGroups(EMPTY_ARRAY);
 
     if (ruleSet === undefined) return;
 
@@ -100,8 +64,6 @@ export function RuleBasedOutputsSelector({
           .map((item) => item.assets)
           .flat() ?? [];
 
-      const basedNodeStyling = applyBasedNodeStyling(model, flatMappings);
-
       const collectionStylings = await generateRuleBasedOutputs(
         model,
         contextualizedAssetNodes,
@@ -109,16 +71,7 @@ export function RuleBasedOutputsSelector({
         ruleSet
       );
 
-      const ruleNodeCollectionStylings: AssetStylingGroupAndStyleIndex[] = [];
-      for await (const styling of collectionStylings) {
-        ruleNodeCollectionStylings.push(styling);
-      }
-
-      const allNodeCollectionStyling = filterUndefined([
-        basedNodeStyling,
-        ...ruleNodeCollectionStylings
-      ]);
-      setStylingsGroups(allNodeCollectionStyling);
+      setStylingsGroups(collectionStylings);
     };
 
     models.forEach(async (model) => {
