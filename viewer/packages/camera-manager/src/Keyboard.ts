@@ -39,25 +39,30 @@ const isEventCode = (value: string): value is EventCode => {
 
 export default class Keyboard {
   private readonly _keys = new Set<EventCode>();
-  private _disabled = false;
+  private _isEnabled = true;
   private readonly _domElement: HTMLElement;
 
-  get disabled(): boolean {
-    return this._disabled;
+  get isEnabled(): boolean {
+    return this._isEnabled;
   }
 
-  set disabled(isDisabled: boolean) {
-    this._disabled = isDisabled;
-    if (isDisabled) {
-      this.removeEventListeners();
-    } else {
+  set isEnabled(value: boolean) {
+    if (this._isEnabled == value) {
+      return;
+    }
+    this._isEnabled = value;
+    if (this._isEnabled) {
       this.addEventListeners();
+    } else {
+      this.removeEventListeners();
     }
   }
 
   constructor(domElement: HTMLElement) {
     this._domElement = domElement;
-    this.addEventListeners();
+    if (this._isEnabled) {
+      this.addEventListeners();
+    }
   }
 
   public isPressed(key: EventCode): boolean {
@@ -68,8 +73,16 @@ export default class Keyboard {
     return this.isPressed('ShiftLeft') || this.isPressed('ShiftRight');
   }
 
+  public isShiftPressedOnly(): boolean {
+    return this._keys.size === 1 && this.isShiftPressed();
+  }
+
   public isCtrlPressed(): boolean {
     return this.isPressed('ControlLeft') || this.isPressed('ControlRight');
+  }
+
+  public isCtrlPressedOnly(): boolean {
+    return this._keys.size === 1 && this.isCtrlPressed();
   }
 
   public isAltPressed(): boolean {
@@ -112,17 +125,15 @@ export default class Keyboard {
 
   private readonly onKeyDown = (event: KeyboardEvent) => {
     if (!isEventCode(event.code)) return;
-
     this._keys.add(event.code);
   };
 
   private readonly onKeyUp = (event: KeyboardEvent) => {
     if (!isEventCode(event.code)) return;
-
     this._keys.delete(event.code);
   };
 
-  private readonly clearPressedKeys = () => {
+  public readonly clearPressedKeys = (): void => {
     this._keys.clear();
   };
 }

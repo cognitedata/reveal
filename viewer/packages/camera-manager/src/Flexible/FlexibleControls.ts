@@ -72,6 +72,9 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   private readonly _reusableVector3s = new ReusableVector3s();
   private readonly _rotationHelper = new FlexibleControlsRotationHelper();
 
+  // Used in mouse move, if not dragging it is undefined
+  private _mouseDragInfo: MouseDragInfo | undefined = undefined;
+
   //        FlexibleControlsType.OrbitInCenter
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
@@ -389,85 +392,90 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   //================================================
 
   private readonly onPointerDown = async (event: PointerEvent) => {
-    if (!this.isEnabled) return;
-    switch (event.pointerType) {
-      case 'mouse':
-        await this.onMouseDown(event);
-        break;
-      case 'touch':
-        this._pointEventCache.push(event);
-        this.onTouchStart(event);
-        break;
-      default:
-        break;
+    if (!this.isEnabled) {
+      return;
+    }
+    if (isMouse(event)) {
+      await this.onMouseDown(event);
+    } else if (isTouch(event)) {
+      this.onTouchStart(event);
     }
   };
+
   private readonly onMouseDown = async (event: PointerEvent) => {
-    if (!this.isEnabled) return;
+    if (!this.isEnabled) {
+      return;
+    }
     this._cameraVector.synchronizeEnd();
     switch (event.button) {
-      case MOUSE.LEFT: {
-        await this.startMouse(event, false);
+      case MOUSE.LEFT:
         break;
-      }
-      case MOUSE.RIGHT: {
+
+      case MOUSE.RIGHT:
         event.preventDefault();
-        await this.startMouse(event, true);
         break;
-      }
+
       default:
-        break;
+        return;
     }
+    const mouseDragInfo = new MouseDragInfo(
+      getMousePosition(this._domElement, event.clientX, event.clientY),
+      event.button === MOUSE.RIGHT
+    );
+    this._mouseDragInfo = mouseDragInfo;
   };
 
-  private async startMouse(initialEvent: PointerEvent, isRight: boolean): Promise<void> {
-    let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
-    let translator: FlexibleControlsTranslator | undefined;
+  private readonly onPointerMove = async (event: PointerEvent) => {
+    if (!this._mouseDragInfo || !this.isEnabled || !isMouse(event)) {
+      return;
+    }
+    if (!isPressed(event)) {
+      if (this._mouseDragInfo) {
+        // No buttons is pressed, and still in mouse dragging, issue a onPointerUp()
+        // This can happend when you move the mouse outside the window and release the mouse button
+        // It shouldn't, but it is dependent of the context where the viewer is used.
+        this.onPointerUp(event);
+      }
+      return;
+    }
+    if (event.button === MOUSE.LEFT || event.button === MOUSE.RIGHT) {
+      this.onPointerMove(event);
+    }
+    const position = this.getMousePosition(event);
+    const deltaPosition = position.clone().sub(this._mouseDragInfo.prevPosition);
+    if (deltaPosition.x == 0 && deltaPosition.y == 0) {
+      return;
+    }
+    const { isRight } = this._mouseDragInfo;
+    let { translator } = this._mouseDragInfo;
 
-    const onMouseMove = async (event: PointerEvent) => {
-      const position = this.getMousePosition(event);
-      const deltaPosition = position.clone().sub(prevPosition);
-      if (deltaPosition.x == 0 && deltaPosition.y == 0) {
-        return;
+    if (this._keyboard.isShiftPressedOnly()) {
+      translator = undefined;
+      // Zooming forward and backward
+      deltaPosition.multiplyScalar(this._options.mouseDollySpeed);
+      this.pan(0, 0, deltaPosition.y);
+    } else if (isRight || this._keyboard.isCtrlPressedOnly()) {
+      // Pan left, right, up or down
+      if (!translator) {
+        translator = new FlexibleControlsTranslator(this);
+        await translator.initialize(event);
       }
-      if (this._keyboard.isShiftPressed()) {
-        translator = undefined;
-        // Zooming forward and backward
-        deltaPosition.multiplyScalar(this._options.mouseDollySpeed);
-        this.pan(0, 0, deltaPosition.y);
-      } else if (isRight || this._keyboard.isCtrlPressed()) {
-        // Pan left, right, up or down
-        if (translator == null) {
-          translator = new FlexibleControlsTranslator(this);
-          await translator.initialize(event);
-        }
-        if (!translator.translate(event)) {
-          // If not, translate in a simpler way
-          deltaPosition.multiplyScalar(this._options.mousePanSpeed);
-          this.pan(deltaPosition.x, deltaPosition.y, 0);
-        }
-      } else if (!isRight) {
-        translator = undefined;
-        this.rotate(deltaPosition);
+      if (!translator.translate(event)) {
+        // If not, translate in a simpler way
+        deltaPosition.multiplyScalar(this._options.mousePanSpeed);
+        this.pan(deltaPosition.x, deltaPosition.y, 0);
       }
-      prevPosition = position;
-    };
-    const onMouseUp = () => {
-      window.removeEventListener('pointermove', onMouseMove);
-      window.removeEventListener('pointerup', onMouseUp);
-    };
-    window.addEventListener('pointermove', onMouseMove, { passive: false });
-    window.addEventListener('pointerup', onMouseUp, { passive: false });
-  }
+    } else if (!isRight) {
+      translator = undefined;
+      this.rotate(deltaPosition);
+    }
+    this._mouseDragInfo.update(position, translator);
+  };
 
   private readonly onPointerUp = (event: PointerEvent) => {
-    if (!this.isEnabled) return;
-    switch (event.pointerType) {
-      case 'touch':
-        remove(this._pointEventCache, ev => ev.pointerId === event.pointerId);
-        break;
-      default:
-        break;
+    this._mouseDragInfo = undefined;
+    if (isTouch(event)) {
+      remove(this._pointEventCache, ev => ev.pointerId === event.pointerId);
     }
   };
 
@@ -508,8 +516,9 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
     if (!this.isEnabled) return;
-    if (event.type !== 'blur') {
-      this._keyboard.disabled = false;
+    this._keyboard.isEnabled = true;
+    if (event.type === 'focus') {
+      this._keyboard.clearPressedKeys();
     }
   };
 
@@ -527,13 +536,14 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._domElement.addEventListener('wheel', this.onMouseWheel);
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
 
-    // canvas has no blur/focus by default, but it's possible to set tabindex on it,
+    // canvas has focus by default, but it's possible to set tabindex on it,
     // in that case events will be fired (we don't set tabindex here, but still support that case)
     this._domElement.addEventListener('focus', this.onFocusChanged);
-    this._domElement.addEventListener('blur', this.onFocusChanged);
+    this._domElement.addEventListener('pointerdown', this.onFocusChanged);
 
+    // These must be on the window
+    window.addEventListener('pointermove', this.onPointerMove);
     window.addEventListener('pointerup', this.onPointerUp);
-    window.addEventListener('pointerdown', this.onFocusChanged);
   }
 
   private removeEventListeners() {
@@ -541,10 +551,10 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._domElement.removeEventListener('wheel', this.onMouseWheel);
     this._domElement.removeEventListener('contextmenu', this.onContextMenu);
     this._domElement.removeEventListener('focus', this.onFocusChanged);
-    this._domElement.removeEventListener('blur', this.onFocusChanged);
+    this._domElement.removeEventListener('pointerdown', this.onFocusChanged);
 
+    window.removeEventListener('pointermove', this.onPointerMove);
     window.removeEventListener('pointerup', this.onPointerUp);
-    window.removeEventListener('pointerdown', this.onFocusChanged);
   }
 
   //================================================
@@ -940,4 +950,32 @@ function getWheelDelta(event: WheelEvent): number {
  */
 function getTimeScale(deltaTimeS: number): number {
   return deltaTimeS * TARGET_FPS;
+}
+
+export function isMouse(event: PointerEvent): boolean {
+  return event.pointerType === 'mouse';
+}
+
+export function isTouch(event: PointerEvent): boolean {
+  return event.pointerType === 'touch';
+}
+
+export function isPressed(event: PointerEvent): boolean {
+  return event.buttons !== 0;
+}
+
+// helper class from mouseDown, mouseMove and mouseUp
+// It keeps track of the previous position and how it is translated
+class MouseDragInfo {
+  public constructor(prevPosition: Vector2, isRight: boolean) {
+    this.prevPosition = prevPosition;
+    this.isRight = isRight;
+  }
+  public update(prevPosition: Vector2, translator: FlexibleControlsTranslator | undefined): void {
+    this.prevPosition.copy(prevPosition);
+    this.translator = translator;
+  }
+  public readonly prevPosition: Vector2;
+  public readonly isRight: boolean = false;
+  public translator: FlexibleControlsTranslator | undefined = undefined;
 }
