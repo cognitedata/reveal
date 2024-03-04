@@ -566,7 +566,7 @@ __metadata:
     "@types/jsdom": "npm:21.1.6"
     "@types/lodash": "npm:4.14.202"
     "@types/mixpanel-browser": "npm:2.49.0"
-    "@types/node": "npm:18.19.20"
+    "@types/node": "npm:18.19.21"
     "@types/random-seed": "npm:0.3.5"
     "@types/skmeans": "npm:0.11.7"
     "@types/stats": "npm:0.16.30"
@@ -605,7 +605,7 @@ __metadata:
     loglevel: "npm:1.9.1"
     mixpanel-browser: "npm:2.49.0"
     moq.ts: "npm:10.0.8"
-    nock: "npm:13.5.3"
+    nock: "npm:13.5.4"
     path-browserify: "npm:1.0.1"
     prettier: "npm:3.2.5"
     process: "npm:0.11.10"
@@ -2050,12 +2050,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.19.20":
-  version: 18.19.20
-  resolution: "@types/node@npm:18.19.20"
+"@types/node@npm:18.19.21":
+  version: 18.19.21
+  resolution: "@types/node@npm:18.19.21"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/10afaee6ec3d56e8627cf574f87439a9199502b0097b7878f59a8a56bc2d46997f03afed9c5223074224dff28e11e432b9d6c75dd4be0daf548ab3dceb126d87
+  checksum: 10/3a5c5841f294bc35b5b416a32764b5c0c2f22f4cef48cb7d2e3b4e068a52d5857e50da8e6e0685e743127c70344301c833849a3904ce3bd3f67448da5e85487a
   languageName: node
   linkType: hard
 
@@ -8254,14 +8254,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:13.5.3":
-  version: 13.5.3
-  resolution: "nock@npm:13.5.3"
+"nock@npm:13.5.4":
+  version: 13.5.4
+  resolution: "nock@npm:13.5.4"
   dependencies:
     debug: "npm:^4.1.0"
     json-stringify-safe: "npm:^5.0.1"
     propagate: "npm:^2.0.0"
-  checksum: 10/a5766a71e5a561e0cb96941748480decd17c4c07413b17b79fa2ac544964182fdb649f28f5c4fc4d4ce7a19be6ea67052c864319579991cc4130238d447052b3
+  checksum: 10/75bad391bae4efb81b742734af5f2d87309cd93d3ca6b78372fd37946d78ccb254d79104676619866915e6734abfc1b00fee2aa42073a4843ca3c746aad35a4d
   languageName: node
   linkType: hard
 
