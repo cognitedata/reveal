@@ -1,22 +1,28 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
-import { useEffect, type ReactElement } from 'react';
+import { useEffect, type ReactElement, useState } from 'react';
 
-import { CogniteCadModel, type CogniteModel } from '@cognite/reveal';
+import { CogniteCadModel } from '@cognite/reveal';
 import { useAllMappedEquipmentAssetMappings } from '../..';
-import { Color } from 'three';
-import { type RuleOutputSet } from './types';
+import { type AssetStylingGroupAndStyleIndex } from './types';
 import { generateRuleBasedOutputs } from './utils';
-import { type FdmPropertyType } from '../Reveal3DResources/types';
 import { use3dModels } from '../../hooks/use3dModels';
+import { type FdmPropertyType } from '../Reveal3DResources/types';
+import { EMPTY_ARRAY } from '../../utilities/constants';
 
 export type ColorOverlayProps = {
-  ruleSet: RuleOutputSet | Record<string, any> | FdmPropertyType<Record<string, any>> | undefined;
+  ruleSet: Record<string, any> | FdmPropertyType<Record<string, any>> | undefined;
+  onRuleSetChanged?: (currentStylings: AssetStylingGroupAndStyleIndex[] | undefined) => void;
 };
 
-export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactElement | undefined {
+export function RuleBasedOutputsSelector({
+  ruleSet,
+  onRuleSetChanged
+}: ColorOverlayProps): ReactElement | undefined {
   const models = use3dModels();
+
+  const [stylingGroups, setStylingsGroups] = useState<AssetStylingGroupAndStyleIndex[]>();
 
   const {
     data: assetMappings,
@@ -32,9 +38,13 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
   }, [isFetching, hasNextPage, fetchNextPage]);
 
   useEffect(() => {
-    if (assetMappings === undefined || isFetching) return;
+    if (onRuleSetChanged !== undefined) onRuleSetChanged(stylingGroups);
+  }, [stylingGroups]);
 
-    clearAllModelStyling(models);
+  useEffect(() => {
+    if (assetMappings === undefined || models === undefined || isFetching) return;
+
+    setStylingsGroups(EMPTY_ARRAY);
 
     if (ruleSet === undefined) return;
 
@@ -53,30 +63,23 @@ export function RuleBasedOutputsSelector({ ruleSet }: ColorOverlayProps): ReactE
           .map((item) => item.assets)
           .flat() ?? [];
 
-      generateRuleBasedOutputs(model, contextualizedAssetNodes, flatMappings, ruleSet);
+      const collectionStylings = await generateRuleBasedOutputs(
+        model,
+        contextualizedAssetNodes,
+        flatMappings,
+        ruleSet
+      );
+
+      setStylingsGroups(collectionStylings);
     };
 
-    models.forEach((model) => {
+    models.forEach(async (model) => {
       if (!(model instanceof CogniteCadModel)) {
         return;
       }
-      void initializeRuleBasedOutputs(model);
+      await initializeRuleBasedOutputs(model);
     });
-  }, [assetMappings, ruleSet, models]);
+  }, [assetMappings, ruleSet]);
 
   return <></>;
-}
-
-function clearAllModelStyling(models: CogniteModel[]): void {
-  // clean up the appearance
-  models.forEach((model) => {
-    if (!(model instanceof CogniteCadModel)) {
-      return;
-    }
-    model.removeAllStyledNodeCollections();
-
-    model.setDefaultNodeAppearance({
-      color: new Color('#efefef')
-    });
-  });
 }
