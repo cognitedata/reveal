@@ -34,27 +34,29 @@ export const useSearchMappedEquipmentAssetMappings = (
 ): UseQueryResult<Asset[]> => {
   const sdk = useSDK(userSdk);
   const modelsKey = models.map((model) => [model.modelId, model.revisionId]);
+  const { data: assetMappings, isFetched } = useAllMappedEquipmentAssetMappings(models, sdk);
 
   return useQuery(
     ['reveal', 'react-components', 'search-mapped-asset-mappings', query, modelsKey],
     async () => {
       if (query === '') {
-        const assetMappings = await getAssetMappingsByModels(sdk, models, limit);
-
-        const modelsAssets = await getAssetsFromAssetMappings(sdk, assetMappings);
-
-        return modelsAssets.map(({ assets }) => assets).flat();
+        const mappedAssets =
+          assetMappings?.pages
+            .flat()
+            .map((item) => item.assets)
+            .flat() ?? [];
+        return mappedAssets;
       }
 
       const searchedAssets = await sdk.assets.search({ search: { query }, limit: 1000 });
-      const assetMappings = await getAssetMappingsByModels(
+      const assetMappingsWithSearch = await getAssetMappingsByModels(
         sdk,
         models,
         limit,
         searchedAssets.map((asset) => asset.id)
       );
 
-      const assetMappingsSet = createAssetMappingsSet(assetMappings);
+      const assetMappingsSet = createAssetMappingsSet(assetMappingsWithSearch);
       const filteredSearchedAssets = searchedAssets.filter((asset) =>
         assetMappingsSet.has(asset.id)
       );
@@ -62,7 +64,8 @@ export const useSearchMappedEquipmentAssetMappings = (
       return filteredSearchedAssets;
     },
     {
-      staleTime: Infinity
+      staleTime: Infinity,
+      enabled: isFetched && assetMappings !== undefined
     }
   );
 };
