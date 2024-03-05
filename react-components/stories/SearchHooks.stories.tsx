@@ -75,6 +75,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const { data: assetSearchData } = useSearchMappedEquipmentAssetMappings(
     mainSearchQuery,
     filteredResources,
+    1000,
     sdk
   );
 
