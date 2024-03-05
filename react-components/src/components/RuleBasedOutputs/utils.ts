@@ -179,11 +179,16 @@ export const generateRuleBasedOutputs = async (
       // Starting Expression
       const expression = rule.expression;
 
-      const outputSelected = outputs.find(
-        (output: { type: string }) => output.type === outputType
-      ) as ColorRuleOutput;
+      const outputFound = outputs.find((output: { type: string }) => output.type === outputType);
 
-      if (outputSelected === undefined) return;
+      if (outputFound?.type !== 'color') return;
+
+      const outputSelected: ColorRuleOutput = {
+        externalId: outputFound.externalId,
+        type: 'color',
+        fill: outputFound.fill,
+        outline: outputFound.outline
+      };
 
       return await analyzeNodesAgainstExpression({
         model,
