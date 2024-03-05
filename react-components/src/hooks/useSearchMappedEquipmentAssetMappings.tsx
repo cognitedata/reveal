@@ -15,6 +15,7 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
+import { chunk } from 'lodash';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -28,30 +29,37 @@ export type ModelMappingsWithAssets = ModelMappings & {
 export const useSearchMappedEquipmentAssetMappings = (
   query: string,
   models: AddModelOptions[],
-  userSdk: CogniteClient
+  limit: number = 100,
+  userSdk?: CogniteClient
 ): UseQueryResult<Asset[]> => {
+  const sdk = useSDK(userSdk);
   const modelsKey = models.map((model) => [model.modelId, model.revisionId]);
-  const { data: assetMappings, isFetched } = useAllMappedEquipmentAssetMappings(models, userSdk);
+  const { data: assetMappings, isFetched } = useAllMappedEquipmentAssetMappings(models, sdk);
 
   return useQuery(
     ['reveal', 'react-components', 'search-mapped-asset-mappings', query, modelsKey],
     async () => {
-      const mappedAssets =
-        assetMappings?.pages
-          .flat()
-          .map((item) => item.assets)
-          .flat() ?? [];
       if (query === '') {
+        const mappedAssets =
+          assetMappings?.pages
+            .flat()
+            .map((item) => item.assets)
+            .flat() ?? [];
         return mappedAssets;
       }
 
-      const filteredSearchedAssets =
-        mappedAssets.filter((asset) => {
-          const isInName = asset.name.toLowerCase().includes(query.toLowerCase());
-          const isInDescription = asset.description?.toLowerCase().includes(query.toLowerCase());
+      const searchedAssets = await sdk.assets.search({ search: { query }, limit: 1000 });
+      const assetMappingsWithSearch = await getAssetMappingsByModels(
+        sdk,
+        models,
+        limit,
+        searchedAssets.map((asset) => asset.id)
+      );
 
-          return isInName || isInDescription;
-        }) ?? [];
+      const assetMappingsSet = createAssetMappingsSet(assetMappingsWithSearch);
+      const filteredSearchedAssets = searchedAssets.filter((asset) =>
+        assetMappingsSet.has(asset.id)
+      );
 
       return filteredSearchedAssets;
     },
@@ -125,6 +133,39 @@ function getNextPageParam(
   return nextCursors;
 }
 
+async function getAssetMappingsByModels(
+  sdk: CogniteClient,
+  models: AddModelOptions[],
+  limit: number = 1000,
+  assetIdsFilter?: number[]
+): Promise<ModelMappings[]> {
+  const mappedEquipmentPromises = models.map(async (model) => {
+    if (assetIdsFilter === undefined) {
+      const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
+        limit
+      });
+      return [{ mappings, model }];
+    }
+
+    const deduplicatedAssetIds = Array.from(new Set(assetIdsFilter));
+    const chunkedFilter = chunk(deduplicatedAssetIds, 100);
+
+    const chunkedPromises = chunkedFilter.map(async (chunk) => {
+      const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
+        filter: { assetIds: chunk },
+        limit
+      });
+      return { mappings, model };
+    });
+
+    return await Promise.all(chunkedPromises);
+  });
+
+  const mappedEquipment = await Promise.all(mappedEquipmentPromises);
+
+  return mappedEquipment.flat();
+}
+
 async function getAssetsFromAssetMappings(
   sdk: CogniteClient,
   modelsMappings: Array<{ model: AddModelOptions; mappings: ListResponse<AssetMapping3D[]> }>
@@ -147,4 +188,12 @@ async function getAssetsFromAssetMappings(
   const mappingsWithAssets = await Promise.all(mappingsWithAssetsPromises);
 
   return mappingsWithAssets;
+}
+
+function createAssetMappingsSet(
+  assetMappings: Array<{ model: AddModelOptions; mappings: ListResponse<AssetMapping3D[]> }>
+): Set<number> {
+  return new Set(
+    assetMappings.map(({ mappings }) => mappings.items.map((item) => item.assetId)).flat()
+  );
 }
