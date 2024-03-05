@@ -554,7 +554,7 @@ __metadata:
   dependencies:
     "@azure/msal-browser": "npm:2.38.3"
     "@cognite/sdk": "npm:8.3.0"
-    "@microsoft/api-extractor": "npm:7.41.0"
+    "@microsoft/api-extractor": "npm:7.42.1"
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:19.0.0"
     "@types/dat.gui": "npm:0.7.12"
@@ -1177,9 +1177,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@microsoft/api-extractor@npm:7.41.0":
-  version: 7.41.0
-  resolution: "@microsoft/api-extractor@npm:7.41.0"
+"@microsoft/api-extractor@npm:7.42.1":
+  version: 7.42.1
+  resolution: "@microsoft/api-extractor@npm:7.42.1"
   dependencies:
     "@microsoft/api-extractor-model": "npm:7.28.13"
     "@microsoft/tsdoc": "npm:0.14.2"
@@ -1187,15 +1187,16 @@ __metadata:
     "@rushstack/node-core-library": "npm:4.0.2"
     "@rushstack/rig-package": "npm:0.5.2"
     "@rushstack/terminal": "npm:0.10.0"
-    "@rushstack/ts-command-line": "npm:4.17.4"
+    "@rushstack/ts-command-line": "npm:4.18.1"
     lodash: "npm:~4.17.15"
+    minimatch: "npm:~3.0.3"
     resolve: "npm:~1.22.1"
     semver: "npm:~7.5.4"
     source-map: "npm:~0.6.1"
     typescript: "npm:5.3.3"
   bin:
     api-extractor: bin/api-extractor
-  checksum: 10/494feabecec7f1e0993255c9f74d3bebf7d129e5fecc9742f1c4d64d11fd772bd8d993b4e78518993afadb17bf15c9a24f3d5b0eee34bd919fd714a759c83881
+  checksum: 10/ee136e7603abde2c3dc504e1059fe736843b8c6aba87d2211057fcaf0d420e88a6430717afdcab339da1114ddb86cfa1da9e8e8404a0eec40962ea188a41935a
   languageName: node
   linkType: hard
 
@@ -1591,15 +1592,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rushstack/ts-command-line@npm:4.17.4":
-  version: 4.17.4
-  resolution: "@rushstack/ts-command-line@npm:4.17.4"
+"@rushstack/ts-command-line@npm:4.18.1":
+  version: 4.18.1
+  resolution: "@rushstack/ts-command-line@npm:4.18.1"
   dependencies:
     "@rushstack/terminal": "npm:0.10.0"
     "@types/argparse": "npm:1.0.38"
     argparse: "npm:~1.0.9"
     string-argv: "npm:~0.3.1"
-  checksum: 10/32bfc274bf41bce3eba72e3c950e392cb636ea39b2e830e9247da163d7f46077b74373743b383833cbb95cd0322a17fe78a87b2d32af8aa87d793cd276ac2888
+  checksum: 10/48177ccdf983f35ae37b7bd005560460134775c54914ed4903120043307962dbec5d2549ab7a77c54d6b927674f3232351bb0952e15e21d08b9ace6d5a59b199
   languageName: node
   linkType: hard
 
@@ -7983,6 +7984,15 @@ __metadata:
   dependencies:
     brace-expansion: "npm:^2.0.1"
   checksum: 10/b4e98f4dc740dcf33999a99af23ae6e5e1c47632f296dc95cb649a282150f92378d41434bf64af4ea2e5975255a757d031c3bf014bad9214544ac57d97f3ba63
+  languageName: node
+  linkType: hard
+
+"minimatch@npm:~3.0.3":
+  version: 3.0.8
+  resolution: "minimatch@npm:3.0.8"
+  dependencies:
+    brace-expansion: "npm:^1.1.7"
+  checksum: 10/6df5373cb1ea79020beb6887ff5576c58cfabcfd32c5a65c2cf58f326e4ee8eae84f129e5fa50b8a4347fa1d1e583f931285c9fb3040d984bdfb5109ef6607ec
   languageName: node
   linkType: hard
 
