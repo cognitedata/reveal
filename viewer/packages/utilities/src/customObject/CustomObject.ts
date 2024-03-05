@@ -97,7 +97,7 @@ export class CustomObject {
       customObject: this,
       point,
       distanceToCamera: distance,
-      boundingBox: undefined
+      userData: intersection[0]
     };
     if (this.shouldPickBoundingBox) {
       const boundingBox = new Box3().setFromObject(this.object);

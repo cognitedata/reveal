@@ -13,7 +13,7 @@ export type CustomObjectIntersection = {
   /**
    * The intersection type.
    */
-  type: 'customObject';
+  type: string;
   /**
    * Coordinate of the intersection.
    */
@@ -23,6 +23,18 @@ export type CustomObjectIntersection = {
    */
   distanceToCamera: number;
 
+  /**
+   * The CustomObject that was intersected.
+   */
   customObject: CustomObject;
+
+  /**
+   * The bounding box of the part of the CustomObject that was intersected.
+   */
   boundingBox?: Box3;
+
+  /**
+   * Additional info, for instance which part of the CustomObject was intersected.
+   */
+  userData?: any;
 };
