@@ -60,7 +60,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   private _tempTarget: Vector3 | undefined = undefined;
 
   private readonly _keyboard: Keyboard;
-  private readonly _touchEvents: Array<PointerEvent> = [];
+  private readonly _pointEventCache: Array<PointerEvent> = [];
   private _getPickedPointByPixelCoordinates: GetPickedPointByPixelCoordinates | undefined;
 
   // This is a hack for overcome problems with the setting the Quaternion direction.
@@ -475,7 +475,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   private readonly onPointerUp = (event: PointerEvent) => {
     this._mouseDragInfo = undefined;
     if (isTouch(event)) {
-      remove(this._touchEvents, ev => ev.pointerId === event.pointerId);
+      remove(this._pointEventCache, ev => ev.pointerId === event.pointerId);
     }
   };
 
@@ -497,19 +497,18 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   private readonly onTouchStart = (event: PointerEvent) => {
     if (!this.isEnabled) return;
-    this._touchEvents.push(event);
     event.preventDefault();
     this._cameraVector.synchronizeEnd();
 
-    switch (this._touchEvents.length) {
-      case 1:
+    switch (this._pointEventCache.length) {
+      case 1: {
         this.startTouchRotation(event);
         break;
-
-      case 2:
+      }
+      case 2: {
         this.startTouchPinch(event);
         break;
-
+      }
       default:
         break;
     }
@@ -619,7 +618,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
     const onTouchMove = (event: PointerEvent) => {
       if (!this.isEnabled) return;
-      if (this._touchEvents.length !== 1) {
+      if (this._pointEventCache.length !== 1) {
         return;
       }
       const position = this.getMousePosition(event);
@@ -630,16 +629,16 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     const onTouchStart = (_event: PointerEvent) => {
       if (!this.isEnabled) return;
       // if num fingers used don't equal 1 then we stop touch rotation
-      if (this._touchEvents.length !== 1) {
-        removeEventListeners();
+      if (this._pointEventCache.length !== 1) {
+        dispose();
       }
     };
 
     const onTouchEnd = () => {
-      removeEventListeners();
+      dispose();
     };
 
-    const removeEventListeners = () => {
+    const dispose = () => {
       this._domElement.removeEventListener('pointerdown', onTouchStart);
       this._domElement.removeEventListener('pointerup', onTouchEnd);
       document.removeEventListener('pointermove', onTouchMove);
@@ -691,42 +690,47 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   //================================================
 
   private startTouchPinch(initialEvent: PointerEvent) {
-    this.replaceTouchEvent(initialEvent);
-    let previousInfo = getPinchInfo(this._domElement, this._touchEvents);
+    const index = this._pointEventCache.findIndex(cachedEvent => cachedEvent.pointerId === initialEvent.pointerId);
+    this._pointEventCache[index] = initialEvent;
+    let previousPinchInfo = getPinchInfo(this._domElement, this._pointEventCache);
+    const initialPinchInfo = getPinchInfo(this._domElement, this._pointEventCache);
+    const initialRadius = this._cameraVector.end.radius;
 
     const onTouchMove = (event: PointerEvent) => {
-      if (this._touchEvents.length !== 2) {
+      if (this._pointEventCache.length !== 2) {
         return;
       }
-      this.replaceTouchEvent(event);
-      const info = getPinchInfo(this._domElement, this._touchEvents);
-
+      // Find this event in the cache and update its record with this event
+      const index = this._pointEventCache.findIndex(cachedEvent => cachedEvent.pointerId === event.pointerId);
+      this._pointEventCache[index] = event;
+      const pinchInfo = getPinchInfo(this._domElement, this._pointEventCache);
       // dolly
-      const deltaDistance = 0.1 * this._options.sensitivity * (info.distance - previousInfo.distance);
-      const translation = this.getTranslationByDirection(new Vector2(0, 0), deltaDistance);
-      this.translate(translation);
+      const distanceFactor = initialPinchInfo.distance / pinchInfo.distance;
+      // Min distance / 5 because on phones it is reasonable to get quite close to the target,
+      // but we don't want to get too close since zooming slows down very close to target.
+      this._cameraVector.end.radius = Math.max(distanceFactor * initialRadius, this._options.sensitivity / 5);
 
       // pan
-      const deltaPosition = new Vector2().subVectors(info.center, previousInfo.center);
-      if (deltaPosition.length() > this._options.pinchEpsilon) {
-        deltaPosition.multiplyScalar(this._options.pinchPanSpeed);
-        this.pan(deltaPosition.x, deltaPosition.y, 0);
+      const deltaCenter = pinchInfo.center.clone().sub(previousPinchInfo.center);
+      if (deltaCenter.length() > this._options.pinchEpsilon) {
+        deltaCenter.multiplyScalar(this._options.pinchPanSpeed);
+        this.pan(deltaCenter.x, deltaCenter.y, 0);
       }
-      previousInfo = info;
+      previousPinchInfo = pinchInfo;
     };
 
     const onTouchStart = (_event: PointerEvent) => {
       // if num fingers used don't equal 2 then we stop touch pinch
-      if (this._touchEvents.length !== 2) {
-        removeEventListeners();
+      if (this._pointEventCache.length !== 2) {
+        dispose();
       }
     };
 
     const onTouchEnd = () => {
-      removeEventListeners();
+      dispose();
     };
 
-    const removeEventListeners = () => {
+    const dispose = () => {
       document.removeEventListener('pointerdown', onTouchStart);
       document.removeEventListener('pointermove', onTouchMove);
       document.removeEventListener('pointerup', onTouchEnd);
@@ -737,11 +741,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     document.addEventListener('pointerup', onTouchEnd);
   }
 
-  private replaceTouchEvent(event: PointerEvent) {
-    // Find this event in the cache and update its record with this event
-    const index = this._touchEvents.findIndex(cachedEvent => cachedEvent.pointerId === event.pointerId);
-    this._touchEvents[index] = event;
-  }
   //================================================
   // INSTANCE METHODS: Pan
   //================================================
@@ -914,10 +913,15 @@ function getPinchInfo(domElement: HTMLElement, touches: PointerEvent[]) {
   if (touches.length !== 2) {
     throw new Error('getPinchInfo only works if touches.length === 2');
   }
-  const offsets = touches.map(({ clientX, clientY }) => getMousePosition(domElement, clientX, clientY));
-  const center = new Vector2().addVectors(offsets[0], offsets[1]).multiplyScalar(0.5);
+  const touchList = [touches[0], touches[1]];
+  const offsets = touchList.map(({ clientX, clientY }) => getMousePosition(domElement, clientX, clientY));
+  const center = offsets[0].clone().add(offsets[1]).multiplyScalar(0.5);
   const distance = offsets[0].distanceTo(offsets[1]);
-  return { center, distance };
+  return {
+    center,
+    distance,
+    offsets
+  };
 }
 
 function getWheelDelta(event: WheelEvent): number {

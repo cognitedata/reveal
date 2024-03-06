@@ -76,8 +76,8 @@ export class FlexibleControlsOptions {
   public keyboardFastMoveFactor = 5;
 
   // Pinch speed
-  public pinchEpsilon = 0.1;
-  public pinchPanSpeed = 50;
+  public pinchEpsilon = 2;
+  public pinchPanSpeed = 1;
 
   public orthographicCameraDollyFactor = 0.3;
 
