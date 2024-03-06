@@ -457,7 +457,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
         return;
       }
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
-      previousOffset.sub(newOffset);
       this.rotate(new Vector2().subVectors(previousOffset, newOffset));
       previousOffset = newOffset;
     };
