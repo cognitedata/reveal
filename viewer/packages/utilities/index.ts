@@ -73,6 +73,8 @@ export { CustomObject } from './src/customObject/CustomObject';
 export { CustomObjectIntersectInput } from './src/customObject/CustomObjectIntersectInput';
 export { CustomObjectIntersection } from './src/customObject/CustomObjectIntersection';
 
+export { isPointVisibleByPlanes } from './src/three/isPointVisibleByPlanes';
+
 export { CDF_TO_VIEWER_TRANSFORMATION } from './src/constants';
 
 export * from './src/workers/workerize-transferable';
