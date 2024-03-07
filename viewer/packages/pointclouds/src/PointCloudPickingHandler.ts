@@ -9,6 +9,7 @@ import { PointCloudNode } from './PointCloudNode';
 
 import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-three-loader';
 import { AnnotationsAssetRef } from '@cognite/sdk';
+import { isPointVisibleByPlanes } from '@reveal/utilities';
 
 export interface IntersectPointCloudNodeResult {
   /**
@@ -75,7 +76,7 @@ export class PointCloudPickingHandler {
 
     return intersections
       .sort((x, y) => x.position.distanceTo(camera.position) - y.position.distanceTo(camera.position))
-      .filter(x => isPointAcceptedByClippingPlanes(x.position, input.clippingPlanes))
+      .filter(x => isPointVisibleByPlanes(input.clippingPlanes, x.position))
       .map(x => {
         const pointCloudNode = determinePointCloudNode(x.object, nodes);
         if (pointCloudNode === null) {
@@ -108,12 +109,4 @@ function determinePointCloudNode(node: THREE.Object3D, candidates: PointCloudNod
     return candidates.find(x => node === x.octree) || null;
   }
   return null;
-}
-
-function isPointAcceptedByClippingPlanes(point: THREE.Vector3, planes: THREE.Plane[]): boolean {
-  let accepted = true;
-  for (let i = 0; accepted && i < planes.length; ++i) {
-    accepted = planes[i].distanceToPoint(point) >= 0.0;
-  }
-  return accepted;
 }
