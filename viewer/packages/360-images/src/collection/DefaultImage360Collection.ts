@@ -148,6 +148,14 @@ export class DefaultImage360Collection implements Image360Collection {
   }
 
   /**
+   * Gets visibility of all 360 image icons.
+   * @returns true if all icons are visible, false if all icons are invisible
+   */
+  getIconsVisibility(): boolean {
+    return this._isCollectionVisible;
+  }
+
+  /**
    * Set visibility of all 360 image icons.
    * @param visible If true all icons are made visible according to the active culling scheme. If false all icons are hidden.
    */
