@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Line2, LineGeometry, LineMaterial } from '@reveal/utilities';
+import { Line2, LineGeometry, LineMaterial, isPointVisibleByPlanes } from '@reveal/utilities';
 import * as THREE from 'three';
 
 export class MeasurementLine {
@@ -82,8 +82,8 @@ export class MeasurementLine {
    */
   updateLineClippingPlanes(clippingPlanes: THREE.Plane[]): void {
     const visible =
-      !this.clippingPlanesContainPoint(clippingPlanes, this._startPos) ||
-      !this.clippingPlanesContainPoint(clippingPlanes, this._endpoint);
+      !isPointVisibleByPlanes(clippingPlanes, this._startPos) ||
+      !isPointVisibleByPlanes(clippingPlanes, this._endpoint);
     this._meshes.visible = !visible;
   }
 
@@ -138,9 +138,5 @@ export class MeasurementLine {
 
     this._meshes.add(adaptiveMesh);
     this._meshes.add(fixedMesh);
-  }
-
-  private clippingPlanesContainPoint(planes: THREE.Plane[], point: THREE.Vector3) {
-    return planes.every(p => p.distanceToPoint(point) > 0);
   }
 }
