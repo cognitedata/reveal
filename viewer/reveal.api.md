@@ -1126,6 +1126,7 @@ export interface Image360Collection {
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
+    getIconsVisibility(): boolean;
     readonly id: string;
     readonly image360Entities: Image360[];
     readonly label: string | undefined;
