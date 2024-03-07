@@ -10,9 +10,10 @@ import {
   RevealTopbar,
   RevealCanvas,
   type DmsUniqueIdentifier,
-  RevealToolbar
+  RevealToolbar,
+  Reveal3DResources
 } from '../src';
-import { Color } from 'three';
+import { Color, Matrix4 } from 'three';
 import { type ReactElement, useEffect, useState } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
@@ -37,10 +38,29 @@ export const Main: Story = {
     <RevealStoryContext
       viewerOptions={{ useFlexibleCameraManager: true }}
       color={new Color(0x4a4a4a)}>
-      <RevealTopbar topbarContent={<TopbarContent />} />
+      <RevealTopbar />
       <RevealCanvas>
+        <Reveal3DResources
+          resources={[
+            {
+              modelId: 1791160622840317,
+              revisionId: 498427137020189,
+              transform: new Matrix4().makeTranslation(40, 0, 0)
+            },
+            {
+              modelId: 1791160622840317,
+              revisionId: 498427137020189,
+              transform: new Matrix4().makeTranslation(40, 10, 0)
+            },
+            {
+              siteId: 'c_RC_2'
+            },
+            {
+              modelId: 3865289545346058,
+              revisionId: 4160448151596909
+            }
+          ]}></Reveal3DResources>
         <FitToUrlCameraState />
-        <CadModelContainer addModelOptions={addModelOptions} />
       </RevealCanvas>
     </RevealStoryContext>
   )
