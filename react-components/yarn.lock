@@ -1791,8 +1791,8 @@ __metadata:
   linkType: soft
 
 "@cognite/reveal@npm:^4.10.4":
-  version: 4.10.4
-  resolution: "@cognite/reveal@npm:4.10.4"
+  version: 4.10.6
+  resolution: "@cognite/reveal@npm:4.10.6"
   dependencies:
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:19.0.0"
@@ -1812,7 +1812,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.158.0
-  checksum: 10/ad4a3436eebd3b044195a39eaaa25495bfe240fd28ddccd745007b98f942ab3a3e4da9a45a446ec049f1e5248f0cd21ca2e09850190ac3161d0cf804cc85a6de
+  checksum: 10/d474eeb363c826676e395fa75fd560495e97ed340401ab0a89cd43c7116381faea2e051331494513080f9dd3af717735f7e58d9e41a2523a611a71535b47a024
   languageName: node
   linkType: hard
 
