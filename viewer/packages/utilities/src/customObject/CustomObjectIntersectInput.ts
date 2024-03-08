@@ -3,6 +3,7 @@
  */
 
 import { Raycaster, Vector3, Vector2, PerspectiveCamera, Plane } from 'three';
+import { isPointVisibleByPlanes } from '../three/isPointVisibleByPlanes';
 
 /**
  * This class is used as input for intersecting custom objects
@@ -22,14 +23,6 @@ export class CustomObjectIntersectInput {
   }
 
   public isVisible(point: Vector3): boolean {
-    if (!this.clippingPlanes) {
-      return true;
-    }
-    for (let i = 0; i < this.clippingPlanes.length; ++i) {
-      if (this.clippingPlanes[i].distanceToPoint(point) < 0.0) {
-        return false;
-      }
-    }
-    return true;
+    return this.clippingPlanes === undefined || isPointVisibleByPlanes(this.clippingPlanes, point);
   }
 }
