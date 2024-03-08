@@ -3,7 +3,6 @@
  */
 
 import { type ReactElement } from 'react';
-import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { Menu } from '@cognite/cogs.js';
 import { type ModelHandler } from '../../RevealTopbar/LayersStrip/ModelHandler';
 import { ModelLayersList } from '../../RevealTopbar/LayersStrip/ModelLayersList';
@@ -18,12 +17,10 @@ export const LayerToggleDropdown = ({
   update: () => void;
   label: string;
 }): ReactElement => {
-  const viewer = useReveal();
-
   return (
     <div>
       <Menu.Submenu
-        appendTo={viewer.domElement ?? document.body}
+        appendTo={'parent'}
         content={<ModelLayersList modelHandlers={layerHandlers} update={update} />}>
         <WholeLayerVisibilityToggle modelHandlers={layerHandlers} update={update} label={label} />
       </Menu.Submenu>

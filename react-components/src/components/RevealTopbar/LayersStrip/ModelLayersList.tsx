@@ -34,11 +34,11 @@ const ModelContent = ({
 }: {
   modelHandlers: ModelHandler[];
   update: () => void;
-}) => {
+}): ReactElement => {
   return (
     <div>
-      {modelHandlers.map((handler) => (
-        <ModelItem modelHandler={handler} update={update} />
+      {modelHandlers.map((handler, index) => (
+        <ModelItem key={index} modelHandler={handler} update={update} />
       ))}
     </div>
   );
@@ -50,7 +50,7 @@ const ModelItem = ({
 }: {
   modelHandler: ModelHandler;
   update: () => void;
-}) => {
+}): ReactElement => {
   return (
     <Menu.Item
       key={modelHandler.key()}
