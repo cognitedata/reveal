@@ -5,7 +5,7 @@
 import { type ReactElement } from 'react';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { Menu } from '@cognite/cogs.js';
-import { ModelHandler } from '../../RevealTopbar/LayersStrip/ModelHandler';
+import { type ModelHandler } from '../../RevealTopbar/LayersStrip/ModelHandler';
 import { ModelLayersList } from '../../RevealTopbar/LayersStrip/ModelLayersList';
 import { WholeLayerVisibilityToggle } from '../../RevealTopbar/LayersStrip/WholeLayerVisibilityToggle';
 

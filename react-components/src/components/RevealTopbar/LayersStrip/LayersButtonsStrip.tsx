@@ -1,20 +1,17 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import styled from 'styled-components';
 import {
-  CadModelHandler,
-  Image360CollectionHandler,
-  ModelHandler,
-  PointCloudModelHandler
+  type CadModelHandler,
+  type Image360CollectionHandler,
+  type PointCloudModelHandler
 } from './ModelHandler';
 import { ModelLayersButton } from './ModelLayersButton';
-import {
-  CogniteCadModel,
-  CogniteModel,
-  CognitePointCloudModel,
-  Image360Collection
-} from '@cognite/reveal';
-import { Dispatch, SetStateAction } from 'react';
+
+import { type ReactElement, type Dispatch, type SetStateAction } from 'react';
 import { useTranslation } from '../../i18n/I18n';
-import { LayersUrlStateParam } from '../../../hooks/types';
+import { type LayersUrlStateParam } from '../../../hooks/types';
 import { useModelHandlers } from './useModelHandlers';
 import { useSyncExternalLayersState } from './useSyncExternalLayersState';
 
@@ -32,7 +29,7 @@ export type ModelLayerHandlers = {
 export const LayersButtonStrip = ({
   externalLayersState,
   setExternalLayersState
-}: LayersButtonStripProps) => {
+}: LayersButtonStripProps): ReactElement => {
   const { t } = useTranslation();
   const [modelLayerHandlers, update] = useModelHandlers();
   const { cadHandlers, pointCloudHandlers, image360Handlers } = modelLayerHandlers;

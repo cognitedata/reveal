@@ -1,5 +1,12 @@
-import { Cognite3DViewer, CogniteCadModel, CognitePointCloudModel } from '@cognite/reveal';
-import { LayersUrlStateParam } from '../../../hooks/types';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import {
+  type Cognite3DViewer,
+  type CogniteCadModel,
+  type CognitePointCloudModel
+} from '@cognite/reveal';
+import { type LayersUrlStateParam } from '../../../hooks/types';
 
 export function updateViewerFromExternalState({
   layersState,

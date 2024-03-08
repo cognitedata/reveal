@@ -1,9 +1,12 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { useReveal } from '../../..';
-import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
-import { LayersUrlStateParam } from '../../../hooks/types';
+import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
+import { type LayersUrlStateParam } from '../../../hooks/types';
 import { updateExternalStateFromLayerHandlers } from './updateExternalStateFromLayerHandlers';
 import { updateViewerFromExternalState } from './updateViewerFromExternalState';
-import { ModelLayerHandlers } from './LayersButtonsStrip';
+import { type ModelLayerHandlers } from './LayersButtonsStrip';
 
 export const useSyncExternalLayersState = (
   modelLayerHandlers: ModelLayerHandlers,

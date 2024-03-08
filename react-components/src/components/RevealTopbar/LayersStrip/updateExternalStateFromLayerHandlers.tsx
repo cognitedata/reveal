@@ -1,11 +1,14 @@
-import { Dispatch, SetStateAction } from 'react';
-import { LayersUrlStateParam } from '../../../hooks/types';
-import { ModelLayerHandlers } from './LayersButtonsStrip';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type Dispatch, type SetStateAction } from 'react';
+import { type LayersUrlStateParam } from '../../../hooks/types';
+import { type ModelLayerHandlers } from './LayersButtonsStrip';
 
 export function updateExternalStateFromLayerHandlers(
   modelLayerHandlers: ModelLayerHandlers,
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam>>
-) {
+): void {
   const newState = {
     cadLayers: modelLayerHandlers.cadHandlers.map((handler, index) => ({
       revisionId: handler.getRevisionId(),

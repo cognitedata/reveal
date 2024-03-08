@@ -1,8 +1,11 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import {
-  CogniteCadModel,
-  CogniteModel,
-  CognitePointCloudModel,
-  Image360Collection
+  type CogniteCadModel,
+  type CogniteModel,
+  type CognitePointCloudModel,
+  type Image360Collection
 } from '@cognite/reveal';
 
 export abstract class ModelHandler {
@@ -12,14 +15,13 @@ export abstract class ModelHandler {
   public abstract visible(): boolean;
   public abstract setVisibility(visible: boolean): void;
 
-  public isSame(handler: ModelHandler): boolean;
-  public isSame(handler: ModelHandler): Boolean {
+  public isSame(handler: ModelHandler): boolean {
     return handler.model === this.model;
   }
 }
 
 export class CadModelHandler extends ModelHandler {
-  constructor(private _cadModel: CogniteCadModel) {
+  constructor(private readonly _cadModel: CogniteCadModel) {
     super(_cadModel);
   }
 
@@ -41,7 +43,7 @@ export class CadModelHandler extends ModelHandler {
 }
 
 export class PointCloudModelHandler extends ModelHandler {
-  constructor(private _pointCloudModel: CognitePointCloudModel) {
+  constructor(private readonly _pointCloudModel: CognitePointCloudModel) {
     super(_pointCloudModel);
   }
 
@@ -63,7 +65,7 @@ export class PointCloudModelHandler extends ModelHandler {
 }
 
 export class Image360CollectionHandler extends ModelHandler {
-  constructor(private _image360Collection: Image360Collection) {
+  constructor(private readonly _image360Collection: Image360Collection) {
     super(_image360Collection);
   }
 

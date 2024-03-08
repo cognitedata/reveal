@@ -1,6 +1,9 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { Divider, Menu } from '@cognite/cogs.js';
-import { ModelHandler } from './ModelHandler';
-import { ChangeEvent } from 'react';
+import { type ModelHandler } from './ModelHandler';
+import { type ReactElement, type ChangeEvent } from 'react';
 import { WholeLayerVisibilityToggle } from './WholeLayerVisibilityToggle';
 
 export const ModelLayersList = ({
@@ -11,10 +14,10 @@ export const ModelLayersList = ({
   modelHandlers: ModelHandler[];
   update: () => void;
   label?: string;
-}) => {
+}): ReactElement => {
   return (
     <Menu>
-      {label && (
+      {label !== undefined && (
         <>
           <WholeLayerVisibilityToggle modelHandlers={modelHandlers} label={label} update={update} />
           <Divider />

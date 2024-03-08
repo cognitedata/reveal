@@ -5,20 +5,17 @@
 import { Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { LayerToggleDropdown } from './LayerToggleDropdown';
-import { Image360CollectionLayerContainer } from './Image360LayersContainer';
-import { PointCloudLayersContainer } from './PointCloudLayersContainer';
 import {
-  useState,
+  // useState,
   type ReactElement,
-  useEffect,
-  type MouseEvent,
-  SetStateAction,
-  Dispatch
+  // useEffect,
+  type MouseEvent
+  // type SetStateAction,
+  // type Dispatch
 } from 'react';
-import { type Reveal3DResourcesLayerStates } from './types';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
-import { useLayersUrlParams } from '../hooks/useUrlStateParam';
-import { ModelLayerHandlers } from '../../RevealTopbar/LayersStrip/LayersButtonsStrip';
+// import { useLayersUrlParams } from '../hooks/useUrlStateParam';
+import { type ModelLayerHandlers } from '../../RevealTopbar/LayersStrip/LayersButtonsStrip';
 import { useTranslation } from '../../i18n/I18n';
 
 export const LayersContainer = ({
@@ -63,59 +60,59 @@ export const LayersContainer = ({
   );
 };
 
-const useStoreStateToUrl = (
-  enable: boolean
-): [Reveal3DResourcesLayerStates, Dispatch<SetStateAction<Reveal3DResourcesLayerStates>>] => {
-  const viewer = useReveal();
+// const useStoreStateToUrl = (
+//   enable: boolean
+// ): [Reveal3DResourcesLayerStates, Dispatch<SetStateAction<Reveal3DResourcesLayerStates>>] => {
+//   const viewer = useReveal();
 
-  const [, setLayersUrlState] = useLayersUrlParams();
-  const [layersContainerState, setLayersContainerState] = useState<Reveal3DResourcesLayerStates>({
-    cadLayerData: [],
-    pointCloudLayerData: [],
-    image360LayerData: []
-  });
+//   const [, setLayersUrlState] = useLayersUrlParams();
+//   const [layersContainerState, setLayersContainerState] = useState<Reveal3DResourcesLayerStates>({
+//     cadLayerData: [],
+//     pointCloudLayerData: [],
+//     image360LayerData: []
+//   });
 
-  useEffect(() => {
-    if (!enable) {
-      return;
-    }
+//   useEffect(() => {
+//     if (!enable) {
+//       return;
+//     }
 
-    const { cadLayerData, pointCloudLayerData, image360LayerData } = layersContainerState;
+//     const { cadLayerData, pointCloudLayerData, image360LayerData } = layersContainerState;
 
-    const cadLayers = cadLayerData.map((data) => {
-      const index = viewer.models.indexOf(data.model);
-      return {
-        revisionId: data.model.revisionId,
-        applied: data.isToggled,
-        index
-      };
-    });
+//     const cadLayers = cadLayerData.map((data) => {
+//       const index = viewer.models.indexOf(data.model);
+//       return {
+//         revisionId: data.model.revisionId,
+//         applied: data.isToggled,
+//         index
+//       };
+//     });
 
-    const pointCloudLayers = pointCloudLayerData.map((data) => {
-      const index = viewer.models.indexOf(data.model);
-      return {
-        revisionId: data.model.revisionId,
-        applied: data.isToggled,
-        index
-      };
-    });
+//     const pointCloudLayers = pointCloudLayerData.map((data) => {
+//       const index = viewer.models.indexOf(data.model);
+//       return {
+//         revisionId: data.model.revisionId,
+//         applied: data.isToggled,
+//         index
+//       };
+//     });
 
-    const image360Layers = image360LayerData.map((data) => {
-      return {
-        siteId: data.model.id,
-        applied: data.isToggled
-      };
-    });
+//     const image360Layers = image360LayerData.map((data) => {
+//       return {
+//         siteId: data.model.id,
+//         applied: data.isToggled
+//       };
+//     });
 
-    setLayersUrlState({
-      cadLayers,
-      pointCloudLayers,
-      image360Layers
-    });
-  }, [layersContainerState]);
+//     setLayersUrlState({
+//       cadLayers,
+//       pointCloudLayers,
+//       image360Layers
+//     });
+//   }, [layersContainerState]);
 
-  return [layersContainerState, setLayersContainerState];
-};
+//   return [layersContainerState, setLayersContainerState];
+// };
 
 const Container = styled.div`
   position: relative;

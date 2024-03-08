@@ -1,6 +1,9 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { Menu } from '@cognite/cogs.js';
-import { ModelHandler } from './ModelHandler';
-import { ChangeEvent, useCallback, useMemo } from 'react';
+import { type ModelHandler } from './ModelHandler';
+import { type ChangeEvent, useCallback, useMemo, type ReactElement } from 'react';
 
 export const WholeLayerVisibilityToggle = ({
   modelHandlers,
@@ -10,7 +13,7 @@ export const WholeLayerVisibilityToggle = ({
   modelHandlers: ModelHandler[];
   label: string;
   update: () => void;
-}) => {
+}): ReactElement => {
   const allVisible = useMemo(
     () => modelHandlers.every((handler) => handler.visible()),
     [modelHandlers]

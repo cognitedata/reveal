@@ -1,13 +1,17 @@
-import { use3dModels, useReveal } from '../../..';
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ModelLayerHandlers } from './LayersButtonsStrip';
+import { type ModelLayerHandlers } from './LayersButtonsStrip';
 import {
-  CogniteCadModel,
-  CogniteModel,
-  CognitePointCloudModel,
-  Image360Collection
+  type CogniteCadModel,
+  type CogniteModel,
+  type CognitePointCloudModel,
+  type Image360Collection
 } from '@cognite/reveal';
 import { CadModelHandler, Image360CollectionHandler, PointCloudModelHandler } from './ModelHandler';
+import { use3dModels } from '../../../hooks/use3dModels';
+import { useReveal } from '../../RevealCanvas/ViewerContext';
 
 export const useModelHandlers = (): [ModelLayerHandlers, () => void] => {
   const models = use3dModels();
@@ -31,7 +35,10 @@ export const useModelHandlers = (): [ModelLayerHandlers, () => void] => {
   return [modelHandlers, update];
 };
 
-function createHandlers(models: CogniteModel[], image360Collections: Image360Collection[]) {
+function createHandlers(
+  models: CogniteModel[],
+  image360Collections: Image360Collection[]
+): ModelLayerHandlers {
   return {
     cadHandlers: models
       .filter((model): model is CogniteCadModel => model.type === 'cad')
