@@ -66,20 +66,6 @@ export const Main: Story = {
   )
 };
 
-const TopbarContent = (): ReactElement => {
-  const [scene, setScene] = useState<DmsUniqueIdentifier>();
-
-  return (
-    <>
-      <SceneSelectionDropdown selectedScene={scene} setSelectedScene={setScene} />
-      <RevealTopbar.SetOrbitOrFistPersonControlsType orientation="horizontal" />
-      <RevealToolbar.LayersButton storeStateInUrl={true} />
-      <RuleBasedOutputsButton />
-      <RevealToolbar.HelpButton />
-    </>
-  );
-};
-
 function FitToUrlCameraState(): ReactElement {
   const getCameraState = useGetCameraStateFromUrlParam();
   const cameraNavigation = useCameraNavigation();

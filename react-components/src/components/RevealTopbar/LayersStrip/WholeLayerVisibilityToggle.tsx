@@ -3,7 +3,7 @@
  */
 import { Checkbox, Flex } from '@cognite/cogs.js';
 import { type ModelHandler } from './ModelHandler';
-import { type ChangeEvent, useCallback, useMemo, type ReactElement, MouseEvent } from 'react';
+import { type ChangeEvent, useCallback, useMemo, type ReactElement, type MouseEvent } from 'react';
 import { StyledChipCount, StyledLabel } from '../../RevealToolbar/LayersContainer/elements';
 
 export const WholeLayerVisibilityToggle = ({
