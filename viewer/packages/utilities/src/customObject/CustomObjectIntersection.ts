@@ -13,7 +13,7 @@ export type CustomObjectIntersection = {
   /**
    * The intersection type.
    */
-  type: string;
+  type: 'customObject';
   /**
    * Coordinate of the intersection.
    */
