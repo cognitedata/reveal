@@ -765,7 +765,7 @@ export class CustomObjectIntersectInput {
 
 // @beta
 export type CustomObjectIntersection = {
-    type: string;
+    type: 'customObject';
     point: Vector3;
     distanceToCamera: number;
     customObject: CustomObject;
