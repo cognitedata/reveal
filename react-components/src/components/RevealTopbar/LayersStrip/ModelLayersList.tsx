@@ -19,7 +19,13 @@ export const ModelLayersList = ({
     <Menu>
       {label !== undefined && (
         <>
-          <WholeLayerVisibilityToggle modelHandlers={modelHandlers} label={label} update={update} />
+          <Menu.Item>
+            <WholeLayerVisibilityToggle
+              modelHandlers={modelHandlers}
+              label={label}
+              update={update}
+            />
+          </Menu.Item>
           <Divider />
         </>
       )}
