@@ -14,8 +14,8 @@ export const WholeLayerVisibilityToggle = ({
   label: string;
   update: () => void;
 }): ReactElement => {
-  const allVisible = useMemo(
-    () => modelHandlers.every((handler) => handler.visible()),
+  const someVisible = useMemo(
+    () => modelHandlers.some((handler) => handler.visible()),
     [modelHandlers]
   );
 
@@ -28,17 +28,17 @@ export const WholeLayerVisibilityToggle = ({
 
   const toggleAll = useCallback(() => {
     modelHandlers.forEach((handler) => {
-      handler.setVisibility(!allVisible);
+      handler.setVisibility(!someVisible);
       update();
     });
-  }, [modelHandlers, allVisible]);
+  }, [modelHandlers, someVisible]);
 
   return (
     <>
       <Menu.Item
         hasCheckbox
         checkboxProps={{
-          checked: allVisible,
+          checked: someVisible,
           indeterminate,
           onChange: (e: ChangeEvent) => {
             e.stopPropagation();
