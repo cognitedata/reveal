@@ -95,7 +95,12 @@ export type Cdf3dImage360CollectionProperties = Transformation3d & {
   image360CollectionSpace: string;
 };
 
-export type AnnotationAssetMappingDataResult = {
+export type PointCloudAnnotationMappedAssetData = {
   annotationId: number;
   asset: Asset;
+};
+
+export type Image360AnnotationMappedAssetData = {
+  asset: Asset;
+  annotationIds: number[];
 };

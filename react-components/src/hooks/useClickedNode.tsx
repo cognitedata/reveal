@@ -16,7 +16,7 @@ import { type FdmNodeDataPromises } from '../components/NodeCacheProvider/types'
 import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
 import { type NodeAssetMappingResult } from '../components/NodeCacheProvider/AssetMappingCache';
 import { usePointCloudAnnotationMappingForAssetId } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
-import { type AnnotationAssetMappingDataResult } from './types';
+import { type PointCloudAnnotationMappedAssetData } from './types';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -32,7 +32,7 @@ export type FdmNodeDataResult = {
 export type ClickedNodeData = {
   fdmResult?: FdmNodeDataResult;
   assetMappingResult?: AssetMappingDataResult;
-  pointCloudAnnotationMappingResult?: AnnotationAssetMappingDataResult[];
+  pointCloudAnnotationMappingResult?: PointCloudAnnotationMappedAssetData[];
   intersection: CadIntersection | PointCloudIntersection | Image360AnnotationIntersection;
 };
 
@@ -108,7 +108,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
 const useCombinedClickedNodeData = (
   fdmPromises: FdmNodeDataPromises | undefined,
   assetMappings: NodeAssetMappingResult | undefined,
-  pointCloudAssetMappings: AnnotationAssetMappingDataResult[] | undefined,
+  pointCloudAssetMappings: PointCloudAnnotationMappedAssetData[] | undefined,
   intersection:
     | CadIntersection
     | PointCloudIntersection
