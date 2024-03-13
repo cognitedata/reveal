@@ -69,6 +69,8 @@ export {
   CustomObject,
   CustomObjectIntersection,
   CustomObjectIntersectInput,
+  getNormalizedPixelCoordinatesBySize,
+  getNormalizedPixelCoordinates,
   CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 

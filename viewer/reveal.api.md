@@ -770,6 +770,7 @@ export type CustomObjectIntersection = {
     distanceToCamera: number;
     customObject: CustomObject;
     boundingBox?: Box3;
+    userData?: any;
 };
 
 // @public
@@ -1015,6 +1016,12 @@ export type GeometryFilter = {
     boundingBox?: THREE.Box3;
     isBoundingBoxInModelCoordinates?: boolean;
 };
+
+// @public (undocumented)
+export function getNormalizedPixelCoordinates(domElement: HTMLElement, pixelX: number, pixelY: number): THREE_2.Vector2;
+
+// @public
+export function getNormalizedPixelCoordinatesBySize(pixelX: number, pixelY: number, width: number, height: number): THREE_2.Vector2;
 
 // @public
 export type HtmlOverlayCreateClusterDelegate = (overlayElements: {

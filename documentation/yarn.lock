@@ -1919,7 +1919,7 @@ __metadata:
     replace: 1.2.2
     rimraf: 5.0.5
     styled-components: 5.3.11
-    typedoc: 0.25.9
+    typedoc: 0.25.11
     typedoc-plugin-markdown: 3.17.1
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 5.3.3
@@ -12119,9 +12119,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.25.9":
-  version: 0.25.9
-  resolution: "typedoc@npm:0.25.9"
+"typedoc@npm:0.25.11":
+  version: 0.25.11
+  resolution: "typedoc@npm:0.25.11"
   dependencies:
     lunr: ^2.3.9
     marked: ^4.3.0
@@ -12131,7 +12131,7 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
   bin:
     typedoc: bin/typedoc
-  checksum: c2e7d81e19083bda9289b9d6984c8ce1978b46272d5189c1bdca1518050975ad8fe4d48b2994d3e2e0ee2ebedb57354079674bf8d1466f8d61d74fc810f77f62
+  checksum: 2df254d8009e7a1eddb77bdf8652cfd487f05c97f464bc9ef28770c955f00b63922e5026c207a3e9625e13c9c47d04a2dd1f970e2c442c9cbcc37917f6a5ae2f
   languageName: node
   linkType: hard
 

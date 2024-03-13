@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "4.10.6",
+  "version": "4.10.7",
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "repository": {
@@ -81,7 +81,7 @@
   "devDependencies": {
     "@azure/msal-browser": "2.38.3",
     "@cognite/sdk": "8.3.0",
-    "@microsoft/api-extractor": "7.42.1",
+    "@microsoft/api-extractor": "7.42.3",
     "@types/dat.gui": "0.7.12",
     "@types/gl": "^6.0.2",
     "@types/glob": "8.1.0",
@@ -91,7 +91,7 @@
     "@types/jsdom": "21.1.6",
     "@types/lodash": "4.14.202",
     "@types/mixpanel-browser": "2.49.0",
-    "@types/node": "18.19.21",
+    "@types/node": "18.19.22",
     "@types/random-seed": "0.3.5",
     "@types/skmeans": "0.11.7",
     "@types/stats": "0.16.30",
@@ -105,7 +105,7 @@
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-header": "3.1.1",
-    "eslint-plugin-jsdoc": "48.2.0",
+    "eslint-plugin-jsdoc": "48.2.1",
     "eslint-plugin-lodash": "7.4.0",
     "eslint-plugin-prettier": "5.1.3",
     "eslint-plugin-unused-imports": "3.1.0",
