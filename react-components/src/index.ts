@@ -59,7 +59,10 @@ export {
   usePointCloudAnnotationMappingsForModels,
   usePointCloudAnnotationMappingsForAssetIds
 } from './components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
-export { type AnnotationAssetMappingDataResult } from './hooks/types';
+export {
+  type PointCloudAnnotationMappedAssetData,
+  type Image360AnnotationMappedAssetData
+} from './hooks/types';
 export { useImage360AnnotationMappingsForAssetIds } from './components/NodeCacheProvider/Image360AnnotationCacheProvider';
 export { type Image360AnnotationAssetInfo } from './components/NodeCacheProvider/types';
 
