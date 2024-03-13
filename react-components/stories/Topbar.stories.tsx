@@ -27,10 +27,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Main: Story = {
-  args: {
-    addModelOptions: getAddModelOptionsFromUrl('/primitives')
-  },
-  render: ({ addModelOptions }) => (
+  render: () => (
     <RevealStoryContext
       viewerOptions={{ useFlexibleCameraManager: true }}
       color={new Color(0x4a4a4a)}>
