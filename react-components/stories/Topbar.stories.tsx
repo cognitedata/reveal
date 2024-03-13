@@ -15,44 +15,45 @@ import { Color, Matrix4 } from 'three';
 import { type ReactElement, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
-import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 
 const meta = {
   title: 'Example/Topbar',
-  component: CadModelContainer,
+  component: Reveal3DResources,
   tags: ['autodocs']
-} satisfies Meta<typeof CadModelContainer>;
+} satisfies Meta<typeof Reveal3DResources>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Main: Story = {
-  render: () => (
+  args: {
+    resources: [
+      {
+        modelId: 1791160622840317,
+        revisionId: 498427137020189,
+        transform: new Matrix4().makeTranslation(40, 0, 0)
+      },
+      {
+        modelId: 1791160622840317,
+        revisionId: 498427137020189,
+        transform: new Matrix4().makeTranslation(40, 10, 0)
+      },
+      {
+        siteId: 'c_RC_2'
+      },
+      {
+        modelId: 3865289545346058,
+        revisionId: 4160448151596909
+      }
+    ]
+  },
+  render: ({ resources }) => (
     <RevealStoryContext
       viewerOptions={{ useFlexibleCameraManager: true }}
       color={new Color(0x4a4a4a)}>
       <RevealTopbar />
       <RevealCanvas>
-        <Reveal3DResources
-          resources={[
-            {
-              modelId: 1791160622840317,
-              revisionId: 498427137020189,
-              transform: new Matrix4().makeTranslation(40, 0, 0)
-            },
-            {
-              modelId: 1791160622840317,
-              revisionId: 498427137020189,
-              transform: new Matrix4().makeTranslation(40, 10, 0)
-            },
-            {
-              siteId: 'c_RC_2'
-            },
-            {
-              modelId: 3865289545346058,
-              revisionId: 4160448151596909
-            }
-          ]}></Reveal3DResources>
+        <Reveal3DResources resources={resources}></Reveal3DResources>
         <FitToUrlCameraState />
       </RevealCanvas>
     </RevealStoryContext>
