@@ -17,6 +17,7 @@ import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/Ass
 import { type NodeAssetMappingResult } from '../components/NodeCacheProvider/AssetMappingCache';
 import { usePointCloudAnnotationMappingForAssetId } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
 import { type PointCloudAnnotationMappedAssetData } from './types';
+import { MOUSE } from 'three';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -50,6 +51,9 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async () => {
+        if (event.button !== MOUSE.LEFT) {
+          return;
+        }
         const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
         const annotationIntersection = await viewer.get360AnnotationIntersectionFromPixel(
           event.offsetX,
