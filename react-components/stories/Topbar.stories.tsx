@@ -4,7 +4,6 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  CadModelContainer,
   useGetCameraStateFromUrlParam,
   useCameraNavigation,
   RevealTopbar,
