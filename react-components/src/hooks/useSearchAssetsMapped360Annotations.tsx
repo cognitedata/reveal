@@ -13,6 +13,7 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { chunk, uniqBy } from 'lodash';
 import { getAssetIdOrExternalIdFromImage360Annotation } from '../components/NodeCacheProvider/utils';
 import { type Image360AnnotationMappedAssetData } from './types';
+import { filterUndefined } from '../utilities/filterUndefined';
 
 export const useAllAssetsMapped360Annotations = (
   sdk: CogniteClient,
@@ -86,30 +87,24 @@ async function get360AnnotationAssets(
   image360Annotations: AnnotationModel[],
   sdk: CogniteClient
 ): Promise<Image360AnnotationMappedAssetData[]> {
-  const annotationMapping = image360Annotations
-    .map((annotation) => {
-      const assetId = getAssetIdOrExternalIdFromImage360Annotation(annotation);
-      const annotationId = annotation.id;
+  const annotationMapping = image360Annotations.map((annotation) => {
+    const assetId = getAssetIdOrExternalIdFromImage360Annotation(annotation);
+    if (assetId === undefined) {
+      return undefined;
+    }
+    return {
+      assetId,
+      annotationId: annotation.id
+    };
+  });
 
-      return {
-        assetId,
-        annotationId
-      };
-    })
-    .filter(
-      (
-        annotation
-      ): annotation is {
-        assetId: string | number;
-        annotationId: number;
-      } => annotation.assetId !== undefined
-    );
+  const filteredAnnotationMappings = filterUndefined(annotationMapping);
 
-  const uniqueAnnotationMapping = uniqBy(annotationMapping, 'assetId');
+  const uniqueAnnotationMapping = uniqBy(filteredAnnotationMappings, 'assetId');
 
   const assets = await retrieveAssets(sdk, uniqueAnnotationMapping);
   const flatAssets = assets.flat();
-  return getAssetsWithAnnotations(flatAssets, annotationMapping);
+  return getAssetsWithAnnotations(flatAssets, filteredAnnotationMappings);
 }
 
 async function retrieveAssets(
