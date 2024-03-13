@@ -9,17 +9,13 @@ import {
   useCameraNavigation,
   RevealTopbar,
   RevealCanvas,
-  type DmsUniqueIdentifier,
-  RevealToolbar,
   Reveal3DResources
 } from '../src';
 import { Color, Matrix4 } from 'three';
-import { type ReactElement, useEffect, useState } from 'react';
+import { type ReactElement, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
-import { SceneSelectionDropdown } from '../src/components/RevealTopbar/SceneSelectionDropdown';
-import { RuleBasedOutputsButton } from '../src/components/RevealToolbar/RuleBasedOutputsButton';
 
 const meta = {
   title: 'Example/Topbar',
