@@ -58,7 +58,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   private readonly _controls: FlexibleControls;
   private readonly _camera: PerspectiveCamera;
   private readonly _domElement: HTMLElement;
-  private readonly _inputHandler: InputHandler;
   private readonly _markers?: undefined | FlexibleCameraMarkers;
   private readonly _currentBoundingBox: Box3 = new Box3();
   private _isDisposed = false;
@@ -90,7 +89,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this._controls = new FlexibleControls(this.camera, domElement, new FlexibleControlsOptions());
     this._controls.getPickedPointByPixelCoordinates = this.getPickedPointByPixelCoordinates;
     this._domElement = domElement;
-    this._inputHandler = inputHandler;
     this._raycastCallback = raycastCallback;
     if (scene) {
       this._markers = new FlexibleCameraMarkers(scene);
@@ -206,7 +204,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this.controls.dispose();
     this.removeEventListeners();
     disposeOfAllEventListeners(this._triggers);
-    this._inputHandler.dispose();
     this._stopEventTrigger.dispose();
   }
 
