@@ -3,7 +3,7 @@
  */
 import { Cognite3DViewer, type Cognite3DViewerOptions } from '@cognite/reveal';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 import { type Color } from 'three';
 import { I18nContextProvider } from '../i18n/I18n';
 import { ViewerContext } from '../RevealCanvas/ViewerContext';
@@ -34,7 +34,7 @@ export type RevealContextProps = {
   >;
 };
 
-export const RevealContext = (props: RevealContextProps): ReactNode => {
+export const RevealContext = (props: RevealContextProps): ReactElement => {
   const viewer = useRevealFromKeepAlive(props);
 
   const queryClient = useMemo(() => {

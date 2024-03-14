@@ -108,6 +108,10 @@ export type { FdmInstanceWithView } from './utilities/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
 export { WindowWidget } from './components/Widgets/WindowWidget';
 export type { RuleAndEnabled, TriggerType } from './components/RuleBasedOutputs/types';
+export {
+  type PointCloudAnnotationMappedAssetData,
+  type Image360AnnotationMappedAssetData
+} from './hooks/types';
 
 // Functions
 export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';

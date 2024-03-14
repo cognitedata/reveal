@@ -136,7 +136,7 @@
     "ts-jest": "29.1.2",
     "ts-loader": "9.5.1",
     "tsc-alias": "1.8.8",
-    "typescript": "5.3.3",
+    "typescript": "5.4.2",
     "wasm-pack": "0.12.1",
     "webpack": "5.90.3",
     "webpack-cli": "5.1.4",
@@ -157,5 +157,5 @@
   "files": [
     "dist"
   ],
-  "packageManager": "yarn@4.1.0"
+  "packageManager": "yarn@4.1.1"
 }

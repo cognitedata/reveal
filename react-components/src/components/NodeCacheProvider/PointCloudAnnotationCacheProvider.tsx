@@ -10,7 +10,7 @@ import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { type PointCloudModelOptions, type TypedReveal3DModel } from '../Reveal3DResources/types';
 import { type AnnotationModelDataResult } from '../../hooks/useCalculatePointCloudModelsStyling';
-import { type AnnotationAssetMappingDataResult } from '../../hooks/types';
+import { type PointCloudAnnotationMappedAssetData } from '../../hooks/types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { filterUndefined } from '../../utilities/filterUndefined';
 import { type AnnotationId } from './types';
@@ -101,7 +101,7 @@ export const usePointCloudAnnotationMappingsForModels = (
 export const usePointCloudAnnotationMappingsForAssetIds = (
   models: TypedReveal3DModel[],
   assetIds: Array<string | number> | undefined
-): UseQueryResult<AnnotationAssetMappingDataResult[]> => {
+): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
   return useQuery(
@@ -134,7 +134,7 @@ export const usePointCloudAnnotationMappingForAssetId = (
   modelId: number | undefined,
   revisionId: number | undefined,
   assetId: string | number | undefined
-): UseQueryResult<AnnotationAssetMappingDataResult[]> => {
+): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
   return useQuery(
@@ -166,7 +166,7 @@ const fetchAnnotationsForModel = async (
   revisionId: number | undefined,
   assetIds: Array<string | number> | undefined,
   pointCloudAnnotationCache: PointCloudAnnotationCache
-): Promise<AnnotationAssetMappingDataResult[] | undefined> => {
+): Promise<PointCloudAnnotationMappedAssetData[] | undefined> => {
   if (modelId === undefined || revisionId === undefined || assetIds === undefined) {
     return undefined;
   }
