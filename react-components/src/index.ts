@@ -15,15 +15,19 @@ export { Image360HistoricalDetails } from './components/Image360HistoricalDetail
 export { Image360Details } from './components/Image360Details/Image360Details';
 export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
 export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
+export {
+  SceneContainer,
+  type SceneContainerProps
+} from './components/SceneContainer/SceneContainer';
 
 export { RevealToolbar, type RevealToolbarProps } from './components/RevealToolbar/RevealToolbar';
 export { RevealTopbar } from './components/RevealTopbar/RevealTopbar';
 export { AxisGizmo, AxisGizmoOptions } from './components/AxisGizmo';
+export { WindowWidget } from './components/Widgets/WindowWidget';
 
 // Hooks
 export { useReveal } from './components/RevealCanvas/ViewerContext';
-export { use3DModelName } from './hooks/use3DModelName';
-export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCacheProvider';
+export { useFdmAssetMappings } from './components/CacheProvider/NodeCacheProvider';
 export { useSceneDefaultCamera } from './hooks/useSceneDefaultCamera';
 export {
   useClickedNodeData,
@@ -31,40 +35,41 @@ export {
   type FdmNodeDataResult
 } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
-export { use3dScenes } from './hooks/use3dScenes';
 export { use3dModels } from './hooks/use3dModels';
-export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
+export { useMappedEdgesForRevisions } from './components/CacheProvider/NodeCacheProvider';
 export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
-export { use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
+
+export {
+  usePointCloudAnnotationMappingsForModels,
+  usePointCloudAnnotationMappingsForAssetIds
+} from './components/CacheProvider/PointCloudAnnotationCacheProvider';
+export { useImage360AnnotationMappingsForAssetIds } from './components/CacheProvider/Image360AnnotationCacheProvider';
+
+// Queries
+export { use3DModelName } from './query/use3DModelName';
+export { use3dScenes } from './query/use3dScenes';
+export { use3dRelatedEdgeConnections } from './query/use3dRelatedEdgeConnections';
+export { use3dRelatedDirectConnections } from './query/use3dRelatedDirectConnections';
+export { use3dNodeByExternalId } from './query/use3dNodeByExternalId';
 export {
   useAllMappedEquipmentFDM,
   useSearchMappedEquipmentFDM,
   type SearchResultsWithView
-} from './hooks/useSearchMappedEquipmentFDM';
+} from './query/useSearchMappedEquipmentFDM';
 export {
   useSearchMappedEquipmentAssetMappings,
   useAllMappedEquipmentAssetMappings,
   type ModelMappings,
   type ModelMappingsWithAssets
-} from './hooks/useSearchMappedEquipmentAssetMappings';
+} from './query/useSearchMappedEquipmentAssetMappings';
 export {
   useSearchAssetsMapped360Annotations,
   useAllAssetsMapped360Annotations
-} from './hooks/useSearchAssetsMapped360Annotations';
+} from './query/useSearchAssetsMapped360Annotations';
 export {
   useAllAssetsMappedPointCloudAnnotations,
   useSearchAssetsMappedPointCloudAnnotations
-} from './hooks/useSearchAssetsMappedPointCloudAnnotations';
-export {
-  usePointCloudAnnotationMappingsForModels,
-  usePointCloudAnnotationMappingsForAssetIds
-} from './components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
-export {
-  type PointCloudAnnotationMappedAssetData,
-  type Image360AnnotationMappedAssetData
-} from './hooks/types';
-export { useImage360AnnotationMappingsForAssetIds } from './components/NodeCacheProvider/Image360AnnotationCacheProvider';
-export { type Image360AnnotationAssetInfo } from './components/NodeCacheProvider/types';
+} from './query/useSearchAssetsMappedPointCloudAnnotations';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
@@ -90,19 +95,17 @@ export {
   type DefaultResourceStyling,
   type Image360AssetStylingGroup
 } from './components/Reveal3DResources/types';
-export {
-  SceneContainer,
-  type SceneContainerProps
-} from './components/SceneContainer/SceneContainer';
 export type {
   AddImageCollection360Options,
   AddResourceOptions,
   AddReveal3DModelOptions
 } from './components/Reveal3DResources/types';
+export {
+  type PointCloudAnnotationMappedAssetData,
+  type Image360AnnotationMappedAssetData
+} from './hooks/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { FdmInstanceWithView } from './utilities/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
-export { WindowWidget } from './components/Widgets/WindowWidget';
-export { use3dRelatedEdgeConnections } from './hooks/use3dRelatedEdgeConnections';
-export { use3dRelatedDirectConnections } from './hooks/use3dRelatedDirectConnections';
+export { type Image360AnnotationAssetInfo } from './components/CacheProvider/types';

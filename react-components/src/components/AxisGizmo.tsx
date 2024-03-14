@@ -5,7 +5,7 @@
 import { useEffect, type ReactElement } from 'react';
 
 import { AxisGizmoOptions, AxisGizmoTool } from '@cognite/reveal/tools';
-import { useReveal } from '..';
+import { useReveal } from './RevealCanvas/ViewerContext';
 
 export { AxisGizmoOptions };
 

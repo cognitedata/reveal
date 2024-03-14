@@ -14,9 +14,9 @@ import { isSamePointCloudModel } from '../utilities/isSameModel';
 import {
   usePointCloudAnnotationMappingsForModels,
   usePointCloudAnnotationIdsForModels
-} from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
+} from '../components/CacheProvider/PointCloudAnnotationCacheProvider';
 import { EMPTY_ARRAY } from '../utilities/constants';
-import { type PointCloudAnnotationModel } from '../components/NodeCacheProvider/types';
+import { type PointCloudAnnotationModel } from '../components/CacheProvider/types';
 
 export type StyledPointCloudModel = {
   model: PointCloudModelOptions;
