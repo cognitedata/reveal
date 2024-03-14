@@ -4,7 +4,7 @@
 import { type ReactElement } from 'react';
 
 import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { use3dScenes } from '../../hooks/use3dScenes';
+import { use3dScenes } from '../../query/use3dScenes';
 import { useTranslation } from '../i18n/I18n';
 import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 import { SceneList } from './SceneList';

@@ -7,7 +7,6 @@ import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { useMemo } from 'react';
 import { type EdgeItem, FdmSDK, type Query, type NodeItem } from '../utilities/FdmSDK';
-import { type AddReveal3DModelOptions } from '..';
 import {
   type SceneConfigurationProperties,
   type Cdf3dRevisionProperties,
@@ -15,10 +14,13 @@ import {
   type Cdf3dImage360CollectionProperties,
   type GroundPlaneProperties,
   type SkyboxProperties
-} from './types';
+} from '../hooks/types';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type AddImageCollection360DatamodelsOptions } from '../components/Reveal3DResources/types';
+import {
+  type AddReveal3DModelOptions,
+  type AddImageCollection360DatamodelsOptions
+} from '../components/Reveal3DResources/types';
 import { type GroundPlane, type Skybox } from '../components/SceneContainer/SceneTypes';
 
 export type Space = string;

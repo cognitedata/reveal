@@ -13,23 +13,23 @@ import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
-} from '../components/NodeCacheProvider/NodeCacheProvider';
+} from '../components/CacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
 import {
   type NodeId,
   type FdmEdgeWithNode,
   type AssetId,
   type ModelRevisionAssetNodesResult
-} from '../components/NodeCacheProvider/types';
+} from '../components/CacheProvider/types';
 import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../components/CadModelContainer/useApplyCadModelStyling';
-import { type AssetMapping } from '../components/NodeCacheProvider/AssetMappingCache';
+import { type AssetMapping } from '../components/CacheProvider/AssetMappingCache';
 import {
   useAssetMappedNodesForRevisions,
   useNodesForAssets
-} from '../components/NodeCacheProvider/AssetMappingCacheProvider';
+} from '../components/CacheProvider/AssetMappingCacheProvider';
 import { isSameCadModel } from '../utilities/isSameModel';
 import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
 

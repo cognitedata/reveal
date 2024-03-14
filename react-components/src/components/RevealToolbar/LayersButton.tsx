@@ -12,7 +12,7 @@ import {
   type Image360Collection
 } from '@cognite/reveal';
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import { use3DModelName } from '../../hooks/use3DModelName';
+import { use3DModelName } from '../../query/use3DModelName';
 import { isEqual } from 'lodash';
 import { useLayersUrlParams } from './hooks/useUrlStateParam';
 import { useTranslation } from '../i18n/I18n';

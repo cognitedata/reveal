@@ -3,12 +3,12 @@
  */
 
 import { useEffect } from 'react';
-import { useSceneConfig } from './useSceneConfig';
+import { useSceneConfig } from '../query/useSceneConfig';
 import { DoubleSide, Mesh, MeshBasicMaterial, PlaneGeometry, TextureLoader } from 'three';
-import { useReveal } from '..';
 import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { CDF_TO_VIEWER_TRANSFORMATION, CustomObject } from '@cognite/reveal';
+import { useReveal } from '../components/RevealCanvas/ViewerContext';
 
 export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
   const { data: scene } = useSceneConfig(sceneExternalId, sceneSpaceId);

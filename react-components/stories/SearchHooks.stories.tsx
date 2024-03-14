@@ -19,20 +19,20 @@ import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCa
 import {
   useAllMappedEquipmentFDM,
   useSearchMappedEquipmentFDM
-} from '../src/hooks/useSearchMappedEquipmentFDM';
+} from '../src/query/useSearchMappedEquipmentFDM';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   useAllMappedEquipmentAssetMappings,
   useSearchMappedEquipmentAssetMappings
-} from '../src/hooks/useSearchMappedEquipmentAssetMappings';
+} from '../src/query/useSearchMappedEquipmentAssetMappings';
 import {
   useAllAssetsMapped360Annotations,
   useSearchAssetsMapped360Annotations
-} from '../src/hooks/useSearchAssetsMapped360Annotations';
+} from '../src/query/useSearchAssetsMapped360Annotations';
 import {
   useAllAssetsMappedPointCloudAnnotations,
   useSearchAssetsMappedPointCloudAnnotations
-} from '../src/hooks/useSearchAssetsMappedPointCloudAnnotations';
+} from '../src/query/useSearchAssetsMappedPointCloudAnnotations';
 import { isEqual } from 'lodash';
 import { type NodeItem } from '../src/utilities/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';

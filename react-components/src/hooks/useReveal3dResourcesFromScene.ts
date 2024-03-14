@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useSceneConfig } from './useSceneConfig';
+import { useSceneConfig } from '../query/useSceneConfig';
 import { type CogniteClient } from '@cognite/sdk';
 import {
   type AddResourceOptions,
