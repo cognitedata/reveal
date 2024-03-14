@@ -8,7 +8,7 @@ import {
   type Node3D,
   type AnnotationsCogniteAnnotationTypesImagesAssetLink
 } from '@cognite/sdk';
-import { type EdgeItem, type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
+import { type DmsUniqueIdentifier, type Source, type EdgeItem } from '../../utilities/FdmSDK';
 import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 import { type Vector3 } from 'three';

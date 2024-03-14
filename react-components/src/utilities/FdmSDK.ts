@@ -103,6 +103,17 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   properties: FdmPropertyType<PropertyType>;
 };
 
+export type FdmNode<PropertyType = Record<string, unknown>> = {
+  instanceType: 'node';
+  version: number;
+  space: string;
+  externalId: string;
+  createdTime: number;
+  lastUpdatedTime: number;
+  deletedTime: number;
+  properties: PropertyType;
+};
+
 type InspectionOperations =
   | { involvedContainers: Record<never, never>; involvedViews?: Record<never, never> }
   | { involvedContainers?: Record<never, never>; involvedViews: Record<never, never> };
@@ -294,7 +305,7 @@ export class FdmSDK {
     source?: Source,
     cursor?: string
   ): Promise<{
-    instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>>;
+    instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>>;
     nextCursor?: string;
   }>;
 
@@ -304,7 +315,7 @@ export class FdmSDK {
     instanceType: 'node',
     source?: Source,
     cursor?: string
-  ): Promise<{ instances: Array<NodeItem<PropertiesType>>; nextCursor?: string }>;
+  ): Promise<{ instances: Array<FdmNode<PropertiesType>>; nextCursor?: string }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
@@ -321,7 +332,7 @@ export class FdmSDK {
     source: Source,
     cursor?: string
   ): Promise<{
-    instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>>;
+    instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>>;
     nextCursor?: string;
   }> {
     const data: any = { filter, instanceType };
@@ -355,7 +366,7 @@ export class FdmSDK {
     filter: InstanceFilter,
     instanceType: InstanceType,
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>;
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
@@ -367,16 +378,16 @@ export class FdmSDK {
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter,
-    instanceType: 'edge',
+    instanceType: 'node',
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
+  ): Promise<{ instances: Array<FdmNode<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter,
     instanceType: InstanceType,
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> {
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }> {
     let mappings = await this.filterInstances<PropertiesType>(filter, instanceType, source);
 
     while (mappings.nextCursor !== undefined) {

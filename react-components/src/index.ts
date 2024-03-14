@@ -20,6 +20,9 @@ export { RevealToolbar, type RevealToolbarProps } from './components/RevealToolb
 export { RevealTopbar } from './components/RevealTopbar/RevealTopbar';
 export { AxisGizmo, AxisGizmoOptions } from './components/AxisGizmo';
 
+export { type AnnotationAssetMappingDataResult } from './hooks/types';
+export { type Image360AnnotationAssetInfo } from './components/NodeCacheProvider/types';
+
 // Hooks
 export { useReveal } from './components/RevealCanvas/ViewerContext';
 export { use3DModelName } from './hooks/use3DModelName';
@@ -59,9 +62,12 @@ export {
   usePointCloudAnnotationMappingsForModels,
   usePointCloudAnnotationMappingsForAssetIds
 } from './components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
-export { type AnnotationAssetMappingDataResult } from './hooks/types';
+
+export { use3dRelatedEdgeConnections } from './hooks/use3dRelatedEdgeConnections';
+export { use3dRelatedDirectConnections } from './hooks/use3dRelatedDirectConnections';
+export { useFetchRuleInstances } from './components/RuleBasedOutputs/hooks/useFetchRuleInstances';
+
 export { useImage360AnnotationMappingsForAssetIds } from './components/NodeCacheProvider/Image360AnnotationCacheProvider';
-export { type Image360AnnotationAssetInfo } from './components/NodeCacheProvider/types';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
@@ -101,5 +107,7 @@ export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { FdmInstanceWithView } from './utilities/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
 export { WindowWidget } from './components/Widgets/WindowWidget';
-export { use3dRelatedEdgeConnections } from './hooks/use3dRelatedEdgeConnections';
-export { use3dRelatedDirectConnections } from './hooks/use3dRelatedDirectConnections';
+export type { RuleAndEnabled, TriggerType } from './components/RuleBasedOutputs/types';
+
+// Functions
+export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';

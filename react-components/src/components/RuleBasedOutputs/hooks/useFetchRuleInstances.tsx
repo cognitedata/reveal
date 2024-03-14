@@ -4,7 +4,7 @@
 import { useFdmSdk } from '../../RevealCanvas/SDKProvider';
 import { RULE_BASED_OUTPUTS_VIEW } from '../constants';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { type RuleAndEnabled } from '../types';
+import { type RuleAndEnabled, type RuleOutputSet } from '../types';
 import { fdmViewsExist } from '../../../utilities/fdmViewsExist';
 
 export const useFetchRuleInstances = (): UseQueryResult<RuleAndEnabled[], unknown> => {
@@ -25,7 +25,11 @@ export const useFetchRuleInstances = (): UseQueryResult<RuleAndEnabled[], unknow
         values: ['color']
       }
     };
-    const result = await fdmSdk.filterAllInstances(filter, 'node', RULE_BASED_OUTPUTS_VIEW);
+    const result = await fdmSdk.filterAllInstances<RuleOutputSet>(
+      filter,
+      'node',
+      RULE_BASED_OUTPUTS_VIEW
+    );
 
     const rulesAndEnabled: RuleAndEnabled[] = [];
     result.instances.forEach((instance) => {

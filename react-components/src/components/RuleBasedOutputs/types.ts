@@ -3,10 +3,12 @@
  */
 
 import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
-import { type EdgeItem } from '../../utilities/FdmSDK';
+import { type FdmNode, type EdgeItem } from '../../utilities/FdmSDK';
 import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
 
 // =========== RULE BASED OUTPUT DATA MODEL
+
+export type TriggerType = 'timeseries' | 'metadata';
 
 export type TimeseriesRuleTrigger = {
   type: 'timeseries';
@@ -168,7 +170,7 @@ export type NodeAndRange = {
 
 export type RuleAndEnabled = {
   isEnabled: boolean;
-  rule: EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>;
+  rule: FdmNode<RuleOutputSet>;
 };
 
 export type RuleRecord = EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>;
