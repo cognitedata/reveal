@@ -20,7 +20,6 @@ export { RevealToolbar, type RevealToolbarProps } from './components/RevealToolb
 export { RevealTopbar } from './components/RevealTopbar/RevealTopbar';
 export { AxisGizmo, AxisGizmoOptions } from './components/AxisGizmo';
 
-export { type AnnotationAssetMappingDataResult } from './hooks/types';
 export { type Image360AnnotationAssetInfo } from './components/NodeCacheProvider/types';
 
 // Hooks
