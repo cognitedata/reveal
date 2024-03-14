@@ -26,7 +26,7 @@ import {
 } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset } from '@cognite/sdk';
 import { type AssetStylingGroup } from '../Reveal3DResources/types';
-import { filterUndefined } from '../../utilities/filterUndefined';
+import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
 
 const checkStringExpressionStatement = (
@@ -192,7 +192,7 @@ export const generateRuleBasedOutputs = async (
   const outputType = 'color'; // for now it only supports colors as the output
 
   const ruleWithOutputs = ruleSet?.rulesWithOutputs;
-  return filterUndefined(
+  return (
     await Promise.all(
       ruleWithOutputs?.map(async (ruleWithOutput: { rule: Rule; outputs: RuleOutput[] }) => {
         const { rule, outputs } = ruleWithOutput;
@@ -219,7 +219,7 @@ export const generateRuleBasedOutputs = async (
         });
       })
     )
-  );
+  ).filter(isDefined);
 };
 
 const analyzeNodesAgainstExpression = async ({
@@ -255,7 +255,7 @@ const analyzeNodesAgainstExpression = async ({
     })
   );
 
-  const filteredAllTreeNodes = filterUndefined(allTreeNodes.flat());
+  const filteredAllTreeNodes = allTreeNodes.flat().filter(isDefined);
   return applyNodeStyles(filteredAllTreeNodes, outputSelected, model);
 };
 
