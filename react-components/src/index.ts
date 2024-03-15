@@ -25,6 +25,8 @@ export { RevealTopbar } from './components/RevealTopbar/RevealTopbar';
 export { AxisGizmo, AxisGizmoOptions } from './components/AxisGizmo';
 export { WindowWidget } from './components/Widgets/WindowWidget';
 
+export { type Image360AnnotationAssetInfo } from './components/CacheProvider/types';
+
 // Hooks
 export { useReveal } from './components/RevealCanvas/ViewerContext';
 export { useFdmAssetMappings } from './components/CacheProvider/NodeCacheProvider';
@@ -71,6 +73,8 @@ export {
   useSearchAssetsMappedPointCloudAnnotations
 } from './query/useSearchAssetsMappedPointCloudAnnotations';
 
+export { useFetchRuleInstances } from './components/RuleBasedOutputs/hooks/useFetchRuleInstances';
+
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
 export {
@@ -108,4 +112,8 @@ export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { FdmInstanceWithView } from './utilities/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
-export { type Image360AnnotationAssetInfo } from './components/CacheProvider/types';
+
+export type { RuleAndEnabled, TriggerType } from './components/RuleBasedOutputs/types';
+
+// Functions
+export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';
