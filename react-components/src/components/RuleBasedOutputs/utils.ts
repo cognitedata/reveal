@@ -15,7 +15,9 @@ import {
   type Rule,
   type TimeseriesRuleTrigger,
   type RuleAndStyleIndex,
-  type AssetStylingGroupAndStyleIndex
+  type AssetStylingGroupAndStyleIndex,
+  type TriggerType,
+  type RuleWithOutputs
 } from './types';
 import {
   type CogniteCadModel,
@@ -23,8 +25,9 @@ import {
   type NodeAppearance
 } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset } from '@cognite/sdk';
-import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
-import { filterUndefined } from '../../utilities/filterUndefined';
+import { type AssetStylingGroup } from '../Reveal3DResources/types';
+import { isDefined } from '../../utilities/isDefined';
+import { assertNever } from '../../utilities/assertNever';
 
 const checkStringExpressionStatement = (
   asset: Asset,
@@ -164,41 +167,59 @@ const traverseExpression = (
   return expressionResults;
 };
 
+export function getRuleTriggerTypes(expression: RuleWithOutputs): TriggerType[] {
+  return getExpressionTriggerTypes(expression.rule.expression);
+}
+
+function getExpressionTriggerTypes(expression: Expression): TriggerType[] {
+  if (expression.type === 'and' || expression.type === 'or') {
+    return expression.expressions.flatMap(getExpressionTriggerTypes);
+  } else if (expression.type === 'not') {
+    return getExpressionTriggerTypes(expression.expression);
+  } else if (expression.type === 'numericExpression' || expression.type === 'stringExpression') {
+    return [expression.trigger.type];
+  } else {
+    assertNever(expression);
+  }
+}
+
 export const generateRuleBasedOutputs = async (
   model: CogniteCadModel,
   contextualizedAssetNodes: Asset[],
   assetMappings: AssetMapping3D[],
-  ruleSet: RuleOutputSet | Record<string, any> | FdmPropertyType<Record<string, any>>
+  ruleSet: RuleOutputSet
 ): Promise<AssetStylingGroupAndStyleIndex[]> => {
   const outputType = 'color'; // for now it only supports colors as the output
 
   const ruleWithOutputs = ruleSet?.rulesWithOutputs;
-  return await Promise.all(
-    ruleWithOutputs?.map(async (ruleWithOutput: { rule: Rule; outputs: RuleOutput[] }) => {
-      const { rule, outputs } = ruleWithOutput;
-      // Starting Expression
-      const expression = rule.expression;
+  return (
+    await Promise.all(
+      ruleWithOutputs?.map(async (ruleWithOutput: { rule: Rule; outputs: RuleOutput[] }) => {
+        const { rule, outputs } = ruleWithOutput;
+        // Starting Expression
+        const expression = rule.expression;
 
-      const outputFound = outputs.find((output: { type: string }) => output.type === outputType);
+        const outputFound = outputs.find((output: { type: string }) => output.type === outputType);
 
-      if (outputFound?.type !== 'color') return;
+        if (outputFound?.type !== 'color') return;
 
-      const outputSelected: ColorRuleOutput = {
-        externalId: outputFound.externalId,
-        type: 'color',
-        fill: outputFound.fill,
-        outline: outputFound.outline
-      };
+        const outputSelected: ColorRuleOutput = {
+          externalId: outputFound.externalId,
+          type: 'color',
+          fill: outputFound.fill,
+          outline: outputFound.outline
+        };
 
-      return await analyzeNodesAgainstExpression({
-        model,
-        contextualizedAssetNodes,
-        assetMappings,
-        expression,
-        outputSelected
-      });
-    })
-  );
+        return await analyzeNodesAgainstExpression({
+          model,
+          contextualizedAssetNodes,
+          assetMappings,
+          expression,
+          outputSelected
+        });
+      })
+    )
+  ).filter(isDefined);
 };
 
 const analyzeNodesAgainstExpression = async ({
@@ -234,7 +255,7 @@ const analyzeNodesAgainstExpression = async ({
     })
   );
 
-  const filteredAllTreeNodes = filterUndefined(allTreeNodes.flat());
+  const filteredAllTreeNodes = allTreeNodes.flat().filter(isDefined);
   return applyNodeStyles(filteredAllTreeNodes, outputSelected, model);
 };
 

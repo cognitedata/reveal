@@ -2,7 +2,7 @@
 This library contains react components to augment applications using Reveal.
 
 ## Building and installing
-Note that this library depends on an internal Cognite design library (`cogs.js`) and is therefore not usable for non-cognite applications (sorry...). 
+Note that this library depends on an internal Cognite design library (`cogs.js`) and is therefore not usable for non-cognite applications (sorry...).
 To be able to fetch internal packages you must be logged into yarn with `yarn npm login`.
 
 After authenticating and installing, build can be done with the following commands:
@@ -20,7 +20,7 @@ yarn run storybook
 
 
 ## Using reveal react components in /examples
-As we want `/examples` to continue working out of the box by external users, you must do some manual adjustments if you want to test a components.
+As we want `/examples` to continue working out-of-the-box by external users, you must do some manual adjustments if you want to test a components.
 
 Some changes must be made to `/examples/package.json`,
 

@@ -5,14 +5,13 @@ import { useEffect, type ReactElement, useState } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
 import { useAllMappedEquipmentAssetMappings } from '../..';
-import { type AssetStylingGroupAndStyleIndex } from './types';
+import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types';
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
-import { type FdmPropertyType } from '../Reveal3DResources/types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 
 export type ColorOverlayProps = {
-  ruleSet: Record<string, any> | FdmPropertyType<Record<string, any>> | undefined;
+  ruleSet: RuleOutputSet | undefined;
   onRuleSetChanged?: (currentStylings: AssetStylingGroupAndStyleIndex[] | undefined) => void;
 };
 
