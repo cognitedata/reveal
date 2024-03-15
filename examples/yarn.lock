@@ -175,17 +175,18 @@
     commander "^2.15.1"
 
 "@cognite/reveal@link:../viewer":
-  version "4.8.0"
+  version "4.10.7"
   dependencies:
+    "@rajesh896/broprint.js" "^2.1.1"
     "@tweenjs/tween.js" "19.0.0"
     assert "2.1.0"
-    async-mutex "0.4.0"
+    async-mutex "0.4.1"
     glslify "7.1.1"
     glslify-import "3.1.0"
     html2canvas "^1.4.1"
     lodash "4.17.21"
-    loglevel "1.8.1"
-    mixpanel-browser "2.48.1"
+    loglevel "1.9.1"
+    mixpanel-browser "2.49.0"
     path-browserify "1.0.1"
     random-seed "0.3.0"
     rxjs "7.8.1"
@@ -302,6 +303,11 @@
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"
   integrity sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==
+
+"@rajesh896/broprint.js@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@rajesh896/broprint.js/-/broprint.js-2.1.1.tgz#f38870f62539035f318ebb9b6ba01fcc7ed76605"
+  integrity sha512-34L0SFrOLHWAhF4ZU7QS32zItGOKdu3BY0DmMwoW6zekLuJWSuCIK07Xzgyy2AqCCUByd2VHMr2wbHousid+qg==
 
 "@testing-library/jest-dom@^5.11.5":
   version "5.14.1"
@@ -859,10 +865,10 @@ assert@2.1.0:
     object.assign "^4.1.4"
     util "^0.12.5"
 
-async-mutex@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/async-mutex/-/async-mutex-0.4.0.tgz#ae8048cd4d04ace94347507504b3cf15e631c25f"
-  integrity sha512-eJFZ1YhRR8UN8eBLoNzcDPcy/jqjsg6I1AP+KvWQX80BqOSW1oJPJXDylPUEeMr2ZQvHgnQ//Lp6f3RQ1zI7HA==
+async-mutex@0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/async-mutex/-/async-mutex-0.4.1.tgz#bccf55b96f2baf8df90ed798cb5544a1f6ee4c2c"
+  integrity sha512-WfoBo4E/TbCX1G95XTjbWTE3X2XLG0m1Xbv2cwOtuPdyH9CZvnaA5nCt1ucjaKEgW2A5IF71hxrRhr83Je5xjA==
   dependencies:
     tslib "^2.4.0"
 
@@ -1740,9 +1746,9 @@ find-up@^4.0.0:
     path-exists "^4.0.0"
 
 follow-redirects@^1.0.0:
-  version "1.15.4"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.4.tgz#cdc7d308bf6493126b17ea2191ea0ccf3e535adf"
-  integrity sha512-Cr4D/5wlrb0z9dgERpUL3LrmPKVDsETIJhaCMeDfuFYcqa5bldGV6wBsAN6X/vxlXQtFBMrXdXxdL8CbDTGniw==
+  version "1.15.6"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.6.tgz#7f815c0cda4249c74ff09e95ef97c23b5fd0399b"
+  integrity sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==
 
 for-each@^0.3.3:
   version "0.3.3"
@@ -2544,10 +2550,10 @@ lodash@4.17.21, lodash@^4.17.15, lodash@^4.17.20, lodash@^4.17.21:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-loglevel@1.8.1:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.8.1.tgz#5c621f83d5b48c54ae93b6156353f555963377b4"
-  integrity sha512-tCRIJM51SHjAayKwC+QAg8hT8vg6z7GSgLJKGvzuPb1Wc+hLzqtuVLxp6/HzSPOozuK+8ErAhy7U/sVzw8Dgfg==
+loglevel@1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.9.1.tgz#d63976ac9bcd03c7c873116d41c2a85bafff1be7"
+  integrity sha512-hP3I3kCrDIMuRwAwHltphhDM1r8i55H33GgqjXbrisuJhF4kRhW1dNuxsRklp4bXl8DSdLaNLuiL4A/LWRfxvg==
 
 loglevelnext@^3.0.1:
   version "3.0.1"
@@ -2666,10 +2672,10 @@ minimist@^1.2.5:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.6.tgz#8637a5b759ea0d6e98702cfb3a9283323c93af44"
   integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
 
-mixpanel-browser@2.48.1:
-  version "2.48.1"
-  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.48.1.tgz#0fec03d87f57fe2e72c6a4b1df5924436840ece7"
-  integrity sha512-vXTuUzZMg+ht7sRqyjtc3dUDy/81Z/H6FLFgFkUZJqKFaAqcx1JSXmOdY/2kmsxCkUdy5JN5zW9m9TMCk+rxGQ==
+mixpanel-browser@2.49.0:
+  version "2.49.0"
+  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.49.0.tgz#de3f4f2d0f3a32b4babf6d827ef983a9fd48a711"
+  integrity sha512-RZJCO7XXuuHBAWG5fd9Mavz994M7v7W3Qiaq8NzmN631pa4BQ0vNZQtRFqKcCCOBn4xqOZbX2GkuC7ZkQoL4cQ==
 
 ms@2.0.0:
   version "2.0.0"
