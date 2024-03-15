@@ -8,16 +8,17 @@ import {
   type PointerEventData,
   type Image360AnnotationIntersection
 } from '@cognite/reveal';
-import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
-import { useFdm3dNodeDataPromises } from '../components/NodeCacheProvider/NodeCacheProvider';
+import { useFdm3dNodeDataPromises } from '../components/CacheProvider/NodeCacheProvider';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
-import { type FdmNodeDataPromises } from '../components/NodeCacheProvider/types';
-import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
-import { type NodeAssetMappingResult } from '../components/NodeCacheProvider/AssetMappingCache';
-import { usePointCloudAnnotationMappingForAssetId } from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
+import { type FdmNodeDataPromises } from '../components/CacheProvider/types';
+import { useAssetMappingForTreeIndex } from '../components/CacheProvider/AssetMappingCacheProvider';
+import { type NodeAssetMappingResult } from '../components/CacheProvider/AssetMappingCache';
+import { usePointCloudAnnotationMappingForAssetId } from '../components/CacheProvider/PointCloudAnnotationCacheProvider';
 import { type PointCloudAnnotationMappedAssetData } from './types';
 import { MOUSE } from 'three';
+import { type DmsUniqueIdentifier, type Source } from '../utilities/FdmSDK';
+import { useReveal } from '../components/RevealCanvas/ViewerContext';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;

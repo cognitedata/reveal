@@ -2,9 +2,10 @@
  * Copyright 2023 Cognite AS
  */
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useFdmNodeCache } from '../components/NodeCacheProvider/NodeCacheProvider';
-import { type DmsUniqueIdentifier, useReveal } from '../index';
+import { useFdmNodeCache } from '../components/CacheProvider/NodeCacheProvider';
 import { type Node3D } from '@cognite/sdk';
+import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
+import { useReveal } from '../components/RevealCanvas/ViewerContext';
 
 export const use3dNodeByExternalId = ({
   externalId,

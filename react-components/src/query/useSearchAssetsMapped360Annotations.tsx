@@ -11,9 +11,9 @@ import {
 } from '@cognite/sdk';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { chunk, uniqBy } from 'lodash';
-import { getAssetIdOrExternalIdFromImage360Annotation } from '../components/NodeCacheProvider/utils';
-import { type Image360AnnotationMappedAssetData } from './types';
 import { isDefined } from '../utilities/isDefined';
+import { getAssetIdOrExternalIdFromImage360Annotation } from '../components/CacheProvider/utils';
+import { type Image360AnnotationMappedAssetData } from '../hooks/types';
 
 export const useAllAssetsMapped360Annotations = (
   sdk: CogniteClient,

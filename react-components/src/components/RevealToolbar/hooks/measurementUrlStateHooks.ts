@@ -5,8 +5,8 @@
 import { useCallback, useMemo } from 'react';
 import { distancesInFeetAndMeters } from '../MeasurementButton';
 import { type Measurement, MeasurementTool } from '@cognite/reveal/tools';
-import { useReveal } from '../../..';
 import { Vector3 } from 'three';
+import { useReveal } from '../../RevealCanvas/ViewerContext';
 
 type SerializedMeasurement = number[];
 

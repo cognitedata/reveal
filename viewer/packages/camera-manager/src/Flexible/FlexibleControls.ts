@@ -27,8 +27,8 @@ import { FlexibleControlsEvent } from './FlexibleControlsEvent';
 import { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordinates';
 import { FlexibleControlsTranslator } from './FlexibleControlsTranslator';
 import { FlexibleControlsRotationHelper } from './FlexibleControlsRotationHelper';
+import { getWheelDelta } from '../utils/getWheelDelta';
 
-const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
 const XYZ_EPSILON = 0.001; // Used for points
 const RAD_EPSILON = Math.PI / 10000; // Used for angles
@@ -918,24 +918,6 @@ function getPinchInfo(domElement: HTMLElement, touches: PointerEvent[]) {
   const center = new Vector2().addVectors(offsets[0], offsets[1]).multiplyScalar(0.5);
   const distance = offsets[0].distanceTo(offsets[1]);
   return { center, distance };
-}
-
-function getWheelDelta(event: WheelEvent): number {
-  // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
-  if (event.wheelDelta) {
-    // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
-    return -event.wheelDelta / 40;
-  }
-  if (event.detail) {
-    // Firefox
-    return event.detail;
-  }
-  if (event.deltaY) {
-    // Firefox / Explorer + event target is SVG.
-    const factor = IS_FIREFOX ? 1 : 40;
-    return event.deltaY / factor;
-  }
-  return 0;
 }
 
 /**
