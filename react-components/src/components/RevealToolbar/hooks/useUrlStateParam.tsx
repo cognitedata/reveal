@@ -38,7 +38,7 @@ export const useSlicerUrlParams = (): [
     const topBottom = searchParams.get(ParamKeys.SlicerState);
 
     if (topBottom !== null && topBottom !== undefined) {
-      const [top, bottom] = JSON.parse(topBottom);
+      const [bottom, top] = JSON.parse(topBottom);
       return { top, bottom };
     }
 
