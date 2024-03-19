@@ -61,7 +61,7 @@ export class Image360ApiHelper {
 
   private readonly _debouncePreLoad = debounce(
     entity => {
-      this._image360Facade.preload(entity, this.findRevisionIdToEnter(entity)).catch(() => { });
+      this._image360Facade.preload(entity, this.findRevisionIdToEnter(entity)).catch(() => {});
     },
     300,
     {
