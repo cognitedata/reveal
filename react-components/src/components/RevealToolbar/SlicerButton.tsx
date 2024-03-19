@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { useSlicerUrlParams } from './hooks/useUrlStateParam';
 import { useTranslation } from '../i18n/I18n';
+import { use3dModels } from '../../hooks/use3dModels';
 
 type SliceState = {
   minHeight: number;
@@ -28,7 +29,7 @@ type SlicerButtonProps = {
 export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): ReactElement => {
   const viewer = useReveal();
   const { t } = useTranslation();
-  const { reveal3DResourcesCount } = useReveal3DResourcesCount();
+  const models = use3dModels();
   const [slicerUrlState, setSlicerUrlState] = useSlicerUrlParams();
   const { top, bottom } = storeStateInUrl ? slicerUrlState : { top: 1, bottom: 0 };
   const [sliceActive, setSliceActive] = useState<boolean>(false);
@@ -43,24 +44,23 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   const { minHeight, maxHeight, topRatio, bottomRatio } = sliceState;
 
   useEffect(() => {
-    if (reveal3DResourcesCount === 0 || viewer === undefined) {
+    if (models.length === 0) {
       return;
     }
 
     const box = new Box3();
-    viewer.models.forEach((model) => box.union(model.getModelBoundingBox(undefined, true)));
+    models.forEach((model) => box.union(model.getModelBoundingBox(undefined, true)));
 
     const newMaxY = box.max.y;
     const newMinY = box.min.y;
 
     if (maxHeight !== newMaxY || minHeight !== newMinY) {
       // Set clipping plane only if top or bottom has changed & storeStateInUrl is enabled
-      if (storeStateInUrl && (topRatio !== 1 || bottomRatio !== 0)) {
-        viewer.setGlobalClippingPlanes([
-          new Plane(new Vector3(0, 1, 0), -(newMinY + topRatio * (newMaxY - newMinY))),
-          new Plane(new Vector3(0, -1, 0), newMinY + bottomRatio * (newMaxY - newMinY))
-        ]);
+
+      if (storeStateInUrl && (topRatio !== 0 || bottomRatio !== 1)) {
+        setGlobalPlanes(topRatio, bottomRatio, newMaxY, newMinY);
       }
+
       setSliceState({
         maxHeight: newMaxY,
         minHeight: newMinY,
@@ -68,13 +68,10 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
         bottomRatio
       });
     }
-  }, [reveal3DResourcesCount]);
+  }, [models]);
 
   function changeSlicingState(newValues: number[]): void {
-    viewer.setGlobalClippingPlanes([
-      new Plane(new Vector3(0, 1, 0), -(minHeight + newValues[0] * (maxHeight - minHeight))),
-      new Plane(new Vector3(0, -1, 0), minHeight + newValues[1] * (maxHeight - minHeight))
-    ]);
+    setGlobalPlanes(newValues[0], newValues[1], maxHeight, minHeight);
 
     setSliceState({
       maxHeight,
@@ -86,6 +83,29 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
     if (storeStateInUrl) {
       setSlicerUrlState(newValues);
     }
+  }
+
+  function setGlobalPlanes(
+    topRatio: number,
+    bottomRatio: number,
+    maxHeight: number,
+    minHeight: number
+  ) {
+    const planes: Plane[] = [];
+
+    if (topRatio !== 0) {
+      planes.push(
+        new Plane(new Vector3(0, 1, 0), -(minHeight + topRatio * (maxHeight - minHeight)))
+      );
+    }
+
+    if (bottomRatio !== 1) {
+      planes.push(
+        new Plane(new Vector3(0, -1, 0), minHeight + bottomRatio * (maxHeight - minHeight))
+      );
+    }
+
+    viewer.setGlobalClippingPlanes(planes);
   }
 
   return (
