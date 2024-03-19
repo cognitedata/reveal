@@ -30,14 +30,15 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   const { t } = useTranslation();
   const models = use3dModels();
   const [slicerUrlState, setSlicerUrlState] = useSlicerUrlParams();
-  const { top, bottom } = storeStateInUrl ? slicerUrlState : { top: 1, bottom: 0 };
+  const { top: initialTopRatio, bottom: initialBottomRatio } =
+    storeStateInUrl && slicerUrlState ? slicerUrlState : { top: 1, bottom: 0 };
   const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,
     maxHeight: 0,
-    topRatio: top,
-    bottomRatio: bottom
+    topRatio: initialTopRatio,
+    bottomRatio: initialBottomRatio
   });
 
   const { minHeight, maxHeight, topRatio, bottomRatio } = sliceState;
@@ -56,8 +57,8 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
     if (maxHeight !== newMaxY || minHeight !== newMinY) {
       // Set clipping plane only if top or bottom has changed & storeStateInUrl is enabled
 
-      if (storeStateInUrl && (topRatio !== 0 || bottomRatio !== 1)) {
-        setGlobalPlanes(topRatio, bottomRatio, newMaxY, newMinY);
+      if (storeStateInUrl && (topRatio !== 1 || bottomRatio !== 0)) {
+        setGlobalPlanes(bottomRatio, topRatio, newMaxY, newMinY);
       }
 
       setSliceState({
@@ -85,23 +86,21 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   }
 
   function setGlobalPlanes(
-    topRatio: number,
     bottomRatio: number,
+    topRatio: number,
     maxHeight: number,
     minHeight: number
   ): void {
     const planes: Plane[] = [];
 
-    if (topRatio !== 0) {
+    if (bottomRatio !== 0) {
       planes.push(
-        new Plane(new Vector3(0, 1, 0), -(minHeight + topRatio * (maxHeight - minHeight)))
+        new Plane(new Vector3(0, 1, 0), -(minHeight + bottomRatio * (maxHeight - minHeight)))
       );
     }
 
-    if (bottomRatio !== 1) {
-      planes.push(
-        new Plane(new Vector3(0, -1, 0), minHeight + bottomRatio * (maxHeight - minHeight))
-      );
+    if (topRatio !== 1) {
+      planes.push(new Plane(new Vector3(0, -1, 0), minHeight + topRatio * (maxHeight - minHeight)));
     }
 
     viewer.setGlobalClippingPlanes(planes);
