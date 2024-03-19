@@ -30,24 +30,24 @@ export enum ParamKeys {
 
 export const useSlicerUrlParams = (): [
   { top: number; bottom: number },
-  (slicerTopBottom: number[]) => void
+  (slicerBottomTop: number[]) => void
 ] => {
   const { url, searchParams } = useSearchParams();
 
   const slicerUrlState = useMemo(() => {
-    const topBottom = searchParams.get(ParamKeys.SlicerState);
+    const bottomTop = searchParams.get(ParamKeys.SlicerState);
 
-    if (topBottom !== null && topBottom !== undefined) {
-      const [bottom, top] = JSON.parse(topBottom);
-      return { top, bottom };
+    if (bottomTop !== null && bottomTop !== undefined) {
+      const [bottom, top] = JSON.parse(bottomTop);
+      return { bottom, top };
     }
 
-    return { top: 1, bottom: 0 };
+    return { bottom: 0, top: 1 };
   }, [searchParams]);
 
   const setSlicerUrlState = useCallback(
-    (slicerTopBottom: number[]) => {
-      searchParams.set(ParamKeys.SlicerState, JSON.stringify(slicerTopBottom));
+    (slicerBottomTop: number[]) => {
+      searchParams.set(ParamKeys.SlicerState, JSON.stringify(slicerBottomTop));
       window.history.pushState({}, '', url);
     },
     [searchParams]

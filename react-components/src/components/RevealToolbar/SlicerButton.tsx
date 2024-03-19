@@ -30,9 +30,9 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   const { t } = useTranslation();
   const models = use3dModels();
   const [slicerUrlState, setSlicerUrlState] = useSlicerUrlParams();
-  const { top: initialTopRatio, bottom: initialBottomRatio } = storeStateInUrl
+  const { bottom: initialBottomRatio, top: initialTopRatio } = storeStateInUrl
     ? slicerUrlState
-    : { top: 1, bottom: 0 };
+    : { bottom: 0, top: 1 };
   const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
@@ -58,7 +58,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
     if (maxHeight !== newMaxY || minHeight !== newMinY) {
       // Set clipping plane only if top or bottom has changed & storeStateInUrl is enabled
 
-      if (storeStateInUrl && (topRatio !== 1 || bottomRatio !== 0)) {
+      if (storeStateInUrl && (bottomRatio !== 0 || topRatio !== 1)) {
         setGlobalPlanes(bottomRatio, topRatio, newMaxY, newMinY);
       }
 
