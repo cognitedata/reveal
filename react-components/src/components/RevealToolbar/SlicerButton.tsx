@@ -31,7 +31,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   const models = use3dModels();
   const [slicerUrlState, setSlicerUrlState] = useSlicerUrlParams();
   const { top: initialTopRatio, bottom: initialBottomRatio } =
-    storeStateInUrl && slicerUrlState ? slicerUrlState : { top: 1, bottom: 0 };
+    storeStateInUrl && slicerUrlState !== undefined ? slicerUrlState : { top: 1, bottom: 0 };
   const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
