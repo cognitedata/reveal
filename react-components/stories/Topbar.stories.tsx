@@ -52,7 +52,7 @@ const TopbarContent = (): ReactElement => {
   return (
     <>
       <SceneSelectionDropdown selectedScene={scene} setSelectedScene={setScene} />
-      <RevealTopbar.SetOrbitOrFistPersonControlsType orientation="horizontal" />
+      <RevealTopbar.SetOrbitOrFirstPersonControlsType orientation="horizontal" />
       <RevealToolbar.LayersButton storeStateInUrl={true} />
       <RuleBasedOutputsButton />
       <RevealToolbar.HelpButton />
