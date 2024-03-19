@@ -63,13 +63,13 @@ const RevealTopbarContainer = ({
 
 export const RevealTopbar = RevealTopbarContainer as typeof RevealTopbarContainer & {
   SetFlexibleControlsType: typeof SetFlexibleControlsType;
-  SetOrbitOrFistPersonControlsType: typeof SetOrbitOrFirstPersonControlsType;
+  SetOrbitOrFirstPersonControlsType: typeof SetOrbitOrFirstPersonControlsType;
   SceneSelectionDropdown: typeof SceneSelectionDropdown;
   RuleBasedOutputsButton: typeof RuleBasedOutputsButton;
 };
 
 RevealTopbar.SetFlexibleControlsType = SetFlexibleControlsType;
-RevealTopbar.SetOrbitOrFistPersonControlsType = SetOrbitOrFirstPersonControlsType;
+RevealTopbar.SetOrbitOrFirstPersonControlsType = SetOrbitOrFirstPersonControlsType;
 RevealTopbar.SceneSelectionDropdown = SceneSelectionDropdown;
 RevealTopbar.RuleBasedOutputsButton = RuleBasedOutputsButton;
 
