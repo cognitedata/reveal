@@ -21,6 +21,7 @@ import {
   SetFlexibleControlsType,
   SetOrbitOrFirstPersonControlsType
 } from './SetFlexibleControlsType';
+import { SceneSelectionDropdown } from '../RevealTopbar/SceneSelectionDropdown';
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute;
@@ -113,6 +114,7 @@ export const RevealToolbar = withSuppressRevealEvents(
   RuleBasedOutputsButton: typeof RuleBasedOutputsButton;
   SetOrbitOrFirstPersonControlsType: typeof SetOrbitOrFirstPersonControlsType;
   SetFlexibleControlsType: typeof SetFlexibleControlsType;
+  SceneSelectionDropdown: typeof SceneSelectionDropdown;
 };
 
 RevealToolbar.FitModelsButton = FitModelsButton;
@@ -127,3 +129,4 @@ RevealToolbar.SelectSceneButton = SelectSceneButton;
 RevealToolbar.RuleBasedOutputsButton = RuleBasedOutputsButton;
 RevealToolbar.SetOrbitOrFirstPersonControlsType = SetOrbitOrFirstPersonControlsType;
 RevealToolbar.SetFlexibleControlsType = SetFlexibleControlsType;
+RevealToolbar.SceneSelectionDropdown = SceneSelectionDropdown;
