@@ -17,6 +17,10 @@ import { type QualitySettings } from './SettingsContainer/types';
 import styled from 'styled-components';
 import { SelectSceneButton } from './SelectSceneButton';
 import { RuleBasedOutputsButton } from './RuleBasedOutputsButton';
+import {
+  SetFlexibleControlsType,
+  SetOrbitOrFirstPersonControlsType
+} from './SetFlexibleControlsType';
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute;
@@ -107,6 +111,8 @@ export const RevealToolbar = withSuppressRevealEvents(
   ResetCameraButton: typeof ResetCameraButton;
   SelectSceneButton: typeof SelectSceneButton;
   RuleBasedOutputsButton: typeof RuleBasedOutputsButton;
+  SetOrbitOrFirstPersonControlsType: typeof SetOrbitOrFirstPersonControlsType;
+  SetFlexibleControlsType: typeof SetFlexibleControlsType;
 };
 
 RevealToolbar.FitModelsButton = FitModelsButton;
@@ -119,3 +125,5 @@ RevealToolbar.HelpButton = HelpButton;
 RevealToolbar.ResetCameraButton = ResetCameraButton;
 RevealToolbar.SelectSceneButton = SelectSceneButton;
 RevealToolbar.RuleBasedOutputsButton = RuleBasedOutputsButton;
+RevealToolbar.SetOrbitOrFirstPersonControlsType = SetOrbitOrFirstPersonControlsType;
+RevealToolbar.SetFlexibleControlsType = SetFlexibleControlsType;
