@@ -4,11 +4,12 @@
 import { type AnnotationsAssetRef, type CogniteClient, type IdEither } from '@cognite/sdk/dist/src';
 import { uniq } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
+import { TaggedAddImageCollection360Options } from '../../components/Reveal3DResources/types';
 
 export async function getImage360CollectionsForAsset(
   assetId: number,
   sdk: CogniteClient
-): Promise<Array<{ siteId: string }>> {
+): Promise<TaggedAddImageCollection360Options[]> {
   const fileRefsResult = await sdk.annotations.reverseLookup({
     filter: { annotatedResourceType: 'file', data: { assetRef: { id: assetId } } },
     limit: 1000
@@ -20,7 +21,7 @@ export async function getImage360CollectionsForAsset(
 
   const siteIds = uniq(fileInfos.map((fileInfo) => fileInfo?.metadata?.site_id)).filter(isDefined);
 
-  return siteIds.map((siteId) => ({ siteId }));
+  return siteIds.map((siteId) => ({ type: 'image360', addOptions: { siteId } }));
 }
 
 function isIdEither(ref: AnnotationsAssetRef): ref is IdEither {

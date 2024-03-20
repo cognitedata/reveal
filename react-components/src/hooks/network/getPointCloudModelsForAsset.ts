@@ -1,13 +1,13 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type AddModelOptions } from '@cognite/reveal';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
 
 export async function getPointCloudModelsForAsset(
   assetId: number,
   sdk: CogniteClient
-): Promise<AddModelOptions[]> {
+): Promise<TaggedAdd3DModelOptions[]> {
   const modelIdResult = await sdk.annotations.reverseLookup({
     filter: { annotatedResourceType: 'threedmodel', data: { assetRef: { id: assetId } } },
     limit: 5
@@ -27,7 +27,10 @@ export async function getPointCloudModelsForAsset(
   );
 
   return revisionItems.map((revisionList, index) => ({
-    modelId: modelIds[index],
-    revisionId: revisionList.items[0].id // Always choose the newest revision
+    type: 'pointcloud',
+    addOptions: {
+      modelId: modelIds[index],
+      revisionId: revisionList.items[0].id // Always choose the newest revision
+    }
   }));
 }

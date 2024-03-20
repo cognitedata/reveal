@@ -1,8 +1,8 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type AddModelOptions } from '@cognite/reveal';
 import { type CogniteClient } from '@cognite/sdk';
+import { TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
 
 export type CadModelNode = {
   modelId: number;
@@ -13,7 +13,7 @@ export type CadModelNode = {
 export async function getCadModelsForAsset(
   assetId: number,
   sdk: CogniteClient
-): Promise<AddModelOptions[]> {
+): Promise<TaggedAdd3DModelOptions[]> {
   const result = await sdk.get<{ items: CadModelNode[] }>(
     `api/v1/projects/${sdk.project}/3d/mappings/${assetId}/modelnodes`,
     {
@@ -21,5 +21,8 @@ export async function getCadModelsForAsset(
     }
   );
 
-  return result.data.items.map(({ modelId, revisionId }) => ({ modelId, revisionId }));
+  return result.data.items.map(({ modelId, revisionId }) => ({
+    type: 'cad',
+    addOptions: { modelId, revisionId }
+  }));
 }

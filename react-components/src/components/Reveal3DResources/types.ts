@@ -28,6 +28,17 @@ export type AddImageCollection360DatamodelsOptions = {
 
 export type FdmPropertyType<NodeType> = Record<string, Record<string, NodeType>>;
 
+export type TaggedAddImageCollection360Options = {
+  type: 'image360';
+  addOptions: AddImageCollection360Options;
+};
+export type TaggedAdd3DModelOptions = {
+  type: 'cad' | 'pointcloud';
+  addOptions: AddReveal3DModelOptions;
+};
+
+export type TaggedAddResourceOptions = TaggedAdd3DModelOptions | TaggedAddImageCollection360Options;
+
 export type AddResourceOptions = AddReveal3DModelOptions | AddImageCollection360Options;
 
 export type AddReveal3DModelOptions = AddModelOptions & { transform?: Matrix4 } & {
