@@ -111,15 +111,13 @@ export class Image360ApiHelper {
 
     this._activeCameraManager = activeCameraManager;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
-    if (!FlexibleCameraManager.as(activeCameraManager.innerCameraManager)) {
+    if (true || !FlexibleCameraManager.as(activeCameraManager.innerCameraManager)) {
       this._stationaryCameraManager = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
       this._cachedCameraManager = activeCameraManager.innerCameraManager;
     }
 
     const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
     domElement.addEventListener('mousemove', setHoverIconEventHandler);
-    const dblclickEventHandler = (event: MouseEvent) => event.stopPropagation();
-    domElement.addEventListener('dblclick', dblclickEventHandler);
 
     const enter360Image = (event: PointerEventData) => this.enter360ImageOnIntersect(event);
     inputHandler.on('click', enter360Image);
@@ -226,7 +224,6 @@ export class Image360ApiHelper {
   public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
     const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
     if (revisionToEnter === this._interactionState.revisionSelectedForEntry) {
-      console.log('enter360Image A');
       return;
     }
     this._interactionState.revisionSelectedForEntry = revisionToEnter;
@@ -236,11 +233,9 @@ export class Image360ApiHelper {
       if (this._interactionState.revisionSelectedForEntry === revisionToEnter) {
         this._interactionState.revisionSelectedForEntry = undefined;
       }
-      console.log('enter360Image B');
       return;
     }
     if (this._interactionState.revisionSelectedForEntry !== revisionToEnter) {
-      console.log('enter360Image C');
       return;
     }
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;

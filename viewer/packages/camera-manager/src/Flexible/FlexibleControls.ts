@@ -198,7 +198,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (this._isStationary) {
       this.setFov(this.options.defaultFov);
     }
-    console.log('isStationary', value);
     this._isStationary = value;
   }
 

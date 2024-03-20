@@ -420,7 +420,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     if (!this.isEnabled || !this.isEnableClickAndDoubleClick || this.controls.isStationary) {
       return;
     }
-    console.log('onClick');
     if (this.options.mouseClickType !== FlexibleMouseActionType.None) {
       await this.mouseAction(event, this.options.mouseClickType);
     }
@@ -430,7 +429,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     if (!this.isEnabled || !this.isEnableClickAndDoubleClick || this.controls.isStationary) {
       return;
     }
-    console.log('onDoubleClick');
     if (this.options.mouseDoubleClickType !== FlexibleMouseActionType.None) {
       await this.mouseAction(event, this.options.mouseDoubleClickType);
     }
