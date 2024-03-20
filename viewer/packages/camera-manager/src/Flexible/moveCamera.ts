@@ -46,7 +46,7 @@ export function moveCameraPositionAndTargetTo(
   const tempPosition = new Vector3();
   manager.controls.temporarlyDisableKeyboard = true;
 
-  const { tween, stopTween } = createTweenAnimation(manager, from, to, duration);
+  const { tween, removeEventListeners } = createTweenAnimationWithStop(manager, from, to, duration);
 
   tween
     .onUpdate(() => {
@@ -59,58 +59,12 @@ export function moveCameraPositionAndTargetTo(
     })
     .onStop(() => {
       manager.controls.temporarlyDisableKeyboard = false;
+      removeEventListeners();
+    })
+    .onComplete(() => {
       manager.setPositionAndTarget(tempPosition, tempTarget);
-    })
-    .onComplete(() => {
       manager.controls.temporarlyDisableKeyboard = false;
-      if (manager.isDisposed) {
-        return;
-      }
-      manager.domElement.removeEventListener('pointerdown', stopTween);
-    })
-    .start(TWEEN.now());
-}
-
-export function moveCameraPositionTo(manager: FlexibleCameraManager, position: Vector3, duration: number): void {
-  if (manager.isDisposed) {
-    return;
-  }
-  const cameraPosition = manager.camera.position;
-  const from = {
-    x: cameraPosition.x,
-    y: cameraPosition.y,
-    z: cameraPosition.z
-  };
-  const to = {
-    x: position.x,
-    y: position.y,
-    z: position.z
-  };
-
-  const tempPosition = new Vector3();
-  manager.controls.temporarlyDisableKeyboard = true;
-
-  const { tween, stopTween } = createTweenAnimation(manager, from, to, duration, false);
-
-  tween
-    .onUpdate(() => {
-      if (manager.isDisposed) {
-        return;
-      }
-      tempPosition.set(from.x, from.y, from.z);
-      manager.setPosition(tempPosition);
-    })
-    .onStop(() => {
-      manager.controls.temporarlyDisableKeyboard = false;
-      manager.setPosition(tempPosition);
-    })
-    .onComplete(() => {
-      manager.setPosition(position);
-      manager.controls.temporarlyDisableKeyboard = false;
-      if (manager.isDisposed) {
-        return;
-      }
-      manager.domElement.removeEventListener('pointerdown', stopTween);
+      removeEventListeners();
     })
     .start(TWEEN.now());
 }
@@ -140,8 +94,7 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
   const tempTarget = new Vector3();
   manager.controls.temporarlyDisableKeyboard = true;
 
-  const { tween, stopTween } = createTweenAnimation(manager, from, to, duration);
-
+  const { tween, removeEventListeners } = createTweenAnimationWithStop(manager, from, to, duration);
   tween
     .onStart(() => {
       manager.setPositionAndTarget(manager.camera.position, target);
@@ -164,61 +117,86 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
     .onStop(() => {
       manager.controls.setTempTarget(undefined);
       manager.controls.temporarlyDisableKeyboard = false;
-      manager.setPositionAndTarget(manager.camera.position, tempTarget);
+      removeEventListeners();
     })
     .onComplete(() => {
       manager.controls.setTempTarget(undefined);
+      manager.setPositionAndTarget(manager.camera.position, tempTarget);
       manager.controls.temporarlyDisableKeyboard = false;
-      if (manager.isDisposed) {
-        return;
-      }
-      manager.domElement.removeEventListener('pointerdown', stopTween);
+      removeEventListeners();
     })
     .start(TWEEN.now());
 }
 
-export function tweenCameraToDefaultFov(manager: FlexibleCameraManager, duration: number): Promise<void> {
+export function moveCameraPositionTo(manager: FlexibleCameraManager, position: Vector3, duration: number): void {
+  if (manager.isDisposed) {
+    return;
+  }
+  const cameraPosition = manager.camera.position;
+  const from = {
+    x: cameraPosition.x,
+    y: cameraPosition.y,
+    z: cameraPosition.z
+  };
+  const to = {
+    x: position.x,
+    y: position.y,
+    z: position.z
+  };
+
+  const tempPosition = new Vector3();
+  manager.controls.temporarlyDisableKeyboard = true;
+
+  new TWEEN.Tween(from)
+    .to(to, duration)
+    .onUpdate(() => {
+      tempPosition.set(from.x, from.y, from.z);
+      manager.setPosition(tempPosition);
+    })
+    .easing(num => TWEEN.Easing.Quintic.InOut(num))
+    .onStop(() => {
+      manager.setPosition(tempPosition);
+      manager.controls.temporarlyDisableKeyboard = false;
+    })
+    .onComplete(() => {
+      manager.setPosition(position);
+      manager.controls.temporarlyDisableKeyboard = false;
+    })
+    .start(TWEEN.now());
+}
+
+export function tweenCameraToDefaultFov(manager: FlexibleCameraManager, duration: number): void {
   const from = { fov: manager.controls.fov };
   const to = { fov: manager.controls.options.defaultFov };
   const delay = duration * 0.25;
-  const tween = new TWEEN.Tween(from)
+  new TWEEN.Tween(from)
     .to(to, duration * 0.5)
     .onUpdate(() => {
       manager.controls.setFov(from.fov);
     })
+    .onComplete(() => {
+      manager.controls.setFov(to.fov);
+    })
     .delay(delay)
     .easing(num => TWEEN.Easing.Quintic.InOut(num))
     .start(TWEEN.now());
-
-  return new Promise(resolve => {
-    tween.onComplete(() => {
-      tween.stop();
-      resolve();
-    });
-  });
 }
 
-function createTweenAnimation<T>(
+function createTweenAnimationWithStop<T>(
   manager: FlexibleCameraManager,
   from: T,
   to: T,
-  duration: number,
-  isCircular: boolean = true
-): { tween: TWEEN.Tween; stopTween: (event: Event) => void } {
+  duration: number
+): { tween: TWEEN.Tween; removeEventListeners: () => void } {
   const animation = new TWEEN.Tween(from);
-  const stopTween = (event: Event) => {
-    if (manager.isDisposed) {
-      document.removeEventListener('keydown', stopTween);
-      animation.stop();
-      return;
-    }
+  const stopTween = (_event: Event) => {
+    animation.stop();
+  };
 
-    if (event.type !== 'keydown' || !manager.controls.temporarlyDisableKeyboard) {
-      animation.stop();
-      manager.domElement.removeEventListener('pointerdown', stopTween);
-      manager.domElement.removeEventListener('wheel', stopTween);
-      document.removeEventListener('keydown', stopTween);
-    }
+  const removeEventListeners = () => {
+    manager.domElement.removeEventListener('pointerdown', stopTween);
+    manager.domElement.removeEventListener('wheel', stopTween);
+    document.removeEventListener('keydown', stopTween);
   };
 
   manager.domElement.addEventListener('pointerdown', stopTween);
@@ -226,12 +204,8 @@ function createTweenAnimation<T>(
   document.addEventListener('keydown', stopTween);
 
   const tween = animation.to(to, duration);
-  if (isCircular) {
-    tween.easing((x: number) => TWEEN.Easing.Circular.Out(x));
-  } else {
-    tween.easing((x: number) => TWEEN.Easing.Quintic.InOut(x));
-  }
-  return { tween, stopTween };
+  tween.easing((x: number) => TWEEN.Easing.Circular.Out(x));
+  return { tween, removeEventListeners };
 }
 
 const MIN_ANIMATION_DURATION = 300;

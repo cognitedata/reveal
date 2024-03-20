@@ -83,6 +83,7 @@ export class FlexibleControlsOptions {
 
   // For when it is isStationary
   public minimumFov: number = 5;
+  public maximumFov: number = 100;
   public defaultFov: number = 60;
 
   // Shaw target as a Marker settings
@@ -118,6 +119,10 @@ export class FlexibleControlsOptions {
   //================================================
   // INSTANCE METHODS: Getters
   //================================================
+
+  public getLegalFov(fov: number): number {
+    return MathUtils.clamp(fov, this.minimumFov, this.maximumFov);
+  }
 
   public getLegalAzimuthAngle(azimuthAngle: number): number {
     return MathUtils.clamp(azimuthAngle, this.minAzimuthAngle, this.maxAzimuthAngle);

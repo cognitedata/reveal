@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import { Raycaster, Vector2, Vector3 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
 import { CogniteClient, Metadata } from '@cognite/sdk';
@@ -41,13 +41,12 @@ import {
 } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
-import { moveCameraPositionTo, tweenCameraToDefaultFov } from '@reveal/camera-manager/src/Flexible/moveCamera';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
-  private readonly _raycaster = new THREE.Raycaster();
+  private readonly _raycaster = new Raycaster();
   private _needsRedraw: boolean = false;
 
   private readonly _interactionState: {
@@ -76,9 +75,9 @@ export class Image360ApiHelper {
   );
 
   private readonly _activeCameraManager: ProxyCameraManager;
-  private readonly _stationaryCameraManager: StationaryCameraManager | undefined = undefined;
+  private readonly _stationaryCameraManager: StationaryCameraManager | undefined;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
-  private _cachedCameraManager: CameraManager | undefined = undefined;
+  private _cachedCameraManager: CameraManager | undefined;
 
   constructor(
     cogniteClient: CogniteClient,
@@ -242,7 +241,7 @@ export class Image360ApiHelper {
     lastEntered360ImageEntity?.deactivateAnnotations();
     image360Entity.setActiveRevision(revisionToEnter);
 
-    this.set360CameraManager();
+    this.setStationaryCameraManager();
 
     const imageCollection = this._image360Facade.getCollectionContainingEntity(image360Entity);
     this._interactionState.enteredCollection = imageCollection;
@@ -267,7 +266,7 @@ export class Image360ApiHelper {
         MetricsLogger.trackEvent('360ImageEntered', {});
       } else {
         const transitionDuration = 1000;
-        const position = new THREE.Vector3().setFromMatrixPosition(image360Entity.transform);
+        const position = new Vector3().setFromMatrixPosition(image360Entity.transform);
         const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
         if (flexibleCameraManager) {
           await Promise.all([
@@ -288,6 +287,13 @@ export class Image360ApiHelper {
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
     this.applyFullResolutionTextures(revisionToEnter);
 
+    // This sucks, but I don't have possible to turn off the camera event function. If I don't set this
+    // the camera target will be on the thing it hits in the background and aoften this is
+    // far away. So it gives me not any other option to just set the target to the camera position.
+    const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
+    if (flexibleCameraManager && flexibleCameraManager.controls.isStationary) {
+      flexibleCameraManager.controls.setTarget(flexibleCameraManager.controls.camera.position);
+    }
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
   }
 
@@ -304,9 +310,9 @@ export class Image360ApiHelper {
     const toVisualizationCube = to360Entity.image360Visualization;
     const fromVisualizationCube = from360Entity.image360Visualization;
 
-    const fromPosition = new THREE.Vector3().setFromMatrixPosition(from360Entity.transform);
-    const toPosition = new THREE.Vector3().setFromMatrixPosition(to360Entity.transform);
-    const length = new THREE.Vector3().subVectors(toPosition, fromPosition).length();
+    const fromPosition = new Vector3().setFromMatrixPosition(from360Entity.transform);
+    const toPosition = new Vector3().setFromMatrixPosition(to360Entity.transform);
+    const length = new Vector3().subVectors(toPosition, fromPosition).length();
 
     setPreTransitionState();
 
@@ -336,7 +342,7 @@ export class Image360ApiHelper {
 
     function setPreTransitionState() {
       const fillingScaleMagnitude = length * 2;
-      const uniformScaling = new THREE.Vector3(1, 1, 1).multiplyScalar(fillingScaleMagnitude);
+      const uniformScaling = new Vector3(1, 1, 1).multiplyScalar(fillingScaleMagnitude);
 
       fromVisualizationCube.scale = uniformScaling;
       fromVisualizationCube.renderOrder = default360ImageRenderOrder + 1;
@@ -346,7 +352,7 @@ export class Image360ApiHelper {
     }
 
     function restorePostTransitionState(opacity: number) {
-      const defaultScaling = new THREE.Vector3(1, 1, 1);
+      const defaultScaling = new Vector3(1, 1, 1);
 
       fromVisualizationCube.scale = defaultScaling;
       fromVisualizationCube.renderOrder = default360ImageRenderOrder;
@@ -410,7 +416,7 @@ export class Image360ApiHelper {
     });
   }
 
-  private set360CameraManager() {
+  private setStationaryCameraManager() {
     const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
     if (flexibleCameraManager) {
       flexibleCameraManager.controls.isStationary = true;
@@ -446,7 +452,7 @@ export class Image360ApiHelper {
       this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
       this._activeCameraManager.setCameraState({
         position,
-        target: new THREE.Vector3(0, 0, -1).applyQuaternion(rotation).add(position)
+        target: new Vector3(0, 0, -1).applyQuaternion(rotation).add(position)
       });
     }
     this._domElement.removeEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
@@ -486,7 +492,7 @@ export class Image360ApiHelper {
   public intersect360ImageIcons(offsetX: number, offsetY: number): Image360Entity | undefined {
     const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
     const entity = this._image360Facade.intersect(
-      new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
+      new Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
     return entity;
@@ -520,7 +526,7 @@ export class Image360ApiHelper {
     this._image360Facade.allIconsSelected = false;
     const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
     const entity = this._image360Facade.intersect(
-      new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y),
+      new Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
 
@@ -557,4 +563,62 @@ export class Image360ApiHelper {
     }
     this.exit360Image();
   }
+}
+
+//================================================
+// STATIC METHODS: Tweens for FlexibleCameraManager
+//================================================
+
+function moveCameraPositionTo(manager: FlexibleCameraManager, position: Vector3, duration: number): void {
+  if (manager.isDisposed) {
+    return;
+  }
+  const cameraPosition = manager.camera.position;
+  const from = {
+    x: cameraPosition.x,
+    y: cameraPosition.y,
+    z: cameraPosition.z
+  };
+  const to = {
+    x: position.x,
+    y: position.y,
+    z: position.z
+  };
+
+  const tempPosition = new Vector3();
+  manager.controls.temporarlyDisableKeyboard = true;
+
+  new TWEEN.Tween(from)
+    .to(to, duration)
+    .onUpdate(() => {
+      tempPosition.set(from.x, from.y, from.z);
+      manager.setPosition(tempPosition);
+    })
+    .easing(num => TWEEN.Easing.Quintic.InOut(num))
+    .onStop(() => {
+      manager.setPosition(tempPosition);
+      manager.controls.temporarlyDisableKeyboard = false;
+    })
+    .onComplete(() => {
+      manager.setPosition(position);
+      manager.controls.temporarlyDisableKeyboard = false;
+    })
+    .start(TWEEN.now());
+}
+
+function tweenCameraToDefaultFov(manager: FlexibleCameraManager, duration: number): void {
+  const from = { fov: manager.controls.fov };
+  const to = { fov: manager.controls.options.defaultFov };
+  const delay = duration * 0.25;
+  new TWEEN.Tween(from)
+    .to(to, duration * 0.5)
+    .onUpdate(() => {
+      manager.controls.setFov(from.fov);
+    })
+    .onComplete(() => {
+      manager.controls.setFov(to.fov);
+    })
+    .delay(delay)
+    .easing(num => TWEEN.Easing.Quintic.InOut(num))
+    .start(TWEEN.now());
 }

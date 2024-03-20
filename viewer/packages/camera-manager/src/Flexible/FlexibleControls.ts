@@ -278,7 +278,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (!(this._camera instanceof PerspectiveCamera)) {
       return false;
     }
-    const fov = MathUtils.clamp(value, this.options.minimumFov, this.options.defaultFov);
+    const fov = this.options.getLegalFov(value);
     if (this.fov === fov) {
       return false;
     }
