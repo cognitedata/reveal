@@ -81,6 +81,10 @@ export class FlexibleControlsOptions {
 
   public orthographicCameraDollyFactor = 0.3;
 
+  // For when it is isStationary
+  public minimumFov: number = 5;
+  public defaultFov: number = 60;
+
   // Shaw target as a Marker settings
   public showTarget = true;
   public relativeMarkerSize = 0.018;
