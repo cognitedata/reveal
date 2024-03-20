@@ -72,6 +72,7 @@ export {
   useAllAssetsMappedPointCloudAnnotations,
   useSearchAssetsMappedPointCloudAnnotations
 } from './query/useSearchAssetsMappedPointCloudAnnotations';
+export { useModelsForInstanceQuery } from './query/useModelsForInstanceQuery';
 
 export { useFetchRuleInstances } from './components/RuleBasedOutputs/hooks/useFetchRuleInstances';
 
@@ -114,6 +115,8 @@ export type { FdmInstanceWithView } from './utilities/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
 
 export type { RuleAndEnabled, TriggerType } from './components/RuleBasedOutputs/types';
+
+export type { InstanceReference, AssetInstanceReference } from './query/useModelsForInstanceQuery';
 
 // Functions
 export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';
