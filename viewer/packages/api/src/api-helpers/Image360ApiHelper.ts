@@ -33,9 +33,15 @@ import {
   PointerEventData,
   SceneHandler
 } from '@reveal/utilities';
-import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
+import {
+  CameraManager,
+  FlexibleCameraManager,
+  ProxyCameraManager,
+  StationaryCameraManager
+} from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
+import { moveCameraPositionTo, tweenCameraToDefaultFov } from '@reveal/camera-manager/src/Flexible/moveCamera';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
@@ -70,9 +76,9 @@ export class Image360ApiHelper {
   );
 
   private readonly _activeCameraManager: ProxyCameraManager;
-  private readonly _image360Navigation: StationaryCameraManager;
+  private readonly _stationaryCameraManager: StationaryCameraManager | undefined = undefined;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
-  private _cachedCameraManager: CameraManager;
+  private _cachedCameraManager: CameraManager | undefined = undefined;
 
   constructor(
     cogniteClient: CogniteClient,
@@ -99,17 +105,21 @@ export class Image360ApiHelper {
       iconsOptions
     );
     this._image360Facade = new Image360Facade(image360EntityFactory);
-    this._image360Navigation = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
 
     this._domElement = domElement;
     this._interactionState = {};
 
     this._activeCameraManager = activeCameraManager;
-    this._cachedCameraManager = activeCameraManager.innerCameraManager;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
+    if (!FlexibleCameraManager.as(activeCameraManager.innerCameraManager)) {
+      this._stationaryCameraManager = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
+      this._cachedCameraManager = activeCameraManager.innerCameraManager;
+    }
 
     const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
     domElement.addEventListener('mousemove', setHoverIconEventHandler);
+    const dblclickEventHandler = (event: MouseEvent) => event.stopPropagation();
+    domElement.addEventListener('dblclick', dblclickEventHandler);
 
     const enter360Image = (event: PointerEventData) => this.enter360ImageOnIntersect(event);
     inputHandler.on('click', enter360Image);
@@ -216,23 +226,23 @@ export class Image360ApiHelper {
   public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
     const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
     if (revisionToEnter === this._interactionState.revisionSelectedForEntry) {
+      console.log('enter360Image A');
       return;
     }
     this._interactionState.revisionSelectedForEntry = revisionToEnter;
-
     try {
       await this._image360Facade.preload(image360Entity, revisionToEnter, true);
     } catch (error) {
       if (this._interactionState.revisionSelectedForEntry === revisionToEnter) {
         this._interactionState.revisionSelectedForEntry = undefined;
       }
+      console.log('enter360Image B');
       return;
     }
-
     if (this._interactionState.revisionSelectedForEntry !== revisionToEnter) {
+      console.log('enter360Image C');
       return;
     }
-
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
     this._interactionState.currentImage360Entered = image360Entity;
     lastEntered360ImageEntity?.deactivateAnnotations();
@@ -264,10 +274,18 @@ export class Image360ApiHelper {
       } else {
         const transitionDuration = 1000;
         const position = new THREE.Vector3().setFromMatrixPosition(image360Entity.transform);
-        await Promise.all([
-          this._image360Navigation.moveTo(position, transitionDuration),
-          this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
-        ]);
+        const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
+        if (flexibleCameraManager) {
+          await Promise.all([
+            moveCameraPositionTo(flexibleCameraManager, position, transitionDuration),
+            this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
+          ]);
+        } else if (this._stationaryCameraManager) {
+          await Promise.all([
+            this._stationaryCameraManager.moveTo(position, transitionDuration),
+            this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
+          ]);
+        }
         image360Entity.activateAnnotations();
         MetricsLogger.trackEvent('360ImageTransitioned', {});
       }
@@ -296,19 +314,28 @@ export class Image360ApiHelper {
     const toPosition = new THREE.Vector3().setFromMatrixPosition(to360Entity.transform);
     const length = new THREE.Vector3().subVectors(toPosition, fromPosition).length();
 
-    const toZoom = this._image360Navigation.defaultFOV;
-    const fromZoom = this._image360Navigation.getCamera().fov;
-
     setPreTransitionState();
 
     const currentFromOpacity = fromVisualizationCube.opacity;
 
     from360Entity.deactivateAnnotations();
-    await Promise.all([
-      this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
-      this.tweenVisualizationZoom(this._image360Navigation, fromZoom, toZoom, alphaTweenDuration),
-      this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
-    ]);
+    const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
+    if (flexibleCameraManager) {
+      flexibleCameraManager.controls.isStationary = true;
+      await Promise.all([
+        moveCameraPositionTo(flexibleCameraManager, toPosition, cameraTransitionDuration),
+        tweenCameraToDefaultFov(flexibleCameraManager, alphaTweenDuration),
+        this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
+      ]);
+    } else if (this._stationaryCameraManager) {
+      const fromZoom = this._stationaryCameraManager.getCamera().fov;
+      const toZoom = this._stationaryCameraManager.defaultFOV;
+      await Promise.all([
+        this._stationaryCameraManager.moveTo(toPosition, cameraTransitionDuration),
+        this.tweenVisualizationZoom(this._stationaryCameraManager, fromZoom, toZoom, alphaTweenDuration),
+        this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
+      ]);
+    }
     to360Entity.activateAnnotations();
 
     restorePostTransitionState(currentFromOpacity);
@@ -390,9 +417,14 @@ export class Image360ApiHelper {
   }
 
   private set360CameraManager() {
-    if (this._activeCameraManager.innerCameraManager !== this._image360Navigation) {
-      this._cachedCameraManager = this._activeCameraManager.innerCameraManager;
-      this._activeCameraManager.setActiveCameraManager(this._image360Navigation);
+    const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
+    if (flexibleCameraManager) {
+      flexibleCameraManager.controls.isStationary = true;
+    } else if (this._stationaryCameraManager) {
+      if (this._activeCameraManager.innerCameraManager !== this._stationaryCameraManager) {
+        this._cachedCameraManager = this._activeCameraManager.innerCameraManager;
+        this._activeCameraManager.setActiveCameraManager(this._stationaryCameraManager);
+      }
     }
   }
 
@@ -412,12 +444,17 @@ export class Image360ApiHelper {
       this._interactionState.enteredCollection = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
-    const { position, rotation } = this._image360Navigation.getCameraState();
-    this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
-    this._activeCameraManager.setCameraState({
-      position,
-      target: new THREE.Vector3(0, 0, -1).applyQuaternion(rotation).add(position)
-    });
+    const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
+    if (flexibleCameraManager) {
+      flexibleCameraManager.controls.isStationary = false;
+    } else if (this._stationaryCameraManager && this._cachedCameraManager) {
+      const { position, rotation } = this._stationaryCameraManager.getCameraState();
+      this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
+      this._activeCameraManager.setCameraState({
+        position,
+        target: new THREE.Vector3(0, 0, -1).applyQuaternion(rotation).add(position)
+      });
+    }
     this._domElement.removeEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
   }
 
@@ -427,12 +464,13 @@ export class Image360ApiHelper {
     this._domElement.addEventListener('pointerup', this._eventHandlers.enter360Image);
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
 
-    if (this._activeCameraManager.innerCameraManager === this._image360Navigation) {
-      this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
+    if (this._stationaryCameraManager && this._cachedCameraManager) {
+      if (this._activeCameraManager.innerCameraManager === this._stationaryCameraManager) {
+        this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
+      }
+      this._stationaryCameraManager.dispose();
     }
-
     this._image360Facade.dispose();
-    this._image360Navigation.dispose();
   }
 
   private findRevisionIdToEnter(image360Entity: Image360Entity): Image360RevisionEntity {
