@@ -28,7 +28,7 @@ export async function getCadModelsForFdmInstance(
     .map((edge) => {
       const properties = Object.values(Object.values(edge.properties)[0])[0];
 
-      const modelIdString = edge.instanceType;
+      const modelIdString = edge.endNode.externalId;
       const modelId = Number(modelIdString);
 
       if (isNaN(modelId)) {
