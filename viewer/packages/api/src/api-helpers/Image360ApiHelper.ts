@@ -111,11 +111,10 @@ export class Image360ApiHelper {
 
     this._activeCameraManager = activeCameraManager;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
-    if (true || !FlexibleCameraManager.as(activeCameraManager.innerCameraManager)) {
+    if (!FlexibleCameraManager.as(activeCameraManager.innerCameraManager)) {
       this._stationaryCameraManager = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
       this._cachedCameraManager = activeCameraManager.innerCameraManager;
     }
-
     const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
     domElement.addEventListener('mousemove', setHoverIconEventHandler);
 
