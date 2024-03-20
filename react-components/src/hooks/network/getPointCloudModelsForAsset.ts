@@ -1,19 +1,22 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { Revision3D, type CogniteClient } from '@cognite/sdk/dist/src';
 import { TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
+import { chunk } from 'lodash';
 
 export async function getPointCloudModelsForAsset(
   assetId: number,
   sdk: CogniteClient
 ): Promise<TaggedAdd3DModelOptions[]> {
-  const modelIdResult = await sdk.annotations.reverseLookup({
-    filter: { annotatedResourceType: 'threedmodel', data: { assetRef: { id: assetId } } },
-    limit: 5
-  });
+  const modelIdResult = await sdk.annotations
+    .reverseLookup({
+      filter: { annotatedResourceType: 'threedmodel', data: { assetRef: { id: assetId } } },
+      limit: 1000
+    })
+    .autoPagingToArray({ limit: Infinity });
 
-  const modelIds = modelIdResult.items.reduce((accModelIds: number[], ids) => {
+  const modelIds = modelIdResult.reduce((accModelIds: number[], ids) => {
     if (ids.id === undefined) {
       return accModelIds;
     }
@@ -22,15 +25,26 @@ export async function getPointCloudModelsForAsset(
     return accModelIds;
   }, []);
 
-  const revisionItems = await Promise.all(
-    modelIds.map(async (modelId) => await sdk.revisions3D.list(modelId))
-  );
+  const modelChunks = chunk(modelIds, 4);
 
-  return revisionItems.map((revisionList, index) => ({
+  const revisionList: Revision3D[] = [];
+
+  for (const modelChunk of modelChunks) {
+    const revisionItems = await Promise.all(
+      modelChunk.map(
+        async (modelId) =>
+          await sdk.revisions3D.list(modelId, { limit: 1 }).autoPagingToArray({ limit: 1 })
+      )
+    );
+
+    revisionList.push(...revisionItems.flat());
+  }
+
+  return revisionList.map((revision, index) => ({
     type: 'pointcloud',
     addOptions: {
       modelId: modelIds[index],
-      revisionId: revisionList.items[0].id // Always choose the newest revision
+      revisionId: revision.id // Always choose the newest revision
     }
   }));
 }
