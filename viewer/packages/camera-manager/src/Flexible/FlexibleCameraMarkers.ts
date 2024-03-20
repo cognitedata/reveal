@@ -23,7 +23,9 @@ export class FlexibleCameraMarkers {
   //================================================
 
   public update(manager: FlexibleCameraManager): void {
-    if (manager.options.showTarget && manager.options.controlsType !== FlexibleControlsType.FirstPerson) {
+    const isFirstPerson =
+      manager.controls.isStationary || manager.options.controlsType === FlexibleControlsType.FirstPerson;
+    if (manager.options.showTarget && !isFirstPerson) {
       if (!this._targetMarker) {
         this._targetMarker = createSprite(manager.options.outerMarkerColor, manager.options.innerMarkerColor);
         this._scene.add(this._targetMarker);
