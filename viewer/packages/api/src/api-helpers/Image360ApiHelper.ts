@@ -430,20 +430,22 @@ export class Image360ApiHelper {
 
   public exit360Image(): void {
     this._image360Facade.allIconCullingScheme = 'clustered';
-    if (this._interactionState.currentImage360Entered !== undefined) {
-      const imageCollection = this._image360Facade.getCollectionContainingEntity(
-        this._interactionState.currentImage360Entered
-      );
-      this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
-      imageCollection.events.image360Exited.fire();
-
-      this._interactionState.currentImage360Entered.deactivateAnnotations();
-      this._interactionState.currentImage360Entered.image360Visualization.visible = false;
-      this._interactionState.currentImage360Entered = undefined;
-      this._interactionState.revisionSelectedForEntry = undefined;
-      this._interactionState.enteredCollection = undefined;
-      MetricsLogger.trackEvent('360ImageExited', {});
+    if (this._interactionState.currentImage360Entered === undefined) {
+      return;
     }
+    const imageCollection = this._image360Facade.getCollectionContainingEntity(
+      this._interactionState.currentImage360Entered
+    );
+    this._interactionState.currentImage360Entered.icon.setVisible(imageCollection.isCollectionVisible);
+    imageCollection.events.image360Exited.fire();
+
+    this._interactionState.currentImage360Entered.deactivateAnnotations();
+    this._interactionState.currentImage360Entered.image360Visualization.visible = false;
+    this._interactionState.currentImage360Entered = undefined;
+    this._interactionState.revisionSelectedForEntry = undefined;
+    this._interactionState.enteredCollection = undefined;
+    MetricsLogger.trackEvent('360ImageExited', {});
+
     const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
     if (flexibleCameraManager) {
       flexibleCameraManager.controls.isStationary = false;
