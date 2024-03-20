@@ -128,60 +128,6 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
     .start(TWEEN.now());
 }
 
-export function moveCameraPositionTo(manager: FlexibleCameraManager, position: Vector3, duration: number): void {
-  if (manager.isDisposed) {
-    return;
-  }
-  const cameraPosition = manager.camera.position;
-  const from = {
-    x: cameraPosition.x,
-    y: cameraPosition.y,
-    z: cameraPosition.z
-  };
-  const to = {
-    x: position.x,
-    y: position.y,
-    z: position.z
-  };
-
-  const tempPosition = new Vector3();
-  manager.controls.temporarlyDisableKeyboard = true;
-
-  new TWEEN.Tween(from)
-    .to(to, duration)
-    .onUpdate(() => {
-      tempPosition.set(from.x, from.y, from.z);
-      manager.setPosition(tempPosition);
-    })
-    .easing(num => TWEEN.Easing.Quintic.InOut(num))
-    .onStop(() => {
-      manager.setPosition(tempPosition);
-      manager.controls.temporarlyDisableKeyboard = false;
-    })
-    .onComplete(() => {
-      manager.setPosition(position);
-      manager.controls.temporarlyDisableKeyboard = false;
-    })
-    .start(TWEEN.now());
-}
-
-export function tweenCameraToDefaultFov(manager: FlexibleCameraManager, duration: number): void {
-  const from = { fov: manager.controls.fov };
-  const to = { fov: manager.controls.options.defaultFov };
-  const delay = duration * 0.25;
-  new TWEEN.Tween(from)
-    .to(to, duration * 0.5)
-    .onUpdate(() => {
-      manager.controls.setFov(from.fov);
-    })
-    .onComplete(() => {
-      manager.controls.setFov(to.fov);
-    })
-    .delay(delay)
-    .easing(num => TWEEN.Easing.Quintic.InOut(num))
-    .start(TWEEN.now());
-}
-
 function createTweenAnimationWithStop<T>(
   manager: FlexibleCameraManager,
   from: T,
