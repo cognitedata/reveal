@@ -1,8 +1,8 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Revision3D, type CogniteClient } from '@cognite/sdk/dist/src';
-import { TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
+import { type Revision3D, type CogniteClient } from '@cognite/sdk/dist/src';
+import { type TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
 import { chunk } from 'lodash';
 
 export async function getPointCloudModelsForAsset(

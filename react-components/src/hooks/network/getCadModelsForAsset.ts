@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type CogniteClient } from '@cognite/sdk';
-import { TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
+import { type TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
 
 export type CadModelNode = {
   modelId: number;

@@ -6,16 +6,20 @@ import { type DmsUniqueIdentifier, type FdmSDK } from '../utilities/FdmSDK';
 import { getCadModelsForAsset } from '../hooks/network/getCadModelsForAsset';
 import { getPointCloudModelsForAsset } from '../hooks/network/getPointCloudModelsForAsset';
 import { useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
-import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { type AddResourceOptions } from '../components/Reveal3DResources/types';
+import { type CogniteClient } from '@cognite/sdk';
+import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
 import { getCadModelsForFdmInstance } from '../hooks/network/getCadModelsForFdmInstance';
-
-export type AssetInstanceReference = { assetId: number };
-export type InstanceReference = AssetInstanceReference | DmsUniqueIdentifier;
+import { getImage360CollectionsForAsset } from '../hooks/network/getImage360CollectionsForAsset';
+import {
+  type AssetInstanceReference,
+  type InstanceReference,
+  isAssetInstance,
+  isDmsInstance
+} from '../utilities/types';
 
 export const useModelsForInstanceQuery = (
   instance: InstanceReference | undefined
-): UseQueryResult<AddResourceOptions[]> => {
+): UseQueryResult<TaggedAddResourceOptions[]> => {
   const cogniteClient = useSDK();
   const fdmSdk = useFdmSdk();
 
@@ -41,26 +45,24 @@ export const useModelsForInstanceQuery = (
 async function getModelsForAssetInstance(
   instance: AssetInstanceReference,
   cogniteClient: CogniteClient
-): Promise<AddResourceOptions[]> {
+): Promise<TaggedAddResourceOptions[]> {
   const cadModelsPromise = getCadModelsForAsset(instance.assetId, cogniteClient);
   const pointCloudModelsPromise = getPointCloudModelsForAsset(instance.assetId, cogniteClient);
-  const image360CollectionsPromise = getPointCloudModelsForAsset(instance.assetId, cogniteClient);
+  const image360CollectionsPromise = getImage360CollectionsForAsset(
+    instance.assetId,
+    cogniteClient
+  );
 
   return (
     await Promise.all([cadModelsPromise, pointCloudModelsPromise, image360CollectionsPromise])
   ).flat();
 }
 
-async function getModelsForFdmInstance(instance: DmsUniqueIdentifier, fdmSdk: FdmSDK) {
+async function getModelsForFdmInstance(
+  instance: DmsUniqueIdentifier,
+  fdmSdk: FdmSDK
+): Promise<TaggedAddResourceOptions[]> {
   const cadModelsPromise = getCadModelsForFdmInstance(instance, fdmSdk);
 
   return await cadModelsPromise;
-}
-
-function isAssetInstance(instance: InstanceReference): instance is AssetInstanceReference {
-  return 'assetId' in instance;
-}
-
-function isDmsInstance(instance: InstanceReference): instance is DmsUniqueIdentifier {
-  return 'externalId' in instance && 'space' in instance;
 }

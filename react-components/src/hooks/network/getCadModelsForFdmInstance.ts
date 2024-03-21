@@ -7,7 +7,7 @@ import {
   SYSTEM_3D_EDGE_SOURCE
 } from '../../utilities/globalDataModels';
 import { isDefined } from '../../utilities/isDefined';
-import { TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
+import { type TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
 
 type ModelForInstancesResponse = {
   model_edges: Array<EdgeItem<Record<string, Record<string, InModel3dEdgeProperties>>>>;

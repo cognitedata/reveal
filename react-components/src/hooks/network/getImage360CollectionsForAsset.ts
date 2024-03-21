@@ -4,7 +4,7 @@
 import { type AnnotationsAssetRef, type CogniteClient, type IdEither } from '@cognite/sdk/dist/src';
 import { uniq } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
-import { TaggedAddImageCollection360Options } from '../../components/Reveal3DResources/types';
+import { type TaggedAddImageCollection360Options } from '../../components/Reveal3DResources/types';
 
 export async function getImage360CollectionsForAsset(
   assetId: number,
@@ -16,6 +16,10 @@ export async function getImage360CollectionsForAsset(
   });
 
   const idEithers = fileRefsResult.items.filter(isIdEither);
+
+  if (idEithers.length === 0) {
+    return [];
+  }
 
   const fileInfos = await sdk.files.retrieve(idEithers, { ignoreUnknownIds: true });
 
