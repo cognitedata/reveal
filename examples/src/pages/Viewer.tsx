@@ -426,11 +426,11 @@ export function Viewer() {
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
       const collection = await viewer.add360ImageSet('datamodels', {
-        image360CollectionExternalId: 'c_RC_2',
-        space: 'anders_360_image'
+        image360CollectionExternalId: 'Hibernia_RS2',
+        space: 'christjt-test-system-360'
       });
 
-      collection.setModelTransformation(new THREE.Matrix4().makeRotationY(Math.PI / 2));
+      collection.setModelTransformation(new THREE.Matrix4().makeTranslation(0, -1, 0));
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;

@@ -118,7 +118,10 @@ export class IconCollection {
     const screenSpaceAreaThreshold = 0.04;
     const minimumLevel = 3;
     return ({ camera }) => {
-      projection.copy(camera.projectionMatrix).multiply(camera.matrixWorldInverse);
+      projection
+        .copy(camera.projectionMatrix)
+        .multiply(camera.matrixWorldInverse)
+        .multiply(this._pointsObject.getTransform());
       const nodesLOD = octree.getLODByScreenArea(screenSpaceAreaThreshold, projection, minimumLevel);
 
       frustum.setFromProjectionMatrix(projection);

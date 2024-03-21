@@ -43,6 +43,7 @@ export class OverlayPointsObject extends Group {
   private readonly _colorBuffer: Float32Array;
   private readonly _colorAttribute: BufferAttribute;
   private readonly _points: { frontPoints: Points; backPoints: Points };
+  private _modelTransform: Matrix4;
 
   constructor(maxNumberOfPoints: number, materialParameters: OverlayPointsParameters) {
     super();
@@ -51,6 +52,7 @@ export class OverlayPointsObject extends Group {
     this._positionAttribute = new BufferAttribute(this._positionBuffer, 3);
     this._colorBuffer = new Float32Array(maxNumberOfPoints * 3).fill(1);
     this._colorAttribute = new BufferAttribute(this._colorBuffer, 3);
+    this._modelTransform = new Matrix4();
     geometry.setAttribute('position', this._positionAttribute);
     geometry.setAttribute('color', this._colorAttribute);
     geometry.setDrawRange(0, 0);
@@ -137,6 +139,12 @@ export class OverlayPointsObject extends Group {
 
     this._points.backPoints.position.setFromMatrixPosition(transform);
     this._points.backPoints.quaternion.setFromRotationMatrix(transform);
+
+    this._modelTransform = transform.clone();
+  }
+
+  public getTransform(): Matrix4 {
+    return this._modelTransform;
   }
 
   public dispose(): void {
