@@ -30,6 +30,7 @@ import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter
 import { Image360 } from '../entity/Image360';
 import { Image360Revision } from '../entity/Image360Revision';
 import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
+import { Matrix4 } from 'three';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -110,6 +111,10 @@ export class DefaultImage360Collection implements Image360Collection {
     this._isCollectionVisible = true;
     this._annotationFilter = annotationFilter;
     this._image360DataProvider = image360DataProvider;
+  }
+
+  setModelTransformation(transformationMatrix: Matrix4): void {
+    this._icons.setTransform(transformationMatrix);
   }
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:

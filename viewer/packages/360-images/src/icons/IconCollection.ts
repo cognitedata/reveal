@@ -108,6 +108,10 @@ export class IconCollection {
     sceneHandler.addObject3D(iconsSprites);
   }
 
+  public setTransform(transform: Matrix4): void {
+    this._pointsObject.setTransform(transform);
+  }
+
   private setIconClustersByLOD(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
     const frustum = new Frustum();

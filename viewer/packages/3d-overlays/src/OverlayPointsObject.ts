@@ -12,6 +12,7 @@ import {
   GreaterDepth,
   Group,
   LessEqualDepth,
+  Matrix4,
   Points,
   RawShaderMaterial,
   ShaderMaterial,
@@ -41,6 +42,7 @@ export class OverlayPointsObject extends Group {
   private readonly _positionAttribute: BufferAttribute;
   private readonly _colorBuffer: Float32Array;
   private readonly _colorAttribute: BufferAttribute;
+  private readonly _points: { frontPoints: Points; backPoints: Points };
 
   constructor(maxNumberOfPoints: number, materialParameters: OverlayPointsParameters) {
     super();
@@ -96,6 +98,7 @@ export class OverlayPointsObject extends Group {
 
     this._geometry = geometry;
     this._frontMaterial = frontMaterial;
+    this._points = { frontPoints, backPoints };
   }
 
   public setPoints(points: Vector3[], colors?: Color[]): void {
@@ -126,6 +129,14 @@ export class OverlayPointsObject extends Group {
 
     this._geometry.computeBoundingBox();
     this._geometry.computeBoundingSphere();
+  }
+
+  public setTransform(transform: Matrix4): void {
+    this._points.frontPoints.position.setFromMatrixPosition(transform);
+    this._points.frontPoints.quaternion.setFromRotationMatrix(transform);
+
+    this._points.backPoints.position.setFromMatrixPosition(transform);
+    this._points.backPoints.quaternion.setFromRotationMatrix(transform);
   }
 
   public dispose(): void {

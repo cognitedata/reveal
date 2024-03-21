@@ -85,6 +85,12 @@ export interface Image360Collection {
   targetRevisionDate: Date | undefined;
 
   /**
+   * Sets the transformation matrix to be applied to the collection.
+   * @param transformationMatrix The transformation matrix to be applied to the collection.
+   */
+  setModelTransformation(transformationMatrix: THREE.Matrix4): void;
+
+  /**
    * Specify parameters used to determine the number of icons that are visible when entering 360 Images.
    * @param radius Only icons within the given radius will be made visible.
    * @param pointLimit Limit the number of points within the given radius. Points closer to the camera will be prioritized.
