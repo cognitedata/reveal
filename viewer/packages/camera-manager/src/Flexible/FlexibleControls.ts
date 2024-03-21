@@ -551,34 +551,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
   };
 
-  private zoomCameraByFov(normalizedCoords: Vector2, delta: number) {
-    // Added to prevent browser scrolling when zooming
-    if (!(this._camera instanceof PerspectiveCamera)) {
-      return;
-    }
-    const getCursorRay = (normalizedCoords: Vector2) => {
-      const ray = new Vector3(normalizedCoords.x, normalizedCoords.y, 1)
-        .unproject(this._camera)
-        .sub(this._camera.position)
-        .normalize();
-      return ray;
-    };
-
-    const preCursorRay = getCursorRay(normalizedCoords);
-
-    if (!this.setFov(this.fov + delta, false)) {
-      return;
-    }
-    // When zooming the camera is rotated towards the cursor position
-    const postCursorRay = getCursorRay(normalizedCoords);
-    const arcBetweenRays = new Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
-    const forwardVector = this.cameraVector.getEndVector();
-
-    forwardVector.applyQuaternion(arcBetweenRays);
-    this._cameraVector.copy(forwardVector);
-    this.triggerCameraChangeEvent();
-  }
-
   private onTouchStart(event: PointerEvent) {
     if (!this.isEnabled) return;
     this._touchEvents.push(event);
@@ -650,7 +622,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   public updateCameraAndTriggerCameraChangeEvent(): void {
     // Call this when manually update the target, cameraVector or cameraPosition
-    // Thios update the camera without damening
+    // This update the camera without damping
     if (!this.updateCamera(1000 / TARGET_FPS, true, true)) {
       this.triggerCameraChangeEvent(); // Force trigger if not done in updateCamera
     }
@@ -865,7 +837,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   //================================================
-  // INSTANCE METHODS: Dolly
+  // INSTANCE METHODS: Dolly/Zoom
   //================================================
 
   private dollyOrthographicCamera(deltaDistance: number) {
@@ -926,6 +898,33 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       }
     }
     return step;
+  }
+
+  private zoomCameraByFov(normalizedCoords: Vector2, delta: number) {
+    // Added to prevent browser scrolling when zooming
+    if (!(this._camera instanceof PerspectiveCamera)) {
+      return;
+    }
+    const preCursorRay = getCursorRay(this._camera, normalizedCoords);
+    if (!this.setFov(this.fov + delta, false)) {
+      return;
+    }
+    // When zooming the camera is rotated towards the cursor position
+    const postCursorRay = getCursorRay(this._camera, normalizedCoords);
+    const arcBetweenRays = new Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
+    const forwardVector = this.cameraVector.getEndVector();
+
+    forwardVector.applyQuaternion(arcBetweenRays);
+    this._cameraVector.copy(forwardVector);
+    this.triggerCameraChangeEvent();
+
+    function getCursorRay(camera: PerspectiveCamera, normalizedCoords: Vector2) {
+      const ray = new Vector3(normalizedCoords.x, normalizedCoords.y, 1)
+        .unproject(camera)
+        .sub(camera.position)
+        .normalize();
+      return ray;
+    }
   }
 
   //================================================

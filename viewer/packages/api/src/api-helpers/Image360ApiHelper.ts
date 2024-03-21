@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Raycaster, Vector2, Vector3 } from 'three';
+import { Quaternion, Raycaster, Vector2, Vector3 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
 import { CogniteClient, Metadata } from '@cognite/sdk';
@@ -287,13 +287,6 @@ export class Image360ApiHelper {
     this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
     this.applyFullResolutionTextures(revisionToEnter);
 
-    // This sucks, but I don't have possible to turn off the camera event function. If I don't set this
-    // the camera target will be on the thing it hits in the background and aoften this is
-    // far away. So it gives me not any other option to just set the target to the camera position.
-    const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
-    if (flexibleCameraManager && flexibleCameraManager.controls.isStationary) {
-      flexibleCameraManager.controls.setTarget(flexibleCameraManager.controls.camera.position);
-    }
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
   }
 
@@ -449,15 +442,21 @@ export class Image360ApiHelper {
     const flexibleCameraManager = FlexibleCameraManager.as(this._activeCameraManager.innerCameraManager);
     if (flexibleCameraManager) {
       flexibleCameraManager.controls.isStationary = false;
+      const { position, rotation } = flexibleCameraManager.getCameraState();
+      setCameraTarget1MeterInFrontOfCamera(flexibleCameraManager, position, rotation);
     } else if (this._stationaryCameraManager && this._cachedCameraManager) {
       const { position, rotation } = this._stationaryCameraManager.getCameraState();
       this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
-      this._activeCameraManager.setCameraState({
+      setCameraTarget1MeterInFrontOfCamera(this._activeCameraManager, position, rotation);
+    }
+    this._domElement.removeEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
+
+    function setCameraTarget1MeterInFrontOfCamera(manager: CameraManager, position: Vector3, rotation: Quaternion) {
+      manager.setCameraState({
         position,
         target: new Vector3(0, 0, -1).applyQuaternion(rotation).add(position)
       });
     }
-    this._domElement.removeEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
   }
 
   public dispose(): void {
