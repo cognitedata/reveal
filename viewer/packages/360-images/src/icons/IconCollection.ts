@@ -112,6 +112,10 @@ export class IconCollection {
     this._pointsObject.setTransform(transform);
   }
 
+  public getTransform(): Matrix4 {
+    return this._pointsObject.getTransform();
+  }
+
   private setIconClustersByLOD(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
     const frustum = new Frustum();
@@ -211,7 +215,7 @@ export class IconCollection {
 
     icons.forEach(icon =>
       icon.on('selected', () => {
-        this._hoverSprite.position.copy(icon.getPosition());
+        this._hoverSprite.position.copy(icon.getPosition().clone().applyMatrix4(this.getTransform()));
         this._hoverSprite.scale.set(icon.adaptiveScale * 2, icon.adaptiveScale * 2, 1);
       })
     );

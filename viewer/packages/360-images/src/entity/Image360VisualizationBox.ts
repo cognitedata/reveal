@@ -84,7 +84,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   constructor(worldTransform: THREE.Matrix4, sceneHandler: SceneHandler, device: DeviceDescriptor) {
-    this._worldTransform = worldTransform;
+    this._worldTransform = worldTransform.clone();
     this._sceneHandler = sceneHandler;
     this._device = device;
     this._textureLoader = new THREE.TextureLoader();
@@ -94,6 +94,10 @@ export class Image360VisualizationBox implements Image360Visualization {
       scale: new THREE.Vector3(1, 1, 1),
       visible: true
     };
+  }
+
+  public setWorldTransform(matrix: THREE.Matrix4): void {
+    // Doesn't work :(
   }
 
   public loadImages(textures: Image360Texture[]): void {

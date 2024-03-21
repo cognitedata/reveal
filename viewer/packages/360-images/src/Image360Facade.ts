@@ -115,19 +115,23 @@ export class Image360Facade<T> {
   }
 
   public intersect(coords: THREE.Vector2, camera: THREE.Camera): Image360Entity | undefined {
-    this._rayCaster.setFromCamera(coords, camera);
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     const cameraPosition = camera.position.clone();
 
-    const intersections = this._image360Collections
-      .flatMap(getImage360Entities)
-      .filter(hasVisibleIcon)
-      .map(entity => getIntersection(entity, this._rayCaster.ray))
-      .filter(hasIntersection)
-      .map(intersectionToCameraSpace)
-      .filter(isInFrontOfCamera)
-      .sort(byDistanceToCamera)
-      .map(selectEntity);
+    const intersections = this._image360Collections.flatMap(collection =>
+      getImage360Entities(collection)
+        .filter(hasVisibleIcon)
+        .map(
+          getIntersector(
+            getTransformedRay(this._rayCaster, coords, camera, collection.getModelTransformation().clone().invert())
+          )
+        )
+        .filter(hasIntersection)
+        .map(intersectionToCameraSpace)
+        .filter(isInFrontOfCamera)
+        .sort(byDistanceToCamera)
+        .map(selectEntity)
+    );
 
     return first(intersections);
 
@@ -139,8 +143,19 @@ export class Image360Facade<T> {
       return entity.icon.getVisible() && !entity.image360Visualization.visible;
     }
 
-    function getIntersection(entity: Image360Entity, ray: THREE.Ray): [Image360Entity, THREE.Vector3 | null] {
-      return [entity, entity.icon.intersect(ray)];
+    function getIntersector(ray: THREE.Ray): (entity: Image360Entity) => [Image360Entity, THREE.Vector3 | null] {
+      return (entity: Image360Entity) => [entity, entity.icon.intersect(ray)];
+    }
+
+    function getTransformedRay(
+      rayCaster: THREE.Raycaster,
+      coords: THREE.Vector2,
+      camera: THREE.Camera,
+      transform: THREE.Matrix4
+    ): THREE.Ray {
+      rayCaster.setFromCamera(coords, camera);
+      rayCaster.ray.applyMatrix4(transform);
+      return rayCaster.ray;
     }
 
     function hasIntersection(
