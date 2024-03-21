@@ -889,6 +889,8 @@ export class FlexibleControlsOptions {
     // (undocumented)
     dampingFactor: number;
     // (undocumented)
+    defaultFov: number;
+    // (undocumented)
     enableChangeControlsTypeOn123Key: boolean;
     // (undocumented)
     enableDamping: boolean;
@@ -896,6 +898,8 @@ export class FlexibleControlsOptions {
     enableKeyboardNavigation: boolean;
     // (undocumented)
     getLegalAzimuthAngle(azimuthAngle: number): number;
+    // (undocumented)
+    getLegalFov(fov: number): number;
     // (undocumented)
     getLegalPolarAngle(polarAngle: number): number;
     // (undocumented)
@@ -915,6 +919,8 @@ export class FlexibleControlsOptions {
     // (undocumented)
     maxAzimuthAngle: number;
     // (undocumented)
+    maximumFov: number;
+    // (undocumented)
     maximumTimeBetweenRaycasts: number;
     // (undocumented)
     maxOrthographicZoom: number;
@@ -924,6 +930,8 @@ export class FlexibleControlsOptions {
     maxSensitivity: number;
     // (undocumented)
     minAzimuthAngle: number;
+    // (undocumented)
+    minimumFov: number;
     // (undocumented)
     minimumTimeBetweenRaycasts: number;
     // (undocumented)

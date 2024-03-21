@@ -7,7 +7,7 @@ import { AxisGizmoOptions } from './AxisGizmoOptions';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@reveal/utilities';
 import { Cognite3DViewer } from '@reveal/api';
 import { OneGizmoAxis } from './OneGizmoAxis';
-import { CameraManager, IFlexibleCameraManager } from '@reveal/camera-manager';
+import { asFlexibleCameraManager } from '@reveal/camera-manager';
 import { moveCameraTo } from '../utilities/moveCameraTo';
 import { Corner } from '../utilities/Corner';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
@@ -465,10 +465,4 @@ function initializeStyle(element: HTMLElement, options: AxisGizmoOptions) {
       style.left = xMargin;
       style.top = yMargin;
   }
-}
-
-function asFlexibleCameraManager(manager: CameraManager): IFlexibleCameraManager | undefined {
-  // instanceof don't work within React, so using safeguarding
-  const flexibleCameraManager = manager as IFlexibleCameraManager;
-  return flexibleCameraManager.controlsType === undefined ? undefined : flexibleCameraManager;
 }

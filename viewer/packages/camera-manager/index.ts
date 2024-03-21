@@ -17,5 +17,6 @@ export { FlexibleControlsOptions } from './src/Flexible/FlexibleControlsOptions'
 export { FlexibleWheelZoomType } from './src/Flexible/FlexibleWheelZoomType';
 export { FlexibleControlsType } from './src/Flexible/FlexibleControlsType';
 export { FlexibleMouseActionType } from './src/Flexible/FlexibleMouseActionType';
+export { asFlexibleCameraManager } from './src/Flexible/IFlexibleCameraManager';
 
 export * from './src/types';
