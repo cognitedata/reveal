@@ -116,7 +116,7 @@ export type { QualitySettings } from './components/RevealToolbar/SettingsContain
 
 export type { RuleAndEnabled, TriggerType } from './components/RuleBasedOutputs/types';
 
-export type { InstanceReference, AssetInstanceReference } from './query/useModelsForInstanceQuery';
+export type { InstanceReference, AssetInstanceReference } from './utilities/types';
 
 // Functions
 export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';
