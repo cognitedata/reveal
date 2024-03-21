@@ -19,6 +19,9 @@ export class FlexibleControlsRotationHelper {
   private readonly oldCameraVectorEnd: Spherical = new Spherical();
 
   public begin(controls: FlexibleControls): void {
+    if (controls.isStationary) {
+      return;
+    }
     if (controls.controlsType === FlexibleControlsType.Orbit) {
       this.oldOffset.subVectors(controls.target.end, controls.cameraPosition.end);
       this.oldCameraVectorEnd.copy(controls.cameraVector.end);
@@ -26,6 +29,10 @@ export class FlexibleControlsRotationHelper {
   }
 
   public end(controls: FlexibleControls): void {
+    if (controls.isStationary) {
+      return;
+    }
+
     if (controls.controlsType === FlexibleControlsType.OrbitInCenter) {
       // Adust the camera position by
       // CameraPosition = Target - CameraVector * DistanceToTarget

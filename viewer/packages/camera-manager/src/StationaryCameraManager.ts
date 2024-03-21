@@ -76,7 +76,7 @@ export class StationaryCameraManager implements CameraManager {
     this._camera.aspect = cameraManager.getCamera().aspect;
     this._camera.updateProjectionMatrix();
 
-    window.addEventListener('pointerdown', this.onPointerDown);
+    this._domElement.addEventListener('pointerdown', this.onPointerDown);
     window.addEventListener('pointermove', this.onPointerMove, { passive: false });
     this._domElement.addEventListener('wheel', this.zoomCamera);
     // The handler for pointerup is used for the pointercancel, pointerout
@@ -86,7 +86,7 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   deactivate(): void {
-    window.removeEventListener('pointerdown', this.onPointerDown);
+    this._domElement.removeEventListener('pointerdown', this.onPointerDown);
     window.removeEventListener('pointermove', this.onPointerMove);
     window.removeEventListener('pointerup', this.onPointerUp);
     this._domElement.removeEventListener('pointercancel', this.onPointerUp);

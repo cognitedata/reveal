@@ -43,6 +43,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   private _isEnabled: boolean = true;
   private _isInitialized: boolean = false;
+  private _isStationary = false; // If true the options.controlsType should not be used. Camera cannot change position and zooms by fov
   public temporarlyDisableKeyboard: boolean = false;
 
   private readonly _options: FlexibleControlsOptions;
@@ -118,13 +119,15 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   // CONSTRUCTOR
   //================================================
 
-  constructor(
-    camera: PerspectiveCamera | OrthographicCamera,
-    domElement: HTMLElement,
-    options: FlexibleControlsOptions
-  ) {
+  constructor(camera: PerspectiveCamera | undefined, domElement: HTMLElement, options: FlexibleControlsOptions) {
     super();
-    this._camera = camera;
+
+    if (camera) {
+      this._camera = camera;
+      options.defaultFov = this.fov;
+    } else {
+      this._camera = new PerspectiveCamera(options.defaultFov, undefined, 0.1, 10000);
+    }
     this._domElement = domElement;
     this._options = options;
     this._keyboard = new Keyboard(this._domElement);
@@ -146,6 +149,10 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   get camera(): PerspectiveCamera | OrthographicCamera {
     return this._camera;
+  }
+
+  get domElement(): HTMLElement {
+    return this._domElement;
   }
 
   get target(): DampedVector3 {
@@ -178,6 +185,27 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   public get controlsType(): FlexibleControlsType {
     return this.options.controlsType;
+  }
+
+  public get isStationary(): boolean {
+    return this._isStationary;
+  }
+
+  public set isStationary(value: boolean) {
+    if (this._isStationary == value) {
+      return;
+    }
+    if (this._isStationary) {
+      this.setFov(this.options.defaultFov);
+    }
+    this._isStationary = value;
+  }
+
+  public get fov(): number {
+    if (!(this._camera instanceof PerspectiveCamera)) {
+      return 0;
+    }
+    return this._camera.fov;
   }
 
   set getPickedPointByPixelCoordinates(getPickedPointByPixelCoordinates: GetPickedPointByPixelCoordinates | undefined) {
@@ -246,6 +274,22 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
   }
 
+  setFov(value: number, triggerCameraChangeEvent: boolean = true): boolean {
+    if (!(this._camera instanceof PerspectiveCamera)) {
+      return false;
+    }
+    const fov = this.options.getLegalFov(value);
+    if (this.fov === fov) {
+      return false;
+    }
+    this._camera.fov = fov;
+    this._camera.updateProjectionMatrix();
+    if (triggerCameraChangeEvent) {
+      this.triggerCameraChangeEvent();
+    }
+    return true;
+  }
+
   public setPositionAndTarget(position: Vector3, target: Vector3): void {
     this.isInitialized = true;
     this._cameraPosition.copy(position);
@@ -256,7 +300,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     vector.normalize();
     this._cameraVector.copy(vector);
     this._rawCameraRotation = undefined;
+    this.updateCameraAndTriggerCameraChangeEvent();
+  }
 
+  public setPosition(position: Vector3): void {
+    this._cameraPosition.copy(position);
+    this._rawCameraRotation = undefined;
     this.updateCameraAndTriggerCameraChangeEvent();
   }
 
@@ -323,7 +372,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     // So we get y = x * tan (a), where y is parallel to the screen
     // half of the fov is center to top of screen
     if (this._camera instanceof PerspectiveCamera) {
-      const fovFactor = Math.tan(MathUtils.degToRad(this._camera.fov / 2));
+      const fovFactor = Math.tan(MathUtils.degToRad(this.fov / 2));
       speed *= fovFactor; // Typical value is 0.57
     }
     const factor = 2 / this._domElement.clientHeight;
@@ -402,7 +451,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
   };
 
-  private readonly onMouseDown = async (event: PointerEvent) => {
+  private async onMouseDown(event: PointerEvent) {
     if (!this.isEnabled) {
       return;
     }
@@ -423,7 +472,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       event.button === MOUSE.RIGHT
     );
     this._mouseDragInfo = mouseDragInfo;
-  };
+  }
 
   private readonly onPointerMove = async (event: PointerEvent) => {
     if (!this._mouseDragInfo || !this.isEnabled || !isMouse(event)) {
@@ -449,12 +498,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     const { isRight } = this._mouseDragInfo;
     let { translator } = this._mouseDragInfo;
 
-    if (this._keyboard.isShiftPressedOnly()) {
+    if (!this.isStationary && this._keyboard.isShiftPressedOnly()) {
       translator = undefined;
       // Zooming forward and backward
       deltaPosition.multiplyScalar(this._options.mouseDollySpeed);
       this.pan(0, 0, deltaPosition.y);
-    } else if (isRight || this._keyboard.isCtrlPressedOnly()) {
+    } else if (!this.isStationary && (isRight || this._keyboard.isCtrlPressedOnly())) {
       // Pan left, right, up or down
       if (!translator) {
         translator = new FlexibleControlsTranslator(this);
@@ -480,22 +529,29 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   };
 
   private readonly onMouseWheel = (event: WheelEvent) => {
-    if (!this.isEnabled) return;
+    if (!this.isEnabled) {
+      return;
+    }
     event.preventDefault();
 
     const delta = getWheelDelta(event);
     if (this._camera instanceof PerspectiveCamera) {
-      const deltaDistance = delta * this.getWheelSpeed();
       const pixelCoords = getClickOrTouchEventPoint(event, this._domElement);
       const normalizedCoords = getNormalizedPixelCoordinates(this._domElement, pixelCoords.x, pixelCoords.y);
-      this.dollyWithWheelScroll(normalizedCoords, -deltaDistance);
+      if (this.isStationary) {
+        const deltaDistance = delta * this.options.wheelDollySpeed;
+        this.zoomCameraByFov(normalizedCoords, deltaDistance);
+      } else {
+        const deltaDistance = delta * this.getWheelSpeed();
+        this.dollyWithWheelScroll(normalizedCoords, -deltaDistance);
+      }
     } else if (this._camera instanceof OrthographicCamera) {
       const deltaDistance = Math.sign(delta) * this._options.orthographicCameraDollyFactor;
       this.dollyOrthographicCamera(deltaDistance);
     }
   };
 
-  private readonly onTouchStart = (event: PointerEvent) => {
+  private onTouchStart(event: PointerEvent) {
     if (!this.isEnabled) return;
     this._touchEvents.push(event);
     event.preventDefault();
@@ -507,13 +563,15 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
         break;
 
       case 2:
-        this.startTouchPinch(event);
+        if (!this.isStationary) {
+          this.startTouchPinch(event);
+        }
         break;
 
       default:
         break;
     }
-  };
+  }
 
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
     if (!this.isEnabled) return;
@@ -564,7 +622,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   public updateCameraAndTriggerCameraChangeEvent(): void {
     // Call this when manually update the target, cameraVector or cameraPosition
-    // Thios update the camera without damening
+    // This update the camera without damping
     if (!this.updateCamera(1000 / TARGET_FPS, true, true)) {
       this.triggerCameraChangeEvent(); // Force trigger if not done in updateCamera
     }
@@ -657,7 +715,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     let deltaAzimuthAngle = this._options.mouseRotationSpeedAzimuth * delta.x;
     let deltaPolarAngle = this._options.mouseRotationSpeedPolar * delta.y;
     // It is more natural that the first persion rotate slower then the other modes
-    if (this.controlsType == FlexibleControlsType.FirstPerson) {
+    if (this.isStationary || this.controlsType == FlexibleControlsType.FirstPerson) {
       deltaAzimuthAngle *= 0.5;
       deltaPolarAngle *= 0.5;
     }
@@ -779,7 +837,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   //================================================
-  // INSTANCE METHODS: Dolly
+  // INSTANCE METHODS: Dolly/Zoom
   //================================================
 
   private dollyOrthographicCamera(deltaDistance: number) {
@@ -842,6 +900,33 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     return step;
   }
 
+  private zoomCameraByFov(normalizedCoords: Vector2, delta: number) {
+    // Added to prevent browser scrolling when zooming
+    if (!(this._camera instanceof PerspectiveCamera)) {
+      return;
+    }
+    const preCursorRay = getCursorRay(this._camera, normalizedCoords);
+    if (!this.setFov(this.fov + delta, false)) {
+      return;
+    }
+    // When zooming the camera is rotated towards the cursor position
+    const postCursorRay = getCursorRay(this._camera, normalizedCoords);
+    const arcBetweenRays = new Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
+    const forwardVector = this.cameraVector.getEndVector();
+
+    forwardVector.applyQuaternion(arcBetweenRays);
+    this._cameraVector.copy(forwardVector);
+    this.triggerCameraChangeEvent();
+
+    function getCursorRay(camera: PerspectiveCamera, normalizedCoords: Vector2) {
+      const ray = new Vector3(normalizedCoords.x, normalizedCoords.y, 1)
+        .unproject(camera)
+        .sub(camera.position)
+        .normalize();
+      return ray;
+    }
+  }
+
   //================================================
   // INSTANCE METHODS: Keyboard
   //================================================
@@ -858,8 +943,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
     let handled = false;
     const timeScale = getTimeScale(deltaTimeS);
-    if (this.handleRotationFromKeyboard(timeScale)) handled = true;
-    if (this.handleMoveFromKeyboard(timeScale)) handled = true;
+    if (this.handleRotationFromKeyboard(timeScale)) {
+      handled = true;
+    }
+    if (!this.isStationary && this.handleMoveFromKeyboard(timeScale)) {
+      handled = true;
+    }
     return handled;
   }
 
@@ -877,7 +966,9 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (deltaAzimuthAngle === 0 && deltaPolarAngle === 0) {
       return false;
     }
-    this.setControlsType(FlexibleControlsType.FirstPerson);
+    if (!this.isStationary) {
+      this.setControlsType(FlexibleControlsType.FirstPerson);
+    }
     this.rotateByAngles(-deltaAzimuthAngle, -deltaPolarAngle);
     return true;
   }
@@ -890,7 +981,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (deltaX === 0 && deltaY === 0 && deltaZ === 0) {
       return false;
     }
-    if (this.controlsType === FlexibleControlsType.Orbit) {
+    if (!this.isStationary) {
       this.setControlsType(FlexibleControlsType.FirstPerson);
     }
     const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardFastMoveFactor : 1;

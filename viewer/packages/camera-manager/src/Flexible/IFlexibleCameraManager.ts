@@ -50,3 +50,9 @@ export interface IFlexibleCameraManager extends CameraManager {
    */
   removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
 }
+
+export function asFlexibleCameraManager(manager: CameraManager): IFlexibleCameraManager | undefined {
+  // instanceof don't work within React, so using safeguarding
+  const flexibleCameraManager = manager as IFlexibleCameraManager;
+  return flexibleCameraManager.controlsType === undefined ? undefined : flexibleCameraManager;
+}
