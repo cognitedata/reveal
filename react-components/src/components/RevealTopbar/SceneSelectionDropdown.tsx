@@ -8,6 +8,7 @@ import { use3dScenes } from '../../query/use3dScenes';
 import { useTranslation } from '../i18n/I18n';
 import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 import { SceneList } from '../RevealToolbar/SceneList';
+import styled from 'styled-components';
 
 export type SelectSceneButtonProps = {
   selectedScene: DmsUniqueIdentifier | undefined;
@@ -34,10 +35,10 @@ export const SceneSelectionDropdown = ({
       <Dropdown
         placement="bottom-start"
         content={
-          <Menu>
+          <StyledMenu>
             <Menu.Header>{t('SCENE_SELECT_HEADER', 'Select 3D location')}</Menu.Header>
             <SceneList selectedScene={selectedScene} onSceneChange={onSceneChange} />
-          </Menu>
+          </StyledMenu>
         }>
         <>
           <Button icon="World" aria-label="Select 3D location" type="ghost">
@@ -48,3 +49,8 @@ export const SceneSelectionDropdown = ({
     </CogsTooltip>
   );
 };
+
+const StyledMenu = styled(Menu)`
+  max-height: 400px;
+  overflow: auto;
+`;
