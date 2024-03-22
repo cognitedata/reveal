@@ -13,11 +13,13 @@ import styled from 'styled-components';
 export type SelectSceneButtonProps = {
   selectedScene: DmsUniqueIdentifier | undefined;
   setSelectedScene: (scene?: DmsUniqueIdentifier | undefined) => void;
+  orientation?: 'horizontal' | 'none';
 };
 
 export const SelectSceneButton = ({
   selectedScene,
-  setSelectedScene: onSceneChange
+  setSelectedScene: onSceneChange,
+  orientation = 'none'
 }: SelectSceneButtonProps): ReactElement => {
   const { data } = use3dScenes();
   const { t } = useTranslation();
@@ -36,11 +38,15 @@ export const SelectSceneButton = ({
         placement="right-start"
         content={
           <StyledMenu>
-            <Menu.Header>{t('SCENE_SELECT_HEADER', 'Select 3D location')}</Menu.Header>
+            {orientation === 'none' && (
+              <Menu.Header>{t('SCENE_SELECT_HEADER', 'Select 3D location')}</Menu.Header>
+            )}
             <SceneList selectedScene={selectedScene} onSceneChange={onSceneChange} />
           </StyledMenu>
         }>
-        <Button icon="World" aria-label="Select 3D location" type="ghost" />
+        <Button icon="World" aria-label="Select 3D location" type="ghost">
+          {orientation === 'horizontal' && selectedScene?.externalId}
+        </Button>
       </Dropdown>
     </CogsTooltip>
   );

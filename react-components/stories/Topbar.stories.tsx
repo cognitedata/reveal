@@ -19,6 +19,7 @@ import { RevealStoryContext } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { SceneSelectionDropdown } from '../src/components/RevealTopbar/SceneSelectionDropdown';
 import { RuleBasedOutputsButton } from '../src/components/RevealToolbar/RuleBasedOutputsButton';
+import { SelectSceneButton } from '../src/components/RevealToolbar/SelectSceneButton';
 
 const meta = {
   title: 'Example/Topbar',
@@ -51,7 +52,11 @@ const TopbarContent = (): ReactElement => {
 
   return (
     <>
-      <SceneSelectionDropdown selectedScene={scene} setSelectedScene={setScene} />
+      <SelectSceneButton
+        selectedScene={scene}
+        setSelectedScene={setScene}
+        orientation="horizontal"
+      />
       <RevealToolbar.SetOrbitOrFirstPersonControlsType orientation="horizontal" />
       <RevealToolbar.LayersButton storeStateInUrl={true} />
       <RuleBasedOutputsButton />
