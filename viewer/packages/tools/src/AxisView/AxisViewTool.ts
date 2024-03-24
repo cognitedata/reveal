@@ -300,8 +300,9 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       context.fillStyle = compassLayout.fontColor!.getStyle();
       context.fillText(compassLayout.ringLabel, halfSize, halfSize * (1 / 4) + fontSize / 3);
     }
-
-    return new THREE.CanvasTexture(canvas);
+    const canvasTexture = new THREE.CanvasTexture(canvas);
+    canvasTexture.anisotropy = 8;
+    return canvasTexture;
   }
 
   private getFaceTexture(faceConfig: AxisBoxFaceConfig, size: number) {
@@ -327,8 +328,9 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       context.fillStyle = faceConfig.fontColor!.getStyle();
       context.fillText(faceConfig.label!, textureSize / 2, textureSize / 2 + fontSize / 3);
     }
-
-    return new THREE.CanvasTexture(canvas);
+    const canvasTexture = new THREE.CanvasTexture(canvas);
+    canvasTexture.anisotropy = 8;
+    return canvasTexture;
   }
 
   private createBoxFace(position: THREE.Vector3, faceConfig: AxisBoxFaceConfig, upVector = new THREE.Vector3(0, 1, 0)) {
