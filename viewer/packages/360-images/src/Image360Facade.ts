@@ -117,13 +117,14 @@ export class Image360Facade<T> {
   public intersect(coords: THREE.Vector2, camera: THREE.Camera): Image360Entity | undefined {
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     const cameraPosition = camera.position.clone();
+    const collectionMatrix = new THREE.Matrix4();
 
     const intersections = this._image360Collections.flatMap(collection =>
       getImage360Entities(collection)
         .filter(hasVisibleIcon)
         .map(
           getIntersector(
-            getTransformedRay(this._rayCaster, coords, camera, collection.getModelTransformation().clone().invert())
+            getTransformedRay(this._rayCaster, coords, camera, getCollectionMatrix(collection, collectionMatrix))
           )
         )
         .filter(hasIntersection)
@@ -156,6 +157,15 @@ export class Image360Facade<T> {
       rayCaster.setFromCamera(coords, camera);
       rayCaster.ray.applyMatrix4(transform);
       return rayCaster.ray;
+    }
+
+    function getCollectionMatrix(
+      collection: DefaultImage360Collection,
+      collectionMatrix: THREE.Matrix4
+    ): THREE.Matrix4 {
+      collection.getModelTransformation(collectionMatrix);
+      collectionMatrix.invert();
+      return collectionMatrix;
     }
 
     function hasIntersection(

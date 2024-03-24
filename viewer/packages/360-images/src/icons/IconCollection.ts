@@ -110,10 +110,11 @@ export class IconCollection {
 
   public setTransform(transform: Matrix4): void {
     this._pointsObject.setTransform(transform);
+    this._icons.forEach(icon => icon.setWorldTransform(transform));
   }
 
-  public getTransform(): Matrix4 {
-    return this._pointsObject.getTransform();
+  public getTransform(out?: Matrix4): Matrix4 {
+    return this._pointsObject.getTransform(out);
   }
 
   private setIconClustersByLOD(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {

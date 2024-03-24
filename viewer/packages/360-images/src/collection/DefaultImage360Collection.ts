@@ -113,8 +113,8 @@ export class DefaultImage360Collection implements Image360Collection {
     this._image360DataProvider = image360DataProvider;
   }
 
-  public getModelTransformation(): Matrix4 {
-    return this._icons.getTransform();
+  public getModelTransformation(out?: Matrix4): Matrix4 {
+    return this._icons.getTransform(out);
   }
 
   public setModelTransformation(transformationMatrix: Matrix4): void {

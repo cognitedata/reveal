@@ -94,7 +94,7 @@ export interface Image360Collection {
   /**
    * Gets the transformation matrix of the collection
    */
-  getModelTransformation(): Matrix4;
+  getModelTransformation(out?: Matrix4): Matrix4;
 
   /**
    * Specify parameters used to determine the number of icons that are visible when entering 360 Images.
