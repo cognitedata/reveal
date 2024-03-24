@@ -80,9 +80,10 @@ export type ConcreteExpression = StringExpression | NumericExpression;
 export type Expression = ConcreteExpression | ExpressionOperator;
 
 export type Rule = {
+  type: 'rule';
   id: string; // uuid
   name: string;
-  expression: Expression;
+  expression: Expression | undefined;
 };
 
 export type BaseRuleOutput = {
@@ -150,6 +151,20 @@ export type FdmRuleOutputSet = {
 // =====================================
 
 // ======== GENERAL TYPES ==============
+
+export type ExpressionOperatorsTypes = 'and' | 'or' | 'not';
+
+export type StringConditionTypes = 'equals' | 'notEquals' | 'contains' | 'startsWith' | 'endsWith';
+
+export type NumericConditionTypes =
+  | 'equals'
+  | 'notEquals'
+  | 'lessThan'
+  | 'greaterThan'
+  | 'lessThanOrEquals'
+  | 'greaterThanOrEquals'
+  | 'within'
+  | 'outside';
 
 export type RuleAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;
