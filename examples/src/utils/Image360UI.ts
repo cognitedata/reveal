@@ -207,8 +207,6 @@ export class Image360UI {
 
     const collection = await this.addCollection();
 
-    this.viewer.requestRedraw();
-
     collection.setIconsVisibility(!this.iconCulling.hideAll);
     collection.on('image360Entered', (entity, _) => {
       this.selectedEntity = entity;
