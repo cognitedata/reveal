@@ -87,9 +87,9 @@ export interface Image360Collection {
 
   /**
    * Sets the transformation matrix to be applied to the collection.
-   * @param transformationMatrix The transformation matrix to be applied to the collection.
+   * @param matrix The transformation matrix to be applied to the collection.
    */
-  setModelTransformation(transformationMatrix: Matrix4): void;
+  setModelTransformation(matrix: Matrix4): void;
 
   /**
    * Gets the transformation matrix of the collection

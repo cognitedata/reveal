@@ -117,9 +117,9 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._icons.getTransform(out);
   }
 
-  public setModelTransformation(transformationMatrix: Matrix4): void {
-    this._icons.setTransform(transformationMatrix);
-    this.image360Entities.forEach(entity => entity.setWorldTransform(transformationMatrix));
+  public setModelTransformation(matrix: THREE.Matrix4): void {
+    this._icons.setTransform(matrix);
+    this.image360Entities.forEach(entity => entity.setWorldTransform(matrix));
   }
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:
