@@ -124,7 +124,12 @@ export class Image360Facade<T> {
         .filter(hasVisibleIcon)
         .map(
           getIntersector(
-            getTransformedRay(this._rayCaster, coords, camera, getCollectionMatrix(collection, collectionMatrix))
+            getTransformedRay(
+              this._rayCaster,
+              coords,
+              camera,
+              getWorldToModelCollectionMatrix(collection, collectionMatrix)
+            )
           )
         )
         .filter(hasIntersection)
@@ -159,7 +164,7 @@ export class Image360Facade<T> {
       return rayCaster.ray;
     }
 
-    function getCollectionMatrix(
+    function getWorldToModelCollectionMatrix(
       collection: DefaultImage360Collection,
       collectionMatrix: THREE.Matrix4
     ): THREE.Matrix4 {

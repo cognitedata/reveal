@@ -148,6 +148,7 @@ export class OverlayPointsObject extends Group {
   public getTransform(out?: Matrix4): Matrix4 {
     if (out !== undefined) {
       out.copy(this._modelTransform);
+      return out;
     }
     return this._modelTransform.clone();
   }
