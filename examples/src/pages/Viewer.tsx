@@ -425,15 +425,6 @@ export function Viewer() {
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
-      //christjt-test-system-360
-      const collection = await viewer.add360ImageSet('datamodels', {
-        image360CollectionExternalId: 'c_RC_2',
-        space: 'anders_360_image'
-      });
-
-      collection.setModelTransformation(new THREE.Matrix4().makeTranslation(0, -5, 0));
-      // collection.setModelTransformation(new THREE.Matrix4().makeRotationY(Math.PI / 2));
-
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         const start = performance.now();

@@ -207,6 +207,15 @@ export class Image360UI {
 
     const collection = await this.addCollection();
 
+    this.viewer.requestRedraw();
+
+    // await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // collection.setModelTransformation(
+    //   new THREE.Matrix4().makeTranslation(0, -5, 0).multiply(new THREE.Matrix4().makeRotationY(Math.PI / 2))
+    // );
+    // collection.setModelTransformation(new THREE.Matrix4().makeTranslation(0, -5, 0));
+
     collection.setIconsVisibility(!this.iconCulling.hideAll);
     collection.on('image360Entered', (entity, _) => {
       this.selectedEntity = entity;

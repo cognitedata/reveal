@@ -27,6 +27,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   private readonly _textureLoader: THREE.TextureLoader;
   private readonly _faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
   private readonly _annotationsGroup: THREE.Group = new THREE.Group();
+  private readonly _localTransform: THREE.Matrix4;
 
   get opacity(): number {
     return this._visualizationState.opacity;
@@ -84,6 +85,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   constructor(worldTransform: THREE.Matrix4, sceneHandler: SceneHandler, device: DeviceDescriptor) {
+    this._localTransform = worldTransform.clone();
     this._worldTransform = worldTransform.clone();
     this._sceneHandler = sceneHandler;
     this._device = device;
@@ -97,7 +99,12 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   public setWorldTransform(matrix: THREE.Matrix4): void {
-    // Doesn't work :(
+    this._worldTransform.copy(matrix).multiply(this._localTransform);
+
+    if (this._visualizationMesh) {
+      this._visualizationMesh.position.setFromMatrixPosition(this._worldTransform);
+      this._visualizationMesh.rotation.setFromRotationMatrix(this._worldTransform);
+    }
   }
 
   public loadImages(textures: Image360Texture[]): void {
@@ -122,7 +129,8 @@ export class Image360VisualizationBox implements Image360Visualization {
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const visualizationMesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
     visualizationMesh.renderOrder = this._visualizationState.renderOrder;
-    visualizationMesh.applyMatrix4(this._worldTransform);
+    visualizationMesh.position.setFromMatrixPosition(this._worldTransform);
+    visualizationMesh.rotation.setFromRotationMatrix(this._worldTransform);
     visualizationMesh.scale.copy(this._visualizationState.scale);
     visualizationMesh.visible = this._visualizationState.visible;
     visualizationMesh.add(this._annotationsGroup);
