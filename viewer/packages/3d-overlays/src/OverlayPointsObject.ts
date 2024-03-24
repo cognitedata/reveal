@@ -136,9 +136,11 @@ export class OverlayPointsObject extends Group {
   public setTransform(transform: Matrix4): void {
     this._points.frontPoints.position.setFromMatrixPosition(transform);
     this._points.frontPoints.quaternion.setFromRotationMatrix(transform);
+    this._points.frontPoints.scale.setFromMatrixScale(transform);
 
     this._points.backPoints.position.setFromMatrixPosition(transform);
     this._points.backPoints.quaternion.setFromRotationMatrix(transform);
+    this._points.backPoints.scale.setFromMatrixScale(transform);
 
     this._modelTransform = transform.clone();
   }

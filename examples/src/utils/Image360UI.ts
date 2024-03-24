@@ -211,10 +211,11 @@ export class Image360UI {
 
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    collection.setModelTransformation(
-      new THREE.Matrix4().makeTranslation(0, -5, 0).multiply(new THREE.Matrix4().makeRotationY(Math.PI / 2))
-    );
-    // collection.setModelTransformation(new THREE.Matrix4().makeTranslation(0, -5, 0));
+    // collection.setModelTransformation(
+    //   new THREE.Matrix4().makeTranslation(0, -5, 0).multiply(new THREE.Matrix4().makeRotationY(Math.PI / 2))
+    // );
+
+    collection.setModelTransformation(new THREE.Matrix4().makeScale(2, 2, 2));
 
     collection.setIconsVisibility(!this.iconCulling.hideAll);
     collection.on('image360Entered', (entity, _) => {
