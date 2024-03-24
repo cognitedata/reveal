@@ -14,8 +14,9 @@ import {
 import { type Matrix4 } from 'three';
 
 type Image360CollectionContainerProps = {
-  collectionId: AddImageCollection360Options & { transform?: Matrix4 };
+  collectionId: AddImageCollection360Options;
   styling?: ImageCollectionModelStyling;
+  transform?: Matrix4;
   onLoad?: (image360: Image360Collection) => void;
   onLoadError?: (addOptions: AddImageCollection360Options, error: any) => void;
 };
@@ -23,6 +24,7 @@ type Image360CollectionContainerProps = {
 export function Image360CollectionContainer({
   collectionId,
   styling,
+  transform,
   onLoad,
   onLoadError
 }: Image360CollectionContainerProps): ReactElement {
@@ -43,17 +45,32 @@ export function Image360CollectionContainer({
 
     initializingSiteId.current = collectionId;
 
-    void add360Collection();
+    void add360Collection(transform);
     return remove360Collection;
   }, [collectionId]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
 
+  useEffect(() => {
+    if(modelRef.current === undefined || transform === undefined || !viewer.get360ImageCollections().includes(modelRef.current)){
+      return;
+    }
+
+    modelRef.current.setModelTransformation(transform);
+    viewer.requestRedraw();
+
+  }, [modelRef, transform, viewer])
+
   return <></>;
 
-  async function add360Collection(): Promise<void> {
+  async function add360Collection(transform?: Matrix4): Promise<void> {
     await getOrAdd360Collection()
       .then((image360Collection) => {
+
+        if(transform !== undefined){
+          image360Collection.setModelTransformation(transform);
+        }
+
         modelRef.current = image360Collection;
         onLoad?.(image360Collection);
         applyLayersState(image360Collection);
@@ -75,7 +92,7 @@ export function Image360CollectionContainer({
         return await viewer.add360ImageSet(
           'events',
           { site_id: siteId },
-          { collectionTransform: collectionId.transform, preMultipliedRotation: false }
+          { preMultipliedRotation: false }
         );
       } else {
         return await viewer.add360ImageSet(
@@ -83,8 +100,7 @@ export function Image360CollectionContainer({
           {
             image360CollectionExternalId: collectionId.externalId,
             space: collectionId.space
-          },
-          { collectionTransform: collectionId.transform }
+          }
         );
       }
     }
