@@ -125,7 +125,6 @@ export class DefaultImage360Collection implements Image360Collection {
     this.image360Entities.forEach(entity => entity.setWorldTransform(matrix));
     this._setNeedsRedraw();
   }
-
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:
    * 'image360Entered' - Subscribes to a event for entering 360 image mode.
