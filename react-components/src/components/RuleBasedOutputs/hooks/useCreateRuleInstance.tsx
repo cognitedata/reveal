@@ -9,47 +9,45 @@ import { fdmViewsExist } from '../../../utilities/fdmViewsExist';
 
 export const useCreateRuleInstance = (): ((
   ruleOutputSet: RuleOutputSet
-) => UseQueryResult<ExternalIdsResultList<unknown>>) => {
+) => Promise<ExternalIdsResultList<unknown>>) => {
   const fdmSdk = useFdmSdk();
 
-  const createNewRule = (
+  const createNewRule = async (
     ruleOutputSet: RuleOutputSet
-  ): UseQueryResult<ExternalIdsResultList<unknown>> => {
-    return useQuery(['react-components', 'color-overlay-rules', 'all'], async () => {
-      const viewExists = await fdmViewsExist(fdmSdk, [RULE_BASED_OUTPUTS_VIEW]);
+  ): Promise<ExternalIdsResultList<unknown>> => {
+    const viewExists = await fdmViewsExist(fdmSdk, [RULE_BASED_OUTPUTS_VIEW]);
 
-      if (!viewExists) {
-        return [];
-      }
+    if (!viewExists) {
+      return { items: [] };
+    }
 
-      const resultFromSavingRule = await fdmSdk.createInstance([
-        {
-          instanceType: 'node',
-          space: RULE_BASED_OUTPUTS_VIEW.space,
-          externalId: ruleOutputSet.id,
-          sources: [
-            {
-              properties: {
-                name: ruleOutputSet.name,
-                id: ruleOutputSet.id,
-                createdAt: ruleOutputSet.createdAt,
-                createdBy: ruleOutputSet.createdBy,
-                rulesWithOutputs: JSON.parse(JSON.stringify(ruleOutputSet.rulesWithOutputs)),
-                shamefulOutputTypes: ['color']
-              },
-              source: {
-                type: RULE_BASED_OUTPUTS_VIEW.type,
-                space: RULE_BASED_OUTPUTS_VIEW.space,
-                externalId: RULE_BASED_OUTPUTS_VIEW.externalId,
-                version: RULE_BASED_OUTPUTS_VIEW.version
-              }
+    const resultFromSavingRule = await fdmSdk.createInstance([
+      {
+        instanceType: 'node',
+        space: RULE_BASED_OUTPUTS_VIEW.space,
+        externalId: ruleOutputSet.id,
+        sources: [
+          {
+            properties: {
+              name: ruleOutputSet.name,
+              id: ruleOutputSet.id,
+              createdAt: ruleOutputSet.createdAt,
+              createdBy: ruleOutputSet.createdBy,
+              rulesWithOutputs: JSON.parse(JSON.stringify(ruleOutputSet.rulesWithOutputs)),
+              shamefulOutputTypes: ['color']
+            },
+            source: {
+              type: RULE_BASED_OUTPUTS_VIEW.type,
+              space: RULE_BASED_OUTPUTS_VIEW.space,
+              externalId: RULE_BASED_OUTPUTS_VIEW.externalId,
+              version: RULE_BASED_OUTPUTS_VIEW.version
             }
-          ]
-        }
-      ]);
+          }
+        ]
+      }
+    ]);
 
-      return resultFromSavingRule;
-    });
+    return resultFromSavingRule;
   };
   return createNewRule;
 };

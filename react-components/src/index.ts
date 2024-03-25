@@ -115,6 +115,7 @@ export type { QualitySettings } from './components/RevealToolbar/SettingsContain
 // Rule Based Outputs
 export { useFetchRuleInstances } from './components/RuleBasedOutputs/hooks/useFetchRuleInstances';
 export { useCreateRuleInstance } from './components/RuleBasedOutputs/hooks/useCreateRuleInstance';
+export { useSearchRuleInstance } from './components/RuleBasedOutputs/hooks/useSearchRuleInstance';
 export type {
   RuleAndEnabled,
   TriggerType,
