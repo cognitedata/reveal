@@ -65,6 +65,7 @@ export class DefaultImage360Collection implements Image360Collection {
   private _isCollectionVisible: boolean;
   private readonly _collectionId: string;
   private readonly _collectionLabel: string | undefined;
+  private readonly _setNeedsRedraw: () => void;
 
   get id(): string {
     return this._collectionId;
@@ -102,7 +103,8 @@ export class DefaultImage360Collection implements Image360Collection {
     entities: Image360Entity[],
     icons: IconCollection,
     annotationFilter: Image360AnnotationFilter,
-    image360DataProvider: Image360DataProvider
+    image360DataProvider: Image360DataProvider,
+    setNeedsRedraw: () => void
   ) {
     this._collectionId = collectionId;
     this._collectionLabel = collectionLabel;
@@ -111,6 +113,17 @@ export class DefaultImage360Collection implements Image360Collection {
     this._isCollectionVisible = true;
     this._annotationFilter = annotationFilter;
     this._image360DataProvider = image360DataProvider;
+    this._setNeedsRedraw = setNeedsRedraw;
+  }
+
+  public getModelTransformation(out?: Matrix4): Matrix4 {
+    return this._icons.getTransform(out);
+  }
+
+  public setModelTransformation(matrix: THREE.Matrix4): void {
+    this._icons.setTransform(matrix);
+    this.image360Entities.forEach(entity => entity.setWorldTransform(matrix));
+    this._setNeedsRedraw();
   }
 
   public getModelTransformation(out?: Matrix4): Matrix4 {

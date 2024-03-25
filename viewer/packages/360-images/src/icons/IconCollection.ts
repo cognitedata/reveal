@@ -154,12 +154,18 @@ export class IconCollection {
   }
 
   private computeProximityPoints(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
+    const cameraModelSpacePosition = new Vector3();
+    const worldTransform = new Matrix4();
     return ({ camera }) => {
+      this._pointsObject.getTransform(worldTransform);
+      worldTransform.invert();
+      cameraModelSpacePosition.copy(camera.position).applyMatrix4(worldTransform);
+
       const points =
         this._proximityRadius === Infinity
           ? this._icons
           : octree
-              .findPoints(camera.position, this._proximityRadius)
+              .findPoints(cameraModelSpacePosition, this._proximityRadius)
               .map(pointContainer => {
                 return pointContainer.data;
               })
@@ -168,7 +174,8 @@ export class IconCollection {
       const closestPoints = points
         .sort((a, b) => {
           return (
-            a.getPosition().distanceToSquared(camera.position) - b.getPosition().distanceToSquared(camera.position)
+            a.getPosition().distanceToSquared(cameraModelSpacePosition) -
+            b.getPosition().distanceToSquared(cameraModelSpacePosition)
           );
         })
         .slice(0, this._proximityPointLimit + 1); //Add 1 to account for self.
