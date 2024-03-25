@@ -94,12 +94,16 @@ export class Image360ApiHelper {
       image360DataModelsDescriptorProvider,
       image360EventDescriptorProvider
     );
+
+    const setNeedsRedraw: () => void = () => (this._needsRedraw = true);
+
     const image360DataProvider = new Cdf360ImageProvider(cogniteClient, combinedDescriptorProvider);
     const device = determineCurrentDevice();
     const image360EntityFactory = new Image360CollectionFactory(
       image360DataProvider,
       sceneHandler,
       onBeforeSceneRendered,
+      setNeedsRedraw,
       device,
       iconsOptions
     );
