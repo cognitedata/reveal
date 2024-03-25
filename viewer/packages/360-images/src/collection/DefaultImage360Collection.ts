@@ -65,7 +65,7 @@ export class DefaultImage360Collection implements Image360Collection {
   private _isCollectionVisible: boolean;
   private readonly _collectionId: string;
   private readonly _collectionLabel: string | undefined;
-  private _setNeedsRedraw: () => void;
+  private readonly _setNeedsRedraw: () => void;
 
   get id(): string {
     return this._collectionId;
