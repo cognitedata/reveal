@@ -57,8 +57,6 @@ export function Image360CollectionContainer({
     }
 
     modelRef.current.setModelTransformation(transform);
-    viewer.requestRedraw();
-
   }, [modelRef, transform, viewer])
 
   return <></>;

@@ -161,6 +161,7 @@ export const Reveal3DResources = ({
               key={key}
               collectionId={addModelOption}
               styling={image360Styling}
+              transform={addModelOption.transform}
               onLoad={onModelLoaded}
               onLoadError={onModelLoadedError}
             />
