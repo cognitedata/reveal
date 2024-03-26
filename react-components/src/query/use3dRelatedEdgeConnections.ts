@@ -8,6 +8,7 @@ import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 import { zipWith } from 'lodash';
 import { type FdmInstanceWithView } from '../utilities/types';
 import assert from 'assert';
+import { SYSTEM_3D_EDGE_SOURCE } from '../utilities/globalDataModels';
 
 export function use3dRelatedEdgeConnections(
   fdmId: DmsUniqueIdentifier | undefined
@@ -96,14 +97,7 @@ const related3dEdgesQuery = {
         filter: {
           and: [
             {
-              hasData: [
-                {
-                  type: 'view',
-                  space: 'cdf_3d_schema',
-                  externalId: 'Cdf3dConnectionProperties',
-                  version: '1'
-                }
-              ]
+              hasData: [SYSTEM_3D_EDGE_SOURCE]
             }
           ]
         }
