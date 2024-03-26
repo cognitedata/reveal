@@ -553,7 +553,7 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": "npm:2.38.3"
-    "@cognite/sdk": "npm:8.3.0"
+    "@cognite/sdk": "npm:9.10.0"
     "@microsoft/api-extractor": "npm:7.42.3"
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:19.0.0"
@@ -632,33 +632,33 @@ __metadata:
     whatwg-fetch: "npm:3.6.20"
     workerize-loader: "npm:2.0.2"
   peerDependencies:
-    "@cognite/sdk": ^7.16.0 || ^8.0.0
+    "@cognite/sdk": ^7.16.0 || ^8.0.0 || ^9.0.0
     three: 0.158.0
   languageName: unknown
   linkType: soft
 
-"@cognite/sdk-core@npm:^4.9.0":
-  version: 4.9.0
-  resolution: "@cognite/sdk-core@npm:4.9.0"
+"@cognite/sdk-core@npm:^4.10.1":
+  version: 4.10.1
+  resolution: "@cognite/sdk-core@npm:4.10.1"
   dependencies:
     cross-fetch: "npm:^3.0.4"
     is-buffer: "npm:^2.0.5"
     lodash: "npm:^4.17.11"
     query-string: "npm:^5.1.1"
     url: "npm:^0.11.0"
-  checksum: 10/b8620ac5e9235a88f4cb8b345b2ba09e99bf5cfc2d7fc047ea96e74cef8fed330e3f515749c9370b5b1687f5cfe1ca009132700e6dad3ddc08b93ff2b6f4c07e
+  checksum: 10/c75f3101c4e28c36be7bfa4c55f93a3a9e765e2313881799b5eef27e299dec389c283450984697acce465902dd2d09b51bb83aadb4910469b06436a55820aa67
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:8.3.0":
-  version: 8.3.0
-  resolution: "@cognite/sdk@npm:8.3.0"
+"@cognite/sdk@npm:9.10.0":
+  version: 9.10.0
+  resolution: "@cognite/sdk@npm:9.10.0"
   dependencies:
-    "@cognite/sdk-core": "npm:^4.9.0"
+    "@cognite/sdk-core": "npm:^4.10.1"
     "@types/geojson": "npm:^7946.0.8"
     geojson: "npm:^0.5.0"
     lodash: "npm:^4.17.11"
-  checksum: 10/e391e80e7e1ba269926557a31b0454f5d42e8e8e0188217959912a2725d1528fc48cd8bd4efcad9bfb8ae600ea23445a8eac70002c7215438eb9b9c86fcaf451
+  checksum: 10/4e48dbca9f32c7bb101da9390c70d3c8ca4088df8b49c95a2dc904cb4d0767a9c5c745fe2a5607d381708780485a911a84b8665d4bd9b5dc9467c3cf42f08634
   languageName: node
   linkType: hard
 
