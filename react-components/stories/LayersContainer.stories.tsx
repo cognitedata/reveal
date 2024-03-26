@@ -51,7 +51,7 @@ export const Main: Story = {
           }}
           transform={new Matrix4()}
         />
-        <Image360CollectionContainer collectionId={{ siteId: 'Hibernia_RS2' }} />
+        <Image360CollectionContainer addImageCollection360Options={{ siteId: 'Hibernia_RS2' }} />
         <RevealToolbar />
       </RevealCanvas>
     </RevealContext>
