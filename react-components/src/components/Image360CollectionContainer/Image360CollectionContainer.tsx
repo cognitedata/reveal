@@ -14,14 +14,14 @@ import {
 import { type Matrix4 } from 'three';
 
 type Image360CollectionContainerProps = {
-  collectionId: AddImageCollection360Options;
+  addImageCollection360Options: AddImageCollection360Options;
   styling?: ImageCollectionModelStyling;
   onLoad?: (image360: Image360Collection) => void;
   onLoadError?: (addOptions: AddImageCollection360Options, error: any) => void;
 };
 
 export function Image360CollectionContainer({
-  collectionId,
+  addImageCollection360Options: collectionId,
   styling,
   onLoad,
   onLoadError
