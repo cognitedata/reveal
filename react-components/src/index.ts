@@ -135,7 +135,10 @@ export type {
   RuleOutput,
   ExpressionOperatorsTypes,
   StringConditionTypes,
-  NumericConditionTypes
+  NumericConditionTypes,
+  NumericWithinConditionType,
+  NumericOutsideConditionType,
+  CriteriaTypes
 } from './components/RuleBasedOutputs/types';
 
 // Functions

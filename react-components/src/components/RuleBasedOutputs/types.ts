@@ -166,6 +166,24 @@ export type NumericConditionTypes =
   | 'within'
   | 'outside';
 
+export type NumericWithinConditionType = {
+  type: 'within';
+  lowerBoundInclusive: number;
+  upperBoundInclusive: number;
+};
+
+export type NumericOutsideConditionType = {
+  type: 'outside';
+  lowerBoundExclusive: number;
+  upperBoundExclusive: number;
+};
+
+export type CriteriaTypes =
+  | string
+  | number
+  | NumericWithinConditionType
+  | NumericOutsideConditionType;
+
 export type RuleAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;
   ruleOutputParams: RuleOutput;
