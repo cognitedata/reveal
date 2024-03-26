@@ -26,21 +26,24 @@ export const Main: Story = {
   args: {
     addImageCollection360Options: { siteId: 'c_RC_2', transform: new Matrix4() }
   },
-  render: ({ addImageCollection360Options: collectionId, styling }) => (
+  render: ({ addImageCollection360Options, styling }) => (
     <RevealStoryContainer color={new Color(0x4a4a4a)}>
-      <Image360CollectionContainerStoryContent collectionId={collectionId} styling={styling} />
+      <Image360CollectionContainerStoryContent
+        addImageCollection360Options={addImageCollection360Options}
+        styling={styling}
+      />
     </RevealStoryContainer>
   )
 };
 
 type CadModelContainerStoryContentProps = {
-  collectionId: AddImageCollection360Options;
+  addImageCollection360Options: AddImageCollection360Options;
   transform?: Matrix4;
   styling?: ImageCollectionModelStyling;
 };
 
 const Image360CollectionContainerStoryContent = ({
-  collectionId,
+  addImageCollection360Options,
   styling
 }: CadModelContainerStoryContentProps): ReactElement => {
   const cameraNavigationActions = useCameraNavigation();
@@ -54,7 +57,7 @@ const Image360CollectionContainerStoryContent = ({
   return (
     <>
       <Image360CollectionContainer
-        addImageCollection360Options={collectionId}
+        addImageCollection360Options={addImageCollection360Options}
         styling={styling}
         onLoad={onLoad}
       />

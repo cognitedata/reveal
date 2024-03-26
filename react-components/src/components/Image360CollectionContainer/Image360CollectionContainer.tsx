@@ -21,7 +21,7 @@ type Image360CollectionContainerProps = {
 };
 
 export function Image360CollectionContainer({
-  addImageCollection360Options: collectionId,
+  addImageCollection360Options,
   styling,
   onLoad,
   onLoadError
@@ -37,29 +37,32 @@ export function Image360CollectionContainer({
   );
 
   useEffect(() => {
-    if ('siteId' in collectionId && initializingSiteId.current === collectionId) {
+    if (
+      'siteId' in addImageCollection360Options &&
+      initializingSiteId.current === addImageCollection360Options
+    ) {
       return;
     }
 
-    initializingSiteId.current = collectionId;
+    initializingSiteId.current = addImageCollection360Options;
 
-    void add360Collection(collectionId.transform);
+    void add360Collection(addImageCollection360Options.transform);
     return remove360Collection;
-  }, [collectionId]);
+  }, [addImageCollection360Options]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
 
   useEffect(() => {
     if (
       modelRef.current === undefined ||
-      collectionId.transform === undefined ||
+      addImageCollection360Options.transform === undefined ||
       !viewer.get360ImageCollections().includes(modelRef.current)
     ) {
       return;
     }
 
-    modelRef.current.setModelTransformation(collectionId.transform);
-  }, [modelRef, collectionId.transform, viewer]);
+    modelRef.current.setModelTransformation(addImageCollection360Options.transform);
+  }, [modelRef, addImageCollection360Options.transform, viewer]);
 
   return <></>;
 
@@ -76,18 +79,21 @@ export function Image360CollectionContainer({
       })
       .catch((error: any) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
-        errorReportFunction(collectionId, error);
+        errorReportFunction(addImageCollection360Options, error);
       });
 
     async function getOrAdd360Collection(): Promise<Image360Collection> {
       const collections = viewer.get360ImageCollections();
-      const siteId = 'siteId' in collectionId ? collectionId.siteId : collectionId.externalId;
+      const siteId =
+        'siteId' in addImageCollection360Options
+          ? addImageCollection360Options.siteId
+          : addImageCollection360Options.externalId;
       const collection = collections.find((collection) => collection.id === siteId);
       if (collection !== undefined) {
         return collection;
       }
 
-      if ('siteId' in collectionId) {
+      if ('siteId' in addImageCollection360Options) {
         return await viewer.add360ImageSet(
           'events',
           { site_id: siteId },
@@ -95,8 +101,8 @@ export function Image360CollectionContainer({
         );
       } else {
         return await viewer.add360ImageSet('datamodels', {
-          image360CollectionExternalId: collectionId.externalId,
-          space: collectionId.space
+          image360CollectionExternalId: addImageCollection360Options.externalId,
+          space: addImageCollection360Options.space
         });
       }
     }
