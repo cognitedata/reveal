@@ -9,7 +9,7 @@ import {
 } from '../src';
 import { Color, Matrix4, Vector3 } from 'three';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
-import { type ReactElement, useRef } from 'react';
+import { type ReactElement } from 'react';
 import { type ImageCollectionModelStyling } from '../src/components/Image360CollectionContainer/useApply360AnnotationStyling';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 
@@ -48,17 +48,13 @@ const Image360CollectionContainerStoryContent = ({
   transform,
   styling
 }: CadModelContainerStoryContentProps): ReactElement => {
-  const modelsLoadedRef = useRef(0);
   const cameraNavigationActions = useCameraNavigation();
   const onLoad = (): void => {
-    modelsLoadedRef.current++;
-    if (modelsLoadedRef.current === 1) {
-      cameraNavigationActions.fitCameraToState({
-        position: new Vector3(5, 10, 5),
-        target: new Vector3()
-      });
-      signalStoryReadyForScreenshot();
-    }
+    cameraNavigationActions.fitCameraToState({
+      position: new Vector3(5, 10, 5),
+      target: new Vector3()
+    });
+    signalStoryReadyForScreenshot();
   };
   return (
     <>
