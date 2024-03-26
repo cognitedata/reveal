@@ -28,11 +28,7 @@ export const Main: Story = {
   },
   render: ({ collectionId, styling }) => (
     <RevealStoryContainer color={new Color(0x4a4a4a)}>
-      <Image360CollectionContainerStoryContent
-        collectionId={collectionId}
-        styling={styling}
-        transform={collectionId.transform}
-      />
+      <Image360CollectionContainerStoryContent collectionId={collectionId} styling={styling} />
     </RevealStoryContainer>
   )
 };
@@ -45,7 +41,6 @@ type CadModelContainerStoryContentProps = {
 
 const Image360CollectionContainerStoryContent = ({
   collectionId,
-  transform,
   styling
 }: CadModelContainerStoryContentProps): ReactElement => {
   const cameraNavigationActions = useCameraNavigation();
