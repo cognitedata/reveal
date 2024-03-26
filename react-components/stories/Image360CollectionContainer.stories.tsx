@@ -24,7 +24,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Main: Story = {
   args: {
-    collectionId: { siteId: 'c_RC_2', transform: new Matrix4().makeTranslation(0, 4, 0) }
+    collectionId: { siteId: 'c_RC_2', transform: new Matrix4() }
   },
   render: ({ collectionId, styling }) => (
     <RevealStoryContainer color={new Color(0x4a4a4a)}>
