@@ -52,20 +52,23 @@ export function Image360CollectionContainer({
   useApply360AnnotationStyling(modelRef.current, styling);
 
   useEffect(() => {
-    if(modelRef.current === undefined || transform === undefined || !viewer.get360ImageCollections().includes(modelRef.current)){
+    if (
+      modelRef.current === undefined ||
+      transform === undefined ||
+      !viewer.get360ImageCollections().includes(modelRef.current)
+    ) {
       return;
     }
 
     modelRef.current.setModelTransformation(transform);
-  }, [modelRef, transform, viewer])
+  }, [modelRef, transform, viewer]);
 
   return <></>;
 
   async function add360Collection(transform?: Matrix4): Promise<void> {
     await getOrAdd360Collection()
       .then((image360Collection) => {
-
-        if(transform !== undefined){
+        if (transform !== undefined) {
           image360Collection.setModelTransformation(transform);
         }
 
@@ -93,13 +96,10 @@ export function Image360CollectionContainer({
           { preMultipliedRotation: false }
         );
       } else {
-        return await viewer.add360ImageSet(
-          'datamodels',
-          {
-            image360CollectionExternalId: collectionId.externalId,
-            space: collectionId.space
-          }
-        );
+        return await viewer.add360ImageSet('datamodels', {
+          image360CollectionExternalId: collectionId.externalId,
+          space: collectionId.space
+        });
       }
     }
   }
