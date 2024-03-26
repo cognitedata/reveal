@@ -16,7 +16,6 @@ import { type Matrix4 } from 'three';
 type Image360CollectionContainerProps = {
   collectionId: AddImageCollection360Options;
   styling?: ImageCollectionModelStyling;
-  transform?: Matrix4;
   onLoad?: (image360: Image360Collection) => void;
   onLoadError?: (addOptions: AddImageCollection360Options, error: any) => void;
 };
@@ -24,7 +23,6 @@ type Image360CollectionContainerProps = {
 export function Image360CollectionContainer({
   collectionId,
   styling,
-  transform,
   onLoad,
   onLoadError
 }: Image360CollectionContainerProps): ReactElement {
@@ -45,7 +43,7 @@ export function Image360CollectionContainer({
 
     initializingSiteId.current = collectionId;
 
-    void add360Collection(transform);
+    void add360Collection(collectionId.transform);
     return remove360Collection;
   }, [collectionId]);
 
@@ -54,14 +52,14 @@ export function Image360CollectionContainer({
   useEffect(() => {
     if (
       modelRef.current === undefined ||
-      transform === undefined ||
+      collectionId.transform === undefined ||
       !viewer.get360ImageCollections().includes(modelRef.current)
     ) {
       return;
     }
 
-    modelRef.current.setModelTransformation(transform);
-  }, [modelRef, transform, viewer]);
+    modelRef.current.setModelTransformation(collectionId.transform);
+  }, [modelRef, collectionId.transform, viewer]);
 
   return <></>;
 

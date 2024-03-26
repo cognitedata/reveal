@@ -24,15 +24,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Main: Story = {
   args: {
-    collectionId: { siteId: 'c_RC_2' },
-    transform: new Matrix4().makeTranslation(0, 4, 0)
+    collectionId: { siteId: 'c_RC_2', transform: new Matrix4().makeTranslation(0, 4, 0) }
   },
-  render: ({ collectionId, styling, transform }) => (
+  render: ({ collectionId, styling }) => (
     <RevealStoryContainer color={new Color(0x4a4a4a)}>
       <Image360CollectionContainerStoryContent
         collectionId={collectionId}
         styling={styling}
-        transform={transform}
+        transform={collectionId.transform}
       />
     </RevealStoryContainer>
   )
@@ -63,12 +62,7 @@ const Image360CollectionContainerStoryContent = ({
   };
   return (
     <>
-      <Image360CollectionContainer
-        collectionId={collectionId}
-        transform={transform}
-        styling={styling}
-        onLoad={onLoad}
-      />
+      <Image360CollectionContainer collectionId={collectionId} styling={styling} onLoad={onLoad} />
     </>
   );
 };
