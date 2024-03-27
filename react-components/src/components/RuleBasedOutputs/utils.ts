@@ -200,6 +200,8 @@ export const generateRuleBasedOutputs = async (
         // Starting Expression
         const expression = rule.expression;
 
+        if (expression === undefined) return;
+
         const outputFound = outputs.find((output: { type: string }) => output.type === outputType);
 
         if (outputFound?.type !== 'color') return;
