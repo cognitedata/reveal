@@ -3,7 +3,6 @@
  */
 import { useFdmSdk } from '../../RevealCanvas/SDKProvider';
 import { RULE_BASED_OUTPUTS_VIEW } from '../constants';
-import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type ExternalIdsResultList, type RuleOutputSet } from '../types';
 import { fdmViewsExist } from '../../../utilities/fdmViewsExist';
 
