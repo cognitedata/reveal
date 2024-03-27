@@ -167,8 +167,9 @@ const traverseExpression = (
   return expressionResults;
 };
 
-export function getRuleTriggerTypes(expression: RuleWithOutputs): TriggerType[] {
-  return getExpressionTriggerTypes(expression.rule.expression);
+export function getRuleTriggerTypes(ruleWithOutput: RuleWithOutputs): TriggerType[] | undefined {
+  if (ruleWithOutput.rule.expression === undefined) return;
+  return getExpressionTriggerTypes(ruleWithOutput.rule.expression);
 }
 
 function getExpressionTriggerTypes(expression: Expression): TriggerType[] {
@@ -198,6 +199,8 @@ export const generateRuleBasedOutputs = async (
         const { rule, outputs } = ruleWithOutput;
         // Starting Expression
         const expression = rule.expression;
+
+        if (expression === undefined) return;
 
         const outputFound = outputs.find((output: { type: string }) => output.type === outputType);
 
