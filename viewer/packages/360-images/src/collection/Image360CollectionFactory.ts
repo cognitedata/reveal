@@ -22,11 +22,13 @@ export class Image360CollectionFactory<T> {
   private readonly _onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>;
   private readonly _iconsOptions: IconsOptions | undefined;
   private readonly _device: DeviceDescriptor;
+  private readonly _setNeedsRedraw: () => void;
 
   constructor(
     image360DataProvider: Image360Provider<T>,
     sceneHandler: SceneHandler,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
+    setNeedsRedraw: () => void,
     device: DeviceDescriptor,
     iconsOptions?: IconsOptions
   ) {
@@ -35,6 +37,7 @@ export class Image360CollectionFactory<T> {
     this._onBeforeSceneRendered = onBeforeSceneRendered;
     this._iconsOptions = iconsOptions;
     this._device = device;
+    this._setNeedsRedraw = setNeedsRedraw;
   }
 
   public async create(
@@ -86,7 +89,8 @@ export class Image360CollectionFactory<T> {
       entities,
       collectionIcons,
       annotationFilterer,
-      this._image360DataProvider
+      this._image360DataProvider,
+      this._setNeedsRedraw
     );
 
     function isDefined(
