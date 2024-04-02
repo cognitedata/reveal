@@ -18,15 +18,29 @@ export type AddImageCollection360Options =
 
 export type AddImageCollection360EventsOptions = {
   siteId: string;
+} & {
+  transform?: Matrix4;
 };
 
 export type AddImageCollection360DatamodelsOptions = {
   externalId: string;
   space: string;
+} & {
   transform?: Matrix4;
 };
 
 export type FdmPropertyType<NodeType> = Record<string, Record<string, NodeType>>;
+
+export type TaggedAddImageCollection360Options = {
+  type: 'image360';
+  addOptions: AddImageCollection360Options;
+};
+export type TaggedAdd3DModelOptions = {
+  type: 'cad' | 'pointcloud';
+  addOptions: AddReveal3DModelOptions;
+};
+
+export type TaggedAddResourceOptions = TaggedAdd3DModelOptions | TaggedAddImageCollection360Options;
 
 export type AddResourceOptions = AddReveal3DModelOptions | AddImageCollection360Options;
 

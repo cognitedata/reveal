@@ -404,7 +404,7 @@ export class ClusteredAreaCollection implements AreaCollection {
 // @public (undocumented)
 export class Cognite3DViewer {
     constructor(options: Cognite3DViewerOptions);
-    add360ImageSet(datasource: 'datamodels', dataModelIdentifier: Image360DataModelIdentifier, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
+    add360ImageSet(datasource: 'datamodels', dataModelIdentifier: Image360DataModelIdentifier): Promise<Image360Collection>;
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
@@ -889,6 +889,8 @@ export class FlexibleControlsOptions {
     // (undocumented)
     dampingFactor: number;
     // (undocumented)
+    defaultFov: number;
+    // (undocumented)
     enableChangeControlsTypeOn123Key: boolean;
     // (undocumented)
     enableDamping: boolean;
@@ -896,6 +898,8 @@ export class FlexibleControlsOptions {
     enableKeyboardNavigation: boolean;
     // (undocumented)
     getLegalAzimuthAngle(azimuthAngle: number): number;
+    // (undocumented)
+    getLegalFov(fov: number): number;
     // (undocumented)
     getLegalPolarAngle(polarAngle: number): number;
     // (undocumented)
@@ -915,6 +919,8 @@ export class FlexibleControlsOptions {
     // (undocumented)
     maxAzimuthAngle: number;
     // (undocumented)
+    maximumFov: number;
+    // (undocumented)
     maximumTimeBetweenRaycasts: number;
     // (undocumented)
     maxOrthographicZoom: number;
@@ -924,6 +930,8 @@ export class FlexibleControlsOptions {
     maxSensitivity: number;
     // (undocumented)
     minAzimuthAngle: number;
+    // (undocumented)
+    minimumFov: number;
     // (undocumented)
     minimumTimeBetweenRaycasts: number;
     // (undocumented)
@@ -1134,6 +1142,7 @@ export interface Image360Collection {
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
     getIconsVisibility(): boolean;
+    getModelTransformation(out?: Matrix4): Matrix4;
     readonly id: string;
     readonly image360Entities: Image360[];
     readonly label: string | undefined;
@@ -1146,6 +1155,7 @@ export interface Image360Collection {
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
     setIconsVisibility(visible: boolean): void;
+    setModelTransformation(matrix: Matrix4): void;
     targetRevisionDate: Date | undefined;
 }
 

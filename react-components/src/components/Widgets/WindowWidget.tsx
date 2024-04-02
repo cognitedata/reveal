@@ -20,7 +20,7 @@ import {
 import { useTranslation } from '../i18n/I18n';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { StyledComponent, WidgetBody, WidgetContent } from './elements';
-import { useReveal } from '../..';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 
 type WindowWidgetProps = {
   title?: string;

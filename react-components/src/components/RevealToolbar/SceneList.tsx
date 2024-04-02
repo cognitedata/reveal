@@ -4,7 +4,7 @@
 import { type ReactElement } from 'react';
 
 import { Menu } from '@cognite/cogs.js';
-import { use3dScenes } from '../../hooks/use3dScenes';
+import { use3dScenes } from '../../query/use3dScenes';
 import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 
 export type SceneListProps = {

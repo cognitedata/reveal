@@ -14,14 +14,14 @@ import {
 import { type Matrix4 } from 'three';
 
 type Image360CollectionContainerProps = {
-  collectionId: AddImageCollection360Options & { transform?: Matrix4 };
+  addImageCollection360Options: AddImageCollection360Options;
   styling?: ImageCollectionModelStyling;
   onLoad?: (image360: Image360Collection) => void;
   onLoadError?: (addOptions: AddImageCollection360Options, error: any) => void;
 };
 
 export function Image360CollectionContainer({
-  collectionId,
+  addImageCollection360Options,
   styling,
   onLoad,
   onLoadError
@@ -37,55 +37,73 @@ export function Image360CollectionContainer({
   );
 
   useEffect(() => {
-    if ('siteId' in collectionId && initializingSiteId.current === collectionId) {
+    if (
+      'siteId' in addImageCollection360Options &&
+      initializingSiteId.current === addImageCollection360Options
+    ) {
       return;
     }
 
-    initializingSiteId.current = collectionId;
+    initializingSiteId.current = addImageCollection360Options;
 
-    void add360Collection();
+    void add360Collection(addImageCollection360Options.transform);
     return remove360Collection;
-  }, [collectionId]);
+  }, [addImageCollection360Options]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
 
+  useEffect(() => {
+    if (
+      modelRef.current === undefined ||
+      addImageCollection360Options.transform === undefined ||
+      !viewer.get360ImageCollections().includes(modelRef.current)
+    ) {
+      return;
+    }
+
+    modelRef.current.setModelTransformation(addImageCollection360Options.transform);
+  }, [modelRef, addImageCollection360Options.transform, viewer]);
+
   return <></>;
 
-  async function add360Collection(): Promise<void> {
+  async function add360Collection(transform?: Matrix4): Promise<void> {
     await getOrAdd360Collection()
       .then((image360Collection) => {
+        if (transform !== undefined) {
+          image360Collection.setModelTransformation(transform);
+        }
+
         modelRef.current = image360Collection;
         onLoad?.(image360Collection);
         applyLayersState(image360Collection);
       })
       .catch((error: any) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
-        errorReportFunction(collectionId, error);
+        errorReportFunction(addImageCollection360Options, error);
       });
 
     async function getOrAdd360Collection(): Promise<Image360Collection> {
       const collections = viewer.get360ImageCollections();
-      const siteId = 'siteId' in collectionId ? collectionId.siteId : collectionId.externalId;
+      const siteId =
+        'siteId' in addImageCollection360Options
+          ? addImageCollection360Options.siteId
+          : addImageCollection360Options.externalId;
       const collection = collections.find((collection) => collection.id === siteId);
       if (collection !== undefined) {
         return collection;
       }
 
-      if ('siteId' in collectionId) {
+      if ('siteId' in addImageCollection360Options) {
         return await viewer.add360ImageSet(
           'events',
           { site_id: siteId },
-          { collectionTransform: collectionId.transform, preMultipliedRotation: false }
+          { preMultipliedRotation: false }
         );
       } else {
-        return await viewer.add360ImageSet(
-          'datamodels',
-          {
-            image360CollectionExternalId: collectionId.externalId,
-            space: collectionId.space
-          },
-          { collectionTransform: collectionId.transform }
-        );
+        return await viewer.add360ImageSet('datamodels', {
+          image360CollectionExternalId: addImageCollection360Options.externalId,
+          space: addImageCollection360Options.space
+        });
       }
     }
   }

@@ -623,7 +623,7 @@ __metadata:
     ts-jest: "npm:29.1.2"
     ts-loader: "npm:9.5.1"
     tsc-alias: "npm:1.8.8"
-    typescript: "npm:5.3.3"
+    typescript: "npm:5.4.2"
     wasm-pack: "npm:0.12.1"
     webpack: "npm:5.90.3"
     webpack-cli: "npm:5.1.4"
@@ -5243,12 +5243,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.8, follow-redirects@npm:^1.15.0":
-  version: 1.15.4
-  resolution: "follow-redirects@npm:1.15.4"
+  version: 1.15.6
+  resolution: "follow-redirects@npm:1.15.6"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10/2e8f5f259a6b02dfa8dc199e08431848a7c3beed32eb4c19945966164a52c89f07b86c3afcc32ebe4279cf0a960520e45a63013d6350309c5ec90133c5d9351a
+  checksum: 10/70c7612c4cab18e546e36b991bbf8009a1a41cf85354afe04b113d1117569abf760269409cb3eb842d9f7b03d62826687086b081c566ea7b1e6613cf29030bf7
   languageName: node
   linkType: hard
 
@@ -10885,6 +10885,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:5.4.2":
+  version: 5.4.2
+  resolution: "typescript@npm:5.4.2"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10/f8cfdc630ab1672f004e9561eb2916935b2d267792d07ce93e97fc601c7a65191af32033d5e9c0169b7dc37da7db9bf320f7432bc84527cb7697effaa4e4559d
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>":
   version: 5.3.3
   resolution: "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"
@@ -10892,6 +10902,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10/c93786fcc9a70718ba1e3819bab56064ead5817004d1b8186f8ca66165f3a2d0100fee91fa64c840dcd45f994ca5d615d8e1f566d39a7470fc1e014dbb4cf15d
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>":
+  version: 5.4.2
+  resolution: "typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>::version=5.4.2&hash=5adc0c"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10/f5f9a4133c2670761f0166eae5b3bafbc4a3fc24f0f42a93c9c893d9e9d6e66ea066969c5e7483fa66b4ae0e99125592553f3b92fd3599484de8be13b0615176
   languageName: node
   linkType: hard
 
@@ -11241,8 +11261,8 @@ __metadata:
   linkType: hard
 
 "webpack-dev-middleware@npm:^5.3.1":
-  version: 5.3.3
-  resolution: "webpack-dev-middleware@npm:5.3.3"
+  version: 5.3.4
+  resolution: "webpack-dev-middleware@npm:5.3.4"
   dependencies:
     colorette: "npm:^2.0.10"
     memfs: "npm:^3.4.3"
@@ -11251,7 +11271,7 @@ __metadata:
     schema-utils: "npm:^4.0.0"
   peerDependencies:
     webpack: ^4.0.0 || ^5.0.0
-  checksum: 10/31a2f7a11e58a76bdcde1eb8da310b6643844d9b442f9916f48be5b46c103f23490c393c32a9af501ce68226fbb018b811f5a956635ed60a03f9481a4bcd6c76
+  checksum: 10/3004374130f31c2910da39b80e24296009653bb11caa0b8449d962b67e003d7e73d01fbcfda9be1f1f04179f66a9c39f4caf7963df54303b430e39ba5a94f7c2
   languageName: node
   linkType: hard
 

@@ -8,12 +8,16 @@ import {
   useCameraNavigation,
   RevealTopbar,
   RevealCanvas,
-  Reveal3DResources
+  Reveal3DResources,
+  RevealToolbar,
+  DmsUniqueIdentifier
 } from '../src';
 import { Color, Matrix4 } from 'three';
-import { type ReactElement, useEffect } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
+import { RuleBasedOutputsButton } from '../src/components/RevealToolbar/RuleBasedOutputsButton';
+import { SelectSceneButton } from '../src/components/RevealToolbar/SelectSceneButton';
 
 const meta = {
   title: 'Example/Topbar',
@@ -52,7 +56,7 @@ export const Main: Story = {
       color={new Color(0x4a4a4a)}>
       <RevealTopbar />
       <RevealCanvas>
-        <Reveal3DResources resources={resources}></Reveal3DResources>
+        <Reveal3DResources resources={resources} />
         <FitToUrlCameraState />
       </RevealCanvas>
     </RevealStoryContext>

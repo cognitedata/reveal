@@ -22,8 +22,8 @@ import Keyboard from './Keyboard';
 import clamp from 'lodash/clamp';
 import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
+import { getWheelDelta } from './utils/getWheelDelta';
 
-const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
 
 /**
@@ -334,19 +334,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     event.preventDefault();
 
-    let delta = 0;
-    // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
-    if (event.wheelDelta) {
-      // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
-      delta = -event.wheelDelta / 40;
-    } else if (event.detail) {
-      // Firefox
-      delta = event.detail;
-    } else if (event.deltaY) {
-      // Firefox / Explorer + event target is SVG.
-      const factor = IS_FIREFOX ? 1 : 40;
-      delta = event.deltaY / factor;
-    }
+    const delta = getWheelDelta(event);
     const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
 
     const pixelCoordinates = getNormalizedPixelCoordinates(

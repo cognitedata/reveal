@@ -11,7 +11,7 @@ import {
   type Image360Collection
 } from '@cognite/reveal';
 import { fetchAssetForAssetIds } from './AnnotationModelUtils';
-import { filterUndefined } from '../../utilities/filterUndefined';
+import { isDefined } from '../../utilities/isDefined';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;
@@ -109,7 +109,9 @@ export class Image360AnnotationCache {
         };
       });
 
-    const assetsWithAnnotations = filterUndefined(await Promise.all(assetsWithAnnotationsPromises));
+    const assetsWithAnnotations = (await Promise.all(assetsWithAnnotationsPromises)).filter(
+      isDefined
+    );
 
     return assetsWithAnnotations;
   }

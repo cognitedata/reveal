@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useSceneConfig } from './useSceneConfig';
+import { useSceneConfig } from '../query/useSceneConfig';
 import { type CogniteClient } from '@cognite/sdk';
 import {
   type AddResourceOptions,
@@ -50,11 +50,10 @@ export const useReveal3dResourcesFromScene = (
       const transform = createResourceTransformation(collection);
       const addModelOptions: AddImageCollection360DatamodelsOptions = {
         externalId: collection.image360CollectionExternalId,
-        space: collection.image360CollectionSpace,
-        transform
+        space: collection.image360CollectionSpace
       };
 
-      addResourceOptions.push({ ...addModelOptions });
+      addResourceOptions.push({ ...addModelOptions, ...transform });
     });
     setResourceOptions(addResourceOptions);
   }, [scene.data]);

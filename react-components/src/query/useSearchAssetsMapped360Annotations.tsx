@@ -10,13 +10,15 @@ import {
   type AnnotationModel
 } from '@cognite/sdk';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { chunk, uniq } from 'lodash';
-import { getAssetIdOrExternalIdFromImage360Annotation } from '../components/NodeCacheProvider/utils';
+import { chunk, uniqBy } from 'lodash';
+import { isDefined } from '../utilities/isDefined';
+import { getAssetIdOrExternalIdFromImage360Annotation } from '../components/CacheProvider/utils';
+import { type Image360AnnotationMappedAssetData } from '../hooks/types';
 
 export const useAllAssetsMapped360Annotations = (
   sdk: CogniteClient,
   siteIds: string[]
-): UseQueryResult<Asset[]> => {
+): UseQueryResult<Image360AnnotationMappedAssetData[]> => {
   return useQuery(
     ['reveal', 'react-components', 'all-assets-mapped-360-annotations', siteIds],
     async () => {
@@ -33,15 +35,20 @@ export const useSearchAssetsMapped360Annotations = (
   siteIds: string[],
   sdk: CogniteClient,
   query: string
-): UseQueryResult<Asset[]> => {
-  const { data: assetMappings, isFetched } = useAllAssetsMapped360Annotations(sdk, siteIds);
+): UseQueryResult<Image360AnnotationMappedAssetData[]> => {
+  const { data: assetAnnotationMappings, isFetched } = useAllAssetsMapped360Annotations(
+    sdk,
+    siteIds
+  );
 
   return useQuery(
     ['reveal', 'react-components', 'search-assets-mapped-360-annotations', query, siteIds],
     async () => {
       if (query === '') {
-        return assetMappings;
+        return assetAnnotationMappings;
       }
+
+      const assetMappings = assetAnnotationMappings?.map((mapping) => mapping.asset) ?? [];
 
       const filteredSearchedAssets =
         assetMappings?.filter((asset) => {
@@ -51,11 +58,16 @@ export const useSearchAssetsMapped360Annotations = (
           return isInName || isInDescription;
         }) ?? [];
 
-      return filteredSearchedAssets;
+      const filteredAssetAnnotationMappings =
+        assetAnnotationMappings?.filter((mapping) =>
+          filteredSearchedAssets.includes(mapping.asset)
+        ) ?? [];
+
+      return filteredAssetAnnotationMappings;
     },
     {
       staleTime: Infinity,
-      enabled: isFetched && assetMappings !== undefined
+      enabled: isFetched && assetAnnotationMappings !== undefined
     }
   );
 };
@@ -63,7 +75,7 @@ export const useSearchAssetsMapped360Annotations = (
 async function getAssetsMapped360Annotations(
   sdk: CogniteClient,
   siteIds: string[]
-): Promise<Asset[]> {
+): Promise<Image360AnnotationMappedAssetData[]> {
   const fileIdsList = await get360ImagesFileIds(siteIds, sdk);
   const image360Annotations = await get360ImageAnnotations(fileIdsList, sdk);
   const result = await get360AnnotationAssets(image360Annotations, sdk);
@@ -74,17 +86,36 @@ async function getAssetsMapped360Annotations(
 async function get360AnnotationAssets(
   image360Annotations: AnnotationModel[],
   sdk: CogniteClient
-): Promise<Asset[]> {
-  const annotationMapping = image360Annotations
-    .map((annotation) => getAssetIdOrExternalIdFromImage360Annotation(annotation))
-    .filter((annotation): annotation is string | number => annotation !== undefined);
+): Promise<Image360AnnotationMappedAssetData[]> {
+  const filteredAnnotationMappings = image360Annotations
+    .map((annotation) => {
+      const assetId = getAssetIdOrExternalIdFromImage360Annotation(annotation);
+      if (assetId === undefined) {
+        return undefined;
+      }
+      return {
+        assetId,
+        annotationId: annotation.id
+      };
+    })
+    .filter(isDefined);
 
-  const uniqueAnnotationMapping = uniq(annotationMapping);
+  const uniqueAnnotationMapping = uniqBy(filteredAnnotationMappings, 'assetId');
 
-  const assets = await Promise.all(
-    chunk(uniqueAnnotationMapping, 1000).map(async (uniqueAssetsChunk) => {
+  const assets = await retrieveAssets(sdk, uniqueAnnotationMapping);
+  const flatAssets = assets.flat();
+  return getAssetsWithAnnotations(flatAssets, filteredAnnotationMappings);
+}
+
+async function retrieveAssets(
+  sdk: CogniteClient,
+  annotationMapping: Array<{ assetId: string | number; annotationId: number }>
+): Promise<Asset[][]> {
+  return await Promise.all(
+    chunk(annotationMapping, 1000).map(async (mappingChunk) => {
       const retrievedAssets = await sdk.assets.retrieve(
-        uniqueAssetsChunk.map((assetId) => {
+        mappingChunk.map((mapping) => {
+          const assetId = mapping.assetId;
           if (typeof assetId === 'number') {
             return { id: assetId };
           } else {
@@ -96,8 +127,41 @@ async function get360AnnotationAssets(
       return retrievedAssets;
     })
   );
+}
 
-  return assets.flat();
+function getAssetsWithAnnotations(
+  flatAssets: Asset[],
+  annotationMapping: Array<{ assetId: string | number; annotationId: number }>
+): Array<{ asset: Asset; annotationIds: number[] }> {
+  const flatAssetsWithAnnotations: Array<{ asset: Asset; annotationIds: number[] }> = [];
+
+  flatAssets.forEach((asset) => {
+    const matchingMapping = annotationMapping.find((mapping) => {
+      const assetId = mapping.assetId;
+      if (typeof assetId === 'number') {
+        return asset.id === assetId;
+      } else {
+        return asset.externalId === assetId;
+      }
+    });
+
+    if (matchingMapping !== undefined) {
+      const matchedAssetWithAnnotation = flatAssetsWithAnnotations.find(
+        (entry) => entry.asset.id === asset.id
+      );
+
+      if (matchedAssetWithAnnotation !== undefined) {
+        matchedAssetWithAnnotation.annotationIds.push(matchingMapping.annotationId);
+      } else {
+        flatAssetsWithAnnotations.push({
+          asset,
+          annotationIds: [matchingMapping.annotationId]
+        });
+      }
+    }
+  });
+
+  return flatAssetsWithAnnotations;
 }
 
 async function get360ImagesFileIds(siteIds: string[], sdk: CogniteClient): Promise<number[]> {

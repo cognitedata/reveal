@@ -4,17 +4,17 @@
 import { useRef, type ReactElement, useMemo } from 'react';
 import { RevealKeepAliveContext } from '../../src/components/RevealKeepAlive/RevealKeepAliveContext';
 import { RevealCanvas } from '../../src/components/RevealCanvas/RevealCanvas';
-import { type FdmNodeCache } from '../../src/components/NodeCacheProvider/FdmNodeCache';
-import { type AssetMappingCache } from '../../src/components/NodeCacheProvider/AssetMappingCache';
+import { type FdmNodeCache } from '../../src/components/CacheProvider/FdmNodeCache';
+import { type AssetMappingCache } from '../../src/components/CacheProvider/AssetMappingCache';
 import { type CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { createSdkByUrlToken } from './createSdkByUrlToken';
-import { type PointCloudAnnotationCache } from '../../src/components/NodeCacheProvider/PointCloudAnnotationCache';
+import { type PointCloudAnnotationCache } from '../../src/components/CacheProvider/PointCloudAnnotationCache';
 import {
   RevealContext,
   type RevealContextProps
 } from '../../src/components/RevealContext/RevealContext';
-import { type Image360AnnotationCache } from '../../src/components/NodeCacheProvider/Image360AnnotationCache';
+import { type Image360AnnotationCache } from '../../src/components/CacheProvider/Image360AnnotationCache';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;

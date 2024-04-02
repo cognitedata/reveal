@@ -3,7 +3,7 @@
  */
 import { type CogniteClient, type Asset } from '@cognite/sdk/dist/src';
 import { uniqBy, chunk } from 'lodash';
-import { filterUndefined } from '../../utilities/filterUndefined';
+import { isDefined } from '../../utilities/isDefined';
 import { type AnnotationId, type PointCloudAnnotationModel } from './types';
 import { getAssetIdOrExternalIdFromPointCloudAnnotation } from './utils';
 
@@ -21,7 +21,7 @@ export async function fetchPointCloudAnnotationAssets(
       assetId
     };
   });
-  const filteredAnnotationMapping = filterUndefined(annotationMapping);
+  const filteredAnnotationMapping = annotationMapping.filter(isDefined);
 
   const uniqueAnnotationMapping = uniqBy(filteredAnnotationMapping, 'assetId');
   const assetIds = uniqueAnnotationMapping.map((mapping) => mapping.assetId);

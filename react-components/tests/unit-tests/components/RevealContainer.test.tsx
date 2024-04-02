@@ -6,10 +6,10 @@ import { type CogniteClient } from '@cognite/sdk';
 import { RevealKeepAliveContext } from '../../../src/components/RevealKeepAlive/RevealKeepAliveContext';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { type FC, useRef } from 'react';
-import { type FdmNodeCache } from '../../../src/components/NodeCacheProvider/FdmNodeCache';
-import { type AssetMappingCache } from '../../../src/components/NodeCacheProvider/AssetMappingCache';
-import { type PointCloudAnnotationCache } from '../../../src/components/NodeCacheProvider/PointCloudAnnotationCache';
-import { Image360AnnotationCache } from '../../../src/components/NodeCacheProvider/Image360AnnotationCache';
+import { type FdmNodeCache } from '../../../src/components/CacheProvider/FdmNodeCache';
+import { type AssetMappingCache } from '../../../src/components/CacheProvider/AssetMappingCache';
+import { type PointCloudAnnotationCache } from '../../../src/components/CacheProvider/PointCloudAnnotationCache';
+import { Image360AnnotationCache } from '../../../src/components/CacheProvider/Image360AnnotationCache';
 
 describe(RevealCanvas.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {
