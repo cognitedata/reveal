@@ -9,7 +9,7 @@ import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { Asset } from '@cognite/sdk';
+import { type Asset } from '@cognite/sdk';
 
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
