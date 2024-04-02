@@ -18,11 +18,14 @@ export type AddImageCollection360Options =
 
 export type AddImageCollection360EventsOptions = {
   siteId: string;
+} & {
+  transform?: Matrix4;
 };
 
 export type AddImageCollection360DatamodelsOptions = {
   externalId: string;
   space: string;
+} & {
   transform?: Matrix4;
 };
 

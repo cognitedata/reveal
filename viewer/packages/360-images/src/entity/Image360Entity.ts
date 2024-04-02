@@ -12,14 +12,15 @@ import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { Color } from 'three';
+import { Color, Matrix4 } from 'three';
 
 import cloneDeep from 'lodash/cloneDeep';
 
 export class Image360Entity implements Image360 {
   private readonly _revisions: Image360RevisionEntity[];
   private readonly _imageMetadata: Image360EventDescriptor;
-  private readonly _transform: THREE.Matrix4;
+  private readonly _modelTransform: THREE.Matrix4;
+  private readonly _worldTransform: THREE.Matrix4;
   private readonly _image360Icon: Overlay3DIcon;
   private readonly _image360VisualizationBox: Image360VisualizationBox;
   private _activeRevision: Image360RevisionEntity;
@@ -31,7 +32,7 @@ export class Image360Entity implements Image360 {
    * @returns model-to-world transform of the 360 Image
    */
   get transform(): THREE.Matrix4 {
-    return this._transform.clone();
+    return this._worldTransform.clone();
   }
 
   /**
@@ -76,11 +77,12 @@ export class Image360Entity implements Image360 {
     icon: Overlay3DIcon,
     device: DeviceDescriptor
   ) {
-    this._transform = transform;
+    this._modelTransform = transform;
+    this._worldTransform = transform.clone();
     this._image360Icon = icon;
     this._imageMetadata = image360Metadata;
 
-    this._image360VisualizationBox = new Image360VisualizationBox(this._transform, sceneHandler, device);
+    this._image360VisualizationBox = new Image360VisualizationBox(this._modelTransform, sceneHandler, device);
     this._image360VisualizationBox.visible = false;
 
     this._revisions = image360Metadata.imageRevisions.map(
@@ -88,6 +90,11 @@ export class Image360Entity implements Image360 {
         new Image360RevisionEntity(imageProvider, descriptor, this._image360VisualizationBox, annotationFilterer)
     );
     this._activeRevision = this.getMostRecentRevision();
+  }
+
+  public setWorldTransform(matrix: Matrix4): void {
+    this._worldTransform.copy(matrix).multiply(this._modelTransform);
+    this._image360VisualizationBox.setWorldTransform(matrix);
   }
 
   /**

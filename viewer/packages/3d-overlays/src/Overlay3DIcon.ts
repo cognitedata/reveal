@@ -3,37 +3,45 @@
  */
 
 import { assertNever, EventTrigger } from '@reveal/utilities';
-import { PerspectiveCamera, Ray, Sphere, Vector3, Vector4, MathUtils, Color } from 'three';
+import {
+  PerspectiveCamera,
+  Ray,
+  Sphere,
+  Vector3,
+  Vector4,
+  MathUtils,
+  Color,
+  Matrix4,
+  Sprite,
+  Camera,
+  Vector2
+} from 'three';
 import { Overlay3D } from './Overlay3D';
 import { DefaultOverlay3DContentType } from './OverlayCollection';
 
 export type IconParameters = {
-  position: THREE.Vector3;
-  color?: THREE.Color;
+  position: Vector3;
+  color?: Color;
   minPixelSize: number;
   maxPixelSize: number;
   iconRadius: number;
-  hoverSprite?: THREE.Sprite;
+  hoverSprite?: Sprite;
 };
 
-export type SetAdaptiveScaleDelegate = (args: {
-  camera: THREE.Camera;
-  renderSize: THREE.Vector2;
-  domElement: HTMLElement;
-}) => void;
+export type SetAdaptiveScaleDelegate = (args: { camera: Camera; renderSize: Vector2; domElement: HTMLElement }) => void;
 
-export type ParametersChangeDelegate = (event: { color: THREE.Color; visble: boolean }) => void;
+export type ParametersChangeDelegate = (event: { color: Color; visble: boolean }) => void;
 export type SelectedDelegate = (event: { selected: boolean }) => void;
 
 export type IconEvent = 'selected' | 'parametersChange';
 
 export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements Overlay3D<ContentType> {
-  private readonly _position: THREE.Vector3;
+  private readonly _position: Vector3;
   private readonly _minPixelSize: number;
   private readonly _maxPixelSize: number;
   private readonly _setAdaptiveScale: SetAdaptiveScaleDelegate;
   private readonly _iconRadius: number;
-  private readonly _hoverSprite?: THREE.Sprite;
+  private readonly _hoverSprite?: Sprite;
   private readonly _content: ContentType;
   private readonly _raycastBoundingSphere = new Sphere();
   private readonly _defaultColor: Color;
@@ -43,6 +51,7 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
   private _culled = false;
   private _selected = false;
   private _color = new Color('white');
+  private readonly _worldTransform: Matrix4;
   private readonly _ndcPosition = new Vector4();
 
   private readonly _events = {
@@ -53,6 +62,7 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
   constructor(iconParameters: IconParameters, content: ContentType) {
     const { position, minPixelSize, maxPixelSize, iconRadius, hoverSprite, color } = iconParameters;
 
+    this._worldTransform = new Matrix4();
     this._minPixelSize = minPixelSize;
     this._maxPixelSize = maxPixelSize;
     this._iconRadius = iconRadius;
@@ -118,7 +128,7 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
   }
 
   updateAdaptiveScale(delegateArguments: {
-    renderSize: THREE.Vector2;
+    renderSize: Vector2;
     camera: PerspectiveCamera;
     domElement: HTMLElement;
   }): void {
@@ -158,17 +168,21 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
     return this._culled;
   }
 
-  setVisible(visible: boolean): void {
+  public setVisible(visible: boolean): void {
     this._visible = visible;
     this._events.parametersChange.fire({ color: this._color, visble: visible });
   }
 
-  getVisible(): boolean {
+  public getVisible(): boolean {
     return this._visible && !this._culled;
   }
 
-  getPosition(): Vector3 {
+  public getPosition(): Vector3 {
     return this._position;
+  }
+
+  public setWorldTransform(matrix: Matrix4): void {
+    this._worldTransform.copy(matrix);
   }
 
   public intersect(ray: Ray): Vector3 | null {
@@ -182,7 +196,7 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
     this._events.parametersChange.unsubscribeAll();
   }
 
-  private setupAdaptiveScaling(position: THREE.Vector3): SetAdaptiveScaleDelegate {
+  private setupAdaptiveScaling(position: Vector3): SetAdaptiveScaleDelegate {
     return ({ camera, renderSize, domElement }) => {
       if (!this.getVisible()) {
         return;
@@ -200,17 +214,20 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
   }
 
   private computeAdaptiveScaling(
-    position: THREE.Vector3,
-    renderSize: THREE.Vector2,
+    position: Vector3,
+    renderSize: Vector2,
     domElement: HTMLElement,
-    camera: THREE.Camera,
+    camera: Camera,
     maxHeight: number,
     minHeight: number,
     iconRadius: number
   ) {
     const { _ndcPosition } = this;
     _ndcPosition.set(position.x, position.y, position.z, 1);
-    _ndcPosition.applyMatrix4(camera.matrixWorldInverse).applyMatrix4(camera.projectionMatrix);
+    _ndcPosition
+      .applyMatrix4(this._worldTransform)
+      .applyMatrix4(camera.matrixWorldInverse)
+      .applyMatrix4(camera.projectionMatrix);
     if (Math.abs(_ndcPosition.w) < 0.00001) {
       return 1.0;
     }
