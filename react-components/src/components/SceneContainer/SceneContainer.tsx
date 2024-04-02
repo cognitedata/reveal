@@ -38,7 +38,7 @@ export function SceneContainer({
 
   useEffect(() => {
     defaultCamera.fitCameraToSceneDefault();
-  }, [sceneExternalId, sceneSpaceId]);
+  }, [sceneExternalId, sceneSpaceId, defaultCamera]);
 
   return (
     <Reveal3DResources
