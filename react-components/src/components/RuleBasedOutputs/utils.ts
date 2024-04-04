@@ -167,6 +167,27 @@ const traverseExpression = (
   return expressionResults;
 };
 
+function forEachExpression(
+  expression: Expression,
+  callback: (expression: Expression) => void
+): void {
+  callback(expression);
+  switch (expression.type) {
+    case 'or':
+    case 'and':
+      return expression.expressions.forEach((childExpression) =>
+        forEachExpression(childExpression, callback)
+      );
+    case 'not':
+      return forEachExpression(expression.expression, callback);
+    case 'numericExpression':
+    case 'stringExpression':
+      return;
+    default:
+      assertNever(expression);
+  }
+}
+
 export function getRuleTriggerTypes(ruleWithOutput: RuleWithOutputs): TriggerType[] | undefined {
   if (ruleWithOutput.rule.expression === undefined) return;
   return getExpressionTriggerTypes(ruleWithOutput.rule.expression);
@@ -201,6 +222,8 @@ export const generateRuleBasedOutputs = async (
         const expression = rule.expression;
 
         if (expression === undefined) return;
+
+        forEachExpression(expression, convertExpressionStringMetadataKeyToLowerCase);
 
         const outputFound = outputs.find((output: { type: string }) => output.type === outputType);
 
@@ -316,4 +339,12 @@ const isMetadataTrigger = (
   trigger: MetadataRuleTrigger | TimeseriesRuleTrigger
 ): trigger is MetadataRuleTrigger => {
   return trigger.type === 'metadata';
+};
+
+const convertExpressionStringMetadataKeyToLowerCase = (expression: Expression): void => {
+  if (expression.type !== 'stringExpression') {
+    return;
+  }
+
+  expression.trigger.key = expression.trigger.key.toLowerCase();
 };
