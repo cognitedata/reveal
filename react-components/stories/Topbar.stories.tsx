@@ -8,16 +8,12 @@ import {
   useCameraNavigation,
   RevealTopbar,
   RevealCanvas,
-  Reveal3DResources,
-  RevealToolbar,
-  DmsUniqueIdentifier
+  Reveal3DResources
 } from '../src';
 import { Color, Matrix4 } from 'three';
-import { type ReactElement, useEffect, useState } from 'react';
+import { type ReactElement, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
-import { RuleBasedOutputsButton } from '../src/components/RevealToolbar/RuleBasedOutputsButton';
-import { SelectSceneButton } from '../src/components/RevealToolbar/SelectSceneButton';
 
 const meta = {
   title: 'Example/Topbar',
