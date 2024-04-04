@@ -8,7 +8,7 @@ import { FlexibleMouseActionType } from './FlexibleMouseActionType';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 
 const DEFAULT_POINTER_ROTATION_SPEED = (0.5 * Math.PI) / 360; // half degree per pixel
-const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 2.5;
+const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 5;
 const DEFAULT_MIN_POLAR_ANGLE = 0.0001;
 
 /**
@@ -59,6 +59,7 @@ export class FlexibleControlsOptions {
   public mouseRotationSpeedPolar = DEFAULT_POINTER_ROTATION_SPEED;
   public keyboardRotationSpeedAzimuth = DEFAULT_KEYBOARD_ROTATION_SPEED;
   public keyboardRotationSpeedPolar = DEFAULT_KEYBOARD_ROTATION_SPEED * 0.8;
+  public keyboardFastRotationFactor = 4;
 
   // Wheel settings
   public zoomFraction = 0.05;
