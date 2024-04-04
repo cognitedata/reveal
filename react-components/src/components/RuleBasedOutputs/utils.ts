@@ -174,12 +174,16 @@ function forEachExpression(
   callback(expression);
   switch (expression.type) {
     case 'or':
-    case 'and':
-      return expression.expressions.forEach((childExpression) =>
-        forEachExpression(childExpression, callback)
-      );
-    case 'not':
-      return forEachExpression(expression.expression, callback);
+    case 'and': {
+      expression.expressions.forEach((childExpression) => {
+        forEachExpression(childExpression, callback);
+      });
+      return;
+    }
+    case 'not': {
+      forEachExpression(expression.expression, callback);
+      return;
+    }
     case 'numericExpression':
     case 'stringExpression':
       return;
