@@ -48,11 +48,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
   private _isDisposed = false;
   private _isEnableClickAndDoubleClick = true;
   private _nearAndFarNeedsUpdate = false;
-
-  //================================================
-  // INSTANCE FIELDS: Events
-  //================================================
-
   private readonly _raycastCallback: RaycastCallback;
 
   //================================================

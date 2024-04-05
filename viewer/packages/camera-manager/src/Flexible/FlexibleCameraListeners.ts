@@ -21,7 +21,7 @@ export class FlexibleCameraListeners {
   private readonly _debouncedCameraChange = debounce(() => this._cameraStopEvents.fire(), DEBOUNCE_TIME_MS);
 
   //================================================
-  // INSTANCE FIELDS:
+  // CONTRUCTOR:
   //================================================
 
   constructor() {

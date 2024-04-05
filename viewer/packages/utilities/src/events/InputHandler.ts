@@ -9,16 +9,28 @@ import { IPointerEvents } from './IPointerEvents';
 import { PointerEventsDetector } from './PointerEventsDetector';
 
 export class InputHandler implements IPointerEvents {
+  //================================================
+  // INSTANCE FIELDS:
+  //================================================
+
   private readonly _domElement: HTMLElement;
   private readonly _pointerEventsDetector: PointerEventsDetector;
   private readonly _clickEvents = new EventTrigger<PointerEventDelegate>();
   private readonly _hoverEvents = new EventTrigger<PointerEventDelegate>();
+
+  //================================================
+  // CONTRUCTOR:
+  //================================================
 
   constructor(domElement: HTMLElement) {
     this._domElement = domElement;
     this._pointerEventsDetector = new PointerEventsDetector(domElement, this);
     this._pointerEventsDetector.addEventListeners();
   }
+
+  //================================================
+  // INSTANCE METHODS:
+  //================================================
 
   dispose(): void {
     this._hoverEvents.unsubscribeAll();
