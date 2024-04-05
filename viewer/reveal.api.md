@@ -911,6 +911,8 @@ export class FlexibleControlsOptions {
     // (undocumented)
     keyboardFastMoveFactor: number;
     // (undocumented)
+    keyboardFastRotationFactor: number;
+    // (undocumented)
     keyboardPanSpeed: number;
     // (undocumented)
     keyboardRotationSpeedAzimuth: number;
