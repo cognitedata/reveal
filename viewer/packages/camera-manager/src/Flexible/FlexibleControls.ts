@@ -464,7 +464,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (!this.isEnabled) {
       return;
     }
-    this._keyboard.isEnabled = true;
     if (isMouse(event)) {
       await this.onMouseDown(event);
     } else if (isTouch(event)) {
@@ -604,7 +603,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
     if (!this.isEnabled) return;
-    this._keyboard.isEnabled = true;
     if (event.type === 'focus') {
       this._keyboard.clearPressedKeys();
     }
