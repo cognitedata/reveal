@@ -163,8 +163,6 @@ export class Cognite3DViewer {
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeDelegate>(),
     cameraStop: new EventTrigger<CameraStopDelegate>(),
-    click: new EventTrigger<PointerEventDelegate>(),
-    hover: new EventTrigger<PointerEventDelegate>(),
     beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
     sceneRendered: new EventTrigger<SceneRenderedDelegate>(),
     disposed: new EventTrigger<DisposedDelegate>()
@@ -294,7 +292,6 @@ export class Cognite3DViewer {
       (useFlexibleCameraManager
         ? new FlexibleCameraManager(
             this._domElement,
-            this._mouseHandler,
             this.modelIntersectionCallback.bind(this),
             undefined,
             this._sceneHandler.scene
@@ -358,9 +355,6 @@ export class Cognite3DViewer {
         }
       );
     }
-
-    this.startPointerEventListeners();
-
     this._pickingHandler = new PickingHandler(
       this._renderer,
       this._revealManagerHelper.revealManager.materialManager,
@@ -550,12 +544,9 @@ export class Cognite3DViewer {
       | DisposedDelegate
   ): void {
     switch (event) {
-      case 'click':
-        this._events.click.subscribe(callback as PointerEventDelegate);
-        break;
-
       case 'hover':
-        this._events.hover.subscribe(callback as PointerEventDelegate);
+      case 'click':
+        this._mouseHandler.on(event, callback as PointerEventDelegate);
         break;
 
       case 'cameraChange':
@@ -641,11 +632,8 @@ export class Cognite3DViewer {
   ): void {
     switch (event) {
       case 'click':
-        this._events.click.unsubscribe(callback as PointerEventDelegate);
-        break;
-
       case 'hover':
-        this._events.hover.unsubscribe(callback as PointerEventDelegate);
+        this._mouseHandler.off(event, callback as PointerEventDelegate);
         break;
 
       case 'cameraChange':
@@ -1805,16 +1793,6 @@ export class Cognite3DViewer {
     resizeObserver.observe(domElement);
     return resizeObserver;
   }
-
-  private readonly startPointerEventListeners = () => {
-    this._mouseHandler.on('click', e => {
-      this._events.click.fire(e);
-    });
-
-    this._mouseHandler.on('hover', e => {
-      this._events.hover.fire(e);
-    });
-  };
 }
 
 function adjustCamera(camera: THREE.PerspectiveCamera, width: number, height: number) {

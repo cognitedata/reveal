@@ -12,6 +12,7 @@ export {
   clickOrTouchEventOffset,
   getClickOrTouchEventPoint,
   InputHandler,
+  IPointerEvents,
   disposeOfAllEventListeners
 } from './src/events';
 export {

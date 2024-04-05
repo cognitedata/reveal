@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Box3, PerspectiveCamera, Raycaster, Vector2, Vector3, Scene, Ray, Spherical } from 'three';
+import { Box3, PerspectiveCamera, Raycaster, Vector3, Scene, Ray, Spherical } from 'three';
 
 import { FlexibleControls } from './FlexibleControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
@@ -12,12 +12,10 @@ import TWEEN from '@tweenjs/tween.js';
 import {
   assertNever,
   EventTrigger,
-  InputHandler,
-  disposeOfAllEventListeners,
   PointerEventData,
   fitCameraToBoundingBox,
   getNormalizedPixelCoordinates,
-  getClickOrTouchEventPoint
+  clickOrTouchEventOffset
 } from '@reveal/utilities';
 
 import {
@@ -36,6 +34,8 @@ import { DebouncedCameraStopEventTrigger } from '../utils/DebouncedCameraStopEve
 import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraPositionAndTargetTo } from './moveCamera';
 import { FlexibleControlsTypeChangeDelegate, IFlexibleCameraManager } from './IFlexibleCameraManager';
+import { IPointerEvents } from '@reveal/utilities/src/events/IPointerEvents';
+import { PointerEventsDetector } from '@reveal/utilities/src/events/PointerEventsDetector';
 
 type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
 
@@ -45,27 +45,21 @@ type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promi
  * @beta
  */
 
-export class FlexibleCameraManager implements IFlexibleCameraManager {
+export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEvents {
   //================================================
   // INSTANCE FIELDS:
   //================================================
 
-  private readonly _triggers = {
-    cameraChange: new EventTrigger<CameraChangeDelegate>(),
-    controlsTypeChange: new EventTrigger<FlexibleControlsTypeChangeDelegate>()
-  };
-  private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
+  private readonly _cameraChangeEvents = new EventTrigger<CameraChangeDelegate>();
+  private readonly _controlsTypeChangeEvents = new EventTrigger<FlexibleControlsTypeChangeDelegate>();
+  private readonly _stopCameraEvents: DebouncedCameraStopEventTrigger;
+  private readonly _pointerEventsDetector: PointerEventsDetector;
   private readonly _controls: FlexibleControls;
-  private readonly _inputHandler: InputHandler;
   private readonly _markers?: undefined | FlexibleCameraMarkers;
   private readonly _currentBoundingBox: Box3 = new Box3();
   private _isDisposed = false;
   private _isEnableClickAndDoubleClick = true;
   private _nearAndFarNeedsUpdate = false;
-
-  // For the wheel event
-  private _prevTime = 0;
-  private readonly _prevCoords = new Vector2();
 
   //================================================
   // INSTANCE FIELDS: Events
@@ -77,25 +71,18 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   // CONSTRUCTOR
   //================================================
 
-  constructor(
-    domElement: HTMLElement,
-    inputHandler: InputHandler,
-    raycastCallback: RaycastCallback,
-    camera?: PerspectiveCamera,
-    scene?: Scene
-  ) {
+  constructor(domElement: HTMLElement, raycastCallback: RaycastCallback, camera?: PerspectiveCamera, scene?: Scene) {
     this._controls = new FlexibleControls(camera, domElement, new FlexibleControlsOptions());
     this._controls.getPickedPointByPixelCoordinates = this.getPickedPointByPixelCoordinates;
-    this._inputHandler = inputHandler;
     this._raycastCallback = raycastCallback;
+    this._pointerEventsDetector = new PointerEventsDetector(domElement, this);
     if (scene) {
       this._markers = new FlexibleCameraMarkers(scene);
     }
 
     this.addEventListeners();
-    this._controls.addEventListeners(); // After this.addEventListeners();
     this.isEnabled = true;
-    this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
+    this._stopCameraEvents = new DebouncedCameraStopEventTrigger(this);
   }
 
   //================================================
@@ -154,26 +141,26 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this.isEnabled = false;
   }
 
-  public on(event: CameraManagerEventType, callback: CameraEventDelegate): void {
+  public on(event: CameraManagerEventType, callback: CameraChangeDelegate | CameraStopDelegate): void {
     switch (event) {
       case 'cameraChange':
-        this._triggers.cameraChange.subscribe(callback as CameraChangeDelegate);
+        this._cameraChangeEvents.subscribe(callback as CameraChangeDelegate);
         break;
       case 'cameraStop':
-        this._stopEventTrigger.subscribe(callback as CameraStopDelegate);
+        this._stopCameraEvents.subscribe(callback as CameraStopDelegate);
         break;
       default:
         assertNever(event);
     }
   }
 
-  public off(event: CameraManagerEventType, callback: CameraEventDelegate): void {
+  public off(event: CameraManagerEventType, callback: CameraEventDelegate | CameraStopDelegate): void {
     switch (event) {
       case 'cameraChange':
-        this._triggers.cameraChange.unsubscribe(callback as CameraChangeDelegate);
+        this._cameraChangeEvents.unsubscribe(callback as CameraChangeDelegate);
         break;
       case 'cameraStop':
-        this._stopEventTrigger.unsubscribe(callback as CameraStopDelegate);
+        this._stopCameraEvents.unsubscribe(callback as CameraStopDelegate);
         break;
       default:
         assertNever(event);
@@ -201,9 +188,9 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
     this._isDisposed = true;
     this.controls.dispose();
     this.removeEventListeners();
-    disposeOfAllEventListeners(this._triggers);
-    this._inputHandler.dispose();
-    this._stopEventTrigger.dispose();
+    this._cameraChangeEvents.unsubscribeAll();
+    this._controlsTypeChangeEvents.unsubscribeAll();
+    this._stopCameraEvents.dispose();
   }
 
   //================================================
@@ -248,11 +235,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   }
 
   public addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
-    this._triggers.controlsTypeChange.subscribe(callback);
+    this._controlsTypeChangeEvents.subscribe(callback);
   }
 
   public removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
-    this._triggers.controlsTypeChange.subscribe(callback);
+    this._controlsTypeChangeEvents.subscribe(callback);
   }
 
   public updateModelBoundingBox(modelBoundingBox: Box3): void {
@@ -263,6 +250,41 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
       this.controls.isInitialized = true;
     }
     this.updateControlsSensitivity(modelBoundingBox);
+  }
+
+  //================================================
+  // IMPLEMENTATION OF IPointerEvents
+  //================================================
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  public async onClick(event: PointerEvent) {
+    if (!this.isEnabled || !this.isEnableClickAndDoubleClick || this.controls.isStationary) {
+      return;
+    }
+    if (this.options.mouseClickType === FlexibleMouseActionType.None) {
+      return;
+    }
+    const firedEvent = {
+      ...clickOrTouchEventOffset(event, this.domElement),
+      button: event instanceof MouseEvent ? event.button : undefined
+    };
+    await this.mouseAction(firedEvent, this.options.mouseClickType);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  public async onDoubleClick(event: PointerEvent) {
+    if (!this.isEnabled || !this.isEnableClickAndDoubleClick || this.controls.isStationary) {
+      return;
+    }
+    if (this.options.mouseClickType === FlexibleMouseActionType.None) {
+      return;
+    }
+    const firedEvent = clickOrTouchEventOffset(event, this.domElement);
+    await this.mouseAction(firedEvent, this.options.mouseDoubleClickType);
+  }
+
+  public onHover(_event: PointerEvent): void {
+    // Not implemented
   }
 
   //================================================
@@ -366,21 +388,17 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   //================================================
 
   private addEventListeners() {
-    this._inputHandler.on('click', this.onClick);
-    this.domElement.addEventListener('keydown', this.onKeyDown);
-    this.domElement.addEventListener('dblclick', this.onDoubleClick);
-    this.domElement.addEventListener('wheel', this.onWheel);
     this.controls.addEventListener('cameraChange', this.onCameraChange);
     this.controls.addEventListener('controlsTypeChange', this.onControlsTypeChange);
+    this._pointerEventsDetector.addEventListeners();
+    this._controls.addEventListeners();
   }
 
   private removeEventListeners(): void {
-    this._inputHandler.off('click', this.onClick);
-    this.domElement.removeEventListener('dblclick', this.onDoubleClick);
-    this.domElement.removeEventListener('keydown', this.onKeyDown);
-    this.domElement.removeEventListener('wheel', this.onWheel);
     this.controls.removeEventListener('cameraChange', this.onCameraChange);
     this.controls.removeEventListener('controlsTypeChange', this.onControlsTypeChange);
+    this._pointerEventsDetector.removeEventListeners();
+    this._controls.removeEventListeners();
   }
 
   //================================================
@@ -389,7 +407,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
 
   private readonly onCameraChange = (event: { content: { position: Vector3; target: Vector3 } }) => {
     const { position, target } = event.content;
-    this._triggers.cameraChange.fire(position.clone(), target.clone());
+    this._cameraChangeEvents.fire(position.clone(), target.clone());
     this._nearAndFarNeedsUpdate = true;
     if (this._markers) {
       this._markers.update(this);
@@ -397,69 +415,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager {
   };
 
   private readonly onControlsTypeChange = (event: { controlsType: FlexibleControlsType }) => {
-    this._triggers.controlsTypeChange.fire(event.controlsType);
-  };
-
-  private readonly onKeyDown = (event: KeyboardEvent) => {
-    if (!this.isEnabled || this.controls.isStationary) {
-      return;
-    }
-    if (!this.options.enableChangeControlsTypeOn123Key) {
-      return;
-    }
-    if (event.code === 'Digit1') {
-      return this.controls.setControlsType(FlexibleControlsType.Orbit);
-    } else if (event.code === 'Digit2') {
-      return this.controls.setControlsType(FlexibleControlsType.FirstPerson);
-    } else if (event.code === 'Digit3') {
-      return this.controls.setControlsType(FlexibleControlsType.OrbitInCenter);
-    }
-  };
-
-  private readonly onClick = async (event: PointerEventData) => {
-    if (!this.isEnabled || !this.isEnableClickAndDoubleClick || this.controls.isStationary) {
-      return;
-    }
-    if (this.options.mouseClickType !== FlexibleMouseActionType.None) {
-      await this.mouseAction(event, this.options.mouseClickType);
-    }
-  };
-
-  private readonly onDoubleClick = async (event: PointerEventData) => {
-    if (!this.isEnabled || !this.isEnableClickAndDoubleClick || this.controls.isStationary) {
-      return;
-    }
-    if (this.options.mouseDoubleClickType !== FlexibleMouseActionType.None) {
-      await this.mouseAction(event, this.options.mouseDoubleClickType);
-    }
-  };
-
-  private readonly onWheel = async (event: WheelEvent) => {
-    if (!this.isEnabled || !this.options.shouldPick || this.controls.isStationary) {
-      return;
-    }
-    // Added because cameraControls are disabled when doing picking, so
-    // preventDefault could be not called on wheel event and produce unwanted scrolling.
-    event.preventDefault();
-    const currentCoords = getClickOrTouchEventPoint(event, this.domElement);
-    const currentTime = performance.now();
-    const deltaTime = currentTime - this._prevTime;
-    const deltaCoords = currentCoords.distanceTo(this._prevCoords);
-
-    if (deltaTime <= this.options.minimumTimeBetweenRaycasts) {
-      return;
-    }
-    const timeHasChanged = deltaTime >= this.options.maximumTimeBetweenRaycasts;
-    const positionHasChanged = deltaCoords >= this.options.mouseDistanceThresholdBetweenRaycasts;
-    if (!positionHasChanged || !timeHasChanged) {
-      return;
-    }
-    this._prevTime = currentTime;
-    this._prevCoords.copy(currentCoords);
-
-    const scrollCursor = await this.getPickedPointByPixelCoordinates(currentCoords.x, currentCoords.y);
-    this.controls.setScrollCursor(scrollCursor);
-    this._prevTime = currentTime;
+    this._controlsTypeChangeEvents.fire(event.controlsType);
   };
 
   private async mouseAction(event: PointerEventData, mouseActionType: FlexibleMouseActionType) {

@@ -3,5 +3,7 @@
  */
 export { clickOrTouchEventOffset, getClickOrTouchEventPoint } from './clickOrTouchEventOffset';
 export { EventTrigger } from './EventTrigger';
-export { InputHandler, disposeOfAllEventListeners } from './InputHandler';
+export { InputHandler } from './InputHandler';
+export { IPointerEvents } from './IPointerEvents';
+export { disposeOfAllEventListeners } from './disposeOfAllEventListeners';
 export * from './types';

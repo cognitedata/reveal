@@ -76,6 +76,10 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   // Used in mouse move, if not dragging it is undefined
   private _mouseDragInfo: MouseDragInfo | undefined = undefined;
 
+  // For the wheel event
+  private _prevTime = 0;
+  private readonly _prevCoords = new Vector2();
+
   //        FlexibleControlsType.OrbitInCenter
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
@@ -440,10 +444,27 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   // INSTANCE METHODS: Event
   //================================================
 
-  private readonly onPointerDown = async (event: PointerEvent) => {
+  private readonly onKeyDown = (event: KeyboardEvent) => {
+    if (!this.isEnabled || this.isStationary) {
+      return;
+    }
+    if (!this.options.enableChangeControlsTypeOn123Key) {
+      return;
+    }
+    if (event.code === 'Digit1') {
+      return this.setControlsType(FlexibleControlsType.Orbit);
+    } else if (event.code === 'Digit2') {
+      return this.setControlsType(FlexibleControlsType.FirstPerson);
+    } else if (event.code === 'Digit3') {
+      return this.setControlsType(FlexibleControlsType.OrbitInCenter);
+    }
+  };
+
+  public readonly onPointerDown = async (event: PointerEvent): Promise<void> => {
     if (!this.isEnabled) {
       return;
     }
+    this._keyboard.isEnabled = true;
     if (isMouse(event)) {
       await this.onMouseDown(event);
     } else if (isTouch(event)) {
@@ -487,8 +508,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       }
       return;
     }
-    if (event.button === MOUSE.LEFT || event.button === MOUSE.RIGHT) {
-      this.onPointerMove(event);
+    this.onPointerDrag(event);
+  };
+
+  private readonly onPointerDrag = async (event: PointerEvent) => {
+    if (!this._mouseDragInfo || !this.isEnabled || !isMouse(event)) {
+      return;
     }
     const position = this.getMousePosition(event);
     const deltaPosition = position.clone().sub(this._mouseDragInfo.prevPosition);
@@ -521,18 +546,22 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._mouseDragInfo.update(position, translator);
   };
 
-  private readonly onPointerUp = (event: PointerEvent) => {
+  public readonly onPointerUp = (event: PointerEvent): void => {
     this._mouseDragInfo = undefined;
     if (isTouch(event)) {
       remove(this._touchEvents, ev => ev.pointerId === event.pointerId);
     }
   };
 
-  private readonly onMouseWheel = (event: WheelEvent) => {
+  public readonly onMouseWheel = async (event: WheelEvent): Promise<void> => {
     if (!this.isEnabled) {
       return;
     }
+    // Added because cameraControls are disabled when doing picking, so
+    // preventDefault could be not called on wheel event and produce unwanted scrolling.
     event.preventDefault();
+
+    await this.setScrollCursorByWheelEvent(event);
 
     const delta = getWheelDelta(event);
     if (this._camera instanceof PerspectiveCamera) {
@@ -591,6 +620,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   //================================================
 
   public addEventListeners(): void {
+    this._domElement.addEventListener('keydown', this.onKeyDown);
     this._domElement.addEventListener('pointerdown', this.onPointerDown);
     this._domElement.addEventListener('wheel', this.onMouseWheel);
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
@@ -598,14 +628,14 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     // canvas has focus by default, but it's possible to set tabindex on it,
     // in that case events will be fired (we don't set tabindex here, but still support that case)
     this._domElement.addEventListener('focus', this.onFocusChanged);
-    this._domElement.addEventListener('pointerdown', this.onFocusChanged);
 
     // These must be on the window
     window.addEventListener('pointermove', this.onPointerMove);
     window.addEventListener('pointerup', this.onPointerUp);
   }
 
-  private removeEventListeners() {
+  public removeEventListeners(): void {
+    this._domElement.removeEventListener('keydown', this.onKeyDown);
     this._domElement.removeEventListener('pointerdown', this.onPointerDown);
     this._domElement.removeEventListener('wheel', this.onMouseWheel);
     this._domElement.removeEventListener('contextmenu', this.onContextMenu);
@@ -925,6 +955,32 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
         .normalize();
       return ray;
     }
+  }
+
+  private async setScrollCursorByWheelEvent(event: WheelEvent): Promise<void> {
+    if (!this.options.shouldPick || this.isStationary || !this.getPickedPointByPixelCoordinates) {
+      return;
+    }
+    const currentCoords = getClickOrTouchEventPoint(event, this.domElement);
+    const currentTime = performance.now();
+    const deltaTime = currentTime - this._prevTime;
+    const deltaCoords = currentCoords.distanceTo(this._prevCoords);
+
+    if (deltaTime <= this.options.minimumTimeBetweenRaycasts) {
+      return;
+    }
+    const timeHasChanged = deltaTime >= this.options.maximumTimeBetweenRaycasts;
+    const positionHasChanged = deltaCoords >= this.options.mouseDistanceThresholdBetweenRaycasts;
+    if (!positionHasChanged || !timeHasChanged) {
+      return;
+    }
+    this._prevTime = currentTime;
+    this._prevCoords.copy(currentCoords);
+
+    const scrollCursor = await this.getPickedPointByPixelCoordinates(currentCoords.x, currentCoords.y);
+    this.setScrollCursor(scrollCursor);
+    this._prevTime = currentTime;
+    return;
   }
 
   //================================================

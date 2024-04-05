@@ -1,30 +1,31 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
 import { EventTrigger } from './EventTrigger';
-import debounce from 'lodash/debounce';
 import { assertNever } from '../assertNever';
-import { Vector2 } from 'three';
 import { PointerEventDelegate } from './types';
+import { IPointerEvents } from './IPointerEvents';
+import { PointerEventsDetector } from './PointerEventsDetector';
 
-export type EventCollection = { [eventName: string]: EventTrigger<(...args: any[]) => void> };
-
-export class InputHandler {
-  private readonly domElement: HTMLElement;
-  private static readonly maxMoveDistance = 8;
-  private static readonly maxClickDuration = 250;
-
-  private readonly _events = {
-    click: new EventTrigger<PointerEventDelegate>(),
-    hover: new EventTrigger<PointerEventDelegate>()
-  };
+export class InputHandler implements IPointerEvents {
+  private readonly _domElement: HTMLElement;
+  private readonly _pointerEventsDetector: PointerEventsDetector;
+  private readonly _clickEvents = new EventTrigger<PointerEventDelegate>();
+  private readonly _hoverEvents = new EventTrigger<PointerEventDelegate>();
 
   constructor(domElement: HTMLElement) {
-    this.domElement = domElement;
-
-    this.setupEventListeners();
+    this._domElement = domElement;
+    this._pointerEventsDetector = new PointerEventsDetector(domElement, this);
+    this._pointerEventsDetector.addEventListeners();
   }
+
+  dispose(): void {
+    this._hoverEvents.unsubscribeAll();
+    this._clickEvents.unsubscribeAll();
+    this._pointerEventsDetector.removeEventListeners();
+  }
+
   /**
    * @example
    * ```js
@@ -35,12 +36,13 @@ export class InputHandler {
   on(event: 'click' | 'hover', callback: PointerEventDelegate): void {
     switch (event) {
       case 'click':
-        this._events.click.subscribe(callback as PointerEventDelegate);
+        this._clickEvents.subscribe(callback);
         break;
 
       case 'hover':
-        this._events.hover.subscribe(callback as PointerEventDelegate);
+        this._hoverEvents.subscribe(callback);
         break;
+
       default:
         assertNever(event);
     }
@@ -49,113 +51,36 @@ export class InputHandler {
   off(event: 'click' | 'hover', callback: PointerEventDelegate): void {
     switch (event) {
       case 'click':
-        this._events.click.unsubscribe(callback as PointerEventDelegate);
+        this._clickEvents.unsubscribe(callback);
         break;
 
       case 'hover':
-        this._events.hover.unsubscribe(callback as PointerEventDelegate);
+        this._hoverEvents.unsubscribe(callback);
         break;
+
       default:
         assertNever(event);
     }
   }
 
-  dispose(): void {
-    disposeOfAllEventListeners(this._events);
-  }
+  //================================================
+  // IMPLEMENTATION OF IPointerEvents
+  //================================================
 
-  private setupEventListeners() {
-    const { domElement } = this;
-
-    let pointerDown = false;
-    let pointerDownTimestamp = 0;
-    let validClick = false;
-
-    const startOffset = new Vector2();
-
-    const onUp = (e: PointerEvent) => {
-      this.handleClickEvent(e, startOffset, pointerDown, validClick, pointerDownTimestamp);
-
-      pointerDown = false;
-      validClick = false;
-
-      // up
-      domElement.removeEventListener('pointerup', onUp);
-
-      // add back onHover
-      domElement.addEventListener('pointermove', this.onHoverCallback);
+  onClick(event: PointerEvent): void {
+    const firedEvent = {
+      ...clickOrTouchEventOffset(event, this._domElement),
+      button: event instanceof MouseEvent ? event.button : undefined
     };
-
-    const onDown = (e: PointerEvent) => {
-      pointerDown = true;
-      validClick = true;
-      pointerDownTimestamp = e.timeStamp;
-
-      const { offsetX, offsetY } = clickOrTouchEventOffset(e, domElement);
-      startOffset.set(offsetX, offsetY);
-
-      // up
-      domElement.addEventListener('pointerup', onUp);
-
-      // no more onHover
-      domElement.removeEventListener('pointermove', this.onHoverCallback);
-    };
-
-    // down
-    domElement.addEventListener('pointerdown', onDown);
-
-    // on hover callback
-    domElement.addEventListener('pointermove', this.onHoverCallback);
+    this._clickEvents.fire(firedEvent);
   }
 
-  private isProperClick(
-    e: PointerEvent,
-    startOffset: Vector2,
-    pointerDown: boolean,
-    validClick: boolean,
-    pointerDownTimestamp: number
-  ) {
-    const { offsetX, offsetY } = clickOrTouchEventOffset(e, this.domElement);
-    const clickDuration = e.timeStamp - pointerDownTimestamp;
-
-    const hasMovedDuringClick =
-      Math.abs(offsetX - startOffset.x) + Math.abs(offsetY - startOffset.y) > InputHandler.maxMoveDistance;
-
-    const isProperClick =
-      pointerDown && validClick && clickDuration < InputHandler.maxClickDuration && !hasMovedDuringClick;
-
-    return isProperClick;
+  onHover(event: PointerEvent): void {
+    const firedEvent = clickOrTouchEventOffset(event, this._domElement);
+    this._hoverEvents.fire(firedEvent);
   }
 
-  private handleClickEvent(
-    e: PointerEvent,
-    startOffset: Vector2,
-    pointerDown: boolean,
-    validClick: boolean,
-    pointerDownTimestamp: number
-  ) {
-    const isProperClick = this.isProperClick(e, startOffset, pointerDown, validClick, pointerDownTimestamp);
-
-    if (isProperClick) {
-      const firedEvent = {
-        ...clickOrTouchEventOffset(e, this.domElement),
-        button: e instanceof MouseEvent ? e.button : undefined
-      };
-
-      this._events.click.fire(firedEvent);
-    }
-  }
-
-  private readonly onHoverCallback = debounce((e: PointerEvent) => {
-    this._events.hover.fire(clickOrTouchEventOffset(e, this.domElement));
-  }, 100);
-}
-
-/**
- * Method for deleting all external events that are associated with current instance of a class.
- */
-export function disposeOfAllEventListeners(eventList: EventCollection): void {
-  for (const eventType of Object.keys(eventList)) {
-    eventList[eventType].unsubscribeAll();
+  onDoubleClick(_event: PointerEvent): void {
+    // Not implemented
   }
 }

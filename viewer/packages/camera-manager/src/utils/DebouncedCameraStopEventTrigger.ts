@@ -23,7 +23,6 @@ export class DebouncedCameraStopEventTrigger {
 
     this._debouncedFireEvent = debounce(() => this._trigger.fire(), debounceTimeMs);
     this._cameraManager = cameraManager;
-
     this._cameraManager.on('cameraChange', this._debouncedFireEvent);
   }
 
