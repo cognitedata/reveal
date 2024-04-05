@@ -38,17 +38,9 @@ export class FlexibleCameraListeners {
     this._cameraStopEvents.unsubscribeAll();
   }
 
-  public addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
-    this._controlsTypeChangeEvents.subscribe(callback);
-  }
-
-  public removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
-    this._controlsTypeChangeEvents.unsubscribe(callback);
-  }
-
-  public onControlsTypeChange(controls: FlexibleControls): void {
-    this._controlsTypeChangeEvents.fire(controls.controlsType);
-  }
+  //================================================
+  // INSTANCE METHODS: CameraChange/CameraStop
+  //================================================
 
   public onCameraChangeEventsChange(controls: FlexibleControls): void {
     this._cameraChangeEvents.fire(controls.getPosition(), controls.getTarget());
@@ -78,5 +70,21 @@ export class FlexibleCameraListeners {
       default:
         assertNever(event);
     }
+  }
+
+  //================================================
+  // INSTANCE METHODS: ControlsTypeChange
+  //================================================
+
+  public addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
+    this._controlsTypeChangeEvents.subscribe(callback);
+  }
+
+  public removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
+    this._controlsTypeChangeEvents.unsubscribe(callback);
+  }
+
+  public onControlsTypeChange(controls: FlexibleControls): void {
+    this._controlsTypeChangeEvents.fire(controls.controlsType);
   }
 }
