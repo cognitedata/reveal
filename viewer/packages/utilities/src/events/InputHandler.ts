@@ -83,4 +83,8 @@ export class InputHandler implements IPointerEvents {
   onDoubleClick(_event: PointerEvent): void {
     // Not implemented
   }
+
+  get isEnabled(): boolean {
+    return true;
+  }
 }

@@ -11,4 +11,5 @@ export interface IPointerEvents {
   onClick(event: PointerEvent): void;
   onHover(event: PointerEvent): void;
   onDoubleClick(event: PointerEvent): void;
+  get isEnabled(): boolean;
 }

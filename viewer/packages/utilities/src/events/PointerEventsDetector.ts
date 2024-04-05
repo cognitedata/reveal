@@ -13,7 +13,7 @@ const HOVER_INTERVAL = 100;
 
 /**
  * This class fires click, double click and hover events at a IPointerEvents
- * Click will fired if it is a single click, and the mouse hasn't move too much
+ * Click will fired if it's a single click, and the mouse hasn't move too much
  * If double click is fired, the click will not be fired
  * Hover will be fired only if the mouse button is not pressed and not to often
  */
@@ -53,6 +53,9 @@ export class PointerEventsDetector {
   //================================================
 
   private readonly onPointerDown = (event: PointerEvent) => {
+    if (!this._events.isEnabled) {
+      return false;
+    }
     const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
     this._downPosition.set(offsetX, offsetY);
     this._prevDownTimestamp = this._lastDownTimestamp;
@@ -64,10 +67,16 @@ export class PointerEventsDetector {
   };
 
   private readonly onPointerMove = debounce((event: PointerEvent) => {
+    if (!this._events.isEnabled) {
+      return false;
+    }
     this._events.onHover(event);
   }, HOVER_INTERVAL);
 
   private readonly onPointerUp = (event: PointerEvent) => {
+    if (!this._events.isEnabled) {
+      return false;
+    }
     if (this._downPosition === undefined) {
       return;
     }
