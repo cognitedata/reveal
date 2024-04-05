@@ -59,7 +59,7 @@ export class FlexibleControlsOptions {
   public mouseRotationSpeedPolar = DEFAULT_POINTER_ROTATION_SPEED;
   public keyboardRotationSpeedAzimuth = DEFAULT_KEYBOARD_ROTATION_SPEED;
   public keyboardRotationSpeedPolar = DEFAULT_KEYBOARD_ROTATION_SPEED * 0.8;
-  public keyboardFastRotationFactor = 4;
+  public keyboardFastRotationFactor = 2;
 
   // Wheel settings
   public zoomFraction = 0.05;
