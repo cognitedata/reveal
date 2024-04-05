@@ -10,32 +10,23 @@ import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import TWEEN from '@tweenjs/tween.js';
 
 import {
-  assertNever,
-  EventTrigger,
   PointerEventData,
   fitCameraToBoundingBox,
   getNormalizedPixelCoordinates,
   clickOrTouchEventOffset
 } from '@reveal/utilities';
 
-import {
-  CameraChangeDelegate,
-  CameraEventDelegate,
-  CameraManagerCallbackData,
-  CameraManagerEventType,
-  CameraState,
-  CameraStopDelegate
-} from './../types';
+import { CameraEventDelegate, CameraManagerCallbackData, CameraManagerEventType, CameraState } from './../types';
 import { CameraManagerHelper } from './../CameraManagerHelper';
 import { CameraManager } from './../CameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleMouseActionType } from './FlexibleMouseActionType';
-import { DebouncedCameraStopEventTrigger } from '../utils/DebouncedCameraStopEventTrigger';
 import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraPositionAndTargetTo } from './moveCamera';
 import { FlexibleControlsTypeChangeDelegate, IFlexibleCameraManager } from './IFlexibleCameraManager';
 import { IPointerEvents } from '@reveal/utilities/src/events/IPointerEvents';
 import { PointerEventsDetector } from '@reveal/utilities/src/events/PointerEventsDetector';
+import { FlexibleCameraListeners } from './FlexibleCameraListeners';
 
 type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
 
@@ -50,9 +41,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
   // INSTANCE FIELDS:
   //================================================
 
-  private readonly _cameraChangeEvents = new EventTrigger<CameraChangeDelegate>();
-  private readonly _controlsTypeChangeEvents = new EventTrigger<FlexibleControlsTypeChangeDelegate>();
-  private readonly _stopCameraEvents: DebouncedCameraStopEventTrigger;
   private readonly _pointerEventsDetector: PointerEventsDetector;
   private readonly _controls: FlexibleControls;
   private readonly _markers?: undefined | FlexibleCameraMarkers;
@@ -82,7 +70,14 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
 
     this.addEventListeners();
     this.isEnabled = true;
-    this._stopCameraEvents = new DebouncedCameraStopEventTrigger(this);
+
+    const onCameraChange = () => {
+      this._nearAndFarNeedsUpdate = true;
+      if (this._markers) {
+        this._markers.update(this);
+      }
+    };
+    this.on('cameraChange', onCameraChange);
   }
 
   //================================================
@@ -141,30 +136,12 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
     this.isEnabled = false;
   }
 
-  public on(event: CameraManagerEventType, callback: CameraChangeDelegate | CameraStopDelegate): void {
-    switch (event) {
-      case 'cameraChange':
-        this._cameraChangeEvents.subscribe(callback as CameraChangeDelegate);
-        break;
-      case 'cameraStop':
-        this._stopCameraEvents.subscribe(callback as CameraStopDelegate);
-        break;
-      default:
-        assertNever(event);
-    }
+  public on(event: CameraManagerEventType, callback: CameraEventDelegate): void {
+    this.listeners.on(event, callback);
   }
 
-  public off(event: CameraManagerEventType, callback: CameraEventDelegate | CameraStopDelegate): void {
-    switch (event) {
-      case 'cameraChange':
-        this._cameraChangeEvents.unsubscribe(callback as CameraChangeDelegate);
-        break;
-      case 'cameraStop':
-        this._stopCameraEvents.unsubscribe(callback as CameraStopDelegate);
-        break;
-      default:
-        assertNever(event);
-    }
+  public off(event: CameraManagerEventType, callback: CameraEventDelegate): void {
+    this.listeners.off(event, callback);
   }
 
   public fitCameraToBoundingBox(boundingBox: Box3, duration?: number, radiusFactor: number = 2): void {
@@ -188,9 +165,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
     this._isDisposed = true;
     this.controls.dispose();
     this.removeEventListeners();
-    this._cameraChangeEvents.unsubscribeAll();
-    this._controlsTypeChangeEvents.unsubscribeAll();
-    this._stopCameraEvents.dispose();
   }
 
   //================================================
@@ -235,11 +209,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
   }
 
   public addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
-    this._controlsTypeChangeEvents.subscribe(callback);
+    this.listeners.addControlsTypeChangeListener(callback);
   }
 
   public removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void {
-    this._controlsTypeChangeEvents.subscribe(callback);
+    this.listeners.removeControlsTypeChangeListener(callback);
   }
 
   public updateModelBoundingBox(modelBoundingBox: Box3): void {
@@ -301,6 +275,10 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
 
   public get camera(): PerspectiveCamera {
     return this.controls.camera as PerspectiveCamera;
+  }
+
+  get listeners(): FlexibleCameraListeners {
+    return this.controls.listeners;
   }
 
   public get domElement(): HTMLElement {
@@ -388,15 +366,11 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
   //================================================
 
   private addEventListeners() {
-    this.controls.addEventListener('cameraChange', this.onCameraChange);
-    this.controls.addEventListener('controlsTypeChange', this.onControlsTypeChange);
     this._pointerEventsDetector.addEventListeners();
     this._controls.addEventListeners();
   }
 
   private removeEventListeners(): void {
-    this.controls.removeEventListener('cameraChange', this.onCameraChange);
-    this.controls.removeEventListener('controlsTypeChange', this.onControlsTypeChange);
     this._pointerEventsDetector.removeEventListeners();
     this._controls.removeEventListeners();
   }
@@ -404,19 +378,6 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
   //================================================
   // INSTANCE METHODS: Event Handlers
   //================================================
-
-  private readonly onCameraChange = (event: { content: { position: Vector3; target: Vector3 } }) => {
-    const { position, target } = event.content;
-    this._cameraChangeEvents.fire(position.clone(), target.clone());
-    this._nearAndFarNeedsUpdate = true;
-    if (this._markers) {
-      this._markers.update(this);
-    }
-  };
-
-  private readonly onControlsTypeChange = (event: { controlsType: FlexibleControlsType }) => {
-    this._controlsTypeChangeEvents.fire(event.controlsType);
-  };
 
   private async mouseAction(event: PointerEventData, mouseActionType: FlexibleMouseActionType) {
     if (mouseActionType === FlexibleMouseActionType.None) {
