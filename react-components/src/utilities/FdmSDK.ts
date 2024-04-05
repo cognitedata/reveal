@@ -446,6 +446,29 @@ export class FdmSDK {
     throw new Error(`Failed to create instances. Status: ${result.status}`);
   }
 
+  public async editInstance<PropertyType>(
+    queries: Array<{
+      instanceType: InstanceType;
+      externalId: string;
+      space: string;
+      sources: [{ source: Source; properties: any }];
+    }>
+  ): Promise<ExternalIdsResultList<PropertyType>> {
+    const data: any = {
+      items: queries,
+      autoCreateStartNodes: false,
+      autoCreateEndNodes: false,
+      skipOnVersionConflict: false,
+      replace: false
+    };
+
+    const result = await this._sdk.post(this._createUpdateInstancesEndpoint, { data });
+    if (result.status === 200) {
+      return result.data;
+    }
+    throw new Error(`Failed to edit instances. Status: ${result.status}`);
+  }
+
   public async deleteInstance<PropertyType>(
     queries: Array<{
       instanceType: InstanceType;

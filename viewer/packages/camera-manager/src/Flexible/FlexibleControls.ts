@@ -64,11 +64,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   private readonly _touchEvents: Array<PointerEvent> = [];
   private _getPickedPointByPixelCoordinates: GetPickedPointByPixelCoordinates | undefined;
 
-  // This is a hack for overcome problems with the setting the Quaternion direction.
-  // This is normally done in animation of movements using setCameraState,
-  // which arguments does not fit into this control. (no direction is given for instance)
-  private _rawCameraRotation: Quaternion | undefined = undefined;
-
   // Temporary objects used for calculations to avoid allocations
   private readonly _reusableVector3s = new ReusableVector3s();
   private readonly _rotationHelper = new FlexibleControlsRotationHelper();
@@ -303,13 +298,11 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     const vector = this.newVector3().subVectors(target, position);
     vector.normalize();
     this._cameraVector.copy(vector);
-    this._rawCameraRotation = undefined;
     this.updateCameraAndTriggerCameraChangeEvent();
   }
 
   public setPosition(position: Vector3): void {
     this._cameraPosition.copy(position);
-    this._rawCameraRotation = undefined;
     this.updateCameraAndTriggerCameraChangeEvent();
   }
 
@@ -317,8 +310,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this.isInitialized = true;
     this._cameraPosition.copy(position);
     this._cameraVector.copy(direction);
-    this._rawCameraRotation = undefined;
-
     this.updateCameraAndTriggerCameraChangeEvent();
   }
 
@@ -328,8 +319,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
     const cameraVector = this.newVector3().set(0, 0, -1);
     cameraVector.applyQuaternion(rotation);
-
-    this._rawCameraRotation = rotation.clone();
 
     if (DampedSpherical.isVertical(cameraVector)) {
       // Looking from top or bottom, the theta must be defined in a proper way
@@ -682,13 +671,8 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._camera.position.copy(this._cameraPosition.value);
     this._camera.updateProjectionMatrix();
 
-    if (this._rawCameraRotation) {
-      this._camera.setRotationFromQuaternion(this._rawCameraRotation);
-      this._camera.updateProjectionMatrix();
-    } else {
-      this._camera.lookAt(this.getLookAt());
-      this._camera.updateProjectionMatrix();
-    }
+    this._camera.lookAt(this.getLookAt());
+    this._camera.updateProjectionMatrix();
     if (!isChange) {
       return false;
     }
@@ -704,8 +688,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
 
     const onTouchMove = (event: PointerEvent) => {
-      if (!this.isEnabled) return;
-      if (this._touchEvents.length !== 1) {
+      if (!this.isEnabled || this._touchEvents.length !== 1) {
         return;
       }
       const position = this.getMousePosition(event);
@@ -714,9 +697,8 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     };
 
     const onTouchStart = (_event: PointerEvent) => {
-      if (!this.isEnabled) return;
       // if num fingers used don't equal 1 then we stop touch rotation
-      if (this._touchEvents.length !== 1) {
+      if (!this.isEnabled || this._touchEvents.length !== 1) {
         removeEventListeners();
       }
     };
@@ -1007,21 +989,22 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   private handleRotationFromKeyboard(timeScale: number): boolean {
+    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardFastRotationFactor : 1;
+
     const deltaAzimuthAngle =
       this._options.keyboardRotationSpeedAzimuth *
+      speedFactor *
       this._keyboard.getKeyboardMovementValue('ArrowLeft', 'ArrowRight') *
       timeScale;
 
     const deltaPolarAngle =
       this._options.keyboardRotationSpeedPolar *
+      speedFactor *
       this._keyboard.getKeyboardMovementValue('ArrowUp', 'ArrowDown') *
       timeScale;
 
     if (deltaAzimuthAngle === 0 && deltaPolarAngle === 0) {
       return false;
-    }
-    if (!this.isStationary) {
-      this.setControlsType(FlexibleControlsType.FirstPerson);
     }
     this.rotateByAngles(-deltaAzimuthAngle, -deltaPolarAngle);
     return true;
