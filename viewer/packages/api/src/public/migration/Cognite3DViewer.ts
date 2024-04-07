@@ -161,8 +161,6 @@ export class Cognite3DViewer {
   private readonly _boundAnimate = this.animate.bind(this);
 
   private readonly _events = {
-    cameraChange: new EventTrigger<CameraChangeDelegate>(),
-    cameraStop: new EventTrigger<CameraStopDelegate>(),
     beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
     sceneRendered: new EventTrigger<SceneRenderedDelegate>(),
     disposed: new EventTrigger<DisposedDelegate>()
@@ -304,15 +302,6 @@ export class Cognite3DViewer {
           ));
 
     this._activeCameraManager = new ProxyCameraManager(initialActiveCameraManager);
-
-    this._activeCameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
-      this._events.cameraChange.fire(position.clone(), target.clone());
-    });
-
-    this._activeCameraManager.on('cameraStop', () => {
-      this._events.cameraStop.fire();
-    });
-
     const revealOptions = createRevealManagerOptions(options, this._renderer.getPixelRatio());
     if (options._localModels === true) {
       this._dataSource = new LocalDataSource();
@@ -550,11 +539,11 @@ export class Cognite3DViewer {
         break;
 
       case 'cameraChange':
-        this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
+        this._activeCameraManager.on(event, callback as CameraChangeDelegate);
         break;
 
       case 'cameraStop':
-        this._events.cameraStop.subscribe(callback as CameraStopDelegate);
+        this._activeCameraManager.on(event, callback as CameraStopDelegate);
         break;
 
       case 'beforeSceneRendered':
@@ -637,11 +626,11 @@ export class Cognite3DViewer {
         break;
 
       case 'cameraChange':
-        this._events.cameraChange.unsubscribe(callback as CameraChangeDelegate);
+        this._activeCameraManager.off(event, callback as CameraChangeDelegate);
         break;
 
       case 'cameraStop':
-        this._events.cameraStop.unsubscribe(callback as CameraStopDelegate);
+        this._activeCameraManager.off(event, callback as CameraStopDelegate);
         break;
 
       case 'beforeSceneRendered':
