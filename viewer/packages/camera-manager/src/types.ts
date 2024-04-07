@@ -98,9 +98,9 @@ export type CameraManagerCallbackData = {
 /**
  * List of supported event types (adapted from https://stackoverflow.com/questions/44480644/string-union-to-string-array)
  */
-export const CAMERA_MANAGER_EVENT_TYPE_LIST: Array<CameraManagerEventType> = ['cameraChange', 'cameraStop'] as const;
+export const CAMERA_MANAGER_EVENT_TYPE_LIST = ['cameraChange', 'cameraStop'] as const;
 
 /**
  * Union type of the supported camera manager event types
  */
-export type CameraManagerEventType = 'cameraChange' | 'cameraStop';
+export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[number];
