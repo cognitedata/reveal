@@ -26,7 +26,7 @@ import { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordin
 import { FlexibleControlsTranslator } from './FlexibleControlsTranslator';
 import { FlexibleControlsRotationHelper } from './FlexibleControlsRotationHelper';
 import { getWheelDelta } from '../utils/getWheelDelta';
-import { FlexibleCameraListeners } from './FlexibleCameraListeners';
+import { FlexibleCameraEventTarget } from './FlexibleCameraEventTarget';
 
 const TARGET_FPS = 30;
 const XYZ_EPSILON = 0.001; // Used for points
@@ -59,7 +59,7 @@ export class FlexibleControls {
   private _scrollDistance = 0; // When using the wheel this is the distance to the picked point
   private _tempTarget: Vector3 | undefined = undefined;
 
-  private readonly _listeners: FlexibleCameraListeners = new FlexibleCameraListeners();
+  private readonly _listeners: FlexibleCameraEventTarget = new FlexibleCameraEventTarget();
   private readonly _keyboard: Keyboard;
   private readonly _touchEvents: Array<PointerEvent> = [];
   private _getPickedPointByPixelCoordinates: GetPickedPointByPixelCoordinates | undefined;
@@ -153,7 +153,7 @@ export class FlexibleControls {
     return this._domElement;
   }
 
-  get listeners(): FlexibleCameraListeners {
+  get listeners(): FlexibleCameraEventTarget {
     return this._listeners;
   }
 
@@ -226,10 +226,6 @@ export class FlexibleControls {
     return this._target.value.clone();
   }
 
-  public getPosition(): Vector3 {
-    return this._cameraPosition.value.clone();
-  }
-
   public setTarget(value: Vector3): void {
     this._target.copy(value);
   }
@@ -291,7 +287,7 @@ export class FlexibleControls {
     this._camera.fov = fov;
     this._camera.updateProjectionMatrix();
     if (triggerCameraChangeEvent) {
-      this.listeners.onCameraChangeEventsChange(this);
+      this.listeners.dispatchEvent('cameraChange', this);
     }
     return true;
   }
@@ -353,12 +349,12 @@ export class FlexibleControls {
       this._target.synchronize();
       this.updateCameraAndTriggerCameraChangeEvent();
     }
-    this.listeners.onControlsTypeChange(this);
+    this.listeners.dispatchEvent('controlsTypeChange', this);
 
     // This shouldn't be here, but RevealManager listen to this in order to do a redraw
     // Cannot triggerControlsTypeChangeEvent since it is not part of the predefined general events
     // The scene must be redrawn because of the markers
-    this.listeners.onCameraChangeEventsChange(this);
+    this.listeners.dispatchEvent('cameraChange', this);
     return true;
   }
 
@@ -631,7 +627,7 @@ export class FlexibleControls {
     // Call this when manually update the target, cameraVector or cameraPosition
     // This update the camera without damping
     if (!this.updateCamera(1000 / TARGET_FPS, true, true)) {
-      this.listeners.onCameraChangeEventsChange(this); // Force trigger if not done in updateCamera
+      this.listeners.dispatchEvent('cameraChange', this); // Force trigger if not done in updateCamera
     }
   }
 
@@ -666,7 +662,7 @@ export class FlexibleControls {
     if (!isChange) {
       return false;
     }
-    this.listeners.onCameraChangeEventsChange(this);
+    this.listeners.dispatchEvent('cameraChange', this);
     return true; // Tell caller if camera has changed
   }
 
@@ -916,7 +912,7 @@ export class FlexibleControls {
 
     forwardVector.applyQuaternion(arcBetweenRays);
     this._cameraVector.copy(forwardVector);
-    this.listeners.onCameraChangeEventsChange(this);
+    this.listeners.dispatchEvent('cameraChange', this);
 
     function getCursorRay(camera: PerspectiveCamera, normalizedCoords: Vector2) {
       const ray = new Vector3(normalizedCoords.x, normalizedCoords.y, 1)

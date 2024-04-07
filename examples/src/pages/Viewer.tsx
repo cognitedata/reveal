@@ -473,8 +473,6 @@ export function Viewer() {
 
       const axisGizmoTool = new AxisGizmoTool();
       axisGizmoTool.connect(viewer);
-      viewer.on('click', (event) => console.log("click"));
-      viewer.on('hover', (event) => console.log("hover"));
     }
 
     main();

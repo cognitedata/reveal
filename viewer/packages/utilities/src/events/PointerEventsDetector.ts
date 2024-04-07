@@ -21,9 +21,14 @@ export class PointerEventsDetector {
   private readonly _domElement: HTMLElement;
   private readonly _events: IPointerEvents;
   private readonly _downPosition: Vector2 = new Vector2();
+
   private _lastDownTimestamp = 0; // Time of last pointer down event
   private _prevDownTimestamp = 0; // Time of previous pointer down event
   private _clickCounter = 0; // Incremented at each onPointerDown
+
+  private get isEnabled(): boolean {
+    return this._events.isEnabled;
+  }
 
   //================================================
   // CONTRUCTOR
@@ -53,7 +58,7 @@ export class PointerEventsDetector {
   //================================================
 
   private readonly onPointerDown = (event: PointerEvent) => {
-    if (!this._events.isEnabled) {
+    if (!this.isEnabled) {
       return false;
     }
     const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
@@ -67,14 +72,14 @@ export class PointerEventsDetector {
   };
 
   private readonly onPointerMove = debounce((event: PointerEvent) => {
-    if (!this._events.isEnabled) {
+    if (!this.isEnabled) {
       return false;
     }
     this._events.onHover(event);
   }, HOVER_INTERVAL);
 
   private readonly onPointerUp = (event: PointerEvent) => {
-    if (!this._events.isEnabled) {
+    if (!this.isEnabled) {
       return false;
     }
     if (this._downPosition === undefined) {
