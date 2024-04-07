@@ -13,14 +13,14 @@ import { EventTrigger } from '@reveal/utilities';
  * camera hasn't changed for a little while.
  */
 
-const DEBOUNCE_TIME_MS = 100;
 export class DebouncedCameraStopEventTrigger {
+  private readonly _debouncedFireEvent: () => void;
   private readonly _cameraManager: CameraManager;
-  private readonly _debouncedFireEvent = debounce(() => this._trigger.fire(), DEBOUNCE_TIME_MS);
   private readonly _trigger = new EventTrigger<CameraStopDelegate>();
 
-  constructor(cameraManager: CameraManager) {
+  constructor(cameraManager: CameraManager, debounceTimeMs: number = 100) {
     this._cameraManager = cameraManager;
+    this._debouncedFireEvent = debounce(() => this._trigger.fire(), debounceTimeMs);
     this._cameraManager.on('cameraChange', this._debouncedFireEvent);
   }
 
