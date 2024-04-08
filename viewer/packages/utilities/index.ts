@@ -7,14 +7,13 @@ export { transformCameraConfiguration } from './src/transformCameraConfiguration
 
 export { RandomColors } from './src/RandomColors';
 export { CameraConfiguration } from './src/CameraConfiguration';
-export {
-  EventTrigger,
-  clickOrTouchEventOffset,
-  getClickOrTouchEventPoint,
-  InputHandler,
-  IPointerEvents,
-  disposeOfAllEventListeners
-} from './src/events';
+
+export { EventTrigger } from './src/events/EventTrigger';
+export { InputHandler } from './src/events/InputHandler';
+export { IPointerEvents } from './src/events/IPointerEvents';
+export { PointerEventsDetector } from './src/events/PointerEventsDetector';
+export { disposeOfAllEventListeners } from './src/events/disposeOfAllEventListeners';
+export { clickOrTouchEventOffset, getClickOrTouchEventPoint } from './src/events/clickOrTouchEventOffset';
 export {
   DisposedDelegate,
   BeforeSceneRenderedDelegate,
@@ -22,6 +21,7 @@ export {
   PointerEventDelegate,
   PointerEventData
 } from './src/events/types';
+
 export { assertNever } from './src/assertNever';
 export { NumericRange } from './src/NumericRange';
 export { determinePowerOfTwoDimensions } from './src/determinePowerOfTwoDimensions';

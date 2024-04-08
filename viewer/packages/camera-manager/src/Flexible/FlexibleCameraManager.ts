@@ -13,7 +13,9 @@ import {
   PointerEventData,
   fitCameraToBoundingBox,
   getNormalizedPixelCoordinates,
-  clickOrTouchEventOffset
+  clickOrTouchEventOffset,
+  PointerEventsDetector,
+  IPointerEvents
 } from '@reveal/utilities';
 
 import { CameraEventDelegate, CameraManagerCallbackData, CameraManagerEventType, CameraState } from './../types';
@@ -24,8 +26,6 @@ import { FlexibleMouseActionType } from './FlexibleMouseActionType';
 import { FlexibleCameraMarkers } from './FlexibleCameraMarkers';
 import { moveCameraTargetTo, moveCameraPositionAndTargetTo } from './moveCamera';
 import { FlexibleControlsTypeChangeDelegate, IFlexibleCameraManager } from './IFlexibleCameraManager';
-import { IPointerEvents } from '@reveal/utilities/src/events/IPointerEvents';
-import { PointerEventsDetector } from '@reveal/utilities/src/events/PointerEventsDetector';
 import { FlexibleCameraEventTarget } from './FlexibleCameraEventTarget';
 
 type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
