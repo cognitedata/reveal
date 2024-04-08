@@ -46,3 +46,8 @@ export type GroundPlane = Transformation3d & {
   label: string;
   wrapping: string;
 };
+
+export type SceneIdentifiers = {
+  externalId: string;
+  spaceId: string;
+};

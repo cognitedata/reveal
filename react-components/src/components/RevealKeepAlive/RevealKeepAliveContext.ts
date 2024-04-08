@@ -7,10 +7,12 @@ import { type FdmNodeCache } from '../CacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../CacheProvider/AssetMappingCache';
 import { type PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from '../CacheProvider/Image360AnnotationCache';
+import { type SceneIdentifiers } from '../SceneContainer/SceneTypes';
 
 export type RevealKeepAliveData = {
   viewerRef: MutableRefObject<Cognite3DViewer | undefined>;
   isRevealContainerMountedRef: MutableRefObject<boolean>;
+  isSceneLoadedRef: MutableRefObject<SceneIdentifiers | undefined>;
   fdmNodeCache: MutableRefObject<FdmNodeCache | undefined>;
   assetMappingCache: MutableRefObject<AssetMappingCache | undefined>;
   pointCloudAnnotationCache: MutableRefObject<PointCloudAnnotationCache | undefined>;
