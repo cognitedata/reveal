@@ -36,7 +36,7 @@ describe(RevealCanvas.name, () => {
           .object()
       );
       const isRevealContainerMountedRef = useRef<boolean>(true);
-      const isSceneLoadedRef = useRef<SceneIdentifiers | undefined>();
+      const sceneLoadedRef = useRef<SceneIdentifiers | undefined>();
       const fdmNodeCache = useRef<FdmNodeCache | undefined>();
       const assetMappingCache = useRef<AssetMappingCache | undefined>();
       const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache>();
@@ -46,7 +46,7 @@ describe(RevealCanvas.name, () => {
           value={{
             viewerRef,
             isRevealContainerMountedRef,
-            isSceneLoadedRef,
+            sceneLoadedRef,
             fdmNodeCache,
             assetMappingCache,
             pointCloudAnnotationCache,

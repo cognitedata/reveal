@@ -12,7 +12,7 @@ import { type SceneIdentifiers } from '../SceneContainer/SceneTypes';
 export type RevealKeepAliveData = {
   viewerRef: MutableRefObject<Cognite3DViewer | undefined>;
   isRevealContainerMountedRef: MutableRefObject<boolean>;
-  isSceneLoadedRef: MutableRefObject<SceneIdentifiers | undefined>;
+  sceneLoadedRef: MutableRefObject<SceneIdentifiers | undefined>;
   fdmNodeCache: MutableRefObject<FdmNodeCache | undefined>;
   assetMappingCache: MutableRefObject<AssetMappingCache | undefined>;
   pointCloudAnnotationCache: MutableRefObject<PointCloudAnnotationCache | undefined>;

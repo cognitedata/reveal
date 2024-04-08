@@ -14,7 +14,7 @@ import { type SceneIdentifiers } from '../SceneContainer/SceneTypes';
 export function RevealKeepAlive({ children }: { children?: ReactNode }): ReactElement {
   const viewerRef = useRef<Cognite3DViewer>();
   const isRevealContainerMountedRef = useRef<boolean>(false);
-  const isSceneLoadedRef = useRef<SceneIdentifiers>();
+  const sceneLoadedRef = useRef<SceneIdentifiers>();
   const fdmNodeCache = useRef<FdmNodeCache>();
   const assetMappingCache = useRef<AssetMappingCache>();
   const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache>();
@@ -31,7 +31,7 @@ export function RevealKeepAlive({ children }: { children?: ReactNode }): ReactEl
       value={{
         viewerRef,
         isRevealContainerMountedRef,
-        isSceneLoadedRef,
+        sceneLoadedRef,
         fdmNodeCache,
         assetMappingCache,
         pointCloudAnnotationCache,

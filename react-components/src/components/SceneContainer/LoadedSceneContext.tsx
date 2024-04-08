@@ -1,13 +1,13 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import {
-  type ReactElement,
+import React, {
   createContext,
   useContext,
   useState,
+  useMemo,
   type ReactNode,
-  useMemo
+  useCallback
 } from 'react';
 import { type SceneIdentifiers } from './SceneTypes';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
@@ -19,24 +19,23 @@ type LoadedSceneContextType = {
 
 const LoadedSceneContext = createContext<LoadedSceneContextType | undefined>(undefined);
 
-export const LoadedSceneProvider = ({ children }: { children: ReactNode }): ReactElement => {
-  const [scene, setScene] = useState<SceneIdentifiers | undefined>(undefined);
+export const LoadedSceneProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [scene, setSceneState] = useState<SceneIdentifiers | undefined>(undefined);
   const revealKeepAliveData = useRevealKeepAlive();
 
-  const loadedSceneRef = useMemo(() => {
-    if (revealKeepAliveData === undefined) {
-      return undefined;
-    }
-    const existingScene = revealKeepAliveData?.isSceneLoadedRef.current ?? scene;
+  const setScene = useCallback(
+    (scene: SceneIdentifiers) => {
+      if (revealKeepAliveData !== undefined) {
+        revealKeepAliveData.sceneLoadedRef.current = scene;
+      }
+      setSceneState(scene);
+    },
+    [revealKeepAliveData]
+  );
 
-    const isRevealKeepAliveContextProvided = revealKeepAliveData !== undefined;
-    if (isRevealKeepAliveContextProvided) {
-      revealKeepAliveData.isSceneLoadedRef.current = existingScene;
-    }
-    return revealKeepAliveData.isSceneLoadedRef.current;
-  }, [scene]);
-
-  const loadedScene = scene ?? loadedSceneRef;
+  const loadedScene = useMemo(() => {
+    return revealKeepAliveData?.sceneLoadedRef.current ?? scene;
+  }, [scene, revealKeepAliveData]);
 
   return (
     <LoadedSceneContext.Provider value={{ loadedScene, setScene }}>

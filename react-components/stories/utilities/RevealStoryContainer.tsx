@@ -44,7 +44,7 @@ export const RevealStoryContext = ({
         : undefined)
   );
   const isRevealContainerMountedRef = useRef<boolean>(true);
-  const isSceneLoadedRef = useRef<SceneIdentifiers>();
+  const sceneLoadedRef = useRef<SceneIdentifiers>();
   const fdmNodeCache = useRef<FdmNodeCache | undefined>();
   const assetMappingCache = useRef<AssetMappingCache | undefined>();
   const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache | undefined>();
@@ -54,7 +54,7 @@ export const RevealStoryContext = ({
       value={{
         viewerRef,
         isRevealContainerMountedRef,
-        isSceneLoadedRef,
+        sceneLoadedRef,
         fdmNodeCache,
         assetMappingCache,
         pointCloudAnnotationCache,
