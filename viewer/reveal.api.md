@@ -429,9 +429,9 @@ export class Cognite3DViewer {
     fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
     get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection>;
     get360ImageCollections(): Image360Collection[];
+    getActive360ImageInfo(): Image360WithCollection | undefined;
     // @deprecated
     getClippingPlanes(): THREE_2.Plane[];
-    getCurrentlyEntered360ImageAndCollection(): Image360WithCollection | undefined;
     getGlobalClippingPlanes(): THREE_2.Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
