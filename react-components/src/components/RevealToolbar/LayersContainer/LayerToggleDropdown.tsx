@@ -8,7 +8,7 @@ import { type ModelHandler } from '../../RevealTopbar/LayersStrip/ModelHandler';
 import { ModelLayersList } from '../../RevealTopbar/LayersStrip/ModelLayersList';
 import { WholeLayerVisibilityToggle } from '../../RevealTopbar/LayersStrip/WholeLayerVisibilityToggle';
 import { withSuppressRevealEvents } from '../../../higher-order-components/withSuppressRevealEvents';
-import { UpdateModelHandlersCallback } from '../../RevealTopbar/LayersStrip/useModelHandlers';
+import { type UpdateModelHandlersCallback } from '../../RevealTopbar/LayersStrip/useModelHandlers';
 
 const SuppressedSubmenu = withSuppressRevealEvents(Menu.Submenu);
 

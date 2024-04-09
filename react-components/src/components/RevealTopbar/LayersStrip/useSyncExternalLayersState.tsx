@@ -7,7 +7,7 @@ import { type LayersUrlStateParam } from '../../../hooks/types';
 import { updateExternalStateFromLayerHandlers } from './updateExternalStateFromLayerHandlers';
 import { updateViewerFromExternalState } from './updateViewerFromExternalState';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';
-import { UpdateModelHandlersCallback } from './useModelHandlers';
+import { type UpdateModelHandlersCallback } from './useModelHandlers';
 
 export const useSyncExternalLayersState = (
   modelLayerHandlers: ModelLayerHandlers,

@@ -3,12 +3,6 @@
  */
 
 import { useCallback, useMemo } from 'react';
-import {
-  type LayersUrlStateParam,
-  type CadLayersUrlStateParam,
-  type PointCloudLayersUrlStateParam,
-  type Image360LayersUrlStateParam
-} from '../../../hooks/types';
 
 type SearchParamsHookResult = {
   url: URL;

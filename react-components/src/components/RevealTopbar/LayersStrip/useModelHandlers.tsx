@@ -1,7 +1,14 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';
 import {
   type CogniteCadModel,
@@ -12,7 +19,7 @@ import {
 import { CadModelHandler, Image360CollectionHandler, PointCloudModelHandler } from './ModelHandler';
 import { use3dModels } from '../../../hooks/use3dModels';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
-import { LayersUrlStateParam } from '../../../hooks/types';
+import { type LayersUrlStateParam } from '../../../hooks/types';
 
 export type UpdateModelHandlersCallback = (
   models: CogniteModel[],

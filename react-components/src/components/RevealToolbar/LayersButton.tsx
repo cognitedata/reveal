@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Dispatch, SetStateAction, type ReactElement } from 'react';
+import { type Dispatch, type SetStateAction, type ReactElement } from 'react';
 import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { LayersContainer } from '../RevealToolbar/LayersContainer/LayersContainer';
 import { useReveal } from '../RevealCanvas/ViewerContext';
@@ -11,7 +11,7 @@ import { useTranslation } from '../i18n/I18n';
 
 import { useSyncExternalLayersState } from '../RevealTopbar/LayersStrip/useSyncExternalLayersState';
 import { useModelHandlers } from '../RevealTopbar/LayersStrip/useModelHandlers';
-import { LayersUrlStateParam } from '../../hooks/types';
+import { type LayersUrlStateParam } from '../../hooks/types';
 
 type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;

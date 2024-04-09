@@ -6,9 +6,9 @@ import { type ModelHandler } from './ModelHandler';
 import { type ReactElement, type ChangeEvent } from 'react';
 import { WholeLayerVisibilityToggle } from './WholeLayerVisibilityToggle';
 import { withSuppressRevealEvents } from '../../../higher-order-components/withSuppressRevealEvents';
-import { UpdateModelHandlersCallback } from './useModelHandlers';
+import { type UpdateModelHandlersCallback } from './useModelHandlers';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
-import { Cognite3DViewer } from '@cognite/reveal';
+import { type Cognite3DViewer } from '@cognite/reveal';
 
 const SuppressedMenu = withSuppressRevealEvents(Menu);
 

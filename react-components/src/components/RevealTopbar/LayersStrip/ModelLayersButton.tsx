@@ -6,7 +6,7 @@ import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { type ModelHandler } from './ModelHandler';
 import { ModelLayersList } from './ModelLayersList';
 import { type ReactElement } from 'react';
-import { UpdateModelHandlersCallback } from './useModelHandlers';
+import { type UpdateModelHandlersCallback } from './useModelHandlers';
 
 export const ModelLayersButton = ({
   icon,
