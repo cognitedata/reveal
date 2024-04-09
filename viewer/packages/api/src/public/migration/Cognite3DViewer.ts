@@ -905,7 +905,7 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Returns the currently entered 360 image
+   * Returns the currently entered 360 image.
    */
   getCurrentlyEntered360Image(): Image360WithCollectionAndRevision | undefined {
     return this._image360ApiHelper?.getCurrentlyEnteredImageInfo();

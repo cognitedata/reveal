@@ -15,8 +15,7 @@ import {
   Image360RevisionEntity,
   DefaultImage360Collection,
   Image360AnnotationIntersection,
-  Image360AnnotationFilterOptions,
-  Image360Revision
+  Image360AnnotationFilterOptions
 } from '@reveal/360-images';
 import {
   Cdf360CombinedDescriptorProvider,
