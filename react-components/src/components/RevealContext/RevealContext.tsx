@@ -15,6 +15,7 @@ import { SDKProvider } from '../RevealCanvas/SDKProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { Image360AnnotationCacheProvider } from '../CacheProvider/Image360AnnotationCacheProvider';
+import { LoadedSceneProvider } from '../SceneContainer/LoadedSceneContext';
 
 export type RevealContextProps = {
   color?: Color;
@@ -47,19 +48,21 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
     <SDKProvider sdk={props.sdk}>
       <QueryClientProvider client={queryClient}>
         <I18nContextProvider appLanguage={props.appLanguage}>
-          <ViewerContext.Provider value={viewer}>
-            <NodeCacheProvider>
-              <AssetMappingCacheProvider>
-                <PointCloudAnnotationCacheProvider>
-                  <Image360AnnotationCacheProvider>
-                    <Reveal3DResourcesCountContextProvider>
-                      {props.children}
-                    </Reveal3DResourcesCountContextProvider>
-                  </Image360AnnotationCacheProvider>
-                </PointCloudAnnotationCacheProvider>
-              </AssetMappingCacheProvider>
-            </NodeCacheProvider>
-          </ViewerContext.Provider>
+          <LoadedSceneProvider>
+            <ViewerContext.Provider value={viewer}>
+              <NodeCacheProvider>
+                <AssetMappingCacheProvider>
+                  <PointCloudAnnotationCacheProvider>
+                    <Image360AnnotationCacheProvider>
+                      <Reveal3DResourcesCountContextProvider>
+                        {props.children}
+                      </Reveal3DResourcesCountContextProvider>
+                    </Image360AnnotationCacheProvider>
+                  </PointCloudAnnotationCacheProvider>
+                </AssetMappingCacheProvider>
+              </NodeCacheProvider>
+            </ViewerContext.Provider>
+          </LoadedSceneProvider>
         </I18nContextProvider>
       </QueryClientProvider>
     </SDKProvider>
