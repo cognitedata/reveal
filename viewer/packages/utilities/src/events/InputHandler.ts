@@ -5,10 +5,10 @@ import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
 import { EventTrigger } from './EventTrigger';
 import { assertNever } from '../assertNever';
 import { PointerEventDelegate } from './types';
-import { IPointerEvents } from './IPointerEvents';
+import { PointerEvents } from './PointerEvents';
 import { PointerEventsTarget } from './PointerEventsTarget';
 
-export class InputHandler implements IPointerEvents {
+export class InputHandler extends PointerEvents {
   //================================================
   // INSTANCE FIELDS:
   //================================================
@@ -23,6 +23,7 @@ export class InputHandler implements IPointerEvents {
   //================================================
 
   constructor(domElement: HTMLElement) {
+    super();
     this._domElement = domElement;
     this._pointerEventsTarget = new PointerEventsTarget(domElement, this);
     this._pointerEventsTarget.addEventListeners();
@@ -76,27 +77,24 @@ export class InputHandler implements IPointerEvents {
   }
 
   //================================================
-  // IMPLEMENTATION OF IPointerEvents
+  // OVERRIDES of PointerEvents
   //================================================
 
-  onClick(event: PointerEvent): void {
+  override async onClick(event: PointerEvent): Promise<void> {
     const firedEvent = {
       ...clickOrTouchEventOffset(event, this._domElement),
       button: event instanceof MouseEvent ? event.button : undefined
     };
     this._clickEvents.fire(firedEvent);
+    return Promise.resolve();
   }
 
-  onHover(event: PointerEvent): void {
+  override onHover(event: PointerEvent): void {
     const firedEvent = clickOrTouchEventOffset(event, this._domElement);
     this._hoverEvents.fire(firedEvent);
   }
 
-  onDoubleClick(_event: PointerEvent): void {
-    // Not implemented
-  }
-
-  get isEnabled(): boolean {
+  override get isEnabled(): boolean {
     return true;
   }
 }

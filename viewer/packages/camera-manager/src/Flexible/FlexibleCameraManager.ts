@@ -15,7 +15,7 @@ import {
   getNormalizedPixelCoordinates,
   clickOrTouchEventOffset,
   PointerEventsTarget,
-  IPointerEvents
+  PointerEvents
 } from '@reveal/utilities';
 
 import { CameraEventDelegate, CameraManagerCallbackData, CameraManagerEventType, CameraState } from './../types';
@@ -36,7 +36,7 @@ type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promi
  * @beta
  */
 
-export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEvents {
+export class FlexibleCameraManager extends PointerEvents implements IFlexibleCameraManager {
   //================================================
   // INSTANCE FIELDS:
   //================================================
@@ -55,6 +55,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
   //================================================
 
   constructor(domElement: HTMLElement, raycastCallback: RaycastCallback, camera?: PerspectiveCamera, scene?: Scene) {
+    super();
     this._controls = new FlexibleControls(camera, domElement, new FlexibleControlsOptions());
     this._controls.getPickedPointByPixelCoordinates = this.getPickedPointByPixelCoordinates;
     this._raycastCallback = raycastCallback;
@@ -225,11 +226,10 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
   }
 
   //================================================
-  // IMPLEMENTATION OF IPointerEvents
+  // OVERIDES of PointerEvents
   //================================================
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public async onClick(event: PointerEvent) {
+  public override async onClick(event: PointerEvent): Promise<void> {
     if (!this.isEnabled || !this.isEnableClickAndDoubleClick || this.controls.isStationary) {
       return;
     }
@@ -243,8 +243,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
     await this.mouseAction(firedEvent, this.options.mouseClickType);
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public async onDoubleClick(event: PointerEvent) {
+  public override async onDoubleClick(event: PointerEvent): Promise<void> {
     if (!this.isEnabled || !this.isEnableClickAndDoubleClick || this.controls.isStationary) {
       return;
     }
@@ -255,8 +254,16 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
     await this.mouseAction(firedEvent, this.options.mouseDoubleClickType);
   }
 
-  public onHover(_event: PointerEvent): void {
-    // Not implemented
+  public override async onPointerDown(event: PointerEvent): Promise<void> {
+    await this.controls.onPointerDown(event);
+  }
+
+  public override async onPointerDrag(event: PointerEvent): Promise<void> {
+    await this.controls.onPointerDrag(event);
+  }
+
+  public override async onPointerUp(event: PointerEvent): Promise<void> {
+    await this.controls.onPointerUp(event);
   }
 
   //================================================
@@ -283,7 +290,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
     return this.controls.domElement;
   }
 
-  public get isEnabled(): boolean {
+  public override get isEnabled(): boolean {
     return this.controls.isEnabled;
   }
 

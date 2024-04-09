@@ -10,7 +10,7 @@ export { CameraConfiguration } from './src/CameraConfiguration';
 
 export { EventTrigger } from './src/events/EventTrigger';
 export { InputHandler } from './src/events/InputHandler';
-export { IPointerEvents } from './src/events/IPointerEvents';
+export { PointerEvents } from './src/events/PointerEvents';
 export { PointerEventsTarget } from './src/events/PointerEventsTarget';
 export { disposeOfAllEventListeners } from './src/events/disposeOfAllEventListeners';
 export { clickOrTouchEventOffset, getClickOrTouchEventPoint } from './src/events/clickOrTouchEventOffset';

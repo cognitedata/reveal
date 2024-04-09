@@ -4,7 +4,7 @@
 import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
 import debounce from 'lodash/debounce';
 import { Vector2 } from 'three';
-import { IPointerEvents } from './IPointerEvents';
+import { PointerEvents } from './PointerEvents';
 
 const MAX_MOVE_DISTANCE = 8;
 const MAX_CLICK_DURATION = 250;
@@ -12,7 +12,7 @@ const DOUBLE_CLICK_INTERVAL = 300;
 const HOVER_INTERVAL = 100;
 
 /**
- * This class fires click, double click and hover events at a IPointerEvents
+ * This class fires click, double click and hover events at a PointerEvents
  * Click will fired if it's a single click, and the mouse hasn't move too much
  * If double click is fired, the click will not be fired
  * Hover will be fired only if the mouse button is not pressed and not to often
@@ -23,12 +23,13 @@ export class PointerEventsTarget {
   //================================================
 
   private readonly _domElement: HTMLElement;
-  private readonly _events: IPointerEvents;
+  private readonly _events: PointerEvents;
   private readonly _downPosition: Vector2 = new Vector2();
 
   private _lastDownTimestamp = 0; // Time of last pointer down event
   private _prevDownTimestamp = 0; // Time of previous pointer down event
   private _clickCounter = 0; // Incremented at each onPointerDown
+  private _isDragging = false;
 
   //================================================
   // INSTANCE PROPERIES
@@ -42,7 +43,7 @@ export class PointerEventsTarget {
   // CONTRUCTOR
   //================================================
 
-  constructor(domElement: HTMLElement, events: IPointerEvents) {
+  constructor(domElement: HTMLElement, events: PointerEvents) {
     this._domElement = domElement;
     this._events = events;
   }
@@ -54,20 +55,22 @@ export class PointerEventsTarget {
   public addEventListeners(): void {
     this._domElement.addEventListener('pointerdown', this.onPointerDown);
     this._domElement.addEventListener('pointermove', this.onPointerHover);
+    window.addEventListener('pointermove', this.onPointerDrag);
   }
 
   public removeEventListeners(): void {
     this._domElement.removeEventListener('pointerdown', this.onPointerDown);
     this._domElement.removeEventListener('pointermove', this.onPointerHover);
+    window.removeEventListener('pointermove', this.onPointerDrag);
   }
 
   //================================================
   // EVENTS
   //================================================
 
-  private readonly onPointerDown = (event: PointerEvent) => {
+  private readonly onPointerDown = async (event: PointerEvent) => {
     if (!this.isEnabled) {
-      return false;
+      return;
     }
     const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
     this._downPosition.set(offsetX, offsetY);
@@ -75,32 +78,50 @@ export class PointerEventsTarget {
     this._lastDownTimestamp = event.timeStamp;
     this._clickCounter++;
 
-    this._domElement.addEventListener('pointerup', this.onPointerUp);
+    await this._events.onPointerDown(event);
+    this._isDragging = true;
+    window.addEventListener('pointerup', this.onPointerUp);
     this._domElement.removeEventListener('pointermove', this.onPointerHover);
   };
 
   private readonly onPointerHover = debounce((event: PointerEvent) => {
     if (!this.isEnabled) {
-      return false;
+      return;
     }
     this._events.onHover(event);
   }, HOVER_INTERVAL);
 
-  private readonly onPointerUp = (event: PointerEvent) => {
+  private readonly onPointerDrag = async (event: PointerEvent) => {
     if (!this.isEnabled) {
-      return false;
+      return;
     }
+    if (!isPressed(event)) {
+      if (this._isDragging) {
+        this.onPointerUp(event);
+      }
+    }
+    if (this._isDragging) {
+      await this._events.onPointerDrag(event);
+    }
+  };
+
+  private readonly onPointerUp = async (event: PointerEvent) => {
+    if (!this.isEnabled) {
+      return;
+    }
+    this._isDragging = false;
     if (this._downPosition === undefined) {
       return;
     }
-    this._domElement.removeEventListener('pointerup', this.onPointerUp);
+    await this._events.onPointerUp(event);
+    window.removeEventListener('pointerup', this.onPointerUp);
     this._domElement.addEventListener('pointermove', this.onPointerHover);
 
     if (!this.isProperClick(event)) {
       return;
     }
     if (this.isDoubleClick()) {
-      this._events.onDoubleClick(event);
+      await this._events.onDoubleClick(event);
       return;
     }
     const currentClickCounter = this._clickCounter;
@@ -116,9 +137,9 @@ export class PointerEventsTarget {
   // INSTANCE METHODS: Requests
   //================================================
 
-  private isProperClick(event: PointerEvent) {
+  private isProperClick(event: PointerEvent): boolean {
     if (this._downPosition === undefined) {
-      return;
+      return false;
     }
     const clickDuration = event.timeStamp - this._lastDownTimestamp;
     if (clickDuration >= MAX_CLICK_DURATION) {
@@ -130,11 +151,15 @@ export class PointerEventsTarget {
     return distance < MAX_MOVE_DISTANCE;
   }
 
-  private isDoubleClick() {
+  private isDoubleClick(): boolean {
     if (this._prevDownTimestamp <= 0) {
       return false;
     }
     const interval = this._lastDownTimestamp - this._prevDownTimestamp;
     return interval < DOUBLE_CLICK_INTERVAL;
   }
+}
+
+function isPressed(event: PointerEvent): boolean {
+  return event.buttons !== 0;
 }

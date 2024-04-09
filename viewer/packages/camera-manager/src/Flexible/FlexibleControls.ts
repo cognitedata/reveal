@@ -419,23 +419,7 @@ export class FlexibleControls {
   // INSTANCE METHODS: Event
   //================================================
 
-  public readonly onKeyDown = (event: KeyboardEvent): void => {
-    if (!this.isEnabled || this.isStationary) {
-      return;
-    }
-    if (!this.options.enableChangeControlsTypeOn123Key) {
-      return;
-    }
-    if (event.code === 'Digit1') {
-      this.setControlsType(FlexibleControlsType.Orbit);
-    } else if (event.code === 'Digit2') {
-      this.setControlsType(FlexibleControlsType.FirstPerson);
-    } else if (event.code === 'Digit3') {
-      this.setControlsType(FlexibleControlsType.OrbitInCenter);
-    }
-  };
-
-  public readonly onPointerDown = async (event: PointerEvent): Promise<void> => {
+  public async onPointerDown(event: PointerEvent): Promise<void> {
     if (!this.isEnabled) {
       return;
     }
@@ -444,7 +428,7 @@ export class FlexibleControls {
     } else if (isTouch(event)) {
       this.onTouchStart(event);
     }
-  };
+  }
 
   private async onMouseDown(event: PointerEvent) {
     if (!this.isEnabled) {
@@ -469,23 +453,7 @@ export class FlexibleControls {
     this._mouseDragInfo = mouseDragInfo;
   }
 
-  private readonly onPointerMove = async (event: PointerEvent) => {
-    if (!this._mouseDragInfo || !this.isEnabled || !isMouse(event)) {
-      return;
-    }
-    if (!isPressed(event)) {
-      if (this._mouseDragInfo) {
-        // No buttons is pressed, and still in mouse dragging, issue a onPointerUp()
-        // This can happend when you move the mouse outside the window and release the mouse button
-        // It shouldn't, but it is dependent of the context where the viewer is used.
-        this.onPointerUp(event);
-      }
-      return;
-    }
-    this.onPointerDrag(event);
-  };
-
-  public readonly onPointerDrag = async (event: PointerEvent): Promise<void> => {
+  public async onPointerDrag(event: PointerEvent): Promise<void> {
     if (!this._mouseDragInfo || !this.isEnabled || !isMouse(event)) {
       return;
     }
@@ -518,12 +486,28 @@ export class FlexibleControls {
       this.rotate(deltaPosition);
     }
     this._mouseDragInfo.update(position, translator);
-  };
+  }
 
-  public readonly onPointerUp = (event: PointerEvent): void => {
+  public onPointerUp(event: PointerEvent): void {
     this._mouseDragInfo = undefined;
     if (isTouch(event)) {
       remove(this._touchEvents, ev => ev.pointerId === event.pointerId);
+    }
+  }
+
+  public readonly onKeyDown = (event: KeyboardEvent): void => {
+    if (!this.isEnabled || this.isStationary) {
+      return;
+    }
+    if (!this.options.enableChangeControlsTypeOn123Key) {
+      return;
+    }
+    if (event.code === 'Digit1') {
+      this.setControlsType(FlexibleControlsType.Orbit);
+    } else if (event.code === 'Digit2') {
+      this.setControlsType(FlexibleControlsType.FirstPerson);
+    } else if (event.code === 'Digit3') {
+      this.setControlsType(FlexibleControlsType.OrbitInCenter);
     }
   };
 
@@ -594,29 +578,21 @@ export class FlexibleControls {
 
   public addEventListeners(): void {
     this._domElement.addEventListener('keydown', this.onKeyDown);
-    this._domElement.addEventListener('pointerdown', this.onPointerDown);
     this._domElement.addEventListener('wheel', this.onMouseWheel);
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
 
     // canvas has focus by default, but it's possible to set tabindex on it,
     // in that case events will be fired (we don't set tabindex here, but still support that case)
     this._domElement.addEventListener('focus', this.onFocusChanged);
-
-    // These must be on the window
-    window.addEventListener('pointermove', this.onPointerMove);
-    window.addEventListener('pointerup', this.onPointerUp);
+    this._domElement.addEventListener('pointerdown', this.onFocusChanged);
   }
 
   public removeEventListeners(): void {
     this._domElement.removeEventListener('keydown', this.onKeyDown);
-    this._domElement.removeEventListener('pointerdown', this.onPointerDown);
     this._domElement.removeEventListener('wheel', this.onMouseWheel);
     this._domElement.removeEventListener('contextmenu', this.onContextMenu);
     this._domElement.removeEventListener('focus', this.onFocusChanged);
     this._domElement.removeEventListener('pointerdown', this.onFocusChanged);
-
-    window.removeEventListener('pointermove', this.onPointerMove);
-    window.removeEventListener('pointerup', this.onPointerUp);
   }
 
   //================================================
@@ -700,7 +676,9 @@ export class FlexibleControls {
     };
 
     this._domElement.addEventListener('pointerdown', onTouchStart);
-    this._domElement.addEventListener('pointerup', onTouchEnd, { passive: false });
+    this._domElement.addEventListener('pointerup', onTouchEnd, {
+      passive: false
+    });
     document.addEventListener('pointermove', onTouchMove, { passive: false });
   }
 
@@ -1044,15 +1022,15 @@ function getTimeScale(deltaTimeS: number): number {
   return deltaTimeS * TARGET_FPS;
 }
 
-export function isMouse(event: PointerEvent): boolean {
+function isMouse(event: PointerEvent): boolean {
   return event.pointerType === 'mouse';
 }
 
-export function isTouch(event: PointerEvent): boolean {
+function isTouch(event: PointerEvent): boolean {
   return event.pointerType === 'touch';
 }
 
-export function isPressed(event: PointerEvent): boolean {
+function isPressed(event: PointerEvent): boolean {
   return event.buttons !== 0;
 }
 
