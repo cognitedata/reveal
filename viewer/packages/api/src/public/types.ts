@@ -16,7 +16,7 @@ export { WellKnownAsprsPointClassCodes } from '@reveal/pointclouds';
 export { PointShape, PointColorType, PointSizeType } from '@reveal/rendering';
 
 /**
- * A tuple of a 360 image and its collection
+ * A tuple of a 360 image and its collection.
  */
 export type Image360WithCollection = {
   image360Collection: Image360Collection;
