@@ -53,7 +53,7 @@ export const useReveal3dResourcesFromScene = (
         space: collection.image360CollectionSpace
       };
 
-      addResourceOptions.push({ ...addModelOptions, ...transform });
+      addResourceOptions.push({ ...addModelOptions, transform });
     });
     setResourceOptions(addResourceOptions);
   }, [scene.data]);
