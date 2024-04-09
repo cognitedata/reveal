@@ -41,7 +41,7 @@ import {
 } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
-import { Image360WithCollectionAndRevision } from '../public/types';
+import { Image360WithCollection } from '../public/types';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
@@ -224,11 +224,10 @@ export class Image360ApiHelper {
     this._needsRedraw = true;
   }
 
-  public getCurrentlyEnteredImageInfo(): Image360WithCollectionAndRevision | undefined {
+  public getCurrentlyEnteredImageInfo(): Image360WithCollection | undefined {
     const entity = this._interactionState.currentImage360Entered;
-    const revision = this._interactionState.revisionSelectedForEntry;
 
-    if (entity === undefined || revision === undefined) {
+    if (entity === undefined) {
       return undefined;
     }
 
@@ -236,8 +235,7 @@ export class Image360ApiHelper {
 
     return {
       image360: entity,
-      image360Collection: collection,
-      image360Revision: revision
+      image360Collection: collection
     };
   }
 
