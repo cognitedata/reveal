@@ -17,7 +17,11 @@ const HOVER_INTERVAL = 100;
  * If double click is fired, the click will not be fired
  * Hover will be fired only if the mouse button is not pressed and not to often
  */
-export class PointerEventsDetector {
+export class PointerEventsTarget {
+  //================================================
+  // INSTANCE FIELDS
+  //================================================
+
   private readonly _domElement: HTMLElement;
   private readonly _events: IPointerEvents;
   private readonly _downPosition: Vector2 = new Vector2();
@@ -25,6 +29,10 @@ export class PointerEventsDetector {
   private _lastDownTimestamp = 0; // Time of last pointer down event
   private _prevDownTimestamp = 0; // Time of previous pointer down event
   private _clickCounter = 0; // Incremented at each onPointerDown
+
+  //================================================
+  // INSTANCE PROPERIES
+  //================================================
 
   private get isEnabled(): boolean {
     return this._events.isEnabled;
@@ -45,12 +53,12 @@ export class PointerEventsDetector {
 
   public addEventListeners(): void {
     this._domElement.addEventListener('pointerdown', this.onPointerDown);
-    this._domElement.addEventListener('pointermove', this.onPointerMove);
+    this._domElement.addEventListener('pointermove', this.onPointerHover);
   }
 
   public removeEventListeners(): void {
     this._domElement.removeEventListener('pointerdown', this.onPointerDown);
-    this._domElement.removeEventListener('pointermove', this.onPointerMove);
+    this._domElement.removeEventListener('pointermove', this.onPointerHover);
   }
 
   //================================================
@@ -68,10 +76,10 @@ export class PointerEventsDetector {
     this._clickCounter++;
 
     this._domElement.addEventListener('pointerup', this.onPointerUp);
-    this._domElement.removeEventListener('pointermove', this.onPointerMove);
+    this._domElement.removeEventListener('pointermove', this.onPointerHover);
   };
 
-  private readonly onPointerMove = debounce((event: PointerEvent) => {
+  private readonly onPointerHover = debounce((event: PointerEvent) => {
     if (!this.isEnabled) {
       return false;
     }
@@ -86,7 +94,7 @@ export class PointerEventsDetector {
       return;
     }
     this._domElement.removeEventListener('pointerup', this.onPointerUp);
-    this._domElement.addEventListener('pointermove', this.onPointerMove);
+    this._domElement.addEventListener('pointermove', this.onPointerHover);
 
     if (!this.isProperClick(event)) {
       return;

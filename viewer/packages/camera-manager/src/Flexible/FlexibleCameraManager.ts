@@ -14,7 +14,7 @@ import {
   fitCameraToBoundingBox,
   getNormalizedPixelCoordinates,
   clickOrTouchEventOffset,
-  PointerEventsDetector,
+  PointerEventsTarget,
   IPointerEvents
 } from '@reveal/utilities';
 
@@ -41,7 +41,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
   // INSTANCE FIELDS:
   //================================================
 
-  private readonly _pointerEventsDetector: PointerEventsDetector;
+  private readonly _pointerEventsTarget: PointerEventsTarget;
   private readonly _controls: FlexibleControls;
   private readonly _markers?: undefined | FlexibleCameraMarkers;
   private readonly _currentBoundingBox: Box3 = new Box3();
@@ -58,7 +58,7 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
     this._controls = new FlexibleControls(camera, domElement, new FlexibleControlsOptions());
     this._controls.getPickedPointByPixelCoordinates = this.getPickedPointByPixelCoordinates;
     this._raycastCallback = raycastCallback;
-    this._pointerEventsDetector = new PointerEventsDetector(domElement, this);
+    this._pointerEventsTarget = new PointerEventsTarget(domElement, this);
     if (scene) {
       this._markers = new FlexibleCameraMarkers(scene);
     }
@@ -360,12 +360,12 @@ export class FlexibleCameraManager implements IFlexibleCameraManager, IPointerEv
   //================================================
 
   private addEventListeners() {
-    this._pointerEventsDetector.addEventListeners();
+    this._pointerEventsTarget.addEventListeners();
     this._controls.addEventListeners();
   }
 
   private removeEventListeners(): void {
-    this._pointerEventsDetector.removeEventListeners();
+    this._pointerEventsTarget.removeEventListeners();
     this._controls.removeEventListeners();
   }
 

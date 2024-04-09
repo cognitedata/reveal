@@ -419,7 +419,7 @@ export class FlexibleControls {
   // INSTANCE METHODS: Event
   //================================================
 
-  private readonly onKeyDown = (event: KeyboardEvent) => {
+  public readonly onKeyDown = (event: KeyboardEvent): void => {
     if (!this.isEnabled || this.isStationary) {
       return;
     }
@@ -427,11 +427,11 @@ export class FlexibleControls {
       return;
     }
     if (event.code === 'Digit1') {
-      return this.setControlsType(FlexibleControlsType.Orbit);
+      this.setControlsType(FlexibleControlsType.Orbit);
     } else if (event.code === 'Digit2') {
-      return this.setControlsType(FlexibleControlsType.FirstPerson);
+      this.setControlsType(FlexibleControlsType.FirstPerson);
     } else if (event.code === 'Digit3') {
-      return this.setControlsType(FlexibleControlsType.OrbitInCenter);
+      this.setControlsType(FlexibleControlsType.OrbitInCenter);
     }
   };
 
@@ -485,7 +485,7 @@ export class FlexibleControls {
     this.onPointerDrag(event);
   };
 
-  private readonly onPointerDrag = async (event: PointerEvent) => {
+  public readonly onPointerDrag = async (event: PointerEvent): Promise<void> => {
     if (!this._mouseDragInfo || !this.isEnabled || !isMouse(event)) {
       return;
     }

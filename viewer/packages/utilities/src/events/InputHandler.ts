@@ -6,7 +6,7 @@ import { EventTrigger } from './EventTrigger';
 import { assertNever } from '../assertNever';
 import { PointerEventDelegate } from './types';
 import { IPointerEvents } from './IPointerEvents';
-import { PointerEventsDetector } from './PointerEventsDetector';
+import { PointerEventsTarget } from './PointerEventsTarget';
 
 export class InputHandler implements IPointerEvents {
   //================================================
@@ -14,7 +14,7 @@ export class InputHandler implements IPointerEvents {
   //================================================
 
   private readonly _domElement: HTMLElement;
-  private readonly _pointerEventsDetector: PointerEventsDetector;
+  private readonly _pointerEventsTarget: PointerEventsTarget;
   private readonly _clickEvents = new EventTrigger<PointerEventDelegate>();
   private readonly _hoverEvents = new EventTrigger<PointerEventDelegate>();
 
@@ -24,8 +24,8 @@ export class InputHandler implements IPointerEvents {
 
   constructor(domElement: HTMLElement) {
     this._domElement = domElement;
-    this._pointerEventsDetector = new PointerEventsDetector(domElement, this);
-    this._pointerEventsDetector.addEventListeners();
+    this._pointerEventsTarget = new PointerEventsTarget(domElement, this);
+    this._pointerEventsTarget.addEventListeners();
   }
 
   //================================================
@@ -35,7 +35,7 @@ export class InputHandler implements IPointerEvents {
   dispose(): void {
     this._hoverEvents.unsubscribeAll();
     this._clickEvents.unsubscribeAll();
-    this._pointerEventsDetector.removeEventListeners();
+    this._pointerEventsTarget.removeEventListeners();
   }
 
   /**
