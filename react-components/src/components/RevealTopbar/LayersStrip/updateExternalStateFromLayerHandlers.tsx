@@ -7,7 +7,7 @@ import { type ModelLayerHandlers } from './LayersButtonsStrip';
 
 export function updateExternalStateFromLayerHandlers(
   modelLayerHandlers: ModelLayerHandlers,
-  setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam>>
+  setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined
 ): void {
   const newState = {
     cadLayers: modelLayerHandlers.cadHandlers.map((handler, index) => ({
@@ -26,5 +26,5 @@ export function updateExternalStateFromLayerHandlers(
     }))
   };
 
-  setExternalLayersState(newState);
+  setExternalLayersState?.(newState);
 }

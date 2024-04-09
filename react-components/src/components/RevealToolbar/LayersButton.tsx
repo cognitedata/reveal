@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement } from 'react';
+import { Dispatch, SetStateAction, type ReactElement } from 'react';
 import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { LayersContainer } from '../RevealToolbar/LayersContainer/LayersContainer';
 import { useReveal } from '../RevealCanvas/ViewerContext';
@@ -11,18 +11,28 @@ import { useTranslation } from '../i18n/I18n';
 
 import { useSyncExternalLayersState } from '../RevealTopbar/LayersStrip/useSyncExternalLayersState';
 import { useModelHandlers } from '../RevealTopbar/LayersStrip/useModelHandlers';
+import { LayersUrlStateParam } from '../../hooks/types';
 
 type LayersButtonProps = {
-  storeStateInUrl?: boolean;
+  layersState?: LayersUrlStateParam | undefined;
+  setLayersState?: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined;
 };
 
-export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): ReactElement => {
+export const LayersButton = ({
+  layersState: externalLayersState,
+  setLayersState: setExternalLayersState
+}: LayersButtonProps): ReactElement => {
   const viewer = useReveal();
   const { t } = useTranslation();
 
-  const [modelLayerHandlers, update] = useModelHandlers();
+  const [modelLayerHandlers, update] = useModelHandlers(setExternalLayersState);
 
-  useSyncExternalLayersState(modelLayerHandlers, undefined, undefined, update);
+  useSyncExternalLayersState(
+    modelLayerHandlers,
+    externalLayersState,
+    setExternalLayersState,
+    update
+  );
 
   return (
     <CogsTooltip

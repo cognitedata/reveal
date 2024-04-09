@@ -5,6 +5,8 @@ import { Checkbox, Flex } from '@cognite/cogs.js';
 import { type ModelHandler } from './ModelHandler';
 import { type ChangeEvent, useCallback, useMemo, type ReactElement, type MouseEvent } from 'react';
 import { StyledChipCount, StyledLabel } from '../../RevealToolbar/LayersContainer/elements';
+import { UpdateModelHandlersCallback } from './useModelHandlers';
+import { useReveal } from '../../RevealCanvas/ViewerContext';
 
 export const WholeLayerVisibilityToggle = ({
   modelHandlers,
@@ -13,8 +15,10 @@ export const WholeLayerVisibilityToggle = ({
 }: {
   modelHandlers: ModelHandler[];
   label: string;
-  update: () => void;
+  update: UpdateModelHandlersCallback;
 }): ReactElement => {
+  const viewer = useReveal();
+
   const someVisible = useMemo(
     () => modelHandlers.some((handler) => handler.visible()),
     [modelHandlers]
@@ -32,8 +36,8 @@ export const WholeLayerVisibilityToggle = ({
       e.stopPropagation();
       modelHandlers.forEach((handler) => {
         handler.setVisibility(!someVisible);
-        update();
       });
+      update(viewer.models, viewer.get360ImageCollections());
     },
     [modelHandlers, someVisible]
   );

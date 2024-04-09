@@ -5,6 +5,12 @@ import { Divider, Menu } from '@cognite/cogs.js';
 import { type ModelHandler } from './ModelHandler';
 import { type ReactElement, type ChangeEvent } from 'react';
 import { WholeLayerVisibilityToggle } from './WholeLayerVisibilityToggle';
+import { withSuppressRevealEvents } from '../../../higher-order-components/withSuppressRevealEvents';
+import { UpdateModelHandlersCallback } from './useModelHandlers';
+import { useReveal } from '../../RevealCanvas/ViewerContext';
+import { Cognite3DViewer } from '@cognite/reveal';
+
+const SuppressedMenu = withSuppressRevealEvents(Menu);
 
 export const ModelLayersList = ({
   modelHandlers,
@@ -12,11 +18,11 @@ export const ModelLayersList = ({
   label
 }: {
   modelHandlers: ModelHandler[];
-  update: () => void;
+  update: UpdateModelHandlersCallback;
   label?: string;
 }): ReactElement => {
   return (
-    <Menu>
+    <SuppressedMenu>
       {label !== undefined && (
         <>
           <Menu.Item>
@@ -30,7 +36,7 @@ export const ModelLayersList = ({
         </>
       )}
       <ModelContent modelHandlers={modelHandlers} update={update} />
-    </Menu>
+    </SuppressedMenu>
   );
 };
 
@@ -39,23 +45,27 @@ const ModelContent = ({
   update
 }: {
   modelHandlers: ModelHandler[];
-  update: () => void;
+  update: UpdateModelHandlersCallback;
 }): ReactElement => {
+  const viewer = useReveal();
+
   return (
-    <div>
+    <>
       {modelHandlers.map((handler, index) => (
-        <ModelItem key={index} modelHandler={handler} update={update} />
+        <ModelItem key={index} modelHandler={handler} update={update} viewer={viewer} />
       ))}
-    </div>
+    </>
   );
 };
 
 const ModelItem = ({
   modelHandler,
+  viewer,
   update
 }: {
   modelHandler: ModelHandler;
-  update: () => void;
+  update: UpdateModelHandlersCallback;
+  viewer: Cognite3DViewer;
 }): ReactElement => {
   return (
     <Menu.Item
@@ -67,7 +77,7 @@ const ModelItem = ({
         onChange: (e: ChangeEvent) => {
           e.stopPropagation();
           modelHandler.setVisibility(!modelHandler.visible());
-          update();
+          update(viewer.models, viewer.get360ImageCollections());
         }
       }}>
       {modelHandler.key()}

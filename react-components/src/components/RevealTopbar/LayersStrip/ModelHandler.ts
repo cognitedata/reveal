@@ -9,6 +9,7 @@ import {
 } from '@cognite/reveal';
 
 export abstract class ModelHandler {
+  protected visibility: boolean;
   protected constructor(protected model: CogniteModel | Image360Collection) {}
 
   public abstract key(): string;

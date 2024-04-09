@@ -2,10 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 import { Button, Dropdown, type IconType, Tooltip } from '@cognite/cogs.js';
-import { useReveal } from '../../..';
+import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { type ModelHandler } from './ModelHandler';
 import { ModelLayersList } from './ModelLayersList';
 import { type ReactElement } from 'react';
+import { UpdateModelHandlersCallback } from './useModelHandlers';
 
 export const ModelLayersButton = ({
   icon,
@@ -16,7 +17,7 @@ export const ModelLayersButton = ({
   icon: IconType;
   label: string;
   handlers: ModelHandler[];
-  update: () => void;
+  update: UpdateModelHandlersCallback;
 }): ReactElement => {
   const viewer = useReveal();
 

@@ -17,7 +17,7 @@ import { useSyncExternalLayersState } from './useSyncExternalLayersState';
 
 export type LayersButtonStripProps = {
   externalLayersState?: LayersUrlStateParam;
-  setExternalLayersState?: Dispatch<SetStateAction<LayersUrlStateParam>>;
+  setExternalLayersState?: Dispatch<SetStateAction<LayersUrlStateParam | undefined>>;
 };
 
 export type ModelLayerHandlers = {
@@ -31,7 +31,7 @@ export const LayersButtonStrip = ({
   setExternalLayersState
 }: LayersButtonStripProps): ReactElement => {
   const { t } = useTranslation();
-  const [modelLayerHandlers, update] = useModelHandlers();
+  const [modelLayerHandlers, update] = useModelHandlers(setExternalLayersState);
   const { cadHandlers, pointCloudHandlers, image360Handlers } = modelLayerHandlers;
 
   useSyncExternalLayersState(

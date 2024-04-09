@@ -5,25 +5,18 @@
 import { Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { LayerToggleDropdown } from './LayerToggleDropdown';
-import {
-  // useState,
-  type ReactElement,
-  // useEffect,
-  type MouseEvent
-  // type SetStateAction,
-  // type Dispatch
-} from 'react';
+import { type ReactElement, type MouseEvent } from 'react';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
-// import { useLayersUrlParams } from '../hooks/useUrlStateParam';
 import { type ModelLayerHandlers } from '../../RevealTopbar/LayersStrip/LayersButtonsStrip';
 import { useTranslation } from '../../i18n/I18n';
+import { UpdateModelHandlersCallback } from '../../RevealTopbar/LayersStrip/useModelHandlers';
 
 export const LayersContainer = ({
   modelHandlers,
   update
 }: {
   modelHandlers: ModelLayerHandlers;
-  update: () => void;
+  update: UpdateModelHandlersCallback;
 }): ReactElement => {
   const viewer = useReveal();
   const { t } = useTranslation();
@@ -59,60 +52,6 @@ export const LayersContainer = ({
     </>
   );
 };
-
-// const useStoreStateToUrl = (
-//   enable: boolean
-// ): [Reveal3DResourcesLayerStates, Dispatch<SetStateAction<Reveal3DResourcesLayerStates>>] => {
-//   const viewer = useReveal();
-
-//   const [, setLayersUrlState] = useLayersUrlParams();
-//   const [layersContainerState, setLayersContainerState] = useState<Reveal3DResourcesLayerStates>({
-//     cadLayerData: [],
-//     pointCloudLayerData: [],
-//     image360LayerData: []
-//   });
-
-//   useEffect(() => {
-//     if (!enable) {
-//       return;
-//     }
-
-//     const { cadLayerData, pointCloudLayerData, image360LayerData } = layersContainerState;
-
-//     const cadLayers = cadLayerData.map((data) => {
-//       const index = viewer.models.indexOf(data.model);
-//       return {
-//         revisionId: data.model.revisionId,
-//         applied: data.isToggled,
-//         index
-//       };
-//     });
-
-//     const pointCloudLayers = pointCloudLayerData.map((data) => {
-//       const index = viewer.models.indexOf(data.model);
-//       return {
-//         revisionId: data.model.revisionId,
-//         applied: data.isToggled,
-//         index
-//       };
-//     });
-
-//     const image360Layers = image360LayerData.map((data) => {
-//       return {
-//         siteId: data.model.id,
-//         applied: data.isToggled
-//       };
-//     });
-
-//     setLayersUrlState({
-//       cadLayers,
-//       pointCloudLayers,
-//       image360Layers
-//     });
-//   }, [layersContainerState]);
-
-//   return [layersContainerState, setLayersContainerState];
-// };
 
 const Container = styled.div`
   position: relative;

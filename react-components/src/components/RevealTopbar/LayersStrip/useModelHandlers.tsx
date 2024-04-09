@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';
 import {
   type CogniteCadModel,
@@ -12,8 +12,16 @@ import {
 import { CadModelHandler, Image360CollectionHandler, PointCloudModelHandler } from './ModelHandler';
 import { use3dModels } from '../../../hooks/use3dModels';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
+import { LayersUrlStateParam } from '../../../hooks/types';
 
-export const useModelHandlers = (): [ModelLayerHandlers, () => void] => {
+export type UpdateModelHandlersCallback = (
+  models: CogniteModel[],
+  image360Collections: Image360Collection[]
+) => void;
+
+export const useModelHandlers = (
+  setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined
+): [ModelLayerHandlers, UpdateModelHandlersCallback] => {
   const models = use3dModels();
   const viewer = useReveal();
   const image360Collections = useMemo(
@@ -27,10 +35,17 @@ export const useModelHandlers = (): [ModelLayerHandlers, () => void] => {
     setModelHandlers(createHandlers(models, image360Collections));
   }, [models, image360Collections]);
 
-  const update = useCallback(() => {
-    setModelHandlers(createHandlers(models, image360Collections));
-    viewer.requestRedraw();
-  }, [models, image360Collections]);
+  const update = useCallback(
+    (models: CogniteModel[], image360Collections: Image360Collection[]) => {
+      const newModelHandlers = createHandlers(models, image360Collections);
+      setModelHandlers(newModelHandlers);
+      const newExternalState = createExternalStateFromLayers(newModelHandlers);
+
+      setExternalLayersState?.(newExternalState);
+      viewer.requestRedraw();
+    },
+    [setExternalLayersState, viewer]
+  );
 
   return [modelHandlers, update];
 };
@@ -49,5 +64,25 @@ function createHandlers(
     image360Handlers: image360Collections.map(
       (collection) => new Image360CollectionHandler(collection)
     )
+  };
+}
+
+function createExternalStateFromLayers(modelHandlers: ModelLayerHandlers): LayersUrlStateParam {
+  return {
+    cadLayers: modelHandlers.cadHandlers.map((cadHandler, handlerIndex) => ({
+      applied: cadHandler.visible(),
+      revisionId: cadHandler.getRevisionId(),
+      index: handlerIndex
+    })),
+    pointCloudLayers: modelHandlers.pointCloudHandlers.map((pointCloudHandler, handlerIndex) => ({
+      applied: pointCloudHandler.visible(),
+      revisionId: pointCloudHandler.getRevisionId(),
+      index: handlerIndex
+    })),
+    image360Layers: modelHandlers.image360Handlers.map((image360Handler, handlerIndex) => ({
+      applied: image360Handler.visible(),
+      siteId: image360Handler.getSiteId(),
+      index: handlerIndex
+    }))
   };
 }

@@ -8,13 +8,15 @@ import {
 } from '@cognite/reveal';
 import { type LayersUrlStateParam } from '../../../hooks/types';
 
-export function updateViewerFromExternalState({
-  layersState,
-  viewer
-}: {
-  layersState: LayersUrlStateParam;
-  viewer: Cognite3DViewer;
-}): void {
+export function updateViewerFromExternalState(
+  layersState: LayersUrlStateParam | undefined,
+  viewer: Cognite3DViewer
+): void {
+  if (layersState === undefined) {
+    setAllModelsVisible(viewer);
+    return;
+  }
+
   const cadModels = viewer.models.filter((model): model is CogniteCadModel => model.type === 'cad');
   const pointCloudModels = viewer.models.filter(
     (model): model is CognitePointCloudModel => model.type === 'pointcloud'
@@ -22,13 +24,16 @@ export function updateViewerFromExternalState({
   const image360Collections = viewer.get360ImageCollections();
 
   layersState.cadLayers?.forEach((layer) => {
-    if (cadModels[layer.index].revisionId === layer.revisionId) {
+    if (layer.index < cadModels.length && cadModels[layer.index].revisionId === layer.revisionId) {
       cadModels[layer.index].visible = layer.applied;
     }
   });
 
   layersState.pointCloudLayers?.forEach((layer) => {
-    if (pointCloudModels[layer.index].revisionId === layer.revisionId) {
+    if (
+      layer.index < pointCloudModels.length &&
+      pointCloudModels[layer.index].revisionId === layer.revisionId
+    ) {
       pointCloudModels[layer.index].visible = layer.applied;
     }
   });
@@ -38,4 +43,10 @@ export function updateViewerFromExternalState({
       .find((collection) => collection.id === layer.siteId)
       ?.setIconsVisibility(layer.applied);
   });
+}
+
+function setAllModelsVisible(viewer: Cognite3DViewer) {
+  viewer.models.forEach((model) => (model.visible = true));
+
+  viewer.get360ImageCollections().forEach((collection) => collection.setIconsVisibility(true));
 }
