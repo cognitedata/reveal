@@ -1030,10 +1030,6 @@ function isTouch(event: PointerEvent): boolean {
   return event.pointerType === 'touch';
 }
 
-function isPressed(event: PointerEvent): boolean {
-  return event.buttons !== 0;
-}
-
 // helper class from mouseDown, mouseMove and mouseUp
 // It keeps track of the previous position and how it is translated
 class MouseDragInfo {
