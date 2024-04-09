@@ -15,7 +15,8 @@ import {
   Image360RevisionEntity,
   DefaultImage360Collection,
   Image360AnnotationIntersection,
-  Image360AnnotationFilterOptions
+  Image360AnnotationFilterOptions,
+  Image360Revision
 } from '@reveal/360-images';
 import {
   Cdf360CombinedDescriptorProvider,
@@ -221,6 +222,23 @@ export class Image360ApiHelper {
     this._image360Facade.removeSet(collection as DefaultImage360Collection);
 
     this._needsRedraw = true;
+  }
+
+  public getCurrentlyEnteredImageInfo(): Image360WithCollectionAndRevision | undefined {
+    const entity = this._interactionState.currentImage360Entered;
+    const revision = this._interactionState.revisionSelectedForEntry;
+
+    if (entity === undefined || revision === undefined) {
+      return undefined;
+    }
+
+    const collection = this._image360Facade.getCollectionContainingEntity(entity);
+
+    return {
+      image360: entity,
+      image360Collection: collection,
+      image360Revision: revision
+    };
   }
 
   public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
