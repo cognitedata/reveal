@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';
 import {
+  Cognite3DViewer,
   type CogniteCadModel,
   type CogniteModel,
   type CognitePointCloudModel,
@@ -20,6 +21,7 @@ import { CadModelHandler, Image360CollectionHandler, PointCloudModelHandler } fr
 import { use3dModels } from '../../../hooks/use3dModels';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { type LayersUrlStateParam } from '../../../hooks/types';
+import { use3DModelName } from '../../../query/use3DModelName';
 
 export type UpdateModelHandlersCallback = (
   models: CogniteModel[],
@@ -36,15 +38,20 @@ export const useModelHandlers = (
     [viewer, viewer.get360ImageCollections().length]
   );
 
-  const [modelHandlers, setModelHandlers] = useState(createHandlers(models, image360Collections));
+  const modelIds = useMemo(() => models.map((model) => model.modelId), [models]);
+  const modelNames = use3DModelName(modelIds);
+
+  const [modelHandlers, setModelHandlers] = useState(
+    createHandlers(models, modelNames.data, image360Collections, viewer)
+  );
 
   useEffect(() => {
-    setModelHandlers(createHandlers(models, image360Collections));
-  }, [models, image360Collections]);
+    setModelHandlers(createHandlers(models, modelNames.data, image360Collections, viewer));
+  }, [models, modelNames.data, image360Collections, viewer]);
 
   const update = useCallback(
     (models: CogniteModel[], image360Collections: Image360Collection[]) => {
-      const newModelHandlers = createHandlers(models, image360Collections);
+      const newModelHandlers = createHandlers(models, modelNames.data, image360Collections, viewer);
       setModelHandlers(newModelHandlers);
       const newExternalState = createExternalStateFromLayers(newModelHandlers);
 
@@ -59,17 +66,37 @@ export const useModelHandlers = (
 
 function createHandlers(
   models: CogniteModel[],
-  image360Collections: Image360Collection[]
+  modelNames: string[] | undefined,
+  image360Collections: Image360Collection[],
+  viewer: Cognite3DViewer
 ): ModelLayerHandlers {
+  const is360CollectionCurrentlyEntered = (collection: Image360Collection) =>
+    viewer.getCurrentlyEntered360Image()?.image360Collection === collection;
+  const exit360Image = () => viewer.exit360Image();
+
   return {
     cadHandlers: models
-      .filter((model): model is CogniteCadModel => model.type === 'cad')
-      .map((model) => new CadModelHandler(model)),
+      .map((model, index) => [index, model] as const)
+      .filter(
+        (modelWithIndex): modelWithIndex is [number, CogniteCadModel] =>
+          modelWithIndex[1].type === 'cad'
+      )
+      .map(
+        (modelWithIndex) => new CadModelHandler(modelWithIndex[1], modelNames?.[modelWithIndex[0]])
+      ),
     pointCloudHandlers: models
-      .filter((model): model is CognitePointCloudModel => model.type === 'pointcloud')
-      .map((model) => new PointCloudModelHandler(model)),
+      .map((model, index) => [index, model] as const)
+      .filter(
+        (modelWithIndex): modelWithIndex is [number, CognitePointCloudModel] =>
+          modelWithIndex[1].type === 'pointcloud'
+      )
+      .map(
+        (modelWithIndex) =>
+          new PointCloudModelHandler(modelWithIndex[1], modelNames?.[modelWithIndex[0]])
+      ),
     image360Handlers: image360Collections.map(
-      (collection) => new Image360CollectionHandler(collection)
+      (collection) =>
+        new Image360CollectionHandler(collection, is360CollectionCurrentlyEntered, exit360Image)
     )
   };
 }

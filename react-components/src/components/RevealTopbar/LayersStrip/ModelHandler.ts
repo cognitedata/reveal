@@ -9,8 +9,10 @@ import {
 } from '@cognite/reveal';
 
 export abstract class ModelHandler {
-  protected visibility: boolean;
-  protected constructor(protected model: CogniteModel | Image360Collection) {}
+  protected constructor(
+    protected model: CogniteModel | Image360Collection,
+    public readonly name: string
+  ) {}
 
   public abstract key(): string;
   public abstract visible(): boolean;
@@ -22,8 +24,11 @@ export abstract class ModelHandler {
 }
 
 export class CadModelHandler extends ModelHandler {
-  constructor(private readonly _cadModel: CogniteCadModel) {
-    super(_cadModel);
+  constructor(
+    private readonly _cadModel: CogniteCadModel,
+    name: string | undefined
+  ) {
+    super(_cadModel, name ?? `cad-${_cadModel.modelId}-${_cadModel.revisionId}`);
   }
 
   key(): string {
@@ -44,8 +49,14 @@ export class CadModelHandler extends ModelHandler {
 }
 
 export class PointCloudModelHandler extends ModelHandler {
-  constructor(private readonly _pointCloudModel: CognitePointCloudModel) {
-    super(_pointCloudModel);
+  constructor(
+    private readonly _pointCloudModel: CognitePointCloudModel,
+    name: string | undefined
+  ) {
+    super(
+      _pointCloudModel,
+      name ?? `pointcloud-${_pointCloudModel.modelId}-${_pointCloudModel.revisionId}`
+    );
   }
 
   key(): string {
@@ -66,8 +77,12 @@ export class PointCloudModelHandler extends ModelHandler {
 }
 
 export class Image360CollectionHandler extends ModelHandler {
-  constructor(private readonly _image360Collection: Image360Collection) {
-    super(_image360Collection);
+  constructor(
+    private readonly _image360Collection: Image360Collection,
+    private readonly _isCurrentlyEntered: (collection: Image360Collection) => boolean,
+    private readonly _exit360Image: () => void
+  ) {
+    super(_image360Collection, _image360Collection.id);
   }
 
   key(): string {
@@ -79,6 +94,9 @@ export class Image360CollectionHandler extends ModelHandler {
   }
 
   setVisibility(visible: boolean): void {
+    if (!visible && this._isCurrentlyEntered(this._image360Collection)) {
+      this._exit360Image();
+    }
     this._image360Collection.setIconsVisibility(visible);
   }
 
