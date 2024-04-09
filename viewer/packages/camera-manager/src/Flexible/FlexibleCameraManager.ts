@@ -385,7 +385,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
       return;
     }
     if (mouseActionType === FlexibleMouseActionType.SetTarget) {
-      if (this.controls.controlsType === FlexibleControlsType.FirstPerson) {
+      if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
         return;
       }
       const newTarget = await this.getPickedPointByPixelCoordinates(event.offsetX, event.offsetY);

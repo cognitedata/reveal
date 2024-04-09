@@ -99,6 +99,10 @@ export class PointerEventsTarget {
       if (this._isDragging) {
         this.onPointerUp(event);
       }
+      return;
+    }
+    if (event.movementX === 0 && event.movementX === 0) {
+      return;
     }
     if (this._isDragging) {
       await this._events.onPointerDrag(event);
