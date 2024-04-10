@@ -41,7 +41,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   // INSTANCE FIELDS:
   //================================================
 
-  private readonly _pointerEventsTarget: PointerEventsTarget;
+  private readonly _pointerEventsTarget?: PointerEventsTarget;
   private readonly _controls: FlexibleControls;
   private readonly _markers?: undefined | FlexibleCameraMarkers;
   private readonly _currentBoundingBox: Box3 = new Box3();
@@ -49,17 +49,27 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   private _isEnableClickAndDoubleClick = true;
   private _nearAndFarNeedsUpdate = false;
   private readonly _raycastCallback: RaycastCallback;
+  private readonly _haveEventListers: boolean;
 
   //================================================
   // CONSTRUCTOR
   //================================================
 
-  constructor(domElement: HTMLElement, raycastCallback: RaycastCallback, camera?: PerspectiveCamera, scene?: Scene) {
+  constructor(
+    domElement: HTMLElement,
+    raycastCallback: RaycastCallback,
+    camera?: PerspectiveCamera,
+    scene?: Scene,
+    haveEventListers?: boolean
+  ) {
     super();
+    this._haveEventListers = haveEventListers ?? true;
     this._controls = new FlexibleControls(camera, domElement, new FlexibleControlsOptions());
     this._controls.getPickedPointByPixelCoordinates = this.getPickedPointByPixelCoordinates;
     this._raycastCallback = raycastCallback;
-    this._pointerEventsTarget = new PointerEventsTarget(domElement, this);
+    if (this._haveEventListers) {
+      this._pointerEventsTarget = new PointerEventsTarget(domElement, this);
+    }
     if (scene) {
       this._markers = new FlexibleCameraMarkers(scene);
     }
@@ -367,13 +377,17 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   //================================================
 
   private addEventListeners() {
-    this._pointerEventsTarget.addEventListeners();
-    this._controls.addEventListeners();
+    if (this._haveEventListers) {
+      this._pointerEventsTarget?.addEventListeners();
+      this._controls.addEventListeners();
+    }
   }
 
   private removeEventListeners(): void {
-    this._pointerEventsTarget.removeEventListeners();
-    this._controls.removeEventListeners();
+    if (this._haveEventListers) {
+      this._pointerEventsTarget?.removeEventListeners();
+      this._controls.removeEventListeners();
+    }
   }
 
   //================================================
