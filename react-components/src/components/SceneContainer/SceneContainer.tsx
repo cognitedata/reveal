@@ -2,7 +2,6 @@
  * Copyright 2023 Cognite AS
  */
 import { useEffect, type ReactElement } from 'react';
-import { Reveal3DResources, useSceneDefaultCamera } from '../..';
 import {
   type Image360AssetStylingGroup,
   type AssetStylingGroup,
@@ -12,6 +11,9 @@ import {
 import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesFromScene';
 import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
 import { useSkyboxFromScene } from '../../hooks/useSkyboxFromScene';
+import { Reveal3DResources } from '../Reveal3DResources/Reveal3DResources';
+import { useLoadedScene } from './LoadedSceneContext';
+import { useSceneDefaultCamera } from '../../hooks/useSceneDefaultCamera';
 
 export type SceneContainerProps = {
   sceneExternalId: string;
@@ -31,14 +33,22 @@ export function SceneContainer({
   onResourceLoadError
 }: SceneContainerProps): ReactElement {
   const resourceOptions = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
-
-  const defaultCamera = useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
-  useGroundPlaneFromScene(sceneExternalId, sceneSpaceId);
-  useSkyboxFromScene(sceneExternalId, sceneSpaceId);
+  const { loadedScene, setScene } = useLoadedScene();
+  const defaultSceneCamera = useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
 
   useEffect(() => {
-    defaultCamera.fitCameraToSceneDefault();
-  }, [sceneExternalId, sceneSpaceId]);
+    if (
+      !defaultSceneCamera.isFetched ||
+      (loadedScene?.externalId === sceneExternalId && loadedScene?.spaceId === sceneSpaceId)
+    ) {
+      return;
+    }
+    defaultSceneCamera.fitCameraToSceneDefault();
+    setScene({ externalId: sceneExternalId, spaceId: sceneSpaceId });
+  }, [defaultSceneCamera]);
+
+  useGroundPlaneFromScene(sceneExternalId, sceneSpaceId);
+  useSkyboxFromScene(sceneExternalId, sceneSpaceId);
 
   return (
     <Reveal3DResources
