@@ -9,6 +9,7 @@ import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { EMPTY_ARRAY } from '../../utilities/constants';
+import { type Asset } from '@cognite/sdk';
 
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
@@ -50,17 +51,15 @@ export function RuleBasedOutputsSelector({
     const initializeRuleBasedOutputs = async (model: CogniteCadModel): Promise<void> => {
       // parse assets and mappings
       // TODO: refactor to be sure to filter only the mappings/assets for the current model within the pages
-      const flatAssetsMappingsList =
-        assetMappings?.pages
-          .flat()
-          .map((item) => item.mappings)
-          .flat() ?? [];
+      const flatAssetsMappingsList = assetMappings.pages
+        .flat()
+        .map((item) => item.mappings)
+        .flat();
       const flatMappings = flatAssetsMappingsList.map((node) => node.items).flat();
-      const contextualizedAssetNodes =
-        assetMappings?.pages
-          .flat()
-          .map((item) => item.assets)
-          .flat() ?? [];
+      const contextualizedAssetNodes = assetMappings.pages
+        .flat()
+        .flatMap((item) => item.assets)
+        .map(convertAssetMetadataKeysToLowerCase);
 
       const collectionStylings = await generateRuleBasedOutputs(
         model,
@@ -81,4 +80,15 @@ export function RuleBasedOutputsSelector({
   }, [assetMappings, ruleSet]);
 
   return <></>;
+}
+
+function convertAssetMetadataKeysToLowerCase(asset: Asset): Asset {
+  return {
+    ...asset,
+    metadata: Object.fromEntries(
+      [...Object.entries(asset.metadata ?? {})].map(
+        ([key, value]) => [key.toLowerCase(), value] as const
+      )
+    )
+  };
 }
