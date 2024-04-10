@@ -41,6 +41,7 @@ import {
 } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
+import { Image360WithCollection } from '../public/types';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
@@ -221,6 +222,21 @@ export class Image360ApiHelper {
     this._image360Facade.removeSet(collection as DefaultImage360Collection);
 
     this._needsRedraw = true;
+  }
+
+  public getCurrentlyEnteredImageInfo(): Image360WithCollection | undefined {
+    const entity = this._interactionState.currentImage360Entered;
+
+    if (entity === undefined) {
+      return undefined;
+    }
+
+    const collection = this._image360Facade.getCollectionContainingEntity(entity);
+
+    return {
+      image360: entity,
+      image360Collection: collection
+    };
   }
 
   public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
