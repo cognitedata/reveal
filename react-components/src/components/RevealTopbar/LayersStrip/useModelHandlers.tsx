@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';
 import {
-  Cognite3DViewer,
+  type Cognite3DViewer,
   type CogniteCadModel,
   type CogniteModel,
   type CognitePointCloudModel,
@@ -70,9 +70,11 @@ function createHandlers(
   image360Collections: Image360Collection[],
   viewer: Cognite3DViewer
 ): ModelLayerHandlers {
-  const is360CollectionCurrentlyEntered = (collection: Image360Collection) =>
+  const is360CollectionCurrentlyEntered = (collection: Image360Collection): boolean =>
     viewer.getCurrentlyEntered360Image()?.image360Collection === collection;
-  const exit360Image = () => viewer.exit360Image();
+  const exit360Image = (): void => {
+    viewer.exit360Image();
+  };
 
   return {
     cadHandlers: models
