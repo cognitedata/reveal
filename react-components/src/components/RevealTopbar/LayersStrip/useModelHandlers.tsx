@@ -71,7 +71,7 @@ function createHandlers(
   viewer: Cognite3DViewer
 ): ModelLayerHandlers {
   const is360CollectionCurrentlyEntered = (collection: Image360Collection): boolean =>
-    viewer.getCurrentlyEntered360Image()?.image360Collection === collection;
+    viewer.getActive360ImageInfo()?.image360Collection === collection;
   const exit360Image = (): void => {
     viewer.exit360Image();
   };
