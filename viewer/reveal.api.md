@@ -1679,7 +1679,7 @@ export type PointerEventData = {
 // @public
 export type PointerEventDelegate = (event: PointerEventData) => void;
 
-// @public
+// @beta
 export class PointerEvents {
     // (undocumented)
     get isEnabled(): boolean;
@@ -1697,7 +1697,7 @@ export class PointerEvents {
     onPointerUp(_event: PointerEvent, _leftButton: boolean): Promise<void>;
 }
 
-// @public
+// @beta
 export class PointerEventsTarget {
     constructor(domElement: HTMLElement, events: PointerEvents);
     // (undocumented)
