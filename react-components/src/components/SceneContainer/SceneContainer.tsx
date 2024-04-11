@@ -1,8 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useEffect, type ReactElement } from 'react';
-import { Reveal3DResources, useSceneDefaultCamera } from '../..';
+import { type ReactElement } from 'react';
 import {
   type Image360AssetStylingGroup,
   type AssetStylingGroup,
@@ -12,6 +11,7 @@ import {
 import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesFromScene';
 import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
 import { useSkyboxFromScene } from '../../hooks/useSkyboxFromScene';
+import { Reveal3DResources } from '../Reveal3DResources/Reveal3DResources';
 
 export type SceneContainerProps = {
   sceneExternalId: string;
@@ -32,13 +32,8 @@ export function SceneContainer({
 }: SceneContainerProps): ReactElement {
   const resourceOptions = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
 
-  const defaultCamera = useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
   useGroundPlaneFromScene(sceneExternalId, sceneSpaceId);
   useSkyboxFromScene(sceneExternalId, sceneSpaceId);
-
-  useEffect(() => {
-    defaultCamera.fitCameraToSceneDefault();
-  }, [sceneExternalId, sceneSpaceId, defaultCamera]);
 
   return (
     <Reveal3DResources

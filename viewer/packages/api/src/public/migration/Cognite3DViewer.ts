@@ -46,7 +46,7 @@ import {
   RenderParameters
 } from './types';
 import { RevealManager } from '../RevealManager';
-import { CogniteModel } from '../types';
+import { CogniteModel, Image360WithCollection } from '../types';
 import { RevealOptions } from '../RevealOptions';
 
 import { Spinner } from '../../utilities/Spinner';
@@ -880,6 +880,13 @@ export class Cognite3DViewer {
    */
   get360ImageCollections(): Image360Collection[] {
     return this._image360ApiHelper?.getImageCollections() ?? [];
+  }
+
+  /**
+   * Returns the currently entered 360 image.
+   */
+  getActive360ImageInfo(): Image360WithCollection | undefined {
+    return this._image360ApiHelper?.getCurrentlyEnteredImageInfo();
   }
 
   /**
