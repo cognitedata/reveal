@@ -419,7 +419,7 @@ export class FlexibleControls {
     if (isMouse(event)) {
       await this.onMouseDown(event, leftButton);
     } else if (isTouch(event)) {
-      this.onTouchStart(event);
+      this.onTouchDown(event);
     }
   }
 
@@ -513,10 +513,10 @@ export class FlexibleControls {
     event.preventDefault();
 
     const pixelCoords = getClickOrTouchEventPoint(event, this._domElement);
-    const delta = getWheelDelta(event);
 
     await this.setScrollCursorByWheelEventCoords(pixelCoords);
 
+    const delta = getWheelDelta(event);
     if (this._camera instanceof PerspectiveCamera) {
       const normalizedCoords = getNormalizedPixelCoordinates(this._domElement, pixelCoords.x, pixelCoords.y);
       if (this.isStationary) {
@@ -532,8 +532,10 @@ export class FlexibleControls {
     }
   };
 
-  private onTouchStart(event: PointerEvent) {
-    if (!this.isEnabled) return;
+  private onTouchDown(event: PointerEvent) {
+    if (!this.isEnabled) {
+      return;
+    }
     this._touchEvents.push(event);
     event.preventDefault();
     this._cameraVector.synchronizeEnd();
