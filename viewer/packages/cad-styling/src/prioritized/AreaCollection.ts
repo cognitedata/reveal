@@ -12,7 +12,7 @@
  * representative set covers too much area that is not part
  * of the inserted boxes
  */
-export interface AreaCollection {
+export type AreaCollection = {
   readonly isEmpty: boolean;
 
   /**
@@ -41,4 +41,4 @@ export interface AreaCollection {
    * A and B, and will thus be a valid representative set for the intersection of A and B.
    */
   intersectWith(boxes: Iterable<THREE.Box3>): void;
-}
+};

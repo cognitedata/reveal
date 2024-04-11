@@ -14,22 +14,15 @@ const Reveal3DResourcesCountContext = createContext<Reveal3DResourcesCountConten
 export const useReveal3DResourcesCount = (): Reveal3DResourcesCountContent => {
   const element = useContext(Reveal3DResourcesCountContext);
   if (element === null) {
-    throw new Error(
-      'useReveal3DResourcesCount must be used within a Reveal3DResourcesCountContextProvider'
-    );
+    throw new Error('useReveal3DResourcesCount must be used within a Reveal3DResourcesCountContextProvider');
   }
   return element;
 };
 
-export const Reveal3DResourcesCountContextProvider = ({
-  children
-}: {
-  children: ReactNode;
-}): ReactElement => {
+export const Reveal3DResourcesCountContextProvider = ({ children }: { children: ReactNode }): ReactElement => {
   const [reveal3DResourcesCount, setRevealResourcesCount] = useState<number>(0);
   return (
-    <Reveal3DResourcesCountContext.Provider
-      value={{ reveal3DResourcesCount, setRevealResourcesCount }}>
+    <Reveal3DResourcesCountContext.Provider value={{ reveal3DResourcesCount, setRevealResourcesCount }}>
       {children}
     </Reveal3DResourcesCountContext.Provider>
   );

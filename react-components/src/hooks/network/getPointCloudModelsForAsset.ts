@@ -31,10 +31,7 @@ export async function getPointCloudModelsForAsset(
 
   for (const modelChunk of modelChunks) {
     const revisionItems = await Promise.all(
-      modelChunk.map(
-        async (modelId) =>
-          await sdk.revisions3D.list(modelId, { limit: 1 }).autoPagingToArray({ limit: 1 })
-      )
+      modelChunk.map(async modelId => await sdk.revisions3D.list(modelId, { limit: 1 }).autoPagingToArray({ limit: 1 }))
     );
 
     revisionList.push(...revisionItems.flat());

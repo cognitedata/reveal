@@ -6,11 +6,7 @@ import { type ReactElement, useState, useEffect, useMemo, useRef, type RefObject
 import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type Reveal3DResourcesLayerStates } from './LayersContainer/types';
 import LayersContainer from './LayersContainer/LayersContainer';
-import {
-  type CognitePointCloudModel,
-  type CogniteCadModel,
-  type Image360Collection
-} from '@cognite/reveal';
+import { type CognitePointCloudModel, type CogniteCadModel, type Image360Collection } from '@cognite/reveal';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { use3DModelName } from '../../query/use3DModelName';
 import { isEqual } from 'lodash';
@@ -33,18 +29,17 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
   const [cadModelIds, setCadModelIds] = useState<number[]>([]);
   const [pointCloudModelIds, setPointCloudModelIds] = useState<number[]>([]);
 
-  const [reveal3DResourcesLayerData, setReveal3DResourcesLayerData] =
-    useState<Reveal3DResourcesLayerStates>({
-      cadLayerData: [],
-      pointCloudLayerData: [],
-      image360LayerData: []
-    });
+  const [reveal3DResourcesLayerData, setReveal3DResourcesLayerData] = useState<Reveal3DResourcesLayerStates>({
+    cadLayerData: [],
+    pointCloudLayerData: [],
+    image360LayerData: []
+  });
 
   const cadModelName = use3DModelName(cadModelIds);
   const pointCloudModelName = use3DModelName(pointCloudModelIds);
 
   const showLayers = (): void => {
-    setVisible((prevState) => !prevState);
+    setVisible(prevState => !prevState);
   };
 
   const useOutsideClick = (ref: RefObject<HTMLElement | null>): void => {
@@ -68,10 +63,8 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
 
   useEffect(() => {
     // Compare the previous and current models to avoid infinite loop
-    const cadIds = models.filter((model) => model.type === 'cad').map((model) => model.modelId);
-    const pointCloudIds = models
-      .filter((model) => model.type === 'pointcloud')
-      .map((model) => model.modelId);
+    const cadIds = models.filter(model => model.type === 'cad').map(model => model.modelId);
+    const pointCloudIds = models.filter(model => model.type === 'pointcloud').map(model => model.modelId);
 
     // Only update the state when the modelIds change
     if (!isEqual(cadModelIds, cadIds)) {
@@ -99,9 +92,9 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
       .map((model, index) => fillPointCloudLayerData(model, index));
     const updatedImage360LayerData = viewer
       .get360ImageCollections()
-      .map((image36Collection) => fillImage360LayerData(image36Collection));
+      .map(image36Collection => fillImage360LayerData(image36Collection));
 
-    updatedImage360LayerData.forEach((image360LayerData) => {
+    updatedImage360LayerData.forEach(image360LayerData => {
       subcribe360ImageEnterExitMode(image360LayerData);
     });
 
@@ -109,7 +102,7 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
       cadModel: CogniteCadModel,
       index: number
     ): { model: CogniteCadModel; isToggled: boolean; name: string } {
-      const urlLayerState = cadLayers?.find((layer) => layer.index === index);
+      const urlLayerState = cadLayers?.find(layer => layer.index === index);
       urlLayerState !== undefined && (cadModel.visible = urlLayerState.applied);
 
       return {
@@ -123,9 +116,8 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
       pointCloudModel: CognitePointCloudModel,
       index: number
     ): { model: CognitePointCloudModel; isToggled: boolean; name: string } {
-      const urlLayerState = pointCloudLayers?.find((layer) => layer.index === index);
-      urlLayerState !== undefined &&
-        pointCloudModel.setDefaultPointCloudAppearance({ visible: urlLayerState.applied });
+      const urlLayerState = pointCloudLayers?.find(layer => layer.index === index);
+      urlLayerState !== undefined && pointCloudModel.setDefaultPointCloudAppearance({ visible: urlLayerState.applied });
 
       return {
         model: pointCloudModel,
@@ -139,7 +131,7 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
       isToggled: boolean;
       isActive: boolean;
     } {
-      const urlLayerState = image360Layers?.find((layer) => layer.siteId === image360Collection.id);
+      const urlLayerState = image360Layers?.find(layer => layer.siteId === image360Collection.id);
       urlLayerState !== undefined && image360Collection.setIconsVisibility(urlLayerState.applied);
 
       return {
@@ -177,7 +169,8 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
     <CogsTooltip
       content={t('LAYERS_FILTER_TOOLTIP', 'Filter 3D resource layers')}
       placement="right"
-      appendTo={document.body}>
+      appendTo={document.body}
+    >
       <Dropdown
         appendTo={viewer.domElement ?? document.body}
         content={
@@ -190,7 +183,8 @@ export const LayersButton = ({ storeStateInUrl = true }: LayersButtonProps): Rea
           />
         }
         visible={visible}
-        placement="right-start">
+        placement="right-start"
+      >
         <Button
           ref={ref}
           type="ghost"

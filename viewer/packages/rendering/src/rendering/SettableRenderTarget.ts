@@ -5,6 +5,6 @@
 /**
  * Interface for allowing render targets in renderPipelines to be changed dynamicaly in RevealManager.
  */
-export interface SettableRenderTarget {
+export type SettableRenderTarget = {
   setOutputRenderTarget(target: THREE.WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void;
-}
+};

@@ -2,15 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  useEffect,
-  useRef,
-  type ReactElement,
-  type RefObject,
-  useState,
-  useCallback,
-  type CSSProperties
-} from 'react';
+import { useEffect, useRef, type ReactElement, type RefObject, useState, useCallback, type CSSProperties } from 'react';
 import { Vector2, type Vector3 } from 'three';
 
 import { useReveal } from '../RevealCanvas/ViewerContext';
@@ -60,7 +52,8 @@ export const ViewerAnchor = ({
         position: 'absolute',
         left: '0px',
         top: '0px'
-      }}>
+      }}
+    >
       {children}
     </div>
   ) : (
@@ -93,10 +86,7 @@ function usePointProjection(
   useEffect(() => {
     viewer.cameraManager.on('cameraChange', cameraChanged);
 
-    cameraChanged(
-      viewer.cameraManager.getCameraState().position,
-      viewer.cameraManager.getCameraState().target
-    );
+    cameraChanged(viewer.cameraManager.getCameraState().position, viewer.cameraManager.getCameraState().target);
 
     return () => {
       viewer.cameraManager.off('cameraChange', cameraChanged);
@@ -174,10 +164,7 @@ function computeNewStickyCompensation(
     maxYTranslation - uncompensatedLocalRect.top
   );
 
-  Math.min(
-    maxXTranslation - uncompensatedLocalRect.left,
-    Math.max(minXTranslation - uncompensatedLocalRect.left, 0)
-  );
+  Math.min(maxXTranslation - uncompensatedLocalRect.left, Math.max(minXTranslation - uncompensatedLocalRect.left, 0));
 
   return newStickyCompensation;
 }

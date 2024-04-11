@@ -27,7 +27,7 @@ export function use3dRelatedEdgeConnections(
         }
       });
 
-      const nodeIds = nodesResult.items.connected_objects_with_3d.map((obj) => ({
+      const nodeIds = nodesResult.items.connected_objects_with_3d.map(obj => ({
         instanceType: 'node' as const,
         externalId: obj.externalId,
         space: obj.space

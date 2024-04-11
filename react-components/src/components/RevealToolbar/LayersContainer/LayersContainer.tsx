@@ -23,7 +23,7 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
 
   useEffect(() => {
     const { cadLayerData, pointCloudLayerData, image360LayerData } = layersContainerState;
-    const cadLayers = cadLayerData.map((data) => {
+    const cadLayers = cadLayerData.map(data => {
       const index = viewer.models.indexOf(data.model);
       return {
         revisionId: data.model.revisionId,
@@ -31,7 +31,7 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
         index
       };
     });
-    const pointCloudLayers = pointCloudLayerData.map((data) => {
+    const pointCloudLayers = pointCloudLayerData.map(data => {
       const index = viewer.models.indexOf(data.model);
       return {
         revisionId: data.model.revisionId,
@@ -40,7 +40,7 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
       };
     });
 
-    const image360Layers = image360LayerData.map((data) => {
+    const image360Layers = image360LayerData.map(data => {
       return {
         siteId: data.image360.id,
         applied: data.isToggled
@@ -60,25 +60,24 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
           <StyledMenu
             onClick={(event: MouseEvent<HTMLElement>) => {
               event.stopPropagation();
-            }}>
+            }}
+          >
             <CadModelLayersContainer
               layerProps={props}
               onChange={(cadLayerData: Reveal3DResourcesLayerStates['cadLayerData']) => {
-                setLayersContainerState((prev) => ({ ...prev, cadLayerData }));
+                setLayersContainerState(prev => ({ ...prev, cadLayerData }));
               }}
             />
             <PointCloudLayersContainer
               layerProps={props}
-              onChange={(
-                pointCloudLayerData: Reveal3DResourcesLayerStates['pointCloudLayerData']
-              ) => {
-                setLayersContainerState((prev) => ({ ...prev, pointCloudLayerData }));
+              onChange={(pointCloudLayerData: Reveal3DResourcesLayerStates['pointCloudLayerData']) => {
+                setLayersContainerState(prev => ({ ...prev, pointCloudLayerData }));
               }}
             />
             <Image360CollectionLayerContainer
               layerProps={props}
               onChange={(image360LayerData: Reveal3DResourcesLayerStates['image360LayerData']) => {
-                setLayersContainerState((prev) => ({ ...prev, image360LayerData }));
+                setLayersContainerState(prev => ({ ...prev, image360LayerData }));
               }}
             />
           </StyledMenu>

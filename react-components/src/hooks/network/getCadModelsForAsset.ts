@@ -10,10 +10,7 @@ export type CadModelNode = {
   nodeId: number;
 };
 
-export async function getCadModelsForAsset(
-  assetId: number,
-  sdk: CogniteClient
-): Promise<TaggedAdd3DModelOptions[]> {
+export async function getCadModelsForAsset(assetId: number, sdk: CogniteClient): Promise<TaggedAdd3DModelOptions[]> {
   const result = await sdk.get<{ items: CadModelNode[] }>(
     `api/v1/projects/${sdk.project}/3d/mappings/${assetId}/modelnodes`,
     {

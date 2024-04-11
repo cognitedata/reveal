@@ -1,6 +1,6 @@
 import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
-export interface IVisibilityUpdateResult {
+export type IVisibilityUpdateResult = {
   visibleNodes: IPointCloudTreeNodeBase[];
   numVisiblePoints: number;
   /**
@@ -16,4 +16,4 @@ export interface IVisibilityUpdateResult {
    * Promises for loading nodes, will reject when loading fails.
    */
   nodeLoadPromises: Promise<void>[];
-}
+};

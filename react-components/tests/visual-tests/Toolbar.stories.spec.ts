@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { test, expect } from '@playwright/test';
 import { loadStory } from './utils/loadStory';
 
@@ -8,7 +11,7 @@ test('cad model container storybook', async ({ page }) => {
   await page.locator('button[aria-label="Slice models"]').first().click();
 
   // Wait for the camera to move
-  await new Promise((resolve) => setTimeout(resolve, 2100));
+  await new Promise(resolve => setTimeout(resolve, 2100));
 
   await expect(page).toHaveScreenshot();
 });

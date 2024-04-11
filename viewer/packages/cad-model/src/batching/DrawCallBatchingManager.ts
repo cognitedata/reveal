@@ -4,8 +4,8 @@
 
 import { ParsedGeometry } from '@reveal/sector-parser';
 
-export interface DrawCallBatchingManager {
+export type DrawCallBatchingManager = {
   batchGeometries(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void;
   removeSectorBatches(sectorId: number): void;
   dispose(): void;
-}
+};

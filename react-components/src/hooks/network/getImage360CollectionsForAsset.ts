@@ -23,9 +23,9 @@ export async function getImage360CollectionsForAsset(
 
   const fileInfos = await sdk.files.retrieve(idEithers, { ignoreUnknownIds: true });
 
-  const siteIds = uniq(fileInfos.map((fileInfo) => fileInfo?.metadata?.site_id)).filter(isDefined);
+  const siteIds = uniq(fileInfos.map(fileInfo => fileInfo?.metadata?.site_id)).filter(isDefined);
 
-  return siteIds.map((siteId) => ({ type: 'image360', addOptions: { siteId } }));
+  return siteIds.map(siteId => ({ type: 'image360', addOptions: { siteId } }));
 }
 
 function isIdEither(ref: AnnotationsAssetRef): ref is IdEither {

@@ -40,7 +40,7 @@ export type RenderParameters = {
 /**
  * @module @cognite/reveal
  */
-export interface Cognite3DViewerOptions {
+export type Cognite3DViewerOptions = {
   /** Initialized connection to CDF used to load data. */
   sdk: CogniteClient;
 
@@ -194,18 +194,18 @@ export interface Cognite3DViewerOptions {
    * @beta
    */
   useFlexibleCameraManager?: boolean;
-}
+};
 
 /**
  * @module @cognite/reveal
  */
-export interface AddModelOptions {
+export type AddModelOptions = {
   modelId: number;
   revisionId: number;
   // if you need to access local files, this is where you would specify it.
   localPath?: string;
   geometryFilter?: GeometryFilter;
-}
+};
 
 export type AddImage360Options = {
   /**

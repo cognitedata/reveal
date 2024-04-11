@@ -59,7 +59,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
     () =>
       data
         ?.get(`${platformModelOptions.modelId}/${platformModelOptions.revisionId}`)
-        ?.map((edgeWithNode) => edgeWithNode.edge.properties.revisionNodeId),
+        ?.map(edgeWithNode => edgeWithNode.edge.properties.revisionNodeId),
     [data]
   );
 
@@ -78,9 +78,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
             {
               nodeIds: newNodeIds.slice(0, newNodeIds.length / 2),
               style: {
-                color: new Color().setFromVector3(
-                  new Vector3(Math.random(), Math.random(), Math.random())
-                ),
+                color: new Color().setFromVector3(new Vector3(Math.random(), Math.random(), Math.random())),
                 prioritizedForLoadingHint: 5
               }
             }
@@ -119,11 +117,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
 
   return (
     <>
-      <CadModelContainer
-        addModelOptions={platformModelOptions}
-        styling={platformStyling}
-        onLoad={onModelLoaded}
-      />
+      <CadModelContainer addModelOptions={platformModelOptions} styling={platformStyling} onLoad={onModelLoaded} />
     </>
   );
 };

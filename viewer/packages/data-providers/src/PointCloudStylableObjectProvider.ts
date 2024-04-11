@@ -5,6 +5,6 @@
 import { ModelIdentifier } from './ModelIdentifier';
 import { PointCloudObject } from './pointcloud-stylable-object-providers/types';
 
-export interface PointCloudStylableObjectProvider {
+export type PointCloudStylableObjectProvider = {
   getPointCloudObjects(modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]>;
-}
+};

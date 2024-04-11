@@ -6,11 +6,7 @@ import { type ReactElement, useEffect, useState, useCallback } from 'react';
 
 import { SegmentedControl, Tooltip as CogsTooltip, type IconType, Button } from '@cognite/cogs.js';
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import {
-  type CameraManager,
-  FlexibleControlsType,
-  type IFlexibleCameraManager
-} from '@cognite/reveal';
+import { type CameraManager, FlexibleControlsType, type IFlexibleCameraManager } from '@cognite/reveal';
 
 import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
@@ -35,10 +31,7 @@ export function SetOrbitOrFirstPersonControlsType(
   return SetFlexibleControlsType({ ...props, includeOrbitInCenter: false });
 }
 
-export function SetFlexibleControlsType({
-  includeOrbitInCenter,
-  orientation
-}: CustomSettingsProps): ReactElement {
+export function SetFlexibleControlsType({ includeOrbitInCenter, orientation }: CustomSettingsProps): ReactElement {
   const viewer = useReveal();
   const flexibleCameraManager = asFlexibleCameraManager(viewer.cameraManager);
   const { t: translate } = useTranslation();
@@ -114,12 +107,13 @@ const ButtonsControlTypeSelector = ({
 }: ControlTypeSelectionProps): ReactElement => {
   return (
     <ButtonsContainer>
-      {options.map((controlType) => (
+      {options.map(controlType => (
         <CogsTooltip
           content={getLabel(translateDelegate, controlType)}
           placement="right"
           appendTo={document.body}
-          key={controlType}>
+          key={controlType}
+        >
           <Button
             type="ghost"
             icon={getIcon(controlType)}
@@ -127,7 +121,8 @@ const ButtonsControlTypeSelector = ({
             aria-label={getLabel(translateDelegate, controlType)}
             onClick={() => {
               setSelectedControlsType(controlType);
-            }}></Button>
+            }}
+          ></Button>
         </CogsTooltip>
       ))}
     </ButtonsContainer>
@@ -143,14 +138,16 @@ const SegmentedControlTypeSelector = ({
   <CogsTooltip
     content={translateDelegate('CONTROLS_TYPE_TOOLTIP', 'Set Camera to Orbit or Fly mode')}
     placement="right"
-    appendTo={document.body}>
+    appendTo={document.body}
+  >
     <SegmentedControl
       onButtonClicked={(controlsType: FlexibleControlsType) => {
         setSelectedControlsType(controlsType);
       }}
       currentKey={selectedControlsType}
-      fullWidth>
-      {options.map((controlsType) => (
+      fullWidth
+    >
+      {options.map(controlsType => (
         <SegmentedControl.Button key={controlsType} icon={getIcon(controlsType)}>
           {getLabel(translateDelegate, controlsType)}
         </SegmentedControl.Button>

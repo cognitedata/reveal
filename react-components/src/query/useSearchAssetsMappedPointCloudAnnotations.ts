@@ -44,7 +44,7 @@ export const useSearchAssetsMappedPointCloudAnnotations = (
       }
 
       const filteredSearchedAssets =
-        assetMappings?.filter((asset) => {
+        assetMappings?.filter(asset => {
           const isInName = asset.name.toLowerCase().includes(query.toLowerCase());
           const isInDescription = asset.description?.toLowerCase().includes(query.toLowerCase());
 
@@ -60,11 +60,8 @@ export const useSearchAssetsMappedPointCloudAnnotations = (
   );
 };
 
-async function getAssetsMappedPointCloudAnnotations(
-  sdk: CogniteClient,
-  models: AddModelOptions[]
-): Promise<Asset[]> {
-  const modelIdList = models.map((model) => model.modelId);
+async function getAssetsMappedPointCloudAnnotations(sdk: CogniteClient, models: AddModelOptions[]): Promise<Asset[]> {
+  const modelIdList = models.map(model => model.modelId);
   const pointCloudAnnotations = await getPointCloudAnnotations(modelIdList, sdk);
   const result = await getPointCloudAnnotationAssets(pointCloudAnnotations, sdk);
 
@@ -78,7 +75,7 @@ async function getPointCloudAnnotationAssets(
   // TODO: Replace the check for assetRef similar to Point Cloud Asset Styling
   const annotationMapping = pointCloudAnnotations
     .map(
-      (annotation) =>
+      annotation =>
         (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
         (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId
     )
@@ -87,9 +84,9 @@ async function getPointCloudAnnotationAssets(
   const uniqueAnnotationMapping = uniq(annotationMapping);
 
   const assets = await Promise.all(
-    chunk(uniqueAnnotationMapping, 1000).map(async (uniqueAssetsChunk) => {
+    chunk(uniqueAnnotationMapping, 1000).map(async uniqueAssetsChunk => {
       const retrievedAssets = await sdk.assets.retrieve(
-        uniqueAssetsChunk.map((assetId) => {
+        uniqueAssetsChunk.map(assetId => {
           if (typeof assetId === 'number') {
             return { id: assetId };
           } else {
@@ -105,14 +102,11 @@ async function getPointCloudAnnotationAssets(
   return assets.flat();
 }
 
-async function getPointCloudAnnotations(
-  modelIdList: number[],
-  sdk: CogniteClient
-): Promise<AnnotationModel[]> {
+async function getPointCloudAnnotations(modelIdList: number[], sdk: CogniteClient): Promise<AnnotationModel[]> {
   const annotationArray = await Promise.all(
-    chunk(modelIdList, 1000).map(async (modelIdList) => {
+    chunk(modelIdList, 1000).map(async modelIdList => {
       const filter: AnnotationFilterProps = {
-        annotatedResourceIds: modelIdList.map((id) => ({ id })),
+        annotatedResourceIds: modelIdList.map(id => ({ id })),
         annotatedResourceType: 'threedmodel',
         annotationType: 'pointcloud.BoundingVolume'
       };
@@ -126,5 +120,5 @@ async function getPointCloudAnnotations(
     })
   );
 
-  return annotationArray.flatMap((annotations) => annotations);
+  return annotationArray.flatMap(annotations => annotations);
 }

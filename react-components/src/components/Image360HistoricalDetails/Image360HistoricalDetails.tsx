@@ -41,10 +41,8 @@ export const Image360HistoricalDetails = ({
     const fetchRevisionCollection = async (): Promise<void> => {
       if (image360Entity !== undefined) {
         const revisions = image360Entity.getRevisions();
-        const revisionDates = revisions.map((revision) => revision.date);
-        const imageDatas = await Promise.all(
-          revisions.map(async (revision) => await revision.getPreviewThumbnailUrl())
-        );
+        const revisionDates = revisions.map(revision => revision.date);
+        const imageDatas = await Promise.all(revisions.map(async revision => await revision.getPreviewThumbnailUrl()));
         setImageUrls(imageDatas);
 
         const collection = revisionDates.map((date, index) => {
@@ -66,7 +64,7 @@ export const Image360HistoricalDetails = ({
 
     return () => {
       // Remove image URLs
-      imageUrls.forEach((url) => {
+      imageUrls.forEach(url => {
         if (url !== undefined) {
           URL.revokeObjectURL(url);
         }

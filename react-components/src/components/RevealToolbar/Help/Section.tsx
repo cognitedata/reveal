@@ -4,20 +4,9 @@
 
 import { type ReactElement } from 'react';
 import { type HelpSectionProps } from './types';
-import {
-  SectionContainer,
-  SectionTitle,
-  SectionSubTitle,
-  InstructionDetail,
-  SectionContent
-} from './elements';
+import { SectionContainer, SectionTitle, SectionSubTitle, InstructionDetail, SectionContent } from './elements';
 
-export const Section = ({
-  children,
-  title,
-  description,
-  subTitle
-}: HelpSectionProps): ReactElement => (
+export const Section = ({ children, title, description, subTitle }: HelpSectionProps): ReactElement => (
   <SectionContainer>
     <SectionTitle>{title}</SectionTitle>
     <SectionSubTitle>{subTitle}</SectionSubTitle>

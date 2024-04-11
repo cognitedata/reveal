@@ -11,7 +11,7 @@ import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-th
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { isPointVisibleByPlanes } from '@reveal/utilities';
 
-export interface IntersectPointCloudNodeResult {
+export type IntersectPointCloudNodeResult = {
   /**
    * Distance from camera to intersected point.
    */
@@ -40,7 +40,7 @@ export interface IntersectPointCloudNodeResult {
    * asset reference of the clicked object in the pointcloud, if any.
    */
   assetRef?: AnnotationsAssetRef;
-}
+};
 
 export class PointCloudPickingHandler {
   private readonly _normalized = new THREE.Vector2();

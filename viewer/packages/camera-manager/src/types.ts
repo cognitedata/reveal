@@ -10,7 +10,7 @@ export type ControlsState = {
 /**
  * @internal
  * */
-export interface RevealCameraControls extends THREE.EventDispatcher {
+export type RevealCameraControls = {
   enabled: boolean;
   /**
    * Method for updating controls state
@@ -36,7 +36,7 @@ export interface RevealCameraControls extends THREE.EventDispatcher {
    * Sets scroll target (used for different scrolling mechanics) for controls.
    */
   setScrollTarget: (target: THREE.Vector3) => void;
-}
+} & THREE.EventDispatcher;
 
 export type CameraState = {
   /**

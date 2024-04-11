@@ -3,12 +3,7 @@
  */
 
 import { type Node3D, type CogniteClient, type CogniteExternalId } from '@cognite/sdk';
-import {
-  type Source,
-  type DmsUniqueIdentifier,
-  type EdgeItem,
-  type FdmSDK
-} from '../../utilities/FdmSDK';
+import { type Source, type DmsUniqueIdentifier, type EdgeItem, type FdmSDK } from '../../utilities/FdmSDK';
 import { RevisionFdmNodeCache } from './RevisionFdmNodeCache';
 import {
   type FdmEdgeWithNode,
@@ -22,12 +17,7 @@ import {
   type FdmKey,
   type FdmNodeDataPromises
 } from './types';
-import {
-  createFdmKey,
-  createModelNodeIdKey,
-  createModelRevisionKey,
-  revisionKeyToIds
-} from './idAndKeyTranslation';
+import { createFdmKey, createModelNodeIdKey, createModelRevisionKey, revisionKeyToIds } from './idAndKeyTranslation';
 import {
   type InModel3dEdgeProperties,
   SYSTEM_3D_EDGE_SOURCE,
@@ -57,18 +47,12 @@ export class FdmNodeCache {
     externalIds: DmsUniqueIdentifier[],
     modelRevisionIds: ModelRevisionId[]
   ): Promise<ThreeDModelFdmMappings[]> {
-    const [cachedModelRevisionIds, nonCachedModelRevisionIds] = partition(
-      modelRevisionIds,
-      (id) => {
-        const revisionKey = createModelRevisionKey(id.modelId, id.revisionId);
-        return this._completeRevisions.has(revisionKey);
-      }
-    );
+    const [cachedModelRevisionIds, nonCachedModelRevisionIds] = partition(modelRevisionIds, id => {
+      const revisionKey = createModelRevisionKey(id.modelId, id.revisionId);
+      return this._completeRevisions.has(revisionKey);
+    });
 
-    const nonCachedModelMappings = await this.getNonCachedModelMappings(
-      externalIds,
-      nonCachedModelRevisionIds
-    );
+    const nonCachedModelMappings = await this.getNonCachedModelMappings(externalIds, nonCachedModelRevisionIds);
 
     const cachedModelMappings = this.getCachedModelMappings(cachedModelRevisionIds, externalIds);
 
@@ -80,11 +64,9 @@ export class FdmNodeCache {
     modelRevisionIds: ModelRevisionId[],
     externalIds: DmsUniqueIdentifier[]
   ): ThreeDModelFdmMappings[] {
-    const inputExternalIdSet = new Set<FdmKey>(
-      externalIds.map((id) => createFdmKey(id.space, id.externalId))
-    );
+    const inputExternalIdSet = new Set<FdmKey>(externalIds.map(id => createFdmKey(id.space, id.externalId)));
 
-    return modelRevisionIds.map((modelRevisionId) => {
+    return modelRevisionIds.map(modelRevisionId => {
       return this.getCachedModelMappingForRevision(modelRevisionId, inputExternalIdSet);
     });
   }
@@ -93,18 +75,12 @@ export class FdmNodeCache {
     modelRevisionId: ModelRevisionId,
     relevantFdmKeySet: Set<FdmKey>
   ): ThreeDModelFdmMappings {
-    const revisionCache = this.getOrCreateRevisionCache(
-      modelRevisionId.modelId,
-      modelRevisionId.revisionId
-    );
+    const revisionCache = this.getOrCreateRevisionCache(modelRevisionId.modelId, modelRevisionId.revisionId);
 
-    const relevantCachedEdgeData = intersectWithStartNodeIdSet(
-      revisionCache.getAllEdges(),
-      relevantFdmKeySet
-    );
+    const relevantCachedEdgeData = intersectWithStartNodeIdSet(revisionCache.getAllEdges(), relevantFdmKeySet);
 
     const mappings = createMapWithAccumulatedValues(
-      relevantCachedEdgeData.map((data) => [data.edge.startNode.externalId, data.cadNode])
+      relevantCachedEdgeData.map(data => [data.edge.startNode.externalId, data.cadNode])
     );
 
     return {
@@ -121,7 +97,7 @@ export class FdmNodeCache {
       return [];
     }
 
-    const fdmKeySet = new Set(uniqueIds.map((id) => createFdmKey(id.space, id.externalId)));
+    const fdmKeySet = new Set(uniqueIds.map(id => createFdmKey(id.space, id.externalId)));
 
     const revisionToEdgesMap = await this.getAndCacheRevisionToEdgesMap(modelRevisions, false);
 
@@ -129,11 +105,7 @@ export class FdmNodeCache {
       const revisionKey = createModelRevisionKey(modelId, revisionId);
       const edges = revisionToEdgesMap.get(revisionKey);
 
-      return this.getRelevantExternalIdToNodeMapForRevision(
-        { modelId, revisionId },
-        edges,
-        fdmKeySet
-      );
+      return this.getRelevantExternalIdToNodeMapForRevision({ modelId, revisionId }, edges, fdmKeySet);
     });
 
     return await Promise.all(modelDataPromises);
@@ -150,7 +122,7 @@ export class FdmNodeCache {
     const relevantEdges = intersectWithStartNodeIdSet(edges, relevantFdmKeySet);
 
     const externalIdToNodeMap = createMapWithAccumulatedValues(
-      relevantEdges.map((edge) => [edge.edge.startNode.externalId, edge.cadNode])
+      relevantEdges.map(edge => [edge.edge.startNode.externalId, edge.cadNode])
     );
 
     return {
@@ -164,7 +136,7 @@ export class FdmNodeCache {
     modelRevisionIds: ModelRevisionId[],
     fetchViews: boolean = false
   ): Promise<ModelRevisionToEdgeMap> {
-    const [cachedRevisionIds, nonCachedRevisionIds] = partition(modelRevisionIds, (ids) => {
+    const [cachedRevisionIds, nonCachedRevisionIds] = partition(modelRevisionIds, ids => {
       const key = createModelRevisionKey(ids.modelId, ids.revisionId);
       return this._completeRevisions.has(key);
     });
@@ -173,12 +145,9 @@ export class FdmNodeCache {
       await this.fetchAllViewsForCachedRevisions(cachedRevisionIds);
     }
 
-    const cachedEdges = cachedRevisionIds.map((id) => this.getCachedEdgesForRevision(id));
+    const cachedEdges = cachedRevisionIds.map(id => this.getCachedEdgesForRevision(id));
 
-    const revisionToEdgesMap = await this.getAndCacheRevisionToEdgesMap(
-      nonCachedRevisionIds,
-      fetchViews
-    );
+    const revisionToEdgesMap = await this.getAndCacheRevisionToEdgesMap(nonCachedRevisionIds, fetchViews);
 
     cachedEdges.forEach(([revisionKey, edges]) => {
       revisionToEdgesMap.set(revisionKey, edges);
@@ -217,7 +186,7 @@ export class FdmNodeCache {
       const [modelId, revisionId] = revisionKeyToIds(revisionKey);
       const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
 
-      data.forEach((edgeAndNode) => {
+      data.forEach(edgeAndNode => {
         revisionCache.insertTreeIndexMappings(edgeAndNode.cadNode.treeIndex, edgeAndNode);
       });
 
@@ -229,12 +198,10 @@ export class FdmNodeCache {
     modelRevisionIds: ModelRevisionId[],
     fetchViews: boolean
   ): Promise<Map<ModelRevisionKey, FdmEdgeWithNode[]>> {
-    const revisionIds = modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId);
+    const revisionIds = modelRevisionIds.map(modelRevisionId => modelRevisionId.revisionId);
     const edges = await this.getEdgesForRevisions(revisionIds, this._fdmClient);
 
-    const edgesWithOptionalViews = fetchViews
-      ? await this.getViewsForEdges(edges)
-      : edges.map((edge) => ({ edge }));
+    const edgesWithOptionalViews = fetchViews ? await this.getViewsForEdges(edges) : edges.map(edge => ({ edge }));
 
     const revisionToEdgesMap = await createRevisionToEdgesMap(
       edgesWithOptionalViews,
@@ -247,22 +214,16 @@ export class FdmNodeCache {
     return revisionToEdgesMap;
   }
 
-  public getClosestParentDataPromises(
-    modelId: number,
-    revisionId: number,
-    treeIndex: number
-  ): FdmNodeDataPromises {
+  public getClosestParentDataPromises(modelId: number, revisionId: number, treeIndex: number): FdmNodeDataPromises {
     const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
 
     return revisionCache.getClosestParentFdmData(treeIndex);
   }
 
-  private async getViewsForEdges(
-    edges: FdmCadEdge[]
-  ): Promise<Array<{ edge: FdmCadEdge; view: Source }>> {
+  private async getViewsForEdges(edges: FdmCadEdge[]): Promise<Array<{ edge: FdmCadEdge; view: Source }>> {
     const nodeInspectionResults = await inspectNodes(
       this._fdmClient,
-      edges.map((edge) => edge.startNode)
+      edges.map(edge => edge.startNode)
     );
 
     const dataWithViews = edges.map((edge, ind) => ({
@@ -286,11 +247,7 @@ export class FdmNodeCache {
         values: revisionIds
       }
     };
-    const mappings = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
-      filter,
-      'edge',
-      SYSTEM_3D_EDGE_SOURCE
-    );
+    const mappings = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(filter, 'edge', SYSTEM_3D_EDGE_SOURCE);
     return mappings.instances;
   }
 
@@ -303,12 +260,7 @@ export class FdmNodeCache {
       return revisionCache;
     }
 
-    const newRevisionCache = new RevisionFdmNodeCache(
-      this._cdfClient,
-      this._fdmClient,
-      modelId,
-      revisionId
-    );
+    const newRevisionCache = new RevisionFdmNodeCache(this._cdfClient, this._fdmClient, modelId, revisionId);
 
     this._revisionNodeCaches.set(revisionKey, newRevisionCache);
 
@@ -322,24 +274,15 @@ async function createRevisionToEdgesMap(
   cdfClient: CogniteClient
 ): Promise<Map<ModelRevisionKey, FdmEdgeWithNode[]>> {
   const revisionToNodeIdsMap = createRevisionToNodeIdMap(edgesWithViews);
-  const modelNodeIdToNodeMap = await createModelNodeIdToNodeMap(
-    revisionToNodeIdsMap,
-    modelRevisionIds,
-    cdfClient
-  );
+  const modelNodeIdToNodeMap = await createModelNodeIdToNodeMap(revisionToNodeIdsMap, modelRevisionIds, cdfClient);
 
   return edgesWithViews.reduce((map, edgeWithView) => {
     const edgeRevisionId = edgeWithView.edge.properties.revisionId;
-    const modelRevisionId = modelRevisionIds.find((p) => p.revisionId === edgeRevisionId);
+    const modelRevisionId = modelRevisionIds.find(p => p.revisionId === edgeRevisionId);
 
     if (modelRevisionId === undefined) return map;
 
-    const value = createFdmEdgeWithNode(
-      modelRevisionId,
-      modelNodeIdToNodeMap,
-      edgeWithView.edge,
-      edgeWithView.view
-    );
+    const value = createFdmEdgeWithNode(modelRevisionId, modelNodeIdToNodeMap, edgeWithView.edge, edgeWithView.view);
 
     insertEdgeIntoMapList(value, map, modelRevisionId);
 
@@ -392,7 +335,7 @@ async function createModelNodeIdToNodeMap(
   const revisionNodeIdToNode = new Map<ModelNodeIdKey, Node3D>();
 
   const nodePromises = [...revisionToNodeIdsMap.entries()].map(async ([revisionId, nodeIds]) => {
-    const modelId = modelRevisionIds.find((p) => p.revisionId === revisionId)?.modelId;
+    const modelId = modelRevisionIds.find(p => p.revisionId === revisionId)?.modelId;
     assert(modelId !== undefined);
 
     const nodes = await fetchNodesForNodeIds(modelId, revisionId, nodeIds, cdfClient);
@@ -425,11 +368,8 @@ function createRevisionToNodeIdMap(
   }, new Map<RevisionId, NodeId[]>());
 }
 
-function intersectWithStartNodeIdSet(
-  edges: FdmEdgeWithNode[],
-  relevantFdmKeySet: Set<FdmKey>
-): FdmEdgeWithNode[] {
-  return edges.filter((edgeData) => {
+function intersectWithStartNodeIdSet(edges: FdmEdgeWithNode[], relevantFdmKeySet: Set<FdmKey>): FdmEdgeWithNode[] {
+  return edges.filter(edgeData => {
     const fdmKey = createFdmKey(edgeData.edge.startNode.space, edgeData.edge.startNode.externalId);
     return relevantFdmKeySet.has(fdmKey);
   });

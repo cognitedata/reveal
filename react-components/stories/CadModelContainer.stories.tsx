@@ -40,11 +40,7 @@ export const Main: Story = {
   render: ({ addModelOptions, transform, styling }) => {
     return (
       <RevealStoryContainer color={new Color(0x4a4a4a)}>
-        <CadModelContainerStoryContent
-          addModelOptions={addModelOptions}
-          styling={styling}
-          transform={transform}
-        />
+        <CadModelContainerStoryContent addModelOptions={addModelOptions} styling={styling} transform={transform} />
       </RevealStoryContainer>
     );
   }

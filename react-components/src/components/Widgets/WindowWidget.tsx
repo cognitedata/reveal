@@ -57,7 +57,7 @@ export const WindowWidget = ({
     if (!isMinimized) {
       setPosition({ x: 0, y: 0 });
     }
-    setIsMinimized((prev) => !prev);
+    setIsMinimized(prev => !prev);
   };
 
   const handleClose = (): void => {
@@ -104,7 +104,8 @@ export const WindowWidget = ({
               right: '10px'
             }
           : {}
-      }>
+      }
+    >
       <Draggable onDrag={handleDrag} position={position} handle=".widget-header">
         <ResizableBox
           width={size.width}
@@ -112,27 +113,18 @@ export const WindowWidget = ({
           minConstraints={[WIDGET_WINDOW_MIN_WIDTH, WIDGET_INSIDE_WINDOW_MIN_HEIGHT]}
           maxConstraints={[parentContainerElement.clientWidth, parentContainerElement.clientHeight]}
           resizeHandles={isMinimized ? [] : ['se', 'ne', 'e', 's']}
-          onResize={handleResize}>
+          onResize={handleResize}
+        >
           <Widget>
             <Widget.Header title={title} type={type} header={header} subtitle={subtitle}>
               <CogsTooltip
-                content={
-                  isMinimized
-                    ? t('WIDGET_WINDOW_EXPAND', 'Expand')
-                    : t('WIDGET_WINDOW_MINIMIZE', 'Minimize')
-                }
+                content={isMinimized ? t('WIDGET_WINDOW_EXPAND', 'Expand') : t('WIDGET_WINDOW_MINIMIZE', 'Minimize')}
                 placement="top"
-                appendTo={document.body}>
-                <Button
-                  type="ghost"
-                  icon={isMinimized ? 'Expand' : 'Collapse'}
-                  onClick={handleExpand}
-                />
+                appendTo={document.body}
+              >
+                <Button type="ghost" icon={isMinimized ? 'Expand' : 'Collapse'} onClick={handleExpand} />
               </CogsTooltip>
-              <CogsTooltip
-                content={t('WIDGET_WINDOW_CLOSE', 'Close')}
-                placement="top"
-                appendTo={document.body}>
+              <CogsTooltip content={t('WIDGET_WINDOW_CLOSE', 'Close')} placement="top" appendTo={document.body}>
                 <Button type="ghost" icon="Close" onClick={handleClose} />
               </CogsTooltip>
             </Widget.Header>

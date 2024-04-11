@@ -42,7 +42,7 @@ export const useMappedEdgesForRevisions = (
     [
       'reveal',
       'react-components',
-      ...modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId.toString()).sort(),
+      ...modelRevisionIds.map(modelRevisionId => modelRevisionId.revisionId.toString()).sort(),
       fetchViews
     ],
     async () => await content.cache.getAllMappingExternalIds(modelRevisionIds, fetchViews),
@@ -58,10 +58,7 @@ export const useFdm3dNodeDataPromises = (
   const content = useFdmNodeCache();
 
   const enableQuery =
-    content !== undefined &&
-    modelId !== undefined &&
-    revisionId !== undefined &&
-    treeIndex !== undefined;
+    content !== undefined && modelId !== undefined && revisionId !== undefined && treeIndex !== undefined;
 
   const result = useQuery(
     ['reveal', 'react-components', 'tree-index-to-external-id', modelId, revisionId, treeIndex],
@@ -101,8 +98,7 @@ export function NodeCacheProvider({ children }: { children?: ReactNode }): React
   const revealKeepAliveData = useRevealKeepAlive();
 
   const fdmCache = useMemo(() => {
-    const cache =
-      revealKeepAliveData?.fdmNodeCache.current ?? new FdmNodeCache(cdfClient, fdmClient);
+    const cache = revealKeepAliveData?.fdmNodeCache.current ?? new FdmNodeCache(cdfClient, fdmClient);
 
     const isRevealKeepAliveContextProvided = revealKeepAliveData !== undefined;
     if (isRevealKeepAliveContextProvided) {
@@ -112,9 +108,5 @@ export function NodeCacheProvider({ children }: { children?: ReactNode }): React
     return cache;
   }, [cdfClient, fdmClient]);
 
-  return (
-    <FdmNodeCacheContext.Provider value={{ cache: fdmCache }}>
-      {children}
-    </FdmNodeCacheContext.Provider>
-  );
+  return <FdmNodeCacheContext.Provider value={{ cache: fdmCache }}>{children}</FdmNodeCacheContext.Provider>;
 }

@@ -1,14 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useMemo,
-  type ReactNode,
-  useCallback
-} from 'react';
+import React, { createContext, useContext, useState, useMemo, type ReactNode, useCallback } from 'react';
 import { type SceneIdentifiers } from './SceneTypes';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 
@@ -37,11 +30,7 @@ export const LoadedSceneProvider: React.FC<{ children: ReactNode }> = ({ childre
     return revealKeepAliveData?.sceneLoadedRef.current ?? scene;
   }, [scene, revealKeepAliveData]);
 
-  return (
-    <LoadedSceneContext.Provider value={{ loadedScene, setScene }}>
-      {children}
-    </LoadedSceneContext.Provider>
-  );
+  return <LoadedSceneContext.Provider value={{ loadedScene, setScene }}>{children}</LoadedSceneContext.Provider>;
 };
 
 export const useLoadedScene = (): LoadedSceneContextType => {

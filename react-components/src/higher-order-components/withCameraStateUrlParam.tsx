@@ -9,9 +9,7 @@ import { type CameraState } from '@cognite/reveal';
 
 type CameraStateTransform = Omit<Required<CameraState>, 'rotation'>;
 
-export function withCameraStateUrlParam<T extends object>(
-  Component: FunctionComponent<T>
-): FunctionComponent<T> {
+export function withCameraStateUrlParam<T extends object>(Component: FunctionComponent<T>): FunctionComponent<T> {
   return function CameraStateUrlParam(props: T): ReactElement {
     const reveal = useReveal();
     const getCameraStateFromUrlParam = useGetCameraStateFromUrlParam();
@@ -42,10 +40,7 @@ export function withCameraStateUrlParam<T extends object>(
     return <Component {...props} />;
   };
 
-  function hasCameraStateChanged(
-    previous: CameraStateTransform,
-    current: CameraStateTransform
-  ): boolean {
+  function hasCameraStateChanged(previous: CameraStateTransform, current: CameraStateTransform): boolean {
     const epsilon = 0.001;
     const { position: previousPosition, target: previousTarget } = previous;
     const { position: currentPosition, target: currentTarget } = current;

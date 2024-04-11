@@ -11,10 +11,7 @@ type WidgetProps = {
   [x: string]: any;
 };
 
-const BaseWidget = (
-  { children, ...props }: WidgetProps,
-  ref: ForwardedRef<HTMLDivElement>
-): ReactElement => {
+const BaseWidget = ({ children, ...props }: WidgetProps, ref: ForwardedRef<HTMLDivElement>): ReactElement => {
   return (
     <Container ref={ref} {...props}>
       {children}
@@ -34,9 +31,7 @@ const Container = styled.div`
 
 type WidgetType = {
   Header: typeof WidgetHeader;
-} & React.ForwardRefExoticComponent<
-  React.PropsWithoutRef<WidgetProps> & React.RefAttributes<HTMLDivElement>
->;
+} & React.ForwardRefExoticComponent<React.PropsWithoutRef<WidgetProps> & React.RefAttributes<HTMLDivElement>>;
 
 const Widget = React.forwardRef(BaseWidget) as WidgetType;
 

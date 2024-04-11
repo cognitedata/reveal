@@ -10,14 +10,14 @@ export const use3DModelName = (ids: number[]): UseQueryResult<string[] | undefin
 
   const queryFunction: QueryFunction<string[] | undefined> = async () => {
     const modelNamePromises = await Promise.allSettled(
-      ids.map(async (id) => {
+      ids.map(async id => {
         const model = await sdk.models3D.retrieve(id);
         return model.name;
       })
     );
 
     const modelResolvedNames: string[] = [];
-    modelNamePromises.forEach((modelNamePromise) => {
+    modelNamePromises.forEach(modelNamePromise => {
       if (modelNamePromise.status === 'fulfilled') {
         modelResolvedNames.push(modelNamePromise.value);
       } else if (modelNamePromise.status === 'rejected') {

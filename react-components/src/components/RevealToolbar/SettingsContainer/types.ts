@@ -2,11 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  type CadModelBudget,
-  type PointCloudBudget,
-  type ResolutionOptions
-} from '@cognite/reveal';
+import { type CadModelBudget, type PointCloudBudget, type ResolutionOptions } from '@cognite/reveal';
 import { type ReactElement } from 'react';
 
 export type QualityProps = {

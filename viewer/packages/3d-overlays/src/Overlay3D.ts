@@ -7,7 +7,7 @@ import { Color, Vector3 } from 'three';
 /**
  * Represents one 3d overlay
  */
-export interface Overlay3D<ContentType> {
+export type Overlay3D<ContentType> = {
   /**
    * Set whether this overlay should be visible.
    * */
@@ -32,4 +32,4 @@ export interface Overlay3D<ContentType> {
    * Get the metadata associated with this overlay.
    * */
   getContent(): ContentType;
-}
+};

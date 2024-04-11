@@ -5,9 +5,9 @@
 import { SectorScene } from '../utilities/types';
 import { parseCadMetadataGltf } from './parsers/CadMetadataParserGltf';
 
-interface VersionHeader {
+type VersionHeader = {
   readonly version: number;
-}
+};
 
 export class CadMetadataParser {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

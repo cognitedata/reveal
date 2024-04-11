@@ -8,10 +8,7 @@ import { getLanguage } from './utils';
 
 const I18nContext = createContext<I18nContent | null>(null);
 
-const useTranslationContent = (
-  overrideLanguage?: string | undefined,
-  enabled: boolean = true
-): I18nContent => {
+const useTranslationContent = (overrideLanguage?: string | undefined, enabled: boolean = true): I18nContent => {
   const initialLanguage = overrideLanguage ?? getLanguage() ?? 'en';
   const [currentLanguage, setCurrentLanguage] = useState(initialLanguage);
   const [translations, setTranslations] = useState<Translations>({});
@@ -78,10 +75,7 @@ const useTranslationContent = (
 export const useTranslation = (fallbackLanguage?: string | undefined): I18nContent => {
   const i18nContent = useContext(I18nContext);
   const defaultLanguage = getLanguage() ?? 'en';
-  const fallbackI18nContent = useTranslationContent(
-    fallbackLanguage ?? defaultLanguage,
-    i18nContent === null
-  );
+  const fallbackI18nContent = useTranslationContent(fallbackLanguage ?? defaultLanguage, i18nContent === null);
 
   if (i18nContent !== null) {
     return i18nContent;

@@ -21,7 +21,7 @@ export type Image360IconStyle = {
  * A single 360 image "station", which may consist of several revisions
  * captured in approximately the same location
  */
-export interface Image360 {
+export type Image360 = {
   /**
    * Get a copy of the model-to-world transformation matrix
    * of the given 360 image.
@@ -70,4 +70,4 @@ export interface Image360 {
    * Assign a color to the icon of this entity
    */
   setIconColor(color: Color | 'default'): void;
-}
+};

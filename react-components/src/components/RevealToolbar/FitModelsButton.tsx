@@ -17,16 +17,8 @@ export const FitModelsButton = (): ReactElement => {
   }, []);
 
   return (
-    <CogsTooltip
-      content={t('FIT_VIEW_TOOLTIP', 'Fit view')}
-      placement="right"
-      appendTo={document.body}>
-      <Button
-        type="ghost"
-        icon="ExpandAlternative"
-        aria-label="Fit camera to models"
-        onClick={updateCamera}
-      />
+    <CogsTooltip content={t('FIT_VIEW_TOOLTIP', 'Fit view')} placement="right" appendTo={document.body}>
+      <Button type="ghost" icon="ExpandAlternative" aria-label="Fit camera to models" onClick={updateCamera} />
     </CogsTooltip>
   );
 };

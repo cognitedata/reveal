@@ -2,7 +2,7 @@ import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
 import * as THREE from 'three';
 
-export interface IPointCloudTreeGeometry {
+export type IPointCloudTreeGeometry = {
   root: IPointCloudTreeNodeBase | undefined;
 
   boundingBox: THREE.Box3;
@@ -12,4 +12,4 @@ export interface IPointCloudTreeGeometry {
   spacing: number;
 
   dispose(): void;
-}
+};

@@ -26,11 +26,11 @@ export const CadModelLayersContainer = ({
   const { storeStateInUrl } = layerProps;
 
   const count = cadLayerData.length.toString();
-  const someModelVisible = !cadLayerData.every((data) => !data.isToggled);
-  const indeterminate = cadLayerData.some((data) => !data.isToggled);
+  const someModelVisible = !cadLayerData.every(data => !data.isToggled);
+  const indeterminate = cadLayerData.some(data => !data.isToggled);
 
   const handleCadModelVisibility = (model: CogniteCadModel): void => {
-    const updatedSelectedCadModels = cadLayerData.map((data) => {
+    const updatedSelectedCadModels = cadLayerData.map(data => {
       if (data.model === model) {
         return {
           ...data,
@@ -42,7 +42,7 @@ export const CadModelLayersContainer = ({
     });
     model.visible = !model.visible;
     viewer.requestRedraw();
-    layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
+    layerProps.setReveal3DResourcesLayerData(prevResourcesStates => ({
       ...prevResourcesStates,
       cadLayerData: updatedSelectedCadModels
     }));
@@ -53,15 +53,15 @@ export const CadModelLayersContainer = ({
   };
 
   const handleAllCadModelsVisibility = (visible: boolean): void => {
-    const updatedSelectedCadModels = cadLayerData.map((data) => ({
+    const updatedSelectedCadModels = cadLayerData.map(data => ({
       ...data,
       isToggled: visible
     }));
-    updatedSelectedCadModels.forEach((data) => {
+    updatedSelectedCadModels.forEach(data => {
       data.model.visible = visible;
     });
     viewer.requestRedraw();
-    layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
+    layerProps.setReveal3DResourcesLayerData(prevResourcesStates => ({
       ...prevResourcesStates,
       cadLayerData: updatedSelectedCadModels
     }));
@@ -76,8 +76,9 @@ export const CadModelLayersContainer = ({
       <StyledSubMenu
         onClick={(event: MouseEvent<HTMLElement>) => {
           event.stopPropagation();
-        }}>
-        {cadLayerData.map((data) => (
+        }}
+      >
+        {cadLayerData.map(data => (
           <Menu.Item
             key={uniqueId()}
             hideTooltip={true}
@@ -88,7 +89,8 @@ export const CadModelLayersContainer = ({
                 e.stopPropagation();
                 handleCadModelVisibility(data.model);
               }
-            }}>
+            }}
+          >
             {data.name}
           </Menu.Item>
         ))}
@@ -99,8 +101,9 @@ export const CadModelLayersContainer = ({
   return (
     <div
       onClick={() => {
-        setVisible((prevState) => !prevState);
-      }}>
+        setVisible(prevState => !prevState);
+      }}
+    >
       {cadLayerData.length > 0 && (
         <Menu.Submenu
           appendTo={viewer.domElement ?? document.body}
@@ -108,12 +111,13 @@ export const CadModelLayersContainer = ({
           onClickOutside={() => {
             setVisible(false);
           }}
-          content={cadModelContent()}>
+          content={cadModelContent()}
+        >
           <Flex direction="row" justifyContent="space-between" gap={4}>
             <Checkbox
               checked={someModelVisible}
               indeterminate={indeterminate}
-              onChange={(e) => {
+              onChange={e => {
                 e.stopPropagation();
                 handleAllCadModelsVisibility(e.target.checked);
                 setVisible(true);

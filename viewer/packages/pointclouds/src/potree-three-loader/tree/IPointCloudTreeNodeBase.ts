@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export interface IPointCloudTreeNodeBase {
+export type IPointCloudTreeNodeBase = {
   id: number;
   name: string;
   level: number;
@@ -20,4 +20,4 @@ export interface IPointCloudTreeNodeBase {
   dispose(): void;
 
   traverse(cb: (node: IPointCloudTreeNodeBase) => void, includeSelf?: boolean): void;
-}
+};

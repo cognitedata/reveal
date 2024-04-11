@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { CameraConfiguration } from '@reveal/utilities';
 import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
 
-export interface PointCloudMetadata {
+export type PointCloudMetadata = {
   readonly format: File3dFormat;
   readonly formatVersion: number;
 
@@ -15,4 +15,4 @@ export interface PointCloudMetadata {
   readonly modelMatrix: THREE.Matrix4;
   readonly cameraConfiguration?: CameraConfiguration;
   readonly scene: any;
-}
+};

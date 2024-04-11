@@ -19,7 +19,7 @@ import { DefaultCameraManager } from './DefaultCameraManager';
  * must trigger the `cameraChange`-event when camera is changed.
  * The default implementation is {@link DefaultCameraManager}.
  */
-export interface CameraManager {
+export type CameraManager = {
   /**
    * Returns the camera used for rendering the viewer.
    * Note that the camera will not be modified directly by Reveal.
@@ -107,4 +107,4 @@ export interface CameraManager {
    * @obvious
    */
   dispose(): void;
-}
+};

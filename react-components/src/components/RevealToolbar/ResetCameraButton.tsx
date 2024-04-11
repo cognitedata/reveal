@@ -13,10 +13,7 @@ type ResetCameraButtonProps = {
   sceneSpaceId?: string;
 };
 
-export const ResetCameraButton = ({
-  sceneExternalId,
-  sceneSpaceId
-}: ResetCameraButtonProps): ReactElement => {
+export const ResetCameraButton = ({ sceneExternalId, sceneSpaceId }: ResetCameraButtonProps): ReactElement => {
   const { t } = useTranslation();
   const cameraNavigation = useCameraNavigation();
   const resetToDefaultSceneCamera = useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
@@ -30,16 +27,8 @@ export const ResetCameraButton = ({
   }, [sceneExternalId, sceneSpaceId, cameraNavigation, resetToDefaultSceneCamera]);
 
   return (
-    <CogsTooltip
-      content={t('RESET_CAMERA_TO_HOME', 'Reset camera to home')}
-      placement="right"
-      appendTo={document.body}>
-      <Button
-        type="ghost"
-        icon="Home"
-        aria-label="Reset camera to home"
-        onClick={resetCameraToHomePosition}
-      />
+    <CogsTooltip content={t('RESET_CAMERA_TO_HOME', 'Reset camera to home')} placement="right" appendTo={document.body}>
+      <Button type="ghost" icon="Home" aria-label="Reset camera to home" onClick={resetCameraToHomePosition} />
     </CogsTooltip>
   );
 };

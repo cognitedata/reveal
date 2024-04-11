@@ -23,12 +23,12 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
       }
 
       const downloadUrls = await sdk.files.getDownloadUrls(
-        scene.groundPlanes.map((groundPlaneProperties) => ({
+        scene.groundPlanes.map(groundPlaneProperties => ({
           externalId: groundPlaneProperties.file
         }))
       );
 
-      return downloadUrls.map((url) => {
+      return downloadUrls.map(url => {
         return new TextureLoader().load(url.downloadUrl);
       });
     },
@@ -36,12 +36,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
   );
 
   useEffect(() => {
-    if (
-      scene === undefined ||
-      scene === null ||
-      groundPlanesUrls === undefined ||
-      groundPlanesUrls.length === 0
-    ) {
+    if (scene === undefined || scene === null || groundPlanesUrls === undefined || groundPlanesUrls.length === 0) {
       return;
     }
     const groundMeshes: CustomObject[] = [];
@@ -57,11 +52,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
       geometry.name = `CogniteGroundPlane`;
 
       const mesh = new Mesh(geometry, material);
-      mesh.position.set(
-        groundPlane.translationX,
-        groundPlane.translationY,
-        groundPlane.translationZ
-      );
+      mesh.position.set(groundPlane.translationX, groundPlane.translationY, groundPlane.translationZ);
       mesh.rotation.set(-Math.PI / 2, 0, 0);
 
       mesh.position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
@@ -76,7 +67,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
 
     return () => {
       // Cleanup function
-      groundMeshes.forEach((customObject) => {
+      groundMeshes.forEach(customObject => {
         const groundPlane = customObject.object as Mesh;
         groundPlane.geometry.dispose();
 

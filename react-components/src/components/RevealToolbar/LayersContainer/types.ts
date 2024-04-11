@@ -1,11 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import {
-  type CogniteCadModel,
-  type CognitePointCloudModel,
-  type Image360Collection
-} from '@cognite/reveal';
+import { type CogniteCadModel, type CognitePointCloudModel, type Image360Collection } from '@cognite/reveal';
 import { type Dispatch, type SetStateAction } from 'react';
 
 export type Reveal3DResourcesLayerStates = {
@@ -26,9 +22,7 @@ export type Reveal3DResourcesLayerStates = {
   }>;
 };
 
-export type SetReveal3DResourcesLayerStates = Dispatch<
-  SetStateAction<Reveal3DResourcesLayerStates>
->;
+export type SetReveal3DResourcesLayerStates = Dispatch<SetStateAction<Reveal3DResourcesLayerStates>>;
 
 export type Reveal3DResourcesLayersProps = {
   reveal3DResourcesLayerData: Reveal3DResourcesLayerStates;

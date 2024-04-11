@@ -16,20 +16,12 @@ export type ColorOverlayProps = {
   onRuleSetChanged?: (currentStylings: AssetStylingGroupAndStyleIndex[] | undefined) => void;
 };
 
-export function RuleBasedOutputsSelector({
-  ruleSet,
-  onRuleSetChanged
-}: ColorOverlayProps): ReactElement | undefined {
+export function RuleBasedOutputsSelector({ ruleSet, onRuleSetChanged }: ColorOverlayProps): ReactElement | undefined {
   const models = use3dModels();
 
   const [stylingGroups, setStylingsGroups] = useState<AssetStylingGroupAndStyleIndex[]>();
 
-  const {
-    data: assetMappings,
-    isFetching,
-    hasNextPage,
-    fetchNextPage
-  } = useAllMappedEquipmentAssetMappings(models);
+  const { data: assetMappings, isFetching, hasNextPage, fetchNextPage } = useAllMappedEquipmentAssetMappings(models);
 
   useEffect(() => {
     if (!isFetching && hasNextPage === true) {
@@ -53,25 +45,20 @@ export function RuleBasedOutputsSelector({
       // TODO: refactor to be sure to filter only the mappings/assets for the current model within the pages
       const flatAssetsMappingsList = assetMappings.pages
         .flat()
-        .map((item) => item.mappings)
+        .map(item => item.mappings)
         .flat();
-      const flatMappings = flatAssetsMappingsList.map((node) => node.items).flat();
+      const flatMappings = flatAssetsMappingsList.map(node => node.items).flat();
       const contextualizedAssetNodes = assetMappings.pages
         .flat()
-        .flatMap((item) => item.assets)
+        .flatMap(item => item.assets)
         .map(convertAssetMetadataKeysToLowerCase);
 
-      const collectionStylings = await generateRuleBasedOutputs(
-        model,
-        contextualizedAssetNodes,
-        flatMappings,
-        ruleSet
-      );
+      const collectionStylings = await generateRuleBasedOutputs(model, contextualizedAssetNodes, flatMappings, ruleSet);
 
       setStylingsGroups(collectionStylings);
     };
 
-    models.forEach(async (model) => {
+    models.forEach(async model => {
       if (!(model instanceof CogniteCadModel)) {
         return;
       }
@@ -86,9 +73,7 @@ function convertAssetMetadataKeysToLowerCase(asset: Asset): Asset {
   return {
     ...asset,
     metadata: Object.fromEntries(
-      [...Object.entries(asset.metadata ?? {})].map(
-        ([key, value]) => [key.toLowerCase(), value] as const
-      )
+      [...Object.entries(asset.metadata ?? {})].map(([key, value]) => [key.toLowerCase(), value] as const)
     )
   };
 }

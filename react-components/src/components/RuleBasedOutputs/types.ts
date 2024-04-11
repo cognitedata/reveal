@@ -29,13 +29,7 @@ export type StringCondition = {
 
 export type NumericCondition =
   | {
-      type:
-        | 'equals'
-        | 'notEquals'
-        | 'lessThan'
-        | 'greaterThan'
-        | 'lessThanOrEquals'
-        | 'greaterThanOrEquals';
+      type: 'equals' | 'notEquals' | 'lessThan' | 'greaterThan' | 'lessThanOrEquals' | 'greaterThanOrEquals';
       parameters: number[];
     }
   | {
@@ -114,11 +108,7 @@ export type NotificationRuleOutput = BaseRuleOutput & {
   notification: string;
 };
 
-export type RuleOutput =
-  | CanvasRuleOutput
-  | ColorRuleOutput
-  | EmailRuleOutput
-  | NotificationRuleOutput;
+export type RuleOutput = CanvasRuleOutput | ColorRuleOutput | EmailRuleOutput | NotificationRuleOutput;
 
 export type RuleWithOutputs = {
   rule: Rule;
@@ -178,11 +168,7 @@ export type NumericOutsideConditionType = {
   upperBoundExclusive: number;
 };
 
-export type CriteriaTypes =
-  | string
-  | number
-  | NumericWithinConditionType
-  | NumericOutsideConditionType;
+export type CriteriaTypes = string | number | NumericWithinConditionType | NumericOutsideConditionType;
 
 export type RuleAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;

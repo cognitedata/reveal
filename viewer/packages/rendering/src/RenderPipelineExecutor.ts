@@ -9,7 +9,7 @@ import { RenderPipelineProvider } from './RenderPipelineProvider';
  * The job of the implementor of this interface is to exectute some subset of
  * a given pipeline from a RenderPipelineProvider.
  */
-export interface RenderPipelineExecutor {
+export type RenderPipelineExecutor = {
   render(renderPipeline: RenderPipelineProvider, camera: THREE.Camera): void;
   dispose(): void;
-}
+};

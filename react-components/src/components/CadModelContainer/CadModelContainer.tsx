@@ -45,12 +45,12 @@ export function CadModelContainer({
 
     initializingModel.current = addModelOptions;
     addModel(addModelOptions, transform)
-      .then((model) => {
+      .then(model => {
         onLoad?.(model);
         setRevealResourcesCount(viewer.models.length);
         applyLayersState(model);
       })
-      .catch((error) => {
+      .catch(error => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
         errorReportFunction(addModelOptions, error);
       });
@@ -68,10 +68,7 @@ export function CadModelContainer({
 
   return <></>;
 
-  async function addModel(
-    addModelOptions: AddModelOptions,
-    transform?: Matrix4
-  ): Promise<CogniteCadModel> {
+  async function addModel(addModelOptions: AddModelOptions, transform?: Matrix4): Promise<CogniteCadModel> {
     const cadModel = await getOrAddModel();
 
     if (transform !== undefined) {
@@ -83,7 +80,7 @@ export function CadModelContainer({
 
     async function getOrAddModel(): Promise<CogniteCadModel> {
       const viewerModel = viewer.models.find(
-        (model) =>
+        model =>
           model.modelId === modelId &&
           model.revisionId === revisionId &&
           model.getModelTransformation().equals(transform ?? new Matrix4())
@@ -98,8 +95,7 @@ export function CadModelContainer({
   function removeModel(): void {
     if (!modelExists(model, viewer)) return;
 
-    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
-      return;
+    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current) return;
 
     viewer.removeModel(model);
     setRevealResourcesCount(viewer.models.length);
@@ -111,15 +107,11 @@ export function CadModelContainer({
       return;
     }
     const index = viewer.models.indexOf(model);
-    const urlLayerState = cadLayers.find(
-      (layer) => layer.revisionId === revisionId && layer.index === index
-    );
+    const urlLayerState = cadLayers.find(layer => layer.revisionId === revisionId && layer.index === index);
     urlLayerState !== undefined && (model.visible = urlLayerState.applied);
   }
 }
 
 function defaultLoadErrorHandler(addOptions: AddModelOptions, error: any): void {
-  console.warn(
-    `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
-  );
+  console.warn(`Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`);
 }

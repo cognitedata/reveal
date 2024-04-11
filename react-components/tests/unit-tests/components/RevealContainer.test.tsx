@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { RevealCanvas, RevealContext } from '../../../src';
@@ -16,20 +19,18 @@ describe(RevealCanvas.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {
     const MockedReveal: FC = () => {
       const sdkMock = new Mock<CogniteClient>()
-        .setup((p) => p.getBaseUrl())
+        .setup(p => p.getBaseUrl())
         .returns('https://example.com')
-        .setup((p) => p.project)
+        .setup(p => p.project)
         .returns('test');
 
-      const domElement = document
-        .createElement('div')
-        .appendChild(document.createElement('canvas'));
+      const domElement = document.createElement('div').appendChild(document.createElement('canvas'));
 
       const viewerRef = useRef<Cognite3DViewer>(
         new Mock<Cognite3DViewer>()
-          .setup((p) => p.domElement)
+          .setup(p => p.domElement)
           .returns(domElement)
-          .setup((p) => {
+          .setup(p => {
             p.setBackgroundColor(It.IsAny());
           })
           .returns()
@@ -51,7 +52,8 @@ describe(RevealCanvas.name, () => {
             assetMappingCache,
             pointCloudAnnotationCache,
             image360AnnotationCache
-          }}>
+          }}
+        >
           <RevealContext sdk={sdkMock.object()}>
             <RevealCanvas />
           </RevealContext>

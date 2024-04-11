@@ -28,10 +28,7 @@ export enum ParamKeys {
   Image360LayersState = 'image360LayersState'
 }
 
-export const useSlicerUrlParams = (): [
-  { top: number; bottom: number },
-  (slicerBottomTop: number[]) => void
-] => {
+export const useSlicerUrlParams = (): [{ top: number; bottom: number }, (slicerBottomTop: number[]) => void] => {
   const { url, searchParams } = useSearchParams();
 
   const slicerUrlState = useMemo(() => {
@@ -56,10 +53,7 @@ export const useSlicerUrlParams = (): [
   return [slicerUrlState, setSlicerUrlState];
 };
 
-export const useLayersUrlParams = (): [
-  LayersUrlStateParam,
-  (layers: LayersUrlStateParam) => void
-] => {
+export const useLayersUrlParams = (): [LayersUrlStateParam, (layers: LayersUrlStateParam) => void] => {
   const { url, searchParams } = useSearchParams();
 
   const layersUrlState = useMemo(() => {
@@ -72,7 +66,7 @@ export const useLayersUrlParams = (): [
         const cadModelsUrlData = JSON.parse(cadInstance) as Array<
           Pick<CadLayersUrlStateParam, 'revisionId' | 'applied' | 'index'>
         >;
-        return cadModelsUrlData.map((model) => ({ ...model }));
+        return cadModelsUrlData.map(model => ({ ...model }));
       }
       return [];
     })();
@@ -82,7 +76,7 @@ export const useLayersUrlParams = (): [
         const pointCloudModelsUrlData = JSON.parse(pointCloudInstance) as Array<
           Pick<PointCloudLayersUrlStateParam, 'revisionId' | 'applied' | 'index'>
         >;
-        return pointCloudModelsUrlData.map((model) => ({ ...model }));
+        return pointCloudModelsUrlData.map(model => ({ ...model }));
       }
       return [];
     })();
@@ -92,7 +86,7 @@ export const useLayersUrlParams = (): [
         const image360UrlData = JSON.parse(image360Instance) as Array<
           Pick<Image360LayersUrlStateParam, 'siteId' | 'applied'>
         >;
-        return image360UrlData.map((image360) => ({ ...image360 }));
+        return image360UrlData.map(image360 => ({ ...image360 }));
       }
       return [];
     })();

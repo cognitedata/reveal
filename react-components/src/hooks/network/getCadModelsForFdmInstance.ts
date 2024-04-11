@@ -2,10 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type DmsUniqueIdentifier, type EdgeItem, type FdmSDK } from '../../utilities/FdmSDK';
-import {
-  type InModel3dEdgeProperties,
-  SYSTEM_3D_EDGE_SOURCE
-} from '../../utilities/globalDataModels';
+import { type InModel3dEdgeProperties, SYSTEM_3D_EDGE_SOURCE } from '../../utilities/globalDataModels';
 import { isDefined } from '../../utilities/isDefined';
 import { type TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
 
@@ -25,7 +22,7 @@ export async function getCadModelsForFdmInstance(
   ).items as ModelForInstancesResponse;
 
   const modelAndRevisionIds = result.model_edges
-    .map((edge) => {
+    .map(edge => {
       const properties = Object.values(Object.values(edge.properties)[0])[0];
 
       const modelIdString = edge.endNode.externalId;

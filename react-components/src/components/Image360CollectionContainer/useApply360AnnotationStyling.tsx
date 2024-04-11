@@ -34,9 +34,7 @@ export const useApply360AnnotationStyling = (
   styling?: ImageCollectionModelStyling
 ): void => {
   const viewer = useReveal();
-  const [lastStyledImageAnnotations, setLastStyledImageAnnotations] = useState<
-    Image360Annotation[]
-  >([]);
+  const [lastStyledImageAnnotations, setLastStyledImageAnnotations] = useState<Image360Annotation[]>([]);
 
   const abortController = useRef(new AbortController());
 
@@ -45,7 +43,7 @@ export const useApply360AnnotationStyling = (
 
   const applyDefaultAnnotationStyling = useCallback(() => {
     if (imageCollection === undefined) return;
-    lastStyledImageAnnotations.forEach((a) => {
+    lastStyledImageAnnotations.forEach(a => {
       a.setColor(undefined);
     });
     setLastStyledImageAnnotations([]);
@@ -94,7 +92,7 @@ async function applyStyling(
 
   for (const group of styling) {
     if (group.assetIds !== undefined) {
-      const annotationInfoPromise = group.assetIds.map(async (id) => {
+      const annotationInfoPromise = group.assetIds.map(async id => {
         return await imageCollection.findImageAnnotations({
           assetRef: { id: group.assetIds[0] }
         });
@@ -106,10 +104,10 @@ async function applyStyling(
       }
       applyDefaultAnnotationStyling();
 
-      annotationInfo.forEach((info) => {
+      annotationInfo.forEach(info => {
         info.annotation.setColor(group.style.color);
       });
-      setLastStyledImageAnnotations(annotationInfo.map((i) => i.annotation));
+      setLastStyledImageAnnotations(annotationInfo.map(i => i.annotation));
 
       viewer.requestRedraw();
     }

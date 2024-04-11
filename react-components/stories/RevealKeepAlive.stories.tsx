@@ -31,20 +31,23 @@ const KeepAliveMockScenario = (): ReactElement => {
     <>
       <button
         onClick={() => {
-          setIsKeepAliveMounted((prev) => !prev);
-        }}>
+          setIsKeepAliveMounted(prev => !prev);
+        }}
+      >
         Toggle Mounting of RevealKeepAlive
       </button>
       <button
         onClick={() => {
-          setIsRevealContainerMounted((prev) => !prev);
-        }}>
+          setIsRevealContainerMounted(prev => !prev);
+        }}
+      >
         Toggle Mounting of RevealContainer
       </button>
       <button
         onClick={() => {
-          setIsResourcesMounted((prev) => !prev);
-        }}>
+          setIsResourcesMounted(prev => !prev);
+        }}
+      >
         Toggle Mounting of 3DResources
       </button>
       {isKeepAliveMounted && (

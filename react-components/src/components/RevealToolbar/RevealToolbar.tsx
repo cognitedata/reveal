@@ -17,10 +17,7 @@ import { type QualitySettings } from './SettingsContainer/types';
 import styled from 'styled-components';
 import { SelectSceneButton } from './SelectSceneButton';
 import { RuleBasedOutputsButton } from './RuleBasedOutputsButton';
-import {
-  SetFlexibleControlsType,
-  SetOrbitOrFirstPersonControlsType
-} from './SetFlexibleControlsType';
+import { SetFlexibleControlsType, SetOrbitOrFirstPersonControlsType } from './SetFlexibleControlsType';
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute;
@@ -98,9 +95,7 @@ const RevealToolbarContainer = forwardRef(
 
 RevealToolbarContainer.displayName = 'RevealToolbarContainer';
 
-export const RevealToolbar = withSuppressRevealEvents(
-  RevealToolbarContainer
-) as typeof RevealToolbarContainer & {
+export const RevealToolbar = withSuppressRevealEvents(RevealToolbarContainer) as typeof RevealToolbarContainer & {
   FitModelsButton: typeof FitModelsButton;
   SlicerButton: typeof SlicerButton;
   LayersButton: typeof LayersButton;

@@ -36,9 +36,7 @@ export function getAssetIdOrExternalIdFromPointCloudAnnotation(
   );
 }
 
-export function getAssetIdOrExternalIdFromImage360Annotation(
-  annotation: AnnotationModel
-): string | number | undefined {
+export function getAssetIdOrExternalIdFromImage360Annotation(annotation: AnnotationModel): string | number | undefined {
   return (
     (annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink).assetRef?.id ??
     (annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink).assetRef?.externalId

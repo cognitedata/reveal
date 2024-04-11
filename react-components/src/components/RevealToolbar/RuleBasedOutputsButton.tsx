@@ -3,21 +3,10 @@
  */
 import { useState, type ReactElement, useEffect } from 'react';
 
-import {
-  Button,
-  Dropdown,
-  Flex,
-  Icon,
-  Menu,
-  Switch,
-  Tooltip as CogsTooltip
-} from '@cognite/cogs.js';
+import { Button, Dropdown, Flex, Icon, Menu, Switch, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 import { RuleBasedOutputsSelector } from '../RuleBasedOutputs/RuleBasedOutputsSelector';
-import {
-  type AssetStylingGroupAndStyleIndex,
-  type RuleAndEnabled
-} from '../RuleBasedOutputs/types';
+import { type AssetStylingGroupAndStyleIndex, type RuleAndEnabled } from '../RuleBasedOutputs/types';
 import { useTranslation } from '../i18n/I18n';
 import { useFetchRuleInstances } from '../RuleBasedOutputs/hooks/useFetchRuleInstances';
 import { type AssetStylingGroup } from '../..';
@@ -25,9 +14,7 @@ import { type AssetStylingGroup } from '../..';
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AssetStylingGroup[] | undefined) => void;
 };
-export const RuleBasedOutputsButton = ({
-  onRuleSetStylingChanged
-}: RuleBasedOutputsButtonProps): ReactElement => {
+export const RuleBasedOutputsButton = ({ onRuleSetStylingChanged }: RuleBasedOutputsButtonProps): ReactElement => {
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
   const [ruleInstances, setRuleInstances] = useState<RuleAndEnabled[]>();
   const { t } = useTranslation();
@@ -41,10 +28,10 @@ export const RuleBasedOutputsButton = ({
   }, [ruleInstancesResult]);
 
   const onChange = (data: { target: { id: string | number; checked: boolean } }): void => {
-    ruleInstances?.forEach((item) => {
+    ruleInstances?.forEach(item => {
       item.isEnabled = false;
     });
-    const selectedRule = ruleInstances?.find((item) => {
+    const selectedRule = ruleInstances?.find(item => {
       return item.rule.properties.id === data.target.id && data.target.checked;
     });
 
@@ -55,10 +42,8 @@ export const RuleBasedOutputsButton = ({
     setRuleInstances(ruleInstances);
   };
 
-  const ruleSetStylingChanged = (
-    stylingGroups: AssetStylingGroupAndStyleIndex[] | undefined
-  ): void => {
-    const assetStylingGroups = stylingGroups?.map((group) => group.assetStylingGroup);
+  const ruleSetStylingChanged = (stylingGroups: AssetStylingGroupAndStyleIndex[] | undefined): void => {
+    const assetStylingGroups = stylingGroups?.map(group => group.assetStylingGroup);
     if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(assetStylingGroups);
   };
   return (
@@ -66,7 +51,8 @@ export const RuleBasedOutputsButton = ({
       <CogsTooltip
         content={t('RULESET_SELECT_HEADER', 'Select color overlay')}
         placement="right"
-        appendTo={document.body}>
+        appendTo={document.body}
+      >
         <Dropdown
           placement="right-start"
           content={
@@ -75,9 +61,10 @@ export const RuleBasedOutputsButton = ({
                 maxHeight: 300,
                 overflow: 'auto',
                 marginBottom: '20px'
-              }}>
+              }}
+            >
               <Menu.Header>{t('RULESET_SELECT_HEADER', 'Select color overlay')}</Menu.Header>
-              {ruleInstances?.map((item) => (
+              {ruleInstances?.map(item => (
                 <Menu.Item key={item.rule.properties.id}>
                   <Flex justifyContent="space-between" alignItems="center" gap={8}>
                     <Flex gap={4} alignItems="center">
@@ -94,7 +81,8 @@ export const RuleBasedOutputsButton = ({
                 </Menu.Item>
               ))}
             </Menu>
-          }>
+          }
+        >
           <Button icon="ColorPalette" aria-label="Select RuleSet" type="ghost" />
         </Dropdown>
       </CogsTooltip>

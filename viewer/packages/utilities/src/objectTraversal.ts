@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-interface WithChildren<T> {
+type WithChildren<T> = {
   readonly children: T[];
-}
+};
 
 export function traverseDepthFirst<T extends WithChildren<T>>(root: T, visitor: (element: T) => boolean): void {
   if (!visitor(root)) {

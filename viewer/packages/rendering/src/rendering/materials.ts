@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { sectorShaders } from './shaders';
 import { RenderMode } from './RenderMode';
 
-export interface Materials {
+export type Materials = {
   // Materials
   box: THREE.RawShaderMaterial;
   circle: THREE.RawShaderMaterial;
@@ -22,7 +22,7 @@ export interface Materials {
   instancedMesh: THREE.RawShaderMaterial;
   triangleMesh: THREE.RawShaderMaterial;
   texturedMaterials: { [key: string]: THREE.RawShaderMaterial };
-}
+};
 
 export function forEachMaterial(materials: Materials, callback: (material: THREE.RawShaderMaterial) => void): void {
   for (const materialOrMaterialSet of Object.values(materials)) {

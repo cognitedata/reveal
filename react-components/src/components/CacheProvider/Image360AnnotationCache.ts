@@ -5,11 +5,7 @@
 import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { type Image360AnnotationAssetInfo } from './types';
 import { getAssetIdOrExternalIdFromImage360Annotation } from './utils';
-import {
-  type AssetAnnotationImage360Info,
-  type Cognite3DViewer,
-  type Image360Collection
-} from '@cognite/reveal';
+import { type AssetAnnotationImage360Info, type Cognite3DViewer, type Image360Collection } from '@cognite/reveal';
 import { fetchAssetForAssetIds } from './AnnotationModelUtils';
 import { isDefined } from '../../utilities/isDefined';
 
@@ -56,7 +52,7 @@ export class Image360AnnotationCache {
     const annotationsInfo = annotationsInfoPromise.flat();
 
     const filteredAssetIds = new Set<string | number>();
-    annotationsInfo.forEach((annotation) => {
+    annotationsInfo.forEach(annotation => {
       const assetId = getAssetIdOrExternalIdFromImage360Annotation(annotation.annotationInfo);
       if (assetId !== undefined) {
         filteredAssetIds.add(assetId);
@@ -64,7 +60,7 @@ export class Image360AnnotationCache {
     });
 
     const assetsArray = await fetchAssetForAssetIds(Array.from(filteredAssetIds), this._sdk);
-    const assets = new Map(assetsArray.map((asset) => [asset.id, asset]));
+    const assets = new Map(assetsArray.map(asset => [asset.id, asset]));
     const assetsWithAnnotations = await this.getAssetWithAnnotationsMapped(annotationsInfo, assets);
 
     return assetsWithAnnotations;
@@ -75,11 +71,11 @@ export class Image360AnnotationCache {
     assets: Map<number, Asset>
   ): Promise<Image360AnnotationAssetInfo[]> {
     const assetsWithAnnotationsPromises = assetAnnotationImage360Infos
-      .filter((assetAnnnotationImageInfo) => {
+      .filter(assetAnnnotationImageInfo => {
         const assetId = assetAnnnotationImageInfo?.annotationInfo?.data?.assetRef?.id;
         return assetId !== undefined && assets.has(assetId);
       })
-      .map(async (assetAnnnotationImageInfo) => {
+      .map(async assetAnnnotationImageInfo => {
         const assetId = assetAnnnotationImageInfo.annotationInfo.data.assetRef.id;
         if (assetId === undefined) {
           return undefined;
@@ -92,7 +88,7 @@ export class Image360AnnotationCache {
         const transform = assetAnnnotationImageInfo.imageEntity.transform;
         const revisionAnnotations = await assetAnnnotationImageInfo.imageRevision.getAnnotations();
 
-        const filteredRevisionAnnotations = revisionAnnotations.find((revisionAnnotation) => {
+        const filteredRevisionAnnotations = revisionAnnotations.find(revisionAnnotation => {
           return revisionAnnotation.annotation.id === annotationId;
         });
 
@@ -109,9 +105,7 @@ export class Image360AnnotationCache {
         };
       });
 
-    const assetsWithAnnotations = (await Promise.all(assetsWithAnnotationsPromises)).filter(
-      isDefined
-    );
+    const assetsWithAnnotations = (await Promise.all(assetsWithAnnotationsPromises)).filter(isDefined);
 
     return assetsWithAnnotations;
   }

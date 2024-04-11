@@ -21,18 +21,18 @@ import { PickPoint, PointCloudHit } from '../types/types';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { createVisibilityTextureData, makeOnBeforeRender } from '../utils/utils';
 
-export interface RenderedNode {
+export type RenderedNode = {
   node: IPointCloudTreeNode;
   octree: PointCloudOctree;
-}
+};
 
-export interface IPickState {
+export type IPickState = {
   renderTarget: WebGLRenderTarget;
   material: PointCloudMaterial;
   scene: Scene;
-}
+};
 
-export interface PickParams {
+export type PickParams = {
   pickWindowSize: number;
   pickOutsideClipRegion: boolean;
   /**
@@ -49,7 +49,7 @@ export interface PickParams {
    * @param renterTarget The render target used for picking.
    */
   onBeforePickRender: (material: PointCloudMaterial, renterTarget: WebGLRenderTarget) => void;
-}
+};
 
 /**
  * Helper class for PointCloudOctreePicker.

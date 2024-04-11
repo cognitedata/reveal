@@ -18,7 +18,7 @@ export type FlexibleControlsTypeChangeDelegate = (controlsType: FlexibleControls
  * @beta
  */
 
-export interface IFlexibleCameraManager extends CameraManager {
+export type IFlexibleCameraManager = {
   /**
    * Get curent FlexibleControlsType type
    */
@@ -49,7 +49,7 @@ export interface IFlexibleCameraManager extends CameraManager {
    * @param callback - The callback function to be removed from the controls type change listeners.
    */
   removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
-}
+} & CameraManager;
 
 export function asFlexibleCameraManager(manager: CameraManager): IFlexibleCameraManager | undefined {
   // instanceof don't work within React, so using safeguarding

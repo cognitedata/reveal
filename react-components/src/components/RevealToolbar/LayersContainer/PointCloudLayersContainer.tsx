@@ -25,17 +25,17 @@ export const PointCloudLayersContainer = ({
   const { pointCloudLayerData } = layerProps.reveal3DResourcesLayerData;
   const { storeStateInUrl } = layerProps;
   const count = pointCloudLayerData.length.toString();
-  const someModelVisible = !pointCloudLayerData.every((data) => !data.isToggled);
-  const indeterminate = pointCloudLayerData.some((data) => !data.isToggled);
+  const someModelVisible = !pointCloudLayerData.every(data => !data.isToggled);
+  const indeterminate = pointCloudLayerData.some(data => !data.isToggled);
 
   const handlePointCloudVisibility = (model: CognitePointCloudModel): void => {
-    const affectedPointCloudData = pointCloudLayerData.find((data) => data.model === model);
+    const affectedPointCloudData = pointCloudLayerData.find(data => data.model === model);
     if (affectedPointCloudData !== undefined) {
       affectedPointCloudData.isToggled = !affectedPointCloudData.isToggled;
       model.visible = affectedPointCloudData.isToggled;
     }
     viewer.requestRedraw();
-    layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
+    layerProps.setReveal3DResourcesLayerData(prevResourcesStates => ({
       ...prevResourcesStates,
       pointCloudLayerData
     }));
@@ -46,13 +46,13 @@ export const PointCloudLayersContainer = ({
   };
 
   const handleAllPointCloudModelsVisibility = (visible: boolean): void => {
-    pointCloudLayerData.forEach((data) => {
+    pointCloudLayerData.forEach(data => {
       data.isToggled = visible;
       data.model.visible = visible;
     });
     viewer.requestRedraw();
 
-    layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
+    layerProps.setReveal3DResourcesLayerData(prevResourcesStates => ({
       ...prevResourcesStates,
       pointCloudLayerData
     }));
@@ -66,8 +66,9 @@ export const PointCloudLayersContainer = ({
       <StyledSubMenu
         onClick={(event: MouseEvent<HTMLElement>) => {
           event.stopPropagation();
-        }}>
-        {pointCloudLayerData.map((data) => (
+        }}
+      >
+        {pointCloudLayerData.map(data => (
           <Menu.Item
             key={uniqueId()}
             hasCheckbox
@@ -77,7 +78,8 @@ export const PointCloudLayersContainer = ({
                 e.stopPropagation();
                 handlePointCloudVisibility(data.model);
               }
-            }}>
+            }}
+          >
             {data.name}
           </Menu.Item>
         ))}
@@ -88,8 +90,9 @@ export const PointCloudLayersContainer = ({
   return (
     <div
       onClick={() => {
-        setVisible((prevState) => !prevState);
-      }}>
+        setVisible(prevState => !prevState);
+      }}
+    >
       {pointCloudLayerData.length > 0 && (
         <Menu.Submenu
           appendTo={viewer.domElement ?? document.body}
@@ -97,12 +100,13 @@ export const PointCloudLayersContainer = ({
           onClickOutside={() => {
             setVisible(false);
           }}
-          content={pointCloudModelContent()}>
+          content={pointCloudModelContent()}
+        >
           <Flex direction="row" justifyContent="space-between">
             <Checkbox
               checked={someModelVisible}
               indeterminate={indeterminate}
-              onChange={(e) => {
+              onChange={e => {
                 e.stopPropagation();
                 handleAllPointCloudModelsVisibility(e.target.checked);
                 setVisible(true);

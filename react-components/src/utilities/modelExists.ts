@@ -20,7 +20,5 @@ export function image360CollectionExists(
   image360Collection: Image360Collection | undefined,
   viewer: Cognite3DViewer
 ): image360Collection is Image360Collection {
-  return (
-    image360Collection !== undefined && viewer.get360ImageCollections().includes(image360Collection)
-  );
+  return image360Collection !== undefined && viewer.get360ImageCollections().includes(image360Collection);
 }

@@ -44,7 +44,7 @@ export function getDistanceToMeterConversionFactor(unit: string | undefined): nu
   return WellKnownDistanceToMeterConversionFactors.get(unit.toLowerCase());
 }
 
-export interface SectorScene {
+export type SectorScene = {
   readonly version: number;
   readonly maxTreeIndex: number;
   readonly root: SectorMetadata;
@@ -95,14 +95,14 @@ export interface SectorScene {
   // readonly revisionId: number;
   // readonly subRevisionId: number;
   // readonly unit: string | null;
-}
-export interface SectorMetadataIndexFileSection {
+};
+export type SectorMetadataIndexFileSection = {
   readonly fileName: string;
   readonly peripheralFiles: string[];
   readonly downloadSize: number;
-}
+};
 
-export interface SectorMetadataFacesFileSection {
+export type SectorMetadataFacesFileSection = {
   readonly quadSize: number;
   /**
    * Coverage factors for the sector without children.
@@ -122,4 +122,4 @@ export interface SectorMetadataFacesFileSection {
   };
   readonly fileName: string | null;
   readonly downloadSize: number;
-}
+};

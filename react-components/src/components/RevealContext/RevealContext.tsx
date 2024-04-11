@@ -54,9 +54,7 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
                 <AssetMappingCacheProvider>
                   <PointCloudAnnotationCacheProvider>
                     <Image360AnnotationCacheProvider>
-                      <Reveal3DResourcesCountContextProvider>
-                        {props.children}
-                      </Reveal3DResourcesCountContextProvider>
+                      <Reveal3DResourcesCountContextProvider>{props.children}</Reveal3DResourcesCountContextProvider>
                     </Image360AnnotationCacheProvider>
                   </PointCloudAnnotationCacheProvider>
                 </AssetMappingCacheProvider>
@@ -69,11 +67,7 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
   );
 };
 
-const useRevealFromKeepAlive = ({
-  color,
-  sdk,
-  viewerOptions
-}: RevealContextProps): Cognite3DViewer | null => {
+const useRevealFromKeepAlive = ({ color, sdk, viewerOptions }: RevealContextProps): Cognite3DViewer | null => {
   const revealKeepAliveData = useRevealKeepAlive();
 
   // Double bookkeeping to satisfy test
@@ -100,8 +94,7 @@ const useRevealFromKeepAlive = ({
   return viewerRef.current;
 
   function getOrInitializeViewer(): Cognite3DViewer {
-    const viewer =
-      revealKeepAliveData?.viewerRef.current ?? new Cognite3DViewer({ ...viewerOptions, sdk });
+    const viewer = revealKeepAliveData?.viewerRef.current ?? new Cognite3DViewer({ ...viewerOptions, sdk });
     if (revealKeepAliveData !== undefined) {
       revealKeepAliveData.viewerRef.current = viewer;
     }

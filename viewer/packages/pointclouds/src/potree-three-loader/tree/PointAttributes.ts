@@ -12,10 +12,10 @@ export enum PointAttributeName {
   NORMAL = 10
 }
 
-export interface PointAttributeType {
+export type PointAttributeType = {
   ordinal: number;
   size: number;
-}
+};
 
 export const POINT_ATTRIBUTE_TYPES: Record<string, PointAttributeType> = {
   DATA_TYPE_DOUBLE: { ordinal: 0, size: 8 },
@@ -30,18 +30,18 @@ export const POINT_ATTRIBUTE_TYPES: Record<string, PointAttributeType> = {
   DATA_TYPE_UINT64: { ordinal: 9, size: 8 }
 };
 
-export interface IPointAttribute {
+export type IPointAttribute = {
   name: PointAttributeName;
   type: PointAttributeType;
   numElements: number;
   byteSize: number;
-}
+};
 
-export interface IPointAttributes {
+export type IPointAttributes = {
   attributes: IPointAttribute[];
   byteSize: number;
   size: number;
-}
+};
 
 function makePointAttribute(name: PointAttributeName, type: PointAttributeType, numElements: number): IPointAttribute {
   return {

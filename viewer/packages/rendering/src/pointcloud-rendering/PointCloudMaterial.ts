@@ -32,14 +32,14 @@ import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceT
 import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import { pointCloudShaders } from '../rendering/shaders';
 
-export interface IPointCloudMaterialParameters {
+export type IPointCloudMaterialParameters = {
   size: number;
   minSize: number;
   maxSize: number;
   objectsMaps: PointCloudObjectIdMaps;
-}
+};
 
-export interface IPointCloudMaterialUniforms {
+export type IPointCloudMaterialUniforms = {
   classificationLUT: IUniform<Texture>;
   fov: IUniform<number>;
   gradient: IUniform<Texture>;
@@ -62,7 +62,7 @@ export interface IPointCloudMaterialUniforms {
   spacing: IUniform<number>;
   visibleNodes: IUniform<Texture>;
   vnStart: IUniform<number>;
-}
+};
 
 const SIZE_TYPE_DEFS = {
   [PointSizeType.Fixed]: 'fixed_point_size',

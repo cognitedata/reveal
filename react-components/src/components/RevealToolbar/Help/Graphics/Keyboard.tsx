@@ -5,13 +5,7 @@
 import { type ReactElement, type SVGProps } from 'react';
 
 const UpArrowKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
-  <svg
-    width="46"
-    height="46"
-    viewBox="0 0 46 46"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+  <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect
       x="1.20903"
       y="1.20903"
@@ -30,13 +24,7 @@ const UpArrowKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
 );
 
 const RightArrowKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
-  <svg
-    width="46"
-    height="46"
-    viewBox="0 0 46 46"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+  <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect
       x="1.20903"
       y="1.20903"
@@ -55,13 +43,7 @@ const RightArrowKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
 );
 
 const DownArrowKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
-  <svg
-    width="46"
-    height="46"
-    viewBox="0 0 46 46"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+  <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect
       x="1.20903"
       y="1.20903"
@@ -80,13 +62,7 @@ const DownArrowKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
 );
 
 const LeftArrowKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
-  <svg
-    width="46"
-    height="46"
-    viewBox="0 0 46 46"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+  <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect
       x="1.20903"
       y="1.20903"
@@ -105,13 +81,7 @@ const LeftArrowKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
 );
 
 const QKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
-  <svg
-    width="46"
-    height="46"
-    viewBox="0 0 46 46"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+  <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect
       x="1.20903"
       y="1.20903"
@@ -129,13 +99,7 @@ const QKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
 );
 
 const WKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
-  <svg
-    width="46"
-    height="46"
-    viewBox="0 0 46 46"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+  <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect
       x="1.20903"
       y="1.20903"
@@ -153,13 +117,7 @@ const WKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
 );
 
 const EKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
-  <svg
-    width="46"
-    height="46"
-    viewBox="0 0 46 46"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+  <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect
       x="1.20903"
       y="1.20903"
@@ -177,13 +135,7 @@ const EKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
 );
 
 const AKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
-  <svg
-    width="46"
-    height="46"
-    viewBox="0 0 46 46"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+  <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect
       x="1.20903"
       y="1.20903"
@@ -201,13 +153,7 @@ const AKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
 );
 
 const SKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
-  <svg
-    width="46"
-    height="46"
-    viewBox="0 0 46 46"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+  <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect
       x="1.20903"
       y="1.20903"
@@ -225,13 +171,7 @@ const SKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
 );
 
 const DKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
-  <svg
-    width="46"
-    height="46"
-    viewBox="0 0 46 46"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+  <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect
       x="1.20903"
       y="1.20903"

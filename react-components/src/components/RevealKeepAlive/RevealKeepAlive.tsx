@@ -36,7 +36,8 @@ export function RevealKeepAlive({ children }: { children?: ReactNode }): ReactEl
         assetMappingCache,
         pointCloudAnnotationCache,
         image360AnnotationCache
-      }}>
+      }}
+    >
       {children}
     </RevealKeepAliveContext.Provider>
   );

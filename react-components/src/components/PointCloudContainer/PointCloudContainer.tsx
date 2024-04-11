@@ -10,10 +10,7 @@ import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
 import { cloneDeep, isEqual } from 'lodash';
-import {
-  useApplyPointCloudStyling,
-  type PointCloudModelStyling
-} from './useApplyPointCloudStyling';
+import { useApplyPointCloudStyling, type PointCloudModelStyling } from './useApplyPointCloudStyling';
 import { modelExists } from '../../utilities/modelExists';
 
 export type CognitePointCloudModelProps = {
@@ -48,12 +45,12 @@ export function PointCloudContainer({
     initializingModel.current = cloneDeep(addModelOptions);
 
     addModel(modelId, revisionId, transform)
-      .then((pointCloudModel) => {
+      .then(pointCloudModel => {
         onLoad?.(pointCloudModel);
         setRevealResourcesCount(viewer.models.length);
         applyLayersState(pointCloudModel);
       })
-      .catch((error) => {
+      .catch(error => {
         const errorHandler = onLoadError ?? defaultLoadErrorHandler;
         errorHandler(addModelOptions, error);
       });
@@ -71,11 +68,7 @@ export function PointCloudContainer({
 
   return <></>;
 
-  async function addModel(
-    modelId: number,
-    revisionId: number,
-    transform?: Matrix4
-  ): Promise<CognitePointCloudModel> {
+  async function addModel(modelId: number, revisionId: number, transform?: Matrix4): Promise<CognitePointCloudModel> {
     const pointCloudModel = await getOrAddModel();
 
     if (transform !== undefined) {
@@ -86,7 +79,7 @@ export function PointCloudContainer({
 
     async function getOrAddModel(): Promise<CognitePointCloudModel> {
       const viewerModel = viewer.models.find(
-        (model) =>
+        model =>
           model.modelId === modelId &&
           model.revisionId === revisionId &&
           model.getModelTransformation().equals(transform ?? new Matrix4())
@@ -101,8 +94,7 @@ export function PointCloudContainer({
   function removeModel(): void {
     if (!modelExists(model, viewer)) return;
 
-    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
-      return;
+    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current) return;
 
     viewer.removeModel(model);
     setRevealResourcesCount(viewer.models.length);
@@ -114,16 +106,11 @@ export function PointCloudContainer({
       return;
     }
     const index = viewer.models.indexOf(model);
-    const urlLayerState = pointCloudLayers.find(
-      (layer) => layer.revisionId === revisionId && layer.index === index
-    );
-    urlLayerState !== undefined &&
-      model.setDefaultPointCloudAppearance({ visible: urlLayerState.applied });
+    const urlLayerState = pointCloudLayers.find(layer => layer.revisionId === revisionId && layer.index === index);
+    urlLayerState !== undefined && model.setDefaultPointCloudAppearance({ visible: urlLayerState.applied });
   }
 }
 
 function defaultLoadErrorHandler(addOptions: AddModelOptions, error: any): void {
-  console.warn(
-    `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
-  );
+  console.warn(`Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`);
 }

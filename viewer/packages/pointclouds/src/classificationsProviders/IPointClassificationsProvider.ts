@@ -5,6 +5,6 @@
 import { PointCloudMetadata } from '../PointCloudMetadata';
 import { ClassificationInfo } from '../potree-three-loader/loading/ClassificationInfo';
 
-export interface IPointClassificationsProvider {
+export type IPointClassificationsProvider = {
   getClassifications(modelMetadata: PointCloudMetadata): Promise<ClassificationInfo>;
-}
+};

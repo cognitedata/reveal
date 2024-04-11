@@ -16,10 +16,7 @@ import { type ReactElement, useState, useMemo, useEffect } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
-import {
-  useAllMappedEquipmentFDM,
-  useSearchMappedEquipmentFDM
-} from '../src/query/useSearchMappedEquipmentFDM';
+import { useAllMappedEquipmentFDM, useSearchMappedEquipmentFDM } from '../src/query/useSearchMappedEquipmentFDM';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   useAllMappedEquipmentAssetMappings,
@@ -55,13 +52,9 @@ type Equipment = {
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [tempSearchQuery, setTempSearchQuery] = useState<string>('');
   const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
-  const [searchMethod, setSearchMethod] = useState<
-    'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
-  >('fdmSearch');
+  const [searchMethod, setSearchMethod] = useState<'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'>('fdmSearch');
 
-  const filteredResources = resources.filter(
-    (resource): resource is AddReveal3DModelOptions => 'modelId' in resource
-  );
+  const filteredResources = resources.filter((resource): resource is AddReveal3DModelOptions => 'modelId' in resource);
 
   const { data: searchData } = useSearchMappedEquipmentFDM(
     mainSearchQuery,
@@ -91,7 +84,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const filtered360ImageResources = resources.filter(
     (resource): resource is AddImageCollection360Options => 'siteId' in resource
   );
-  const siteIds = filtered360ImageResources.map((filteredResource) => {
+  const siteIds = filtered360ImageResources.map(filteredResource => {
     return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;
   });
 
@@ -101,10 +94,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     mainSearchQuery
   );
 
-  const { data: all360ImageAssetAnnotationMappings } = useAllAssetsMapped360Annotations(
-    sdk,
-    siteIds
-  );
+  const { data: all360ImageAssetAnnotationMappings } = useAllAssetsMapped360Annotations(sdk, siteIds);
 
   const { data: pointCloudAssetSearchData } = useSearchAssetsMappedPointCloudAnnotations(
     filteredResources,
@@ -112,10 +102,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     mainSearchQuery
   );
 
-  const { data: allPointCloudAssets } = useAllAssetsMappedPointCloudAnnotations(
-    sdk,
-    filteredResources
-  );
+  const { data: allPointCloudAssets } = useAllAssetsMappedPointCloudAnnotations(sdk, filteredResources);
 
   useEffect(() => {
     if (searchMethod !== 'allAssets') return;
@@ -128,15 +115,12 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const filteredEquipment = useMemo(() => {
     if (searchMethod === 'allFdm') {
       return (
-        allEquipment?.filter((equipment) => {
-          const isInExternalId = equipment.externalId
-            .toLowerCase()
-            .includes(mainSearchQuery.toLowerCase());
-          const isInProperties = Object.values(equipment.properties).some((viewProperties) =>
-            Object.values(viewProperties).some((property) =>
-              Object.values(property).some((value) => {
-                const valueAsString =
-                  typeof value === 'object' ? (value as any)?.externalId : value?.toString();
+        allEquipment?.filter(equipment => {
+          const isInExternalId = equipment.externalId.toLowerCase().includes(mainSearchQuery.toLowerCase());
+          const isInProperties = Object.values(equipment.properties).some(viewProperties =>
+            Object.values(viewProperties).some(property =>
+              Object.values(property).some(value => {
+                const valueAsString = typeof value === 'object' ? (value as any)?.externalId : value?.toString();
                 return valueAsString?.toLowerCase().includes(mainSearchQuery.toLowerCase());
               })
             )
@@ -149,28 +133,21 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       const transformedAssets =
         allAssets?.pages
           .flat()
-          .map((mapping) => mapping.assets)
+          .map(mapping => mapping.assets)
           .flat() ?? [];
 
-      const all360ImageAssets =
-        all360ImageAssetAnnotationMappings?.map((mapping) => mapping.asset) ?? [];
-      const combinedAssets = [
-        ...transformedAssets,
-        ...(all360ImageAssets ?? []),
-        ...(allPointCloudAssets ?? [])
-      ];
+      const all360ImageAssets = all360ImageAssetAnnotationMappings?.map(mapping => mapping.asset) ?? [];
+      const combinedAssets = [...transformedAssets, ...(all360ImageAssets ?? []), ...(allPointCloudAssets ?? [])];
 
       const filteredAssets =
-        combinedAssets.filter((assetMappings) => {
+        combinedAssets.filter(assetMappings => {
           const isInName = assetMappings.name.toLowerCase().includes(mainSearchQuery.toLowerCase());
-          const isInDescription = assetMappings.description
-            ?.toLowerCase()
-            .includes(mainSearchQuery.toLowerCase());
+          const isInDescription = assetMappings.description?.toLowerCase().includes(mainSearchQuery.toLowerCase());
 
           return isInName || isInDescription;
         }) ?? [];
 
-      const mappedAssets: Equipment[] = filteredAssets.map((asset) => {
+      const mappedAssets: Equipment[] = filteredAssets.map(asset => {
         return {
           view: 'Asset',
           externalId: asset.id + '',
@@ -188,8 +165,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         return [];
       }
 
-      const assetImage360SearchData =
-        assetAnnotationImage360SearchData?.map((mapping) => mapping.asset) ?? [];
+      const assetImage360SearchData = assetAnnotationImage360SearchData?.map(mapping => mapping.asset) ?? [];
 
       const combinedAssetSearchData = [
         ...assetSearchData,
@@ -197,7 +173,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         ...(pointCloudAssetSearchData ?? [])
       ];
 
-      const searchedEquipment: Equipment[] = combinedAssetSearchData.map((asset) => {
+      const searchedEquipment: Equipment[] = combinedAssetSearchData.map(asset => {
         return {
           view: 'Asset',
           externalId: asset.id + '',
@@ -216,8 +192,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       }
 
       const searchedEquipment: Equipment[] = searchData
-        .map((searchResult) => {
-          return searchResult.instances.map((instance) => {
+        .map(searchResult => {
+          return searchResult.instances.map(instance => {
             return {
               view: searchResult.view.externalId,
               externalId: instance.externalId,
@@ -263,14 +239,16 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       <h1>Mapped equipment</h1>
       <div style={{ display: 'flex', flexDirection: 'row', gap: 8, padding: '0 8px 8px 0' }}>
         <Input
-          onInput={(event) => {
+          onInput={event => {
             setTempSearchQuery((event.target as HTMLInputElement).value);
-          }}></Input>
+          }}
+        ></Input>
         <Button
           size="small"
           onClick={() => {
             setMainSearchQuery(tempSearchQuery);
-          }}>
+          }}
+        >
           Search
         </Button>
         <Button
@@ -278,7 +256,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           type={searchMethod === 'allFdm' ? 'primary' : 'secondary'}
           onClick={() => {
             setSearchMethod('allFdm');
-          }}>
+          }}
+        >
           All FDM mappings search
         </Button>
         <Button
@@ -286,7 +265,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           type={searchMethod === 'fdmSearch' ? 'primary' : 'secondary'}
           onClick={() => {
             setSearchMethod('fdmSearch');
-          }}>
+          }}
+        >
           FDM search hook
         </Button>
         <Button
@@ -294,7 +274,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           type={searchMethod === 'allAssets' ? 'primary' : 'secondary'}
           onClick={() => {
             setSearchMethod('allAssets');
-          }}>
+          }}
+        >
           All asset mappings search
         </Button>
         <Button
@@ -302,7 +283,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           type={searchMethod === 'assetSearch' ? 'primary' : 'secondary'}
           onClick={() => {
             setSearchMethod('assetSearch');
-          }}>
+          }}
+        >
           Asset search hook
         </Button>
       </div>
@@ -313,13 +295,11 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           gap: 2,
           height: 200,
           overflow: 'scroll'
-        }}>
+        }}
+      >
         {filteredEquipment.map((equipment, index) => (
           <div key={equipment.externalId + index} style={{ border: '1px solid green' }}>
-            <b>
-              {((equipment as Equipment)?.view ?? determineViewFromQueryResultNodeItem(equipment)) +
-                ' '}
-            </b>
+            <b>{((equipment as Equipment)?.view ?? determineViewFromQueryResultNodeItem(equipment)) + ' '}</b>
             <span>{equipment.externalId + ' '}</span>
             <span>
               <b>Space:</b> {equipment.space + ' '}
@@ -377,5 +357,5 @@ function determineViewFromQueryResultNodeItem(nodeItem: NodeItem | Equipment): s
 }
 
 function findNonZeroProperty(properties?: Record<string, any>): string | undefined {
-  return Object.keys(properties ?? {}).find((key) => !isEqual(properties?.[key], {}));
+  return Object.keys(properties ?? {}).find(key => !isEqual(properties?.[key], {}));
 }

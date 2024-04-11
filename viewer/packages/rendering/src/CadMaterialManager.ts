@@ -18,7 +18,7 @@ import matCapTextureImage from './rendering/matCapTextureData';
 import throttle from 'lodash/throttle';
 import assert from 'assert';
 
-interface MaterialsWrapper {
+type MaterialsWrapper = {
   materials: Materials;
   matCapTexture: THREE.Texture;
   perModelClippingPlanes: THREE.Plane[];
@@ -28,7 +28,7 @@ interface MaterialsWrapper {
   nodeTransformTextureBuilder: NodeTransformTextureBuilder;
   updateMaterialsCallback: () => void;
   updateTransformsCallback: () => void;
-}
+};
 
 export class CadMaterialManager {
   private readonly _events = {

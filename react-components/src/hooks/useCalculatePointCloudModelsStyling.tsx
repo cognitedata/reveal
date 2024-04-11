@@ -49,13 +49,12 @@ function useCalculateInstanceStyling(
   models: PointCloudModelOptions[],
   instanceGroups: AssetStylingGroup[]
 ): StyledPointCloudModel[] {
-  const { data: pointCloudAnnotationMappings, isLoading } =
-    usePointCloudAnnotationMappingsForModels(models);
+  const { data: pointCloudAnnotationMappings, isLoading } = usePointCloudAnnotationMappingsForModels(models);
 
   const { data: styledModels } = useQuery(
     ['styledModels', pointCloudAnnotationMappings, instanceGroups, models],
     () =>
-      pointCloudAnnotationMappings?.map((annotationMappings) => {
+      pointCloudAnnotationMappings?.map(annotationMappings => {
         return calculateAnnotationMappingModelStyling(instanceGroups, annotationMappings);
       }) ?? EMPTY_ARRAY,
     {
@@ -71,7 +70,7 @@ function calculateAnnotationMappingModelStyling(
   annotationMapping: AnnotationModelDataResult
 ): StyledPointCloudModel {
   const styleGroups = instanceGroups
-    .map((group) => {
+    .map(group => {
       return getMappedStyleGroupFromAssetIds(annotationMapping, group);
     })
     .filter((styleGroup): styleGroup is AnnotationIdStylingGroup => styleGroup !== undefined);
@@ -84,9 +83,9 @@ function getMappedStyleGroupFromAssetIds(
   instanceGroup: AssetStylingGroup
 ): AnnotationIdStylingGroup | undefined {
   const uniqueAnnotationIds = new Set<number>();
-  const assetIdsSet = new Set(instanceGroup.assetIds.map((id) => id));
+  const assetIdsSet = new Set(instanceGroup.assetIds.map(id => id));
 
-  const matchedAnnotationModels = annotationMapping.annotationModel.filter((annotation) => {
+  const matchedAnnotationModels = annotationMapping.annotationModel.filter(annotation => {
     const assetRef = annotation.data.assetRef;
     const isAssetIdInMapping = assetIdsSet.has(assetRef?.id ?? Number(assetRef?.externalId));
     if (isAssetIdInMapping && !uniqueAnnotationIds.has(annotation.id)) {
@@ -98,7 +97,7 @@ function getMappedStyleGroupFromAssetIds(
 
   return matchedAnnotationModels.length > 0
     ? {
-        annotationIds: matchedAnnotationModels.map((annotationModel) => annotationModel.id),
+        annotationIds: matchedAnnotationModels.map(annotationModel => annotationModel.id),
         style: instanceGroup.style.pointcloud ?? {}
       }
     : undefined;
@@ -110,8 +109,7 @@ function useCalculateMappedPointCloudStyling(
 ): StyledPointCloudModel[] {
   const modelsWithStyledMapped = useMemo(() => getMappedPointCloudModelsOptions(), [models]);
 
-  const { data: pointCloudStyledModelAnnotationIds } =
-    usePointCloudAnnotationIdsForModels(modelsWithStyledMapped);
+  const { data: pointCloudStyledModelAnnotationIds } = usePointCloudAnnotationIdsForModels(modelsWithStyledMapped);
 
   const modelsMappedAnnotationIdStyleGroups = useMemo(() => {
     if (
@@ -122,9 +120,8 @@ function useCalculateMappedPointCloudStyling(
       return EMPTY_ARRAY;
     }
 
-    return pointCloudStyledModelAnnotationIds.map((pointCloudAnnotationCollection) => {
-      const modelStyle =
-        pointCloudAnnotationCollection.model.styling?.mapped ?? defaultMappedNodeAppearance;
+    return pointCloudStyledModelAnnotationIds.map(pointCloudAnnotationCollection => {
+      const modelStyle = pointCloudAnnotationCollection.model.styling?.mapped ?? defaultMappedNodeAppearance;
 
       const styleGroups: AnnotationIdStylingGroup[] =
         modelStyle !== undefined
@@ -141,7 +138,7 @@ function useCalculateMappedPointCloudStyling(
       return models;
     }
 
-    return models.filter((model) => model.styling?.mapped !== undefined);
+    return models.filter(model => model.styling?.mapped !== undefined);
   }
 }
 
@@ -152,7 +149,7 @@ function getMappedStyleGroupFromAnnotationIds(
   }>,
   nodeAppearance: NodeAppearance
 ): AnnotationIdStylingGroup {
-  const annotationIds = annotationData.flatMap((data) => {
+  const annotationIds = annotationData.flatMap(data => {
     return data.annotationIds;
   });
 
@@ -161,7 +158,7 @@ function getMappedStyleGroupFromAnnotationIds(
 
 function groupStyleGroupByModel(styleGroup: StyledPointCloudModel[]): StyledPointCloudModel[] {
   return styleGroup.reduce<StyledPointCloudModel[]>((accumulatedGroups, currentGroup) => {
-    const existingGroupWithModel = accumulatedGroups.find((group) =>
+    const existingGroupWithModel = accumulatedGroups.find(group =>
       isSamePointCloudModel(group.model, currentGroup.model)
     );
     if (existingGroupWithModel !== undefined) {

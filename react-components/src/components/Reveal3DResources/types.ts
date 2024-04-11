@@ -2,19 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  type NodeAppearance,
-  type AddModelOptions,
-  type Image360AnnotationAppearance
-} from '@cognite/reveal';
+import { type NodeAppearance, type AddModelOptions, type Image360AnnotationAppearance } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk/dist/src';
 
-export type AddImageCollection360Options =
-  | AddImageCollection360EventsOptions
-  | AddImageCollection360DatamodelsOptions;
+export type AddImageCollection360Options = AddImageCollection360EventsOptions | AddImageCollection360DatamodelsOptions;
 
 export type AddImageCollection360EventsOptions = {
   siteId: string;

@@ -29,17 +29,14 @@ export const useCameraNavigation = (): CameraNavigationActions => {
   };
 
   const fitCameraToModelNodes = async (revisionId: number, nodeIds: number[]): Promise<void> => {
-    const model = viewer.models.find((m) => m.revisionId === revisionId);
+    const model = viewer.models.find(m => m.revisionId === revisionId);
     if (model === undefined) {
       await Promise.reject(new Error(`Could not find model with revision ${revisionId}`));
       return;
     }
 
     const nodeBoundingBoxes = await (model as CogniteCadModel).getBoundingBoxesByNodeIds(nodeIds);
-    const unionedBox = nodeBoundingBoxes.reduce(
-      (currentBox, nextBox) => currentBox.union(nextBox),
-      new Box3()
-    );
+    const unionedBox = nodeBoundingBoxes.reduce((currentBox, nextBox) => currentBox.union(nextBox), new Box3());
     viewer.cameraManager.fitCameraToBoundingBox(unionedBox);
   };
 
@@ -47,19 +44,17 @@ export const useCameraNavigation = (): CameraNavigationActions => {
     await fitCameraToModelNodes(revisionId, [nodeId]);
   };
 
-  const fitCameraToInstances = async (
-    instances: Array<{ externalId: string; space: string }>
-  ): Promise<void> => {
-    const modelsRevisionIds = viewer.models.map((model) => ({
+  const fitCameraToInstances = async (instances: Array<{ externalId: string; space: string }>): Promise<void> => {
+    const modelsRevisionIds = viewer.models.map(model => ({
       modelId: model.modelId,
       revisionId: model.revisionId
     }));
 
-    const modelMappings = (
-      await fdmNodeCache.cache.getMappingsForFdmIds(instances, modelsRevisionIds)
-    ).find((model) => model.mappings.size > 0);
+    const modelMappings = (await fdmNodeCache.cache.getMappingsForFdmIds(instances, modelsRevisionIds)).find(
+      model => model.mappings.size > 0
+    );
 
-    const nodeIds = [...(modelMappings?.mappings.values() ?? [])].flat().map((node) => node.id);
+    const nodeIds = [...(modelMappings?.mappings.values() ?? [])].flat().map(node => node.id);
 
     if (modelMappings === undefined || nodeIds.length === 0) {
       await Promise.reject(new Error(`Could not find a model connected to the instances`));

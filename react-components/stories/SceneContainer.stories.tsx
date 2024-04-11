@@ -49,16 +49,11 @@ export const Main: Story = {
             sceneExternalId={selectedScene?.externalId}
             sceneSpaceId={selectedScene?.space}
           />
-          <RevealToolbar.SelectSceneButton
-            selectedScene={selectedScene}
-            setSelectedScene={setSelectedScene}
-          />
+          <RevealToolbar.SelectSceneButton selectedScene={selectedScene} setSelectedScene={setSelectedScene} />
           <RevealToolbar.FitModelsButton />
         </MyCustomToolbar>
         <SceneContainerStoryContent
-          sceneExternalId={
-            selectedScene !== undefined ? selectedScene?.externalId : sceneExternalId
-          }
+          sceneExternalId={selectedScene !== undefined ? selectedScene?.externalId : sceneExternalId}
           sceneSpaceId={selectedScene !== undefined ? selectedScene?.space : sceneSpaceId}
         />
       </RevealStoryContainer>

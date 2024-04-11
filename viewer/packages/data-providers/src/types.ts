@@ -11,24 +11,24 @@ import * as THREE from 'three';
 
 export type Image360AnnotationFilterDelegate = (annotation: AnnotationModel) => boolean;
 
-export interface JsonFileProvider {
+export type JsonFileProvider = {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
-}
+};
 
-export interface BinaryFileProvider {
+export type BinaryFileProvider = {
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
-}
+};
 
-export interface Image360AnnotationProvider {
+export type Image360AnnotationProvider = {
   get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]>;
   getFilesByAssetRef(assetId: IdEither): Promise<CogniteInternalId[]>;
-}
+};
 
-export interface Image360DescriptorProvider<T> {
+export type Image360DescriptorProvider<T> = {
   get360ImageDescriptors(metadataFilter: T, preMultipliedRotation: boolean): Promise<Historical360ImageSet[]>;
-}
+};
 
-export interface Image360FileProvider {
+export type Image360FileProvider = {
   get360ImageFiles(
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
@@ -38,7 +38,7 @@ export interface Image360FileProvider {
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
   ): Promise<Image360Face[]>;
-}
+};
 
 /**
  * A CDF AnnotationModel with a narrower type representing an image asset link
@@ -50,12 +50,12 @@ export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
   data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
 };
 
-export interface Image360AssetProvider {
+export type Image360AssetProvider = {
   get360ImageAssets(
     image360FileDescriptors: Image360FileDescriptor[],
     annotationFilter: Image360AnnotationFilterDelegate
   ): Promise<ImageAssetLinkAnnotationInfo[]>;
-}
+};
 
 export type Historical360ImageSet = Image360EventDescriptor & {
   imageRevisions: Image360Descriptor[];
@@ -100,11 +100,11 @@ export enum File3dFormat {
   AnyFormat = 'all-outputs'
 }
 
-export interface BlobOutputMetadata {
+export type BlobOutputMetadata = {
   blobId: number;
   format: File3dFormat | string;
   version: number;
-}
+};
 
 type InstanceType = 'node' | 'edge';
 

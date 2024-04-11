@@ -28,9 +28,7 @@ export const useSDK = (userSdk?: CogniteClient): CogniteClient => {
       return userSdk;
     }
 
-    throw new Error(
-      `SdkContext not found, add '<SDKProvider value={sdk}>' around your component/app`
-    );
+    throw new Error(`SdkContext not found, add '<SDKProvider value={sdk}>' around your component/app`);
   }
 
   return sdk;
@@ -39,9 +37,7 @@ export const useSDK = (userSdk?: CogniteClient): CogniteClient => {
 export const useFdmSdk = (): FdmSDK => {
   const fdmSdk = useContext(FdmSdkContext);
   if (fdmSdk === null) {
-    throw new Error(
-      `FdmSdkContext not found, add '<SDKProvider value={sdk}>' around your component/app`
-    );
+    throw new Error(`FdmSdkContext not found, add '<SDKProvider value={sdk}>' around your component/app`);
   }
   return fdmSdk;
 };

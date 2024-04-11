@@ -9,5 +9,5 @@ import {
   Image360AssetProvider
 } from './types';
 
-export interface Image360Provider<T> extends Image360DescriptorProvider<T>, Image360DataProvider {}
-export interface Image360DataProvider extends Image360FileProvider, Image360AnnotationProvider, Image360AssetProvider {}
+export type Image360Provider<T> = {} & Image360DescriptorProvider<T> & Image360DataProvider;
+export type Image360DataProvider = {} & Image360FileProvider & Image360AnnotationProvider & Image360AssetProvider;

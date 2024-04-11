@@ -3,11 +3,7 @@
  */
 
 import { type CogniteClient, type CogniteInternalId, type Node3D } from '@cognite/sdk';
-import {
-  type DmsUniqueIdentifier,
-  type FdmSDK,
-  type InspectResultList
-} from '../../utilities/FdmSDK';
+import { type DmsUniqueIdentifier, type FdmSDK, type InspectResultList } from '../../utilities/FdmSDK';
 import { type FdmCadEdge } from './types';
 import {
   INSTANCE_SPACE_3D_DATA,
@@ -24,11 +20,7 @@ export async function fetchAncestorNodesForTreeIndex(
 ): Promise<Node3D[]> {
   const nodeId = await treeIndexesToNodeIds(modelId, revisionId, [treeIndex], cogniteClient);
 
-  const ancestorNodes = await cogniteClient.revisions3D.list3DNodeAncestors(
-    modelId,
-    revisionId,
-    nodeId[0]
-  );
+  const ancestorNodes = await cogniteClient.revisions3D.list3DNodeAncestors(modelId, revisionId, nodeId[0]);
 
   return ancestorNodes.items;
 }
@@ -73,19 +65,12 @@ export async function getMappingEdgesForNodeIds(
     ]
   };
 
-  const instances = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
-    filter,
-    'edge',
-    SYSTEM_3D_EDGE_SOURCE
-  );
+  const instances = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(filter, 'edge', SYSTEM_3D_EDGE_SOURCE);
 
   return { edges: instances.instances };
 }
 
-export async function inspectNodes(
-  fdmClient: FdmSDK,
-  dataNodes: DmsUniqueIdentifier[]
-): Promise<InspectResultList> {
+export async function inspectNodes(fdmClient: FdmSDK, dataNodes: DmsUniqueIdentifier[]): Promise<InspectResultList> {
   const chunkedNodes = chunk(dataNodes, 100);
 
   const inspectionResult: InspectResultList = {
@@ -95,7 +80,7 @@ export async function inspectNodes(
   for (const nodesChunk of chunkedNodes) {
     const chunkInspectionResults = await fdmClient.inspectInstances({
       inspectionOperations: { involvedViews: {} },
-      items: nodesChunk.map((node) => ({
+      items: nodesChunk.map(node => ({
         instanceType: 'node',
         externalId: node.externalId,
         space: node.space
@@ -139,6 +124,6 @@ export async function fetchNodesForNodeIds(
   return await cogniteClient.revisions3D.retrieve3DNodes(
     modelId,
     revisionId,
-    nodeIds.map((id) => ({ id }))
+    nodeIds.map(id => ({ id }))
   );
 }

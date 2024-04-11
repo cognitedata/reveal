@@ -2,11 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  type AddImageCollection360Options,
-  Image360CollectionContainer,
-  useCameraNavigation
-} from '../src';
+import { type AddImageCollection360Options, Image360CollectionContainer, useCameraNavigation } from '../src';
 import { Color, Matrix4, Vector3 } from 'three';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { type ReactElement } from 'react';

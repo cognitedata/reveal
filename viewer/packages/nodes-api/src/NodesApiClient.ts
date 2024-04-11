@@ -9,7 +9,7 @@ import { CogniteInternalId } from '@cognite/sdk';
 /**
  * Client for retrieving metadata information about CAD nodes.
  */
-export interface NodesApiClient {
+export type NodesApiClient = {
   /**
    * Maps a set of "tree indexes" that identify nodes, to the respective
    * "node IDs".
@@ -69,4 +69,4 @@ export interface NodesApiClient {
     revisionId: CogniteInternalId,
     nodeIds: CogniteInternalId[]
   ): Promise<THREE.Box3[]>;
-}
+};

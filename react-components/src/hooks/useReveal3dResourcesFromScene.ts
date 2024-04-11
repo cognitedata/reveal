@@ -19,10 +19,7 @@ export type UseSyncSceneConfigWithViewerProps = {
   sceneSpaceId: string;
 };
 
-export const useReveal3dResourcesFromScene = (
-  sceneExternalId: string,
-  sceneSpaceId: string
-): AddResourceOptions[] => {
+export const useReveal3dResourcesFromScene = (sceneExternalId: string, sceneSpaceId: string): AddResourceOptions[] => {
   const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
   const [resourceOptions, setResourceOptions] = useState<AddResourceOptions[]>([]);
 
@@ -31,7 +28,7 @@ export const useReveal3dResourcesFromScene = (
       return;
     }
     const addResourceOptions: AddResourceOptions[] = [];
-    scene.data.sceneModels.forEach((model) => {
+    scene.data.sceneModels.forEach(model => {
       if (isNaN(model.modelId)) {
         throw new Error('Model id is not a number');
       }
@@ -46,7 +43,7 @@ export const useReveal3dResourcesFromScene = (
       addResourceOptions.push({ ...addModelOptions, transform });
     });
 
-    scene.data.image360Collections.forEach((collection) => {
+    scene.data.image360Collections.forEach(collection => {
       const transform = createResourceTransformation(collection);
       const addModelOptions: AddImageCollection360DatamodelsOptions = {
         externalId: collection.image360CollectionExternalId,

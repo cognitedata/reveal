@@ -7,7 +7,7 @@ import { BinaryFileProvider, JsonFileProvider } from './types';
 /**
  * Provides data for 3D models.
  */
-export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider {
+export type ModelDataProvider = {
   /**
    * Download and parse a JSON file and return the resulting struct.
    * @param baseUrl     Base URL of the model.
@@ -21,4 +21,5 @@ export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider 
    * @param abortSignal Optional abort signal that can be used to cancel an in progress fetch.
    */
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
-}
+} & JsonFileProvider &
+  BinaryFileProvider;

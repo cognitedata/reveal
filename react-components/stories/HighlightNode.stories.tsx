@@ -19,10 +19,7 @@ import { type CadIntersection, DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
-import {
-  type Image360AssetStylingGroup,
-  type AssetStylingGroup
-} from '../src/components/Reveal3DResources/types';
+import { type Image360AssetStylingGroup, type AssetStylingGroup } from '../src/components/Reveal3DResources/types';
 import { type AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 
 const meta = {

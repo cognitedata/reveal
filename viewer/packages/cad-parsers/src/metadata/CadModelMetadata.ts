@@ -7,7 +7,7 @@ import { SectorScene } from '../utilities/types';
 import { CameraConfiguration } from '@reveal/utilities';
 import { File3dFormat } from '@reveal/data-providers';
 
-export interface CadModelMetadata {
+export type CadModelMetadata = {
   /**
    * A unique identifier of the model.
    */
@@ -57,4 +57,4 @@ export interface CadModelMetadata {
    * Camera configuration stored in CDF (if any).
    */
   readonly cameraConfiguration?: CameraConfiguration;
-}
+};

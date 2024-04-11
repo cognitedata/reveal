@@ -61,7 +61,7 @@ export type Image360AnnotationAssetQueryResult = {
 /**
  * A wrapper that represents a set of 360 images.
  */
-export interface Image360Collection {
+export type Image360Collection = {
   /**
    * The id of the collection.
    * @returns The id of the collection.
@@ -162,4 +162,4 @@ export interface Image360Collection {
    * @param assets What source data to pull the annotation info from
    */
   getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info[]>;
-}
+};

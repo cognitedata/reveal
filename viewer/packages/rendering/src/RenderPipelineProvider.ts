@@ -11,7 +11,7 @@ import { RenderPass } from './RenderPass';
  * skipping any passes may yield undefined behaviour for following
  * render passes given some dependency.
  */
-export interface RenderPipelineProvider {
+export type RenderPipelineProvider = {
   pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass>;
   dispose(): void;
-}
+};

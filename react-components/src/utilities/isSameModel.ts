@@ -2,10 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type GeometryFilter } from '@cognite/reveal';
-import {
-  type PointCloudModelOptions,
-  type CadModelOptions
-} from '../components/Reveal3DResources/types';
+import { type PointCloudModelOptions, type CadModelOptions } from '../components/Reveal3DResources/types';
 
 export function isSameCadModel(model0: CadModelOptions, model1: CadModelOptions): boolean {
   return (
@@ -19,10 +16,7 @@ export function isSameCadModel(model0: CadModelOptions, model1: CadModelOptions)
   );
 }
 
-function isSameGeometryFilter(
-  filter0: GeometryFilter | undefined,
-  filter1: GeometryFilter | undefined
-): boolean {
+function isSameGeometryFilter(filter0: GeometryFilter | undefined, filter1: GeometryFilter | undefined): boolean {
   if (filter0 === filter1) {
     return true;
   }
@@ -45,16 +39,11 @@ function isSameGeometryFilter(
   );
 }
 
-export function isSamePointCloudModel(
-  model0: PointCloudModelOptions,
-  model1: PointCloudModelOptions
-): boolean {
+export function isSamePointCloudModel(model0: PointCloudModelOptions, model1: PointCloudModelOptions): boolean {
   return (
     model0.modelId === model1.modelId &&
     model0.revisionId === model1.revisionId &&
     (model0.transform === model1.transform ||
-      (model0.transform !== undefined &&
-        model1.transform !== undefined &&
-        model0.transform.equals(model1.transform)))
+      (model0.transform !== undefined && model1.transform !== undefined && model0.transform.equals(model1.transform)))
   );
 }

@@ -36,10 +36,7 @@ export const useSearchAssetsMapped360Annotations = (
   sdk: CogniteClient,
   query: string
 ): UseQueryResult<Image360AnnotationMappedAssetData[]> => {
-  const { data: assetAnnotationMappings, isFetched } = useAllAssetsMapped360Annotations(
-    sdk,
-    siteIds
-  );
+  const { data: assetAnnotationMappings, isFetched } = useAllAssetsMapped360Annotations(sdk, siteIds);
 
   return useQuery(
     ['reveal', 'react-components', 'search-assets-mapped-360-annotations', query, siteIds],
@@ -48,10 +45,10 @@ export const useSearchAssetsMapped360Annotations = (
         return assetAnnotationMappings;
       }
 
-      const assetMappings = assetAnnotationMappings?.map((mapping) => mapping.asset) ?? [];
+      const assetMappings = assetAnnotationMappings?.map(mapping => mapping.asset) ?? [];
 
       const filteredSearchedAssets =
-        assetMappings?.filter((asset) => {
+        assetMappings?.filter(asset => {
           const isInName = asset.name.toLowerCase().includes(query.toLowerCase());
           const isInDescription = asset.description?.toLowerCase().includes(query.toLowerCase());
 
@@ -59,9 +56,7 @@ export const useSearchAssetsMapped360Annotations = (
         }) ?? [];
 
       const filteredAssetAnnotationMappings =
-        assetAnnotationMappings?.filter((mapping) =>
-          filteredSearchedAssets.includes(mapping.asset)
-        ) ?? [];
+        assetAnnotationMappings?.filter(mapping => filteredSearchedAssets.includes(mapping.asset)) ?? [];
 
       return filteredAssetAnnotationMappings;
     },
@@ -88,7 +83,7 @@ async function get360AnnotationAssets(
   sdk: CogniteClient
 ): Promise<Image360AnnotationMappedAssetData[]> {
   const filteredAnnotationMappings = image360Annotations
-    .map((annotation) => {
+    .map(annotation => {
       const assetId = getAssetIdOrExternalIdFromImage360Annotation(annotation);
       if (assetId === undefined) {
         return undefined;
@@ -112,9 +107,9 @@ async function retrieveAssets(
   annotationMapping: Array<{ assetId: string | number; annotationId: number }>
 ): Promise<Asset[][]> {
   return await Promise.all(
-    chunk(annotationMapping, 1000).map(async (mappingChunk) => {
+    chunk(annotationMapping, 1000).map(async mappingChunk => {
       const retrievedAssets = await sdk.assets.retrieve(
-        mappingChunk.map((mapping) => {
+        mappingChunk.map(mapping => {
           const assetId = mapping.assetId;
           if (typeof assetId === 'number') {
             return { id: assetId };
@@ -135,8 +130,8 @@ function getAssetsWithAnnotations(
 ): Array<{ asset: Asset; annotationIds: number[] }> {
   const flatAssetsWithAnnotations: Array<{ asset: Asset; annotationIds: number[] }> = [];
 
-  flatAssets.forEach((asset) => {
-    const matchingMapping = annotationMapping.find((mapping) => {
+  flatAssets.forEach(asset => {
+    const matchingMapping = annotationMapping.find(mapping => {
       const assetId = mapping.assetId;
       if (typeof assetId === 'number') {
         return asset.id === assetId;
@@ -146,9 +141,7 @@ function getAssetsWithAnnotations(
     });
 
     if (matchingMapping !== undefined) {
-      const matchedAssetWithAnnotation = flatAssetsWithAnnotations.find(
-        (entry) => entry.asset.id === asset.id
-      );
+      const matchedAssetWithAnnotation = flatAssetsWithAnnotations.find(entry => entry.asset.id === asset.id);
 
       if (matchedAssetWithAnnotation !== undefined) {
         matchedAssetWithAnnotation.annotationIds.push(matchingMapping.annotationId);
@@ -165,7 +158,7 @@ function getAssetsWithAnnotations(
 }
 
 async function get360ImagesFileIds(siteIds: string[], sdk: CogniteClient): Promise<number[]> {
-  const fileIdListPromises = siteIds.map(async (siteId) => {
+  const fileIdListPromises = siteIds.map(async siteId => {
     const req: FileFilterProps = {
       metadata: { site_id: siteId }
     };
@@ -178,14 +171,11 @@ async function get360ImagesFileIds(siteIds: string[], sdk: CogniteClient): Promi
   return fileIdsList;
 }
 
-async function get360ImageAnnotations(
-  fileIdsList: number[],
-  sdk: CogniteClient
-): Promise<AnnotationModel[]> {
+async function get360ImageAnnotations(fileIdsList: number[], sdk: CogniteClient): Promise<AnnotationModel[]> {
   const annotationArray = await Promise.all(
-    chunk(fileIdsList, 1000).map(async (fileIdsChunk) => {
+    chunk(fileIdsList, 1000).map(async fileIdsChunk => {
       const filter: AnnotationFilterProps = {
-        annotatedResourceIds: fileIdsChunk.map((id) => ({ id })),
+        annotatedResourceIds: fileIdsChunk.map(id => ({ id })),
         annotatedResourceType: 'file',
         annotationType: 'images.AssetLink'
       };
@@ -199,7 +189,7 @@ async function get360ImageAnnotations(
     })
   );
 
-  return annotationArray.flatMap((annotations) => annotations);
+  return annotationArray.flatMap(annotations => annotations);
 }
 
 async function listFileIds(filter: FileFilterProps, sdk: CogniteClient): Promise<number[]> {
@@ -207,7 +197,7 @@ async function listFileIds(filter: FileFilterProps, sdk: CogniteClient): Promise
   const map = await sdk.files.list(req).autoPagingToArray({ limit: Infinity });
 
   const fileInfo = await Promise.all(map.flat());
-  const list = fileInfo.map((file) => file.id);
+  const list = fileInfo.map(file => file.id);
 
   return list;
 }

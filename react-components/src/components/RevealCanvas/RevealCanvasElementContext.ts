@@ -9,9 +9,7 @@ export const RevealCanvasElementContext = createContext<HTMLDivElement | null>(n
 export const useRevealContainerElement = (): HTMLDivElement => {
   const element = useContext(RevealCanvasElementContext);
   if (element === null) {
-    throw new Error(
-      'useRevealContainerElement must be used within a RevealContainerElementContextProvider'
-    );
+    throw new Error('useRevealContainerElement must be used within a RevealContainerElementContextProvider');
   }
   return element;
 };

@@ -3,7 +3,7 @@ import { LRU } from '../utils/lru';
 import { PointCloudOctree } from '../tree/PointCloudOctree';
 import { PointCloudObject } from '@reveal/data-providers';
 
-export interface IPotree {
+export type IPotree = {
   pointBudget: number;
   maxNumNodesLoading: number;
   lru: LRU;
@@ -16,4 +16,4 @@ export interface IPotree {
   ): Promise<PointCloudOctree>;
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void;
-}
+};

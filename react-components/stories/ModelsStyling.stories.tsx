@@ -80,12 +80,10 @@ export const Main: Story = {
             opacity: 1,
             placement: 'topRight'
           }
-        }}>
+        }}
+      >
         <RevealCanvas>
-          <RevealResourcesFitCameraOnLoad
-            resources={resources}
-            defaultResourceStyling={defaultResourceStyling}
-          />
+          <RevealResourcesFitCameraOnLoad resources={resources} defaultResourceStyling={defaultResourceStyling} />
         </RevealCanvas>
       </RevealContext>
     );

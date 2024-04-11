@@ -8,7 +8,7 @@ import { AnnotationModel } from '@cognite/sdk';
 /**
  * An annotation associated with a 360 image revision
  */
-export interface Image360Annotation {
+export type Image360Annotation = {
   /**
    * The underlying CDF annotation
    */
@@ -38,4 +38,4 @@ export interface Image360Annotation {
    * Get center of annotation, to e.g. point the camera toward it
    */
   getCenter(out?: Vector3): Vector3;
-}
+};

@@ -52,11 +52,7 @@ export const Main: Story = {
   render: ({ addModelOptions, transform, styling }) => (
     <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
       <RevealCanvas>
-        <PointCloudContainer
-          addModelOptions={addModelOptions}
-          transform={transform}
-          styling={styling}
-        />
+        <PointCloudContainer addModelOptions={addModelOptions} transform={transform} styling={styling} />
       </RevealCanvas>
     </RevealContext>
   )

@@ -12,6 +12,6 @@ import * as THREE from 'three';
  * Usually multiple RenderPass' will be combined and managed by
  * some RenderPipelineProvider that defines the rendering job.
  */
-export interface RenderPass {
+export type RenderPass = {
   render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void;
-}
+};

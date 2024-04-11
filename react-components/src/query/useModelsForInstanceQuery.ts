@@ -48,14 +48,9 @@ async function getModelsForAssetInstance(
 ): Promise<TaggedAddResourceOptions[]> {
   const cadModelsPromise = getCadModelsForAsset(instance.assetId, cogniteClient);
   const pointCloudModelsPromise = getPointCloudModelsForAsset(instance.assetId, cogniteClient);
-  const image360CollectionsPromise = getImage360CollectionsForAsset(
-    instance.assetId,
-    cogniteClient
-  );
+  const image360CollectionsPromise = getImage360CollectionsForAsset(instance.assetId, cogniteClient);
 
-  return (
-    await Promise.all([cadModelsPromise, pointCloudModelsPromise, image360CollectionsPromise])
-  ).flat();
+  return (await Promise.all([cadModelsPromise, pointCloudModelsPromise, image360CollectionsPromise])).flat();
 }
 
 async function getModelsForFdmInstance(

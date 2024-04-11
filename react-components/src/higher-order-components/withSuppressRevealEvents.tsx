@@ -4,9 +4,7 @@
 
 import { useRef, useEffect, type ReactElement, type FunctionComponent } from 'react';
 
-export function withSuppressRevealEvents<T extends object>(
-  Component: FunctionComponent<T>
-): FunctionComponent<T> {
+export function withSuppressRevealEvents<T extends object>(Component: FunctionComponent<T>): FunctionComponent<T> {
   return function SuppressRevealEvents(props: T): ReactElement {
     const divRef = useRef<HTMLDivElement>(null);
 

@@ -4,11 +4,7 @@
 
 import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
 import { type CadModelOptions } from '../Reveal3DResources/types';
-import {
-  type AssetMapping,
-  AssetMappingCache,
-  type NodeAssetMappingResult
-} from './AssetMappingCache';
+import { type AssetMapping, AssetMappingCache, type NodeAssetMappingResult } from './AssetMappingCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type CogniteInternalId } from '@cognite/sdk';
 import { useSDK } from '../RevealCanvas/SDKProvider';
@@ -53,14 +49,14 @@ export const useAssetMappedNodesForRevisions = (
       'reveal',
       'react-components',
       'models-asset-mappings',
-      ...cadModels.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+      ...cadModels.map(model => `${model.modelId}/${model.revisionId}`).sort()
     ],
     async () => {
       const fetchPromises = cadModels.map(
-        async (model) =>
+        async model =>
           await assetMappingCache
             .getAssetMappingsForModel(model.modelId, model.revisionId)
-            .then((assetMappings) => ({ model, assetMappings }))
+            .then(assetMappings => ({ model, assetMappings }))
       );
       return await Promise.all(fetchPromises);
     },
@@ -79,16 +75,12 @@ export const useNodesForAssets = (
       'reveal',
       'react-components',
       'asset-mapping-nodes',
-      ...models.map((model) => `${model.modelId}/${model.revisionId}`),
-      ...assetIds.map((id) => `${id}`)
+      ...models.map(model => `${model.modelId}/${model.revisionId}`),
+      ...assetIds.map(id => `${id}`)
     ],
     async () => {
-      const modelAndNodeMapPromises = models.map(async (model) => {
-        const nodeMap = await assetMappingCache.getNodesForAssetIds(
-          model.modelId,
-          model.revisionId,
-          assetIds
-        );
+      const modelAndNodeMapPromises = models.map(async model => {
+        const nodeMap = await assetMappingCache.getNodesForAssetIds(model.modelId, model.revisionId, assetIds);
         return { modelId: model.modelId, revisionId: model.revisionId, assetToNodeMap: nodeMap };
       });
 
@@ -107,33 +99,17 @@ export const useAssetMappingForTreeIndex = (
   const cdfClient = useSDK();
 
   return useQuery(
-    [
-      'reveal',
-      'react-components',
-      'tree-index-asset-mapping',
-      `${modelId}/${revisionId}`,
-      treeIndex
-    ],
+    ['reveal', 'react-components', 'tree-index-asset-mapping', `${modelId}/${revisionId}`, treeIndex],
     async () => {
-      const areInputsDefined =
-        modelId !== undefined && revisionId !== undefined && treeIndex !== undefined;
+      const areInputsDefined = modelId !== undefined && revisionId !== undefined && treeIndex !== undefined;
 
       if (!areInputsDefined) {
         return { mappings: [] };
       }
 
-      const ancestors = await fetchAncestorNodesForTreeIndex(
-        modelId,
-        revisionId,
-        treeIndex,
-        cdfClient
-      );
+      const ancestors = await fetchAncestorNodesForTreeIndex(modelId, revisionId, treeIndex, cdfClient);
 
-      return await assetMappingCache.getAssetMappingsForLowestAncestor(
-        modelId,
-        revisionId,
-        ancestors
-      );
+      return await assetMappingCache.getAssetMappingsForLowestAncestor(modelId, revisionId, ancestors);
     },
     { staleTime: Infinity }
   );
@@ -144,8 +120,7 @@ export function AssetMappingCacheProvider({ children }: { children?: ReactNode }
   const revealKeepAliveData = useRevealKeepAlive();
 
   const fdmCache = useMemo(() => {
-    const cache =
-      revealKeepAliveData?.assetMappingCache.current ?? new AssetMappingCache(cdfClient);
+    const cache = revealKeepAliveData?.assetMappingCache.current ?? new AssetMappingCache(cdfClient);
 
     const isRevealKeepAliveContextProvided = revealKeepAliveData !== undefined;
     if (isRevealKeepAliveContextProvided) {
@@ -155,9 +130,5 @@ export function AssetMappingCacheProvider({ children }: { children?: ReactNode }
     return cache;
   }, [cdfClient]);
 
-  return (
-    <AssetMappingCacheContext.Provider value={{ cache: fdmCache }}>
-      {children}
-    </AssetMappingCacheContext.Provider>
-  );
+  return <AssetMappingCacheContext.Provider value={{ cache: fdmCache }}>{children}</AssetMappingCacheContext.Provider>;
 }

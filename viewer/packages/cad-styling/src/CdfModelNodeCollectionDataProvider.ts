@@ -7,7 +7,7 @@ import * as THREE from 'three';
 /**
  * Provides metadata needed to get asset mappings for a CDF 3D model
  */
-export interface CdfModelNodeCollectionDataProvider {
+export type CdfModelNodeCollectionDataProvider = {
   /**
    * Gets the transformation of the model in ThreeJS space
    */
@@ -30,4 +30,4 @@ export interface CdfModelNodeCollectionDataProvider {
    */
   modelId: number;
   revisionId: number;
-}
+};

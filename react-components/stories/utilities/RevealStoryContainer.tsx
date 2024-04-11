@@ -10,10 +10,7 @@ import { type CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { createSdkByUrlToken } from './createSdkByUrlToken';
 import { type PointCloudAnnotationCache } from '../../src/components/CacheProvider/PointCloudAnnotationCache';
-import {
-  RevealContext,
-  type RevealContextProps
-} from '../../src/components/RevealContext/RevealContext';
+import { RevealContext, type RevealContextProps } from '../../src/components/RevealContext/RevealContext';
 import { type Image360AnnotationCache } from '../../src/components/CacheProvider/Image360AnnotationCache';
 import { type SceneIdentifiers } from '../../src/components/SceneContainer/SceneTypes';
 
@@ -22,12 +19,7 @@ type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   viewer?: Cognite3DViewer;
 };
 
-export const RevealStoryContext = ({
-  viewer,
-  sdk,
-  children,
-  ...rest
-}: RevealStoryContainerProps): ReactElement => {
+export const RevealStoryContext = ({ viewer, sdk, children, ...rest }: RevealStoryContainerProps): ReactElement => {
   const sdkInstance = useMemo(() => {
     if (sdk !== undefined) {
       return sdk;
@@ -59,7 +51,8 @@ export const RevealStoryContext = ({
         assetMappingCache,
         pointCloudAnnotationCache,
         image360AnnotationCache
-      }}>
+      }}
+    >
       <RevealContext sdk={sdkInstance} {...rest}>
         {children}
       </RevealContext>
@@ -67,10 +60,7 @@ export const RevealStoryContext = ({
   );
 };
 
-export const RevealStoryContainer = ({
-  children,
-  ...rest
-}: RevealStoryContainerProps): ReactElement => {
+export const RevealStoryContainer = ({ children, ...rest }: RevealStoryContainerProps): ReactElement => {
   return (
     <RevealStoryContext {...rest}>
       <RevealCanvas>{children}</RevealCanvas>

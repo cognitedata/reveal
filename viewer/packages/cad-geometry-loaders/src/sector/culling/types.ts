@@ -10,7 +10,7 @@ import { CadLoadingHints } from '../../CadLoadingHints';
 import { CadModelBudget } from '../../CadModelBudget';
 import { CadNode } from '@reveal/cad-model';
 
-export interface DetermineSectorsInput {
+export type DetermineSectorsInput = {
   camera: THREE.PerspectiveCamera;
   modelClippingPlanes: THREE.Plane[][];
   cadModelsMetadata: CadModelMetadata[];
@@ -18,7 +18,7 @@ export interface DetermineSectorsInput {
   cameraInMotion: boolean;
   budget: CadModelBudget;
   prioritizedAreas: PrioritizedArea[];
-}
+};
 
 export type DetermineSectorsPayload = {
   camera: THREE.PerspectiveCamera;

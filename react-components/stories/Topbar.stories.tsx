@@ -34,9 +34,7 @@ export const Main: Story = {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
   render: ({ addModelOptions }) => (
-    <RevealStoryContext
-      viewerOptions={{ useFlexibleCameraManager: true }}
-      color={new Color(0x4a4a4a)}>
+    <RevealStoryContext viewerOptions={{ useFlexibleCameraManager: true }} color={new Color(0x4a4a4a)}>
       <RevealTopbar topbarContent={<TopbarContent />} />
       <RevealCanvas>
         <FitToUrlCameraState />
@@ -51,11 +49,7 @@ const TopbarContent = (): ReactElement => {
 
   return (
     <>
-      <SelectSceneButton
-        selectedScene={scene}
-        setSelectedScene={setScene}
-        orientation="horizontal"
-      />
+      <SelectSceneButton selectedScene={scene} setSelectedScene={setScene} orientation="horizontal" />
       <RevealToolbar.SetOrbitOrFirstPersonControlsType orientation="horizontal" />
       <RevealToolbar.LayersButton storeStateInUrl={true} />
       <RuleBasedOutputsButton />

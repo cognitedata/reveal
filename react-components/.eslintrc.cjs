@@ -1,27 +1,16 @@
 module.exports = {
-  env: {
-    browser: true,
-    es2021: true
-  },
   extends: [
-    'standard-with-typescript',
-    'eslint:recommended',
     'plugin:react/recommended',
-    'plugin:prettier/recommended'
-  ],
+    '../viewer/.eslintrc.common.js'],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
     project: './tsconfig.json',
     tsconfigRootDir: __dirname
   },
-  plugins: ['react', 'prettier', 'header'],
+  plugins: ['react'],
   rules: {
-    'react/react-in-jsx-scope': 'off',
-    '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
-    '@typescript-eslint/no-misused-promises': 'off',
-    'no-console': [2, { allow: ['warn', 'error'] }],
-    eqeqeq: ['error', 'always']
+    'react/react-in-jsx-scope': 'off'
   },
   settings: {
     react: {

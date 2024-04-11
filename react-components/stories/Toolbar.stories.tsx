@@ -54,8 +54,9 @@ const exampleCustomSettingElements = (): ReactElement => {
         hasSwitch
         toggled={originalCadColor}
         onChange={() => {
-          setOriginalCadColor((prevMode) => !prevMode);
-        }}>
+          setOriginalCadColor(prevMode => !prevMode);
+        }}
+      >
         Original CAD coloring
       </Menu.Item>
       <Button>Custom Button</Button>
@@ -96,9 +97,7 @@ export const Main: Story = {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
   render: ({ addModelOptions }) => (
-    <RevealStoryContainer
-      color={new Color(0x4a4a4a)}
-      viewerOptions={{ useFlexibleCameraManager: true }}>
+    <RevealStoryContainer color={new Color(0x4a4a4a)} viewerOptions={{ useFlexibleCameraManager: true }}>
       <FitToUrlCameraState />
       <CadModelContainer addModelOptions={addModelOptions} />
       <RevealToolbar

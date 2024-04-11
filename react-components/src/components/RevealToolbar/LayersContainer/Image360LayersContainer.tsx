@@ -25,11 +25,11 @@ export const Image360CollectionLayerContainer = ({
   const { storeStateInUrl } = layerProps;
 
   const count = image360LayerData.length.toString();
-  const someImagesVisible = !image360LayerData.every((data) => !data.isToggled);
-  const indeterminate = image360LayerData.some((data) => !data.isToggled);
+  const someImagesVisible = !image360LayerData.every(data => !data.isToggled);
+  const indeterminate = image360LayerData.some(data => !data.isToggled);
 
   const handle360ImagesVisibility = (image360: Image360Collection): void => {
-    const updatedImage360Collection = image360LayerData.map((data) => {
+    const updatedImage360Collection = image360LayerData.map(data => {
       if (data.image360 === image360) {
         data.isToggled = !data.isToggled;
         // Exit 360 image if it is active
@@ -42,7 +42,7 @@ export const Image360CollectionLayerContainer = ({
       return data;
     });
     viewer.requestRedraw();
-    layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
+    layerProps.setReveal3DResourcesLayerData(prevResourcesStates => ({
       ...prevResourcesStates,
       image360LayerData: updatedImage360Collection
     }));
@@ -53,13 +53,13 @@ export const Image360CollectionLayerContainer = ({
   };
 
   const handleAll360ImagesVisibility = (visible: boolean): void => {
-    [...image360LayerData].forEach((data) => {
+    [...image360LayerData].forEach(data => {
       data.isToggled = visible;
       data.image360.setIconsVisibility(data.isToggled);
     });
-    image360LayerData.some((data) => data.isActive) && viewer.exit360Image();
+    image360LayerData.some(data => data.isActive) && viewer.exit360Image();
     viewer.requestRedraw();
-    layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
+    layerProps.setReveal3DResourcesLayerData(prevResourcesStates => ({
       ...prevResourcesStates,
       image360LayerData
     }));
@@ -74,8 +74,9 @@ export const Image360CollectionLayerContainer = ({
       <StyledSubMenu
         onClick={(event: MouseEvent<HTMLElement>) => {
           event.stopPropagation();
-        }}>
-        {image360LayerData.map((data) => (
+        }}
+      >
+        {image360LayerData.map(data => (
           <Menu.Item
             key={uniqueId()}
             hasCheckbox
@@ -85,7 +86,8 @@ export const Image360CollectionLayerContainer = ({
                 e.stopPropagation();
                 handle360ImagesVisibility(data.image360);
               }
-            }}>
+            }}
+          >
             {data.image360.label}
           </Menu.Item>
         ))}
@@ -96,8 +98,9 @@ export const Image360CollectionLayerContainer = ({
   return (
     <div
       onClick={() => {
-        setVisible((prevState) => !prevState);
-      }}>
+        setVisible(prevState => !prevState);
+      }}
+    >
       {image360LayerData.length > 0 && (
         <Menu.Submenu
           appendTo={viewer.domElement ?? document.body}
@@ -105,12 +108,13 @@ export const Image360CollectionLayerContainer = ({
           onClickOutside={() => {
             setVisible(false);
           }}
-          content={image360Content()}>
+          content={image360Content()}
+        >
           <Flex direction="row" justifyContent="space-between">
             <Checkbox
               checked={someImagesVisible}
               indeterminate={indeterminate}
-              onChange={(e) => {
+              onChange={e => {
                 e.stopPropagation();
                 handleAll360ImagesVisibility(e.target.checked);
                 setVisible(true);

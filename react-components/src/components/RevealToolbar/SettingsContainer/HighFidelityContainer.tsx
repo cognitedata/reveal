@@ -37,10 +37,7 @@ const defaultHighFidelitySettings: QualitySettings = {
   }
 };
 
-export const HighFidelityContainer = ({
-  lowQualitySettings,
-  highQualitySettings
-}: QualityProps): ReactElement => {
+export const HighFidelityContainer = ({ lowQualitySettings, highQualitySettings }: QualityProps): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
   const [active, setActive] = useState(!isLowFidelity(viewer));
@@ -59,7 +56,7 @@ export const HighFidelityContainer = ({
     viewer.cadBudget = config.cadBudget;
     viewer.pointCloudBudget = config.pointCloudBudget;
     viewer.setResolutionOptions(config.resolutionOptions);
-    setActive((prevState) => !prevState);
+    setActive(prevState => !prevState);
   };
 
   return (
@@ -72,7 +69,6 @@ export const HighFidelityContainer = ({
 function isLowFidelity(viewer: Cognite3DViewer): boolean {
   return (
     viewer.cadBudget.maximumRenderCost <= defaultLowFidelitySettings.cadBudget.maximumRenderCost &&
-    viewer.pointCloudBudget.numberOfPoints <=
-      defaultLowFidelitySettings.pointCloudBudget.numberOfPoints
+    viewer.pointCloudBudget.numberOfPoints <= defaultLowFidelitySettings.pointCloudBudget.numberOfPoints
   );
 }

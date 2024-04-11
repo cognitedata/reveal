@@ -19,20 +19,13 @@ import {
   type TriggerType,
   type RuleWithOutputs
 } from './types';
-import {
-  type CogniteCadModel,
-  TreeIndexNodeCollection,
-  type NodeAppearance
-} from '@cognite/reveal';
+import { type CogniteCadModel, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset } from '@cognite/sdk';
 import { type AssetStylingGroup } from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
 
-const checkStringExpressionStatement = (
-  asset: Asset,
-  expression: StringExpression
-): boolean | undefined => {
+const checkStringExpressionStatement = (asset: Asset, expression: StringExpression): boolean | undefined => {
   const { trigger, condition } = expression;
 
   let expressionResult: boolean | undefined = false;
@@ -64,10 +57,7 @@ const checkStringExpressionStatement = (
 
   return expressionResult;
 };
-const checkNumericExpressionStatement = (
-  asset: Asset,
-  expression: NumericExpression
-): boolean | undefined => {
+const checkNumericExpressionStatement = (asset: Asset, expression: NumericExpression): boolean | undefined => {
   if (!isMetadataTrigger(expression.trigger)) return undefined;
 
   const trigger = expression.trigger;
@@ -127,24 +117,21 @@ const checkNumericExpressionStatement = (
   return expressionResult;
 };
 
-const traverseExpression = (
-  asset: Asset,
-  expressions: Expression[]
-): Array<boolean | undefined> => {
+const traverseExpression = (asset: Asset, expressions: Expression[]): Array<boolean | undefined> => {
   let expressionResult: boolean | undefined = false;
 
   const expressionResults: Array<boolean | undefined> = [];
 
-  expressions.forEach((expression) => {
+  expressions.forEach(expression => {
     switch (expression.type) {
       case 'or': {
         const operatorResult = traverseExpression(asset, expression.expressions);
-        expressionResult = operatorResult.find((result) => result) ?? false;
+        expressionResult = operatorResult.find(result => result) ?? false;
         break;
       }
       case 'and': {
         const operatorResult = traverseExpression(asset, expression.expressions);
-        expressionResult = operatorResult.every((result) => result === true) ?? false;
+        expressionResult = operatorResult.every(result => result === true) ?? false;
         break;
       }
       case 'not': {
@@ -167,15 +154,12 @@ const traverseExpression = (
   return expressionResults;
 };
 
-function forEachExpression(
-  expression: Expression,
-  callback: (expression: Expression) => void
-): void {
+function forEachExpression(expression: Expression, callback: (expression: Expression) => void): void {
   callback(expression);
   switch (expression.type) {
     case 'or':
     case 'and': {
-      expression.expressions.forEach((childExpression) => {
+      expression.expressions.forEach(childExpression => {
         forEachExpression(childExpression, callback);
       });
       return;
@@ -266,19 +250,14 @@ const analyzeNodesAgainstExpression = async ({
   outputSelected: ColorRuleOutput;
 }): Promise<AssetStylingGroupAndStyleIndex> => {
   const allTreeNodes = await Promise.all(
-    contextualizedAssetNodes.map(async (assetNode) => {
+    contextualizedAssetNodes.map(async assetNode => {
       const finalGlobalOutputResult = traverseExpression(assetNode, [expression]);
 
       if (finalGlobalOutputResult[0] ?? false) {
-        const nodesFromThisAsset = assetMappings.filter(
-          (mapping) => mapping.assetId === assetNode.id
-        );
+        const nodesFromThisAsset = assetMappings.filter(mapping => mapping.assetId === assetNode.id);
 
         // get the 3d nodes linked to the asset and with treeindex and subtreeRange
-        const nodesAndRange: NodeAndRange[] = await getThreeDNodesFromAsset(
-          nodesFromThisAsset,
-          model
-        );
+        const nodesAndRange: NodeAndRange[] = await getThreeDNodesFromAsset(nodesFromThisAsset, model);
 
         return nodesAndRange;
       }
@@ -294,7 +273,7 @@ const getThreeDNodesFromAsset = async (
   model: CogniteCadModel
 ): Promise<NodeAndRange[]> => {
   return await Promise.all(
-    nodesFromThisAsset.map(async (nodeFromAsset) => {
+    nodesFromThisAsset.map(async nodeFromAsset => {
       const subtreeRange = await model.getSubtreeTreeIndices(nodeFromAsset.treeIndex);
       const node: NodeAndRange = {
         nodeId: nodeFromAsset.nodeId,
@@ -318,7 +297,7 @@ const applyNodeStyles = (
   };
 
   const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
-  treeNodes.forEach((node) => {
+  treeNodes.forEach(node => {
     nodeIndexSet.addRange(node.subtreeRange);
   });
 
@@ -328,7 +307,7 @@ const applyNodeStyles = (
     color: new Color(outputSelected.fill)
   };
   const assetStylingGroup: AssetStylingGroup = {
-    assetIds: treeNodes.map((node) => node.assetId),
+    assetIds: treeNodes.map(node => node.assetId),
     style: { cad: nodeAppearance }
   };
 
@@ -339,9 +318,7 @@ const applyNodeStyles = (
   return stylingGroup;
 };
 
-const isMetadataTrigger = (
-  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger
-): trigger is MetadataRuleTrigger => {
+const isMetadataTrigger = (trigger: MetadataRuleTrigger | TimeseriesRuleTrigger): trigger is MetadataRuleTrigger => {
   return trigger.type === 'metadata';
 };
 

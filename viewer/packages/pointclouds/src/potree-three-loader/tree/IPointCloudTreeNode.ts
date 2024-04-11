@@ -3,7 +3,7 @@ import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometry
 
 import * as THREE from 'three';
 
-export interface IPointCloudTreeNode extends IPointCloudTreeNodeBase {
+export type IPointCloudTreeNode = {
   sceneNode: THREE.Points;
   geometryNode: IPointCloudTreeGeometryNode;
-}
+} & IPointCloudTreeNodeBase;

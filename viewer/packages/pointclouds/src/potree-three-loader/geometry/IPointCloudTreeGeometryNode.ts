@@ -1,7 +1,7 @@
 import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 import * as THREE from 'three';
 
-export interface IPointCloudTreeGeometryNode extends IPointCloudTreeNodeBase {
+export type IPointCloudTreeGeometryNode = {
   geometry: THREE.BufferGeometry | undefined;
   failed: boolean;
   load: () => Promise<void>;
@@ -15,4 +15,4 @@ export interface IPointCloudTreeGeometryNode extends IPointCloudTreeNodeBase {
     np: number,
     _mean: THREE.Vector3
   ) => void;
-}
+} & IPointCloudTreeNodeBase;

@@ -138,7 +138,7 @@ function getSceneModels(sceneResponse: SceneResponse): CadOrPointCloudModel[] {
   const models: CadOrPointCloudModel[] = [];
   if (sceneResponse.items.sceneModels.length > 0) {
     const sceneModels = sceneResponse.items.sceneModels;
-    sceneModels.forEach((sceneModel) => {
+    sceneModels.forEach(sceneModel => {
       const sceneModelProperties = extractProperties<SceneModelsProperties>(sceneModel.properties);
       if (!isNaN(Number(sceneModel.endNode.externalId))) {
         const model: CadOrPointCloudModel = {
@@ -157,10 +157,8 @@ function getImageCollections(sceneResponse: SceneResponse): Image360Collection[]
   const imageCollections: Image360Collection[] = [];
   if (sceneResponse.items.image360CollectionsEdges.length > 0) {
     const sceneModels = sceneResponse.items.image360CollectionsEdges;
-    sceneModels.forEach((sceneModel) => {
-      const imageCollectionProperties = extractProperties<Scene360ImageCollectionsProperties>(
-        sceneModel.properties
-      );
+    sceneModels.forEach(sceneModel => {
+      const imageCollectionProperties = extractProperties<Scene360ImageCollectionsProperties>(sceneModel.properties);
       const collection: Image360Collection = {
         ...imageCollectionProperties
       };
@@ -178,20 +176,16 @@ function getGroundPlanes(sceneResponse: SceneResponse): GroundPlane[] {
     const groundPlaneEdgeResponse = sceneResponse.items.groundPlaneEdges;
 
     // Match groundplanes with their edges
-    groundPlaneEdgeResponse.forEach((groundPlaneEdge) => {
+    groundPlaneEdgeResponse.forEach(groundPlaneEdge => {
       const mappedGroundPlane = groundPlaneResponse.find(
-        (groundPlane) =>
+        groundPlane =>
           groundPlane.externalId === groundPlaneEdge.endNode.externalId &&
           groundPlane.space === groundPlaneEdge.endNode.space
       );
 
       if (mappedGroundPlane !== undefined) {
-        const { label, file, wrapping } = extractProperties<GroundPlaneProperties>(
-          mappedGroundPlane.properties
-        );
-        const groundPlaneEdgeProperties = extractProperties<Transformation3d>(
-          groundPlaneEdge.properties
-        );
+        const { label, file, wrapping } = extractProperties<GroundPlaneProperties>(mappedGroundPlane.properties);
+        const groundPlaneEdgeProperties = extractProperties<Transformation3d>(groundPlaneEdge.properties);
         const groundPlane: GroundPlane = {
           label,
           file,
@@ -210,9 +204,7 @@ function getSkybox(sceneResponse: SceneResponse): Skybox | undefined {
     return undefined;
   }
 
-  const { label, isSpherical, file } = extractProperties<SkyboxProperties>(
-    sceneResponse.items.skybox[0].properties
-  );
+  const { label, isSpherical, file } = extractProperties<SkyboxProperties>(sceneResponse.items.skybox[0].properties);
   return {
     label,
     isSpherical,

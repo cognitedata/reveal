@@ -7,7 +7,7 @@ import type { ShaderMaterialParameters } from 'three';
 
 export type ColorOptions = Color | string | number;
 
-export interface LineMaterialParameters extends ShaderMaterialParameters {
+export type LineMaterialParameters = {
   color?: ColorOptions;
   worldUnits?: boolean;
   linewidth?: number;
@@ -17,7 +17,7 @@ export interface LineMaterialParameters extends ShaderMaterialParameters {
   dashOffset?: number;
   gapSize?: number;
   resolution?: Vector2;
-}
+} & ShaderMaterialParameters;
 
 /**
  * parameters = {

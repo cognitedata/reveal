@@ -15,11 +15,7 @@ export function revisionKeyToIds(revisionKey: ModelRevisionKey): [number, number
   return [Number(components[0]), Number(components[1])];
 }
 
-export function createModelNodeIdKey(
-  modelId: number,
-  revisionId: number,
-  nodeId: number
-): ModelNodeIdKey {
+export function createModelNodeIdKey(modelId: number, revisionId: number, nodeId: number): ModelNodeIdKey {
   return `${modelId}/${revisionId}/${nodeId}`;
 }
 

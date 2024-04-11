@@ -221,10 +221,7 @@ export class FdmSDK {
     this._sdk = sdk;
   }
 
-  public async listViews(
-    space: string,
-    includeInheritedProperties: boolean = true
-  ): Promise<{ views: ViewItem[] }> {
+  public async listViews(space: string, includeInheritedProperties: boolean = true): Promise<{ views: ViewItem[] }> {
     const result = await this._sdk.get(this._listViewsEndpoint, {
       params: {
         includeInheritedProperties,
@@ -239,9 +236,7 @@ export class FdmSDK {
   }
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<
-    PropertiesType extends Record<string, unknown> = Record<string, unknown>
-  >(
+  public async searchInstances<PropertiesType extends Record<string, unknown> = Record<string, unknown>>(
     searchedView: Source,
     query: string,
     instanceType?: InstanceType,
@@ -251,9 +246,7 @@ export class FdmSDK {
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<
-    PropertiesType extends Record<string, unknown> = Record<string, unknown>
-  >(
+  public async searchInstances<PropertiesType extends Record<string, unknown> = Record<string, unknown>>(
     searchedView: Source,
     query: string,
     instanceType?: 'edge',
@@ -273,9 +266,7 @@ export class FdmSDK {
   ): Promise<{ instances: Array<NodeItem<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<
-    PropertiesType extends Record<string, unknown> = Record<string, unknown>
-  >(
+  public async searchInstances<PropertiesType extends Record<string, unknown> = Record<string, unknown>>(
     searchedView: Source,
     query: string,
     instanceType?: InstanceType,
@@ -349,9 +340,7 @@ export class FdmSDK {
       throw new Error(`Failed to fetch instances. Status: ${result.status}`);
     }
 
-    const typedResult = result.data.items as Array<
-      EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>
-    >;
+    const typedResult = result.data.items as Array<EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>>;
 
     hoistInstanceProperties(source, typedResult);
 
@@ -499,7 +488,7 @@ export class FdmSDK {
   public async getViewsByIds(views: Source[]): Promise<{ items: ViewItem[] }> {
     const result = await this._sdk.post(this._viewsByIdEndpoint, {
       data: {
-        items: views.map((view) => ({
+        items: views.map(view => ({
           externalId: view.externalId,
           space: view.space,
           version: view.version
@@ -537,7 +526,7 @@ function hoistInstanceProperties(
     return;
   }
   const propertyKey = `${source.externalId}/${source.version}`;
-  instances.forEach((instance) => {
+  instances.forEach(instance => {
     if (instance.properties[source.space][propertyKey] !== undefined) {
       instance.properties = instance.properties[source.space][propertyKey];
     }

@@ -43,7 +43,8 @@ export const Main: Story = {
             opacity: 1,
             placement: 'topRight'
           }
-        }}>
+        }}
+      >
         <RevealCanvas>
           <RevealResourcesFitCameraOnLoad resources={resources} />
           <ViewerAnchor
@@ -52,7 +53,8 @@ export const Main: Story = {
             stickyMargin={20}
             style={{
               transform: 'translate(-50%, calc(-100% - 50px))'
-            }}>
+            }}
+          >
             <div
               style={{
                 backgroundColor: 'turquoise',
@@ -60,7 +62,8 @@ export const Main: Story = {
                 borderRadius: '10px',
                 borderStyle: 'solid',
                 maxWidth: '300px'
-              }}>
+              }}
+            >
               <SuppressedDiv>
                 <p>This label is stuck at position {position.toArray().join(',')}</p>
               </SuppressedDiv>
@@ -75,7 +78,8 @@ export const Main: Story = {
                 borderStyle: 'solid',
                 maxWidth: '300px',
                 transform: 'translate(0px, 0px)'
-              }}>
+              }}
+            >
               This label is stuck at position {position2.toArray().join(',')}
             </p>
           </ViewerAnchor>

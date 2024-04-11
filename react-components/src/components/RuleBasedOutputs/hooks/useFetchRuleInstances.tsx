@@ -25,14 +25,10 @@ export const useFetchRuleInstances = (): UseQueryResult<RuleAndEnabled[], unknow
         values: ['color']
       }
     };
-    const result = await fdmSdk.filterAllInstances<RuleOutputSet>(
-      filter,
-      'node',
-      RULE_BASED_OUTPUTS_VIEW
-    );
+    const result = await fdmSdk.filterAllInstances<RuleOutputSet>(filter, 'node', RULE_BASED_OUTPUTS_VIEW);
 
     const rulesAndEnabled: RuleAndEnabled[] = [];
-    result.instances.forEach((instance) => {
+    result.instances.forEach(instance => {
       rulesAndEnabled.push({
         isEnabled: false,
         rule: instance

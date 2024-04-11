@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { defineConfig, devices } from '@playwright/test';
 
 const PORT = 6006;
@@ -28,10 +31,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command:
-      process.env.CI === undefined
-        ? `yarn run storybook`
-        : `npx servor storybook-static index.html ${PORT}`,
+    command: process.env.CI === undefined ? `yarn run storybook` : `npx servor storybook-static index.html ${PORT}`,
     port: PORT,
     reuseExistingServer: process.env.CI === undefined
   }

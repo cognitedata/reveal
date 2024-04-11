@@ -15,11 +15,7 @@ import {
 } from '../utilities/FdmSDK';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import {
-  SYSTEM_3D_EDGE_SOURCE,
-  INSTANCE_SPACE_3D_DATA,
-  SYSTEM_SPACE_3D_SCHEMA
-} from '../utilities/globalDataModels';
+import { SYSTEM_3D_EDGE_SOURCE, INSTANCE_SPACE_3D_DATA, SYSTEM_SPACE_3D_SCHEMA } from '../utilities/globalDataModels';
 import { type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
 
@@ -42,10 +38,7 @@ export const useSearchMappedEquipmentFDM = (
   const sdk = useSDK(userSdk);
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
 
-  const spacesToSearch = useMemo(
-    () => uniq(viewsToSearch.map((view) => view.space)),
-    [viewsToSearch]
-  );
+  const spacesToSearch = useMemo(() => uniq(viewsToSearch.map(view => view.space)), [viewsToSearch]);
 
   return useQuery(
     ['reveal', 'react-components', 'search-mapped-fdm', query, models, viewsToSearch],
@@ -88,19 +81,17 @@ const searchNodesWithViewsAndModels = async (
   limit: number = 100
 ): Promise<SearchResultsWithView[]> => {
   if (query === '') {
-    const result = await fdmSdk.queryNodesAndEdges(
-      createMappedEquipmentQuery(models, sourcesToSearch, limit)
-    );
+    const result = await fdmSdk.queryNodesAndEdges(createMappedEquipmentQuery(models, sourcesToSearch, limit));
 
     const transformedResults = convertQueryNodeItemsToSearchResultsWithViews(
       result.items.mapped_nodes.concat(result.items.mapped_nodes_2) as NodeItem[]
     );
 
-    const combinedWithOtherViews = sourcesToSearch.map((view) => ({
+    const combinedWithOtherViews = sourcesToSearch.map(view => ({
       view,
       instances:
         transformedResults.find(
-          (result) => result.view.externalId === view.externalId && result.view.space === view.space
+          result => result.view.externalId === view.externalId && result.view.space === view.space
         )?.instances ?? []
     }));
 
@@ -148,19 +139,15 @@ export const useAllMappedEquipmentFDM = (
 
         const mappedNodes = currentPage.items.mapped_nodes as NodeItem[];
         const mappedNodesParents = currentPage.items.mapped_nodes_2 as NodeItem[];
-        mappedEquipment.push(
-          ...mappedNodes.concat(mappedNodesParents).map((node) => removeEmptyProperties(node))
-        );
+        mappedEquipment.push(...mappedNodes.concat(mappedNodesParents).map(node => removeEmptyProperties(node)));
 
         while (!isEqual(currentPage.nextCursor, {})) {
           query.cursors = currentPage.nextCursor;
 
           currentPage = await fdmSdk.queryNodesAndEdges(query);
 
-          const cleanedNodes = currentPage.items.mapped_nodes.map((node) =>
-            removeEmptyProperties(node as NodeItem)
-          );
-          const cleanedNodesParents = currentPage.items.mapped_nodes_2.map((node) =>
+          const cleanedNodes = currentPage.items.mapped_nodes.map(node => removeEmptyProperties(node as NodeItem));
+          const cleanedNodesParents = currentPage.items.mapped_nodes_2.map(node =>
             removeEmptyProperties(node as NodeItem)
           );
 
@@ -175,11 +162,11 @@ export const useAllMappedEquipmentFDM = (
 };
 
 function removeEmptyProperties(queryResultNode: NodeItem): NodeItem {
-  Object.keys(queryResultNode.properties).forEach((space) => {
+  Object.keys(queryResultNode.properties).forEach(space => {
     const currentSpaceProperties = queryResultNode.properties[space];
     const newProperties: Record<string, Record<string, unknown>> = {};
 
-    Object.keys(currentSpaceProperties).forEach((view) => {
+    Object.keys(currentSpaceProperties).forEach(view => {
       const currentViewProperties = currentSpaceProperties[view];
 
       if (Object.keys(currentViewProperties).length !== 0) {
@@ -193,17 +180,15 @@ function removeEmptyProperties(queryResultNode: NodeItem): NodeItem {
   return queryResultNode;
 }
 
-function convertQueryNodeItemsToSearchResultsWithViews(
-  queryItems: NodeItem[]
-): SearchResultsWithView[] {
+function convertQueryNodeItemsToSearchResultsWithViews(queryItems: NodeItem[]): SearchResultsWithView[] {
   return queryItems.reduce<SearchResultsWithView[]>((acc, fdmNode) => {
     const cleanedNode = removeEmptyProperties(fdmNode);
 
-    Object.keys(cleanedNode.properties).forEach((space) => {
+    Object.keys(cleanedNode.properties).forEach(space => {
       const currentSpaceProperties = cleanedNode.properties[space];
 
       const fdmNodeView = Object.keys(currentSpaceProperties)
-        .find((key) => !isEqual(currentSpaceProperties[key], {}))
+        .find(key => !isEqual(currentSpaceProperties[key], {}))
         ?.split('/');
 
       if (fdmNodeView === undefined || fdmNodeView.length !== 2) {
@@ -214,9 +199,8 @@ function convertQueryNodeItemsToSearchResultsWithViews(
       const fdmNodeViewVersion = fdmNodeView[1];
 
       const currentSearchResultWithView = acc.find(
-        (searchResultsWithView) =>
-          searchResultsWithView.view.externalId === fdmNodeViewExternalId &&
-          searchResultsWithView.view.space === space
+        searchResultsWithView =>
+          searchResultsWithView.view.externalId === fdmNodeViewExternalId && searchResultsWithView.view.space === space
       );
 
       if (currentSearchResultWithView === undefined) {
@@ -256,8 +240,7 @@ function createMappedEquipmentMaps(
 
     const isModelsMapped = models.some(
       ({ modelId, revisionId }) =>
-        modelId.toString() === endExternalId &&
-        revisionId.toString() === getRevisionIdFromEdge(edge)
+        modelId.toString() === endExternalId && revisionId.toString() === getRevisionIdFromEdge(edge)
     );
 
     if (endSpace === INSTANCE_SPACE_3D_DATA && isModelsMapped) {
@@ -296,8 +279,8 @@ function createCheckMappedEquipmentQuery(
             in: {
               property: ['node', 'externalId'],
               values: instances
-                .map((instance) => instance.externalId)
-                .concat(directlyMappedNodes.map((node) => node.externalId))
+                .map(instance => instance.externalId)
+                .concat(directlyMappedNodes.map(node => node.externalId))
             }
           }
         },
@@ -310,7 +293,7 @@ function createCheckMappedEquipmentQuery(
           terminationFilter: {
             in: {
               property: ['node', 'externalId'],
-              values: models.map((model) => model.modelId.toString())
+              values: models.map(model => model.modelId.toString())
             }
           },
           maxDistance: 2
@@ -323,7 +306,7 @@ function createCheckMappedEquipmentQuery(
         sources: [{ source: SYSTEM_3D_EDGE_SOURCE, properties: [] }]
       },
       mapped_nodes: {
-        sources: views.map((view) => ({ source: view, properties: [] }))
+        sources: views.map(view => ({ source: view, properties: [] }))
       }
     }
   };
@@ -336,9 +319,7 @@ function createChunkedMappedEquipmentQueries(
   cursors?: Record<string, string>
 ): Query[] {
   const viewChunks = chunk(views, 10);
-  return viewChunks.map((viewChunk) =>
-    createMappedEquipmentQuery(models, viewChunk, limit, cursors)
-  );
+  return viewChunks.map(viewChunk => createMappedEquipmentQuery(models, viewChunk, limit, cursors));
 }
 
 function createMappedEquipmentQuery(
@@ -379,14 +360,14 @@ function createMappedEquipmentQuery(
     cursors,
     select: {
       mapped_nodes_2: {
-        sources: views.map((view) => ({ source: view, properties: [] }))
+        sources: views.map(view => ({ source: view, properties: [] }))
       },
       mapped_edges_2: {},
       mapped_edges: {
         sources: [{ source: SYSTEM_3D_EDGE_SOURCE, properties: [] }]
       },
       mapped_nodes: {
-        sources: views.map((view) => ({ source: view, properties: [] }))
+        sources: views.map(view => ({ source: view, properties: [] }))
       }
     }
   };
@@ -400,7 +381,7 @@ function createInModelsFilter(models: AddModelOptions[]): { in: any } {
         `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
         'revisionId'
       ],
-      values: models.map((model) => model.revisionId)
+      values: models.map(model => model.revisionId)
     }
   };
 }
@@ -413,11 +394,9 @@ async function filterSearchResultsByMappedTo3DModels(
 ): Promise<SearchResultsWithView[]> {
   const filteredSearchResults: SearchResultsWithView[] = [];
 
-  const searchResultsNodes = searchResults.flatMap((result) => result.instances);
-  const searchResultsViews = searchResults.map((result) => result.view);
-  const directlyMappedNodes = searchResultsNodes
-    .map((node) => getDirectRelationProperties(node))
-    .flat();
+  const searchResultsNodes = searchResults.flatMap(result => result.instances);
+  const searchResultsViews = searchResults.map(result => result.view);
+  const directlyMappedNodes = searchResultsNodes.map(node => getDirectRelationProperties(node)).flat();
 
   if (searchResultsNodes.length === 0) {
     return searchResults;
@@ -438,12 +417,8 @@ async function filterSearchResultsByMappedTo3DModels(
   );
 
   for (const searchResult of searchResults) {
-    const filteredInstances = searchResult.instances.filter((instance) =>
-      checkInstanceWithMappedEquipmentMaps(
-        mappedEquipmentFirstLevelMap,
-        equipmentSecondLevelMap,
-        instance
-      )
+    const filteredInstances = searchResult.instances.filter(instance =>
+      checkInstanceWithMappedEquipmentMaps(mappedEquipmentFirstLevelMap, equipmentSecondLevelMap, instance)
     );
 
     filteredSearchResults.push({ view: searchResult.view, instances: filteredInstances });
@@ -468,7 +443,7 @@ function checkInstanceWithMappedEquipmentMaps(
   }
 
   if (isSecondLevelWithEdge) {
-    return equipmentSecondLevelMap[key].some((edge) => {
+    return equipmentSecondLevelMap[key].some(edge => {
       const { space, externalId } = edge.endNode;
 
       const secondLevelKey: FdmKey = `${space}/${externalId}`;
@@ -480,8 +455,7 @@ function checkInstanceWithMappedEquipmentMaps(
 
   if (isSecondLevelWithDirectRelation) {
     const isMappedWithDirectRelation = directRelationProperties.some(
-      ({ externalId, space }) =>
-        mappedEquipmentFirstLevelMap[`${space}/${externalId}`] !== undefined
+      ({ externalId, space }) => mappedEquipmentFirstLevelMap[`${space}/${externalId}`] !== undefined
     );
 
     return isMappedWithDirectRelation;
@@ -500,7 +474,7 @@ function getDirectRelationProperties(searchResultNode: NodeItem): DmsUniqueIdent
   const directRelations: DmsUniqueIdentifier[] = [];
   const nodeProperties = searchResultNode.properties;
 
-  Object.keys(nodeProperties).forEach((propertyKey) => {
+  Object.keys(nodeProperties).forEach(propertyKey => {
     const { space, externalId } = nodeProperties[propertyKey] as any;
 
     if (space !== undefined && externalId !== undefined) {
@@ -511,25 +485,18 @@ function getDirectRelationProperties(searchResultNode: NodeItem): DmsUniqueIdent
   return directRelations;
 }
 
-async function createSourcesFromViews(
-  viewsToSearch: DmsUniqueIdentifier[],
-  fdmSdk: FdmSDK
-): Promise<Source[]> {
+async function createSourcesFromViews(viewsToSearch: DmsUniqueIdentifier[], fdmSdk: FdmSDK): Promise<Source[]> {
   const dataModelResult = await fdmSdk.listDataModels();
   const viewToVersionMap = new Map<string, string>(
     dataModelResult.items.flatMap((dataModel: any) => {
-      return dataModel.views.map(
-        (view: Source) => [`${view.space}/${view.externalId}`, view.version] as const
-      );
+      return dataModel.views.map((view: Source) => [`${view.space}/${view.externalId}`, view.version] as const);
     })
   );
 
-  return viewsToSearch.map((view) => {
+  return viewsToSearch.map(view => {
     const version = viewToVersionMap.get(`${view.space}/${view.externalId}`);
     if (version === undefined) {
-      throw Error(
-        `Could not find version for view with space/externalId ${view.space}/${view.externalId}`
-      );
+      throw Error(`Could not find version for view with space/externalId ${view.space}/${view.externalId}`);
     }
     return {
       ...view,

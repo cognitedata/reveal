@@ -32,10 +32,7 @@ export type CadModelStyling = {
   groups?: Array<NodeStylingGroup | TreeIndexStylingGroup>;
 };
 
-export const useApplyCadModelStyling = (
-  model?: CogniteCadModel,
-  modelStyling?: CadModelStyling
-): void => {
+export const useApplyCadModelStyling = (model?: CogniteCadModel, modelStyling?: CadModelStyling): void => {
   const viewer = useReveal();
   const sdk = useSDK();
 
@@ -134,10 +131,7 @@ async function isEqualOrUpdated(
   }
 
   function updateIfTreeIndexCollection(): void {
-    if (
-      !(collection.nodeCollection instanceof TreeIndexNodeCollection) ||
-      !('treeIndexSet' in group)
-    ) {
+    if (!(collection.nodeCollection instanceof TreeIndexNodeCollection) || !('treeIndexSet' in group)) {
       return;
     }
 
@@ -152,10 +146,7 @@ async function isEqualOrUpdated(
   }
 }
 
-function isEqualTreeIndex(
-  collectionA: TreeIndexNodeCollection,
-  collectionB: TreeIndexNodeCollection
-): boolean {
+function isEqualTreeIndex(collectionA: TreeIndexNodeCollection, collectionB: TreeIndexNodeCollection): boolean {
   const setA = collectionA.getIndexSet();
   const setB = collectionB.getIndexSet();
 
@@ -167,10 +158,7 @@ function isEqualStyle(styleA: NodeAppearance, styleB: NodeAppearance): boolean {
   const { color: colorA, ...restA } = styleA;
   const { color: colorB, ...restB } = styleB;
 
-  const color =
-    colorA === undefined || colorB === undefined
-      ? Boolean(colorA ?? colorB)
-      : colorA.equals(colorB);
+  const color = colorA === undefined || colorB === undefined ? Boolean(colorA ?? colorB) : colorA.equals(colorB);
 
   return color && isEqual(restA, restB);
 }

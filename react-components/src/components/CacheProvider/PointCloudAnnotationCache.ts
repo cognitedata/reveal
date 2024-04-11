@@ -16,15 +16,9 @@ import assert from 'assert';
 
 export class PointCloudAnnotationCache {
   private readonly _sdk: CogniteClient;
-  private readonly _modelToAnnotationAssetMappings = new Map<
-    ModelRevisionKey,
-    Promise<Map<AnnotationId, Asset>>
-  >();
+  private readonly _modelToAnnotationAssetMappings = new Map<ModelRevisionKey, Promise<Map<AnnotationId, Asset>>>();
 
-  private readonly _modelToAnnotationMappings = new Map<
-    ModelRevisionKey,
-    PointCloudAnnotationModel[]
-  >();
+  private readonly _modelToAnnotationMappings = new Map<ModelRevisionKey, PointCloudAnnotationModel[]>();
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
@@ -65,9 +59,7 @@ export class PointCloudAnnotationCache {
     return annotationModels;
   }
 
-  private async fetchAndCacheAssetMappingsForModel(
-    modelId: ModelId
-  ): Promise<Map<AnnotationId, Asset>> {
+  private async fetchAndCacheAssetMappingsForModel(modelId: ModelId): Promise<Map<AnnotationId, Asset>> {
     const annotationModels = await this.fetchAnnotationForModel(modelId);
     const annotationAssets = fetchPointCloudAnnotationAssets(annotationModels, this._sdk);
 
@@ -86,12 +78,8 @@ export class PointCloudAnnotationCache {
         limit: 1000
       })
       .autoPagingToArray({ limit: Infinity });
-    assert(
-      annotationModels.every(
-        (annotationModel) => annotationModel.annotationType === 'pointcloud.BoundingVolume'
-      )
-    );
-    const filteredAnnotationModelsByAsset = annotationModels.filter((annotation) => {
+    assert(annotationModels.every(annotationModel => annotationModel.annotationType === 'pointcloud.BoundingVolume'));
+    const filteredAnnotationModelsByAsset = annotationModels.filter(annotation => {
       return getAssetIdOrExternalIdFromPointCloudAnnotation(annotation) !== undefined;
     });
     return filteredAnnotationModelsByAsset as PointCloudAnnotationModel[];
@@ -102,10 +90,7 @@ export class PointCloudAnnotationCache {
     revisionId: RevisionId,
     assetId: string | number
   ): Promise<Map<AnnotationId, Asset> | undefined> {
-    const fetchedAnnotationAssetMappings = await this.getPointCloudAnnotationAssetsForModel(
-      modelId,
-      revisionId
-    );
+    const fetchedAnnotationAssetMappings = await this.getPointCloudAnnotationAssetsForModel(modelId, revisionId);
 
     const assetIdNumber = typeof assetId === 'number' ? assetId : undefined;
     const matchedAnnotations = Array.from(fetchedAnnotationAssetMappings.entries()).filter(

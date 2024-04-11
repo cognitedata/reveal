@@ -30,9 +30,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   const { t } = useTranslation();
   const models = use3dModels();
   const [slicerUrlState, setSlicerUrlState] = useSlicerUrlParams();
-  const { bottom: initialBottomRatio, top: initialTopRatio } = storeStateInUrl
-    ? slicerUrlState
-    : { bottom: 0, top: 1 };
+  const { bottom: initialBottomRatio, top: initialTopRatio } = storeStateInUrl ? slicerUrlState : { bottom: 0, top: 1 };
   const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
@@ -50,7 +48,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
     }
 
     const box = new Box3();
-    models.forEach((model) => box.union(model.getModelBoundingBox(undefined, true)));
+    models.forEach(model => box.union(model.getModelBoundingBox(undefined, true)));
 
     const newMaxY = box.max.y;
     const newMinY = box.min.y;
@@ -86,18 +84,11 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
     }
   }
 
-  function setGlobalPlanes(
-    bottomRatio: number,
-    topRatio: number,
-    maxHeight: number,
-    minHeight: number
-  ): void {
+  function setGlobalPlanes(bottomRatio: number, topRatio: number, maxHeight: number, minHeight: number): void {
     const planes: Plane[] = [];
 
     if (bottomRatio !== 0) {
-      planes.push(
-        new Plane(new Vector3(0, 1, 0), -(minHeight + bottomRatio * (maxHeight - minHeight)))
-      );
+      planes.push(new Plane(new Vector3(0, 1, 0), -(minHeight + bottomRatio * (maxHeight - minHeight))));
     }
 
     if (topRatio !== 1) {
@@ -127,14 +118,15 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
             />
           </StyledMenu>
         }
-        placement="right-end">
+        placement="right-end"
+      >
         <Button
           type="ghost"
           icon="Slice"
           aria-label="Slice models"
           toggled={sliceActive}
           onClick={() => {
-            setSliceActive((prevState) => !prevState);
+            setSliceActive(prevState => !prevState);
           }}
         />
       </Dropdown>

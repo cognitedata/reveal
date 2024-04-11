@@ -26,28 +26,24 @@ export const MouseNavigation = ({ fallbackLanguage }: MouseNavigationProps): Rea
       description={t(
         'MOUSE_NAVIGATION_DESCRIPTION',
         'Click and drag to rotate, and pan the view. Use mouse wheel to zoom the view. Left click to select'
-      )}>
+      )}
+    >
       <MouseNavigationInstructionGrid>
         <InstructionText>{t('MOUSE_ZOOM', 'Zoom / scroll')}</InstructionText>
-        <InstructionText
-          style={{ marginBottom: 30, textAlign: 'right', width: 'max-content', maxWidth: '100px' }}>
+        <InstructionText style={{ marginBottom: 30, textAlign: 'right', width: 'max-content', maxWidth: '100px' }}>
           {t('MOUSE_ROTATE', 'Rotate')}
           <InstructionDetail>{t('MOUSE_INSTRUCTIONS', 'Click+drag')}</InstructionDetail>
         </InstructionText>
         <MouseNavigationCombinedGridItem>
           <StyledMouse />
         </MouseNavigationCombinedGridItem>
-        <InstructionText
-          style={{ marginBottom: 30, textAlign: 'left', width: 'max-content', maxWidth: '100px' }}>
+        <InstructionText style={{ marginBottom: 30, textAlign: 'left', width: 'max-content', maxWidth: '100px' }}>
           {t('PAN', 'Pan')}
           <InstructionDetail>{t('MOUSE_INSTRUCTIONS', 'Click+drag')}</InstructionDetail>
         </InstructionText>
-        <InstructionText
-          style={{ marginTop: -50, textAlign: 'right', width: 'max-content', maxWidth: '100px' }}>
+        <InstructionText style={{ marginTop: -50, textAlign: 'right', width: 'max-content', maxWidth: '100px' }}>
           {t('MOUSE_SELECT', 'Select Objects')}
-          <InstructionDetail>
-            {t('MOUSE_SELECT_INSTRUCTION', 'Click on interactive objects')}
-          </InstructionDetail>
+          <InstructionDetail>{t('MOUSE_SELECT_INSTRUCTION', 'Click on interactive objects')}</InstructionDetail>
         </InstructionText>
       </MouseNavigationInstructionGrid>
     </Section>

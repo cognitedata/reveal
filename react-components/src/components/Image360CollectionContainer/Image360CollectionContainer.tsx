@@ -7,10 +7,7 @@ import { type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type AddImageCollection360Options } from '../..';
 import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
-import {
-  type ImageCollectionModelStyling,
-  useApply360AnnotationStyling
-} from './useApply360AnnotationStyling';
+import { type ImageCollectionModelStyling, useApply360AnnotationStyling } from './useApply360AnnotationStyling';
 import { type Matrix4 } from 'three';
 
 type Image360CollectionContainerProps = {
@@ -32,15 +29,10 @@ export function Image360CollectionContainer({
   const [layersUrlState] = useLayersUrlParams();
   const { image360Layers } = layersUrlState;
 
-  const initializingSiteId = useRef<{ siteId: string } | { externalId: string } | undefined>(
-    undefined
-  );
+  const initializingSiteId = useRef<{ siteId: string } | { externalId: string } | undefined>(undefined);
 
   useEffect(() => {
-    if (
-      'siteId' in addImageCollection360Options &&
-      initializingSiteId.current === addImageCollection360Options
-    ) {
+    if ('siteId' in addImageCollection360Options && initializingSiteId.current === addImageCollection360Options) {
       return;
     }
 
@@ -68,7 +60,7 @@ export function Image360CollectionContainer({
 
   async function add360Collection(transform?: Matrix4): Promise<void> {
     await getOrAdd360Collection()
-      .then((image360Collection) => {
+      .then(image360Collection => {
         if (transform !== undefined) {
           image360Collection.setModelTransformation(transform);
         }
@@ -88,17 +80,13 @@ export function Image360CollectionContainer({
         'siteId' in addImageCollection360Options
           ? addImageCollection360Options.siteId
           : addImageCollection360Options.externalId;
-      const collection = collections.find((collection) => collection.id === siteId);
+      const collection = collections.find(collection => collection.id === siteId);
       if (collection !== undefined) {
         return collection;
       }
 
       if ('siteId' in addImageCollection360Options) {
-        return await viewer.add360ImageSet(
-          'events',
-          { site_id: siteId },
-          { preMultipliedRotation: false }
-        );
+        return await viewer.add360ImageSet('events', { site_id: siteId }, { preMultipliedRotation: false });
       } else {
         return await viewer.add360ImageSet('datamodels', {
           image360CollectionExternalId: addImageCollection360Options.externalId,
@@ -111,8 +99,7 @@ export function Image360CollectionContainer({
   function remove360Collection(): void {
     if (modelRef.current === undefined) return;
 
-    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
-      return;
+    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current) return;
 
     viewer.remove360ImageSet(modelRef.current);
     modelRef.current = undefined;
@@ -122,7 +109,7 @@ export function Image360CollectionContainer({
     if (image360Layers === undefined) {
       return;
     }
-    const urlLayerState = image360Layers.find((layer) => layer.siteId === image360Collection.id);
+    const urlLayerState = image360Layers.find(layer => layer.siteId === image360Collection.id);
     urlLayerState !== undefined && image360Collection.setIconsVisibility(urlLayerState.applied);
   }
 }

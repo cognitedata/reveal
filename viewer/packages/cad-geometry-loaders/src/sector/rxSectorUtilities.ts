@@ -10,9 +10,9 @@ export function loadingEnabled({ models, loadingHints }: DetermineSectorsPayload
   return models.length > 0 && loadingHints.suspendLoading !== true;
 }
 
-export interface ModelState {
+export type ModelState = {
   [id: number]: LevelOfDetail;
-}
-export interface SceneModelState {
+};
+export type SceneModelState = {
   [modelIdentifier: string]: ModelState;
-}
+};

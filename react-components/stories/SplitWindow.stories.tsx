@@ -60,9 +60,7 @@ function SecondaryRevealContainer(): ReactElement {
   return (
     <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
       <RevealCanvas>
-        <CadModelContainer
-          addModelOptions={{ modelId: 1791160622840317, revisionId: 498427137020189 }}
-        />
+        <CadModelContainer addModelOptions={{ modelId: 1791160622840317, revisionId: 498427137020189 }} />
       </RevealCanvas>
     </RevealContext>
   );

@@ -33,14 +33,15 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
             <TouchNavigation fallbackLanguage={fallbackLanguage} />
           </StyledMenu>
         }
-        placement="right">
+        placement="right"
+      >
         <Button
           type="ghost"
           icon="Help"
           aria-label="help-button"
           toggled={helpActive}
           onClick={() => {
-            setHelpActive((prevState) => !prevState);
+            setHelpActive(prevState => !prevState);
           }}
         />
       </Dropdown>

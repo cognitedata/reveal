@@ -19,9 +19,7 @@ export type Image360AnnotationCacheContextContent = {
   cache: Image360AnnotationCache;
 };
 
-const Image360AnnotationCacheContext = createContext<
-  Image360AnnotationCacheContextContent | undefined
->(undefined);
+const Image360AnnotationCacheContext = createContext<Image360AnnotationCacheContextContent | undefined>(undefined);
 
 const useImage360AnnotationCache = (): Image360AnnotationCache => {
   const content = useContext(Image360AnnotationCacheContext);
@@ -44,20 +42,15 @@ export const useImage360AnnotationMappingsForAssetIds = (
       'reveal',
       'react-components',
       'image360-annotations-info',
-      ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? []),
-      ...(siteIds?.map((siteId) => siteId).sort() ?? [])
+      ...(assetIds?.map(assetId => assetId.toString()).sort() ?? []),
+      ...(siteIds?.map(siteId => siteId).sort() ?? [])
     ],
     async () => {
-      if (
-        assetIds === undefined ||
-        assetIds.length === 0 ||
-        siteIds === undefined ||
-        siteIds.length === 0
-      ) {
+      if (assetIds === undefined || assetIds.length === 0 || siteIds === undefined || siteIds.length === 0) {
         return [];
       }
       const annotationAssetInfo = await image360AnnotationCache.getReveal360Annotations(siteIds);
-      const filteredAnnotationAssetInfo = annotationAssetInfo.filter((annotationInfo) => {
+      const filteredAnnotationAssetInfo = annotationAssetInfo.filter(annotationInfo => {
         return assetIds.includes(annotationInfo.asset.id);
       });
       return filteredAnnotationAssetInfo;
@@ -69,11 +62,7 @@ export const useImage360AnnotationMappingsForAssetIds = (
   );
 };
 
-export function Image360AnnotationCacheProvider({
-  children
-}: {
-  children?: ReactNode;
-}): ReactElement {
+export function Image360AnnotationCacheProvider({ children }: { children?: ReactNode }): ReactElement {
   const cdfClient = useSDK();
   const revealKeepAliveData = useRevealKeepAlive();
 

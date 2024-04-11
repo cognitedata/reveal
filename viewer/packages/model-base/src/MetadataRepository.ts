@@ -4,6 +4,6 @@
 
 import { ModelIdentifier } from '@reveal/data-providers';
 
-export interface MetadataRepository<Output> {
+export type MetadataRepository<Output> = {
   loadData(modelIdentifier: ModelIdentifier): Output;
-}
+};

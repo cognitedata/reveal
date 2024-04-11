@@ -32,7 +32,7 @@ export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
 /**
  * A set of overlays managed.
  */
-export interface OverlayCollection<ContentType> {
+export type OverlayCollection<ContentType> = {
   /**
    * Get all overlays in the collection.
    * */
@@ -60,4 +60,4 @@ export interface OverlayCollection<ContentType> {
    * Sets whether overlays in the collection should be visible.
    */
   setVisibility(visibility: boolean): void;
-}
+};

@@ -32,12 +32,12 @@ export function Image360Details({ appLanguage }: Image360DetailsProps): ReactEle
   const collections = viewer.get360ImageCollections();
 
   useEffect(() => {
-    collections.forEach((collection) => {
+    collections.forEach(collection => {
       collection.on('image360Entered', setEnteredEntity);
       collection.on('image360Exited', clearEnteredImage360);
     });
     return () => {
-      collections.forEach((collection) => {
+      collections.forEach(collection => {
         collection.off('image360Entered', setEnteredEntity);
         collection.off('image360Exited', clearEnteredImage360);
       });

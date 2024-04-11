@@ -34,19 +34,19 @@ export type InstancedMesh = {
   readonly treeIndices: Float32Array;
 };
 
-export interface ConsumedSector {
+export type ConsumedSector = {
   modelIdentifier: string;
   metadata: SectorMetadata;
   levelOfDetail: LevelOfDetail;
   group: AutoDisposeGroup | undefined;
   instancedMeshes: InstancedMeshFile[] | undefined;
   geometryBatchingQueue?: ParsedGeometry[];
-}
+};
 
-export interface WantedSector {
+export type WantedSector = {
   modelIdentifier: string;
   modelBaseUrl: string;
   geometryClipBox: THREE.Box3 | null;
   levelOfDetail: LevelOfDetail;
   metadata: SectorMetadata;
-}
+};

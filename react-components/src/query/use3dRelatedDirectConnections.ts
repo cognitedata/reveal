@@ -24,16 +24,13 @@ export function use3dRelatedDirectConnections(
 
       const view = views.items[0].inspectionResults.involvedViews[0];
       const instanceContent = (
-        await fdmSdk.getByExternalIds<Record<string, unknown>>(
-          [{ instanceType: 'node', ...instance }],
-          view
-        )
+        await fdmSdk.getByExternalIds<Record<string, unknown>>([{ instanceType: 'node', ...instance }], view)
       ).items[0];
 
       const directlyRelatedObjects = Object.values(instanceContent.properties)
-        .map((spaceScope) =>
+        .map(spaceScope =>
           Object.values(spaceScope)
-            .map((fieldValues) =>
+            .map(fieldValues =>
               Object.values(fieldValues).filter(
                 (value: any): value is DmsUniqueIdentifier =>
                   value.externalId !== undefined && value.space !== undefined
@@ -49,15 +46,15 @@ export function use3dRelatedDirectConnections(
 
       const relatedObjectInspectionsResult = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
-        items: directlyRelatedObjects.map((fdmId) => ({ ...fdmId, instanceType: 'node' }))
+        items: directlyRelatedObjects.map(fdmId => ({ ...fdmId, instanceType: 'node' }))
       });
 
       const relatedObjectsViewLists = relatedObjectInspectionsResult.items.map(
-        (item) => item.inspectionResults.involvedViews
+        item => item.inspectionResults.involvedViews
       );
 
       const relatedObjectViewsWithObjectIndex = relatedObjectsViewLists
-        .map((viewList, objectInd) => viewList.map((view) => [objectInd, view] as const))
+        .map((viewList, objectInd) => viewList.map(view => [objectInd, view] as const))
         .flat();
 
       const [deduplicatedViews, viewToDeduplicatedIndexMap] = createDeduplicatediewToIndexMap(
@@ -70,7 +67,7 @@ export function use3dRelatedDirectConnections(
         const viewResultIndex = viewToDeduplicatedIndexMap.get(createViewKey(view));
         assert(viewResultIndex !== undefined);
         const propsForView = viewProps.items[viewResultIndex];
-        return Object.keys(propsForView.properties).some((propName) => propName === 'inModel3d');
+        return Object.keys(propsForView.properties).some(propName => propName === 'inModel3d');
       });
 
       return threeDRelatedViews.map(([index, view]) => ({

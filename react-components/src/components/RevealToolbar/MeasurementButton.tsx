@@ -8,10 +8,7 @@ import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type Measurement } from '@cognite/reveal/tools';
 import { FEET_TO_INCHES, METERS_TO_FEET } from '../../utilities/constants';
 import { useTranslation } from '../i18n/I18n';
-import {
-  useAddMeasurementsToUrl,
-  useInitializedMeasurementTool
-} from './hooks/measurementUrlStateHooks';
+import { useAddMeasurementsToUrl, useInitializedMeasurementTool } from './hooks/measurementUrlStateHooks';
 
 export const distancesInFeetAndMeters = (distanceInMeters: number): string => {
   const distanceInFeet = distanceInMeters * METERS_TO_FEET;
@@ -60,7 +57,7 @@ export const MeasurementButton = ({
     if (viewer.models.length <= 0) {
       return;
     }
-    setMeasurementEnabled((prevState) => !prevState);
+    setMeasurementEnabled(prevState => !prevState);
   };
 
   useEffect(() => {
@@ -76,7 +73,8 @@ export const MeasurementButton = ({
     <CogsTooltip
       content={t('MEASUREMENTS_TOOLTIP', 'Distance measuring tool')}
       placement="right"
-      appendTo={document.body}>
+      appendTo={document.body}
+    >
       <Button
         type="ghost"
         icon="Ruler"

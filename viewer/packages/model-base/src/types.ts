@@ -4,13 +4,13 @@
 
 import * as THREE from 'three';
 
-export interface IntersectInput {
+export type IntersectInput = {
   normalizedCoords: THREE.Vector2;
   camera: THREE.PerspectiveCamera;
   clippingPlanes: THREE.Plane[];
   renderer: THREE.WebGLRenderer;
   domElement: HTMLElement;
-}
+};
 
 /**
  * State holding information about data being loaded.

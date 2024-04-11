@@ -44,10 +44,7 @@ export const Image360HistoricalSummary = forwardRef(
     const { t } = useTranslation(fallbackLanguage);
     const gridContainerRef = useRef<HTMLDivElement>(null);
 
-    const onRevisionChanged = async (
-      revisionDetails: Image360RevisionDetails,
-      index: number
-    ): Promise<void> => {
+    const onRevisionChanged = async (revisionDetails: Image360RevisionDetails, index: number): Promise<void> => {
       if (viewer !== undefined && revisionDetails.image360Entity !== undefined) {
         setActiveRevision(index);
         const revisions = revisionDetails.image360Entity.getRevisions();
@@ -90,7 +87,8 @@ export const Image360HistoricalSummary = forwardRef(
                 key={uniqueId()}
                 onClick={() => {
                   void onRevisionChanged(revisionDetails, index);
-                }}>
+                }}
+              >
                 <Thumbnail
                   key={index}
                   isActive={activeRevision === index}

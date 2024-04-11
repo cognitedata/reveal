@@ -9,9 +9,9 @@ import * as THREE from 'three';
 import { createV9SceneSectorMetadata } from '../../../../test-utilities';
 import { CadSceneRootMetadata } from './parsers/types';
 
-export interface ModelId {
+export type ModelId = {
   readonly revealInternalId: symbol;
-}
+};
 
 describe(CadModelMetadataRepository.name, () => {
   test('output v9 is returned if it is in the output list', async () => {

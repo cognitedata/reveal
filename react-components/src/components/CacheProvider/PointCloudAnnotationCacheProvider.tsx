@@ -19,9 +19,7 @@ export type PointCloudAnnotationCacheContextContent = {
   cache: PointCloudAnnotationCache;
 };
 
-const PointCloudAnnotationCacheContext = createContext<
-  PointCloudAnnotationCacheContextContent | undefined
->(undefined);
+const PointCloudAnnotationCacheContext = createContext<PointCloudAnnotationCacheContextContent | undefined>(undefined);
 
 const usePointCloudAnnotationCache = (): PointCloudAnnotationCache => {
   const content = useContext(PointCloudAnnotationCacheContext);
@@ -48,16 +46,16 @@ export const usePointCloudAnnotationIdsForModels = (
       'reveal',
       'react-components',
       'models-pointcloud-annotationmodels',
-      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+      ...models.map(model => `${model.modelId}/${model.revisionId}`).sort()
     ],
     async () => {
       return await Promise.all(
-        models.map(async (model) => {
+        models.map(async model => {
           const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
             model.modelId,
             model.revisionId
           );
-          const annotationIds = annotationModel.map((annotation) => {
+          const annotationIds = annotationModel.map(annotation => {
             return annotation.id;
           });
           return { model, annotationIds };
@@ -78,11 +76,11 @@ export const usePointCloudAnnotationMappingsForModels = (
       'reveal',
       'react-components',
       'models-pointcloud-annotations-mappings',
-      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+      ...models.map(model => `${model.modelId}/${model.revisionId}`).sort()
     ],
     async () => {
       return await Promise.all(
-        models.map(async (model) => {
+        models.map(async model => {
           const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
             model.modelId,
             model.revisionId
@@ -109,12 +107,12 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
       'reveal',
       'react-components',
       'all-annotation-mappings',
-      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
-      ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? [])
+      ...models.map(model => `${model.modelId}/${model.revisionId}`).sort(),
+      ...(assetIds?.map(assetId => assetId.toString()).sort() ?? [])
     ],
     async () => {
       const allAnnotationMappingsPromisesResult = await Promise.all(
-        models.map(async (model) => {
+        models.map(async model => {
           const result = await fetchAnnotationsForModel(
             model.modelId,
             model.revisionId,
@@ -138,23 +136,12 @@ export const usePointCloudAnnotationMappingForAssetId = (
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
   return useQuery(
-    [
-      'reveal',
-      'react-components',
-      'asset-annotation-mapping-for-a-model',
-      `${modelId}/${revisionId}`,
-      assetId
-    ],
+    ['reveal', 'react-components', 'asset-annotation-mapping-for-a-model', `${modelId}/${revisionId}`, assetId],
     async () => {
       if (modelId === undefined || revisionId === undefined || assetId === undefined) {
         return EMPTY_ARRAY;
       }
-      const result = await fetchAnnotationsForModel(
-        modelId,
-        revisionId,
-        [assetId],
-        pointCloudAnnotationCache
-      );
+      const result = await fetchAnnotationsForModel(modelId, revisionId, [assetId], pointCloudAnnotationCache);
       return result ?? EMPTY_ARRAY;
     },
     { staleTime: Infinity, enabled: assetId !== undefined }
@@ -173,17 +160,12 @@ const fetchAnnotationsForModel = async (
 
   const annotationMappings = await Promise.all(
     assetIds.map(
-      async (assetId) =>
-        await pointCloudAnnotationCache.matchPointCloudAnnotationsForModel(
-          modelId,
-          revisionId,
-          assetId
-        )
+      async assetId => await pointCloudAnnotationCache.matchPointCloudAnnotationsForModel(modelId, revisionId, assetId)
     )
   );
 
   const filteredAnnotationMappings = annotationMappings.filter(isDefined);
-  const transformedAnnotationMappings = filteredAnnotationMappings.flatMap((annotationMapping) =>
+  const transformedAnnotationMappings = filteredAnnotationMappings.flatMap(annotationMapping =>
     Array.from(annotationMapping.entries()).map(([annotationId, asset]) => ({
       annotationId,
       asset
@@ -193,18 +175,12 @@ const fetchAnnotationsForModel = async (
   return transformedAnnotationMappings;
 };
 
-export function PointCloudAnnotationCacheProvider({
-  children
-}: {
-  children?: ReactNode;
-}): ReactElement {
+export function PointCloudAnnotationCacheProvider({ children }: { children?: ReactNode }): ReactElement {
   const cdfClient = useSDK();
   const revealKeepAliveData = useRevealKeepAlive();
 
   const pointCloudAnnotationCache = useMemo(() => {
-    const cache =
-      revealKeepAliveData?.pointCloudAnnotationCache.current ??
-      new PointCloudAnnotationCache(cdfClient);
+    const cache = revealKeepAliveData?.pointCloudAnnotationCache.current ?? new PointCloudAnnotationCache(cdfClient);
 
     const isRevealKeepAliveContextProvided = revealKeepAliveData !== undefined;
     if (isRevealKeepAliveContextProvided) {

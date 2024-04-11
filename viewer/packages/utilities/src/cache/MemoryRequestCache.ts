@@ -27,9 +27,9 @@ class TimestampedContainer<T> {
   }
 }
 
-export interface MemoryRequestCacheOptions {
+export type MemoryRequestCacheOptions = {
   maxElementsInCache?: number;
-}
+};
 
 export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   private _maxElementsInCache: number;

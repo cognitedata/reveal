@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { type Page } from '@playwright/test';
 
 import type storyOutput from '../../../storybook-static/stories.json';
@@ -22,8 +25,8 @@ export async function loadStory(page: Page, storyID: StoryName): Promise<void> {
 async function viewerLoadingSettled(page: Page): Promise<void> {
   const spinner = page.locator('.reveal-viewer-spinner');
   await spinner.waitFor({ state: 'attached' });
-  await spinner.evaluate(async (spinner) => {
-    await new Promise<void>((resolve) => {
+  await spinner.evaluate(async spinner => {
+    await new Promise<void>(resolve => {
       let debounceSettled: ReturnType<typeof setTimeout> | undefined;
       if (!(spinner.className as string).includes('loading')) {
         debounceSettled = setTimeout(() => {

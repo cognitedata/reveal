@@ -5,15 +5,15 @@ import { Color, IUniform as IThreeUniform, Vector4 } from 'three';
 
 export type IGradient = [number, Color][];
 
-export interface PointClassification {
+export type PointClassification = {
   [value: string]: Vector4;
   DEFAULT: Vector4;
-}
+};
 
-export interface IUniform<T> extends IThreeUniform {
+export type IUniform<T> = {
   type: string;
   value: T;
-}
+} & IThreeUniform;
 
 export type OctreeMaterialParams = {
   scale: THREE.Vector3;

@@ -64,20 +64,12 @@ function extractCameraTarget(scene: SceneConfiguration, viewer: Cognite3DViewer)
       )
     );
 
-    const position = new Vector3(
-      scene.cameraTranslationX,
-      scene.cameraTranslationY,
-      scene.cameraTranslationZ
-    );
+    const position = new Vector3(scene.cameraTranslationX, scene.cameraTranslationY, scene.cameraTranslationZ);
     // As a heuristic, use distance to center of all models' bounding
     // boxes as target distance
     const positionToSceneCenterDistance = position.distanceTo(
-      viewer.models
-        .reduce((acc, m) => acc.union(m.getModelBoundingBox()), new Box3())
-        .getCenter(new Vector3())
+      viewer.models.reduce((acc, m) => acc.union(m.getModelBoundingBox()), new Box3()).getCenter(new Vector3())
     );
-    return position
-      .clone()
-      .add(new Vector3(0, 0, -positionToSceneCenterDistance).applyQuaternion(rotation));
+    return position.clone().add(new Vector3(0, 0, -positionToSceneCenterDistance).applyQuaternion(rotation));
   }
 }

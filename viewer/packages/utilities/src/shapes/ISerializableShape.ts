@@ -8,6 +8,6 @@ export enum ShapeType {
   Composite
 }
 
-export interface ISerializableShape {
+export type ISerializableShape = {
   readonly shapeType: ShapeType;
-}
+};

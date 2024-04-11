@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { resolve } from 'path';
 import { type PluginOption, defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -42,10 +45,10 @@ function yalcPush(): PluginOption {
       await new Promise<void>((resolve, reject) => {
         const process = exec('yalc push');
         process.stdout
-          ?.on('data', (data) => {
+          ?.on('data', data => {
             console.log(data);
           })
-          .on('error', (err) => {
+          .on('error', err => {
             reject(err);
           })
           .on('close', () => {

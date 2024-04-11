@@ -49,10 +49,7 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
   }, [skyboxTexture]);
 };
 
-function initializeSkybox(
-  texture: THREE.Texture,
-  viewer: Cognite3DViewer
-): [THREE.Object3D, () => void] {
+function initializeSkybox(texture: THREE.Texture, viewer: Cognite3DViewer): [THREE.Object3D, () => void] {
   const skyboxRadius = 10;
   const skyboxGeometry = new THREE.SphereGeometry(skyboxRadius, 20, 20);
   const skyboxMaterial = new THREE.MeshBasicMaterial({

@@ -6,11 +6,7 @@ import { type ReactElement } from 'react';
 import { Section } from './Section';
 import { Flex } from '@cognite/cogs.js';
 import { ArrowKeysNavigation, QWEASDKeysNavigation } from './Graphics/Keyboard';
-import {
-  InstructionText,
-  KeyboardNavigationInstructionGrid,
-  ArrowKeyboardNavigationInstructionGrid
-} from './elements';
+import { InstructionText, KeyboardNavigationInstructionGrid, ArrowKeyboardNavigationInstructionGrid } from './elements';
 import { useTranslation } from '../../i18n/I18n';
 
 export type KeyboardNavigationProps = {
@@ -26,7 +22,8 @@ export const KeyboardNavigation = ({ fallbackLanguage }: KeyboardNavigationProps
       description={t(
         'KEYBOARD_NAVIGATION_DESCRIPTION',
         'Click and hold to move.\nYou can also use mouse in conjunction with keys.'
-      )}>
+      )}
+    >
       <Flex gap={8} style={{ paddingTop: 12 }}>
         <Flex direction="column">
           <KeyboardNavigationInstructionGrid>

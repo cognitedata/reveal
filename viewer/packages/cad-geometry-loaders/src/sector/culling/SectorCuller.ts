@@ -9,7 +9,7 @@ import { DetermineSectorsInput, SectorLoadingSpent } from './types';
  * Interface for implementations that are responsible for determining
  * what sectors should be loaded (i.e. "culls" sectors).
  */
-export interface SectorCuller {
+export type SectorCuller = {
   /**
    * Determine initial sector prioritization about what we think to load. This provides an initial guesstimate of
    * what sectors we should load. Use {@link SectorCuller.filterSectorsToLoad} to improve
@@ -35,4 +35,4 @@ export interface SectorCuller {
    * Dispose all non-GCed resoures held.
    */
   dispose(): void;
-}
+};

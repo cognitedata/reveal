@@ -9,7 +9,7 @@ import { Image360Annotation } from '../annotation/Image360Annotation';
  * Interface used to manage historical revisions of {@link Image360}.
  * One instance represents one specific image revision.
  */
-export interface Image360Revision {
+export type Image360Revision = {
   /**
    * The date of this revision. Undefined if the revision is undated.
    * @returns Date | undefined
@@ -25,4 +25,4 @@ export interface Image360Revision {
    * Get the thumbnail url for this revision.
    */
   getPreviewThumbnailUrl(): Promise<string | undefined>;
-}
+};

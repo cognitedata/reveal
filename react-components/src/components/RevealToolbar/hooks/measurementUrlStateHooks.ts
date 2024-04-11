@@ -24,7 +24,7 @@ const useGetMeasurementsFromUrlParam = (): (() => Array<{
 
     const measurements = JSON.parse(serializedMeasurements) as SerializedMeasurement[];
 
-    return measurements.map((measurementValues) => {
+    return measurements.map(measurementValues => {
       const startPoint = new Vector3().fromArray(measurementValues, 0);
       const endPoint = new Vector3().fromArray(measurementValues, 3);
 
@@ -46,7 +46,7 @@ export const useInitializedMeasurementTool = (initializeFromUrl: boolean): Measu
 
     if (initializeFromUrl) {
       const measurements = getUrlMeasurements();
-      measurements.forEach((measurement) => {
+      measurements.forEach(measurement => {
         measurementTool.addMeasurement(measurement.startPoint, measurement.endPoint);
       });
     }
@@ -57,9 +57,7 @@ export const useInitializedMeasurementTool = (initializeFromUrl: boolean): Measu
   }, [viewer]);
 };
 
-export const useAddMeasurementsToUrl = (
-  storeInUrl: boolean
-): ((measurements: Measurement[]) => void) => {
+export const useAddMeasurementsToUrl = (storeInUrl: boolean): ((measurements: Measurement[]) => void) => {
   return useCallback((measurements: Measurement[]) => {
     if (!storeInUrl) {
       return;
@@ -68,7 +66,7 @@ export const useAddMeasurementsToUrl = (
     const url = new URL(window.location.toString());
 
     if (measurements.length > 0) {
-      const serializedMeasurements = measurements.map((measurement) => [
+      const serializedMeasurements = measurements.map(measurement => [
         ...measurement.startPoint.toArray(),
         ...measurement.endPoint.toArray()
       ]);

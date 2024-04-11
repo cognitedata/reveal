@@ -52,10 +52,7 @@ export const Reveal3DResources = ({
   );
 
   const pointCloudModelOptions = useMemo(
-    () =>
-      reveal3DModels.filter(
-        (model): model is PointCloudModelOptions => model.type === 'pointcloud'
-      ),
+    () => reveal3DModels.filter((model): model is PointCloudModelOptions => model.type === 'pointcloud'),
     [reveal3DModels]
   );
 
@@ -71,7 +68,7 @@ export const Reveal3DResources = ({
     defaultResourceStyling
   );
 
-  const image360CollectionAddOptions = resources.filter((resource) => {
+  const image360CollectionAddOptions = resources.filter(resource => {
     if ('siteId' in resource) return resource.siteId !== undefined;
     else if ('externalId' in resource) return resource.externalId !== undefined;
     return false;
@@ -80,13 +77,11 @@ export const Reveal3DResources = ({
   const image360StyledGroup =
     instanceStyling
       ?.filter(isImage360AssetStylingGroup)
-      .map((group) => {
+      .map(group => {
         return { assetIds: group.assetIds, style: group.style.image360 };
       })
-      .filter(
-        (group): group is AnnotationIdStylingGroup & { assetIds: number[] } =>
-          group.style !== undefined
-      ) ?? EMPTY_ARRAY;
+      .filter((group): group is AnnotationIdStylingGroup & { assetIds: number[] } => group.style !== undefined) ??
+    EMPTY_ARRAY;
 
   const onModelLoaded = (): void => {
     onModelFailOrSucceed();
@@ -143,7 +138,7 @@ export const Reveal3DResources = ({
           />
         );
       })}
-      {image360CollectionAddOptions.map((addModelOption) => {
+      {image360CollectionAddOptions.map(addModelOption => {
         const image360Styling: ImageCollectionModelStyling = {
           defaultStyle: defaultResourceStyling?.image360?.default,
           groups: image360StyledGroup
@@ -185,13 +180,11 @@ async function getTypedModels(
         (resource as AddReveal3DModelOptions).modelId !== undefined &&
         (resource as AddReveal3DModelOptions).revisionId !== undefined
     )
-    .map(async (addModelOptions) => {
-      const type = await viewer
-        .determineModelType(addModelOptions.modelId, addModelOptions.revisionId)
-        .catch((error) => {
-          errorFunction(addModelOptions, error);
-          return '';
-        });
+    .map(async addModelOptions => {
+      const type = await viewer.determineModelType(addModelOptions.modelId, addModelOptions.revisionId).catch(error => {
+        errorFunction(addModelOptions, error);
+        return '';
+      });
       const typedModel = { ...addModelOptions, type };
       return typedModel;
     });

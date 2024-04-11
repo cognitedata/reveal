@@ -43,17 +43,13 @@ export type SceneData = {
 type Use3dScenesQueryResult = {
   scenes: Array<NodeItem<SceneConfigurationProperties>>;
   sceneModels: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>;
-  scene360Collections: Array<
-    EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>
-  >;
+  scene360Collections: Array<EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>>;
   sceneGroundPlanes: Array<NodeItem<GroundPlaneProperties>>;
   sceneGroundPlaneEdges: Array<EdgeItem<Record<string, Record<string, Transformation3d>>>>;
   sceneSkybox: Array<NodeItem<SkyboxProperties>>;
 };
 
-export const use3dScenes = (
-  userSdk?: CogniteClient
-): UseQueryResult<Record<Space, Record<ExternalId, SceneData>>> => {
+export const use3dScenes = (userSdk?: CogniteClient): UseQueryResult<Record<Space, Record<ExternalId, SceneData>>> => {
   const sdk = useSDK(userSdk);
 
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
@@ -62,17 +58,12 @@ export const use3dScenes = (
     const scenesQuery = createGetScenesQuery();
 
     try {
-      const queryResult = (await fdmSdk.queryNodesAndEdges(scenesQuery))
-        .items as Use3dScenesQueryResult;
+      const queryResult = (await fdmSdk.queryNodesAndEdges(scenesQuery)).items as Use3dScenesQueryResult;
 
       const scenesMap = createMapOfScenes(queryResult.scenes, queryResult.sceneSkybox);
       populateSceneMapWithModels(queryResult.sceneModels, scenesMap);
       populateSceneMapWith360Images(queryResult.scene360Collections, scenesMap);
-      populateSceneMapWithGroundplanes(
-        queryResult.sceneGroundPlanes,
-        queryResult.sceneGroundPlaneEdges,
-        scenesMap
-      );
+      populateSceneMapWithGroundplanes(queryResult.sceneGroundPlanes, queryResult.sceneGroundPlaneEdges, scenesMap);
 
       return scenesMap;
     } catch (error) {
@@ -92,10 +83,7 @@ function createMapOfScenes(
   skyboxes: Array<NodeItem<SkyboxProperties>>
 ): Record<Space, Record<ExternalId, SceneData>> {
   return scenes.reduce(
-    (
-      acc: Record<Space, Record<ExternalId, SceneData>>,
-      scene: NodeItem<SceneConfigurationProperties>
-    ) => {
+    (acc: Record<Space, Record<ExternalId, SceneData>>, scene: NodeItem<SceneConfigurationProperties>) => {
       const { space, externalId } = scene;
       const properties = Object.values(Object.values(scene.properties)[0])[0];
       if (acc[space] === undefined) {
@@ -106,9 +94,7 @@ function createMapOfScenes(
         const skyboxIdentifier = properties.skybox;
         if (skyboxIdentifier !== undefined) {
           const connectedSkybox = skyboxes.find(
-            (skybox) =>
-              skybox.externalId === skyboxIdentifier.externalId &&
-              skybox.space === skyboxIdentifier.space
+            skybox => skybox.externalId === skyboxIdentifier.externalId && skybox.space === skyboxIdentifier.space
           );
           if (connectedSkybox !== undefined) {
             const skyboxProperties = Object.values(Object.values(connectedSkybox.properties)[0])[0];
@@ -141,7 +127,7 @@ function populateSceneMapWithModels(
   scene360Images: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>,
   scenesMap: Record<Space, Record<ExternalId, SceneData>>
 ): void {
-  scene360Images.forEach((edge) => {
+  scene360Images.forEach(edge => {
     const { space, externalId } = edge.startNode;
 
     const properties = Object.values(Object.values(edge.properties)[0])[0];
@@ -169,12 +155,10 @@ function populateSceneMapWithModels(
 }
 
 function populateSceneMapWith360Images(
-  scene360Images: Array<
-    EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>
-  >,
+  scene360Images: Array<EdgeItem<Record<string, Record<string, Cdf3dImage360CollectionProperties>>>>,
   scenesMap: Record<Space, Record<ExternalId, SceneData>>
 ): void {
-  scene360Images.forEach((edge) => {
+  scene360Images.forEach(edge => {
     const { space, externalId } = edge.startNode;
 
     if (scenesMap[space]?.[externalId] === undefined) {
@@ -198,13 +182,11 @@ function populateSceneMapWithGroundplanes(
   sceneGroundPlaneEdges: Array<EdgeItem<Record<string, Record<string, Transformation3d>>>>,
   scenesMap: Record<Space, Record<ExternalId, SceneData>>
 ): void {
-  sceneGroundPlaneEdges.forEach((edge) => {
+  sceneGroundPlaneEdges.forEach(edge => {
     const { space, externalId } = edge.startNode;
 
     const mappedGroundPlane = sceneGroundPlanes.find(
-      (groundPlane) =>
-        groundPlane.externalId === edge.endNode.externalId &&
-        groundPlane.space === edge.endNode.space
+      groundPlane => groundPlane.externalId === edge.endNode.externalId && groundPlane.space === edge.endNode.space
     );
 
     if (scenesMap[space]?.[externalId] === undefined || mappedGroundPlane === undefined) {
@@ -236,11 +218,7 @@ function createTransformFromEdge(properties: Transformation3d): Matrix4 {
 
   fixModelScale(properties);
 
-  const scaleMatrix = new Matrix4().makeScale(
-    properties.scaleX,
-    properties.scaleY,
-    properties.scaleZ
-  );
+  const scaleMatrix = new Matrix4().makeScale(properties.scaleX, properties.scaleY, properties.scaleZ);
   transform.multiply(scaleMatrix);
 
   const translation = new Matrix4().makeTranslation(
