@@ -21,7 +21,7 @@ import {
   type AddReveal3DModelOptions,
   type AddImageCollection360DatamodelsOptions
 } from '../components/Reveal3DResources/types';
-import { type GroundPlane, type Skybox } from '../components/SceneContainer/SceneTypes';
+import { type GroundPlane, type Skybox } from '../components/SceneContainer/sceneTypes';
 
 export type Space = string;
 export type ExternalId = string;
