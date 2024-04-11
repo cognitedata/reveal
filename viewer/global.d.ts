@@ -4,10 +4,10 @@
 
 declare global {
   namespace NodeJS {
-    interface ProcessEnv {
+    type ProcessEnv = {
       VERSION: string;
       MIXPANEL_TOKEN: string;
-    }
+    };
   }
 }
 

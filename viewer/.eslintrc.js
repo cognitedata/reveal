@@ -17,12 +17,18 @@ module.exports = {
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module' // Allows for the use of imports
   },
-  ignorePatterns: ['.eslintrc.js', '**/dist/**/*', '**/*/draco_decoder_gltf.js', '**/wasm/**/*.js'],
+  ignorePatterns: ['.eslintrc.*js', '**/dist/**/*', '**/*/draco_decoder_gltf.js', '**/wasm/**/*.js'],
   rules: {
     // see relevant discussion https://github.com/cognitedata/cognite-sdk-js/pull/386
     'lodash/import-scope': ['error', 'method'],
   },
   overrides: [
+    {
+      files: ['jest.config.ts', 'webpack.config.ts'],
+      env: {
+        'node': true
+      }
+    },
     {
       files: ['*.test.ts', 'test-utilities/**/*.ts'],
       rules: {

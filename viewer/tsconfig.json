@@ -41,5 +41,10 @@
     "target",
     "dist",
     "./**/wasm/**/*"
-  ]
+  ],
+  "ts-node": {
+   "compilerOptions": {
+     "module": "CommonJS"
+   }
+ }
 }
