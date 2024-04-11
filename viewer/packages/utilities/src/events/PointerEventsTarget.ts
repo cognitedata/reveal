@@ -29,7 +29,6 @@ export class PointerEventsTarget {
   private _lastDownTimestamp = 0; // Time of last pointer down event
   private _prevDownTimestamp = 0; // Time of previous pointer down event
   private _clickCounter = 0; // Incremented at each onPointerDown
-  private _isDragging = false;
   private _isLeftDown = false;
 
   //================================================
@@ -76,7 +75,7 @@ export class PointerEventsTarget {
     event.stopPropagation();
     event.preventDefault();
 
-    const leftButton = isLeftMouseButton(event);
+    const leftButton = isTouch(event) || isLeftMouseButton(event);
 
     const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
     this._downPosition.set(offsetX, offsetY);
@@ -85,7 +84,6 @@ export class PointerEventsTarget {
     this._clickCounter++;
 
     await this._events.onPointerDown(event, leftButton);
-    this._isDragging = true;
     this._isLeftDown = leftButton;
 
     window.addEventListener('pointerup', this.onPointerUp);
@@ -106,18 +104,14 @@ export class PointerEventsTarget {
     if (!this.isEnabled) {
       return;
     }
-    if (!isMouseButtonPressed(event)) {
-      if (this._isDragging) {
-        this.onPointerUp(event);
-      }
+    if (isMouse(event) && !isMouseButtonPressed(event)) {
+      this.onPointerUp(event);
       return;
     }
     if (event.movementX === 0 && event.movementX === 0) {
       return;
     }
-    if (this._isDragging) {
-      await this._events.onPointerDrag(event, this._isLeftDown);
-    }
+    await this._events.onPointerDrag(event, this._isLeftDown);
   };
 
   private readonly onPointerUp = async (event: PointerEvent) => {
@@ -127,7 +121,6 @@ export class PointerEventsTarget {
     event.stopPropagation();
     event.preventDefault();
 
-    this._isDragging = false;
     if (this._downPosition === undefined) {
       return;
     }
@@ -135,7 +128,8 @@ export class PointerEventsTarget {
     window.removeEventListener('pointerup', this.onPointerUp);
     this._domElement.addEventListener('pointermove', this.onPointerHover);
 
-    if (!isLeftMouseButton(event)) {
+    const leftButton = isTouch(event) || isLeftMouseButton(event);
+    if (!leftButton) {
       return;
     }
     if (!this.isProperClick(event)) {
@@ -187,4 +181,12 @@ function isMouseButtonPressed(event: PointerEvent): boolean {
 
 function isLeftMouseButton(event: PointerEvent): boolean {
   return event.button === MOUSE.LEFT;
+}
+
+function isMouse(event: PointerEvent): boolean {
+  return event.pointerType === 'mouse';
+}
+
+function isTouch(event: PointerEvent): boolean {
+  return event.pointerType === 'touch';
 }
