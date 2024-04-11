@@ -4,11 +4,11 @@
 
 import { type ReactElement } from 'react';
 import { Menu } from '@cognite/cogs.js';
-import { type ModelHandler } from '../../RevealTopbar/LayersStrip/ModelHandler';
-import { ModelLayersList } from '../../RevealTopbar/LayersStrip/ModelLayersList';
-import { WholeLayerVisibilityToggle } from '../../RevealTopbar/LayersStrip/WholeLayerVisibilityToggle';
+import { type ModelHandler } from './ModelHandler';
+import { ModelLayersList } from './ModelLayersList';
+import { WholeLayerVisibilityToggle } from './WholeLayerVisibilityToggle';
 import { withSuppressRevealEvents } from '../../../higher-order-components/withSuppressRevealEvents';
-import { type UpdateModelHandlersCallback } from '../../RevealTopbar/LayersStrip/useModelHandlers';
+import { type UpdateModelHandlersCallback } from './useModelHandlers';
 
 const SuppressedSubmenu = withSuppressRevealEvents(Menu.Submenu);
 

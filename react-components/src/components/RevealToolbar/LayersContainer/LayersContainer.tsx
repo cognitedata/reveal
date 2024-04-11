@@ -7,9 +7,9 @@ import styled from 'styled-components';
 import { LayerToggleDropdown } from './LayerToggleDropdown';
 import { type ReactElement, type MouseEvent } from 'react';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
-import { type ModelLayerHandlers } from '../../RevealTopbar/LayersStrip/LayersButtonsStrip';
+import { type ModelLayerHandlers } from './LayersButtonsStrip';
 import { useTranslation } from '../../i18n/I18n';
-import { type UpdateModelHandlersCallback } from '../../RevealTopbar/LayersStrip/useModelHandlers';
+import { type UpdateModelHandlersCallback } from './useModelHandlers';
 
 export const LayersContainer = ({
   modelHandlers,

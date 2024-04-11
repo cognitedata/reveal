@@ -9,8 +9,8 @@ import { useReveal } from '../RevealCanvas/ViewerContext';
 
 import { useTranslation } from '../i18n/I18n';
 
-import { useSyncExternalLayersState } from '../RevealTopbar/LayersStrip/useSyncExternalLayersState';
-import { useModelHandlers } from '../RevealTopbar/LayersStrip/useModelHandlers';
+import { useSyncExternalLayersState } from './LayersContainer/useSyncExternalLayersState';
+import { useModelHandlers } from './LayersContainer/useModelHandlers';
 import { type LayersUrlStateParam } from '../../hooks/types';
 
 type LayersButtonProps = {
