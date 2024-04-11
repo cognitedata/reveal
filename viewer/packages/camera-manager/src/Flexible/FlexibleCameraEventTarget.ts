@@ -35,7 +35,7 @@ export class FlexibleCameraEventTarget {
   // INSTANCE METHODS:
   //================================================
 
-  public dispose(): void {
+  public removeEventListeners(): void {
     this._controlsTypeChangeListeners.unsubscribeAll();
     this._cameraChangeListeners.unsubscribeAll();
     this._cameraStopListeners.unsubscribeAll();

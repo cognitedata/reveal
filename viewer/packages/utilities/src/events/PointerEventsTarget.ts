@@ -3,7 +3,7 @@
  */
 import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
 import debounce from 'lodash/debounce';
-import { Vector2 } from 'three';
+import { Vector2, MOUSE } from 'three';
 import { PointerEvents } from './PointerEvents';
 
 const MAX_MOVE_DISTANCE = 8;
@@ -30,6 +30,7 @@ export class PointerEventsTarget {
   private _prevDownTimestamp = 0; // Time of previous pointer down event
   private _clickCounter = 0; // Incremented at each onPointerDown
   private _isDragging = false;
+  private _isLeftDown = false;
 
   //================================================
   // INSTANCE PROPERIES
@@ -72,14 +73,21 @@ export class PointerEventsTarget {
     if (!this.isEnabled) {
       return;
     }
+    event.stopPropagation();
+    event.preventDefault();
+
+    const leftButton = isLeftMouseButton(event);
+
     const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
     this._downPosition.set(offsetX, offsetY);
     this._prevDownTimestamp = this._lastDownTimestamp;
     this._lastDownTimestamp = event.timeStamp;
     this._clickCounter++;
 
-    await this._events.onPointerDown(event);
+    await this._events.onPointerDown(event, leftButton);
     this._isDragging = true;
+    this._isLeftDown = leftButton;
+
     window.addEventListener('pointerup', this.onPointerUp);
     this._domElement.removeEventListener('pointermove', this.onPointerHover);
   };
@@ -92,10 +100,13 @@ export class PointerEventsTarget {
   }, HOVER_INTERVAL);
 
   private readonly onPointerDrag = async (event: PointerEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+
     if (!this.isEnabled) {
       return;
     }
-    if (!isPressed(event)) {
+    if (!isMouseButtonPressed(event)) {
       if (this._isDragging) {
         this.onPointerUp(event);
       }
@@ -105,7 +116,7 @@ export class PointerEventsTarget {
       return;
     }
     if (this._isDragging) {
-      await this._events.onPointerDrag(event);
+      await this._events.onPointerDrag(event, this._isLeftDown);
     }
   };
 
@@ -113,14 +124,20 @@ export class PointerEventsTarget {
     if (!this.isEnabled) {
       return;
     }
+    event.stopPropagation();
+    event.preventDefault();
+
     this._isDragging = false;
     if (this._downPosition === undefined) {
       return;
     }
-    await this._events.onPointerUp(event);
+    await this._events.onPointerUp(event, this._isLeftDown);
     window.removeEventListener('pointerup', this.onPointerUp);
     this._domElement.addEventListener('pointermove', this.onPointerHover);
 
+    if (!isLeftMouseButton(event)) {
+      return;
+    }
     if (!this.isProperClick(event)) {
       return;
     }
@@ -164,6 +181,10 @@ export class PointerEventsTarget {
   }
 }
 
-function isPressed(event: PointerEvent): boolean {
+function isMouseButtonPressed(event: PointerEvent): boolean {
   return event.buttons !== 0;
+}
+
+function isLeftMouseButton(event: PointerEvent): boolean {
+  return event.button === MOUSE.LEFT;
 }

@@ -17,14 +17,14 @@ export class PointerEvents {
     return Promise.resolve();
   }
 
-  public async onPointerDown(_event: PointerEvent): Promise<void> {
+  public async onPointerDown(_event: PointerEvent, _leftButton: boolean): Promise<void> {
     return Promise.resolve();
   }
-  public async onPointerUp(_event: PointerEvent): Promise<void> {
+  public async onPointerUp(_event: PointerEvent, _leftButton: boolean): Promise<void> {
     return Promise.resolve();
   }
 
-  public async onPointerDrag(_event: PointerEvent): Promise<void> {
+  public async onPointerDrag(_event: PointerEvent, _leftButton: boolean): Promise<void> {
     return Promise.resolve();
   }
 

@@ -199,7 +199,7 @@ export interface Cognite3DViewerOptions {
    * Add event listerers around, default is having event listeners.
    * @beta
    */
-  haveEventListers?: boolean;
+  haveEventListeners?: boolean;
 }
 
 /**

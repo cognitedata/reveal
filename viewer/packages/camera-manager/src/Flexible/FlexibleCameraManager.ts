@@ -49,7 +49,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   private _isEnableClickAndDoubleClick = true;
   private _nearAndFarNeedsUpdate = false;
   private readonly _raycastCallback: RaycastCallback;
-  private readonly _haveEventListers: boolean;
+  private readonly _haveEventListeners: boolean;
 
   //================================================
   // CONSTRUCTOR
@@ -60,21 +60,22 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     raycastCallback: RaycastCallback,
     camera?: PerspectiveCamera,
     scene?: Scene,
-    haveEventListers?: boolean
+    haveEventListeners?: boolean
   ) {
     super();
-    this._haveEventListers = haveEventListers ?? true;
+    this._haveEventListeners = haveEventListeners ?? true;
     this._controls = new FlexibleControls(camera, domElement, new FlexibleControlsOptions());
     this._controls.getPickedPointByPixelCoordinates = this.getPickedPointByPixelCoordinates;
     this._raycastCallback = raycastCallback;
-    if (this._haveEventListers) {
+
+    if (this._haveEventListeners) {
       this._pointerEventsTarget = new PointerEventsTarget(domElement, this);
+      this.addEventListeners();
     }
     if (scene) {
       this._markers = new FlexibleCameraMarkers(scene);
     }
 
-    this.addEventListeners();
     this.isEnabled = true;
 
     const onCameraChange = () => {
@@ -172,7 +173,6 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
 
   public dispose(): void {
     this._isDisposed = true;
-    this.controls.dispose();
     this.removeEventListeners();
   }
 
@@ -264,18 +264,33 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     await this.mouseAction(firedEvent, this.options.mouseDoubleClickType);
   }
 
-  public override async onPointerDown(event: PointerEvent): Promise<void> {
-    await this.controls.onPointerDown(event);
+  public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
+    await this.controls.onPointerDown(event, leftButton);
   }
 
-  public override async onPointerDrag(event: PointerEvent): Promise<void> {
-    await this.controls.onPointerDrag(event);
+  public override async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
+    await this.controls.onPointerDrag(event, leftButton);
   }
 
-  public override async onPointerUp(event: PointerEvent): Promise<void> {
-    await this.controls.onPointerUp(event);
+  public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
+    await this.controls.onPointerUp(event, leftButton);
   }
 
+  //================================================
+  // INSTANCE METHODS: Other events
+  //================================================
+
+  public async onWheel(event: WheelEvent): Promise<void> {
+    await this.controls.onWheel(event);
+  }
+
+  public onKey(event: KeyboardEvent, down: boolean): void {
+    this.controls.onKey(event, down);
+  }
+
+  public onFocusChanged(haveFocus: boolean): void {
+    this.controls.onFocusChanged(haveFocus);
+  }
   //================================================
   // INSTANCE METHODS: Setters and getters
   //================================================
@@ -377,17 +392,19 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   //================================================
 
   private addEventListeners() {
-    if (this._haveEventListers) {
-      this._pointerEventsTarget?.addEventListeners();
-      this._controls.addEventListeners();
+    if (!this._haveEventListeners) {
+      return;
     }
+    this._pointerEventsTarget?.addEventListeners();
+    this._controls.addEventListeners();
   }
 
   private removeEventListeners(): void {
-    if (this._haveEventListers) {
-      this._pointerEventsTarget?.removeEventListeners();
-      this._controls.removeEventListeners();
+    if (!this._haveEventListeners) {
+      return;
     }
+    this._pointerEventsTarget?.removeEventListeners();
+    this._controls.removeEventListeners();
   }
 
   //================================================

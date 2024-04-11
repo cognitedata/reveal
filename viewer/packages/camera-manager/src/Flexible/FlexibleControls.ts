@@ -15,7 +15,7 @@ import {
   Vector3
 } from 'three';
 import Keyboard from '../Keyboard';
-import { getNormalizedPixelCoordinates, getClickOrTouchEventPoint } from '@reveal/utilities';
+import { getNormalizedPixelCoordinates, getClickOrTouchEventPoint, getWheelDelta } from '@reveal/utilities';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
@@ -25,7 +25,6 @@ import { ReusableVector3s } from './ReusableVector3s';
 import { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordinates';
 import { FlexibleControlsTranslator } from './FlexibleControlsTranslator';
 import { FlexibleControlsRotationHelper } from './FlexibleControlsRotationHelper';
-import { getWheelDelta } from '../utils/getWheelDelta';
 import { FlexibleCameraEventTarget } from './FlexibleCameraEventTarget';
 
 const TARGET_FPS = 30;
@@ -127,14 +126,8 @@ export class FlexibleControls {
     }
     this._domElement = domElement;
     this._options = options;
-    this._keyboard = new Keyboard(this._domElement);
+    this._keyboard = new Keyboard();
     this._cameraVector.copy(new Vector3(1, 0, 0));
-  }
-
-  public dispose(): void {
-    this.removeEventListeners();
-    this._keyboard.dispose();
-    this._listeners.dispose();
   }
 
   //================================================
@@ -175,6 +168,7 @@ export class FlexibleControls {
 
   set isEnabled(value: boolean) {
     this._isEnabled = value;
+    this._keyboard.isEnabled = value;
   }
 
   get isInitialized(): boolean {
@@ -419,41 +413,27 @@ export class FlexibleControls {
   // INSTANCE METHODS: Event
   //================================================
 
-  public async onPointerDown(event: PointerEvent): Promise<void> {
+  public async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
     if (!this.isEnabled) {
       return;
     }
     if (isMouse(event)) {
-      await this.onMouseDown(event);
+      await this.onMouseDown(event, leftButton);
     } else if (isTouch(event)) {
       this.onTouchStart(event);
     }
   }
 
-  private async onMouseDown(event: PointerEvent) {
+  private async onMouseDown(event: PointerEvent, _leftButton: boolean): Promise<void> {
     if (!this.isEnabled) {
       return;
     }
     this._cameraVector.synchronizeEnd();
-    switch (event.button) {
-      case MOUSE.LEFT:
-        break;
-
-      case MOUSE.RIGHT:
-        event.preventDefault();
-        break;
-
-      default:
-        return;
-    }
-    const mouseDragInfo = new MouseDragInfo(
-      getMousePosition(this._domElement, event.clientX, event.clientY),
-      event.button === MOUSE.RIGHT
-    );
+    const mouseDragInfo = new MouseDragInfo(getMousePosition(this._domElement, event.clientX, event.clientY));
     this._mouseDragInfo = mouseDragInfo;
   }
 
-  public async onPointerDrag(event: PointerEvent): Promise<void> {
+  public async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
     if (!this._mouseDragInfo || !this.isEnabled || !isMouse(event)) {
       return;
     }
@@ -462,7 +442,6 @@ export class FlexibleControls {
     if (deltaPosition.x == 0 && deltaPosition.y == 0) {
       return;
     }
-    const { isRight } = this._mouseDragInfo;
     let { translator } = this._mouseDragInfo;
 
     if (!this.isStationary && this._keyboard.isShiftPressedOnly()) {
@@ -470,7 +449,7 @@ export class FlexibleControls {
       // Zooming forward and backward
       deltaPosition.multiplyScalar(this._options.mouseDollySpeed);
       this.pan(0, 0, deltaPosition.y);
-    } else if (!this.isStationary && (isRight || this._keyboard.isCtrlPressedOnly())) {
+    } else if (!this.isStationary && (!leftButton || this._keyboard.isCtrlPressedOnly())) {
       // Pan left, right, up or down
       if (!translator) {
         translator = new FlexibleControlsTranslator(this);
@@ -481,14 +460,14 @@ export class FlexibleControls {
         deltaPosition.multiplyScalar(this._options.mousePanSpeed);
         this.pan(deltaPosition.x, deltaPosition.y, 0);
       }
-    } else if (!isRight) {
+    } else if (leftButton) {
       translator = undefined;
       this.rotate(deltaPosition);
     }
     this._mouseDragInfo.update(position, translator);
   }
 
-  public onPointerUp(event: PointerEvent): void {
+  public onPointerUp(event: PointerEvent, _leftButton: boolean): void {
     this._mouseDragInfo = undefined;
     if (isTouch(event)) {
       remove(this._touchEvents, ev => ev.pointerId === event.pointerId);
@@ -496,7 +475,10 @@ export class FlexibleControls {
   }
 
   public readonly onKeyDown = (event: KeyboardEvent): void => {
-    if (!this.isEnabled || this.isStationary) {
+    if (!this.isEnabled) {
+      return;
+    }
+    if (this.isStationary) {
       return;
     }
     if (!this.options.enableChangeControlsTypeOn123Key) {
@@ -511,19 +493,32 @@ export class FlexibleControls {
     }
   };
 
-  public readonly onMouseWheel = async (event: WheelEvent): Promise<void> => {
+  public onFocusChanged(_haveFocus: boolean): void {
+    this._keyboard.clearPressedKeys();
+  }
+
+  public onKey(event: KeyboardEvent, down: boolean): void {
     if (!this.isEnabled) {
       return;
     }
-    // Added because cameraControls are disabled when doing picking, so
-    // preventDefault could be not called on wheel event and produce unwanted scrolling.
+    if (down) {
+      this.onKeyDown(event);
+    }
+    this._keyboard.onKey(event, down);
+  }
+
+  public readonly onWheel = async (event: WheelEvent): Promise<void> => {
+    if (!this.isEnabled) {
+      return;
+    }
     event.preventDefault();
 
-    await this.setScrollCursorByWheelEvent(event);
-
+    const pixelCoords = getClickOrTouchEventPoint(event, this._domElement);
     const delta = getWheelDelta(event);
+
+    await this.setScrollCursorByWheelEventCoords(pixelCoords);
+
     if (this._camera instanceof PerspectiveCamera) {
-      const pixelCoords = getClickOrTouchEventPoint(event, this._domElement);
       const normalizedCoords = getNormalizedPixelCoordinates(this._domElement, pixelCoords.x, pixelCoords.y);
       if (this.isStationary) {
         const deltaDistance = delta * this.options.wheelDollySpeed;
@@ -560,13 +555,6 @@ export class FlexibleControls {
     }
   }
 
-  private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
-    if (!this.isEnabled) return;
-    if (event.type === 'focus') {
-      this._keyboard.clearPressedKeys();
-    }
-  };
-
   private readonly onContextMenu = (event: MouseEvent) => {
     if (!this.isEnabled) return;
     event.preventDefault();
@@ -577,22 +565,18 @@ export class FlexibleControls {
   //================================================
 
   public addEventListeners(): void {
+    this._keyboard.addEventListeners(this._domElement);
     this._domElement.addEventListener('keydown', this.onKeyDown);
-    this._domElement.addEventListener('wheel', this.onMouseWheel);
+    this._domElement.addEventListener('wheel', this.onWheel);
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
-
-    // canvas has focus by default, but it's possible to set tabindex on it,
-    // in that case events will be fired (we don't set tabindex here, but still support that case)
-    this._domElement.addEventListener('focus', this.onFocusChanged);
-    this._domElement.addEventListener('pointerdown', this.onFocusChanged);
   }
 
   public removeEventListeners(): void {
+    this._listeners.removeEventListeners();
+    this._keyboard.removeEventListeners(this._domElement);
     this._domElement.removeEventListener('keydown', this.onKeyDown);
-    this._domElement.removeEventListener('wheel', this.onMouseWheel);
+    this._domElement.removeEventListener('wheel', this.onWheel);
     this._domElement.removeEventListener('contextmenu', this.onContextMenu);
-    this._domElement.removeEventListener('focus', this.onFocusChanged);
-    this._domElement.removeEventListener('pointerdown', this.onFocusChanged);
   }
 
   //================================================
@@ -901,11 +885,10 @@ export class FlexibleControls {
     }
   }
 
-  private async setScrollCursorByWheelEvent(event: WheelEvent): Promise<void> {
+  private async setScrollCursorByWheelEventCoords(currentCoords: Vector2): Promise<void> {
     if (!this.options.shouldPick || this.isStationary || !this.getPickedPointByPixelCoordinates) {
       return;
     }
-    const currentCoords = getClickOrTouchEventPoint(event, this.domElement);
     const currentTime = performance.now();
     const deltaTime = currentTime - this._prevTime;
     const deltaCoords = currentCoords.distanceTo(this._prevCoords);
@@ -1033,15 +1016,13 @@ function isTouch(event: PointerEvent): boolean {
 // helper class from mouseDown, mouseMove and mouseUp
 // It keeps track of the previous position and how it is translated
 class MouseDragInfo {
-  public constructor(prevPosition: Vector2, isRight: boolean) {
+  public constructor(prevPosition: Vector2) {
     this.prevPosition = prevPosition;
-    this.isRight = isRight;
   }
   public update(prevPosition: Vector2, translator: FlexibleControlsTranslator | undefined): void {
     this.prevPosition.copy(prevPosition);
     this.translator = translator;
   }
   public readonly prevPosition: Vector2;
-  public readonly isRight: boolean = false;
   public translator: FlexibleControlsTranslator | undefined = undefined;
 }
