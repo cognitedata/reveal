@@ -23,8 +23,6 @@ import { PerspectiveCamera } from 'three';
 import { Plane } from 'three';
 import { Quaternion } from 'three';
 import { Raycaster } from 'three';
-import { Scene } from 'three';
-import { Spherical } from 'three';
 import * as THREE_2 from 'three';
 import { Vector2 } from 'three';
 import { Vector3 } from 'three';
@@ -72,6 +70,11 @@ export interface AreaCollection {
     // (undocumented)
     readonly isEmpty: boolean;
 }
+
+// Warning: (ae-incompatible-release-tags) The symbol "asFlexibleCameraManager" is marked as @public, but its signature references "IFlexibleCameraManager" which is marked as @beta
+//
+// @public (undocumented)
+export function asFlexibleCameraManager(manager: CameraManager): IFlexibleCameraManager | undefined;
 
 // @public
 export type AssetAnnotationImage360Info = {
@@ -493,6 +496,8 @@ export interface Cognite3DViewerOptions {
     customDataSource?: DataSource;
     domElement?: HTMLElement;
     enableEdges?: boolean;
+    // @beta
+    haveEventListeners?: boolean;
     loadingIndicatorStyle?: {
         placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
         opacity: number;
@@ -878,74 +883,6 @@ export enum File3dFormat {
     GltfCadModel = "gltf-directory"
 }
 
-// @beta
-export class FlexibleCameraManager extends PointerEvents implements IFlexibleCameraManager {
-    constructor(domElement: HTMLElement, raycastCallback: RaycastCallback, camera?: PerspectiveCamera, scene?: Scene);
-    // (undocumented)
-    activate(cameraManager?: CameraManager): void;
-    // (undocumented)
-    addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
-    // (undocumented)
-    static as(manager: CameraManager): FlexibleCameraManager | undefined;
-    // (undocumented)
-    get camera(): PerspectiveCamera;
-    // (undocumented)
-    get controls(): FlexibleControls;
-    // (undocumented)
-    get controlsType(): FlexibleControlsType;
-    set controlsType(value: FlexibleControlsType);
-    // (undocumented)
-    deactivate(): void;
-    // (undocumented)
-    dispose(): void;
-    // (undocumented)
-    get domElement(): HTMLElement;
-    // (undocumented)
-    fitCameraToBoundingBox(boundingBox: Box3, duration?: number, radiusFactor?: number): void;
-    // (undocumented)
-    getCamera(): PerspectiveCamera;
-    // (undocumented)
-    getCameraState(): Required<CameraState>;
-    // (undocumented)
-    get isDisposed(): boolean;
-    // (undocumented)
-    get isEnableClickAndDoubleClick(): boolean;
-    set isEnableClickAndDoubleClick(value: boolean);
-    // (undocumented)
-    get isEnabled(): boolean;
-    // (undocumented)
-    get listeners(): FlexibleCameraEventTarget;
-    // (undocumented)
-    off(event: CameraManagerEventType, callback: CameraEventDelegate): void;
-    // (undocumented)
-    on(event: CameraManagerEventType, callback: CameraEventDelegate): void;
-    // (undocumented)
-    onClick(event: PointerEvent): Promise<void>;
-    // (undocumented)
-    onDoubleClick(event: PointerEvent): Promise<void>;
-    // (undocumented)
-    onPointerDown(event: PointerEvent): Promise<void>;
-    // (undocumented)
-    onPointerDrag(event: PointerEvent): Promise<void>;
-    // (undocumented)
-    onPointerUp(event: PointerEvent): Promise<void>;
-    // (undocumented)
-    get options(): FlexibleControlsOptions;
-    // (undocumented)
-    removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
-    // (undocumented)
-    rotateCameraTo(direction: Vector3, animationDuration: number): void;
-    setCameraState(state: CameraState): void;
-    // (undocumented)
-    setPosition(position: Vector3): void;
-    // (undocumented)
-    setPositionAndTarget(position: Vector3, target: Vector3): void;
-    // (undocumented)
-    update(deltaTime: number, nearFarBoundingBox: Box3): void;
-    // (undocumented)
-    updateModelBoundingBox(modelBoundingBox: Box3): void;
-}
-
 // @beta (undocumented)
 export class FlexibleControlsOptions {
     // (undocumented)
@@ -1150,6 +1087,14 @@ export interface IFlexibleCameraManager extends CameraManager {
     addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
     get controlsType(): FlexibleControlsType;
     set controlsType(value: FlexibleControlsType);
+    onClick(event: PointerEvent): Promise<void>;
+    onDoubleClick(event: PointerEvent): Promise<void>;
+    onFocusChanged(haveFocus: boolean): void;
+    onKey(event: KeyboardEvent, down: boolean): void;
+    onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void>;
+    onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void>;
+    onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void>;
+    onWheel(event: WheelEvent): Promise<void>;
     removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
     rotateCameraTo(direction: Vector3, animationDuration: number): void;
 }
@@ -1738,11 +1683,11 @@ export class PointerEvents {
     // (undocumented)
     onHover(_event: PointerEvent): void;
     // (undocumented)
-    onPointerDown(_event: PointerEvent): Promise<void>;
+    onPointerDown(_event: PointerEvent, _leftButton: boolean): Promise<void>;
     // (undocumented)
-    onPointerDrag(_event: PointerEvent): Promise<void>;
+    onPointerDrag(_event: PointerEvent, _leftButton: boolean): Promise<void>;
     // (undocumented)
-    onPointerUp(_event: PointerEvent): Promise<void>;
+    onPointerUp(_event: PointerEvent, _leftButton: boolean): Promise<void>;
 }
 
 // @public
