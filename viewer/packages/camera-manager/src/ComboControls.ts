@@ -4,7 +4,7 @@
 // TODO 2021-11-08 larsmoa: Enable explicit-module-boundary-types for ComboControls
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-import { clickOrTouchEventOffset, getWheelDelta } from '@reveal/utilities';
+import { clickOrTouchEventOffset, getWheelEventDelta } from '@reveal/utilities';
 import remove from 'lodash/remove';
 import {
   EventDispatcher,
@@ -330,7 +330,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     event.preventDefault();
 
-    const delta = getWheelDelta(event);
+    const delta = getWheelEventDelta(event);
     const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
 
     const pixelCoordinates = getNormalizedPixelCoordinates(

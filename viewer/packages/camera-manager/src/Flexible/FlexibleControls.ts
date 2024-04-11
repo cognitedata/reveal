@@ -14,7 +14,7 @@ import {
   Vector3
 } from 'three';
 import Keyboard from '../Keyboard';
-import { getNormalizedPixelCoordinates, getClickOrTouchEventPoint, getWheelDelta } from '@reveal/utilities';
+import { getNormalizedPixelCoordinates, getClickOrTouchEventPoint, getWheelEventDelta } from '@reveal/utilities';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
@@ -241,7 +241,7 @@ export class FlexibleControls {
     return getMousePosition(this._domElement, event.clientX, event.clientY);
   }
 
-  public getNormalizedPixelCoordinates(event: PointerEvent): Vector2 {
+  public getNormalizedPixelCoordinates(event: PointerEvent | WheelEvent): Vector2 {
     return getNormalizedPixelCoordinates(this._domElement, event.clientX, event.clientY);
   }
 
@@ -516,9 +516,9 @@ export class FlexibleControls {
 
     await this.setScrollCursorByWheelEventCoords(pixelCoords);
 
-    const delta = getWheelDelta(event);
+    const delta = getWheelEventDelta(event);
     if (this._camera instanceof PerspectiveCamera) {
-      const normalizedCoords = getNormalizedPixelCoordinates(this._domElement, pixelCoords.x, pixelCoords.y);
+      const normalizedCoords = this.getNormalizedPixelCoordinates(event);
       if (this.isStationary) {
         const deltaDistance = delta * this.options.wheelDollySpeed;
         this.zoomCameraByFov(normalizedCoords, deltaDistance);

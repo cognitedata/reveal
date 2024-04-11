@@ -14,7 +14,7 @@ export { PointerEvents } from './src/events/PointerEvents';
 export { PointerEventsTarget } from './src/events/PointerEventsTarget';
 export { disposeOfAllEventListeners } from './src/events/disposeOfAllEventListeners';
 export { clickOrTouchEventOffset, getClickOrTouchEventPoint } from './src/events/clickOrTouchEventOffset';
-export { getWheelDelta } from './src/events/getWheelDelta';
+export { getWheelEventDelta } from './src/events/getWheelEventDelta';
 export {
   DisposedDelegate,
   BeforeSceneRenderedDelegate,
