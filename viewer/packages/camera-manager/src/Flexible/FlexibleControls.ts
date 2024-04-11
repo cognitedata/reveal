@@ -5,7 +5,6 @@
 import remove from 'lodash/remove';
 import {
   MathUtils,
-  MOUSE,
   OrthographicCamera,
   PerspectiveCamera,
   Quaternion,

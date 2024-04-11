@@ -291,6 +291,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   public onFocusChanged(haveFocus: boolean): void {
     this.controls.onFocusChanged(haveFocus);
   }
+
   //================================================
   // INSTANCE METHODS: Setters and getters
   //================================================
