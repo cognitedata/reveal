@@ -7,7 +7,7 @@ import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js
 import { use3dScenes } from '../../query/use3dScenes';
 import { useTranslation } from '../i18n/I18n';
 import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
-import { SceneList, SceneWithName } from './SceneList';
+import { SceneList, type SceneWithName } from './SceneList';
 import styled from 'styled-components';
 
 export type SelectSceneButtonProps = {
