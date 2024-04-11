@@ -12,10 +12,13 @@ const DOUBLE_CLICK_INTERVAL = 300;
 const HOVER_INTERVAL = 100;
 
 /**
- * This class fires click, double click and hover events at a PointerEvents
- * Click will fired if it's a single click, and the mouse hasn't move too much
- * If double click is fired, the click will not be fired
- * Hover will be fired only if the mouse button is not pressed and not to often
+ * This class fires click, double click, hover end similar events at a PointerEvents
+ * onClick will fired if it's a single click, and the mouse hasn't move too much
+ * If onDoubleClick is fired, the onClick will not be fired
+ * onHover will be fired only if the mouse button is not pressed and not to often
+ * If mouse, the onDoubleClick and onClick is fired when the left mouse button is pressed
+ * onPointerDrag will be fired wnen the mouse button is pressed and the mouse is moving
+ * @beta
  */
 export class PointerEventsTarget {
   //================================================
@@ -104,7 +107,7 @@ export class PointerEventsTarget {
     if (!this.isEnabled) {
       return;
     }
-    if (isMouse(event) && !isMouseButtonPressed(event)) {
+    if (isMouse(event) && !isAnyMouseButtonPressed(event)) {
       this.onPointerUp(event);
       return;
     }
@@ -175,7 +178,7 @@ export class PointerEventsTarget {
   }
 }
 
-function isMouseButtonPressed(event: PointerEvent): boolean {
+function isAnyMouseButtonPressed(event: PointerEvent): boolean {
   return event.buttons !== 0;
 }
 

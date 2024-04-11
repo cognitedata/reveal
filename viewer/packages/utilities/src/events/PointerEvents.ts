@@ -3,8 +3,8 @@
  */
 
 /**
- * This base should be extended if PointerEventsTarget is used to
- * identify proper click, double click, hover events and more
+ * This base should be extended for listen to various pointer events.
+ * @beta
  */
 export class PointerEvents {
   public onHover(_event: PointerEvent): void {}
