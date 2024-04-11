@@ -47,6 +47,7 @@ export {
 } from './components/CacheProvider/PointCloudAnnotationCacheProvider';
 export { useImage360AnnotationMappingsForAssetIds } from './components/CacheProvider/Image360AnnotationCacheProvider';
 export { useLoadedScene } from './components/SceneContainer/LoadedSceneContext';
+export { useIsDraggingOnViewer } from './hooks/useIsDraggingOnViewer';
 
 // Queries
 export { use3DModelName } from './query/use3DModelName';
