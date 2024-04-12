@@ -1,7 +1,10 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { useIsDraggingOnViewer } from '../../../hooks/useIsDraggingOnViewer';
 import { useEffect } from 'react';
 
-export const useDisableBodyTextSelectionOnViewerDragging = () => {
+export const useDisableBodyTextSelectionOnViewerDragging = (): void => {
   const draggingOnViewer = useIsDraggingOnViewer();
 
   useEffect(() => {
@@ -10,6 +13,8 @@ export const useDisableBodyTextSelectionOnViewerDragging = () => {
       body.style.userSelect = 'none';
     }
 
-    return () => void (body.style.userSelect = '');
+    return () => {
+      body.style.userSelect = '';
+    };
   }, [draggingOnViewer]);
 };
