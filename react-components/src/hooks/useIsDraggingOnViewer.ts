@@ -23,7 +23,7 @@ export const useIsDraggingOnViewer = (): boolean => {
     return () => {
       viewer.domElement.removeEventListener('pointerdown', onPointerDown);
     };
-  }, [onPointerDown, onPointerUp]);
+  }, [onPointerDown]);
 
   return isMouseDown;
 };
