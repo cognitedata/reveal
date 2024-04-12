@@ -10,20 +10,20 @@ export const useIsDraggingOnViewer = (): boolean => {
 
   const onPointerDown = useCallback(() => {
     setIsMouseDown(true);
+    window.addEventListener('pointerup', onPointerUp);
   }, [setIsMouseDown]);
 
   const onPointerUp = useCallback(() => {
     setIsMouseDown(false);
+    window.removeEventListener('pointerup', onPointerUp);
   }, [setIsMouseDown]);
 
   useEffect(() => {
     viewer.domElement.addEventListener('pointerdown', onPointerDown);
-    viewer.domElement.addEventListener('pointerup', onPointerUp);
     return () => {
       viewer.domElement.removeEventListener('pointerdown', onPointerDown);
-      viewer.domElement.removeEventListener('pointerup', onPointerUp);
     };
-  }, [onPointerDown, onPointerUp]);
+  }, [onPointerDown]);
 
   return isMouseDown;
 };
