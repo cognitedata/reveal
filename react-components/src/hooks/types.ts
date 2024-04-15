@@ -84,6 +84,8 @@ export type GroundPlaneProperties = {
   file: string;
   label: string;
   wrapping: string;
+  repeatU?: number;
+  repeatV?: number;
 };
 
 export type Cdf3dRevisionProperties = Transformation3d & {
