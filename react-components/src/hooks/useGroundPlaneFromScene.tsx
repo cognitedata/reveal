@@ -39,14 +39,15 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
       return await Promise.all(
         downloadUrls.map(async (url, index) => {
           let texture: Texture | undefined;
+          const errorMessage = 'Failed to load groundplane texture';
           try {
             texture = await new TextureLoader().loadAsync(url.downloadUrl);
           } catch (error) {
-            console.error('Failed to load groundplane texture');
+            console.error(errorMessage);
             return undefined;
           }
           if (texture === null) {
-            console.error('Failed to load groundplane texture');
+            console.error(errorMessage);
             return undefined;
           }
           if (scene.groundPlanes[index].wrapping === 'repeat') {
