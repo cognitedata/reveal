@@ -10,6 +10,7 @@ import {
   MeshBasicMaterial,
   PlaneGeometry,
   RepeatWrapping,
+  type Texture,
   TextureLoader
 } from 'three';
 import { useQuery } from '@tanstack/react-query';
@@ -22,7 +23,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
   const sdk = useSDK();
   const viewer = useReveal();
 
-  const { data: groundPlanesUrls } = useQuery(
+  const { data: groundPlaneTextures } = useQuery(
     ['reveal', 'react-components', 'groundplaneUrls', scene ?? 'noSceneData'],
     async () => {
       if (scene?.groundPlanes === undefined || scene.groundPlanes.length === 0) {
@@ -37,8 +38,17 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
 
       return await Promise.all(
         downloadUrls.map(async (url, index) => {
-          const texture = await new TextureLoader().loadAsync(url.downloadUrl);
-
+          let texture: Texture | undefined;
+          try {
+            texture = await new TextureLoader().loadAsync(url.downloadUrl);
+          } catch (error) {
+            console.error('Failed to load groundplane texture');
+            return undefined;
+          }
+          if (texture === null) {
+            console.error('Failed to load groundplane texture');
+            return undefined;
+          }
           if (scene.groundPlanes[index].wrapping === 'repeat') {
             const repeatU = scene.groundPlanes[index].repeatU;
             const repeatV = scene.groundPlanes[index].repeatV;
@@ -58,18 +68,18 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
     if (
       scene === undefined ||
       scene === null ||
-      groundPlanesUrls === undefined ||
-      groundPlanesUrls.length === 0
+      groundPlaneTextures === undefined ||
+      groundPlaneTextures.length === 0
     ) {
       return;
     }
     const groundMeshes: CustomObject[] = [];
 
     scene.groundPlanes.forEach((groundPlane, index) => {
-      if (groundPlanesUrls === undefined) {
+      if (groundPlaneTextures?.[index] === undefined) {
         return;
       }
-      const texture = groundPlanesUrls[index];
+      const texture = groundPlaneTextures[index];
       const material = new MeshBasicMaterial({ map: texture, side: DoubleSide });
       const geometry = new PlaneGeometry(10000 * groundPlane.scaleX, 10000 * groundPlane.scaleY);
 
@@ -108,5 +118,5 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
 
       groundMeshes.splice(0, groundMeshes.length);
     };
-  }, [groundPlanesUrls]);
+  }, [groundPlaneTextures]);
 };

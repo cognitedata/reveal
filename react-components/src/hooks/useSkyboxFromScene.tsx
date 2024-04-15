@@ -30,8 +30,13 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
       }
 
       const skyboxUrl = skyBoxUrls[0].downloadUrl;
-      const texture = await new THREE.TextureLoader().loadAsync(skyboxUrl);
-      return texture;
+      try {
+        const texture = await new THREE.TextureLoader().loadAsync(skyboxUrl);
+        return texture;
+      } catch (error) {
+        console.error('Failed to load skybox texture');
+        return null;
+      }
     },
     { staleTime: Infinity }
   );
