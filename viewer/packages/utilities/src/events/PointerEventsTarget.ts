@@ -131,10 +131,6 @@ export class PointerEventsTarget {
     window.removeEventListener('pointerup', this.onPointerUp);
     this._domElement.addEventListener('pointermove', this.onPointerHover);
 
-    const leftButton = isTouch(event) || isLeftMouseButton(event);
-    if (!leftButton) {
-      return;
-    }
     if (!this.isProperClick(event)) {
       return;
     }
