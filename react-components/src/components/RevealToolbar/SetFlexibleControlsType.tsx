@@ -6,7 +6,11 @@ import { type ReactElement, useEffect, useState, useCallback } from 'react';
 
 import { SegmentedControl, Tooltip as CogsTooltip, type IconType, Button } from '@cognite/cogs.js';
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import { FlexibleControlsType, type IFlexibleCameraManager, asFlexibleCameraManager } from '@cognite/reveal';
+import {
+  FlexibleControlsType,
+  type IFlexibleCameraManager,
+  asFlexibleCameraManager
+} from '@cognite/reveal';
 
 import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
@@ -31,7 +35,10 @@ export function SetOrbitOrFirstPersonControlsType(
   return SetFlexibleControlsType({ ...props, includeOrbitInCenter: false });
 }
 
-export function SetFlexibleControlsType({ includeOrbitInCenter, orientation }: CustomSettingsProps): ReactElement {
+export function SetFlexibleControlsType({
+  includeOrbitInCenter,
+  orientation
+}: CustomSettingsProps): ReactElement {
   const viewer = useReveal();
   const flexibleCameraManager = asFlexibleCameraManager(viewer.cameraManager);
   const { t: translate } = useTranslation();
