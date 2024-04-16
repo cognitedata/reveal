@@ -1,6 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
+import { type Relationship } from '@cognite/sdk/';
 import { type DmsUniqueIdentifier, type Source } from './FdmSDK';
 
 export type FdmInstanceWithView = DmsUniqueIdentifier & { view: Source };
@@ -15,3 +16,11 @@ export function isAssetInstance(instance: InstanceReference): instance is AssetI
 export function isDmsInstance(instance: InstanceReference): instance is DmsUniqueIdentifier {
   return 'externalId' in instance && 'space' in instance;
 }
+
+export type RelationshipsFilterInternal = {
+  labels?: string[];
+};
+
+export type ExtendedRelationship = {
+  relation: 'Source' | 'Target';
+} & Relationship;

@@ -10,6 +10,8 @@ import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { type Asset } from '@cognite/sdk';
+import { useRelationshipsQuery } from '../../query/useRelationshipQuery';
+import { isEmpty } from 'lodash';
 
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
@@ -30,6 +32,15 @@ export function RuleBasedOutputsSelector({
     hasNextPage,
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(models);
+
+  const resourceExternalId = 'LOR_UMEA_WELL_01_well_monthly_actual_deferment_count';
+  const { data = [] } = useRelationshipsQuery({
+    resourceExternalIds: resourceExternalId.length > 0 ? [resourceExternalId] : [],
+    relationshipResourceTypes: ['asset']
+  });
+
+  // eslint-disable-next-line no-console
+  console.log(' TIMESERIES TEST ', data);
 
   useEffect(() => {
     if (!isFetching && hasNextPage === true) {
