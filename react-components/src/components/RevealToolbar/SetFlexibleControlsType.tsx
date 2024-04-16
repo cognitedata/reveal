@@ -9,7 +9,7 @@ import { useReveal } from '../RevealCanvas/ViewerContext';
 import {
   FlexibleControlsType,
   type IFlexibleCameraManager,
-  asFlexibleCameraManager
+  type CameraManager
 } from '@cognite/reveal';
 
 import { useTranslation } from '../i18n/I18n';
@@ -193,3 +193,11 @@ const ButtonsContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+export function asFlexibleCameraManager(
+  manager: CameraManager
+): IFlexibleCameraManager | undefined {
+  // instanceof don't work within React, so using safeguarding
+  const flexibleCameraManager = manager as IFlexibleCameraManager;
+  return flexibleCameraManager.controlsType === undefined ? undefined : flexibleCameraManager;
+}
