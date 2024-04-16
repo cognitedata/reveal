@@ -223,25 +223,27 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
     // Note! Must be part of DOM tree before we do getComputedStyle(), so add before check
     this.viewerDomElement.appendChild(htmlElement);
-    const style = getComputedStyle(htmlElement);
-    if (style.position !== 'absolute') {
-      this.viewerDomElement.removeChild(htmlElement);
-      throw new Error(`htmlElement style must have a position of absolute. but was '${style.position}'`);
-    }
-
-    const element: HtmlOverlayElement = {
-      position3D,
-      options,
-      state: {
-        position2D: new THREE.Vector2(),
-        width: -1,
-        height: -1,
-        visible: true
+    setTimeout(() => {
+      const style = getComputedStyle(htmlElement);
+      if (!style.position || style.position !== 'absolute') {
+        this.viewerDomElement.removeChild(htmlElement);
+        throw new Error(`htmlElement style must have a position of absolute. but was '${style.position}'`);
       }
-    };
-    this._htmlOverlays.set(htmlElement, element);
 
-    this.scheduleUpdate();
+      const element: HtmlOverlayElement = {
+        position3D,
+        options,
+        state: {
+          position2D: new THREE.Vector2(),
+          width: -1,
+          height: -1,
+          visible: true
+        }
+      };
+      this._htmlOverlays.set(htmlElement, element);
+
+      this.scheduleUpdate();
+    }, 50);
   }
 
   /**
