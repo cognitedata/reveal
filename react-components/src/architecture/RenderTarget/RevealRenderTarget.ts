@@ -7,17 +7,18 @@ import {
   type IFlexibleCameraManager,
   asFlexibleCameraManager
 } from '@cognite/reveal';
-import { ToolController } from './ToolController';
+//import { ToolController } from './ToolController';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../ConcreteTools/NavigationTool';
 
+// Note: ToolController will be added later
 export class RevealRenderTarget {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   private readonly _viewer: Cognite3DViewer;
-  private readonly _toolController: ToolController;
+  //private readonly _toolController: ToolController;
   private _axisGizmoTool: AxisGizmoTool | undefined;
 
   // ==================================================
@@ -26,8 +27,8 @@ export class RevealRenderTarget {
 
   constructor(viewer: Cognite3DViewer) {
     this._viewer = viewer;
-    this._toolController = new ToolController(this.domElement);
-    this._toolController.addEventListeners();
+    //this._toolController = new ToolController(this.domElement);
+    //this._toolController.addEventListeners();
   }
 
   public initialize(): void {
@@ -35,13 +36,13 @@ export class RevealRenderTarget {
     this._axisGizmoTool.connect(this._viewer);
 
     const navigationTool = new NavigationTool(this);
-    this.toolController.add(navigationTool);
+    //this.toolController.add(navigationTool);
 
-    this.toolController.setActiveTool(navigationTool);
+    //this.toolController.setActiveTool(navigationTool);
   }
 
   public dispose(): void {
-    this.toolController.removeEventListeners();
+    //this.toolController.removeEventListeners();
     this._axisGizmoTool?.dispose();
   }
 
@@ -61,9 +62,9 @@ export class RevealRenderTarget {
     return this._viewer.domElement;
   }
 
-  public get toolController(): ToolController {
-    return this._toolController;
-  }
+  // public get toolController(): ToolController {
+  //   return this._toolController;
+  // }
 
   public get cameraManager(): IFlexibleCameraManager {
     const cameraManager = asFlexibleCameraManager(this.viewer.cameraManager);
