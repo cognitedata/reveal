@@ -15,7 +15,7 @@ import { SDKProvider } from '../RevealCanvas/SDKProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { Image360AnnotationCacheProvider } from '../CacheProvider/Image360AnnotationCacheProvider';
-import { LoadedSceneProvider } from '../SceneContainer/LoadedSceneContext';
+import { RevealRenderTarget } from '../../architecture/RenderTarget/RevealRenderTarget';
 
 export type RevealContextProps = {
   color?: Color;
@@ -48,67 +48,60 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
     <SDKProvider sdk={props.sdk}>
       <QueryClientProvider client={queryClient}>
         <I18nContextProvider appLanguage={props.appLanguage}>
-          <LoadedSceneProvider>
-            <ViewerContext.Provider value={viewer}>
-              <NodeCacheProvider>
-                <AssetMappingCacheProvider>
-                  <PointCloudAnnotationCacheProvider>
-                    <Image360AnnotationCacheProvider>
-                      <Reveal3DResourcesCountContextProvider>
-                        {props.children}
-                      </Reveal3DResourcesCountContextProvider>
-                    </Image360AnnotationCacheProvider>
-                  </PointCloudAnnotationCacheProvider>
-                </AssetMappingCacheProvider>
-              </NodeCacheProvider>
-            </ViewerContext.Provider>
-          </LoadedSceneProvider>
+          <ViewerContext.Provider value={viewer}>
+            <NodeCacheProvider>
+              <AssetMappingCacheProvider>
+                <PointCloudAnnotationCacheProvider>
+                  <Image360AnnotationCacheProvider>
+                    <Reveal3DResourcesCountContextProvider>{props.children}</Reveal3DResourcesCountContextProvider>
+                  </Image360AnnotationCacheProvider>
+                </PointCloudAnnotationCacheProvider>
+              </AssetMappingCacheProvider>
+            </NodeCacheProvider>
+          </ViewerContext.Provider>
         </I18nContextProvider>
       </QueryClientProvider>
     </SDKProvider>
   );
 };
 
-const useRevealFromKeepAlive = ({
-  color,
-  sdk,
-  viewerOptions
-}: RevealContextProps): Cognite3DViewer | null => {
+const useRevealFromKeepAlive = ({ color, sdk, viewerOptions }: RevealContextProps): RevealRenderTarget | null => {
   const revealKeepAliveData = useRevealKeepAlive();
 
   // Double bookkeeping to satisfy test
-  const viewerRef = useRef<Cognite3DViewer | null>(null);
-  const [, setViewer] = useState<Cognite3DViewer | undefined>(undefined);
+  const [renderTarget, setRenderTarget] = useState<RevealRenderTarget | null>(null);
 
   const viewerDomElement = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const initializedViewer = getOrInitializeViewer();
+    const renderTarget = getOrInitializeRenderTarget();
     if (revealKeepAliveData === undefined) {
       return;
     }
     revealKeepAliveData.isRevealContainerMountedRef.current = true;
     return () => {
       if (revealKeepAliveData === undefined) {
-        initializedViewer.dispose();
+        renderTarget.dispose();
         return;
       }
       revealKeepAliveData.isRevealContainerMountedRef.current = false;
     };
   }, []);
 
-  return viewerRef.current;
+  return renderTarget;
 
-  function getOrInitializeViewer(): Cognite3DViewer {
-    const viewer =
-      revealKeepAliveData?.viewerRef.current ?? new Cognite3DViewer({ ...viewerOptions, sdk });
-    if (revealKeepAliveData !== undefined) {
-      revealKeepAliveData.viewerRef.current = viewer;
+  function getOrInitializeRenderTarget(): RevealRenderTarget {
+    let renderTarget = revealKeepAliveData?.renderTargetRef.current;
+    if (renderTarget === undefined) {
+      const viewer = new Cognite3DViewer({ ...viewerOptions, sdk });
+      viewer.setBackgroundColor({ color, alpha: 1 });
+      renderTarget = new RevealRenderTarget(viewer);
+      if (revealKeepAliveData !== undefined) {
+        revealKeepAliveData.renderTargetRef.current = renderTarget;
+      }
     }
-    viewerDomElement.current = viewer.domElement;
-    viewer.setBackgroundColor({ color, alpha: 1 });
-    setViewer(viewer);
-    viewerRef.current = viewer;
-    return viewer;
+    viewerDomElement.current = renderTarget.viewer.domElement;
+    setRenderTarget(renderTarget);
+    return renderTarget;
   }
 };

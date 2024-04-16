@@ -6,11 +6,7 @@ import { type ReactElement, useEffect, useState, useCallback } from 'react';
 
 import { SegmentedControl, Tooltip as CogsTooltip, type IconType, Button } from '@cognite/cogs.js';
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import {
-  type CameraManager,
-  FlexibleControlsType,
-  type IFlexibleCameraManager
-} from '@cognite/reveal';
+import { FlexibleControlsType, type IFlexibleCameraManager, asFlexibleCameraManager } from '@cognite/reveal';
 
 import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
@@ -35,10 +31,7 @@ export function SetOrbitOrFirstPersonControlsType(
   return SetFlexibleControlsType({ ...props, includeOrbitInCenter: false });
 }
 
-export function SetFlexibleControlsType({
-  includeOrbitInCenter,
-  orientation
-}: CustomSettingsProps): ReactElement {
+export function SetFlexibleControlsType({ includeOrbitInCenter, orientation }: CustomSettingsProps): ReactElement {
   const viewer = useReveal();
   const flexibleCameraManager = asFlexibleCameraManager(viewer.cameraManager);
   const { t: translate } = useTranslation();
@@ -187,12 +180,6 @@ function getIcon(controlsType: FlexibleControlsType): IconType {
     default:
       return 'Error';
   }
-}
-
-function asFlexibleCameraManager(manager: CameraManager): IFlexibleCameraManager | undefined {
-  // instanceof don't work within React, so using safeguarding
-  const flexibleCameraManager = manager as IFlexibleCameraManager;
-  return flexibleCameraManager.controlsType === undefined ? undefined : flexibleCameraManager;
 }
 
 const ButtonsContainer = styled.div`

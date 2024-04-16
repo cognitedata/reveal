@@ -4,13 +4,13 @@ import { RevealCanvas, RevealContext } from '../../../src';
 import { It, Mock } from 'moq.ts';
 import { type CogniteClient } from '@cognite/sdk';
 import { RevealKeepAliveContext } from '../../../src/components/RevealKeepAlive/RevealKeepAliveContext';
-import { type Cognite3DViewer } from '@cognite/reveal';
 import { type FC, useRef } from 'react';
 import { type FdmNodeCache } from '../../../src/components/CacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../../../src/components/CacheProvider/AssetMappingCache';
 import { type PointCloudAnnotationCache } from '../../../src/components/CacheProvider/PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from '../../../src/components/CacheProvider/Image360AnnotationCache';
 import { type SceneIdentifiers } from '../../../src/components/SceneContainer/SceneTypes';
+import { type RevealRenderTarget } from '../../../src/architecture/RenderTarget/RevealRenderTarget';
 
 describe(RevealCanvas.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {
@@ -21,16 +21,14 @@ describe(RevealCanvas.name, () => {
         .setup((p) => p.project)
         .returns('test');
 
-      const domElement = document
-        .createElement('div')
-        .appendChild(document.createElement('canvas'));
+      const domElement = document.createElement('div').appendChild(document.createElement('canvas'));
 
-      const viewerRef = useRef<Cognite3DViewer>(
-        new Mock<Cognite3DViewer>()
+      const renderTargetRef = useRef<RevealRenderTarget>(
+        new Mock<RevealRenderTarget>()
           .setup((p) => p.domElement)
           .returns(domElement)
           .setup((p) => {
-            p.setBackgroundColor(It.IsAny());
+            p.viewer.setBackgroundColor(It.IsAny());
           })
           .returns()
           .object()
@@ -44,7 +42,7 @@ describe(RevealCanvas.name, () => {
       return (
         <RevealKeepAliveContext.Provider
           value={{
-            viewerRef,
+            renderTargetRef,
             isRevealContainerMountedRef,
             sceneLoadedRef,
             fdmNodeCache,

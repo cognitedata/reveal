@@ -10,24 +10,17 @@ import { type CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { createSdkByUrlToken } from './createSdkByUrlToken';
 import { type PointCloudAnnotationCache } from '../../src/components/CacheProvider/PointCloudAnnotationCache';
-import {
-  RevealContext,
-  type RevealContextProps
-} from '../../src/components/RevealContext/RevealContext';
+import { RevealContext, type RevealContextProps } from '../../src/components/RevealContext/RevealContext';
 import { type Image360AnnotationCache } from '../../src/components/CacheProvider/Image360AnnotationCache';
 import { type SceneIdentifiers } from '../../src/components/SceneContainer/SceneTypes';
+import { RevealRenderTarget } from '../../src/architecture/RenderTarget/RevealRenderTarget';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
   viewer?: Cognite3DViewer;
 };
 
-export const RevealStoryContext = ({
-  viewer,
-  sdk,
-  children,
-  ...rest
-}: RevealStoryContainerProps): ReactElement => {
+export const RevealStoryContext = ({ viewer, sdk, children, ...rest }: RevealStoryContainerProps): ReactElement => {
   const sdkInstance = useMemo(() => {
     if (sdk !== undefined) {
       return sdk;
@@ -36,13 +29,23 @@ export const RevealStoryContext = ({
   }, [sdk]);
 
   const isLocal = sdkInstance.project === '';
-  const viewerRef = useRef<Cognite3DViewer | undefined>(
-    viewer ??
-      (isLocal
-        ? // @ts-expect-error use local models
-          new Cognite3DViewer({ ...rest.viewerOptions, sdk: sdkInstance, _localModels: true })
-        : undefined)
-  );
+
+  let renderTarget: RevealRenderTarget | undefined;
+  if (viewer !== undefined) {
+    renderTarget = new RevealRenderTarget(viewer);
+  } else if (isLocal) {
+    const newViewer = new Cognite3DViewer({
+      ...rest.viewerOptions,
+      sdk: sdkInstance,
+      // @ts-expect-error use local models
+      _localModels: true,
+      haveEventListeners: false
+    });
+    renderTarget = new RevealRenderTarget(newViewer);
+    renderTarget.initialize();
+  }
+
+  const renderTargetRef = useRef<RevealRenderTarget | undefined>(renderTarget);
   const isRevealContainerMountedRef = useRef<boolean>(true);
   const sceneLoadedRef = useRef<SceneIdentifiers>();
   const fdmNodeCache = useRef<FdmNodeCache | undefined>();
@@ -52,7 +55,7 @@ export const RevealStoryContext = ({
   return (
     <RevealKeepAliveContext.Provider
       value={{
-        viewerRef,
+        renderTargetRef,
         isRevealContainerMountedRef,
         sceneLoadedRef,
         fdmNodeCache,
@@ -67,10 +70,7 @@ export const RevealStoryContext = ({
   );
 };
 
-export const RevealStoryContainer = ({
-  children,
-  ...rest
-}: RevealStoryContainerProps): ReactElement => {
+export const RevealStoryContainer = ({ children, ...rest }: RevealStoryContainerProps): ReactElement => {
   return (
     <RevealStoryContext {...rest}>
       <RevealCanvas>{children}</RevealCanvas>
