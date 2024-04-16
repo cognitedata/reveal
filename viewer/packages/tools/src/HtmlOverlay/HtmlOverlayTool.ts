@@ -141,6 +141,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private readonly _htmlOverlays: Map<HTMLElement, HtmlOverlayElement> = new Map();
   private readonly _compositeOverlays: HTMLElement[] = [];
   private _visible: boolean;
+  private readonly TIMER_ADVANCE_MS = 50;
 
   private readonly _onSceneRenderedHandler: SceneRenderedDelegate;
   private readonly _onViewerDisposedHandler: DisposedDelegate;
@@ -243,7 +244,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       this._htmlOverlays.set(htmlElement, element);
 
       this.scheduleUpdate();
-    }, 50);
+    }, this.TIMER_ADVANCE_MS);
   }
 
   /**
