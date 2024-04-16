@@ -9,7 +9,7 @@ import {
 } from '@cognite/reveal';
 // import { ToolController } from './ToolController';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
-import { NavigationTool } from '../ConcreteTools/NavigationTool';
+// import { NavigationTool } from '../ConcreteTools/NavigationTool';
 
 // Note: ToolController will be added later
 export class RevealRenderTarget {
