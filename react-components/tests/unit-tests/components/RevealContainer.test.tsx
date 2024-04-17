@@ -9,7 +9,8 @@ import { type FC, useRef } from 'react';
 import { type FdmNodeCache } from '../../../src/components/CacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../../../src/components/CacheProvider/AssetMappingCache';
 import { type PointCloudAnnotationCache } from '../../../src/components/CacheProvider/PointCloudAnnotationCache';
-import { Image360AnnotationCache } from '../../../src/components/CacheProvider/Image360AnnotationCache';
+import { type Image360AnnotationCache } from '../../../src/components/CacheProvider/Image360AnnotationCache';
+import { type SceneIdentifiers } from '../../../src/components/SceneContainer/SceneTypes';
 
 describe(RevealCanvas.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {
@@ -35,6 +36,7 @@ describe(RevealCanvas.name, () => {
           .object()
       );
       const isRevealContainerMountedRef = useRef<boolean>(true);
+      const sceneLoadedRef = useRef<SceneIdentifiers | undefined>();
       const fdmNodeCache = useRef<FdmNodeCache | undefined>();
       const assetMappingCache = useRef<AssetMappingCache | undefined>();
       const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache>();
@@ -44,6 +46,7 @@ describe(RevealCanvas.name, () => {
           value={{
             viewerRef,
             isRevealContainerMountedRef,
+            sceneLoadedRef,
             fdmNodeCache,
             assetMappingCache,
             pointCloudAnnotationCache,

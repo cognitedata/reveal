@@ -46,6 +46,8 @@ export {
   usePointCloudAnnotationMappingsForAssetIds
 } from './components/CacheProvider/PointCloudAnnotationCacheProvider';
 export { useImage360AnnotationMappingsForAssetIds } from './components/CacheProvider/Image360AnnotationCacheProvider';
+export { useLoadedScene } from './components/SceneContainer/LoadedSceneContext';
+export { useIsDraggingOnViewer } from './hooks/useIsDraggingOnViewer';
 
 // Queries
 export { use3DModelName } from './query/use3DModelName';
@@ -73,8 +75,6 @@ export {
   useSearchAssetsMappedPointCloudAnnotations
 } from './query/useSearchAssetsMappedPointCloudAnnotations';
 export { useModelsForInstanceQuery } from './query/useModelsForInstanceQuery';
-
-export { useFetchRuleInstances } from './components/RuleBasedOutputs/hooks/useFetchRuleInstances';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
@@ -114,10 +114,40 @@ export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { FdmInstanceWithView } from './utilities/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
+export type { SceneIdentifiers } from './components/SceneContainer/SceneTypes';
 
-export type { RuleAndEnabled, TriggerType } from './components/RuleBasedOutputs/types';
-
-export type { InstanceReference, AssetInstanceReference } from './utilities/types';
+// Rule Based Outputs
+export { useFetchRuleInstances } from './components/RuleBasedOutputs/hooks/useFetchRuleInstances';
+export { useCreateRuleInstance } from './components/RuleBasedOutputs/hooks/useCreateRuleInstance';
+export { useEditRuleInstance } from './components/RuleBasedOutputs/hooks/useEditRuleInstance';
+export { useDeleteRuleInstance } from './components/RuleBasedOutputs/hooks/useDeleteRuleInstance';
+export { useSearchRuleInstance } from './components/RuleBasedOutputs/hooks/useSearchRuleInstance';
+export type {
+  RuleAndEnabled,
+  TriggerType,
+  RuleOutputSet,
+  TimeseriesRuleTrigger,
+  MetadataRuleTrigger,
+  StringCondition,
+  NumericCondition,
+  StringExpression,
+  NumericExpression,
+  ExpressionOperator,
+  Expression,
+  ConcreteExpression,
+  ColorRuleOutput,
+  RuleWithOutputs,
+  Rule,
+  RuleOutput,
+  ExpressionOperatorsTypes,
+  StringConditionTypes,
+  NumericConditionTypes,
+  NumericWithinConditionType,
+  NumericOutsideConditionType,
+  CriteriaTypes
+} from './components/RuleBasedOutputs/types';
 
 // Functions
 export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';
+
+export type { InstanceReference, AssetInstanceReference } from './utilities/types';
