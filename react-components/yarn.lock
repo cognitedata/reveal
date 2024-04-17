@@ -1727,7 +1727,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.5.0"
     "@cognite/cogs.js": "npm:^9.17.0"
-    "@cognite/reveal": "npm:4.11.0"
+    "@cognite/reveal": "npm:4.12.0"
     "@cognite/sdk": "npm:^8.2.0"
     "@playwright/test": "npm:^1.39.0"
     "@storybook/addon-essentials": "npm:7.6.17"
@@ -1790,9 +1790,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:4.11.0":
-  version: 4.11.0
-  resolution: "@cognite/reveal@npm:4.11.0"
+"@cognite/reveal@npm:4.12.0":
+  version: 4.12.0
+  resolution: "@cognite/reveal@npm:4.12.0"
   dependencies:
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:19.0.0"
@@ -1812,7 +1812,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.158.0
-  checksum: 10/531c74d773870df8761e0b74b7dec355f27142b425071feb0b5e9cb906d3a51935ded035ed9f4035d3d2054968ec315639062023422190ba80139ab5955150c8
+  checksum: 10/bd8389f417a330cacef705c70423c9e08d922d6d339f58cd93497af3440b944a3b9e93a3cf86747a6659bf6e3785cdccc7ef7f3312424e043b0360847d328e2d
   languageName: node
   linkType: hard
 
@@ -9100,12 +9100,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.15.0":
-  version: 1.15.6
-  resolution: "follow-redirects@npm:1.15.6"
+  version: 1.15.4
+  resolution: "follow-redirects@npm:1.15.4"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10/70c7612c4cab18e546e36b991bbf8009a1a41cf85354afe04b113d1117569abf760269409cb3eb842d9f7b03d62826687086b081c566ea7b1e6613cf29030bf7
+  checksum: 10/2e8f5f259a6b02dfa8dc199e08431848a7c3beed32eb4c19945966164a52c89f07b86c3afcc32ebe4279cf0a960520e45a63013d6350309c5ec90133c5d9351a
   languageName: node
   linkType: hard
 
@@ -9786,13 +9786,13 @@ __metadata:
   linkType: hard
 
 "happy-dom@npm:^13.0.0":
-  version: 13.8.2
-  resolution: "happy-dom@npm:13.8.2"
+  version: 13.6.2
+  resolution: "happy-dom@npm:13.6.2"
   dependencies:
     entities: "npm:^4.5.0"
     webidl-conversions: "npm:^7.0.0"
     whatwg-mimetype: "npm:^3.0.0"
-  checksum: 10/b49a8f71d46b245584f81b8ba3c64b71e442351732d864432020200bc9abfe5a60475280260ce965cdebac4758491432edd70fc6aa13932eb36782f5fbb0fb1a
+  checksum: 10/e97f2ba59ea03c4ad5e1c395a54a483a52bf97421d497745c5c0a2588f94ff478cfd1a434790bceb8b27a591cbb5989bc7c785b0d5cc57584ca010c03c0778f8
   languageName: node
   linkType: hard
 
