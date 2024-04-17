@@ -9,9 +9,9 @@ import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { type Asset } from '@cognite/sdk';
+import { type ExternalId, type Asset } from '@cognite/sdk';
 import { useRelationshipsQuery } from '../../query/useRelationshipQuery';
-import { isEmpty } from 'lodash';
+import { useTimeseriesByIdsQuery } from '../../query/useTimeseriesByIdsQuery';
 
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
@@ -33,11 +33,20 @@ export function RuleBasedOutputsSelector({
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(models);
 
-  const resourceExternalId = 'LOR_UMEA_WELL_01_well_monthly_actual_deferment_count';
-  const { data = [] } = useRelationshipsQuery({
-    resourceExternalIds: resourceExternalId.length > 0 ? [resourceExternalId] : [],
+  const timeseriesExternalId = '21PT1019.name2';
+
+  const dataRelationship = useRelationshipsQuery({
+    resourceExternalIds: timeseriesExternalId.length > 0 ? [timeseriesExternalId] : [],
     relationshipResourceTypes: ['asset']
   });
+
+  // eslint-disable-next-line no-console
+  console.log(' TIMESERIES RELATIONSHIP TEST ', dataRelationship.data);
+
+  const resourceExternalId: ExternalId = {
+    externalId: timeseriesExternalId
+  };
+  const { data } = useTimeseriesByIdsQuery([resourceExternalId]);
 
   // eslint-disable-next-line no-console
   console.log(' TIMESERIES TEST ', data);

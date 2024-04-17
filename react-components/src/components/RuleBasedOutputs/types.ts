@@ -12,7 +12,7 @@ export type TriggerType = 'timeseries' | 'metadata';
 
 export type TimeseriesRuleTrigger = {
   type: 'timeseries';
-  timeseriesId: number;
+  externalId: string;
 };
 
 export type MetadataRuleTrigger = {
