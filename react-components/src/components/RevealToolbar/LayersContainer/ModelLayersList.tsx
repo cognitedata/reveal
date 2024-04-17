@@ -80,7 +80,7 @@ const ModelItem = ({
           update(viewer.models, viewer.get360ImageCollections());
         }
       }}>
-      {modelHandler.key()}
+      {modelHandler.name}
     </Menu.Item>
   );
 };
