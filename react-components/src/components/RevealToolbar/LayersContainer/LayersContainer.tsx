@@ -30,27 +30,21 @@ export const LayersContainer = ({
               onClick={(event: MouseEvent<HTMLElement>) => {
                 event.stopPropagation();
               }}>
-              {modelHandlers.cadHandlers.length > 0 && (
-                <LayerToggleDropdown
-                  layerHandlers={modelHandlers.cadHandlers}
-                  update={update}
-                  label={t('CAD_MODELS', 'CAD models')}
-                />
-              )}
-              {modelHandlers.pointCloudHandlers.length > 0 && (
-                <LayerToggleDropdown
-                  layerHandlers={modelHandlers.pointCloudHandlers}
-                  update={update}
-                  label={t('POINT_CLOUDS', 'Pointclouds')}
-                />
-              )}
-              {modelHandlers.image360Handlers.length > 0 && (
-                <LayerToggleDropdown
-                  layerHandlers={modelHandlers.image360Handlers}
-                  update={update}
-                  label={t('360_IMAGES', '360 images')}
-                />
-              )}
+              <LayerToggleDropdown
+                layerHandlers={modelHandlers.cadHandlers}
+                update={update}
+                label={t('CAD_MODELS', 'CAD models')}
+              />
+              <LayerToggleDropdown
+                layerHandlers={modelHandlers.pointCloudHandlers}
+                update={update}
+                label={t('POINT_CLOUDS', 'Pointclouds')}
+              />
+              <LayerToggleDropdown
+                layerHandlers={modelHandlers.image360Handlers}
+                update={update}
+                label={t('360_IMAGES', '360 images')}
+              />
             </StyledMenu>
           </Container>
         </>

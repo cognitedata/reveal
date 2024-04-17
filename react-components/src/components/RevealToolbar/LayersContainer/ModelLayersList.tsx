@@ -21,6 +21,9 @@ export const ModelLayersList = ({
   update: UpdateModelHandlersCallback;
   label?: string;
 }): ReactElement => {
+  if (modelHandlers.length === 0) {
+    return <></>;
+  }
   return (
     <SuppressedMenu>
       {label !== undefined && (
