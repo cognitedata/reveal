@@ -17,20 +17,22 @@ import {
   type RuleAndStyleIndex,
   type AssetStylingGroupAndStyleIndex,
   type TriggerType,
-  type RuleWithOutputs
+  type RuleWithOutputs,
+  type TriggerTypeData
 } from './types';
 import {
   type CogniteCadModel,
   TreeIndexNodeCollection,
   type NodeAppearance
 } from '@cognite/reveal';
-import { type AssetMapping3D, type Asset } from '@cognite/sdk';
+import { type AssetMapping3D, type Asset, ExternalId } from '@cognite/sdk';
 import { type AssetStylingGroup } from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
+import { useRetrieveAssetIdsFromTimeseries } from '../../query/useRetrieveAssetIdsFromTimeseries';
 
 const checkStringExpressionStatement = (
-  asset: Asset,
+  triggerTypeData: TriggerTypeData,
   expression: StringExpression
 ): boolean | undefined => {
   const { trigger, condition } = expression;
@@ -64,18 +66,29 @@ const checkStringExpressionStatement = (
 
   return expressionResult;
 };
-const checkNumericExpressionStatement = (
-  asset: Asset,
+
+const getTriggerData = async (
+  triggerTypeData: TriggerTypeData,
+  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger
+): Promise<string | number | undefined> => {
+  return triggerTypeData.asset !== undefined && trigger.type === 'metadata'
+    ? Number(triggerTypeData.asset[trigger.type]?.[trigger.key])
+    : triggerTypeData.timeseries !== undefined && trigger.type === 'timeseries'
+      ? trigger.externalId
+      : undefined;
+};
+const checkNumericExpressionStatement = async (
+  triggerTypeData: TriggerTypeData,
   expression: NumericExpression
-): boolean | undefined => {
-  if (!isMetadataTrigger(expression.trigger)) return undefined;
+): Promise<boolean | undefined> => {
+  // if (!isMetadataTrigger(expression.trigger)) return undefined;
 
   const trigger = expression.trigger;
   const condition = expression.condition;
 
   let expressionResult: boolean = false;
 
-  const assetTrigger = Number(asset[trigger.type]?.[trigger.key]);
+  const assetTrigger = await getTriggerData(triggerTypeData, trigger);
 
   switch (condition.type) {
     case 'equals': {
@@ -127,8 +140,21 @@ const checkNumericExpressionStatement = (
   return expressionResult;
 };
 
+const getTimeseriesFromNumericExpression = (
+  expression: NumericExpression
+): string[] | undefined => {
+  const trigger = expression.trigger;
+
+  if (isMetadataTrigger(trigger)) return;
+
+  /*  const externalId: ExternalId = {
+    externalId: trigger.externalId
+  }; */
+  return [trigger.externalId];
+};
+
 const traverseExpression = (
-  asset: Asset,
+  triggerTypeData: TriggerTypeData,
   expressions: Expression[]
 ): Array<boolean | undefined> => {
   let expressionResult: boolean | undefined = false;
@@ -138,26 +164,26 @@ const traverseExpression = (
   expressions.forEach((expression) => {
     switch (expression.type) {
       case 'or': {
-        const operatorResult = traverseExpression(asset, expression.expressions);
+        const operatorResult = traverseExpression(triggerTypeData, expression.expressions);
         expressionResult = operatorResult.find((result) => result) ?? false;
         break;
       }
       case 'and': {
-        const operatorResult = traverseExpression(asset, expression.expressions);
+        const operatorResult = traverseExpression(triggerTypeData, expression.expressions);
         expressionResult = operatorResult.every((result) => result === true) ?? false;
         break;
       }
       case 'not': {
-        const operatorResult = traverseExpression(asset, [expression.expression]);
+        const operatorResult = traverseExpression(triggerTypeData, [expression.expression]);
         expressionResult = operatorResult[0] !== undefined ? !operatorResult[0] : false;
         break;
       }
       case 'numericExpression': {
-        expressionResult = checkNumericExpressionStatement(asset, expression);
+        expressionResult = checkNumericExpressionStatement(triggerTypeData, expression);
         break;
       }
       case 'stringExpression': {
-        expressionResult = checkStringExpressionStatement(asset, expression);
+        expressionResult = checkStringExpressionStatement(triggerTypeData, expression);
         break;
       }
     }
@@ -229,16 +255,20 @@ export const generateRuleBasedOutputs = async (
 
         forEachExpression(expression, convertExpressionStringMetadataKeyToLowerCase);
 
-        const outputFound = outputs.find((output: { type: string }) => output.type === outputType);
+        const outputSelected: ColorRuleOutput | undefined = getRuleOutputFromTypeSelected(
+          outputs,
+          outputType
+        );
 
-        if (outputFound?.type !== 'color') return;
+        if (outputSelected === undefined) return;
 
-        const outputSelected: ColorRuleOutput = {
-          externalId: outputFound.externalId,
-          type: 'color',
-          fill: outputFound.fill,
-          outline: outputFound.outline
-        };
+        const timeseriesFromRule = traverseExpressionToGetTimeseries([expression]) ?? [];
+
+        // const timeseriesExternalId = 'LOR_KARLSTAD_WELL_05_Well_TOTAL_GAS_PRODUCTION';
+        const assetAndTimeseries = useRetrieveAssetIdsFromTimeseries(timeseriesFromRule);
+
+        // eslint-disable-next-line no-console
+        console.log(' TIMESERIES ALL ', assetAndTimeseries);
 
         return await analyzeNodesAgainstExpression({
           model,
@@ -250,6 +280,24 @@ export const generateRuleBasedOutputs = async (
       })
     )
   ).filter(isDefined);
+};
+
+const getRuleOutputFromTypeSelected = (
+  outputs: RuleOutput[],
+  outputType: string
+): ColorRuleOutput | undefined => {
+  const outputFound = outputs.find((output: { type: string }) => output.type === outputType);
+
+  if (outputFound?.type !== 'color') return;
+
+  const outputSelected: ColorRuleOutput = {
+    externalId: outputFound.externalId,
+    type: 'color',
+    fill: outputFound.fill,
+    outline: outputFound.outline
+  };
+
+  return outputSelected;
 };
 
 const analyzeNodesAgainstExpression = async ({
@@ -287,6 +335,34 @@ const analyzeNodesAgainstExpression = async ({
 
   const filteredAllTreeNodes = allTreeNodes.flat().filter(isDefined);
   return applyNodeStyles(filteredAllTreeNodes, outputSelected, model);
+};
+
+const traverseExpressionToGetTimeseries = (expressions: Expression[]): string[] | undefined => {
+  let timeseriesIdFound: string[] | undefined = [];
+
+  const timeseriesIdResults: string[] = [];
+
+  expressions.forEach((expression) => {
+    switch (expression.type) {
+      case 'or':
+      case 'and': {
+        timeseriesIdFound = traverseExpressionToGetTimeseries(expression.expressions);
+        break;
+      }
+      case 'not': {
+        timeseriesIdFound = traverseExpressionToGetTimeseries([expression.expression]);
+        break;
+      }
+      case 'numericExpression': {
+        timeseriesIdFound = getTimeseriesFromNumericExpression(expression);
+        break;
+      }
+    }
+    const filteredTimeseriesFound = timeseriesIdFound?.map((timeseries) => timeseries) ?? [];
+    timeseriesIdResults.concat(filteredTimeseriesFound);
+  });
+
+  return timeseriesIdResults;
 };
 
 const getThreeDNodesFromAsset = async (

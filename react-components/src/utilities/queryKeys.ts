@@ -5,7 +5,13 @@ import { type IdEither } from '@cognite/sdk/dist/src';
 
 export const queryKeys = {
   all: ['cdf'] as const,
+  // ASSETS
+  assets: () => [...queryKeys.all, 'assets'] as const,
   // TIMESERIES
   timeseries: () => [...queryKeys.all, 'timeseries'] as const,
-  timeseriesById: (ids: IdEither[]) => [...queryKeys.timeseries(), ids] as const
+  timeseriesById: (ids: IdEither[]) => [...queryKeys.timeseries(), ids] as const,
+  timeseriesLatestDatapoint: () => [...queryKeys.all, 'timeseries', 'latest-datapoints'] as const,
+  // TIMESERIES RELATIONSHIPS WITH ASSETS
+  timeseriesRelationshipsWithAssets: () =>
+    [...queryKeys.all, 'timeseries', 'timeseries-relationships-assets'] as const
 } as const;

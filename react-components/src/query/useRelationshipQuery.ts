@@ -7,8 +7,9 @@ import { type CogniteExternalId, type RelationshipResourceType } from '@cognite/
 
 import { getRelationships } from '../hooks/network/getRelationships';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
-import { type ExtendedRelationship, type RelationshipsFilterInternal } from '../utilities/types';
+import { type RelationshipData, type RelationshipsFilterInternal } from '../utilities/types';
 import { createLabelFilter } from '../utilities/createLabelFilters';
+import { queryKeys } from '../utilities/queryKeys';
 
 type Props = {
   resourceExternalIds: CogniteExternalId[];
@@ -21,12 +22,11 @@ export const useRelationshipsQuery = ({
   resourceExternalIds,
   relationshipResourceTypes,
   filter
-}: Props): UseQueryResult<ExtendedRelationship[], unknown> => {
+}: Props): UseQueryResult<RelationshipData[], unknown> => {
   const sdk = useSDK();
 
-  // TODO move this to an argument to keep it generic.
-  const queryKeys = ['reveal', 'react-components', 'timeseries-relationships-assets'];
-  return useQuery(queryKeys, async () => {
+  // TODO move this to the queryKeys
+  return useQuery(queryKeys.timeseriesRelationshipsWithAssets(), async () => {
     return await getRelationships(sdk, {
       resourceExternalIds,
       relationshipResourceTypes,

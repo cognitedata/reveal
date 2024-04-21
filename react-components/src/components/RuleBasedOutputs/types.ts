@@ -5,6 +5,13 @@
 import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
 import { type FdmNode, type EdgeItem } from '../../utilities/FdmSDK';
 import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
+import {
+  type Datapoints,
+  type Asset,
+  type Timeseries,
+  type InternalId,
+  type ExternalId
+} from '@cognite/sdk/';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
@@ -227,7 +234,6 @@ export type ViewQueryFilter = {
   view: Source;
 };
 
-export type ExternalId = string;
 export type Space = string;
 
 export type ExternalIdsResultList<PropertyType> = {
@@ -260,4 +266,9 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   lastUpdatedTime: number;
   deletedTime: number;
   properties: FdmPropertyType<PropertyType>;
+};
+
+export type TriggerTypeData = {
+  asset?: Asset;
+  timeseries?: Timeseries & Datapoints;
 };

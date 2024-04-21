@@ -8,15 +8,12 @@ type RelationshipWithResources = {
   target?: Record<string, any>;
 };
 
-// use the cursor as a external variable to be recognized by the linter in the do while loop
-let cursor: string | undefined;
-
 export const filterRelationships = async (
   sdk: CogniteClient,
   filter: RelationshipsFilter,
   fetchResources = true
 ): Promise<Relationship[]> => {
-  cursor = undefined;
+  let cursor: string | undefined;
 
   const fetch = async (): Promise<Relationship[]> => {
     return await sdk.relationships
