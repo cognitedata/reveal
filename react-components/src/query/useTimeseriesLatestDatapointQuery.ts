@@ -7,12 +7,15 @@ import { queryKeys } from '../utilities/queryKeys';
 import { type Datapoints } from '@cognite/sdk/';
 
 export const useTimeseriesLatestDatapointQuery = (
-  timeseriesId: number
-): UseQueryResult<Datapoints, unknown> => {
+  timeseriesIds: number[]
+): UseQueryResult<Datapoints[], unknown> => {
   const sdk = useSDK();
 
-  return useQuery([queryKeys.timeseriesLatestDatapoint(), timeseriesId], async () => {
-    const results = await sdk.datapoints.retrieveLatest([{ id: timeseriesId }]);
-    return results[0];
+  const timeseries = timeseriesIds.map((id) => {
+    return { id };
+  });
+  return useQuery([queryKeys.timeseriesLatestDatapoint(), timeseriesIds], async () => {
+    const results = await sdk.datapoints.retrieveLatest(timeseries);
+    return results;
   });
 };

@@ -1,7 +1,13 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type ExternalId, type InternalId, type Metadata, type Relationship } from '@cognite/sdk/';
+import {
+  Timeseries,
+  type ExternalId,
+  type InternalId,
+  type Metadata,
+  type Relationship
+} from '@cognite/sdk/';
 import { type DmsUniqueIdentifier, type Source } from './FdmSDK';
 
 export type FdmInstanceWithView = DmsUniqueIdentifier & { view: Source };
@@ -39,5 +45,5 @@ export type RelationshipData = ExtendedRelationship & RelationshipSourceAndTarge
 
 export type AssetAndTimeseriesIds = {
   assetIds?: Partial<ExternalId & InternalId>;
-  timeseriesIds?: Partial<ExternalId & InternalId>;
+  timeseries?: Timeseries | undefined;
 };

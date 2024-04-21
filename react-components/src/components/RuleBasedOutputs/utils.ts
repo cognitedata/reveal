@@ -25,11 +25,13 @@ import {
   TreeIndexNodeCollection,
   type NodeAppearance
 } from '@cognite/reveal';
-import { type AssetMapping3D, type Asset, ExternalId } from '@cognite/sdk';
+import { type AssetMapping3D, type Asset, type Datapoints, type Timeseries } from '@cognite/sdk';
 import { type AssetStylingGroup } from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
 import { useRetrieveAssetIdsFromTimeseries } from '../../query/useRetrieveAssetIdsFromTimeseries';
+import { type AssetAndTimeseriesIds } from '../../utilities/types';
+import { useTimeseriesLatestDatapointQuery } from '../../query/useTimeseriesLatestDatapointQuery';
 
 const checkStringExpressionStatement = (
   triggerTypeData: TriggerTypeData,
@@ -39,7 +41,9 @@ const checkStringExpressionStatement = (
 
   let expressionResult: boolean | undefined = false;
 
-  const assetTrigger = asset[trigger.type]?.[trigger.key];
+  if (triggerTypeData?.asset === undefined) return;
+
+  const assetTrigger = triggerTypeData?.asset[trigger.type]?.[trigger.key];
 
   switch (condition.type) {
     case 'equals': {
@@ -67,71 +71,77 @@ const checkStringExpressionStatement = (
   return expressionResult;
 };
 
-const getTriggerData = async (
+const getTriggerNumericData = (
   triggerTypeData: TriggerTypeData,
   trigger: MetadataRuleTrigger | TimeseriesRuleTrigger
-): Promise<string | number | undefined> => {
-  return triggerTypeData.asset !== undefined && trigger.type === 'metadata'
-    ? Number(triggerTypeData.asset[trigger.type]?.[trigger.key])
-    : triggerTypeData.timeseries !== undefined && trigger.type === 'timeseries'
-      ? trigger.externalId
-      : undefined;
+): number | undefined => {
+  const dataTrigger =
+    triggerTypeData.asset !== undefined && trigger.type === 'metadata'
+      ? Number(triggerTypeData.asset[trigger.type]?.[trigger.key])
+      : triggerTypeData.timeseries !== undefined && trigger.type === 'timeseries'
+        ? Number(
+            triggerTypeData.timeseries.datapoints[triggerTypeData.timeseries.datapoints.length - 1]
+              .value
+          )
+        : undefined;
+
+  return dataTrigger;
 };
-const checkNumericExpressionStatement = async (
+const checkNumericExpressionStatement = (
   triggerTypeData: TriggerTypeData,
   expression: NumericExpression
-): Promise<boolean | undefined> => {
-  // if (!isMetadataTrigger(expression.trigger)) return undefined;
-
+): boolean | undefined => {
   const trigger = expression.trigger;
   const condition = expression.condition;
 
   let expressionResult: boolean = false;
 
-  const assetTrigger = await getTriggerData(triggerTypeData, trigger);
+  const dataTrigger = getTriggerNumericData(triggerTypeData, trigger);
+
+  if (dataTrigger === undefined) return;
 
   switch (condition.type) {
     case 'equals': {
       const parameter = condition.parameters[0];
-      expressionResult = assetTrigger === parameter;
+      expressionResult = dataTrigger === parameter;
       break;
     }
     case 'notEquals': {
       const parameter = condition.parameters[0];
-      expressionResult = assetTrigger !== parameter;
+      expressionResult = dataTrigger !== parameter;
       break;
     }
     case 'lessThan': {
       const parameter = condition.parameters[0];
-      expressionResult = assetTrigger < parameter;
+      expressionResult = dataTrigger < parameter;
       break;
     }
     case 'greaterThan': {
       const parameter = condition.parameters[0];
-      expressionResult = assetTrigger > parameter;
+      expressionResult = dataTrigger > parameter;
       break;
     }
     case 'lessThanOrEquals': {
       const parameter = condition.parameters[0];
-      expressionResult = assetTrigger <= parameter;
+      expressionResult = dataTrigger <= parameter;
       break;
     }
     case 'greaterThanOrEquals': {
       const parameter = condition.parameters[0];
-      expressionResult = assetTrigger >= parameter;
+      expressionResult = dataTrigger >= parameter;
       break;
     }
     case 'within': {
       const lower = condition.lowerBoundInclusive;
       const upper = condition.upperBoundInclusive;
-      const value = assetTrigger;
+      const value = dataTrigger;
       expressionResult = lower < value && value < upper;
       break;
     }
     case 'outside': {
       const lower = condition.lowerBoundExclusive;
       const upper = condition.upperBoundExclusive;
-      const value = assetTrigger;
+      const value = dataTrigger;
       expressionResult = value <= lower && upper <= value;
       break;
     }
@@ -267,12 +277,17 @@ export const generateRuleBasedOutputs = async (
         // const timeseriesExternalId = 'LOR_KARLSTAD_WELL_05_Well_TOTAL_GAS_PRODUCTION';
         const assetAndTimeseries = useRetrieveAssetIdsFromTimeseries(timeseriesFromRule);
 
+        const { data: timeseriesDatapoints } = useTimeseriesLatestDatapointQuery(
+          assetAndTimeseries.map((item) => item.timeseries?.id).filter(isDefined)
+        );
         // eslint-disable-next-line no-console
-        console.log(' TIMESERIES ALL ', assetAndTimeseries);
+        console.log(' TIMESERIES ALL ', assetAndTimeseries, timeseriesDatapoints);
 
         return await analyzeNodesAgainstExpression({
           model,
           contextualizedAssetNodes,
+          assetAndTimeseries,
+          timeseriesDatapoints,
           assetMappings,
           expression,
           outputSelected
@@ -303,23 +318,36 @@ const getRuleOutputFromTypeSelected = (
 const analyzeNodesAgainstExpression = async ({
   model,
   contextualizedAssetNodes,
+  assetAndTimeseries,
+  timeseriesDatapoints,
   assetMappings,
   expression,
   outputSelected
 }: {
   model: CogniteCadModel;
   contextualizedAssetNodes: Asset[];
+  assetAndTimeseries: AssetAndTimeseriesIds[];
+  timeseriesDatapoints: Datapoints[] | undefined;
   assetMappings: AssetMapping3D[];
   expression: Expression;
   outputSelected: ColorRuleOutput;
 }): Promise<AssetStylingGroupAndStyleIndex> => {
   const allTreeNodes = await Promise.all(
-    contextualizedAssetNodes.map(async (assetNode) => {
-      const finalGlobalOutputResult = traverseExpression(assetNode, [expression]);
+    contextualizedAssetNodes.map(async (assetNodeData) => {
+      const trigger = generateTriggerDataFromAssetAndTimeseriesIds({
+        assetNodeData,
+        assetAndTimeseries,
+        timeseriesDatapoints
+      });
+      const triggerData: TriggerTypeData = {
+        asset: assetNodeData,
+        timeseries: trigger
+      };
+      const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
 
       if (finalGlobalOutputResult[0] ?? false) {
         const nodesFromThisAsset = assetMappings.filter(
-          (mapping) => mapping.assetId === assetNode.id
+          (mapping) => mapping.assetId === assetNodeData.id
         );
 
         // get the 3d nodes linked to the asset and with treeindex and subtreeRange
@@ -335,6 +363,34 @@ const analyzeNodesAgainstExpression = async ({
 
   const filteredAllTreeNodes = allTreeNodes.flat().filter(isDefined);
   return applyNodeStyles(filteredAllTreeNodes, outputSelected, model);
+};
+
+const generateTriggerDataFromAssetAndTimeseriesIds = ({
+  assetNodeData,
+  assetAndTimeseries,
+  timeseriesDatapoints
+}: {
+  assetNodeData: Asset;
+  assetAndTimeseries: AssetAndTimeseriesIds[];
+  timeseriesDatapoints: Datapoints[] | undefined;
+}): (Timeseries & Datapoints) | undefined => {
+  const timeseriesLinkedToThisAsset = assetAndTimeseries.find(
+    (item) => item.assetIds?.externalId === assetNodeData.externalId
+  );
+
+  const timeseries = timeseriesLinkedToThisAsset?.timeseries;
+  const datapoints = timeseriesDatapoints?.find((datapoint) => {
+    return datapoint.externalId === timeseriesLinkedToThisAsset?.timeseries?.externalId;
+  });
+  const timeseriesData: (Timeseries & Datapoints) | undefined =
+    datapoints !== undefined && timeseries !== undefined
+      ? {
+          ...timeseries,
+          ...datapoints
+        }
+      : undefined;
+
+  return timeseriesData;
 };
 
 const traverseExpressionToGetTimeseries = (expressions: Expression[]): string[] | undefined => {
