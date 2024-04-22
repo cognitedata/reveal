@@ -7,7 +7,7 @@ import { type AssetAndTimeseriesIds } from '../utilities/types';
 import { useAssetsByIdsQuery } from './useAssetsByIdsQuery';
 import { useRelationshipsQuery } from './useRelationshipQuery';
 import { useTimeseriesByIdsQuery } from './useTimeseriesByIdsQuery';
-import { type InternalId, type ExternalId } from '@cognite/sdk';
+import { type InternalId, type ExternalId, type IdEither } from '@cognite/sdk';
 
 export const useRetrieveAssetIdsFromTimeseries = (
   externalIds: string[]
@@ -20,7 +20,7 @@ export const useRetrieveAssetIdsFromTimeseries = (
     relationshipResourceTypes: ['asset']
   });
 
-  const assetAndTimeseriesIds =
+  const assetAndTimeseriesIdsFromRelationship =
     dataRelationship?.data
       ?.map((item) => {
         const assetIds: Partial<ExternalId & InternalId> = {};
@@ -42,7 +42,7 @@ export const useRetrieveAssetIdsFromTimeseries = (
           timeseriesIds.externalId = item.target.externalId;
         }
 
-        const assetAndTimeseriesIds: AssetAndTimeseriesIds = {
+        const assetAndTimeseriesIds = {
           assetIds,
           timeseriesIds
         };
@@ -52,7 +52,11 @@ export const useRetrieveAssetIdsFromTimeseries = (
       ?.filter(isDefined) ?? [];
 
   // eslint-disable-next-line no-console
-  console.log(' TIMESERIES RELATIONSHIP TEST ', assetAndTimeseriesIds, dataRelationship.data);
+  console.log(
+    ' TIMESERIES RELATIONSHIP TEST ',
+    assetAndTimeseriesIdsFromRelationship,
+    dataRelationship.data
+  );
 
   const resourceExternalIds: ExternalId[] = timeseriesExternalIds.map((externalId) => {
     return {
@@ -63,42 +67,79 @@ export const useRetrieveAssetIdsFromTimeseries = (
   // CONNECT TIMESERIES WITH ASSETS
   const { data: timeseriesData } = useTimeseriesByIdsQuery(resourceExternalIds);
 
-  const assetInternalIdFromTimeseries =
-    timeseriesData?.map((item) => item.assetId)?.filter(isDefined) ?? [];
+  /*  const assetInternalIdFromTimeseries =
+    timeseriesData?.map((item) => item.assetId)?.filter(isDefined) ?? []; */
 
-  const { data: assetFromTimeseries } = useAssetsByIdsQuery(
-    assetInternalIdFromTimeseries.map((id) => {
-      return {
-        id
-      };
-    })
-  );
+  const assetIdsFound: IdEither[] =
+    timeseriesData
+      ?.map((timeseries) => {
+        const assetIdFromTimeseries: InternalId | undefined =
+          timeseries.assetId !== undefined
+            ? {
+                id: timeseries.assetId
+              }
+            : undefined;
+
+        const itemsFromRelationship = assetAndTimeseriesIdsFromRelationship.filter(
+          (item) =>
+            item.timeseriesIds.externalId === timeseries.externalId &&
+            item.assetIds.id !== assetIdFromTimeseries?.id
+        );
+
+        const assetIdsFromRelationship = itemsFromRelationship.map((item) => {
+          const itemFound: InternalId | undefined =
+            item.assetIds.id !== undefined ? { id: item.assetIds.id } : undefined;
+          return itemFound;
+        });
+        return assetIdsFromRelationship.concat(assetIdFromTimeseries).filter(isDefined);
+      })
+      .flat()
+      .filter(isDefined) ?? [];
+
+  const { data: assetFromTimeseries } = useAssetsByIdsQuery(assetIdsFound);
 
   const linkedAssetsFromTimeseries =
     timeseriesData
-      ?.map((timeseries): AssetAndTimeseriesIds | undefined => {
-        const assetIds: Partial<ExternalId & InternalId> = {};
-        const timeseriesIds: Partial<ExternalId & InternalId> = {};
+      ?.map((timeseries): AssetAndTimeseriesIds[] | undefined => {
         const linkedAsset = assetFromTimeseries?.find((asset) => asset.id === timeseries.assetId);
+        const assetIds: Partial<ExternalId & InternalId> | undefined =
+          linkedAsset !== undefined
+            ? { externalId: linkedAsset.externalId, id: linkedAsset.id }
+            : undefined;
 
-        if (linkedAsset === undefined) return undefined;
+        const assetAndTimeseriesFromLinked: AssetAndTimeseriesIds | undefined =
+          assetIds !== undefined
+            ? {
+                assetIds,
+                timeseries
+              }
+            : undefined;
 
-        assetIds.externalId = linkedAsset.externalId;
-        assetIds.id = linkedAsset.id;
+        const itemsFromRelationship = assetAndTimeseriesIdsFromRelationship.filter(
+          (item) =>
+            item.timeseriesIds.externalId === timeseries.externalId &&
+            item.assetIds.id !== linkedAsset?.id
+        );
 
-        timeseriesIds.externalId = timeseries.externalId;
-        timeseriesIds.id = timeseries.id;
+        const assetAndTimeseriesFromRelationship: AssetAndTimeseriesIds[] =
+          itemsFromRelationship.map((item) => {
+            const itemFound: AssetAndTimeseriesIds = {
+              assetIds: item.assetIds,
+              timeseries
+            };
+            return itemFound;
+          }) ?? [];
 
-        const assetAndTimeseriesIds: AssetAndTimeseriesIds = {
-          assetIds,
-          timeseriesIds
-        };
-        return assetAndTimeseriesIds;
+        if (assetAndTimeseriesFromLinked !== undefined) {
+          assetAndTimeseriesFromRelationship.concat(assetAndTimeseriesFromLinked);
+        }
+
+        return assetAndTimeseriesFromRelationship;
       })
+      .flat()
       .filter(isDefined) ?? [];
 
-  const combinedAssetsLinkedToTimeseries = assetAndTimeseriesIds.concat(linkedAssetsFromTimeseries);
   // eslint-disable-next-line no-console
-  console.log(' TIMESERIES ALL ', combinedAssetsLinkedToTimeseries);
-  return combinedAssetsLinkedToTimeseries;
+  console.log(' TIMESERIES ALL ', linkedAssetsFromTimeseries);
+  return linkedAssetsFromTimeseries;
 };

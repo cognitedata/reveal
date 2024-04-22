@@ -5,13 +5,7 @@
 import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
 import { type FdmNode, type EdgeItem } from '../../utilities/FdmSDK';
 import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
-import {
-  type Datapoints,
-  type Asset,
-  type Timeseries,
-  type InternalId,
-  type ExternalId
-} from '@cognite/sdk/';
+import { type Datapoints, type Asset, type Timeseries, type ExternalId } from '@cognite/sdk/';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
@@ -268,7 +262,25 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   properties: FdmPropertyType<PropertyType>;
 };
 
-export type TriggerTypeData = {
+/* export type TriggerTypeData = {
   asset?: Asset;
   timeseries?: Timeseries & Datapoints;
 };
+ */
+
+export type TriggerTypeData = TriggerMetadataType | TriggerTimeseriesType;
+
+export type TriggerMetadataType = {
+  type: 'metadata';
+  asset: Asset;
+};
+
+export type TriggerTimeseriesType = {
+  type: 'timeseries';
+  timeseries: {
+    timeseriesWithDatapoints: TimeseriesAndDatapoints[];
+    linkedAssets: Asset;
+  };
+};
+
+export type TimeseriesAndDatapoints = Timeseries & Datapoints;
