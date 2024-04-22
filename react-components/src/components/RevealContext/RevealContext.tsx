@@ -3,7 +3,7 @@
  */
 import { Cognite3DViewer, type Cognite3DViewerOptions } from '@cognite/reveal';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { type ReactNode, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
+import { type ReactNode, useEffect, useMemo, useState, type ReactElement } from 'react';
 import { type Color } from 'three';
 import { I18nContextProvider } from '../i18n/I18n';
 import { ViewerContext } from '../RevealCanvas/ViewerContext';
@@ -77,8 +77,6 @@ const useRevealFromKeepAlive = ({
   // Double bookkeeping to satisfy test
   const [renderTarget, setRenderTarget] = useState<RevealRenderTarget | null>(null);
 
-  const viewerDomElement = useRef<HTMLElement | null>(null);
-
   useEffect(() => {
     const renderTarget = getOrInitializeRenderTarget();
     if (revealKeepAliveData === undefined) {
@@ -106,7 +104,6 @@ const useRevealFromKeepAlive = ({
         revealKeepAliveData.renderTargetRef.current = renderTarget;
       }
     }
-    viewerDomElement.current = renderTarget.viewer.domElement;
     setRenderTarget(renderTarget);
     return renderTarget;
   }
