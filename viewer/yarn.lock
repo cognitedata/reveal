@@ -557,7 +557,7 @@ __metadata:
     "@microsoft/api-extractor": "npm:7.42.3"
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:19.0.0"
-    "@types/dat.gui": "npm:0.7.12"
+    "@types/dat.gui": "npm:0.7.13"
     "@types/gl": "npm:^6.0.2"
     "@types/glob": "npm:8.1.0"
     "@types/jest": "npm:29.5.12"
@@ -1802,10 +1802,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/dat.gui@npm:0.7.12":
-  version: 0.7.12
-  resolution: "@types/dat.gui@npm:0.7.12"
-  checksum: 10/e212d69c5e9924114cdb9bf459f20bcadddb4a3a0407e9f5d4b7410df1f50f11501921a0f2f5b5ae54e2c994b9e6a5acba297f958540b3f89260648fbd2b0f42
+"@types/dat.gui@npm:0.7.13":
+  version: 0.7.13
+  resolution: "@types/dat.gui@npm:0.7.13"
+  checksum: 10/78cea4c7d583ffccabf896f029844153ad1c9669c2455b80de8c2e4ab15dbf3e1df0a253f82a68244187a3e0d60c7f37514325f5c25a9754b6f792db5f939664
   languageName: node
   linkType: hard
 
