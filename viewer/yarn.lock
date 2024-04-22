@@ -33,12 +33,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.38.3":
-  version: 2.38.3
-  resolution: "@azure/msal-browser@npm:2.38.3"
+"@azure/msal-browser@npm:2.38.4":
+  version: 2.38.4
+  resolution: "@azure/msal-browser@npm:2.38.4"
   dependencies:
     "@azure/msal-common": "npm:13.3.1"
-  checksum: 10/01815a47ea40df0478a0af8ff880a1dd5606056d1b7d38350c68e9adf5c32ddfb8f444aed0e7cbd48194de0db8d5f18dea3f68affe08483f03cae2fb81253971
+  checksum: 10/657e3752792458e8d7bcd0d6799f656beb0c2c7fb60b15548ad60b41e65c13d0a5c928645d985374914ee66c454f6f1619c7a917c5d95789c0cef8d1e6b64dae
   languageName: node
   linkType: hard
 
@@ -552,7 +552,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal@workspace:."
   dependencies:
-    "@azure/msal-browser": "npm:2.38.3"
+    "@azure/msal-browser": "npm:2.38.4"
     "@cognite/sdk": "npm:8.3.0"
     "@microsoft/api-extractor": "npm:7.42.3"
     "@rajesh896/broprint.js": "npm:^2.1.1"
