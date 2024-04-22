@@ -9,7 +9,7 @@ import { type FdmNodeCache } from '../CacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../CacheProvider/AssetMappingCache';
 import { type PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from '../CacheProvider/Image360AnnotationCache';
-import { type SceneIdentifiers } from '../SceneContainer/SceneTypes';
+import { type SceneIdentifiers } from '../SceneContainer/sceneTypes';
 
 export function RevealKeepAlive({ children }: { children?: ReactNode }): ReactElement {
   const viewerRef = useRef<Cognite3DViewer>();

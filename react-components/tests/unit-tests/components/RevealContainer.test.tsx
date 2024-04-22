@@ -10,7 +10,7 @@ import { type FdmNodeCache } from '../../../src/components/CacheProvider/FdmNode
 import { type AssetMappingCache } from '../../../src/components/CacheProvider/AssetMappingCache';
 import { type PointCloudAnnotationCache } from '../../../src/components/CacheProvider/PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from '../../../src/components/CacheProvider/Image360AnnotationCache';
-import { type SceneIdentifiers } from '../../../src/components/SceneContainer/SceneTypes';
+import { type SceneIdentifiers } from '../../../src/components/SceneContainer/sceneTypes';
 
 describe(RevealCanvas.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {
