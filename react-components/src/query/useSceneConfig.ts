@@ -186,9 +186,8 @@ function getGroundPlanes(sceneResponse: SceneResponse): GroundPlane[] {
       );
 
       if (mappedGroundPlane !== undefined) {
-        const { label, file, wrapping } = extractProperties<GroundPlaneProperties>(
-          mappedGroundPlane.properties
-        );
+        const { label, file, wrapping, repeatU, repeatV } =
+          extractProperties<GroundPlaneProperties>(mappedGroundPlane.properties);
         const groundPlaneEdgeProperties = extractProperties<Transformation3d>(
           groundPlaneEdge.properties
         );
@@ -196,6 +195,8 @@ function getGroundPlanes(sceneResponse: SceneResponse): GroundPlane[] {
           label,
           file,
           wrapping,
+          repeatU: repeatU ?? 1,
+          repeatV: repeatV ?? 1,
           ...groundPlaneEdgeProperties
         };
         groundPlanes.push(groundPlane);
