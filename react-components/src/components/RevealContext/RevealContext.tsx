@@ -98,12 +98,12 @@ const useRevealFromKeepAlive = ({
     let renderTarget = revealKeepAliveData?.renderTargetRef.current;
     if (renderTarget === undefined) {
       const viewer = new Cognite3DViewer({ ...viewerOptions, sdk });
-      viewer.setBackgroundColor({ color, alpha: 1 });
       renderTarget = new RevealRenderTarget(viewer);
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;
       }
     }
+    renderTarget.viewer.setBackgroundColor({ color, alpha: 1 });
     setRenderTarget(renderTarget);
     return renderTarget;
   }
