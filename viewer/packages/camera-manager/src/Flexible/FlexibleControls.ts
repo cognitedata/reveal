@@ -412,24 +412,17 @@ export class FlexibleControls {
   // INSTANCE METHODS: Event
   //================================================
 
-  public async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
-    if (!this.isEnabled) {
-      return;
-    }
-    if (isMouse(event)) {
-      await this.onMouseDown(event, leftButton);
-    } else if (isTouch(event)) {
-      this.onTouchDown(event);
-    }
-  }
-
-  private async onMouseDown(event: PointerEvent, _leftButton: boolean): Promise<void> {
+  public async onPointerDown(event: PointerEvent, _leftButton: boolean): Promise<void> {
     if (!this.isEnabled) {
       return;
     }
     this._cameraVector.synchronizeEnd();
-    const mouseDragInfo = new MouseDragInfo(getMousePosition(this._domElement, event.clientX, event.clientY));
-    this._mouseDragInfo = mouseDragInfo;
+    if (isMouse(event)) {
+      this._mouseDragInfo = new MouseDragInfo(getMousePosition(this._domElement, event.clientX, event.clientY));
+    } else if (isTouch(event)) {
+      this.updateTouchEvents(event);
+      this.onTouchDown(event);
+    }
   }
 
   public async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
@@ -468,9 +461,10 @@ export class FlexibleControls {
 
   public onPointerUp(event: PointerEvent, _leftButton: boolean): void {
     this._mouseDragInfo = undefined;
-    if (isTouch(event)) {
-      remove(this._touchEvents, ev => ev.pointerId === event.pointerId);
+    if (!isTouch(event)) {
+      return;
     }
+    this.removeTouchEvent(event);
   }
 
   public readonly onKeyDown = (event: KeyboardEvent): void => {
@@ -531,30 +525,6 @@ export class FlexibleControls {
       this.dollyOrthographicCamera(deltaDistance);
     }
   };
-
-  private onTouchDown(event: PointerEvent) {
-    if (!this.isEnabled) {
-      return;
-    }
-    this._touchEvents.push(event);
-    event.preventDefault();
-    this._cameraVector.synchronizeEnd();
-
-    switch (this._touchEvents.length) {
-      case 1:
-        this.startTouchRotation(event);
-        break;
-
-      case 2:
-        if (!this.isStationary) {
-          this.startTouchPinch(event);
-        }
-        break;
-
-      default:
-        break;
-    }
-  }
 
   private readonly onContextMenu = (event: MouseEvent) => {
     if (!this.isEnabled) return;
@@ -631,42 +601,6 @@ export class FlexibleControls {
   // INSTANCE METHODS: Rotate
   //================================================
 
-  private startTouchRotation(initialEvent: PointerEvent) {
-    let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
-
-    const onTouchMove = (event: PointerEvent) => {
-      if (!this.isEnabled || this._touchEvents.length !== 1) {
-        return;
-      }
-      const position = this.getMousePosition(event);
-      this.rotate(new Vector2().subVectors(position, prevPosition));
-      prevPosition = position;
-    };
-
-    const onTouchStart = (_event: PointerEvent) => {
-      // if num fingers used don't equal 1 then we stop touch rotation
-      if (!this.isEnabled || this._touchEvents.length !== 1) {
-        removeEventListeners();
-      }
-    };
-
-    const onTouchEnd = () => {
-      removeEventListeners();
-    };
-
-    const removeEventListeners = () => {
-      this._domElement.removeEventListener('pointerdown', onTouchStart);
-      this._domElement.removeEventListener('pointerup', onTouchEnd);
-      document.removeEventListener('pointermove', onTouchMove);
-    };
-
-    this._domElement.addEventListener('pointerdown', onTouchStart);
-    this._domElement.addEventListener('pointerup', onTouchEnd, {
-      passive: false
-    });
-    document.addEventListener('pointermove', onTouchMove, { passive: false });
-  }
-
   private rotate(delta: Vector2) {
     if (delta.x === 0 && delta.y === 0) {
       return;
@@ -704,18 +638,75 @@ export class FlexibleControls {
   }
 
   //================================================
-  // INSTANCE METHODS: Pinch
+  // INSTANCE METHODS: Touch events
   //================================================
 
-  private startTouchPinch(initialEvent: PointerEvent) {
-    this.replaceTouchEvent(initialEvent);
-    let previousInfo = getPinchInfo(this._domElement, this._touchEvents);
+  private onTouchDown(event: PointerEvent) {
+    switch (this.touchEventsCount) {
+      case 1:
+        this.startTouchRotation(event);
+        break;
 
-    const onTouchMove = (event: PointerEvent) => {
-      if (this._touchEvents.length !== 2) {
+      case 2:
+        if (!this.isStationary) {
+          this.startTouchPinch();
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  private startTouchRotation(initialEvent: PointerEvent) {
+    let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
+
+    const isOk = () => this.touchEventsCount === 1;
+
+    const onMove = (event: PointerEvent) => {
+      this.updateTouchEvents(event);
+      if (!isOk()) {
+        removeEventListeners();
         return;
       }
-      this.replaceTouchEvent(event);
+      const position = this.getMousePosition(event);
+      this.rotate(new Vector2().subVectors(position, prevPosition));
+      prevPosition = position;
+    };
+
+    const onDown = (_event: PointerEvent) => {
+      // if num fingers used don't equal 1 then we stop touch rotation
+      if (!isOk()) {
+        removeEventListeners();
+      }
+    };
+
+    const onUp = (_event: PointerEvent) => {
+      removeEventListeners();
+    };
+
+    const removeEventListeners = () => {
+      this._domElement.removeEventListener('pointerdown', onDown);
+      this._domElement.removeEventListener('pointerup', onUp);
+      this._domElement.removeEventListener('pointermove', onMove);
+    };
+
+    this._domElement.addEventListener('pointerdown', onDown);
+    this._domElement.addEventListener('pointerup', onUp);
+    this._domElement.addEventListener('pointermove', onMove);
+  }
+
+  private startTouchPinch() {
+    let previousInfo = getPinchInfo(this._domElement, this._touchEvents);
+
+    const isOk = () => this.touchEventsCount === 2;
+
+    const onMove = (event: PointerEvent) => {
+      this.updateTouchEvents(event);
+      if (!isOk()) {
+        removeEventListeners();
+        return;
+      }
       const info = getPinchInfo(this._domElement, this._touchEvents);
 
       // dolly
@@ -732,33 +723,45 @@ export class FlexibleControls {
       previousInfo = info;
     };
 
-    const onTouchStart = (_event: PointerEvent) => {
-      // if num fingers used don't equal 2 then we stop touch pinch
-      if (this._touchEvents.length !== 2) {
+    const onDown = (_event: PointerEvent) => {
+      if (!isOk()) {
         removeEventListeners();
       }
     };
 
-    const onTouchEnd = () => {
+    const onUp = (_event: PointerEvent) => {
       removeEventListeners();
     };
 
     const removeEventListeners = () => {
-      document.removeEventListener('pointerdown', onTouchStart);
-      document.removeEventListener('pointermove', onTouchMove);
-      document.removeEventListener('pointerup', onTouchEnd);
+      this._domElement.removeEventListener('pointerdown', onDown);
+      this._domElement.removeEventListener('pointermove', onMove);
+      this._domElement.removeEventListener('pointerup', onUp);
     };
 
-    document.addEventListener('pointerdown', onTouchStart);
-    document.addEventListener('pointermove', onTouchMove);
-    document.addEventListener('pointerup', onTouchEnd);
+    this._domElement.addEventListener('pointerdown', onDown);
+    this._domElement.addEventListener('pointermove', onMove);
+    this._domElement.addEventListener('pointerup', onUp);
   }
 
-  private replaceTouchEvent(event: PointerEvent) {
-    // Find this event in the cache and update its record with this event
-    const index = this._touchEvents.findIndex(cachedEvent => cachedEvent.pointerId === event.pointerId);
-    this._touchEvents[index] = event;
+  private get touchEventsCount(): number {
+    return this._touchEvents.length;
   }
+
+  private removeTouchEvent(event: PointerEvent) {
+    remove(this._touchEvents, ev => ev.pointerId === event.pointerId);
+  }
+
+  private updateTouchEvents(event: PointerEvent) {
+    // Find this event in the cache and update its record with this event
+    const index = this._touchEvents.findIndex(e => e.pointerId === event.pointerId);
+    if (index >= 0) {
+      this._touchEvents[index] = event;
+    } else {
+      this._touchEvents.push(event);
+    }
+  }
+
   //================================================
   // INSTANCE METHODS: Pan
   //================================================
