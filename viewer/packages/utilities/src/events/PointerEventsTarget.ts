@@ -77,6 +77,7 @@ export class PointerEventsTarget {
     }
     event.stopPropagation();
     event.preventDefault();
+    this._domElement.focus();
 
     const leftButton = isTouch(event) || isLeftMouseButton(event);
 
