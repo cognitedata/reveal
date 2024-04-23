@@ -3,7 +3,7 @@
  */
 import { Cognite3DViewer, type Cognite3DViewerOptions } from '@cognite/reveal';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { type ReactNode, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
+import { type ReactNode, useEffect, useMemo, useState, type ReactElement } from 'react';
 import { type Color } from 'three';
 import { I18nContextProvider } from '../i18n/I18n';
 import { ViewerContext } from '../RevealCanvas/ViewerContext';
@@ -77,8 +77,6 @@ const useRevealFromKeepAlive = ({
   // Double bookkeeping to satisfy test
   const [renderTarget, setRenderTarget] = useState<RevealRenderTarget | null>(null);
 
-  const viewerDomElement = useRef<HTMLElement | null>(null);
-
   useEffect(() => {
     const renderTarget = getOrInitializeRenderTarget();
     if (revealKeepAliveData === undefined) {
@@ -100,13 +98,12 @@ const useRevealFromKeepAlive = ({
     let renderTarget = revealKeepAliveData?.renderTargetRef.current;
     if (renderTarget === undefined) {
       const viewer = new Cognite3DViewer({ ...viewerOptions, sdk });
-      viewer.setBackgroundColor({ color, alpha: 1 });
       renderTarget = new RevealRenderTarget(viewer);
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;
       }
     }
-    viewerDomElement.current = renderTarget.viewer.domElement;
+    renderTarget.viewer.setBackgroundColor({ color, alpha: 1 });
     setRenderTarget(renderTarget);
     return renderTarget;
   }

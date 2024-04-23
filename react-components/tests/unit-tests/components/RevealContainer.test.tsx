@@ -9,8 +9,9 @@ import { type FdmNodeCache } from '../../../src/components/CacheProvider/FdmNode
 import { type AssetMappingCache } from '../../../src/components/CacheProvider/AssetMappingCache';
 import { type PointCloudAnnotationCache } from '../../../src/components/CacheProvider/PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from '../../../src/components/CacheProvider/Image360AnnotationCache';
-import { type SceneIdentifiers } from '../../../src/components/SceneContainer/SceneTypes';
+import { type SceneIdentifiers } from '../../../src/components/SceneContainer/sceneTypes';
 import { type RevealRenderTarget } from '../../../src/architecture/RenderTarget/RevealRenderTarget';
+import { Cognite3DViewer } from '@cognite/reveal';
 
 describe(RevealCanvas.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {
@@ -21,18 +22,21 @@ describe(RevealCanvas.name, () => {
         .setup((p) => p.project)
         .returns('test');
 
-      const domElement = document.createElement('div').appendChild(document.createElement('canvas'));
+      const domElement = document
+        .createElement('div')
+        .appendChild(document.createElement('canvas'));
 
-      const renderTargetRef = useRef<RevealRenderTarget>(
-        new Mock<RevealRenderTarget>()
-          .setup((p) => p.domElement)
-          .returns(domElement)
-          .setup((p) => {
-            p.viewer.setBackgroundColor(It.IsAny());
-          })
-          .returns()
-          .object()
-      );
+      // This object is not created as a Mock because it seems to interact badly with
+      const renderTargetRef = useRef<RevealRenderTarget>({
+        get viewer() {
+          return new Mock<Cognite3DViewer>()
+            .setup((viewer) => viewer.setBackgroundColor(It.IsAny()))
+            .returns()
+            .setup((viewer) => viewer.domElement)
+            .returns(domElement)
+            .object();
+        }
+      } as unknown as RevealRenderTarget);
       const isRevealContainerMountedRef = useRef<boolean>(true);
       const sceneLoadedRef = useRef<SceneIdentifiers | undefined>();
       const fdmNodeCache = useRef<FdmNodeCache | undefined>();
