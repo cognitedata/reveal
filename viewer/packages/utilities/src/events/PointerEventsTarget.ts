@@ -59,12 +59,14 @@ export class PointerEventsTarget {
     this._domElement.addEventListener('pointerdown', this.onPointerDown);
     this._domElement.addEventListener('pointermove', this.onPointerHover);
     window.addEventListener('pointermove', this.onPointerDrag);
+    window.addEventListener('pointerup', this.onPointerUp);
   }
 
   public removeEventListeners(): void {
     this._domElement.removeEventListener('pointerdown', this.onPointerDown);
     this._domElement.removeEventListener('pointermove', this.onPointerHover);
     window.removeEventListener('pointermove', this.onPointerDrag);
+    window.removeEventListener('pointerup', this.onPointerUp);
   }
 
   //================================================
@@ -89,13 +91,16 @@ export class PointerEventsTarget {
 
     await this._events.onPointerDown(event, leftButton);
     this._isLeftDown = leftButton;
-
-    window.addEventListener('pointerup', this.onPointerUp);
-    this._domElement.removeEventListener('pointermove', this.onPointerHover);
   };
 
   private readonly onPointerHover = debounce((event: PointerEvent) => {
     if (!this.isEnabled) {
+      return;
+    }
+    if (!isMouse(event)) {
+      return;
+    }
+    if (isAnyMouseButtonPressed(event)) {
       return;
     }
     this._events.onHover(event);
@@ -108,12 +113,13 @@ export class PointerEventsTarget {
     if (!this.isEnabled) {
       return;
     }
-    if (isMouse(event) && !isAnyMouseButtonPressed(event)) {
-      this.onPointerUp(event);
-      return;
-    }
-    if (event.movementX === 0 && event.movementX === 0) {
-      return;
+    if (isMouse(event)) {
+      if (!isAnyMouseButtonPressed(event)) {
+        return;
+      }
+      if (event.movementX === 0 && event.movementX === 0) {
+        return;
+      }
     }
     await this._events.onPointerDrag(event, this._isLeftDown);
   };
@@ -129,8 +135,6 @@ export class PointerEventsTarget {
       return;
     }
     await this._events.onPointerUp(event, this._isLeftDown);
-    window.removeEventListener('pointerup', this.onPointerUp);
-    this._domElement.addEventListener('pointermove', this.onPointerHover);
 
     if (!this.isProperClick(event)) {
       return;
