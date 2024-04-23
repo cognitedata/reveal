@@ -71,11 +71,6 @@ export interface AreaCollection {
     readonly isEmpty: boolean;
 }
 
-// Warning: (ae-incompatible-release-tags) The symbol "asFlexibleCameraManager" is marked as @public, but its signature references "IFlexibleCameraManager" which is marked as @beta
-//
-// @public (undocumented)
-export function asFlexibleCameraManager(manager: CameraManager): IFlexibleCameraManager | undefined;
-
 // @public
 export type AssetAnnotationImage360Info = {
     annotationInfo: ImageAssetLinkAnnotationInfo;
@@ -498,7 +493,7 @@ export interface Cognite3DViewerOptions {
     domElement?: HTMLElement;
     enableEdges?: boolean;
     // @beta
-    haveEventListeners?: boolean;
+    hasEventListeners?: boolean;
     loadingIndicatorStyle?: {
         placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
         opacity: number;
@@ -1292,6 +1287,9 @@ export class InvertedNodeCollection extends NodeCollection {
     // (undocumented)
     serialize(): SerializedNodeCollection;
 }
+
+// @beta
+export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager;
 
 // @public (undocumented)
 export interface JsonFileProvider {
