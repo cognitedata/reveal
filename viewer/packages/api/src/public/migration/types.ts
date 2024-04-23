@@ -190,7 +190,7 @@ export interface Cognite3DViewerOptions {
   _localModels?: boolean;
 
   /**
-   * Use the new flexiable camera manager or not, default not to be used.
+   * Use the new flexible camera manager or not, default not to be used.
    * @beta
    */
   useFlexibleCameraManager?: boolean;
@@ -199,7 +199,7 @@ export interface Cognite3DViewerOptions {
    * Add event listerers around, default is having event listeners.
    * @beta
    */
-  haveEventListeners?: boolean;
+  hasEventListeners?: boolean;
 }
 
 /**

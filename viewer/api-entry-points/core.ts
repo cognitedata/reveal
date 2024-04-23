@@ -29,7 +29,7 @@ export {
   FlexibleWheelZoomType,
   FlexibleControlsType,
   FlexibleMouseActionType,
-  asFlexibleCameraManager
+  isFlexibleCameraManager
 } from '../packages/camera-manager';
 
 export {

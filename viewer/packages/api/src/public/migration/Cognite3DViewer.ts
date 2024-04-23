@@ -293,7 +293,7 @@ export class Cognite3DViewer {
             this.modelIntersectionCallback.bind(this),
             undefined,
             this._sceneHandler.scene,
-            options.haveEventListeners
+            options.hasEventListeners
           )
         : new DefaultCameraManager(
             this._domElement,

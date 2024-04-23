@@ -98,8 +98,12 @@ export interface IFlexibleCameraManager extends CameraManager {
   onFocusChanged(haveFocus: boolean): void;
 }
 
-export function asFlexibleCameraManager(manager: CameraManager): IFlexibleCameraManager | undefined {
+/**
+ * Check id the CameraManager is a IFlexibleCameraManager
+ * @beta
+ */
+export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager {
   // instanceof don't work within React, so using safeguarding
   const flexibleCameraManager = manager as IFlexibleCameraManager;
-  return flexibleCameraManager.controlsType === undefined ? undefined : flexibleCameraManager;
+  return flexibleCameraManager.controlsType !== undefined;
 }
