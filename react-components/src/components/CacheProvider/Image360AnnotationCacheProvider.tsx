@@ -80,7 +80,7 @@ export function Image360AnnotationCacheProvider({
   const image360AnnotationCache = useMemo(() => {
     const cache =
       revealKeepAliveData?.image360AnnotationCache.current ??
-      new Image360AnnotationCache(cdfClient, revealKeepAliveData?.viewerRef.current);
+      new Image360AnnotationCache(cdfClient, revealKeepAliveData?.renderTargetRef.current?.viewer);
 
     const isRevealKeepAliveContextProvided = revealKeepAliveData !== undefined;
     if (isRevealKeepAliveContextProvided) {

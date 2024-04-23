@@ -6,7 +6,6 @@ import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type AddImageCollection360Options } from '../..';
-import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
 import {
   type ImageCollectionModelStyling,
   useApply360AnnotationStyling
@@ -29,8 +28,6 @@ export function Image360CollectionContainer({
   const cachedViewerRef = useRevealKeepAlive();
   const modelRef = useRef<Image360Collection>();
   const viewer = useReveal();
-  const [layersUrlState] = useLayersUrlParams();
-  const { image360Layers } = layersUrlState;
 
   const initializingSiteId = useRef<{ siteId: string } | { externalId: string } | undefined>(
     undefined
@@ -75,7 +72,6 @@ export function Image360CollectionContainer({
 
         modelRef.current = image360Collection;
         onLoad?.(image360Collection);
-        applyLayersState(image360Collection);
       })
       .catch((error: any) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
@@ -116,14 +112,6 @@ export function Image360CollectionContainer({
 
     viewer.remove360ImageSet(modelRef.current);
     modelRef.current = undefined;
-  }
-
-  function applyLayersState(image360Collection: Image360Collection): void {
-    if (image360Layers === undefined) {
-      return;
-    }
-    const urlLayerState = image360Layers.find((layer) => layer.siteId === image360Collection.id);
-    urlLayerState !== undefined && image360Collection.setIconsVisibility(urlLayerState.applied);
   }
 }
 

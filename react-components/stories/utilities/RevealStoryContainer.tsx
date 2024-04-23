@@ -15,7 +15,8 @@ import {
   type RevealContextProps
 } from '../../src/components/RevealContext/RevealContext';
 import { type Image360AnnotationCache } from '../../src/components/CacheProvider/Image360AnnotationCache';
-import { type SceneIdentifiers } from '../../src/components/SceneContainer/SceneTypes';
+import { type SceneIdentifiers } from '../../src/components/SceneContainer/sceneTypes';
+import { RevealRenderTarget } from '../../src/architecture/RenderTarget/RevealRenderTarget';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
@@ -36,13 +37,23 @@ export const RevealStoryContext = ({
   }, [sdk]);
 
   const isLocal = sdkInstance.project === '';
-  const viewerRef = useRef<Cognite3DViewer | undefined>(
-    viewer ??
-      (isLocal
-        ? // @ts-expect-error use local models
-          new Cognite3DViewer({ ...rest.viewerOptions, sdk: sdkInstance, _localModels: true })
-        : undefined)
-  );
+
+  let renderTarget: RevealRenderTarget | undefined;
+  if (viewer !== undefined) {
+    renderTarget = new RevealRenderTarget(viewer);
+  } else if (isLocal) {
+    const newViewer = new Cognite3DViewer({
+      ...rest.viewerOptions,
+      sdk: sdkInstance,
+      // @ts-expect-error use local models
+      _localModels: true,
+      haveEventListeners: false
+    });
+    renderTarget = new RevealRenderTarget(newViewer);
+    renderTarget.initialize();
+  }
+
+  const renderTargetRef = useRef<RevealRenderTarget | undefined>(renderTarget);
   const isRevealContainerMountedRef = useRef<boolean>(true);
   const sceneLoadedRef = useRef<SceneIdentifiers>();
   const fdmNodeCache = useRef<FdmNodeCache | undefined>();
@@ -52,7 +63,7 @@ export const RevealStoryContext = ({
   return (
     <RevealKeepAliveContext.Provider
       value={{
-        viewerRef,
+        renderTargetRef,
         isRevealContainerMountedRef,
         sceneLoadedRef,
         fdmNodeCache,
