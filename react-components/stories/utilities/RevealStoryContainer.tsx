@@ -15,7 +15,7 @@ import {
   type RevealContextProps
 } from '../../src/components/RevealContext/RevealContext';
 import { type Image360AnnotationCache } from '../../src/components/CacheProvider/Image360AnnotationCache';
-import { type SceneIdentifiers } from '../../src/components/SceneContainer/SceneTypes';
+import { type SceneIdentifiers } from '../../src/components/SceneContainer/sceneTypes';
 import { RevealRenderTarget } from '../../src/architecture/RenderTarget/RevealRenderTarget';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {

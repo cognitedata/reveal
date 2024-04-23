@@ -17,7 +17,7 @@ import {
   type Image360Collection,
   type Scene,
   type Skybox
-} from '../components/SceneContainer/SceneTypes';
+} from '../components/SceneContainer/sceneTypes';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type Source, type FdmSDK } from '../utilities/FdmSDK';
 import { type SceneConfigurationProperties } from '../hooks/types';

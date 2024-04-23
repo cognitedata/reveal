@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 import { FitModelsButton } from '../RevealToolbar/FitModelsButton';
-import { LayersButton } from '../RevealToolbar/LayersButton';
 import { type ReactNode, type ReactElement } from 'react';
 import { SlicerButton } from '../RevealToolbar/SlicerButton';
 import styled from 'styled-components';
@@ -12,24 +11,31 @@ import { HelpButton } from '../RevealToolbar/HelpButton';
 import { Divider } from '@cognite/cogs.js';
 import { SetOrbitOrFirstPersonControlsType } from '../RevealToolbar/SetFlexibleControlsType';
 import { RuleBasedOutputsButton } from '../RevealToolbar/RuleBasedOutputsButton';
+import { LayersButtonStrip } from '../RevealToolbar/LayersContainer/LayersButtonsStrip';
 
 export type CustomTopbarContent = CustomToolbarContent & { topbarContent?: ReactNode };
 
 const DefaultContentWrapper = (props: CustomTopbarContent): ReactElement => {
   return (
     <>
-      <LayersButton />
-      <SlicerButton />
-      <FitModelsButton />
-      <RuleBasedOutputsButton />
-      <SetOrbitOrFirstPersonControlsType />
-      <Divider weight="1px" length="75%" direction="vertical" />
-      <HelpButton />
-      <SettingsButton
-        customSettingsContent={props.customSettingsContent}
-        lowQualitySettings={props.lowFidelitySettings}
-        highQualitySettings={props.highFidelitySettings}
-      />
+      <FlexSection>
+        <SlicerButton />
+        <FitModelsButton />
+      </FlexSection>
+      <FlexSection>
+        <LayersButtonStrip />
+        <RuleBasedOutputsButton />
+      </FlexSection>
+      <FlexSection>
+        <SetOrbitOrFirstPersonControlsType orientation="horizontal" />
+        <Divider weight="1px" length="75%" direction="vertical" />
+        <HelpButton />
+        <SettingsButton
+          customSettingsContent={props.customSettingsContent}
+          lowQualitySettings={props.lowFidelitySettings}
+          highQualitySettings={props.highFidelitySettings}
+        />
+      </FlexSection>
     </>
   );
 };
@@ -56,6 +62,12 @@ export const RevealTopbar = ({
     </StyledTopBar>
   );
 };
+
+const FlexSection = styled.div`
+  flex: 1;
+  flex-direction: row;
+  display: flex;
+`;
 
 const StyledTopBar = styled.div`
   width: 100%;
