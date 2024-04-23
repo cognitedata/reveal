@@ -21,7 +21,7 @@ import {
   type AddReveal3DModelOptions,
   type AddImageCollection360DatamodelsOptions
 } from '../components/Reveal3DResources/types';
-import { type GroundPlane, type Skybox } from '../components/SceneContainer/SceneTypes';
+import { type GroundPlane, type Skybox } from '../components/SceneContainer/sceneTypes';
 
 export type Space = string;
 export type ExternalId = string;
@@ -215,7 +215,11 @@ function populateSceneMapWithGroundplanes(
     const groundPlaneProperties = Object.values(Object.values(mappedGroundPlane.properties)[0])[0];
 
     const groundPlane: GroundPlane = {
-      ...groundPlaneProperties,
+      label: groundPlaneProperties.label,
+      file: groundPlaneProperties.file,
+      wrapping: groundPlaneProperties.wrapping,
+      repeatU: groundPlaneProperties.repeatU ?? 1,
+      repeatV: groundPlaneProperties.repeatV ?? 1,
       ...groundPlaneEdgeProperties // Transformation3d
     };
 
@@ -456,7 +460,7 @@ function createGetScenesQuery(limit: number = 100): Query {
               externalId: 'TexturedPlane',
               version: 'v1'
             },
-            properties: ['label', 'file', 'wrapping']
+            properties: ['*']
           }
         ]
       }

@@ -17,7 +17,7 @@ import {
   type Image360Collection,
   type Scene,
   type Skybox
-} from '../components/SceneContainer/SceneTypes';
+} from '../components/SceneContainer/sceneTypes';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type Source, type FdmSDK } from '../utilities/FdmSDK';
 import { type SceneConfigurationProperties } from '../hooks/types';
@@ -186,9 +186,8 @@ function getGroundPlanes(sceneResponse: SceneResponse): GroundPlane[] {
       );
 
       if (mappedGroundPlane !== undefined) {
-        const { label, file, wrapping } = extractProperties<GroundPlaneProperties>(
-          mappedGroundPlane.properties
-        );
+        const { label, file, wrapping, repeatU, repeatV } =
+          extractProperties<GroundPlaneProperties>(mappedGroundPlane.properties);
         const groundPlaneEdgeProperties = extractProperties<Transformation3d>(
           groundPlaneEdge.properties
         );
@@ -196,6 +195,8 @@ function getGroundPlanes(sceneResponse: SceneResponse): GroundPlane[] {
           label,
           file,
           wrapping,
+          repeatU: repeatU ?? 1,
+          repeatV: repeatV ?? 1,
           ...groundPlaneEdgeProperties
         };
         groundPlanes.push(groundPlane);

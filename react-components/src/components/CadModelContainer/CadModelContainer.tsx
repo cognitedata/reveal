@@ -8,7 +8,6 @@ import { Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type CadModelStyling, useApplyCadModelStyling } from './useApplyCadModelStyling';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
 import { isEqual } from 'lodash';
 import { modelExists } from '../../utilities/modelExists';
 
@@ -30,9 +29,7 @@ export function CadModelContainer({
   const cachedViewerRef = useRevealKeepAlive();
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
-  const [layersUrlState] = useLayersUrlParams();
   const initializingModel = useRef<AddModelOptions | undefined>(undefined);
-  const { cadLayers } = layersUrlState;
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
 
@@ -48,7 +45,6 @@ export function CadModelContainer({
       .then((model) => {
         onLoad?.(model);
         setRevealResourcesCount(viewer.models.length);
-        applyLayersState(model);
       })
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
@@ -104,17 +100,6 @@ export function CadModelContainer({
     viewer.removeModel(model);
     setRevealResourcesCount(viewer.models.length);
     setModel(undefined);
-  }
-
-  function applyLayersState(model: CogniteCadModel): void {
-    if (cadLayers === undefined) {
-      return;
-    }
-    const index = viewer.models.indexOf(model);
-    const urlLayerState = cadLayers.find(
-      (layer) => layer.revisionId === revisionId && layer.index === index
-    );
-    urlLayerState !== undefined && (model.visible = urlLayerState.applied);
   }
 }
 

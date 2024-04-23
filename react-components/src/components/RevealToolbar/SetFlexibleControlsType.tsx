@@ -7,9 +7,9 @@ import { type ReactElement, useEffect, useState, useCallback } from 'react';
 import { SegmentedControl, Tooltip as CogsTooltip, type IconType, Button } from '@cognite/cogs.js';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import {
-  type CameraManager,
   FlexibleControlsType,
-  type IFlexibleCameraManager
+  type IFlexibleCameraManager,
+  type CameraManager
 } from '@cognite/reveal';
 
 import { useTranslation } from '../i18n/I18n';
@@ -189,13 +189,15 @@ function getIcon(controlsType: FlexibleControlsType): IconType {
   }
 }
 
-function asFlexibleCameraManager(manager: CameraManager): IFlexibleCameraManager | undefined {
-  // instanceof don't work within React, so using safeguarding
-  const flexibleCameraManager = manager as IFlexibleCameraManager;
-  return flexibleCameraManager.controlsType === undefined ? undefined : flexibleCameraManager;
-}
-
 const ButtonsContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+export function asFlexibleCameraManager(
+  manager: CameraManager
+): IFlexibleCameraManager | undefined {
+  // instanceof don't work within React, so using safeguarding
+  const flexibleCameraManager = manager as IFlexibleCameraManager;
+  return flexibleCameraManager.controlsType === undefined ? undefined : flexibleCameraManager;
+}
