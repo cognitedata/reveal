@@ -1919,7 +1919,7 @@ __metadata:
     replace: 1.2.2
     rimraf: 5.0.5
     styled-components: 5.3.11
-    typedoc: 0.25.11
+    typedoc: 0.25.13
     typedoc-plugin-markdown: 3.17.1
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 5.4.2
@@ -12133,19 +12133,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.25.11":
-  version: 0.25.11
-  resolution: "typedoc@npm:0.25.11"
+"typedoc@npm:0.25.13":
+  version: 0.25.13
+  resolution: "typedoc@npm:0.25.13"
   dependencies:
     lunr: ^2.3.9
     marked: ^4.3.0
     minimatch: ^9.0.3
     shiki: ^0.14.7
   peerDependencies:
-    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
+    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x
   bin:
     typedoc: bin/typedoc
-  checksum: 2df254d8009e7a1eddb77bdf8652cfd487f05c97f464bc9ef28770c955f00b63922e5026c207a3e9625e13c9c47d04a2dd1f970e2c442c9cbcc37917f6a5ae2f
+  checksum: 703d1f48137300b0ef3df1998a25ae745db3ca0b126f8dd1f7262918f11243a94d24dfc916cdba2baeb5a7d85d5a94faac811caf7f4fa6b7d07144dc02f7639f
   languageName: node
   linkType: hard
 
