@@ -2,7 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CameraManager, type Cognite3DViewer, type IFlexibleCameraManager } from '@cognite/reveal';
+import {
+  isFlexibleCameraManager,
+  type Cognite3DViewer,
+  type IFlexibleCameraManager
+} from '@cognite/reveal';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../concreteTools/NavigationTool';
 import { type Object3D, Group } from 'three';
