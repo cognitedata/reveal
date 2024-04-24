@@ -7,7 +7,8 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useState
+  useState,
+  useRef
 } from 'react';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';
 import {
@@ -37,28 +38,35 @@ export const useModelHandlers = (
     () => viewer.get360ImageCollections(),
     [viewer, viewer.get360ImageCollections().length]
   );
+  const modelNamesRef = useRef<string[] | undefined>(undefined);
 
   const modelIds = useMemo(() => models.map((model) => model.modelId), [models]);
   const modelNames = use3DModelName(modelIds);
+  modelNamesRef.current = modelNames.data;
 
   const [modelHandlers, setModelHandlers] = useState(
-    createHandlers(models, modelNames.data, image360Collections, viewer)
+    createHandlers(models, modelNamesRef.current, image360Collections, viewer)
   );
 
   useEffect(() => {
-    setModelHandlers(createHandlers(models, modelNames.data, image360Collections, viewer));
-  }, [models, modelNames.data, image360Collections, viewer]);
+    setModelHandlers(createHandlers(models, modelNamesRef.current, image360Collections, viewer));
+  }, [models, modelNamesRef.current, image360Collections, viewer]);
 
   const update = useCallback(
     (models: CogniteModel[], image360Collections: Image360Collection[]) => {
-      const newModelHandlers = createHandlers(models, modelNames.data, image360Collections, viewer);
+      const newModelHandlers = createHandlers(
+        models,
+        modelNamesRef.current,
+        image360Collections,
+        viewer
+      );
       setModelHandlers(newModelHandlers);
       const newExternalState = createExternalStateFromLayers(newModelHandlers);
 
       setExternalLayersState?.(newExternalState);
       viewer.requestRedraw();
     },
-    [setExternalLayersState, viewer]
+    [setExternalLayersState, models]
   );
 
   return [modelHandlers, update];
