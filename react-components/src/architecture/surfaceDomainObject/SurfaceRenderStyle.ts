@@ -7,9 +7,9 @@ import { ColorType } from '../utilities/colors/ColorType';
 import { RenderStyle } from '../utilities/misc/RenderStyle';
 
 export class SurfaceRenderStyle extends RenderStyle {
-  //= =================================================
+  // ==================================================
   // INSTANCE FIELDS
-  //= =================================================
+  // ==================================================
 
   public showContours = true;
   public contoursColorType = ColorType.Black;
@@ -28,9 +28,9 @@ export class SurfaceRenderStyle extends RenderStyle {
 
   public increment = 5;
 
-  //= =================================================
+  // ==================================================
   // OVERRIDES of BaseStyle
-  //= =================================================
+  // ==================================================
 
   public override clone(): RenderStyle {
     return cloneDeep<SurfaceRenderStyle>(this);
