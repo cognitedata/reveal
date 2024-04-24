@@ -204,7 +204,7 @@ function createTexture(
   if (style.solidColorType !== ColorType.ColorMap && !style.solidContourUse) {
     return undefined;
   }
-  const colorMap = getColorMap(surfaceDomainObject.colorMapType);
+  const colorMap = getColorMap(style.colorMapType);
   if (colorMap === undefined) {
     return undefined;
   }

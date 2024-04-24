@@ -5,6 +5,7 @@
 import { cloneDeep } from 'lodash';
 import { ColorType } from '../utilities/colors/ColorType';
 import { RenderStyle } from '../utilities/misc/RenderStyle';
+import { ColorMapType } from '../utilities/colors/ColorMapType';
 
 export class SurfaceRenderStyle extends RenderStyle {
   // ==================================================
@@ -13,6 +14,7 @@ export class SurfaceRenderStyle extends RenderStyle {
 
   public showContours = true;
   public contoursColorType = ColorType.Black;
+  public colorMapType = ColorMapType.Terrain;
 
   public showSolid = true;
   public solidColorType = ColorType.ColorMap;

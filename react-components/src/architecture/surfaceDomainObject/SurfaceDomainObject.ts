@@ -2,19 +2,19 @@
  * Copyright 2024 Cognite AS
  */
 
-import { ColorMapType } from '../utilities/colors/ColorMapType';
 import { ColorType } from '../utilities/colors/ColorType';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 import { SurfaceRenderStyle } from './SurfaceRenderStyle';
 import { type RegularGrid2 } from '../utilities/geometry/RegularGrid2';
 import { type RenderStyle } from '../utilities/misc/RenderStyle';
+import { type ThreeView } from '../views/ThreeView';
+import { SurfaceThreeView } from './SurfaceThreeView';
 
-export abstract class SurfaceDomainObject extends VisualDomainObject {
+export class SurfaceDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private _colorMapType = ColorMapType.Terrain;
   private _surface: RegularGrid2 | undefined = undefined;
 
   // ==================================================
@@ -27,14 +27,6 @@ export abstract class SurfaceDomainObject extends VisualDomainObject {
 
   public set surface(value: RegularGrid2 | undefined) {
     this._surface = value;
-  }
-
-  public get colorMapType(): ColorMapType {
-    return this._colorMapType;
-  }
-
-  public set colorMapType(value: ColorMapType) {
-    this._colorMapType = value;
   }
 
   public get renderStyle(): SurfaceRenderStyle | undefined {
@@ -58,7 +50,7 @@ export abstract class SurfaceDomainObject extends VisualDomainObject {
     if (!(style instanceof SurfaceRenderStyle)) {
       return;
     }
-    const surface = this.surface;
+    const { surface } = this;
     if (surface === undefined) {
       return;
     }
@@ -75,6 +67,18 @@ export abstract class SurfaceDomainObject extends VisualDomainObject {
       style.increment = zRange.getBestInc();
     }
   }
+
+  // ==================================================
+  // OVERRIDES of VisualDomainObject
+  // ==================================================
+
+  protected override createThreeView(): ThreeView | undefined {
+    return new SurfaceThreeView();
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
 
   public supportsColorType(colorType: ColorType, solid: boolean): boolean {
     switch (colorType) {
