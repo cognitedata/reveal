@@ -2,15 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import {
-  type Cognite3DViewer,
-  type IFlexibleCameraManager,
-  isFlexibleCameraManager
-} from '@cognite/reveal';
+import { CameraManager, type Cognite3DViewer, type IFlexibleCameraManager } from '@cognite/reveal';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../concreteTools/NavigationTool';
 import { type Object3D, Group } from 'three';
-import { ToolController } from './ToolController';
+import { ToolControllers } from '../commands/ToolController';
 
 export class RevealRenderTarget {
   // ==================================================
@@ -18,7 +14,7 @@ export class RevealRenderTarget {
   // ==================================================
 
   private readonly _viewer: Cognite3DViewer;
-  private readonly _toolController: ToolController;
+  private readonly _toolController: ToolControllers;
   private _axisGizmoTool: AxisGizmoTool | undefined;
   protected readonly _rootObject3D: Object3D;
 
@@ -28,7 +24,7 @@ export class RevealRenderTarget {
 
   constructor(viewer: Cognite3DViewer) {
     this._viewer = viewer;
-    this._toolController = new ToolController(this.domElement);
+    this._toolController = new ToolControllers(this.domElement);
     this._toolController.addEventListeners();
 
     this._rootObject3D = new Group();
@@ -56,12 +52,12 @@ export class RevealRenderTarget {
     return this._viewer.domElement;
   }
 
-  public get toolController(): ToolController {
+  public get toolController(): ToolControllers {
     return this._toolController;
   }
 
   public get cameraManager(): IFlexibleCameraManager {
-    const cameraManager = isFlexibleCameraManager(this.viewer.cameraManager);
+    const cameraManager = this.viewer.cameraManager;
     if (!isFlexibleCameraManager(cameraManager)) {
       throw new Error('Camera manager is not flexible');
     }
@@ -91,3 +87,4 @@ export class RevealRenderTarget {
     this._viewer.requestRedraw();
   }
 }
+function isFlexibleCameraManager(cameraManager: CameraManager) {}
