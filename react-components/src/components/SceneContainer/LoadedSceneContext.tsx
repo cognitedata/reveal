@@ -9,7 +9,7 @@ import React, {
   type ReactNode,
   useCallback
 } from 'react';
-import { type SceneIdentifiers } from './SceneTypes';
+import { type SceneIdentifiers } from './sceneTypes';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 
 type LoadedSceneContextType = {

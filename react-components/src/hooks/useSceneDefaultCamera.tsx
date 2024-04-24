@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useSceneConfig } from '../query/useSceneConfig';
 import { Vector3, Quaternion, Euler, MathUtils, Box3 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION, type Cognite3DViewer } from '@cognite/reveal';
-import { type SceneConfiguration } from '../components/SceneContainer/SceneTypes';
+import { type SceneConfiguration } from '../components/SceneContainer/sceneTypes';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
 
 export const useSceneDefaultCamera = (

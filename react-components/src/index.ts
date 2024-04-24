@@ -107,13 +107,14 @@ export type {
 } from './components/Reveal3DResources/types';
 export {
   type PointCloudAnnotationMappedAssetData,
-  type Image360AnnotationMappedAssetData
+  type Image360AnnotationMappedAssetData,
+  type LayersUrlStateParam
 } from './hooks/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { FdmInstanceWithView } from './utilities/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
-export type { SceneIdentifiers } from './components/SceneContainer/SceneTypes';
+export type { SceneIdentifiers } from './components/SceneContainer/sceneTypes';
 
 // Rule Based Outputs
 export { useFetchRuleInstances } from './components/RuleBasedOutputs/hooks/useFetchRuleInstances';
