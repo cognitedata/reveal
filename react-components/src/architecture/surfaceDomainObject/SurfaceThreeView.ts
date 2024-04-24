@@ -16,7 +16,6 @@ import {
   Color,
   Object3D
 } from 'three';
-import { ObjectThreeView } from '../views/ObjectThreeView';
 import { ContouringService } from '../utilities/geometry/ContouringService';
 import { SurfaceDomainObject } from './SurfaceDomainObject';
 import { DomainObjectChange } from '../utilities/misc/DomainObjectChange';
@@ -28,6 +27,7 @@ import { SurfaceRenderStyle } from './SurfaceRenderStyle';
 import { ColorType } from '../utilities/colors/ColorType';
 import { WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { getColorMap } from '../utilities/colors/colorMaps';
+import { ObjectThreeView } from '../views/ObjectThreeView';
 
 const SOLID_NAME = 'Solid';
 const CONTOURS_NAME = 'Contour';

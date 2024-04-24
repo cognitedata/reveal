@@ -4,7 +4,7 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { type RevealRenderTarget } from '../RenderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { NavigationTool } from './NavigationTool';
 
 export class InfoClickTool extends NavigationTool {

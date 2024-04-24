@@ -3,7 +3,7 @@
  */
 
 import { BaseCommand } from './BaseCommand';
-import { type RevealRenderTarget } from '../RenderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 
 export abstract class RenderTargetCommand extends BaseCommand {
   // ==================================================

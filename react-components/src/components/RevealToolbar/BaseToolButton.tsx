@@ -7,7 +7,7 @@ import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { Button, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseTool } from '../../architecture/commands/BaseTool';
-import { type RevealRenderTarget } from '../../architecture/RenderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../../architecture/renderTarget/RevealRenderTarget';
 
 type CreateToolDelegate = (renderTarget: RevealRenderTarget) => BaseTool;
 

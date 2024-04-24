@@ -6,7 +6,7 @@ import { CameraManager, type Cognite3DViewer, type IFlexibleCameraManager } from
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../concreteTools/NavigationTool';
 import { type Object3D, Group } from 'three';
-import { ToolControllers } from '../commands/ToolController';
+import { ToolControllers } from './ToolController';
 
 export class RevealRenderTarget {
   // ==================================================
@@ -87,4 +87,3 @@ export class RevealRenderTarget {
     this._viewer.requestRedraw();
   }
 }
-function isFlexibleCameraManager(cameraManager: CameraManager) {}

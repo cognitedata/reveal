@@ -6,7 +6,7 @@ import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 import { BaseView } from './BaseView';
 import { Changes } from '../utilities/misc/Changes';
 import { type RenderStyle } from '../utilities/misc/RenderStyle';
-import { type RevealRenderTarget } from '../RenderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Range3 } from '../utilities/geometry/Range3';
 

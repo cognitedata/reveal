@@ -12,10 +12,10 @@ import { isEmpty } from '../utilities/extensions/stringExtensions';
 import { VisibleState } from '../utilities/misc/VisibleState';
 import { clear, removeAt, remove } from '../utilities/extensions/arrayExtensions';
 import { getNextColor } from '../utilities/colors/getNextColor';
-import { type RevealRenderTarget } from '../RenderTarget/RevealRenderTarget';
-import { type BaseView } from '../views/BaseView';
+import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ColorType } from '../utilities/colors/ColorType';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
+import { type BaseView } from '../views/BaseView';
 
 type NotifyDelegate = (change: DomainObjectChange) => void;
 

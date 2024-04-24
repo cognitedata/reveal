@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { RenderTargetCommand } from './RenderTargetCommand';
-import { type RevealRenderTarget } from '../RenderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 
 type UpdateToolDelegate = () => void;
