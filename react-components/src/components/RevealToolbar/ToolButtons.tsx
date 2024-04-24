@@ -3,8 +3,8 @@
  */
 
 import { type ReactElement } from 'react';
-import { InfoClickTool } from '../../architecture/ConcreteTools/InfoClickTool';
-import { NavigationTool } from '../../architecture/ConcreteTools/NavigationTool';
+import { InfoClickTool } from '../../architecture/concreteTools/InfoClickTool';
+import { NavigationTool } from '../../architecture/concreteTools/NavigationTool';
 import { BaseToolButton } from './BaseToolButton';
 
 export const InfoToolButton = (): ReactElement => {

@@ -7,10 +7,10 @@ import {
   type IFlexibleCameraManager,
   isFlexibleCameraManager
 } from '@cognite/reveal';
-import { ToolController } from './ToolController';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
-import { NavigationTool } from '../ConcreteTools/NavigationTool';
+import { NavigationTool } from '../concreteTools/NavigationTool';
 import { type Object3D, Group } from 'three';
+import { ToolController } from './ToolController';
 
 export class RevealRenderTarget {
   // ==================================================

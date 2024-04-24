@@ -7,7 +7,7 @@ import { DomainObject } from './DomainObject';
 
 export class FolderDomainObject extends DomainObject {
   // ==================================================
-  // OVERRIDES of BaseNode
+  // OVERRIDES of DomainObject
   // ==================================================
 
   public override get typeName(): string {

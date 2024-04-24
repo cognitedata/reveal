@@ -4,31 +4,21 @@
 
 import { type Vector2, Vector3 } from 'three';
 import { Range1 } from './Range1';
-import { square } from '../utilities/math';
+import { square } from '../extensions/mathExtensions';
 
 export class Range3 {
   // ==================================================
-  // STATIC PROPERTIES
+  // STATIC FIELDS
   // ==================================================
 
   public static readonly empty = new Range3();
-
-  public static get newUnit(): Range3 {
-    const range = new Range3();
-    range.x = Range1.newUnit;
-    range.y = Range1.newUnit;
-    range.z = Range1.newUnit;
-    return range;
-  }
 
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   public x: Range1 = new Range1();
-
   public y: Range1 = new Range1();
-
   public z: Range1 = new Range1();
 
   // ==================================================
@@ -77,7 +67,7 @@ export class Range3 {
     else if (min !== undefined && max !== undefined) this.set(min, max);
   }
 
-  public /* copy constructor */ clone(): Range3 {
+  public clone(): Range3 {
     const range = new Range3();
     range.x = this.x.clone();
     range.y = this.y.clone();
@@ -198,7 +188,7 @@ export class Range3 {
   }
 
   // ==================================================
-  // STATIC METHODS:
+  // STATIC METHODS
   // ==================================================
 
   public static createByMinAndMax(xmin: number, ymin: number, xmax: number, ymax: number): Range3 {
@@ -218,7 +208,7 @@ export class Range3 {
   }
 
   // ==================================================
-  // STATIC METHODS:
+  // STATIC METHODS
   // ==================================================
 
   // Corner and walls is pr. definition:

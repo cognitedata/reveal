@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { type RevealRenderTarget } from '../RenderTarget/RevealRenderTarget';
-import { BaseTool } from '../Commands/BaseTool';
+import { BaseTool } from '../commands/BaseTool';
 
 export class NavigationTool extends BaseTool {
   // ==================================================

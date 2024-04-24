@@ -3,17 +3,19 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { Color } from 'three';
-import { type RenderStyle } from '../utilities/RenderStyle';
-import { DomainObjectChange } from '../utilities/DomainObjectChange';
-import { Changes } from '../utilities/Changes';
-import { isInstanceOf, type Class } from '../utilities/Class';
-import { isEmpty } from '../utilities/utilities';
-import { VisibleState } from '../utilities/VisibleState';
-import { clear, removeAt, remove } from '../utilities/arrayExtensions';
-import { getNextColor } from '../utilities/Colors';
+import { type Color } from 'three';
+import { type RenderStyle } from '../utilities/misc/RenderStyle';
+import { DomainObjectChange } from '../utilities/misc/DomainObjectChange';
+import { Changes } from '../utilities/misc/Changes';
+import { isInstanceOf, type Class } from '../utilities/misc/Class';
+import { isEmpty } from '../utilities/extensions/stringExtensions';
+import { VisibleState } from '../utilities/misc/VisibleState';
+import { clear, removeAt, remove } from '../utilities/extensions/arrayExtensions';
+import { getNextColor } from '../utilities/colors/getNextColor';
 import { type RevealRenderTarget } from '../RenderTarget/RevealRenderTarget';
-import { type BaseView } from '../Views/BaseView';
+import { type BaseView } from '../views/BaseView';
+import { ColorType } from '../utilities/colors/ColorType';
+import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
 
 type NotifyDelegate = (change: DomainObjectChange) => void;
 
@@ -216,13 +218,13 @@ export abstract class DomainObject {
   // VIRTUAL METHODS: Visibility
   // ==================================================
 
-  public getCheckBoxState(target: RevealRenderTarget): VisibleState {
+  public getVisibleState(target: RevealRenderTarget): VisibleState {
     let numCandidates = 0;
     let numAll = 0;
     let numNone = 0;
 
     for (const child of this.children) {
-      const childState = child.getCheckBoxState(target);
+      const childState = child.getVisibleState(target);
       if (childState === VisibleState.Disabled) {
         continue;
       }
@@ -253,7 +255,7 @@ export abstract class DomainObject {
     target: RevealRenderTarget,
     topLevel = true
   ): boolean {
-    const checkBoxState = this.getCheckBoxState(target);
+    const checkBoxState = this.getVisibleState(target);
     if (checkBoxState === VisibleState.Disabled) {
       return false;
     }
@@ -288,7 +290,7 @@ export abstract class DomainObject {
 
   // Use this when clicking on the checkbox in the three control
   public toggleVisibleInteractive(target: RevealRenderTarget): void {
-    const checkBoxState = this.getCheckBoxState(target);
+    const checkBoxState = this.getVisibleState(target);
     if (checkBoxState === VisibleState.None) this.setVisibleInteractive(true, target);
     else if (checkBoxState === VisibleState.Some || checkBoxState === VisibleState.All)
       this.setVisibleInteractive(false, target);
@@ -599,7 +601,7 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Misc
+  // INSTANCE METHODS: Initialization
   // ==================================================
 
   public initialize(): void {
@@ -666,7 +668,7 @@ export abstract class DomainObject {
   // ==================================================
 
   protected generateNewColor(): Color {
-    return this.canChangeColor ? getNextColor().clone() : new Color(1, 1, 1);
+    return this.canChangeColor ? getNextColor().clone() : WHITE_COLOR.clone();
   }
 
   protected generateNewName(): string {
@@ -688,5 +690,20 @@ export abstract class DomainObject {
     }
     result += ` ${childIndex + 1}`;
     return result;
+  }
+
+  public getColorByColorType(colorType: ColorType): Color {
+    switch (colorType) {
+      case ColorType.Specified:
+        return this.color;
+      case ColorType.Parent:
+        if (this.parent !== undefined) {
+          return this.parent.color;
+        }
+        break;
+      case ColorType.Black:
+        return BLACK_COLOR;
+    }
+    return WHITE_COLOR;
   }
 }

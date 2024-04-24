@@ -3,17 +3,21 @@
  */
 
 import { BoxHelper, Group, type Object3D } from 'three';
-import { BaseThreeView } from './BaseThreeView';
-import { type DomainObjectChange } from '../utilities/DomainObjectChange';
-import { Changes } from '../utilities/Changes';
-import { Range3 } from '../Geometry/Range3';
+import { ThreeView } from './ThreeView';
+import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
+import { Changes } from '../utilities/misc/Changes';
+import { Range3 } from '../utilities/geometry/Range3';
 
-export abstract class BaseGroupThreeView extends BaseThreeView {
+export abstract class ObjectThreeView extends ThreeView {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   protected _object3D: Object3D | undefined = undefined;
+
+  protected get hasObject3D(): boolean {
+    return this._object3D !== undefined;
+  }
 
   protected get object3D(): Object3D | undefined {
     if (this._object3D === undefined) {
@@ -47,7 +51,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView {
   }
 
   // ==================================================
-  // OVERRIDES of BaseThreeView
+  // OVERRIDES of ThreeView
   // ==================================================
 
   public override get isVisible(): boolean {

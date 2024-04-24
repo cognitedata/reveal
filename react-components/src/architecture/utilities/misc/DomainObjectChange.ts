@@ -7,7 +7,7 @@ export class DomainObjectChange {
   // INSTANCE FIELDS
   // ==================================================
 
-  private changes: ChangedDescription[] | undefined = undefined;
+  private _changes: ChangedDescription[] | undefined = undefined;
 
   // ==================================================
   // CONSTRUCTOR
@@ -24,15 +24,15 @@ export class DomainObjectChange {
   // ==================================================
 
   public get isEmpty(): boolean {
-    return this.changes === undefined || this.changes.length === 0;
+    return this._changes === undefined || this._changes.length === 0;
   }
 
   public isChanged(...changes: symbol[]): boolean {
-    if (this.changes === undefined) {
+    if (this._changes === undefined) {
       return false;
     }
     for (const change of changes) {
-      if (this.changes.some((desc: ChangedDescription) => desc.change === change)) {
+      if (this._changes.some((desc: ChangedDescription) => desc.change === change)) {
         return true;
       }
     }
@@ -84,10 +84,10 @@ export class DomainObjectChange {
   // ==================================================
 
   private getChangedDescription(change: symbol): ChangedDescription | undefined {
-    if (this.changes === undefined) {
+    if (this._changes === undefined) {
       return undefined;
     }
-    return this.changes.find((desc: ChangedDescription) => desc.change === change);
+    return this._changes.find((desc: ChangedDescription) => desc.change === change);
   }
 
   private getName(change: symbol): string | undefined {
@@ -103,10 +103,10 @@ export class DomainObjectChange {
     if (change === undefined) {
       return;
     }
-    if (this.changes === undefined) {
-      this.changes = [];
+    if (this._changes === undefined) {
+      this._changes = [];
     }
-    this.changes.push(new ChangedDescription(change, name));
+    this._changes.push(new ChangedDescription(change, name));
   }
 }
 

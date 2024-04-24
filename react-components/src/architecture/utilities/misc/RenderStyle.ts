@@ -3,7 +3,5 @@
  */
 
 export abstract class RenderStyle {
-  protected constructor() {}
-
-  public placeHolder(): void {}
+  public abstract clone(): RenderStyle;
 }

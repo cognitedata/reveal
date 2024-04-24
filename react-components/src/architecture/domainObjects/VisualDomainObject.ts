@@ -3,17 +3,16 @@
  */
 
 import { type RevealRenderTarget } from '../RenderTarget/RevealRenderTarget';
-import { BaseThreeView } from '../Views/BaseThreeView';
-import { type DomainObjectChange } from '../utilities/DomainObjectChange';
-import { VisibleState } from '../utilities/VisibleState';
+import { ThreeView } from '../views/ThreeView';
+import { VisibleState } from '../utilities/misc/VisibleState';
 import { DomainObject } from './DomainObject';
 
 export abstract class VisualDomainObject extends DomainObject {
   // ==================================================
-  // OVERRIDES of BaseNode
+  // OVERRIDES of DomainObject
   // ==================================================
 
-  public override getCheckBoxState(target: RevealRenderTarget): VisibleState {
+  public override getVisibleState(target: RevealRenderTarget): VisibleState {
     if (this.isVisible(target)) {
       return VisibleState.All;
     }
@@ -44,10 +43,10 @@ export abstract class VisualDomainObject extends DomainObject {
   }
 
   // ==================================================
-  // VIRTUAL METHODS:
+  // VIRTUAL METHODS
   // ==================================================
 
-  protected abstract createThreeView(): BaseThreeView | undefined;
+  protected abstract createThreeView(): ThreeView | undefined;
 
   protected canCreateThreeView(): boolean {
     return true;
@@ -57,10 +56,10 @@ export abstract class VisualDomainObject extends DomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  public getViewByTarget(target: RevealRenderTarget): BaseThreeView | undefined {
+  public getViewByTarget(target: RevealRenderTarget): ThreeView | undefined {
     return this.views.find(
-      (view) => view instanceof BaseThreeView && view.renderTarget === target
-    ) as BaseThreeView;
+      (view) => view instanceof ThreeView && view.renderTarget === target
+    ) as ThreeView;
   }
 
   public isVisible(target: RevealRenderTarget): boolean {

@@ -5,28 +5,25 @@
 import { Vector3 } from 'three';
 import { Range1 } from './Range1';
 import { type RegularGrid2 } from './RegularGrid2';
-import { isAbsEqual, isInside, max, min } from '../utilities/math';
+import { isAbsEqual, isInside, max, min } from '../extensions/mathExtensions';
 
 export class ContouringService {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly range = Range1.newZero;
-
-  private readonly inc: number;
-
-  private readonly tolerance: number;
-
-  private readonly positions: number[] = [];
+  private readonly _tempRange = new Range1();
+  private readonly _inc: number;
+  private readonly _tolerance: number;
+  private readonly _positions: number[] = [];
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
   public constructor(inc: number) {
-    this.inc = inc;
-    this.tolerance = this.inc / 1000;
+    this._inc = inc;
+    this._tolerance = this._inc / 1000;
   }
 
   // ==================================================
@@ -66,7 +63,7 @@ export class ContouringService {
         if (triangleCount === 4 || !isDef3) this.addTriangle(p0, p1, p2);
       }
     }
-    return this.positions;
+    return this._positions;
   }
 
   // ==================================================
@@ -74,9 +71,9 @@ export class ContouringService {
   // ==================================================
 
   private addTriangle(a: Vector3, b: Vector3, c: Vector3): void {
-    this.range.set(min(a.z, b.z, c.z), max(a.z, b.z, c.z));
+    this._tempRange.set(min(a.z, b.z, c.z), max(a.z, b.z, c.z));
 
-    for (const anyTick of this.range.getFastTicks(this.inc, this.tolerance)) {
+    for (const anyTick of this._tempRange.getFastTicks(this._inc, this._tolerance)) {
       const z = Number(anyTick);
       this.addLevelAt(z, a, b, c);
     }
@@ -84,10 +81,10 @@ export class ContouringService {
 
   private addLevelAt(z: number, a: Vector3, b: Vector3, c: Vector3): boolean {
     // Make sure we don't run into numerical problems
-    if (isAbsEqual(a.z, z, this.tolerance)) a.z = z + this.tolerance;
-    if (isAbsEqual(b.z, z, this.tolerance)) b.z = z + this.tolerance;
-    if (isAbsEqual(c.z, z, this.tolerance)) c.z = z + this.tolerance;
-    if (isAbsEqual(a.z, b.z, this.tolerance)) b.z = a.z + this.tolerance;
+    if (isAbsEqual(a.z, z, this._tolerance)) a.z = z + this._tolerance;
+    if (isAbsEqual(b.z, z, this._tolerance)) b.z = z + this._tolerance;
+    if (isAbsEqual(c.z, z, this._tolerance)) c.z = z + this._tolerance;
+    if (isAbsEqual(a.z, b.z, this._tolerance)) b.z = a.z + this._tolerance;
 
     // Special cases, check exact intersection on the corner or along the edges
     if (a.z === z) {
@@ -144,15 +141,15 @@ export class ContouringService {
 
     if (numPoints === 1) {
       // Remove the last added
-      this.positions.pop();
-      this.positions.pop();
-      this.positions.pop();
+      this._positions.pop();
+      this._positions.pop();
+      this._positions.pop();
     }
     return false;
   }
 
   private add(position: Vector3): void {
-    this.positions.push(position.y, position.y, position.z);
+    this._positions.push(position.y, position.y, position.z);
   }
 
   private addLinearInterpolation(a: Vector3, b: Vector3, z: number): void {
@@ -160,6 +157,6 @@ export class ContouringService {
     // a.Z and b.Z is assumed to be different (Check by yourself)
     // Returns  a + (b-a)*(z-a.Z)/(b.Z-a.Z);  (unrolled code)
     const f = (z - a.z) / (b.z - a.z);
-    this.positions.push((b.x - a.x) * f + a.x, (b.y - a.y) * f + a.y, z);
+    this._positions.push((b.x - a.x) * f + a.x, (b.y - a.y) * f + a.y, z);
   }
 }

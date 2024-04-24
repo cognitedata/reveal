@@ -6,7 +6,7 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { Button, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
-import { type BaseTool } from '../../architecture/Commands/BaseTool';
+import { type BaseTool } from '../../architecture/commands/BaseTool';
 import { type RevealRenderTarget } from '../../architecture/RenderTarget/RevealRenderTarget';
 
 type CreateToolDelegate = (renderTarget: RevealRenderTarget) => BaseTool;

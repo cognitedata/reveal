@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Vector2, Vector3 } from 'three';
+import { type Vector2, Vector3 } from 'three';
 import { type Range1 } from './Range1';
 import { Range3 } from './Range3';
 import { Grid2 } from './Grid2';
@@ -9,32 +9,22 @@ import { Grid2 } from './Grid2';
 import cloneDeep from 'lodash/cloneDeep';
 import { type Shape } from './Shape';
 import { Index2 } from './Index2';
-import { getGaussian } from '../utilities/math';
 
 export class RegularGrid2 extends Grid2 {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public origin: Vector2; // Z is translation in Z
+  public readonly origin: Vector2;
+  public readonly inc: Vector2;
 
-  public inc: Vector2; // Z is ignored
-
+  private _buffer: Float32Array; // NaN value in this array means undefined node
   private _hasRotationAngle = false;
-
   private _rotationAngle = 0;
-
-  private _sinRotationAngle = 0;
-
-  private _cosRotationAngle = 1;
-
-  private _buffer: Float32Array;
-
-  static readonly _staticHelperA = new Vector3();
-
-  static readonly _staticHelperB = new Vector3();
-
-  static readonly _staticHelperC = new Vector3();
+  private _sinRotationAngle = 0; // Due to speed
+  private _cosRotationAngle = 1; // Due to speed
+  static _tempVectorA = new Vector3();
+  static _tempVectorB = new Vector3();
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -129,10 +119,9 @@ export class RegularGrid2 extends Grid2 {
   // ==================================================
 
   public getNodePosition(i: number, j: number, resultPosition?: Vector3): boolean {
-    if (resultPosition === undefined)
-      // eslint-disable-next-line no-param-reassign
+    if (resultPosition === undefined) {
       resultPosition = new Vector3();
-
+    }
     const z = this.getZ(i, j);
     if (Number.isNaN(z)) return false;
 
@@ -180,10 +169,9 @@ export class RegularGrid2 extends Grid2 {
   // ==================================================
 
   public getCellFromPosition(position: Vector3, resultCell?: Index2): Index2 {
-    if (resultCell === undefined)
-      // eslint-disable-next-line no-param-reassign
+    if (resultCell === undefined) {
       resultCell = Index2.newZero;
-
+    }
     const dx = position.x - this.origin.x;
     const dy = position.y - this.origin.y;
 
@@ -214,15 +202,12 @@ export class RegularGrid2 extends Grid2 {
     normalize: boolean,
     resultNormal?: Vector3
   ): Vector3 {
-    if (resultNormal === undefined) resultNormal = new Vector3();
-
+    if (resultNormal === undefined) {
+      resultNormal = new Vector3();
+    }
     if (z === undefined) {
       z = this.getZ(i, j);
     }
-
-    const a = RegularGrid2._staticHelperA;
-    const b = RegularGrid2._staticHelperB;
-
     resultNormal.set(0, 0, 0);
 
     let def0 = this.isNodeInside(i + 1, j + 0);
@@ -257,6 +242,9 @@ export class RegularGrid2 extends Grid2 {
       else z3 -= z;
     }
 
+    const a = RegularGrid2._tempVectorA;
+    const b = RegularGrid2._tempVectorB;
+
     if (def0 && def1) {
       a.set(+this.inc.x, 0, z0);
       b.set(0, +this.inc.y, z1);
@@ -284,7 +272,7 @@ export class RegularGrid2 extends Grid2 {
     if (normalize) {
       resultNormal.normalize();
       if (resultNormal.lengthSq() < 0.5) {
-        resultNormal.set(0, 0, 1);
+        resultNormal.set(0, 0, 1); // If the normal is too small, we assume it is a flat surface
       }
     }
     return resultNormal;
@@ -366,107 +354,4 @@ export class RegularGrid2 extends Grid2 {
     }
     this.touch();
   }
-
-  // ==================================================
-  // STATIC METHODS:
-  // ==================================================
-
-  static createFractal(
-    boundingBox: Range3,
-    powerOf2: number,
-    dampning: number = 0.7,
-    smoothNumberOfPasses: number = 0,
-    rotationAngle: number
-  ): RegularGrid2 {
-    const origin = new Vector2();
-    const inc = new Vector2(1, 1);
-    const nodeSize = new Index2(2 ** powerOf2 + 1);
-    const stdDev = 1;
-    const grid = new RegularGrid2(nodeSize, origin, inc, rotationAngle);
-
-    const i0 = 0;
-    const j0 = 0;
-    const i1 = grid.cellSize.i;
-    const j1 = grid.cellSize.j;
-
-    grid.setZ(i0, j0, getGaussian(0, stdDev));
-    grid.setZ(i1, j0, getGaussian(0, stdDev));
-    grid.setZ(i0, j1, getGaussian(0, stdDev));
-    grid.setZ(i1, j1, getGaussian(0, stdDev));
-
-    subDivide(grid, i0, j0, i1, j1, stdDev, powerOf2, dampning);
-
-    grid.origin.x = boundingBox.x.min;
-    grid.origin.y = boundingBox.y.min;
-    grid.inc.x = boundingBox.x.delta / grid.cellSize.i;
-    grid.inc.y = boundingBox.y.delta / grid.cellSize.j;
-
-    grid.normalizeZ(boundingBox.z);
-    grid.smoothSimple(smoothNumberOfPasses);
-    return grid;
-  }
-}
-
-// ==================================================
-// LOCAL FUNCTIONS: Helpers
-// ==================================================
-
-function setValueBetween(
-  grid: RegularGrid2,
-  i0: number,
-  j0: number,
-  i2: number,
-  j2: number,
-  stdDev: number,
-  zMean?: number
-): number {
-  const i1 = Math.trunc((i0 + i2) / 2);
-  const j1 = Math.trunc((j0 + j2) / 2);
-
-  const oldZ = grid.getZ(i1, j1);
-  if (oldZ !== 0) return oldZ; // Assume already calculated (little bit dirty...)
-
-  if (zMean === undefined)
-    // eslint-disable-next-line no-param-reassign
-    zMean = (grid.getZ(i0, j0) + grid.getZ(i2, j2)) / 2;
-
-  const newZ = getGaussian(zMean, stdDev);
-  grid.setZ(i1, j1, newZ);
-  return newZ;
-}
-
-function subDivide(
-  grid: RegularGrid2,
-  i0: number,
-  j0: number,
-  i2: number,
-  j2: number,
-  stdDev: number,
-  level: number,
-  dampning: number
-): void {
-  if (i2 - i0 <= 1 && j2 - j0 <= 1) return; // Nothing more to update
-  if (i2 - i0 !== j2 - j0) throw Error('Logical bug, should be a square');
-
-  // eslint-disable-next-line no-param-reassign
-  stdDev *= dampning;
-  let z = 0;
-  z += setValueBetween(grid, i0, j0, i2, j0, stdDev);
-  z += setValueBetween(grid, i0, j2, i2, j2, stdDev);
-  z += setValueBetween(grid, i0, j0, i0, j2, stdDev);
-  z += setValueBetween(grid, i2, j0, i2, j2, stdDev);
-
-  setValueBetween(grid, i0, j0, i2, j2, stdDev, z / 4);
-
-  // eslint-disable-next-line no-param-reassign
-  level -= 1;
-  if (level === 0) return;
-
-  const i1 = Math.trunc((i0 + i2) / 2);
-  const j1 = Math.trunc((j0 + j2) / 2);
-
-  subDivide(grid, i0, j0, i1, j1, stdDev, level, dampning);
-  subDivide(grid, i0, j1, i1, j2, stdDev, level, dampning);
-  subDivide(grid, i1, j0, i2, j1, stdDev, level, dampning);
-  subDivide(grid, i1, j1, i2, j2, stdDev, level, dampning);
 }

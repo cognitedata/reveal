@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { clear } from '../utilities/arrayExtensions';
+import { clear } from '../extensions/arrayExtensions';
 import { type Range3 } from './Range3';
 import { Shape } from './Shape';
 import { type Vector3 } from 'three';
@@ -37,7 +37,9 @@ export class Points extends Shape {
   }
 
   public override expandBoundingBox(boundingBox: Range3): void {
-    for (const point of this.list) boundingBox.add(point);
+    for (const point of this.list) {
+      boundingBox.add(point);
+    }
   }
 
   // ==================================================

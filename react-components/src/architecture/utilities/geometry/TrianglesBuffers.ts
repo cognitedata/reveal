@@ -14,17 +14,12 @@ export class TrianglesBuffers {
   // INSTANCE FIELDS
   // ==================================================
 
-  protected positions: Float32Array;
-
-  protected normals: Float32Array;
-
-  protected uvs: Float32Array;
-
-  protected triangleIndexes: number[] = [];
-
-  protected uniqueIndex = 0;
-
   public side = FrontSide;
+  protected positions: Float32Array;
+  protected normals: Float32Array;
+  protected uvs: Float32Array;
+  protected triangleIndexes: number[] = [];
+  protected uniqueIndex = 0;
 
   // ==================================================
   // INSTANCE PROPERTIES

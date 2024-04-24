@@ -9,6 +9,7 @@ export abstract class RenderTargetCommand extends BaseCommand {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
+
   public readonly target: RevealRenderTarget;
 
   // ==================================================

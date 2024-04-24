@@ -2,39 +2,21 @@
  * Copyright 2024 Cognite AS
  */
 
-import { ceil, floor, isInc, roundInc } from '../utilities/math';
+import { ceil, floor, isInc, roundInc } from '../extensions/mathExtensions';
 
 export class Range1 {
   // ==================================================
-  // STATIC PROPERTIES
+  // STATIC FIELDS
   // ==================================================
 
   public static readonly empty = new Range1();
-
-  public static get newZero(): Range1 {
-    return new Range1(0, 0);
-  }
-
-  public static get newUnit(): Range1 {
-    return new Range1(0, 1);
-  }
-
-  public static get newTest(): Range1 {
-    return new Range1(-1000, 1000);
-  }
-
-  public static get newZTest(): Range1 {
-    return new Range1(-1000, -1500);
-  }
 
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   private _min: number = 0;
-
   private _max: number = 0;
-
   private _isEmpty: boolean = true;
 
   // ==================================================
@@ -87,7 +69,7 @@ export class Range1 {
     else if (min !== undefined && max !== undefined) this.set(min, max);
   }
 
-  public /* copy constructor */ clone(): Range1 {
+  public clone(): Range1 {
     const range = new Range1();
     range._min = this._min;
     range._max = this._max;
@@ -203,31 +185,35 @@ export class Range1 {
   }
 
   public translate(value: number): void {
-    if (this._isEmpty) return;
-
+    if (this.isEmpty) {
+      return;
+    }
     this._min += value;
     this._max += value;
   }
 
   public scale(value: number): void {
-    if (this._isEmpty) return;
-
+    if (this.isEmpty) {
+      return;
+    }
     this._min *= value;
     this._max *= value;
   }
 
   public scaleDelta(scale: number): void {
-    if (this._isEmpty) return;
-
+    if (this.isEmpty) {
+      return;
+    }
     const { center } = this;
     this._min = (this._min - center) * scale + center;
     this._max = (this._max - center) * scale + center;
   }
 
   public add(value: number): void {
-    if (Number.isNaN(value)) return;
-
-    if (this._isEmpty) {
+    if (Number.isNaN(value)) {
+      return;
+    }
+    if (this.isEmpty) {
       this._isEmpty = false;
       this._min = value;
       this._max = value;
@@ -236,14 +222,17 @@ export class Range1 {
   }
 
   public addRange(value: Range1): void {
-    if (value.isEmpty) return;
-
+    if (this.isEmpty) {
+      return;
+    }
     this.add(value.min);
     this.add(value.max);
   }
 
   public expandByMargin(margin: number): void {
-    if (this.isEmpty) return;
+    if (this.isEmpty) {
+      return;
+    }
     this._min -= margin;
     this._max += margin;
     if (this._min > this._max) [this._max, this._min] = [this._min, this._max]; // Swap
@@ -254,8 +243,9 @@ export class Range1 {
   }
 
   public roundByInc(inc: number): boolean {
-    if (this.isEmpty) return false;
-
+    if (this.isEmpty) {
+      return false;
+    }
     if (inc < 0) {
       this._min = ceil(this._min, -inc);
       this._max = floor(this._max, -inc);

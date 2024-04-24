@@ -6,7 +6,7 @@
 
 import { RenderTargetCommand } from './RenderTargetCommand';
 import { type RevealRenderTarget } from '../RenderTarget/RevealRenderTarget';
-import { clear, remove } from '../utilities/arrayExtensions';
+import { clear, remove } from '../utilities/extensions/arrayExtensions';
 
 type UpdateToolDelegate = () => void;
 

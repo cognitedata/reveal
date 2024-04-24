@@ -2,15 +2,15 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type DomainObjectChange } from '../utilities/DomainObjectChange';
+import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 import { BaseView } from './BaseView';
-import { Range3 } from '../Geometry/Range3';
-import { Changes } from '../utilities/Changes';
-import { type RenderStyle } from '../utilities/RenderStyle';
+import { Changes } from '../utilities/misc/Changes';
+import { type RenderStyle } from '../utilities/misc/RenderStyle';
 import { type RevealRenderTarget } from '../RenderTarget/RevealRenderTarget';
-import { type DomainObject } from '../DomainObject/DomainObject';
+import { type DomainObject } from '../domainObjects/DomainObject';
+import { Range3 } from '../utilities/geometry/Range3';
 
-export abstract class BaseThreeView extends BaseView {
+export abstract class ThreeView extends BaseView {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -76,17 +76,21 @@ export abstract class BaseThreeView extends BaseView {
   // eslint-disable-next-line @typescript-eslint/class-literal-property-style
   public abstract get isVisible(): boolean;
 
+  /**
+   * Calculates the bounding box of the view.
+   * Override this function to recalculate the bounding box of the view.
+   * @returns The calculated bounding box of the view.
+   */
   protected calculateBoundingBox(): Range3 {
-    // Override this function to recalculate the bounding box of the view
     return Range3.empty;
   }
 
   public shouldPick(): boolean {
-    return true; // To be overriudden
+    return true; // To be overridden
   }
 
   // ==================================================
-  // INSTANCE METHODS:
+  // INSTANCE METHODS
   // ==================================================
 
   public get boundingBox(): Range3 | undefined {

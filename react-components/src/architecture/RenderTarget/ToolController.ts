@@ -4,7 +4,7 @@
  */
 
 import { PointerEvents, PointerEventsTarget } from '@cognite/reveal';
-import { type BaseTool } from '../Commands/BaseTool';
+import { type BaseTool } from '../commands/BaseTool';
 
 export class ToolController extends PointerEvents {
   // ==================================================

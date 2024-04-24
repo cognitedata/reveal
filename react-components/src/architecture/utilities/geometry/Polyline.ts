@@ -57,8 +57,9 @@ export class Polyline extends Points {
 
   public getSignedArea(): number {
     const n = this.length;
-    if (n === 2) return 0;
-
+    if (n === 2) {
+      return 0;
+    }
     let area = 0;
     const first = this.list[0];
     const p0 = new Vector3();

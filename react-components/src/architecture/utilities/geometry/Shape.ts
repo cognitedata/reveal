@@ -32,7 +32,7 @@ export abstract class Shape {
   }
 
   // ==================================================
-  // VIRTUAL METHODS:
+  // VIRTUAL METHODS
   // ==================================================
 
   public abstract clone(): Shape;
@@ -40,7 +40,7 @@ export abstract class Shape {
   public abstract expandBoundingBox(boundingBox: Range3): void;
 
   // ==================================================
-  // INSTANCE METHODS: Md range
+  // INSTANCE METHODS
   // ==================================================
 
   public calculateBoundingBox(): Range3 {

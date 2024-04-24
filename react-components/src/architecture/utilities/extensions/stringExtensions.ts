@@ -25,7 +25,7 @@ export function isNumber(text: string): boolean {
 export function getNumber(text: string): number {
   const value = Number(text);
   if (Number.isNaN(value)) {
-    return value;
+    return Number.NaN;
   }
   return value;
 }

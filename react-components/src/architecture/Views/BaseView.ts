@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type DomainObject } from '../DomainObject/DomainObject';
-import { type DomainObjectChange } from '../utilities/DomainObjectChange';
+import { type DomainObject } from '../domainObjects/DomainObject';
+import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 
 export abstract class BaseView {
   // ==================================================
@@ -15,10 +15,6 @@ export abstract class BaseView {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  public get hasDomainObject(): boolean {
-    return this._domainObject !== undefined;
-  }
 
   protected get domainObject(): DomainObject {
     if (this._domainObject === undefined) {
@@ -98,7 +94,7 @@ export abstract class BaseView {
   }
 
   // ==================================================
-  // INSTANCE METHODS:
+  // INSTANCE METHODS
   // ==================================================
 
   public isOwner(domainObject: DomainObject): boolean {
