@@ -9,19 +9,16 @@ import { useRelationshipsQuery } from './useRelationshipQuery';
 import { useTimeseriesByIdsQuery } from './useTimeseriesByIdsQuery';
 import { type InternalId, type ExternalId, type IdEither } from '@cognite/sdk';
 
-export const useRetrieveAssetIdsFromTimeseries = (
-  externalIds: string[]
-): AssetAndTimeseriesIds[] => {
-  // const timeseriesExternalId = 'LOR_KARLSTAD_WELL_05_Well_TOTAL_GAS_PRODUCTION';
+export function useAssetIdsFromTimeseriesQuery(externalIds: string[]): AssetAndTimeseriesIds[] {
   const timeseriesExternalIds = externalIds;
 
-  const dataRelationship = useRelationshipsQuery({
+  const { data: dataRelationship } = useRelationshipsQuery({
     resourceExternalIds: timeseriesExternalIds.length > 0 ? timeseriesExternalIds : [],
     relationshipResourceTypes: ['asset']
   });
 
   const assetAndTimeseriesIdsFromRelationship =
-    dataRelationship?.data
+    dataRelationship
       ?.map((item) => {
         const assetIds: Partial<ExternalId & InternalId> = {};
         const timeseriesIds: Partial<ExternalId & InternalId> = {};
@@ -55,7 +52,7 @@ export const useRetrieveAssetIdsFromTimeseries = (
   console.log(
     ' TIMESERIES RELATIONSHIP TEST ',
     assetAndTimeseriesIdsFromRelationship,
-    dataRelationship.data
+    dataRelationship
   );
 
   const resourceExternalIds: ExternalId[] = timeseriesExternalIds.map((externalId) => {
@@ -66,9 +63,6 @@ export const useRetrieveAssetIdsFromTimeseries = (
 
   // CONNECT TIMESERIES WITH ASSETS
   const { data: timeseriesData } = useTimeseriesByIdsQuery(resourceExternalIds);
-
-  /*  const assetInternalIdFromTimeseries =
-    timeseriesData?.map((item) => item.assetId)?.filter(isDefined) ?? []; */
 
   const assetIdsFound: IdEither[] =
     timeseriesData
@@ -142,4 +136,4 @@ export const useRetrieveAssetIdsFromTimeseries = (
   // eslint-disable-next-line no-console
   console.log(' TIMESERIES ALL ', linkedAssetsFromTimeseries);
   return linkedAssetsFromTimeseries;
-};
+}

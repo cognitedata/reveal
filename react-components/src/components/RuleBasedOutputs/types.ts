@@ -262,12 +262,6 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   properties: FdmPropertyType<PropertyType>;
 };
 
-/* export type TriggerTypeData = {
-  asset?: Asset;
-  timeseries?: Timeseries & Datapoints;
-};
- */
-
 export type TriggerTypeData = TriggerMetadataType | TriggerTimeseriesType;
 
 export type TriggerMetadataType = {

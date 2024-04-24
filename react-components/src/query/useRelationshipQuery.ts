@@ -18,19 +18,26 @@ type Props = {
   options?: UseInfiniteQueryOptions;
 };
 
-export const useRelationshipsQuery = ({
+export function useRelationshipsQuery({
   resourceExternalIds,
   relationshipResourceTypes,
   filter
-}: Props): UseQueryResult<RelationshipData[], unknown> => {
+}: Props): UseQueryResult<RelationshipData[], unknown> {
   const sdk = useSDK();
 
-  // TODO move this to the queryKeys
-  return useQuery(queryKeys.timeseriesRelationshipsWithAssets(), async () => {
-    return await getRelationships(sdk, {
+  return useQuery(
+    [
+      queryKeys.timeseriesRelationshipsWithAssets(),
       resourceExternalIds,
       relationshipResourceTypes,
-      labels: createLabelFilter(filter?.labels)
-    });
-  });
-};
+      filter
+    ],
+    async () => {
+      return await getRelationships(sdk, {
+        resourceExternalIds,
+        relationshipResourceTypes,
+        labels: createLabelFilter(filter?.labels)
+      });
+    }
+  );
+}

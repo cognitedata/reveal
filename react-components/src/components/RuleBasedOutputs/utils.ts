@@ -30,8 +30,6 @@ import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
 import { type AssetStylingGroup } from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
-import { useRetrieveAssetIdsFromTimeseries } from '../../query/useRetrieveAssetIdsFromTimeseries';
-import { useTimeseriesLatestDatapointQuery } from '../../query/useTimeseriesLatestDatapointQuery';
 import { type AssetAndTimeseriesIds } from '../../utilities/types';
 
 const checkStringExpressionStatement = (
@@ -134,6 +132,8 @@ const checkNumericExpressionStatement = (
 
   const dataTrigger = getTriggerNumericData(triggerTypeData, trigger);
 
+  // eslint-disable-next-line no-console
+  console.log(' DATA TRIGGER ', dataTrigger);
   if (dataTrigger === undefined) return;
 
   switch (condition.type) {
@@ -278,15 +278,25 @@ function getExpressionTriggerTypes(expression: Expression): TriggerType[] {
   }
 }
 
-export const generateRuleBasedOutputs = async (
-  model: CogniteCadModel,
-  contextualizedAssetNodes: Asset[],
-  assetMappings: AssetMapping3D[],
-  ruleSet: RuleOutputSet
-): Promise<AssetStylingGroupAndStyleIndex[]> => {
+export const generateRuleBasedOutputs = async ({
+  model,
+  contextualizedAssetNodes,
+  assetMappings,
+  ruleSet,
+  assetAndTimeseriesIds,
+  timeseriesDatapoints
+}: {
+  model: CogniteCadModel;
+  contextualizedAssetNodes: Asset[];
+  assetMappings: AssetMapping3D[];
+  ruleSet: RuleOutputSet;
+  assetAndTimeseriesIds: AssetAndTimeseriesIds[];
+  timeseriesDatapoints: Datapoints[] | undefined;
+}): Promise<AssetStylingGroupAndStyleIndex[]> => {
   const outputType = 'color'; // for now it only supports colors as the output
 
   const ruleWithOutputs = ruleSet?.rulesWithOutputs;
+
   return (
     await Promise.all(
       ruleWithOutputs?.map(async (ruleWithOutput: { rule: Rule; outputs: RuleOutput[] }) => {
@@ -305,25 +315,10 @@ export const generateRuleBasedOutputs = async (
 
         if (outputSelected === undefined) return;
 
-        const timeseriesFromRule = traverseExpressionToGetTimeseries([expression]) ?? [];
-
-        // const timeseriesExternalId = 'LOR_KARLSTAD_WELL_05_Well_TOTAL_GAS_PRODUCTION';
-        const assetAndTimeseries = useRetrieveAssetIdsFromTimeseries(timeseriesFromRule);
-
-        const { data: timeseriesDatapoints } = useTimeseriesLatestDatapointQuery(
-          assetAndTimeseries
-            .map((item): number | undefined => {
-              return item.timeseries?.id;
-            })
-            .filter(isDefined)
-        );
-        // eslint-disable-next-line no-console
-        console.log(' TIMESERIES ALL ', assetAndTimeseries, timeseriesDatapoints);
-
         return await analyzeNodesAgainstExpression({
           model,
           contextualizedAssetNodes,
-          assetAndTimeseries,
+          assetAndTimeseriesIds,
           timeseriesDatapoints,
           assetMappings,
           expression,
@@ -355,7 +350,7 @@ const getRuleOutputFromTypeSelected = (
 const analyzeNodesAgainstExpression = async ({
   model,
   contextualizedAssetNodes,
-  assetAndTimeseries,
+  assetAndTimeseriesIds,
   timeseriesDatapoints,
   assetMappings,
   expression,
@@ -363,7 +358,7 @@ const analyzeNodesAgainstExpression = async ({
 }: {
   model: CogniteCadModel;
   contextualizedAssetNodes: Asset[];
-  assetAndTimeseries: AssetAndTimeseriesIds[];
+  assetAndTimeseriesIds: AssetAndTimeseriesIds[];
   timeseriesDatapoints: Datapoints[] | undefined;
   assetMappings: AssetMapping3D[];
   expression: Expression;
@@ -373,22 +368,33 @@ const analyzeNodesAgainstExpression = async ({
     contextualizedAssetNodes.map(async (contextualizedAssetNode) => {
       const timeseriesDataForThisAsset = generateTimeseriesAndDatapointsFromTheAsset({
         contextualizedAssetNode,
-        assetAndTimeseries,
+        assetAndTimeseriesIds,
         timeseriesDatapoints
       });
-      const triggerData: TriggerTypeData[] = [
-        {
-          type: 'metadata',
-          asset: contextualizedAssetNode
-        },
-        {
+
+      const triggerData: TriggerTypeData[] = [];
+
+      const metadataTriggerData: TriggerTypeData = {
+        type: 'metadata',
+        asset: contextualizedAssetNode
+      };
+
+      triggerData.push(metadataTriggerData);
+
+      if (timeseriesDataForThisAsset.length > 0) {
+        const timeseriesTriggerData: TriggerTypeData = {
           type: 'timeseries',
           timeseries: {
             timeseriesWithDatapoints: timeseriesDataForThisAsset,
             linkedAssets: contextualizedAssetNode
           }
-        }
-      ];
+        };
+
+        triggerData.push(timeseriesTriggerData);
+      }
+
+      // eslint-disable-next-line no-console
+      console.log(' TRIGGER DATA AND EXPRESSION ', triggerData, expression);
       const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
 
       if (finalGlobalOutputResult[0] ?? false) {
@@ -413,14 +419,14 @@ const analyzeNodesAgainstExpression = async ({
 
 const generateTimeseriesAndDatapointsFromTheAsset = ({
   contextualizedAssetNode,
-  assetAndTimeseries,
+  assetAndTimeseriesIds,
   timeseriesDatapoints
 }: {
   contextualizedAssetNode: Asset;
-  assetAndTimeseries: AssetAndTimeseriesIds[];
+  assetAndTimeseriesIds: AssetAndTimeseriesIds[];
   timeseriesDatapoints: Datapoints[] | undefined;
 }): TimeseriesAndDatapoints[] => {
-  const timeseriesLinkedToThisAsset = assetAndTimeseries.filter(
+  const timeseriesLinkedToThisAsset = assetAndTimeseriesIds.filter(
     (item) => item.assetIds?.externalId === contextualizedAssetNode.externalId
   );
 
@@ -443,30 +449,31 @@ const generateTimeseriesAndDatapointsFromTheAsset = ({
   return timeseriesData;
 };
 
-const traverseExpressionToGetTimeseries = (expressions: Expression[]): string[] | undefined => {
+export const traverseExpressionToGetTimeseries = (
+  expressions: Expression[] | undefined
+): string[] | undefined => {
   let timeseriesExternalIdFound: string[] | undefined = [];
 
-  const timeseriesExternalIdResults: string[] = [];
-
-  expressions.forEach((expression) => {
-    switch (expression.type) {
-      case 'or':
-      case 'and': {
-        timeseriesExternalIdFound = traverseExpressionToGetTimeseries(expression.expressions);
-        break;
+  const timeseriesExternalIdResults = expressions
+    ?.map((expression) => {
+      switch (expression.type) {
+        case 'or':
+        case 'and': {
+          timeseriesExternalIdFound = traverseExpressionToGetTimeseries(expression.expressions);
+          break;
+        }
+        case 'not': {
+          timeseriesExternalIdFound = traverseExpressionToGetTimeseries([expression.expression]);
+          break;
+        }
+        case 'numericExpression': {
+          timeseriesExternalIdFound = getTimeseriesExternalIdFromNumericExpression(expression);
+          break;
+        }
       }
-      case 'not': {
-        timeseriesExternalIdFound = traverseExpressionToGetTimeseries([expression.expression]);
-        break;
-      }
-      case 'numericExpression': {
-        timeseriesExternalIdFound = getTimeseriesExternalIdFromNumericExpression(expression);
-        break;
-      }
-    }
-    const filteredTimeseriesFound = timeseriesExternalIdFound?.filter(isDefined) ?? []; // linter doesn't recognize the filtered output from isDefined
-    timeseriesExternalIdResults.concat(filteredTimeseriesFound);
-  });
+      return timeseriesExternalIdFound?.filter(isDefined) ?? []; // linter doesn't recognize the filtered output from isDefined
+    })
+    .flat();
 
   return timeseriesExternalIdResults;
 };

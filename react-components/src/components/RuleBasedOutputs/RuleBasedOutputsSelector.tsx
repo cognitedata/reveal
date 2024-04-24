@@ -6,12 +6,13 @@ import { useEffect, type ReactElement, useState } from 'react';
 import { CogniteCadModel } from '@cognite/reveal';
 import { useAllMappedEquipmentAssetMappings } from '../..';
 import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types';
-import { generateRuleBasedOutputs } from './utils';
+import { generateRuleBasedOutputs, traverseExpressionToGetTimeseries } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { type ExternalId, type Asset } from '@cognite/sdk';
-import { useRelationshipsQuery } from '../../query/useRelationshipQuery';
-import { useTimeseriesByIdsQuery } from '../../query/useTimeseriesByIdsQuery';
+import { type Asset } from '@cognite/sdk';
+import { isDefined } from '../../utilities/isDefined';
+import { useAssetIdsFromTimeseriesQuery } from '../../query/useAssetIdsFromTimeseriesQuery';
+import { useTimeseriesLatestDatapointQuery } from '../../query/useTimeseriesLatestDatapointQuery';
 
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
@@ -22,6 +23,8 @@ export function RuleBasedOutputsSelector({
   ruleSet,
   onRuleSetChanged
 }: ColorOverlayProps): ReactElement | undefined {
+  if (ruleSet === undefined) return;
+
   const models = use3dModels();
 
   const [stylingGroups, setStylingsGroups] = useState<AssetStylingGroupAndStyleIndex[]>();
@@ -33,23 +36,19 @@ export function RuleBasedOutputsSelector({
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(models);
 
-  const timeseriesExternalId = '21PT1019.name2';
+  const expressions = ruleSet?.rulesWithOutputs
+    .map((ruleSet) => ruleSet.rule.expression)
+    .filter(isDefined);
+  const timeseriesExternalIdsFromRule = traverseExpressionToGetTimeseries(expressions) ?? [];
 
-  const dataRelationship = useRelationshipsQuery({
-    resourceExternalIds: timeseriesExternalId.length > 0 ? [timeseriesExternalId] : [],
-    relationshipResourceTypes: ['asset']
-  });
-
-  // eslint-disable-next-line no-console
-  console.log(' TIMESERIES RELATIONSHIP TEST ', dataRelationship.data);
-
-  const resourceExternalId: ExternalId = {
-    externalId: timeseriesExternalId
-  };
-  const { data } = useTimeseriesByIdsQuery([resourceExternalId]);
-
-  // eslint-disable-next-line no-console
-  console.log(' TIMESERIES TEST ', data);
+  const assetAndTimeseriesIds = useAssetIdsFromTimeseriesQuery(timeseriesExternalIdsFromRule);
+  const timeseriesDatapoints = useTimeseriesLatestDatapointQuery(
+    assetAndTimeseriesIds
+      .map((item): number | undefined => {
+        return item.timeseries?.id;
+      })
+      .filter(isDefined)
+  );
 
   useEffect(() => {
     if (!isFetching && hasNextPage === true) {
@@ -81,12 +80,14 @@ export function RuleBasedOutputsSelector({
         .flatMap((item) => item.assets)
         .map(convertAssetMetadataKeysToLowerCase);
 
-      const collectionStylings = await generateRuleBasedOutputs(
+      const collectionStylings = await generateRuleBasedOutputs({
         model,
         contextualizedAssetNodes,
-        flatMappings,
-        ruleSet
-      );
+        assetMappings: flatMappings,
+        ruleSet,
+        assetAndTimeseriesIds,
+        timeseriesDatapoints
+      });
 
       setStylingsGroups(collectionStylings);
     };
