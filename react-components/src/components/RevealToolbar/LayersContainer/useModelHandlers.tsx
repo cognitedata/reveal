@@ -58,7 +58,7 @@ export const useModelHandlers = (
       setExternalLayersState?.(newExternalState);
       viewer.requestRedraw();
     },
-    [setExternalLayersState, viewer]
+    [setExternalLayersState, models, modelNames.data]
   );
 
   return [modelHandlers, update];
