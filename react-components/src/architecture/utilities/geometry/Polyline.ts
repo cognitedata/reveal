@@ -14,14 +14,6 @@ export class Polyline extends Points {
   public isClosed: boolean = false;
 
   // ==================================================
-  // CONSTRUCTOR
-  // ==================================================
-
-  public constructor() {
-    super();
-  }
-
-  // ==================================================
   // OVERRIDES of Shape:
   // ==================================================
 
