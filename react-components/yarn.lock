@@ -1727,7 +1727,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.5.0"
     "@cognite/cogs.js": "npm:^9.17.0"
-    "@cognite/reveal": "npm:4.11.0"
+    "@cognite/reveal": "npm:4.12.1"
     "@cognite/sdk": "npm:^8.2.0"
     "@playwright/test": "npm:^1.39.0"
     "@storybook/addon-essentials": "npm:7.6.17"
@@ -1776,23 +1776,23 @@ __metadata:
     styled-components: "npm:^6.1.1"
     three: "npm:0.158.0"
     ts-loader: "npm:9.5.1"
-    typescript: "npm:5.4.2"
+    typescript: "npm:5.4.5"
     vite: "npm:^5.0.0"
     vite-plugin-dts: "npm:^3.5.3"
     vite-plugin-externalize-deps: "npm:^0.8.0"
     vitest: "npm:^1.0.0"
   peerDependencies:
     "@cognite/cogs.js": ">=9"
-    "@cognite/reveal": 4.11.0
+    "@cognite/reveal": 4.12.1
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:4.11.0":
-  version: 4.11.0
-  resolution: "@cognite/reveal@npm:4.11.0"
+"@cognite/reveal@npm:4.12.1":
+  version: 4.12.1
+  resolution: "@cognite/reveal@npm:4.12.1"
   dependencies:
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:19.0.0"
@@ -1812,7 +1812,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.158.0
-  checksum: 10/531c74d773870df8761e0b74b7dec355f27142b425071feb0b5e9cb906d3a51935ded035ed9f4035d3d2054968ec315639062023422190ba80139ab5955150c8
+  checksum: 10/c5e97742cd7a64ef289da57bcd13ec7fa093e4165b921f07ce56034fddc732aec916d0e758155bc0104f4255755aea47a5205f43779096a7d732a539b9825448
   languageName: node
   linkType: hard
 
@@ -9100,12 +9100,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.15.0":
-  version: 1.15.6
-  resolution: "follow-redirects@npm:1.15.6"
+  version: 1.15.4
+  resolution: "follow-redirects@npm:1.15.4"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10/70c7612c4cab18e546e36b991bbf8009a1a41cf85354afe04b113d1117569abf760269409cb3eb842d9f7b03d62826687086b081c566ea7b1e6613cf29030bf7
+  checksum: 10/2e8f5f259a6b02dfa8dc199e08431848a7c3beed32eb4c19945966164a52c89f07b86c3afcc32ebe4279cf0a960520e45a63013d6350309c5ec90133c5d9351a
   languageName: node
   linkType: hard
 
@@ -9786,13 +9786,13 @@ __metadata:
   linkType: hard
 
 "happy-dom@npm:^13.0.0":
-  version: 13.8.2
-  resolution: "happy-dom@npm:13.8.2"
+  version: 13.6.2
+  resolution: "happy-dom@npm:13.6.2"
   dependencies:
     entities: "npm:^4.5.0"
     webidl-conversions: "npm:^7.0.0"
     whatwg-mimetype: "npm:^3.0.0"
-  checksum: 10/b49a8f71d46b245584f81b8ba3c64b71e442351732d864432020200bc9abfe5a60475280260ce965cdebac4758491432edd70fc6aa13932eb36782f5fbb0fb1a
+  checksum: 10/e97f2ba59ea03c4ad5e1c395a54a483a52bf97421d497745c5c0a2588f94ff478cfd1a434790bceb8b27a591cbb5989bc7c785b0d5cc57584ca010c03c0778f8
   languageName: node
   linkType: hard
 
@@ -15516,13 +15516,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.4.2":
-  version: 5.4.2
-  resolution: "typescript@npm:5.4.2"
+"typescript@npm:5.4.5":
+  version: 5.4.5
+  resolution: "typescript@npm:5.4.5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/f8cfdc630ab1672f004e9561eb2916935b2d267792d07ce93e97fc601c7a65191af32033d5e9c0169b7dc37da7db9bf320f7432bc84527cb7697effaa4e4559d
+  checksum: 10/d04a9e27e6d83861f2126665aa8d84847e8ebabcea9125b9ebc30370b98cb38b5dff2508d74e2326a744938191a83a69aa9fddab41f193ffa43eabfdf3f190a5
   languageName: node
   linkType: hard
 
@@ -15536,13 +15536,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>":
-  version: 5.4.2
-  resolution: "typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>::version=5.4.2&hash=5adc0c"
+"typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>":
+  version: 5.4.5
+  resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=5adc0c"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/f5f9a4133c2670761f0166eae5b3bafbc4a3fc24f0f42a93c9c893d9e9d6e66ea066969c5e7483fa66b4ae0e99125592553f3b92fd3599484de8be13b0615176
+  checksum: 10/760f7d92fb383dbf7dee2443bf902f4365db2117f96f875cf809167f6103d55064de973db9f78fe8f31ec08fff52b2c969aee0d310939c0a3798ec75d0bca2e1
   languageName: node
   linkType: hard
 
