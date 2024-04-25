@@ -10,27 +10,31 @@ import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Range3 } from '../utilities/geometry/Range3';
 
+/**
+ * Represents an abstract base class for a Three.js view in the application.
+ * Extends the `BaseView` class.
+ */
 export abstract class ThreeView extends BaseView {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   private _boundingBox: Range3 | undefined = undefined;
-  private _target: RevealRenderTarget | undefined = undefined;
+  private _renderTarget: RevealRenderTarget | undefined = undefined;
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
   public get hasRenderTarget(): boolean {
-    return this._target !== undefined;
+    return this._renderTarget !== undefined;
   }
 
   public get renderTarget(): RevealRenderTarget {
-    if (this._target === undefined) {
+    if (this._renderTarget === undefined) {
       throw Error('The RevealRenderTarget is missing in the view');
     }
-    return this._target;
+    return this._renderTarget;
   }
 
   protected get style(): RenderStyle | undefined {
@@ -66,7 +70,7 @@ export abstract class ThreeView extends BaseView {
 
   public override dispose(): void {
     super.dispose();
-    this._target = undefined;
+    this._renderTarget = undefined;
   }
 
   // ==================================================
@@ -106,7 +110,7 @@ export abstract class ThreeView extends BaseView {
 
   public attach(domainObject: DomainObject, target: RevealRenderTarget): void {
     this.domainObject = domainObject;
-    this._target = target;
+    this._renderTarget = target;
   }
 
   protected invalidate(): void {

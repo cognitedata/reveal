@@ -9,8 +9,15 @@ import {
 } from '@cognite/reveal';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../concreteTools/NavigationTool';
-import { type Object3D, Group } from 'three';
+import { type Object3D, Group, Vector3, AmbientLight, DirectionalLight } from 'three';
 import { ToolControllers } from './ToolController';
+import { RootDomainObject } from '../domainObjects/RootDomainObject';
+import { Range3 } from '../utilities/geometry/Range3';
+import { createFractalRegularGrid2 } from '../utilities/geometry/createFractalRegularGrid2';
+import { SurfaceDomainObject } from '../surfaceDomainObject/SurfaceDomainObject';
+import { toRad } from '../utilities/extensions/mathExtensions';
+
+const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
 export class RevealRenderTarget {
   // ==================================================
@@ -31,9 +38,10 @@ export class RevealRenderTarget {
     this._toolController = new ToolControllers(this.domElement);
     this._toolController.addEventListeners();
 
-    this._rootObject3D = new Group();
-    this._rootObject3D.visible = true;
+    this._rootObject3D = this.createRootGroup();
     this._viewer.addObject3D(this._rootObject3D);
+
+    this._viewer.on('cameraChange', this.updateLightPosition);
   }
 
   // ==================================================
@@ -90,4 +98,73 @@ export class RevealRenderTarget {
   public invalidate(): void {
     this._viewer.requestRedraw();
   }
+
+  public test(): void {
+    const root = RootDomainObject.active;
+    const surfaceDomainObject = new SurfaceDomainObject();
+    root.addChildInteractive(surfaceDomainObject);
+
+    const range = new Range3(new Vector3(0, 0, 0), new Vector3(1000, 1000, 200));
+    surfaceDomainObject.surface = createFractalRegularGrid2(range, 8, 0.7, 3);
+
+    surfaceDomainObject.setVisibleInteractive(true, this);
+  }
+
+  private createRootGroup(): Group {
+    const group = new Group();
+    const ambientLight = new AmbientLight(0xffffff, 0.5); // soft white light
+    const directionalLight = new DirectionalLight(0xffffff);
+    directionalLight.name = DIRECTIONAL_LIGHT_NAME;
+    directionalLight.position.set(0, 1, 0);
+    group.add(ambientLight);
+    group.add(directionalLight);
+    return group;
+  }
+
+  private get directionalLight(): DirectionalLight | undefined {
+    return this._rootObject3D.getObjectByName(DIRECTIONAL_LIGHT_NAME) as DirectionalLight;
+  }
+
+  updateLightPosition = (position: Vector3, target: Vector3): void => {
+    const light = this.directionalLight;
+    if (light === undefined) {
+      return;
+    }
+    const camera = this.viewer.cameraManager.getCamera();
+
+    // The idea of this function is letting the light track the camera,
+    const vectorToCenter = position.clone();
+    vectorToCenter.sub(target);
+
+    // Get camera direction
+    const cameraDirection = new Vector3();
+    camera.getWorldDirection(cameraDirection);
+
+    let vectorLength = vectorToCenter.length();
+    vectorToCenter.normalize();
+
+    console.log('ssss');
+    console.log(vectorToCenter);
+    console.log(cameraDirection);
+
+    // Vector direction is opposite to camera direction
+
+    const horizontalAxis = vectorToCenter.clone();
+    const verticalAxis = new Vector3(0, 1, 0);
+
+    horizontalAxis.y = 0;
+    horizontalAxis.normalize();
+    horizontalAxis.applyAxisAngle(verticalAxis, Math.PI / 2);
+
+    verticalAxis.crossVectors(horizontalAxis, vectorToCenter);
+
+    vectorToCenter.applyAxisAngle(verticalAxis, toRad(0)); // Azimuth angle
+    vectorToCenter.applyAxisAngle(horizontalAxis, -toRad(0)); // Dip angle
+
+    vectorLength = Math.max(vectorLength, 100_000); // Move the light far away
+    vectorToCenter.multiplyScalar(vectorLength);
+    vectorToCenter.add(target);
+
+    light.position.copy(vectorToCenter);
+  };
 }

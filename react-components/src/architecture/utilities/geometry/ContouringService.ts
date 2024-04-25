@@ -49,18 +49,27 @@ export class ContouringService {
         if (isDef2) triangleCount += 1;
         if (isDef3) triangleCount += 1;
 
-        if (triangleCount < 3) continue;
-
+        if (triangleCount < 3) {
+          continue;
+        }
         // (i,j+1)     (i+1,j+1)
         //     3------2
         //     |      |
         //     0------1
         // (i,j)       (i+1,j)
 
-        if (!isDef0) this.addTriangle(p1, p2, p3);
-        if (triangleCount === 4 || !isDef1) this.addTriangle(p0, p2, p3);
-        if (!isDef2) this.addTriangle(p0, p1, p3);
-        if (triangleCount === 4 || !isDef3) this.addTriangle(p0, p1, p2);
+        if (!isDef0) {
+          this.addTriangle(p1, p2, p3);
+        }
+        if (triangleCount === 4 || !isDef1) {
+          this.addTriangle(p0, p2, p3);
+        }
+        if (!isDef2) {
+          this.addTriangle(p0, p1, p3);
+        }
+        if (triangleCount === 4 || !isDef3) {
+          this.addTriangle(p0, p1, p2);
+        }
       }
     }
     return this._positions;
@@ -137,8 +146,9 @@ export class ContouringService {
       else this.addLinearInterpolation(c, a, z);
       numPoints += 1;
     }
-    if (numPoints === 2) return true;
-
+    if (numPoints === 2) {
+      return true;
+    }
     if (numPoints === 1) {
       // Remove the last added
       this._positions.pop();
@@ -149,7 +159,7 @@ export class ContouringService {
   }
 
   private add(position: Vector3): void {
-    this._positions.push(position.y, position.y, position.z);
+    this.addXyz(position.y, position.y, position.z);
   }
 
   private addLinearInterpolation(a: Vector3, b: Vector3, z: number): void {
@@ -157,6 +167,10 @@ export class ContouringService {
     // a.Z and b.Z is assumed to be different (Check by yourself)
     // Returns  a + (b-a)*(z-a.Z)/(b.Z-a.Z);  (unrolled code)
     const f = (z - a.z) / (b.z - a.z);
-    this._positions.push((b.x - a.x) * f + a.x, (b.y - a.y) * f + a.y, z);
+    this.addXyz((b.x - a.x) * f + a.x, (b.y - a.y) * f + a.y, z);
+  }
+
+  private addXyz(x: number, y: number, z: number): void {
+    this._positions.push(x, z, y);
   }
 }

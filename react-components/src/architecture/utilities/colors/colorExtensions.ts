@@ -6,6 +6,7 @@ import { Color, type HSL } from 'three';
 
 export const WHITE_COLOR = new Color(1, 1, 1);
 export const BLACK_COLOR = new Color(0, 0, 0);
+export const MAX_BYTE = 255;
 
 export function getMixedColor(color: Color, other: Color, fraction = 0.5): Color {
   const otherFraction = 1 - fraction;
@@ -48,6 +49,10 @@ export function getGammaCorrectedColor(color: Color, gamma = 2.2): Color {
   return new Color(r, g, b);
 }
 
+export function fractionToByte(fraction: number): number {
+  return fraction * MAX_BYTE;
+}
+
 export function getColorFromBytes(r: number, g: number, b: number): Color {
-  return new Color(r / 255.0, g / 255.0, b / 255.0);
+  return new Color(r / MAX_BYTE, g / MAX_BYTE, b / MAX_BYTE);
 }

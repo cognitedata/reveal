@@ -32,11 +32,14 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
       for (let i = grid.nodeSize.i - 1; i >= 0; i--) {
         const nodeIndex = grid.getNodeIndex(i, j);
         const uniqueIndex = uniqueIndexes[nodeIndex];
-        if (uniqueIndex < 0) continue;
+        if (uniqueIndex < 0) {
+          continue;
+        }
+        if (!grid.getRelativeNodePosition(i, j, position)) {
+          continue;
+        }
+        grid.getNormal(i, j, position.z, true, normal);
 
-        if (!grid.getRelativeNodePosition(i, j, position)) continue;
-
-        grid.getNormal(i, j, position.z, false, normal);
         const u = zRange.getFraction(position.z);
         this.setAt(uniqueIndex, position, normal, u);
       }
@@ -64,18 +67,27 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
         if (unique2 >= 0) triangleCount += 1;
         if (unique3 >= 0) triangleCount += 1;
 
-        if (triangleCount < 3) continue;
-
+        if (triangleCount < 3) {
+          continue;
+        }
         // (i,j+1)     (i+1,j+1)
         //     3------2
         //     |      |
         //     0------1
         // (i,j)       (i+1,j)
 
-        if (unique0 < 0) this.addTriangle(unique1, unique2, unique3);
-        if (triangleCount === 4 || unique1 < 0) this.addTriangle(unique0, unique2, unique3);
-        if (unique2 < 0) this.addTriangle(unique0, unique1, unique3);
-        if (triangleCount === 4 || unique3 < 0) this.addTriangle(unique0, unique1, unique2);
+        if (unique0 < 0) {
+          this.addTriangle(unique1, unique2, unique3);
+        }
+        if (triangleCount === 4 || unique1 < 0) {
+          this.addTriangle(unique0, unique2, unique3);
+        }
+        if (unique2 < 0) {
+          this.addTriangle(unique0, unique1, unique3);
+        }
+        if (triangleCount === 4 || unique3 < 0) {
+          this.addTriangle(unique0, unique1, unique2);
+        }
       }
     }
   }
@@ -86,10 +98,12 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
     for (let j = grid.nodeSize.j - 1; j >= 0; j--) {
       for (let i = grid.nodeSize.i - 1; i >= 0; i--) {
         const nodeIndex = grid.getNodeIndex(i, j);
-        if (grid.isNodeDef(i, j)) {
-          uniqueIndexes[nodeIndex] = numUniqueIndex;
-          numUniqueIndex += 1;
-        } else uniqueIndexes[nodeIndex] = -1;
+        if (!grid.isNodeDef(i, j)) {
+          uniqueIndexes[nodeIndex] = -1;
+          continue;
+        }
+        uniqueIndexes[nodeIndex] = numUniqueIndex;
+        numUniqueIndex += 1;
       }
     }
     return [uniqueIndexes, numUniqueIndex];

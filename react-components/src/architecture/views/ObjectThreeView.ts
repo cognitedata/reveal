@@ -8,12 +8,22 @@ import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 import { Changes } from '../utilities/misc/Changes';
 import { Range3 } from '../utilities/geometry/Range3';
 
+/**
+ * Represents an abstract class for a Three.js view that renders an Object3D.
+ * This class extends the ThreeView class.
+ * @remarks
+ * You only have to override createObject3D() to create the object to be render.
+ */
 export abstract class ObjectThreeView extends ThreeView {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   protected _object3D: Object3D | undefined = undefined;
+
+  // ==================================================
+  // INSTANCE PROPERTIES
+  // ==================================================
 
   protected get hasObject3D(): boolean {
     return this._object3D !== undefined;
@@ -29,6 +39,13 @@ export abstract class ObjectThreeView extends ThreeView {
   // ==================================================
   // OVERRIDES of BaseView
   // ==================================================
+
+  public initialize(): void {
+    super.initialize();
+    if (this._object3D === undefined) {
+      this.makeObject();
+    }
+  }
 
   public override update(change: DomainObjectChange): void {
     super.update(change);

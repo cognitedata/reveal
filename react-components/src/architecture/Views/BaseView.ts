@@ -5,6 +5,9 @@
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 
+/**
+ * Represents a base view class that provides common functionality for views.
+ */
 export abstract class BaseView {
   // ==================================================
   // INSTANCE FIELDS
@@ -15,6 +18,10 @@ export abstract class BaseView {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
+
+  protected get hasDomainObject(): boolean {
+    return this._domainObject !== undefined;
+  }
 
   protected get domainObject(): DomainObject {
     if (this._domainObject === undefined) {

@@ -43,12 +43,14 @@ export class TrianglesBuffers {
   // INSTANCE METHODS: Getters
   // ==================================================
 
-  public getBufferGeometry(): BufferGeometry {
+  public createBufferGeometry(): BufferGeometry {
     const geometry = new BufferGeometry();
     geometry.setAttribute('position', new Float32BufferAttribute(this.positions, 3, true));
     geometry.setAttribute('normal', new Float32BufferAttribute(this.normals, 3, false)); // Auto normalizing
     geometry.setIndex(new Uint32BufferAttribute(this.triangleIndexes, 1, true));
-    if (this.hasUvs) geometry.setAttribute('uv', new Float32BufferAttribute(this.uvs, 2, true));
+    if (this.hasUvs) {
+      geometry.setAttribute('uv', new Float32BufferAttribute(this.uvs, 2, true));
+    }
     return geometry;
   }
 
@@ -74,7 +76,7 @@ export class TrianglesBuffers {
     this.add(p2, n2, u);
   }
 
-  public addPair2(p1: Vector3, p2: Vector3, normal: Vector3, fraction: number): void {
+  public addPair2(p1: Vector3, p2: Vector3, normal: Vector3, u: number): void {
     if (this.uniqueIndex >= 2) {
       //     2------3
       //     |      |
@@ -88,46 +90,31 @@ export class TrianglesBuffers {
       this.addTriangle(unique0, unique3, unique1);
     }
     if (this.hasUvs) {
-      this.add(p1, normal, fraction, 1);
-      this.add(p2, normal, fraction, 0);
+      this.add(p1, normal, u);
+      this.add(p2, normal, u);
     }
   }
 
   protected add(position: Vector3, normal: Vector3, u = 0, v = 0): void {
-    {
-      const index = 3 * this.uniqueIndex;
-      this.positions[index + 0] = position.x;
-      this.positions[index + 1] = position.y;
-      this.positions[index + 2] = position.z;
-      this.normals[index + 0] = normal.x;
-      this.normals[index + 1] = normal.y;
-      this.normals[index + 2] = normal.z;
-    }
-    if (this.hasUvs) {
-      const index = 2 * this.uniqueIndex;
-      this.uvs[index + 0] = u;
-      this.uvs[index + 1] = v;
-    }
-    this.uniqueIndex += 1;
+    this.setAt(this.uniqueIndex, position, normal, u, v);
+    this.uniqueIndex++;
   }
 
-  protected setAt(uniqueIndex: number, position: Vector3, normal: Vector3, u = 0): void {
+  protected setAt(uniqueIndex: number, position: Vector3, normal: Vector3, u = 0, v = 0): void {
     {
       const index = 3 * uniqueIndex;
       this.positions[index + 0] = position.x;
-      this.positions[index + 1] = position.y;
-      this.positions[index + 2] = position.z;
+      this.positions[index + 1] = position.z;
+      this.positions[index + 2] = position.y;
       this.normals[index + 0] = normal.x;
-      this.normals[index + 1] = normal.y;
-      this.normals[index + 2] = normal.z;
+      this.normals[index + 1] = -normal.z;
+      this.normals[index + 2] = normal.y;
     }
-    if (this.hasUvs) this.setUAt(uniqueIndex, u);
-  }
-
-  public setUAt(uniqueIndex: number, u: number): void {
-    const index = 2 * uniqueIndex;
-    this.uvs[index + 0] = u;
-    this.uvs[index + 1] = 0;
+    if (this.hasUvs) {
+      const index = 2 * uniqueIndex;
+      this.uvs[index + 0] = u;
+      this.uvs[index + 1] = v;
+    }
   }
 
   protected addTriangle(index0: number, index1: number, index2: number): void {

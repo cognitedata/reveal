@@ -7,11 +7,17 @@ import { type Color } from 'three';
 import { ColorMapItem } from './ColorMapItem';
 import { compare } from '../extensions/mathExtensions';
 import { ColorMapType } from './ColorMapType';
-import { BLACK_COLOR, WHITE_COLOR, getMixedColor } from './colorExtensions';
+import {
+  BLACK_COLOR,
+  MAX_BYTE,
+  WHITE_COLOR,
+  fractionToByte,
+  getMixedColor
+} from './colorExtensions';
 import { type Range1 } from '../geometry/Range1';
 
 export const BYTE_PR_COLOR = 4; // RGBA
-export const TEXTURE_1D_WIDTH = 2;
+export const TEXTURE_1D_WIDTH = 2; // Width 2 because this is the minimum
 const TEXTURE_1D_SIZE = 1000;
 
 export class ColorMap {
@@ -79,55 +85,46 @@ export class ColorMap {
   // INSTANCE METHODS: Operations
   // ==================================================
 
-  public create1DColors(size: number = TEXTURE_1D_SIZE): Uint8Array {
-    const rgbaArray = new Uint8Array(BYTE_PR_COLOR * size * TEXTURE_1D_WIDTH);
-
-    let index1 = 0;
-    let index2 = size;
+  public createColors(size: number = TEXTURE_1D_SIZE): Uint8Array {
+    const rgbaArray = new Uint8Array(size * BYTE_PR_COLOR * TEXTURE_1D_WIDTH);
     const indexInColorMap = new Index();
 
-    for (let i = 0; i < size; i++) {
-      const fraction = i / (size - 1);
+    for (let index1 = 0, index2 = size; index1 < size; index1++, index2++) {
+      const fraction = index1 / (size - 1);
       const color = this.getColorFast(fraction, indexInColorMap);
-      setAt(rgbaArray, (index1 += 1), color);
-      setAt(rgbaArray, (index2 += 1), color);
+      setAt(rgbaArray, index1, color);
+      setAt(rgbaArray, index2, color);
     }
     return rgbaArray;
   }
 
-  public create1DContourColors(
+  public createColorsWithContours(
     range: Range1,
     increment: number,
     volume: number,
     solidColor?: Color,
     size: number = TEXTURE_1D_SIZE
   ): Uint8Array {
-    const rgbaArray = new Uint8Array(BYTE_PR_COLOR * size * TEXTURE_1D_WIDTH);
-
-    let index1 = 0;
-    let index2 = size;
+    const rgbaArray = new Uint8Array(size * BYTE_PR_COLOR * TEXTURE_1D_WIDTH);
     const indexInColorMap = new Index();
-
-    for (let i = 0; i < size; i++) {
-      const fraction = i / (size - 1);
+    for (let index1 = 0, index2 = size; index1 < size; index1++, index2++) {
+      const fraction = index1 / (size - 1);
       const level = range.getValue(fraction);
       const reminder = level % increment;
-      let contourFraction = reminder / increment;
-      if (contourFraction < 1) {
-        contourFraction += 1;
-      }
+      const contourFraction = reminder / increment;
+
       // Get color in the middle
-      const middleLevel = level - reminder - increment / 2;
+      const middleLevel = level - reminder + increment / 2;
       const middleFraction = range.getFraction(middleLevel);
 
       let color = solidColor ?? this.getColorFast(middleFraction, indexInColorMap);
       if (contourFraction < 0.5) {
-        color = getMixedColor(color, WHITE_COLOR, volume * (0.5 - contourFraction));
+        color = getMixedColor(WHITE_COLOR, color, volume * (0.5 - contourFraction));
       } else {
-        color = getMixedColor(color, BLACK_COLOR, volume * (contourFraction - 0.5));
+        color = getMixedColor(BLACK_COLOR, color, volume * (contourFraction - 0.5));
       }
-      setAt(rgbaArray, (index1 += 1), color);
-      setAt(rgbaArray, (index2 += 1), color);
+      setAt(rgbaArray, index1, color);
+      setAt(rgbaArray, index2, color);
     }
     return rgbaArray;
   }
@@ -135,10 +132,10 @@ export class ColorMap {
 
 function setAt(rgbaArray: Uint8Array, index: number, color: Color): void {
   const i = index * BYTE_PR_COLOR;
-  rgbaArray[i + 0] = color.r * 255;
-  rgbaArray[i + 1] = color.g * 255;
-  rgbaArray[i + 2] = color.b * 255;
-  rgbaArray[i + 3] = 255;
+  rgbaArray[i + 0] = fractionToByte(color.r);
+  rgbaArray[i + 1] = fractionToByte(color.g);
+  rgbaArray[i + 2] = fractionToByte(color.b);
+  rgbaArray[i + 3] = MAX_BYTE;
 }
 
 class Index {

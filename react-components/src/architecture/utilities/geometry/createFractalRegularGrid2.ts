@@ -12,7 +12,7 @@ export function createFractalRegularGrid2(
   powerOf2: number,
   dampning: number = 0.7,
   smoothNumberOfPasses: number = 0,
-  rotationAngle: number
+  rotationAngle: number = 0
 ): RegularGrid2 {
   const origin = new Vector2();
   const inc = new Vector2(1, 1);

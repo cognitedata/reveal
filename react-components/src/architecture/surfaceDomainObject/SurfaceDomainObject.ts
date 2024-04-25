@@ -62,7 +62,7 @@ export class SurfaceDomainObject extends VisualDomainObject {
     if (
       style.increment <= 0 ||
       style.increment > zRange.delta ||
-      style.increment < zRange.delta * 200
+      style.increment < zRange.delta / 200
     ) {
       style.increment = zRange.getBestInc();
     }

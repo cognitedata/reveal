@@ -22,7 +22,7 @@ import { DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 import { Changes } from '../utilities/misc/Changes';
 import { RegularGrid2Buffers } from '../utilities/geometry/RegularGrid2Buffers';
 import { Range3 } from '../utilities/geometry/Range3';
-import { create1DContours, create1DTexture } from '../utilities/colors/create1DTexture';
+import { create1DTextureWithContours, create1DTexture } from '../utilities/colors/create1DTexture';
 import { SurfaceRenderStyle } from './SurfaceRenderStyle';
 import { ColorType } from '../utilities/colors/ColorType';
 import { WHITE_COLOR } from '../utilities/colors/colorExtensions';
@@ -60,7 +60,7 @@ export class SurfaceThreeView extends ObjectThreeView {
     if (change.isChanged(Changes.renderStyle)) {
       const solid = this._object3D.getObjectByName(SOLID_NAME) as Mesh;
       if (solid !== undefined) {
-        setMaterial(solid.material as MeshPhongMaterial, this.surfaceDomainObject, this.style);
+        setSolidMaterial(solid.material as MeshPhongMaterial, this.surfaceDomainObject, this.style);
         this.invalidate();
         return;
       }
@@ -106,7 +106,7 @@ export class SurfaceThreeView extends ObjectThreeView {
     }
     group.rotateZ(surface.rotationAngle);
     group.position.x = surface.origin.x;
-    group.position.y = surface.origin.y;
+    group.position.z = surface.origin.y;
     return group;
   }
 
@@ -125,15 +125,17 @@ export class SurfaceThreeView extends ObjectThreeView {
       return undefined;
     }
     const buffers = new RegularGrid2Buffers(surface, true);
-    const geometry = buffers.getBufferGeometry();
+    const geometry = buffers.createBufferGeometry();
 
     const material = new MeshPhongMaterial({
       side: DoubleSide,
-      polygonOffset: true,
+      shadowSide: DoubleSide,
+      polygonOffset: style.showContours, // Because of the countours to be visible
       polygonOffsetFactor: 1,
       polygonOffsetUnits: 4.0
     });
-    setMaterial(material, surfaceDomainObject, style);
+
+    setSolidMaterial(material, surfaceDomainObject, style);
 
     const mesh = new Mesh(geometry, material);
     mesh.name = SOLID_NAME;
@@ -174,7 +176,7 @@ export class SurfaceThreeView extends ObjectThreeView {
 // LOCAL FUNCTIONS
 // ==================================================
 
-function setMaterial(
+function setSolidMaterial(
   material: MeshPhongMaterial,
   surfaceDomainObject: SurfaceDomainObject,
   style: SurfaceRenderStyle,
@@ -188,8 +190,9 @@ function setMaterial(
     material.shininess = style.solidShininessUse ? 100 * style.solidShininess : 0;
   }
   const texture = createTexture(surfaceDomainObject, style);
+  material.specular = WHITE_COLOR;
   if (texture !== undefined) {
-    texture.anisotropy = 4;
+    texture.anisotropy = 2;
     material.color = WHITE_COLOR;
     material.map = texture;
   } else {
@@ -204,13 +207,13 @@ function createTexture(
   if (style.solidColorType !== ColorType.ColorMap && !style.solidContourUse) {
     return undefined;
   }
-  const colorMap = getColorMap(style.colorMapType);
+  const colorMap = getColorMap(style.solidColorMapType);
   if (colorMap === undefined) {
     return undefined;
   }
   let color: Color | undefined;
   if (style.solidColorType === ColorType.ColorMap) {
-    if (style.solidContourUse) {
+    if (!style.solidContourUse) {
       return create1DTexture(colorMap);
     }
   } else {
@@ -220,11 +223,11 @@ function createTexture(
   if (surface === undefined) {
     return undefined;
   }
-  return create1DContours(
+  return create1DTextureWithContours(
     colorMap,
     surface.boundingBox.z,
     style.increment,
-    style.solidContour,
+    style.solidContourVolume,
     color
   );
 }

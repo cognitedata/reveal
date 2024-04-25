@@ -14,21 +14,21 @@ export class SurfaceRenderStyle extends RenderStyle {
 
   public showContours = true;
   public contoursColorType = ColorType.Black;
-  public colorMapType = ColorMapType.Terrain;
 
   public showSolid = true;
   public solidColorType = ColorType.ColorMap;
+  public solidColorMapType = ColorMapType.Terrain;
 
-  public solidContour = 0.5;
+  public solidContourVolume = 0.5;
   public solidContourUse = true;
 
-  public solidShininess = 0.5;
+  public solidShininess = 0.15;
   public solidShininessUse = true;
 
   public solidOpacity = 0.5;
   public solidOpacityUse = false;
 
-  public increment = 5;
+  public increment = 20;
 
   // ==================================================
   // OVERRIDES of BaseStyle
