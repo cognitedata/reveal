@@ -28,7 +28,8 @@ export {
   FlexibleControlsOptions,
   FlexibleWheelZoomType,
   FlexibleControlsType,
-  FlexibleMouseActionType
+  FlexibleMouseActionType,
+  isFlexibleCameraManager
 } from '../packages/camera-manager';
 
 export {
@@ -69,6 +70,8 @@ export {
   CustomObject,
   CustomObjectIntersection,
   CustomObjectIntersectInput,
+  PointerEventsTarget,
+  PointerEvents,
   getNormalizedPixelCoordinatesBySize,
   getNormalizedPixelCoordinates,
   CDF_TO_VIEWER_TRANSFORMATION
