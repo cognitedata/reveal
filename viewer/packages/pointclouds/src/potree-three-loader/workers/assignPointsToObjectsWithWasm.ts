@@ -6,6 +6,7 @@ import { SerializableStylableObject } from '@reveal/data-providers';
 import { assertNever, SerializableCylinder, SerializableBox, ShapeType } from '@reveal/utilities';
 
 import { WasmSerializedPointCloudObject, assignPoints } from '../../../wasm';
+import type { Vector3, Box3 } from 'three';
 
 function createWasmSerializedObject(obj: SerializableStylableObject): WasmSerializedPointCloudObject {
   switch (obj.shape.shapeType) {
@@ -40,8 +41,8 @@ function createWasmSerializedObject(obj: SerializableStylableObject): WasmSerial
 export async function assignPointsToObjectsWithWasm(
   points: Float32Array,
   objects: SerializableStylableObject[],
-  pointOffset: THREE.Vector3,
-  sectorBoundingBox: THREE.Box3
+  pointOffset: Vector3,
+  sectorBoundingBox: Box3
 ): Promise<Uint16Array> {
   const wasmShapes = objects.map(obj => createWasmSerializedObject(obj));
 

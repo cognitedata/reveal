@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import type { WebGLRenderer } from 'three';
 import { RenderPass } from './RenderPass';
 
 /**
@@ -12,6 +13,6 @@ import { RenderPass } from './RenderPass';
  * render passes given some dependency.
  */
 export interface RenderPipelineProvider {
-  pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass>;
+  pipeline(renderer: WebGLRenderer): Generator<RenderPass>;
   dispose(): void;
 }

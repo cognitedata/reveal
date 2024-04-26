@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+import type { Box3 } from 'three';
 import { AreaCollection } from './AreaCollection';
 import { BoxClusterer } from './BoxClusterer';
 
@@ -17,11 +18,11 @@ export class ClusteredAreaCollection implements AreaCollection {
     return this._clusterer.boxCount == 0;
   }
 
-  *areas(): Generator<THREE.Box3> {
+  *areas(): Generator<Box3> {
     yield* this._clusterer.getBoxes();
   }
 
-  intersectsBox(box: THREE.Box3): boolean {
+  intersectsBox(box: Box3): boolean {
     for (const innerBox of this._clusterer.getBoxes()) {
       if (box.intersectsBox(innerBox)) {
         return true;
@@ -31,11 +32,11 @@ export class ClusteredAreaCollection implements AreaCollection {
     return false;
   }
 
-  addAreas(boxes: Iterable<THREE.Box3>): void {
+  addAreas(boxes: Iterable<Box3>): void {
     this._clusterer.addBoxes(boxes);
   }
 
-  intersectWith(boxes: Iterable<THREE.Box3>): void {
+  intersectWith(boxes: Iterable<Box3>): void {
     this._clusterer.intersection(boxes);
   }
 }

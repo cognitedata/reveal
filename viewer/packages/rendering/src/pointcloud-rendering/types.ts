@@ -1,7 +1,7 @@
 /*!
  * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
-import { Color, IUniform as IThreeUniform, Vector4 } from 'three';
+import { Color, IUniform as IThreeUniform, Vector4, type Box3, type Vector3 } from 'three';
 
 export type IGradient = [number, Color][];
 
@@ -16,7 +16,7 @@ export interface IUniform<T> extends IThreeUniform {
 }
 
 export type OctreeMaterialParams = {
-  scale: THREE.Vector3;
+  scale: Vector3;
   spacing: number;
-  boundingBox: THREE.Box3;
+  boundingBox: Box3;
 };

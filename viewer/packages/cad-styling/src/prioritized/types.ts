@@ -2,4 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-export type PrioritizedArea = { area: THREE.Box3; extraPriority: number };
+import type { Box3 } from 'three';
+
+export type PrioritizedArea = { area: Box3; extraPriority: number };

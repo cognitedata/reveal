@@ -1,6 +1,9 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+
+import type { InstancedBufferGeometry, BufferGeometry, Texture as ThreeTexture } from 'three';
+
 export type GltfJson = {
   accessors: Accessor[];
   asset: Asset;
@@ -102,7 +105,7 @@ export type GlbHeaderData = {
 
 export type GeometryProcessingPayload = {
   geometryType: RevealGeometryCollectionType;
-  bufferGeometry: THREE.InstancedBufferGeometry | THREE.BufferGeometry;
+  bufferGeometry: InstancedBufferGeometry | BufferGeometry;
   instancingExtension:
     | {
         attributes: {
@@ -112,13 +115,13 @@ export type GeometryProcessingPayload = {
     | undefined;
   meshId: number | undefined;
   glbHeaderData: GlbHeaderData;
-  texture?: THREE.Texture;
+  texture?: ThreeTexture;
   data: ArrayBuffer;
 };
 
 export type ParsedGeometry = {
   type: RevealGeometryCollectionType;
-  geometryBuffer: THREE.BufferGeometry;
-  texture?: THREE.Texture;
+  geometryBuffer: BufferGeometry;
+  texture?: ThreeTexture;
   instanceId?: string;
 };

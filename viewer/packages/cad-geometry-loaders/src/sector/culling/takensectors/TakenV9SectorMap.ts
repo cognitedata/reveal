@@ -9,6 +9,7 @@ import { CadModelMetadata, LevelOfDetail, SectorMetadata } from '@reveal/cad-par
 import { traverseDepthFirst } from '@reveal/utilities';
 
 import assert from 'assert';
+import type { Box3 } from 'three';
 
 export class TakenV9SectorMap extends TakenSectorMapBase {
   private readonly determineSectorCost: DetermineSectorCostDelegate<SectorMetadata>;
@@ -118,7 +119,7 @@ function toWantedSector(
   sector: SectorMetadata,
   levelOfDetail: LevelOfDetail,
   priority: number,
-  geometryClipBox: THREE.Box3 | null
+  geometryClipBox: Box3 | null
 ): PrioritizedWantedSector {
   const prioritizedSector: PrioritizedWantedSector = {
     modelIdentifier,

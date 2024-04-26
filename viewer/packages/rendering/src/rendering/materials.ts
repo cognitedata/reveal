@@ -201,9 +201,6 @@ export function createMaterials(
         value: new THREE.Matrix4()
       }
     },
-    extensions: {
-      derivatives: true
-    },
     vertexShader: sectorShaders.torusSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.torusSegmentPrimitive.fragment,
     side: THREE.DoubleSide,
@@ -214,9 +211,6 @@ export function createMaterials(
     name: 'Triangle meshes',
     clipping: true,
     clippingPlanes,
-    extensions: {
-      derivatives: true
-    },
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.detailedMesh.fragment,
     vertexShader: sectorShaders.detailedMesh.vertex,
@@ -227,9 +221,6 @@ export function createMaterials(
     name: 'Instanced meshes',
     clipping: true,
     clippingPlanes,
-    extensions: {
-      derivatives: true
-    },
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.instancedMesh.fragment,
     vertexShader: sectorShaders.instancedMesh.vertex,

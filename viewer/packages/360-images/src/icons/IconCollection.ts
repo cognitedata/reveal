@@ -240,7 +240,7 @@ export class IconCollection {
     this._sharedTexture.dispose();
   }
 
-  private createHoverSprite(hoverIconTexture: THREE.CanvasTexture): THREE.Sprite {
+  private createHoverSprite(hoverIconTexture: CanvasTexture): Sprite {
     const spriteMaterial = new SpriteMaterial({ map: hoverIconTexture, depthTest: false });
     const sprite = new Sprite(spriteMaterial);
     sprite.updateMatrixWorld();

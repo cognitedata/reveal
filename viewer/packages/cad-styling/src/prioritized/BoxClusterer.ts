@@ -148,7 +148,7 @@ export class BoxClusterer {
     }
   }
 
-  intersection(other: Iterable<THREE.Box3>): BoxClusterer {
+  intersection(other: Iterable<Box3>): BoxClusterer {
     const otherBoxes = [...other];
     const thisBoxes = this.resultBoxes;
 

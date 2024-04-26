@@ -3,6 +3,7 @@
  */
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
+import type { Vector3 } from 'three';
 
 export type PointCloudIntersection = {
   /**
@@ -16,7 +17,7 @@ export type PointCloudIntersection = {
   /**
    * Coordinate of the intersection.
    */
-  point: THREE.Vector3;
+  point: Vector3;
   /**
    * The index of the point that was intersected.
    */

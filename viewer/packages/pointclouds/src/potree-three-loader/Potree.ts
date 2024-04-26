@@ -67,7 +67,7 @@ export class Potree implements IPotree {
   private readonly _materialManager: PointCloudMaterialManager;
 
   private _throttledUpdateFunc = throttle(
-    (pointClouds: PointCloudOctree[], camera: THREE.Camera, renderer: WebGLRenderer) =>
+    (pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer) =>
       this.innerUpdatePointClouds(pointClouds, camera, renderer),
     UPDATE_THROTTLE_TIME_MS
   );
@@ -85,7 +85,7 @@ export class Potree implements IPotree {
   reset(): void {
     // Reset the throttle function, to make sure all references to a deleted model are released
     this._throttledUpdateFunc = throttle(
-      (pointClouds: PointCloudOctree[], camera: THREE.Camera, renderer: WebGLRenderer) =>
+      (pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer) =>
         this.innerUpdatePointClouds(pointClouds, camera, renderer),
       UPDATE_THROTTLE_TIME_MS
     );

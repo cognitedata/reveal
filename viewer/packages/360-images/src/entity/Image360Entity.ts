@@ -12,15 +12,15 @@ import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { Color, Matrix4 } from 'three';
+import { Color, Matrix4, type Raycaster } from 'three';
 
 import cloneDeep from 'lodash/cloneDeep';
 
 export class Image360Entity implements Image360 {
   private readonly _revisions: Image360RevisionEntity[];
   private readonly _imageMetadata: Image360EventDescriptor;
-  private readonly _modelTransform: THREE.Matrix4;
-  private readonly _worldTransform: THREE.Matrix4;
+  private readonly _modelTransform: Matrix4;
+  private readonly _worldTransform: Matrix4;
   private readonly _image360Icon: Overlay3DIcon;
   private readonly _image360VisualizationBox: Image360VisualizationBox;
   private _activeRevision: Image360RevisionEntity;
@@ -31,7 +31,7 @@ export class Image360Entity implements Image360 {
    * of the given 360 image.
    * @returns model-to-world transform of the 360 Image
    */
-  get transform(): THREE.Matrix4 {
+  get transform(): Matrix4 {
     return this._worldTransform.clone();
   }
 
@@ -73,7 +73,7 @@ export class Image360Entity implements Image360 {
     sceneHandler: SceneHandler,
     imageProvider: Image360DataProvider,
     annotationFilterer: Image360AnnotationFilter,
-    transform: THREE.Matrix4,
+    transform: Matrix4,
     icon: Overlay3DIcon,
     device: DeviceDescriptor
   ) {
@@ -137,7 +137,7 @@ export class Image360Entity implements Image360 {
     return closestDatedRevision ?? this.getMostRecentRevision();
   }
 
-  public intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
+  public intersectAnnotations(raycaster: Raycaster): ImageAnnotationObject | undefined {
     return this._activeRevision.intersectAnnotations(raycaster);
   }
 

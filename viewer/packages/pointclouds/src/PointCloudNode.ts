@@ -14,7 +14,7 @@ import { ClassificationHandler } from './ClassificationHandler';
 
 import { CompletePointCloudAppearance, StyledPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 
-import { Matrix4, Group, Box3, Color } from 'three';
+import { Matrix4, Group, Box3, Color, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
 
 export class PointCloudNode extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
@@ -136,7 +136,7 @@ export class PointCloudNode extends Group {
    * @param ray Ray representing the direction for picking.
    * @returns Picked point data.
    */
-  pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
+  pick(renderer: WebGLRenderer, camera: Camera, ray: Ray): PickPoint | null {
     return this._octree.pick(renderer, camera, ray, { pickWindowSize: PointCloudNode.pickingWindowSize });
   }
   /**
@@ -180,8 +180,8 @@ export class PointCloudNode extends Group {
     return this._classificationHandler.classes;
   }
 
-  getBoundingBox(outBbox: THREE.Box3 = new Box3()): THREE.Box3 {
-    const box: THREE.Box3 =
+  getBoundingBox(outBbox: Box3 = new Box3()): Box3 {
+    const box: Box3 =
       this._octree.pcoGeometry.tightBoundingBox ?? this._octree.pcoGeometry.boundingBox ?? this._octree.boundingBox;
 
     const transformedBox = box.clone().applyMatrix4(this._octree.matrixWorld);
@@ -190,7 +190,7 @@ export class PointCloudNode extends Group {
     return outBbox;
   }
 
-  setModelTransformation(matrix: THREE.Matrix4): void {
+  setModelTransformation(matrix: Matrix4): void {
     this._customTransform.copy(matrix);
     this.matrix.copy(this._customTransform).multiply(this._sourceTransform);
     this.updateMatrixWorld(true);
@@ -198,7 +198,7 @@ export class PointCloudNode extends Group {
     this._needsRedraw = true;
   }
 
-  getModelTransformation(out = new Matrix4()): THREE.Matrix4 {
+  getModelTransformation(out = new Matrix4()): Matrix4 {
     return out.copy(this._customTransform);
   }
 
@@ -232,7 +232,7 @@ export class PointCloudNode extends Group {
     this._needsRedraw = true;
   }
 
-  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+  set clippingPlanes(clippingPlanes: Plane[]) {
     this._octree.setModelClippingPlane(clippingPlanes);
     this._needsRedraw = true;
   }

@@ -29,7 +29,7 @@ export class GeometryBufferUtils {
       });
   }
 
-  public static copyGeometryWithBufferAttributes(geometry: BufferGeometry): THREE.BufferGeometry {
+  public static copyGeometryWithBufferAttributes(geometry: BufferGeometry): BufferGeometry {
     const newGeometry = new BufferGeometry();
 
     GeometryBufferUtils.getAttributes(geometry, BufferAttribute).forEach(namedAttribute => {

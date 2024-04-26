@@ -239,7 +239,7 @@ export class PointCloudOctreePickerHelper {
     pixels: Uint8Array,
     pickWndSize: number,
     nodes: RenderedNode[],
-    camera: THREE.Camera
+    camera: Camera
   ): PointCloudHit | null {
     const ibuffer = new Uint32Array(pixels.buffer);
 
@@ -329,7 +329,7 @@ export class PointCloudOctreePickerHelper {
     if (!points) throw new Error('Point cloud not found');
 
     return this.helperVec3
-      .fromBufferAttribute(points.geometry.attributes['position'] as THREE.BufferAttribute, pIndex)
+      .fromBufferAttribute(points.geometry.attributes['position'] as BufferAttribute, pIndex)
       .applyMatrix4(points.matrixWorld);
   }
 

@@ -2,6 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
+import type { Vector3, Color } from 'three';
 import { Overlay3D } from './Overlay3D';
 
 /**
@@ -18,7 +19,7 @@ export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
   /**
    * Position of the overlay
    */
-  position: THREE.Vector3;
+  position: Vector3;
   /**
    * The data contained in this overlay
    */
@@ -26,7 +27,7 @@ export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
   /**
    * The color of this overlay. Will be set by collection if undefined
    */
-  color?: THREE.Color;
+  color?: Color;
 };
 
 /**
