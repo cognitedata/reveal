@@ -11,5 +11,7 @@ import { useSDK } from '../components/RevealCanvas/SDKProvider';
 
 export function useTimeseriesByIdsQuery(ids: IdEither[]): UseQueryResult<Timeseries[]> {
   const sdk = useSDK();
-  return useQuery(queryKeys.timeseriesById(ids), async () => await getTimeseriesByIds(sdk, ids));
+  return useQuery(queryKeys.timeseriesById(ids), async () => await getTimeseriesByIds(sdk, ids), {
+    enabled: ids.length > 0
+  });
 }

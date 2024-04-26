@@ -30,7 +30,7 @@ import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
 import { type AssetStylingGroup } from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
-import { type AssetAndTimeseriesIds } from '../../utilities/types';
+import { type AssetIdsAndTimeseries } from '../../utilities/types';
 
 const checkStringExpressionStatement = (
   triggerTypeData: TriggerTypeData[],
@@ -283,14 +283,14 @@ export const generateRuleBasedOutputs = async ({
   contextualizedAssetNodes,
   assetMappings,
   ruleSet,
-  assetAndTimeseriesIds,
+  assetIdsAndTimeseries,
   timeseriesDatapoints
 }: {
   model: CogniteCadModel;
   contextualizedAssetNodes: Asset[];
   assetMappings: AssetMapping3D[];
   ruleSet: RuleOutputSet;
-  assetAndTimeseriesIds: AssetAndTimeseriesIds[];
+  assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
 }): Promise<AssetStylingGroupAndStyleIndex[]> => {
   const outputType = 'color'; // for now it only supports colors as the output
@@ -318,7 +318,7 @@ export const generateRuleBasedOutputs = async ({
         return await analyzeNodesAgainstExpression({
           model,
           contextualizedAssetNodes,
-          assetAndTimeseriesIds,
+          assetIdsAndTimeseries,
           timeseriesDatapoints,
           assetMappings,
           expression,
@@ -350,7 +350,7 @@ const getRuleOutputFromTypeSelected = (
 const analyzeNodesAgainstExpression = async ({
   model,
   contextualizedAssetNodes,
-  assetAndTimeseriesIds,
+  assetIdsAndTimeseries,
   timeseriesDatapoints,
   assetMappings,
   expression,
@@ -358,7 +358,7 @@ const analyzeNodesAgainstExpression = async ({
 }: {
   model: CogniteCadModel;
   contextualizedAssetNodes: Asset[];
-  assetAndTimeseriesIds: AssetAndTimeseriesIds[];
+  assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
   assetMappings: AssetMapping3D[];
   expression: Expression;
@@ -366,12 +366,6 @@ const analyzeNodesAgainstExpression = async ({
 }): Promise<AssetStylingGroupAndStyleIndex> => {
   const allTreeNodes = await Promise.all(
     contextualizedAssetNodes.map(async (contextualizedAssetNode) => {
-      const timeseriesDataForThisAsset = generateTimeseriesAndDatapointsFromTheAsset({
-        contextualizedAssetNode,
-        assetAndTimeseriesIds,
-        timeseriesDatapoints
-      });
-
       const triggerData: TriggerTypeData[] = [];
 
       const metadataTriggerData: TriggerTypeData = {
@@ -380,6 +374,12 @@ const analyzeNodesAgainstExpression = async ({
       };
 
       triggerData.push(metadataTriggerData);
+
+      const timeseriesDataForThisAsset = generateTimeseriesAndDatapointsFromTheAsset({
+        contextualizedAssetNode,
+        assetIdsAndTimeseries,
+        timeseriesDatapoints
+      });
 
       if (timeseriesDataForThisAsset.length > 0) {
         const timeseriesTriggerData: TriggerTypeData = {
@@ -419,14 +419,14 @@ const analyzeNodesAgainstExpression = async ({
 
 const generateTimeseriesAndDatapointsFromTheAsset = ({
   contextualizedAssetNode,
-  assetAndTimeseriesIds,
+  assetIdsAndTimeseries,
   timeseriesDatapoints
 }: {
   contextualizedAssetNode: Asset;
-  assetAndTimeseriesIds: AssetAndTimeseriesIds[];
+  assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
 }): TimeseriesAndDatapoints[] => {
-  const timeseriesLinkedToThisAsset = assetAndTimeseriesIds.filter(
+  const timeseriesLinkedToThisAsset = assetIdsAndTimeseries.filter(
     (item) => item.assetIds?.externalId === contextualizedAssetNode.externalId
   );
 
@@ -434,6 +434,10 @@ const generateTimeseriesAndDatapointsFromTheAsset = ({
   const datapoints = timeseriesDatapoints?.filter((datapoint) =>
     timeseries?.find((item) => item?.externalId === datapoint.externalId)
   );
+  // eslint-disable-next-line no-console
+  console.log(' timeseriesLinkedToThisAsset ', timeseriesLinkedToThisAsset);
+  // eslint-disable-next-line no-console
+  console.log(' TIMESERIES AND DATAPOINTS ', timeseries, datapoints);
   const timeseriesData: TimeseriesAndDatapoints[] = timeseries
     .map((item) => {
       const datapoint = datapoints?.find((datapoint) => datapoint.externalId === item.externalId);

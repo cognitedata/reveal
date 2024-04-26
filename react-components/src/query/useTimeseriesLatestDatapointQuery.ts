@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { queryKeys } from '../utilities/queryKeys';
 import { type Datapoints } from '@cognite/sdk/';
+import { getTimeseriesLatestDatapoints } from '../hooks/network/getTimeseriesLatestDatapoints';
 
 export const useTimeseriesLatestDatapointQuery = (
   timeseriesIds: number[]
@@ -16,9 +17,9 @@ export const useTimeseriesLatestDatapointQuery = (
   });
   const { data: timeseriesDatapoints } = useQuery(
     [queryKeys.timeseriesLatestDatapoint(), timeseriesIds],
-    async () => {
-      const results = await sdk.datapoints.retrieveLatest(timeseries);
-      return results;
+    async () => await getTimeseriesLatestDatapoints(sdk, timeseries),
+    {
+      enabled: timeseries.length > 0
     }
   );
 

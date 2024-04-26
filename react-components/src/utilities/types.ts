@@ -43,7 +43,12 @@ export type RelationshipSourceAndTargetData = {
 
 export type RelationshipData = ExtendedRelationship & RelationshipSourceAndTarget;
 
-export type AssetAndTimeseriesIds = {
+export type AssetIdsAndTimeseries = {
   assetIds?: Partial<ExternalId & InternalId>;
   timeseries?: Timeseries | undefined;
+};
+
+export type AssetAndTimeseriesIds = {
+  assetIds: Partial<ExternalId & InternalId>;
+  timeseriesIds: Partial<ExternalId & InternalId>;
 };

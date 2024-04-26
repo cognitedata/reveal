@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useEffect, type ReactElement, useState } from 'react';
+import { useEffect, type ReactElement, useState, useMemo } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
 import { useAllMappedEquipmentAssetMappings } from '../..';
@@ -19,10 +19,10 @@ export type ColorOverlayProps = {
   onRuleSetChanged?: (currentStylings: AssetStylingGroupAndStyleIndex[] | undefined) => void;
 };
 
-export function RuleBasedOutputsSelector({
+export const RuleBasedOutputsSelector = ({
   ruleSet,
   onRuleSetChanged
-}: ColorOverlayProps): ReactElement | undefined {
+}: ColorOverlayProps): ReactElement | undefined => {
   if (ruleSet === undefined) return;
 
   const models = use3dModels();
@@ -36,14 +36,26 @@ export function RuleBasedOutputsSelector({
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(models);
 
+  const contextualizedAssetNodes =
+    assetMappings?.pages
+      .flat()
+      .flatMap((item) => item.assets)
+      .map(convertAssetMetadataKeysToLowerCase) ?? [];
+
+  // eslint-disable-next-line no-console
+  console.log(' contextualizedAssetNodes ', contextualizedAssetNodes);
+
   const expressions = ruleSet?.rulesWithOutputs
     .map((ruleSet) => ruleSet.rule.expression)
     .filter(isDefined);
   const timeseriesExternalIdsFromRule = traverseExpressionToGetTimeseries(expressions) ?? [];
 
-  const assetAndTimeseriesIds = useAssetIdsFromTimeseriesQuery(timeseriesExternalIdsFromRule);
+  const assetIdsAndTimeseries = useAssetIdsFromTimeseriesQuery(
+    timeseriesExternalIdsFromRule,
+    contextualizedAssetNodes
+  );
   const timeseriesDatapoints = useTimeseriesLatestDatapointQuery(
-    assetAndTimeseriesIds
+    assetIdsAndTimeseries
       .map((item): number | undefined => {
         return item.timeseries?.id;
       })
@@ -75,17 +87,18 @@ export function RuleBasedOutputsSelector({
         .map((item) => item.mappings)
         .flat();
       const flatMappings = flatAssetsMappingsList.map((node) => node.items).flat();
-      const contextualizedAssetNodes = assetMappings.pages
-        .flat()
-        .flatMap((item) => item.assets)
-        .map(convertAssetMetadataKeysToLowerCase);
+
+      // eslint-disable-next-line no-console
+      console.log(' assetIdsAndTimeseries ', assetIdsAndTimeseries);
+      // eslint-disable-next-line no-console
+      console.log(' timeseriesExternalIdsFromRule ', timeseriesExternalIdsFromRule);
 
       const collectionStylings = await generateRuleBasedOutputs({
         model,
         contextualizedAssetNodes,
         assetMappings: flatMappings,
         ruleSet,
-        assetAndTimeseriesIds,
+        assetIdsAndTimeseries,
         timeseriesDatapoints
       });
 
@@ -98,10 +111,10 @@ export function RuleBasedOutputsSelector({
       }
       await initializeRuleBasedOutputs(model);
     });
-  }, [assetMappings, ruleSet]);
+  }, [ruleSet]);
 
   return <></>;
-}
+};
 
 function convertAssetMetadataKeysToLowerCase(asset: Asset): Asset {
   return {
