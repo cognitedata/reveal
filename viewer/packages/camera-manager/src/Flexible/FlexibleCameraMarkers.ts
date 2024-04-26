@@ -23,9 +23,7 @@ export class FlexibleCameraMarkers {
   //================================================
 
   public update(manager: FlexibleCameraManager): void {
-    const isFirstPerson =
-      manager.controls.isStationary || manager.options.controlsType === FlexibleControlsType.FirstPerson;
-    if (manager.options.showTarget && !isFirstPerson) {
+    if (this.isVisible(manager)) {
       if (!this._targetMarker) {
         this._targetMarker = createSprite(manager.options.outerMarkerColor, manager.options.innerMarkerColor);
         this._scene.add(this._targetMarker);
@@ -39,6 +37,22 @@ export class FlexibleCameraMarkers {
         this._targetMarker.visible = false;
       }
     }
+  }
+
+  private isVisible(manager: FlexibleCameraManager): boolean {
+    if (!manager.options.showTarget) {
+      return false;
+    }
+    if (!manager.isEnabled) {
+      return false;
+    }
+    if (manager.controls.isStationary) {
+      return false;
+    }
+    if (manager.options.controlsType === FlexibleControlsType.FirstPerson) {
+      return false;
+    }
+    return true;
   }
 }
 

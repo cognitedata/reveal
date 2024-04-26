@@ -42,7 +42,8 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setAnimationLoop(render);
 
-  keyboard = new Keyboard(renderer.domElement);
+  keyboard = new Keyboard();
+  keyboard.addEventListeners(renderer.domElement);
 
   controls = new ComboControls(camera, renderer.domElement);
 

@@ -12,15 +12,13 @@ import { EventTrigger } from '@reveal/utilities';
  * Simple helper class to trigger a stop event whenever a camera manager's
  * camera hasn't changed for a little while.
  */
+
 export class DebouncedCameraStopEventTrigger {
   private readonly _debouncedFireEvent: () => void;
   private readonly _cameraManager: CameraManager;
-
-  private readonly _trigger: EventTrigger<CameraStopDelegate>;
+  private readonly _trigger = new EventTrigger<CameraStopDelegate>();
 
   constructor(cameraManager: CameraManager, debounceTimeMs: number = 100) {
-    this._trigger = new EventTrigger();
-
     this._debouncedFireEvent = debounce(() => this._trigger.fire(), debounceTimeMs);
     this._cameraManager = cameraManager;
 
