@@ -89,7 +89,7 @@
     "@types/jest-environment-puppeteer": "5.0.6",
     "@types/jest-image-snapshot": "6.4.0",
     "@types/jsdom": "21.1.6",
-    "@types/lodash": "4.14.202",
+    "@types/lodash": "4.17.0",
     "@types/mixpanel-browser": "2.49.0",
     "@types/node": "18.19.31",
     "@types/random-seed": "0.3.5",
