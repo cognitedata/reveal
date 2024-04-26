@@ -107,7 +107,7 @@ export class TrianglesBuffers {
       this.positions[index + 1] = position.z;
       this.positions[index + 2] = position.y;
       this.normals[index + 0] = normal.x;
-      this.normals[index + 1] = -normal.z;
+      this.normals[index + 1] = normal.z;
       this.normals[index + 2] = normal.y;
     }
     if (this.hasUvs) {

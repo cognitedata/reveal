@@ -22,13 +22,13 @@ export class SurfaceRenderStyle extends RenderStyle {
   public solidContourVolume = 0.5;
   public solidContourUse = true;
 
-  public solidShininess = 0.15;
+  public solidShininess = 0.3;
   public solidShininessUse = true;
 
   public solidOpacity = 0.5;
   public solidOpacityUse = false;
 
-  public increment = 20;
+  public increment = 10;
 
   // ==================================================
   // OVERRIDES of BaseStyle

@@ -15,7 +15,6 @@ import { RootDomainObject } from '../domainObjects/RootDomainObject';
 import { Range3 } from '../utilities/geometry/Range3';
 import { createFractalRegularGrid2 } from '../utilities/geometry/createFractalRegularGrid2';
 import { SurfaceDomainObject } from '../surfaceDomainObject/SurfaceDomainObject';
-import { toRad } from '../utilities/extensions/mathExtensions';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -112,8 +111,8 @@ export class RevealRenderTarget {
 
   private createRootGroup(): Group {
     const group = new Group();
-    const ambientLight = new AmbientLight(0xffffff, 0.5); // soft white light
-    const directionalLight = new DirectionalLight(0xffffff);
+    const ambientLight = new AmbientLight(0xffffff, 0.25); // soft white light
+    const directionalLight = new DirectionalLight(0xffffff, 2.5);
     directionalLight.name = DIRECTIONAL_LIGHT_NAME;
     directionalLight.position.set(0, 1, 0);
     group.add(ambientLight);
@@ -125,46 +124,17 @@ export class RevealRenderTarget {
     return this._rootObject3D.getObjectByName(DIRECTIONAL_LIGHT_NAME) as DirectionalLight;
   }
 
-  updateLightPosition = (position: Vector3, target: Vector3): void => {
+  updateLightPosition = (_position: Vector3, _target: Vector3): void => {
     const light = this.directionalLight;
     if (light === undefined) {
       return;
     }
     const camera = this.viewer.cameraManager.getCamera();
 
-    // The idea of this function is letting the light track the camera,
-    const vectorToCenter = position.clone();
-    vectorToCenter.sub(target);
-
     // Get camera direction
     const cameraDirection = new Vector3();
     camera.getWorldDirection(cameraDirection);
 
-    let vectorLength = vectorToCenter.length();
-    vectorToCenter.normalize();
-
-    console.log('ssss');
-    console.log(vectorToCenter);
-    console.log(cameraDirection);
-
-    // Vector direction is opposite to camera direction
-
-    const horizontalAxis = vectorToCenter.clone();
-    const verticalAxis = new Vector3(0, 1, 0);
-
-    horizontalAxis.y = 0;
-    horizontalAxis.normalize();
-    horizontalAxis.applyAxisAngle(verticalAxis, Math.PI / 2);
-
-    verticalAxis.crossVectors(horizontalAxis, vectorToCenter);
-
-    vectorToCenter.applyAxisAngle(verticalAxis, toRad(0)); // Azimuth angle
-    vectorToCenter.applyAxisAngle(horizontalAxis, -toRad(0)); // Dip angle
-
-    vectorLength = Math.max(vectorLength, 100_000); // Move the light far away
-    vectorToCenter.multiplyScalar(vectorLength);
-    vectorToCenter.add(target);
-
-    light.position.copy(vectorToCenter);
+    light.position.copy(cameraDirection);
   };
 }
