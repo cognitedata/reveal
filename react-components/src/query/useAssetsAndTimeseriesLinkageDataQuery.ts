@@ -76,8 +76,6 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
             assetAndTimeseriesIds.timeseriesIds.externalId = item.targetExternalId;
           }
 
-          // eslint-disable-next-line no-console
-          console.log(' assetAndTimeseriesIds ', assetAndTimeseriesIds);
           return assetAndTimeseriesIds;
         }) ?? [];
 

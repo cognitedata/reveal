@@ -132,8 +132,6 @@ const checkNumericExpressionStatement = (
 
   const dataTrigger = getTriggerNumericData(triggerTypeData, trigger);
 
-  // eslint-disable-next-line no-console
-  console.log(' DATA TRIGGER ', dataTrigger);
   if (dataTrigger === undefined) return;
 
   switch (condition.type) {
@@ -393,8 +391,6 @@ const analyzeNodesAgainstExpression = async ({
         triggerData.push(timeseriesTriggerData);
       }
 
-      // eslint-disable-next-line no-console
-      console.log(' TRIGGER DATA AND EXPRESSION ', triggerData, expression);
       const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
 
       if (finalGlobalOutputResult[0] ?? false) {
@@ -434,10 +430,7 @@ const generateTimeseriesAndDatapointsFromTheAsset = ({
   const datapoints = timeseriesDatapoints?.filter((datapoint) =>
     timeseries?.find((item) => item?.externalId === datapoint.externalId)
   );
-  // eslint-disable-next-line no-console
-  console.log(' timeseriesLinkedToThisAsset ', timeseriesLinkedToThisAsset);
-  // eslint-disable-next-line no-console
-  console.log(' TIMESERIES AND DATAPOINTS ', timeseries, datapoints);
+
   const timeseriesData: TimeseriesAndDatapoints[] = timeseries
     .map((item) => {
       const datapoint = datapoints?.find((datapoint) => datapoint.externalId === item.externalId);
@@ -475,7 +468,7 @@ export const traverseExpressionToGetTimeseries = (
           break;
         }
       }
-      return timeseriesExternalIdFound?.filter(isDefined) ?? []; // linter doesn't recognize the filtered output from isDefined
+      return timeseriesExternalIdFound?.filter(isDefined) ?? [];
     })
     .flat();
 
@@ -514,8 +507,6 @@ const applyNodeStyles = (
   treeNodes.forEach((node) => {
     nodeIndexSet.addRange(node.subtreeRange);
   });
-
-  // assign the style with the color from the condition
 
   const nodeAppearance: NodeAppearance = {
     color: new Color(outputSelected.fill)

@@ -11,9 +11,6 @@ import { getAssetsByIds } from '../hooks/network/getAssetsByIds';
 
 export const useAssetsByIdsQuery = (ids: IdEither[]): UseQueryResult<Asset[]> => {
   const sdk = useSDK();
-
-  // eslint-disable-next-line no-console
-  console.log(' getAssetsByIds ', ids);
   return useQuery(queryKeys.assetsById(ids), async () => await getAssetsByIds(sdk, ids), {
     enabled: ids.length > 0
   });
