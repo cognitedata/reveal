@@ -10,7 +10,8 @@ import {
   type InternalId,
   type Timeseries,
   type CogniteExternalId,
-  type RelationshipResourceType
+  type RelationshipResourceType,
+  type CogniteClient
 } from '@cognite/sdk';
 
 import { getRelationships } from '../hooks/network/getRelationships';
@@ -51,33 +52,12 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
       filter
     ],
     async () => {
-      const dataRelationship = await getRelationships(sdk, {
-        resourceExternalIds: timeseriesExternalIdsFromRule,
+      const assetAndTimeseriesIdsFromRelationship = await getLinkFromRelationships(
+        sdk,
+        timeseriesExternalIdsFromRule,
         relationshipResourceTypes,
-        labels: createLabelFilter(filter?.labels)
-      });
-
-      const assetAndTimeseriesIdsFromRelationship =
-        dataRelationship?.map((item) => {
-          const assetAndTimeseriesIds: AssetAndTimeseriesIds = {
-            assetIds: { externalId: '' },
-            timeseriesIds: { externalId: '' }
-          };
-
-          if (item.sourceType === 'asset') {
-            assetAndTimeseriesIds.assetIds.externalId = item.sourceExternalId;
-          } else if (item.targetType === 'asset') {
-            assetAndTimeseriesIds.assetIds.externalId = item.targetExternalId;
-          }
-
-          if (item.sourceType === 'timeSeries') {
-            assetAndTimeseriesIds.timeseriesIds.externalId = item.sourceExternalId;
-          } else if (item.targetType === 'timeSeries') {
-            assetAndTimeseriesIds.timeseriesIds.externalId = item.targetExternalId;
-          }
-
-          return assetAndTimeseriesIds;
-        }) ?? [];
+        filter
+      );
 
       const externalIds: ExternalId[] = timeseriesExternalIdsFromRule.map((externalId) => {
         return {
@@ -124,6 +104,43 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
     }
   );
 }
+
+const getLinkFromRelationships = async (
+  sdk: CogniteClient,
+  timeseriesExternalIdsFromRule: string[],
+  relationshipResourceTypes: RelationshipResourceType[],
+  filter?: RelationshipsFilterInternal
+): Promise<AssetAndTimeseriesIds[]> => {
+  const dataRelationship = await getRelationships(sdk, {
+    resourceExternalIds: timeseriesExternalIdsFromRule,
+    relationshipResourceTypes,
+    labels: createLabelFilter(filter?.labels)
+  });
+
+  const assetAndTimeseriesIdsFromRelationship =
+    dataRelationship?.map((item) => {
+      const assetAndTimeseriesIds: AssetAndTimeseriesIds = {
+        assetIds: { externalId: '' },
+        timeseriesIds: { externalId: '' }
+      };
+
+      if (item.sourceType === 'asset') {
+        assetAndTimeseriesIds.assetIds.externalId = item.sourceExternalId;
+      } else if (item.targetType === 'asset') {
+        assetAndTimeseriesIds.assetIds.externalId = item.targetExternalId;
+      }
+
+      if (item.sourceType === 'timeSeries') {
+        assetAndTimeseriesIds.timeseriesIds.externalId = item.sourceExternalId;
+      } else if (item.targetType === 'timeSeries') {
+        assetAndTimeseriesIds.timeseriesIds.externalId = item.targetExternalId;
+      }
+
+      return assetAndTimeseriesIds;
+    }) ?? [];
+
+  return assetAndTimeseriesIdsFromRelationship;
+};
 
 const getAssetIdsFromTimeseries = (
   contextualizedAssetNodes: Asset[],
