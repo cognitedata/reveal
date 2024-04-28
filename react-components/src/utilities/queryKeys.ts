@@ -13,6 +13,6 @@ export const queryKeys = {
   timeseriesById: (ids: IdEither[]) => [...queryKeys.timeseries(), ids] as const,
   timeseriesLatestDatapoint: () => [...queryKeys.all, 'timeseries', 'latest-datapoints'] as const,
   // TIMESERIES RELATIONSHIPS WITH ASSETS
-  timeseriesRelationshipsWithAssets: () =>
-    [...queryKeys.all, 'timeseries', 'timeseries-relationships-assets'] as const
+  timeseriesLinkedToAssets: () =>
+    [...queryKeys.all, 'timeseries', 'timeseries-linked-assets'] as const
 } as const;

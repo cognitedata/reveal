@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import {
+  Datapoints,
   Timeseries,
   type ExternalId,
   type InternalId,
@@ -51,4 +52,9 @@ export type AssetIdsAndTimeseries = {
 export type AssetAndTimeseriesIds = {
   assetIds: Partial<ExternalId & InternalId>;
   timeseriesIds: Partial<ExternalId & InternalId>;
+};
+
+export type AssetIdsAndTimeseriesData = {
+  assetIdsWithTimeseries: AssetIdsAndTimeseries[];
+  timeseriesDatapoints: Datapoints[];
 };

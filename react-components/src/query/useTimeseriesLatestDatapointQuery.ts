@@ -8,7 +8,8 @@ import { type Datapoints } from '@cognite/sdk/';
 import { getTimeseriesLatestDatapoints } from '../hooks/network/getTimeseriesLatestDatapoints';
 
 export const useTimeseriesLatestDatapointQuery = (
-  timeseriesIds: number[]
+  timeseriesIds: number[],
+  isLoadingAssetIdsAndTimeseries: boolean
 ): Datapoints[] | undefined => {
   const sdk = useSDK();
 
@@ -19,7 +20,7 @@ export const useTimeseriesLatestDatapointQuery = (
     [queryKeys.timeseriesLatestDatapoint(), timeseriesIds],
     async () => await getTimeseriesLatestDatapoints(sdk, timeseries),
     {
-      enabled: timeseries.length > 0
+      enabled: !isLoadingAssetIdsAndTimeseries && timeseries.length > 0
     }
   );
 
