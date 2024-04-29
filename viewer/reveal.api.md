@@ -492,6 +492,8 @@ export interface Cognite3DViewerOptions {
     customDataSource?: DataSource;
     domElement?: HTMLElement;
     enableEdges?: boolean;
+    // @beta
+    hasEventListeners?: boolean;
     loadingIndicatorStyle?: {
         placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
         opacity: number;
@@ -1081,6 +1083,14 @@ export interface IFlexibleCameraManager extends CameraManager {
     addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
     get controlsType(): FlexibleControlsType;
     set controlsType(value: FlexibleControlsType);
+    onClick(event: PointerEvent): Promise<void>;
+    onDoubleClick(event: PointerEvent): Promise<void>;
+    onFocusChanged(haveFocus: boolean): void;
+    onKey(event: KeyboardEvent, down: boolean): void;
+    onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void>;
+    onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void>;
+    onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void>;
+    onWheel(event: WheelEvent): Promise<void>;
     removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
     rotateCameraTo(direction: Vector3, animationDuration: number): void;
 }
@@ -1277,6 +1287,9 @@ export class InvertedNodeCollection extends NodeCollection {
     // (undocumented)
     serialize(): SerializedNodeCollection;
 }
+
+// @beta
+export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager;
 
 // @public (undocumented)
 export interface JsonFileProvider {
@@ -1663,6 +1676,33 @@ export type PointerEventData = {
 
 // @public
 export type PointerEventDelegate = (event: PointerEventData) => void;
+
+// @beta
+export class PointerEvents {
+    // (undocumented)
+    get isEnabled(): boolean;
+    // (undocumented)
+    onClick(_event: PointerEvent): Promise<void>;
+    // (undocumented)
+    onDoubleClick(_event: PointerEvent): Promise<void>;
+    // (undocumented)
+    onHover(_event: PointerEvent): void;
+    // (undocumented)
+    onPointerDown(_event: PointerEvent, _leftButton: boolean): Promise<void>;
+    // (undocumented)
+    onPointerDrag(_event: PointerEvent, _leftButton: boolean): Promise<void>;
+    // (undocumented)
+    onPointerUp(_event: PointerEvent, _leftButton: boolean): Promise<void>;
+}
+
+// @beta
+export class PointerEventsTarget {
+    constructor(domElement: HTMLElement, events: PointerEvents);
+    // (undocumented)
+    addEventListeners(): void;
+    // (undocumented)
+    removeEventListeners(): void;
+}
 
 // @public (undocumented)
 export enum PointShape {

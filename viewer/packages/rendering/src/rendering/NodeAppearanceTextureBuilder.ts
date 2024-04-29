@@ -121,10 +121,7 @@ export class NodeAppearanceTextureBuilder {
     // Apply individual styles
     this._styleProvider.applyStyles((treeIndices, appearance) => {
       // Translate from style to magic values in textures
-      const fullStyle = { ...this._defaultAppearance, ...appearance };
-      fullStyle.color = appearance.color; // Ensure color is undefined if appearance.color is
-
-      this.applyStyleToNodes(treeIndices, fullStyle);
+      this.applyStyleToNodes(treeIndices, appearance);
     });
 
     this._overrideColorPerTreeIndexTexture.needsUpdate = true;

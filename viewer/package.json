@@ -81,7 +81,7 @@
   "devDependencies": {
     "@azure/msal-browser": "2.38.4",
     "@cognite/sdk": "8.3.0",
-    "@microsoft/api-extractor": "7.42.3",
+    "@microsoft/api-extractor": "7.43.1",
     "@types/dat.gui": "0.7.13",
     "@types/gl": "^6.0.2",
     "@types/glob": "8.1.0",
@@ -89,7 +89,7 @@
     "@types/jest-environment-puppeteer": "5.0.6",
     "@types/jest-image-snapshot": "6.4.0",
     "@types/jsdom": "21.1.6",
-    "@types/lodash": "4.14.202",
+    "@types/lodash": "4.17.0",
     "@types/mixpanel-browser": "2.49.0",
     "@types/node": "18.19.31",
     "@types/random-seed": "0.3.5",
@@ -140,7 +140,7 @@
     "wasm-pack": "0.12.1",
     "webpack": "5.90.3",
     "webpack-cli": "5.1.4",
-    "webpack-dev-server": "4.15.1",
+    "webpack-dev-server": "4.15.2",
     "webpack-node-externals": "3.0.0",
     "whatwg-fetch": "3.6.20",
     "workerize-loader": "2.0.2"
