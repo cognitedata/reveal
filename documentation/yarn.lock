@@ -1908,7 +1908,7 @@ __metadata:
     "@types/styled-components": 5.1.34
     "@uiw/codemirror-theme-material": 4.21.25
     "@uiw/react-codemirror": 4.21.25
-    clsx: 2.1.0
+    clsx: 2.1.1
     copyfiles: 2.4.1
     cross-env: 7.0.3
     docusaurus-plugin-typedoc: 0.22.0
@@ -4912,10 +4912,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:2.1.0":
-  version: 2.1.0
-  resolution: "clsx@npm:2.1.0"
-  checksum: 43fefc29b6b49c9476fbce4f8b1cc75c27b67747738e598e6651dd40d63692135dc60b18fa1c5b78a2a9ba8ae6fd2055a068924b94e20b42039bd53b78b98e1d
+"clsx@npm:2.1.1":
+  version: 2.1.1
+  resolution: "clsx@npm:2.1.1"
+  checksum: acd3e1ab9d8a433ecb3cc2f6a05ab95fe50b4a3cfc5ba47abb6cbf3754585fcb87b84e90c822a1f256c4198e3b41c7f6c391577ffc8678ad587fc0976b24fd57
   languageName: node
   linkType: hard
 

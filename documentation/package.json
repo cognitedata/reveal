@@ -31,7 +31,7 @@
     "@docusaurus/remark-plugin-npm2yarn": "2.4.3",
     "@uiw/codemirror-theme-material": "4.21.25",
     "@uiw/react-codemirror": "4.21.25",
-    "clsx": "2.1.0",
+    "clsx": "2.1.1",
     "cross-env": "7.0.3",
     "ieee754": "1.2.1",
     "query-string": "8.2.0",
