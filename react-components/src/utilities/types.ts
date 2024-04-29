@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 import {
-  Datapoints,
-  Timeseries,
+  type Datapoints,
+  type Timeseries,
   type ExternalId,
   type InternalId,
   type Metadata,

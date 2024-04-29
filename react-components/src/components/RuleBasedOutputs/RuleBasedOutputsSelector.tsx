@@ -20,10 +20,10 @@ export type ColorOverlayProps = {
   onRuleSetChanged?: (currentStylings: AssetStylingGroupAndStyleIndex[] | undefined) => void;
 };
 
-export const RuleBasedOutputsSelector = ({
+export function RuleBasedOutputsSelector({
   ruleSet,
   onRuleSetChanged
-}: ColorOverlayProps): ReactElement | undefined => {
+}: ColorOverlayProps): ReactElement | undefined {
   if (ruleSet === undefined) return;
 
   const models = use3dModels();
@@ -90,7 +90,7 @@ export const RuleBasedOutputsSelector = ({
   }, [isLoadingAssetIdsAndTimeseriesData, ruleSet]);
 
   return <></>;
-};
+}
 
 const initializeRuleBasedOutputs = async ({
   model,

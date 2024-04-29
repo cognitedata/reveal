@@ -2,10 +2,17 @@
  * Copyright 2024 Cognite AS
  */
 import { type Timeseries, type CogniteClient, type IdEither } from '@cognite/sdk';
+import { chunk } from 'lodash';
+import { DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT } from '../../utilities/constants';
 
 export const getTimeseriesByIds = async (
   sdk: CogniteClient,
   timeseriesIds: IdEither[]
 ): Promise<Timeseries[]> => {
-  return await sdk.timeseries.retrieve(timeseriesIds, { ignoreUnknownIds: true });
+  const chunkedTimeseriesIds = chunk(timeseriesIds, DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT);
+  const chunkedPromises = chunkedTimeseriesIds.map(
+    async (timeseriesIds) =>
+      await sdk.timeseries.retrieve(timeseriesIds, { ignoreUnknownIds: true })
+  );
+  return await Promise.all(chunkedPromises).then((result) => result.flat());
 };

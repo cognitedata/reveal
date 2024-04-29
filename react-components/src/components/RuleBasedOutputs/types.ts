@@ -89,6 +89,7 @@ export type Rule = {
 
 export type BaseRuleOutput = {
   externalId: string; // comes from FDM
+  name: string | undefined;
   // ruleId: string | undefined; // Transiently it can be left undefined
 };
 

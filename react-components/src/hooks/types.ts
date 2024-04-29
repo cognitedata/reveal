@@ -1,14 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import {
-  type Node3D,
-  type CogniteExternalId,
-  type Asset,
-  type Relationship,
-  Metadata,
-  CogniteInternalId
-} from '@cognite/sdk';
+import { type Node3D, type CogniteExternalId, type Asset } from '@cognite/sdk';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 
@@ -112,22 +105,4 @@ export type PointCloudAnnotationMappedAssetData = {
 export type Image360AnnotationMappedAssetData = {
   asset: Asset;
   annotationIds: number[];
-};
-
-export type InternalTimeseriesData = {
-  id: number;
-  lastUpdatedTime: Date;
-  createdTime: Date;
-  isString: boolean;
-  isStep: boolean;
-  description: string;
-  name?: string;
-  unit?: string;
-  externalId?: CogniteExternalId;
-  metadata?: Metadata;
-  assetId?: number;
-  dataSetId?: CogniteInternalId;
-  securityCategories?: number[];
-  latestDatapointDate?: Date;
-  hasDatapoints?: boolean;
 };
