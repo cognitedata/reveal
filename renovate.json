@@ -1,0 +1,64 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base", ":disablePeerDependencies"],
+  "timezone": "Europe/Oslo",
+  "labels": ["dependencies"],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/examples/**",
+    "**/__tests__/**",
+    "**/test/**",
+    "**/__fixtures__/**"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["*"],
+      "prConcurrentLimit": 5
+    },
+    {
+      "matchPackagePrefixes": [
+        "@cognite/sdk",
+        "@cognite/reveal",
+        "three",
+        "@types/three"
+      ],
+      "matchPaths": ["documentation/versioned_docs/*/package.json"],
+      "enabled": false
+    },
+    {
+      "matchPackagePrefixes": ["three", "@types/three"],
+      "matchPaths": ["viewer/package.json", "examples/package.json"],
+      "automerge": false
+    },
+    {
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "matchPackagePatterns": ["*"],
+      "automerge": true,
+      "stabilityDays": 3,
+      "internalChecksFilter": "strict",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"]
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "matchPackagePatterns": ["*"],
+      "automerge": false,
+      "stabilityDays": 10,
+      "internalChecksFilter": "strict"
+    },
+    {
+      "matchPaths": ["viewer"],
+      "extends": ["github>Turbo87/renovate-config//rust/updateToolchain"]
+    }
+  ],
+  "force": {
+    "constraints": {
+      "yarn": ">= 4.0.0"
+    }
+  },
+  "postUpdateOptions": ["yarnDedupeHighest"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "extends": ["schedule:weekly"]
+  }
+}
