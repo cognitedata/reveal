@@ -30,7 +30,7 @@ export function autoMockWebGLRenderer(
   const sync = new Mock<WebGLSync>();
 
   const webglContext = new Mock<WebGL2RenderingContext>();
-  webglContext.setup(instance => instance.getParameter(It.IsAny())).returns([1, 32]); // ALIASED_POINT_SIZE_RANGE: 33901
+  webglContext.setup(instance => instance.getParameter(It.IsAny())).returns([0, 0]);
   webglContext.setup(instance => instance.createBuffer()).returns(new Mock<WebGLBuffer>().object());
   webglContext.setup(instance => instance.deleteBuffer(It.IsAny())).returns();
   webglContext.setup(instance => instance.bindBuffer(It.IsAny(), It.IsAny())).returns();
@@ -93,8 +93,8 @@ export function autoMockWebGLRenderer(
   renderer.setup(instance => instance.getClearColor(It.IsAny())).returns(new Color());
   renderer.setup(instance => instance.getClearAlpha()).returns(0);
   renderer.setup(instance => instance.setClearColor(It.IsAny(), It.IsAny())).returns();
-  renderer.setup(instance => instance.getSize(It.IsAny())).returns(new Vector2(128, 128));
-  renderer.setup(instance => instance.getDrawingBufferSize(It.IsAny())).returns(new Vector2(0, 0));
+  renderer.setup(instance => instance.getSize(It.IsAny())).returns(new Vector2());
+  renderer.setup(instance => instance.getDrawingBufferSize(It.IsAny())).returns(new Vector2());
   renderer.setup(instance => instance.getRenderTarget()).returns(null);
   renderer.setup(instance => instance.setRenderTarget(It.IsAny())).returns();
   renderer.setup(instance => instance.clear()).returns();
