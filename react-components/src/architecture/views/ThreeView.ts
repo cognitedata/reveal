@@ -108,9 +108,9 @@ export abstract class ThreeView extends BaseView {
     this._boundingBox = undefined;
   }
 
-  public attach(domainObject: DomainObject, target: RevealRenderTarget): void {
+  public attach(domainObject: DomainObject, renderTarget: RevealRenderTarget): void {
     this.domainObject = domainObject;
-    this._renderTarget = target;
+    this._renderTarget = renderTarget;
   }
 
   protected invalidate(): void {

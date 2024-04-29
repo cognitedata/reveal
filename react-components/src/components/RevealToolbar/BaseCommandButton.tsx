@@ -6,59 +6,59 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { Button, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
-import { type BaseTool } from '../../architecture/commands/BaseTool';
+import { type BaseCommand } from '../../architecture/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/renderTarget/RevealRenderTarget';
 
-type CreateToolDelegate = (renderTarget: RevealRenderTarget) => BaseTool;
+type CreateCommandDelegate = (renderTarget: RevealRenderTarget) => BaseCommand;
 
-export const BaseToolButton = (createToolDelegate: CreateToolDelegate): ReactElement => {
+export const BaseCommandButton = (createCommandDelegate: CreateCommandDelegate): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const [tool] = useState<BaseTool>(createTool());
+  const [command] = useState<BaseCommand>(createCommand());
 
-  function createTool(): BaseTool {
-    const newTool = createToolDelegate(renderTarget);
-    const oldTool = renderTarget.toolController.getEqual(newTool);
-    if (oldTool !== undefined) {
-      return oldTool;
+  function createCommand(): BaseCommand {
+    const newCommand = createCommandDelegate(renderTarget);
+    const oldCommand = renderTarget.commandController.getEqual(newCommand);
+    if (oldCommand !== undefined) {
+      return oldCommand;
     }
-    renderTarget.toolController.add(newTool);
-    return newTool;
+    renderTarget.commandController.add(newCommand);
+    return newCommand;
   }
 
   // These are redundant, but react fore me to add these to update
-  const [isChecked, setChecked] = useState<boolean>(true);
+  const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
 
   useEffect(() => {
     function update(): void {
-      setChecked(tool.isChecked);
-      setEnabled(tool.isEnabled);
-      setVisible(tool.isVisible);
+      setChecked(command.isChecked);
+      setEnabled(command.isEnabled);
+      setVisible(command.isVisible);
     }
     update();
-    tool.addEventListener(update);
+    command.addEventListener(update);
     return () => {
-      tool.removeEventListener(update);
+      command.removeEventListener(update);
     };
-  }, [tool]);
+  }, [command]);
 
   if (!isVisible) {
     return <></>;
   }
 
-  const toolTip = t(tool.tooltipKey, tool.tooltip);
+  const toolTip = t(command.tooltipKey, command.tooltip);
   return (
     <CogsTooltip content={toolTip} placement="right" appendTo={document.body}>
       <Button
         type="ghost"
-        icon={tool.icon as IconType}
+        icon={command.icon as IconType}
         toggled={isChecked}
         disabled={!isEnabled}
-        aria-label={tool.name}
+        aria-label={command.name}
         onClick={() => {
-          tool.invoke();
+          command.invoke();
         }}
       />
     </CogsTooltip>

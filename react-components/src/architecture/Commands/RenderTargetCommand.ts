@@ -10,14 +10,14 @@ export abstract class RenderTargetCommand extends BaseCommand {
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly target: RevealRenderTarget;
+  public readonly renderTarget: RevealRenderTarget;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  protected constructor(target: RevealRenderTarget) {
+  protected constructor(renderTarget: RevealRenderTarget) {
     super();
-    this.target = target;
+    this.renderTarget = renderTarget;
   }
 }

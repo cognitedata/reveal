@@ -41,34 +41,34 @@ export class NavigationTool extends BaseTool {
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    await this.target.cameraManager.onClick(event);
+    await this.renderTarget.cameraManager.onClick(event);
   }
 
   public override async onDoubleClick(event: PointerEvent): Promise<void> {
-    await this.target.cameraManager.onDoubleClick(event);
+    await this.renderTarget.cameraManager.onDoubleClick(event);
   }
 
   public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.target.cameraManager.onPointerDown(event, leftButton);
+    await this.renderTarget.cameraManager.onPointerDown(event, leftButton);
   }
 
   public override async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.target.cameraManager.onPointerDrag(event, leftButton);
+    await this.renderTarget.cameraManager.onPointerDrag(event, leftButton);
   }
 
   public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.target.cameraManager.onPointerUp(event, leftButton);
+    await this.renderTarget.cameraManager.onPointerUp(event, leftButton);
   }
 
   public override async onWheel(event: WheelEvent): Promise<void> {
-    await this.target.cameraManager.onWheel(event);
+    await this.renderTarget.cameraManager.onWheel(event);
   }
 
   public onKey(event: KeyboardEvent, down: boolean): void {
-    this.target.cameraManager.onKey(event, down);
+    this.renderTarget.cameraManager.onKey(event, down);
   }
 
   public override onFocusChanged(haveFocus: boolean): void {
-    this.target.cameraManager.onFocusChanged(haveFocus);
+    this.renderTarget.cameraManager.onFocusChanged(haveFocus);
   }
 }

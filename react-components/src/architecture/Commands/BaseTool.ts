@@ -6,17 +6,8 @@
 
 import { RenderTargetCommand } from './RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
-import { clear, remove } from '../utilities/extensions/arrayExtensions';
-
-type UpdateToolDelegate = () => void;
 
 export abstract class BaseTool extends RenderTargetCommand {
-  // ==================================================
-  // INSTANCE FIELDS
-  // ==================================================
-
-  private readonly _listeners: UpdateToolDelegate[] = [];
-
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
@@ -34,11 +25,11 @@ export abstract class BaseTool extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    return this.target.toolController.activeTool === this;
+    return this.renderTarget.toolController.activeTool === this;
   }
 
   protected override invokeCore(): boolean {
-    this.target.toolController.setActiveTool(this);
+    this.renderTarget.toolController.setActiveTool(this);
     return true;
   }
 
@@ -83,26 +74,4 @@ export abstract class BaseTool extends RenderTargetCommand {
   public onFocusChanged(haveFocus: boolean): void {}
 
   public onKey(event: KeyboardEvent, down: boolean): void {}
-
-  // ==================================================
-  // INSTANCE METHODS: Event listeners
-  // ==================================================
-
-  public addEventListener(listener: UpdateToolDelegate): void {
-    this._listeners.push(listener);
-  }
-
-  public removeEventListener(listener: UpdateToolDelegate): void {
-    remove(this._listeners, listener);
-  }
-
-  public removeEventListeners(): void {
-    clear(this._listeners);
-  }
-
-  public update(): void {
-    for (const listener of this._listeners) {
-      listener();
-    }
-  }
 }

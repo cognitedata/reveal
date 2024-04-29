@@ -255,11 +255,11 @@ export abstract class DomainObject {
     target: RevealRenderTarget,
     topLevel = true
   ): boolean {
-    const checkBoxState = this.getVisibleState(target);
-    if (checkBoxState === VisibleState.Disabled) {
+    const visibleState = this.getVisibleState(target);
+    if (visibleState === VisibleState.Disabled) {
       return false;
     }
-    if (checkBoxState === VisibleState.None && !this.canBeChecked(target)) {
+    if (visibleState === VisibleState.None && !this.canBeChecked(target)) {
       return false;
     }
     let hasChanged = false;
@@ -288,11 +288,10 @@ export abstract class DomainObject {
     }
   }
 
-  // Use this when clicking on the checkbox in the three control
   public toggleVisibleInteractive(target: RevealRenderTarget): void {
-    const checkBoxState = this.getVisibleState(target);
-    if (checkBoxState === VisibleState.None) this.setVisibleInteractive(true, target);
-    else if (checkBoxState === VisibleState.Some || checkBoxState === VisibleState.All)
+    const visibleState = this.getVisibleState(target);
+    if (visibleState === VisibleState.None) this.setVisibleInteractive(true, target);
+    else if (visibleState === VisibleState.Some || visibleState === VisibleState.All)
       this.setVisibleInteractive(false, target);
   }
 
@@ -400,13 +399,13 @@ export abstract class DomainObject {
     return undefined;
   }
 
-  public getChildByType<T extends DomainObject>(classType: Class<T>): T | null {
+  public getChildByType<T extends DomainObject>(classType: Class<T>): T | undefined {
     for (const child of this.children) {
       if (isInstanceOf(child, classType)) {
         return child;
       }
     }
-    return null;
+    return undefined;
   }
 
   public getActiveChildByType<T extends DomainObject>(classType: Class<T>): T | undefined {
@@ -453,6 +452,36 @@ export abstract class DomainObject {
     for (const descendant of this.getDescendants()) {
       yield descendant;
     }
+  }
+
+  public getDescendantByName(name: string): DomainObject | undefined {
+    for (const descendant of this.getDescendants()) {
+      if (descendant.name === name) {
+        return descendant;
+      }
+    }
+    return undefined;
+  }
+
+  public getDescendantByTypeAndName<T extends DomainObject>(
+    classType: Class<T>,
+    name: string
+  ): T | undefined {
+    for (const descendant of this.getDescendants()) {
+      if (isInstanceOf(descendant, classType) && descendant.name === name) {
+        return descendant;
+      }
+    }
+    return undefined;
+  }
+
+  public getDescendantByType<T extends DomainObject>(classType: Class<T>): T | undefined {
+    for (const descendant of this.getDescendants()) {
+      if (isInstanceOf(descendant, classType)) {
+        return descendant;
+      }
+    }
+    return undefined;
   }
 
   public *getDescendantsByType<T extends DomainObject>(classType: Class<T>): Generator<T> {

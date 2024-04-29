@@ -14,12 +14,17 @@ import {
 } from '../src';
 import { Color } from 'three';
 import styled from 'styled-components';
-import { Button, Menu, ToolBar, type ToolBarButton } from '@cognite/cogs.js';
+import { Button, Menu, ToolBar } from '@cognite/cogs.js';
 import { type ReactElement, useState, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
-import { InfoToolButton, NavigationToolButton } from '../src/components/RevealToolbar/ToolButtons';
+import {
+  UpdateTerrainCommandButton,
+  InfoToolButton,
+  NavigationToolButton,
+  SetTerrainVisibleButton
+} from '../src/components/RevealToolbar/ToolButtons';
 
 const meta = {
   title: 'Example/Architecture',
@@ -102,6 +107,8 @@ export const Main: Story = {
         <RevealToolbar.SetOrbitOrFirstPersonControlsType />
         <RevealToolbar.SlicerButton />
         <NavigationToolButton />
+        <SetTerrainVisibleButton />
+        <UpdateTerrainCommandButton />
         <InfoToolButton />
       </MyCustomToolbar>
     </RevealStoryContainer>

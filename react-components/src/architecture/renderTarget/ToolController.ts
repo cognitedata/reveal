@@ -14,7 +14,7 @@ export class ToolControllers extends PointerEvents {
   private _activeTool: BaseTool | undefined;
   private _previousTool: BaseTool | undefined;
   private readonly _domElement: HTMLElement;
-  private readonly _alltools: BaseTool[] = [];
+  private readonly _tools = new Set<BaseTool>();
   private readonly _pointerEventsTarget: PointerEventsTarget;
 
   // ==================================================
@@ -75,16 +75,18 @@ export class ToolControllers extends PointerEvents {
   // INSTANCE METHODS
   // ==================================================
 
-  public exists(tool: BaseTool): boolean {
-    return this._alltools.findIndex((t) => t === tool) >= 0;
-  }
-
-  public getByEqualName(tool: BaseTool): BaseTool | undefined {
-    return this._alltools.find((t) => t.name === tool.name);
+  public getEqual(tool: BaseTool): BaseTool | undefined {
+    // For some reason Set<> doesn't have find!
+    for (const oldTool of this._tools) {
+      if (oldTool.isEqual(tool)) {
+        return oldTool;
+      }
+    }
+    return undefined;
   }
 
   public add(tool: BaseTool): void {
-    this._alltools.push(tool);
+    this._tools.add(tool);
   }
 
   public setPreviousTool(): void {
@@ -110,6 +112,12 @@ export class ToolControllers extends PointerEvents {
     this._activeTool.onActivate();
   }
 
+  public update(): void {
+    for (const tool of this._tools) {
+      tool.update();
+    }
+  }
+
   // ================================================
   // INSTANCE METHODS: Other events
   // ================================================
@@ -120,7 +128,7 @@ export class ToolControllers extends PointerEvents {
     // key – the character ("A", "a" and so on), for non-character keys, such as Esc, usually has the same value as code.
     if (down) {
       const key = event.key.toUpperCase();
-      for (const tool of this._alltools) {
+      for (const tool of this._tools) {
         if (tool.shortCutKey === key) {
           this.setActiveTool(tool);
           // VirtualUserInterface.updateToolbars();
@@ -155,17 +163,10 @@ export class ToolControllers extends PointerEvents {
     domElement.removeEventListener('focus', this._onFocus);
     domElement.removeEventListener('blur', this._onBlur);
     this._pointerEventsTarget.removeEventListeners();
-    for (const tool of this._alltools) {
+    for (const tool of this._tools) {
       tool.removeEventListeners();
     }
   }
-
-  public updatedTools(): void {
-    for (const tool of this._alltools) {
-      tool.update();
-    }
-  }
-
   // ==================================================
   // INSTANCE METHODS: Events
   // ==================================================

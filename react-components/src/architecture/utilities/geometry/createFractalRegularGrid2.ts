@@ -9,9 +9,9 @@ import { RegularGrid2 } from './RegularGrid2';
 
 export function createFractalRegularGrid2(
   boundingBox: Range3,
-  powerOf2: number,
+  powerOf2: number = 8,
   dampning: number = 0.7,
-  smoothNumberOfPasses: number = 0,
+  smoothNumberOfPasses: number = 2,
   rotationAngle: number = 0
 ): RegularGrid2 {
   const origin = new Vector2();

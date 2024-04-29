@@ -2,6 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+
 import {
   isFlexibleCameraManager,
   type Cognite3DViewer,
@@ -9,12 +11,19 @@ import {
 } from '@cognite/reveal';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../concreteTools/NavigationTool';
-import { type Object3D, Group, Vector3, AmbientLight, DirectionalLight } from 'three';
+import {
+  type Object3D,
+  Group,
+  Vector3,
+  AmbientLight,
+  DirectionalLight,
+  WebGLRenderer,
+  PerspectiveCamera
+} from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
-import { Range3 } from '../utilities/geometry/Range3';
-import { createFractalRegularGrid2 } from '../utilities/geometry/createFractalRegularGrid2';
-import { SurfaceDomainObject } from '../surfaceDomainObject/SurfaceDomainObject';
+import { CommandController } from './CommandController';
+import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -25,8 +34,10 @@ export class RevealRenderTarget {
 
   private readonly _viewer: Cognite3DViewer;
   private readonly _toolController: ToolControllers;
+  private readonly _commandController: CommandController;
+  private readonly _rootObject3D: Object3D;
+  private readonly _rootDomainObject: RootDomainObject;
   private _axisGizmoTool: AxisGizmoTool | undefined;
-  protected readonly _rootObject3D: Object3D;
 
   // ==================================================
   // CONTRUCTORS
@@ -36,12 +47,28 @@ export class RevealRenderTarget {
     this._viewer = viewer;
     this._toolController = new ToolControllers(this.domElement);
     this._toolController.addEventListeners();
+    this._commandController = new CommandController();
 
     this._rootObject3D = this.createRootGroup();
     this._viewer.addObject3D(this._rootObject3D);
 
     this._viewer.on('cameraChange', this.updateLightPosition);
+    this._viewer.on('beforeSceneRendered', this.beforeSceneRenderedDelegate);
+
+    this._rootDomainObject = new RootDomainObject();
   }
+
+  beforeSceneRenderedDelegate = (event: {
+    frameNumber: number;
+    renderer: WebGLRenderer;
+    camera: PerspectiveCamera;
+  }): void => {
+    for (const domainObject of this._rootDomainObject.getDescendantsByType(VisualDomainObject)) {
+      for (const view of domainObject.views) {
+        view.beforeRender();
+      }
+    }
+  };
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -55,6 +82,10 @@ export class RevealRenderTarget {
     return this._rootObject3D;
   }
 
+  public get rootDomainObject(): RootDomainObject {
+    return this._rootDomainObject;
+  }
+
   public get canvas(): HTMLCanvasElement {
     return this._viewer.canvas;
   }
@@ -65,6 +96,10 @@ export class RevealRenderTarget {
 
   public get toolController(): ToolControllers {
     return this._toolController;
+  }
+
+  public get commandController(): CommandController {
+    return this._commandController;
   }
 
   public get cameraManager(): IFlexibleCameraManager {
@@ -98,16 +133,12 @@ export class RevealRenderTarget {
     this._viewer.requestRedraw();
   }
 
-  public test(): void {
-    const root = RootDomainObject.active;
-    const surfaceDomainObject = new SurfaceDomainObject();
-    root.addChildInteractive(surfaceDomainObject);
-
-    const range = new Range3(new Vector3(0, 0, 0), new Vector3(1000, 1000, 200));
-    surfaceDomainObject.surface = createFractalRegularGrid2(range, 8, 0.7, 3);
-
-    surfaceDomainObject.setVisibleInteractive(true, this);
+  public updateToolsAndCommands(): void {
+    this._toolController.update();
+    this._commandController.update();
   }
+
+  public test(): void {}
 
   private createRootGroup(): Group {
     const group = new Group();

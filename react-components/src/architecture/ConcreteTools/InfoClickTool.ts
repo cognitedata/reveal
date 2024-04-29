@@ -41,7 +41,7 @@ export class InfoClickTool extends NavigationTool {
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    const viewer = this.target.viewer;
+    const viewer = this.renderTarget.viewer;
 
     const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
     if (intersection === null) {

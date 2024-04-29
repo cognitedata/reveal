@@ -61,10 +61,14 @@ export abstract class ObjectThreeView extends ThreeView {
 
   public override beforeRender(): void {
     super.beforeRender();
-
     if (this._object3D === undefined) {
       this.makeObject();
     }
+  }
+
+  public override dispose(): void {
+    this.removeObject();
+    super.dispose();
   }
 
   // ==================================================
@@ -116,6 +120,7 @@ export abstract class ObjectThreeView extends ThreeView {
     const root = this.renderTarget.rootObject3D;
     root.remove(this._object3D);
     this._object3D = undefined;
+    // TODO: Do we have to dispose Object3D in some way (matrials?)
   }
 }
 function getBoundingBox(object: Object3D | undefined): Range3 | undefined {

@@ -23,17 +23,17 @@ export class RootDomainObject extends DomainObject {
     return 'Root';
   }
 
-  //= =================================================
+  // ==================================================
   // STATICS FIELDS AND PROPERTIES
-  //= =================================================
+  // ==================================================
 
-  private static _active: RootDomainObject = new RootDomainObject();
+  // private static _active: RootDomainObject = new RootDomainObject();
 
-  public static get active(): RootDomainObject {
-    return RootDomainObject._active;
-  }
+  // public static get active(): RootDomainObject {
+  //   return RootDomainObject._active;
+  // }
 
-  public static set active(value: RootDomainObject) {
-    RootDomainObject._active = value;
-  }
+  // public static set active(value: RootDomainObject) {
+  //   RootDomainObject._active = value;
+  // }
 }

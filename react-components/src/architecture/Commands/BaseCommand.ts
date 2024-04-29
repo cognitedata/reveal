@@ -4,8 +4,17 @@
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { isEmpty } from 'lodash';
+import { clear, remove } from '../utilities/extensions/arrayExtensions';
+
+type UpdateToolDelegate = () => void;
 
 export abstract class BaseCommand {
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
+  private readonly _listeners: UpdateToolDelegate[] = [];
+
   // ==================================================
   // VIRTUAL METHODS (To be overriden)
   // =================================================
@@ -54,6 +63,10 @@ export abstract class BaseCommand {
     return false;
   }
 
+  public isEqual(other: BaseCommand): boolean {
+    return this.name === other.name;
+  }
+
   // ==================================================
   // INSTANCE METHODS (Not to be overriden)
   // =================================================
@@ -70,5 +83,27 @@ export abstract class BaseCommand {
 
   public invoke(): boolean {
     return this.invokeCore();
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Event listeners
+  // ==================================================
+
+  public addEventListener(listener: UpdateToolDelegate): void {
+    this._listeners.push(listener);
+  }
+
+  public removeEventListener(listener: UpdateToolDelegate): void {
+    remove(this._listeners, listener);
+  }
+
+  public removeEventListeners(): void {
+    clear(this._listeners);
+  }
+
+  public update(): void {
+    for (const listener of this._listeners) {
+      listener();
+    }
   }
 }
