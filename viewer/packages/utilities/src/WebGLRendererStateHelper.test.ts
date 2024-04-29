@@ -6,13 +6,13 @@ import { WebGLRendererStateHelper } from './WebGLRendererStateHelper';
 
 import { jest } from '@jest/globals';
 import { It, Mock } from 'moq.ts';
-import { populateWebGLRendererMock } from '../../../test-utilities';
+import { autoMockWebGLRenderer } from '../../../test-utilities';
 
 describe('WebGLRendererStateHelper', () => {
   let renderer: THREE.WebGLRenderer;
 
   beforeEach(() => {
-    renderer = populateWebGLRendererMock(new Mock<THREE.WebGLRenderer>()).object();
+    renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>()).object();
   });
 
   afterEach(() => {

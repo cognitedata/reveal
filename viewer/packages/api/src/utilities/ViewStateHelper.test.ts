@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import { ViewStateHelper } from './ViewStateHelper';
 
-import { mockClientAuthentication, populateWebGLRendererMock } from '../../../../test-utilities';
+import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../test-utilities';
 
 import { CogniteClient } from '@cognite/sdk';
 
@@ -19,7 +19,7 @@ describe(ViewStateHelper.name, () => {
   beforeEach(() => {
     const sdk = new CogniteClient({ appId: 'reveal.test', project: 'dummy', getToken: async () => 'dummy' });
     mockClientAuthentication(sdk);
-    const renderer = populateWebGLRendererMock(new Mock<THREE.WebGLRenderer>()).object();
+    const renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>()).object();
     renderer.render = jest.fn();
 
     viewer = new Cognite3DViewer({ sdk, renderer });

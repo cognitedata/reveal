@@ -10,14 +10,14 @@ import { IntersectInput } from '@reveal/model-base';
 import { PickingHandler } from './PickingHandler';
 import { It, Mock } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
-import { createCadModel, populateWebGLRendererMock } from '../../../../test-utilities';
+import { createCadModel, autoMockWebGLRenderer } from '../../../../test-utilities';
 
 describe(PickingHandler.name, () => {
   let pickingHandler: PickingHandler;
 
   const camera = new THREE.PerspectiveCamera();
 
-  const renderer = populateWebGLRendererMock(new Mock<THREE.WebGLRenderer>()).object();
+  const renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>()).object();
 
   const input: IntersectInput = {
     normalizedCoords: new THREE.Vector2(0.5, 0.5),

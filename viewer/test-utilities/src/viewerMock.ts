@@ -10,7 +10,7 @@ import { Camera, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
 
 import { jest } from '@jest/globals';
 import { Mock } from 'moq.ts';
-import { autoMockWebGLRenderer } from './populateWebGLRendererMock';
+import { autoMockWebGLRenderer } from './autoMockWebGLRenderer';
 
 export function mockViewer(): Cognite3DViewer {
   return mockViewerComponents().viewer;

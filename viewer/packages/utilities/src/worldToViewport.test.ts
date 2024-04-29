@@ -8,7 +8,7 @@ import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from
 
 import { jest } from '@jest/globals';
 import { Mock } from 'moq.ts';
-import { populateWebGLRendererMock } from '../../../test-utilities';
+import { autoMockWebGLRenderer } from '../../../test-utilities';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -57,7 +57,7 @@ describe('worldToViewport', () => {
     const canvas = document.createElement('canvas');
     jest.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(canvasRect);
 
-    renderer = populateWebGLRendererMock(new Mock<THREE.WebGLRenderer>(), { canvas }).object();
+    renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>(), { canvas }).object();
     renderer.setSize(64, 64);
   });
 
