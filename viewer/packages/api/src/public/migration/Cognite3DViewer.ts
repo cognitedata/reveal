@@ -161,10 +161,6 @@ export class Cognite3DViewer {
   private readonly _boundAnimate = this.animate.bind(this);
 
   private readonly _events = {
-    cameraChange: new EventTrigger<CameraChangeDelegate>(),
-    cameraStop: new EventTrigger<CameraStopDelegate>(),
-    click: new EventTrigger<PointerEventDelegate>(),
-    hover: new EventTrigger<PointerEventDelegate>(),
     beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
     sceneRendered: new EventTrigger<SceneRenderedDelegate>(),
     disposed: new EventTrigger<DisposedDelegate>()
@@ -294,10 +290,10 @@ export class Cognite3DViewer {
       (useFlexibleCameraManager
         ? new FlexibleCameraManager(
             this._domElement,
-            this._mouseHandler,
             this.modelIntersectionCallback.bind(this),
             undefined,
-            this._sceneHandler.scene
+            this._sceneHandler.scene,
+            options.hasEventListeners
           )
         : new DefaultCameraManager(
             this._domElement,
@@ -307,15 +303,6 @@ export class Cognite3DViewer {
           ));
 
     this._activeCameraManager = new ProxyCameraManager(initialActiveCameraManager);
-
-    this._activeCameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
-      this._events.cameraChange.fire(position.clone(), target.clone());
-    });
-
-    this._activeCameraManager.on('cameraStop', () => {
-      this._events.cameraStop.fire();
-    });
-
     const revealOptions = createRevealManagerOptions(options, this._renderer.getPixelRatio());
     if (options._localModels === true) {
       this._dataSource = new LocalDataSource();
@@ -358,9 +345,6 @@ export class Cognite3DViewer {
         }
       );
     }
-
-    this.startPointerEventListeners();
-
     this._pickingHandler = new PickingHandler(
       this._renderer,
       this._revealManagerHelper.revealManager.materialManager,
@@ -550,20 +534,17 @@ export class Cognite3DViewer {
       | DisposedDelegate
   ): void {
     switch (event) {
-      case 'click':
-        this._events.click.subscribe(callback as PointerEventDelegate);
-        break;
-
       case 'hover':
-        this._events.hover.subscribe(callback as PointerEventDelegate);
+      case 'click':
+        this._mouseHandler.on(event, callback as PointerEventDelegate);
         break;
 
       case 'cameraChange':
-        this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
+        this._activeCameraManager.on(event, callback as CameraChangeDelegate);
         break;
 
       case 'cameraStop':
-        this._events.cameraStop.subscribe(callback as CameraStopDelegate);
+        this._activeCameraManager.on(event, callback as CameraStopDelegate);
         break;
 
       case 'beforeSceneRendered':
@@ -641,19 +622,16 @@ export class Cognite3DViewer {
   ): void {
     switch (event) {
       case 'click':
-        this._events.click.unsubscribe(callback as PointerEventDelegate);
-        break;
-
       case 'hover':
-        this._events.hover.unsubscribe(callback as PointerEventDelegate);
+        this._mouseHandler.off(event, callback as PointerEventDelegate);
         break;
 
       case 'cameraChange':
-        this._events.cameraChange.unsubscribe(callback as CameraChangeDelegate);
+        this._activeCameraManager.off(event, callback as CameraChangeDelegate);
         break;
 
       case 'cameraStop':
-        this._events.cameraStop.unsubscribe(callback as CameraStopDelegate);
+        this._activeCameraManager.off(event, callback as CameraStopDelegate);
         break;
 
       case 'beforeSceneRendered':
@@ -1617,11 +1595,6 @@ export class Cognite3DViewer {
     offsetY: number,
     options?: { asyncCADIntersection?: boolean }
   ): Promise<null | Intersection> {
-    const cadModels = this.getModels('cad');
-    const pointCloudModels = this.getModels('pointcloud');
-    const cadNodes = cadModels.map(x => x.cadNode);
-    const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
-
     const normalizedCoords = getNormalizedPixelCoordinates(this.renderer.domElement, offsetX, offsetY);
     const input: IntersectInput = {
       normalizedCoords,
@@ -1631,48 +1604,57 @@ export class Cognite3DViewer {
       domElement: this.renderer.domElement
     };
 
-    // Do not refresh renderer when CAD picking is active as it would create a bleed through during TreeIndex computing.
-    this._forceStopRendering = true;
-    const cadResults = await this._pickingHandler.intersectCadNodes(
-      cadNodes,
-      input,
-      options?.asyncCADIntersection ?? true
-    );
-    this._forceStopRendering = false;
-    const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
-
     const intersections: Intersection[] = [];
-    if (pointCloudResults.length > 0) {
-      const result = pointCloudResults[0]; // Nearest intersection
-      for (const model of pointCloudModels) {
-        if (model.pointCloudNode === result.pointCloudNode) {
-          const intersection: PointCloudIntersection = {
-            type: 'pointcloud',
-            model,
-            point: result.point,
-            pointIndex: result.pointIndex,
-            distanceToCamera: result.distance,
-            annotationId: result.annotationId,
-            assetRef: result.assetRef
-          };
-          intersections.push(intersection);
-          break;
+    {
+      const pointCloudModels = this.getModels('pointcloud');
+      const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
+      const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
+
+      if (pointCloudResults.length > 0) {
+        const result = pointCloudResults[0]; // Nearest intersection
+        for (const model of pointCloudModels) {
+          if (model.pointCloudNode === result.pointCloudNode) {
+            const intersection: PointCloudIntersection = {
+              type: 'pointcloud',
+              model,
+              point: result.point,
+              pointIndex: result.pointIndex,
+              distanceToCamera: result.distance,
+              annotationId: result.annotationId,
+              assetRef: result.assetRef
+            };
+            intersections.push(intersection);
+            break;
+          }
         }
       }
     }
+    {
+      // Do not refresh renderer when CAD picking is active as it would create a bleed through during TreeIndex computing.
+      this._forceStopRendering = true;
 
-    if (cadResults.length > 0) {
-      const result = cadResults[0]; // Nearest intersection
-      for (const model of cadModels) {
-        if (model.cadNode === result.cadNode) {
-          const intersection: CadIntersection = {
-            type: 'cad',
-            model,
-            treeIndex: result.treeIndex,
-            point: result.point,
-            distanceToCamera: result.distance
-          };
-          intersections.push(intersection);
+      const cadModels = this.getModels('cad');
+      const cadNodes = cadModels.map(x => x.cadNode);
+      const cadResults = await this._pickingHandler.intersectCadNodes(
+        cadNodes,
+        input,
+        options?.asyncCADIntersection ?? true
+      );
+      this._forceStopRendering = false;
+
+      if (cadResults.length > 0) {
+        const result = cadResults[0]; // Nearest intersection
+        for (const model of cadModels) {
+          if (model.cadNode === result.cadNode) {
+            const intersection: CadIntersection = {
+              type: 'cad',
+              model,
+              treeIndex: result.treeIndex,
+              point: result.point,
+              distanceToCamera: result.distance
+            };
+            intersections.push(intersection);
+          }
         }
       }
     }
@@ -1812,16 +1794,6 @@ export class Cognite3DViewer {
     resizeObserver.observe(domElement);
     return resizeObserver;
   }
-
-  private readonly startPointerEventListeners = () => {
-    this._mouseHandler.on('click', e => {
-      this._events.click.fire(e);
-    });
-
-    this._mouseHandler.on('hover', e => {
-      this._events.hover.fire(e);
-    });
-  };
 }
 
 function adjustCamera(camera: THREE.PerspectiveCamera, width: number, height: number) {
