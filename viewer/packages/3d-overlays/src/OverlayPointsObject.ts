@@ -123,9 +123,12 @@ export class OverlayPointsObject extends Group {
       }
     }
 
-    this._positionAttribute.updateRange = { offset: 0, count: points.length * 3 };
+    this._positionAttribute.clearUpdateRanges();
+    this._positionAttribute.updateRanges.push({ start: 0, count: points.length * 3 });
     this._positionAttribute.needsUpdate = true;
-    this._colorAttribute.updateRange = { offset: 0, count: points.length * 3 };
+
+    this._colorAttribute.clearUpdateRanges();
+    this._colorAttribute.updateRanges.push({ start: 0, count: points.length * 3 });
     this._colorAttribute.needsUpdate = true;
     this._geometry.setDrawRange(0, points.length);
 

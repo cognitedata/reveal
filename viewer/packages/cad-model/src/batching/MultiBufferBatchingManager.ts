@@ -287,17 +287,19 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     const newOffset = updateRange.byteOffset / typeSize;
     const newCount = updateRange.byteCount / typeSize;
 
-    const { offset: oldOffset, count: oldCount } = attribute.data.updateRange;
-    if (oldCount === -1) {
-      attribute.data.updateRange = { offset: newOffset, count: newCount };
+    if (attribute.data.updateRanges.length === 0) {
+      attribute.data.clearUpdateRanges();
+      attribute.data.updateRanges.push({ start: newOffset, count: newCount });
       attribute.data.needsUpdate = true;
       return;
     }
 
-    const offset = Math.min(oldOffset, newOffset);
-    const count = Math.max(oldOffset + oldCount, newOffset + newCount) - offset;
+    const { start: oldOffset, count: oldCount } = attribute.data.updateRanges[0];
+    const start = Math.min(oldOffset, newOffset);
+    const count = Math.max(oldOffset + oldCount, newOffset + newCount) - start;
 
-    attribute.data.updateRange = { offset, count };
+    attribute.data.clearUpdateRanges();
+    attribute.data.updateRanges.push({ start, count });
   }
 
   private getBatchBufferToFill(instanceBatch: InstanceBatch): BatchBuffer {
