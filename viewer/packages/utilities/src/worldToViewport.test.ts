@@ -4,11 +4,11 @@
 
 import * as THREE from 'three';
 
-import { createGlContext } from '../../../test-utilities/src/createGlContext';
-
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from './worldToViewport';
 
 import { jest } from '@jest/globals';
+import { Mock } from 'moq.ts';
+import { populateWebGLRendererMock } from '../../../test-utilities';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -57,8 +57,7 @@ describe('worldToViewport', () => {
     const canvas = document.createElement('canvas');
     jest.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(canvasRect);
 
-    const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
-    renderer = new THREE.WebGLRenderer({ context, canvas });
+    renderer = populateWebGLRendererMock(new Mock<THREE.WebGLRenderer>(), { canvas }).object();
     renderer.setSize(64, 64);
   });
 

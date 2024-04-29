@@ -6,14 +6,13 @@ import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@reveal/api';
 import * as THREE from 'three';
 
-import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
+import { mockClientAuthentication, populateWebGLRendererMock } from '../../../../test-utilities';
 
 import { AxisViewTool } from './AxisViewTool';
 import { defaultAxisBoxConfig } from './types';
 
-const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
-
 import { jest } from '@jest/globals';
+import { Mock } from 'moq.ts';
 
 describe('AxisViewTool', () => {
   let canvasContainer: HTMLElement;
@@ -27,7 +26,7 @@ describe('AxisViewTool', () => {
       getToken: async () => 'dummy'
     });
     mockClientAuthentication(sdk);
-    const renderer = new THREE.WebGLRenderer({ context });
+    const renderer = populateWebGLRendererMock(new Mock<THREE.WebGLRenderer>()).object();
     renderer.render = jest.fn();
 
     domSize = { height: 480, width: 640 };

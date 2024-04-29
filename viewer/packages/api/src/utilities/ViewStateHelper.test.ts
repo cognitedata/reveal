@@ -6,13 +6,12 @@ import * as THREE from 'three';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import { ViewStateHelper } from './ViewStateHelper';
 
-import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
+import { mockClientAuthentication, populateWebGLRendererMock } from '../../../../test-utilities';
 
 import { CogniteClient } from '@cognite/sdk';
 
 import { jest } from '@jest/globals';
-
-const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
+import { Mock } from 'moq.ts';
 
 describe(ViewStateHelper.name, () => {
   let viewer: Cognite3DViewer;
@@ -20,7 +19,7 @@ describe(ViewStateHelper.name, () => {
   beforeEach(() => {
     const sdk = new CogniteClient({ appId: 'reveal.test', project: 'dummy', getToken: async () => 'dummy' });
     mockClientAuthentication(sdk);
-    const renderer = new THREE.WebGLRenderer({ context });
+    const renderer = populateWebGLRendererMock(new Mock<THREE.WebGLRenderer>()).object();
     renderer.render = jest.fn();
 
     viewer = new Cognite3DViewer({ sdk, renderer });

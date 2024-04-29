@@ -2,7 +2,6 @@
  * Copyright 2023 Cognite AS
  */
 
-import { createGlContext } from './createGlContext';
 import { mockClientAuthentication } from './cogniteClientAuth';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -10,8 +9,8 @@ import { Cognite3DViewer } from '../../packages/api';
 import { Camera, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
 
 import { jest } from '@jest/globals';
-
-const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
+import { Mock } from 'moq.ts';
+import { autoMockWebGLRenderer } from './populateWebGLRendererMock';
 
 export function mockViewer(): Cognite3DViewer {
   return mockViewerComponents().viewer;
@@ -30,9 +29,11 @@ export function mockViewerComponents(): {
   });
   mockClientAuthentication(sdk);
   const canvas = document.createElement('canvas');
+  canvas.width = 128;
+  canvas.height = 128;
   fakeGetBoundingClientRect(canvas, 0, 0, 128, 128);
 
-  const renderer = new WebGLRenderer({ context, canvas });
+  const renderer = autoMockWebGLRenderer(new Mock<WebGLRenderer>(), { canvas }).object();
   renderer.render = jest.fn();
 
   const canvasContainer = document.createElement('div');
