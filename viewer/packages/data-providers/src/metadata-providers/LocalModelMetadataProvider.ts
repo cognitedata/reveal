@@ -42,7 +42,6 @@ export class LocalModelMetadataProvider implements ModelMetadataProvider {
   }
 
   async getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]> {
-    console.log('gettigetti');
     const modelUri = await this.getModelUri(modelIdentifier);
 
     const output = (await getCadOutput(modelUri)) ?? (await getPointCloudOutput(modelUri));
