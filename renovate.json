@@ -12,22 +12,6 @@
   ],
   "packageRules": [
     {
-      "matchPackagePrefixes": [
-        "@cognite/sdk",
-        "@cognite/reveal",
-        "three",
-        "@types/three"
-      ],
-      "matchPaths": ["documentation/versioned_docs/*/package.json"],
-      "enabled": false
-    },
-    {
-      "matchPackagePrefixes": ["three", "@types/three"],
-      "matchPaths": ["viewer/package.json", "examples/package.json"],
-      "automerge": false,
-      "enabled": true
-    },
-    {
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch",
       "matchPackagePatterns": ["*"],
@@ -47,6 +31,25 @@
       "enabled": true
     },
     {
+      "matchPackagePrefixes": [
+        "@cognite/sdk",
+        "@cognite/reveal",
+        "three",
+        "@types/three"
+      ],
+      "matchPaths": [
+        "documentation/versioned_docs/*/package.json",
+        "react-components/package.json"
+      ],
+      "enabled": false
+    },
+    {
+      "matchPackagePrefixes": ["three", "@types/three"],
+      "matchPaths": ["viewer/package.json", "examples/package.json"],
+      "automerge": false,
+      "enabled": true
+    },
+    {
       "matchPaths": ["viewer"],
       "extends": ["github>Turbo87/renovate-config//rust/updateToolchain"]
     }
@@ -59,7 +62,7 @@
   "postUpdateOptions": ["yarnDedupeHighest"],
   "lockFileMaintenance": {
     "enabled": true,
-	  "automerge": true,
+    "automerge": true,
     "extends": ["schedule:weekly"]
   }
 }
