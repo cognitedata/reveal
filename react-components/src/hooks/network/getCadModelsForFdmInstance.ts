@@ -35,7 +35,7 @@ export async function getCadModelsForFdmInstance(
         return undefined;
       }
 
-      return { type: 'cad' as const, addOptions: { modelId, revisionId: properties.revisionId } };
+      return { type: 'cad' as const, modelId, revisionId: properties.revisionId };
     })
     .filter(isDefined);
 

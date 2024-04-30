@@ -62,7 +62,13 @@ import {
   CameraStopDelegate,
   CameraManagerCallbackData
 } from '@reveal/camera-manager';
-import { CdfModelIdentifier, File3dFormat, Image360DataModelIdentifier } from '@reveal/data-providers';
+import {
+  CdfModelIdentifier,
+  File3dFormat,
+  Image360DataModelIdentifier,
+  LocalModelIdentifier,
+  ModelIdentifier
+} from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
 
@@ -1019,11 +1025,13 @@ export class Cognite3DViewer {
    * ```
    */
   async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''> {
-    if (this._cdfSdkClient === undefined) {
-      throw new Error(`${this.determineModelType.name}() is only supported when connecting to Cognite Data Fusion`);
+    let modelIdentifier: ModelIdentifier;
+    if (typeof modelId === 'string') {
+      modelIdentifier = new LocalModelIdentifier(modelId);
+    } else {
+      modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
     }
 
-    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
     const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
     const outputFormats = outputs.map(output => output.format);
 

@@ -16,29 +16,27 @@ export type AddImageCollection360Options =
   | AddImageCollection360EventsOptions
   | AddImageCollection360DatamodelsOptions;
 
+type CommonAddImageCollection360Options = {
+  transform?: Matrix4;
+  styling?: { default?: Image360AnnotationAppearance; mapped?: Image360AnnotationAppearance };
+};
+
 export type AddImageCollection360EventsOptions = {
   siteId: string;
-} & {
-  transform?: Matrix4;
-};
+} & CommonAddImageCollection360Options;
 
 export type AddImageCollection360DatamodelsOptions = {
   externalId: string;
   space: string;
-} & {
-  transform?: Matrix4;
-};
+} & CommonAddImageCollection360Options;
 
 export type FdmPropertyType<NodeType> = Record<string, Record<string, NodeType>>;
 
 export type TaggedAddImageCollection360Options = {
   type: 'image360';
-  addOptions: AddImageCollection360Options;
-};
-export type TaggedAdd3DModelOptions = {
-  type: 'cad' | 'pointcloud';
-  addOptions: AddReveal3DModelOptions;
-};
+} & AddImageCollection360Options;
+
+export type TaggedAdd3DModelOptions = CadModelOptions | PointCloudModelOptions;
 
 export type TaggedAddResourceOptions = TaggedAdd3DModelOptions | TaggedAddImageCollection360Options;
 
@@ -49,15 +47,8 @@ export type AddReveal3DModelOptions = AddModelOptions & { transform?: Matrix4 } 
 };
 export type TypedReveal3DModel = CadModelOptions | PointCloudModelOptions;
 
-export type CadModelOptions = { type: 'cad' } & AddModelOptions & { transform?: Matrix4 } & {
-    styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
-  };
-
-export type PointCloudModelOptions = { type: 'pointcloud' } & AddModelOptions & {
-    transform?: Matrix4;
-  } & {
-    styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
-  };
+export type CadModelOptions = { type: 'cad' } & AddReveal3DModelOptions;
+export type PointCloudModelOptions = { type: 'pointcloud' } & AddReveal3DModelOptions;
 
 export type NodeDataResult = {
   fdmNode: DmsUniqueIdentifier;
@@ -80,7 +71,7 @@ export type AssetStylingGroup = {
 
 export type Image360AssetStylingGroup = {
   assetIds: CogniteInternalId[];
-  style: { image360?: Image360AnnotationAppearance };
+  style: { image360: Image360AnnotationAppearance };
 };
 
 export type DefaultResourceStyling = {

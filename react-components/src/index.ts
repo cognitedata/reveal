@@ -8,9 +8,6 @@ export { RevealCanvas } from './components/RevealCanvas/RevealCanvas';
 export { RevealContext, type RevealContextProps } from './components/RevealContext/RevealContext';
 export { RevealContainer } from './components/RevealContainer/RevealContainer';
 export { Reveal3DResources } from './components/Reveal3DResources/Reveal3DResources';
-export { PointCloudContainer } from './components/PointCloudContainer/PointCloudContainer';
-export { CadModelContainer } from './components/CadModelContainer/CadModelContainer';
-export { Image360CollectionContainer } from './components/Image360CollectionContainer/Image360CollectionContainer';
 export { Image360HistoricalDetails } from './components/Image360HistoricalDetails/Image360HistoricalDetails';
 export { Image360Details } from './components/Image360Details/Image360Details';
 export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
@@ -86,13 +83,8 @@ export {
 export {
   type PointCloudModelStyling,
   type AnnotationIdStylingGroup
-} from './components/PointCloudContainer/useApplyPointCloudStyling';
-export { type CogniteCadModelProps } from './components/CadModelContainer/CadModelContainer';
-export {
-  type CadModelStyling,
-  type TreeIndexStylingGroup,
-  type NodeStylingGroup
-} from './components/CadModelContainer/useApplyCadModelStyling';
+} from './components/Reveal3DResources/applyPointCloudStyling';
+export { type CadModelStyling } from './components/Reveal3DResources/applyCadStyling';
 export {
   type Reveal3DResourcesProps,
   type FdmAssetStylingGroup,

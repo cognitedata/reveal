@@ -3,10 +3,6 @@
  */
 import { useRef, type ReactElement, useState, useEffect, useMemo } from 'react';
 import { type Cognite3DViewer } from '@cognite/reveal';
-import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
-import { type CadModelStyling } from '../CadModelContainer/useApplyCadModelStyling';
-import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
-import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import {
   type AddReveal3DModelOptions,
@@ -18,17 +14,19 @@ import {
 } from './types';
 import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
 import { useCalculatePointCloudStyling } from '../../hooks/useCalculatePointCloudModelsStyling';
-import {
-  type AnnotationIdStylingGroup,
-  type PointCloudModelStyling
-} from '../PointCloudContainer/useApplyPointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import {
   isAssetMappingStylingGroup,
   isCadAssetMappingStylingGroup,
   isImage360AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
-import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
+import {
+  ResourceContainerClass,
+  StyledAddModelOptions,
+  StyledImage360CollectionAddOptions
+} from './ResourceContainerClass';
+import { useSDK } from '../RevealCanvas/SDKProvider';
+import { is360ImageCollectionOptions } from '../../utilities/isSameModel';
 
 export const Reveal3DResources = ({
   resources,
@@ -40,16 +38,42 @@ export const Reveal3DResources = ({
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
 
   const viewer = useReveal();
+  const sdk = useSDK();
+
+  const onModelFailOrSucceed = (): void => {
+    numModelsLoaded.current += 1;
+
+    const expectedTotalLoadCount = resources.length;
+
+    if (numModelsLoaded.current === expectedTotalLoadCount && onResourcesAdded !== undefined) {
+      onResourcesAdded();
+    }
+  };
+
+  const onModelLoaded = (): void => {
+    onModelFailOrSucceed();
+  };
+
+  const onModelLoadedError = (addOptions: AddResourceOptions, error: any): void => {
+    onResourceLoadError?.(addOptions, error);
+    onModelFailOrSucceed();
+  };
+
+  const revealHandler = useRef<ResourceContainerClass>(
+    new ResourceContainerClass(viewer, sdk, onModelLoaded, onModelLoadedError)
+  );
   const numModelsLoaded = useRef(0);
 
   useEffect(() => {
     void getTypedModels(resources, viewer, onResourceLoadError).then(setReveal3DModels);
   }, [resources, viewer]);
 
-  const cadModelOptions = useMemo(
-    () => reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad'),
-    [reveal3DModels]
-  );
+  const cadModelOptions = useMemo(() => {
+    const cadModels = reveal3DModels.filter(
+      (model): model is CadModelOptions => model.type === 'cad'
+    );
+    return cadModels;
+  }, [reveal3DModels]);
 
   const pointCloudModelOptions = useMemo(
     () =>
@@ -71,105 +95,30 @@ export const Reveal3DResources = ({
     defaultResourceStyling
   );
 
-  const image360CollectionAddOptions = resources.filter((resource) => {
-    if ('siteId' in resource) return resource.siteId !== undefined;
-    else if ('externalId' in resource) return resource.externalId !== undefined;
-    return false;
-  });
+  const image360CollectionAddOptions = resources.filter(is360ImageCollectionOptions);
+  const image360StyledGroups =
+    instanceStyling?.filter(isImage360AssetStylingGroup).map((group) => {
+      return { assetIds: group.assetIds, style: group.style.image360 };
+    }) ?? EMPTY_ARRAY;
 
-  const image360StyledGroup =
-    instanceStyling
-      ?.filter(isImage360AssetStylingGroup)
-      .map((group) => {
-        return { assetIds: group.assetIds, style: group.style.image360 };
-      })
-      .filter(
-        (group): group is AnnotationIdStylingGroup & { assetIds: number[] } =>
-          group.style !== undefined
-      ) ?? EMPTY_ARRAY;
+  const styledImage360CollectionOptions: StyledImage360CollectionAddOptions[] =
+    image360CollectionAddOptions.map((collectionAddOptions) => {
+      return {
+        addOptions: collectionAddOptions,
+        styleGroups: image360StyledGroups
+      };
+    });
 
-  const onModelLoaded = (): void => {
-    onModelFailOrSucceed();
-  };
+  useEffect(() => {
+    revealHandler.current.sync(
+      ([] as StyledAddModelOptions[])
+        .concat(styledCadModelOptions)
+        .concat(styledPointCloudModelOptions)
+        .concat(styledImage360CollectionOptions)
+    );
+  }, [styledCadModelOptions, styledPointCloudModelOptions, styledImage360CollectionOptions]);
 
-  const onModelLoadedError = (addOptions: AddResourceOptions, error: any): void => {
-    onResourceLoadError?.(addOptions, error);
-    onModelFailOrSucceed();
-  };
-
-  const onModelFailOrSucceed = (): void => {
-    numModelsLoaded.current += 1;
-
-    const expectedTotalLoadCount = reveal3DModels.length + image360CollectionAddOptions.length;
-
-    if (numModelsLoaded.current === expectedTotalLoadCount && onResourcesAdded !== undefined) {
-      onResourcesAdded();
-    }
-  };
-
-  return (
-    <>
-      {styledCadModelOptions.map(({ styleGroups, model }, index) => {
-        const defaultStyle = model.styling?.default ?? defaultResourceStyling?.cad?.default;
-        const cadStyling: CadModelStyling = {
-          defaultStyle,
-          groups: styleGroups
-        };
-        return (
-          <CadModelContainer
-            key={`${model.modelId}/${model.revisionId}/${index}`}
-            addModelOptions={model}
-            styling={cadStyling}
-            transform={model.transform}
-            onLoad={onModelLoaded}
-            onLoadError={onResourceLoadError}
-          />
-        );
-      })}
-      {styledPointCloudModelOptions.map(({ styleGroups, model }, index) => {
-        const defaultStyle = model.styling?.default ?? defaultResourceStyling?.pointcloud?.default;
-        const pcStyling: PointCloudModelStyling = {
-          defaultStyle,
-          groups: styleGroups
-        };
-        return (
-          <PointCloudContainer
-            key={`${model.modelId}/${model.revisionId}/${index}`}
-            addModelOptions={model}
-            styling={pcStyling}
-            transform={model.transform}
-            onLoad={onModelLoaded}
-            onLoadError={onModelLoadedError}
-          />
-        );
-      })}
-      {image360CollectionAddOptions.map((addModelOption) => {
-        const image360Styling: ImageCollectionModelStyling = {
-          defaultStyle: defaultResourceStyling?.image360?.default,
-          groups: image360StyledGroup
-        };
-        let key;
-        if ('siteId' in addModelOption) {
-          key = `${addModelOption.siteId}`;
-        } else if ('externalId' in addModelOption) {
-          key = `${addModelOption.externalId}`;
-        }
-
-        if ('externalId' in addModelOption || 'siteId' in addModelOption) {
-          return (
-            <Image360CollectionContainer
-              key={key}
-              addImageCollection360Options={addModelOption}
-              styling={image360Styling}
-              onLoad={onModelLoaded}
-              onLoadError={onModelLoadedError}
-            />
-          );
-        }
-        return <></>;
-      })}
-    </>
-  );
+  return <></>;
 };
 
 async function getTypedModels(
@@ -187,7 +136,10 @@ async function getTypedModels(
     )
     .map(async (addModelOptions) => {
       const type = await viewer
-        .determineModelType(addModelOptions.modelId, addModelOptions.revisionId)
+        .determineModelType(
+          (addModelOptions.localPath as unknown as number) ?? addModelOptions.modelId,
+          addModelOptions.revisionId
+        )
         .catch((error) => {
           errorFunction(addModelOptions, error);
           return '';

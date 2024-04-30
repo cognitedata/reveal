@@ -7,7 +7,12 @@ import {
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
 } from '../components/Reveal3DResources/types';
-import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
+import {
+  NumericRange,
+  type NodeAppearance,
+  IndexSet,
+  DefaultNodeAppearance
+} from '@cognite/reveal';
 import { type ThreeDModelFdmMappings } from './types';
 import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 import {
@@ -21,17 +26,17 @@ import {
   type AssetId,
   type ModelRevisionAssetNodesResult
 } from '../components/CacheProvider/types';
-import {
-  type NodeStylingGroup,
-  type TreeIndexStylingGroup
-} from '../components/CadModelContainer/useApplyCadModelStyling';
 import { type AssetMapping } from '../components/CacheProvider/AssetMappingCache';
 import {
   useAssetMappedNodesForRevisions,
   useNodesForAssets
 } from '../components/CacheProvider/AssetMappingCacheProvider';
-import { isSameCadModel } from '../utilities/isSameModel';
+import { isSame3dModel } from '../utilities/isSameModel';
 import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
+import {
+  NodeStylingGroup,
+  TreeIndexStylingGroup
+} from '../components/Reveal3DResources/applyCadStyling';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -40,16 +45,17 @@ type ModelStyleGroup = {
 
 export type CadStyleGroup = NodeStylingGroup | TreeIndexStylingGroup;
 
-export type StyledModel = {
-  model: CadModelOptions;
+export type StyledCadModelAddOptions = {
+  addOptions: CadModelOptions;
   styleGroups: CadStyleGroup[];
+  defaultStyle: NodeAppearance;
 };
 
 export const useCalculateCadStyling = (
   models: CadModelOptions[],
   instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
   defaultResourceStyling?: DefaultResourceStyling
-): StyledModel[] => {
+): StyledCadModelAddOptions[] => {
   const modelsMappedStyleGroups = useCalculateMappedStyling(
     models,
     defaultResourceStyling?.cad?.mapped
@@ -59,7 +65,8 @@ export const useCalculateCadStyling = (
   const joinedStyleGroups = useJoinStylingGroups(
     models,
     modelsMappedStyleGroups,
-    modelInstanceStyleGroups
+    modelInstanceStyleGroups,
+    defaultResourceStyling?.cad?.default
   );
   return joinedStyleGroups;
 };
@@ -214,22 +221,25 @@ function useFdmInstanceStyleGroups(
 function useJoinStylingGroups(
   models: CadModelOptions[],
   modelsMappedStyleGroups: ModelStyleGroup[],
-  modelInstanceStyleGroups: ModelStyleGroup[]
-): StyledModel[] {
+  modelInstanceStyleGroups: ModelStyleGroup[],
+  defaultNodeAppearance: NodeAppearance | undefined
+): StyledCadModelAddOptions[] {
   const modelsStyling = useMemo(() => {
     if (modelInstanceStyleGroups.length === 0 && modelsMappedStyleGroups.length === 0) {
-      return extractDefaultStyles(models);
+      return extractDefaultStyles(models, defaultNodeAppearance);
     }
     return models.map((model) => {
       const mappedStyleGroup =
-        modelsMappedStyleGroups.find((typedModel) => isSameCadModel(typedModel.model, model))
+        modelsMappedStyleGroups.find((typedModel) => isSame3dModel(typedModel.model, model))
           ?.styleGroup ?? [];
       const instanceStyleGroups = modelInstanceStyleGroups
-        .filter((typedModel) => isSameCadModel(typedModel.model, model))
+        .filter((typedModel) => isSame3dModel(typedModel.model, model))
         .flatMap((typedModel) => typedModel.styleGroup);
       return {
-        model,
-        styleGroups: [...mappedStyleGroup, ...instanceStyleGroups]
+        addOptions: model,
+        styleGroups: [...mappedStyleGroup, ...instanceStyleGroups],
+        defaultStyle:
+          model.styling?.default ?? defaultNodeAppearance ?? DefaultNodeAppearance.Default
       };
     });
   }, [models, modelInstanceStyleGroups, modelsMappedStyleGroups]);
@@ -240,7 +250,7 @@ function useJoinStylingGroups(
 function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
   return styleGroup.reduce<ModelStyleGroup[]>((accumulatedGroups, currentGroup) => {
     const existingGroupWithModel = accumulatedGroups.find((group) =>
-      isSameCadModel(group.model, currentGroup.model)
+      isSame3dModel(group.model, currentGroup.model)
     );
     if (existingGroupWithModel !== undefined) {
       existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
@@ -254,11 +264,15 @@ function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[
   }, []);
 }
 
-function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {
+function extractDefaultStyles(
+  typedModels: CadModelOptions[],
+  defaultNodeAppearance: NodeAppearance | undefined
+): StyledCadModelAddOptions[] {
   return typedModels.map((model) => {
     return {
-      model,
-      styleGroups: []
+      addOptions: model,
+      styleGroups: [],
+      defaultStyle: model.styling?.default ?? defaultNodeAppearance ?? DefaultNodeAppearance.Default
     };
   });
 }

@@ -42,9 +42,7 @@ export async function getPointCloudModelsForAsset(
 
   return revisionList.map((revision, index) => ({
     type: 'pointcloud',
-    addOptions: {
-      modelId: modelIds[index],
-      revisionId: revision.id // Always choose the newest revision
-    }
+    modelId: modelIds[index],
+    revisionId: revision.id // Always choose the newest revision
   }));
 }
