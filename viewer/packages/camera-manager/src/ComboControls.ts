@@ -654,7 +654,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
   }
 
-  private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number, cameraDirection: THREE.Vector3) {
+  private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number, cameraDirection: Vector3) {
     const isDollyIn = deltaDistance < 0 ? true : false;
     const newTargetOffset = this.newVector3();
     let newRadius = this._sphericalEnd.radius;
@@ -695,7 +695,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private calculateNewRadiusAndTargetOffsetLerp(
     pixelCoordinates: Vector2,
     deltaDistance: number,
-    cameraDirection: THREE.Vector3
+    cameraDirection: Vector3
   ) {
     const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - getFov(this._camera) / 2));
     const distFromCameraToCursor = Math.sqrt(
@@ -732,7 +732,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return { targetOffset, radius };
   }
 
-  private calculateNewRadiusAndTargetOffsetScrollTarget(deltaDistance: number, cameraDirection: THREE.Vector3) {
+  private calculateNewRadiusAndTargetOffsetScrollTarget(deltaDistance: number, cameraDirection: Vector3) {
     const isDollyOut = deltaDistance > 0 ? true : false;
 
     if (isDollyOut) {
@@ -887,7 +887,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 // LOCAL FUNCTIONS
 //================================================
 
-function isIdentityQuaternion(q: THREE.Quaternion) {
+function isIdentityQuaternion(q: Quaternion) {
   return q.x === 0 && q.y === 0 && q.z === 0 && q.w === 1;
 }
 

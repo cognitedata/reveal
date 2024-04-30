@@ -168,7 +168,7 @@ export class Cdf360EventDescriptorProvider implements Image360DescriptorProvider
       transform: parseTransform(eventMetadata)
     };
 
-    function parseTransform(transformationData: Event360TransformationData): THREE.Matrix4 {
+    function parseTransform(transformationData: Event360TransformationData): Matrix4 {
       const translationComponents = transformationData.translation.split(',').map(parseFloat);
       const millimetersInMeters = 1000;
       const translation = new Vector3(

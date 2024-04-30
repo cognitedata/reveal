@@ -9,10 +9,11 @@ import { RevealGeometryCollectionType } from '../src/types';
 
 // https://blog.logrocket.com/alternatives-dirname-node-js-es-modules/
 import url from 'url';
+import type { BufferGeometry } from 'three';
 const __dirname = url.fileURLToPath(new url.URL('.', import.meta.url));
 
 describe(GltfSectorParser.name, () => {
-  let parsedPrimitivesResult: { type: RevealGeometryCollectionType; geometryBuffer: THREE.BufferGeometry }[];
+  let parsedPrimitivesResult: { type: RevealGeometryCollectionType; geometryBuffer: BufferGeometry }[];
   let parser: GltfSectorParser;
 
   beforeAll(async () => {
