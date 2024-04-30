@@ -2,6 +2,7 @@ import * as dat from 'dat.gui';
 
 import { Cognite3DViewer, CogniteCadModel, CognitePointCloudModel } from '@cognite/reveal';
 import { SingleClippingUI } from './SingleClippingUI';
+import type { Box3 } from 'three';
 
 export class ClippingUIs {
   private _rootUi: dat.GUI;
@@ -14,7 +15,7 @@ export class ClippingUIs {
     this._globalUi = new SingleClippingUI(globalFolder, planes => viewer.setGlobalClippingPlanes(planes));
   }
 
-  updateWorldBounds(bounds: THREE.Box3) {
+  updateWorldBounds(bounds: Box3) {
     this._globalUi.updateBounds(bounds);
   }
 

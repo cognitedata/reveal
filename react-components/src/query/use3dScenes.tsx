@@ -81,10 +81,10 @@ export const use3dScenes = (
     }
   };
 
-  return useQuery<Record<Space, Record<ExternalId, SceneData>>>(
-    ['reveal-react-components', 'cdf', '3d', 'scenes'],
-    queryFunction
-  );
+  return useQuery<Record<Space, Record<ExternalId, SceneData>>>({
+    queryKey: ['reveal-react-components', 'cdf', '3d', 'scenes'],
+    queryFn: queryFunction
+  });
 };
 
 function createMapOfScenes(

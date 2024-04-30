@@ -120,7 +120,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   useEffect(() => {
     if (searchMethod !== 'allAssets') return;
 
-    if (!isFetching && hasNextPage === true) {
+    if (!isFetching && hasNextPage) {
       void fetchNextPage();
     }
   }, [searchMethod, isFetching, hasNextPage, fetchNextPage]);
@@ -247,7 +247,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     <>
       <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
         <RevealCanvas>
-          <ReactQueryDevtools position="bottom-right" />
+          <ReactQueryDevtools buttonPosition="bottom-right" />
           <RevealResourcesFitCameraOnLoad
             resources={resources}
             defaultResourceStyling={{

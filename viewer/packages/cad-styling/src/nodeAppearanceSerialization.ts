@@ -6,7 +6,7 @@ import { NodeAppearance, SerializableNodeAppearance } from './NodeAppearance';
 
 import { Color } from 'three';
 
-function serializableColorToThreeColor(color?: [number, number, number]): THREE.Color | undefined {
+function serializableColorToThreeColor(color?: [number, number, number]): Color | undefined {
   if (!color) return undefined;
   return new Color().fromArray(color.map(c => c / 255));
 }

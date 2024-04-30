@@ -3,7 +3,18 @@
  */
 import assert from 'assert';
 import minBy from 'lodash/minBy';
-import { BufferGeometry, Group, InstancedMesh, InterleavedBufferAttribute, RawShaderMaterial, Sphere } from 'three';
+import {
+  BufferGeometry,
+  Group,
+  InstancedMesh,
+  InterleavedBufferAttribute,
+  RawShaderMaterial,
+  Sphere,
+  type Camera,
+  type Matrix4,
+  type Mesh,
+  type Vector3
+} from 'three';
 import { Materials, setModelRenderLayers, StyledTreeIndexSets } from '@reveal/rendering';
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import {
@@ -143,7 +154,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   }
 
   private removeTreeIndicesFromMeshUserData(
-    mesh: THREE.Mesh,
+    mesh: Mesh,
     updateRange: { byteOffset: number; byteCount: number },
     instanceAttributes: { name: string; attribute: InterleavedBufferAttribute }[]
   ): void {
@@ -266,7 +277,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   }
 
   private extendUpdateRange(
-    attribute: THREE.InterleavedBufferAttribute,
+    attribute: InterleavedBufferAttribute,
     updateRange: {
       byteOffset: number;
       byteCount: number;
@@ -276,17 +287,19 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     const newOffset = updateRange.byteOffset / typeSize;
     const newCount = updateRange.byteCount / typeSize;
 
-    const { offset: oldOffset, count: oldCount } = attribute.data.updateRange;
-    if (oldCount === -1) {
-      attribute.data.updateRange = { offset: newOffset, count: newCount };
+    if (attribute.data.updateRanges.length === 0) {
+      attribute.data.clearUpdateRanges();
+      attribute.data.updateRanges.push({ start: newOffset, count: newCount });
       attribute.data.needsUpdate = true;
       return;
     }
 
-    const offset = Math.min(oldOffset, newOffset);
-    const count = Math.max(oldOffset + oldCount, newOffset + newCount) - offset;
+    const { start: oldOffset, count: oldCount } = attribute.data.updateRanges[0];
+    const start = Math.min(oldOffset, newOffset);
+    const count = Math.max(oldOffset + oldCount, newOffset + newCount) - start;
 
-    attribute.data.updateRange = { offset, count };
+    attribute.data.clearUpdateRanges();
+    attribute.data.updateRanges.push({ start, count });
   }
 
   private getBatchBufferToFill(instanceBatch: InstanceBatch): BatchBuffer {
@@ -325,9 +338,9 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     instancedMesh.frustumCulled = false;
     instancedMesh.boundingSphere = new Sphere(); // Unused, to avoid a calculated sphere on first render
 
-    instancedMesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
-      (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(instancedMesh.matrixWorld).invert();
-      (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+    instancedMesh.onBeforeRender = (_0, _1, camera: Camera) => {
+      (material.uniforms.inverseModelMatrix?.value as Matrix4)?.copy(instancedMesh.matrixWorld).invert();
+      (material.uniforms.cameraPosition?.value as Vector3)?.copy(camera.position);
     };
 
     instancedMesh.userData.treeIndices = new Map<number, number>();
@@ -338,7 +351,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   }
 
   private createDefragmentedBufferGeometry(
-    bufferGeometry: THREE.BufferGeometry,
+    bufferGeometry: BufferGeometry,
     defragmentedAttributeBuffer: DynamicDefragmentedBuffer<Uint8Array>
   ): BufferGeometry {
     const instanceBufferGeometry = GeometryBufferUtils.copyGeometryWithBufferAttributes(bufferGeometry);
@@ -352,8 +365,8 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   }
 
   private getTreeIndexAttribute(
-    instanceAttributes: { name: string; attribute: THREE.InterleavedBufferAttribute }[]
-  ): THREE.InterleavedBufferAttribute {
+    instanceAttributes: { name: string; attribute: InterleavedBufferAttribute }[]
+  ): InterleavedBufferAttribute {
     const treeIndexAttribute = instanceAttributes.filter(att => att.name === 'a_treeIndex');
 
     return treeIndexAttribute[0].attribute;

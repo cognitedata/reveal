@@ -101,7 +101,7 @@ export async function readPixelsFromTargetAsync(
 ): Promise<void> {
   if (renderer.capabilities.isWebGL2 && !forceSync) {
     const gl = renderer.getContext() as WebGL2RenderingContext;
-    const utils = new THREE.WebGLUtils(gl, renderer.extensions, renderer.capabilities);
+    const utils = new THREE.WebGLUtils(gl, renderer.extensions);
 
     const texture = renderTarget.texture;
     const format = utils.convert(texture.format);

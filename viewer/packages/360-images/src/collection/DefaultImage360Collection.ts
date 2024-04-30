@@ -120,7 +120,7 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._icons.getTransform(out);
   }
 
-  public setModelTransformation(matrix: THREE.Matrix4): void {
+  public setModelTransformation(matrix: Matrix4): void {
     this._icons.setTransform(matrix);
     this.image360Entities.forEach(entity => entity.setWorldTransform(matrix));
     this._setNeedsRedraw();

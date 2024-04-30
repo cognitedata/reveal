@@ -47,9 +47,9 @@ export const useSearchMappedEquipmentFDM = (
     [viewsToSearch]
   );
 
-  return useQuery(
-    ['reveal', 'react-components', 'search-mapped-fdm', query, models, viewsToSearch],
-    async () => {
+  return useQuery({
+    queryKey: ['reveal', 'react-components', 'search-mapped-fdm', query, models, viewsToSearch],
+    queryFn: async () => {
       if (models.length === 0 || viewsToSearch.length === 0) {
         return [];
       }
@@ -74,8 +74,8 @@ export const useSearchMappedEquipmentFDM = (
       }
       return queryResults;
     },
-    { staleTime: Infinity }
-  );
+    staleTime: Infinity
+  });
 };
 
 const searchNodesWithViewsAndModels = async (
@@ -136,9 +136,9 @@ export const useAllMappedEquipmentFDM = (
 
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
 
-  return useQuery(
-    ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch],
-    async () => {
+  return useQuery({
+    queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch],
+    queryFn: async () => {
       const viewSources = await createSourcesFromViews(viewsToSearch, fdmSdk);
       const queries = createChunkedMappedEquipmentQueries(models, viewSources, 10000);
 
@@ -170,8 +170,8 @@ export const useAllMappedEquipmentFDM = (
 
       return mappedEquipment;
     },
-    { staleTime: Infinity }
-  );
+    staleTime: Infinity
+  });
 };
 
 function removeEmptyProperties(queryResultNode: NodeItem): NodeItem {

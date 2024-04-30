@@ -38,7 +38,6 @@ import { LoadGltfUi } from '../utils/LoadGltfUi';
 import { createFunnyButton } from '../utils/PageVariationUtils';
 import { getCogniteClient } from '../utils/example-helpers';
 
-window.THREE = THREE;
 (window as any).reveal = reveal;
 
 export function Viewer() {
