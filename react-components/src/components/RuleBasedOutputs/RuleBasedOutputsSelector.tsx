@@ -32,7 +32,7 @@ export function RuleBasedOutputsSelector({
   } = useAllMappedEquipmentAssetMappings(models);
 
   useEffect(() => {
-    if (!isFetching && hasNextPage === true) {
+    if (!isFetching && hasNextPage) {
       void fetchNextPage();
     }
   }, [isFetching, hasNextPage, fetchNextPage]);
@@ -51,12 +51,12 @@ export function RuleBasedOutputsSelector({
     const initializeRuleBasedOutputs = async (model: CogniteCadModel): Promise<void> => {
       // parse assets and mappings
       // TODO: refactor to be sure to filter only the mappings/assets for the current model within the pages
-      const flatAssetsMappingsList = assetMappings.pages
+      const flatAssetsMappingsList = assetMappings
         .flat()
         .map((item) => item.mappings)
         .flat();
       const flatMappings = flatAssetsMappingsList.map((node) => node.items).flat();
-      const contextualizedAssetNodes = assetMappings.pages
+      const contextualizedAssetNodes = assetMappings
         .flat()
         .flatMap((item) => item.assets)
         .map(convertAssetMetadataKeysToLowerCase);
