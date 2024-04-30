@@ -1751,8 +1751,8 @@ __metadata:
     "@vitejs/plugin-react": "npm:^4.0.4"
     assert: "npm:^2.0.0"
     eslint: "npm:^8.0.1"
+    eslint-config-love: "npm:43.1.0"
     eslint-config-prettier: "npm:^9.0.0"
-    eslint-config-standard-with-typescript: "npm:43.0.1"
     eslint-plugin-header: "npm:^3.1.1"
     eslint-plugin-import: "npm:^2.25.2"
     eslint-plugin-n: "npm:^16.0.0"
@@ -8404,20 +8404,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-prettier@npm:^9.0.0":
-  version: 9.1.0
-  resolution: "eslint-config-prettier@npm:9.1.0"
-  peerDependencies:
-    eslint: ">=7.0.0"
-  bin:
-    eslint-config-prettier: bin/cli.js
-  checksum: 10/411e3b3b1c7aa04e3e0f20d561271b3b909014956c4dba51c878bf1a23dbb8c800a3be235c46c4732c70827276e540b6eed4636d9b09b444fd0a8e07f0fcd830
-  languageName: node
-  linkType: hard
-
-"eslint-config-standard-with-typescript@npm:43.0.1":
-  version: 43.0.1
-  resolution: "eslint-config-standard-with-typescript@npm:43.0.1"
+"eslint-config-love@npm:43.1.0":
+  version: 43.1.0
+  resolution: "eslint-config-love@npm:43.1.0"
   dependencies:
     "@typescript-eslint/parser": "npm:^6.4.0"
     eslint-config-standard: "npm:17.1.0"
@@ -8428,7 +8417,18 @@ __metadata:
     eslint-plugin-n: "^15.0.0 || ^16.0.0 "
     eslint-plugin-promise: ^6.0.0
     typescript: "*"
-  checksum: 10/26a460efd918262ef865abd1f1d7ad4a41c2f368b560ca0ccf16b674f2ca3a778ba5b2a43845421b48fa9ce118a68765222086c30c35e407f878fa1e9170576d
+  checksum: 10/624d6b4028dd2825c1fe965bee0a8aa83f0c7f6dfb1a954065f4c18f742348b88991cd571b5ef336ffb8ce343bcdd280e9dafda0727f6c7c6e44d22b42d5e436
+  languageName: node
+  linkType: hard
+
+"eslint-config-prettier@npm:^9.0.0":
+  version: 9.1.0
+  resolution: "eslint-config-prettier@npm:9.1.0"
+  peerDependencies:
+    eslint: ">=7.0.0"
+  bin:
+    eslint-config-prettier: bin/cli.js
+  checksum: 10/411e3b3b1c7aa04e3e0f20d561271b3b909014956c4dba51c878bf1a23dbb8c800a3be235c46c4732c70827276e540b6eed4636d9b09b444fd0a8e07f0fcd830
   languageName: node
   linkType: hard
 
