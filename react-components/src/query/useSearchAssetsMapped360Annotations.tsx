@@ -19,16 +19,14 @@ export const useAllAssetsMapped360Annotations = (
   sdk: CogniteClient,
   siteIds: string[]
 ): UseQueryResult<Image360AnnotationMappedAssetData[]> => {
-  return useQuery(
-    ['reveal', 'react-components', 'all-assets-mapped-360-annotations', siteIds],
-    async () => {
+  return useQuery({
+    queryKey: ['reveal', 'react-components', 'all-assets-mapped-360-annotations', siteIds],
+    queryFn: async () => {
       const assetMappings = await getAssetsMapped360Annotations(sdk, siteIds);
       return assetMappings;
     },
-    {
-      staleTime: Infinity
-    }
-  );
+    staleTime: Infinity
+  });
 };
 
 export const useSearchAssetsMapped360Annotations = (
@@ -41,9 +39,15 @@ export const useSearchAssetsMapped360Annotations = (
     siteIds
   );
 
-  return useQuery(
-    ['reveal', 'react-components', 'search-assets-mapped-360-annotations', query, siteIds],
-    async () => {
+  return useQuery({
+    queryKey: [
+      'reveal',
+      'react-components',
+      'search-assets-mapped-360-annotations',
+      query,
+      siteIds
+    ],
+    queryFn: async () => {
       if (query === '') {
         return assetAnnotationMappings;
       }
@@ -65,11 +69,9 @@ export const useSearchAssetsMapped360Annotations = (
 
       return filteredAssetAnnotationMappings;
     },
-    {
-      staleTime: Infinity,
-      enabled: isFetched && assetAnnotationMappings !== undefined
-    }
-  );
+    staleTime: Infinity,
+    enabled: isFetched && assetAnnotationMappings !== undefined
+  });
 };
 
 async function getAssetsMapped360Annotations(
