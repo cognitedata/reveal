@@ -571,7 +571,7 @@ __metadata:
     "@types/skmeans": "npm:0.11.7"
     "@types/stats": "npm:0.16.30"
     "@types/three": "npm:0.158.2"
-    "@types/tween.js": "npm:18.5.1"
+    "@types/tween.js": "npm:18.6.1"
     "@typescript-eslint/eslint-plugin": "npm:6.21.0"
     "@typescript-eslint/parser": "npm:6.21.0"
     assert: "npm:2.1.0"
@@ -1709,6 +1709,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tweenjs/tween.js@npm:*":
+  version: 23.1.1
+  resolution: "@tweenjs/tween.js@npm:23.1.1"
+  checksum: 10/8833907d9d6adb584879fb743c3d1f6f37ea8a6a2750c06383040cba03cd284a8bbd9f173b50ee7636f56d242e1090b28335b29eb9c44ddf7ca0bb534c4b697e
+  languageName: node
+  linkType: hard
+
 "@tweenjs/tween.js@npm:19.0.0":
   version: 19.0.0
   resolution: "@tweenjs/tween.js@npm:19.0.0"
@@ -2183,10 +2190,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/tween.js@npm:18.5.1":
-  version: 18.5.1
-  resolution: "@types/tween.js@npm:18.5.1"
-  checksum: 10/8ecc0997676942a0d234d3952b47b8511bd215633be41883baa987f41e8fbf11ff8980ac5458ec9abb88550cf9d23d0348d427b4063efd6b7c8093749a4c49b1
+"@types/tween.js@npm:18.6.1":
+  version: 18.6.1
+  resolution: "@types/tween.js@npm:18.6.1"
+  dependencies:
+    "@tweenjs/tween.js": "npm:*"
+  checksum: 10/70deb8e22a4fca45487ef871bb94bcf9d37f247490994c74f39a52690c49056fcbc0c4894c63a04a3db9e09dd1e12c5248e91fac4e73fa87c0ecb37d379ec311
   languageName: node
   linkType: hard
 

@@ -96,7 +96,7 @@
     "@types/skmeans": "0.11.7",
     "@types/stats": "0.16.30",
     "@types/three": "0.158.2",
-    "@types/tween.js": "18.5.1",
+    "@types/tween.js": "18.6.1",
     "@typescript-eslint/eslint-plugin": "6.21.0",
     "@typescript-eslint/parser": "6.21.0",
     "concurrently": "8.2.2",
