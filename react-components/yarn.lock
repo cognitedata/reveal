@@ -1754,7 +1754,7 @@ __metadata:
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-resizable": "npm:^3.0.7"
-    "@types/three": "npm:0.158.2"
+    "@types/three": "npm:0.163.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.8.0"
     "@vitejs/plugin-react": "npm:^4.2.1"
     assert: "npm:^2.1.0"
@@ -1782,7 +1782,7 @@ __metadata:
     storybook: "npm:^8.0.9"
     style-loader: "npm:^4.0.0"
     styled-components: "npm:^6.1.8"
-    three: "npm:0.158.0"
+    three: "npm:0.164.1"
     ts-loader: "npm:^9.5.1"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.10"
@@ -4359,6 +4359,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tweenjs/tween.js@npm:~23.1.1":
+  version: 23.1.1
+  resolution: "@tweenjs/tween.js@npm:23.1.1"
+  checksum: 10/8833907d9d6adb584879fb743c3d1f6f37ea8a6a2750c06383040cba03cd284a8bbd9f173b50ee7636f56d242e1090b28335b29eb9c44ddf7ca0bb534c4b697e
+  languageName: node
+  linkType: hard
+
 "@types/argparse@npm:1.0.38":
   version: 1.0.38
   resolution: "@types/argparse@npm:1.0.38"
@@ -4777,15 +4784,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.158.2":
-  version: 0.158.2
-  resolution: "@types/three@npm:0.158.2"
+"@types/three@npm:0.163.0":
+  version: 0.163.0
+  resolution: "@types/three@npm:0.163.0"
   dependencies:
+    "@tweenjs/tween.js": "npm:~23.1.1"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
-    fflate: "npm:~0.6.10"
+    fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/6ce40499cb87ec88a4b3bfe662005052ada3413692efe62bc3a1958b1608aef8282613da150191af7312d114aec98326e2274d246c12f34db5dd7faf3beea132
+  checksum: 10/81320c03aa89b67601cdc7d0a0dca93cf1d59ff564214859f0f87d0314062e3b7cb02f6d15c245cdae6755d1febc54d23432c25df16ff4aac9c65ba2efd9973d
   languageName: node
   linkType: hard
 
@@ -8142,10 +8150,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fflate@npm:~0.6.10":
-  version: 0.6.10
-  resolution: "fflate@npm:0.6.10"
-  checksum: 10/9f2fd7224bccdb28102adc7c55c262b584571426eb9e0b91b13088884f45700232b51e034e300b74abf64e5449596d5c37d0a802673e25edb17c6742e4a4a0bd
+"fflate@npm:~0.8.2":
+  version: 0.8.2
+  resolution: "fflate@npm:0.8.2"
+  checksum: 10/2bd26ba6d235d428de793c6a0cd1aaa96a06269ebd4e21b46c8fd1bd136abc631acf27e188d47c3936db090bf3e1ede11d15ce9eae9bffdc4bfe1b9dc66ca9cb
   languageName: node
   linkType: hard
 
@@ -14182,10 +14190,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.158.0":
-  version: 0.158.0
-  resolution: "three@npm:0.158.0"
-  checksum: 10/0dcb30fde67495337d129af55f3e4ed5f16425bb55c8fe2ec871bbde8264bdbdf3141fce4733c4739fe394f7840c4b37f6210754f657cfe98554f8f9a02eeb92
+"three@npm:0.164.1":
+  version: 0.164.1
+  resolution: "three@npm:0.164.1"
+  checksum: 10/561f28a84c6978b3fb548c11892ac6411df97a848089611d16ef921613d71af7a77815f531d10311cd7f9f9477ba900b69a99a39fe978d193a990476050fe062
   languageName: node
   linkType: hard
 
