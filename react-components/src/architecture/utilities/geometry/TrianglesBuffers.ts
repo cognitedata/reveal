@@ -104,11 +104,11 @@ export class TrianglesBuffers {
     {
       const index = 3 * uniqueIndex;
       this.positions[index + 0] = position.x;
-      this.positions[index + 1] = position.z;
-      this.positions[index + 2] = position.y;
+      this.positions[index + 1] = position.y;
+      this.positions[index + 2] = position.z;
       this.normals[index + 0] = normal.x;
-      this.normals[index + 1] = normal.z;
-      this.normals[index + 2] = normal.y;
+      this.normals[index + 1] = normal.y;
+      this.normals[index + 2] = normal.z;
     }
     if (this.hasUvs) {
       const index = 2 * uniqueIndex;

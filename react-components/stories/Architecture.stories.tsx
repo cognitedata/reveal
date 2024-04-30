@@ -19,12 +19,7 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
-import {
-  UpdateTerrainCommandButton,
-  InfoToolButton,
-  NavigationToolButton,
-  SetTerrainVisibleButton
-} from '../src/components/RevealToolbar/ToolButtons';
+import { RevealButtons } from '../src/components/RevealToolbar/Architecture/ToolButtons';
 
 const meta = {
   title: 'Example/Architecture',
@@ -103,13 +98,24 @@ export const Main: Story = {
         highFidelitySettings={exampleHighQualitySettings}
       />
       <MyCustomToolbar>
-        <RevealToolbar.FitModelsButton />
-        <RevealToolbar.SetOrbitOrFirstPersonControlsType />
-        <RevealToolbar.SlicerButton />
-        <NavigationToolButton />
-        <SetTerrainVisibleButton />
-        <UpdateTerrainCommandButton />
-        <InfoToolButton />
+        <>
+          <RevealButtons.FitView />
+          <RevealButtons.SetFlexibleControlsTypeOrbit />
+          <RevealButtons.SetFlexibleControlsTypeFirstPerson />
+
+          <RevealToolbar.FitModelsButton />
+          <RevealToolbar.SetOrbitOrFirstPersonControlsType />
+          <RevealToolbar.SlicerButton />
+        </>
+        <>
+          <RevealButtons.NavigationTool />
+        </>
+        <>
+          <RevealButtons.SetTerrainVisible />
+          <RevealButtons.UpdateTerrain />
+          <RevealButtons.SetBoxVisible />
+          <RevealButtons.BoxEditTool />
+        </>
       </MyCustomToolbar>
     </RevealStoryContainer>
   )

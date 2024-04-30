@@ -721,6 +721,22 @@ export abstract class DomainObject {
     return result;
   }
 
+  public supportsColorType(colorType: ColorType, solid: boolean): boolean {
+    switch (colorType) {
+      case ColorType.Specified:
+      case ColorType.Parent:
+      case ColorType.Black:
+      case ColorType.White:
+        return true;
+
+      case ColorType.ColorMap:
+        return solid;
+
+      default:
+        return false;
+    }
+  }
+
   public getColorByColorType(colorType: ColorType): Color {
     switch (colorType) {
       case ColorType.Specified:

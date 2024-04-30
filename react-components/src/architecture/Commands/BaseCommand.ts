@@ -3,20 +3,24 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { isEmpty } from 'lodash';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 
-type UpdateToolDelegate = () => void;
+type UpdateDelegate = () => void;
+
+export type Tooltip = {
+  key: string;
+  fallback: string;
+};
 
 export abstract class BaseCommand {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _listeners: UpdateToolDelegate[] = [];
+  private readonly _listeners: UpdateDelegate[] = [];
 
   // ==================================================
-  // VIRTUAL METHODS (To be overriden)
+  // VIRTUAL METHODS (To be override)
   // =================================================
 
   public get name(): string {
@@ -27,12 +31,8 @@ export abstract class BaseCommand {
     return undefined;
   }
 
-  public get tooltip(): string {
-    return '';
-  }
-
-  public get tooltipKey(): string {
-    return '';
+  public get tooltip(): Tooltip {
+    return { key: '', fallback: '' };
   }
 
   public get icon(): string {
@@ -67,33 +67,23 @@ export abstract class BaseCommand {
     return this.name === other.name;
   }
 
-  // ==================================================
-  // INSTANCE METHODS (Not to be overriden)
-  // =================================================
-
-  public getTooltipOld(): string {
-    let tooltip = this.tooltip;
-    if (isEmpty(tooltip)) tooltip = this.name;
-    if (isEmpty(tooltip)) return tooltip;
-
-    const shortCut = this.shortCutKey;
-    if (!isEmpty(shortCut)) tooltip += ` [${shortCut}]`;
-    return tooltip;
-  }
-
   public invoke(): boolean {
     return this.invokeCore();
+  }
+
+  public dispose(): void {
+    this.removeEventListeners();
   }
 
   // ==================================================
   // INSTANCE METHODS: Event listeners
   // ==================================================
 
-  public addEventListener(listener: UpdateToolDelegate): void {
+  public addEventListener(listener: UpdateDelegate): void {
     this._listeners.push(listener);
   }
 
-  public removeEventListener(listener: UpdateToolDelegate): void {
+  public removeEventListener(listener: UpdateDelegate): void {
     remove(this._listeners, listener);
   }
 

@@ -6,18 +6,24 @@ import { BaseCommand } from './BaseCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 
 export abstract class RenderTargetCommand extends BaseCommand {
-  // ==================================================
-  // INSTANCE FIELDS
-  // ==================================================
+  public _renderTarget: RevealRenderTarget | undefined = undefined;
 
-  public readonly renderTarget: RevealRenderTarget;
+  public get renderTarget(): RevealRenderTarget {
+    if (this._renderTarget === undefined) {
+      throw new Error('Render target is not set');
+    }
+    return this._renderTarget;
+  }
 
-  // ==================================================
-  // CONSTRUCTOR
-  // ==================================================
+  public attach(renderTarget: RevealRenderTarget): void {
+    this._renderTarget = renderTarget;
+  }
 
-  protected constructor(renderTarget: RevealRenderTarget) {
-    super();
-    this.renderTarget = renderTarget;
+  public override invoke(): boolean {
+    const success = this.invokeCore();
+    if (success) {
+      this.renderTarget.updateToolsAndCommands();
+    }
+    return success;
   }
 }

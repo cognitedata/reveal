@@ -5,6 +5,7 @@
 
 import { PointerEvents, PointerEventsTarget } from '@cognite/reveal';
 import { type BaseTool } from '../commands/BaseTool';
+import { BaseCommand } from '../commands/BaseCommand';
 
 export class ToolControllers extends PointerEvents {
   // ==================================================
@@ -14,7 +15,7 @@ export class ToolControllers extends PointerEvents {
   private _activeTool: BaseTool | undefined;
   private _previousTool: BaseTool | undefined;
   private readonly _domElement: HTMLElement;
-  private readonly _tools = new Set<BaseTool>();
+  private readonly _tools = new Set<BaseCommand>();
   private readonly _pointerEventsTarget: PointerEventsTarget;
 
   // ==================================================
@@ -118,6 +119,12 @@ export class ToolControllers extends PointerEvents {
     }
   }
 
+  public dispose(): void {
+    for (const tool of this._tools) {
+      tool.dispose();
+    }
+  }
+
   // ================================================
   // INSTANCE METHODS: Other events
   // ================================================
@@ -167,6 +174,7 @@ export class ToolControllers extends PointerEvents {
       tool.removeEventListeners();
     }
   }
+
   // ==================================================
   // INSTANCE METHODS: Events
   // ==================================================

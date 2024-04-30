@@ -4,18 +4,10 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { BaseTool } from '../commands/BaseTool';
+import { type Tooltip } from '../commands/BaseCommand';
 
 export class NavigationTool extends BaseTool {
-  // ==================================================
-  // CONSTRUCTOR
-  // ==================================================
-
-  public constructor(target: RevealRenderTarget) {
-    super(target);
-  }
-
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -32,12 +24,8 @@ export class NavigationTool extends BaseTool {
     return 'Grab';
   }
 
-  public override get tooltip(): string {
-    return 'Navigation';
-  }
-
-  public override get tooltipKey(): string {
-    return 'NAVIGATION';
+  public override get tooltip(): Tooltip {
+    return { key: 'NAVIGATION', fallback: 'Navigation' };
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {

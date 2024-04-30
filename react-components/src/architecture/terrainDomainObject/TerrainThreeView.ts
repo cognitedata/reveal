@@ -17,32 +17,33 @@ import {
   Object3D
 } from 'three';
 import { ContouringService } from '../utilities/geometry/ContouringService';
-import { SurfaceDomainObject } from './SurfaceDomainObject';
+import { TerrainDomainObject } from './TerrainDomainObject';
 import { DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 import { Changes } from '../utilities/misc/Changes';
 import { RegularGrid2Buffers } from '../utilities/geometry/RegularGrid2Buffers';
 import { Range3 } from '../utilities/geometry/Range3';
 import { create1DTextureWithContours, create1DTexture } from '../utilities/colors/create1DTexture';
-import { SurfaceRenderStyle } from './SurfaceRenderStyle';
+import { TerrainRenderStyle } from './TerrainRenderStyle';
 import { ColorType } from '../utilities/colors/ColorType';
 import { WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { getColorMap } from '../utilities/colors/colorMaps';
 import { ObjectThreeView } from '../views/ObjectThreeView';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 const SOLID_NAME = 'Solid';
 const CONTOURS_NAME = 'Contour';
 
-export class SurfaceThreeView extends ObjectThreeView {
+export class TerrainThreeView extends ObjectThreeView {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected get surfaceDomainObject(): SurfaceDomainObject {
-    return super.domainObject as SurfaceDomainObject;
+  protected get terrainDomainObject(): TerrainDomainObject {
+    return super.domainObject as TerrainDomainObject;
   }
 
-  protected get style(): SurfaceRenderStyle {
-    return super.style as SurfaceRenderStyle;
+  protected get style(): TerrainRenderStyle {
+    return super.style as TerrainRenderStyle;
   }
 
   // ==================================================
@@ -60,7 +61,7 @@ export class SurfaceThreeView extends ObjectThreeView {
     if (change.isChanged(Changes.renderStyle)) {
       const solid = this._object3D.getObjectByName(SOLID_NAME) as Mesh;
       if (solid !== undefined) {
-        setSolidMaterial(solid.material as MeshPhongMaterial, this.surfaceDomainObject, this.style);
+        updateMaterial(solid.material as MeshPhongMaterial, this.terrainDomainObject, this.style);
         this.invalidate();
         return;
       }
@@ -73,12 +74,12 @@ export class SurfaceThreeView extends ObjectThreeView {
   // ==================================================
 
   public override calculateBoundingBox(): Range3 {
-    const { surfaceDomainObject } = this;
-    const { surface } = surfaceDomainObject;
-    if (surface === undefined) {
+    const { terrainDomainObject } = this;
+    const { grid } = terrainDomainObject;
+    if (grid === undefined) {
       return Range3.empty;
     }
-    return surface.boundingBox;
+    return grid.boundingBox;
   }
 
   // ==================================================
@@ -86,9 +87,9 @@ export class SurfaceThreeView extends ObjectThreeView {
   // ==================================================
 
   protected override createObject3D(): Object3D | undefined {
-    const { surfaceDomainObject } = this;
-    const { surface } = surfaceDomainObject;
-    if (surface === undefined) {
+    const { terrainDomainObject } = this;
+    const { grid } = terrainDomainObject;
+    if (grid === undefined) {
       return undefined;
     }
     const group = new Group();
@@ -104,9 +105,11 @@ export class SurfaceThreeView extends ObjectThreeView {
         group.add(contours);
       }
     }
-    group.rotateZ(surface.rotationAngle);
-    group.position.x = surface.origin.x;
-    group.position.z = surface.origin.y;
+    group.rotateZ(grid.rotationAngle);
+    group.position.x = grid.origin.x;
+    group.position.z = grid.origin.y;
+
+    group.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     return group;
   }
 
@@ -119,12 +122,12 @@ export class SurfaceThreeView extends ObjectThreeView {
     if (!style.showSolid) {
       return undefined;
     }
-    const { surfaceDomainObject } = this;
-    const { surface } = surfaceDomainObject;
-    if (surface === undefined) {
+    const { terrainDomainObject } = this;
+    const { grid } = terrainDomainObject;
+    if (grid === undefined) {
       return undefined;
     }
-    const buffers = new RegularGrid2Buffers(surface, true);
+    const buffers = new RegularGrid2Buffers(grid, true);
     const geometry = buffers.createBufferGeometry();
 
     const material = new MeshPhongMaterial({
@@ -135,7 +138,7 @@ export class SurfaceThreeView extends ObjectThreeView {
       polygonOffsetUnits: 4.0
     });
 
-    setSolidMaterial(material, surfaceDomainObject, style);
+    updateMaterial(material, terrainDomainObject, style);
 
     const mesh = new Mesh(geometry, material);
     mesh.name = SOLID_NAME;
@@ -147,15 +150,15 @@ export class SurfaceThreeView extends ObjectThreeView {
     if (!style.showContours) {
       return undefined;
     }
-    const { surfaceDomainObject } = this;
-    const { surface } = surfaceDomainObject;
-    if (surface === undefined) {
+    const { terrainDomainObject } = this;
+    const { grid } = terrainDomainObject;
+    if (grid === undefined) {
       return undefined;
     }
-    const color = surfaceDomainObject.getColorByColorType(style.contoursColorType);
+    const color = terrainDomainObject.getColorByColorType(style.contoursColorType);
     const service = new ContouringService(style.increment);
 
-    const contoursBuffer = service.createContoursAsXyzArray(surface);
+    const contoursBuffer = service.createContoursAsXyzArray(grid);
     if (contoursBuffer.length === 0) {
       return undefined;
     }
@@ -176,10 +179,10 @@ export class SurfaceThreeView extends ObjectThreeView {
 // LOCAL FUNCTIONS
 // ==================================================
 
-function setSolidMaterial(
+function updateMaterial(
   material: MeshPhongMaterial,
-  surfaceDomainObject: SurfaceDomainObject,
-  style: SurfaceRenderStyle,
+  terrainDomainObject: TerrainDomainObject,
+  style: TerrainRenderStyle,
   is2D: boolean = false
 ): void {
   material.opacity = style.solidOpacityUse ? style.solidOpacity : 1;
@@ -189,20 +192,20 @@ function setSolidMaterial(
   } else {
     material.shininess = style.solidShininessUse ? 100 * style.solidShininess : 0;
   }
-  const texture = createTexture(surfaceDomainObject, style);
   material.specular = WHITE_COLOR;
+  const texture = createTexture(terrainDomainObject, style);
   if (texture !== undefined) {
     texture.anisotropy = 2;
     material.color = WHITE_COLOR;
     material.map = texture;
   } else {
-    material.color = surfaceDomainObject.getColorByColorType(style.solidColorType);
+    material.color = terrainDomainObject.getColorByColorType(style.solidColorType);
   }
 }
 
 function createTexture(
-  surfaceDomainObject: SurfaceDomainObject,
-  style: SurfaceRenderStyle
+  terrainDomainObject: TerrainDomainObject,
+  style: TerrainRenderStyle
 ): DataTexture | undefined {
   if (style.solidColorType !== ColorType.ColorMap && !style.solidContourUse) {
     return undefined;
@@ -217,15 +220,15 @@ function createTexture(
       return create1DTexture(colorMap);
     }
   } else {
-    color = surfaceDomainObject.getColorByColorType(style.solidColorType);
+    color = terrainDomainObject.getColorByColorType(style.solidColorType);
   }
-  const { surface } = surfaceDomainObject;
-  if (surface === undefined) {
+  const { grid } = terrainDomainObject;
+  if (grid === undefined) {
     return undefined;
   }
   return create1DTextureWithContours(
     colorMap,
-    surface.boundingBox.z,
+    grid.boundingBox.z,
     style.increment,
     style.solidContourVolume,
     color

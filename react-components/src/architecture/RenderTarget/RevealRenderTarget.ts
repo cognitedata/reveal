@@ -118,7 +118,8 @@ export class RevealRenderTarget {
     this._axisGizmoTool = new AxisGizmoTool();
     this._axisGizmoTool.connect(this._viewer);
 
-    const navigationTool = new NavigationTool(this);
+    const navigationTool = new NavigationTool();
+    navigationTool.attach(this);
     this.toolController.add(navigationTool);
     this.toolController.setActiveTool(navigationTool);
   }
@@ -126,6 +127,8 @@ export class RevealRenderTarget {
   public dispose(): void {
     this._viewer.removeObject3D(this._rootObject3D);
     this.toolController.removeEventListeners();
+    this.toolController.dispose();
+    this.commandController.dispose();
     this._axisGizmoTool?.dispose();
   }
 
@@ -143,7 +146,7 @@ export class RevealRenderTarget {
   private createRootGroup(): Group {
     const group = new Group();
     const ambientLight = new AmbientLight(0xffffff, 0.25); // soft white light
-    const directionalLight = new DirectionalLight(0xffffff, 2.5);
+    const directionalLight = new DirectionalLight(0xffffff, 2);
     directionalLight.name = DIRECTIONAL_LIGHT_NAME;
     directionalLight.position.set(0, 1, 0);
     group.add(ambientLight);
@@ -166,6 +169,7 @@ export class RevealRenderTarget {
     const cameraDirection = new Vector3();
     camera.getWorldDirection(cameraDirection);
 
+    cameraDirection.negate();
     light.position.copy(cameraDirection);
   };
 }

@@ -7,7 +7,7 @@ import { ColorType } from '../utilities/colors/ColorType';
 import { RenderStyle } from '../utilities/misc/RenderStyle';
 import { ColorMapType } from '../utilities/colors/ColorMapType';
 
-export class SurfaceRenderStyle extends RenderStyle {
+export class TerrainRenderStyle extends RenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -22,7 +22,7 @@ export class SurfaceRenderStyle extends RenderStyle {
   public solidContourVolume = 0.5;
   public solidContourUse = true;
 
-  public solidShininess = 0.3;
+  public solidShininess = 0.03;
   public solidShininessUse = true;
 
   public solidOpacity = 0.5;
@@ -35,6 +35,6 @@ export class SurfaceRenderStyle extends RenderStyle {
   // ==================================================
 
   public override clone(): RenderStyle {
-    return cloneDeep<SurfaceRenderStyle>(this);
+    return cloneDeep<TerrainRenderStyle>(this);
   }
 }

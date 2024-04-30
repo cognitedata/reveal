@@ -1,6 +1,6 @@
 /*!
  * Copyright 2024 Cognite AS
- * CommandsController: Holds the commands
+ * CommandsController: Holds the commands so they can be updated
  */
 
 import { type BaseCommand } from '../commands/BaseCommand';
@@ -33,6 +33,12 @@ export class CommandController {
   public update(): void {
     for (const command of this._commands) {
       command.update();
+    }
+  }
+
+  public dispose(): void {
+    for (const tool of this._commands) {
+      tool.dispose();
     }
   }
 }

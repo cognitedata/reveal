@@ -47,7 +47,7 @@ export const RevealStoryContext = ({
       sdk: sdkInstance,
       // @ts-expect-error use local models
       _localModels: true,
-      haveEventListeners: false
+      hasEventListeners: false
     });
     renderTarget = new RevealRenderTarget(newViewer);
     renderTarget.initialize();

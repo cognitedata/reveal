@@ -2,6 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
+/*
+ * Utilitys function for missing array methods
+ * Use there function in order top increase the readability of your code
+ */
+
 export function clear<T>(array: T[]): void {
   array.splice(0, array.length);
 }

@@ -171,6 +171,6 @@ export class ContouringService {
   }
 
   private addXyz(x: number, y: number, z: number): void {
-    this._positions.push(x, z, y);
+    this._positions.push(x, y, z);
   }
 }

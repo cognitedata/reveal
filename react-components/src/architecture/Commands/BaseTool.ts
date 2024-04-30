@@ -5,17 +5,8 @@
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { RenderTargetCommand } from './RenderTargetCommand';
-import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 
 export abstract class BaseTool extends RenderTargetCommand {
-  // ==================================================
-  // CONSTRUCTOR
-  // ==================================================
-
-  protected constructor(target: RevealRenderTarget) {
-    super(target);
-  }
-
   // ==================================================
   // OVERRIDES
   // =================================================
