@@ -147,8 +147,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       );
     } else if (searchMethod === 'allAssets') {
       const transformedAssets =
-        allAssets
-          ?.flat()
+        allAssets?.pages
+          .flat()
           .map((mapping) => mapping.assets)
           .flat() ?? [];
 

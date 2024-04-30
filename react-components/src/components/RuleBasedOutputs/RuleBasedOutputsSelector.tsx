@@ -51,12 +51,12 @@ export function RuleBasedOutputsSelector({
     const initializeRuleBasedOutputs = async (model: CogniteCadModel): Promise<void> => {
       // parse assets and mappings
       // TODO: refactor to be sure to filter only the mappings/assets for the current model within the pages
-      const flatAssetsMappingsList = assetMappings
+      const flatAssetsMappingsList = assetMappings.pages
         .flat()
         .map((item) => item.mappings)
         .flat();
       const flatMappings = flatAssetsMappingsList.map((node) => node.items).flat();
-      const contextualizedAssetNodes = assetMappings
+      const contextualizedAssetNodes = assetMappings.pages
         .flat()
         .flatMap((item) => item.assets)
         .map(convertAssetMetadataKeysToLowerCase);

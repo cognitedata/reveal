@@ -12,7 +12,8 @@ import {
   type UseInfiniteQueryResult,
   type UseQueryResult,
   useInfiniteQuery,
-  useQuery
+  useQuery,
+  type InfiniteData
 } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { chunk } from 'lodash';
@@ -41,8 +42,8 @@ export const useSearchMappedEquipmentAssetMappings = (
     queryFn: async () => {
       if (query === '') {
         const mappedAssets =
-          assetMappings
-            ?.flat()
+          assetMappings?.pages
+            .flat()
             .map((item) => item.assets)
             .flat() ?? [];
         return mappedAssets;
@@ -71,7 +72,7 @@ export const useSearchMappedEquipmentAssetMappings = (
 export const useAllMappedEquipmentAssetMappings = (
   models: AddModelOptions[],
   userSdk?: CogniteClient
-): UseInfiniteQueryResult<ModelMappingsWithAssets[]> => {
+): UseInfiniteQueryResult<InfiniteData<ModelMappingsWithAssets[]>, Error> => {
   const sdk = useSDK(userSdk);
 
   return useInfiniteQuery({
