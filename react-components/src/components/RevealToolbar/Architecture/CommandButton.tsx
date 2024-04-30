@@ -9,7 +9,6 @@ import { useTranslation } from '../../i18n/I18n';
 import { type BaseCommand } from '../../../architecture/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../../architecture/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../../architecture/commands/RenderTargetCommand';
-import { BaseTool } from '../../../architecture/commands/BaseTool';
 
 export const CommandButton = (inputCommand: BaseCommand): ReactElement => {
   const renderTarget = useRenderTarget();
@@ -57,20 +56,12 @@ export const CommandButton = (inputCommand: BaseCommand): ReactElement => {
 
 function getDefaultCommand(newCommand: BaseCommand, renderTarget: RevealRenderTarget): BaseCommand {
   // If it exists from before, return the existing command
-  // Otherwise, add the new command to the controller and attch the renderTarget
-  if (newCommand instanceof BaseTool) {
-    const oldCommand = renderTarget.toolController.getEqual(newCommand);
-    if (oldCommand !== undefined) {
-      return oldCommand;
-    }
-    renderTarget.toolController.add(newCommand);
-  } else {
-    const oldCommand = renderTarget.commandController.getEqual(newCommand);
-    if (oldCommand !== undefined) {
-      return oldCommand;
-    }
-    renderTarget.commandController.add(newCommand);
+  // Otherwise, add the new command to the controller and attach the renderTarget
+  const oldCommand = renderTarget.toolController.getEqual(newCommand);
+  if (oldCommand !== undefined) {
+    return oldCommand;
   }
+  renderTarget.toolController.add(newCommand);
   if (newCommand instanceof RenderTargetCommand) {
     newCommand.attach(renderTarget);
   }

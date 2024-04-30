@@ -22,7 +22,6 @@ import {
 } from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
-import { CommandController } from './CommandController';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
@@ -34,7 +33,6 @@ export class RevealRenderTarget {
 
   private readonly _viewer: Cognite3DViewer;
   private readonly _toolController: ToolControllers;
-  private readonly _commandController: CommandController;
   private readonly _rootObject3D: Object3D;
   private readonly _rootDomainObject: RootDomainObject;
   private _axisGizmoTool: AxisGizmoTool | undefined;
@@ -47,7 +45,6 @@ export class RevealRenderTarget {
     this._viewer = viewer;
     this._toolController = new ToolControllers(this.domElement);
     this._toolController.addEventListeners();
-    this._commandController = new CommandController();
 
     this._rootObject3D = this.createRootGroup();
     this._viewer.addObject3D(this._rootObject3D);
@@ -98,10 +95,6 @@ export class RevealRenderTarget {
     return this._toolController;
   }
 
-  public get commandController(): CommandController {
-    return this._commandController;
-  }
-
   public get cameraManager(): IFlexibleCameraManager {
     const cameraManager = this.viewer.cameraManager;
     if (!isFlexibleCameraManager(cameraManager)) {
@@ -128,20 +121,12 @@ export class RevealRenderTarget {
     this._viewer.removeObject3D(this._rootObject3D);
     this.toolController.removeEventListeners();
     this.toolController.dispose();
-    this.commandController.dispose();
     this._axisGizmoTool?.dispose();
   }
 
   public invalidate(): void {
     this._viewer.requestRedraw();
   }
-
-  public updateToolsAndCommands(): void {
-    this._toolController.update();
-    this._commandController.update();
-  }
-
-  public test(): void {}
 
   private createRootGroup(): Group {
     const group = new Group();

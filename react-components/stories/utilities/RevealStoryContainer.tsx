@@ -51,7 +51,6 @@ export const RevealStoryContext = ({
     });
     renderTarget = new RevealRenderTarget(newViewer);
     renderTarget.initialize();
-    renderTarget.test();
   }
 
   const renderTargetRef = useRef<RevealRenderTarget | undefined>(renderTarget);

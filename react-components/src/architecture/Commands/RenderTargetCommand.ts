@@ -22,7 +22,7 @@ export abstract class RenderTargetCommand extends BaseCommand {
   public override invoke(): boolean {
     const success = this.invokeCore();
     if (success) {
-      this.renderTarget.updateToolsAndCommands();
+      this.renderTarget.toolController.update();
     }
     return success;
   }

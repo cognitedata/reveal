@@ -5,7 +5,7 @@
 
 import { PointerEvents, PointerEventsTarget } from '@cognite/reveal';
 import { type BaseTool } from '../commands/BaseTool';
-import { BaseCommand } from '../commands/BaseCommand';
+import { type BaseCommand } from '../commands/BaseCommand';
 
 export class ToolControllers extends PointerEvents {
   // ==================================================
@@ -15,7 +15,7 @@ export class ToolControllers extends PointerEvents {
   private _activeTool: BaseTool | undefined;
   private _previousTool: BaseTool | undefined;
   private readonly _domElement: HTMLElement;
-  private readonly _tools = new Set<BaseCommand>();
+  private readonly _commands = new Set<BaseCommand>();
   private readonly _pointerEventsTarget: PointerEventsTarget;
 
   // ==================================================
@@ -76,18 +76,18 @@ export class ToolControllers extends PointerEvents {
   // INSTANCE METHODS
   // ==================================================
 
-  public getEqual(tool: BaseTool): BaseTool | undefined {
+  public getEqual(command: BaseCommand): BaseCommand | undefined {
     // For some reason Set<> doesn't have find!
-    for (const oldTool of this._tools) {
-      if (oldTool.isEqual(tool)) {
-        return oldTool;
+    for (const oldCommand of this._commands) {
+      if (oldCommand.isEqual(command)) {
+        return oldCommand;
       }
     }
     return undefined;
   }
 
-  public add(tool: BaseTool): void {
-    this._tools.add(tool);
+  public add(command: BaseCommand): void {
+    this._commands.add(command);
   }
 
   public setPreviousTool(): void {
@@ -114,14 +114,14 @@ export class ToolControllers extends PointerEvents {
   }
 
   public update(): void {
-    for (const tool of this._tools) {
-      tool.update();
+    for (const command of this._commands) {
+      command.update();
     }
   }
 
   public dispose(): void {
-    for (const tool of this._tools) {
-      tool.dispose();
+    for (const command of this._commands) {
+      command.dispose();
     }
   }
 
@@ -135,10 +135,9 @@ export class ToolControllers extends PointerEvents {
     // key – the character ("A", "a" and so on), for non-character keys, such as Esc, usually has the same value as code.
     if (down) {
       const key = event.key.toUpperCase();
-      for (const tool of this._tools) {
-        if (tool.shortCutKey === key) {
-          this.setActiveTool(tool);
-          // VirtualUserInterface.updateToolbars();
+      for (const command of this._commands) {
+        if (command.shortCutKey === key) {
+          command.invoke();
           return;
         }
       }
@@ -170,8 +169,8 @@ export class ToolControllers extends PointerEvents {
     domElement.removeEventListener('focus', this._onFocus);
     domElement.removeEventListener('blur', this._onBlur);
     this._pointerEventsTarget.removeEventListeners();
-    for (const tool of this._tools) {
-      tool.removeEventListeners();
+    for (const commands of this._commands) {
+      commands.removeEventListeners();
     }
   }
 
