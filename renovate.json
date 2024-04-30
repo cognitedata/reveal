@@ -5,7 +5,6 @@
   "labels": ["dependencies"],
   "ignorePaths": [
     "**/node_modules/**",
-    "**/examples/**",
     "**/__tests__/**",
     "**/test/**",
     "**/__fixtures__/**"
