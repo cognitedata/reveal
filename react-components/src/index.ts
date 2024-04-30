@@ -147,6 +147,8 @@ export type {
   CriteriaTypes
 } from './components/RuleBasedOutputs/types';
 
+export { RuleBasedOutputsPanel } from './components/RuleBasedOutputs/RuleBasedOutputsPanel';
+
 // Functions
 export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';
 
