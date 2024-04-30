@@ -9786,13 +9786,13 @@ __metadata:
   linkType: hard
 
 "happy-dom@npm:^13.0.0":
-  version: 13.6.2
-  resolution: "happy-dom@npm:13.6.2"
+  version: 13.10.1
+  resolution: "happy-dom@npm:13.10.1"
   dependencies:
     entities: "npm:^4.5.0"
     webidl-conversions: "npm:^7.0.0"
     whatwg-mimetype: "npm:^3.0.0"
-  checksum: 10/e97f2ba59ea03c4ad5e1c395a54a483a52bf97421d497745c5c0a2588f94ff478cfd1a434790bceb8b27a591cbb5989bc7c785b0d5cc57584ca010c03c0778f8
+  checksum: 10/cb94fae0f93abbef85c98b883381ccde9a59fe158341fdea5b0fb6e04aee19026f9717cd019dab59197564292670de0f38be9678f9532559535ff71c13e2e03e
   languageName: node
   linkType: hard
 
