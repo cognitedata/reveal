@@ -6,7 +6,7 @@
 import { RenderTargetCommand } from './RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';
-import { type Tooltip } from './BaseCommand';
+import { type BaseCommand, type Tooltip } from './BaseCommand';
 
 export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   private readonly _controlsType: FlexibleControlsType;
@@ -30,14 +30,17 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
+  public isEqual(other: BaseCommand): boolean {
+    if (!(other instanceof SetFlexibleControlsTypeCommand)) {
+      return false;
+    }
+    return this._controlsType === other._controlsType;
+  }
+
   public override dispose(): void {
     super.dispose();
     const { cameraManager } = this.renderTarget;
     cameraManager.removeControlsTypeChangeListener(this._controlsTypeChangeHandler);
-  }
-
-  public override get name(): string {
-    return this.tooltip.fallback;
   }
 
   public override get icon(): string {

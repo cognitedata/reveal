@@ -15,10 +15,6 @@ export class SetBoxVisibleCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get name(): string {
-    return 'SetBoxVisible';
-  }
-
   public override get icon(): string {
     return 'CheckmarkAlternative';
   }

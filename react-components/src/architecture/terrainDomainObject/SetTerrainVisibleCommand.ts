@@ -16,10 +16,6 @@ export class SetTerrainVisibleCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get name(): string {
-    return 'SetTerrainVisible';
-  }
-
   public override get icon(): string {
     return 'EyeShow';
   }

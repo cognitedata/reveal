@@ -19,10 +19,6 @@ export class BoxEditTool extends NavigationTool {
     return 'I';
   }
 
-  public override get name(): string {
-    return 'Info';
-  }
-
   public override get icon(): string {
     return 'Cube';
   }

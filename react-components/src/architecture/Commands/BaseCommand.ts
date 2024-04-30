@@ -24,7 +24,7 @@ export abstract class BaseCommand {
   // =================================================
 
   public get name(): string {
-    return '';
+    return this.tooltip.fallback;
   }
 
   public get shortCutKey(): string | undefined {
@@ -64,7 +64,7 @@ export abstract class BaseCommand {
   }
 
   public isEqual(other: BaseCommand): boolean {
-    return this.name === other.name;
+    return this.constructor === other.constructor;
   }
 
   public invoke(): boolean {

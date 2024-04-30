@@ -7,10 +7,6 @@ import { RenderTargetCommand } from './RenderTargetCommand';
 import { type Tooltip } from '../commands/BaseCommand';
 
 export class FitViewCommand extends RenderTargetCommand {
-  public override get name(): string {
-    return 'Fit camera to models';
-  }
-
   public override get icon(): string {
     return 'ExpandAlternative';
   }

@@ -16,10 +16,6 @@ export class NavigationTool extends BaseTool {
     return 'N';
   }
 
-  public override get name(): string {
-    return 'Navigation';
-  }
-
   public override get icon(): string {
     return 'Grab';
   }

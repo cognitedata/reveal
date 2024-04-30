@@ -17,10 +17,6 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get name(): string {
-    return 'ChangeTerrain';
-  }
-
   public override get icon(): string {
     return 'Refresh';
   }
