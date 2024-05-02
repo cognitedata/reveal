@@ -123,8 +123,9 @@ export class RegularGrid2 extends Grid2 {
       resultPosition = new Vector3();
     }
     const z = this.getZ(i, j);
-    if (Number.isNaN(z)) return false;
-
+    if (Number.isNaN(z)) {
+      return false;
+    }
     if (this._hasRotationAngle) {
       const dx = this.inc.x * i;
       const dy = this.inc.y * j;
@@ -134,9 +135,9 @@ export class RegularGrid2 extends Grid2 {
       resultPosition.x = this.inc.x * i;
       resultPosition.y = this.inc.y * j;
     }
-    resultPosition.z = z;
     resultPosition.x += this.origin.x;
     resultPosition.y += this.origin.y;
+    resultPosition.z = z;
     return true;
   }
 

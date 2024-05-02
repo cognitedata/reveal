@@ -14,7 +14,7 @@ export class BoxDomainObject extends VisualDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly scale: Vector3 = new Vector3(10, 10, 5);
+  public readonly scale: Vector3 = new Vector3(1, 1, 1);
   public readonly center: Vector3 = new Vector3(0, 0, 0);
   public readonly zRotation: number = 0;
 

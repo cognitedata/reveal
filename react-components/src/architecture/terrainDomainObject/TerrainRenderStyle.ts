@@ -28,7 +28,7 @@ export class TerrainRenderStyle extends RenderStyle {
   public solidOpacity = 0.5;
   public solidOpacityUse = false;
 
-  public increment = 10;
+  public increment = 0;
 
   // ==================================================
   // OVERRIDES of BaseStyle

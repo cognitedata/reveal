@@ -51,6 +51,7 @@ export class TerrainDomainObject extends VisualDomainObject {
     if (!(style instanceof TerrainRenderStyle)) {
       return;
     }
+    // The rest checks if the increment is valid. To many contour lines with hang/crash the app.
     const { grid } = this;
     if (grid === undefined) {
       return;
@@ -61,11 +62,11 @@ export class TerrainDomainObject extends VisualDomainObject {
       return;
     }
     if (
-      style.increment <= 0 ||
-      style.increment > zRange.delta ||
-      style.increment < zRange.delta / 200
+      style.increment <= 0 || // Not set
+      style.increment > zRange.delta || // Too large
+      style.increment < zRange.delta / 200 // Too small
     ) {
-      style.increment = zRange.getBestInc();
+      style.increment = zRange.getBestInc(20);
     }
   }
 

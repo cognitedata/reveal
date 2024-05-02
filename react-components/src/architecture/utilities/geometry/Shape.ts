@@ -22,7 +22,8 @@ export abstract class Shape {
 
   public get boundingBox(): Range3 {
     if (this._boundingBox === undefined) {
-      this._boundingBox = this.calculateBoundingBox();
+      this._boundingBox = new Range3();
+      this.expandBoundingBox(this._boundingBox);
     }
     return this._boundingBox;
   }
@@ -42,12 +43,6 @@ export abstract class Shape {
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
-
-  public calculateBoundingBox(): Range3 {
-    const boundingBox = new Range3();
-    this.expandBoundingBox(boundingBox);
-    return boundingBox;
-  }
 
   public touch(): void {
     this._boundingBox = undefined;

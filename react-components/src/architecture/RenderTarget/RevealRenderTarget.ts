@@ -11,15 +11,7 @@ import {
 } from '@cognite/reveal';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../concreteTools/NavigationTool';
-import {
-  type Object3D,
-  Group,
-  Vector3,
-  AmbientLight,
-  DirectionalLight,
-  WebGLRenderer,
-  PerspectiveCamera
-} from 'three';
+import { Vector3, AmbientLight, DirectionalLight, WebGLRenderer, PerspectiveCamera } from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
@@ -33,7 +25,6 @@ export class RevealRenderTarget {
 
   private readonly _viewer: Cognite3DViewer;
   private readonly _toolController: ToolControllers;
-  private readonly _rootObject3D: Object3D;
   private readonly _rootDomainObject: RootDomainObject;
   private _axisGizmoTool: AxisGizmoTool | undefined;
 
@@ -46,8 +37,7 @@ export class RevealRenderTarget {
     this._toolController = new ToolControllers(this.domElement);
     this._toolController.addEventListeners();
 
-    this._rootObject3D = this.createRootGroup();
-    this._viewer.addObject3D(this._rootObject3D);
+    this.initializeLights();
 
     this._viewer.on('cameraChange', this.updateLightPosition);
     this._viewer.on('beforeSceneRendered', this.beforeSceneRenderedDelegate);
@@ -73,10 +63,6 @@ export class RevealRenderTarget {
 
   public get viewer(): Cognite3DViewer {
     return this._viewer;
-  }
-
-  public get rootObject3D(): Object3D {
-    return this._rootObject3D;
   }
 
   public get rootDomainObject(): RootDomainObject {
@@ -118,7 +104,12 @@ export class RevealRenderTarget {
   }
 
   public dispose(): void {
-    this._viewer.removeObject3D(this._rootObject3D);
+    if (this._ambientLight !== undefined) {
+      this._viewer.removeObject3D(this._ambientLight);
+    }
+    if (this._directionalLight !== undefined) {
+      this._viewer.removeObject3D(this._directionalLight);
+    }
     this.toolController.removeEventListeners();
     this.toolController.dispose();
     this._axisGizmoTool?.dispose();
@@ -128,23 +119,20 @@ export class RevealRenderTarget {
     this._viewer.requestRedraw();
   }
 
-  private createRootGroup(): Group {
-    const group = new Group();
-    const ambientLight = new AmbientLight(0xffffff, 0.25); // soft white light
-    const directionalLight = new DirectionalLight(0xffffff, 2);
-    directionalLight.name = DIRECTIONAL_LIGHT_NAME;
-    directionalLight.position.set(0, 1, 0);
-    group.add(ambientLight);
-    group.add(directionalLight);
-    return group;
-  }
+  private _ambientLight: AmbientLight | undefined;
+  private _directionalLight: DirectionalLight | undefined;
 
-  private get directionalLight(): DirectionalLight | undefined {
-    return this._rootObject3D.getObjectByName(DIRECTIONAL_LIGHT_NAME) as DirectionalLight;
+  private initializeLights(): void {
+    this._ambientLight = new AmbientLight(0xffffff, 0.25); // soft white light
+    this._directionalLight = new DirectionalLight(0xffffff, 2);
+    this._directionalLight.name = DIRECTIONAL_LIGHT_NAME;
+    this._directionalLight.position.set(0, 1, 0);
+    this.viewer.addObject3D(this._ambientLight);
+    this.viewer.addObject3D(this._directionalLight);
   }
 
   updateLightPosition = (_position: Vector3, _target: Vector3): void => {
-    const light = this.directionalLight;
+    const light = this._directionalLight;
     if (light === undefined) {
       return;
     }

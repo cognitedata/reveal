@@ -3,11 +3,10 @@
  */
 
 /* eslint-disable @typescript-eslint/consistent-type-imports */
-import { Mesh, MeshPhongMaterial, Object3D, BoxGeometry, Box3, DoubleSide } from 'three';
+import { Mesh, MeshPhongMaterial, Object3D, BoxGeometry, DoubleSide } from 'three';
 import { BoxDomainObject } from './BoxDomainObject';
 import { DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 import { Changes } from '../utilities/misc/Changes';
-import { Range3 } from '../utilities/geometry/Range3';
 import { BoxRenderStyle } from './BoxRenderStyle';
 import { ObjectThreeView } from '../views/ObjectThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
@@ -31,30 +30,16 @@ export class BoxThreeView extends ObjectThreeView {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (this._object3D === undefined) {
+    if (this._object === undefined) {
       return;
     }
     if (change.isChanged(Changes.renderStyle) || change.isChanged(Changes.color)) {
-      const mesh = this._object3D as Mesh;
+      const mesh = this._object as Mesh;
       if (mesh !== undefined) {
         updateMaterial(mesh.material as MeshPhongMaterial, this.boxDomainObject, this.style);
         this.invalidate();
       }
     }
-  }
-
-  // ==================================================
-  // OVERRIDES of ThreeView
-  // ==================================================
-
-  public override calculateBoundingBox(): Range3 {
-    const object = this.object3D;
-    if (object === undefined) {
-      return new Range3();
-    }
-    const box = new Box3();
-    box.setFromObject(object);
-    return new Range3(box.min, box.max);
   }
 
   // ==================================================

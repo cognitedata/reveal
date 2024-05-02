@@ -14,14 +14,14 @@ import {
   Mesh,
   MeshPhongMaterial,
   Color,
-  Object3D
+  Object3D,
+  Box3
 } from 'three';
 import { ContouringService } from '../utilities/geometry/ContouringService';
 import { TerrainDomainObject } from './TerrainDomainObject';
 import { DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 import { Changes } from '../utilities/misc/Changes';
 import { RegularGrid2Buffers } from '../utilities/geometry/RegularGrid2Buffers';
-import { Range3 } from '../utilities/geometry/Range3';
 import { create1DTextureWithContours, create1DTexture } from '../utilities/colors/create1DTexture';
 import { TerrainRenderStyle } from './TerrainRenderStyle';
 import { ColorType } from '../utilities/colors/ColorType';
@@ -52,14 +52,14 @@ export class TerrainThreeView extends ObjectThreeView {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (this._object3D === undefined) {
+    if (this._object === undefined) {
       return;
     }
     if (change.isChanged(Changes.colorMap)) {
       this.clearMemory();
     }
     if (change.isChanged(Changes.renderStyle)) {
-      const solid = this._object3D.getObjectByName(SOLID_NAME) as Mesh;
+      const solid = this._object.getObjectByName(SOLID_NAME) as Mesh;
       if (solid !== undefined) {
         updateMaterial(solid.material as MeshPhongMaterial, this.terrainDomainObject, this.style);
         this.invalidate();
@@ -73,13 +73,23 @@ export class TerrainThreeView extends ObjectThreeView {
   // OVERRIDES of ThreeView
   // ==================================================
 
-  public override calculateBoundingBox(): Range3 {
+  public override calculateBoundingBox(): Box3 {
     const { terrainDomainObject } = this;
     const { grid } = terrainDomainObject;
     if (grid === undefined) {
-      return Range3.empty;
+      return new Box3().makeEmpty();
     }
-    return grid.boundingBox;
+    const range = grid.boundingBox;
+    if (range.isEmpty) {
+      return new Box3().makeEmpty();
+    }
+    const boundingBox = new Box3();
+    boundingBox.min.set(range.x.min, range.y.min, range.z.min);
+    boundingBox.max.set(range.x.max, range.y.max, range.z.max);
+
+    // Convert to viewer space
+    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    return boundingBox;
   }
 
   // ==================================================
@@ -107,7 +117,7 @@ export class TerrainThreeView extends ObjectThreeView {
     }
     group.rotateZ(grid.rotationAngle);
     group.position.x = grid.origin.x;
-    group.position.z = grid.origin.y;
+    group.position.y = grid.origin.y;
 
     group.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     return group;
@@ -132,7 +142,6 @@ export class TerrainThreeView extends ObjectThreeView {
 
     const material = new MeshPhongMaterial({
       side: DoubleSide,
-      shadowSide: DoubleSide,
       polygonOffset: style.showContours, // Because of the countours to be visible
       polygonOffsetFactor: 1,
       polygonOffsetUnits: 4.0

@@ -19,11 +19,11 @@ export class FitViewCommand extends RenderTargetCommand {
     const { renderTarget } = this;
     const { viewer } = renderTarget;
 
-    // const boundingBox = viewer.boundingBox;
-    // if (boundingBox.isEmpty)
-    //   return false;
-    // viewer.fitCameraToBoundingBox(boundingBox);
-    viewer.fitCameraToModels(undefined, undefined, true);
+    const boundingBox = viewer.getModelBoundingBox();
+    if (boundingBox.isEmpty()) {
+      return false;
+    }
+    viewer.fitCameraToBoundingBox(boundingBox);
     return true;
   }
 }

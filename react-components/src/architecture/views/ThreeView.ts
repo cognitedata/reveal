@@ -1,6 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
+/* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 import { BaseView } from './BaseView';
@@ -8,7 +9,7 @@ import { Changes } from '../utilities/misc/Changes';
 import { type RenderStyle } from '../utilities/misc/RenderStyle';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type DomainObject } from '../domainObjects/DomainObject';
-import { Range3 } from '../utilities/geometry/Range3';
+import { type Box3 } from 'three';
 
 /**
  * Represents an abstract base class for a Three.js view in the application.
@@ -19,7 +20,7 @@ export abstract class ThreeView extends BaseView {
   // INSTANCE FIELDS
   // ==================================================
 
-  private _boundingBox: Range3 | undefined = undefined;
+  private _boundingBox: Box3 | undefined = undefined; // Cashe of the bounding box of the view
   private _renderTarget: RevealRenderTarget | undefined = undefined;
 
   // ==================================================
@@ -77,31 +78,23 @@ export abstract class ThreeView extends BaseView {
   // VIRTUAL METHODS
   // ==================================================
 
-  // eslint-disable-next-line @typescript-eslint/class-literal-property-style
-  public abstract get isVisible(): boolean;
-
   /**
    * Calculates the bounding box of the view.
    * Override this function to recalculate the bounding box of the view.
    * @returns The calculated bounding box of the view.
    */
-  protected calculateBoundingBox(): Range3 {
-    return Range3.empty;
-  }
-
-  public shouldPick(): boolean {
-    return true; // To be overridden
-  }
+  protected abstract calculateBoundingBox(): Box3;
 
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
-  public get boundingBox(): Range3 | undefined {
+  public getBoundingBox(target: Box3): Box3 {
     if (this._boundingBox === undefined) {
       this._boundingBox = this.calculateBoundingBox();
     }
-    return this._boundingBox;
+    target.copy(this._boundingBox);
+    return target;
   }
 
   protected touchBoundingBox(): void {

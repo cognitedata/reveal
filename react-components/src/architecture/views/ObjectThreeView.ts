@@ -1,12 +1,17 @@
 /*!
  * Copyright 2024 Cognite AS
  */
+/* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { BoxHelper, Group, type Object3D } from 'three';
+import { Box3, type Mesh, type Object3D } from 'three';
 import { ThreeView } from './ThreeView';
 import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 import { Changes } from '../utilities/misc/Changes';
-import { Range3 } from '../utilities/geometry/Range3';
+import {
+  type CustomObjectIntersectInput,
+  type CustomObjectIntersection,
+  type ICustomObject
+} from '@cognite/reveal';
 
 /**
  * Represents an abstract class for a Three.js view that renders an Object3D.
@@ -14,26 +19,86 @@ import { Range3 } from '../utilities/geometry/Range3';
  * @remarks
  * You only have to override createObject3D() to create the object to be render.
  */
-export abstract class ObjectThreeView extends ThreeView {
+export abstract class ObjectThreeView extends ThreeView implements ICustomObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  protected _object3D: Object3D | undefined = undefined;
+  protected _object: Object3D | undefined = undefined;
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
   protected get hasObject3D(): boolean {
-    return this._object3D !== undefined;
+    return this._object !== undefined;
   }
 
-  protected get object3D(): Object3D | undefined {
-    if (this._object3D === undefined) {
+  // ==================================================
+  // IMPLEMENTATION of ICustomObject
+  // ==================================================
+
+  public get object(): Object3D {
+    if (this._object === undefined) {
       this.makeObject();
     }
-    return this._object3D;
+    if (this._object === undefined) {
+      throw Error('The object is not created');
+    }
+    return this._object;
+  }
+
+  public get shouldPick(): boolean {
+    return true; // To be overridden
+  }
+
+  public get shouldPickBoundingBox(): boolean {
+    return true; // To be overridden
+  }
+
+  public get isPartOfBoundingBox(): boolean {
+    return true; // To be overridden
+  }
+
+  public intersectIfCloser(
+    intersectInput: CustomObjectIntersectInput,
+    closestDistance: number | undefined
+  ): undefined | CustomObjectIntersection {
+    const solid = this.object.getObjectByName('Solid') as Mesh;
+    solid.updateMatrixWorld();
+    solid.updateMatrixWorld(true);
+
+    console.log('intersectInput.raycaster', intersectInput.raycaster);
+    const intersection = intersectInput.raycaster.intersectObject(solid, true);
+    if (intersection.length === 0) {
+      console.log('intersectIfCloser A', this.domainObject.name);
+      return undefined;
+    }
+    const { point, distance } = intersection[0];
+    if (closestDistance !== undefined && closestDistance < distance) {
+      console.log('intersectIfCloser B', this.domainObject.name);
+      return undefined;
+    }
+    if (!intersectInput.isVisible(point)) {
+      console.log('intersectIfCloser C', this.domainObject.name);
+      return undefined;
+    }
+    console.log('intersectIfCloser found', this.domainObject.name);
+    const customObjectIntersection: CustomObjectIntersection = {
+      type: 'customObject',
+      customObject: this,
+      point,
+      distanceToCamera: distance,
+      userData: intersection[0]
+    };
+    if (this.shouldPickBoundingBox) {
+      const boundingBox = this.getBoundingBox(new Box3());
+      if (!boundingBox.isEmpty()) {
+        console.log('intersectIfCloser boundingBox', boundingBox);
+        customObjectIntersection.boundingBox = boundingBox;
+      }
+    }
+    return customObjectIntersection;
   }
 
   // ==================================================
@@ -42,7 +107,7 @@ export abstract class ObjectThreeView extends ThreeView {
 
   public initialize(): void {
     super.initialize();
-    if (this._object3D === undefined) {
+    if (this._object === undefined) {
       this.makeObject();
     }
   }
@@ -61,7 +126,7 @@ export abstract class ObjectThreeView extends ThreeView {
 
   public override beforeRender(): void {
     super.beforeRender();
-    if (this._object3D === undefined) {
+    if (this._object === undefined) {
       this.makeObject();
     }
   }
@@ -75,18 +140,12 @@ export abstract class ObjectThreeView extends ThreeView {
   // OVERRIDES of ThreeView
   // ==================================================
 
-  public override get isVisible(): boolean {
-    return this._object3D?.parent !== null;
-  }
-
-  public override calculateBoundingBox(): Range3 {
-    if (this.object3D === undefined) {
-      return Range3.empty;
+  public override calculateBoundingBox(): Box3 {
+    if (this.object === undefined) {
+      return new Box3().makeEmpty();
     }
-    const boundingBox = getBoundingBox(this.object3D);
-    if (boundingBox === undefined) {
-      return Range3.empty;
-    }
+    const boundingBox = new Box3();
+    boundingBox.setFromObject(this.object);
     return boundingBox;
   }
 
@@ -101,47 +160,24 @@ export abstract class ObjectThreeView extends ThreeView {
   // ==================================================
 
   private makeObject(): void {
-    if (this._object3D !== undefined) {
+    if (this._object !== undefined) {
       throw Error('Can make the object when it is already made');
     }
-    this._object3D = this.createObject3D();
-    if (this._object3D === undefined) {
+    this._object = this.createObject3D();
+    if (this._object === undefined) {
       return;
     }
-    const root = this.renderTarget.rootObject3D;
-    root.add(this._object3D);
-    this.touchBoundingBox();
+    const { viewer } = this.renderTarget;
+    viewer.addCustomObject(this);
   }
 
   private removeObject(): void {
-    if (this._object3D === undefined) {
+    if (this._object === undefined) {
       return;
     }
-    const root = this.renderTarget.rootObject3D;
-    root.remove(this._object3D);
-    this._object3D = undefined;
+    const { viewer } = this.renderTarget;
+    viewer.removeCustomObject(this);
+    this._object = undefined;
     // TODO: Do we have to dispose Object3D in some way (matrials?)
   }
-}
-function getBoundingBox(object: Object3D | undefined): Range3 | undefined {
-  if (object === undefined) {
-    return undefined;
-  }
-  if (object instanceof Group) {
-    const boundingBox = new Range3();
-    for (const child of object.children) {
-      const childBoundingBox = getBoundingBox(child);
-      if (childBoundingBox !== undefined) {
-        boundingBox.addRange(childBoundingBox);
-      }
-    }
-    return boundingBox;
-  }
-  const helper = new BoxHelper(object);
-  helper.geometry.computeBoundingBox();
-  const box = helper.geometry.boundingBox;
-  if (box === null || box.isEmpty()) {
-    return undefined;
-  }
-  return new Range3(box.min, box.max);
 }
