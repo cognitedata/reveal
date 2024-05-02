@@ -3,7 +3,7 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { Box3, type Mesh, type Object3D } from 'three';
+import { Box3, Group, Mesh, type Object3D } from 'three';
 import { ThreeView } from './ThreeView';
 import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
 import { Changes } from '../utilities/misc/Changes';
@@ -177,7 +177,28 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
     }
     const { viewer } = this.renderTarget;
     viewer.removeCustomObject(this);
+    disposeMaterials(this._object);
     this._object = undefined;
     // TODO: Do we have to dispose Object3D in some way (matrials?)
+  }
+}
+
+function disposeMaterials(object: Object3D): void {
+  if (object === undefined) {
+    return undefined;
+  }
+  if (object instanceof Group) {
+    for (const child of object.children) {
+      disposeMaterials(child);
+    }
+  }
+  if (object instanceof Mesh && object.material !== undefined) {
+    if (object.material.map !== undefined) {
+      object.material.map.dispose();
+    }
+    if (object.material.texture !== undefined) {
+      object.material.texture.dispose();
+    }
+    object.material.dispose();
   }
 }

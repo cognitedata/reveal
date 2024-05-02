@@ -15,6 +15,7 @@ import { Vector3, AmbientLight, DirectionalLight, WebGLRenderer, PerspectiveCame
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
+import { ObjectThreeView } from '../views/ObjectThreeView';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -27,6 +28,8 @@ export class RevealRenderTarget {
   private readonly _toolController: ToolControllers;
   private readonly _rootDomainObject: RootDomainObject;
   private _axisGizmoTool: AxisGizmoTool | undefined;
+  private _ambientLight: AmbientLight | undefined;
+  private _directionalLight: DirectionalLight | undefined;
 
   // ==================================================
   // CONTRUCTORS
@@ -36,26 +39,13 @@ export class RevealRenderTarget {
     this._viewer = viewer;
     this._toolController = new ToolControllers(this.domElement);
     this._toolController.addEventListeners();
+    this._rootDomainObject = new RootDomainObject();
 
     this.initializeLights();
 
-    this._viewer.on('cameraChange', this.updateLightPosition);
-    this._viewer.on('beforeSceneRendered', this.beforeSceneRenderedDelegate);
-
-    this._rootDomainObject = new RootDomainObject();
+    this._viewer.on('cameraChange', this.cameraChangeHandler);
+    this._viewer.on('beforeSceneRendered', this.beforeSceneRenderedHandler);
   }
-
-  beforeSceneRenderedDelegate = (event: {
-    frameNumber: number;
-    renderer: WebGLRenderer;
-    camera: PerspectiveCamera;
-  }): void => {
-    for (const domainObject of this._rootDomainObject.getDescendantsByType(VisualDomainObject)) {
-      for (const view of domainObject.views) {
-        view.beforeRender();
-      }
-    }
-  };
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -119,9 +109,6 @@ export class RevealRenderTarget {
     this._viewer.requestRedraw();
   }
 
-  private _ambientLight: AmbientLight | undefined;
-  private _directionalLight: DirectionalLight | undefined;
-
   private initializeLights(): void {
     this._ambientLight = new AmbientLight(0xffffff, 0.25); // soft white light
     this._directionalLight = new DirectionalLight(0xffffff, 2);
@@ -131,7 +118,25 @@ export class RevealRenderTarget {
     this.viewer.addObject3D(this._directionalLight);
   }
 
-  updateLightPosition = (_position: Vector3, _target: Vector3): void => {
+  // ==================================================
+  // EVENT HANDLERS
+  // ==================================================
+
+  beforeSceneRenderedHandler = (event: {
+    frameNumber: number;
+    renderer: WebGLRenderer;
+    camera: PerspectiveCamera;
+  }): void => {
+    for (const domainObject of this._rootDomainObject.getDescendantsByType(VisualDomainObject)) {
+      for (const view of domainObject.views) {
+        if (view instanceof ObjectThreeView && view.renderTarget === this) {
+          view.beforeRender();
+        }
+      }
+    }
+  };
+
+  cameraChangeHandler = (_position: Vector3, _target: Vector3): void => {
     const light = this._directionalLight;
     if (light === undefined) {
       return;
