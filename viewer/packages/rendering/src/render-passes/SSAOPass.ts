@@ -29,7 +29,7 @@ export class SSAOPass implements RenderPass {
     this._fullScreenTriangle.visible = sampleSize > 0;
   }
 
-  constructor(depthTexture: THREE.Texture, ssaoParameters: SsaoParameters) {
+  constructor(depthTexture: THREE.Texture | null, ssaoParameters: SsaoParameters) {
     const { sampleSize, depthCheckBias, sampleRadius } = ssaoParameters;
 
     const uniforms = {
