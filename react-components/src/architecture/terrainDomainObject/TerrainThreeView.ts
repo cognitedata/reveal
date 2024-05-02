@@ -200,18 +200,8 @@ function add(parent: Object3D, child: Object3D | undefined): void {
 
 function applyMatrix(object: Object3D, grid: RegularGrid2): void {
   object.rotateZ(grid.rotationAngle);
-  object.position.x = grid.origin.x;
-  object.position.y = grid.origin.y;
+  object.position.set(grid.origin.x, grid.origin.y, 0);
   object.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-}
-
-function updateContoursMaterial(
-  material: LineBasicMaterial,
-  terrainDomainObject: TerrainDomainObject,
-  style: TerrainRenderStyle
-): void {
-  material.color = terrainDomainObject.getColorByColorType(style.contoursColorType);
-  material.linewidth = 1;
 }
 
 function updateSolidMaterial(
@@ -245,6 +235,15 @@ function updateSolidMaterial(
     }
     material.color = terrainDomainObject.getColorByColorType(style.solidColorType);
   }
+}
+
+function updateContoursMaterial(
+  material: LineBasicMaterial,
+  terrainDomainObject: TerrainDomainObject,
+  style: TerrainRenderStyle
+): void {
+  material.color = terrainDomainObject.getColorByColorType(style.contoursColorType);
+  material.linewidth = 1;
 }
 
 function createTexture(

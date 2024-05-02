@@ -3,10 +3,10 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { RenderTargetCommand } from './RenderTargetCommand';
+import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';
-import { type BaseCommand, type Tooltip } from './BaseCommand';
+import { type BaseCommand, type Tooltip } from '../commands/BaseCommand';
 
 export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   private readonly _controlsType: FlexibleControlsType;

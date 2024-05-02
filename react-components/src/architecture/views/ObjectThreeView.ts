@@ -64,26 +64,21 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    const solid = this.object.getObjectByName('Solid') as Mesh;
-    solid.updateMatrixWorld();
-    solid.updateMatrixWorld(true);
-
-    console.log('intersectInput.raycaster', intersectInput.raycaster);
-    const intersection = intersectInput.raycaster.intersectObject(solid, true);
+    const intersection = intersectInput.raycaster.intersectObject(this.object, true);
     if (intersection.length === 0) {
-      console.log('intersectIfCloser A', this.domainObject.name);
+      console.log('intersectIfCloser: failed', this.domainObject.name);
       return undefined;
     }
     const { point, distance } = intersection[0];
     if (closestDistance !== undefined && closestDistance < distance) {
-      console.log('intersectIfCloser B', this.domainObject.name);
+      console.log('intersectIfCloser: closer found', this.domainObject.name);
       return undefined;
     }
     if (!intersectInput.isVisible(point)) {
-      console.log('intersectIfCloser C', this.domainObject.name);
+      console.log('intersectIfCloser: not visible', this.domainObject.name);
       return undefined;
     }
-    console.log('intersectIfCloser found', this.domainObject.name);
+    console.log('intersectIfCloser: found', this.domainObject.name);
     const customObjectIntersection: CustomObjectIntersection = {
       type: 'customObject',
       customObject: this,
@@ -92,10 +87,9 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
       userData: intersection[0]
     };
     if (this.shouldPickBoundingBox) {
-      const boundingBox = this.getBoundingBox(new Box3());
+      const boundingBox = this.boundingBox;
       if (!boundingBox.isEmpty()) {
-        console.log('intersectIfCloser boundingBox', boundingBox);
-        customObjectIntersection.boundingBox = boundingBox;
+        customObjectIntersection.boundingBox = this.boundingBox;
       }
     }
     return customObjectIntersection;
@@ -192,13 +186,15 @@ function disposeMaterials(object: Object3D): void {
       disposeMaterials(child);
     }
   }
-  if (object instanceof Mesh && object.material !== undefined) {
-    if (object.material.map !== undefined) {
-      object.material.map.dispose();
+  if (object instanceof Mesh) {
+    // NOT WORKING
+    const material = object.material;
+    if (material !== null && material !== undefined) {
+      const texture = material.texture;
+      if (texture !== undefined && texture !== null) {
+        texture.dispose();
+      }
+      material.dispose();
     }
-    if (object.material.texture !== undefined) {
-      object.material.texture.dispose();
-    }
-    object.material.dispose();
   }
 }

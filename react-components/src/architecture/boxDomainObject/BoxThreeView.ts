@@ -56,8 +56,8 @@ export class BoxThreeView extends ObjectThreeView {
     const geometry = new BoxGeometry(1, 1, 1);
     const mesh = new Mesh(geometry, material);
 
-    matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
     mesh.applyMatrix4(matrix);
+    mesh.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     return mesh;
   }
 }

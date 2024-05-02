@@ -3,7 +3,7 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { RenderTargetCommand } from './RenderTargetCommand';
+import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type Tooltip } from '../commands/BaseCommand';
 
 export class FitViewCommand extends RenderTargetCommand {

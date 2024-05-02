@@ -89,6 +89,13 @@ export abstract class ThreeView extends BaseView {
   // INSTANCE METHODS
   // ==================================================
 
+  public get boundingBox(): Box3 {
+    if (this._boundingBox === undefined) {
+      this._boundingBox = this.calculateBoundingBox();
+    }
+    return this._boundingBox;
+  }
+
   public getBoundingBox(target: Box3): Box3 {
     if (this._boundingBox === undefined) {
       this._boundingBox = this.calculateBoundingBox();

@@ -10,7 +10,7 @@ import {
   type IFlexibleCameraManager
 } from '@cognite/reveal';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
-import { NavigationTool } from '../concreteTools/NavigationTool';
+import { NavigationTool } from '../concreteCommands/NavigationTool';
 import { Vector3, AmbientLight, DirectionalLight, WebGLRenderer, PerspectiveCamera } from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';

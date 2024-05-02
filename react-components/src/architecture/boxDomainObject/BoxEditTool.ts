@@ -4,13 +4,19 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { NavigationTool } from '../concreteTools/NavigationTool';
+import { NavigationTool } from '../concreteCommands/NavigationTool';
 import { BoxDomainObject } from './BoxDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type Tooltip } from '../commands/BaseCommand';
+import { type Vector3, type Intersection } from 'three';
+import { Changes } from '../utilities/misc/Changes';
 
 export class BoxEditTool extends NavigationTool {
   _useNavigation = false;
+  _side: number | undefined = undefined;
+  _boxDomainObject: BoxDomainObject | undefined = undefined;
+  _startDrag: Vector3 | undefined = undefined;
+
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -30,16 +36,14 @@ export class BoxEditTool extends NavigationTool {
   public override async onClick(event: PointerEvent): Promise<void> {
     const { renderTarget } = this;
     const { rootDomainObject } = renderTarget;
-    const { viewer } = renderTarget;
 
-    const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
-    if (intersection === null) {
+    const intersection = await this.getIntersection(event);
+    if (intersection === undefined) {
       return;
     }
-    const ANNOTATION_RADIUS_FACTOR = 0.2;
-
+    const RADIUS_FACTOR = 0.2;
     const distance = intersection.distanceToCamera;
-    const scale = (distance * ANNOTATION_RADIUS_FACTOR) / 2;
+    const scale = (distance * RADIUS_FACTOR) / 2;
     const boxDomainObject = new BoxDomainObject();
 
     const center = intersection.point.clone();
@@ -53,56 +57,63 @@ export class BoxEditTool extends NavigationTool {
   }
 
   public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
-    const { renderTarget } = this;
-    const { viewer } = renderTarget;
-
-    const rect = renderTarget.domElement.getBoundingClientRect();
-    const point = {
-      offsetX: event.clientX - rect.left,
-      offsetY: event.clientY - rect.top
-    };
-    const intersection = await viewer.getIntersectionFromPixel(point.offsetX, point.offsetY);
-    if (intersection !== null) {
-      this._useNavigation = false;
+    const intersection = await this.getIntersection(event);
+    if (intersection === undefined) {
+      this._useNavigation = true;
+      await super.onPointerDown(event, leftButton);
       return;
     }
-    this._useNavigation = true;
-    await super.onPointerDown(event, leftButton);
+    const boxDomainObject = this.getDomainObject(intersection) as BoxDomainObject;
+    if (boxDomainObject === undefined) {
+      this._useNavigation = true;
+      await super.onPointerDown(event, leftButton);
+      return;
+    }
+    if (intersection?.type !== 'customObject') {
+      return undefined;
+    }
+    const userData = intersection.userData as Intersection;
+    if (userData?.normal === undefined) {
+      return;
+    }
+    this._side = getSide(userData.normal);
+    this._boxDomainObject = boxDomainObject;
+    this._startDrag = intersection.point;
   }
 
   public override async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
-    const { renderTarget } = this;
-    const { viewer } = renderTarget;
-
     if (this._useNavigation) {
       await super.onPointerDrag(event, leftButton);
+    }
+    if (
+      this._boxDomainObject === undefined ||
+      this._startDrag === undefined ||
+      this._side === undefined
+    ) {
       return;
     }
-    const rect = renderTarget.domElement.getBoundingClientRect();
-    const point = {
-      offsetX: event.clientX - rect.left,
-      offsetY: event.clientY - rect.top
-    };
-    const intersection = await viewer.getIntersectionFromPixel(point.offsetX, point.offsetY);
-    if (intersection !== null) {
-    }
+
+    this._boxDomainObject.center.addScalar(0.01);
+    this._boxDomainObject.notify(Changes.geometry);
   }
 
   public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
     if (this._useNavigation) {
       await super.onPointerUp(event, leftButton);
-      return;
-    }
-    const { renderTarget } = this;
-    const { viewer } = renderTarget;
-
-    const rect = renderTarget.domElement.getBoundingClientRect();
-    const point = {
-      offsetX: event.clientX - rect.left,
-      offsetY: event.clientY - rect.top
-    };
-    const intersection = await viewer.getIntersectionFromPixel(point.offsetX, point.offsetY);
-    if (intersection !== null) {
     }
   }
+}
+
+function getSide(normal: Vector3): number {
+  // Gives 1 for X+ axis, -1 for X- axis, 2 for Y+ axis, -2 for Y- axis etc
+  if (normal.x !== 0) {
+    return Math.sign(normal.x);
+  }
+  if (normal.y !== 0) {
+    return 2 * Math.sign(normal.y);
+  }
+  if (normal.z !== 0) {
+    return 3 * Math.sign(normal.z);
+  }
+  throw new Error('Invalid normal');
 }
