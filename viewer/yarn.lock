@@ -555,14 +555,14 @@ __metadata:
   linkType: hard
 
 "@cognite/sdk@npm:^9.12.0":
-  version: 9.12.0
-  resolution: "@cognite/sdk@npm:9.12.0"
+  version: 9.13.0
+  resolution: "@cognite/sdk@npm:9.13.0"
   dependencies:
     "@cognite/sdk-core": "npm:^4.10.1"
     "@types/geojson": "npm:^7946.0.8"
     geojson: "npm:^0.5.0"
     lodash: "npm:^4.17.11"
-  checksum: 10/5bcbedfc4dda7b1b7fa19937505ed2775c4395f4388f19d26ea868e467ed73500401f040fad7d69abb5f1de49f1d30b9e27cd5247c994d53b67ea578e86b6c38
+  checksum: 10/f7599115d5816d77426d613538259e5da801b10b039f16372b3e5e5dd6dd1670f540380564e0252b6293bd47ce04b2f7a289c496cad6b2129e4101c2d5706087
   languageName: node
   linkType: hard
 
