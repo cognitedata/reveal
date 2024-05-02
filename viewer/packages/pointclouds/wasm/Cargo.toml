@@ -16,7 +16,7 @@ crate-type = ["cdylib"]
 wasm-bindgen = { version = "0.2.92", features = ["serde-serialize"] }
 web-sys = { version = "0.3.69", features = ["console"] }
 
-serde = { version = "1.0.199", features = ["derive"] }
+serde = { version = "1.0.200", features = ["derive"] }
 serde-wasm-bindgen = "0.6.5"
 
 js-sys = "0.3.69"
@@ -37,4 +37,4 @@ rand = "0.8.5"
 rand_chacha = "0.3.1"
 
 # Only used in rand, but need to add `js` feature for wasm compatibility
-getrandom = { version = "0.2", features = ["js"] }
+getrandom = { version = "0.2.14", features = ["js"] }
