@@ -32,7 +32,7 @@
     "styled-components": "5.3.11"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.11.5",
+    "@testing-library/jest-dom": "^6.0.0",
     "@types/dat.gui": "^0.7.5",
     "@types/lodash": "^4.14.190",
     "@types/react": "18.3.1",
