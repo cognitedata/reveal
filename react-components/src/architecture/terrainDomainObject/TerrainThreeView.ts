@@ -118,7 +118,6 @@ export class TerrainThreeView extends ObjectThreeView {
     group.rotateZ(grid.rotationAngle);
     group.position.x = grid.origin.x;
     group.position.y = grid.origin.y;
-
     group.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     return group;
   }
@@ -140,13 +139,7 @@ export class TerrainThreeView extends ObjectThreeView {
     const buffers = new RegularGrid2Buffers(grid, true);
     const geometry = buffers.createBufferGeometry();
 
-    const material = new MeshPhongMaterial({
-      side: DoubleSide,
-      polygonOffset: style.showContours, // Because of the countours to be visible
-      polygonOffsetFactor: 1,
-      polygonOffsetUnits: 4.0
-    });
-
+    const material = new MeshPhongMaterial();
     updateMaterial(material, terrainDomainObject, style);
 
     const mesh = new Mesh(geometry, material);
@@ -194,6 +187,11 @@ function updateMaterial(
   style: TerrainRenderStyle,
   is2D: boolean = false
 ): void {
+  material.side = DoubleSide; // the terrain must be seen from both side
+  material.polygonOffset = style.showContours; // Because of the countours to be visible
+  material.polygonOffsetFactor = 1;
+  material.polygonOffsetUnits = 4.0;
+
   material.opacity = style.solidOpacityUse ? style.solidOpacity : 1;
   material.transparent = style.solidOpacityUse;
   if (is2D) {
