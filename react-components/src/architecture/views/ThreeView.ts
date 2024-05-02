@@ -49,14 +49,14 @@ export abstract class ThreeView extends BaseView {
   public override update(change: DomainObjectChange): void {
     super.update(change);
     if (change.isChanged(Changes.geometry)) {
-      this.touchBoundingBox();
+      this.invalidateBoundingBox();
     }
     this.invalidate();
   }
 
   public override clearMemory(): void {
     super.clearMemory();
-    this.touchBoundingBox();
+    this.invalidateBoundingBox();
   }
 
   public override onShow(): void {
@@ -97,7 +97,7 @@ export abstract class ThreeView extends BaseView {
     return target;
   }
 
-  protected touchBoundingBox(): void {
+  protected invalidateBoundingBox(): void {
     this._boundingBox = undefined;
   }
 

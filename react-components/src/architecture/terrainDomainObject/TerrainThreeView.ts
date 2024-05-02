@@ -29,6 +29,7 @@ import { WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { getColorMap } from '../utilities/colors/colorMaps';
 import { ObjectThreeView } from '../views/ObjectThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { RegularGrid2 } from '../utilities/geometry/RegularGrid2';
 
 const SOLID_NAME = 'Solid';
 const CONTOURS_NAME = 'Contour';
@@ -59,13 +60,38 @@ export class TerrainThreeView extends ObjectThreeView {
       this.clearMemory();
     }
     if (change.isChanged(Changes.renderStyle)) {
-      const solid = this._object.getObjectByName(SOLID_NAME) as Mesh;
-      if (solid !== undefined) {
-        updateMaterial(solid.material as MeshPhongMaterial, this.terrainDomainObject, this.style);
-        this.invalidate();
-        return;
+      // TODO: Need better change handling
+      const style = this.style;
+      {
+        const solid = this._object.getObjectByName(SOLID_NAME) as Mesh;
+        if (solid !== undefined && !style.showSolid) {
+          this._object.remove(solid);
+          this.invalidate();
+        } else if (solid === undefined && style.showSolid) {
+          add(this._object, this.createSolid());
+          this.invalidate();
+        } else if (solid !== undefined) {
+          updateSolidMaterial(solid.material as MeshPhongMaterial, this.terrainDomainObject, style);
+          this.invalidate();
+        }
       }
-      this.clearMemory();
+      {
+        const contours = this._object.getObjectByName(CONTOURS_NAME) as LineSegments;
+        if (contours !== undefined && !style.showContours) {
+          this._object.remove(contours);
+          this.invalidate();
+        } else if (contours === undefined && style.showContours) {
+          add(this._object, this.createContours());
+          this.invalidate();
+        } else if (contours !== undefined) {
+          updateContoursMaterial(
+            contours.material as LineBasicMaterial,
+            this.terrainDomainObject,
+            style
+          );
+          this.invalidate();
+        }
+      }
     }
   }
 
@@ -103,22 +129,8 @@ export class TerrainThreeView extends ObjectThreeView {
       return undefined;
     }
     const group = new Group();
-    {
-      const solid = this.createSolid();
-      if (solid !== undefined) {
-        group.add(solid);
-      }
-    }
-    {
-      const contours = this.createContours();
-      if (contours !== undefined) {
-        group.add(contours);
-      }
-    }
-    group.rotateZ(grid.rotationAngle);
-    group.position.x = grid.origin.x;
-    group.position.y = grid.origin.y;
-    group.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    add(group, this.createSolid());
+    add(group, this.createContours());
     return group;
   }
 
@@ -140,10 +152,11 @@ export class TerrainThreeView extends ObjectThreeView {
     const geometry = buffers.createBufferGeometry();
 
     const material = new MeshPhongMaterial();
-    updateMaterial(material, terrainDomainObject, style);
+    updateSolidMaterial(material, terrainDomainObject, style);
 
     const mesh = new Mesh(geometry, material);
     mesh.name = SOLID_NAME;
+    applyMatrix(mesh, grid);
     return mesh;
   }
 
@@ -157,7 +170,6 @@ export class TerrainThreeView extends ObjectThreeView {
     if (grid === undefined) {
       return undefined;
     }
-    const color = terrainDomainObject.getColorByColorType(style.contoursColorType);
     const service = new ContouringService(style.increment);
 
     const contoursBuffer = service.createContoursAsXyzArray(grid);
@@ -167,21 +179,42 @@ export class TerrainThreeView extends ObjectThreeView {
     const geometry = new BufferGeometry();
     geometry.setAttribute('position', new Float32BufferAttribute(contoursBuffer, 3));
 
-    const material = new LineBasicMaterial({
-      color,
-      linewidth: 1
-    });
+    const material = new LineBasicMaterial();
+    updateContoursMaterial(material, terrainDomainObject, style);
+
     const contours = new LineSegments(geometry, material);
     contours.name = CONTOURS_NAME;
+    applyMatrix(contours, grid);
     return contours;
   }
 }
-
 // ==================================================
 // LOCAL FUNCTIONS
 // ==================================================
 
-function updateMaterial(
+function add(parent: Object3D, child: Object3D | undefined): void {
+  if (child !== undefined) {
+    parent.add(child);
+  }
+}
+
+function applyMatrix(object: Object3D, grid: RegularGrid2): void {
+  object.rotateZ(grid.rotationAngle);
+  object.position.x = grid.origin.x;
+  object.position.y = grid.origin.y;
+  object.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+}
+
+function updateContoursMaterial(
+  material: LineBasicMaterial,
+  terrainDomainObject: TerrainDomainObject,
+  style: TerrainRenderStyle
+): void {
+  material.color = terrainDomainObject.getColorByColorType(style.contoursColorType);
+  material.linewidth = 1;
+}
+
+function updateSolidMaterial(
   material: MeshPhongMaterial,
   terrainDomainObject: TerrainDomainObject,
   style: TerrainRenderStyle,
@@ -206,6 +239,10 @@ function updateMaterial(
     material.color = WHITE_COLOR;
     material.map = texture;
   } else {
+    if (material.map !== null) {
+      material.map.dispose();
+      material.map = null;
+    }
     material.color = terrainDomainObject.getColorByColorType(style.solidColorType);
   }
 }
