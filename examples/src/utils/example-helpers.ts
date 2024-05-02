@@ -70,8 +70,8 @@ export function getParamsFromURL(
         modelUrl !== null
           ? withBasePath(modelUrl)
           : modelId === null && defaults.modelUrl
-          ? withBasePath(defaults.modelUrl)
-          : undefined
+            ? withBasePath(defaults.modelUrl)
+            : undefined
     },
     environmentParam
   };

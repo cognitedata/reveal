@@ -475,7 +475,7 @@ __metadata:
     "@types/random-seed": "npm:^0.3.5"
     "@types/skmeans": "npm:^0.11.7"
     "@types/stats": "npm:^0.16.30"
-    "@types/three": "npm:^0.163.0"
+    "@types/three": "npm:^0.164.0"
     "@types/tween.js": "npm:^18.6.1"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.1"
     "@typescript-eslint/parser": "npm:^7.7.1"
@@ -555,14 +555,14 @@ __metadata:
   linkType: hard
 
 "@cognite/sdk@npm:^9.12.0":
-  version: 9.12.0
-  resolution: "@cognite/sdk@npm:9.12.0"
+  version: 9.13.0
+  resolution: "@cognite/sdk@npm:9.13.0"
   dependencies:
     "@cognite/sdk-core": "npm:^4.10.1"
     "@types/geojson": "npm:^7946.0.8"
     geojson: "npm:^0.5.0"
     lodash: "npm:^4.17.11"
-  checksum: 10/5bcbedfc4dda7b1b7fa19937505ed2775c4395f4388f19d26ea868e467ed73500401f040fad7d69abb5f1de49f1d30b9e27cd5247c994d53b67ea578e86b6c38
+  checksum: 10/f7599115d5816d77426d613538259e5da801b10b039f16372b3e5e5dd6dd1670f540380564e0252b6293bd47ce04b2f7a289c496cad6b2129e4101c2d5706087
   languageName: node
   linkType: hard
 
@@ -2017,16 +2017,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.163.0":
-  version: 0.163.0
-  resolution: "@types/three@npm:0.163.0"
+"@types/three@npm:^0.164.0":
+  version: 0.164.0
+  resolution: "@types/three@npm:0.164.0"
   dependencies:
     "@tweenjs/tween.js": "npm:~23.1.1"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/81320c03aa89b67601cdc7d0a0dca93cf1d59ff564214859f0f87d0314062e3b7cb02f6d15c245cdae6755d1febc54d23432c25df16ff4aac9c65ba2efd9973d
+  checksum: 10/e5bdca5db603c594a5a5ae8ab2eaa38f95e091964a109ed4cbc00cfc95e00f3d7e356c6d676db4c2fbb9d98c266b3097eab2c5b4099a72e80bc9e455f5fec8d3
   languageName: node
   linkType: hard
 

@@ -182,28 +182,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.38.4":
+"@azure/msal-browser@npm:2.38.4, @azure/msal-browser@npm:^2.11.0":
   version: 2.38.4
   resolution: "@azure/msal-browser@npm:2.38.4"
   dependencies:
     "@azure/msal-common": 13.3.1
   checksum: 153dd0121e5de573354aca4de5c43c168ebc484e9e28189d70ae1d65d328ec74ae11683a2cfb097965142a64c730c5365e5363169510e7d8602b9fad0597264d
-  languageName: node
-  linkType: hard
-
-"@azure/msal-browser@npm:^2.11.0":
-  version: 2.38.2
-  resolution: "@azure/msal-browser@npm:2.38.2"
-  dependencies:
-    "@azure/msal-common": 13.3.0
-  checksum: 78142f33971ed18110ede263f5bba37f7b9e81fb7f30c7feb28e6715bef15faf7e59e1b8fa1843e544dc86607aedf011d27f2e6867f16acb98d963a525186e5e
-  languageName: node
-  linkType: hard
-
-"@azure/msal-common@npm:13.3.0":
-  version: 13.3.0
-  resolution: "@azure/msal-common@npm:13.3.0"
-  checksum: 334c2d4cee12064ef80ce949cc2c6e02ac54f5931b522e0592512ce12738206fd4558158205d6ed73a01a3227fd2e95965c1cb08bd302d5e3bf1099b81385b3d
   languageName: node
   linkType: hard
 
@@ -1904,18 +1888,18 @@ __metadata:
     "@docusaurus/core": 2.4.3
     "@docusaurus/preset-classic": 2.4.3
     "@docusaurus/remark-plugin-npm2yarn": 2.4.3
-    "@types/react": 18.2.42
+    "@types/react": 18.3.1
     "@types/styled-components": 5.1.34
-    "@uiw/codemirror-theme-material": 4.21.25
-    "@uiw/react-codemirror": 4.21.25
+    "@uiw/codemirror-theme-material": 4.22.0
+    "@uiw/react-codemirror": 4.22.0
     clsx: 2.1.1
     copyfiles: 2.4.1
     cross-env: 7.0.3
     docusaurus-plugin-typedoc: 0.22.0
     ieee754: 1.2.1
     query-string: 8.2.0
-    react: 18.2.0
-    react-dom: 18.2.0
+    react: 18.3.1
+    react-dom: 18.3.1
     replace: 1.2.2
     rimraf: 5.0.5
     styled-components: 5.3.11
@@ -3477,25 +3461,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
-  version: 18.2.12
-  resolution: "@types/react@npm:18.2.12"
+"@types/react@npm:*, @types/react@npm:18.3.1":
+  version: 18.3.1
+  resolution: "@types/react@npm:18.3.1"
   dependencies:
     "@types/prop-types": "*"
-    "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: ad85a7eadaf1b35cfeee9f715b39311420ff46d46e0650377d918b3f888c2e47416037da4a765e1dccd3d1916abd54c105a3bee803c971ba56c955a7768ce976
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:18.2.42":
-  version: 18.2.42
-  resolution: "@types/react@npm:18.2.42"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: d2019afdf48303a3a598a97cc9dd2284e3c04b369e791f6ba3c33232b7f8645daff97b093a19f8b3ce75ac8a261b47552cb4513226ab16d843eb9443b0f91844
+  checksum: 9224ef319a0c2b7f66e7e7f06012aa5eb638a6c76c9742843eab1a5d243f2bed5ff829ddbb41efd60d33a266420528adfcb84cb93f238b00e905f98c3a355768
   languageName: node
   linkType: hard
 
@@ -3521,13 +3493,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 2aa50cbf1d1f0cf8541ef1787f94c7442e58e63900afd3b45c354e4140ed5efc5cf26fca8eb9df9970a74c7ea582293ae2083271bd046dedf4c3cc2689a40892
-  languageName: node
-  linkType: hard
-
-"@types/scheduler@npm:*":
-  version: 0.16.2
-  resolution: "@types/scheduler@npm:0.16.2"
-  checksum: b6b4dcfeae6deba2e06a70941860fb1435730576d3689225a421280b7742318d1548b3d22c1f66ab68e414f346a9542f29240bc955b6332c5b11e561077583bc
   languageName: node
   linkType: hard
 
@@ -3624,9 +3589,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-extensions-basic-setup@npm:4.21.25":
-  version: 4.21.25
-  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.21.25"
+"@uiw/codemirror-extensions-basic-setup@npm:4.22.0":
+  version: 4.22.0
+  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.22.0"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/commands": ^6.0.0
@@ -3643,22 +3608,22 @@ __metadata:
     "@codemirror/search": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: 1714fcb9ff1a80c14cef5b6b78f41d18f3991877fc088e5c5edf4ce4ee203f468a6401aab7d042ceae527f6475e2e11d4f30dbab6e127bd157c6aaf4c68049d2
+  checksum: 7321781f51e6be06540c6b64d393261b6387a880a68ef709ae499b8731217e4404d7931507d4e119022518542b276b04d7132214df915e67b8c410361348f49e
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-theme-material@npm:4.21.25":
-  version: 4.21.25
-  resolution: "@uiw/codemirror-theme-material@npm:4.21.25"
+"@uiw/codemirror-theme-material@npm:4.22.0":
+  version: 4.22.0
+  resolution: "@uiw/codemirror-theme-material@npm:4.22.0"
   dependencies:
-    "@uiw/codemirror-themes": 4.21.25
-  checksum: 87b354b0a464c69f85b7f06bceab34b574c39cb3ba93ebaf3580828f5eb969cefa088019267ccbd5ea48113e8e9ec9e6316444b9a137fcff9e00ad5fd59d4722
+    "@uiw/codemirror-themes": 4.22.0
+  checksum: afff2f152851eeccfc36286e9099c8ed542a094a0de056381ffd924435f6e98789582d616add14c95926277f188ca6a315a810544a6a08daf59346b2cbf0744e
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-themes@npm:4.21.25":
-  version: 4.21.25
-  resolution: "@uiw/codemirror-themes@npm:4.21.25"
+"@uiw/codemirror-themes@npm:4.22.0":
+  version: 4.22.0
+  resolution: "@uiw/codemirror-themes@npm:4.22.0"
   dependencies:
     "@codemirror/language": ^6.0.0
     "@codemirror/state": ^6.0.0
@@ -3667,19 +3632,19 @@ __metadata:
     "@codemirror/language": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: 96803b2f3e98f52a3013232a42ebe831a1d09285aff3f3ba87fd3ab6a235e0647c3d810c2ac0f5dde8366d0eeceb8074192f1c55e9073277eb2bfc99a526190c
+  checksum: 120944f253fe157b91adac20dd8650374e9d87f1ef5d886cfe60d7cdbd58605c12b1d786e0a4d723a8b4843416a4fbadc93d753675ad540fc7b49eab4a5a83fc
   languageName: node
   linkType: hard
 
-"@uiw/react-codemirror@npm:4.21.25":
-  version: 4.21.25
-  resolution: "@uiw/react-codemirror@npm:4.21.25"
+"@uiw/react-codemirror@npm:4.22.0":
+  version: 4.22.0
+  resolution: "@uiw/react-codemirror@npm:4.22.0"
   dependencies:
     "@babel/runtime": ^7.18.6
     "@codemirror/commands": ^6.1.0
     "@codemirror/state": ^6.1.1
     "@codemirror/theme-one-dark": ^6.0.0
-    "@uiw/codemirror-extensions-basic-setup": 4.21.25
+    "@uiw/codemirror-extensions-basic-setup": 4.22.0
     codemirror: ^6.0.0
   peerDependencies:
     "@babel/runtime": ">=7.11.0"
@@ -3689,7 +3654,7 @@ __metadata:
     codemirror: ">=6.0.0"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 63d7578dab73f66d0357bdd566d24c3c43431627c77b5756f0a982ac5ebff35322e3292ce33a16cb19d5e8fb750a64f59d17c35a3d84c66b38c8454d06613dff
+  checksum: a07c15161bec4ff74857431d38f5d31a5876b224d96e1302127248b687257038806ae39293569033b83d4f11a2e3cae5c225d74fc3517fdd5171306225012924
   languageName: node
   linkType: hard
 
@@ -5153,14 +5118,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"content-type@npm:~1.0.4":
-  version: 1.0.4
-  resolution: "content-type@npm:1.0.4"
-  checksum: 3d93585fda985d1554eca5ebd251994327608d2e200978fdbfba21c0c679914d5faf266d17027de44b34a72c7b0745b18584ecccaa7e1fdfb6a68ac7114f12e0
-  languageName: node
-  linkType: hard
-
-"content-type@npm:~1.0.5":
+"content-type@npm:~1.0.4, content-type@npm:~1.0.5":
   version: 1.0.5
   resolution: "content-type@npm:1.0.5"
   checksum: 566271e0a251642254cde0f845f9dd4f9856e52d988f4eb0d0dcffbb7a1f8ec98de7a5215fc628f3bce30fe2fb6fd2bc064b562d721658c59b544e2d34ea2766
@@ -10351,15 +10309,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:18.2.0":
-  version: 18.2.0
-  resolution: "react-dom@npm:18.2.0"
+"react-dom@npm:18.3.1":
+  version: 18.3.1
+  resolution: "react-dom@npm:18.3.1"
   dependencies:
     loose-envify: ^1.1.0
-    scheduler: ^0.23.0
+    scheduler: ^0.23.2
   peerDependencies:
-    react: ^18.2.0
-  checksum: 7d323310bea3a91be2965f9468d552f201b1c27891e45ddc2d6b8f717680c95a75ae0bc1e3f5cf41472446a2589a75aed4483aee8169287909fcd59ad149e8cc
+    react: ^18.3.1
+  checksum: 298954ecd8f78288dcaece05e88b570014d8f6dce5db6f66e6ee91448debeb59dcd31561dddb354eee47e6c1bb234669459060deb238ed0213497146e555a0b9
   languageName: node
   linkType: hard
 
@@ -10496,12 +10454,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.2.0":
-  version: 18.2.0
-  resolution: "react@npm:18.2.0"
+"react@npm:18.3.1":
+  version: 18.3.1
+  resolution: "react@npm:18.3.1"
   dependencies:
     loose-envify: ^1.1.0
-  checksum: 88e38092da8839b830cda6feef2e8505dec8ace60579e46aa5490fc3dc9bba0bd50336507dc166f43e3afc1c42939c09fe33b25fae889d6f402721dcd78fca1b
+  checksum: a27bcfa8ff7c15a1e50244ad0d0c1cb2ad4375eeffefd266a64889beea6f6b64c4966c9b37d14ee32d6c9fcd5aa6ba183b6988167ab4d127d13e7cb5b386a376
   languageName: node
   linkType: hard
 
@@ -10984,12 +10942,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.23.0":
-  version: 0.23.0
-  resolution: "scheduler@npm:0.23.0"
+"scheduler@npm:^0.23.2":
+  version: 0.23.2
+  resolution: "scheduler@npm:0.23.2"
   dependencies:
     loose-envify: ^1.1.0
-  checksum: d79192eeaa12abef860c195ea45d37cbf2bbf5f66e3c4dcd16f54a7da53b17788a70d109ee3d3dde1a0fd50e6a8fc171f4300356c5aee4fc0171de526bf35f8a
+  checksum: 3e82d1f419e240ef6219d794ff29c7ee415fbdc19e038f680a10c067108e06284f1847450a210b29bbaf97b9d8a97ced5f624c31c681248ac84c80d56ad5a2c4
   languageName: node
   linkType: hard
 
@@ -12968,18 +12926,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrap-ansi@npm:^8.0.1":
-  version: 8.0.1
-  resolution: "wrap-ansi@npm:8.0.1"
-  dependencies:
-    ansi-styles: ^6.1.0
-    string-width: ^5.0.1
-    strip-ansi: ^7.0.1
-  checksum: 5d7816e64f75544e466d58a736cb96ca47abad4ad57f48765b9735ba5601221013a37f436662340ca159208b011121e4e030de5a17180c76202e35157195a71e
-  languageName: node
-  linkType: hard
-
-"wrap-ansi@npm:^8.1.0":
+"wrap-ansi@npm:^8.0.1, wrap-ansi@npm:^8.1.0":
   version: 8.1.0
   resolution: "wrap-ansi@npm:8.1.0"
   dependencies:

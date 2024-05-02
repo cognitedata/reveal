@@ -23,9 +23,9 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
   const sdk = useSDK();
   const viewer = useReveal();
 
-  const { data: groundPlaneTextures } = useQuery(
-    ['reveal', 'react-components', 'groundplaneUrls', scene ?? 'noSceneData'],
-    async () => {
+  const { data: groundPlaneTextures } = useQuery({
+    queryKey: ['reveal', 'react-components', 'groundplaneUrls', scene ?? 'noSceneData'],
+    queryFn: async () => {
       if (scene?.groundPlanes === undefined || scene.groundPlanes.length === 0) {
         return [];
       }
@@ -62,8 +62,8 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
         })
       );
     },
-    { staleTime: Infinity }
-  );
+    staleTime: Infinity
+  });
 
   useEffect(() => {
     if (

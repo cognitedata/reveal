@@ -170,15 +170,15 @@ function createOutlineColorTexture(): THREE.DataTexture {
   return outlineColorTexture;
 }
 
-function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: number, color: THREE.Color) {
+function setOutlineColor(outlineTextureData: Uint8Array | Uint8ClampedArray, colorIndex: number, color: THREE.Color) {
   outlineTextureData[4 * colorIndex + 0] = Math.floor(255 * color.r);
   outlineTextureData[4 * colorIndex + 1] = Math.floor(255 * color.g);
   outlineTextureData[4 * colorIndex + 2] = Math.floor(255 * color.b);
   outlineTextureData[4 * colorIndex + 3] = 255;
 }
 
-function setDepthTestOptions(depthTexture: THREE.DepthTexture | undefined, uniforms: ThreeUniforms, defines: any) {
-  if (depthTexture === undefined) {
+function setDepthTestOptions(depthTexture: THREE.DepthTexture | null, uniforms: ThreeUniforms, defines: any) {
+  if (depthTexture === null) {
     return false;
   }
 
