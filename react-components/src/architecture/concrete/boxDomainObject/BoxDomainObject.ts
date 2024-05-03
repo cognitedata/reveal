@@ -54,27 +54,4 @@ export class BoxDomainObject extends VisualDomainObject {
   protected override createThreeView(): ThreeView | undefined {
     return new BoxThreeView();
   }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  public setDelta(index:number, value: number): void
-  {
-    setComponent(index: number, value: number): this;
-        switch(dimension)
-    {
-      case 1:
-        vector.x += value;
-        break;
-      case 2:
-        this.scale.y += value;
-        break;
-      case 3:
-        this.scale.z += value;
-        break;
-
-    }
-
-  }
 }

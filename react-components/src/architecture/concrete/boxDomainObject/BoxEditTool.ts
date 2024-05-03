@@ -98,71 +98,83 @@ export class BoxEditTool extends NavigationTool {
   }
 }
 
-function getSide(normal: Vector3): number {
-  // Gives 1 for X+ axis, -1 for X- axis, 2 for Y+ axis, -2 for Y- axis etc
-  if (normal.x !== 0) {
-    return Math.sign(normal.x);
-  }
-  if (normal.y !== 0) {
-    return 2 * Math.sign(normal.y);
-  }
-  if (normal.z !== 0) {
-    return 3 * Math.sign(normal.z);
-  }
-  throw new Error('Invalid normal');
-}
-
 // ==================================================
 // HELPER CLASS
 // ==================================================
 
 class DragInfo {
-  public readonly side: number = 0;
-  public readonly boxDomainObject: BoxDomainObject;
-  public readonly intersectionNormal: Vector3 = new Vector3();
-  public readonly intersectionPoint: Vector3 = new Vector3();
-  public readonly scaleOfBox: Vector3 = new Vector3();
-  public readonly centerOfBox: Vector3 = new Vector3();
-  public readonly planeOfBox: Plane = new Plane();
+  private readonly _face: number = 0; // Face is +/-1,  +/-2,  +/-3
+  private readonly _boxDomainObject: BoxDomainObject;
+  private readonly _intersectionNormal: Vector3 = new Vector3();
+  private readonly _intersectionPoint: Vector3 = new Vector3();
+  private readonly _scaleOfBox: Vector3 = new Vector3();
+  private readonly _centerOfBox: Vector3 = new Vector3();
+  private readonly _planeOfBox: Plane = new Plane();
+  private readonly _minPoint: Vector3 = new Vector3();
+  private readonly _maxPoint: Vector3 = new Vector3();
+
+  public get index(): number {
+    return Math.abs(this._face) - 1; // Face is +/-1,  +/-2,  +/-3, index is 0, 1, 2
+  }
 
   public constructor(event: PointerEvent, intersection: DomainObjectIntersection) {
     const userData = intersection.userData as Intersection;
-    this.boxDomainObject = intersection.domainObject as BoxDomainObject;
+    this._boxDomainObject = intersection.domainObject as BoxDomainObject;
     if (userData?.normal === undefined) {
       return;
     }
-    this.side = getSide(userData.normal);
-    this.intersectionNormal.copy(userData.normal);
-    this.intersectionNormal.applyMatrix4(this.boxDomainObject.matrix);
-    this.intersectionNormal.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    this.intersectionNormal.normalize();
+    this._face = getFace(userData.normal);
+    this._intersectionNormal.copy(userData.normal);
+    this._intersectionNormal.applyMatrix4(this._boxDomainObject.matrix);
+    this._intersectionNormal.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    this._intersectionNormal.normalize();
 
-    console.log('side', this.side);
+    this._intersectionPoint.copy(intersection.point);
+    this._minPoint.copy(intersection.point);
+    this._maxPoint.copy(intersection.point);
 
-    this.intersectionPoint.copy(intersection.point);
-    this.scaleOfBox.copy(this.boxDomainObject.scale);
-    this.centerOfBox.copy(this.boxDomainObject.center);
-    this.planeOfBox.setFromNormalAndCoplanarPoint(this.intersectionNormal, this.intersectionPoint);
+    this._minPoint.addScaledVector(this._intersectionNormal, +intersection.distanceToCamera * 10);
+    this._maxPoint.addScaledVector(this._intersectionNormal, -intersection.distanceToCamera * 10);
+
+    this._scaleOfBox.copy(this._boxDomainObject.scale);
+    this._centerOfBox.copy(this._boxDomainObject.center);
+    this._planeOfBox.setFromNormalAndCoplanarPoint(
+      this._intersectionNormal,
+      this._intersectionPoint
+    );
   }
 
   public translate(ray: Ray): void {
-    const closest = ray.closestPointToPoint(this.intersectionPoint, new Vector3());
-    let deltaScale = this.planeOfBox.distanceToPoint(closest);
-    if (Math.abs(deltaScale) < 0.0001) {
+    const pointOnSegment = new Vector3();
+    ray.distanceSqToSegment(this._minPoint, this._maxPoint, undefined, pointOnSegment);
+    const deltaScale = this._planeOfBox.distanceToPoint(pointOnSegment);
+    if (Math.abs(deltaScale) < 0.00001) {
       return;
     }
-    const deltaCenter = deltaScale / 2;
-    if (this.side < 0) {
-      deltaScale = -deltaScale;
-    }
-    const { scale, center } = this.boxDomainObject;
-    scale.copy(this.scaleOfBox);
-    center.copy(this.centerOfBox);
+    const deltaCenter = (Math.sign(this._face) * deltaScale) / 2;
 
-    const index = Math.abs(this.side) - 1; // Side is +/-1,  +/-2,  +/-3, index is 0, 1, 2
+    // First copy the original values
+    const { scale, center } = this._boxDomainObject;
+    scale.copy(this._scaleOfBox);
+    center.copy(this._centerOfBox);
+
+    // Then change the values
+    const index = this.index;
     scale.setComponent(index, deltaScale + scale.getComponent(index));
     center.setComponent(index, deltaCenter + center.getComponent(index));
 
-    this.boxDomainObject.notify(Changes.geometry);
+    // Notify the changes
+    this._boxDomainObject.notify(Changes.geometry);
   }
+}
+
+function getFace(normal: Vector3): number {
+  // Gives 1 for +X axis, -1 for -X axis, 2 for +Y axis, -2 for -Y axis etc
+  for (let i = 0; i < 3; i++) {
+    const value = normal.getComponent(i);
+    if (value !== 0) {
+      return (i + 1) * Math.sign(value);
+    }
+  }
+  throw new Error('Invalid normal');
 }

@@ -41,34 +41,34 @@ export class ToolControllers extends PointerEvents {
   // ================================================
 
   // eslint-disable-next-line @typescript-eslint/class-literal-property-style
-  public get isEnabled(): boolean {
+  public override get isEnabled(): boolean {
     return true;
   }
 
-  public onHover(event: PointerEvent): void {
+  public override onHover(event: PointerEvent): void {
     this.activeTool?.onHover(event);
   }
 
-  public async onClick(event: PointerEvent): Promise<void> {
+  public override async onClick(event: PointerEvent): Promise<void> {
     this._domElement.focus();
     await this.activeTool?.onClick(event);
   }
 
-  public async onDoubleClick(event: PointerEvent): Promise<void> {
+  public override async onDoubleClick(event: PointerEvent): Promise<void> {
     this._domElement.focus();
     await this.activeTool?.onDoubleClick(event);
   }
 
-  public async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
+  public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
     this._domElement.focus();
     await this.activeTool?.onPointerDown(event, leftButton);
   }
 
-  public async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
+  public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
     await this.activeTool?.onPointerUp(event, leftButton);
   }
 
-  public async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
+  public override async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
     await this.activeTool?.onPointerDrag(event, leftButton);
   }
 

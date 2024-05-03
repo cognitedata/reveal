@@ -51,7 +51,7 @@ export abstract class ThreeView extends BaseView {
     if (change.isChanged(Changes.geometry)) {
       this.invalidateBoundingBox();
     }
-    this.invalidate();
+    this.invalidateRenderTarget();
   }
 
   public override clearMemory(): void {
@@ -61,12 +61,12 @@ export abstract class ThreeView extends BaseView {
 
   public override onShow(): void {
     super.onShow();
-    this.invalidate();
+    this.invalidateRenderTarget();
   }
 
   public override onHide(): void {
     super.onHide();
-    this.invalidate();
+    this.invalidateRenderTarget();
   }
 
   public override dispose(): void {
@@ -105,7 +105,7 @@ export abstract class ThreeView extends BaseView {
     this._renderTarget = renderTarget;
   }
 
-  protected invalidate(): void {
+  protected invalidateRenderTarget(): void {
     this.renderTarget.invalidate();
   }
 }

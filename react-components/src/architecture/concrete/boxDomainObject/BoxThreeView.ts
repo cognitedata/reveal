@@ -37,7 +37,7 @@ export class BoxThreeView extends ObjectThreeView {
       const mesh = this._object as Mesh;
       if (mesh !== undefined) {
         updateMaterial(mesh.material as MeshPhongMaterial, this.boxDomainObject, this.style);
-        this.invalidate();
+        this.invalidateRenderTarget();
       }
     }
   }

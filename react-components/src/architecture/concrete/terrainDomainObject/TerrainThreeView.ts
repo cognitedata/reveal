@@ -69,30 +69,30 @@ export class TerrainThreeView extends ObjectThreeView {
         const solid = this._object.getObjectByName(SOLID_NAME) as Mesh;
         if (solid !== undefined && !style.showSolid) {
           this._object.remove(solid);
-          this.invalidate();
+          this.invalidateRenderTarget();
         } else if (solid === undefined && style.showSolid) {
           add(this._object, this.createSolid());
-          this.invalidate();
+          this.invalidateRenderTarget();
         } else if (solid !== undefined) {
           updateSolidMaterial(solid.material as MeshPhongMaterial, this.terrainDomainObject, style);
-          this.invalidate();
+          this.invalidateRenderTarget();
         }
       }
       {
         const contours = this._object.getObjectByName(CONTOURS_NAME) as LineSegments;
         if (contours !== undefined && !style.showContours) {
           this._object.remove(contours);
-          this.invalidate();
+          this.invalidateRenderTarget();
         } else if (contours === undefined && style.showContours) {
           add(this._object, this.createContours());
-          this.invalidate();
+          this.invalidateRenderTarget();
         } else if (contours !== undefined) {
           updateContoursMaterial(
             contours.material as LineBasicMaterial,
             this.terrainDomainObject,
             style
           );
-          this.invalidate();
+          this.invalidateRenderTarget();
         }
       }
     }
