@@ -19,7 +19,7 @@ export const RuleBasedOutputsPanel = ({
   return (
     <StyledRuleBasedOutputsPanel>
       {ruleOutputs !== undefined && ruleOutputs?.length > 0 && (
-        <Flex direction="row" gap={14}>
+        <Flex direction="column" gap={14}>
           {ruleOutputs.map((output, index) => {
             return (
               <StyledOutputItem key={index}>
@@ -38,10 +38,9 @@ const StyledRuleBasedOutputsPanel = withSuppressRevealEvents(styled.div`
   display: flex;
   position: relative;
   bottom: 60px;
+  left: 30px;
   min-width: 200px;
   max-width: 400px;
-  overflow-x: auto;
-  overflow-y: hidden;
   border-radius: var(--cogs-border-radius--default);
   font-size: 13px;
   line-height: 18px;

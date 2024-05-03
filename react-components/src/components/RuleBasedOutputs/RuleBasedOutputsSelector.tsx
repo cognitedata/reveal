@@ -9,7 +9,7 @@ import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { type Asset } from '@cognite/sdk';
+import { type AssetMapping3D, type Asset } from '@cognite/sdk';
 
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
@@ -32,7 +32,7 @@ export function RuleBasedOutputsSelector({
   } = useAllMappedEquipmentAssetMappings(models);
 
   useEffect(() => {
-    if (!isFetching && hasNextPage) {
+    if (!isFetching && (hasNextPage ?? false)) {
       void fetchNextPage();
     }
   }, [isFetching, hasNextPage, fetchNextPage]);
@@ -51,11 +51,10 @@ export function RuleBasedOutputsSelector({
     const initializeRuleBasedOutputs = async (model: CogniteCadModel): Promise<void> => {
       // parse assets and mappings
       // TODO: refactor to be sure to filter only the mappings/assets for the current model within the pages
-      const flatAssetsMappingsList = assetMappings.pages
+      const flatAssetsMappingsList: AssetMapping3D[] = assetMappings.pages
         .flat()
-        .map((item) => item.mappings)
-        .flat();
-      const flatMappings = flatAssetsMappingsList.map((node) => node.items).flat();
+        .flatMap((item) => item.mappings.items);
+
       const contextualizedAssetNodes = assetMappings.pages
         .flat()
         .flatMap((item) => item.assets)
@@ -64,7 +63,7 @@ export function RuleBasedOutputsSelector({
       const collectionStylings = await generateRuleBasedOutputs(
         model,
         contextualizedAssetNodes,
-        flatMappings,
+        flatAssetsMappingsList,
         ruleSet
       );
 

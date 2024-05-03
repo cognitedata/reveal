@@ -9,8 +9,8 @@ import {
   Flex,
   Icon,
   Menu,
-  Switch,
-  Tooltip as CogsTooltip
+  Tooltip as CogsTooltip,
+  Radio
 } from '@cognite/cogs.js';
 
 import { RuleBasedOutputsSelector } from '../RuleBasedOutputs/RuleBasedOutputsSelector';
@@ -22,17 +22,30 @@ import { useTranslation } from '../i18n/I18n';
 import { useFetchRuleInstances } from '../RuleBasedOutputs/hooks/useFetchRuleInstances';
 import { type AssetStylingGroup } from '../..';
 
+type EmptyRule = {
+  rule: any;
+  isEnabled: boolean;
+};
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AssetStylingGroup[] | undefined) => void;
+  onRuleSetSelectedChanged?: (ruleSet: RuleAndEnabled | EmptyRule | undefined) => void;
 };
 export const RuleBasedOutputsButton = ({
-  onRuleSetStylingChanged
+  onRuleSetStylingChanged,
+  onRuleSetSelectedChanged
 }: RuleBasedOutputsButtonProps): ReactElement => {
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
-  const [ruleInstances, setRuleInstances] = useState<RuleAndEnabled[]>();
+  const [emptyRuleSelected, setEmptyRuleSelected] = useState<EmptyRule>();
+  const [ruleInstances, setRuleInstances] =
+    useState<Array<RuleAndEnabled | EmptyRule | undefined>>();
   const { t } = useTranslation();
 
   const ruleInstancesResult = useFetchRuleInstances();
+
+  const emptySelection: EmptyRule = {
+    rule: { properties: { id: '', name: t('RULESET_NO_SELECTION', 'No RuleSet selected') } },
+    isEnabled: false
+  };
 
   useEffect(() => {
     if (ruleInstancesResult.data === undefined) return;
@@ -40,17 +53,26 @@ export const RuleBasedOutputsButton = ({
     setRuleInstances(ruleInstancesResult.data);
   }, [ruleInstancesResult]);
 
-  const onChange = (data: { target: { id: string | number; checked: boolean } }): void => {
+  const onChange = (data: string | undefined): void => {
     ruleInstances?.forEach((item) => {
+      if (item === undefined) return;
       item.isEnabled = false;
     });
+    emptySelection.isEnabled = false;
+
     const selectedRule = ruleInstances?.find((item) => {
-      return item.rule.properties.id === data.target.id && data.target.checked;
+      return item?.rule?.properties.id === data;
     });
 
     if (selectedRule !== undefined) {
-      selectedRule.isEnabled = data.target.checked;
+      selectedRule.isEnabled = true;
+    } else {
+      emptySelection.isEnabled = true;
+      if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(undefined);
     }
+    if (onRuleSetSelectedChanged !== undefined) onRuleSetSelectedChanged(selectedRule);
+
+    setEmptyRuleSelected(emptySelection);
     setCurrentRuleSetEnabled(selectedRule);
     setRuleInstances(ruleInstances);
   };
@@ -77,18 +99,36 @@ export const RuleBasedOutputsButton = ({
                 marginBottom: '20px'
               }}>
               <Menu.Header>{t('RULESET_SELECT_HEADER', 'Select color overlay')}</Menu.Header>
+              <Menu.Item key="no-rule-selected">
+                <Flex justifyContent="space-between" alignItems="center" gap={8}>
+                  <Flex gap={4} alignItems="center">
+                    <Icon type="ColorPalette" />
+                    {t('RULESET_NO_SELECTION', 'No RuleSet selected')}
+                  </Flex>
+                  <Radio
+                    name={'no-selection'}
+                    value={'no-selection'}
+                    checked={emptyRuleSelected?.isEnabled}
+                    onChange={(_: any, value: string | undefined) => {
+                      onChange(value);
+                    }}
+                  />
+                </Flex>
+              </Menu.Item>
               {ruleInstances?.map((item) => (
-                <Menu.Item key={item.rule.properties.id}>
+                <Menu.Item key={item?.rule?.properties.id}>
                   <Flex justifyContent="space-between" alignItems="center" gap={8}>
                     <Flex gap={4} alignItems="center">
                       <Icon type="ColorPalette" />
-                      {item.rule.properties.name}
+                      {item?.rule?.properties.name}
                     </Flex>
-                    <Switch
-                      checked={item.isEnabled}
-                      id={item.rule.properties.id}
-                      name={item.rule.properties.id}
-                      onChange={onChange}
+                    <Radio
+                      name={item?.rule?.properties.id}
+                      value={item?.rule?.properties.id}
+                      checked={item?.isEnabled}
+                      onChange={(_: any, value: string | undefined) => {
+                        onChange(value);
+                      }}
                     />
                   </Flex>
                 </Menu.Item>
