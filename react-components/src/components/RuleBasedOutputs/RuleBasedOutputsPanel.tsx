@@ -17,28 +17,32 @@ export const RuleBasedOutputsPanel = ({
   ruleOutputs
 }: RuleBasedOutputsPanelProps): ReactElement => {
   return (
-    <StyledRuleBasedOutputsPanel>
+    <>
       {ruleOutputs !== undefined && ruleOutputs?.length > 0 && (
-        <Flex direction="column" gap={14}>
-          {ruleOutputs.map((output, index) => {
-            return (
-              <StyledOutputItem key={index}>
-                <StyledBulletColor $backgroundColor={output.type === 'color' ? output.fill : ''} />
-                <StyledLabel>{output.name ?? output.externalId}</StyledLabel>
-              </StyledOutputItem>
-            );
-          })}
-        </Flex>
+        <StyledRuleBasedOutputsPanel>
+          <Flex direction="column" gap={14}>
+            {ruleOutputs.map((output, index) => {
+              return (
+                <StyledOutputItem key={index}>
+                  <StyledBulletColor
+                    $backgroundColor={output.type === 'color' ? output.fill : ''}
+                  />
+                  <StyledLabel>{output.name ?? output.externalId}</StyledLabel>
+                </StyledOutputItem>
+              );
+            })}
+          </Flex>
+        </StyledRuleBasedOutputsPanel>
       )}
-    </StyledRuleBasedOutputsPanel>
+    </>
   );
 };
 
 const StyledRuleBasedOutputsPanel = withSuppressRevealEvents(styled.div`
   display: flex;
-  position: relative;
-  bottom: 60px;
-  left: 30px;
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
   min-width: 200px;
   max-width: 400px;
   border-radius: var(--cogs-border-radius--default);
@@ -50,16 +54,14 @@ const StyledRuleBasedOutputsPanel = withSuppressRevealEvents(styled.div`
   color: var(--cogs-text-color);
   box-shadow: var(--cogs-elevation--overlay);
   margin: auto;
-  justify-content: space-around;
-  flex-wrap: nowrap;
+  justify-content: left;
   align-content: space-around;
   align-items: stretch;
+  padding: 10px;
 `);
 
 const StyledOutputItem = styled.div`
   display: flex;
-  padding-top: 7px;
-  padding-bottom: 7px;
   width: 100%;
   gap: 8px;
   align-items: center;
