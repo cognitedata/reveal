@@ -4,16 +4,16 @@
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { type Color } from 'three';
-import { type RenderStyle } from '../utilities/misc/RenderStyle';
-import { DomainObjectChange } from '../utilities/misc/DomainObjectChange';
-import { Changes } from '../utilities/misc/Changes';
-import { isInstanceOf, type Class } from '../utilities/misc/Class';
-import { isEmpty } from '../utilities/extensions/stringExtensions';
-import { VisibleState } from '../utilities/misc/VisibleState';
+import { type RenderStyle } from '../domainObjectsHelpers/RenderStyle';
+import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../domainObjectsHelpers/Changes';
+import { isInstanceOf, type Class } from '../domainObjectsHelpers/Class';
+import { equalsIgnoreCase, isEmpty } from '../utilities/extensions/stringExtensions';
+import { VisibleState } from '../domainObjectsHelpers/VisibleState';
 import { clear, removeAt, remove } from '../utilities/extensions/arrayExtensions';
 import { getNextColor } from '../utilities/colors/getNextColor';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
-import { ColorType } from '../utilities/colors/ColorType';
+import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { type BaseView } from '../views/BaseView';
 
@@ -38,7 +38,7 @@ export abstract class DomainObject {
   private readonly _views: BaseView[] = [];
 
   // ==================================================
-  // INSTANCE PROPERTIES
+  // INSTANCE/VIRTUAL PROPERTIES
   // ==================================================
 
   public abstract get typeName(): string; // to be overridden
@@ -60,7 +60,7 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // VIRTUAL METHODS: Name
+  // INSTANCE/VIRTUAL METHODS: Nameing
   // ==================================================
 
   public get canChangeName(): boolean {
@@ -68,7 +68,7 @@ export abstract class DomainObject {
   }
 
   public get name(): string {
-    if (this._name === undefined) {
+    if (this._name === undefined || isEmpty(this._name)) {
       this._name = this.generateNewName();
     }
     return this._name;
@@ -82,8 +82,12 @@ export abstract class DomainObject {
     return undefined;
   }
 
+  public hasEqualName(name: string): boolean {
+    return equalsIgnoreCase(this.name, name);
+  }
+
   // ==================================================
-  // VIRTUAL METHODS: Color
+  // INSTANCE/VIRTUAL METHODS: Color
   // ==================================================
 
   public get canChangeColor(): boolean {
@@ -106,7 +110,7 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // VIRTUAL METHODS: Selected
+  // INSTANCE/VIRTUAL METHODS: Selected
   // ==================================================
 
   public get canBeSelected(): boolean {
@@ -131,7 +135,7 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // VIRTUAL METHODS: Active
+  // INSTANCE/VIRTUAL METHODS: Active
   // ==================================================
 
   public get canBeActive(): boolean {
@@ -178,7 +182,7 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Expanded
+  // INSTANCE/INSTANCE METHODS: Expanded
   // ==================================================
 
   public get canBeExpanded(): boolean {
@@ -392,7 +396,7 @@ export abstract class DomainObject {
 
   public getChildByName(name: string): DomainObject | undefined {
     for (const child of this.children) {
-      if (child.name === name) {
+      if (child.hasEqualName(name)) {
         return child;
       }
     }
@@ -456,7 +460,7 @@ export abstract class DomainObject {
 
   public getDescendantByName(name: string): DomainObject | undefined {
     for (const descendant of this.getDescendants()) {
-      if (descendant.name === name) {
+      if (descendant.hasEqualName(name)) {
         return descendant;
       }
     }
@@ -468,7 +472,7 @@ export abstract class DomainObject {
     name: string
   ): T | undefined {
     for (const descendant of this.getDescendants()) {
-      if (isInstanceOf(descendant, classType) && descendant.name === name) {
+      if (isInstanceOf(descendant, classType) && descendant.hasEqualName(name)) {
         return descendant;
       }
     }

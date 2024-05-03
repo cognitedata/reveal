@@ -3,10 +3,10 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
+import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { BaseView } from './BaseView';
-import { Changes } from '../utilities/misc/Changes';
-import { type RenderStyle } from '../utilities/misc/RenderStyle';
+import { Changes } from '../domainObjectsHelpers/Changes';
+import { type RenderStyle } from '../domainObjectsHelpers/RenderStyle';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type Box3 } from 'three';
@@ -94,14 +94,6 @@ export abstract class ThreeView extends BaseView {
       this._boundingBox = this.calculateBoundingBox();
     }
     return this._boundingBox;
-  }
-
-  public getBoundingBox(target: Box3): Box3 {
-    if (this._boundingBox === undefined) {
-      this._boundingBox = this.calculateBoundingBox();
-    }
-    target.copy(this._boundingBox);
-    return target;
   }
 
   protected invalidateBoundingBox(): void {

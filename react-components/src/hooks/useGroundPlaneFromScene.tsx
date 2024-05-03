@@ -17,7 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { CDF_TO_VIEWER_TRANSFORMATION, CustomObject } from '@cognite/reveal';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
-import { clear } from '../architecture/utilities/extensions/arrayExtensions';
+import { clear } from '../architecture/base/utilities/extensions/arrayExtensions';
 
 export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
   const { data: scene } = useSceneConfig(sceneExternalId, sceneSpaceId);

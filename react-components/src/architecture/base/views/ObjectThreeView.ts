@@ -5,13 +5,14 @@
 
 import { Box3, Group, Mesh, type Object3D } from 'three';
 import { ThreeView } from './ThreeView';
-import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
-import { Changes } from '../utilities/misc/Changes';
+import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../domainObjectsHelpers/Changes';
 import {
   type CustomObjectIntersectInput,
   type CustomObjectIntersection,
   type ICustomObject
 } from '@cognite/reveal';
+import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 
 /**
  * Represents an abstract class for a Three.js view that renders an Object3D.
@@ -19,6 +20,7 @@ import {
  * @remarks
  * You only have to override createObject3D() to create the object to be render.
  */
+
 export abstract class ObjectThreeView extends ThreeView implements ICustomObject {
   // ==================================================
   // INSTANCE FIELDS
@@ -60,11 +62,16 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
     return true; // To be overridden
   }
 
+  public getBoundingBox(target: Box3): Box3 {
+    target.copy(this.boundingBox);
+    return target;
+  }
+
   public intersectIfCloser(
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    const intersection = intersectInput.raycaster.intersectObject(this.object, true);
+    const intersection = intersectInput.raycaster.intersectObject(this.object);
     if (intersection.length === 0) {
       console.log('intersectIfCloser: failed', this.domainObject.name);
       return undefined;
@@ -79,12 +86,13 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
       return undefined;
     }
     console.log('intersectIfCloser: found', this.domainObject.name);
-    const customObjectIntersection: CustomObjectIntersection = {
+    const customObjectIntersection: DomainObjectIntersection = {
       type: 'customObject',
       customObject: this,
       point,
       distanceToCamera: distance,
-      userData: intersection[0]
+      userData: intersection[0],
+      domainObject: this.domainObject
     };
     if (this.shouldPickBoundingBox) {
       const boundingBox = this.boundingBox;
@@ -187,7 +195,6 @@ function disposeMaterials(object: Object3D): void {
     }
   }
   if (object instanceof Mesh) {
-    // NOT WORKING
     const material = object.material;
     if (material !== null && material !== undefined) {
       const texture = material.texture;

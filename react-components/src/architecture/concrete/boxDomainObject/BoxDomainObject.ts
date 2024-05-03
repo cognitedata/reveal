@@ -2,10 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
-import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
+import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { BoxRenderStyle } from './BoxRenderStyle';
-import { type RenderStyle } from '../utilities/misc/RenderStyle';
-import { type ThreeView } from '../views/ThreeView';
+import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { type ThreeView } from '../../base/views/ThreeView';
 import { BoxThreeView } from './BoxThreeView';
 import { Matrix4, Vector3 } from 'three';
 

@@ -4,12 +4,12 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { RenderTargetCommand } from '../commands/RenderTargetCommand';
+import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { Vector3 } from 'three';
-import { Range3 } from '../utilities/geometry/Range3';
-import { createFractalRegularGrid2 } from '../utilities/geometry/createFractalRegularGrid2';
+import { Range3 } from '../../base/utilities/geometry/Range3';
+import { createFractalRegularGrid2 } from '../../base/utilities/geometry/createFractalRegularGrid2';
 import { DEFAULT_TERRAIN_NAME, TerrainDomainObject } from './TerrainDomainObject';
-import { type Tooltip } from '../commands/BaseCommand';
+import { type Tooltip } from '../../base/commands/BaseCommand';
 
 export class SetTerrainVisibleCommand extends RenderTargetCommand {
   // ==================================================

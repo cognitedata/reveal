@@ -2,11 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
+import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { TerrainRenderStyle } from './TerrainRenderStyle';
-import { type RegularGrid2 } from '../utilities/geometry/RegularGrid2';
-import { type RenderStyle } from '../utilities/misc/RenderStyle';
-import { type ThreeView } from '../views/ThreeView';
+import { type RegularGrid2 } from '../../base/utilities/geometry/RegularGrid2';
+import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { type ThreeView } from '../../base/views/ThreeView';
 import { TerrainThreeView } from './TerrainThreeView';
 
 export const DEFAULT_TERRAIN_NAME = 'Terrain';

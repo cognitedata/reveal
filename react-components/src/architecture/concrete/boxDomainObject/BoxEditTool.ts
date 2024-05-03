@@ -4,12 +4,13 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { NavigationTool } from '../concreteCommands/NavigationTool';
+import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
 import { BoxDomainObject } from './BoxDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type Tooltip } from '../commands/BaseCommand';
+import { type Tooltip } from '../../base/commands/BaseCommand';
 import { type Vector3, type Intersection } from 'three';
-import { Changes } from '../utilities/misc/Changes';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 
 export class BoxEditTool extends NavigationTool {
   _useNavigation = false;
@@ -63,7 +64,10 @@ export class BoxEditTool extends NavigationTool {
       await super.onPointerDown(event, leftButton);
       return;
     }
-    const boxDomainObject = this.getDomainObject(intersection) as BoxDomainObject;
+    if (!isDomainObjectIntersection(intersection)) {
+      return;
+    }
+    const boxDomainObject = intersection.domainObject as BoxDomainObject;
     if (boxDomainObject === undefined) {
       this._useNavigation = true;
       await super.onPointerDown(event, leftButton);

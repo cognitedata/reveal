@@ -3,8 +3,8 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { ColorType } from '../utilities/colors/ColorType';
-import { RenderStyle } from '../utilities/misc/RenderStyle';
+import { ColorType } from '../../base/domainObjectsHelpers/ColorType';
+import { RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 
 export class BoxRenderStyle extends RenderStyle {
   // ==================================================

@@ -17,19 +17,22 @@ import {
   Object3D,
   Box3
 } from 'three';
-import { ContouringService } from '../utilities/geometry/ContouringService';
+import { ContouringService } from '../../base/utilities/geometry/ContouringService';
 import { TerrainDomainObject } from './TerrainDomainObject';
-import { DomainObjectChange } from '../utilities/misc/DomainObjectChange';
-import { Changes } from '../utilities/misc/Changes';
-import { RegularGrid2Buffers } from '../utilities/geometry/RegularGrid2Buffers';
-import { create1DTextureWithContours, create1DTexture } from '../utilities/colors/create1DTexture';
+import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { RegularGrid2Buffers } from '../../base/utilities/geometry/RegularGrid2Buffers';
+import {
+  create1DTextureWithContours,
+  create1DTexture
+} from '../../base/utilities/colors/create1DTexture';
 import { TerrainRenderStyle } from './TerrainRenderStyle';
-import { ColorType } from '../utilities/colors/ColorType';
-import { WHITE_COLOR } from '../utilities/colors/colorExtensions';
-import { getColorMap } from '../utilities/colors/colorMaps';
-import { ObjectThreeView } from '../views/ObjectThreeView';
+import { ColorType } from '../../base/domainObjectsHelpers/ColorType';
+import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
+import { getColorMap } from '../../base/utilities/colors/colorMaps';
+import { ObjectThreeView } from '../../base/views/ObjectThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { RegularGrid2 } from '../utilities/geometry/RegularGrid2';
+import { RegularGrid2 } from '../../base/utilities/geometry/RegularGrid2';
 
 const SOLID_NAME = 'Solid';
 const CONTOURS_NAME = 'Contour';

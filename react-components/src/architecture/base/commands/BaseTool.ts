@@ -6,8 +6,6 @@
 
 import { RenderTargetCommand } from './RenderTargetCommand';
 import { type AnyIntersection } from '@cognite/reveal';
-import { BaseView } from '../views/BaseView';
-import { type DomainObject } from '../domainObjects/DomainObject';
 
 export abstract class BaseTool extends RenderTargetCommand {
   // ==================================================
@@ -77,26 +75,9 @@ export abstract class BaseTool extends RenderTargetCommand {
     const { renderTarget } = this;
     const { viewer } = renderTarget;
     const intersection = await viewer.getAnyIntersectionFromPixel(event.offsetX, event.offsetY);
-    if (intersection === null) {
-      return undefined;
-    }
-    return intersection;
-  }
-
-  protected getDomainObject(intersection: AnyIntersection | undefined): DomainObject | undefined {
     if (intersection === undefined) {
       return undefined;
     }
-    if (intersection?.type !== 'customObject') {
-      return undefined;
-    }
-    const customObject = intersection.customObject;
-    if (customObject === undefined) {
-      return;
-    }
-    if (!(customObject instanceof BaseView)) {
-      return;
-    }
-    return customObject.domainObject;
+    return intersection;
   }
 }

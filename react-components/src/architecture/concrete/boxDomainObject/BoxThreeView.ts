@@ -5,10 +5,10 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import { Mesh, MeshPhongMaterial, Object3D, BoxGeometry, DoubleSide } from 'three';
 import { BoxDomainObject } from './BoxDomainObject';
-import { DomainObjectChange } from '../utilities/misc/DomainObjectChange';
-import { Changes } from '../utilities/misc/Changes';
+import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxRenderStyle } from './BoxRenderStyle';
-import { ObjectThreeView } from '../views/ObjectThreeView';
+import { ObjectThreeView } from '../../base/views/ObjectThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 export class BoxThreeView extends ObjectThreeView {

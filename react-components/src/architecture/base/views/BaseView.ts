@@ -3,7 +3,7 @@
  */
 
 import { type DomainObject } from '../domainObjects/DomainObject';
-import { type DomainObjectChange } from '../utilities/misc/DomainObjectChange';
+import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 
 /**
  * Represents a base view class that provides common functionality for views.

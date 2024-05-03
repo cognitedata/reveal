@@ -4,9 +4,9 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { RenderTargetCommand } from '../commands/RenderTargetCommand';
+import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { BoxDomainObject } from './BoxDomainObject';
-import { type Tooltip } from '../commands/BaseCommand';
+import { type Tooltip } from '../../base/commands/BaseCommand';
 
 export const BOX_NAME = 'BOX';
 

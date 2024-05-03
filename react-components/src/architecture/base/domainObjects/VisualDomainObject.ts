@@ -4,7 +4,7 @@
 
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ThreeView } from '../views/ThreeView';
-import { VisibleState } from '../utilities/misc/VisibleState';
+import { VisibleState } from '../domainObjectsHelpers/VisibleState';
 import { DomainObject } from './DomainObject';
 
 export abstract class VisualDomainObject extends DomainObject {
