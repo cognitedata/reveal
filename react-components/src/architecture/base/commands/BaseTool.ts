@@ -4,10 +4,12 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
+import { Raycaster } from 'three';
 import { RenderTargetCommand } from './RenderTargetCommand';
-import { type AnyIntersection } from '@cognite/reveal';
+import { getNormalizedPixelCoordinates, type AnyIntersection } from '@cognite/reveal';
 
 export abstract class BaseTool extends RenderTargetCommand {
+  private _raycaster = new Raycaster();
   // ==================================================
   // OVERRIDES
   // =================================================
@@ -79,5 +81,19 @@ export abstract class BaseTool extends RenderTargetCommand {
       return undefined;
     }
     return intersection;
+  }
+
+  protected getRaycaster(event: PointerEvent): Raycaster {
+    const { renderTarget } = this;
+    const { cameraManager } = renderTarget;
+    const { domElement } = renderTarget;
+
+    const normalizedCoords = getNormalizedPixelCoordinates(
+      domElement,
+      event.offsetX,
+      event.offsetY
+    );
+    this._raycaster.setFromCamera(normalizedCoords, cameraManager.getCamera());
+    return this._raycaster;
   }
 }
