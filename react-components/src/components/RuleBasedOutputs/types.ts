@@ -5,7 +5,7 @@
 import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
 import { type FdmNode, type EdgeItem } from '../../utilities/FdmSDK';
 import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
-import { type Datapoints, type Asset, type Timeseries, type ExternalId } from '@cognite/sdk/';
+import { type Datapoints, type Asset, type Timeseries, type ExternalId } from '@cognite/sdk';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
