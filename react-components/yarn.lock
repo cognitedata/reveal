@@ -2101,14 +2101,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/unitless@npm:0.8.0":
-  version: 0.8.0
-  resolution: "@emotion/unitless@npm:0.8.0"
-  checksum: 10/176141117ed23c0eb6e53a054a69c63e17ae532ec4210907a20b2208f91771821835f1c63dd2ec63e30e22fcc984026d7f933773ee6526dd038e0850919fae7a
-  languageName: node
-  linkType: hard
-
-"@emotion/unitless@npm:^0.8.1":
+"@emotion/unitless@npm:0.8.1, @emotion/unitless@npm:^0.8.1":
   version: 0.8.1
   resolution: "@emotion/unitless@npm:0.8.1"
   checksum: 10/918f73c46ac0b7161e3c341cc07d651ce87e31ab1695e74b12adb7da6bb98dfbff8c69cf68a4e40d9eb3d820ca055dc1267aeb3007927ce88f98b885bf729b63
@@ -4222,22 +4215,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-devtools@npm:5.28.10":
-  version: 5.28.10
-  resolution: "@tanstack/query-devtools@npm:5.28.10"
-  checksum: 10/3caa49e83507abc1fb5d44283738d6c5d88fd4b7d6f6ec2c26aa77d938157679fc99da51e1f832295e76940d9d90f793549ae927d11bfba67fcc2dfeaf0d5a43
+"@tanstack/query-devtools@npm:5.32.1":
+  version: 5.32.1
+  resolution: "@tanstack/query-devtools@npm:5.32.1"
+  checksum: 10/2eddf002cf8e4f6d7a4cd532f3e6e75ae8627b1b0f94ad5797ab173de797ad303696c25a66727187fd13f42cb50d6f3509133def5b6c8893d3312ae77f5914ec
   languageName: node
   linkType: hard
 
 "@tanstack/react-query-devtools@npm:^5.32.0":
-  version: 5.32.0
-  resolution: "@tanstack/react-query-devtools@npm:5.32.0"
+  version: 5.34.2
+  resolution: "@tanstack/react-query-devtools@npm:5.34.2"
   dependencies:
-    "@tanstack/query-devtools": "npm:5.28.10"
+    "@tanstack/query-devtools": "npm:5.32.1"
   peerDependencies:
-    "@tanstack/react-query": ^5.32.0
+    "@tanstack/react-query": ^5.34.2
     react: ^18.0.0
-  checksum: 10/6ce3ec152604fdf64d4b1c7fc480ef0bd410e693902c28a06d2bd64102734952b7bc680263bee2cacd5441beaf75ec2619fe54fb2c93b53396074e556a82ce12
+  checksum: 10/ed7d9dd8a57a1c49cf37daa26b45620073f9f01e27b8d8a3b985fa19257bc443fb1ed1e5e8737dea5b57e07ac5308bc5441d6a07ddc56382c52fcc695f59a9b8
   languageName: node
   linkType: hard
 
@@ -4318,16 +4311,20 @@ __metadata:
   linkType: hard
 
 "@testing-library/react@npm:^15.0.5":
-  version: 15.0.5
-  resolution: "@testing-library/react@npm:15.0.5"
+  version: 15.0.6
+  resolution: "@testing-library/react@npm:15.0.6"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
     "@testing-library/dom": "npm:^10.0.0"
     "@types/react-dom": "npm:^18.0.0"
   peerDependencies:
+    "@types/react": ^18.0.0
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 10/27b938ddcdd6b4a98d4564460899f36ae3f69ad749e25389424c1c1d0adf40adeb1387dd29303c0f83b33e2f7ce7133253e0491c4b22af8cb340f631901dbe62
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10/04f63fc8e1d32ca9ce387df87abbdbe1d1e8bd7343d305a3d4662e60133453a4a39f5b0e1653efbfe9516750ca559c27a9ace4740f4c3e24a49270acaf93084d
   languageName: node
   linkType: hard
 
@@ -4622,11 +4619,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^20.12.7":
-  version: 20.12.7
-  resolution: "@types/node@npm:20.12.7"
+  version: 20.12.8
+  resolution: "@types/node@npm:20.12.8"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/b4a28a3b593a9bdca5650880b6a9acef46911d58cf7cfa57268f048e9a7157a7c3196421b96cea576850ddb732e3b54bc982c8eb5e1e5ef0635d4424c2fce801
+  checksum: 10/1feab4c8cb08588eea10811ed4d02485a5cde47fdf92e7b3193fc9f8ee39ea556f6e3124dc6d5378354466ed5f7e5fbe5e20f625908de40ea37560368a50f72c
   languageName: node
   linkType: hard
 
@@ -14005,11 +14002,11 @@ __metadata:
   linkType: hard
 
 "styled-components@npm:^6.1.8":
-  version: 6.1.8
-  resolution: "styled-components@npm:6.1.8"
+  version: 6.1.9
+  resolution: "styled-components@npm:6.1.9"
   dependencies:
     "@emotion/is-prop-valid": "npm:1.2.1"
-    "@emotion/unitless": "npm:0.8.0"
+    "@emotion/unitless": "npm:0.8.1"
     "@types/stylis": "npm:4.2.0"
     css-to-react-native: "npm:3.2.0"
     csstype: "npm:3.1.2"
@@ -14020,7 +14017,7 @@ __metadata:
   peerDependencies:
     react: ">= 16.8.0"
     react-dom: ">= 16.8.0"
-  checksum: 10/f8fd00556d15940c8276bf05f618fc28a593a2244bf97a2ceb7797325eac78cb8c00ec780811d8d1024edb011a21e9575796b6d7e638cd91c062ddd8d0c4f8a8
+  checksum: 10/e9da0c226753008856f4c533a84471361747c8a13377f05893850651ad5a2c626135d36cf0fa41b23d20f0f288d0de651d7d533829bce353fdd2c9b263748ef6
   languageName: node
   linkType: hard
 
@@ -14862,8 +14859,8 @@ __metadata:
   linkType: hard
 
 "vite@npm:^5.0.0, vite@npm:^5.2.10":
-  version: 5.2.10
-  resolution: "vite@npm:5.2.10"
+  version: 5.2.11
+  resolution: "vite@npm:5.2.11"
   dependencies:
     esbuild: "npm:^0.20.1"
     fsevents: "npm:~2.3.3"
@@ -14897,7 +14894,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10/a0c4ac7b95e9a2a59f4e73e5b42a63f33569f5ec505af9dd019f19ff419fd20d66ad9aad6708987d4da173d485358f0024f410af78ac97cf5c92a38f8c96c451
+  checksum: 10/ee0ad038f0831c9514796522deb1e2dcb84bc311abbccb77e4b12216d37fc9559137f4f1b8e75187d51007b954e845c6518e36ee3acac2e2a2789c1181ebb16c
   languageName: node
   linkType: hard
 
