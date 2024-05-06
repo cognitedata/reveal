@@ -8,7 +8,6 @@ import {
   DataTexture,
   DoubleSide,
   Float32BufferAttribute,
-  Group,
   LineBasicMaterial,
   LineSegments,
   Mesh,
@@ -56,22 +55,23 @@ export class TerrainThreeView extends ObjectThreeView {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (this._object === undefined) {
+    if (this.isEmpty) {
       return;
     }
     if (change.isChanged(Changes.colorMap)) {
       this.clearMemory();
+      this.invalidateRenderTarget();
     }
     if (change.isChanged(Changes.renderStyle)) {
       // TODO: Need better change handling
       const style = this.style;
       {
-        const solid = this._object.getObjectByName(SOLID_NAME) as Mesh;
+        const solid = this.object.getObjectByName(SOLID_NAME) as Mesh;
         if (solid !== undefined && !style.showSolid) {
-          this._object.remove(solid);
+          this.removeChild(solid);
           this.invalidateRenderTarget();
         } else if (solid === undefined && style.showSolid) {
-          this.add(this._object, this.createSolid());
+          this.addChild(this.createSolid());
           this.invalidateRenderTarget();
         } else if (solid !== undefined) {
           updateSolidMaterial(solid.material as MeshPhongMaterial, this.terrainDomainObject, style);
@@ -79,12 +79,12 @@ export class TerrainThreeView extends ObjectThreeView {
         }
       }
       {
-        const contours = this._object.getObjectByName(CONTOURS_NAME) as LineSegments;
+        const contours = this.object.getObjectByName(CONTOURS_NAME) as LineSegments;
         if (contours !== undefined && !style.showContours) {
-          this._object.remove(contours);
+          this.removeChild(contours);
           this.invalidateRenderTarget();
         } else if (contours === undefined && style.showContours) {
-          this.add(this._object, this.createContours());
+          this.addChild(this.createContours());
           this.invalidateRenderTarget();
         } else if (contours !== undefined) {
           updateContoursMaterial(
@@ -125,16 +125,14 @@ export class TerrainThreeView extends ObjectThreeView {
   // OVERRIDES of ObjectThreeView
   // ==================================================
 
-  protected override createObject3D(): Object3D | undefined {
+  protected override addChildren(): void {
     const { terrainDomainObject } = this;
     const { grid } = terrainDomainObject;
     if (grid === undefined) {
       return undefined;
     }
-    const group = new Group();
-    this.add(group, this.createSolid());
-    this.add(group, this.createContours());
-    return group;
+    this.addChild(this.createSolid());
+    this.addChild(this.createContours());
   }
 
   // ==================================================

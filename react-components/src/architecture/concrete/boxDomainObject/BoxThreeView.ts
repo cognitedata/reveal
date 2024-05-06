@@ -12,7 +12,6 @@ import {
   LineSegments,
   BufferGeometry,
   BufferAttribute,
-  Group,
   LineBasicMaterial,
   Vector3,
   ArrowHelper,
@@ -52,18 +51,20 @@ export class BoxThreeView extends ObjectThreeView {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (this._object === undefined) {
+    if (this.isEmpty) {
       return;
     }
     if (change.isChanged(Changes.renderStyle) || change.isChanged(Changes.color)) {
-      const mesh = this._object as Mesh;
+      const mesh = this.object as Mesh;
       if (mesh !== undefined) {
         updateSolidMaterial(mesh.material as MeshPhongMaterial, this.boxDomainObject, this.style);
         this.invalidateRenderTarget();
       }
     }
     if (change.isChanged(Changes.focus)) {
-      this.removeObject();
+      this.removeChildren();
+      this.invalidateBoundingBox();
+      this.invalidateRenderTarget();
     }
   }
 
@@ -71,13 +72,12 @@ export class BoxThreeView extends ObjectThreeView {
   // OVERRIDES of ObjectThreeView
   // ==================================================
 
-  protected override createObject3D(): Object3D | undefined {
+  protected override addChildren(): void {
     const { boxDomainObject } = this;
-    const group = new Group();
     const matrix = this.getCombinedMatrix();
-    this.add(group, this.createLines(matrix));
+    this.addChild(this.createLines(matrix));
     if (boxDomainObject.hasFocus) {
-      this.add(group, this.createSolid(matrix));
+      this.addChild(this.createSolid(matrix));
 
       // Add the arrows
       if (boxDomainObject.focusFace !== undefined) {
@@ -90,17 +90,16 @@ export class BoxThreeView extends ObjectThreeView {
         const arrowSize = Math.sqrt(arrowSize1 * arrowSize2) / 2; // Half of the geometric mean of the two sizes
 
         if (boxDomainObject.focusTranslate) {
-          this.addArrow(group, face.getTangent1(), center, arrowSize);
-          this.addArrow(group, face.getTangent2(), center, arrowSize);
+          this.addArrow(face.getTangent1(), center, arrowSize);
+          this.addArrow(face.getTangent2(), center, arrowSize);
         } else {
-          this.addArrow(group, face.getNormal(), center, arrowSize);
+          this.addArrow(face.getNormal(), center, arrowSize);
         }
       }
     }
-    return group;
   }
 
-  private addArrow(group: Group, direction: Vector3, center: Vector3, size: number): void {
+  private addArrow(direction: Vector3, center: Vector3, size: number): void {
     direction.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     direction.normalize();
 
@@ -111,10 +110,10 @@ export class BoxThreeView extends ObjectThreeView {
     const arrow1 = new ArrowHelper(direction, center, size, color, headLength, headWidth);
 
     direction.negate();
-    group.add(arrow1);
+    this.addChild(arrow1);
 
     const arrow2 = new ArrowHelper(direction, center, size, color, headLength, headWidth);
-    group.add(arrow2);
+    this.addChild(arrow2);
   }
 
   public override intersectIfCloser(

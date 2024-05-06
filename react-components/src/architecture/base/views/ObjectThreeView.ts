@@ -26,14 +26,10 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
   // INSTANCE FIELDS
   // ==================================================
 
-  protected _object: Object3D | undefined = undefined;
+  protected readonly _group: Group = new Group();
 
-  // ==================================================
-  // INSTANCE PROPERTIES
-  // ==================================================
-
-  protected get hasObject3D(): boolean {
-    return this._object !== undefined;
+  protected get isEmpty(): boolean {
+    return this._group.children.length === 0;
   }
 
   // ==================================================
@@ -41,13 +37,10 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
   // ==================================================
 
   public get object(): Object3D {
-    if (this._object === undefined) {
-      this.makeObject();
+    if (this.isEmpty) {
+      this.makeChildern();
     }
-    if (this._object === undefined) {
-      throw Error('The object is not created');
-    }
-    return this._object;
+    return this._group;
   }
 
   public get shouldPick(): boolean {
@@ -105,32 +98,37 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
 
   public initialize(): void {
     super.initialize();
-    if (this._object === undefined) {
-      this.makeObject();
+    if (this.isEmpty) {
+      this.makeChildern();
     }
+    const { viewer } = this.renderTarget;
+    viewer.addCustomObject(this);
   }
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
     if (change.isChanged(Changes.geometry)) {
-      this.removeObject();
+      this.removeChildren();
+      this.invalidateRenderTarget();
     }
   }
 
   public override clearMemory(): void {
     super.clearMemory();
-    this.removeObject();
+    this.removeChildren();
   }
 
   public override beforeRender(): void {
     super.beforeRender();
-    if (this._object === undefined) {
-      this.makeObject();
+    if (this.isEmpty) {
+      this.makeChildern();
     }
   }
 
   public override dispose(): void {
-    this.removeObject();
+    this.removeChildren();
+    const { viewer } = this.renderTarget;
+    viewer.removeCustomObject(this);
     super.dispose();
   }
 
@@ -143,7 +141,7 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
       return new Box3().makeEmpty();
     }
     const boundingBox = new Box3();
-    boundingBox.setFromObject(this.object);
+    boundingBox.setFromObject(this.object, true);
     return boundingBox;
   }
 
@@ -151,39 +149,40 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
   // VIRTUAL METHODS
   // ==================================================
 
-  protected abstract createObject3D(): Object3D | undefined;
+  protected abstract addChildren(): void;
 
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
-  private makeObject(): void {
-    if (this._object !== undefined) {
+  private makeChildern(): void {
+    if (!this.isEmpty) {
       throw Error('Can make the object when it is already made');
     }
-    this._object = this.createObject3D();
-    if (this._object === undefined) {
-      return;
-    }
-    const { viewer } = this.renderTarget;
-    viewer.addCustomObject(this);
+    this.addChildren();
   }
 
-  protected removeObject(): void {
-    if (this._object === undefined) {
+  protected removeChildren(): void {
+    if (this.isEmpty) {
       return;
     }
-    const { viewer } = this.renderTarget;
-    viewer.removeCustomObject(this);
-    disposeMaterials(this._object);
-    this._object = undefined;
-    // TODO: Do we have to dispose Object3D in some way (matrials?)
+    disposeMaterials(this._group);
+    this._group.remove(...this._group.children);
   }
 
-  protected add(parent: Object3D, child: Object3D | undefined): void {
-    if (child !== undefined) {
-      parent.add(child);
+  protected addChild(child: Object3D | undefined): void {
+    if (child === undefined) {
+      return;
     }
+    this._group.add(child);
+  }
+
+  protected removeChild(child: Object3D | undefined): void {
+    if (child === undefined) {
+      return;
+    }
+    disposeMaterials(child);
+    this._group.remove(child);
   }
 }
 

@@ -10,7 +10,8 @@ import {
   CustomObjectIntersectInput,
   type CustomObjectIntersection,
   getNormalizedPixelCoordinates,
-  type AnyIntersection
+  type AnyIntersection,
+  getMousePositionCoords
 } from '@cognite/reveal';
 import { ObjectThreeView } from '../views/ObjectThreeView';
 import {
@@ -87,7 +88,8 @@ export abstract class BaseTool extends RenderTargetCommand {
   protected async getIntersection(event: PointerEvent): Promise<AnyIntersection | undefined> {
     const { renderTarget } = this;
     const { viewer } = renderTarget;
-    const intersection = await viewer.getAnyIntersectionFromPixel(event.offsetX, event.offsetY);
+    const point = getMousePositionCoords(event, renderTarget.domElement);
+    const intersection = await viewer.getAnyIntersectionFromPixel(point.x, point.y);
     if (intersection === undefined) {
       return undefined;
     }
@@ -133,22 +135,22 @@ export abstract class BaseTool extends RenderTargetCommand {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Intersections
+  // INSTANCE METHODS: Getters
   // ==================================================
 
   protected getRaycaster(event: PointerEvent): Raycaster {
     const { renderTarget } = this;
     const { cameraManager } = renderTarget;
     const normalizedCoords = this.getNormalizedPixelCoordinates(event);
-    const _raycaster = new Raycaster();
-    _raycaster.setFromCamera(normalizedCoords, cameraManager.getCamera());
-    return _raycaster;
+    const raycaster = new Raycaster();
+    raycaster.setFromCamera(normalizedCoords, cameraManager.getCamera());
+    return raycaster;
   }
 
   protected getNormalizedPixelCoordinates(event: PointerEvent): Vector2 {
     const { renderTarget } = this;
     const { domElement } = renderTarget;
-
-    return getNormalizedPixelCoordinates(domElement, event.offsetX, event.offsetY);
+    const point = getMousePositionCoords(event, domElement);
+    return getNormalizedPixelCoordinates(domElement, point.x, point.y);
   }
 }

@@ -102,9 +102,6 @@ export const Main: Story = {
           <RevealButtons.FitView />
           <RevealButtons.SetFlexibleControlsTypeOrbit />
           <RevealButtons.SetFlexibleControlsTypeFirstPerson />
-
-          <RevealToolbar.FitModelsButton />
-          <RevealToolbar.SetOrbitOrFirstPersonControlsType />
           <RevealToolbar.SlicerButton />
         </>
         <>

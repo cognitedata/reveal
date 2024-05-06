@@ -50,8 +50,8 @@ export abstract class ThreeView extends BaseView {
     super.update(change);
     if (change.isChanged(Changes.geometry)) {
       this.invalidateBoundingBox();
+      this.invalidateRenderTarget();
     }
-    this.invalidateRenderTarget();
   }
 
   public override clearMemory(): void {

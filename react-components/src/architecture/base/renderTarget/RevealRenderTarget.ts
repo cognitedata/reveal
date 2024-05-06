@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 
 import {
+  CustomObject,
   isFlexibleCameraManager,
   type Cognite3DViewer,
   type IFlexibleCameraManager
@@ -114,8 +115,14 @@ export class RevealRenderTarget {
     this._directionalLight = new DirectionalLight(0xffffff, 2);
     this._directionalLight.name = DIRECTIONAL_LIGHT_NAME;
     this._directionalLight.position.set(0, 1, 0);
-    this.viewer.addObject3D(this._ambientLight);
-    this.viewer.addObject3D(this._directionalLight);
+
+    const ambientLight = new CustomObject(this._ambientLight);
+    const directionalLight = new CustomObject(this._directionalLight);
+    ambientLight.isPartOfBoundingBox = false;
+    directionalLight.isPartOfBoundingBox = false;
+
+    this.viewer.addCustomObject(ambientLight);
+    this.viewer.addCustomObject(directionalLight);
   }
 
   // ==================================================
