@@ -286,6 +286,11 @@ export type ResolutionOptions = {
  */
 export type Intersection = CadIntersection | PointCloudIntersection;
 
+/**
+ * Represents the result from {@link Cognite3DViewer.getAnyIntersectionFromPixel}.
+ * @module @cognite/reveal
+ * @beta
+ */
 export type AnyIntersection = CadIntersection | PointCloudIntersection | CustomObjectIntersection;
 
 /**

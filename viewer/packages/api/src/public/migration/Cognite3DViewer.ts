@@ -200,7 +200,7 @@ export class Cognite3DViewer {
    */
   private readonly _boundingBoxes = {
     nearFarPlaneBoundingBox: new THREE.Box3(),
-    modelBoundingBox: new THREE.Box3(),
+    sceneBoundingBox: new THREE.Box3(),
     temporaryBox: new THREE.Box3()
   };
 
@@ -1206,8 +1206,8 @@ export class Cognite3DViewer {
    * Returns the union of all bounding boxes in reveal, including custom objects.
    * @beta
    */
-  getModelBoundingBox(): THREE.Box3 {
-    return this._boundingBoxes.modelBoundingBox;
+  getSceneBoundingBox(): THREE.Box3 {
+    return this._boundingBoxes.sceneBoundingBox;
   }
 
   /**
@@ -1547,19 +1547,17 @@ export class Cognite3DViewer {
 
   /**
    * Raycasting model(s) for finding where the ray intersects with all models, including custom objects.
-   * @param offsetX X coordinate in pixels (relative to the domElement).
-   * @param offsetY Y coordinate in pixels (relative to the domElement).
+   * @param pixelCoord Pixel coordinate in pixels (relative to the domElement).
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @beta
    */
-  public async getAnyIntersectionFromPixel(offsetX: number, offsetY: number): Promise<AnyIntersection | undefined> {
-    const modelIntersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
+  public async getAnyIntersectionFromPixel(pixelCoord: THREE.Vector2): Promise<AnyIntersection | undefined> {
+    const modelIntersection = await this.intersectModels(pixelCoord.x, pixelCoord.y, { asyncCADIntersection: false });
 
     // Find any custom object intersection closer to the camera than the model intersection
     const customObjectIntersection = this.getCustomObjectIntersectionIfCloser(
-      offsetX,
-      offsetY,
+      pixelCoord,
       modelIntersection?.distanceToCamera
     );
     if (customObjectIntersection !== undefined) {
@@ -1626,7 +1624,7 @@ export class Cognite3DViewer {
 
     const innerCameraManager = this._activeCameraManager.innerCameraManager;
     if (innerCameraManager instanceof FlexibleCameraManager) {
-      innerCameraManager.updateModelBoundingBox(this.getModelBoundingBox());
+      innerCameraManager.updateModelBoundingBox(this.getSceneBoundingBox());
     }
     this._activeCameraManager.update(this.cameraManagerClock.getDelta(), this._boundingBoxes.nearFarPlaneBoundingBox);
     this.revealManager.update(camera);
@@ -1731,8 +1729,7 @@ export class Cognite3DViewer {
   }
 
   private getCustomObjectIntersectionIfCloser(
-    offsetX: number,
-    offsetY: number,
+    pixelCoord: THREE.Vector2,
     closestDistanceToCamera: number | undefined
   ): CustomObjectIntersection | undefined {
     let intersectInput: CustomObjectIntersectInput | undefined = undefined; // Lazy creation for speed
@@ -1745,7 +1742,7 @@ export class Cognite3DViewer {
         return;
       }
       if (!intersectInput) {
-        intersectInput = this.createCustomObjectIntersectInput(offsetX, offsetY);
+        intersectInput = this.createCustomObjectIntersectInput(pixelCoord);
       }
       const intersection = customObject.intersectIfCloser(intersectInput, closestDistanceToCamera);
       if (!intersection) {
@@ -1757,8 +1754,8 @@ export class Cognite3DViewer {
     return closestIntersection;
   }
 
-  private createCustomObjectIntersectInput(offsetX: number, offsetY: number): CustomObjectIntersectInput {
-    const normalizedCoords = getNormalizedPixelCoordinates(this.domElement, offsetX, offsetY);
+  private createCustomObjectIntersectInput(pixelCoord: THREE.Vector2): CustomObjectIntersectInput {
+    const normalizedCoords = this.getNormalizedPixelCoordinates(pixelCoord);
     return new CustomObjectIntersectInput(
       normalizedCoords,
       this.cameraManager.getCamera(),
@@ -1780,8 +1777,7 @@ export class Cognite3DViewer {
 
     // Find any custom object intersection closer to the camera than the model intersection
     const customObjectIntersection = this.getCustomObjectIntersectionIfCloser(
-      offsetX,
-      offsetY,
+      new THREE.Vector2(offsetX, offsetY),
       modelIntersection?.distanceToCamera
     );
     if (customObjectIntersection === undefined && modelIntersection === null) {
@@ -1789,7 +1785,7 @@ export class Cognite3DViewer {
       return {
         intersection: null,
         pickedBoundingBox: undefined,
-        modelsBoundingBox: this.getModelBoundingBox()
+        modelsBoundingBox: this.getSceneBoundingBox()
       };
     }
     if (customObjectIntersection) {
@@ -1797,7 +1793,7 @@ export class Cognite3DViewer {
       return {
         intersection: customObjectIntersection,
         pickedBoundingBox: pickBoundingBox ? customObjectIntersection.boundingBox : undefined,
-        modelsBoundingBox: this.getModelBoundingBox()
+        modelsBoundingBox: this.getSceneBoundingBox()
       };
     }
     const getBoundingBox = async (intersection: Intersection | null): Promise<THREE.Box3 | undefined> => {
@@ -1812,7 +1808,7 @@ export class Cognite3DViewer {
     return {
       intersection: modelIntersection,
       pickedBoundingBox: pickBoundingBox ? await getBoundingBox(modelIntersection) : undefined,
-      modelsBoundingBox: this.getModelBoundingBox()
+      modelsBoundingBox: this.getSceneBoundingBox()
     };
   }
 
@@ -1823,9 +1819,9 @@ export class Cognite3DViewer {
       return;
     }
 
-    const { nearFarPlaneBoundingBox, modelBoundingBox, temporaryBox } = this._boundingBoxes;
+    const { nearFarPlaneBoundingBox, sceneBoundingBox, temporaryBox } = this._boundingBoxes;
     nearFarPlaneBoundingBox.makeEmpty();
-    modelBoundingBox.makeEmpty();
+    sceneBoundingBox.makeEmpty();
 
     this._models.forEach(model => {
       model.getModelBoundingBox(temporaryBox);
@@ -1834,12 +1830,12 @@ export class Cognite3DViewer {
       }
       nearFarPlaneBoundingBox.union(temporaryBox);
 
-      // The modelBoundingBox is using restrictToMostGeometry = true
+      // The getModelBoundingBox is using restrictToMostGeometry = true
       model.getModelBoundingBox(temporaryBox, true);
       if (temporaryBox.isEmpty()) {
         return;
       }
-      modelBoundingBox.union(temporaryBox);
+      sceneBoundingBox.union(temporaryBox);
     });
     this._sceneHandler.customObjects.forEach(customObject => {
       if (!customObject.object.visible) {
@@ -1853,7 +1849,7 @@ export class Cognite3DViewer {
       if (!customObject.isPartOfBoundingBox) {
         return;
       }
-      modelBoundingBox.union(temporaryBox);
+      sceneBoundingBox.union(temporaryBox);
     });
   }
 

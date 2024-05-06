@@ -63,9 +63,7 @@ export class AnnotationIdPointCloudObjectCollection extends PointCloudObjectColl
     get isLoading(): false;
 }
 
-// Warning: (ae-incompatible-release-tags) The symbol "AnyIntersection" is marked as @public, but its signature references "CustomObjectIntersection" which is marked as @beta
-//
-// @public (undocumented)
+// @beta
 export type AnyIntersection = CadIntersection | PointCloudIntersection | CustomObjectIntersection;
 
 // @public
@@ -438,15 +436,15 @@ export class Cognite3DViewer {
     get360ImageCollections(): Image360Collection[];
     getActive360ImageInfo(): Image360WithCollection | undefined;
     // @beta
-    getAnyIntersectionFromPixel(offsetX: number, offsetY: number): Promise<AnyIntersection | undefined>;
+    getAnyIntersectionFromPixel(pixelCoord: THREE.Vector2): Promise<AnyIntersection | undefined>;
     // @deprecated
     getClippingPlanes(): THREE.Plane[];
     getGlobalClippingPlanes(): THREE.Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
-    // @beta
-    getModelBoundingBox(): THREE.Box3;
     getNormalizedPixelCoordinates(pixelCoords: THREE.Vector2): THREE.Vector2;
     getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): THREE.Vector2;
+    // @beta
+    getSceneBoundingBox(): THREE.Box3;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
     getVersion(): string;
     getViewState(): ViewerState;
