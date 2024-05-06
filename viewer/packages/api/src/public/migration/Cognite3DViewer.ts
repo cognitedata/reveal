@@ -24,7 +24,10 @@ import {
   SceneHandler,
   BeforeSceneRenderedDelegate,
   CustomObjectIntersection,
-  getPixelCoordinatesFromEvent
+  getPixelCoordinatesFromEvent,
+  getNormalizedPixelCoordinates,
+  CustomObjectIntersectInput,
+  ICustomObject
 } from '@reveal/utilities';
 
 import { SessionLogger, MetricsLogger } from '@reveal/metrics';
@@ -62,7 +65,8 @@ import {
   CameraChangeDelegate,
   ProxyCameraManager,
   CameraStopDelegate,
-  CameraManagerCallbackData
+  CameraManagerCallbackData,
+  FlexibleCameraManager
 } from '@reveal/camera-manager';
 import {
   CdfModelIdentifier,
@@ -91,8 +95,6 @@ import {
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
-import { getNormalizedPixelCoordinates, CustomObjectIntersectInput, ICustomObject } from '@reveal/utilities';
-import { FlexibleCameraManager } from '@reveal/camera-manager';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -1754,10 +1756,9 @@ export class Cognite3DViewer {
     return closestIntersection;
   }
 
-  private createCustomObjectIntersectInput(pixelCoord: THREE.Vector2): CustomObjectIntersectInput {
-    const normalizedCoords = this.getNormalizedPixelCoordinates(pixelCoord);
+  public createCustomObjectIntersectInput(pixelCoord: THREE.Vector2): CustomObjectIntersectInput {
     return new CustomObjectIntersectInput(
-      normalizedCoords,
+      this.getNormalizedPixelCoordinates(pixelCoord),
       this.cameraManager.getCamera(),
       this.getGlobalClippingPlanes()
     );
