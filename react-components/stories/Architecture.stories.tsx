@@ -113,7 +113,6 @@ export const Main: Story = {
         <>
           <RevealButtons.SetTerrainVisible />
           <RevealButtons.UpdateTerrain />
-          <RevealButtons.SetBoxVisible />
           <RevealButtons.BoxEditTool />
         </>
       </MyCustomToolbar>

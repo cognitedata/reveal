@@ -9,6 +9,7 @@ export class Changes {
   public static readonly active: symbol = Symbol('active');
   public static readonly expanded: symbol = Symbol('expanded');
   public static readonly selected: symbol = Symbol('selected');
+  public static readonly focus: symbol = Symbol('focus');
   public static readonly loaded: symbol = Symbol('loaded');
 
   // Fields changed

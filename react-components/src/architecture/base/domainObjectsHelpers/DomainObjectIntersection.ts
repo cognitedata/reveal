@@ -16,7 +16,7 @@ export function isDomainObjectIntersection(
   intersection: AnyIntersection | undefined
 ): intersection is DomainObjectIntersection {
   const domainObjectIntersection = intersection as DomainObjectIntersection;
-  return domainObjectIntersection.domainObject !== undefined;
+  return domainObjectIntersection?.domainObject !== undefined;
 }
 
 export function isCustomObjectIntersection(

@@ -73,25 +73,21 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
   ): undefined | CustomObjectIntersection {
     const intersection = intersectInput.raycaster.intersectObject(this.object);
     if (intersection.length === 0) {
-      console.log('intersectIfCloser: failed', this.domainObject.name);
       return undefined;
     }
     const { point, distance } = intersection[0];
     if (closestDistance !== undefined && closestDistance < distance) {
-      console.log('intersectIfCloser: closer found', this.domainObject.name);
       return undefined;
     }
     if (!intersectInput.isVisible(point)) {
-      console.log('intersectIfCloser: not visible', this.domainObject.name);
       return undefined;
     }
-    console.log('intersectIfCloser: found', this.domainObject.name);
     const customObjectIntersection: DomainObjectIntersection = {
       type: 'customObject',
-      customObject: this,
       point,
       distanceToCamera: distance,
       userData: intersection[0],
+      customObject: this,
       domainObject: this.domainObject
     };
     if (this.shouldPickBoundingBox) {
@@ -173,7 +169,7 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
     viewer.addCustomObject(this);
   }
 
-  private removeObject(): void {
+  protected removeObject(): void {
     if (this._object === undefined) {
       return;
     }
@@ -182,6 +178,12 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
     disposeMaterials(this._object);
     this._object = undefined;
     // TODO: Do we have to dispose Object3D in some way (matrials?)
+  }
+
+  protected add(parent: Object3D, child: Object3D | undefined): void {
+    if (child !== undefined) {
+      parent.add(child);
+    }
   }
 }
 

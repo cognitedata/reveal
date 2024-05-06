@@ -4,12 +4,23 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { Raycaster } from 'three';
+import { Raycaster, type Vector2 } from 'three';
 import { RenderTargetCommand } from './RenderTargetCommand';
-import { getNormalizedPixelCoordinates, type AnyIntersection } from '@cognite/reveal';
+import {
+  CustomObjectIntersectInput,
+  type CustomObjectIntersection,
+  getNormalizedPixelCoordinates,
+  type AnyIntersection
+} from '@cognite/reveal';
+import { ObjectThreeView } from '../views/ObjectThreeView';
+import {
+  type DomainObjectIntersection,
+  isDomainObjectIntersection
+} from '../domainObjectsHelpers/DomainObjectIntersection';
+import { type Class } from '../domainObjectsHelpers/Class';
+import { type DomainObject } from '../domainObjects/DomainObject';
 
 export abstract class BaseTool extends RenderTargetCommand {
-  private _raycaster = new Raycaster();
   // ==================================================
   // OVERRIDES
   // =================================================
@@ -28,7 +39,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   }
 
   // ==================================================
-  // VIRTUAL METHODS: To be overridded
+  // VIRTUAL METHODS: To be overridden
   // ==================================================
 
   public onActivate(): void {
@@ -70,7 +81,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   public onKey(event: KeyboardEvent, down: boolean): void {}
 
   // ==================================================
-  // INSTANCE METHODS: Getters
+  // INSTANCE METHODS: Intersections
   // ==================================================
 
   protected async getIntersection(event: PointerEvent): Promise<AnyIntersection | undefined> {
@@ -83,17 +94,61 @@ export abstract class BaseTool extends RenderTargetCommand {
     return intersection;
   }
 
+  protected getSpecificIntersection<T extends DomainObject>(
+    event: PointerEvent,
+    classType: Class<T>
+  ): DomainObjectIntersection | undefined {
+    // This function is similar to getIntersection, but it only considers a specific DomainObject
+    const { renderTarget } = this;
+    const { rootDomainObject } = renderTarget;
+    const normalizedCoords = this.getNormalizedPixelCoordinates(event);
+    const intersectInput = new CustomObjectIntersectInput(
+      normalizedCoords,
+      renderTarget.cameraManager.getCamera(),
+      renderTarget.viewer.getGlobalClippingPlanes()
+    );
+
+    let closestIntersection: CustomObjectIntersection | undefined;
+    let closestDistanceToCamera: number | undefined;
+    for (const domainObject of rootDomainObject.getDescendantsByType(classType)) {
+      for (const view of domainObject.views) {
+        if (!(view instanceof ObjectThreeView)) {
+          continue;
+        }
+        if (view.renderTarget !== renderTarget) {
+          continue;
+        }
+        const intersection = view.intersectIfCloser(intersectInput, closestDistanceToCamera);
+        if (intersection === undefined) {
+          continue;
+        }
+        closestDistanceToCamera = intersection.distanceToCamera;
+        closestIntersection = intersection;
+      }
+    }
+    if (!isDomainObjectIntersection(closestIntersection)) {
+      return undefined;
+    }
+    return closestIntersection;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Intersections
+  // ==================================================
+
   protected getRaycaster(event: PointerEvent): Raycaster {
     const { renderTarget } = this;
     const { cameraManager } = renderTarget;
+    const normalizedCoords = this.getNormalizedPixelCoordinates(event);
+    const _raycaster = new Raycaster();
+    _raycaster.setFromCamera(normalizedCoords, cameraManager.getCamera());
+    return _raycaster;
+  }
+
+  protected getNormalizedPixelCoordinates(event: PointerEvent): Vector2 {
+    const { renderTarget } = this;
     const { domElement } = renderTarget;
 
-    const normalizedCoords = getNormalizedPixelCoordinates(
-      domElement,
-      event.offsetX,
-      event.offsetY
-    );
-    this._raycaster.setFromCamera(normalizedCoords, cameraManager.getCamera());
-    return this._raycaster;
+    return getNormalizedPixelCoordinates(domElement, event.offsetX, event.offsetY);
   }
 }

@@ -71,7 +71,7 @@ export class TerrainThreeView extends ObjectThreeView {
           this._object.remove(solid);
           this.invalidateRenderTarget();
         } else if (solid === undefined && style.showSolid) {
-          add(this._object, this.createSolid());
+          this.add(this._object, this.createSolid());
           this.invalidateRenderTarget();
         } else if (solid !== undefined) {
           updateSolidMaterial(solid.material as MeshPhongMaterial, this.terrainDomainObject, style);
@@ -84,7 +84,7 @@ export class TerrainThreeView extends ObjectThreeView {
           this._object.remove(contours);
           this.invalidateRenderTarget();
         } else if (contours === undefined && style.showContours) {
-          add(this._object, this.createContours());
+          this.add(this._object, this.createContours());
           this.invalidateRenderTarget();
         } else if (contours !== undefined) {
           updateContoursMaterial(
@@ -132,8 +132,8 @@ export class TerrainThreeView extends ObjectThreeView {
       return undefined;
     }
     const group = new Group();
-    add(group, this.createSolid());
-    add(group, this.createContours());
+    this.add(group, this.createSolid());
+    this.add(group, this.createContours());
     return group;
   }
 
@@ -157,10 +157,10 @@ export class TerrainThreeView extends ObjectThreeView {
     const material = new MeshPhongMaterial();
     updateSolidMaterial(material, terrainDomainObject, style);
 
-    const mesh = new Mesh(geometry, material);
-    mesh.name = SOLID_NAME;
-    applyMatrix(mesh, grid);
-    return mesh;
+    const result = new Mesh(geometry, material);
+    result.name = SOLID_NAME;
+    applyMatrix(result, grid);
+    return result;
   }
 
   private createContours(): Object3D | undefined {
@@ -185,21 +185,15 @@ export class TerrainThreeView extends ObjectThreeView {
     const material = new LineBasicMaterial();
     updateContoursMaterial(material, terrainDomainObject, style);
 
-    const contours = new LineSegments(geometry, material);
-    contours.name = CONTOURS_NAME;
-    applyMatrix(contours, grid);
-    return contours;
+    const result = new LineSegments(geometry, material);
+    result.name = CONTOURS_NAME;
+    applyMatrix(result, grid);
+    return result;
   }
 }
 // ==================================================
 // LOCAL FUNCTIONS
 // ==================================================
-
-function add(parent: Object3D, child: Object3D | undefined): void {
-  if (child !== undefined) {
-    parent.add(child);
-  }
-}
 
 function applyMatrix(object: Object3D, grid: RegularGrid2): void {
   object.rotateZ(grid.rotationAngle);

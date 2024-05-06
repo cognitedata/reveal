@@ -7,7 +7,6 @@ import { NavigationTool } from '../../../architecture/base/concreteCommands/Navi
 import { SetTerrainVisibleCommand } from '../../../architecture/concrete/terrainDomainObject/SetTerrainVisibleCommand';
 import { CommandButton } from './CommandButton';
 import { UpdateTerrainCommand } from '../../../architecture/concrete/terrainDomainObject/UpdateTerrainCommand';
-import { SetBoxVisibleCommand } from '../../../architecture/concrete/boxDomainObject/SetBoxVisibleCommand';
 import { BoxEditTool } from '../../../architecture/concrete/boxDomainObject/BoxEditTool';
 import { FitViewCommand } from '../../../architecture/base/concreteCommands/FitViewCommand';
 import { FlexibleControlsType } from '@cognite/reveal';
@@ -20,7 +19,6 @@ export type RevealButtonsType = {
   NavigationTool: CreateElementDelegate;
   SetTerrainVisible: CreateElementDelegate;
   UpdateTerrain: CreateElementDelegate;
-  SetBoxVisible: CreateElementDelegate;
   BoxEditTool: CreateElementDelegate;
   SetFlexibleControlsTypeOrbit: CreateElementDelegate;
   SetFlexibleControlsTypeFirstPerson: CreateElementDelegate;
@@ -31,7 +29,6 @@ export const RevealButtons: RevealButtonsType = {
   NavigationTool: () => CommandButton(new NavigationTool()),
   SetTerrainVisible: () => CommandButton(new SetTerrainVisibleCommand()),
   UpdateTerrain: () => CommandButton(new UpdateTerrainCommand()),
-  SetBoxVisible: () => CommandButton(new SetBoxVisibleCommand()),
   BoxEditTool: () => CommandButton(new BoxEditTool()),
   SetFlexibleControlsTypeOrbit: () =>
     CommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit)),

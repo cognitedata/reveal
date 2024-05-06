@@ -80,9 +80,12 @@ function subDivide(
   level: number,
   dampning: number
 ): void {
-  if (i2 - i0 <= 1 && j2 - j0 <= 1) return; // Nothing more to update
-  if (i2 - i0 !== j2 - j0) throw Error('Logical bug, should be a square');
-
+  if (i2 - i0 <= 1 && j2 - j0 <= 1) {
+    return; // Nothing more to update
+  }
+  if (i2 - i0 !== j2 - j0) {
+    throw Error('Logical bug, the grid should be a square');
+  }
   stdDev *= dampning;
   let z = 0;
   z += setValueBetween(grid, i0, j0, i2, j0, stdDev);
@@ -93,8 +96,9 @@ function subDivide(
   setValueBetween(grid, i0, j0, i2, j2, stdDev, z / 4);
 
   level -= 1;
-  if (level === 0) return;
-
+  if (level === 0) {
+    return;
+  }
   const i1 = Math.trunc((i0 + i2) / 2);
   const j1 = Math.trunc((j0 + j2) / 2);
 
