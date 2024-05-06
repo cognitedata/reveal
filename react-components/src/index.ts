@@ -35,7 +35,7 @@ export {
 } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 export { use3dModels } from './hooks/use3dModels';
-export { useMappedEdgesForRevisions } from './components/CacheProvider/NodeCacheProvider';
+export { useFdmMappedEdgesForRevisions } from './components/CacheProvider/NodeCacheProvider';
 export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
 
 export {

@@ -4,13 +4,13 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  CadModelContainer,
   type QualitySettings,
   RevealToolbar,
   withSuppressRevealEvents,
   withCameraStateUrlParam,
   useGetCameraStateFromUrlParam,
-  useCameraNavigation
+  useCameraNavigation,
+  Reveal3DResources
 } from '../src';
 import { Color } from 'three';
 import styled from 'styled-components';
@@ -23,9 +23,9 @@ import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolb
 
 const meta = {
   title: 'Example/Toolbar',
-  component: CadModelContainer,
+  component: Reveal3DResources,
   tags: ['autodocs']
-} satisfies Meta<typeof CadModelContainer>;
+} satisfies Meta<typeof Reveal3DResources>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -93,14 +93,14 @@ const exampleLowQualitySettings: QualitySettings = {
 
 export const Main: Story = {
   args: {
-    addModelOptions: getAddModelOptionsFromUrl('/primitives')
+    resources: [getAddModelOptionsFromUrl('/primitives')]
   },
-  render: ({ addModelOptions }) => (
+  render: ({ resources }) => (
     <RevealStoryContainer
       color={new Color(0x4a4a4a)}
       viewerOptions={{ useFlexibleCameraManager: true }}>
       <FitToUrlCameraState />
-      <CadModelContainer addModelOptions={addModelOptions} />
+      <Reveal3DResources resources={resources} />
       <RevealToolbar
         customSettingsContent={exampleCustomSettingElements()}
         lowFidelitySettings={exampleLowQualitySettings}

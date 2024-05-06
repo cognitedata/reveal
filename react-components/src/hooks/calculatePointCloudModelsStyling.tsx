@@ -11,16 +11,11 @@ import {
   type PointCloudModelOptions,
   type AssetStylingGroup
 } from '../components/Reveal3DResources/types';
-import { useMemo } from 'react';
-import { type AnnotationIdStylingGroup } from '../components/PointCloudContainer/useApplyPointCloudStyling';
-import { useQuery } from '@tanstack/react-query';
+import { type AnnotationIdStylingGroup } from '../components/Reveal3DResources/applyPointCloudStyling';
 import { isSame3dModel } from '../utilities/isSameModel';
-import {
-  usePointCloudAnnotationMappingsForModels,
-  usePointCloudAnnotationIdsForModels
-} from '../components/CacheProvider/PointCloudAnnotationCacheProvider';
 import { EMPTY_ARRAY } from '../utilities/constants';
-import { type PointCloudAnnotationModel } from '../components/CacheProvider/types';
+import { AnnotationId, type PointCloudAnnotationModel } from '../components/CacheProvider/types';
+import { PointCloudAnnotationCache } from '../components/CacheProvider/PointCloudAnnotationCache';
 
 export type StyledPointCloudModelAddOptions = {
   addOptions: PointCloudModelOptions;
@@ -38,45 +33,45 @@ export type AnnotationModelDataResult = {
   annotationModel: PointCloudAnnotationModel[];
 };
 
-export const useCalculatePointCloudStyling = (
+export const calculatePointCloudStyling = async (
   models: PointCloudModelOptions[],
   instanceGroups: AssetStylingGroup[],
-  defaultResourceStyling?: DefaultResourceStyling
-): StyledPointCloudModelAddOptions[] => {
-  const styledPointCloudModels = useCalculateMappedPointCloudStyling(
+  defaultResourceStyling: DefaultResourceStyling | undefined,
+  pointCloudAnnotationCache: PointCloudAnnotationCache
+): Promise<StyledPointCloudModelAddOptions[]> => {
+  const styledPointCloudModels = await calculateMappedPointCloudStyling(
     models,
-    defaultResourceStyling?.pointcloud?.mapped
+    defaultResourceStyling?.pointcloud?.mapped,
+    pointCloudAnnotationCache
   );
-  const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
+  const modelInstanceStyleGroups = await calculateInstanceStyling(
+    models,
+    instanceGroups,
+    pointCloudAnnotationCache
+  );
 
-  const combinedStyledPointCloudModels = useMemo(() => {
-    return groupStyleGroupByModel(
-      [...styledPointCloudModels, ...modelInstanceStyleGroups],
-      defaultResourceStyling?.pointcloud?.default
-    );
-  }, [styledPointCloudModels, modelInstanceStyleGroups]);
+  const combinedStyledPointCloudModels = groupStyleGroupByModel(
+    [...styledPointCloudModels, ...modelInstanceStyleGroups],
+    defaultResourceStyling?.pointcloud?.default
+  );
   return combinedStyledPointCloudModels;
 };
 
-function useCalculateInstanceStyling(
+async function calculateInstanceStyling(
   models: PointCloudModelOptions[],
-  instanceGroups: AssetStylingGroup[]
-): PointCloudAddOptionsWithStyleGroups[] {
-  const { data: pointCloudAnnotationMappings, isLoading } =
-    usePointCloudAnnotationMappingsForModels(models);
-
-  const { data: styledModels } = useQuery(
-    ['styledModels', pointCloudAnnotationMappings, instanceGroups, models],
-    () =>
-      pointCloudAnnotationMappings?.map((annotationMappings) => {
-        return calculateAnnotationMappingModelStyling(instanceGroups, annotationMappings);
-      }) ?? EMPTY_ARRAY,
-    {
-      enabled: !isLoading
-    }
+  instanceGroups: AssetStylingGroup[],
+  pointCloudAnnotationCache: PointCloudAnnotationCache
+): Promise<PointCloudAddOptionsWithStyleGroups[]> {
+  const pointCloudAnnotationMappings = await getPointCloudAnnotationMappingsForModels(
+    models,
+    pointCloudAnnotationCache
   );
 
-  return styledModels ?? EMPTY_ARRAY;
+  const styledModels = pointCloudAnnotationMappings?.map((annotationMappings) => {
+    return calculateAnnotationMappingModelStyling(instanceGroups, annotationMappings);
+  });
+
+  return styledModels;
 }
 
 function calculateAnnotationMappingModelStyling(
@@ -117,25 +112,20 @@ function getMappedStyleGroupFromAssetIds(
     : undefined;
 }
 
-function useCalculateMappedPointCloudStyling(
+async function calculateMappedPointCloudStyling(
   models: PointCloudModelOptions[],
-  defaultMappedNodeAppearance?: NodeAppearance
-): PointCloudAddOptionsWithStyleGroups[] {
-  const modelsWithStyledMapped = useMemo(() => getMappedPointCloudModelsOptions(), [models]);
+  defaultMappedNodeAppearance: NodeAppearance | undefined,
+  pointCloudAnnotationCache: PointCloudAnnotationCache
+): Promise<PointCloudAddOptionsWithStyleGroups[]> {
+  const modelsWithStyledMapped = getMappedPointCloudModelsOptions();
 
-  const { data: pointCloudStyledModelAnnotationIds } =
-    usePointCloudAnnotationIdsForModels(modelsWithStyledMapped);
+  const pointCloudStyledModelAnnotationIds = await getPointCloudAnnotationIdsForModels(
+    modelsWithStyledMapped,
+    pointCloudAnnotationCache
+  );
 
-  const modelsMappedAnnotationIdStyleGroups = useMemo(() => {
-    if (
-      models.length === 0 ||
-      pointCloudStyledModelAnnotationIds === undefined ||
-      pointCloudStyledModelAnnotationIds.length === 0
-    ) {
-      return EMPTY_ARRAY;
-    }
-
-    return pointCloudStyledModelAnnotationIds.map((pointCloudAnnotationCollection) => {
+  const modelsMappedAnnotationIdStyleGroups = pointCloudStyledModelAnnotationIds.map(
+    (pointCloudAnnotationCollection) => {
       const modelStyle =
         pointCloudAnnotationCollection.model.styling?.mapped ?? defaultMappedNodeAppearance;
 
@@ -144,8 +134,8 @@ function useCalculateMappedPointCloudStyling(
           ? [getMappedStyleGroupFromAnnotationIds([pointCloudAnnotationCollection], modelStyle)]
           : EMPTY_ARRAY;
       return { addOptions: pointCloudAnnotationCollection.model, styleGroups };
-    });
-  }, [modelsWithStyledMapped, pointCloudStyledModelAnnotationIds, defaultMappedNodeAppearance]);
+    }
+  );
 
   return modelsMappedAnnotationIdStyleGroups;
 
@@ -194,4 +184,45 @@ function groupStyleGroupByModel(
     }
     return accumulatedGroups;
   }, []);
+}
+
+async function getPointCloudAnnotationIdsForModels(
+  models: PointCloudModelOptions[],
+  pointCloudAnnotationCache: PointCloudAnnotationCache
+): Promise<
+  Array<{
+    model: PointCloudModelOptions;
+    annotationIds: AnnotationId[];
+  }>
+> {
+  return await Promise.all(
+    models.map(async (model) => {
+      const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
+        model.modelId,
+        model.revisionId
+      );
+      const annotationIds = annotationModel.map((annotation) => {
+        return annotation.id;
+      });
+      return { model, annotationIds };
+    })
+  );
+}
+
+async function getPointCloudAnnotationMappingsForModels(
+  models: PointCloudModelOptions[],
+  pointCloudAnnotationCache: PointCloudAnnotationCache
+): Promise<AnnotationModelDataResult[]> {
+  return await Promise.all(
+    models.map(async (model) => {
+      const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
+        model.modelId,
+        model.revisionId
+      );
+      return {
+        model,
+        annotationModel
+      };
+    })
+  );
 }

@@ -2,7 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { useCameraNavigation, Reveal3DResources, AddResourceOptions, RevealContext } from '../src';
+import {
+  useCameraNavigation,
+  Reveal3DResources,
+  AddResourceOptions,
+  RevealContext,
+  useReveal
+} from '../src';
 import { Color, Matrix4 } from 'three';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { useEffect, type ReactElement } from 'react';
@@ -19,6 +25,10 @@ const CadModelContainerStoryContent = ({
     cameraNavigationActions.fitCameraToAllModels(0);
     signalStoryReadyForScreenshot();
   };
+  const viewer = useReveal();
+  useEffect(() => {
+    (window as any).viewer = viewer;
+  }, []);
   return (
     <Reveal3DResources
       onResourcesAdded={onLoad}
@@ -56,8 +66,8 @@ export const Main: Story = {
   },
   render: (resource) => {
     return (
-      <RevealStoryContainer>
-        <CadModelContainerStoryContent {...resource} />{' '}
+      <RevealStoryContainer color={new Color(0x4a4a4a)}>
+        <CadModelContainerStoryContent {...resource} />
       </RevealStoryContainer>
     );
   }

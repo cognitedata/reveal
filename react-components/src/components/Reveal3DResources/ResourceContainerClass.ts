@@ -10,9 +10,18 @@ import {
   Image360EnteredDelegate,
   Image360AnnotationAppearance,
   Image360,
-  Image360Revision
+  Image360Revision,
+  AddModelOptions
 } from '@cognite/reveal';
-import { AddImageCollection360Options, AddResourceOptions } from './types';
+import {
+  AddImageCollection360Options,
+  AddResourceOptions,
+  AddReveal3DModelOptions,
+  CadModelOptions,
+  DefaultResourceStyling,
+  InstanceStylingGroup,
+  TaggedAdd3DModelOptions
+} from './types';
 import { findNewAndOutdatedResources, is3dModelOptions } from './utils';
 import {
   is360DataModelCollection,
@@ -20,35 +29,54 @@ import {
   isSameModel
 } from '../../utilities/isSameModel';
 import assert from 'assert';
-import { Matrix4 } from 'three';
 import { applyCadStyling } from './applyCadStyling';
 import { AnnotationsCogniteAnnotationTypesImagesAssetLink, CogniteClient } from '@cognite/sdk';
-import { StyledCadModelAddOptions } from '../../hooks/useCalculateModelsStyling';
-import { StyledPointCloudModelAddOptions } from '../../hooks/useCalculatePointCloudModelsStyling';
+import {
+  StyledCadModelAddOptions,
+  calculateCadStyling
+} from '../../hooks/calculateCadModelsStyling';
+import {
+  StyledPointCloudModelAddOptions,
+  calculatePointCloudStyling
+} from '../../hooks/calculatePointCloudModelsStyling';
 import { applyPointCloudStyling } from './applyPointCloudStyling';
 import { modelExists } from '../../utilities/modelExists';
+import { FdmNodeCache } from '../CacheProvider/FdmNodeCache';
+import { AssetMappingCache } from '../CacheProvider/AssetMappingCache';
+import {
+  isAssetMappingStylingGroup,
+  isCadAssetMappingStylingGroup,
+  isImage360AssetStylingGroup
+} from '../../utilities/StylingGroupUtils';
+import { PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
+import { Matrix4 } from 'three';
+
+export type Image360AnnotationStyleGroup = {
+  assetIds: number[];
+  style: Image360AnnotationAppearance;
+};
 
 export type StyledImage360CollectionAddOptions = {
   addOptions: AddImageCollection360Options;
-  styleGroups: { assetIds: number[]; style: Image360AnnotationAppearance }[];
+  styleGroups: Image360AnnotationStyleGroup[];
   defaultStyle?: Image360AnnotationAppearance;
 };
 
 type CadAddOptionsWithModel = {
   type: 'cad';
-  styledAddOptions: StyledCadModelAddOptions;
+  addOptions: AddReveal3DModelOptions;
   model: CogniteCadModel;
 };
 
 type PointCloudAddOptionsWithModel = {
   type: 'pointcloud';
-  styledAddOptions: StyledPointCloudModelAddOptions;
+  addOptions: AddReveal3DModelOptions;
   model: CognitePointCloudModel;
 };
 
-type Image360AddOptionsWithModel = {
+export type Image360AddOptionsWithModel = {
   type: 'image360';
-  styledAddOptions: StyledImage360CollectionAddOptions;
+  addOptions: AddImageCollection360Options;
   model: Image360Collection;
 };
 
@@ -75,6 +103,13 @@ export class ResourceContainerClass {
   private readonly _viewer: Cognite3DViewer;
   private readonly _client: CogniteClient;
 
+  private readonly _fdmNodeCache: FdmNodeCache;
+  private readonly _assetMappingCache: AssetMappingCache;
+  private readonly _pointCloudAnnotationCache: PointCloudAnnotationCache;
+
+  private _instanceStyling: InstanceStylingGroup[] = [];
+  private _defaultResourceStyling: DefaultResourceStyling = {};
+
   private readonly _onModelLoaded: (() => void) | undefined;
   private readonly _onModelLoadedError:
     | ((addOptions: AddResourceOptions, error: any) => void)
@@ -83,16 +118,22 @@ export class ResourceContainerClass {
   constructor(
     viewer: Cognite3DViewer,
     client: CogniteClient,
+    fdmNodeCache: FdmNodeCache,
+    assetMappingCache: AssetMappingCache,
+    pointCloudAnnotationCache: PointCloudAnnotationCache,
     onModelLoaded: () => void | undefined,
     onModelLoadedError: (addOptions: AddResourceOptions, error: any) => void | undefined
   ) {
     this._viewer = viewer;
     this._client = client;
+    this._fdmNodeCache = fdmNodeCache;
+    this._assetMappingCache = assetMappingCache;
+    this._pointCloudAnnotationCache = pointCloudAnnotationCache;
     this._onModelLoaded = onModelLoaded;
     this._onModelLoadedError = onModelLoadedError;
   }
 
-  public async sync(modelAddOptions: StyledAddModelOptions[]): Promise<void> {
+  public async sync(modelAddOptions: AddResourceOptions[]): Promise<void> {
     this._runningCounter++;
     const cachedRunningCounter = this._runningCounter;
 
@@ -107,17 +148,13 @@ export class ResourceContainerClass {
       currentlyAddedResources.length !==
       this._viewer.models.length + this._viewer.get360ImageCollections().length
     ) {
-      this._viewer.models.forEach((model) => this._viewer.removeModel(model));
-      this._viewer
-        .get360ImageCollections()
-        .forEach((collection) => this._viewer.remove360ImageSet(collection));
-
+      this.clearAllModels();
       currentlyAddedResources.splice(0);
     }
 
     const { newResources, outdatedResources } = findNewAndOutdatedResources(
       modelAddOptions,
-      currentlyAddedResources.map((options) => options.styledAddOptions)
+      currentlyAddedResources.map((options) => options.addOptions)
     );
 
     const keptModelsWithOptions = this.removeResources(outdatedResources, currentlyAddedResources);
@@ -130,14 +167,31 @@ export class ResourceContainerClass {
     );
   }
 
-  private updateKeptModels(oldModels: AddOptionsWithModel[], newOptions: StyledAddModelOptions[]) {
+  public async updateCommonStyling(
+    instanceStyling: InstanceStylingGroup[],
+    defaultStyling: DefaultResourceStyling
+  ) {
+    this._defaultResourceStyling = defaultStyling;
+    this._instanceStyling = instanceStyling;
+
+    const models = await this._pendingModelsPromise;
+    models.forEach((model) => this.applyStylingAndTransform(model));
+  }
+
+  private clearAllModels() {
+    this._viewer.models.forEach((model) => this._viewer.removeModel(model));
+    this._viewer
+      .get360ImageCollections()
+      .forEach((collection) => this._viewer.remove360ImageSet(collection));
+  }
+
+  private updateKeptModels(oldModels: AddOptionsWithModel[], newOptions: AddResourceOptions[]) {
     oldModels.forEach((oldModel) => {
       const correspondingNewOption = newOptions.find((newOption) =>
-        isSameModel(oldModel.styledAddOptions.addOptions, newOption.addOptions)
+        isSameModel(oldModel.addOptions, newOption)
       );
 
       assert(correspondingNewOption !== undefined);
-      oldModel.styledAddOptions = correspondingNewOption;
     });
   }
 
@@ -148,14 +202,14 @@ export class ResourceContainerClass {
     const allModels = (await Promise.all(newModelPromises)).concat(keptModels);
 
     this.removeAllImage360Callbacks(allModels);
-    allModels.forEach((model) => this.applyStyling(model, this._client));
+    allModels.forEach((model) => this.applyStylingAndTransform(model));
 
     return allModels;
   }
 
   private removeAllImage360Callbacks(newModels: AddOptionsWithModel[]) {
     const collections = newModels.filter((model): model is Image360AddOptionsWithModel =>
-      is360ImageCollectionOptions(model.styledAddOptions.addOptions)
+      is360ImageCollectionOptions(model.addOptions)
     );
     collections.forEach((collection) => {
       const prevCallback = this._previousImage360StylingCallbacks.get(collection.model.id);
@@ -168,22 +222,22 @@ export class ResourceContainerClass {
   }
 
   private removeResources(
-    resources: StyledAddModelOptions[],
+    resources: AddResourceOptions[],
     currentModels: AddOptionsWithModel[]
   ): AddOptionsWithModel[] {
     const currentModelsSet = new Set(currentModels);
     resources.forEach((resourceAddOptions) => {
       const resourceAndModel = [...currentModelsSet].find((model) =>
-        isSameModel(model.styledAddOptions.addOptions, resourceAddOptions.addOptions)
+        isSameModel(model.addOptions, resourceAddOptions)
       );
 
       assert(resourceAndModel !== undefined);
 
       currentModelsSet.delete(resourceAndModel);
 
-      if (is3dModelOptions(resourceAddOptions.addOptions)) {
+      if (is3dModelOptions(resourceAddOptions)) {
         this._viewer.removeModel(resourceAndModel.model as CogniteModel);
-      } else if (is360ImageCollectionOptions(resourceAddOptions.addOptions)) {
+      } else if (is360ImageCollectionOptions(resourceAddOptions)) {
         this._viewer.remove360ImageSet(resourceAndModel.model as Image360Collection);
       } else {
         throw Error('Tried to remove Model of unknown type');
@@ -193,71 +247,78 @@ export class ResourceContainerClass {
     return [...currentModelsSet];
   }
 
-  private addResources(resources: StyledAddModelOptions[]): Promise<AddOptionsWithModel>[] {
-    return resources
-      .map((addOptions) => {
-        if (is3dModelOptions(addOptions.addOptions)) {
-          let addModelPromise: Promise<CogniteModel>;
-          if (addOptions.addOptions.type === 'cad') {
-            addModelPromise = this._viewer.addCadModel(addOptions.addOptions);
+  private addResources(resources: AddResourceOptions[]): Promise<AddOptionsWithModel>[] {
+    return resources.map(async (addOptions) => {
+      try {
+        if (is3dModelOptions(addOptions)) {
+          const addedModel = await this._viewer.addModel(addOptions);
+          if (addedModel instanceof CogniteCadModel) {
+            this._onModelLoaded?.();
+            return { type: 'cad' as const, model: addedModel, addOptions };
           } else {
-            addModelPromise = this._viewer.addPointCloudModel(addOptions.addOptions);
+            this._onModelLoaded?.();
+            return { type: 'pointcloud' as const, model: addedModel, addOptions };
           }
-          addModelPromise
-            .catch((error) => this._onModelLoadedError?.(addOptions.addOptions, error))
-            .then(this._onModelLoaded);
-
-          return addModelPromise;
-        } else if (is360DataModelCollection(addOptions.addOptions)) {
-          const addCollectionPromise = this._viewer.add360ImageSet('datamodels', {
-            image360CollectionExternalId: addOptions.addOptions.externalId,
-            space: addOptions.addOptions.space
-          });
-
-          addCollectionPromise
-            .catch((error) => this._onModelLoadedError?.(addOptions.addOptions, error))
-            .then(this._onModelLoaded);
-          return addCollectionPromise;
         } else {
-          const addCollectionPromise = this._viewer.add360ImageSet('events', {
-            site_id: addOptions.addOptions.siteId
-          });
-          addCollectionPromise
-            .catch((error) => this._onModelLoadedError?.(addOptions.addOptions, error))
-            .then(this._onModelLoaded);
+          const addedCollection = await (() => {
+            if (is360DataModelCollection(addOptions)) {
+              return this._viewer.add360ImageSet('datamodels', {
+                image360CollectionExternalId: addOptions.externalId,
+                space: addOptions.space
+              });
+            } else {
+              return this._viewer.add360ImageSet('events', {
+                site_id: addOptions.siteId
+              });
+            }
+          })();
 
-          return addCollectionPromise;
+          this._onModelLoaded?.();
+          return {
+            model: addedCollection,
+            addOptions,
+            type: 'image360' as const
+          };
         }
-      })
-      .map(async (modelPromise, ind) => {
-        const model = await modelPromise;
-
-        model.setModelTransformation(resources[ind].addOptions.transform ?? new Matrix4());
-        const modelType = getModelType(model);
-        return { type: modelType, model, styledAddOptions: resources[ind] } as AddOptionsWithModel;
-      });
+      } catch (error: any) {
+        this._onModelLoadedError?.(addOptions, error);
+        throw error;
+      }
+    });
   }
 
-  private applyStyling(model: AddOptionsWithModel, client: CogniteClient): void {
-    if (model.type === 'pointcloud') {
+  private compute360ImageStyleGroups(): Image360AnnotationStyleGroup[] {
+    return this._instanceStyling?.filter(isImage360AssetStylingGroup).map((group) => {
+      return { assetIds: group.assetIds, style: group.style.image360 };
+    });
+  }
+
+  private async applyStylingAndTransform(model: AddOptionsWithModel): Promise<void> {
+    if (model.type === 'cad') {
       if (!modelExists(model.model, this._viewer)) {
         return;
       }
-      applyPointCloudStyling(model.model, model.styledAddOptions);
-    } else if (model.type === 'cad') {
+      const [styling] = await this.computeCadModelsStyling([model.addOptions]);
+      await applyCadStyling(this._client, model.model, styling);
+    } else if (model.type === 'pointcloud') {
       if (!modelExists(model.model, this._viewer)) {
         return;
       }
-      void applyCadStyling(client, model.model, model.styledAddOptions);
+      const [styling] = await this.computePointCloudModelsStyling([model.model]);
+      applyPointCloudStyling(model.model, styling);
     } else {
-      void this.update360ImageStylingCallback(model);
+      await this.update360ImageStylingCallback(model.model, this.compute360ImageStyleGroups());
     }
+
+    const matrix = model.addOptions.transform ?? new Matrix4();
+    model.model.setModelTransformation(matrix);
   }
 
   private async update360ImageStylingCallback(
-    collection: Image360AddOptionsWithModel
+    collection: Image360Collection,
+    styleGroups: Image360AnnotationStyleGroup[]
   ): Promise<void> {
-    const collectionStyleGroupsWithSet = collection.styledAddOptions.styleGroups.map((group) => ({
+    const collectionStyleGroupsWithSet = styleGroups.map((group) => ({
       styling: group.style,
       assetIdSet: new Set(group.assetIds)
     }));
@@ -265,8 +326,8 @@ export class ResourceContainerClass {
     const newStylingCallback: Image360EnteredDelegate = async (_image, imageRevision) => {
       const annotations = await imageRevision.getAnnotations();
       annotations.forEach((annotation) => {
-        annotation.setColor(collection.styledAddOptions.defaultStyle?.color);
-        annotation.setVisible(collection.styledAddOptions.defaultStyle?.visible);
+        annotation.setColor(this._defaultResourceStyling.image360?.default.color);
+        annotation.setVisible(this._defaultResourceStyling.image360?.default.visible);
 
         const assetRefId = (
           annotation.annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink
@@ -290,17 +351,32 @@ export class ResourceContainerClass {
       });
     };
 
-    collection.model.on('image360Entered', newStylingCallback);
+    collection.on('image360Entered', newStylingCallback);
 
-    const collectionId = collection.model.id;
+    const collectionId = collection.id;
     this._previousImage360StylingCallbacks.set(collectionId, newStylingCallback);
   }
-}
 
-function getModelType(model: CogniteModel | Image360Collection): 'cad' | 'pointcloud' | 'image360' {
-  if (model instanceof CogniteCadModel || model instanceof CognitePointCloudModel) {
-    return model.type;
+  private async computeCadModelsStyling(
+    models: AddReveal3DModelOptions[]
+  ): Promise<StyledCadModelAddOptions[]> {
+    return calculateCadStyling(
+      models,
+      this._instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? [],
+      this._fdmNodeCache,
+      this._assetMappingCache,
+      this._defaultResourceStyling
+    );
   }
 
-  return 'image360';
+  private async computePointCloudModelsStyling(
+    models: CognitePointCloudModel[]
+  ): Promise<StyledPointCloudModelAddOptions[]> {
+    return calculatePointCloudStyling(
+      models as (CognitePointCloudModel & { type: 'pointcloud' })[],
+      this._instanceStyling?.filter(isAssetMappingStylingGroup),
+      this._defaultResourceStyling,
+      this._pointCloudAnnotationCache
+    );
+  }
 }

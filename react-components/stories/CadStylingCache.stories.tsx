@@ -3,25 +3,30 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  CadModelContainer,
   type CadModelStyling,
-  type CogniteCadModelProps,
-  type NodeStylingGroup,
   RevealCanvas,
   useReveal,
-  RevealContext
+  RevealContext,
+  Reveal3DResources,
+  Reveal3DResourcesProps
 } from '../src';
 import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { type CogniteCadModel, DefaultNodeAppearance } from '@cognite/reveal';
 import { useEffect, useMemo, useState, type JSX } from 'react';
-import { useMappedEdgesForRevisions } from '../src/components/CacheProvider/NodeCacheProvider';
+import { useFdmMappedEdgesForRevisions } from '../src/components/CacheProvider/NodeCacheProvider';
+import {
+  CadModelOptions,
+  DefaultResourceStyling,
+  InstanceStylingGroup
+} from '../src/components/Reveal3DResources/types';
+import { NodeStylingGroup } from '../src/components/Reveal3DResources/applyCadStyling';
 
 const meta = {
   title: 'Example/CadStylingCache',
-  component: CadModelContainer,
+  component: Reveal3DResources,
   tags: ['autodocs']
-} satisfies Meta<typeof CadModelContainer>;
+} satisfies Meta<typeof Reveal3DResources>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -30,65 +35,73 @@ const sdk = createSdkByUrlToken();
 
 export const Main: Story = {
   args: {
-    addModelOptions: {
-      modelId: 2231774635735416,
-      revisionId: 912809199849811
-    },
-    styling: {},
-    transform: new Matrix4().makeTranslation(0, 10, 0)
+    resources: [
+      {
+        modelId: 2231774635735416,
+        revisionId: 912809199849811,
+        styling: {},
+        transform: new Matrix4().makeTranslation(0, 10, 0)
+      }
+    ]
   },
-  render: ({ addModelOptions, transform, styling }) => (
+  render: ({ resources }) => (
     <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
       <RevealCanvas>
-        <Models addModelOptions={addModelOptions} styling={styling} transform={transform} />
+        <Models addOptions={resources[0] as CadModelOptions} />
       </RevealCanvas>
     </RevealContext>
   )
 };
 
-const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
-  const platformModelOptions = addModelOptions;
-
+const Models = ({ addOptions }: { addOptions: CadModelOptions }): JSX.Element => {
   const viewer = useReveal();
 
-  const [platformStyling, setPlatformStyling] = useState<CadModelStyling>();
+  const [platformStyling, setPlatformStyling] = useState<{
+    instanceStyling: InstanceStylingGroup[];
+    defaultStyling: DefaultResourceStyling;
+  }>();
 
-  const { data } = useMappedEdgesForRevisions([platformModelOptions]);
+  const { data } = useFdmMappedEdgesForRevisions([addOptions]);
 
-  const nodeIds = useMemo(
+  const instanceIds = useMemo(
     () =>
       data
-        ?.get(`${platformModelOptions.modelId}/${platformModelOptions.revisionId}`)
-        ?.map((edgeWithNode) => edgeWithNode.edge.properties.revisionNodeId),
+        ?.get(`${addOptions.modelId}/${addOptions.revisionId}`)
+        ?.map((edgeWithNode) => edgeWithNode.edge.startNode) ?? [],
     [data]
   );
 
   useEffect(() => {
     const callback = (): void => {
-      if (platformStyling === undefined || nodeIds === undefined) return;
+      if (platformStyling === undefined) return;
 
-      setPlatformStyling((prev): CadModelStyling | undefined => {
-        if (prev?.groups === undefined) return prev;
+      setPlatformStyling((prev) => {
+        if (prev === undefined) return prev;
 
-        const newNodeIds = getRandomSubset(nodeIds, nodeIds.length * 0.8);
+        const newInstanceIds = getRandomSubset(instanceIds, instanceIds.length * 0.8);
 
         return {
-          groups: [
-            ...prev.groups,
+          ...prev,
+          instanceStyling: [
+            ...prev.instanceStyling,
             {
-              nodeIds: newNodeIds.slice(0, newNodeIds.length / 2),
+              fdmAssetExternalIds: newInstanceIds.slice(0, newInstanceIds.length / 2),
               style: {
-                color: new Color().setFromVector3(
-                  new Vector3(Math.random(), Math.random(), Math.random())
-                ),
-                prioritizedForLoadingHint: 5
+                cad: {
+                  color: new Color().setFromVector3(
+                    new Vector3(Math.random(), Math.random(), Math.random())
+                  ),
+                  prioritizedForLoadingHint: 5
+                }
               }
             }
-          ],
-          defaultStyle: prev.defaultStyle
+          ]
         };
       });
     };
+    useEffect(() => {
+      if (instanceIds === undefined) return;
+    }, [viewer, data]);
 
     viewer.on('click', callback);
     return () => {
@@ -96,33 +109,17 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
     };
   }, [viewer, platformStyling, setPlatformStyling]);
 
-  useEffect(() => {
-    if (nodeIds === undefined) return;
-
-    const stylingGroupRed: NodeStylingGroup = {
-      nodeIds: nodeIds.slice(0, nodeIds.length),
-      style: {
-        color: new Color('red'),
-        renderInFront: true
-      }
-    };
-
-    setPlatformStyling({
-      defaultStyle: DefaultNodeAppearance.Ghosted,
-      groups: [stylingGroupRed]
-    });
-  }, [viewer, data]);
-
-  const onModelLoaded = (model: CogniteCadModel): void => {
-    viewer.fitCameraToModel(model);
+  const onModelLoaded = (): void => {
+    viewer.fitCameraToModel(viewer.models[0]);
   };
 
   return (
     <>
-      <CadModelContainer
-        addModelOptions={platformModelOptions}
-        styling={platformStyling}
-        onLoad={onModelLoaded}
+      <Reveal3DResources
+        resources={[{ ...addOptions }]}
+        instanceStyling={platformStyling?.instanceStyling}
+        defaultResourceStyling={platformStyling?.defaultStyling}
+        onResourcesAdded={onModelLoaded}
       />
     </>
   );

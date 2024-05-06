@@ -33,7 +33,7 @@ export type ModelWithAssetMappings = {
 
 const AssetMappingCacheContext = createContext<AssetMappingCacheContent | undefined>(undefined);
 
-const useAssetMappingCache = (): AssetMappingCache => {
+export const useAssetMappingCache = (): AssetMappingCache => {
   const content = useContext(AssetMappingCacheContext);
 
   if (content === undefined) {

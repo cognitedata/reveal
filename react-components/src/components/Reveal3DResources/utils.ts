@@ -3,18 +3,17 @@
  */
 import { type AddResourceOptions, type AddReveal3DModelOptions } from './types';
 import { isSameModel } from '../../utilities/isSameModel';
-import { StyledAddModelOptions } from './ResourceContainerClass';
 
 export function findNewAndOutdatedResources(
-  newResourceOptions: StyledAddModelOptions[],
-  oldResourceOptions: StyledAddModelOptions[]
-): { newResources: StyledAddModelOptions[]; outdatedResources: StyledAddModelOptions[] } {
+  newResourceOptions: AddResourceOptions[],
+  oldResourceOptions: AddResourceOptions[]
+): { newResources: AddResourceOptions[]; outdatedResources: AddResourceOptions[] } {
   const remainingNewResourceOptions = new Set(newResourceOptions);
   const remainingOldResourceOptions = new Set(oldResourceOptions);
 
   newResourceOptions.forEach((newResource) => {
     oldResourceOptions.some((oldResource) => {
-      const equal = isSameModel(newResource.addOptions, oldResource.addOptions);
+      const equal = isSameModel(newResource, oldResource);
 
       if (equal) {
         remainingNewResourceOptions.delete(newResource);

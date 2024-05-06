@@ -3,22 +3,15 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  CadModelContainer,
-  Image360CollectionContainer,
-  PointCloudContainer,
-  RevealCanvas,
-  RevealContext,
-  RevealToolbar
-} from '../src';
+import { Reveal3DResources, RevealCanvas, RevealContext, RevealToolbar } from '../src';
 import { CogniteClient } from '@cognite/sdk';
-import { Color, Matrix4 } from 'three';
+import { Color, Matrix4, Vector3 } from 'three';
 
 const meta = {
   title: 'Example/Toolbar/LayersContainer',
-  component: CadModelContainer,
+  component: Reveal3DResources,
   tags: ['autodocs']
-} satisfies Meta<typeof CadModelContainer>;
+} satisfies Meta<typeof Reveal3DResources>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -31,27 +24,31 @@ const sdk = new CogniteClient({
   getToken: async () => await Promise.resolve(token)
 });
 
+const cadResource = {
+  modelId: 1791160622840317,
+  revisionId: 498427137020189
+};
+
+const pointCloudResource = {
+  modelId: 3865289545346058,
+  revisionId: 4160448151596909
+};
+
+const image360Resource = { siteId: 'Hibernia_RS2' };
+
 export const Main: Story = {
   args: {
-    addModelOptions: {
-      modelId: 1791160622840317,
-      revisionId: 498427137020189
-    },
-    transform: new Matrix4().makeTranslation(0, 10, 0)
+    resources: [
+      cadResource,
+      { ...cadResource, transform: new Matrix4().makeTranslation(new Vector3(0, 10, 0)) },
+      pointCloudResource,
+      image360Resource
+    ]
   },
-  render: ({ addModelOptions, transform }) => (
+  render: ({ resources }) => (
     <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
       <RevealCanvas>
-        <CadModelContainer addModelOptions={addModelOptions} />
-        <CadModelContainer addModelOptions={addModelOptions} transform={transform} />
-        <PointCloudContainer
-          addModelOptions={{
-            modelId: 3865289545346058,
-            revisionId: 4160448151596909
-          }}
-          transform={new Matrix4()}
-        />
-        <Image360CollectionContainer addImageCollection360Options={{ siteId: 'Hibernia_RS2' }} />
+        <Reveal3DResources resources={resources} />
         <RevealToolbar />
       </RevealCanvas>
     </RevealContext>

@@ -30,7 +30,7 @@ export const use3dNodeByExternalId = ({
       }));
 
       const modelMappings = (
-        await fdmNodeCache.cache.getMappingsForFdmIds([{ externalId, space }], modelsRevisionIds)
+        await fdmNodeCache.getMappingsForFdmIds([{ externalId, space }], modelsRevisionIds)
       ).find((model) => model.mappings.size > 0);
 
       const node3d = modelMappings?.mappings.get(externalId)?.[0];

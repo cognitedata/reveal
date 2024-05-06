@@ -3,7 +3,7 @@ import {
   CognitePointCloudModel,
   PointCloudAppearance
 } from '@cognite/reveal';
-import { StyledPointCloudModelAddOptions } from '../../hooks/useCalculatePointCloudModelsStyling';
+import { StyledPointCloudModelAddOptions } from '../../hooks/calculatePointCloudModelsStyling';
 
 export type AnnotationIdStylingGroup = {
   annotationIds: number[];

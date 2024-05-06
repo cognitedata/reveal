@@ -21,22 +21,22 @@ export type FdmNodeCacheContent = {
 
 export const FdmNodeCacheContext = createContext<FdmNodeCacheContent | undefined>(undefined);
 
-export const useFdmNodeCache = (): FdmNodeCacheContent => {
+export const useFdmNodeCache = (): FdmNodeCache => {
   const content = useContext(FdmNodeCacheContext);
 
   if (content === undefined) {
     throw Error('Must use useNodeCache inside a NodeCacheContext');
   }
 
-  return content;
+  return content.cache;
 };
 
-export const useMappedEdgesForRevisions = (
+export const useFdmMappedEdgesForRevisions = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
   fetchViews = false,
   enabled = true
 ): UseQueryResult<ModelRevisionToEdgeMap> => {
-  const content = useFdmNodeCache();
+  const cache = useFdmNodeCache();
 
   return useQuery(
     [
@@ -45,7 +45,7 @@ export const useMappedEdgesForRevisions = (
       ...modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId.toString()).sort(),
       fetchViews
     ],
-    async () => await content.cache.getAllMappingExternalIds(modelRevisionIds, fetchViews),
+    async () => await cache.getAllMappingExternalIds(modelRevisionIds, fetchViews),
     { staleTime: Infinity, enabled: enabled && modelRevisionIds.length > 0 }
   );
 };
@@ -55,10 +55,10 @@ export const useFdm3dNodeDataPromises = (
   revisionId: number | undefined,
   treeIndex: number | undefined
 ): UseQueryResult<FdmNodeDataPromises> => {
-  const content = useFdmNodeCache();
+  const cache = useFdmNodeCache();
 
   const enableQuery =
-    content !== undefined &&
+    cache !== undefined &&
     modelId !== undefined &&
     revisionId !== undefined &&
     treeIndex !== undefined;
@@ -67,7 +67,7 @@ export const useFdm3dNodeDataPromises = (
     ['reveal', 'react-components', 'tree-index-to-external-id', modelId, revisionId, treeIndex],
     async () => {
       assert(enableQuery);
-      return content.cache.getClosestParentDataPromises(modelId, revisionId, treeIndex);
+      return cache.getClosestParentDataPromises(modelId, revisionId, treeIndex);
     },
     {
       enabled: enableQuery
@@ -81,12 +81,12 @@ export const useFdmAssetMappings = (
   fdmAssetExternalIds: DmsUniqueIdentifier[],
   models: TypedReveal3DModel[]
 ): UseQueryResult<ThreeDModelFdmMappings[]> => {
-  const nodeCacheContent = useFdmNodeCache();
+  const cache = useFdmNodeCache();
 
   return useQuery(
     ['reveal', 'react-components', 'fdm-asset-mappings', fdmAssetExternalIds],
     async () => {
-      return await nodeCacheContent.cache.getMappingsForFdmIds(fdmAssetExternalIds, models);
+      return await cache.getMappingsForFdmIds(fdmAssetExternalIds, models);
     },
     {
       enabled: fdmAssetExternalIds.length > 0 && models.length > 0,

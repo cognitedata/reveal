@@ -69,6 +69,11 @@ export type AssetStylingGroup = {
   };
 };
 
+export type InstanceStylingGroup =
+  | FdmAssetStylingGroup
+  | AssetStylingGroup
+  | Image360AssetStylingGroup;
+
 export type Image360AssetStylingGroup = {
   assetIds: CogniteInternalId[];
   style: { image360: Image360AnnotationAppearance };

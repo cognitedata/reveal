@@ -8,7 +8,7 @@ import {
 } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk/dist/src';
 import { isEqual } from 'lodash';
-import { StyledCadModelAddOptions } from '../../hooks/useCalculateModelsStyling';
+import { StyledCadModelAddOptions } from '../../hooks/calculateCadModelsStyling';
 
 export type NodeStylingGroup = {
   nodeIds: number[];

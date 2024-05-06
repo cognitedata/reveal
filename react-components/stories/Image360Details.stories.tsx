@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Image360CollectionContainer, Image360Details, RevealCanvas, RevealContext } from '../src';
+import { Image360Details, Reveal3DResources, RevealCanvas, RevealContext } from '../src';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { Color } from 'three';
 import { useState } from 'react';
@@ -24,9 +24,9 @@ export const Main: Story = {
     return (
       <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
         <RevealCanvas>
-          <Image360CollectionContainer
-            addImageCollection360Options={{ siteId: 'c_RC_2' }}
-            onLoad={() => {
+          <Reveal3DResources
+            resources={[{ siteId: 'c_RC_2' }]}
+            onResourcesAdded={() => {
               setLoading(false);
             }}
           />
