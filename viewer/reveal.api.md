@@ -445,6 +445,8 @@ export class Cognite3DViewer {
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
     // @beta
     getModelBoundingBox(): THREE.Box3;
+    getNormalizedPixelCoordinates(pixelCoords: THREE.Vector2): THREE.Vector2;
+    getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): THREE.Vector2;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
     getVersion(): string;
     getViewState(): ViewerState;
@@ -1041,15 +1043,6 @@ export type GeometryFilter = {
     boundingBox?: Box3;
     isBoundingBoxInModelCoordinates?: boolean;
 };
-
-// @public
-export function getMousePosition(event: PointerEvent | WheelEvent, target: HTMLElement): {
-    x: number;
-    y: number;
-};
-
-// @public
-export function getMousePositionCoords(event: PointerEvent | WheelEvent, target: HTMLElement): Vector2;
 
 // @public (undocumented)
 export function getNormalizedPixelCoordinates(domElement: HTMLElement, pixelX: number, pixelY: number): THREE.Vector2;

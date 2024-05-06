@@ -75,8 +75,6 @@ export {
   PointerEvents,
   getNormalizedPixelCoordinatesBySize,
   getNormalizedPixelCoordinates,
-  getMousePosition,
-  getMousePositionCoords,
   CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 

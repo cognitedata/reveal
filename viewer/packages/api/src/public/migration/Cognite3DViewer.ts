@@ -23,7 +23,8 @@ import {
   determineCurrentDevice,
   SceneHandler,
   BeforeSceneRenderedDelegate,
-  CustomObjectIntersection
+  CustomObjectIntersection,
+  getPixelCoordinatesFromEvent
 } from '@reveal/utilities';
 
 import { SessionLogger, MetricsLogger } from '@reveal/metrics';
@@ -1481,6 +1482,24 @@ export class Cognite3DViewer {
       this.latestRequestId = requestAnimationFrame(this._boundAnimate);
       this.requestRedraw();
     }
+  }
+
+  /**
+   * Converts a pixel coordinate to normalized device coordinate (in range [-1, 1])
+   * @param pixelCoords A Vector2 containing pixel coordinates relative to the 3D viewer.
+   * @returns A Vector2 containing the normalized device coordinate (in range [-1, 1])
+   */
+  getNormalizedPixelCoordinates(pixelCoords: THREE.Vector2): THREE.Vector2 {
+    return getNormalizedPixelCoordinates(this.domElement, pixelCoords.x, pixelCoords.y);
+  }
+
+  /**
+   * Determines clicked or touched pixel coordinate as offset.
+   * @param event An PointerEvent or WheelEvent.
+   * @returns A Vector2 containing pixel coordinates relative to the 3D viewer.
+   */
+  getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): THREE.Vector2 {
+    return getPixelCoordinatesFromEvent(event, this.domElement);
   }
 
   /**

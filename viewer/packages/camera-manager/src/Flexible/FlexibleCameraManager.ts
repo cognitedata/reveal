@@ -14,7 +14,7 @@ import {
   getNormalizedPixelCoordinates,
   PointerEventsTarget,
   PointerEvents,
-  getMousePositionCoords
+  getPixelCoordinatesFromEvent
 } from '@reveal/utilities';
 
 import { CameraEventDelegate, CameraManagerCallbackData, CameraManagerEventType, CameraState } from './../types';
@@ -245,7 +245,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     if (this.options.mouseClickType === FlexibleMouseActionType.None) {
       return;
     }
-    const position = getMousePositionCoords(event, this.domElement);
+    const position = getPixelCoordinatesFromEvent(event, this.domElement);
     await this.mouseAction(position, this.options.mouseClickType);
   }
 
@@ -256,7 +256,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     if (this.options.mouseClickType === FlexibleMouseActionType.None) {
       return;
     }
-    const position = getMousePositionCoords(event, this.domElement);
+    const position = getPixelCoordinatesFromEvent(event, this.domElement);
     await this.mouseAction(position, this.options.mouseDoubleClickType);
   }
 

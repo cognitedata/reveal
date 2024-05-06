@@ -14,7 +14,7 @@ import {
   Vector3
 } from 'three';
 import Keyboard from '../Keyboard';
-import { getNormalizedPixelCoordinates, getMousePositionCoords, getWheelEventDelta } from '@reveal/utilities';
+import { getNormalizedPixelCoordinates, getPixelCoordinatesFromEvent, getWheelEventDelta } from '@reveal/utilities';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
@@ -414,7 +414,7 @@ export class FlexibleControls {
     }
     this._cameraVector.synchronizeEnd();
     if (isMouse(event)) {
-      const position = getMousePositionCoords(event, this._domElement);
+      const position = getPixelCoordinatesFromEvent(event, this._domElement);
       this._mouseDragInfo = new MouseDragInfo(position);
     } else if (isTouch(event)) {
       this.updateTouchEvents(event);
@@ -426,7 +426,7 @@ export class FlexibleControls {
     if (!this._mouseDragInfo || !this.isEnabled || !isMouse(event)) {
       return;
     }
-    const position = getMousePositionCoords(event, this._domElement);
+    const position = getPixelCoordinatesFromEvent(event, this._domElement);
     const deltaPosition = position.clone().sub(this._mouseDragInfo.prevPosition);
     if (deltaPosition.x == 0 && deltaPosition.y == 0) {
       return;
@@ -503,7 +503,7 @@ export class FlexibleControls {
     }
     event.preventDefault();
 
-    const pixelCoords = getMousePositionCoords(event, this._domElement);
+    const pixelCoords = getPixelCoordinatesFromEvent(event, this._domElement);
 
     await this.setScrollCursorByWheelEventCoords(pixelCoords);
 
@@ -656,7 +656,7 @@ export class FlexibleControls {
   }
 
   private startTouchRotation(initialEvent: PointerEvent) {
-    let prevPosition = getMousePositionCoords(initialEvent, this._domElement);
+    let prevPosition = getPixelCoordinatesFromEvent(initialEvent, this._domElement);
 
     const isOk = () => this.touchEventsCount === 1;
 
@@ -666,7 +666,7 @@ export class FlexibleControls {
         removeEventListeners();
         return;
       }
-      const position = getMousePositionCoords(event, this._domElement);
+      const position = getPixelCoordinatesFromEvent(event, this._domElement);
       this.rotate(new Vector2().subVectors(position, prevPosition));
       prevPosition = position;
     };
@@ -986,7 +986,7 @@ function getPinchInfo(domElement: HTMLElement, touches: PointerEvent[]) {
   if (touches.length !== 2) {
     throw new Error('getPinchInfo only works if touches.length === 2');
   }
-  const positions = touches.map(event => getMousePositionCoords(event, domElement));
+  const positions = touches.map(event => getPixelCoordinatesFromEvent(event, domElement));
   const center = new Vector2().addVectors(positions[0], positions[1]).multiplyScalar(0.5);
   const distance = positions[0].distanceTo(positions[1]);
   return { center, distance };

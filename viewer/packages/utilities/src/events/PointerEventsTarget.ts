@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { getMousePositionCoords } from './getMousePosition';
+import { getPixelCoordinatesFromEvent } from './getPixelCoordinatesFromEvent';
 import debounce from 'lodash/debounce';
 import { Vector2, MOUSE } from 'three';
 import { PointerEvents } from './PointerEvents';
@@ -83,7 +83,7 @@ export class PointerEventsTarget {
 
     const leftButton = isTouch(event) || isLeftMouseButton(event);
 
-    this._downPosition = getMousePositionCoords(event, this._domElement);
+    this._downPosition = getPixelCoordinatesFromEvent(event, this._domElement);
     this._prevDownTimestamp = this._lastDownTimestamp;
     this._lastDownTimestamp = event.timeStamp;
     this._clickCounter++;
@@ -163,7 +163,7 @@ export class PointerEventsTarget {
     if (clickDuration >= MAX_CLICK_DURATION) {
       return false;
     }
-    const position = getMousePositionCoords(event, this._domElement);
+    const position = getPixelCoordinatesFromEvent(event, this._domElement);
     const distance = position.distanceTo(this._downPosition);
     return distance < MAX_MOVE_DISTANCE;
   }

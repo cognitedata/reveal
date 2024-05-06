@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { getMousePosition } from './getMousePosition';
+import { getPixelCoordinatesFromEvent } from './getPixelCoordinatesFromEvent';
 import { EventTrigger } from './EventTrigger';
 import { assertNever } from '../assertNever';
 import { PointerEventDelegate } from './types';
@@ -81,7 +81,7 @@ export class InputHandler extends PointerEvents {
   //================================================
 
   override async onClick(event: PointerEvent): Promise<void> {
-    const position = getMousePosition(event, this._domElement);
+    const position = getPixelCoordinatesFromEvent(event, this._domElement);
     const firedEvent = {
       offsetX: position.x,
       offsetY: position.y,
@@ -92,7 +92,7 @@ export class InputHandler extends PointerEvents {
   }
 
   override onHover(event: PointerEvent): void {
-    const position = getMousePosition(event, this._domElement);
+    const position = getPixelCoordinatesFromEvent(event, this._domElement);
     const firedEvent = {
       offsetX: position.x,
       offsetY: position.y

@@ -13,7 +13,7 @@ export { InputHandler } from './src/events/InputHandler';
 export { PointerEvents } from './src/events/PointerEvents';
 export { PointerEventsTarget } from './src/events/PointerEventsTarget';
 export { disposeOfAllEventListeners } from './src/events/disposeOfAllEventListeners';
-export { getMousePosition, getMousePositionCoords } from './src/events/getMousePosition';
+export { getPixelCoordinatesFromEvent } from './src/events/getPixelCoordinatesFromEvent';
 export { getWheelEventDelta } from './src/events/getWheelEventDelta';
 export {
   DisposedDelegate,

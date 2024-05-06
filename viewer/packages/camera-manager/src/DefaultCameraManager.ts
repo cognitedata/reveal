@@ -28,7 +28,7 @@ import {
   PointerEventDelegate,
   PointerEventData,
   fitCameraToBoundingBox,
-  getMousePosition
+  getPixelCoordinatesFromEvent
 } from '@reveal/utilities';
 
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
@@ -572,10 +572,10 @@ export class DefaultCameraManager implements CameraManager {
       // Added because cameraControls are disabled when doing picking, so
       // preventDefault could be not called on wheel event and produce unwanted scrolling.
       event.preventDefault();
-      const position = getMousePosition(event, this._domElement);
+      const position = getPixelCoordinatesFromEvent(event, this._domElement);
 
       const currentTime = performance.now();
-      const currentMousePosition = new THREE.Vector2(position.x, position.y);
+      const currentMousePosition = position;
 
       const onWheelTimeDelta = currentTime - lastWheelEventTime;
 
