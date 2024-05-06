@@ -1485,9 +1485,9 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Converts a pixel coordinate to normalized device coordinate (in range [-1, 1])
+   * Converts a pixel coordinate to normalized device coordinate (in range [-1, 1]).
    * @param pixelCoords A Vector2 containing pixel coordinates relative to the 3D viewer.
-   * @returns A Vector2 containing the normalized device coordinate (in range [-1, 1])
+   * @returns A Vector2 containing the normalized device coordinate (in range [-1, 1]).
    */
   getNormalizedPixelCoordinates(pixelCoords: THREE.Vector2): THREE.Vector2 {
     return getNormalizedPixelCoordinates(this.domElement, pixelCoords.x, pixelCoords.y);
