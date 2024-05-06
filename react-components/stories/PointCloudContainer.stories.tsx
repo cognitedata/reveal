@@ -12,7 +12,7 @@ import {
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { PropsWithChildren } from 'react';
-import { ResourceContainerClass } from '../src/components/Reveal3DResources/ResourceContainerClass';
+import { ResourceUpdater } from '../src/components/Reveal3DResources/ResourceUpdater';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/PointCloudContainer',

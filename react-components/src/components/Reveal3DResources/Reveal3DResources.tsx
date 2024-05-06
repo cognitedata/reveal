@@ -4,7 +4,7 @@
 import { useRef, type ReactElement, useEffect } from 'react';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type AddResourceOptions, type Reveal3DResourcesProps } from './types';
-import { ResourceContainerClass } from './ResourceContainerClass';
+import { ResourceUpdater } from './ResourceUpdater';
 import { useSDK } from '../RevealCanvas/SDKProvider';
 import { is360ImageCollectionOptions } from '../../utilities/isSameModel';
 import { useFdmNodeCache } from '../CacheProvider/NodeCacheProvider';
@@ -44,8 +44,8 @@ export const Reveal3DResources = ({
   const assetMappingCache = useAssetMappingCache();
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
-  const revealHandler = useRef<ResourceContainerClass>(
-    new ResourceContainerClass(
+  const revealHandler = useRef<ResourceUpdater>(
+    new ResourceUpdater(
       viewer,
       sdk,
       fdmNodeCache,

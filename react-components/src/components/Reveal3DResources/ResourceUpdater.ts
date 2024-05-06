@@ -7,20 +7,14 @@ import {
   type Cognite3DViewer,
   CognitePointCloudModel,
   CogniteCadModel,
-  Image360EnteredDelegate,
-  Image360AnnotationAppearance,
-  Image360,
-  Image360Revision,
-  AddModelOptions
+  Image360AnnotationAppearance
 } from '@cognite/reveal';
 import {
   AddImageCollection360Options,
   AddResourceOptions,
   AddReveal3DModelOptions,
-  CadModelOptions,
   DefaultResourceStyling,
-  InstanceStylingGroup,
-  TaggedAdd3DModelOptions
+  InstanceStylingGroup
 } from './types';
 import { findNewAndOutdatedResources, is3dModelOptions } from './utils';
 import {
@@ -30,7 +24,7 @@ import {
 } from '../../utilities/isSameModel';
 import assert from 'assert';
 import { applyCadStyling } from './applyCadStyling';
-import { AnnotationsCogniteAnnotationTypesImagesAssetLink, CogniteClient } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import {
   StyledCadModelAddOptions,
   calculateCadStyling
@@ -45,11 +39,11 @@ import { FdmNodeCache } from '../CacheProvider/FdmNodeCache';
 import { AssetMappingCache } from '../CacheProvider/AssetMappingCache';
 import {
   isAssetMappingStylingGroup,
-  isCadAssetMappingStylingGroup,
-  isImage360AssetStylingGroup
+  isCadAssetMappingStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
 import { Matrix4 } from 'three';
+import { Image360StylingHandler } from './Image360StylingHandler';
 
 export type Image360AnnotationStyleGroup = {
   assetIds: number[];
@@ -80,7 +74,7 @@ export type Image360AddOptionsWithModel = {
   model: Image360Collection;
 };
 
-type AddOptionsWithModel =
+export type AddOptionsWithModel =
   | CadAddOptionsWithModel
   | PointCloudAddOptionsWithModel
   | Image360AddOptionsWithModel;
@@ -90,15 +84,10 @@ export type StyledAddModelOptions =
   | StyledPointCloudModelAddOptions
   | StyledImage360CollectionAddOptions;
 
-export class ResourceContainerClass {
+export class ResourceUpdater {
   private _pendingModelsPromise: Promise<Array<AddOptionsWithModel>> = Promise.resolve([]);
 
   private _runningCounter: number = 0;
-
-  private readonly _previousImage360StylingCallbacks = new Map<
-    string,
-    (image: Image360, imageRevision: Image360Revision) => void
-  >();
 
   private readonly _viewer: Cognite3DViewer;
   private readonly _client: CogniteClient;
@@ -109,6 +98,8 @@ export class ResourceContainerClass {
 
   private _instanceStyling: InstanceStylingGroup[] = [];
   private _defaultResourceStyling: DefaultResourceStyling = {};
+
+  private _image360StylingHandler: Image360StylingHandler;
 
   private readonly _onModelLoaded: (() => void) | undefined;
   private readonly _onModelLoadedError:
@@ -131,6 +122,7 @@ export class ResourceContainerClass {
     this._pointCloudAnnotationCache = pointCloudAnnotationCache;
     this._onModelLoaded = onModelLoaded;
     this._onModelLoadedError = onModelLoadedError;
+    this._image360StylingHandler = new Image360StylingHandler(this._viewer);
   }
 
   public async sync(modelAddOptions: AddResourceOptions[]): Promise<void> {
@@ -174,6 +166,8 @@ export class ResourceContainerClass {
     this._defaultResourceStyling = defaultStyling;
     this._instanceStyling = instanceStyling;
 
+    this._image360StylingHandler.setCommonStyling(defaultStyling.image360, instanceStyling);
+
     const models = await this._pendingModelsPromise;
     models.forEach((model) => this.applyStylingAndTransform(model));
   }
@@ -201,24 +195,9 @@ export class ResourceContainerClass {
   ): Promise<AddOptionsWithModel[]> {
     const allModels = (await Promise.all(newModelPromises)).concat(keptModels);
 
-    this.removeAllImage360Callbacks(allModels);
+    await this._image360StylingHandler.setCollections(allModels);
     allModels.forEach((model) => this.applyStylingAndTransform(model));
-
     return allModels;
-  }
-
-  private removeAllImage360Callbacks(newModels: AddOptionsWithModel[]) {
-    const collections = newModels.filter((model): model is Image360AddOptionsWithModel =>
-      is360ImageCollectionOptions(model.addOptions)
-    );
-    collections.forEach((collection) => {
-      const prevCallback = this._previousImage360StylingCallbacks.get(collection.model.id);
-      if (prevCallback !== undefined) {
-        collection.model.off('image360Entered', prevCallback);
-      }
-    });
-
-    this._previousImage360StylingCallbacks.clear();
   }
 
   private removeResources(
@@ -287,12 +266,6 @@ export class ResourceContainerClass {
     });
   }
 
-  private compute360ImageStyleGroups(): Image360AnnotationStyleGroup[] {
-    return this._instanceStyling?.filter(isImage360AssetStylingGroup).map((group) => {
-      return { assetIds: group.assetIds, style: group.style.image360 };
-    });
-  }
-
   private async applyStylingAndTransform(model: AddOptionsWithModel): Promise<void> {
     if (model.type === 'cad') {
       if (!modelExists(model.model, this._viewer)) {
@@ -307,54 +280,11 @@ export class ResourceContainerClass {
       const [styling] = await this.computePointCloudModelsStyling([model.model]);
       applyPointCloudStyling(model.model, styling);
     } else {
-      await this.update360ImageStylingCallback(model.model, this.compute360ImageStyleGroups());
+      await this._image360StylingHandler.update360ImageStylingCallback(model.model);
     }
 
     const matrix = model.addOptions.transform ?? new Matrix4();
     model.model.setModelTransformation(matrix);
-  }
-
-  private async update360ImageStylingCallback(
-    collection: Image360Collection,
-    styleGroups: Image360AnnotationStyleGroup[]
-  ): Promise<void> {
-    const collectionStyleGroupsWithSet = styleGroups.map((group) => ({
-      styling: group.style,
-      assetIdSet: new Set(group.assetIds)
-    }));
-
-    const newStylingCallback: Image360EnteredDelegate = async (_image, imageRevision) => {
-      const annotations = await imageRevision.getAnnotations();
-      annotations.forEach((annotation) => {
-        annotation.setColor(this._defaultResourceStyling.image360?.default.color);
-        annotation.setVisible(this._defaultResourceStyling.image360?.default.visible);
-
-        const assetRefId = (
-          annotation.annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink
-        )?.assetRef?.id;
-
-        if (assetRefId === undefined) {
-          return;
-        }
-
-        collectionStyleGroupsWithSet.forEach((groupWithSets) => {
-          if (assetRefId !== undefined && groupWithSets.assetIdSet.has(assetRefId)) {
-            if (groupWithSets.styling.color !== undefined) {
-              annotation.setColor(groupWithSets.styling.color);
-            }
-
-            if (groupWithSets.styling.visible !== undefined) {
-              annotation.setVisible(groupWithSets.styling.visible);
-            }
-          }
-        });
-      });
-    };
-
-    collection.on('image360Entered', newStylingCallback);
-
-    const collectionId = collection.id;
-    this._previousImage360StylingCallbacks.set(collectionId, newStylingCallback);
   }
 
   private async computeCadModelsStyling(
