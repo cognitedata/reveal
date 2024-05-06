@@ -6,7 +6,7 @@ import {
   type CognitePointCloudModel,
   type PointCloudAppearance
 } from '@cognite/reveal';
-import { type StyledPointCloudModelAddOptions } from '../../hooks/calculatePointCloudModelsStyling';
+import { type StyledPointCloudModelAddOptions } from './calculatePointCloudModelsStyling';
 
 export type AnnotationIdStylingGroup = {
   annotationIds: number[];

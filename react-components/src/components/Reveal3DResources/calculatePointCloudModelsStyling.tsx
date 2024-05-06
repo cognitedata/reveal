@@ -10,15 +10,12 @@ import {
   type DefaultResourceStyling,
   type PointCloudModelOptions,
   type AssetStylingGroup
-} from '../components/Reveal3DResources/types';
-import { type AnnotationIdStylingGroup } from '../components/Reveal3DResources/applyPointCloudStyling';
-import { isSame3dModel } from '../utilities/isSameModel';
-import { EMPTY_ARRAY } from '../utilities/constants';
-import {
-  type AnnotationId,
-  type PointCloudAnnotationModel
-} from '../components/CacheProvider/types';
-import { type PointCloudAnnotationCache } from '../components/CacheProvider/PointCloudAnnotationCache';
+} from './types';
+import { type AnnotationIdStylingGroup } from './applyPointCloudStyling';
+import { isSame3dModel } from '../../utilities/isSameModel';
+import { EMPTY_ARRAY } from '../../utilities/constants';
+import { type AnnotationId, type PointCloudAnnotationModel } from '../CacheProvider/types';
+import { type PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
 
 export type StyledPointCloudModelAddOptions = {
   addOptions: PointCloudModelOptions;

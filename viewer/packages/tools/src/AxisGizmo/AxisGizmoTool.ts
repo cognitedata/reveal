@@ -7,10 +7,10 @@ import { AxisGizmoOptions } from './AxisGizmoOptions';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@reveal/utilities';
 import { Cognite3DViewer } from '@reveal/api';
 import { OneGizmoAxis } from './OneGizmoAxis';
-import { asFlexibleCameraManager } from '@reveal/camera-manager';
 import { moveCameraTo } from '../utilities/moveCameraTo';
 import { Corner } from '../utilities/Corner';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
+import { isFlexibleCameraManager } from '@reveal/camera-manager/src/Flexible/IFlexibleCameraManager';
 
 /**
  * Class for axis gizmo like the one in Blender
@@ -132,9 +132,8 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     upAxis.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
     const cameraManager = this._viewer.cameraManager;
-    const flexibleCameraManager = asFlexibleCameraManager(cameraManager);
-    if (flexibleCameraManager) {
-      flexibleCameraManager.rotateCameraTo(forward.negate(), this._options.animationDuration);
+    if (isFlexibleCameraManager(cameraManager)) {
+      cameraManager.rotateCameraTo(forward.negate(), this._options.animationDuration);
     } else {
       moveCameraTo(this._viewer.cameraManager, forward, upAxis, this._options.animationDuration);
     }

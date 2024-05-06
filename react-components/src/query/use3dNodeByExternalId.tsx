@@ -14,9 +14,9 @@ export const use3dNodeByExternalId = ({
   const viewer = useReveal();
   const fdmNodeCache = useFdmNodeCache();
 
-  return useQuery(
-    ['reveal', 'react-components', '3dNodeByExternalId', externalId, space],
-    async () => {
+  return useQuery({
+    queryKey: ['reveal', 'react-components', '3dNodeByExternalId', externalId, space],
+    queryFn: async () => {
       if (externalId === undefined || space === undefined) {
         await Promise.reject(
           new Error(`No externalId and space provided to use3dNodeByExternalId hook`)
@@ -44,5 +44,5 @@ export const use3dNodeByExternalId = ({
 
       return node3d;
     }
-  );
+  });
 };

@@ -8,11 +8,11 @@ import {
   type NodeCollection,
   NodeIdNodeCollection,
   TreeIndexNodeCollection,
-  Cognite3DViewer
+  type Cognite3DViewer
 } from '@cognite/reveal';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { isEqual } from 'lodash';
-import { type StyledCadModelAddOptions } from '../../hooks/calculateCadModelsStyling';
+import { type StyledCadModelAddOptions } from './calculateCadModelsStyling';
 import { modelExists } from '../../utilities/modelExists';
 
 export type NodeStylingGroup = {
@@ -42,7 +42,6 @@ export async function applyCadStyling(
 
   const stylingGroups = addOptions.styleGroups;
   const firstChangeIndex = await getFirstChangeIndex();
-  console.log('Setting default node appearance: ', addOptions.defaultStyle);
   model.setDefaultNodeAppearance(addOptions.defaultStyle);
 
   for (let i = firstChangeIndex; i < model.styledNodeCollections.length; i++) {

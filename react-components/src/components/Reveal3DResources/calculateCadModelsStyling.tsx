@@ -6,33 +6,30 @@ import {
   type AssetStylingGroup,
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
-} from '../components/Reveal3DResources/types';
+} from './types';
 import {
   NumericRange,
   type NodeAppearance,
   IndexSet,
   DefaultNodeAppearance
 } from '@cognite/reveal';
-import { type ThreeDModelFdmMappings } from './types';
+import { type ThreeDModelFdmMappings } from '../../hooks/types';
 import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 import {
   type NodeId,
   type FdmEdgeWithNode,
   type AssetId,
   type ModelRevisionAssetNodesResult
-} from '../components/CacheProvider/types';
-import {
-  type AssetMappingCache,
-  type AssetMapping
-} from '../components/CacheProvider/AssetMappingCache';
+} from '../CacheProvider/types';
+import { type AssetMappingCache, type AssetMapping } from '../CacheProvider/AssetMappingCache';
 
-import { isSame3dModel } from '../utilities/isSameModel';
-import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
+import { isSame3dModel } from '../../utilities/isSameModel';
 import {
-  type NodeStylingGroup,
-  type TreeIndexStylingGroup
-} from '../components/Reveal3DResources/applyCadStyling';
-import { type FdmNodeCache } from '../components/CacheProvider/FdmNodeCache';
+  isAssetMappingStylingGroup,
+  isFdmAssetStylingGroup
+} from '../../utilities/StylingGroupUtils';
+import { type NodeStylingGroup, type TreeIndexStylingGroup } from './applyCadStyling';
+import { type FdmNodeCache } from '../CacheProvider/FdmNodeCache';
 
 type ModelStyleGroup = {
   model: AddReveal3DModelOptions;

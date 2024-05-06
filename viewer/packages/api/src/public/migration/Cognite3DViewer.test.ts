@@ -12,19 +12,17 @@ import { Cognite3DViewer } from './Cognite3DViewer';
 import nock from 'nock';
 import { Mock } from 'moq.ts';
 import { BeforeSceneRenderedDelegate, CustomObject, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
-import { createGlContext, mockClientAuthentication } from '../../../../../test-utilities';
+import { mockClientAuthentication, autoMockWebGLRenderer } from '../../../../../test-utilities';
 
 import { jest } from '@jest/globals';
 
 const sceneJson = (await import('./Cognite3DViewer.test-scene.json.json', { assert: { type: 'json' } })).default;
 
-const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
-
 describe('Cognite3DViewer', () => {
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest', project: 'dummy', getToken: async () => 'dummy' });
   mockClientAuthentication(sdk);
 
-  const renderer = new THREE.WebGLRenderer({ context });
+  const renderer = autoMockWebGLRenderer(new Mock<THREE.WebGLRenderer>()).object();
   renderer.render = jest.fn();
   const _sectorCuller = new Mock<SectorCuller>()
     .setup(p => p.dispose)

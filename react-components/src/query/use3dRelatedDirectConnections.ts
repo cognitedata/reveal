@@ -13,9 +13,9 @@ export function use3dRelatedDirectConnections(
 ): UseQueryResult<FdmInstanceWithView[]> {
   const fdmSdk = useFdmSdk();
 
-  return useQuery(
-    ['reveal-react-components', 'get-3d-related-direct-connections'],
-    async () => {
+  return useQuery({
+    queryKey: ['reveal-react-components', 'get-3d-related-direct-connections'],
+    queryFn: async () => {
       assert(instance !== undefined);
       const views = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
@@ -78,10 +78,8 @@ export function use3dRelatedDirectConnections(
         view
       }));
     },
-    {
-      enabled: instance !== undefined
-    }
-  );
+    enabled: instance !== undefined
+  });
 }
 
 type ViewKey = `${string}/${string}/${string}`;

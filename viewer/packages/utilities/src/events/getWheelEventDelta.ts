@@ -4,7 +4,11 @@
 
 const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 
-export function getWheelDelta(event: WheelEvent): number {
+/**
+ * Determines hove many deltas the whell has been scrolled.
+ * @param event     An WheelEvent
+ */
+export function getWheelEventDelta(event: WheelEvent): number {
   // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
   if (event.wheelDelta) {
     // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9

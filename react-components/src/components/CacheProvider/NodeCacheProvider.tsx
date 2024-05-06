@@ -38,16 +38,17 @@ export const useFdmMappedEdgesForRevisions = (
 ): UseQueryResult<ModelRevisionToEdgeMap> => {
   const cache = useFdmNodeCache();
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'reveal',
       'react-components',
       ...modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId.toString()).sort(),
       fetchViews
     ],
-    async () => await cache.getAllMappingExternalIds(modelRevisionIds, fetchViews),
-    { staleTime: Infinity, enabled: enabled && modelRevisionIds.length > 0 }
-  );
+    queryFn: async () => await cache.getAllMappingExternalIds(modelRevisionIds, fetchViews),
+    staleTime: Infinity,
+    enabled: enabled && modelRevisionIds.length > 0
+  });
 };
 
 export const useFdm3dNodeDataPromises = (
@@ -63,16 +64,22 @@ export const useFdm3dNodeDataPromises = (
     revisionId !== undefined &&
     treeIndex !== undefined;
 
-  const result = useQuery(
-    ['reveal', 'react-components', 'tree-index-to-external-id', modelId, revisionId, treeIndex],
-    async () => {
+  const result = useQuery({
+    queryKey: [
+      'reveal',
+      'react-components',
+      'tree-index-to-external-id',
+      modelId,
+      revisionId,
+      treeIndex
+    ],
+    queryFn: async () => {
       assert(enableQuery);
       return cache.getClosestParentDataPromises(modelId, revisionId, treeIndex);
     },
-    {
-      enabled: enableQuery
-    }
-  );
+
+    enabled: enableQuery
+  });
 
   return result;
 };
@@ -83,16 +90,14 @@ export const useFdmAssetMappings = (
 ): UseQueryResult<ThreeDModelFdmMappings[]> => {
   const cache = useFdmNodeCache();
 
-  return useQuery(
-    ['reveal', 'react-components', 'fdm-asset-mappings', fdmAssetExternalIds],
-    async () => {
+  return useQuery({
+    queryKey: ['reveal', 'react-components', 'fdm-asset-mappings', fdmAssetExternalIds],
+    queryFn: async () => {
       return await cache.getMappingsForFdmIds(fdmAssetExternalIds, models);
     },
-    {
-      enabled: fdmAssetExternalIds.length > 0 && models.length > 0,
-      staleTime: DEFAULT_QUERY_STALE_TIME
-    }
-  );
+    enabled: fdmAssetExternalIds.length > 0 && models.length > 0,
+    staleTime: DEFAULT_QUERY_STALE_TIME
+  });
 };
 
 export function NodeCacheProvider({ children }: { children?: ReactNode }): ReactElement {

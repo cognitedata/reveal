@@ -114,7 +114,7 @@ export class NodeAppearanceTextureBuilder {
     this._needsUpdate = false;
   }
 
-  private populateTexture(rgbaBuffer: Uint8ClampedArray) {
+  private populateTexture(rgbaBuffer: Uint8Array | Uint8ClampedArray) {
     // Fill texture with default style
     rgbaBuffer.set(this._overrideColorDefaultAppearanceRgba); // Note! This is basically memcpy(), i.e. fast
 
@@ -127,7 +127,7 @@ export class NodeAppearanceTextureBuilder {
     this._overrideColorPerTreeIndexTexture.needsUpdate = true;
   }
 
-  private populateNodeSets(rgbaBuffer: Uint8ClampedArray) {
+  private populateNodeSets(rgbaBuffer: Uint8Array | Uint8ClampedArray) {
     this._regularNodesTreeIndices.clear();
     this._infrontNodesTreeIndices.clear();
     this._ghostedNodesTreeIndices.clear();
@@ -243,7 +243,7 @@ function fillRGBA(rgbaBuffer: Uint8ClampedArray, style: NodeAppearance) {
   }
 }
 
-function combineRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style: NodeAppearance) {
+function combineRGBA(rgbaBuffer: Uint8Array | Uint8ClampedArray, treeIndices: IndexSet, style: NodeAppearance) {
   const [r, g, b, a] = appearanceToColorOverride(style);
   // Create a bit mask for updating color (update if style contains color, don't update if it doesn't)
   const updateRgbBitmask = style.color === undefined ? 0 : 0b11111111;

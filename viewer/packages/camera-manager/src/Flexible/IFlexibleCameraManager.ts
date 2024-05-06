@@ -49,10 +49,61 @@ export interface IFlexibleCameraManager extends CameraManager {
    * @param callback - The callback function to be removed from the controls type change listeners.
    */
   removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
+
+  /**
+   * Called when a click event is triggered
+   * @beta
+   */
+  onClick(event: PointerEvent): Promise<void>;
+
+  /**
+   * Called when double click event is triggered
+   * @beta
+   */
+  onDoubleClick(event: PointerEvent): Promise<void>;
+
+  /**
+   * Called when pointer is pressed
+   * @beta
+   */
+  onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void>;
+
+  /**
+   * Called when pointer is dragged
+   * @beta
+   */
+  onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void>;
+
+  /**
+   * Called when pointer is released
+   * @beta
+   */
+  onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void>;
+  /**
+   * Called when wheel event is triggered
+   * @beta
+   */
+  onWheel(event: WheelEvent): Promise<void>;
+
+  /**
+   * Called when a key is pressed or released
+   * @beta
+   */
+  onKey(event: KeyboardEvent, down: boolean): void;
+
+  /**
+   * Called when focus is changed
+   * @beta
+   */
+  onFocusChanged(haveFocus: boolean): void;
 }
 
-export function asFlexibleCameraManager(manager: CameraManager): IFlexibleCameraManager | undefined {
+/**
+ * Check id the CameraManager is a IFlexibleCameraManager
+ * @beta
+ */
+export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager {
   // instanceof don't work within React, so using safeguarding
   const flexibleCameraManager = manager as IFlexibleCameraManager;
-  return flexibleCameraManager.controlsType === undefined ? undefined : flexibleCameraManager;
+  return flexibleCameraManager.controlsType !== undefined;
 }

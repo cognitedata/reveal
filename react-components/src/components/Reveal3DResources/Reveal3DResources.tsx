@@ -6,7 +6,6 @@ import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type AddResourceOptions, type Reveal3DResourcesProps } from './types';
 import { ResourceUpdater } from './ResourceUpdater';
 import { useSDK } from '../RevealCanvas/SDKProvider';
-import { is360ImageCollectionOptions } from '../../utilities/isSameModel';
 import { useFdmNodeCache } from '../CacheProvider/NodeCacheProvider';
 import { useAssetMappingCache } from '../CacheProvider/AssetMappingCacheProvider';
 import { usePointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCacheProvider';
@@ -57,10 +56,7 @@ export const Reveal3DResources = ({
   );
   const numModelsLoaded = useRef(0);
 
-  const image360CollectionAddOptions = resources.filter(is360ImageCollectionOptions);
-
   useEffect(() => {
-    console.log('Updating styling!');
     void revealHandler.current.updateCommonStyling(
       instanceStyling ?? [],
       defaultResourceStyling ?? {}
@@ -68,7 +64,6 @@ export const Reveal3DResources = ({
   }, [defaultResourceStyling, instanceStyling]);
 
   useEffect(() => {
-    console.log('Updating models!');
     void revealHandler.current.updateModels(resources);
   }, [resources]);
 

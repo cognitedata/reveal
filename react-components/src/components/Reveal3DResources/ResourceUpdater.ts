@@ -25,14 +25,11 @@ import {
 import assert from 'assert';
 import { applyCadStyling } from './applyCadStyling';
 import { type CogniteClient } from '@cognite/sdk';
-import {
-  type StyledCadModelAddOptions,
-  calculateCadStyling
-} from '../../hooks/calculateCadModelsStyling';
+import { type StyledCadModelAddOptions, calculateCadStyling } from './calculateCadModelsStyling';
 import {
   type StyledPointCloudModelAddOptions,
   calculatePointCloudStyling
-} from '../../hooks/calculatePointCloudModelsStyling';
+} from './calculatePointCloudModelsStyling';
 import { applyPointCloudStyling } from './applyPointCloudStyling';
 import { image360CollectionExists, modelExists } from '../../utilities/modelExists';
 import { type FdmNodeCache } from '../CacheProvider/FdmNodeCache';

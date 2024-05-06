@@ -4,7 +4,7 @@
 // TODO 2021-11-08 larsmoa: Enable explicit-module-boundary-types for ComboControls
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-import { clickOrTouchEventOffset } from '@reveal/utilities';
+import { clickOrTouchEventOffset, getWheelEventDelta } from '@reveal/utilities';
 import remove from 'lodash/remove';
 import {
   EventDispatcher,
@@ -22,7 +22,6 @@ import Keyboard from './Keyboard';
 import clamp from 'lodash/clamp';
 import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
-import { getWheelDelta } from './utils/getWheelDelta';
 
 const TARGET_FPS = 30;
 
@@ -71,7 +70,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this._camera = camera;
     this._reusableCamera = camera.clone() as typeof camera;
     this._domElement = domElement;
-    this._keyboard = new Keyboard(this._domElement);
+    this._keyboard = new Keyboard();
 
     // rotation
     this._spherical.setFromVector3(camera.position);
@@ -80,9 +79,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
     this.dispose = () => {
       this.removeEventListeners();
-
-      // Dispose all keyboard events registered. REV-461!
-      this._keyboard.dispose();
     };
   }
 
@@ -334,7 +330,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     event.preventDefault();
 
-    const delta = getWheelDelta(event);
+    const delta = getWheelEventDelta(event);
     const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
 
     const pixelCoordinates = getNormalizedPixelCoordinates(
@@ -374,7 +370,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   };
 
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
-    this._keyboard.isEnabled = true;
     if (event.type === 'focus') {
       this._keyboard.clearPressedKeys();
     }
@@ -392,6 +387,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   //================================================
 
   private addEventListeners() {
+    this._keyboard.addEventListeners(this._domElement);
     this._domElement.addEventListener('pointerdown', this.onPointerDown);
     this._domElement.addEventListener('wheel', event => this.onMouseWheel(event));
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
@@ -405,6 +401,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   }
 
   private removeEventListeners() {
+    this._keyboard.removeEventListeners(this._domElement);
     this._domElement.removeEventListener('pointerdown', this.onPointerDown);
     this._domElement.removeEventListener('wheel', this.onMouseWheel);
     this._domElement.removeEventListener('contextmenu', this.onContextMenu);
@@ -657,7 +654,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
   }
 
-  private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number, cameraDirection: THREE.Vector3) {
+  private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number, cameraDirection: Vector3) {
     const isDollyIn = deltaDistance < 0 ? true : false;
     const newTargetOffset = this.newVector3();
     let newRadius = this._sphericalEnd.radius;
@@ -698,7 +695,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private calculateNewRadiusAndTargetOffsetLerp(
     pixelCoordinates: Vector2,
     deltaDistance: number,
-    cameraDirection: THREE.Vector3
+    cameraDirection: Vector3
   ) {
     const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - getFov(this._camera) / 2));
     const distFromCameraToCursor = Math.sqrt(
@@ -735,7 +732,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return { targetOffset, radius };
   }
 
-  private calculateNewRadiusAndTargetOffsetScrollTarget(deltaDistance: number, cameraDirection: THREE.Vector3) {
+  private calculateNewRadiusAndTargetOffsetScrollTarget(deltaDistance: number, cameraDirection: Vector3) {
     const isDollyOut = deltaDistance > 0 ? true : false;
 
     if (isDollyOut) {
@@ -890,7 +887,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 // LOCAL FUNCTIONS
 //================================================
 
-function isIdentityQuaternion(q: THREE.Quaternion) {
+function isIdentityQuaternion(q: Quaternion) {
   return q.x === 0 && q.y === 0 && q.z === 0 && q.w === 1;
 }
 

@@ -3,7 +3,7 @@
  */
 
 import { PerspectiveCamera, Raycaster, Vector2, Vector3 } from 'three';
-import TWEEN from '@tweenjs/tween.js';
+import TWEEN, { type Tween } from '@tweenjs/tween.js';
 
 import { FlexibleCameraManager } from './FlexibleCameraManager';
 import clamp from 'lodash/clamp';
@@ -128,12 +128,12 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
     .start(TWEEN.now());
 }
 
-function createTweenAnimationWithStop<T>(
+function createTweenAnimationWithStop<T extends Record<string, any>>(
   manager: FlexibleCameraManager,
   from: T,
   to: T,
   duration: number
-): { tween: TWEEN.Tween; removeEventListeners: () => void } {
+): { tween: Tween<T>; removeEventListeners: () => void } {
   const animation = new TWEEN.Tween(from);
   const stopTween = (_event: Event) => {
     animation.stop();
