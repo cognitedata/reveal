@@ -1526,6 +1526,15 @@ export class Cognite3DViewer {
     return this.intersectModels(offsetX, offsetY);
   }
 
+  /**
+   * Raycasting model(s) for finding where the ray intersects with all models, including custom objects
+   * @param offsetX X coordinate in pixels (relative to the domElement).
+   * @param offsetY Y coordinate in pixels (relative to the domElement).
+   * @returns A promise that if there was an intersection then return the intersection object - otherwise it
+   * returns `null` if there were no intersections.
+   * @beta
+   */
+
   public async getAnyIntersectionFromPixel(offsetX: number, offsetY: number): Promise<AnyIntersection | undefined> {
     const modelIntersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
 
