@@ -87,7 +87,7 @@ export abstract class BaseTool extends RenderTargetCommand {
     const { renderTarget } = this;
     const { viewer } = renderTarget;
     const point = viewer.getPixelCoordinatesFromEvent(event);
-    const intersection = await viewer.getAnyIntersectionFromPixel(point.x, point.y);
+    const intersection = await viewer.getAnyIntersectionFromPixel(point);
     if (intersection === undefined) {
       return undefined;
     }

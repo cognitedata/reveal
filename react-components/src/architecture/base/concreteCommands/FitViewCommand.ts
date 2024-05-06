@@ -19,7 +19,7 @@ export class FitViewCommand extends RenderTargetCommand {
     const { renderTarget } = this;
     const { viewer } = renderTarget;
 
-    const boundingBox = viewer.getModelBoundingBox();
+    const boundingBox = viewer.getSceneBoundingBox();
     if (boundingBox.isEmpty()) {
       return false;
     }
