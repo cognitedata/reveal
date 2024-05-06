@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import TWEEN from '@tweenjs/tween.js';
+import TWEEN, { type Tween } from '@tweenjs/tween.js';
 import clamp from 'lodash/clamp';
 
 import { ComboControls } from './ComboControls';
@@ -456,7 +456,7 @@ export class DefaultCameraManager implements CameraManager {
     from: any,
     to: any,
     duration: number
-  ): { tween: TWEEN.Tween; stopTween: (event: Event) => void } {
+  ): { tween: Tween<any>; stopTween: (event: Event) => void } {
     const animation = new TWEEN.Tween(from);
     const stopTween = (event: Event) => {
       if (this._isDisposed) {

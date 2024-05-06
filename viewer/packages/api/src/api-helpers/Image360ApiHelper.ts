@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Quaternion, Raycaster, Vector2, Vector3 } from 'three';
+import { Quaternion, Raycaster, Vector2, Vector3, type Matrix4 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
 import { CogniteClient, Metadata } from '@cognite/sdk';
@@ -156,7 +156,7 @@ export class Image360ApiHelper {
 
   public async add360ImageSet(
     collectionIdentifier: Metadata | Image360DataModelIdentifier,
-    collectionTransform: THREE.Matrix4,
+    collectionTransform: Matrix4,
     preMultipliedRotation: boolean,
     annotationOptions?: Image360AnnotationFilterOptions
   ): Promise<Image360Collection> {

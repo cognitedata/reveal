@@ -9,15 +9,23 @@ addons.setConfig({
 
 const config: StorybookConfig = {
   stories: ['../stories/**/*.stories.@(js|jsx|ts|tsx)'],
-  addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-interactions'],
-  features: {
-    buildStoriesJson: true
+  addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
+
+  framework: {
+    name: '@storybook/react-vite',
+    options: {
+      builder: {
+        viteConfigPath: './vite.config.ts'
+      }
+    }
   },
-  framework: '@storybook/react-vite',
-  core: {
-    builder: '@storybook/builder-vite'
+
+  typescript: {
+    reactDocgen: false
   },
+
   staticDirs: ['../stories/public'],
+
   async viteFinal(config, { configType }) {
     if (config.plugins !== undefined) {
       remove(config.plugins, (plugin) => {

@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+import type { Box3 } from 'three';
 import { AreaCollection } from './AreaCollection';
 
 /**
@@ -18,17 +19,17 @@ export class EmptyAreaCollection implements AreaCollection {
 
   private constructor() {}
 
-  *areas(): Generator<THREE.Box3> {}
+  *areas(): Generator<Box3> {}
 
-  intersectsBox(_box: THREE.Box3): boolean {
+  intersectsBox(_box: Box3): boolean {
     return false;
   }
 
-  addAreas(_: Iterable<THREE.Box3>): void {
+  addAreas(_: Iterable<Box3>): void {
     throw new Error('addAreas() not defined for EmptyAreaCollection');
   }
 
-  intersectWith(_: Iterable<THREE.Box3>): void {}
+  intersectWith(_: Iterable<Box3>): void {}
 
   get isEmpty(): boolean {
     return true;

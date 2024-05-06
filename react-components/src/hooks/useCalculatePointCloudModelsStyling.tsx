@@ -52,16 +52,14 @@ function useCalculateInstanceStyling(
   const { data: pointCloudAnnotationMappings, isLoading } =
     usePointCloudAnnotationMappingsForModels(models);
 
-  const { data: styledModels } = useQuery(
-    ['styledModels', pointCloudAnnotationMappings, instanceGroups, models],
-    () =>
+  const { data: styledModels } = useQuery({
+    queryKey: ['styledModels', pointCloudAnnotationMappings, instanceGroups, models],
+    queryFn: () =>
       pointCloudAnnotationMappings?.map((annotationMappings) => {
         return calculateAnnotationMappingModelStyling(instanceGroups, annotationMappings);
       }) ?? EMPTY_ARRAY,
-    {
-      enabled: !isLoading
-    }
-  );
+    enabled: !isLoading
+  });
 
   return styledModels ?? EMPTY_ARRAY;
 }

@@ -12,7 +12,6 @@ export { createPointCloudModel, createPointCloudNode } from './src/createPointCl
 
 export { mockClientAuthentication } from './src/cogniteClientAuth';
 
-export { createGlContext } from './src/createGlContext';
 export { sleep } from './src/wait';
 export { asyncIteratorToArray } from './src/asyncIteratorToArray';
 export { expectContainsSectorsWithLevelOfDetail } from './src/expects';
@@ -22,3 +21,4 @@ export { createRandomBox } from './src/createBoxes';
 
 export { Mutable } from './src/reflection';
 export { mockViewer, mockViewerComponents, fakeGetBoundingClientRect } from './src/viewerMock';
+export { autoMockWebGLRenderer } from './src/autoMockWebGLRenderer';

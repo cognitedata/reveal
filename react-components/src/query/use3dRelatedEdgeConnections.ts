@@ -15,9 +15,14 @@ export function use3dRelatedEdgeConnections(
 ): UseQueryResult<FdmInstanceWithView[]> {
   const fdmSdk = useFdmSdk();
 
-  return useQuery(
-    ['reveal-react-components', 'get-3d-related-edge-connections', fdmId?.externalId, fdmId?.space],
-    async () => {
+  return useQuery({
+    queryKey: [
+      'reveal-react-components',
+      'get-3d-related-edge-connections',
+      fdmId?.externalId,
+      fdmId?.space
+    ],
+    queryFn: async () => {
       assert(fdmId !== undefined);
       const nodesResult = await fdmSdk.queryNodesAndEdges({
         ...related3dEdgesQuery,
@@ -47,8 +52,8 @@ export function use3dRelatedEdgeConnections(
         view: view.inspectionResults.involvedViews[0]
       }));
     },
-    { enabled: fdmId !== undefined }
-  );
+    enabled: fdmId !== undefined
+  });
 }
 
 const related3dEdgesQuery = {

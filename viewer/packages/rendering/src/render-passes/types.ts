@@ -22,7 +22,7 @@ export enum BlitEffect {
 export type BlitOptions = {
   texture: THREE.Texture;
   effect?: BlitEffect;
-  depthTexture?: THREE.DepthTexture;
+  depthTexture: THREE.DepthTexture | null;
   ssaoTexture?: THREE.Texture;
   blendOptions?: BlendOptions;
   overrideAlpha?: number;
@@ -32,9 +32,9 @@ export type BlitOptions = {
 
 export type DepthBlendBlitOptions = {
   texture: THREE.Texture;
-  depthTexture: THREE.DepthTexture;
+  depthTexture: THREE.DepthTexture | null;
   blendTexture: THREE.Texture;
-  blendDepthTexture: THREE.Texture;
+  blendDepthTexture: THREE.Texture | null;
   blendFactor: number;
   overrideAlpha?: number;
   outline?: boolean;
@@ -43,7 +43,7 @@ export type DepthBlendBlitOptions = {
 export type PointCloudPostProcessingOptions = {
   logDepthTexture: THREE.Texture;
   texture: THREE.Texture;
-  depthTexture: THREE.DepthTexture;
+  depthTexture: THREE.DepthTexture | null;
   pointBlending: boolean;
   edlOptions: EdlOptions;
 };

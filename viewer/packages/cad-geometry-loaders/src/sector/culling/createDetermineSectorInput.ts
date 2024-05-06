@@ -8,9 +8,10 @@ import { CadModelMetadata } from '@reveal/cad-parsers';
 import { CadModelBudget } from '../../CadModelBudget';
 
 import { DetermineSectorsInput } from './types';
+import type { PerspectiveCamera } from 'three';
 
 export function createDetermineSectorInput(
-  camera: THREE.PerspectiveCamera,
+  camera: PerspectiveCamera,
   models: CadModelMetadata | CadModelMetadata[],
   budget?: CadModelBudget
 ): DetermineSectorsInput {
