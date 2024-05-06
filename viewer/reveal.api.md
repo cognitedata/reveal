@@ -437,7 +437,7 @@ export class Cognite3DViewer {
     get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection>;
     get360ImageCollections(): Image360Collection[];
     getActive360ImageInfo(): Image360WithCollection | undefined;
-    // (undocumented)
+    // @beta
     getAnyIntersectionFromPixel(offsetX: number, offsetY: number): Promise<AnyIntersection | undefined>;
     // @deprecated
     getClippingPlanes(): THREE.Plane[];

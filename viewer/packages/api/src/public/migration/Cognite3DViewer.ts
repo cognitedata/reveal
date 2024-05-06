@@ -1534,7 +1534,6 @@ export class Cognite3DViewer {
    * returns `null` if there were no intersections.
    * @beta
    */
-
   public async getAnyIntersectionFromPixel(offsetX: number, offsetY: number): Promise<AnyIntersection | undefined> {
     const modelIntersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
 
