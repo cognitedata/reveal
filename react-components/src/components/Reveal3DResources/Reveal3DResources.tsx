@@ -60,6 +60,7 @@ export const Reveal3DResources = ({
   const image360CollectionAddOptions = resources.filter(is360ImageCollectionOptions);
 
   useEffect(() => {
+    console.log('Updating styling!');
     void revealHandler.current.updateCommonStyling(
       instanceStyling ?? [],
       defaultResourceStyling ?? {}
@@ -67,8 +68,9 @@ export const Reveal3DResources = ({
   }, [defaultResourceStyling, instanceStyling]);
 
   useEffect(() => {
-    void revealHandler.current.sync(resources);
-  }, [image360CollectionAddOptions]);
+    console.log('Updating models!');
+    void revealHandler.current.updateModels(resources);
+  }, [resources]);
 
   return <></>;
 };

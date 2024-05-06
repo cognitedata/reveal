@@ -34,7 +34,7 @@ import {
   calculatePointCloudStyling
 } from '../../hooks/calculatePointCloudModelsStyling';
 import { applyPointCloudStyling } from './applyPointCloudStyling';
-import { modelExists } from '../../utilities/modelExists';
+import { image360CollectionExists, modelExists } from '../../utilities/modelExists';
 import { type FdmNodeCache } from '../CacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../CacheProvider/AssetMappingCache';
 import {
@@ -125,7 +125,7 @@ export class ResourceUpdater {
     this._image360StylingHandler = new Image360StylingHandler(this._viewer);
   }
 
-  public async sync(modelAddOptions: AddResourceOptions[]): Promise<void> {
+  public async updateModels(modelAddOptions: AddResourceOptions[]): Promise<void> {
     this._runningCounter++;
     const cachedRunningCounter = this._runningCounter;
 
@@ -238,36 +238,41 @@ export class ResourceUpdater {
   private addResources(resources: AddResourceOptions[]): Array<Promise<AddOptionsWithModel>> {
     return resources.map(async (addOptions) => {
       try {
-        if (is3dModelOptions(addOptions)) {
-          const addedModel = await this._viewer.addModel(addOptions);
-          if (addedModel instanceof CogniteCadModel) {
-            this._onModelLoaded?.();
-            return { type: 'cad' as const, model: addedModel, addOptions };
-          } else {
-            this._onModelLoaded?.();
-            return { type: 'pointcloud' as const, model: addedModel, addOptions };
-          }
-        } else {
-          const addedCollection = await (async () => {
-            if (is360DataModelCollection(addOptions)) {
-              return await this._viewer.add360ImageSet('datamodels', {
-                image360CollectionExternalId: addOptions.externalId,
-                space: addOptions.space
-              });
+        const addedModel = await (async () => {
+          if (is3dModelOptions(addOptions)) {
+            const addedModel = await this._viewer.addModel(addOptions);
+            if (addedModel instanceof CogniteCadModel) {
+              addedModel.setDefaultNodeAppearance({ visible: false });
+              return { type: 'cad' as const, model: addedModel, addOptions };
             } else {
-              return await this._viewer.add360ImageSet('events', {
-                site_id: addOptions.siteId
-              });
+              addedModel.setDefaultPointCloudAppearance({ visible: false });
+              return { type: 'pointcloud' as const, model: addedModel, addOptions };
             }
-          })();
+          } else {
+            const addedCollection = await (async () => {
+              if (is360DataModelCollection(addOptions)) {
+                return await this._viewer.add360ImageSet('datamodels', {
+                  image360CollectionExternalId: addOptions.externalId,
+                  space: addOptions.space
+                });
+              } else {
+                return await this._viewer.add360ImageSet('events', {
+                  site_id: addOptions.siteId
+                });
+              }
+            })();
 
-          this._onModelLoaded?.();
-          return {
-            model: addedCollection,
-            addOptions,
-            type: 'image360' as const
-          };
-        }
+            addedCollection.setDefaultAnnotationStyle({ visible: false });
+            return {
+              model: addedCollection,
+              addOptions,
+              type: 'image360' as const
+            };
+          }
+        })();
+
+        this._onModelLoaded?.();
+        return addedModel;
       } catch (error: any) {
         this._onModelLoadedError?.(addOptions, error);
         throw error;
@@ -281,18 +286,25 @@ export class ResourceUpdater {
         return;
       }
       const [styling] = await this.computeCadModelsStyling([model.addOptions]);
-      await applyCadStyling(this._client, model.model, styling);
+
+      await applyCadStyling(model.model, styling, this._viewer, this._client);
     } else if (model.type === 'pointcloud') {
       if (!modelExists(model.model, this._viewer)) {
         return;
       }
       const [styling] = await this.computePointCloudModelsStyling([model.model]);
+
       applyPointCloudStyling(model.model, styling);
     } else {
       await this._image360StylingHandler.update360ImageStylingCallback(model.model);
     }
 
     const matrix = model.addOptions.transform ?? new Matrix4();
+    if (
+      (model.type === 'image360' && !image360CollectionExists(model.model, this._viewer)) ||
+      (model.type !== 'image360' && !modelExists(model.model, this._viewer))
+    )
+      return;
     model.model.setModelTransformation(matrix);
   }
 

@@ -7,11 +7,13 @@ import {
   type NodeAppearance,
   type NodeCollection,
   NodeIdNodeCollection,
-  TreeIndexNodeCollection
+  TreeIndexNodeCollection,
+  Cognite3DViewer
 } from '@cognite/reveal';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { isEqual } from 'lodash';
 import { type StyledCadModelAddOptions } from '../../hooks/calculateCadModelsStyling';
+import { modelExists } from '../../utilities/modelExists';
 
 export type NodeStylingGroup = {
   nodeIds: number[];
@@ -29,13 +31,18 @@ export type CadModelStyling = {
 };
 
 export async function applyCadStyling(
-  sdk: CogniteClient,
   model: CogniteCadModel,
-  addOptions: StyledCadModelAddOptions
+  addOptions: StyledCadModelAddOptions,
+  viewer: Cognite3DViewer,
+  sdk: CogniteClient
 ): Promise<void> {
+  if (!modelExists(model, viewer)) {
+    return;
+  }
+
   const stylingGroups = addOptions.styleGroups;
   const firstChangeIndex = await getFirstChangeIndex();
-
+  console.log('Setting default node appearance: ', addOptions.defaultStyle);
   model.setDefaultNodeAppearance(addOptions.defaultStyle);
 
   for (let i = firstChangeIndex; i < model.styledNodeCollections.length; i++) {
