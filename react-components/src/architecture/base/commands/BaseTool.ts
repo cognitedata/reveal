@@ -101,9 +101,9 @@ export abstract class BaseTool extends RenderTargetCommand {
     // This function is similar to getIntersection, but it only considers a specific DomainObject
     const { renderTarget } = this;
     const { rootDomainObject } = renderTarget;
-    const normalizedCoords = this.getNormalizedPixelCoordinates(event);
+
     const intersectInput = new CustomObjectIntersectInput(
-      normalizedCoords,
+      this.getNormalizedPixelCoordinates(event),
       renderTarget.cameraManager.getCamera(),
       renderTarget.viewer.getGlobalClippingPlanes()
     );
@@ -136,7 +136,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   // INSTANCE METHODS: Getters
   // ==================================================
 
-  protected getRaycaster(event: PointerEvent): Raycaster {
+  protected getRaycaster(event: PointerEvent | WheelEvent): Raycaster {
     const { renderTarget } = this;
     const { cameraManager } = renderTarget;
     const normalizedCoords = this.getNormalizedPixelCoordinates(event);
@@ -145,7 +145,7 @@ export abstract class BaseTool extends RenderTargetCommand {
     return raycaster;
   }
 
-  protected getNormalizedPixelCoordinates(event: PointerEvent): Vector2 {
+  protected getNormalizedPixelCoordinates(event: PointerEvent | WheelEvent): Vector2 {
     const { renderTarget } = this;
     const { viewer } = renderTarget;
     const point = viewer.getPixelCoordinatesFromEvent(event);
