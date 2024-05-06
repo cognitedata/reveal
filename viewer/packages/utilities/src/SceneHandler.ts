@@ -4,13 +4,14 @@
 
 import * as THREE from 'three';
 import remove from 'lodash/remove';
+import { ICustomObject } from './customObject/ICustomObject';
 import { CustomObject } from './customObject/CustomObject';
 
 export class SceneHandler {
   private readonly _scene: THREE.Scene;
   private readonly _cadModels: { cadNode: THREE.Object3D; modelIdentifier: string }[];
   private readonly _pointCloudModels: { pointCloudNode: THREE.Object3D; modelIdentifier: symbol }[];
-  private readonly _customObjects: CustomObject[];
+  private readonly _customObjects: ICustomObject[];
 
   get scene(): THREE.Scene {
     return this._scene;
@@ -24,7 +25,7 @@ export class SceneHandler {
     return this._pointCloudModels;
   }
 
-  get customObjects(): CustomObject[] {
+  get customObjects(): ICustomObject[] {
     return this._customObjects;
   }
 
@@ -61,7 +62,7 @@ export class SceneHandler {
     this.addCustomObject(new CustomObject(object));
   }
 
-  public addCustomObject(customObject: CustomObject): void {
+  public addCustomObject(customObject: ICustomObject): void {
     this._customObjects.push(customObject);
     this._scene.add(customObject.object);
   }
@@ -73,7 +74,7 @@ export class SceneHandler {
     }
   }
 
-  public removeCustomObject(customObject: CustomObject): void {
+  public removeCustomObject(customObject: ICustomObject): void {
     this.scene.remove(customObject.object);
     remove(this._customObjects, customObject);
   }

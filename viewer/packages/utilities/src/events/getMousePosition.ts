@@ -10,30 +10,27 @@ import { Vector2 } from 'three';
  * @param target    HTML element to find coordinates relative to.
  * @returns A struct containing coordinates relative to the HTML element provided.
  */
-export function clickOrTouchEventOffset(
-  event: PointerEvent | WheelEvent,
-  target: HTMLElement
-): { offsetX: number; offsetY: number } {
+export function getMousePosition(event: PointerEvent | WheelEvent, target: HTMLElement): { x: number; y: number } {
   const rect = target.getBoundingClientRect();
 
   if (event instanceof PointerEvent) {
     if (event.pointerType === 'mouse' || event.pointerType === 'touch') {
       return {
-        offsetX: event.clientX - rect.left,
-        offsetY: event.clientY - rect.top
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
       };
     }
   } else if (event instanceof WheelEvent) {
     return {
-      offsetX: event.clientX - rect.left,
-      offsetY: event.clientY - rect.top
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
     };
   }
 
   // Invalid event
   return {
-    offsetX: -1,
-    offsetY: -1
+    x: -1,
+    y: -1
   };
 }
 
@@ -43,7 +40,7 @@ export function clickOrTouchEventOffset(
  * @param target    HTML element to find coordinates relative to.
  * @returns A Vector2 containing coordinates relative to the HTML element provided.
  */
-export function getClickOrTouchEventPoint(event: PointerEvent | WheelEvent, target: HTMLElement): Vector2 {
-  const point = clickOrTouchEventOffset(event, target);
-  return new Vector2(point.offsetX, point.offsetY);
+export function getMousePositionCoords(event: PointerEvent | WheelEvent, target: HTMLElement): Vector2 {
+  const point = getMousePosition(event, target);
+  return new Vector2(point.x, point.y);
 }

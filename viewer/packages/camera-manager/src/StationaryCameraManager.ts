@@ -18,7 +18,7 @@ import {
   CameraStopDelegate
 } from './types';
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
-import { assertNever, clickOrTouchEventOffset, getNormalizedPixelCoordinatesBySize } from '@reveal/utilities';
+import { assertNever, getMousePosition, getNormalizedPixelCoordinatesBySize } from '@reveal/utilities';
 
 export class StationaryCameraManager implements CameraManager {
   private readonly _camera: PerspectiveCamera;
@@ -283,8 +283,8 @@ export class StationaryCameraManager implements CameraManager {
 
   private getCursorRay(event: WheelEvent) {
     const { width, height } = this._domElement.getBoundingClientRect();
-    const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
-    const ndcCoordinates = getNormalizedPixelCoordinatesBySize(offsetX, offsetY, width, height);
+    const position = getMousePosition(event, this._domElement);
+    const ndcCoordinates = getNormalizedPixelCoordinatesBySize(position.x, position.y, width, height);
     const ray = new Vector3(ndcCoordinates.x, ndcCoordinates.y, 1).unproject(this._camera).sub(this._camera.position);
     return ray;
   }

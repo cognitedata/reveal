@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
+import { getMousePosition } from './getMousePosition';
 import { EventTrigger } from './EventTrigger';
 import { assertNever } from '../assertNever';
 import { PointerEventDelegate } from './types';
@@ -81,8 +81,10 @@ export class InputHandler extends PointerEvents {
   //================================================
 
   override async onClick(event: PointerEvent): Promise<void> {
+    const position = getMousePosition(event, this._domElement);
     const firedEvent = {
-      ...clickOrTouchEventOffset(event, this._domElement),
+      offsetX: position.x,
+      offsetY: position.y,
       button: event instanceof MouseEvent ? event.button : undefined
     };
     this._clickEvents.fire(firedEvent);
@@ -90,7 +92,11 @@ export class InputHandler extends PointerEvents {
   }
 
   override onHover(event: PointerEvent): void {
-    const firedEvent = clickOrTouchEventOffset(event, this._domElement);
+    const position = getMousePosition(event, this._domElement);
+    const firedEvent = {
+      offsetX: position.x,
+      offsetY: position.y
+    };
     this._hoverEvents.fire(firedEvent);
   }
 

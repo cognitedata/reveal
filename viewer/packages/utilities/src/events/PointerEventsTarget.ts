@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
+import { getMousePosition, getMousePositionCoords } from './getMousePosition';
 import debounce from 'lodash/debounce';
 import { Vector2, MOUSE } from 'three';
 import { PointerEvents } from './PointerEvents';
@@ -27,7 +27,7 @@ export class PointerEventsTarget {
 
   private readonly _domElement: HTMLElement;
   private readonly _events: PointerEvents;
-  private readonly _downPosition: Vector2 = new Vector2();
+  private _downPosition: Vector2 | undefined = undefined;
 
   private _lastDownTimestamp = 0; // Time of last pointer down event
   private _prevDownTimestamp = 0; // Time of previous pointer down event
@@ -83,8 +83,7 @@ export class PointerEventsTarget {
 
     const leftButton = isTouch(event) || isLeftMouseButton(event);
 
-    const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
-    this._downPosition.set(offsetX, offsetY);
+    this._downPosition = getMousePositionCoords(event, this._domElement);
     this._prevDownTimestamp = this._lastDownTimestamp;
     this._lastDownTimestamp = event.timeStamp;
     this._clickCounter++;
@@ -164,9 +163,8 @@ export class PointerEventsTarget {
     if (clickDuration >= MAX_CLICK_DURATION) {
       return false;
     }
-    const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
-    const distance = Math.sqrt(offsetX - this._downPosition.x) ** 2 + (offsetY - this._downPosition.y) ** 2;
-
+    const position = getMousePositionCoords(event, this._domElement);
+    const distance = position.distanceTo(this._downPosition);
     return distance < MAX_MOVE_DISTANCE;
   }
 

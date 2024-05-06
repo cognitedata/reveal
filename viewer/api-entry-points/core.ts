@@ -67,6 +67,7 @@ export {
   PointerEventDelegate,
   PointerEventData,
   DisposedDelegate,
+  ICustomObject,
   CustomObject,
   CustomObjectIntersection,
   CustomObjectIntersectInput,
@@ -74,6 +75,8 @@ export {
   PointerEvents,
   getNormalizedPixelCoordinatesBySize,
   getNormalizedPixelCoordinates,
+  getMousePosition,
+  getMousePositionCoords,
   CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 
