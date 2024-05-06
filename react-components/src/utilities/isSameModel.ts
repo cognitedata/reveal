@@ -1,16 +1,16 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { AddImage360Options, type GeometryFilter } from '@cognite/reveal';
+import { type GeometryFilter } from '@cognite/reveal';
 import {
-  AddResourceOptions,
-  AddReveal3DModelOptions,
-  AddImageCollection360Options,
-  AddImageCollection360DatamodelsOptions,
-  AddImageCollection360EventsOptions
+  type AddResourceOptions,
+  type AddReveal3DModelOptions,
+  type AddImageCollection360Options,
+  type AddImageCollection360DatamodelsOptions,
+  type AddImageCollection360EventsOptions
 } from '../components/Reveal3DResources/types';
 import { is3dModelOptions } from '../components/Reveal3DResources/utils';
-import { Matrix4 } from 'three';
+import { type Matrix4 } from 'three';
 
 export function isSameModel(model0: AddResourceOptions, model1: AddResourceOptions): boolean {
   if (is3dModelOptions(model0) && is3dModelOptions(model1)) {

@@ -1,9 +1,12 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import {
   AnnotationIdPointCloudObjectCollection,
-  CognitePointCloudModel,
-  PointCloudAppearance
+  type CognitePointCloudModel,
+  type PointCloudAppearance
 } from '@cognite/reveal';
-import { StyledPointCloudModelAddOptions } from '../../hooks/calculatePointCloudModelsStyling';
+import { type StyledPointCloudModelAddOptions } from '../../hooks/calculatePointCloudModelsStyling';
 
 export type AnnotationIdStylingGroup = {
   annotationIds: number[];

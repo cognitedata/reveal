@@ -4,15 +4,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   Reveal3DResources,
-  Reveal3DResourcesProps,
+  type Reveal3DResourcesProps,
   RevealCanvas,
   RevealContext,
   useReveal
 } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { PropsWithChildren } from 'react';
-import { ResourceUpdater } from '../src/components/Reveal3DResources/ResourceUpdater';
+import { type ReactElement } from 'react';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/PointCloudContainer',
@@ -70,7 +69,7 @@ export const Main: Story = {
   )
 };
 
-const PointCloudResource = ({ resources }: Reveal3DResourcesProps) => {
+const PointCloudResource = ({ resources }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
   return (
     <RevealCanvas>

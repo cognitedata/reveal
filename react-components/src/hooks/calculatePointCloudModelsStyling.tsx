@@ -3,7 +3,7 @@
  */
 import {
   DefaultPointCloudAppearance,
-  PointCloudAppearance,
+  type PointCloudAppearance,
   type NodeAppearance
 } from '@cognite/reveal';
 import {
@@ -14,8 +14,11 @@ import {
 import { type AnnotationIdStylingGroup } from '../components/Reveal3DResources/applyPointCloudStyling';
 import { isSame3dModel } from '../utilities/isSameModel';
 import { EMPTY_ARRAY } from '../utilities/constants';
-import { AnnotationId, type PointCloudAnnotationModel } from '../components/CacheProvider/types';
-import { PointCloudAnnotationCache } from '../components/CacheProvider/PointCloudAnnotationCache';
+import {
+  type AnnotationId,
+  type PointCloudAnnotationModel
+} from '../components/CacheProvider/types';
+import { type PointCloudAnnotationCache } from '../components/CacheProvider/PointCloudAnnotationCache';
 
 export type StyledPointCloudModelAddOptions = {
   addOptions: PointCloudModelOptions;

@@ -1,14 +1,17 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import {
-  CogniteCadModel,
-  IndexSet,
-  NodeAppearance,
-  NodeCollection,
+  type CogniteCadModel,
+  type IndexSet,
+  type NodeAppearance,
+  type NodeCollection,
   NodeIdNodeCollection,
   TreeIndexNodeCollection
 } from '@cognite/reveal';
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { isEqual } from 'lodash';
-import { StyledCadModelAddOptions } from '../../hooks/calculateCadModelsStyling';
+import { type StyledCadModelAddOptions } from '../../hooks/calculateCadModelsStyling';
 
 export type NodeStylingGroup = {
   nodeIds: number[];

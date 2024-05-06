@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import {
-  AddReveal3DModelOptions,
+  type AddReveal3DModelOptions,
   type AssetStylingGroup,
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
@@ -22,21 +22,21 @@ import {
   type ModelRevisionAssetNodesResult
 } from '../components/CacheProvider/types';
 import {
-  AssetMappingCache,
+  type AssetMappingCache,
   type AssetMapping
 } from '../components/CacheProvider/AssetMappingCache';
 
 import { isSame3dModel } from '../utilities/isSameModel';
 import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
 import {
-  NodeStylingGroup,
-  TreeIndexStylingGroup
+  type NodeStylingGroup,
+  type TreeIndexStylingGroup
 } from '../components/Reveal3DResources/applyCadStyling';
-import { FdmNodeCache } from '../components/CacheProvider/FdmNodeCache';
+import { type FdmNodeCache } from '../components/CacheProvider/FdmNodeCache';
 
 type ModelStyleGroup = {
   model: AddReveal3DModelOptions;
-  styleGroup: Array<CadStyleGroup>;
+  styleGroup: CadStyleGroup[];
 };
 
 export type CadStyleGroup = NodeStylingGroup | TreeIndexStylingGroup;

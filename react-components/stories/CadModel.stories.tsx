@@ -2,13 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  useCameraNavigation,
-  Reveal3DResources,
-  AddResourceOptions,
-  RevealContext,
-  useReveal
-} from '../src';
+import { useCameraNavigation, Reveal3DResources, type AddResourceOptions, useReveal } from '../src';
 import { Color, Matrix4 } from 'three';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { useEffect, type ReactElement } from 'react';

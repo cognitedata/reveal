@@ -2,25 +2,16 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  type CadModelStyling,
-  RevealCanvas,
-  useReveal,
-  RevealContext,
-  Reveal3DResources,
-  Reveal3DResourcesProps
-} from '../src';
+import { RevealCanvas, useReveal, RevealContext, Reveal3DResources } from '../src';
 import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { type CogniteCadModel, DefaultNodeAppearance } from '@cognite/reveal';
 import { useEffect, useMemo, useState, type JSX } from 'react';
 import { useFdmMappedEdgesForRevisions } from '../src/components/CacheProvider/NodeCacheProvider';
 import {
-  CadModelOptions,
-  DefaultResourceStyling,
-  InstanceStylingGroup
+  type CadModelOptions,
+  type DefaultResourceStyling,
+  type InstanceStylingGroup
 } from '../src/components/Reveal3DResources/types';
-import { NodeStylingGroup } from '../src/components/Reveal3DResources/applyCadStyling';
 
 const meta = {
   title: 'Example/CadStylingCache',
@@ -99,9 +90,6 @@ const Models = ({ addOptions }: { addOptions: CadModelOptions }): JSX.Element =>
         };
       });
     };
-    useEffect(() => {
-      if (instanceIds === undefined) return;
-    }, [viewer, data]);
 
     viewer.on('click', callback);
     return () => {
