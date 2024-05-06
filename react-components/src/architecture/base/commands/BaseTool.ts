@@ -9,9 +9,7 @@ import { RenderTargetCommand } from './RenderTargetCommand';
 import {
   CustomObjectIntersectInput,
   type CustomObjectIntersection,
-  getNormalizedPixelCoordinates,
-  type AnyIntersection,
-  getMousePositionCoords
+  type AnyIntersection
 } from '@cognite/reveal';
 import { ObjectThreeView } from '../views/ObjectThreeView';
 import {
@@ -88,7 +86,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   protected async getIntersection(event: PointerEvent): Promise<AnyIntersection | undefined> {
     const { renderTarget } = this;
     const { viewer } = renderTarget;
-    const point = getMousePositionCoords(event, renderTarget.domElement);
+    const point = viewer.getPixelCoordinatesFromEvent(event);
     const intersection = await viewer.getAnyIntersectionFromPixel(point.x, point.y);
     if (intersection === undefined) {
       return undefined;
@@ -149,8 +147,8 @@ export abstract class BaseTool extends RenderTargetCommand {
 
   protected getNormalizedPixelCoordinates(event: PointerEvent): Vector2 {
     const { renderTarget } = this;
-    const { domElement } = renderTarget;
-    const point = getMousePositionCoords(event, domElement);
-    return getNormalizedPixelCoordinates(domElement, point.x, point.y);
+    const { viewer } = renderTarget;
+    const point = viewer.getPixelCoordinatesFromEvent(event);
+    return viewer.getNormalizedPixelCoordinates(point);
   }
 }
