@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { getMousePosition, getMousePositionCoords } from './getMousePosition';
+import { getMousePositionCoords } from './getMousePosition';
 import debounce from 'lodash/debounce';
 import { Vector2, MOUSE } from 'three';
 import { PointerEvents } from './PointerEvents';

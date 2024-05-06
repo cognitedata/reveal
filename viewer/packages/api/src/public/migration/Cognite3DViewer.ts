@@ -1789,8 +1789,6 @@ export class Cognite3DViewer {
     };
   }
 
-  private _nearFarPlaneBoundingBox = new THREE.Box3();
-
   /** @private */
   private recalculateBoundingBox() {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
