@@ -44,7 +44,7 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.5.0",
     "@cognite/cogs.js": "^9.17.0",
-    "@cognite/reveal": "4.12.1",
+    "@cognite/reveal": "4.13.0",
     "@cognite/sdk": "^8.2.0",
     "@playwright/test": "^1.39.0",
     "@storybook/addon-essentials": "7.6.17",
