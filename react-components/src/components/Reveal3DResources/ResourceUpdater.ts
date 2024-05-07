@@ -6,12 +6,10 @@ import {
   type Image360Collection,
   type Cognite3DViewer,
   type CognitePointCloudModel,
-  CogniteCadModel,
-  type Image360AnnotationAppearance
+  CogniteCadModel
 } from '@cognite/reveal';
 import {
-  AddOptionsWithModel,
-  type AddImageCollection360Options,
+  type AddOptionsWithModel,
   type AddResourceOptions,
   type AddReveal3DModelOptions,
   type DefaultResourceStyling,
@@ -218,27 +216,27 @@ export class ResourceUpdater {
         addedModel.setDefaultPointCloudAppearance({ visible: false });
         return { type: 'pointcloud' as const, model: addedModel, addOptions };
       }
-    } else {
-      const addedCollection = await (async () => {
-        if (is360DataModelCollection(addOptions)) {
-          return await this._viewer.add360ImageSet('datamodels', {
-            image360CollectionExternalId: addOptions.externalId,
-            space: addOptions.space
-          });
-        } else {
-          return await this._viewer.add360ImageSet('events', {
-            site_id: addOptions.siteId
-          });
-        }
-      })();
-
-      addedCollection.setDefaultAnnotationStyle({ visible: false });
-      return {
-        model: addedCollection,
-        addOptions,
-        type: 'image360' as const
-      };
     }
+
+    const addedCollection = await (async () => {
+      if (is360DataModelCollection(addOptions)) {
+        return await this._viewer.add360ImageSet('datamodels', {
+          image360CollectionExternalId: addOptions.externalId,
+          space: addOptions.space
+        });
+      } else {
+        return await this._viewer.add360ImageSet('events', {
+          site_id: addOptions.siteId
+        });
+      }
+    })();
+
+    addedCollection.setDefaultAnnotationStyle({ visible: false });
+    return {
+      model: addedCollection,
+      addOptions,
+      type: 'image360' as const
+    };
   }
 
   private async applyStylingAndTransform(model: AddOptionsWithModel): Promise<void> {

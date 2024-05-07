@@ -6,16 +6,16 @@ import {
   type NodeAppearance,
   type AddModelOptions,
   type Image360AnnotationAppearance,
-  Image360Collection,
-  CognitePointCloudModel,
-  CogniteCadModel
+  type Image360Collection,
+  type CognitePointCloudModel,
+  type CogniteCadModel
 } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk/dist/src';
-import { StyledPointCloudModelAddOptions } from './calculatePointCloudModelsStyling';
-import { StyledCadModelAddOptions } from './calculateCadModelsStyling';
+import { type StyledPointCloudModelAddOptions } from './calculatePointCloudModelsStyling';
+import { type StyledCadModelAddOptions } from './calculateCadModelsStyling';
 
 export type AddImageCollection360Options =
   | AddImageCollection360EventsOptions
