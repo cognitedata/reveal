@@ -424,6 +424,8 @@ export class Cognite3DViewer {
     // (undocumented)
     get cameraManager(): CameraManager;
     get canvas(): HTMLCanvasElement;
+    // @beta
+    createCustomObjectIntersectInput(pixelCoord: THREE.Vector2): CustomObjectIntersectInput;
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
     get domElement(): HTMLElement;
