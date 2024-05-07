@@ -10,9 +10,9 @@ import {
   TreeIndexNodeCollection,
   type Cognite3DViewer
 } from '@cognite/reveal';
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk';
 import { isEqual } from 'lodash';
-import { type StyledCadModelAddOptions } from './calculateCadModelsStyling';
+import { type StyledCadModelAddOptions } from './types';
 import { modelExists } from '../../utilities/modelExists';
 
 export type NodeStylingGroup = {

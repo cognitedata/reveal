@@ -10,12 +10,15 @@ import {
   type DefaultResourceStyling,
   type PointCloudModelOptions,
   type AssetStylingGroup,
-  StyledPointCloudModelAddOptions
+  type StyledPointCloudModelAddOptions
 } from './types';
-import { isSame3dModel } from '../../utilities/isSameModel';
+import { isSame3dModelOptions } from '../../utilities/isSameModel';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { type AnnotationId, type PointCloudAnnotationModel } from '../CacheProvider/types';
+import { type AnnotationId } from '../CacheProvider/types';
 import { type PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
+import { isDefined } from '../../utilities/isDefined';
+import { type AnnotationModelDataResult } from '../CacheProvider/PointCloudAnnotationCacheProvider';
+import { uniqBy } from 'lodash';
 
 export type PointCloudAnnotationIdStylingGroup = {
   annotationIds: number[];
@@ -25,11 +28,6 @@ export type PointCloudAnnotationIdStylingGroup = {
 type PointCloudAddOptionsWithStyleGroups = {
   addOptions: PointCloudModelOptions;
   styleGroups: PointCloudAnnotationIdStylingGroup[];
-};
-
-export type AnnotationModelDataResult = {
-  model: PointCloudModelOptions;
-  annotationModel: PointCloudAnnotationModel[];
 };
 
 export const calculatePointCloudStyling = async (
@@ -81,9 +79,7 @@ function calculateAnnotationMappingModelStyling(
     .map((group) => {
       return getMappedStyleGroupFromAssetIds(annotationMapping, group);
     })
-    .filter(
-      (styleGroup): styleGroup is PointCloudAnnotationIdStylingGroup => styleGroup !== undefined
-    );
+    .filter(isDefined);
 
   return { addOptions: annotationMapping.model, styleGroups };
 }
@@ -92,22 +88,18 @@ function getMappedStyleGroupFromAssetIds(
   annotationMapping: AnnotationModelDataResult,
   instanceGroup: AssetStylingGroup
 ): PointCloudAnnotationIdStylingGroup | undefined {
-  const uniqueAnnotationIds = new Set<number>();
   const assetIdsSet = new Set(instanceGroup.assetIds.map((id) => id));
 
-  const matchedAnnotationModels = annotationMapping.annotationModel.filter((annotation) => {
-    const assetRef = annotation.data.assetRef;
-    const isAssetIdInMapping = assetIdsSet.has(assetRef?.id ?? Number(assetRef?.externalId));
-    if (isAssetIdInMapping && !uniqueAnnotationIds.has(annotation.id)) {
-      uniqueAnnotationIds.add(annotation.id);
-      return true;
-    }
-    return false;
+  const annotationModelsWithAssetId = annotationMapping.annotationModels.filter((annotation) => {
+    const assetId = annotation.data.assetRef?.id;
+    return assetId !== undefined && assetIdsSet.has(assetId);
   });
 
-  return matchedAnnotationModels.length > 0
+  const uniqueAnnotationModels = uniqBy(annotationModelsWithAssetId, (annotation) => annotation.id);
+
+  return uniqueAnnotationModels.length > 0
     ? {
-        annotationIds: matchedAnnotationModels.map((annotationModel) => annotationModel.id),
+        annotationIds: uniqueAnnotationModels.map((annotationModel) => annotationModel.id),
         style: instanceGroup.style.pointcloud ?? {}
       }
     : undefined;
@@ -168,8 +160,13 @@ function groupStyleGroupByModel(
   defaultPointCloudAppearance: PointCloudAppearance | undefined
 ): StyledPointCloudModelAddOptions[] {
   return styleGroup.reduce<StyledPointCloudModelAddOptions[]>((accumulatedGroups, currentGroup) => {
+    const defaultStyle =
+      currentGroup.addOptions.styling?.default ??
+      defaultPointCloudAppearance ??
+      DefaultPointCloudAppearance;
+
     const existingGroupWithModel = accumulatedGroups.find((group) =>
-      isSame3dModel(group.addOptions, currentGroup.addOptions)
+      isSame3dModelOptions(group.addOptions, currentGroup.addOptions)
     );
     if (existingGroupWithModel !== undefined) {
       existingGroupWithModel.styleGroups.push(...currentGroup.styleGroups);
@@ -177,10 +174,7 @@ function groupStyleGroupByModel(
       accumulatedGroups.push({
         addOptions: currentGroup.addOptions,
         styleGroups: [...currentGroup.styleGroups],
-        defaultStyle:
-          currentGroup.addOptions.styling?.default ??
-          defaultPointCloudAppearance ??
-          DefaultPointCloudAppearance
+        defaultStyle
       });
     }
     return accumulatedGroups;
@@ -216,13 +210,13 @@ async function getPointCloudAnnotationMappingsForModels(
 ): Promise<AnnotationModelDataResult[]> {
   return await Promise.all(
     models.map(async (model) => {
-      const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
+      const annotationModels = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
         model.modelId,
         model.revisionId
       );
       return {
         model,
-        annotationModel
+        annotationModels
       };
     })
   );

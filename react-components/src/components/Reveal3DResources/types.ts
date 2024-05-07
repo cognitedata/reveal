@@ -15,11 +15,8 @@ import {
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk/dist/src';
-import {
-  PointCloudAnnotationIdStylingGroup,
-  type StyledPointCloudModelAddOptions
-} from './calculatePointCloudModelsStyling';
-import { CadStyleGroup, type StyledCadModelAddOptions } from './calculateCadModelsStyling';
+import { type PointCloudAnnotationIdStylingGroup } from './calculatePointCloudModelsStyling';
+import { type CadStyleGroup } from './calculateCadModelsStyling';
 
 export type AddImageCollection360Options =
   | AddImageCollection360EventsOptions

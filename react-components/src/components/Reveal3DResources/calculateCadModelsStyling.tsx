@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import {
-  StyledCadModelAddOptions,
+  type StyledCadModelAddOptions,
   type AddReveal3DModelOptions,
   type AssetStylingGroup,
   type DefaultResourceStyling,
@@ -24,13 +24,14 @@ import {
 } from '../CacheProvider/types';
 import { type AssetMappingCache, type AssetMapping } from '../CacheProvider/AssetMappingCache';
 
-import { isSame3dModel } from '../../utilities/isSameModel';
+import { isSame3dModelOptions } from '../../utilities/isSameModel';
 import {
   isAssetMappingStylingGroup,
   isFdmAssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type NodeStylingGroup, type TreeIndexStylingGroup } from './applyCadStyling';
 import { type FdmNodeCache } from '../CacheProvider/FdmNodeCache';
+import { isDefined } from '../../utilities/isDefined';
 
 type ModelStyleGroup = {
   model: AddReveal3DModelOptions;
@@ -83,14 +84,14 @@ async function calculateMappedStyling(
     false
   );
 
-  const fetchPromises = modelsRevisionsWithMappedEquipment.map(
-    async (model) =>
-      await assetMappingCache
-        .getAssetMappingsForModel(model.modelId, model.revisionId)
-        .then((assetMappings) => ({ model, assetMappings }))
+  const assetMappingData = await Promise.all(
+    modelsRevisionsWithMappedEquipment.map(
+      async (model) =>
+        await assetMappingCache
+          .getAssetMappingsForModel(model.modelId, model.revisionId)
+          .then((assetMappings) => ({ model, assetMappings }))
+    )
   );
-
-  const assetMappingData = await Promise.all(fetchPromises);
 
   const modelsMappedFdmStyleGroups = modelsRevisionsWithMappedEquipment.map((model) => {
     const fdmData = mappedEquipmentEdges?.get(`${model.modelId}/${model.revisionId}`) ?? [];
@@ -148,16 +149,16 @@ async function calculateInstanceStyling(
     .filter(isAssetMappingStylingGroup)
     .flatMap((instanceGroup) => instanceGroup.assetIds);
 
-  const modelAndNodeMapPromises = models.map(async (model) => {
-    const nodeMap = await assetMappingCache.getNodesForAssetIds(
-      model.modelId,
-      model.revisionId,
-      assetIds
-    );
-    return { modelId: model.modelId, revisionId: model.revisionId, assetToNodeMap: nodeMap };
-  });
-
-  const modelAssetMappings = await Promise.all(modelAndNodeMapPromises);
+  const modelAssetMappings = await Promise.all(
+    models.map(async (model) => {
+      const nodeMap = await assetMappingCache.getNodesForAssetIds(
+        model.modelId,
+        model.revisionId,
+        assetIds
+      );
+      return { modelId: model.modelId, revisionId: model.revisionId, assetToNodeMap: nodeMap };
+    })
+  );
 
   const fdmModelInstanceStyleGroups = getFdmInstanceStyleGroups(
     models,
@@ -226,15 +227,19 @@ function joinStylingGroups(
   }
   return models.map((model) => {
     const mappedStyleGroup =
-      modelsMappedStyleGroups.find((typedModel) => isSame3dModel(typedModel.model, model))
+      modelsMappedStyleGroups.find((typedModel) => isSame3dModelOptions(typedModel.model, model))
         ?.styleGroup ?? [];
     const instanceStyleGroups = modelInstanceStyleGroups
-      .filter((typedModel) => isSame3dModel(typedModel.model, model))
+      .filter((typedModel) => isSame3dModelOptions(typedModel.model, model))
       .flatMap((typedModel) => typedModel.styleGroup);
+
+    const defaultStyle =
+      model.styling?.default ?? defaultNodeAppearance ?? DefaultNodeAppearance.Default;
+
     return {
       addOptions: model,
       styleGroups: [...mappedStyleGroup, ...instanceStyleGroups],
-      defaultStyle: model.styling?.default ?? defaultNodeAppearance ?? DefaultNodeAppearance.Default
+      defaultStyle
     };
   });
 }
@@ -242,7 +247,7 @@ function joinStylingGroups(
 function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
   return styleGroup.reduce<ModelStyleGroup[]>((accumulatedGroups, currentGroup) => {
     const existingGroupWithModel = accumulatedGroups.find((group) =>
-      isSame3dModel(group.model, currentGroup.model)
+      isSame3dModelOptions(group.model, currentGroup.model)
     );
     if (existingGroupWithModel !== undefined) {
       existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
@@ -261,10 +266,12 @@ function extractDefaultStyles(
   defaultNodeAppearance: NodeAppearance | undefined
 ): StyledCadModelAddOptions[] {
   return typedModels.map((model) => {
+    const defaultStyle =
+      model.styling?.default ?? defaultNodeAppearance ?? DefaultNodeAppearance.Default;
     return {
       addOptions: model,
       styleGroups: [],
-      defaultStyle: model.styling?.default ?? defaultNodeAppearance ?? DefaultNodeAppearance.Default
+      defaultStyle
     };
   });
 }
@@ -335,11 +342,9 @@ function calculateAssetMappingCadModelStyling(
       group.assetIds
         .map((assetId) => nodeMap.get(assetId))
         .forEach((nodeList) =>
-          nodeList
-            ?.filter((node): node is Node3D => node !== undefined)
-            .forEach((node) => {
-              indexSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
-            })
+          nodeList?.filter(isDefined).forEach((node) => {
+            indexSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
+          })
         );
 
       return {

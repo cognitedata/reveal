@@ -12,9 +12,12 @@ import {
 import { is3dModelOptions } from '../components/Reveal3DResources/utils';
 import { type Matrix4 } from 'three';
 
-export function isSameModel(model0: AddResourceOptions, model1: AddResourceOptions): boolean {
+export function isSameAddResourceOptions(
+  model0: AddResourceOptions,
+  model1: AddResourceOptions
+): boolean {
   if (is3dModelOptions(model0) && is3dModelOptions(model1)) {
-    return isSame3dModel(model0, model1);
+    return isSame3dModelOptions(model0, model1);
   }
 
   if (is360ImageCollectionOptions(model0) && is360ImageCollectionOptions(model1)) {
@@ -45,7 +48,7 @@ function isSame360ImageOptions(
   return false;
 }
 
-export function isSame3dModel(
+export function isSame3dModelOptions(
   model0: AddReveal3DModelOptions,
   model1: AddReveal3DModelOptions
 ): boolean {

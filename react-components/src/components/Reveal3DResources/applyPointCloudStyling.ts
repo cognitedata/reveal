@@ -5,7 +5,7 @@ import {
   AnnotationIdPointCloudObjectCollection,
   type CognitePointCloudModel
 } from '@cognite/reveal';
-import { type StyledPointCloudModelAddOptions } from './calculatePointCloudModelsStyling';
+import { type StyledPointCloudModelAddOptions } from './types';
 
 export function applyPointCloudStyling(
   model: CognitePointCloudModel,

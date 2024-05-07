@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type AddResourceOptions, type AddReveal3DModelOptions } from './types';
-import { isSameModel } from '../../utilities/isSameModel';
+import { isSameAddResourceOptions } from '../../utilities/isSameModel';
 
 export function findNewAndOutdatedResources(
   newResourceOptions: AddResourceOptions[],
@@ -13,7 +13,7 @@ export function findNewAndOutdatedResources(
 
   newResourceOptions.forEach((newResource) => {
     oldResourceOptions.some((oldResource) => {
-      const equal = isSameModel(newResource, oldResource);
+      const equal = isSameAddResourceOptions(newResource, oldResource);
 
       if (equal) {
         remainingNewResourceOptions.delete(newResource);

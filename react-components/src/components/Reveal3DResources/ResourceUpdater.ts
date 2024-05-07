@@ -13,22 +13,21 @@ import {
   type AddResourceOptions,
   type AddReveal3DModelOptions,
   type DefaultResourceStyling,
-  type InstanceStylingGroup
+  type InstanceStylingGroup,
+  type StyledPointCloudModelAddOptions,
+  type StyledCadModelAddOptions
 } from './types';
 import { findNewAndOutdatedResources, is3dModelOptions } from './utils';
 import {
   is360DataModelCollection,
   is360ImageCollectionOptions,
-  isSameModel
+  isSameAddResourceOptions
 } from '../../utilities/isSameModel';
 import assert from 'assert';
 import { applyCadStyling } from './applyCadStyling';
 import { type CogniteClient } from '@cognite/sdk';
-import { type StyledCadModelAddOptions, calculateCadStyling } from './calculateCadModelsStyling';
-import {
-  type StyledPointCloudModelAddOptions,
-  calculatePointCloudStyling
-} from './calculatePointCloudModelsStyling';
+import { calculateCadStyling } from './calculateCadModelsStyling';
+import { calculatePointCloudStyling } from './calculatePointCloudModelsStyling';
 import { applyPointCloudStyling } from './applyPointCloudStyling';
 import { resourceExists } from '../../utilities/modelExists';
 import { type FdmNodeCache } from '../CacheProvider/FdmNodeCache';
@@ -160,7 +159,7 @@ export class ResourceUpdater {
     const currentModelsSet = new Set(currentModels);
     resources.forEach((resourceAddOptions) => {
       const resourceAndModel = [...currentModelsSet].find((model) =>
-        isSameModel(model.addOptions, resourceAddOptions)
+        isSameAddResourceOptions(model.addOptions, resourceAddOptions)
       );
 
       assert(resourceAndModel !== undefined);
