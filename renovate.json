@@ -15,7 +15,6 @@
       "groupSlug": "all-minor-patch",
       "matchPackagePatterns": ["*"],
       "excludePackagePatterns": ["three", "@types/three"],
-      "rangeStrategy": "bump",
       "automerge": true,
       "stabilityDays": 3,
       "internalChecksFilter": "strict",
