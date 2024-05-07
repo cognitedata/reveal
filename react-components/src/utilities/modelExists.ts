@@ -8,7 +8,7 @@ import {
   type CogniteCadModel,
   type Image360Collection
 } from '@cognite/reveal';
-import { AddOptionsWithModel } from '../components/Reveal3DResources/types';
+import { type AddOptionsWithModel } from '../components/Reveal3DResources/types';
 
 export function resourceExists(
   resource: AddOptionsWithModel | undefined,

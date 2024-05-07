@@ -30,7 +30,7 @@ import {
   calculatePointCloudStyling
 } from './calculatePointCloudModelsStyling';
 import { applyPointCloudStyling } from './applyPointCloudStyling';
-import { image360CollectionExists, modelExists, resourceExists } from '../../utilities/modelExists';
+import { resourceExists } from '../../utilities/modelExists';
 import { type FdmNodeCache } from '../CacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../CacheProvider/AssetMappingCache';
 import {
@@ -248,7 +248,7 @@ export class ResourceUpdater {
         await this._image360StylingHandler.update360ImageStylingCallback(model.model);
         break;
       default:
-        assertNever(model.type);
+        assertNever(model);
     }
 
     const matrix = model.addOptions.transform ?? new Matrix4();
@@ -264,9 +264,9 @@ export class ResourceUpdater {
     return await calculateCadStyling(
       models,
       this._instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? [],
+      this._defaultResourceStyling,
       this._fdmNodeCache,
-      this._assetMappingCache,
-      this._defaultResourceStyling
+      this._assetMappingCache
     );
   }
 

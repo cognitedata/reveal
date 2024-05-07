@@ -47,9 +47,9 @@ export type StyledCadModelAddOptions = {
 export async function calculateCadStyling(
   models: AddReveal3DModelOptions[],
   instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
+  defaultResourceStyling: DefaultResourceStyling | undefined,
   fdmNodeCache: FdmNodeCache,
-  assetMappingCache: AssetMappingCache,
-  defaultResourceStyling?: DefaultResourceStyling
+  assetMappingCache: AssetMappingCache
 ): Promise<StyledCadModelAddOptions[]> {
   const modelsMappedStyleGroups =
     defaultResourceStyling?.cad?.mapped !== undefined
