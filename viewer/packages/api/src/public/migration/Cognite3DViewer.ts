@@ -1507,13 +1507,12 @@ export class Cognite3DViewer {
   /**
    * Creates and initialize a CustomObjectIntersectInput to be used by CustomObject.intersectIfCloser method.
    * @param pixelCoords A Vector2 containing pixel coordinates relative to the 3D viewer.
-   * @param pixelCoord
    * @returns A CustomObjectIntersectInput ready to use.
    * @beta
    */
-  public createCustomObjectIntersectInput(pixelCoord: THREE.Vector2): CustomObjectIntersectInput {
+  public createCustomObjectIntersectInput(pixelCoords: THREE.Vector2): CustomObjectIntersectInput {
     return new CustomObjectIntersectInput(
-      this.getNormalizedPixelCoordinates(pixelCoord),
+      this.getNormalizedPixelCoordinates(pixelCoords),
       this.cameraManager.getCamera(),
       this.getGlobalClippingPlanes()
     );
@@ -1564,17 +1563,17 @@ export class Cognite3DViewer {
 
   /**
    * Raycasting model(s) for finding where the ray intersects with all models, including custom objects.
-   * @param pixelCoord Pixel coordinate in pixels (relative to the domElement).
+   * @param pixelCoords Pixel coordinate in pixels (relative to the domElement).
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @beta
    */
-  public async getAnyIntersectionFromPixel(pixelCoord: THREE.Vector2): Promise<AnyIntersection | undefined> {
-    const modelIntersection = await this.intersectModels(pixelCoord.x, pixelCoord.y, { asyncCADIntersection: false });
+  public async getAnyIntersectionFromPixel(pixelCoords: THREE.Vector2): Promise<AnyIntersection | undefined> {
+    const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, { asyncCADIntersection: false });
 
     // Find any custom object intersection closer to the camera than the model intersection
     const customObjectIntersection = this.getCustomObjectIntersectionIfCloser(
-      pixelCoord,
+      pixelCoords,
       modelIntersection?.distanceToCamera
     );
     if (customObjectIntersection !== undefined) {
@@ -1746,7 +1745,7 @@ export class Cognite3DViewer {
   }
 
   private getCustomObjectIntersectionIfCloser(
-    pixelCoord: THREE.Vector2,
+    pixelCoords: THREE.Vector2,
     closestDistanceToCamera: number | undefined
   ): CustomObjectIntersection | undefined {
     let intersectInput: CustomObjectIntersectInput | undefined = undefined; // Lazy creation for speed
@@ -1759,7 +1758,7 @@ export class Cognite3DViewer {
         return;
       }
       if (!intersectInput) {
-        intersectInput = this.createCustomObjectIntersectInput(pixelCoord);
+        intersectInput = this.createCustomObjectIntersectInput(pixelCoords);
       }
       const intersection = customObject.intersectIfCloser(intersectInput, closestDistanceToCamera);
       if (!intersection) {
