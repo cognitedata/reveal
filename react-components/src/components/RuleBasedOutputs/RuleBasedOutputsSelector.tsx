@@ -55,7 +55,7 @@ export function RuleBasedOutputsSelector({
     });
 
   useEffect(() => {
-    if (!isFetching && hasNextPage) {
+    if (!isFetching && (hasNextPage ?? false)) {
       void fetchNextPage();
     }
   }, [isFetching, hasNextPage, fetchNextPage]);
