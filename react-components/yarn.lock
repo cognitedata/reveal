@@ -1790,7 +1790,7 @@ __metadata:
     react-router-dom: "npm:^6.23.0"
     storybook: "npm:^8.0.9"
     style-loader: "npm:^4.0.0"
-    styled-components: "npm:^6.1.9"
+    styled-components: "npm:^6.1.8"
     three: "npm:0.158.0"
     ts-loader: "npm:^9.5.1"
     typescript: "npm:^5.4.5"
@@ -14083,7 +14083,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:^6.1.9":
+"styled-components@npm:^6.1.8":
   version: 6.1.9
   resolution: "styled-components@npm:6.1.9"
   dependencies:
