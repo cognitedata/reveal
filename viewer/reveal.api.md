@@ -63,6 +63,9 @@ export class AnnotationIdPointCloudObjectCollection extends PointCloudObjectColl
     get isLoading(): false;
 }
 
+// @beta
+export type AnyIntersection = CadIntersection | PointCloudIntersection | CustomObjectIntersection;
+
 // @public
 export interface AreaCollection {
     addAreas(boxes: Iterable<Box3>): void;
@@ -412,7 +415,7 @@ export class Cognite3DViewer {
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
     addCadModel(options: AddModelOptions): Promise<CogniteCadModel>;
     // @beta
-    addCustomObject(customObject: CustomObject): void;
+    addCustomObject(customObject: ICustomObject): void;
     addModel(options: AddModelOptions): Promise<CogniteModel>;
     addObject3D(object: THREE.Object3D): void;
     addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel>;
@@ -421,6 +424,8 @@ export class Cognite3DViewer {
     // (undocumented)
     get cameraManager(): CameraManager;
     get canvas(): HTMLCanvasElement;
+    // @beta
+    createCustomObjectIntersectInput(pixelCoords: THREE.Vector2): CustomObjectIntersectInput;
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
     get domElement(): HTMLElement;
@@ -432,10 +437,16 @@ export class Cognite3DViewer {
     get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection>;
     get360ImageCollections(): Image360Collection[];
     getActive360ImageInfo(): Image360WithCollection | undefined;
+    // @beta
+    getAnyIntersectionFromPixel(pixelCoords: THREE.Vector2): Promise<AnyIntersection | undefined>;
     // @deprecated
     getClippingPlanes(): THREE.Plane[];
     getGlobalClippingPlanes(): THREE.Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
+    getNormalizedPixelCoordinates(pixelCoords: THREE.Vector2): THREE.Vector2;
+    getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): THREE.Vector2;
+    // @beta
+    getSceneBoundingBox(): THREE.Box3;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
     getVersion(): string;
     getViewState(): ViewerState;
@@ -467,7 +478,7 @@ export class Cognite3DViewer {
     remove360Images(...image360Entities: Image360[]): Promise<void>;
     remove360ImageSet(imageCollection: Image360Collection): void;
     // @beta
-    removeCustomObject(customObject: CustomObject): void;
+    removeCustomObject(customObject: ICustomObject): void;
     removeModel(model: CogniteModel): void;
     removeObject3D(object: THREE.Object3D): void;
     get renderParameters(): RenderParameters;
@@ -537,7 +548,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getCameraConfiguration(): CameraConfiguration | undefined;
     getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
     getDefaultNodeAppearance(): NodeAppearance;
-    getModelBoundingBox(outBbox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3;
+    getModelBoundingBox(outBoundingBox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3;
     getModelClippingPlanes(): THREE.Plane[];
     getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
     getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange>;
@@ -589,7 +600,7 @@ export class CognitePointCloudModel {
     }>;
     getDefaultPointCloudAppearance(): PointCloudAppearance;
     // (undocumented)
-    getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3;
+    getModelBoundingBox(outBoundingBox?: THREE.Box3): THREE.Box3;
     getModelClippingPlanes(): THREE.Plane[];
     getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
     hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
@@ -741,8 +752,9 @@ export enum Corner {
 }
 
 // @beta
-export class CustomObject {
+export class CustomObject implements ICustomObject {
     constructor(object: Object3D);
+    getBoundingBox(target: Box3): Box3;
     intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
     get isPartOfBoundingBox(): boolean;
     set isPartOfBoundingBox(value: boolean);
@@ -773,7 +785,7 @@ export type CustomObjectIntersection = {
     type: 'customObject';
     point: Vector3;
     distanceToCamera: number;
-    customObject: CustomObject;
+    customObject: ICustomObject;
     boundingBox?: Box3;
     userData?: any;
 };
@@ -1079,6 +1091,16 @@ export type HtmlOverlayToolClusteringOptions = {
 export type HtmlOverlayToolOptions = {
     clusteringOptions?: HtmlOverlayToolClusteringOptions;
 };
+
+// @beta
+export interface ICustomObject {
+    getBoundingBox(target: Box3): Box3;
+    intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
+    get isPartOfBoundingBox(): boolean;
+    get object(): Object3D;
+    get shouldPick(): boolean;
+    get shouldPickBoundingBox(): boolean;
+}
 
 // @beta
 export interface IFlexibleCameraManager extends CameraManager {

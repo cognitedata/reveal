@@ -352,7 +352,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
   /**
    * Determines the full bounding box of the model.
-   * @param outBbox Optional. Used to write result to.
+   * @param outBoundingBox Optional. Used to write result to.
    * @param restrictToMostGeometry Optional. When true, returned bounds are restricted to
    * where most of the geometry is located. This is useful for models that have junk geometry
    * located far from the "main" model. Added in version 1.3.0.
@@ -360,24 +360,24 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    *
    * @example
    * ```js
-   * const box = new THREE.Box3()
-   * model.getModelBoundingBox(box);
-   * // box now has the bounding box
+   * const boundingBox = new THREE.Box3()
+   * model.getModelBoundingBox(boundingBox);
+   * // boundingBox now has the bounding box
    * ```
    * ```js
    * // the following code does the same
-   * const box = model.getModelBoundingBox();
+   * const boundingBox = model.getModelBoundingBox();
    * ```
    */
-  getModelBoundingBox(outBbox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3 {
+  getModelBoundingBox(outBoundingBox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3 {
     const bounds = restrictToMostGeometry
       ? this.cadModel.scene.getBoundsOfMostGeometry()
       : this.cadModel.scene.root.subtreeBoundingBox;
 
-    outBbox = outBbox || new THREE.Box3();
-    outBbox.copy(bounds);
-    outBbox.applyMatrix4(this.cadModel.modelMatrix);
-    return outBbox;
+    outBoundingBox = outBoundingBox || new THREE.Box3();
+    outBoundingBox.copy(bounds);
+    outBoundingBox.applyMatrix4(this.cadModel.modelMatrix);
+    return outBoundingBox;
   }
 
   /**

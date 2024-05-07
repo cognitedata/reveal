@@ -83,7 +83,7 @@ export class CameraManagerHelper {
     camera.getWorldPosition(cameraPosition);
     camera.getWorldDirection(cameraDirection);
 
-    // 1. Compute nearest to fit the whole bbox (the case
+    // 1. Compute nearest to fit the whole boundingBox (the case
     // where the camera is inside the box is ignored for now)
     let near = this.calculateCameraNear(camera, boundingBox, cameraPosition);
 
