@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { loadStory } from './utils/loadStory';
 
-test('cad model container storybook', async ({ page }) => {
+test('tool bar storybook', async ({ page }) => {
   await loadStory(page, 'example-toolbar');
 
   await page.locator('button[aria-label="Fit camera to models"]').first().click();

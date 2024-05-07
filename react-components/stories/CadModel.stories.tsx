@@ -16,6 +16,7 @@ const CadModelContainerStoryContent = ({
 }: AddResourceOptions): ReactElement => {
   const cameraNavigationActions = useCameraNavigation();
   const onLoad = (): void => {
+    console.log('AAAAAHHHH');
     cameraNavigationActions.fitCameraToAllModels(0);
     signalStoryReadyForScreenshot();
   };
