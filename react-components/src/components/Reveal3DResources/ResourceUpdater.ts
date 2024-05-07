@@ -30,7 +30,7 @@ import {
   calculatePointCloudStyling
 } from './calculatePointCloudModelsStyling';
 import { applyPointCloudStyling } from './applyPointCloudStyling';
-import { image360CollectionExists, modelExists } from '../../utilities/modelExists';
+import { image360CollectionExists, modelExists, resourceExists } from '../../utilities/modelExists';
 import { type FdmNodeCache } from '../CacheProvider/FdmNodeCache';
 import { type AssetMappingCache } from '../CacheProvider/AssetMappingCache';
 import {
@@ -40,6 +40,7 @@ import {
 import { type PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
 import { Matrix4 } from 'three';
 import { Image360StylingHandler } from './Image360StylingHandler';
+import { assertNever } from '../../utilities/assertNever';
 
 export class ResourceUpdater {
   private _pendingModelsPromise: Promise<AddOptionsWithModel[]> = Promise.resolve([]);
@@ -226,30 +227,34 @@ export class ResourceUpdater {
   }
 
   private async applyStylingAndTransform(model: AddOptionsWithModel): Promise<void> {
-    if (model.type === 'cad') {
-      if (!modelExists(model.model, this._viewer)) {
-        return;
-      }
-      const [styling] = await this.computeCadModelsStyling([model.addOptions]);
+    if (!resourceExists(model, this._viewer)) {
+      return;
+    }
+    switch (model.type) {
+      case 'cad': {
+        const [styling] = await this.computeCadModelsStyling([model.addOptions]);
 
-      await applyCadStyling(model.model, styling, this._viewer, this._client);
-    } else if (model.type === 'pointcloud') {
-      if (!modelExists(model.model, this._viewer)) {
-        return;
+        await applyCadStyling(model.model, styling, this._viewer, this._client);
+        break;
       }
-      const [styling] = await this.computePointCloudModelsStyling([model.model]);
+      case 'pointcloud': {
+        const [styling] = await this.computePointCloudModelsStyling([model.model]);
 
-      applyPointCloudStyling(model.model, styling);
-    } else {
-      await this._image360StylingHandler.update360ImageStylingCallback(model.model);
+        applyPointCloudStyling(model.model, styling);
+        break;
+      }
+
+      case 'image360':
+        await this._image360StylingHandler.update360ImageStylingCallback(model.model);
+        break;
+      default:
+        assertNever(model.type);
     }
 
     const matrix = model.addOptions.transform ?? new Matrix4();
-    if (
-      (model.type === 'image360' && !image360CollectionExists(model.model, this._viewer)) ||
-      (model.type !== 'image360' && !modelExists(model.model, this._viewer))
-    )
-      return;
+
+    if (!resourceExists(model, this._viewer)) return;
+
     model.model.setModelTransformation(matrix);
   }
 

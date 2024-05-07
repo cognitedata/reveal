@@ -8,6 +8,22 @@ import {
   type CogniteCadModel,
   type Image360Collection
 } from '@cognite/reveal';
+import { AddOptionsWithModel } from '../components/Reveal3DResources/types';
+
+export function resourceExists(
+  resource: AddOptionsWithModel | undefined,
+  viewer: Cognite3DViewer
+): resource is AddOptionsWithModel {
+  if (resource === undefined) {
+    return false;
+  }
+
+  if (resource.type === 'image360') {
+    return image360CollectionExists(resource.model, viewer);
+  }
+
+  return modelExists(resource.model, viewer);
+}
 
 export function modelExists(
   model: CogniteCadModel | CognitePointCloudModel | undefined,
