@@ -14,7 +14,7 @@ import { AnnotationModel } from '@cognite/sdk';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import assert from 'assert';
-import { Box3, Vector3 } from 'three';
+import { Box3, Vector3, type Raycaster } from 'three';
 import minBy from 'lodash/minBy';
 import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
@@ -71,7 +71,7 @@ export class Image360RevisionEntity implements Image360Revision {
     return this._annotationsPromise;
   }
 
-  public intersectAnnotations(raycaster: THREE.Raycaster): ImageAnnotationObject | undefined {
+  public intersectAnnotations(raycaster: Raycaster): ImageAnnotationObject | undefined {
     if (this._annotations === undefined) {
       return undefined;
     }

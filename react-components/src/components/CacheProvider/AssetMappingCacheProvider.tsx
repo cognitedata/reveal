@@ -48,14 +48,14 @@ export const useAssetMappedNodesForRevisions = (
 ): UseQueryResult<ModelWithAssetMappings[]> => {
   const assetMappingCache = useAssetMappingCache();
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'reveal',
       'react-components',
       'models-asset-mappings',
       ...cadModels.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
-    async () => {
+    queryFn: async () => {
       const fetchPromises = cadModels.map(
         async (model) =>
           await assetMappingCache
@@ -64,8 +64,9 @@ export const useAssetMappedNodesForRevisions = (
       );
       return await Promise.all(fetchPromises);
     },
-    { staleTime: Infinity, enabled: cadModels.length > 0 }
-  );
+    staleTime: Infinity,
+    enabled: cadModels.length > 0
+  });
 };
 
 export const useNodesForAssets = (
@@ -74,15 +75,15 @@ export const useNodesForAssets = (
 ): UseQueryResult<ModelRevisionAssetNodesResult[]> => {
   const assetMappingCache = useAssetMappingCache();
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'reveal',
       'react-components',
       'asset-mapping-nodes',
       ...models.map((model) => `${model.modelId}/${model.revisionId}`),
       ...assetIds.map((id) => `${id}`)
     ],
-    async () => {
+    queryFn: async () => {
       const modelAndNodeMapPromises = models.map(async (model) => {
         const nodeMap = await assetMappingCache.getNodesForAssetIds(
           model.modelId,
@@ -94,8 +95,9 @@ export const useNodesForAssets = (
 
       return await Promise.all(modelAndNodeMapPromises);
     },
-    { staleTime: Infinity, enabled: assetIds.length > 0 }
-  );
+    staleTime: Infinity,
+    enabled: assetIds.length > 0
+  });
 };
 
 export const useAssetMappingForTreeIndex = (
@@ -106,15 +108,15 @@ export const useAssetMappingForTreeIndex = (
   const assetMappingCache = useAssetMappingCache();
   const cdfClient = useSDK();
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'reveal',
       'react-components',
       'tree-index-asset-mapping',
       `${modelId}/${revisionId}`,
       treeIndex
     ],
-    async () => {
+    queryFn: async () => {
       const areInputsDefined =
         modelId !== undefined && revisionId !== undefined && treeIndex !== undefined;
 
@@ -135,8 +137,8 @@ export const useAssetMappingForTreeIndex = (
         ancestors
       );
     },
-    { staleTime: Infinity }
-  );
+    staleTime: Infinity
+  });
 };
 
 export function AssetMappingCacheProvider({ children }: { children?: ReactNode }): ReactElement {

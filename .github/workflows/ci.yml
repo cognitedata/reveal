@@ -65,7 +65,7 @@ jobs:
         if: steps.cargo_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         continue-on-error: false
-        run: cargo update --locked
+        run: cargo update --workspace --locked
 
   build-viewer:
     needs: [changes, populate-caches]
@@ -371,7 +371,7 @@ jobs:
     name: Cleanup
     runs-on: ubuntu-latest
     steps:
-      - uses: geekyeggo/delete-artifact@v2
+      - uses: geekyeggo/delete-artifact@v5
         with:
           name: |
             viewer

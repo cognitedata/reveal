@@ -43,14 +43,14 @@ export const usePointCloudAnnotationIdsForModels = (
 > => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'reveal',
       'react-components',
       'models-pointcloud-annotationmodels',
       ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
-    async () => {
+    queryFn: async () => {
       return await Promise.all(
         models.map(async (model) => {
           const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
@@ -64,8 +64,9 @@ export const usePointCloudAnnotationIdsForModels = (
         })
       );
     },
-    { staleTime: Infinity, enabled: models.length > 0 }
-  );
+    staleTime: Infinity,
+    enabled: models.length > 0
+  });
 };
 
 export const usePointCloudAnnotationMappingsForModels = (
@@ -73,14 +74,14 @@ export const usePointCloudAnnotationMappingsForModels = (
 ): UseQueryResult<AnnotationModelDataResult[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'reveal',
       'react-components',
       'models-pointcloud-annotations-mappings',
       ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
-    async () => {
+    queryFn: async () => {
       return await Promise.all(
         models.map(async (model) => {
           const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
@@ -94,8 +95,9 @@ export const usePointCloudAnnotationMappingsForModels = (
         })
       );
     },
-    { staleTime: Infinity, enabled: models.length > 0 }
-  );
+    staleTime: Infinity,
+    enabled: models.length > 0
+  });
 };
 
 export const usePointCloudAnnotationMappingsForAssetIds = (
@@ -104,15 +106,15 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
 ): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'reveal',
       'react-components',
       'all-annotation-mappings',
       ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
       ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? [])
     ],
-    async () => {
+    queryFn: async () => {
       const allAnnotationMappingsPromisesResult = await Promise.all(
         models.map(async (model) => {
           const result = await fetchAnnotationsForModel(
@@ -126,8 +128,9 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
       );
       return allAnnotationMappingsPromisesResult.flat();
     },
-    { staleTime: Infinity, enabled: assetIds !== undefined && assetIds.length > 0 }
-  );
+    staleTime: Infinity,
+    enabled: assetIds !== undefined && assetIds.length > 0
+  });
 };
 
 export const usePointCloudAnnotationMappingForAssetId = (
@@ -137,15 +140,15 @@ export const usePointCloudAnnotationMappingForAssetId = (
 ): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'reveal',
       'react-components',
       'asset-annotation-mapping-for-a-model',
       `${modelId}/${revisionId}`,
       assetId
     ],
-    async () => {
+    queryFn: async () => {
       if (modelId === undefined || revisionId === undefined || assetId === undefined) {
         return EMPTY_ARRAY;
       }
@@ -157,8 +160,9 @@ export const usePointCloudAnnotationMappingForAssetId = (
       );
       return result ?? EMPTY_ARRAY;
     },
-    { staleTime: Infinity, enabled: assetId !== undefined }
-  );
+    staleTime: Infinity,
+    enabled: assetId !== undefined
+  });
 };
 
 const fetchAnnotationsForModel = async (

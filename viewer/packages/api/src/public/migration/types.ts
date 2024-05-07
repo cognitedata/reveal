@@ -15,6 +15,8 @@ import { Cognite3DViewer } from './Cognite3DViewer';
 import { DefaultCameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import { Image360AnnotationFilterOptions } from '@reveal/360-images';
+import type { Vector2, WebGLRenderTarget, WebGLRenderer, Matrix4, Vector3 } from 'three';
+import { CustomObjectIntersection } from '@reveal/utilities';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -28,13 +30,13 @@ import { Image360AnnotationFilterOptions } from '@reveal/360-images';
 export type OnLoadingCallback = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => void;
 
 /**
- * Some parameters of THREE.WebGLRenderer initialized with {@link Cognite3DViewer}.
+ * Some parameters of WebGLRenderer initialized with {@link Cognite3DViewer}.
  */
 export type RenderParameters = {
   /**
    * Current width and height of the renderer's output canvas, in pixels.
    */
-  renderSize: THREE.Vector2;
+  renderSize: Vector2;
 };
 
 /**
@@ -53,7 +55,7 @@ export interface Cognite3DViewerOptions {
   /**
    * Render to offscreen buffer instead of canvas.
    */
-  renderTargetOptions?: { target: THREE.WebGLRenderTarget; autoSetSize?: boolean };
+  renderTargetOptions?: { target: WebGLRenderTarget; autoSetSize?: boolean };
 
   /**
    * Style the loading indicator.
@@ -73,7 +75,7 @@ export interface Cognite3DViewerOptions {
    * Camera manager instance that is used for controlling the camera.
    * It is responsible for all manipulations that are done with the camera,
    * including animations and modification of state. Also, gives ability
-   * to provide custom `THREE.PerspectiveCamera` instance to {@link Cognite3DViewer}.
+   * to provide custom `PerspectiveCamera` instance to {@link Cognite3DViewer}.
    * Default implementation is {@link DefaultCameraManager}.
    */
   cameraManager?: CameraManager;
@@ -82,7 +84,7 @@ export interface Cognite3DViewerOptions {
    * Note that when providing a custom renderer, this should be configured with
    * `'powerPreference': 'high-performance'` for best performance.
    */
-  renderer?: THREE.WebGLRenderer;
+  renderer?: WebGLRenderer;
 
   /**
    * Generally Reveal will follow the resolution given by the size
@@ -217,7 +219,7 @@ export type AddImage360Options = {
   /**
    * An optional transformation which will be applied to all 360 images that are fetched.
    */
-  collectionTransform?: THREE.Matrix4;
+  collectionTransform?: Matrix4;
   /**
    * Set this to false if the 360 images' rotation is not pre-multiplied to fit the given model.
    * @default true
@@ -241,7 +243,7 @@ export type CadIntersection = {
   /**
    * Coordinate of the intersection.
    */
-  point: THREE.Vector3;
+  point: Vector3;
   /**
    * Tree index of the intersected 3D node.
    */
@@ -283,6 +285,13 @@ export type ResolutionOptions = {
  * @module @cognite/reveal
  */
 export type Intersection = CadIntersection | PointCloudIntersection;
+
+/**
+ * Represents the result from {@link Cognite3DViewer.getAnyIntersectionFromPixel}.
+ * @module @cognite/reveal
+ * @beta
+ */
+export type AnyIntersection = CadIntersection | PointCloudIntersection | CustomObjectIntersection;
 
 /**
  * @module @cognite/reveal

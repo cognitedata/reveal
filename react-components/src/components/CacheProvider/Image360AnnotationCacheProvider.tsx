@@ -39,15 +39,15 @@ export const useImage360AnnotationMappingsForAssetIds = (
 ): UseQueryResult<Image360AnnotationAssetInfo[]> => {
   const image360AnnotationCache = useImage360AnnotationCache();
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'reveal',
       'react-components',
       'image360-annotations-info',
       ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? []),
       ...(siteIds?.map((siteId) => siteId).sort() ?? [])
     ],
-    async () => {
+    queryFn: async () => {
       if (
         assetIds === undefined ||
         assetIds.length === 0 ||
@@ -62,11 +62,9 @@ export const useImage360AnnotationMappingsForAssetIds = (
       });
       return filteredAnnotationAssetInfo;
     },
-    {
-      staleTime: Infinity,
-      enabled: assetIds !== undefined && siteIds !== undefined
-    }
-  );
+    staleTime: Infinity,
+    enabled: assetIds !== undefined && siteIds !== undefined
+  });
 };
 
 export function Image360AnnotationCacheProvider({
