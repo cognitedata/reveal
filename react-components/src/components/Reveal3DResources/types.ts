@@ -5,12 +5,17 @@
 import {
   type NodeAppearance,
   type AddModelOptions,
-  type Image360AnnotationAppearance
+  type Image360AnnotationAppearance,
+  Image360Collection,
+  CognitePointCloudModel,
+  CogniteCadModel
 } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk/dist/src';
+import { StyledPointCloudModelAddOptions } from './calculatePointCloudModelsStyling';
+import { StyledCadModelAddOptions } from './calculateCadModelsStyling';
 
 export type AddImageCollection360Options =
   | AddImageCollection360EventsOptions
@@ -92,3 +97,42 @@ export type Reveal3DResourcesProps = {
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
 };
+
+export type Image360AnnotationStyleGroup = {
+  assetIds: number[];
+  style: Image360AnnotationAppearance;
+};
+
+export type StyledImage360CollectionAddOptions = {
+  addOptions: AddImageCollection360Options;
+  styleGroups: Image360AnnotationStyleGroup[];
+  defaultStyle?: Image360AnnotationAppearance;
+};
+
+export type CadAddOptionsWithModel = {
+  type: 'cad';
+  addOptions: AddReveal3DModelOptions;
+  model: CogniteCadModel;
+};
+
+export type PointCloudAddOptionsWithModel = {
+  type: 'pointcloud';
+  addOptions: AddReveal3DModelOptions;
+  model: CognitePointCloudModel;
+};
+
+export type Image360AddOptionsWithModel = {
+  type: 'image360';
+  addOptions: AddImageCollection360Options;
+  model: Image360Collection;
+};
+
+export type AddOptionsWithModel =
+  | CadAddOptionsWithModel
+  | PointCloudAddOptionsWithModel
+  | Image360AddOptionsWithModel;
+
+export type StyledAddModelOptions =
+  | StyledCadModelAddOptions
+  | StyledPointCloudModelAddOptions
+  | StyledImage360CollectionAddOptions;

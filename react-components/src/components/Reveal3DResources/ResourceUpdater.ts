@@ -10,6 +10,7 @@ import {
   type Image360AnnotationAppearance
 } from '@cognite/reveal';
 import {
+  AddOptionsWithModel,
   type AddImageCollection360Options,
   type AddResourceOptions,
   type AddReveal3DModelOptions,
@@ -41,45 +42,6 @@ import {
 import { type PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
 import { Matrix4 } from 'three';
 import { Image360StylingHandler } from './Image360StylingHandler';
-
-export type Image360AnnotationStyleGroup = {
-  assetIds: number[];
-  style: Image360AnnotationAppearance;
-};
-
-export type StyledImage360CollectionAddOptions = {
-  addOptions: AddImageCollection360Options;
-  styleGroups: Image360AnnotationStyleGroup[];
-  defaultStyle?: Image360AnnotationAppearance;
-};
-
-type CadAddOptionsWithModel = {
-  type: 'cad';
-  addOptions: AddReveal3DModelOptions;
-  model: CogniteCadModel;
-};
-
-type PointCloudAddOptionsWithModel = {
-  type: 'pointcloud';
-  addOptions: AddReveal3DModelOptions;
-  model: CognitePointCloudModel;
-};
-
-export type Image360AddOptionsWithModel = {
-  type: 'image360';
-  addOptions: AddImageCollection360Options;
-  model: Image360Collection;
-};
-
-export type AddOptionsWithModel =
-  | CadAddOptionsWithModel
-  | PointCloudAddOptionsWithModel
-  | Image360AddOptionsWithModel;
-
-export type StyledAddModelOptions =
-  | StyledCadModelAddOptions
-  | StyledPointCloudModelAddOptions
-  | StyledImage360CollectionAddOptions;
 
 export class ResourceUpdater {
   private _pendingModelsPromise: Promise<AddOptionsWithModel[]> = Promise.resolve([]);
@@ -235,38 +197,7 @@ export class ResourceUpdater {
   private addResources(resources: AddResourceOptions[]): Array<Promise<AddOptionsWithModel>> {
     return resources.map(async (addOptions) => {
       try {
-        const addedModel = await (async () => {
-          if (is3dModelOptions(addOptions)) {
-            const addedModel = await this._viewer.addModel(addOptions);
-            if (addedModel instanceof CogniteCadModel) {
-              addedModel.setDefaultNodeAppearance({ visible: false });
-              return { type: 'cad' as const, model: addedModel, addOptions };
-            } else {
-              addedModel.setDefaultPointCloudAppearance({ visible: false });
-              return { type: 'pointcloud' as const, model: addedModel, addOptions };
-            }
-          } else {
-            const addedCollection = await (async () => {
-              if (is360DataModelCollection(addOptions)) {
-                return await this._viewer.add360ImageSet('datamodels', {
-                  image360CollectionExternalId: addOptions.externalId,
-                  space: addOptions.space
-                });
-              } else {
-                return await this._viewer.add360ImageSet('events', {
-                  site_id: addOptions.siteId
-                });
-              }
-            })();
-
-            addedCollection.setDefaultAnnotationStyle({ visible: false });
-            return {
-              model: addedCollection,
-              addOptions,
-              type: 'image360' as const
-            };
-          }
-        })();
+        const addedModel = await this.addResourceToViewer(addOptions);
 
         this._onModelLoaded?.();
         return addedModel;
@@ -275,6 +206,39 @@ export class ResourceUpdater {
         throw error;
       }
     });
+  }
+
+  private async addResourceToViewer(addOptions: AddResourceOptions): Promise<AddOptionsWithModel> {
+    if (is3dModelOptions(addOptions)) {
+      const addedModel = await this._viewer.addModel(addOptions);
+      if (addedModel instanceof CogniteCadModel) {
+        addedModel.setDefaultNodeAppearance({ visible: false });
+        return { type: 'cad' as const, model: addedModel, addOptions };
+      } else {
+        addedModel.setDefaultPointCloudAppearance({ visible: false });
+        return { type: 'pointcloud' as const, model: addedModel, addOptions };
+      }
+    } else {
+      const addedCollection = await (async () => {
+        if (is360DataModelCollection(addOptions)) {
+          return await this._viewer.add360ImageSet('datamodels', {
+            image360CollectionExternalId: addOptions.externalId,
+            space: addOptions.space
+          });
+        } else {
+          return await this._viewer.add360ImageSet('events', {
+            site_id: addOptions.siteId
+          });
+        }
+      })();
+
+      addedCollection.setDefaultAnnotationStyle({ visible: false });
+      return {
+        model: addedCollection,
+        addOptions,
+        type: 'image360' as const
+      };
+    }
   }
 
   private async applyStylingAndTransform(model: AddOptionsWithModel): Promise<void> {

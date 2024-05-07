@@ -13,9 +13,7 @@ import {
 import {
   type AddOptionsWithModel,
   type Image360AddOptionsWithModel,
-  type Image360AnnotationStyleGroup
-} from './ResourceUpdater';
-import {
+  type Image360AnnotationStyleGroup,
   type DefaultResourceStyling,
   type Image360AssetStylingGroup,
   type InstanceStylingGroup
