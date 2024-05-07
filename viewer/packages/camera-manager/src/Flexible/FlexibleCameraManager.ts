@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Box3, PerspectiveCamera, Raycaster, Vector3, Scene, Ray, Spherical } from 'three';
+import { Box3, PerspectiveCamera, Raycaster, Vector3, Scene, Ray, Spherical, Vector2 } from 'three';
 
 import { FlexibleControls } from './FlexibleControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
@@ -10,12 +10,11 @@ import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import TWEEN from '@tweenjs/tween.js';
 
 import {
-  PointerEventData,
   fitCameraToBoundingBox,
   getNormalizedPixelCoordinates,
-  clickOrTouchEventOffset,
   PointerEventsTarget,
-  PointerEvents
+  PointerEvents,
+  getPixelCoordinatesFromEvent
 } from '@reveal/utilities';
 
 import { CameraEventDelegate, CameraManagerCallbackData, CameraManagerEventType, CameraState } from './../types';
@@ -159,12 +158,12 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     moveCameraPositionAndTargetTo(this, position, target, duration);
   }
 
-  public update(deltaTime: number, nearFarBoundingBox: Box3): void {
+  public update(deltaTime: number, nearFarPlaneBoundingBox: Box3): void {
     // If the camera haven't set the position and target before, do it now
-    if (this._nearAndFarNeedsUpdate || !nearFarBoundingBox.equals(this._currentBoundingBox)) {
+    if (this._nearAndFarNeedsUpdate || !nearFarPlaneBoundingBox.equals(this._currentBoundingBox)) {
       this._nearAndFarNeedsUpdate = false;
-      this._currentBoundingBox.copy(nearFarBoundingBox);
-      this.updateCameraNearAndFar(nearFarBoundingBox);
+      this._currentBoundingBox.copy(nearFarPlaneBoundingBox);
+      this.updateCameraNearAndFar(nearFarPlaneBoundingBox);
     }
     if (this.isEnabled) {
       this.controls.update(deltaTime);
@@ -246,11 +245,8 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     if (this.options.mouseClickType === FlexibleMouseActionType.None) {
       return;
     }
-    const firedEvent = {
-      ...clickOrTouchEventOffset(event, this.domElement),
-      button: event instanceof MouseEvent ? event.button : undefined
-    };
-    await this.mouseAction(firedEvent, this.options.mouseClickType);
+    const position = getPixelCoordinatesFromEvent(event, this.domElement);
+    await this.mouseAction(position, this.options.mouseClickType);
   }
 
   public override async onDoubleClick(event: PointerEvent): Promise<void> {
@@ -260,8 +256,8 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     if (this.options.mouseClickType === FlexibleMouseActionType.None) {
       return;
     }
-    const firedEvent = clickOrTouchEventOffset(event, this.domElement);
-    await this.mouseAction(firedEvent, this.options.mouseDoubleClickType);
+    const position = getPixelCoordinatesFromEvent(event, this.domElement);
+    await this.mouseAction(position, this.options.mouseDoubleClickType);
   }
 
   public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
@@ -356,18 +352,18 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   // INSTANCE METHODS: Calculations
   //================================================
 
-  private readonly getPickedPointByPixelCoordinates = async (pixelX: number, pixelY: number): Promise<Vector3> => {
-    const raycastResult = await this._raycastCallback(pixelX, pixelY, false);
+  private readonly getPickedPointByPixelCoordinates = async (position: Vector2): Promise<Vector3> => {
+    const raycastResult = await this._raycastCallback(position.x, position.y, false);
     if (raycastResult.intersection?.point) {
       return raycastResult.intersection.point;
     }
     // If no intersection, get the intersection from the bounding box
-    return this.getTargetByBoundingBox(pixelX, pixelY, raycastResult.modelsBoundingBox);
+    return this.getTargetByBoundingBox(position, raycastResult.modelsBoundingBox);
   };
 
-  private getTargetByBoundingBox(pixelX: number, pixelY: number, boundingBox: Box3): Vector3 {
+  private getTargetByBoundingBox(position: Vector2, boundingBox: Box3): Vector3 {
     const raycaster = new Raycaster();
-    const normalizedCoords = getNormalizedPixelCoordinates(this.domElement, pixelX, pixelY);
+    const normalizedCoords = getNormalizedPixelCoordinates(this.domElement, position.x, position.y);
     raycaster.setFromCamera(normalizedCoords, this.camera);
 
     // Try to intersect the bounding box
@@ -412,7 +408,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   // INSTANCE METHODS: Event Handlers
   //================================================
 
-  private async mouseAction(event: PointerEventData, mouseActionType: FlexibleMouseActionType) {
+  private async mouseAction(position: Vector2, mouseActionType: FlexibleMouseActionType) {
     if (mouseActionType === FlexibleMouseActionType.None) {
       return;
     }
@@ -420,19 +416,19 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
       if (this.controls.controlsType !== FlexibleControlsType.Orbit) {
         return;
       }
-      const newTarget = await this.getPickedPointByPixelCoordinates(event.offsetX, event.offsetY);
+      const newTarget = await this.getPickedPointByPixelCoordinates(position);
       this.controls.setTarget(newTarget);
       this.controls.updateCameraAndTriggerCameraChangeEvent();
     } else if (mouseActionType === FlexibleMouseActionType.SetTargetAndCameraDirection) {
-      const newTarget = await this.getPickedPointByPixelCoordinates(event.offsetX, event.offsetY);
+      const newTarget = await this.getPickedPointByPixelCoordinates(position);
       moveCameraTargetTo(this, newTarget, this.options.animationDuration);
     } else if (mouseActionType === FlexibleMouseActionType.SetTargetAndCameraPosition) {
-      this.setTargetAndCameraPosition(event);
+      this.setTargetAndCameraPosition(position);
     }
   }
 
-  private async setTargetAndCameraPosition(event: PointerEventData) {
-    const raycastResult = await this._raycastCallback(event.offsetX, event.offsetY, true);
+  private async setTargetAndCameraPosition(position: Vector2) {
+    const raycastResult = await this._raycastCallback(position.x, position.y, true);
     // If an object is picked, zoom in to the object (the target will be in the middle of the bounding box)
     if (raycastResult.pickedBoundingBox !== undefined) {
       const { position, target } = fitCameraToBoundingBox(this.camera, raycastResult.pickedBoundingBox, 3);
@@ -454,7 +450,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     }
     // If not particular object is picked, move the camera position towards the edge of the modelsBoundingBox
     const moveFraction = 0.33;
-    const newTarget = this.getTargetByBoundingBox(event.offsetX, event.offsetY, raycastResult.modelsBoundingBox);
+    const newTarget = this.getTargetByBoundingBox(position, raycastResult.modelsBoundingBox);
     const newPosition = new Vector3().subVectors(newTarget, this.camera.position);
     newPosition.multiplyScalar(moveFraction);
     newPosition.add(this.camera.position);

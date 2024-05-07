@@ -16,6 +16,7 @@ import { DefaultCameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 import { Image360AnnotationFilterOptions } from '@reveal/360-images';
 import type { Vector2, WebGLRenderTarget, WebGLRenderer, Matrix4, Vector3 } from 'three';
+import { CustomObjectIntersection } from '@reveal/utilities';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -284,6 +285,13 @@ export type ResolutionOptions = {
  * @module @cognite/reveal
  */
 export type Intersection = CadIntersection | PointCloudIntersection;
+
+/**
+ * Represents the result from {@link Cognite3DViewer.getAnyIntersectionFromPixel}.
+ * @module @cognite/reveal
+ * @beta
+ */
+export type AnyIntersection = CadIntersection | PointCloudIntersection | CustomObjectIntersection;
 
 /**
  * @module @cognite/reveal
