@@ -37,11 +37,11 @@ export class BoxEditTool extends NavigationTool {
 
   public onActivate(): void {
     this._dragger = undefined;
-    this.setAllVisible(true);
+    this.setAllBoxesVisible(true);
   }
 
   public onDeactivate(): void {
-    this.setAllVisible(false);
+    this.setAllBoxesVisible(false);
   }
 
   public onKey(event: KeyboardEvent, down: boolean): void {
@@ -178,7 +178,7 @@ export class BoxEditTool extends NavigationTool {
     }
   }
 
-  private setAllVisible(visible: boolean): void {
+  private setAllBoxesVisible(visible: boolean): void {
     for (const boxDomainObject of this.getAllBoxDomainObjects()) {
       boxDomainObject.setVisibleInteractive(visible, this.renderTarget);
     }
