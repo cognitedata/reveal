@@ -3,20 +3,9 @@
  */
 import {
   AnnotationIdPointCloudObjectCollection,
-  type CognitePointCloudModel,
-  type PointCloudAppearance
+  type CognitePointCloudModel
 } from '@cognite/reveal';
 import { type StyledPointCloudModelAddOptions } from './calculatePointCloudModelsStyling';
-
-export type AnnotationIdStylingGroup = {
-  annotationIds: number[];
-  style: PointCloudAppearance;
-};
-
-export type PointCloudModelStyling = {
-  defaultStyle?: PointCloudAppearance;
-  groups?: AnnotationIdStylingGroup[];
-};
 
 export function applyPointCloudStyling(
   model: CognitePointCloudModel,

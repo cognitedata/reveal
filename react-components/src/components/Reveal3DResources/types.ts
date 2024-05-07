@@ -8,14 +8,18 @@ import {
   type Image360AnnotationAppearance,
   type Image360Collection,
   type CognitePointCloudModel,
-  type CogniteCadModel
+  type CogniteCadModel,
+  type PointCloudAppearance
 } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk/dist/src';
-import { type StyledPointCloudModelAddOptions } from './calculatePointCloudModelsStyling';
-import { type StyledCadModelAddOptions } from './calculateCadModelsStyling';
+import {
+  PointCloudAnnotationIdStylingGroup,
+  type StyledPointCloudModelAddOptions
+} from './calculatePointCloudModelsStyling';
+import { CadStyleGroup, type StyledCadModelAddOptions } from './calculateCadModelsStyling';
 
 export type AddImageCollection360Options =
   | AddImageCollection360EventsOptions
@@ -74,15 +78,15 @@ export type AssetStylingGroup = {
   };
 };
 
-export type InstanceStylingGroup =
-  | FdmAssetStylingGroup
-  | AssetStylingGroup
-  | Image360AssetStylingGroup;
-
 export type Image360AssetStylingGroup = {
   assetIds: CogniteInternalId[];
   style: { image360: Image360AnnotationAppearance };
 };
+
+export type InstanceStylingGroup =
+  | FdmAssetStylingGroup
+  | AssetStylingGroup
+  | Image360AssetStylingGroup;
 
 export type DefaultResourceStyling = {
   cad?: { default?: NodeAppearance; mapped?: NodeAppearance };
@@ -101,12 +105,6 @@ export type Reveal3DResourcesProps = {
 export type Image360AnnotationStyleGroup = {
   assetIds: number[];
   style: Image360AnnotationAppearance;
-};
-
-export type StyledImage360CollectionAddOptions = {
-  addOptions: AddImageCollection360Options;
-  styleGroups: Image360AnnotationStyleGroup[];
-  defaultStyle?: Image360AnnotationAppearance;
 };
 
 export type CadAddOptionsWithModel = {
@@ -131,6 +129,24 @@ export type AddOptionsWithModel =
   | CadAddOptionsWithModel
   | PointCloudAddOptionsWithModel
   | Image360AddOptionsWithModel;
+
+export type StyledCadModelAddOptions = {
+  addOptions: AddReveal3DModelOptions;
+  styleGroups: CadStyleGroup[];
+  defaultStyle: NodeAppearance;
+};
+
+export type StyledPointCloudModelAddOptions = {
+  addOptions: PointCloudModelOptions;
+  styleGroups: PointCloudAnnotationIdStylingGroup[];
+  defaultStyle: PointCloudAppearance;
+};
+
+export type StyledImage360CollectionAddOptions = {
+  addOptions: AddImageCollection360Options;
+  styleGroups: Image360AnnotationStyleGroup[];
+  defaultStyle?: Image360AnnotationAppearance;
+};
 
 export type StyledAddModelOptions =
   | StyledCadModelAddOptions

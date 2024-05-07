@@ -9,23 +9,22 @@ import {
 import {
   type DefaultResourceStyling,
   type PointCloudModelOptions,
-  type AssetStylingGroup
+  type AssetStylingGroup,
+  StyledPointCloudModelAddOptions
 } from './types';
-import { type AnnotationIdStylingGroup } from './applyPointCloudStyling';
 import { isSame3dModel } from '../../utilities/isSameModel';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { type AnnotationId, type PointCloudAnnotationModel } from '../CacheProvider/types';
 import { type PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
 
-export type StyledPointCloudModelAddOptions = {
-  addOptions: PointCloudModelOptions;
-  styleGroups: AnnotationIdStylingGroup[];
-  defaultStyle: PointCloudAppearance;
+export type PointCloudAnnotationIdStylingGroup = {
+  annotationIds: number[];
+  style: PointCloudAppearance;
 };
 
 type PointCloudAddOptionsWithStyleGroups = {
   addOptions: PointCloudModelOptions;
-  styleGroups: AnnotationIdStylingGroup[];
+  styleGroups: PointCloudAnnotationIdStylingGroup[];
 };
 
 export type AnnotationModelDataResult = {
@@ -82,7 +81,9 @@ function calculateAnnotationMappingModelStyling(
     .map((group) => {
       return getMappedStyleGroupFromAssetIds(annotationMapping, group);
     })
-    .filter((styleGroup): styleGroup is AnnotationIdStylingGroup => styleGroup !== undefined);
+    .filter(
+      (styleGroup): styleGroup is PointCloudAnnotationIdStylingGroup => styleGroup !== undefined
+    );
 
   return { addOptions: annotationMapping.model, styleGroups };
 }
@@ -90,7 +91,7 @@ function calculateAnnotationMappingModelStyling(
 function getMappedStyleGroupFromAssetIds(
   annotationMapping: AnnotationModelDataResult,
   instanceGroup: AssetStylingGroup
-): AnnotationIdStylingGroup | undefined {
+): PointCloudAnnotationIdStylingGroup | undefined {
   const uniqueAnnotationIds = new Set<number>();
   const assetIdsSet = new Set(instanceGroup.assetIds.map((id) => id));
 
@@ -129,7 +130,7 @@ async function calculateMappedPointCloudStyling(
       const modelStyle =
         pointCloudAnnotationCollection.model.styling?.mapped ?? defaultMappedNodeAppearance;
 
-      const styleGroups: AnnotationIdStylingGroup[] =
+      const styleGroups: PointCloudAnnotationIdStylingGroup[] =
         modelStyle !== undefined
           ? [getMappedStyleGroupFromAnnotationIds([pointCloudAnnotationCollection], modelStyle)]
           : EMPTY_ARRAY;
@@ -154,7 +155,7 @@ function getMappedStyleGroupFromAnnotationIds(
     annotationIds: number[];
   }>,
   nodeAppearance: NodeAppearance
-): AnnotationIdStylingGroup {
+): PointCloudAnnotationIdStylingGroup {
   const annotationIds = annotationData.flatMap((data) => {
     return data.annotationIds;
   });

@@ -80,10 +80,7 @@ export {
   useGetCameraStateFromUrlParam
 } from './higher-order-components/withCameraStateUrlParam';
 // Types
-export {
-  type PointCloudModelStyling,
-  type AnnotationIdStylingGroup
-} from './components/Reveal3DResources/applyPointCloudStyling';
+export { type PointCloudAnnotationIdStylingGroup } from './components/Reveal3DResources/calculatePointCloudModelsStyling';
 export { type CadModelStyling } from './components/Reveal3DResources/applyCadStyling';
 export {
   type Reveal3DResourcesProps,

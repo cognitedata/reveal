@@ -2,6 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import {
+  StyledCadModelAddOptions,
   type AddReveal3DModelOptions,
   type AssetStylingGroup,
   type DefaultResourceStyling,
@@ -37,12 +38,6 @@ type ModelStyleGroup = {
 };
 
 export type CadStyleGroup = NodeStylingGroup | TreeIndexStylingGroup;
-
-export type StyledCadModelAddOptions = {
-  addOptions: AddReveal3DModelOptions;
-  styleGroups: CadStyleGroup[];
-  defaultStyle: NodeAppearance;
-};
 
 export async function calculateCadStyling(
   models: AddReveal3DModelOptions[],
