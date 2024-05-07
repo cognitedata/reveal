@@ -4,11 +4,11 @@
 import * as THREE from 'three';
 
 // TODO: Fix dependencies such that test app doesn't depend on core internals
-import matCapTextureImage from '../../../packages/rendering/src/rendering/matCapTextureData';
+import { getMatCapTextureData } from '../../../packages/rendering/src/rendering/matCapTextureData';
 import { sectorShaders } from '../../../packages/rendering/src/rendering/shaders';
 import { RevealGeometryCollectionType } from '../src/types';
 
-const matCapTexture = new THREE.Texture(matCapTextureImage);
+const matCapTexture = new THREE.Texture(getMatCapTextureData());
 matCapTexture.needsUpdate = true;
 
 function getColorDataTexture(treeIndexCount: number) {
