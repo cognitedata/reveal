@@ -59,21 +59,21 @@ export class CognitePointCloudModel {
 
   // eslint-disable-next-line jsdoc/require-description
   /**
-   * @param outBbox Optional. Used to write result to.
+   * @param outBoundingBox Optional. Used to write result to.
    * @returns Model's bounding box.
    * @example
    * ```js
-   * const box = new THREE.Box3()
-   * model.getModelBoundingBox(box);
-   * // box now has the bounding box
+   * const boundingBox = new THREE.Box3()
+   * model.getModelBoundingBox(boundingBox);
+   * // boundingBox now has the bounding box
    *```
    * ```js
    * // the following code does the same
-   * const box = model.getModelBoundingBox();
+   * const boundingBox = model.getModelBoundingBox();
    * ```
    */
-  getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
-    return this.pointCloudNode.getBoundingBox(outBbox);
+  getModelBoundingBox(outBoundingBox?: THREE.Box3): THREE.Box3 {
+    return this.pointCloudNode.getBoundingBox(outBoundingBox);
   }
 
   /**

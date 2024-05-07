@@ -2,6 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Vector3 } from 'three';
+import { Vector2, Vector3 } from 'three';
 
-export type GetPickedPointByPixelCoordinates = (pixelX: number, pixelY: number) => Promise<Vector3>;
+export type GetPickedPointByPixelCoordinates = (position: Vector2) => Promise<Vector3>;

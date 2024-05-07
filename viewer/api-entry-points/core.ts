@@ -67,6 +67,7 @@ export {
   PointerEventDelegate,
   PointerEventData,
   DisposedDelegate,
+  ICustomObject,
   CustomObject,
   CustomObjectIntersection,
   CustomObjectIntersectInput,

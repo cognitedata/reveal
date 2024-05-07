@@ -13,7 +13,7 @@ export { InputHandler } from './src/events/InputHandler';
 export { PointerEvents } from './src/events/PointerEvents';
 export { PointerEventsTarget } from './src/events/PointerEventsTarget';
 export { disposeOfAllEventListeners } from './src/events/disposeOfAllEventListeners';
-export { clickOrTouchEventOffset, getClickOrTouchEventPoint } from './src/events/clickOrTouchEventOffset';
+export { getPixelCoordinatesFromEvent } from './src/events/getPixelCoordinatesFromEvent';
 export { getWheelEventDelta } from './src/events/getWheelEventDelta';
 export {
   DisposedDelegate,
@@ -72,6 +72,7 @@ export { DeferredPromise } from './src/DeferredPromise';
 export { SceneHandler } from './src/SceneHandler';
 
 export { CustomObject } from './src/customObject/CustomObject';
+export { ICustomObject } from './src/customObject/ICustomObject';
 export { CustomObjectIntersectInput } from './src/customObject/CustomObjectIntersectInput';
 export { CustomObjectIntersection } from './src/customObject/CustomObjectIntersection';
 
