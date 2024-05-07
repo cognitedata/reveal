@@ -1505,6 +1505,21 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Creates and initialize a CustomObjectIntersectInput to be used by CustomObject.intersectIfCloser method.
+   * @param pixelCoords A Vector2 containing pixel coordinates relative to the 3D viewer.
+   * @param pixelCoord
+   * @returns A CustomObjectIntersectInput ready to use.
+   * @beta
+   */
+  public createCustomObjectIntersectInput(pixelCoord: THREE.Vector2): CustomObjectIntersectInput {
+    return new CustomObjectIntersectInput(
+      this.getNormalizedPixelCoordinates(pixelCoord),
+      this.cameraManager.getCamera(),
+      this.getGlobalClippingPlanes()
+    );
+  }
+
+  /**
    * Raycasting model(s) for finding where the ray intersects with the model.
    * @param offsetX X coordinate in pixels (relative to the domElement).
    * @param offsetY Y coordinate in pixels (relative to the domElement).
@@ -1754,14 +1769,6 @@ export class Cognite3DViewer {
       closestIntersection = intersection;
     });
     return closestIntersection;
-  }
-
-  public createCustomObjectIntersectInput(pixelCoord: THREE.Vector2): CustomObjectIntersectInput {
-    return new CustomObjectIntersectInput(
-      this.getNormalizedPixelCoordinates(pixelCoord),
-      this.cameraManager.getCamera(),
-      this.getGlobalClippingPlanes()
-    );
   }
 
   /**

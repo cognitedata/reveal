@@ -524,7 +524,9 @@ export class FlexibleControls {
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {
-    if (!this.isEnabled) return;
+    if (!this.isEnabled) {
+      return;
+    }
     event.preventDefault();
   };
 

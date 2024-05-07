@@ -6,7 +6,7 @@ import debounce from 'lodash/debounce';
 import { Vector2, MOUSE } from 'three';
 import { PointerEvents } from './PointerEvents';
 
-const MAX_MOVE_DISTANCE = 8;
+const MAX_MOVE_DISTANCE_DURING_CLICK = 8;
 const MAX_CLICK_DURATION = 250;
 const DOUBLE_CLICK_INTERVAL = 300;
 const HOVER_INTERVAL = 100;
@@ -116,7 +116,7 @@ export class PointerEventsTarget {
       if (!isAnyMouseButtonPressed(event)) {
         return;
       }
-      if (event.movementX === 0 && event.movementX === 0) {
+      if (event.movementX === 0 && event.movementY === 0) {
         return;
       }
     }
@@ -165,7 +165,7 @@ export class PointerEventsTarget {
     }
     const position = getPixelCoordinatesFromEvent(event, this._domElement);
     const distance = position.distanceTo(this._downPosition);
-    return distance < MAX_MOVE_DISTANCE;
+    return distance < MAX_MOVE_DISTANCE_DURING_CLICK;
   }
 
   private isDoubleClick(): boolean {
