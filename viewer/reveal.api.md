@@ -425,7 +425,7 @@ export class Cognite3DViewer {
     get cameraManager(): CameraManager;
     get canvas(): HTMLCanvasElement;
     // @beta
-    createCustomObjectIntersectInput(pixelCoord: THREE.Vector2): CustomObjectIntersectInput;
+    createCustomObjectIntersectInput(pixelCoords: THREE.Vector2): CustomObjectIntersectInput;
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
     get domElement(): HTMLElement;
@@ -438,7 +438,7 @@ export class Cognite3DViewer {
     get360ImageCollections(): Image360Collection[];
     getActive360ImageInfo(): Image360WithCollection | undefined;
     // @beta
-    getAnyIntersectionFromPixel(pixelCoord: THREE.Vector2): Promise<AnyIntersection | undefined>;
+    getAnyIntersectionFromPixel(pixelCoords: THREE.Vector2): Promise<AnyIntersection | undefined>;
     // @deprecated
     getClippingPlanes(): THREE.Plane[];
     getGlobalClippingPlanes(): THREE.Plane[];
