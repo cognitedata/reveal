@@ -107,7 +107,6 @@ export class ResourceUpdater {
     );
 
     const keptModelsWithOptions = this.removeResources(outdatedResources, currentlyAddedResources);
-    this.updateKeptModels(keptModelsWithOptions, modelAddOptions);
     const newModelWithAddOptionsPromises = this.addResources(newResources);
 
     this._pendingModelsPromise = this.constructNewModelPromises(
@@ -137,19 +136,6 @@ export class ResourceUpdater {
     });
     this._viewer.get360ImageCollections().forEach((collection) => {
       this._viewer.remove360ImageSet(collection);
-    });
-  }
-
-  private updateKeptModels(
-    oldModels: AddOptionsWithModel[],
-    newOptions: AddResourceOptions[]
-  ): void {
-    oldModels.forEach((oldModel) => {
-      const correspondingNewOption = newOptions.find((newOption) =>
-        isSameModel(oldModel.addOptions, newOption)
-      );
-
-      assert(correspondingNewOption !== undefined);
     });
   }
 
