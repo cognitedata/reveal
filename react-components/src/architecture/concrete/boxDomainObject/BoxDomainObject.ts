@@ -7,9 +7,10 @@ import { BoxRenderStyle } from './BoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { BoxThreeView } from './BoxThreeView';
-import { type Matrix4, Vector3 } from 'three';
+import { Matrix4, Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from './BoxFace';
+import { BoxFocusType } from './BoxFocusType';
 
 export class BoxDomainObject extends VisualDomainObject {
   // ==================================================
@@ -18,12 +19,11 @@ export class BoxDomainObject extends VisualDomainObject {
 
   public readonly size = new Vector3(1, 1, 1);
   public readonly center = new Vector3();
-  public readonly zRotation = 0;
+  public zRotation = 0;
 
   // For focus when edit in 3D
-  private _hasFocus = false;
   private _focusFace: BoxFace | undefined = undefined; // Used when hasFocus is true only
-  private _focusTranslate: boolean = false; // Used when hasFocus is true only
+  private _focusType: BoxFocusType = BoxFocusType.None;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -34,19 +34,15 @@ export class BoxDomainObject extends VisualDomainObject {
   }
 
   public get hasFocus(): boolean {
-    return this._hasFocus;
-  }
-
-  public set hasFocus(value: boolean) {
-    this._hasFocus = value;
+    return this.focusType !== BoxFocusType.None;
   }
 
   public get focusFace(): BoxFace | undefined {
     return this._focusFace;
   }
 
-  public get focusTranslate(): boolean {
-    return this._focusTranslate;
+  public get focusType(): BoxFocusType {
+    return this._focusType;
   }
 
   // ==================================================
@@ -74,34 +70,31 @@ export class BoxDomainObject extends VisualDomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  public getMatrix(matrix: Matrix4): Matrix4 {
+  public getRotatationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
     matrix.makeRotationZ(this.zRotation);
-    matrix.setPosition(this.center.clone());
-    matrix.scale(this.size.clone());
     return matrix;
   }
 
-  public setFocusInteractive(hasFocus: boolean, face?: BoxFace, translate = false): boolean {
-    if (!hasFocus) {
-      // Ignore face and translate here
-      if (hasFocus === this.hasFocus) {
-        return false; // Nothing to do
-      }
+  public getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+    matrix = this.getRotatationMatrix(matrix);
+    matrix.setPosition(this.center);
+    matrix.scale(this.size);
+    return matrix;
+  }
 
-      this.hasFocus = false;
-      this._focusFace = undefined;
-      this._focusTranslate = false;
-    } else {
-      if (
-        hasFocus === this.hasFocus &&
-        this.focusFace === face &&
-        this.focusTranslate === translate
-      ) {
-        return false; // Nothing to do
+  public setFocusInteractive(type: BoxFocusType, face?: BoxFace): boolean {
+    if (type === BoxFocusType.None) {
+      if (this.focusType === BoxFocusType.None) {
+        return false; // No change
       }
-      this.hasFocus = true;
+      this._focusType = BoxFocusType.None;
+      this._focusFace = undefined; // Ignore input face
+    } else {
+      if (type === this.focusType && this.focusFace === face) {
+        return false; // No change
+      }
+      this._focusType = type;
       this._focusFace = face;
-      this._focusTranslate = translate;
     }
     this.notify(Changes.focus);
     return true;

@@ -29,19 +29,19 @@ import { TerrainRenderStyle } from './TerrainRenderStyle';
 import { ColorType } from '../../base/domainObjectsHelpers/ColorType';
 import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
 import { getColorMap } from '../../base/utilities/colors/colorMaps';
-import { ObjectThreeView } from '../../base/views/ObjectThreeView';
+import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { RegularGrid2 } from '../../base/utilities/geometry/RegularGrid2';
 
 const SOLID_NAME = 'Solid';
 const CONTOURS_NAME = 'Contour';
 
-export class TerrainThreeView extends ObjectThreeView {
+export class TerrainThreeView extends GroupThreeView {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected get terrainDomainObject(): TerrainDomainObject {
+  private get terrainDomainObject(): TerrainDomainObject {
     return super.domainObject as TerrainDomainObject;
   }
 
@@ -102,7 +102,7 @@ export class TerrainThreeView extends ObjectThreeView {
   // OVERRIDES of ThreeView
   // ==================================================
 
-  public override calculateBoundingBox(): Box3 {
+  protected override calculateBoundingBox(): Box3 {
     const { terrainDomainObject } = this;
     const { grid } = terrainDomainObject;
     if (grid === undefined) {
@@ -122,7 +122,7 @@ export class TerrainThreeView extends ObjectThreeView {
   }
 
   // ==================================================
-  // OVERRIDES of ObjectThreeView
+  // OVERRIDES of GroupThreeView
   // ==================================================
 
   protected override addChildren(): void {

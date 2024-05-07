@@ -40,7 +40,7 @@ export class TrianglesBuffers {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Getters
+  // INSTANCE METHODS: Creators
   // ==================================================
 
   public createBufferGeometry(): BufferGeometry {

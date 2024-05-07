@@ -8,11 +8,16 @@ import { BoxDomainObject } from './BoxDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type Tooltip } from '../../base/commands/BaseCommand';
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { BoxDragInfo } from './BoxDragInfo';
+import { BoxDragger } from './BoxDragger';
 import { type BoxFace } from './BoxFace';
+import { BoxFocusType } from './BoxFocusType';
 
 export class BoxEditTool extends NavigationTool {
-  private _dragInfo: BoxDragInfo | undefined = undefined;
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
+  private _dragger: BoxDragger | undefined = undefined;
 
   // ==================================================
   // OVERRIDES
@@ -31,7 +36,7 @@ export class BoxEditTool extends NavigationTool {
   }
 
   public onActivate(): void {
-    this._dragInfo = undefined;
+    this._dragger = undefined;
     this.setAllVisible(true);
   }
 
@@ -50,12 +55,21 @@ export class BoxEditTool extends NavigationTool {
       return;
     }
     if (event.key === 'Control') {
-      const focusTranslate = down;
+      const focusType = down ? BoxFocusType.Translate : getFocusType(event);
       for (const boxDomainObject of this.getAllBoxDomainObjects()) {
         if (!boxDomainObject.hasFocus) {
           continue;
         }
-        boxDomainObject.setFocusInteractive(true, boxDomainObject.focusFace, focusTranslate);
+        boxDomainObject.setFocusInteractive(focusType, boxDomainObject.focusFace);
+      }
+    }
+    if (event.key === 'Shift') {
+      const focusType = down ? BoxFocusType.Rotate : getFocusType(event);
+      for (const boxDomainObject of this.getAllBoxDomainObjects()) {
+        if (!boxDomainObject.hasFocus) {
+          continue;
+        }
+        boxDomainObject.setFocusInteractive(focusType, boxDomainObject.focusFace);
       }
     }
     super.onKey(event, down);
@@ -70,7 +84,7 @@ export class BoxEditTool extends NavigationTool {
     if (!(intersection.domainObject instanceof BoxDomainObject)) {
       return;
     }
-    this.setFocus(intersection.domainObject, intersection.userData as BoxFace, event.ctrlKey);
+    this.setFocus(intersection.domainObject, getFocusType(event), intersection.userData as BoxFace);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
@@ -99,36 +113,31 @@ export class BoxEditTool extends NavigationTool {
 
     rootDomainObject.addChildInteractive(boxDomainObject);
     boxDomainObject.setVisibleInteractive(true, renderTarget);
-    this.setFocus(boxDomainObject);
+    this.setFocus(boxDomainObject, BoxFocusType.Any);
   }
 
   public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
-    this._dragInfo = await this.createDragInfo(event);
-    if (this._dragInfo === undefined) {
+    this._dragger = await this.createDragInfo(event);
+    if (this._dragger === undefined) {
       await super.onPointerDown(event, leftButton);
     } else {
-      this.setFocus(this._dragInfo.boxDomainObject, this._dragInfo.face, event.ctrlKey);
+      this.setFocus(this._dragger.boxDomainObject, getFocusType(event), this._dragger._face);
     }
   }
 
   public override async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
-    if (this._dragInfo === undefined) {
+    if (this._dragger === undefined) {
       await super.onPointerDrag(event, leftButton);
       return;
     }
-    const ray = this.getRaycaster(event).ray;
-    if (event.ctrlKey) {
-      this._dragInfo.translate(ray);
-    } else {
-      this._dragInfo.scale(ray);
-    }
+    this._dragger.apply(getFocusType(event), this.getRaycaster(event).ray);
   }
 
   public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
-    if (this._dragInfo === undefined) {
+    if (this._dragger === undefined) {
       await super.onPointerUp(event, leftButton);
     } else {
-      this._dragInfo = undefined;
+      this._dragger = undefined;
     }
   }
 
@@ -136,7 +145,7 @@ export class BoxEditTool extends NavigationTool {
   // INSTANCE METHODS
   // ==================================================
 
-  private async createDragInfo(event: PointerEvent): Promise<BoxDragInfo | undefined> {
+  private async createDragInfo(event: PointerEvent): Promise<BoxDragger | undefined> {
     const intersection = await this.getIntersection(event);
     if (intersection === undefined) {
       return undefined;
@@ -151,21 +160,21 @@ export class BoxEditTool extends NavigationTool {
     if (face === undefined) {
       return undefined;
     }
-    return new BoxDragInfo(event, intersection);
+    return new BoxDragger(event, intersection);
   }
 
   private setFocus(
     boxDomainObject: BoxDomainObject | undefined,
-    face?: BoxFace,
-    translate = false
+    type: BoxFocusType = BoxFocusType.None,
+    face?: BoxFace
   ): void {
     for (const other of this.getAllBoxDomainObjects()) {
       if (boxDomainObject === undefined || other !== boxDomainObject) {
-        other.setFocusInteractive(false);
+        other.setFocusInteractive(BoxFocusType.None);
       }
     }
     if (boxDomainObject !== undefined) {
-      boxDomainObject.setFocusInteractive(true, face, translate);
+      boxDomainObject.setFocusInteractive(type, face);
     }
   }
 
@@ -182,4 +191,14 @@ export class BoxEditTool extends NavigationTool {
       yield boxDomainObject;
     }
   }
+}
+
+function getFocusType(event: PointerEvent | KeyboardEvent): BoxFocusType {
+  if (event.ctrlKey) {
+    return BoxFocusType.Translate;
+  }
+  if (event.shiftKey) {
+    return BoxFocusType.Rotate;
+  }
+  return BoxFocusType.Scale;
 }

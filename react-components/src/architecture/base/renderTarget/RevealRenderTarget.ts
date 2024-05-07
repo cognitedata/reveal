@@ -12,11 +12,9 @@ import {
 } from '@cognite/reveal';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../concreteCommands/NavigationTool';
-import { Vector3, AmbientLight, DirectionalLight, WebGLRenderer, PerspectiveCamera } from 'three';
+import { Vector3, AmbientLight, DirectionalLight } from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
-import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
-import { ObjectThreeView } from '../views/ObjectThreeView';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -43,9 +41,7 @@ export class RevealRenderTarget {
     this._rootDomainObject = new RootDomainObject();
 
     this.initializeLights();
-
     this._viewer.on('cameraChange', this.cameraChangeHandler);
-    this._viewer.on('beforeSceneRendered', this.beforeSceneRenderedHandler);
   }
 
   // ==================================================
@@ -128,20 +124,6 @@ export class RevealRenderTarget {
   // ==================================================
   // EVENT HANDLERS
   // ==================================================
-
-  beforeSceneRenderedHandler = (event: {
-    frameNumber: number;
-    renderer: WebGLRenderer;
-    camera: PerspectiveCamera;
-  }): void => {
-    for (const domainObject of this._rootDomainObject.getDescendantsByType(VisualDomainObject)) {
-      for (const view of domainObject.views) {
-        if (view instanceof ObjectThreeView && view.renderTarget === this) {
-          view.beforeRender();
-        }
-      }
-    }
-  };
 
   cameraChangeHandler = (_position: Vector3, _target: Vector3): void => {
     const light = this._directionalLight;

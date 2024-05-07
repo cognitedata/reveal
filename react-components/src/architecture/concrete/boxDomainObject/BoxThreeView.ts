@@ -15,13 +15,15 @@ import {
   LineBasicMaterial,
   Vector3,
   ArrowHelper,
-  Matrix4
+  Matrix4,
+  RingGeometry,
+  MeshBasicMaterial
 } from 'three';
 import { BoxDomainObject } from './BoxDomainObject';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxRenderStyle } from './BoxRenderStyle';
-import { ObjectThreeView } from '../../base/views/ObjectThreeView';
+import { GroupThreeView } from '../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
   CustomObjectIntersectInput,
@@ -30,9 +32,15 @@ import {
 import { DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { OBB } from 'three/addons/math/OBB.js';
 import { BoxFace } from './BoxFace';
+import { BoxFocusType } from './BoxFocusType';
 
 const HALF_SIDE = 0.5;
-export class BoxThreeView extends ObjectThreeView {
+const RELATIVE_HEAD_LENGTH = 0.25;
+const RELATIVE_INNER_RADIUS = 0.85;
+const RELATIVE_OUTER_RADIUS = 0.95;
+const ARROW_AND_RING_COLOR = 0xffffff;
+
+export class BoxThreeView extends GroupThreeView {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
@@ -69,51 +77,23 @@ export class BoxThreeView extends ObjectThreeView {
   }
 
   // ==================================================
-  // OVERRIDES of ObjectThreeView
+  // OVERRIDES of GroupThreeView
   // ==================================================
 
   protected override addChildren(): void {
     const { boxDomainObject } = this;
     const matrix = this.getCombinedMatrix();
     this.addChild(this.createLines(matrix));
-    if (boxDomainObject.hasFocus) {
-      this.addChild(this.createSolid(matrix));
-
-      // Add the arrows
-      if (boxDomainObject.focusFace !== undefined) {
-        const face = boxDomainObject.focusFace;
-        const center = face.getCenter();
-        center.applyMatrix4(matrix);
-
-        const arrowSize1 = boxDomainObject.size.getComponent(face.tangentIndex1);
-        const arrowSize2 = boxDomainObject.size.getComponent(face.tangentIndex2);
-        const arrowSize = Math.sqrt(arrowSize1 * arrowSize2) / 2; // Half of the geometric mean of the two sizes
-
-        if (boxDomainObject.focusTranslate) {
-          this.addArrow(face.getTangent1(), center, arrowSize);
-          this.addArrow(face.getTangent2(), center, arrowSize);
-        } else {
-          this.addArrow(face.getNormal(), center, arrowSize);
-        }
-      }
+    const focusType = boxDomainObject.focusType;
+    if (focusType === BoxFocusType.None) {
+      return;
     }
-  }
-
-  private addArrow(direction: Vector3, center: Vector3, size: number): void {
-    direction.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    direction.normalize();
-
-    const headLength = size * 0.25;
-    const headWidth = size * 0.25;
-    const color = 0xffffff;
-
-    const arrow1 = new ArrowHelper(direction, center, size, color, headLength, headWidth);
-
-    direction.negate();
-    this.addChild(arrow1);
-
-    const arrow2 = new ArrowHelper(direction, center, size, color, headLength, headWidth);
-    this.addChild(arrow2);
+    this.addChild(this.createSolid(matrix));
+    if (focusType === BoxFocusType.Scale || focusType === BoxFocusType.Translate) {
+      this.addArrows(matrix);
+    } else if (focusType === BoxFocusType.Rotate) {
+      this.addChild(this.createRotationCircle(matrix));
+    }
   }
 
   public override intersectIfCloser(
@@ -183,9 +163,88 @@ export class BoxThreeView extends ObjectThreeView {
     return result;
   }
 
-  public getCombinedMatrix(): Matrix4 {
+  protected addArrows(matrix: Matrix4): void {
     const { boxDomainObject } = this;
-    const combinedMatrix = boxDomainObject.getMatrix(new Matrix4());
+
+    // Add the arrows
+    const face = boxDomainObject.focusFace;
+    if (face === undefined) {
+      return;
+    }
+    const center = face.getCenter();
+    center.applyMatrix4(matrix);
+    const arrowSize = getArrowSize();
+
+    const rotationMatrix = boxDomainObject.getRotatationMatrix();
+    if (boxDomainObject.focusType === BoxFocusType.Translate) {
+      this.addArrow(face.getTangent1(), center, arrowSize, rotationMatrix);
+      this.addArrow(face.getTangent2(), center, arrowSize, rotationMatrix);
+    } else if (boxDomainObject.focusType === BoxFocusType.Scale) {
+      this.addArrow(face.getNormal(), center, arrowSize, rotationMatrix);
+    }
+
+    function getArrowSize(): number {
+      if (face === undefined) {
+        return 0;
+      }
+      const size1 = boxDomainObject.size.getComponent(face.tangentIndex1);
+      const size2 = boxDomainObject.size.getComponent(face.tangentIndex2);
+      const size = Math.sqrt(size1 * size2) / 2; // Half of the geometric mean of the two sizes
+      return size;
+    }
+  }
+
+  private addArrow(
+    direction: Vector3,
+    center: Vector3,
+    size: number,
+    rotationMatrix: Matrix4
+  ): void {
+    direction.applyMatrix4(rotationMatrix);
+    direction.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    direction.normalize();
+
+    const headLength = size * RELATIVE_HEAD_LENGTH;
+    const headWidth = size * RELATIVE_HEAD_LENGTH;
+    const color = ARROW_AND_RING_COLOR;
+    const arrow1 = new ArrowHelper(direction, center, size, color, headLength, headWidth);
+
+    direction.negate();
+    this.addChild(arrow1);
+
+    const arrow2 = new ArrowHelper(direction, center, size, color, headLength, headWidth);
+    this.addChild(arrow2);
+  }
+
+  private createRotationCircle(matrix: Matrix4): Mesh {
+    const { boxDomainObject } = this;
+
+    const face = new BoxFace(2);
+    const radius = getRadius();
+
+    const outerRadius = radius * RELATIVE_OUTER_RADIUS;
+    const innerRadius = radius * RELATIVE_INNER_RADIUS;
+    const color = ARROW_AND_RING_COLOR;
+    const geometry = new RingGeometry(innerRadius, outerRadius, 32);
+    const material = new MeshBasicMaterial({ color, side: DoubleSide });
+    const mesh = new Mesh(geometry, material);
+
+    const center = face.getCenter();
+    center.applyMatrix4(matrix);
+    mesh.position.copy(center);
+    mesh.rotateX(Math.PI / 2);
+    return mesh;
+
+    function getRadius(): number {
+      const size1 = boxDomainObject.size.getComponent(face.tangentIndex1);
+      const size2 = boxDomainObject.size.getComponent(face.tangentIndex2);
+      return Math.max(size1, size2) / 2;
+    }
+  }
+
+  private getCombinedMatrix(): Matrix4 {
+    const { boxDomainObject } = this;
+    const combinedMatrix = boxDomainObject.getMatrix();
     combinedMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
     return combinedMatrix;
   }

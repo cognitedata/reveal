@@ -18,10 +18,10 @@ import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObj
  * Represents an abstract class for a Three.js view that renders an Object3D.
  * This class extends the ThreeView class.
  * @remarks
- * You only have to override createObject3D() to create the object to be render.
+ * You only have to override addChildren() to create the object3D to be added to the group.
  */
 
-export abstract class ObjectThreeView extends ThreeView implements ICustomObject {
+export abstract class GroupThreeView extends ThreeView implements ICustomObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -118,13 +118,6 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
     this.removeChildren();
   }
 
-  public override beforeRender(): void {
-    super.beforeRender();
-    if (this.isEmpty) {
-      this.makeChildern();
-    }
-  }
-
   public override dispose(): void {
     this.removeChildren();
     const { viewer } = this.renderTarget;
@@ -136,7 +129,7 @@ export abstract class ObjectThreeView extends ThreeView implements ICustomObject
   // OVERRIDES of ThreeView
   // ==================================================
 
-  public override calculateBoundingBox(): Box3 {
+  protected override calculateBoundingBox(): Box3 {
     if (this.object === undefined) {
       return new Box3().makeEmpty();
     }

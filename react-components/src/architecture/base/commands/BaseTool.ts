@@ -11,7 +11,7 @@ import {
   type CustomObjectIntersection,
   type AnyIntersection
 } from '@cognite/reveal';
-import { ObjectThreeView } from '../views/ObjectThreeView';
+import { GroupThreeView } from '../views/GroupThreeView';
 import {
   type DomainObjectIntersection,
   isDomainObjectIntersection
@@ -112,7 +112,7 @@ export abstract class BaseTool extends RenderTargetCommand {
     let closestDistanceToCamera: number | undefined;
     for (const domainObject of rootDomainObject.getDescendantsByType(classType)) {
       for (const view of domainObject.views) {
-        if (!(view instanceof ObjectThreeView)) {
+        if (!(view instanceof GroupThreeView)) {
           continue;
         }
         if (view.renderTarget !== renderTarget) {
