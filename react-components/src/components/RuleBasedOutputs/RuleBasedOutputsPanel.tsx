@@ -4,10 +4,14 @@
 
 import styled from 'styled-components';
 
-import { Flex } from '@cognite/cogs.js';
+import { Flex, Button } from '@cognite/cogs.js';
 import { type RuleOutput } from './types';
-import { type ReactElement } from 'react';
+import { useState, type ReactNode, type ReactElement } from 'react';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
+import { useTranslation } from '../i18n/I18n';
+
+const MAX_WHEN_NO_SHOW_MORE = 5;
+const MAX_HEIGHT = '300px';
 
 type RuleBasedOutputsPanelProps = {
   ruleOutputs?: RuleOutput[];
@@ -16,21 +20,44 @@ type RuleBasedOutputsPanelProps = {
 export const RuleBasedOutputsPanel = ({
   ruleOutputs
 }: RuleBasedOutputsPanelProps): ReactElement => {
+  const [isShowMore, setIsShowMore] = useState(false);
+
+  const { t } = useTranslation();
+
   return (
     <>
       {ruleOutputs !== undefined && ruleOutputs?.length > 0 && (
-        <StyledRuleBasedOutputsPanel>
+        <StyledRuleBasedOutputsPanel $showMore={isShowMore}>
           <Flex direction="column" gap={14}>
             {ruleOutputs.map((output, index) => {
               return (
-                <StyledOutputItem key={index}>
-                  <StyledBulletColor
-                    $backgroundColor={output.type === 'color' ? output.fill : ''}
-                  />
-                  <StyledLabel>{output.name ?? output.externalId}</StyledLabel>
-                </StyledOutputItem>
+                <>
+                  {isShowMore || index <= MAX_WHEN_NO_SHOW_MORE - 1 ? (
+                    <StyledOutputItem key={index}>
+                      <StyledBulletColor
+                        $backgroundColor={output.type === 'color' ? output.fill : ''}
+                      />
+                      <StyledLabel>
+                        {output.label ?? (output.type === 'color' ? output.fill : '')}
+                      </StyledLabel>
+                    </StyledOutputItem>
+                  ) : (
+                    <></>
+                  )}
+                </>
               );
             })}
+            {ruleOutputs.length > MAX_WHEN_NO_SHOW_MORE && (
+              <StyledOutputItem key={'rule-based-panel-show-more'}>
+                <ShowMore
+                  isShowMore={isShowMore}
+                  onShowMore={() => {
+                    setIsShowMore((previousState) => !previousState);
+                  }}>
+                  {isShowMore ? t('SHOW_LESS', 'Show less') : t('SHOW_MORE', 'Show more')}
+                </ShowMore>
+              </StyledOutputItem>
+            )}
           </Flex>
         </StyledRuleBasedOutputsPanel>
       )}
@@ -38,13 +65,37 @@ export const RuleBasedOutputsPanel = ({
   );
 };
 
-const StyledRuleBasedOutputsPanel = withSuppressRevealEvents(styled.div`
+const ShowMore = ({
+  onShowMore,
+  isShowMore,
+  children
+}: {
+  onShowMore: () => void;
+  isShowMore: boolean;
+  children?: ReactNode;
+}): ReactElement => {
+  return (
+    <Flex justifyContent="center" gap={8}>
+      <Button
+        size="small"
+        onClick={onShowMore}
+        icon={!isShowMore ? 'Add' : 'Remove'}
+        type="ghost-accent">
+        {children}
+      </Button>
+    </Flex>
+  );
+};
+
+const StyledRuleBasedOutputsPanel = withSuppressRevealEvents(styled.div<{ $showMore?: boolean }>`
   display: flex;
   position: absolute;
   bottom: 16px;
   left: 16px;
   min-width: 200px;
   max-width: 400px;
+  max-height: ${({ $showMore }: { $showMore?: boolean }) =>
+    $showMore === true ? MAX_HEIGHT : 'inherit'};
   border-radius: var(--cogs-border-radius--default);
   font-size: 13px;
   line-height: 18px;
@@ -58,6 +109,7 @@ const StyledRuleBasedOutputsPanel = withSuppressRevealEvents(styled.div`
   align-content: space-around;
   align-items: stretch;
   padding: 10px;
+  overflow-y: auto;
 `);
 
 const StyledOutputItem = styled.div`
