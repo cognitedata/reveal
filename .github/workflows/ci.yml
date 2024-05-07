@@ -65,7 +65,7 @@ jobs:
         if: steps.cargo_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         continue-on-error: false
-        run: cargo update --locked
+        run: cargo update --workspace --locked
 
   build-viewer:
     needs: [changes, populate-caches]
@@ -97,7 +97,7 @@ jobs:
       - name: Check that Cargo.lock is up to date
         working-directory: viewer
         continue-on-error: false
-        run: cargo update --locked --offline
+        run: cargo update --workspace --locked --offline
 
       - name: Lint
         working-directory: viewer

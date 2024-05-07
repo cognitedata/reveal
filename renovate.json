@@ -25,6 +25,7 @@
       "matchUpdateTypes": ["major"],
       "matchPackagePatterns": ["*"],
       "excludePackagePatterns": ["three", "@types/three"],
+      "addLabels": ["slack"],
       "automerge": false,
       "stabilityDays": 10,
       "internalChecksFilter": "strict",

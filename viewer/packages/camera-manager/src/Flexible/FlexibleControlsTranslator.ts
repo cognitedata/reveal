@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { OrthographicCamera, PerspectiveCamera, Plane, Raycaster, Vector3 } from 'three';
+import { OrthographicCamera, PerspectiveCamera, Plane, Raycaster, Vector2, Vector3 } from 'three';
 import { FlexibleControls } from './FlexibleControls';
 
 /**
@@ -33,11 +33,11 @@ export class FlexibleControlsTranslator {
   // INSTANCE METHODS
   //================================================
 
-  public async initialize(event: PointerEvent): Promise<boolean> {
+  public async initialize(position: Vector2): Promise<boolean> {
     if (!this._controls.getPickedPointByPixelCoordinates) {
       return false;
     }
-    const pickedPoint = await this._controls.getPickedPointByPixelCoordinates(event.clientX, event.clientY);
+    const pickedPoint = await this._controls.getPickedPointByPixelCoordinates(position);
     if (!pickedPoint) {
       return false;
     }
@@ -47,11 +47,11 @@ export class FlexibleControlsTranslator {
     return true;
   }
 
-  public translate(event: PointerEvent): boolean {
+  public translate(position: Vector2): boolean {
     if (!this._camera) {
       return false;
     }
-    const normalizedCoords = this._controls.getNormalizedPixelCoordinates(event);
+    const normalizedCoords = this._controls.getNormalizedPixelCoordinates(position);
     this._raycaster.setFromCamera(normalizedCoords, this._camera);
 
     const pickedPoint = this._raycaster.ray.intersectPlane(this._plane, new Vector3());
