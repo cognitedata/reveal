@@ -26,7 +26,10 @@ const CadModelContainerStoryContent = ({
   return (
     <Reveal3DResources
       onResourcesAdded={onLoad}
-      resources={[{ transform, styling, ...restOptions }, { ...restOptions }]}
+      resources={[
+        { transform, ...restOptions },
+        { styling, ...restOptions }
+      ]}
     />
   );
 };
