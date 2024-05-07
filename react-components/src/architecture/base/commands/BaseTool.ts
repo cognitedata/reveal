@@ -6,11 +6,7 @@
 
 import { Raycaster, type Vector2 } from 'three';
 import { RenderTargetCommand } from './RenderTargetCommand';
-import {
-  CustomObjectIntersectInput,
-  type CustomObjectIntersection,
-  type AnyIntersection
-} from '@cognite/reveal';
+import { type CustomObjectIntersection, type AnyIntersection } from '@cognite/reveal';
 import { GroupThreeView } from '../views/GroupThreeView';
 import {
   type DomainObjectIntersection,
@@ -101,12 +97,10 @@ export abstract class BaseTool extends RenderTargetCommand {
     // This function is similar to getIntersection, but it only considers a specific DomainObject
     const { renderTarget } = this;
     const { rootDomainObject } = renderTarget;
+    const { viewer } = renderTarget;
 
-    const intersectInput = new CustomObjectIntersectInput(
-      this.getNormalizedPixelCoordinates(event),
-      renderTarget.cameraManager.getCamera(),
-      renderTarget.viewer.getGlobalClippingPlanes()
-    );
+    const point = viewer.getPixelCoordinatesFromEvent(event);
+    const intersectInput = viewer.createCustomObjectIntersectInput(point);
 
     let closestIntersection: CustomObjectIntersection | undefined;
     let closestDistanceToCamera: number | undefined;
