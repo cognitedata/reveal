@@ -62,7 +62,12 @@ import {
   CameraStopDelegate,
   CameraManagerCallbackData
 } from '@reveal/camera-manager';
-import { CdfModelIdentifier, File3dFormat, Image360DataModelIdentifier } from '@reveal/data-providers';
+import {
+  CdfModelIdentifier,
+  File3dFormat,
+  Image360DataModelIdentifier,
+  LocalModelIdentifier
+} from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
 
@@ -705,21 +710,19 @@ export class Cognite3DViewer {
    * ```
    */
   async addModel(options: AddModelOptions): Promise<CogniteModel> {
-    if (options.localPath !== undefined) {
-      throw new Error(
-        'addModel() only supports CDF hosted models. Use addCadModel() and addPointCloudModel() to use self-hosted models'
-      );
-    }
-
     const modelLoadSequencer = this._addModelSequencer.getNextSequencer<void>();
 
     return (async () => {
       let type: '' | SupportedModelTypes;
       try {
-        type = await this.determineModelType(options.modelId, options.revisionId);
+        const modelAddOption =
+          options.localPath !== undefined
+            ? { type: 'path' as const, localPath: options.localPath }
+            : { type: 'cdfId' as const, modelId: options.modelId, revisionId: options.revisionId };
+        type = await this.determineModelTypeInternal(modelAddOption);
       } catch (error) {
         await modelLoadSequencer(() => {});
-        throw new Error(`Failed to add model: ${error}`);
+        throw new Error(`Failed to add model: ${JSON.stringify(error)}`);
       }
       switch (type) {
         case 'cad':
@@ -997,11 +1000,20 @@ export class Cognite3DViewer {
    * ```
    */
   async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''> {
-    if (this._cdfSdkClient === undefined) {
-      throw new Error(`${this.determineModelType.name}() is only supported when connecting to Cognite Data Fusion`);
-    }
+    return this.determineModelTypeInternal({ type: 'cdfId', modelId, revisionId });
+  }
 
-    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
+  private async determineModelTypeInternal(
+    modelOptions: { type: 'cdfId'; modelId: number; revisionId: number } | { type: 'path'; localPath: string }
+  ): Promise<SupportedModelTypes | ''> {
+    const modelIdentifier = (() => {
+      if (modelOptions.type === 'cdfId') {
+        return new CdfModelIdentifier(modelOptions.modelId, modelOptions.revisionId);
+      } else {
+        return new LocalModelIdentifier(modelOptions.localPath);
+      }
+    })();
+
     const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
     const outputFormats = outputs.map(output => output.format);
 
