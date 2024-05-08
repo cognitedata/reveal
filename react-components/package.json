@@ -44,7 +44,7 @@
   "devDependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
-    "@cognite/cogs.js": "^9.3.0",
+    "@cognite/cogs.js": "^10.0.0",
     "@cognite/reveal": "^4.12.1",
     "@cognite/sdk": "^9.13.0",
     "@playwright/test": "^1.43.1",
