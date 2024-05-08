@@ -11,7 +11,9 @@ import { getAssetsByIds } from '../hooks/network/getAssetsByIds';
 
 export const useAssetsByIdsQuery = (ids: IdEither[]): UseQueryResult<Asset[]> => {
   const sdk = useSDK();
-  return useQuery(queryKeys.assetsById(ids), async () => await getAssetsByIds(sdk, ids), {
+  return useQuery({
+    queryKey: queryKeys.assetsById(ids),
+    queryFn: async () => await getAssetsByIds(sdk, ids),
     enabled: ids.length > 0
   });
 };

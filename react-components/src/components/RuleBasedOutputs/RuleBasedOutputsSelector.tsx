@@ -107,11 +107,8 @@ const initializeRuleBasedOutputs = async ({
   assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
 }): Promise<AssetStylingGroupAndStyleIndex[]> => {
-  const flatAssetsMappingsList = assetMappings.pages
-    .flat()
-    .map((item) => item.mappings)
-    .flat();
-  const flatMappings = flatAssetsMappingsList.map((node) => node.items).flat();
+  const flatAssetsMappingsList = assetMappings.pages.flat().flatMap((item) => item.mappings);
+  const flatMappings = flatAssetsMappingsList.flatMap((node) => node.items);
 
   const collectionStylings = await generateRuleBasedOutputs({
     model,

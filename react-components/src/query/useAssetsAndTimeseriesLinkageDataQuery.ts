@@ -44,14 +44,14 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
 
   const relationshipResourceTypes: RelationshipResourceType[] = ['asset'];
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       queryKeys.timeseriesLinkedToAssets(),
       timeseriesExternalIdsFromRule,
       relationshipResourceTypes,
       filter
     ],
-    async () => {
+    queryFn: async () => {
       const assetAndTimeseriesIdsFromRelationship = await getLinkFromRelationships(
         sdk,
         timeseriesExternalIdsFromRule,
@@ -99,10 +99,8 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
       };
       return assetIdsAndTimeseriesData;
     },
-    {
-      enabled: timeseriesExternalIdsFromRule.length > 0
-    }
-  );
+    enabled: timeseriesExternalIdsFromRule.length > 0
+  });
 }
 
 const getLinkFromRelationships = async (
@@ -143,7 +141,7 @@ const getLinkFromRelationships = async (
 };
 
 const getAssetIdsFromTimeseries = (
-  contextualizedAssetNodes: Asset[],
+  contextualizedAssetNodes: Array<Asset & InternalId>,
   timeseries: Timeseries,
   assetAndTimeseriesIdsFromRelationship: AssetAndTimeseriesIds[] | undefined
 ): Array<ExternalId | undefined> | undefined => {
@@ -178,7 +176,7 @@ const getAssetIdsFromTimeseries = (
 };
 
 const generateAssetAndTimeseries = (
-  assetFromTimeseries: Asset[] | undefined,
+  assetFromTimeseries: Array<Asset & InternalId> | undefined,
   timeseries: Timeseries,
   assetAndTimeseriesIdsFromRelationship: AssetAndTimeseriesIds[] | undefined
 ): AssetIdsAndTimeseries[] => {

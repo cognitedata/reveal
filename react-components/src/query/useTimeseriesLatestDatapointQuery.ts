@@ -16,13 +16,11 @@ export const useTimeseriesLatestDatapointQuery = (
   const timeseries = timeseriesIds.map((id) => {
     return { id };
   });
-  const { data: timeseriesDatapoints } = useQuery(
-    [queryKeys.timeseriesLatestDatapoint(), timeseriesIds],
-    async () => await getTimeseriesLatestDatapoints(sdk, timeseries),
-    {
-      enabled: !isLoadingAssetIdsAndTimeseries && timeseries.length > 0
-    }
-  );
+  const { data: timeseriesDatapoints } = useQuery({
+    queryKey: [queryKeys.timeseriesLatestDatapoint(), timeseriesIds],
+    queryFn: async () => await getTimeseriesLatestDatapoints(sdk, timeseries),
+    enabled: !isLoadingAssetIdsAndTimeseries && timeseries.length > 0
+  });
 
   return timeseriesDatapoints;
 };
