@@ -31,6 +31,6 @@ export const defaultMobileCadModelBudget: CadModelBudget = {
   maximumRenderCost: 7_000_000
 };
 
-export const defaultCadModelBudget: CadModelBudget = isMobileOrTablet()
-  ? defaultMobileCadModelBudget
-  : defaultDesktopCadModelBudget;
+export function getDefaultCadModelBudget(): CadModelBudget {
+  return isMobileOrTablet() ? defaultMobileCadModelBudget : defaultDesktopCadModelBudget;
+}
