@@ -22,9 +22,8 @@
     "@azure/msal-browser": "^3.0.0",
     "@cognite/reveal": "link:../viewer",
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
-    "buffer": "^6.0.3",
     "dat.gui": "^0.7.7",
-    "hold-event": "^0.2.0",
+    "buffer": "^6.0.3",
     "lodash": "^4.17.21",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -32,7 +31,6 @@
     "styled-components": "5.3.11"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.0.0",
     "@types/dat.gui": "^0.7.5",
     "@types/lodash": "^4.14.190",
     "@types/react": "18.3.1",
