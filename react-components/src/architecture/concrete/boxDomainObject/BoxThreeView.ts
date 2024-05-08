@@ -31,8 +31,8 @@ import {
 } from '@cognite/reveal';
 import { DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { OBB } from 'three/addons/math/OBB.js';
-import { BoxFace } from './BoxFace';
-import { BoxFocusType } from './BoxFocusType';
+import { BoxFace } from '../../base/utilities/boxEdit/BoxFace';
+import { BoxFocusType } from '../../base/utilities/boxEdit/BoxFocusType';
 
 const HALF_SIDE = 0.5;
 const RELATIVE_HEAD_LENGTH = 0.25;
@@ -175,7 +175,7 @@ export class BoxThreeView extends GroupThreeView {
     center.applyMatrix4(matrix);
     const arrowSize = getArrowSize();
 
-    const rotationMatrix = boxDomainObject.getRotatationMatrix();
+    const rotationMatrix = boxDomainObject.getRotationMatrix();
     if (boxDomainObject.focusType === BoxFocusType.Translate) {
       this.addArrow(face.getTangent1(), center, arrowSize, rotationMatrix);
       this.addArrow(face.getTangent2(), center, arrowSize, rotationMatrix);

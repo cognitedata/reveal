@@ -8,9 +8,9 @@ import { BoxDomainObject } from './BoxDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type Tooltip } from '../../base/commands/BaseCommand';
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { BoxDragger } from './BoxDragger';
-import { type BoxFace } from './BoxFace';
-import { BoxFocusType } from './BoxFocusType';
+import { BoxDragger } from '../../base/utilities/boxEdit/BoxDragger';
+import { type BoxFace } from '../../base/utilities/boxEdit/BoxFace';
+import { BoxFocusType } from '../../base/utilities/boxEdit/BoxFocusType';
 
 export class BoxEditTool extends NavigationTool {
   // ==================================================
@@ -123,7 +123,8 @@ export class BoxEditTool extends NavigationTool {
     if (this._dragger === undefined) {
       await super.onPointerDown(event, leftButton);
     } else {
-      this.setFocus(this._dragger.boxDomainObject, getFocusType(event), this._dragger._face);
+      const boxDomainObject = this._dragger.domainObject as BoxDomainObject;
+      this.setFocus(boxDomainObject, getFocusType(event), this._dragger.face);
     }
   }
 
@@ -155,14 +156,15 @@ export class BoxEditTool extends NavigationTool {
     if (!isDomainObjectIntersection(intersection)) {
       return undefined;
     }
-    if (!(intersection.domainObject instanceof BoxDomainObject)) {
+    const domainObject = intersection.domainObject;
+    if (!(domainObject instanceof BoxDomainObject)) {
       return undefined;
     }
     const face = intersection.userData as BoxFace;
     if (face === undefined) {
       return undefined;
     }
-    return new BoxDragger(event, intersection);
+    return new BoxDragger(domainObject, intersection.point, face);
   }
 
   private setFocus(

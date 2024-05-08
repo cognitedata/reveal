@@ -2,13 +2,13 @@
  * Copyright 2024 Cognite AS
  */
 import { type Vector2, Vector3 } from 'three';
-import { type Range1 } from './src/architecture/base/utilities/geometry/Range1';
-import { Range3 } from './src/architecture/base/utilities/geometry/Range3';
-import { Grid2 } from './src/architecture/concrete/terrainDomainObject/geometry/Grid2';
+import { type Range1 } from '../../../base/utilities/geometry/Range1';
+import { Range3 } from '../../../base/utilities/geometry/Range3';
+import { Grid2 } from './Grid2';
 
 import cloneDeep from 'lodash/cloneDeep';
-import { type Shape } from './src/architecture/base/utilities/geometry/Shape';
-import { Index2 } from './src/architecture/base/utilities/geometry/Index2';
+import { type Shape } from '../../../base/utilities/geometry/Shape';
+import { Index2 } from '../../../base/utilities/geometry/Index2';
 
 export class RegularGrid2 extends Grid2 {
   // ==================================================
@@ -171,7 +171,7 @@ export class RegularGrid2 extends Grid2 {
 
   public getCellFromPosition(position: Vector3, resultCell?: Index2): Index2 {
     if (resultCell === undefined) {
-      resultCell = Index2.newZero;
+      resultCell = new Index2();
     }
     const dx = position.x - this.origin.x;
     const dy = position.y - this.origin.y;

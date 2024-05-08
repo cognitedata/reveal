@@ -3,13 +3,13 @@
  */
 /* eslint-disable @typescript-eslint/class-literal-property-style */
 
-import { type BoxDomainObject } from './BoxDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type Ray, Vector3, Plane, Vector2 } from 'three';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { type Ray, Vector3, Plane, Vector2, Matrix4 } from 'three';
+import { Changes } from '../../domainObjectsHelpers/Changes';
 import { BoxFace } from './BoxFace';
 import { BoxFocusType } from './BoxFocusType';
+import { type DomainObject } from '../../domainObjects/DomainObject';
+import { type IBox } from './IBox';
 
 const MIN_SIZE = 0.1;
 
@@ -18,8 +18,10 @@ export class BoxDragger {
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly boxDomainObject: BoxDomainObject;
-  public readonly _face = new BoxFace();
+  public readonly domainObject: DomainObject;
+  public readonly box: IBox;
+
+  private readonly _face = new BoxFace();
   private readonly _point: Vector3 = new Vector3();
   private readonly _normal: Vector3 = new Vector3();
   private readonly _planeOfBox: Plane = new Plane();
@@ -43,30 +45,30 @@ export class BoxDragger {
   // CONTRUCTOR
   // ==================================================
 
-  public constructor(event: PointerEvent, intersection: DomainObjectIntersection) {
-    // Plase check the domainObject by instanceof before enter this constructor
-    this.boxDomainObject = intersection.domainObject as BoxDomainObject;
-    this._face.copy(intersection.userData as BoxFace);
-    this._point.copy(intersection.point);
+  public constructor(domainObject: DomainObject, point: Vector3, face: BoxFace) {
+    this.domainObject = domainObject;
+    this.box = domainObject as unknown as IBox;
+    this._face.copy(face);
+    this._point.copy(point);
     this._normal.copy(this._face.getNormal());
 
-    const rotationMatrix = this.boxDomainObject.getRotatationMatrix();
+    const rotationMatrix = this.getRotationMatrix();
     this._normal.applyMatrix4(rotationMatrix);
     this._normal.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     this._normal.normalize();
 
-    this._minPoint.copy(intersection.point);
-    this._maxPoint.copy(intersection.point);
+    const length = this.box.size.getComponent(this._face.index) * 100;
+    this._minPoint.copy(point);
+    this._maxPoint.copy(point);
+    this._minPoint.addScaledVector(this._normal, +length);
+    this._maxPoint.addScaledVector(this._normal, -length);
 
-    this._minPoint.addScaledVector(this._normal, +intersection.distanceToCamera * 10);
-    this._maxPoint.addScaledVector(this._normal, -intersection.distanceToCamera * 10);
-
-    this._planeOfBox.setFromNormalAndCoplanarPoint(this._normal, intersection.point.clone());
+    this._planeOfBox.setFromNormalAndCoplanarPoint(this._normal, point.clone());
 
     // Back up the original values
-    this._scaleOfBox.copy(this.boxDomainObject.size);
-    this._centerOfBox.copy(this.boxDomainObject.center);
-    this._zRotationOfBox = this.boxDomainObject.zRotation;
+    this._scaleOfBox.copy(this.box.size);
+    this._centerOfBox.copy(this.box.center);
+    this._zRotationOfBox = this.box.zRotation;
   }
 
   // ==================================================
@@ -97,14 +99,14 @@ export class BoxDragger {
     deltaCenter.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
 
     // First copy the original values
-    const { center } = this.boxDomainObject;
+    const { center } = this.box;
     center.copy(this._centerOfBox);
 
     // Then translate the center
     center.add(deltaCenter);
 
     // Notify the changes
-    this.boxDomainObject.notify(Changes.geometry);
+    this.domainObject.notify(Changes.geometry);
   }
 
   private scale(ray: Ray): void {
@@ -117,7 +119,7 @@ export class BoxDragger {
       return;
     }
     // First copy the original values
-    const { size, center } = this.boxDomainObject;
+    const { size, center } = this.box;
     size.copy(this._scaleOfBox);
     center.copy(this._centerOfBox);
 
@@ -136,12 +138,12 @@ export class BoxDragger {
     const deltaCenter = (this._face.sign * newDeltaSize) / 2;
     const deltaCenterVector = new Vector3();
     deltaCenterVector.setComponent(index, deltaCenter);
-    const rotationMatrix = this.boxDomainObject.getRotatationMatrix();
+    const rotationMatrix = this.getRotationMatrix();
     deltaCenterVector.applyMatrix4(rotationMatrix);
     center.add(deltaCenterVector);
 
     // Notify the changes
-    this.boxDomainObject.notify(Changes.geometry);
+    this.domainObject.notify(Changes.geometry);
   }
 
   private rotate(ray: Ray): void {
@@ -169,13 +171,18 @@ export class BoxDragger {
     const deltaAngle = startAngle - endAngle;
 
     // Rotate
-    this.boxDomainObject.zRotation = deltaAngle + this._zRotationOfBox;
+    this.box.zRotation = deltaAngle + this._zRotationOfBox;
 
     // Notify the changes
-    this.boxDomainObject.notify(Changes.geometry);
+    this.domainObject.notify(Changes.geometry);
 
     function substractXZ(v1: Vector3, v2: Vector3): Vector2 {
       return new Vector2(v1.x - v2.x, v1.z - v2.z);
     }
+  }
+
+  public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+    matrix.makeRotationZ(this.box.zRotation);
+    return matrix;
   }
 }

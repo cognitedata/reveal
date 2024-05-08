@@ -4,14 +4,6 @@
 
 export class Index2 {
   // ==================================================
-  // STATIC PROPERTIES
-  // ==================================================
-
-  public static get newZero(): Index2 {
-    return new Index2(0, 0);
-  }
-
-  // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
@@ -22,9 +14,9 @@ export class Index2 {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(i: number, j?: number) {
-    this.i = i;
-    this.j = j ?? i;
+  public constructor(i?: number, j?: number) {
+    this.i = i ?? 0;
+    this.j = j ?? this.i;
   }
 
   public clone(): Index2 {
@@ -66,18 +58,21 @@ export class Index2 {
   // INSTANCE METHODS: Operations
   // ==================================================
 
-  public copy(value: Index2): void {
+  public copy(value: Index2): this {
     this.i = value.i;
     this.j = value.j;
+    return this;
   }
 
-  public add(value: Index2): void {
+  public add(value: Index2): this {
     this.i += value.i;
     this.j += value.j;
+    return this;
   }
 
-  public substract(value: Index2): void {
+  public sub(value: Index2): this {
     this.i -= value.i;
     this.j -= value.j;
+    return this;
   }
 }

@@ -24,7 +24,7 @@ export class Points extends Shape {
 
   public override clone(): Shape {
     const result = new Points();
-    result.list = [...this.list]; // This syntax sucks!
+    result.list = [...this.list];
     return result;
   }
 

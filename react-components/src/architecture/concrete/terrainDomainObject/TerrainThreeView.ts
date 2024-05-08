@@ -31,7 +31,7 @@ import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
 import { getColorMap } from '../../base/utilities/colors/colorMaps';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { RegularGrid2 } from '../../../../RegularGrid2';
+import { RegularGrid2 } from './geometry/RegularGrid2';
 
 const SOLID_NAME = 'Solid';
 const CONTOURS_NAME = 'Contour';

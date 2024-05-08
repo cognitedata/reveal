@@ -9,12 +9,13 @@ import { type ThreeView } from '../../base/views/ThreeView';
 import { BoxThreeView } from './BoxThreeView';
 import { Matrix4, Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type BoxFace } from './BoxFace';
-import { BoxFocusType } from './BoxFocusType';
+import { BoxFace } from '../../base/utilities/boxEdit/BoxFace';
+import { BoxFocusType } from '../../base/utilities/boxEdit/BoxFocusType';
+import { type IBox } from '../../base/utilities/boxEdit/IBox';
 
-export class BoxDomainObject extends VisualDomainObject {
+export class BoxDomainObject extends VisualDomainObject implements IBox {
   // ==================================================
-  // INSTANCE FIELDS
+  // INSTANCE FIELDS (This implements the IBox interface)
   // ==================================================
 
   public readonly size = new Vector3(1, 1, 1);
@@ -22,8 +23,8 @@ export class BoxDomainObject extends VisualDomainObject {
   public zRotation = 0;
 
   // For focus when edit in 3D
-  private _focusFace: BoxFace | undefined = undefined; // Used when hasFocus is true only
-  private _focusType: BoxFocusType = BoxFocusType.None;
+  public focusFace: BoxFace | undefined = undefined; // Used when hasFocus is true only
+  public focusType: BoxFocusType = BoxFocusType.None;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -35,14 +36,6 @@ export class BoxDomainObject extends VisualDomainObject {
 
   public get hasFocus(): boolean {
     return this.focusType !== BoxFocusType.None;
-  }
-
-  public get focusFace(): BoxFace | undefined {
-    return this._focusFace;
-  }
-
-  public get focusType(): BoxFocusType {
-    return this._focusType;
   }
 
   // ==================================================
@@ -70,13 +63,13 @@ export class BoxDomainObject extends VisualDomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  public getRotatationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+  public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
     matrix.makeRotationZ(this.zRotation);
     return matrix;
   }
 
   public getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    matrix = this.getRotatationMatrix(matrix);
+    matrix = this.getRotationMatrix(matrix);
     matrix.setPosition(this.center);
     matrix.scale(this.size);
     return matrix;
@@ -87,14 +80,14 @@ export class BoxDomainObject extends VisualDomainObject {
       if (this.focusType === BoxFocusType.None) {
         return false; // No change
       }
-      this._focusType = BoxFocusType.None;
-      this._focusFace = undefined; // Ignore input face
+      this.focusType = BoxFocusType.None;
+      this.focusFace = undefined; // Ignore input face
     } else {
-      if (type === this.focusType && this.focusFace === face) {
+      if (type === this.focusType && BoxFace.isEqual(this.focusFace, face)) {
         return false; // No change
       }
-      this._focusType = type;
-      this._focusFace = face;
+      this.focusType = type;
+      this.focusFace = face;
     }
     this.notify(Changes.focus);
     return true;

@@ -12,12 +12,12 @@ export class BoxFace {
     this._face = face;
   }
 
-  public get index(): number {
-    return this._face % 3;
-  }
-
   public get face(): number {
     return this._face;
+  }
+
+  public get index(): number {
+    return this._face % 3;
   }
 
   public get tangentIndex1(): number {
@@ -67,5 +67,18 @@ export class BoxFace {
   public getCenter(): Vector3 {
     // Assume the box is centered at (0,0,0) and has size 1 in all directions
     return this.getNormal().multiplyScalar(0.5);
+  }
+
+  public static isEqual(face: BoxFace | undefined, other: BoxFace | undefined): boolean {
+    if (face === undefined || other === undefined) {
+      return true;
+    }
+    if (face === undefined && other !== undefined) {
+      return false;
+    }
+    if (face !== undefined && other === undefined) {
+      return false;
+    }
+    return face.face === other.face;
   }
 }
