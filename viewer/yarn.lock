@@ -1240,6 +1240,7 @@ __metadata:
   resolution: "@reveal/cad-parsers@workspace:packages/cad-parsers"
   dependencies:
     "@reveal/data-providers": "workspace:*"
+    "@reveal/logger": "workspace:*"
     "@reveal/metrics": "workspace:*"
     "@reveal/model-base": "workspace:*"
     "@reveal/sector-parser": "workspace:*"
