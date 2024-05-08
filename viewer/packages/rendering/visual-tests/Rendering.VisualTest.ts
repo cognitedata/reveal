@@ -28,13 +28,13 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     this.pipelineExecutor = stepPipelineExecutor;
 
     const grid = this.getGridFromBoundingBox(model.boundingBox);
-    sceneHandler.addCustomObject(grid);
+    sceneHandler.addObject3D(grid);
 
     const customBox = this.getCustomBoxFromBoundingBox(model.boundingBox);
-    sceneHandler.addCustomObject(customBox);
+    sceneHandler.addObject3D(customBox);
 
     const transformControls = this.attachTransformControlsTo(customBox, camera, renderer.domElement);
-    sceneHandler.addCustomObject(transformControls);
+    sceneHandler.addObject3D(transformControls);
 
     await this.setupMockCadStyling(cadMaterialManager, model.geometryNode.type);
 

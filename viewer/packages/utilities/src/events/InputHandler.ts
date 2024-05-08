@@ -1,30 +1,44 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2024 Cognite AS
  */
-import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
+import { getPixelCoordinatesFromEvent } from './getPixelCoordinatesFromEvent';
 import { EventTrigger } from './EventTrigger';
-import debounce from 'lodash/debounce';
 import { assertNever } from '../assertNever';
-import { Vector2 } from 'three';
 import { PointerEventDelegate } from './types';
+import { PointerEvents } from './PointerEvents';
+import { PointerEventsTarget } from './PointerEventsTarget';
 
-export type EventCollection = { [eventName: string]: EventTrigger<(...args: any[]) => void> };
+export class InputHandler extends PointerEvents {
+  //================================================
+  // INSTANCE FIELDS:
+  //================================================
 
-export class InputHandler {
-  private readonly domElement: HTMLElement;
-  private static readonly maxMoveDistance = 8;
-  private static readonly maxClickDuration = 250;
+  private readonly _domElement: HTMLElement;
+  private readonly _pointerEventsTarget: PointerEventsTarget;
+  private readonly _clickEvents = new EventTrigger<PointerEventDelegate>();
+  private readonly _hoverEvents = new EventTrigger<PointerEventDelegate>();
 
-  private readonly _events = {
-    click: new EventTrigger<PointerEventDelegate>(),
-    hover: new EventTrigger<PointerEventDelegate>()
-  };
+  //================================================
+  // CONTRUCTOR:
+  //================================================
 
   constructor(domElement: HTMLElement) {
-    this.domElement = domElement;
-
-    this.setupEventListeners();
+    super();
+    this._domElement = domElement;
+    this._pointerEventsTarget = new PointerEventsTarget(domElement, this);
+    this._pointerEventsTarget.addEventListeners();
   }
+
+  //================================================
+  // INSTANCE METHODS:
+  //================================================
+
+  dispose(): void {
+    this._hoverEvents.unsubscribeAll();
+    this._clickEvents.unsubscribeAll();
+    this._pointerEventsTarget.removeEventListeners();
+  }
+
   /**
    * @example
    * ```js
@@ -35,12 +49,13 @@ export class InputHandler {
   on(event: 'click' | 'hover', callback: PointerEventDelegate): void {
     switch (event) {
       case 'click':
-        this._events.click.subscribe(callback as PointerEventDelegate);
+        this._clickEvents.subscribe(callback);
         break;
 
       case 'hover':
-        this._events.hover.subscribe(callback as PointerEventDelegate);
+        this._hoverEvents.subscribe(callback);
         break;
+
       default:
         assertNever(event);
     }
@@ -49,113 +64,43 @@ export class InputHandler {
   off(event: 'click' | 'hover', callback: PointerEventDelegate): void {
     switch (event) {
       case 'click':
-        this._events.click.unsubscribe(callback as PointerEventDelegate);
+        this._clickEvents.unsubscribe(callback);
         break;
 
       case 'hover':
-        this._events.hover.unsubscribe(callback as PointerEventDelegate);
+        this._hoverEvents.unsubscribe(callback);
         break;
+
       default:
         assertNever(event);
     }
   }
 
-  dispose(): void {
-    disposeOfAllEventListeners(this._events);
-  }
+  //================================================
+  // OVERRIDES of PointerEvents
+  //================================================
 
-  private setupEventListeners() {
-    const { domElement } = this;
-
-    let pointerDown = false;
-    let pointerDownTimestamp = 0;
-    let validClick = false;
-
-    const startOffset = new Vector2();
-
-    const onUp = (e: PointerEvent) => {
-      this.handleClickEvent(e, startOffset, pointerDown, validClick, pointerDownTimestamp);
-
-      pointerDown = false;
-      validClick = false;
-
-      // up
-      domElement.removeEventListener('pointerup', onUp);
-
-      // add back onHover
-      domElement.addEventListener('pointermove', this.onHoverCallback);
+  override async onClick(event: PointerEvent): Promise<void> {
+    const position = getPixelCoordinatesFromEvent(event, this._domElement);
+    const firedEvent = {
+      offsetX: position.x,
+      offsetY: position.y,
+      button: event instanceof MouseEvent ? event.button : undefined
     };
+    this._clickEvents.fire(firedEvent);
+    return Promise.resolve();
+  }
 
-    const onDown = (e: PointerEvent) => {
-      pointerDown = true;
-      validClick = true;
-      pointerDownTimestamp = e.timeStamp;
-
-      const { offsetX, offsetY } = clickOrTouchEventOffset(e, domElement);
-      startOffset.set(offsetX, offsetY);
-
-      // up
-      domElement.addEventListener('pointerup', onUp);
-
-      // no more onHover
-      domElement.removeEventListener('pointermove', this.onHoverCallback);
+  override onHover(event: PointerEvent): void {
+    const position = getPixelCoordinatesFromEvent(event, this._domElement);
+    const firedEvent = {
+      offsetX: position.x,
+      offsetY: position.y
     };
-
-    // down
-    domElement.addEventListener('pointerdown', onDown);
-
-    // on hover callback
-    domElement.addEventListener('pointermove', this.onHoverCallback);
+    this._hoverEvents.fire(firedEvent);
   }
 
-  private isProperClick(
-    e: PointerEvent,
-    startOffset: Vector2,
-    pointerDown: boolean,
-    validClick: boolean,
-    pointerDownTimestamp: number
-  ) {
-    const { offsetX, offsetY } = clickOrTouchEventOffset(e, this.domElement);
-    const clickDuration = e.timeStamp - pointerDownTimestamp;
-
-    const hasMovedDuringClick =
-      Math.abs(offsetX - startOffset.x) + Math.abs(offsetY - startOffset.y) > InputHandler.maxMoveDistance;
-
-    const isProperClick =
-      pointerDown && validClick && clickDuration < InputHandler.maxClickDuration && !hasMovedDuringClick;
-
-    return isProperClick;
-  }
-
-  private handleClickEvent(
-    e: PointerEvent,
-    startOffset: Vector2,
-    pointerDown: boolean,
-    validClick: boolean,
-    pointerDownTimestamp: number
-  ) {
-    const isProperClick = this.isProperClick(e, startOffset, pointerDown, validClick, pointerDownTimestamp);
-
-    if (isProperClick) {
-      const firedEvent = {
-        ...clickOrTouchEventOffset(e, this.domElement),
-        button: e instanceof MouseEvent ? e.button : undefined
-      };
-
-      this._events.click.fire(firedEvent);
-    }
-  }
-
-  private readonly onHoverCallback = debounce((e: PointerEvent) => {
-    this._events.hover.fire(clickOrTouchEventOffset(e, this.domElement));
-  }, 100);
-}
-
-/**
- * Method for deleting all external events that are associated with current instance of a class.
- */
-export function disposeOfAllEventListeners(eventList: EventCollection): void {
-  for (const eventType of Object.keys(eventList)) {
-    eventList[eventType].unsubscribeAll();
+  override get isEnabled(): boolean {
+    return true;
   }
 }

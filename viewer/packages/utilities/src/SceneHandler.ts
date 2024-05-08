@@ -4,12 +4,14 @@
 
 import * as THREE from 'three';
 import remove from 'lodash/remove';
+import { ICustomObject } from './customObject/ICustomObject';
+import { CustomObject } from './customObject/CustomObject';
 
 export class SceneHandler {
   private readonly _scene: THREE.Scene;
   private readonly _cadModels: { cadNode: THREE.Object3D; modelIdentifier: string }[];
   private readonly _pointCloudModels: { pointCloudNode: THREE.Object3D; modelIdentifier: symbol }[];
-  private readonly _customObjects: THREE.Object3D[];
+  private readonly _customObjects: ICustomObject[];
 
   get scene(): THREE.Scene {
     return this._scene;
@@ -23,7 +25,7 @@ export class SceneHandler {
     return this._pointCloudModels;
   }
 
-  get customObjects(): THREE.Object3D[] {
+  get customObjects(): ICustomObject[] {
     return this._customObjects;
   }
 
@@ -56,14 +58,25 @@ export class SceneHandler {
     remove(this._cadModels, { cadNode });
   }
 
-  public addCustomObject(object: THREE.Object3D): void {
-    this._customObjects.push(object);
-    this._scene.add(object);
+  public addObject3D(object: THREE.Object3D): void {
+    this.addCustomObject(new CustomObject(object));
   }
 
-  public removeCustomObject(object: THREE.Object3D): void {
-    this.scene.remove(object);
-    remove(this._customObjects, object);
+  public addCustomObject(customObject: ICustomObject): void {
+    this._customObjects.push(customObject);
+    this._scene.add(customObject.object);
+  }
+
+  public removeObject3D(object: THREE.Object3D): void {
+    const customObject = this._customObjects.find(customObject => customObject.object === object);
+    if (customObject) {
+      this.removeCustomObject(customObject);
+    }
+  }
+
+  public removeCustomObject(customObject: ICustomObject): void {
+    this.scene.remove(customObject.object);
+    remove(this._customObjects, customObject);
   }
 
   public dispose(): void {

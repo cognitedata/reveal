@@ -95,7 +95,7 @@ export class ResizeHandler {
     }
   }
 
-  private setupResizeListener(renderer: THREE.WebGLRenderer): ResizeObserver | undefined {
+  private setupResizeListener(renderer: WebGLRenderer): ResizeObserver | undefined {
     const domElement = renderer.domElement.parentElement;
     if (!domElement) {
       throw new Error('Canvas does not have a parent element');
@@ -106,7 +106,7 @@ export class ResizeHandler {
     return resizeObserver;
   }
 
-  private resize(camera: THREE.PerspectiveCamera): void {
+  private resize(camera: PerspectiveCamera): void {
     const canvas = this._renderer.domElement;
     const domElement = canvas.parentElement;
 

@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { AxisViewTool } from './AxisViewTool';
+import { Corner } from '../utilities/Corner';
 
 /**
  * Configuration of {@link AxisViewTool}.
@@ -91,16 +92,6 @@ export type AxisBoxCompassConfig = {
   fontColor?: THREE.Color;
   tickColor?: THREE.Color;
 };
-
-/**
- * A corner of the viewer.
- */
-export enum Corner {
-  TopRight,
-  TopLeft,
-  BottomLeft,
-  BottomRight
-}
 
 export const defaultAxisBoxCompassConfig: AxisBoxCompassConfig = {
   ringLabel: 'N',

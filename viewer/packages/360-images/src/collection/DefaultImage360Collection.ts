@@ -30,6 +30,7 @@ import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter
 import { Image360 } from '../entity/Image360';
 import { Image360Revision } from '../entity/Image360Revision';
 import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
+import { Matrix4 } from 'three';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -64,6 +65,7 @@ export class DefaultImage360Collection implements Image360Collection {
   private _isCollectionVisible: boolean;
   private readonly _collectionId: string;
   private readonly _collectionLabel: string | undefined;
+  private readonly _setNeedsRedraw: () => void;
 
   get id(): string {
     return this._collectionId;
@@ -101,7 +103,8 @@ export class DefaultImage360Collection implements Image360Collection {
     entities: Image360Entity[],
     icons: IconCollection,
     annotationFilter: Image360AnnotationFilter,
-    image360DataProvider: Image360DataProvider
+    image360DataProvider: Image360DataProvider,
+    setNeedsRedraw: () => void
   ) {
     this._collectionId = collectionId;
     this._collectionLabel = collectionLabel;
@@ -110,6 +113,17 @@ export class DefaultImage360Collection implements Image360Collection {
     this._isCollectionVisible = true;
     this._annotationFilter = annotationFilter;
     this._image360DataProvider = image360DataProvider;
+    this._setNeedsRedraw = setNeedsRedraw;
+  }
+
+  public getModelTransformation(out?: Matrix4): Matrix4 {
+    return this._icons.getTransform(out);
+  }
+
+  public setModelTransformation(matrix: Matrix4): void {
+    this._icons.setTransform(matrix);
+    this.image360Entities.forEach(entity => entity.setWorldTransform(matrix));
+    this._setNeedsRedraw();
   }
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:
@@ -145,6 +159,14 @@ export class DefaultImage360Collection implements Image360Collection {
    */
   public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
     this._icons.set360IconCullingRestrictions(radius, pointLimit);
+  }
+
+  /**
+   * Gets visibility of all 360 image icons.
+   * @returns true if all icons are visible, false if all icons are invisible
+   */
+  getIconsVisibility(): boolean {
+    return this._isCollectionVisible;
   }
 
   /**

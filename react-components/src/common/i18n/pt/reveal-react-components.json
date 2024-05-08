@@ -1,5 +1,10 @@
 {
   "CAD_MODELS": "Modelos CAD",
+  "CONTROLS_TYPE_FIRST_PERSON": "Voo",
+  "CONTROLS_TYPE_ORBIT": "Órbita",
+  "CONTROLS_TYPE_ORBIT_IN_CENTER": "Centralizar órbita",
+  "CONTROLS_TYPE_TOOLTIP": "Configurar câmera para o modo de órbita ou voo",
+  "COPY_URL_TO_SHARE": "Copiar URL para compartilhar",
   "FIT_VIEW_TOOLTIP": "Ajustar exibição",
   "HELP_TOOLTIP": "Ajuda",
   "HIGH_FIDELITY": "Alta fidelidade",
@@ -32,10 +37,18 @@
   "MOUSE_ZOOM": "Ampliar/rolar",
   "PAN": "Panorâmica",
   "POINT_CLOUDS": "Nuvens de pontos",
+  "RESET_CAMERA_TO_HOME": "Redefinir câmera para posição padrão",
+  "RULESET_SELECT_HEADER": "Selecionar sobreposição de cores",
+  "SCENE_SELECT_HEADER": "Selecionar local 3D",
+  "SEARCH_PLACEHOLDER": "Pesquisar",
+  "SELECT_INDIVIDUAL_3D_MODELS": "Selecionar modelos individuais",
   "SETTINGS_TOOLTIP": "Configurações",
   "SLICE_TOOLTIP": "Fatiar",
   "TOUCH_NAVIGATION_DESCRIPTION": "Use gestos para ampliar, mover e selecionar",
   "TOUCH_NAVIGATION_TITLE": "Toque",
   "TOUCH_SELECT": "Toque para selecionar",
-  "TOUCH_ZOOM": "Zoom"
+  "TOUCH_ZOOM": "Zoom",
+  "WIDGET_WINDOW_CLOSE": "Fechar",
+  "WIDGET_WINDOW_EXPAND": "Expandir",
+  "WIDGET_WINDOW_MINIMIZE": "Minimizar"
 }

@@ -1,8 +1,8 @@
-Releasing Reveal involves releasing NPM packages `@cognite/reveal` and/or updating documentation. The documentation is automatically 
+Releasing Reveal involves releasing NPM packages `@cognite/reveal` and/or updating documentation. The documentation is automatically
 deployed when pushed to master.
 
 # Publishing packages
-Publishing of new packages to NPM is handled automatically by a Github Actions workflow which is triggered when publishing a new release on GitHub. 
+Publishing of new packages to NPM is handled automatically by a Github Actions workflow which is triggered when publishing a new release on GitHub.
 The only consideration you need to make when publishing a new release, is that the NPM package version must be unique meaning that the package version has not been released previously.
 
 ### Updating latest documentation
@@ -29,8 +29,8 @@ Once the PR is merged into master, the documentation will be automatically deplo
 1. Go to [https://github.com/cognitedata/reveal/releases/new](https://github.com/cognitedata/reveal/releases/new)
 2. Under the "Tag version" field, add a new tag for this release with the name and version of the package, e.g. `@cognite/reveal@3.2.0`
 3. Specify the same release title as the tag name.
-4. Write the changes that new version brings. Get inspired by done tasks from your sprint board. Note! 
-   Remember to specify the correct ThreeJS version required by the released version - you can find this in package.json 
+4. Write the changes that new version brings. Get inspired by done tasks from your sprint board. Note!
+   Remember to specify the correct ThreeJS version required by the released version - you can find this in package.json
    of the viewer.
 Also, you can check what's committed from the previous tag with that command:
    ```bash
@@ -47,6 +47,11 @@ This version of Reveal is compatible with ThreeJS <THREEJS_VERSION>.
 ### 🐞 Bug fixes and enhancements
 
 * commit message
+
+### ⚠️ Experimental changes
+
+* feat(experimental): commit message
+* fix(experimental): commit message
 
 ### 📖 Documentation
 

@@ -7,7 +7,8 @@ import {
   CadModelContainer,
   Image360CollectionContainer,
   PointCloudContainer,
-  RevealContainer,
+  RevealCanvas,
+  RevealContext,
   RevealToolbar
 } from '../src';
 import { CogniteClient } from '@cognite/sdk';
@@ -39,18 +40,20 @@ export const Main: Story = {
     transform: new Matrix4().makeTranslation(0, 10, 0)
   },
   render: ({ addModelOptions, transform }) => (
-    <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-      <CadModelContainer addModelOptions={addModelOptions} />
-      <CadModelContainer addModelOptions={addModelOptions} transform={transform} />
-      <PointCloudContainer
-        addModelOptions={{
-          modelId: 3865289545346058,
-          revisionId: 4160448151596909
-        }}
-        transform={new Matrix4()}
-      />
-      <Image360CollectionContainer siteId={'Hibernia_RS2'} />
-      <RevealToolbar />
-    </RevealContainer>
+    <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+      <RevealCanvas>
+        <CadModelContainer addModelOptions={addModelOptions} />
+        <CadModelContainer addModelOptions={addModelOptions} transform={transform} />
+        <PointCloudContainer
+          addModelOptions={{
+            modelId: 3865289545346058,
+            revisionId: 4160448151596909
+          }}
+          transform={new Matrix4()}
+        />
+        <Image360CollectionContainer addImageCollection360Options={{ siteId: 'Hibernia_RS2' }} />
+        <RevealToolbar />
+      </RevealCanvas>
+    </RevealContext>
   )
 };

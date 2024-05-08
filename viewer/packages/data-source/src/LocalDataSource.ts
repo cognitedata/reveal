@@ -25,6 +25,6 @@ export class LocalDataSource implements DataSource {
   }
 
   getModelMetadataProvider(): ModelMetadataProvider {
-    throw new LocalModelMetadataProvider();
+    return new LocalModelMetadataProvider();
   }
 }

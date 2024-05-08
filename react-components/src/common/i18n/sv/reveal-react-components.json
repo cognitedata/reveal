@@ -1,5 +1,10 @@
 {
   "CAD_MODELS": "CAD-modeller",
+  "CONTROLS_TYPE_FIRST_PERSON": "Flyg",
+  "CONTROLS_TYPE_ORBIT": "Kretsa",
+  "CONTROLS_TYPE_ORBIT_IN_CENTER": "Kretsa centrerat",
+  "CONTROLS_TYPE_TOOLTIP": "Ställ in kameran till kretsnings- eller flygläge",
+  "COPY_URL_TO_SHARE": "Kopiera URL för att dela",
   "FIT_VIEW_TOOLTIP": "Passa vy",
   "HELP_TOOLTIP": "Hjälp",
   "HIGH_FIDELITY": "Hög upplösning",
@@ -30,12 +35,20 @@
   "MOUSE_SELECT_INSTRUCTION": "Klicka på interaktiva objekt",
   "MOUSE_TOUCH_NAVIGATION_SUBTITLE": "Navigera och välj",
   "MOUSE_ZOOM": "Zoom/bläddra",
-  "PAN": "Pan",
+  "PAN": "Panorera",
   "POINT_CLOUDS": "Punktmoln",
+  "RESET_CAMERA_TO_HOME": "Återställ kamera till hem",
+  "RULESET_SELECT_HEADER": "Välj färgöverlägg",
+  "SCENE_SELECT_HEADER": "Välj 3D-plats",
+  "SEARCH_PLACEHOLDER": "Sök",
+  "SELECT_INDIVIDUAL_3D_MODELS": "Välj individuella modeller",
   "SETTINGS_TOOLTIP": "Inställningar",
   "SLICE_TOOLTIP": "Del",
   "TOUCH_NAVIGATION_DESCRIPTION": "Använd gester för att zooma, panorera och välja",
   "TOUCH_NAVIGATION_TITLE": "Peka",
   "TOUCH_SELECT": "Tryck för att välja",
-  "TOUCH_ZOOM": "Zoom"
+  "TOUCH_ZOOM": "Zoom",
+  "WIDGET_WINDOW_CLOSE": "Stäng",
+  "WIDGET_WINDOW_EXPAND": "Expandera",
+  "WIDGET_WINDOW_MINIMIZE": "Minimera"
 }

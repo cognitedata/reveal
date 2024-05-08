@@ -2,10 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
+import type { Vector3, Color } from 'three';
+
 export type Measurement = {
   readonly measurementId: number;
-  readonly startPoint: THREE.Vector3;
-  readonly endPoint: THREE.Vector3;
+  readonly startPoint: Vector3;
+  readonly endPoint: Vector3;
   readonly distanceInMeters: number;
 };
 
@@ -41,5 +43,5 @@ export type MeasurementOptions = {
   /**
    * Line color in 32 bit hex.
    */
-  color?: THREE.Color;
+  color?: Color;
 };

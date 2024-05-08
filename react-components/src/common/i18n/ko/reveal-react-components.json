@@ -1,5 +1,10 @@
 {
   "CAD_MODELS": "CAD 모델",
+  "CONTROLS_TYPE_FIRST_PERSON": "플라이",
+  "CONTROLS_TYPE_ORBIT": "궤도",
+  "CONTROLS_TYPE_ORBIT_IN_CENTER": "중심 궤도",
+  "CONTROLS_TYPE_TOOLTIP": "카메라를 궤도 또는 플라이 모드로 설정",
+  "COPY_URL_TO_SHARE": "공유 URL 복사",
   "FIT_VIEW_TOOLTIP": "보기 맞추기",
   "HELP_TOOLTIP": "도움말",
   "HIGH_FIDELITY": "고성능",
@@ -32,10 +37,18 @@
   "MOUSE_ZOOM": "확대/축소/스크롤",
   "PAN": "이동",
   "POINT_CLOUDS": "포인트 클라우드",
+  "RESET_CAMERA_TO_HOME": "카메라를 홈으로 설정",
+  "RULESET_SELECT_HEADER": "컬러 오버레이 선택",
+  "SCENE_SELECT_HEADER": "3D 위치 선택",
+  "SEARCH_PLACEHOLDER": "검색",
+  "SELECT_INDIVIDUAL_3D_MODELS": "개별 모델 선택",
   "SETTINGS_TOOLTIP": "설정",
   "SLICE_TOOLTIP": "나누기",
   "TOUCH_NAVIGATION_DESCRIPTION": "동작을 사용하여 확대/축소, 이동 및 선택",
   "TOUCH_NAVIGATION_TITLE": "터치",
   "TOUCH_SELECT": "탭하여 선택",
-  "TOUCH_ZOOM": "확대/축소"
+  "TOUCH_ZOOM": "확대/축소",
+  "WIDGET_WINDOW_CLOSE": "닫기",
+  "WIDGET_WINDOW_EXPAND": "확장",
+  "WIDGET_WINDOW_MINIMIZE": "최소화"
 }

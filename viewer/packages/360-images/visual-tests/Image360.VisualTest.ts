@@ -3,7 +3,12 @@
  */
 import * as THREE from 'three';
 
-import { Cdf360EventDescriptorProvider, Cdf360ImageProvider, Local360ImageProvider } from '@reveal/data-providers';
+import {
+  Cdf360DataModelsDescriptorProvider,
+  Cdf360EventDescriptorProvider,
+  Cdf360ImageProvider,
+  Local360ImageProvider
+} from '@reveal/data-providers';
 import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
@@ -11,18 +16,18 @@ import {
   BeforeSceneRenderedDelegate,
   DeviceDescriptor,
   EventTrigger,
-  pixelToNormalizedDeviceCoordinates,
+  getNormalizedPixelCoordinates,
   SceneHandler
 } from '@reveal/utilities';
 import { CogniteClient } from '@cognite/sdk';
 import { Image360Entity } from '../src/entity/Image360Entity';
-import { degToRad } from 'three/src/math/MathUtils';
 import TWEEN from '@tweenjs/tween.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
 import { IconOctree } from '@reveal/3d-overlays';
 import { OctreeHelper } from 'sparse-octree';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
+import { DefaultImage360Collection } from '../src/collection/DefaultImage360Collection';
 
 type CdfImage360Facade = Image360Facade<{
   [key: string]: string;
@@ -37,18 +42,31 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     camera.near = 0.01;
     camera.updateProjectionMatrix();
 
-    camera.position.set(11.67, 4.15, -2.89);
+    camera.position.set(22.67, 4.15, -2.89);
     camera.rotation.set(-0.4, 0.84, 0.3);
 
     const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
 
-    const { facade, entities } = await this.setup360Images(cogniteClient, sceneHandler, onBeforeRender, desktopDevice);
-    entities[1].setIconColor(new THREE.Color(1.0, 0.0, 1.0));
+    const { facade, collection } = await this.setup360Images(
+      cogniteClient,
+      sceneHandler,
+      onBeforeRender,
+      desktopDevice
+    );
+    collection.image360Entities[1].setIconColor(new THREE.Color(1.0, 0.0, 1.0));
 
-    const icons = entities.map(entity => entity.icon);
-    sceneHandler.addCustomObject(this.getOctreeVisualizationObject(icons));
+    const collectionTransform = new THREE.Matrix4()
+      .makeTranslation(10, -5, -7)
+      .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 4));
 
-    this.setupGUI(entities);
+    collection.setModelTransformation(collectionTransform);
+
+    const icons = collection.image360Entities.map(entity => entity.icon);
+    const octreeVisualizationObject = this.getOctreeVisualizationObject(icons);
+    octreeVisualizationObject.applyMatrix4(collection.getModelTransformation());
+    sceneHandler.addObject3D(octreeVisualizationObject);
+
+    this.setupGUI(collection.image360Entities);
 
     this.setupMouseMoveEventHandler(renderer, facade, camera);
 
@@ -87,12 +105,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     let lastClicked: Image360Entity | undefined;
     renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
-      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
-        x,
-        y,
-        renderer.domElement.clientWidth,
-        renderer.domElement.clientHeight
-      );
+      const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
       const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
 
       if (entity === undefined) {
@@ -177,12 +190,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
   ) {
     renderer.domElement.addEventListener('mousemove', async event => {
       const { x, y } = event;
-      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
-        x,
-        y,
-        renderer.domElement.clientWidth,
-        renderer.domElement.clientHeight
-      );
+      const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
       const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
       if (entity === undefined) {
         this.render();
@@ -210,7 +218,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     sceneHandler: SceneHandler,
     onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
     device: DeviceDescriptor
-  ): Promise<{ facade: CdfImage360Facade | LocalImage360Facade; entities: Image360Entity[] }> {
+  ): Promise<{ facade: CdfImage360Facade | LocalImage360Facade; collection: DefaultImage360Collection }> {
     if (cogniteClient === undefined) {
       return this.setupLocal(sceneHandler, onBeforeRender, device);
     }
@@ -218,91 +226,58 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
-    if (
-      urlParams.get('project') === 'twin-test' &&
-      urlParams.get('modelId') === '946412141563897' &&
-      urlParams.get('revisionId') === '6425532219434724'
-    ) {
-      return this.setupTwinTestMauiA(sceneHandler, cogniteClient, onBeforeRender, device);
+    const siteId = urlParams.get('siteId');
+    const externalId = urlParams.get('externalId');
+    const space = urlParams.get('space');
+
+    if (externalId !== null && space !== null) {
+      return getDM360ImageCollection(cogniteClient, externalId, space);
     }
 
-    if (
-      urlParams.get('project') === 'officerobotics' &&
-      urlParams.get('modelId') === '2755498691043825' &&
-      urlParams.get('revisionId') === '141507501940626'
-    ) {
-      return this.setupOfficeRobotics(sceneHandler, cogniteClient, onBeforeRender, device);
+    if (siteId !== null) {
+      return getEvents360ImageCollection(cogniteClient, siteId);
     }
 
     return this.setupLocal(sceneHandler, onBeforeRender, device);
-  }
 
-  private async setupOfficeRobotics(
-    sceneHandler: SceneHandler,
-    cogniteClient: CogniteClient,
-    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
-    device: DeviceDescriptor
-  ): Promise<{
-    facade: Image360Facade<{
-      [key: string]: string;
-    }>;
-    entities: Image360Entity[];
-  }> {
-    const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
-    const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
-    const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender, device);
-    const image360Facade = new Image360Facade(image360Factory);
-    const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), 0.1);
-    const translation = new THREE.Matrix4().makeTranslation(-18, 1, -13);
-    const collectionTransform = translation.multiply(rotation);
-    const collection = await image360Facade.create(
-      { site_id: '6th floor v3 - enterprise' },
-      {},
-      collectionTransform,
-      false
-    );
-    return { facade: image360Facade, entities: collection.image360Entities };
-  }
+    async function getDM360ImageCollection(
+      cogniteClient: CogniteClient,
+      externalId: string,
+      space: string
+    ): Promise<{ facade: CdfImage360Facade; collection: DefaultImage360Collection }> {
+      const cdf360EventDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
+      const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
+      const image360Factory = new Image360CollectionFactory(
+        cdf360ImageProvider,
+        sceneHandler,
+        onBeforeRender,
+        () => {},
+        device
+      );
+      const image360Facade = new Image360Facade(image360Factory);
+      const collection = await image360Facade.create({ image360CollectionExternalId: externalId, space: space });
 
-  private async setupTwinTestMauiA(
-    sceneHandler: SceneHandler,
-    cogniteClient: CogniteClient,
-    onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
-    device: DeviceDescriptor
-  ): Promise<{
-    facade: Image360Facade<{
-      [key: string]: string;
-    }>;
-    entities: Image360Entity[];
-  }> {
-    const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
-    const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
-    const image360Factory = new Image360CollectionFactory(cdf360ImageProvider, sceneHandler, onBeforeRender, device);
-    const image360Facade = new Image360Facade(image360Factory);
+      return { facade: image360Facade, collection: collection };
+    }
 
-    const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(177));
-    const translation = new THREE.Matrix4().makeTranslation(11, 49, 32);
-    const collectionTransform = translation.multiply(rotation);
-    const collection1 = await image360Facade.create({ site_id: 'helideck-site-2' }, {}, collectionTransform);
+    async function getEvents360ImageCollection(
+      cogniteClient: CogniteClient,
+      siteId: string
+    ): Promise<{ facade: CdfImage360Facade; collection: DefaultImage360Collection }> {
+      const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
+      const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
+      const image360Factory = new Image360CollectionFactory(
+        cdf360ImageProvider,
+        sceneHandler,
+        onBeforeRender,
+        () => {},
+        device
+      );
+      const image360Facade = new Image360Facade(image360Factory);
+      const collection = await image360Facade.create({ siteId: siteId });
 
-    const rotation2 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(40));
-    const translation2 = new THREE.Matrix4().makeTranslation(34, 30, 46);
-    const collectionTransform2 = translation2.multiply(rotation2);
-    const collection2 = await image360Facade.create({ site_id: 'j-tube-diesel-header-tank' }, {}, collectionTransform2);
-
-    const rotation3 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(96));
-    const translation3 = new THREE.Matrix4().makeTranslation(176, 37, 56);
-    const collectionTransform3 = translation3.multiply(rotation3);
-    const collection3 = await image360Facade.create(
-      { site_id: 'se-stairs-module-5-boot-room' },
-      {},
-      collectionTransform3
-    );
-
-    return {
-      facade: image360Facade,
-      entities: collection1.image360Entities.concat(collection2.image360Entities, collection3.image360Entities)
-    };
+      return { facade: image360Facade, collection: collection };
+    }
   }
 
   private async setupLocal(
@@ -311,16 +286,16 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     device: DeviceDescriptor
   ): Promise<{
     facade: Image360Facade<any>;
-    entities: Image360Entity[];
+    collection: DefaultImage360Collection;
   }> {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const modelUrl = urlParams.get('modelUrl') ?? 'primitives';
     const dataProvider = new Local360ImageProvider(`${window.location.origin}/${modelUrl}`);
-    const image360Factory = new Image360CollectionFactory(dataProvider, sceneHandler, onBeforeRender, device);
+    const image360Factory = new Image360CollectionFactory(dataProvider, sceneHandler, onBeforeRender, () => {}, device);
     const image360Facade = new Image360Facade(image360Factory);
     const collection = await image360Facade.create({});
 
-    return { facade: image360Facade, entities: collection.image360Entities };
+    return { facade: image360Facade, collection };
   }
 }

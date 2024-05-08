@@ -12,8 +12,15 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { MeasurementButton } from './MeasurementButton';
 import { HelpButton } from './HelpButton';
 import { ShareButton } from './ShareButton';
+import { ResetCameraButton } from './ResetCameraButton';
 import { type QualitySettings } from './SettingsContainer/types';
 import styled from 'styled-components';
+import { SelectSceneButton } from './SelectSceneButton';
+import { RuleBasedOutputsButton } from './RuleBasedOutputsButton';
+import {
+  SetFlexibleControlsType,
+  SetOrbitOrFirstPersonControlsType
+} from './SetFlexibleControlsType';
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute;
@@ -26,21 +33,21 @@ const StyledToolBar = styled(ToolBar)`
   border: 1px solid rgba(83, 88, 127, 0.24);
 `;
 
-type RevealToolbarProps = ToolBarProps & CustomContent;
+export type RevealToolbarProps = ToolBarProps & CustomToolbarContent;
 
-type CustomContent = {
+export type CustomToolbarContent = {
   customSettingsContent?: JSX.Element;
   lowFidelitySettings?: Partial<QualitySettings>;
   highFidelitySettings?: Partial<QualitySettings>;
   storeStateInUrl?: boolean;
 };
 
-const DefaultContentWrapper = (props: CustomContent): ReactElement => {
+const DefaultContentWrapper = (props: CustomToolbarContent): ReactElement => {
   return (
     <>
       <LayersButton />
       <FitModelsButton />
-
+      <RuleBasedOutputsButton />
       <Divider weight="2px" length="75%" />
 
       <SlicerButton storeStateInUrl={props.storeStateInUrl} />
@@ -101,6 +108,11 @@ export const RevealToolbar = withSuppressRevealEvents(
   ShareButton: typeof ShareButton;
   SettingsButton: typeof SettingsButton;
   HelpButton: typeof HelpButton;
+  ResetCameraButton: typeof ResetCameraButton;
+  SelectSceneButton: typeof SelectSceneButton;
+  RuleBasedOutputsButton: typeof RuleBasedOutputsButton;
+  SetOrbitOrFirstPersonControlsType: typeof SetOrbitOrFirstPersonControlsType;
+  SetFlexibleControlsType: typeof SetFlexibleControlsType;
 };
 
 RevealToolbar.FitModelsButton = FitModelsButton;
@@ -110,3 +122,8 @@ RevealToolbar.MeasurementButton = MeasurementButton;
 RevealToolbar.ShareButton = ShareButton;
 RevealToolbar.SettingsButton = SettingsButton;
 RevealToolbar.HelpButton = HelpButton;
+RevealToolbar.ResetCameraButton = ResetCameraButton;
+RevealToolbar.SelectSceneButton = SelectSceneButton;
+RevealToolbar.RuleBasedOutputsButton = RuleBasedOutputsButton;
+RevealToolbar.SetOrbitOrFirstPersonControlsType = SetOrbitOrFirstPersonControlsType;
+RevealToolbar.SetFlexibleControlsType = SetFlexibleControlsType;

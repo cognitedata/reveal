@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import {
-  type AssetMappingStylingGroup,
+  type AssetStylingGroup,
   type CadModelOptions,
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
@@ -13,23 +13,25 @@ import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
-} from '../components/NodeCacheProvider/NodeCacheProvider';
+} from '../components/CacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
 import {
   type NodeId,
   type FdmEdgeWithNode,
   type AssetId,
   type ModelRevisionAssetNodesResult
-} from '../components/NodeCacheProvider/types';
+} from '../components/CacheProvider/types';
 import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../components/CadModelContainer/useApplyCadModelStyling';
-import { type AssetMapping } from '../components/NodeCacheProvider/AssetMappingCache';
+import { type AssetMapping } from '../components/CacheProvider/AssetMappingCache';
 import {
   useAssetMappedNodesForRevisions,
   useNodesForAssets
-} from '../components/NodeCacheProvider/AssetMappingCacheProvider';
+} from '../components/CacheProvider/AssetMappingCacheProvider';
+import { isSameCadModel } from '../utilities/isSameModel';
+import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -45,7 +47,7 @@ export type StyledModel = {
 
 export const useCalculateCadStyling = (
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>,
+  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledModel[] => {
   const modelsMappedStyleGroups = useCalculateMappedStyling(
@@ -53,6 +55,7 @@ export const useCalculateCadStyling = (
     defaultResourceStyling?.cad?.mapped
   );
   const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
+
   const joinedStyleGroups = useJoinStylingGroups(
     models,
     modelsMappedStyleGroups,
@@ -127,7 +130,7 @@ function useCalculateMappedStyling(
 
 function useCalculateInstanceStyling(
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>
+  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>
 ): ModelStyleGroup[] {
   const { data: fdmAssetMappings } = useFdmAssetMappings(
     instanceGroups
@@ -166,7 +169,7 @@ function useCalculateInstanceStyling(
 
 function useAssetMappingInstanceStyleGroups(
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>,
+  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
   modelAssetMappings: ModelRevisionAssetNodesResult[] | undefined
 ): ModelStyleGroup[] {
   return useMemo(() => {
@@ -186,7 +189,7 @@ function useAssetMappingInstanceStyleGroups(
 
 function useFdmInstanceStyleGroups(
   models: CadModelOptions[],
-  instanceGroups: Array<FdmAssetStylingGroup | AssetMappingStylingGroup>,
+  instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
   fdmAssetMappings: ThreeDModelFdmMappings[] | undefined
 ): ModelStyleGroup[] {
   return useMemo(() => {
@@ -208,14 +211,6 @@ function useFdmInstanceStyleGroups(
   }, [models, instanceGroups, fdmAssetMappings]);
 }
 
-function isFdmAssetStylingGroup(instanceGroup: any): instanceGroup is FdmAssetStylingGroup {
-  return instanceGroup.fdmAssetExternalIds !== undefined && instanceGroup.style !== undefined;
-}
-
-function isAssetMappingStylingGroup(instanceGroup: any): instanceGroup is AssetMappingStylingGroup {
-  return instanceGroup.assetIds !== undefined && instanceGroup.style !== undefined;
-}
-
 function useJoinStylingGroups(
   models: CadModelOptions[],
   modelsMappedStyleGroups: ModelStyleGroup[],
@@ -227,9 +222,10 @@ function useJoinStylingGroups(
     }
     return models.map((model) => {
       const mappedStyleGroup =
-        modelsMappedStyleGroups.find((typedModel) => typedModel.model === model)?.styleGroup ?? [];
+        modelsMappedStyleGroups.find((typedModel) => isSameCadModel(typedModel.model, model))
+          ?.styleGroup ?? [];
       const instanceStyleGroups = modelInstanceStyleGroups
-        .filter((typedModel) => typedModel.model === model)
+        .filter((typedModel) => isSameCadModel(typedModel.model, model))
         .flatMap((typedModel) => typedModel.styleGroup);
       return {
         model,
@@ -243,13 +239,16 @@ function useJoinStylingGroups(
 
 function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
   return styleGroup.reduce<ModelStyleGroup[]>((accumulatedGroups, currentGroup) => {
-    const existingGroupWithModel = accumulatedGroups.find(
-      (group) => group.model === currentGroup.model
+    const existingGroupWithModel = accumulatedGroups.find((group) =>
+      isSameCadModel(group.model, currentGroup.model)
     );
     if (existingGroupWithModel !== undefined) {
       existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
     } else {
-      accumulatedGroups.push({ ...currentGroup });
+      accumulatedGroups.push({
+        model: currentGroup.model,
+        styleGroup: [...currentGroup.styleGroup]
+      });
     }
     return accumulatedGroups;
   }, []);
@@ -320,8 +319,8 @@ function calculateFdmCadModelStyling(
 }
 
 function calculateAssetMappingCadModelStyling(
-  stylingGroups: AssetMappingStylingGroup[],
-  nodeMap: Map<AssetId, Node3D>,
+  stylingGroups: AssetStylingGroup[],
+  nodeMap: Map<AssetId, Node3D[]>,
   model: CadModelOptions
 ): ModelStyleGroup {
   const treeIndexSetsWithStyle = stylingGroups
@@ -329,10 +328,13 @@ function calculateAssetMappingCadModelStyling(
       const indexSet = new IndexSet();
       group.assetIds
         .map((assetId) => nodeMap.get(assetId))
-        .filter((node): node is Node3D => node !== undefined)
-        .forEach((node) => {
-          indexSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
-        });
+        .forEach((nodeList) =>
+          nodeList
+            ?.filter((node): node is Node3D => node !== undefined)
+            .forEach((node) => {
+              indexSet.addRange(new NumericRange(node.treeIndex, node.subtreeSize));
+            })
+        );
 
       return {
         treeIndexSet: indexSet,

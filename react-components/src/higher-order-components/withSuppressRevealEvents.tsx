@@ -21,11 +21,13 @@ export function withSuppressRevealEvents<T extends object>(
         return;
       }
 
+      div.addEventListener('dblclick', stopPropagation);
       div.addEventListener('pointerdown', stopPropagation);
       div.addEventListener('wheel', stopPropagation);
       div.addEventListener('keydown', stopPropagation);
 
       return () => {
+        div.removeEventListener('dblclick', stopPropagation);
         div.removeEventListener('pointerdown', stopPropagation);
         div.removeEventListener('wheel', stopPropagation);
         div.removeEventListener('keydown', stopPropagation);

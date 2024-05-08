@@ -27,7 +27,7 @@ function createMockImage360(options?: { customTranslation?: THREE.Matrix4 }) {
     ]
   };
 
-  const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addCustomObject(It.IsAny())).returns();
+  const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addObject3D(It.IsAny())).returns();
   const mock360ImageProvider = new Mock<Image360Provider<any>>();
   const mock360ImageIcon = new Overlay3DIcon(
     { position: new THREE.Vector3(), minPixelSize: 10, maxPixelSize: 10, iconRadius: 10 },
