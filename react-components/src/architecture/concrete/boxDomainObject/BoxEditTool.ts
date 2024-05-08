@@ -57,7 +57,7 @@ export class BoxEditTool extends NavigationTool {
       return;
     }
     if (event.key === 'Control') {
-      const focusType = down ? BoxFocusType.Translate : getFocusType(event);
+      const focusType = down ? BoxFocusType.Scale : getFocusType(event);
       for (const boxDomainObject of this.getAllBoxDomainObjects()) {
         if (!boxDomainObject.hasFocus) {
           continue;
@@ -199,10 +199,10 @@ export class BoxEditTool extends NavigationTool {
 
 function getFocusType(event: PointerEvent | KeyboardEvent): BoxFocusType {
   if (event.ctrlKey) {
-    return BoxFocusType.Translate;
+    return BoxFocusType.Scale;
   }
   if (event.shiftKey) {
     return BoxFocusType.Rotate;
   }
-  return BoxFocusType.Scale;
+  return BoxFocusType.Translate;
 }

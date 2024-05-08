@@ -105,9 +105,6 @@ export const Main: Story = {
           <RevealToolbar.SlicerButton />
         </>
         <>
-          <RevealButtons.NavigationTool />
-        </>
-        <>
           <RevealButtons.SetTerrainVisible />
           <RevealButtons.UpdateTerrain />
           <RevealButtons.BoxEditTool />

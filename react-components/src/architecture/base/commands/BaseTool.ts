@@ -29,7 +29,11 @@ export abstract class BaseTool extends RenderTargetCommand {
   }
 
   protected override invokeCore(): boolean {
-    this.renderTarget.toolController.setActiveTool(this);
+    if (this.isChecked) {
+      this.renderTarget.toolController.activateDefaultTool();
+    } else {
+      this.renderTarget.toolController.setActiveTool(this);
+    }
     return true;
   }
 

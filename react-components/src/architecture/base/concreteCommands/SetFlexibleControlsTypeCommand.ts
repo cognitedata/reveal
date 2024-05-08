@@ -30,7 +30,7 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public isEqual(other: BaseCommand): boolean {
+  public equal(other: BaseCommand): boolean {
     if (!(other instanceof SetFlexibleControlsTypeCommand)) {
       return false;
     }

@@ -79,9 +79,9 @@ export class Range3 {
   // INSTANCE METHODS: Requests
   // ==================================================
 
-  public isEqual(other: Range3 | undefined): boolean {
+  public equal(other: Range3 | undefined): boolean {
     if (other === undefined) return false;
-    return this.x.isEqual(other.x) && this.y.isEqual(other.y) && this.z.isEqual(other.z);
+    return this.x.equal(other.x) && this.y.equal(other.y) && this.z.equal(other.z);
   }
 
   // ==================================================

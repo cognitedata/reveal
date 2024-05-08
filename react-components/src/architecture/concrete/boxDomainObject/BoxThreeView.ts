@@ -184,13 +184,7 @@ export class BoxThreeView extends GroupThreeView {
     }
 
     function getArrowSize(): number {
-      if (face === undefined) {
-        return 0;
-      }
-      const size1 = boxDomainObject.size.getComponent(face.tangentIndex1);
-      const size2 = boxDomainObject.size.getComponent(face.tangentIndex2);
-      const size = Math.sqrt(size1 * size2) / 2; // Half of the geometric mean of the two sizes
-      return size;
+      return Math.sqrt(boxDomainObject.area) / 4;
     }
   }
 

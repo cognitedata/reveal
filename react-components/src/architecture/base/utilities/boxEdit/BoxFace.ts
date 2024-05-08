@@ -37,6 +37,10 @@ export class BoxFace {
     return this;
   }
 
+  equals(other: BoxFace): boolean {
+    return this.face === other.face;
+  }
+
   public fromPositionAtEdge(positionAtEdge: Vector3): this {
     const x = Math.abs(positionAtEdge.x);
     const y = Math.abs(positionAtEdge.y);
@@ -69,7 +73,7 @@ export class BoxFace {
     return this.getNormal().multiplyScalar(0.5);
   }
 
-  public static isEqual(face: BoxFace | undefined, other: BoxFace | undefined): boolean {
+  public static equals(face: BoxFace | undefined, other: BoxFace | undefined): boolean {
     if (face === undefined || other === undefined) {
       return true;
     }
@@ -79,6 +83,6 @@ export class BoxFace {
     if (face !== undefined && other === undefined) {
       return false;
     }
-    return face.face === other.face;
+    return face.equals(other);
   }
 }

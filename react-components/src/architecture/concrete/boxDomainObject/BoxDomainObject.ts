@@ -30,6 +30,14 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
   // INSTANCE PROPERTIES
   // ==================================================
 
+  public get area(): number {
+    return 2 * (this.size.x + this.size.y + this.size.z);
+  }
+
+  public get volume(): number {
+    return this.size.x * this.size.y * this.size.z;
+  }
+
   public get renderStyle(): BoxRenderStyle | undefined {
     return this.getRenderStyle() as BoxRenderStyle;
   }
@@ -83,7 +91,7 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
       this.focusType = BoxFocusType.None;
       this.focusFace = undefined; // Ignore input face
     } else {
-      if (type === this.focusType && BoxFace.isEqual(this.focusFace, face)) {
+      if (type === this.focusType && BoxFace.equals(this.focusFace, face)) {
         return false; // No change
       }
       this.focusType = type;

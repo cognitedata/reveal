@@ -11,7 +11,7 @@ import { BoxFocusType } from './BoxFocusType';
 import { type DomainObject } from '../../domainObjects/DomainObject';
 import { type IBox } from './IBox';
 
-const MIN_SIZE = 0.1;
+const MIN_SIZE = 0.01;
 
 export class BoxDragger {
   // ==================================================
@@ -115,7 +115,7 @@ export class BoxDragger {
     const pointOnSegment = new Vector3();
     ray.distanceSqToSegment(this._minPoint, this._maxPoint, undefined, pointOnSegment);
     const deltaSize = this._planeOfBox.distanceToPoint(pointOnSegment);
-    if (Math.abs(deltaSize) < 0.001) {
+    if (deltaSize === 0) {
       return;
     }
     // First copy the original values
