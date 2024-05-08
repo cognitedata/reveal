@@ -94,7 +94,7 @@ async function applyStyling(
 
   for (const group of styling) {
     if (group.assetIds !== undefined) {
-      const annotationInfoPromise = group.assetIds.map(async (id) => {
+      const annotationInfoPromise = group.assetIds.map(async () => {
         return await imageCollection.findImageAnnotations({
           assetRef: { id: group.assetIds[0] }
         });
