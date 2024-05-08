@@ -1,7 +1,6 @@
 dist/*
 node_modules/*
 .yarn/*
-.storybook/*
 storybook-static/*
 yarn.lock
 webpack.config.js
