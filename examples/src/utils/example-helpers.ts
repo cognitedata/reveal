@@ -158,6 +158,7 @@ export async function createSDKFromEnvironment(
   };
 
   const msalObj = new PublicClientApplication(config);
+  await msalObj.initialize();
 
   const accountList = msalObj.getAllAccounts();
   if (accountList.length > 0) {
