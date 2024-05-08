@@ -38,13 +38,13 @@ export class NodeTransformUI {
     mode: 'translate' as const
   };
 
+  private _transformControls: TransformControls | undefined;
+
   constructor(viewer: Cognite3DViewer, gui: dat.GUI, model: CogniteCadModel) {
     this.viewer = viewer;
     this.model = model;
 
-    const transformControls = new TransformControls(this.viewer.cameraManager.getCamera(), this.viewer.domElement);
-
-    this.setupTransformTool(this.viewer, this.model, transformControls);
+    viewer.on('click', this._onNodeClick);
 
     const nodeTransformGui = gui.addFolder('Manuel node transform');
     const translationGui = nodeTransformGui.addFolder('Translation');
@@ -67,7 +67,7 @@ export class NodeTransformUI {
     toolTransform.add(this.attachTransformControls, 'attach').name('Attach transform controls');
     toolTransform
       .add(this.attachTransformControls, 'mode', ['translate', 'rotate'] as const)
-      .onChange(() => transformControls.setMode(this.attachTransformControls.mode));
+      .onChange(() => this._transformControls?.setMode(this.attachTransformControls.mode));
   }
 
   apply() {
@@ -84,50 +84,56 @@ export class NodeTransformUI {
     this.model.setNodeTransform(new NumericRange(this.range.from, this.range.count), matrix, undefined, 'world');
   }
 
-  setupTransformTool(viewer: Cognite3DViewer, model: CogniteCadModel, transformControls: TransformControls) {
+  createAndSetupTransformTool(viewer: Cognite3DViewer, model: CogniteCadModel): TransformControls {
+    const transformControls = new TransformControls(viewer.cameraManager.getCamera(), viewer.domElement);
     transformControls.setMode(this.attachTransformControls.mode);
     viewer.addObject3D(transformControls);
-
-    viewer.on('click', async ({ offsetX, offsetY }) => {
-      if (!this.attachTransformControls.attach) {
-        transformControls.detach();
-        return;
-      }
-      const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
-      const treeIndex: number | undefined = (intersection as CadIntersection)?.treeIndex;
-
-      if (intersection === null || treeIndex === undefined) {
-        transformControls.detach();
-        return;
-      }
-
-      const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-      const boxMesh = new THREE.Object3D();
-      transformControls.attach(boxMesh);
-      viewer.addObject3D(boxMesh);
-
-      const center = boundingBox.getCenter(new THREE.Vector3());
-      boxMesh.position.copy(center);
-
-      const modelToWorld = new THREE.Matrix4();
-      const worldToModel = new THREE.Matrix4();
-
-      modelToWorld.setPosition(center);
-      worldToModel.copy(modelToWorld.clone().invert());
-
-      transformControls.addEventListener('dragging-changed', event => {
-        if (event.value) {
-          viewer.cameraManager.deactivate();
-        } else {
-          viewer.cameraManager.activate();
-        }
-      });
-
-      transformControls.addEventListener('change', event => {
-        const matrixOverride = boxMesh.matrix.clone().multiply(worldToModel);
-        model.setNodeTransform(new NumericRange(treeIndex, 1), matrixOverride, undefined, 'world');
-        viewer.requestRedraw();
-      });
-    });
+    return transformControls;
   }
+
+  private _onNodeClick = async ({ offsetX, offsetY }: { offsetX: number; offsetY: number }) => {
+    if (!this.attachTransformControls.attach) {
+      this._transformControls?.detach();
+      return;
+    }
+    const intersection = await this.viewer.getIntersectionFromPixel(offsetX, offsetY);
+
+    const treeIndex: number | undefined = (intersection as CadIntersection)?.treeIndex;
+
+    if (intersection === null || treeIndex === undefined) {
+      this._transformControls?.detach();
+      return;
+    }
+
+    const transformControls = this._transformControls ?? this.createAndSetupTransformTool(this.viewer, this.model);
+    this._transformControls = transformControls;
+
+    const boundingBox = await this.model.getBoundingBoxByTreeIndex(treeIndex);
+    const boxMesh = new THREE.Object3D();
+    transformControls.attach(boxMesh);
+    this.viewer.addObject3D(boxMesh);
+
+    const center = boundingBox.getCenter(new THREE.Vector3());
+    boxMesh.position.copy(center);
+
+    const modelToWorld = new THREE.Matrix4();
+    const worldToModel = new THREE.Matrix4();
+
+    modelToWorld.setPosition(center);
+    worldToModel.copy(modelToWorld.clone().invert());
+
+    transformControls.addEventListener('dragging-changed', event => {
+      if (event.value) {
+        this.viewer.cameraManager.deactivate();
+      } else {
+        this.viewer.cameraManager.activate();
+      }
+    });
+
+    transformControls.addEventListener('change', event => {
+      const matrixOverride = boxMesh.matrix.clone().multiply(worldToModel);
+      this.model.setNodeTransform(new NumericRange(treeIndex, 1), matrixOverride, undefined, 'world');
+      this.viewer.requestRedraw();
+    });
+  };
 }

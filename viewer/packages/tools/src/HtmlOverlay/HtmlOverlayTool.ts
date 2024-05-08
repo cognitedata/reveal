@@ -8,7 +8,7 @@ import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { BucketGrid2D } from './BucketGrid2D';
 
 import { MetricsLogger } from '@reveal/metrics';
-import { DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
+import { DisposedDelegate, SceneRenderedDelegate, isPointVisibleByPlanes } from '@reveal/utilities';
 import { assertNever, worldToViewportCoordinates } from '@reveal/utilities';
 import debounce from 'lodash/debounce';
 import { Cognite3DViewer } from '@reveal/api';
@@ -141,6 +141,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private readonly _htmlOverlays: Map<HTMLElement, HtmlOverlayElement> = new Map();
   private readonly _compositeOverlays: HTMLElement[] = [];
   private _visible: boolean;
+  private readonly TIMER_ADVANCE_MS = 50;
 
   private readonly _onSceneRenderedHandler: SceneRenderedDelegate;
   private readonly _onViewerDisposedHandler: DisposedDelegate;
@@ -223,25 +224,27 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
     // Note! Must be part of DOM tree before we do getComputedStyle(), so add before check
     this.viewerDomElement.appendChild(htmlElement);
-    const style = getComputedStyle(htmlElement);
-    if (style.position !== 'absolute') {
-      this.viewerDomElement.removeChild(htmlElement);
-      throw new Error(`htmlElement style must have a position of absolute. but was '${style.position}'`);
-    }
-
-    const element: HtmlOverlayElement = {
-      position3D,
-      options,
-      state: {
-        position2D: new THREE.Vector2(),
-        width: -1,
-        height: -1,
-        visible: true
+    setTimeout(() => {
+      const style = getComputedStyle(htmlElement);
+      if (!style.position || style.position !== 'absolute') {
+        this.viewerDomElement.removeChild(htmlElement);
+        throw new Error(`htmlElement style must have a position of absolute. but was '${style.position}'`);
       }
-    };
-    this._htmlOverlays.set(htmlElement, element);
 
-    this.scheduleUpdate();
+      const element: HtmlOverlayElement = {
+        position3D,
+        options,
+        state: {
+          position2D: new THREE.Vector2(),
+          width: -1,
+          height: -1,
+          visible: true
+        }
+      };
+      this._htmlOverlays.set(htmlElement, element);
+
+      this.scheduleUpdate();
+    }, this.TIMER_ADVANCE_MS);
   }
 
   /**
@@ -330,7 +333,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
       const insideCameraPlanes =
         nearPlane.distanceToPoint(position3D) >= 0.0 && farPlane.distanceToPoint(position3D) <= 0.0;
-      const insideClippingPlanes = clippingPlanesContainPoint(this._viewer.getGlobalClippingPlanes(), position3D);
+      const insideClippingPlanes = isPointVisibleByPlanes(this._viewer.getGlobalClippingPlanes(), position3D);
       const { x, y } = worldToViewportCoordinates(canvas, camera, position3D);
 
       if (insideCameraPlanes && insideClippingPlanes) {
@@ -512,8 +515,4 @@ function createElementBounds(element: HtmlOverlayElement, out?: THREE.Box2) {
   out.min.set(state.position2D.x, state.position2D.y);
   out.max.set(state.position2D.x + state.width, state.position2D.y + state.height);
   return out;
-}
-
-function clippingPlanesContainPoint(planes: THREE.Plane[], point: THREE.Vector3) {
-  return planes.every(p => p.distanceToPoint(point) > 0);
 }

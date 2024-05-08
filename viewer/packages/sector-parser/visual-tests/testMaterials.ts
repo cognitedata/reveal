@@ -39,7 +39,7 @@ export function getMaterialsMap(treeIndexCount: number): Map<RevealGeometryColle
   const { colorDataTexture, width, height } = getColorDataTexture(treeIndexCount);
   colorDataTexture.needsUpdate = true;
 
-  const sharedParams = {
+  const sharedParams: THREE.ShaderMaterialParameters = {
     clipping: false,
     uniforms: {
       renderMode: { value: 1 },
@@ -49,9 +49,6 @@ export function getMaterialsMap(treeIndexCount: number): Map<RevealGeometryColle
       matCapTexture: { value: matCapTexture },
       treeIndexTextureSize: { value: new THREE.Vector2(width, height) },
       colorDataTexture: { value: colorDataTexture }
-    },
-    extensions: {
-      derivatives: true
     },
     side: THREE.DoubleSide,
     glslVersion: THREE.GLSL3,

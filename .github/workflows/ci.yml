@@ -23,7 +23,7 @@ jobs:
       should-run: ${{ github.event_name != 'pull_request' || steps.filter.outputs.should-run }}
     steps:
       # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v3
         id: filter
         if: ${{ github.event_name == 'pull_request' }}
         with:
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Cache NPM packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: npm_cache
         with:
           path: "**/node_modules"
@@ -55,7 +55,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Cache cargo registry
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -65,7 +65,7 @@ jobs:
         if: steps.cargo_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         continue-on-error: false
-        run: cargo update --locked
+        run: cargo update --workspace --locked
 
   build-viewer:
     needs: [changes, populate-caches]
@@ -76,14 +76,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Cache NPM packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -97,7 +97,7 @@ jobs:
       - name: Check that Cargo.lock is up to date
         working-directory: viewer
         continue-on-error: false
-        run: cargo update --locked --offline
+        run: cargo update --workspace --locked --offline
 
       - name: Lint
         working-directory: viewer
@@ -123,7 +123,7 @@ jobs:
           npx api-extractor run || (diff reveal.api.md api-extractor-temp/reveal.api.md && exit 1)
 
       - name: Upload dist/ artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: viewer
           path: viewer/dist/
@@ -136,14 +136,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -162,7 +162,7 @@ jobs:
           xvfb-run yarn run coverage
 
       - name: Publish to codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
 
   run-visual-tests:
     needs: [changes, populate-caches]
@@ -172,14 +172,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -203,7 +203,7 @@ jobs:
 
       - name: Upload image diffs for failed visual tests
         if: (steps.viewerVisualTests.outcome == 'failure')
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: image-diffs-${{ github.sha }}
           path: viewer/visual-tests/__diff_output__/*
@@ -223,19 +223,19 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Download viewer build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: viewer
           path: viewer/dist/
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -274,14 +274,14 @@ jobs:
           echo "PR_TIMESTAMP=$PR_TIMESTAMP" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: npm_cache
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cargo_cache
         with:
           path: ~/.cargo/registry
@@ -317,7 +317,7 @@ jobs:
 
       - name: Upload documentation artifact
         if: ${{ contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: preview-docs
           path: documentation/build/
@@ -336,14 +336,14 @@ jobs:
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
 
       - name: Download documentation artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         if:
         with:
           name: preview-docs
           path: documentation/
 
       - name: Deploy documentation preview 🚀
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           deploy_key: ${{ secrets.REVEAL_DOCS_PREVIEW_DEPLOY_KEY }}
           external_repository: cognitedata/reveal-docs-preview
@@ -371,7 +371,7 @@ jobs:
     name: Cleanup
     runs-on: ubuntu-latest
     steps:
-      - uses: geekyeggo/delete-artifact@v2
+      - uses: geekyeggo/delete-artifact@v5
         with:
           name: |
             viewer

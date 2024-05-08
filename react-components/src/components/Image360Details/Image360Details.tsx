@@ -5,9 +5,9 @@
 import { useState, type ReactElement, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Image360HistoricalDetails } from '../Image360HistoricalDetails/Image360HistoricalDetails';
-import { useReveal } from '../..';
 import { type Image360 } from '@cognite/reveal';
 import { Button } from '@cognite/cogs.js';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 
 type Image360DetailsProps = {
   appLanguage?: string;

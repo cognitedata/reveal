@@ -7,6 +7,7 @@ import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';
 import { MeasurementLine } from './MeasurementLine';
 import { Measurement, MeasurementOptions } from './types';
+import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 
 export class MeasurementManager {
   private readonly _measurementLabel: MeasurementLabels;
@@ -149,26 +150,23 @@ export class MeasurementManager {
     return labelElement;
   }
 
-  private pointerTo3DPosition(offsetX: number, offsetY: number) {
-    const position = new THREE.Vector3();
-    //Get position based on the mouse pointer X and Y value.
-    const mouse = new THREE.Vector2();
-    mouse.x = (offsetX / this._domElement.clientWidth) * 2 - 1;
-    mouse.y = -(offsetY / this._domElement.clientHeight) * 2 + 1;
+  private pointerTo3DPosition(offsetX: number, offsetY: number): THREE.Vector3 {
+    const mouse = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
 
-    const direction = new THREE.Vector3();
-    const ray = new THREE.Ray();
+    // Set the origin of the Ray to camera.
     const origin = new THREE.Vector3();
-
-    //Set the origin of the Ray to camera.
     origin.setFromMatrixPosition(this._camera.matrixWorld);
-    ray.origin.copy(origin);
-    //Calculate the camera direction.
-    direction.set(mouse.x, mouse.y, 0.5).unproject(this._camera).sub(ray.origin).normalize();
-    ray.direction.copy(direction);
-    //Note: Using the initial/start point as reference for ray to emit till that distance from camera.
-    ray.at(this._distanceToCamera, position);
 
+    const ray = new THREE.Ray();
+    ray.origin.copy(origin);
+
+    // Calculate the camera direction.
+    const direction = new THREE.Vector3(mouse.x, mouse.y, 0.5).unproject(this._camera).sub(ray.origin).normalize();
+    ray.direction.copy(direction);
+
+    // Note: Using the initial/start point as reference for ray to emit till that distance from camera.
+    const position = new THREE.Vector3();
+    ray.at(this._distanceToCamera, position);
     return position;
   }
 }

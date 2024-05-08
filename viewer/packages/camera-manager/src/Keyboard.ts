@@ -39,25 +39,18 @@ const isEventCode = (value: string): value is EventCode => {
 
 export default class Keyboard {
   private readonly _keys = new Set<EventCode>();
-  private _disabled = false;
-  private readonly _domElement: HTMLElement;
+  private _isEnabled = true;
 
-  get disabled(): boolean {
-    return this._disabled;
+  get isEnabled(): boolean {
+    return this._isEnabled;
   }
 
-  set disabled(isDisabled: boolean) {
-    this._disabled = isDisabled;
-    if (isDisabled) {
-      this.removeEventListeners();
-    } else {
-      this.addEventListeners();
+  set isEnabled(value: boolean) {
+    if (this._isEnabled == value) {
+      return;
     }
-  }
-
-  constructor(domElement: HTMLElement) {
-    this._domElement = domElement;
-    this.addEventListeners();
+    this._isEnabled = value;
+    this.clearPressedKeys();
   }
 
   public isPressed(key: EventCode): boolean {
@@ -68,8 +61,16 @@ export default class Keyboard {
     return this.isPressed('ShiftLeft') || this.isPressed('ShiftRight');
   }
 
+  public isShiftPressedOnly(): boolean {
+    return this._keys.size === 1 && this.isShiftPressed();
+  }
+
   public isCtrlPressed(): boolean {
     return this.isPressed('ControlLeft') || this.isPressed('ControlRight');
+  }
+
+  public isCtrlPressedOnly(): boolean {
+    return this._keys.size === 1 && this.isCtrlPressed();
   }
 
   public isAltPressed(): boolean {
@@ -78,11 +79,6 @@ export default class Keyboard {
 
   public isMetaPressed(): boolean {
     return this.isPressed('MetaLeft') || this.isPressed('MetaRight');
-  }
-
-  public dispose(): void {
-    this.clearPressedKeys();
-    this.removeEventListeners();
   }
 
   /**
@@ -97,32 +93,37 @@ export default class Keyboard {
     return (this.isPressed(positiveKey) ? 1 : 0) - (this.isPressed(negativeKey) ? 1 : 0);
   }
 
-  private readonly addEventListeners = () => {
+  public addEventListeners(domElement: HTMLElement): void {
     this.clearPressedKeys();
-    this._domElement.addEventListener('keydown', this.onKeyDown);
-    this._domElement.addEventListener('keyup', this.onKeyUp);
-    this._domElement.addEventListener('blur', this.clearPressedKeys);
-  };
+    domElement.addEventListener('keydown', this.onKeyDown);
+    domElement.addEventListener('keyup', this.onKeyUp);
+    domElement.addEventListener('blur', this.clearPressedKeys);
+    domElement.addEventListener('focus', this.clearPressedKeys);
+  }
 
-  private readonly removeEventListeners = () => {
-    this._domElement.removeEventListener('keydown', this.onKeyDown);
-    this._domElement.removeEventListener('keyup', this.onKeyUp);
-    this._domElement.removeEventListener('blur', this.clearPressedKeys);
-  };
+  public removeEventListeners(domElement: HTMLElement): void {
+    this.clearPressedKeys();
+    domElement.removeEventListener('keydown', this.onKeyDown);
+    domElement.removeEventListener('keyup', this.onKeyUp);
+    domElement.removeEventListener('blur', this.clearPressedKeys);
+    domElement.removeEventListener('focus', this.clearPressedKeys);
+  }
 
-  private readonly onKeyDown = (event: KeyboardEvent) => {
-    if (!isEventCode(event.code)) return;
+  private readonly onKeyDown = (event: KeyboardEvent): void => this.onKey(event, true);
+  private readonly onKeyUp = (event: KeyboardEvent): void => this.onKey(event, false);
 
-    this._keys.add(event.code);
-  };
+  public onKey(event: KeyboardEvent, down: boolean): void {
+    if (!this.isEnabled) {
+      return;
+    }
+    if (!isEventCode(event.code)) {
+      return;
+    }
+    if (down) this._keys.add(event.code);
+    else this._keys.delete(event.code);
+  }
 
-  private readonly onKeyUp = (event: KeyboardEvent) => {
-    if (!isEventCode(event.code)) return;
-
-    this._keys.delete(event.code);
-  };
-
-  private readonly clearPressedKeys = () => {
+  public readonly clearPressedKeys = (): void => {
     this._keys.clear();
   };
 }

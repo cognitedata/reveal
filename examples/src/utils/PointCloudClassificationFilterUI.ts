@@ -9,7 +9,7 @@ export class PointCloudClassificationFilterUI {
     }, {});
 
     classes.forEach(pointClass => {
-      ui.add(visibility, `${pointClass}`)
+      ui.add(visibility as any, `${pointClass}`)
         .name(pointClass.name)
         .onChange((visible: boolean) => {
           model.setClassVisible(pointClass.code, visible);

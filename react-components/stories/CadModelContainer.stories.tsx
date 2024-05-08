@@ -8,7 +8,7 @@ import { type AddModelOptions } from '@cognite/reveal';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { useRef, type ReactElement } from 'react';
-import { signalStoryReadyForScreenshot as signalStoryReadyForVisualTest } from './utilities/signalStoryReadyForScreenshot';
+import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/CadModelContainer',
@@ -67,7 +67,7 @@ const CadModelContainerStoryContent = ({
     modelsLoadedRef.current++;
     if (modelsLoadedRef.current === 2) {
       cameraNavigationActions.fitCameraToAllModels(0);
-      signalStoryReadyForVisualTest();
+      signalStoryReadyForScreenshot();
     }
   };
   return (

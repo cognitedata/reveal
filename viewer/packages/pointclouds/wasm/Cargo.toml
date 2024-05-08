@@ -13,27 +13,28 @@ license-file = "../../../../LICENSE"
 crate-type = ["cdylib"]
 
 [dependencies]
-wasm-bindgen = { version = "0.2.88", features = ["serde-serialize"] }
-web-sys = { version = "0.3.65", features = ["console"] }
+wasm-bindgen = { version = "0.2.92", features = ["serde-serialize"] }
+web-sys = { version = "0.3.69", features = ["console"] }
 
-serde = { version = "1.0.193", features = ["derive"] }
-serde-wasm-bindgen = "0.6.1"
+serde = { version = "1.0.200", features = ["derive"] }
+serde-wasm-bindgen = "0.6.5"
 
-js-sys = "0.3.65"
+js-sys = "0.3.69"
 
-nalgebra = "0.32.3"
+nalgebra = "0.32.5"
 nalgebra-glm = "0.18.0"
-wasm-bindgen-test = "0.3.38"
+wasm-bindgen-test = "0.3.42"
 
 console_error_panic_hook = "0.1.7"
 
 # These crates are used for running unit tests.
 [dev-dependencies]
-wasm-bindgen-test = "0.3.38"
-futures = "0.3.29"
-wasm-bindgen-futures = "0.4.38"
+wasm-bindgen-test = "0.3.42"
+futures = "0.3.30"
+wasm-bindgen-futures = "0.4.42"
+
 rand = "0.8.5"
 rand_chacha = "0.3.1"
 
 # Only used in rand, but need to add `js` feature for wasm compatibility
-getrandom = { version = "0.2", features = ["js"] }
+getrandom = { version = "0.2.14", features = ["js"] }

@@ -29,6 +29,7 @@ describe(Image360RevisionEntity.name, () => {
     const annotations: AnnotationModel[] = [
       {
         annotatedResourceId: 1,
+        annotationType: 'images.ObjectDetection',
         status: 'approved',
         data: {
           label: 'bigger annotation',
@@ -42,6 +43,7 @@ describe(Image360RevisionEntity.name, () => {
       } as AnnotationModel,
       {
         annotatedResourceId: 1,
+        annotationType: 'images.ObjectDetection',
         status: 'approved',
         data: {
           label: 'smaller annotation',
@@ -100,6 +102,8 @@ describe(Image360RevisionEntity.name, () => {
 
 function createAnnotationMock(label: string): AnnotationModel {
   return new Mock<AnnotationModel>()
+    .setup(p => p.annotationType)
+    .returns('images.ObjectDetection')
     .setup(p => p.data)
     .returns({ label, boundingBox: { xMin: 0.0, xMax: 1.0, yMin: 0.0, yMax: 1.0 } })
     .object();

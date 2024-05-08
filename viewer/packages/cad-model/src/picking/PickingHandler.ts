@@ -21,7 +21,6 @@ type PickingInput = {
     x: number;
     y: number;
   };
-  scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
   domElement: HTMLElement;
@@ -190,19 +189,11 @@ export class PickingHandler {
   }
 
   private async intersectCadNodeDepth(input: PickingInput, async: boolean) {
-    const { camera, normalizedCoords, renderer, domElement, cadNodes, scene } = input;
-    const pickInput = {
-      normalizedCoords,
-      camera,
-      renderer,
-      domElement,
-      scene,
-      cadNodes
-    };
-    const depth = await this.pickDepth(pickInput, async);
+    const { camera } = input;
+    const depth = await this.pickDepth(input, async);
 
     const viewZ = this.perspectiveDepthToViewZ(depth, camera.near, camera.far);
-    const point = this.getPosition(pickInput, viewZ);
+    const point = this.getPosition(input, viewZ);
     const distance = new THREE.Vector3().subVectors(point, camera.position).length();
     return {
       distance,

@@ -227,7 +227,7 @@ export class PointCloudObjectStylingUI {
       }
     };
 
-    for (const key of Object.keys(state)) {
+    for (const key of Object.keys(state).map(key => key as keyof typeof state)) {
       ui.add(state, key);
     }
 

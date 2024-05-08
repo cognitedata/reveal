@@ -2,7 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CogniteClient, AnnotationData, AnnotationsBoundingVolume, AnnotationsGeometry } from '@cognite/sdk';
+import {
+  CogniteClient,
+  AnnotationData,
+  AnnotationsBoundingVolume,
+  AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationsGeometry
+} from '@cognite/sdk';
 import { ModelIdentifier } from '../ModelIdentifier';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 import { IShape, Box, Cylinder } from '@reveal/utilities';

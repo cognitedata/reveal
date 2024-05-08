@@ -8,6 +8,7 @@ import { Log } from '@reveal/logger';
 
 import { TrackedEvents, EventProps } from './types';
 import throttle from 'lodash/throttle';
+import { getUserFingerprint } from './Fingerprint';
 
 /**
  * Source: https://stackoverflow.com/a/2117523/167251
@@ -22,9 +23,6 @@ function generateUuidv4(): string {
 
 const { VERSION, MIXPANEL_TOKEN } = process.env;
 
-// Don't identify users in MixPanel to avoid GDPR problems
-const mixpanelDistinctId = 'reveal-single-user';
-
 export class MetricsLogger {
   private readonly _sessionProps: {
     VERSION: string;
@@ -32,6 +30,7 @@ export class MetricsLogger {
     application: string;
     sessionId: string;
   };
+  private readonly _initPromise: Promise<void>;
 
   private static readonly TrackCameraNavigationThrottleDelay = 5000;
   private static readonly TrackCadNodeTransformOverriddenThrottleDelay = 1000;
@@ -72,8 +71,6 @@ export class MetricsLogger {
     // Reset device ID (even if we don't send it)
     mixpanel.reset();
 
-    mixpanel.identify(mixpanelDistinctId);
-
     this._sessionProps = {
       VERSION: VERSION!,
       project: 'unknown',
@@ -82,14 +79,18 @@ export class MetricsLogger {
       // violate GDPR.
       sessionId: generateUuidv4()
     };
-
     if (project) {
       this._sessionProps.project = project;
     }
     if (applicationId) {
       this._sessionProps.application = applicationId;
     }
-    this.innerTrackEvent('init', eventProps);
+
+    // GDPR friendly (read: no cookies etc) way of identifying users
+    this._initPromise = getUserFingerprint().then(fingerprint => {
+      mixpanel.identify(fingerprint);
+      this.innerTrackEvent('init', eventProps);
+    });
   }
 
   static init(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps): void {
@@ -103,8 +104,9 @@ export class MetricsLogger {
     mixpanel.track(eventName, combined);
   }
 
-  static trackEvent(eventName: TrackedEvents, eventProps: EventProps): void {
+  static async trackEvent(eventName: TrackedEvents, eventProps: EventProps): Promise<void> {
     if (MetricsLogger.globalMetricsLogger) {
+      await this.globalMetricsLogger._initPromise;
       this.globalMetricsLogger.innerTrackEvent(eventName, eventProps);
     }
   }

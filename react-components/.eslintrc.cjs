@@ -4,7 +4,7 @@ module.exports = {
     es2021: true
   },
   extends: [
-    'standard-with-typescript',
+    'love',
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:prettier/recommended'
@@ -20,6 +20,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     '@typescript-eslint/no-misused-promises': 'off',
+    'no-console': [2, { allow: ['warn', 'error'] }],
     eqeqeq: ['error', 'always']
   },
   settings: {

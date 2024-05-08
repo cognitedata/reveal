@@ -5,5 +5,5 @@ import { useRevealKeepAlive } from '../components/RevealKeepAlive/RevealKeepAliv
 
 export const useIsRevealInitialized = (): boolean => {
   const revealKeepAliveData = useRevealKeepAlive();
-  return revealKeepAliveData?.viewerRef.current !== undefined;
+  return revealKeepAliveData?.renderTargetRef.current !== undefined;
 };

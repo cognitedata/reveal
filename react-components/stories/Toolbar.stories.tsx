@@ -19,6 +19,7 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
+import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -95,7 +96,9 @@ export const Main: Story = {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
   render: ({ addModelOptions }) => (
-    <RevealStoryContainer color={new Color(0x4a4a4a)}>
+    <RevealStoryContainer
+      color={new Color(0x4a4a4a)}
+      viewerOptions={{ useFlexibleCameraManager: true }}>
       <FitToUrlCameraState />
       <CadModelContainer addModelOptions={addModelOptions} />
       <RevealToolbar
@@ -106,6 +109,7 @@ export const Main: Story = {
       <MyCustomToolbar>
         <RevealToolbar.FitModelsButton />
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
+        <SetOrbitOrFirstPersonControlsType />
         <RevealToolbar.SlicerButton />
       </MyCustomToolbar>
     </RevealStoryContainer>

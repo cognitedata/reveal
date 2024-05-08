@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CanvasTexture, Color, Texture, Object3D } from 'three';
+import { CanvasTexture, Color, Texture, Object3D, type Camera } from 'three';
 import { Overlay3DIcon } from './Overlay3DIcon';
 import { Overlay3D } from './Overlay3D';
 import { OverlayPointsObject } from './OverlayPointsObject';
@@ -83,7 +83,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     return newIcons;
   }
 
-  sortOverlaysRelativeToCamera(camera: THREE.Camera): void {
+  sortOverlaysRelativeToCamera(camera: Camera): void {
     this._overlays = this._overlays.sort((a, b) => {
       return b.getPosition().distanceToSquared(camera.position) - a.getPosition().distanceToSquared(camera.position);
     });
@@ -151,8 +151,8 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   }
 
   private createCircleTextures(): {
-    color: THREE.Texture;
-    mask: THREE.Texture;
+    color: Texture;
+    mask: Texture;
   } {
     const canvas = document.createElement('canvas');
     const canvas2 = document.createElement('canvas');

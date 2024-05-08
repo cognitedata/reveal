@@ -53,13 +53,14 @@ describe(Image360CollectionFactory.name, () => {
         }
       ]);
 
-    const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addCustomObject(It.IsAny())).returns();
+    const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addObject3D(It.IsAny())).returns();
     const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
 
     const image360EntityFactory = new Image360CollectionFactory(
       mock360ImageProvider.object(),
       mockSceneHandler.object(),
       new EventTrigger<BeforeSceneRenderedDelegate>(),
+      () => {},
       desktopDevice,
       { platformMaxPointsSize: 256 }
     );

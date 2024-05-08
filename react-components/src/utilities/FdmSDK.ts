@@ -46,6 +46,7 @@ export type NodeResultSetExpression = {
     from?: string;
     through?: ViewPropertyReference;
     chainTo?: EdgeDirection;
+    direction?: 'outwards' | 'inwards';
   };
 };
 
@@ -102,20 +103,33 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   properties: FdmPropertyType<PropertyType>;
 };
 
+export type FdmNode<PropertyType = Record<string, unknown>> = {
+  instanceType: 'node';
+  version: number;
+  space: string;
+  externalId: string;
+  createdTime: number;
+  lastUpdatedTime: number;
+  deletedTime: number;
+  properties: PropertyType;
+};
+
+type InspectionOperations =
+  | { involvedContainers: Record<never, never>; involvedViews?: Record<never, never> }
+  | { involvedContainers?: Record<never, never>; involvedViews: Record<never, never> };
+
 export type InspectFilter = {
-  inspectionOperations: { involvedViewsAndContainers: Record<never, never> };
+  inspectionOperations: InspectionOperations;
   items: Array<{ instanceType: InstanceType; externalId: string; space: string }>;
 };
 
 export type InspectResult = {
-  involvedViewsAndContainers: {
-    containers: Array<{
-      type: 'container';
-      space: string;
-      externalId: string;
-    }>;
-    views: Source[];
-  };
+  involvedContainers: Array<{
+    type: 'container';
+    space: string;
+    externalId: string;
+  }>;
+  involvedViews: Source[];
 };
 
 export type InspectResultList = {
@@ -169,6 +183,10 @@ export type ViewItem = {
   implements: Source[];
 };
 
+export type DataModelListResponse = {
+  items: Array<{ views: Source[] }>;
+};
+
 export class FdmSDK {
   private readonly _sdk: CogniteClient;
   private readonly _byIdsEndpoint: string;
@@ -178,6 +196,9 @@ export class FdmSDK {
   private readonly _queryEndpoint: string;
   private readonly _listViewsEndpoint: string;
   private readonly _viewsByIdEndpoint: string;
+  private readonly _listDataModelsEndpoint: string;
+  private readonly _createUpdateInstancesEndpoint: string;
+  private readonly _deleteInstancesEndpoint: string;
 
   constructor(sdk: CogniteClient) {
     const baseUrl = sdk.getBaseUrl();
@@ -191,8 +212,11 @@ export class FdmSDK {
     this._byIdsEndpoint = `${instancesBaseUrl}/byids`;
     this._inspectEndpoint = `${instancesBaseUrl}/inspect`;
     this._searchEndpoint = `${instancesBaseUrl}/search`;
-    this._listViewsEndpoint = viewsBaseUrl;
+    this._listDataModelsEndpoint = `${baseUrl}/api/v1/projects/${project}/models/datamodels`;
     this._viewsByIdEndpoint = `${viewsBaseUrl}/byids`;
+    this._listViewsEndpoint = viewsBaseUrl;
+    this._createUpdateInstancesEndpoint = instancesBaseUrl;
+    this._deleteInstancesEndpoint = `${instancesBaseUrl}/delete`;
 
     this._sdk = sdk;
   }
@@ -215,7 +239,9 @@ export class FdmSDK {
   }
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<PropertiesType = Record<string, unknown>>(
+  public async searchInstances<
+    PropertiesType extends Record<string, unknown> = Record<string, unknown>
+  >(
     searchedView: Source,
     query: string,
     instanceType?: InstanceType,
@@ -225,7 +251,9 @@ export class FdmSDK {
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<PropertiesType = Record<string, unknown>>(
+  public async searchInstances<
+    PropertiesType extends Record<string, unknown> = Record<string, unknown>
+  >(
     searchedView: Source,
     query: string,
     instanceType?: 'edge',
@@ -245,7 +273,9 @@ export class FdmSDK {
   ): Promise<{ instances: Array<NodeItem<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
-  public async searchInstances<PropertiesType = Record<string, unknown>>(
+  public async searchInstances<
+    PropertiesType extends Record<string, unknown> = Record<string, unknown>
+  >(
     searchedView: Source,
     query: string,
     instanceType?: InstanceType,
@@ -258,7 +288,10 @@ export class FdmSDK {
     const result = await this._sdk.post(this._searchEndpoint, { data });
 
     if (result.status === 200) {
-      hoistInstanceProperties(searchedView, result.data.items);
+      hoistInstanceProperties(
+        searchedView,
+        result.data.items as Array<EdgeItem<PropertiesType>> | Array<NodeItem<PropertiesType>>
+      );
 
       return { instances: result.data.items };
     }
@@ -272,7 +305,7 @@ export class FdmSDK {
     source?: Source,
     cursor?: string
   ): Promise<{
-    instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>>;
+    instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>>;
     nextCursor?: string;
   }>;
 
@@ -282,7 +315,7 @@ export class FdmSDK {
     instanceType: 'node',
     source?: Source,
     cursor?: string
-  ): Promise<{ instances: Array<NodeItem<PropertiesType>>; nextCursor?: string }>;
+  ): Promise<{ instances: Array<FdmNode<PropertiesType>>; nextCursor?: string }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
@@ -299,7 +332,7 @@ export class FdmSDK {
     source: Source,
     cursor?: string
   ): Promise<{
-    instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>>;
+    instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>>;
     nextCursor?: string;
   }> {
     const data: any = { filter, instanceType };
@@ -333,7 +366,7 @@ export class FdmSDK {
     filter: InstanceFilter,
     instanceType: InstanceType,
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>;
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
@@ -345,16 +378,16 @@ export class FdmSDK {
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter,
-    instanceType: 'edge',
+    instanceType: 'node',
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
+  ): Promise<{ instances: Array<FdmNode<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter,
     instanceType: InstanceType,
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> {
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }> {
     let mappings = await this.filterInstances<PropertiesType>(filter, instanceType, source);
 
     while (mappings.nextCursor !== undefined) {
@@ -390,15 +423,77 @@ export class FdmSDK {
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 
+  public async createInstance<PropertyType>(
+    queries: Array<{
+      instanceType: InstanceType;
+      externalId: string;
+      space: string;
+      sources: [{ source: Source; properties: any }];
+    }>
+  ): Promise<ExternalIdsResultList<PropertyType>> {
+    const data: any = {
+      items: queries,
+      autoCreateStartNodes: false,
+      autoCreateEndNodes: false,
+      skipOnVersionConflict: false,
+      replace: false
+    };
+
+    const result = await this._sdk.post(this._createUpdateInstancesEndpoint, { data });
+    if (result.status === 200) {
+      return result.data;
+    }
+    throw new Error(`Failed to create instances. Status: ${result.status}`);
+  }
+
+  public async editInstance<PropertyType>(
+    queries: Array<{
+      instanceType: InstanceType;
+      externalId: string;
+      space: string;
+      sources: [{ source: Source; properties: any }];
+    }>
+  ): Promise<ExternalIdsResultList<PropertyType>> {
+    const data: any = {
+      items: queries,
+      autoCreateStartNodes: false,
+      autoCreateEndNodes: false,
+      skipOnVersionConflict: false,
+      replace: false
+    };
+
+    const result = await this._sdk.post(this._createUpdateInstancesEndpoint, { data });
+    if (result.status === 200) {
+      return result.data;
+    }
+    throw new Error(`Failed to edit instances. Status: ${result.status}`);
+  }
+
+  public async deleteInstance<PropertyType>(
+    queries: Array<{
+      instanceType: InstanceType;
+      externalId: string;
+      space: string;
+    }>
+  ): Promise<ExternalIdsResultList<PropertyType>> {
+    const data: any = {
+      items: queries
+    };
+
+    const result = await this._sdk.post(this._deleteInstancesEndpoint, { data });
+    if (result.status === 200) {
+      return result.data;
+    }
+    throw new Error(`Failed to delete instances. Status: ${result.status}`);
+  }
+
   public async inspectInstances(inspectFilter: InspectFilter): Promise<InspectResultList> {
-    const data: any = inspectFilter;
-    const result = await this._sdk.post(this._inspectEndpoint, { data });
+    const result = await this._sdk.post(this._inspectEndpoint, { data: inspectFilter });
 
     if (result.status === 200) {
       return result.data as InspectResultList;
     }
-
-    throw new Error(`Failed to fetch instances. Status: ${result.status}`);
+    throw new Error(`Failed to fetch instances`);
   }
 
   public async getViewsByIds(views: Source[]): Promise<{ items: ViewItem[] }> {
@@ -423,6 +518,14 @@ export class FdmSDK {
       return { items: result.data.items, nextCursor: result.data.nextCursor };
     }
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
+  }
+
+  public async listDataModels(): Promise<DataModelListResponse> {
+    const result = await this._sdk.get(this._listDataModelsEndpoint, { params: { limit: 1000 } });
+    if (result.status === 200) {
+      return result.data;
+    }
+    throw new Error(`Failed to fetch data models. Status: ${result.status}`);
   }
 }
 

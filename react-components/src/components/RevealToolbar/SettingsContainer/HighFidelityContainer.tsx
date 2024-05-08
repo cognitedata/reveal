@@ -4,7 +4,7 @@
 
 import { type ReactElement, useState } from 'react';
 import { Menu } from '@cognite/cogs.js';
-import { useReveal } from '../../RevealContainer/RevealContext';
+import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { type QualitySettings, type QualityProps } from './types';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { useTranslation } from '../../i18n/I18n';

@@ -7,14 +7,15 @@ import {
   type CadModelStyling,
   type CogniteCadModelProps,
   type NodeStylingGroup,
-  RevealContainer,
-  useReveal
+  RevealCanvas,
+  useReveal,
+  RevealContext
 } from '../src';
 import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { type CogniteCadModel, DefaultNodeAppearance } from '@cognite/reveal';
 import { useEffect, useMemo, useState, type JSX } from 'react';
-import { useMappedEdgesForRevisions } from '../src/components/NodeCacheProvider/NodeCacheProvider';
+import { useMappedEdgesForRevisions } from '../src/components/CacheProvider/NodeCacheProvider';
 
 const meta = {
   title: 'Example/CadStylingCache',
@@ -37,9 +38,11 @@ export const Main: Story = {
     transform: new Matrix4().makeTranslation(0, 10, 0)
   },
   render: ({ addModelOptions, transform, styling }) => (
-    <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-      <Models addModelOptions={addModelOptions} styling={styling} transform={transform} />
-    </RevealContainer>
+    <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+      <RevealCanvas>
+        <Models addModelOptions={addModelOptions} styling={styling} transform={transform} />
+      </RevealCanvas>
+    </RevealContext>
   )
 };
 
@@ -66,7 +69,6 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
 
       setPlatformStyling((prev): CadModelStyling | undefined => {
         if (prev?.groups === undefined) return prev;
-        console.log('New group', prev.groups);
 
         const newNodeIds = getRandomSubset(nodeIds, nodeIds.length * 0.8);
 

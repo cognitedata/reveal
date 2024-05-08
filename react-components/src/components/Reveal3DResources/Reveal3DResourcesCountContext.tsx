@@ -2,7 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, createContext, useContext, useState, type ReactNode } from 'react';
+import {
+  type ReactElement,
+  createContext,
+  useContext,
+  useState,
+  type ReactNode,
+  useMemo
+} from 'react';
 
 type Reveal3DResourcesCountContent = {
   reveal3DResourcesCount: number;
@@ -27,9 +34,15 @@ export const Reveal3DResourcesCountContextProvider = ({
   children: ReactNode;
 }): ReactElement => {
   const [reveal3DResourcesCount, setRevealResourcesCount] = useState<number>(0);
+  const memoedState = useMemo(
+    () => ({
+      reveal3DResourcesCount,
+      setRevealResourcesCount
+    }),
+    [reveal3DResourcesCount, setRevealResourcesCount]
+  );
   return (
-    <Reveal3DResourcesCountContext.Provider
-      value={{ reveal3DResourcesCount, setRevealResourcesCount }}>
+    <Reveal3DResourcesCountContext.Provider value={memoedState}>
       {children}
     </Reveal3DResourcesCountContext.Provider>
   );

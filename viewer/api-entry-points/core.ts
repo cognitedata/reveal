@@ -22,7 +22,14 @@ export {
   ComboControlsEventType,
   CameraEventDelegate,
   CameraChangeDelegate,
-  CameraStopDelegate
+  CameraStopDelegate,
+  IFlexibleCameraManager,
+  FlexibleControlsTypeChangeDelegate,
+  FlexibleControlsOptions,
+  FlexibleWheelZoomType,
+  FlexibleControlsType,
+  FlexibleMouseActionType,
+  isFlexibleCameraManager
 } from '../packages/camera-manager';
 
 export {
@@ -60,6 +67,14 @@ export {
   PointerEventDelegate,
   PointerEventData,
   DisposedDelegate,
+  ICustomObject,
+  CustomObject,
+  CustomObjectIntersection,
+  CustomObjectIntersectInput,
+  PointerEventsTarget,
+  PointerEvents,
+  getNormalizedPixelCoordinatesBySize,
+  getNormalizedPixelCoordinates,
   CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 

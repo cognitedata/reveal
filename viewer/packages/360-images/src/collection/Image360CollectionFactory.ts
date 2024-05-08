@@ -10,7 +10,7 @@ import { BeforeSceneRenderedDelegate, DeviceDescriptor, EventTrigger, SceneHandl
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { IconCollection, IconsOptions } from '../icons/IconCollection';
-import { Vector3 } from 'three';
+import { Vector3, type Matrix4 } from 'three';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Historical360ImageSet } from '@reveal/data-providers/src/types';
 import { Image360AnnotationFilterOptions } from '../annotation/types';
@@ -22,11 +22,13 @@ export class Image360CollectionFactory<T> {
   private readonly _onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>;
   private readonly _iconsOptions: IconsOptions | undefined;
   private readonly _device: DeviceDescriptor;
+  private readonly _setNeedsRedraw: () => void;
 
   constructor(
     image360DataProvider: Image360Provider<T>,
     sceneHandler: SceneHandler,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
+    setNeedsRedraw: () => void,
     device: DeviceDescriptor,
     iconsOptions?: IconsOptions
   ) {
@@ -35,11 +37,12 @@ export class Image360CollectionFactory<T> {
     this._onBeforeSceneRendered = onBeforeSceneRendered;
     this._iconsOptions = iconsOptions;
     this._device = device;
+    this._setNeedsRedraw = setNeedsRedraw;
   }
 
   public async create(
     dataProviderFilter: T,
-    postTransform: THREE.Matrix4,
+    postTransform: Matrix4,
     preMultipliedRotation: boolean,
     annotationFilter: Image360AnnotationFilterOptions
   ): Promise<DefaultImage360Collection> {
@@ -86,7 +89,8 @@ export class Image360CollectionFactory<T> {
       entities,
       collectionIcons,
       annotationFilterer,
-      this._image360DataProvider
+      this._image360DataProvider,
+      this._setNeedsRedraw
     );
 
     function isDefined(

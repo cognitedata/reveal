@@ -3,6 +3,7 @@
  */
 import * as THREE from 'three';
 import { CogniteInternalId } from '@cognite/sdk';
+import sortBy from 'lodash/sortBy';
 
 import { callActionWithIndicesAsync } from '../utilities/callActionWithIndicesAsync';
 
@@ -84,7 +85,11 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   private readonly cadModel: CadModelMetadata;
   private readonly nodesApiClient: NodesApiClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
-  private readonly _styledNodeCollections: { nodeCollection: NodeCollection; appearance: NodeAppearance }[] = [];
+  private _styledNodeCollections: {
+    nodeCollection: NodeCollection;
+    appearance: NodeAppearance;
+    importance: number;
+  }[] = [];
   private readonly customSectorBounds: CustomSectorBounds;
 
   /**
@@ -160,6 +165,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    *
    * @param nodeCollection Dynamic set of nodes to apply the provided appearance to.
    * @param appearance Appearance to style the provided set with.
+   * @param importance The importance of this style. Can be used to manually order the order of styles, this can avoid the order of adding styles affecting the outcome. Optional and defaults to 0.
    * @example
    * ```js
    * model.setDefaultNodeAppearance({ rendererGhosted: true });
@@ -167,16 +173,17 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * model.assignStyledNodeCollection(visibleSet, { rendererGhosted: false });
    * ```
    */
-  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance): void {
+  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance, importance: number = 0): void {
     MetricsLogger.trackCadModelStyled(nodeCollection.classToken, appearance);
 
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index !== -1) {
       this._styledNodeCollections[index].appearance = appearance;
     } else {
-      this._styledNodeCollections.push({ nodeCollection: nodeCollection, appearance });
+      this._styledNodeCollections.push({ nodeCollection: nodeCollection, appearance, importance });
     }
-    this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance);
+    this._styledNodeCollections = sortBy(this._styledNodeCollections, sc => sc.importance); // Using lodash sortBy as array.sort is not stable
+    this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance, importance);
   }
 
   /**
@@ -345,7 +352,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
   /**
    * Determines the full bounding box of the model.
-   * @param outBbox Optional. Used to write result to.
+   * @param outBoundingBox Optional. Used to write result to.
    * @param restrictToMostGeometry Optional. When true, returned bounds are restricted to
    * where most of the geometry is located. This is useful for models that have junk geometry
    * located far from the "main" model. Added in version 1.3.0.
@@ -353,24 +360,24 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    *
    * @example
    * ```js
-   * const box = new THREE.Box3()
-   * model.getModelBoundingBox(box);
-   * // box now has the bounding box
+   * const boundingBox = new THREE.Box3()
+   * model.getModelBoundingBox(boundingBox);
+   * // boundingBox now has the bounding box
    * ```
    * ```js
    * // the following code does the same
-   * const box = model.getModelBoundingBox();
+   * const boundingBox = model.getModelBoundingBox();
    * ```
    */
-  getModelBoundingBox(outBbox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3 {
+  getModelBoundingBox(outBoundingBox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3 {
     const bounds = restrictToMostGeometry
       ? this.cadModel.scene.getBoundsOfMostGeometry()
       : this.cadModel.scene.root.subtreeBoundingBox;
 
-    outBbox = outBbox || new THREE.Box3();
-    outBbox.copy(bounds);
-    outBbox.applyMatrix4(this.cadModel.modelMatrix);
-    return outBbox;
+    outBoundingBox = outBoundingBox || new THREE.Box3();
+    outBoundingBox.copy(bounds);
+    outBoundingBox.applyMatrix4(this.cadModel.modelMatrix);
+    return outBoundingBox;
   }
 
   /**
