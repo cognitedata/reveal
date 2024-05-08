@@ -10,11 +10,11 @@ export class LoginManager {
 
   private readonly _clientId = '2fb875d7-80b5-414a-9983-8f053372d760';
   private readonly _tenantId = '48d5043c-cf70-4c49-881c-c638f5796997';
-  
+
   private readonly _userScopes = ['User.Read'];
   private readonly _cdfScopes = ['https://api.cognitedata.com/user_impersonation'];
-  
-  private readonly _msalInstance: PublicClientApplication;
+
+  private readonly _msalInstancePromise: Promise<PublicClientApplication>;
 
   public get isLoggedIn() {
     return this._isLoggedIn;
@@ -23,17 +23,18 @@ export class LoginManager {
   constructor() {
     this._isLoggedIn = false;
 
-    this._msalInstance = this.setupMsalInstance();
+    this._msalInstancePromise = this.setupMsalInstance();
   }
 
   public async getToken(): Promise<string> {
-    const account = this._msalInstance.getActiveAccount();
+    const msalInstance = await this._msalInstancePromise;
+    const account = msalInstance.getActiveAccount();
 
     if (!account) {
       throw Error("No local account found");
     }
 
-    const { accessToken } = await this._msalInstance.acquireTokenSilent({
+    const { accessToken } = await msalInstance.acquireTokenSilent({
       account,
       scopes: this._cdfScopes
     });
@@ -42,11 +43,12 @@ export class LoginManager {
   }
 
   public async loginPopup(): Promise<void> {
-    await this._msalInstance.loginPopup({ scopes: this._userScopes, extraScopesToConsent: this._cdfScopes });
+    const msalInstance = await this._msalInstancePromise;
+    await msalInstance.loginPopup({ scopes: this._userScopes, extraScopesToConsent: this._cdfScopes });
     location.reload();
   }
 
-  private setupMsalInstance(){
+  private async setupMsalInstance() {
     const msalConfig: Configuration = {
       auth: {
         clientId: this._clientId,
@@ -55,11 +57,12 @@ export class LoginManager {
       },
       cache: {
         cacheLocation: BrowserCacheLocation.LocalStorage,
-        storeAuthStateInCookie: false 
+        storeAuthStateInCookie: false
       }
     };
-    
+
     const msalInstance = new PublicClientApplication(msalConfig);
+    await msalInstance.initialize();
     const allAccounts = msalInstance.getAllAccounts();
 
     if(allAccounts.length > 0){
