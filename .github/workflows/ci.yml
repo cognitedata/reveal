@@ -343,7 +343,7 @@ jobs:
           path: documentation/
 
       - name: Deploy documentation preview 🚀
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           deploy_key: ${{ secrets.REVEAL_DOCS_PREVIEW_DEPLOY_KEY }}
           external_repository: cognitedata/reveal-docs-preview
