@@ -86,7 +86,7 @@
     "react-router-dom": "^6.23.0",
     "storybook": "^8.0.9",
     "style-loader": "^4.0.0",
-    "styled-components": "^6.1.8",
+    "styled-components": "^6.1.10",
     "three": "0.158.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
