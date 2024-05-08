@@ -2007,10 +2007,10 @@ hoist-non-react-statics@^3.0.0, hoist-non-react-statics@^3.3.0:
   dependencies:
     react-is "^16.7.0"
 
-hold-event@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/hold-event/-/hold-event-0.2.0.tgz#1e8848ba42fb9098aa55006a5f450589dcaf0564"
-  integrity sha512-rko5P1XgHzy4B0NR0xVHEpWPgj0i23f8Mf8qsOugd1CHvfLR0PyIyy+8TAQQA9v8qAa1OZ4XuCKk04rxmPGHNQ==
+hold-event@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/hold-event/-/hold-event-1.1.0.tgz#103595d7224b7bf952de2ff092890e416f73d290"
+  integrity sha512-dBziMRU5X/wT6Wc8mRnvqtrkCzUtzCYKK1l/lnhy1o1SIvhh2juuNL1pCgVq9JsL60LVyDNjQ8axI6UkWNI+Tw==
 
 hpack.js@^2.1.6:
   version "2.1.6"
