@@ -29,7 +29,6 @@
       "automerge": false,
       "stabilityDays": 10,
       "internalChecksFilter": "strict",
-      "prConcurrentLimit": 5,
       "enabled": true
     },
     {
