@@ -13,6 +13,7 @@ export class ToolControllers extends PointerEvents {
   // ==================================================
 
   private _activeTool: BaseTool | undefined;
+  private _defaultTool: BaseTool | undefined;
   private _previousTool: BaseTool | undefined;
   private readonly _domElement: HTMLElement;
   private readonly _commands = new Set<BaseCommand>();
@@ -96,6 +97,21 @@ export class ToolControllers extends PointerEvents {
     }
   }
 
+  public setDefaultTool(tool: BaseTool | undefined): void {
+    if (tool === undefined) {
+      return;
+    }
+    this._defaultTool = tool;
+    this.activateDefaultTool();
+  }
+
+  public activateDefaultTool(): void {
+    if (this._defaultTool === undefined) {
+      return;
+    }
+    this.setActiveTool(this._defaultTool);
+  }
+
   public setActiveTool(tool: BaseTool | undefined): void {
     if (tool === undefined) {
       return;
@@ -130,7 +146,6 @@ export class ToolControllers extends PointerEvents {
   // ================================================
 
   public onKey(event: KeyboardEvent, down: boolean): void {
-    // ctrlKey, altKey,shiftKey
     // code – the “key code” ("KeyA", "ArrowLeft" and so on), specific to the physical location of the key on keyboard.
     // key – the character ("A", "a" and so on), for non-character keys, such as Esc, usually has the same value as code.
     if (down) {

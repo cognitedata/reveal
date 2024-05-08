@@ -160,8 +160,9 @@ export class BoxDragger {
     centerOfBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     const center = plane.projectPoint(centerOfBox, new Vector3());
 
-    const centerToStartPoint = new Vector2(this._point.x - center.x, this._point.z - center.z);
-    const centerToEndPoint = new Vector2(endPoint.x - center.x, endPoint.z - center.z);
+    // Ignore Y-value (up) since we are only interested in the rotation around the Up-axis
+    const centerToStartPoint = substractXZ(this._point, center);
+    const centerToEndPoint = substractXZ(endPoint, center);
 
     const startAngle = centerToStartPoint.angle();
     const endAngle = centerToEndPoint.angle();
@@ -172,5 +173,9 @@ export class BoxDragger {
 
     // Notify the changes
     this.boxDomainObject.notify(Changes.geometry);
+
+    function substractXZ(v1: Vector3, v2: Vector3): Vector2 {
+      return new Vector2(v1.x - v2.x, v1.z - v2.z);
+    }
   }
 }

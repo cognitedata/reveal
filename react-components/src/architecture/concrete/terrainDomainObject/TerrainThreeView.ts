@@ -16,11 +16,11 @@ import {
   Object3D,
   Box3
 } from 'three';
-import { ContouringService } from '../../base/utilities/geometry/ContouringService';
+import { ContouringService } from './geometry/ContouringService';
 import { TerrainDomainObject } from './TerrainDomainObject';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { RegularGrid2Buffers } from '../../base/utilities/geometry/RegularGrid2Buffers';
+import { RegularGrid2Buffers } from './geometry/RegularGrid2Buffers';
 import {
   create1DTextureWithContours,
   create1DTexture
@@ -31,7 +31,7 @@ import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
 import { getColorMap } from '../../base/utilities/colors/colorMaps';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { RegularGrid2 } from '../../base/utilities/geometry/RegularGrid2';
+import { RegularGrid2 } from '../../../../RegularGrid2';
 
 const SOLID_NAME = 'Solid';
 const CONTOURS_NAME = 'Contour';

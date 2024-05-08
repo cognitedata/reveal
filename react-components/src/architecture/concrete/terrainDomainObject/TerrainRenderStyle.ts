@@ -17,7 +17,7 @@ export class TerrainRenderStyle extends RenderStyle {
 
   public showSolid = true;
   public solidColorType = ColorType.ColorMap;
-  public solidColorMapType = ColorMapType.Terrain;
+  public solidColorMapType = ColorMapType.Rainbow;
 
   public solidContourVolume = 0.5;
   public solidContourUse = true;

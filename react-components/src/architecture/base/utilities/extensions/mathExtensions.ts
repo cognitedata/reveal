@@ -3,13 +3,13 @@
  */
 
 // ==================================================
-// CONSTANT FIELDS
+// CONSTANTS
 // ==================================================
 
 const ERROR_TOLERANCE = 1.0e-10;
 
 // ==================================================
-// STATIC METHODS: Returning boolean
+// FUNCTIONS: Requests
 // ==================================================
 
 export function isZero(x: number): boolean {
@@ -51,7 +51,7 @@ export function isInside(min: number, value: number, max: number): boolean {
 }
 
 // ==================================================
-// STATIC METHODS: Returning a number
+// FUNCTIONS: Returning a number
 // ==================================================
 
 export function max(a: number, b: number, c: number): number {
@@ -129,7 +129,7 @@ export function floor(value: number, delta: number): number {
 }
 
 // ==================================================
-// STATIC METHODS: Comparing
+// FUNCTIONS: Comparing
 // ==================================================
 
 export function compare(a: number, b: number): number {
@@ -139,10 +139,10 @@ export function compare(a: number, b: number): number {
 }
 
 // ==================================================
-// STATIC METHODS: Random
+// FUNCTIONS: Random
 // ==================================================
 
-export function getGaussian(mean = 0, stdDev = 1): number {
+export function getRandomGaussian(mean = 0, stdDev = 1): number {
   for (;;) {
     const a = Math.random();
     if (a <= Number.EPSILON) {

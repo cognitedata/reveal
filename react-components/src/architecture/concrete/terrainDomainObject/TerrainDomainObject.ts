@@ -4,7 +4,7 @@
 
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { TerrainRenderStyle } from './TerrainRenderStyle';
-import { type RegularGrid2 } from '../../base/utilities/geometry/RegularGrid2';
+import { type RegularGrid2 } from '../../../../RegularGrid2';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { TerrainThreeView } from './TerrainThreeView';

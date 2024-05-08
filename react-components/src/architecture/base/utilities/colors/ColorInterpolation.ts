@@ -4,6 +4,6 @@
 
 export enum ColorInterpolation {
   Rgb,
-  HsvMin,
-  HsvMax
+  HslShort,
+  HslLong
 }

@@ -2,9 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Index2 } from './Index2';
-import { type Range3 } from './Range3';
-import { Shape } from './Shape';
+import { type Index2 } from '../../../base/utilities/geometry/Index2';
+import { type Range3 } from '../../../base/utilities/geometry/Range3';
+import { Shape } from '../../../base/utilities/geometry/Shape';
 
 export class Grid2 extends Shape {
   // ==================================================

@@ -36,7 +36,7 @@ export class ColorMapItem {
     if (this._interpolation === ColorInterpolation.Rgb) {
       return getMixedColor(this.color, other.color, fractionOfThis);
     }
-    const long = this._interpolation === ColorInterpolation.HsvMax;
+    const long = this._interpolation === ColorInterpolation.HslLong;
     return getHslMixedColor(this.color, other.color, fractionOfThis, long);
   }
 }

@@ -2,10 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 import { Vector2 } from 'three';
-import { type Range3 } from './Range3';
-import { Index2 } from './Index2';
-import { getGaussian } from '../extensions/mathExtensions';
-import { RegularGrid2 } from './RegularGrid2';
+import { type Range3 } from '../../../base/utilities/geometry/Range3';
+import { Index2 } from '../../../base/utilities/geometry/Index2';
+import { getRandomGaussian } from '../../../base/utilities/extensions/mathExtensions';
+import { RegularGrid2 } from '../../../../../RegularGrid2';
 
 export function createFractalRegularGrid2(
   boundingBox: Range3,
@@ -25,10 +25,10 @@ export function createFractalRegularGrid2(
   const i1 = grid.cellSize.i;
   const j1 = grid.cellSize.j;
 
-  grid.setZ(i0, j0, getGaussian(0, stdDev));
-  grid.setZ(i1, j0, getGaussian(0, stdDev));
-  grid.setZ(i0, j1, getGaussian(0, stdDev));
-  grid.setZ(i1, j1, getGaussian(0, stdDev));
+  grid.setZ(i0, j0, getRandomGaussian(0, stdDev));
+  grid.setZ(i1, j0, getRandomGaussian(0, stdDev));
+  grid.setZ(i0, j1, getRandomGaussian(0, stdDev));
+  grid.setZ(i1, j1, getRandomGaussian(0, stdDev));
 
   subDivide(grid, i0, j0, i1, j1, stdDev, powerOf2, dampning);
 
@@ -65,7 +65,7 @@ function setValueBetween(
   if (zMean === undefined) {
     zMean = (grid.getZ(i0, j0) + grid.getZ(i2, j2)) / 2;
   }
-  const newZ = getGaussian(zMean, stdDev);
+  const newZ = getRandomGaussian(zMean, stdDev);
   grid.setZ(i1, j1, newZ);
   return newZ;
 }

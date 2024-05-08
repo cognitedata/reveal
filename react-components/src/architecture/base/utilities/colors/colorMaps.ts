@@ -78,7 +78,7 @@ function createSeismic(reverse: boolean): ColorMap {
 
 function createRainbow(reverse: boolean): ColorMap {
   const colorMap = new ColorMap();
-  const interpolation = ColorInterpolation.HsvMax;
+  const interpolation = ColorInterpolation.HslLong;
   colorMap.add(new Color(Color.NAMES.magenta), 0, interpolation);
   colorMap.add(new Color(Color.NAMES.red), 1, interpolation);
   colorMap.colorMapType = reverse ? ColorMapType.RainbowReverse : ColorMapType.Rainbow;
@@ -90,7 +90,7 @@ function createRainbow(reverse: boolean): ColorMap {
 
 function createGreyScale(reverse: boolean): ColorMap {
   const colorMap = new ColorMap();
-  const interpolation = ColorInterpolation.HsvMax;
+  const interpolation = ColorInterpolation.HslLong;
   colorMap.add(new Color(Color.NAMES.white), 0, interpolation);
   colorMap.add(new Color(Color.NAMES.black), 1, interpolation);
   colorMap.colorMapType = reverse ? ColorMapType.GreyScaleReverse : ColorMapType.GreyScale;

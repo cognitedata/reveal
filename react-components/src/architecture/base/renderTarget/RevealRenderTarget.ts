@@ -87,7 +87,7 @@ export class RevealRenderTarget {
     const navigationTool = new NavigationTool();
     navigationTool.attach(this);
     this.toolController.add(navigationTool);
-    this.toolController.setActiveTool(navigationTool);
+    this.toolController.setDefaultTool(navigationTool);
   }
 
   public dispose(): void {

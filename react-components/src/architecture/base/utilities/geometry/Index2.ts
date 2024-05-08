@@ -16,7 +16,6 @@ export class Index2 {
   // ==================================================
 
   public i: number;
-
   public j: number;
 
   // ==================================================
@@ -28,7 +27,7 @@ export class Index2 {
     this.j = j ?? i;
   }
 
-  public /* copy constructor */ clone(): Index2 {
+  public clone(): Index2 {
     return new Index2(this.i, this.j);
   }
 

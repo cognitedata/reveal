@@ -35,16 +35,18 @@ export class BoxEditTool extends NavigationTool {
     return { key: 'UNKNOWN', fallback: 'Create or edit a box' };
   }
 
-  public onActivate(): void {
+  public override onActivate(): void {
+    super.onActivate();
     this._dragger = undefined;
     this.setAllBoxesVisible(true);
   }
 
-  public onDeactivate(): void {
+  public override onDeactivate(): void {
+    super.onDeactivate();
     this.setAllBoxesVisible(false);
   }
 
-  public onKey(event: KeyboardEvent, down: boolean): void {
+  public override onKey(event: KeyboardEvent, down: boolean): void {
     if (down && event.key === 'Delete') {
       for (const boxDomainObject of this.getAllBoxDomainObjects()) {
         if (!boxDomainObject.hasFocus) {
@@ -75,7 +77,7 @@ export class BoxEditTool extends NavigationTool {
     super.onKey(event, down);
   }
 
-  public onHover(event: PointerEvent): void {
+  public override onHover(event: PointerEvent): void {
     const intersection = this.getSpecificIntersection(event, BoxDomainObject);
     if (intersection === undefined) {
       this.setFocus(undefined);

@@ -48,7 +48,7 @@ export class NavigationTool extends BaseTool {
     await this.renderTarget.cameraManager.onWheel(event);
   }
 
-  public onKey(event: KeyboardEvent, down: boolean): void {
+  public override onKey(event: KeyboardEvent, down: boolean): void {
     this.renderTarget.cameraManager.onKey(event, down);
   }
 

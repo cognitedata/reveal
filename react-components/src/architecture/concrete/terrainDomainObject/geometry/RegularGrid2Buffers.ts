@@ -3,8 +3,8 @@
  */
 
 import { Vector3 } from 'three';
-import { type RegularGrid2 } from './RegularGrid2';
-import { TrianglesBuffers } from './TrianglesBuffers';
+import { type RegularGrid2 } from '../../../../../RegularGrid2';
+import { TrianglesBuffers } from '../../../base/utilities/geometry/TrianglesBuffers';
 
 export class RegularGrid2Buffers extends TrianglesBuffers {
   // ==================================================

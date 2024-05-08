@@ -7,7 +7,7 @@
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { Vector3 } from 'three';
 import { Range3 } from '../../base/utilities/geometry/Range3';
-import { createFractalRegularGrid2 } from '../../base/utilities/geometry/createFractalRegularGrid2';
+import { createFractalRegularGrid2 } from './geometry/createFractalRegularGrid2';
 import { DEFAULT_TERRAIN_NAME, TerrainDomainObject } from './TerrainDomainObject';
 import { type Tooltip } from '../../base/commands/BaseCommand';
 
