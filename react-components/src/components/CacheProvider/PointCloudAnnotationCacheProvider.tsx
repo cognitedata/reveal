@@ -9,21 +9,25 @@ import { useSDK } from '../RevealCanvas/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { type PointCloudModelOptions, type TypedReveal3DModel } from '../Reveal3DResources/types';
-import { type AnnotationModelDataResult } from '../../hooks/useCalculatePointCloudModelsStyling';
 import { type PointCloudAnnotationMappedAssetData } from '../../hooks/types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isDefined } from '../../utilities/isDefined';
-import { type AnnotationId } from './types';
+import { type PointCloudAnnotationModel, type AnnotationId } from './types';
 
 export type PointCloudAnnotationCacheContextContent = {
   cache: PointCloudAnnotationCache;
+};
+
+export type AnnotationModelDataResult = {
+  model: PointCloudModelOptions;
+  annotationModels: PointCloudAnnotationModel[];
 };
 
 const PointCloudAnnotationCacheContext = createContext<
   PointCloudAnnotationCacheContextContent | undefined
 >(undefined);
 
-const usePointCloudAnnotationCache = (): PointCloudAnnotationCache => {
+export const usePointCloudAnnotationCache = (): PointCloudAnnotationCache => {
   const content = useContext(PointCloudAnnotationCacheContext);
 
   if (content === undefined) {

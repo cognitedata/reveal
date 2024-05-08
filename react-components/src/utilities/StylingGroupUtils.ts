@@ -19,7 +19,11 @@ export function isAssetMappingStylingGroup(instanceGroup: any): instanceGroup is
 export function isImage360AssetStylingGroup(
   instanceGroup: any
 ): instanceGroup is Image360AssetStylingGroup {
-  return instanceGroup.assetIds !== undefined && instanceGroup.style !== undefined;
+  return (
+    instanceGroup.assetIds !== undefined &&
+    instanceGroup.style !== undefined &&
+    instanceGroup.style.image360 !== undefined
+  );
 }
 
 export function isCadAssetMappingStylingGroup(

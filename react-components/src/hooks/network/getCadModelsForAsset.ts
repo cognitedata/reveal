@@ -23,6 +23,7 @@ export async function getCadModelsForAsset(
 
   return result.data.items.map(({ modelId, revisionId }) => ({
     type: 'cad',
-    addOptions: { modelId, revisionId }
+    modelId,
+    revisionId
   }));
 }

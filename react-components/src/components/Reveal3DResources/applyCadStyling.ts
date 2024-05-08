@@ -1,20 +1,18 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 import {
   type CogniteCadModel,
-  DefaultNodeAppearance,
+  type IndexSet,
   type NodeAppearance,
   type NodeCollection,
   NodeIdNodeCollection,
   TreeIndexNodeCollection,
-  type IndexSet
+  type Cognite3DViewer
 } from '@cognite/reveal';
-import { useEffect } from 'react';
-import { useSDK } from '../RevealCanvas/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { isEqual } from 'lodash';
-import { useReveal } from '../RevealCanvas/ViewerContext';
+import { type StyledCadModelAddOptions } from './types';
 import { modelExists } from '../../utilities/modelExists';
 
 export type NodeStylingGroup = {
@@ -32,35 +30,19 @@ export type CadModelStyling = {
   groups?: Array<NodeStylingGroup | TreeIndexStylingGroup>;
 };
 
-export const useApplyCadModelStyling = (
-  model?: CogniteCadModel,
-  modelStyling?: CadModelStyling
-): void => {
-  const viewer = useReveal();
-  const sdk = useSDK();
-
-  const defaultStyle = modelStyling?.defaultStyle ?? DefaultNodeAppearance.Default;
-  const styleGroups = modelStyling?.groups;
-
-  useEffect(() => {
-    if (!modelExists(model, viewer) || styleGroups === undefined) return;
-
-    void applyStyling(sdk, model, styleGroups);
-  }, [styleGroups, model]);
-
-  useEffect(() => {
-    if (!modelExists(model, viewer)) return;
-
-    model.setDefaultNodeAppearance(defaultStyle);
-  }, [defaultStyle, model]);
-};
-
-async function applyStyling(
-  sdk: CogniteClient,
+export async function applyCadStyling(
   model: CogniteCadModel,
-  stylingGroups: Array<NodeStylingGroup | TreeIndexStylingGroup>
+  addOptions: StyledCadModelAddOptions,
+  viewer: Cognite3DViewer,
+  sdk: CogniteClient
 ): Promise<void> {
+  if (!modelExists(model, viewer)) {
+    return;
+  }
+
+  const stylingGroups = addOptions.styleGroups;
   const firstChangeIndex = await getFirstChangeIndex();
+  model.setDefaultNodeAppearance(addOptions.defaultStyle);
 
   for (let i = firstChangeIndex; i < model.styledNodeCollections.length; i++) {
     const viewerStyledNodeCollection = model.styledNodeCollections[i];

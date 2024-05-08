@@ -3,7 +3,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CadModelContainer, RevealCanvas, PointCloudContainer, RevealContext } from '../src';
+import { Reveal3DResources, RevealCanvas, RevealContext } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 import { useState, type ReactElement } from 'react';
@@ -11,9 +11,9 @@ import { WindowWidget } from '../src/components/Widgets/WindowWidget';
 
 const meta = {
   title: 'Example/SplitWindow',
-  component: PointCloudContainer,
+  component: Reveal3DResources,
   tags: ['autodocs']
-} satisfies Meta<typeof PointCloudContainer>;
+} satisfies Meta<typeof Reveal3DResources>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -28,12 +28,14 @@ const sdk = new CogniteClient({
 
 export const Main: Story = {
   args: {
-    addModelOptions: {
-      modelId: 3865289545346058,
-      revisionId: 4160448151596909
-    }
+    resources: [
+      {
+        modelId: 3865289545346058,
+        revisionId: 4160448151596909
+      }
+    ]
   },
-  render: ({ addModelOptions }) => {
+  render: ({ resources }) => {
     const [isWindowWidgetVisible, setIsWindowWidgetVisible] = useState(true);
     const handleClose = (): void => {
       setIsWindowWidgetVisible(false);
@@ -43,7 +45,7 @@ export const Main: Story = {
       <>
         <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
           <RevealCanvas>
-            <PointCloudContainer addModelOptions={addModelOptions} />
+            <Reveal3DResources resources={resources} />
             {isWindowWidgetVisible && (
               <WindowWidget header="Widget Header" onClose={handleClose}>
                 <SecondaryRevealContainer />
@@ -60,8 +62,8 @@ function SecondaryRevealContainer(): ReactElement {
   return (
     <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
       <RevealCanvas>
-        <CadModelContainer
-          addModelOptions={{ modelId: 1791160622840317, revisionId: 498427137020189 }}
+        <Reveal3DResources
+          resources={[{ modelId: 3544114490298106, revisionId: 6405404576933316 }]}
         />
       </RevealCanvas>
     </RevealContext>
