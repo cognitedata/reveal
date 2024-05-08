@@ -28,13 +28,14 @@ import {
   PointerEventDelegate,
   PointerEventData,
   fitCameraToBoundingBox,
-  clickOrTouchEventOffset
+  getPixelCoordinatesFromEvent
 } from '@reveal/utilities';
 
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 import { CameraControlsOptions } from './CameraControlsOptions';
 
+type RaycastCallback = (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>;
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
  * keyboard and mouse navigation possibility. Supports automatic update of camera near and far
@@ -59,11 +60,7 @@ export class DefaultCameraManager implements CameraManager {
   // as these are temporarily disabled to block onWheel input during `zoomToCursor`-mode
   private _isEnabled = true;
 
-  private readonly _modelRaycastCallback: (
-    x: number,
-    y: number,
-    pickBoundingBox: boolean
-  ) => Promise<CameraManagerCallbackData>;
+  private readonly _raycastCallback: RaycastCallback;
   private _onClick: ((event: PointerEvent) => void) | undefined = undefined;
   private _onDoubleClick: ((event: PointerEventData) => void) | undefined = undefined;
   private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
@@ -116,14 +113,14 @@ export class DefaultCameraManager implements CameraManager {
   constructor(
     domElement: HTMLElement,
     inputHandler: InputHandler,
-    raycastFunction: (x: number, y: number, pickBoundingBox: boolean) => Promise<CameraManagerCallbackData>,
+    raycastCallback: RaycastCallback,
     camera?: THREE.PerspectiveCamera
   ) {
     this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
 
     this._domElement = domElement;
     this._inputHandler = inputHandler;
-    this._modelRaycastCallback = raycastFunction;
+    this._raycastCallback = raycastCallback;
 
     this.setCameraControlsOptions(this._cameraControlsOptions);
     this._controls = new ComboControls(this._camera, domElement);
@@ -419,7 +416,7 @@ export class DefaultCameraManager implements CameraManager {
     tween.update(TWEEN.now());
   }
 
-  private updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
+  private updateCameraNearAndFar(camera: THREE.PerspectiveCamera, boundingBox: THREE.Box3): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this._isDisposed) {
       return;
@@ -427,13 +424,11 @@ export class DefaultCameraManager implements CameraManager {
     if (!this.automaticControlsSensitivity && !this.automaticNearFarPlane) {
       return;
     }
-
-    // Apply
     if (this.automaticNearFarPlane) {
-      CameraManagerHelper.updateCameraNearAndFar(camera, combinedBbox);
+      CameraManagerHelper.updateCameraNearAndFar(camera, boundingBox);
     }
     if (this.automaticControlsSensitivity) {
-      const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
+      const diagonal = boundingBox.min.distanceTo(boundingBox.max);
 
       // This is used to determine the speed of the camera when flying with ASDW.
       // We want to either let it be controlled by the near plane if we are far away,
@@ -515,11 +510,11 @@ export class DefaultCameraManager implements CameraManager {
    */
   private async calculateNewTarget(event: PointerEventData): Promise<THREE.Vector3> {
     const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, event.offsetX, event.offsetY);
-    const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, false);
+    const raycastResult = await this._raycastCallback(event.offsetX, event.offsetY, false);
 
     const newTarget =
-      modelRaycastData.intersection?.point ??
-      this.calculateNewTargetWithoutModel(pixelCoordinates, modelRaycastData.modelsBoundingBox);
+      raycastResult.intersection?.point ??
+      this.calculateNewTargetWithoutModel(pixelCoordinates, raycastResult.modelsBoundingBox);
 
     return newTarget;
   }
@@ -577,13 +572,10 @@ export class DefaultCameraManager implements CameraManager {
       // Added because cameraControls are disabled when doing picking, so
       // preventDefault could be not called on wheel event and produce unwanted scrolling.
       event.preventDefault();
-      const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
+      const position = getPixelCoordinatesFromEvent(event, this._domElement);
 
       const currentTime = performance.now();
-      const currentMousePosition = new THREE.Vector2(
-        domElementRelativeOffset.offsetX,
-        domElementRelativeOffset.offsetY
-      );
+      const currentMousePosition = position;
 
       const onWheelTimeDelta = currentTime - lastWheelEventTime;
 
@@ -610,8 +602,8 @@ export class DefaultCameraManager implements CameraManager {
         scrollStarted = true;
 
         const pointerEventData = {
-          offsetX: domElementRelativeOffset.offsetX,
-          offsetY: domElementRelativeOffset.offsetY,
+          offsetX: position.x,
+          offsetY: position.y,
           button: event.button
         };
 
@@ -649,7 +641,7 @@ export class DefaultCameraManager implements CameraManager {
     this.keyboardNavigationEnabled = false;
 
     const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, event.offsetX, event.offsetY);
-    const modelRaycastData = await this._modelRaycastCallback(event.offsetX, event.offsetY, true);
+    const modelRaycastData = await this._raycastCallback(event.offsetX, event.offsetY, true);
 
     // If an object is picked, zoom in to the object (the target will be in the middle of the bounding box)
     if (modelRaycastData.pickedBoundingBox !== undefined) {
