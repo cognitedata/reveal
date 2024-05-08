@@ -1,8 +1,8 @@
 import { type Page } from '@playwright/test';
 
-import type storyOutput from '../../../storybook-static/stories.json';
+import type storyOutput from '../../../storybook-static/index.json';
 
-type StoryName = keyof typeof storyOutput.stories extends `${infer T}--${string}` ? T : never;
+type StoryName = keyof typeof storyOutput.entries extends `${infer T}--${string}` ? T : never;
 
 /** Load Storybook story for Playwright testing */
 export async function loadStory(page: Page, storyID: StoryName): Promise<void> {

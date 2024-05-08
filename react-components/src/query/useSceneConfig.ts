@@ -44,9 +44,15 @@ export const useSceneConfig = (
   sceneSpaceExternalId: string | undefined
 ): UseQueryResult<Scene | null> => {
   const fdmSdk = useFdmSdk();
-  return useQuery(
-    ['reveal', 'react-components', 'sync-scene-config', sceneExternalId, sceneSpaceExternalId],
-    async () => {
+  return useQuery({
+    queryKey: [
+      'reveal',
+      'react-components',
+      'sync-scene-config',
+      sceneExternalId,
+      sceneSpaceExternalId
+    ],
+    queryFn: async () => {
       if (sceneExternalId === undefined || sceneSpaceExternalId === undefined) {
         return null;
       }
@@ -87,8 +93,8 @@ export const useSceneConfig = (
       };
       return scene;
     },
-    { staleTime: Infinity }
-  );
+    staleTime: Infinity
+  });
 };
 
 async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {

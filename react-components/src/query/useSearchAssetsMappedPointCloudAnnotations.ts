@@ -17,16 +17,14 @@ export const useAllAssetsMappedPointCloudAnnotations = (
   sdk: CogniteClient,
   models: AddModelOptions[]
 ): UseQueryResult<Asset[]> => {
-  return useQuery(
-    ['reveal', 'react-components', 'all-assets-mapped-point-cloud-annotations', models],
-    async () => {
+  return useQuery({
+    queryKey: ['reveal', 'react-components', 'all-assets-mapped-point-cloud-annotations', models],
+    queryFn: async () => {
       const assetMappings = await getAssetsMappedPointCloudAnnotations(sdk, models);
       return assetMappings;
     },
-    {
-      staleTime: Infinity
-    }
-  );
+    staleTime: Infinity
+  });
 };
 
 export const useSearchAssetsMappedPointCloudAnnotations = (
@@ -36,9 +34,15 @@ export const useSearchAssetsMappedPointCloudAnnotations = (
 ): UseQueryResult<Asset[]> => {
   const { data: assetMappings, isFetched } = useAllAssetsMappedPointCloudAnnotations(sdk, models);
 
-  return useQuery(
-    ['reveal', 'react-components', 'search-assets-mapped-point-cloud-annotations', query, models],
-    async () => {
+  return useQuery({
+    queryKey: [
+      'reveal',
+      'react-components',
+      'search-assets-mapped-point-cloud-annotations',
+      query,
+      models
+    ],
+    queryFn: async () => {
       if (query === '') {
         return assetMappings;
       }
@@ -53,11 +57,9 @@ export const useSearchAssetsMappedPointCloudAnnotations = (
 
       return filteredSearchedAssets;
     },
-    {
-      staleTime: Infinity,
-      enabled: isFetched && assetMappings !== undefined
-    }
-  );
+    staleTime: Infinity,
+    enabled: isFetched && assetMappings !== undefined
+  });
 };
 
 async function getAssetsMappedPointCloudAnnotations(

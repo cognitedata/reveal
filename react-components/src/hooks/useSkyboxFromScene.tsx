@@ -15,9 +15,9 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
   const viewer = useReveal();
   const sdk = useSDK();
 
-  const { data: skyboxTexture } = useQuery(
-    ['reveal', 'react-components', 'skyboxUrl', scene.data],
-    async () => {
+  const { data: skyboxTexture } = useQuery({
+    queryKey: ['reveal', 'react-components', 'skyboxUrl', scene.data],
+    queryFn: async () => {
       if (scene.data?.skybox === undefined) {
         return null;
       }
@@ -38,8 +38,8 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
         return null;
       }
     },
-    { staleTime: Infinity }
-  );
+    staleTime: Infinity
+  });
 
   useEffect(() => {
     if (skyboxTexture === undefined || skyboxTexture === null) {

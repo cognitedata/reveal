@@ -305,10 +305,10 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
   private intersectPointsMarkers(mouseCoords: { offsetX: number; offsetY: number }): Overlay3DIcon<ContentType> | null {
     const { _viewer, _raycaster, _temporaryVec } = this;
 
-    const pixelCoord = getNormalizedPixelCoordinates(_viewer.domElement, mouseCoords.offsetX, mouseCoords.offsetY);
+    const pixelCoords = getNormalizedPixelCoordinates(_viewer.domElement, mouseCoords.offsetX, mouseCoords.offsetY);
     const camera = _viewer.cameraManager.getCamera();
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
-    _raycaster.setFromCamera(_temporaryVec.copy(pixelCoord), camera);
+    _raycaster.setFromCamera(_temporaryVec.copy(pixelCoords), camera);
 
     let intersection: [Overlay3DIcon<ContentType>, THREE.Vector3][] = [];
 

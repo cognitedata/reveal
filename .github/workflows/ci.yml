@@ -23,7 +23,7 @@ jobs:
       should-run: ${{ github.event_name != 'pull_request' || steps.filter.outputs.should-run }}
     steps:
       # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v3
         id: filter
         if: ${{ github.event_name == 'pull_request' }}
         with:
@@ -65,7 +65,7 @@ jobs:
         if: steps.cargo_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         continue-on-error: false
-        run: cargo update --locked
+        run: cargo update --workspace --locked
 
   build-viewer:
     needs: [changes, populate-caches]
@@ -97,7 +97,7 @@ jobs:
       - name: Check that Cargo.lock is up to date
         working-directory: viewer
         continue-on-error: false
-        run: cargo update --locked --offline
+        run: cargo update --workspace --locked --offline
 
       - name: Lint
         working-directory: viewer
@@ -343,7 +343,7 @@ jobs:
           path: documentation/
 
       - name: Deploy documentation preview 🚀
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           deploy_key: ${{ secrets.REVEAL_DOCS_PREVIEW_DEPLOY_KEY }}
           external_repository: cognitedata/reveal-docs-preview
@@ -371,7 +371,7 @@ jobs:
     name: Cleanup
     runs-on: ubuntu-latest
     steps:
-      - uses: geekyeggo/delete-artifact@v2
+      - uses: geekyeggo/delete-artifact@v5
         with:
           name: |
             viewer

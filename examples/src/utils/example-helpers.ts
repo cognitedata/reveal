@@ -70,8 +70,8 @@ export function getParamsFromURL(
         modelUrl !== null
           ? withBasePath(modelUrl)
           : modelId === null && defaults.modelUrl
-          ? withBasePath(defaults.modelUrl)
-          : undefined
+            ? withBasePath(defaults.modelUrl)
+            : undefined
     },
     environmentParam
   };
@@ -158,6 +158,7 @@ export async function createSDKFromEnvironment(
   };
 
   const msalObj = new PublicClientApplication(config);
+  await msalObj.initialize();
 
   const accountList = msalObj.getAllAccounts();
   if (accountList.length > 0) {
