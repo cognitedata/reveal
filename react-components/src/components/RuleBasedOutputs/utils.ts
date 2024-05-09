@@ -88,32 +88,28 @@ const getTriggerNumericData = (
 
   if (currentTriggerData === undefined) return;
 
-  const dataTrigger =
-    currentTriggerData.type === 'metadata' && trigger.type === 'metadata'
-      ? Number(currentTriggerData.asset[trigger.type]?.[trigger.key])
-      : currentTriggerData.type === 'timeseries' && trigger.type === 'timeseries'
-        ? getTriggerTimeseriesNumericData(currentTriggerData, trigger)
-        : undefined;
-
-  return dataTrigger;
+  if (currentTriggerData.type === 'metadata' && trigger.type === 'metadata') {
+    return Number(currentTriggerData.asset[trigger.type]?.[trigger.key]);
+  } else if (currentTriggerData.type === 'timeseries' && trigger.type === 'timeseries') {
+    return getTriggerTimeseriesNumericData(currentTriggerData, trigger);
+  }
+  return;
 };
 
 const getTriggerTimeseriesNumericData = (
   triggerTypeData: TriggerTypeData,
   trigger: TimeseriesRuleTrigger
 ): number | undefined => {
-  if (triggerTypeData.type === 'timeseries' && trigger.type === 'timeseries') {
-    const timeseriesWithDatapoints = triggerTypeData.timeseries.timeseriesWithDatapoints;
+  if (trigger.type !== 'timeseries') return;
+  if (triggerTypeData.type !== 'timeseries') return;
 
-    const dataFound = timeseriesWithDatapoints.find(
-      (item) => item.externalId === trigger.externalId
-    );
+  const timeseriesWithDatapoints = triggerTypeData.timeseries.timeseriesWithDatapoints;
 
-    const datapoint = dataFound?.datapoints[dataFound?.datapoints.length - 1]?.value;
+  const dataFound = timeseriesWithDatapoints.find((item) => item.externalId === trigger.externalId);
 
-    return Number(datapoint);
-  }
-  return undefined;
+  const datapoint = dataFound?.datapoints[dataFound?.datapoints.length - 1]?.value;
+
+  return Number(datapoint);
 };
 
 const checkNumericExpressionStatement = (
