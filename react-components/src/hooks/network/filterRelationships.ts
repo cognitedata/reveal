@@ -10,37 +10,20 @@ type RelationshipWithResources = {
 
 export const filterRelationships = async (
   sdk: CogniteClient,
-  filter: RelationshipsFilter,
-  fetchResources = true
+  filter?: RelationshipsFilter
 ): Promise<Relationship[]> => {
-  let cursor: string | undefined;
-
-  const fetch = async (): Promise<Relationship[]> => {
-    return await sdk.relationships
+  const fetch = async () => {
+    const response = await sdk.relationships
       .list({
         filter,
-        cursor,
-        limit: 1000,
-        fetchResources
+        fetchResources: true
       })
-      .then(({ items, nextCursor }) => {
-        cursor = nextCursor;
-        return items.filter(isValidRelationship);
-      })
-      .catch(() => {
-        cursor = undefined;
-        return [] as Relationship[];
-      });
+      .autoPagingToArray({ limit: -1 });
+
+    return response.filter(isValidRelationship);
   };
 
-  let relationships: Relationship[] = [];
-
-  do {
-    relationships = relationships.concat(await fetch());
-    // eslint-disable-next-line no-unmodified-loop-condition
-  } while (cursor !== undefined);
-
-  return relationships;
+  return await fetch();
 };
 
 const isValidRelationship = (relationship: Relationship): boolean => {

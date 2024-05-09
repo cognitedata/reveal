@@ -2,10 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 import {
+  RelationshipsFilterRequest,
   type CogniteClient,
   type CogniteExternalId,
-  type RelationshipResourceType,
-  type RelationshipsFilter
+  type RelationshipResourceType
 } from '@cognite/sdk';
 
 import { getSourceRelationships } from './getSourceRelationships';
@@ -16,7 +16,7 @@ type Payload = {
   resourceExternalIds: CogniteExternalId[];
   relationshipResourceTypes?: RelationshipResourceType[];
 } & Omit<
-  RelationshipsFilter,
+  RelationshipsFilterRequest,
   'sourceExternalIds' | 'targetExternalIds' | 'sourceTypes' | 'targetTypes'
 >;
 

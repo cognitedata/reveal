@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type IdEither } from '@cognite/sdk/dist/src';
+import { type IdEither } from '@cognite/sdk/';
 
 export const queryKeys = {
   all: ['cdf'] as const,
