@@ -53,13 +53,12 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
         };
       });
 
-      const assetAndTimeseriesIdsFromRelationship = await getLinkFromRelationships(
-        sdk,
-        timeseriesExternalIds,
-        relationshipResourceTypes
-      );
-
-      const timeseries = await getTimeseriesByIds(sdk, externalIds);
+      const [assetAndTimeseriesIdsFromRelationship, timeseries, timeseriesDatapoints] =
+        await Promise.all([
+          getLinkFromRelationships(sdk, timeseriesExternalIds, relationshipResourceTypes),
+          getTimeseriesByIds(sdk, externalIds),
+          getTimeseriesLatestDatapoints(sdk, externalIds)
+        ]);
 
       const assetIdsFound: IdEither[] =
         timeseries
@@ -86,7 +85,6 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
           .flat()
           .filter(isDefined) ?? [];
 
-      const timeseriesDatapoints = await getTimeseriesLatestDatapoints(sdk, externalIds);
       const assetIdsAndTimeseriesData: AssetIdsAndTimeseriesData = {
         assetIdsWithTimeseries,
         timeseriesDatapoints
