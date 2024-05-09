@@ -37,6 +37,12 @@ export function RuleBasedOutputsSelector({
     fetchNextPage
   } = useAllMappedEquipmentAssetMappings(models);
 
+  useEffect(() => {
+    if (!isFetching && (hasNextPage ?? false)) {
+      void fetchNextPage();
+    }
+  }, [isFetching, hasNextPage, fetchNextPage]);
+
   const contextualizedAssetNodes =
     assetMappings?.pages
       .flat()
@@ -46,19 +52,13 @@ export function RuleBasedOutputsSelector({
   const expressions = ruleSet?.rulesWithOutputs
     .map((ruleSet) => ruleSet.rule.expression)
     .filter(isDefined);
-  const timeseriesExternalIdsFromRule = traverseExpressionToGetTimeseries(expressions) ?? [];
+  const timeseriesExternalIds = traverseExpressionToGetTimeseries(expressions) ?? [];
 
   const { isLoading: isLoadingAssetIdsAndTimeseriesData, data: assetIdsWithTimeseriesData } =
     useAssetsAndTimeseriesLinkageDataQuery({
-      timeseriesExternalIdsFromRule,
+      timeseriesExternalIds,
       contextualizedAssetNodes
     });
-
-  useEffect(() => {
-    if (!isFetching && (hasNextPage ?? false)) {
-      void fetchNextPage();
-    }
-  }, [isFetching, hasNextPage, fetchNextPage]);
 
   useEffect(() => {
     if (onRuleSetChanged !== undefined) onRuleSetChanged(stylingGroups);
@@ -66,7 +66,7 @@ export function RuleBasedOutputsSelector({
 
   useEffect(() => {
     if (assetMappings === undefined || models === undefined || isFetching) return;
-    if (timeseriesExternalIdsFromRule.length > 0 && isLoadingAssetIdsAndTimeseriesData) return;
+    if (timeseriesExternalIds.length > 0 && isLoadingAssetIdsAndTimeseriesData) return;
 
     setStylingsGroups(EMPTY_ARRAY);
 
@@ -92,7 +92,7 @@ export function RuleBasedOutputsSelector({
   return <></>;
 }
 
-const initializeRuleBasedOutputs = async ({
+async function initializeRuleBasedOutputs({
   model,
   assetMappings,
   contextualizedAssetNodes,
@@ -106,7 +106,7 @@ const initializeRuleBasedOutputs = async ({
   ruleSet: RuleOutputSet;
   assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
-}): Promise<AssetStylingGroupAndStyleIndex[]> => {
+}): Promise<AssetStylingGroupAndStyleIndex[]> {
   const flatAssetsMappingsList = assetMappings.pages.flat().flatMap((item) => item.mappings);
   const flatMappings = flatAssetsMappingsList.flatMap((node) => node.items);
 
@@ -120,7 +120,7 @@ const initializeRuleBasedOutputs = async ({
   });
 
   return collectionStylings;
-};
+}
 
 function convertAssetMetadataKeysToLowerCase(asset: Asset): Asset {
   return {

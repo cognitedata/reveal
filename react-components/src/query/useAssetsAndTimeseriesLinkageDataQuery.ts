@@ -30,12 +30,12 @@ import { getAssetsByIds } from '../hooks/network/getAssetsByIds';
 import { getTimeseriesLatestDatapoints } from '../hooks/network/getTimeseriesLatestDatapoints';
 
 type Props = {
-  timeseriesExternalIdsFromRule: CogniteExternalId[];
+  timeseriesExternalIds: CogniteExternalId[];
   contextualizedAssetNodes: Asset[];
 };
 
 export function useAssetsAndTimeseriesLinkageDataQuery({
-  timeseriesExternalIdsFromRule,
+  timeseriesExternalIds,
   contextualizedAssetNodes
 }: Props): UseQueryResult<AssetIdsAndTimeseriesData, unknown> {
   const sdk = useSDK();
@@ -45,17 +45,17 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
   return useQuery({
     queryKey: [
       queryKeys.timeseriesLinkedToAssets(),
-      timeseriesExternalIdsFromRule,
+      timeseriesExternalIds,
       relationshipResourceTypes
     ],
     queryFn: async () => {
       const assetAndTimeseriesIdsFromRelationship = await getLinkFromRelationships(
         sdk,
-        timeseriesExternalIdsFromRule,
+        timeseriesExternalIds,
         relationshipResourceTypes
       );
 
-      const externalIds: ExternalId[] = timeseriesExternalIdsFromRule.map((externalId) => {
+      const externalIds: ExternalId[] = timeseriesExternalIds.map((externalId) => {
         return {
           externalId
         };
@@ -95,17 +95,17 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
       };
       return assetIdsAndTimeseriesData;
     },
-    enabled: timeseriesExternalIdsFromRule.length > 0
+    enabled: timeseriesExternalIds.length > 0
   });
 }
 
 const getLinkFromRelationships = async (
   sdk: CogniteClient,
-  timeseriesExternalIdsFromRule: string[],
+  timeseriesExternalIds: string[],
   relationshipResourceTypes: RelationshipResourceType[]
 ): Promise<AssetAndTimeseriesIds[]> => {
   const dataRelationship = await getRelationships(sdk, {
-    resourceExternalIds: timeseriesExternalIdsFromRule,
+    resourceExternalIds: timeseriesExternalIds,
     relationshipResourceTypes
   });
 
