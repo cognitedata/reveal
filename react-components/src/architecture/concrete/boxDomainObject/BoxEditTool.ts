@@ -12,8 +12,10 @@ import { BoxDragger } from '../../base/utilities/box/BoxDragger';
 import { type BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
-import { Vector3 } from 'three';
+import { type Vector3 } from 'three';
 import { clear } from '../../base/utilities/extensions/arrayExtensions';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { makeBox } from './BoxEditTool copy';
 
 export class BoxEditTool extends NavigationTool {
   // ==================================================
@@ -22,6 +24,8 @@ export class BoxEditTool extends NavigationTool {
 
   private _dragger: BoxDragger | undefined = undefined;
   private readonly _clickedPoints: Vector3[] = [];
+
+  private _boxDomainObject: BoxDomainObject | undefined = undefined;
 
   // ==================================================
   // OVERRIDES
@@ -118,25 +122,25 @@ export class BoxEditTool extends NavigationTool {
         return;
       }
     }
-    this._clickedPoints.push(intersection.point.clone());
-    const RADIUS_FACTOR = 0.2 * 5;
-    const distance = intersection.distanceToCamera;
-    const size = (distance * RADIUS_FACTOR) / 2;
+    const point = intersection.point.clone();
+    point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    this._clickedPoints.push(point);
 
-    const boxDomainObject = new BoxDomainObject();
-
-    const center = intersection.point.clone();
-    center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-
-    boxDomainObject.size.setScalar(size);
-    boxDomainObject.center.copy(center);
-
-    rootDomainObject.addChildInteractive(boxDomainObject);
-    boxDomainObject.setVisibleInteractive(true, renderTarget);
-    this.setFocus(boxDomainObject, BoxFocusType.Any);
-
-    if (this._clickedPoints.length === 4) {
-      clear(this._clickedPoints);
+    if (this._clickedPoints.length === 1) {
+      const boxDomainObject = new BoxDomainObject();
+      makeBox(boxDomainObject, this._clickedPoints, intersection.distanceToCamera);
+      rootDomainObject.addChildInteractive(boxDomainObject);
+      boxDomainObject.setVisibleInteractive(true, renderTarget);
+      this.setFocus(boxDomainObject, BoxFocusType.Any);
+      this._boxDomainObject = boxDomainObject;
+    } else if (this._boxDomainObject !== undefined) {
+      makeBox(this._boxDomainObject, this._clickedPoints, intersection.distanceToCamera);
+      this.setFocus(this._boxDomainObject, BoxFocusType.Any);
+      this._boxDomainObject.notify(Changes.geometry);
+      if (this._clickedPoints.length === 4) {
+        clear(this._clickedPoints);
+        this._boxDomainObject = undefined;
+      }
     }
   }
 

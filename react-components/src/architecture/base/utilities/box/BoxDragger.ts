@@ -1,7 +1,6 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-/* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type Ray, Vector3, Plane, Vector2, Matrix4 } from 'three';
