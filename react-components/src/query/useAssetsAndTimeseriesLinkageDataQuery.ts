@@ -19,10 +19,8 @@ import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import {
   type AssetIdsAndTimeseries,
   type AssetAndTimeseriesIds,
-  type RelationshipsFilterInternal,
   type AssetIdsAndTimeseriesData
 } from '../utilities/types';
-import { createLabelFilter } from '../utilities/createLabelFilters';
 import { queryKeys } from '../utilities/queryKeys';
 import { getTimeseriesByIds } from '../hooks/network/getTimeseriesByIds';
 import { isDefined } from '../utilities/isDefined';

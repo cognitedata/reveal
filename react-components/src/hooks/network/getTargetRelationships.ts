@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import {
-  RelationshipsFilterRequest,
+  type RelationshipsFilterRequest,
   type CogniteClient,
   type CogniteExternalId,
   type RelationshipResourceType
