@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useEffect, type ReactElement, useState } from 'react';
+import { useEffect, type ReactElement, useState, useMemo } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
 import { type ModelMappingsWithAssets, useAllMappedEquipmentAssetMappings } from '../..';
@@ -43,16 +43,21 @@ export function RuleBasedOutputsSelector({
     }
   }, [isFetching, hasNextPage, fetchNextPage]);
 
-  const contextualizedAssetNodes =
-    assetMappings?.pages
-      .flat()
-      .flatMap((item) => item.assets)
-      .map(convertAssetMetadataKeysToLowerCase) ?? [];
+  const contextualizedAssetNodes = useMemo(() => {
+    return (
+      assetMappings?.pages
+        .flat()
+        .flatMap((item) => item.assets)
+        .map(convertAssetMetadataKeysToLowerCase) ?? []
+    );
+  }, [assetMappings]);
 
-  const expressions = ruleSet?.rulesWithOutputs
-    .map((ruleSet) => ruleSet.rule.expression)
-    .filter(isDefined);
-  const timeseriesExternalIds = traverseExpressionToGetTimeseries(expressions) ?? [];
+  const timeseriesExternalIds = useMemo(() => {
+    const expressions = ruleSet?.rulesWithOutputs
+      .map((ruleWithOutput) => ruleWithOutput.rule.expression)
+      .filter(isDefined);
+    return traverseExpressionToGetTimeseries(expressions) ?? [];
+  }, [ruleSet]);
 
   const { isLoading: isLoadingAssetIdsAndTimeseriesData, data: assetIdsWithTimeseriesData } =
     useAssetsAndTimeseriesLinkageDataQuery({
