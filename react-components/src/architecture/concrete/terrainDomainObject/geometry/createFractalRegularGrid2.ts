@@ -43,7 +43,7 @@ export function createFractalRegularGrid2(
 }
 
 // ==================================================
-// LOCAL FUNCTIONS: Helpers
+// PRIVATE FUNCTIONS: Helpers
 // ==================================================
 
 function setValueBetween(

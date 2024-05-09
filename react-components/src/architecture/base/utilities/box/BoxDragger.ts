@@ -45,7 +45,7 @@ export class BoxDragger {
   // CONTRUCTOR
   // ==================================================
 
-  public constructor(domainObject: DomainObject, point: Vector3, face: BoxFace) {
+  public constructor(domainObject: DomainObject, point: Vector3, face: BoxPickInfo) {
     this.domainObject = domainObject;
     this.box = domainObject as unknown as IBox;
     this._face.copy(face);

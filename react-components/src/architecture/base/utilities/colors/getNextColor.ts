@@ -26,7 +26,7 @@ export function getNextColorByIndex(index: number): Color {
 }
 
 // ==================================================
-// LOCAL FUNCTIONS:
+// PRIVATE FUNCTIONS
 // ==================================================
 
 function getUniqueColors(): Color[] {

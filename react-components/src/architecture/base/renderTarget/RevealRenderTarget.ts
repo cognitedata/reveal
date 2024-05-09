@@ -12,7 +12,7 @@ import {
 } from '@cognite/reveal';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../concreteCommands/NavigationTool';
-import { Vector3, AmbientLight, DirectionalLight } from 'three';
+import { Vector3, AmbientLight, DirectionalLight, PerspectiveCamera } from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
 
@@ -76,6 +76,10 @@ export class RevealRenderTarget {
     return cameraManager;
   }
 
+  public get camera(): PerspectiveCamera {
+    return this.cameraManager.getCamera();
+  }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
@@ -130,7 +134,7 @@ export class RevealRenderTarget {
     if (light === undefined) {
       return;
     }
-    const camera = this.viewer.cameraManager.getCamera();
+    const camera = this.camera;
 
     // Get camera direction
     const cameraDirection = new Vector3();

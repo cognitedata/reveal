@@ -6,8 +6,13 @@
 
 import { BaseTool } from '../commands/BaseTool';
 import { type Tooltip } from '../commands/BaseCommand';
+import { type IFlexibleCameraManager } from '@cognite/reveal';
 
 export class NavigationTool extends BaseTool {
+  private get cameraManager(): IFlexibleCameraManager {
+    return this.renderTarget.cameraManager;
+  }
+
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -25,34 +30,34 @@ export class NavigationTool extends BaseTool {
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    await this.renderTarget.cameraManager.onClick(event);
+    await this.cameraManager.onClick(event);
   }
 
   public override async onDoubleClick(event: PointerEvent): Promise<void> {
-    await this.renderTarget.cameraManager.onDoubleClick(event);
+    await this.cameraManager.onDoubleClick(event);
   }
 
   public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.renderTarget.cameraManager.onPointerDown(event, leftButton);
+    await this.cameraManager.onPointerDown(event, leftButton);
   }
 
   public override async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.renderTarget.cameraManager.onPointerDrag(event, leftButton);
+    await this.cameraManager.onPointerDrag(event, leftButton);
   }
 
   public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.renderTarget.cameraManager.onPointerUp(event, leftButton);
+    await this.cameraManager.onPointerUp(event, leftButton);
   }
 
   public override async onWheel(event: WheelEvent): Promise<void> {
-    await this.renderTarget.cameraManager.onWheel(event);
+    await this.cameraManager.onWheel(event);
   }
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
-    this.renderTarget.cameraManager.onKey(event, down);
+    this.cameraManager.onKey(event, down);
   }
 
   public override onFocusChanged(haveFocus: boolean): void {
-    this.renderTarget.cameraManager.onFocusChanged(haveFocus);
+    this.cameraManager.onFocusChanged(haveFocus);
   }
 }

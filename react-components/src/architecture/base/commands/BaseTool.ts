@@ -136,10 +136,9 @@ export abstract class BaseTool extends RenderTargetCommand {
 
   protected getRaycaster(event: PointerEvent | WheelEvent): Raycaster {
     const { renderTarget } = this;
-    const { cameraManager } = renderTarget;
     const normalizedCoords = this.getNormalizedPixelCoordinates(event);
     const raycaster = new Raycaster();
-    raycaster.setFromCamera(normalizedCoords, cameraManager.getCamera());
+    raycaster.setFromCamera(normalizedCoords, renderTarget.camera);
     return raycaster;
   }
 

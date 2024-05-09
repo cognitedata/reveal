@@ -190,7 +190,7 @@ export class TerrainThreeView extends GroupThreeView {
   }
 }
 // ==================================================
-// LOCAL FUNCTIONS
+// PRIVATE FUNCTIONS
 // ==================================================
 
 function applyMatrix(object: Object3D, grid: RegularGrid2): void {

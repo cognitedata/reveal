@@ -25,7 +25,7 @@ export function getOptions(): ColorMapType[] {
 }
 
 // ==================================================
-// LOCAL FUNCTIONS:
+// PRIVATE FUNCTIONS
 // ==================================================
 
 function getColorMaps(): Map<ColorMapType, ColorMap> {
@@ -52,7 +52,7 @@ function createColorMaps(): Map<ColorMapType, ColorMap> {
 }
 
 // ==================================================
-// LOCAL FUNCTIONS: Create various color maps
+// PRIVATE FUNCTIONS: Create various color maps
 // ==================================================
 
 function createSeismic(reverse: boolean): ColorMap {

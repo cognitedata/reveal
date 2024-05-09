@@ -8,9 +8,10 @@ import { BoxDomainObject } from './BoxDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type Tooltip } from '../../base/commands/BaseCommand';
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { BoxDragger } from '../../base/utilities/boxEdit/BoxDragger';
-import { type BoxFace } from '../../base/utilities/boxEdit/BoxFace';
-import { BoxFocusType } from '../../base/utilities/boxEdit/BoxFocusType';
+import { BoxDragger } from '../../base/utilities/box/BoxDragger';
+import { type BoxFace } from '../../base/utilities/box/BoxFace';
+import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
+import { BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 
 export class BoxEditTool extends NavigationTool {
   // ==================================================
@@ -86,7 +87,11 @@ export class BoxEditTool extends NavigationTool {
     if (!(intersection.domainObject instanceof BoxDomainObject)) {
       return;
     }
-    this.setFocus(intersection.domainObject, getFocusType(event), intersection.userData as BoxFace);
+    this.setFocus(
+      intersection.domainObject,
+      getFocusType(event),
+      intersection.userData as BoxPickInfo
+    );
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
@@ -95,14 +100,16 @@ export class BoxEditTool extends NavigationTool {
 
     const intersection = await this.getIntersection(event);
     if (intersection === undefined) {
+      await super.onClick(event);
       return;
     }
     if (isDomainObjectIntersection(intersection)) {
       if (intersection.domainObject instanceof BoxDomainObject) {
+        await super.onClick(event);
         return;
       }
     }
-    const RADIUS_FACTOR = 0.2;
+    const RADIUS_FACTOR = 0.2 * 5;
     const distance = intersection.distanceToCamera;
     const size = (distance * RADIUS_FACTOR) / 2;
     const boxDomainObject = new BoxDomainObject();
@@ -160,11 +167,11 @@ export class BoxEditTool extends NavigationTool {
     if (!(domainObject instanceof BoxDomainObject)) {
       return undefined;
     }
-    const face = intersection.userData as BoxFace;
-    if (face === undefined) {
+    const pickInfo = intersection.userData as BoxPickInfo;
+    if (pickInfo === undefined) {
       return undefined;
     }
-    return new BoxDragger(domainObject, intersection.point, face);
+    return new BoxDragger(domainObject, intersection.point, pickInfo);
   }
 
   private setFocus(

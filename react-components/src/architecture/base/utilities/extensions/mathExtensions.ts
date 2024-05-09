@@ -112,6 +112,14 @@ export function roundInc(increment: number): number {
   return inc;
 }
 
+export function round(value: number, delta: number): number {
+  // Rounding number up to nearest delta
+  let result = value / delta;
+  result = Math.round(result);
+  result *= delta;
+  return result;
+}
+
 export function ceil(value: number, delta: number): number {
   // Rounding number up to nearest delta
   let result = value / delta;

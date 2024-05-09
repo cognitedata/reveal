@@ -9,9 +9,9 @@ import { type ThreeView } from '../../base/views/ThreeView';
 import { BoxThreeView } from './BoxThreeView';
 import { Matrix4, Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { BoxFace } from '../../base/utilities/boxEdit/BoxFace';
-import { BoxFocusType } from '../../base/utilities/boxEdit/BoxFocusType';
-import { type IBox } from '../../base/utilities/boxEdit/IBox';
+import { BoxFace } from '../../base/utilities/box/BoxFace';
+import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
+import { type IBox } from '../../base/utilities/box/IBox';
 
 export class BoxDomainObject extends VisualDomainObject implements IBox {
   // ==================================================
@@ -77,9 +77,13 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
   }
 
   public getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+    return this.getScaledMatrix(this.size);
+  }
+
+  public getScaledMatrix(scale: Vector3, matrix: Matrix4 = new Matrix4()): Matrix4 {
     matrix = this.getRotationMatrix(matrix);
     matrix.setPosition(this.center);
-    matrix.scale(this.size);
+    matrix.scale(scale);
     return matrix;
   }
 
