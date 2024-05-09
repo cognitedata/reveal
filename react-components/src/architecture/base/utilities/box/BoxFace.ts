@@ -66,13 +66,13 @@ export class BoxFace {
     switch (this.face) {
       case 0:
       case 3:
-        return new Vector2(positionAtFace.x, positionAtFace.y);
+        return new Vector2(positionAtFace.y, positionAtFace.z);
       case 1:
       case 4:
         return new Vector2(positionAtFace.x, positionAtFace.z);
       case 2:
       case 5:
-        return new Vector2(positionAtFace.y, positionAtFace.z);
+        return new Vector2(positionAtFace.x, positionAtFace.y);
       default:
         throw new Error('Invalid face');
     }

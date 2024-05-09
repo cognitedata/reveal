@@ -5,7 +5,7 @@
 import { Vector3 } from 'three';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { type RegularGrid2 } from './RegularGrid2';
-import { isAbsEqual, isInside, max, min } from '../../../base/utilities/extensions/mathExtensions';
+import { isAbsEqual, isBetween, max, min } from '../../../base/utilities/extensions/mathExtensions';
 
 export class ContouringService {
   // ==================================================
@@ -97,7 +97,7 @@ export class ContouringService {
 
     // Special cases, check exact intersection on the corner or along the edges
     if (a.z === z) {
-      if (isInside(b.z, z, c.z)) {
+      if (isBetween(b.z, z, c.z)) {
         this.add(a);
         this.addLinearInterpolation(b, c, z);
         return true;
@@ -114,7 +114,7 @@ export class ContouringService {
       }
     }
     if (b.z === z) {
-      if (isInside(c.z, z, a.z)) {
+      if (isBetween(c.z, z, a.z)) {
         this.add(b);
         this.addLinearInterpolation(c, a, z);
         return true;
@@ -125,23 +125,23 @@ export class ContouringService {
         return true;
       }
     }
-    if (c.z === z && isInside(a.z, z, b.z)) {
+    if (c.z === z && isBetween(a.z, z, b.z)) {
       this.add(c);
       this.addLinearInterpolation(a, b, z);
       return true;
     }
     // Intersection of two of the edges
     let numPoints = 0;
-    if (isInside(a.z, z, b.z)) {
+    if (isBetween(a.z, z, b.z)) {
       this.addLinearInterpolation(a, b, z);
       numPoints += 1;
     }
-    if (isInside(b.z, z, c.z)) {
+    if (isBetween(b.z, z, c.z)) {
       if (numPoints === 0) this.addLinearInterpolation(b, c, z);
       else this.addLinearInterpolation(b, c, z);
       numPoints += 1;
     }
-    if (numPoints < 2 && isInside(c.z, z, a.z)) {
+    if (numPoints < 2 && isBetween(c.z, z, a.z)) {
       if (numPoints === 0) this.addLinearInterpolation(c, a, z);
       else this.addLinearInterpolation(c, a, z);
       numPoints += 1;

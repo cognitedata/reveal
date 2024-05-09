@@ -15,6 +15,7 @@ import { NavigationTool } from '../concreteCommands/NavigationTool';
 import { Vector3, AmbientLight, DirectionalLight, PerspectiveCamera } from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
+import { getOctDir, getResizeCursor } from '../utilities/geometry/vector3Extensions';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -47,6 +48,14 @@ export class RevealRenderTarget {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
+
+  public get cursor(): string {
+    return this.domElement.style.cursor;
+  }
+
+  public set cursor(value: string) {
+    this.domElement.style.cursor = value;
+  }
 
   public get viewer(): Cognite3DViewer {
     return this._viewer;
@@ -143,4 +152,46 @@ export class RevealRenderTarget {
     cameraDirection.negate();
     light.position.copy(cameraDirection);
   };
+
+  // ==================================================
+  // INSTANCE METHODS: Cursor
+  // See: https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
+  // ==================================================
+
+  public setDefaultCursor(): void {
+    this.domElement.style.cursor = 'default';
+  }
+
+  public setMoveCursor(): void {
+    this.cursor = 'move';
+  }
+
+  public setNavigateCursor(): void {
+    this.cursor = 'pointer';
+  }
+
+  public setGrabCursor(): void {
+    this.cursor = 'grab';
+  }
+
+  public setCrosshairCursor(): void {
+    this.domElement.style.cursor = 'crosshair';
+  }
+
+  public setResizeCursor(point1: Vector3, point2: Vector3): void {
+    const screenPoint1 = this.viewer.worldToScreen(point1, false);
+    if (screenPoint1 === null) {
+      return;
+    }
+    const screenPoint2 = this.viewer.worldToScreen(point2, false);
+    if (screenPoint2 === null) {
+      return;
+    }
+    const screenVector = screenPoint2?.sub(screenPoint1).normalize();
+    screenVector.y = -screenVector.y; // Flip y axis
+    const cursor = getResizeCursor(getOctDir(screenVector));
+    if (cursor !== undefined) {
+      this.cursor = cursor;
+    }
+  }
 }

@@ -11,7 +11,9 @@ import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/Doma
 import { BoxDragger } from '../../base/utilities/box/BoxDragger';
 import { type BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
-import { BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
+import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
+import { Vector3 } from 'three';
+import { clear } from '../../base/utilities/extensions/arrayExtensions';
 
 export class BoxEditTool extends NavigationTool {
   // ==================================================
@@ -19,6 +21,7 @@ export class BoxEditTool extends NavigationTool {
   // ==================================================
 
   private _dragger: BoxDragger | undefined = undefined;
+  private readonly _clickedPoints: Vector3[] = [];
 
   // ==================================================
   // OVERRIDES
@@ -34,6 +37,10 @@ export class BoxEditTool extends NavigationTool {
 
   public override get tooltip(): Tooltip {
     return { key: 'UNKNOWN', fallback: 'Create or edit a box' };
+  }
+
+  public get defaultCursor(): string {
+    return 'crosshair';
   }
 
   public override onActivate(): void {
@@ -57,41 +64,43 @@ export class BoxEditTool extends NavigationTool {
       }
       return;
     }
-    if (event.key === 'Control') {
-      const focusType = down ? BoxFocusType.Scale : getFocusType(event);
-      for (const boxDomainObject of this.getAllBoxDomainObjects()) {
-        if (!boxDomainObject.hasFocus) {
-          continue;
-        }
-        boxDomainObject.setFocusInteractive(focusType, boxDomainObject.focusFace);
-      }
-    }
-    if (event.key === 'Shift') {
-      const focusType = down ? BoxFocusType.Rotate : getFocusType(event);
-      for (const boxDomainObject of this.getAllBoxDomainObjects()) {
-        if (!boxDomainObject.hasFocus) {
-          continue;
-        }
-        boxDomainObject.setFocusInteractive(focusType, boxDomainObject.focusFace);
-      }
-    }
     super.onKey(event, down);
   }
 
   public override onHover(event: PointerEvent): void {
     const intersection = this.getSpecificIntersection(event, BoxDomainObject);
     if (intersection === undefined) {
+      this.setDefaultCursor();
       this.setFocus(undefined);
       return;
     }
     if (!(intersection.domainObject instanceof BoxDomainObject)) {
+      this.setDefaultCursor();
       return;
     }
-    this.setFocus(
-      intersection.domainObject,
-      getFocusType(event),
-      intersection.userData as BoxPickInfo
-    );
+    const pickInfo = intersection.userData as BoxPickInfo;
+    if (pickInfo === undefined) {
+      this.setDefaultCursor();
+      return undefined;
+    }
+    if (pickInfo.focusType === BoxFocusType.Translate) {
+      this.renderTarget.setMoveCursor();
+    } else if (pickInfo.focusType === BoxFocusType.Scale) {
+      const matrix = intersection.domainObject.getMatrix();
+      matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+
+      const point1 = intersection.domainObject.center.clone();
+      const point2 = pickInfo.face.getCenter();
+      point1.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      point2.applyMatrix4(matrix);
+
+      this.renderTarget.setResizeCursor(point1, point2);
+    } else if (pickInfo.focusType === BoxFocusType.Rotate) {
+      this.renderTarget.setGrabCursor();
+    } else {
+      this.setDefaultCursor();
+    }
+    this.setFocus(intersection.domainObject, pickInfo.focusType, pickInfo.face);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
@@ -109,9 +118,11 @@ export class BoxEditTool extends NavigationTool {
         return;
       }
     }
+    this._clickedPoints.push(intersection.point.clone());
     const RADIUS_FACTOR = 0.2 * 5;
     const distance = intersection.distanceToCamera;
     const size = (distance * RADIUS_FACTOR) / 2;
+
     const boxDomainObject = new BoxDomainObject();
 
     const center = intersection.point.clone();
@@ -123,6 +134,10 @@ export class BoxEditTool extends NavigationTool {
     rootDomainObject.addChildInteractive(boxDomainObject);
     boxDomainObject.setVisibleInteractive(true, renderTarget);
     this.setFocus(boxDomainObject, BoxFocusType.Any);
+
+    if (this._clickedPoints.length === 4) {
+      clear(this._clickedPoints);
+    }
   }
 
   public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
@@ -131,7 +146,7 @@ export class BoxEditTool extends NavigationTool {
       await super.onPointerDown(event, leftButton);
     } else {
       const boxDomainObject = this._dragger.domainObject as BoxDomainObject;
-      this.setFocus(boxDomainObject, getFocusType(event), this._dragger.face);
+      this.setFocus(boxDomainObject, this._dragger.focusType, this._dragger.face);
     }
   }
 
@@ -140,7 +155,7 @@ export class BoxEditTool extends NavigationTool {
       await super.onPointerDrag(event, leftButton);
       return;
     }
-    this._dragger.apply(getFocusType(event), this.getRaycaster(event).ray);
+    this._dragger.apply(this.getRaycaster(event).ray);
   }
 
   public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
@@ -176,7 +191,7 @@ export class BoxEditTool extends NavigationTool {
 
   private setFocus(
     boxDomainObject: BoxDomainObject | undefined,
-    type: BoxFocusType = BoxFocusType.None,
+    focusType: BoxFocusType = BoxFocusType.None,
     face?: BoxFace
   ): void {
     for (const other of this.getAllBoxDomainObjects()) {
@@ -185,7 +200,7 @@ export class BoxEditTool extends NavigationTool {
       }
     }
     if (boxDomainObject !== undefined) {
-      boxDomainObject.setFocusInteractive(type, face);
+      boxDomainObject.setFocusInteractive(focusType, face);
     }
   }
 
@@ -202,14 +217,4 @@ export class BoxEditTool extends NavigationTool {
       yield boxDomainObject;
     }
   }
-}
-
-function getFocusType(event: PointerEvent | KeyboardEvent): BoxFocusType {
-  if (event.ctrlKey) {
-    return BoxFocusType.Scale;
-  }
-  if (event.shiftKey) {
-    return BoxFocusType.Rotate;
-  }
-  return BoxFocusType.Translate;
 }

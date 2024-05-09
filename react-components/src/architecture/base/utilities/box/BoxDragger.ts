@@ -10,6 +10,7 @@ import { BoxFace } from './BoxFace';
 import { BoxFocusType } from './BoxFocusType';
 import { type DomainObject } from '../../domainObjects/DomainObject';
 import { type IBox } from './IBox';
+import { type BoxPickInfo } from './BoxPickInfo';
 
 const MIN_SIZE = 0.01;
 
@@ -22,6 +23,7 @@ export class BoxDragger {
   public readonly box: IBox;
 
   private readonly _face = new BoxFace();
+  private readonly _focusType: BoxFocusType;
   private readonly _point: Vector3 = new Vector3();
   private readonly _normal: Vector3 = new Vector3();
   private readonly _planeOfBox: Plane = new Plane();
@@ -41,14 +43,19 @@ export class BoxDragger {
     return this._face;
   }
 
+  public get focusType(): BoxFocusType {
+    return this._focusType;
+  }
+
   // ==================================================
   // CONTRUCTOR
   // ==================================================
 
-  public constructor(domainObject: DomainObject, point: Vector3, face: BoxPickInfo) {
+  public constructor(domainObject: DomainObject, point: Vector3, pickInfo: BoxPickInfo) {
     this.domainObject = domainObject;
     this.box = domainObject as unknown as IBox;
-    this._face.copy(face);
+    this._face.copy(pickInfo.face);
+    this._focusType = pickInfo.focusType;
     this._point.copy(point);
     this._normal.copy(this._face.getNormal());
 
@@ -75,7 +82,11 @@ export class BoxDragger {
   // INSTANCE METHODS
   // ==================================================
 
-  public apply(type: BoxFocusType, ray: Ray): void {
+  public apply(ray: Ray): void {
+    this.applyByBoxFocusType(this.focusType, ray);
+  }
+
+  public applyByBoxFocusType(type: BoxFocusType, ray: Ray): void {
     switch (type) {
       case BoxFocusType.Scale:
         this.scale(ray);

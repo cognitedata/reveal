@@ -41,8 +41,13 @@ export abstract class BaseTool extends RenderTargetCommand {
   // VIRTUAL METHODS: To be overridden
   // ==================================================
 
+  public get defaultCursor(): string {
+    return 'default';
+  }
+
   public onActivate(): void {
     this.update();
+    this.setDefaultCursor();
   }
 
   public onDeactivate(): void {
@@ -82,6 +87,10 @@ export abstract class BaseTool extends RenderTargetCommand {
   // ==================================================
   // INSTANCE METHODS: Intersections
   // ==================================================
+
+  public setDefaultCursor(): void {
+    this.renderTarget.cursor = this.defaultCursor;
+  }
 
   protected async getIntersection(event: PointerEvent): Promise<AnyIntersection | undefined> {
     const { renderTarget } = this;

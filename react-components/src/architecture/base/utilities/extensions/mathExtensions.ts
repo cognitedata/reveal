@@ -46,7 +46,7 @@ export function isEven(value: number): boolean {
   return value % 2 === 0;
 }
 
-export function isInside(min: number, value: number, max: number): boolean {
+export function isBetween(min: number, value: number, max: number): boolean {
   return min < max ? min < value && value < max : max < value && value < min;
 }
 
@@ -64,14 +64,6 @@ export function min(a: number, b: number, c: number): number {
 
 export function strickSign(value: number): number {
   return value === 0 ? 0 : Math.sign(value);
-}
-
-export function toDeg(radians: number): number {
-  return (180 * radians) / Math.PI;
-}
-
-export function toRad(degrees: number): number {
-  return (Math.PI * degrees) / 180;
 }
 
 export function square(value: number): number {

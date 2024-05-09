@@ -87,19 +87,19 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
     return matrix;
   }
 
-  public setFocusInteractive(type: BoxFocusType, face?: BoxFace): boolean {
-    if (type === BoxFocusType.None) {
+  public setFocusInteractive(focusType: BoxFocusType, focusFace?: BoxFace): boolean {
+    if (focusType === BoxFocusType.None) {
       if (this.focusType === BoxFocusType.None) {
         return false; // No change
       }
       this.focusType = BoxFocusType.None;
       this.focusFace = undefined; // Ignore input face
     } else {
-      if (type === this.focusType && BoxFace.equals(this.focusFace, face)) {
+      if (focusType === this.focusType && BoxFace.equals(this.focusFace, focusFace)) {
         return false; // No change
       }
-      this.focusType = type;
-      this.focusFace = face;
+      this.focusType = focusType;
+      this.focusFace = focusFace;
     }
     this.notify(Changes.focus);
     return true;

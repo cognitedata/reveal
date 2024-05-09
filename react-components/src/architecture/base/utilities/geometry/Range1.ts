@@ -87,6 +87,10 @@ export class Range1 {
     return this.min === other.min && this.max === other.max;
   }
 
+  isInside(value: number): boolean {
+    return this.min <= value && value <= this.max;
+  }
+
   // ==================================================
   // INSTANCE METHODS: Getters
   // ==================================================
