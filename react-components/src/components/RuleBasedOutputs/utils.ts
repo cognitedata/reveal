@@ -93,7 +93,6 @@ const getTriggerNumericData = (
   } else if (currentTriggerData.type === 'timeseries' && trigger.type === 'timeseries') {
     return getTriggerTimeseriesNumericData(currentTriggerData, trigger);
   }
-  return;
 };
 
 const getTriggerTimeseriesNumericData = (

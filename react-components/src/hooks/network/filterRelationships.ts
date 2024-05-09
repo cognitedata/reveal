@@ -12,7 +12,7 @@ export const filterRelationships = async (
   sdk: CogniteClient,
   filter?: RelationshipsFilter
 ): Promise<Relationship[]> => {
-  const fetch = async () => {
+  const fetch = async (): Promise<Relationship[]> => {
     const response = await sdk.relationships
       .list({
         filter,

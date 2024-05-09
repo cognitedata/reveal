@@ -49,17 +49,17 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
       relationshipResourceTypes
     ],
     queryFn: async () => {
-      const assetAndTimeseriesIdsFromRelationship = await getLinkFromRelationships(
-        sdk,
-        timeseriesExternalIds,
-        relationshipResourceTypes
-      );
-
       const externalIds: ExternalId[] = timeseriesExternalIds.map((externalId) => {
         return {
           externalId
         };
       });
+
+      const assetAndTimeseriesIdsFromRelationship = await getLinkFromRelationships(
+        sdk,
+        timeseriesExternalIds,
+        relationshipResourceTypes
+      );
 
       const timeseries = await getTimeseriesByIds(sdk, externalIds);
 
