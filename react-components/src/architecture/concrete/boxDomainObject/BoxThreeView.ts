@@ -20,7 +20,7 @@ import {
   CircleGeometry,
   Material
 } from 'three';
-import { BoxDomainObject } from './BoxDomainObject';
+import { BoxDomainObject, MIN_BOX_SIZE } from './BoxDomainObject';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxRenderStyle } from './BoxRenderStyle';
@@ -55,7 +55,7 @@ export class BoxThreeView extends GroupThreeView {
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _labels: Sprite[] = [];
+  private readonly _labels: Array<Sprite | undefined> = [];
   private readonly _vectorPool = new Vector3Pool();
 
   // ==================================================
@@ -82,7 +82,7 @@ export class BoxThreeView extends GroupThreeView {
     const { size } = this.boxDomainObject;
     const size1 = size.getComponent(face.tangentIndex1);
     const size2 = size.getComponent(face.tangentIndex2);
-    return Math.max(size1, size2) / 2;
+    return (size1 + size2) / 4;
   }
 
   // ==================================================
@@ -116,13 +116,13 @@ export class BoxThreeView extends GroupThreeView {
     const { boxDomainObject } = this;
     const matrix = this.getCombinedMatrix();
 
-    const focusType = boxDomainObject.focusType;
+    const { focusType } = boxDomainObject;
     if (focusType !== BoxFocusType.None) {
       this.addChild(this.createSolid(matrix));
     }
     this.addChild(this.createLines(matrix));
 
-    if (focusType !== BoxFocusType.None) {
+    if (focusType !== BoxFocusType.Pending && focusType !== BoxFocusType.None) {
       const material = new MeshPhongMaterial();
       updateMarkerMaterial(material, boxDomainObject);
       this.addChild(this.createRotationCircle(matrix, material));
@@ -135,6 +135,10 @@ export class BoxThreeView extends GroupThreeView {
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
+    const { boxDomainObject } = this;
+    if (boxDomainObject.focusType === BoxFocusType.Pending) {
+      return undefined; // Should never be picked
+    }
     const orientedBox = createOrientedBox();
     const matrix = this.getCombinedMatrix();
     orientedBox.applyMatrix4(matrix);
@@ -160,7 +164,7 @@ export class BoxThreeView extends GroupThreeView {
       distanceToCamera,
       userData: new BoxPickInfo(boxFace, focusType),
       customObject: this,
-      domainObject: this.domainObject
+      domainObject: boxDomainObject
     };
     if (this.shouldPickBoundingBox) {
       customObjectIntersection.boundingBox = this.boundingBox;
@@ -203,16 +207,27 @@ export class BoxThreeView extends GroupThreeView {
     const { boxDomainObject } = this;
     clear(this._labels);
     for (let index = 0; index < 3; index++) {
-      const text = boxDomainObject.size.getComponent(index).toFixed(2);
-      const sprite = createSprite(text, labelHeight);
+      const size = boxDomainObject.size.getComponent(index);
+      if (size <= MIN_BOX_SIZE) {
+        this._labels.push(undefined);
+        continue;
+      }
+      const sprite = createSprite(size.toFixed(2), labelHeight);
       if (sprite === undefined) {
-        return;
+        this._labels.push(undefined);
+        continue;
       }
       this._labels.push(sprite);
       this.addChild(sprite);
     }
     this.updateLabels(this.renderTarget.camera);
-    this.addChild(this.createDegreesLabel(matrix, labelHeight));
+    if (
+      boxDomainObject.focusType !== BoxFocusType.Pending &&
+      boxDomainObject.focusType !== BoxFocusType.Scale &&
+      boxDomainObject.focusType !== BoxFocusType.Translate
+    ) {
+      this.addChild(this.createDegreesLabel(matrix, labelHeight));
+    }
   }
 
   private createDegreesLabel(matrix: Matrix4, labelHeight: number): Sprite | undefined {
@@ -259,8 +274,10 @@ export class BoxThreeView extends GroupThreeView {
     // If the 2 adjecent faces are visible, show the label along the edge
     for (let index = 0; index < this._labels.length; index++) {
       const label = this._labels[index];
+      if (label === undefined) {
+        continue;
+      }
       label.visible = false;
-
       for (let i = 0; i < 2; i++) {
         const face1 = (index + (i === 0 ? 1 : 4)) % 6;
         if (!visibleFaces[face1]) {

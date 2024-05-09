@@ -13,12 +13,14 @@ import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
 import { type IBox } from '../../base/utilities/box/IBox';
 
+export const MIN_BOX_SIZE = 0.01;
+
 export class BoxDomainObject extends VisualDomainObject implements IBox {
   // ==================================================
   // INSTANCE FIELDS (This implements the IBox interface)
   // ==================================================
 
-  public readonly size = new Vector3(1, 1, 1);
+  public readonly size = new Vector3().setScalar(MIN_BOX_SIZE);
   public readonly center = new Vector3();
   public zRotation = 0;
 
@@ -70,6 +72,13 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  forceMinSize(): void {
+    const { size } = this;
+    size.x = Math.max(MIN_BOX_SIZE, size.x);
+    size.y = Math.max(MIN_BOX_SIZE, size.y);
+    size.z = Math.max(MIN_BOX_SIZE, size.z);
+  }
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
     matrix.makeRotationZ(this.zRotation);

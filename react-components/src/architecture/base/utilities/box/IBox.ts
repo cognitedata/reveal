@@ -11,6 +11,7 @@ export type IBox = {
   get center(): Vector3;
   get zRotation(): number;
   set zRotation(value: number);
+  forceMinSize: () => void;
 
   // For focus when edit in 3D
   get focusFace(): BoxFace | undefined;

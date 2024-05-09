@@ -12,7 +12,7 @@ export class BoxRenderStyle extends RenderStyle {
   // ==================================================
 
   public colorType = ColorType.Specified;
-  public opacity = 0.8;
+  public opacity = 0.5;
   public opacityUse = true;
 
   // ==================================================

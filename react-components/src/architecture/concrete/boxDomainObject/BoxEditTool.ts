@@ -5,7 +5,7 @@
 
 import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
 import { BoxDomainObject } from './BoxDomainObject';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type Tooltip } from '../../base/commands/BaseCommand';
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { BoxDragger } from '../../base/utilities/box/BoxDragger';
@@ -13,9 +13,9 @@ import { type BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type Vector3 } from 'three';
-import { clear } from '../../base/utilities/extensions/arrayExtensions';
+import { clear, replaceLast } from '../../base/utilities/extensions/arrayExtensions';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { makeBox } from './BoxEditTool copy';
+import { addPointsToBox } from '../../base/utilities/box/addPointsToBox';
 
 export class BoxEditTool extends NavigationTool {
   // ==================================================
@@ -23,9 +23,11 @@ export class BoxEditTool extends NavigationTool {
   // ==================================================
 
   private _dragger: BoxDragger | undefined = undefined;
-  private readonly _clickedPoints: Vector3[] = [];
 
-  private _boxDomainObject: BoxDomainObject | undefined = undefined;
+  // These are for the pening box:
+  private readonly _clickedPoints: Vector3[] = [];
+  private _lastIsHovering: boolean = false;
+  private _pendingBox: BoxDomainObject | undefined = undefined;
 
   // ==================================================
   // OVERRIDES
@@ -51,6 +53,7 @@ export class BoxEditTool extends NavigationTool {
     super.onActivate();
     this._dragger = undefined;
     this.setAllBoxesVisible(true);
+    this.clearPendingBox();
   }
 
   public override onDeactivate(): void {
@@ -66,25 +69,63 @@ export class BoxEditTool extends NavigationTool {
         }
         boxDomainObject.removeInteractive();
       }
+      this.clearPendingBox();
+      return;
+    }
+    if (down && event.key === 'Escape') {
+      if (this._pendingBox !== undefined) {
+        if (this._lastIsHovering) {
+          this._clickedPoints.pop();
+        }
+        if (this._clickedPoints.length >= 3) {
+          addPointsToBox(this._pendingBox, this._clickedPoints);
+          this.setFocus(this._pendingBox, BoxFocusType.Any);
+          this._pendingBox.notify(Changes.geometry);
+        } else {
+          this._pendingBox.removeInteractive();
+        }
+        this.clearPendingBox();
+      }
       return;
     }
     super.onKey(event, down);
   }
 
-  public override onHover(event: PointerEvent): void {
-    const intersection = this.getSpecificIntersection(event, BoxDomainObject);
+  public override async onHover(event: PointerEvent): Promise<void> {
+    const intersection = await this.getIntersection(event);
     if (intersection === undefined) {
+      this.renderTarget.setNavigateCursor();
+      this.setFocus(undefined);
+      super.onHover(event);
+      return;
+    }
+    if (this._pendingBox !== undefined) {
+      if (this._clickedPoints.length >= 1) {
+        this.addPoint(intersection, true);
+        addPointsToBox(this._pendingBox, this._clickedPoints);
+        this._pendingBox.notify(Changes.geometry);
+      }
       this.setDefaultCursor();
       this.setFocus(undefined);
       return;
     }
+    if (!isDomainObjectIntersection(intersection)) {
+      this.setDefaultCursor();
+      this.setFocus(undefined);
+      super.onHover(event);
+      return;
+    }
     if (!(intersection.domainObject instanceof BoxDomainObject)) {
       this.setDefaultCursor();
+      this.setFocus(undefined);
+      super.onHover(event);
       return;
     }
     const pickInfo = intersection.userData as BoxPickInfo;
     if (pickInfo === undefined) {
       this.setDefaultCursor();
+      this.setFocus(undefined);
+      super.onHover(event);
       return undefined;
     }
     if (pickInfo.focusType === BoxFocusType.Translate) {
@@ -116,35 +157,31 @@ export class BoxEditTool extends NavigationTool {
       await super.onClick(event);
       return;
     }
-    if (isDomainObjectIntersection(intersection)) {
-      if (intersection.domainObject instanceof BoxDomainObject) {
-        await super.onClick(event);
-        return;
-      }
-    }
-    const point = intersection.point.clone();
-    point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-    this._clickedPoints.push(point);
-
-    if (this._clickedPoints.length === 1) {
-      const boxDomainObject = new BoxDomainObject();
-      makeBox(boxDomainObject, this._clickedPoints, intersection.distanceToCamera);
-      rootDomainObject.addChildInteractive(boxDomainObject);
-      boxDomainObject.setVisibleInteractive(true, renderTarget);
-      this.setFocus(boxDomainObject, BoxFocusType.Any);
-      this._boxDomainObject = boxDomainObject;
-    } else if (this._boxDomainObject !== undefined) {
-      makeBox(this._boxDomainObject, this._clickedPoints, intersection.distanceToCamera);
-      this.setFocus(this._boxDomainObject, BoxFocusType.Any);
-      this._boxDomainObject.notify(Changes.geometry);
-      if (this._clickedPoints.length === 4) {
-        clear(this._clickedPoints);
-        this._boxDomainObject = undefined;
+    this.addPoint(intersection, false);
+    const points = this._clickedPoints;
+    if (points.length === 1) {
+      const pendingBox = new BoxDomainObject();
+      addPointsToBox(pendingBox, points);
+      rootDomainObject.addChildInteractive(pendingBox);
+      this.setFocus(pendingBox, BoxFocusType.Pending);
+      pendingBox.setVisibleInteractive(true, renderTarget);
+      this._pendingBox = pendingBox;
+    } else if (this._pendingBox !== undefined) {
+      addPointsToBox(this._pendingBox, points);
+      const focusType = points.length === 4 ? BoxFocusType.Any : BoxFocusType.Pending;
+      this.setFocus(this._pendingBox, focusType);
+      this._pendingBox.notify(Changes.geometry);
+      if (points.length === 4) {
+        this.clearPendingBox();
       }
     }
   }
 
   public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
+    if (this._pendingBox !== undefined) {
+      await super.onPointerDown(event, leftButton);
+      return;
+    }
     this._dragger = await this.createDragInfo(event);
     if (this._dragger === undefined) {
       await super.onPointerDown(event, leftButton);
@@ -193,15 +230,38 @@ export class BoxEditTool extends NavigationTool {
     return new BoxDragger(domainObject, intersection.point, pickInfo);
   }
 
+  private addPoint(intersection: AnyIntersection, isHovering: boolean): void {
+    const point = intersection.point.clone();
+    point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    const points = this._clickedPoints;
+
+    if (this._lastIsHovering) {
+      replaceLast(points, point);
+    } else {
+      points.push(point);
+    }
+    this._lastIsHovering = isHovering;
+  }
+
+  private clearPendingBox(): void {
+    clear(this._clickedPoints);
+    this._lastIsHovering = false;
+    this._pendingBox = undefined;
+  }
+
   private setFocus(
     boxDomainObject: BoxDomainObject | undefined,
     focusType: BoxFocusType = BoxFocusType.None,
     face?: BoxFace
   ): void {
     for (const other of this.getAllBoxDomainObjects()) {
-      if (boxDomainObject === undefined || other !== boxDomainObject) {
-        other.setFocusInteractive(BoxFocusType.None);
+      if (other.focusType === BoxFocusType.Pending) {
+        continue;
       }
+      if (boxDomainObject !== undefined && other === boxDomainObject) {
+        continue;
+      }
+      other.setFocusInteractive(BoxFocusType.None);
     }
     if (boxDomainObject !== undefined) {
       boxDomainObject.setFocusInteractive(focusType, face);
@@ -214,7 +274,7 @@ export class BoxEditTool extends NavigationTool {
     }
   }
 
-  public *getAllBoxDomainObjects(): Generator<BoxDomainObject> {
+  private *getAllBoxDomainObjects(): Generator<BoxDomainObject> {
     const { renderTarget } = this;
     const { rootDomainObject } = renderTarget;
     for (const boxDomainObject of rootDomainObject.getDescendantsByType(BoxDomainObject)) {

@@ -10,8 +10,7 @@ import { BoxFocusType } from './BoxFocusType';
 import { type DomainObject } from '../../domainObjects/DomainObject';
 import { type IBox } from './IBox';
 import { type BoxPickInfo } from './BoxPickInfo';
-
-const MIN_SIZE = 0.01;
+import { MIN_BOX_SIZE } from '../../../concrete/boxDomainObject/BoxDomainObject';
 
 export class BoxDragger {
   // ==================================================
@@ -135,7 +134,7 @@ export class BoxDragger {
 
     // Restrict the size to be at least MIN_SIZE
     const index = this._face.index;
-    const newSize = Math.max(MIN_SIZE, deltaSize + size.getComponent(index));
+    const newSize = Math.max(MIN_BOX_SIZE, deltaSize + size.getComponent(index));
     const newDeltaSize = newSize - size.getComponent(index);
     if (newDeltaSize === 0) {
       return;

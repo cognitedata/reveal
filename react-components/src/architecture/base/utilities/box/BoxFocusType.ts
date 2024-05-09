@@ -7,5 +7,6 @@ export enum BoxFocusType {
   Rotate,
   Translate,
   Scale,
+  Pending,
   Any // This only indicates focus when it is created
 }
