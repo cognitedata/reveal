@@ -13,11 +13,21 @@ import {
   type ModelAssetIdKey,
   type ModelId,
   type ModelRevisionKey,
-  type RevisionId
+  type RevisionId,
+  type ModelNodeIdKey
 } from './types';
 
 export function modelRevisionToKey(modelId: ModelId, revisionId: RevisionId): ModelRevisionKey {
   return `${modelId}/${revisionId}`;
+}
+
+export function modelRevisionNodesToKey(
+  modelId: ModelId,
+  revisionId: RevisionId,
+  nodeIds: number[]
+): ModelNodeIdKey {
+  const nodeIdsSerialized = nodeIds.reduce((a, b) => a + b, 0);
+  return `${modelId}/${revisionId}/${nodeIdsSerialized}`;
 }
 
 export function modelRevisionAssetIdsToKey(
