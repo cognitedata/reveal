@@ -24,7 +24,7 @@ export class BoxEditTool extends NavigationTool {
 
   private _dragger: BoxDragger | undefined = undefined;
 
-  // These are for the pening box:
+  // For the pending box:
   private readonly _clickedPoints: Vector3[] = [];
   private _lastIsHovering: boolean = false;
   private _pendingBox: BoxDomainObject | undefined = undefined;
@@ -82,6 +82,7 @@ export class BoxEditTool extends NavigationTool {
           this.setFocus(this._pendingBox, BoxFocusType.Any);
           this._pendingBox.notify(Changes.geometry);
         } else {
+          // Just one or two points, remove it
           this._pendingBox.removeInteractive();
         }
         this.clearPendingBox();
@@ -151,6 +152,26 @@ export class BoxEditTool extends NavigationTool {
     this.setFocus(intersection.domainObject, pickInfo.focusType, pickInfo.face);
   }
 
+  public override async onDoubleClick(event: PointerEvent): Promise<void> {
+    const { renderTarget } = this;
+    const { rootDomainObject } = renderTarget;
+
+    const intersection = await this.getIntersection(event);
+    // Do not want to click on other boxes
+    if (intersection === undefined || this.isBoxDomainObject(intersection)) {
+      await super.onDoubleClick(event);
+      return;
+    }
+    const pendingBox = new BoxDomainObject();
+    const center = intersection.point;
+    center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    pendingBox.center.copy(center);
+    pendingBox.size.set(2, 3, 1);
+    rootDomainObject.addChildInteractive(pendingBox);
+    this.setFocus(pendingBox, BoxFocusType.Any);
+    pendingBox.setVisibleInteractive(true, renderTarget);
+  }
+
   public override async onClick(event: PointerEvent): Promise<void> {
     const { renderTarget } = this;
     const { rootDomainObject } = renderTarget;
@@ -161,7 +182,6 @@ export class BoxEditTool extends NavigationTool {
       await super.onClick(event);
       return;
     }
-
     this.addPoint(intersection, false);
     const points = this._clickedPoints;
     if (points.length === 1) {
@@ -201,7 +221,9 @@ export class BoxEditTool extends NavigationTool {
       await super.onPointerDrag(event, leftButton);
       return;
     }
-    this._dragger.apply(this.getRaycaster(event).ray);
+    const ray = this.getRaycaster(event).ray.clone();
+    //ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    this._dragger.apply(ray);
   }
 
   public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
