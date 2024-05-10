@@ -19,7 +19,8 @@ import {
   Camera,
   CircleGeometry,
   Material,
-  Plane
+  Plane,
+  FrontSide
 } from 'three';
 import { BoxDomainObject, MIN_BOX_SIZE } from './BoxDomainObject';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
@@ -124,15 +125,8 @@ export class BoxThreeView extends GroupThreeView {
     this.addChild(this.createLines(matrix));
 
     if (focusType !== BoxFocusType.Pending && focusType !== BoxFocusType.None) {
-      const rotationMaterial = new MeshPhongMaterial();
-      updateMarkerMaterial(rotationMaterial, boxDomainObject);
-      rotationMaterial.clippingPlanes = this.createClippingPlanes(matrix, 2);
-
-      this.addChild(this.createRotationCircle(matrix, rotationMaterial));
-
-      const resizeMaterial = new MeshPhongMaterial();
-      updateMarkerMaterial(resizeMaterial, boxDomainObject);
-      this.addResizeCircles(matrix, resizeMaterial);
+      this.addChild(this.createRotationCircle(matrix));
+      this.addResizeCircles(matrix);
     }
     this.addLabels(matrix);
   }
@@ -325,26 +319,46 @@ export class BoxThreeView extends GroupThreeView {
     }
   }
 
-  protected addResizeCircles(matrix: Matrix4, material: Material): void {
+  protected addResizeCircles(matrix: Matrix4): void {
+    let selectedFace = this.boxDomainObject.focusFace;
+    if (this.boxDomainObject.focusType !== BoxFocusType.Scale) {
+      selectedFace = undefined;
+    }
+    const material = new MeshPhongMaterial();
+    updateMarkerMaterial(material, this.boxDomainObject, false);
     const boxFace = new BoxFace();
     for (boxFace.face = 0; boxFace.face < 6; boxFace.face++) {
-      this.addChild(this.createResizeCircle(matrix, material, boxFace));
+      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+      if (selectedFace === undefined || !selectedFace.equals(boxFace)) {
+        this.addChild(this.createResizeCircle(matrix, material, boxFace));
+      }
+    }
+    if (selectedFace !== undefined) {
+      const material = new MeshPhongMaterial();
+      updateMarkerMaterial(material, this.boxDomainObject, true);
+      this.addChild(this.createResizeCircle(matrix, material, selectedFace));
     }
   }
 
-  private createRotationCircle(matrix: Matrix4, material: Material): Mesh {
+  private createRotationCircle(matrix: Matrix4): Mesh {
+    const { boxDomainObject } = this;
+    const { focusType } = boxDomainObject;
     const face = new BoxFace(2);
     const radius = this.getFaceRadius(face);
 
     const outerRadius = RELATIVE_ROTATION_RADIUS.max * radius;
     const innerRadius = RELATIVE_ROTATION_RADIUS.min * radius;
     const geometry = new RingGeometry(innerRadius, outerRadius, 32);
+
+    const material = new MeshPhongMaterial();
+    updateMarkerMaterial(material, boxDomainObject, focusType === BoxFocusType.Rotate);
+    material.clippingPlanes = this.createClippingPlanes(matrix, 2);
     const mesh = new Mesh(geometry, material);
 
     const center = face.getCenter(this.newVector3());
     center.applyMatrix4(matrix);
     mesh.position.copy(center);
-    mesh.rotateX(Math.PI / 2);
+    mesh.rotateX(-Math.PI / 2);
     return mesh;
   }
 
@@ -367,11 +381,19 @@ export class BoxThreeView extends GroupThreeView {
     const center = face.getCenter(this.newVector3());
     center.applyMatrix4(matrix);
     mesh.position.copy(center);
-    if (face.index === 2) {
+
+    // Must be roteted correctly because of sideness
+    if (face.face === 2) {
+      mesh.rotateX(-Math.PI / 2);
+    } else if (face.face === 5) {
       mesh.rotateX(Math.PI / 2);
-    } else if (face.index === 0) {
+    } else if (face.face === 0) {
       mesh.rotateY(Math.PI / 2 + boxDomainObject.zRotation);
-    } else {
+    } else if (face.face === 3) {
+      mesh.rotateY(-Math.PI / 2 + boxDomainObject.zRotation);
+    } else if (face.face === 1) {
+      mesh.rotateY(Math.PI + boxDomainObject.zRotation);
+    } else if (face.face === 4) {
       mesh.rotateY(boxDomainObject.zRotation);
     }
     return mesh;
@@ -446,15 +468,19 @@ function updateLineSegmentsMaterial(
   material.depthWrite = false;
 }
 
-function updateMarkerMaterial(material: MeshPhongMaterial, boxDomainObject: BoxDomainObject): void {
+function updateMarkerMaterial(
+  material: MeshPhongMaterial,
+  boxDomainObject: BoxDomainObject,
+  selected: boolean
+): void {
   material.color = ARROW_AND_RING_COLOR;
   material.polygonOffset = boxDomainObject.hasFocus;
   material.polygonOffsetFactor = 1;
   material.polygonOffsetUnits = 4.0;
   material.transparent = true;
   material.emissive = ARROW_AND_RING_COLOR;
-  material.emissiveIntensity = 0.4;
-  material.side = DoubleSide;
+  material.emissiveIntensity = selected ? 0.8 : 0.3;
+  material.side = FrontSide;
   material.flatShading = true;
   material.depthWrite = false;
 }
