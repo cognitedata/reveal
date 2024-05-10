@@ -2,6 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
+import type { PerspectiveCamera, WebGLRenderer } from 'three';
+
 /**
  * Delegate for pointer events.
  * @module @cognite/reveal
@@ -24,8 +26,8 @@ export type DisposedDelegate = () => void;
  */
 export type BeforeSceneRenderedDelegate = (event: {
   frameNumber: number;
-  renderer: THREE.WebGLRenderer;
-  camera: THREE.PerspectiveCamera;
+  renderer: WebGLRenderer;
+  camera: PerspectiveCamera;
 }) => void;
 
 /**
@@ -35,6 +37,6 @@ export type BeforeSceneRenderedDelegate = (event: {
 export type SceneRenderedDelegate = (event: {
   frameNumber: number;
   renderTime: number;
-  renderer: THREE.WebGLRenderer;
-  camera: THREE.PerspectiveCamera;
+  renderer: WebGLRenderer;
+  camera: PerspectiveCamera;
 }) => void;

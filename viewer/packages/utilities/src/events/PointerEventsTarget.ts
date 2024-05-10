@@ -1,12 +1,12 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
+import { getPixelCoordinatesFromEvent } from './getPixelCoordinatesFromEvent';
 import debounce from 'lodash/debounce';
 import { Vector2, MOUSE } from 'three';
 import { PointerEvents } from './PointerEvents';
 
-const MAX_MOVE_DISTANCE = 8;
+const MAX_MOVE_DISTANCE_DURING_CLICK = 8;
 const MAX_CLICK_DURATION = 250;
 const DOUBLE_CLICK_INTERVAL = 300;
 const HOVER_INTERVAL = 100;
@@ -27,7 +27,7 @@ export class PointerEventsTarget {
 
   private readonly _domElement: HTMLElement;
   private readonly _events: PointerEvents;
-  private readonly _downPosition: Vector2 = new Vector2();
+  private _downPosition: Vector2 | undefined = undefined;
 
   private _lastDownTimestamp = 0; // Time of last pointer down event
   private _prevDownTimestamp = 0; // Time of previous pointer down event
@@ -83,8 +83,7 @@ export class PointerEventsTarget {
 
     const leftButton = isTouch(event) || isLeftMouseButton(event);
 
-    const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
-    this._downPosition.set(offsetX, offsetY);
+    this._downPosition = getPixelCoordinatesFromEvent(event, this._domElement);
     this._prevDownTimestamp = this._lastDownTimestamp;
     this._lastDownTimestamp = event.timeStamp;
     this._clickCounter++;
@@ -117,7 +116,7 @@ export class PointerEventsTarget {
       if (!isAnyMouseButtonPressed(event)) {
         return;
       }
-      if (event.movementX === 0 && event.movementX === 0) {
+      if (event.movementX === 0 && event.movementY === 0) {
         return;
       }
     }
@@ -164,10 +163,9 @@ export class PointerEventsTarget {
     if (clickDuration >= MAX_CLICK_DURATION) {
       return false;
     }
-    const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
-    const distance = Math.sqrt(offsetX - this._downPosition.x) ** 2 + (offsetY - this._downPosition.y) ** 2;
-
-    return distance < MAX_MOVE_DISTANCE;
+    const position = getPixelCoordinatesFromEvent(event, this._domElement);
+    const distance = position.distanceTo(this._downPosition);
+    return distance < MAX_MOVE_DISTANCE_DURING_CLICK;
   }
 
   private isDoubleClick(): boolean {

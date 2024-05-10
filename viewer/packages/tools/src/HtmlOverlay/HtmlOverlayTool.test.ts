@@ -228,7 +228,7 @@ describe(HtmlOverlayTool.name, () => {
     helper.forceUpdate();
 
     // Assert
-    expect(createClusterElementCallback).toBeCalledTimes(1);
+    expect(createClusterElementCallback).toHaveBeenCalledTimes(1);
     expect(div1.style.visibility).toEqual('hidden');
     expect(div2.style.visibility).toEqual('hidden');
   });

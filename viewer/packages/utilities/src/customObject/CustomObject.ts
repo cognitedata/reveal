@@ -5,13 +5,14 @@
 import { Object3D, Box3 } from 'three';
 import { CustomObjectIntersection } from './CustomObjectIntersection';
 import { CustomObjectIntersectInput } from './CustomObjectIntersectInput';
+import { ICustomObject } from './ICustomObject';
 
 /**
  * This class encasulate a Object3D, and made it possible to add flags to it.
  * It might be extended with more flags in the future.
  * @beta
  */
-export class CustomObject {
+export class CustomObject implements ICustomObject {
   private readonly _object: Object3D;
   private _isPartOfBoundingBox: boolean = true;
   private _shouldPick: boolean = false;
@@ -60,6 +61,15 @@ export class CustomObject {
   }
 
   /**
+   * Get the bounding box from the object
+   * @beta
+   */
+  getBoundingBox(target: Box3): Box3 {
+    target.setFromObject(this.object);
+    return target;
+  }
+
+  /**
    * Set or get whether it should be also give the bounding box when picked by the camera
    * Default is false.
    * @beta
@@ -81,7 +91,7 @@ export class CustomObject {
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    const intersection = intersectInput.raycaster.intersectObject(this._object);
+    const intersection = intersectInput.raycaster.intersectObject(this.object, true);
     if (intersection.length === 0) {
       return undefined;
     }
@@ -100,7 +110,7 @@ export class CustomObject {
       userData: intersection[0]
     };
     if (this.shouldPickBoundingBox) {
-      const boundingBox = new Box3().setFromObject(this.object);
+      const boundingBox = this.getBoundingBox(new Box3());
       if (!boundingBox.isEmpty()) {
         customObjectIntersection.boundingBox = boundingBox;
       }

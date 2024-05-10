@@ -5,7 +5,7 @@
 import { Image360Revision } from './Image360Revision';
 import { Image360Visualization } from './Image360Visualization';
 
-import { Color } from 'three';
+import { Color, type Matrix4 } from 'three';
 
 /**
  * Image360 icon style
@@ -27,7 +27,7 @@ export interface Image360 {
    * of the given 360 image.
    * @returns model-to-world transform of the 360 Image
    */
-  readonly transform: THREE.Matrix4;
+  readonly transform: Matrix4;
 
   /**
    * The object containing the unit cube with the 360 images.

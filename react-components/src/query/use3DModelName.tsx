@@ -28,7 +28,9 @@ export const use3DModelName = (ids: number[]): UseQueryResult<string[] | undefin
     return modelResolvedNames;
   };
 
-  const queryResult = useQuery<string[] | undefined>(['cdf', '3d', 'model', ids], queryFunction, {
+  const queryResult = useQuery<string[] | undefined>({
+    queryKey: ['cdf', '3d', 'model', ids],
+    queryFn: queryFunction,
     staleTime: Infinity
   });
 

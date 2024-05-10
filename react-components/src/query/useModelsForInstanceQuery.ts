@@ -23,9 +23,9 @@ export const useModelsForInstanceQuery = (
   const cogniteClient = useSDK();
   const fdmSdk = useFdmSdk();
 
-  return useQuery(
-    ['reveal', 'react-components', instance],
-    async () => {
+  return useQuery({
+    queryKey: ['reveal', 'react-components', instance],
+    queryFn: async () => {
       if (instance === undefined) {
         return undefined;
       }
@@ -38,8 +38,8 @@ export const useModelsForInstanceQuery = (
         return await getModelsForFdmInstance(instance, fdmSdk);
       }
     },
-    { enabled: instance !== undefined }
-  );
+    enabled: instance !== undefined
+  });
 };
 
 async function getModelsForAssetInstance(

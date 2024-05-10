@@ -12,7 +12,8 @@ import {
   type UseInfiniteQueryResult,
   type UseQueryResult,
   useInfiniteQuery,
-  useQuery
+  useQuery,
+  type InfiniteData
 } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { chunk } from 'lodash';
@@ -36,9 +37,9 @@ export const useSearchMappedEquipmentAssetMappings = (
   const modelsKey = models.map((model) => [model.modelId, model.revisionId]);
   const { data: assetMappings, isFetched } = useAllMappedEquipmentAssetMappings(models, sdk);
 
-  return useQuery(
-    ['reveal', 'react-components', 'search-mapped-asset-mappings', query, modelsKey],
-    async () => {
+  return useQuery({
+    queryKey: ['reveal', 'react-components', 'search-mapped-asset-mappings', query, modelsKey],
+    queryFn: async () => {
       if (query === '') {
         const mappedAssets =
           assetMappings?.pages
@@ -63,27 +64,25 @@ export const useSearchMappedEquipmentAssetMappings = (
 
       return filteredSearchedAssets;
     },
-    {
-      staleTime: Infinity,
-      enabled: isFetched && assetMappings !== undefined
-    }
-  );
+    staleTime: Infinity,
+    enabled: isFetched && assetMappings !== undefined
+  });
 };
 
 export const useAllMappedEquipmentAssetMappings = (
   models: AddModelOptions[],
   userSdk?: CogniteClient
-): UseInfiniteQueryResult<ModelMappingsWithAssets[]> => {
+): UseInfiniteQueryResult<InfiniteData<ModelMappingsWithAssets[]>, Error> => {
   const sdk = useSDK(userSdk);
 
-  return useInfiniteQuery(
-    [
+  return useInfiniteQuery({
+    queryKey: [
       'reveal',
       'react-components',
       'all-mapped-equipment-asset-mappings',
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
-    async ({ pageParam = models.map((model) => ({ cursor: 'start', model })) }) => {
+    queryFn: async ({ pageParam }) => {
       const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
         const nextCursors = pageParam as Array<{
           cursor: string | 'start' | undefined;
@@ -114,11 +113,10 @@ export const useAllMappedEquipmentAssetMappings = (
 
       return modelsAssets;
     },
-    {
-      staleTime: Infinity,
-      getNextPageParam
-    }
-  );
+    initialPageParam: models.map((model) => ({ cursor: 'start', model })),
+    staleTime: Infinity,
+    getNextPageParam
+  });
 };
 
 export const useMappingsForAssetIds = (
