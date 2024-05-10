@@ -6,6 +6,7 @@ import { Matrix4, type Vector3 } from 'three';
 import { horizontalAngle } from '../geometry/vector3Extensions';
 import { Range3 } from '../geometry/Range3';
 import { type IBox } from './IBox';
+import { forceBetween0AndPi } from '../extensions/mathExtensions';
 
 export function addPointsToBox(box: IBox, points: Vector3[]): void {
   if (points.length === 0) {
@@ -32,7 +33,7 @@ export function addPointsToBox(box: IBox, points: Vector3[]): void {
       // Calculate zRotation
       const vector = points[1].clone();
       vector.sub(points[0]);
-      box.zRotation = horizontalAngle(vector);
+      box.zRotation = forceBetween0AndPi(horizontalAngle(vector));
     }
   }
   const matrix = new Matrix4().makeRotationZ(box.zRotation);

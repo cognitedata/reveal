@@ -11,6 +11,7 @@ import { type DomainObject } from '../../domainObjects/DomainObject';
 import { type IBox } from './IBox';
 import { type BoxPickInfo } from './BoxPickInfo';
 import { MIN_BOX_SIZE } from '../../../concrete/boxDomainObject/BoxDomainObject';
+import { forceBetween0AndPi } from '../extensions/mathExtensions';
 
 export class BoxDragger {
   // ==================================================
@@ -157,8 +158,8 @@ export class BoxDragger {
 
   private rotate(ray: Ray): void {
     // Use top face and create a plane on the top face
-    const face = new BoxFace(2);
-    const normal = face.getNormal();
+    const boxFace = new BoxFace(2);
+    const normal = boxFace.getNormal();
     normal.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     normal.normalize();
 
@@ -180,7 +181,7 @@ export class BoxDragger {
     const deltaAngle = startAngle - endAngle;
 
     // Rotate
-    this.box.zRotation = deltaAngle + this._zRotationOfBox;
+    this.box.zRotation = forceBetween0AndPi(deltaAngle + this._zRotationOfBox);
 
     // Notify the changes
     this.domainObject.notify(Changes.geometry);

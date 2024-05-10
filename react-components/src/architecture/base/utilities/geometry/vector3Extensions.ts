@@ -20,13 +20,16 @@ export function verticalDistanceTo(p1: Vector3, p2: Vector3): number {
 }
 
 export function getOctDir(vector: Vector2): number {
+  // The octdirs are:
+  //         North (Positive Y-axis)
+  //        3  2  1
+  // West   4  *  0 East (Positive X-axis)
+  //        5  6  7
+  //         South
   const angle = vector.angle();
 
-  // Convert from math to compass angle (0 at north, clockwise)
-  const compassAngle = Math.PI / 2 - angle;
-
   // Normalize angle to (0,1) so it is easier to work with
-  let normalized = compassAngle / (2 * Math.PI);
+  let normalized = angle / (2 * Math.PI);
 
   // Force between 0 and 1
   while (normalized < 0) normalized += 1;
@@ -34,6 +37,8 @@ export function getOctDir(vector: Vector2): number {
 
   // Convert it to integer between 0 and 7
   const octdir = Math.round(8 * normalized);
+
+  // Check to be sure
   if (octdir >= 8) {
     return octdir - 8;
   }
@@ -41,29 +46,4 @@ export function getOctDir(vector: Vector2): number {
     return octdir + 8;
   }
   return octdir;
-}
-
-export function getResizeCursor(octdir: number): string | undefined {
-  // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
-
-  switch (octdir) {
-    case 0:
-    case 4:
-      return 'ns-resize';
-
-    case 1:
-    case 5:
-      return 'nesw-resize';
-
-    case 2:
-    case 6:
-      return 'ew-resize';
-
-    case 3:
-    case 7:
-      return 'nwse-resize';
-
-    default:
-      return undefined;
-  }
 }

@@ -22,7 +22,7 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
 
   public readonly size = new Vector3().setScalar(MIN_BOX_SIZE);
   public readonly center = new Vector3();
-  public zRotation = 0;
+  public zRotation = 0; // In interval [0, Pi>
 
   // For focus when edit in 3D
   public focusFace: BoxFace | undefined = undefined; // Used when hasFocus is true only
@@ -31,6 +31,10 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
+
+  public get diagonal(): number {
+    return this.size.length();
+  }
 
   public get area(): number {
     return 2 * (this.size.x + this.size.y + this.size.z);
@@ -102,7 +106,7 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
         return false; // No change
       }
       this.focusType = BoxFocusType.None;
-      this.focusFace = undefined; // Ignore input face
+      this.focusFace = undefined; // Ignore input focusFace
     } else {
       if (focusType === this.focusType && BoxFace.equals(this.focusFace, focusFace)) {
         return false; // No change

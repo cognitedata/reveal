@@ -15,7 +15,8 @@ import { NavigationTool } from '../concreteCommands/NavigationTool';
 import { Vector3, AmbientLight, DirectionalLight, PerspectiveCamera } from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
-import { getOctDir, getResizeCursor } from '../utilities/geometry/vector3Extensions';
+import { getOctDir } from '../utilities/geometry/vector3Extensions';
+import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -188,7 +189,7 @@ export class RevealRenderTarget {
       return;
     }
     const screenVector = screenPoint2?.sub(screenPoint1).normalize();
-    screenVector.y = -screenVector.y; // Flip y axis
+    screenVector.y = -screenVector.y; // Flip y axis som x-y axis is mathematically correct
     const cursor = getResizeCursor(getOctDir(screenVector));
     if (cursor !== undefined) {
       this.cursor = cursor;

@@ -14,6 +14,7 @@ export class BoxRenderStyle extends RenderStyle {
   public colorType = ColorType.Specified;
   public opacity = 0.5;
   public opacityUse = true;
+  public relativeFontSize = 0.05; // Relative to diagonal of the box
 
   // ==================================================
   // OVERRIDES of BaseStyle

@@ -134,8 +134,9 @@ export class BoxEditTool extends NavigationTool {
       const matrix = intersection.domainObject.getMatrix();
       matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
+      // If they are too close, the pixel value will be the same, so multiply point2 by 100
       const point1 = intersection.domainObject.center.clone();
-      const point2 = pickInfo.face.getCenter();
+      const point2 = pickInfo.face.getCenter().multiplyScalar(100);
       point1.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
       point2.applyMatrix4(matrix);
 

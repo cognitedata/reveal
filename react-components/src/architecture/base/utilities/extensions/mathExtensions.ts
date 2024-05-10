@@ -128,6 +128,26 @@ export function floor(value: number, delta: number): number {
   return result;
 }
 
+export function forceBetween0AndTwoPi(value: number): number {
+  while (value < 0) {
+    value += 2 * Math.PI;
+  }
+  while (value >= 2 * Math.PI) {
+    value -= 2 * Math.PI;
+  }
+  return value;
+}
+
+export function forceBetween0AndPi(value: number): number {
+  while (value < 0) {
+    value += Math.PI;
+  }
+  while (value >= Math.PI) {
+    value -= Math.PI;
+  }
+  return value;
+}
+
 // ==================================================
 // FUNCTIONS: Comparing
 // ==================================================

@@ -18,7 +18,8 @@ import {
   Sprite,
   Camera,
   CircleGeometry,
-  Material
+  Material,
+  Plane
 } from 'three';
 import { BoxDomainObject, MIN_BOX_SIZE } from './BoxDomainObject';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
@@ -45,8 +46,8 @@ import { BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { Range1 } from '../../base/utilities/geometry/Range1';
 
-const RELATIVE_RESIZE_RADIUS = 0.15;
-const RELATIVE_ROTATION_RADIUS = new Range1(0.45, 0.6);
+const RELATIVE_RESIZE_RADIUS = 0.125;
+const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
 
 const ARROW_AND_RING_COLOR = new Color(1, 1, 1);
 const LABEL_BG_COLOR = new Color().setScalar(0.05);
@@ -74,8 +75,8 @@ export class BoxThreeView extends GroupThreeView {
     return this._vectorPool.getNext(copyFrom);
   }
 
-  private getLabelHeight(): number {
-    return 0.075 * Math.sqrt(this.boxDomainObject.area);
+  private getLabelHeight(relativeFontSize: number): number {
+    return relativeFontSize * this.boxDomainObject.diagonal;
   }
 
   private getFaceRadius(face: BoxFace): number {
@@ -114,7 +115,7 @@ export class BoxThreeView extends GroupThreeView {
 
   protected override addChildren(): void {
     const { boxDomainObject } = this;
-    const matrix = this.getCombinedMatrix();
+    const matrix = this.getMatrix();
 
     const { focusType } = boxDomainObject;
     if (focusType !== BoxFocusType.None) {
@@ -123,9 +124,26 @@ export class BoxThreeView extends GroupThreeView {
     this.addChild(this.createLines(matrix));
 
     if (focusType !== BoxFocusType.Pending && focusType !== BoxFocusType.None) {
+      const planes: Plane[] = [];
+      const boxFace = new BoxFace();
+      for (boxFace.face = 0; boxFace.face < 6; boxFace.face++) {
+        if (boxFace.index === 2) {
+          continue;
+        }
+        const center = boxFace.getCenter(this.newVector3());
+        const normal = boxFace.getNormal(this.newVector3()).negate();
+        const plane = new Plane().setFromNormalAndCoplanarPoint(normal, center);
+        plane.applyMatrix4(matrix);
+        planes.push(plane);
+      }
+      const rotationMaterial = new MeshPhongMaterial();
+      updateMarkerMaterial(rotationMaterial, boxDomainObject);
+      rotationMaterial.clippingPlanes = planes;
+
+      this.addChild(this.createRotationCircle(matrix, rotationMaterial));
+
       const material = new MeshPhongMaterial();
       updateMarkerMaterial(material, boxDomainObject);
-      this.addChild(this.createRotationCircle(matrix, material));
       this.addResizeCircles(matrix, material);
     }
     this.addLabels(matrix);
@@ -140,7 +158,7 @@ export class BoxThreeView extends GroupThreeView {
       return undefined; // Should never be picked
     }
     const orientedBox = createOrientedBox();
-    const matrix = this.getCombinedMatrix();
+    const matrix = this.getMatrix();
     orientedBox.applyMatrix4(matrix);
 
     const ray = intersectInput.raycaster.ray;
@@ -203,8 +221,8 @@ export class BoxThreeView extends GroupThreeView {
   }
 
   private addLabels(matrix: Matrix4): void {
-    const labelHeight = this.getLabelHeight();
-    const { boxDomainObject } = this;
+    const { boxDomainObject, style } = this;
+    const labelHeight = this.getLabelHeight(style.relativeFontSize);
     clear(this._labels);
     for (let index = 0; index < 3; index++) {
       const size = boxDomainObject.size.getComponent(index);
@@ -233,9 +251,9 @@ export class BoxThreeView extends GroupThreeView {
   private createDegreesLabel(matrix: Matrix4, labelHeight: number): Sprite | undefined {
     const { boxDomainObject } = this;
     const degrees = radToDeg(boxDomainObject.zRotation);
-    const text = degrees.toFixed(2);
-    if (text === '0.00') {
-      return undefined; // Not show when 0.00
+    const text = degrees.toFixed(1);
+    if (text === '0.0') {
+      return undefined; // Not show when about 0
     }
     const sprite = createSprite(text + '°', labelHeight);
     if (sprite === undefined) {
@@ -253,11 +271,9 @@ export class BoxThreeView extends GroupThreeView {
 
   private updateLabels(camera: Camera): void {
     const { boxDomainObject } = this;
-    const matrix = this.getCombinedMatrix();
+    const matrix = this.getMatrix();
 
-    const rotationMatrix = boxDomainObject.getRotationMatrix();
-    rotationMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
-
+    const rotationMatrix = this.getRotationMatrix();
     const centerOfBox = this.newVector3(boxDomainObject.center);
     centerOfBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     const cameraPosition = camera.getWorldPosition(this.newVector3());
@@ -318,7 +334,7 @@ export class BoxThreeView extends GroupThreeView {
 
     const outerRadius = RELATIVE_ROTATION_RADIUS.max * radius;
     const innerRadius = RELATIVE_ROTATION_RADIUS.min * radius;
-    const geometry = new RingGeometry(innerRadius, outerRadius, 64);
+    const geometry = new RingGeometry(innerRadius, outerRadius, 32);
     const mesh = new Mesh(geometry, material);
 
     const center = face.getCenter(this.newVector3());
@@ -328,11 +344,17 @@ export class BoxThreeView extends GroupThreeView {
     return mesh;
   }
 
-  private createResizeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh {
+  private createResizeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
     const { boxDomainObject } = this;
-
+    const adjecentSize1 = boxDomainObject.size.getComponent(face.tangentIndex1);
+    if (adjecentSize1 <= MIN_BOX_SIZE) {
+      return undefined;
+    }
+    const adjecentSize2 = boxDomainObject.size.getComponent(face.tangentIndex2);
+    if (adjecentSize2 <= MIN_BOX_SIZE) {
+      return undefined;
+    }
     const radius = RELATIVE_RESIZE_RADIUS * this.getFaceRadius(face);
-
     const geometry = new CircleGeometry(radius, 32);
     material.transparent = true;
     material.depthWrite = false;
@@ -341,9 +363,9 @@ export class BoxThreeView extends GroupThreeView {
     const center = face.getCenter(this.newVector3());
     center.applyMatrix4(matrix);
     mesh.position.copy(center);
-    if (face.face % 3 === 2) {
+    if (face.index === 2) {
       mesh.rotateX(Math.PI / 2);
-    } else if (face.face % 3 === 0) {
+    } else if (face.index === 0) {
       mesh.rotateY(Math.PI / 2 + boxDomainObject.zRotation);
     } else {
       mesh.rotateY(boxDomainObject.zRotation);
@@ -351,9 +373,16 @@ export class BoxThreeView extends GroupThreeView {
     return mesh;
   }
 
-  private getCombinedMatrix(): Matrix4 {
+  private getMatrix(): Matrix4 {
     const { boxDomainObject } = this;
     const matrix = boxDomainObject.getMatrix();
+    matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+    return matrix;
+  }
+
+  private getRotationMatrix(): Matrix4 {
+    const { boxDomainObject } = this;
+    const matrix = boxDomainObject.getRotationMatrix();
     matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
     return matrix;
   }
@@ -431,7 +460,6 @@ function createSprite(text: string, labelHeight: number): Sprite | undefined {
   if (result === undefined) {
     return undefined;
   }
-  result.renderOrder = 3;
   result.material.depthTest = true;
   result.material.transparent = true;
   result.material.opacity = 0.75;
