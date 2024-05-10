@@ -125,15 +125,15 @@ export const useMappingsForAssetIds = (
 ): UseInfiniteQueryResult<ModelMappingsWithAssets[]> => {
   const sdk = useSDK();
 
-  return useInfiniteQuery(
-    [
+  return useInfiniteQuery({
+    queryKey: [
       'reveal',
       'react-components',
       'mappings-for-asset-ids',
       ...models.map((model) => [model.modelId, model.revisionId]),
       ...assetIds
     ],
-    async ({ pageParam = models.map((model) => ({ cursor: 'start', model })) }) => {
+    queryFn: async ({ pageParam = models.map((model) => ({ cursor: 'start', model })) }) => {
       const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
         const nextCursors = pageParam as Array<{
           cursor: string | 'start' | undefined;
@@ -165,11 +165,10 @@ export const useMappingsForAssetIds = (
 
       return modelsAssets;
     },
-    {
-      staleTime: Infinity,
-      getNextPageParam
-    }
-  );
+    initialPageParam: models.map((model) => ({ cursor: 'start', model })),
+    staleTime: Infinity,
+    getNextPageParam
+});
 };
 
 function getNextPageParam(
