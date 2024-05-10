@@ -32,7 +32,6 @@ import {
 } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { isSameCadModel, isSamePointCloudModel } from '../../utilities/isSameModel';
-import { is3DModelOptions } from '../../../stories/utilities/is3DModelOptions';
 
 export const Reveal3DResources = ({
   resources,
@@ -227,7 +226,7 @@ function useRemoveUnmentionedModels(
 
     const nonReferredModels = models.filter((model) => {
       const correspondingAddOptions = [...addOptionsSet.values()].find((options) => {
-        if (!is3DModelOptions(options)) {
+        if (!is3dModelOptions(options)) {
           return false;
         }
 
@@ -286,6 +285,12 @@ function is360ImageAddOptions(
   return (
     (addOptions as AddReveal3DModelOptions).modelId === undefined &&
     (addOptions as AddReveal3DModelOptions).revisionId === undefined
+  );
+}
+function is3dModelOptions(addOptions: AddResourceOptions): addOptions is AddReveal3DModelOptions {
+  return (
+    (addOptions as AddReveal3DModelOptions).modelId !== undefined &&
+    (addOptions as AddReveal3DModelOptions).revisionId !== undefined
   );
 }
 
