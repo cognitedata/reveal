@@ -14,7 +14,9 @@ import {
   type AddResourceOptions,
   type Reveal3DResourcesProps,
   type CadModelOptions,
-  type PointCloudModelOptions
+  type PointCloudModelOptions,
+  AddImageCollection360Options,
+  AddImageCollection360DatamodelsOptions
 } from './types';
 import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
 import { useCalculatePointCloudStyling } from '../../hooks/useCalculatePointCloudModelsStyling';
@@ -29,6 +31,8 @@ import {
   isImage360AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
+import { isSameCadModel, isSamePointCloudModel } from '../../utilities/isSameModel';
+import { is3DModelOptions } from '../../../stories/utilities/is3DModelOptions';
 
 export const Reveal3DResources = ({
   resources,
@@ -45,6 +49,8 @@ export const Reveal3DResources = ({
   useEffect(() => {
     void getTypedModels(resources, viewer, onResourceLoadError).then(setReveal3DModels);
   }, [resources, viewer]);
+
+  useRemoveUnmentionedModels(reveal3DModels, resources, viewer);
 
   const cadModelOptions = useMemo(
     () => reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad'),
@@ -206,4 +212,82 @@ async function getTypedModels(
 
 function defaultLoadFailHandler(resource: AddResourceOptions, error: any): void {
   console.warn(`Could not load resource ${JSON.stringify(resource)}: ${JSON.stringify(error)}`);
+}
+
+function useRemoveUnmentionedModels(
+  addOptions: TypedReveal3DModel[],
+  allResourceAddOptions: AddResourceOptions[],
+  viewer: Cognite3DViewer
+): void {
+  useEffect(() => {
+    const models = viewer.models;
+    const collections = viewer.get360ImageCollections();
+    const addOptionsSet = new Set(addOptions);
+    const collectionAddOptionsSet = new Set(allResourceAddOptions.filter(is360ImageAddOptions));
+
+    const nonReferredModels = models.filter((model) => {
+      const correspondingAddOptions = [...addOptionsSet.values()].find((options) => {
+        if (!is3DModelOptions(options)) {
+          return false;
+        }
+
+        if (options.type === 'cad') {
+          return isSameCadModel(options, {
+            type: 'cad',
+            modelId: model.modelId,
+            revisionId: model.revisionId,
+            transform: model.getModelTransformation()
+          });
+        } else {
+          return isSamePointCloudModel(options, {
+            type: 'pointcloud',
+            modelId: model.modelId,
+            revisionId: model.revisionId,
+            transform: model.getModelTransformation()
+          });
+        }
+      });
+
+      if (correspondingAddOptions !== undefined) {
+        addOptionsSet.delete(correspondingAddOptions);
+      }
+
+      return correspondingAddOptions === undefined;
+    });
+
+    const nonReferredCollections = collections.filter((collection) => {
+      const correspondingAddOptions = [...collectionAddOptionsSet.values()].find((options) => {
+        if (is360ImageDataModelAddOptinos(options)) {
+          return collection.id === options.externalId;
+        } else {
+          return collection.id === options.siteId;
+        }
+      });
+
+      if (correspondingAddOptions !== undefined) {
+        collectionAddOptionsSet.delete(correspondingAddOptions);
+      }
+
+      return correspondingAddOptions === undefined;
+    });
+
+    nonReferredModels.forEach((model) => viewer.removeModel(model));
+    nonReferredCollections.forEach((collection) => viewer.remove360ImageSet(collection));
+  }, [addOptions]);
+}
+
+function is360ImageAddOptions(
+  addOptions: AddResourceOptions
+): addOptions is AddImageCollection360Options {
+  return (
+    (addOptions as AddReveal3DModelOptions).modelId === undefined &&
+    (addOptions as AddReveal3DModelOptions).revisionId === undefined
+  );
+}
+
+function is360ImageDataModelAddOptinos(
+  addOptions: AddImageCollection360Options
+): addOptions is AddImageCollection360DatamodelsOptions {
+  const castOptions = addOptions as AddImageCollection360DatamodelsOptions;
+  return castOptions.externalId !== undefined && castOptions.space !== undefined;
 }
