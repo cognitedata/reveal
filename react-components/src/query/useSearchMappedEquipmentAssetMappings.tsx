@@ -122,7 +122,7 @@ export const useAllMappedEquipmentAssetMappings = (
 export const useMappingsForAssetIds = (
   models: AddModelOptions[],
   assetIds: number[]
-): UseInfiniteQueryResult<ModelMappingsWithAssets[]> => {
+): UseInfiniteQueryResult<InfiniteData<ModelMappingsWithAssets[]>, Error> => {
   const sdk = useSDK();
 
   return useInfiniteQuery({
