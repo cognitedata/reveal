@@ -22,11 +22,11 @@ export class BoxDragger {
 
   private readonly _face = new BoxFace();
   private readonly _focusType: BoxFocusType;
-  private readonly _point: Vector3 = new Vector3();
-  private readonly _normal: Vector3 = new Vector3();
-  private readonly _planeOfBox: Plane = new Plane();
-  private readonly _minPoint: Vector3 = new Vector3();
-  private readonly _maxPoint: Vector3 = new Vector3();
+  private readonly _point: Vector3 = new Vector3(); // Intersection point
+  private readonly _normal: Vector3 = new Vector3(); // Intersection normal
+  private readonly _planeOfBox: Plane = new Plane(); // Plane of the intersection/normal
+  private readonly _minPoint: Vector3 = new Vector3(); // Start of line from point at -normal direction
+  private readonly _maxPoint: Vector3 = new Vector3(); // End of line from point at +normal direction
 
   // Original values when the drag started
   private readonly _scaleOfBox: Vector3 = new Vector3();
@@ -132,7 +132,7 @@ export class BoxDragger {
     size.copy(this._scaleOfBox);
     center.copy(this._centerOfBox);
 
-    // Restrict the size to be at least MIN_SIZE
+    // Restrict the size
     const index = this._face.index;
     const newSize = Math.max(MIN_BOX_SIZE, deltaSize + size.getComponent(index));
     const newDeltaSize = newSize - size.getComponent(index);

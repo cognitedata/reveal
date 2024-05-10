@@ -14,7 +14,7 @@ export class Changes {
 
   // Fields changed
   public static readonly nameing: symbol = Symbol('nameing');
-  public static readonly color: symbol = Symbol('Color');
+  public static readonly color: symbol = Symbol('color');
   public static readonly icon: symbol = Symbol('icon');
   public static readonly colorMap: symbol = Symbol('colorMap');
   public static readonly geometry: symbol = Symbol('geometry');
