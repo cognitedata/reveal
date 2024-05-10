@@ -168,7 +168,7 @@ export const useMappingsForAssetIds = (
     initialPageParam: models.map((model) => ({ cursor: 'start', model })),
     staleTime: Infinity,
     getNextPageParam
-});
+  });
 };
 
 function getNextPageParam(
