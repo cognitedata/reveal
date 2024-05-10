@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useState, type ReactElement } from 'react';
+import { useCallback, useState, type ReactElement } from 'react';
 
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
@@ -13,6 +13,17 @@ type AssetContextualizedButtonProps = {
   setEnableCustomDefaultStyling: (enabled: boolean) => void;
 };
 
+const tooltipMapping = {
+  true: {
+    key: 'CONTEXTUALIZED_ASSETS_LOADING_TOOLTIP',
+    default: 'Loading contextualized assets'
+  },
+  false: {
+    key: 'CONTEXTUALIZED_ASSETS_TOOLTIP',
+    default: 'Show contextualized assets'
+  }
+};
+
 export const AssetContextualizedButton = ({
   setEnableCustomDefaultStyling
 }: AssetContextualizedButtonProps): ReactElement => {
@@ -22,23 +33,12 @@ export const AssetContextualizedButton = ({
   const [enableContextualizedStyling, setEnableContextualizedStyling] = useState<boolean>(false);
   const { isLoading } = useAssetMappedNodesForRevisions(cadModels);
 
-  const tooltipMapping = {
-    true: {
-      key: 'CONTEXTUALIZED_ASSETS_LOADING_TOOLTIP',
-      default: 'Loading contextualized assets'
-    },
-    false: {
-      key: 'CONTEXTUALIZED_ASSETS_TOOLTIP',
-      default: 'Show contextualized assets'
-    }
-  };
-
   const tooltip = isLoading ? tooltipMapping.true : tooltipMapping.false;
 
-  const onClick = (): void => {
+  const onClick = useCallback((): void => {
     setEnableContextualizedStyling((prevState) => !prevState);
     setEnableCustomDefaultStyling(!enableContextualizedStyling);
-  };
+  }, [enableContextualizedStyling, setEnableCustomDefaultStyling]);
 
   return (
     <CogsTooltip
