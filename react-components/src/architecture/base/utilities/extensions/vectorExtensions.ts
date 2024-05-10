@@ -2,8 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Vector2, type Vector3 } from 'three';
-import { square } from '../extensions/mathExtensions';
+import { Vector2, type Vector3 } from 'three';
+import { square } from './mathExtensions';
+
+export function horizontalSubstract(v1: Vector3, v2: Vector3): Vector2 {
+  return new Vector2(v1.x - v2.x, v1.y - v2.y);
+}
 
 export function horizontalAngle(vector: Vector3): number {
   // computes the angle in radians with respect to the positive x-axis

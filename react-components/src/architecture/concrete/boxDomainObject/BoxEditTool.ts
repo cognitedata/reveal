@@ -222,7 +222,7 @@ export class BoxEditTool extends NavigationTool {
       return;
     }
     const ray = this.getRaycaster(event).ray.clone();
-    //ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
     this._dragger.apply(ray);
   }
 
@@ -254,7 +254,9 @@ export class BoxEditTool extends NavigationTool {
     if (pickInfo === undefined) {
       return undefined;
     }
-    return new BoxDragger(domainObject, intersection.point, pickInfo);
+    const point = intersection.point;
+    point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    return new BoxDragger(domainObject, point, pickInfo);
   }
 
   private addPoint(intersection: AnyIntersection, isHovering: boolean): void {

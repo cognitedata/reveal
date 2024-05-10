@@ -9,7 +9,7 @@ import { type BoxFocusType } from './BoxFocusType';
 export type IBox = {
   get size(): Vector3;
   get center(): Vector3;
-  get zRotation(): number;
+  get zRotation(): number; // Angle in radians in interval [0, 2*Pi>
   set zRotation(value: number);
   forceMinSize: () => void;
 

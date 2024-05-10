@@ -22,7 +22,7 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
 
   public readonly size = new Vector3().setScalar(MIN_BOX_SIZE);
   public readonly center = new Vector3();
-  public zRotation = 0; // In interval [0, Pi>
+  public zRotation = 0; // Angle in radians in interval [0, 2*Pi>
 
   // For focus when edit in 3D
   public focusFace: BoxFace | undefined = undefined; // Used when hasFocus is true only

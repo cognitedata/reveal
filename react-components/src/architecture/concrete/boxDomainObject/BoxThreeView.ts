@@ -285,6 +285,8 @@ export class BoxThreeView extends GroupThreeView {
       normal.applyMatrix4(rotationMatrix);
       visibleFaces[boxFace.face] = normal.dot(cameraDirection) < 0;
     }
+    const labelHeight = this.getLabelHeight(this.style.relativeFontSize);
+
     // If the 2 adjecent faces are visible, show the label along the edge
     for (let index = 0; index < this._labels.length; index++) {
       const label = this._labels[index];
@@ -308,6 +310,8 @@ export class BoxThreeView extends GroupThreeView {
           const faceCenter2 = boxFace.getCenter(this.newVector3());
           const edgeCenter = faceCenter2.add(faceCenter1);
           edgeCenter.applyMatrix4(matrix);
+          // Move the label slightly away from the box to avoid z-fighting
+          edgeCenter.addScaledVector(cameraDirection, -labelHeight / 4);
           label.position.copy(edgeCenter);
           label.visible = true;
           break;

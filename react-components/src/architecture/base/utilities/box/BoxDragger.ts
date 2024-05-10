@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type Ray, Vector3, Plane, Vector2, Matrix4 } from 'three';
 import { Changes } from '../../domainObjectsHelpers/Changes';
 import { BoxFace } from './BoxFace';
@@ -11,7 +10,9 @@ import { type DomainObject } from '../../domainObjects/DomainObject';
 import { type IBox } from './IBox';
 import { type BoxPickInfo } from './BoxPickInfo';
 import { forceBetween0AndPi } from '../extensions/mathExtensions';
+import { horizontalSubstract } from '../extensions/vectorExtensions';
 
+// All geometry in this class assume Z-axis is up
 export class BoxDragger {
   // ==================================================
   // INSTANCE FIELDS
@@ -59,7 +60,6 @@ export class BoxDragger {
 
     const rotationMatrix = this.getRotationMatrix();
     this._normal.applyMatrix4(rotationMatrix);
-    this._normal.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     this._normal.normalize();
 
     const length = this._box.size.getComponent(this._face.index) * 100;
@@ -68,7 +68,7 @@ export class BoxDragger {
     this._minPoint.addScaledVector(this._normal, +length);
     this._maxPoint.addScaledVector(this._normal, -length);
 
-    this._planeOfBox.setFromNormalAndCoplanarPoint(this._normal, point.clone());
+    this._planeOfBox.setFromNormalAndCoplanarPoint(this._normal, point);
 
     // Back up the original values
     this._sizeOfBox.copy(this._box.size);
@@ -107,8 +107,9 @@ export class BoxDragger {
       return false;
     }
     const deltaCenter = planeIntersect.sub(this._point);
-    deltaCenter.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-
+    if (deltaCenter.length() === 0) {
+      return false;
+    }
     // First copy the original values
     const { center } = this._box;
     center.copy(this._centerOfBox);
@@ -125,7 +126,7 @@ export class BoxDragger {
     ray.distanceSqToSegment(this._minPoint, this._maxPoint, undefined, pointOnSegment);
     const deltaSize = this._planeOfBox.distanceToPoint(pointOnSegment);
     if (deltaSize === 0) {
-      return false;
+      return false; // Nothing has changed
     }
     // First copy the original values
     const { size, center } = this._box;
@@ -137,11 +138,11 @@ export class BoxDragger {
     size.setComponent(index, deltaSize + size.getComponent(index));
     this._box.forceMinSize();
 
-    const newDeltaSize = size.getComponent(index) - this._sizeOfBox.getComponent(index);
-    if (newDeltaSize === 0) {
+    if (size.getComponent(index) === this._sizeOfBox.getComponent(index)) {
       return false; // Nothing has changed
     }
     // The center of the box should be moved by half of the delta size and take the rotation into accont.
+    const newDeltaSize = size.getComponent(index) - this._sizeOfBox.getComponent(index);
     const deltaCenter = (this._face.sign * newDeltaSize) / 2;
     const deltaCenterVector = new Vector3();
     deltaCenterVector.setComponent(index, deltaCenter);
@@ -155,33 +156,22 @@ export class BoxDragger {
     // Use top face and create a plane on the top face
     const boxFace = new BoxFace(2);
     const normal = boxFace.getNormal();
-    normal.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    normal.normalize();
 
-    const plane = new Plane().setFromNormalAndCoplanarPoint(normal, this._point.clone());
+    const plane = new Plane().setFromNormalAndCoplanarPoint(normal, this._point);
     const endPoint = ray.intersectPlane(plane, new Vector3());
     if (endPoint === null) {
       return false;
     }
-    const centerOfBox = this._centerOfBox.clone();
-    centerOfBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    const center = plane.projectPoint(centerOfBox, new Vector3());
+    const center = plane.projectPoint(this._centerOfBox, new Vector3());
 
-    // Ignore Y-value (up) since we are only interested in the rotation around the Up-axis
-    const centerToStartPoint = substractXZ(this._point, center);
-    const centerToEndPoint = substractXZ(endPoint, center);
-
-    const startAngle = centerToStartPoint.angle();
-    const endAngle = centerToEndPoint.angle();
-    const deltaAngle = startAngle - endAngle;
+    // Ignore Z-value since we are only interested in the rotation around the Z-axis
+    const centerToStartPoint = horizontalSubstract(this._point, center);
+    const centerToEndPoint = horizontalSubstract(endPoint, center);
+    const deltaAngle = centerToEndPoint.angle() - centerToStartPoint.angle();
 
     // Rotate
     this._box.zRotation = forceBetween0AndPi(deltaAngle + this._zRotationOfBox);
     return true;
-
-    function substractXZ(v1: Vector3, v2: Vector3): Vector2 {
-      return new Vector2(v1.x - v2.x, v1.z - v2.z);
-    }
   }
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {

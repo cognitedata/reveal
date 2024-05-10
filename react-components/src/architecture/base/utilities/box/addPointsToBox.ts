@@ -3,7 +3,7 @@
  */
 
 import { Matrix4, type Vector3 } from 'three';
-import { horizontalAngle } from '../geometry/vector3Extensions';
+import { horizontalAngle } from '../extensions/vectorExtensions';
 import { Range3 } from '../geometry/Range3';
 import { type IBox } from './IBox';
 import { forceBetween0AndPi } from '../extensions/mathExtensions';

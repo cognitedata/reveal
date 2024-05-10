@@ -15,7 +15,7 @@ import { NavigationTool } from '../concreteCommands/NavigationTool';
 import { Vector3, AmbientLight, DirectionalLight, PerspectiveCamera } from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
-import { getOctDir } from '../utilities/geometry/vector3Extensions';
+import { getOctDir } from '../utilities/extensions/vectorExtensions';
 import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
