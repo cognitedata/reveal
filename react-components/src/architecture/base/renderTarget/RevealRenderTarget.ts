@@ -160,7 +160,7 @@ export class RevealRenderTarget {
   // ==================================================
 
   public setDefaultCursor(): void {
-    this.domElement.style.cursor = 'default';
+    this.cursor = 'default';
   }
 
   public setMoveCursor(): void {
@@ -176,7 +176,7 @@ export class RevealRenderTarget {
   }
 
   public setCrosshairCursor(): void {
-    this.domElement.style.cursor = 'crosshair';
+    this.cursor = 'crosshair';
   }
 
   public setResizeCursor(point1: Vector3, point2: Vector3): void {
@@ -189,7 +189,7 @@ export class RevealRenderTarget {
       return;
     }
     const screenVector = screenPoint2?.sub(screenPoint1).normalize();
-    screenVector.y = -screenVector.y; // Flip y axis som x-y axis is mathematically correct
+    screenVector.y = -screenVector.y; // Flip y axis so the x-y axis is mathematically correct
     const cursor = getResizeCursor(getOctDir(screenVector));
     if (cursor !== undefined) {
       this.cursor = cursor;

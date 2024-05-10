@@ -100,6 +100,11 @@ export class BoxEditTool extends NavigationTool {
       return;
     }
     if (this._pendingBox !== undefined) {
+      if (this.isBoxDomainObject(intersection)) {
+        this.setDefaultCursor();
+        this.setFocus(undefined);
+        return;
+      }
       if (this._clickedPoints.length >= 1) {
         this.addPoint(intersection, true);
         addPointsToBox(this._pendingBox, this._clickedPoints);
@@ -112,21 +117,18 @@ export class BoxEditTool extends NavigationTool {
     if (!isDomainObjectIntersection(intersection)) {
       this.setDefaultCursor();
       this.setFocus(undefined);
-      super.onHover(event);
       return;
     }
     if (!(intersection.domainObject instanceof BoxDomainObject)) {
       this.setDefaultCursor();
       this.setFocus(undefined);
-      super.onHover(event);
       return;
     }
     const pickInfo = intersection.userData as BoxPickInfo;
     if (pickInfo === undefined) {
       this.setDefaultCursor();
       this.setFocus(undefined);
-      super.onHover(event);
-      return undefined;
+      return;
     }
     if (pickInfo.focusType === BoxFocusType.Translate) {
       this.renderTarget.setMoveCursor();
@@ -154,10 +156,12 @@ export class BoxEditTool extends NavigationTool {
     const { rootDomainObject } = renderTarget;
 
     const intersection = await this.getIntersection(event);
-    if (intersection === undefined) {
+    // Do not want to click on other boxes
+    if (intersection === undefined || this.isBoxDomainObject(intersection)) {
       await super.onClick(event);
       return;
     }
+
     this.addPoint(intersection, false);
     const points = this._clickedPoints;
     if (points.length === 1) {
@@ -281,5 +285,14 @@ export class BoxEditTool extends NavigationTool {
     for (const boxDomainObject of rootDomainObject.getDescendantsByType(BoxDomainObject)) {
       yield boxDomainObject;
     }
+  }
+
+  private isBoxDomainObject(intersection: AnyIntersection): boolean {
+    // Do not want to click on other boxes
+    if (!isDomainObjectIntersection(intersection)) {
+      return false;
+    }
+    const domainObject = intersection.domainObject;
+    return domainObject instanceof BoxDomainObject;
   }
 }
