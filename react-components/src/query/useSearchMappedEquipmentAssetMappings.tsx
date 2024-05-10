@@ -119,6 +119,58 @@ export const useAllMappedEquipmentAssetMappings = (
   });
 };
 
+export const useMappingsForAssetIds = (
+  models: AddModelOptions[],
+  assetIds: number[]
+): UseInfiniteQueryResult<InfiniteData<ModelMappingsWithAssets[]>, Error> => {
+  const sdk = useSDK();
+
+  return useInfiniteQuery({
+    queryKey: [
+      'reveal',
+      'react-components',
+      'mappings-for-asset-ids',
+      ...models.map((model) => [model.modelId, model.revisionId]),
+      ...assetIds
+    ],
+    queryFn: async ({ pageParam }) => {
+      const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
+        const nextCursors = pageParam as Array<{
+          cursor: string | 'start' | undefined;
+          model: AddModelOptions;
+        }>;
+
+        const nextCursor = nextCursors.find(
+          (nextCursor) =>
+            nextCursor.model.modelId === model.modelId &&
+            nextCursor.model.revisionId === model.revisionId
+        )?.cursor;
+
+        if (nextCursor === undefined) {
+          return { mappings: { items: [] }, model };
+        }
+
+        const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
+          cursor: nextCursor === 'start' ? undefined : nextCursor,
+          limit: 1000,
+          filter: { assetIds }
+        });
+
+        return { mappings, model };
+      });
+
+      const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
+
+      const modelsAssets = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
+
+      return modelsAssets;
+    },
+    initialPageParam: models.map((model) => ({ cursor: 'start', model })),
+    staleTime: Infinity,
+    getNextPageParam
+  });
+};
+
 function getNextPageParam(
   lastPage: ModelMappingsWithAssets[]
 ): Array<{ cursor: string | undefined; model: AddModelOptions }> | undefined {

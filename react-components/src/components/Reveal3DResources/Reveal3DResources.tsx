@@ -37,9 +37,9 @@ export const Reveal3DResources = ({
   onResourcesAdded,
   onResourceLoadError
 }: Reveal3DResourcesProps): ReactElement => {
+  const viewer = useReveal();
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
 
-  const viewer = useReveal();
   const numModelsLoaded = useRef(0);
 
   useEffect(() => {

@@ -63,6 +63,7 @@ export {
 export {
   useSearchMappedEquipmentAssetMappings,
   useAllMappedEquipmentAssetMappings,
+  useMappingsForAssetIds,
   type ModelMappings,
   type ModelMappingsWithAssets
 } from './query/useSearchMappedEquipmentAssetMappings';
