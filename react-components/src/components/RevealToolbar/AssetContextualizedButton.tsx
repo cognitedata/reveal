@@ -22,6 +22,19 @@ export const AssetContextualizedButton = ({
   const [enableContextualizedStyling, setEnableContextualizedStyling] = useState<boolean>(false);
   const { isLoading } = useAssetMappedNodesForRevisions(cadModels);
 
+  const tooltipMapping = {
+    true: {
+      key: 'CONTEXTUALIZED_ASSETS_LOADING_TOOLTIP',
+      default: 'Loading contextualized assets'
+    },
+    false: {
+      key: 'CONTEXTUALIZED_ASSETS_TOOLTIP',
+      default: 'Show contextualized assets'
+    }
+  };
+
+  const tooltip = isLoading ? tooltipMapping.true : tooltipMapping.false;
+
   const onClick = (): void => {
     setEnableContextualizedStyling((prevState) => !prevState);
     setEnableCustomDefaultStyling(!enableContextualizedStyling);
@@ -29,10 +42,7 @@ export const AssetContextualizedButton = ({
 
   return (
     <CogsTooltip
-      content={t(
-        'CONTEXTUALIZED_ASSETS_TOOLTIP',
-        isLoading ? 'Loading contextualized assets' : 'Contextualized assets'
-      )}
+      content={t(tooltip.key, tooltip.default)}
       placement="right"
       appendTo={document.body}>
       <Button

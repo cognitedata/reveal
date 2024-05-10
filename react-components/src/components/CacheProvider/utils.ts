@@ -21,13 +21,13 @@ export function modelRevisionToKey(modelId: ModelId, revisionId: RevisionId): Mo
   return `${modelId}/${revisionId}`;
 }
 
-export function modelRevisionNodesToKey(
+export function modelRevisionNodesAssetsToKey(
   modelId: ModelId,
   revisionId: RevisionId,
-  nodeIds: number[]
+  ids: number[]
 ): ModelNodeIdKey {
-  const nodeIdsSerialized = nodeIds.reduce((a, b) => a + b, 0);
-  return `${modelId}/${revisionId}/${nodeIdsSerialized}`;
+  const idsSerialized = ids.reduce((a, b) => a + b, 0);
+  return `${modelId}/${revisionId}/${idsSerialized}`;
 }
 
 export function modelRevisionAssetIdsToKey(

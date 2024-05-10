@@ -18,7 +18,7 @@ import {
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
 import { fetchNodesForNodeIds } from './requests';
-import { modelRevisionNodesToKey, modelRevisionToKey } from './utils';
+import { modelRevisionNodesAssetsToKey, modelRevisionToKey } from './utils';
 
 export type NodeAssetMappingResult = { node?: Node3D; mappings: AssetMapping[] };
 
@@ -129,7 +129,7 @@ export class AssetMappingCache {
     ids: number[],
     filterType: string
   ): Promise<AssetMapping[]> {
-    const key: ModelNodeIdKey = modelRevisionNodesToKey(modelId, revisionId, ids);
+    const key: ModelNodeIdKey = modelRevisionNodesAssetsToKey(modelId, revisionId, ids);
     const idChunks = chunk(ids, 100);
     const assetMappingsPromises = idChunks.map(async (idChunk) => {
       const filter = filterType === 'nodeIds' ? { nodeIds: idChunk } : { assetIds: idChunk };
@@ -152,7 +152,7 @@ export class AssetMappingCache {
     nodes: Node3D[]
   ): Promise<AssetMapping[]> {
     const nodeIds = nodes.map((node) => node.id);
-    const key: ModelNodeIdKey = modelRevisionNodesToKey(modelId, revisionId, nodeIds);
+    const key: ModelNodeIdKey = modelRevisionNodesAssetsToKey(modelId, revisionId, nodeIds);
     const cachedResult = this._nodeAssetIdsToAssetMappings.get(key);
 
     if (cachedResult !== undefined) {
@@ -166,7 +166,7 @@ export class AssetMappingCache {
     revisionId: RevisionId,
     assetIds: number[]
   ): Promise<AssetMapping[]> {
-    const key: ModelNodeIdKey = modelRevisionNodesToKey(modelId, revisionId, assetIds);
+    const key: ModelNodeIdKey = modelRevisionNodesAssetsToKey(modelId, revisionId, assetIds);
     const cachedResult = this._nodeAssetIdsToAssetMappings.get(key);
 
     if (cachedResult !== undefined) {

@@ -133,7 +133,7 @@ export const useMappingsForAssetIds = (
       ...models.map((model) => [model.modelId, model.revisionId]),
       ...assetIds
     ],
-    queryFn: async ({ pageParam = models.map((model) => ({ cursor: 'start', model })) }) => {
+    queryFn: async ({ pageParam }) => {
       const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
         const nextCursors = pageParam as Array<{
           cursor: string | 'start' | undefined;
