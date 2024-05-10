@@ -46,7 +46,7 @@ import { BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { Range1 } from '../../base/utilities/geometry/Range1';
 
-const RELATIVE_RESIZE_RADIUS = 0.125;
+const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
 
 const ARROW_AND_RING_COLOR = new Color(1, 1, 1);
@@ -124,29 +124,33 @@ export class BoxThreeView extends GroupThreeView {
     this.addChild(this.createLines(matrix));
 
     if (focusType !== BoxFocusType.Pending && focusType !== BoxFocusType.None) {
-      const planes: Plane[] = [];
-      const boxFace = new BoxFace();
-      for (boxFace.face = 0; boxFace.face < 6; boxFace.face++) {
-        if (boxFace.index === 2) {
-          continue;
-        }
-        const center = boxFace.getCenter(this.newVector3());
-        const normal = boxFace.getNormal(this.newVector3()).negate();
-        const plane = new Plane().setFromNormalAndCoplanarPoint(normal, center);
-        plane.applyMatrix4(matrix);
-        planes.push(plane);
-      }
       const rotationMaterial = new MeshPhongMaterial();
       updateMarkerMaterial(rotationMaterial, boxDomainObject);
-      rotationMaterial.clippingPlanes = planes;
+      rotationMaterial.clippingPlanes = this.createClippingPlanes(matrix, 2);
 
       this.addChild(this.createRotationCircle(matrix, rotationMaterial));
 
-      const material = new MeshPhongMaterial();
-      updateMarkerMaterial(material, boxDomainObject);
-      this.addResizeCircles(matrix, material);
+      const resizeMaterial = new MeshPhongMaterial();
+      updateMarkerMaterial(resizeMaterial, boxDomainObject);
+      this.addResizeCircles(matrix, resizeMaterial);
     }
     this.addLabels(matrix);
+  }
+
+  private createClippingPlanes(matrix: Matrix4, faceIndex: number): Plane[] {
+    const planes: Plane[] = [];
+    const boxFace = new BoxFace();
+    for (boxFace.face = 0; boxFace.face < 6; boxFace.face++) {
+      if (boxFace.index === faceIndex) {
+        continue;
+      }
+      const center = boxFace.getCenter(this.newVector3());
+      const normal = boxFace.getNormal(this.newVector3()).negate();
+      const plane = new Plane().setFromNormalAndCoplanarPoint(normal, center);
+      plane.applyMatrix4(matrix);
+      planes.push(plane);
+    }
+    return planes;
   }
 
   public override intersectIfCloser(
