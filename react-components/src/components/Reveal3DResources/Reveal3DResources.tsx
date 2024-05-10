@@ -15,8 +15,8 @@ import {
   type Reveal3DResourcesProps,
   type CadModelOptions,
   type PointCloudModelOptions,
-  AddImageCollection360Options,
-  AddImageCollection360DatamodelsOptions
+  type AddImageCollection360Options,
+  type AddImageCollection360DatamodelsOptions
 } from './types';
 import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
 import { useCalculatePointCloudStyling } from '../../hooks/useCalculatePointCloudModelsStyling';
@@ -271,8 +271,12 @@ function useRemoveUnmentionedModels(
       return correspondingAddOptions === undefined;
     });
 
-    nonReferredModels.forEach((model) => viewer.removeModel(model));
-    nonReferredCollections.forEach((collection) => viewer.remove360ImageSet(collection));
+    nonReferredModels.forEach((model) => {
+      viewer.removeModel(model);
+    });
+    nonReferredCollections.forEach((collection) => {
+      viewer.remove360ImageSet(collection);
+    });
   }, [addOptions]);
 }
 
