@@ -1736,7 +1736,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.6.0"
     "@cognite/cogs.js": "npm:^9.3.0"
-    "@cognite/reveal": "npm:^4.12.1"
+    "@cognite/reveal": "npm:^4.14.1"
     "@cognite/sdk": "npm:^9.13.0"
     "@playwright/test": "npm:^1.43.1"
     "@storybook/addon-essentials": "npm:^8.0.9"
@@ -1754,7 +1754,7 @@ __metadata:
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-resizable": "npm:^3.0.7"
-    "@types/three": "npm:0.158.2"
+    "@types/three": "npm:0.164.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.8.0"
     "@vitejs/plugin-react": "npm:^4.2.1"
     assert: "npm:^2.1.0"
@@ -1782,7 +1782,7 @@ __metadata:
     storybook: "npm:^8.0.9"
     style-loader: "npm:^4.0.0"
     styled-components: "npm:^6.1.10"
-    three: "npm:0.158.0"
+    three: "npm:0.164.0"
     ts-loader: "npm:^9.5.1"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.10"
@@ -1798,29 +1798,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:^4.12.1":
-  version: 4.12.1
-  resolution: "@cognite/reveal@npm:4.12.1"
+"@cognite/reveal@npm:^4.14.1":
+  version: 4.14.1
+  resolution: "@cognite/reveal@npm:4.14.1"
   dependencies:
     "@rajesh896/broprint.js": "npm:^2.1.1"
-    "@tweenjs/tween.js": "npm:19.0.0"
-    assert: "npm:2.1.0"
-    async-mutex: "npm:0.4.1"
-    glslify: "npm:7.1.1"
-    glslify-import: "npm:3.1.0"
+    "@tweenjs/tween.js": "npm:^23.1.1"
+    assert: "npm:^2.1.0"
+    async-mutex: "npm:^0.5.0"
+    glslify: "npm:^7.1.1"
+    glslify-import: "npm:^3.1.0"
     html2canvas: "npm:^1.4.1"
-    lodash: "npm:4.17.21"
-    loglevel: "npm:1.9.1"
-    mixpanel-browser: "npm:2.49.0"
-    path-browserify: "npm:1.0.1"
-    random-seed: "npm:0.3.0"
-    rxjs: "npm:7.8.1"
-    skmeans: "npm:0.11.3"
-    sparse-octree: "npm:7.1.8"
+    lodash: "npm:^4.17.21"
+    loglevel: "npm:^1.9.1"
+    mixpanel-browser: "npm:^2.49.0"
+    path-browserify: "npm:^1.0.1"
+    random-seed: "npm:^0.3.0"
+    rxjs: "npm:^7.8.1"
+    skmeans: "npm:^0.11.3"
+    sparse-octree: "npm:^7.1.8"
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
-    three: 0.158.0
-  checksum: 10/c5e97742cd7a64ef289da57bcd13ec7fa093e4165b921f07ce56034fddc732aec916d0e758155bc0104f4255755aea47a5205f43779096a7d732a539b9825448
+    three: 0.164.1
+  checksum: 10/8535bffd5a63f60fb8a7e1e2e85b3690ba9d93db64b57aedcc92bade62dc291598fd666fbbe2779faffb6a5da3fc8bb2f0b6b9e5149f788440fd451a78147654
   languageName: node
   linkType: hard
 
@@ -3367,6 +3367,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rrweb/types@npm:^2.0.0-alpha.4":
+  version: 2.0.0-alpha.13
+  resolution: "@rrweb/types@npm:2.0.0-alpha.13"
+  dependencies:
+    rrweb-snapshot: "npm:^2.0.0-alpha.13"
+  checksum: 10/a63a22bfc3b7d3dbfcfdbf127a3bdb1939f24a1d19c7243a9ce43b24287f75a7b4961478ee019fa033279abd255d9ef06cfacd2fb60cb692915c4a504574523a
+  languageName: node
+  linkType: hard
+
 "@rushstack/node-core-library@npm:4.0.2":
   version: 4.0.2
   resolution: "@rushstack/node-core-library@npm:4.0.2"
@@ -4340,10 +4349,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tweenjs/tween.js@npm:19.0.0":
-  version: 19.0.0
-  resolution: "@tweenjs/tween.js@npm:19.0.0"
-  checksum: 10/b3b153714e2579a24c59d99b99afe7ba35b5cb55bd1acc710218e4ff0c3571593db3e81c575bdad13b2c6b22acf22d1be01cd0511abd3d894b214b7eaa3c8674
+"@tweenjs/tween.js@npm:^23.1.1, @tweenjs/tween.js@npm:~23.1.1":
+  version: 23.1.2
+  resolution: "@tweenjs/tween.js@npm:23.1.2"
+  checksum: 10/ca7f62b1059917ebddf1e7e9d7361b87e945bfc21b3c840dd34b1ebfe7d90d87d0dd10ebfa88e2233fe4887cf260b9e1a45134573b599c905af45853b39ae0b8
   languageName: node
   linkType: hard
 
@@ -4427,6 +4436,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10/9b9cf332e49319903df3abeeb91882730f26ef80eed2e5d5ab1feb432f3f0804f72a07296c305daf5a310e771d5e3bbfc5395f993ba17e35d399bf6996860771
+  languageName: node
+  linkType: hard
+
+"@types/css-font-loading-module@npm:0.0.7":
+  version: 0.0.7
+  resolution: "@types/css-font-loading-module@npm:0.0.7"
+  checksum: 10/f70b9098ee3b2e006f5f6d5cecc627dcc7b898f266bfc594e73a8720636f1a3bc5f8c38fa0e8f7e5b7878038b46fd70da0c797c3288e072af984097210f4c056
   languageName: node
   linkType: hard
 
@@ -4765,15 +4781,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.158.2":
-  version: 0.158.2
-  resolution: "@types/three@npm:0.158.2"
+"@types/three@npm:0.164.0":
+  version: 0.164.0
+  resolution: "@types/three@npm:0.164.0"
   dependencies:
+    "@tweenjs/tween.js": "npm:~23.1.1"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
-    fflate: "npm:~0.6.10"
+    fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/6ce40499cb87ec88a4b3bfe662005052ada3413692efe62bc3a1958b1608aef8282613da150191af7312d114aec98326e2274d246c12f34db5dd7faf3beea132
+  checksum: 10/e5bdca5db603c594a5a5ae8ab2eaa38f95e091964a109ed4cbc00cfc95e00f3d7e356c6d676db4c2fbb9d98c266b3097eab2c5b4099a72e80bc9e455f5fec8d3
   languageName: node
   linkType: hard
 
@@ -5165,6 +5182,13 @@ __metadata:
   version: 3.3.8
   resolution: "@vue/shared@npm:3.3.8"
   checksum: 10/6511b05ccee9f25ad71f4c4a0984090a6aad0717a1bcc95be5df041e38fb907e9a83a029705fb9e7132f755dab9bb795294358fe3f58fdb3506a7a3ebec42445
+  languageName: node
+  linkType: hard
+
+"@xstate/fsm@npm:^1.4.0":
+  version: 1.6.5
+  resolution: "@xstate/fsm@npm:1.6.5"
+  checksum: 10/deae1501169d41d5395ce1581d7b08bde17911b7dec1533eacd5bee17060d22273055d6d6bc7e8f32222a502e4dcf510cd29064a5c9c5fa5aa2ced0ad60b2512
   languageName: node
   linkType: hard
 
@@ -5617,7 +5641,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"assert@npm:2.1.0, assert@npm:^2.1.0":
+"assert@npm:^2.1.0":
   version: 2.1.0
   resolution: "assert@npm:2.1.0"
   dependencies:
@@ -5646,12 +5670,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async-mutex@npm:0.4.1":
-  version: 0.4.1
-  resolution: "async-mutex@npm:0.4.1"
+"async-mutex@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "async-mutex@npm:0.5.0"
   dependencies:
     tslib: "npm:^2.4.0"
-  checksum: 10/7e9f77b112b8545beb6612493fae4a8d9d1d6c3f24fc22f4d6d05ce96d1e8d326ac3e743a804cc6d7bf24e7ef0267afb65bb127f99b2e433609684b38933ff1c
+  checksum: 10/4c6bfce1cc9cd43f723c4d96403ac5f4757f885c953b839cde6956ec8817ff39623b82d67614de10c7933e21626925882fb9bac367db7d15d7cb4f84228722c9
   languageName: node
   linkType: hard
 
@@ -5820,7 +5844,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base64-arraybuffer@npm:^1.0.2":
+"base64-arraybuffer@npm:^1.0.1, base64-arraybuffer@npm:^1.0.2":
   version: 1.0.2
   resolution: "base64-arraybuffer@npm:1.0.2"
   checksum: 10/15e6400d2d028bf18be4ed97702b11418f8f8779fb8c743251c863b726638d52f69571d4cc1843224da7838abef0949c670bde46936663c45ad078e89fee5c62
@@ -8065,10 +8089,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fflate@npm:~0.6.10":
-  version: 0.6.10
-  resolution: "fflate@npm:0.6.10"
-  checksum: 10/9f2fd7224bccdb28102adc7c55c262b584571426eb9e0b91b13088884f45700232b51e034e300b74abf64e5449596d5c37d0a802673e25edb17c6742e4a4a0bd
+"fflate@npm:^0.4.4":
+  version: 0.4.8
+  resolution: "fflate@npm:0.4.8"
+  checksum: 10/c0c75029bcbefd0b47cede4ad2a3698f571e38d3d93dfbb96d744c655ec3bf5e31111044c2c01fa3965109874f5be8b5a6b3686b958392693689665cbabf3ece
+  languageName: node
+  linkType: hard
+
+"fflate@npm:~0.8.2":
+  version: 0.8.2
+  resolution: "fflate@npm:0.8.2"
+  checksum: 10/2bd26ba6d235d428de793c6a0cd1aaa96a06269ebd4e21b46c8fd1bd136abc631acf27e188d47c3936db090bf3e1ede11d15ce9eae9bffdc4bfe1b9dc66ca9cb
   languageName: node
   linkType: hard
 
@@ -8840,7 +8871,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glslify-import@npm:3.1.0":
+"glslify-import@npm:^3.1.0":
   version: 3.1.0
   resolution: "glslify-import@npm:3.1.0"
   dependencies:
@@ -8851,7 +8882,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glslify@npm:7.1.1":
+"glslify@npm:^7.1.1":
   version: 7.1.1
   resolution: "glslify@npm:7.1.1"
   dependencies:
@@ -10196,7 +10227,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4.17.21, lodash@npm:^4.17.11, lodash@npm:^4.17.15, lodash@npm:^4.17.21, lodash@npm:~4.17.15":
+"lodash@npm:^4.17.11, lodash@npm:^4.17.15, lodash@npm:^4.17.21, lodash@npm:~4.17.15":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 10/c08619c038846ea6ac754abd6dd29d2568aa705feb69339e836dfa8d8b09abbb2f859371e86863eda41848221f9af43714491467b5b0299122431e202bb0c532
@@ -10213,7 +10244,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loglevel@npm:1.9.1":
+"loglevel@npm:^1.9.1":
   version: 1.9.1
   resolution: "loglevel@npm:1.9.1"
   checksum: 10/863cbbcddf850a937482c604e2d11586574a5110b746bb49c7cc04739e01f6035f6db841d25377106dd330bca7142d74995f15a97c5f3ea0af86d9472d4a99f4
@@ -10608,10 +10639,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mixpanel-browser@npm:2.49.0":
-  version: 2.49.0
-  resolution: "mixpanel-browser@npm:2.49.0"
-  checksum: 10/46b738792153caa35c083f3e23b208d48fac0f040074d2f36dc95bac49e86729676ffb599b4b50d814231c4ae8170110419e748a1cbe0d5432ea415f0fe8adc4
+"mitt@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "mitt@npm:3.0.1"
+  checksum: 10/287c70d8e73ffc25624261a4989c783768aed95ecb60900f051d180cf83e311e3e59865bfd6e9d029cdb149dc20ba2f128a805e9429c5c4ce33b1416c65bbd14
+  languageName: node
+  linkType: hard
+
+"mixpanel-browser@npm:^2.49.0":
+  version: 2.50.0
+  resolution: "mixpanel-browser@npm:2.50.0"
+  dependencies:
+    rrweb: "npm:2.0.0-alpha.4"
+  checksum: 10/68020c88ee0772c07add923e550de975938b16b3889d70c22f40e108a563efbaf2228262662752f65e6eb05382e0d97b9df23e1ec2590386dcaa4fe9551a87ad
   languageName: node
   linkType: hard
 
@@ -11206,7 +11246,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-browserify@npm:1.0.1, path-browserify@npm:^1.0.1":
+"path-browserify@npm:^1.0.1":
   version: 1.0.1
   resolution: "path-browserify@npm:1.0.1"
   checksum: 10/7e7368a5207e7c6b9051ef045711d0dc3c2b6203e96057e408e6e74d09f383061010d2be95cb8593fe6258a767c3e9fc6b2bfc7ce8d48ae8c3d9f6994cca9ad8
@@ -11702,7 +11742,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"random-seed@npm:0.3.0":
+"random-seed@npm:^0.3.0":
   version: 0.3.0
   resolution: "random-seed@npm:0.3.0"
   dependencies:
@@ -13144,6 +13184,38 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rrdom@npm:^0.1.7":
+  version: 0.1.7
+  resolution: "rrdom@npm:0.1.7"
+  dependencies:
+    rrweb-snapshot: "npm:^2.0.0-alpha.4"
+  checksum: 10/73be5e8538002638867de7fa51be705f5f5ec90f842a8cb62ed25543ecef69cb4a1efe5e654ba455b7be627aefc12bb276c03823ef084b0d2985d18c825b5ad5
+  languageName: node
+  linkType: hard
+
+"rrweb-snapshot@npm:^2.0.0-alpha.13, rrweb-snapshot@npm:^2.0.0-alpha.4":
+  version: 2.0.0-alpha.13
+  resolution: "rrweb-snapshot@npm:2.0.0-alpha.13"
+  checksum: 10/eca4b895e498efae903cff15fe963c1a093b52eb5d02bc0ebfac25a625013fa7ae5b9f3078632bca73b62dc09a62ec1746550a89fe4a30c9eb5119f1b90a4be8
+  languageName: node
+  linkType: hard
+
+"rrweb@npm:2.0.0-alpha.4":
+  version: 2.0.0-alpha.4
+  resolution: "rrweb@npm:2.0.0-alpha.4"
+  dependencies:
+    "@rrweb/types": "npm:^2.0.0-alpha.4"
+    "@types/css-font-loading-module": "npm:0.0.7"
+    "@xstate/fsm": "npm:^1.4.0"
+    base64-arraybuffer: "npm:^1.0.1"
+    fflate: "npm:^0.4.4"
+    mitt: "npm:^3.0.0"
+    rrdom: "npm:^0.1.7"
+    rrweb-snapshot: "npm:^2.0.0-alpha.4"
+  checksum: 10/1dab0a682933d1be2086ff02e630c9800b90aa37a353bbf9fb04190dd3f907aa883c2f5dbfdc261b41cfa4f6590e5091ba65a16a1299ec4e2a00b23c2c7e78d0
+  languageName: node
+  linkType: hard
+
 "run-parallel@npm:^1.1.9":
   version: 1.2.0
   resolution: "run-parallel@npm:1.2.0"
@@ -13153,7 +13225,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.8.1":
+"rxjs@npm:^7.8.1":
   version: 7.8.1
   resolution: "rxjs@npm:7.8.1"
   dependencies:
@@ -13432,7 +13504,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"skmeans@npm:0.11.3":
+"skmeans@npm:^0.11.3":
   version: 0.11.3
   resolution: "skmeans@npm:0.11.3"
   checksum: 10/0e6cd69815c8807b4b1714092d376cd865795e04f16d25244f7721e5c52e624df5756f9e66216e137f6db55ced3dfe14c519d70559413a0a25bae956e1cf0132
@@ -13519,7 +13591,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sparse-octree@npm:7.1.8":
+"sparse-octree@npm:^7.1.8":
   version: 7.1.8
   resolution: "sparse-octree@npm:7.1.8"
   peerDependencies:
@@ -13917,8 +13989,8 @@ __metadata:
   linkType: hard
 
 "styled-components@npm:^6.1.10":
-  version: 6.1.10
-  resolution: "styled-components@npm:6.1.10"
+  version: 6.1.11
+  resolution: "styled-components@npm:6.1.11"
   dependencies:
     "@emotion/is-prop-valid": "npm:1.2.2"
     "@emotion/unitless": "npm:0.8.1"
@@ -13932,7 +14004,7 @@ __metadata:
   peerDependencies:
     react: ">= 16.8.0"
     react-dom: ">= 16.8.0"
-  checksum: 10/2e0f061bd67e287457846731fb15e20dd058ed7cac83881715f63a70bbfda9a9eaaadb0f0981e9902e39acfd53e8f7d482ff6f154054e69a3e3feec904e20f1e
+  checksum: 10/6813bba73ad706998a903793da2c903a6a64e487b2167d26cc3d55a850637a31becab1ce43fa072f9aba4f6074ec5a914dd4696e9ba2548e6c4873436f4ca632
   languageName: node
   linkType: hard
 
@@ -14094,10 +14166,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.158.0":
-  version: 0.158.0
-  resolution: "three@npm:0.158.0"
-  checksum: 10/0dcb30fde67495337d129af55f3e4ed5f16425bb55c8fe2ec871bbde8264bdbdf3141fce4733c4739fe394f7840c4b37f6210754f657cfe98554f8f9a02eeb92
+"three@npm:0.164.0":
+  version: 0.164.0
+  resolution: "three@npm:0.164.0"
+  checksum: 10/55603c9c567a274baaeed118e421208a1fa4eb60dd9fef97424cf0193a15691d4ef709c2ed4eda30936faad0fe51af360d1505721cee2aecbb81fc4fd5b193a9
   languageName: node
   linkType: hard
 
