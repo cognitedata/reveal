@@ -21,7 +21,7 @@ export class Vector3Pool {
     const vector = this._vectors[this._index];
     // Return the vector at the new index
     if (copyFrom === undefined) {
-      return vector;
+      return vector.setScalar(0); // Reset the vector to zero
     }
     return vector.copy(copyFrom);
   }

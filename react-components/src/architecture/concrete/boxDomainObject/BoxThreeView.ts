@@ -58,7 +58,6 @@ export class BoxThreeView extends GroupThreeView {
   // ==================================================
 
   private readonly _labels: Array<Sprite | undefined> = [];
-  private readonly _vectorPool = new Vector3Pool();
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -72,18 +71,14 @@ export class BoxThreeView extends GroupThreeView {
     return super.style as BoxRenderStyle;
   }
 
-  private newVector3(copyFrom?: Vector3): Vector3 {
-    return this._vectorPool.getNext(copyFrom);
-  }
-
   private getLabelHeight(relativeFontSize: number): number {
     return relativeFontSize * this.boxDomainObject.diagonal;
   }
 
-  private getFaceRadius(face: BoxFace): number {
+  private getFaceRadius(boxFace: BoxFace): number {
     const { size } = this.boxDomainObject;
-    const size1 = size.getComponent(face.tangentIndex1);
-    const size2 = size.getComponent(face.tangentIndex2);
+    const size1 = size.getComponent(boxFace.tangentIndex1);
+    const size2 = size.getComponent(boxFace.tangentIndex2);
     return (size1 + size2) / 4;
   }
 
@@ -131,22 +126,6 @@ export class BoxThreeView extends GroupThreeView {
     this.addLabels(matrix);
   }
 
-  private createClippingPlanes(matrix: Matrix4, faceIndex: number): Plane[] {
-    const planes: Plane[] = [];
-    const boxFace = new BoxFace();
-    for (boxFace.face = 0; boxFace.face < 6; boxFace.face++) {
-      if (boxFace.index === faceIndex) {
-        continue;
-      }
-      const center = boxFace.getCenter(this.newVector3());
-      const normal = boxFace.getNormal(this.newVector3()).negate();
-      const plane = new Plane().setFromNormalAndCoplanarPoint(normal, center);
-      plane.applyMatrix4(matrix);
-      planes.push(plane);
-    }
-    return planes;
-  }
-
   public override intersectIfCloser(
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
@@ -160,7 +139,7 @@ export class BoxThreeView extends GroupThreeView {
     orientedBox.applyMatrix4(matrix);
 
     const ray = intersectInput.raycaster.ray;
-    const point = orientedBox.intersectRay(ray, this.newVector3());
+    const point = orientedBox.intersectRay(ray, newVector3());
     if (point === null) {
       return undefined;
     }
@@ -171,14 +150,18 @@ export class BoxThreeView extends GroupThreeView {
     if (!intersectInput.isVisible(point)) {
       return undefined;
     }
-    const positionAtFace = this.newVector3(point).applyMatrix4(matrix.invert());
+    const positionAtFace = newVector3(point).applyMatrix4(matrix.invert());
+    const realPosition = newVector3(point).applyMatrix4(
+      CDF_TO_VIEWER_TRANSFORMATION.clone().invert()
+    );
     const boxFace = new BoxFace().fromPositionAtFace(positionAtFace);
-    const focusType = this.getPickedFocusType(point, boxFace);
+    const cornerSign = new Vector3();
+    const focusType = this.getPickedFocusType(realPosition, boxFace, cornerSign);
     const customObjectIntersection: DomainObjectIntersection = {
       type: 'customObject',
       point,
       distanceToCamera,
-      userData: new BoxPickInfo(boxFace, focusType),
+      userData: new BoxPickInfo(boxFace, focusType, cornerSign),
       customObject: this,
       domainObject: boxDomainObject
     };
@@ -239,7 +222,7 @@ export class BoxThreeView extends GroupThreeView {
     this.updateLabels(this.renderTarget.camera);
     if (
       boxDomainObject.focusType !== BoxFocusType.Pending &&
-      boxDomainObject.focusType !== BoxFocusType.Scale &&
+      boxDomainObject.focusType !== BoxFocusType.ScaleByEdge &&
       boxDomainObject.focusType !== BoxFocusType.Translate
     ) {
       this.addChild(this.createDegreesLabel(matrix, labelHeight));
@@ -257,7 +240,7 @@ export class BoxThreeView extends GroupThreeView {
     if (sprite === undefined) {
       return undefined;
     }
-    const faceCenter = new BoxFace(2).getCenter(this.newVector3());
+    const faceCenter = new BoxFace(2).getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
     sprite.position.copy(faceCenter);
     return sprite;
@@ -272,16 +255,16 @@ export class BoxThreeView extends GroupThreeView {
     const matrix = this.getMatrix();
 
     const rotationMatrix = this.getRotationMatrix();
-    const centerOfBox = this.newVector3(boxDomainObject.center);
+    const centerOfBox = newVector3(boxDomainObject.center);
     centerOfBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    const cameraPosition = camera.getWorldPosition(this.newVector3());
+    const cameraPosition = camera.getWorldPosition(newVector3());
     const cameraDirection = centerOfBox.sub(cameraPosition).normalize();
 
     // Calculate which face of the box are visible
     const visibleFaces: boolean[] = new Array(6).fill(false);
     const boxFace = new BoxFace();
     for (boxFace.face = 0; boxFace.face < visibleFaces.length; boxFace.face++) {
-      const normal = boxFace.getNormal(this.newVector3());
+      const normal = boxFace.getNormal(newVector3());
       normal.applyMatrix4(rotationMatrix);
       visibleFaces[boxFace.face] = normal.dot(cameraDirection) < 0;
     }
@@ -300,14 +283,14 @@ export class BoxThreeView extends GroupThreeView {
           continue;
         }
         boxFace.face = face1;
-        const faceCenter1 = boxFace.getCenter(this.newVector3());
+        const faceCenter1 = boxFace.getCenter(newVector3());
         for (let j = 0; j < 2; j++) {
           const face2 = (index + (j === 0 ? 2 : 5)) % 6;
           if (!visibleFaces[face2]) {
             continue;
           }
           boxFace.face = face2;
-          const faceCenter2 = boxFace.getCenter(this.newVector3());
+          const faceCenter2 = boxFace.getCenter(newVector3());
           const edgeCenter = faceCenter2.add(faceCenter1);
           edgeCenter.applyMatrix4(matrix);
           // Move the label slightly away from the box to avoid z-fighting
@@ -325,7 +308,7 @@ export class BoxThreeView extends GroupThreeView {
 
   protected addResizeCircles(matrix: Matrix4): void {
     let selectedFace = this.boxDomainObject.focusFace;
-    if (this.boxDomainObject.focusType !== BoxFocusType.Scale) {
+    if (this.boxDomainObject.focusType !== BoxFocusType.ScaleByEdge) {
       selectedFace = undefined;
     }
     const material = new MeshPhongMaterial();
@@ -359,7 +342,7 @@ export class BoxThreeView extends GroupThreeView {
     material.clippingPlanes = this.createClippingPlanes(matrix, 2);
     const mesh = new Mesh(geometry, material);
 
-    const center = face.getCenter(this.newVector3());
+    const center = face.getCenter(newVector3());
     center.applyMatrix4(matrix);
     mesh.position.copy(center);
     mesh.rotateX(-Math.PI / 2);
@@ -382,7 +365,7 @@ export class BoxThreeView extends GroupThreeView {
     material.depthWrite = false;
     const mesh = new Mesh(geometry, material);
 
-    const center = face.getCenter(this.newVector3());
+    const center = face.getCenter(newVector3());
     center.applyMatrix4(matrix);
     mesh.position.copy(center);
 
@@ -417,17 +400,43 @@ export class BoxThreeView extends GroupThreeView {
     return matrix;
   }
 
-  private getPickedFocusType(intersectionPoint: Vector3, boxFace: BoxFace): BoxFocusType {
+  private createClippingPlanes(matrix: Matrix4, faceIndex: number): Plane[] {
+    const planes: Plane[] = [];
+    const boxFace = new BoxFace();
+    for (boxFace.face = 0; boxFace.face < 6; boxFace.face++) {
+      if (boxFace.index === faceIndex) {
+        continue;
+      }
+      const center = boxFace.getCenter(newVector3());
+      const normal = boxFace.getNormal(newVector3()).negate();
+      const plane = new Plane().setFromNormalAndCoplanarPoint(normal, center);
+      plane.applyMatrix4(matrix);
+      planes.push(plane);
+    }
+    return planes;
+  }
+
+  private getPickedFocusType(
+    realPosition: Vector3,
+    boxFace: BoxFace,
+    outputCornerSign: Vector3
+  ): BoxFocusType {
     const { boxDomainObject } = this;
-    const scale = this.newVector3().setScalar(this.getFaceRadius(boxFace));
+    const scale = newVector3().setScalar(this.getFaceRadius(boxFace));
     const scaledMatrix = boxDomainObject.getScaledMatrix(scale);
-    scaledMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
     scaledMatrix.invert();
-    const scaledPositionAtFace = this.newVector3(intersectionPoint).applyMatrix4(scaledMatrix);
+    const scaledPositionAtFace = newVector3(realPosition).applyMatrix4(scaledMatrix);
     const planePoint = boxFace.getPlanePoint(scaledPositionAtFace);
     const relativeDistance = planePoint.length();
+
+    outputCornerSign.copy(this.getCornerSign(realPosition, boxFace));
+    const corner = this.getCorner(outputCornerSign, boxFace);
+
     if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
-      return BoxFocusType.Scale;
+      return BoxFocusType.ScaleByEdge;
+    }
+    if (realPosition.distanceTo(corner) < 0.2 * this.getFaceRadius(boxFace)) {
+      return BoxFocusType.ScaleByCorner;
     }
     if (boxFace.face === 2) {
       if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
@@ -435,6 +444,33 @@ export class BoxThreeView extends GroupThreeView {
       }
     }
     return BoxFocusType.Translate;
+  }
+
+  private getCornerSign(realPosition: Vector3, boxFace: BoxFace): Vector3 {
+    const { boxDomainObject } = this;
+    const scale = newVector3().setScalar(this.getFaceRadius(boxFace));
+    const scaledMatrix = boxDomainObject.getScaledMatrix(scale);
+    scaledMatrix.invert();
+    const scaledPositionAtFace = realPosition.clone().applyMatrix4(scaledMatrix);
+    scaledPositionAtFace.setComponent(boxFace.index, 0);
+    scaledPositionAtFace.setComponent(
+      boxFace.tangentIndex1,
+      Math.sign(scaledPositionAtFace.getComponent(boxFace.tangentIndex1))
+    );
+    scaledPositionAtFace.setComponent(
+      boxFace.tangentIndex2,
+      Math.sign(scaledPositionAtFace.getComponent(boxFace.tangentIndex2))
+    );
+    return scaledPositionAtFace;
+  }
+
+  private getCorner(cornerSign: Vector3, boxFace: BoxFace): Vector3 {
+    const { boxDomainObject } = this;
+    const center = boxFace.getCenter(new Vector3()); // In range (-0.5, 0.5)
+    const corner = center.addScaledVector(cornerSign, 0.5);
+    const matrix = boxDomainObject.getMatrix();
+    corner.applyMatrix4(matrix);
+    return corner;
   }
 }
 
@@ -498,4 +534,13 @@ function createSprite(text: string, labelHeight: number): Sprite | undefined {
   result.material.transparent = true;
   result.material.opacity = 0.75;
   return result;
+}
+
+// ==================================================
+// PRIVATE FUNCTIONS: Vector pool
+// ==================================================
+
+const VECTOR_POOL = new Vector3Pool();
+function newVector3(copyFrom?: Vector3): Vector3 {
+  return VECTOR_POOL.getNext(copyFrom);
 }

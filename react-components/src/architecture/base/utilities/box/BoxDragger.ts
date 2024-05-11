@@ -2,15 +2,16 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, Vector3, Plane, Vector2, Matrix4 } from 'three';
+import { type Ray, Vector3, Plane, Matrix4 } from 'three';
 import { Changes } from '../../domainObjectsHelpers/Changes';
-import { BoxFace } from './BoxFace';
+import { type BoxFace } from './BoxFace';
 import { BoxFocusType } from './BoxFocusType';
 import { type DomainObject } from '../../domainObjects/DomainObject';
 import { type IBox } from './IBox';
 import { type BoxPickInfo } from './BoxPickInfo';
 import { forceBetween0AndPi } from '../extensions/mathExtensions';
 import { horizontalSubstract } from '../extensions/vectorExtensions';
+import { Vector3Pool } from '../geometry/Vector3Pool';
 
 // All geometry in this class assume Z-axis is up
 export class BoxDragger {
@@ -21,7 +22,7 @@ export class BoxDragger {
   public readonly domainObject: DomainObject;
   private readonly _box: IBox;
 
-  private readonly _face = new BoxFace();
+  private readonly _face;
   private readonly _focusType: BoxFocusType;
   private readonly _point: Vector3 = new Vector3(); // Intersection point
   private readonly _normal: Vector3 = new Vector3(); // Intersection normal
@@ -33,6 +34,8 @@ export class BoxDragger {
   private readonly _sizeOfBox: Vector3 = new Vector3();
   private readonly _centerOfBox: Vector3 = new Vector3();
   private readonly _zRotationOfBox: number = 0;
+
+  private readonly _cornerSign = new Vector3(); // Indicate the corner of the face
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -53,16 +56,17 @@ export class BoxDragger {
   public constructor(domainObject: DomainObject, point: Vector3, pickInfo: BoxPickInfo) {
     this.domainObject = domainObject;
     this._box = domainObject as unknown as IBox;
-    this._face.copy(pickInfo.face);
+    this._face = pickInfo.face;
     this._focusType = pickInfo.focusType;
+    this._cornerSign.copy(pickInfo.cornerSign);
     this._point.copy(point);
-    this._normal.copy(this._face.getNormal());
+    this._face.getNormal(this._normal);
 
     const rotationMatrix = this.getRotationMatrix();
     this._normal.applyMatrix4(rotationMatrix);
     this._normal.normalize();
 
-    const length = this._box.size.getComponent(this._face.index) * 100;
+    const length = this._box.size.length() * 100 + 100;
     this._minPoint.copy(point);
     this._maxPoint.copy(point);
     this._minPoint.addScaledVector(this._normal, +length);
@@ -90,8 +94,10 @@ export class BoxDragger {
 
   private applyByFocusType(type: BoxFocusType, ray: Ray): boolean {
     switch (type) {
-      case BoxFocusType.Scale:
-        return this.scale(ray);
+      case BoxFocusType.ScaleByEdge:
+        return this.scaleByEdge(ray);
+      case BoxFocusType.ScaleByCorner:
+        return this.scaleByCorner(ray);
       case BoxFocusType.Translate:
         return this.translate(ray);
       case BoxFocusType.Rotate:
@@ -102,12 +108,12 @@ export class BoxDragger {
   }
 
   private translate(ray: Ray): boolean {
-    const planeIntersect = ray.intersectPlane(this._planeOfBox, new Vector3());
+    const planeIntersect = ray.intersectPlane(this._planeOfBox, newVector3());
     if (planeIntersect === null) {
       return false;
     }
     const deltaCenter = planeIntersect.sub(this._point);
-    if (deltaCenter.length() === 0) {
+    if (deltaCenter.lengthSq() === 0) {
       return false;
     }
     // First copy the original values
@@ -119,10 +125,10 @@ export class BoxDragger {
     return true;
   }
 
-  private scale(ray: Ray): boolean {
+  private scaleByEdge(ray: Ray): boolean {
     // Take find closest point between the ray and the line perpenducular to the face of in picked box.
     // The distance from this point to the face of in picked box is the change.
-    const pointOnSegment = new Vector3();
+    const pointOnSegment = newVector3();
     ray.distanceSqToSegment(this._minPoint, this._maxPoint, undefined, pointOnSegment);
     const deltaSize = this._planeOfBox.distanceToPoint(pointOnSegment);
     if (deltaSize === 0) {
@@ -144,7 +150,7 @@ export class BoxDragger {
     // The center of the box should be moved by half of the delta size and take the rotation into accont.
     const newDeltaSize = size.getComponent(index) - this._sizeOfBox.getComponent(index);
     const deltaCenter = (this._face.sign * newDeltaSize) / 2;
-    const deltaCenterVector = new Vector3();
+    const deltaCenterVector = newVector3();
     deltaCenterVector.setComponent(index, deltaCenter);
     const rotationMatrix = this.getRotationMatrix();
     deltaCenterVector.applyMatrix4(rotationMatrix);
@@ -152,17 +158,49 @@ export class BoxDragger {
     return true;
   }
 
-  private rotate(ray: Ray): boolean {
-    // Use top face and create a plane on the top face
-    const boxFace = new BoxFace(2);
-    const normal = boxFace.getNormal();
-
-    const plane = new Plane().setFromNormalAndCoplanarPoint(normal, this._point);
-    const endPoint = ray.intersectPlane(plane, new Vector3());
+  private scaleByCorner(ray: Ray): boolean {
+    const endPoint = ray.intersectPlane(this._planeOfBox, newVector3());
     if (endPoint === null) {
       return false;
     }
-    const center = plane.projectPoint(this._centerOfBox, new Vector3());
+    const startPoint = this._planeOfBox.projectPoint(this._point, newVector3());
+
+    const rotationMatrix = this.getRotationMatrix();
+    const invRotationMatrix = rotationMatrix.clone().invert();
+    const deltaSize = endPoint.sub(startPoint);
+    deltaSize.applyMatrix4(invRotationMatrix);
+
+    deltaSize.multiply(this._cornerSign);
+    if (deltaSize.lengthSq() === 0) {
+      return false; // Nothing has changed
+    }
+    // First copy the original values
+    const { size, center } = this._box;
+    size.copy(this._sizeOfBox);
+    center.copy(this._centerOfBox);
+
+    // Apply the change
+    size.add(deltaSize);
+    this._box.forceMinSize();
+
+    if (size.lengthSq() === this._sizeOfBox.lengthSq()) {
+      return false; // Nothing has changed
+    }
+    // The center of the box should be moved by half of the delta size and take the rotation into accont.
+    const newDeltaSize = newVector3().subVectors(size, this._sizeOfBox);
+    const deltaCenter = newDeltaSize.divideScalar(2);
+    deltaCenter.multiply(this._cornerSign);
+    deltaCenter.applyMatrix4(rotationMatrix);
+    center.add(deltaCenter);
+    return true;
+  }
+
+  private rotate(ray: Ray): boolean {
+    const endPoint = ray.intersectPlane(this._planeOfBox, newVector3());
+    if (endPoint === null) {
+      return false;
+    }
+    const center = this._planeOfBox.projectPoint(this._centerOfBox, newVector3());
 
     // Ignore Z-value since we are only interested in the rotation around the Z-axis
     const centerToStartPoint = horizontalSubstract(this._point, center);
@@ -178,4 +216,13 @@ export class BoxDragger {
     matrix.makeRotationZ(this._box.zRotation);
     return matrix;
   }
+}
+
+// ==================================================
+// PRIVATE FUNCTIONS: Vector pool
+// ==================================================
+
+const VECTOR_POOL = new Vector3Pool();
+function newVector3(copyFrom?: Vector3): Vector3 {
+  return VECTOR_POOL.getNext(copyFrom);
 }
