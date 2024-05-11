@@ -1,5 +1,7 @@
 {
   "CAD_MODELS": "CAD models",
+  "CONTEXTUALIZED_ASSETS_TOOLTIP": "Show contextualized assets",
+  "CONTEXTUALIZED_ASSETS_LOADING_TOOLTIP": "Loading contextualized assets",
   "CONTROLS_TYPE_FIRST_PERSON": "Fly",
   "CONTROLS_TYPE_ORBIT": "Orbit",
   "CONTROLS_TYPE_ORBIT_IN_CENTER": "Center Orbit",

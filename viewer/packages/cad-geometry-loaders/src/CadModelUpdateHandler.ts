@@ -26,7 +26,7 @@ import { CadLoadingHints } from './CadLoadingHints';
 import { LoadingState } from '@reveal/model-base';
 import { loadingEnabled } from './sector/rxSectorUtilities';
 import { SectorLoader } from './sector/SectorLoader';
-import { CadModelBudget, defaultCadModelBudget } from './CadModelBudget';
+import { CadModelBudget, getDefaultCadModelBudget } from './CadModelBudget';
 import { DetermineSectorsPayload, SectorLoadingSpent } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
 import { CadNode } from '@reveal/cad-model';
@@ -53,7 +53,7 @@ export class CadModelUpdateHandler {
   constructor(sectorCuller: SectorCuller, continuousModelStreaming = true) {
     this._sectorCuller = sectorCuller;
     this._modelStateHandler = new ModelStateHandler();
-    this._budget = defaultCadModelBudget;
+    this._budget = getDefaultCadModelBudget();
     this._lastSpent = {
       downloadSize: 0,
       drawCalls: 0,

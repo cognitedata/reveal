@@ -4,7 +4,7 @@ module.exports = {
     es2021: true
   },
   extends: [
-    'standard-with-typescript',
+    'love',
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:prettier/recommended'
@@ -18,6 +18,15 @@ module.exports = {
   plugins: ['react', 'prettier', 'header'],
   rules: {
     'react/react-in-jsx-scope': 'off',
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_'
+      }
+    ],
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     '@typescript-eslint/no-misused-promises': 'off',
     'no-console': [2, { allow: ['warn', 'error'] }],

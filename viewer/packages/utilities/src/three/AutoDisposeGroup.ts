@@ -15,6 +15,10 @@ export class AutoDisposeGroup extends THREE.Group {
   private _isDisposed = false;
   private _referenceCount = 0;
 
+  isDisposed(): boolean {
+    return this._isDisposed;
+  }
+
   reference(): void {
     this.ensureNotDisposed();
     this._referenceCount++;
