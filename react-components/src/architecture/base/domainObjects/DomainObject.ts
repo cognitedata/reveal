@@ -214,7 +214,7 @@ export abstract class DomainObject {
     return true; // to be overridden
   }
 
-  public canBeChecked(target: RevealRenderTarget): boolean {
+  public canBeChecked(_target: RevealRenderTarget): boolean {
     return true; // to be overridden
   }
 

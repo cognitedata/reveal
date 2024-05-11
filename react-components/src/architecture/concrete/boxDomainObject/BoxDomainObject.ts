@@ -90,7 +90,7 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
   }
 
   public getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    return this.getScaledMatrix(this.size);
+    return this.getScaledMatrix(this.size, matrix);
   }
 
   public getScaledMatrix(scale: Vector3, matrix: Matrix4 = new Matrix4()): Matrix4 {

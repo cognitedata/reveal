@@ -64,25 +64,25 @@ export abstract class BaseTool extends RenderTargetCommand {
     await Promise.resolve();
   }
 
-  public async onPointerDown(_event: PointerEvent, leftButton: boolean): Promise<void> {
+  public async onPointerDown(_event: PointerEvent, _leftButton: boolean): Promise<void> {
     await Promise.resolve();
   }
 
-  public async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
+  public async onPointerDrag(_event: PointerEvent, _leftButton: boolean): Promise<void> {
     await Promise.resolve();
   }
 
-  public async onPointerUp(_event: PointerEvent, leftButton: boolean): Promise<void> {
+  public async onPointerUp(_event: PointerEvent, _leftButton: boolean): Promise<void> {
     await Promise.resolve();
   }
 
-  public async onWheel(event: WheelEvent): Promise<void> {
+  public async onWheel(_event: WheelEvent): Promise<void> {
     await Promise.resolve();
   }
 
-  public onFocusChanged(haveFocus: boolean): void {}
+  public onFocusChanged(_haveFocus: boolean): void {}
 
-  public onKey(event: KeyboardEvent, down: boolean): void {}
+  public onKey(_event: KeyboardEvent, _down: boolean): void {}
 
   // ==================================================
   // INSTANCE METHODS: Intersections

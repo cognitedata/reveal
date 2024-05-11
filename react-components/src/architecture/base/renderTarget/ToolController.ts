@@ -216,11 +216,11 @@ export class ToolControllers extends PointerEvents {
     event.preventDefault();
   };
 
-  private readonly _onFocus = (event: FocusEvent): void => {
+  private readonly _onFocus = (_event: FocusEvent): void => {
     this.activeTool?.onFocusChanged(true);
   };
 
-  private readonly _onBlur = (event: FocusEvent): void => {
+  private readonly _onBlur = (_event: FocusEvent): void => {
     this.activeTool?.onFocusChanged(false);
   };
 }

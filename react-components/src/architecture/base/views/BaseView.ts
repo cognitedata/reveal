@@ -54,7 +54,7 @@ export abstract class BaseView {
    * @remarks
    * Always call `super.update()` in the overrides.
    */
-  public update(change: DomainObjectChange): void {}
+  public update(_change: DomainObjectChange): void {}
 
   /**
    * Clears the memory and removes redundant data.
