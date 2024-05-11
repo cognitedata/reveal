@@ -293,6 +293,7 @@ export class BoxThreeView extends GroupThreeView {
           const faceCenter2 = boxFace.getCenter(newVector3());
           const edgeCenter = faceCenter2.add(faceCenter1);
           edgeCenter.applyMatrix4(matrix);
+
           // Move the label slightly away from the box to avoid z-fighting
           edgeCenter.addScaledVector(cameraDirection, -labelHeight / 4);
           label.position.copy(edgeCenter);
