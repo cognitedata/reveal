@@ -310,21 +310,26 @@ export class BoxEditTool extends NavigationTool {
       const matrix = boxDomainObject.getMatrix();
       matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
-      // If they are too close, the pixel value will be the same, so multiply point2 by 100
-      const point1 = boxDomainObject.center.clone();
-      const point2 = pickInfo.face.getCenter().multiplyScalar(100);
-      point1.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-      point2.applyMatrix4(matrix);
+      const boxCenter = boxDomainObject.center.clone();
+      const faceCenter = pickInfo.face.getCenter().multiplyScalar(100);
+      const size = boxDomainObject.size.getComponent(pickInfo.face.index);
+      if (size < 1) {
+        // If they are too close, the pixel value will be the same, so multiply faceCenter
+        // so it pretend the size is at least 1.
+        faceCenter.multiplyScalar(1 / size);
+      }
+      boxCenter.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      faceCenter.applyMatrix4(matrix);
 
-      this.renderTarget.setResizeCursor(point1, point2);
+      this.renderTarget.setResizeCursor(boxCenter, faceCenter);
     } else if (pickInfo.focusType === BoxFocusType.ScaleByCorner) {
       const matrix = boxDomainObject.getMatrix();
       matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
-      const center = pickInfo.face.getCenter();
-      center.applyMatrix4(matrix);
+      const faceCenter = pickInfo.face.getCenter();
+      faceCenter.applyMatrix4(matrix);
 
-      this.renderTarget.setResizeCursor(point, center);
+      this.renderTarget.setResizeCursor(point, faceCenter);
     } else if (pickInfo.focusType === BoxFocusType.Rotate) {
       this.renderTarget.setGrabCursor();
     } else {

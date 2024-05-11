@@ -62,10 +62,6 @@ export function min(a: number, b: number, c: number): number {
   return Math.min(a, Math.min(b, c));
 }
 
-export function strickSign(value: number): number {
-  return value === 0 ? 0 : Math.sign(value);
-}
-
 export function square(value: number): number {
   return value * value;
 }
@@ -87,14 +83,19 @@ export function roundInc(increment: number): number {
       break;
     }
   }
-  if (!found) return Number.NaN;
-
+  if (!found) {
+    return Number.NaN;
+  }
   // Now round it
-  if (inc < 2) inc = 2;
-  else if (inc < 2.5) inc = 2.5;
-  else if (inc < 5) inc = 5;
-  else inc = 10;
-
+  if (inc < 2) {
+    inc = 2;
+  } else if (inc < 2.5) {
+    inc = 2.5;
+  } else if (inc < 5) {
+    inc = 5;
+  } else {
+    inc = 10;
+  }
   // Upscale the inc to the real number
   if (exp < 0) {
     for (; exp !== 0; exp++) inc /= 10;

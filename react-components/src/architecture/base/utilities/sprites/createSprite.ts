@@ -13,7 +13,7 @@ import {
   type Texture
 } from 'three';
 
-const VIEWER_FONT_TYPE = 'sans-serif'; // "Helvetica" Use brush instead here?
+const VIEWER_FONT_TYPE = 'sans-serif';
 
 // ==================================================
 // PUBLIC FUNCTIONS
@@ -93,7 +93,7 @@ function createCanvasWithText(
   if (context === null) {
     return undefined;
   }
-  // measure how long the name will be
+  // Measure how long the name will be
   context.font = font;
   const textWidth = context.measureText(text).width;
   const doubleBorderSize = borderSize * 2;
@@ -103,7 +103,7 @@ function createCanvasWithText(
   canvas.width = width;
   canvas.height = height;
 
-  // Draw optinal rounded rectangle
+  // Draw optional rounded rectangle
   if (bgColor !== undefined) {
     context.fillStyle = '#' + bgColor.getHexString();
     context.beginPath();

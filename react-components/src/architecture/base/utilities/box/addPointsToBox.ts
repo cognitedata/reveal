@@ -8,6 +8,15 @@ import { Range3 } from '../geometry/Range3';
 import { type IBox } from './IBox';
 import { forceBetween0AndPi } from '../extensions/mathExtensions';
 
+/**
+ * Create the box by adding points. The first point will make a boc with a center and a tiny size.
+ * The second point will give the zRotation and one edge of the box
+ * the other will expand the box to include the point.
+ *
+ * @param box - The box to add points to.
+ * @param points - An array of points to add to the box.
+ * @throws Error if points array is empty.
+ */
 export function addPointsToBox(box: IBox, points: Vector3[]): void {
   if (points.length === 0) {
     throw new Error('Cannot create a box without points');

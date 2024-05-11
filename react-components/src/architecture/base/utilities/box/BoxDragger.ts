@@ -10,7 +10,7 @@ import { type DomainObject } from '../../domainObjects/DomainObject';
 import { type IBox } from './IBox';
 import { type BoxPickInfo } from './BoxPickInfo';
 import { forceBetween0AndPi } from '../extensions/mathExtensions';
-import { horizontalSubstract } from '../extensions/vectorExtensions';
+import { horizontalAngle } from '../extensions/vectorExtensions';
 import { Vector3Pool } from '../geometry/Vector3Pool';
 
 // All geometry in this class assume Z-axis is up
@@ -201,11 +201,11 @@ export class BoxDragger {
       return false;
     }
     const center = this._planeOfBox.projectPoint(this._centerOfBox, newVector3());
+    const centerToStartPoint = newVector3().subVectors(this._point, center);
+    const centerToEndPoint = newVector3().subVectors(endPoint, center);
 
     // Ignore Z-value since we are only interested in the rotation around the Z-axis
-    const centerToStartPoint = horizontalSubstract(this._point, center);
-    const centerToEndPoint = horizontalSubstract(endPoint, center);
-    const deltaAngle = centerToEndPoint.angle() - centerToStartPoint.angle();
+    const deltaAngle = horizontalAngle(centerToEndPoint) - horizontalAngle(centerToStartPoint);
 
     // Rotate
     this._box.zRotation = forceBetween0AndPi(deltaAngle + this._zRotationOfBox);
