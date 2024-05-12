@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { ceil, floor, isInc, roundInc } from '../extensions/mathExtensions';
+import { ceil, floor, isIncrement, roundInc as roundIncrement } from '../extensions/mathExtensions';
 
 export class Range1 {
   // ==================================================
@@ -116,52 +116,52 @@ export class Range1 {
     return fraction * this.delta + this.min;
   }
 
-  public getBestInc(numTicks = 50): number {
-    const inc = this.delta / numTicks;
-    return roundInc(inc);
+  public getBestIncrement(numTicks = 50): number {
+    const increment = this.delta / numTicks;
+    return roundIncrement(increment);
   }
 
-  public getNumTicks(inc: number): number {
-    return Math.round(this.delta / inc);
+  public getNumTicks(increment: number): number {
+    return Math.round(this.delta / increment);
   }
 
-  public *getTicks(inc: number): Generator<number> {
+  public *getTicks(increment: number): Generator<number> {
     const copy = this.clone();
-    if (!copy.roundByInc(-inc)) return;
+    if (!copy.roundByInc(-increment)) return;
 
-    if (copy.getNumTicks(inc) > 1000)
+    if (copy.getNumTicks(increment) > 1000)
       // This is a safety valve to prevent it going infinity loops
       return;
 
-    const tolerance = inc / 10000;
+    const tolerance = increment / 10000;
     const max = copy.max + tolerance;
-    for (let tick = copy.min; tick <= max; tick += inc) {
+    for (let tick = copy.min; tick <= max; tick += increment) {
       if (Math.abs(tick) < tolerance) yield 0;
       else yield tick;
     }
   }
 
-  public *getFastTicks(inc: number, tolerance: number): Generator<number> {
+  public *getFastTicks(increment: number, tolerance: number): Generator<number> {
     // This overwrites this
-    if (!this.roundByInc(-inc)) return;
+    if (!this.roundByInc(-increment)) return;
 
-    if (this.getNumTicks(inc) > 1000)
+    if (this.getNumTicks(increment) > 1000)
       // This is a safety valve to prevent it going infinity loops
       return;
 
     const max = this.max + tolerance;
-    for (let tick = this.min; tick <= max; tick += inc) {
+    for (let tick = this.min; tick <= max; tick += increment) {
       if (Math.abs(tick) < tolerance) yield 0;
       else yield tick;
     }
   }
 
-  public getBoldInc(inc: number, every = 2): number {
+  public getBoldIncrement(increment: number, every = 2): number {
     let numTicks = 0;
-    const boldInc = inc * every;
-    for (const anyTick of this.getTicks(inc)) {
+    const boldInc = increment * every;
+    for (const anyTick of this.getTicks(increment)) {
       const tick = Number(anyTick);
-      if (!isInc(tick, boldInc)) {
+      if (!isIncrement(tick, boldInc)) {
         continue;
       }
       numTicks += 1;
@@ -169,7 +169,7 @@ export class Range1 {
         return boldInc;
       }
     }
-    return inc;
+    return increment;
   }
 
   // ==================================================
@@ -246,17 +246,17 @@ export class Range1 {
     if (!this.isEmpty) this.expandByMargin(this.delta * fraction);
   }
 
-  public roundByInc(inc: number): boolean {
+  public roundByInc(increment: number): boolean {
     if (this.isEmpty) {
       return false;
     }
-    if (inc < 0) {
-      this._min = ceil(this._min, -inc);
-      this._max = floor(this._max, -inc);
+    if (increment < 0) {
+      this._min = ceil(this._min, -increment);
+      this._max = floor(this._max, -increment);
       if (this._min > this._max) return false;
-    } else if (inc > 0) {
-      this._min = floor(this._min, inc);
-      this._max = ceil(this._max, inc);
+    } else if (increment > 0) {
+      this._min = floor(this._min, increment);
+      this._max = ceil(this._max, increment);
     }
     return true;
   }

@@ -20,7 +20,8 @@ import {
   CircleGeometry,
   Material,
   Plane,
-  FrontSide
+  FrontSide,
+  PerspectiveCamera
 } from 'three';
 import { BoxDomainObject, MIN_BOX_SIZE } from './BoxDomainObject';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
@@ -103,6 +104,18 @@ export class BoxThreeView extends GroupThreeView {
       this.invalidateBoundingBox();
       this.invalidateRenderTarget();
     }
+  }
+
+  // ==================================================
+  // OVERRIDES of ThreeView
+  // ==================================================
+
+  public override beforeRender(camera: PerspectiveCamera): void {
+    super.beforeRender(camera);
+    if (this.isEmpty) {
+      return;
+    }
+    this.updateLabels(camera);
   }
 
   // ==================================================
@@ -197,7 +210,6 @@ export class BoxThreeView extends GroupThreeView {
     const result = new LineSegments(geometry, material);
 
     result.applyMatrix4(matrix);
-    result.onBeforeRender = this.onBeforeRender;
     return result;
   }
 
@@ -245,10 +257,6 @@ export class BoxThreeView extends GroupThreeView {
     sprite.position.copy(faceCenter);
     return sprite;
   }
-
-  private readonly onBeforeRender = (_1: any, _2: any, camera: Camera): void => {
-    this.updateLabels(camera);
-  };
 
   private updateLabels(camera: Camera): void {
     const { boxDomainObject } = this;

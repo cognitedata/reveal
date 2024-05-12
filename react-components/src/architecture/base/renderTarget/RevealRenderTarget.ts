@@ -12,11 +12,20 @@ import {
 } from '@cognite/reveal';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../concreteCommands/NavigationTool';
-import { Vector3, AmbientLight, DirectionalLight, PerspectiveCamera } from 'three';
+import {
+  Vector3,
+  AmbientLight,
+  DirectionalLight,
+  PerspectiveCamera,
+  Box3,
+  WebGLRenderer
+} from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
 import { getOctDir } from '../utilities/extensions/vectorExtensions';
 import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
+import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
+import { ThreeView } from '../views/ThreeView';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -44,19 +53,12 @@ export class RevealRenderTarget {
 
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
+    this._viewer.on('beforeSceneRendered', this.beforeSceneRenderedDelegate);
   }
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  public get cursor(): string {
-    return this.domElement.style.cursor;
-  }
-
-  public set cursor(value: string) {
-    this.domElement.style.cursor = value;
-  }
 
   public get viewer(): Cognite3DViewer {
     return this._viewer;
@@ -78,6 +80,14 @@ export class RevealRenderTarget {
     return this._toolController;
   }
 
+  public get cursor(): string {
+    return this.domElement.style.cursor;
+  }
+
+  public set cursor(value: string) {
+    this.domElement.style.cursor = value;
+  }
+
   public get cameraManager(): IFlexibleCameraManager {
     const cameraManager = this.viewer.cameraManager;
     if (!isFlexibleCameraManager(cameraManager)) {
@@ -88,6 +98,10 @@ export class RevealRenderTarget {
 
   public get camera(): PerspectiveCamera {
     return this.cameraManager.getCamera();
+  }
+
+  public get sceneBoundingBox(): Box3 {
+    return this.viewer.getSceneBoundingBox();
   }
 
   // ==================================================
@@ -154,6 +168,22 @@ export class RevealRenderTarget {
     light.position.copy(cameraDirection);
   };
 
+  beforeSceneRenderedDelegate = (event: {
+    frameNumber: number;
+    renderer: WebGLRenderer;
+    camera: PerspectiveCamera;
+  }): void => {
+    // TODO: Add beforeRender to the customObject in Reveal, so this can be general made.
+    // This way is a little bit time consuming since we have to iterate over all domainObjects and all views.
+    for (const domainObject of this._rootDomainObject.getDescendantsByType(VisualDomainObject)) {
+      for (const view of domainObject.views) {
+        if (view instanceof ThreeView) {
+          view.beforeRender(event.camera);
+        }
+      }
+    }
+  };
+
   // ==================================================
   // INSTANCE METHODS: Cursor
   // See: https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
@@ -179,6 +209,12 @@ export class RevealRenderTarget {
     this.cursor = 'crosshair';
   }
 
+  /**
+   * Sets the resize cursor based on two points in 3D space to the resize
+   * // cursor has a correct direction.
+   * @param point1 - The first point in 3D space.
+   * @param point2 - The second point in 3D space.
+   */
   public setResizeCursor(point1: Vector3, point2: Vector3): void {
     const screenPoint1 = this.viewer.worldToScreen(point1, false);
     if (screenPoint1 === null) {

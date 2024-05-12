@@ -13,7 +13,11 @@ import { forceBetween0AndPi } from '../extensions/mathExtensions';
 import { horizontalAngle } from '../extensions/vectorExtensions';
 import { Vector3Pool } from '../geometry/Vector3Pool';
 
-// All geometry in this class assume Z-axis is up
+/**
+ * The `BoxDragger` class represents a utility for dragging and manipulating a box in a 3D space.
+ * It provides methods for scaling, translating, and rotating the box based on user interactions.
+ * All geometry in this class assume Z-axis is up
+ */
 export class BoxDragger {
   // ==================================================
   // INSTANCE FIELDS

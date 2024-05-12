@@ -6,7 +6,7 @@ import { type DomainObject } from '../domainObjects/DomainObject';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 
 /**
- * Represents a base view class that provides common functionality for views.
+ * Represents a base view class that provides common functionality for all types of views.
  */
 export abstract class BaseView {
   // ==================================================
@@ -79,15 +79,6 @@ export abstract class BaseView {
    * Always call `super.onHide()` in the overrides.
    */
   public onHide(): void {}
-
-  /**
-   * This method is called before rendering the view.
-   * Override this function to perform any necessary operations
-   * just before rendering.
-   * @remarks
-   * Always call `super.beforeRender()` in the overrides.
-   */
-  public beforeRender(): void {}
 
   /**
    * Dispose the view.

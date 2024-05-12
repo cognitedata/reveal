@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Vector2, type Vector3 } from 'three';
+import { Vector3, type Vector2 } from 'three';
 import { square } from './mathExtensions';
 
 export function horizontalAngle(vector: Vector3): number {
@@ -17,6 +17,10 @@ export function horizontalDistanceTo(p1: Vector3, p2: Vector3): number {
 
 export function verticalDistanceTo(p1: Vector3, p2: Vector3): number {
   return Math.abs(p1.z - p2.z);
+}
+
+export function getCenter(a: Vector3, b: Vector3): Vector3 {
+  return new Vector3().addVectors(a, b).divideScalar(2);
 }
 
 export function getOctDir(vector: Vector2): number {

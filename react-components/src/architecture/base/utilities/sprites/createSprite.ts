@@ -19,6 +19,15 @@ const VIEWER_FONT_TYPE = 'sans-serif';
 // PUBLIC FUNCTIONS
 // ==================================================
 
+/**
+ * Creates a sprite with the specified text.
+ *
+ * @param text - The text to be displayed on the sprite.
+ * @param worldHeight - The height of sprite in the world coordinates.
+ * @param color - The color of the text.
+ * @param bgColor - The background color of the sprite (optional).
+ * @returns The created sprite, or undefined if the canvas creation failed.
+ */
 export function createSpriteWithText(
   text: string,
   worldHeight: number,
@@ -32,6 +41,12 @@ export function createSpriteWithText(
   return createSprite(canvas, worldHeight);
 }
 
+/**
+ * Moves a sprite to a new position based on a given position and direction.
+ * @param sprite - The sprite to move.
+ * @param position - The current position of the sprite.
+ * @param direction - The direction in which the sprite should move.
+ */
 export function moveSpriteByPositionAndDirection(
   sprite: Sprite,
   position: Vector3,
@@ -45,6 +60,13 @@ export function moveSpriteByPositionAndDirection(
   sprite.position.copy(newPosition);
 }
 
+/**
+ * Moves a sprite to a specified position and aligns it based on the given alignment value.
+ * @param sprite - The sprite to be moved.
+ * @param position - The position to move the sprite to.
+ * @param alignment - The alignment value to align the sprite. This is a number between 0 and 8.
+ * and is documented below.
+ */
 export function moveSpriteByPositionAndAlignment(
   sprite: Sprite,
   position: Vector3,
@@ -93,6 +115,7 @@ function createCanvasWithText(
   if (context === null) {
     return undefined;
   }
+
   // Measure how long the name will be
   context.font = font;
   const textWidth = context.measureText(text).width;
@@ -102,6 +125,7 @@ function createCanvasWithText(
 
   canvas.width = width;
   canvas.height = height;
+  context.clearRect(0, 0, canvas.width, canvas.height);
 
   // Draw optional rounded rectangle
   if (bgColor !== undefined) {

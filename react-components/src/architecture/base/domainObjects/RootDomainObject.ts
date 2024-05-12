@@ -22,18 +22,4 @@ export class RootDomainObject extends DomainObject {
   public override get typeName(): string {
     return 'Root';
   }
-
-  // ==================================================
-  // STATICS FIELDS AND PROPERTIES
-  // ==================================================
-
-  // private static _active: RootDomainObject = new RootDomainObject();
-
-  // public static get active(): RootDomainObject {
-  //   return RootDomainObject._active;
-  // }
-
-  // public static set active(value: RootDomainObject) {
-  //   RootDomainObject._active = value;
-  // }
 }

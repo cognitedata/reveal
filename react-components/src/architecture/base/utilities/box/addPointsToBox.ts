@@ -56,7 +56,9 @@ export function addPointsToBox(box: IBox, points: Vector3[]): void {
   const center = rotatedRange.center;
   const delta = rotatedRange.delta;
   center.applyMatrix4(matrix);
+
+  // Set the cente and the size
+  box.center.copy(center);
   box.size.copy(delta);
   box.forceMinSize();
-  box.center.copy(center);
 }

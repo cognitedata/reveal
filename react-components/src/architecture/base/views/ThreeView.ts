@@ -8,7 +8,7 @@ import { Changes } from '../domainObjectsHelpers/Changes';
 import { type RenderStyle } from '../domainObjectsHelpers/RenderStyle';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type DomainObject } from '../domainObjects/DomainObject';
-import { type Box3 } from 'three';
+import { type PerspectiveCamera, type Box3 } from 'three';
 
 /**
  * Represents an abstract base class for a Three.js view in the application.
@@ -83,6 +83,15 @@ export abstract class ThreeView extends BaseView {
    * @returns The calculated bounding box of the view.
    */
   protected abstract calculateBoundingBox(): Box3;
+
+  /**
+   * This method is called before rendering the view.
+   * Override this function to perform any necessary operations
+   * just before rendering.
+   * @remarks
+   * Always call `super.beforeRender(camera)` in the overrides.
+   */
+  public beforeRender(_camera: PerspectiveCamera): void {}
 
   // ==================================================
   // INSTANCE METHODS

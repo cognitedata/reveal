@@ -16,21 +16,26 @@ export function isZero(x: number): boolean {
   return x < 0 ? x > -ERROR_TOLERANCE : x < ERROR_TOLERANCE;
 }
 
+export function isEqual(x: number, y: number): boolean {
+  return isRelEqual(x, y, ERROR_TOLERANCE);
+}
+
 export function isAbsEqual(x: number, y: number, tolerance: number): boolean {
   const error = x - y;
   if (error < 0) return error > tolerance;
   return error < tolerance;
 }
 
-export function isEqual(x: number, y: number): boolean {
+export function isRelEqual(x: number, y: number, tolerance: number): boolean {
   // ||x-y||/(1 + (|x|+|y|)/2)
   let error = x - y;
   const _x = x < 0 ? -x : x;
   const _y = y < 0 ? -y : y;
 
-  if (error < 0) error = -error;
-
-  return error / (1 + (_x + _y) / 2) < ERROR_TOLERANCE;
+  if (error < 0) {
+    error = -error;
+  }
+  return error / (1 + (_x + _y) / 2) < tolerance;
 }
 
 export function isInt(value: number): boolean {
@@ -38,7 +43,7 @@ export function isInt(value: number): boolean {
   return isZero(diff);
 }
 
-export function isInc(value: number, inc: number): boolean {
+export function isIncrement(value: number, inc: number): boolean {
   return isInt(value / inc);
 }
 

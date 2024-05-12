@@ -66,7 +66,7 @@ export class TerrainDomainObject extends VisualDomainObject {
       style.increment > zRange.delta || // Too large
       style.increment < zRange.delta / 200 // Too small
     ) {
-      style.increment = zRange.getBestInc(20);
+      style.increment = zRange.getBestIncrement(20);
     }
   }
 

@@ -4,6 +4,9 @@
 
 import { Vector2, Vector3 } from 'three';
 
+/**
+ * Represents a face of a box.
+ */
 export class BoxFace {
   // Face is 0-5, where 0-2 are positive faces and 3-5 are negative faces
   private _face: number = 0;

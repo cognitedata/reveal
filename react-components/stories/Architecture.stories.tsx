@@ -100,6 +100,7 @@ export const Main: Story = {
       <MyCustomToolbar>
         <>
           <RevealButtons.FitView />
+          <RevealButtons.SetAxisVisible />
           <RevealButtons.SetFlexibleControlsTypeOrbit />
           <RevealButtons.SetFlexibleControlsTypeFirstPerson />
           <RevealToolbar.SlicerButton />

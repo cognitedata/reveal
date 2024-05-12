@@ -37,6 +37,9 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
   // ==================================================
 
   public get object(): Object3D {
+    if (this.needsUpdate) {
+      this.removeChildren();
+    }
     if (this.isEmpty) {
       this.makeChildern();
     }
@@ -143,6 +146,17 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
   // ==================================================
 
   protected abstract addChildren(): void;
+
+  /**
+   * Determines whether the view needs to be updated just before rendering.
+   * Typically needed to be implemented id the update function is not enough and
+   * the view depend on other factors as the model bounding box or the camera position.
+   * This method should be overridden in derived classes.
+   * @returns A boolean value indicating whether the view needs to be updated.
+   */
+  protected get needsUpdate(): boolean {
+    return false;
+  }
 
   // ==================================================
   // INSTANCE METHODS

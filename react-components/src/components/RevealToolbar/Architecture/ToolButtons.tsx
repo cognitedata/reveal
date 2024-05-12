@@ -11,12 +11,14 @@ import { BoxEditTool } from '../../../architecture/concrete/boxDomainObject/BoxE
 import { FitViewCommand } from '../../../architecture/base/concreteCommands/FitViewCommand';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
+import { SetAxisVisibleCommand } from '../../../architecture/concrete/axis/SetAxisVisibleCommand';
 
 type CreateElementDelegate = () => ReactElement;
 
 export type RevealButtonsType = {
   FitView: CreateElementDelegate;
   NavigationTool: CreateElementDelegate;
+  SetAxisVisible: CreateElementDelegate;
   SetTerrainVisible: CreateElementDelegate;
   UpdateTerrain: CreateElementDelegate;
   BoxEditTool: CreateElementDelegate;
@@ -27,6 +29,7 @@ export type RevealButtonsType = {
 export const RevealButtons: RevealButtonsType = {
   FitView: () => CommandButton(new FitViewCommand()),
   NavigationTool: () => CommandButton(new NavigationTool()),
+  SetAxisVisible: () => CommandButton(new SetAxisVisibleCommand()),
   SetTerrainVisible: () => CommandButton(new SetTerrainVisibleCommand()),
   UpdateTerrain: () => CommandButton(new UpdateTerrainCommand()),
   BoxEditTool: () => CommandButton(new BoxEditTool()),

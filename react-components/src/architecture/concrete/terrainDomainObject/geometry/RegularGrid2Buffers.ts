@@ -13,7 +13,7 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
 
   public constructor(grid: RegularGrid2, makeUvs: boolean) {
     const [uniqueIndexes, numUniqueIndex] = RegularGrid2Buffers.createUniqueIndexes(grid);
-    super(numUniqueIndex, makeUvs);
+    super(numUniqueIndex, true, makeUvs);
     this.makeBuffers(grid, uniqueIndexes);
     this.makeTriangleIndexes(grid, uniqueIndexes);
   }

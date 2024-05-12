@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Vector2, Vector3 } from 'three';
+import { type Vector2, Vector3, type Box3 } from 'three';
 import { Range1 } from './Range1';
 import { square } from '../extensions/mathExtensions';
 
@@ -45,16 +45,16 @@ export class Range3 {
     return new Vector3(this.x.center, this.y.center, this.z.center);
   }
 
-  public get aspectRatio2(): number {
-    return this.x.delta / this.y.delta;
+  public get diagonal(): number {
+    return Math.sqrt(square(this.x.delta) + square(this.y.delta) + square(this.z.delta));
+  }
+
+  public get area(): number {
+    return 2 * (this.x.delta + this.y.delta + this.z.delta);
   }
 
   public get volume(): number {
     return this.x.delta * this.y.delta * this.z.delta;
-  }
-
-  public get diagonal(): number {
-    return Math.sqrt(square(this.x.delta) + square(this.y.delta) + square(this.z.delta));
   }
 
   // ==================================================
@@ -62,9 +62,13 @@ export class Range3 {
   // ==================================================
 
   public constructor(min?: Vector3, max?: Vector3) {
-    if (min === undefined && max !== undefined) this.set(max, max);
-    else if (min !== undefined && max === undefined) this.set(min, min);
-    else if (min !== undefined && max !== undefined) this.set(min, max);
+    if (min === undefined && max !== undefined) {
+      this.set(max, max);
+    } else if (min !== undefined && max === undefined) {
+      this.set(min, min);
+    } else if (min !== undefined && max !== undefined) {
+      this.set(min, max);
+    }
   }
 
   public clone(): Range3 {
@@ -79,8 +83,10 @@ export class Range3 {
   // INSTANCE METHODS: Requests
   // ==================================================
 
-  public equal(other: Range3 | undefined): boolean {
-    if (other === undefined) return false;
+  public equals(other: Range3 | undefined): boolean {
+    if (other === undefined) {
+      return false;
+    }
     return this.x.equal(other.x) && this.y.equal(other.y) && this.z.equal(other.z);
   }
 
@@ -92,13 +98,20 @@ export class Range3 {
     return `(X: ${this.x.toString()}, Y: ${this.y.toString()}, Z: ${this.z.toString()})`;
   }
 
-  getCornerPoints(): Vector3[] {
-    const corners: Vector3[] = [];
-    for (let corner = 0; corner < 8; corner++) corners[corner] = this.getCornerPoint(corner);
+  public getBox(target: Box3): Box3 {
+    target.min.set(this.x.min, this.y.min, this.z.min);
+    target.max.set(this.x.max, this.y.max, this.z.max);
+    return target;
+  }
+
+  public getCornerPoints(corners: Vector3[]): Vector3[] {
+    for (let corner = 0; corner < 8; corner++) {
+      this.getCornerPoint(corner, corners[corner]);
+    }
     return corners;
   }
 
-  public getCornerPoint(corner: number): Vector3 {
+  public getCornerPoint(corner: number, target: Vector3): Vector3 {
     //      7-------6
     //    / |      /|
     //   4-------5  |
@@ -109,21 +122,21 @@ export class Range3 {
 
     switch (corner) {
       case 0:
-        return new Vector3(this.x.min, this.y.min, this.z.min);
+        return target.set(this.x.min, this.y.min, this.z.min);
       case 1:
-        return new Vector3(this.x.max, this.y.min, this.z.min);
+        return target.set(this.x.max, this.y.min, this.z.min);
       case 2:
-        return new Vector3(this.x.max, this.y.max, this.z.min);
+        return target.set(this.x.max, this.y.max, this.z.min);
       case 3:
-        return new Vector3(this.x.min, this.y.max, this.z.min);
+        return target.set(this.x.min, this.y.max, this.z.min);
       case 4:
-        return new Vector3(this.x.min, this.y.min, this.z.max);
+        return target.set(this.x.min, this.y.min, this.z.max);
       case 5:
-        return new Vector3(this.x.max, this.y.min, this.z.max);
+        return target.set(this.x.max, this.y.min, this.z.max);
       case 6:
-        return new Vector3(this.x.max, this.y.max, this.z.max);
+        return target.set(this.x.max, this.y.max, this.z.max);
       case 7:
-        return new Vector3(this.x.min, this.y.max, this.z.max);
+        return target.set(this.x.min, this.y.max, this.z.max);
       default:
         throw Error('getCornerPoint');
     }
@@ -132,6 +145,10 @@ export class Range3 {
   // ==================================================
   // INSTANCE METHODS: Operations
   // ==================================================
+
+  public copy(box: Box3): void {
+    this.set(box.min, box.max);
+  }
 
   public set(min: Vector3, max: Vector3): void {
     this.x.set(min.x, max.x);
