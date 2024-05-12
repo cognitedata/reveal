@@ -1916,7 +1916,7 @@ __metadata:
     react-dom: 18.3.1
     replace: 1.2.2
     rimraf: 5.0.5
-    styled-components: 6.1.10
+    styled-components: 6.1.11
     typedoc: 0.25.13
     typedoc-plugin-markdown: 3.17.1
     typedoc-plugin-no-inherit: 1.4.0
@@ -11600,9 +11600,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:6.1.10":
-  version: 6.1.10
-  resolution: "styled-components@npm:6.1.10"
+"styled-components@npm:6.1.11":
+  version: 6.1.11
+  resolution: "styled-components@npm:6.1.11"
   dependencies:
     "@emotion/is-prop-valid": 1.2.2
     "@emotion/unitless": 0.8.1
@@ -11616,7 +11616,7 @@ __metadata:
   peerDependencies:
     react: ">= 16.8.0"
     react-dom: ">= 16.8.0"
-  checksum: f0782ce173cfc31a77975bb9b7927f58f0255df3285dd438c90ce7563f8de5326a034f6ed38f44bf4a2224608d59016640ea37dd2eb651c174b6bc97972323a5
+  checksum: 18fb43fe49b61c7b5d3b6c6bd6fd315c7f83310916b52e7b788286064f6586d3211d40528d9413b4f812c6ff806ae25976f7e400f9b125a8f7ea653b39f155c8
   languageName: node
   linkType: hard
 
