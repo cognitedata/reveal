@@ -15,10 +15,10 @@ export const queryKeys = {
     [...queryKeys.all, 'timeseries', 'timeseries-linked-assets'] as const
 } as const;
 
-const assets = () => {
+const assets = (): string[] => {
   return [...queryKeys.all, 'assets'];
 };
 
-const timeseries = () => {
+const timeseries = (): string[] => {
   return [...queryKeys.all, 'timeseries'];
 };
