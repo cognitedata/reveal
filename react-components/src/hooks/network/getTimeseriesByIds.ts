@@ -14,5 +14,6 @@ export const getTimeseriesByIds = async (
     async (timeseriesIds) =>
       await sdk.timeseries.retrieve(timeseriesIds, { ignoreUnknownIds: true })
   );
-  return await Promise.all(chunkedPromises).then((result) => result.flat());
+  const result = await Promise.all(chunkedPromises);
+  return result.flat();
 };

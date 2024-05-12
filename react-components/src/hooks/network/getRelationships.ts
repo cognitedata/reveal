@@ -26,7 +26,7 @@ export const getRelationships = async (
 ): Promise<ExtendedRelationship[]> => {
   const { resourceExternalIds, relationshipResourceTypes, ...rest } = payload;
 
-  return await Promise.all([
+  const [sourceRelationships, targetRelationships] = await Promise.all([
     getSourceRelationships(sdk, {
       targetExternalIds: resourceExternalIds,
       sourceTypes: relationshipResourceTypes,
@@ -37,7 +37,6 @@ export const getRelationships = async (
       targetTypes: relationshipResourceTypes,
       ...rest
     })
-  ]).then(([sourceRelationships, targetRelationships]) => {
-    return [...sourceRelationships, ...targetRelationships];
-  });
+  ]);
+  return [...sourceRelationships, ...targetRelationships];
 };

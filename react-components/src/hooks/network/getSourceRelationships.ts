@@ -20,10 +20,9 @@ export const getSourceRelationships = async (
   sdk: CogniteClient,
   payload: Payload
 ): Promise<ExtendedRelationship[]> => {
-  return await filterRelationships(sdk, payload).then((relationships) => {
-    return relationships.map((relationship) => ({
-      ...relationship,
-      relation: 'Source'
-    }));
-  });
+  const relationships = await filterRelationships(sdk, payload);
+  return relationships.map((relationship) => ({
+    ...relationship,
+    relation: 'Source'
+  }));
 };
