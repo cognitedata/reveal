@@ -4,8 +4,12 @@
 import { useEffect, type ReactElement, useState } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
-import { useAllMappedEquipmentAssetMappings } from '../..';
-import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types';
+import { ModelMappingsWithAssets, useAllMappedEquipmentAssetMappings } from '../..';
+import {
+  type RuleOutputSet,
+  type AssetStylingGroupAndStyleIndex,
+  type EmptyRuleForSelectionProps
+} from './types';
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { EMPTY_ARRAY } from '../../utilities/constants';
@@ -53,11 +57,11 @@ export function RuleBasedOutputsSelector({
       // TODO: refactor to be sure to filter only the mappings/assets for the current model within the pages
       const flatAssetsMappingsList: AssetMapping3D[] = assetMappings.pages
         .flat()
-        .flatMap((item) => item.mappings.items);
+        .flatMap((item: ModelMappingsWithAssets) => item.mappings.items);
 
       const contextualizedAssetNodes = assetMappings.pages
         .flat()
-        .flatMap((item) => item.assets)
+        .flatMap((item: ModelMappingsWithAssets) => item.assets)
         .map(convertAssetMetadataKeysToLowerCase);
 
       const collectionStylings = await generateRuleBasedOutputs(

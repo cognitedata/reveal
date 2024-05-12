@@ -262,3 +262,16 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   deletedTime: number;
   properties: FdmPropertyType<PropertyType>;
 };
+
+export type EmptyRuleForSelection = {
+  rule: {
+    properties: EmptyRuleForSelectionProps;
+  };
+  isEnabled: boolean;
+};
+
+export type EmptyRuleForSelectionProps = {
+  id: string | undefined;
+  name: string;
+  isNoSelection: boolean;
+};

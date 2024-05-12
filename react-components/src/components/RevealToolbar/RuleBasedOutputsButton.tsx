@@ -15,6 +15,7 @@ import {
 
 import { RuleBasedOutputsSelector } from '../RuleBasedOutputs/RuleBasedOutputsSelector';
 import {
+  EmptyRuleForSelection,
   type AssetStylingGroupAndStyleIndex,
   type RuleAndEnabled
 } from '../RuleBasedOutputs/types';
@@ -25,22 +26,17 @@ import { type AssetStylingGroup } from '../..';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCacheProvider';
 
-type EmptyRule = {
-  rule: any;
-  isEnabled: boolean;
-};
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AssetStylingGroup[] | undefined) => void;
-  onRuleSetSelectedChanged?: (ruleSet: RuleAndEnabled | EmptyRule | undefined) => void;
+  onRuleSetSelectedChanged?: (ruleSet: RuleAndEnabled | undefined) => void;
 };
 export const RuleBasedOutputsButton = ({
   onRuleSetStylingChanged,
   onRuleSetSelectedChanged
 }: RuleBasedOutputsButtonProps): ReactElement => {
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
-  const [emptyRuleSelected, setEmptyRuleSelected] = useState<EmptyRule>();
-  const [ruleInstances, setRuleInstances] =
-    useState<Array<RuleAndEnabled | EmptyRule | undefined>>();
+  const [emptyRuleSelected, setEmptyRuleSelected] = useState<EmptyRuleForSelection>();
+  const [ruleInstances, setRuleInstances] = useState<Array<RuleAndEnabled | undefined>>();
   const { t } = useTranslation();
   const models = use3dModels();
   const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
@@ -48,8 +44,14 @@ export const RuleBasedOutputsButton = ({
 
   const ruleInstancesResult = useFetchRuleInstances();
 
-  const emptySelection: EmptyRule = {
-    rule: { properties: { id: '', name: t('RULESET_NO_SELECTION', 'No RuleSet selected') } },
+  const emptySelection: EmptyRuleForSelection = {
+    rule: {
+      properties: {
+        id: undefined,
+        name: t('RULESET_NO_SELECTION', 'No RuleSet selected'),
+        isNoSelection: true
+      }
+    },
     isEnabled: false
   };
 
@@ -76,6 +78,7 @@ export const RuleBasedOutputsButton = ({
       emptySelection.isEnabled = true;
       if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(undefined);
     }
+
     if (onRuleSetSelectedChanged !== undefined) onRuleSetSelectedChanged(selectedRule);
 
     setEmptyRuleSelected(emptySelection);
@@ -130,7 +133,7 @@ export const RuleBasedOutputsButton = ({
                       {item?.rule?.properties.name}
                     </Flex>
                     <Radio
-                      name={item?.rule?.properties.id}
+                      name={item?.rule?.properties.id ?? ''}
                       value={item?.rule?.properties.id}
                       checked={item?.isEnabled}
                       onChange={(_: any, value: string | undefined) => {
