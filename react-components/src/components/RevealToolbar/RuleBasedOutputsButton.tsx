@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useState, type ReactElement, useEffect } from 'react';
+import { useState, type ReactElement, useEffect, useCallback } from 'react';
 
 import {
   Button,
@@ -25,6 +25,7 @@ import { use3dModels } from '../../hooks/use3dModels';
 import { type AssetStylingGroup } from '../..';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCacheProvider';
+import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
 
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AssetStylingGroup[] | undefined) => void;
@@ -36,7 +37,7 @@ export const RuleBasedOutputsButton = ({
 }: RuleBasedOutputsButtonProps): ReactElement => {
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
   const [emptyRuleSelected, setEmptyRuleSelected] = useState<EmptyRuleForSelection>();
-  const [ruleInstances, setRuleInstances] = useState<Array<RuleAndEnabled | undefined>>();
+  const [ruleInstances, setRuleInstances] = useState<Array<RuleAndEnabled> | undefined>();
   const { t } = useTranslation();
   const models = use3dModels();
   const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
@@ -44,47 +45,48 @@ export const RuleBasedOutputsButton = ({
 
   const ruleInstancesResult = useFetchRuleInstances();
 
-  const emptySelection: EmptyRuleForSelection = {
-    rule: {
-      properties: {
-        id: undefined,
-        name: t('RULESET_NO_SELECTION', 'No RuleSet selected'),
-        isNoSelection: true
-      }
-    },
-    isEnabled: false
-  };
-
   useEffect(() => {
     if (ruleInstancesResult.data === undefined) return;
 
     setRuleInstances(ruleInstancesResult.data);
   }, [ruleInstancesResult]);
 
-  const onChange = (data: string | undefined): void => {
-    ruleInstances?.forEach((item) => {
-      if (item === undefined) return;
-      item.isEnabled = false;
-    });
-    emptySelection.isEnabled = false;
+  const onChange = useCallback(
+    (data: string | undefined): void => {
+      ruleInstances?.forEach((item) => {
+        if (item === undefined) return;
+        item.isEnabled = false;
+      });
 
-    const selectedRule = ruleInstances?.find((item) => {
-      return item?.rule?.properties.id === data;
-    });
+      const emptySelection: EmptyRuleForSelection = {
+        rule: {
+          properties: {
+            id: undefined,
+            name: t('RULESET_NO_SELECTION', 'No RuleSet selected'),
+            isNoSelection: true
+          }
+        },
+        isEnabled: false
+      };
 
-    if (selectedRule !== undefined) {
-      selectedRule.isEnabled = true;
-    } else {
-      emptySelection.isEnabled = true;
-      if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(undefined);
-    }
+      const selectedRule = ruleInstances?.find((item) => {
+        return item?.rule?.properties.id === data;
+      });
 
-    if (onRuleSetSelectedChanged !== undefined) onRuleSetSelectedChanged(selectedRule);
+      if (selectedRule !== undefined) {
+        selectedRule.isEnabled = true;
+      } else {
+        emptySelection.isEnabled = true;
+        if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(undefined);
+      }
 
-    setEmptyRuleSelected(emptySelection);
-    setCurrentRuleSetEnabled(selectedRule);
-    setRuleInstances(ruleInstances);
-  };
+      if (onRuleSetSelectedChanged !== undefined) onRuleSetSelectedChanged(selectedRule);
+
+      setEmptyRuleSelected(emptySelection);
+      setCurrentRuleSetEnabled(selectedRule);
+    },
+    [ruleInstances, onRuleSetStylingChanged, onRuleSetSelectedChanged]
+  );
 
   const ruleSetStylingChanged = (
     stylingGroups: AssetStylingGroupAndStyleIndex[] | undefined
@@ -92,6 +94,7 @@ export const RuleBasedOutputsButton = ({
     const assetStylingGroups = stylingGroups?.map((group) => group.assetStylingGroup);
     if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(assetStylingGroups);
   };
+
   return (
     <>
       <CogsTooltip
@@ -109,39 +112,21 @@ export const RuleBasedOutputsButton = ({
                 marginBottom: '20px'
               }}>
               <Menu.Header>{t('RULESET_SELECT_HEADER', 'Select color overlay')}</Menu.Header>
-              <Menu.Item key="no-rule-selected">
-                <Flex justifyContent="space-between" alignItems="center" gap={8}>
-                  <Flex gap={4} alignItems="center">
-                    <Icon type="ColorPalette" />
-                    {t('RULESET_NO_SELECTION', 'No RuleSet selected')}
-                  </Flex>
-                  <Radio
-                    name={'no-selection'}
-                    value={'no-selection'}
-                    checked={emptyRuleSelected?.isEnabled}
-                    onChange={(_: any, value: string | undefined) => {
-                      onChange(value);
-                    }}
-                  />
-                </Flex>
-              </Menu.Item>
+              <RuleBasedSelectionItem
+                key="no-rule-selected"
+                id="no-rule-selected"
+                label={t('RULESET_NO_SELECTION', 'No RuleSet selected')}
+                checked={currentRuleSetEnabled === undefined || emptyRuleSelected?.isEnabled}
+                onChange={onChange}
+              />
               {ruleInstances?.map((item) => (
-                <Menu.Item key={item?.rule?.properties.id}>
-                  <Flex justifyContent="space-between" alignItems="center" gap={8}>
-                    <Flex gap={4} alignItems="center">
-                      <Icon type="ColorPalette" />
-                      {item?.rule?.properties.name}
-                    </Flex>
-                    <Radio
-                      name={item?.rule?.properties.id ?? ''}
-                      value={item?.rule?.properties.id}
-                      checked={item?.isEnabled}
-                      onChange={(_: any, value: string | undefined) => {
-                        onChange(value);
-                      }}
-                    />
-                  </Flex>
-                </Menu.Item>
+                <RuleBasedSelectionItem
+                  key={item?.rule?.properties.id}
+                  id={item?.rule?.properties.id}
+                  label={item?.rule?.properties.name}
+                  checked={item?.isEnabled}
+                  onChange={onChange}
+                />
               ))}
             </Menu>
           }>
