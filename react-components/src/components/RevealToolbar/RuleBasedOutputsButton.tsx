@@ -29,7 +29,7 @@ export const RuleBasedOutputsButton = ({
 }: RuleBasedOutputsButtonProps): ReactElement => {
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
   const [emptyRuleSelected, setEmptyRuleSelected] = useState<EmptyRuleForSelection>();
-  const [ruleInstances, setRuleInstances] = useState<Array<RuleAndEnabled> | undefined>();
+  const [ruleInstances, setRuleInstances] = useState<RuleAndEnabled[] | undefined>();
   const { t } = useTranslation();
   const models = use3dModels();
   const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];

@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { Flex, Icon, Menu, Radio } from '@cognite/cogs.js';
+import { type ReactElement } from 'react';
 
 type RuleBasedSelectionItemProps = {
   onChange: (value: string | undefined) => void;
@@ -16,7 +17,7 @@ export const RuleBasedSelectionItem = ({
   key,
   id,
   checked
-}: RuleBasedSelectionItemProps) => {
+}: RuleBasedSelectionItemProps): ReactElement => {
   return (
     <Menu.Item key={key}>
       <Flex justifyContent="space-between" alignItems="center" gap={8}>

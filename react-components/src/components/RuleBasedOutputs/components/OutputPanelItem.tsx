@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import { type RuleOutput } from '../types';
 import styled from 'styled-components';
 

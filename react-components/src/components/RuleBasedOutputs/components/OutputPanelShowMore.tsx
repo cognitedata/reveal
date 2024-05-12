@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import styled from 'styled-components';
 import { Button, Flex } from '@cognite/cogs.js';
 import { useTranslation } from '../../i18n/I18n';
