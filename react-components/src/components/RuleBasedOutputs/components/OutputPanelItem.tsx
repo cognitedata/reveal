@@ -1,5 +1,8 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { ReactElement } from 'react';
-import { RuleOutput } from '../types';
+import { type RuleOutput } from '../types';
 import styled from 'styled-components';
 
 type OutputPanelItemProps = {

@@ -1,5 +1,7 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { Flex, Icon, Menu, Radio } from '@cognite/cogs.js';
-import { RuleAndEnabled } from '../types';
 
 type RuleBasedSelectionItemProps = {
   onChange: (value: string | undefined) => void;

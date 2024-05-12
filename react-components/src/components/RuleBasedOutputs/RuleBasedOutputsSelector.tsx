@@ -4,12 +4,8 @@
 import { useEffect, type ReactElement, useState } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
-import { ModelMappingsWithAssets, useAllMappedEquipmentAssetMappings } from '../..';
-import {
-  type RuleOutputSet,
-  type AssetStylingGroupAndStyleIndex,
-  type EmptyRuleForSelectionProps
-} from './types';
+import { type ModelMappingsWithAssets, useAllMappedEquipmentAssetMappings } from '../..';
+import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types';
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { EMPTY_ARRAY } from '../../utilities/constants';

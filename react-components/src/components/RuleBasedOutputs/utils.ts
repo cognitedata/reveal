@@ -17,8 +17,7 @@ import {
   type RuleAndStyleIndex,
   type AssetStylingGroupAndStyleIndex,
   type TriggerType,
-  type RuleWithOutputs,
-  type EmptyRuleForSelectionProps
+  type RuleWithOutputs
 } from './types';
 import {
   type CogniteCadModel,

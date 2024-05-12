@@ -4,9 +4,9 @@
 
 import styled from 'styled-components';
 
-import { Flex, Button } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 import { type RuleOutput } from './types';
-import { useState, type ReactNode, type ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { ShowMore } from './components/OutputPanelShowMore';
 import { OutputPanelItem } from './components/OutputPanelItem';

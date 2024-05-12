@@ -3,19 +3,11 @@
  */
 import { useState, type ReactElement, useEffect, useCallback } from 'react';
 
-import {
-  Button,
-  Dropdown,
-  Flex,
-  Icon,
-  Menu,
-  Tooltip as CogsTooltip,
-  Radio
-} from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 import { RuleBasedOutputsSelector } from '../RuleBasedOutputs/RuleBasedOutputsSelector';
 import {
-  EmptyRuleForSelection,
+  type EmptyRuleForSelection,
   type AssetStylingGroupAndStyleIndex,
   type RuleAndEnabled
 } from '../RuleBasedOutputs/types';
