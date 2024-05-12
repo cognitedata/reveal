@@ -4,6 +4,7 @@
 
 import { ceil, floor, isIncrement, roundInc as roundIncrement } from '../extensions/mathExtensions';
 
+const MAX_NUMBER_OF_TICKS = 1000;
 export class Range1 {
   // ==================================================
   // STATIC FIELDS
@@ -116,8 +117,8 @@ export class Range1 {
     return fraction * this.delta + this.min;
   }
 
-  public getBestIncrement(numTicks = 50): number {
-    const increment = this.delta / numTicks;
+  public getBestIncrement(numberOfTicks = 50): number {
+    const increment = this.delta / numberOfTicks;
     return roundIncrement(increment);
   }
 
@@ -127,46 +128,43 @@ export class Range1 {
 
   public *getTicks(increment: number): Generator<number> {
     const copy = this.clone();
-    if (!copy.roundByInc(-increment)) return;
-
-    if (copy.getNumTicks(increment) > 1000)
-      // This is a safety valve to prevent it going infinity loops
+    if (!copy.roundByInc(-increment)) {
       return;
-
+    }
+    if (copy.getNumTicks(increment) > MAX_NUMBER_OF_TICKS) {
+      return; // This is a safety valve to prevent it going infinity loops
+    }
     const tolerance = increment / 10000;
     const max = copy.max + tolerance;
     for (let tick = copy.min; tick <= max; tick += increment) {
-      if (Math.abs(tick) < tolerance) yield 0;
-      else yield tick;
+      yield Math.abs(tick) < tolerance ? 0 : tick;
     }
   }
 
   public *getFastTicks(increment: number, tolerance: number): Generator<number> {
-    // This overwrites this
-    if (!this.roundByInc(-increment)) return;
-
-    if (this.getNumTicks(increment) > 1000)
-      // This is a safety valve to prevent it going infinity loops
+    // This method overwrites this (optimalization)
+    if (!this.roundByInc(-increment)) {
       return;
-
+    }
+    if (this.getNumTicks(increment) > MAX_NUMBER_OF_TICKS) {
+      return; // This is a safety valve to prevent it going infinity loops
+    }
     const max = this.max + tolerance;
     for (let tick = this.min; tick <= max; tick += increment) {
-      if (Math.abs(tick) < tolerance) yield 0;
-      else yield tick;
+      yield Math.abs(tick) < tolerance ? 0 : tick;
     }
   }
 
   public getBoldIncrement(increment: number, every = 2): number {
-    let numTicks = 0;
-    const boldInc = increment * every;
-    for (const anyTick of this.getTicks(increment)) {
-      const tick = Number(anyTick);
-      if (!isIncrement(tick, boldInc)) {
+    let numerOfTicks = 0;
+    const boldIncrement = increment * every;
+    for (const tick of this.getTicks(increment)) {
+      if (!isIncrement(tick, boldIncrement)) {
         continue;
       }
-      numTicks += 1;
-      if (numTicks > 2) {
-        return boldInc;
+      numerOfTicks += 1;
+      if (numerOfTicks > 2) {
+        return boldIncrement;
       }
     }
     return increment;

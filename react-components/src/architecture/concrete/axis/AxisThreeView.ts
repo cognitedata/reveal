@@ -160,7 +160,7 @@ export class AxisThreeView extends GroupThreeView {
     for (let wallIndex = 0; wallIndex < 6; wallIndex++) {
       this.addWall(style, useWall, wallIndex);
     }
-    const increment = getGridInc(boundingBox, style.numTicks);
+    const increment = getGridInc(boundingBox, style.numberOfTicks);
     if (boundingBox.x.hasSpan) {
       this.addAxis(style, useWall, increment, tickLength, 0, 1, 0, 1, 2);
       this.addAxis(style, useWall, increment, tickLength, 3, 2, 0, 2, 4);
@@ -246,8 +246,7 @@ export class AxisThreeView extends GroupThreeView {
       if (style.showAxisTicks || style.showAxisNumbers) {
         const vertices: number[] = [];
         const tickFontSize = style.tickFontSize * tickLength;
-        for (const anyTick of range.getTicks(increment)) {
-          const tick = Number(anyTick);
+        for (const tick of range.getTicks(increment)) {
           const start = this._corners[i0].clone();
           start.setComponent(dimension, tick);
 
@@ -403,8 +402,7 @@ export class AxisThreeView extends GroupThreeView {
       return;
     }
     const boldIncrement = range.getBoldIncrement(increment);
-    for (const anyTick of range.getTicks(increment)) {
-      const tick = Number(anyTick);
+    for (const tick of range.getTicks(increment)) {
       if (!isIncrement(tick, boldIncrement)) {
         continue;
       }
@@ -478,11 +476,11 @@ export class AxisThreeView extends GroupThreeView {
 // PRIVATE FUNCTIONS: Getters
 // ==================================================
 
-function getGridInc(range: Range3, numTicks: number): number {
+function getGridInc(range: Range3, numberOfTicks: number): number {
   let increment = 0;
-  if (range.x.hasSpan) increment = Math.max(increment, range.x.getBestIncrement(numTicks));
-  if (range.y.hasSpan) increment = Math.max(increment, range.y.getBestIncrement(numTicks));
-  if (range.z.hasSpan) increment = Math.max(increment, range.z.getBestIncrement(numTicks));
+  if (range.x.hasSpan) increment = Math.max(increment, range.x.getBestIncrement(numberOfTicks));
+  if (range.y.hasSpan) increment = Math.max(increment, range.y.getBestIncrement(numberOfTicks));
+  if (range.z.hasSpan) increment = Math.max(increment, range.z.getBestIncrement(numberOfTicks));
   return increment;
 }
 

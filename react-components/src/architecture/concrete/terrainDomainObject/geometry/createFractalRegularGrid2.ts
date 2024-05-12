@@ -15,10 +15,10 @@ export function createFractalRegularGrid2(
   rotationAngle: number = 0
 ): RegularGrid2 {
   const origin = new Vector2();
-  const inc = new Vector2(1, 1);
+  const increment = new Vector2(1, 1);
   const nodeSize = new Index2(2 ** powerOf2 + 1);
   const stdDev = 1;
-  const grid = new RegularGrid2(nodeSize, origin, inc, rotationAngle);
+  const grid = new RegularGrid2(nodeSize, origin, increment, rotationAngle);
 
   const i0 = 0;
   const j0 = 0;
@@ -34,8 +34,8 @@ export function createFractalRegularGrid2(
 
   grid.origin.x = boundingBox.x.min;
   grid.origin.y = boundingBox.y.min;
-  grid.inc.x = boundingBox.x.delta / grid.cellSize.i;
-  grid.inc.y = boundingBox.y.delta / grid.cellSize.j;
+  grid.increment.x = boundingBox.x.delta / grid.cellSize.i;
+  grid.increment.y = boundingBox.y.delta / grid.cellSize.j;
 
   grid.normalizeZ(boundingBox.z);
   grid.smoothSimple(smoothNumberOfPasses);

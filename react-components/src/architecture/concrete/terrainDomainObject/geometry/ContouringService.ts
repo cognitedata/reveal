@@ -13,7 +13,7 @@ export class ContouringService {
   // ==================================================
 
   private readonly _tempRange = new Range1();
-  private readonly _inc: number;
+  private readonly _increment: number;
   private readonly _tolerance: number;
   private readonly _positions: number[] = [];
 
@@ -21,9 +21,9 @@ export class ContouringService {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(inc: number) {
-    this._inc = inc;
-    this._tolerance = this._inc / 1000;
+  public constructor(increment: number) {
+    this._increment = increment;
+    this._tolerance = this._increment / 1000;
   }
 
   // ==================================================
@@ -82,7 +82,7 @@ export class ContouringService {
   private addTriangle(a: Vector3, b: Vector3, c: Vector3): void {
     this._tempRange.set(min(a.z, b.z, c.z), max(a.z, b.z, c.z));
 
-    for (const anyTick of this._tempRange.getFastTicks(this._inc, this._tolerance)) {
+    for (const anyTick of this._tempRange.getFastTicks(this._increment, this._tolerance)) {
       const z = Number(anyTick);
       this.addLevelAt(z, a, b, c);
     }

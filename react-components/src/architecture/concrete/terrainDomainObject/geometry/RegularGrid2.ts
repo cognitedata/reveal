@@ -16,7 +16,7 @@ export class RegularGrid2 extends Grid2 {
   // ==================================================
 
   public readonly origin: Vector2;
-  public readonly inc: Vector2;
+  public readonly increment: Vector2;
 
   private _buffer: Float32Array; // NaN value in this array means undefined node
   private _hasRotationAngle = false;
@@ -54,12 +54,12 @@ export class RegularGrid2 extends Grid2 {
   public constructor(
     nodeSize: Index2,
     origin: Vector2,
-    inc: Vector2,
+    increment: Vector2,
     rotationAngle: number | undefined = undefined
   ) {
     super(nodeSize);
     this.origin = origin;
-    this.inc = inc;
+    this.increment = increment;
     if (rotationAngle !== undefined) {
       this.rotationAngle = rotationAngle;
     }
@@ -71,7 +71,7 @@ export class RegularGrid2 extends Grid2 {
   // ==================================================
 
   public override toString(): string {
-    return `nodeSize: (${this.nodeSize.toString()}) origin: (${this.origin.x}, ${this.origin.y}) inc: (${this.inc.x}, ${this.inc.y})`;
+    return `nodeSize: (${this.nodeSize.toString()}) origin: (${this.origin.x}, ${this.origin.y}) inc: (${this.increment.x}, ${this.increment.y})`;
   }
 
   // ==================================================
@@ -127,13 +127,13 @@ export class RegularGrid2 extends Grid2 {
       return false;
     }
     if (this._hasRotationAngle) {
-      const dx = this.inc.x * i;
-      const dy = this.inc.y * j;
+      const dx = this.increment.x * i;
+      const dy = this.increment.y * j;
       resultPosition.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
       resultPosition.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
     } else {
-      resultPosition.x = this.inc.x * i;
-      resultPosition.y = this.inc.y * j;
+      resultPosition.x = this.increment.x * i;
+      resultPosition.y = this.increment.y * j;
     }
     resultPosition.x += this.origin.x;
     resultPosition.y += this.origin.y;
@@ -143,13 +143,13 @@ export class RegularGrid2 extends Grid2 {
 
   public getNodePosition2(i: number, j: number, resultPosition: Vector3): void {
     if (this._hasRotationAngle) {
-      const dx = this.inc.x * i;
-      const dy = this.inc.y * j;
+      const dx = this.increment.x * i;
+      const dy = this.increment.y * j;
       resultPosition.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
       resultPosition.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
     } else {
-      resultPosition.x = this.inc.x * i;
-      resultPosition.y = this.inc.y * j;
+      resultPosition.x = this.increment.x * i;
+      resultPosition.y = this.increment.y * j;
     }
     resultPosition.x += this.origin.x;
     resultPosition.y += this.origin.y;
@@ -159,8 +159,8 @@ export class RegularGrid2 extends Grid2 {
     const z = this.getZ(i, j);
     if (Number.isNaN(z)) return false;
 
-    resultPosition.x = this.inc.x * i;
-    resultPosition.y = this.inc.y * j;
+    resultPosition.x = this.increment.x * i;
+    resultPosition.y = this.increment.y * j;
     resultPosition.z = z;
     return true;
   }
@@ -181,11 +181,11 @@ export class RegularGrid2 extends Grid2 {
     if (this._hasRotationAngle) {
       const x = dx * this._cosRotationAngle + dy * this._sinRotationAngle;
       const y = -dx * this._sinRotationAngle + dy * this._cosRotationAngle;
-      i = x / this.inc.x;
-      j = y / this.inc.y;
+      i = x / this.increment.x;
+      j = y / this.increment.y;
     } else {
-      i = dx / this.inc.x;
-      j = dy / this.inc.y;
+      i = dx / this.increment.x;
+      j = dy / this.increment.y;
     }
     resultCell.i = Math.floor(i);
     resultCell.j = Math.floor(j);
@@ -247,26 +247,26 @@ export class RegularGrid2 extends Grid2 {
     const b = RegularGrid2._tempVectorB;
 
     if (def0 && def1) {
-      a.set(+this.inc.x, 0, z0);
-      b.set(0, +this.inc.y, z1);
+      a.set(+this.increment.x, 0, z0);
+      b.set(0, +this.increment.y, z1);
       a.cross(b);
       resultNormal.add(a);
     }
     if (def1 && def2) {
-      a.set(0, +this.inc.y, z1);
-      b.set(-this.inc.x, 0, z2);
+      a.set(0, +this.increment.y, z1);
+      b.set(-this.increment.x, 0, z2);
       a.cross(b);
       resultNormal.add(a);
     }
     if (def2 && def3) {
-      a.set(-this.inc.x, 0, z2);
-      b.set(0, -this.inc.y, z3);
+      a.set(-this.increment.x, 0, z2);
+      b.set(0, -this.increment.y, z3);
       a.cross(b);
       resultNormal.add(a);
     }
     if (def3 && def0) {
-      a.set(0, -this.inc.y, z3);
-      b.set(+this.inc.x, 0, z0);
+      a.set(0, -this.increment.y, z3);
+      b.set(+this.increment.x, 0, z0);
       a.cross(b);
       resultNormal.add(a);
     }

@@ -43,8 +43,8 @@ export function isInt(value: number): boolean {
   return isZero(diff);
 }
 
-export function isIncrement(value: number, inc: number): boolean {
-  return isInt(value / inc);
+export function isIncrement(value: number, increment: number): boolean {
+  return isInt(value / increment);
 }
 
 export function isEven(value: number): boolean {
