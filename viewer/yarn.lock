@@ -23,18 +23,18 @@ __metadata:
   linkType: hard
 
 "@azure/msal-browser@npm:^3.13.0":
-  version: 3.13.0
-  resolution: "@azure/msal-browser@npm:3.13.0"
+  version: 3.14.0
+  resolution: "@azure/msal-browser@npm:3.14.0"
   dependencies:
-    "@azure/msal-common": "npm:14.9.0"
-  checksum: 10/18297ef398056bc9786d90f0cbc75966814d85a0223cdbdf11d7ce55a550e5bc9429bdf5c656a55eebf46508d1a4b756cdb3410a96c4883171a1c00917eefc18
+    "@azure/msal-common": "npm:14.10.0"
+  checksum: 10/cd4c6ee8ca7c84ef5057231a91363958bca572a00efa240358d1b04f4993ce7772fefbc781101b52d0daa01cd0769a8f6bcb8524193389ecd591deef4277d072
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:14.9.0":
-  version: 14.9.0
-  resolution: "@azure/msal-common@npm:14.9.0"
-  checksum: 10/554f8132080900f2760038d48152f5b56289ecf2ee127340c881e7715fc13aa5b65a11e06871c4570c78a59d1c2514c61cdf0a57ba154ea1a03e1819c763cb9e
+"@azure/msal-common@npm:14.10.0":
+  version: 14.10.0
+  resolution: "@azure/msal-common@npm:14.10.0"
+  checksum: 10/7d36c42285041ee50300991f16f29886d4757234c7f15712ab9de4730534d59256b57dc9f4da7ea0b00cfd45660c67739f3a73d8942f147f14bfb53926140428
   languageName: node
   linkType: hard
 
@@ -1029,28 +1029,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@microsoft/api-extractor-model@npm:7.28.14":
-  version: 7.28.14
-  resolution: "@microsoft/api-extractor-model@npm:7.28.14"
+"@microsoft/api-extractor-model@npm:7.28.15":
+  version: 7.28.15
+  resolution: "@microsoft/api-extractor-model@npm:7.28.15"
   dependencies:
     "@microsoft/tsdoc": "npm:0.14.2"
     "@microsoft/tsdoc-config": "npm:~0.16.1"
-    "@rushstack/node-core-library": "npm:4.1.0"
-  checksum: 10/9866d7c185bfd164df6a23c976571708b592dfbe9e455feb0b10692ca778a05abbd542f965e1d32f03707d2fab0b1d5bc506d67849f234bcd97772faab25db46
+    "@rushstack/node-core-library": "npm:4.2.0"
+  checksum: 10/3a210eeeebb451103e05088a0f454aa09c138f26515aff48222441ce18a629d87de1e59c61cab49361dc366be2aacc06787bf485a47a85985e28cc86a03989d7
   languageName: node
   linkType: hard
 
 "@microsoft/api-extractor@npm:^7.43.1":
-  version: 7.43.1
-  resolution: "@microsoft/api-extractor@npm:7.43.1"
+  version: 7.43.3
+  resolution: "@microsoft/api-extractor@npm:7.43.3"
   dependencies:
-    "@microsoft/api-extractor-model": "npm:7.28.14"
+    "@microsoft/api-extractor-model": "npm:7.28.15"
     "@microsoft/tsdoc": "npm:0.14.2"
     "@microsoft/tsdoc-config": "npm:~0.16.1"
-    "@rushstack/node-core-library": "npm:4.1.0"
+    "@rushstack/node-core-library": "npm:4.2.0"
     "@rushstack/rig-package": "npm:0.5.2"
-    "@rushstack/terminal": "npm:0.10.1"
-    "@rushstack/ts-command-line": "npm:4.19.2"
+    "@rushstack/terminal": "npm:0.10.2"
+    "@rushstack/ts-command-line": "npm:4.19.4"
     lodash: "npm:~4.17.15"
     minimatch: "npm:~3.0.3"
     resolve: "npm:~1.22.1"
@@ -1059,7 +1059,7 @@ __metadata:
     typescript: "npm:5.4.2"
   bin:
     api-extractor: bin/api-extractor
-  checksum: 10/05342aa3abd0d8f852a3d4e0c6ca3d1275f772e8d2845c28b52f5df2c72173fd4b7c815545df5760c8fe4d23de0450d66a94e4711502f101b000c9a9fdb1f292
+  checksum: 10/6b00b8bfbbeff8db5f1124c68fa0d2670e68f002c32cbde84bda6b0161fecdc28b4c262e3217b752497ebbbf72d901419973a38498ee040d209b3c90031561ea
   languageName: node
   linkType: hard
 
@@ -1240,6 +1240,7 @@ __metadata:
   resolution: "@reveal/cad-parsers@workspace:packages/cad-parsers"
   dependencies:
     "@reveal/data-providers": "workspace:*"
+    "@reveal/logger": "workspace:*"
     "@reveal/metrics": "workspace:*"
     "@reveal/model-base": "workspace:*"
     "@reveal/sector-parser": "workspace:*"
@@ -1401,9 +1402,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rushstack/node-core-library@npm:4.1.0":
-  version: 4.1.0
-  resolution: "@rushstack/node-core-library@npm:4.1.0"
+"@rushstack/node-core-library@npm:4.2.0":
+  version: 4.2.0
+  resolution: "@rushstack/node-core-library@npm:4.2.0"
   dependencies:
     fs-extra: "npm:~7.0.1"
     import-lazy: "npm:~4.0.0"
@@ -1416,7 +1417,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/node":
       optional: true
-  checksum: 10/eb2a263ba60124585b476dcbebbd49c03ca78cc02c6de5cfcceefcb4ce8d7ab1398ec48b8e67f020bbaec6cee940a5d990929a64a21d3092952c25f8dfcfb269
+  checksum: 10/f67650224ae14dae98970660cf3ab62f5df1824bdb4a07690331f9a821b50503fc843e4bb2bd73556463df38a00c7c305e5b7f13c25fb2cbceaf97db6326c626
   languageName: node
   linkType: hard
 
@@ -1430,30 +1431,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rushstack/terminal@npm:0.10.1":
-  version: 0.10.1
-  resolution: "@rushstack/terminal@npm:0.10.1"
+"@rushstack/terminal@npm:0.10.2":
+  version: 0.10.2
+  resolution: "@rushstack/terminal@npm:0.10.2"
   dependencies:
-    "@rushstack/node-core-library": "npm:4.1.0"
+    "@rushstack/node-core-library": "npm:4.2.0"
     supports-color: "npm:~8.1.1"
   peerDependencies:
     "@types/node": "*"
   peerDependenciesMeta:
     "@types/node":
       optional: true
-  checksum: 10/aa5d15ed1609b02d0c813d6292491163f1ec85cea209e8f8be4568a740b1ff757d9940d02f8189a6c0430cb28adbb22fb2620bffe8a4f7995f710861b7452786
+  checksum: 10/4dddc4815d57a9466a8965b85d803cc242438bb8e4b82355b8a693fabe3cf6a2a47ead5ca50e1e6d4e81ac17c2db69faca6f3a8318d4cbb6254b5c0e209022c0
   languageName: node
   linkType: hard
 
-"@rushstack/ts-command-line@npm:4.19.2":
-  version: 4.19.2
-  resolution: "@rushstack/ts-command-line@npm:4.19.2"
+"@rushstack/ts-command-line@npm:4.19.4":
+  version: 4.19.4
+  resolution: "@rushstack/ts-command-line@npm:4.19.4"
   dependencies:
-    "@rushstack/terminal": "npm:0.10.1"
+    "@rushstack/terminal": "npm:0.10.2"
     "@types/argparse": "npm:1.0.38"
     argparse: "npm:~1.0.9"
     string-argv: "npm:~0.3.1"
-  checksum: 10/720d7519fd9887aa0e7c0f79cedc09ea2c237b32d59b0a75fec6c1666c8a577fe8b1fec97f010fae5723d3df209c07affcbed32cf4e3753538f6836aedf328cd
+  checksum: 10/cc9e1336b635b3256cd429409bac428ea8d2749a9949148b5b329da8675b9c957ed8498e09fa04bf4875baa1366380a49e3d05afd5e02db154ed3f7b95b595a0
   languageName: node
   linkType: hard
 
@@ -1568,9 +1569,9 @@ __metadata:
   linkType: hard
 
 "@tweenjs/tween.js@npm:*, @tweenjs/tween.js@npm:^23.1.1, @tweenjs/tween.js@npm:~23.1.1":
-  version: 23.1.1
-  resolution: "@tweenjs/tween.js@npm:23.1.1"
-  checksum: 10/8833907d9d6adb584879fb743c3d1f6f37ea8a6a2750c06383040cba03cd284a8bbd9f173b50ee7636f56d242e1090b28335b29eb9c44ddf7ca0bb534c4b697e
+  version: 23.1.2
+  resolution: "@tweenjs/tween.js@npm:23.1.2"
+  checksum: 10/ca7f62b1059917ebddf1e7e9d7361b87e945bfc21b3c840dd34b1ebfe7d90d87d0dd10ebfa88e2233fe4887cf260b9e1a45134573b599c905af45853b39ae0b8
   languageName: node
   linkType: hard
 
@@ -1868,9 +1869,9 @@ __metadata:
   linkType: hard
 
 "@types/lodash@npm:^4.17.0":
-  version: 4.17.0
-  resolution: "@types/lodash@npm:4.17.0"
-  checksum: 10/2053203292b5af99352d108656ceb15d39da5922fc3fb8186e1552d65c82d6e545372cc97f36c95873aa7186404d59d9305e9d49254d4ae55e77df1e27ab7b5d
+  version: 4.17.1
+  resolution: "@types/lodash@npm:4.17.1"
+  checksum: 10/384bdd29348a000f8e815f94839a1a8c7f5a4ca856b016ade7f2abdc1df0b4e3e009c113b69db320a8fde51d1f38e60c19462b9bf3e82e0e2e32d3ac3e7ba2c4
   languageName: node
   linkType: hard
 
@@ -1905,11 +1906,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^20.12.7":
-  version: 20.12.8
-  resolution: "@types/node@npm:20.12.8"
+  version: 20.12.11
+  resolution: "@types/node@npm:20.12.11"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/1feab4c8cb08588eea10811ed4d02485a5cde47fdf92e7b3193fc9f8ee39ea556f6e3124dc6d5378354466ed5f7e5fbe5e20f625908de40ea37560368a50f72c
+  checksum: 10/c6afe7c2c4504a4f488814d7b306ebad16bf42cbb43bf9db9fe1aed8c5fb99235593c3be5088979a64526b106cf022256688e2f002811be8273d87dc2e0d484f
   languageName: node
   linkType: hard
 
@@ -8685,30 +8686,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:22.7.1":
-  version: 22.7.1
-  resolution: "puppeteer-core@npm:22.7.1"
+"puppeteer-core@npm:22.8.0":
+  version: 22.8.0
+  resolution: "puppeteer-core@npm:22.8.0"
   dependencies:
     "@puppeteer/browsers": "npm:2.2.3"
     chromium-bidi: "npm:0.5.19"
     debug: "npm:4.3.4"
     devtools-protocol: "npm:0.0.1273771"
-    ws: "npm:8.16.0"
-  checksum: 10/25ac29edbc56fa370fbc456802358c2917527920d0c6ab723b583da8124ee742629e824605d14f7d5e6d56895a153bdf768f92f985f325aedd10f2e3fae00546
+    ws: "npm:8.17.0"
+  checksum: 10/9f352a4bbdd5facdf309776a6de1558ead0b1c9d3d0764e67958ccebab6554658b213a70363ba5f19031121c419ca6253b541e2cc9bdad2bc0d213945ae76a4b
   languageName: node
   linkType: hard
 
 "puppeteer@npm:^22.7.1":
-  version: 22.7.1
-  resolution: "puppeteer@npm:22.7.1"
+  version: 22.8.0
+  resolution: "puppeteer@npm:22.8.0"
   dependencies:
     "@puppeteer/browsers": "npm:2.2.3"
     cosmiconfig: "npm:9.0.0"
     devtools-protocol: "npm:0.0.1273771"
-    puppeteer-core: "npm:22.7.1"
+    puppeteer-core: "npm:22.8.0"
   bin:
     puppeteer: lib/esm/puppeteer/node/cli.js
-  checksum: 10/121fd67bfebf901e1ed17ea08c0cd82256e2824c9d1852ba1ea3d88581870a52796022dba4080bb971a972fe27f7ea092a3df06ecea12bd410dc7f664998b201
+  checksum: 10/0f39c036b707ffa720ba3f8ddce2bb4b0f205dca99fb68974f97afbfbb578bb3819bb834a420a4f27dd38034549cf1c17620446de367a25994605eea3dbdcb64
   languageName: node
   linkType: hard
 
@@ -11024,9 +11025,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:8.16.0, ws@npm:^8.16.0, ws@npm:^8.8.0":
-  version: 8.16.0
-  resolution: "ws@npm:8.16.0"
+"ws@npm:8.17.0, ws@npm:^8.16.0, ws@npm:^8.8.0":
+  version: 8.17.0
+  resolution: "ws@npm:8.17.0"
   peerDependencies:
     bufferutil: ^4.0.1
     utf-8-validate: ">=5.0.2"
@@ -11035,7 +11036,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 10/7c511c59e979bd37b63c3aea4a8e4d4163204f00bd5633c053b05ed67835481995f61a523b0ad2b603566f9a89b34cb4965cb9fab9649fbfebd8f740cea57f17
+  checksum: 10/5e1dcb0ae70c6e2f158f5b446e0a72a2cd335b07aba73ee1872e9bae1285382286a10e53ed479db21bdd690a5dfd05641a768611ebb236253c62fefa43ef58b4
   languageName: node
   linkType: hard
 

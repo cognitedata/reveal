@@ -286,7 +286,7 @@ const analyzeNodesAgainstExpression = async ({
   );
 
   const filteredAllTreeNodes = allTreeNodes.flat().filter(isDefined);
-  return applyNodeStyles(filteredAllTreeNodes, outputSelected, model);
+  return applyNodeStyles(filteredAllTreeNodes, outputSelected);
 };
 
 const getThreeDNodesFromAsset = async (
@@ -309,8 +309,7 @@ const getThreeDNodesFromAsset = async (
 
 const applyNodeStyles = (
   treeNodes: NodeAndRange[],
-  outputSelected: ColorRuleOutput,
-  model: CogniteCadModel
+  outputSelected: ColorRuleOutput
 ): AssetStylingGroupAndStyleIndex => {
   const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
     styleIndex: new TreeIndexNodeCollection(),

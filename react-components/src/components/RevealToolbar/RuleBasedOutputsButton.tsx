@@ -20,7 +20,10 @@ import {
 } from '../RuleBasedOutputs/types';
 import { useTranslation } from '../i18n/I18n';
 import { useFetchRuleInstances } from '../RuleBasedOutputs/hooks/useFetchRuleInstances';
+import { use3dModels } from '../../hooks/use3dModels';
 import { type AssetStylingGroup } from '../..';
+import { type CadModelOptions } from '../Reveal3DResources/types';
+import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCacheProvider';
 
 type EmptyRule = {
   rule: any;
@@ -39,6 +42,9 @@ export const RuleBasedOutputsButton = ({
   const [ruleInstances, setRuleInstances] =
     useState<Array<RuleAndEnabled | EmptyRule | undefined>>();
   const { t } = useTranslation();
+  const models = use3dModels();
+  const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
+  const { isLoading } = useAssetMappedNodesForRevisions(cadModels);
 
   const ruleInstancesResult = useFetchRuleInstances();
 
@@ -91,6 +97,7 @@ export const RuleBasedOutputsButton = ({
         appendTo={document.body}>
         <Dropdown
           placement="right-start"
+          disabled={isLoading}
           content={
             <Menu
               style={{

@@ -21,6 +21,7 @@ import {
   SetFlexibleControlsType,
   SetOrbitOrFirstPersonControlsType
 } from './SetFlexibleControlsType';
+import { AssetContextualizedButton } from './AssetContextualizedButton';
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute;
@@ -111,6 +112,7 @@ export const RevealToolbar = withSuppressRevealEvents(
   ResetCameraButton: typeof ResetCameraButton;
   SelectSceneButton: typeof SelectSceneButton;
   RuleBasedOutputsButton: typeof RuleBasedOutputsButton;
+  AssetContextualizedButton: typeof AssetContextualizedButton;
   SetOrbitOrFirstPersonControlsType: typeof SetOrbitOrFirstPersonControlsType;
   SetFlexibleControlsType: typeof SetFlexibleControlsType;
 };
@@ -125,5 +127,6 @@ RevealToolbar.HelpButton = HelpButton;
 RevealToolbar.ResetCameraButton = ResetCameraButton;
 RevealToolbar.SelectSceneButton = SelectSceneButton;
 RevealToolbar.RuleBasedOutputsButton = RuleBasedOutputsButton;
+RevealToolbar.AssetContextualizedButton = AssetContextualizedButton;
 RevealToolbar.SetOrbitOrFirstPersonControlsType = SetOrbitOrFirstPersonControlsType;
 RevealToolbar.SetFlexibleControlsType = SetFlexibleControlsType;

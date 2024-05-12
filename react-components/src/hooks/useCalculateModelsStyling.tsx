@@ -68,21 +68,24 @@ function useCalculateMappedStyling(
   models: CadModelOptions[],
   defaultMappedNodeAppearance?: NodeAppearance
 ): ModelStyleGroup[] {
-  const modelsRevisionsWithMappedEquipment = useMemo(() => getMappedCadModelsOptions(), [models]);
-  const { data: mappedEquipmentEdges } = useMappedEdgesForRevisions(
-    modelsRevisionsWithMappedEquipment
+  const modelsRevisionsWithMappedEquipment = useMemo(
+    () => getMappedCadModelsOptions(),
+    [models, defaultMappedNodeAppearance]
   );
+  const { data: mappedEquipmentEdges, isLoading: isFDMEquipmentMappingLoading } =
+    useMappedEdgesForRevisions(modelsRevisionsWithMappedEquipment);
 
-  const { data: assetMappingData } = useAssetMappedNodesForRevisions(
-    modelsRevisionsWithMappedEquipment
-  );
+  const { data: assetMappingData, isLoading: isAssetMappingLoading } =
+    useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
 
   const modelsMappedFdmStyleGroups = useMemo(() => {
-    if (
+    const isFdmMappingUnavailableOrLoading =
       models.length === 0 ||
       mappedEquipmentEdges === undefined ||
-      mappedEquipmentEdges.size === 0
-    ) {
+      mappedEquipmentEdges.size === 0 ||
+      isFDMEquipmentMappingLoading;
+
+    if (isFdmMappingUnavailableOrLoading) {
       return [];
     }
 
@@ -94,10 +97,21 @@ function useCalculateMappedStyling(
         modelStyle !== undefined ? [getMappedStyleGroupFromFdm(fdmData, modelStyle)] : [];
       return { model, styleGroup };
     });
-  }, [modelsRevisionsWithMappedEquipment, mappedEquipmentEdges, defaultMappedNodeAppearance]);
+  }, [
+    modelsRevisionsWithMappedEquipment,
+    mappedEquipmentEdges,
+    defaultMappedNodeAppearance,
+    isFDMEquipmentMappingLoading
+  ]);
 
   const modelsMappedAssetStyleGroups = useMemo(() => {
-    if (models.length === 0 || assetMappingData === undefined || assetMappingData.length === 0) {
+    const isAssetMappingUnavailableOrLoading =
+      models.length === 0 ||
+      assetMappingData === undefined ||
+      assetMappingData.length === 0 ||
+      isAssetMappingLoading;
+
+    if (isAssetMappingUnavailableOrLoading) {
       return [];
     }
 
@@ -110,7 +124,12 @@ function useCalculateMappedStyling(
           : [];
       return { model: assetMappedModel.model, styleGroup };
     });
-  }, [modelsRevisionsWithMappedEquipment, assetMappingData, defaultMappedNodeAppearance]);
+  }, [
+    modelsRevisionsWithMappedEquipment,
+    assetMappingData,
+    defaultMappedNodeAppearance,
+    isAssetMappingLoading
+  ]);
 
   const combinedMappedStyleGroups = useMemo(
     () => groupStyleGroupByModel([...modelsMappedAssetStyleGroups, ...modelsMappedFdmStyleGroups]),
@@ -216,16 +235,19 @@ function useJoinStylingGroups(
   modelsMappedStyleGroups: ModelStyleGroup[],
   modelInstanceStyleGroups: ModelStyleGroup[]
 ): StyledModel[] {
+  const isSameModel = (model1: CadModelOptions, model2: CadModelOptions): boolean => {
+    return model1.modelId === model2.modelId && model1.revisionId === model2.revisionId;
+  };
   const modelsStyling = useMemo(() => {
     if (modelInstanceStyleGroups.length === 0 && modelsMappedStyleGroups.length === 0) {
       return extractDefaultStyles(models);
     }
     return models.map((model) => {
       const mappedStyleGroup =
-        modelsMappedStyleGroups.find((typedModel) => isSameCadModel(typedModel.model, model))
+        modelsMappedStyleGroups.find((typedModel) => isSameModel(typedModel.model, model))
           ?.styleGroup ?? [];
       const instanceStyleGroups = modelInstanceStyleGroups
-        .filter((typedModel) => isSameCadModel(typedModel.model, model))
+        .filter((typedModel) => isSameModel(typedModel.model, model))
         .flatMap((typedModel) => typedModel.styleGroup);
       return {
         model,
