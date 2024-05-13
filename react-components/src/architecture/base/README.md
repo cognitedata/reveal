@@ -1,36 +1,106 @@
 #Building
-
-yarn
-yarn build
-yarn tsc --noEmit // Same as yarn build, but build with types
-yarn storybook
-
-This will goto: https://localhost:3000/?modelUrl=primitives
-Open Architecture/Main
-
+yarnyarn buildyarn tsc --noEmit // Same as yarn build, but build with typesyarn storybook
+This will goto: https://localhost:3000/?modelUrl=primitivesOpen Architecture/Main
 #Movivation
+Go to this documenthttps://docs.google.com/presentation/d/1Y50PeqoCS5BdWyDqRNNazeISy1SYTcx4QDcjeMKIm78/edit?usp=sharing
 
-Go to this document
-https://docs.google.com/presentation/d/1Y50PeqoCS5BdWyDqRNNazeISy1SYTcx4QDcjeMKIm78/edit?usp=sharing
+# Coding
 
-#Overview
+You will probably find the coding style somewhat different than usually done in Reveal.
 
-##architecture/base
+1. I use headers to mark a new section in the file. This is important for fast navigation and to keep the code in correct order. The order in the files are:
 
-Here is the architecture with all base classes and some utility functionallity.
+   - Instance fields.
+   - Instance properties
+   - Implementation of interface (if any)
+   - Overrides from the must basic base class (if any)
+   - :
+   - Overrides from the actually base class (if any)- Instance methods- Local functions, types or classes used in this file only
 
-###architecture/base/domainObject
+2. I try to reuse code whenever it is possible. Therefore you will find functions that are very small,
+   often one liners. This ensures the complexity of the code to be low.
 
-DomainObject: This is the base class for the domain object. A domain object is some sort of data, that is a collection of other domainObject or the data itself. A important property of the domainObject is that is has a list of views that will be updated.
+3. I try to give each class one single responsibility. Therefore I use several base classes, it adds the complexity that is needed.
 
-FolderDomainObject: Concrete class and RootDomainObject
+4. Keep must classes independed of other classes.
 
-###architecture/base/views
+# Architecture Overview
 
-BaseView: Represents a abstract base view class that provides common functionality for all types of views. This do not have any dependency to three.js and can be used in other types of views as well.
+## architecture/base
 
-ThreeView: Represents an abstract base class for a Three.js view in the application. It adds basicly 2 thing: Concept of bounding box and a pointer to the renderTarget (viewer). The bounding box is lazy calculated. The reeason for this object is that we sometimes can have a view without and Object3D, for instance if a view manipulates another view, for instance a texture on a surface.
+Here is the architecture with all base classes and some utility functionality.
 
-GroupThreeView: Represents an abstract base class for a Three.js view where it holds a pointer to a Group object. This object is the root of the Object3D's that can be added to the view. The most important method is addChildren() to be overridden. Here the children of the group should be aded. The class will administrate the group and the children, and perform a lazy creation of these automatically.
+### architecture/base/domainObject
 
-In the cade all view are inhirited from GroupThreeView.
+- **DomainObject:** This is the base class for the domain object. A domain object is some sort of data, that is a collection of other domainObject or the data itself. An important property of the domainObject is that is has a list of views that will be updated. It also has a parent and a collection of children.
+    - It has some properties like selected, expanded and active. This is not used yet, but I wanted it to be here as this is part of the pattern. They are connected to how they are visualized in a tree view.
+    - Methods with postfix "interactive" are doing all necessary updates automatically. For instance addChild/addChildInteractive or setVisible/setVisibleInteractive
+
+- **VisualDomainObject**: This subclass adds functionality to a domain object so it can be shown in 3D. The most important function here is createThreeView() which must be overridden.
+
+- **FolderDomainObject**: Concrete class for multi purpose folder.- **RootDomainObject**: Concrete class for the root of the hierarchy
+
+### architecture/base/renderTarget
+
+Normally, when I follow this pattern, the renderTarget is a domainObject itself, and you can have as many of them as you like. But this makes it a little bit more complicated. Since we always have only one viewer, I don't use any bare class for this.
+
+- **RevealRenderTarget** Wrap around the Cognite3DViewer. It contains:
+    - The Cognite3DViewer and assume this is constructed somewhere else.  - The RootDomainObject, where the data can be added.  - The ToolController, where the active tool is kept and where the events are handled.  - In addition, it has several utility functions for getting information from the viewer.  - It set up listeners to cameraChange and beforeSceneRendered events from the viewer
+
+- **ToolController** Holds the tools and all commands, the active tool and the previous tool.  - It inherit from PointerEvents, which is a base class on the Reveal side. All virtual functions are implemented in the ToolControllers.  - It created a PointerEventsTarget, also on the reveal side, that set up all the event listeners for the pointer (mouse or touch) handlers. The PointerEventsTarget will automatically call the    function onHover, onClick, onDoubleClick, onPointerDown, onPointerUp and onPointerDrag correctly.  - In addition it sets up some other events like onKey and onFocus.  - All event are routed to the active tool
+
+### architecture/base/commands
+
+- **BaseCommand**: Base class for all tools and commands. There are basically user actions. It contains all necessary information to create and update a button in the user interface, but it doesn't need or use react. The must important method to overide is invokeCore, which is called whewn the use press the button.A base commen can be checkable
+- **RenderTargetCommand** I wanted that BaseCommand should be independent of any type of connection to the rest of the system. This class only brings in the commentect to the RevealRenderTarget
+- **BaseTool** This is the bare class for all the tools, which is used when doing under interaction in the viewer itself. It defined a lot ov virtual methods for user interactions. This should be overridden for creating the logic specific for a tool.
+
+### architecture/base/concreteCommands
+
+This is a collection of most commonly used tools and commands:
+
+- **FitViewCommand**: Fit view to the model bounding box- **NavigationTool**: Reroute the events to the camera manager- **SetFlexibleControlsTypeCommand**: This is another version than we had before. It is made for testing the architecture where the users are changing the state of the command from outside. Use the "1" or "2" key to change btween Fly or Orbit mode.
+
+### architecture/base/views
+
+- **BaseView**: Represents a abstract base view class that provides common functionality for all types of views. This does not have any dependency to three.js and can be used in other types of views as well.
+- **ThreeView**: Represents an abstract base class for a Three.js view in the application. It adds basicly 2 things: Concept of bounding box and a pointer to the renderTarget (viewer). The bounding box is a lazy calculation. The reeason for this object is that we sometimes can have a view without and Object3D, for instance if a view manipulates another view, for instance a texture on a surface.
+- **GroupThreeView**: Represents an abstract base class for a Three.js view where it holds a pointer to a Group object. This object is the root of the Object3D's that can be added to the view. The most important method is addChildren() to be overridden. Here the children of the group should be added. The class will administrate the group and the children, and perform a lazy creation of these automatically.
+  In the code all views are inherited from GroupThreeView.
+
+### architecture/base/domainObjectHelpers
+
+- **RenderStyle**: Is the base class for all renderstyle.- **Changes**: All changes that can be applied on a domainObject. it uses symbols as the type, because it can easily be extended. It looks like an enum when unit it, since I have used a static class, and this is done by purpose.- **DomainObjectChange** Here you can add several changes before you call domainObject.notify(....)
+
+### architecture/base/utilities
+
+Smaller files with utility classes and function:
+
+### architecture/base/utilities
+
+- **architecture/base/utilities/box**
+- **architecture/base/utilities/colors**
+- **architecture/base/utilities/extensions**
+- **architecture/base/utilities/geometry**
+- **architecture/base/utilities/sprites**
+
+## architecture/concrete
+
+### architecture/concrete/axes
+
+- AxisDomainObject, AxisRenderStyle and AxisTreeView- SetAxisVisibleCommand to set the axis visible
+
+### architecture/concrete/boxDomainObject
+
+- BoxDomainObject, BoxRenderStyle and BoxTreeView- BotEditTool for manipulation
+
+### architecture/concrete/terrainDomainObject
+
+- TerrainDomainObject, TerrainRenderStyle and TerrainTreeView- UpdateTerrainCommand and SetTerrainVisibleCommand for demo/example- geometry: Folder with math and grid structures
+
+--
+
+Nils Petter Fremming
+Chief System Architect for 3D
++47 412 99 596| nils.fremming@cognite.com
+www.cognite.com | REVEALING INDUSTRIAL REALITY™ See the latest news from CogniteSubscribe to our newsletter

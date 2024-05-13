@@ -56,8 +56,9 @@ export abstract class BaseCommand {
   }
 
   /*
-   *  Called when the command is invoked
-   *  Return true if successful, false otherwise
+   * Called when the command is invoked
+   * Return true if successful, false otherwise
+   * Override this method to implement the command logic
    */
   protected invokeCore(): boolean {
     return false;

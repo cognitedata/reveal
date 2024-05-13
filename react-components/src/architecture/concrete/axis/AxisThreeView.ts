@@ -132,17 +132,7 @@ export class AxisThreeView extends GroupThreeView {
     if (boundingBox.isEmpty) {
       return;
     }
-    // Initialize the corners and the centers
-    boundingBox.getCornerPoints(this._corners);
-    for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
-      const indexes = getFaceCornerIndexes(faceIndex);
-      const center = this._faceCenters[faceIndex];
-      center.copy(this._corners[indexes[0]]);
-      center.add(this._corners[indexes[1]]);
-      center.add(this._corners[indexes[2]]);
-      center.add(this._corners[indexes[3]]);
-      center.divideScalar(4);
-    }
+    this.initializeCornersAndCenters(boundingBox);
     const useFace = createUseFaceArray(boundingBox);
     const { style } = this;
 
@@ -476,6 +466,23 @@ export class AxisThreeView extends GroupThreeView {
     }
     const normal = getFaceNormal(faceIndex, newVector3());
     return cameraDirection.dot(normal) > 0.02;
+  }
+
+  protected initializeCornersAndCenters(boundingBox: Range3): void {
+    if (boundingBox.isEmpty) {
+      return;
+    }
+    // Initialize the corners and the centers
+    boundingBox.getCornerPoints(this._corners);
+    for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
+      const indexes = getFaceCornerIndexes(faceIndex);
+      const center = this._faceCenters[faceIndex];
+      center.copy(this._corners[indexes[0]]);
+      center.add(this._corners[indexes[1]]);
+      center.add(this._corners[indexes[2]]);
+      center.add(this._corners[indexes[3]]);
+      center.divideScalar(4);
+    }
   }
 }
 
