@@ -99,7 +99,7 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
   // OVERRIDES of BaseView
   // ==================================================
 
-  public initialize(): void {
+  public override initialize(): void {
     super.initialize();
     if (this.isEmpty) {
       this.makeChildern();
