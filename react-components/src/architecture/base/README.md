@@ -22,7 +22,7 @@ This is decribed in this document: https://docs.google.com/presentation/d/1Y50Pe
 
 You will probably find the coding style somewhat different than usually done in Reveal.
 
-1.  I use headers to mark a new section in the file. This is important for fast navigation and to keep the code in correct order. The order in the files are:
+1.  I use headers to mark sections in a file. This is important for fast navigation and to keep the code in correct order. The order in the files are:
 
     - Instance fields.
     - Instance properties
@@ -30,17 +30,18 @@ You will probably find the coding style somewhat different than usually done in 
     - Overrides from the must basic base class (if any)
     - :
     - Overrides from the actually base class (if any)
-    - Instance methods
+    - Instance methods (If many, break it up based on what they do)
     - Local functions, types or classes used in this file only
 
 2.  I try to reuse code whenever it is possible. Therefore you will find functions that are very small,
-    often one liners. This ensures the complexity of the code to be low. For instance:
+    often one liners. This ensures the complexity of the code to be low and increase readability on the caller side. For instance:
 
          export function clear<T>(array: T[]): void {
              array.splice(0, array.length);
          }
 
 3.  I try to give each class one single responsibility. Therefore I use several base classes, it adds the complexity that is needed.
+    Examples of this is BaseView/
 
 4.  Keep must classes independed of other classes. For instance the tool should not know abount the views.
 
@@ -83,14 +84,16 @@ Normally, when I follow this pattern, the renderTarget is a domainObject itself,
 
 - **ToolController**
   Holds the tools and all commands, the active tool and the previous tool.
-- It inherit from PointerEvents, which is a base class on the Reveal side. All virtual functions are implemented in the ToolControllers.
-- It created a PointerEventsTarget, also on the reveal side, that set up all the event listeners for the pointer (mouse or touch) handlers. The PointerEventsTarget will automatically call the    function onHover, onClick, onDoubleClick, onPointerDown, onPointerUp and onPointerDrag correctly.  - In addition it sets up some other events like onKey and onFocus.  - All event are routed to the active tool
+- It inherit from `PointerEvents`, which is a base class on the Reveal side. All virtual functions are implemented in the `ToolControllers`.
+- It created a `PointerEventsTarget`, also on the Reveal side, that set up all the event listeners for the pointer (mouse or touch) handlers. The `PointerEventsTarget` will automatically call the functions `onHover`, `onClick`, `onDoubleClick`, `onPointerDown`, `onPointerUp` and `onPointerDrag` correctly.
+- In addition it sets up some other events like `onKey` and `onFocus`.
+- All event are routed to the active tool
 
 ### architecture/base/commands
 
-- **BaseCommand**: Base class for all tools and commands. There are basically user actions. It contains all necessary information to create and update a button in the user interface, but it doesn't need or use react. The must important method to overide is invokeCore, which is called whewn the use press the button.A base commen can be checkable
+- **BaseCommand**: Base class for all tools and commands. There are basically user actions. It contains all necessary information to create and update a button in the user interface, but it doesn't need or use React. The must important method to overide is invokeCore, which is called whewn the use press the button.A base commen can be checkable
 
-- **RenderTargetCommand** I wanted BaseCommand should be independent of any type of connection to the rest of the system. This class only brings in the commentect to the RevealRenderTarget
+- **RenderTargetCommand** I wanted BaseCommand should be independent of any type of connection to the rest of the system. This class only brings in the connection to the `RevealRenderTarget`.
 
 - **BaseTool** This is the base class for all the tools, which is used when doing user interaction in the viewer itself. It defined a lot of virtual methods for user interactions. This should be overridden for creating the logic specific for a tool.
 
@@ -106,9 +109,9 @@ This is a collection of most commonly used tools and commands:
 
 - **BaseView**: Represents a abstract base view class that provides common functionality for all types of views. This does not have any dependency to three.js and can be used in other types of views as well.
 
-- **ThreeView**: Represents an abstract base class for a Three.js view in the application. It adds basicly 2 things: Concept of bounding box and a pointer to the renderTarget (viewer). The bounding box is a lazy calculation. The reeason for this object is that we sometimes can have a view without and Object3D, for instance if a view manipulates another view, for instance a texture on a surface.
+- **ThreeView**: Represents an abstract base class for a Three.js view in the application. It adds basicly 2 things: Concept of bounding box and a pointer to the renderTarget (viewer). The bounding box is a lazy calculation. The reeason for this object is that we sometimes can have a view without any `Object3D`, for instance if a view manipulates another view, for instance a texture on a surface.
 
-- **GroupThreeView**: Represents an abstract base class for a Three.js view where it holds a pointer to a Group object. This object is the root of the Object3D's that can be added to the view. The most important method is addChildren() to be overridden. Here the children of the group should be added. The class will administrate the group and the children, and perform a lazy creation of these automatically. In the code all views are inherited from GroupThreeView.
+- **GroupThreeView**: Represents an abstract base class for a Three.js view where it holds a pointer to a `THREE.Group` object. This object is the root of the `Object3D`'s that can be added to the view. The most important method is a`sddChildren()` to be overridden. Here the children of the group should be added. The class will administrate the group and the children, and perform a lazy creation of these automatically. In the code all views are inherited from `GroupThreeView`.
 
 ### architecture/base/domainObjectHelpers
 
@@ -149,4 +152,5 @@ These are made to test the architecture but should when ready be used by any of 
 ### architecture/concrete/terrainDomainObject
 
 - TerrainDomainObject, TerrainRenderStyle and TerrainTreeView
-- UpdateTerrainCommand and SetTerrainVisibleCommand for demo/example- geometry: Folder with math and grid structures
+- UpdateTerrainCommand and SetTerrainVisibleCommand for demo/example
+- geometry: Folder with math and grid structures
