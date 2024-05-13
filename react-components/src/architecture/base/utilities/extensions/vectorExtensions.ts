@@ -19,10 +19,6 @@ export function verticalDistanceTo(p1: Vector3, p2: Vector3): number {
   return Math.abs(p1.z - p2.z);
 }
 
-export function getCenter(a: Vector3, b: Vector3): Vector3 {
-  return new Vector3().addVectors(a, b).divideScalar(2);
-}
-
 export function getOctDir(vector: Vector2): number {
   // The octdirs are:
   //         North (Positive Y-axis)

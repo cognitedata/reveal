@@ -28,7 +28,6 @@ import {
   moveSpriteByPositionAndDirection
 } from '../../base/utilities/sprites/createSprite';
 import { TrianglesBuffers } from '../../base/utilities/geometry/TrianglesBuffers';
-import { getCenter } from '../../base/utilities/extensions/vectorExtensions';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { Vector3Pool } from '../../base/utilities/geometry/Vector3Pool';
@@ -119,7 +118,6 @@ export class AxisThreeView extends GroupThreeView {
     if (sceneBoundingBox.equals(this._sceneBoundingBox)) {
       return false;
     }
-    console.log('UPDATE AxisThreeView', sceneBoundingBox, this._sceneBoundingBox);
     this._sceneBoundingBox.copy(sceneBoundingBox);
     this._expandedSceneBoundingBox.copy(sceneBoundingBox);
     this._expandedSceneBoundingBox.expandByFraction(0.02);
@@ -153,7 +151,7 @@ export class AxisThreeView extends GroupThreeView {
     for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
       this.addFace(style, useFace, faceIndex);
     }
-    const increment = getGridInc(boundingBox, style.numberOfTicks);
+    const increment = getBestIncrement(boundingBox, style.numberOfTicks);
     if (boundingBox.x.hasSpan) {
       this.addAxis(style, useFace, increment, tickLength, 0, 1, 0, 1, 2);
       this.addAxis(style, useFace, increment, tickLength, 3, 2, 0, 2, 4);
@@ -241,17 +239,16 @@ export class AxisThreeView extends GroupThreeView {
         const vertices: number[] = [];
         const tickFontSize = style.tickFontSize * tickLength;
         for (const tick of range.getTicks(increment)) {
-          const start = this._corners[i0].clone();
+          const start = newVector3(this._corners[i0]);
           start.setComponent(dimension, tick);
 
-          const end = start.clone();
-          const vector = tickDirection.clone();
+          const end = newVector3(start);
+          const vector = newVector3(tickDirection);
           vector.multiplyScalar(tickLength);
 
+          // Add tick mark
           if (style.showAxisTicks) {
             end.add(vector);
-
-            // Add tick mark
             vertices.push(...start);
             vertices.push(...end);
           }
@@ -284,8 +281,8 @@ export class AxisThreeView extends GroupThreeView {
       if (style.showAxisLabel) {
         const labelFontSize = style.axisLabelFontSize * tickLength;
 
-        // Find the position by collision detect
-        let position: Vector3;
+        // Find the best position by collision detect
+        const position = newVector3();
         if (labelCount >= 2) {
           let tick = minLabelTick + Math.round(0.5 * labelCount - 0.5) * labelInc;
           if (labelInc === increment) {
@@ -293,14 +290,14 @@ export class AxisThreeView extends GroupThreeView {
           } else {
             tick -= increment;
           }
-          position = this._corners[i0].clone();
+          position.copy(this._corners[i0]);
           position.setComponent(dimension, tick);
         } else {
-          position = getCenter(this._corners[i0], this._corners[i1]);
+          position.copy(this._corners[i0]);
+          position.add(this._corners[i1]);
         }
-        position = position.addScaledVector(tickDirection, tickLength * 5);
+        position.addScaledVector(tickDirection, tickLength * 5);
 
-        // Align the text
         const sprite = createSpriteWithText(
           style.getAxisLabel(rotateToViewer(dimension)),
           labelFontSize,
@@ -387,9 +384,9 @@ export class AxisThreeView extends GroupThreeView {
     //     +-----------+
     //   p0            p1
 
-    const p0 = this._corners[i0].clone();
-    const p1 = this._corners[i1].clone();
-    const p2 = this._corners[i2].clone();
+    const p0 = newVector3(this._corners[i0]);
+    const p1 = this._corners[i1];
+    const p2 = newVector3(this._corners[i2]);
 
     const range = new Range1(p0.getComponent(dimension), p1.getComponent(dimension));
     if (range.isEmpty) {
@@ -470,7 +467,7 @@ export class AxisThreeView extends GroupThreeView {
 // PRIVATE FUNCTIONS: Getters
 // ==================================================
 
-function getGridInc(range: Range3, numberOfTicks: number): number {
+function getBestIncrement(range: Range3, numberOfTicks: number): number {
   let increment = 0;
   if (range.x.hasSpan) increment = Math.max(increment, range.x.getBestIncrement(numberOfTicks));
   if (range.y.hasSpan) increment = Math.max(increment, range.y.getBestIncrement(numberOfTicks));
