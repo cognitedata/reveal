@@ -207,7 +207,7 @@ export class AxisThreeView extends GroupThreeView {
       for (let i = 0; i < 2; i++) {
         const isMainAxis = i === 0;
 
-        const color = style.getAxisColor(isMainAxis, rotateToViewer(dimension));
+        const color = style.getAxisColor(isMainAxis, convertToViewerDimension(dimension));
         const linewidth = isMainAxis ? 2 : 1;
         const vertices: number[] = [];
 
@@ -299,7 +299,7 @@ export class AxisThreeView extends GroupThreeView {
         position.addScaledVector(tickDirection, tickLength * 5);
 
         const sprite = createSpriteWithText(
-          style.getAxisLabel(rotateToViewer(dimension)),
+          style.getAxisLabel(convertToViewerDimension(dimension)),
           labelFontSize,
           style.textColor
         );
@@ -475,7 +475,7 @@ function getBestIncrement(range: Range3, numberOfTicks: number): number {
   return increment;
 }
 
-function rotateToViewer(dimension: number): number {
+function convertToViewerDimension(dimension: number): number {
   // This swaps the Z and Y axis
   if (dimension === 1) {
     return 2;
@@ -522,8 +522,8 @@ function createLineSegments(vertices: number[], color: Color, linewidth: number)
 // ==================================================
 
 // Corner and faces is pr. definition:
-//            5      4
-//            v     /
+//            5  4
+//            v /
 //        7--------6                7-------6
 //       / |      /|               / |      /|
 //      4-------5  |              4-------5  |
@@ -531,8 +531,8 @@ function createLineSegments(vertices: number[], color: Color, linewidth: number)
 //      |  3----|--2              |  3----|--2
 //      | /     | /               | /     | /
 //      0-------1                 0-------1
-//    /     ^
-//   1      2
+//        /  ^
+//       1   2
 // Face number are marked with arrows
 
 function getFaceNormal(faceIndex: number, target: Vector3): Vector3 {
