@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 
 import {
+  CameraManager,
   CustomObject,
   isFlexibleCameraManager,
   type Cognite3DViewer,
@@ -47,6 +48,11 @@ export class RevealRenderTarget {
 
   constructor(viewer: Cognite3DViewer) {
     this._viewer = viewer;
+
+    const cameraManager = this.cameraManager;
+    if (!isFlexibleCameraManager(cameraManager)) {
+      throw new Error('Can not use RevealRenderTarget without the FlexibleCameraManager');
+    }
     this._toolController = new ToolControllers(this.domElement);
     this._toolController.addEventListeners();
     this._rootDomainObject = new RootDomainObject();
@@ -88,8 +94,12 @@ export class RevealRenderTarget {
     this.domElement.style.cursor = value;
   }
 
-  public get cameraManager(): IFlexibleCameraManager {
-    const cameraManager = this.viewer.cameraManager;
+  public get cameraManager(): CameraManager {
+    return this.viewer.cameraManager;
+  }
+
+  public get flexibleCameraManager(): IFlexibleCameraManager {
+    const cameraManager = this.cameraManager;
     if (!isFlexibleCameraManager(cameraManager)) {
       throw new Error('Camera manager is not flexible');
     }

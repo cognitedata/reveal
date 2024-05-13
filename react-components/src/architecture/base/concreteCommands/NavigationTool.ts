@@ -9,8 +9,12 @@ import { type Tooltip } from '../commands/BaseCommand';
 import { type IFlexibleCameraManager } from '@cognite/reveal';
 
 export class NavigationTool extends BaseTool {
+  // ==================================================
+  // INSTANVE PROPERTIES
+  // ==================================================
+
   private get cameraManager(): IFlexibleCameraManager {
-    return this.renderTarget.cameraManager;
+    return this.renderTarget.flexibleCameraManager;
   }
 
   // ==================================================

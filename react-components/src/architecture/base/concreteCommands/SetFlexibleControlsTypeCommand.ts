@@ -22,8 +22,8 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
 
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
-    const { cameraManager } = renderTarget;
-    cameraManager.addControlsTypeChangeListener(this._controlsTypeChangeHandler);
+    const { flexibleCameraManager } = renderTarget;
+    flexibleCameraManager.addControlsTypeChangeListener(this._controlsTypeChangeHandler);
   }
 
   // ==================================================
@@ -39,8 +39,8 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
 
   public override dispose(): void {
     super.dispose();
-    const { cameraManager } = this.renderTarget;
-    cameraManager.removeControlsTypeChangeListener(this._controlsTypeChangeHandler);
+    const { flexibleCameraManager } = this.renderTarget;
+    flexibleCameraManager.removeControlsTypeChangeListener(this._controlsTypeChangeHandler);
   }
 
   public override get icon(): string {
@@ -75,17 +75,17 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
 
   public override get isChecked(): boolean {
     const { renderTarget } = this;
-    const { cameraManager } = renderTarget;
-    return cameraManager.controlsType === this._controlsType;
+    const { flexibleCameraManager } = renderTarget;
+    return flexibleCameraManager.controlsType === this._controlsType;
   }
 
   protected override invokeCore(): boolean {
     const { renderTarget } = this;
-    const { cameraManager } = renderTarget;
-    if (cameraManager.controlsType === this._controlsType) {
+    const { flexibleCameraManager } = renderTarget;
+    if (flexibleCameraManager.controlsType === this._controlsType) {
       return false;
     }
-    cameraManager.controlsType = this._controlsType;
+    flexibleCameraManager.controlsType = this._controlsType;
     return true;
   }
 
