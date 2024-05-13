@@ -55,7 +55,8 @@ Here is the architecture with all base classes and some utility functionality.
 
 - **VisualDomainObject**: This subclass adds functionality to a domain object so it can be shown in 3D. The most important function here is createThreeView() which must be overridden.
 
-- **FolderDomainObject**: Concrete class for multi purpose folder.- **RootDomainObject**: Concrete class for the root of the hierarchy
+- **FolderDomainObject**: Concrete class for multi purpose folder.
+- **RootDomainObject**: Concrete class for the root of the hierarchy
 
 ### architecture/base/renderTarget
 
@@ -69,25 +70,34 @@ Normally, when I follow this pattern, the renderTarget is a domainObject itself,
 ### architecture/base/commands
 
 - **BaseCommand**: Base class for all tools and commands. There are basically user actions. It contains all necessary information to create and update a button in the user interface, but it doesn't need or use react. The must important method to overide is invokeCore, which is called whewn the use press the button.A base commen can be checkable
+
 - **RenderTargetCommand** I wanted that BaseCommand should be independent of any type of connection to the rest of the system. This class only brings in the commentect to the RevealRenderTarget
+
 - **BaseTool** This is the bare class for all the tools, which is used when doing under interaction in the viewer itself. It defined a lot ov virtual methods for user interactions. This should be overridden for creating the logic specific for a tool.
 
 ### architecture/base/concreteCommands
 
 This is a collection of most commonly used tools and commands:
 
-- **FitViewCommand**: Fit view to the model bounding box- **NavigationTool**: Reroute the events to the camera manager- **SetFlexibleControlsTypeCommand**: This is another version than we had before. It is made for testing the architecture where the users are changing the state of the command from outside. Use the "1" or "2" key to change btween Fly or Orbit mode.
+- **FitViewCommand**: Fit view to the model bounding box
+- **NavigationTool**: Reroute the events to the camera manager
+- **SetFlexibleControlsTypeCommand**: This is another version than we had before. It is made for testing the architecture where the users are changing the state of the command from outside. Use the "1" or "2" key to change btween Fly or Orbit mode.
 
 ### architecture/base/views
 
 - **BaseView**: Represents a abstract base view class that provides common functionality for all types of views. This does not have any dependency to three.js and can be used in other types of views as well.
+
 - **ThreeView**: Represents an abstract base class for a Three.js view in the application. It adds basicly 2 things: Concept of bounding box and a pointer to the renderTarget (viewer). The bounding box is a lazy calculation. The reeason for this object is that we sometimes can have a view without and Object3D, for instance if a view manipulates another view, for instance a texture on a surface.
-- **GroupThreeView**: Represents an abstract base class for a Three.js view where it holds a pointer to a Group object. This object is the root of the Object3D's that can be added to the view. The most important method is addChildren() to be overridden. Here the children of the group should be added. The class will administrate the group and the children, and perform a lazy creation of these automatically.
-  In the code all views are inherited from GroupThreeView.
+
+- **GroupThreeView**: Represents an abstract base class for a Three.js view where it holds a pointer to a Group object. This object is the root of the Object3D's that can be added to the view. The most important method is addChildren() to be overridden. Here the children of the group should be added. The class will administrate the group and the children, and perform a lazy creation of these automatically. In the code all views are inherited from GroupThreeView.
 
 ### architecture/base/domainObjectHelpers
 
-- **RenderStyle**: Is the base class for all renderstyle.- **Changes**: All changes that can be applied on a domainObject. it uses symbols as the type, because it can easily be extended. It looks like an enum when unit it, since I have used a static class, and this is done by purpose.- **DomainObjectChange** Here you can add several changes before you call domainObject.notify(....)
+- **RenderStyle**: Is the base class for all renderstyle.
+
+- **Changes**: All changes that can be applied on a domainObject. it uses symbols as the type, because it can easily be extended. It looks like an enum when unit it, since I have used a static class, and this is done by purpose.
+
+- **DomainObjectChange** Here you can add several changes before you call domainObject.notify(....)
 
 ### architecture/base/utilities
 
