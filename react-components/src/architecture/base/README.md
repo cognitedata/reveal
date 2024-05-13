@@ -1,4 +1,4 @@
-#Building
+# Building and teesting
 
 Do the following commands:
 
@@ -6,14 +6,17 @@ Do the following commands:
     yarn build
     yarn storybook`
 
+This will automatically goto: https://localhost:3000/?modelUrl=primitivesOpen.
+
 Instead of yarn build, use can build with types by:
 
     yarn tsc --noEmit
 
-This will goto: https://localhost:3000/?modelUrl=primitivesOpen Architecture/Main
+When the StoryBook is open, goto `Architeture/Main`. The toolbar on the right hand side is the one I have made. Here some commands and tools are added.
 
-#Movivation
-Go to this document: https://docs.google.com/presentation/d/1Y50PeqoCS5BdWyDqRNNazeISy1SYTcx4QDcjeMKIm78/edit?usp=sharing
+# Motivation
+
+This is decribed in this document: https://docs.google.com/presentation/d/1Y50PeqoCS5BdWyDqRNNazeISy1SYTcx4QDcjeMKIm78/edit?usp=sharing
 
 # Coding
 
@@ -26,12 +29,12 @@ You will probably find the coding style somewhat different than usually done in 
     - Implementation of interface (if any)
     - Overrides from the must basic base class (if any)
     - :
-    - Overrides from the actually base class (if any)-
+    - Overrides from the actually base class (if any)
     - Instance methods
     - Local functions, types or classes used in this file only
 
 2.  I try to reuse code whenever it is possible. Therefore you will find functions that are very small,
-    often one liners. This ensures the complexity of the code to be low. For instance
+    often one liners. This ensures the complexity of the code to be low. For instance:
 
          export function clear<T>(array: T[]): void {
              array.splice(0, array.length);
@@ -39,7 +42,14 @@ You will probably find the coding style somewhat different than usually done in 
 
 3.  I try to give each class one single responsibility. Therefore I use several base classes, it adds the complexity that is needed.
 
-4.  Keep must classes independed of other classes.
+4.  Keep must classes independed of other classes. For instance the tool should not know abount the views.
+
+5.  I have added som utility function/classes in `architecture/base/utilities`.
+    - Some utility functions may be a duplicate of some function in a package we use. Please tell me.
+    - Some utility classes you will see is like a duplicate, but is made by purpose. For instance `Range3` class which is almost the same as `THREE.Box`, but is far easier to work with.
+    - Some utility classes or function is already implemented in Reveal, and are similar. The reason for not reusing Reveal for utility
+      is due to what we should expose out of Reveal and into Reveral-components. For the moment this is rather strick. Examples is `Vector3Pool` which is implemented both places. Also some of the color classes may seem to be similar. But all this is low level stuff, and is not related to any Reveal functionallity.
+    - I will remove unused utility function or classes when I feel ready for it. Most of them are imported file by file from the node-visualier project.
 
 # Architecture Overview
 
@@ -51,29 +61,38 @@ Here is the architecture with all base classes and some utility functionality.
 
 - **DomainObject:** This is the base class for the domain object. A domain object is some sort of data, that is a collection of other domainObject or the data itself. An important property of the domainObject is that is has a list of views that will be updated. It also has a parent and a collection of children.
     - It has some properties like selected, expanded and active. This is not used yet, but I wanted it to be here as this is part of the pattern. They are connected to how they are visualized and behave in a tree view, but this is not used for the moment.
-    - Methods with postfix "Interactive" are doing all necessary updates automatically. For instance: addChild/addChildInteractive or setVisible/setVisibleInteractive
+    - Methods with postfix `Interactive` are doing all necessary updates automatically. For instance: `addChild/addChildInteractive` or `setVisible/setVisibleInteractive`
 
-- **VisualDomainObject**: This subclass adds functionality to a domain object so it can be shown in 3D. The most important function here is createThreeView() which must be overridden.
+- **VisualDomainObject**: This subclass adds functionality to a domain object so it can be shown in 3D. The most important function here is `createThreeView()` which must be overridden.
 
 - **FolderDomainObject**: Concrete class for multi purpose folder.
+
 - **RootDomainObject**: Concrete class for the root of the hierarchy
 
 ### architecture/base/renderTarget
 
-Normally, when I follow this pattern, the renderTarget is a domainObject itself, and you can have as many of them as you like. But this makes it a little bit more complicated. Since we always have only one viewer, I don't use any bare class for this.
+Normally, when I follow this pattern, the renderTarget is a domainObject itself, and you can have as many of them as you like. But this makes it a little bit more complicated. Since we always have one viewer only, I don't use any base class for this.
 
 - **RevealRenderTarget** Wrap around the Cognite3DViewer. It contains:
-    - The Cognite3DViewer and assume this is constructed somewhere else.  - The RootDomainObject, where the data can be added.  - The ToolController, where the active tool is kept and where the events are handled.  - In addition, it has several utility functions for getting information from the viewer.  - It set up listeners to cameraChange and beforeSceneRendered events from the viewer
 
-- **ToolController** Holds the tools and all commands, the active tool and the previous tool.  - It inherit from PointerEvents, which is a base class on the Reveal side. All virtual functions are implemented in the ToolControllers.  - It created a PointerEventsTarget, also on the reveal side, that set up all the event listeners for the pointer (mouse or touch) handlers. The PointerEventsTarget will automatically call the    function onHover, onClick, onDoubleClick, onPointerDown, onPointerUp and onPointerDrag correctly.  - In addition it sets up some other events like onKey and onFocus.  - All event are routed to the active tool
+  - The `Cognite3DViewer` and assume this is constructed somewhere else.
+  - The `RootDomainObject`, where the data can be added.
+  - The `ToolController`, where the active tool is kept and where the events are handled.
+  - In addition, it has several utility functions for getting information from the viewer.
+  - It set up listeners on `cameraChange` and `beforeSceneRendered` events from the viewer.
+
+- **ToolController**
+  Holds the tools and all commands, the active tool and the previous tool.
+- It inherit from PointerEvents, which is a base class on the Reveal side. All virtual functions are implemented in the ToolControllers.
+- It created a PointerEventsTarget, also on the reveal side, that set up all the event listeners for the pointer (mouse or touch) handlers. The PointerEventsTarget will automatically call the    function onHover, onClick, onDoubleClick, onPointerDown, onPointerUp and onPointerDrag correctly.  - In addition it sets up some other events like onKey and onFocus.  - All event are routed to the active tool
 
 ### architecture/base/commands
 
 - **BaseCommand**: Base class for all tools and commands. There are basically user actions. It contains all necessary information to create and update a button in the user interface, but it doesn't need or use react. The must important method to overide is invokeCore, which is called whewn the use press the button.A base commen can be checkable
 
-- **RenderTargetCommand** I wanted that BaseCommand should be independent of any type of connection to the rest of the system. This class only brings in the commentect to the RevealRenderTarget
+- **RenderTargetCommand** I wanted BaseCommand should be independent of any type of connection to the rest of the system. This class only brings in the commentect to the RevealRenderTarget
 
-- **BaseTool** This is the bare class for all the tools, which is used when doing under interaction in the viewer itself. It defined a lot ov virtual methods for user interactions. This should be overridden for creating the logic specific for a tool.
+- **BaseTool** This is the base class for all the tools, which is used when doing user interaction in the viewer itself. It defined a lot of virtual methods for user interactions. This should be overridden for creating the logic specific for a tool.
 
 ### architecture/base/concreteCommands
 
@@ -81,7 +100,7 @@ This is a collection of most commonly used tools and commands:
 
 - **FitViewCommand**: Fit view to the model bounding box
 - **NavigationTool**: Reroute the events to the camera manager
-- **SetFlexibleControlsTypeCommand**: This is another version than we had before. It is made for testing the architecture where the users are changing the state of the command from outside. Use the "1" or "2" key to change btween Fly or Orbit mode.
+- **SetFlexibleControlsTypeCommand**: This is another version than we had before. It is made for testing the architecture where the users are changing the state of the command from outside. Use the "1" or "2" key to change between Fly or Orbit mode.
 
 ### architecture/base/views
 
@@ -111,23 +130,23 @@ Smaller files with utility classes and function:
 - **architecture/base/utilities/geometry**
 - **architecture/base/utilities/sprites**
 
+# Some concrete examples
+
+These are made to test the architecture but should when ready be used by any of Cognites applications:
+
 ## architecture/concrete
 
 ### architecture/concrete/axes
 
-- AxisDomainObject, AxisRenderStyle and AxisTreeView- SetAxisVisibleCommand to set the axis visible
+- AxisDomainObject, AxisRenderStyle and AxisTreeView
+- SetAxisVisibleCommand to set the axis visible
 
 ### architecture/concrete/boxDomainObject
 
-- BoxDomainObject, BoxRenderStyle and BoxTreeView- BotEditTool for manipulation
+- BoxDomainObject, BoxRenderStyle and BoxTreeView
+- BotEditTool for manipulation
 
 ### architecture/concrete/terrainDomainObject
 
-- TerrainDomainObject, TerrainRenderStyle and TerrainTreeView- UpdateTerrainCommand and SetTerrainVisibleCommand for demo/example- geometry: Folder with math and grid structures
-
---
-
-Nils Petter Fremming
-Chief System Architect for 3D
-+47 412 99 596| nils.fremming@cognite.com
-www.cognite.com | REVEALING INDUSTRIAL REALITY™ See the latest news from CogniteSubscribe to our newsletter
+- TerrainDomainObject, TerrainRenderStyle and TerrainTreeView
+- UpdateTerrainCommand and SetTerrainVisibleCommand for demo/example- geometry: Folder with math and grid structures
