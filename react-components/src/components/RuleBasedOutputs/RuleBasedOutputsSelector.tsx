@@ -77,28 +77,6 @@ export function RuleBasedOutputsSelector({
 
     if (ruleSet === undefined) return;
 
-    const initializeRuleBasedOutputs = async (model: CogniteCadModel): Promise<void> => {
-      // parse assets and mappings
-      // TODO: refactor to be sure to filter only the mappings/assets for the current model within the pages
-      const flatAssetsMappingsList: AssetMapping3D[] = assetMappings.pages
-        .flat()
-        .flatMap((item: ModelMappingsWithAssets) => item.mappings.items);
-
-      const contextualizedAssetNodes = assetMappings.pages
-        .flat()
-        .flatMap((item: ModelMappingsWithAssets) => item.assets)
-        .map(convertAssetMetadataKeysToLowerCase);
-
-      const collectionStylings = await generateRuleBasedOutputs(
-        model,
-        contextualizedAssetNodes,
-        flatAssetsMappingsList,
-        ruleSet
-      );
-
-      setStylingsGroups(collectionStylings);
-    };
-
     models.forEach(async (model) => {
       if (!(model instanceof CogniteCadModel)) {
         return;
