@@ -6,19 +6,14 @@ import { type IdEither } from '@cognite/sdk/';
 export const queryKeys = {
   all: ['cdf'] as const,
   // ASSETS
-  assetsById: (ids: IdEither[]) => [...assets(), ids] as const,
+  assetsById: (ids: IdEither[]) => [...assets, ids] as const,
   // TIMESERIES
-  timeseriesById: (ids: IdEither[]) => [...timeseries(), ids] as const,
-  timeseriesLatestDatapoint: () => [...timeseries(), 'latest-datapoints'] as const,
+  timeseriesById: (ids: IdEither[]) => [...timeseries, ids] as const,
+  timeseriesLatestDatapoint: () => [...timeseries, 'latest-datapoints'] as const,
   // TIMESERIES RELATIONSHIPS WITH ASSETS
-  timeseriesLinkedToAssets: () =>
-    [...queryKeys.all, 'timeseries', 'timeseries-linked-assets'] as const
+  timeseriesLinkedToAssets: () => [...timeseries, 'timeseries-linked-assets'] as const
 } as const;
 
-const assets = (): string[] => {
-  return [...queryKeys.all, 'assets'];
-};
+const assets: string[] = [...queryKeys.all, 'assets'];
 
-const timeseries = (): string[] => {
-  return [...queryKeys.all, 'timeseries'];
-};
+const timeseries: string[] = [...queryKeys.all, 'timeseries'];
