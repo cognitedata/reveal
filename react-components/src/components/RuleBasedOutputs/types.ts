@@ -89,7 +89,7 @@ export type Rule = {
 
 export type BaseRuleOutput = {
   externalId: string; // comes from FDM
-  name?: string;
+  label?: string;
   // ruleId: string | undefined; // Transiently it can be left undefined
 };
 
@@ -261,6 +261,19 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   lastUpdatedTime: number;
   deletedTime: number;
   properties: FdmPropertyType<PropertyType>;
+};
+
+export type EmptyRuleForSelection = {
+  rule: {
+    properties: EmptyRuleForSelectionProps;
+  };
+  isEnabled: boolean;
+};
+
+export type EmptyRuleForSelectionProps = {
+  id: string | undefined;
+  name: string;
+  isNoSelection: boolean;
 };
 
 export type TriggerTypeData = TriggerMetadataType | TriggerTimeseriesType;
