@@ -149,9 +149,11 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
 
   /**
    * Determines whether the view needs to be updated just before rendering.
-   * Typically needed to be implemented id the update function is not enough and
+   * Typically needed to be implemented if the update function is not enough and
    * the view depend on other factors as the model bounding box or the camera position.
    * This method should be overridden in derived classes.
+   *
+   * When it returns true, the view will be rebuild by addChildren().
    * @returns A boolean value indicating whether the view needs to be updated.
    */
   protected get needsUpdate(): boolean {

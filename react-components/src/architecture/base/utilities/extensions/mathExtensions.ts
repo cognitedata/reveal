@@ -17,7 +17,7 @@ export function isZero(x: number): boolean {
 }
 
 export function isEqual(x: number, y: number): boolean {
-  return isRelEqual(x, y, ERROR_TOLERANCE);
+  return isRelativeEqual(x, y, ERROR_TOLERANCE);
 }
 
 export function isAbsEqual(x: number, y: number, tolerance: number): boolean {
@@ -26,25 +26,25 @@ export function isAbsEqual(x: number, y: number, tolerance: number): boolean {
   return error < tolerance;
 }
 
-export function isRelEqual(x: number, y: number, tolerance: number): boolean {
-  // ||x-y||/(1 + (|x|+|y|)/2)
+export function isRelativeEqual(x: number, y: number, tolerance: number): boolean {
+  // Error = ||x-y||/(1 + (|x|+|y|)/2)
   let error = x - y;
-  const _x = x < 0 ? -x : x;
-  const _y = y < 0 ? -y : y;
+  const absX = x < 0 ? -x : x;
+  const absY = y < 0 ? -y : y;
 
   if (error < 0) {
     error = -error;
   }
-  return error / (1 + (_x + _y) / 2) < tolerance;
+  return error / (1 + (absX + absY) / 2) < tolerance;
 }
 
-export function isInt(value: number): boolean {
+export function isInteger(value: number): boolean {
   const diff = Math.round(value) - value;
   return isZero(diff);
 }
 
 export function isIncrement(value: number, increment: number): boolean {
-  return isInt(value / increment);
+  return isInteger(value / increment);
 }
 
 export function isEven(value: number): boolean {

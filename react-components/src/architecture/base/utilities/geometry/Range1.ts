@@ -82,9 +82,16 @@ export class Range1 {
   // INSTANCE METHODS: Requests
   // ==================================================
 
-  equal(other: Range1): boolean {
-    if (this._isEmpty && other._isEmpty) return true;
-    if (this._isEmpty !== other._isEmpty) return false;
+  equals(other: Range1): boolean {
+    if (other === undefined) {
+      return false;
+    }
+    if (this._isEmpty && other._isEmpty) {
+      return true;
+    }
+    if (this._isEmpty !== other._isEmpty) {
+      return false;
+    }
     return this.min === other.min && this.max === other.max;
   }
 

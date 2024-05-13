@@ -87,7 +87,8 @@ export abstract class ThreeView extends BaseView {
   /**
    * This method is called before rendering the view.
    * Override this function to perform any necessary operations
-   * just before rendering.
+   * just before rendering.Have in mind that the Object3D are build at the time this is
+   * called, so you can only do adjustment on existing object3D's.
    * @remarks
    * Always call `super.beforeRender(camera)` in the overrides.
    */

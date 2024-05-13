@@ -80,7 +80,7 @@ export class ToolControllers extends PointerEvents {
   public getEqual(command: BaseCommand): BaseCommand | undefined {
     // For some reason Set<> doesn't have find!
     for (const oldCommand of this._commands) {
-      if (oldCommand.equal(command)) {
+      if (oldCommand.equals(command)) {
         return oldCommand;
       }
     }

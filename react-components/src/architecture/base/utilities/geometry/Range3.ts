@@ -87,7 +87,7 @@ export class Range3 {
     if (other === undefined) {
       return false;
     }
-    return this.x.equal(other.x) && this.y.equal(other.y) && this.z.equal(other.z);
+    return this.x.equals(other.x) && this.y.equals(other.y) && this.z.equals(other.z);
   }
 
   // ==================================================
@@ -222,78 +222,5 @@ export class Range3 {
     range.y.set(ymin, ymin + dy);
     range.z.set(0, 0);
     return range;
-  }
-
-  // ==================================================
-  // STATIC METHODS
-  // ==================================================
-
-  // Corner and walls is pr. definition:
-  //            5      4
-  //            v     /
-  //        7--------6                7-------6
-  //       / |      /|               / |      /|
-  //      4-------5  |              4-------5  |
-  // 0->  |  |    |  |  <-3         |  |    |  |
-  //      |  3----|--2              |  3----|--2
-  //      | /     | /               | /     | /
-  //      0-------1                 0-------1
-  //    /     ^
-  //   1      2
-  // Wall number are marked with arrows
-
-  public static getWallNormal(wallIndex: number): Vector3 {
-    switch (wallIndex) {
-      case 0:
-        return new Vector3(-1, +0, +0);
-      case 1:
-        return new Vector3(+0, -1, +0);
-      case 2:
-        return new Vector3(+0, +0, -1);
-      case 3:
-        return new Vector3(+1, +0, +0);
-      case 4:
-        return new Vector3(+0, +1, +0);
-      case 5:
-        return new Vector3(+0, +0, +1);
-      default:
-        throw Error('getWallNormal');
-    }
-  }
-
-  public static getWallCornerIndexes(wallIndex: number): number[] {
-    // These as CCW
-    switch (wallIndex) {
-      case 0:
-        return [3, 0, 4, 7];
-      case 1:
-        return [0, 1, 5, 4];
-      case 2:
-        return [3, 2, 1, 0];
-      case 3:
-        return [1, 2, 6, 5];
-      case 4:
-        return [2, 3, 7, 6];
-      case 5:
-        return [4, 5, 6, 7];
-      default:
-        Error('getWallCornerIndexes');
-        return [0, 0, 0, 0];
-    }
-  }
-
-  public static getTickDirection(wallIndex1: number, wallIndex2: number): Vector3 {
-    const vector = new Vector3(0, 0, 0);
-
-    if (wallIndex1 === 0 || wallIndex2 === 0) vector.x = -Math.SQRT1_2;
-    if (wallIndex1 === 3 || wallIndex2 === 3) vector.x = Math.SQRT1_2;
-
-    if (wallIndex1 === 1 || wallIndex2 === 1) vector.y = -Math.SQRT1_2;
-    if (wallIndex1 === 4 || wallIndex2 === 4) vector.y = Math.SQRT1_2;
-
-    if (wallIndex1 === 2 || wallIndex2 === 2) vector.z = -Math.SQRT1_2;
-    if (wallIndex1 === 5 || wallIndex2 === 5) vector.z = Math.SQRT1_2;
-
-    return vector;
   }
 }

@@ -34,11 +34,10 @@ export class AxisRenderStyle extends RenderStyle {
   public wallColor = COLOR_DARK_GREY;
   public textColor = COLOR_WHITE;
 
-  public axisColor = COLOR_WHITE;
-  public xAxisColor = COLOR_RED;
-  public yAxisColor = COLOR_GREEN;
-  public zAxisColor = COLOR_BLUE;
-  public axisBlend = 0.6;
+  public mainAxisColor = COLOR_WHITE;
+  public xAxisColor = getMixedColor(COLOR_WHITE, COLOR_RED, 0.6);
+  public yAxisColor = getMixedColor(COLOR_WHITE, COLOR_GREEN, 0.6);
+  public zAxisColor = getMixedColor(COLOR_WHITE, COLOR_BLUE, 0.6);
 
   // ==================================================
   // OVERRIDES of BaseStyle
@@ -54,16 +53,16 @@ export class AxisRenderStyle extends RenderStyle {
 
   public getAxisColor(isMainAxis: boolean, dimension: number): Color {
     if (!isMainAxis) {
-      return this.axisColor;
+      return this.mainAxisColor;
     }
     // Note: Y is up in viewer coordinated
     switch (dimension) {
       case 0:
-        return getMixedColor(this.axisColor, this.xAxisColor, this.axisBlend);
+        return this.xAxisColor;
       case 1:
-        return getMixedColor(this.axisColor, this.zAxisColor, this.axisBlend);
+        return this.yAxisColor;
       case 2:
-        return getMixedColor(this.axisColor, this.yAxisColor, this.axisBlend);
+        return this.zAxisColor;
       default:
         throw Error('getAxisColor');
     }
@@ -75,9 +74,9 @@ export class AxisRenderStyle extends RenderStyle {
       case 0:
         return 'X';
       case 1:
-        return 'Z';
-      case 2:
         return 'Y';
+      case 2:
+        return 'Z';
       default:
         throw Error('getAxisName');
     }

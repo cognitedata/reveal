@@ -306,7 +306,7 @@ export class BoxEditTool extends NavigationTool {
   private setCursor(boxDomainObject: BoxDomainObject, point: Vector3, pickInfo: BoxPickInfo): void {
     if (pickInfo.focusType === BoxFocusType.Translate) {
       this.renderTarget.setMoveCursor();
-    } else if (pickInfo.focusType === BoxFocusType.ScaleByEdge) {
+    } else if (pickInfo.focusType === BoxFocusType.ResizeByEdge) {
       const matrix = boxDomainObject.getMatrix();
       matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
@@ -322,7 +322,7 @@ export class BoxEditTool extends NavigationTool {
       faceCenter.applyMatrix4(matrix);
 
       this.renderTarget.setResizeCursor(boxCenter, faceCenter);
-    } else if (pickInfo.focusType === BoxFocusType.ScaleByCorner) {
+    } else if (pickInfo.focusType === BoxFocusType.ResizeByCorner) {
       const matrix = boxDomainObject.getMatrix();
       matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 

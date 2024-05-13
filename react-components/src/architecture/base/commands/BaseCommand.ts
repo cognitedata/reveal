@@ -63,7 +63,7 @@ export abstract class BaseCommand {
     return false;
   }
 
-  public equal(other: BaseCommand): boolean {
+  public equals(other: BaseCommand): boolean {
     return this.constructor === other.constructor;
   }
 

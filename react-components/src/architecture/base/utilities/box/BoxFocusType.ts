@@ -6,8 +6,8 @@ export enum BoxFocusType {
   None,
   Rotate,
   Translate,
-  ScaleByEdge,
-  ScaleByCorner,
+  ResizeByEdge,
+  ResizeByCorner,
   Pending, // This only indicates focus during creation
   Any // This only indicates focus when it is created
 }

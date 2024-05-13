@@ -98,10 +98,10 @@ export class BoxDragger {
 
   private applyByFocusType(type: BoxFocusType, ray: Ray): boolean {
     switch (type) {
-      case BoxFocusType.ScaleByEdge:
-        return this.scaleByEdge(ray);
-      case BoxFocusType.ScaleByCorner:
-        return this.scaleByCorner(ray);
+      case BoxFocusType.ResizeByEdge:
+        return this.resizeByEdge(ray);
+      case BoxFocusType.ResizeByCorner:
+        return this.resizeByCorner(ray);
       case BoxFocusType.Translate:
         return this.translate(ray);
       case BoxFocusType.Rotate:
@@ -129,7 +129,7 @@ export class BoxDragger {
     return true;
   }
 
-  private scaleByEdge(ray: Ray): boolean {
+  private resizeByEdge(ray: Ray): boolean {
     // Take find closest point between the ray and the line perpenducular to the face of in picked box.
     // The distance from this point to the face of in picked box is the change.
     const pointOnSegment = newVector3();
@@ -162,7 +162,7 @@ export class BoxDragger {
     return true;
   }
 
-  private scaleByCorner(ray: Ray): boolean {
+  private resizeByCorner(ray: Ray): boolean {
     const endPoint = ray.intersectPlane(this._planeOfBox, newVector3());
     if (endPoint === null) {
       return false;

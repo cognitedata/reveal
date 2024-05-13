@@ -53,7 +53,7 @@ export class RevealRenderTarget {
 
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
-    this._viewer.on('beforeSceneRendered', this.beforeSceneRenderedDelegate);
+    this._viewer.on('beforeSceneRendered', this.beforeSceneRenderedHandler);
   }
 
   // ==================================================
@@ -168,7 +168,7 @@ export class RevealRenderTarget {
     light.position.copy(cameraDirection);
   };
 
-  beforeSceneRenderedDelegate = (event: {
+  beforeSceneRenderedHandler = (event: {
     frameNumber: number;
     renderer: WebGLRenderer;
     camera: PerspectiveCamera;

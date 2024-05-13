@@ -20,7 +20,7 @@ import {
 } from 'three';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { Range3 } from '../../base/utilities/geometry/Range3';
-import { isRelEqual, isIncrement } from '../../base/utilities/extensions/mathExtensions';
+import { isIncrement } from '../../base/utilities/extensions/mathExtensions';
 import { Range1 } from '../../base/utilities/geometry/Range1';
 import { type AxisRenderStyle } from './AxisRenderStyle';
 import {
@@ -31,9 +31,10 @@ import { TrianglesBuffers } from '../../base/utilities/geometry/TrianglesBuffers
 import { getCenter } from '../../base/utilities/extensions/vectorExtensions';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { Vector3Pool } from '../../base/utilities/geometry/Vector3Pool';
 
-const WALL_INDEX_NAME1 = 'wallIndex1';
-const WALL_INDEX_NAME2 = 'wallIndex2';
+const FACE_INDEX_NAME1 = 'faceIndex1';
+const FACE_INDEX_NAME2 = 'faceIndex2';
 const MAIN_AXIS_NAME = 'mainAxis';
 
 export class AxisThreeView extends GroupThreeView {
@@ -89,7 +90,7 @@ export class AxisThreeView extends GroupThreeView {
     let cameraPosition: Vector3 | undefined;
 
     if (camera instanceof OrthographicCamera) {
-      cameraDirection = camera.getWorldDirection(new Vector3());
+      cameraDirection = camera.getWorldDirection(newVector3());
     } else {
       cameraPosition = camera.position;
     }
@@ -115,18 +116,10 @@ export class AxisThreeView extends GroupThreeView {
 
     // Check if bounding box is different
     const sceneBoundingBox = target.sceneBoundingBox;
-    const a = sceneBoundingBox.min.distanceTo(sceneBoundingBox.max);
-    const b = this._sceneBoundingBox.min.distanceTo(this._sceneBoundingBox.max);
-    if (isRelEqual(a, b, 0.075)) {
-      return false;
-    }
     if (sceneBoundingBox.equals(this._sceneBoundingBox)) {
-      // Not working
       return false;
     }
-    if (!sceneBoundingBox.isEmpty()) {
-      sceneBoundingBox.expandByVector(sceneBoundingBox.getSize(new Vector3()).multiplyScalar(0.02));
-    }
+    console.log('UPDATE AxisThreeView', sceneBoundingBox, this._sceneBoundingBox);
     this._sceneBoundingBox.copy(sceneBoundingBox);
     this._expandedSceneBoundingBox.copy(sceneBoundingBox);
     this._expandedSceneBoundingBox.expandByFraction(0.02);
@@ -146,50 +139,50 @@ export class AxisThreeView extends GroupThreeView {
 
     // Initialize the corners and the centers
     boundingBox.getCornerPoints(this._corners);
-    const useWall = getUseWall(boundingBox);
-    for (let wallIndex = 0; wallIndex < 6; wallIndex++) {
-      const indexes = Range3.getWallCornerIndexes(wallIndex);
-      const center = this._faceCenters[wallIndex];
+    const useFace = getUseFace(boundingBox);
+    for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
+      const indexes = getFaceCornerIndexes(faceIndex);
+      const center = this._faceCenters[faceIndex];
       center.copy(this._corners[indexes[0]]);
       center.add(this._corners[indexes[1]]);
       center.add(this._corners[indexes[2]]);
       center.add(this._corners[indexes[3]]);
       center.divideScalar(4);
     }
-    // Add Walls
-    for (let wallIndex = 0; wallIndex < 6; wallIndex++) {
-      this.addWall(style, useWall, wallIndex);
+    // Add Faces
+    for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
+      this.addFace(style, useFace, faceIndex);
     }
     const increment = getGridInc(boundingBox, style.numberOfTicks);
     if (boundingBox.x.hasSpan) {
-      this.addAxis(style, useWall, increment, tickLength, 0, 1, 0, 1, 2);
-      this.addAxis(style, useWall, increment, tickLength, 3, 2, 0, 2, 4);
-      this.addAxis(style, useWall, increment, tickLength, 7, 6, 0, 4, 5);
-      this.addAxis(style, useWall, increment, tickLength, 4, 5, 0, 1, 5);
+      this.addAxis(style, useFace, increment, tickLength, 0, 1, 0, 1, 2);
+      this.addAxis(style, useFace, increment, tickLength, 3, 2, 0, 2, 4);
+      this.addAxis(style, useFace, increment, tickLength, 7, 6, 0, 4, 5);
+      this.addAxis(style, useFace, increment, tickLength, 4, 5, 0, 1, 5);
     }
     // Add Y axis
     if (boundingBox.y.hasSpan) {
-      this.addAxis(style, useWall, increment, tickLength, 3, 0, 1, 0, 2);
-      this.addAxis(style, useWall, increment, tickLength, 1, 2, 1, 2, 3);
-      this.addAxis(style, useWall, increment, tickLength, 5, 6, 1, 3, 5);
-      this.addAxis(style, useWall, increment, tickLength, 7, 4, 1, 0, 5);
+      this.addAxis(style, useFace, increment, tickLength, 3, 0, 1, 0, 2);
+      this.addAxis(style, useFace, increment, tickLength, 1, 2, 1, 2, 3);
+      this.addAxis(style, useFace, increment, tickLength, 5, 6, 1, 3, 5);
+      this.addAxis(style, useFace, increment, tickLength, 7, 4, 1, 0, 5);
     }
     // Add Z axis
     if (boundingBox.z.hasSpan) {
-      this.addAxis(style, useWall, increment, tickLength, 0, 4, 2, 0, 1);
-      this.addAxis(style, useWall, increment, tickLength, 1, 5, 2, 1, 3);
-      this.addAxis(style, useWall, increment, tickLength, 2, 6, 2, 3, 4);
-      this.addAxis(style, useWall, increment, tickLength, 3, 7, 2, 0, 4);
+      this.addAxis(style, useFace, increment, tickLength, 0, 4, 2, 0, 1);
+      this.addAxis(style, useFace, increment, tickLength, 1, 5, 2, 1, 3);
+      this.addAxis(style, useFace, increment, tickLength, 2, 6, 2, 3, 4);
+      this.addAxis(style, useFace, increment, tickLength, 3, 7, 2, 0, 4);
     }
 
     // Add Grid
     if (style.showGrid) {
-      this.addGrid(style, useWall, 0, increment, 1, 2);
-      this.addGrid(style, useWall, 1, increment, 0, 2);
-      this.addGrid(style, useWall, 2, increment, 0, 1);
-      this.addGrid(style, useWall, 3, increment, 1, 2);
-      this.addGrid(style, useWall, 4, increment, 0, 2);
-      this.addGrid(style, useWall, 5, increment, 0, 1);
+      this.addGrid(style, useFace, 0, increment, 1, 2);
+      this.addGrid(style, useFace, 1, increment, 0, 2);
+      this.addGrid(style, useFace, 2, increment, 0, 1);
+      this.addGrid(style, useFace, 3, increment, 1, 2);
+      this.addGrid(style, useFace, 4, increment, 0, 2);
+      this.addGrid(style, useFace, 5, increment, 0, 1);
     }
   }
 
@@ -199,23 +192,24 @@ export class AxisThreeView extends GroupThreeView {
 
   private addAxis(
     style: AxisRenderStyle,
-    usedWall: boolean[],
+    usedFace: boolean[],
     increment: number,
     tickLength: number,
     i0: number,
     i1: number,
     dimension: number,
-    wallIndex1: number,
-    wallIndex2: number
+    faceIndex1: number,
+    faceIndex2: number
   ): void {
-    if (!usedWall[wallIndex1] && !usedWall[wallIndex2]) {
+    if (!usedFace[faceIndex1] && !usedFace[faceIndex2]) {
       return;
     }
     // Draw axis
     if (style.showAxis) {
       for (let i = 0; i < 2; i++) {
         const isMainAxis = i === 0;
-        const color = style.getAxisColor(isMainAxis, dimension);
+
+        const color = style.getAxisColor(isMainAxis, rotateToViewer(dimension));
         const linewidth = isMainAxis ? 2 : 1;
         const vertices: number[] = [];
 
@@ -223,7 +217,7 @@ export class AxisThreeView extends GroupThreeView {
         vertices.push(...this._corners[i1]);
 
         const lineSegments = createLineSegments(vertices, color, linewidth);
-        this.setUserDataOnAxis(lineSegments, wallIndex1, wallIndex2, isMainAxis);
+        this.setUserDataOnAxis(lineSegments, faceIndex1, faceIndex2, isMainAxis);
         this.addChild(lineSegments);
       }
     }
@@ -240,7 +234,7 @@ export class AxisThreeView extends GroupThreeView {
 
       // Draw ticks
       const labelInc = range.getBoldIncrement(increment);
-      const tickDirection = Range3.getTickDirection(wallIndex1, wallIndex2);
+      const tickDirection = getTickDirection(faceIndex1, faceIndex2, newVector3());
 
       // Add tick marks and labels
       if (style.showAxisTicks || style.showAxisNumbers) {
@@ -276,13 +270,13 @@ export class AxisThreeView extends GroupThreeView {
             if (sprite !== undefined) {
               moveSpriteByPositionAndDirection(sprite, end, tickDirection);
               this.addChild(sprite);
-              this.setUserDataOnAxis(sprite, wallIndex1, wallIndex2, true);
+              this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
             }
           }
         }
         if (style.showAxisTicks) {
-          const lineSegments = createLineSegments(vertices, style.axisColor, 1);
-          this.setUserDataOnAxis(lineSegments, wallIndex1, wallIndex2, true);
+          const lineSegments = createLineSegments(vertices, style.mainAxisColor, 1);
+          this.setUserDataOnAxis(lineSegments, faceIndex1, faceIndex2, true);
           this.addChild(lineSegments);
         }
       }
@@ -308,28 +302,28 @@ export class AxisThreeView extends GroupThreeView {
 
         // Align the text
         const sprite = createSpriteWithText(
-          style.getAxisLabel(dimension),
+          style.getAxisLabel(rotateToViewer(dimension)),
           labelFontSize,
           style.textColor
         );
         if (sprite !== undefined) {
           moveSpriteByPositionAndDirection(sprite, position, tickDirection);
           this.addChild(sprite);
-          this.setUserDataOnAxis(sprite, wallIndex1, wallIndex2, true);
+          this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
         }
       }
     }
   }
 
   // ==================================================
-  // INSTANCE METHODS: Add wall
+  // INSTANCE METHODS: Add face
   // ==================================================
 
-  private addWall(style: AxisRenderStyle, usedWall: boolean[], wallIndex: number): void {
-    if (!usedWall[wallIndex]) {
+  private addFace(style: AxisRenderStyle, usedFace: boolean[], faceIndex: number): void {
+    if (!usedFace[faceIndex]) {
       return;
     }
-    const indexes = Range3.getWallCornerIndexes(wallIndex);
+    const indexes = getFaceCornerIndexes(faceIndex);
 
     const buffer = new TrianglesBuffers(4);
     buffer.addPosition(this._corners[indexes[0]]);
@@ -347,7 +341,7 @@ export class AxisThreeView extends GroupThreeView {
       polygonOffsetUnits: 4.0
     });
     const mesh = new Mesh(buffer.createBufferGeometry(), squareMaterial);
-    this.setUserDataOnWall(mesh, wallIndex);
+    this.setUserDataOnFace(mesh, faceIndex);
     this.addChild(mesh);
   }
 
@@ -357,23 +351,23 @@ export class AxisThreeView extends GroupThreeView {
 
   private addGrid(
     style: AxisRenderStyle,
-    usedWall: boolean[],
-    wallIndex: number,
+    usedFace: boolean[],
+    faceIndex: number,
     increment: number,
     dim1: number,
     dim2: number
   ): void {
-    if (!usedWall[wallIndex]) {
+    if (!usedFace[faceIndex]) {
       return;
     }
-    const indexes = Range3.getWallCornerIndexes(wallIndex);
+    const indexes = getFaceCornerIndexes(faceIndex);
     const vertices: number[] = [];
 
     this.addGridInOneDirection(vertices, increment, indexes[0], indexes[1], indexes[3], dim1);
     this.addGridInOneDirection(vertices, increment, indexes[0], indexes[3], indexes[1], dim2);
 
     const lineSegments = createLineSegments(vertices, style.gridColor, 1);
-    this.setUserDataOnWall(lineSegments, wallIndex);
+    this.setUserDataOnFace(lineSegments, faceIndex);
     this.addChild(lineSegments);
   }
 
@@ -417,18 +411,18 @@ export class AxisThreeView extends GroupThreeView {
   // INSTANCE METHODS: Visibility
   // ==================================================
 
-  private setUserDataOnWall(object: Object3D, setUserDataOnWall: number): void {
-    object.userData[WALL_INDEX_NAME1] = setUserDataOnWall;
+  private setUserDataOnFace(object: Object3D, setUserDataOnFace: number): void {
+    object.userData[FACE_INDEX_NAME1] = setUserDataOnFace;
   }
 
   private setUserDataOnAxis(
     object: Object3D,
-    wallIndex1: number,
-    wallIndex2: number,
+    faceIndex1: number,
+    faceIndex2: number,
     mainAxis: boolean
   ): void {
-    object.userData[WALL_INDEX_NAME1] = wallIndex1;
-    object.userData[WALL_INDEX_NAME2] = wallIndex2;
+    object.userData[FACE_INDEX_NAME1] = faceIndex1;
+    object.userData[FACE_INDEX_NAME2] = faceIndex2;
     object.userData[MAIN_AXIS_NAME] = mainAxis;
   }
 
@@ -437,17 +431,17 @@ export class AxisThreeView extends GroupThreeView {
     cameraPosition: Vector3 | undefined,
     cameraDirection: Vector3 | undefined
   ): void {
-    const wallIndex1 = object.userData[WALL_INDEX_NAME1] as number;
-    if (wallIndex1 === undefined) {
+    const faceIndex1 = object.userData[FACE_INDEX_NAME1] as number;
+    if (faceIndex1 === undefined) {
       return;
     }
-    const visible1 = this.isWallVisible(wallIndex1, cameraPosition, cameraDirection);
-    const wallIndex2 = object.userData[WALL_INDEX_NAME2] as number;
-    if (wallIndex2 === undefined) {
+    const visible1 = this.isFaceVisible(faceIndex1, cameraPosition, cameraDirection);
+    const faceIndex2 = object.userData[FACE_INDEX_NAME2] as number;
+    if (faceIndex2 === undefined) {
       object.visible = visible1;
       return;
     }
-    const visible2 = this.isWallVisible(wallIndex2, cameraPosition, cameraDirection);
+    const visible2 = this.isFaceVisible(faceIndex2, cameraPosition, cameraDirection);
     const mainAxis = object.userData[MAIN_AXIS_NAME] as boolean;
     if (mainAxis) {
       object.visible = visible1 !== visible2;
@@ -456,8 +450,8 @@ export class AxisThreeView extends GroupThreeView {
     }
   }
 
-  private isWallVisible(
-    wallIndex: number,
+  private isFaceVisible(
+    faceIndex: number,
     cameraPosition: Vector3 | undefined,
     cameraDirection: Vector3 | undefined
   ): boolean {
@@ -465,9 +459,9 @@ export class AxisThreeView extends GroupThreeView {
       if (cameraPosition === undefined) {
         return false;
       }
-      cameraDirection = new Vector3().subVectors(this._faceCenters[wallIndex], cameraPosition);
+      cameraDirection = newVector3().subVectors(this._faceCenters[faceIndex], cameraPosition);
     }
-    const normal = Range3.getWallNormal(wallIndex);
+    const normal = getFaceNormal(faceIndex, newVector3());
     return cameraDirection.dot(normal) > 0.02;
   }
 }
@@ -484,19 +478,30 @@ function getGridInc(range: Range3, numberOfTicks: number): number {
   return increment;
 }
 
+function rotateToViewer(dimension: number): number {
+  // This swaps the Z and Y axis
+  if (dimension === 1) {
+    return 2;
+  }
+  if (dimension === 2) {
+    return 1;
+  }
+  return dimension;
+}
+
 // ==================================================
 // PRIVATE FUNCTIONS: Visibility
 // ==================================================
 
-function getUseWall(range: Range3): boolean[] {
-  const usedWall: boolean[] = new Array<boolean>(6);
-  usedWall[0] = range.y.hasSpan && range.z.hasSpan;
-  usedWall[1] = range.x.hasSpan && range.z.hasSpan;
-  usedWall[2] = range.x.hasSpan && range.y.hasSpan;
-  usedWall[3] = range.y.hasSpan && range.z.hasSpan;
-  usedWall[4] = range.x.hasSpan && range.z.hasSpan;
-  usedWall[5] = range.x.hasSpan && range.y.hasSpan;
-  return usedWall;
+function getUseFace(range: Range3): boolean[] {
+  const usedFace: boolean[] = new Array<boolean>(6);
+  usedFace[0] = range.y.hasSpan && range.z.hasSpan;
+  usedFace[1] = range.x.hasSpan && range.z.hasSpan;
+  usedFace[2] = range.x.hasSpan && range.y.hasSpan;
+  usedFace[3] = range.y.hasSpan && range.z.hasSpan;
+  usedFace[4] = range.x.hasSpan && range.z.hasSpan;
+  usedFace[5] = range.x.hasSpan && range.y.hasSpan;
+  return usedFace;
 }
 
 // ==================================================
@@ -513,4 +518,85 @@ function createLineSegments(vertices: number[], color: Color, linewidth: number)
     geometry.setAttribute('position', new BufferAttribute(verticesArray, 3));
     return geometry;
   }
+}
+
+// ==================================================
+// PRIVATE METHODS: Some math for Range3
+// ==================================================
+
+// Corner and faces is pr. definition:
+//            5      4
+//            v     /
+//        7--------6                7-------6
+//       / |      /|               / |      /|
+//      4-------5  |              4-------5  |
+// 0->  |  |    |  |  <-3         |  |    |  |
+//      |  3----|--2              |  3----|--2
+//      | /     | /               | /     | /
+//      0-------1                 0-------1
+//    /     ^
+//   1      2
+// Face number are marked with arrows
+
+function getFaceNormal(faceIndex: number, target: Vector3): Vector3 {
+  switch (faceIndex) {
+    case 0:
+      return target.set(-1, +0, +0);
+    case 1:
+      return target.set(+0, -1, +0);
+    case 2:
+      return target.set(+0, +0, -1);
+    case 3:
+      return target.set(+1, +0, +0);
+    case 4:
+      return target.set(+0, +1, +0);
+    case 5:
+      return target.set(+0, +0, +1);
+    default:
+      throw Error('getFaceNormal');
+  }
+}
+
+function getFaceCornerIndexes(faceIndex: number): number[] {
+  // These as CCW
+  switch (faceIndex) {
+    case 0:
+      return [3, 0, 4, 7];
+    case 1:
+      return [0, 1, 5, 4];
+    case 2:
+      return [3, 2, 1, 0];
+    case 3:
+      return [1, 2, 6, 5];
+    case 4:
+      return [2, 3, 7, 6];
+    case 5:
+      return [4, 5, 6, 7];
+    default:
+      Error('getFaceCornerIndexes');
+      return [0, 0, 0, 0];
+  }
+}
+
+function getTickDirection(faceIndex1: number, faceIndex2: number, target: Vector3): Vector3 {
+  target.setScalar(0);
+
+  if (faceIndex1 === 0 || faceIndex2 === 0) target.x = -Math.SQRT1_2;
+  if (faceIndex1 === 3 || faceIndex2 === 3) target.x = Math.SQRT1_2;
+
+  if (faceIndex1 === 1 || faceIndex2 === 1) target.y = -Math.SQRT1_2;
+  if (faceIndex1 === 4 || faceIndex2 === 4) target.y = Math.SQRT1_2;
+
+  if (faceIndex1 === 2 || faceIndex2 === 2) target.z = -Math.SQRT1_2;
+  if (faceIndex1 === 5 || faceIndex2 === 5) target.z = Math.SQRT1_2;
+  return target;
+}
+
+// ==================================================
+// PRIVATE FUNCTIONS: Vector pool
+// ==================================================
+
+const VECTOR_POOL = new Vector3Pool();
+function newVector3(copyFrom?: Vector3): Vector3 {
+  return VECTOR_POOL.getNext(copyFrom);
 }
