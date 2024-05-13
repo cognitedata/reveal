@@ -1,28 +1,45 @@
 #Building
-yarnyarn buildyarn tsc --noEmit // Same as yarn build, but build with typesyarn storybook
+
+Do the following commands:
+
+    yarn
+    yarn build
+    yarn storybook`
+
+Instead of yarn build, use can build with types by:
+
+    yarn tsc --noEmit
+
 This will goto: https://localhost:3000/?modelUrl=primitivesOpen Architecture/Main
+
 #Movivation
-Go to this documenthttps://docs.google.com/presentation/d/1Y50PeqoCS5BdWyDqRNNazeISy1SYTcx4QDcjeMKIm78/edit?usp=sharing
+Go to this document: https://docs.google.com/presentation/d/1Y50PeqoCS5BdWyDqRNNazeISy1SYTcx4QDcjeMKIm78/edit?usp=sharing
 
 # Coding
 
 You will probably find the coding style somewhat different than usually done in Reveal.
 
-1. I use headers to mark a new section in the file. This is important for fast navigation and to keep the code in correct order. The order in the files are:
+1.  I use headers to mark a new section in the file. This is important for fast navigation and to keep the code in correct order. The order in the files are:
 
-   - Instance fields.
-   - Instance properties
-   - Implementation of interface (if any)
-   - Overrides from the must basic base class (if any)
-   - :
-   - Overrides from the actually base class (if any)- Instance methods- Local functions, types or classes used in this file only
+    - Instance fields.
+    - Instance properties
+    - Implementation of interface (if any)
+    - Overrides from the must basic base class (if any)
+    - :
+    - Overrides from the actually base class (if any)-
+    - Instance methods
+    - Local functions, types or classes used in this file only
 
-2. I try to reuse code whenever it is possible. Therefore you will find functions that are very small,
-   often one liners. This ensures the complexity of the code to be low.
+2.  I try to reuse code whenever it is possible. Therefore you will find functions that are very small,
+    often one liners. This ensures the complexity of the code to be low. For instance
 
-3. I try to give each class one single responsibility. Therefore I use several base classes, it adds the complexity that is needed.
+         export function clear<T>(array: T[]): void {
+             array.splice(0, array.length);
+         }
 
-4. Keep must classes independed of other classes.
+3.  I try to give each class one single responsibility. Therefore I use several base classes, it adds the complexity that is needed.
+
+4.  Keep must classes independed of other classes.
 
 # Architecture Overview
 
@@ -33,8 +50,8 @@ Here is the architecture with all base classes and some utility functionality.
 ### architecture/base/domainObject
 
 - **DomainObject:** This is the base class for the domain object. A domain object is some sort of data, that is a collection of other domainObject or the data itself. An important property of the domainObject is that is has a list of views that will be updated. It also has a parent and a collection of children.
-    - It has some properties like selected, expanded and active. This is not used yet, but I wanted it to be here as this is part of the pattern. They are connected to how they are visualized in a tree view.
-    - Methods with postfix "interactive" are doing all necessary updates automatically. For instance addChild/addChildInteractive or setVisible/setVisibleInteractive
+    - It has some properties like selected, expanded and active. This is not used yet, but I wanted it to be here as this is part of the pattern. They are connected to how they are visualized and behave in a tree view, but this is not used for the moment.
+    - Methods with postfix "Interactive" are doing all necessary updates automatically. For instance: addChild/addChildInteractive or setVisible/setVisibleInteractive
 
 - **VisualDomainObject**: This subclass adds functionality to a domain object so it can be shown in 3D. The most important function here is createThreeView() which must be overridden.
 
