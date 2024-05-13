@@ -132,7 +132,6 @@ export class AxisThreeView extends GroupThreeView {
     if (boundingBox.isEmpty) {
       return;
     }
-
     // Initialize the corners and the centers
     boundingBox.getCornerPoints(this._corners);
     for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
@@ -153,27 +152,27 @@ export class AxisThreeView extends GroupThreeView {
     const tickLength = boundingBox.diagonal * style.tickLength;
     const props = { style, useFace, increment, tickLength };
 
+    // Add X-axis
     if (boundingBox.x.hasSpan) {
       this.addAxis(props, 0, 1, 0, 1, 2);
       this.addAxis(props, 3, 2, 0, 2, 4);
       this.addAxis(props, 7, 6, 0, 4, 5);
       this.addAxis(props, 4, 5, 0, 1, 5);
     }
-    // Add Y axis
+    // Add Y-axis
     if (boundingBox.y.hasSpan) {
       this.addAxis(props, 3, 0, 1, 0, 2);
       this.addAxis(props, 1, 2, 1, 2, 3);
       this.addAxis(props, 5, 6, 1, 3, 5);
       this.addAxis(props, 7, 4, 1, 0, 5);
     }
-    // Add Z axis
+    // Add Z-axis
     if (boundingBox.z.hasSpan) {
       this.addAxis(props, 0, 4, 2, 0, 1);
       this.addAxis(props, 1, 5, 2, 1, 3);
       this.addAxis(props, 2, 6, 2, 3, 4);
       this.addAxis(props, 3, 7, 2, 0, 4);
     }
-
     // Add Grid
     if (style.showGrid) {
       this.addGrid(props, 0, 1, 2);
