@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Vector3, type Vector2 } from 'three';
+import { type Vector3, type Vector2 } from 'three';
 import { square } from './mathExtensions';
 
 export function horizontalAngle(vector: Vector3): number {
