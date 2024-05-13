@@ -132,12 +132,9 @@ export class AxisThreeView extends GroupThreeView {
     if (boundingBox.isEmpty) {
       return;
     }
-    const { style } = this;
-    const tickLength = boundingBox.diagonal * style.tickLength;
 
     // Initialize the corners and the centers
     boundingBox.getCornerPoints(this._corners);
-    const useFace = getUseFace(boundingBox);
     for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
       const indexes = getFaceCornerIndexes(faceIndex);
       const center = this._faceCenters[faceIndex];
@@ -147,40 +144,44 @@ export class AxisThreeView extends GroupThreeView {
       center.add(this._corners[indexes[3]]);
       center.divideScalar(4);
     }
-    // Add Faces
+    const useFace = getUseFace(boundingBox);
+    const { style } = this;
     for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
       this.addFace(style, useFace, faceIndex);
     }
     const increment = getBestIncrement(boundingBox, style.numberOfTicks);
+    const tickLength = boundingBox.diagonal * style.tickLength;
+    const props = { style, useFace, increment, tickLength };
+
     if (boundingBox.x.hasSpan) {
-      this.addAxis(style, useFace, increment, tickLength, 0, 1, 0, 1, 2);
-      this.addAxis(style, useFace, increment, tickLength, 3, 2, 0, 2, 4);
-      this.addAxis(style, useFace, increment, tickLength, 7, 6, 0, 4, 5);
-      this.addAxis(style, useFace, increment, tickLength, 4, 5, 0, 1, 5);
+      this.addAxis(props, 0, 1, 0, 1, 2);
+      this.addAxis(props, 3, 2, 0, 2, 4);
+      this.addAxis(props, 7, 6, 0, 4, 5);
+      this.addAxis(props, 4, 5, 0, 1, 5);
     }
     // Add Y axis
     if (boundingBox.y.hasSpan) {
-      this.addAxis(style, useFace, increment, tickLength, 3, 0, 1, 0, 2);
-      this.addAxis(style, useFace, increment, tickLength, 1, 2, 1, 2, 3);
-      this.addAxis(style, useFace, increment, tickLength, 5, 6, 1, 3, 5);
-      this.addAxis(style, useFace, increment, tickLength, 7, 4, 1, 0, 5);
+      this.addAxis(props, 3, 0, 1, 0, 2);
+      this.addAxis(props, 1, 2, 1, 2, 3);
+      this.addAxis(props, 5, 6, 1, 3, 5);
+      this.addAxis(props, 7, 4, 1, 0, 5);
     }
     // Add Z axis
     if (boundingBox.z.hasSpan) {
-      this.addAxis(style, useFace, increment, tickLength, 0, 4, 2, 0, 1);
-      this.addAxis(style, useFace, increment, tickLength, 1, 5, 2, 1, 3);
-      this.addAxis(style, useFace, increment, tickLength, 2, 6, 2, 3, 4);
-      this.addAxis(style, useFace, increment, tickLength, 3, 7, 2, 0, 4);
+      this.addAxis(props, 0, 4, 2, 0, 1);
+      this.addAxis(props, 1, 5, 2, 1, 3);
+      this.addAxis(props, 2, 6, 2, 3, 4);
+      this.addAxis(props, 3, 7, 2, 0, 4);
     }
 
     // Add Grid
     if (style.showGrid) {
-      this.addGrid(style, useFace, 0, increment, 1, 2);
-      this.addGrid(style, useFace, 1, increment, 0, 2);
-      this.addGrid(style, useFace, 2, increment, 0, 1);
-      this.addGrid(style, useFace, 3, increment, 1, 2);
-      this.addGrid(style, useFace, 4, increment, 0, 2);
-      this.addGrid(style, useFace, 5, increment, 0, 1);
+      this.addGrid(props, 0, 1, 2);
+      this.addGrid(props, 1, 0, 2);
+      this.addGrid(props, 2, 0, 1);
+      this.addGrid(props, 3, 1, 2);
+      this.addGrid(props, 4, 0, 2);
+      this.addGrid(props, 5, 0, 1);
     }
   }
 
@@ -189,125 +190,145 @@ export class AxisThreeView extends GroupThreeView {
   // ==================================================
 
   private addAxis(
-    style: AxisRenderStyle,
-    usedFace: boolean[],
-    increment: number,
-    tickLength: number,
+    props: AxisProps,
     i0: number,
     i1: number,
     dimension: number,
     faceIndex1: number,
     faceIndex2: number
   ): void {
-    if (!usedFace[faceIndex1] && !usedFace[faceIndex2]) {
+    const { style, useFace } = props;
+
+    if (!useFace[faceIndex1] && !useFace[faceIndex2]) {
       return;
     }
-    // Draw axis
     if (style.showAxis) {
-      for (let i = 0; i < 2; i++) {
-        const isMainAxis = i === 0;
+      this.addAxisLine(style, i0, i1, dimension, faceIndex1, faceIndex2);
+    }
+    this.addAxisTickmarksAndLabels(props, i0, i1, dimension, faceIndex1, faceIndex2);
+  }
 
-        const color = style.getAxisColor(isMainAxis, convertToViewerDimension(dimension));
-        const linewidth = isMainAxis ? 2 : 1;
-        const vertices: number[] = [];
+  private addAxisLine(
+    style: AxisRenderStyle,
+    i0: number,
+    i1: number,
+    dimension: number,
+    faceIndex1: number,
+    faceIndex2: number
+  ): void {
+    // Draw axis
+    for (let i = 0; i < 2; i++) {
+      const isMainAxis = i === 0;
 
-        vertices.push(...this._corners[i0]);
-        vertices.push(...this._corners[i1]);
+      const color = style.getAxisColor(isMainAxis, convertToViewerDimension(dimension));
+      const linewidth = isMainAxis ? 2 : 1;
+      const vertices: number[] = [];
 
-        const lineSegments = createLineSegments(vertices, color, linewidth);
-        this.setUserDataOnAxis(lineSegments, faceIndex1, faceIndex2, isMainAxis);
+      vertices.push(...this._corners[i0]);
+      vertices.push(...this._corners[i1]);
+
+      const lineSegments = createLineSegments(vertices, color, linewidth);
+      this.setUserDataOnAxis(lineSegments, faceIndex1, faceIndex2, isMainAxis);
+      this.addChild(lineSegments);
+    }
+  }
+
+  private addAxisTickmarksAndLabels(
+    props: AxisProps,
+    i0: number,
+    i1: number,
+    dimension: number,
+    faceIndex1: number,
+    faceIndex2: number
+  ): void {
+    const range = new Range1(
+      this._corners[i0].getComponent(dimension),
+      this._corners[i1].getComponent(dimension)
+    );
+    if (range.isEmpty) {
+      return;
+    }
+    let minLabelTick = 0;
+    let labelCount = 0;
+    const { style, tickLength, increment } = props;
+
+    // Draw ticks
+    const labelInc = range.getBoldIncrement(increment);
+    const tickDirection = getTickDirection(faceIndex1, faceIndex2, new Vector3());
+
+    // Add tick marks and labels
+    if (style.showAxisTicks || style.showAxisNumbers) {
+      const vertices: number[] = [];
+      const tickFontSize = style.tickFontSize * tickLength;
+      for (const tick of range.getTicks(increment)) {
+        const start = newVector3(this._corners[i0]);
+        start.setComponent(dimension, tick);
+
+        const end = newVector3(start);
+        const vector = newVector3(tickDirection);
+        vector.multiplyScalar(tickLength);
+
+        // Add tick mark
+        if (style.showAxisTicks) {
+          end.add(vector);
+          vertices.push(...start);
+          vertices.push(...end);
+        }
+        if (style.showAxisNumbers) {
+          if (!isIncrement(tick, labelInc)) {
+            continue;
+          }
+          if (labelCount === 0) {
+            minLabelTick = tick;
+          }
+          labelCount += 1;
+          end.add(vector);
+
+          // Add sprite
+          const sprite = createSpriteWithText(`${tick}`, tickFontSize, style.textColor);
+          if (sprite !== undefined) {
+            moveSpriteByPositionAndDirection(sprite, end, tickDirection);
+            this.addChild(sprite);
+            this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
+          }
+        }
+      }
+      if (style.showAxisTicks) {
+        const lineSegments = createLineSegments(vertices, style.mainAxisColor, 1);
+        this.setUserDataOnAxis(lineSegments, faceIndex1, faceIndex2, true);
         this.addChild(lineSegments);
       }
     }
-    {
-      const range = new Range1(
-        this._corners[i0].getComponent(dimension),
-        this._corners[i1].getComponent(dimension)
-      );
-      if (range.isEmpty) {
-        return;
-      }
-      let minLabelTick = 0;
-      let labelCount = 0;
+    // Add axis sprite
+    if (style.showAxisLabel) {
+      const labelFontSize = style.axisLabelFontSize * tickLength;
 
-      // Draw ticks
-      const labelInc = range.getBoldIncrement(increment);
-      const tickDirection = getTickDirection(faceIndex1, faceIndex2, newVector3());
-
-      // Add tick marks and labels
-      if (style.showAxisTicks || style.showAxisNumbers) {
-        const vertices: number[] = [];
-        const tickFontSize = style.tickFontSize * tickLength;
-        for (const tick of range.getTicks(increment)) {
-          const start = newVector3(this._corners[i0]);
-          start.setComponent(dimension, tick);
-
-          const end = newVector3(start);
-          const vector = newVector3(tickDirection);
-          vector.multiplyScalar(tickLength);
-
-          // Add tick mark
-          if (style.showAxisTicks) {
-            end.add(vector);
-            vertices.push(...start);
-            vertices.push(...end);
-          }
-          if (style.showAxisNumbers) {
-            if (!isIncrement(tick, labelInc)) {
-              continue;
-            }
-            if (labelCount === 0) {
-              minLabelTick = tick;
-            }
-            labelCount += 1;
-            end.add(vector);
-
-            // Add sprite
-            const sprite = createSpriteWithText(`${tick}`, tickFontSize, style.textColor);
-            if (sprite !== undefined) {
-              moveSpriteByPositionAndDirection(sprite, end, tickDirection);
-              this.addChild(sprite);
-              this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
-            }
-          }
-        }
-        if (style.showAxisTicks) {
-          const lineSegments = createLineSegments(vertices, style.mainAxisColor, 1);
-          this.setUserDataOnAxis(lineSegments, faceIndex1, faceIndex2, true);
-          this.addChild(lineSegments);
-        }
-      }
-      // Add axis sprite
-      if (style.showAxisLabel) {
-        const labelFontSize = style.axisLabelFontSize * tickLength;
-
-        // Find the best position by collision detect
-        const position = newVector3();
-        if (labelCount >= 2) {
-          let tick = minLabelTick + Math.round(0.5 * labelCount - 0.5) * labelInc;
-          if (labelInc === increment) {
-            tick -= increment / 2;
-          } else {
-            tick -= increment;
-          }
-          position.copy(this._corners[i0]);
-          position.setComponent(dimension, tick);
+      // Find the best position by collision detect
+      const position = newVector3();
+      if (labelCount >= 2) {
+        let tick = minLabelTick + Math.round(0.5 * labelCount - 0.5) * labelInc;
+        if (labelInc === increment) {
+          tick -= increment / 2;
         } else {
-          position.copy(this._corners[i0]);
-          position.add(this._corners[i1]);
+          tick -= increment;
         }
-        position.addScaledVector(tickDirection, tickLength * 5);
+        position.copy(this._corners[i0]);
+        position.setComponent(dimension, tick);
+      } else {
+        position.copy(this._corners[i0]);
+        position.add(this._corners[i1]);
+      }
+      position.addScaledVector(tickDirection, tickLength * 5);
 
-        const sprite = createSpriteWithText(
-          style.getAxisLabel(convertToViewerDimension(dimension)),
-          labelFontSize,
-          style.textColor
-        );
-        if (sprite !== undefined) {
-          moveSpriteByPositionAndDirection(sprite, position, tickDirection);
-          this.addChild(sprite);
-          this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
-        }
+      const sprite = createSpriteWithText(
+        style.getAxisLabel(convertToViewerDimension(dimension)),
+        labelFontSize,
+        style.textColor
+      );
+      if (sprite !== undefined) {
+        moveSpriteByPositionAndDirection(sprite, position, tickDirection);
+        this.addChild(sprite);
+        this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
       }
     }
   }
@@ -346,15 +367,9 @@ export class AxisThreeView extends GroupThreeView {
   // INSTANCE METHODS: Add grid
   // ==================================================
 
-  private addGrid(
-    style: AxisRenderStyle,
-    usedFace: boolean[],
-    faceIndex: number,
-    increment: number,
-    dim1: number,
-    dim2: number
-  ): void {
-    if (!usedFace[faceIndex]) {
+  private addGrid(props: AxisProps, faceIndex: number, dim1: number, dim2: number): void {
+    const { style, useFace, increment } = props;
+    if (!useFace[faceIndex]) {
       return;
     }
     const indexes = getFaceCornerIndexes(faceIndex);
@@ -597,3 +612,14 @@ const VECTOR_POOL = new Vector3Pool();
 function newVector3(copyFrom?: Vector3): Vector3 {
   return VECTOR_POOL.getNext(copyFrom);
 }
+
+// ==================================================
+// HELPER TYPE
+// ==================================================
+
+type AxisProps = {
+  style: AxisRenderStyle;
+  useFace: boolean[];
+  increment: number;
+  tickLength: number;
+};
