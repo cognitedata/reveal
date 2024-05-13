@@ -143,8 +143,10 @@ export class AxisThreeView extends GroupThreeView {
       center.add(this._corners[indexes[3]]);
       center.divideScalar(4);
     }
-    const useFace = getUseFace(boundingBox);
+    const useFace = createUseFaceArray(boundingBox);
     const { style } = this;
+
+    // Add faces
     for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
       this.addFace(style, useFace, faceIndex);
     }
@@ -336,8 +338,8 @@ export class AxisThreeView extends GroupThreeView {
   // INSTANCE METHODS: Add face
   // ==================================================
 
-  private addFace(style: AxisRenderStyle, usedFace: boolean[], faceIndex: number): void {
-    if (!usedFace[faceIndex]) {
+  private addFace(style: AxisRenderStyle, useFace: boolean[], faceIndex: number): void {
+    if (!useFace[faceIndex]) {
       return;
     }
     const indexes = getFaceCornerIndexes(faceIndex);
@@ -501,23 +503,19 @@ function convertToViewerDimension(dimension: number): number {
 }
 
 // ==================================================
-// PRIVATE FUNCTIONS: Visibility
-// ==================================================
-
-function getUseFace(range: Range3): boolean[] {
-  const usedFace: boolean[] = new Array<boolean>(6);
-  usedFace[0] = range.y.hasSpan && range.z.hasSpan;
-  usedFace[1] = range.x.hasSpan && range.z.hasSpan;
-  usedFace[2] = range.x.hasSpan && range.y.hasSpan;
-  usedFace[3] = range.y.hasSpan && range.z.hasSpan;
-  usedFace[4] = range.x.hasSpan && range.z.hasSpan;
-  usedFace[5] = range.x.hasSpan && range.y.hasSpan;
-  return usedFace;
-}
-
-// ==================================================
 // PRIVATE FUNCTIONS: Creators
 // ==================================================
+
+function createUseFaceArray(range: Range3): boolean[] {
+  const useFace: boolean[] = new Array<boolean>(6);
+  useFace[0] = range.y.hasSpan && range.z.hasSpan;
+  useFace[1] = range.x.hasSpan && range.z.hasSpan;
+  useFace[2] = range.x.hasSpan && range.y.hasSpan;
+  useFace[3] = range.y.hasSpan && range.z.hasSpan;
+  useFace[4] = range.x.hasSpan && range.z.hasSpan;
+  useFace[5] = range.x.hasSpan && range.y.hasSpan;
+  return useFace;
+}
 
 function createLineSegments(vertices: number[], color: Color, linewidth: number): LineSegments {
   const material = new LineBasicMaterial({ color, linewidth });
