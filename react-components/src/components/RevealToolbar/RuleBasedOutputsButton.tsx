@@ -56,6 +56,8 @@ export const RuleBasedOutputsButton = ({
 
     if (selectedRule !== undefined) {
       selectedRule.isEnabled = data.target.checked;
+    } else {
+      if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(undefined);
     }
     setCurrentRuleSetEnabled(selectedRule);
     setRuleInstances(ruleInstances);
