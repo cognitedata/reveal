@@ -16,41 +16,50 @@ When the StoryBook is open, goto `Architeture/Main`. The toolbar on the right ha
 
 # Motivation
 
-This is decribed in this document: https://docs.google.com/presentation/d/1Y50PeqoCS5BdWyDqRNNazeISy1SYTcx4QDcjeMKIm78/edit?usp=sharing
+The objectives with this framework it that is should be easy to use and extend in the future. I hope all new related functiality will be developed using this framework. More is decribed in this document: https://docs.google.com/presentation/d/1Y50PeqoCS5BdWyDqRNNazeISy1SYTcx4QDcjeMKIm78/edit?usp=sharing
 
 # Coding
 
-You will probably find the coding style somewhat different than usually done in Reveal.
+You will probably find the coding style somewhat different than usually done in Reveal. Some difference:
 
-1.  I use headers to mark sections in a file. This is important for fast navigation and to keep the code in correct order. The order in the files are:
+- **Headers:** Headers are used to mark sections in a file. This is important for fast navigation and to keep the code in correct order. The order in the file is always:
 
-    - Instance fields.
-    - Instance properties
-    - Implementation of interface (if any)
-    - Overrides from the must basic base class (if any)
-    - :
-    - Overrides from the actually base class (if any)
-    - Instance methods (If many, break it up based on what they do)
-    - Local functions, types or classes used in this file only
+  - Public constants (exported)
+  - Instance fields.
+  - Instance properties
+  - Implementation of interface (if any)
+  - Overrides from the must basic base class (if any)
+  - :
+  - Overrides from the actually base class (if any)
+  - Instance methods (If many, break it up based on what they do)
+  - Static methods (if any)
+  - Local functions, types or classes used in this file only
 
-2.  I try to reuse code whenever it is possible. Therefore you will find functions that are very small,
-    often one liners. This ensures the complexity of the code to be low and increase readability on the caller side. For instance:
+- **Virual methods:**: Since TypeScript doesn't allow the virtual keyword, all functions are virtual. This is a weekness for the application developer. I have tried to mark function as virtual by comments. You should not override other function than this. A virtual function normally brings in uncessesary complexibility and should general be used by care.
 
-         export function clear<T>(array: T[]): void {
-             array.splice(0, array.length);
-         }
+  - Function with prefex `Core` are always virtual and protected. They can be overridden, but must call the same function for the base class. A function without the `Core` prefex is the one you should call from outside and is public. Experince shows that this pattern will make the code easier to maintain and extend in the future. For instance `remove/removeCore` and `initialize/initializeCore` in the `DomainObject`.
+  - Overridden methods should alway be marked by the override keyword. You will unfortunate not get any linting error when you forget this.
+  -
 
-3.  I try to give each class one single responsibility. Therefore I use several base classes, it adds the complexity that is needed.
-    Examples of this is BaseView/
+- **Static methods and classes:** The linker don't like static method, epecially when the entire class have static method only. I wanted to use this more, but have used functions instead. I don't like this, because it doen't group similar function togeter. It will also be less readabble on the caller side, since you don't know what part of the code the function is coming from. In typescript we have for instance Math with act like a static class, but they use som magic to pretend it to be using interface.
 
-4.  Keep must classes independed of other classes. For instance the tool should not know abount the views.
+- **Reuse:** I try to reuse code whenever it is possible. Therefore you will find functions that are very small,
+  often one liners. This ensures the complexity of the code to be low and increase readability on the caller side. For instance:
 
-5.  I have added som utility function/classes in `architecture/base/utilities`.
-    - Some utility functions may be a duplicate of some function in a package we use. Please tell me.
-    - Some utility classes you will see is like a duplicate, but is made by purpose. For instance `Range3` class which is almost the same as `THREE.Box`, but is far easier to work with.
-    - Some utility classes or function is already implemented in Reveal, and are similar. The reason for not reusing Reveal for utility
-      is due to what we should expose out of Reveal and into Reveral-components. For the moment this is rather strick. Examples is `Vector3Pool` which is implemented both places. Also some of the color classes may seem to be similar. But all this is low level stuff, and is not related to any Reveal functionallity.
-    - I will remove unused utility function or classes when I feel ready for it. Most of them are imported file by file from the node-visualier project.
+        export function clear<T>(array: T[]): void {
+            array.splice(0, array.length);
+        }
+
+- **Single responsibility:** I try to give each class one single responsibility. Therefore I use several base classes, each class adds some complexity.
+  Examples of this is `BaseView/ThreeView/GroupThreeView` which are all base classes. If they are merge to one single class, it will be too complex.
+
+- **Interpendence:** Try to keep must classes independed of other classes. For instance the tool should not know abount the views. Utility function and classes can used whenevery you like.
+
+- **Utility function and classes:** I have added som utility function/classes in `architecture/base/utilities`.
+  - Some utility functions may be a duplicate of some function in a package we use. Please tell me.
+  - Some utility classes you will see is like a duplicate, but is made by purpose. For instance `Range3` class which is almost the same as `THREE.Box`, but is far easier to work with.
+  - Some utility classes or function is already implemented in Reveal, and are similar. The reason for not reusing Reveal here is due to what we should expose out of Reveal and into Reveral-components. For the moment this is rather strick. Examples is `Vector3Pool` which is implemented both places. Also some of the color classes may seem to be similar. But all this is low level stuff, and is not related to any Reveal functionallity.
+  - I will remove unused utility function or classes when I feel ready for it. Most of them are imported file by file from the node-visualier project.
 
 # Architecture Overview
 
@@ -60,9 +69,14 @@ Here is the architecture with all base classes and some utility functionality.
 
 ### architecture/base/domainObject
 
-- **DomainObject:** This is the base class for the domain object. A domain object is some sort of data, that is a collection of other domainObject or the data itself. An important property of the domainObject is that is has a list of views that will be updated. It also has a parent and a collection of children.
-    - It has some properties like selected, expanded and active. This is not used yet, but I wanted it to be here as this is part of the pattern. They are connected to how they are visualized and behave in a tree view, but this is not used for the moment.
-    - Methods with postfix `Interactive` are doing all necessary updates automatically. For instance: `addChild/addChildInteractive` or `setVisible/setVisibleInteractive`
+- **DomainObject:** This is the base class for the domain object. A domain object is some sort of data, that is a collection of other domainObject or the data itself.
+
+  - An important property of the domainObject is that is has a list of views that will be updated.
+  - It has a parent and a collection of children. To ensure easy use, I have added several methods to access children, descendants and ancestors in several ways.
+
+  - It has some properties like selected, expanded and active. This is not used yet, but I wanted it to be here as this is part of the pattern. They are connected to how they are visualized and behave in a tree view, but this is not used for the moment.
+
+  - Methods with postfix `Interactive` are doing all necessary updates automatically. For instance: `addChild/addChildInteractive` or `setVisible/setVisibleInteractive`
 
 - **VisualDomainObject**: This subclass adds functionality to a domain object so it can be shown in 3D. The most important function here is `createThreeView()` which must be overridden.
 
@@ -84,10 +98,10 @@ Normally, when I follow this pattern, the renderTarget is a domainObject itself,
 
 - **ToolController**
   Holds the tools and all commands, the active tool and the previous tool.
-- It inherit from `PointerEvents`, which is a base class on the Reveal side. All virtual functions are implemented in the `ToolControllers`.
-- It created a `PointerEventsTarget`, also on the Reveal side, that set up all the event listeners for the pointer (mouse or touch) handlers. The `PointerEventsTarget` will automatically call the functions `onHover`, `onClick`, `onDoubleClick`, `onPointerDown`, `onPointerUp` and `onPointerDrag` correctly.
-- In addition it sets up some other events like `onKey` and `onFocus`.
-- All event are routed to the active tool
+  - It inherits from `PointerEvents`, which is a base class on the Reveal side. All virtual functions are implemented in the `ToolControllers`.
+  - It creates a `PointerEventsTarget`, also on the Reveal side, that set up all the event listeners for the pointer (mouse or touch) handlers. The `PointerEventsTarget` will automatically call the functions `onHover`, `onClick`, `onDoubleClick`, `onPointerDown`, `onPointerUp` and `onPointerDrag` correctly.
+  - In addition it sets up some other events like `onKey` and `onFocus`.
+  - All event are routed to the active tool
 
 ### architecture/base/commands
 
@@ -123,15 +137,27 @@ This is a collection of most commonly used tools and commands:
 
 ### architecture/base/utilities
 
-Smaller files with utility classes and function:
+Smaller files with utility classes and functions:
 
-### architecture/base/utilities
+- **architecture/base/utilities/box:**
 
-- **architecture/base/utilities/box**
-- **architecture/base/utilities/colors**
-- **architecture/base/utilities/extensions**
-- **architecture/base/utilities/geometry**
-- **architecture/base/utilities/sprites**
+  Geometry algorithms and enums for box manipulation.
+
+- **architecture/base/utilities/colors:**
+
+  Color manipulation. Making various colormaps and 1d textures from color maps. Used mostly by the terrain visualization.
+
+- **architecture/base/utilities/extensions:**
+
+  Some simple math and THREE.Vector2/3 extension
+
+- **architecture/base/utilities/geometry:**
+
+  Some usefull geometry
+
+- **architecture/base/utilities/sprites:**
+
+  Easy Creation of sprite with text
 
 # Some concrete examples
 
@@ -154,3 +180,7 @@ These are made to test the architecture but should when ready be used by any of 
 - TerrainDomainObject, TerrainRenderStyle and TerrainTreeView
 - UpdateTerrainCommand and SetTerrainVisibleCommand for demo/example
 - geometry: Folder with math and grid structures
+
+```
+
+```
