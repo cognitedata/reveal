@@ -106,7 +106,10 @@ function useCalculateMappedPointCloudStyling(
   models: PointCloudModelOptions[],
   defaultMappedNodeAppearance?: NodeAppearance
 ): StyledPointCloudModel[] {
-  const modelsWithStyledMapped = useMemo(() => getMappedPointCloudModelsOptions(), [models, defaultMappedNodeAppearance]);
+  const modelsWithStyledMapped = useMemo(
+    () => getMappedPointCloudModelsOptions(),
+    [models, defaultMappedNodeAppearance]
+  );
 
   const { data: pointCloudStyledModelAnnotationIds } =
     usePointCloudAnnotationIdsForModels(modelsWithStyledMapped);

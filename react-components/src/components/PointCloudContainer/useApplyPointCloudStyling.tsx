@@ -45,16 +45,18 @@ export const useApplyPointCloudStyling = (
 };
 
 function applyStyling(model: CognitePointCloudModel, styling: AnnotationIdStylingGroup[]): void {
-  if (styling !== undefined) {
-    if ( model.styledCollections.length > 0) {
-      model.removeAllStyledObjectCollections();
-    }
-    for (const group of styling) {
-      if (group.annotationIds !== undefined) {
-        const collection = new AnnotationIdPointCloudObjectCollection(group.annotationIds);
+  if (styling === undefined) {
+    return;
+  }
 
-        model.assignStyledObjectCollection(collection, group.style);
-      }
+  if (model.styledCollections.length > 0) {
+    model.removeAllStyledObjectCollections();
+  }
+  for (const group of styling) {
+    if (group.annotationIds !== undefined) {
+      const collection = new AnnotationIdPointCloudObjectCollection(group.annotationIds);
+
+      model.assignStyledObjectCollection(collection, group.style);
     }
   }
 }
