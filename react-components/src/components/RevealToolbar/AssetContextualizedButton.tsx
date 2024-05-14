@@ -10,7 +10,7 @@ import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCa
 import { type CadModelOptions } from '../Reveal3DResources/types';
 
 type AssetContextualizedButtonProps = {
-  setEnableCustomDefaultStyling: (enabled: boolean) => void;
+  setEnableMappedStyling: (enabled: boolean) => void;
 };
 
 const tooltipMapping = {
@@ -25,7 +25,7 @@ const tooltipMapping = {
 };
 
 export const AssetContextualizedButton = ({
-  setEnableCustomDefaultStyling
+  setEnableMappedStyling
 }: AssetContextualizedButtonProps): ReactElement => {
   const { t } = useTranslation();
   const models = use3dModels();
@@ -37,8 +37,8 @@ export const AssetContextualizedButton = ({
 
   const onClick = useCallback((): void => {
     setEnableContextualizedStyling((prevState) => !prevState);
-    setEnableCustomDefaultStyling(!enableContextualizedStyling);
-  }, [enableContextualizedStyling, setEnableCustomDefaultStyling]);
+    setEnableMappedStyling(!enableContextualizedStyling);
+  }, [enableContextualizedStyling, setEnableMappedStyling]);
 
   return (
     <CogsTooltip
