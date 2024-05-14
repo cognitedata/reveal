@@ -145,13 +145,17 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
   // VIRTUAL METHODS
   // ==================================================
 
+  /**
+   * Add the Object3 children to the view. Use the addChild() method to add the children.
+   * This method should always be overridden in derived classes.
+   */
   protected abstract addChildren(): void;
 
   /**
    * Determines whether the view needs to be updated just before rendering.
    * Typically needed to be implemented if the update function is not enough and
    * the view depend on other factors as the model bounding box or the camera position.
-   * This method should be overridden in derived classes.
+   * This method can be overridden in derived classes.
    *
    * When it returns true, the view will be rebuild by addChildren().
    * @returns A boolean value indicating whether the view needs to be updated.
@@ -204,14 +208,15 @@ function disposeMaterials(object: Object3D): void {
       disposeMaterials(child);
     }
   }
-  if (object instanceof Mesh) {
-    const material = object.material;
-    if (material !== null && material !== undefined) {
-      const texture = material.texture;
-      if (texture !== undefined && texture !== null) {
-        texture.dispose();
-      }
-      material.dispose();
+  if (!(object instanceof Mesh)) {
+    return;
+  }
+  const material = object.material;
+  if (material !== null && material !== undefined) {
+    const texture = material.texture;
+    if (texture !== undefined && texture !== null) {
+      texture.dispose();
     }
+    material.dispose();
   }
 }

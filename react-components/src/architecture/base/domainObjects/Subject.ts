@@ -55,7 +55,7 @@ export abstract class Subject {
   }
 
   // ==================================================
-  // INSTANCE METHODS: View admin
+  // INSTANCE METHODS: Views admin
   // ==================================================
 
   public *getViewsByType<T extends BaseView>(classType: Class<T>): Generator<T> {

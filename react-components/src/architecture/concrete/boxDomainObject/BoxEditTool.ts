@@ -13,9 +13,8 @@ import { type BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type Vector3 } from 'three';
-import { clear, replaceLast } from '../../base/utilities/extensions/arrayExtensions';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { addPointsToBox } from '../../base/utilities/box/addPointsToBox';
+import { PendingBox } from './PendingBox';
 
 export class BoxEditTool extends NavigationTool {
   // ==================================================
@@ -23,11 +22,7 @@ export class BoxEditTool extends NavigationTool {
   // ==================================================
 
   private _dragger: BoxDragger | undefined = undefined;
-
-  // For the pending box:
-  private readonly _clickedPoints: Vector3[] = [];
-  private _lastIsHovering: boolean = false;
-  private _pendingBox: BoxDomainObject | undefined = undefined;
+  private _pending: PendingBox | undefined = undefined;
 
   // ==================================================
   // OVERRIDES
@@ -52,12 +47,14 @@ export class BoxEditTool extends NavigationTool {
   public override onActivate(): void {
     super.onActivate();
     this._dragger = undefined;
+    this._pending = undefined;
     this.setAllBoxesVisible(true);
-    this.clearPendingBox();
   }
 
   public override onDeactivate(): void {
     super.onDeactivate();
+    this._dragger = undefined;
+    this._pending = undefined;
     this.setAllBoxesVisible(false);
   }
 
@@ -69,25 +66,24 @@ export class BoxEditTool extends NavigationTool {
         }
         boxDomainObject.removeInteractive();
       }
-      this.clearPendingBox();
+      this._pending = undefined;
       return;
     }
     if (down && event.key === 'Escape') {
-      if (this._pendingBox !== undefined) {
-        if (this._lastIsHovering) {
-          this._clickedPoints.pop();
-        }
-        if (this._clickedPoints.length >= 3) {
-          addPointsToBox(this._pendingBox, this._clickedPoints);
-          this.setFocus(this._pendingBox, BoxFocusType.Any);
-          this._pendingBox.notify(Changes.geometry);
+      const { _pending: pending } = this;
+      if (pending !== undefined) {
+        pending.removeLastHovering();
+        if (pending.hasEnoughPoints) {
+          pending.rebuild();
+          this.setFocus(pending.boxDomainObject, BoxFocusType.Any);
+          pending.boxDomainObject.notify(Changes.geometry);
         } else {
           // Just one or two points, remove it
-          this._pendingBox.removeInteractive();
+          pending.boxDomainObject.removeInteractive();
         }
-        this.clearPendingBox();
+        this._pending = undefined;
+        return;
       }
-      return;
     }
     super.onKey(event, down);
   }
@@ -100,16 +96,16 @@ export class BoxEditTool extends NavigationTool {
       super.onHover(event);
       return;
     }
-    if (this._pendingBox !== undefined) {
+    const { _pending: pending } = this;
+    if (pending !== undefined) {
       if (this.isBoxDomainObject(intersection)) {
         this.setDefaultCursor();
         this.setFocus(undefined);
         return;
       }
-      if (this._clickedPoints.length >= 1) {
-        this.addPoint(intersection, true);
-        addPointsToBox(this._pendingBox, this._clickedPoints);
-        this._pendingBox.notify(Changes.geometry);
+      if (pending !== undefined) {
+        pending.addPoint(intersection.point, true);
+        pending.boxDomainObject.notify(Changes.geometry);
       }
       this.setDefaultCursor();
       this.setFocus(undefined);
@@ -165,28 +161,28 @@ export class BoxEditTool extends NavigationTool {
       await super.onClick(event);
       return;
     }
-    this.addPoint(intersection, false);
-    const points = this._clickedPoints;
-    if (points.length === 1) {
+    if (this._pending === undefined) {
       const pendingBox = new BoxDomainObject();
-      addPointsToBox(pendingBox, points);
+      this._pending = new PendingBox(pendingBox);
+      this._pending.addPoint(intersection.point, false);
       rootDomainObject.addChildInteractive(pendingBox);
       this.setFocus(pendingBox, BoxFocusType.Pending);
       pendingBox.setVisibleInteractive(true, renderTarget);
-      this._pendingBox = pendingBox;
-    } else if (this._pendingBox !== undefined) {
-      addPointsToBox(this._pendingBox, points);
-      const focusType = points.length === 4 ? BoxFocusType.Any : BoxFocusType.Pending;
-      this.setFocus(this._pendingBox, focusType);
-      this._pendingBox.notify(Changes.geometry);
-      if (points.length === 4) {
-        this.clearPendingBox();
+    } else {
+      const { _pending: pending } = this;
+      pending.addPoint(intersection.point, false);
+      const focusType = pending.countPoint === 4 ? BoxFocusType.Any : BoxFocusType.Pending;
+      this.setFocus(pending.boxDomainObject, focusType);
+      pending.boxDomainObject.notify(Changes.geometry);
+
+      if (pending.countPoint === 4) {
+        this._pending = undefined;
       }
     }
   }
 
   public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
-    if (this._pendingBox !== undefined) {
+    if (this._pending !== undefined) {
       await super.onPointerDown(event, leftButton);
       return;
     }
@@ -240,25 +236,6 @@ export class BoxEditTool extends NavigationTool {
     const point = intersection.point;
     point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
     return new BoxDragger(domainObject, point, pickInfo);
-  }
-
-  private addPoint(intersection: AnyIntersection, isHovering: boolean): void {
-    const point = intersection.point.clone();
-    point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-    const points = this._clickedPoints;
-
-    if (this._lastIsHovering) {
-      replaceLast(points, point);
-    } else {
-      points.push(point);
-    }
-    this._lastIsHovering = isHovering;
-  }
-
-  private clearPendingBox(): void {
-    clear(this._clickedPoints);
-    this._lastIsHovering = false;
-    this._pendingBox = undefined;
   }
 
   private setFocus(
