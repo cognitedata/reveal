@@ -105,9 +105,9 @@ Normally, when I follow this pattern, the renderTarget is a domainObject itself,
 
 ### architecture/base/commands
 
-- **BaseCommand**: Base class for all tools and commands. There are basically user actions. It contains all necessary information to create and update a button in the user interface, but it doesn't need or use React. The must important method to overide is invokeCore, which is called whewn the use press the button.A base commen can be checkable
+- **BaseCommand**: Base class for all tools and commands. There are basically user actions. It contains all necessary information to create and update a button in the user interface, but it doesn't need or use React. The must important method to overide is `invokeCore`, which is called whewn the use press the button.A base commen can be checkable
 
-- **RenderTargetCommand** I wanted BaseCommand should be independent of any type of connection to the rest of the system. This class only brings in the connection to the `RevealRenderTarget`.
+- **RenderTargetCommand** I wanted `BaseCommand` should be independent of any type of connection to the rest of the system. This class only brings in the connection to the `RevealRenderTarget`.
 
 - **BaseTool** This is the base class for all the tools, which is used when doing user interaction in the viewer itself. It defined a lot of virtual methods for user interactions. This should be overridden for creating the logic specific for a tool.
 
@@ -121,11 +121,11 @@ This is a collection of most commonly used tools and commands:
 
 ### architecture/base/views
 
-- **BaseView**: Represents a abstract base view class that provides common functionality for all types of views. This does not have any dependency to three.js and can be used in other types of views as well.
+- **BaseView**: Represents a abstract base view class that provides common functionality for all types of views. This does not have any dependency to `three.js` and can be used in other types of views as well.
 
-- **ThreeView**: Represents an abstract base class for a Three.js view in the application. It adds basicly 2 things: Concept of bounding box and a pointer to the renderTarget (viewer). The bounding box is a lazy calculation. The reeason for this object is that we sometimes can have a view without any `Object3D`, for instance if a view manipulates another view, for instance a texture on a surface.
+- **ThreeView**: Represents an abstract base class for a `Three.js` view in the application. It adds basicly 2 things: Concept of bounding box and a pointer to the renderTarget (viewer). The bounding box is a lazy calculation. The reason for this object is that we sometimes can have a view without any `Object3D`, for instance if a view manipulates another view, for instance a texture on a surface.
 
-- **GroupThreeView**: Represents an abstract base class for a Three.js view where it holds a pointer to a `THREE.Group` object. This object is the root of the `Object3D`'s that can be added to the view. The most important method is a`sddChildren()` to be overridden. Here the children of the group should be added. The class will administrate the group and the children, and perform a lazy creation of these automatically. In the code all views are inherited from `GroupThreeView`.
+- **GroupThreeView**: Represents an abstract base class for a `Three.js` view where it holds a pointer to a `THREE.Group` object. This object is the root of the `Object3D`'s that can be added to the view. The most important method is a`addChildren()` to be overridden. Here is where the children of the group should be added. The class will administate the group and the children, and perform a lazy creation of these automatically. `GroupThreeView` implements the `CustomObject` which is injected into Reveal by `viewer.addCustomObject(this)` when the view is set to visible. It is removed from Reveal when view is hidden by `viewer.removeCustomObject(this)`. This magic should be hidden from the application developer. All concrete views I have made inherit from `GroupThreeView`.
 
 ### architecture/base/domainObjectHelpers
 
