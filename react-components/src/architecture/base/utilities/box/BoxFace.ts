@@ -24,15 +24,15 @@ export class BoxFace {
   }
 
   public get index(): number {
-    return this._face % 3;
+    return this._face % 3; // Give 0:X axis, 1:Y-axis, 2:Z-axis
   }
 
   public get tangentIndex1(): number {
-    return (this.index + 1) % 3;
+    return (this.index + 1) % 3; // Give 0:X axis, 1:Y-axis, 2:Z-axis
   }
 
   public get tangentIndex2(): number {
-    return (this.index + 2) % 3;
+    return (this.index + 2) % 3; // Give 0:X axis, 1:Y-axis, 2:Z-axis
   }
 
   public get sign(): number {

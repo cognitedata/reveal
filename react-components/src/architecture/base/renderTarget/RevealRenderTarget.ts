@@ -186,8 +186,8 @@ export class RevealRenderTarget {
     // TODO: Add beforeRender to the customObject in Reveal, so this can be general made.
     // This way is a little bit time consuming since we have to iterate over all domainObjects and all views.
     for (const domainObject of this._rootDomainObject.getDescendantsByType(VisualDomainObject)) {
-      for (const view of domainObject.views) {
-        if (view instanceof ThreeView) {
+      for (const view of domainObject.getViewsByType(ThreeView)) {
+        if (view.renderTarget === this) {
           view.beforeRender(event.camera);
         }
       }

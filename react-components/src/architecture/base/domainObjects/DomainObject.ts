@@ -10,16 +10,19 @@ import { Changes } from '../domainObjectsHelpers/Changes';
 import { isInstanceOf, type Class } from '../domainObjectsHelpers/Class';
 import { equalsIgnoreCase, isEmpty } from '../utilities/extensions/stringExtensions';
 import { VisibleState } from '../domainObjectsHelpers/VisibleState';
-import { clear, removeAt, remove } from '../utilities/extensions/arrayExtensions';
+import { clear, removeAt } from '../utilities/extensions/arrayExtensions';
 import { getNextColor } from '../utilities/colors/getNextColor';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
-import { type BaseView } from '../views/BaseView';
+import { Subject } from './Subject';
 
-type NotifyDelegate = (change: DomainObjectChange) => void;
-
-export abstract class DomainObject {
+/**
+ * Represents an abstract base class for domain objects.
+ * @abstract
+ * @extends Subject
+ */
+export abstract class DomainObject extends Subject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -34,8 +37,6 @@ export abstract class DomainObject {
   private readonly _children: DomainObject[] = [];
   private _parent: DomainObject | undefined = undefined;
   private _renderStyle: RenderStyle | undefined = undefined;
-  private readonly _listeners: NotifyDelegate[] = [];
-  private readonly _views: BaseView[] = [];
 
   // ==================================================
   // INSTANCE/VIRTUAL PROPERTIES
@@ -55,8 +56,28 @@ export abstract class DomainObject {
     return `${this.name} [${nameExtension}]`;
   }
 
-  public get views(): BaseView[] {
-    return this._views;
+  // ==================================================
+  // VIRTUAL METHODS: Others
+  // ==================================================
+
+  /**
+   * Initializes the core functionality of the domain object.
+   * This method should be overridden in derived classes to provide custom implementation.
+   * @param change - The change object representing the update.
+   * @remarks
+   * Always call `super.initializeCore()` in the overrides.
+   */
+  protected initializeCore(): void {}
+
+  /**
+   * Removes the core functionality of the domain object.
+   * This method should be overridden in derived classes to provide custom implementation.
+   * @remarks
+   * Always call `super.removeCore()` in the overrides.
+   */
+  protected removeCore(): void {
+    this.removeAllViews();
+    this.removeEventListeners();
   }
 
   // ==================================================
@@ -257,7 +278,7 @@ export abstract class DomainObject {
   public setVisibleInteractive(
     visible: boolean,
     target: RevealRenderTarget,
-    topLevel = true
+    topLevel = true // When calling this from outside, this value should alwaus be true
   ): boolean {
     const visibleState = this.getVisibleState(target);
     if (visibleState === VisibleState.Disabled) {
@@ -300,45 +321,6 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // VIRTUAL METHODS: Others
-  // ==================================================
-
-  /**
-   * Initializes the core functionality of the domain object.
-   * This method should be overridden in derived classes to provide custom implementation.
-   * @param change - The change object representing the update.
-   * @remarks
-   * Always call `super.initializeCore()` in the overrides.
-   */
-  protected initializeCore(): void {}
-
-  /**
-   * Notifies the registered views and listeners about a change in the domain object.
-   * This method should be overridden in derived classes to provide custom implementation.
-   * @param change - The change object representing the update.
-   * @remarks
-   * Always call `super.notifyCore()` in the overrides.
-   */
-  protected notifyCore(change: DomainObjectChange): void {
-    for (const listener of this._listeners) {
-      listener(change);
-    }
-    for (const view of this.views) {
-      view.update(change);
-    }
-  }
-
-  /**
-   * Removes the core functionality of the domain object.
-   * This method should be overridden in derived classes to provide custom implementation.
-   * @remarks
-   * Always call `super.removeCore()` in the overrides.
-   */
-  protected removeCore(): void {
-    this.removeAllViews();
-  }
-
-  // ==================================================
   // VIRTUAL METHODS: Render styles
   // ==================================================
 
@@ -351,7 +333,7 @@ export abstract class DomainObject {
   }
 
   public verifyRenderStyle(_style: RenderStyle): void {
-    /* overide when validating the render style */
+    // override when validating the render style
   }
 
   // ==================================================
@@ -606,34 +588,6 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Notifying
-  // ==================================================
-
-  public notify(change: DomainObjectChange | symbol): void {
-    if (change instanceof DomainObjectChange) {
-      this.notifyCore(change);
-    } else {
-      this.notify(new DomainObjectChange(change));
-    }
-  }
-
-  // ==================================================
-  // INSTANCE METHODS: Event listeners
-  // ==================================================
-
-  public addEventListener(listener: NotifyDelegate): void {
-    this._listeners.push(listener);
-  }
-
-  public removeEventListener(listener: NotifyDelegate): void {
-    remove(this._listeners, listener);
-  }
-
-  public removeEventListeners(): void {
-    clear(this._listeners);
-  }
-
-  // ==================================================
   // INSTANCE METHODS: Initialization
   // ==================================================
 
@@ -672,28 +626,6 @@ export abstract class DomainObject {
 
   public setRenderStyle(value: RenderStyle | undefined = undefined): void {
     this._renderStyle = value;
-  }
-
-  // ==================================================
-  // INSTANCE METHODS: View admin
-  // ==================================================
-
-  protected addView(view: BaseView): void {
-    this._views.push(view);
-  }
-
-  protected removeView(view: BaseView): void {
-    view.onHide();
-    view.dispose();
-    remove(this.views, view);
-  }
-
-  private removeAllViews(): void {
-    for (const view of this._views) {
-      view.onHide();
-      view.dispose();
-    }
-    clear(this._views);
   }
 
   // ==================================================

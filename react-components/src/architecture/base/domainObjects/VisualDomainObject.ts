@@ -57,9 +57,11 @@ export abstract class VisualDomainObject extends DomainObject {
   // ==================================================
 
   public getViewByTarget(target: RevealRenderTarget): ThreeView | undefined {
-    return this.views.find(
-      (view) => view instanceof ThreeView && view.renderTarget === target
-    ) as ThreeView;
+    for (const view of this.getViewsByType(ThreeView)) {
+      if (view.renderTarget === target) {
+        return view;
+      }
+    }
   }
 
   public isVisible(target: RevealRenderTarget): boolean {

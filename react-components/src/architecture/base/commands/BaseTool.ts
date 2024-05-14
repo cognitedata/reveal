@@ -118,10 +118,7 @@ export abstract class BaseTool extends RenderTargetCommand {
     let closestIntersection: CustomObjectIntersection | undefined;
     let closestDistanceToCamera: number | undefined;
     for (const domainObject of rootDomainObject.getDescendantsByType(classType)) {
-      for (const view of domainObject.views) {
-        if (!(view instanceof GroupThreeView)) {
-          continue;
-        }
+      for (const view of domainObject.getViewsByType(GroupThreeView)) {
         if (view.renderTarget !== renderTarget) {
           continue;
         }

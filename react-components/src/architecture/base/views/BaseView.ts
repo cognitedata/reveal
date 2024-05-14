@@ -6,7 +6,8 @@ import { type DomainObject } from '../domainObjects/DomainObject';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 
 /**
- * Represents a base view class that provides common functionality for all types of views.
+ * Represents the observer in the Observer pattern
+ * It provides common functionality for all types of views.
  */
 export abstract class BaseView {
   // ==================================================
