@@ -298,7 +298,8 @@ export class Cognite3DViewer {
       (useFlexibleCameraManager
         ? new FlexibleCameraManager(
             this._domElement,
-            this.modelIntersectionCallback.bind(this),
+            (offsetX: number, offsetY: number, pickBoundingBox: boolean) =>
+              this.modelIntersectionCallback(offsetX, offsetY, pickBoundingBox),
             undefined,
             this._sceneHandler.scene,
             options.hasEventListeners
@@ -722,6 +723,7 @@ export class Cognite3DViewer {
           options.localPath !== undefined
             ? { type: 'path' as const, localPath: options.localPath }
             : { type: 'cdfId' as const, modelId: options.modelId, revisionId: options.revisionId };
+        console.log(modelAddOption);
         type = await this.determineModelTypeInternal(modelAddOption);
       } catch (error) {
         await modelLoadSequencer(() => {});
