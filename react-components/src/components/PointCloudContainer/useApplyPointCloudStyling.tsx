@@ -46,6 +46,9 @@ export const useApplyPointCloudStyling = (
 
 function applyStyling(model: CognitePointCloudModel, styling: AnnotationIdStylingGroup[]): void {
   if (styling !== undefined) {
+    if ( model.styledCollections.length > 0) {
+      model.removeAllStyledObjectCollections();
+    }
     for (const group of styling) {
       if (group.annotationIds !== undefined) {
         const collection = new AnnotationIdPointCloudObjectCollection(group.annotationIds);
