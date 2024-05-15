@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import {
-  AddImageCollection360EventsOptions,
+  type AddImageCollection360EventsOptions,
   type AddImageCollection360DatamodelsOptions,
   type AddImageCollection360Options,
   type AddResourceOptions,
