@@ -307,7 +307,8 @@ export class Cognite3DViewer {
         : new DefaultCameraManager(
             this._domElement,
             this._mouseHandler,
-            this.modelIntersectionCallback.bind(this),
+            (offsetX: number, offsetY: number, pickBoundingBox: boolean) =>
+              this.modelIntersectionCallback(offsetX, offsetY, pickBoundingBox),
             undefined
           ));
 
