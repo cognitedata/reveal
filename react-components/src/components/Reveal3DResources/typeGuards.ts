@@ -1,8 +1,11 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import {
-  AddImageCollection360DatamodelsOptions,
-  AddImageCollection360Options,
-  AddResourceOptions,
-  AddReveal3DModelOptions
+  type AddImageCollection360DatamodelsOptions,
+  type AddImageCollection360Options,
+  type AddResourceOptions,
+  type AddReveal3DModelOptions
 } from './types';
 
 export function is360ImageAddOptions(

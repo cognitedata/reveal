@@ -1,5 +1,8 @@
-import { Cognite3DViewer, CogniteModel, Image360Collection } from '@cognite/reveal';
-import { AddImageCollection360Options, TypedReveal3DModel } from './types';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type Cognite3DViewer, type CogniteModel, type Image360Collection } from '@cognite/reveal';
+import { type AddImageCollection360Options, type TypedReveal3DModel } from './types';
 import { is360ImageDataModelAddOptions, is3dModelOptions } from './typeGuards';
 import { useEffect } from 'react';
 import { isSameCadModel, isSamePointCloudModel } from '../../utilities/isSameModel';

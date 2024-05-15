@@ -44,11 +44,14 @@ export const Reveal3DResources = ({
 
   const numModelsLoaded = useRef(0);
 
-  const image360CollectionAddOptions = resources.filter(is360ImageAddOptions);
-
   useEffect(() => {
     void getTypedModels(resources, viewer, onResourceLoadError).then(setReveal3DModels);
   }, [resources, viewer]);
+
+  const image360CollectionAddOptions = useMemo(
+    () => resources.filter(is360ImageAddOptions),
+    [resources]
+  );
 
   useRemoveNonReferencedModels(reveal3DModels, image360CollectionAddOptions, viewer);
 
