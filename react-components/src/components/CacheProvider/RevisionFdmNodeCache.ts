@@ -3,7 +3,7 @@
  */
 
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
-import { type Source, type FdmSDK } from '../../utilities/FdmSDK';
+import { type Source, type FdmSDK, type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 import {
   type TreeIndex,
   type FdmEdgeWithNode,
@@ -15,6 +15,7 @@ import {
 
 import {
   fetchAncestorNodesForTreeIndex,
+  getDMSModel,
   getMappingEdgesForNodeIds,
   inspectNodes
 } from './requests';
@@ -32,6 +33,8 @@ export class RevisionFdmNodeCache {
 
   private readonly _treeIndexToFdmEdges = new Map<TreeIndex, FdmEdgeWithNode[]>();
 
+  private readonly _model: Promise<DmsUniqueIdentifier | undefined>;
+
   constructor(
     cogniteClient: CogniteClient,
     fdmClient: FdmSDK,
@@ -43,6 +46,7 @@ export class RevisionFdmNodeCache {
 
     this._modelId = modelId;
     this._revisionId = revisionId;
+    this._model = getDMSModel(this._modelId, this._fdmClient).catch(() => undefined);
   }
 
   public getClosestParentFdmData(searchTreeIndex: number): FdmNodeDataPromises {
@@ -247,9 +251,13 @@ export class RevisionFdmNodeCache {
 
       return edgesAndNodes.map((edge) => edge.edge);
     }
+    const modelInstances = await this._model;
+    if (modelInstances === undefined) {
+      return [];
+    }
 
     const ancestorMappings = await getMappingEdgesForNodeIds(
-      this._modelId,
+      modelInstances,
       this._revisionId,
       this._fdmClient,
       ancestors.map((a) => a.id)
