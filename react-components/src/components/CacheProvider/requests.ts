@@ -4,15 +4,18 @@
 
 import { type CogniteClient, type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import {
+  type Source,
   type DmsUniqueIdentifier,
   type FdmSDK,
   type InspectResultList
 } from '../../utilities/FdmSDK';
 import { type FdmCadEdge } from './types';
 import {
-  INSTANCE_SPACE_3D_DATA,
   type InModel3dEdgeProperties,
-  SYSTEM_3D_EDGE_SOURCE
+  SYSTEM_3D_EDGE_SOURCE,
+  SYSTEM_SPACE_3D_SCHEMA,
+  SYSTEM_SPACE_3D_MODEL_ID,
+  SYSTEM_SPACE_3D_MODEL_VERSION
 } from '../../utilities/globalDataModels';
 import { chunk } from 'lodash';
 
@@ -33,8 +36,29 @@ export async function fetchAncestorNodesForTreeIndex(
   return ancestorNodes.items;
 }
 
-export async function getMappingEdgesForNodeIds(
+export async function getDMSModel(
   modelId: number,
+  fdmClient: FdmSDK
+): Promise<DmsUniqueIdentifier> {
+  const filter = {
+    equals: {
+      property: ['node', 'externalId'],
+      value: `${modelId}`
+    }
+  };
+  const sources: Source = {
+    type: 'view',
+    space: SYSTEM_SPACE_3D_SCHEMA,
+    externalId: SYSTEM_SPACE_3D_MODEL_ID,
+    version: SYSTEM_SPACE_3D_MODEL_VERSION
+  };
+
+  const model = await fdmClient.filterInstances(filter, 'node', sources);
+  return model.instances[0];
+}
+
+export async function getMappingEdgesForNodeIds(
+  model: DmsUniqueIdentifier,
   revisionId: number,
   fdmClient: FdmSDK,
   ancestorIds: CogniteInternalId[]
@@ -45,8 +69,8 @@ export async function getMappingEdgesForNodeIds(
         equals: {
           property: ['edge', 'endNode'],
           value: {
-            space: INSTANCE_SPACE_3D_DATA,
-            externalId: `${modelId}`
+            externalId: model.externalId,
+            space: model.space
           }
         }
       },
