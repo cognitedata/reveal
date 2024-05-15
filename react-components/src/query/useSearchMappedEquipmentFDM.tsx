@@ -15,11 +15,7 @@ import {
 } from '../utilities/FdmSDK';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import {
-  SYSTEM_3D_EDGE_SOURCE,
-  INSTANCE_SPACE_3D_DATA,
-  SYSTEM_SPACE_3D_SCHEMA
-} from '../utilities/globalDataModels';
+import { SYSTEM_3D_EDGE_SOURCE, SYSTEM_SPACE_3D_SCHEMA } from '../utilities/globalDataModels';
 import { type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
 import { getDMSModel } from '../components/CacheProvider/requests';
