@@ -3,7 +3,11 @@
  */
 import { type Cognite3DViewer, type CogniteModel, type Image360Collection } from '@cognite/reveal';
 import { type AddImageCollection360Options, type TypedReveal3DModel } from './types';
-import { is360ImageDataModelAddOptions, is3dModelOptions } from './typeGuards';
+import {
+  is360ImageDataModelAddOptions,
+  is360ImageEventsAddOptions,
+  is3dModelOptions
+} from './typeGuards';
 import { useEffect } from 'react';
 import { isSameCadModel, isSamePointCloudModel } from '../../utilities/isSameModel';
 
@@ -38,27 +42,36 @@ function findNonReferencedModels(
   const addOptionsSet = new Set(addOptions);
 
   return models.filter((model) => {
-    const correspondingAddOptions = [...addOptionsSet.values()].find((options) => {
-      if (!is3dModelOptions(options)) {
-        return false;
-      }
+    const correspondingAddOptions = (() => {
+      for (const options of addOptionsSet) {
+        if (!is3dModelOptions(options)) {
+          continue;
+        }
 
-      if (options.type === 'cad') {
-        return isSameCadModel(options, {
-          type: 'cad',
-          modelId: model.modelId,
-          revisionId: model.revisionId,
-          transform: model.getModelTransformation()
-        });
-      } else {
-        return isSamePointCloudModel(options, {
-          type: 'pointcloud',
-          modelId: model.modelId,
-          revisionId: model.revisionId,
-          transform: model.getModelTransformation()
-        });
+        const isCadAndSame =
+          options.type === 'cad' &&
+          isSameCadModel(options, {
+            type: 'cad',
+            modelId: model.modelId,
+            revisionId: model.revisionId,
+            transform: model.getModelTransformation()
+          });
+
+        const isPointCloudAndSame =
+          options.type === 'pointcloud' &&
+          isSamePointCloudModel(options, {
+            type: 'pointcloud',
+            modelId: model.modelId,
+            revisionId: model.revisionId,
+            transform: model.getModelTransformation()
+          });
+
+        if (isCadAndSame || isPointCloudAndSame) {
+          return options;
+        }
       }
-    });
+      return undefined;
+    })();
 
     if (correspondingAddOptions !== undefined) {
       addOptionsSet.delete(correspondingAddOptions);
@@ -77,13 +90,19 @@ function findNonReferencedCollections(
   const collectionAddOptionsSet = new Set(image360CollectionAddOptions);
 
   return collections.filter((collection) => {
-    const correspondingAddOptions = [...collectionAddOptionsSet.values()].find((options) => {
-      if (is360ImageDataModelAddOptions(options)) {
-        return collection.id === options.externalId;
-      } else {
-        return collection.id === options.siteId;
+    const correspondingAddOptions = (() => {
+      for (const options of collectionAddOptionsSet) {
+        const isDataModelCollectionAndSame =
+          is360ImageDataModelAddOptions(options) && collection.id === options.externalId;
+        const isEventCollectionAndSame =
+          is360ImageEventsAddOptions(options) && collection.id === options.siteId;
+
+        if (isDataModelCollectionAndSame || isEventCollectionAndSame) {
+          return options;
+        }
       }
-    });
+      return undefined;
+    })();
 
     if (correspondingAddOptions !== undefined) {
       collectionAddOptionsSet.delete(correspondingAddOptions);

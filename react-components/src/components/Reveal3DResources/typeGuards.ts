@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import {
+  AddImageCollection360EventsOptions,
   type AddImageCollection360DatamodelsOptions,
   type AddImageCollection360Options,
   type AddResourceOptions,
@@ -26,4 +27,11 @@ export function is360ImageDataModelAddOptions(
 ): addOptions is AddImageCollection360DatamodelsOptions {
   const castOptions = addOptions as AddImageCollection360DatamodelsOptions;
   return castOptions.externalId !== undefined && castOptions.space !== undefined;
+}
+
+export function is360ImageEventsAddOptions(
+  addOptions: AddImageCollection360Options
+): addOptions is AddImageCollection360EventsOptions {
+  const castOptions = addOptions as AddImageCollection360EventsOptions;
+  return castOptions.siteId !== undefined;
 }
