@@ -1,7 +1,6 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-/* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';

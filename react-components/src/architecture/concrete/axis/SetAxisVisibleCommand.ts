@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  * BaseTool: Base class for the tool are used to interact with the render target.
  */
-/* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { type Tooltip } from '../../base/commands/BaseCommand';

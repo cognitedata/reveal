@@ -1,7 +1,6 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-/* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { Box3, Group, Mesh, type Object3D } from 'three';
 import { ThreeView } from './ThreeView';

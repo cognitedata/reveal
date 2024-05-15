@@ -1,7 +1,6 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-/* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
 import { BoxDomainObject } from './BoxDomainObject';

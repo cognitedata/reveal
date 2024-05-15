@@ -1,7 +1,6 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-/* eslint-disable @typescript-eslint/class-literal-property-style */
 
 import { type Color } from 'three';
 import { type RenderStyle } from '../domainObjectsHelpers/RenderStyle';

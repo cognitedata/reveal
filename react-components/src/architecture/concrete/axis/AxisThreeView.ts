@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-/* eslint-disable @typescript-eslint/class-literal-property-style */
 import {
   Mesh,
   type Object3D,
