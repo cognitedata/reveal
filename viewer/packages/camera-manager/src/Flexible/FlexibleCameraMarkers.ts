@@ -8,7 +8,7 @@ import { FlexibleControlsType } from './FlexibleControlsType';
 
 export class FlexibleCameraMarkers {
   private readonly _scene: Scene;
-  private _targetMarker: Object3D | undefined;
+  private _targetMarker: Sprite | undefined;
 
   //================================================
   // CONSTRUCTOR
@@ -36,6 +36,16 @@ export class FlexibleCameraMarkers {
       if (this._targetMarker && this._targetMarker.visible) {
         this._targetMarker.visible = false;
       }
+    }
+  }
+
+  public dispose(): void {
+    if (this._targetMarker) {
+      this._scene.remove(this._targetMarker);
+      this._targetMarker.material.map?.dispose();
+      this._targetMarker.material.dispose();
+      this._targetMarker.geometry.dispose();
+      this._targetMarker = undefined;
     }
   }
 

@@ -65,7 +65,10 @@ export class PointCloudPickingHandler {
 
     const intersections: PickPoint[] = [];
 
-    nodes.forEach(node => {
+    // Get PointCloudNodes which are visible.
+    const visibleNodes = nodes.filter(node => node.visible);
+
+    visibleNodes.forEach(node => {
       const intersection = this._picker.pick(camera, this._raycaster.ray, [node.octree], {
         pickWindowSize: PointCloudPickingHandler.PickingWindowSize
       });
@@ -78,7 +81,7 @@ export class PointCloudPickingHandler {
       .sort((x, y) => x.position.distanceTo(camera.position) - y.position.distanceTo(camera.position))
       .filter(x => isPointVisibleByPlanes(input.clippingPlanes, x.position))
       .map(x => {
-        const pointCloudNode = determinePointCloudNode(x.object, nodes);
+        const pointCloudNode = determinePointCloudNode(x.object, visibleNodes);
         if (pointCloudNode === null) {
           throw new Error(`Coulds not find PointCloudNode for intersected point`);
         }

@@ -385,7 +385,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private addEventListeners() {
     this._keyboard.addEventListeners(this._domElement);
     this._domElement.addEventListener('pointerdown', this.onPointerDown);
-    this._domElement.addEventListener('wheel', event => this.onMouseWheel(event));
+    this._domElement.addEventListener('wheel', this.onMouseWheel);
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
 
     // canvas has focus by default, but it's possible to set tabindex on it,
