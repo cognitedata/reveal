@@ -11,19 +11,14 @@ import {
 export function is360ImageAddOptions(
   addOptions: AddResourceOptions
 ): addOptions is AddImageCollection360Options {
-  return (
-    (addOptions as AddReveal3DModelOptions).modelId === undefined &&
-    (addOptions as AddReveal3DModelOptions).revisionId === undefined
-  );
+  return !is3dModelOptions(addOptions);
 }
 
 export function is3dModelOptions(
   addOptions: AddResourceOptions
 ): addOptions is AddReveal3DModelOptions {
-  return (
-    (addOptions as AddReveal3DModelOptions).modelId !== undefined &&
-    (addOptions as AddReveal3DModelOptions).revisionId !== undefined
-  );
+  const modelOptions = addOptions as AddReveal3DModelOptions;
+  return modelOptions.modelId !== undefined && modelOptions.revisionId !== undefined;
 }
 
 export function is360ImageDataModelAddOptions(
