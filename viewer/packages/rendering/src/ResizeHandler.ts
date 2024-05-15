@@ -141,7 +141,6 @@ export class ResizeHandler {
   }
 
   dispose(): void {
-    console.log('asd');
     this._resizeObserver?.unobserve(this._renderer.domElement.parentElement!);
     this._resizeObserver?.disconnect();
     this._resizeObserver = undefined;

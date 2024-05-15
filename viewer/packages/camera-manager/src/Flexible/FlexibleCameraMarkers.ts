@@ -41,7 +41,6 @@ export class FlexibleCameraMarkers {
 
   public dispose(): void {
     if (this._targetMarker) {
-      console.log('dispose called asd ');
       this._scene.remove(this._targetMarker);
       this._targetMarker.material.map?.dispose();
       this._targetMarker.material.dispose();
