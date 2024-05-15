@@ -100,6 +100,8 @@ export class RevealManager {
     this._pointCloudManager.dispose();
     this._pipelineExecutor.dispose();
     this._renderPipeline.dispose();
+    this._resizeHandler.dispose();
+    this._updateSubject.unsubscribe();
     this._subscriptions.unsubscribe();
     this._isDisposed = true;
 

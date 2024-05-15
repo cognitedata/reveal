@@ -173,6 +173,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   public dispose(): void {
     this._isDisposed = true;
     this.removeEventListeners();
+    this._markers?.dispose();
   }
 
   //================================================
