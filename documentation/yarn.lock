@@ -1904,7 +1904,7 @@ __metadata:
     "@docusaurus/core": 2.4.3
     "@docusaurus/preset-classic": 2.4.3
     "@docusaurus/remark-plugin-npm2yarn": 2.4.3
-    "@types/react": 18.3.1
+    "@types/react": 18.3.2
     "@uiw/codemirror-theme-material": 4.22.0
     "@uiw/react-codemirror": 4.22.0
     clsx: 2.1.1
@@ -1915,7 +1915,7 @@ __metadata:
     react: 18.3.1
     react-dom: 18.3.1
     replace: 1.2.2
-    rimraf: 5.0.6
+    rimraf: 5.0.7
     styled-components: 6.1.11
     typedoc: 0.25.13
     typedoc-plugin-markdown: 3.17.1
@@ -3458,13 +3458,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.3.1":
-  version: 18.3.1
-  resolution: "@types/react@npm:18.3.1"
+"@types/react@npm:*, @types/react@npm:18.3.2":
+  version: 18.3.2
+  resolution: "@types/react@npm:18.3.2"
   dependencies:
     "@types/prop-types": "*"
     csstype: ^3.0.2
-  checksum: 9224ef319a0c2b7f66e7e7f06012aa5eb638a6c76c9742843eab1a5d243f2bed5ff829ddbb41efd60d33a266420528adfcb84cb93f238b00e905f98c3a355768
+  checksum: d0b8b9d0ede6cd28dbbe34106d914b5e3652d9d7aa9d0f32fe6171506b6fc7c826d9d6571642976a5422bd29c5022fd893a710ed59a1177a0c1df8e02cf17ffe
   languageName: node
   linkType: hard
 
@@ -10797,14 +10797,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:5.0.6":
-  version: 5.0.6
-  resolution: "rimraf@npm:5.0.6"
+"rimraf@npm:5.0.7":
+  version: 5.0.7
+  resolution: "rimraf@npm:5.0.7"
   dependencies:
     glob: ^10.3.7
   bin:
     rimraf: dist/esm/bin.mjs
-  checksum: f7c0ce3c2d0b2f374a9cfc77e755f47f6f7436f44a85437deb41d18fff04b681a0f2bde96cd5b9fbca4704a927aa152e09e3002ba776ecec58e9fd2eb59857dd
+  checksum: 884852abf8aefd4667448d87bdab04120a8641266c828cf382ac811713547eda18f81799d2146ffec3178f357d83d44ec01c10095949c82e23551660732bf14f
   languageName: node
   linkType: hard
 
