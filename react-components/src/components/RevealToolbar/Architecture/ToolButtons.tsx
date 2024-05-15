@@ -12,15 +12,27 @@ import { FitViewCommand } from '../../../architecture/base/concreteCommands/FitV
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../../architecture/concrete/axis/SetAxisVisibleCommand';
+import { GeometryType } from '../../../architecture/base/utilities/box/GeometryType';
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
+/* eslint-disable @typescript-eslint/no-extraneous-class */
+
 export class RevealButtons {
   static FitView = (): ReactElement => CommandButton(new FitViewCommand());
   static NavigationTool = (): ReactElement => CommandButton(new NavigationTool());
   static SetAxisVisible = (): ReactElement => CommandButton(new SetAxisVisibleCommand());
   static SetTerrainVisible = (): ReactElement => CommandButton(new SetTerrainVisibleCommand());
   static UpdateTerrain = (): ReactElement => CommandButton(new UpdateTerrainCommand());
-  static BoxEditTool = (): ReactElement => CommandButton(new BoxEditTool());
+  static MeasureLine = (): ReactElement => CommandButton(new BoxEditTool(GeometryType.Line));
+  static MeasureLines = (): ReactElement => CommandButton(new BoxEditTool(GeometryType.Polyline));
+
+  static MeasureHorizontalArea = (): ReactElement =>
+    CommandButton(new BoxEditTool(GeometryType.HorizontalArea));
+
+  static MeasureVerticalArea = (): ReactElement =>
+    CommandButton(new BoxEditTool(GeometryType.VerticalArea));
+
+  static MeasureVolume = (): ReactElement => CommandButton(new BoxEditTool(GeometryType.Volume));
+
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
     CommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));
 

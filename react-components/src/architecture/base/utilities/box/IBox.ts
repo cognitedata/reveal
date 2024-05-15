@@ -5,6 +5,7 @@
 import { type Vector3 } from 'three';
 import { type BoxFace } from './BoxFace';
 import { type BoxFocusType } from './BoxFocusType';
+import { type GeometryType } from './GeometryType';
 
 /**
  * Represents a box in 3D space.
@@ -52,4 +53,10 @@ export type IBox = {
    * @param value The focus type to set.
    */
   set focusType(value: BoxFocusType);
+
+  /**
+   * Gets the type of geometry for the box
+   * @param value The geometry type to set.
+   */
+  get geometryType(): GeometryType;
 };

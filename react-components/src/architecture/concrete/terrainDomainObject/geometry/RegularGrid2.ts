@@ -82,7 +82,7 @@ export class RegularGrid2 extends Grid2 {
     return cloneDeep(this);
   }
 
-  public expandBoundingBox(boundingBox: Range3): void {
+  public override expandBoundingBox(boundingBox: Range3): void {
     const position = new Vector3();
     for (let j = this.nodeSize.j - 1; j >= 0; j--) {
       for (let i = this.nodeSize.i - 1; i >= 0; i--) {

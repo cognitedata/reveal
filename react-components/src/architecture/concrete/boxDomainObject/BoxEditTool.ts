@@ -5,7 +5,7 @@
 import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
 import { BoxDomainObject } from './BoxDomainObject';
 import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type Tooltip } from '../../base/commands/BaseCommand';
+import { type BaseCommand, type Tooltip } from '../../base/commands/BaseCommand';
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { BoxDragger } from '../../base/utilities/box/BoxDragger';
 import { type BoxFace } from '../../base/utilities/box/BoxFace';
@@ -14,6 +14,7 @@ import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { PendingBox } from './PendingBox';
+import { GeometryType } from '../../base/utilities/box/GeometryType';
 
 export class BoxEditTool extends NavigationTool {
   // ==================================================
@@ -22,10 +23,27 @@ export class BoxEditTool extends NavigationTool {
 
   private _dragger: BoxDragger | undefined = undefined;
   private _pending: PendingBox | undefined = undefined;
+  private readonly _geometryType: GeometryType;
 
   // ==================================================
-  // OVERRIDES
+  // CONSTRUCTORS
   // ==================================================
+
+  public constructor(geometryType: GeometryType) {
+    super();
+    this._geometryType = geometryType;
+  }
+
+  // ==================================================
+  // OVERRIDES from BaseCommand
+  // ==================================================
+
+  public override equals(other: BaseCommand): boolean {
+    if (!(other instanceof BoxEditTool)) {
+      return false;
+    }
+    return this._geometryType === other._geometryType;
+  }
 
   public override get shortCutKey(): string | undefined {
     return 'I';
@@ -36,10 +54,51 @@ export class BoxEditTool extends NavigationTool {
   }
 
   public override get tooltip(): Tooltip {
-    return { key: 'UNKNOWN', fallback: 'Create or edit a box' };
+    switch (this._geometryType) {
+      case GeometryType.Line:
+        return {
+          key: 'MEASUREMENTS_ADD_LINE',
+          fallback:
+            'Measure distance between two points. Click at the start point and the end point.'
+        };
+      case GeometryType.Polyline:
+        return {
+          key: 'MEASUREMENTS_ADD_POLYLINE',
+          fallback:
+            'Measure the length of a continuous polyline. Click at any number of points and end with Esc.'
+        };
+      case GeometryType.Polygon:
+        return {
+          key: 'MEASUREMENTS_ADD_POLYGON',
+          fallback: 'Measure an area of a polygon. Click at least 3 points and end with Esc.'
+        };
+      case GeometryType.VerticalArea:
+        return {
+          key: 'MEASUREMENTS_ADD_VERTICAL_AREA',
+          fallback: 'Measure rectangular vertical Area. Click at two points in a vertical plan.'
+        };
+      case GeometryType.HorizontalArea:
+        return {
+          key: 'MEASUREMENTS_ADD_HORIZONTAL_AREA',
+          fallback:
+            'Measure rectangular horizontal Area. Click at three points in a horizontal plan.'
+        };
+      case GeometryType.Volume:
+        return {
+          key: 'MEASUREMENTS_ADD_VOLUME',
+          fallback:
+            'Measure volume of a box. Click at three points in a horizontal plan and the fourth to give it height.'
+        };
+      default:
+        throw new Error('Unknown measurement type');
+    }
   }
 
-  public get defaultCursor(): string {
+  // ==================================================
+  // OVERRIDES from BaseTool
+  // ==================================================
+
+  public override get defaultCursor(): string {
     return 'crosshair';
   }
 
@@ -71,15 +130,7 @@ export class BoxEditTool extends NavigationTool {
     if (down && event.key === 'Escape') {
       const { _pending: pending } = this;
       if (pending !== undefined) {
-        pending.removeLastHovering();
-        if (pending.hasEnoughPoints) {
-          pending.rebuild();
-          this.setFocus(pending.boxDomainObject, BoxFocusType.Any);
-          pending.boxDomainObject.notify(Changes.geometry);
-        } else {
-          // Just one or two points, remove it
-          pending.boxDomainObject.removeInteractive();
-        }
+        pending.boxDomainObject.removeInteractive();
         this._pending = undefined;
         return;
       }
@@ -88,6 +139,16 @@ export class BoxEditTool extends NavigationTool {
   }
 
   public override async onHover(event: PointerEvent): Promise<void> {
+    const { _pending: pending } = this;
+    if (pending !== undefined && pending.realPointCount >= 1) {
+      const ray = this.getRay(event);
+      if (pending.addPoint(ray, undefined, true)) {
+        pending.boxDomainObject.notify(Changes.geometry);
+        this.setDefaultCursor();
+        this.setFocus(undefined);
+        return;
+      }
+    }
     const intersection = await this.getIntersection(event);
     if (intersection === undefined) {
       this.renderTarget.setNavigateCursor();
@@ -95,20 +156,19 @@ export class BoxEditTool extends NavigationTool {
       super.onHover(event);
       return;
     }
-    const { _pending: pending } = this;
     if (pending !== undefined) {
       if (this.isBoxDomainObject(intersection)) {
         this.setDefaultCursor();
         this.setFocus(undefined);
         return;
       }
-      if (pending !== undefined) {
-        pending.addPoint(intersection.point, true);
+      const ray = this.getRay(event);
+      if (pending.addPoint(ray, intersection.point, true)) {
         pending.boxDomainObject.notify(Changes.geometry);
+        this.setDefaultCursor();
+        this.setFocus(undefined);
+        return;
       }
-      this.setDefaultCursor();
-      this.setFocus(undefined);
-      return;
     }
     if (!isDomainObjectIntersection(intersection)) {
       this.setDefaultCursor();
@@ -131,28 +191,29 @@ export class BoxEditTool extends NavigationTool {
   }
 
   public override async onDoubleClick(event: PointerEvent): Promise<void> {
-    const { renderTarget } = this;
-    const { rootDomainObject } = renderTarget;
-
-    const intersection = await this.getIntersection(event);
-    // Do not want to click on other boxes
-    if (intersection === undefined || this.isBoxDomainObject(intersection)) {
-      await super.onDoubleClick(event);
-      return;
-    }
-    const pendingBox = new BoxDomainObject();
-    const center = intersection.point;
-    center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-    pendingBox.center.copy(center);
-    pendingBox.size.set(2, 3, 1);
-    rootDomainObject.addChildInteractive(pendingBox);
-    this.setFocus(pendingBox, BoxFocusType.Any);
-    pendingBox.setVisibleInteractive(true, renderTarget);
+    await super.onDoubleClick(event);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
     const { renderTarget } = this;
     const { rootDomainObject } = renderTarget;
+
+    const { _pending: pending } = this;
+    if (pending !== undefined && pending.realPointCount >= 1) {
+      const ray = this.getRay(event);
+      if (pending.addPoint(ray, undefined, false)) {
+        const focusType =
+          pending.realPointCount === this.maximumPointCount
+            ? BoxFocusType.Any
+            : BoxFocusType.Pending;
+        this.setFocus(pending.boxDomainObject, focusType);
+        pending.boxDomainObject.notify(Changes.geometry);
+        if (pending.realPointCount === this.maximumPointCount) {
+          this._pending = undefined;
+        }
+        return;
+      }
+    }
 
     const intersection = await this.getIntersection(event);
     // Do not want to click on other boxes
@@ -160,22 +221,26 @@ export class BoxEditTool extends NavigationTool {
       await super.onClick(event);
       return;
     }
-    if (this._pending === undefined) {
-      const pendingBox = new BoxDomainObject();
+    const ray = this.getRay(event);
+    if (pending === undefined) {
+      const pendingBox = new BoxDomainObject(this._geometryType);
       this._pending = new PendingBox(pendingBox);
-      this._pending.addPoint(intersection.point, false);
-      rootDomainObject.addChildInteractive(pendingBox);
-      this.setFocus(pendingBox, BoxFocusType.Pending);
-      pendingBox.setVisibleInteractive(true, renderTarget);
+      if (this._pending.addPoint(ray, intersection.point, false)) {
+        rootDomainObject.addChildInteractive(pendingBox);
+        this.setFocus(pendingBox, BoxFocusType.Pending);
+        pendingBox.setVisibleInteractive(true, renderTarget);
+      }
     } else {
-      const { _pending: pending } = this;
-      pending.addPoint(intersection.point, false);
-      const focusType = pending.countPoint === 4 ? BoxFocusType.Any : BoxFocusType.Pending;
-      this.setFocus(pending.boxDomainObject, focusType);
-      pending.boxDomainObject.notify(Changes.geometry);
-
-      if (pending.countPoint === 4) {
-        this._pending = undefined;
+      if (pending.addPoint(ray, intersection.point, false)) {
+        const focusType =
+          pending.realPointCount === this.maximumPointCount
+            ? BoxFocusType.Any
+            : BoxFocusType.Pending;
+        this.setFocus(pending.boxDomainObject, focusType);
+        pending.boxDomainObject.notify(Changes.geometry);
+        if (pending.realPointCount === this.maximumPointCount) {
+          this._pending = undefined;
+        }
       }
     }
   }
@@ -199,8 +264,7 @@ export class BoxEditTool extends NavigationTool {
       await super.onPointerDrag(event, leftButton);
       return;
     }
-    const ray = this.getRaycaster(event).ray.clone();
-    ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    const ray = this.getRay(event, true);
     this._dragger.apply(ray);
   }
 
@@ -310,6 +374,24 @@ export class BoxEditTool extends NavigationTool {
       this.renderTarget.setGrabCursor();
     } else {
       this.setDefaultCursor();
+    }
+  }
+
+  private get maximumPointCount(): number {
+    switch (this._geometryType) {
+      case GeometryType.Line:
+        return 2;
+      case GeometryType.Polyline:
+      case GeometryType.Polygon:
+        return Number.MAX_SAFE_INTEGER;
+      case GeometryType.VerticalArea:
+        return 2;
+      case GeometryType.HorizontalArea:
+        return 3;
+      case GeometryType.Volume:
+        return 4;
+      default:
+        throw new Error('Unknown measurement type');
     }
   }
 }

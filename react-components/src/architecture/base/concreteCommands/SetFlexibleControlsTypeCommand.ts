@@ -19,17 +19,11 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     this._controlsType = controlsType;
   }
 
-  public override attach(renderTarget: RevealRenderTarget): void {
-    super.attach(renderTarget);
-    const { flexibleCameraManager } = renderTarget;
-    flexibleCameraManager.addControlsTypeChangeListener(this._controlsTypeChangeHandler);
-  }
-
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public equals(other: BaseCommand): boolean {
+  public override equals(other: BaseCommand): boolean {
     if (!(other instanceof SetFlexibleControlsTypeCommand)) {
       return false;
     }
@@ -86,6 +80,12 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     }
     flexibleCameraManager.controlsType = this._controlsType;
     return true;
+  }
+
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+    const { flexibleCameraManager } = renderTarget;
+    flexibleCameraManager.addControlsTypeChangeListener(this._controlsTypeChangeHandler);
   }
 
   // ==================================================

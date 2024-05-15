@@ -16,7 +16,7 @@ export class SetAxisVisibleCommand extends RenderTargetCommand {
     return { key: 'UNKNOWN', fallback: 'Toggle axis visible' };
   }
 
-  public get icon(): string {
+  public override get icon(): string {
     return 'Axis';
   }
 
@@ -24,11 +24,11 @@ export class SetAxisVisibleCommand extends RenderTargetCommand {
     return true;
   }
 
-  public get isCheckable(): boolean {
+  public override get isCheckable(): boolean {
     return true;
   }
 
-  public get isChecked(): boolean {
+  public override get isChecked(): boolean {
     const { renderTarget } = this;
     const { rootDomainObject } = renderTarget;
 

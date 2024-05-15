@@ -45,7 +45,7 @@ export class TerrainThreeView extends GroupThreeView {
     return super.domainObject as TerrainDomainObject;
   }
 
-  protected get style(): TerrainRenderStyle {
+  protected override get style(): TerrainRenderStyle {
     return super.style as TerrainRenderStyle;
   }
 

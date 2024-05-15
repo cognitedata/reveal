@@ -49,7 +49,7 @@ export class AxisThreeView extends GroupThreeView {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected get style(): AxisRenderStyle {
+  protected override get style(): AxisRenderStyle {
     return super.style as AxisRenderStyle;
   }
 

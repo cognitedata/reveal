@@ -15,15 +15,15 @@ export abstract class RenderTargetCommand extends BaseCommand {
     return this._renderTarget;
   }
 
-  public attach(renderTarget: RevealRenderTarget): void {
-    this._renderTarget = renderTarget;
-  }
-
   public override invoke(): boolean {
     const success = this.invokeCore();
     if (success) {
       this.renderTarget.toolController.update();
     }
     return success;
+  }
+
+  public attach(renderTarget: RevealRenderTarget): void {
+    this._renderTarget = renderTarget;
   }
 }

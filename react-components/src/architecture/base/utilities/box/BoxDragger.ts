@@ -133,6 +133,8 @@ export class BoxDragger {
     // Take find closest point between the ray and the line perpenducular to the face of in picked box.
     // The distance from this point to the face of in picked box is the change.
     const pointOnSegment = newVector3();
+
+    // Three.js lack a distance to line function, so I use the line segment function
     ray.distanceSqToSegment(this._minPoint, this._maxPoint, undefined, pointOnSegment);
     const deltaSize = this._planeOfBox.distanceToPoint(pointOnSegment);
     if (deltaSize === 0) {

@@ -12,6 +12,7 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
 import { type IBox } from '../../base/utilities/box/IBox';
+import { type GeometryType } from '../../base/utilities/box/GeometryType';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -27,6 +28,8 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
   // For focus when edit in 3D
   public focusFace: BoxFace | undefined = undefined; // Used when hasFocus is true only
   public focusType: BoxFocusType = BoxFocusType.None;
+
+  private readonly _geometryType: GeometryType;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -52,11 +55,23 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
     return this.focusType !== BoxFocusType.None;
   }
 
+  public get geometryType(): GeometryType {
+    return this._geometryType;
+  }
+
+  // ==================================================
+  // CONSTRUCTORS
+  // ==================================================
+
+  public constructor(geometryType: GeometryType) {
+    super();
+    this._geometryType = geometryType;
+  }
+
   // ==================================================
   // OVERRIDES of DomainObject
   // ==================================================
 
-  // eslint-disable-next-line @typescript-eslint/class-literal-property-style
   public override get typeName(): string {
     return 'Box';
   }

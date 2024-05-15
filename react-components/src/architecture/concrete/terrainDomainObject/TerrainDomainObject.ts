@@ -38,7 +38,6 @@ export class TerrainDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  // eslint-disable-next-line @typescript-eslint/class-literal-property-style
   public override get typeName(): string {
     return DEFAULT_TERRAIN_NAME;
   }

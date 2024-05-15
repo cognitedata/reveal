@@ -66,7 +66,7 @@ export class BoxThreeView extends GroupThreeView {
     return super.domainObject as BoxDomainObject;
   }
 
-  protected get style(): BoxRenderStyle {
+  protected override get style(): BoxRenderStyle {
     return super.style as BoxRenderStyle;
   }
 
@@ -238,6 +238,7 @@ export class BoxThreeView extends GroupThreeView {
     }
     const faceCenter = new BoxFace(2).getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
+    faceCenter.y += spriteHeight / 2;
     sprite.position.copy(faceCenter);
     return sprite;
   }
@@ -249,6 +250,7 @@ export class BoxThreeView extends GroupThreeView {
     }
     const faceCenter = new BoxFace(2).getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
+    faceCenter.y += spriteHeight / 2;
     sprite.position.copy(faceCenter);
     return sprite;
   }
@@ -360,7 +362,7 @@ export class BoxThreeView extends GroupThreeView {
   }
 
   private updateLabels(camera: Camera): void {
-    const { boxDomainObject } = this;
+    const { boxDomainObject, style } = this;
     const matrix = this.getMatrix();
 
     const rotationMatrix = this.getRotationMatrix();
@@ -377,7 +379,7 @@ export class BoxThreeView extends GroupThreeView {
       normal.applyMatrix4(rotationMatrix);
       visibleFaces[boxFace.face] = normal.dot(cameraDirection) < 0;
     }
-    const labelHeight = this.getTextHeight(this.style.relativeTextSize);
+    const spriteHeight = this.getTextHeight(style.relativeTextSize);
 
     // If the 2 adjecent faces are visible, show the sprite along the edge
     for (let index = 0; index < this._sprites.length; index++) {
@@ -402,9 +404,10 @@ export class BoxThreeView extends GroupThreeView {
           const faceCenter2 = boxFace.getCenter(newVector3());
           const edgeCenter = faceCenter2.add(faceCenter1);
           edgeCenter.applyMatrix4(matrix);
+          edgeCenter.y += spriteHeight / 2;
 
           // Move the sprite slightly away from the box to avoid z-fighting
-          edgeCenter.addScaledVector(cameraDirection, -labelHeight / 4);
+          edgeCenter.addScaledVector(cameraDirection, -spriteHeight / 4);
           sprite.position.copy(edgeCenter);
           sprite.visible = true;
           break;
