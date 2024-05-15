@@ -23,7 +23,7 @@ export class ResizeHandler {
   private readonly _onCameraChangeCallback: () => void;
   private readonly _onCameraStopCallback: () => void;
 
-  private readonly _resizeObserver: ResizeObserver | undefined;
+  private _resizeObserver: ResizeObserver | undefined;
 
   private _shouldResize: boolean = false;
 
@@ -141,7 +141,9 @@ export class ResizeHandler {
   }
 
   dispose(): void {
+    this._resizeObserver?.unobserve(this._renderer.domElement.parentElement!);
     this._resizeObserver?.disconnect();
+    this._resizeObserver = undefined;
   }
 }
 

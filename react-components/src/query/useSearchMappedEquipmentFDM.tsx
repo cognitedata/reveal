@@ -15,13 +15,10 @@ import {
 } from '../utilities/FdmSDK';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import {
-  SYSTEM_3D_EDGE_SOURCE,
-  INSTANCE_SPACE_3D_DATA,
-  SYSTEM_SPACE_3D_SCHEMA
-} from '../utilities/globalDataModels';
+import { SYSTEM_3D_EDGE_SOURCE, SYSTEM_SPACE_3D_SCHEMA } from '../utilities/globalDataModels';
 import { type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
+import { getDMSModel } from '../components/CacheProvider/requests';
 
 export type SearchResultsWithView = { view: Source; instances: NodeItem[] };
 
@@ -239,14 +236,15 @@ function convertQueryNodeItemsToSearchResultsWithViews(
   }, []);
 }
 
-function createMappedEquipmentMaps(
+async function createMappedEquipmentMaps(
   allEdges: EdgeItem[],
   models: AddModelOptions[],
-  spacesToSearch: string[]
-): {
+  spacesToSearch: string[],
+  fdmSdk: FdmSDK
+): Promise<{
   mappedEquipmentFirstLevelMap: Record<string, EdgeItem[]>;
   equipmentSecondLevelMap: Record<string, EdgeItem[]>;
-} {
+}> {
   const mappedEquipmentFirstLevelMap: Record<string, EdgeItem[]> = {};
   const equipmentSecondLevelMap: Record<string, EdgeItem[]> = {};
 
@@ -260,7 +258,9 @@ function createMappedEquipmentMaps(
         revisionId.toString() === getRevisionIdFromEdge(edge)
     );
 
-    if (endSpace === INSTANCE_SPACE_3D_DATA && isModelsMapped) {
+    const modelInstance = await getDMSModel(parseInt(endExternalId), fdmSdk);
+
+    if (endSpace === modelInstance.space && isModelsMapped) {
       const key = `${space}/${externalId}`;
 
       const keyEdges = mappedEquipmentFirstLevelMap[key];
@@ -431,10 +431,11 @@ async function filterSearchResultsByMappedTo3DModels(
   );
   const queryResult = await fdmSdk.queryNodesAndEdges(mappedEquipmentQuery);
 
-  const { mappedEquipmentFirstLevelMap, equipmentSecondLevelMap } = createMappedEquipmentMaps(
+  const { mappedEquipmentFirstLevelMap, equipmentSecondLevelMap } = await createMappedEquipmentMaps(
     queryResult.items.mapped_edges as EdgeItem[],
     models,
-    spacesToSearch
+    spacesToSearch,
+    fdmSdk
   );
 
   for (const searchResult of searchResults) {
