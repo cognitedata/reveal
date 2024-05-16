@@ -5,7 +5,7 @@
 import css from './spinnerStyles.css';
 import svg from '!!raw-loader!./spinnerCogniteLogo.svg';
 import * as THREE from 'three';
-import {v4} from 'uuid';
+import { v4 } from 'uuid';
 
 import { assertNever } from '@reveal/utilities';
 
