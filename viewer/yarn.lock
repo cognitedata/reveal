@@ -4015,10 +4015,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"devtools-protocol@npm:0.0.1273771":
-  version: 0.0.1273771
-  resolution: "devtools-protocol@npm:0.0.1273771"
-  checksum: 10/d8aafce1e9b126223f6945054043f723f69e1236ff9a14e97560d02f2d01db1a35c87933c4cd9a8e521765a1c677b772a6cc88b4c1d378d4f3335cd091195df2
+"devtools-protocol@npm:0.0.1286932":
+  version: 0.0.1286932
+  resolution: "devtools-protocol@npm:0.0.1286932"
+  checksum: 10/b4270e533136220f533cb4a4630d8f0e3a53b8ebcffdd6c64f0ce99b0ab618e5266e4a828f5998437cfaa9c0be26899204886d84a8ef0c668f92708ba0d62be3
   languageName: node
   linkType: hard
 
@@ -8689,30 +8689,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:22.8.0":
-  version: 22.8.0
-  resolution: "puppeteer-core@npm:22.8.0"
+"puppeteer-core@npm:22.9.0":
+  version: 22.9.0
+  resolution: "puppeteer-core@npm:22.9.0"
   dependencies:
     "@puppeteer/browsers": "npm:2.2.3"
     chromium-bidi: "npm:0.5.19"
     debug: "npm:4.3.4"
-    devtools-protocol: "npm:0.0.1273771"
+    devtools-protocol: "npm:0.0.1286932"
     ws: "npm:8.17.0"
-  checksum: 10/9f352a4bbdd5facdf309776a6de1558ead0b1c9d3d0764e67958ccebab6554658b213a70363ba5f19031121c419ca6253b541e2cc9bdad2bc0d213945ae76a4b
+  checksum: 10/2c28386ce4989eb6c1df2f6f3e2ddf1a666a2450156d116050f3097cf7fa6a5cfc13858190ef73ef3537f6ca05213e2f9dfd0a4202e704ece87999e3da63580d
   languageName: node
   linkType: hard
 
 "puppeteer@npm:^22.7.1":
-  version: 22.8.0
-  resolution: "puppeteer@npm:22.8.0"
+  version: 22.9.0
+  resolution: "puppeteer@npm:22.9.0"
   dependencies:
     "@puppeteer/browsers": "npm:2.2.3"
     cosmiconfig: "npm:9.0.0"
-    devtools-protocol: "npm:0.0.1273771"
-    puppeteer-core: "npm:22.8.0"
+    devtools-protocol: "npm:0.0.1286932"
+    puppeteer-core: "npm:22.9.0"
   bin:
     puppeteer: lib/esm/puppeteer/node/cli.js
-  checksum: 10/0f39c036b707ffa720ba3f8ddce2bb4b0f205dca99fb68974f97afbfbb578bb3819bb834a420a4f27dd38034549cf1c17620446de367a25994605eea3dbdcb64
+  checksum: 10/f5bf5f777972f1df240e43024dde48297ce1efc7bfbda80d2df1c312053530dca08255a9e07086c1eb7980facc0fb47e4da13bc8e2f26daac14a21a7671538c9
   languageName: node
   linkType: hard
 

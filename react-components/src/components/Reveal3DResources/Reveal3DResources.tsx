@@ -29,6 +29,8 @@ import {
   isImage360AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
+import { is360ImageAddOptions } from './typeGuards';
+import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
 
 export const Reveal3DResources = ({
   resources,
@@ -45,6 +47,13 @@ export const Reveal3DResources = ({
   useEffect(() => {
     void getTypedModels(resources, viewer, onResourceLoadError).then(setReveal3DModels);
   }, [resources, viewer]);
+
+  const image360CollectionAddOptions = useMemo(
+    () => resources.filter(is360ImageAddOptions),
+    [resources]
+  );
+
+  useRemoveNonReferencedModels(reveal3DModels, image360CollectionAddOptions, viewer);
 
   const cadModelOptions = useMemo(
     () => reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad'),
@@ -70,12 +79,6 @@ export const Reveal3DResources = ({
     instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
   );
-
-  const image360CollectionAddOptions = resources.filter((resource) => {
-    if ('siteId' in resource) return resource.siteId !== undefined;
-    else if ('externalId' in resource) return resource.externalId !== undefined;
-    return false;
-  });
 
   const image360StyledGroup =
     instanceStyling
