@@ -350,6 +350,7 @@ export class DefaultCameraManager implements CameraManager {
         }
         this.keyboardNavigationEnabled = keyboardNavigationEnabled;
         this._domElement.removeEventListener('pointerdown', stopTween);
+        document.removeEventListener('keydown', stopTween);
       })
       .start(TWEEN.now());
     tween.update(TWEEN.now());
@@ -411,6 +412,7 @@ export class DefaultCameraManager implements CameraManager {
         this.setComboControlsOptions({ lookAtViewTarget: false });
         this.keyboardNavigationEnabled = keyboardNavigationEnabled;
         this._domElement.removeEventListener('pointerdown', stopTween);
+        document.removeEventListener('keydown', stopTween);
       })
       .start(TWEEN.now());
     tween.update(TWEEN.now());
