@@ -477,6 +477,7 @@ __metadata:
     "@types/stats": "npm:^0.16.30"
     "@types/three": "npm:^0.164.0"
     "@types/tween.js": "npm:^18.6.1"
+    "@types/uuid": "npm:^9.0.8"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.1"
     "@typescript-eslint/parser": "npm:^7.7.1"
     assert: "npm:^2.1.0"
@@ -528,6 +529,7 @@ __metadata:
     ts-loader: "npm:^9.5.1"
     tsc-alias: "npm:^1.8.8"
     typescript: "npm:^5.4.5"
+    uuid: "npm:^9.0.1"
     wasm-pack: "npm:^0.12.1"
     webpack: "npm:^5.91.0"
     webpack-cli: "npm:^5.1.4"
@@ -2063,6 +2065,13 @@ __metadata:
   dependencies:
     "@tweenjs/tween.js": "npm:*"
   checksum: 10/70deb8e22a4fca45487ef871bb94bcf9d37f247490994c74f39a52690c49056fcbc0c4894c63a04a3db9e09dd1e12c5248e91fac4e73fa87c0ecb37d379ec311
+  languageName: node
+  linkType: hard
+
+"@types/uuid@npm:^9.0.8":
+  version: 9.0.8
+  resolution: "@types/uuid@npm:9.0.8"
+  checksum: 10/b8c60b7ba8250356b5088302583d1704a4e1a13558d143c549c408bf8920535602ffc12394ede77f8a8083511b023704bc66d1345792714002bfa261b17c5275
   languageName: node
   linkType: hard
 
@@ -10537,6 +10546,15 @@ __metadata:
   bin:
     uuid: dist/bin/uuid
   checksum: 10/9a5f7aa1d6f56dd1e8d5f2478f855f25c645e64e26e347a98e98d95781d5ed20062d6cca2eecb58ba7c84bc3910be95c0451ef4161906abaab44f9cb68ffbdd1
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "uuid@npm:9.0.1"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 10/9d0b6adb72b736e36f2b1b53da0d559125ba3e39d913b6072f6f033e0c87835b414f0836b45bcfaf2bdf698f92297fea1c3cc19b0b258bc182c9c43cc0fab9f2
   languageName: node
   linkType: hard
 
