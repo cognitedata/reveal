@@ -93,13 +93,16 @@ export function RuleBasedOutputsSelector({
     if (ruleSet === undefined) return;
 
     const ruleBasedInitilization = async (): Promise<void> => {
-      await Promise.all(
+      const allStylings = await Promise.all(
         models.map(async (model) => {
           if (!(model instanceof CogniteCadModel)) {
             return;
           }
 
           const flatAssetsMappingsList = flatAssetsMappingsListPerModel.get(model) ?? [];
+
+          if (flatAssetsMappingsList.length === 0) return [];
+
 
           const stylings = await initializeRuleBasedOutputs({
             model,
@@ -110,9 +113,11 @@ export function RuleBasedOutputsSelector({
             timeseriesDatapoints: assetIdsWithTimeseriesData?.timeseriesDatapoints ?? []
           });
 
-          setStylingsGroups(stylings);
+          return stylings;
         })
       );
+      const filteredStylings = allStylings.filter(isDefined).flat();
+      setStylingsGroups(filteredStylings);
     };
     void ruleBasedInitilization();
   }, [isLoadingAssetIdsAndTimeseriesData, ruleSet]);
