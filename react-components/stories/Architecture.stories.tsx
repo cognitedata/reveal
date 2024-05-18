@@ -111,6 +111,9 @@ export const Main: Story = {
           <RevealButtons.UpdateTerrain />
         </>
         <>
+          <RevealButtons.MeasureLine />
+          <RevealButtons.MeasurePolyline />
+          <RevealButtons.MeasurePolygon />
           <RevealButtons.MeasureHorizontalArea />
           <RevealButtons.MeasureVerticalArea />
           <RevealButtons.MeasureVolume />

@@ -3,16 +3,16 @@
  */
 
 import { type ReactElement } from 'react';
-import { NavigationTool } from '../../../architecture/base/concreteCommands/NavigationTool';
+import { NavigationTool } from '../../../architecture/base/commands/NavigationTool';
 import { SetTerrainVisibleCommand } from '../../../architecture/concrete/terrainDomainObject/SetTerrainVisibleCommand';
 import { CommandButton } from './CommandButton';
 import { UpdateTerrainCommand } from '../../../architecture/concrete/terrainDomainObject/UpdateTerrainCommand';
-import { BoxEditTool } from '../../../architecture/concrete/boxDomainObject/BoxEditTool';
+import { MeasurementTool } from '../../../architecture/concrete/boxDomainObject/MeasurementTool';
 import { FitViewCommand } from '../../../architecture/base/concreteCommands/FitViewCommand';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../../architecture/concrete/axis/SetAxisVisibleCommand';
-import { GeometryType } from '../../../architecture/base/utilities/box/GeometryType';
+import { MeasureType } from '../../../architecture/concrete/boxDomainObject/MeasureType';
 
 /* eslint-disable @typescript-eslint/no-extraneous-class */
 
@@ -22,16 +22,20 @@ export class RevealButtons {
   static SetAxisVisible = (): ReactElement => CommandButton(new SetAxisVisibleCommand());
   static SetTerrainVisible = (): ReactElement => CommandButton(new SetTerrainVisibleCommand());
   static UpdateTerrain = (): ReactElement => CommandButton(new UpdateTerrainCommand());
-  static MeasureLine = (): ReactElement => CommandButton(new BoxEditTool(GeometryType.Line));
-  static MeasureLines = (): ReactElement => CommandButton(new BoxEditTool(GeometryType.Polyline));
+  static MeasureLine = (): ReactElement => CommandButton(new MeasurementTool(MeasureType.Line));
+  static MeasurePolyline = (): ReactElement =>
+    CommandButton(new MeasurementTool(MeasureType.Polyline));
+
+  static MeasurePolygon = (): ReactElement =>
+    CommandButton(new MeasurementTool(MeasureType.Polygon));
 
   static MeasureHorizontalArea = (): ReactElement =>
-    CommandButton(new BoxEditTool(GeometryType.HorizontalArea));
+    CommandButton(new MeasurementTool(MeasureType.HorizontalArea));
 
   static MeasureVerticalArea = (): ReactElement =>
-    CommandButton(new BoxEditTool(GeometryType.VerticalArea));
+    CommandButton(new MeasurementTool(MeasureType.VerticalArea));
 
-  static MeasureVolume = (): ReactElement => CommandButton(new BoxEditTool(GeometryType.Volume));
+  static MeasureVolume = (): ReactElement => CommandButton(new MeasurementTool(MeasureType.Volume));
 
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
     CommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));

@@ -114,6 +114,15 @@ export class BoxFace {
     return target.setComponent(this.index, this.sign * 0.5);
   }
 
+  public static *getAllFaces(boxFace?: BoxFace): Generator<BoxFace> {
+    if (boxFace === undefined) {
+      boxFace = new BoxFace();
+    }
+    for (boxFace.face = 0; boxFace.face < 6; boxFace.face++) {
+      yield boxFace;
+    }
+  }
+
   public static equals(face: BoxFace | undefined, other: BoxFace | undefined): boolean {
     if (face === undefined || other === undefined) {
       return true;

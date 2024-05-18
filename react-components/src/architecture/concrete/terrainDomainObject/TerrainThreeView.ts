@@ -172,7 +172,6 @@ export class TerrainThreeView extends GroupThreeView {
       return undefined;
     }
     const service = new ContouringService(style.increment);
-
     const contoursBuffer = service.createContoursAsXyzArray(grid);
     if (contoursBuffer.length === 0) {
       return undefined;

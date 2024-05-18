@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-export enum GeometryType {
+export enum MeasureType {
   Line,
   Polyline,
   Polygon,

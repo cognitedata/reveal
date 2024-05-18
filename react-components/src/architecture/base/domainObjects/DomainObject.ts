@@ -15,6 +15,8 @@ import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { Subject } from './Subject';
+import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
+import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -336,6 +338,15 @@ export abstract class DomainObject extends Subject {
   }
 
   // ==================================================
+  // VIRTUAL METHODS: Create dragger
+  // ==================================================
+
+  // override when creating a dragger operation in the BaseEditTool
+  public createDragger(_intersection: DomainObjectIntersection): BaseDragger | undefined {
+    return undefined;
+  }
+
+  // ==================================================
   // INSTANCE PROPERTIES: Child-Parent relationship
   // ==================================================
 
@@ -475,9 +486,7 @@ export abstract class DomainObject extends Subject {
         yield child;
       }
       for (const descendant of child.getDescendantsByType<T>(classType)) {
-        if (isInstanceOf(descendant, classType)) {
-          yield descendant;
-        }
+        yield descendant;
       }
     }
   }

@@ -3,8 +3,8 @@
  * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
-import { BaseTool } from '../commands/BaseTool';
-import { type Tooltip } from '../commands/BaseCommand';
+import { BaseTool } from './BaseTool';
+import { type Tooltip } from './BaseCommand';
 import { type IFlexibleCameraManager } from '@cognite/reveal';
 
 export class NavigationTool extends BaseTool {

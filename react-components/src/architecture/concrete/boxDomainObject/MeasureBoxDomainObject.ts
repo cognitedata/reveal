@@ -3,20 +3,23 @@
  */
 
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { BoxRenderStyle } from './BoxRenderStyle';
+import { MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
-import { BoxThreeView } from './BoxThreeView';
+import { MeasureBoxView } from './MeasureBoxView';
 import { Matrix4, Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
-import { type IBox } from '../../base/utilities/box/IBox';
-import { type GeometryType } from '../../base/utilities/box/GeometryType';
+import { MeasureType } from './MeasureType';
+import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
+import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
+import { MeasureBoxDragger } from './MeasureBoxDragger';
 
 export const MIN_BOX_SIZE = 0.01;
 
-export class BoxDomainObject extends VisualDomainObject implements IBox {
+export class MeasureBoxDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS (This implements the IBox interface)
   // ==================================================
@@ -25,11 +28,11 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
   public readonly center = new Vector3();
   public zRotation = 0; // Angle in radians in interval [0, 2*Pi>
 
-  // For focus when edit in 3D
-  public focusFace: BoxFace | undefined = undefined; // Used when hasFocus is true only
-  public focusType: BoxFocusType = BoxFocusType.None;
+  // For focus when edit in 3D (Used when isSelected is true only)
+  public focusFace: BoxFace | undefined = undefined;
+  public focusType: BoxFocusType = BoxFocusType.JustCreated;
 
-  private readonly _geometryType: GeometryType;
+  private readonly _measureType: MeasureType;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -43,29 +46,33 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
     return 2 * (this.size.x + this.size.y + this.size.z);
   }
 
+  public get hasArea(): boolean {
+    let count = 0;
+    if (this.size.x > MIN_BOX_SIZE) count++;
+    if (this.size.y > MIN_BOX_SIZE) count++;
+    if (this.size.z > MIN_BOX_SIZE) count++;
+    return count >= 2;
+  }
+
   public get volume(): number {
     return this.size.x * this.size.y * this.size.z;
   }
 
-  public get renderStyle(): BoxRenderStyle | undefined {
-    return this.getRenderStyle() as BoxRenderStyle;
+  public get renderStyle(): MeasureBoxRenderStyle {
+    return this.getRenderStyle() as MeasureBoxRenderStyle;
   }
 
-  public get hasFocus(): boolean {
-    return this.focusType !== BoxFocusType.None;
-  }
-
-  public get geometryType(): GeometryType {
-    return this._geometryType;
+  public get measureType(): MeasureType {
+    return this._measureType;
   }
 
   // ==================================================
   // CONSTRUCTORS
   // ==================================================
 
-  public constructor(geometryType: GeometryType) {
+  public constructor(measureType: MeasureType) {
     super();
-    this._geometryType = geometryType;
+    this._measureType = measureType;
   }
 
   // ==================================================
@@ -73,11 +80,28 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
   // ==================================================
 
   public override get typeName(): string {
-    return 'Box';
+    switch (this._measureType) {
+      case MeasureType.HorizontalArea:
+        return 'Measure horizontal area';
+      case MeasureType.VerticalArea:
+        return 'Measure vertical area';
+      case MeasureType.Volume:
+        return 'Measure volume';
+      default:
+        throw new Error('Unknown MeasureType type');
+    }
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
-    return new BoxRenderStyle();
+    return new MeasureBoxRenderStyle();
+  }
+
+  public override createDragger(intersection: DomainObjectIntersection): BaseDragger | undefined {
+    const pickInfo = intersection.userData as BoxPickInfo;
+    if (pickInfo === undefined) {
+      return undefined;
+    }
+    return new MeasureBoxDragger(this, intersection.point, pickInfo);
   }
 
   // ==================================================
@@ -85,14 +109,14 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
   // ==================================================
 
   protected override createThreeView(): ThreeView | undefined {
-    return new BoxThreeView();
+    return new MeasureBoxView();
   }
 
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
-  forceMinSize(): void {
+  public forceMinSize(): void {
     const { size } = this;
     size.x = Math.max(MIN_BOX_SIZE, size.x);
     size.y = Math.max(MIN_BOX_SIZE, size.y);
@@ -116,19 +140,11 @@ export class BoxDomainObject extends VisualDomainObject implements IBox {
   }
 
   public setFocusInteractive(focusType: BoxFocusType, focusFace?: BoxFace): boolean {
-    if (focusType === BoxFocusType.None) {
-      if (this.focusType === BoxFocusType.None) {
-        return false; // No change
-      }
-      this.focusType = BoxFocusType.None;
-      this.focusFace = undefined; // Ignore input focusFace
-    } else {
-      if (focusType === this.focusType && BoxFace.equals(this.focusFace, focusFace)) {
-        return false; // No change
-      }
-      this.focusType = focusType;
-      this.focusFace = focusFace;
+    if (focusType === this.focusType && BoxFace.equals(this.focusFace, focusFace)) {
+      return false; // No change
     }
+    this.focusType = focusType;
+    this.focusFace = focusFace;
     this.notify(Changes.focus);
     return true;
   }
