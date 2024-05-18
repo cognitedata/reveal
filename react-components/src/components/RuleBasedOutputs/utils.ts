@@ -45,8 +45,8 @@ const checkStringExpressionStatement = (
   );
   const assetTrigger =
     trigger?.type === 'metadata' &&
-    currentTriggerData?.type === 'metadata' &&
-    currentTriggerData?.asset !== undefined
+      currentTriggerData?.type === 'metadata' &&
+      currentTriggerData?.asset !== undefined
       ? currentTriggerData?.asset[trigger.type]?.[trigger.key]
       : undefined;
 
@@ -352,6 +352,8 @@ const analyzeNodesAgainstExpression = async ({
   expression: Expression;
   outputSelected: ColorRuleOutput;
 }): Promise<AssetStylingGroupAndStyleIndex> => {
+  await delay(1000);
+
   const allTreeNodes = await Promise.all(
     contextualizedAssetNodes.map(async (contextualizedAssetNode) => {
       const triggerData: TriggerTypeData[] = [];
@@ -363,37 +365,45 @@ const analyzeNodesAgainstExpression = async ({
 
       triggerData.push(metadataTriggerData);
 
-      const timeseriesDataForThisAsset = generateTimeseriesAndDatapointsFromTheAsset({
-        contextualizedAssetNode,
-        assetIdsAndTimeseries,
-        timeseriesDatapoints
-      });
+      if (
+        timeseriesDatapoints !== undefined &&
+        timeseriesDatapoints.length > 0 &&
+        assetIdsAndTimeseries !== undefined &&
+        assetIdsAndTimeseries.length > 0
+      ) {
+        const timeseriesDataForThisAsset = generateTimeseriesAndDatapointsFromTheAsset({
+          contextualizedAssetNode,
+          assetIdsAndTimeseries,
+          timeseriesDatapoints
+        });
 
-      if (timeseriesDataForThisAsset.length > 0) {
-        const timeseriesTriggerData: TriggerTypeData = {
-          type: 'timeseries',
-          timeseries: {
-            timeseriesWithDatapoints: timeseriesDataForThisAsset,
-            linkedAssets: contextualizedAssetNode
-          }
-        };
+        if (timeseriesDataForThisAsset.length > 0) {
+          const timeseriesTriggerData: TriggerTypeData = {
+            type: 'timeseries',
+            timeseries: {
+              timeseriesWithDatapoints: timeseriesDataForThisAsset,
+              linkedAssets: contextualizedAssetNode
+            }
+          };
 
-        triggerData.push(timeseriesTriggerData);
+          triggerData.push(timeseriesTriggerData);
+        }
       }
 
       const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
 
       if (finalGlobalOutputResult[0] ?? false) {
         const nodesFromThisAsset = assetMappings.filter(
-          (mapping) => mapping.assetId === contextualizedAssetNode.id
+          (item) => item.assetId === contextualizedAssetNode.id
         );
+
+        if (nodesFromThisAsset.length === 0) return [];
 
         // get the 3d nodes linked to the asset and with treeindex and subtreeRange
         const nodesAndRange: NodeAndRange[] = await getThreeDNodesFromAsset(
           nodesFromThisAsset,
           model
         );
-
         return nodesAndRange;
       }
     })
@@ -471,6 +481,7 @@ const getThreeDNodesFromAsset = async (
 ): Promise<NodeAndRange[]> => {
   return await Promise.all(
     nodesFromThisAsset.map(async (nodeFromAsset) => {
+
       const subtreeRange = await model.getSubtreeTreeIndices(nodeFromAsset.treeIndex);
       const node: NodeAndRange = {
         nodeId: nodeFromAsset.nodeId,
@@ -525,3 +536,8 @@ const convertExpressionStringMetadataKeyToLowerCase = (expression: Expression): 
 
   expression.trigger.key = expression.trigger.key.toLowerCase();
 };
+
+// eslint-disable-next-line @typescript-eslint/promise-function-async
+function delay(ms: number | undefined): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
