@@ -352,7 +352,7 @@ const analyzeNodesAgainstExpression = async ({
   expression: Expression;
   outputSelected: ColorRuleOutput;
 }): Promise<AssetStylingGroupAndStyleIndex> => {
-  await delay(1000);
+  await delay(300);
 
   const allTreeNodes = await Promise.all(
     contextualizedAssetNodes.map(async (contextualizedAssetNode) => {

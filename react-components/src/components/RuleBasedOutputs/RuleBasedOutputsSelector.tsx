@@ -51,6 +51,22 @@ export function RuleBasedOutputsSelector({
     );
   }, [assetMappings]);
 
+  const flatAssetsMappingsListPerModel = useMemo(() => {
+    const mappingsPerModel = new Map<CogniteCadModel, AssetMapping3D[] | undefined>();
+    models.forEach((model) => {
+      if (!(model instanceof CogniteCadModel)) {
+        return;
+      }
+      const flatAssetsMappingsList = assetMappings?.pages
+        .flatMap((item) => item.filter((item) => item.model.modelId === model.modelId))
+        .flatMap((item) => item.mappings)
+        .flatMap((node) => node.items);
+      mappingsPerModel.set(model, flatAssetsMappingsList);
+
+    });
+    return mappingsPerModel;
+  }, [assetMappings, models]);
+
   const timeseriesExternalIds = useMemo(() => {
     const expressions = ruleSet?.rulesWithOutputs
       .map((ruleWithOutput) => ruleWithOutput.rule.expression)
@@ -83,10 +99,7 @@ export function RuleBasedOutputsSelector({
             return;
           }
 
-          const flatAssetsMappingsList = assetMappings?.pages
-            .flatMap((item) => item.filter((item) => item.model.modelId === model.modelId))
-            .flatMap((item) => item.mappings)
-            .flatMap((node) => node.items);
+          const flatAssetsMappingsList = flatAssetsMappingsListPerModel.get(model) ?? [];
 
           const stylings = await initializeRuleBasedOutputs({
             model,
