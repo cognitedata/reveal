@@ -1,4 +1,4 @@
-# Building and teesting
+# Building and testing
 
 Do the following commands:
 
@@ -12,11 +12,11 @@ Instead of yarn build, use can build with types by:
 
     yarn tsc --noEmit
 
-When the StoryBook is open, goto `Architeture/Main`. The toolbar on the right hand side is the one I have made. Here some commands and tools are added.
+When the StoryBook is open, goto `Architecture/Main`. The toolbar on the right hand side is the one I have made. Here some commands and tools are added.
 
 # Motivation
 
-The objectives with this framework it that is should be easy to use and extend in the future. I hope all new related functiality will be developed using this framework. More is decribed in this document: https://docs.google.com/presentation/d/1Y50PeqoCS5BdWyDqRNNazeISy1SYTcx4QDcjeMKIm78/edit?usp=sharing
+The objectives with this framework it that is should be easy to use and extend in the future. I hope all new related functionality will be developed using this framework. More is described in this document: https://docs.google.com/presentation/d/1Y50PeqoCS5BdWyDqRNNazeISy1SYTcx4QDcjeMKIm78/edit?usp=sharing
 
 # Coding
 
@@ -35,13 +35,13 @@ You will probably find the coding style somewhat different than usually done in 
   - Static methods (if any)
   - Local functions, types or classes used in this file only
 
-- **Virual methods:**: Since TypeScript doesn't allow the virtual keyword, all functions are virtual. This is a weekness for the application developer. I have tried to mark function as virtual by comments. You should not override other function than this. A virtual function normally brings in uncessesary complexibility and should general be used by care.
+- **Virtual methods:**: Since TypeScript doesn't allow the virtual keyword, all functions are virtual. This is a weakness for the application developer. I have tried to mark function as virtual by comments. You should not override other function than this. A virtual function normally brings in unnecessary complexity and should general be used by care.
 
-  - Function with prefex `Core` are always virtual and protected. They can be overridden, but must call the same function for the base class. A function without the `Core` prefex is the one you should call from outside and is public. Experince shows that this pattern will make the code easier to maintain and extend in the future. For instance `remove/removeCore` and `initialize/initializeCore` in the `DomainObject`.
+  - Function with prefix `Core` are always virtual and protected. They can be overridden, but must call the same function for the base class. A function without the `Core` prefix is the one you should call from outside and is public. Experience shows that this pattern will make the code easier to maintain and extend in the future. For instance `remove/removeCore` and `initialize/initializeCore` in the `DomainObject`.
   - Overridden methods should alway be marked by the override keyword. You will unfortunate not get any linting error when you forget this.
   -
 
-- **Static methods and classes:** The linker don't like static method, epecially when the entire class have static method only. I wanted to use this more, but have used functions instead. I don't like this, because it doen't group similar function togeter. It will also be less readabble on the caller side, since you don't know what part of the code the function is coming from. In typescript we have for instance Math with act like a static class, but they use som magic to pretend it to be using interface.
+- **Static methods and classes:** The linker don't like static method, especially when the entire class have static method only. I wanted to use this more, but have used functions instead. I don't like this, because it does not group similar function together. It will also be less readable on the caller side, since you don't know what part of the code the function is coming from. In typescript we have for instance Math with act like a static class, but they use som magic to pretend it to be using interface.
 
 - **Reuse:** I try to reuse code whenever it is possible. Therefore you will find functions that are very small,
   often one liners. This ensures the complexity of the code to be low and increase readability on the caller side. For instance:
@@ -53,13 +53,13 @@ You will probably find the coding style somewhat different than usually done in 
 - **Single responsibility:** I try to give each class one single responsibility. Therefore I use several base classes, each class adds some complexity.
   Examples of this is `BaseView/ThreeView/GroupThreeView` which are all base classes. If they are merge to one single class, it will be too complex.
 
-- **Interpendence:** Try to keep must classes independed of other classes. For instance the tool should not know abount the views. Utility function and classes can used whenevery you like.
+- **Interdependence:** Try to keep must classes independent of other classes. For instance the tool should not know about the views. Utility function and classes can used whenever you like.
 
 - **Utility function and classes:** I have added som utility function/classes in `architecture/base/utilities`.
   - Some utility functions may be a duplicate of some function in a package we use. Please tell me.
   - Some utility classes you will see is like a duplicate, but is made by purpose. For instance `Range3` class which is almost the same as `THREE.Box`, but is far easier to work with.
-  - Some utility classes or function is already implemented in Reveal, and are similar. The reason for not reusing Reveal here is due to what we should expose out of Reveal and into Reveral-components. For the moment this is rather strick. Examples is `Vector3Pool` which is implemented both places. Also some of the color classes may seem to be similar. But all this is low level stuff, and is not related to any Reveal functionallity.
-  - I will remove unused utility function or classes when I feel ready for it. Most of them are imported file by file from the node-visualier project.
+  - Some utility classes or function is already implemented in Reveal, and are similar. The reason for not reusing Reveal here is due to what we should expose out of Reveal and into Reveal-components. For the moment this is rather strick. Examples is `Vector3Pool` which is implemented both places. Also some of the color classes may seem to be similar. But all this is low level stuff, and is not related to any Reveal functionality.
+  - I will remove unused utility function or classes when I feel ready for it. Most of them are imported file by file from the node-visualizer project.
 
 # Architecture Overview
 
@@ -105,7 +105,7 @@ Normally, when I follow this pattern, the renderTarget is a domainObject itself,
 
 ### architecture/base/commands
 
-- **BaseCommand**: Base class for all tools and commands. There are basically user actions. It contains all necessary information to create and update a button in the user interface, but it doesn't need or use React. The must important method to overide is `invokeCore`, which is called whewn the use press the button.A base commen can be checkable
+- **BaseCommand**: Base class for all tools and commands. There are basically user actions. It contains all necessary information to create and update a button in the user interface, but it doesn't need or use React. The must important method to override is `invokeCore`, which is called when the user presses the button.A base command can be checkable.
 
 - **RenderTargetCommand** I wanted `BaseCommand` should be independent of any type of connection to the rest of the system. This class only brings in the connection to the `RevealRenderTarget`.
 
@@ -123,13 +123,13 @@ This is a collection of most commonly used tools and commands:
 
 - **BaseView**: Represents a abstract base view class that provides common functionality for all types of views. This does not have any dependency to `three.js` and can be used in other types of views as well.
 
-- **ThreeView**: Represents an abstract base class for a `Three.js` view in the application. It adds basicly 2 things: Concept of bounding box and a pointer to the renderTarget (viewer). The bounding box is a lazy calculation. The reason for this object is that we sometimes can have a view without any `Object3D`, for instance if a view manipulates another view, for instance a texture on a surface.
+- **ThreeView**: Represents an abstract base class for a `Three.js` view in the application. It adds basically 2 things: Concept of bounding box and a pointer to the renderTarget (viewer). The bounding box is a lazy calculation. The reason for this object is that we sometimes can have a view without any `Object3D`, for instance if a view manipulates another view, for instance a texture on a surface.
 
-- **GroupThreeView**: Represents an abstract base class for a `Three.js` view where it holds a pointer to a `THREE.Group` object. This object is the root of the `Object3D`'s that can be added to the view. The most important method is a`addChildren()` to be overridden. Here is where the children of the group should be added. The class will administate the group and the children, and perform a lazy creation of these automatically. `GroupThreeView` implements the `CustomObject` which is injected into Reveal by `viewer.addCustomObject(this)` when the view is set to visible. It is removed from Reveal when view is hidden by `viewer.removeCustomObject(this)`. This magic should be hidden from the application developer. All concrete views I have made inherit from `GroupThreeView`.
+- **GroupThreeView**: Represents an abstract base class for a `Three.js` view where it holds a pointer to a `THREE.Group` object. This object is the root of the `Object3D`'s that can be added to the view. The most important method is a`addChildren()` to be overridden. Here is where the children of the group should be added. The class will administrate the group and the children, and perform a lazy creation of these automatically. `GroupThreeView` implements the `CustomObject` which is injected into Reveal by `viewer.addCustomObject(this)` when the view is set to visible. It is removed from Reveal when view is hidden by `viewer.removeCustomObject(this)`. This magic should be hidden from the application developer. All concrete views I have made inherit from `GroupThreeView`.
 
 ### architecture/base/domainObjectHelpers
 
-- **RenderStyle**: Is the base class for all renderstyle.
+- **RenderStyle**: Is the base class for all render styles.
 
 - **Changes**: All changes that can be applied on a domainObject. it uses symbols as the type, because it can easily be extended. It looks like an enum when unit it, since I have used a static class, and this is done by purpose.
 
@@ -145,7 +145,7 @@ Smaller files with utility classes and functions:
 
 - **architecture/base/utilities/colors:**
 
-  Color manipulation. Making various colormaps and 1d textures from color maps. Used mostly by the terrain visualization.
+  Color manipulation. Making various color maps and 1d textures from color maps. Used mostly by the terrain visualization.
 
 - **architecture/base/utilities/extensions:**
 
@@ -153,7 +153,7 @@ Smaller files with utility classes and functions:
 
 - **architecture/base/utilities/geometry:**
 
-  Some usefull geometry
+  Some useful geometry
 
 - **architecture/base/utilities/sprites:**
 
@@ -161,7 +161,7 @@ Smaller files with utility classes and functions:
 
 # Some concrete examples
 
-These are made to test the architecture but should when ready be used by any of Cognites applications:
+These are made to test the architecture but should when ready be used by any of Cognite's applications:
 
 ## architecture/concrete
 
