@@ -7,7 +7,7 @@ import { MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { MeasureBoxView } from './MeasureBoxView';
-import { Matrix4, Vector3 } from 'three';
+import { Color, Matrix4, Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
@@ -73,6 +73,7 @@ export class MeasureBoxDomainObject extends VisualDomainObject {
   public constructor(measureType: MeasureType) {
     super();
     this._measureType = measureType;
+    this.color = new Color(1, 0, 1);
   }
 
   // ==================================================

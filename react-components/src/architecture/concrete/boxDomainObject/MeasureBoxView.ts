@@ -60,6 +60,7 @@ export class MeasureBoxView extends GroupThreeView {
   // ==================================================
 
   private readonly _sprites: Array<Sprite | undefined> = [];
+  private readonly _visibleFaces: boolean[] = new Array(6); // Just for avoiding allocation
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -385,8 +386,8 @@ export class MeasureBoxView extends GroupThreeView {
     const cameraDirection = centerOfBox.sub(cameraPosition).normalize();
 
     // Calculate which face of the box are visible
-    const visibleFaces: boolean[] = new Array(6);
     const boxFace = new BoxFace(); // Due to reuse in both loops
+    const visibleFaces = this._visibleFaces;
     for (const face of BoxFace.getAllFaces(boxFace)) {
       const normal = boxFace.getNormal(newVector3());
       normal.applyMatrix4(rotationMatrix);

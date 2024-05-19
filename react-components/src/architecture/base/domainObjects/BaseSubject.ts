@@ -14,7 +14,7 @@ type NotifyDelegate = (change: DomainObjectChange) => void;
  * A subject is an abstract class that provides functionality for notifying views and
  * listeners about changes.
  */
-export abstract class Subject {
+export abstract class BaseSubject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

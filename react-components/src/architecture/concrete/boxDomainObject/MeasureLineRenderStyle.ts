@@ -14,7 +14,8 @@ export class MeasureLineRenderStyle extends RenderStyle {
   // ==================================================
 
   public colorType = ColorType.Specified;
-  public lineWidth = 4;
+  public lineWidth = 2;
+  public selectedLineWidth = 2;
   public textColor = WHITE_COLOR.clone();
   public textBgColor = new Color().setScalar(0.05); // Dark gray
   public relativeTextSize = 0.05; // Relative to diagonal of the box

@@ -6,7 +6,7 @@ import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject'
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { MeasureLineView } from './MeasureLineView';
-import { type Vector3 } from 'three';
+import { Color, type Vector3 } from 'three';
 import { MeasureType } from './MeasureType';
 import { MeasureLineRenderStyle } from './MeasureLineRenderStyle';
 
@@ -42,6 +42,7 @@ export class MeasureLineDomainObject extends VisualDomainObject {
   public constructor(measureType: MeasureType) {
     super();
     this._measureType = measureType;
+    this.color = new Color(1, 0, 0);
   }
 
   // ==================================================

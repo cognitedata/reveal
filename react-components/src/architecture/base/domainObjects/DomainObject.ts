@@ -14,16 +14,16 @@ import { getNextColor } from '../utilities/colors/getNextColor';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
-import { Subject } from './Subject';
+import { BaseSubject } from './BaseSubject';
 import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 
 /**
  * Represents an abstract base class for domain objects.
  * @abstract
- * @extends Subject
+ * @extends BaseSubject
  */
-export abstract class DomainObject extends Subject {
+export abstract class DomainObject extends BaseSubject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

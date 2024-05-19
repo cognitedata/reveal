@@ -114,12 +114,12 @@ export class BoxFace {
     return target.setComponent(this.index, this.sign * 0.5);
   }
 
-  public static *getAllFaces(boxFace?: BoxFace): Generator<BoxFace> {
-    if (boxFace === undefined) {
-      boxFace = new BoxFace();
+  public static *getAllFaces(target?: BoxFace): Generator<BoxFace> {
+    if (target === undefined) {
+      target = new BoxFace();
     }
-    for (boxFace.face = 0; boxFace.face < 6; boxFace.face++) {
-      yield boxFace;
+    for (target.face = 0; target.face < 6; target.face++) {
+      yield target;
     }
   }
 
