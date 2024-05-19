@@ -8,7 +8,7 @@ import { RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { Color } from 'three';
 import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
 
-export class BoxRenderStyle extends RenderStyle {
+export class MeasureBoxRenderStyle extends RenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -25,6 +25,6 @@ export class BoxRenderStyle extends RenderStyle {
   // ==================================================
 
   public override clone(): RenderStyle {
-    return cloneDeep<BoxRenderStyle>(this);
+    return cloneDeep<MeasureBoxRenderStyle>(this);
   }
 }

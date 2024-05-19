@@ -23,10 +23,10 @@ import {
   FrontSide,
   PerspectiveCamera
 } from 'three';
-import { BoxDomainObject, MIN_BOX_SIZE } from './BoxDomainObject';
+import { MeasureBoxDomainObject, MIN_BOX_SIZE } from './MeasureBoxDomainObject';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { BoxRenderStyle } from './BoxRenderStyle';
+import { MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
@@ -46,28 +46,32 @@ import {
 import { BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { Range1 } from '../../base/utilities/geometry/Range1';
+import { MeasureType } from './MeasureType';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
 const ARROW_AND_RING_COLOR = new Color(1, 1, 1);
+const TOP_FACE = new BoxFace(2);
+const CIRCULAR_SEGMENTS = 32;
 
-export class BoxThreeView extends GroupThreeView {
+export class MeasureBoxView extends GroupThreeView {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   private readonly _sprites: Array<Sprite | undefined> = [];
+  private readonly _visibleFaces: boolean[] = new Array(6); // Just for avoiding allocation
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected get boxDomainObject(): BoxDomainObject {
-    return super.domainObject as BoxDomainObject;
+  protected get boxDomainObject(): MeasureBoxDomainObject {
+    return super.domainObject as MeasureBoxDomainObject;
   }
 
-  protected get style(): BoxRenderStyle {
-    return super.style as BoxRenderStyle;
+  protected override get style(): MeasureBoxRenderStyle {
+    return super.style as MeasureBoxRenderStyle;
   }
 
   // ==================================================
@@ -81,6 +85,7 @@ export class BoxThreeView extends GroupThreeView {
     }
     if (
       change.isChanged(Changes.focus) ||
+      change.isChanged(Changes.selected) ||
       change.isChanged(Changes.renderStyle) ||
       change.isChanged(Changes.color)
     ) {
@@ -111,13 +116,11 @@ export class BoxThreeView extends GroupThreeView {
     const matrix = this.getMatrix();
 
     const { focusType } = boxDomainObject;
-    if (focusType !== BoxFocusType.None) {
-      this.addChild(this.createSolid(matrix));
-    }
+    this.addChild(this.createSolid(matrix));
     this.addChild(this.createLines(matrix));
-    if (focusType !== BoxFocusType.Pending && focusType !== BoxFocusType.None) {
-      this.addChild(this.createRotationCircle(matrix));
-      this.addResizeCircles(matrix);
+    if (boxDomainObject.isSelected && showMarkers(focusType)) {
+      this.addChild(this.createRotationRing(matrix));
+      this.addEdgeCircles(matrix);
     }
     this.addLabels(matrix);
   }
@@ -147,12 +150,15 @@ export class BoxThreeView extends GroupThreeView {
       return undefined;
     }
     const positionAtFace = newVector3(point).applyMatrix4(matrix.invert());
-    const realPosition = newVector3(point).applyMatrix4(
+    const boxFace = new BoxFace().fromPositionAtFace(positionAtFace);
+    if (!this.isFaceVisible(boxFace)) {
+      return undefined;
+    }
+    const cornerSign = new Vector3();
+    const cdfPosition = newVector3(point).applyMatrix4(
       CDF_TO_VIEWER_TRANSFORMATION.clone().invert()
     );
-    const boxFace = new BoxFace().fromPositionAtFace(positionAtFace);
-    const cornerSign = new Vector3();
-    const focusType = this.getPickedFocusType(realPosition, boxFace, cornerSign);
+    const focusType = this.getPickedFocusType(cdfPosition, boxFace, cornerSign);
     const customObjectIntersection: DomainObjectIntersection = {
       type: 'customObject',
       point,
@@ -225,7 +231,10 @@ export class BoxThreeView extends GroupThreeView {
     return result;
   }
 
-  private createDegreesLabel(matrix: Matrix4, spriteHeight: number): Sprite | undefined {
+  private createRotationLabel(matrix: Matrix4, spriteHeight: number): Sprite | undefined {
+    if (!this.isFaceVisible(TOP_FACE)) {
+      return undefined;
+    }
     const { boxDomainObject } = this;
     const degrees = radToDeg(boxDomainObject.zRotation);
     const text = degrees.toFixed(1);
@@ -236,46 +245,53 @@ export class BoxThreeView extends GroupThreeView {
     if (sprite === undefined) {
       return undefined;
     }
-    const faceCenter = new BoxFace(2).getCenter(newVector3());
+    const faceCenter = TOP_FACE.getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
+    faceCenter.y += spriteHeight / 2;
     sprite.position.copy(faceCenter);
     return sprite;
   }
 
   private createPendingLabel(matrix: Matrix4, spriteHeight: number): Sprite | undefined {
+    if (!this.isFaceVisible(TOP_FACE)) {
+      return undefined;
+    }
     const sprite = createSprite('Pending', this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
     }
-    const faceCenter = new BoxFace(2).getCenter(newVector3());
+    const faceCenter = TOP_FACE.getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
+    faceCenter.y += spriteHeight / 2;
     sprite.position.copy(faceCenter);
     return sprite;
   }
 
-  private createRotationCircle(matrix: Matrix4): Mesh {
+  private createRotationRing(matrix: Matrix4): Mesh | undefined {
+    if (!this.isFaceVisible(TOP_FACE)) {
+      return undefined;
+    }
     const { boxDomainObject } = this;
     const { focusType } = boxDomainObject;
-    const face = new BoxFace(2);
-    const radius = this.getFaceRadius(face);
+    const radius = this.getFaceRadius(TOP_FACE);
 
     const outerRadius = RELATIVE_ROTATION_RADIUS.max * radius;
     const innerRadius = RELATIVE_ROTATION_RADIUS.min * radius;
-    const geometry = new RingGeometry(innerRadius, outerRadius, 32);
+    const geometry = new RingGeometry(innerRadius, outerRadius, CIRCULAR_SEGMENTS);
 
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, boxDomainObject, focusType === BoxFocusType.Rotate);
-    material.clippingPlanes = this.createClippingPlanes(matrix, 2);
+    updateMarkerMaterial(material, boxDomainObject, focusType === BoxFocusType.RotationRing);
+    material.clippingPlanes = this.createClippingPlanes(matrix, TOP_FACE.index);
     const mesh = new Mesh(geometry, material);
 
-    const center = face.getCenter(newVector3());
+    const center = TOP_FACE.getCenter(newVector3());
     center.applyMatrix4(matrix);
     mesh.position.copy(center);
     mesh.rotateX(-Math.PI / 2);
     return mesh;
   }
 
-  private createResizeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
+  private createEdgeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
     const { boxDomainObject } = this;
     const adjecentSize1 = boxDomainObject.size.getComponent(face.tangentIndex1);
     if (adjecentSize1 <= MIN_BOX_SIZE) {
@@ -286,7 +302,7 @@ export class BoxThreeView extends GroupThreeView {
       return undefined;
     }
     const radius = RELATIVE_RESIZE_RADIUS * this.getFaceRadius(face);
-    const geometry = new CircleGeometry(radius, 32);
+    const geometry = new CircleGeometry(radius, CIRCULAR_SEGMENTS);
     material.transparent = true;
     material.depthWrite = false;
     const mesh = new Mesh(geometry, material);
@@ -314,8 +330,8 @@ export class BoxThreeView extends GroupThreeView {
 
   private createClippingPlanes(matrix: Matrix4, faceIndex: number): Plane[] {
     const planes: Plane[] = [];
-    const boxFace = new BoxFace();
-    for (boxFace.face = 0; boxFace.face < 6; boxFace.face++) {
+
+    for (const boxFace of BoxFace.getAllFaces()) {
       if (boxFace.index === faceIndex) {
         continue;
       }
@@ -352,15 +368,15 @@ export class BoxThreeView extends GroupThreeView {
     }
     this.updateLabels(this.renderTarget.camera);
     const { focusType } = boxDomainObject;
-    if (focusType === BoxFocusType.Pending) {
+    if (focusType === BoxFocusType.Pending && boxDomainObject.hasArea) {
       this.addChild(this.createPendingLabel(matrix, spriteHeight));
-    } else if (focusType !== BoxFocusType.ResizeByEdge && focusType !== BoxFocusType.Translate) {
-      this.addChild(this.createDegreesLabel(matrix, spriteHeight));
+    } else if (showRotationLabel(focusType)) {
+      this.addChild(this.createRotationLabel(matrix, spriteHeight));
     }
   }
 
   private updateLabels(camera: Camera): void {
-    const { boxDomainObject } = this;
+    const { boxDomainObject, style } = this;
     const matrix = this.getMatrix();
 
     const rotationMatrix = this.getRotationMatrix();
@@ -370,14 +386,14 @@ export class BoxThreeView extends GroupThreeView {
     const cameraDirection = centerOfBox.sub(cameraPosition).normalize();
 
     // Calculate which face of the box are visible
-    const visibleFaces: boolean[] = new Array(6);
-    const boxFace = new BoxFace();
-    for (boxFace.face = 0; boxFace.face < visibleFaces.length; boxFace.face++) {
+    const boxFace = new BoxFace(); // Due to reuse in both loops
+    const visibleFaces = this._visibleFaces;
+    for (const face of BoxFace.getAllFaces(boxFace)) {
       const normal = boxFace.getNormal(newVector3());
       normal.applyMatrix4(rotationMatrix);
-      visibleFaces[boxFace.face] = normal.dot(cameraDirection) < 0;
+      visibleFaces[face.face] = normal.dot(cameraDirection) < 0;
     }
-    const labelHeight = this.getTextHeight(this.style.relativeTextSize);
+    const spriteHeight = this.getTextHeight(style.relativeTextSize);
 
     // If the 2 adjecent faces are visible, show the sprite along the edge
     for (let index = 0; index < this._sprites.length; index++) {
@@ -392,6 +408,7 @@ export class BoxThreeView extends GroupThreeView {
           continue;
         }
         boxFace.face = face1;
+        const showFace1 = this.isFaceVisible(boxFace);
         const faceCenter1 = boxFace.getCenter(newVector3());
         for (let j = 0; j < 2; j++) {
           const face2 = (index + (j === 0 ? 2 : 5)) % 6;
@@ -399,12 +416,16 @@ export class BoxThreeView extends GroupThreeView {
             continue;
           }
           boxFace.face = face2;
+          if (!showFace1 && !this.isFaceVisible(boxFace)) {
+            continue;
+          }
           const faceCenter2 = boxFace.getCenter(newVector3());
           const edgeCenter = faceCenter2.add(faceCenter1);
           edgeCenter.applyMatrix4(matrix);
+          edgeCenter.y += spriteHeight / 2;
 
           // Move the sprite slightly away from the box to avoid z-fighting
-          edgeCenter.addScaledVector(cameraDirection, -labelHeight / 4);
+          edgeCenter.addScaledVector(cameraDirection, -spriteHeight / 4);
           sprite.position.copy(edgeCenter);
           sprite.visible = true;
           break;
@@ -416,24 +437,26 @@ export class BoxThreeView extends GroupThreeView {
     }
   }
 
-  protected addResizeCircles(matrix: Matrix4): void {
+  private addEdgeCircles(matrix: Matrix4): void {
     let selectedFace = this.boxDomainObject.focusFace;
-    if (this.boxDomainObject.focusType !== BoxFocusType.ResizeByEdge) {
+    if (this.boxDomainObject.focusType !== BoxFocusType.Face) {
       selectedFace = undefined;
     }
     const material = new MeshPhongMaterial();
     updateMarkerMaterial(material, this.boxDomainObject, false);
-    const boxFace = new BoxFace();
-    for (boxFace.face = 0; boxFace.face < 6; boxFace.face++) {
+    for (const boxFace of BoxFace.getAllFaces()) {
+      if (!this.isFaceVisible(boxFace)) {
+        continue;
+      }
       // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
       if (selectedFace === undefined || !selectedFace.equals(boxFace)) {
-        this.addChild(this.createResizeCircle(matrix, material, boxFace));
+        this.addChild(this.createEdgeCircle(matrix, material, boxFace));
       }
     }
-    if (selectedFace !== undefined) {
+    if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
       updateMarkerMaterial(material, this.boxDomainObject, true);
-      this.addChild(this.createResizeCircle(matrix, material, selectedFace));
+      this.addChild(this.createEdgeCircle(matrix, material, selectedFace));
     }
   }
 
@@ -458,17 +481,17 @@ export class BoxThreeView extends GroupThreeView {
     const corner = this.getCorner(outputCornerSign, boxFace);
 
     if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
-      return BoxFocusType.ResizeByEdge;
+      return BoxFocusType.Face;
     }
     if (realPosition.distanceTo(corner) < 0.2 * this.getFaceRadius(boxFace)) {
-      return BoxFocusType.ResizeByCorner;
+      return BoxFocusType.Corner;
     }
     if (boxFace.face === 2) {
       if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
-        return BoxFocusType.Rotate;
+        return BoxFocusType.RotationRing;
       }
     }
-    return BoxFocusType.Translate;
+    return BoxFocusType.Body;
   }
 
   private getCornerSign(realPosition: Vector3, boxFace: BoxFace): Vector3 {
@@ -497,6 +520,42 @@ export class BoxThreeView extends GroupThreeView {
     corner.applyMatrix4(matrix);
     return corner;
   }
+
+  private isFaceVisible(boxFace: BoxFace): boolean {
+    const { boxDomainObject } = this;
+    switch (boxDomainObject.measureType) {
+      case MeasureType.VerticalArea:
+        return boxFace.index === 1; // Y Face visible
+
+      case MeasureType.HorizontalArea:
+        return boxFace.index === 2; // Z face visible
+    }
+    return true;
+  }
+}
+
+// ==================================================
+// PRIVATE FUNCTIONS: Update materials
+// ==================================================
+
+function showRotationLabel(focusType: BoxFocusType): boolean {
+  switch (focusType) {
+    case BoxFocusType.Face:
+    case BoxFocusType.Body:
+    case BoxFocusType.Pending:
+      return false;
+    default:
+      return true;
+  }
+}
+
+function showMarkers(focusType: BoxFocusType): boolean {
+  switch (focusType) {
+    case BoxFocusType.Pending:
+      return false;
+    default:
+      return true;
+  }
 }
 
 // ==================================================
@@ -505,15 +564,17 @@ export class BoxThreeView extends GroupThreeView {
 
 function updateSolidMaterial(
   material: MeshPhongMaterial,
-  boxDomainObject: BoxDomainObject,
-  style: BoxRenderStyle
+  boxDomainObject: MeasureBoxDomainObject,
+  style: MeasureBoxRenderStyle
 ): void {
   const color = boxDomainObject.getColorByColorType(style.colorType);
-  material.polygonOffset = boxDomainObject.hasFocus;
+  const selected = boxDomainObject.isSelected;
+  const opacity = selected ? style.opacity : style.opacity / 2;
+  material.polygonOffset = true;
   material.polygonOffsetFactor = 1;
   material.polygonOffsetUnits = 4.0;
   material.color = color;
-  material.opacity = style.opacityUse ? style.opacity : 1;
+  material.opacity = style.opacityUse ? opacity : 1;
   material.transparent = true;
   material.emissive = color;
   material.emissiveIntensity = 0.2;
@@ -524,8 +585,8 @@ function updateSolidMaterial(
 
 function updateLineSegmentsMaterial(
   material: LineBasicMaterial,
-  boxDomainObject: BoxDomainObject,
-  style: BoxRenderStyle
+  boxDomainObject: MeasureBoxDomainObject,
+  style: MeasureBoxRenderStyle
 ): void {
   const color = boxDomainObject.getColorByColorType(style.colorType);
   material.color = color;
@@ -535,11 +596,11 @@ function updateLineSegmentsMaterial(
 
 function updateMarkerMaterial(
   material: MeshPhongMaterial,
-  boxDomainObject: BoxDomainObject,
+  boxDomainObject: MeasureBoxDomainObject,
   selected: boolean
 ): void {
   material.color = ARROW_AND_RING_COLOR;
-  material.polygonOffset = boxDomainObject.hasFocus;
+  material.polygonOffset = true;
   material.polygonOffsetFactor = 1;
   material.polygonOffsetUnits = 4.0;
   material.transparent = true;
@@ -554,7 +615,11 @@ function updateMarkerMaterial(
 // PRIVATE FUNCTIONS: Create object3D's
 // ==================================================
 
-function createSprite(text: string, style: BoxRenderStyle, height: number): Sprite | undefined {
+function createSprite(
+  text: string,
+  style: MeasureBoxRenderStyle,
+  height: number
+): Sprite | undefined {
   const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
   if (result === undefined) {
     return undefined;

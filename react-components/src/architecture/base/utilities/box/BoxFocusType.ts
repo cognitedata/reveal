@@ -3,11 +3,10 @@
  */
 
 export enum BoxFocusType {
-  None,
-  Rotate,
-  Translate,
-  ResizeByEdge,
-  ResizeByCorner,
-  Pending, // This only indicates focus during creation
-  Any // This only indicates focus when it is created
+  Body, // Pick on any other places
+  Face,
+  Corner,
+  RotationRing,
+  Pending, // Focus during creation
+  JustCreated // Focus when it is created, but not picked on any particalar place
 }

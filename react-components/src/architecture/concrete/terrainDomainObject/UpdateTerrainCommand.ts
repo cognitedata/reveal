@@ -24,7 +24,7 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
     return { key: 'UNKNOWN', fallback: 'Change the visible terrain' };
   }
 
-  public get isEnabled(): boolean {
+  public override get isEnabled(): boolean {
     const { renderTarget } = this;
     const { rootDomainObject } = renderTarget;
     const terrainDomainObject = rootDomainObject.getDescendantByTypeAndName(

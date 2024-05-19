@@ -45,7 +45,7 @@ export class TerrainThreeView extends GroupThreeView {
     return super.domainObject as TerrainDomainObject;
   }
 
-  protected get style(): TerrainRenderStyle {
+  protected override get style(): TerrainRenderStyle {
     return super.style as TerrainRenderStyle;
   }
 
@@ -172,7 +172,6 @@ export class TerrainThreeView extends GroupThreeView {
       return undefined;
     }
     const service = new ContouringService(style.increment);
-
     const contoursBuffer = service.createContoursAsXyzArray(grid);
     if (contoursBuffer.length === 0) {
       return undefined;

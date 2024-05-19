@@ -12,7 +12,7 @@ import {
   type IFlexibleCameraManager
 } from '@cognite/reveal';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
-import { NavigationTool } from '../concreteCommands/NavigationTool';
+import { NavigationTool } from '../commands/NavigationTool';
 import {
   Vector3,
   AmbientLight,

@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class Changes {
   // States changed
   public static readonly visibleState: symbol = Symbol('visibleState');

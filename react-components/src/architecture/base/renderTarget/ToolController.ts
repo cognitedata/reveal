@@ -41,7 +41,6 @@ export class ToolControllers extends PointerEvents {
   // OVERRIDES of PointerEvents
   // ================================================
 
-  // eslint-disable-next-line @typescript-eslint/class-literal-property-style
   public override get isEnabled(): boolean {
     return true;
   }

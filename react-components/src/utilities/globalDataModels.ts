@@ -5,7 +5,8 @@ import { type DmsUniqueIdentifier, type Source } from './FdmSDK';
 
 export const SYSTEM_SPACE_3D_SCHEMA = 'cdf_3d_schema'; // Data model, views, containers and types for edges
 
-export const INSTANCE_SPACE_3D_DATA = 'cog_3d_data'; // Instances of 3D models
+export const SYSTEM_SPACE_3D_MODEL_ID = 'Cdf3dModel';
+export const SYSTEM_SPACE_3D_MODEL_VERSION = '1';
 
 export const SYSTEM_3D_NODE_TYPE: DmsUniqueIdentifier = {
   externalId: 'Cdf3dEntity',

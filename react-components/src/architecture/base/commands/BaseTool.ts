@@ -3,9 +3,13 @@
  * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
-import { Raycaster, type Vector2 } from 'three';
+import { type Ray, Raycaster, type Vector2 } from 'three';
 import { RenderTargetCommand } from './RenderTargetCommand';
-import { type CustomObjectIntersection, type AnyIntersection } from '@cognite/reveal';
+import {
+  type CustomObjectIntersection,
+  type AnyIntersection,
+  CDF_TO_VIEWER_TRANSFORMATION
+} from '@cognite/reveal';
 import { GroupThreeView } from '../views/GroupThreeView';
 import {
   type DomainObjectIntersection,
@@ -145,6 +149,14 @@ export abstract class BaseTool extends RenderTargetCommand {
     const raycaster = new Raycaster();
     raycaster.setFromCamera(normalizedCoords, renderTarget.camera);
     return raycaster;
+  }
+
+  protected getRay(event: PointerEvent | WheelEvent, convertToCdf: boolean = false): Ray {
+    const ray = this.getRaycaster(event).ray;
+    if (convertToCdf) {
+      ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    }
+    return ray;
   }
 
   protected getNormalizedPixelCoordinates(event: PointerEvent | WheelEvent): Vector2 {

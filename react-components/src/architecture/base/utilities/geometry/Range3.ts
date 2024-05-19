@@ -98,6 +98,22 @@ export class Range3 {
     return `(X: ${this.x.toString()}, Y: ${this.y.toString()}, Z: ${this.z.toString()})`;
   }
 
+  public getMin(target: Vector3): Vector3 {
+    return target.set(this.x.min, this.y.min, this.z.min);
+  }
+
+  public getMax(target: Vector3): Vector3 {
+    return target.set(this.x.max, this.y.max, this.z.max);
+  }
+
+  public getDelta(target: Vector3): Vector3 {
+    return target.set(this.x.delta, this.y.delta, this.z.delta);
+  }
+
+  public getCenter(target: Vector3): Vector3 {
+    return target.set(this.x.center, this.y.center, this.z.center);
+  }
+
   public getBox(target: Box3): Box3 {
     target.min.set(this.x.min, this.y.min, this.z.min);
     target.max.set(this.x.max, this.y.max, this.z.max);

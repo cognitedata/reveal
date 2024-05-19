@@ -91,12 +91,4 @@ export abstract class BaseView {
   public dispose(): void {
     this._domainObject = undefined;
   }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  public isOwner(domainObject: DomainObject): boolean {
-    return this._domainObject === domainObject;
-  }
 }
