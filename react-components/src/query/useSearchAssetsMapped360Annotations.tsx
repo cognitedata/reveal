@@ -14,6 +14,7 @@ import { chunk, uniqBy } from 'lodash';
 import { isDefined } from '../utilities/isDefined';
 import { getAssetIdOrExternalIdFromImage360Annotation } from '../components/CacheProvider/utils';
 import { type Image360AnnotationMappedAssetData } from '../hooks/types';
+import { is360ImageAnnotation } from '../utilities/is360ImageAnnotation';
 
 export const useAllAssetsMapped360Annotations = (
   sdk: CogniteClient,
@@ -197,7 +198,11 @@ async function get360ImageAnnotations(
           limit: 1000
         })
         .autoPagingToArray({ limit: Infinity });
-      return annotations;
+
+      const filteredAnnotations = annotations.filter((annotation) =>
+        is360ImageAnnotation(annotation.data)
+      );
+      return filteredAnnotations;
     })
   );
 
