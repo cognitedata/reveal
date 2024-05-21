@@ -50,6 +50,10 @@ export abstract class BaseCreator {
   // VIRTUAL METHODS
   // ==================================================
 
+  public get preferIntersection(): boolean {
+    return false;
+  }
+
   public abstract get domainObject(): DomainObject;
 
   public abstract get maximumPointCount(): number;

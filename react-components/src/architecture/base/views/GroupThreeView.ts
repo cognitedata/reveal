@@ -67,6 +67,9 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
     const intersection = intersectInput.raycaster.intersectObject(this.object, true);
+    if (intersection === undefined || intersection.length === 0) {
+      return undefined;
+    }
     const { point, distance } = intersection[0];
     if (closestDistance !== undefined && closestDistance < distance) {
       return undefined;

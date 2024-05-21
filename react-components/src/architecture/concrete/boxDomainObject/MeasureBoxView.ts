@@ -448,7 +448,6 @@ export class MeasureBoxView extends GroupThreeView {
       if (!this.isFaceVisible(boxFace)) {
         continue;
       }
-      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
       if (selectedFace === undefined || !selectedFace.equals(boxFace)) {
         this.addChild(this.createEdgeCircle(matrix, material, boxFace));
       }

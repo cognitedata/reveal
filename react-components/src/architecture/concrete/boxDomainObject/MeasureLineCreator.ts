@@ -34,7 +34,11 @@ export class MeasureLineCreator extends BaseCreator {
   // OVERRIDES
   // ==================================================
 
-  public get domainObject(): DomainObject {
+  public override get preferIntersection(): boolean {
+    return true;
+  }
+
+  public override get domainObject(): DomainObject {
     return this._domainObject;
   }
 

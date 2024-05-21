@@ -148,7 +148,7 @@ export class MeasurementTool extends BaseEditTool {
 
   public override async onHover(event: PointerEvent): Promise<void> {
     const { _creator: creator } = this;
-    if (creator !== undefined) {
+    if (creator !== undefined && !creator.preferIntersection) {
       // Hover in the "air"
       const ray = this.getRay(event);
       if (creator.addPoint(ray, undefined, true)) {
@@ -158,6 +158,14 @@ export class MeasurementTool extends BaseEditTool {
     }
     const intersection = await this.getIntersection(event);
     if (intersection === undefined) {
+      if (creator !== undefined && creator.preferIntersection) {
+        // Hover in the "air"
+        const ray = this.getRay(event);
+        if (creator.addPoint(ray, undefined, true)) {
+          this.setDefaultCursor();
+          return;
+        }
+      }
       this.renderTarget.setNavigateCursor();
       super.onHover(event);
       return;
@@ -206,7 +214,7 @@ export class MeasurementTool extends BaseEditTool {
 
     const { _creator: creator } = this;
     // Click in the "air"
-    if (creator !== undefined) {
+    if (creator !== undefined && !creator.preferIntersection) {
       const ray = this.getRay(event);
       if (creator.addPoint(ray, undefined, false)) {
         if (creator.isFinished) {
