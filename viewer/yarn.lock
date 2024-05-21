@@ -477,7 +477,6 @@ __metadata:
     "@types/stats": "npm:^0.16.30"
     "@types/three": "npm:^0.164.0"
     "@types/tween.js": "npm:^18.6.1"
-    "@types/uuid": "npm:^9.0.8"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.1"
     "@typescript-eslint/parser": "npm:^7.7.1"
     assert: "npm:^2.1.0"
@@ -2057,13 +2056,6 @@ __metadata:
   dependencies:
     "@tweenjs/tween.js": "npm:*"
   checksum: 10/70deb8e22a4fca45487ef871bb94bcf9d37f247490994c74f39a52690c49056fcbc0c4894c63a04a3db9e09dd1e12c5248e91fac4e73fa87c0ecb37d379ec311
-  languageName: node
-  linkType: hard
-
-"@types/uuid@npm:^9.0.8":
-  version: 9.0.8
-  resolution: "@types/uuid@npm:9.0.8"
-  checksum: 10/b8c60b7ba8250356b5088302583d1704a4e1a13558d143c549c408bf8920535602ffc12394ede77f8a8083511b023704bc66d1345792714002bfa261b17c5275
   languageName: node
   linkType: hard
 
