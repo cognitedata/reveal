@@ -2,38 +2,37 @@
  * Copyright 2024 Cognite AS
  */
 
-/* eslint-disable @typescript-eslint/consistent-type-imports */
 import {
   Mesh,
   MeshPhongMaterial,
-  Object3D,
+  type Object3D,
   BoxGeometry,
   DoubleSide,
   LineSegments,
   LineBasicMaterial,
   Vector3,
-  Matrix4,
+  type Matrix4,
   RingGeometry,
   Color,
-  Sprite,
-  Camera,
+  type Sprite,
+  type Camera,
   CircleGeometry,
-  Material,
+  type Material,
   Plane,
   FrontSide,
-  PerspectiveCamera
+  type PerspectiveCamera
 } from 'three';
-import { MeasureBoxDomainObject, MIN_BOX_SIZE } from './MeasureBoxDomainObject';
-import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
+import { type MeasureBoxDomainObject, MIN_BOX_SIZE } from './MeasureBoxDomainObject';
+import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
+import { type MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
-  CustomObjectIntersectInput,
-  CustomObjectIntersection
+  type CustomObjectIntersectInput,
+  type CustomObjectIntersection
 } from '@cognite/reveal';
-import { DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
 import { clear } from '../../base/utilities/extensions/arrayExtensions';
@@ -271,7 +270,7 @@ export class MeasureBoxView extends GroupThreeView {
     if (!this.isFaceVisible(TOP_FACE)) {
       return undefined;
     }
-    const { boxDomainObject } = this;
+    const { boxDomainObject, style } = this;
     const { focusType } = boxDomainObject;
     const radius = this.getFaceRadius(TOP_FACE);
 
@@ -280,7 +279,7 @@ export class MeasureBoxView extends GroupThreeView {
     const geometry = new RingGeometry(innerRadius, outerRadius, CIRCULAR_SEGMENTS);
 
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, boxDomainObject, focusType === BoxFocusType.RotationRing);
+    updateMarkerMaterial(material, boxDomainObject, style, focusType === BoxFocusType.RotationRing);
     material.clippingPlanes = this.createClippingPlanes(matrix, TOP_FACE.index);
     const mesh = new Mesh(geometry, material);
 
@@ -438,12 +437,13 @@ export class MeasureBoxView extends GroupThreeView {
   }
 
   private addEdgeCircles(matrix: Matrix4): void {
-    let selectedFace = this.boxDomainObject.focusFace;
+    const { boxDomainObject, style } = this;
+    let selectedFace = boxDomainObject.focusFace;
     if (this.boxDomainObject.focusType !== BoxFocusType.Face) {
       selectedFace = undefined;
     }
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, this.boxDomainObject, false);
+    updateMarkerMaterial(material, boxDomainObject, style, false);
     for (const boxFace of BoxFace.getAllFaces()) {
       if (!this.isFaceVisible(boxFace)) {
         continue;
@@ -455,7 +455,7 @@ export class MeasureBoxView extends GroupThreeView {
     }
     if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
-      updateMarkerMaterial(material, this.boxDomainObject, true);
+      updateMarkerMaterial(material, boxDomainObject, style, true);
       this.addChild(this.createEdgeCircle(matrix, material, selectedFace));
     }
   }
@@ -581,6 +581,7 @@ function updateSolidMaterial(
   material.side = DoubleSide;
   material.flatShading = true;
   material.depthWrite = false;
+  material.depthTest = style.depthTest;
 }
 
 function updateLineSegmentsMaterial(
@@ -592,11 +593,13 @@ function updateLineSegmentsMaterial(
   material.color = color;
   material.transparent = true;
   material.depthWrite = false;
+  material.depthTest = style.depthTest;
 }
 
 function updateMarkerMaterial(
   material: MeshPhongMaterial,
   boxDomainObject: MeasureBoxDomainObject,
+  style: MeasureBoxRenderStyle,
   selected: boolean
 ): void {
   material.color = ARROW_AND_RING_COLOR;
@@ -609,6 +612,7 @@ function updateMarkerMaterial(
   material.side = FrontSide;
   material.flatShading = true;
   material.depthWrite = false;
+  material.depthTest = style.depthTest;
 }
 
 // ==================================================
@@ -627,6 +631,7 @@ function createSprite(
   result.material.depthTest = true;
   result.material.transparent = true;
   result.material.opacity = 0.75;
+  result.material.depthTest = style.depthTest;
   return result;
 }
 

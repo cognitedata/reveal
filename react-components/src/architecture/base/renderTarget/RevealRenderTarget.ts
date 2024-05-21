@@ -2,10 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-/* eslint-disable @typescript-eslint/consistent-type-imports */
-
 import {
-  CameraManager,
+  type CameraManager,
   CustomObject,
   isFlexibleCameraManager,
   type Cognite3DViewer,
@@ -17,9 +15,9 @@ import {
   Vector3,
   AmbientLight,
   DirectionalLight,
-  PerspectiveCamera,
-  Box3,
-  WebGLRenderer
+  type PerspectiveCamera,
+  type Box3,
+  type WebGLRenderer
 } from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';

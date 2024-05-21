@@ -2,36 +2,35 @@
  * Copyright 2024 Cognite AS
  */
 
-/* eslint-disable @typescript-eslint/consistent-type-imports */
 import {
   BufferGeometry,
-  DataTexture,
+  type DataTexture,
   DoubleSide,
   Float32BufferAttribute,
   LineBasicMaterial,
   LineSegments,
   Mesh,
   MeshPhongMaterial,
-  Color,
-  Object3D,
+  type Color,
+  type Object3D,
   Box3
 } from 'three';
 import { ContouringService } from './geometry/ContouringService';
-import { TerrainDomainObject } from './TerrainDomainObject';
-import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
+import { type TerrainDomainObject } from './TerrainDomainObject';
+import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { RegularGrid2Buffers } from './geometry/RegularGrid2Buffers';
 import {
   create1DTextureWithContours,
   create1DTexture
 } from '../../base/utilities/colors/create1DTexture';
-import { TerrainRenderStyle } from './TerrainRenderStyle';
+import { type TerrainRenderStyle } from './TerrainRenderStyle';
 import { ColorType } from '../../base/domainObjectsHelpers/ColorType';
 import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
 import { getColorMap } from '../../base/utilities/colors/colorMaps';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { RegularGrid2 } from './geometry/RegularGrid2';
+import { type RegularGrid2 } from './geometry/RegularGrid2';
 
 const SOLID_NAME = 'Solid';
 const CONTOURS_NAME = 'Contour';

@@ -8,7 +8,7 @@ import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
+import { MeasureLineRenderStyle } from './MeasureLineRenderStyle';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
@@ -26,8 +26,8 @@ export class MeasureLineView extends GroupThreeView {
     return super.domainObject as MeasureLineDomainObject;
   }
 
-  protected override get style(): MeasureBoxRenderStyle {
-    return super.style as MeasureBoxRenderStyle;
+  protected override get style(): MeasureLineRenderStyle {
+    return super.style as MeasureLineRenderStyle;
   }
 
   // ==================================================
@@ -56,14 +56,36 @@ export class MeasureLineView extends GroupThreeView {
   // ==================================================
 
   protected override addChildren(): void {
-    const { lineDomainObject } = this;
-    this.addChild(createWireframe(lineDomainObject));
+    this.addChild(this.createWireframe());
     this.addLabels();
   }
 
   // ==================================================
   // INSTANCE METHODS:
   // ==================================================
+
+  private createWireframe(): Wireframe | undefined {
+    const { lineDomainObject, style } = this;
+    const vertices = createVertices(lineDomainObject);
+    if (vertices === undefined) {
+      return undefined;
+    }
+    const color = lineDomainObject.getColorByColorType(style.colorType);
+    const linewidth = lineDomainObject.isSelected ? style.selectedLineWidth : style.lineWidth;
+    const geometry = new LineSegmentsGeometry().setPositions(vertices);
+    const material = new LineMaterial({
+      linewidth: linewidth / 50,
+      color,
+      resolution: new Vector2(1000, 1000),
+      worldUnits: true,
+      depthTest: style.depthTest
+    });
+    return new Wireframe(geometry, material);
+
+    // Alternative:
+    // https://discourse.threejs.org/t/how-do-i-align-a-cylinder-along-an-axis/30860
+    //  import { BufferGeometryUtils} from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+  }
 
   private addLabels(): void {
     const { lineDomainObject, style } = this;
@@ -114,23 +136,6 @@ export class MeasureLineView extends GroupThreeView {
 // PRIVATE FUNCTIONS: Create object3D's
 // ==================================================
 
-function createWireframe(domainObject: MeasureLineDomainObject): Wireframe | undefined {
-  const vertices = createVertices(domainObject);
-  if (vertices === undefined) {
-    return undefined;
-  }
-  const style = domainObject.renderStyle;
-  const color = domainObject.getColorByColorType(style.colorType);
-  const linewidth = domainObject.isSelected ? style.selectedLineWidth : style.lineWidth;
-  const geometry = new LineSegmentsGeometry().setPositions(vertices);
-  const material = new LineMaterial({
-    linewidth,
-    color,
-    resolution: new Vector2(1000, 1000)
-  });
-  return new Wireframe(geometry, material);
-}
-
 function createVertices(domainObject: MeasureLineDomainObject): number[] | undefined {
   const { points } = domainObject;
   const { length } = points;
@@ -154,7 +159,7 @@ function createVertices(domainObject: MeasureLineDomainObject): number[] | undef
 
 function createSprite(
   text: string,
-  style: MeasureBoxRenderStyle,
+  style: MeasureLineRenderStyle,
   height: number
 ): Sprite | undefined {
   const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
@@ -164,5 +169,6 @@ function createSprite(
   result.material.depthTest = true;
   result.material.transparent = true;
   result.material.opacity = 0.75;
+  result.material.depthTest = style.depthTest;
   return result;
 }

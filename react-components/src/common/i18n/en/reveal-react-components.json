@@ -59,6 +59,7 @@
   "SHOW_OR_HIDE_AXIS": "Show or hide axis",
   "DELETE": "Delete",
   "COPY_TO_CLIPBOARD": "Copy to clipboard",
+  "MEASUREMENTS_SHOW_ON_TOP": "Show all measurements on top",
   "MEASUREMENTS": "Measurements",
   "MEASUREMENTS_HEIGHT": "Height",
   "MEASUREMENTS_DEPTH": "Depth",

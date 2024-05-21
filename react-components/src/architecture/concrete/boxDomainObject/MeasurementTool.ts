@@ -15,6 +15,10 @@ import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { MeasureLineCreator } from './MeasureLineCreator';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
+import { getAnyMeasureDomainObject, getMeasurementDomainObjects } from './MeasurementFunctions';
+import { MeasureRenderStyle } from './MeasureRenderStyle';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
+import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -122,7 +126,7 @@ export class MeasurementTool extends BaseEditTool {
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
     if (down && event.key === 'Delete') {
-      for (const domainObject of this.getMeasurementDomainObjects()) {
+      for (const domainObject of getMeasurementDomainObjects(this.renderTarget)) {
         if (!domainObject.isSelected) {
           continue;
         }
@@ -222,8 +226,10 @@ export class MeasurementTool extends BaseEditTool {
     if (creator === undefined) {
       const creator = (this._creator = this.createCreator());
       if (creator.addPoint(ray, intersection.point, false)) {
-        rootDomainObject.addChildInteractive(creator.domainObject);
-        creator.domainObject.setVisibleInteractive(true, renderTarget);
+        const { domainObject } = creator;
+        initializeStyle(domainObject, renderTarget);
+        rootDomainObject.addChildInteractive(domainObject);
+        domainObject.setVisibleInteractive(true, renderTarget);
       }
     } else {
       if (creator.addPoint(ray, intersection.point, false)) {
@@ -246,23 +252,8 @@ export class MeasurementTool extends BaseEditTool {
   // ==================================================
 
   private setAllMeasurementsVisible(visible: boolean): void {
-    for (const domainObject of this.getMeasurementDomainObjects()) {
+    for (const domainObject of getMeasurementDomainObjects(this.renderTarget)) {
       domainObject.setVisibleInteractive(visible, this.renderTarget);
-    }
-  }
-
-  private *getMeasurementDomainObjects(): Generator<
-    MeasureBoxDomainObject | MeasureLineDomainObject
-  > {
-    const { renderTarget } = this;
-    const { rootDomainObject } = renderTarget;
-    for (const descendant of rootDomainObject.getDescendants()) {
-      if (descendant instanceof MeasureBoxDomainObject) {
-        yield descendant;
-      }
-      if (descendant instanceof MeasureLineDomainObject) {
-        yield descendant;
-      }
     }
   }
 
@@ -330,4 +321,20 @@ export class MeasurementTool extends BaseEditTool {
         throw new Error();
     }
   }
+}
+
+function initializeStyle(domainObject: DomainObject, renderTarget: RevealRenderTarget): void {
+  const otherDomainObject = getAnyMeasureDomainObject(renderTarget);
+  if (otherDomainObject === undefined) {
+    return;
+  }
+  const otherStyle = otherDomainObject.getRenderStyle();
+  if (!(otherStyle instanceof MeasureRenderStyle)) {
+    return;
+  }
+  const style = domainObject.getRenderStyle();
+  if (!(style instanceof MeasureRenderStyle)) {
+    return;
+  }
+  style.depthTest = otherStyle.depthTest;
 }
