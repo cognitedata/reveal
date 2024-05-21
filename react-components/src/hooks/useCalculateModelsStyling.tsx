@@ -30,7 +30,7 @@ import {
   useAssetMappedNodesForRevisions,
   useNodesForAssets
 } from '../components/CacheProvider/AssetMappingCacheProvider';
-import { isSameCadModel } from '../utilities/isSameModel';
+import { isSameModel } from '../utilities/isSameModel';
 import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
 
 type ModelStyleGroup = {
@@ -235,9 +235,6 @@ function useJoinStylingGroups(
   modelsMappedStyleGroups: ModelStyleGroup[],
   modelInstanceStyleGroups: ModelStyleGroup[]
 ): StyledModel[] {
-  const isSameModel = (model1: CadModelOptions, model2: CadModelOptions): boolean => {
-    return model1.modelId === model2.modelId && model1.revisionId === model2.revisionId;
-  };
   const modelsStyling = useMemo(() => {
     if (modelInstanceStyleGroups.length === 0 && modelsMappedStyleGroups.length === 0) {
       return extractDefaultStyles(models);
@@ -262,7 +259,7 @@ function useJoinStylingGroups(
 function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
   return styleGroup.reduce<ModelStyleGroup[]>((accumulatedGroups, currentGroup) => {
     const existingGroupWithModel = accumulatedGroups.find((group) =>
-      isSameCadModel(group.model, currentGroup.model)
+      isSameModel(group.model, currentGroup.model)
     );
     if (existingGroupWithModel !== undefined) {
       existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
