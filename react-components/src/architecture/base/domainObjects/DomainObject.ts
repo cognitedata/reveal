@@ -564,6 +564,7 @@ export abstract class DomainObject extends BaseSubject {
 
   public addChildInteractive(child: DomainObject, insertFirst = false): void {
     this.addChild(child, insertFirst);
+    child.notify(Changes.added);
     this.notify(Changes.childAdded);
   }
 
@@ -587,6 +588,7 @@ export abstract class DomainObject extends BaseSubject {
       child.removeInteractive();
     }
     const { parent } = this;
+    this.notify(Changes.deleted);
     this.remove();
     parent?.notify(Changes.childDeleted);
   }
