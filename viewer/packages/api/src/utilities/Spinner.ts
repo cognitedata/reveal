@@ -5,14 +5,13 @@
 import css from './spinnerStyles.css';
 import svg from '!!raw-loader!./spinnerCogniteLogo.svg';
 import * as THREE from 'three';
-import * as uuid from 'uuid';
 
 import { assertNever } from '@reveal/utilities';
 
 export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
 export class Spinner {
-  private readonly stylesId = `reveal-viewer-spinner-styles-${uuid.v4()}`;
+  private readonly stylesId = `reveal-viewer-spinner-styles-${Math.random()}`;
   private static readonly classnames = {
     base: 'reveal-viewer-spinner',
     topLeft: 'reveal-viewer-spinner-top-left',

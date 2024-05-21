@@ -76,8 +76,7 @@
     "random-seed": "^0.3.0",
     "rxjs": "^7.8.1",
     "skmeans": "^0.11.3",
-    "sparse-octree": "^7.1.8",
-    "uuid": "^9.0.1"
+    "sparse-octree": "^7.1.8"
   },
   "devDependencies": {
     "@azure/msal-browser": "^3.13.0",
