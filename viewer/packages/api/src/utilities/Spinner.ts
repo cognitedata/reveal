@@ -11,7 +11,7 @@ import { assertNever } from '@reveal/utilities';
 export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
 export class Spinner {
-  private readonly stylesId = `reveal-viewer-spinner-styles-${Math.random()}`;
+  private readonly stylesId = `reveal-viewer-spinner-styles-${Math.random().toString().split('.')[1]}`;
   private static readonly classnames = {
     base: 'reveal-viewer-spinner',
     topLeft: 'reveal-viewer-spinner-top-left',
