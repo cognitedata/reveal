@@ -145,7 +145,7 @@ export class MeasurementTool extends BaseEditTool {
   public override async onHover(event: PointerEvent): Promise<void> {
     const { _creator: creator } = this;
     if (creator !== undefined) {
-      // Try to add a point without any intersersection
+      // Hover in the "air"
       const ray = this.getRay(event);
       if (creator.addPoint(ray, undefined, true)) {
         this.setDefaultCursor();
@@ -159,7 +159,7 @@ export class MeasurementTool extends BaseEditTool {
       return;
     }
     if (creator !== undefined) {
-      if (this.isMeasurementDomainObject(intersection)) {
+      if (this.isAnyMeasurement(intersection)) {
         return;
       }
       const ray = this.getRay(event);
@@ -201,6 +201,7 @@ export class MeasurementTool extends BaseEditTool {
     const { rootDomainObject } = renderTarget;
 
     const { _creator: creator } = this;
+    // Click in the "air"
     if (creator !== undefined) {
       const ray = this.getRay(event);
       if (creator.addPoint(ray, undefined, false)) {
@@ -210,9 +211,10 @@ export class MeasurementTool extends BaseEditTool {
         return;
       }
     }
+    // Click at "something"
     const intersection = await this.getIntersection(event);
-    // Do not want to click on other boxes
-    if (intersection === undefined || this.isMeasurementDomainObject(intersection)) {
+    if (intersection === undefined || this.isAnyMeasurement(intersection)) {
+      // Do not want to click on other measurments
       await super.onClick(event);
       return;
     }
@@ -264,7 +266,7 @@ export class MeasurementTool extends BaseEditTool {
     }
   }
 
-  private isMeasurementDomainObject(intersection: AnyIntersection): boolean {
+  private isAnyMeasurement(intersection: AnyIntersection): boolean {
     // Do not want to click on other boxes
     if (!isDomainObjectIntersection(intersection)) {
       return false;

@@ -15,35 +15,35 @@ export abstract class BaseCreator {
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _points: Vector3[] = [];
-  private _lastIsPending: boolean = false;
-
-  protected get lastIsPending(): boolean {
-    return this._lastIsPending;
-  }
+  private readonly _points: Vector3[] = []; // Clicked points
+  private _lastIsPending: boolean = false; // If true, the last point is hover and not confirmed.
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get realPointCount(): number {
-    return this._lastIsPending ? this.pointCount - 1 : this.pointCount;
-  }
-
-  public get pointCount(): number {
-    return this._points.length;
-  }
-
   public get points(): Vector3[] {
     return this._points;
   }
 
-  public get lastPoint(): Vector3 {
-    return this._points[this._points.length - 1];
+  public get pointCount(): number {
+    return this.points.length;
+  }
+
+  public get realPointCount(): number {
+    return this.lastIsPending ? this.pointCount - 1 : this.pointCount;
   }
 
   public get firstPoint(): Vector3 {
-    return this._points[0];
+    return this.points[0];
+  }
+
+  public get lastPoint(): Vector3 {
+    return this.points[this.pointCount - 1];
+  }
+
+  protected get lastIsPending(): boolean {
+    return this._lastIsPending;
   }
 
   // ==================================================
@@ -54,9 +54,7 @@ export abstract class BaseCreator {
 
   public abstract get maximumPointCount(): number;
 
-  public get minimumPointCount(): number {
-    return this.maximumPointCount;
-  }
+  public abstract get minimumPointCount(): number;
 
   protected abstract addPointCore(
     ray: Ray,
@@ -83,17 +81,17 @@ export abstract class BaseCreator {
   }
 
   protected addRawPoint(point: Vector3, isPending: boolean): void {
-    if (this._lastIsPending) {
-      replaceLast(this._points, point);
+    if (this.lastIsPending) {
+      replaceLast(this.points, point);
     } else {
-      this._points.push(point);
+      this.points.push(point);
     }
     this._lastIsPending = isPending;
   }
 
   protected removePendingPoint(): void {
-    if (this._lastIsPending) {
-      this._points.pop();
+    if (this.lastIsPending) {
+      this.points.pop();
       this._lastIsPending = false;
     }
   }

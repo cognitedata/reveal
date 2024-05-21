@@ -47,6 +47,10 @@ export class MeasureBoxCreator extends BaseCreator {
     return this._domainObject;
   }
 
+  public override get minimumPointCount(): number {
+    return this.maximumPointCount;
+  }
+
   public override get maximumPointCount(): number {
     switch (this._domainObject.measureType) {
       case MeasureType.VerticalArea:

@@ -13,7 +13,7 @@ export class SetAxisVisibleCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get tooltip(): Tooltip {
-    return { key: 'UNKNOWN', fallback: 'Toggle axis visible' };
+    return { key: 'SHOW_OR_HIDE_AXIS', fallback: 'Show or hide axis' };
   }
 
   public override get icon(): string {
