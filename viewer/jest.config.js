@@ -15,7 +15,7 @@ module.exports = () => {
     testRegex: '(.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
     moduleFileExtensions: ['ts', 'js', 'json', 'node'],
     // Transform certain packages that don't export commonJS
-    transformIgnorePatterns: ['node_modules/(?!(moq.ts|rxjs|random-seed|uuid)/)'],
+    transformIgnorePatterns: ['node_modules/(?!(moq.ts|rxjs|random-seed)/)'],
     moduleNameMapper: {
       '\\.(frag|vert)$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/glslMocks.js'),
       '\\.css$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/cssMock.js'),
