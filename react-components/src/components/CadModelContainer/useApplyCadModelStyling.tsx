@@ -62,7 +62,7 @@ async function applyStyling(
 ): Promise<void> {
   const firstChangeIndex = await getFirstChangeIndex();
 
-  for (let i = firstChangeIndex; i < model.styledNodeCollections.length; i++) {
+  for (let i = model.styledNodeCollections.length - 1; i >= firstChangeIndex; i--) {
     const viewerStyledNodeCollection = model.styledNodeCollections[i];
     model.unassignStyledNodeCollection(viewerStyledNodeCollection.nodeCollection);
   }
