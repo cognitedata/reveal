@@ -6,8 +6,9 @@ import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { isInstanceOf, type Class } from '../domainObjectsHelpers/Class';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 import { type BaseView } from '../views/BaseView';
+import { DomainObject } from './DomainObject';
 
-type NotifyDelegate = (change: DomainObjectChange) => void;
+type NotifyDelegate = (domainObject: DomainObject, change: DomainObjectChange) => void;
 
 /**
  * Represents the subject in the Observer pattern
@@ -33,9 +34,12 @@ export abstract class BaseSubject {
    * @remarks
    * Always call `super.notifyCore()` in the overrides.
    */
-  protected notifyCore(change: DomainObjectChange): void {
+  protected notifyCore<T extends DomainObject & BaseSubject>(
+    this: T,
+    change: DomainObjectChange
+  ): void {
     for (const listener of this._listeners) {
-      listener(change);
+      listener(this, change);
     }
     for (const view of this._views) {
       view.update(change);
@@ -46,7 +50,10 @@ export abstract class BaseSubject {
   // INSTANCE METHODS: Notifying
   // ==================================================
 
-  public notify(change: DomainObjectChange | symbol): void {
+  public notify<T extends DomainObject & BaseSubject>(
+    this: T,
+    change: DomainObjectChange | symbol
+  ): void {
     if (change instanceof DomainObjectChange) {
       this.notifyCore(change);
     } else {

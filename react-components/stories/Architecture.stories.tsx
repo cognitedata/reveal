@@ -20,6 +20,8 @@ import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForSc
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { RevealButtons } from '../src/components/RevealToolbar/Architecture/ToolButtons';
+import { MeasurementPanel } from './utilities/MeasurementPanel';
+import { MeasurementObjectInfo } from '../src/architecture/concrete/boxDomainObject/addEventListenerToBoxDomainObject';
 
 const meta = {
   title: 'Example/Architecture',
@@ -86,41 +88,49 @@ export const Main: Story = {
   args: {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
-  render: ({ addModelOptions }) => (
-    <RevealStoryContainer
-      color={new Color(0x4a4a4a)}
-      viewerOptions={{ useFlexibleCameraManager: true }}>
-      <FitToUrlCameraState />
-      <CadModelContainer addModelOptions={addModelOptions} />
-      <RevealToolbar
-        customSettingsContent={exampleCustomSettingElements()}
-        lowFidelitySettings={exampleLowQualitySettings}
-        highFidelitySettings={exampleHighQualitySettings}
-      />
-      <MyCustomToolbar>
-        <>
-          <RevealButtons.SetFlexibleControlsTypeOrbit />
-          <RevealButtons.SetFlexibleControlsTypeFirstPerson />
-        </>
-        <>
-          <RevealButtons.FitView />
-          <RevealButtons.SetAxisVisible />
-        </>
-        <>
-          <RevealButtons.SetTerrainVisible />
-          <RevealButtons.UpdateTerrain />
-        </>
-        <>
-          <RevealButtons.MeasureLine />
-          <RevealButtons.MeasurePolyline />
-          <RevealButtons.MeasurePolygon />
-          <RevealButtons.MeasureHorizontalArea />
-          <RevealButtons.MeasureVerticalArea />
-          <RevealButtons.MeasureVolume />
-        </>
-      </MyCustomToolbar>
-    </RevealStoryContainer>
-  )
+  render: ({ addModelOptions }) => {
+    const [currentMeasurementInfo, setCurrentMeasurementInfo] = useState<
+      MeasurementObjectInfo | undefined
+    >();
+
+    return (
+      <RevealStoryContainer
+        color={new Color(0x4a4a4a)}
+        viewerOptions={{ useFlexibleCameraManager: true }}>
+        <FitToUrlCameraState />
+        <CadModelContainer addModelOptions={addModelOptions} />
+        <RevealToolbar
+          customSettingsContent={exampleCustomSettingElements()}
+          lowFidelitySettings={exampleLowQualitySettings}
+          highFidelitySettings={exampleHighQualitySettings}
+        />
+        <MyCustomToolbar>
+          <>
+            <RevealButtons.SetFlexibleControlsTypeOrbit />
+            <RevealButtons.SetFlexibleControlsTypeFirstPerson />
+          </>
+          <>
+            <RevealButtons.FitView />
+            <RevealButtons.SetAxisVisible />
+          </>
+          <>
+            <RevealButtons.SetTerrainVisible />
+            <RevealButtons.UpdateTerrain />
+          </>
+          <>
+            <RevealButtons.MeasureLine />
+            <RevealButtons.MeasurePolyline />
+            <RevealButtons.MeasurePolygon />
+            <RevealButtons.MeasureHorizontalArea />
+            <RevealButtons.MeasureVerticalArea />
+            <RevealButtons.MeasureVolume onMeasurementChangeCallback={setCurrentMeasurementInfo} />
+          </>
+        </MyCustomToolbar>
+
+        <MeasurementPanel measurementInfo={currentMeasurementInfo} />
+      </RevealStoryContainer>
+    );
+  }
 };
 
 function FitToUrlCameraState(): ReactElement {

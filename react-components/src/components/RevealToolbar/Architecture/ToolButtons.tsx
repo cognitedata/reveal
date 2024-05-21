@@ -13,8 +13,11 @@ import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { MeasureType } from '../../../architecture/concrete/boxDomainObject/MeasureType';
+import { MeasurementObjectInfo } from '../../../architecture/concrete/boxDomainObject/addEventListenerToBoxDomainObject';
 
-/* eslint-disable @typescript-eslint/no-extraneous-class */
+export type MeasurementCommandProps = {
+  onMeasurementChangeCallback?: (measurementInfo?: MeasurementObjectInfo) => void;
+};
 
 export class RevealButtons {
   static FitView = (): ReactElement => CommandButton(new FitViewCommand());
@@ -22,20 +25,25 @@ export class RevealButtons {
   static SetAxisVisible = (): ReactElement => CommandButton(new SetAxisVisibleCommand());
   static SetTerrainVisible = (): ReactElement => CommandButton(new SetTerrainVisibleCommand());
   static UpdateTerrain = (): ReactElement => CommandButton(new UpdateTerrainCommand());
-  static MeasureLine = (): ReactElement => CommandButton(new MeasurementTool(MeasureType.Line));
-  static MeasurePolyline = (): ReactElement =>
-    CommandButton(new MeasurementTool(MeasureType.Polyline));
 
-  static MeasurePolygon = (): ReactElement =>
-    CommandButton(new MeasurementTool(MeasureType.Polygon));
+  static MeasureLine = (props: MeasurementCommandProps): ReactElement =>
+    CommandButton(new MeasurementTool(MeasureType.Line, props.onMeasurementChangeCallback));
+  static MeasurePolyline = (props: MeasurementCommandProps): ReactElement =>
+    CommandButton(new MeasurementTool(MeasureType.Polyline, props.onMeasurementChangeCallback));
 
-  static MeasureHorizontalArea = (): ReactElement =>
-    CommandButton(new MeasurementTool(MeasureType.HorizontalArea));
+  static MeasurePolygon = (props: MeasurementCommandProps): ReactElement =>
+    CommandButton(new MeasurementTool(MeasureType.Polygon, props.onMeasurementChangeCallback));
 
-  static MeasureVerticalArea = (): ReactElement =>
-    CommandButton(new MeasurementTool(MeasureType.VerticalArea));
+  static MeasureHorizontalArea = (props: MeasurementCommandProps): ReactElement =>
+    CommandButton(
+      new MeasurementTool(MeasureType.HorizontalArea, props.onMeasurementChangeCallback)
+    );
 
-  static MeasureVolume = (): ReactElement => CommandButton(new MeasurementTool(MeasureType.Volume));
+  static MeasureVerticalArea = (props: MeasurementCommandProps): ReactElement =>
+    CommandButton(new MeasurementTool(MeasureType.VerticalArea, props.onMeasurementChangeCallback));
+
+  static MeasureVolume = (props: MeasurementCommandProps): ReactElement =>
+    CommandButton(new MeasurementTool(MeasureType.Volume, props.onMeasurementChangeCallback));
 
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
     CommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));
