@@ -15,15 +15,21 @@ import { isDefined } from '../utilities/isDefined';
 import { getAssetIdOrExternalIdFromImage360Annotation } from '../components/CacheProvider/utils';
 import { type Image360AnnotationMappedAssetData } from '../hooks/types';
 import { is360ImageAnnotation } from '../utilities/is360ImageAnnotation';
+import { type Image360AnnotationFilterOptions } from '@cognite/reveal';
 
 export const useAllAssetsMapped360Annotations = (
   sdk: CogniteClient,
-  siteIds: string[]
+  siteIds: string[],
+  image360AnnotationFilterOptions: Image360AnnotationFilterOptions = { status: `approved` }
 ): UseQueryResult<Image360AnnotationMappedAssetData[]> => {
   return useQuery({
     queryKey: ['reveal', 'react-components', 'all-assets-mapped-360-annotations', siteIds],
     queryFn: async () => {
-      const assetMappings = await getAssetsMapped360Annotations(sdk, siteIds);
+      const assetMappings = await getAssetsMapped360Annotations(
+        sdk,
+        siteIds,
+        image360AnnotationFilterOptions
+      );
       return assetMappings;
     },
     staleTime: Infinity
@@ -33,11 +39,13 @@ export const useAllAssetsMapped360Annotations = (
 export const useSearchAssetsMapped360Annotations = (
   siteIds: string[],
   sdk: CogniteClient,
-  query: string
+  query: string,
+  image360AnnotationFilterOptions?: Image360AnnotationFilterOptions
 ): UseQueryResult<Image360AnnotationMappedAssetData[]> => {
   const { data: assetAnnotationMappings, isFetched } = useAllAssetsMapped360Annotations(
     sdk,
-    siteIds
+    siteIds,
+    image360AnnotationFilterOptions
   );
 
   return useQuery({
@@ -77,10 +85,15 @@ export const useSearchAssetsMapped360Annotations = (
 
 async function getAssetsMapped360Annotations(
   sdk: CogniteClient,
-  siteIds: string[]
+  siteIds: string[],
+  image360AnnotationFilterOptions: Image360AnnotationFilterOptions
 ): Promise<Image360AnnotationMappedAssetData[]> {
   const fileIdsList = await get360ImagesFileIds(siteIds, sdk);
-  const image360Annotations = await get360ImageAnnotations(fileIdsList, sdk);
+  const image360Annotations = await get360ImageAnnotations(
+    fileIdsList,
+    sdk,
+    image360AnnotationFilterOptions
+  );
   const result = await get360AnnotationAssets(image360Annotations, sdk);
 
   return result;
@@ -183,7 +196,8 @@ async function get360ImagesFileIds(siteIds: string[], sdk: CogniteClient): Promi
 
 async function get360ImageAnnotations(
   fileIdsList: number[],
-  sdk: CogniteClient
+  sdk: CogniteClient,
+  image360AnnotationFilterOptions: Image360AnnotationFilterOptions
 ): Promise<AnnotationModel[]> {
   const annotationArray = await Promise.all(
     chunk(fileIdsList, 1000).map(async (fileIdsChunk) => {
@@ -199,9 +213,9 @@ async function get360ImageAnnotations(
         })
         .autoPagingToArray({ limit: Infinity });
 
-      const filteredAnnotations = annotations.filter((annotation) =>
-        is360ImageAnnotation(annotation.data)
-      );
+      const filteredAnnotations = annotations
+        .filter((annotation) => annotation.status === image360AnnotationFilterOptions.status)
+        .filter((annotation) => is360ImageAnnotation(annotation.data));
       return filteredAnnotations;
     })
   );
