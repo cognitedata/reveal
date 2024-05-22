@@ -38,21 +38,23 @@ export const RevealStoryContext = ({
 
   const isLocal = sdkInstance.project === '';
 
-  let renderTarget: RevealRenderTarget | undefined;
-  if (viewer !== undefined) {
-    renderTarget = new RevealRenderTarget(viewer);
-  } else if (isLocal) {
-    const newViewer = new Cognite3DViewer({
-      ...rest.viewerOptions,
-      sdk: sdkInstance,
-      // @ts-expect-error use local models
-      _localModels: true,
-      hasEventListeners: false,
-      useFlexibleCameraManager: true
-    });
-    renderTarget = new RevealRenderTarget(newViewer);
-    renderTarget.initialize();
-  }
+  const renderTarget = useMemo(() => {
+    if (viewer !== undefined) {
+      return new RevealRenderTarget(viewer);
+    } else if (isLocal) {
+      const newViewer = new Cognite3DViewer({
+        ...rest.viewerOptions,
+        sdk: sdkInstance,
+        // @ts-expect-error use local models
+        _localModels: true,
+        hasEventListeners: false,
+        useFlexibleCameraManager: true
+      });
+      const renderTarget = new RevealRenderTarget(newViewer);
+      renderTarget.initialize();
+      return renderTarget;
+    }
+  }, [viewer]);
 
   const renderTargetRef = useRef<RevealRenderTarget | undefined>(renderTarget);
   const isRevealContainerMountedRef = useRef<boolean>(true);

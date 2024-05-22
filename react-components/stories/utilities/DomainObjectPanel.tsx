@@ -26,23 +26,29 @@ export const DomainObjectPanel = ({
   return (
     <DomainObjectPanelContainer>
       <CardContainer>
-        <tr>
-          <Th>
-            <Icon type="RulerAlternative" />
-          </Th>
-          <Th>
-            <span>{domainObject.name}</span>
-          </Th>
-          <th>
-            <Button
-              onClick={() => {
-                domainObject.removeInteractive();
-              }}>
-              <Icon type="Delete" />
-            </Button>
-          </th>
-        </tr>
-        <table>{infos.map((x, _i) => add(x))}</table>
+        <table>
+          <tbody>
+            <tr>
+              <Th>
+                <Icon type="RulerAlternative" />
+              </Th>
+              <Th>
+                <span>{domainObject.name}</span>
+              </Th>
+              <th>
+                <Button
+                  onClick={() => {
+                    domainObject.removeInteractive();
+                  }}>
+                  <Icon type="Delete" />
+                </Button>
+              </th>
+            </tr>
+          </tbody>
+        </table>
+        <table>
+          <tbody>{infos.map((x, _i) => add(x))}</tbody>
+        </table>
       </CardContainer>
     </DomainObjectPanelContainer>
   );
@@ -50,7 +56,7 @@ export const DomainObjectPanel = ({
 
 function add(info: NumberInfo): ReactElement {
   return (
-    <tr>
+    <tr key={JSON.stringify(info)}>
       <Th>
         <span>{info[1]}</span>
       </Th>
