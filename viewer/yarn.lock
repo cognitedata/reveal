@@ -2031,15 +2031,15 @@ __metadata:
   linkType: hard
 
 "@types/three@npm:^0.164.0":
-  version: 0.164.0
-  resolution: "@types/three@npm:0.164.0"
+  version: 0.164.1
+  resolution: "@types/three@npm:0.164.1"
   dependencies:
     "@tweenjs/tween.js": "npm:~23.1.1"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/e5bdca5db603c594a5a5ae8ab2eaa38f95e091964a109ed4cbc00cfc95e00f3d7e356c6d676db4c2fbb9d98c266b3097eab2c5b4099a72e80bc9e455f5fec8d3
+  checksum: 10/508368629305f1bb9c353e52f2cafe78ae84e7af55eb87a7d852c3ecff2da493cbdf021d91524046d200d7b1b182734cfa8167cb67314056adfda98cd42b3d7e
   languageName: node
   linkType: hard
 
