@@ -4,6 +4,7 @@
 
 import { DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { type SetDomainObjectInfoDelegate } from './MeasurementTool';
 
 export type DomainObjectInfo = {
   domainObject: DomainObject;
@@ -12,7 +13,7 @@ export type DomainObjectInfo = {
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function addEventListenerToDomainObject(
   domainObject: DomainObject,
-  setter: ((info: DomainObjectInfo | undefined) => void) | undefined
+  setter: SetDomainObjectInfoDelegate | undefined
 ) {
   domainObject.addEventListener((domainObject, change) => {
     if (!(domainObject instanceof DomainObject)) {
@@ -23,14 +24,9 @@ export function addEventListenerToDomainObject(
       setter?.(undefined);
     }
 
-    if (!change.isChanged(Changes.focus, Changes.geometry)) {
-      return;
+    if (change.isChanged(Changes.selected, Changes.geometry)) {
+      const domainObjectInfo = { domainObject };
+      setter?.(domainObjectInfo);
     }
-
-    const domainObjectInfo = {
-      domainObject
-    };
-    console.log('domainObjectInfo', domainObjectInfo, ' with setter', setter);
-    setter?.(domainObjectInfo);
   });
 }

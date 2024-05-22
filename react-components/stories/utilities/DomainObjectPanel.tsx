@@ -15,9 +15,11 @@ export const DomainObjectPanel = ({
   if (domainObjectInfo === undefined) {
     return <></>;
   }
-  console.log('Rendering DomainObjectPanel!');
-
   const domainObject = domainObjectInfo.domainObject;
+  if (domainObject === undefined) {
+    return <></>;
+  }
+
   const infos = domainObject.getNumberInfos();
   if (infos === undefined) {
     return <></>;
@@ -29,12 +31,12 @@ export const DomainObjectPanel = ({
         <table>
           <tbody>
             <tr>
-              <Th>
+              <PaddedTh>
                 <Icon type="RulerAlternative" />
-              </Th>
-              <Th>
+              </PaddedTh>
+              <PaddedTh>
                 <span>{domainObject.name}</span>
-              </Th>
+              </PaddedTh>
               <th>
                 <Button
                   onClick={() => {
@@ -57,18 +59,23 @@ export const DomainObjectPanel = ({
 function add(info: NumberInfo): ReactElement {
   return (
     <tr key={JSON.stringify(info)}>
-      <Th>
+      <PaddedTh>
         <span>{info[1]}</span>
-      </Th>
-      <Th>
+      </PaddedTh>
+      <></>
+      <RightTh>
         <span>{info[2].toFixed(info[3]) + ' m'}</span>
-      </Th>
+      </RightTh>
     </tr>
   );
 }
 
-const Th = styled.th`
-  padding-right: 10px;
+const RightTh = styled.th`
+  text-align: right;
+`;
+
+const PaddedTh = styled.th`
+  padding-right: 20px;
 `;
 
 const CardContainer = styled.div`
