@@ -272,14 +272,7 @@ function groupStyleGroupByModel(
     const existingGroupWithModel = accumulatedGroups.find((group) =>
       isSameModel(group.model, currentGroup.model)
     );
-    if (existingGroupWithModel !== undefined) {
-      existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
-    } else {
-      accumulatedGroups.push({
-        model: currentGroup.model,
-        styleGroup: [...currentGroup.styleGroup]
-      });
-    }
+    existingGroupWithModel?.styleGroup.push(...currentGroup.styleGroup);
     return accumulatedGroups;
   }, initialStyleGroups);
 }
