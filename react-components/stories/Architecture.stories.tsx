@@ -20,8 +20,8 @@ import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForSc
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { RevealButtons } from '../src/components/RevealToolbar/Architecture/ToolButtons';
-import { MeasurementPanel } from './utilities/MeasurementPanel';
-import { type MeasurementObjectInfo } from '../src/architecture/concrete/boxDomainObject/addEventListenerToBoxDomainObject';
+import { DomainObjectPanel } from './utilities/DomainObjectPanel';
+import { type DomainObjectInfo } from '../src/architecture/concrete/boxDomainObject/addEventListenerToDomainObject';
 
 const meta = {
   title: 'Example/Architecture',
@@ -89,8 +89,8 @@ export const Main: Story = {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
   render: ({ addModelOptions }) => {
-    const [currentMeasurementInfo, setCurrentMeasurementInfo] = useState<
-      MeasurementObjectInfo | undefined
+    const [currentDomainObjectInfo, setCurrentDomainObjectInfo] = useState<
+      DomainObjectInfo | undefined
     >();
 
     return (
@@ -118,16 +118,27 @@ export const Main: Story = {
             <RevealButtons.UpdateTerrain />
           </>
           <>
-            <RevealButtons.MeasureLine />
-            <RevealButtons.MeasurePolyline />
-            <RevealButtons.MeasurePolygon />
-            <RevealButtons.MeasureHorizontalArea />
-            <RevealButtons.MeasureVerticalArea />
-            <RevealButtons.MeasureVolume onMeasurementChangeCallback={setCurrentMeasurementInfo} />
+            <RevealButtons.MeasureLine onDomainObjectChangeCallback={setCurrentDomainObjectInfo} />
+
+            <RevealButtons.MeasurePolyline
+              onDomainObjectChangeCallback={setCurrentDomainObjectInfo}
+            />
+            <RevealButtons.MeasurePolygon
+              onDomainObjectChangeCallback={setCurrentDomainObjectInfo}
+            />
+            <RevealButtons.MeasureHorizontalArea
+              onDomainObjectChangeCallback={setCurrentDomainObjectInfo}
+            />
+            <RevealButtons.MeasureVerticalArea
+              onDomainObjectChangeCallback={setCurrentDomainObjectInfo}
+            />
+            <RevealButtons.MeasureVolume
+              onDomainObjectChangeCallback={setCurrentDomainObjectInfo}
+            />
           </>
         </MyCustomToolbar>
 
-        <MeasurementPanel measurementInfo={currentMeasurementInfo} />
+        <DomainObjectPanel domainObjectInfo={currentDomainObjectInfo} />
       </RevealStoryContainer>
     );
   }

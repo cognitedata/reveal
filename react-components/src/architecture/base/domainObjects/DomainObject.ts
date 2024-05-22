@@ -23,6 +23,8 @@ import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
  * @abstract
  * @extends BaseSubject
  */
+export type NumberInfo = [string, string, number, number];
+
 export abstract class DomainObject extends BaseSubject {
   // ==================================================
   // INSTANCE FIELDS
@@ -79,6 +81,10 @@ export abstract class DomainObject extends BaseSubject {
   protected removeCore(): void {
     this.removeAllViews();
     this.removeEventListeners();
+  }
+
+  public getNumberInfos(): NumberInfo[] | undefined {
+    return undefined;
   }
 
   // ==================================================

@@ -16,6 +16,7 @@ import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { MeasureBoxDragger } from './MeasureBoxDragger';
 import { MeasureDomainObject } from './MeasureDomainObject';
+import { type NumberInfo } from '../../base/domainObjects/DomainObject';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -41,7 +42,18 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
   }
 
   public get area(): number {
-    return 2 * (this.size.x + this.size.y + this.size.z);
+    switch (this.measureType) {
+      case MeasureType.HorizontalArea:
+        return this.size.x * this.size.y;
+      case MeasureType.VerticalArea:
+        return this.size.x * this.size.z;
+      case MeasureType.Volume: {
+        const a = this.size.x * this.size.y + this.size.y * this.size.z + this.size.z * this.size.x;
+        return a * 2;
+      }
+      default:
+        throw new Error('Unknown MeasureType type');
+    }
   }
 
   public get hasArea(): boolean {
@@ -95,6 +107,38 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
       return undefined;
     }
     return new MeasureBoxDragger(this, intersection.point, pickInfo);
+  }
+
+  public override getNumberInfos(): NumberInfo[] | undefined {
+    const result: NumberInfo[] = [];
+    switch (this.measureType) {
+      case MeasureType.HorizontalArea:
+        add('MEASUREMENTS_LENGTH', 'Length', this.size.x);
+        add('MEASUREMENTS_DEPTH', 'Depth', this.size.y);
+        add('MEASUREMENTS_AREA', 'Area', this.area);
+        break;
+
+      case MeasureType.VerticalArea:
+        add('MEASUREMENTS_LENGTH', 'Length', this.size.x);
+        add('MEASUREMENTS_HEIGHT', 'Height', this.size.z);
+        add('MEASUREMENTS_AREA', 'Area', this.area);
+        break;
+      case MeasureType.Volume:
+        add('MEASUREMENTS_LENGTH', 'Length', this.size.x);
+        add('MEASUREMENTS_DEPTH', 'Depth', this.size.y);
+        add('MEASUREMENTS_HEIGHT', 'Height', this.size.z);
+        add('MEASUREMENTS_AREA', 'Area', this.area);
+        add('MEASUREMENTS_VOLUME', 'Volume', this.volume);
+        break;
+
+      default:
+        throw new Error('Unknown MeasureType type');
+    }
+    return result;
+
+    function add(code: string, text: string, value: number): void {
+      result.push([code, text, value, 2]);
+    }
   }
 
   // ==================================================

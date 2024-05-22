@@ -20,9 +20,9 @@ import { MeasureRenderStyle } from './MeasureRenderStyle';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import {
-  type MeasurementObjectInfo,
-  addEventListenerToMeasureBoxDomainObject
-} from './addEventListenerToBoxDomainObject';
+  type DomainObjectInfo,
+  addEventListenerToDomainObject
+} from './addEventListenerToDomainObject';
 import { MeasureDomainObject } from './MeasureDomainObject';
 
 export class MeasurementTool extends BaseEditTool {
@@ -32,7 +32,7 @@ export class MeasurementTool extends BaseEditTool {
 
   private _creator: BaseCreator | undefined = undefined;
   private readonly _measureType: MeasureType;
-  private readonly _measurementChangeCallback?: (measurementInfo?: MeasurementObjectInfo) => void;
+  private readonly _measurementChangeCallback?: (domainObjectInfo?: DomainObjectInfo) => void;
 
   // ==================================================
   // CONSTRUCTORS
@@ -40,7 +40,7 @@ export class MeasurementTool extends BaseEditTool {
 
   public constructor(
     measureType: MeasureType,
-    measurementChangeCallback?: (measurementInfo?: MeasurementObjectInfo) => void
+    measurementChangeCallback?: (domainObjectInfo?: DomainObjectInfo) => void
   ) {
     super();
     this._measureType = measureType;
@@ -244,12 +244,7 @@ export class MeasurementTool extends BaseEditTool {
     const ray = this.getRay(event);
     if (creator === undefined) {
       const creator = (this._creator = this.createCreator());
-      if (creator instanceof MeasureBoxCreator) {
-        addEventListenerToMeasureBoxDomainObject(
-          creator.domainObject as MeasureBoxDomainObject,
-          this._measurementChangeCallback
-        );
-      }
+      addEventListenerToDomainObject(creator.domainObject, this._measurementChangeCallback);
       if (creator.addPoint(ray, intersection.point, false)) {
         const { domainObject } = creator;
         initializeStyle(domainObject, renderTarget);
