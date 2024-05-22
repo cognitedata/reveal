@@ -56,7 +56,7 @@ export function isSamePointCloudModel(
 
 const identity = new Matrix4();
 
-function isSameTransform(m0: Matrix4 | undefined, m1: Matrix4 | undefined) {
+function isSameTransform(m0: Matrix4 | undefined, m1: Matrix4 | undefined): boolean {
   if ((m0 === undefined || m0.equals(identity)) && (m1 === undefined || m1.equals(identity))) {
     return true;
   }
