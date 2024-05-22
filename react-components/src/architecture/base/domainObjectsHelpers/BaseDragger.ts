@@ -34,10 +34,10 @@ export abstract class BaseDragger {
     // Empty, probably not needed
   }
 
+  // This must be overriden
+  public abstract onPointerDrag(_event: PointerEvent, ray: Ray): boolean;
+
   public onPointerUp(_event: PointerEvent): void {
     // Empty, probably not needed
   }
-
-  // This must be overriden
-  public abstract onPointerDrag(_event: PointerEvent, ray: Ray): boolean;
 }

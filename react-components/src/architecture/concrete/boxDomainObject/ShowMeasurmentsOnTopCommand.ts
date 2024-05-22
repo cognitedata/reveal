@@ -5,9 +5,8 @@
 
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { type Tooltip } from '../../base/commands/BaseCommand';
-import { MeasureRenderStyle } from './MeasureRenderStyle';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { getAnyMeasureDomainObject, getMeasurementDomainObjects } from './MeasurementFunctions';
+import { getAnyMeasureDomainObject, getMeasureDomainObjects } from './MeasurementFunctions';
 
 export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
   // ==================================================
@@ -36,20 +35,14 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
     if (domainObject === undefined) {
       return false;
     }
-    const style = domainObject.getRenderStyle();
-    if (style instanceof MeasureRenderStyle) {
-      return style.depthTest;
-    }
-    return false;
+    const style = domainObject.renderStyle;
+    return style.depthTest;
   }
 
   protected override invokeCore(): boolean {
     const isChecked = this.isChecked;
-    for (const domainObject of getMeasurementDomainObjects(this.renderTarget)) {
-      const style = domainObject.getRenderStyle();
-      if (!(style instanceof MeasureRenderStyle)) {
-        continue;
-      }
+    for (const domainObject of getMeasureDomainObjects(this.renderTarget)) {
+      const style = domainObject.renderStyle;
       style.depthTest = !isChecked;
       domainObject.notify(Changes.renderStyle);
     }

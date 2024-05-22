@@ -97,7 +97,7 @@ export class MeasureLineView extends GroupThreeView {
     if (length < 2) {
       return undefined;
     }
-    const radius = 0.03; //this.getTextHeight(style.relativeTextSize) * 0.2;
+    const radius = 0.03; // this.getTextHeight(style.relativeTextSize) * 0.2;
     if (radius <= 0) {
       return;
     }

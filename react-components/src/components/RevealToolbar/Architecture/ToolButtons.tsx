@@ -13,7 +13,7 @@ import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { MeasureType } from '../../../architecture/concrete/boxDomainObject/MeasureType';
-import { MeasurementObjectInfo } from '../../../architecture/concrete/boxDomainObject/addEventListenerToBoxDomainObject';
+import { type MeasurementObjectInfo } from '../../../architecture/concrete/boxDomainObject/addEventListenerToBoxDomainObject';
 
 export type MeasurementCommandProps = {
   onMeasurementChangeCallback?: (measurementInfo?: MeasurementObjectInfo) => void;
@@ -28,6 +28,7 @@ export class RevealButtons {
 
   static MeasureLine = (props: MeasurementCommandProps): ReactElement =>
     CommandButton(new MeasurementTool(MeasureType.Line, props.onMeasurementChangeCallback));
+
   static MeasurePolyline = (props: MeasurementCommandProps): ReactElement =>
     CommandButton(new MeasurementTool(MeasureType.Polyline, props.onMeasurementChangeCallback));
 

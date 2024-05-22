@@ -1,4 +1,7 @@
-import { DomainObject } from '../../base/domainObjects/DomainObject';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
 
@@ -12,6 +15,7 @@ function measurementToMeasurementInfo(box: MeasureBoxDomainObject): MeasurementO
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function addEventListenerToMeasureBoxDomainObject(
   box: MeasureBoxDomainObject,
   setter: ((box: MeasurementObjectInfo | undefined) => void) | undefined

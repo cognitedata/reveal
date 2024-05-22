@@ -2,12 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { MeasureBoxView } from './MeasureBoxView';
-import { Color, Matrix4, Vector3 } from 'three';
+import { Matrix4, Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
@@ -16,10 +15,11 @@ import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/D
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { MeasureBoxDragger } from './MeasureBoxDragger';
+import { MeasureDomainObject } from './MeasureDomainObject';
 
 export const MIN_BOX_SIZE = 0.01;
 
-export class MeasureBoxDomainObject extends VisualDomainObject {
+export class MeasureBoxDomainObject extends MeasureDomainObject {
   // ==================================================
   // INSTANCE FIELDS (This implements the IBox interface)
   // ==================================================
@@ -31,8 +31,6 @@ export class MeasureBoxDomainObject extends VisualDomainObject {
   // For focus when edit in 3D (Used when isSelected is true only)
   public focusFace: BoxFace | undefined = undefined;
   public focusType: BoxFocusType = BoxFocusType.JustCreated;
-
-  private readonly _measureType: MeasureType;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -58,12 +56,8 @@ export class MeasureBoxDomainObject extends VisualDomainObject {
     return this.size.x * this.size.y * this.size.z;
   }
 
-  public get renderStyle(): MeasureBoxRenderStyle {
+  public override get renderStyle(): MeasureBoxRenderStyle {
     return this.getRenderStyle() as MeasureBoxRenderStyle;
-  }
-
-  public get measureType(): MeasureType {
-    return this._measureType;
   }
 
   // ==================================================
@@ -71,9 +65,7 @@ export class MeasureBoxDomainObject extends VisualDomainObject {
   // ==================================================
 
   public constructor(measureType: MeasureType) {
-    super();
-    this._measureType = measureType;
-    this.color = new Color(1, 0, 1);
+    super(measureType);
   }
 
   // ==================================================
@@ -81,7 +73,7 @@ export class MeasureBoxDomainObject extends VisualDomainObject {
   // ==================================================
 
   public override get typeName(): string {
-    switch (this._measureType) {
+    switch (this.measureType) {
       case MeasureType.HorizontalArea:
         return 'Measure horizontal area';
       case MeasureType.VerticalArea:

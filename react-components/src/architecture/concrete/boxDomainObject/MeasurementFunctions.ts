@@ -3,10 +3,8 @@
  * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
-import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
-import { MeasureLineDomainObject } from './MeasureLineDomainObject';
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { MeasureDomainObject } from './MeasureDomainObject';
 
 // ==================================================
 // PUBLIC FUNCTIONS
@@ -14,24 +12,19 @@ import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTar
 
 export function getAnyMeasureDomainObject(
   renderTarget: RevealRenderTarget
-): DomainObject | undefined {
+): MeasureDomainObject | undefined {
   // eslint-disable-next-line no-unreachable-loop
-  for (const domainObject of getMeasurementDomainObjects(renderTarget)) {
+  for (const domainObject of getMeasureDomainObjects(renderTarget)) {
     return domainObject;
   }
   return undefined;
 }
 
-export function* getMeasurementDomainObjects(
+export function* getMeasureDomainObjects(
   renderTarget: RevealRenderTarget
-): Generator<MeasureBoxDomainObject | MeasureLineDomainObject> {
+): Generator<MeasureDomainObject> {
   const { rootDomainObject } = renderTarget;
-  for (const descendant of rootDomainObject.getDescendants()) {
-    if (descendant instanceof MeasureBoxDomainObject) {
-      yield descendant;
-    }
-    if (descendant instanceof MeasureLineDomainObject) {
-      yield descendant;
-    }
+  for (const descendant of rootDomainObject.getDescendantsByType(MeasureDomainObject)) {
+    yield descendant;
   }
 }

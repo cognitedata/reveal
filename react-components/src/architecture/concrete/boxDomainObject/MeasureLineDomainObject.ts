@@ -2,22 +2,21 @@
  * Copyright 2024 Cognite AS
  */
 
-import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { MeasureLineView } from './MeasureLineView';
-import { Color, type Vector3 } from 'three';
+import { type Vector3 } from 'three';
 import { MeasureType } from './MeasureType';
 import { MeasureLineRenderStyle } from './MeasureLineRenderStyle';
+import { MeasureDomainObject } from './MeasureDomainObject';
 
-export class MeasureLineDomainObject extends VisualDomainObject {
+export class MeasureLineDomainObject extends MeasureDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   public isClosed: boolean = false;
   public points: Vector3[] = [];
-  private readonly _measureType: MeasureType;
 
   public get length(): number {
     return this.points.length;
@@ -27,12 +26,8 @@ export class MeasureLineDomainObject extends VisualDomainObject {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get renderStyle(): MeasureLineRenderStyle {
+  public override get renderStyle(): MeasureLineRenderStyle {
     return this.getRenderStyle() as MeasureLineRenderStyle;
-  }
-
-  public get measureType(): MeasureType {
-    return this._measureType;
   }
 
   // ==================================================
@@ -40,9 +35,7 @@ export class MeasureLineDomainObject extends VisualDomainObject {
   // ==================================================
 
   public constructor(measureType: MeasureType) {
-    super();
-    this._measureType = measureType;
-    this.color = new Color(1, 0, 0);
+    super(measureType);
   }
 
   // ==================================================
@@ -50,7 +43,7 @@ export class MeasureLineDomainObject extends VisualDomainObject {
   // ==================================================
 
   public override get typeName(): string {
-    switch (this._measureType) {
+    switch (this.measureType) {
       case MeasureType.Line:
         return 'Measure line';
       case MeasureType.Polyline:

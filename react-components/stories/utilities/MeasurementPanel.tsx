@@ -1,5 +1,8 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { Button, Icon } from '@cognite/cogs.js';
-import { MeasurementObjectInfo } from '../../src/architecture/concrete/boxDomainObject/addEventListenerToBoxDomainObject';
+import { type MeasurementObjectInfo } from '../../src/architecture/concrete/boxDomainObject/addEventListenerToBoxDomainObject';
 import styled from 'styled-components';
 
 export const MeasurementPanel = ({
@@ -27,7 +30,29 @@ export const MeasurementPanel = ({
               <span>{measurementInfo.domainObject.size.length() + ' m'}</span>
             </Th>
             <th>
-              <Button onClick={() => measurementInfo.domainObject.removeInteractive()}>
+              <Button
+                onClick={() => {
+                  measurementInfo.domainObject.removeInteractive();
+                }}>
+                <Icon type="Delete" />
+              </Button>
+            </th>
+          </tr>
+          <tr>
+            <Th>
+              <Icon type="RulerAlternative" />
+            </Th>
+            <Th>
+              <span>{'Lengthssss'}</span>
+            </Th>
+            <Th>
+              <span>{measurementInfo.domainObject.size.length() + ' m'}</span>
+            </Th>
+            <th>
+              <Button
+                onClick={() => {
+                  measurementInfo.domainObject.removeInteractive();
+                }}>
                 <Icon type="Delete" />
               </Button>
             </th>

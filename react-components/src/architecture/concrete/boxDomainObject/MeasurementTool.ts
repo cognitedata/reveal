@@ -15,14 +15,15 @@ import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { MeasureLineCreator } from './MeasureLineCreator';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
-import { getAnyMeasureDomainObject, getMeasurementDomainObjects } from './MeasurementFunctions';
+import { getAnyMeasureDomainObject, getMeasureDomainObjects } from './MeasurementFunctions';
 import { MeasureRenderStyle } from './MeasureRenderStyle';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import {
-  MeasurementObjectInfo,
+  type MeasurementObjectInfo,
   addEventListenerToMeasureBoxDomainObject
 } from './addEventListenerToBoxDomainObject';
+import { MeasureDomainObject } from './MeasureDomainObject';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -136,7 +137,7 @@ export class MeasurementTool extends BaseEditTool {
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
     if (down && event.key === 'Delete') {
-      for (const domainObject of getMeasurementDomainObjects(this.renderTarget)) {
+      for (const domainObject of getMeasureDomainObjects(this.renderTarget)) {
         if (!domainObject.isSelected) {
           continue;
         }
@@ -181,7 +182,7 @@ export class MeasurementTool extends BaseEditTool {
       return;
     }
     if (creator !== undefined) {
-      if (this.isAnyMeasurement(intersection)) {
+      if (this.isMeasurement(intersection)) {
         return;
       }
       const ray = this.getRay(event);
@@ -235,7 +236,7 @@ export class MeasurementTool extends BaseEditTool {
     }
     // Click at "something"
     const intersection = await this.getIntersection(event);
-    if (intersection === undefined || this.isAnyMeasurement(intersection)) {
+    if (intersection === undefined || this.isMeasurement(intersection)) {
       // Do not want to click on other measurments
       await super.onClick(event);
       return;
@@ -276,21 +277,17 @@ export class MeasurementTool extends BaseEditTool {
   // ==================================================
 
   private setAllMeasurementsVisible(visible: boolean): void {
-    for (const domainObject of getMeasurementDomainObjects(this.renderTarget)) {
+    for (const domainObject of getMeasureDomainObjects(this.renderTarget)) {
       domainObject.setVisibleInteractive(visible, this.renderTarget);
     }
   }
 
-  private isAnyMeasurement(intersection: AnyIntersection): boolean {
+  private isMeasurement(intersection: AnyIntersection): boolean {
     // Do not want to click on other boxes
     if (!isDomainObjectIntersection(intersection)) {
       return false;
     }
-    const domainObject = intersection.domainObject;
-    return (
-      domainObject instanceof MeasureBoxDomainObject ||
-      domainObject instanceof MeasureLineDomainObject
-    );
+    return intersection.domainObject instanceof MeasureDomainObject;
   }
 
   private setCursor(
@@ -352,10 +349,7 @@ function initializeStyle(domainObject: DomainObject, renderTarget: RevealRenderT
   if (otherDomainObject === undefined) {
     return;
   }
-  const otherStyle = otherDomainObject.getRenderStyle();
-  if (!(otherStyle instanceof MeasureRenderStyle)) {
-    return;
-  }
+  const otherStyle = otherDomainObject.renderStyle;
   const style = domainObject.getRenderStyle();
   if (!(style instanceof MeasureRenderStyle)) {
     return;

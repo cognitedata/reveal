@@ -21,7 +21,7 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { RevealButtons } from '../src/components/RevealToolbar/Architecture/ToolButtons';
 import { MeasurementPanel } from './utilities/MeasurementPanel';
-import { MeasurementObjectInfo } from '../src/architecture/concrete/boxDomainObject/addEventListenerToBoxDomainObject';
+import { type MeasurementObjectInfo } from '../src/architecture/concrete/boxDomainObject/addEventListenerToBoxDomainObject';
 
 const meta = {
   title: 'Example/Architecture',

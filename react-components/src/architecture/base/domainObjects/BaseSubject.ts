@@ -6,7 +6,7 @@ import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { isInstanceOf, type Class } from '../domainObjectsHelpers/Class';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 import { type BaseView } from '../views/BaseView';
-import { DomainObject } from './DomainObject';
+import { type DomainObject } from './DomainObject';
 
 type NotifyDelegate = (domainObject: DomainObject, change: DomainObjectChange) => void;
 
