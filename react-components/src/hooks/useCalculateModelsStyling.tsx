@@ -132,7 +132,11 @@ function useCalculateMappedStyling(
   ]);
 
   const combinedMappedStyleGroups = useMemo(
-    () => groupStyleGroupByModel([...modelsMappedAssetStyleGroups, ...modelsMappedFdmStyleGroups]),
+    () =>
+      groupStyleGroupByModel(models, [
+        ...modelsMappedAssetStyleGroups,
+        ...modelsMappedFdmStyleGroups
+      ]),
     [modelsMappedAssetStyleGroups, modelsMappedFdmStyleGroups]
   );
 
@@ -179,7 +183,10 @@ function useCalculateInstanceStyling(
 
   const combinedMappedStyleGroups = useMemo(
     () =>
-      groupStyleGroupByModel([...fdmModelInstanceStyleGroups, ...assetMappingInstanceStyleGroups]),
+      groupStyleGroupByModel(models, [
+        ...fdmModelInstanceStyleGroups,
+        ...assetMappingInstanceStyleGroups
+      ]),
     [fdmModelInstanceStyleGroups, assetMappingInstanceStyleGroups]
   );
 
@@ -256,7 +263,11 @@ function useJoinStylingGroups(
   return modelsStyling;
 }
 
-function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
+function groupStyleGroupByModel(
+  models: CadModelOptions[],
+  styleGroup: ModelStyleGroup[]
+): ModelStyleGroup[] {
+  const initialStyleGroups = models.map((model) => ({ model, styleGroup: [] }));
   return styleGroup.reduce<ModelStyleGroup[]>((accumulatedGroups, currentGroup) => {
     const existingGroupWithModel = accumulatedGroups.find((group) =>
       isSameModel(group.model, currentGroup.model)
@@ -270,7 +281,7 @@ function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[
       });
     }
     return accumulatedGroups;
-  }, []);
+  }, initialStyleGroups);
 }
 
 function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {
