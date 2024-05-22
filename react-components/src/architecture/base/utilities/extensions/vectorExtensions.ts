@@ -19,6 +19,10 @@ export function verticalDistanceTo(p1: Vector3, p2: Vector3): number {
   return Math.abs(p1.z - p2.z);
 }
 
+export function getHorizontalCrossProduct(self: Vector3, other: Vector3): number {
+  return self.x * other.y - self.y * other.x;
+}
+
 export function getOctDir(vector: Vector2): number {
   // The octdirs are:
   //         North (Positive Y-axis)

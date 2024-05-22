@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { getHorizontalCrossProduct, horizontalDistanceTo } from '../extensions/vectorExtensions';
 import { Points } from './Points';
 import { type Shape } from './Shape';
 import { Vector3 } from 'three';
@@ -60,16 +61,9 @@ export class Polyline extends Points {
     for (let index = 1; index <= n; index++) {
       p1.copy(this.list[index % n]);
       p1.sub(first); // Translate down to first point, to increase acceracy
-      area += getCross2(p0, p1);
+      area += getHorizontalCrossProduct(p0, p1);
       p0.copy(p1);
     }
     return area * 0.5;
   }
-}
-
-function getCross2(self: Vector3, other: Vector3): number {
-  return self.x * other.y - self.y * other.x;
-}
-function horizontalDistanceTo(self: Vector3, other: Vector3): number {
-  return self.x * other.y - self.y * other.x;
 }

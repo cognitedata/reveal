@@ -5,11 +5,12 @@
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { MeasureLineView } from './MeasureLineView';
-import { type Vector3 } from 'three';
+import { Vector3 } from 'three';
 import { MeasureType } from './MeasureType';
 import { MeasureLineRenderStyle } from './MeasureLineRenderStyle';
 import { MeasureDomainObject } from './MeasureDomainObject';
 import {
+  getHorizontalCrossProduct,
   horizontalDistanceTo,
   verticalDistanceTo
 } from '../../base/utilities/extensions/vectorExtensions';
@@ -20,7 +21,7 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  public points: Vector3[] = [];
+  public readonly points: Vector3[] = [];
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -111,19 +112,6 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
     return sum;
   }
 
-  public getVerticalLength(): number {
-    let prevPoint: Vector3 | undefined;
-    let sum = 0.0;
-    for (const point of this.points) {
-      if (prevPoint !== undefined) {
-        sum += verticalDistanceTo(point, prevPoint);
-        continue;
-      }
-      prevPoint = point;
-    }
-    return sum;
-  }
-
   public getHorizontalLength(): number {
     let prevPoint: Vector3 | undefined;
     let sum = 0.0;
@@ -137,13 +125,37 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
     return sum;
   }
 
+  public getVerticalLength(): number {
+    let prevPoint: Vector3 | undefined;
+    let sum = 0.0;
+    for (const point of this.points) {
+      if (prevPoint !== undefined) {
+        sum += verticalDistanceTo(point, prevPoint);
+        continue;
+      }
+      prevPoint = point;
+    }
+    return sum;
+  }
+
   public getHorizontalArea(): number {
     const { points } = this;
     const length = points.length;
-    let sum = 0.0;
-    for (let j = length - 1, i = 0; i < length; j = i++) {
-      sum += points[j].x * points[i].y - points[i].x * points[j].y;
+
+    if (length <= 2) {
+      return 0;
     }
-    return sum * 0.5;
+    let sum = 0.0;
+    const first = points[0];
+    const p0 = new Vector3();
+    const p1 = new Vector3();
+
+    for (let index = 1; index <= length; index++) {
+      p1.copy(points[index % length]);
+      p1.sub(first); // Translate down to first point, to increase acceracy
+      sum += getHorizontalCrossProduct(p0, p1);
+      p0.copy(p1);
+    }
+    return Math.abs(sum) / 2;
   }
 }
