@@ -1748,7 +1748,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.6.0"
     "@cognite/cogs.js": "npm:^9.3.0"
-    "@cognite/reveal": "npm:^4.14.1"
+    "@cognite/reveal": "npm:^4.14.3"
     "@cognite/sdk": "npm:^9.13.0"
     "@playwright/test": "npm:^1.43.1"
     "@storybook/addon-essentials": "npm:^8.0.9"
@@ -1794,7 +1794,7 @@ __metadata:
     storybook: "npm:^8.0.9"
     style-loader: "npm:^4.0.0"
     styled-components: "npm:^6.1.10"
-    three: "npm:0.164.0"
+    three: "npm:0.164.1"
     ts-loader: "npm:^9.5.1"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.10"
@@ -1803,16 +1803,16 @@ __metadata:
     vitest: "npm:^1.5.3"
   peerDependencies:
     "@cognite/cogs.js": ">=9"
-    "@cognite/reveal": 4.12.1
+    "@cognite/reveal": 4.14.3
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:^4.14.1":
-  version: 4.14.1
-  resolution: "@cognite/reveal@npm:4.14.1"
+"@cognite/reveal@npm:^4.14.3":
+  version: 4.14.3
+  resolution: "@cognite/reveal@npm:4.14.3"
   dependencies:
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:^23.1.1"
@@ -1832,7 +1832,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.164.1
-  checksum: 10/8535bffd5a63f60fb8a7e1e2e85b3690ba9d93db64b57aedcc92bade62dc291598fd666fbbe2779faffb6a5da3fc8bb2f0b6b9e5149f788440fd451a78147654
+  checksum: 10/cb19996bfb3ade06db5a8cd375bea64ff73145eb723b6c97afb78044f33f26e19dda37df817a33e061b243a99ce9746a26943722d77b8d82df6906a63cfcfaa4
   languageName: node
   linkType: hard
 
@@ -14608,10 +14608,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.164.0":
-  version: 0.164.0
-  resolution: "three@npm:0.164.0"
-  checksum: 10/55603c9c567a274baaeed118e421208a1fa4eb60dd9fef97424cf0193a15691d4ef709c2ed4eda30936faad0fe51af360d1505721cee2aecbb81fc4fd5b193a9
+"three@npm:0.164.1":
+  version: 0.164.1
+  resolution: "three@npm:0.164.1"
+  checksum: 10/561f28a84c6978b3fb548c11892ac6411df97a848089611d16ef921613d71af7a77815f531d10311cd7f9f9477ba900b69a99a39fe978d193a990476050fe062
   languageName: node
   linkType: hard
 

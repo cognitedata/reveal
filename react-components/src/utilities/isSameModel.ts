@@ -58,3 +58,7 @@ export function isSamePointCloudModel(
         model0.transform.equals(model1.transform)))
   );
 }
+
+export function isSameModel(model1: CadModelOptions, model2: CadModelOptions): boolean {
+  return model1.modelId === model2.modelId && model1.revisionId === model2.revisionId;
+}

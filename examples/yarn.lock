@@ -22,26 +22,12 @@
     commander "^2.15.1"
 
 "@cognite/reveal@link:../viewer":
-  version "4.14.3"
-  dependencies:
-    "@rajesh896/broprint.js" "^2.1.1"
-    "@tweenjs/tween.js" "^23.1.1"
-    assert "^2.1.0"
-    async-mutex "^0.5.0"
-    glslify "^7.1.1"
-    glslify-import "^3.1.0"
-    html2canvas "^1.4.1"
-    lodash "^4.17.21"
-    loglevel "^1.9.1"
-    mixpanel-browser "^2.49.0"
-    path-browserify "^1.0.1"
-    random-seed "^0.3.0"
-    rxjs "^7.8.1"
-    skmeans "^0.11.3"
-    sparse-octree "^7.1.8"
+  version "0.0.0"
+  uid ""
 
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
+  uid ""
 
 "@discoveryjs/json-ext@^0.5.0":
   version "0.5.7"
@@ -3540,6 +3526,11 @@ uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
+
+uuid@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
+  integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==
 
 vary@~1.1.2:
   version "1.1.2"
