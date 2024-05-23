@@ -61,7 +61,7 @@ export const DomainObjectPanel = ({
                   appendTo={document.body}>
                   <Button
                     onClick={async () => {
-                      await copyStringToClipboard(info);
+                      await copyTextToClipboard(info);
                     }}>
                     <Icon type="Copy" />
                   </Button>
@@ -91,17 +91,14 @@ export const DomainObjectPanel = ({
     );
   }
 
-  async function copyStringToClipboard(info: PanelInfo): Promise<void> {
+  async function copyTextToClipboard(info: PanelInfo): Promise<void> {
     let text = '';
-    if (info.header !== undefined) {
-      text += t(info.header.key, info.header.fallback);
-      text += `\n`;
+    const { header } = info;
+    if (header !== undefined) {
+      text += `${t(header.key, header.fallback)}\n`;
     }
     for (const item of info.items) {
-      text += t(item.key, item.fallback);
-      text += `:  `;
-      text += item.valueToString();
-      text += `\n`;
+      text += `${t(item.key, item.fallback)}:  ${item.valueToString()}\n`;
     }
     await navigator.clipboard.writeText(text);
   }
