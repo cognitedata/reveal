@@ -33,7 +33,7 @@ export const DomainObjectPanel = ({
   const header = info.header;
 
   return (
-    <DomainObjectPanelContainer>
+    <PanelContainer>
       <CardContainer>
         <table>
           <tbody>
@@ -76,10 +76,10 @@ export const DomainObjectPanel = ({
           </tbody>
         </table>
         <table>
-          <tbody>{info.items.map((x, _i) => addNumber(x))}</tbody>
+          <tbody>{info.items.map((item, _i) => addNumber(item))}</tbody>
         </table>
       </CardContainer>
-    </DomainObjectPanelContainer>
+    </PanelContainer>
   );
 
   function addNumber(item: NumberPanelItem): ReactElement {
@@ -133,7 +133,7 @@ const CardContainer = styled.div`
   box-shadow: 0px 1px 8px #4f52681a;
 `;
 
-const DomainObjectPanelContainer = styled.div`
+const PanelContainer = styled.div`
   zindex: 1000px;
   bottom: 10px;
   left: 60px;

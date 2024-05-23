@@ -34,7 +34,7 @@ export class DomainObjectPanelUpdater {
       this._setDomainObject(undefined);
       return;
     }
-    const domainObjectInfo = { domainObject };
-    this._setDomainObject(domainObjectInfo);
+    const info = { domainObject };
+    this._setDomainObject(info);
   }
 }

@@ -10,7 +10,7 @@ import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type Vector3 } from 'three';
 import { MeasureBoxCreator } from './MeasureBoxCreator';
-import { MeasureType, getIconByMeasureType, getTooltipByMeasureType } from './MeasureType';
+import { MeasureType } from './MeasureType';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { MeasureLineCreator } from './MeasureLineCreator';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
@@ -20,6 +20,8 @@ import { MeasureRenderStyle } from './MeasureRenderStyle';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { MeasureDomainObject } from './MeasureDomainObject';
+import { ShowMeasurmentsOnTopCommand } from './ShowMeasurmentsOnTopCommand';
+import { SetMeasurmentTypeCommand } from './SetMeasurmentTypeCommand';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -27,34 +29,31 @@ export class MeasurementTool extends BaseEditTool {
   // ==================================================
 
   private _creator: BaseCreator | undefined = undefined;
-  private readonly _measureType: MeasureType;
-
-  // ==================================================
-  // CONSTRUCTORS
-  // ==================================================
-
-  public constructor(measureType: MeasureType) {
-    super();
-    this._measureType = measureType;
-  }
+  public measureType: MeasureType = MeasureType.Line;
 
   // ==================================================
   // OVERRIDES of BaseCommand
   // ==================================================
 
-  public override equals(other: BaseCommand): boolean {
-    if (!(other instanceof MeasurementTool)) {
-      return false;
-    }
-    return this._measureType === other._measureType;
-  }
-
   public override get icon(): string {
-    return getIconByMeasureType(this._measureType);
+    return 'Ruler';
   }
 
   public override get tooltip(): Tooltip {
-    return getTooltipByMeasureType(this._measureType);
+    return { key: 'MEASUREMENTS', fallback: 'Measurements' };
+  }
+
+  public override getExtraToolbar(): Array<BaseCommand | undefined> | undefined {
+    const result = new Array<BaseCommand | undefined>();
+    result.push(new SetMeasurmentTypeCommand(MeasureType.Line));
+    result.push(new SetMeasurmentTypeCommand(MeasureType.Polyline));
+    result.push(new SetMeasurmentTypeCommand(MeasureType.Polygon));
+    result.push(new SetMeasurmentTypeCommand(MeasureType.HorizontalArea));
+    result.push(new SetMeasurmentTypeCommand(MeasureType.VerticalArea));
+    result.push(new SetMeasurmentTypeCommand(MeasureType.Volume));
+    result.push(undefined); // Means separator
+    result.push(new ShowMeasurmentsOnTopCommand());
+    return result;
   }
 
   // ==================================================
@@ -63,14 +62,19 @@ export class MeasurementTool extends BaseEditTool {
 
   public override onActivate(): void {
     super.onActivate();
-    this._creator = undefined;
     this.setAllMeasurementsVisible(true);
   }
 
   public override onDeactivate(): void {
+    this.handleEscape();
     super.onDeactivate();
-    this._creator = undefined;
     this.setAllMeasurementsVisible(false);
+    this.deselectAll();
+  }
+
+  public override clearDragging(): void {
+    super.clearDragging();
+    this._creator = undefined;
   }
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
@@ -85,17 +89,18 @@ export class MeasurementTool extends BaseEditTool {
       return;
     }
     if (down && event.key === 'Escape') {
-      const { _creator: creator } = this;
-      if (creator !== undefined) {
-        creator.handleEscape();
-        this._creator = undefined;
-        return;
-      }
+      this.handleEscape();
     }
     super.onKey(event, down);
   }
 
   public override async onHover(event: PointerEvent): Promise<void> {
+    if (this.measureType === MeasureType.None) {
+      this.renderTarget.setNavigateCursor();
+      super.onHover(event);
+      return;
+    }
+
     const { _creator: creator } = this;
     if (creator !== undefined && !creator.preferIntersection) {
       // Hover in the "air"
@@ -182,6 +187,10 @@ export class MeasurementTool extends BaseEditTool {
     const ray = this.getRay(event);
     if (creator === undefined) {
       const creator = (this._creator = this.createCreator());
+      if (creator === undefined) {
+        await super.onClick(event);
+        return;
+      }
       if (creator.addPoint(ray, intersection.point, false)) {
         const { domainObject } = creator;
         initializeStyle(domainObject, renderTarget);
@@ -208,6 +217,14 @@ export class MeasurementTool extends BaseEditTool {
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  public handleEscape(): void {
+    if (this._creator === undefined) {
+      return;
+    }
+    this._creator.handleEscape();
+    this._creator = undefined;
+  }
 
   private setAllMeasurementsVisible(visible: boolean): void {
     for (const domainObject of getMeasureDomainObjects(this.renderTarget)) {
@@ -261,18 +278,18 @@ export class MeasurementTool extends BaseEditTool {
     }
   }
 
-  private createCreator(): BaseCreator {
-    switch (this._measureType) {
+  private createCreator(): BaseCreator | undefined {
+    switch (this.measureType) {
       case MeasureType.Line:
       case MeasureType.Polyline:
       case MeasureType.Polygon:
-        return new MeasureLineCreator(this._measureType);
+        return new MeasureLineCreator(this.measureType);
       case MeasureType.HorizontalArea:
       case MeasureType.VerticalArea:
       case MeasureType.Volume:
-        return new MeasureBoxCreator(this._measureType);
+        return new MeasureBoxCreator(this.measureType);
       default:
-        throw new Error();
+        return undefined;
     }
   }
 }

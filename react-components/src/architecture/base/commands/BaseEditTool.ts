@@ -22,13 +22,8 @@ export abstract class BaseEditTool extends NavigationTool {
     return 'crosshair';
   }
 
-  public override onActivate(): void {
-    super.onActivate();
-    this._dragger = undefined;
-  }
-
-  public override onDeactivate(): void {
-    super.onDeactivate();
+  public override clearDragging(): void {
+    super.clearDragging();
     this._dragger = undefined;
   }
 

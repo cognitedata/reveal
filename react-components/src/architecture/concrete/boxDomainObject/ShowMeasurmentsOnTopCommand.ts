@@ -44,6 +44,10 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
     return true;
   }
 
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
   public getDepthTest(): boolean {
     const domainObject = getAnyMeasureDomainObject(this.renderTarget);
     if (domainObject === undefined) {

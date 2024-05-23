@@ -25,6 +25,11 @@ import {
   DomainObjectPanelUpdater,
   type DomainObjectInfo
 } from '../src/architecture/base/domainObjectsHelpers/DomainObjectPanelUpdater';
+import {
+  type ActiveToolInfo,
+  ExtraToolbarUpdater
+} from '../src/architecture/base/domainObjectsHelpers/ExtraToolbarUpdater';
+import { ExtraToolbar } from '../src/components/RevealToolbar/Architecture/ExtraToolbar';
 
 const meta = {
   title: 'Example/Architecture',
@@ -95,8 +100,10 @@ export const Main: Story = {
     const [currentDomainObjectInfo, setCurrentDomainObjectInfo] = useState<
       DomainObjectInfo | undefined
     >();
+    const [activeToolInfo, setActiveToolInfo] = useState<ActiveToolInfo | undefined>();
 
     DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
+    ExtraToolbarUpdater.setActiveToolDelegate(setActiveToolInfo);
 
     return (
       <RevealStoryContainer
@@ -123,17 +130,12 @@ export const Main: Story = {
             <RevealButtons.UpdateTerrain />
           </>
           <>
-            <RevealButtons.MeasureLine />
-            <RevealButtons.MeasurePolyline />
-            <RevealButtons.MeasurePolygon />
-            <RevealButtons.MeasureHorizontalArea />
-            <RevealButtons.MeasureVerticalArea />
-            <RevealButtons.MeasureVolume />
-            <RevealButtons.ShowMeasurmentsOnTop />
+            <RevealButtons.Measurement />
           </>
         </MyCustomToolbar>
 
         <DomainObjectPanel domainObjectInfo={currentDomainObjectInfo} />
+        <ExtraToolbar activeToolInfo={activeToolInfo} />
       </RevealStoryContainer>
     );
   }

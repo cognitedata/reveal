@@ -5,6 +5,7 @@
 import { type Tooltip } from '../../base/commands/BaseCommand';
 
 export enum MeasureType {
+  None,
   Line,
   Polyline,
   Polygon,

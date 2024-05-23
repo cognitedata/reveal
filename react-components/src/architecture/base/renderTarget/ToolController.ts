@@ -6,6 +6,7 @@
 import { PointerEvents, PointerEventsTarget } from '@cognite/reveal';
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
+import { ExtraToolbarUpdater } from '../domainObjectsHelpers/ExtraToolbarUpdater';
 
 export class ToolControllers extends PointerEvents {
   // ==================================================
@@ -132,6 +133,7 @@ export class ToolControllers extends PointerEvents {
     for (const command of this._commands) {
       command.update();
     }
+    ExtraToolbarUpdater.update(this.activeTool);
   }
 
   public dispose(): void {

@@ -12,8 +12,6 @@ import { FitViewCommand } from '../../../architecture/base/concreteCommands/FitV
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../../architecture/concrete/axis/SetAxisVisibleCommand';
-import { MeasureType } from '../../../architecture/concrete/boxDomainObject/MeasureType';
-import { ShowMeasurmentsOnTopCommand } from '../../../architecture/concrete/boxDomainObject/ShowMeasurmentsOnTopCommand';
 
 export class RevealButtons {
   static FitView = (): ReactElement => CommandButton(new FitViewCommand());
@@ -21,25 +19,7 @@ export class RevealButtons {
   static SetAxisVisible = (): ReactElement => CommandButton(new SetAxisVisibleCommand());
   static SetTerrainVisible = (): ReactElement => CommandButton(new SetTerrainVisibleCommand());
   static UpdateTerrain = (): ReactElement => CommandButton(new UpdateTerrainCommand());
-
-  static ShowMeasurmentsOnTop = (): ReactElement =>
-    CommandButton(new ShowMeasurmentsOnTopCommand());
-
-  static MeasureLine = (): ReactElement => CommandButton(new MeasurementTool(MeasureType.Line));
-
-  static MeasurePolyline = (): ReactElement =>
-    CommandButton(new MeasurementTool(MeasureType.Polyline));
-
-  static MeasurePolygon = (): ReactElement =>
-    CommandButton(new MeasurementTool(MeasureType.Polygon));
-
-  static MeasureHorizontalArea = (): ReactElement =>
-    CommandButton(new MeasurementTool(MeasureType.HorizontalArea));
-
-  static MeasureVerticalArea = (): ReactElement =>
-    CommandButton(new MeasurementTool(MeasureType.VerticalArea));
-
-  static MeasureVolume = (): ReactElement => CommandButton(new MeasurementTool(MeasureType.Volume));
+  static Measurement = (): ReactElement => CommandButton(new MeasurementTool());
 
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
     CommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));

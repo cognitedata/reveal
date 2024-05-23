@@ -17,6 +17,7 @@ import {
 } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { type DomainObject } from '../domainObjects/DomainObject';
+import { type BaseCommand } from './BaseCommand';
 
 export abstract class BaseTool extends RenderTargetCommand {
   // ==================================================
@@ -44,6 +45,10 @@ export abstract class BaseTool extends RenderTargetCommand {
   // VIRTUAL METHODS: To be overridden
   // ==================================================
 
+  public getExtraToolbar(): Array<BaseCommand | undefined> | undefined {
+    return undefined;
+  }
+
   public get defaultCursor(): string {
     return 'default';
   }
@@ -51,10 +56,16 @@ export abstract class BaseTool extends RenderTargetCommand {
   public onActivate(): void {
     this.update();
     this.setDefaultCursor();
+    this.clearDragging();
   }
 
   public onDeactivate(): void {
     this.update();
+    this.clearDragging();
+  }
+
+  public clearDragging(): void {
+    // Override this to clear any temporary objects in the tool, like the dragger
   }
 
   public onHover(_event: PointerEvent): void {}
