@@ -17,7 +17,7 @@ export class SetAxisVisibleCommand extends RenderTargetCommand {
   }
 
   public override get icon(): string {
-    return 'Axis';
+    return 'Axis3D';
   }
 
   public override get isEnabled(): boolean {

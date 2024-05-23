@@ -129,6 +129,7 @@ export const Main: Story = {
             <RevealButtons.MeasureHorizontalArea />
             <RevealButtons.MeasureVerticalArea />
             <RevealButtons.MeasureVolume />
+            <RevealButtons.ShowMeasurmentsOnTop />
           </>
         </MyCustomToolbar>
 

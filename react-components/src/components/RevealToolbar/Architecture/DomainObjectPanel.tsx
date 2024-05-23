@@ -47,12 +47,17 @@ export const DomainObjectPanel = ({
                 </PaddedTh>
               )}
               <th>
-                <Button
-                  onClick={() => {
-                    domainObject.removeInteractive();
-                  }}>
-                  <Icon type="Delete" />
-                </Button>
+                <CogsTooltip
+                  content={t('DELETE', 'Delete')}
+                  placement="right"
+                  appendTo={document.body}>
+                  <Button
+                    onClick={() => {
+                      domainObject.removeInteractive();
+                    }}>
+                    <Icon type="Delete" />
+                  </Button>
+                </CogsTooltip>
               </th>
               <th>
                 <CogsTooltip

@@ -13,6 +13,7 @@ import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { MeasureType } from '../../../architecture/concrete/boxDomainObject/MeasureType';
+import { ShowMeasurmentsOnTopCommand } from '../../../architecture/concrete/boxDomainObject/ShowMeasurmentsOnTopCommand';
 
 export class RevealButtons {
   static FitView = (): ReactElement => CommandButton(new FitViewCommand());
@@ -20,6 +21,9 @@ export class RevealButtons {
   static SetAxisVisible = (): ReactElement => CommandButton(new SetAxisVisibleCommand());
   static SetTerrainVisible = (): ReactElement => CommandButton(new SetTerrainVisibleCommand());
   static UpdateTerrain = (): ReactElement => CommandButton(new UpdateTerrainCommand());
+
+  static ShowMeasurmentsOnTop = (): ReactElement =>
+    CommandButton(new ShowMeasurmentsOnTopCommand());
 
   static MeasureLine = (): ReactElement => CommandButton(new MeasurementTool(MeasureType.Line));
 

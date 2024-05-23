@@ -186,6 +186,7 @@ export class MeasurementTool extends BaseEditTool {
         const { domainObject } = creator;
         initializeStyle(domainObject, renderTarget);
         rootDomainObject.addChildInteractive(domainObject);
+        this.renderTarget.toolController.update();
         domainObject.setVisibleInteractive(true, renderTarget);
       }
     } else {

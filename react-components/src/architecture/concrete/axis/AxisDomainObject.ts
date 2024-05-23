@@ -14,7 +14,7 @@ export class AxisDomainObject extends VisualDomainObject {
   // ==================================================
 
   public override get typeName(): string {
-    return 'Axis';
+    return 'Axis3D';
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

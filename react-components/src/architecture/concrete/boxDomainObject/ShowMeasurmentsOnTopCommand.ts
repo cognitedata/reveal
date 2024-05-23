@@ -18,7 +18,7 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
   }
 
   public override get icon(): string {
-    return 'Expand';
+    return 'EyeShow';
   }
 
   public override get isEnabled(): boolean {
@@ -31,21 +31,25 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
+    return !this.getDepthTest();
+  }
+
+  protected override invokeCore(): boolean {
+    const depthTest = this.getDepthTest();
+    for (const domainObject of getMeasureDomainObjects(this.renderTarget)) {
+      const style = domainObject.renderStyle;
+      style.depthTest = !depthTest;
+      domainObject.notify(Changes.renderStyle);
+    }
+    return true;
+  }
+
+  public getDepthTest(): boolean {
     const domainObject = getAnyMeasureDomainObject(this.renderTarget);
     if (domainObject === undefined) {
       return false;
     }
     const style = domainObject.renderStyle;
     return style.depthTest;
-  }
-
-  protected override invokeCore(): boolean {
-    const isChecked = this.isChecked;
-    for (const domainObject of getMeasureDomainObjects(this.renderTarget)) {
-      const style = domainObject.renderStyle;
-      style.depthTest = !isChecked;
-      domainObject.notify(Changes.renderStyle);
-    }
-    return true;
   }
 }
