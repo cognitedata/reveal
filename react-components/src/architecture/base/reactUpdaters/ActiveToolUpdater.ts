@@ -22,7 +22,7 @@ export class ActiveToolUpdater {
 
   public static update(): void {
     // Increment the counter, so the state change in React and force a redraw each time the active tool changes
-    // The reason for this it that I only want to store the active tool at one single location, since this gives a more
+    // The reason for solution it that I only want to store the active tool at one single location, since this gives a more
     // stabel code, and never goes out of sync.
     // React get the active tool by: renderTarget.toolController.activeTool;
     if (this._setCounter === undefined) {

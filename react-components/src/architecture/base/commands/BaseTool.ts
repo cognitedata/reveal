@@ -19,6 +19,7 @@ import { type Class } from '../domainObjectsHelpers/Class';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type BaseCommand } from './BaseCommand';
 import { ActiveToolUpdater } from '../reactUpdaters/ActiveToolUpdater';
+import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 
 export abstract class BaseTool extends RenderTargetCommand {
   // ==================================================
@@ -46,12 +47,17 @@ export abstract class BaseTool extends RenderTargetCommand {
   // VIRTUAL METHODS: To be overridden
   // ==================================================
 
-  public getExtraToolbar(): Array<BaseCommand | undefined> | undefined {
-    return undefined;
-  }
-
   public get defaultCursor(): string {
     return 'default';
+  }
+
+  public getExtraToolbar(): Array<BaseCommand | undefined> | undefined {
+    return undefined; // Override this to add extra buttons to a separate toolbar
+  }
+
+  public getExtraToolbarStyle(): PopupStyle {
+    // Default lower left corner
+    return new PopupStyle({ bottom: 0, left: 0 });
   }
 
   public onActivate(): void {

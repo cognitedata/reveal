@@ -23,12 +23,21 @@ export const ExtraToolbar = (): ReactElement => {
   if (commands === undefined || commands.length === 0) {
     return <></>;
   }
+  const style = activeTool.getExtraToolbarStyle();
   return (
-    <PanelContainer>
+    <Container
+      style={{
+        left: style.leftPx,
+        right: style.rightPx,
+        top: style.topPx,
+        bottom: style.bottomPx,
+        margin: style.marginPx
+        // Padding not used here
+      }}>
       <MyCustomToolbar>
         <>{commands.map((command, _i): ReactElement => addCommand(command))}</>
       </MyCustomToolbar>
-    </PanelContainer>
+    </Container>
   );
 };
 
@@ -39,17 +48,12 @@ function addCommand(command: BaseCommand | undefined): ReactElement {
   return CommandButton(command);
 }
 
-const PanelContainer = styled.div`
+const Container = styled.div`
   zindex: 1000px;
-  bottom: 140px;
-  right: 150px;
   position: absolute;
   display: block;
 `;
 
 const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(ToolBar)))`
-  position: absolute;
-  right: 20px;
-  top: 70px;
   flex-direction: row;
 `;

@@ -8,6 +8,7 @@ import { type MeasureRenderStyle } from './MeasureRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { DomainObjectPanelUpdater } from '../../base/reactUpdaters/DomainObjectPanelUpdater';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 
 export abstract class MeasureDomainObject extends VisualDomainObject {
   private readonly _measureType: MeasureType;
@@ -43,6 +44,11 @@ export abstract class MeasureDomainObject extends VisualDomainObject {
 
   public override get typeName(): string {
     return getNameByMeasureType(this.measureType);
+  }
+
+  public override getPanelInfoStyle(): PopupStyle {
+    // bottom = 66 because the measurement toolbar is below
+    return new PopupStyle({ bottom: 66, left: 0 });
   }
 
   protected override notifyCore(change: DomainObjectChange): void {

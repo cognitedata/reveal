@@ -18,6 +18,7 @@ import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObj
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
+import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -268,6 +269,12 @@ export abstract class DomainObject {
 
   public getPanelInfo(): PanelInfo | undefined {
     return undefined; // to be overridden
+  }
+
+  public getPanelInfoStyle(): PopupStyle {
+    // to be overridden
+    // Default lower left corner
+    return new PopupStyle({ bottom: 0, left: 0 });
   }
 
   // ==================================================

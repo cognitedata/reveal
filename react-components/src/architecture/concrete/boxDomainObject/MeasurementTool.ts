@@ -22,6 +22,7 @@ import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTar
 import { MeasureDomainObject } from './MeasureDomainObject';
 import { ShowMeasurmentsOnTopCommand } from './ShowMeasurmentsOnTopCommand';
 import { SetMeasurmentTypeCommand } from './SetMeasurmentTypeCommand';
+import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -54,6 +55,10 @@ export class MeasurementTool extends BaseEditTool {
     result.push(undefined); // Means separator
     result.push(new ShowMeasurmentsOnTopCommand());
     return result;
+  }
+
+  public override getExtraToolbarStyle(): PopupStyle {
+    return new PopupStyle({ bottom: 0, left: 0 });
   }
 
   // ==================================================

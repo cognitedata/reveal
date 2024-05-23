@@ -32,58 +32,64 @@ export const DomainObjectPanel = (): ReactElement => {
   if (info === undefined) {
     return <></>;
   }
-
+  const style = domainObject.getPanelInfoStyle();
   const icon = domainObject.icon as IconType;
   const header = info.header;
 
   return (
-    <PanelContainer>
-      <CardContainer>
-        <table>
-          <tbody>
-            <tr>
+    <Container
+      style={{
+        left: style.leftPx,
+        right: style.rightPx,
+        top: style.topPx,
+        bottom: style.bottomPx,
+        margin: style.marginPx,
+        padding: style.paddingPx
+      }}>
+      <table>
+        <tbody>
+          <tr>
+            <PaddedTh>
+              <Icon type={icon} />
+            </PaddedTh>
+            {header !== undefined && (
               <PaddedTh>
-                <Icon type={icon} />
+                <span>{t(header.key, header.fallback)}</span>
               </PaddedTh>
-              {header !== undefined && (
-                <PaddedTh>
-                  <span>{t(header.key, header.fallback)}</span>
-                </PaddedTh>
-              )}
-              <th>
-                <CogsTooltip
-                  content={t('DELETE', 'Delete')}
-                  placement="right"
-                  appendTo={document.body}>
-                  <Button
-                    onClick={() => {
-                      domainObject.removeInteractive();
-                    }}>
-                    <Icon type="Delete" />
-                  </Button>
-                </CogsTooltip>
-              </th>
-              <th>
-                <CogsTooltip
-                  content={t('COPY_TO_CLIPBOARD', 'Copy to clipboard')}
-                  placement="right"
-                  appendTo={document.body}>
-                  <Button
-                    onClick={async () => {
-                      await copyTextToClipboard(info);
-                    }}>
-                    <Icon type="Copy" />
-                  </Button>
-                </CogsTooltip>
-              </th>
-            </tr>
-          </tbody>
-        </table>
-        <table>
-          <tbody>{info.items.map((item, _i) => addTextWithNumber(item))}</tbody>
-        </table>
-      </CardContainer>
-    </PanelContainer>
+            )}
+            <th>
+              <CogsTooltip
+                content={t('DELETE', 'Delete')}
+                placement="right"
+                appendTo={document.body}>
+                <Button
+                  onClick={() => {
+                    domainObject.removeInteractive();
+                  }}>
+                  <Icon type="Delete" />
+                </Button>
+              </CogsTooltip>
+            </th>
+            <th>
+              <CogsTooltip
+                content={t('COPY_TO_CLIPBOARD', 'Copy to clipboard')}
+                placement="right"
+                appendTo={document.body}>
+                <Button
+                  onClick={async () => {
+                    await copyTextToClipboard(info);
+                  }}>
+                  <Icon type="Copy" />
+                </Button>
+              </CogsTooltip>
+            </th>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <tbody>{info.items.map((item, _i) => addTextWithNumber(item))}</tbody>
+      </table>
+    </Container>
   );
 
   function addTextWithNumber(item: NumberPanelItem): ReactElement {
@@ -125,22 +131,13 @@ const PaddedTh = styled.th`
   padding-right: 10px;
 `;
 
-const CardContainer = styled.div`
-  margin: 24px;
-  padding: 20px;
+const Container = styled.div`
+  zindex: 1000px;
+  position: absolute;
+  display: block;
   border-radius: 10px;
-  bottom: 10px;
   flex-direction: column;
-  min-width: 220px;
   overflow: hidden;
   background-color: white;
   box-shadow: 0px 1px 8px #4f52681a;
-`;
-
-const PanelContainer = styled.div`
-  zindex: 1000px;
-  bottom: 0px;
-  left: 0px;
-  position: absolute;
-  display: block;
 `;
