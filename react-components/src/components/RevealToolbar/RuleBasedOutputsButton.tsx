@@ -87,6 +87,10 @@ export const RuleBasedOutputsButton = ({
     if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(assetStylingGroups);
   };
 
+  if (ruleInstances === undefined || ruleInstances.length === 0) {
+    return <></>;
+  }
+
   return (
     <>
       <CogsTooltip
