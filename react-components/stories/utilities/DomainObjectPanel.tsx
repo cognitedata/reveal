@@ -30,10 +30,8 @@ export const DomainObjectPanel = ({
     return <></>;
   }
 
-  if (info.header === undefined) {
-    return <></>;
-  }
   const icon = domainObject.icon as IconType;
+  const header = info.header;
 
   return (
     <DomainObjectPanelContainer>
@@ -44,9 +42,11 @@ export const DomainObjectPanel = ({
               <PaddedTh>
                 <Icon type={icon} />
               </PaddedTh>
-              <PaddedTh>
-                <span>{t(info.header.key, info.header.fallback)}</span>
-              </PaddedTh>
+              {header !== undefined && (
+                <PaddedTh>
+                  <span>{t(header.key, header.fallback)}</span>
+                </PaddedTh>
+              )}
               <th>
                 <Button
                   onClick={() => {

@@ -14,13 +14,13 @@ export enum MeasureType {
 export function getIconByMeasureType(measureType: MeasureType): string {
   switch (measureType) {
     case MeasureType.Line:
-      return 'RulerAlternative';
+      return 'VectorLine';
     case MeasureType.Polyline:
-      return 'VectorSquare';
+      return 'VectorZigzag';
     case MeasureType.Polygon:
       return 'Polygon';
     case MeasureType.HorizontalArea:
-      return 'Dimensions';
+      return 'FrameTool';
     case MeasureType.VerticalArea:
       return 'Perspective';
     case MeasureType.Volume:
