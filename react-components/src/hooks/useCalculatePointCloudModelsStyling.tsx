@@ -40,7 +40,7 @@ export const useCalculatePointCloudStyling = (
   const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
 
   const combinedStyledPointCloudModels = useMemo(() => {
-    return groupStyleGroupByModel([...styledPointCloudModels, ...modelInstanceStyleGroups]);
+    return groupStyleGroupByModel(models, [...styledPointCloudModels, ...modelInstanceStyleGroups]);
   }, [styledPointCloudModels, modelInstanceStyleGroups]);
   return combinedStyledPointCloudModels;
 };
@@ -160,19 +160,17 @@ function getMappedStyleGroupFromAnnotationIds(
   return { annotationIds, style: nodeAppearance };
 }
 
-function groupStyleGroupByModel(styleGroup: StyledPointCloudModel[]): StyledPointCloudModel[] {
+function groupStyleGroupByModel(
+  models: PointCloudModelOptions[],
+  styleGroup: StyledPointCloudModel[]
+): StyledPointCloudModel[] {
+  const initialStyleGroups = models.map((model) => ({ model, styleGroups: [] }));
+
   return styleGroup.reduce<StyledPointCloudModel[]>((accumulatedGroups, currentGroup) => {
     const existingGroupWithModel = accumulatedGroups.find((group) =>
       isSamePointCloudModel(group.model, currentGroup.model)
     );
-    if (existingGroupWithModel !== undefined) {
-      existingGroupWithModel.styleGroups.push(...currentGroup.styleGroups);
-    } else {
-      accumulatedGroups.push({
-        model: currentGroup.model,
-        styleGroups: [...currentGroup.styleGroups]
-      });
-    }
+    existingGroupWithModel?.styleGroups.push(...currentGroup.styleGroups);
     return accumulatedGroups;
-  }, []);
+  }, initialStyleGroups);
 }
