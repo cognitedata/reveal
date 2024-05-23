@@ -18,7 +18,7 @@ import {
 import { type Class } from '../domainObjectsHelpers/Class';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type BaseCommand } from './BaseCommand';
-import { ActiveToolUpdater } from '../domainObjectsHelpers/ActiveToolUpdater';
+import { ActiveToolUpdater } from '../reactUpdaters/ActiveToolUpdater';
 
 export abstract class BaseTool extends RenderTargetCommand {
   // ==================================================

@@ -7,7 +7,7 @@ import { useState, type ReactElement } from 'react';
 import {
   DomainObjectPanelUpdater,
   type DomainObjectInfo
-} from '../../../architecture/base/domainObjectsHelpers/DomainObjectPanelUpdater';
+} from '../../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
 import {
   type PanelInfo,
   type NumberPanelItem

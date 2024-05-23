@@ -6,7 +6,7 @@ import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject'
 import { getIconByMeasureType, getNameByMeasureType, type MeasureType } from './MeasureType';
 import { type MeasureRenderStyle } from './MeasureRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { DomainObjectPanelUpdater } from '../../base/domainObjectsHelpers/DomainObjectPanelUpdater';
+import { DomainObjectPanelUpdater } from '../../base/reactUpdaters/DomainObjectPanelUpdater';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 
 export abstract class MeasureDomainObject extends VisualDomainObject {

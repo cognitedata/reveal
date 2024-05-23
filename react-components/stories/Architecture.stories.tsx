@@ -22,7 +22,7 @@ import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl
 import { RevealButtons } from '../src/components/RevealToolbar/Architecture/ToolButtons';
 import { DomainObjectPanel } from '../src/components/RevealToolbar/Architecture/DomainObjectPanel';
 import { ExtraToolbar } from '../src/components/RevealToolbar/Architecture/ExtraToolbar';
-import { ActiveToolUpdater } from '../src/architecture/base/domainObjectsHelpers/ActiveToolUpdater';
+import { ActiveToolUpdater } from '../src/architecture/base/reactUpdaters/ActiveToolUpdater';
 
 const meta = {
   title: 'Example/Architecture',
