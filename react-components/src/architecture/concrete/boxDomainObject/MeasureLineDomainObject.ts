@@ -14,7 +14,7 @@ import {
   horizontalDistanceTo,
   verticalDistanceTo
 } from '../../base/utilities/extensions/vectorExtensions';
-import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
+import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 
 export class MeasureLineDomainObject extends MeasureDomainObject {
   // ==================================================
@@ -52,24 +52,30 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
     switch (this.measureType) {
       case MeasureType.Line:
         info.setHeader('MEASUREMENTS_LINE', 'Line');
-        info.add('MEASUREMENTS_LENGTH', 'Length', this.getTotalLength());
-        info.add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
-        info.add('MEASUREMENTS_VERTICAL_LENGTH', 'Vertical length', this.getVerticalLength());
+        add('MEASUREMENTS_LENGTH', 'Length', this.getTotalLength());
+        add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
+        add('MEASUREMENTS_VERTICAL_LENGTH', 'Vertical length', this.getVerticalLength());
         break;
 
       case MeasureType.Polyline:
         info.setHeader('MEASUREMENTS_POLYLINE', 'Polyline');
-        info.add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
+        add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
         break;
       case MeasureType.Polygon:
         info.setHeader('MEASUREMENTS_POLYGON', 'Polygon');
-        info.add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
-        info.add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.getHorizontalArea());
+        add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
+        if (this.points.length > 2) {
+          add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.getHorizontalArea());
+        }
         break;
 
       default:
         throw new Error('Unknown MeasureType type');
     }
+    function add(key: string, fallback: string, value: number): void {
+      info.add(key, fallback, value, NumberType.Length);
+    }
+
     return info;
   }
 

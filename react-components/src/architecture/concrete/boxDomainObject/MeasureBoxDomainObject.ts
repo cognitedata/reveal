@@ -16,7 +16,7 @@ import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { MeasureBoxDragger } from './MeasureBoxDragger';
 import { MeasureDomainObject } from './MeasureDomainObject';
-import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
+import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -125,22 +125,27 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
         break;
     }
     if (isFinished || isValid(this.size.x)) {
-      info.add('MEASUREMENTS_LENGTH', 'Length', this.size.x);
+      info.add('MEASUREMENTS_LENGTH', 'Length', this.size.x, NumberType.Length);
     }
     if (measureType !== MeasureType.VerticalArea && (isFinished || isValid(this.size.y))) {
-      info.add('MEASUREMENTS_DEPTH', 'Depth', this.size.y);
+      info.add('MEASUREMENTS_DEPTH', 'Depth', this.size.y, NumberType.Length);
     }
     if (measureType !== MeasureType.HorizontalArea && (isFinished || isValid(this.size.z))) {
-      info.add('MEASUREMENTS_HEIGHT', 'Height', this.size.z);
+      info.add('MEASUREMENTS_HEIGHT', 'Height', this.size.z, NumberType.Length);
     }
     if (measureType !== MeasureType.Volume && (isFinished || this.hasArea)) {
-      info.add('MEASUREMENTS_AREA', 'Area', this.area);
+      info.add('MEASUREMENTS_AREA', 'Area', this.area, NumberType.Area);
     }
     if (measureType === MeasureType.Volume && (isFinished || this.hasHorizontalArea)) {
-      info.add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.horizontalArea);
+      info.add(
+        'MEASUREMENTS_HORIZONTAL_AREA',
+        'Horizontal area',
+        this.horizontalArea,
+        NumberType.Area
+      );
     }
     if (measureType === MeasureType.Volume && (isFinished || this.hasVolume)) {
-      info.add('MEASUREMENTS_VOLUME', 'Volume', this.volume);
+      info.add('MEASUREMENTS_VOLUME', 'Volume', this.volume, NumberType.Volume);
     }
     return info;
   }

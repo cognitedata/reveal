@@ -84,9 +84,12 @@ export const DomainObjectPanel = ({
           <span>{t(item.key, item.fallback)}</span>
         </PaddedTh>
         <></>
-        <RightTh>
+        <NumberTh>
           <span>{item.valueToString()}</span>
-        </RightTh>
+        </NumberTh>
+        <PaddedTh>
+          <span>{item.getUnit()}</span>
+        </PaddedTh>
       </tr>
     );
   }
@@ -98,14 +101,15 @@ export const DomainObjectPanel = ({
       text += `${t(header.key, header.fallback)}\n`;
     }
     for (const item of info.items) {
-      text += `${t(item.key, item.fallback)}:  ${item.valueToString()}\n`;
+      text += `${t(item.key, item.fallback)}:  ${item.valueToString()} ${item.getUnit()}\n`;
     }
     await navigator.clipboard.writeText(text);
   }
 };
 
-const RightTh = styled.th`
+const NumberTh = styled.th`
   text-align: right;
+  padding-right: 8px;
 `;
 
 const PaddedTh = styled.th`
