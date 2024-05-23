@@ -1,11 +1,15 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button, Icon, type IconType, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { type ReactElement } from 'react';
-import { type NumberInfo } from '../../src/architecture/base/domainObjects/DomainObject';
 import { type DomainObjectInfo } from '../../src/architecture/base/domainObjectsHelpers/DomainObjectPanelUpdater';
+import {
+  type PanelInfo,
+  type NumberPanelItem
+} from '../../src/architecture/base/domainObjectsHelpers/PanelInfo';
+import { useTranslation } from '../../src/components/i18n/I18n';
 
 export const DomainObjectPanel = ({
   domainObjectInfo
@@ -15,15 +19,21 @@ export const DomainObjectPanel = ({
   if (domainObjectInfo === undefined) {
     return <></>;
   }
+  const { t } = useTranslation();
   const domainObject = domainObjectInfo.domainObject;
   if (domainObject === undefined) {
     return <></>;
   }
 
-  const infos = domainObject.getPanelInfo();
-  if (infos === undefined) {
+  const info = domainObject.getPanelInfo();
+  if (info === undefined) {
     return <></>;
   }
+
+  if (info.header === undefined) {
+    return <></>;
+  }
+  const icon = domainObject.icon as IconType;
 
   return (
     <DomainObjectPanelContainer>
@@ -32,10 +42,10 @@ export const DomainObjectPanel = ({
           <tbody>
             <tr>
               <PaddedTh>
-                <Icon type="RulerAlternative" />
+                <Icon type={icon} />
               </PaddedTh>
               <PaddedTh>
-                <span>{domainObject.name}</span>
+                <span>{t(info.header.key, info.header.fallback)}</span>
               </PaddedTh>
               <th>
                 <Button
@@ -45,30 +55,58 @@ export const DomainObjectPanel = ({
                   <Icon type="Delete" />
                 </Button>
               </th>
+              <th>
+                <CogsTooltip
+                  content={t('COPY_TO_CLIPBOARD', 'Copy to clipboard')}
+                  placement="right"
+                  appendTo={document.body}>
+                  <Button
+                    onClick={async () => {
+                      await copyStringToClipboard(info);
+                    }}>
+                    <Icon type="Copy" />
+                  </Button>
+                </CogsTooltip>
+              </th>
             </tr>
           </tbody>
         </table>
         <table>
-          <tbody>{infos.map((x, _i) => add(x))}</tbody>
+          <tbody>{info.items.map((x, _i) => addNumber(x))}</tbody>
         </table>
       </CardContainer>
     </DomainObjectPanelContainer>
   );
-};
 
-function add(info: NumberInfo): ReactElement {
-  return (
-    <tr key={JSON.stringify(info)}>
-      <PaddedTh>
-        <span>{info[1]}</span>
-      </PaddedTh>
-      <></>
-      <RightTh>
-        <span>{info[2].toFixed(info[3]) + ' m'}</span>
-      </RightTh>
-    </tr>
-  );
-}
+  function addNumber(item: NumberPanelItem): ReactElement {
+    return (
+      <tr key={JSON.stringify(item)}>
+        <PaddedTh>
+          <span>{t(item.key, item.fallback)}</span>
+        </PaddedTh>
+        <></>
+        <RightTh>
+          <span>{item.valueToString()}</span>
+        </RightTh>
+      </tr>
+    );
+  }
+
+  async function copyStringToClipboard(info: PanelInfo): Promise<void> {
+    let text = '';
+    if (info.header !== undefined) {
+      text += t(info.header.key, info.header.fallback);
+      text += `\n`;
+    }
+    for (const item of info.items) {
+      text += t(item.key, item.fallback);
+      text += `:  `;
+      text += item.valueToString();
+      text += `\n`;
+    }
+    await navigator.clipboard.writeText(text);
+  }
+};
 
 const RightTh = styled.th`
   text-align: right;

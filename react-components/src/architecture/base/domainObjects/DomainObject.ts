@@ -17,14 +17,13 @@ import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { Views } from '../domainObjectsHelpers/Views';
+import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 
 /**
  * Represents an abstract base class for domain objects.
  * @abstract
  * @extends BaseSubject
  */
-export type NumberInfo = [string, string, number, number];
-
 export abstract class DomainObject {
   // ==================================================
   // INSTANCE FIELDS
@@ -89,6 +88,10 @@ export abstract class DomainObject {
     this.views.clear();
   }
 
+  public get icon(): string {
+    return 'Unknown';
+  }
+
   // ==================================================
   // INSTANCE/VIRTUAL METHODS: Nameing
   // ==================================================
@@ -109,7 +112,7 @@ export abstract class DomainObject {
   }
 
   public get nameExtension(): string | undefined {
-    return undefined;
+    return undefined; // to be overridden, should be added to the name in UI for more information
   }
 
   public hasEqualName(name: string): boolean {
@@ -263,7 +266,7 @@ export abstract class DomainObject {
   // VIRTUAL METHODS: For updating the panel
   // ==================================================
 
-  public getPanelInfo(): NumberInfo[] | undefined {
+  public getPanelInfo(): PanelInfo | undefined {
     return undefined; // to be overridden
   }
 

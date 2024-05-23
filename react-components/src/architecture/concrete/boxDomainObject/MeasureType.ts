@@ -10,3 +10,41 @@ export enum MeasureType {
   VerticalArea,
   Volume
 }
+
+export function getIconByMeasureType(measureType: MeasureType): string {
+  switch (measureType) {
+    case MeasureType.Line:
+      return 'RulerAlternative';
+    case MeasureType.Polyline:
+      return 'VectorSquare';
+    case MeasureType.Polygon:
+      return 'Polygon';
+    case MeasureType.HorizontalArea:
+      return 'Dimensions';
+    case MeasureType.VerticalArea:
+      return 'Perspective';
+    case MeasureType.Volume:
+      return 'Cube';
+    default:
+      throw new Error('Unknown MeasureType type');
+  }
+}
+
+export function getNameByMeasureType(measureType: MeasureType): string {
+  switch (measureType) {
+    case MeasureType.Line:
+      return 'Line';
+    case MeasureType.Polyline:
+      return 'Polyline';
+    case MeasureType.Polygon:
+      return 'Polygon';
+    case MeasureType.HorizontalArea:
+      return 'Horizontal area';
+    case MeasureType.VerticalArea:
+      return 'Vertical area';
+    case MeasureType.Volume:
+      return 'Volume';
+    default:
+      throw new Error('Unknown MeasureType type');
+  }
+}

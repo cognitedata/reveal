@@ -3,7 +3,7 @@
  */
 
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type MeasureType } from './MeasureType';
+import { getIconByMeasureType, getNameByMeasureType, type MeasureType } from './MeasureType';
 import { type MeasureRenderStyle } from './MeasureRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { DomainObjectPanelUpdater } from '../../base/domainObjectsHelpers/DomainObjectPanelUpdater';
@@ -36,6 +36,14 @@ export abstract class MeasureDomainObject extends VisualDomainObject {
   // ==================================================
   // OVERRIDES
   // ==================================================
+
+  public override get icon(): string {
+    return getIconByMeasureType(this.measureType);
+  }
+
+  public override get typeName(): string {
+    return getNameByMeasureType(this.measureType);
+  }
 
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);

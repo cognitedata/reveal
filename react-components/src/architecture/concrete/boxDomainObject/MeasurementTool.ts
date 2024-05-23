@@ -10,7 +10,7 @@ import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type Vector3 } from 'three';
 import { MeasureBoxCreator } from './MeasureBoxCreator';
-import { MeasureType } from './MeasureType';
+import { MeasureType, getIconByMeasureType } from './MeasureType';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { MeasureLineCreator } from './MeasureLineCreator';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
@@ -54,18 +54,7 @@ export class MeasurementTool extends BaseEditTool {
   }
 
   public override get icon(): string {
-    switch (this._measureType) {
-      case MeasureType.Line:
-      case MeasureType.Polyline:
-      case MeasureType.Polygon:
-        return 'Ruler';
-      case MeasureType.VerticalArea:
-      case MeasureType.HorizontalArea:
-      case MeasureType.Volume:
-        return 'Cube';
-      default:
-        throw new Error('Unknown MeasureType type');
-    }
+    return getIconByMeasureType(this._measureType);
   }
 
   public override get tooltip(): Tooltip {

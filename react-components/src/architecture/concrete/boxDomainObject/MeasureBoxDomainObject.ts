@@ -16,7 +16,7 @@ import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { MeasureBoxDragger } from './MeasureBoxDragger';
 import { MeasureDomainObject } from './MeasureDomainObject';
-import { type NumberInfo } from '../../base/domainObjects/DomainObject';
+import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -96,19 +96,6 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get typeName(): string {
-    switch (this.measureType) {
-      case MeasureType.HorizontalArea:
-        return 'Measure horizontal area';
-      case MeasureType.VerticalArea:
-        return 'Measure vertical area';
-      case MeasureType.Volume:
-        return 'Measure volume';
-      default:
-        throw new Error('Unknown MeasureType type');
-    }
-  }
-
   public override createRenderStyle(): RenderStyle | undefined {
     return new MeasureBoxRenderStyle();
   }
@@ -121,33 +108,41 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
     return new MeasureBoxDragger(this, intersection.point, pickInfo);
   }
 
-  public override getPanelInfo(): NumberInfo[] | undefined {
-    const result: NumberInfo[] = [];
+  public override getPanelInfo(): PanelInfo | undefined {
+    const info = new PanelInfo();
     const { measureType } = this;
     const isFinished = this.focusType !== BoxFocusType.Pending;
+
+    switch (measureType) {
+      case MeasureType.HorizontalArea:
+        info.setHeader('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area');
+        break;
+      case MeasureType.VerticalArea:
+        info.setHeader('MEASUREMENTS_VERTICAL_AREA', 'Vertical area');
+        break;
+      case MeasureType.Volume:
+        info.setHeader('MEASUREMENTS_VOLUME', 'Volume');
+        break;
+    }
     if (isFinished || isValid(this.size.x)) {
-      add('MEASUREMENTS_LENGTH', 'Length', this.size.x);
+      info.add('MEASUREMENTS_LENGTH', 'Length', this.size.x);
     }
     if (measureType !== MeasureType.VerticalArea && (isFinished || isValid(this.size.y))) {
-      add('MEASUREMENTS_DEPTH', 'Depth', this.size.y);
+      info.add('MEASUREMENTS_DEPTH', 'Depth', this.size.y);
     }
     if (measureType !== MeasureType.HorizontalArea && (isFinished || isValid(this.size.z))) {
-      add('MEASUREMENTS_HEIGHT', 'Height', this.size.z);
+      info.add('MEASUREMENTS_HEIGHT', 'Height', this.size.z);
     }
     if (measureType !== MeasureType.Volume && (isFinished || this.hasArea)) {
-      add('MEASUREMENTS_AREA', 'Area', this.area);
+      info.add('MEASUREMENTS_AREA', 'Area', this.area);
     }
     if (measureType === MeasureType.Volume && (isFinished || this.hasHorizontalArea)) {
-      add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.horizontalArea);
+      info.add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.horizontalArea);
     }
     if (measureType === MeasureType.Volume && (isFinished || this.hasVolume)) {
-      add('MEASUREMENTS_VOLUME', 'Volume', this.volume);
+      info.add('MEASUREMENTS_VOLUME', 'Volume', this.volume);
     }
-    return result;
-
-    function add(code: string, text: string, value: number): void {
-      result.push([code, text, value, 2]);
-    }
+    return info;
   }
 
   // ==================================================

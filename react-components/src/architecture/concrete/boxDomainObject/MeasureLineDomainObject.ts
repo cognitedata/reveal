@@ -14,7 +14,7 @@ import {
   horizontalDistanceTo,
   verticalDistanceTo
 } from '../../base/utilities/extensions/vectorExtensions';
-import { type NumberInfo } from '../../base/domainObjects/DomainObject';
+import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 
 export class MeasureLineDomainObject extends MeasureDomainObject {
   // ==================================================
@@ -43,48 +43,34 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get typeName(): string {
-    switch (this.measureType) {
-      case MeasureType.Line:
-        return 'Measure line';
-      case MeasureType.Polyline:
-        return 'Measure polyline';
-      case MeasureType.Polygon:
-        return 'Measure polygon';
-      default:
-        throw new Error('Unknown MeasureType type');
-    }
-  }
-
   public override createRenderStyle(): RenderStyle | undefined {
     return new MeasureLineRenderStyle();
   }
 
-  public override getPanelInfo(): NumberInfo[] | undefined {
-    const result: NumberInfo[] = [];
+  public override getPanelInfo(): PanelInfo | undefined {
+    const info = new PanelInfo();
     switch (this.measureType) {
       case MeasureType.Line:
-        add('MEASUREMENTS_LENGTH', 'Length', this.getTotalLength());
-        add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
-        add('MEASUREMENTS_VERTICAL_LENGTH', 'Vertical length', this.getVerticalLength());
+        info.setHeader('MEASUREMENTS_LINE', 'Line');
+        info.add('MEASUREMENTS_LENGTH', 'Length', this.getTotalLength());
+        info.add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
+        info.add('MEASUREMENTS_VERTICAL_LENGTH', 'Vertical length', this.getVerticalLength());
         break;
 
       case MeasureType.Polyline:
-        add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
+        info.setHeader('MEASUREMENTS_POLYLINE', 'Polyline');
+        info.add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
         break;
       case MeasureType.Polygon:
-        add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
-        add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.getHorizontalArea());
+        info.setHeader('MEASUREMENTS_POLYGON', 'Polygon');
+        info.add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
+        info.add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.getHorizontalArea());
         break;
 
       default:
         throw new Error('Unknown MeasureType type');
     }
-    return result;
-
-    function add(code: string, text: string, value: number): void {
-      result.push([code, text, value, 2]);
-    }
+    return info;
   }
 
   // ==================================================
