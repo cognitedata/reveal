@@ -3,24 +3,28 @@
  */
 import { Button, Icon, type IconType, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { type ReactElement } from 'react';
-import { type DomainObjectInfo } from '../../../architecture/base/domainObjectsHelpers/DomainObjectPanelUpdater';
+import { useState, type ReactElement } from 'react';
+import {
+  DomainObjectPanelUpdater,
+  type DomainObjectInfo
+} from '../../../architecture/base/domainObjectsHelpers/DomainObjectPanelUpdater';
 import {
   type PanelInfo,
   type NumberPanelItem
 } from '../../../architecture/base/domainObjectsHelpers/PanelInfo';
 import { useTranslation } from '../../i18n/I18n';
 
-export const DomainObjectPanel = ({
-  domainObjectInfo
-}: {
-  domainObjectInfo: DomainObjectInfo | undefined;
-}): ReactElement => {
+export const DomainObjectPanel = (): ReactElement => {
+  const [currentDomainObjectInfo, setCurrentDomainObjectInfo] = useState<
+    DomainObjectInfo | undefined
+  >();
+  DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
+
   const { t } = useTranslation();
-  if (domainObjectInfo === undefined) {
+  if (currentDomainObjectInfo === undefined) {
     return <></>;
   }
-  const domainObject = domainObjectInfo.domainObject;
+  const domainObject = currentDomainObjectInfo.domainObject;
   if (domainObject === undefined) {
     return <></>;
   }
@@ -76,13 +80,13 @@ export const DomainObjectPanel = ({
           </tbody>
         </table>
         <table>
-          <tbody>{info.items.map((item, _i) => addNumber(item))}</tbody>
+          <tbody>{info.items.map((item, _i) => addTextWithNumber(item))}</tbody>
         </table>
       </CardContainer>
     </PanelContainer>
   );
 
-  function addNumber(item: NumberPanelItem): ReactElement {
+  function addTextWithNumber(item: NumberPanelItem): ReactElement {
     return (
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
@@ -118,7 +122,7 @@ const NumberTh = styled.th`
 `;
 
 const PaddedTh = styled.th`
-  padding-right: 20px;
+  padding-right: 10px;
 `;
 
 const CardContainer = styled.div`
@@ -135,8 +139,8 @@ const CardContainer = styled.div`
 
 const PanelContainer = styled.div`
   zindex: 1000px;
-  bottom: 10px;
-  left: 60px;
+  bottom: 0px;
+  left: 0px;
   position: absolute;
   display: block;
 `;

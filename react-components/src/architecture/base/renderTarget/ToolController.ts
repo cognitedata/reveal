@@ -130,6 +130,7 @@ export class ToolControllers extends PointerEvents {
   }
 
   public update(): void {
+    console.log('update');
     for (const command of this._commands) {
       command.update();
     }

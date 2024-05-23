@@ -8,13 +8,7 @@ import { withCameraStateUrlParam } from '../../../higher-order-components/withCa
 import { withSuppressRevealEvents } from '../../../higher-order-components/withSuppressRevealEvents';
 import { type ActiveToolInfo } from '../../../architecture/base/domainObjectsHelpers/ExtraToolbarUpdater';
 import { CommandButton } from './CommandButton';
-
-const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(ToolBar)))`
-  position: absolute;
-  right: 20px;
-  top: 70px;
-  flex-direction: row;
-`;
+import { type BaseCommand } from '../../../architecture/base/commands/BaseCommand';
 
 export const ExtraToolbar = ({
   activeToolInfo
@@ -35,18 +29,18 @@ export const ExtraToolbar = ({
   return (
     <PanelContainer>
       <MyCustomToolbar>
-        <>
-          {commands.map((command, _i): ReactElement => {
-            if (command === undefined) {
-              return <>|</>;
-            }
-            return CommandButton(command);
-          })}
-        </>
+        <>{commands.map((command, _i): ReactElement => addCommand(command))}</>
       </MyCustomToolbar>
     </PanelContainer>
   );
 };
+
+function addCommand(command: BaseCommand | undefined): ReactElement {
+  if (command === undefined) {
+    return <>|</>;
+  }
+  return CommandButton(command);
+}
 
 const PanelContainer = styled.div`
   zindex: 1000px;
@@ -54,4 +48,11 @@ const PanelContainer = styled.div`
   right: 150px;
   position: absolute;
   display: block;
+`;
+
+const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(ToolBar)))`
+  position: absolute;
+  right: 20px;
+  top: 70px;
+  flex-direction: row;
 `;

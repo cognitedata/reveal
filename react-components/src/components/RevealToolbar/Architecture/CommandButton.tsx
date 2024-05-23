@@ -21,12 +21,12 @@ export const CommandButton = (inputCommand: BaseCommand): ReactElement => {
   const [isVisible, setVisible] = useState<boolean>(true);
 
   useEffect(() => {
-    function update(): void {
+    function update(command: BaseCommand): void {
       setChecked(command.isChecked);
       setEnabled(command.isEnabled);
       setVisible(command.isVisible);
     }
-    update();
+    update(command);
     command.addEventListener(update);
     return () => {
       command.removeEventListener(update);
@@ -36,7 +36,6 @@ export const CommandButton = (inputCommand: BaseCommand): ReactElement => {
   if (!isVisible) {
     return <></>;
   }
-
   const { key, fallback } = command.tooltip;
   return (
     <CogsTooltip content={t(key, fallback)} placement="right" appendTo={document.body}>

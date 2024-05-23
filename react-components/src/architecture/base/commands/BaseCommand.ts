@@ -4,7 +4,7 @@
 
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 
-type UpdateDelegate = () => void;
+type UpdateDelegate = (command: BaseCommand) => void;
 
 export type Tooltip = {
   key: string;
@@ -93,7 +93,7 @@ export abstract class BaseCommand {
 
   public update(): void {
     for (const listener of this._listeners) {
-      listener();
+      listener(this);
     }
   }
 }

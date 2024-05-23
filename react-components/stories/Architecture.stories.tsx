@@ -22,10 +22,6 @@ import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl
 import { RevealButtons } from '../src/components/RevealToolbar/Architecture/ToolButtons';
 import { DomainObjectPanel } from '../src/components/RevealToolbar/Architecture/DomainObjectPanel';
 import {
-  DomainObjectPanelUpdater,
-  type DomainObjectInfo
-} from '../src/architecture/base/domainObjectsHelpers/DomainObjectPanelUpdater';
-import {
   type ActiveToolInfo,
   ExtraToolbarUpdater
 } from '../src/architecture/base/domainObjectsHelpers/ExtraToolbarUpdater';
@@ -97,12 +93,7 @@ export const Main: Story = {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
   render: ({ addModelOptions }) => {
-    const [currentDomainObjectInfo, setCurrentDomainObjectInfo] = useState<
-      DomainObjectInfo | undefined
-    >();
     const [activeToolInfo, setActiveToolInfo] = useState<ActiveToolInfo | undefined>();
-
-    DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
     ExtraToolbarUpdater.setActiveToolDelegate(setActiveToolInfo);
 
     return (
@@ -134,7 +125,7 @@ export const Main: Story = {
           </>
         </MyCustomToolbar>
 
-        <DomainObjectPanel domainObjectInfo={currentDomainObjectInfo} />
+        <DomainObjectPanel />
         <ExtraToolbar activeToolInfo={activeToolInfo} />
       </RevealStoryContainer>
     );
