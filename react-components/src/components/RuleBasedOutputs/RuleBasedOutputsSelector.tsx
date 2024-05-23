@@ -88,8 +88,6 @@ export function RuleBasedOutputsSelector({
     if (assetMappings === undefined || models === undefined || isFetching) return;
     if (timeseriesExternalIds.length > 0 && isLoadingAssetIdsAndTimeseriesData) return;
 
-    setStylingsGroups(EMPTY_ARRAY);
-
     if (ruleSet === undefined) return;
 
     const ruleBasedInitilization = async (): Promise<void> => {
