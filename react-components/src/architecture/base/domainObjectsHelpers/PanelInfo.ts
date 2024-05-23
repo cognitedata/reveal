@@ -28,6 +28,17 @@ export class PanelInfo {
     const item = new NumberPanelItem(key, fallback, value, numberType, decimals);
     this.items.push(item);
   }
+
+  public addIcon(
+    icon: string,
+    value: number,
+    numberType: NumberType = NumberType.Unitless,
+    decimals: number = 2
+  ): void {
+    const item = new NumberPanelItem('', '', value, numberType, decimals);
+    item.icon = icon;
+    this.items.push(item);
+  }
 }
 
 export class PanelItem {
@@ -41,6 +52,7 @@ export class PanelItem {
 }
 
 export class NumberPanelItem extends PanelItem {
+  public icon: string | undefined = undefined;
   public value: number;
   public numberType: NumberType;
   public decimals: number;

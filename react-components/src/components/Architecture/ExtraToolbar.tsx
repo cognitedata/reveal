@@ -4,11 +4,11 @@
 import { ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { type ReactElement } from 'react';
-import { withCameraStateUrlParam } from '../../../higher-order-components/withCameraStateUrlParam';
-import { withSuppressRevealEvents } from '../../../higher-order-components/withSuppressRevealEvents';
+import { withCameraStateUrlParam } from '../../higher-order-components/withCameraStateUrlParam';
+import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { CommandButton } from './CommandButton';
-import { type BaseCommand } from '../../../architecture/base/commands/BaseCommand';
-import { useRenderTarget } from '../../RevealCanvas/ViewerContext';
+import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
+import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 
 export const ExtraToolbar = (): ReactElement => {
   const renderTarget = useRenderTarget();
@@ -32,7 +32,7 @@ export const ExtraToolbar = (): ReactElement => {
         top: style.topPx,
         bottom: style.bottomPx,
         margin: style.marginPx
-        // Padding not used here
+        // Padding is not used here
       }}>
       <MyCustomToolbar>
         <>{commands.map((command, _i): ReactElement => addCommand(command))}</>

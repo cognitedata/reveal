@@ -3,12 +3,12 @@
  */
 
 import { type ReactElement, useState, useEffect } from 'react';
-import { useRenderTarget } from '../../RevealCanvas/ViewerContext';
+import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { Button, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
-import { useTranslation } from '../../i18n/I18n';
-import { type BaseCommand } from '../../../architecture/base/commands/BaseCommand';
-import { type RevealRenderTarget } from '../../../architecture/base/renderTarget/RevealRenderTarget';
-import { RenderTargetCommand } from '../../../architecture/base/commands/RenderTargetCommand';
+import { useTranslation } from '../i18n/I18n';
+import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
+import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
+import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
 
 export const CommandButton = (inputCommand: BaseCommand): ReactElement => {
   const renderTarget = useRenderTarget();

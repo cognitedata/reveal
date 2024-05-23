@@ -65,7 +65,8 @@ export class MeasureLineCreator extends BaseCreator {
   ): boolean {
     // Figure out where the point should be if no intersection
     if (isPending && this.realPointCount >= 1 && point === undefined) {
-      const plane = new Plane().setFromNormalAndCoplanarPoint(ray.direction, this.firstPoint);
+      const lastPoint = this.points[this.realPointCount - 1];
+      const plane = new Plane().setFromNormalAndCoplanarPoint(ray.direction, lastPoint);
       const newPoint = ray.intersectPlane(plane, new Vector3());
       if (newPoint === null) {
         return false;

@@ -28,7 +28,6 @@ import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeome
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { MeasureType } from './MeasureType';
 import { createSpriteWithText } from '../../base/utilities/sprites/createSprite';
-import { Range3 } from '../../base/utilities/geometry/Range3';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
@@ -187,16 +186,7 @@ export class MeasureLineView extends GroupThreeView {
   }
 
   private getTextHeight(relativeTextSize: number): number {
-    const { lineDomainObject } = this;
-    const { points } = lineDomainObject;
-    if (points.length < 2) {
-      return 0;
-    }
-    const range = new Range3();
-    for (const point of points) {
-      range.add(point);
-    }
-    return relativeTextSize * range.diagonal;
+    return relativeTextSize * this.lineDomainObject.getAverageLength();
   }
 }
 

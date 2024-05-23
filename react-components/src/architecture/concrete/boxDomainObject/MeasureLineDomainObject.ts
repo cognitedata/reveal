@@ -104,6 +104,14 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
     return sum;
   }
 
+  public getAverageLength(): number {
+    const length = this.points.length;
+    if (length === 0) {
+      return 0;
+    }
+    return this.getTotalLength() / length;
+  }
+
   public getHorizontalLength(): number {
     let prevPoint: Vector3 | undefined;
     let sum = 0.0;

@@ -11,12 +11,12 @@ export function horizontalAngle(vector: Vector3): number {
   return Math.atan2(-vector.y, -vector.x) + Math.PI;
 }
 
-export function horizontalDistanceTo(p1: Vector3, p2: Vector3): number {
-  return Math.sqrt(square(p1.x - p2.x) + square(p1.y - p2.y));
+export function horizontalDistanceTo(from: Vector3, to: Vector3): number {
+  return Math.sqrt(square(from.x - to.x) + square(from.y - to.y));
 }
 
-export function verticalDistanceTo(p1: Vector3, p2: Vector3): number {
-  return Math.abs(p1.z - p2.z);
+export function verticalDistanceTo(from: Vector3, to: Vector3): number {
+  return Math.abs(from.z - to.z);
 }
 
 export function getHorizontalCrossProduct(self: Vector3, other: Vector3): number {

@@ -7,12 +7,12 @@ import { useState, type ReactElement } from 'react';
 import {
   DomainObjectPanelUpdater,
   type DomainObjectInfo
-} from '../../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
+} from '../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
 import {
   type PanelInfo,
   type NumberPanelItem
-} from '../../../architecture/base/domainObjectsHelpers/PanelInfo';
-import { useTranslation } from '../../i18n/I18n';
+} from '../../architecture/base/domainObjectsHelpers/PanelInfo';
+import { useTranslation } from '../i18n/I18n';
 
 export const DomainObjectPanel = (): ReactElement => {
   const [currentDomainObjectInfo, setCurrentDomainObjectInfo] = useState<
@@ -93,10 +93,16 @@ export const DomainObjectPanel = (): ReactElement => {
   );
 
   function addTextWithNumber(item: NumberPanelItem): ReactElement {
+    const icon = item.icon as IconType;
     return (
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
-          <span>{t(item.key, item.fallback)}</span>
+          {icon === undefined && <span>{t(item.key, item.fallback)}</span>}
+          {icon !== undefined && (
+            <span>
+              <Icon type={icon} />
+            </span>
+          )}
         </PaddedTh>
         <></>
         <NumberTh>
@@ -125,6 +131,7 @@ export const DomainObjectPanel = (): ReactElement => {
 const NumberTh = styled.th`
   text-align: right;
   padding-right: 8px;
+  min-width: 60px;
 `;
 
 const PaddedTh = styled.th`

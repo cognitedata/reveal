@@ -3,15 +3,15 @@
  */
 
 import { type ReactElement } from 'react';
-import { NavigationTool } from '../../../architecture/base/commands/NavigationTool';
-import { SetTerrainVisibleCommand } from '../../../architecture/concrete/terrainDomainObject/SetTerrainVisibleCommand';
+import { NavigationTool } from '../../architecture/base/commands/NavigationTool';
+import { SetTerrainVisibleCommand } from '../../architecture/concrete/terrainDomainObject/SetTerrainVisibleCommand';
 import { CommandButton } from './CommandButton';
-import { UpdateTerrainCommand } from '../../../architecture/concrete/terrainDomainObject/UpdateTerrainCommand';
-import { MeasurementTool } from '../../../architecture/concrete/boxDomainObject/MeasurementTool';
-import { FitViewCommand } from '../../../architecture/base/concreteCommands/FitViewCommand';
+import { UpdateTerrainCommand } from '../../architecture/concrete/terrainDomainObject/UpdateTerrainCommand';
+import { MeasurementTool } from '../../architecture/concrete/boxDomainObject/MeasurementTool';
+import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
 import { FlexibleControlsType } from '@cognite/reveal';
-import { SetFlexibleControlsTypeCommand } from '../../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
-import { SetAxisVisibleCommand } from '../../../architecture/concrete/axis/SetAxisVisibleCommand';
+import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
+import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
 
 export class RevealButtons {
   static FitView = (): ReactElement => CommandButton(new FitViewCommand());

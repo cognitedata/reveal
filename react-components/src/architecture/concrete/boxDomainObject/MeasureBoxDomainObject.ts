@@ -148,8 +148,9 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
     if (measureType === MeasureType.Volume && (isFinished || this.hasVolume)) {
       info.add('MEASUREMENTS_VOLUME', 'Volume', this.volume, NumberType.Volume);
     }
+    // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
     if (this.zRotation !== 0 && isFinished) {
-      info.add('MOUSE_ROTATE', 'Rotation', radToDeg(this.zRotation), NumberType.Degrees);
+      info.addIcon('Angle', radToDeg(this.zRotation), NumberType.Degrees);
     }
     return info;
   }

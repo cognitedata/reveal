@@ -19,9 +19,9 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
-import { RevealButtons } from '../src/components/RevealToolbar/Architecture/ToolButtons';
-import { DomainObjectPanel } from '../src/components/RevealToolbar/Architecture/DomainObjectPanel';
-import { ExtraToolbar } from '../src/components/RevealToolbar/Architecture/ExtraToolbar';
+import { RevealButtons } from '../src/components/Architecture/ToolButtons';
+import { DomainObjectPanel } from '../src/components/Architecture/DomainObjectPanel';
+import { ExtraToolbar } from '../src/components/Architecture/ExtraToolbar';
 import { ActiveToolUpdater } from '../src/architecture/base/reactUpdaters/ActiveToolUpdater';
 
 const meta = {
