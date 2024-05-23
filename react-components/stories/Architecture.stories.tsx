@@ -21,11 +21,8 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { RevealButtons } from '../src/components/RevealToolbar/Architecture/ToolButtons';
 import { DomainObjectPanel } from '../src/components/RevealToolbar/Architecture/DomainObjectPanel';
-import {
-  type ActiveToolInfo,
-  ExtraToolbarUpdater
-} from '../src/architecture/base/domainObjectsHelpers/ExtraToolbarUpdater';
 import { ExtraToolbar } from '../src/components/RevealToolbar/Architecture/ExtraToolbar';
+import { ActiveToolUpdater } from '../src/architecture/base/domainObjectsHelpers/ActiveToolUpdater';
 
 const meta = {
   title: 'Example/Architecture',
@@ -93,8 +90,9 @@ export const Main: Story = {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
   render: ({ addModelOptions }) => {
-    const [activeToolInfo, setActiveToolInfo] = useState<ActiveToolInfo | undefined>();
-    ExtraToolbarUpdater.setActiveToolDelegate(setActiveToolInfo);
+    // TODO: Move this to ExtraToolbar. Tried but is crashes
+    const [_activeToolUpdater, setActiveToolUpdater] = useState<number>(0);
+    ActiveToolUpdater.setCounterDelegate(setActiveToolUpdater);
 
     return (
       <RevealStoryContainer
@@ -126,7 +124,7 @@ export const Main: Story = {
         </MyCustomToolbar>
 
         <DomainObjectPanel />
-        <ExtraToolbar activeToolInfo={activeToolInfo} />
+        <ExtraToolbar />
       </RevealStoryContainer>
     );
   }

@@ -18,6 +18,7 @@ import {
 import { type Class } from '../domainObjectsHelpers/Class';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type BaseCommand } from './BaseCommand';
+import { ActiveToolUpdater } from '../domainObjectsHelpers/ActiveToolUpdater';
 
 export abstract class BaseTool extends RenderTargetCommand {
   // ==================================================
@@ -57,11 +58,13 @@ export abstract class BaseTool extends RenderTargetCommand {
     this.update();
     this.setDefaultCursor();
     this.clearDragging();
+    ActiveToolUpdater.update();
   }
 
   public onDeactivate(): void {
     this.update();
     this.clearDragging();
+    ActiveToolUpdater.update();
   }
 
   public clearDragging(): void {

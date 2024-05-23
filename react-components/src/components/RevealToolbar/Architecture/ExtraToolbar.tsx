@@ -6,19 +6,16 @@ import styled from 'styled-components';
 import { type ReactElement } from 'react';
 import { withCameraStateUrlParam } from '../../../higher-order-components/withCameraStateUrlParam';
 import { withSuppressRevealEvents } from '../../../higher-order-components/withSuppressRevealEvents';
-import { type ActiveToolInfo } from '../../../architecture/base/domainObjectsHelpers/ExtraToolbarUpdater';
 import { CommandButton } from './CommandButton';
 import { type BaseCommand } from '../../../architecture/base/commands/BaseCommand';
+import { useRenderTarget } from '../../RevealCanvas/ViewerContext';
 
-export const ExtraToolbar = ({
-  activeToolInfo
-}: {
-  activeToolInfo: ActiveToolInfo | undefined;
-}): ReactElement => {
-  if (activeToolInfo === undefined) {
+export const ExtraToolbar = (): ReactElement => {
+  const renderTarget = useRenderTarget();
+  if (renderTarget === undefined) {
     return <></>;
   }
-  const activeTool = activeToolInfo.activeTool;
+  const activeTool = renderTarget.toolController.activeTool;
   if (activeTool === undefined) {
     return <></>;
   }
