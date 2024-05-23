@@ -14,9 +14,9 @@ import { getNextColor } from '../utilities/colors/getNextColor';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
-import { BaseSubject } from './BaseSubject';
 import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
+import { Views } from '../domainObjectsHelpers/Views';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -25,11 +25,12 @@ import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
  */
 export type NumberInfo = [string, string, number, number];
 
-export abstract class DomainObject extends BaseSubject {
+export abstract class DomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
+  // Some basic states
   private _name: string | undefined = undefined;
   private _color: Color | undefined = undefined;
   private _isSelected: boolean = false;
@@ -37,9 +38,15 @@ export abstract class DomainObject extends BaseSubject {
   private _isExpanded = false;
   private _isInitialized = false;
 
+  // Parent-Child relationship
   private readonly _children: DomainObject[] = [];
   private _parent: DomainObject | undefined = undefined;
+
+  // Render style
   private _renderStyle: RenderStyle | undefined = undefined;
+
+  // Views and listeners
+  public readonly views: Views = new Views();
 
   // ==================================================
   // INSTANCE/VIRTUAL PROPERTIES
@@ -79,12 +86,7 @@ export abstract class DomainObject extends BaseSubject {
    * Always call `super.removeCore()` in the overrides.
    */
   protected removeCore(): void {
-    this.removeAllViews();
-    this.removeEventListeners();
-  }
-
-  public getNumberInfos(): NumberInfo[] | undefined {
-    return undefined;
+    this.views.clear();
   }
 
   // ==================================================
@@ -112,6 +114,29 @@ export abstract class DomainObject extends BaseSubject {
 
   public hasEqualName(name: string): boolean {
     return equalsIgnoreCase(this.name, name);
+  }
+
+  // ==================================================
+  // INSTANCE/VIRTUAL METHODS: Notification
+  // ==================================================
+
+  /**
+   * Notifies the registered views and listeners about a change in the domain object.
+   * This method should be overridden in derived classes to provide custom implementation.
+   * @param change - The change object representing the update.
+   * @remarks
+   * Always call `super.notifyCore()` in the overrides.
+   */
+  protected notifyCore(change: DomainObjectChange): void {
+    this.views.notify(this, change);
+  }
+
+  public notify(change: DomainObjectChange | symbol): void {
+    if (change instanceof DomainObjectChange) {
+      this.notifyCore(change);
+    } else {
+      this.notify(new DomainObjectChange(change));
+    }
   }
 
   // ==================================================
@@ -232,6 +257,14 @@ export abstract class DomainObject extends BaseSubject {
     this.isExpanded = value;
     this.notify(Changes.expanded);
     return true;
+  }
+
+  // ==================================================
+  // VIRTUAL METHODS: For updating the panel
+  // ==================================================
+
+  public getPanelInfo(): NumberInfo[] | undefined {
+    return undefined; // to be overridden
   }
 
   // ==================================================

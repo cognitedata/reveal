@@ -21,7 +21,10 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { RevealButtons } from '../src/components/RevealToolbar/Architecture/ToolButtons';
 import { DomainObjectPanel } from './utilities/DomainObjectPanel';
-import { type DomainObjectInfo } from '../src/architecture/concrete/boxDomainObject/addEventListenerToDomainObject';
+import {
+  DomainObjectPanelUpdater,
+  type DomainObjectInfo
+} from '../src/architecture/base/domainObjectsHelpers/DomainObjectPanelUpdater';
 
 const meta = {
   title: 'Example/Architecture',
@@ -93,6 +96,8 @@ export const Main: Story = {
       DomainObjectInfo | undefined
     >();
 
+    DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
+
     return (
       <RevealStoryContainer
         color={new Color(0x4a4a4a)}
@@ -118,23 +123,12 @@ export const Main: Story = {
             <RevealButtons.UpdateTerrain />
           </>
           <>
-            <RevealButtons.MeasureLine onDomainObjectChangeCallback={setCurrentDomainObjectInfo} />
-
-            <RevealButtons.MeasurePolyline
-              onDomainObjectChangeCallback={setCurrentDomainObjectInfo}
-            />
-            <RevealButtons.MeasurePolygon
-              onDomainObjectChangeCallback={setCurrentDomainObjectInfo}
-            />
-            <RevealButtons.MeasureHorizontalArea
-              onDomainObjectChangeCallback={setCurrentDomainObjectInfo}
-            />
-            <RevealButtons.MeasureVerticalArea
-              onDomainObjectChangeCallback={setCurrentDomainObjectInfo}
-            />
-            <RevealButtons.MeasureVolume
-              onDomainObjectChangeCallback={setCurrentDomainObjectInfo}
-            />
+            <RevealButtons.MeasureLine />
+            <RevealButtons.MeasurePolyline />
+            <RevealButtons.MeasurePolygon />
+            <RevealButtons.MeasureHorizontalArea />
+            <RevealButtons.MeasureVerticalArea />
+            <RevealButtons.MeasureVolume />
           </>
         </MyCustomToolbar>
 

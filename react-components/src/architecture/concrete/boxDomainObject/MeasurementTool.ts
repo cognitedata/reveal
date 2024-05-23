@@ -19,13 +19,7 @@ import { getAnyMeasureDomainObject, getMeasureDomainObjects } from './Measuremen
 import { MeasureRenderStyle } from './MeasureRenderStyle';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
-import {
-  type DomainObjectInfo,
-  addEventListenerToDomainObject
-} from './addEventListenerToDomainObject';
 import { MeasureDomainObject } from './MeasureDomainObject';
-
-export type SetDomainObjectInfoDelegate = (domainObjectInfo?: DomainObjectInfo) => void;
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -34,19 +28,14 @@ export class MeasurementTool extends BaseEditTool {
 
   private _creator: BaseCreator | undefined = undefined;
   private readonly _measureType: MeasureType;
-  private readonly _domainChangeCallback?: SetDomainObjectInfoDelegate;
 
   // ==================================================
   // CONSTRUCTORS
   // ==================================================
 
-  public constructor(
-    measureType: MeasureType,
-    measurementChangeCallback?: SetDomainObjectInfoDelegate
-  ) {
+  public constructor(measureType: MeasureType) {
     super();
     this._measureType = measureType;
-    this._domainChangeCallback = measurementChangeCallback;
   }
 
   // ==================================================
@@ -134,7 +123,6 @@ export class MeasurementTool extends BaseEditTool {
     super.onDeactivate();
     this._creator = undefined;
     this.setAllMeasurementsVisible(false);
-    this._domainChangeCallback?.(undefined);
   }
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
@@ -246,7 +234,6 @@ export class MeasurementTool extends BaseEditTool {
     const ray = this.getRay(event);
     if (creator === undefined) {
       const creator = (this._creator = this.createCreator());
-      addEventListenerToDomainObject(creator.domainObject, this._domainChangeCallback);
       if (creator.addPoint(ray, intersection.point, false)) {
         const { domainObject } = creator;
         initializeStyle(domainObject, renderTarget);

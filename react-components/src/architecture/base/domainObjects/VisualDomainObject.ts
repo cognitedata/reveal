@@ -57,7 +57,7 @@ export abstract class VisualDomainObject extends DomainObject {
   // ==================================================
 
   public getViewByTarget(target: RevealRenderTarget): ThreeView | undefined {
-    for (const view of this.getViewsByType(ThreeView)) {
+    for (const view of this.views.getByType(ThreeView)) {
       if (view.renderTarget === target) {
         return view;
       }
@@ -88,7 +88,7 @@ export abstract class VisualDomainObject extends DomainObject {
       if (view === undefined) {
         return false;
       }
-      this.addView(view);
+      this.views.addView(view);
       view.attach(this, target);
       view.initialize();
       view.onShow();
@@ -96,7 +96,7 @@ export abstract class VisualDomainObject extends DomainObject {
       if (view === undefined) {
         return false;
       }
-      this.removeView(view);
+      this.views.removeView(view);
     }
     return true; // State has changed
   }

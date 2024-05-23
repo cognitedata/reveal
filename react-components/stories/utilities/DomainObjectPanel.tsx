@@ -2,10 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 import { Button, Icon } from '@cognite/cogs.js';
-import { type DomainObjectInfo } from '../../src/architecture/concrete/boxDomainObject/addEventListenerToDomainObject';
 import styled from 'styled-components';
 import { type ReactElement } from 'react';
 import { type NumberInfo } from '../../src/architecture/base/domainObjects/DomainObject';
+import { type DomainObjectInfo } from '../../src/architecture/base/domainObjectsHelpers/DomainObjectPanelUpdater';
 
 export const DomainObjectPanel = ({
   domainObjectInfo
@@ -20,7 +20,7 @@ export const DomainObjectPanel = ({
     return <></>;
   }
 
-  const infos = domainObject.getNumberInfos();
+  const infos = domainObject.getPanelInfo();
   if (infos === undefined) {
     return <></>;
   }

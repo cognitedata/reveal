@@ -293,11 +293,11 @@ export class MeasureBoxView extends GroupThreeView {
   private createEdgeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
     const { boxDomainObject } = this;
     const adjecentSize1 = boxDomainObject.size.getComponent(face.tangentIndex1);
-    if (adjecentSize1 <= MIN_BOX_SIZE) {
+    if (!isValid(adjecentSize1)) {
       return undefined;
     }
     const adjecentSize2 = boxDomainObject.size.getComponent(face.tangentIndex2);
-    if (adjecentSize2 <= MIN_BOX_SIZE) {
+    if (!isValid(adjecentSize2)) {
       return undefined;
     }
     const radius = RELATIVE_RESIZE_RADIUS * this.getFaceRadius(face);
@@ -353,7 +353,7 @@ export class MeasureBoxView extends GroupThreeView {
     clear(this._sprites);
     for (let index = 0; index < 3; index++) {
       const size = boxDomainObject.size.getComponent(index);
-      if (size <= MIN_BOX_SIZE) {
+      if (!isValid(size)) {
         this._sprites.push(undefined);
         continue;
       }
@@ -634,6 +634,9 @@ function createSprite(
   return result;
 }
 
+function isValid(value: number): boolean {
+  return value > MIN_BOX_SIZE;
+}
 // ==================================================
 // PRIVATE FUNCTIONS: Vector pool
 // ==================================================

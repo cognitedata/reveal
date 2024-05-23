@@ -2,11 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
-import { isInstanceOf, type Class } from '../domainObjectsHelpers/Class';
+import { type DomainObjectChange } from './DomainObjectChange';
+import { isInstanceOf, type Class } from './Class';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 import { type BaseView } from '../views/BaseView';
-import { type DomainObject } from './DomainObject';
+import { type DomainObject } from '../domainObjects/DomainObject';
 
 type NotifyDelegate = (domainObject: DomainObject, change: DomainObjectChange) => void;
 
@@ -15,7 +15,7 @@ type NotifyDelegate = (domainObject: DomainObject, change: DomainObjectChange) =
  * A subject is an abstract class that provides functionality for notifying views and
  * listeners about changes.
  */
-export abstract class BaseSubject {
+export class Views {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -28,18 +28,14 @@ export abstract class BaseSubject {
   // ==================================================
 
   /**
-   * Notifies the registered views and listeners about a change in the domain object.
-   * This method should be overridden in derived classes to provide custom implementation.
-   * @param change - The change object representing the update.
-   * @remarks
-   * Always call `super.notifyCore()` in the overrides.
+   * Notifies the listeners and views about a change in the domain object.
+   * The should be called from DomainObject class only
+   * @param domainObject - The domain object that has changed.
+   * @param change - The change that occurred in the domain object.
    */
-  protected notifyCore<T extends DomainObject & BaseSubject>(
-    this: T,
-    change: DomainObjectChange
-  ): void {
+  public notify(domainObject: DomainObject, change: DomainObjectChange): void {
     for (const listener of this._listeners) {
-      listener(this, change);
+      listener(domainObject, change);
     }
     for (const view of this._views) {
       view.update(change);
@@ -47,25 +43,10 @@ export abstract class BaseSubject {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Notifying
-  // ==================================================
-
-  public notify<T extends DomainObject & BaseSubject>(
-    this: T,
-    change: DomainObjectChange | symbol
-  ): void {
-    if (change instanceof DomainObjectChange) {
-      this.notifyCore(change);
-    } else {
-      this.notify(new DomainObjectChange(change));
-    }
-  }
-
-  // ==================================================
   // INSTANCE METHODS: Views admin
   // ==================================================
 
-  public *getViewsByType<T extends BaseView>(classType: Class<T>): Generator<T> {
+  public *getByType<T extends BaseView>(classType: Class<T>): Generator<T> {
     for (const view of this._views) {
       if (isInstanceOf(view, classType)) {
         yield view;
@@ -83,7 +64,7 @@ export abstract class BaseSubject {
     remove(this._views, view);
   }
 
-  protected removeAllViews(): void {
+  private removeAllViews(): void {
     for (const view of this._views) {
       view.onHide();
       view.dispose();
@@ -103,7 +84,12 @@ export abstract class BaseSubject {
     remove(this._listeners, listener);
   }
 
-  protected removeEventListeners(): void {
+  private removeEventListeners(): void {
     clear(this._listeners);
+  }
+
+  public clear(): void {
+    this.removeEventListeners();
+    this.removeAllViews();
   }
 }

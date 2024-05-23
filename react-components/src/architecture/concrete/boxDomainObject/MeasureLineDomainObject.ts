@@ -60,7 +60,7 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
     return new MeasureLineRenderStyle();
   }
 
-  public override getNumberInfos(): NumberInfo[] | undefined {
+  public override getPanelInfo(): NumberInfo[] | undefined {
     const result: NumberInfo[] = [];
     switch (this.measureType) {
       case MeasureType.Line:
