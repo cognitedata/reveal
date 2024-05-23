@@ -4,12 +4,12 @@
 import { Button, Icon, type IconType, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { type ReactElement } from 'react';
-import { type DomainObjectInfo } from '../../src/architecture/base/domainObjectsHelpers/DomainObjectPanelUpdater';
+import { type DomainObjectInfo } from '../../../architecture/base/domainObjectsHelpers/DomainObjectPanelUpdater';
 import {
   type PanelInfo,
   type NumberPanelItem
-} from '../../src/architecture/base/domainObjectsHelpers/PanelInfo';
-import { useTranslation } from '../../src/components/i18n/I18n';
+} from '../../../architecture/base/domainObjectsHelpers/PanelInfo';
+import { useTranslation } from '../../i18n/I18n';
 
 export const DomainObjectPanel = ({
   domainObjectInfo

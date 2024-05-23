@@ -20,7 +20,7 @@ import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForSc
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { RevealButtons } from '../src/components/RevealToolbar/Architecture/ToolButtons';
-import { DomainObjectPanel } from './utilities/DomainObjectPanel';
+import { DomainObjectPanel } from '../src/components/RevealToolbar/Architecture/DomainObjectPanel';
 import {
   DomainObjectPanelUpdater,
   type DomainObjectInfo

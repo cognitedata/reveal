@@ -10,7 +10,7 @@ import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type Vector3 } from 'three';
 import { MeasureBoxCreator } from './MeasureBoxCreator';
-import { MeasureType, getIconByMeasureType } from './MeasureType';
+import { MeasureType, getIconByMeasureType, getTooltipByMeasureType } from './MeasureType';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { MeasureLineCreator } from './MeasureLineCreator';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
@@ -49,53 +49,12 @@ export class MeasurementTool extends BaseEditTool {
     return this._measureType === other._measureType;
   }
 
-  public override get shortCutKey(): string | undefined {
-    return 'I';
-  }
-
   public override get icon(): string {
     return getIconByMeasureType(this._measureType);
   }
 
   public override get tooltip(): Tooltip {
-    switch (this._measureType) {
-      case MeasureType.Line:
-        return {
-          key: 'MEASUREMENTS_ADD_LINE',
-          fallback:
-            'Measure distance between two points. Click at the start point and the end point.'
-        };
-      case MeasureType.Polyline:
-        return {
-          key: 'MEASUREMENTS_ADD_POLYLINE',
-          fallback:
-            'Measure the length of a continuous polyline. Click at any number of points and end with Esc.'
-        };
-      case MeasureType.Polygon:
-        return {
-          key: 'MEASUREMENTS_ADD_POLYGON',
-          fallback: 'Measure an area of a polygon. Click at least 3 points and end with Esc.'
-        };
-      case MeasureType.VerticalArea:
-        return {
-          key: 'MEASUREMENTS_ADD_VERTICAL_AREA',
-          fallback: 'Measure rectangular vertical Area. Click at two points in a vertical plan.'
-        };
-      case MeasureType.HorizontalArea:
-        return {
-          key: 'MEASUREMENTS_ADD_HORIZONTAL_AREA',
-          fallback:
-            'Measure rectangular horizontal Area. Click at three points in a horizontal plan.'
-        };
-      case MeasureType.Volume:
-        return {
-          key: 'MEASUREMENTS_ADD_VOLUME',
-          fallback:
-            'Measure volume of a box. Click at three points in a horizontal plan and the fourth to give it height.'
-        };
-      default:
-        throw new Error('Unknown MeasureType type');
-    }
+    return getTooltipByMeasureType(this._measureType);
   }
 
   // ==================================================
