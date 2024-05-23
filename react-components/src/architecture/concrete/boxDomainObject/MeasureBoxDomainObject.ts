@@ -17,6 +17,7 @@ import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { MeasureBoxDragger } from './MeasureBoxDragger';
 import { MeasureDomainObject } from './MeasureDomainObject';
 import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
+import { radToDeg } from 'three/src/math/MathUtils.js';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -146,6 +147,9 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
     }
     if (measureType === MeasureType.Volume && (isFinished || this.hasVolume)) {
       info.add('MEASUREMENTS_VOLUME', 'Volume', this.volume, NumberType.Volume);
+    }
+    if (this.zRotation !== 0 && isFinished) {
+      info.add('MOUSE_ROTATE', 'Rotation', radToDeg(this.zRotation), NumberType.Degrees);
     }
     return info;
   }

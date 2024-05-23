@@ -6,7 +6,8 @@ export enum NumberType {
   Unitless,
   Length,
   Area,
-  Volume
+  Volume,
+  Degrees
 }
 
 export class PanelInfo {
@@ -71,6 +72,8 @@ export class NumberPanelItem extends PanelItem {
         return 'm²';
       case NumberType.Volume:
         return 'm³';
+      case NumberType.Degrees:
+        return '°';
     }
   }
 }
