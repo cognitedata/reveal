@@ -16,15 +16,14 @@ export const DomainObjectPanel = ({
 }: {
   domainObjectInfo: DomainObjectInfo | undefined;
 }): ReactElement => {
+  const { t } = useTranslation();
   if (domainObjectInfo === undefined) {
     return <></>;
   }
-  const { t } = useTranslation();
   const domainObject = domainObjectInfo.domainObject;
   if (domainObject === undefined) {
     return <></>;
   }
-
   const info = domainObject.getPanelInfo();
   if (info === undefined) {
     return <></>;
