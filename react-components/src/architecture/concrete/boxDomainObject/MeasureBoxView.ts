@@ -567,8 +567,8 @@ function updateSolidMaterial(
   style: MeasureBoxRenderStyle
 ): void {
   const color = boxDomainObject.getColorByColorType(style.colorType);
-  const selected = boxDomainObject.isSelected;
-  const opacity = selected ? style.opacity : style.opacity / 2;
+  const isSelected = boxDomainObject.isSelected;
+  const opacity = isSelected ? style.opacity : style.opacity / 2;
   material.polygonOffset = true;
   material.polygonOffsetFactor = 1;
   material.polygonOffsetUnits = 4.0;

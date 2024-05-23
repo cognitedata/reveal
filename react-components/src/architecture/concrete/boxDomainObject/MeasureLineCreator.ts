@@ -27,7 +27,6 @@ export class MeasureLineCreator extends BaseCreator {
   constructor(measureType: MeasureType) {
     super();
     this._domainObject = new MeasureLineDomainObject(measureType);
-    this._domainObject.isSelected = true;
   }
 
   // ==================================================

@@ -36,7 +36,6 @@ export class MeasureBoxCreator extends BaseCreator {
     super();
     this._domainObject = new MeasureBoxDomainObject(measureType);
     this._domainObject.focusType = BoxFocusType.Pending;
-    this._domainObject.isSelected = true;
   }
 
   // ==================================================

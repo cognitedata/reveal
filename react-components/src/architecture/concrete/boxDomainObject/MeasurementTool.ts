@@ -199,9 +199,11 @@ export class MeasurementTool extends BaseEditTool {
       if (creator.addPoint(ray, intersection.point, false)) {
         const { domainObject } = creator;
         initializeStyle(domainObject, renderTarget);
+        this.deselectAll();
         rootDomainObject.addChildInteractive(domainObject);
-        this.renderTarget.toolController.update();
+        domainObject.setSelectedInteractive(true);
         domainObject.setVisibleInteractive(true, renderTarget);
+        this.renderTarget.toolController.update();
       }
     } else {
       if (creator.addPoint(ray, intersection.point, false)) {
