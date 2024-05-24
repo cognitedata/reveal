@@ -29,6 +29,9 @@ module.exports = {
     ],
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     '@typescript-eslint/no-misused-promises': 'off',
+    '@typescript-eslint/class-literal-property-style': 'off',
+    '@typescript-eslint/no-extraneous-class': 'off',
+    '@typescript-eslint/prefer-optional-chain': 'off',
     'no-console': [2, { allow: ['warn', 'error'] }],
     eqeqeq: ['error', 'always']
   },

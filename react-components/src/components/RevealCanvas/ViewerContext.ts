@@ -3,7 +3,7 @@
  */
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { createContext, useContext } from 'react';
-import { type RevealRenderTarget } from '../../architecture/RenderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 
 export const ViewerContext = createContext<RevealRenderTarget | null>(null);
 

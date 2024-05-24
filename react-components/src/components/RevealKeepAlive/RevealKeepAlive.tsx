@@ -9,7 +9,7 @@ import { type AssetMappingCache } from '../CacheProvider/AssetMappingCache';
 import { type PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from '../CacheProvider/Image360AnnotationCache';
 import { type SceneIdentifiers } from '../SceneContainer/sceneTypes';
-import { type RevealRenderTarget } from '../../architecture/RenderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 
 export function RevealKeepAlive({ children }: { children?: ReactNode }): ReactElement {
   const renderTargetRef = useRef<RevealRenderTarget>();
