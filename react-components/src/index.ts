@@ -148,6 +148,11 @@ export type {
   CriteriaTypes
 } from './components/RuleBasedOutputs/types';
 
+export { ActiveToolToolbar } from './components/Architecture/ActiveToolToolbar';
+export { DomainObjectPanel } from './components/Architecture/DomainObjectPanel';
+export { RevealButtons } from './components/Architecture/ToolButtons';
+export { CommandButton } from './components/Architecture/CommandButton';
+
 export { RuleBasedOutputsPanel } from './components/RuleBasedOutputs/RuleBasedOutputsPanel';
 
 // Functions

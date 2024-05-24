@@ -12,7 +12,7 @@ export class Changes {
   public static readonly loaded: symbol = Symbol('loaded');
 
   // Fields changed
-  public static readonly nameing: symbol = Symbol('nameing');
+  public static readonly naming: symbol = Symbol('naming');
   public static readonly color: symbol = Symbol('color');
   public static readonly icon: symbol = Symbol('icon');
   public static readonly colorMap: symbol = Symbol('colorMap');
