@@ -442,7 +442,6 @@ const generateTimeseriesAndDatapointsFromTheAsset = ({
 export const traverseExpressionToGetTimeseries = (
   expressions: Expression[] | undefined
 ): string[] | undefined => {
-
   const timeseriesExternalIdResults = expressions
     ?.map((expression) => {
       let timeseriesExternalIdFound: string[] | undefined = [];

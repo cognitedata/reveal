@@ -142,8 +142,8 @@ const getAssetIdsFromTimeseries = (
   const assetIdFromTimeseries: ExternalId | undefined =
     assetFoundFromTimeseries?.externalId !== undefined
       ? {
-        externalId: assetFoundFromTimeseries.externalId
-      }
+          externalId: assetFoundFromTimeseries.externalId
+        }
       : undefined;
 
   const itemsFromRelationship = assetAndTimeseriesIdsFromRelationship?.filter(
@@ -179,9 +179,9 @@ const generateAssetAndTimeseries = (
   const assetAndTimeseriesFromLinked: AssetIdsAndTimeseries | undefined =
     assetIds !== undefined
       ? {
-        assetIds,
-        timeseries
-      }
+          assetIds,
+          timeseries
+        }
       : undefined;
 
   const itemsFromRelationship = assetAndTimeseriesIdsFromRelationship?.filter(
