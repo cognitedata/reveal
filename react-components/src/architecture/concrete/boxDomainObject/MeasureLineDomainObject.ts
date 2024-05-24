@@ -113,7 +113,6 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
     for (const point of this.points) {
       if (prevPoint !== undefined) {
         sum += point.distanceTo(prevPoint);
-        continue;
       }
       prevPoint = point;
     }
@@ -121,11 +120,11 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
   }
 
   public getAverageLength(): number {
-    const length = this.points.length;
-    if (length === 0) {
+    const count = this.points.length;
+    if (count <= 1) {
       return 0;
     }
-    return this.getTotalLength() / length;
+    return this.getTotalLength() / (count - 1);
   }
 
   public getHorizontalLength(): number {
@@ -156,9 +155,8 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
 
   public getHorizontalArea(): number {
     const { points } = this;
-    const length = points.length;
-
-    if (length <= 2) {
+    const count = points.length;
+    if (count <= 2) {
       return 0;
     }
     let sum = 0.0;
@@ -166,8 +164,8 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
     const p0 = new Vector3();
     const p1 = new Vector3();
 
-    for (let index = 1; index <= length; index++) {
-      p1.copy(points[index % length]);
+    for (let index = 1; index <= count; index++) {
+      p1.copy(points[index % count]);
       p1.sub(first); // Translate down to first point, to increase acceracy
       sum += getHorizontalCrossProduct(p0, p1);
       p0.copy(p1);

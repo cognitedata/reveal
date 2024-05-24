@@ -46,6 +46,7 @@ import { BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { Range1 } from '../../base/utilities/geometry/Range1';
 import { MeasureType } from './MeasureType';
+import { type MeasureRenderStyle } from './MeasureRenderStyle';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
@@ -246,7 +247,7 @@ export class MeasureBoxView extends GroupThreeView {
     }
     const faceCenter = TOP_FACE.getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
-    faceCenter.y += spriteHeight / 2;
+    adjustLabel(faceCenter, boxDomainObject, spriteHeight);
     sprite.position.copy(faceCenter);
     return sprite;
   }
@@ -261,7 +262,7 @@ export class MeasureBoxView extends GroupThreeView {
     }
     const faceCenter = TOP_FACE.getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
-    faceCenter.y += spriteHeight / 2;
+    adjustLabel(faceCenter, this.boxDomainObject, spriteHeight);
     sprite.position.copy(faceCenter);
     return sprite;
   }
@@ -421,10 +422,11 @@ export class MeasureBoxView extends GroupThreeView {
           const faceCenter2 = boxFace.getCenter(newVector3());
           const edgeCenter = faceCenter2.add(faceCenter1);
           edgeCenter.applyMatrix4(matrix);
-          edgeCenter.y += spriteHeight / 2;
+
+          adjustLabel(edgeCenter, boxDomainObject, spriteHeight);
 
           // Move the sprite slightly away from the box to avoid z-fighting
-          edgeCenter.addScaledVector(cameraDirection, -spriteHeight / 4);
+          edgeCenter.addScaledVector(cameraDirection, -spriteHeight / 2);
           sprite.position.copy(edgeCenter);
           sprite.visible = true;
           break;
@@ -619,20 +621,25 @@ function updateMarkerMaterial(
 // PRIVATE FUNCTIONS: Create object3D's
 // ==================================================
 
-function createSprite(
-  text: string,
-  style: MeasureBoxRenderStyle,
-  height: number
-): Sprite | undefined {
+function createSprite(text: string, style: MeasureRenderStyle, height: number): Sprite | undefined {
   const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
   if (result === undefined) {
     return undefined;
   }
-  result.material.depthTest = true;
   result.material.transparent = true;
-  result.material.opacity = 0.75;
+  result.material.opacity = style.textOpacity;
   result.material.depthTest = style.depthTest;
   return result;
+}
+
+function adjustLabel(
+  point: Vector3,
+  domainObject: MeasureBoxDomainObject,
+  spriteHeight: number
+): void {
+  if (domainObject.measureType !== MeasureType.VerticalArea) {
+    point.y += (1.1 * spriteHeight) / 2;
+  }
 }
 
 function isValid(value: number): boolean {

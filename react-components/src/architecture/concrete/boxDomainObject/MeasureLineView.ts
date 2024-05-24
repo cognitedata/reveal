@@ -30,6 +30,7 @@ import { MeasureType } from './MeasureType';
 import { createSpriteWithText } from '../../base/utilities/sprites/createSprite';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
+import { MeasureRenderStyle } from './MeasureRenderStyle';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 
@@ -97,7 +98,7 @@ export class MeasureLineView extends GroupThreeView {
     if (length < 2) {
       return undefined;
     }
-    const radius = 0.03; // this.getTextHeight(style.relativeTextSize) * 0.2;
+    const radius = style.pipeRadius;
     if (radius <= 0) {
       return;
     }
@@ -180,7 +181,7 @@ export class MeasureLineView extends GroupThreeView {
       if (sprite === undefined) {
         continue;
       }
-      center.y += spriteHeight / 2;
+      adjustLabel(center, lineDomainObject, style, spriteHeight);
       sprite.position.copy(center);
       this.addChild(sprite);
     }
@@ -215,18 +216,13 @@ function createVertices(domainObject: MeasureLineDomainObject): number[] | undef
   return vertices;
 }
 
-function createSprite(
-  text: string,
-  style: MeasureLineRenderStyle,
-  height: number
-): Sprite | undefined {
+function createSprite(text: string, style: MeasureRenderStyle, height: number): Sprite | undefined {
   const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
   if (result === undefined) {
     return undefined;
   }
-  result.material.depthTest = true;
   result.material.transparent = true;
-  result.material.opacity = 0.75;
+  result.material.opacity = style.textOpacity;
   result.material.depthTest = style.depthTest;
   return result;
 }
@@ -247,4 +243,15 @@ function updateSolidMaterial(
   material.flatShading = false;
   material.depthWrite = false;
   material.depthTest = style.depthTest;
+}
+
+function adjustLabel(
+  point: Vector3,
+  domainObject: MeasureLineDomainObject,
+  style: MeasureLineRenderStyle,
+  spriteHeight: number
+): void {
+  if (domainObject.measureType !== MeasureType.VerticalArea) {
+    point.y += (1.1 * spriteHeight) / 2 + style.pipeRadius;
+  }
 }
