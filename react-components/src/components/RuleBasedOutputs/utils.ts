@@ -44,12 +44,12 @@ const checkStringExpressionStatement = (
     (triggerType) => triggerType.type === trigger?.type
   );
 
-  const isAssetTrigger =
+  const isMetadataAndAssetTrigger =
     trigger?.type === 'metadata' &&
     currentTriggerData?.type === 'metadata' &&
     currentTriggerData?.asset !== undefined;
 
-  const assetTrigger = isAssetTrigger
+  const assetTrigger = isMetadataAndAssetTrigger
     ? currentTriggerData?.asset[trigger.type]?.[trigger.key]
     : undefined;
 
