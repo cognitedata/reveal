@@ -179,7 +179,7 @@ const getTimeseriesExternalIdFromNumericExpression = (
 ): string[] | undefined => {
   const trigger = expression.trigger;
 
-  if (isMetadataTrigger(trigger)) return undefined;
+  if (isMetadataTrigger(trigger)) return;
 
   return [trigger.externalId];
 };
