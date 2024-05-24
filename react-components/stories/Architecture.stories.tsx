@@ -22,7 +22,6 @@ import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl
 import { RevealButtons } from '../src/components/Architecture/ToolButtons';
 import { DomainObjectPanel } from '../src/components/Architecture/DomainObjectPanel';
 import { ExtraToolbar } from '../src/components/Architecture/ExtraToolbar';
-import { ActiveToolUpdater } from '../src/architecture/base/reactUpdaters/ActiveToolUpdater';
 
 const meta = {
   title: 'Example/Architecture',
@@ -91,9 +90,6 @@ export const Main: Story = {
   },
   render: ({ addModelOptions }) => {
     // TODO: Move this to ExtraToolbar. Tried but is crashes
-    const [_activeToolUpdater, setActiveToolUpdater] = useState<number>(0);
-    ActiveToolUpdater.setCounterDelegate(setActiveToolUpdater);
-
     return (
       <RevealStoryContainer
         color={new Color(0x4a4a4a)}

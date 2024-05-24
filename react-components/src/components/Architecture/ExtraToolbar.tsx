@@ -1,16 +1,19 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { ToolBar } from '@cognite/cogs.js';
+import { Divider, ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { type ReactElement } from 'react';
-import { withCameraStateUrlParam } from '../../higher-order-components/withCameraStateUrlParam';
+import { useState, type ReactElement } from 'react';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { CommandButton } from './CommandButton';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
+import { ActiveToolUpdater } from '../../architecture/base/reactUpdaters/ActiveToolUpdater';
 
 export const ExtraToolbar = (): ReactElement => {
+  const [_activeToolUpdater, setActiveToolUpdater] = useState<number>(0);
+  ActiveToolUpdater.setCounterDelegate(setActiveToolUpdater);
+
   const renderTarget = useRenderTarget();
   if (renderTarget === undefined) {
     return <></>;
@@ -35,17 +38,17 @@ export const ExtraToolbar = (): ReactElement => {
         // Padding is not used here
       }}>
       <MyCustomToolbar>
-        <>{commands.map((command, _i): ReactElement => addCommand(command))}</>
+        <>{commands.map((command, index): ReactElement => addCommand(command, index))}</>
       </MyCustomToolbar>
     </Container>
   );
 };
 
-function addCommand(command: BaseCommand | undefined): ReactElement {
+function addCommand(command: BaseCommand | undefined, index: number): ReactElement {
   if (command === undefined) {
-    return <>|</>;
+    return <Divider key={index} weight="2px" length="75%" direction="vertical" />;
   }
-  return CommandButton(command);
+  return <CommandButton command={command} key={index} />;
 }
 
 const Container = styled.div`
@@ -54,6 +57,6 @@ const Container = styled.div`
   display: block;
 `;
 
-const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(ToolBar)))`
+const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
   flex-direction: row;
 `;

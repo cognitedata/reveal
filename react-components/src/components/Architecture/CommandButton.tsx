@@ -10,10 +10,14 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
 
-export const CommandButton = (inputCommand: BaseCommand): ReactElement => {
+export const CreateButton = (command: BaseCommand): ReactElement => {
+  return <CommandButton command={command} />;
+};
+
+export const CommandButton = ({ command }: { command: BaseCommand }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const [command] = useState<BaseCommand>(getDefaultCommand(inputCommand, renderTarget));
+  const [newCommand] = useState<BaseCommand>(getDefaultCommand(command, renderTarget));
 
   // These are redundant, but react fore me to add these to update
   const [isChecked, setChecked] = useState<boolean>(false);
@@ -26,27 +30,27 @@ export const CommandButton = (inputCommand: BaseCommand): ReactElement => {
       setEnabled(command.isEnabled);
       setVisible(command.isVisible);
     }
-    update(command);
-    command.addEventListener(update);
+    update(newCommand);
+    newCommand.addEventListener(update);
     return () => {
-      command.removeEventListener(update);
+      newCommand.removeEventListener(update);
     };
-  }, [command]);
+  }, [newCommand]);
 
   if (!isVisible) {
     return <></>;
   }
-  const { key, fallback } = command.tooltip;
+  const { key, fallback } = newCommand.tooltip;
   return (
     <CogsTooltip content={t(key, fallback)} placement="right" appendTo={document.body}>
       <Button
         type="ghost"
-        icon={command.icon as IconType}
+        icon={newCommand.icon as IconType}
         toggled={isChecked}
         disabled={!isEnabled}
         aria-label={t(key, fallback)}
         onClick={() => {
-          command.invoke();
+          newCommand.invoke();
         }}
       />
     </CogsTooltip>

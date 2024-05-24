@@ -51,6 +51,7 @@ export class NumberPanelItem extends PanelItem {
 
   constructor(props: PanelItemProps) {
     super(props);
+    this.icon = props.icon;
     this.value = props.value ?? 0;
     this.numberType = props.numberType ?? NumberType.Unitless;
     this.decimals = props.decimals ?? 2;

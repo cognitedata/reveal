@@ -61,7 +61,7 @@ export abstract class MeasureDomainObject extends VisualDomainObject {
       if (change.isChanged(Changes.deleted)) {
         DomainObjectPanelUpdater.update(undefined);
       }
-      if (change.isChanged(Changes.selected, Changes.geometry, Changes.nameing)) {
+      if (change.isChanged(Changes.selected, Changes.geometry)) {
         DomainObjectPanelUpdater.update(this);
       }
     } else {
