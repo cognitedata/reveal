@@ -100,24 +100,10 @@ export class MeasurementTool extends BaseEditTool {
   }
 
   public override async onHover(event: PointerEvent): Promise<void> {
-    if (this.measureType === MeasureType.None) {
-      this.renderTarget.setNavigateCursor();
-      super.onHover(event);
-      return;
-    }
-
-    const { _creator: creator } = this;
-    if (creator !== undefined && !creator.preferIntersection) {
-      // Hover in the "air"
-      const ray = this.getRay(event);
-      if (creator.addPoint(ray, undefined, true)) {
-        this.setDefaultCursor();
-        return;
-      }
-    }
-    const intersection = await this.getIntersection(event);
-    if (intersection === undefined) {
-      if (creator !== undefined && creator.preferIntersection) {
+    // Handle when creator is set first
+    if (this.measureType !== MeasureType.None && this._creator !== undefined) {
+      const { _creator: creator } = this;
+      if (!creator.preferIntersection) {
         // Hover in the "air"
         const ray = this.getRay(event);
         if (creator.addPoint(ray, undefined, true)) {
@@ -125,11 +111,20 @@ export class MeasurementTool extends BaseEditTool {
           return;
         }
       }
-      this.renderTarget.setNavigateCursor();
-      super.onHover(event);
-      return;
-    }
-    if (creator !== undefined) {
+      const intersection = await this.getIntersection(event);
+      if (intersection === undefined) {
+        if (creator !== undefined && creator.preferIntersection) {
+          // Hover in the "air"
+          const ray = this.getRay(event);
+          if (creator.addPoint(ray, undefined, true)) {
+            this.setDefaultCursor();
+            return;
+          }
+        }
+        this.renderTarget.setNavigateCursor();
+        super.onHover(event);
+        return;
+      }
       if (this.isMeasurement(intersection)) {
         return;
       }
@@ -140,29 +135,31 @@ export class MeasurementTool extends BaseEditTool {
       }
       return;
     }
+    const intersection = await this.getIntersection(event);
     if (!isDomainObjectIntersection(intersection)) {
+      this.defocusAll();
       this.setDefaultCursor();
-      this.deselectAll();
       return;
     }
     const domainObject = intersection.domainObject;
     if (domainObject === undefined) {
+      this.defocusAll();
       this.setDefaultCursor();
-      this.deselectAll();
       return;
     }
+    // Set focus on the hovered object
     if (domainObject instanceof MeasureLineDomainObject) {
-      this.deselectAll(domainObject);
-      domainObject.setSelectedInteractive(true);
+      this.defocusAll(domainObject);
+      domainObject.setFocusInteractive(true);
     } else if (domainObject instanceof MeasureBoxDomainObject) {
-      this.deselectAll(domainObject);
       const pickInfo = intersection.userData as BoxPickInfo;
       if (pickInfo === undefined) {
+        this.defocusAll();
         this.setDefaultCursor();
         return;
       }
       this.setCursor(domainObject, intersection.point, pickInfo);
-      domainObject.setSelectedInteractive(true);
+      this.defocusAll(domainObject);
       domainObject.setFocusInteractive(pickInfo.focusType, pickInfo.face);
     }
   }
@@ -297,6 +294,20 @@ export class MeasurementTool extends BaseEditTool {
         return new MeasureBoxCreator(this.measureType);
       default:
         return undefined;
+    }
+  }
+
+  protected defocusAll(except?: DomainObject | undefined): void {
+    for (const domainObject of getMeasureDomainObjects(this.renderTarget)) {
+      if (except !== undefined && domainObject === except) {
+        continue;
+      }
+      if (domainObject instanceof MeasureLineDomainObject) {
+        domainObject.setFocusInteractive(false);
+      }
+      if (domainObject instanceof MeasureBoxDomainObject) {
+        domainObject.setFocusInteractive(BoxFocusType.None);
+      }
     }
   }
 }

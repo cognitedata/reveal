@@ -3,6 +3,7 @@
  */
 
 export enum BoxFocusType {
+  None,
   Body, // Pick on any other places
   Face,
   Corner,

@@ -191,11 +191,19 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
   }
 
   public setFocusInteractive(focusType: BoxFocusType, focusFace?: BoxFace): boolean {
-    if (focusType === this.focusType && BoxFace.equals(this.focusFace, focusFace)) {
-      return false; // No change
+    if (focusType === BoxFocusType.None) {
+      if (this.focusType === BoxFocusType.None) {
+        return false; // No change
+      }
+      this.focusType = BoxFocusType.None;
+      this.focusFace = undefined; // Ignore input face
+    } else {
+      if (focusType === this.focusType && BoxFace.equals(this.focusFace, focusFace)) {
+        return false; // No change
+      }
+      this.focusType = focusType;
+      this.focusFace = focusFace;
     }
-    this.focusType = focusType;
-    this.focusFace = focusFace;
     this.notify(Changes.focus);
     return true;
   }

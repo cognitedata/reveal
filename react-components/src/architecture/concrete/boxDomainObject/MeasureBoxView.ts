@@ -117,7 +117,7 @@ export class MeasureBoxView extends GroupThreeView {
     const { focusType } = boxDomainObject;
     this.addChild(this.createSolid(matrix));
     this.addChild(this.createLines(matrix));
-    if (boxDomainObject.isSelected && showMarkers(focusType)) {
+    if (showMarkers(focusType)) {
       this.addChild(this.createRotationRing(matrix));
       this.addEdgeCircles(matrix);
     }
@@ -551,6 +551,7 @@ function showRotationLabel(focusType: BoxFocusType): boolean {
 function showMarkers(focusType: BoxFocusType): boolean {
   switch (focusType) {
     case BoxFocusType.Pending:
+    case BoxFocusType.None:
       return false;
     default:
       return true;
@@ -568,7 +569,7 @@ function updateSolidMaterial(
 ): void {
   const color = boxDomainObject.getColorByColorType(style.colorType);
   const isSelected = boxDomainObject.isSelected;
-  const opacity = isSelected ? style.opacity : style.opacity / 2;
+  const opacity = isSelected ? style.opacity : style.opacity / 4;
   material.polygonOffset = true;
   material.polygonOffsetFactor = 1;
   material.polygonOffsetUnits = 4.0;
@@ -599,7 +600,7 @@ function updateMarkerMaterial(
   material: MeshPhongMaterial,
   boxDomainObject: MeasureBoxDomainObject,
   style: MeasureBoxRenderStyle,
-  selected: boolean
+  hasFocus: boolean
 ): void {
   material.color = ARROW_AND_RING_COLOR;
   material.polygonOffset = true;
@@ -607,7 +608,7 @@ function updateMarkerMaterial(
   material.polygonOffsetUnits = 4.0;
   material.transparent = true;
   material.emissive = ARROW_AND_RING_COLOR;
-  material.emissiveIntensity = selected ? 0.8 : 0.3;
+  material.emissiveIntensity = hasFocus ? 0.8 : 0.3;
   material.side = FrontSide;
   material.flatShading = true;
   material.depthWrite = false;

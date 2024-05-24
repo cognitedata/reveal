@@ -89,7 +89,6 @@ export class MeasureBoxDragger extends BaseDragger {
   }
 
   public override onPointerDown(_event: PointerEvent): void {
-    this._domainObject.setSelectedInteractive(true);
     this._domainObject.setFocusInteractive(this.focusType, this.face);
   }
 

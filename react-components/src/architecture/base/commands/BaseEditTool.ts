@@ -35,6 +35,7 @@ export abstract class BaseEditTool extends NavigationTool {
     }
     this._dragger.onPointerDown(event);
     this.deselectAll(this._dragger.domainObject);
+    this._dragger.domainObject.setSelectedInteractive(true);
   }
 
   public override async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
@@ -86,11 +87,11 @@ export abstract class BaseEditTool extends NavigationTool {
   protected deselectAll(except?: DomainObject | undefined): void {
     const { renderTarget } = this;
     const { rootDomainObject } = renderTarget;
-    for (const other of rootDomainObject.getDescendants()) {
-      if (except !== undefined && other === except) {
+    for (const domainObject of rootDomainObject.getDescendants()) {
+      if (except !== undefined && domainObject === except) {
         continue;
       }
-      other.setSelectedInteractive(false);
+      domainObject.setSelectedInteractive(false);
     }
   }
 }

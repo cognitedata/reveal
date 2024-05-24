@@ -15,6 +15,7 @@ import {
   verticalDistanceTo
 } from '../../base/utilities/extensions/vectorExtensions';
 import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
 
 export class MeasureLineDomainObject extends MeasureDomainObject {
   // ==================================================
@@ -22,6 +23,7 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
   // ==================================================
 
   public readonly points: Vector3[] = [];
+  public hasFocus: boolean = false;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -157,5 +159,11 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
       p0.copy(p1);
     }
     return Math.abs(sum) / 2;
+  }
+
+  public setFocusInteractive(hasFocus: boolean): boolean {
+    this.hasFocus = hasFocus;
+    this.notify(Changes.focus);
+    return true;
   }
 }

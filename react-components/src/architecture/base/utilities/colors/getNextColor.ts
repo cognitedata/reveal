@@ -45,8 +45,8 @@ function createUniqueColors(count: number): Color[] {
     h += CONJUGATE_OF_GOLDEN_RATIO;
     h %= 1;
 
-    const s = isEven(i) ? 0.67 : 1; // Brighter
-    const l = isEven(i) ? 1 : 0.67; // Brighter && Darker
+    const s = isEven(i) ? 0.5 : 1; // Brighter
+    const l = 0.5; // Brighter && Darker
 
     const color = new Color();
     color.setHSL(h, s, l);
