@@ -43,12 +43,15 @@ const checkStringExpressionStatement = (
   const currentTriggerData = triggerTypeData.find(
     (triggerType) => triggerType.type === trigger?.type
   );
-  const assetTrigger =
+
+  const isAssetTrigger =
     trigger?.type === 'metadata' &&
-      currentTriggerData?.type === 'metadata' &&
-      currentTriggerData?.asset !== undefined
-      ? currentTriggerData?.asset[trigger.type]?.[trigger.key]
-      : undefined;
+    currentTriggerData?.type === 'metadata' &&
+    currentTriggerData?.asset !== undefined;
+
+  const assetTrigger = isAssetTrigger
+    ? currentTriggerData?.asset[trigger.type]?.[trigger.key]
+    : undefined;
 
   if (assetTrigger === undefined) return;
 
