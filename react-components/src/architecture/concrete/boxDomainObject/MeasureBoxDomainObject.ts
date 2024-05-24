@@ -126,33 +126,32 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
         break;
     }
     if (isFinished || isValid(this.size.x)) {
-      info.add('MEASUREMENTS_LENGTH', 'Length', this.size.x, NumberType.Length);
+      add('MEASUREMENTS_LENGTH', 'Length', this.size.x, NumberType.Length);
     }
     if (measureType !== MeasureType.VerticalArea && (isFinished || isValid(this.size.y))) {
-      info.add('MEASUREMENTS_DEPTH', 'Depth', this.size.y, NumberType.Length);
+      add('MEASUREMENTS_DEPTH', 'Depth', this.size.y, NumberType.Length);
     }
     if (measureType !== MeasureType.HorizontalArea && (isFinished || isValid(this.size.z))) {
-      info.add('MEASUREMENTS_HEIGHT', 'Height', this.size.z, NumberType.Length);
+      add('MEASUREMENTS_HEIGHT', 'Height', this.size.z, NumberType.Length);
     }
     if (measureType !== MeasureType.Volume && (isFinished || this.hasArea)) {
-      info.add('MEASUREMENTS_AREA', 'Area', this.area, NumberType.Area);
+      add('MEASUREMENTS_AREA', 'Area', this.area, NumberType.Area);
     }
     if (measureType === MeasureType.Volume && (isFinished || this.hasHorizontalArea)) {
-      info.add(
-        'MEASUREMENTS_HORIZONTAL_AREA',
-        'Horizontal area',
-        this.horizontalArea,
-        NumberType.Area
-      );
+      add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.horizontalArea, NumberType.Area);
     }
     if (measureType === MeasureType.Volume && (isFinished || this.hasVolume)) {
-      info.add('MEASUREMENTS_VOLUME', 'Volume', this.volume, NumberType.Volume);
+      add('MEASUREMENTS_VOLUME', 'Volume', this.volume, NumberType.Volume);
     }
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
     if (this.zRotation !== 0 && isFinished) {
-      info.addIcon('Angle', radToDeg(this.zRotation), NumberType.Degrees);
+      info.add({ icon: 'Angle', value: radToDeg(this.zRotation), numberType: NumberType.Degrees });
     }
     return info;
+
+    function add(key: string, fallback: string, value: number, numberType: NumberType): void {
+      info.add({ key, fallback, value, numberType });
+    }
   }
 
   // ==================================================

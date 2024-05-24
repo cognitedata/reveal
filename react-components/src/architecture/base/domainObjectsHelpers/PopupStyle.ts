@@ -3,7 +3,7 @@
  * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
-type Props = {
+type PopupProps = {
   left?: number;
   right?: number;
   top?: number;
@@ -20,7 +20,7 @@ export class PopupStyle {
   private readonly _margin: number = 16; // margin ouside the popup
   private readonly _padding: number = 16; // margin inside the popup
 
-  public constructor(props: Props) {
+  public constructor(props: PopupProps) {
     this._left = props.left;
     this._right = props.right;
     this._top = props.top;

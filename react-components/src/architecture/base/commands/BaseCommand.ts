@@ -8,7 +8,7 @@ type UpdateDelegate = (command: BaseCommand) => void;
 
 export type Tooltip = {
   key: string;
-  fallback: string;
+  fallback?: string;
 };
 
 export abstract class BaseCommand {
@@ -23,7 +23,7 @@ export abstract class BaseCommand {
   // =================================================
 
   public get name(): string {
-    return this.tooltip.fallback;
+    return this.tooltip.fallback ?? this.tooltip.key;
   }
 
   public get shortCutKey(): string | undefined {
@@ -31,11 +31,11 @@ export abstract class BaseCommand {
   }
 
   public get tooltip(): Tooltip {
-    return { key: '', fallback: '' };
+    return { key: '' };
   }
 
   public get icon(): string {
-    return '';
+    return 'Unknown';
   }
 
   public get isEnabled(): boolean {

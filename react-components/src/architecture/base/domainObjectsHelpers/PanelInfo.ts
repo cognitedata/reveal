@@ -10,44 +10,36 @@ export enum NumberType {
   Degrees
 }
 
+type PanelItemProps = {
+  key?: string;
+  fallback?: string;
+  icon?: string;
+  value?: number;
+  numberType?: NumberType;
+  decimals?: number;
+};
+
 export class PanelInfo {
   public header?: PanelItem;
   public readonly items: NumberPanelItem[] = [];
 
   public setHeader(key: string, fallback: string): void {
-    this.header = new PanelItem(key, fallback);
+    this.header = new PanelItem({ key, fallback });
   }
 
-  public add(
-    key: string,
-    fallback: string,
-    value: number,
-    numberType: NumberType = NumberType.Unitless,
-    decimals: number = 2
-  ): void {
-    const item = new NumberPanelItem(key, fallback, value, numberType, decimals);
-    this.items.push(item);
-  }
-
-  public addIcon(
-    icon: string,
-    value: number,
-    numberType: NumberType = NumberType.Unitless,
-    decimals: number = 2
-  ): void {
-    const item = new NumberPanelItem('', '', value, numberType, decimals);
-    item.icon = icon;
+  public add(props: PanelItemProps): void {
+    const item = new NumberPanelItem(props);
     this.items.push(item);
   }
 }
 
 export class PanelItem {
-  public key: string;
-  public fallback: string;
+  public key?: string;
+  public fallback?: string;
 
-  constructor(key: string, fallback: string) {
-    this.key = key;
-    this.fallback = fallback;
+  constructor(props: PanelItemProps) {
+    this.key = props.key;
+    this.fallback = props.fallback;
   }
 }
 
@@ -57,35 +49,33 @@ export class NumberPanelItem extends PanelItem {
   public numberType: NumberType;
   public decimals: number;
 
-  constructor(
-    key: string,
-    fallback: string,
-    value: number,
-    numberType: NumberType,
-    decimals: number
-  ) {
-    super(key, fallback);
-    this.value = value;
-    this.numberType = numberType;
-    this.decimals = decimals;
+  constructor(props: PanelItemProps) {
+    super(props);
+    this.value = props.value ?? 0;
+    this.numberType = props.numberType ?? NumberType.Unitless;
+    this.decimals = props.decimals ?? 2;
   }
 
-  public valueToString(): string {
+  public get valueAsString(): string {
     return this.value.toFixed(this.decimals);
   }
 
-  public getUnit(): string {
-    switch (this.numberType) {
-      case NumberType.Unitless:
-        return '';
-      case NumberType.Length:
-        return 'm';
-      case NumberType.Area:
-        return 'm²';
-      case NumberType.Volume:
-        return 'm³';
-      case NumberType.Degrees:
-        return '°';
-    }
+  public get unit(): string {
+    return getUnit(this.numberType);
+  }
+}
+
+function getUnit(numberType: NumberType): string {
+  switch (numberType) {
+    case NumberType.Unitless:
+      return '';
+    case NumberType.Length:
+      return 'm';
+    case NumberType.Area:
+      return 'm²';
+    case NumberType.Volume:
+      return 'm³';
+    case NumberType.Degrees:
+      return '°';
   }
 }

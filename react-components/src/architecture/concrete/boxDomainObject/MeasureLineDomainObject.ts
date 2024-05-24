@@ -71,18 +71,28 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
         info.setHeader('MEASUREMENTS_POLYGON', 'Polygon');
         add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
         if (this.points.length > 2) {
-          add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.getHorizontalArea());
+          add(
+            'MEASUREMENTS_HORIZONTAL_AREA',
+            'Horizontal area',
+            this.getHorizontalArea(),
+            NumberType.Area
+          );
         }
         break;
 
       default:
         throw new Error('Unknown MeasureType type');
     }
-    function add(key: string, fallback: string, value: number): void {
-      info.add(key, fallback, value, NumberType.Length);
-    }
-
     return info;
+
+    function add(
+      key: string,
+      fallback: string,
+      value: number,
+      numberType = NumberType.Length
+    ): void {
+      info.add({ key, fallback, value, numberType });
+    }
   }
 
   // ==================================================

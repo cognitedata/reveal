@@ -52,7 +52,7 @@ export const DomainObjectPanel = (): ReactElement => {
             <PaddedTh>
               <Icon type={icon} />
             </PaddedTh>
-            {header !== undefined && (
+            {header !== undefined && header.key !== undefined && (
               <PaddedTh>
                 <span>{t(header.key, header.fallback)}</span>
               </PaddedTh>
@@ -97,7 +97,7 @@ export const DomainObjectPanel = (): ReactElement => {
     return (
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
-          {icon === undefined && <span>{t(item.key, item.fallback)}</span>}
+          {item.key !== undefined && <span>{t(item.key, item.fallback)}</span>}
           {icon !== undefined && (
             <span>
               <Icon type={icon} />
@@ -106,10 +106,10 @@ export const DomainObjectPanel = (): ReactElement => {
         </PaddedTh>
         <></>
         <NumberTh>
-          <span>{item.valueToString()}</span>
+          <span>{item.valueAsString}</span>
         </NumberTh>
         <PaddedTh>
-          <span>{item.getUnit()}</span>
+          <span>{item.unit}</span>
         </PaddedTh>
       </tr>
     );
@@ -117,12 +117,16 @@ export const DomainObjectPanel = (): ReactElement => {
 
   async function copyTextToClipboard(info: PanelInfo): Promise<void> {
     let text = '';
-    const { header } = info;
-    if (header !== undefined) {
-      text += `${t(header.key, header.fallback)}\n`;
+    {
+      const { header } = info;
+      if (header !== undefined && header.key !== undefined) {
+        text += `${t(header.key, header.fallback)}\n`;
+      }
     }
     for (const item of info.items) {
-      text += `${t(item.key, item.fallback)}:  ${item.valueToString()} ${item.getUnit()}\n`;
+      if (item !== undefined && item.key !== undefined) {
+        text += `${t(item.key, item.fallback)}:  ${item.valueAsString} ${item.unit}\n`;
+      }
     }
     await navigator.clipboard.writeText(text);
   }
