@@ -51,11 +51,11 @@ export abstract class BaseTool extends RenderTargetCommand {
     return 'default';
   }
 
-  public getExtraToolbar(): Array<BaseCommand | undefined> | undefined {
+  public getToolbar(): Array<BaseCommand | undefined> | undefined {
     return undefined; // Override this to add extra buttons to a separate toolbar
   }
 
-  public getExtraToolbarStyle(): PopupStyle {
+  public getToolbarStyle(): PopupStyle {
     // Override this to pclase the extra separate toolbar
     // Default lower left corner
     return new PopupStyle({ bottom: 0, left: 0 });

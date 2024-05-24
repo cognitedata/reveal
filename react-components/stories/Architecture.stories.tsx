@@ -21,7 +21,7 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { RevealButtons } from '../src/components/Architecture/ToolButtons';
 import { DomainObjectPanel } from '../src/components/Architecture/DomainObjectPanel';
-import { ExtraToolbar } from '../src/components/Architecture/ExtraToolbar';
+import { ActiveToolToolbar } from '../src/components/Architecture/ActiveToolToolbar';
 
 const meta = {
   title: 'Example/Architecture',
@@ -89,7 +89,6 @@ export const Main: Story = {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
   render: ({ addModelOptions }) => {
-    // TODO: Move this to ExtraToolbar. Tried but is crashes
     return (
       <RevealStoryContainer
         color={new Color(0x4a4a4a)}
@@ -120,7 +119,7 @@ export const Main: Story = {
         </MyCustomToolbar>
 
         <DomainObjectPanel />
-        <ExtraToolbar />
+        <ActiveToolToolbar />
       </RevealStoryContainer>
     );
   }

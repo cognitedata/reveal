@@ -40,7 +40,7 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
       this.removeChildren();
     }
     if (this.isEmpty) {
-      this.makeChildern();
+      this.makeChilderen();
     }
     return this._group;
   }
@@ -101,7 +101,7 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
   public override initialize(): void {
     super.initialize();
     if (this.isEmpty) {
-      this.makeChildern();
+      this.makeChilderen();
     }
     const { viewer } = this.renderTarget;
     viewer.addCustomObject(this);
@@ -167,7 +167,7 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
   // INSTANCE METHODS
   // ==================================================
 
-  private makeChildern(): void {
+  private makeChilderen(): void {
     if (!this.isEmpty) {
       throw Error('Can make the object when it is already made');
     }

@@ -36,7 +36,6 @@ export abstract class DomainObject {
   private _isSelected: boolean = false;
   private _isActive: boolean = false;
   private _isExpanded = false;
-  private _isInitialized = false;
 
   // Parent-Child relationship
   private readonly _children: DomainObject[] = [];
@@ -644,25 +643,6 @@ export abstract class DomainObject {
 
   public sortChildrenByName(): void {
     this.children.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  // ==================================================
-  // INSTANCE METHODS: Initialization
-  // ==================================================
-
-  public initialize(): void {
-    if (this._isInitialized) {
-      return; // This should be done once
-    }
-    this.initializeCore();
-    this._isInitialized = true;
-  }
-
-  public initializeRecursive(): void {
-    this.initialize();
-    for (const child of this.children) {
-      child.initializeRecursive();
-    }
   }
 
   // ==================================================

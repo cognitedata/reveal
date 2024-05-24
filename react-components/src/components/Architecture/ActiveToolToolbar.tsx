@@ -10,7 +10,7 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { ActiveToolUpdater } from '../../architecture/base/reactUpdaters/ActiveToolUpdater';
 
-export const ExtraToolbar = (): ReactElement => {
+export const ActiveToolToolbar = (): ReactElement => {
   const [_activeToolUpdater, setActiveToolUpdater] = useState<number>(0);
   ActiveToolUpdater.setCounterDelegate(setActiveToolUpdater);
 
@@ -22,11 +22,11 @@ export const ExtraToolbar = (): ReactElement => {
   if (activeTool === undefined) {
     return <></>;
   }
-  const commands = activeTool.getExtraToolbar();
+  const commands = activeTool.getToolbar();
   if (commands === undefined || commands.length === 0) {
     return <></>;
   }
-  const style = activeTool.getExtraToolbarStyle();
+  const style = activeTool.getToolbarStyle();
   return (
     <Container
       style={{

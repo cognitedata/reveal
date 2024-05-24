@@ -44,7 +44,7 @@ export class MeasurementTool extends BaseEditTool {
     return { key: 'MEASUREMENTS', fallback: 'Measurements' };
   }
 
-  public override getExtraToolbar(): Array<BaseCommand | undefined> | undefined {
+  public override getToolbar(): Array<BaseCommand | undefined> | undefined {
     const result = new Array<BaseCommand | undefined>();
     result.push(new SetMeasurmentTypeCommand(MeasureType.Line));
     result.push(new SetMeasurmentTypeCommand(MeasureType.Polyline));
@@ -57,7 +57,7 @@ export class MeasurementTool extends BaseEditTool {
     return result;
   }
 
-  public override getExtraToolbarStyle(): PopupStyle {
+  public override getToolbarStyle(): PopupStyle {
     return new PopupStyle({ bottom: 0, left: 0 });
   }
 
