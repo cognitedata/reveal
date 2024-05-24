@@ -16,6 +16,7 @@ import {
 } from '../../base/utilities/extensions/vectorExtensions';
 import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 
 export class MeasureLineDomainObject extends MeasureDomainObject {
   // ==================================================
@@ -23,7 +24,7 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
   // ==================================================
 
   public readonly points: Vector3[] = [];
-  public hasFocus: boolean = false;
+  public focusType = FocusType.None;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -50,6 +51,9 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
   }
 
   public override getPanelInfo(): PanelInfo | undefined {
+    if (this.focusType === FocusType.Pending && this.points.length <= 1) {
+      return undefined;
+    }
     const info = new PanelInfo();
     switch (this.measureType) {
       case MeasureType.Line:
@@ -161,8 +165,11 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
     return Math.abs(sum) / 2;
   }
 
-  public setFocusInteractive(hasFocus: boolean): boolean {
-    this.hasFocus = hasFocus;
+  public setFocusInteractive(focusType: FocusType): boolean {
+    if (this.focusType === focusType) {
+      return false;
+    }
+    this.focusType = focusType;
     this.notify(Changes.focus);
     return true;
   }

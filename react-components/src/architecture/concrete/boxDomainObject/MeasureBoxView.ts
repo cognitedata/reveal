@@ -34,7 +34,7 @@ import {
 } from '@cognite/reveal';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
-import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { clear } from '../../base/utilities/extensions/arrayExtensions';
 import { Vector3Pool } from '../../base/utilities/geometry/Vector3Pool';
 import { createSpriteWithText } from '../../base/utilities/sprites/createSprite';
@@ -129,7 +129,7 @@ export class MeasureBoxView extends GroupThreeView {
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
     const { boxDomainObject } = this;
-    if (boxDomainObject.focusType === BoxFocusType.Pending) {
+    if (boxDomainObject.focusType === FocusType.Pending) {
       return undefined; // Should never be picked
     }
     const orientedBox = createOrientedBox();
@@ -279,7 +279,7 @@ export class MeasureBoxView extends GroupThreeView {
     const geometry = new RingGeometry(innerRadius, outerRadius, CIRCULAR_SEGMENTS);
 
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, boxDomainObject, style, focusType === BoxFocusType.RotationRing);
+    updateMarkerMaterial(material, boxDomainObject, style, focusType === FocusType.Rotation);
     material.clippingPlanes = this.createClippingPlanes(matrix, TOP_FACE.index);
     const mesh = new Mesh(geometry, material);
 
@@ -367,7 +367,7 @@ export class MeasureBoxView extends GroupThreeView {
     }
     this.updateLabels(this.renderTarget.camera);
     const { focusType } = boxDomainObject;
-    if (focusType === BoxFocusType.Pending && boxDomainObject.hasArea) {
+    if (focusType === FocusType.Pending && boxDomainObject.hasArea) {
       this.addChild(this.createPendingLabel(matrix, spriteHeight));
     } else if (showRotationLabel(focusType)) {
       this.addChild(this.createRotationLabel(matrix, spriteHeight));
@@ -439,7 +439,7 @@ export class MeasureBoxView extends GroupThreeView {
   private addEdgeCircles(matrix: Matrix4): void {
     const { boxDomainObject, style } = this;
     let selectedFace = boxDomainObject.focusFace;
-    if (this.boxDomainObject.focusType !== BoxFocusType.Face) {
+    if (this.boxDomainObject.focusType !== FocusType.Face) {
       selectedFace = undefined;
     }
     const material = new MeshPhongMaterial();
@@ -467,7 +467,7 @@ export class MeasureBoxView extends GroupThreeView {
     realPosition: Vector3,
     boxFace: BoxFace,
     outputCornerSign: Vector3
-  ): BoxFocusType {
+  ): FocusType {
     const { boxDomainObject } = this;
     const scale = newVector3().setScalar(this.getFaceRadius(boxFace));
     const scaledMatrix = boxDomainObject.getScaledMatrix(scale);
@@ -480,17 +480,17 @@ export class MeasureBoxView extends GroupThreeView {
     const corner = this.getCorner(outputCornerSign, boxFace);
 
     if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
-      return BoxFocusType.Face;
+      return FocusType.Face;
     }
     if (realPosition.distanceTo(corner) < 0.2 * this.getFaceRadius(boxFace)) {
-      return BoxFocusType.Corner;
+      return FocusType.Corner;
     }
     if (boxFace.face === 2) {
       if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
-        return BoxFocusType.RotationRing;
+        return FocusType.Rotation;
       }
     }
-    return BoxFocusType.Body;
+    return FocusType.Body;
   }
 
   private getCornerSign(realPosition: Vector3, boxFace: BoxFace): Vector3 {
@@ -537,21 +537,21 @@ export class MeasureBoxView extends GroupThreeView {
 // PRIVATE FUNCTIONS: Update materials
 // ==================================================
 
-function showRotationLabel(focusType: BoxFocusType): boolean {
+function showRotationLabel(focusType: FocusType): boolean {
   switch (focusType) {
-    case BoxFocusType.Face:
-    case BoxFocusType.Body:
-    case BoxFocusType.Pending:
+    case FocusType.Face:
+    case FocusType.Body:
+    case FocusType.Pending:
       return false;
     default:
       return true;
   }
 }
 
-function showMarkers(focusType: BoxFocusType): boolean {
+function showMarkers(focusType: FocusType): boolean {
   switch (focusType) {
-    case BoxFocusType.Pending:
-    case BoxFocusType.None:
+    case FocusType.Pending:
+    case FocusType.None:
       return false;
     default:
       return true;

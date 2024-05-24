@@ -9,7 +9,7 @@ import { MeasureBoxView } from './MeasureBoxView';
 import { Matrix4, Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
-import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { MeasureType } from './MeasureType';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
@@ -31,8 +31,8 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
   public zRotation = 0; // Angle in radians in interval [0, 2*Pi>
 
   // For focus when edit in 3D (Used when isSelected is true only)
+  public focusType: FocusType = FocusType.None;
   public focusFace: BoxFace | undefined = undefined;
-  public focusType: BoxFocusType = BoxFocusType.JustCreated;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -112,7 +112,7 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
     const { measureType } = this;
-    const isFinished = this.focusType !== BoxFocusType.Pending;
+    const isFinished = this.focusType !== FocusType.Pending;
 
     switch (measureType) {
       case MeasureType.HorizontalArea:
@@ -190,12 +190,12 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
     return matrix;
   }
 
-  public setFocusInteractive(focusType: BoxFocusType, focusFace?: BoxFace): boolean {
-    if (focusType === BoxFocusType.None) {
-      if (this.focusType === BoxFocusType.None) {
+  public setFocusInteractive(focusType: FocusType, focusFace?: BoxFace): boolean {
+    if (focusType === FocusType.None) {
+      if (this.focusType === FocusType.None) {
         return false; // No change
       }
-      this.focusType = BoxFocusType.None;
+      this.focusType = FocusType.None;
       this.focusFace = undefined; // Ignore input face
     } else {
       if (focusType === this.focusType && BoxFace.equals(this.focusFace, focusFace)) {

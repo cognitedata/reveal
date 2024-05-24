@@ -9,6 +9,7 @@ import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { copy } from '../../base/utilities/extensions/arrayExtensions';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 
 /**
  * Helper class for generate a MeasureLineDomainObject by clicking around
@@ -27,6 +28,7 @@ export class MeasureLineCreator extends BaseCreator {
   constructor(measureType: MeasureType) {
     super();
     this._domainObject = new MeasureLineDomainObject(measureType);
+    this._domainObject.focusType = FocusType.Pending;
   }
 
   // ==================================================
@@ -82,6 +84,7 @@ export class MeasureLineCreator extends BaseCreator {
     domainObject.notify(Changes.geometry);
     if (this.isFinished) {
       domainObject.setSelectedInteractive(true);
+      domainObject.setFocusInteractive(FocusType.Focus);
     }
     return true;
   }

@@ -13,7 +13,7 @@ import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
 import { MeasureType } from './MeasureType';
 import { getClosestPointOnLine } from '../../base/utilities/extensions/rayExtensions';
 import { BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 
@@ -35,7 +35,7 @@ export class MeasureBoxCreator extends BaseCreator {
   constructor(measureType: MeasureType) {
     super();
     this._domainObject = new MeasureBoxDomainObject(measureType);
-    this._domainObject.focusType = BoxFocusType.Pending;
+    this._domainObject.focusType = FocusType.Pending;
   }
 
   // ==================================================
@@ -80,7 +80,7 @@ export class MeasureBoxCreator extends BaseCreator {
     domainObject.notify(Changes.geometry);
     if (this.isFinished) {
       domainObject.setSelectedInteractive(true);
-      domainObject.setFocusInteractive(BoxFocusType.JustCreated);
+      domainObject.setFocusInteractive(FocusType.Focus);
     }
     return true;
   }

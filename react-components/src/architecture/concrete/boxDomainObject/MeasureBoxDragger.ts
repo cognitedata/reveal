@@ -5,7 +5,7 @@
 import { type Ray, Vector3, Plane, Matrix4 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../../base/utilities/box/BoxFace';
-import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { forceBetween0AndPi } from '../../base/utilities/extensions/mathExtensions';
@@ -30,7 +30,7 @@ export class MeasureBoxDragger extends BaseDragger {
   private readonly _domainObject: MeasureBoxDomainObject;
 
   private readonly _face;
-  private readonly _focusType: BoxFocusType;
+  private readonly _focusType: FocusType;
   private readonly _normal: Vector3 = new Vector3(); // Intersection normal
   private readonly _planeOfBox: Plane = new Plane(); // Plane of the intersection/normal
 
@@ -49,7 +49,7 @@ export class MeasureBoxDragger extends BaseDragger {
     return this._face;
   }
 
-  public get focusType(): BoxFocusType {
+  public get focusType(): FocusType {
     return this._focusType;
   }
 
@@ -104,15 +104,15 @@ export class MeasureBoxDragger extends BaseDragger {
   // INSTANCE METHODS
   // ==================================================
 
-  private applyByFocusType(type: BoxFocusType, ray: Ray): boolean {
-    switch (type) {
-      case BoxFocusType.Face:
+  private applyByFocusType(focusType: FocusType, ray: Ray): boolean {
+    switch (focusType) {
+      case FocusType.Face:
         return this.moveFace(ray);
-      case BoxFocusType.Corner:
+      case FocusType.Corner:
         return this.resize(ray);
-      case BoxFocusType.Body:
+      case FocusType.Body:
         return this.translate(ray);
-      case BoxFocusType.RotationRing:
+      case FocusType.Rotation:
         return this.rotate(ray);
       default:
         return false;

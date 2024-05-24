@@ -29,6 +29,7 @@ import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { MeasureType } from './MeasureType';
 import { createSpriteWithText } from '../../base/utilities/sprites/createSprite';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 
@@ -79,8 +80,8 @@ export class MeasureLineView extends GroupThreeView {
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    if (this.domainObject.isSelected) {
-      return undefined;
+    if (this.lineDomainObject.focusType === FocusType.Pending) {
+      return undefined; // Should never be picked
     }
     return super.intersectIfCloser(intersectInput, closestDistance);
   }

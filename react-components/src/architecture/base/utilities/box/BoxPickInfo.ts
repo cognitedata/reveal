@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type BoxFocusType } from './BoxFocusType';
+import { type FocusType } from '../../domainObjectsHelpers/FocusType';
 import { type BoxFace } from './BoxFace';
 import { type Vector3 } from 'three';
 
@@ -18,7 +18,7 @@ export class BoxPickInfo {
   /**
    * The type of focus on the picked box.
    */
-  public readonly focusType: BoxFocusType;
+  public readonly focusType: FocusType;
 
   /**
    * Indicates the corner of the face.
@@ -31,7 +31,7 @@ export class BoxPickInfo {
    * @param focusType The type of focus on the picked box.
    * @param cornerSign Indicates the corner of the face.
    */
-  public constructor(face: BoxFace, focusType: BoxFocusType, cornerSign: Vector3) {
+  public constructor(face: BoxFace, focusType: FocusType, cornerSign: Vector3) {
     this.face = face;
     this.focusType = focusType;
     this.cornerSign = cornerSign;

@@ -6,7 +6,7 @@ import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
 import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type BaseCommand, type Tooltip } from '../../base/commands/BaseCommand';
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { BoxFocusType } from '../../base/utilities/box/BoxFocusType';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type Vector3 } from 'three';
 import { MeasureBoxCreator } from './MeasureBoxCreator';
@@ -122,10 +122,10 @@ export class MeasurementTool extends BaseEditTool {
           }
         }
         this.renderTarget.setNavigateCursor();
-        super.onHover(event);
         return;
       }
-      if (this.isMeasurement(intersection)) {
+      if (this.getMeasurement(intersection) !== undefined) {
+        this.renderTarget.setNavigateCursor();
         return;
       }
       const ray = this.getRay(event);
@@ -133,29 +133,30 @@ export class MeasurementTool extends BaseEditTool {
         this.setDefaultCursor();
         return;
       }
+      this.renderTarget.setNavigateCursor();
       return;
     }
     const intersection = await this.getIntersection(event);
-    if (!isDomainObjectIntersection(intersection)) {
+    const domainObject = this.getMeasurement(intersection);
+    if (!isDomainObjectIntersection(intersection) || domainObject === undefined) {
       this.defocusAll();
-      this.setDefaultCursor();
-      return;
-    }
-    const domainObject = intersection.domainObject;
-    if (domainObject === undefined) {
-      this.defocusAll();
-      this.setDefaultCursor();
+      if (this.measureType === MeasureType.None || intersection === undefined) {
+        this.renderTarget.setNavigateCursor();
+      } else {
+        this.setDefaultCursor();
+      }
       return;
     }
     // Set focus on the hovered object
     if (domainObject instanceof MeasureLineDomainObject) {
       this.defocusAll(domainObject);
-      domainObject.setFocusInteractive(true);
+      domainObject.setFocusInteractive(FocusType.Focus);
+      this.renderTarget.setDefaultCursor();
     } else if (domainObject instanceof MeasureBoxDomainObject) {
       const pickInfo = intersection.userData as BoxPickInfo;
       if (pickInfo === undefined) {
         this.defocusAll();
-        this.setDefaultCursor();
+        this.renderTarget.setDefaultCursor();
         return;
       }
       this.setCursor(domainObject, intersection.point, pickInfo);
@@ -179,11 +180,18 @@ export class MeasurementTool extends BaseEditTool {
         return;
       }
     }
-    // Click at "something"
     const intersection = await this.getIntersection(event);
-    if (intersection === undefined || this.isMeasurement(intersection)) {
-      // Do not want to click on other measurments
+    if (intersection === undefined) {
+      // Click in the "air"
       await super.onClick(event);
+      return;
+    }
+    const measurment = this.getMeasurement(intersection);
+    if (measurment !== undefined) {
+      // Click at "a measurement"
+      // Do not want to click on other measurments
+      this.deselectAll(measurment);
+      measurment.setSelectedInteractive(true);
       return;
     }
     const ray = this.getRay(event);
@@ -236,12 +244,21 @@ export class MeasurementTool extends BaseEditTool {
     }
   }
 
-  private isMeasurement(intersection: AnyIntersection): boolean {
+  private getMeasurement(
+    intersection: AnyIntersection | undefined
+  ): MeasureDomainObject | undefined {
+    if (intersection === undefined) {
+      return undefined;
+    }
     // Do not want to click on other boxes
     if (!isDomainObjectIntersection(intersection)) {
-      return false;
+      return undefined;
     }
-    return intersection.domainObject instanceof MeasureDomainObject;
+    if (intersection.domainObject instanceof MeasureDomainObject) {
+      return intersection.domainObject;
+    } else {
+      return undefined;
+    }
   }
 
   private setCursor(
@@ -249,9 +266,9 @@ export class MeasurementTool extends BaseEditTool {
     point: Vector3,
     pickInfo: BoxPickInfo
   ): void {
-    if (pickInfo.focusType === BoxFocusType.Body) {
+    if (pickInfo.focusType === FocusType.Body) {
       this.renderTarget.setMoveCursor();
-    } else if (pickInfo.focusType === BoxFocusType.Face) {
+    } else if (pickInfo.focusType === FocusType.Face) {
       const matrix = boxDomainObject.getMatrix();
       matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
@@ -267,7 +284,7 @@ export class MeasurementTool extends BaseEditTool {
       faceCenter.applyMatrix4(matrix);
 
       this.renderTarget.setResizeCursor(boxCenter, faceCenter);
-    } else if (pickInfo.focusType === BoxFocusType.Corner) {
+    } else if (pickInfo.focusType === FocusType.Corner) {
       const matrix = boxDomainObject.getMatrix();
       matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
@@ -275,7 +292,7 @@ export class MeasurementTool extends BaseEditTool {
       faceCenter.applyMatrix4(matrix);
 
       this.renderTarget.setResizeCursor(point, faceCenter);
-    } else if (pickInfo.focusType === BoxFocusType.RotationRing) {
+    } else if (pickInfo.focusType === FocusType.Rotation) {
       this.renderTarget.setGrabCursor();
     } else {
       this.setDefaultCursor();
@@ -303,10 +320,10 @@ export class MeasurementTool extends BaseEditTool {
         continue;
       }
       if (domainObject instanceof MeasureLineDomainObject) {
-        domainObject.setFocusInteractive(false);
+        domainObject.setFocusInteractive(FocusType.None);
       }
       if (domainObject instanceof MeasureBoxDomainObject) {
-        domainObject.setFocusInteractive(BoxFocusType.None);
+        domainObject.setFocusInteractive(FocusType.None);
       }
     }
   }
