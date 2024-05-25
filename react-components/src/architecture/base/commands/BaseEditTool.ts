@@ -6,6 +6,8 @@ import { NavigationTool } from './NavigationTool';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { isDomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
+import { type VisualDomainObject } from '../domainObjects/VisualDomainObject';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 /**
  * The `BaseEditTool` class is an abstract class that extends the `NavigationTool` class.
@@ -64,7 +66,7 @@ export abstract class BaseEditTool extends NavigationTool {
   }
 
   // ==================================================
-  // VIRTUALS METHODS
+  // VIRTUAL METHODS
   // ==================================================
 
   /**
@@ -80,11 +82,16 @@ export abstract class BaseEditTool extends NavigationTool {
     if (!isDomainObjectIntersection(intersection)) {
       return undefined;
     }
-    const domainObject = intersection.domainObject;
+    const domainObject = intersection.domainObject as VisualDomainObject;
     if (domainObject === undefined) {
       return undefined;
     }
-    return domainObject.createDragger(intersection);
+    const ray = this.getRay(event);
+    const matrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+    const point = intersection.point.clone();
+    point.applyMatrix4(matrix);
+    ray.applyMatrix4(matrix);
+    return domainObject.createDragger({ intersection, point, ray });
   }
 
   // ==================================================
@@ -92,8 +99,7 @@ export abstract class BaseEditTool extends NavigationTool {
   // ==================================================
 
   protected deselectAll(except?: DomainObject | undefined): void {
-    const { renderTarget } = this;
-    const { rootDomainObject } = renderTarget;
+    const { rootDomainObject } = this;
     for (const domainObject of rootDomainObject.getDescendants()) {
       if (except !== undefined && domainObject === except) {
         continue;

@@ -163,8 +163,7 @@ export class MeasurementTool extends BaseEditTool {
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    const { renderTarget } = this;
-    const { rootDomainObject } = renderTarget;
+    const { renderTarget, rootDomainObject } = this;
 
     const { _creator: creator } = this;
     // Click in the "air"
@@ -244,10 +243,6 @@ export class MeasurementTool extends BaseEditTool {
   private getMeasurement(
     intersection: AnyIntersection | undefined
   ): MeasureDomainObject | undefined {
-    if (intersection === undefined) {
-      return undefined;
-    }
-    // Do not want to click on other boxes
     if (!isDomainObjectIntersection(intersection)) {
       return undefined;
     }

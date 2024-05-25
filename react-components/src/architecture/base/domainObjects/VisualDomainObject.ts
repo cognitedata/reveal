@@ -6,11 +6,15 @@ import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ThreeView } from '../views/ThreeView';
 import { VisibleState } from '../domainObjectsHelpers/VisibleState';
 import { DomainObject } from './DomainObject';
+import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
+import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
+import { type Vector3, type Ray } from 'three';
 
 /**
  * Represents a visual domain object that can be rendered and manipulated in a three-dimensional space.
  * This class extends the `DomainObject` class and provides additional functionality for visualization.
  */
+
 export abstract class VisualDomainObject extends DomainObject {
   // ==================================================
   // OVERRIDES of DomainObject
@@ -63,6 +67,16 @@ export abstract class VisualDomainObject extends DomainObject {
    */
   protected canCreateThreeView(): boolean {
     return true;
+  }
+
+  /**
+   * Factory method to create a dragger to interpret the mouse dragging operation
+   * This function is used in BaseEditTool
+   *
+   * @returns The dragger
+   */
+  public createDragger(_props: CreateDraggerProps): BaseDragger | undefined {
+    return undefined;
   }
 
   // ==================================================
@@ -118,3 +132,9 @@ export abstract class VisualDomainObject extends DomainObject {
     return true; // State has changed
   }
 }
+
+export type CreateDraggerProps = {
+  intersection: DomainObjectIntersection;
+  point: Vector3;
+  ray: Ray;
+};

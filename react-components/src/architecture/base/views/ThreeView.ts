@@ -113,7 +113,7 @@ export abstract class ThreeView extends BaseView {
   }
 
   public attach(domainObject: DomainObject, renderTarget: RevealRenderTarget): void {
-    this.domainObject = domainObject;
+    super.setDomainObject(domainObject);
     this._renderTarget = renderTarget;
   }
 

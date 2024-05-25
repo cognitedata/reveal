@@ -66,7 +66,7 @@ export class MeasureBoxView extends GroupThreeView {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected get boxDomainObject(): MeasureBoxDomainObject {
+  protected override get domainObject(): MeasureBoxDomainObject {
     return super.domainObject as MeasureBoxDomainObject;
   }
 
@@ -112,10 +112,10 @@ export class MeasureBoxView extends GroupThreeView {
   // ==================================================
 
   protected override addChildren(): void {
-    const { boxDomainObject } = this;
+    const { domainObject } = this;
     const matrix = this.getMatrix();
 
-    const { focusType } = boxDomainObject;
+    const { focusType } = domainObject;
     this.addChild(this.createSolid(matrix));
     this.addChild(this.createLines(matrix));
     if (showMarkers(focusType)) {
@@ -129,8 +129,8 @@ export class MeasureBoxView extends GroupThreeView {
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    const { boxDomainObject } = this;
-    if (boxDomainObject.focusType === FocusType.Pending) {
+    const { domainObject } = this;
+    if (domainObject.focusType === FocusType.Pending) {
       return undefined; // Should never be picked
     }
     const orientedBox = createOrientedBox();
@@ -165,7 +165,7 @@ export class MeasureBoxView extends GroupThreeView {
       distanceToCamera,
       userData: new BoxPickInfo(boxFace, focusType, cornerSign),
       customObject: this,
-      domainObject: boxDomainObject
+      domainObject
     };
     if (this.shouldPickBoundingBox) {
       customObjectIntersection.boundingBox = this.boundingBox;
@@ -178,26 +178,26 @@ export class MeasureBoxView extends GroupThreeView {
   // ==================================================
 
   private getTextHeight(relativeTextSize: number): number {
-    return relativeTextSize * this.boxDomainObject.diagonal;
+    return relativeTextSize * this.domainObject.diagonal;
   }
 
   private getFaceRadius(boxFace: BoxFace): number {
-    const { size } = this.boxDomainObject;
+    const { size } = this.domainObject;
     const size1 = size.getComponent(boxFace.tangentIndex1);
     const size2 = size.getComponent(boxFace.tangentIndex2);
     return (size1 + size2) / 4;
   }
 
   private getMatrix(): Matrix4 {
-    const { boxDomainObject } = this;
-    const matrix = boxDomainObject.getMatrix();
+    const { domainObject } = this;
+    const matrix = domainObject.getMatrix();
     matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
     return matrix;
   }
 
   private getRotationMatrix(): Matrix4 {
-    const { boxDomainObject } = this;
-    const matrix = boxDomainObject.getRotationMatrix();
+    const { domainObject } = this;
+    const matrix = domainObject.getRotationMatrix();
     matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
     return matrix;
   }
@@ -207,11 +207,11 @@ export class MeasureBoxView extends GroupThreeView {
   // ==================================================
 
   private createSolid(matrix: Matrix4): Object3D | undefined {
-    const { boxDomainObject } = this;
+    const { domainObject } = this;
     const { style } = this;
 
     const material = new MeshPhongMaterial();
-    updateSolidMaterial(material, boxDomainObject, style);
+    updateSolidMaterial(material, domainObject, style);
     const geometry = new BoxGeometry(1, 1, 1);
     const result = new Mesh(geometry, material);
     result.applyMatrix4(matrix);
@@ -219,11 +219,11 @@ export class MeasureBoxView extends GroupThreeView {
   }
 
   private createLines(matrix: Matrix4): Object3D | undefined {
-    const { boxDomainObject } = this;
+    const { domainObject } = this;
     const { style } = this;
 
     const material = new LineBasicMaterial();
-    updateLineSegmentsMaterial(material, boxDomainObject, style);
+    updateLineSegmentsMaterial(material, domainObject, style);
     const geometry = createLineSegmentsBufferGeometryForBox();
     const result = new LineSegments(geometry, material);
 
@@ -235,8 +235,8 @@ export class MeasureBoxView extends GroupThreeView {
     if (!this.isFaceVisible(TOP_FACE)) {
       return undefined;
     }
-    const { boxDomainObject } = this;
-    const degrees = radToDeg(boxDomainObject.zRotation);
+    const { domainObject } = this;
+    const degrees = radToDeg(domainObject.zRotation);
     const text = degrees.toFixed(1);
     if (text === '0.0') {
       return undefined; // Not show when about 0
@@ -247,7 +247,7 @@ export class MeasureBoxView extends GroupThreeView {
     }
     const faceCenter = TOP_FACE.getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
-    adjustLabel(faceCenter, boxDomainObject, spriteHeight);
+    adjustLabel(faceCenter, domainObject, spriteHeight);
     sprite.position.copy(faceCenter);
     return sprite;
   }
@@ -262,7 +262,7 @@ export class MeasureBoxView extends GroupThreeView {
     }
     const faceCenter = TOP_FACE.getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
-    adjustLabel(faceCenter, this.boxDomainObject, spriteHeight);
+    adjustLabel(faceCenter, this.domainObject, spriteHeight);
     sprite.position.copy(faceCenter);
     return sprite;
   }
@@ -271,8 +271,8 @@ export class MeasureBoxView extends GroupThreeView {
     if (!this.isFaceVisible(TOP_FACE)) {
       return undefined;
     }
-    const { boxDomainObject, style } = this;
-    const { focusType } = boxDomainObject;
+    const { domainObject, style } = this;
+    const { focusType } = domainObject;
     const radius = this.getFaceRadius(TOP_FACE);
 
     const outerRadius = RELATIVE_ROTATION_RADIUS.max * radius;
@@ -280,7 +280,7 @@ export class MeasureBoxView extends GroupThreeView {
     const geometry = new RingGeometry(innerRadius, outerRadius, CIRCULAR_SEGMENTS);
 
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, boxDomainObject, style, focusType === FocusType.Rotation);
+    updateMarkerMaterial(material, domainObject, style, focusType === FocusType.Rotation);
     material.clippingPlanes = this.createClippingPlanes(matrix, TOP_FACE.index);
     const mesh = new Mesh(geometry, material);
 
@@ -292,12 +292,12 @@ export class MeasureBoxView extends GroupThreeView {
   }
 
   private createEdgeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
-    const { boxDomainObject } = this;
-    const adjecentSize1 = boxDomainObject.size.getComponent(face.tangentIndex1);
+    const { domainObject } = this;
+    const adjecentSize1 = domainObject.size.getComponent(face.tangentIndex1);
     if (!isValid(adjecentSize1)) {
       return undefined;
     }
-    const adjecentSize2 = boxDomainObject.size.getComponent(face.tangentIndex2);
+    const adjecentSize2 = domainObject.size.getComponent(face.tangentIndex2);
     if (!isValid(adjecentSize2)) {
       return undefined;
     }
@@ -317,13 +317,13 @@ export class MeasureBoxView extends GroupThreeView {
     } else if (face.face === 5) {
       mesh.rotateX(Math.PI / 2);
     } else if (face.face === 0) {
-      mesh.rotateY(Math.PI / 2 + boxDomainObject.zRotation);
+      mesh.rotateY(Math.PI / 2 + domainObject.zRotation);
     } else if (face.face === 3) {
-      mesh.rotateY(-Math.PI / 2 + boxDomainObject.zRotation);
+      mesh.rotateY(-Math.PI / 2 + domainObject.zRotation);
     } else if (face.face === 1) {
-      mesh.rotateY(Math.PI + boxDomainObject.zRotation);
+      mesh.rotateY(Math.PI + domainObject.zRotation);
     } else if (face.face === 4) {
-      mesh.rotateY(boxDomainObject.zRotation);
+      mesh.rotateY(domainObject.zRotation);
     }
     return mesh;
   }
@@ -349,11 +349,11 @@ export class MeasureBoxView extends GroupThreeView {
   // ==================================================
 
   private addLabels(matrix: Matrix4): void {
-    const { boxDomainObject, style } = this;
+    const { domainObject, style } = this;
     const spriteHeight = this.getTextHeight(style.relativeTextSize);
     clear(this._sprites);
     for (let index = 0; index < 3; index++) {
-      const size = boxDomainObject.size.getComponent(index);
+      const size = domainObject.size.getComponent(index);
       if (!isValid(size)) {
         this._sprites.push(undefined);
         continue;
@@ -367,8 +367,8 @@ export class MeasureBoxView extends GroupThreeView {
       this.addChild(sprite);
     }
     this.updateLabels(this.renderTarget.camera);
-    const { focusType } = boxDomainObject;
-    if (focusType === FocusType.Pending && boxDomainObject.hasArea) {
+    const { focusType } = domainObject;
+    if (focusType === FocusType.Pending && domainObject.hasArea) {
       this.addChild(this.createPendingLabel(matrix, spriteHeight));
     } else if (showRotationLabel(focusType)) {
       this.addChild(this.createRotationLabel(matrix, spriteHeight));
@@ -376,11 +376,11 @@ export class MeasureBoxView extends GroupThreeView {
   }
 
   private updateLabels(camera: Camera): void {
-    const { boxDomainObject, style } = this;
+    const { domainObject, style } = this;
     const matrix = this.getMatrix();
 
     const rotationMatrix = this.getRotationMatrix();
-    const centerOfBox = newVector3(boxDomainObject.center);
+    const centerOfBox = newVector3(domainObject.center);
     centerOfBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     const cameraPosition = camera.getWorldPosition(newVector3());
     const cameraDirection = centerOfBox.sub(cameraPosition).normalize();
@@ -423,7 +423,7 @@ export class MeasureBoxView extends GroupThreeView {
           const edgeCenter = faceCenter2.add(faceCenter1);
           edgeCenter.applyMatrix4(matrix);
 
-          adjustLabel(edgeCenter, boxDomainObject, spriteHeight);
+          adjustLabel(edgeCenter, domainObject, spriteHeight);
 
           // Move the sprite slightly away from the box to avoid z-fighting
           edgeCenter.addScaledVector(cameraDirection, -spriteHeight / 2);
@@ -439,13 +439,13 @@ export class MeasureBoxView extends GroupThreeView {
   }
 
   private addEdgeCircles(matrix: Matrix4): void {
-    const { boxDomainObject, style } = this;
-    let selectedFace = boxDomainObject.focusFace;
-    if (this.boxDomainObject.focusType !== FocusType.Face) {
+    const { domainObject, style } = this;
+    let selectedFace = domainObject.focusFace;
+    if (this.domainObject.focusType !== FocusType.Face) {
       selectedFace = undefined;
     }
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, boxDomainObject, style, false);
+    updateMarkerMaterial(material, domainObject, style, false);
     for (const boxFace of BoxFace.getAllFaces()) {
       if (!this.isFaceVisible(boxFace)) {
         continue;
@@ -456,7 +456,7 @@ export class MeasureBoxView extends GroupThreeView {
     }
     if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
-      updateMarkerMaterial(material, boxDomainObject, style, true);
+      updateMarkerMaterial(material, domainObject, style, true);
       this.addChild(this.createEdgeCircle(matrix, material, selectedFace));
     }
   }
@@ -470,9 +470,9 @@ export class MeasureBoxView extends GroupThreeView {
     boxFace: BoxFace,
     outputCornerSign: Vector3
   ): FocusType {
-    const { boxDomainObject } = this;
+    const { domainObject } = this;
     const scale = newVector3().setScalar(this.getFaceRadius(boxFace));
-    const scaledMatrix = boxDomainObject.getScaledMatrix(scale);
+    const scaledMatrix = domainObject.getScaledMatrix(scale);
     scaledMatrix.invert();
     const scaledPositionAtFace = newVector3(realPosition).applyMatrix4(scaledMatrix);
     const planePoint = boxFace.getPlanePoint(scaledPositionAtFace);
@@ -496,9 +496,9 @@ export class MeasureBoxView extends GroupThreeView {
   }
 
   private getCornerSign(realPosition: Vector3, boxFace: BoxFace): Vector3 {
-    const { boxDomainObject } = this;
+    const { domainObject } = this;
     const scale = newVector3().setScalar(this.getFaceRadius(boxFace));
-    const scaledMatrix = boxDomainObject.getScaledMatrix(scale);
+    const scaledMatrix = domainObject.getScaledMatrix(scale);
     scaledMatrix.invert();
     const scaledPositionAtFace = realPosition.clone().applyMatrix4(scaledMatrix);
     scaledPositionAtFace.setComponent(boxFace.index, 0);
@@ -514,17 +514,17 @@ export class MeasureBoxView extends GroupThreeView {
   }
 
   private getCorner(cornerSign: Vector3, boxFace: BoxFace): Vector3 {
-    const { boxDomainObject } = this;
+    const { domainObject } = this;
     const center = boxFace.getCenter(new Vector3()); // In range (-0.5, 0.5)
     const corner = center.addScaledVector(cornerSign, 0.5);
-    const matrix = boxDomainObject.getMatrix();
+    const matrix = domainObject.getMatrix();
     corner.applyMatrix4(matrix);
     return corner;
   }
 
   private isFaceVisible(boxFace: BoxFace): boolean {
-    const { boxDomainObject } = this;
-    switch (boxDomainObject.measureType) {
+    const { domainObject } = this;
+    switch (domainObject.measureType) {
       case MeasureType.VerticalArea:
         return boxFace.index === 1; // Y Face visible
 
@@ -566,11 +566,11 @@ function showMarkers(focusType: FocusType): boolean {
 
 function updateSolidMaterial(
   material: MeshPhongMaterial,
-  boxDomainObject: MeasureBoxDomainObject,
+  domainObject: MeasureBoxDomainObject,
   style: MeasureBoxRenderStyle
 ): void {
-  const color = boxDomainObject.getColorByColorType(style.colorType);
-  const isSelected = boxDomainObject.isSelected;
+  const color = domainObject.getColorByColorType(style.colorType);
+  const isSelected = domainObject.isSelected;
   const opacity = isSelected ? style.opacity : style.opacity / 4;
   material.polygonOffset = true;
   material.polygonOffsetFactor = 1;
@@ -588,10 +588,10 @@ function updateSolidMaterial(
 
 function updateLineSegmentsMaterial(
   material: LineBasicMaterial,
-  boxDomainObject: MeasureBoxDomainObject,
+  domainObject: MeasureBoxDomainObject,
   style: MeasureBoxRenderStyle
 ): void {
-  const color = boxDomainObject.getColorByColorType(style.colorType);
+  const color = domainObject.getColorByColorType(style.colorType);
   material.color = color;
   material.transparent = true;
   material.depthWrite = false;
@@ -600,7 +600,7 @@ function updateLineSegmentsMaterial(
 
 function updateMarkerMaterial(
   material: MeshPhongMaterial,
-  boxDomainObject: MeasureBoxDomainObject,
+  domainObject: MeasureBoxDomainObject,
   style: MeasureBoxRenderStyle,
   hasFocus: boolean
 ): void {

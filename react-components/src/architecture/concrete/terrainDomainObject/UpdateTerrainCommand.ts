@@ -25,8 +25,7 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    const { renderTarget } = this;
-    const { rootDomainObject } = renderTarget;
+    const { renderTarget, rootDomainObject } = this;
     const terrainDomainObject = rootDomainObject.getDescendantByTypeAndName(
       TerrainDomainObject,
       DEFAULT_TERRAIN_NAME
@@ -38,9 +37,7 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
   }
 
   protected override invokeCore(): boolean {
-    const { renderTarget } = this;
-    const { rootDomainObject } = renderTarget;
-
+    const { renderTarget, rootDomainObject } = this;
     const terrainDomainObject = rootDomainObject.getDescendantByTypeAndName(
       TerrainDomainObject,
       DEFAULT_TERRAIN_NAME

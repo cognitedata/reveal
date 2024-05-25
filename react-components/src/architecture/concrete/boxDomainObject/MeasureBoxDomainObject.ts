@@ -11,13 +11,13 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { MeasureType } from './MeasureType';
-import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { MeasureBoxDragger } from './MeasureBoxDragger';
 import { MeasureDomainObject } from './MeasureDomainObject';
 import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
+import { type CreateDraggerProps } from '../../base/domainObjects/VisualDomainObject';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -101,12 +101,12 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
     return new MeasureBoxRenderStyle();
   }
 
-  public override createDragger(intersection: DomainObjectIntersection): BaseDragger | undefined {
-    const pickInfo = intersection.userData as BoxPickInfo;
+  public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
+    const pickInfo = props.intersection.userData as BoxPickInfo;
     if (pickInfo === undefined) {
-      return undefined;
+      return undefined; // If the BoxPickInfo isn't specified, no dragger iscreated
     }
-    return new MeasureBoxDragger(this, intersection.point, pickInfo);
+    return new MeasureBoxDragger(props, this);
   }
 
   public override getPanelInfo(): PanelInfo | undefined {

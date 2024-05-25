@@ -39,7 +39,7 @@ export class MeasureLineView extends GroupThreeView {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected get lineDomainObject(): MeasureLineDomainObject {
+  protected override get domainObject(): MeasureLineDomainObject {
     return super.domainObject as MeasureLineDomainObject;
   }
 
@@ -81,7 +81,7 @@ export class MeasureLineView extends GroupThreeView {
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    if (this.lineDomainObject.focusType === FocusType.Pending) {
+    if (this.domainObject.focusType === FocusType.Pending) {
       return undefined; // Should never be picked
     }
     return super.intersectIfCloser(intersectInput, closestDistance);
@@ -92,8 +92,8 @@ export class MeasureLineView extends GroupThreeView {
   // ==================================================
 
   private createCylinders(): Mesh | undefined {
-    const { lineDomainObject, style } = this;
-    const { points } = lineDomainObject;
+    const { domainObject, style } = this;
+    const { points } = domainObject;
     const { length } = points;
     if (length < 2) {
       return undefined;
@@ -103,7 +103,7 @@ export class MeasureLineView extends GroupThreeView {
       return;
     }
     const geometries: CylinderGeometry[] = [];
-    const loopLength = lineDomainObject.measureType === MeasureType.Polygon ? length + 1 : length;
+    const loopLength = domainObject.measureType === MeasureType.Polygon ? length + 1 : length;
 
     // Just allocate all needed objects once
     const prevPoint = new Vector3();
@@ -134,18 +134,18 @@ export class MeasureLineView extends GroupThreeView {
       prevPoint.copy(thisPoint);
     }
     const material = new MeshPhongMaterial();
-    updateSolidMaterial(material, lineDomainObject, style);
+    updateSolidMaterial(material, domainObject, style);
     return new Mesh(mergeGeometries(geometries, false), material);
   }
 
   private createLines(): Wireframe | undefined {
-    const { lineDomainObject, style } = this;
-    const vertices = createVertices(lineDomainObject);
+    const { domainObject, style } = this;
+    const vertices = createVertices(domainObject);
     if (vertices === undefined) {
       return undefined;
     }
-    const color = lineDomainObject.getColorByColorType(style.colorType);
-    const linewidth = lineDomainObject.isSelected ? style.selectedLineWidth : style.lineWidth;
+    const color = domainObject.getColorByColorType(style.colorType);
+    const linewidth = domainObject.isSelected ? style.selectedLineWidth : style.lineWidth;
     const geometry = new LineSegmentsGeometry().setPositions(vertices);
     const material = new LineMaterial({
       linewidth: linewidth / 50,
@@ -158,8 +158,8 @@ export class MeasureLineView extends GroupThreeView {
   }
 
   private addLabels(): void {
-    const { lineDomainObject, style } = this;
-    const { points } = lineDomainObject;
+    const { domainObject, style } = this;
+    const { points } = domainObject;
     const { length } = points;
     if (length < 2) {
       return;
@@ -168,7 +168,7 @@ export class MeasureLineView extends GroupThreeView {
     if (spriteHeight <= 0) {
       return;
     }
-    const loopLength = lineDomainObject.measureType === MeasureType.Polygon ? length : length - 1;
+    const loopLength = domainObject.measureType === MeasureType.Polygon ? length : length - 1;
     const center = new Vector3();
     for (let i = 0; i < loopLength; i++) {
       const point1 = points[i % length];
@@ -181,14 +181,14 @@ export class MeasureLineView extends GroupThreeView {
       if (sprite === undefined) {
         continue;
       }
-      adjustLabel(center, lineDomainObject, style, spriteHeight);
+      adjustLabel(center, domainObject, style, spriteHeight);
       sprite.position.copy(center);
       this.addChild(sprite);
     }
   }
 
   private getTextHeight(relativeTextSize: number): number {
-    return relativeTextSize * this.lineDomainObject.getAverageLength();
+    return relativeTextSize * this.domainObject.getAverageLength();
   }
 }
 

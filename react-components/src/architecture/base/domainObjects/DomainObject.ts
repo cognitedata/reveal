@@ -14,8 +14,6 @@ import { getNextColor } from '../utilities/colors/getNextColor';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
-import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
-import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
@@ -308,20 +306,6 @@ export abstract class DomainObject {
    * Override this method when needed
    */
   public verifyRenderStyle(_style: RenderStyle): void {}
-
-  // ==================================================
-  // VIRTUAL METHODS: Create dragger
-  // ==================================================
-
-  /**
-   * Factory method to create a dragger to interpret the mouse dragging operation
-   * This function is used in BaseEditTool
-   * @returns The render style
-   */
-  // override when creating a dragger operation in the BaseEditTool
-  public createDragger(_intersection: DomainObjectIntersection): BaseDragger | undefined {
-    return undefined;
-  }
 
   // ==================================================
   // VIRTUAL METHODS: Visibility
