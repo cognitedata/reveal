@@ -5,7 +5,7 @@
 import { Vector3 } from 'three';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { type RegularGrid2 } from './RegularGrid2';
-import { isAbsEqual, isBetween, max, min } from '../../../base/utilities/extensions/mathExtensions';
+import { isAbsEqual, isBetween } from '../../../base/utilities/extensions/mathExtensions';
 
 export class ContouringService {
   // ==================================================
@@ -80,7 +80,7 @@ export class ContouringService {
   // ==================================================
 
   private addTriangle(a: Vector3, b: Vector3, c: Vector3): void {
-    this._tempRange.set(min(a.z, b.z, c.z), max(a.z, b.z, c.z));
+    this._tempRange.set(Math.min(a.z, b.z, c.z), Math.max(a.z, b.z, c.z));
 
     for (const anyTick of this._tempRange.getFastTicks(this._increment, this._tolerance)) {
       const z = Number(anyTick);

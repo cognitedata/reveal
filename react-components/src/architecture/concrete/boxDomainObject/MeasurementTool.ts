@@ -15,14 +15,13 @@ import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { MeasureLineCreator } from './MeasureLineCreator';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
-import { getAnyMeasureDomainObject, getMeasureDomainObjects } from './MeasurementFunctions';
 import { MeasureRenderStyle } from './MeasureRenderStyle';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { MeasureDomainObject } from './MeasureDomainObject';
 import { ShowMeasurmentsOnTopCommand } from './ShowMeasurmentsOnTopCommand';
 import { SetMeasurmentTypeCommand } from './SetMeasurmentTypeCommand';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
+import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -84,10 +83,8 @@ export class MeasurementTool extends BaseEditTool {
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
     if (down && event.key === 'Delete') {
-      for (const domainObject of getMeasureDomainObjects(this.renderTarget)) {
-        if (!domainObject.isSelected) {
-          continue;
-        }
+      const domainObject = this.rootDomainObject.getSelectedDescendantByType(MeasureDomainObject);
+      if (domainObject !== undefined) {
         domainObject.removeInteractive();
       }
       this._creator = undefined;
@@ -196,14 +193,14 @@ export class MeasurementTool extends BaseEditTool {
     }
     const ray = this.getRay(event);
     if (creator === undefined) {
-      const creator = (this._creator = this.createCreator());
+      const creator = (this._creator = createCreator(this.measureType));
       if (creator === undefined) {
         await super.onClick(event);
         return;
       }
       if (creator.addPoint(ray, intersection.point, false)) {
         const { domainObject } = creator;
-        initializeStyle(domainObject, renderTarget);
+        initializeStyle(domainObject, this.rootDomainObject);
         this.deselectAll();
         rootDomainObject.addChildInteractive(domainObject);
         domainObject.setSelectedInteractive(true);
@@ -239,7 +236,7 @@ export class MeasurementTool extends BaseEditTool {
   }
 
   private setAllMeasurementsVisible(visible: boolean): void {
-    for (const domainObject of getMeasureDomainObjects(this.renderTarget)) {
+    for (const domainObject of this.rootDomainObject.getDescendantsByType(MeasureDomainObject)) {
       domainObject.setVisibleInteractive(visible, this.renderTarget);
     }
   }
@@ -299,23 +296,8 @@ export class MeasurementTool extends BaseEditTool {
     }
   }
 
-  private createCreator(): BaseCreator | undefined {
-    switch (this.measureType) {
-      case MeasureType.Line:
-      case MeasureType.Polyline:
-      case MeasureType.Polygon:
-        return new MeasureLineCreator(this.measureType);
-      case MeasureType.HorizontalArea:
-      case MeasureType.VerticalArea:
-      case MeasureType.Volume:
-        return new MeasureBoxCreator(this.measureType);
-      default:
-        return undefined;
-    }
-  }
-
   protected defocusAll(except?: DomainObject | undefined): void {
-    for (const domainObject of getMeasureDomainObjects(this.renderTarget)) {
+    for (const domainObject of this.rootDomainObject.getDescendantsByType(MeasureDomainObject)) {
       if (except !== undefined && domainObject === except) {
         continue;
       }
@@ -329,8 +311,12 @@ export class MeasurementTool extends BaseEditTool {
   }
 }
 
-function initializeStyle(domainObject: DomainObject, renderTarget: RevealRenderTarget): void {
-  const otherDomainObject = getAnyMeasureDomainObject(renderTarget);
+// ==================================================
+// PRIVATE FUNCTIONS
+// ==================================================
+
+function initializeStyle(domainObject: DomainObject, rootDomainObject: RootDomainObject): void {
+  const otherDomainObject = rootDomainObject.getDescendantByType(MeasureDomainObject);
   if (otherDomainObject === undefined) {
     return;
   }
@@ -340,4 +326,19 @@ function initializeStyle(domainObject: DomainObject, renderTarget: RevealRenderT
     return;
   }
   style.depthTest = otherStyle.depthTest;
+}
+
+function createCreator(measureType: MeasureType): BaseCreator | undefined {
+  switch (measureType) {
+    case MeasureType.Line:
+    case MeasureType.Polyline:
+    case MeasureType.Polygon:
+      return new MeasureLineCreator(measureType);
+    case MeasureType.HorizontalArea:
+    case MeasureType.VerticalArea:
+    case MeasureType.Volume:
+      return new MeasureBoxCreator(measureType);
+    default:
+      return undefined;
+  }
 }

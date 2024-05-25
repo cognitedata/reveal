@@ -7,6 +7,13 @@ import { type DomainObject } from '../domainObjects/DomainObject';
 import { isDomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 
+/**
+ * The `BaseEditTool` class is an abstract class that extends the `NavigationTool` class.
+ * It provides a base implementation for editing tools in a specific architecture.
+ * Custom editing tools can be created by extending this class and overriding its methods.
+ * This class will also proivide the dragging functionality if the picked domain object has
+ * createDragger() overridden.
+ */
 export abstract class BaseEditTool extends NavigationTool {
   // ==================================================
   // INSTANCE FIELDS

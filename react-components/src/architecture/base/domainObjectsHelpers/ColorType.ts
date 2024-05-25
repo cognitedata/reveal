@@ -3,10 +3,10 @@
  */
 
 export enum ColorType {
-  ColorMap, // Color by the given color map
-  Specified, // Use the color of the node
-  Parent, // Use the color of the parent node
+  Specified, // Use the color of the domain object itself
+  Parent, // Use the color of the parent domain object
   Black,
   White,
-  Different // Use different colors (normally use for debugging)
+  Different, // Use different colors (normally use for debugging)
+  ColorMap // Color by the given color map
 }

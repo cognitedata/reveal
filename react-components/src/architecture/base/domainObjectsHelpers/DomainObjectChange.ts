@@ -2,6 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
+import { equalsIgnoreCaseAndSpace } from '../utilities/extensions/stringExtensions';
+
 export class DomainObjectChange {
   // ==================================================
   // INSTANCE FIELDS
@@ -13,9 +15,9 @@ export class DomainObjectChange {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(change?: symbol, name?: string) {
+  public constructor(change?: symbol, fieldName?: string) {
     if (change !== undefined) {
-      this.add(change, name);
+      this.add(change, fieldName);
     }
   }
 
@@ -27,6 +29,11 @@ export class DomainObjectChange {
     return this._changes === undefined || this._changes.length === 0;
   }
 
+  /**
+   * Checks if the domain object has been changed based on the specified changes.
+   * @param changes - The changes to check.
+   * @returns `true` if any of the specified changes are present in the domain object, `false` otherwise.
+   */
   public isChanged(...changes: symbol[]): boolean {
     if (this._changes === undefined) {
       return false;
@@ -39,40 +46,24 @@ export class DomainObjectChange {
     return false;
   }
 
-  public isNameChanged(change: symbol, ...names: string[]): boolean {
+  /**
+   * Checks if the domain object has been changed based on the specified change and some specific fieldnames.
+   * For instance
+   * if (isFieldNameChanged(Changes.renderStyle, 'lineWidth', 'lineColor')) {
+   *   // Now you have to update the line matrial only
+   * }
+   * @param change - The symbol representing the change.
+   * @param fieldNames - The field names to compare against the change symbol.
+   * @returns A boolean indicating whether the name has changed or not.
+   */
+  public isFieldNameChanged(change: symbol, ...fieldNames: string[]): boolean {
     // This igonores space and case.
-    const name = this.getName(change);
-    if (name === undefined) {
+    const fieldName = this.getFieldNameBySymbol(change);
+    if (fieldName === undefined) {
       return false;
     }
-
-    const isSpace = (s: string): boolean => s === ' ';
-
-    const { length } = name;
-    for (const otherName of names) {
-      let found = true;
-      const otherLength = otherName.length;
-
-      for (let i = 0, j = 0; i < length && found; i++) {
-        const a = name.charAt(i);
-        if (isSpace(a)) {
-          continue;
-        }
-        const lowerA = a.toLowerCase();
-        for (; j < otherLength; j++) {
-          const b = otherName.charAt(j);
-          if (isSpace(b)) {
-            continue;
-          }
-          const lowerB = b.toLowerCase();
-          if (lowerB === lowerA) {
-            continue;
-          }
-          found = false;
-          break;
-        }
-      }
-      if (found) {
+    for (const otherFieldName of fieldNames) {
+      if (equalsIgnoreCaseAndSpace(fieldName, otherFieldName)) {
         return true;
       }
     }
@@ -90,23 +81,23 @@ export class DomainObjectChange {
     return this._changes.find((desc: ChangedDescription) => desc.change === change);
   }
 
-  private getName(change: symbol): string | undefined {
+  private getFieldNameBySymbol(change: symbol): string | undefined {
     const changedDescription = this.getChangedDescription(change);
-    return changedDescription === undefined ? undefined : changedDescription.name;
+    return changedDescription === undefined ? undefined : changedDescription.fieldName;
   }
 
   // ==================================================
   // INSTANCE METHODS: Operations
   // ==================================================
 
-  public add(change: symbol, name?: string): void {
+  public add(change: symbol, fieldName?: string): void {
     if (change === undefined) {
       return;
     }
     if (this._changes === undefined) {
       this._changes = [];
     }
-    this._changes.push(new ChangedDescription(change, name));
+    this._changes.push(new ChangedDescription(change, fieldName));
   }
 }
 
@@ -116,10 +107,10 @@ export class DomainObjectChange {
 
 class ChangedDescription {
   public change: symbol;
-  public name: string | undefined;
+  public fieldName: string | undefined;
 
-  public constructor(change: symbol, name?: string) {
+  public constructor(change: symbol, fieldName?: string) {
     this.change = change;
-    this.name = name;
+    this.fieldName = fieldName;
   }
 }

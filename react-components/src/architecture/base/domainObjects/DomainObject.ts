@@ -23,7 +23,6 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 /**
  * Represents an abstract base class for domain objects.
  * @abstract
- * @extends BaseSubject
  */
 export abstract class DomainObject {
   // ==================================================
@@ -33,8 +32,16 @@ export abstract class DomainObject {
   // Some basic states
   private _name: string | undefined = undefined;
   private _color: Color | undefined = undefined;
+
+  // Selection. This is used for selection in 3D viewer. Selection in a tree view is
+  // not implemented yet, but should be added in the future.
   private _isSelected: boolean = false;
+
+  // Maximum one active object for each type of domain object. Works as a long term selection
+  // For instance you can have many crop boxes, but only one can be used at the time.
   private _isActive: boolean = false;
+
+  // Expaned when it is shown in a tree view
   private _isExpanded = false;
 
   // Parent-Child relationship
@@ -289,16 +296,61 @@ export abstract class DomainObject {
   }
 
   // ==================================================
+  // VIRTUAL METHODS: Render styles
+  // ==================================================
+
+  /**
+   * Override if the render style is taken from another domain object, for instance the parent
+   * or somewhere else in the hieracy
+   * @returns The render style root
+   */
+  public get renderStyleRoot(): DomainObject | undefined {
+    return undefined;
+  }
+
+  /**
+   * Factory method to create the render style for the domain object.
+   * Override this method to create a custom render style.
+   * @returns The render style
+   */
+  public createRenderStyle(): RenderStyle | undefined {
+    return undefined;
+  }
+
+  /**
+   * Verifies the render style for the domain object, because the render style may
+   * be not valid in some cases. In this method you can change the render style.
+   * You can also change som fields in the rebnderstyle to get default values
+   * dependent of the domain object itself.
+   * Override this method when needed
+   */
+  public verifyRenderStyle(_style: RenderStyle): void {}
+
+  // ==================================================
+  // VIRTUAL METHODS: Create dragger
+  // ==================================================
+
+  /**
+   * Factory method to create a dragger to interpret the mouse dragging operation
+   * This function is used in BaseEditTool
+   * @returns The render style
+   */
+  // override when creating a dragger operation in the BaseEditTool
+  public createDragger(_intersection: DomainObjectIntersection): BaseDragger | undefined {
+    return undefined;
+  }
+
+  // ==================================================
   // VIRTUAL METHODS: Visibility
   // ==================================================
 
-  public getVisibleState(target: RevealRenderTarget): VisibleState {
+  public getVisibleState(renderTarget: RevealRenderTarget): VisibleState {
     let numCandidates = 0;
     let numAll = 0;
     let numNone = 0;
 
     for (const child of this.children) {
-      const childState = child.getVisibleState(target);
+      const childState = child.getVisibleState(renderTarget);
       if (childState === VisibleState.Disabled) {
         continue;
       }
@@ -319,26 +371,26 @@ export abstract class DomainObject {
       return VisibleState.All;
     }
     if (numCandidates === numNone) {
-      return this.canBeChecked(target) ? VisibleState.None : VisibleState.CanNotBeChecked;
+      return this.canBeChecked(renderTarget) ? VisibleState.None : VisibleState.CanNotBeChecked;
     }
     return VisibleState.Some;
   }
 
   public setVisibleInteractive(
     visible: boolean,
-    target: RevealRenderTarget,
+    renderTarget: RevealRenderTarget,
     topLevel = true // When calling this from outside, this value should alwaus be true
   ): boolean {
-    const visibleState = this.getVisibleState(target);
+    const visibleState = this.getVisibleState(renderTarget);
     if (visibleState === VisibleState.Disabled) {
       return false;
     }
-    if (visibleState === VisibleState.None && !this.canBeChecked(target)) {
+    if (visibleState === VisibleState.None && !this.canBeChecked(renderTarget)) {
       return false;
     }
     let hasChanged = false;
     for (const child of this.children) {
-      if (child.setVisibleInteractive(visible, target, false)) {
+      if (child.setVisibleInteractive(visible, renderTarget, false)) {
         hasChanged = true;
       }
     }
@@ -351,6 +403,10 @@ export abstract class DomainObject {
     return true;
   }
 
+  // ==================================================
+  // INSTANCE METHODS: Visibility
+  // ==================================================
+
   protected notifyVisibleStateChange(): void {
     const change = new DomainObjectChange(Changes.visibleState);
     this.notify(change);
@@ -362,36 +418,11 @@ export abstract class DomainObject {
     }
   }
 
-  public toggleVisibleInteractive(target: RevealRenderTarget): void {
-    const visibleState = this.getVisibleState(target);
-    if (visibleState === VisibleState.None) this.setVisibleInteractive(true, target);
+  public toggleVisibleInteractive(renderTarget: RevealRenderTarget): void {
+    const visibleState = this.getVisibleState(renderTarget);
+    if (visibleState === VisibleState.None) this.setVisibleInteractive(true, renderTarget);
     else if (visibleState === VisibleState.Some || visibleState === VisibleState.All)
-      this.setVisibleInteractive(false, target);
-  }
-
-  // ==================================================
-  // VIRTUAL METHODS: Render styles
-  // ==================================================
-
-  public get renderStyleRoot(): DomainObject | undefined {
-    return undefined; // Override if the render style is taken from another domain object
-  }
-
-  public createRenderStyle(): RenderStyle | undefined {
-    return undefined; // Override when creating a render style
-  }
-
-  public verifyRenderStyle(_style: RenderStyle): void {
-    // override when validating the render style
-  }
-
-  // ==================================================
-  // VIRTUAL METHODS: Create dragger
-  // ==================================================
-
-  // override when creating a dragger operation in the BaseEditTool
-  public createDragger(_intersection: DomainObjectIntersection): BaseDragger | undefined {
-    return undefined;
+      this.setVisibleInteractive(false, renderTarget);
   }
 
   // ==================================================
@@ -470,17 +501,8 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Get descendants
+  // INSTANCE METHODS: Get descendants (returning a generator)
   // ==================================================
-
-  public getSelected(): DomainObject | undefined {
-    for (const descendant of this.getThisAndDescendants()) {
-      if (descendant.isSelected) {
-        return descendant;
-      }
-    }
-    return undefined;
-  }
 
   public *getDescendants(): Generator<DomainObject> {
     for (const child of this.children) {
@@ -496,6 +518,36 @@ export abstract class DomainObject {
     for (const descendant of this.getDescendants()) {
       yield descendant;
     }
+  }
+
+  public *getDescendantsByType<T extends DomainObject>(classType: Class<T>): Generator<T> {
+    for (const descendant of this.getDescendants()) {
+      if (isInstanceOf(descendant, classType)) {
+        yield descendant;
+      }
+    }
+  }
+
+  public *getThisAndDescendantsByType<T extends DomainObject>(classType: Class<T>): Generator<T> {
+    for (const descendant of this.getThisAndDescendants()) {
+      if (isInstanceOf(descendant, classType)) {
+        yield descendant;
+      }
+    }
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Get single descendant
+  // (returning a DomainObject | undefined)
+  // ==================================================
+
+  public getDescendantByType<T extends DomainObject>(classType: Class<T>): T | undefined {
+    for (const descendant of this.getDescendants()) {
+      if (isInstanceOf(descendant, classType)) {
+        return descendant;
+      }
+    }
+    return undefined;
   }
 
   public getDescendantByName(name: string): DomainObject | undefined {
@@ -519,33 +571,27 @@ export abstract class DomainObject {
     return undefined;
   }
 
-  public getDescendantByType<T extends DomainObject>(classType: Class<T>): T | undefined {
-    for (const descendant of this.getDescendants()) {
-      if (isInstanceOf(descendant, classType)) {
+  public getSelectedDescendant(): DomainObject | undefined {
+    for (const descendant of this.getThisAndDescendants()) {
+      if (descendant.isSelected) {
         return descendant;
       }
     }
     return undefined;
   }
 
-  public *getDescendantsByType<T extends DomainObject>(classType: Class<T>): Generator<T> {
-    for (const child of this.children) {
-      if (isInstanceOf(child, classType)) {
-        yield child;
-      }
-      for (const descendant of child.getDescendantsByType<T>(classType)) {
-        yield descendant;
+  public getSelectedDescendantByType<T extends DomainObject>(classType: Class<T>): T | undefined {
+    for (const descendant of this.getDescendantsByType(classType)) {
+      if (descendant.isSelected) {
+        return descendant;
       }
     }
+    return undefined;
   }
 
   public getActiveDescendantByType<T extends DomainObject>(classType: Class<T>): T | undefined {
-    for (const child of this.children) {
-      if (child.isActive && isInstanceOf(child, classType)) {
-        return child;
-      }
-      const descendant = child.getActiveDescendantByType(classType);
-      if (descendant !== undefined) {
+    for (const descendant of this.getDescendantsByType(classType)) {
+      if (descendant.isActive) {
         return descendant;
       }
     }
@@ -650,13 +696,16 @@ export abstract class DomainObject {
   // ==================================================
 
   public getRenderStyle(): RenderStyle | undefined {
+    // Find the root of the render style
     const root = this.renderStyleRoot;
     if (root !== undefined && root !== this) {
       return root.getRenderStyle();
     }
+    // Create it if not created
     if (this._renderStyle === undefined) {
       this._renderStyle = this.createRenderStyle();
     }
+    // Verify it
     if (this._renderStyle !== undefined) {
       this.verifyRenderStyle(this._renderStyle);
     }
@@ -671,11 +720,11 @@ export abstract class DomainObject {
   // INSTANCE METHODS: Get auto name and color
   // ==================================================
 
-  protected generateNewColor(): Color {
+  private generateNewColor(): Color {
     return this.canChangeColor ? getNextColor().clone() : WHITE_COLOR.clone();
   }
 
-  protected generateNewName(): string {
+  private generateNewName(): string {
     let result = this.typeName;
     if (!this.canChangeName) {
       return result;
@@ -695,6 +744,11 @@ export abstract class DomainObject {
     result += ` ${childIndex + 1}`;
     return result;
   }
+
+  // ==================================================
+  // INSTANCE METHODS: Color type
+  // Used in the renderstyle to determin which of the color a doamin object should have.
+  // ==================================================
 
   public supportsColorType(colorType: ColorType, solid: boolean): boolean {
     switch (colorType) {

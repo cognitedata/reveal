@@ -65,8 +65,8 @@ export class MeasureLineCreator extends BaseCreator {
     isPending: boolean
   ): boolean {
     // Figure out where the point should be if no intersection
-    if (isPending && this.realPointCount >= 1 && point === undefined) {
-      const lastPoint = this.points[this.realPointCount - 1];
+    if (isPending && this.notPendingPointCount >= 1 && point === undefined) {
+      const lastPoint = this.lastNotPendingPoint;
       const plane = new Plane().setFromNormalAndCoplanarPoint(ray.direction, lastPoint);
       const newPoint = ray.intersectPlane(plane, new Vector3());
       if (newPoint === null) {
@@ -91,7 +91,7 @@ export class MeasureLineCreator extends BaseCreator {
 
   public override handleEscape(): void {
     const domainObject = this._domainObject;
-    if (this.realPointCount < this.minimumPointCount) {
+    if (this.notPendingPointCount < this.minimumPointCount) {
       domainObject.removeInteractive();
     } else if (this.lastIsPending) {
       domainObject.points.pop();

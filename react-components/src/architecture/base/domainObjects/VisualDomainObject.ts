@@ -7,17 +7,21 @@ import { ThreeView } from '../views/ThreeView';
 import { VisibleState } from '../domainObjectsHelpers/VisibleState';
 import { DomainObject } from './DomainObject';
 
+/**
+ * Represents a visual domain object that can be rendered and manipulated in a three-dimensional space.
+ * This class extends the `DomainObject` class and provides additional functionality for visualization.
+ */
 export abstract class VisualDomainObject extends DomainObject {
   // ==================================================
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override getVisibleState(target: RevealRenderTarget): VisibleState {
-    if (this.isVisible(target)) {
+  public override getVisibleState(renderTarget: RevealRenderTarget): VisibleState {
+    if (this.isVisible(renderTarget)) {
       return VisibleState.All;
     }
     if (this.canCreateThreeView()) {
-      if (this.canBeChecked(target)) {
+      if (this.canBeChecked(renderTarget)) {
         return VisibleState.None;
       }
       return VisibleState.CanNotBeChecked;
@@ -27,13 +31,13 @@ export abstract class VisualDomainObject extends DomainObject {
 
   public override setVisibleInteractive(
     visible: boolean,
-    target: RevealRenderTarget,
+    renderTarget: RevealRenderTarget,
     topLevel = true
   ): boolean {
-    if (visible && !this.canBeChecked(target)) {
+    if (visible && !this.canBeChecked(renderTarget)) {
       return false;
     }
-    if (!this.setVisible(visible, target)) {
+    if (!this.setVisible(visible, renderTarget)) {
       return false;
     }
     if (topLevel) {
@@ -46,8 +50,17 @@ export abstract class VisualDomainObject extends DomainObject {
   // VIRTUAL METHODS
   // ==================================================
 
+  /**
+   * Factory methods to create its own three view for visualization in three.js
+   */
   protected abstract createThreeView(): ThreeView | undefined;
 
+  /**
+   * Determines whether the visual domain object can create a three view.
+   * It may have a state when it can not create a view bacause of other dependencies
+   *
+   * @returns A boolean value indicating whether the visual domain object can create a three view.
+   */
   protected canCreateThreeView(): boolean {
     return true;
   }
@@ -56,27 +69,31 @@ export abstract class VisualDomainObject extends DomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  public getViewByTarget(target: RevealRenderTarget): ThreeView | undefined {
+  public getViewByTarget(renderTarget: RevealRenderTarget): ThreeView | undefined {
     for (const view of this.views.getByType(ThreeView)) {
-      if (view.renderTarget === target) {
+      if (view.renderTarget === renderTarget) {
         return view;
       }
     }
   }
 
-  public isVisible(target: RevealRenderTarget): boolean {
-    return this.getViewByTarget(target) !== undefined;
+  /**
+   * Checks if the visual domain object is visible in the specified render target.
+   * @param renderTarget - The render target to check visibility in.
+   * @returns `true` if the visual domain object is visible in the target, `false` otherwise.
+   */
+  public isVisible(renderTarget: RevealRenderTarget): boolean {
+    return this.getViewByTarget(renderTarget) !== undefined;
   }
 
   /**
    * Sets the visibility of the visual domain object for a specific target.
-   *
    * @param visible - A boolean indicating whether the visual domain object should be visible or not.
    * @param target - The target RevealRenderTarget where the visual domain object will be attached.
    * @returns A boolean indicating whether the state has changed.
    */
-  public setVisible(visible: boolean, target: RevealRenderTarget): boolean {
-    let view = this.getViewByTarget(target);
+  public setVisible(visible: boolean, renderTarget: RevealRenderTarget): boolean {
+    let view = this.getViewByTarget(renderTarget);
     if (visible) {
       if (view !== undefined) {
         return false;
@@ -89,7 +106,7 @@ export abstract class VisualDomainObject extends DomainObject {
         return false;
       }
       this.views.addView(view);
-      view.attach(this, target);
+      view.attach(this, renderTarget);
       view.initialize();
       view.onShow();
     } else {

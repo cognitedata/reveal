@@ -24,13 +24,6 @@ export class SetMeasurmentTypeCommand extends RenderTargetCommand {
   // OVERRIDES of BaseCommand
   // ==================================================
 
-  public override equals(other: BaseCommand): boolean {
-    if (!(other instanceof SetMeasurmentTypeCommand)) {
-      return false;
-    }
-    return this._measureType === other._measureType;
-  }
-
   public override get icon(): string {
     return getIconByMeasureType(this._measureType);
   }
@@ -68,6 +61,13 @@ export class SetMeasurmentTypeCommand extends RenderTargetCommand {
     measurementTool.handleEscape();
     measurementTool.clearDragging();
     return true;
+  }
+
+  public override equals(other: BaseCommand): boolean {
+    if (!(other instanceof SetMeasurmentTypeCommand)) {
+      return false;
+    }
+    return this._measureType === other._measureType;
   }
 
   // ==================================================

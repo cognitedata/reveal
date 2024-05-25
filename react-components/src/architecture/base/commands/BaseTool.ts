@@ -21,6 +21,10 @@ import { type BaseCommand } from './BaseCommand';
 import { ActiveToolUpdater } from '../reactUpdaters/ActiveToolUpdater';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 
+/**
+ * Base class for intraction in the 3D viewer
+ * Provides common functionality and virtual methods to be overridden by derived classes.
+ */
 export abstract class BaseTool extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES

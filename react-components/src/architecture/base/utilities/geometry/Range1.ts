@@ -2,7 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { ceil, floor, isIncrement, roundInc as roundIncrement } from '../extensions/mathExtensions';
+import {
+  ceil,
+  floor,
+  isIncrement,
+  roundIncrement as roundIncrement
+} from '../extensions/mathExtensions';
 
 const MAX_NUMBER_OF_TICKS = 1000;
 export class Range1 {
