@@ -100,7 +100,7 @@ export function roundIncrement(increment: number): number {
   } else {
     inc = 10;
   }
-  // Upscale the inc to the real number
+  // Upscale the increment to the real number
   if (exp < 0) {
     for (; exp !== 0; exp++) inc /= 10;
   } else {

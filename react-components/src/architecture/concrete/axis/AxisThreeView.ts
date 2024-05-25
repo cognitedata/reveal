@@ -42,7 +42,7 @@ export class AxisThreeView extends GroupThreeView {
 
   private readonly _corners: Vector3[];
   private readonly _faceCenters: Vector3[];
-  private readonly _sceneBoundingBox: Box3 = new Box3().makeEmpty(); // Caching the bounding box of the scene
+  private readonly _sceneBoundingBox: Box3 = new Box3().makeEmpty(); // Casehing the bounding box of the scene
   private readonly _expandedSceneBoundingBox: Range3 = new Range3();
 
   // ==================================================
@@ -295,19 +295,14 @@ export class AxisThreeView extends GroupThreeView {
 
       // Find the best position by collision detect
       const position = newVector3();
-      if (labelCount >= 2) {
-        let tick = minLabelTick + Math.round(0.5 * labelCount - 0.5) * labelInc;
-        if (labelInc === increment) {
-          tick -= increment / 2;
-        } else {
-          tick -= increment;
-        }
-        position.copy(this._corners[i0]);
-        position.setComponent(dimension, tick);
+      let tick = minLabelTick + Math.round(0.5 * labelCount - 0.5) * labelInc;
+      if (labelInc === increment) {
+        tick -= increment / 2;
       } else {
-        position.copy(this._corners[i0]);
-        position.add(this._corners[i1]);
+        tick -= increment;
       }
+      position.copy(this._corners[i0]);
+      position.setComponent(dimension, tick);
       position.addScaledVector(tickDirection, tickLength * 5);
 
       const sprite = createSpriteWithText(
@@ -315,11 +310,12 @@ export class AxisThreeView extends GroupThreeView {
         labelFontSize,
         style.textColor
       );
-      if (sprite !== undefined) {
-        moveSpriteByPositionAndDirection(sprite, position, tickDirection);
-        this.addChild(sprite);
-        this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
+      if (sprite === undefined) {
+        return;
       }
+      moveSpriteByPositionAndDirection(sprite, position, tickDirection);
+      this.addChild(sprite);
+      this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
     }
   }
 

@@ -19,7 +19,7 @@ export abstract class ThreeView extends BaseView {
   // INSTANCE FIELDS
   // ==================================================
 
-  private _boundingBox: Box3 | undefined = undefined; // Cashe of the bounding box of the view
+  private _boundingBox: Box3 | undefined = undefined; // Cache of the bounding box of the view
   private _renderTarget: RevealRenderTarget | undefined = undefined;
 
   // ==================================================
