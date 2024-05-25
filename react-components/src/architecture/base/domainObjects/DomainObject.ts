@@ -73,33 +73,6 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // VIRTUAL METHODS: Others
-  // ==================================================
-
-  /**
-   * Initializes the core functionality of the domain object.
-   * This method should be overridden in derived classes to provide custom implementation.
-   * @param change - The change object representing the update.
-   * @remarks
-   * Always call `super.initializeCore()` in the overrides.
-   */
-  protected initializeCore(): void {}
-
-  /**
-   * Removes the core functionality of the domain object.
-   * This method should be overridden in derived classes to provide custom implementation.
-   * @remarks
-   * Always call `super.removeCore()` in the overrides.
-   */
-  protected removeCore(): void {
-    this.views.clear();
-  }
-
-  public get icon(): string {
-    return 'Unknown';
-  }
-
-  // ==================================================
   // INSTANCE/VIRTUAL METHODS: Nameing
   // ==================================================
 
@@ -124,29 +97,6 @@ export abstract class DomainObject {
 
   public hasEqualName(name: string): boolean {
     return equalsIgnoreCase(this.name, name);
-  }
-
-  // ==================================================
-  // INSTANCE/VIRTUAL METHODS: Notification
-  // ==================================================
-
-  /**
-   * Notifies the registered views and listeners about a change in the domain object.
-   * This method should be overridden in derived classes to provide custom implementation.
-   * @param change - The change object representing the update.
-   * @remarks
-   * Always call `super.notifyCore()` in the overrides.
-   */
-  protected notifyCore(change: DomainObjectChange): void {
-    this.views.notify(this, change);
-  }
-
-  public notify(change: DomainObjectChange | symbol): void {
-    if (change instanceof DomainObjectChange) {
-      this.notifyCore(change);
-    } else {
-      this.notify(new DomainObjectChange(change));
-    }
   }
 
   // ==================================================
@@ -245,7 +195,7 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // INSTANCE/INSTANCE METHODS: Expanded
+  // INSTANCE/INSTANCE METHODS: Expanded in tree view
   // ==================================================
 
   public get canBeExpanded(): boolean {
@@ -270,6 +220,33 @@ export abstract class DomainObject {
   }
 
   // ==================================================
+  // VIRTUAL METHODS: Appearance in the tree view
+  // ==================================================
+
+  public get canBeRemoved(): boolean {
+    return true; // to be overridden
+  }
+
+  public canBeChecked(_target: RevealRenderTarget): boolean {
+    return true; // to be overridden
+  }
+
+  // ==================================================
+  // VIRTUAL METHODS: Notification
+  // ==================================================
+
+  /**
+   * Notifies the registered views and listeners about a change in the domain object.
+   * This method should be overridden in derived classes to provide custom implementation.
+   * @param change - The change object representing the update.
+   * @remarks
+   * Always call `super.notifyCore()` in the overrides.
+   */
+  protected notifyCore(change: DomainObjectChange): void {
+    this.views.notify(this, change);
+  }
+
+  // ==================================================
   // VIRTUAL METHODS: For updating the panel
   // ==================================================
 
@@ -284,15 +261,21 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // VIRTUAL METHODS: Appearance in the explorer
+  // VIRTUAL METHODS: Others
   // ==================================================
 
-  public get canBeDeleted(): boolean {
-    return true; // to be overridden
+  public get icon(): string {
+    return 'Unknown';
   }
 
-  public canBeChecked(_target: RevealRenderTarget): boolean {
-    return true; // to be overridden
+  /**
+   * Removes the core functionality of the domain object.
+   * This method should be overridden in derived classes to provide custom implementation.
+   * @remarks
+   * Always call `super.removeCore()` in the overrides.
+   */
+  protected removeCore(): void {
+    this.views.clear();
   }
 
   // ==================================================
@@ -404,8 +387,24 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Visibility
+  // INSTANCE METHODS: Notification
   // ==================================================
+
+  public notify(change: DomainObjectChange | symbol): void {
+    if (!(change instanceof DomainObjectChange)) {
+      change = new DomainObjectChange(change);
+    }
+    this.notifyCore(change);
+  }
+
+  public notifyRecursive(change: DomainObjectChange | symbol): void {
+    if (!(change instanceof DomainObjectChange)) {
+      change = new DomainObjectChange(change);
+    }
+    for (const descendant of this.getDescendants()) {
+      descendant.notify(change);
+    }
+  }
 
   protected notifyVisibleStateChange(): void {
     const change = new DomainObjectChange(Changes.visibleState);
@@ -417,6 +416,9 @@ export abstract class DomainObject {
       descendant.notify(change);
     }
   }
+  // ==================================================
+  // INSTANCE METHODS: Visibility
+  // ==================================================
 
   public toggleVisibleInteractive(renderTarget: RevealRenderTarget): void {
     const visibleState = this.getVisibleState(renderTarget);
@@ -678,6 +680,7 @@ export abstract class DomainObject {
   }
 
   public removeInteractive(): void {
+    // You may call canBeDeleted() before calling this
     for (const child of this.children) {
       child.removeInteractive();
     }
