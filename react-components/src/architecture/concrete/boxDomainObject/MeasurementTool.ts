@@ -22,7 +22,6 @@ import { ShowMeasurmentsOnTopCommand } from './ShowMeasurmentsOnTopCommand';
 import { SetMeasurmentTypeCommand } from './SetMeasurmentTypeCommand';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
-import { SetCropBoxCommand } from './SetCropBoxCommand';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
