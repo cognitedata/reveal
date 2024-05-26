@@ -53,13 +53,13 @@ export class SetMeasurmentTypeCommand extends RenderTargetCommand {
     if (measurementTool === undefined) {
       return false;
     }
+    measurementTool.handleEscape();
+    measurementTool.clearDragging();
     if (measurementTool.measureType === this._measureType) {
       measurementTool.measureType = MeasureType.None;
     } else {
       measurementTool.measureType = this._measureType;
     }
-    measurementTool.handleEscape();
-    measurementTool.clearDragging();
     return true;
   }
 

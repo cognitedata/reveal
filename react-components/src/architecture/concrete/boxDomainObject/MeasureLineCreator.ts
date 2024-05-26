@@ -89,14 +89,16 @@ export class MeasureLineCreator extends BaseCreator {
     return true;
   }
 
-  public override handleEscape(): void {
+  public override handleEscape(): boolean {
     const domainObject = this._domainObject;
     if (this.notPendingPointCount < this.minimumPointCount) {
       domainObject.removeInteractive();
+      return false; // Removed
     } else if (this.lastIsPending) {
       domainObject.points.pop();
       this.removePendingPoint();
       domainObject.notify(Changes.geometry);
+      return true; // Successfully
     }
   }
 }

@@ -91,7 +91,14 @@ export abstract class BaseCreator {
     isPending: boolean
   ): boolean;
 
-  public handleEscape(): void {}
+  /**
+   * Handles the escape key press event.
+   *
+   * @returns {boolean} Returns true if the pending object is created successfully, false if it is removed
+   */
+  public handleEscape(): boolean {
+    return false;
+  }
 
   // ==================================================
   // INSTANCE METHODS

@@ -85,10 +85,12 @@ export class MeasureBoxCreator extends BaseCreator {
     return true;
   }
 
-  public override handleEscape(): void {
-    if (this.notPendingPointCount < this.minimumPointCount) {
-      this._domainObject.removeInteractive();
+  public override handleEscape(): boolean {
+    if (this.notPendingPointCount >= this.minimumPointCount) {
+      return true; // Successfully
     }
+    this._domainObject.removeInteractive();
+    return false; // Removed
   }
 
   // ==================================================
