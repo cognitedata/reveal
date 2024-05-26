@@ -16,13 +16,6 @@ export class FitViewCommand extends RenderTargetCommand {
 
   protected override invokeCore(): boolean {
     const { renderTarget } = this;
-    const { viewer } = renderTarget;
-
-    const boundingBox = renderTarget.sceneBoundingBox;
-    if (boundingBox.isEmpty()) {
-      return false;
-    }
-    viewer.fitCameraToBoundingBox(boundingBox);
-    return true;
+    return renderTarget.fitView();
   }
 }

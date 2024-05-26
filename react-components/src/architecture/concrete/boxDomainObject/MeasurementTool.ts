@@ -172,8 +172,9 @@ export class MeasurementTool extends BaseEditTool {
       if (creator.addPoint(ray, undefined)) {
         if (creator.isFinished) {
           this._creator = undefined;
+          this.measureType = MeasureType.None;
+          this.renderTarget.toolController.update();
         }
-        this.renderTarget.toolController.update();
         return;
       }
     }
@@ -209,6 +210,8 @@ export class MeasurementTool extends BaseEditTool {
     } else {
       if (creator.addPoint(ray, intersection)) {
         if (creator.isFinished) {
+          this.measureType = MeasureType.None;
+          this.renderTarget.toolController.update();
           this._creator = undefined;
         }
       }
@@ -230,7 +233,11 @@ export class MeasurementTool extends BaseEditTool {
     if (this._creator === undefined) {
       return;
     }
-    this._creator.handleEscape();
+    if (this._creator.handleEscape()) {
+      // Sucessfully created, set it back to none
+      this.measureType = MeasureType.None;
+      this.renderTarget.toolController.update();
+    }
     this._creator = undefined;
   }
 

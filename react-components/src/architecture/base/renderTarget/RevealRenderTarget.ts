@@ -57,7 +57,7 @@ export class RevealRenderTarget {
     }
     this._toolController = new ToolControllers(this.domElement);
     this._toolController.addEventListeners();
-    this._rootDomainObject = new RootDomainObject();
+    this._rootDomainObject = new RootDomainObject(this);
 
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
@@ -201,14 +201,31 @@ export class RevealRenderTarget {
   };
 
   // ==================================================
-  // INSTANCE METHODS: Crpp box
+  // INSTANCE METHODS: Fit operations
   // ==================================================
 
-  public setGlobalCropBox(clippingPlanes: Plane[], boundingBox: Box3, name: string): void {
+  public fitView(): boolean {
+    const boundingBox = this.sceneBoundingBox;
+    if (boundingBox.isEmpty()) {
+      return false;
+    }
+    this.viewer.fitCameraToBoundingBox(this.sceneBoundingBox);
+    return true;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Crop box operations (Experimental code)
+  // ==================================================
+
+  public setGlobalCropBox(
+    clippingPlanes: Plane[],
+    boundingBox: Box3,
+    domainObject: DomainObject
+  ): void {
     // Input in Viewer coordinates
     this.viewer.setGlobalClippingPlanes(clippingPlanes);
     this._cropBoxBoundingBox = boundingBox;
-    this._cropBoxName = name;
+    this._cropBoxName = domainObject.name;
   }
 
   public clearGlobalCropBox(): void {
