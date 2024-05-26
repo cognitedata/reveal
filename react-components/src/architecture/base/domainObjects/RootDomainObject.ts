@@ -20,7 +20,6 @@ export class RootDomainObject extends DomainObject {
     super();
     this.name = 'Root';
     this._renderTarget = renderTarget;
-    console.log(this._renderTarget);
   }
 
   // ==================================================
