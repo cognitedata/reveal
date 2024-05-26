@@ -245,6 +245,7 @@ export class AxisThreeView extends GroupThreeView {
     // Draw ticks
     const labelInc = range.getBoldIncrement(increment);
     const tickDirection = getTickDirection(faceIndex1, faceIndex2, new Vector3());
+    tickDirection.normalize();
 
     // Add tick marks and labels
     if (style.showAxisTicks || style.showAxisNumbers) {
@@ -253,14 +254,11 @@ export class AxisThreeView extends GroupThreeView {
       for (const tick of range.getTicks(increment)) {
         const start = newVector3(this._corners[i0]);
         start.setComponent(dimension, tick);
-
         const end = newVector3(start);
-        const vector = newVector3(tickDirection);
-        vector.multiplyScalar(tickLength);
 
         // Add tick mark
         if (style.showAxisTicks) {
-          end.add(vector);
+          end.addScaledVector(tickDirection, tickLength);
           vertices.push(...start);
           vertices.push(...end);
         }
@@ -272,15 +270,15 @@ export class AxisThreeView extends GroupThreeView {
             minLabelTick = tick;
           }
           labelCount += 1;
-          end.add(vector);
-          // Add sprite
+          end.addScaledVector(tickDirection, 2 * tickLength);
           const text = incrementToString(tick);
           const sprite = createSpriteWithText(text, tickFontSize, style.textColor);
-          if (sprite !== undefined) {
-            moveSpriteByPositionAndDirection(sprite, end, tickDirection);
-            this.addChild(sprite);
-            this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
+          if (sprite === undefined) {
+            continue;
           }
+          sprite.position.copy(end);
+          this.addChild(sprite);
+          this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
         }
       }
       if (style.showAxisTicks) {
