@@ -18,7 +18,6 @@ import {
   type Camera,
   CircleGeometry,
   type Material,
-  Plane,
   FrontSide,
   type PerspectiveCamera
 } from 'three';
@@ -281,7 +280,7 @@ export class MeasureBoxView extends GroupThreeView {
 
     const material = new MeshPhongMaterial();
     updateMarkerMaterial(material, domainObject, style, focusType === FocusType.Rotation);
-    material.clippingPlanes = this.createClippingPlanes(matrix, TOP_FACE.index);
+    material.clippingPlanes = BoxFace.createClippingPlanes(matrix, TOP_FACE.index);
     const mesh = new Mesh(geometry, material);
 
     const center = TOP_FACE.getCenter(newVector3());
@@ -326,22 +325,6 @@ export class MeasureBoxView extends GroupThreeView {
       mesh.rotateY(domainObject.zRotation);
     }
     return mesh;
-  }
-
-  private createClippingPlanes(matrix: Matrix4, faceIndex: number): Plane[] {
-    const planes: Plane[] = [];
-
-    for (const boxFace of BoxFace.getAllFaces()) {
-      if (boxFace.index === faceIndex) {
-        continue;
-      }
-      const center = boxFace.getCenter(newVector3());
-      const normal = boxFace.getNormal(newVector3()).negate();
-      const plane = new Plane().setFromNormalAndCoplanarPoint(normal, center);
-      plane.applyMatrix4(matrix);
-      planes.push(plane);
-    }
-    return planes;
   }
 
   // ==================================================

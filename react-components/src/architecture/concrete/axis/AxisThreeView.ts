@@ -273,9 +273,9 @@ export class AxisThreeView extends GroupThreeView {
           }
           labelCount += 1;
           end.add(vector);
-
           // Add sprite
-          const sprite = createSpriteWithText(`${tick}`, tickFontSize, style.textColor);
+          const text = incrementToString(tick);
+          const sprite = createSpriteWithText(text, tickFontSize, style.textColor);
           if (sprite !== undefined) {
             moveSpriteByPositionAndDirection(sprite, end, tickDirection);
             this.addChild(sprite);
@@ -532,7 +532,7 @@ function createLineSegments(vertices: number[], color: Color, linewidth: number)
 }
 
 // ==================================================
-// PRIVATE METHODS: Some math for Range3
+// PRIVATE METHODS: Some math
 // ==================================================
 
 // Corner and faces is pr. definition:
@@ -601,6 +601,48 @@ function getTickDirection(faceIndex1: number, faceIndex2: number, target: Vector
   if (faceIndex1 === 2 || faceIndex2 === 2) target.z = -Math.SQRT1_2;
   if (faceIndex1 === 5 || faceIndex2 === 5) target.z = Math.SQRT1_2;
   return target;
+}
+
+function incrementToString(value: number): string {
+  // Sometimes the number comes out like this: 1.20000005 or 1.19999992 due to numeric precision limitations.
+  // To get better rounded values, I wrote this myself: Multiply by some high integer and round it, then
+  // convert to text, and insert the comma manually afterwards.
+
+  // Small number get less accurate result in tjhis algorithm,, so use the default string conversion.
+  if (Math.abs(value) < 0.001) {
+    return `${value}`;
+  }
+  const sign = Math.sign(value);
+  const rounded = Math.abs(Math.round(value * 1e5));
+  let text = `${rounded}`;
+  if (text.length === 1) {
+    text = `${'0.0000'}${text}`;
+  } else if (text.length === 2) {
+    text = `${'0.000'}${text}`;
+  } else if (text.length === 3) {
+    text = `${'0.00'}${text}`;
+  } else if (text.length === 4) {
+    text = `${'0.0'}${text}`;
+  } else if (text.length === 5) {
+    text = `${'0.'}${text}`;
+  } else if (text.length >= 6) {
+    const i = text.length - 5;
+    text = `${text.slice(0, i)}${'.'}${text.slice(i)}`;
+  }
+  // Since we know that the comma are there,
+  // we can safely remove trailing zeros
+  while (text[text.length - 1] === '0') {
+    text = text.slice(0, -1);
+  }
+  // Remove if last is a comma
+  if (text[text.length - 1] === '.') {
+    text = text.slice(0, -1);
+  }
+  // Put the negative sign in the front
+  if (sign < 0) {
+    text = `${'-'}${text}`;
+  }
+  return text;
 }
 
 // ==================================================

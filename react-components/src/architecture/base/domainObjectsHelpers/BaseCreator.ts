@@ -2,9 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, type Vector3 } from 'three';
+import { type Vector3, type Ray } from 'three';
 import { replaceLast } from '../utilities/extensions/arrayExtensions';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type DomainObject } from '../domainObjects/DomainObject';
 
 /**
@@ -98,13 +98,15 @@ export abstract class BaseCreator {
   // ==================================================
 
   public get isFinished(): boolean {
-    return this.notPendingPointCount === this.maximumPointCount;
+    return this.notPendingPointCount >= this.maximumPointCount;
   }
 
-  public addPoint(ray: Ray, point: Vector3 | undefined, isPending: boolean): boolean {
-    if (point !== undefined) {
-      point = point.clone();
-    }
+  public addPoint(
+    ray: Ray,
+    intersection: AnyIntersection | undefined,
+    isPending: boolean = false
+  ): boolean {
+    const point = intersection?.point.clone();
     this.convertToCdfCoords(ray, point);
     return this.addPointCore(ray, point, isPending);
   }

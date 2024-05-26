@@ -6,7 +6,7 @@ import { MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { MeasureBoxView } from './MeasureBoxView';
-import { Matrix4, Vector3 } from 'three';
+import { Box3, Matrix4, Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
@@ -18,6 +18,7 @@ import { MeasureDomainObject } from './MeasureDomainObject';
 import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type CreateDraggerProps } from '../../base/domainObjects/VisualDomainObject';
+import { Range3 } from '../../base/utilities/geometry/Range3';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -171,6 +172,19 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
     size.x = Math.max(MIN_BOX_SIZE, size.x);
     size.y = Math.max(MIN_BOX_SIZE, size.y);
     size.z = Math.max(MIN_BOX_SIZE, size.z);
+  }
+
+  public getBoundingBox(): Box3 {
+    const matrix = this.getMatrix();
+    const boundingBox = new Box3().makeEmpty();
+    const unitCube = Range3.createCube(0.5);
+    const corner = new Vector3();
+    for (let i = 0; i < 8; i++) {
+      unitCube.getCornerPoint(i, corner);
+      corner.applyMatrix4(matrix);
+      boundingBox.expandByPoint(corner);
+    }
+    return boundingBox;
   }
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {

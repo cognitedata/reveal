@@ -22,6 +22,7 @@ import { ShowMeasurmentsOnTopCommand } from './ShowMeasurmentsOnTopCommand';
 import { SetMeasurmentTypeCommand } from './SetMeasurmentTypeCommand';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
+import { SetCropBoxCommand } from './SetCropBoxCommand';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -53,6 +54,7 @@ export class MeasurementTool extends BaseEditTool {
     result.push(new SetMeasurmentTypeCommand(MeasureType.Volume));
     result.push(undefined); // Means separator
     result.push(new ShowMeasurmentsOnTopCommand());
+    result.push(new SetCropBoxCommand());
     return result;
   }
 
@@ -126,7 +128,7 @@ export class MeasurementTool extends BaseEditTool {
         return;
       }
       const ray = this.getRay(event);
-      if (creator.addPoint(ray, intersection.point, true)) {
+      if (creator.addPoint(ray, intersection, true)) {
         this.setDefaultCursor();
         return;
       }
@@ -169,10 +171,11 @@ export class MeasurementTool extends BaseEditTool {
     // Click in the "air"
     if (creator !== undefined && !creator.preferIntersection) {
       const ray = this.getRay(event);
-      if (creator.addPoint(ray, undefined, false)) {
+      if (creator.addPoint(ray, undefined)) {
         if (creator.isFinished) {
           this._creator = undefined;
         }
+        this.renderTarget.toolController.update();
         return;
       }
     }
@@ -184,10 +187,9 @@ export class MeasurementTool extends BaseEditTool {
     }
     const measurment = this.getMeasurement(intersection);
     if (measurment !== undefined) {
-      // Click at "a measurement"
-      // Do not want to click on other measurments
       this.deselectAll(measurment);
       measurment.setSelectedInteractive(true);
+      this.renderTarget.toolController.update();
       return;
     }
     const ray = this.getRay(event);
@@ -197,7 +199,7 @@ export class MeasurementTool extends BaseEditTool {
         await super.onClick(event);
         return;
       }
-      if (creator.addPoint(ray, intersection.point, false)) {
+      if (creator.addPoint(ray, intersection)) {
         const { domainObject } = creator;
         initializeStyle(domainObject, this.rootDomainObject);
         this.deselectAll();
@@ -207,7 +209,7 @@ export class MeasurementTool extends BaseEditTool {
         this.renderTarget.toolController.update();
       }
     } else {
-      if (creator.addPoint(ray, intersection.point, false)) {
+      if (creator.addPoint(ray, intersection)) {
         if (creator.isFinished) {
           this._creator = undefined;
         }
@@ -311,6 +313,7 @@ export class MeasurementTool extends BaseEditTool {
 // ==================================================
 
 function initializeStyle(domainObject: DomainObject, rootDomainObject: RootDomainObject): void {
+  // Just copy the style the depthTest field from any other MeasureDomainObject
   const otherDomainObject = rootDomainObject.getDescendantByType(MeasureDomainObject);
   if (otherDomainObject === undefined) {
     return;
@@ -329,6 +332,7 @@ function createCreator(measureType: MeasureType): BaseCreator | undefined {
     case MeasureType.Polyline:
     case MeasureType.Polygon:
       return new MeasureLineCreator(measureType);
+
     case MeasureType.HorizontalArea:
     case MeasureType.VerticalArea:
     case MeasureType.Volume:
