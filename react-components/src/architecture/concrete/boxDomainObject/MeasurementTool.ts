@@ -54,7 +54,6 @@ export class MeasurementTool extends BaseEditTool {
     result.push(new SetMeasurmentTypeCommand(MeasureType.Volume));
     result.push(undefined); // Means separator
     result.push(new ShowMeasurmentsOnTopCommand());
-    result.push(new SetCropBoxCommand());
     return result;
   }
 
