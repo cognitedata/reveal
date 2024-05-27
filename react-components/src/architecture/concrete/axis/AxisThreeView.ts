@@ -42,7 +42,7 @@ export class AxisThreeView extends GroupThreeView {
 
   private readonly _corners: Vector3[];
   private readonly _faceCenters: Vector3[];
-  private readonly _sceneBoundingBox: Box3 = new Box3().makeEmpty(); // Casehing the bounding box of the scene
+  private readonly _sceneBoundingBox: Box3 = new Box3().makeEmpty(); // Cashe the bounding box of the scene
   private readonly _expandedSceneBoundingBox: Range3 = new Range3();
 
   // ==================================================
