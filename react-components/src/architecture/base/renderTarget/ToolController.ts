@@ -195,8 +195,6 @@ export class ToolControllers extends PointerEvents {
 
   private readonly _onKeyDown = (event: KeyboardEvent): void => {
     this.onKey(event, true);
-    event.stopPropagation();
-    event.preventDefault();
   };
 
   private readonly _onContextMenu = (event: MouseEvent): void => {
@@ -206,8 +204,6 @@ export class ToolControllers extends PointerEvents {
 
   private readonly _onKeyUp = (event: KeyboardEvent): void => {
     this.onKey(event, false);
-    event.stopPropagation();
-    event.preventDefault();
   };
 
   private readonly _onWheel = async (event: WheelEvent): Promise<void> => {
