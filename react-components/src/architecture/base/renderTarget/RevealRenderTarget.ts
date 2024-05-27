@@ -9,7 +9,6 @@ import {
   type Cognite3DViewer,
   type IFlexibleCameraManager
 } from '@cognite/reveal';
-import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../commands/NavigationTool';
 import {
   Vector3,
@@ -38,7 +37,6 @@ export class RevealRenderTarget {
   private readonly _viewer: Cognite3DViewer;
   private readonly _toolController: ToolControllers;
   private readonly _rootDomainObject: RootDomainObject;
-  private _axisGizmoTool: AxisGizmoTool | undefined;
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
   private _cropBoxBoundingBox: Box3 | undefined;
@@ -125,9 +123,6 @@ export class RevealRenderTarget {
   // ==================================================
 
   public initialize(): void {
-    this._axisGizmoTool = new AxisGizmoTool();
-    this._axisGizmoTool.connect(this._viewer);
-
     const navigationTool = new NavigationTool();
     navigationTool.attach(this);
     this.toolController.add(navigationTool);
@@ -143,7 +138,6 @@ export class RevealRenderTarget {
     }
     this.toolController.removeEventListeners();
     this.toolController.dispose();
-    this._axisGizmoTool?.dispose();
   }
 
   public invalidate(): void {
