@@ -101,7 +101,11 @@ const useRevealFromKeepAlive = ({
   function getOrInitializeRenderTarget(): RevealRenderTarget {
     let renderTarget = revealKeepAliveData?.renderTargetRef.current;
     if (renderTarget === undefined) {
-      const viewer = new Cognite3DViewer({ ...viewerOptions, sdk, hasEventListeners: false });
+      const viewer = new Cognite3DViewer({
+        ...viewerOptions,
+        sdk,
+        hasEventListeners: !viewerOptions?.useFlexibleCameraManager
+      });
       renderTarget = new RevealRenderTarget(viewer);
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;
