@@ -21,7 +21,7 @@ import {
   FrontSide,
   type PerspectiveCamera
 } from 'three';
-import { type MeasureBoxDomainObject, MIN_BOX_SIZE } from './MeasureBoxDomainObject';
+import { type MeasureBoxDomainObject, isValidSize } from './MeasureBoxDomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
@@ -293,11 +293,11 @@ export class MeasureBoxView extends GroupThreeView {
   private createEdgeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
     const { domainObject } = this;
     const adjecentSize1 = domainObject.size.getComponent(face.tangentIndex1);
-    if (!isValid(adjecentSize1)) {
+    if (!isValidSize(adjecentSize1)) {
       return undefined;
     }
     const adjecentSize2 = domainObject.size.getComponent(face.tangentIndex2);
-    if (!isValid(adjecentSize2)) {
+    if (!isValidSize(adjecentSize2)) {
       return undefined;
     }
     const radius = RELATIVE_RESIZE_RADIUS * this.getFaceRadius(face);
@@ -337,7 +337,7 @@ export class MeasureBoxView extends GroupThreeView {
     clear(this._sprites);
     for (let index = 0; index < 3; index++) {
       const size = domainObject.size.getComponent(index);
-      if (!isValid(size)) {
+      if (!isValidSize(size)) {
         this._sprites.push(undefined);
         continue;
       }
@@ -625,9 +625,6 @@ function adjustLabel(
   }
 }
 
-function isValid(value: number): boolean {
-  return value > MIN_BOX_SIZE;
-}
 // ==================================================
 // PRIVATE FUNCTIONS: Vector pool
 // ==================================================
