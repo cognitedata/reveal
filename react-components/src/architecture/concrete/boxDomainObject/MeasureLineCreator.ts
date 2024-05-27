@@ -98,7 +98,7 @@ export class MeasureLineCreator extends BaseCreator {
       domainObject.points.pop();
       this.removePendingPoint();
       domainObject.notify(Changes.geometry);
-      return true; // Successfully
     }
+    return true; // Successfully
   }
 }
