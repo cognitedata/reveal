@@ -14,6 +14,7 @@ import { type TypedReveal3DModel } from '../Reveal3DResources/types';
 import { type ThreeDModelFdmMappings } from '../../hooks/types';
 import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
+import { AnyIntersection } from '@cognite/reveal';
 
 export type FdmNodeCacheContent = {
   cache: FdmNodeCache;
@@ -52,17 +53,17 @@ export const useMappedEdgesForRevisions = (
 };
 
 export const useFdm3dNodeDataPromises = (
-  modelId: number | undefined,
-  revisionId: number | undefined,
-  treeIndex: number | undefined
+  intersection: AnyIntersection | undefined
 ): UseQueryResult<FdmNodeDataPromises> => {
   const content = useFdmNodeCache();
 
-  const enableQuery =
-    content !== undefined &&
-    modelId !== undefined &&
-    revisionId !== undefined &&
-    treeIndex !== undefined;
+  const isCadModel = intersection?.type === 'cad';
+
+  const [modelId, revisionId, treeIndex] = isCadModel
+    ? [intersection.model.modelId, intersection.model.revisionId, intersection.treeIndex]
+    : [undefined, undefined, undefined];
+
+  const enableQuery = content !== undefined && isCadModel && treeIndex !== undefined;
 
   const result = useQuery({
     queryKey: [

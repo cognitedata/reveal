@@ -21,6 +21,7 @@ import {
   type ModelRevisionAssetNodesResult
 } from './types';
 import { fetchAncestorNodesForTreeIndex } from './requests';
+import { AnyIntersection } from '@cognite/reveal';
 
 export type AssetMappingCacheContent = {
   cache: AssetMappingCache;
@@ -101,12 +102,16 @@ export const useNodesForAssets = (
 };
 
 export const useAssetMappingForTreeIndex = (
-  modelId: ModelId | undefined,
-  revisionId: RevisionId | undefined,
-  treeIndex: TreeIndex | undefined
+  intersection: AnyIntersection | undefined
 ): UseQueryResult<NodeAssetMappingResult> => {
   const assetMappingCache = useAssetMappingCache();
   const cdfClient = useSDK();
+
+  const isCadModel = intersection?.type === 'cad';
+
+  const [modelId, revisionId, treeIndex] = isCadModel
+    ? [intersection.model.modelId, intersection.model.revisionId, intersection.treeIndex]
+    : [undefined, undefined, undefined];
 
   return useQuery({
     queryKey: [

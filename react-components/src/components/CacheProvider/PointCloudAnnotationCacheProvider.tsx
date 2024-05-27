@@ -14,6 +14,7 @@ import { type PointCloudAnnotationMappedAssetData } from '../../hooks/types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isDefined } from '../../utilities/isDefined';
 import { type AnnotationId } from './types';
+import { AnyIntersection } from '@cognite/reveal';
 
 export type PointCloudAnnotationCacheContextContent = {
   cache: PointCloudAnnotationCache;
@@ -134,11 +135,18 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
 };
 
 export const usePointCloudAnnotationMappingForAssetId = (
-  modelId: number | undefined,
-  revisionId: number | undefined,
-  assetId: string | number | undefined
+  intersection: AnyIntersection | undefined
 ): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
+
+  const isPointCloudIntersection = intersection?.type === 'pointcloud';
+  const [modelId, revisionId, assetId] = isPointCloudIntersection
+    ? [
+        intersection.model.modelId,
+        intersection.model.revisionId,
+        intersection.assetRef?.externalId ?? intersection.assetRef?.id
+      ]
+    : [undefined, undefined, undefined];
 
   return useQuery({
     queryKey: [
@@ -161,7 +169,7 @@ export const usePointCloudAnnotationMappingForAssetId = (
       return result ?? EMPTY_ARRAY;
     },
     staleTime: Infinity,
-    enabled: assetId !== undefined
+    enabled: isPointCloudIntersection && assetId !== undefined
   });
 };
 
