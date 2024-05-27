@@ -29,7 +29,7 @@ export class MeasurementTool extends BaseEditTool {
   // ==================================================
 
   private _creator: BaseCreator | undefined = undefined;
-  public measureType: MeasureType = MeasureType.Line;
+  public measureType: MeasureType = MeasureType.None; // Default none, let the user decide
 
   // ==================================================
   // OVERRIDES of BaseCommand
