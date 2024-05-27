@@ -10,7 +10,7 @@ import { type AssetMappingCache } from '../../../src/components/CacheProvider/As
 import { type PointCloudAnnotationCache } from '../../../src/components/CacheProvider/PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from '../../../src/components/CacheProvider/Image360AnnotationCache';
 import { type SceneIdentifiers } from '../../../src/components/SceneContainer/sceneTypes';
-import { type RevealRenderTarget } from '../../../src/architecture/RenderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../../../src/architecture/base/renderTarget/RevealRenderTarget';
 import { Cognite3DViewer } from '@cognite/reveal';
 
 describe(RevealCanvas.name, () => {
