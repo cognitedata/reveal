@@ -6,7 +6,7 @@
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { type Tooltip } from '../../base/commands/BaseCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { getAnyMeasureDomainObject, getMeasureDomainObjects } from './MeasurementFunctions';
+import { MeasureDomainObject } from './MeasureDomainObject';
 
 export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
   // ==================================================
@@ -22,7 +22,7 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    const domainObject = getAnyMeasureDomainObject(this.renderTarget);
+    const domainObject = this.rootDomainObject.getDescendantByType(MeasureDomainObject);
     return domainObject !== undefined;
   }
 
@@ -36,7 +36,7 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
 
   protected override invokeCore(): boolean {
     const depthTest = this.getDepthTest();
-    for (const domainObject of getMeasureDomainObjects(this.renderTarget)) {
+    for (const domainObject of this.rootDomainObject.getDescendantsByType(MeasureDomainObject)) {
       const style = domainObject.renderStyle;
       style.depthTest = !depthTest;
       domainObject.notify(Changes.renderStyle);
@@ -49,7 +49,7 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
   // ==================================================
 
   public getDepthTest(): boolean {
-    const domainObject = getAnyMeasureDomainObject(this.renderTarget);
+    const domainObject = this.rootDomainObject.getDescendantByType(MeasureDomainObject);
     if (domainObject === undefined) {
       return false;
     }

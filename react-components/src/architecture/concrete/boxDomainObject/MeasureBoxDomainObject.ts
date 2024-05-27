@@ -6,18 +6,19 @@ import { MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { MeasureBoxView } from './MeasureBoxView';
-import { Matrix4, Vector3 } from 'three';
+import { Box3, Matrix4, Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { MeasureType } from './MeasureType';
-import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { MeasureBoxDragger } from './MeasureBoxDragger';
 import { MeasureDomainObject } from './MeasureDomainObject';
 import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
+import { type CreateDraggerProps } from '../../base/domainObjects/VisualDomainObject';
+import { Range3 } from '../../base/utilities/geometry/Range3';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -37,49 +38,6 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  public get diagonal(): number {
-    return this.size.length();
-  }
-
-  public get hasArea(): boolean {
-    let count = 0;
-    if (isValid(this.size.x)) count++;
-    if (isValid(this.size.y)) count++;
-    if (isValid(this.size.z)) count++;
-    return count >= 2;
-  }
-
-  public get area(): number {
-    switch (this.measureType) {
-      case MeasureType.HorizontalArea:
-        return this.size.x * this.size.y;
-      case MeasureType.VerticalArea:
-        return this.size.x * this.size.z;
-      case MeasureType.Volume: {
-        const a = this.size.x * this.size.y + this.size.y * this.size.z + this.size.z * this.size.x;
-        return a * 2;
-      }
-      default:
-        throw new Error('Unknown MeasureType type');
-    }
-  }
-
-  public get hasHorizontalArea(): boolean {
-    return isValid(this.size.x) && isValid(this.size.y);
-  }
-
-  public get horizontalArea(): number {
-    return this.size.x * this.size.y;
-  }
-
-  public get hasVolume(): boolean {
-    return isValid(this.size.x) && isValid(this.size.y) && isValid(this.size.z);
-  }
-
-  public get volume(): number {
-    return this.size.x * this.size.y * this.size.z;
-  }
 
   public override get renderStyle(): MeasureBoxRenderStyle {
     return this.getRenderStyle() as MeasureBoxRenderStyle;
@@ -101,12 +59,12 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
     return new MeasureBoxRenderStyle();
   }
 
-  public override createDragger(intersection: DomainObjectIntersection): BaseDragger | undefined {
-    const pickInfo = intersection.userData as BoxPickInfo;
+  public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
+    const pickInfo = props.intersection.userData as BoxPickInfo;
     if (pickInfo === undefined) {
-      return undefined;
+      return undefined; // If the BoxPickInfo isn't specified, no dragger iscreated
     }
-    return new MeasureBoxDragger(this, intersection.point, pickInfo);
+    return new MeasureBoxDragger(props, this);
   }
 
   public override getPanelInfo(): PanelInfo | undefined {
@@ -125,13 +83,13 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
         info.setHeader('MEASUREMENTS_VOLUME', 'Volume');
         break;
     }
-    if (isFinished || isValid(this.size.x)) {
+    if (isFinished || isValidSize(this.size.x)) {
       add('MEASUREMENTS_LENGTH', 'Length', this.size.x, NumberType.Length);
     }
-    if (measureType !== MeasureType.VerticalArea && (isFinished || isValid(this.size.y))) {
+    if (measureType !== MeasureType.VerticalArea && (isFinished || isValidSize(this.size.y))) {
       add('MEASUREMENTS_DEPTH', 'Depth', this.size.y, NumberType.Length);
     }
-    if (measureType !== MeasureType.HorizontalArea && (isFinished || isValid(this.size.z))) {
+    if (measureType !== MeasureType.HorizontalArea && (isFinished || isValidSize(this.size.z))) {
       add('MEASUREMENTS_HEIGHT', 'Height', this.size.z, NumberType.Length);
     }
     if (measureType !== MeasureType.Volume && (isFinished || this.hasArea)) {
@@ -163,14 +121,63 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
   }
 
   // ==================================================
-  // INSTANCE METHODS
+  // INSTANCE METHODS: Getters/Properties
   // ==================================================
 
-  public forceMinSize(): void {
-    const { size } = this;
-    size.x = Math.max(MIN_BOX_SIZE, size.x);
-    size.y = Math.max(MIN_BOX_SIZE, size.y);
-    size.z = Math.max(MIN_BOX_SIZE, size.z);
+  public get diagonal(): number {
+    return this.size.length();
+  }
+
+  public get hasArea(): boolean {
+    let count = 0;
+    if (isValidSize(this.size.x)) count++;
+    if (isValidSize(this.size.y)) count++;
+    if (isValidSize(this.size.z)) count++;
+    return count >= 2;
+  }
+
+  public get area(): number {
+    switch (this.measureType) {
+      case MeasureType.HorizontalArea:
+        return this.size.x * this.size.y;
+      case MeasureType.VerticalArea:
+        return this.size.x * this.size.z;
+      case MeasureType.Volume: {
+        const a = this.size.x * this.size.y + this.size.y * this.size.z + this.size.z * this.size.x;
+        return a * 2;
+      }
+      default:
+        throw new Error('Unknown MeasureType type');
+    }
+  }
+
+  public get hasHorizontalArea(): boolean {
+    return isValidSize(this.size.x) && isValidSize(this.size.y);
+  }
+
+  public get horizontalArea(): number {
+    return this.size.x * this.size.y;
+  }
+
+  public get hasVolume(): boolean {
+    return isValidSize(this.size.x) && isValidSize(this.size.y) && isValidSize(this.size.z);
+  }
+
+  public get volume(): number {
+    return this.size.x * this.size.y * this.size.z;
+  }
+
+  public getBoundingBox(): Box3 {
+    const matrix = this.getMatrix();
+    const boundingBox = new Box3().makeEmpty();
+    const unitCube = Range3.createCube(0.5);
+    const corner = new Vector3();
+    for (let i = 0; i < 8; i++) {
+      unitCube.getCornerPoint(i, corner);
+      corner.applyMatrix4(matrix);
+      boundingBox.expandByPoint(corner);
+    }
+    return boundingBox;
   }
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
@@ -187,6 +194,17 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
     matrix.setPosition(this.center);
     matrix.scale(scale);
     return matrix;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Others
+  // ==================================================
+
+  public forceMinSize(): void {
+    const { size } = this;
+    size.x = Math.max(MIN_BOX_SIZE, size.x);
+    size.y = Math.max(MIN_BOX_SIZE, size.y);
+    size.z = Math.max(MIN_BOX_SIZE, size.z);
   }
 
   public setFocusInteractive(focusType: FocusType, focusFace?: BoxFace): boolean {
@@ -208,6 +226,10 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
   }
 }
 
-function isValid(value: number): boolean {
+// ==================================================
+// PUBLIC FUNCTIONS
+// ==================================================
+
+export function isValidSize(value: number): boolean {
   return value > MIN_BOX_SIZE;
 }

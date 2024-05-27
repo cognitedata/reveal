@@ -40,7 +40,7 @@ export class TerrainThreeView extends GroupThreeView {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  private get terrainDomainObject(): TerrainDomainObject {
+  protected override get domainObject(): TerrainDomainObject {
     return super.domainObject as TerrainDomainObject;
   }
 
@@ -73,7 +73,7 @@ export class TerrainThreeView extends GroupThreeView {
           this.addChild(this.createSolid());
           this.invalidateRenderTarget();
         } else if (solid !== undefined) {
-          updateSolidMaterial(solid.material as MeshPhongMaterial, this.terrainDomainObject, style);
+          updateSolidMaterial(solid.material as MeshPhongMaterial, this.domainObject, style);
           this.invalidateRenderTarget();
         }
       }
@@ -86,11 +86,7 @@ export class TerrainThreeView extends GroupThreeView {
           this.addChild(this.createContours());
           this.invalidateRenderTarget();
         } else if (contours !== undefined) {
-          updateContoursMaterial(
-            contours.material as LineBasicMaterial,
-            this.terrainDomainObject,
-            style
-          );
+          updateContoursMaterial(contours.material as LineBasicMaterial, this.domainObject, style);
           this.invalidateRenderTarget();
         }
       }
@@ -102,8 +98,7 @@ export class TerrainThreeView extends GroupThreeView {
   // ==================================================
 
   protected override calculateBoundingBox(): Box3 {
-    const { terrainDomainObject } = this;
-    const { grid } = terrainDomainObject;
+    const { grid } = this.domainObject;
     if (grid === undefined) {
       return new Box3().makeEmpty();
     }
@@ -125,8 +120,7 @@ export class TerrainThreeView extends GroupThreeView {
   // ==================================================
 
   protected override addChildren(): void {
-    const { terrainDomainObject } = this;
-    const { grid } = terrainDomainObject;
+    const { grid } = this.domainObject;
     if (grid === undefined) {
       return undefined;
     }
@@ -143,8 +137,8 @@ export class TerrainThreeView extends GroupThreeView {
     if (!style.showSolid) {
       return undefined;
     }
-    const { terrainDomainObject } = this;
-    const { grid } = terrainDomainObject;
+    const { domainObject } = this;
+    const { grid } = domainObject;
     if (grid === undefined) {
       return undefined;
     }
@@ -152,7 +146,7 @@ export class TerrainThreeView extends GroupThreeView {
     const geometry = buffers.createBufferGeometry();
 
     const material = new MeshPhongMaterial();
-    updateSolidMaterial(material, terrainDomainObject, style);
+    updateSolidMaterial(material, domainObject, style);
 
     const result = new Mesh(geometry, material);
     result.name = SOLID_NAME;
@@ -165,8 +159,8 @@ export class TerrainThreeView extends GroupThreeView {
     if (!style.showContours) {
       return undefined;
     }
-    const { terrainDomainObject } = this;
-    const { grid } = terrainDomainObject;
+    const { domainObject } = this;
+    const { grid } = domainObject;
     if (grid === undefined) {
       return undefined;
     }
@@ -179,7 +173,7 @@ export class TerrainThreeView extends GroupThreeView {
     geometry.setAttribute('position', new Float32BufferAttribute(contoursBuffer, 3));
 
     const material = new LineBasicMaterial();
-    updateContoursMaterial(material, terrainDomainObject, style);
+    updateContoursMaterial(material, domainObject, style);
 
     const result = new LineSegments(geometry, material);
     result.name = CONTOURS_NAME;

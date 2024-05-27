@@ -2,9 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, type Vector3 } from 'three';
+import { type Vector3, type Ray } from 'three';
 import { replaceLast } from '../utilities/extensions/arrayExtensions';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type DomainObject } from '../domainObjects/DomainObject';
 
 /**
@@ -22,24 +22,28 @@ export abstract class BaseCreator {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get points(): Vector3[] {
+  protected get points(): Vector3[] {
     return this._points;
   }
 
-  public get pointCount(): number {
+  protected get pointCount(): number {
     return this.points.length;
   }
 
-  public get realPointCount(): number {
+  protected get notPendingPointCount(): number {
     return this.lastIsPending ? this.pointCount - 1 : this.pointCount;
   }
 
-  public get firstPoint(): Vector3 {
+  protected get firstPoint(): Vector3 {
     return this.points[0];
   }
 
-  public get lastPoint(): Vector3 {
+  protected get lastPoint(): Vector3 {
     return this.points[this.pointCount - 1];
+  }
+
+  protected get lastNotPendingPoint(): Vector3 {
+    return this.points[this.notPendingPointCount - 1];
   }
 
   protected get lastIsPending(): boolean {
@@ -50,36 +54,66 @@ export abstract class BaseCreator {
   // VIRTUAL METHODS
   // ==================================================
 
+  /**
+   * Gets the value indicating whether to prefer intersection with somthing.
+   * If this is true, it will first try to intersect an object. If false the point
+   * will normally be calculatd based on the previous point and the ray in addPointCore
+   *
+   * @returns {boolean} The value indicating whether to prefer intersection.
+   */
   public get preferIntersection(): boolean {
     return false;
   }
 
   public abstract get domainObject(): DomainObject;
 
-  public abstract get maximumPointCount(): number;
+  /**
+   * @returns The minimum required points to create the domain object.
+   */
+  protected abstract get minimumPointCount(): number;
 
-  public abstract get minimumPointCount(): number;
+  /**
+   * @returns The maximim required points to create the domain object.
+   */
 
+  protected abstract get maximumPointCount(): number;
+  /**
+   * Adds a new point
+   * @param ray - The ray the camera has (in Cdf coordinates)
+   * @param point - The point to add.(in Cdf coordinates). If undefined, it indicates that
+   * it wasn't intersection anything. Then then ray and the previous point can be used to calculate the point.
+   * @param isPending - Indicates whether the point is pending (hover over instead of clicking).
+   * @returns A boolean value indicating whether the point was successfully added.
+   */
   protected abstract addPointCore(
     ray: Ray,
     point: Vector3 | undefined,
     isPending: boolean
   ): boolean;
 
-  public handleEscape(): void {}
+  /**
+   * Handles the escape key press event.
+   *
+   * @returns {boolean} Returns true if the pending object is created successfully, false if it is removed
+   */
+  public handleEscape(): boolean {
+    return false;
+  }
 
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
   public get isFinished(): boolean {
-    return this.realPointCount === this.maximumPointCount;
+    return this.notPendingPointCount >= this.maximumPointCount;
   }
 
-  public addPoint(ray: Ray, point: Vector3 | undefined, isPending: boolean): boolean {
-    if (point !== undefined) {
-      point = point.clone();
-    }
+  public addPoint(
+    ray: Ray,
+    intersection: AnyIntersection | undefined,
+    isPending: boolean = false
+  ): boolean {
+    const point = intersection?.point.clone();
     this.convertToCdfCoords(ray, point);
     return this.addPointCore(ray, point, isPending);
   }

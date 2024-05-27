@@ -50,7 +50,9 @@ export class TerrainDomainObject extends VisualDomainObject {
     if (!(style instanceof TerrainRenderStyle)) {
       return;
     }
-    // The rest checks if the increment is valid. To many contour lines with hang/crash the app.
+    // The rest checks if the increment is valid.
+    // Too many contour lines with hang/crash the app, so it recalculate
+    // its value if it is not set or too large/small.
     const { grid } = this;
     if (grid === undefined) {
       return;

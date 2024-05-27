@@ -64,7 +64,9 @@ export const DomainObjectPanel = (): ReactElement => {
                 appendTo={document.body}>
                 <Button
                   onClick={() => {
-                    domainObject.removeInteractive();
+                    if (domainObject.canBeRemoved) {
+                      domainObject.removeInteractive();
+                    }
                   }}>
                   <Icon type="Delete" />
                 </Button>

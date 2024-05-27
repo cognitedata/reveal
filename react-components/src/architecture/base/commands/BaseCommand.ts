@@ -11,6 +11,11 @@ export type Tooltip = {
   fallback?: string;
 };
 
+/**
+ * Base class for all command and tools. Thses are object that can do a
+ * user interaction with the system. It also have enough information to
+ * generate the UI for the command.
+ */
 export abstract class BaseCommand {
   // ==================================================
   // INSTANCE FIELDS

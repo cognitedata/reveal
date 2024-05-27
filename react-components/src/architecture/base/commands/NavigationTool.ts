@@ -7,6 +7,10 @@ import { BaseTool } from './BaseTool';
 import { type Tooltip } from './BaseCommand';
 import { type IFlexibleCameraManager } from '@cognite/reveal';
 
+/**
+ * Represents a tool navigation tool used for camera manipulation.
+ * Inherit from this class if you like to have some camera manipulation in your tool.
+ */
 export class NavigationTool extends BaseTool {
   // ==================================================
   // INSTANVE PROPERTIES

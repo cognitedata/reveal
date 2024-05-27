@@ -15,9 +15,12 @@ import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObj
 
 /**
  * Represents an abstract class for a Three.js view that renders an Object3D.
- * This class extends the ThreeView class.
+ * This class extends the ThreeView class. It created a group object3D and adds children to it.
  * @remarks
  * You only have to override addChildren() to create the object3D to be added to the group.
+ * Other methods you may override is:
+ * - intersectIfCloser() to determine the exact intersection point.
+ * - calculateBoundingBox() to calculate the bounding box if you don not relay on three.js.
  */
 
 export abstract class GroupThreeView extends ThreeView implements ICustomObject {
@@ -33,6 +36,8 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
 
   // ==================================================
   // IMPLEMENTATION of ICustomObject
+  // some of the methods are virtual and can be overridden,
+  // see each method.
   // ==================================================
 
   public get object(): Object3D {
@@ -131,6 +136,14 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
   // OVERRIDES of ThreeView
   // ==================================================
 
+  /**
+   * Calculates the bounding box of the object.
+   * Overrides this if you want to calculate the bounding box in a
+   * different way that three.js does it. For instance if you don't
+   * want to include text labels in the bounding box.
+   *
+   * @returns The calculated bounding box.
+   */
   protected override calculateBoundingBox(): Box3 {
     if (this.object === undefined) {
       return new Box3().makeEmpty();

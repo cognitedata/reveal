@@ -24,9 +24,7 @@ export class SetTerrainVisibleCommand extends RenderTargetCommand {
   }
 
   protected override invokeCore(): boolean {
-    const { renderTarget } = this;
-    const { rootDomainObject } = renderTarget;
-
+    const { renderTarget, rootDomainObject } = this;
     let terrainDomainObject = rootDomainObject.getDescendantByTypeAndName(
       TerrainDomainObject,
       DEFAULT_TERRAIN_NAME
