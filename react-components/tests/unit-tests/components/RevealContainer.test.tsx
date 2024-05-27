@@ -35,7 +35,8 @@ describe(RevealCanvas.name, () => {
             .setup((viewer) => viewer.domElement)
             .returns(domElement)
             .object();
-        }
+        },
+        initialize(): void {}
       } as unknown as RevealRenderTarget);
       const isRevealContainerMountedRef = useRef<boolean>(true);
       const sceneLoadedRef = useRef<SceneIdentifiers | undefined>();
