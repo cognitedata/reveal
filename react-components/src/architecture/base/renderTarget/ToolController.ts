@@ -171,17 +171,18 @@ export class ToolControllers extends PointerEvents {
     domElement.addEventListener('wheel', this._onWheel);
     domElement.addEventListener('focus', this._onFocus);
     domElement.addEventListener('blur', this._onBlur);
+    domElement.addEventListener('contextmenu', this._onContextMenu);
     this._pointerEventsTarget.addEventListeners();
   }
 
   public removeEventListeners(): void {
     const domElement = this._domElement;
     domElement.removeEventListener('keydown', this._onKeyDown);
-    domElement.addEventListener('contextmenu', this._onContextMenu);
     domElement.removeEventListener('keyup', this._onKeyUp);
     domElement.removeEventListener('wheel', this._onWheel);
     domElement.removeEventListener('focus', this._onFocus);
     domElement.removeEventListener('blur', this._onBlur);
+    domElement.removeEventListener('contextmenu', this._onContextMenu);
     this._pointerEventsTarget.removeEventListeners();
     for (const commands of this._commands) {
       commands.removeEventListeners();
@@ -194,8 +195,6 @@ export class ToolControllers extends PointerEvents {
 
   private readonly _onKeyDown = (event: KeyboardEvent): void => {
     this.onKey(event, true);
-    event.stopPropagation();
-    event.preventDefault();
   };
 
   private readonly _onContextMenu = (event: MouseEvent): void => {
@@ -205,8 +204,6 @@ export class ToolControllers extends PointerEvents {
 
   private readonly _onKeyUp = (event: KeyboardEvent): void => {
     this.onKey(event, false);
-    event.stopPropagation();
-    event.preventDefault();
   };
 
   private readonly _onWheel = async (event: WheelEvent): Promise<void> => {
