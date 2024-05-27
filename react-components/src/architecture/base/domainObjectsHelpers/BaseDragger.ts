@@ -2,8 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, Vector3 } from 'three';
+import { Ray, type Vector3 } from 'three';
 import { type DomainObject } from '../domainObjects/DomainObject';
+import { type CreateDraggerProps } from '../domainObjects/VisualDomainObject';
 
 /**
  * The `BaseDragger` class represents a utility for dragging and manipulating any object in 3D space.
@@ -14,14 +15,16 @@ export abstract class BaseDragger {
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly point: Vector3 = new Vector3(); // Intersection point at pointer down
+  protected readonly point: Vector3; // Intersection point at pointer down in CDF coordinates
+  protected readonly ray: Ray = new Ray(); // Intersection point at pointer down in CDF coordinates
 
   // ==================================================
   // CONTRUCTOR
   // ==================================================
 
-  protected constructor(startDragPoint: Vector3) {
-    this.point.copy(startDragPoint);
+  protected constructor(props: CreateDraggerProps) {
+    this.point = props.point;
+    this.ray = props.ray;
   }
 
   // ==================================================
@@ -35,6 +38,7 @@ export abstract class BaseDragger {
   }
 
   // This must be overriden
+  // Notte that the ray comes in CDF coordinates
   public abstract onPointerDrag(_event: PointerEvent, ray: Ray): boolean;
 
   public onPointerUp(_event: PointerEvent): void {

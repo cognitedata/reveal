@@ -12,14 +12,17 @@ import { type PerspectiveCamera, type Box3 } from 'three';
 
 /**
  * Represents an abstract base class for a Three.js view in the application.
- * Extends the `BaseView` class.
+ * Extends the `BaseView` class. It only has the poiinter to the renderTarget and a bounding box.
+ * Inirit from this class if you want some visualization that do dot require a group object3D as the root object.
+ * It can for instance be a view that chages somting on another view, dor instance texture on a surface or whatever.
+ * I just wanted to make it ready for some corner cases I have seen during a long time as 3D develper.
  */
 export abstract class ThreeView extends BaseView {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private _boundingBox: Box3 | undefined = undefined; // Cashe of the bounding box of the view
+  private _boundingBox: Box3 | undefined = undefined; // Cache of the bounding box of the view
   private _renderTarget: RevealRenderTarget | undefined = undefined;
 
   // ==================================================
@@ -87,7 +90,7 @@ export abstract class ThreeView extends BaseView {
   /**
    * This method is called before rendering the view.
    * Override this function to perform any necessary operations
-   * just before rendering.Have in mind that the Object3D are build at the time this is
+   * just before rendering. Have in mind that the Object3D are build at the time this is
    * called, so you can only do adjustment on existing object3D's.
    * @remarks
    * Always call `super.beforeRender(camera)` in the overrides.
@@ -110,7 +113,7 @@ export abstract class ThreeView extends BaseView {
   }
 
   public attach(domainObject: DomainObject, renderTarget: RevealRenderTarget): void {
-    this.domainObject = domainObject;
+    super.setDomainObject(domainObject);
     this._renderTarget = renderTarget;
   }
 

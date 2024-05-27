@@ -85,10 +85,12 @@ export class MeasureBoxCreator extends BaseCreator {
     return true;
   }
 
-  public override handleEscape(): void {
-    if (this.realPointCount < this.minimumPointCount) {
-      this._domainObject.removeInteractive();
+  public override handleEscape(): boolean {
+    if (this.notPendingPointCount >= this.minimumPointCount) {
+      return true; // Successfully
     }
+    this._domainObject.removeInteractive();
+    return false; // Removed
   }
 
   // ==================================================
@@ -105,11 +107,11 @@ export class MeasureBoxCreator extends BaseCreator {
     }
     // Recalculate the point anywhy for >= 1 points
     // This makes it more natural and you can pick in empty space
-    if (this.realPointCount === 1 || this.realPointCount === 2) {
+    if (this.notPendingPointCount === 1 || this.notPendingPointCount === 2) {
       const plane = new Plane().setFromNormalAndCoplanarPoint(UP_VECTOR, this.firstPoint);
       const newPoint = ray.intersectPlane(plane, new Vector3());
       return newPoint ?? undefined;
-    } else if (this.realPointCount === 3 && measureType === MeasureType.Volume) {
+    } else if (this.notPendingPointCount === 3 && measureType === MeasureType.Volume) {
       return getClosestPointOnLine(ray, UP_VECTOR, this.points[2], point);
     }
     return point;

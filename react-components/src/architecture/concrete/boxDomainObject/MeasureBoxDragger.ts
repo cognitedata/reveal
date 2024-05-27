@@ -15,7 +15,7 @@ import { MeasureType } from './MeasureType';
 import { getClosestPointOnLine } from '../../base/utilities/extensions/rayExtensions';
 import { type MeasureBoxDomainObject } from './MeasureBoxDomainObject';
 import { BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type CreateDraggerProps } from '../../base/domainObjects/VisualDomainObject';
 
 /**
  * The `BoxDragger` class represents a utility for dragging and manipulating a box in a 3D space.
@@ -57,11 +57,10 @@ export class MeasureBoxDragger extends BaseDragger {
   // CONTRUCTOR
   // ==================================================
 
-  public constructor(domainObject: MeasureBoxDomainObject, point: Vector3, pickInfo: BoxPickInfo) {
-    point = point.clone();
-    point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-    super(point);
+  public constructor(props: CreateDraggerProps, domainObject: MeasureBoxDomainObject) {
+    super(props);
 
+    const pickInfo = props.intersection.userData as BoxPickInfo;
     this._domainObject = domainObject;
     this._face = pickInfo.face;
     this._focusType = pickInfo.focusType;
@@ -72,7 +71,7 @@ export class MeasureBoxDragger extends BaseDragger {
     this._normal.applyMatrix4(rotationMatrix);
     this._normal.normalize();
 
-    this._planeOfBox.setFromNormalAndCoplanarPoint(this._normal, point);
+    this._planeOfBox.setFromNormalAndCoplanarPoint(this._normal, this.point);
 
     // Back up the original values
     this._sizeOfBox.copy(this._domainObject.size);

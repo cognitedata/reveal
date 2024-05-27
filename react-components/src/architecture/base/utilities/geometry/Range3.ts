@@ -224,19 +224,11 @@ export class Range3 {
   // STATIC METHODS
   // ==================================================
 
-  public static createByMinAndMax(xmin: number, ymin: number, xmax: number, ymax: number): Range3 {
+  public static createCube(halfSize: number): Range3 {
     const range = new Range3();
-    range.x.set(xmin, xmax);
-    range.y.set(ymin, ymax);
-    range.z.set(0, 0);
-    return range;
-  }
-
-  public static createByMinAndDelta(xmin: number, ymin: number, dx: number, dy: number): Range3 {
-    const range = new Range3();
-    range.x.set(xmin, xmin + dx);
-    range.y.set(ymin, ymin + dy);
-    range.z.set(0, 0);
+    range.x.set(-halfSize, halfSize);
+    range.y.set(-halfSize, halfSize);
+    range.z.set(-halfSize, halfSize);
     return range;
   }
 }

@@ -17,7 +17,8 @@ import {
   DirectionalLight,
   type PerspectiveCamera,
   type Box3,
-  type WebGLRenderer
+  type WebGLRenderer,
+  type Plane
 } from 'three';
 import { ToolControllers } from './ToolController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
@@ -25,6 +26,7 @@ import { getOctDir } from '../utilities/extensions/vectorExtensions';
 import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 import { ThreeView } from '../views/ThreeView';
+import { type DomainObject } from '../domainObjects/DomainObject';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -39,6 +41,8 @@ export class RevealRenderTarget {
   private _axisGizmoTool: AxisGizmoTool | undefined;
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
+  private _cropBoxBoundingBox: Box3 | undefined;
+  private _cropBoxName: string | undefined = undefined;
 
   // ==================================================
   // CONTRUCTORS
@@ -53,7 +57,7 @@ export class RevealRenderTarget {
     }
     this._toolController = new ToolControllers(this.domElement);
     this._toolController.addEventListeners();
-    this._rootDomainObject = new RootDomainObject();
+    this._rootDomainObject = new RootDomainObject(this);
 
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
@@ -109,7 +113,11 @@ export class RevealRenderTarget {
   }
 
   public get sceneBoundingBox(): Box3 {
-    return this.viewer.getSceneBoundingBox();
+    const boundingBox = this.viewer.getSceneBoundingBox();
+    if (this._cropBoxBoundingBox !== undefined) {
+      boundingBox.intersect(this._cropBoxBoundingBox);
+    }
+    return boundingBox;
   }
 
   // ==================================================
@@ -191,6 +199,50 @@ export class RevealRenderTarget {
       }
     }
   };
+
+  // ==================================================
+  // INSTANCE METHODS: Fit operations
+  // ==================================================
+
+  public fitView(): boolean {
+    const boundingBox = this.sceneBoundingBox;
+    if (boundingBox.isEmpty()) {
+      return false;
+    }
+    this.viewer.fitCameraToBoundingBox(this.sceneBoundingBox);
+    return true;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Crop box operations (Experimental code)
+  // ==================================================
+
+  public setGlobalCropBox(
+    clippingPlanes: Plane[],
+    boundingBox: Box3,
+    domainObject: DomainObject
+  ): void {
+    // Input in Viewer coordinates
+    this.viewer.setGlobalClippingPlanes(clippingPlanes);
+    this._cropBoxBoundingBox = boundingBox;
+    this._cropBoxName = domainObject.name;
+  }
+
+  public clearGlobalCropBox(): void {
+    this.viewer.setGlobalClippingPlanes([]);
+    this._cropBoxBoundingBox = undefined;
+    this._cropBoxName = undefined;
+  }
+
+  public isGlobalCropBox(domainObject: DomainObject): boolean {
+    return this._cropBoxName !== undefined && domainObject.hasEqualName(this._cropBoxName);
+  }
+
+  public get isGlobalCropBoxActive(): boolean {
+    return (
+      this.viewer.getGlobalClippingPlanes().length > 0 && this._cropBoxBoundingBox !== undefined
+    );
+  }
 
   // ==================================================
   // INSTANCE METHODS: Cursor

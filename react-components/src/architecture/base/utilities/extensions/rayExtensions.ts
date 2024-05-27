@@ -3,6 +3,14 @@
  */
 import { Vector3, type Ray } from 'three';
 
+/**
+ * Calculates the closest point on a line to a given ray.
+ * @param ray - The ray to calculate the closest point from.
+ * @param lineDirection - The direction of the line.
+ * @param pointOnLine - A point on the line.
+ * @param optionalClosestPointOnLine - An optional Vector3 to store the closest point on the line.
+ * @returns The closest point on the line to the ray.
+ */
 export function getClosestPointOnLine(
   ray: Ray,
   lineDirection: Vector3,

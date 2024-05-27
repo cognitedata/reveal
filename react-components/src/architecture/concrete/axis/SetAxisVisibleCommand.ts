@@ -29,8 +29,7 @@ export class SetAxisVisibleCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    const { renderTarget } = this;
-    const { rootDomainObject } = renderTarget;
+    const { renderTarget, rootDomainObject } = this;
 
     const axis = rootDomainObject.getDescendantByType(AxisDomainObject);
     if (axis === undefined) {
@@ -40,8 +39,7 @@ export class SetAxisVisibleCommand extends RenderTargetCommand {
   }
 
   protected override invokeCore(): boolean {
-    const { renderTarget } = this;
-    const { rootDomainObject } = renderTarget;
+    const { renderTarget, rootDomainObject } = this;
 
     let axis = rootDomainObject.getDescendantByType(AxisDomainObject);
     if (axis === undefined) {

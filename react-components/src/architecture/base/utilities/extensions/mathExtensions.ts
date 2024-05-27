@@ -59,20 +59,19 @@ export function isBetween(min: number, value: number, max: number): boolean {
 // FUNCTIONS: Returning a number
 // ==================================================
 
-export function max(a: number, b: number, c: number): number {
-  return Math.max(a, Math.max(b, c));
-}
-
-export function min(a: number, b: number, c: number): number {
-  return Math.min(a, Math.min(b, c));
-}
-
 export function square(value: number): number {
   return value * value;
 }
 
-export function roundInc(increment: number): number {
-  // Get the exponent for the number [1-10] and scale the inc so the number is between 1 and 10.
+/**
+ * Round a number closest to one of these values:  2*10^N, 2.5*10^N, 5*10^N or 10*10^N.
+ * This is used to give axies a natural increment between the ticks or
+ * contour intervals on a terrain surface
+ * @param increment - The value to be rounded
+ * @returns The rounded value
+ */
+export function roundIncrement(increment: number): number {
+  // First get the exponent for the number [1-10] and scale the inc so the number is between 1 and 10.
   let exp = 0;
   let inc = increment;
   let found = false;
@@ -101,7 +100,7 @@ export function roundInc(increment: number): number {
   } else {
     inc = 10;
   }
-  // Upscale the inc to the real number
+  // Upscale the increment to the real number
   if (exp < 0) {
     for (; exp !== 0; exp++) inc /= 10;
   } else {

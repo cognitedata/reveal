@@ -24,15 +24,11 @@ export abstract class BaseView {
     return this._domainObject !== undefined;
   }
 
-  public get domainObject(): DomainObject {
+  protected get domainObject(): DomainObject {
     if (this._domainObject === undefined) {
       throw Error('The DomainObject is missing in the view');
     }
     return this._domainObject;
-  }
-
-  protected set domainObject(value: DomainObject) {
-    this._domainObject = value;
   }
 
   // ==================================================
@@ -90,5 +86,13 @@ export abstract class BaseView {
    */
   public dispose(): void {
     this._domainObject = undefined;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public setDomainObject(domainObject: DomainObject): void {
+    this._domainObject = domainObject;
   }
 }
