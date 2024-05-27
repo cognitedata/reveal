@@ -109,6 +109,7 @@ const useRevealFromKeepAlive = ({
       }
     }
     renderTarget.viewer.setBackgroundColor({ color, alpha: 1 });
+    renderTarget.initialize();
     setRenderTarget(renderTarget);
     return renderTarget;
   }
