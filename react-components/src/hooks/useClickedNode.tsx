@@ -17,7 +17,8 @@ import { usePointCloudAnnotationMappingForAssetId } from '../components/CachePro
 import { type PointCloudAnnotationMappedAssetData } from './types';
 import { MOUSE, Vector2 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../utilities/FdmSDK';
-import { useReveal } from '../components/RevealCanvas/ViewerContext';
+import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
+import { NavigationTool } from '../architecture/base/commands/NavigationTool';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -39,6 +40,7 @@ export type ClickedNodeData = {
 
 export const useClickedNodeData = (): ClickedNodeData | undefined => {
   const viewer = useReveal();
+  const renderTarget = useRenderTarget();
 
   const [intersection, setIntersection] = useState<AnyIntersection | undefined>(undefined);
 
@@ -49,7 +51,10 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async () => {
-        if (event.button !== MOUSE.LEFT) {
+        const navigationTool = renderTarget.toolController.getEqual(new NavigationTool());
+        const isNavigationActive = renderTarget.toolController.activeTool === navigationTool;
+
+        if (event.button !== MOUSE.LEFT || !isNavigationActive) {
           return;
         }
 
