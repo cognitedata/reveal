@@ -51,7 +51,7 @@ export const RevealStoryContext = ({
         useFlexibleCameraManager: true
       });
       const renderTarget = new RevealRenderTarget(newViewer);
-      renderTarget.initialize();
+      renderTarget.addAxisGizmo();
       return renderTarget;
     }
   }, [viewer]);

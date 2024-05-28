@@ -9,7 +9,6 @@ import {
   type Cognite3DViewer,
   type IFlexibleCameraManager
 } from '@cognite/reveal';
-import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { NavigationTool } from '../commands/NavigationTool';
 import {
   Vector3,
@@ -27,6 +26,7 @@ import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 import { ThreeView } from '../views/ThreeView';
 import { type DomainObject } from '../domainObjects/DomainObject';
+import { AxisGizmoTool } from '@cognite/reveal/tools';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -38,11 +38,11 @@ export class RevealRenderTarget {
   private readonly _viewer: Cognite3DViewer;
   private readonly _toolController: ToolControllers;
   private readonly _rootDomainObject: RootDomainObject;
-  private _axisGizmoTool: AxisGizmoTool | undefined;
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
   private _cropBoxBoundingBox: Box3 | undefined;
   private _cropBoxName: string | undefined = undefined;
+  private _axisGizmoTool: AxisGizmoTool | undefined;
 
   // ==================================================
   // CONTRUCTORS
@@ -62,6 +62,11 @@ export class RevealRenderTarget {
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
     this._viewer.on('beforeSceneRendered', this.beforeSceneRenderedHandler);
+
+    const navigationTool = new NavigationTool();
+    navigationTool.attach(this);
+    this.toolController.add(navigationTool);
+    this.toolController.setDefaultTool(navigationTool);
   }
 
   // ==================================================
@@ -124,14 +129,9 @@ export class RevealRenderTarget {
   // INSTANCE METHODS
   // ==================================================
 
-  public initialize(): void {
+  public addAxisGizmo(): void {
     this._axisGizmoTool = new AxisGizmoTool();
     this._axisGizmoTool.connect(this._viewer);
-
-    const navigationTool = new NavigationTool();
-    navigationTool.attach(this);
-    this.toolController.add(navigationTool);
-    this.toolController.setDefaultTool(navigationTool);
   }
 
   public dispose(): void {
