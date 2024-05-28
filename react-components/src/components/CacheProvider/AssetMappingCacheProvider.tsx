@@ -13,14 +13,9 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type CogniteInternalId } from '@cognite/sdk';
 import { useSDK } from '../RevealCanvas/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import {
-  type ModelRevisionId,
-  type ModelId,
-  type RevisionId,
-  type TreeIndex,
-  type ModelRevisionAssetNodesResult
-} from './types';
+import { type ModelRevisionId, type ModelRevisionAssetNodesResult } from './types';
 import { fetchAncestorNodesForTreeIndex } from './requests';
+import { type AnyIntersection } from '@cognite/reveal';
 
 export type AssetMappingCacheContent = {
   cache: AssetMappingCache;
@@ -101,12 +96,16 @@ export const useNodesForAssets = (
 };
 
 export const useAssetMappingForTreeIndex = (
-  modelId: ModelId | undefined,
-  revisionId: RevisionId | undefined,
-  treeIndex: TreeIndex | undefined
+  intersection: AnyIntersection | undefined
 ): UseQueryResult<NodeAssetMappingResult> => {
   const assetMappingCache = useAssetMappingCache();
   const cdfClient = useSDK();
+
+  const isCadModel = intersection?.type === 'cad';
+
+  const [modelId, revisionId, treeIndex] = isCadModel
+    ? [intersection.model.modelId, intersection.model.revisionId, intersection.treeIndex]
+    : [undefined, undefined, undefined];
 
   return useQuery({
     queryKey: [
