@@ -72,7 +72,7 @@ export class ExampleDomainObject extends VisualDomainObject {
   }
 
   public override getPanelInfoStyle(): PopupStyle {
-    // bottom = 66 because the measurement toolbar is below
+    // bottom = 66 because the toolbar is below
     return new PopupStyle({ bottom: 66, left: 0 });
   }
 
