@@ -438,7 +438,9 @@ export class Cognite3DViewer {
     get360ImageCollections(): Image360Collection[];
     getActive360ImageInfo(): Image360WithCollection | undefined;
     // @beta
-    getAnyIntersectionFromPixel(pixelCoords: THREE.Vector2): Promise<AnyIntersection | undefined>;
+    getAnyIntersectionFromPixel(pixelCoords: THREE.Vector2, options?: {
+        stopOnHitting360Icon?: boolean;
+    }): Promise<AnyIntersection | undefined>;
     // @deprecated
     getClippingPlanes(): THREE.Plane[];
     getGlobalClippingPlanes(): THREE.Plane[];

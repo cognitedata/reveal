@@ -1554,11 +1554,8 @@ export class Cognite3DViewer {
    * ```
    */
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection> {
-    if (this._image360ApiHelper !== undefined) {
-      const image360Intersection = this._image360ApiHelper.intersect360ImageIcons(offsetX, offsetY);
-      if (image360Intersection !== undefined) {
-        return null;
-      }
+    if (this.isIntersecting360Icon(new THREE.Vector2(offsetX, offsetY))) {
+      return null;
     }
     return this.intersectModels(offsetX, offsetY);
   }
@@ -1566,11 +1563,20 @@ export class Cognite3DViewer {
   /**
    * Raycasting model(s) for finding where the ray intersects with all models, including custom objects.
    * @param pixelCoords Pixel coordinate in pixels (relative to the domElement).
+   * @param options
+   * @param options.stopOnHitting360Icon
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @beta
    */
-  public async getAnyIntersectionFromPixel(pixelCoords: THREE.Vector2): Promise<AnyIntersection | undefined> {
+  public async getAnyIntersectionFromPixel(
+    pixelCoords: THREE.Vector2,
+    options?: { stopOnHitting360Icon?: boolean }
+  ): Promise<AnyIntersection | undefined> {
+    if ((options?.stopOnHitting360Icon ?? true) && this.isIntersecting360Icon(pixelCoords)) {
+      return undefined;
+    }
+
     const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, { asyncCADIntersection: false });
 
     // Find any custom object intersection closer to the camera than the model intersection
@@ -1588,6 +1594,21 @@ export class Cognite3DViewer {
     }
     return undefined;
   }
+
+  private isIntersecting360Icon(vector: THREE.Vector2): boolean {
+    if (this._image360ApiHelper === undefined) {
+      return false;
+    }
+
+    const image360Intersection = this._image360ApiHelper.intersect360ImageIcons(vector.x, vector.y);
+
+    if (image360Intersection !== undefined) {
+      return true;
+    }
+
+    return false;
+  }
+
   /**
    * Check for intersections with 360 annotations through the given pixel.
    * Similar to {getIntersectionFromPixel}, but checks 360 image annotations
