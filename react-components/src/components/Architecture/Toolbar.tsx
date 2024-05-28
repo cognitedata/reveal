@@ -42,9 +42,6 @@ export const ActiveToolToolbar = (): ReactElement => {
     return <></>;
   }
   const commands = activeTool.getToolbar();
-  if (commands.length === 0) {
-    return <></>;
-  }
   const style = activeTool.getToolbarStyle();
   return CreateToolToolbar(commands, style);
 };
