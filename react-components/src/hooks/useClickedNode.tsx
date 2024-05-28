@@ -3,8 +3,6 @@
  */
 
 import {
-  type PointCloudIntersection,
-  type CadIntersection,
   type PointerEventData,
   type Image360AnnotationIntersection,
   AnyIntersection
@@ -85,11 +83,12 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     };
   }, [viewer]);
 
-  const nodeDataPromises = useFdm3dNodeDataPromises(intersection).data;
+  const { data: nodeDataPromises } = useFdm3dNodeDataPromises(intersection);
 
-  const assetMappingResult = useAssetMappingForTreeIndex(intersection).data;
+  const { data: assetMappingResult } = useAssetMappingForTreeIndex(intersection);
 
-  const pointCloudAssetMappingResult = usePointCloudAnnotationMappingForAssetId(intersection).data;
+  const { data: pointCloudAssetMappingResult } =
+    usePointCloudAnnotationMappingForAssetId(intersection);
 
   return useCombinedClickedNodeData(
     nodeDataPromises,
