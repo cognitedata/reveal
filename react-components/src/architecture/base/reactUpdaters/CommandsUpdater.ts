@@ -4,7 +4,7 @@
 
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 
-export class UiUpdater {
+export class CommandsUpdater {
   private static _idleCallbackId: number = -1;
   private static _renderTarget: RevealRenderTarget | undefined = undefined;
 
@@ -24,7 +24,7 @@ export class UiUpdater {
       return;
     }
     // Now, update it
-    this._renderTarget.toolController.update();
+    this._renderTarget.commandsController.update();
     this._idleCallbackId = -1;
     this._renderTarget = undefined;
   };

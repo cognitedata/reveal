@@ -18,7 +18,7 @@ import {
   type WebGLRenderer,
   type Plane
 } from 'three';
-import { ToolControllers } from './ToolController';
+import { CommandsController } from './CommandsController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
 import { getOctDir } from '../utilities/extensions/vectorExtensions';
 import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
@@ -37,7 +37,7 @@ export class RevealRenderTarget {
   // ==================================================
 
   private readonly _viewer: Cognite3DViewer;
-  private readonly _toolController: ToolControllers;
+  private readonly _commandsController: CommandsController;
   private readonly _rootDomainObject: RootDomainObject;
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
@@ -57,8 +57,8 @@ export class RevealRenderTarget {
     if (!isFlexibleCameraManager(cameraManager)) {
       throw new Error('Can not use RevealRenderTarget without the FlexibleCameraManager');
     }
-    this._toolController = new ToolControllers(this.domElement);
-    this._toolController.addEventListeners();
+    this._commandsController = new CommandsController(this.domElement);
+    this._commandsController.addEventListeners();
     this._rootDomainObject = new RootDomainObject(this);
 
     this.initializeLights();
@@ -92,8 +92,8 @@ export class RevealRenderTarget {
     return this._viewer.domElement;
   }
 
-  public get toolController(): ToolControllers {
-    return this._toolController;
+  public get commandsController(): CommandsController {
+    return this._commandsController;
   }
 
   public get cursor(): string {
@@ -137,8 +137,8 @@ export class RevealRenderTarget {
 
     const defaultTool = config.createDefaultTool();
     defaultTool.attach(this);
-    this.toolController.add(defaultTool);
-    this.toolController.setDefaultTool(defaultTool);
+    this.commandsController.add(defaultTool);
+    this.commandsController.setDefaultTool(defaultTool);
 
     const axisGizmoTool = config.createAxisGizmoTool();
     if (axisGizmoTool !== undefined) {
@@ -154,8 +154,8 @@ export class RevealRenderTarget {
     if (this._directionalLight !== undefined) {
       this._viewer.removeObject3D(this._directionalLight);
     }
-    this.toolController.removeEventListeners();
-    this.toolController.dispose();
+    this.commandsController.removeEventListeners();
+    this.commandsController.dispose();
     this._axisGizmoTool?.dispose();
   }
 

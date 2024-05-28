@@ -59,11 +59,11 @@ export const CommandButton = ({ command }: { command: BaseCommand }): ReactEleme
 function getDefaultCommand(newCommand: BaseCommand, renderTarget: RevealRenderTarget): BaseCommand {
   // If it exists from before, return the existing command
   // Otherwise, add the new command to the controller and attach the renderTarget
-  const oldCommand = renderTarget.toolController.getEqual(newCommand);
+  const oldCommand = renderTarget.commandsController.getEqual(newCommand);
   if (oldCommand !== undefined) {
     return oldCommand;
   }
-  renderTarget.toolController.add(newCommand);
+  renderTarget.commandsController.add(newCommand);
   if (newCommand instanceof RenderTargetCommand) {
     newCommand.attach(renderTarget);
   }

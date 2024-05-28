@@ -5,7 +5,7 @@
 import { BaseCommand } from './BaseCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type RootDomainObject } from '../domainObjects/RootDomainObject';
-import { UiUpdater } from '../domainObjectsHelpers/UiUpdater';
+import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 
 /**
  * Represents a base class where the render target is known.
@@ -28,7 +28,7 @@ export abstract class RenderTargetCommand extends BaseCommand {
   public override invoke(): boolean {
     const success = this.invokeCore();
     if (success) {
-      UiUpdater.update(this._renderTarget);
+      CommandsUpdater.update(this._renderTarget);
     }
     return success;
   }

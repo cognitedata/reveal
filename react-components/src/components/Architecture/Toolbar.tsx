@@ -37,7 +37,7 @@ export const ActiveToolToolbar = (): ReactElement => {
   if (renderTarget === undefined) {
     return <></>;
   }
-  const activeTool = renderTarget.toolController.activeTool;
+  const activeTool = renderTarget.commandsController.activeTool;
   if (activeTool === undefined) {
     return <></>;
   }

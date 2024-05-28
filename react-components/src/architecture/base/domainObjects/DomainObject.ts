@@ -18,7 +18,7 @@ import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RootDomainObject } from './RootDomainObject';
-import { UiUpdater } from '../domainObjectsHelpers/UiUpdater';
+import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -255,7 +255,7 @@ export abstract class DomainObject {
       )
     ) {
       if (this.root instanceof RootDomainObject) {
-        UiUpdater.update(this.root.renderTarget);
+        CommandsUpdater.update(this.root.renderTarget);
       }
     }
   }
