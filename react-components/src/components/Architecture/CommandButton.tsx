@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useState, useEffect, useMemo } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { Button, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
@@ -17,9 +17,8 @@ export const CreateButton = (command: BaseCommand): ReactElement => {
 export const CommandButton = ({ command }: { command: BaseCommand }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const [newCommand] = useState<BaseCommand>(getDefaultCommand(command, renderTarget));
+  const newCommand = useMemo<BaseCommand>(() => getDefaultCommand(command, renderTarget), []);
 
-  // These are redundant, but react fore me to add these to update
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
