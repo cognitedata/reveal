@@ -18,7 +18,6 @@ import { type PointCloudAnnotationMappedAssetData } from './types';
 import { MOUSE, Vector2 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../utilities/FdmSDK';
 import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
-import { NavigationTool } from '../architecture/base/commands/NavigationTool';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
