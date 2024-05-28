@@ -1782,7 +1782,6 @@ __metadata:
     locize-cli: "npm:^8.0.1"
     lodash: "npm:^4.17.21"
     moq.ts: "npm:10.0.8"
-    node-on-idle: "npm:^1.0.0"
     playwright: "npm:^1.43.1"
     prettier: "npm:^3.2.5"
     prop-types: "npm:^15.8.1"
@@ -11217,13 +11216,6 @@ __metadata:
   bin:
     node-gyp: bin/node-gyp.js
   checksum: 10/578cf0c821f258ce4b6ebce4461eca4c991a4df2dee163c0624f2fe09c7d6d37240be4942285a0048d307230248ee0b18382d6623b9a0136ce9533486deddfa8
-  languageName: node
-  linkType: hard
-
-"node-on-idle@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "node-on-idle@npm:1.0.0"
-  checksum: 10/c18c17fc869cbc0c815fd47d53aa439acf12f80f0f50b2d7b5bcebe2b0820be4de81f246457e427a8677120df1376fa39d5d0472bfa5d3b04c6d9bebd5d999d2
   languageName: node
   linkType: hard
 
