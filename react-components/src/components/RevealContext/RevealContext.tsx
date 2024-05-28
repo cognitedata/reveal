@@ -104,7 +104,7 @@ const useRevealFromKeepAlive = ({
       const viewer = new Cognite3DViewer({
         ...viewerOptions,
         sdk,
-        hasEventListeners: !viewerOptions?.useFlexibleCameraManager
+        hasEventListeners: !(viewerOptions?.useFlexibleCameraManager ?? false)
       });
       renderTarget = new RevealRenderTarget(viewer);
       if (revealKeepAliveData !== undefined) {
