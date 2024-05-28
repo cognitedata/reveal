@@ -4,6 +4,7 @@
  */
 
 type PopupProps = {
+  horizontal?: boolean;
   left?: number;
   right?: number;
   top?: number;
@@ -13,6 +14,7 @@ type PopupProps = {
 };
 
 export class PopupStyle {
+  private readonly _horizontal: boolean = true;
   private readonly _left?: number = undefined;
   private readonly _right?: number = undefined;
   private readonly _top?: number = undefined;
@@ -21,6 +23,9 @@ export class PopupStyle {
   private readonly _padding: number = 16; // margin inside the popup
 
   public constructor(props: PopupProps) {
+    if (props.horizontal !== undefined) {
+      this._horizontal = props.horizontal;
+    }
     this._left = props.left;
     this._right = props.right;
     this._top = props.top;
@@ -31,6 +36,14 @@ export class PopupStyle {
     if (props.padding !== undefined) {
       this._padding = props.padding;
     }
+  }
+
+  public get flexFlow(): string {
+    return this._horizontal ? 'row' : 'column';
+  }
+
+  public get isDividerHorizontal(): boolean {
+    return !this._horizontal;
   }
 
   public get leftPx(): string {

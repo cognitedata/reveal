@@ -17,6 +17,7 @@ import {
 import { type Image360AnnotationCache } from '../../src/components/CacheProvider/Image360AnnotationCache';
 import { type SceneIdentifiers } from '../../src/components/SceneContainer/sceneTypes';
 import { RevealRenderTarget } from '../../src/architecture/base/renderTarget/RevealRenderTarget';
+import { StoryBookConfig } from '../../src/architecture/concrete/config/StoryBookConfig';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
@@ -51,7 +52,7 @@ export const RevealStoryContext = ({
         useFlexibleCameraManager: true
       });
       const renderTarget = new RevealRenderTarget(newViewer);
-      renderTarget.addAxisGizmo();
+      renderTarget.setConfig(new StoryBookConfig());
       return renderTarget;
     }
   }, [viewer]);

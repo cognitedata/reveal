@@ -17,6 +17,7 @@ import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
+import { RootDomainObject } from './RootDomainObject';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -242,6 +243,22 @@ export abstract class DomainObject {
    */
   protected notifyCore(change: DomainObjectChange): void {
     this.views.notify(this, change);
+
+    // This is a little bit dirty, but will be refacored by using onIdle()
+    if (
+      change.isChanged(
+        Changes.visibleState,
+        Changes.active,
+        Changes.active,
+        Changes.selected,
+        Changes.childAdded,
+        Changes.childDeleted
+      )
+    ) {
+      if (this.root instanceof RootDomainObject) {
+        this.root.renderTarget.toolController.update();
+      }
+    }
   }
 
   // ==================================================
@@ -663,10 +680,12 @@ export abstract class DomainObject {
     return true;
   }
 
-  public removeInteractive(): void {
-    // You may call canBeDeleted() before calling this
+  public removeInteractive(checkCanBeDeleted = true): void {
+    if (checkCanBeDeleted && !this.canBeRemoved) {
+      return;
+    }
     for (const child of this.children) {
-      child.removeInteractive();
+      child.removeInteractive(false); // If parent can be removed, so the children also
     }
     const { parent } = this;
     this.notify(Changes.deleted);

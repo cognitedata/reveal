@@ -23,6 +23,7 @@ export abstract class BaseDragger {
   // ==================================================
 
   protected constructor(props: CreateDraggerProps) {
+    // Note: that yje point and the ray comes in CDF coordinates
     this.point = props.point;
     this.ray = props.ray;
   }
@@ -38,7 +39,7 @@ export abstract class BaseDragger {
   }
 
   // This must be overriden
-  // Notte that the ray comes in CDF coordinates
+  // Note: that the ray comes in CDF coordinates
   public abstract onPointerDrag(_event: PointerEvent, ray: Ray): boolean;
 
   public onPointerUp(_event: PointerEvent): void {

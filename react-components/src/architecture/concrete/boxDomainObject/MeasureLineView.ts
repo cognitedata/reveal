@@ -4,8 +4,12 @@
 
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import {
+  BufferAttribute,
+  BufferGeometry,
   CylinderGeometry,
   FrontSide,
+  Line,
+  LineBasicMaterial,
   Mesh,
   MeshPhongMaterial,
   Quaternion,
@@ -73,7 +77,8 @@ export class MeasureLineView extends GroupThreeView {
   // ==================================================
 
   protected override addChildren(): void {
-    this.addChild(this.createCylinders());
+    this.addChild(this.createPipe());
+    this.addChild(this.createLines()); // Create a line so it can be seen from long distance
     this.addLabels();
   }
 
@@ -91,16 +96,16 @@ export class MeasureLineView extends GroupThreeView {
   // INSTANCE METHODS:
   // ==================================================
 
-  private createCylinders(): Mesh | undefined {
+  private createPipe(): Mesh | undefined {
     const { domainObject, style } = this;
+    const radius = style.pipeRadius;
+    if (radius <= 0) {
+      return;
+    }
     const { points } = domainObject;
     const { length } = points;
     if (length < 2) {
       return undefined;
-    }
-    const radius = style.pipeRadius;
-    if (radius <= 0) {
-      return;
     }
     const geometries: CylinderGeometry[] = [];
     const loopLength = domainObject.measureType === MeasureType.Polygon ? length + 1 : length;
@@ -138,7 +143,29 @@ export class MeasureLineView extends GroupThreeView {
     return new Mesh(mergeGeometries(geometries, false), material);
   }
 
-  private createLines(): Wireframe | undefined {
+  private createWireframe(): Wireframe | undefined {
+    const { domainObject, style } = this;
+    const linewidth = domainObject.isSelected ? style.selectedLineWidth : style.lineWidth;
+    if (linewidth === 0) {
+      return undefined;
+    }
+    const vertices = createVertices(domainObject);
+    if (vertices === undefined) {
+      return undefined;
+    }
+    const color = domainObject.getColorByColorType(style.colorType);
+    const geometry = new LineSegmentsGeometry().setPositions(vertices);
+    const material = new LineMaterial({
+      linewidth,
+      color,
+      resolution: new Vector2(1000, 1000),
+      worldUnits: true,
+      depthTest: style.depthTest
+    });
+    return new Wireframe(geometry, material);
+  }
+
+  private createLines(): Line | undefined {
     const { domainObject, style } = this;
     const vertices = createVertices(domainObject);
     if (vertices === undefined) {
@@ -146,15 +173,20 @@ export class MeasureLineView extends GroupThreeView {
     }
     const color = domainObject.getColorByColorType(style.colorType);
     const linewidth = domainObject.isSelected ? style.selectedLineWidth : style.lineWidth;
-    const geometry = new LineSegmentsGeometry().setPositions(vertices);
-    const material = new LineMaterial({
-      linewidth: linewidth / 50,
+    const geometry = createBufferGeometry(vertices);
+    const material = new LineBasicMaterial({
+      linewidth,
       color,
-      resolution: new Vector2(1000, 1000),
-      worldUnits: true,
       depthTest: style.depthTest
     });
-    return new Wireframe(geometry, material);
+    return new Line(geometry, material);
+
+    function createBufferGeometry(vertices: number[]): BufferGeometry {
+      const verticesArray = new Float32Array(vertices);
+      const geometry = new BufferGeometry();
+      geometry.setAttribute('position', new BufferAttribute(verticesArray, 3));
+      return geometry;
+    }
   }
 
   private addLabels(): void {
