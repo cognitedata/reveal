@@ -11,8 +11,8 @@ export class MeasureLineRenderStyle extends MeasureRenderStyle {
   // INSTANCE FIELDS
   // ==================================================
 
-  public lineWidth = 2;
   public pipeRadius = 0.015;
+  public lineWidth = 1;
   public selectedLineWidth = 2;
 
   // ==================================================

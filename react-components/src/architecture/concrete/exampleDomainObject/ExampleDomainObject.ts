@@ -39,7 +39,7 @@ export class ExampleDomainObject extends VisualDomainObject {
   // ==================================================
 
   public override get canBeRemoved(): boolean {
-    return false;
+    return true;
   }
 
   public override get icon(): string {
