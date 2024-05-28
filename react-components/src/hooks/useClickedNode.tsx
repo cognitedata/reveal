@@ -5,7 +5,7 @@
 import {
   type PointerEventData,
   type Image360AnnotationIntersection,
-  AnyIntersection
+  type AnyIntersection
 } from '@cognite/reveal';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeDataPromises } from '../components/CacheProvider/NodeCacheProvider';

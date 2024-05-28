@@ -14,7 +14,7 @@ import { type TypedReveal3DModel } from '../Reveal3DResources/types';
 import { type ThreeDModelFdmMappings } from '../../hooks/types';
 import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { AnyIntersection } from '@cognite/reveal';
+import { type AnyIntersection } from '@cognite/reveal';
 
 export type FdmNodeCacheContent = {
   cache: FdmNodeCache;

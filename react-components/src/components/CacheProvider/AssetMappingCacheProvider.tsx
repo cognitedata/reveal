@@ -13,15 +13,9 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type CogniteInternalId } from '@cognite/sdk';
 import { useSDK } from '../RevealCanvas/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import {
-  type ModelRevisionId,
-  type ModelId,
-  type RevisionId,
-  type TreeIndex,
-  type ModelRevisionAssetNodesResult
-} from './types';
+import { type ModelRevisionId, type ModelRevisionAssetNodesResult } from './types';
 import { fetchAncestorNodesForTreeIndex } from './requests';
-import { AnyIntersection } from '@cognite/reveal';
+import { type AnyIntersection } from '@cognite/reveal';
 
 export type AssetMappingCacheContent = {
   cache: AssetMappingCache;

@@ -14,7 +14,7 @@ import { type PointCloudAnnotationMappedAssetData } from '../../hooks/types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isDefined } from '../../utilities/isDefined';
 import { type AnnotationId } from './types';
-import { AnyIntersection } from '@cognite/reveal';
+import { type AnyIntersection } from '@cognite/reveal';
 
 export type PointCloudAnnotationCacheContextContent = {
   cache: PointCloudAnnotationCache;
