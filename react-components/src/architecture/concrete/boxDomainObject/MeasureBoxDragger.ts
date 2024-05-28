@@ -83,7 +83,7 @@ export class MeasureBoxDragger extends BaseDragger {
   // OVERRIDES
   // ==================================================
 
-  public get domainObject(): DomainObject {
+  public override get domainObject(): DomainObject {
     return this._domainObject;
   }
 
