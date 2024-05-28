@@ -18,8 +18,6 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { DomainObjectPanel } from '../src/components/Architecture/DomainObjectPanel';
 import { ActiveToolToolbar, MainToolbar } from '../src/components/Architecture/Toolbar';
-import { useRenderTarget } from '../src/components/RevealCanvas/ViewerContext';
-import { StoryBookConfig } from '../src/architecture/concrete/config/StoryBookConfig';
 
 const meta = {
   title: 'Example/Architecture',
@@ -85,7 +83,6 @@ export const Main: Story = {
       <RevealStoryContainer
         color={new Color(0x4a4a4a)}
         viewerOptions={{ useFlexibleCameraManager: true }}>
-        <InitializeConfig />
         <FitToUrlCameraState />
         <CadModelContainer addModelOptions={addModelOptions} />
         <RevealToolbar
@@ -99,17 +96,6 @@ export const Main: Story = {
       </RevealStoryContainer>
     );
   }
-};
-
-export const InitializeConfig = (): ReactElement => {
-  const renderTarget = useRenderTarget();
-  if (renderTarget === undefined) {
-    return <></>;
-  }
-  if (renderTarget.config === undefined) {
-    renderTarget.setConfig(new StoryBookConfig());
-  }
-  return <></>;
 };
 
 function FitToUrlCameraState(): ReactElement {
