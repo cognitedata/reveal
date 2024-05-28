@@ -37,6 +37,14 @@ export class ToolControllers extends PointerEvents {
     return this._activeTool;
   }
 
+  public get defaultTool(): BaseTool | undefined {
+    return this._defaultTool;
+  }
+
+  public get isDefaultToolActive(): boolean {
+    return this.activeTool === this.defaultTool;
+  }
+
   // ================================================
   // OVERRIDES of PointerEvents
   // ================================================

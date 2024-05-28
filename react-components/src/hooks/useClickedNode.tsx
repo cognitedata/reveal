@@ -51,10 +51,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async () => {
-        const navigationTool = renderTarget.toolController.getEqual(new NavigationTool());
-        const isNavigationActive = renderTarget.toolController.activeTool === navigationTool;
-
-        if (event.button !== MOUSE.LEFT || !isNavigationActive) {
+        if (event.button !== MOUSE.LEFT || !renderTarget.toolController.isDefaultToolActive) {
           return;
         }
 
