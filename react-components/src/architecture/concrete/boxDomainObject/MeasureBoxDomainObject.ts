@@ -19,12 +19,15 @@ import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type CreateDraggerProps } from '../../base/domainObjects/VisualDomainObject';
 import { Range3 } from '../../base/utilities/geometry/Range3';
+import { RootDomainObject } from '../../base/domainObjects/RootDomainObject';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 
 export const MIN_BOX_SIZE = 0.01;
 
 export class MeasureBoxDomainObject extends MeasureDomainObject {
   // ==================================================
-  // INSTANCE FIELDS (This implements the IBox interface)
+  // INSTANCE FIELDS
   // ==================================================
 
   public readonly size = new Vector3().setScalar(MIN_BOX_SIZE);
@@ -65,6 +68,24 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
       return undefined; // If the BoxPickInfo isn't specified, no dragger iscreated
     }
     return new MeasureBoxDragger(props, this);
+  }
+
+  protected override notifyCore(change: DomainObjectChange): void {
+    super.notifyCore(change);
+
+    if (this.isUseAsCropBox) {
+      if (change.isChanged(Changes.deleted)) {
+        this.setUseAsCropBox(false);
+      }
+      if (change.isChanged(Changes.geometry)) {
+        this.setUseAsCropBox(true);
+      }
+    } else if (change.isChanged(Changes.selected) && this.isSelected) {
+      const root = this.root as RootDomainObject;
+      if (root instanceof RootDomainObject && root.renderTarget.isGlobalCropBoxActive) {
+        this.setUseAsCropBox(true);
+      }
+    }
   }
 
   public override getPanelInfo(): PanelInfo | undefined {
@@ -223,6 +244,31 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
     }
     this.notify(Changes.focus);
     return true;
+  }
+
+  public get isUseAsCropBox(): boolean {
+    const root = this.root as RootDomainObject;
+    if (!(root instanceof RootDomainObject)) {
+      return false;
+    }
+    return root.renderTarget.isGlobalCropBox(this);
+  }
+
+  public setUseAsCropBox(use: boolean): void {
+    const root = this.root as RootDomainObject;
+    if (!(root instanceof RootDomainObject)) {
+      return;
+    }
+    if (!use) {
+      root.renderTarget.clearGlobalCropBox();
+    } else {
+      const boundingBox = this.getBoundingBox();
+      boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      const matrix = this.getMatrix();
+      matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+      const planes = BoxFace.createClippingPlanes(matrix);
+      root.renderTarget.setGlobalCropBox(planes, boundingBox, this);
+    }
   }
 }
 

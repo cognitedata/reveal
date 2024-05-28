@@ -18,6 +18,7 @@ import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RootDomainObject } from './RootDomainObject';
+import { UiUpdater } from '../domainObjectsHelpers/UiUpdater';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -244,11 +245,9 @@ export abstract class DomainObject {
   protected notifyCore(change: DomainObjectChange): void {
     this.views.notify(this, change);
 
-    // This is a little bit dirty, but will be refacored by using onIdle()
     if (
       change.isChanged(
         Changes.visibleState,
-        Changes.active,
         Changes.active,
         Changes.selected,
         Changes.childAdded,
@@ -256,7 +255,7 @@ export abstract class DomainObject {
       )
     ) {
       if (this.root instanceof RootDomainObject) {
-        this.root.renderTarget.toolController.update();
+        UiUpdater.update(this.root.renderTarget);
       }
     }
   }
