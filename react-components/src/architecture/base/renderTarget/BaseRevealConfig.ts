@@ -8,7 +8,7 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { NavigationTool } from '../commands/NavigationTool';
 import { type BaseTool } from '../commands/BaseTool';
 
-export class BaseRevealConfig {
+export abstract class BaseRevealConfig {
   // ==================================================
   // VIRTUAL METHODS: Override these to config the viewer
   // ==================================================
