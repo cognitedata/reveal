@@ -9,7 +9,6 @@ import {
   type Cognite3DViewer,
   type IFlexibleCameraManager
 } from '@cognite/reveal';
-import { NavigationTool } from '../commands/NavigationTool';
 import {
   Vector3,
   AmbientLight,
@@ -26,7 +25,8 @@ import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 import { ThreeView } from '../views/ThreeView';
 import { type DomainObject } from '../domainObjects/DomainObject';
-import { AxisGizmoTool } from '@cognite/reveal/tools';
+import { type AxisGizmoTool } from '@cognite/reveal/tools';
+import { type BaseRevealConfig } from './BaseRevealConfig';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -43,6 +43,7 @@ export class RevealRenderTarget {
   private _cropBoxBoundingBox: Box3 | undefined;
   private _cropBoxName: string | undefined = undefined;
   private _axisGizmoTool: AxisGizmoTool | undefined;
+  private _config: BaseRevealConfig | undefined = undefined;
 
   // ==================================================
   // CONTRUCTORS
@@ -62,11 +63,6 @@ export class RevealRenderTarget {
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
     this._viewer.on('beforeSceneRendered', this.beforeSceneRenderedHandler);
-
-    const navigationTool = new NavigationTool();
-    navigationTool.attach(this);
-    this.toolController.add(navigationTool);
-    this.toolController.setDefaultTool(navigationTool);
   }
 
   // ==================================================
@@ -75,6 +71,10 @@ export class RevealRenderTarget {
 
   public get viewer(): Cognite3DViewer {
     return this._viewer;
+  }
+
+  public get config(): BaseRevealConfig | undefined {
+    return this._config;
   }
 
   public get rootDomainObject(): RootDomainObject {
@@ -129,9 +129,19 @@ export class RevealRenderTarget {
   // INSTANCE METHODS
   // ==================================================
 
-  public addAxisGizmo(): void {
-    this._axisGizmoTool = new AxisGizmoTool();
-    this._axisGizmoTool.connect(this._viewer);
+  public setConfig(config: BaseRevealConfig): void {
+    this._config = config;
+
+    const defaultTool = config.createDefaultTool();
+    defaultTool.attach(this);
+    this.toolController.add(defaultTool);
+    this.toolController.setDefaultTool(defaultTool);
+
+    const axisGizmoTool = config.createAxisGizmoTool();
+    if (axisGizmoTool !== undefined) {
+      axisGizmoTool.connect(this._viewer);
+      this._axisGizmoTool = axisGizmoTool;
+    }
   }
 
   public dispose(): void {

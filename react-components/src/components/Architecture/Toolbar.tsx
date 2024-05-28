@@ -9,8 +9,27 @@ import { CommandButton } from './CommandButton';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { ActiveToolUpdater } from '../../architecture/base/reactUpdaters/ActiveToolUpdater';
+import { type PopupStyle } from '../../architecture/base/domainObjectsHelpers/PopupStyle';
+
+export const MainToolbar = (): ReactElement => {
+  const renderTarget = useRenderTarget();
+  if (renderTarget === undefined) {
+    return <></>;
+  }
+  const config = renderTarget.config;
+  if (config === undefined) {
+    return <></>;
+  }
+  const commands = config.createMainToolbar();
+  if (commands.length === 0) {
+    return <></>;
+  }
+  const style = config.createMainToolbarStyle();
+  return CreateToolToolbar(commands, style);
+};
 
 export const ActiveToolToolbar = (): ReactElement => {
+  //
   const [_activeToolUpdater, setActiveToolUpdater] = useState<number>(0);
   ActiveToolUpdater.setCounterDelegate(setActiveToolUpdater);
 
@@ -23,10 +42,21 @@ export const ActiveToolToolbar = (): ReactElement => {
     return <></>;
   }
   const commands = activeTool.getToolbar();
-  if (commands === undefined || commands.length === 0) {
+  if (commands.length === 0) {
     return <></>;
   }
   const style = activeTool.getToolbarStyle();
+  return CreateToolToolbar(commands, style);
+};
+
+const CreateToolToolbar = (
+  commands: Array<BaseCommand | undefined>,
+  style: PopupStyle
+): ReactElement => {
+  //
+  if (commands.length === 0 || style === null) {
+    return <></>;
+  }
   return (
     <Container
       style={{
@@ -37,16 +67,25 @@ export const ActiveToolToolbar = (): ReactElement => {
         margin: style.marginPx
         // Padding is not used here
       }}>
-      <MyCustomToolbar>
-        <>{commands.map((command, index): ReactElement => addCommand(command, index))}</>
+      <MyCustomToolbar
+        style={{
+          flexFlow: style.flexFlow
+          // Padding is not used here
+        }}>
+        <>{commands.map((command, index): ReactElement => addCommand(command, style, index))}</>
       </MyCustomToolbar>
     </Container>
   );
 };
 
-function addCommand(command: BaseCommand | undefined, index: number): ReactElement {
+function addCommand(
+  command: BaseCommand | undefined,
+  style: PopupStyle,
+  index: number
+): ReactElement {
   if (command === undefined) {
-    return <Divider key={index} weight="2px" length="75%" direction="vertical" />;
+    const direction = style.isDividerHorizontal ? 'horizontal' : 'vertical';
+    return <Divider key={index} weight="2px" length="75%" direction={direction} />;
   }
   return <CommandButton command={command} key={index} />;
 }
@@ -57,6 +96,4 @@ const Container = styled.div`
   display: block;
 `;
 
-const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
-  flex-direction: row;
-`;
+const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))``;

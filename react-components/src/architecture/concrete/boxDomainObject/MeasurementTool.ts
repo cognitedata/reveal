@@ -43,17 +43,17 @@ export class MeasurementTool extends BaseEditTool {
     return { key: 'MEASUREMENTS', fallback: 'Measurements' };
   }
 
-  public override getToolbar(): Array<BaseCommand | undefined> | undefined {
-    const result = new Array<BaseCommand | undefined>();
-    result.push(new SetMeasurmentTypeCommand(MeasureType.Line));
-    result.push(new SetMeasurmentTypeCommand(MeasureType.Polyline));
-    result.push(new SetMeasurmentTypeCommand(MeasureType.Polygon));
-    result.push(new SetMeasurmentTypeCommand(MeasureType.HorizontalArea));
-    result.push(new SetMeasurmentTypeCommand(MeasureType.VerticalArea));
-    result.push(new SetMeasurmentTypeCommand(MeasureType.Volume));
-    result.push(undefined); // Means separator
-    result.push(new ShowMeasurmentsOnTopCommand());
-    return result;
+  public override getToolbar(): Array<BaseCommand | undefined> {
+    return [
+      new SetMeasurmentTypeCommand(MeasureType.Line),
+      new SetMeasurmentTypeCommand(MeasureType.Polyline),
+      new SetMeasurmentTypeCommand(MeasureType.Polygon),
+      new SetMeasurmentTypeCommand(MeasureType.HorizontalArea),
+      new SetMeasurmentTypeCommand(MeasureType.VerticalArea),
+      new SetMeasurmentTypeCommand(MeasureType.Volume),
+      undefined, // Separator
+      new ShowMeasurmentsOnTopCommand()
+    ];
   }
 
   public override getToolbarStyle(): PopupStyle {
@@ -188,7 +188,6 @@ export class MeasurementTool extends BaseEditTool {
     if (measurment !== undefined) {
       this.deselectAll(measurment);
       measurment.setSelectedInteractive(true);
-      this.renderTarget.toolController.update();
       return;
     }
     const ray = this.getRay(event);
@@ -205,7 +204,6 @@ export class MeasurementTool extends BaseEditTool {
         rootDomainObject.addChildInteractive(domainObject);
         domainObject.setSelectedInteractive(true);
         domainObject.setVisibleInteractive(true, renderTarget);
-        this.renderTarget.toolController.update();
       }
     } else {
       if (creator.addPoint(ray, intersection)) {

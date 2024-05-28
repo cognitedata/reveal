@@ -3,23 +3,21 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { MeasureRenderStyle } from './MeasureRenderStyle';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 
-export class MeasureLineRenderStyle extends MeasureRenderStyle {
+export class ExampleRenderStyle extends RenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public lineWidth = 2;
-  public pipeRadius = 0.015;
-  public selectedLineWidth = 2;
+  public radius = 1;
+  public opacity = 0.5;
 
   // ==================================================
   // OVERRIDES of BaseStyle
   // ==================================================
 
   public override clone(): RenderStyle {
-    return cloneDeep<MeasureLineRenderStyle>(this);
+    return cloneDeep<ExampleRenderStyle>(this);
   }
 }

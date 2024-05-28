@@ -7,21 +7,19 @@ import {
   CadModelContainer,
   type QualitySettings,
   RevealToolbar,
-  withSuppressRevealEvents,
-  withCameraStateUrlParam,
   useGetCameraStateFromUrlParam,
   useCameraNavigation
 } from '../src';
 import { Color } from 'three';
-import styled from 'styled-components';
-import { Button, Menu, ToolBar } from '@cognite/cogs.js';
+import { Button, Menu } from '@cognite/cogs.js';
 import { type ReactElement, useState, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
-import { RevealButtons } from '../src/components/Architecture/ToolButtons';
 import { DomainObjectPanel } from '../src/components/Architecture/DomainObjectPanel';
-import { ActiveToolToolbar } from '../src/components/Architecture/ActiveToolToolbar';
+import { ActiveToolToolbar, MainToolbar } from '../src/components/Architecture/Toolbar';
+import { useRenderTarget } from '../src/components/RevealCanvas/ViewerContext';
+import { StoryBookConfig } from '../src/architecture/concrete/config/StoryBookConfig';
 
 const meta = {
   title: 'Example/Architecture',
@@ -31,12 +29,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(ToolBar)))`
-  position: absolute;
-  right: 20px;
-  top: 70px;
-`;
 
 const exampleCustomSettingElements = (): ReactElement => {
   const [originalCadColor, setOriginalCadColor] = useState(false);
@@ -86,13 +78,14 @@ const exampleLowQualitySettings: QualitySettings = {
 
 export const Main: Story = {
   args: {
-    addModelOptions: getAddModelOptionsFromUrl('/primitives')
+    addModelOptions: getAddModelOptionsFromUrl('/cadModel')
   },
   render: ({ addModelOptions }) => {
     return (
       <RevealStoryContainer
         color={new Color(0x4a4a4a)}
         viewerOptions={{ useFlexibleCameraManager: true }}>
+        <InitializeConfig />
         <FitToUrlCameraState />
         <CadModelContainer addModelOptions={addModelOptions} />
         <RevealToolbar
@@ -100,29 +93,23 @@ export const Main: Story = {
           lowFidelitySettings={exampleLowQualitySettings}
           highFidelitySettings={exampleHighQualitySettings}
         />
-        <MyCustomToolbar>
-          <>
-            <RevealButtons.SetFlexibleControlsTypeOrbit />
-            <RevealButtons.SetFlexibleControlsTypeFirstPerson />
-          </>
-          <>
-            <RevealButtons.FitView />
-            <RevealButtons.SetAxisVisible />
-          </>
-          <>
-            <RevealButtons.SetTerrainVisible />
-            <RevealButtons.UpdateTerrain />
-          </>
-          <>
-            <RevealButtons.Measurement />
-          </>
-        </MyCustomToolbar>
-
-        <DomainObjectPanel />
+        <MainToolbar />
         <ActiveToolToolbar />
+        <DomainObjectPanel />
       </RevealStoryContainer>
     );
   }
+};
+
+export const InitializeConfig = (): ReactElement => {
+  const renderTarget = useRenderTarget();
+  if (renderTarget === undefined) {
+    return <></>;
+  }
+  if (renderTarget.config === undefined) {
+    renderTarget.setConfig(new StoryBookConfig());
+  }
+  return <></>;
 };
 
 function FitToUrlCameraState(): ReactElement {

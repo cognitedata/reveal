@@ -12,6 +12,7 @@ import { FitViewCommand } from '../../architecture/base/concreteCommands/FitView
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
+import { ExampleTool } from '../../architecture/concrete/exampleDomainObject/ExampleTool';
 
 export class RevealButtons {
   static FitView = (): ReactElement => CreateButton(new FitViewCommand());
@@ -20,6 +21,7 @@ export class RevealButtons {
   static SetTerrainVisible = (): ReactElement => CreateButton(new SetTerrainVisibleCommand());
   static UpdateTerrain = (): ReactElement => CreateButton(new UpdateTerrainCommand());
   static Measurement = (): ReactElement => CreateButton(new MeasurementTool());
+  static Example = (): ReactElement => CreateButton(new ExampleTool());
 
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
     CreateButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));
