@@ -1563,15 +1563,17 @@ export class Cognite3DViewer {
   /**
    * Raycasting model(s) for finding where the ray intersects with all models, including custom objects.
    * @param pixelCoords Pixel coordinate in pixels (relative to the domElement).
+   * @param options
+   * @param options.stopOnHitting360Icon
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @beta
    */
   public async getAnyIntersectionFromPixel(
     pixelCoords: THREE.Vector2,
-    options?: { breakOnHitting360Icon?: boolean }
+    options?: { stopOnHitting360Icon?: boolean }
   ): Promise<AnyIntersection | undefined> {
-    if ((options?.breakOnHitting360Icon ?? true) && this.isIntersecting360Icon(pixelCoords)) {
+    if ((options?.stopOnHitting360Icon ?? true) && this.isIntersecting360Icon(pixelCoords)) {
       return undefined;
     }
 
