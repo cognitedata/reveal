@@ -73,19 +73,20 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
-    if (this.isUseAsCropBox) {
-      if (change.isChanged(Changes.deleted)) {
-        this.setUseAsCropBox(false);
-      }
-      if (change.isChanged(Changes.geometry)) {
-        this.setUseAsCropBox(true);
-      }
-    } else if (change.isChanged(Changes.selected) && this.isSelected) {
-      const root = this.root as RootDomainObject;
-      if (root instanceof RootDomainObject && root.renderTarget.isGlobalCropBoxActive) {
-        this.setUseAsCropBox(true);
-      }
-    }
+    // Experimental code for crop box (let it stay here)
+    // if (this.isUseAsCropBox) {
+    //   if (change.isChanged(Changes.deleted)) {
+    //     this.setUseAsCropBox(false);
+    //   }
+    //   if (change.isChanged(Changes.geometry)) {
+    //     this.setUseAsCropBox(true);
+    //   }
+    // } else if (change.isChanged(Changes.selected) && this.isSelected) {
+    //   const root = this.root as RootDomainObject;
+    //   if (root instanceof RootDomainObject && root.renderTarget.isGlobalCropBoxActive) {
+    //     this.setUseAsCropBox(true);
+    //   }
+    // }
   }
 
   public override getPanelInfo(): PanelInfo | undefined {

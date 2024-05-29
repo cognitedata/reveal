@@ -8,6 +8,8 @@ import { type Tooltip } from '../../base/commands/BaseCommand';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
 import { MeasureType } from './MeasureType';
 
+// Experimental code for crop box
+
 export class SetCropBoxCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
