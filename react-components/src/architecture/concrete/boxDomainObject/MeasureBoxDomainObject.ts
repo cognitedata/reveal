@@ -65,7 +65,7 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
     const pickInfo = props.intersection.userData as BoxPickInfo;
     if (pickInfo === undefined) {
-      return undefined; // If the BoxPickInfo isn't specified, no dragger iscreated
+      return undefined; // If the BoxPickInfo isn't specified, no dragger is created
     }
     return new MeasureBoxDragger(props, this);
   }

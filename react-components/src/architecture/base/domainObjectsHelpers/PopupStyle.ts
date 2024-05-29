@@ -20,7 +20,7 @@ export class PopupStyle {
   private readonly _top?: number = undefined;
   private readonly _bottom?: number = undefined;
   private readonly _margin: number = 16; // margin ouside the popup
-  private readonly _padding: number = 16; // margin inside the popup
+  private readonly _padding: number = 8; // margin inside the popup
 
   public constructor(props: PopupProps) {
     if (props.horizontal !== undefined) {

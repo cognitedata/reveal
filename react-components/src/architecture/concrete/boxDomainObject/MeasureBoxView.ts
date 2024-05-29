@@ -79,15 +79,7 @@ export class MeasureBoxView extends GroupThreeView {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (this.isEmpty) {
-      return;
-    }
-    if (
-      change.isChanged(Changes.focus) ||
-      change.isChanged(Changes.selected) ||
-      change.isChanged(Changes.renderStyle) ||
-      change.isChanged(Changes.color)
-    ) {
+    if (change.isChanged(Changes.selected, Changes.focus, Changes.renderStyle, Changes.color)) {
       this.removeChildren();
       this.invalidateBoundingBox();
       this.invalidateRenderTarget();

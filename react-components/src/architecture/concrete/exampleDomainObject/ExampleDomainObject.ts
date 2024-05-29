@@ -35,16 +35,16 @@ export class ExampleDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get canBeRemoved(): boolean {
-    return true;
-  }
-
   public override get icon(): string {
     return 'Circle';
   }
 
   public override get typeName(): string {
     return 'Example';
+  }
+
+  public override get canBeRemoved(): boolean {
+    return true;
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

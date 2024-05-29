@@ -113,7 +113,7 @@ export abstract class BaseEditTool extends NavigationTool {
   // INSTANCE METHODS
   // ==================================================
 
-  protected deselectAll(except?: DomainObject | undefined): void {
+  protected deselectAll(except?: VisualDomainObject | undefined): void {
     const { rootDomainObject } = this;
     for (const domainObject of rootDomainObject.getDescendants()) {
       if (!this.canBeSelected(domainObject)) {

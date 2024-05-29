@@ -6,7 +6,6 @@ import { type Ray, Vector3, Plane, Matrix4 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../../base/utilities/box/BoxFace';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { forceBetween0AndPi } from '../../base/utilities/extensions/mathExtensions';
 import { horizontalAngle } from '../../base/utilities/extensions/vectorExtensions';
@@ -15,7 +14,10 @@ import { MeasureType } from './MeasureType';
 import { getClosestPointOnLine } from '../../base/utilities/extensions/rayExtensions';
 import { type MeasureBoxDomainObject } from './MeasureBoxDomainObject';
 import { BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
-import { type CreateDraggerProps } from '../../base/domainObjects/VisualDomainObject';
+import {
+  type VisualDomainObject,
+  type CreateDraggerProps
+} from '../../base/domainObjects/VisualDomainObject';
 
 /**
  * The `BoxDragger` class represents a utility for dragging and manipulating a box in a 3D space.
@@ -83,7 +85,7 @@ export class MeasureBoxDragger extends BaseDragger {
   // OVERRIDES
   // ==================================================
 
-  public override get domainObject(): DomainObject {
+  public override get domainObject(): VisualDomainObject {
     return this._domainObject;
   }
 

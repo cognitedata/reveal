@@ -76,7 +76,7 @@ const exampleLowQualitySettings: QualitySettings = {
 
 export const Main: Story = {
   args: {
-    addModelOptions: getAddModelOptionsFromUrl('/cadModel')
+    addModelOptions: getAddModelOptionsFromUrl('/primitives') //cadModel
   },
   render: ({ addModelOptions }) => {
     return (

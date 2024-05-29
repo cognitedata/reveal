@@ -48,6 +48,7 @@ export class ExampleTool extends BaseEditTool {
       return;
     }
     if (event.ctrlKey) {
+      // Change opacity
       const delta = Math.sign(event.deltaY) * 0.05;
       domainObject.renderStyle.opacity = clamp(domainObject.renderStyle.opacity + delta, 0.2, 1);
       domainObject.notify(Changes.renderStyle);
@@ -61,7 +62,7 @@ export class ExampleTool extends BaseEditTool {
 
   public override async onHover(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
-
+    // Just set the cursor
     if (this.getIntersectedDomainObject(intersection) !== undefined) {
       this.renderTarget.setMoveCursor();
     } else if (intersection !== undefined) {
@@ -72,8 +73,6 @@ export class ExampleTool extends BaseEditTool {
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    const { renderTarget, rootDomainObject } = this;
-
     const intersection = await this.getIntersection(event);
     if (intersection === undefined) {
       await super.onClick(event);
@@ -95,8 +94,8 @@ export class ExampleTool extends BaseEditTool {
     domainObject.center.copy(center);
 
     this.deselectAll();
-    rootDomainObject.addChildInteractive(domainObject);
-    domainObject.setVisibleInteractive(true, renderTarget);
+    this.rootDomainObject.addChildInteractive(domainObject);
+    domainObject.setVisibleInteractive(true, this.renderTarget);
     domainObject.setSelectedInteractive(true);
   }
 
