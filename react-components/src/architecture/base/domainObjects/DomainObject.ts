@@ -228,7 +228,7 @@ export abstract class DomainObject {
     return true; // to be overridden
   }
 
-  public canBeChecked(_target: RevealRenderTarget): boolean {
+  public canBeSetVisibleNow(_target: RevealRenderTarget): boolean {
     return true; // to be overridden
   }
 
@@ -348,7 +348,10 @@ export abstract class DomainObject {
       numCandidates++;
       if (childState === VisibleState.All) {
         numAll++;
-      } else if (childState === VisibleState.None || childState === VisibleState.CanNotBeChecked) {
+      } else if (
+        childState === VisibleState.None ||
+        childState === VisibleState.CanNotBeVisibleNow
+      ) {
         numNone++;
       }
       if (numNone < numCandidates && numCandidates < numAll) {
@@ -362,7 +365,9 @@ export abstract class DomainObject {
       return VisibleState.All;
     }
     if (numCandidates === numNone) {
-      return this.canBeChecked(renderTarget) ? VisibleState.None : VisibleState.CanNotBeChecked;
+      return this.canBeSetVisibleNow(renderTarget)
+        ? VisibleState.None
+        : VisibleState.CanNotBeVisibleNow;
     }
     return VisibleState.Some;
   }
@@ -376,7 +381,7 @@ export abstract class DomainObject {
     if (visibleState === VisibleState.Disabled) {
       return false;
     }
-    if (visibleState === VisibleState.None && !this.canBeChecked(renderTarget)) {
+    if (visibleState === VisibleState.None && !this.canBeSetVisibleNow(renderTarget)) {
       return false;
     }
     let hasChanged = false;

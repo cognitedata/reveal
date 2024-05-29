@@ -25,10 +25,10 @@ export abstract class VisualDomainObject extends DomainObject {
       return VisibleState.All;
     }
     if (this.canCreateThreeView()) {
-      if (this.canBeChecked(renderTarget)) {
+      if (this.canBeSetVisibleNow(renderTarget)) {
         return VisibleState.None;
       }
-      return VisibleState.CanNotBeChecked;
+      return VisibleState.CanNotBeVisibleNow;
     }
     return VisibleState.Disabled;
   }
@@ -38,7 +38,7 @@ export abstract class VisualDomainObject extends DomainObject {
     renderTarget: RevealRenderTarget,
     topLevel = true
   ): boolean {
-    if (visible && !this.canBeChecked(renderTarget)) {
+    if (visible && !this.canBeSetVisibleNow(renderTarget)) {
       return false;
     }
     if (!this.setVisible(visible, renderTarget)) {
