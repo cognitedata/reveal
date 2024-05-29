@@ -3,9 +3,8 @@
  */
 
 import { ExampleDomainObject } from './ExampleDomainObject';
-import { CDF_TO_VIEWER_TRANSFORMATION, type AnyIntersection } from '@cognite/reveal';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type BaseCommand, type Tooltip } from '../../base/commands/BaseCommand';
-import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ResetAllExamplesCommand } from './commands/ResetAllExamplesCommand';
@@ -30,11 +29,6 @@ export class ExampleTool extends BaseEditTool {
   // OVERRIDES of BaseTool
   // ==================================================
 
-  public override onDeactivate(): void {
-    super.onDeactivate();
-    this.deselectAll();
-  }
-
   public override onKey(event: KeyboardEvent, down: boolean): void {
     if (down && event.key === 'Delete') {
       const domainObject = this.rootDomainObject.getSelectedDescendantByType(ExampleDomainObject);
@@ -48,7 +42,7 @@ export class ExampleTool extends BaseEditTool {
 
   public override async onWheel(event: WheelEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
-    const domainObject = this.getExampleDomainObject(intersection);
+    const domainObject = this.getIntersectedDomainObject(intersection) as ExampleDomainObject;
     if (domainObject === undefined || !domainObject.isSelected) {
       await super.onWheel(event);
       return;
@@ -67,9 +61,8 @@ export class ExampleTool extends BaseEditTool {
 
   public override async onHover(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
-    const domainObject = this.getExampleDomainObject(intersection);
 
-    if (domainObject instanceof ExampleDomainObject) {
+    if (this.getIntersectedDomainObject(intersection) !== undefined) {
       this.renderTarget.setMoveCursor();
     } else if (intersection !== undefined) {
       this.renderTarget.setCrosshairCursor();
@@ -87,7 +80,7 @@ export class ExampleTool extends BaseEditTool {
       return;
     }
     {
-      const domainObject = this.getExampleDomainObject(intersection);
+      const domainObject = this.getIntersectedDomainObject(intersection);
       if (domainObject !== undefined) {
         this.deselectAll(domainObject);
         domainObject.setSelectedInteractive(true);
@@ -119,24 +112,7 @@ export class ExampleTool extends BaseEditTool {
   // OVERRIDES of BaseEditTool
   // ==================================================
 
-  protected override accept(domainObject: DomainObject): boolean {
+  protected override canBeSelected(domainObject: DomainObject): boolean {
     return domainObject instanceof ExampleDomainObject;
-  }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  private getExampleDomainObject(
-    intersection: AnyIntersection | undefined
-  ): ExampleDomainObject | undefined {
-    if (!isDomainObjectIntersection(intersection)) {
-      return undefined;
-    }
-    if (intersection.domainObject instanceof ExampleDomainObject) {
-      return intersection.domainObject;
-    } else {
-      return undefined;
-    }
   }
 }

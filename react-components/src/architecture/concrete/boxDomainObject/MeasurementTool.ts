@@ -72,9 +72,8 @@ export class MeasurementTool extends BaseEditTool {
 
   public override onDeactivate(): void {
     this.handleEscape();
-    super.onDeactivate();
     this.setAllMeasurementsVisible(false);
-    this.deselectAll();
+    super.onDeactivate();
   }
 
   public override clearDragging(): void {
@@ -228,7 +227,7 @@ export class MeasurementTool extends BaseEditTool {
   // OVERRIDES of BaseEditTool
   // ==================================================
 
-  protected override accept(domainObject: DomainObject): boolean {
+  protected override canBeSelected(domainObject: DomainObject): boolean {
     return domainObject instanceof MeasureDomainObject;
   }
 

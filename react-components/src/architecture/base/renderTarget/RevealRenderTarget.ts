@@ -28,6 +28,7 @@ import { type DomainObject } from '../domainObjects/DomainObject';
 import { type AxisGizmoTool } from '@cognite/reveal/tools';
 import { type BaseRevealConfig } from './BaseRevealConfig';
 import { DefaultRevealConfig } from './DefaultRevealConfig';
+import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -148,6 +149,7 @@ export class RevealRenderTarget {
   }
 
   public dispose(): void {
+    this._viewer.dispose();
     if (this._ambientLight !== undefined) {
       this._viewer.removeObject3D(this._ambientLight);
     }
@@ -157,6 +159,7 @@ export class RevealRenderTarget {
     this.commandsController.removeEventListeners();
     this.commandsController.dispose();
     this._axisGizmoTool?.dispose();
+    CommandsUpdater.dispose();
   }
 
   public invalidate(): void {

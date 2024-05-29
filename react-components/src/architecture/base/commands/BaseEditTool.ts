@@ -6,8 +6,8 @@ import { NavigationTool } from './NavigationTool';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { isDomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
-import { type VisualDomainObject } from '../domainObjects/VisualDomainObject';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
+import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 /**
  * The `BaseEditTool` class is an abstract class that extends the `NavigationTool` class.
@@ -65,11 +65,22 @@ export abstract class BaseEditTool extends NavigationTool {
     }
   }
 
+  public override onDeactivate(): void {
+    super.onDeactivate();
+    this.deselectAll();
+  }
+
   // ==================================================
   // VIRTUAL METHODS
   // ==================================================
 
-  protected accept(_domainObject: DomainObject): boolean {
+  /**
+   * Determines whether the specified domain object can be selected or dragged by this edit tool.
+   *
+   * @param _domainObject - The domain object to be accepted.
+   * @returns `true` if the domain object can be accepted, `false` otherwise.
+   */
+  protected canBeSelected(_domainObject: DomainObject): boolean {
     return false;
   }
 
@@ -86,11 +97,8 @@ export abstract class BaseEditTool extends NavigationTool {
     if (!isDomainObjectIntersection(intersection)) {
       return undefined;
     }
-    const domainObject = intersection.domainObject as VisualDomainObject;
+    const domainObject = this.getIntersectedDomainObject(intersection);
     if (domainObject === undefined) {
-      return undefined;
-    }
-    if (!this.accept(domainObject)) {
       return undefined;
     }
     const ray = this.getRay(event);
@@ -108,13 +116,28 @@ export abstract class BaseEditTool extends NavigationTool {
   protected deselectAll(except?: DomainObject | undefined): void {
     const { rootDomainObject } = this;
     for (const domainObject of rootDomainObject.getDescendants()) {
-      if (!this.accept(domainObject)) {
+      if (!this.canBeSelected(domainObject)) {
         continue;
       }
       if (except !== undefined && domainObject === except) {
         continue;
       }
       domainObject.setSelectedInteractive(false);
+    }
+  }
+
+  protected getIntersectedDomainObject(
+    intersection: AnyIntersection | undefined
+  ): VisualDomainObject | undefined {
+    if (!isDomainObjectIntersection(intersection)) {
+      return undefined;
+    }
+    if (!this.canBeSelected(intersection.domainObject)) {
+      return undefined;
+    } else if (intersection.domainObject instanceof VisualDomainObject) {
+      return intersection.domainObject;
+    } else {
+      return undefined;
     }
   }
 }

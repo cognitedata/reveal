@@ -4,6 +4,16 @@
 
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 
+// By calling update(), it forces the updating of all the command and tools to be done only once for
+// each user interaction, since it is done the first time the systems goes into onIdle state.
+// It is only updating the commands and tools you see in the toolbars.
+
+// The update() will typically be called when click a button, delete or add an object,
+// set object selected or visible. This will be done by the framework itself, but it may
+// be cases where you have to do it manually. Then call:
+//
+//   CommandsUpdater.update(renderTarget);
+
 export class CommandsUpdater {
   private static _idleCallbackId: number = -1;
   private static _renderTarget: RevealRenderTarget | undefined = undefined;
@@ -19,7 +29,14 @@ export class CommandsUpdater {
     this._renderTarget = renderTarget;
   }
 
-  public static onIdle = (): void => {
+  public static dispose(): void {
+    if (this._idleCallbackId < 0) {
+      return;
+    }
+    window.cancelIdleCallback(this._idleCallbackId);
+  }
+
+  private static readonly onIdle = (): void => {
     if (this._renderTarget === undefined) {
       return;
     }
