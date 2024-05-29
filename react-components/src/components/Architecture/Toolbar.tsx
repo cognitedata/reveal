@@ -81,8 +81,8 @@ function addCommand(
   index: number
 ): ReactElement {
   if (command === undefined) {
-    const direction = style.isDividerHorizontal ? 'horizontal' : 'vertical';
-    return <Divider key={index} weight="2px" length="75%" direction={direction} />;
+    const direction = style.isHorizontalDivider ? 'horizontal' : 'vertical';
+    return <Divider key={index} weight="2px" length="24px" direction={direction} />;
   }
   return <CommandButton command={command} key={command.name} />;
 }

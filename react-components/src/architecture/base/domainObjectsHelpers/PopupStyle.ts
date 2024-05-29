@@ -42,7 +42,7 @@ export class PopupStyle {
     return this._horizontal ? 'row' : 'column';
   }
 
-  public get isDividerHorizontal(): boolean {
+  public get isHorizontalDivider(): boolean {
     return !this._horizontal;
   }
 
