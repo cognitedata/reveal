@@ -28,11 +28,11 @@ export class StoryBookConfig extends BaseRevealConfig {
       new FitViewCommand(),
       new SetAxisVisibleCommand(),
       undefined,
-      new SetTerrainVisibleCommand(),
-      new UpdateTerrainCommand(),
-      undefined,
       new ExampleTool(),
-      new MeasurementTool()
+      new MeasurementTool(),
+      undefined,
+      new SetTerrainVisibleCommand(),
+      new UpdateTerrainCommand()
     ];
   }
 

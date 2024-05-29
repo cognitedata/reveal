@@ -19,6 +19,7 @@ import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RootDomainObject } from './RootDomainObject';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
+import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -258,11 +259,18 @@ export abstract class DomainObject {
         CommandsUpdater.update(this.root.renderTarget);
       }
     }
+    if (this.hasPanelInfo) {
+      DomainObjectPanelUpdater.notify(this, change);
+    }
   }
 
   // ==================================================
   // VIRTUAL METHODS: For updating the panel
   // ==================================================
+
+  public get hasPanelInfo(): boolean {
+    return false; // to be overridden
+  }
 
   public getPanelInfo(): PanelInfo | undefined {
     return undefined; // to be overridden

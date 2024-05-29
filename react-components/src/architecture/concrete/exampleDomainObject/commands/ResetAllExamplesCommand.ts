@@ -14,7 +14,7 @@ export class ResetAllExamplesCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get tooltip(): Tooltip {
-    return { key: 'EXAMPLES_RESET', fallback: 'Reset' };
+    return { key: 'EXAMPLES_RESET', fallback: 'Reset all examples' };
   }
 
   public override get icon(): string {
