@@ -32,7 +32,6 @@ export type RevealContextProps = {
     | 'ssaoQualityHint'
     | 'pointCloudEffects'
     | 'enableEdges'
-    | 'useFlexibleCameraManager'
     | 'onLoading'
   >;
 };
@@ -104,7 +103,8 @@ const useRevealFromKeepAlive = ({
       const viewer = new Cognite3DViewer({
         ...viewerOptions,
         sdk,
-        hasEventListeners: !(viewerOptions?.useFlexibleCameraManager ?? false)
+        useFlexibleCameraManager: true,
+        hasEventListeners: false
       });
       renderTarget = new RevealRenderTarget(viewer);
       if (revealKeepAliveData !== undefined) {

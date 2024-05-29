@@ -55,8 +55,8 @@ export abstract class BaseTool extends RenderTargetCommand {
     return 'default';
   }
 
-  public getToolbar(): Array<BaseCommand | undefined> | undefined {
-    return undefined; // Override this to add extra buttons to a separate toolbar
+  public getToolbar(): Array<BaseCommand | undefined> {
+    return []; // Override this to add extra buttons to a separate toolbar
   }
 
   public getToolbarStyle(): PopupStyle {

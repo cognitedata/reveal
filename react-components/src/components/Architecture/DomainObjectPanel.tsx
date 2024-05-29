@@ -57,21 +57,21 @@ export const DomainObjectPanel = (): ReactElement => {
                 <span>{t(header.key, header.fallback)}</span>
               </PaddedTh>
             )}
-            <th>
-              <CogsTooltip
-                content={t('DELETE', 'Delete')}
-                placement="right"
-                appendTo={document.body}>
-                <Button
-                  onClick={() => {
-                    if (domainObject.canBeRemoved) {
+            {domainObject.canBeRemoved && (
+              <th>
+                <CogsTooltip
+                  content={t('DELETE', 'Delete')}
+                  placement="right"
+                  appendTo={document.body}>
+                  <Button
+                    onClick={() => {
                       domainObject.removeInteractive();
-                    }
-                  }}>
-                  <Icon type="Delete" />
-                </Button>
-              </CogsTooltip>
-            </th>
+                    }}>
+                    <Icon type="Delete" />
+                  </Button>
+                </CogsTooltip>
+              </th>
+            )}
             <th>
               <CogsTooltip
                 content={t('COPY_TO_CLIPBOARD', 'Copy to clipboard')}
