@@ -47,9 +47,7 @@ export const Main: Story = {
     ]
   },
   render: ({ resources }) => (
-    <RevealStoryContext
-      viewerOptions={{ useFlexibleCameraManager: true }}
-      color={new Color(0x4a4a4a)}>
+    <RevealStoryContext viewerOptions={{}} color={new Color(0x4a4a4a)}>
       <RevealTopbar />
       <RevealCanvas>
         <Reveal3DResources resources={resources} />
