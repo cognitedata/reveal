@@ -69,6 +69,10 @@ export abstract class BaseEditTool extends NavigationTool {
   // VIRTUAL METHODS
   // ==================================================
 
+  protected accept(_domainObject: DomainObject): boolean {
+    return false;
+  }
+
   /**
    * Override this function to create custom dragger
    * with other creation logic. Otherwise createDragger in
@@ -86,6 +90,9 @@ export abstract class BaseEditTool extends NavigationTool {
     if (domainObject === undefined) {
       return undefined;
     }
+    if (!this.accept(domainObject)) {
+      return undefined;
+    }
     const ray = this.getRay(event);
     const matrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
     const point = intersection.point.clone();
@@ -101,6 +108,9 @@ export abstract class BaseEditTool extends NavigationTool {
   protected deselectAll(except?: DomainObject | undefined): void {
     const { rootDomainObject } = this;
     for (const domainObject of rootDomainObject.getDescendants()) {
+      if (!this.accept(domainObject)) {
+        continue;
+      }
       if (except !== undefined && domainObject === except) {
         continue;
       }

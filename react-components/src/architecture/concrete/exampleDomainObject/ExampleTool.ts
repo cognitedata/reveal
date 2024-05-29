@@ -12,6 +12,7 @@ import { ResetAllExamplesCommand } from './commands/ResetAllExamplesCommand';
 import { DeleteAllExamplesCommand } from './commands/DeleteAllExamplesCommand';
 import { ShowAllExamplesCommand } from './commands/ShowAllExamplesCommand';
 import { clamp } from 'lodash';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
 export class ExampleTool extends BaseEditTool {
   // ==================================================
   // OVERRIDES of BaseCommand
@@ -112,6 +113,14 @@ export class ExampleTool extends BaseEditTool {
       new ShowAllExamplesCommand(),
       new DeleteAllExamplesCommand()
     ];
+  }
+
+  // ==================================================
+  // OVERRIDES of BaseEditTool
+  // ==================================================
+
+  protected override accept(domainObject: DomainObject): boolean {
+    return domainObject instanceof ExampleDomainObject;
   }
 
   // ==================================================

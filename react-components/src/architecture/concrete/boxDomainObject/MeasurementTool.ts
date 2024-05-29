@@ -225,6 +225,14 @@ export class MeasurementTool extends BaseEditTool {
   }
 
   // ==================================================
+  // OVERRIDES of BaseEditTool
+  // ==================================================
+
+  protected override accept(domainObject: DomainObject): boolean {
+    return domainObject instanceof MeasureDomainObject;
+  }
+
+  // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
