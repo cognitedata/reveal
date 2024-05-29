@@ -19,7 +19,7 @@ export class CommandsUpdater {
     this._renderTarget = renderTarget;
   }
 
-  static onIdle = (): void => {
+  public static onIdle = (): void => {
     if (this._renderTarget === undefined) {
       return;
     }

@@ -1,6 +1,6 @@
 /*!
  * Copyright 2024 Cognite AS
- * ToolController: Holds the tools, the active tool and the previous tool
+ * CommandsController: Holds the tools, the active tool and the previous tool
  */
 
 import { PointerEvents, PointerEventsTarget } from '@cognite/reveal';

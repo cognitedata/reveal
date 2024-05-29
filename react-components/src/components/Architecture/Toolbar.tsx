@@ -51,7 +51,7 @@ const CreateToolToolbar = (
   style: PopupStyle
 ): ReactElement => {
   //
-  if (commands.length === 0 || style === null) {
+  if (commands.length === 0) {
     return <></>;
   }
   return (
@@ -84,7 +84,7 @@ function addCommand(
     const direction = style.isDividerHorizontal ? 'horizontal' : 'vertical';
     return <Divider key={index} weight="2px" length="75%" direction={direction} />;
   }
-  return <CommandButton command={command} key={index} />;
+  return <CommandButton command={command} key={command.name} />;
 }
 
 const Container = styled.div`

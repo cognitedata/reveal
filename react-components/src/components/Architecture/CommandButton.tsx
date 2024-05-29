@@ -22,12 +22,14 @@ export const CommandButton = ({ command }: { command: BaseCommand }): ReactEleme
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
+  const [icon, setIcon] = useState<IconType>('Copy');
 
   useEffect(() => {
     function update(command: BaseCommand): void {
       setChecked(command.isChecked);
       setEnabled(command.isEnabled);
       setVisible(command.isVisible);
+      setIcon(command.icon as IconType);
     }
     update(newCommand);
     newCommand.addEventListener(update);
@@ -44,7 +46,7 @@ export const CommandButton = ({ command }: { command: BaseCommand }): ReactEleme
     <CogsTooltip content={t(key, fallback)} placement="right" appendTo={document.body}>
       <Button
         type="ghost"
-        icon={newCommand.icon as IconType}
+        icon={icon}
         toggled={isChecked}
         disabled={!isEnabled}
         aria-label={t(key, fallback)}
