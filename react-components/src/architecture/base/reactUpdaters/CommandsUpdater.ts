@@ -30,6 +30,7 @@ export class CommandsUpdater {
   }
 
   public static dispose(): void {
+    this._renderTarget = undefined;
     if (this._idleCallbackId < 0) {
       return;
     }
