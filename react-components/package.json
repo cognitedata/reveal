@@ -30,7 +30,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
-    "@cognite/reveal": "4.14.3",
+    "@cognite/reveal": "4.14.5",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
@@ -44,7 +44,7 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
     "@cognite/cogs.js": "^9.3.0",
-    "@cognite/reveal": "^4.14.3",
+    "@cognite/reveal": "^4.14.5",
     "@cognite/sdk": "^9.13.0",
     "@playwright/test": "^1.43.1",
     "@storybook/addon-essentials": "^8.0.9",
