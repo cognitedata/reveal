@@ -12,7 +12,7 @@ export class SetMeasurmentTypeCommand extends RenderTargetCommand {
   private readonly _measureType: MeasureType;
 
   // ==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   // ==================================================
 
   public constructor(measureType: MeasureType) {
@@ -75,7 +75,7 @@ export class SetMeasurmentTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   private get measurementTool(): MeasurementTool | undefined {
-    const activeTool = this.renderTarget.toolController.activeTool;
+    const activeTool = this.renderTarget.commandsController.activeTool;
     if (!(activeTool instanceof MeasurementTool)) {
       return undefined;
     }

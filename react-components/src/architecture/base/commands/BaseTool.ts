@@ -35,14 +35,14 @@ export abstract class BaseTool extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    return this.renderTarget.toolController.activeTool === this;
+    return this.renderTarget.commandsController.activeTool === this;
   }
 
   protected override invokeCore(): boolean {
     if (this.isChecked) {
-      this.renderTarget.toolController.activateDefaultTool();
+      this.renderTarget.commandsController.activateDefaultTool();
     } else {
-      this.renderTarget.toolController.setActiveTool(this);
+      this.renderTarget.commandsController.setActiveTool(this);
     }
     return true;
   }

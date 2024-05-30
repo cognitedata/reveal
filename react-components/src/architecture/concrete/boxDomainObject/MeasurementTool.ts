@@ -22,6 +22,7 @@ import { ShowMeasurmentsOnTopCommand } from './ShowMeasurmentsOnTopCommand';
 import { SetMeasurmentTypeCommand } from './SetMeasurmentTypeCommand';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
+import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -71,9 +72,8 @@ export class MeasurementTool extends BaseEditTool {
 
   public override onDeactivate(): void {
     this.handleEscape();
-    super.onDeactivate();
     this.setAllMeasurementsVisible(false);
-    this.deselectAll();
+    super.onDeactivate();
   }
 
   public override clearDragging(): void {
@@ -173,7 +173,7 @@ export class MeasurementTool extends BaseEditTool {
         if (creator.isFinished) {
           this._creator = undefined;
           this.measureType = MeasureType.None;
-          this.renderTarget.toolController.update();
+          CommandsUpdater.update(renderTarget);
         }
         return;
       }
@@ -209,7 +209,7 @@ export class MeasurementTool extends BaseEditTool {
       if (creator.addPoint(ray, intersection)) {
         if (creator.isFinished) {
           this.measureType = MeasureType.None;
-          this.renderTarget.toolController.update();
+          CommandsUpdater.update(renderTarget);
           this._creator = undefined;
         }
       }
@@ -224,6 +224,14 @@ export class MeasurementTool extends BaseEditTool {
   }
 
   // ==================================================
+  // OVERRIDES of BaseEditTool
+  // ==================================================
+
+  protected override canBeSelected(domainObject: DomainObject): boolean {
+    return domainObject instanceof MeasureDomainObject;
+  }
+
+  // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
@@ -234,7 +242,7 @@ export class MeasurementTool extends BaseEditTool {
     if (this._creator.handleEscape()) {
       // Sucessfully created, set it back to none
       this.measureType = MeasureType.None;
-      this.renderTarget.toolController.update();
+      CommandsUpdater.update(this.renderTarget);
     }
     this._creator = undefined;
   }

@@ -11,7 +11,7 @@ export class ExampleRenderStyle extends RenderStyle {
   // ==================================================
 
   public radius = 1;
-  public opacity = 0.5;
+  public opacity = 0.75;
 
   // ==================================================
   // OVERRIDES of BaseStyle

@@ -5,7 +5,7 @@
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { MeasureLineView } from './MeasureLineView';
-import { Vector3 } from 'three';
+import { Color, Vector3 } from 'three';
 import { MeasureType } from './MeasureType';
 import { MeasureLineRenderStyle } from './MeasureLineRenderStyle';
 import { MeasureDomainObject } from './MeasureDomainObject';
@@ -35,11 +35,12 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
   }
 
   // ==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   // ==================================================
 
   public constructor(measureType: MeasureType) {
     super(measureType);
+    this.color = new Color(Color.NAMES.red);
   }
 
   // ==================================================

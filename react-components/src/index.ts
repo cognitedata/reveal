@@ -150,7 +150,7 @@ export type {
 
 export { ActiveToolToolbar } from './components/Architecture/Toolbar';
 export { DomainObjectPanel } from './components/Architecture/DomainObjectPanel';
-export { RevealButtons } from './components/Architecture/ToolButtons';
+export { RevealButtons } from './components/Architecture/RevealButtons';
 
 export { RuleBasedOutputsPanel } from './components/RuleBasedOutputs/RuleBasedOutputsPanel';
 

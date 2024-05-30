@@ -10,11 +10,17 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
 
-export const CreateButton = (command: BaseCommand): ReactElement => {
-  return <CommandButton command={command} />;
+export const CreateButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
+  return <CommandButton command={command} isHorizontal={isHorizontal} />;
 };
 
-export const CommandButton = ({ command }: { command: BaseCommand }): ReactElement => {
+export const CommandButton = ({
+  command,
+  isHorizontal = false
+}: {
+  command: BaseCommand;
+  isHorizontal: boolean;
+}): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
   const newCommand = useMemo<BaseCommand>(() => getDefaultCommand(command, renderTarget), []);
@@ -22,12 +28,14 @@ export const CommandButton = ({ command }: { command: BaseCommand }): ReactEleme
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
+  const [icon, setIcon] = useState<IconType>('Copy');
 
   useEffect(() => {
     function update(command: BaseCommand): void {
       setChecked(command.isChecked);
       setEnabled(command.isEnabled);
       setVisible(command.isVisible);
+      setIcon(command.icon as IconType);
     }
     update(newCommand);
     newCommand.addEventListener(update);
@@ -39,12 +47,13 @@ export const CommandButton = ({ command }: { command: BaseCommand }): ReactEleme
   if (!isVisible) {
     return <></>;
   }
+  const placement = isHorizontal ? 'top' : 'right';
   const { key, fallback } = newCommand.tooltip;
   return (
-    <CogsTooltip content={t(key, fallback)} placement="right" appendTo={document.body}>
+    <CogsTooltip content={t(key, fallback)} placement={placement} appendTo={document.body}>
       <Button
         type="ghost"
-        icon={newCommand.icon as IconType}
+        icon={icon}
         toggled={isChecked}
         disabled={!isEnabled}
         aria-label={t(key, fallback)}
@@ -59,11 +68,11 @@ export const CommandButton = ({ command }: { command: BaseCommand }): ReactEleme
 function getDefaultCommand(newCommand: BaseCommand, renderTarget: RevealRenderTarget): BaseCommand {
   // If it exists from before, return the existing command
   // Otherwise, add the new command to the controller and attach the renderTarget
-  const oldCommand = renderTarget.toolController.getEqual(newCommand);
+  const oldCommand = renderTarget.commandsController.getEqual(newCommand);
   if (oldCommand !== undefined) {
     return oldCommand;
   }
-  renderTarget.toolController.add(newCommand);
+  renderTarget.commandsController.add(newCommand);
   if (newCommand instanceof RenderTargetCommand) {
     newCommand.attach(renderTarget);
   }

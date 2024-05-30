@@ -52,6 +52,7 @@ const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
 const ARROW_AND_RING_COLOR = new Color(1, 1, 1);
 const TOP_FACE = new BoxFace(2);
 const CIRCULAR_SEGMENTS = 32;
+const RENDER_ORDER = 100;
 
 export class MeasureBoxView extends GroupThreeView {
   // ==================================================
@@ -79,15 +80,7 @@ export class MeasureBoxView extends GroupThreeView {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (this.isEmpty) {
-      return;
-    }
-    if (
-      change.isChanged(Changes.focus) ||
-      change.isChanged(Changes.selected) ||
-      change.isChanged(Changes.renderStyle) ||
-      change.isChanged(Changes.color)
-    ) {
+    if (change.isChanged(Changes.selected, Changes.focus, Changes.renderStyle, Changes.color)) {
       this.removeChildren();
       this.invalidateBoundingBox();
       this.invalidateRenderTarget();
@@ -213,6 +206,7 @@ export class MeasureBoxView extends GroupThreeView {
     updateSolidMaterial(material, domainObject, style);
     const geometry = new BoxGeometry(1, 1, 1);
     const result = new Mesh(geometry, material);
+    result.renderOrder = RENDER_ORDER;
     result.applyMatrix4(matrix);
     return result;
   }
@@ -225,6 +219,7 @@ export class MeasureBoxView extends GroupThreeView {
     updateLineSegmentsMaterial(material, domainObject, style);
     const geometry = createLineSegmentsBufferGeometryForBox();
     const result = new LineSegments(geometry, material);
+    result.renderOrder = RENDER_ORDER;
 
     result.applyMatrix4(matrix);
     return result;
@@ -281,13 +276,14 @@ export class MeasureBoxView extends GroupThreeView {
     const material = new MeshPhongMaterial();
     updateMarkerMaterial(material, domainObject, style, focusType === FocusType.Rotation);
     material.clippingPlanes = BoxFace.createClippingPlanes(matrix, TOP_FACE.index);
-    const mesh = new Mesh(geometry, material);
+    const result = new Mesh(geometry, material);
+    result.renderOrder = RENDER_ORDER;
 
     const center = TOP_FACE.getCenter(newVector3());
     center.applyMatrix4(matrix);
-    mesh.position.copy(center);
-    mesh.rotateX(-Math.PI / 2);
-    return mesh;
+    result.position.copy(center);
+    result.rotateX(-Math.PI / 2);
+    return result;
   }
 
   private createEdgeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
@@ -304,27 +300,28 @@ export class MeasureBoxView extends GroupThreeView {
     const geometry = new CircleGeometry(radius, CIRCULAR_SEGMENTS);
     material.transparent = true;
     material.depthWrite = false;
-    const mesh = new Mesh(geometry, material);
+    const result = new Mesh(geometry, material);
+    result.renderOrder = RENDER_ORDER;
 
     const center = face.getCenter(newVector3());
     center.applyMatrix4(matrix);
-    mesh.position.copy(center);
+    result.position.copy(center);
 
     // Must be roteted correctly because of sideness
     if (face.face === 2) {
-      mesh.rotateX(-Math.PI / 2);
+      result.rotateX(-Math.PI / 2);
     } else if (face.face === 5) {
-      mesh.rotateX(Math.PI / 2);
+      result.rotateX(Math.PI / 2);
     } else if (face.face === 0) {
-      mesh.rotateY(Math.PI / 2 + domainObject.zRotation);
+      result.rotateY(Math.PI / 2 + domainObject.zRotation);
     } else if (face.face === 3) {
-      mesh.rotateY(-Math.PI / 2 + domainObject.zRotation);
+      result.rotateY(-Math.PI / 2 + domainObject.zRotation);
     } else if (face.face === 1) {
-      mesh.rotateY(Math.PI + domainObject.zRotation);
+      result.rotateY(Math.PI + domainObject.zRotation);
     } else if (face.face === 4) {
-      mesh.rotateY(domainObject.zRotation);
+      result.rotateY(domainObject.zRotation);
     }
-    return mesh;
+    return result;
   }
 
   // ==================================================
@@ -612,6 +609,7 @@ function createSprite(text: string, style: MeasureRenderStyle, height: number): 
   result.material.transparent = true;
   result.material.opacity = style.textOpacity;
   result.material.depthTest = style.depthTest;
+  result.renderOrder = RENDER_ORDER;
   return result;
 }
 

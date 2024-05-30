@@ -13,7 +13,7 @@ export class ShowAllExamplesCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get tooltip(): Tooltip {
-    return { key: 'EXAMPLES_SHOW', fallback: 'Show all examples' };
+    return { key: 'EXAMPLES_SHOW', fallback: 'Show or hide all examples' };
   }
 
   public override get icon(): string {
