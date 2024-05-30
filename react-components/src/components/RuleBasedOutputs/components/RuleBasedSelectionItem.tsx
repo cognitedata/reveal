@@ -20,7 +20,13 @@ export const RuleBasedSelectionItem = ({
 }: RuleBasedSelectionItemProps): ReactElement => {
   return (
     <Menu.Item key={key}>
-      <Flex justifyContent="space-between" alignItems="center" gap={8}>
+      <Flex
+        onClick={() => {
+          onChange(id);
+        }}
+        justifyContent="space-between"
+        alignItems="center"
+        gap={8}>
         <Flex gap={4} alignItems="center">
           <Icon type="ColorPalette" />
           {label}
@@ -29,9 +35,6 @@ export const RuleBasedSelectionItem = ({
           name={id ?? ''}
           value={id}
           checked={checked}
-          onChange={(_: any, value: string | undefined) => {
-            onChange(value);
-          }}
         />
       </Flex>
     </Menu.Item>
