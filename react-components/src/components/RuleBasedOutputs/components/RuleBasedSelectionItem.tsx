@@ -19,23 +19,17 @@ export const RuleBasedSelectionItem = ({
   checked
 }: RuleBasedSelectionItemProps): ReactElement => {
   return (
-    <Menu.Item key={key}>
-      <Flex
-        onClick={() => {
-          onChange(id);
-        }}
-        justifyContent="space-between"
-        alignItems="center"
-        gap={8}>
+    <Menu.Item
+      onClick={() => {
+        onChange(id);
+      }}
+      key={key}>
+      <Flex justifyContent="space-between" alignItems="center" gap={8}>
         <Flex gap={4} alignItems="center">
           <Icon type="ColorPalette" />
           {label}
         </Flex>
-        <Radio
-          name={id ?? ''}
-          value={id}
-          checked={checked}
-        />
+        <Radio name={id ?? ''} value={id} checked={checked} />
       </Flex>
     </Menu.Item>
   );
