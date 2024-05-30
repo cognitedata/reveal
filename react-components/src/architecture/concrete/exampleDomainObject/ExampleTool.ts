@@ -12,6 +12,7 @@ import { DeleteAllExamplesCommand } from './commands/DeleteAllExamplesCommand';
 import { ShowAllExamplesCommand } from './commands/ShowAllExamplesCommand';
 import { clamp } from 'lodash';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
+import { type HSL } from 'three';
 export class ExampleTool extends BaseEditTool {
   // ==================================================
   // OVERRIDES of BaseCommand
@@ -22,7 +23,7 @@ export class ExampleTool extends BaseEditTool {
   }
 
   public override get tooltip(): Tooltip {
-    return { key: 'EXAMPLE_EDIT', fallback: 'Create or edit a point' };
+    return { key: 'EXAMPLE_EDIT', fallback: 'Create or edit a single point' };
   }
 
   // ==================================================
@@ -47,7 +48,14 @@ export class ExampleTool extends BaseEditTool {
       await super.onWheel(event);
       return;
     }
-    if (event.ctrlKey) {
+    if (event.shiftKey) {
+      // Change color
+      let hsl: HSL = { h: 0, s: 0, l: 0 };
+      hsl = domainObject.color.getHSL(hsl);
+      hsl.h = (hsl.h + Math.sign(event.deltaY) * 0.02) % 1;
+      domainObject.color.setHSL(hsl.h, hsl.s, hsl.l);
+      domainObject.notify(Changes.color);
+    } else if (event.ctrlKey) {
       // Change opacity
       const delta = Math.sign(event.deltaY) * 0.05;
       domainObject.renderStyle.opacity = clamp(domainObject.renderStyle.opacity + delta, 0.2, 1);
