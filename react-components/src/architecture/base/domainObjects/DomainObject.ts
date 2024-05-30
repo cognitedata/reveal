@@ -18,6 +18,8 @@ import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RootDomainObject } from './RootDomainObject';
+import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
+import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -226,7 +228,7 @@ export abstract class DomainObject {
     return true; // to be overridden
   }
 
-  public canBeChecked(_target: RevealRenderTarget): boolean {
+  public canBeSetVisibleNow(_target: RevealRenderTarget): boolean {
     return true; // to be overridden
   }
 
@@ -244,11 +246,9 @@ export abstract class DomainObject {
   protected notifyCore(change: DomainObjectChange): void {
     this.views.notify(this, change);
 
-    // This is a little bit dirty, but will be refacored by using onIdle()
     if (
       change.isChanged(
         Changes.visibleState,
-        Changes.active,
         Changes.active,
         Changes.selected,
         Changes.childAdded,
@@ -256,14 +256,21 @@ export abstract class DomainObject {
       )
     ) {
       if (this.root instanceof RootDomainObject) {
-        this.root.renderTarget.toolController.update();
+        CommandsUpdater.update(this.root.renderTarget);
       }
+    }
+    if (this.hasPanelInfo) {
+      DomainObjectPanelUpdater.notify(this, change);
     }
   }
 
   // ==================================================
   // VIRTUAL METHODS: For updating the panel
   // ==================================================
+
+  public get hasPanelInfo(): boolean {
+    return false; // to be overridden
+  }
 
   public getPanelInfo(): PanelInfo | undefined {
     return undefined; // to be overridden
@@ -341,7 +348,10 @@ export abstract class DomainObject {
       numCandidates++;
       if (childState === VisibleState.All) {
         numAll++;
-      } else if (childState === VisibleState.None || childState === VisibleState.CanNotBeChecked) {
+      } else if (
+        childState === VisibleState.None ||
+        childState === VisibleState.CanNotBeVisibleNow
+      ) {
         numNone++;
       }
       if (numNone < numCandidates && numCandidates < numAll) {
@@ -355,7 +365,9 @@ export abstract class DomainObject {
       return VisibleState.All;
     }
     if (numCandidates === numNone) {
-      return this.canBeChecked(renderTarget) ? VisibleState.None : VisibleState.CanNotBeChecked;
+      return this.canBeSetVisibleNow(renderTarget)
+        ? VisibleState.None
+        : VisibleState.CanNotBeVisibleNow;
     }
     return VisibleState.Some;
   }
@@ -369,7 +381,7 @@ export abstract class DomainObject {
     if (visibleState === VisibleState.Disabled) {
       return false;
     }
-    if (visibleState === VisibleState.None && !this.canBeChecked(renderTarget)) {
+    if (visibleState === VisibleState.None && !this.canBeSetVisibleNow(renderTarget)) {
       return false;
     }
     let hasChanged = false;
@@ -753,7 +765,7 @@ export abstract class DomainObject {
 
   // ==================================================
   // INSTANCE METHODS: Color type
-  // Used in the renderstyle to determin which of the color a doamin object should have.
+  // Used in the renderstyle to determin which of the color a domain object should have.
   // ==================================================
 
   public supportsColorType(colorType: ColorType, solid: boolean): boolean {

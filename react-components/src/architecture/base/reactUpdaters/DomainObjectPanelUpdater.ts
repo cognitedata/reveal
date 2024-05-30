@@ -3,6 +3,8 @@
  */
 
 import { type DomainObject } from '../domainObjects/DomainObject';
+import { Changes } from '../domainObjectsHelpers/Changes';
+import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 
 export type DomainObjectInfo = { domainObject: DomainObject };
 export type SetDomainObjectInfoDelegate = (domainObjectInfo?: DomainObjectInfo) => void;
@@ -26,12 +28,33 @@ export class DomainObjectPanelUpdater {
     this._setDomainObject = value;
   }
 
-  public static update(domainObject: DomainObject | undefined): void {
+  public static hide(): void {
     if (this._setDomainObject === undefined) {
       return;
     }
-    if (domainObject === undefined) {
-      this._setDomainObject(undefined);
+    this._setDomainObject(undefined);
+  }
+
+  public static notify(domainObject: DomainObject, change: DomainObjectChange): void {
+    if (!this.isActive) {
+      return;
+    }
+    if (domainObject.isSelected) {
+      if (change.isChanged(Changes.deleted)) {
+        this.hide();
+      }
+      if (change.isChanged(Changes.selected, Changes.geometry, Changes.naming)) {
+        this.update(domainObject);
+      }
+    } else {
+      if (change.isChanged(Changes.selected)) {
+        this.hide(); // Deselected
+      }
+    }
+  }
+
+  private static update(domainObject: DomainObject): void {
+    if (this._setDomainObject === undefined) {
       return;
     }
     const info = { domainObject };

@@ -37,14 +37,11 @@ export const ActiveToolToolbar = (): ReactElement => {
   if (renderTarget === undefined) {
     return <></>;
   }
-  const activeTool = renderTarget.toolController.activeTool;
+  const activeTool = renderTarget.commandsController.activeTool;
   if (activeTool === undefined) {
     return <></>;
   }
   const commands = activeTool.getToolbar();
-  if (commands.length === 0) {
-    return <></>;
-  }
   const style = activeTool.getToolbarStyle();
   return CreateToolToolbar(commands, style);
 };
@@ -54,7 +51,7 @@ const CreateToolToolbar = (
   style: PopupStyle
 ): ReactElement => {
   //
-  if (commands.length === 0 || style === null) {
+  if (commands.length === 0) {
     return <></>;
   }
   return (
@@ -84,10 +81,10 @@ function addCommand(
   index: number
 ): ReactElement {
   if (command === undefined) {
-    const direction = style.isDividerHorizontal ? 'horizontal' : 'vertical';
-    return <Divider key={index} weight="2px" length="75%" direction={direction} />;
+    const direction = style.isHorizontalDivider ? 'horizontal' : 'vertical';
+    return <Divider key={index} weight="2px" length="24px" direction={direction} />;
   }
-  return <CommandButton command={command} key={index} />;
+  return <CommandButton command={command} isHorizontal={style.isHorizontal} key={command.name} />;
 }
 
 const Container = styled.div`

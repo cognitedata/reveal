@@ -15,7 +15,7 @@ export abstract class MeasureRenderStyle extends RenderStyle {
   public depthTest = true;
   public colorType = ColorType.Specified;
   public textColor = WHITE_COLOR.clone();
-  public textBgColor = new Color().setScalar(0.05); // Dark gray
-  public textOpacity = 0.75;
+  public textBgColor = new Color('#232323');
+  public textOpacity = 0.9;
   public relativeTextSize = 0.05; // Relative to diagonal of the measurment object for box and average of lenght of line segments for line
 }

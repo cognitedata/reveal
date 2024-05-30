@@ -11,9 +11,10 @@ export class MeasureLineRenderStyle extends MeasureRenderStyle {
   // INSTANCE FIELDS
   // ==================================================
 
-  public pipeRadius = 0.015;
+  public pipeRadius = 0.02;
+  public selectedPipeRadius = this.pipeRadius * 2;
   public lineWidth = 1;
-  public selectedLineWidth = 2;
+  public selectedLineWidth = this.lineWidth * 2;
 
   // ==================================================
   // OVERRIDES of BaseStyle

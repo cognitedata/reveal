@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Button, Icon, type IconType, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Icon, type IconType, Tooltip as CogsTooltip, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useState, type ReactElement } from 'react';
 import {
@@ -13,6 +13,9 @@ import {
   type NumberPanelItem
 } from '../../architecture/base/domainObjectsHelpers/PanelInfo';
 import { useTranslation } from '../i18n/I18n';
+
+const TEXT_SIZE = 'x-small';
+const HEADER_SIZE = 'small';
 
 export const DomainObjectPanel = (): ReactElement => {
   const [currentDomainObjectInfo, setCurrentDomainObjectInfo] = useState<
@@ -54,7 +57,7 @@ export const DomainObjectPanel = (): ReactElement => {
             </PaddedTh>
             {header !== undefined && header.key !== undefined && (
               <PaddedTh>
-                <span>{t(header.key, header.fallback)}</span>
+                <Body size={HEADER_SIZE}>{t(header.key, header.fallback)}</Body>
               </PaddedTh>
             )}
             {domainObject.canBeRemoved && (
@@ -100,7 +103,7 @@ export const DomainObjectPanel = (): ReactElement => {
     return (
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
-          {key !== undefined && <span>{t(key, fallback)}</span>}
+          {key !== undefined && <Body size={TEXT_SIZE}>{t(key, fallback)}</Body>}
           {icon !== undefined && (
             <span>
               <Icon type={icon} />
@@ -109,10 +112,10 @@ export const DomainObjectPanel = (): ReactElement => {
         </PaddedTh>
         <></>
         <NumberTh>
-          <span>{item.valueAsString}</span>
+          <Body size={TEXT_SIZE}>{item.valueAsString}</Body>
         </NumberTh>
         <PaddedTh>
-          <span>{unit}</span>
+          <Body size={TEXT_SIZE}>{unit}</Body>
         </PaddedTh>
       </tr>
     );
@@ -144,10 +147,12 @@ const NumberTh = styled.th`
   text-align: right;
   padding-right: 8px;
   min-width: 60px;
+  size: small;
 `;
 
 const PaddedTh = styled.th`
   padding-right: 10px;
+  size: small;
 `;
 
 const Container = styled.div`

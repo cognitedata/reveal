@@ -107,7 +107,7 @@ function createCanvasWithText(
 ): HTMLCanvasElement | undefined {
   // https://www.javascripture.com/CanvasRenderingContext2D
   const borderSize = 2;
-  const fontSize = 40;
+  const fontSize = 60; // This gives the resolution of the sprite, not real font side.
   const font = getNormalFont(fontSize);
 
   const canvas = document.createElement('canvas');
