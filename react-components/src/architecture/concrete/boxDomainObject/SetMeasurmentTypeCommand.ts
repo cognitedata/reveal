@@ -12,7 +12,7 @@ export class SetMeasurmentTypeCommand extends RenderTargetCommand {
   private readonly _measureType: MeasureType;
 
   // ==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   // ==================================================
 
   public constructor(measureType: MeasureType) {

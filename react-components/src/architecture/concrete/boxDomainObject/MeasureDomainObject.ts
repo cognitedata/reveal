@@ -23,7 +23,7 @@ export abstract class MeasureDomainObject extends VisualDomainObject {
   }
 
   // ==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   // ==================================================
 
   public constructor(measureType: MeasureType) {

@@ -765,7 +765,7 @@ export abstract class DomainObject {
 
   // ==================================================
   // INSTANCE METHODS: Color type
-  // Used in the renderstyle to determin which of the color a doamin object should have.
+  // Used in the renderstyle to determin which of the color a domain object should have.
   // ==================================================
 
   public supportsColorType(colorType: ColorType, solid: boolean): boolean {
