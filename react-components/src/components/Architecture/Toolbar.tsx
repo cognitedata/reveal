@@ -84,7 +84,7 @@ function addCommand(
     const direction = style.isHorizontalDivider ? 'horizontal' : 'vertical';
     return <Divider key={index} weight="2px" length="24px" direction={direction} />;
   }
-  return <CommandButton command={command} key={command.name} />;
+  return <CommandButton command={command} isHorizontal={style.isHorizontal} key={command.name} />;
 }
 
 const Container = styled.div`

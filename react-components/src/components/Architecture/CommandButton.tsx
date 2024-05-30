@@ -10,11 +10,17 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
 
-export const CreateButton = (command: BaseCommand): ReactElement => {
-  return <CommandButton command={command} />;
+export const CreateButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
+  return <CommandButton command={command} isHorizontal={isHorizontal} />;
 };
 
-export const CommandButton = ({ command }: { command: BaseCommand }): ReactElement => {
+export const CommandButton = ({
+  command,
+  isHorizontal = false
+}: {
+  command: BaseCommand;
+  isHorizontal: boolean;
+}): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
   const newCommand = useMemo<BaseCommand>(() => getDefaultCommand(command, renderTarget), []);
@@ -41,9 +47,10 @@ export const CommandButton = ({ command }: { command: BaseCommand }): ReactEleme
   if (!isVisible) {
     return <></>;
   }
+  const placement = isHorizontal ? 'top' : 'right';
   const { key, fallback } = newCommand.tooltip;
   return (
-    <CogsTooltip content={t(key, fallback)} placement="right" appendTo={document.body}>
+    <CogsTooltip content={t(key, fallback)} placement={placement} appendTo={document.body}>
       <Button
         type="ghost"
         icon={icon}

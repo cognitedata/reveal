@@ -14,18 +14,15 @@ type PopupProps = {
 };
 
 export class PopupStyle {
-  private readonly _horizontal: boolean = true;
   private readonly _left?: number = undefined;
   private readonly _right?: number = undefined;
   private readonly _top?: number = undefined;
   private readonly _bottom?: number = undefined;
-  private readonly _margin: number = 16; // margin ouside the popup
+  private readonly _margin: number = 16; // margin outside the popup
   private readonly _padding: number = 8; // margin inside the popup
+  private readonly _horizontal: boolean = true; // Used for toolbars only
 
   public constructor(props: PopupProps) {
-    if (props.horizontal !== undefined) {
-      this._horizontal = props.horizontal;
-    }
     this._left = props.left;
     this._right = props.right;
     this._top = props.top;
@@ -36,14 +33,9 @@ export class PopupStyle {
     if (props.padding !== undefined) {
       this._padding = props.padding;
     }
-  }
-
-  public get flexFlow(): string {
-    return this._horizontal ? 'row' : 'column';
-  }
-
-  public get isHorizontalDivider(): boolean {
-    return !this._horizontal;
+    if (props.horizontal !== undefined) {
+      this._horizontal = props.horizontal;
+    }
   }
 
   public get leftPx(): string {
@@ -72,5 +64,17 @@ export class PopupStyle {
 
   public static getStringWithPx(value?: number): string {
     return value === undefined ? 'undefined' : value.toString() + 'px';
+  }
+
+  public get flexFlow(): string {
+    return this._horizontal ? 'row' : 'column';
+  }
+
+  public get isHorizontal(): boolean {
+    return this._horizontal;
+  }
+
+  public get isHorizontalDivider(): boolean {
+    return !this._horizontal;
   }
 }
