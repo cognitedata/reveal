@@ -267,7 +267,7 @@ function updateSolidMaterial(
   material.opacity = 1;
   material.transparent = true;
   material.emissive = color;
-  material.emissiveIntensity = 0.5;
+  material.emissiveIntensity = boxDomainObject.isSelected ? 0.75 : 0.5;
   material.side = FrontSide;
   material.flatShading = false;
   material.depthWrite = false;
