@@ -100,6 +100,7 @@ export {
   type AssetStylingGroup,
   type DefaultResourceStyling,
   type Image360AssetStylingGroup,
+  type CommonImage360Settings,
   type TaggedAddResourceOptions,
   type TaggedAdd3DModelOptions,
   type TaggedAddImage360CollectionOptions,

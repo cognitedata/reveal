@@ -11,6 +11,10 @@ import {
   useApply360AnnotationStyling
 } from './useApply360AnnotationStyling';
 import { type Matrix4 } from 'three';
+import {
+  DEFAULT_IMAGE360_ICON_COUNT_LIMIT,
+  DEFAULT_IMAGE360_ICON_CULLING_RADIUS
+} from './constants';
 
 type Image360CollectionContainerProps = {
   addImage360CollectionOptions: AddImage360CollectionOptions;
@@ -48,6 +52,7 @@ export function Image360CollectionContainer({
   }, [addImage360CollectionOptions]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
+  useSetIconCulling(modelRef.current, addImage360CollectionOptions.iconCullingOptions);
 
   useEffect(() => {
     if (
@@ -69,6 +74,11 @@ export function Image360CollectionContainer({
         if (transform !== undefined) {
           image360Collection.setModelTransformation(transform);
         }
+
+        setCollectionCullingOptions(
+          image360Collection,
+          addImage360CollectionOptions.iconCullingOptions
+        );
 
         modelRef.current = image360Collection;
         onLoad?.(image360Collection);
@@ -113,6 +123,28 @@ export function Image360CollectionContainer({
     viewer.remove360ImageSet(modelRef.current);
     modelRef.current = undefined;
   }
+}
+
+const useSetIconCulling = (
+  collection?: Image360Collection,
+  cullingParameters?: { radius?: number; iconCountLimit?: number }
+): void => {
+  const radius = cullingParameters?.radius;
+  const iconCountLimit = cullingParameters?.iconCountLimit;
+
+  useEffect(() => {
+    setCollectionCullingOptions(collection, cullingParameters);
+  }, [collection, radius, iconCountLimit]);
+};
+
+function setCollectionCullingOptions(
+  collection?: Image360Collection,
+  cullingParameters?: { radius?: number; iconCountLimit?: number }
+): void {
+  collection?.set360IconCullingRestrictions(
+    cullingParameters?.radius ?? DEFAULT_IMAGE360_ICON_CULLING_RADIUS,
+    cullingParameters?.iconCountLimit ?? DEFAULT_IMAGE360_ICON_COUNT_LIMIT
+  );
 }
 
 function defaultLoadErrorHandler(addOptions: AddImage360CollectionOptions, error: any): void {

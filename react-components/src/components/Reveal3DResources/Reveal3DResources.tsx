@@ -37,7 +37,8 @@ export const Reveal3DResources = ({
   defaultResourceStyling,
   instanceStyling,
   onResourcesAdded,
-  onResourceLoadError
+  onResourceLoadError,
+  image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
@@ -48,10 +49,11 @@ export const Reveal3DResources = ({
     void getTypedModels(resources, viewer, onResourceLoadError).then(setReveal3DModels);
   }, [resources, viewer]);
 
-  const image360CollectionAddOptions = useMemo(
-    () => resources.filter(is360ImageAddOptions),
-    [resources]
-  );
+  const image360CollectionAddOptions = useMemo(() => {
+    return resources
+      .filter(is360ImageAddOptions)
+      .map((options) => ({ ...image360Settings, ...options }));
+  }, [resources, image360Settings]);
 
   useRemoveNonReferencedModels(reveal3DModels, image360CollectionAddOptions, viewer);
 
