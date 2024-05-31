@@ -99,12 +99,15 @@ export {
   type FdmAssetStylingGroup,
   type AssetStylingGroup,
   type DefaultResourceStyling,
-  type Image360AssetStylingGroup
-} from './components/Reveal3DResources/types';
-export type {
-  AddImageCollection360Options,
-  AddResourceOptions,
-  AddReveal3DModelOptions
+  type Image360AssetStylingGroup,
+  type TaggedAddResourceOptions,
+  type TaggedAdd3DModelOptions,
+  type TaggedAddImageCollection360Options,
+  type AddImageCollection360EventsOptions,
+  type AddImageCollection360DatamodelsOptions,
+  type AddImageCollection360Options,
+  type AddResourceOptions,
+  type AddReveal3DModelOptions
 } from './components/Reveal3DResources/types';
 export {
   type PointCloudAnnotationMappedAssetData,
