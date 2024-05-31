@@ -16,19 +16,18 @@ export type AddImageCollection360Options =
   | AddImageCollection360EventsOptions
   | AddImageCollection360DatamodelsOptions;
 
-export type AddImageCollection360EventsOptions = {
-  siteId: string;
-} & {
+export type CommonImage360CollectionAddOptions = {
   transform?: Matrix4;
   iconCullingParameters?: { radius?: number; iconCountLimit?: number };
 };
+export type AddImageCollection360EventsOptions = {
+  siteId: string;
+} & CommonImage360CollectionAddOptions;
 
 export type AddImageCollection360DatamodelsOptions = {
   externalId: string;
   space: string;
-} & {
-  transform?: Matrix4;
-};
+} & CommonImage360CollectionAddOptions;
 
 export type FdmPropertyType<NodeType> = Record<string, Record<string, NodeType>>;
 
