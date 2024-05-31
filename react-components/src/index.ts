@@ -99,7 +99,8 @@ export {
   type FdmAssetStylingGroup,
   type AssetStylingGroup,
   type DefaultResourceStyling,
-  type Image360AssetStylingGroup
+  type Image360AssetStylingGroup,
+  type CommonImage360Settings
 } from './components/Reveal3DResources/types';
 export type {
   AddImageCollection360Options,

@@ -48,7 +48,7 @@ export function Image360CollectionContainer({
   }, [addImageCollection360Options]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
-  useSetIconCulling(modelRef.current, addImageCollection360Options.iconCullingParameters);
+  useSetIconCulling(modelRef.current, addImageCollection360Options.iconCullingOptions);
 
   useEffect(() => {
     if (
@@ -70,6 +70,11 @@ export function Image360CollectionContainer({
         if (transform !== undefined) {
           image360Collection.setModelTransformation(transform);
         }
+
+        setCollectionCullingOptions(
+          image360Collection,
+          addImageCollection360Options.iconCullingOptions
+        );
 
         modelRef.current = image360Collection;
         onLoad?.(image360Collection);
@@ -120,13 +125,23 @@ const useSetIconCulling = (
   collection?: Image360Collection,
   cullingParameters?: { radius?: number; iconCountLimit?: number }
 ): void => {
+  const radius = cullingParameters?.radius;
+  const iconCountLimit = cullingParameters?.iconCountLimit;
+
   useEffect(() => {
-    collection?.set360IconCullingRestrictions(
-      cullingParameters?.radius ?? Infinity,
-      cullingParameters?.iconCountLimit ?? 50
-    );
-  }, [collection, cullingParameters?.radius, cullingParameters?.iconCountLimit]);
+    setCollectionCullingOptions(collection, cullingParameters);
+  }, [collection, radius, iconCountLimit]);
 };
+
+function setCollectionCullingOptions(
+  collection?: Image360Collection,
+  cullingParameters?: { radius?: number; iconCountLimit?: number }
+) {
+  collection?.set360IconCullingRestrictions(
+    cullingParameters?.radius ?? Infinity,
+    cullingParameters?.iconCountLimit ?? 50
+  );
+}
 
 function defaultLoadErrorHandler(addOptions: AddImageCollection360Options, error: any): void {
   console.warn(

@@ -18,7 +18,7 @@ export type AddImageCollection360Options =
 
 export type CommonImage360CollectionAddOptions = {
   transform?: Matrix4;
-  iconCullingParameters?: { radius?: number; iconCountLimit?: number };
+  iconCullingOptions?: { radius?: number; iconCountLimit?: number };
 };
 export type AddImageCollection360EventsOptions = {
   siteId: string;
@@ -91,8 +91,16 @@ export type DefaultResourceStyling = {
 
 export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
+} & CommonResourceContainerProps;
+
+export type CommonImage360Settings = {
+  iconCullingOptions: { radius?: number; iconCountLimit?: number };
+};
+
+export type CommonResourceContainerProps = {
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: Array<FdmAssetStylingGroup | AssetStylingGroup | Image360AssetStylingGroup>;
+  image360Settings?: CommonImage360Settings;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
 };
