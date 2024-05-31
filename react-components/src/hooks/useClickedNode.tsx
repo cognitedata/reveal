@@ -50,7 +50,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async () => {
-        if (event.button !== MOUSE.LEFT || !renderTarget.toolController.isDefaultToolActive) {
+        if (event.button !== MOUSE.LEFT || !renderTarget.commandsController.isDefaultToolActive) {
           return;
         }
 

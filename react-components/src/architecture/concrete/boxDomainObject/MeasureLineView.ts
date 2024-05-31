@@ -37,6 +37,7 @@ import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { MeasureRenderStyle } from './MeasureRenderStyle';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
+const RENDER_ORDER = 100;
 
 export class MeasureLineView extends GroupThreeView {
   // ==================================================
@@ -57,15 +58,7 @@ export class MeasureLineView extends GroupThreeView {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (this.isEmpty) {
-      return;
-    }
-    if (
-      change.isChanged(Changes.focus) ||
-      change.isChanged(Changes.selected) ||
-      change.isChanged(Changes.renderStyle) ||
-      change.isChanged(Changes.color)
-    ) {
+    if (change.isChanged(Changes.selected, Changes.focus, Changes.renderStyle, Changes.color)) {
       this.removeChildren();
       this.invalidateBoundingBox();
       this.invalidateRenderTarget();
@@ -98,7 +91,7 @@ export class MeasureLineView extends GroupThreeView {
 
   private createPipe(): Mesh | undefined {
     const { domainObject, style } = this;
-    const radius = style.pipeRadius;
+    const radius = domainObject.isSelected ? style.selectedPipeRadius : style.pipeRadius;
     if (radius <= 0) {
       return;
     }
@@ -162,7 +155,9 @@ export class MeasureLineView extends GroupThreeView {
       worldUnits: true,
       depthTest: style.depthTest
     });
-    return new Wireframe(geometry, material);
+    const result = new Wireframe(geometry, material);
+    result.renderOrder = RENDER_ORDER;
+    return result;
   }
 
   private createLines(): Line | undefined {
@@ -179,7 +174,9 @@ export class MeasureLineView extends GroupThreeView {
       color,
       depthTest: style.depthTest
     });
-    return new Line(geometry, material);
+    const result = new Line(geometry, material);
+    result.renderOrder = RENDER_ORDER;
+    return result;
 
     function createBufferGeometry(vertices: number[]): BufferGeometry {
       const verticesArray = new Float32Array(vertices);
@@ -256,6 +253,7 @@ function createSprite(text: string, style: MeasureRenderStyle, height: number): 
   result.material.transparent = true;
   result.material.opacity = style.textOpacity;
   result.material.depthTest = style.depthTest;
+  result.renderOrder = RENDER_ORDER;
   return result;
 }
 
@@ -265,12 +263,11 @@ function updateSolidMaterial(
   style: MeasureLineRenderStyle
 ): void {
   const color = boxDomainObject.getColorByColorType(style.colorType);
-  const selected = boxDomainObject.isSelected;
   material.color = color;
   material.opacity = 1;
   material.transparent = true;
   material.emissive = color;
-  material.emissiveIntensity = selected ? 0.6 : 0.2;
+  material.emissiveIntensity = boxDomainObject.isSelected ? 0.75 : 0.5;
   material.side = FrontSide;
   material.flatShading = false;
   material.depthWrite = false;

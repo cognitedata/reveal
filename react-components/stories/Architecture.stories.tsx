@@ -80,9 +80,7 @@ export const Main: Story = {
   },
   render: ({ addModelOptions }) => {
     return (
-      <RevealStoryContainer
-        color={new Color(0x4a4a4a)}
-        viewerOptions={{ useFlexibleCameraManager: true }}>
+      <RevealStoryContainer color={new Color(0x4a4a4a)} viewerOptions={{}}>
         <FitToUrlCameraState />
         <CadModelContainer addModelOptions={addModelOptions} />
         <RevealToolbar

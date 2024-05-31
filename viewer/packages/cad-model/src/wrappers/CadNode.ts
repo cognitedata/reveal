@@ -91,7 +91,7 @@ export class CadNode extends Object3D {
     this._sourceTransform = new Matrix4().copy(model.modelMatrix);
     this._customTransform = new Matrix4();
 
-    this.nodeAppearanceProvider.on('changed', this._setModelRenderLayers);
+    this.materialManager.on('materialsChanged', this._setModelRenderLayers);
   }
 
   get needsRedraw(): boolean {
@@ -210,7 +210,7 @@ export class CadNode extends Object3D {
 
   public dispose(): void {
     this.nodeAppearanceProvider.dispose();
-    this.nodeAppearanceProvider.off('changed', this._setModelRenderLayers);
+    this.materialManager.off('materialsChanged', this._setModelRenderLayers);
     this._sectorRepository.clearCache();
     this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier);
     this._geometryBatchingManager?.dispose();

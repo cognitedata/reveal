@@ -13,9 +13,6 @@ import {
 } from '../../base/domainObjects/VisualDomainObject';
 import { Vector3 } from 'three';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
-import { DomainObjectPanelUpdater } from '../../base/reactUpdaters/DomainObjectPanelUpdater';
-import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { ExampleDragger } from './ExampleDragger';
 
@@ -38,10 +35,6 @@ export class ExampleDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get canBeRemoved(): boolean {
-    return true;
-  }
-
   public override get icon(): string {
     return 'Circle';
   }
@@ -50,12 +43,20 @@ export class ExampleDomainObject extends VisualDomainObject {
     return 'Example';
   }
 
+  public override get canBeRemoved(): boolean {
+    return true;
+  }
+
   public override createRenderStyle(): RenderStyle | undefined {
     return new ExampleRenderStyle();
   }
 
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
     return new ExampleDragger(props, this);
+  }
+
+  public override get hasPanelInfo(): boolean {
+    return true;
   }
 
   public override getPanelInfo(): PanelInfo | undefined {
@@ -76,25 +77,6 @@ export class ExampleDomainObject extends VisualDomainObject {
     return new PopupStyle({ bottom: 66, left: 0 });
   }
 
-  protected override notifyCore(change: DomainObjectChange): void {
-    super.notifyCore(change);
-
-    if (!DomainObjectPanelUpdater.isActive) {
-      return;
-    }
-    if (this.isSelected) {
-      if (change.isChanged(Changes.deleted)) {
-        DomainObjectPanelUpdater.update(undefined);
-      }
-      if (change.isChanged(Changes.selected, Changes.geometry, Changes.naming)) {
-        DomainObjectPanelUpdater.update(this);
-      }
-    } else {
-      if (change.isChanged(Changes.selected)) {
-        DomainObjectPanelUpdater.update(undefined); // Deselected
-      }
-    }
-  }
   // ==================================================
   // OVERRIDES of VisualDomainObject
   // ==================================================

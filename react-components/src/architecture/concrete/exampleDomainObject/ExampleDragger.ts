@@ -4,10 +4,12 @@
 
 import { type Ray, Vector3, Plane } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type ExampleDomainObject } from './ExampleDomainObject';
 import { BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
-import { type CreateDraggerProps } from '../../base/domainObjects/VisualDomainObject';
+import {
+  type VisualDomainObject,
+  type CreateDraggerProps
+} from '../../base/domainObjects/VisualDomainObject';
 
 export class ExampleDragger extends BaseDragger {
   // ==================================================
@@ -17,6 +19,7 @@ export class ExampleDragger extends BaseDragger {
   private readonly _domainObject: ExampleDomainObject;
   private readonly _center: Vector3;
   private readonly _plane: Plane;
+  private readonly _offset: Vector3;
 
   // ==================================================
   // CONTRUCTOR
@@ -27,22 +30,33 @@ export class ExampleDragger extends BaseDragger {
     this._domainObject = domainObject;
     this._center = this._domainObject.center.clone();
     this._plane = new Plane().setFromNormalAndCoplanarPoint(this.ray.direction, this._center);
+
+    // This is the adjustment for hittig the sphere other places than in the center
+    const planeIntersection = this.ray.intersectPlane(this._plane, new Vector3());
+    if (planeIntersection === null) {
+      throw new Error('Failed to intersect plane');
+    }
+    this._offset = planeIntersection.sub(this._center);
   }
 
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public override get domainObject(): DomainObject {
+  public override get domainObject(): VisualDomainObject {
     return this._domainObject;
   }
 
   public override onPointerDrag(_event: PointerEvent, ray: Ray): boolean {
-    const planeIntersect = ray.intersectPlane(this._plane, new Vector3());
-    if (planeIntersect === null) {
+    const planeIntersection = ray.intersectPlane(this._plane, new Vector3());
+    if (planeIntersection === null) {
       return false;
     }
-    this._domainObject.center.copy(planeIntersect);
+    planeIntersection.sub(this._offset);
+    if (planeIntersection.equals(this._center)) {
+      return false; // No change
+    }
+    this._domainObject.center.copy(planeIntersection);
     this.domainObject.notify(Changes.geometry);
     return true;
   }
