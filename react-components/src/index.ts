@@ -112,7 +112,8 @@ export {
 export {
   type PointCloudAnnotationMappedAssetData,
   type Image360AnnotationMappedAssetData,
-  type LayersUrlStateParam
+  type LayersUrlStateParam,
+  type ThreeDModelFdmMappings
 } from './hooks/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
