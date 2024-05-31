@@ -11,6 +11,10 @@ import {
   useApply360AnnotationStyling
 } from './useApply360AnnotationStyling';
 import { type Matrix4 } from 'three';
+import {
+  DEFAULT_IMAGE360_ICON_COUNT_LIMIT,
+  DEFAULT_IMAGE360_ICON_CULLING_RADIUS
+} from './constants';
 
 type Image360CollectionContainerProps = {
   addImage360CollectionOptions: AddImage360CollectionOptions;
@@ -138,8 +142,8 @@ function setCollectionCullingOptions(
   cullingParameters?: { radius?: number; iconCountLimit?: number }
 ): void {
   collection?.set360IconCullingRestrictions(
-    cullingParameters?.radius ?? Infinity,
-    cullingParameters?.iconCountLimit ?? 50
+    cullingParameters?.radius ?? DEFAULT_IMAGE360_ICON_CULLING_RADIUS,
+    cullingParameters?.iconCountLimit ?? DEFAULT_IMAGE360_ICON_COUNT_LIMIT
   );
 }
 
