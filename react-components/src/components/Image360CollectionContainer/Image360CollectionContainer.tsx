@@ -48,7 +48,7 @@ export function Image360CollectionContainer({
   }, [addImage360CollectionOptions]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
-  useSetIconCulling(modelRef.current, addImageCollection360Options.iconCullingOptions);
+  useSetIconCulling(modelRef.current, addImage360CollectionOptions.iconCullingOptions);
 
   useEffect(() => {
     if (
@@ -73,7 +73,7 @@ export function Image360CollectionContainer({
 
         setCollectionCullingOptions(
           image360Collection,
-          addImageCollection360Options.iconCullingOptions
+          addImage360CollectionOptions.iconCullingOptions
         );
 
         modelRef.current = image360Collection;
