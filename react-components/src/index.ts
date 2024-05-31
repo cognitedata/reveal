@@ -103,9 +103,9 @@ export {
   type TaggedAddResourceOptions,
   type TaggedAdd3DModelOptions,
   type TaggedAddImageCollection360Options,
-  type AddImageCollection360EventsOptions,
-  type AddImageCollection360DatamodelsOptions,
-  type AddImageCollection360Options,
+  type AddImage360CollectionEventsOptions,
+  type AddImage360CollectionDatamodelsOptions,
+  type AddImage360CollectionOptions,
   type AddResourceOptions,
   type AddReveal3DModelOptions
 } from './components/Reveal3DResources/types';

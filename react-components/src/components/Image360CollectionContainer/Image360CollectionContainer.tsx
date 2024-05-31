@@ -5,7 +5,7 @@ import { type ReactElement, useEffect, useRef } from 'react';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { type AddImageCollection360Options } from '../..';
+import { type AddImage360CollectionOptions } from '../Reveal3DResources/types';
 import {
   type ImageCollectionModelStyling,
   useApply360AnnotationStyling
@@ -13,10 +13,10 @@ import {
 import { type Matrix4 } from 'three';
 
 type Image360CollectionContainerProps = {
-  addImageCollection360Options: AddImageCollection360Options;
+  addImageCollection360Options: AddImage360CollectionOptions;
   styling?: ImageCollectionModelStyling;
   onLoad?: (image360: Image360Collection) => void;
-  onLoadError?: (addOptions: AddImageCollection360Options, error: any) => void;
+  onLoadError?: (addOptions: AddImage360CollectionOptions, error: any) => void;
 };
 
 export function Image360CollectionContainer({

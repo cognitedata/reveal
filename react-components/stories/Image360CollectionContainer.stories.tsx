@@ -3,7 +3,7 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  type AddImageCollection360Options,
+  type AddImage360CollectionOptions,
   Image360CollectionContainer,
   useCameraNavigation
 } from '../src';
@@ -37,7 +37,7 @@ export const Main: Story = {
 };
 
 type CadModelContainerStoryContentProps = {
-  addImageCollection360Options: AddImageCollection360Options;
+  addImageCollection360Options: AddImage360CollectionOptions;
   transform?: Matrix4;
   styling?: ImageCollectionModelStyling;
 };

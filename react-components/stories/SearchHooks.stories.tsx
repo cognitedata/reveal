@@ -8,7 +8,7 @@ import {
   RevealToolbar,
   type AddResourceOptions,
   type AddReveal3DModelOptions,
-  type AddImageCollection360Options,
+  type AddImage360CollectionOptions,
   RevealContext
 } from '../src';
 import { Color } from 'three';
@@ -89,7 +89,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   } = useAllMappedEquipmentAssetMappings(filteredResources, sdk);
 
   const filtered360ImageResources = resources.filter(
-    (resource): resource is AddImageCollection360Options => 'siteId' in resource
+    (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
   );
   const siteIds = filtered360ImageResources.map((filteredResource) => {
     return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;
