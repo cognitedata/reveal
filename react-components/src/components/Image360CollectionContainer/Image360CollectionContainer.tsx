@@ -128,7 +128,7 @@ const useSetIconCulling = (
   }, [collection, cullingParameters?.radius, cullingParameters?.iconCountLimit]);
 };
 
-function defaultLoadErrorHandler(addOptions: AddImage360CollectionOptions, error: any): void {
+function defaultLoadErrorHandler(addOptions: AddImageCollection360Options, error: any): void {
   console.warn(
     `Failed to load image collection ${
       'siteId' in addOptions ? addOptions.siteId : addOptions.externalId
