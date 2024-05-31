@@ -99,17 +99,21 @@ export {
   type FdmAssetStylingGroup,
   type AssetStylingGroup,
   type DefaultResourceStyling,
-  type Image360AssetStylingGroup
-} from './components/Reveal3DResources/types';
-export type {
-  AddImageCollection360Options,
-  AddResourceOptions,
-  AddReveal3DModelOptions
+  type Image360AssetStylingGroup,
+  type TaggedAddResourceOptions,
+  type TaggedAdd3DModelOptions,
+  type TaggedAddImage360CollectionOptions,
+  type AddImage360CollectionEventsOptions,
+  type AddImage360CollectionDatamodelsOptions,
+  type AddImage360CollectionOptions,
+  type AddResourceOptions,
+  type AddReveal3DModelOptions
 } from './components/Reveal3DResources/types';
 export {
   type PointCloudAnnotationMappedAssetData,
   type Image360AnnotationMappedAssetData,
-  type LayersUrlStateParam
+  type LayersUrlStateParam,
+  type ThreeDModelFdmMappings
 } from './hooks/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
