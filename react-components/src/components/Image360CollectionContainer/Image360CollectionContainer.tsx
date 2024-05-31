@@ -115,7 +115,7 @@ export function Image360CollectionContainer({
   }
 }
 
-function defaultLoadErrorHandler(addOptions: AddImageCollection360Options, error: any): void {
+function defaultLoadErrorHandler(addOptions: AddImage360CollectionOptions, error: any): void {
   console.warn(
     `Failed to load image collection ${
       'siteId' in addOptions ? addOptions.siteId : addOptions.externalId
