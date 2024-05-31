@@ -136,7 +136,7 @@ const useSetIconCulling = (
 function setCollectionCullingOptions(
   collection?: Image360Collection,
   cullingParameters?: { radius?: number; iconCountLimit?: number }
-) {
+): void {
   collection?.set360IconCullingRestrictions(
     cullingParameters?.radius ?? Infinity,
     cullingParameters?.iconCountLimit ?? 50

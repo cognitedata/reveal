@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement } from 'react';
-import { CommonResourceContainerProps } from '../Reveal3DResources/types';
+import { type CommonResourceContainerProps } from '../Reveal3DResources/types';
 import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesFromScene';
 import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
 import { useSkyboxFromScene } from '../../hooks/useSkyboxFromScene';
