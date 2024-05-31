@@ -162,7 +162,7 @@ export const Reveal3DResources = ({
           return (
             <Image360CollectionContainer
               key={key}
-              addImageCollection360Options={addModelOption}
+              addImage360CollectionOptions={addModelOption}
               styling={image360Styling}
               onLoad={onModelLoaded}
               onLoadError={onModelLoadedError}

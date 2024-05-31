@@ -31,7 +31,7 @@ export type AddImage360CollectionDatamodelsOptions = {
 
 export type FdmPropertyType<NodeType> = Record<string, Record<string, NodeType>>;
 
-export type TaggedAddImageCollection360Options = {
+export type TaggedAddImage360CollectionOptions = {
   type: 'image360';
   addOptions: AddImage360CollectionOptions;
 };
@@ -40,7 +40,7 @@ export type TaggedAdd3DModelOptions = {
   addOptions: AddReveal3DModelOptions;
 };
 
-export type TaggedAddResourceOptions = TaggedAdd3DModelOptions | TaggedAddImageCollection360Options;
+export type TaggedAddResourceOptions = TaggedAdd3DModelOptions | TaggedAddImage360CollectionOptions;
 
 export type AddResourceOptions = AddReveal3DModelOptions | AddImage360CollectionOptions;
 

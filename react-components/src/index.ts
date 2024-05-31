@@ -102,7 +102,7 @@ export {
   type Image360AssetStylingGroup,
   type TaggedAddResourceOptions,
   type TaggedAdd3DModelOptions,
-  type TaggedAddImageCollection360Options,
+  type TaggedAddImage360CollectionOptions,
   type AddImage360CollectionEventsOptions,
   type AddImage360CollectionDatamodelsOptions,
   type AddImage360CollectionOptions,
