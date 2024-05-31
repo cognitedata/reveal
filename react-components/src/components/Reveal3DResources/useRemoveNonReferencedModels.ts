@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type Cognite3DViewer, type CogniteModel, type Image360Collection } from '@cognite/reveal';
-import { type AddImageCollection360Options, type TypedReveal3DModel } from './types';
+import { type AddImage360CollectionOptions, type TypedReveal3DModel } from './types';
 import {
   is360ImageDataModelAddOptions,
   is360ImageEventsAddOptions,
@@ -13,7 +13,7 @@ import { isSameCadModel, isSamePointCloudModel } from '../../utilities/isSameMod
 
 export function useRemoveNonReferencedModels(
   addOptions: TypedReveal3DModel[],
-  image360CollectionAddOptions: AddImageCollection360Options[],
+  image360CollectionAddOptions: AddImage360CollectionOptions[],
   viewer: Cognite3DViewer
 ): void {
   useEffect(() => {
@@ -83,7 +83,7 @@ function findNonReferencedModels(
 }
 
 function findNonReferencedCollections(
-  image360CollectionAddOptions: AddImageCollection360Options[],
+  image360CollectionAddOptions: AddImage360CollectionOptions[],
   viewer: Cognite3DViewer
 ): Image360Collection[] {
   const collections = viewer.get360ImageCollections();

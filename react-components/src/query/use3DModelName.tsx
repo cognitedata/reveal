@@ -5,10 +5,12 @@
 import { type QueryFunction, useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 
-export const use3DModelName = (ids: number[]): UseQueryResult<string[] | undefined, unknown> => {
+export const use3DModelName = (
+  ids: number[]
+): UseQueryResult<Array<string | undefined>, unknown> => {
   const sdk = useSDK();
 
-  const queryFunction: QueryFunction<string[] | undefined> = async () => {
+  const queryFunction: QueryFunction<Array<string | undefined>> = async () => {
     const modelNamePromises = await Promise.allSettled(
       ids.map(async (id) => {
         const model = await sdk.models3D.retrieve(id);
@@ -16,19 +18,20 @@ export const use3DModelName = (ids: number[]): UseQueryResult<string[] | undefin
       })
     );
 
-    const modelResolvedNames: string[] = [];
+    const modelNames: Array<string | undefined> = [];
     modelNamePromises.forEach((modelNamePromise) => {
       if (modelNamePromise.status === 'fulfilled') {
-        modelResolvedNames.push(modelNamePromise.value);
+        modelNames.push(modelNamePromise.value);
       } else if (modelNamePromise.status === 'rejected') {
         console.error('Error while retriving Model Name', modelNamePromise.reason);
+        modelNames.push(undefined);
       }
     });
 
-    return modelResolvedNames;
+    return modelNames;
   };
 
-  const queryResult = useQuery<string[] | undefined>({
+  const queryResult = useQuery<Array<string | undefined>>({
     queryKey: ['cdf', '3d', 'model', ids],
     queryFn: queryFunction,
     staleTime: Infinity

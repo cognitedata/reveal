@@ -5,7 +5,7 @@ import { type ReactElement, useEffect, useRef } from 'react';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { type AddImageCollection360Options } from '../..';
+import { type AddImage360CollectionOptions } from '../Reveal3DResources/types';
 import {
   type ImageCollectionModelStyling,
   useApply360AnnotationStyling
@@ -13,14 +13,14 @@ import {
 import { type Matrix4 } from 'three';
 
 type Image360CollectionContainerProps = {
-  addImageCollection360Options: AddImageCollection360Options;
+  addImage360CollectionOptions: AddImage360CollectionOptions;
   styling?: ImageCollectionModelStyling;
   onLoad?: (image360: Image360Collection) => void;
-  onLoadError?: (addOptions: AddImageCollection360Options, error: any) => void;
+  onLoadError?: (addOptions: AddImage360CollectionOptions, error: any) => void;
 };
 
 export function Image360CollectionContainer({
-  addImageCollection360Options,
+  addImage360CollectionOptions,
   styling,
   onLoad,
   onLoadError
@@ -35,17 +35,17 @@ export function Image360CollectionContainer({
 
   useEffect(() => {
     if (
-      'siteId' in addImageCollection360Options &&
-      initializingSiteId.current === addImageCollection360Options
+      'siteId' in addImage360CollectionOptions &&
+      initializingSiteId.current === addImage360CollectionOptions
     ) {
       return;
     }
 
-    initializingSiteId.current = addImageCollection360Options;
+    initializingSiteId.current = addImage360CollectionOptions;
 
-    void add360Collection(addImageCollection360Options.transform);
+    void add360Collection(addImage360CollectionOptions.transform);
     return remove360Collection;
-  }, [addImageCollection360Options]);
+  }, [addImage360CollectionOptions]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
   useSetIconCulling(modelRef.current, addImageCollection360Options.iconCullingOptions);
@@ -53,14 +53,14 @@ export function Image360CollectionContainer({
   useEffect(() => {
     if (
       modelRef.current === undefined ||
-      addImageCollection360Options.transform === undefined ||
+      addImage360CollectionOptions.transform === undefined ||
       !viewer.get360ImageCollections().includes(modelRef.current)
     ) {
       return;
     }
 
-    modelRef.current.setModelTransformation(addImageCollection360Options.transform);
-  }, [modelRef, addImageCollection360Options.transform, viewer]);
+    modelRef.current.setModelTransformation(addImage360CollectionOptions.transform);
+  }, [modelRef, addImage360CollectionOptions.transform, viewer]);
 
   return <></>;
 
@@ -81,21 +81,21 @@ export function Image360CollectionContainer({
       })
       .catch((error: any) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
-        errorReportFunction(addImageCollection360Options, error);
+        errorReportFunction(addImage360CollectionOptions, error);
       });
 
     async function getOrAdd360Collection(): Promise<Image360Collection> {
       const collections = viewer.get360ImageCollections();
       const siteId =
-        'siteId' in addImageCollection360Options
-          ? addImageCollection360Options.siteId
-          : addImageCollection360Options.externalId;
+        'siteId' in addImage360CollectionOptions
+          ? addImage360CollectionOptions.siteId
+          : addImage360CollectionOptions.externalId;
       const collection = collections.find((collection) => collection.id === siteId);
       if (collection !== undefined) {
         return collection;
       }
 
-      if ('siteId' in addImageCollection360Options) {
+      if ('siteId' in addImage360CollectionOptions) {
         return await viewer.add360ImageSet(
           'events',
           { site_id: siteId },
@@ -103,8 +103,8 @@ export function Image360CollectionContainer({
         );
       } else {
         return await viewer.add360ImageSet('datamodels', {
-          image360CollectionExternalId: addImageCollection360Options.externalId,
-          space: addImageCollection360Options.space
+          image360CollectionExternalId: addImage360CollectionOptions.externalId,
+          space: addImage360CollectionOptions.space
         });
       }
     }
@@ -143,7 +143,7 @@ function setCollectionCullingOptions(
   );
 }
 
-function defaultLoadErrorHandler(addOptions: AddImageCollection360Options, error: any): void {
+function defaultLoadErrorHandler(addOptions: AddImage360CollectionOptions, error: any): void {
   console.warn(
     `Failed to load image collection ${
       'siteId' in addOptions ? addOptions.siteId : addOptions.externalId

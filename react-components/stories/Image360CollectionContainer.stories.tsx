@@ -3,7 +3,7 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  type AddImageCollection360Options,
+  type AddImage360CollectionOptions,
   Image360CollectionContainer,
   useCameraNavigation
 } from '../src';
@@ -24,12 +24,12 @@ type Story = StoryObj<typeof meta>;
 
 export const Main: Story = {
   args: {
-    addImageCollection360Options: { siteId: 'c_RC_2', transform: new Matrix4() }
+    addImage360CollectionOptions: { siteId: 'c_RC_2', transform: new Matrix4() }
   },
-  render: ({ addImageCollection360Options, styling }) => (
+  render: ({ addImage360CollectionOptions, styling }) => (
     <RevealStoryContainer color={new Color(0x4a4a4a)}>
       <Image360CollectionContainerStoryContent
-        addImageCollection360Options={addImageCollection360Options}
+        addImageCollection360Options={addImage360CollectionOptions}
         styling={styling}
       />
     </RevealStoryContainer>
@@ -37,7 +37,7 @@ export const Main: Story = {
 };
 
 type CadModelContainerStoryContentProps = {
-  addImageCollection360Options: AddImageCollection360Options;
+  addImageCollection360Options: AddImage360CollectionOptions;
   transform?: Matrix4;
   styling?: ImageCollectionModelStyling;
 };
@@ -57,7 +57,7 @@ const Image360CollectionContainerStoryContent = ({
   return (
     <>
       <Image360CollectionContainer
-        addImageCollection360Options={addImageCollection360Options}
+        addImage360CollectionOptions={addImageCollection360Options}
         styling={styling}
         onLoad={onLoad}
       />

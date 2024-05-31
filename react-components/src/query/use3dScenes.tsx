@@ -19,7 +19,7 @@ import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import {
   type AddReveal3DModelOptions,
-  type AddImageCollection360DatamodelsOptions
+  type AddImage360CollectionDatamodelsOptions
 } from '../components/Reveal3DResources/types';
 import { type GroundPlane, type Skybox } from '../components/SceneContainer/sceneTypes';
 
@@ -35,7 +35,7 @@ export type SceneData = {
   cameraEulerRotationY: number;
   cameraEulerRotationZ: number;
   cadModelOptions: AddReveal3DModelOptions[];
-  image360CollectionOptions: AddImageCollection360DatamodelsOptions[];
+  image360CollectionOptions: AddImage360CollectionDatamodelsOptions[];
   groundPlanes: GroundPlane[];
   skybox?: Skybox;
 };
@@ -183,7 +183,7 @@ function populateSceneMapWith360Images(
 
     const properties = Object.values(Object.values(edge.properties)[0])[0];
     const transform = createTransformFromEdge(properties);
-    const newImage360Collection: AddImageCollection360DatamodelsOptions = {
+    const newImage360Collection: AddImage360CollectionDatamodelsOptions = {
       externalId: properties.image360CollectionExternalId,
       space: properties.image360CollectionSpace,
       transform
