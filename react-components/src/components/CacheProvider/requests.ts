@@ -36,10 +36,10 @@ export async function fetchAncestorNodesForTreeIndex(
   return ancestorNodes.items;
 }
 
-export async function getDMSModel(
+export async function getDMSModels(
   modelId: number,
   fdmClient: FdmSDK
-): Promise<DmsUniqueIdentifier> {
+): Promise<DmsUniqueIdentifier[]> {
   const filter = {
     equals: {
       property: ['node', 'externalId'],
@@ -53,12 +53,12 @@ export async function getDMSModel(
     version: SYSTEM_SPACE_3D_MODEL_VERSION
   };
 
-  const model = await fdmClient.filterInstances(filter, 'node', sources);
-  return model.instances[0];
+  const modelResults = await fdmClient.filterInstances(filter, 'node', sources);
+  return modelResults.instances;
 }
 
 export async function getMappingEdgesForNodeIds(
-  model: DmsUniqueIdentifier,
+  models: DmsUniqueIdentifier[],
   revisionId: number,
   fdmClient: FdmSDK,
   ancestorIds: CogniteInternalId[]
@@ -66,12 +66,12 @@ export async function getMappingEdgesForNodeIds(
   const filter = {
     and: [
       {
-        equals: {
+        in: {
           property: ['edge', 'endNode'],
-          value: {
+          values: models.map((model) => ({
             externalId: model.externalId,
             space: model.space
-          }
+          }))
         }
       },
       {
