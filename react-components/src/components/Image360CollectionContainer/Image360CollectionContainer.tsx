@@ -48,6 +48,7 @@ export function Image360CollectionContainer({
   }, [addImageCollection360Options]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
+  useSetIconCulling(modelRef.current, addImageCollection360Options.iconCullingParameters);
 
   useEffect(() => {
     if (
@@ -115,7 +116,19 @@ export function Image360CollectionContainer({
   }
 }
 
-function defaultLoadErrorHandler(addOptions: AddImageCollection360Options, error: any): void {
+const useSetIconCulling = (
+  collection?: Image360Collection,
+  cullingParameters?: { radius?: number; iconCountLimit?: number }
+): void => {
+  useEffect(() => {
+    collection?.set360IconCullingRestrictions(
+      cullingParameters?.radius ?? Infinity,
+      cullingParameters?.iconCountLimit ?? 50
+    );
+  }, [collection, cullingParameters?.radius, cullingParameters?.iconCountLimit]);
+};
+
+function defaultLoadErrorHandler(addOptions: AddImage360CollectionOptions, error: any): void {
   console.warn(
     `Failed to load image collection ${
       'siteId' in addOptions ? addOptions.siteId : addOptions.externalId

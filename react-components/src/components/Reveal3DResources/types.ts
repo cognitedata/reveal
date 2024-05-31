@@ -20,6 +20,7 @@ export type AddImageCollection360EventsOptions = {
   siteId: string;
 } & {
   transform?: Matrix4;
+  iconCullingParameters?: { radius?: number; iconCountLimit?: number };
 };
 
 export type AddImageCollection360DatamodelsOptions = {
