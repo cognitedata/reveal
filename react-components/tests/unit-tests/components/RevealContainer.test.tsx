@@ -11,7 +11,7 @@ import { type PointCloudAnnotationCache } from '../../../src/components/CachePro
 import { type Image360AnnotationCache } from '../../../src/components/CacheProvider/Image360AnnotationCache';
 import { type SceneIdentifiers } from '../../../src/components/SceneContainer/sceneTypes';
 import { type RevealRenderTarget } from '../../../src/architecture/base/renderTarget/RevealRenderTarget';
-import { Cognite3DViewer } from '@cognite/reveal';
+import { type Cognite3DViewer } from '@cognite/reveal';
 
 describe(RevealCanvas.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {

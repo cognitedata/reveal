@@ -29,6 +29,7 @@ import { type AxisGizmoTool } from '@cognite/reveal/tools';
 import { type BaseRevealConfig } from './BaseRevealConfig';
 import { DefaultRevealConfig } from './DefaultRevealConfig';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
+import { type CogniteClient } from '@cognite/sdk/dist/src';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -38,6 +39,7 @@ export class RevealRenderTarget {
   // ==================================================
 
   private readonly _viewer: Cognite3DViewer;
+  private readonly _sdk: CogniteClient;
   private readonly _commandsController: CommandsController;
   private readonly _rootDomainObject: RootDomainObject;
   private _ambientLight: AmbientLight | undefined;
@@ -51,8 +53,9 @@ export class RevealRenderTarget {
   // CONTRUCTORS
   // ==================================================
 
-  constructor(viewer: Cognite3DViewer) {
+  constructor(viewer: Cognite3DViewer, sdk: CogniteClient) {
     this._viewer = viewer;
+    this._sdk = sdk;
 
     const cameraManager = this.cameraManager;
     if (!isFlexibleCameraManager(cameraManager)) {

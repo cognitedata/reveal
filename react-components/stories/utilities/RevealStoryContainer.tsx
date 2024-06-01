@@ -40,8 +40,11 @@ export const RevealStoryContext = ({
   const isLocal = sdkInstance.project === '';
 
   const renderTarget = useMemo(() => {
+    if (sdk === undefined) {
+      return sdk;
+    }
     if (viewer !== undefined) {
-      return new RevealRenderTarget(viewer);
+      return new RevealRenderTarget(viewer, sdk);
     } else if (isLocal) {
       const newViewer = new Cognite3DViewer({
         ...rest.viewerOptions,
@@ -51,7 +54,7 @@ export const RevealStoryContext = ({
         hasEventListeners: false,
         useFlexibleCameraManager: true
       });
-      const renderTarget = new RevealRenderTarget(newViewer);
+      const renderTarget = new RevealRenderTarget(newViewer, sdk);
       renderTarget.setConfig(new StoryBookConfig());
       return renderTarget;
     }

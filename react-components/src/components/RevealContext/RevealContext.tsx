@@ -106,7 +106,7 @@ const useRevealFromKeepAlive = ({
         useFlexibleCameraManager: true,
         hasEventListeners: false
       });
-      renderTarget = new RevealRenderTarget(viewer);
+      renderTarget = new RevealRenderTarget(viewer, sdk);
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;
       }
