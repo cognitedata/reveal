@@ -58,7 +58,7 @@ export const RevealStoryContext = ({
       renderTarget.setConfig(new StoryBookConfig());
       return renderTarget;
     }
-  }, [viewer]);
+  }, [viewer, sdk]);
 
   const renderTargetRef = useRef<RevealRenderTarget | undefined>(renderTarget);
   const isRevealContainerMountedRef = useRef<boolean>(true);
