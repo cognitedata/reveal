@@ -29,7 +29,9 @@ export const CommandButtons = ({
 };
 
 export const CreateCommandButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
-  return <CommandButton command={command} isHorizontal={isHorizontal} reuse={true} />;
+  return (
+    <CommandButton key={command.name} command={command} isHorizontal={isHorizontal} reuse={true} />
+  );
 };
 
 export const CommandButton = ({
@@ -76,7 +78,6 @@ export const CommandButton = ({
     <CogsTooltip content={t(key, fallback)} placement={placement} appendTo={document.body}>
       <Button
         type="ghost"
-        key={newCommand.name}
         icon={icon}
         toggled={isChecked}
         disabled={!isEnabled}
@@ -119,5 +120,7 @@ function addCommandButton(
     const direction = !isHorizontal ? 'horizontal' : 'vertical';
     return <Divider key={index} weight="2px" length="24px" direction={direction} />;
   }
-  return <CommandButton command={command} isHorizontal={isHorizontal} reuse={reuse} />;
+  return (
+    <CommandButton key={command.name} command={command} isHorizontal={isHorizontal} reuse={reuse} />
+  );
 }
