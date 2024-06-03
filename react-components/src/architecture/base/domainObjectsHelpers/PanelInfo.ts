@@ -2,6 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type TranslateKey, type TranslateDelegate } from '../utilities/TranslateKey';
+
 export enum NumberType {
   Unitless,
   Length,
@@ -11,7 +13,7 @@ export enum NumberType {
 }
 
 type PanelItemProps = {
-  key?: string;
+  key: string;
   fallback?: string;
   icon?: string;
   value?: number;
@@ -31,13 +33,34 @@ export class PanelInfo {
     const item = new NumberPanelItem(props);
     this.items.push(item);
   }
+
+  public toString(translate: TranslateDelegate): string {
+    let text = '';
+    {
+      const { header } = this;
+      if (header !== undefined) {
+        const { key, fallback } = header;
+        if (key !== undefined) {
+          text += `${translate(key, fallback)}\n`;
+        }
+      }
+    }
+    for (const item of this.items) {
+      const { key, fallback, unit } = item;
+      if (key !== undefined) {
+        text += `${translate(key, fallback)}: `;
+      }
+      text += `${item.valueAsString} ${unit}\n`;
+    }
+    return text;
+  }
 }
 
 export class PanelItem {
   public key?: string;
   public fallback?: string;
 
-  constructor(props: PanelItemProps) {
+  constructor(props: TranslateKey) {
     this.key = props.key;
     this.fallback = props.fallback;
   }

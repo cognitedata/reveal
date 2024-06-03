@@ -692,9 +692,9 @@ export abstract class DomainObject {
     return true;
   }
 
-  public removeInteractive(checkCanBeDeleted = true): void {
+  public removeInteractive(checkCanBeDeleted = true): boolean {
     if (checkCanBeDeleted && !this.canBeRemoved) {
-      return;
+      return false;
     }
     for (const child of this.children) {
       child.removeInteractive(false); // If parent can be removed, so the children also
@@ -703,6 +703,7 @@ export abstract class DomainObject {
     this.notify(Changes.deleted);
     this.remove();
     parent?.notify(Changes.childDeleted);
+    return true;
   }
 
   public sortChildrenByName(): void {

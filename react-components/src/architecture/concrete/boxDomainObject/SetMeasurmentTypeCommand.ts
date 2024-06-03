@@ -4,9 +4,10 @@
  */
 
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
-import { type BaseCommand, type Tooltip } from '../../base/commands/BaseCommand';
+import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { MeasureType, getIconByMeasureType, getTooltipByMeasureType } from './MeasureType';
 import { MeasurementTool } from './MeasurementTool';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
 export class SetMeasurmentTypeCommand extends RenderTargetCommand {
   private readonly _measureType: MeasureType;
@@ -28,7 +29,7 @@ export class SetMeasurmentTypeCommand extends RenderTargetCommand {
     return getIconByMeasureType(this._measureType);
   }
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return getTooltipByMeasureType(this._measureType);
   }
 

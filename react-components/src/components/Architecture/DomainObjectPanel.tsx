@@ -1,18 +1,19 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Button, Icon, type IconType, Tooltip as CogsTooltip, Body } from '@cognite/cogs.js';
+import { Icon, type IconType, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useState, type ReactElement } from 'react';
 import {
   DomainObjectPanelUpdater,
   type DomainObjectInfo
 } from '../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
-import {
-  type PanelInfo,
-  type NumberPanelItem
-} from '../../architecture/base/domainObjectsHelpers/PanelInfo';
+import { type NumberPanelItem } from '../../architecture/base/domainObjectsHelpers/PanelInfo';
 import { useTranslation } from '../i18n/I18n';
+import { DeleteDomainObjectCommand } from '../../architecture/base/concreteCommands/DeleteDomainObjectCommand';
+import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands/CopyToClipboardCommand';
+import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
+import { CommandButtons } from './Toolbar';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'small';
@@ -39,6 +40,11 @@ export const DomainObjectPanel = (): ReactElement => {
   const icon = domainObject.icon as IconType;
   const header = info.header;
 
+  const commands: BaseCommand[] = [
+    new DeleteDomainObjectCommand(domainObject),
+    new CopyToClipboardCommand(() => info.toString(t))
+  ];
+
   return (
     <Container
       style={{
@@ -60,34 +66,7 @@ export const DomainObjectPanel = (): ReactElement => {
                 <Body size={HEADER_SIZE}>{t(header.key, header.fallback)}</Body>
               </PaddedTh>
             )}
-            {domainObject.canBeRemoved && (
-              <th>
-                <CogsTooltip
-                  content={t('DELETE', 'Delete')}
-                  placement="right"
-                  appendTo={document.body}>
-                  <Button
-                    onClick={() => {
-                      domainObject.removeInteractive();
-                    }}>
-                    <Icon type="Delete" />
-                  </Button>
-                </CogsTooltip>
-              </th>
-            )}
-            <th>
-              <CogsTooltip
-                content={t('COPY_TO_CLIPBOARD', 'Copy to clipboard')}
-                placement="right"
-                appendTo={document.body}>
-                <Button
-                  onClick={async () => {
-                    await copyTextToClipboard(info);
-                  }}>
-                  <Icon type="Copy" />
-                </Button>
-              </CogsTooltip>
-            </th>
+            <CommandButtons commands={commands} isHorizontal={true} reuse={false} />
           </tr>
         </tbody>
       </table>
@@ -119,27 +98,6 @@ export const DomainObjectPanel = (): ReactElement => {
         </PaddedTh>
       </tr>
     );
-  }
-
-  async function copyTextToClipboard(info: PanelInfo): Promise<void> {
-    let text = '';
-    {
-      const { header } = info;
-      if (header !== undefined) {
-        const { key, fallback } = header;
-        if (key !== undefined) {
-          text += `${t(key, fallback)}\n`;
-        }
-      }
-    }
-    for (const item of info.items) {
-      const { key, fallback, unit } = item;
-      if (key !== undefined) {
-        text += `${t(key, fallback)}: `;
-      }
-      text += `${item.valueAsString} ${unit}\n`;
-    }
-    await navigator.clipboard.writeText(text);
   }
 };
 

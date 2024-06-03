@@ -2,14 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type TranslateKey } from '../utilities/TranslateKey';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 
 type UpdateDelegate = (command: BaseCommand) => void;
-
-export type Tooltip = {
-  key: string;
-  fallback?: string;
-};
 
 /**
  * Base class for all command and tools. Thses are object that can do a
@@ -35,7 +31,7 @@ export abstract class BaseCommand {
     return undefined;
   }
 
-  public get tooltip(): Tooltip {
+  public get tooltip(): TranslateKey {
     return { key: '' };
   }
 

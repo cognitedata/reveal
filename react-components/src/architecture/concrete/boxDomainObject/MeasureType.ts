@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Tooltip } from '../../base/commands/BaseCommand';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
 export enum MeasureType {
   None,
@@ -52,7 +52,7 @@ export function getNameByMeasureType(measureType: MeasureType): string {
   }
 }
 
-export function getTooltipByMeasureType(measureType: MeasureType): Tooltip {
+export function getTooltipByMeasureType(measureType: MeasureType): TranslateKey {
   switch (measureType) {
     case MeasureType.Line:
       return {

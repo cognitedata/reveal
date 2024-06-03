@@ -4,8 +4,8 @@
  */
 
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
-import { type Tooltip } from '../../base/commands/BaseCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { MeasureDomainObject } from './MeasureDomainObject';
 
 export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
@@ -13,7 +13,7 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return { key: 'MEASUREMENTS_SHOW_ON_TOP', fallback: 'Show all measurements on top' };
   }
 

@@ -126,7 +126,12 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
     }
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
     if (this.zRotation !== 0 && isFinished) {
-      info.add({ icon: 'Angle', value: radToDeg(this.zRotation), numberType: NumberType.Degrees });
+      info.add({
+        key: 'NONE',
+        icon: 'Angle',
+        value: radToDeg(this.zRotation),
+        numberType: NumberType.Degrees
+      });
     }
     return info;
 

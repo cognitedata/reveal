@@ -4,7 +4,7 @@
  */
 
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
-import { type Tooltip } from '../../base/commands/BaseCommand';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
 import { MeasureType } from './MeasureType';
 
@@ -15,7 +15,7 @@ export class SetCropBoxCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return { key: 'CROP_BOX', fallback: 'Set as crop box' };
   }
 

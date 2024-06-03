@@ -4,7 +4,7 @@
  */
 
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
-import { type Tooltip } from '../../base/commands/BaseCommand';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { AxisDomainObject } from './AxisDomainObject';
 
 export class SetAxisVisibleCommand extends RenderTargetCommand {
@@ -12,7 +12,7 @@ export class SetAxisVisibleCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return { key: 'SHOW_OR_HIDE_AXIS', fallback: 'Show or hide axis' };
   }
 
