@@ -104,7 +104,12 @@ export class MeasureLineView extends GroupThreeView {
     const radiusSquared = square(1.5 * radius); // Add 50% more to make it easier to pick
     const ray = intersectInput.raycaster.ray;
     const closestFinder = new ClosestGeometryFinder<DomainObjectIntersection>(ray.origin);
-    if (closestDistance !== undefined && style.depthTest) {
+
+    // TODO: The line below will case a tiny bug. The best is that the main intersection algorithm
+    // in the vieweer intersects the objects with depthTest == false first, before any other object and
+    // returns out if any of those objects are intersected. Same thor Boxes. Now the intersection is somewhat arbirtraly
+    // if style.depthTest == false.
+    if (style.depthTest && closestDistance !== undefined) {
       closestFinder.minDistance = closestDistance;
     }
     const loopLength = domainObject.measureType === MeasureType.Polygon ? length + 1 : length;
