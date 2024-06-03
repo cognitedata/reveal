@@ -121,7 +121,7 @@ export class MeasureBoxView extends GroupThreeView {
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    const { domainObject } = this;
+    const { domainObject, style } = this;
     if (domainObject.focusType === FocusType.Pending) {
       return undefined; // Should never be picked
     }
@@ -135,7 +135,7 @@ export class MeasureBoxView extends GroupThreeView {
       return undefined;
     }
     const distanceToCamera = point.distanceTo(ray.origin);
-    if (closestDistance !== undefined && closestDistance < distanceToCamera) {
+    if (style.depthTest && closestDistance !== undefined && closestDistance < distanceToCamera) {
       return undefined;
     }
     if (!intersectInput.isVisible(point)) {

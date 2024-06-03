@@ -182,7 +182,6 @@ export class MeasurementTool extends BaseEditTool {
     const intersection = await this.getIntersection(event);
     if (intersection === undefined) {
       // Click in the "air"
-      await super.onClick(event);
       return;
     }
     const measurment = this.getMeasurement(intersection);
@@ -195,7 +194,6 @@ export class MeasurementTool extends BaseEditTool {
     if (creator === undefined) {
       const creator = (this._creator = createCreator(this.measureType));
       if (creator === undefined) {
-        await super.onClick(event);
         return;
       }
       if (creator.addPoint(ray, intersection)) {

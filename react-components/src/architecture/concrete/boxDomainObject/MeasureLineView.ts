@@ -35,6 +35,9 @@ import { createSpriteWithText } from '../../base/utilities/sprites/createSprite'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { MeasureRenderStyle } from './MeasureRenderStyle';
+import { DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeometryFinder';
+import { square } from '../../base/utilities/extensions/mathExtensions';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const RENDER_ORDER = 100;
@@ -82,7 +85,51 @@ export class MeasureLineView extends GroupThreeView {
     if (this.domainObject.focusType === FocusType.Pending) {
       return undefined; // Should never be picked
     }
-    return super.intersectIfCloser(intersectInput, closestDistance);
+    // Implement the intersection logic here, because of bug in tree.js
+    const { domainObject, style } = this;
+    const radius = getRadius(domainObject, style);
+    if (radius <= 0) {
+      return;
+    }
+    const { points } = domainObject;
+    const { length } = points;
+    if (length < 2) {
+      return undefined;
+    }
+    // Just allocate all needed objects once
+    const prevPoint = new Vector3();
+    const thisPoint = new Vector3();
+    const intersection = new Vector3();
+
+    const radiusSquared = square(1.5 * radius); // Add 50% more to make it easier to pick
+    const ray = intersectInput.raycaster.ray;
+    const closestFinder = new ClosestGeometryFinder<DomainObjectIntersection>(ray.origin);
+    if (closestDistance !== undefined && style.depthTest) {
+      closestFinder.minDistance = closestDistance;
+    }
+    const loopLength = domainObject.measureType === MeasureType.Polygon ? length + 1 : length;
+    for (let i = 0; i < loopLength; i++) {
+      thisPoint.copy(points[i % length]);
+      thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+
+      if (i > 0) {
+        const distanceSq = ray.distanceSqToSegment(prevPoint, thisPoint, undefined, intersection);
+        if (distanceSq > radiusSquared || !closestFinder.isClosest(intersection)) {
+          prevPoint.copy(thisPoint);
+          continue;
+        }
+        const objectIntersection: DomainObjectIntersection = {
+          type: 'customObject',
+          point: intersection,
+          distanceToCamera: closestFinder.minDistance,
+          customObject: this,
+          domainObject
+        };
+        closestFinder.setClosestGeometry(objectIntersection);
+      }
+      prevPoint.copy(thisPoint);
+    }
+    return closestFinder.getClosestGeometry();
   }
 
   // ==================================================
@@ -91,7 +138,7 @@ export class MeasureLineView extends GroupThreeView {
 
   private createPipe(): Mesh | undefined {
     const { domainObject, style } = this;
-    const radius = domainObject.isSelected ? style.selectedPipeRadius : style.pipeRadius;
+    const radius = getRadius(domainObject, style);
     if (radius <= 0) {
       return;
     }
@@ -283,4 +330,8 @@ function adjustLabel(
   if (domainObject.measureType !== MeasureType.VerticalArea) {
     point.y += (1.1 * spriteHeight) / 2 + style.pipeRadius;
   }
+}
+
+function getRadius(domainObject: MeasureLineDomainObject, style: MeasureLineRenderStyle): number {
+  return domainObject.isSelected ? style.selectedPipeRadius : style.pipeRadius;
 }
