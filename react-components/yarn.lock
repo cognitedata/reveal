@@ -1693,9 +1693,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs.js@npm:^9.3.0":
-  version: 9.84.2
-  resolution: "@cognite/cogs.js@npm:9.84.2"
+"@cognite/cogs.js@npm:^9.84.3":
+  version: 9.84.3
+  resolution: "@cognite/cogs.js@npm:9.84.3"
   dependencies:
     "@emotion/react": "npm:11.10.6"
     "@emotion/styled": "npm:11.10.6"
@@ -1736,7 +1736,7 @@ __metadata:
     "@types/react": ^18.0.0
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 10/4fdd6f11534e63ea7205b18f34ca448972309a7cba499a9eb2098b99d3ffe95f0b68ef9c93e172e5d30ea26c2bbe417705d05a0dd69d4cfd0bb98c16a268925a
+  checksum: 10/bc36fb3b01026068fee222c99fd422e72c8b3e37d4b92155ca3b4a22a46db0df820cbbc0e5ea9befac1adba0e7018caa07197550eee14c5b914f4a3123cfd2df
   languageName: node
   linkType: hard
 
@@ -1746,7 +1746,7 @@ __metadata:
   dependencies:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.6.0"
-    "@cognite/cogs.js": "npm:^9.3.0"
+    "@cognite/cogs.js": "npm:^9.84.3"
     "@cognite/reveal": "npm:^4.14.5"
     "@cognite/sdk": "npm:^9.13.0"
     "@playwright/test": "npm:^1.43.1"
@@ -1801,7 +1801,7 @@ __metadata:
     vite-plugin-externalize-deps: "npm:^0.8.0"
     vitest: "npm:^1.5.3"
   peerDependencies:
-    "@cognite/cogs.js": ">=9"
+    "@cognite/cogs.js": ">=9.84.3"
     "@cognite/reveal": 4.14.5
     react: ">=18"
     react-dom: ">=18"

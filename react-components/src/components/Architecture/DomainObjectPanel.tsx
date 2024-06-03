@@ -14,6 +14,7 @@ import { DeleteDomainObjectCommand } from '../../architecture/base/concreteComma
 import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands/CopyToClipboardCommand';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { CommandButtons } from './Toolbar';
+import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'small';
@@ -22,6 +23,7 @@ export const DomainObjectPanel = (): ReactElement => {
   const [currentDomainObjectInfo, setCurrentDomainObjectInfo] = useState<
     DomainObjectInfo | undefined
   >();
+
   DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
 
   const { t } = useTranslation();
@@ -83,11 +85,7 @@ export const DomainObjectPanel = (): ReactElement => {
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
           {key !== undefined && <Body size={TEXT_SIZE}>{t(key, fallback)}</Body>}
-          {icon !== undefined && (
-            <span>
-              <Icon type={icon} />
-            </span>
-          )}
+          {icon !== undefined && <Icon type={icon} />}
         </PaddedTh>
         <></>
         <NumberTh>
@@ -113,7 +111,7 @@ const PaddedTh = styled.th`
   size: small;
 `;
 
-const Container = styled.div`
+const Container = withSuppressRevealEvents(styled.div`
   zindex: 1000px;
   position: absolute;
   display: block;
@@ -122,4 +120,4 @@ const Container = styled.div`
   overflow: hidden;
   background-color: white;
   box-shadow: 0px 1px 8px #4f52681a;
-`;
+`);
