@@ -66,7 +66,7 @@ export const useModelHandlers = (
 
 function createHandlers(
   models: CogniteModel[],
-  modelNames: string[] | undefined,
+  modelNames: Array<string | undefined> | undefined,
   image360Collections: Image360Collection[],
   viewer: Cognite3DViewer
 ): ModelLayerHandlers {

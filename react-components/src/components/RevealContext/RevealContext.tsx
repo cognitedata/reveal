@@ -15,7 +15,7 @@ import { SDKProvider } from '../RevealCanvas/SDKProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { Image360AnnotationCacheProvider } from '../CacheProvider/Image360AnnotationCacheProvider';
-import { RevealRenderTarget } from '../../architecture/RenderTarget/RevealRenderTarget';
+import { RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { LoadedSceneProvider } from '../SceneContainer/LoadedSceneContext';
 
 export type RevealContextProps = {
@@ -32,7 +32,7 @@ export type RevealContextProps = {
     | 'ssaoQualityHint'
     | 'pointCloudEffects'
     | 'enableEdges'
-    | 'useFlexibleCameraManager'
+    | 'onLoading'
   >;
 };
 
@@ -100,7 +100,12 @@ const useRevealFromKeepAlive = ({
   function getOrInitializeRenderTarget(): RevealRenderTarget {
     let renderTarget = revealKeepAliveData?.renderTargetRef.current;
     if (renderTarget === undefined) {
-      const viewer = new Cognite3DViewer({ ...viewerOptions, sdk });
+      const viewer = new Cognite3DViewer({
+        ...viewerOptions,
+        sdk,
+        useFlexibleCameraManager: true,
+        hasEventListeners: false
+      });
       renderTarget = new RevealRenderTarget(viewer);
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;

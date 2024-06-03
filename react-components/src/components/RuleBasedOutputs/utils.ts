@@ -43,12 +43,15 @@ const checkStringExpressionStatement = (
   const currentTriggerData = triggerTypeData.find(
     (triggerType) => triggerType.type === trigger?.type
   );
-  const assetTrigger =
+
+  const isMetadataAndAssetTrigger =
     trigger?.type === 'metadata' &&
-      currentTriggerData?.type === 'metadata' &&
-      currentTriggerData?.asset !== undefined
-      ? currentTriggerData?.asset[trigger.type]?.[trigger.key]
-      : undefined;
+    currentTriggerData?.type === 'metadata' &&
+    currentTriggerData?.asset !== undefined;
+
+  const assetTrigger = isMetadataAndAssetTrigger
+    ? currentTriggerData?.asset[trigger.type]?.[trigger.key]
+    : undefined;
 
   if (assetTrigger === undefined) return;
 
@@ -449,10 +452,9 @@ const generateTimeseriesAndDatapointsFromTheAsset = ({
 export const traverseExpressionToGetTimeseries = (
   expressions: Expression[] | undefined
 ): string[] | undefined => {
-  let timeseriesExternalIdFound: string[] | undefined = [];
-
   const timeseriesExternalIdResults = expressions
     ?.map((expression) => {
+      let timeseriesExternalIdFound: string[] | undefined = [];
       switch (expression.type) {
         case 'or':
         case 'and': {
@@ -471,7 +473,6 @@ export const traverseExpressionToGetTimeseries = (
       return timeseriesExternalIdFound?.filter(isDefined) ?? [];
     })
     .flat();
-
   return timeseriesExternalIdResults;
 };
 

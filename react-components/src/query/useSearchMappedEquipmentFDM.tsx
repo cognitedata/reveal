@@ -18,7 +18,7 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { SYSTEM_3D_EDGE_SOURCE, SYSTEM_SPACE_3D_SCHEMA } from '../utilities/globalDataModels';
 import { type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
-import { getDMSModel } from '../components/CacheProvider/requests';
+import { getDMSModels } from '../components/CacheProvider/requests';
 
 export type SearchResultsWithView = { view: Source; instances: NodeItem[] };
 
@@ -258,9 +258,9 @@ async function createMappedEquipmentMaps(
         revisionId.toString() === getRevisionIdFromEdge(edge)
     );
 
-    const modelInstance = await getDMSModel(parseInt(endExternalId), fdmSdk);
+    const modelInstances = await getDMSModels(parseInt(endExternalId), fdmSdk);
 
-    if (endSpace === modelInstance.space && isModelsMapped) {
+    if (modelInstances.find((model) => model.space === endSpace) !== undefined && isModelsMapped) {
       const key = `${space}/${externalId}`;
 
       const keyEdges = mappedEquipmentFirstLevelMap[key];

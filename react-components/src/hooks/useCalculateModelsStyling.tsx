@@ -30,7 +30,7 @@ import {
   useAssetMappedNodesForRevisions,
   useNodesForAssets
 } from '../components/CacheProvider/AssetMappingCacheProvider';
-import { isSameCadModel } from '../utilities/isSameModel';
+import { isSameModel } from '../utilities/isSameModel';
 import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
 
 type ModelStyleGroup = {
@@ -132,7 +132,11 @@ function useCalculateMappedStyling(
   ]);
 
   const combinedMappedStyleGroups = useMemo(
-    () => groupStyleGroupByModel([...modelsMappedAssetStyleGroups, ...modelsMappedFdmStyleGroups]),
+    () =>
+      groupStyleGroupByModel(models, [
+        ...modelsMappedAssetStyleGroups,
+        ...modelsMappedFdmStyleGroups
+      ]),
     [modelsMappedAssetStyleGroups, modelsMappedFdmStyleGroups]
   );
 
@@ -179,7 +183,10 @@ function useCalculateInstanceStyling(
 
   const combinedMappedStyleGroups = useMemo(
     () =>
-      groupStyleGroupByModel([...fdmModelInstanceStyleGroups, ...assetMappingInstanceStyleGroups]),
+      groupStyleGroupByModel(models, [
+        ...fdmModelInstanceStyleGroups,
+        ...assetMappingInstanceStyleGroups
+      ]),
     [fdmModelInstanceStyleGroups, assetMappingInstanceStyleGroups]
   );
 
@@ -235,9 +242,6 @@ function useJoinStylingGroups(
   modelsMappedStyleGroups: ModelStyleGroup[],
   modelInstanceStyleGroups: ModelStyleGroup[]
 ): StyledModel[] {
-  const isSameModel = (model1: CadModelOptions, model2: CadModelOptions): boolean => {
-    return model1.modelId === model2.modelId && model1.revisionId === model2.revisionId;
-  };
   const modelsStyling = useMemo(() => {
     if (modelInstanceStyleGroups.length === 0 && modelsMappedStyleGroups.length === 0) {
       return extractDefaultStyles(models);
@@ -259,21 +263,18 @@ function useJoinStylingGroups(
   return modelsStyling;
 }
 
-function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
+function groupStyleGroupByModel(
+  models: CadModelOptions[],
+  styleGroup: ModelStyleGroup[]
+): ModelStyleGroup[] {
+  const initialStyleGroups = models.map((model) => ({ model, styleGroup: [] }));
   return styleGroup.reduce<ModelStyleGroup[]>((accumulatedGroups, currentGroup) => {
     const existingGroupWithModel = accumulatedGroups.find((group) =>
-      isSameCadModel(group.model, currentGroup.model)
+      isSameModel(group.model, currentGroup.model)
     );
-    if (existingGroupWithModel !== undefined) {
-      existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
-    } else {
-      accumulatedGroups.push({
-        model: currentGroup.model,
-        styleGroup: [...currentGroup.styleGroup]
-      });
-    }
+    existingGroupWithModel?.styleGroup.push(...currentGroup.styleGroup);
     return accumulatedGroups;
-  }, []);
+  }, initialStyleGroups);
 }
 
 function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {

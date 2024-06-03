@@ -6,7 +6,7 @@ import { useSceneConfig } from '../query/useSceneConfig';
 import { type CogniteClient } from '@cognite/sdk';
 import {
   type AddResourceOptions,
-  type AddImageCollection360DatamodelsOptions
+  type AddImage360CollectionDatamodelsOptions
 } from '../components/Reveal3DResources/types';
 import { CDF_TO_VIEWER_TRANSFORMATION, type AddModelOptions } from '@cognite/reveal';
 import { useEffect, useState } from 'react';
@@ -48,7 +48,7 @@ export const useReveal3dResourcesFromScene = (
 
     scene.data.image360Collections.forEach((collection) => {
       const transform = createResourceTransformation(collection);
-      const addModelOptions: AddImageCollection360DatamodelsOptions = {
+      const addModelOptions: AddImage360CollectionDatamodelsOptions = {
         externalId: collection.image360CollectionExternalId,
         space: collection.image360CollectionSpace
       };

@@ -126,8 +126,8 @@ export class ResizeHandler {
 
     const [virtualWidth, virtualHeight] = getVirtualDomElementWidthAndHeight(canvas);
 
-    const newVirtualWidth = Math.round(virtualWidth * downScale);
-    const newVirtualHeight = Math.round(virtualHeight * downScale);
+    const newVirtualWidth = Math.max(1, Math.round(virtualWidth * downScale));
+    const newVirtualHeight = Math.max(1, Math.round(virtualHeight * downScale));
     const newAspectRatio = newVirtualWidth / newVirtualHeight;
 
     if (camera.aspect !== newAspectRatio) {

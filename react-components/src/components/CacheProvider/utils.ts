@@ -40,17 +40,13 @@ export function modelRevisionAssetIdsToKey(
 export function getAssetIdOrExternalIdFromPointCloudAnnotation(
   annotation: AnnotationModel
 ): string | number | undefined {
-  return (
-    (annotation.data as AnnotationsBoundingVolume).assetRef?.id ??
-    (annotation.data as AnnotationsBoundingVolume).assetRef?.externalId
-  );
+  const annotationData = annotation.data as AnnotationsBoundingVolume;
+  return annotationData.assetRef?.id ?? annotationData.assetRef?.externalId;
 }
 
 export function getAssetIdOrExternalIdFromImage360Annotation(
   annotation: AnnotationModel
 ): string | number | undefined {
-  return (
-    (annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink).assetRef?.id ??
-    (annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink).assetRef?.externalId
-  );
+  const annotationData = annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+  return annotationData.assetRef?.id ?? annotationData.assetRef?.externalId;
 }

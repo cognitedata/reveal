@@ -2,16 +2,16 @@
  * Copyright 2024 Cognite AS
  */
 import {
-  type AddImageCollection360EventsOptions,
-  type AddImageCollection360DatamodelsOptions,
-  type AddImageCollection360Options,
+  type AddImage360CollectionEventsOptions,
+  type AddImage360CollectionDatamodelsOptions,
+  type AddImage360CollectionOptions,
   type AddResourceOptions,
   type AddReveal3DModelOptions
 } from './types';
 
 export function is360ImageAddOptions(
   addOptions: AddResourceOptions
-): addOptions is AddImageCollection360Options {
+): addOptions is AddImage360CollectionOptions {
   return !is3dModelOptions(addOptions);
 }
 
@@ -23,15 +23,15 @@ export function is3dModelOptions(
 }
 
 export function is360ImageDataModelAddOptions(
-  addOptions: AddImageCollection360Options
-): addOptions is AddImageCollection360DatamodelsOptions {
-  const castOptions = addOptions as AddImageCollection360DatamodelsOptions;
+  addOptions: AddImage360CollectionOptions
+): addOptions is AddImage360CollectionDatamodelsOptions {
+  const castOptions = addOptions as AddImage360CollectionDatamodelsOptions;
   return castOptions.externalId !== undefined && castOptions.space !== undefined;
 }
 
 export function is360ImageEventsAddOptions(
-  addOptions: AddImageCollection360Options
-): addOptions is AddImageCollection360EventsOptions {
-  const castOptions = addOptions as AddImageCollection360EventsOptions;
+  addOptions: AddImage360CollectionOptions
+): addOptions is AddImage360CollectionEventsOptions {
+  const castOptions = addOptions as AddImage360CollectionEventsOptions;
   return castOptions.siteId !== undefined;
 }

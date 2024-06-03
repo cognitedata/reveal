@@ -82,7 +82,7 @@ export class Image360CollectionHandler extends ModelHandler {
     private readonly _isCurrentlyEntered: (collection: Image360Collection) => boolean,
     private readonly _exit360Image: () => void
   ) {
-    super(_image360Collection, _image360Collection.id);
+    super(_image360Collection, _image360Collection.label ?? _image360Collection.id);
   }
 
   key(): string {
