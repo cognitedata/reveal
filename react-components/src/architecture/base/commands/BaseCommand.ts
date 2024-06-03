@@ -12,16 +12,32 @@ type UpdateDelegate = (command: BaseCommand) => void;
  * user interaction with the system. It also have enough information to
  * generate the UI for the command.
  */
+
 export abstract class BaseCommand {
+  private static _counter: number = 0; // Counter for the unique index
+
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   private readonly _listeners: UpdateDelegate[] = [];
 
+  // Unique index for the command, used by in React to force rerender
+  // when the command changes for a button.
+  public readonly _uniqueIndex: number;
+
+  public get uniqueIndex(): number {
+    return this._uniqueIndex;
+  }
+
   // ==================================================
   // VIRTUAL METHODS (To be override)
   // =================================================
+
+  constructor() {
+    BaseCommand._counter++;
+    this._uniqueIndex = BaseCommand._counter;
+  }
 
   public get name(): string {
     return this.tooltip.fallback ?? this.tooltip.key;

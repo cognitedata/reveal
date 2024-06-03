@@ -29,9 +29,7 @@ export const CommandButtons = ({
 };
 
 export const CreateCommandButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
-  return (
-    <CommandButton key={command.name} command={command} isHorizontal={isHorizontal} reuse={true} />
-  );
+  return <CommandButton command={command} isHorizontal={isHorizontal} reuse={true} />;
 };
 
 export const CommandButton = ({
@@ -53,6 +51,7 @@ export const CommandButton = ({
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
+  const [uniqueIndex, setUniqueIndex] = useState<number>(0);
   const [icon, setIcon] = useState<IconType>('Copy');
 
   useEffect(() => {
@@ -60,6 +59,7 @@ export const CommandButton = ({
       setChecked(command.isChecked);
       setEnabled(command.isEnabled);
       setVisible(command.isVisible);
+      setUniqueIndex(command._uniqueIndex);
       setIcon(command.icon as IconType);
     }
     update(newCommand);
@@ -79,6 +79,7 @@ export const CommandButton = ({
       <Button
         type="ghost"
         icon={icon}
+        key={uniqueIndex}
         toggled={isChecked}
         disabled={!isEnabled}
         aria-label={t(key, fallback)}
@@ -95,9 +96,9 @@ function getDefaultCommand(
   renderTarget: RevealRenderTarget,
   reuse: boolean
 ): BaseCommand {
+  // If it exists from before, return the existing command
+  // Otherwise, add the new command to the controller and attach the renderTarget
   if (reuse) {
-    // If it exists from before, return the existing command
-    // Otherwise, add the new command to the controller and attach the renderTarget
     const oldCommand = renderTarget.commandsController.getEqual(newCommand);
     if (oldCommand !== undefined) {
       return oldCommand;
@@ -121,6 +122,11 @@ function addCommandButton(
     return <Divider key={index} weight="2px" length="24px" direction={direction} />;
   }
   return (
-    <CommandButton key={command.name} command={command} isHorizontal={isHorizontal} reuse={reuse} />
+    <CommandButton
+      key={command._uniqueIndex}
+      command={command}
+      isHorizontal={isHorizontal}
+      reuse={reuse}
+    />
   );
 }

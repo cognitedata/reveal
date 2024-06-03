@@ -46,6 +46,7 @@ import { radToDeg } from 'three/src/math/MathUtils.js';
 import { Range1 } from '../../base/utilities/geometry/Range1';
 import { MeasureType } from './MeasureType';
 import { type MeasureRenderStyle } from './MeasureRenderStyle';
+import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
@@ -80,7 +81,15 @@ export class MeasureBoxView extends GroupThreeView {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (change.isChanged(Changes.selected, Changes.focus, Changes.renderStyle, Changes.color)) {
+    if (
+      change.isChanged(
+        Changes.selected,
+        Changes.focus,
+        Changes.renderStyle,
+        Changes.color,
+        Changes.unit
+      )
+    ) {
       this.removeChildren();
       this.invalidateBoundingBox();
       this.invalidateRenderTarget();
@@ -230,12 +239,16 @@ export class MeasureBoxView extends GroupThreeView {
       return undefined;
     }
     const { domainObject } = this;
+    const { rootDomainObject } = domainObject;
+    if (rootDomainObject === undefined) {
+      return undefined;
+    }
     const degrees = radToDeg(domainObject.zRotation);
-    const text = degrees.toFixed(1);
-    if (text === '0.0') {
+    if (degrees === 0) {
       return undefined; // Not show when about 0
     }
-    const sprite = createSprite(text + '°', this.style, spriteHeight);
+    const text = rootDomainObject.unitSystem.toStringWithUnit(degrees, Quantity.Degrees);
+    const sprite = createSprite(text, this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
     }
@@ -330,6 +343,10 @@ export class MeasureBoxView extends GroupThreeView {
 
   private addLabels(matrix: Matrix4): void {
     const { domainObject, style } = this;
+    const { rootDomainObject } = domainObject;
+    if (rootDomainObject === undefined) {
+      return undefined;
+    }
     const spriteHeight = this.getTextHeight(style.relativeTextSize);
     clear(this._sprites);
     for (let index = 0; index < 3; index++) {
@@ -338,7 +355,8 @@ export class MeasureBoxView extends GroupThreeView {
         this._sprites.push(undefined);
         continue;
       }
-      const sprite = createSprite(size.toFixed(2), style, spriteHeight);
+      const text = rootDomainObject.unitSystem.toStringWithUnit(size, Quantity.Length);
+      const sprite = createSprite(text, style, spriteHeight);
       if (sprite === undefined) {
         this._sprites.push(undefined);
         continue;

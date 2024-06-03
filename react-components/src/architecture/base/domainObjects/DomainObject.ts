@@ -256,10 +256,13 @@ export abstract class DomainObject {
       )
     ) {
       if (this.root instanceof RootDomainObject) {
+        // Update all the command buttons (in the toolbars).
+        // This goes fast and will not slow the system down.
         CommandsUpdater.update(this.root.renderTarget);
       }
     }
     if (this.hasPanelInfo) {
+      // Update the DomainObjectPanel if any
       DomainObjectPanelUpdater.notify(this, change);
     }
   }
@@ -461,7 +464,14 @@ export abstract class DomainObject {
   }
 
   public get root(): DomainObject {
+    // Returns the root of the hierarcy, regardless what it is
     return this.parent === undefined ? this : this.parent.root;
+  }
+
+  public get rootDomainObject(): RootDomainObject | undefined {
+    // Returns a RootDomainObject only if the root is a RootDomainObject, otherwise undefined
+    const root = this.root;
+    return root instanceof RootDomainObject ? root : undefined;
   }
 
   public get hasParent(): boolean {

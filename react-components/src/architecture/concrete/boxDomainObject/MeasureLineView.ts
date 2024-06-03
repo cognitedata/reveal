@@ -38,6 +38,7 @@ import { MeasureRenderStyle } from './MeasureRenderStyle';
 import { DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeometryFinder';
 import { square } from '../../base/utilities/extensions/mathExtensions';
+import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const RENDER_ORDER = 100;
@@ -61,7 +62,15 @@ export class MeasureLineView extends GroupThreeView {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (change.isChanged(Changes.selected, Changes.focus, Changes.renderStyle, Changes.color)) {
+    if (
+      change.isChanged(
+        Changes.selected,
+        Changes.focus,
+        Changes.renderStyle,
+        Changes.color,
+        Changes.unit
+      )
+    ) {
       this.removeChildren();
       this.invalidateBoundingBox();
       this.invalidateRenderTarget();
@@ -107,8 +116,9 @@ export class MeasureLineView extends GroupThreeView {
 
     // TODO: The line below will case a tiny bug. The best is that the main intersection algorithm
     // in the vieweer intersects the objects with depthTest == false first, before any other object and
-    // returns out if any of those objects are intersected. Same thor Boxes. Now the intersection is somewhat arbirtraly
-    // if style.depthTest == false.
+    // returns out if any of those objects are intersected. Same for Boxes. Now the intersection is somewhat arbitrarly
+    // if style.depthTest == false. Then the last one added to the viewer will be picked first,
+    // regardless of the distance to the mouse.
     if (style.depthTest && closestDistance !== undefined) {
       closestFinder.minDistance = closestDistance;
     }
@@ -240,7 +250,10 @@ export class MeasureLineView extends GroupThreeView {
 
   private addLabels(): void {
     const { domainObject, style } = this;
-    const { points } = domainObject;
+    const { points, rootDomainObject } = domainObject;
+    if (rootDomainObject === undefined) {
+      return;
+    }
     const { length } = points;
     if (length < 2) {
       return;
@@ -258,7 +271,9 @@ export class MeasureLineView extends GroupThreeView {
 
       center.copy(point1).add(point2).divideScalar(2);
       center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-      const sprite = createSprite(distance.toFixed(2), style, spriteHeight);
+
+      const text = rootDomainObject.unitSystem.toStringWithUnit(distance, Quantity.Length);
+      const sprite = createSprite(text, style, spriteHeight);
       if (sprite === undefined) {
         continue;
       }

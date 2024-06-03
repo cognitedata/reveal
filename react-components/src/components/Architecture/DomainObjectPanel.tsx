@@ -8,13 +8,18 @@ import {
   DomainObjectPanelUpdater,
   type DomainObjectInfo
 } from '../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
-import { type NumberPanelItem } from '../../architecture/base/domainObjectsHelpers/PanelInfo';
+import {
+  type PanelInfo,
+  type NumberPanelItem
+} from '../../architecture/base/domainObjectsHelpers/PanelInfo';
 import { useTranslation } from '../i18n/I18n';
 import { DeleteDomainObjectCommand } from '../../architecture/base/concreteCommands/DeleteDomainObjectCommand';
 import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands/CopyToClipboardCommand';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { CommandButtons } from './Toolbar';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
+import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
+import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'small';
@@ -39,12 +44,18 @@ export const DomainObjectPanel = (): ReactElement => {
     return <></>;
   }
   const style = domainObject.getPanelInfoStyle();
+  const root = domainObject.rootDomainObject;
+  if (root === undefined) {
+    return <></>;
+  }
+  const unitSystem = root.unitSystem;
+
   const icon = domainObject.icon as IconType;
   const header = info.header;
 
   const commands: BaseCommand[] = [
     new DeleteDomainObjectCommand(domainObject),
-    new CopyToClipboardCommand(() => info.toString(t))
+    new CopyToClipboardCommand(() => toString(info, t, unitSystem))
   ];
 
   return (
@@ -73,14 +84,14 @@ export const DomainObjectPanel = (): ReactElement => {
         </tbody>
       </table>
       <table>
-        <tbody>{info.items.map((item, _i) => addTextWithNumber(item))}</tbody>
+        <tbody>{info.items.map((item, _i) => addTextWithNumber(item, unitSystem))}</tbody>
       </table>
     </Container>
   );
 
-  function addTextWithNumber(item: NumberPanelItem): ReactElement {
+  function addTextWithNumber(item: NumberPanelItem, unitSystem: UnitSystem): ReactElement {
     const icon = item.icon as IconType;
-    const { key, fallback, unit } = item;
+    const { key, fallback, quantity, value } = item;
     return (
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
@@ -89,15 +100,36 @@ export const DomainObjectPanel = (): ReactElement => {
         </PaddedTh>
         <></>
         <NumberTh>
-          <Body size={TEXT_SIZE}>{item.valueAsString}</Body>
+          <Body size={TEXT_SIZE}>{unitSystem.toString(value, quantity)}</Body>
         </NumberTh>
         <PaddedTh>
-          <Body size={TEXT_SIZE}>{unit}</Body>
+          <Body size={TEXT_SIZE}>{unitSystem.getUnit(quantity)}</Body>
         </PaddedTh>
       </tr>
     );
   }
 };
+
+function toString(info: PanelInfo, translate: TranslateDelegate, unitSystem: UnitSystem): string {
+  let text = '';
+  {
+    const { header } = info;
+    if (header !== undefined) {
+      const { key, fallback } = header;
+      if (key !== undefined) {
+        text += `${translate(key, fallback)}\n`;
+      }
+    }
+  }
+  for (const item of info.items) {
+    const { key, fallback, quantity, value } = item;
+    if (key !== undefined) {
+      text += `${translate(key, fallback)}: `;
+    }
+    text += `${unitSystem.toStringWithUnit(value, quantity)}\n`;
+  }
+  return text;
+}
 
 const NumberTh = styled.th`
   text-align: right;

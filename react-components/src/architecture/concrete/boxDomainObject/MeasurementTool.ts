@@ -24,6 +24,7 @@ import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { ToogleMetricUnitsCommand } from '../../base/concreteCommands/ToogleMetricUnitsCommand';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -54,6 +55,7 @@ export class MeasurementTool extends BaseEditTool {
       new SetMeasurmentTypeCommand(MeasureType.VerticalArea),
       new SetMeasurmentTypeCommand(MeasureType.Volume),
       undefined, // Separator
+      new ToogleMetricUnitsCommand(),
       new ShowMeasurmentsOnTopCommand()
     ];
   }
