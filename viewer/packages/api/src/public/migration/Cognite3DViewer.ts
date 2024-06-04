@@ -777,6 +777,7 @@ export class Cognite3DViewer {
         this._models.push(model3d);
         this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
       });
+      this.recalculateBoundingBox();
       return model3d;
     } catch (error) {
       await modelLoadSequencer(() => {});
@@ -820,6 +821,7 @@ export class Cognite3DViewer {
         this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
       });
 
+      this.recalculateBoundingBox();
       return model;
     } catch (error) {
       await modelLoadSequencer(() => {});
@@ -976,6 +978,7 @@ export class Cognite3DViewer {
         assertNever(model.type, `Model type ${model.type} cannot be removed`);
     }
 
+    this.recalculateBoundingBox();
     this.revealManager.requestRedraw();
   }
 
