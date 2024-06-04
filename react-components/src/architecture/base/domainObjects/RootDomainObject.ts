@@ -3,10 +3,20 @@
  */
 
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
+import { UnitSystem } from '../renderTarget/UnitSystem';
 import { DomainObject } from './DomainObject';
 
 export class RootDomainObject extends DomainObject {
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
   private readonly _renderTarget: RevealRenderTarget;
+  public readonly unitSystem = new UnitSystem();
+
+  // ==================================================
+  // INSTANCE PROPERTIES
+  // ==================================================
 
   public get renderTarget(): RevealRenderTarget {
     return this._renderTarget;

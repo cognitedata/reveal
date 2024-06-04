@@ -4,8 +4,8 @@
  */
 
 import { BaseTool } from './BaseTool';
-import { type Tooltip } from './BaseCommand';
 import { type IFlexibleCameraManager } from '@cognite/reveal';
+import { type TranslateKey } from '../utilities/TranslateKey';
 
 /**
  * Represents a tool navigation tool used for camera manipulation.
@@ -32,7 +32,7 @@ export class NavigationTool extends BaseTool {
     return 'Grab';
   }
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return { key: 'NAVIGATION', fallback: 'Navigation' };
   }
 

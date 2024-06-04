@@ -9,7 +9,7 @@ import { Range3 } from '../../base/utilities/geometry/Range3';
 import { createFractalRegularGrid2 } from './geometry/createFractalRegularGrid2';
 import { DEFAULT_TERRAIN_NAME, TerrainDomainObject } from './TerrainDomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type Tooltip } from '../../base/commands/BaseCommand';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
 export class UpdateTerrainCommand extends RenderTargetCommand {
   // ==================================================
@@ -20,7 +20,7 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
     return 'Refresh';
   }
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return { key: 'UNKNOWN', fallback: 'Change the visible terrain' };
   }
 

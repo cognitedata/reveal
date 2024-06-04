@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Button, Icon, type IconType, Tooltip as CogsTooltip, Body } from '@cognite/cogs.js';
+import { Icon, type IconType, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useState, type ReactElement } from 'react';
 import {
@@ -13,6 +13,13 @@ import {
   type NumberPanelItem
 } from '../../architecture/base/domainObjectsHelpers/PanelInfo';
 import { useTranslation } from '../i18n/I18n';
+import { DeleteDomainObjectCommand } from '../../architecture/base/concreteCommands/DeleteDomainObjectCommand';
+import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands/CopyToClipboardCommand';
+import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
+import { CommandButtons } from './Toolbar';
+import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
+import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
+import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'small';
@@ -21,6 +28,7 @@ export const DomainObjectPanel = (): ReactElement => {
   const [currentDomainObjectInfo, setCurrentDomainObjectInfo] = useState<
     DomainObjectInfo | undefined
   >();
+
   DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
 
   const { t } = useTranslation();
@@ -36,8 +44,19 @@ export const DomainObjectPanel = (): ReactElement => {
     return <></>;
   }
   const style = domainObject.getPanelInfoStyle();
+  const root = domainObject.rootDomainObject;
+  if (root === undefined) {
+    return <></>;
+  }
+  const unitSystem = root.unitSystem;
+
   const icon = domainObject.icon as IconType;
   const header = info.header;
+
+  const commands: BaseCommand[] = [
+    new DeleteDomainObjectCommand(domainObject),
+    new CopyToClipboardCommand(() => toString(info, t, unitSystem))
+  ];
 
   return (
     <Container
@@ -60,88 +79,57 @@ export const DomainObjectPanel = (): ReactElement => {
                 <Body size={HEADER_SIZE}>{t(header.key, header.fallback)}</Body>
               </PaddedTh>
             )}
-            {domainObject.canBeRemoved && (
-              <th>
-                <CogsTooltip
-                  content={t('DELETE', 'Delete')}
-                  placement="right"
-                  appendTo={document.body}>
-                  <Button
-                    onClick={() => {
-                      domainObject.removeInteractive();
-                    }}>
-                    <Icon type="Delete" />
-                  </Button>
-                </CogsTooltip>
-              </th>
-            )}
-            <th>
-              <CogsTooltip
-                content={t('COPY_TO_CLIPBOARD', 'Copy to clipboard')}
-                placement="right"
-                appendTo={document.body}>
-                <Button
-                  onClick={async () => {
-                    await copyTextToClipboard(info);
-                  }}>
-                  <Icon type="Copy" />
-                </Button>
-              </CogsTooltip>
-            </th>
+            <CommandButtons commands={commands} isHorizontal={true} />
           </tr>
         </tbody>
       </table>
       <table>
-        <tbody>{info.items.map((item, _i) => addTextWithNumber(item))}</tbody>
+        <tbody>{info.items.map((item, _i) => addTextWithNumber(item, unitSystem))}</tbody>
       </table>
     </Container>
   );
 
-  function addTextWithNumber(item: NumberPanelItem): ReactElement {
+  function addTextWithNumber(item: NumberPanelItem, unitSystem: UnitSystem): ReactElement {
     const icon = item.icon as IconType;
-    const { key, fallback, unit } = item;
+    const { key, fallback, quantity, value } = item;
     return (
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
           {key !== undefined && <Body size={TEXT_SIZE}>{t(key, fallback)}</Body>}
-          {icon !== undefined && (
-            <span>
-              <Icon type={icon} />
-            </span>
-          )}
+          {icon !== undefined && <Icon type={icon} />}
         </PaddedTh>
         <></>
         <NumberTh>
-          <Body size={TEXT_SIZE}>{item.valueAsString}</Body>
+          <Body size={TEXT_SIZE}>{unitSystem.toString(value, quantity)}</Body>
         </NumberTh>
         <PaddedTh>
-          <Body size={TEXT_SIZE}>{unit}</Body>
+          <Body size={TEXT_SIZE}>{unitSystem.getUnit(quantity)}</Body>
         </PaddedTh>
       </tr>
     );
   }
-
-  async function copyTextToClipboard(info: PanelInfo): Promise<void> {
-    let text = '';
-    {
-      const { header } = info;
-      if (header !== undefined) {
-        const { key, fallback } = header;
-        if (key !== undefined) {
-          text += `${t(key, fallback)}\n`;
-        }
-      }
-    }
-    for (const item of info.items) {
-      const { key, fallback, unit } = item;
-      if (key !== undefined) {
-        text += `${t(key, fallback)}: `;
-      }
-      text += `${item.valueAsString} ${unit}\n`;
-    }
-    await navigator.clipboard.writeText(text);
-  }
 };
+
+function toString(info: PanelInfo, translate: TranslateDelegate, unitSystem: UnitSystem): string {
+  let text = '';
+  {
+    const { header } = info;
+    if (header !== undefined) {
+      const { key, fallback } = header;
+      if (key !== undefined) {
+        text += `${translate(key, fallback)}\n`;
+      }
+    }
+  }
+  for (const item of info.items) {
+    const { key, fallback, quantity, value } = item;
+    if (key !== undefined) {
+      text += `${translate(key, fallback)}: `;
+    }
+    text += `${unitSystem.toStringWithUnit(value, quantity)}\n`;
+  }
+  return text;
+}
 
 const NumberTh = styled.th`
   text-align: right;
@@ -155,7 +143,7 @@ const PaddedTh = styled.th`
   size: small;
 `;
 
-const Container = styled.div`
+const Container = withSuppressRevealEvents(styled.div`
   zindex: 1000px;
   position: absolute;
   display: block;
@@ -164,4 +152,4 @@ const Container = styled.div`
   overflow: hidden;
   background-color: white;
   box-shadow: 0px 1px 8px #4f52681a;
-`;
+`);

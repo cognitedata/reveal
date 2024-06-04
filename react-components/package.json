@@ -29,7 +29,7 @@
     "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace reveal-react-components --path ./src/common/i18n"
   },
   "peerDependencies": {
-    "@cognite/cogs.js": ">=9",
+    "@cognite/cogs.js": ">=9.84.3",
     "@cognite/reveal": "4.14.5",
     "react": ">=18",
     "react-dom": ">=18",
@@ -43,7 +43,7 @@
   "devDependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
-    "@cognite/cogs.js": "^9.3.0",
+    "@cognite/cogs.js": "^9.84.3",
     "@cognite/reveal": "^4.14.5",
     "@cognite/sdk": "^9.13.0",
     "@playwright/test": "^1.43.1",

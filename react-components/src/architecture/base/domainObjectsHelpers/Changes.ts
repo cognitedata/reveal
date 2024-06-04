@@ -16,6 +16,7 @@ export class Changes {
   public static readonly icon: symbol = Symbol('icon');
   public static readonly colorMap: symbol = Symbol('colorMap');
   public static readonly renderStyle: symbol = Symbol('renderStyle');
+  public static readonly unit: symbol = Symbol('unit');
 
   // Something in the geometry changed
   public static readonly geometry: symbol = Symbol('geometry');

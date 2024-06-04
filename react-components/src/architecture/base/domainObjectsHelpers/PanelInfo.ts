@@ -2,21 +2,15 @@
  * Copyright 2024 Cognite AS
  */
 
-export enum NumberType {
-  Unitless,
-  Length,
-  Area,
-  Volume,
-  Degrees
-}
+import { type TranslateKey } from '../utilities/TranslateKey';
+import { Quantity } from './Quantity';
 
 type PanelItemProps = {
-  key?: string;
+  key: string;
   fallback?: string;
   icon?: string;
   value?: number;
-  numberType?: NumberType;
-  decimals?: number;
+  quantity?: Quantity;
 };
 
 export class PanelInfo {
@@ -37,7 +31,7 @@ export class PanelItem {
   public key?: string;
   public fallback?: string;
 
-  constructor(props: PanelItemProps) {
+  constructor(props: TranslateKey) {
     this.key = props.key;
     this.fallback = props.fallback;
   }
@@ -46,37 +40,12 @@ export class PanelItem {
 export class NumberPanelItem extends PanelItem {
   public icon: string | undefined = undefined;
   public value: number;
-  public numberType: NumberType;
-  public decimals: number;
+  public quantity: Quantity;
 
   constructor(props: PanelItemProps) {
     super(props);
     this.icon = props.icon;
     this.value = props.value ?? 0;
-    this.numberType = props.numberType ?? NumberType.Unitless;
-    this.decimals = props.decimals ?? 2;
-  }
-
-  public get valueAsString(): string {
-    return this.value.toFixed(this.decimals);
-  }
-
-  public get unit(): string {
-    return getUnit(this.numberType);
-  }
-}
-
-function getUnit(numberType: NumberType): string {
-  switch (numberType) {
-    case NumberType.Unitless:
-      return '';
-    case NumberType.Length:
-      return 'm';
-    case NumberType.Area:
-      return 'm²';
-    case NumberType.Volume:
-      return 'm³';
-    case NumberType.Degrees:
-      return '°';
+    this.quantity = props.quantity ?? Quantity.Unitless;
   }
 }

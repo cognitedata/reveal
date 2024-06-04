@@ -8,7 +8,7 @@ import { Vector3 } from 'three';
 import { Range3 } from '../../base/utilities/geometry/Range3';
 import { createFractalRegularGrid2 } from './geometry/createFractalRegularGrid2';
 import { DEFAULT_TERRAIN_NAME, TerrainDomainObject } from './TerrainDomainObject';
-import { type Tooltip } from '../../base/commands/BaseCommand';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
 export class SetTerrainVisibleCommand extends RenderTargetCommand {
   // ==================================================
@@ -19,7 +19,7 @@ export class SetTerrainVisibleCommand extends RenderTargetCommand {
     return 'EyeShow';
   }
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return { key: 'UNKNOWN', fallback: 'Set terrain visible. Create it if not done' };
   }
 

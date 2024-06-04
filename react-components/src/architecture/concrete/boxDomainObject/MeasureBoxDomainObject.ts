@@ -15,13 +15,13 @@ import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { MeasureBoxDragger } from './MeasureBoxDragger';
 import { MeasureDomainObject } from './MeasureDomainObject';
-import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
+import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type CreateDraggerProps } from '../../base/domainObjects/VisualDomainObject';
 import { Range3 } from '../../base/utilities/geometry/Range3';
-import { RootDomainObject } from '../../base/domainObjects/RootDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
+import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -107,31 +107,36 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
         break;
     }
     if (isFinished || isValidSize(this.size.x)) {
-      add('MEASUREMENTS_LENGTH', 'Length', this.size.x, NumberType.Length);
+      add('MEASUREMENTS_LENGTH', 'Length', this.size.x, Quantity.Length);
     }
     if (measureType !== MeasureType.VerticalArea && (isFinished || isValidSize(this.size.y))) {
-      add('MEASUREMENTS_DEPTH', 'Depth', this.size.y, NumberType.Length);
+      add('MEASUREMENTS_DEPTH', 'Depth', this.size.y, Quantity.Length);
     }
     if (measureType !== MeasureType.HorizontalArea && (isFinished || isValidSize(this.size.z))) {
-      add('MEASUREMENTS_HEIGHT', 'Height', this.size.z, NumberType.Length);
+      add('MEASUREMENTS_HEIGHT', 'Height', this.size.z, Quantity.Length);
     }
     if (measureType !== MeasureType.Volume && (isFinished || this.hasArea)) {
-      add('MEASUREMENTS_AREA', 'Area', this.area, NumberType.Area);
+      add('MEASUREMENTS_AREA', 'Area', this.area, Quantity.Area);
     }
     if (measureType === MeasureType.Volume && (isFinished || this.hasHorizontalArea)) {
-      add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.horizontalArea, NumberType.Area);
+      add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.horizontalArea, Quantity.Area);
     }
     if (measureType === MeasureType.Volume && (isFinished || this.hasVolume)) {
-      add('MEASUREMENTS_VOLUME', 'Volume', this.volume, NumberType.Volume);
+      add('MEASUREMENTS_VOLUME', 'Volume', this.volume, Quantity.Volume);
     }
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
     if (this.zRotation !== 0 && isFinished) {
-      info.add({ icon: 'Angle', value: radToDeg(this.zRotation), numberType: NumberType.Degrees });
+      info.add({
+        key: '',
+        icon: 'Angle',
+        value: radToDeg(this.zRotation),
+        quantity: Quantity.Degrees
+      });
     }
     return info;
 
-    function add(key: string, fallback: string, value: number, numberType: NumberType): void {
-      info.add({ key, fallback, value, numberType });
+    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
+      info.add({ key, fallback, value, quantity });
     }
   }
 
@@ -249,16 +254,16 @@ export class MeasureBoxDomainObject extends MeasureDomainObject {
   }
 
   public get isUseAsCropBox(): boolean {
-    const root = this.root as RootDomainObject;
-    if (!(root instanceof RootDomainObject)) {
+    const root = this.rootDomainObject;
+    if (root === undefined) {
       return false;
     }
     return root.renderTarget.isGlobalCropBox(this);
   }
 
   public setUseAsCropBox(use: boolean): void {
-    const root = this.root as RootDomainObject;
-    if (!(root instanceof RootDomainObject)) {
+    const root = this.rootDomainObject;
+    if (root === undefined) {
       return;
     }
     if (!use) {
