@@ -12,41 +12,34 @@ import { RenderTargetCommand } from '../../architecture/base/commands/RenderTarg
 
 export const CommandButtons = ({
   commands,
-  isHorizontal = false,
-  reuse = true
+  isHorizontal = false
 }: {
   commands: Array<BaseCommand | undefined>;
   isHorizontal: boolean;
-  reuse: boolean;
 }): ReactElement => {
   return (
     <>
       {commands.map(
-        (command, index): ReactElement => addCommandButton(command, isHorizontal, reuse, index)
+        (command, index): ReactElement => addCommandButton(command, isHorizontal, index)
       )}
     </>
   );
 };
 
 export const CreateCommandButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
-  return <CommandButton command={command} isHorizontal={isHorizontal} reuse={true} />;
+  return <CommandButton command={command} isHorizontal={isHorizontal} />;
 };
 
 export const CommandButton = ({
   command,
-  isHorizontal = false,
-  reuse = true
+  isHorizontal = false
 }: {
   command: BaseCommand;
   isHorizontal: boolean;
-  reuse: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const newCommand = useMemo<BaseCommand>(
-    () => getDefaultCommand(command, renderTarget, reuse),
-    []
-  );
+  const newCommand = useMemo<BaseCommand>(() => getDefaultCommand(command, renderTarget), []);
 
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
@@ -91,14 +84,10 @@ export const CommandButton = ({
   );
 };
 
-function getDefaultCommand(
-  newCommand: BaseCommand,
-  renderTarget: RevealRenderTarget,
-  reuse: boolean
-): BaseCommand {
+function getDefaultCommand(newCommand: BaseCommand, renderTarget: RevealRenderTarget): BaseCommand {
   // If it exists from before, return the existing command
-  // Otherwise, add the new command to the controller and attach the renderTarget
-  if (reuse) {
+  // Otherwise, add the new command to the controller and attach the renderTarget.
+  if (!newCommand.hasData) {
     const oldCommand = renderTarget.commandsController.getEqual(newCommand);
     if (oldCommand !== undefined) {
       return oldCommand;
@@ -114,19 +103,11 @@ function getDefaultCommand(
 function addCommandButton(
   command: BaseCommand | undefined,
   isHorizontal: boolean,
-  reuse: boolean,
   index: number
 ): ReactElement {
   if (command === undefined) {
     const direction = !isHorizontal ? 'horizontal' : 'vertical';
     return <Divider key={index} weight="2px" length="24px" direction={direction} />;
   }
-  return (
-    <CommandButton
-      key={command._uniqueIndex}
-      command={command}
-      isHorizontal={isHorizontal}
-      reuse={reuse}
-    />
-  );
+  return <CommandButton key={command._uniqueIndex} command={command} isHorizontal={isHorizontal} />;
 }

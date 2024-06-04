@@ -29,6 +29,10 @@ export class DeleteDomainObjectCommand extends BaseCommand {
     return this._domainObject !== undefined && this._domainObject.canBeRemoved;
   }
 
+  public override get hasData(): boolean {
+    return true;
+  }
+
   protected override invokeCore(): boolean {
     if (this._domainObject === undefined) {
       return false;

@@ -63,11 +63,18 @@ export abstract class BaseCommand {
     return this.isEnabled;
   }
 
-  public get isCheckable(): boolean {
+  public get isChecked(): boolean {
     return false;
   }
 
-  public get isChecked(): boolean {
+  /**
+   * Gets a value indicating whether the command has data, for instance a refereance
+   * to a specific domain object. Then the command cannot be reused or shared in the user interface.
+   * These command will not be added to the commandsController for updating, so update will
+   * not be done automatically. Typically used when the command is created for a specific domain object
+   * in the DomainObjectPanel.
+   */
+  public get hasData(): boolean {
     return false;
   }
 

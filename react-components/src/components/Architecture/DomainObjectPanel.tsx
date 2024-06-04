@@ -79,7 +79,7 @@ export const DomainObjectPanel = (): ReactElement => {
                 <Body size={HEADER_SIZE}>{t(header.key, header.fallback)}</Body>
               </PaddedTh>
             )}
-            <CommandButtons commands={commands} isHorizontal={true} reuse={false} />
+            <CommandButtons commands={commands} isHorizontal={true} />
           </tr>
         </tbody>
       </table>

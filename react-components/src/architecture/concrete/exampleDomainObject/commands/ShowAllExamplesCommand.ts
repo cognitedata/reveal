@@ -24,10 +24,6 @@ export class ShowAllExamplesCommand extends RenderTargetCommand {
     return this.getFirst() !== undefined;
   }
 
-  public override get isCheckable(): boolean {
-    return true;
-  }
-
   public override get isChecked(): boolean {
     const domainObject = this.getFirst();
     if (domainObject === undefined) {

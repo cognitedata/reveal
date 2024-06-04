@@ -24,10 +24,6 @@ export class SetAxisVisibleCommand extends RenderTargetCommand {
     return true;
   }
 
-  public override get isCheckable(): boolean {
-    return true;
-  }
-
   public override get isChecked(): boolean {
     const { renderTarget, rootDomainObject } = this;
 

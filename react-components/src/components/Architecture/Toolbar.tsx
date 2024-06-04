@@ -69,7 +69,7 @@ const CreateToolToolbar = (
           flexFlow: style.flexFlow
           // Padding is not used here
         }}>
-        <CommandButtons commands={commands} isHorizontal={style.isHorizontal} reuse={true} />
+        <CommandButtons commands={commands} isHorizontal={style.isHorizontal} />
       </MyCustomToolbar>
     </Container>
   );

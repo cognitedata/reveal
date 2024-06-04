@@ -26,10 +26,6 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
     return domainObject !== undefined;
   }
 
-  public override get isCheckable(): boolean {
-    return true;
-  }
-
   public override get isChecked(): boolean {
     return !this.getDepthTest();
   }

@@ -30,10 +30,6 @@ export class SetCropBoxCommand extends RenderTargetCommand {
     return this.getMeasureBoxDomainObject() !== undefined;
   }
 
-  public override get isCheckable(): boolean {
-    return true;
-  }
-
   public override get isChecked(): boolean {
     return this.renderTarget.isGlobalCropBoxActive;
   }

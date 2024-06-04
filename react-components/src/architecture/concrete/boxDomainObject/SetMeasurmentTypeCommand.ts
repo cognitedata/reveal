@@ -37,10 +37,6 @@ export class SetMeasurmentTypeCommand extends RenderTargetCommand {
     return this.measurementTool !== undefined;
   }
 
-  public override get isCheckable(): boolean {
-    return true;
-  }
-
   public override get isChecked(): boolean {
     const { measurementTool } = this;
     if (measurementTool === undefined) {

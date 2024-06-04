@@ -36,6 +36,10 @@ export class CopyToClipboardCommand extends BaseCommand {
     return this._getStringDelegate !== undefined;
   }
 
+  public override get hasData(): boolean {
+    return true;
+  }
+
   protected override invokeCore(): boolean {
     const get = this._getStringDelegate;
     if (get === undefined) {

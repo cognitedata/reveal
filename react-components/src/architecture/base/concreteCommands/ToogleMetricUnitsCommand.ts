@@ -20,10 +20,6 @@ export class ToogleMetricUnitsCommand extends RenderTargetCommand {
     return { key: 'TOGGLE_METRIC_UNITS', fallback: 'm/ft' }; // Note: m/ft do not need to be translated!
   }
 
-  public override get isCheckable(): boolean {
-    return true;
-  }
-
   public override get isChecked(): boolean {
     const { renderTarget } = this;
     return renderTarget.rootDomainObject.unitSystem.isMetric;

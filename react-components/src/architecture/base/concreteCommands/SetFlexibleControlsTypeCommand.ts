@@ -63,10 +63,6 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     }
   }
 
-  public override get isCheckable(): boolean {
-    return true;
-  }
-
   public override get isChecked(): boolean {
     const { renderTarget } = this;
     const { flexibleCameraManager } = renderTarget;
