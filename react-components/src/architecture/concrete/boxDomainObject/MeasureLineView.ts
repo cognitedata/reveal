@@ -127,21 +127,23 @@ export class MeasureLineView extends GroupThreeView {
       thisPoint.copy(points[i % length]);
       thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
-      if (i > 0) {
-        const distanceSq = ray.distanceSqToSegment(prevPoint, thisPoint, undefined, intersection);
-        if (distanceSq > radiusSquared || !closestFinder.isClosest(intersection)) {
-          prevPoint.copy(thisPoint);
-          continue;
-        }
-        const objectIntersection: DomainObjectIntersection = {
-          type: 'customObject',
-          point: intersection,
-          distanceToCamera: closestFinder.minDistance,
-          customObject: this,
-          domainObject
-        };
-        closestFinder.setClosestGeometry(objectIntersection);
+      if (i === 0) {
+        prevPoint.copy(thisPoint);
+        continue;
       }
+      const distanceSq = ray.distanceSqToSegment(prevPoint, thisPoint, undefined, intersection);
+      if (distanceSq > radiusSquared || !closestFinder.isClosest(intersection)) {
+        prevPoint.copy(thisPoint);
+        continue;
+      }
+      const objectIntersection: DomainObjectIntersection = {
+        type: 'customObject',
+        point: intersection,
+        distanceToCamera: closestFinder.minDistance,
+        customObject: this,
+        domainObject
+      };
+      closestFinder.setClosestGeometry(objectIntersection);
       prevPoint.copy(thisPoint);
     }
     return closestFinder.getClosestGeometry();

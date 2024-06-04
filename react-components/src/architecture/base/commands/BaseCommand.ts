@@ -68,7 +68,7 @@ export abstract class BaseCommand {
   }
 
   /**
-   * Gets a value indicating whether the command has data, for instance a refereance
+   * Gets a value indicating whether the command has data, for instance a reference
    * to a specific domain object. Then the command cannot be reused or shared in the user interface.
    * These command will not be added to the commandsController for updating, so update will
    * not be done automatically. Typically used when the command is created for a specific domain object
