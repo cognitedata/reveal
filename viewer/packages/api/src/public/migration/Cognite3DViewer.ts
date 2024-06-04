@@ -758,9 +758,7 @@ export class Cognite3DViewer {
    */
   addCadModel(options: AddModelOptions): Promise<CogniteCadModel> {
     const modelLoaderSequencer = this._addModelSequencer.getNextSequencer<void>();
-    const result = this.addCadModelWithSequencer(options, modelLoaderSequencer);
-    this.recalculateBoundingBox();
-    return result;
+    return this.addCadModelWithSequencer(options, modelLoaderSequencer);
   }
 
   private async addCadModelWithSequencer(
@@ -804,9 +802,7 @@ export class Cognite3DViewer {
    */
   addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
     const sequencerFunction = this._addModelSequencer.getNextSequencer<void>();
-    const result = this.addPointCloudModelWithSequencer(options, sequencerFunction);
-    this.recalculateBoundingBox();
-    return result;
+    return this.addPointCloudModelWithSequencer(options, sequencerFunction);
   }
 
   private async addPointCloudModelWithSequencer(options: AddModelOptions, modelLoadSequencer: SequencerFunction<void>) {
