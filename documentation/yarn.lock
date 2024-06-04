@@ -182,12 +182,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:3.14.0":
-  version: 3.14.0
-  resolution: "@azure/msal-browser@npm:3.14.0"
+"@azure/msal-browser@npm:3.15.0":
+  version: 3.15.0
+  resolution: "@azure/msal-browser@npm:3.15.0"
   dependencies:
     "@azure/msal-common": 14.10.0
-  checksum: 747cd3df32f082e515c5e268d64f0d16afa0ce21ab5154e235ee0eb0fd0e2902504d12bac1f94839afaf9cc94c823d961775c3f57c3f20f12864d13a5ed0fa44
+  checksum: b13937c0ff4f153b5ad145ff5292a1fdb8e3e586869ffc145fa6de3347f571e011423144606e37faa907c43ae6ffb9483c9091e85b04421740ca50849a7b4a92
   languageName: node
   linkType: hard
 
@@ -1899,7 +1899,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
-    "@azure/msal-browser": 3.14.0
+    "@azure/msal-browser": 3.15.0
     "@codemirror/lang-javascript": 6.2.2
     "@docusaurus/core": 2.4.3
     "@docusaurus/preset-classic": 2.4.3
