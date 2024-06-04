@@ -30,10 +30,6 @@ export abstract class BaseTool extends RenderTargetCommand {
   // OVERRIDES
   // =================================================
 
-  public override get isCheckable(): boolean {
-    return true;
-  }
-
   public override get isChecked(): boolean {
     return this.renderTarget.commandsController.activeTool === this;
   }
