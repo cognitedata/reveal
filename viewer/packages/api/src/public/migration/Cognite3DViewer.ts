@@ -758,7 +758,9 @@ export class Cognite3DViewer {
    */
   addCadModel(options: AddModelOptions): Promise<CogniteCadModel> {
     const modelLoaderSequencer = this._addModelSequencer.getNextSequencer<void>();
-    return this.addCadModelWithSequencer(options, modelLoaderSequencer);
+    const result = this.addCadModelWithSequencer(options, modelLoaderSequencer);
+    this.recalculateBoundingBox();
+    return result;
   }
 
   private async addCadModelWithSequencer(
@@ -777,6 +779,7 @@ export class Cognite3DViewer {
         this._models.push(model3d);
         this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
       });
+      this.recalculateBoundingBox();
       return model3d;
     } catch (error) {
       await modelLoadSequencer(() => {});
@@ -801,7 +804,9 @@ export class Cognite3DViewer {
    */
   addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
     const sequencerFunction = this._addModelSequencer.getNextSequencer<void>();
-    return this.addPointCloudModelWithSequencer(options, sequencerFunction);
+    const result = this.addPointCloudModelWithSequencer(options, sequencerFunction);
+    this.recalculateBoundingBox();
+    return result;
   }
 
   private async addPointCloudModelWithSequencer(options: AddModelOptions, modelLoadSequencer: SequencerFunction<void>) {
@@ -820,6 +825,7 @@ export class Cognite3DViewer {
         this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
       });
 
+      this.recalculateBoundingBox();
       return model;
     } catch (error) {
       await modelLoadSequencer(() => {});
@@ -976,6 +982,7 @@ export class Cognite3DViewer {
         assertNever(model.type, `Model type ${model.type} cannot be removed`);
     }
 
+    this.recalculateBoundingBox();
     this.revealManager.requestRedraw();
   }
 
