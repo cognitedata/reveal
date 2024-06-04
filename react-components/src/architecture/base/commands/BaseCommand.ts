@@ -2,30 +2,42 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type TranslateKey } from '../utilities/TranslateKey';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 
 type UpdateDelegate = (command: BaseCommand) => void;
-
-export type Tooltip = {
-  key: string;
-  fallback?: string;
-};
 
 /**
  * Base class for all command and tools. Thses are object that can do a
  * user interaction with the system. It also have enough information to
  * generate the UI for the command.
  */
+
 export abstract class BaseCommand {
+  private static _counter: number = 0; // Counter for the unique index
+
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   private readonly _listeners: UpdateDelegate[] = [];
 
+  // Unique index for the command, used by in React to force rerender
+  // when the command changes for a button.
+  public readonly _uniqueIndex: number;
+
+  public get uniqueIndex(): number {
+    return this._uniqueIndex;
+  }
+
   // ==================================================
   // VIRTUAL METHODS (To be override)
   // =================================================
+
+  constructor() {
+    BaseCommand._counter++;
+    this._uniqueIndex = BaseCommand._counter;
+  }
 
   public get name(): string {
     return this.tooltip.fallback ?? this.tooltip.key;
@@ -35,7 +47,7 @@ export abstract class BaseCommand {
     return undefined;
   }
 
-  public get tooltip(): Tooltip {
+  public get tooltip(): TranslateKey {
     return { key: '' };
   }
 
@@ -51,11 +63,18 @@ export abstract class BaseCommand {
     return this.isEnabled;
   }
 
-  public get isCheckable(): boolean {
+  public get isChecked(): boolean {
     return false;
   }
 
-  public get isChecked(): boolean {
+  /**
+   * Gets a value indicating whether the command has data, for instance a reference
+   * to a specific domain object. Then the command cannot be reused or shared in the user interface.
+   * These command will not be added to the commandsController for updating, so update will
+   * not be done automatically. Typically used when the command is created for a specific domain object
+   * in the DomainObjectPanel.
+   */
+  public get hasData(): boolean {
     return false;
   }
 

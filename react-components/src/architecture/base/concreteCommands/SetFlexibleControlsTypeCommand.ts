@@ -5,7 +5,8 @@
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';
-import { type BaseCommand, type Tooltip } from '../commands/BaseCommand';
+import { type BaseCommand } from '../commands/BaseCommand';
+import { type TranslateKey } from '../utilities/TranslateKey';
 
 export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   private readonly _controlsType: FlexibleControlsType;
@@ -49,7 +50,7 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     }
   }
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     switch (this._controlsType) {
       case FlexibleControlsType.FirstPerson:
         return { key: 'CONTROLS_TYPE_FIRST_PERSON', fallback: 'Fly' };
@@ -60,10 +61,6 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
       default:
         return super.tooltip;
     }
-  }
-
-  public override get isCheckable(): boolean {
-    return true;
   }
 
   public override get isChecked(): boolean {

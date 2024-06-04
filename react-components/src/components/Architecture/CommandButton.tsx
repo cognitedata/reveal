@@ -4,13 +4,29 @@
 
 import { type ReactElement, useState, useEffect, useMemo } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { Button, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, Divider, type IconType } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
 
-export const CreateButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
+export const CommandButtons = ({
+  commands,
+  isHorizontal = false
+}: {
+  commands: Array<BaseCommand | undefined>;
+  isHorizontal: boolean;
+}): ReactElement => {
+  return (
+    <>
+      {commands.map(
+        (command, index): ReactElement => addCommandButton(command, isHorizontal, index)
+      )}
+    </>
+  );
+};
+
+export const CreateCommandButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
   return <CommandButton command={command} isHorizontal={isHorizontal} />;
 };
 
@@ -28,6 +44,7 @@ export const CommandButton = ({
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
+  const [uniqueIndex, setUniqueIndex] = useState<number>(0);
   const [icon, setIcon] = useState<IconType>('Copy');
 
   useEffect(() => {
@@ -35,6 +52,7 @@ export const CommandButton = ({
       setChecked(command.isChecked);
       setEnabled(command.isEnabled);
       setVisible(command.isVisible);
+      setUniqueIndex(command._uniqueIndex);
       setIcon(command.icon as IconType);
     }
     update(newCommand);
@@ -54,6 +72,7 @@ export const CommandButton = ({
       <Button
         type="ghost"
         icon={icon}
+        key={uniqueIndex}
         toggled={isChecked}
         disabled={!isEnabled}
         aria-label={t(key, fallback)}
@@ -67,14 +86,28 @@ export const CommandButton = ({
 
 function getDefaultCommand(newCommand: BaseCommand, renderTarget: RevealRenderTarget): BaseCommand {
   // If it exists from before, return the existing command
-  // Otherwise, add the new command to the controller and attach the renderTarget
-  const oldCommand = renderTarget.commandsController.getEqual(newCommand);
-  if (oldCommand !== undefined) {
-    return oldCommand;
+  // Otherwise, add the new command to the controller and attach the renderTarget.
+  if (!newCommand.hasData) {
+    const oldCommand = renderTarget.commandsController.getEqual(newCommand);
+    if (oldCommand !== undefined) {
+      return oldCommand;
+    }
+    renderTarget.commandsController.add(newCommand);
   }
-  renderTarget.commandsController.add(newCommand);
   if (newCommand instanceof RenderTargetCommand) {
     newCommand.attach(renderTarget);
   }
   return newCommand;
+}
+
+function addCommandButton(
+  command: BaseCommand | undefined,
+  isHorizontal: boolean,
+  index: number
+): ReactElement {
+  if (command === undefined) {
+    const direction = !isHorizontal ? 'horizontal' : 'vertical';
+    return <Divider key={index} weight="2px" length="24px" direction={direction} />;
+  }
+  return <CommandButton key={command._uniqueIndex} command={command} isHorizontal={isHorizontal} />;
 }

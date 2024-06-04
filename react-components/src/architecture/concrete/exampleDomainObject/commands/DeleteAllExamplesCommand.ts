@@ -4,7 +4,7 @@
  */
 
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
-import { type Tooltip } from '../../../base/commands/BaseCommand';
+import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { ExampleDomainObject } from '../ExampleDomainObject';
 
 export class DeleteAllExamplesCommand extends RenderTargetCommand {
@@ -12,7 +12,7 @@ export class DeleteAllExamplesCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return { key: 'EXAMPLES_DELETE', fallback: 'Remove all examples' };
   }
 

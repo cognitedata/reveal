@@ -1,11 +1,11 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Divider, ToolBar } from '@cognite/cogs.js';
+import { ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useState, type ReactElement } from 'react';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
-import { CommandButton } from './CommandButton';
+import { CommandButtons } from './CommandButton';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { ActiveToolUpdater } from '../../architecture/base/reactUpdaters/ActiveToolUpdater';
@@ -69,23 +69,11 @@ const CreateToolToolbar = (
           flexFlow: style.flexFlow
           // Padding is not used here
         }}>
-        <>{commands.map((command, index): ReactElement => addCommand(command, style, index))}</>
+        <CommandButtons commands={commands} isHorizontal={style.isHorizontal} />
       </MyCustomToolbar>
     </Container>
   );
 };
-
-function addCommand(
-  command: BaseCommand | undefined,
-  style: PopupStyle,
-  index: number
-): ReactElement {
-  if (command === undefined) {
-    const direction = style.isHorizontalDivider ? 'horizontal' : 'vertical';
-    return <Divider key={index} weight="2px" length="24px" direction={direction} />;
-  }
-  return <CommandButton command={command} isHorizontal={style.isHorizontal} key={command.name} />;
-}
 
 const Container = styled.div`
   zindex: 1000px;
@@ -94,3 +82,4 @@ const Container = styled.div`
 `;
 
 const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))``;
+export { CommandButtons };

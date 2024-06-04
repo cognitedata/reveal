@@ -14,9 +14,10 @@ import {
   horizontalDistanceTo,
   verticalDistanceTo
 } from '../../base/utilities/extensions/vectorExtensions';
-import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
+import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
+import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 
 export class MeasureLineDomainObject extends MeasureDomainObject {
   // ==================================================
@@ -76,7 +77,7 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
             'MEASUREMENTS_HORIZONTAL_AREA',
             'Horizontal area',
             this.getHorizontalArea(),
-            NumberType.Area
+            Quantity.Area
           );
         }
         break;
@@ -86,13 +87,8 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
     }
     return info;
 
-    function add(
-      key: string,
-      fallback: string,
-      value: number,
-      numberType = NumberType.Length
-    ): void {
-      info.add({ key, fallback, value, numberType });
+    function add(key: string, fallback: string, value: number, quantity = Quantity.Length): void {
+      info.add({ key, fallback, value, quantity });
     }
   }
 

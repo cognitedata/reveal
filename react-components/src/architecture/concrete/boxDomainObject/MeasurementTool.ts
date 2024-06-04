@@ -4,7 +4,7 @@
 
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
 import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type BaseCommand, type Tooltip } from '../../base/commands/BaseCommand';
+import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
@@ -23,6 +23,8 @@ import { SetMeasurmentTypeCommand } from './SetMeasurmentTypeCommand';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { ToogleMetricUnitsCommand } from '../../base/concreteCommands/ToogleMetricUnitsCommand';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -40,7 +42,7 @@ export class MeasurementTool extends BaseEditTool {
     return 'Ruler';
   }
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return { key: 'MEASUREMENTS', fallback: 'Measurements' };
   }
 
@@ -53,6 +55,7 @@ export class MeasurementTool extends BaseEditTool {
       new SetMeasurmentTypeCommand(MeasureType.VerticalArea),
       new SetMeasurmentTypeCommand(MeasureType.Volume),
       undefined, // Separator
+      new ToogleMetricUnitsCommand(),
       new ShowMeasurmentsOnTopCommand()
     ];
   }
@@ -181,7 +184,6 @@ export class MeasurementTool extends BaseEditTool {
     const intersection = await this.getIntersection(event);
     if (intersection === undefined) {
       // Click in the "air"
-      await super.onClick(event);
       return;
     }
     const measurment = this.getMeasurement(intersection);
@@ -194,7 +196,6 @@ export class MeasurementTool extends BaseEditTool {
     if (creator === undefined) {
       const creator = (this._creator = createCreator(this.measureType));
       if (creator === undefined) {
-        await super.onClick(event);
         return;
       }
       if (creator.addPoint(ray, intersection)) {
