@@ -22,7 +22,7 @@
     commander "^2.15.1"
 
 "@cognite/reveal@link:../viewer":
-  version "4.14.5"
+  version "4.14.6"
   dependencies:
     "@rajesh896/broprint.js" "^2.1.1"
     "@tweenjs/tween.js" "^23.1.1"
@@ -355,10 +355,10 @@
   resolved "https://registry.yarnpkg.com/@types/stylis/-/stylis-4.2.5.tgz#1daa6456f40959d06157698a653a9ab0a70281df"
   integrity sha512-1Xve+NMN7FWjY14vLoY5tL3BVEQ/n42YLwaqJIPYhotZ9uBHt87VceMwWQpzmdEt2TNXIorIFG+YeCUUW7RInw==
 
-"@types/three@^0.164.0":
-  version "0.164.1"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.164.1.tgz#ae9f1246e005fb005bc36a6136567f1e848c0e30"
-  integrity sha512-dR/trWDhyaNqJV38rl1TonlCA9DpnX7OPYDWD81bmBGn/+uEc3+zNalFxQcV4FlPTeDBhCY3SFWKvK6EJwL88g==
+"@types/three@^0.165.0":
+  version "0.165.0"
+  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.165.0.tgz#eaf147e69b9fc49ddc2f51b3e425ad03cde5c236"
+  integrity sha512-AJK8JZAFNBF0kBXiAIl5pggYlzAGGA8geVYQXAcPCEDRbyA+oEjkpUBcJJrtNz6IiALwzGexFJGZG2yV3WsYBw==
   dependencies:
     "@tweenjs/tween.js" "~23.1.1"
     "@types/stats.js" "*"
@@ -3375,10 +3375,10 @@ thingies@^1.20.0:
   resolved "https://registry.yarnpkg.com/thingies/-/thingies-1.21.0.tgz#e80fbe58fd6fdaaab8fad9b67bd0a5c943c445c1"
   integrity sha512-hsqsJsFMsV+aD4s3CWKk85ep/3I9XzYV/IXaSouJMYIoDlgyi11cBhsqYe9/geRfB0YIikBQg6raRaM+nIMP9g==
 
-three@0.164.1:
-  version "0.164.1"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.164.1.tgz#b742f76bd8dfd3736ba0d86a12dfddb73c5cdcc0"
-  integrity sha512-iC/hUBbl1vzFny7f5GtqzVXYjMJKaTPxiCxXfrvVdBi1Sf+jhd1CAkitiFwC7mIBFCo3MrDLJG97yisoaWig0w==
+three@0.165.0:
+  version "0.165.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.165.0.tgz#43b93b9b56c71b7eeee6b531d737ab573633ccd1"
+  integrity sha512-cc96IlVYGydeceu0e5xq70H8/yoVT/tXBxV/W8A/U6uOq7DXc4/s1Mkmnu6SqoYGhSRWWYFOhVwvq6V0VtbplA==
 
 through2@^0.6.3:
   version "0.6.5"
