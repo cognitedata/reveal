@@ -11,7 +11,8 @@ import {
   type Query,
   type DmsUniqueIdentifier,
   type Space,
-  type ExternalId
+  type ExternalId,
+  type InstanceFilter
 } from '../utilities/FdmSDK';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
@@ -28,7 +29,7 @@ export const useSearchMappedEquipmentFDM = (
   query: string,
   viewsToSearch: DmsUniqueIdentifier[],
   models: AddModelOptions[],
-  instancesFilter: any,
+  instancesFilter: InstanceFilter | undefined,
   limit: number = 100,
   userSdk?: CogniteClient
 ): UseQueryResult<SearchResultsWithView[]> => {
@@ -80,7 +81,7 @@ const searchNodesWithViewsAndModels = async (
   spacesToSearch: string[],
   sourcesToSearch: Source[],
   models: AddModelOptions[],
-  instancesFilter: any,
+  instancesFilter: InstanceFilter | undefined,
   fdmSdk: FdmSDK,
   limit: number = 100
 ): Promise<SearchResultsWithView[]> => {

@@ -8,7 +8,7 @@ import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 type InstanceType = 'node' | 'edge';
 type EdgeDirection = 'source' | 'destination';
 
-type InstanceFilter = Record<string, any>;
+export type InstanceFilter = Record<string, any>;
 type ViewPropertyReference = any;
 
 export type ExternalId = string;
