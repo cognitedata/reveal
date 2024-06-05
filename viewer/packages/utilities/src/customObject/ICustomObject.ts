@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Object3D, Box3 } from 'three';
+import { Object3D, Box3, PerspectiveCamera } from 'three';
 import { CustomObjectIntersection } from './CustomObjectIntersection';
 import { CustomObjectIntersectInput } from './CustomObjectIntersectInput';
 
@@ -40,6 +40,13 @@ export interface ICustomObject {
   get shouldPickBoundingBox(): boolean;
 
   /**
+   * Get whether it should be rendered with depth test (on top on other objects)
+   * Default is true.
+   * @beta
+   */
+  get useDepthTest(): boolean;
+
+  /**
    * Get the bounding box from the object
    * @beta
    */
@@ -54,4 +61,10 @@ export interface ICustomObject {
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection;
+
+  /**
+   * This method is called before rendering of the custom object
+   * @beta
+   */
+  beforeRender(camera: PerspectiveCamera): void;
 }
