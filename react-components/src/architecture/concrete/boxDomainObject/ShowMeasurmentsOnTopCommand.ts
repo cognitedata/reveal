@@ -22,8 +22,7 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    const domainObject = this.rootDomainObject.getDescendantByType(MeasureDomainObject);
-    return domainObject !== undefined;
+    return this.getFirst() !== undefined;
   }
 
   public override get isChecked(): boolean {
@@ -44,12 +43,16 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  public getDepthTest(): boolean {
-    const domainObject = this.rootDomainObject.getDescendantByType(MeasureDomainObject);
+  private getDepthTest(): boolean {
+    const domainObject = this.getFirst();
     if (domainObject === undefined) {
       return false;
     }
     const style = domainObject.renderStyle;
     return style.depthTest;
+  }
+
+  private getFirst(): MeasureDomainObject | undefined {
+    return this.rootDomainObject.getDescendantByType(MeasureDomainObject);
   }
 }

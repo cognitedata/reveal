@@ -33,6 +33,10 @@ export class ResetAllExamplesCommand extends RenderTargetCommand {
     return true;
   }
 
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
   private getFirst(): ExampleDomainObject | undefined {
     return this.rootDomainObject.getDescendantByType(ExampleDomainObject);
   }

@@ -34,6 +34,10 @@ export class DeleteAllExamplesCommand extends RenderTargetCommand {
     return true;
   }
 
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
   private getFirst(): ExampleDomainObject | undefined {
     return this.rootDomainObject.getDescendantByType(ExampleDomainObject);
   }

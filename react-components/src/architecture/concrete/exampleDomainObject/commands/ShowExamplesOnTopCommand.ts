@@ -22,8 +22,7 @@ export class ShowExamplesOnTopCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    const domainObject = this.rootDomainObject.getDescendantByType(ExampleDomainObject);
-    return domainObject !== undefined;
+    return this.getFirst() !== undefined;
   }
 
   public override get isChecked(): boolean {
@@ -44,11 +43,15 @@ export class ShowExamplesOnTopCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  public getDepthTest(): boolean {
-    const domainObject = this.rootDomainObject.getDescendantByType(ExampleDomainObject);
+  private getDepthTest(): boolean {
+    const domainObject = this.getFirst();
     if (domainObject === undefined) {
       return false;
     }
     return domainObject.renderStyle.depthTest;
+  }
+
+  private getFirst(): ExampleDomainObject | undefined {
+    return this.rootDomainObject.getDescendantByType(ExampleDomainObject);
   }
 }
