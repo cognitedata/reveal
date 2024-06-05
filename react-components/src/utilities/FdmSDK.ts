@@ -8,7 +8,7 @@ import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 type InstanceType = 'node' | 'edge';
 type EdgeDirection = 'source' | 'destination';
 
-type InstanceFilter = any;
+type InstanceFilter = Record<string, any>;
 type ViewPropertyReference = any;
 
 export type ExternalId = string;
@@ -283,7 +283,9 @@ export class FdmSDK {
     filter?: InstanceFilter,
     properties?: string[]
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> {
-    function makeSureNonEmptyFilterForRequest(filter: InstanceFilter | undefined) {
+    function makeSureNonEmptyFilterForRequest(
+      filter: InstanceFilter | undefined
+    ): InstanceFilter | undefined {
       return filter !== undefined && Object.keys(filter).length === 0 ? undefined : filter;
     }
 

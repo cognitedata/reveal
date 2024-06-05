@@ -288,7 +288,7 @@ async function createModelsMap(
   fdmSdk: FdmSDK
 ): Promise<Map<ExternalId, DmsUniqueIdentifier[]>> {
   const modelInstances = await Promise.all(
-    models.map((model) => getDMSModels(model.modelId, fdmSdk))
+    models.map(async (model) => await getDMSModels(model.modelId, fdmSdk))
   );
   return new Map(
     modelInstances.map((modelInstanceList, ind) => [`${models[ind].modelId}`, modelInstanceList])
