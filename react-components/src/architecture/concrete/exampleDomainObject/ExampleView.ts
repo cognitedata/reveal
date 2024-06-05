@@ -46,6 +46,10 @@ export class ExampleView extends GroupThreeView {
   // OVERRIDES of GroupThreeView
   // ==================================================
 
+  public override get useDepthTest(): boolean {
+    return this.style.depthTest;
+  }
+
   protected override addChildren(): void {
     const { domainObject, style } = this;
 
@@ -57,7 +61,8 @@ export class ExampleView extends GroupThreeView {
       emissiveIntensity: domainObject.isSelected ? 0.4 : 0.0,
       shininess: 5,
       opacity: style.opacity,
-      transparent: true
+      transparent: true,
+      depthTest: style.depthTest
     });
     const sphere = new Mesh(geometry, material);
     const center = domainObject.center.clone();

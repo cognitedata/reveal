@@ -14,6 +14,8 @@ import { clamp } from 'lodash';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type HSL } from 'three';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { ShowExamplesOnTopCommand } from './commands/ShowExamplesOnTopCommand';
+import { ToogleMetricUnitsCommand } from '../../base/concreteCommands/ToogleMetricUnitsCommand';
 
 export class ExampleTool extends BaseEditTool {
   // ==================================================
@@ -113,7 +115,9 @@ export class ExampleTool extends BaseEditTool {
     return [
       new ResetAllExamplesCommand(),
       new ShowAllExamplesCommand(),
-      new DeleteAllExamplesCommand()
+      new DeleteAllExamplesCommand(),
+      new ShowExamplesOnTopCommand(),
+      new ToogleMetricUnitsCommand()
     ];
   }
 
