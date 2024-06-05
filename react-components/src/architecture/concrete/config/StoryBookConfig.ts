@@ -14,6 +14,7 @@ import { ExampleTool } from '../exampleDomainObject/ExampleTool';
 import { MeasurementTool } from '../boxDomainObject/MeasurementTool';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { BaseRevealConfig } from '../../base/renderTarget/BaseRevealConfig';
+import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -42,5 +43,9 @@ export class StoryBookConfig extends BaseRevealConfig {
 
   public override createAxisGizmoTool(): AxisGizmoTool | undefined {
     return new AxisGizmoTool();
+  }
+
+  public override onStartup(renderTarget: RevealRenderTarget): void {
+    renderTarget.fitView();
   }
 }

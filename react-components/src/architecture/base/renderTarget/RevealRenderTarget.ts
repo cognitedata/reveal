@@ -144,6 +144,10 @@ export class RevealRenderTarget {
     }
   }
 
+  public onStartup(): void {
+    this._config?.onStartup(this);
+  }
+
   public dispose(): void {
     this._viewer.dispose();
     if (this._ambientLight !== undefined) {

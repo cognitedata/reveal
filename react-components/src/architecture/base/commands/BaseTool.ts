@@ -124,6 +124,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   ): Promise<AnyIntersection | undefined> {
     const { renderTarget } = this;
     const { viewer } = renderTarget;
+
     const point = viewer.getPixelCoordinatesFromEvent(event);
 
     if (domainObjectPredicate === undefined) {
