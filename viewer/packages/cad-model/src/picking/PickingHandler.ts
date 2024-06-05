@@ -286,7 +286,7 @@ export class PickingHandler {
       readPixelsPromise = renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, 1, 1, pixelBuffer);
     } finally {
       // Note! State is reset before promise is resolved as there might be rendering happening between
-      // "now" and when the result from readPixelsFromTargetAsync is ready
+      // "now" and when the result from readRenderTargetPixelsAsync is ready
       stateHelper.resetState();
     }
     await readPixelsPromise;
