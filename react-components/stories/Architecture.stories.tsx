@@ -18,6 +18,8 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { DomainObjectPanel } from '../src/components/Architecture/DomainObjectPanel';
 import { ActiveToolToolbar, MainToolbar } from '../src/components/Architecture/Toolbar';
+import { useRenderTarget } from '../src/components/RevealCanvas/ViewerContext';
+import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/Architecture',
@@ -82,7 +84,7 @@ export const Main: Story = {
     return (
       <RevealStoryContainer color={new Color(0x4a4a4a)} viewerOptions={{}}>
         <FitToUrlCameraState />
-        <CadModelContainer addModelOptions={addModelOptions} />
+        <StoryContent addModelOptions={addModelOptions} />
         <RevealToolbar
           customSettingsContent={exampleCustomSettingElements()}
           lowFidelitySettings={exampleLowQualitySettings}
@@ -95,6 +97,20 @@ export const Main: Story = {
     );
   }
 };
+
+function StoryContent({ addModelOptions }: { addModelOptions: AddModelOptions }): ReactElement {
+  const renderTarget = useRenderTarget();
+  return (
+    <>
+      <CadModelContainer
+        addModelOptions={addModelOptions}
+        onLoad={(_model: CogniteCadModel) => {
+          renderTarget.onStartup();
+        }}
+      />
+    </>
+  );
+}
 
 function FitToUrlCameraState(): ReactElement {
   const getCameraState = useGetCameraStateFromUrlParam();
