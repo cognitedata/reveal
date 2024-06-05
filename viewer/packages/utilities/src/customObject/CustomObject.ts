@@ -132,5 +132,9 @@ export class CustomObject implements ICustomObject {
     return customObjectIntersection;
   }
 
+  /**
+   * This method is called before rendering of the custom object
+   * @beta
+   */
   beforeRender(_camera: PerspectiveCamera): void {}
 }

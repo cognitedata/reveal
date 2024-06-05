@@ -1584,14 +1584,14 @@ export class Cognite3DViewer {
 
     let intersection: AnyIntersection | undefined = undefined;
     intersection = this.getCustomObjectIntersectionIfCloser(pixelCoords, false, undefined, predicate);
-
-    const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, { asyncCADIntersection: false });
+    if (intersection !== undefined) {
+      return intersection;
+    }
+    const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, {
+      asyncCADIntersection: false
+    });
     if (modelIntersection !== null) {
-      if (intersection === undefined) {
-        intersection = modelIntersection;
-      } else if (modelIntersection.distanceToCamera < intersection.distanceToCamera) {
-        intersection = modelIntersection;
-      }
+      intersection = modelIntersection;
     }
     // Find any custom object intersection closer to the camera than the model intersection
     const distanceToCamera = intersection?.distanceToCamera;
