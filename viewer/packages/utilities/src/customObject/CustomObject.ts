@@ -17,6 +17,7 @@ export class CustomObject implements ICustomObject {
   private _isPartOfBoundingBox: boolean = true;
   private _shouldPick: boolean = false;
   private _shouldPickBoundingBox: boolean = false;
+  private _useDepthTest: boolean = true;
 
   /**
    * Constructor
@@ -61,15 +62,6 @@ export class CustomObject implements ICustomObject {
   }
 
   /**
-   * Get the bounding box from the object
-   * @beta
-   */
-  getBoundingBox(target: Box3): Box3 {
-    target.setFromObject(this.object);
-    return target;
-  }
-
-  /**
    * Set or get whether it should be also give the bounding box when picked by the camera
    * Default is false.
    * @beta
@@ -80,6 +72,28 @@ export class CustomObject implements ICustomObject {
 
   set shouldPickBoundingBox(value: boolean) {
     this._shouldPickBoundingBox = value;
+  }
+
+  /**
+   * Get whether it should be rendered with depth test (on top on other objects)
+   * Default is true.
+   * @beta
+   */
+  get useDepthTest(): boolean {
+    return this._useDepthTest;
+  }
+
+  set useDepthTest(value: boolean) {
+    this._useDepthTest = value;
+  }
+
+  /**
+   * Get the bounding box from the object
+   * @beta
+   */
+  getBoundingBox(target: Box3): Box3 {
+    target.setFromObject(this.object);
+    return target;
   }
 
   /**

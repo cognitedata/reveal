@@ -40,6 +40,13 @@ export interface ICustomObject {
   get shouldPickBoundingBox(): boolean;
 
   /**
+   * Get whether it should be rendered with depth test (on top on other objects)
+   * Default is true.
+   * @beta
+   */
+  get useDepthTest(): boolean;
+
+  /**
    * Get the bounding box from the object
    * @beta
    */
