@@ -13,7 +13,6 @@ import {
 } from '@reveal/rendering';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadNode } from '../wrappers/CadNode';
-import { readPixelsFromTargetAsync } from './readPixelsFromTargetAsync';
 import { Mutex } from 'async-mutex';
 
 type PickingInput = {
