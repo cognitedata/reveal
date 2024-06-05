@@ -48,7 +48,7 @@ export class MeasureLineView extends GroupThreeView {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected override get domainObject(): MeasureLineDomainObject {
+  public override get domainObject(): MeasureLineDomainObject {
     return super.domainObject as MeasureLineDomainObject;
   }
 
