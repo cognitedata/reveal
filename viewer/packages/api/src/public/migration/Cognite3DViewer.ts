@@ -1566,24 +1566,30 @@ export class Cognite3DViewer {
   /**
    * Raycasting model(s) for finding where the ray intersects with all models, including custom objects.
    * @param pixelCoords Pixel coordinate in pixels (relative to the domElement).
-   * @param predicate Check whether a CustomObject should be intersected.
    * @param options
    * @param options.stopOnHitting360Icon
+   * @param options.predicate Check whether a CustomObject should be intersected.
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @beta
    */
   public async getAnyIntersectionFromPixel(
     pixelCoords: THREE.Vector2,
-    predicate?: (event: ICustomObject) => boolean,
-    options?: { stopOnHitting360Icon?: boolean }
+    options?: {
+      stopOnHitting360Icon?: boolean;
+      predicate?: (customObject: ICustomObject) => boolean;
+    }
   ): Promise<AnyIntersection | undefined> {
     if ((options?.stopOnHitting360Icon ?? true) && this.isIntersecting360Icon(pixelCoords)) {
       return undefined;
     }
 
+    const predicate = options?.predicate;
     let intersection: AnyIntersection | undefined = undefined;
-    intersection = this.getCustomObjectIntersectionIfCloser(pixelCoords, false, undefined, predicate);
+    intersection = this.getCustomObjectIntersectionIfCloser(pixelCoords, {
+      useDepthTest: false,
+      predicate
+    });
     if (intersection !== undefined) {
       return intersection;
     }
@@ -1594,13 +1600,12 @@ export class Cognite3DViewer {
       intersection = modelIntersection;
     }
     // Find any custom object intersection closer to the camera than the model intersection
-    const distanceToCamera = intersection?.distanceToCamera;
-    const customIntersectionPass2 = this.getCustomObjectIntersectionIfCloser(
-      pixelCoords,
-      true,
-      distanceToCamera,
+    const closestDistanceToCamera = intersection?.distanceToCamera;
+    const customIntersectionPass2 = this.getCustomObjectIntersectionIfCloser(pixelCoords, {
+      useDepthTest: true,
+      closestDistanceToCamera,
       predicate
-    );
+    });
     if (customIntersectionPass2 !== undefined) {
       intersection = customIntersectionPass2;
     }
@@ -1783,20 +1788,23 @@ export class Cognite3DViewer {
 
   private getCustomObjectIntersectionIfCloser(
     pixelCoords: THREE.Vector2,
-    useDepthTest: boolean,
-    closestDistanceToCamera: number | undefined,
-    predicate?: (event: ICustomObject) => boolean
+    options: {
+      useDepthTest: boolean;
+      closestDistanceToCamera?: number;
+      predicate?: (customObject: ICustomObject) => boolean;
+    }
   ): CustomObjectIntersection | undefined {
     let intersectInput: CustomObjectIntersectInput | undefined = undefined; // Lazy creation for speed
     let closestIntersection: CustomObjectIntersection | undefined = undefined;
+    let closestDistanceToCamera = options.closestDistanceToCamera;
     this._sceneHandler.customObjects.forEach(customObject => {
-      if (predicate !== undefined && !predicate(customObject)) {
+      if (options.predicate !== undefined && !options.predicate(customObject)) {
         return;
       }
       if (!customObject.object.visible) {
         return;
       }
-      if (useDepthTest !== customObject.useDepthTest) {
+      if (options.useDepthTest !== customObject.useDepthTest) {
         return;
       }
       if (!customObject.shouldPick) {
