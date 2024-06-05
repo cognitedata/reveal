@@ -8,7 +8,8 @@ import { RenderTargetCommand } from './RenderTargetCommand';
 import {
   type CustomObjectIntersection,
   type AnyIntersection,
-  CDF_TO_VIEWER_TRANSFORMATION
+  CDF_TO_VIEWER_TRANSFORMATION,
+  type ICustomObject
 } from '@cognite/reveal';
 import { GroupThreeView } from '../views/GroupThreeView';
 import {
@@ -20,6 +21,7 @@ import { type DomainObject } from '../domainObjects/DomainObject';
 import { type BaseCommand } from './BaseCommand';
 import { ActiveToolUpdater } from '../reactUpdaters/ActiveToolUpdater';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
+import { ThreeView } from '../views/ThreeView';
 
 /**
  * Base class for intraction in the 3D viewer
@@ -117,17 +119,29 @@ export abstract class BaseTool extends RenderTargetCommand {
   }
 
   protected async getIntersection(
-    event: PointerEvent | WheelEvent
+    event: PointerEvent | WheelEvent,
+    domainObjectPredicate?: (domainObject: DomainObject) => boolean
   ): Promise<AnyIntersection | undefined> {
     const { renderTarget } = this;
     const { viewer } = renderTarget;
 
     const point = viewer.getPixelCoordinatesFromEvent(event);
-    const intersection = await viewer.getAnyIntersectionFromPixel(point);
-    if (intersection === undefined) {
-      return undefined;
+
+    if (domainObjectPredicate === undefined) {
+      return await viewer.getAnyIntersectionFromPixel(point);
     }
-    return intersection;
+    // Here we use a custom predicate to filter the intersections
+    // This maps from ICustomObject to DomainObject
+    const predicate = (customObject: ICustomObject): boolean => {
+      if (domainObjectPredicate === undefined) {
+        return true;
+      }
+      if (!(customObject instanceof ThreeView)) {
+        return false;
+      }
+      return domainObjectPredicate(customObject.domainObject);
+    };
+    return await viewer.getAnyIntersectionFromPixel(point, { predicate });
   }
 
   protected getSpecificIntersection<T extends DomainObject>(

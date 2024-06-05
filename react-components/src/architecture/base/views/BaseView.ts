@@ -24,7 +24,7 @@ export abstract class BaseView {
     return this._domainObject !== undefined;
   }
 
-  protected get domainObject(): DomainObject {
+  public get domainObject(): DomainObject {
     if (this._domainObject === undefined) {
       throw Error('The DomainObject is missing in the view');
     }

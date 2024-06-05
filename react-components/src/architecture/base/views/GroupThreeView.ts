@@ -62,6 +62,10 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
     return true; // To be overridden
   }
 
+  public get useDepthTest(): boolean {
+    return true; // To be overridden
+  }
+
   public getBoundingBox(target: Box3): Box3 {
     target.copy(this.boundingBox);
     return target;

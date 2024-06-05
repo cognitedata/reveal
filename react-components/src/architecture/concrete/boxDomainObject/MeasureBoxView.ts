@@ -67,7 +67,7 @@ export class MeasureBoxView extends GroupThreeView {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected override get domainObject(): MeasureBoxDomainObject {
+  public override get domainObject(): MeasureBoxDomainObject {
     return super.domainObject as MeasureBoxDomainObject;
   }
 
@@ -126,11 +126,15 @@ export class MeasureBoxView extends GroupThreeView {
     this.addLabels(matrix);
   }
 
+  public override get useDepthTest(): boolean {
+    return this.style.depthTest;
+  }
+
   public override intersectIfCloser(
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    const { domainObject, style } = this;
+    const { domainObject } = this;
     if (domainObject.focusType === FocusType.Pending) {
       return undefined; // Should never be picked
     }
@@ -144,7 +148,7 @@ export class MeasureBoxView extends GroupThreeView {
       return undefined;
     }
     const distanceToCamera = point.distanceTo(ray.origin);
-    if (style.depthTest && closestDistance !== undefined && closestDistance < distanceToCamera) {
+    if (closestDistance !== undefined && closestDistance < distanceToCamera) {
       return undefined;
     }
     if (!intersectInput.isVisible(point)) {

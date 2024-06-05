@@ -21,7 +21,7 @@ export class ExampleView extends GroupThreeView {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected override get domainObject(): ExampleDomainObject {
+  public override get domainObject(): ExampleDomainObject {
     return super.domainObject as ExampleDomainObject;
   }
 
