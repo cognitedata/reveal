@@ -1566,7 +1566,7 @@ export class Cognite3DViewer {
   /**
    * Raycasting model(s) for finding where the ray intersects with all models, including custom objects.
    * @param pixelCoords Pixel coordinate in pixels (relative to the domElement).
-   * @param predicate Check whether a CustomObject should be intersected
+   * @param predicate Check whether a CustomObject should be intersected.
    * @param options
    * @param options.stopOnHitting360Icon
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
