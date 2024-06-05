@@ -1585,8 +1585,7 @@ export class Cognite3DViewer {
     }
 
     const predicate = options?.predicate;
-    let intersection: AnyIntersection | undefined = undefined;
-    intersection = this.getCustomObjectIntersectionIfCloser(pixelCoords, {
+    let intersection: AnyIntersection | undefined = this.getCustomObjectIntersectionIfCloser(pixelCoords, {
       useDepthTest: false,
       predicate
     });
