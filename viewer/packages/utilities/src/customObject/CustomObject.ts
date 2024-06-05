@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Object3D, Box3 } from 'three';
+import { Object3D, Box3, PerspectiveCamera } from 'three';
 import { CustomObjectIntersection } from './CustomObjectIntersection';
 import { CustomObjectIntersectInput } from './CustomObjectIntersectInput';
 import { ICustomObject } from './ICustomObject';
@@ -117,4 +117,6 @@ export class CustomObject implements ICustomObject {
     }
     return customObjectIntersection;
   }
+
+  beforeRender(_camera: PerspectiveCamera): void {}
 }

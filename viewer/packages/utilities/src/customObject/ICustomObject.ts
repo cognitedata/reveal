@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Object3D, Box3 } from 'three';
+import { Object3D, Box3, PerspectiveCamera } from 'three';
 import { CustomObjectIntersection } from './CustomObjectIntersection';
 import { CustomObjectIntersectInput } from './CustomObjectIntersectInput';
 
@@ -54,4 +54,10 @@ export interface ICustomObject {
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection;
+
+  /**
+   * This method is called before rendering of the custom object
+   * @beta
+   */
+  beforeRender(camera: PerspectiveCamera): void;
 }

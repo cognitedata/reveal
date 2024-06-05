@@ -1566,6 +1566,7 @@ export class Cognite3DViewer {
   /**
    * Raycasting model(s) for finding where the ray intersects with all models, including custom objects.
    * @param pixelCoords Pixel coordinate in pixels (relative to the domElement).
+   * @param predicate Check whether a CustomObject should be intersected
    * @param options
    * @param options.stopOnHitting360Icon
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
@@ -1574,28 +1575,36 @@ export class Cognite3DViewer {
    */
   public async getAnyIntersectionFromPixel(
     pixelCoords: THREE.Vector2,
+    predicate?: (event: ICustomObject) => boolean,
     options?: { stopOnHitting360Icon?: boolean }
   ): Promise<AnyIntersection | undefined> {
     if ((options?.stopOnHitting360Icon ?? true) && this.isIntersecting360Icon(pixelCoords)) {
       return undefined;
     }
 
-    const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, { asyncCADIntersection: false });
+    let intersection: AnyIntersection | undefined = undefined;
+    intersection = this.getCustomObjectIntersectionIfCloser(pixelCoords, false, undefined, predicate);
 
+    const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, { asyncCADIntersection: false });
+    if (modelIntersection !== null) {
+      if (intersection === undefined) {
+        intersection = modelIntersection;
+      } else if (modelIntersection.distanceToCamera < intersection.distanceToCamera) {
+        intersection = modelIntersection;
+      }
+    }
     // Find any custom object intersection closer to the camera than the model intersection
-    const customObjectIntersection = this.getCustomObjectIntersectionIfCloser(
+    const distanceToCamera = intersection?.distanceToCamera;
+    const customIntersectionPass2 = this.getCustomObjectIntersectionIfCloser(
       pixelCoords,
-      modelIntersection?.distanceToCamera
+      true,
+      distanceToCamera,
+      predicate
     );
-    if (customObjectIntersection !== undefined) {
-      // No intersection
-      return customObjectIntersection;
+    if (customIntersectionPass2 !== undefined) {
+      intersection = customIntersectionPass2;
     }
-    if (modelIntersection != null) {
-      // Custom object intersection
-      return modelIntersection;
-    }
-    return undefined;
+    return intersection;
   }
 
   private isIntersecting360Icon(vector: THREE.Vector2): boolean {
@@ -1685,7 +1694,9 @@ export class Cognite3DViewer {
     const start = Date.now();
 
     this._events.beforeSceneRendered.fire({ frameNumber, renderer: this.renderer, camera });
-
+    this._sceneHandler.customObjects.forEach(customObject => {
+      customObject.beforeRender(camera);
+    });
     this.revealManager.render(camera);
     this.revealManager.resetRedraw();
     this._image360ApiHelper?.resetRedraw();
@@ -1772,12 +1783,20 @@ export class Cognite3DViewer {
 
   private getCustomObjectIntersectionIfCloser(
     pixelCoords: THREE.Vector2,
-    closestDistanceToCamera: number | undefined
+    useDepthTest: boolean,
+    closestDistanceToCamera: number | undefined,
+    predicate?: (event: ICustomObject) => boolean
   ): CustomObjectIntersection | undefined {
     let intersectInput: CustomObjectIntersectInput | undefined = undefined; // Lazy creation for speed
     let closestIntersection: CustomObjectIntersection | undefined = undefined;
     this._sceneHandler.customObjects.forEach(customObject => {
+      if (predicate !== undefined && !predicate(customObject)) {
+        return;
+      }
       if (!customObject.object.visible) {
+        return;
+      }
+      if (useDepthTest !== customObject.useDepthTest) {
         return;
       }
       if (!customObject.shouldPick) {
@@ -1806,14 +1825,10 @@ export class Cognite3DViewer {
     offsetY: number,
     pickBoundingBox: boolean
   ): Promise<CameraManagerCallbackData> {
-    const modelIntersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
+    const pixelCoords = new THREE.Vector2(offsetX, offsetY);
 
-    // Find any custom object intersection closer to the camera than the model intersection
-    const customObjectIntersection = this.getCustomObjectIntersectionIfCloser(
-      new THREE.Vector2(offsetX, offsetY),
-      modelIntersection?.distanceToCamera
-    );
-    if (customObjectIntersection === undefined && modelIntersection === null) {
+    const intersection = await this.getAnyIntersectionFromPixel(pixelCoords);
+    if (intersection === undefined) {
       // No intersection
       return {
         intersection: null,
@@ -1821,26 +1836,28 @@ export class Cognite3DViewer {
         modelsBoundingBox: this.getSceneBoundingBox()
       };
     }
-    if (customObjectIntersection) {
-      // Custom object intersection
+    if (intersection.type === 'customObject') {
       return {
-        intersection: customObjectIntersection,
-        pickedBoundingBox: pickBoundingBox ? customObjectIntersection.boundingBox : undefined,
+        intersection,
+        pickedBoundingBox: pickBoundingBox ? intersection.boundingBox : undefined,
         modelsBoundingBox: this.getSceneBoundingBox()
       };
     }
-    const getBoundingBox = async (intersection: Intersection | null): Promise<THREE.Box3 | undefined> => {
-      if (intersection?.type !== 'cad') {
-        return undefined;
-      }
-      const model = intersection.model;
-      const treeIndex = intersection.treeIndex;
-      return model.getBoundingBoxByTreeIndex(treeIndex);
-    };
-    // Model intersection
+    if (intersection.type === 'cad') {
+      const getBoundingBox = async (intersection: CadIntersection): Promise<THREE.Box3 | undefined> => {
+        const model = intersection.model;
+        const treeIndex = intersection.treeIndex;
+        return model.getBoundingBoxByTreeIndex(treeIndex);
+      };
+      return {
+        intersection,
+        pickedBoundingBox: pickBoundingBox ? await getBoundingBox(intersection) : undefined,
+        modelsBoundingBox: this.getSceneBoundingBox()
+      };
+    }
     return {
-      intersection: modelIntersection,
-      pickedBoundingBox: pickBoundingBox ? await getBoundingBox(modelIntersection) : undefined,
+      intersection,
+      pickedBoundingBox: undefined,
       modelsBoundingBox: this.getSceneBoundingBox()
     };
   }
