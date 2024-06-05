@@ -7,6 +7,7 @@ import { type BaseCommand } from '../commands/BaseCommand';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { NavigationTool } from '../commands/NavigationTool';
 import { type BaseTool } from '../commands/BaseTool';
+import { type RevealRenderTarget } from './RevealRenderTarget';
 
 export abstract class BaseRevealConfig {
   // ==================================================
@@ -28,4 +29,6 @@ export abstract class BaseRevealConfig {
   public createDefaultTool(): BaseTool {
     return new NavigationTool();
   }
+
+  public onStartup(_renderTarget: RevealRenderTarget): void {}
 }
