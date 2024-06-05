@@ -72,8 +72,10 @@ export async function readPixelsFromTargetAsync(
   dest: ArrayBufferView,
   forceSync = false
 ): Promise<void> {
+  const typedBuffer = new Float32Array(dest.buffer);
+
   if (renderer.capabilities.isWebGL2 && !forceSync) {
-    renderer.readRenderTargetPixelsAsync(renderTarget, x, y, w, h, new Float32Array(dest.buffer));
+    renderer.readRenderTargetPixelsAsync(renderTarget, x, y, w, h, typedBuffer);
   }
-  renderer.readRenderTargetPixels(renderTarget, x, y, w, h, new Float32Array(dest.buffer));
+  renderer.readRenderTargetPixels(renderTarget, x, y, w, h, typedBuffer);
 }
