@@ -248,6 +248,8 @@ async function createMappedEquipmentMaps(
   const mappedEquipmentFirstLevelMap: Record<string, EdgeItem[]> = {};
   const equipmentSecondLevelMap: Record<string, EdgeItem[]> = {};
 
+  const modelsMap = await createModelsMap(models, fdmSdk);
+
   for (const edge of allEdges) {
     const { space: endSpace, externalId: endExternalId } = edge.endNode;
     const { space, externalId } = edge.startNode;
@@ -258,9 +260,9 @@ async function createMappedEquipmentMaps(
         revisionId.toString() === getRevisionIdFromEdge(edge)
     );
 
-    const modelInstances = await getDMSModels(parseInt(endExternalId), fdmSdk);
+    const modelInstances = modelsMap.get(endExternalId);
 
-    if (modelInstances.find((model) => model.space === endSpace) !== undefined && isModelsMapped) {
+    if (modelInstances?.find((model) => model.space === endSpace) !== undefined && isModelsMapped) {
       const key = `${space}/${externalId}`;
 
       const keyEdges = mappedEquipmentFirstLevelMap[key];
@@ -279,6 +281,18 @@ async function createMappedEquipmentMaps(
   }
 
   return { mappedEquipmentFirstLevelMap, equipmentSecondLevelMap };
+}
+
+async function createModelsMap(
+  models: AddModelOptions[],
+  fdmSdk: FdmSDK
+): Promise<Map<ExternalId, DmsUniqueIdentifier[]>> {
+  const modelInstances = await Promise.all(
+    models.map((model) => getDMSModels(model.modelId, fdmSdk))
+  );
+  return new Map(
+    modelInstances.map((modelInstanceList, ind) => [`${models[ind].modelId}`, modelInstanceList])
+  );
 }
 
 function createCheckMappedEquipmentQuery(

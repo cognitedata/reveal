@@ -283,7 +283,20 @@ export class FdmSDK {
     filter?: InstanceFilter,
     properties?: string[]
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> {
-    const data: any = { view: searchedView, query, instanceType, filter, properties, limit };
+    function makeSureNonEmptyFilterForRequest(filter: InstanceFilter | undefined) {
+      return filter !== undefined && Object.keys(filter).length === 0 ? undefined : filter;
+    }
+
+    filter = makeSureNonEmptyFilterForRequest(filter);
+
+    const data: any = {
+      view: searchedView,
+      query,
+      instanceType,
+      filter,
+      properties,
+      limit
+    };
 
     const result = await this._sdk.post(this._searchEndpoint, { data });
 
