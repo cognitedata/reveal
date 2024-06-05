@@ -440,6 +440,7 @@ export class Cognite3DViewer {
     // @beta
     getAnyIntersectionFromPixel(pixelCoords: THREE.Vector2, options?: {
         stopOnHitting360Icon?: boolean;
+        predicate?: (customObject: ICustomObject) => boolean;
     }): Promise<AnyIntersection | undefined>;
     // @deprecated
     getClippingPlanes(): THREE.Plane[];
@@ -756,6 +757,7 @@ export enum Corner {
 // @beta
 export class CustomObject implements ICustomObject {
     constructor(object: Object3D);
+    beforeRender(_camera: PerspectiveCamera): void;
     getBoundingBox(target: Box3): Box3;
     intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
     get isPartOfBoundingBox(): boolean;
@@ -765,6 +767,8 @@ export class CustomObject implements ICustomObject {
     set shouldPick(value: boolean);
     get shouldPickBoundingBox(): boolean;
     set shouldPickBoundingBox(value: boolean);
+    get useDepthTest(): boolean;
+    set useDepthTest(value: boolean);
 }
 
 // @beta
@@ -1096,12 +1100,14 @@ export type HtmlOverlayToolOptions = {
 
 // @beta
 export interface ICustomObject {
+    beforeRender(camera: PerspectiveCamera): void;
     getBoundingBox(target: Box3): Box3;
     intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
     get isPartOfBoundingBox(): boolean;
     get object(): Object3D;
     get shouldPick(): boolean;
     get shouldPickBoundingBox(): boolean;
+    get useDepthTest(): boolean;
 }
 
 // @beta
