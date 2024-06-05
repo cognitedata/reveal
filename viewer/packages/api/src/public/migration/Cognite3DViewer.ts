@@ -1592,9 +1592,7 @@ export class Cognite3DViewer {
     if (intersection !== undefined) {
       return intersection;
     }
-    const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y, {
-      asyncCADIntersection: false
-    });
+    const modelIntersection = await this.intersectModels(pixelCoords.x, pixelCoords.y);
     if (modelIntersection !== null) {
       intersection = modelIntersection;
     }
@@ -1711,11 +1709,7 @@ export class Cognite3DViewer {
   }
 
   /** @private */
-  private async intersectModels(
-    offsetX: number,
-    offsetY: number,
-    options?: { asyncCADIntersection?: boolean }
-  ): Promise<null | Intersection> {
+  private async intersectModels(offsetX: number, offsetY: number): Promise<null | Intersection> {
     const normalizedCoords = getNormalizedPixelCoordinates(this.renderer.domElement, offsetX, offsetY);
     const input: IntersectInput = {
       normalizedCoords,
@@ -1756,11 +1750,7 @@ export class Cognite3DViewer {
 
       const cadModels = this.getModels('cad');
       const cadNodes = cadModels.map(x => x.cadNode);
-      const cadResults = await this._pickingHandler.intersectCadNodes(
-        cadNodes,
-        input,
-        options?.asyncCADIntersection ?? true
-      );
+      const cadResults = await this._pickingHandler.intersectCadNodes(cadNodes, input);
       this._forceStopRendering = false;
 
       if (cadResults.length > 0) {
