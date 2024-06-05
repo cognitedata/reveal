@@ -48,7 +48,7 @@ export class MeasureLineView extends GroupThreeView {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected override get domainObject(): MeasureLineDomainObject {
+  public override get domainObject(): MeasureLineDomainObject {
     return super.domainObject as MeasureLineDomainObject;
   }
 
@@ -87,6 +87,10 @@ export class MeasureLineView extends GroupThreeView {
     this.addLabels();
   }
 
+  public override get useDepthTest(): boolean {
+    return this.style.depthTest;
+  }
+
   public override intersectIfCloser(
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
@@ -114,12 +118,7 @@ export class MeasureLineView extends GroupThreeView {
     const ray = intersectInput.raycaster.ray;
     const closestFinder = new ClosestGeometryFinder<DomainObjectIntersection>(ray.origin);
 
-    // TODO: The line below will case a tiny bug. The best is that the main intersection algorithm
-    // in the vieweer intersects the objects with depthTest == false first, before any other object and
-    // returns out if any of those objects are intersected. Same for Boxes. Now the intersection is somewhat arbitrarly
-    // if style.depthTest == false. Then the last one added to the viewer will be picked first,
-    // regardless of the distance to the mouse.
-    if (style.depthTest && closestDistance !== undefined) {
+    if (closestDistance !== undefined) {
       closestFinder.minDistance = closestDistance;
     }
     const loopLength = domainObject.measureType === MeasureType.Polygon ? length + 1 : length;
