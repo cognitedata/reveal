@@ -322,7 +322,7 @@ function createCheckMappedEquipmentQuery(
         edges: {
           from: 'mapped_nodes',
           direction: 'outwards',
-          terminationFilter: {
+          nodeFilter: {
             in: {
               property: ['node', 'externalId'],
               values: models.map((model) => model.modelId.toString())
