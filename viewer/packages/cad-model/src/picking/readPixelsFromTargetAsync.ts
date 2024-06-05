@@ -50,33 +50,6 @@ async function getBufferSubDataAsync(
   }
 }
 
-async function readPixelsAsync(
-  gl: WebGL2RenderingContext,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  format: number,
-  type: number,
-  dest: ArrayBufferView
-): Promise<void> {
-  const buf = gl.createBuffer();
-  if (buf === null) {
-    throw new Error('readPixelsAsync() failed because createBuffer() returned null');
-  }
-
-  try {
-    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, buf);
-    gl.bufferData(gl.PIXEL_PACK_BUFFER, dest.byteLength, gl.STREAM_READ);
-    gl.readPixels(x, y, w, h, format, type, 0);
-    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
-
-    await getBufferSubDataAsync(gl, gl.PIXEL_PACK_BUFFER, buf, 0, dest);
-  } finally {
-    gl.deleteBuffer(buf);
-  }
-}
-
 /**
  * Does the same as THREE.WebGlRenderer.readRenderTargetPixels(), but does this
  * asynchronously when used on WebGL2.
@@ -100,20 +73,7 @@ export async function readPixelsFromTargetAsync(
   forceSync = false
 ): Promise<void> {
   if (renderer.capabilities.isWebGL2 && !forceSync) {
-    const gl = renderer.getContext() as WebGL2RenderingContext;
-    const utils = new THREE.WebGLUtils(gl, renderer.extensions);
-
-    const texture = renderTarget.texture;
-    const format = utils.convert(texture.format);
-    if (format === null) {
-      throw new Error(`Invalid texture format ${texture.format}`);
-    }
-    const type = utils.convert(texture.type);
-    if (type === null) {
-      throw new Error(`Invalid texture type ${texture.type}`);
-    }
-
-    return readPixelsAsync(gl, x, y, w, h, format, type, dest);
+    renderer.readRenderTargetPixelsAsync(renderTarget, x, y, w, h, new Float32Array(dest.buffer));
   }
-  renderer.readRenderTargetPixels(renderTarget, x, y, w, h, dest);
+  renderer.readRenderTargetPixels(renderTarget, x, y, w, h, new Float32Array(dest.buffer));
 }
