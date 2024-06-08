@@ -23,18 +23,18 @@ __metadata:
   linkType: hard
 
 "@azure/msal-browser@npm:^3.13.0":
-  version: 3.15.0
-  resolution: "@azure/msal-browser@npm:3.15.0"
+  version: 3.16.0
+  resolution: "@azure/msal-browser@npm:3.16.0"
   dependencies:
-    "@azure/msal-common": "npm:14.10.0"
-  checksum: 10/f19a1a1a8441731f513eb5438c9f5af0f5f82cd2db2e76fcce2ecff797574e036aaf1b56c52bde0219b30f9a6deb853a191a1b8c0e424bd6084b4736e6d2ef0c
+    "@azure/msal-common": "npm:14.11.0"
+  checksum: 10/518e76ac494c8ef614d6503fb626a2ed3ecd14b396a81ee9c0862a42892c718422a730aa97bd4bfd6a7bd4a942a968451811eb729013b025f15ba56bb3523426
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:14.10.0":
-  version: 14.10.0
-  resolution: "@azure/msal-common@npm:14.10.0"
-  checksum: 10/7d36c42285041ee50300991f16f29886d4757234c7f15712ab9de4730534d59256b57dc9f4da7ea0b00cfd45660c67739f3a73d8942f147f14bfb53926140428
+"@azure/msal-common@npm:14.11.0":
+  version: 14.11.0
+  resolution: "@azure/msal-common@npm:14.11.0"
+  checksum: 10/76ec9a0dda6ab3f71b371df2cadea91e02ec2b5d340cada43a35544b1fc06e8ec99e56d501b7070666b70eb7afce2ea291611f34ab6996c46cd8b6a605a3e511
   languageName: node
   linkType: hard
 
@@ -475,7 +475,7 @@ __metadata:
     "@types/random-seed": "npm:^0.3.5"
     "@types/skmeans": "npm:^0.11.7"
     "@types/stats": "npm:^0.16.30"
-    "@types/three": "npm:^0.164.0"
+    "@types/three": "npm:^0.165.0"
     "@types/tween.js": "npm:^18.6.1"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.1"
     "@typescript-eslint/parser": "npm:^7.7.1"
@@ -523,7 +523,7 @@ __metadata:
     skmeans: "npm:^0.11.3"
     sparse-octree: "npm:^7.1.8"
     stats.js: "npm:^0.17.0"
-    three: "npm:0.164.1"
+    three: "npm:0.165.0"
     ts-jest: "npm:^29.1.2"
     ts-loader: "npm:^9.5.1"
     tsc-alias: "npm:^1.8.8"
@@ -537,7 +537,7 @@ __metadata:
     workerize-loader: "npm:^2.0.2"
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
-    three: 0.164.1
+    three: 0.165.0
   languageName: unknown
   linkType: soft
 
@@ -1044,8 +1044,8 @@ __metadata:
   linkType: hard
 
 "@microsoft/api-extractor@npm:^7.43.1":
-  version: 7.46.2
-  resolution: "@microsoft/api-extractor@npm:7.46.2"
+  version: 7.47.0
+  resolution: "@microsoft/api-extractor@npm:7.47.0"
   dependencies:
     "@microsoft/api-extractor-model": "npm:7.29.2"
     "@microsoft/tsdoc": "npm:~0.15.0"
@@ -1062,7 +1062,7 @@ __metadata:
     typescript: "npm:5.4.2"
   bin:
     api-extractor: bin/api-extractor
-  checksum: 10/2be049ee6cb7c77780520beb93ecebdb8b3b05672f7b81be979bbd0475119345ec49c4f5f0fe8ea74ff6b79ad2166255fb51c3352a970f4227a5b75de2822216
+  checksum: 10/0c573beff459baa87748df312312063c94806ff96ab906757e77dbb3d87f5fb78c32e23a98476f24bb98ff598390a63d3aa27171e0ce4661521a32e87d588b7a
   languageName: node
   linkType: hard
 
@@ -1911,11 +1911,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^20.12.7":
-  version: 20.14.0
-  resolution: "@types/node@npm:20.14.0"
+  version: 20.14.2
+  resolution: "@types/node@npm:20.14.2"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/49b332fbf8aee4dc4f61cc1f1f6e130632510f795dd7b274e55894516feaf4bec8a3d13ea764e2443e340a64ce9bbeb006d14513bf6ccdd4f21161eccc7f311e
+  checksum: 10/c38e47b190fa0a8bdfde24b036dddcf9401551f2fb170a90ff33625c7d6f218907e81c74e0fa6e394804a32623c24c60c50e249badc951007830f0d02c48ee0f
   languageName: node
   linkType: hard
 
@@ -2032,16 +2032,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.164.0":
-  version: 0.164.1
-  resolution: "@types/three@npm:0.164.1"
+"@types/three@npm:^0.165.0":
+  version: 0.165.0
+  resolution: "@types/three@npm:0.165.0"
   dependencies:
     "@tweenjs/tween.js": "npm:~23.1.1"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/508368629305f1bb9c353e52f2cafe78ae84e7af55eb87a7d852c3ecff2da493cbdf021d91524046d200d7b1b182734cfa8167cb67314056adfda98cd42b3d7e
+  checksum: 10/c9374ceed25ba6b26953ba935a937fa57f5de564c6afc61d528760246c0aeed939a74b8b973670d3e879f8df2936ff02fa6b81f412d22edfa1ba1085b8b3d2d8
   languageName: node
   linkType: hard
 
@@ -10045,10 +10045,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.164.1":
-  version: 0.164.1
-  resolution: "three@npm:0.164.1"
-  checksum: 10/561f28a84c6978b3fb548c11892ac6411df97a848089611d16ef921613d71af7a77815f531d10311cd7f9f9477ba900b69a99a39fe978d193a990476050fe062
+"three@npm:0.165.0":
+  version: 0.165.0
+  resolution: "three@npm:0.165.0"
+  checksum: 10/43e39b55fdacdf64f68cf305ca199dc94b2d00c301e0acefe611ead35ba85521f05725a7a71cf790d2dd39816f59cfeb0b00245c62037bc7cb5c383dba280364
   languageName: node
   linkType: hard
 
