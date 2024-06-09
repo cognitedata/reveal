@@ -1,6 +1,5 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { type Ray, Raycaster, type Vector2 } from 'three';
@@ -24,7 +23,7 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { ThreeView } from '../views/ThreeView';
 
 /**
- * Base class for intraction in the 3D viewer
+ * Base class for interactions in the 3D viewer
  * Provides common functionality and virtual methods to be overridden by derived classes.
  */
 export abstract class BaseTool extends RenderTargetCommand {
@@ -58,7 +57,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   }
 
   public getToolbarStyle(): PopupStyle {
-    // Override this to pclase the extra separate toolbar
+    // Override this to place the the toolbar
     // Default lower left corner
     return new PopupStyle({ bottom: 0, left: 0 });
   }

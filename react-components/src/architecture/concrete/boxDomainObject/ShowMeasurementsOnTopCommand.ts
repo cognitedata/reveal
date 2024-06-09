@@ -1,6 +1,5 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
@@ -8,7 +7,7 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { MeasureDomainObject } from './MeasureDomainObject';
 
-export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
+export class ShowMeasurementsOnTopCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================

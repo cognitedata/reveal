@@ -13,7 +13,7 @@ import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/rev
  * The `BaseEditTool` class is an abstract class that extends the `NavigationTool` class.
  * It provides a base implementation for editing tools in a specific architecture.
  * Custom editing tools can be created by extending this class and overriding its methods.
- * This class will also proivide the dragging functionality if the picked domain object has
+ * This class will also provide the dragging functionality if the picked domain object has
  * createDragger() overridden.
  */
 export abstract class BaseEditTool extends NavigationTool {
@@ -76,8 +76,8 @@ export abstract class BaseEditTool extends NavigationTool {
 
   /**
    * Determines whether the specified domain object can be selected or dragged by this edit tool.
-   *
-   * @param _domainObject - The domain object to be accepted.
+   * Override this function of the selection mechanism should be used.
+   * @param domainObject - The domain object to be accepted.
    * @returns `true` if the domain object can be accepted, `false` otherwise.
    */
   protected canBeSelected(_domainObject: DomainObject): boolean {
@@ -113,6 +113,11 @@ export abstract class BaseEditTool extends NavigationTool {
   // INSTANCE METHODS
   // ==================================================
 
+  /**
+   * Deselects all visual domain objects except for the specified object.
+   * If no object is specified, all visual domain objects will be deselected.
+   * @param except - The visual domain object to exclude from deselection.
+   */
   protected deselectAll(except?: VisualDomainObject | undefined): void {
     const { rootDomainObject } = this;
     for (const domainObject of rootDomainObject.getDescendants()) {
@@ -126,6 +131,48 @@ export abstract class BaseEditTool extends NavigationTool {
     }
   }
 
+  /**
+   * Retrieves all selected domain objects.
+   * Use only if multi selection is expected.
+   * @returns A generator that yields each selected domain object.
+   */
+  protected *getAllSelected(): Generator<DomainObject> {
+    const { rootDomainObject } = this;
+    for (const domainObject of rootDomainObject.getDescendants()) {
+      if (!domainObject.isSelected) {
+        continue;
+      }
+      if (!this.canBeSelected(domainObject)) {
+        continue;
+      }
+      yield domainObject;
+    }
+  }
+
+  /**
+   * Retrieves the selected DomainObject.
+   * Use only if single selection is expected.
+   * @returns The selected DomainObject, or undefined if no object is selected.
+   */
+  protected getSelected(): DomainObject | undefined {
+    const { rootDomainObject } = this;
+    for (const domainObject of rootDomainObject.getDescendants()) {
+      if (!domainObject.isSelected) {
+        continue;
+      }
+      if (!this.canBeSelected(domainObject)) {
+        continue;
+      }
+      return domainObject;
+    }
+    return undefined;
+  }
+
+  /**
+   * Retrieves the intersected visual domain object from the given intersection.
+   * @param intersection - The intersection to retrieve the domain object from.
+   * @returns The intersected visual domain object, or undefined if no valid domain object is found.
+   */
   protected getIntersectedDomainObject(
     intersection: AnyIntersection | undefined
   ): VisualDomainObject | undefined {

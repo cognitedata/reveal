@@ -15,9 +15,12 @@ export class DomainObjectChange {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(change?: symbol, fieldName?: string) {
-    if (change !== undefined) {
-      this.add(change, fieldName);
+  public constructor(change?: symbol | ChangedDescription, fieldName?: string) {
+    if (typeof change === 'symbol') {
+      this.addChange(change, fieldName);
+    }
+    if (change instanceof ChangedDescription) {
+      this.addChangedDescription(change);
     }
   }
 
@@ -47,17 +50,17 @@ export class DomainObjectChange {
   }
 
   /**
-   * Checks if the domain object has been changed based on the specified change and some specific fieldnames.
+   * Checks if the domain object has been changed based on the specified change and some specific field names.
    * For instance
    * if (isFieldNameChanged(Changes.renderStyle, 'lineWidth', 'lineColor')) {
-   *   // Now you have to update the line matrial only
+   *   // Now you have to update the line material only
    * }
    * @param change - The symbol representing the change.
    * @param fieldNames - The field names to compare against the change symbol.
    * @returns A boolean indicating whether the name has changed or not.
    */
   public isFieldNameChanged(change: symbol, ...fieldNames: string[]): boolean {
-    // This igonores space and case.
+    // This ignores space and case.
     const fieldName = this.getFieldNameBySymbol(change);
     if (fieldName === undefined) {
       return false;
@@ -74,7 +77,7 @@ export class DomainObjectChange {
   // INSTANCE METHODS: Getters
   // ==================================================
 
-  private getChangedDescription(change: symbol): ChangedDescription | undefined {
+  public getChangedDescription(change: symbol): ChangedDescription | undefined {
     if (this._changes === undefined) {
       return undefined;
     }
@@ -90,14 +93,17 @@ export class DomainObjectChange {
   // INSTANCE METHODS: Operations
   // ==================================================
 
-  public add(change: symbol, fieldName?: string): void {
-    if (change === undefined) {
-      return;
+  public addChange(change: symbol, fieldName?: string): void {
+    if (change !== undefined) {
+      this.addChangedDescription(new ChangedDescription(change, fieldName));
     }
+  }
+
+  public addChangedDescription(changedDescription: ChangedDescription): void {
     if (this._changes === undefined) {
       this._changes = [];
     }
-    this._changes.push(new ChangedDescription(change, fieldName));
+    this._changes.push(changedDescription);
   }
 }
 

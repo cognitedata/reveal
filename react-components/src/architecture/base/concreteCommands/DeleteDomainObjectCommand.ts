@@ -1,6 +1,5 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { BaseCommand } from '../commands/BaseCommand';
@@ -23,6 +22,10 @@ export class DeleteDomainObjectCommand extends BaseCommand {
 
   public override get icon(): string {
     return 'Delete';
+  }
+
+  public override get buttonType(): string {
+    return 'ghost-destructive';
   }
 
   public override get isEnabled(): boolean {

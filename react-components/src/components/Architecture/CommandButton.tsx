@@ -67,10 +67,15 @@ export const CommandButton = ({
   }
   const placement = isHorizontal ? 'top' : 'right';
   const { key, fallback } = newCommand.tooltip;
+  // This was the only way it went through compiler: (more bytton types will be added in the future)
+  const type = newCommand.buttonType;
+  if (type !== 'ghost' && type !== 'ghost-destructive') {
+    return <></>;
+  }
   return (
     <CogsTooltip content={t(key, fallback)} placement={placement} appendTo={document.body}>
       <Button
-        type="ghost"
+        type={type}
         icon={icon}
         key={uniqueIndex}
         toggled={isChecked}

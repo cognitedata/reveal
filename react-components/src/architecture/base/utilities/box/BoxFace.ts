@@ -12,7 +12,7 @@ export class BoxFace {
   private _face: number = 0;
 
   // ==================================================
-  // CONTRUCTOR
+  // CONSTRUCTOR
   // ==================================================
 
   public constructor(face: number = 0) {

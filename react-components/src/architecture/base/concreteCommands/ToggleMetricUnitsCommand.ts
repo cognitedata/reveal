@@ -1,13 +1,12 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type TranslateKey } from '../utilities/TranslateKey';
 
-export class ToogleMetricUnitsCommand extends RenderTargetCommand {
+export class ToggleMetricUnitsCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES of BaseCommand
   // ==================================================
@@ -29,7 +28,7 @@ export class ToogleMetricUnitsCommand extends RenderTargetCommand {
     const { renderTarget } = this;
     const unitSystem = renderTarget.rootDomainObject.unitSystem;
     unitSystem.isMetric = !unitSystem.isMetric;
-    renderTarget.rootDomainObject.notifyRecursive(Changes.unit);
+    renderTarget.rootDomainObject.notifyDescendants(Changes.unit);
     return true;
   }
 }

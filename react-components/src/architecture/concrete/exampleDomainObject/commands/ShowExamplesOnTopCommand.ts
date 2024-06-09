@@ -1,6 +1,5 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
@@ -18,7 +17,7 @@ export class ShowExamplesOnTopCommand extends RenderTargetCommand {
   }
 
   public override get icon(): string {
-    return 'EyeShow';
+    return 'Flag';
   }
 
   public override get isEnabled(): boolean {

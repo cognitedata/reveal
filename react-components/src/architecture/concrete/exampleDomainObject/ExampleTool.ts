@@ -15,7 +15,7 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type HSL } from 'three';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ShowExamplesOnTopCommand } from './commands/ShowExamplesOnTopCommand';
-import { ToogleMetricUnitsCommand } from '../../base/concreteCommands/ToogleMetricUnitsCommand';
+import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 
 export class ExampleTool extends BaseEditTool {
   // ==================================================
@@ -36,7 +36,7 @@ export class ExampleTool extends BaseEditTool {
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
     if (down && event.key === 'Delete') {
-      const domainObject = this.rootDomainObject.getSelectedDescendantByType(ExampleDomainObject);
+      const domainObject = this.getSelected();
       if (domainObject !== undefined) {
         domainObject.removeInteractive();
       }
@@ -63,13 +63,13 @@ export class ExampleTool extends BaseEditTool {
       // Change opacity
       const delta = Math.sign(event.deltaY) * 0.05;
       domainObject.renderStyle.opacity = clamp(domainObject.renderStyle.opacity + delta, 0.2, 1);
-      domainObject.notify(Changes.renderStyle);
+      domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'opacity'));
     } else {
       // Change radius
       const factor = 1 - Math.sign(event.deltaY) * 0.1;
       domainObject.renderStyle.radius *= factor;
+      domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'radius'));
     }
-    domainObject.notify(Changes.renderStyle);
   }
 
   public override async onHover(event: PointerEvent): Promise<void> {
@@ -116,8 +116,7 @@ export class ExampleTool extends BaseEditTool {
       new ResetAllExamplesCommand(),
       new ShowAllExamplesCommand(),
       new DeleteAllExamplesCommand(),
-      new ShowExamplesOnTopCommand(),
-      new ToogleMetricUnitsCommand()
+      new ShowExamplesOnTopCommand()
     ];
   }
 
