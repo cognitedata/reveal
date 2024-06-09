@@ -13,11 +13,14 @@ export class ResetAllExamplesCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'EXAMPLES_RESET', fallback: 'the visual style for all examples' };
+    return {
+      key: 'EXAMPLES_RESET',
+      fallback: 'Reset the visual style for all examples to default'
+    };
   }
 
   public override get icon(): string {
-    return 'ClearAllIcon';
+    return 'ClearAll';
   }
 
   public override get isEnabled(): boolean {
