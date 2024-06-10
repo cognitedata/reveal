@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type Cognite3DViewer, type CogniteModel, type Image360Collection } from '@cognite/reveal';
-import { AddResourceOptions } from './types';
+import { type AddResourceOptions } from './types';
 import {
   is360ImageAddOptions,
   is360ImageDataModelAddOptions,

@@ -1,11 +1,10 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { AddModelOptions, type GeometryFilter } from '@cognite/reveal';
+import { type GeometryFilter } from '@cognite/reveal';
 import {
-  type PointCloudModelOptions,
   type CadModelOptions,
-  AddReveal3DModelOptions
+  type AddReveal3DModelOptions
 } from '../components/Reveal3DResources/types';
 import { Matrix4 } from 'three';
 
