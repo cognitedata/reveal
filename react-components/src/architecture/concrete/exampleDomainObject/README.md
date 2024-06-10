@@ -413,11 +413,11 @@ You can bind the the different changes to shift and control key to make it flexi
 
 ```typescript
 if (event.shiftKey) {
-  //..... copy in code here
+  //..... paste code here
 } else if (event.ctrlKey) {
-  // .... copy in code here
+  // .... paste code here
 } else {
-  // .... copy in code here
+  // .... paste code here
 }
 ```
 
@@ -425,7 +425,19 @@ if (event.shiftKey) {
 
 ## Creating commands
 
-Commands is typically are user interactions outside the viewer. First you should implement a
+Commands is typically are user interactions outside the viewer. First you should implement a command that reset the render style for all your points.
+
+When working on commands, it is often need for traversing the rootDomainObject. In the domain object you will find some families of convenience methods for this. These are:
+
+- `getChild*(...)` Methods for getting a specific child
+- `get[ThisAnd]Descendants*(...)` Methods for iterating on a specific descendants
+- `getDescendantBy*(...)` Methods for getting a specific descendant
+- `get[ThisAnd]Ancestors*(...)` Methods for iterating on a specific ancestors
+- `get[ThisAnd]AncestorBy*(...)` Methods for getting a specific ancestor
+
+By using these function, you can get access to all domain objects you need.
+
+Here is the code you can start with:
 
 ```typescript
 export class ResetAllPointsCommand extends RenderTargetCommand {
@@ -452,7 +464,7 @@ export class ResetAllPointsCommand extends RenderTargetCommand {
 
 Please implement `get isEnabled()` so the button is not enable if you don't have any `PointDomainObjects`.
 
-Make a similar `DeleteAllPointsCommand`. When deleting object in a list, remember to iterate in reverse order. I have done it in this way (maybe it can be done simpler?)
+Make a similar `DeleteAllPointsCommand`. When deleting object by a collection, remember to iterate in reverse order. I have done it in this way (maybe it can be done simpler?)
 
 ```typescript
     const array = Array.from(.....)
@@ -461,7 +473,7 @@ Make a similar `DeleteAllPointsCommand`. When deleting object in a list, remembe
        // Remove the domainObject here
 ```
 
-Also, this button must be of type `'ghost-destructive'` so you have to override `get buttonType()`.
+Also, this button must be of type `'ghost-destructive'` so you have to override `get buttonType()`. Use the `'Delete'` icon.
 
 In order to show your commands in the user interface, you have to override the `getToolbar()` method in `PointTool`.
 
@@ -476,19 +488,19 @@ public override getToolbar(): Array<BaseCommand | undefined> {
 
 > **&#9432; Try it out:** Activate your tool and notice the toolbar after you have created some domain objects. Test them.
 
-When it is working, now you are now ready to make a `ShowAllPointCommand`. This should hide all point if they are shown and show them if the are hidden. You can use the first `PointDomainObject` you find to determine if you are visible or hidden. This should also implement the `get isChecked` method.
+When it is working, now you are now ready to make a `ShowAllPointCommand`. This should hide all point if they are shown and show them if the are hidden. You can simply take the first `PointDomainObject` you find to determine if they are visible or hidden. This should also implement the `get isChecked` method. This can be done simpler, see section **Using a folder** below.
 
 Add it to the list in `getToolbar()` and test it.
 
 > **&#9432; Try it out:** Create some points and toggle the visible button.
 
-## The final touch, overriding the useDepthTest
+## The final touch - manipulate the DepthTest
 
-Here you should try another feature that is in the architecture. Override the method `useDepthTest` in the `PointView`. Let it return true only if `depthTest` in the style is true. The default implementation is return true.
+Here you should try another feature that is in the architecture. Override the method `useDepthTest` in the `PointView`. Let it return true only if `depthTest` in the style is true. The default implementation returns true.
 
-We should now investigate how the mouse picking responds on this. Keep in mind that the general intersection this is implemented in Reveal, not in this framework!
+We should now investigate how the mouse picking responds on this. Keep in mind that the general intersection is implemented in Reveal, not in this framework!
 
-The class above toggle the `depthTest` on all `PointDomainObject`s. In order get the current value of the `depthTest`, it simply take the first it can find. This is done in the `getDepthTest()`. Create a file and copy this code.
+The class above toggle the `depthTest` on all `PointDomainObject`s. In order get the current value of the `depthTest`, simply take the first it can find. This is done in the `getDepthTest()`. Create a file and copy this code.
 
 ```typescript
 export class ShowPointsOnTopCommand extends RenderTargetCommand {
@@ -550,8 +562,9 @@ Lets check if your code is clean when it comes to dependencies. Ask yourself:
 
 1. How many references do I have to the `PointDragger`.
 2. How many references do I have to the `PointView`.
-3. How many references do I have to the `PointRenderStyle`.
-4. How many references do I have from files in the directory I work in to the rest of the system. Please count them.
+3. How many references do I have from files in the directory I work in to the rest of the system. Please count them.
+
+> &#9432; If you have done all exercises until now you are finished. You will receive a diploma for your effort and attention. You are now able to use this architecture and hopefully get some good ideas to use similar architecture elsewhere.
 
 # More advanced exercises
 

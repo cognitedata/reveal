@@ -20,15 +20,13 @@ export class ToggleMetricUnitsCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    const { renderTarget } = this;
-    return renderTarget.rootDomainObject.unitSystem.isMetric;
+    return this.rootDomainObject.unitSystem.isMetric;
   }
 
   protected override invokeCore(): boolean {
-    const { renderTarget } = this;
-    const unitSystem = renderTarget.rootDomainObject.unitSystem;
+    const unitSystem = this.rootDomainObject.unitSystem;
     unitSystem.isMetric = !unitSystem.isMetric;
-    renderTarget.rootDomainObject.notifyDescendants(Changes.unit);
+    this.rootDomainObject.notifyDescendants(Changes.unit);
     return true;
   }
 }
