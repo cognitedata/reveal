@@ -3,8 +3,9 @@
  */
 
 /**
- * Determines hove many deltas the whell has been scrolled.
- * @param event     An WheelEvent
+ * Determines number of deltas when mouse scroll
+ * @beta
+ * @param event An WheelEvent
  */
 export function getWheelEventDelta(event: WheelEvent): number {
   // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
