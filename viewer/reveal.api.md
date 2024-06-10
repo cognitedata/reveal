@@ -1056,6 +1056,9 @@ export function getNormalizedPixelCoordinates(domElement: HTMLElement, pixelX: n
 // @public
 export function getNormalizedPixelCoordinatesBySize(pixelX: number, pixelY: number, width: number, height: number): THREE.Vector2;
 
+// @beta
+export function getWheelEventDelta(event: WheelEvent): number;
+
 // @public
 export type HtmlOverlayCreateClusterDelegate = (overlayElements: {
     htmlElement: HTMLElement;
