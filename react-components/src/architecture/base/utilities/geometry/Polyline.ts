@@ -60,7 +60,7 @@ export class Polyline extends Points {
 
     for (let index = 1; index <= n; index++) {
       p1.copy(this.list[index % n]);
-      p1.sub(first); // Translate down to first point, to increase acceracy
+      p1.sub(first); // Translate down to first point, to increase accuracy
       area += getHorizontalCrossProduct(p0, p1);
       p0.copy(p1);
     }

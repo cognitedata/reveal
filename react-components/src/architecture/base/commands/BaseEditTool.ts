@@ -3,7 +3,6 @@
  */
 
 import { NavigationTool } from './NavigationTool';
-import { type DomainObject } from '../domainObjects/DomainObject';
 import { isDomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
@@ -80,14 +79,13 @@ export abstract class BaseEditTool extends NavigationTool {
    * @param domainObject - The domain object to be accepted.
    * @returns `true` if the domain object can be accepted, `false` otherwise.
    */
-  protected canBeSelected(_domainObject: DomainObject): boolean {
+  protected canBeSelected(_domainObject: VisualDomainObject): boolean {
     return false;
   }
 
   /**
    * Override this function to create custom dragger
-   * with other creation logic. Otherwise createDragger in
-   * the DomainObject itself
+   * with other creation logic.
    */
   protected async createDragger(event: PointerEvent): Promise<BaseDragger | undefined> {
     const intersection = await this.getIntersection(event);
@@ -120,7 +118,7 @@ export abstract class BaseEditTool extends NavigationTool {
    */
   protected deselectAll(except?: VisualDomainObject | undefined): void {
     const { rootDomainObject } = this;
-    for (const domainObject of rootDomainObject.getDescendants()) {
+    for (const domainObject of rootDomainObject.getDescendantsByType(VisualDomainObject)) {
       if (!this.canBeSelected(domainObject)) {
         continue;
       }
@@ -136,9 +134,9 @@ export abstract class BaseEditTool extends NavigationTool {
    * Use only if multi selection is expected.
    * @returns A generator that yields each selected domain object.
    */
-  protected *getAllSelected(): Generator<DomainObject> {
+  protected *getAllSelected(): Generator<VisualDomainObject> {
     const { rootDomainObject } = this;
-    for (const domainObject of rootDomainObject.getDescendants()) {
+    for (const domainObject of rootDomainObject.getDescendantsByType(VisualDomainObject)) {
       if (!domainObject.isSelected) {
         continue;
       }
@@ -150,13 +148,13 @@ export abstract class BaseEditTool extends NavigationTool {
   }
 
   /**
-   * Retrieves the selected DomainObject.
+   * Retrieves the selected VisualDomainObject.
    * Use only if single selection is expected.
    * @returns The selected DomainObject, or undefined if no object is selected.
    */
-  protected getSelected(): DomainObject | undefined {
+  protected getSelected(): VisualDomainObject | undefined {
     const { rootDomainObject } = this;
-    for (const domainObject of rootDomainObject.getDescendants()) {
+    for (const domainObject of rootDomainObject.getDescendantsByType(VisualDomainObject)) {
       if (!domainObject.isSelected) {
         continue;
       }
@@ -179,12 +177,13 @@ export abstract class BaseEditTool extends NavigationTool {
     if (!isDomainObjectIntersection(intersection)) {
       return undefined;
     }
-    if (!this.canBeSelected(intersection.domainObject)) {
-      return undefined;
-    } else if (intersection.domainObject instanceof VisualDomainObject) {
-      return intersection.domainObject;
-    } else {
+    const { domainObject } = intersection;
+    if (!(domainObject instanceof VisualDomainObject)) {
       return undefined;
     }
+    if (!this.canBeSelected(domainObject)) {
+      return undefined;
+    }
+    return domainObject;
   }
 }

@@ -20,7 +20,7 @@ export class CommandsController extends PointerEvents {
   private readonly _pointerEventsTarget: PointerEventsTarget;
 
   // ==================================================
-  // CONTRUCTORS
+  // CONSTRUCTOR
   // ==================================================
 
   constructor(domElement: HTMLElement) {
