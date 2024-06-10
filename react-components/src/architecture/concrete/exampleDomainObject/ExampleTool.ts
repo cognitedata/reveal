@@ -45,28 +45,30 @@ export class ExampleTool extends BaseEditTool {
     super.onKey(event, down);
   }
 
-  public override async onWheel(event: WheelEvent): Promise<void> {
+  public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
     const intersection = await this.getIntersection(event);
-    const domainObject = this.getIntersectedDomainObject(intersection) as ExampleDomainObject;
+    const domainObject = this.getIntersectedSelectableDomainObject(
+      intersection
+    ) as ExampleDomainObject;
     if (domainObject === undefined || !domainObject.isSelected) {
-      await super.onWheel(event);
+      await super.onWheel(event, delta);
       return;
     }
     if (event.shiftKey) {
       // Change color
       let hsl: HSL = { h: 0, s: 0, l: 0 };
       hsl = domainObject.color.getHSL(hsl);
-      hsl.h = (hsl.h + Math.sign(event.deltaY) * 0.02) % 1;
+      hsl.h = (hsl.h + Math.sign(delta) * 0.02) % 1;
       domainObject.color.setHSL(hsl.h, hsl.s, hsl.l);
       domainObject.notify(Changes.color);
     } else if (event.ctrlKey) {
       // Change opacity
-      const delta = Math.sign(event.deltaY) * 0.05;
-      domainObject.renderStyle.opacity = clamp(domainObject.renderStyle.opacity + delta, 0.2, 1);
+      const opacity = domainObject.renderStyle.opacity + Math.sign(delta) * 0.05;
+      domainObject.renderStyle.opacity = clamp(opacity, 0.2, 1);
       domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'opacity'));
     } else {
       // Change radius
-      const factor = 1 - Math.sign(event.deltaY) * 0.1;
+      const factor = 1 - Math.sign(delta) * 0.1;
       domainObject.renderStyle.radius *= factor;
       domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'radius'));
     }
@@ -75,7 +77,7 @@ export class ExampleTool extends BaseEditTool {
   public override async onHover(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
     // Just set the cursor
-    if (this.getIntersectedDomainObject(intersection) !== undefined) {
+    if (this.getIntersectedSelectableDomainObject(intersection) !== undefined) {
       this.renderTarget.setMoveCursor();
     } else if (intersection !== undefined) {
       this.renderTarget.setCrosshairCursor();
@@ -91,7 +93,7 @@ export class ExampleTool extends BaseEditTool {
       return;
     }
     {
-      const domainObject = this.getIntersectedDomainObject(intersection);
+      const domainObject = this.getIntersectedSelectableDomainObject(intersection);
       if (domainObject !== undefined) {
         this.deselectAll(domainObject);
         domainObject.setSelectedInteractive(true);
@@ -109,6 +111,7 @@ export class ExampleTool extends BaseEditTool {
     this.rootDomainObject.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(true, this.renderTarget);
     domainObject.setSelectedInteractive(true);
+    this.renderTarget.setMoveCursor();
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {

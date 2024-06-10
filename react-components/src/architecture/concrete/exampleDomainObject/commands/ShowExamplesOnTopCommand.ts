@@ -21,7 +21,7 @@ export class ShowExamplesOnTopCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.getFirst() !== undefined;
+    return this.getFirstVisible() !== undefined;
   }
 
   public override get isChecked(): boolean {
@@ -43,14 +43,19 @@ export class ShowExamplesOnTopCommand extends RenderTargetCommand {
   // ==================================================
 
   private getDepthTest(): boolean {
-    const domainObject = this.getFirst();
+    const domainObject = this.getFirstVisible();
     if (domainObject === undefined) {
       return false;
     }
     return domainObject.renderStyle.depthTest;
   }
 
-  private getFirst(): ExampleDomainObject | undefined {
-    return this.rootDomainObject.getDescendantByType(ExampleDomainObject);
+  private getFirstVisible(): ExampleDomainObject | undefined {
+    for (const descendant of this.rootDomainObject.getDescendantsByType(ExampleDomainObject)) {
+      if (descendant.isVisible(this.renderTarget)) {
+        return descendant;
+      }
+    }
+    return undefined;
   }
 }

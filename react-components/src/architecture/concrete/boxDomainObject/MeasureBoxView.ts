@@ -29,13 +29,13 @@ import { GroupThreeView } from '../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
   type CustomObjectIntersectInput,
-  type CustomObjectIntersection
+  type CustomObjectIntersection,
+  Vector3Pool
 } from '@cognite/reveal';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { clear } from '../../base/utilities/extensions/arrayExtensions';
-import { Vector3Pool } from '../../base/utilities/geometry/Vector3Pool';
 import { createSpriteWithText } from '../../base/utilities/sprites/createSprite';
 import {
   createLineSegmentsBufferGeometryForBox,

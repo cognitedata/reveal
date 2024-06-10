@@ -29,7 +29,7 @@ import {
 import { TrianglesBuffers } from '../../base/utilities/geometry/TrianglesBuffers';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { Vector3Pool } from '../../base/utilities/geometry/Vector3Pool';
+import { Vector3Pool } from '@cognite/reveal';
 
 const FACE_INDEX_NAME1 = 'faceIndex1';
 const FACE_INDEX_NAME2 = 'faceIndex2';

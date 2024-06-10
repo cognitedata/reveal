@@ -95,7 +95,7 @@ export abstract class BaseEditTool extends NavigationTool {
     if (!isDomainObjectIntersection(intersection)) {
       return undefined;
     }
-    const domainObject = this.getIntersectedDomainObject(intersection);
+    const domainObject = this.getIntersectedSelectableDomainObject(intersection);
     if (domainObject === undefined) {
       return undefined;
     }
@@ -171,7 +171,7 @@ export abstract class BaseEditTool extends NavigationTool {
    * @param intersection - The intersection to retrieve the domain object from.
    * @returns The intersected visual domain object, or undefined if no valid domain object is found.
    */
-  protected getIntersectedDomainObject(
+  protected getIntersectedSelectableDomainObject(
     intersection: AnyIntersection | undefined
   ): VisualDomainObject | undefined {
     if (!isDomainObjectIntersection(intersection)) {

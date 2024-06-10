@@ -24,15 +24,11 @@ export class ShowAllExamplesCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    const domainObject = this.getFirst();
-    if (domainObject === undefined) {
-      return false;
-    }
-    return domainObject.isVisible(this.renderTarget);
+    return this.isAnyVisible();
   }
 
   protected override invokeCore(): boolean {
-    const isVisible = this.isChecked;
+    const isVisible = this.isAnyVisible();
     for (const domainObject of this.rootDomainObject.getDescendantsByType(ExampleDomainObject)) {
       domainObject.setVisibleInteractive(!isVisible, this.renderTarget);
     }
@@ -42,6 +38,15 @@ export class ShowAllExamplesCommand extends RenderTargetCommand {
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  private isAnyVisible(): boolean {
+    for (const descendant of this.rootDomainObject.getDescendantsByType(ExampleDomainObject)) {
+      if (descendant.isVisible(this.renderTarget)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   private getFirst(): ExampleDomainObject | undefined {
     return this.rootDomainObject.getDescendantByType(ExampleDomainObject);

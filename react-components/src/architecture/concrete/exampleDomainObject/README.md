@@ -29,7 +29,7 @@ The architecture I will introduce has been developed since the 1990s and has evo
 
 - It is limited when it comes to advanced React component. Everything that can not be generalized
   must be done as usual.
-- The Reveal objects, like CAD, Point clouds etc. still live somewhere inside Reveal and cannot be used as domain objects.
+- The Reveal objects, like CAD, Point clouds etc. still live somewhere inside Reveal and cannot be used as domain objects yet.
 - Reveal is not a multi viewer system. This architecture support multi viewer, but cannot use it.
 - I have not implemented any save and load data from CDF. This will come later.
 - I have dropped several more advanced features in the architecture (for instance factories), because of the code review system we have. Unfortunate, in Cognite there is no culture for adding thing we may need in the future.
@@ -179,7 +179,7 @@ Then, in your `onClick` method add this after the first if statement is done:
 
 ```typescript
 {
-  const domainObject = this.getIntersectedDomainObject(intersection);
+  const domainObject = this.getIntersectedSelectableDomainObject(intersection);
   if (domainObject !== undefined) {
     this.deselectAll(domainObject);
     domainObject.setSelectedInteractive(true);
@@ -208,7 +208,7 @@ When we already do this, also add `Changes.renderStyle`, `Changes.color` and `Ch
 
 Note that we clear the memory when it change. This is a convenient method to remove all redundant data. The next time some of the data is needed, it will be generated automatically (lazy creation). The method addChildren will automatically be run when needed.
 
-For large objects, where `addChildren` takes more time, you cannot do this. For instance, when the color change, you only need to update the material. If the geometry change, you need to update the geometry only. If the geometry is large, you can specify which part of geometry you need to update. This is not implemented yet, since we haven't seen any use cases for this.
+For large objects, where `addChildren` takes more time, you cannot do this. For instance, when the color change, you only need to update the material. If the geometry change, you need to update the geometry only. If the geometry is large, you can specify which part of geometry you need to update. This is not implemented yet, since we haven't seen any use cases for this, but is a part of this architecture.
 
 > **&#9432; Try it out:** Check that the selection is working when clicking at the your objects. Also check that the object is selected when it is created.
 
@@ -220,7 +220,7 @@ Professional applications uses a context dependent cursor. To do this override `
   public override async onHover(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
     // Just set the cursor
-    if (this.getIntersectedDomainObject(intersection) !== undefined) {
+    if (this.getIntersectedSelectableDomainObject(intersection) !== undefined) {
       this.renderTarget.setDefaultCursor();
     } else if (intersection !== undefined) {
       this.renderTarget.setCrosshairCursor();
@@ -300,7 +300,7 @@ In order to be able to move the point around, you have to implement a dragger. T
 In this example we need:
 
 - The domain object we like to drag
-- A copy of the point at drag start
+- A copy of the center at drag start
 - The plane perpendicular on the mouse direction through the center at drag start
 - And a offset to correction for hitting the sphere other places than in the center
 
@@ -365,13 +365,13 @@ You have to tell the `PointDomainObject` to use this dragger. Then override `cre
 
 > **&#9432; Try it out:** Compile this code. Are you able to move the points?
 
-When this is done, only one thing is missing. You have to indicate in `onHover` the the point can be moved. Change from `setDefaultCursor` or `setMoveCursor`.
+When this is done, only one thing is missing. You have to indicate in `onHover` the the point can be moved. Change from `setDefaultCursor` or `setMoveCursor`. You must also `setMoveCursor` in the end of `onClick` since `onHover` is not called before you release and move the mouse.
 
 > **&#9432; Try it out:** Do you see the move cursor?
 
 Undo dragging is missing from the architecture. It is not hard to implement within this framework and I have a pattern for this that covers most cases. It could be generally made within BaseEditTool.
 
-## Playing with the color and the to visual style
+## Playing with the color and the render style
 
 If the mouse is below the selected domain object, you can try to use the mouse wheel to do some changes.
 You must override the onWheel. Here is the implementation:
@@ -379,7 +379,7 @@ You must override the onWheel. Here is the implementation:
 ```typescript
   public override async onWheel(event: WheelEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
-    const domainObject = this.getIntersectedDomainObject(intersection) as PointDomainObject;
+    const domainObject = this.getIntersectedSelectableDomainObject(intersection) as PointDomainObject;
     if (domainObject === undefined || !domainObject.isSelected) {
       await super.onWheel(event);
       return;
@@ -425,9 +425,7 @@ if (event.shiftKey) {
 
 ## Creating commands
 
-Commands is typically are user interactions outside the viewer. First you should implement a command that reset the render style for all your points.
-
-When working on commands, it is often need for traversing the rootDomainObject. In the domain object you will find some families of convenience methods for this. These are:
+Commands is typically are user interactions outside the viewer. When working on commands, it is often need for traversing the rootDomainObject. In the `DomainObject` you will find some families of convenience methods for this. These are:
 
 - `getChild*(...)` Methods for getting a specific child
 - `get[ThisAnd]Descendants*(...)` Methods for iterating on a specific descendants
@@ -437,6 +435,7 @@ When working on commands, it is often need for traversing the rootDomainObject. 
 
 By using these function, you can get access to all domain objects you need.
 
+First you should implement a command that reset the render style for all your points.
 Here is the code you can start with:
 
 ```typescript
@@ -458,11 +457,11 @@ export class ResetAllPointsCommand extends RenderTargetCommand {
       domainObject.setRenderStyle(undefined);
       domainObject.notify(Changes.renderStyle);
     }
-    return true;
+    return true; // Indicate success
   }
 ```
 
-Please implement `get isEnabled()` so the button is not enable if you don't have any `PointDomainObjects`.
+Please implement `get isEnabled()` so the button is not enable if you don't have any `PointDomainObjects` in the system.
 
 Make a similar `DeleteAllPointsCommand`. When deleting object by a collection, remember to iterate in reverse order. I have done it in this way (maybe it can be done simpler?)
 
@@ -488,7 +487,20 @@ public override getToolbar(): Array<BaseCommand | undefined> {
 
 > **&#9432; Try it out:** Activate your tool and notice the toolbar after you have created some domain objects. Test them.
 
-When it is working, now you are now ready to make a `ShowAllPointCommand`. This should hide all point if they are shown and show them if the are hidden. You can simply take the first `PointDomainObject` you find to determine if they are visible or hidden. This should also implement the `get isChecked` method. This can be done simpler, see section **Using a folder** below.
+When it is working, now you are now ready to make a `ShowAllPointCommand`. This should hide all point if they are shown and show them if the are hidden. To determine if they are visible or hidden, you can for instance do this:
+
+```typescript
+  private isAnyVisible(): boolean {
+    for (const descendant of this.rootDomainObject.getDescendantsByType(PointDomainObject)) {
+      if (descendant.isVisible(this.renderTarget)) {
+        return true;
+      }
+    }
+    return false;
+  }
+```
+
+This should also implement the `get isChecked` method. This can be done simpler, see section **Using a folder** below.
 
 Add it to the list in `getToolbar()` and test it.
 
@@ -500,7 +512,7 @@ Here you should try another feature that is in the architecture. Override the me
 
 We should now investigate how the mouse picking responds on this. Keep in mind that the general intersection is implemented in Reveal, not in this framework!
 
-The class above toggle the `depthTest` on all `PointDomainObject`s. In order get the current value of the `depthTest`, simply take the first it can find. This is done in the `getDepthTest()`. Create a file and copy this code.
+The class above toggle the `depthTest` on all `PointDomainObject`s. In order get the current value of the `depthTest`, simply take the first visible it can find. This is done in the `getDepthTest()`. Create a file and copy this code.
 
 ```typescript
 export class ShowPointsOnTopCommand extends RenderTargetCommand {
@@ -517,7 +529,7 @@ export class ShowPointsOnTopCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.getFirst() !== undefined;
+    return this.getFirstVisible() !== undefined;
   }
 
   public override get isChecked(): boolean {
@@ -539,22 +551,27 @@ export class ShowPointsOnTopCommand extends RenderTargetCommand {
   // ==================================================
 
   private getDepthTest(): boolean {
-    const domainObject = this.getFirst();
+    const domainObject = this.getFirstVisible();
     if (domainObject === undefined) {
       return false;
     }
     return domainObject.renderStyle.depthTest;
   }
 
-  private getFirst(): ExampleDomainObject | undefined {
-    return this.rootDomainObject.getDescendantByType(ExampleDomainObject);
+  private getFirstVisible(): PointDomainObject | undefined {
+    for (const descendant of this.rootDomainObject.getDescendantsByType(PointDomainObject)) {
+      if (descendant.isVisible(this.renderTarget)) {
+        return descendant;
+      }
+    }
+    return undefined;
   }
 }
 ```
 
 Finally add `ShowPointsOnTopCommand` to the list in `getToolbar()` in the `PointTool`.
 
-> **&#9432; Try it out:** Create some point. Rotate the model so some points are hidden. Then check this command. Notice that the points are floating over the model. Click and double click to check the response. Uncheck and do the same.
+> **&#9432; Try it out:** Create some point. Rotate the model so some points are hidden. Then check this command. Notice that the points are floating over the model. Click and double click to check the response. Uncheck it and do the same.
 
 ## Clean code?
 
@@ -564,7 +581,7 @@ Lets check if your code is clean when it comes to dependencies. Ask yourself:
 2. How many references do I have to the `PointView`.
 3. How many references do I have from files in the directory I work in to the rest of the system. Please count them.
 
-> &#9432; If you have done all exercises until now you are finished. You will receive a diploma for your effort and attention. You are now able to use this architecture and hopefully get some good ideas to use similar architecture elsewhere.
+> &#9432; If you have done all exercises until now you are finished. You will receive a diploma for your effort and attention after I have tested it on your PC. You are now able to use this architecture and hopefully get some good ideas to use similar architecture elsewhere.
 
 # More advanced exercises
 
@@ -596,17 +613,17 @@ folder.addChildInteractive(domainObject);
 
 The rest of the code should work without any change.
 
-Now you can use `PointFolder.setVisibleInteractive`, to toggle visibility at all `PointDomainObject`s.
+Now you can use `PointFolder.setVisibleInteractive`, to toggle visibility at all `PointDomainObject`s. To get the visible state for all the domain object in the folder, you can use the method `getVisibleState()`. This function works recursively and will normally return one of `All`, `Some`, `None` or `Disabled`.
 
 ## One domain object for all the points
 
 This is more challenging, but should be done if number of points typically is large.
 
-- You must implement your selection mechanism yourself in the domain object by for instance keep the index of the selected point or a list of multi selection is allowed.
+- You must implement your selection mechanism yourself in the domain object by for instance keep the index of the selected point or a list if multi selection is allowed.
 - You have to do changes in the tool.
 - The view should show all points, in addition the selected point different then the other.
 - In the view the `intersectIfCloser` should be override so the index of your point should
-  be return with the `CustomObjectIntersection`. You can use the field userData to have the index
+  be return with the `CustomObjectIntersection`. You can use the field `userData` to have the index
   of the closest intersected point.
 - None of this is particularly hard in this architecture.
 
@@ -616,4 +633,6 @@ Focus is when you mark the object behind the mouse when hover. You can easily cr
 
 ## Multi selection
 
-Normally in other application you can expand or turn off selection with the control key. This should also work well in this framework. You will need to do adjustments in the `PointTool` code. The panel is implemented so it shows the last selected regardless of how many object you have selected.
+Normally in other application you can expand or turn off selection with the control key. This should also work well in this framework. You will need to do som minor adjustments in the `PointTool` code, for instance check the `event.ctrlKey` in the `onClick` method . The panel is implemented so it shows the last selected regardless of how many object you have selected.
+
+You must also use the `BaseEditTool.getAllSelected` instead of the `BaseEditTool.getSelected`.
