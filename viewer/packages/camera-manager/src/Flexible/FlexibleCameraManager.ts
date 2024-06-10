@@ -277,8 +277,8 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   // INSTANCE METHODS: Other events
   //================================================
 
-  public async onWheel(event: WheelEvent): Promise<void> {
-    await this.controls.onWheel(event);
+  public async onWheel(event: WheelEvent, delta: number): Promise<void> {
+    await this.controls.onWheel(event, delta);
   }
 
   public onKey(event: KeyboardEvent, down: boolean): void {

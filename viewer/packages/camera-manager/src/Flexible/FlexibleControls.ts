@@ -212,7 +212,7 @@ export class FlexibleControls {
   }
 
   //================================================
-  // INSTANCE METHODS: Pulic getters and setters
+  // INSTANCE METHODS: Public getters and setters
   //================================================
 
   public getTarget(): Vector3 {
@@ -497,17 +497,22 @@ export class FlexibleControls {
     this._keyboard.onKey(event, down);
   }
 
-  public readonly onWheel = async (event: WheelEvent): Promise<void> => {
+  public readonly onWheelHandler = async (event: WheelEvent): Promise<void> => {
+    if (!this.isEnabled) {
+      return;
+    }
+    this.onWheel(event, getWheelEventDelta(event));
+  };
+
+  public async onWheel(event: WheelEvent, delta: number): Promise<void> {
     if (!this.isEnabled) {
       return;
     }
     event.preventDefault();
-
     const pixelCoords = getPixelCoordinatesFromEvent(event, this._domElement);
 
     await this.setScrollCursorByWheelEventCoords(pixelCoords);
 
-    const delta = getWheelEventDelta(event);
     if (this._camera instanceof PerspectiveCamera) {
       const normalizedCoords = this.getNormalizedPixelCoordinates(pixelCoords);
       if (this.isStationary) {
@@ -521,7 +526,7 @@ export class FlexibleControls {
       const deltaDistance = Math.sign(delta) * this._options.orthographicCameraDollyFactor;
       this.dollyOrthographicCamera(deltaDistance);
     }
-  };
+  }
 
   private readonly onContextMenu = (event: MouseEvent) => {
     if (!this.isEnabled) {
@@ -537,7 +542,7 @@ export class FlexibleControls {
   public addEventListeners(): void {
     this._keyboard.addEventListeners(this._domElement);
     this._domElement.addEventListener('keydown', this.onKeyDown);
-    this._domElement.addEventListener('wheel', this.onWheel);
+    this._domElement.addEventListener('wheel', this.onWheelHandler);
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
   }
 
@@ -545,7 +550,7 @@ export class FlexibleControls {
     this._listeners.removeEventListeners();
     this._keyboard.removeEventListeners(this._domElement);
     this._domElement.removeEventListener('keydown', this.onKeyDown);
-    this._domElement.removeEventListener('wheel', this.onWheel);
+    this._domElement.removeEventListener('wheel', this.onWheelHandler);
     this._domElement.removeEventListener('contextmenu', this.onContextMenu);
   }
 
@@ -606,7 +611,7 @@ export class FlexibleControls {
     }
     let deltaAzimuthAngle = this._options.mouseRotationSpeedAzimuth * delta.x;
     let deltaPolarAngle = this._options.mouseRotationSpeedPolar * delta.y;
-    // It is more natural that the first persion rotate slower then the other modes
+    // It is more natural that the first person rotate slower then the other modes
     if (this.isStationary || this.controlsType == FlexibleControlsType.FirstPerson) {
       deltaAzimuthAngle *= 0.5;
       deltaPolarAngle *= 0.5;

@@ -83,7 +83,7 @@ export interface IFlexibleCameraManager extends CameraManager {
    * Called when wheel event is triggered
    * @beta
    */
-  onWheel(event: WheelEvent): Promise<void>;
+  onWheel(event: WheelEvent, delta: number): Promise<void>;
 
   /**
    * Called when a key is pressed or released
