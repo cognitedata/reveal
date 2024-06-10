@@ -8,7 +8,7 @@ import { clear, remove } from '../utilities/extensions/arrayExtensions';
 type UpdateDelegate = (command: BaseCommand) => void;
 
 /**
- * Base class for all command and tools. Thses are object that can do a
+ * Base class for all command and tools. These are object that can do a
  * user interaction with the system. It also have enough information to
  * generate the UI for the command.
  */
@@ -53,6 +53,10 @@ export abstract class BaseCommand {
 
   public get icon(): string {
     return 'Unknown';
+  }
+
+  public get buttonType(): string {
+    return 'ghost';
   }
 
   public get isEnabled(): boolean {

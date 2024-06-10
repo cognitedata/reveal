@@ -55,9 +55,9 @@ export abstract class BaseCreator {
   // ==================================================
 
   /**
-   * Gets the value indicating whether to prefer intersection with somthing.
+   * Gets the value indicating whether to prefer intersection with something.
    * If this is true, it will first try to intersect an object. If false the point
-   * will normally be calculatd based on the previous point and the ray in addPointCore
+   * will normally be calculated based on the previous point and the ray in addPointCore
    *
    * @returns {boolean} The value indicating whether to prefer intersection.
    */
@@ -73,7 +73,7 @@ export abstract class BaseCreator {
   protected abstract get minimumPointCount(): number;
 
   /**
-   * @returns The maximim required points to create the domain object.
+   * @returns The maximum required points to create the domain object.
    */
 
   protected abstract get maximumPointCount(): number;

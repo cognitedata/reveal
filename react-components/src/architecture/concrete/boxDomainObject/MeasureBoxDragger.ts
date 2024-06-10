@@ -56,7 +56,7 @@ export class MeasureBoxDragger extends BaseDragger {
   }
 
   // ==================================================
-  // CONTRUCTOR
+  // CONSTRUCTOR
   // ==================================================
 
   public constructor(props: CreateDraggerProps, domainObject: MeasureBoxDomainObject) {

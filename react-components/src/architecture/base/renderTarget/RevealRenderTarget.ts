@@ -45,7 +45,7 @@ export class RevealRenderTarget {
   private _config: BaseRevealConfig | undefined = undefined;
 
   // ==================================================
-  // CONTRUCTORS
+  // CONSTRUCTOR
   // ==================================================
 
   constructor(viewer: Cognite3DViewer) {

@@ -65,7 +65,7 @@ export function square(value: number): number {
 
 /**
  * Round a number closest to one of these values:  2*10^N, 2.5*10^N, 5*10^N or 10*10^N.
- * This is used to give axies a natural increment between the ticks or
+ * This is used to give axes a natural increment between the ticks or
  * contour intervals on a terrain surface
  * @param increment - The value to be rounded
  * @returns The rounded value

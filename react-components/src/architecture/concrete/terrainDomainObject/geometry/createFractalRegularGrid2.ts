@@ -10,7 +10,7 @@ import { RegularGrid2 } from './RegularGrid2';
 export function createFractalRegularGrid2(
   boundingBox: Range3,
   powerOf2: number = 8,
-  dampning: number = 0.7,
+  damping: number = 0.7,
   smoothNumberOfPasses: number = 2,
   rotationAngle: number = 0
 ): RegularGrid2 {
@@ -30,7 +30,7 @@ export function createFractalRegularGrid2(
   grid.setZ(i0, j1, getRandomGaussian(0, stdDev));
   grid.setZ(i1, j1, getRandomGaussian(0, stdDev));
 
-  subDivide(grid, i0, j0, i1, j1, stdDev, powerOf2, dampning);
+  subDivide(grid, i0, j0, i1, j1, stdDev, powerOf2, damping);
 
   grid.origin.x = boundingBox.x.min;
   grid.origin.y = boundingBox.y.min;
@@ -78,7 +78,7 @@ function subDivide(
   j2: number,
   stdDev: number,
   level: number,
-  dampning: number
+  damping: number
 ): void {
   if (i2 - i0 <= 1 && j2 - j0 <= 1) {
     return; // Nothing more to update
@@ -86,7 +86,7 @@ function subDivide(
   if (i2 - i0 !== j2 - j0) {
     throw Error('Logical bug, the grid should be a square');
   }
-  stdDev *= dampning;
+  stdDev *= damping;
   let z = 0;
   z += setValueBetween(grid, i0, j0, i2, j0, stdDev);
   z += setValueBetween(grid, i0, j2, i2, j2, stdDev);
@@ -102,8 +102,8 @@ function subDivide(
   const i1 = Math.trunc((i0 + i2) / 2);
   const j1 = Math.trunc((j0 + j2) / 2);
 
-  subDivide(grid, i0, j0, i1, j1, stdDev, level, dampning);
-  subDivide(grid, i0, j1, i1, j2, stdDev, level, dampning);
-  subDivide(grid, i1, j0, i2, j1, stdDev, level, dampning);
-  subDivide(grid, i1, j1, i2, j2, stdDev, level, dampning);
+  subDivide(grid, i0, j0, i1, j1, stdDev, level, damping);
+  subDivide(grid, i0, j1, i1, j2, stdDev, level, damping);
+  subDivide(grid, i1, j0, i2, j1, stdDev, level, damping);
+  subDivide(grid, i1, j1, i2, j2, stdDev, level, damping);
 }

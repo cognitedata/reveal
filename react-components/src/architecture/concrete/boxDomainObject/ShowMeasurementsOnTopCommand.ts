@@ -1,6 +1,5 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
@@ -8,7 +7,7 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { MeasureDomainObject } from './MeasureDomainObject';
 
-export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
+export class ShowMeasurementsOnTopCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -22,8 +21,7 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    const domainObject = this.rootDomainObject.getDescendantByType(MeasureDomainObject);
-    return domainObject !== undefined;
+    return this.getFirst() !== undefined;
   }
 
   public override get isChecked(): boolean {
@@ -44,12 +42,16 @@ export class ShowMeasurmentsOnTopCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  public getDepthTest(): boolean {
-    const domainObject = this.rootDomainObject.getDescendantByType(MeasureDomainObject);
+  private getDepthTest(): boolean {
+    const domainObject = this.getFirst();
     if (domainObject === undefined) {
       return false;
     }
     const style = domainObject.renderStyle;
     return style.depthTest;
+  }
+
+  private getFirst(): MeasureDomainObject | undefined {
+    return this.rootDomainObject.getDescendantByType(MeasureDomainObject);
   }
 }

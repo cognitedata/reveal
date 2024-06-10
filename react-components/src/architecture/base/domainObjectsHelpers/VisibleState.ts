@@ -7,5 +7,5 @@ export enum VisibleState {
   Some, // Partly visible
   None, // None visible
   CanNotBeVisibleNow, // Can not be checked on, but it can be visible
-  Disabled // Visiable disabled
+  Disabled // Visible disabled
 }
