@@ -10,7 +10,6 @@ import { SetTerrainVisibleCommand } from '../terrainDomainObject/SetTerrainVisib
 import { UpdateTerrainCommand } from '../terrainDomainObject/UpdateTerrainCommand';
 import { FitViewCommand } from '../../base/concreteCommands/FitViewCommand';
 import { SetAxisVisibleCommand } from '../axis/SetAxisVisibleCommand';
-import { ExampleTool } from '../exampleDomainObject/ExampleTool';
 import { MeasurementTool } from '../boxDomainObject/MeasurementTool';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { BaseRevealConfig } from '../../base/renderTarget/BaseRevealConfig';
@@ -37,7 +36,6 @@ export class StoryBookConfig extends BaseRevealConfig {
       new SetAxisVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       undefined,
-      new ExampleTool(),
       new MeasurementTool(),
       undefined,
       new SetTerrainVisibleCommand(),
