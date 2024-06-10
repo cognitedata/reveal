@@ -75,6 +75,7 @@ export { CustomObject } from './src/customObject/CustomObject';
 export { ICustomObject } from './src/customObject/ICustomObject';
 export { CustomObjectIntersectInput } from './src/customObject/CustomObjectIntersectInput';
 export { CustomObjectIntersection } from './src/customObject/CustomObjectIntersection';
+export { Vector3Pool } from './src/three/Vector3Pool';
 
 export { isPointVisibleByPlanes } from './src/three/isPointVisibleByPlanes';
 
