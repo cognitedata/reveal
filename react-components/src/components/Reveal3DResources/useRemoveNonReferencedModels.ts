@@ -2,18 +2,18 @@
  * Copyright 2024 Cognite AS
  */
 import { type Cognite3DViewer, type CogniteModel, type Image360Collection } from '@cognite/reveal';
-import { type AddImage360CollectionOptions, type TypedReveal3DModel } from './types';
+import { AddResourceOptions } from './types';
 import {
+  is360ImageAddOptions,
   is360ImageDataModelAddOptions,
   is360ImageEventsAddOptions,
   is3dModelOptions
 } from './typeGuards';
 import { useEffect } from 'react';
-import { isSameCadModel, isSamePointCloudModel } from '../../utilities/isSameModel';
+import { isSame3dModel } from '../../utilities/isSameModel';
 
 export function useRemoveNonReferencedModels(
-  addOptions: TypedReveal3DModel[],
-  image360CollectionAddOptions: AddImage360CollectionOptions[],
+  addOptions: AddResourceOptions[],
   viewer: Cognite3DViewer
 ): void {
   useEffect(() => {
@@ -23,10 +23,7 @@ export function useRemoveNonReferencedModels(
       viewer.removeModel(model);
     });
 
-    const nonReferencedCollections = findNonReferencedCollections(
-      image360CollectionAddOptions,
-      viewer
-    );
+    const nonReferencedCollections = findNonReferencedCollections(addOptions, viewer);
 
     nonReferencedCollections.forEach((collection) => {
       viewer.remove360ImageSet(collection);
@@ -35,11 +32,11 @@ export function useRemoveNonReferencedModels(
 }
 
 function findNonReferencedModels(
-  addOptions: TypedReveal3DModel[],
+  addOptions: AddResourceOptions[],
   viewer: Cognite3DViewer
 ): CogniteModel[] {
   const models = viewer.models;
-  const addOptionsSet = new Set(addOptions);
+  const addOptionsSet = new Set(addOptions.filter(is3dModelOptions));
 
   return models.filter((model) => {
     const correspondingAddOptions = (() => {
@@ -48,25 +45,13 @@ function findNonReferencedModels(
           continue;
         }
 
-        const isCadAndSame =
-          options.type === 'cad' &&
-          isSameCadModel(options, {
-            type: 'cad',
-            modelId: model.modelId,
-            revisionId: model.revisionId,
-            transform: model.getModelTransformation()
-          });
+        const isSameModel = isSame3dModel(options, {
+          modelId: model.modelId,
+          revisionId: model.revisionId,
+          transform: model.getModelTransformation()
+        });
 
-        const isPointCloudAndSame =
-          options.type === 'pointcloud' &&
-          isSamePointCloudModel(options, {
-            type: 'pointcloud',
-            modelId: model.modelId,
-            revisionId: model.revisionId,
-            transform: model.getModelTransformation()
-          });
-
-        if (isCadAndSame || isPointCloudAndSame) {
+        if (isSameModel) {
           return options;
         }
       }
@@ -83,9 +68,11 @@ function findNonReferencedModels(
 }
 
 function findNonReferencedCollections(
-  image360CollectionAddOptions: AddImage360CollectionOptions[],
+  addOptions: AddResourceOptions[],
   viewer: Cognite3DViewer
 ): Image360Collection[] {
+  const image360CollectionAddOptions = addOptions.filter(is360ImageAddOptions);
+
   const collections = viewer.get360ImageCollections();
   const collectionAddOptionsSet = new Set(image360CollectionAddOptions);
 
