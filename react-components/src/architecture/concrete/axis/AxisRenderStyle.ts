@@ -25,7 +25,7 @@ export class AxisRenderStyle extends RenderStyle {
   public showAxisTicks = true;
   public showGrid = true;
 
-  public numberOfTicks = 40; // Appoximately number of ticks for the largest axis
+  public numberOfTicks = 40; // Approximately number of ticks for the largest axis
   public tickLength = 0.005; // In fraction of the bounding box diagonal
   public tickFontSize = 2; // In fraction of the real tickLength
   public axisLabelFontSize = 4; // In fraction of the real tickLength

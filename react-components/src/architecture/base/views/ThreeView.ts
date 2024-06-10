@@ -12,10 +12,10 @@ import { type PerspectiveCamera, type Box3 } from 'three';
 
 /**
  * Represents an abstract base class for a Three.js view in the application.
- * Extends the `BaseView` class. It only has the poiinter to the renderTarget and a bounding box.
- * Inirit from this class if you want some visualization that do dot require a group object3D as the root object.
- * It can for instance be a view that chages somting on another view, dor instance texture on a surface or whatever.
- * I just wanted to make it ready for some corner cases I have seen during a long time as 3D develper.
+ * Extends the `BaseView` class. It only has the pointer to the renderTarget and a bounding box.
+ * Inherit from this class if you want some visualization that do dot require a group object3D as the root object.
+ * It can for instance be a view that changes something on another view, dor instance texture on a surface or whatever.
+ * I just wanted to make it ready for some corner cases I have seen during a long time as 3D developer.
  */
 export abstract class ThreeView extends BaseView {
   // ==================================================

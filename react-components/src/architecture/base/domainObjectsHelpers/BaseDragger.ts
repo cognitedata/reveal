@@ -21,7 +21,7 @@ export abstract class BaseDragger {
   protected readonly ray: Ray = new Ray(); // Intersection point at pointer down in CDF coordinates
 
   // ==================================================
-  // CONTRUCTOR
+  // CONSTRUCTOR
   // ==================================================
   /**
    * Represents a base dragger object.
@@ -50,7 +50,7 @@ export abstract class BaseDragger {
   /**
    * Called every times the mouse moves during dragging
    * @param event - The pointer event.
-   * @param ray - The current ray in CDF cooordinates
+   * @param ray - The current ray in CDF coordinates
    * @returns True if the dragger has changed the domain object, false otherwise.
    */
   public abstract onPointerDrag(event: PointerEvent, ray: Ray): boolean;

@@ -3,6 +3,7 @@
  */
 
 import { type Color } from 'three';
+import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { type RenderStyle } from '../domainObjectsHelpers/RenderStyle';
 import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../domainObjectsHelpers/Changes';
@@ -13,7 +14,6 @@ import { clear, removeAt } from '../utilities/extensions/arrayExtensions';
 import { getNextColor } from '../utilities/colors/getNextColor';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
-import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
@@ -42,7 +42,7 @@ export abstract class DomainObject {
   // For instance you can have many crop boxes, but only one can be used at the time.
   private _isActive: boolean = false;
 
-  // Expaned when it is shown in a tree view
+  // Expand when it is shown in a tree view
   private _isExpanded = false;
 
   // Parent-Child relationship
@@ -74,7 +74,7 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // INSTANCE/VIRTUAL METHODS: Nameing
+  // INSTANCE/VIRTUAL METHODS: Naming
   // ==================================================
 
   public get canChangeName(): boolean {
@@ -246,6 +246,15 @@ export abstract class DomainObject {
   protected notifyCore(change: DomainObjectChange): void {
     this.views.notify(this, change);
 
+    // If isRenderStyleRoot is true, notify all descendants
+    if (change.isChanged(Changes.renderStyle) && this.isRenderStyleRoot) {
+      const description = change.getChangedDescription(Changes.renderStyle);
+      if (description !== undefined) {
+        const renderStyleChange = new DomainObjectChange(description);
+        this.notifyDescendants(renderStyleChange);
+      }
+    }
+
     if (
       change.isChanged(
         Changes.visibleState,
@@ -309,11 +318,19 @@ export abstract class DomainObject {
 
   /**
    * Override if the render style is taken from another domain object, for instance the parent
-   * or somewhere else in the hieracy
+   * or somewhere else in the hierarchy
    * @returns The render style root
    */
   public get renderStyleRoot(): DomainObject | undefined {
     return undefined;
+  }
+
+  /**
+   * Override if this domain object is a render style root, se method above
+   * @returns true if this is a render style root
+   */
+  public get isRenderStyleRoot(): boolean {
+    return false;
   }
 
   /**
@@ -328,7 +345,7 @@ export abstract class DomainObject {
   /**
    * Verifies the render style for the domain object, because the render style may
    * be not valid in some cases. In this method you can change the render style.
-   * You can also change som fields in the rebnderstyle to get default values
+   * You can also change som fields in the renderStyle to get default values
    * dependent of the domain object itself.
    * Override this method when needed
    */
@@ -378,7 +395,7 @@ export abstract class DomainObject {
   public setVisibleInteractive(
     visible: boolean,
     renderTarget: RevealRenderTarget,
-    topLevel = true // When calling this from outside, this value should alwaus be true
+    topLevel = true // When calling this from outside, this value should always be true
   ): boolean {
     const visibleState = this.getVisibleState(renderTarget);
     if (visibleState === VisibleState.Disabled) {
@@ -413,7 +430,7 @@ export abstract class DomainObject {
     this.notifyCore(change);
   }
 
-  public notifyRecursive(change: DomainObjectChange | symbol): void {
+  public notifyDescendants(change: DomainObjectChange | symbol): void {
     if (!(change instanceof DomainObjectChange)) {
       change = new DomainObjectChange(change);
     }
@@ -464,7 +481,7 @@ export abstract class DomainObject {
   }
 
   public get root(): DomainObject {
-    // Returns the root of the hierarcy, regardless what it is
+    // Returns the root of the hierarchy, regardless what it is
     return this.parent === undefined ? this : this.parent.root;
   }
 
@@ -776,7 +793,7 @@ export abstract class DomainObject {
 
   // ==================================================
   // INSTANCE METHODS: Color type
-  // Used in the renderstyle to determin which of the color a domain object should have.
+  // Used in the render style to determine which of the color a domain object should have.
   // ==================================================
 
   public supportsColorType(colorType: ColorType, solid: boolean): boolean {

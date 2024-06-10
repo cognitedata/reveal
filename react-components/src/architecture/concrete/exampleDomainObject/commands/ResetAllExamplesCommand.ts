@@ -1,6 +1,5 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
@@ -14,11 +13,14 @@ export class ResetAllExamplesCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'EXAMPLES_RESET', fallback: 'Reset all examples' };
+    return {
+      key: 'EXAMPLES_RESET',
+      fallback: 'Reset the visual style for all examples to default'
+    };
   }
 
   public override get icon(): string {
-    return 'Copy';
+    return 'ClearAll';
   }
 
   public override get isEnabled(): boolean {
@@ -32,6 +34,10 @@ export class ResetAllExamplesCommand extends RenderTargetCommand {
     }
     return true;
   }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
 
   private getFirst(): ExampleDomainObject | undefined {
     return this.rootDomainObject.getDescendantByType(ExampleDomainObject);

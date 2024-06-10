@@ -1,6 +1,5 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
@@ -20,6 +19,10 @@ export class DeleteAllExamplesCommand extends RenderTargetCommand {
     return 'Delete';
   }
 
+  public override get buttonType(): string {
+    return 'ghost-destructive';
+  }
+
   public override get isEnabled(): boolean {
     const first = this.getFirst();
     return first !== undefined && first.canBeRemoved;
@@ -33,6 +36,10 @@ export class DeleteAllExamplesCommand extends RenderTargetCommand {
     }
     return true;
   }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
 
   private getFirst(): ExampleDomainObject | undefined {
     return this.rootDomainObject.getDescendantByType(ExampleDomainObject);

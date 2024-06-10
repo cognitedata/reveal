@@ -61,7 +61,7 @@ export abstract class VisualDomainObject extends DomainObject {
 
   /**
    * Determines whether the visual domain object can create a three view.
-   * It may have a state when it can not create a view bacause of other dependencies
+   * It may have a state when it can not create a view because of other dependencies
    *
    * @returns A boolean value indicating whether the visual domain object can create a three view.
    */

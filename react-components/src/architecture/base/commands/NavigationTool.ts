@@ -1,6 +1,5 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { BaseTool } from './BaseTool';
@@ -13,7 +12,7 @@ import { type TranslateKey } from '../utilities/TranslateKey';
  */
 export class NavigationTool extends BaseTool {
   // ==================================================
-  // INSTANVE PROPERTIES
+  // INSTANCE PROPERTIES
   // ==================================================
 
   private get cameraManager(): IFlexibleCameraManager {
