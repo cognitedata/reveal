@@ -15,11 +15,18 @@ import { MeasurementTool } from '../boxDomainObject/MeasurementTool';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { BaseRevealConfig } from '../../base/renderTarget/BaseRevealConfig';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { NavigationTool } from '../../base/commands/NavigationTool';
+import { type BaseTool } from '../../base/commands/BaseTool';
+import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
   // OVERRIDES
   // ==================================================
+
+  public override createDefaultTool(): BaseTool {
+    return new NavigationTool();
+  }
 
   public override createMainToolbar(): Array<BaseCommand | undefined> {
     return [
@@ -28,6 +35,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       undefined,
       new FitViewCommand(),
       new SetAxisVisibleCommand(),
+      new ToggleMetricUnitsCommand(),
       undefined,
       new ExampleTool(),
       new MeasurementTool(),

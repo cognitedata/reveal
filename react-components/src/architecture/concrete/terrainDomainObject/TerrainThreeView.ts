@@ -198,7 +198,7 @@ function updateSolidMaterial(
   is2D: boolean = false
 ): void {
   material.side = DoubleSide; // the terrain must be seen from both side
-  material.polygonOffset = style.showContours; // Because of the countours to be visible
+  material.polygonOffset = style.showContours; // Because of the contours to be visible
   material.polygonOffsetFactor = 1;
   material.polygonOffsetUnits = 4.0;
 

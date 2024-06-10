@@ -1,6 +1,5 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
@@ -9,7 +8,7 @@ import { MeasureType, getIconByMeasureType, getTooltipByMeasureType } from './Me
 import { MeasurementTool } from './MeasurementTool';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
-export class SetMeasurmentTypeCommand extends RenderTargetCommand {
+export class SetMeasurementTypeCommand extends RenderTargetCommand {
   private readonly _measureType: MeasureType;
 
   // ==================================================
@@ -61,7 +60,7 @@ export class SetMeasurmentTypeCommand extends RenderTargetCommand {
   }
 
   public override equals(other: BaseCommand): boolean {
-    if (!(other instanceof SetMeasurmentTypeCommand)) {
+    if (!(other instanceof SetMeasurementTypeCommand)) {
       return false;
     }
     return this._measureType === other._measureType;

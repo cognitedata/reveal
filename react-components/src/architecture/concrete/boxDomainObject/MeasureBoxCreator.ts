@@ -29,7 +29,7 @@ export class MeasureBoxCreator extends BaseCreator {
   private readonly _domainObject: MeasureBoxDomainObject;
 
   // ==================================================
-  // CONTRUCTOR
+  // CONSTRUCTOR
   // ==================================================
 
   constructor(measureType: MeasureType) {

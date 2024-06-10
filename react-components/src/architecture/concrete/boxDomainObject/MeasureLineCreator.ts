@@ -22,7 +22,7 @@ export class MeasureLineCreator extends BaseCreator {
   private readonly _domainObject: MeasureLineDomainObject;
 
   // ==================================================
-  // CONTRUCTOR
+  // CONSTRUCTOR
   // ==================================================
 
   constructor(measureType: MeasureType) {

@@ -4,7 +4,7 @@
 
 export enum FocusType {
   None,
-  Focus, // Focus not any particalar place
+  Focus, // Focus not any particular place
   Face, // Focus on the face
   Corner, // Focus on a corner
   Rotation, // Focus at rotation
