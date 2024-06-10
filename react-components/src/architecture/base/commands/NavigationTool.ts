@@ -55,8 +55,8 @@ export class NavigationTool extends BaseTool {
     await this.cameraManager.onPointerUp(event, leftButton);
   }
 
-  public override async onWheel(event: WheelEvent): Promise<void> {
-    await this.cameraManager.onWheel(event);
+  public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
+    await this.cameraManager.onWheel(event, delta);
   }
 
   public override onKey(event: KeyboardEvent, down: boolean): void {

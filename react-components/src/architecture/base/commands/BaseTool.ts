@@ -101,7 +101,7 @@ export abstract class BaseTool extends RenderTargetCommand {
     await Promise.resolve();
   }
 
-  public async onWheel(_event: WheelEvent): Promise<void> {
+  public async onWheel(_event: WheelEvent, _delta: number): Promise<void> {
     await Promise.resolve();
   }
 

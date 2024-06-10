@@ -455,9 +455,11 @@ export abstract class DomainObject {
 
   public toggleVisibleInteractive(renderTarget: RevealRenderTarget): void {
     const visibleState = this.getVisibleState(renderTarget);
-    if (visibleState === VisibleState.None) this.setVisibleInteractive(true, renderTarget);
-    else if (visibleState === VisibleState.Some || visibleState === VisibleState.All)
+    if (visibleState === VisibleState.None) {
+      this.setVisibleInteractive(true, renderTarget);
+    } else if (visibleState === VisibleState.Some || visibleState === VisibleState.All) {
       this.setVisibleInteractive(false, renderTarget);
+    }
   }
 
   // ==================================================
