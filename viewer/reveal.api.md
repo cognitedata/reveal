@@ -1122,7 +1122,7 @@ export interface IFlexibleCameraManager extends CameraManager {
     onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void>;
     onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void>;
     onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void>;
-    onWheel(event: WheelEvent): Promise<void>;
+    onWheel(event: WheelEvent, delta: number): Promise<void>;
     removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
     rotateCameraTo(direction: Vector3, animationDuration: number): void;
 }
@@ -1910,6 +1910,12 @@ export class UnionNodeCollection extends CombineNodeCollectionBase {
     getAreas(): AreaCollection;
     // (undocumented)
     serialize(): SerializedNodeCollection;
+}
+
+// @beta
+export class Vector3Pool {
+    constructor(size?: number);
+    getNext(copyFrom?: Vector3): Vector3;
 }
 
 // @public (undocumented)

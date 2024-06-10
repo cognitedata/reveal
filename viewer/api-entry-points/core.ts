@@ -73,6 +73,7 @@ export {
   CustomObjectIntersectInput,
   PointerEventsTarget,
   PointerEvents,
+  Vector3Pool,
   getNormalizedPixelCoordinatesBySize,
   getNormalizedPixelCoordinates,
   CDF_TO_VIEWER_TRANSFORMATION

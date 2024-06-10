@@ -236,7 +236,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   }
 
   //================================================
-  // OVERIDES of PointerEvents
+  // OVERRIDES of PointerEvents
   //================================================
 
   public override async onClick(event: PointerEvent): Promise<void> {
