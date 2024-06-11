@@ -7757,11 +7757,11 @@ __metadata:
   linkType: hard
 
 "mixpanel-browser@npm:^2.49.0":
-  version: 2.51.0
-  resolution: "mixpanel-browser@npm:2.51.0"
+  version: 2.52.0
+  resolution: "mixpanel-browser@npm:2.52.0"
   dependencies:
     rrweb: "npm:2.0.0-alpha.13"
-  checksum: 10/7a3f6ff405b47ef12da4501d557fa4dd4245bfa839a86ee505cc7e4d935bc67fe3a9f0dfc99862f3fcd2333cc9f24569b74e01cadedb45c078a9cffeebd158e6
+  checksum: 10/c84fc5992f140e282d74e957d790f53eb15e5280b7c5aa777b3930449d060f9553d64aba83d83b4f4d55de66475b04f9c79f3a42edde8edc44a81a6ce6889b82
   languageName: node
   linkType: hard
 
