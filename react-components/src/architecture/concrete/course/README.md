@@ -171,7 +171,7 @@ Reveal itself is aware your domain object. To check that Reveal understand your 
 
 ## Implement selection functionality
 
-Instead of inherit from NavigationTool you should now inherit from BaseEditTool. This is also subclass of NavigationTool, but add some more functionality to the tool. To see how, do:
+Instead of inherit from `NavigationTool` you should now inherit from `BaseEditTool`. This is also subclass of `NavigationTool`, but add some more functionality to the tool. To see how, do:
 
 Override the method `canBeSelected()` to return true when it is a `PointDomainObject` by using `instanceof`.
 
@@ -369,12 +369,12 @@ When this is done, only one thing is missing. You have to indicate in `onHover` 
 
 > **&#9432; Try it out:** Do you see the move cursor?
 
-Undo dragging is missing from the architecture. It is not hard to implement within this framework and I have a pattern for this that covers most cases. It could be generally made within BaseEditTool.
+Undo dragging is missing from the architecture. It is not hard to implement within this framework and I have a pattern for this that covers most cases. It could be generally made within `BaseEditTool`.
 
 ## Playing with the color and the render style
 
 If the mouse is below the selected domain object, you can try to use the mouse wheel to do some changes.
-First you have to add this convenience property to the PointDomainObject:
+First you have to add this convenience property to the `PointDomainObject`:
 
 ```typescript
   public get renderStyle(): PointRenderStyle {
