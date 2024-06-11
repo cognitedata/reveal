@@ -5,64 +5,16 @@ import { Mock } from 'moq.ts';
 import { renderHook } from '@testing-library/react';
 
 import { useRemoveNonReferencedModels } from '../../../../src/components/Reveal3DResources/useRemoveNonReferencedModels';
+
 import {
-  Cognite3DViewer,
-  CogniteCadModel,
-  CogniteModel,
-  CognitePointCloudModel,
-  Image360Collection
-} from '@cognite/reveal';
-import { Matrix4 } from 'three';
-
-const viewerModelsMock = vi.fn<[], CogniteModel[]>();
-const viewerRemoveModelsMock = vi.fn<[CogniteModel], void>();
-const viewerImage360CollectionsMock = vi.fn<[], Image360Collection[]>();
-
-const viewerMock = new Mock<Cognite3DViewer>()
-  .setup((p) => p.models)
-  .callback(viewerModelsMock)
-  .setup((p) => p.get360ImageCollections())
-  .callback(viewerImage360CollectionsMock)
-  .setup((p) => p.removeModel)
-  .returns(viewerRemoveModelsMock)
-  .object();
-
-const cadModelOptions = {
-  modelId: 123,
-  revisionId: 456
-};
-
-const pointCloudModelOptions = {
-  modelId: 321,
-  revisionId: 654
-};
-
-const cadMock = new Mock<CogniteCadModel>()
-  .setup((p) => p.modelId)
-  .returns(cadModelOptions.modelId)
-  .setup((p) => p.revisionId)
-  .returns(cadModelOptions.revisionId)
-  .setup((p) => p.getModelTransformation())
-  .returns(new Matrix4())
-  .object();
-
-const pointCloudMock = new Mock<CognitePointCloudModel>()
-  .setup((p) => p.modelId)
-  .returns(pointCloudModelOptions.modelId)
-  .setup((p) => p.revisionId)
-  .returns(pointCloudModelOptions.revisionId)
-  .setup((p) => p.getModelTransformation())
-  .returns(new Matrix4())
-  .object();
-
-const image360Options = {
-  siteId: 'siteId'
-};
-
-const image360Mock = new Mock<Image360Collection>()
-  .setup((p) => p.id)
-  .returns(image360Options.siteId)
-  .object();
+  viewerImage360CollectionsMock,
+  viewerMock,
+  viewerModelsMock,
+  viewerRemoveModelsMock
+} from '../../fixtures/viewer';
+import { cadMock, cadModelOptions } from '../../fixtures/cadModel';
+import { pointCloudMock, pointCloudModelOptions } from '../../fixtures/pointCloud';
+import { image360Mock, image360Options } from '../../fixtures/image360';
 
 describe(useRemoveNonReferencedModels.name, () => {
   beforeEach(() => {
