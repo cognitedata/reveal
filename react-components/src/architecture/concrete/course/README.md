@@ -171,7 +171,7 @@ Reveal itself is aware your domain object. To check that Reveal understand your 
 
 ## Implement selection functionality
 
-Instead of inherit from NavigationTool you should now inherit from BaseEditTool. This is also subclass of NavigationTool, but add some more functionality to the tool. To see how, do:
+Instead of inherit from `NavigationTool` you should now inherit from `BaseEditTool`. This is also subclass of `NavigationTool`, but add some more functionality to the tool. To see how, do:
 
 Override the method `canBeSelected()` to return true when it is a `PointDomainObject` by using `instanceof`.
 
@@ -369,23 +369,31 @@ When this is done, only one thing is missing. You have to indicate in `onHover` 
 
 > **&#9432; Try it out:** Do you see the move cursor?
 
-Undo dragging is missing from the architecture. It is not hard to implement within this framework and I have a pattern for this that covers most cases. It could be generally made within BaseEditTool.
+Undo dragging is missing from the architecture. It is not hard to implement within this framework and I have a pattern for this that covers most cases. It could be generally made within `BaseEditTool`.
 
 ## Playing with the color and the render style
 
 If the mouse is below the selected domain object, you can try to use the mouse wheel to do some changes.
-You must override the onWheel. Here is the implementation:
+First you have to add this convenience property to the `PointDomainObject`:
 
 ```typescript
-  public override async onWheel(event: WheelEvent): Promise<void> {
+  public get renderStyle(): PointRenderStyle {
+    return super.getRenderStyle() as PointRenderStyle;
+  }
+```
+
+Then you must override the onWheel. Here is the implementation:
+
+```typescript
+  public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
     const intersection = await this.getIntersection(event);
     const domainObject = this.getIntersectedSelectableDomainObject(intersection) as PointDomainObject;
     if (domainObject === undefined || !domainObject.isSelected) {
-      await super.onWheel(event);
+      await super.onWheel(event, number);
       return;
     }
     // Change radius
-    const factor = 1 - Math.sign(event.deltaY) * 0.1;
+    const factor = 1 - Math.sign(delta) * 0.1;
     domainObject.renderStyle.radius *= factor;
     domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'radius'));
   }
@@ -397,15 +405,15 @@ And you can even to some more playing by using this code:
 // Change color
 let hsl: HSL = { h: 0, s: 0, l: 0 };
 hsl = domainObject.color.getHSL(hsl);
-hsl.h = (hsl.h + Math.sign(event.deltaY) * 0.02) % 1;
+hsl.h = (hsl.h + Math.sign(delta) * 0.02) % 1;
 domainObject.color.setHSL(hsl.h, hsl.s, hsl.l);
 domainObject.notify(Changes.color);
 ```
 
 ```typescript
 // Change opacity
-const delta = Math.sign(event.deltaY) * 0.05;
-domainObject.renderStyle.opacity = clamp(domainObject.renderStyle.opacity + delta, 0.2, 1);
+const opacity = domainObject.renderStyle.opacity + Math.sign(delta) * 0.05;
+domainObject.renderStyle.opacity = clamp(opacity, 0.2, 1);
 domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'opacity'));
 ```
 
@@ -466,10 +474,10 @@ Please implement `get isEnabled()` so the button is not enable if you don't have
 Make a similar `DeleteAllPointsCommand`. When deleting object by a collection, remember to iterate in reverse order. I have done it in this way (maybe it can be done simpler?)
 
 ```typescript
-    const array = Array.from(.....)
-    array.reverse();
+  const array = Array.from(.....)
+  array.reverse();
     for (const domainObject of array)
-       // Remove the domainObject here
+      // Remove the domainObject here
 ```
 
 Also, this button must be of type `'ghost-destructive'` so you have to override `get buttonType()`. Use the `'Delete'` icon.
@@ -633,6 +641,6 @@ Focus is when you mark the object behind the mouse when hover. You can easily cr
 
 ## Multi selection
 
-Normally in other application you can expand or turn off selection with the control key. This should also work well in this framework. You will need to do som minor adjustments in the `PointTool` code, for instance check the `event.ctrlKey` in the `onClick` method . The panel is implemented so it shows the last selected regardless of how many object you have selected.
+Normally in other application you can expand or turn off selection with the control key. This should also work well in this framework. You will need to do some minor adjustments in the `PointTool` code, for instance check the `event.ctrlKey` in the `onClick` method . The panel is implemented so it shows the last selected regardless of how many object you have selected.
 
 You must also use the `BaseEditTool.getAllSelected` instead of the `BaseEditTool.getSelected`.
