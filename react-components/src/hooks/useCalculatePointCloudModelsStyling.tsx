@@ -10,7 +10,7 @@ import {
 import { useMemo } from 'react';
 import { type AnnotationIdStylingGroup } from '../components/PointCloudContainer/useApplyPointCloudStyling';
 import { useQuery } from '@tanstack/react-query';
-import { isSamePointCloudModel } from '../utilities/isSameModel';
+import { isSame3dModel } from '../utilities/isSameModel';
 import {
   usePointCloudAnnotationMappingsForModels,
   usePointCloudAnnotationIdsForModels
@@ -168,7 +168,7 @@ function groupStyleGroupByModel(
 
   return styleGroup.reduce<StyledPointCloudModel[]>((accumulatedGroups, currentGroup) => {
     const existingGroupWithModel = accumulatedGroups.find((group) =>
-      isSamePointCloudModel(group.model, currentGroup.model)
+      isSame3dModel(group.model, currentGroup.model)
     );
     existingGroupWithModel?.styleGroups.push(...currentGroup.styleGroups);
     return accumulatedGroups;
